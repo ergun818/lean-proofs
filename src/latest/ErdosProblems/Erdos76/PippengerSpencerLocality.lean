@@ -71,19 +71,28 @@ def vertexInfluenceEdges (H : FiniteHypergraph V E) (v : V) : Finset E :=
 def vertexConflictBallVertices (H : FiniteHypergraph V E) (r : ℕ) (v : V) : Finset V :=
   (H.vertexConflictBall r v).biUnion H.support
 
+omit [DecidableEq E] [DecidableEq V] in
 @[simp] lemma mem_conflictNeighborhood (H : FiniteHypergraph V E) (e f : E) :
     f ∈ H.conflictNeighborhood e ↔ H.Conflicts e f := by
+  classical
   simp [conflictNeighborhood]
 
+omit [DecidableEq E] [DecidableEq V] in
 @[simp] lemma card_conflictNeighborhood (H : FiniteHypergraph V E) (e : E) :
-    (H.conflictNeighborhood e).card = H.conflictDegree e := rfl
+    (H.conflictNeighborhood e).card = H.conflictDegree e := by
+  classical
+  exact rfl
 
+omit [DecidableEq V] in
 @[simp] lemma mem_closedConflictNeighborhood (H : FiniteHypergraph V E) (e f : E) :
     f ∈ H.closedConflictNeighborhood e ↔ f = e ∨ H.Conflicts e f := by
+  classical
   simp [closedConflictNeighborhood]
 
+omit [DecidableEq V] in
 lemma mem_closedConflictNeighborhood_comm (H : FiniteHypergraph V E) (e f : E) :
     f ∈ H.closedConflictNeighborhood e ↔ e ∈ H.closedConflictNeighborhood f := by
+  classical
   simp only [mem_closedConflictNeighborhood]
   constructor
   · rintro (rfl | hef)
@@ -93,34 +102,48 @@ lemma mem_closedConflictNeighborhood_comm (H : FiniteHypergraph V E) (e f : E) :
     · exact Or.inl rfl
     · exact Or.inr hfe.symm
 
+omit [DecidableEq V] in
 @[simp] lemma mem_conflictExpand (H : FiniteHypergraph V E) (S : Finset E) (f : E) :
     f ∈ H.conflictExpand S ↔
       ∃ e ∈ S, f ∈ H.closedConflictNeighborhood e := by
+  classical
   simp [conflictExpand]
 
+omit [DecidableEq V] in
 @[simp] lemma conflictBall_zero (H : FiniteHypergraph V E) (e : E) :
-    H.conflictBall 0 e = {e} := rfl
+    H.conflictBall 0 e = {e} := by
+  classical
+  exact rfl
 
+omit [DecidableEq V] in
 @[simp] lemma conflictBall_succ (H : FiniteHypergraph V E) (r : ℕ) (e : E) :
-    H.conflictBall (r + 1) e = H.conflictExpand (H.conflictBall r e) := rfl
+    H.conflictBall (r + 1) e = H.conflictExpand (H.conflictBall r e) := by
+  classical
+  exact rfl
 
+omit [DecidableEq V] in
 lemma mem_conflictBall_self (H : FiniteHypergraph V E) (r : ℕ) (e : E) :
     e ∈ H.conflictBall r e := by
+  classical
   induction r with
   | zero => simp
   | succ r ih =>
       rw [conflictBall_succ, mem_conflictExpand]
       exact ⟨e, ih, by simp⟩
 
+omit [DecidableEq V] in
 lemma conflictBall_mono_radius (H : FiniteHypergraph V E) (r : ℕ) (e : E) :
     H.conflictBall r e ⊆ H.conflictBall (r + 1) e := by
+  classical
   intro f hf
   rw [conflictBall_succ, mem_conflictExpand]
   exact ⟨f, hf, by simp⟩
 
+omit [DecidableEq V] in
 lemma conflictBall_of_mem_closed {H : FiniteHypergraph V E} {e f : E}
     (hef : f ∈ H.closedConflictNeighborhood e) (r : ℕ) :
     H.conflictBall r f ⊆ H.conflictBall (r + 1) e := by
+  classical
   induction r with
   | zero =>
       intro x hx
@@ -134,8 +157,10 @@ lemma conflictBall_of_mem_closed {H : FiniteHypergraph V E} {e f : E}
       obtain ⟨y, hy, hxy⟩ := hx
       exact ⟨y, ih hy, hxy⟩
 
+omit [DecidableEq V] in
 lemma mem_conflictBall_comm (H : FiniteHypergraph V E) (r : ℕ) (e f : E) :
     f ∈ H.conflictBall r e ↔ e ∈ H.conflictBall r f := by
+  classical
   induction r generalizing e f with
   | zero => simp [eq_comm]
   | succ r ih =>
@@ -153,9 +178,11 @@ lemma mem_conflictBall_comm (H : FiniteHypergraph V E) (r : ℕ) (e f : E) :
           ((H.mem_closedConflictNeighborhood_comm g e).mp heg) r
           ((ih f g).mp hg)
 
+omit [DecidableEq V] in
 lemma conflictBall_comp {H : FiniteHypergraph V E} {e f : E} {r : ℕ}
     (hef : f ∈ H.conflictBall r e) (s : ℕ) :
     H.conflictBall s f ⊆ H.conflictBall (r + s) e := by
+  classical
   induction s with
   | zero =>
       intro x hx
@@ -170,12 +197,17 @@ lemma conflictBall_comp {H : FiniteHypergraph V E} {e f : E} {r : ℕ}
         mem_conflictExpand]
       exact ⟨y, ih hy, hxy⟩
 
+omit [DecidableEq E] in
 @[simp] lemma mem_incidentEdges (H : FiniteHypergraph V E) (v : V) (e : E) :
     e ∈ H.incidentEdges v ↔ v ∈ H.support e := by
+  classical
   simp [incidentEdges]
 
+omit [DecidableEq E] in
 @[simp] lemma card_incidentEdges (H : FiniteHypergraph V E) (v : V) :
-    (H.incidentEdges v).card = H.edgeDegree v := rfl
+    (H.incidentEdges v).card = H.edgeDegree v := by
+  classical
+  exact rfl
 
 @[simp] lemma mem_vertexConflictBall (H : FiniteHypergraph V E)
     (r : ℕ) (v : V) (f : E) :
@@ -370,7 +402,8 @@ def flattenedBatchResidualDegree {J : Type*} [Fintype J]
       ∃ j : J, e ∈ H.isolatedSample (batchAt Z j) := by
   simp [flattenedBatchAcceptedEdges]
 
-lemma mem_iff_of_agreesOn {J : Type*} [Fintype J]
+omit [Fintype E] in
+lemma mem_iff_of_agreesOn {J : Type*}
     {R Z T : Finset (J × E)} (hZT : FiniteNibble.AgreesOn R Z T)
     {z : J × E} (hz : z ∈ R) :
     z ∈ Z ↔ z ∈ T := by
@@ -439,7 +472,7 @@ lemma flattenedBatchResidualDegree_eq_of_agreesOn
     H.flattenedBatchResidualDegree Z v = H.flattenedBatchResidualDegree T v := by
   apply congrArg card
   ext e
-  simp only [flattenedBatchResidualDegree, mem_filter, mem_sdiff, mem_univ, true_and]
+  simp only [mem_filter, mem_sdiff, mem_univ, true_and]
   by_cases hve : v ∈ H.support e
   · simp only [hve, and_true]
     exact not_congr (H.flattenedBatchAcceptedEdges_mem_iff_of_agreesOn hZT hve)

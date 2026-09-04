@@ -380,10 +380,12 @@ def innerLiveCount (H : FiniteHypergraph V E) (e : E) :
       (if H.InnerLive M e then 1 else 0) +
         H.innerLiveCount e samples (H.innerStep M S)
 
+omit [DecidableEq E] in
 /-- A homogeneous finite product of normalized masses is normalized. -/
 lemma sum_productMass_eq_one (w : Finset E → ℝ)
     (hw : ∑ S, w S = 1) (n : ℕ) :
     ∑ X : Fin n → Finset E, FiniteProduct.productMass w X = 1 := by
+  classical
   simpa [FiniteProduct.productMass, FiniteProduct.mass] using
     (FiniteProduct.sum_mass
       (I := Fin n) (Omega := fun _ ↦ Finset E) (fun _ S ↦ w S)

@@ -23,8 +23,10 @@ complement graph from entering the counting identities. -/
 noncomputable def canonicalEdges (G : SimpleGraph V) : Finset (Sym2 V) :=
   @SimpleGraph.edgeFinset V G (Fintype.ofFinite G.edgeSet)
 
+omit [DecidableEq V] in
 lemma edgeFinset_eq_canonical (G : SimpleGraph V) [Fintype G.edgeSet] :
     G.edgeFinset = canonicalEdges G := by
+  classical
   ext e
   simp only [canonicalEdges, SimpleGraph.mem_edgeFinset]
 
@@ -143,8 +145,10 @@ def zeroGraph (G : SimpleGraph V) (z : Sym2 V → ℝ) : SimpleGraph V where
   symm := ⟨fun a b h ↦ ⟨h.1.symm, by simpa only [Sym2.eq_swap] using h.2⟩⟩
   loopless := ⟨fun _ h ↦ G.irrefl h.1⟩
 
+omit [DecidableEq V] in
 lemma zeroGraph_edgeFinset (G : SimpleGraph V) (z : Sym2 V → ℝ) :
     (zeroGraph G z).edgeFinset = G.edgeFinset.filter (fun e ↦ z e = 0) := by
+  classical
   ext e
   induction e using Sym2.ind with
   | _ a b =>
@@ -167,10 +171,12 @@ lemma forced_cover_ge_one {G H : SimpleGraph V} {z q : Sym2 V → ℝ}
   have h := triangle_cover_inequality hz hab hac.1 hbc.1
   simpa [hac.2, hbc.2] using h
 
+omit [DecidableEq V] in
 lemma positive_edge_count {G : SimpleGraph V} {z : Sym2 V → ℝ}
     (hz : ∀ e ∈ G.edgeFinset, 0 ≤ z e) :
     ((G.edgeFinset.filter (fun e ↦ 0 < z e)).card : ℝ) =
       G.edgeFinset.card - (zeroGraph G z).edgeFinset.card := by
+  classical
   rw [zeroGraph_edgeFinset]
   have hpart : (G.edgeFinset.filter (fun e ↦ z e = 0)).card +
       (G.edgeFinset.filter (fun e ↦ 0 < z e)).card = G.edgeFinset.card := by

@@ -123,8 +123,10 @@ omit [Fintype α] [DecidableEq α] in
 @[simp] lemma sameSide_mk (s : Set α) (u v : α) :
     SameSide s s(u, v) ↔ (u ∈ s ↔ v ∈ s) := Iff.rfl
 
+omit [DecidableEq α] [Fintype α] in
 @[simp] lemma sameSide_set_compl (s : Set α) (e : Sym2 α) :
     SameSide sᶜ e ↔ SameSide s e := by
+  classical
   induction e using Sym2.inductionOn with
   | hf u v =>
       simp only [sameSide_mk, Set.mem_compl_iff]
@@ -134,8 +136,10 @@ omit [Fintype α] [DecidableEq α] in
 def internalEdgeFinset (G : SimpleGraph α) (s : Set α) : Finset (Sym2 α) :=
   G.edgeFinset.filter (SameSide s)
 
+omit [DecidableEq α] in
 @[simp] lemma internalEdgeFinset_set_compl (G : SimpleGraph α) (s : Set α) :
     internalEdgeFinset G sᶜ = internalEdgeFinset G s := by
+  classical
   ext e
   simp [internalEdgeFinset]
 
@@ -154,8 +158,10 @@ lemma CloseToBipartite.mono {G : SimpleGraph α} {k l : ℕ}
   obtain ⟨D, hD, hcard, hbip⟩ := h
   exact ⟨D, hD, hcard.trans hkl, hbip⟩
 
+omit [DecidableEq α] in
 lemma CloseToBipartite.partition_witness {G : SimpleGraph α} {k : ℕ}
     (h : CloseToBipartite G k) : PartitionCloseToBipartite G k := by
+  classical
   obtain ⟨D, hDG, hDcard, hDbip⟩ := h
   obtain ⟨s, t, hst⟩ := hDbip.exists_isBipartiteWith
   refine ⟨s, (card_le_card ?_).trans hDcard⟩
@@ -409,39 +415,39 @@ theorem no_pentagon_chain_of_extension_step
   have h18 : IsPentagonExceptional (G 18) := by
     simpa using hstep 17 (by norm_num) (by norm_num) (G 17) (G 18)
       (hext 17 (by norm_num) (by norm_num)) h17
-      (by convert hsmall 18 (by norm_num) (by norm_num) using 1 <;> norm_num)
+      (by convert hsmall 18 (by norm_num) (by norm_num) using 1 ; norm_num)
   have h19 : IsPentagonExceptional (G 19) := by
     simpa using hstep 18 (by norm_num) (by norm_num) (G 18) (G 19)
       (hext 18 (by norm_num) (by norm_num)) h18
-      (by convert hsmall 19 (by norm_num) (by norm_num) using 1 <;> norm_num)
+      (by convert hsmall 19 (by norm_num) (by norm_num) using 1 ; norm_num)
   have h20 : IsPentagonExceptional (G 20) := by
     simpa using hstep 19 (by norm_num) (by norm_num) (G 19) (G 20)
       (hext 19 (by norm_num) (by norm_num)) h19
-      (by convert hsmall 20 (by norm_num) (by norm_num) using 1 <;> norm_num)
+      (by convert hsmall 20 (by norm_num) (by norm_num) using 1 ; norm_num)
   have h21 : IsPentagonExceptional (G 21) := by
     simpa using hstep 20 (by norm_num) (by norm_num) (G 20) (G 21)
       (hext 20 (by norm_num) (by norm_num)) h20
-      (by convert hsmall 21 (by norm_num) (by norm_num) using 1 <;> norm_num)
+      (by convert hsmall 21 (by norm_num) (by norm_num) using 1 ; norm_num)
   have h22 : IsPentagonExceptional (G 22) := by
     simpa using hstep 21 (by norm_num) (by norm_num) (G 21) (G 22)
       (hext 21 (by norm_num) (by norm_num)) h21
-      (by convert hsmall 22 (by norm_num) (by norm_num) using 1 <;> norm_num)
+      (by convert hsmall 22 (by norm_num) (by norm_num) using 1 ; norm_num)
   have h23 : IsPentagonExceptional (G 23) := by
     simpa using hstep 22 (by norm_num) (by norm_num) (G 22) (G 23)
       (hext 22 (by norm_num) (by norm_num)) h22
-      (by convert hsmall 23 (by norm_num) (by norm_num) using 1 <;> norm_num)
+      (by convert hsmall 23 (by norm_num) (by norm_num) using 1 ; norm_num)
   have h24 : IsPentagonExceptional (G 24) := by
     simpa using hstep 23 (by norm_num) (by norm_num) (G 23) (G 24)
       (hext 23 (by norm_num) (by norm_num)) h23
-      (by convert hsmall 24 (by norm_num) (by norm_num) using 1 <;> norm_num)
+      (by convert hsmall 24 (by norm_num) (by norm_num) using 1 ; norm_num)
   have h25 : IsPentagonExceptional (G 25) := by
     simpa using hstep 24 (by norm_num) (by norm_num) (G 24) (G 25)
       (hext 24 (by norm_num) (by norm_num)) h24
-      (by convert hsmall 25 (by norm_num) (by norm_num) using 1 <;> norm_num)
+      (by convert hsmall 25 (by norm_num) (by norm_num) using 1 ; norm_num)
   have h26 : IsPentagonExceptional (G 26) := by
     simpa using hstep 25 (by norm_num) (by norm_num) (G 25) (G 26)
       (hext 25 (by norm_num) (by norm_num)) h25
-      (by convert hsmall 26 (by norm_num) (by norm_num) using 1 <;> norm_num)
+      (by convert hsmall 26 (by norm_num) (by norm_num) using 1 ; norm_num)
   have : 26 ≤ 25 := by simpa [IsPentagonExceptional] using h26.1
   omega
 
@@ -702,19 +708,23 @@ lemma sideEdgeFinset_disjoint_compl (G : SimpleGraph α) (s : Set α) :
       have huT : u ∉ s := by simpa using hT huPair
       exact huT huS
 
+omit [DecidableEq α] in
 lemma card_internalEdgeFinset_eq_card_induced_sides
     (G : SimpleGraph α) (s : Set α) :
     (internalEdgeFinset G s).card =
       Nat.card (G.induce (s.toFinset : Set α)).edgeSet +
         Nat.card (G.induce (sᶜ.toFinset : Set α)).edgeSet := by
+  classical
   rw [internalEdgeFinset_eq_union_sides,
     card_union_of_disjoint (sideEdgeFinset_disjoint_compl G s),
     card_sideEdgeFinset, card_sideEdgeFinset]
   rw [SimpleGraph.edgeFinset_card, SimpleGraph.edgeFinset_card,
     ← Nat.card_eq_fintype_card, ← Nat.card_eq_fintype_card]
 
+omit [DecidableEq α] in
 lemma internalEdgeFinset_disjoint_compl (G : SimpleGraph α) (s : Set α) :
     Disjoint (internalEdgeFinset G s) (internalEdgeFinset Gᶜ s) := by
+  classical
   rw [Finset.disjoint_left]
   intro e heG heGc
   rcases mem_filter.mp heG with ⟨heG, _⟩
@@ -746,9 +756,11 @@ lemma internalEdgeFinset_union_compl (G : SimpleGraph α) (s : Set α) :
         · exact Or.inl ⟨huv, hs⟩
         · exact Or.inr ⟨⟨hne, huv⟩, hs⟩
 
+omit [DecidableEq α] in
 lemma card_internalEdgeFinset_top (s : Set α) :
     (internalEdgeFinset (⊤ : SimpleGraph α) s).card =
       s.ncard.choose 2 + sᶜ.ncard.choose 2 := by
+  classical
   rw [card_internalEdgeFinset_eq_card_induced_sides]
   have hS :
       Nat.card ((⊤ : SimpleGraph α).induce
@@ -796,12 +808,14 @@ lemma card_internalEdgeFinset_top (s : Set α) :
             (Set.ncard_eq_toFinset_card' (sᶜ : Set α)).symm
   omega
 
+omit [DecidableEq α] in
 /-- On the internal pairs of a bipartition, the two colours partition all
 available pairs. -/
 lemma card_internalEdgeFinset_compl (G : SimpleGraph α) (s : Set α) :
     (internalEdgeFinset Gᶜ s).card =
       s.ncard.choose 2 + sᶜ.ncard.choose 2 -
         (internalEdgeFinset G s).card := by
+  classical
   have hsum :
       (internalEdgeFinset G s).card + (internalEdgeFinset Gᶜ s).card =
         s.ncard.choose 2 + sᶜ.ncard.choose 2 := by
@@ -856,7 +870,7 @@ theorem hasResidualInternalDecompositions_of_sideDecompositions
 
 private lemma IsFractionalDecomposition.relabelGL
     {G : SimpleGraph α} {w : Finset α → ℝ}
-    (hw : IsFractionalDecomposition G w) { β : Type* }
+    (hw : IsFractionalDecomposition G w) {β : Type*}
     [Fintype β] [DecidableEq β] (e : α ≃ β) :
     IsFractionalDecomposition (G.map e.toEmbedding) (relabelWeight e w) := by
   refine ⟨hw.isPacking.relabel e, ?_⟩
@@ -874,7 +888,7 @@ public conclusion below deliberately retains `hAC` as an argument until the
 companion module exports its unconditional theorem. -/
 private lemma almostCompleteFractionalDecomposition_fintype
     (hAC : AlmostCompleteFractionalDecomposition)
-    { β : Type* } [Fintype β] [DecidableEq β]
+    {β : Type*} [Fintype β] [DecidableEq β]
     (G : SimpleGraph β) (hcard : 7 ≤ Fintype.card β)
     (hmissing : missingEdgeCount G ≤ Fintype.card β - 4) :
     ∃ w : Finset β → ℝ, IsFractionalDecomposition G w := by
@@ -899,10 +913,11 @@ private lemma almostCompleteFractionalDecomposition_fintype
   have hmap : H.map e.symm.toEmbedding = G := by
     dsimp only [H]
     rw [SimpleGraph.map_map]
-    simpa using G.map_id
+    simp
   refine ⟨u, ?_⟩
   simpa only [u, hmap] using hw.relabelGL e.symm
 
+omit [Fintype α] in
 private lemma missingEdgeCount_compl_induce_GL
     (G : SimpleGraph α) (S : Finset α) :
     missingEdgeCount (Gᶜ.induce (S : Set α)) =
@@ -1060,7 +1075,7 @@ lemma isFractionalPacking_integralPackingWeight {G : SimpleGraph α}
     have hS :
         ((G.cliqueFinset 3).filter fun t ↦ e ∈ t.sym2).filter (fun t ↦ t ∈ P) = S := by
       ext t
-      simp [S, and_comm, and_left_comm, and_assoc]
+      simp [S, and_comm, and_left_comm]
     calc
       (∑ t ∈ (G.cliqueFinset 3).filter (fun t ↦ e ∈ t.sym2),
           if t ∈ P then 1 else 0) = (S.card : ℝ) := by
@@ -1565,6 +1580,7 @@ lemma maximum_internalCrossPacking_blocks_uncovered_edge
 def packingVertices (P : Finset (Finset α)) : Finset α :=
   P.biUnion id
 
+omit [Fintype α] in
 @[simp] lemma mem_packingVertices {P : Finset (Finset α)} {v : α} :
     v ∈ packingVertices P ↔ ∃ t ∈ P, v ∈ t := by
   simp [packingVertices]
@@ -1676,22 +1692,28 @@ lemma card_packingVertices_filter_le_two_mul
 noncomputable def chosenEndpointCover (E : Finset (Sym2 α)) : Finset α :=
   E.image fun e ↦ e.out.1
 
+omit [Fintype α] in
 lemma card_chosenEndpointCover_le (E : Finset (Sym2 α)) :
     (chosenEndpointCover E).card ≤ E.card := by
   exact card_image_le
 
+omit [Fintype α] in
 lemma chosenEndpoint_mem_cover {E : Finset (Sym2 α)} {e : Sym2 α}
     (he : e ∈ E) : e.out.1 ∈ chosenEndpointCover E := by
   exact mem_image.mpr ⟨e, he, rfl⟩
 
-lemma chosenEndpoint_mem_pair (e : Sym2 α) : e.out.1 ∈ e :=
-  Sym2.out_fst_mem e
+omit [DecidableEq α] [Fintype α] in
+lemma chosenEndpoint_mem_pair (e : Sym2 α) : e.out.1 ∈ e := by
+  classical
+  exact Sym2.out_fst_mem e
 
+omit [DecidableEq α] [Fintype α] in
 /-- The selected endpoints form a vertex cover of the displayed unordered
 pairs, with at most one selected vertex per pair. -/
 lemma exists_endpointCover (E : Finset (Sym2 α)) :
     ∃ C : Finset α, C.card ≤ E.card ∧
       ∀ e ∈ E, ∃ v ∈ C, v ∈ e := by
+  classical
   refine ⟨chosenEndpointCover E, card_chosenEndpointCover_le E, ?_⟩
   intro e he
   exact ⟨e.out.1, chosenEndpoint_mem_cover he, chosenEndpoint_mem_pair e⟩
@@ -1734,6 +1756,7 @@ lemma compl_induce_remainder_eq_top (G : SimpleGraph α) (X D : Finset α) :
   · exact (mem_sdiff.mp ha).2 (hout ▸ heC)
   · exact (mem_sdiff.mp hb).2 (hout ▸ heC)
 
+omit [DecidableEq α] in
 /-- Every finite clique has a matching covering all but at most one of its
 vertices.  In the even case this is a perfect matching; in the odd case we
 delete one vertex and apply the even-clique matching theorem.  This is the
@@ -1757,7 +1780,7 @@ lemma SimpleGraph.IsClique.exists_matching_cover_all_but_one
       exact heven (by simp)
     obtain ⟨x, hx⟩ := hne
     let v : Set α := u \ {x}
-    have hvClique : G.IsClique v := hu.subset Set.diff_subset
+    have hvClique : G.IsClique v := hu.subset Set.sdiff_subset
     have hvEven : Even v.ncard := by
       change Even (u \ {x}).ncard
       rw [Set.ncard_sdiff_singleton_of_mem hx]
@@ -1767,11 +1790,12 @@ lemma SimpleGraph.IsClique.exists_matching_cover_all_but_one
       exact (Nat.even_sub hone).mpr (by simpa using heven)
     obtain ⟨M, hverts, hM⟩ :=
       (hvClique.even_iff_exists_isMatching (Set.toFinite v)).mp hvEven
-    refine ⟨M, hM, hverts.le.trans Set.diff_subset, ?_⟩
+    refine ⟨M, hM, hverts.le.trans Set.sdiff_subset, ?_⟩
     rw [← Set.ncard_sdiff_singleton_add_one hx (Set.toFinite u)]
     change v.ncard + 1 ≤ M.verts.toFinset.card + 1
     rw [← hverts, Set.ncard_eq_toFinset_card']
 
+omit [DecidableEq α] in
 /-- A finite matching has exactly two vertices per edge.  This proof counts
 the two-element fibres of `IsMatching.toEdge`; unlike a degree-sum proof it
 does not depend on choosing definitionally identical local finiteness
@@ -1800,6 +1824,7 @@ lemma SimpleGraph.Subgraph.IsMatching.card_verts_eq_two_mul_card_edgeFinset_GL
     _ = 2 * Fintype.card M.edgeSet := by
       simp [Nat.mul_comm]
 
+omit [Fintype α] in
 /-- Distinct edges of a matching have disjoint endpoint sets.  The proof
 uses the canonical incident edge supplied by `IsMatching.toEdge`, avoiding
 any conversion through degree instances. -/
@@ -1893,7 +1918,7 @@ lemma card_attachedMatchingTriangles {G : SimpleGraph α} {M : G.Subgraph}
 attached set is a graph triangle. -/
 lemma attachedMatchingTriangles_are_triangles
     {G : SimpleGraph α} {M : G.Subgraph} {z : α}
-    (hz : z ∉ M.verts)
+    (_ : z ∉ M.verts)
     (hstar : ∀ v ∈ M.verts, G.Adj z v) :
     ∀ t ∈ attachedMatchingTriangles M z, G.IsNClique 3 t := by
   classical
@@ -1984,7 +2009,7 @@ lemma attachedMatchingTriangles_isInternalCrossPacking
         · rintro ⟨⟨hab, hsab⟩, ha, hb⟩
           rcases ha with rfl | rfl | rfl <;>
             rcases hb with rfl | rfl | rfl <;>
-            simp_all [huv.ne, Sym2.eq_swap]
+            simp_all [Sym2.eq_swap]
         · intro hab
           rcases Sym2.eq_iff.mp hab with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
           · exact ⟨⟨M.adj_sub huv, iff_of_true hu hv⟩, by simp, by simp⟩
@@ -2201,16 +2226,16 @@ lemma exists_twoStarCrossPacking_of_disjoint_cliques_with_support
         mem_packingVertices.mpr ⟨t, htA, hxt⟩
       have hxBound := packingVertices_attachedMatchingTriangles_subset MA z hxPA
       rcases mem_insert.mp hxBound with rfl | hxMA
-      · simp [P]
+      · simp
       · have hxA : x ∈ A := hMAverts (by simpa using hxMA)
-        simp [P, hxA]
+        simp [hxA]
     · have hxPB : x ∈ packingVertices PB :=
         mem_packingVertices.mpr ⟨t, htB, hxt⟩
       have hxBound := packingVertices_attachedMatchingTriangles_subset MB w hxPB
       rcases mem_insert.mp hxBound with rfl | hxMB
-      · simp [P]
+      · simp
       · have hxB : x ∈ B := hMBverts (by simpa using hxMB)
-        simp [P, hxB]
+        simp [hxB]
 
 /-- The two opposite-side two-star constructions of Claim 4.3 combine into
 one cross packing.  The disjoint-envelope hypothesis is the exact support
@@ -2406,7 +2431,7 @@ lemma maximum_internalCrossPacking_no_common_unused_opposite_neighbor
       (by simpa [sameSide_mk] using hedata.2) hxside hax.symm hbx.symm
   obtain ⟨u, huP, htwo⟩ :=
     maximum_internalCrossPacking_blocks_uncovered_edge hP hmax he heP ht
-      (by simp [Sym2.toFinset_mk_eq])
+      (by simp)
   have hxu : x ∉ u := by
     intro hxu
     exact hxunused (mem_packingVertices.mpr ⟨u, huP, hxu⟩)
@@ -2721,6 +2746,7 @@ lemma card_chosenEndpointCovers_add_card_packing_add_two_le_internal
       card_union_of_disjoint (sideEdgeFinset_disjoint_compl G s)]
   omega
 
+omit [Fintype α] in
 /-- Elementary finite-set accounting: a set is partitioned between the
 twice-deleted remainder, the part of the first deletion set lying in it,
 and the second deletion set. -/
@@ -2997,11 +3023,13 @@ def IsCrossMatching (s : Set α) (M : Finset (Sym2 α)) : Prop :=
   (∀ e ∈ M, ¬ SameSide s e) ∧
     (M : Set (Sym2 α)).PairwiseDisjoint fun e ↦ e.toFinset
 
+omit [Fintype α] in
 @[simp] lemma isCrossMatching_set_compl (s : Set α)
     (M : Finset (Sym2 α)) :
     IsCrossMatching sᶜ M ↔ IsCrossMatching s M := by
   simp only [IsCrossMatching, sameSide_set_compl]
 
+omit [Fintype α] in
 /-- A vertex is incident to at most one pair of a cross matching. -/
 lemma IsCrossMatching.unique_other_endpoint
     {s : Set α} {M : Finset (Sym2 α)} (hM : IsCrossMatching s M)
@@ -3022,6 +3050,7 @@ def forbiddenNeighborFinset (M : Finset (Sym2 α)) (a : α)
     (U : Finset α) : Finset α :=
   U.filter fun x ↦ s(a, x) ∈ M
 
+omit [Fintype α] in
 lemma card_forbiddenNeighborFinset_le_one
     {s : Set α} {M : Finset (Sym2 α)} (hM : IsCrossMatching s M)
     (a : α) (U : Finset α) :
@@ -3037,6 +3066,7 @@ def redNeighborFinset (G : SimpleGraph α) (a : α)
     (U : Finset α) : Finset α :=
   U.filter fun x ↦ Gᶜ.Adj a x
 
+omit [Fintype α] in
 /-- The counting core behind the estimates
 `|A_i| + |B_i| ≥ |U_i| - 2` in Claims 4.3 and 4.4.  If `a,b` have no
 common blue neighbor in `G \ M`, their successive red neighborhoods cover
@@ -3197,16 +3227,19 @@ lemma exists_claim43_side_cliques
   · exact havoid
   · exact hcount
 
+omit [Fintype α] in
 @[simp] lemma isCrossMatching_empty (s : Set α) :
     IsCrossMatching s ∅ := by
   simp [IsCrossMatching]
 
+omit [DecidableEq α] in
 /-- Deleting cross pairs does not delete an edge internal to either side. -/
 lemma internalEdgeFinset_deleteEdges_of_cross
     (G : SimpleGraph α) (s : Set α) (M : Finset (Sym2 α))
     (hM : ∀ e ∈ M, ¬ SameSide s e) :
     internalEdgeFinset (G.deleteEdges (M : Set (Sym2 α))) s =
       internalEdgeFinset G s := by
+  classical
   ext e
   simp only [internalEdgeFinset, mem_filter,
     SimpleGraph.edgeFinset_deleteEdges, mem_sdiff]
@@ -3244,6 +3277,7 @@ lemma IsInternalCrossPacking.of_deleteEdges_cross
   rw [← internalEdgeFinset_deleteEdges_of_cross G s M hM]
   exact ht.2
 
+omit [Fintype α] in
 lemma disjoint_fourStar_envelopes_of_cross_sides
     {s : Set α} {U₁ U₂ : Finset α} {z₁ w₁ z₂ w₂ : α}
     (hU₁s : ∀ x ∈ U₁, x ∈ s)
@@ -4078,8 +4112,7 @@ lemma proposition42_claim44_sideCliques
     exact (mem_filter.mp hx).2
   · intro x hx
     exact (mem_filter.mp hx).2
-  · change s.toFinset.card ≤ A.card + B.card + 2 * P.card + 2
-    change s.toFinset.card ≤ U.card + 2 * P.card at hside
+  · change s.toFinset.card ≤ U.card + 2 * P.card at hside
     omega
 
 /-- Coarse fractional-packing conclusion of Claim 4.4.  The two red stars
@@ -4237,6 +4270,7 @@ def cliqueStarTriangleFamily (z : α) (A : Finset α) :
     Finset (Finset α) :=
   (A.powersetCard 2).image (insert z)
 
+omit [Fintype α] in
 lemma card_cliqueStarTriangleFamily
     {z : α} {A : Finset α} (hzA : z ∉ A) :
     (cliqueStarTriangleFamily z A).card = A.card.choose 2 := by
@@ -4269,11 +4303,12 @@ lemma cliqueStarTriangleFamily_subset_internalCrossTriangles
     (hA huA hvA huv) (by simp [hAs u huA, hAs v hvA])
       (by simp [hzside, hAs u huA]) (hzA u huA) (hzA v hvA)
 
+omit [Fintype α] in
 /-- An edge occurs in at most `|A|-1` triangles of the complete star over
 `A`.  If the edge contains the attachment, one base vertex is prescribed;
 otherwise both base vertices are prescribed. -/
 lemma card_filter_cliqueStarTriangleFamily_le
-    {z : α} {A : Finset α} (hAcard : 2 ≤ A.card) (hzA : z ∉ A)
+    {z : α} {A : Finset α} (hAcard : 2 ≤ A.card) (_ : z ∉ A)
     (e : Sym2 α) (hecard : e.toFinset.card = 2) :
     ((cliqueStarTriangleFamily z A).filter fun t ↦ e ∈ t.sym2).card ≤
       A.card - 1 := by
@@ -4300,7 +4335,7 @@ lemma card_filter_cliqueStarTriangleFamily_le
     have hxt : x ∈ t := (mem_sym2_iff.mp het) x hxe
     have hxInsert : x ∈ insert z p := by simpa [htp] using hxt
     rcases mem_insert.mp hxInsert with hxz | hxp
-    · exact ((mem_sdiff.mp hxD).2 (by simpa [hxz])).elim
+    · exact ((mem_sdiff.mp hxD).2 (by simp [hxz])).elim
     · exact hxp
   have hDsubA : D ⊆ A := hDsubP.trans hpA
   have hDcardLe : D.card ≤ 2 := by
@@ -4326,7 +4361,7 @@ lemma card_filter_cliqueStarTriangleFamily_le
     have hxe : x ∈ e := by simpa [D] using (mem_sdiff.mp hxD).1
     have hxInsert : x ∈ insert z q := (mem_sym2_iff.mp heu) x hxe
     rcases mem_insert.mp hxInsert with hxz | hxq
-    · exact ((mem_sdiff.mp hxD).2 (by simpa [hxz])).elim
+    · exact ((mem_sdiff.mp hxD).2 (by simp [hxz])).elim
     · exact hxq
   have hfamilyLe :
       ((cliqueStarTriangleFamily z A).filter fun t ↦ e ∈ t.sym2).card ≤
@@ -4393,7 +4428,6 @@ lemma uniformCliqueStar_isFractionalInternalCrossPacking
     have : (2 : ℝ) ≤ A.card := by exact_mod_cast hAcard
     linarith
   field_simp [hne]
-  <;> ring
 
 /-- A clique star based in `s` puts no load on an edge internal to the
 opposite side.  This oriented-support refinement is needed only in the
@@ -4490,6 +4524,7 @@ lemma isFractionalPacking_add_of_cross_inter_card_le_one
         hsupportF hFavoid, zero_add]
       exact hwQ.edgeLoad_le_one he
 
+omit [Fintype α] in
 /-- The envelopes of two star families with disjoint bases in one side and
 different attachment vertices in the other side are disjoint. -/
 lemma cliqueStarTriangleFamilies_cross_inter_eq_empty
@@ -4758,11 +4793,12 @@ lemma proposition42_claim44_eq_one
 
 /-! #### The exceptional `m = 0` case of Claim 4.4 -/
 
+omit [Fintype α] in
 /-- If an edge does not contain the attachment of a complete star, it
 determines its two base vertices and hence occurs in at most one member of
 the star. -/
 lemma card_filter_cliqueStarTriangleFamily_le_one_of_attachment_not_mem
-    {z : α} {A : Finset α} (hzA : z ∉ A)
+    {z : α} {A : Finset α} (_ : z ∉ A)
     (e : Sym2 α) (hecard : e.toFinset.card = 2)
     (hze : z ∉ e.toFinset) :
     ((cliqueStarTriangleFamily z A).filter fun t ↦ e ∈ t.sym2).card ≤ 1 := by
@@ -4797,6 +4833,7 @@ lemma card_filter_cliqueStarTriangleFamily_le_one_of_attachment_not_mem
     omega
   rw [← hep, ← heq]
 
+omit [Fintype α] in
 /-- A star family avoids every edge containing a vertex different from its
 attachment and outside its base. -/
 lemma filter_cliqueStarTriangleFamily_eq_empty_of_contains_avoided
@@ -4934,7 +4971,7 @@ lemma claim44_bad_structure_of_lower_bound_failure
     exact (mem_filter.mp hx).2
   have hsomeSingleton : A.card = 1 ∨ B.card = 1 := by
     by_contra hnone
-    push_neg at hnone
+    push Not at hnone
     have hred := twoCliqueStars_no_singleton_card_le_maximal
       (G := Gᶜ) (s := s) (A := A) (B := B) (z := a) (w := b)
       hmax hnone.1 hnone.2 hAclique hBclique hAB hAs hBs
@@ -5912,7 +5949,7 @@ lemma isInternalEdgeCoveringCrossPacking_of_proposition42_data
   have hAll : ∀ e ∈ internalEdgeFinset H s,
       e ∈ coveredInternalEdges H s P := by
     by_contra hnot
-    push_neg at hnot
+    push Not at hnot
     obtain ⟨e, heH, heUncovered⟩ := hnot
     have heG : e ∈ internalEdgeFinset G s := by
       simpa only [H, internalEdgeFinset_deleteEdges_of_cross G s M hM.1]
@@ -5926,7 +5963,7 @@ lemma isInternalEdgeCoveringCrossPacking_of_proposition42_data
       · rcases mem_union.mp heSide with heS | heT
         · exact heUncovered (hcoverS e heS)
         · exact heUncovered (hcoverT e heT)
-      · push_neg at hcoverT
+      · push Not at hcoverT
         obtain ⟨f, hfT, hfUncovered⟩ := hcoverT
         have hcoverSG : ∀ q ∈ sideEdgeFinset G s.toFinset,
             q ∈ coveredInternalEdges G s P := by
@@ -5939,7 +5976,7 @@ lemma isInternalEdgeCoveringCrossPacking_of_proposition42_data
           (n := n) (k := (internalEdgeFinset G s).card) (m := P.card)
           (G := G) x (fractionalSize Gᶜ w) hn hk hupper hcovered
           (Or.inr hlower)
-    · push_neg at hcoverS
+    · push Not at hcoverS
       obtain ⟨eS, heS, heSUncovered⟩ := hcoverS
       by_cases hcoverT : ∀ f ∈ sideEdgeFinset G sᶜ.toFinset,
           f ∈ coveredInternalEdges H s P
@@ -5984,7 +6021,7 @@ lemma isInternalEdgeCoveringCrossPacking_of_proposition42_data
           (n := n) (k := (internalEdgeFinset G s).card) (m := P.card)
           (G := G) x (fractionalSize Gᶜ w) hn hk hupper hcovered
           (Or.inr hlower)
-      · push_neg at hcoverT
+      · push Not at hcoverT
         obtain ⟨eT, heT, heTUncovered⟩ := hcoverT
         have hboth := proposition42_claim43_pairs
           hM hP hPmax heS heT heSUncovered heTUncovered hwmax

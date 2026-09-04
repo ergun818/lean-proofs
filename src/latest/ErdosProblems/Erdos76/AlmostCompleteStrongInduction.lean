@@ -185,7 +185,7 @@ theorem almostCompleteStrongAt_of_fin {n : ℕ}
   have hback : H.map e.symm.toEmbedding = G := by
     dsimp only [H]
     rw [SimpleGraph.map_map]
-    simpa using G.map_id
+    simp
   simpa only [hback] using hH.relabel e.symm
 
 /-- Extract a generic-cardinality strong base from the finite certificate
@@ -326,6 +326,7 @@ lemma missingEdgeCount_induce_univ_erase (G : SimpleGraph A) (u : A) :
     _ = missingEdgeCount G - Gᶜ.degree u := by
       rw [Nat.card_coe_set_eq, missingEdgeCount_eq_compl_edgeSet_ncard]
 
+omit [Fintype A] in
 /-- Restricting to a smaller induced vertex set cannot create more missing
 edges.  The proof maps complement edges along the subtype inclusion. -/
 lemma missingEdgeCount_induce_finset_mono (G : SimpleGraph A)
@@ -370,7 +371,7 @@ lemma filter_map_sym2_incidence_card {X Y : Type*}
 edge of another matching.  This is the small derangement step used after the
 two D6 target sets have been chosen. -/
 theorem exists_reindex_avoiding_injective {X Y : Type*}
-    [Fintype X] [DecidableEq X] [DecidableEq Y]
+    [Fintype X]
     (hX : 2 ≤ Fintype.card X) (f g : X → Y)
     (hf : Function.Injective f) (hg : Function.Injective g) :
     ∃ σ : X ≃ X, ∀ x, g (σ x) ≠ f x := by
@@ -447,8 +448,8 @@ theorem exists_reindex_avoiding_injective {X Y : Type*}
 `K` supplies one slot to each matching, while a vertex of `L` supplies one
 slot globally. -/
 theorem exists_d6_slot_assignment {X K L : Type*}
-    [Fintype X] [DecidableEq X] [Fintype K] [DecidableEq K]
-    [Fintype L] [DecidableEq L]
+    [Fintype X] [Fintype K]
+    [Fintype L]
     (hm : Fintype.card X ≤ 3)
     (hcapacity : Fintype.card X + 3 ≤
       2 * Fintype.card K + Fintype.card L) :
@@ -518,7 +519,7 @@ theorem exists_d6_slot_assignment {X K L : Type*}
         _ ≤ (s.biUnion allowed).card := Finset.card_le_card hsub
     · have hIuniv : I = Finset.univ := by
         apply Finset.eq_of_subset_of_card_le (Finset.subset_univ I)
-        simpa [hIc]
+        simp [hIc]
       have hUnion : s.biUnion allowed = Finset.univ := by
         apply Finset.eq_univ_of_forall
         intro z
@@ -576,15 +577,21 @@ cycle are discarded before assigning triangle weights. -/
 def presentCycleEdges (H : SimpleGraph A) (C : Finset (Sym2 A)) :
     Finset (Sym2 A) := C.filter (· ∈ H.edgeSet)
 
+omit [DecidableEq A] [Fintype A] in
 lemma presentCycleEdges_subset (H : SimpleGraph A) (C : Finset (Sym2 A)) :
-    presentCycleEdges H C ⊆ C := Finset.filter_subset _ _
+    presentCycleEdges H C ⊆ C := by
+  classical
+  exact Finset.filter_subset _ _
 
+omit [DecidableEq A] [Fintype A] in
 lemma presentCycleEdges_mem_edgeSet (H : SimpleGraph A)
     (C : Finset (Sym2 A)) :
     ∀ e ∈ presentCycleEdges H C, e ∈ H.edgeSet := by
+  classical
   intro e he
   exact (Finset.mem_filter.mp he).2
 
+omit [DecidableEq A] [Fintype A] in
 /-- If an augmented cycle has `d` edges and exactly `α` of them are absent
 from the graph, its genuine edge set has size `d - α`. -/
 lemma card_presentCycleEdges {H : SimpleGraph A} {C : Finset (Sym2 A)}
@@ -616,7 +623,7 @@ lemma halfEdgeCapacity_isEdgeCapacity_top (H : SimpleGraph A)
   constructor
   · intro e he
     by_cases hH : e ∈ H.edgeSet <;> by_cases hC : e ∈ C <;>
-      simp [halfEdgeCapacity, hH, hC] <;> norm_num
+      simp [halfEdgeCapacity, hH, hC] ; norm_num
   · intro e he
     have hdiag : e.IsDiag := by
       simpa [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] using he
@@ -665,7 +672,7 @@ lemma capacityMissingWeight_halfEdgeCapacity
             simp [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet,
               SimpleGraph.compl_adj, hH]
           by_cases hC : s(x, y) ∈ C <;>
-            simp [halfEdgeCapacity, hHset, hC, hncomp] <;> norm_num
+            simp [halfEdgeCapacity, hHset, hC, hncomp] ; norm_num
         · have hnHset : s(x, y) ∉ H.edgeSet := by
             simpa [SimpleGraph.mem_edgeSet] using hH
           have hcomp : s(x, y) ∈ Hᶜ.edgeFinset := by
@@ -878,11 +885,12 @@ Claim 5.8.  The printed prose says "at most eight", but the displayed
 degree-sum calculation actually rules out a set of eight and hence proves
 the seven-vertex bound needed for the subsequent fourteen-unit allocation. -/
 lemma d8_highDefectSet_card_le_seven
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {n : ℕ} (d : ι → ℕ) (S : Finset ι)
     (hn : 14 ≤ n) (htotal : ∑ u, d u = 2 * n)
     (hhigh : ∀ u ∈ S, n - 2 ≤ 3 * d u) :
     S.card ≤ 7 := by
+  classical
   by_contra hcard
   have hcard8 : 8 ≤ S.card := by omega
   have hlocal : S.card * (n - 2) ≤ 3 * ∑ u ∈ S, d u := by
@@ -907,12 +915,13 @@ lemma d8_highDefectSet_card_le_seven
 sum.  This elementary allocation lemma is used to impose the lower bounds on
 the distinguished vertices in Claim 5.8. -/
 private lemma exists_boundedAssignment_on_finset
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (s : Finset ι) (r : ι → ℕ) {t : ℕ}
     (ht : t ≤ ∑ u ∈ s, r u) :
     ∃ sigma : ι → ℕ,
       (∀ u ∈ s, sigma u ≤ r u) ∧
       ∑ u ∈ s, sigma u = t := by
+  classical
   induction s using Finset.induction_on generalizing t with
   | empty =>
       have ht0 : t = 0 := by simpa using ht
@@ -960,7 +969,7 @@ private lemma exists_boundedAssignment_on_finset
 Claim 5.8: every high-defect vertex receives at least two units, no vertex
 exceeds its allowance, and the total is fourteen. -/
 lemma exists_d8_sigma_assignment
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (r : ι → ℕ) (S : Finset ι)
     (hcard : S.card ≤ 7)
     (hhigh : ∀ u ∈ S, 2 ≤ r u)
@@ -969,6 +978,7 @@ lemma exists_d8_sigma_assignment
       (∀ u, sigma u ≤ r u) ∧
       (∀ u ∈ S, 2 ≤ sigma u) ∧
       ∑ u, sigma u = 14 := by
+  classical
   let base : ι → ℕ := fun u ↦ if u ∈ S then 2 else 0
   have hbase : ∀ u, base u ≤ r u := by
     intro u
@@ -1317,7 +1327,7 @@ theorem d6_claim51 {n a : ℕ}
       have hne1 : Gᶜ.degree u ≠ 1 := by omega
       simpa [hhigh, hne2, hne1] using hnoD5 u
     · have hle : Gᶜ.degree u ≤ 2 := by omega
-      interval_cases hdu : Gᶜ.degree u <;> simp [hdu]
+      interval_cases hdu : Gᶜ.degree u <;> simp
   have hsumUpper :
       ∑ u : A, 3 * Gᶜ.degree u ≤
         k * (n + a) + 6 * ell + 3 * r := by
@@ -1352,9 +1362,9 @@ theorem d6_claim51 {n a : ℕ}
       by_cases h0 : Gᶜ.degree u = 0
       · simp [h0]
       by_cases h1 : Gᶜ.degree u = 1
-      · simp [h0, h1]
+      · simp [h1]
       by_cases h2 : Gᶜ.degree u = 2
-      · simp [h0, h1, h2]
+      · simp [h2]
       have h3 : 3 ≤ Gᶜ.degree u := by omega
       simp [h0, h1, h2, h3]
     have hsumPoint :
@@ -1402,7 +1412,7 @@ theorem d6_claim51 {n a : ℕ}
   exact d6_claim51_arithmetic hn ha hm hsmall hdegree
 
 private lemma d6_claim52_saturated_aggregate {n a m R B bv E : ℕ}
-    (hn : 14 ≤ n) (hm : m ≤ 3)
+    (hn : 14 ≤ n) (_ : m ≤ 3)
     (hB : B = n - 8 + 2 * a - m) (hBsplit : B = bv + E)
     (hRsplit : R = a + E) (hbv : 3 * bv + 3 ≤ n + a) :
     2 * n + 8 * a ≤ 3 * R + 21 + 3 * m := by
@@ -1438,7 +1448,7 @@ theorem d6_claim52_of_residuals {n a m : ℕ}
         simpa only [U] using hbSum
       omega
     exact d6_claim52_arithmetic hn hm hRlt (Or.inl haggregate)
-  · push_neg at hall
+  · push Not at hall
     obtain ⟨v, hvU, hva⟩ := hall
     have hother : ∀ u ∈ U, u ≠ v → b u ≤ a := by
       intro u hu huv
@@ -1455,7 +1465,7 @@ theorem d6_claim52_of_residuals {n a m : ℕ}
         calc
           min a (b v) + min a (b u) =
               ∑ x ∈ ({v, u} : Finset A), min a (b x) := by
-            simp [huv, huv.symm, add_comm]
+            simp [huv.symm]
           _ ≤ ∑ x ∈ U, min a (b x) :=
             Finset.sum_le_sum_of_subset_of_nonneg hsub
               (fun _ _ _ ↦ Nat.zero_le _)
@@ -1667,7 +1677,7 @@ theorem exists_d6_target_maps (G : SimpleGraph A)
       have hz : (z : A) ∈ (∅ : Finset A) := by
         rw [← hZempty]
         exact z.property
-      simpa using hz
+      simp at hz
     let f : ↑(universalVertices G) → A := fun z ↦ (absurdVertex z).elim
     refine ⟨f, f, ?_, ?_, ?_, ?_, ?_, ?_⟩
     · intro z
@@ -1723,6 +1733,7 @@ def d6TargetMultiplicity {X : Type*} [Fintype X]
     (f : X → A) (u : A) : ℕ :=
   (Finset.univ.filter fun x ↦ f x = u).card
 
+omit [Fintype A] in
 lemma d6TargetMultiplicity_le_one {X : Type*} [Fintype X]
     {f : X → A} (hf : Function.Injective f) (u : A) :
     d6TargetMultiplicity f u ≤ 1 := by
@@ -1731,6 +1742,7 @@ lemma d6TargetMultiplicity_le_one {X : Type*} [Fintype X]
   intro x hx y hy
   exact hf ((Finset.mem_filter.mp hx).2.trans (Finset.mem_filter.mp hy).2.symm)
 
+omit [Fintype A] in
 lemma d6TargetMultiplicity_pos_iff {X : Type*} [Fintype X]
     (f : X → A) (u : A) :
     0 < d6TargetMultiplicity f u ↔ ∃ x, f x = u := by
@@ -1743,6 +1755,7 @@ lemma d6TargetMultiplicity_pos_iff {X : Type*} [Fintype X]
     apply Finset.card_pos.mpr
     exact ⟨x, Finset.mem_filter.mpr ⟨Finset.mem_univ x, hx⟩⟩
 
+omit [Fintype A] in
 /-- Summing target multiplicities over any finset containing the entire
 range counts the source exactly once. -/
 lemma sum_d6TargetMultiplicity {X : Type*} [Fintype X]
@@ -2105,6 +2118,7 @@ private lemma complEdge_endpoint_not_universal (G : SimpleGraph A)
       · have hpos := hpq.degree_pos_right
         omega
 
+omit [DecidableEq A] in
 private lemma edgeSet_ncard_eq_edgeFinset_card_AC (G : SimpleGraph A) :
     G.edgeSet.ncard = G.edgeFinset.card := by
   classical
@@ -2698,6 +2712,7 @@ private lemma nonUniversal_not_universal (G : SimpleGraph A) {x : A}
   have hzero := mem_universalVertices.mp hx0
   omega
 
+omit [Fintype A] in
 private lemma card_filter_ne_pair (S : Finset A) (x y : A)
     (hx : x ∈ S) (hy : y ∈ S) (hxy : x ≠ y) :
     (S.filter fun u ↦ u ≠ x ∧ u ≠ y).card = S.card - 2 := by
@@ -2715,6 +2730,7 @@ private lemma card_filter_ne_pair (S : Finset A) (x y : A)
     Finset.card_sdiff_of_subset hpair]
   simp [hxy]
 
+omit [DecidableEq A] [Fintype A] in
 private lemma card_filter_of_iff_ne_pair (S : Finset A) (p : A → Prop)
     (x y : A) (hx : x ∈ S) (hy : y ∈ S) (hxy : x ≠ y)
     (hp : ∀ u ∈ S, p u ↔ u ≠ x ∧ u ≠ y) :
@@ -2804,7 +2820,7 @@ private lemma universal_universal_not_deleted (G : SimpleGraph A)
 the two auxiliary graphs indexed by its endpoints. -/
 lemma d6EdgePresentAt_nonUniversal_nonUniversal (G : SimpleGraph A)
     (f₁ f₂ : (↑(universalVertices G)) → A)
-    (hrange₁ : ∀ z, f₁ z ∈ nonUniversalVertices G)
+    (_ : ∀ z, f₁ z ∈ nonUniversalVertices G)
     {x y u : A} (hx : x ∈ nonUniversalVertices G)
     (hy : y ∈ nonUniversalVertices G) :
     d6EdgePresentAt G f₁ f₂ u s(x, y) ↔ u ≠ x ∧ u ≠ y := by
@@ -2982,9 +2998,11 @@ theorem card_filter_d6EdgePresentAt (G : SimpleGraph A)
           exact d6EdgePresentAt_nonUniversal_nonUniversal G f₁ f₂
             hrange₁ hxU hyU
 
+omit [DecidableEq A] [Fintype A] in
 private lemma sum_subtype_indicator_nat_eq_filter_card (U : Finset A)
     (P : A → Prop) [DecidablePred P] :
     (∑ u : ↑U, if P u then 1 else 0) = (U.filter P).card := by
+  classical
   rw [Finset.card_filter]
   simpa only [Finset.univ_eq_attach] using
     Finset.sum_attach U (fun u ↦ if P u then 1 else 0)
@@ -3071,17 +3089,21 @@ lemma fractionalSize_d6AveragedWeight (G : SimpleGraph A)
   intro u _
   exact fractionalSize_d6LiftedWeight G f₁ f₂ (u : A) (w u)
 
+omit [DecidableEq A] [Fintype A] in
 private lemma sum_subtype_indicator_eq_filter_card (U : Finset A)
     (P : A → Prop) [DecidablePred P] :
     (∑ u : ↑U, if P u then (1 : ℝ) else 0) = ((U.filter P).card : ℝ) := by
+  classical
   rw [← Finset.sum_filter]
   simp only [Finset.sum_const, nsmul_eq_mul, mul_one]
   rw [Finset.univ_eq_attach, Finset.filter_attach, Finset.card_map,
     Finset.card_attach]
 
+omit [DecidableEq A] [Fintype A] in
 private lemma sum_subtype_ite_eq_filter_card_mul (U : Finset A)
     (P : A → Prop) [DecidablePred P] (b : ℝ) :
     (∑ u : ↑U, if P u then b else 0) = ((U.filter P).card : ℝ) * b := by
+  classical
   rw [← Finset.sum_filter]
   simp only [Finset.sum_const, nsmul_eq_mul]
   rw [Finset.univ_eq_attach, Finset.filter_attach, Finset.card_map,
@@ -3404,7 +3426,7 @@ theorem d7DeletedGraph_hasStrongFractionalPacking {n a : ℕ}
 /-- The normalized vertex-deletion sum with one additional explicit
 correction.  In D7 the correction contains the `UUZ`, `UZZ`, and `ZZZ`
 triangles from the paper. -/
-def d7CorrectedAverageWeight (G : SimpleGraph A)
+def d7CorrectedAverageWeight (_ : SimpleGraph A)
     (w : ∀ u : A, Finset (↑(d7DeletedFinset u)) → ℝ)
     (correction : Finset A → ℝ) : Finset A → ℝ :=
   fun t ↦ (((Fintype.card A - 2 : ℕ) : ℝ)⁻¹) *
@@ -3524,6 +3546,7 @@ an edge in the induced subtype `S`. -/
 def attachedEdgeTriangle (S : Finset A) (u : A) (e : Sym2 S) : Finset A :=
   insert u (e.toFinset.map (inducedEmbedding S))
 
+omit [Fintype A] in
 lemma card_attachedEdgeTriangle {S : Finset A} {u : A} {e : Sym2 S}
     (hu : u ∉ S) (he : ¬e.IsDiag) : (attachedEdgeTriangle S u e).card = 3 := by
   have hnot : u ∉ e.toFinset.map (inducedEmbedding S) := by
@@ -3568,6 +3591,7 @@ private lemma sym2_eq_of_toFinset_eq_of_not_isDiag {X : Type*}
             · exact hy
             · exact (he (hx.trans hy.symm)).elim
 
+omit [Fintype A] in
 /-- Distinct non-diagonal induced edges give distinct attached triangles. -/
 lemma attachedEdgeTriangle_injective {S : Finset A} {u : A} (hu : u ∉ S)
     {e f : Sym2 S} (he : ¬e.IsDiag) (hf : ¬f.IsDiag)
@@ -3592,6 +3616,7 @@ lemma attachedEdgeTriangle_injective {S : Finset A} {u : A} (hu : u ∉ S)
   exact sym2_eq_of_toFinset_eq_of_not_isDiag he hf
     (Finset.map_injective (inducedEmbedding S) hmap)
 
+omit [Fintype A] in
 /-- If the two endpoints form an edge in the induced graph and the attachment
 vertex is adjacent to all vertices of `S`, the attached set is a triangle of
 the ambient graph. -/
@@ -3616,6 +3641,7 @@ def attachedEdgeWeight (S : Finset A) (u : A) (C : Finset (Sym2 S))
     (r : ℝ) (t : Finset A) : ℝ :=
   ∑ e ∈ C, if t = attachedEdgeTriangle S u e then r else 0
 
+omit [Fintype A] in
 lemma attachedEdgeWeight_apply {G : SimpleGraph A} {S : Finset A} {u : A}
     {C : Finset (Sym2 S)} {r : ℝ} (hu : u ∉ S)
     (hCG : ∀ e ∈ C, e ∈ (G.induce (S : Set A)).edgeSet)
@@ -3639,6 +3665,7 @@ lemma attachedEdgeWeight_apply {G : SimpleGraph A} {S : Finset A} {u : A}
       · exact fun h ↦ (h heC).elim
     _ = r := by simp
 
+omit [Fintype A] in
 lemma attachedEdgeWeight_eq_zero_of_not_exists
     {S : Finset A} {u : A} {C : Finset (Sym2 S)} {r : ℝ} {t : Finset A}
     (ht : ¬ ∃ e ∈ C, t = attachedEdgeTriangle S u e) :
@@ -3714,7 +3741,7 @@ lemma fractionalEdgeLoad_attachedEdgeWeight {G : SimpleGraph A}
 /-- There is one attached triangle of weight `r` for every selected edge. -/
 lemma fractionalSize_attachedEdgeWeight {G : SimpleGraph A}
     {S : Finset A} {u : A} {C : Finset (Sym2 S)} {r : ℝ}
-    (hu : u ∉ S)
+    (_ : u ∉ S)
     (hCG : ∀ e ∈ C, e ∈ (G.induce (S : Set A)).edgeSet)
     (hstar : ∀ e ∈ C, ∀ x : S, x ∈ e → G.Adj u x) :
     fractionalSize G (attachedEdgeWeight S u C r) = (C.card : ℝ) * r := by
@@ -3743,6 +3770,7 @@ lemma fractionalSize_attachedEdgeWeight {G : SimpleGraph A}
     _ = (C.card : ℝ) * r := by
       rw [Finset.sum_const, nsmul_eq_mul]
 
+omit [Fintype A] in
 private lemma inducedEdge_mem_attachedEdgeTriangle_sym2_iff
     {S : Finset A} {u : A} {p f : Sym2 S} (hu : u ∉ S)
     (hp : ¬p.IsDiag) (hf : ¬f.IsDiag) :
@@ -3763,10 +3791,8 @@ private lemma inducedEdge_mem_attachedEdgeTriangle_sym2_iff
             apply hu
             rw [← h]
             exact b.property
-          simp only [attachedEdgeTriangle, Sym2.map_mk,
-            Sym2.toFinset_mk_eq, Finset.map_insert, Finset.map_singleton,
-            Finset.mk_mem_sym2_iff, Finset.mem_insert, Finset.mem_singleton,
-            Sym2.eq_iff]
+          simp only [attachedEdgeTriangle, Sym2.toFinset_mk_eq, Finset.map_insert,
+            Finset.map_singleton, Sym2.eq_iff]
           aesop
 
 /-- On an edge internal to `S`, the attachment contributes `r` precisely
@@ -3810,6 +3836,7 @@ lemma fractionalEdgeLoad_attachedEdgeWeight_induced {G : SimpleGraph A}
     exact hpC ((inducedEdge_mem_attachedEdgeTriangle_sym2_iff
       hu hp (hnonDiag f hfC)).mp hmem ▸ hfC)
 
+omit [Fintype A] in
 private lemma starEdge_mem_attachedEdgeTriangle_sym2_iff
     {S : Finset A} {u : A} (hu : u ∉ S) (x : S) (f : Sym2 S) :
     s(u, (x : A)) ∈ (attachedEdgeTriangle S u f).sym2 ↔ x ∈ f := by
@@ -3930,7 +3957,7 @@ lemma IsCapacityPacking.eq_zero_of_not_support_triangle
   obtain ⟨x, y, hxy, hnxy⟩ := H.not_isClique_iff.mp hnotClique
   let p : Sym2 U := s((x : U), (y : U))
   have hpTop : p ∈ (⊤ : SimpleGraph U).edgeFinset := by
-    simp [p, SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet, hxy]
+    simp [p, SimpleGraph.mem_edgeFinset, hxy]
   have hpNotH : p ∉ H.edgeSet := by
     intro hp
     apply hnxy
@@ -4029,6 +4056,7 @@ lemma IsCapacityPacking.zeroExtend_support
         fractionalEdgeLoad_zeroExtend_eq_of_capacity_support hw hcSupport e
       _ ≤ c e := hw.2 e heTop
 
+omit [Fintype A] in
 @[simp] lemma halfEdgeCapacity_eq_zero_of_not_edgeSet
     (H : SimpleGraph A) (C : Finset (Sym2 A)) {e : Sym2 A}
     (he : e ∉ H.edgeSet) : halfEdgeCapacity H C e = 0 := by
@@ -4139,6 +4167,7 @@ lemma IsHalfBounded.extendInduced {S : Finset A} {w : Finset S → ℝ}
   · rw [extendInducedWeight_eq_zero hsub]
     norm_num
 
+omit [Fintype A] in
 /-- Old induced triangles and newly attached triangles have disjoint support:
 the former avoid `u`, while the latter contain it. -/
 lemma extendInducedWeight_or_attachedEdgeWeight_eq_zero
@@ -4179,7 +4208,7 @@ lemma fractionalUncoveredWeight_eq_capacityUncoveredWeight_halfEdgeCapacity
       intro e he
       have heSet : e ∈ H.edgeSet := SimpleGraph.mem_edgeFinset.mp he
       by_cases heC : e ∈ C <;>
-        simp [halfEdgeCapacity, heSet, heC] <;> ring
+        simp [halfEdgeCapacity, heSet, heC] ; ring
     _ = (∑ e ∈ H.edgeFinset,
           (halfEdgeCapacity H C e - fractionalEdgeLoad H w e)) +
         ∑ e ∈ H.edgeFinset,
@@ -4245,7 +4274,7 @@ lemma halfEdgeCapacity_isEdgeCapacity_support (H : SimpleGraph A)
   · intro e he
     have heSet : e ∈ H.edgeSet := SimpleGraph.mem_edgeFinset.mp he
     by_cases heC : e ∈ C <;>
-      simp [halfEdgeCapacity, heSet, heC] <;> norm_num
+      simp [halfEdgeCapacity, heSet, heC] ; norm_num
   · intro e he
     have heSet : e ∉ H.edgeSet := fun h ↦
       he (SimpleGraph.mem_edgeFinset.mpr h)

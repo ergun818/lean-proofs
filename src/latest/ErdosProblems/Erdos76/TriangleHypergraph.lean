@@ -33,12 +33,16 @@ variable {A : Type*} [Fintype A] [DecidableEq A]
 def triangleEdgeSet (t : Finset A) : Finset (Finset A) :=
   t.powersetCard 2
 
+omit [DecidableEq A] [Fintype A] in
 @[simp] lemma card_triangleEdgeSet {t : Finset A} (ht : t.card = 3) :
     (triangleEdgeSet t).card = 3 := by
+  classical
   simp [triangleEdgeSet, card_powersetCard, ht]
 
+omit [DecidableEq A] in
 lemma triangleEdgeSet_subset_univ_edges (t : Finset A) :
     triangleEdgeSet t ⊆ (Finset.univ : Finset A).powersetCard 2 := by
+  classical
   apply powersetCard_mono
   exact subset_univ t
 
@@ -68,6 +72,7 @@ lemma monochromaticTriangleHypergraph_isUniform (G : SimpleGraph A) :
     (monochromaticTriangleHypergraph G).vertexSet.card = (Fintype.card A).choose 2 := by
   simp [monochromaticTriangleHypergraph, card_powersetCard]
 
+omit [Fintype A] in
 lemma inter_card_le_one_of_disjoint_triangleEdgeSet {s t : Finset A}
     (hd : Disjoint (triangleEdgeSet s) (triangleEdgeSet t)) : #(s ∩ t) ≤ 1 := by
   by_contra h

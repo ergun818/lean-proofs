@@ -25,6 +25,7 @@ def level1 : Array (BitVec (edgeCount 7)) := #[0x8000#21]
 
 def level2 : Array (BitVec (edgeCount 7)) := #[0x18000#21, 0x10400#21]
 
-def level3 : Array (BitVec (edgeCount 7)) := #[0x38000#21, 0x18400#21, 0x30400#21, 0x108400#21, 0x20840#21]
+def level3 : Array (BitVec (edgeCount 7)) :=
+  #[0x38000#21, 0x18400#21, 0x30400#21, 0x108400#21, 0x20840#21]
 
 end Erdos76.CertificateExhaustion.Certificates.ExhaustionN7

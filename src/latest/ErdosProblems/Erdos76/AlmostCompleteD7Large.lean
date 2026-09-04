@@ -194,7 +194,7 @@ structure D7SeparatedParameters.RealizesCoherentFamily
     (P : D7SeparatedParameters G) : Prop where
   beta_eq : ∀ (z : ↑(universalVertices G))
     (e : Sym2 (↑(nonUniversalVertices G)))
-    (he : e ∈ (G.induce
+    (_ : e ∈ (G.induce
       (↑(nonUniversalVertices G) : Set A)).edgeFinset),
     d7SeparatedUnit (d7DeletedGraph G (z : A))
       (d7CoherentUniversalDeletedWeight G z₀ w₀ z)
@@ -207,7 +207,7 @@ structure D7SeparatedParameters.RealizesCoherentFamily
         d7DeletedVertex (z : A) (y : A) hyz) = P.alpha u
   gamma_eq : ∀ (z x y : ↑(universalVertices G))
     (hxz : (x : A) ≠ (z : A)) (hyz : (y : A) ≠ (z : A))
-    (hxy : (x : A) ≠ (y : A)),
+    (_ : (x : A) ≠ (y : A)),
     d7SeparatedUnit (d7DeletedGraph G (z : A))
       (d7CoherentUniversalDeletedWeight G z₀ w₀ z)
       s(d7DeletedVertex (z : A) (x : A) hxz,
@@ -323,14 +323,6 @@ lemma d7LargeCorrection_numerator_mixed
         ∑ z : ↑(universalVertices G),
           d7MixedRemainingResidual G z₀ w₀ u y z := by
   rw [fractionalEdgeLoad_d7LargeCorrection_mixed G P hm u y]
-  change (∑ z : ↑(universalVertices G),
-      fractionalEdgeLoad G
-        (d7LiftedWeight (z : A)
-          (d7CoherentUniversalDeletedWeight G z₀ w₀ z))
-        s((u : A), (y : A))) +
-      (1 + (((universalVertices G).card : ℝ) - 1) * P.alpha u) =
-    ((universalVertices G).card : ℝ) -
-      ∑ z, d7MixedRemainingResidual G z₀ w₀ u y z
   have hterms : ∀ z : ↑(universalVertices G),
       fractionalEdgeLoad G
           (d7LiftedWeight (z : A)
@@ -923,7 +915,6 @@ lemma cast_choose_three_d7 (n : ℕ) :
       rw [Nat.choose_succ_succ]
       push_cast
       rw [Nat.cast_choose_two, ih]
-      push_cast
       ring
 
 /-- The total size of the explicit correction collapses to `m*q/3`.
@@ -1088,6 +1079,7 @@ lemma hasStrongFractionalPacking_d7LargeAverageWeight_of_halfBounded
     fractionalUncoveredWeight_d7LargeAverageWeight_le G z₀ w₀ P hm hwUpper,
     hhalf⟩
 
+omit [Fintype A] in
 lemma weightedAttachedEdgeWeight_apply_d7
     {S : Finset A} {u : A} {C : Finset (Sym2 S)}
     {r : Sym2 S → ℝ} (hu : u ∉ S)
@@ -1281,7 +1273,7 @@ lemma d7LiftedWeight_add_beta_le_one
     (hwOne : ∀ z : ↑(universalVertices G),
       1 ≤ fractionalUncoveredWeight (d7DeletedGraph G (z : A))
         (d7CoherentUniversalDeletedWeight G z₀ w₀ z))
-    (u v : ↑(nonUniversalVertices G)) (huv : u ≠ v)
+    (u v : ↑(nonUniversalVertices G)) (_ : u ≠ v)
     (z y : ↑(universalVertices G))
     (he : s(u, v) ∈ (G.induce
       (↑(nonUniversalVertices G) : Set A)).edgeFinset)
@@ -1297,8 +1289,7 @@ lemma d7LiftedWeight_add_beta_le_one
       (S := d7DeletedFinset (y : A)) (hwPacking y)
   have het : (inducedEmbedding (nonUniversalVertices G)).sym2Map e ∈
       ({(z : A), (u : A), (v : A)} : Finset A).sym2 := by
-    simp only [e, Sym2.map_mk, inducedEmbedding_apply,
-      Finset.mk_mem_sym2_iff]
+    simp only [e, ]
     simp
   have hweight := hwLift.weight_le_fractionalEdgeLoad ht het
   rw [fractionalEdgeLoad_d7LiftedWeight_nonUniversal G y w e] at hweight
@@ -1315,11 +1306,12 @@ lemma d7LiftedWeight_add_beta_le_one
   change _ + P.beta e ≤ 1
   linarith
 
-lemma sum_le_two_exception {B : Type} [Fintype B] [DecidableEq B]
+lemma sum_le_two_exception {B : Type} [Fintype B]
     (f : B → ℝ) (x y : B) (hxy : x ≠ y)
     (ax ay c : ℝ) (hx : f x ≤ ax) (hy : f y ≤ ay)
     (hrest : ∀ z, z ≠ x → z ≠ y → f z ≤ c) :
     (∑ z : B, f z) ≤ ax + ay + ((Fintype.card B : ℝ) - 2) * c := by
+  classical
   calc
     (∑ z : B, f z) ≤
         ∑ z : B, if z = x then ax else if z = y then ay else c := by
@@ -1348,7 +1340,7 @@ lemma sum_le_two_exception {B : Type} [Fintype B] [DecidableEq B]
           simp [hxy]
         · by_cases hzy : z = y
           · subst z
-            simp [hxy, hzx]
+            simp [hzx]
           · simp [hzx, hzy]
       simp_rw [hpoint, Finset.sum_add_distrib,
         sum_ite_eq_zero_else_two x y hxy]
@@ -1690,12 +1682,13 @@ lemma sum_ite_eq_zero_else_three {B : Type} [Fintype B] [DecidableEq B]
     simpa only [htriple, Finset.card_univ] using this
   rw [Nat.cast_sub hthree, Nat.cast_ofNat]
 
-lemma sum_le_three_zero {B : Type} [Fintype B] [DecidableEq B]
+lemma sum_le_three_zero {B : Type} [Fintype B]
     (f : B → ℝ) (x y z : B)
     (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z)
     (hx : f x ≤ 0) (hy : f y ≤ 0) (hz : f z ≤ 0)
     (hrest : ∀ w, w ≠ x → w ≠ y → w ≠ z → f w ≤ 1 / 2) :
     (∑ w : B, f w) ≤ ((Fintype.card B : ℝ) - 3) * (1 / 2) := by
+  classical
   calc
     (∑ w : B, f w) ≤
         ∑ w : B, if w = x ∨ w = y ∨ w = z then 0 else 1 / 2 := by

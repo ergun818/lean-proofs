@@ -41,20 +41,26 @@ variable {α β : Type*} [Fintype α] [DecidableEq α]
 def relabelWeight (e : α ≃ β) (w : Finset α → ℝ) : Finset β → ℝ :=
   fun t ↦ w (t.map e.symm.toEmbedding)
 
+omit [DecidableEq α] [DecidableEq β] [Fintype α] [Fintype β] in
 @[simp]
 lemma relabelWeight_apply_map (e : α ≃ β) (w : Finset α → ℝ)
     (t : Finset α) : relabelWeight e w (t.map e.toEmbedding) = w t := by
+  classical
   simp [relabelWeight, Finset.map_map]
 
+omit [DecidableEq α] [DecidableEq β] [Fintype α] [Fintype β] in
 @[simp]
 lemma relabelWeight_symm (e : α ≃ β) (w : Finset α → ℝ) :
     relabelWeight e.symm (relabelWeight e w) = w := by
+  classical
   funext t
   simp [relabelWeight, Finset.map_map]
 
+omit [DecidableEq α] [DecidableEq β] [Fintype α] [Fintype β] in
 private lemma isNClique_map_equiv_iff (G : SimpleGraph α) (e : α ≃ β)
     (t : Finset α) (n : ℕ) :
     (G.map e.toEmbedding).IsNClique n (t.map e.toEmbedding) ↔ G.IsNClique n t := by
+  classical
   constructor
   · intro ht
     have h := ht.map (f := e.symm.toEmbedding)
@@ -91,16 +97,20 @@ lemma fractionalCoveredSize_relabel (G : SimpleGraph α) (e : α ≃ β)
       fractionalCoveredSize G w := by
   rw [fractionalCoveredSize, fractionalCoveredSize, fractionalSize_relabel]
 
+omit [DecidableEq α] [DecidableEq β] [Fintype α] [Fintype β] in
 /-- The graph complement commutes with relabelling by a vertex equivalence. -/
 lemma compl_map_equiv (G : SimpleGraph α) (e : α ≃ β) :
     (G.map e.toEmbedding)ᶜ = Gᶜ.map e.toEmbedding := by
+  classical
   rw [← SimpleGraph.comap_symm G e, ← SimpleGraph.comap_symm Gᶜ e]
   ext x y
   simp [SimpleGraph.compl_adj]
 
+omit [DecidableEq α] [DecidableEq β] [Fintype α] [Fintype β] in
 private lemma edge_mem_triangle_map_iff (e : α ↪ β) (p : Sym2 α)
     (t : Finset α) :
     e.sym2Map p ∈ (t.map e).sym2 ↔ p ∈ t.sym2 := by
+  classical
   rw [Finset.sym2_map]
   constructor
   · intro hp
@@ -175,7 +185,7 @@ lemma GruslysLetzterFractional.on_fintype (hGL : GruslysLetzterFractional)
   have hmap : H.map e.symm.toEmbedding = G := by
     dsimp only [H]
     rw [SimpleGraph.map_map]
-    simpa using G.map_id
+    simp
   refine ⟨wR, wB, ?_, ?_, ?_⟩
   · simpa only [wR, hmap] using huR.relabel e.symm
   · have hc : Hᶜ.map e.symm.toEmbedding = Gᶜ := by

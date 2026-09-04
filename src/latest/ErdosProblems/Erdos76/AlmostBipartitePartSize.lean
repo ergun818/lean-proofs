@@ -164,7 +164,6 @@ private lemma cast_choose_three (n : ℕ) :
       rw [Nat.choose_succ_succ]
       push_cast
       rw [Nat.cast_choose_two, ih]
-      push_cast
       ring
 
 private lemma restrictedCompleteCoveredSize_lower
@@ -267,10 +266,11 @@ private lemma almostCompleteFractionalDecomposition_of_card
   have hmap : H.map e.symm.toEmbedding = G := by
     dsimp only [H]
     rw [SimpleGraph.map_map]
-    simpa using G.map_id
+    simp
   refine ⟨u, ?_⟩
   simpa only [u, hmap] using hw.relabel_complete e.symm
 
+omit [Fintype α] in
 private lemma missingEdgeCount_compl_induce (G : SimpleGraph α) (S : Finset α) :
     missingEdgeCount (Gᶜ.induce (S : Set α)) =
       (G.induce (S : Set α)).edgeFinset.card := by
@@ -556,7 +556,7 @@ theorem almostBipartitePartSizeBound
     hpart s.ncard sᶜ.ncard hsum hbalance
   have htK : k + 4 ≤ sᶜ.ncard := by
     exact hpart sᶜ.ncard s.ncard (by omega) (by
-      convert hbalance using 1 <;> ring)
+      convert hbalance using 1 ; ring)
   have hseven (r t : ℕ) (hrt : r + t = n) (hkr : k + 4 ≤ r)
       (hbal : ((r : ℝ) - (t : ℝ)) ^ 2 ≤ (n : ℝ) + 12 * (k : ℝ)) :
       7 ≤ r := by
@@ -581,7 +581,7 @@ theorem almostBipartitePartSizeBound
   exact ⟨hsK, htK,
     hseven s.ncard sᶜ.ncard hsum hsK hbalance,
     hseven sᶜ.ncard s.ncard (by omega) htK (by
-      convert hbalance using 1 <;> ring)⟩
+      convert hbalance using 1 ; ring)⟩
 
 end
 

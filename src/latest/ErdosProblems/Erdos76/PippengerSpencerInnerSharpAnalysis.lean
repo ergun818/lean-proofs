@@ -133,11 +133,10 @@ lemma sum_natCast_mul_pred_mul_choose_mul_pow (a : ℕ) (c : ℝ) :
               ((n + 2).choose (j + 2) : ℝ) * c ^ (j + 2) := by
         rw [sum_range_succ', sum_range_succ']
         simp only [Nat.cast_add, Nat.cast_one, add_sub_cancel_right, zero_add, sub_self, mul_zero,
-    Nat.choose_one_right, Nat.cast_ofNat, zero_mul, pow_one, add_zero, CharP.cast_eq_zero, zero_sub, mul_neg, mul_one,
-    neg_zero, Nat.choose_zero_right, pow_zero]
+          Nat.choose_one_right, Nat.cast_ofNat, zero_mul, pow_one, add_zero, CharP.cast_eq_zero,
+          zero_sub, mul_neg, mul_one, neg_zero, Nat.choose_zero_right, pow_zero]
         apply sum_congr rfl
         intro j _
-        push_cast
         ring
       _ = ∑ j ∈ range (n + 1),
             (((n + 2) * (n + 1) : ℕ) : ℝ) * (n.choose j : ℝ) *
@@ -498,7 +497,7 @@ lemma parityMixedMomentUpper_sub_lower
   rw [parityMixedMomentUpper, parityMixedMomentLower, ← sum_sub_distrib]
   apply sum_congr rfl
   intro j _
-  by_cases heven : Even j <;> simp [heven] <;> ring
+  by_cases heven : Even j <;> simp [heven] ; ring
 
 /-- The ideal full alternating one-step polynomial for a joint uncovered
 moment of order `a`.  Its compact form retains the damping that is lost by
@@ -621,9 +620,10 @@ def meanFieldPlusStep (k : ℕ) (beta x : ℝ) : ℝ :=
 to replace the exact Bernoulli isolation product by an explicit collision
 error. -/
 lemma one_sub_sum_le_prod_one_sub
-    {I : Type*} [DecidableEq I] (s : Finset I) (p : I → ℝ)
+    {I : Type*} (s : Finset I) (p : I → ℝ)
     (hp₀ : ∀ i ∈ s, 0 ≤ p i) (hp₁ : ∀ i ∈ s, p i ≤ 1) :
     1 - ∑ i ∈ s, p i ≤ ∏ i ∈ s, (1 - p i) := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp
   | @insert a s ha ih =>
@@ -644,9 +644,10 @@ lemma one_sub_sum_le_prod_one_sub
 
 /-- A finite product of Bernoulli failure probabilities lies in `[0,1]`. -/
 lemma prod_one_sub_mem_Icc
-    {I : Type*} [DecidableEq I] (s : Finset I) (p : I → ℝ)
+    {I : Type*} (s : Finset I) (p : I → ℝ)
     (hp₀ : ∀ i ∈ s, 0 ≤ p i) (hp₁ : ∀ i ∈ s, p i ≤ 1) :
     (∏ i ∈ s, (1 - p i)) ∈ Set.Icc (0 : ℝ) 1 := by
+  classical
   constructor
   · exact prod_nonneg fun i hi ↦ sub_nonneg.mpr (hp₁ i hi)
   · exact prod_le_one (fun i hi ↦ sub_nonneg.mpr (hp₁ i hi))
@@ -762,7 +763,7 @@ This form deliberately remains valid when either truncated lower factor is
 zero. -/
 lemma linearProfileDeficit_le
     {a target epsilon collision deficit : ℝ}
-    (ha₀ : 0 ≤ a) (htarget₀ : 0 ≤ target) (htarget₁ : target ≤ 1)
+    (ha₀ : 0 ≤ a) (_ : 0 ≤ target) (htarget₁ : target ≤ 1)
     (hepsilon₀ : 0 ≤ epsilon)
     (hcollision₀ : 0 ≤ collision) (hcollision₁ : collision ≤ 1)
     (hdeficit₀ : 0 ≤ deficit) :
@@ -888,7 +889,7 @@ substituting `p = beta / D`, lower degree `(1-eta)D`, and codegree
 theorem abs_next_pow_le_jointMomentStepError
     (a k : ℕ) (ha : 0 < a) (hk : 0 < k)
     {beta eta epsilonA epsilonNext y x next : ℝ}
-    (hbeta₀ : 0 ≤ beta) (hbeta₁ : beta ≤ 1)
+    (hbeta₀ : 0 ≤ beta) (_ : beta ≤ 1)
     (heta₀ : 0 ≤ eta)
     (hepsilonA₀ : 0 ≤ epsilonA)
     (hepsilonNext₀ : 0 ≤ epsilonNext)
@@ -1178,7 +1179,6 @@ lemma meanField_marginal_scalar_budget
             (meanFieldSurvival k beta r ^ k - rho))) * (D : ℝ) := by
         rw [← beta_mul_sum_meanFieldSurvival_pow_sub_const]
         field_simp
-        <;> ring
   · apply (le_div_iff₀ hDreal).2
     calc
       (beta / (D : ℝ) *
@@ -1415,10 +1415,9 @@ theorem meanFieldSurvival_stepSize_order_and_gap
 /-- Bernoulli's inequality in the exact form used to bound the loss from
 requiring a finite family of coordinates to be absent. -/
 lemma one_sub_one_sub_pow_le_natCast_mul
-    (n : ℕ) {p : ℝ} (hp₀ : 0 ≤ p) (hp₁ : p ≤ 1) :
+    (n : ℕ) {p : ℝ} (_ : 0 ≤ p) (hp₁ : p ≤ 1) :
     1 - (1 - p) ^ n ≤ (n : ℝ) * p := by
   have h := one_add_mul_sub_le_pow (a := (1 - p : ℝ)) (by linarith) n
-  push_cast at h
   nlinarith
 
 /-- Replacing `beta` by the worst-case isolated-sampling coefficient loses

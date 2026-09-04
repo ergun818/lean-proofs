@@ -37,6 +37,7 @@ variable {A : Type} [Fintype A] [DecidableEq A]
 
 /-! ## Averaging over a universal subset -/
 
+omit [DecidableEq A] [Fintype A] in
 /-- A permutation supported on vertices which are adjacent to every other
 vertex is a graph automorphism.  The statement is phrased for an arbitrary
 predicate so that it applies directly on a vertex-deleted subtype. -/
@@ -46,6 +47,7 @@ lemma map_eq_of_permutes_universalSubset (H : SimpleGraph A) (P : A → Prop)
     (hpreserve : ∀ x, P (e x) ↔ P x)
     (hfix : ∀ x, ¬ P x → e x = x) :
     H.map e.toEmbedding = H := by
+  classical
   rw [← SimpleGraph.comap_symm H e]
   ext x y
   simp only [SimpleGraph.comap_adj]
@@ -122,7 +124,6 @@ lemma d7ExtendUniversalPerm_preserves (G : SimpleGraph A) (z : A)
     · intro _
       exact hx
     · intro _
-      change P (d7ExtendUniversalPerm G z p x)
       unfold d7ExtendUniversalPerm
       rw [Equiv.Perm.extendDomain_apply_subtype p
         (d7RemainingUniversalEquiv G z) hx]
@@ -266,9 +267,10 @@ def permTransRight {X : Type*} (q : Equiv.Perm X) :
 /-- The full symmetric group is transitive on ordered pairs of distinct
 points.  The explicit two-swap witness avoids importing group-action
 machinery for this elementary fact. -/
-lemma exists_perm_map_pair {X : Type*} [DecidableEq X]
+lemma exists_perm_map_pair {X : Type*}
     {a b c d : X} (hab : a ≠ b) (hcd : c ≠ d) :
     ∃ p : Equiv.Perm X, p a = c ∧ p b = d := by
+  classical
   let p₁ : Equiv.Perm X := Equiv.swap a c
   let b₁ : X := p₁ b
   let p₂ : Equiv.Perm X := Equiv.swap b₁ d
@@ -286,9 +288,10 @@ lemma exists_perm_map_pair {X : Type*} [DecidableEq X]
   · rw [Equiv.trans_apply]
     exact Equiv.swap_apply_left b₁ d
 
-lemma relabelWeight_trans {X : Type*} [DecidableEq X]
+lemma relabelWeight_trans {X : Type*}
     (e f : Equiv.Perm X) (w : Finset X → ℝ) :
     relabelWeight f (relabelWeight e w) = relabelWeight (e.trans f) w := by
+  classical
   funext t
   simp [relabelWeight, Finset.map_map]
 

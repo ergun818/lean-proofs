@@ -275,7 +275,7 @@ theorem exists_masterCoveredSize_of_sideResiduals
       hsevenS hsevenT (by simpa only [compl_compl] using hdeficitS)
         (by simpa only [compl_compl] using hdeficitT)
   refine ⟨x, hsideS, hsideT, ?_⟩
-  convert hcovered using 1 <;> rw [hcard] <;> ring
+  convert hcovered using 1 ; rw [hcard] ; ring
 
 /-- Every subfamily of internal edges carries at most the total cross-packing
 weight.  This form avoids choosing either orientation of the bipartition. -/
@@ -427,7 +427,7 @@ theorem masterCoveredSize_of_residualBudgetsAtImbalance
     hAC (R := Gᶜ) hP hw (fun _v hv ↦ hv) (fun _v ↦ rfl)
       hsevenS hsevenT (by simpa only [compl_compl] using hdeficitS)
         (by simpa only [compl_compl] using hdeficitT)
-  convert hcovered using 1 <;> rw [hcard] <;> ring
+  convert hcovered using 1 ; rw [hcard] ; ring
 
 /-- Fixed-imbalance completion from exact sidewise blue-edge budgets. -/
 theorem masterCoveredSize_of_sidewiseBudget_atImbalance
@@ -484,7 +484,7 @@ theorem masterCoveredSize_of_totalBudget_atImbalance
     hAC (R := Gᶜ) hP hw (fun _v hv ↦ hv) (fun _v ↦ rfl)
       hsevenS hsevenT (by simpa only [compl_compl] using hdeficitS)
         (by simpa only [compl_compl] using hdeficitT)
-  convert hcovered using 1 <;> rw [hcard] <;> ring
+  convert hcovered using 1 ; rw [hcard] ; ring
 
 /-- Full completion from the corrected global `k+r` capacity budget. -/
 theorem exists_masterCoveredSize_of_totalBudget
@@ -569,12 +569,14 @@ lemma totalBudgets_of_size_le_safeTruncation
     norm_num
     linarith
 
+omit [DecidableEq α] in
 /-- Convert a stable `Set.ncard` budget to the induced-side finset form used
 by the capacity constructor. -/
 lemma totalBudget_ncard_to_toFinset
     {s : Set α} {q : ℝ}
     (h : q ≤ ((s.ncard - 4 : ℕ) : ℝ)) :
     q ≤ ((s.toFinset.card - 4 : ℕ) : ℝ) := by
+  classical
   simpa only [Set.ncard_eq_toFinset_card'] using h
 
 /-- A cross packing with at least as many triangles as internal edges already

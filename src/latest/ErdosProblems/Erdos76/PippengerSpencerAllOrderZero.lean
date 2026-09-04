@@ -79,7 +79,7 @@ lemma one_sub_pow_eq_sum_alternating_choose (a : ℕ) (t : ℝ) :
         (-1 : ℝ) ^ j * (a.choose j : ℝ) * t ^ j := by
   have h := add_pow (-t) 1 a
   calc
-    (1 - t) ^ a = (-t + 1) ^ a := by congr 1 <;> ring
+    (1 - t) ^ a = (-t + 1) ^ a := by congr 1 ; ring
     _ = ∑ j ∈ range (a + 1),
         (-t) ^ j * 1 ^ (a - j) * (a.choose j : ℝ) := h
     _ = ∑ j ∈ range (a + 1),
@@ -335,19 +335,23 @@ def matchingMeetingFamilies (H : FiniteHypergraph V E)
     (A : Finset V) (j : ℕ) : Finset (Finset E) :=
   ((H.edgesMeeting A).powersetCard j).filter H.IsMatching
 
+omit [DecidableEq E] in
 @[simp] lemma mem_matchingMeetingFamilies
     (H : FiniteHypergraph V E) (A : Finset V) (j : ℕ) (F : Finset E) :
     F ∈ H.matchingMeetingFamilies A j ↔
       F ⊆ H.edgesMeeting A ∧ F.card = j ∧ H.IsMatching F := by
+  classical
   simp [matchingMeetingFamilies, and_assoc]
 
 /-- Union of the vertex supports of a finite edge family. -/
 def familySupport (H : FiniteHypergraph V E) (F : Finset E) : Finset V :=
   F.biUnion H.support
 
+omit [DecidableEq E] [Fintype E] in
 @[simp] lemma mem_familySupport
     (H : FiniteHypergraph V E) (F : Finset E) (v : V) :
     v ∈ H.familySupport F ↔ ∃ e ∈ F, v ∈ H.support e := by
+  classical
   simp [familySupport]
 
 /-- Joint uncoveredness of `A` together with every support in `F` is
@@ -437,10 +441,12 @@ def innerStaticConflictUnion (H : FiniteHypergraph V E)
     (F : Finset E) : Finset E :=
   F.biUnion H.conflictNeighborhood
 
+omit [DecidableEq V] in
 @[simp] lemma mem_innerStaticConflictUnion
     (H : FiniteHypergraph V E) (F : Finset E) (g : E) :
     g ∈ H.innerStaticConflictUnion F ↔
       ∃ e ∈ F, H.Conflicts e g := by
+  classical
   simp [innerStaticConflictUnion]
 
 /-- For a matching family, the static conflict union is exactly the set of
@@ -472,12 +478,14 @@ lemma innerStaticConflictUnion_eq_edgesMeeting_familySupport_sdiff
     exact ⟨fun heg ↦ hgData.2 (heg ▸ heF),
       not_disjoint_iff.mpr ⟨v, hve, hvg⟩⟩
 
+omit [DecidableEq E] [Fintype E] in
 /-- A uniform matching family has exactly `k` distinct support vertices per
 edge. -/
 lemma card_familySupport_eq_of_matching_uniform
     (H : FiniteHypergraph V E) (F : Finset E) {k : ℕ}
     (hunif : H.IsUniform k) (hF : H.IsMatching F) :
     (H.familySupport F).card = F.card * k := by
+  classical
   unfold familySupport
   rw [card_biUnion hF]
   calc
@@ -487,12 +495,14 @@ lemma card_familySupport_eq_of_matching_uniform
       exact hunif e
     _ = F.card * k := by simp
 
+omit [DecidableEq E] in
 /-- Every edge of a positive-uniform family meets the family's support
 union. -/
 lemma subset_edgesMeeting_familySupport_of_uniform
     (H : FiniteHypergraph V E) (F : Finset E) {k : ℕ} (hk : 0 < k)
     (hunif : H.IsUniform k) :
     F ⊆ H.edgesMeeting (H.familySupport F) := by
+  classical
   intro e heF
   have hnonempty : (H.support e).Nonempty := by
     rw [← card_pos, hunif e]
@@ -659,6 +669,7 @@ def exceptionalProfileSubfamilies (H : FiniteHypergraph V E)
       Q ⊆ C ∧ Q.card = q ∧ H.IsProfileEnlargingFamily B Q := by
   simp [profileEnlargingSubfamilies, and_assoc]
 
+omit [Fintype E] in
 /-- A fixed `s`-subfamily is contained in at most `|C|^(q-s)` members of
 `C.powersetCard q`. -/
 lemma card_filter_powersetCard_superset_le_pow
@@ -1135,14 +1146,16 @@ theorem sum_powersetCard_profile_close
       · exact le_rfl
     _ = (Cset.card.choose q : ℝ) * epsilon +
         ((H.exceptionalProfileSubfamilies B Cset q).card : ℝ) := by
-      simp [good, bad]
+      simp [bad]
 
+omit [DecidableEq E] [Fintype E] in
 /-- Regroup a signed powerset sum by subfamily cardinality. -/
 lemma sum_powerset_signed_eq_sum_powersetCard
     (Cset : Finset E) (p : ℝ) (U : Finset E → ℝ) :
     (∑ Q ∈ Cset.powerset, (-p) ^ Q.card * U Q) =
       ∑ q ∈ range (Cset.card + 1),
         (-p) ^ q * ∑ Q ∈ Cset.powersetCard q, U Q := by
+  classical
   have hdisj : ∀ i ∈ range (Cset.card + 1),
       ∀ j ∈ range (Cset.card + 1), i ≠ j →
         Disjoint (Cset.powersetCard i) (Cset.powersetCard j) := by
@@ -1484,7 +1497,7 @@ lemma abs_pow_sub_pow_le_exponent_gap
   rw [abs_of_nonneg (sub_nonneg.mpr hpowOrder)]
   have hpowSplit : z ^ N = z ^ n * z ^ (N - n) := by
     calc
-      z ^ N = z ^ (n + (N - n)) := by congr 1 <;> omega
+      z ^ N = z ^ (n + (N - n)) := by congr 1 ; omega
       _ = z ^ n * z ^ (N - n) := pow_add z n (N - n)
   calc
     z ^ n - z ^ N = z ^ n * (1 - z ^ (N - n)) := by
@@ -1861,7 +1874,7 @@ chosen static subfamily `Q` contributes only when all of its edges are live
 in the old state. -/
 lemma prod_one_sub_innerLiveConflictUnion_eq_sum_powerset
     (H : FiniteHypergraph V E) (M F : Finset E) (p : ℝ) :
-    (∏ g ∈ H.innerLiveConflictUnion M F, (1 - p)) =
+    (∏ _ ∈ H.innerLiveConflictUnion M F, (1 - p)) =
       ∑ Q ∈ (H.innerStaticConflictUnion F).powerset,
         (-p) ^ Q.card *
           if ∀ g ∈ Q, H.InnerLive M g then 1 else 0 := by
@@ -1892,7 +1905,7 @@ lemma prod_one_sub_innerLiveConflictUnion_eq_sum_powerset
             intro g hg
             rw [if_pos (hQ g hg)]
           _ = (-p) ^ Q.card := by simp
-      · push_neg at hQ
+      · push Not at hQ
         obtain ⟨g, hgQ, hgNotLive⟩ := hQ
         have hprodZero :
             (∏ z ∈ Q, (if H.InnerLive M z then -p else 0)) = 0 := by
@@ -1900,7 +1913,7 @@ lemma prod_one_sub_innerLiveConflictUnion_eq_sum_powerset
           rw [if_neg hgNotLive]
         rw [hprodZero, if_neg]
         · ring
-        · push_neg
+        · push Not
           exact ⟨g, hgQ, hgNotLive⟩
 
 /-- Exact static-conflict expansion of simultaneous isolated acceptance
@@ -2399,9 +2412,9 @@ use their exact enlarged-support cardinality; the exceptional families are
 charged only by their cardinality.  Subsequent counting lemmas provide the
 three explicit family-cardinality hypotheses. -/
 theorem matchingFamilyJointMass_profile_mem_Icc
-    (H : FiniteHypergraph V E) (w : Finset E → ℝ)
-    (r : ℕ) (M : Finset E) (A : Finset V) (j : ℕ)
-    {k : ℕ} (hk : 0 < k) (hunif : H.IsUniform k)
+    (H : FiniteHypergraph V E) (_ : Finset E → ℝ)
+    (_ : ℕ) (_ : Finset E) (A : Finset V) (j : ℕ)
+    {k : ℕ} (_ : 0 < k) (_ : H.IsUniform k)
     (U : Finset V → ℝ)
     (hU : ∀ B, U B ∈ Set.Icc (0 : ℝ) 1)
     (target epsilon ideal countError exceptionalError : ℝ)
@@ -2475,7 +2488,7 @@ theorem matchingFamilyJointMass_profile_mem_Icc
               intro F hF
               exact (hgoodBounds F hF).2
             _ = ((H.goodMatchingMeetingFamilies A j).card : ℝ) *
-                (target + epsilon) := by simp <;> ring
+                (target + epsilon) := by simp ; ring
         · calc
             (∑ F ∈ H.exceptionalMatchingMeetingFamilies A j,
                 U (A ∪ F.biUnion H.support)) ≤
@@ -2532,8 +2545,7 @@ lemma exceptionalMatchingMeetingFamilies_card_le
     · exact (Nat.choose_le_pow _ _).trans
         (Nat.pow_le_pow_left (Nat.sub_le _ _) _)
     · simpa using H.multiMeetingEdges_subset_edgesMeeting A he
-    · change ({e} : Finset E).card ≤ j
-      rw [card_singleton]
+    · rw [card_singleton]
       omega
   have hmeeting := H.edgesMeeting_card_le_mul_degree A D hdeg
   have hmulti := H.multiMeetingEdges_card_le_sq_mul_pairDegree A C hpair
@@ -2558,24 +2570,30 @@ def familyAnchorSet (H : FiniteHypergraph V E)
     (A : Finset V) (F : Finset E) : Finset V :=
   F.biUnion fun e ↦ H.support e ∩ A
 
+omit [DecidableEq E] [Fintype E] in
 @[simp] lemma mem_familyAnchorSet
     (H : FiniteHypergraph V E) (A : Finset V) (F : Finset E) (v : V) :
     v ∈ H.familyAnchorSet A F ↔
       ∃ e ∈ F, v ∈ H.support e ∧ v ∈ A := by
-  simp [familyAnchorSet, and_assoc]
+  classical
+  simp [familyAnchorSet]
 
+omit [DecidableEq E] [Fintype E] in
 lemma familyAnchorSet_subset
     (H : FiniteHypergraph V E) (A : Finset V) (F : Finset E) :
     H.familyAnchorSet A F ⊆ A := by
+  classical
   intro v hv
   obtain ⟨e, _heF, _hve, hvA⟩ := (H.mem_familyAnchorSet A F v).1 hv
   exact hvA
 
+omit [DecidableEq E] [Fintype E] in
 /-- At an anchor of a matching family there is a unique family edge. -/
 lemma existsUnique_edge_at_anchor_of_matching
     (H : FiniteHypergraph V E) (A : Finset V) (F : Finset E)
     (hF : H.IsMatching F) {v : V} (hv : v ∈ H.familyAnchorSet A F) :
     ∃! e, e ∈ F ∧ v ∈ H.support e := by
+  classical
   obtain ⟨e, heF, hve, _⟩ := (H.mem_familyAnchorSet A F v).1 hv
   refine ⟨e, ⟨heF, hve⟩, ?_⟩
   rintro f ⟨hfF, hvf⟩
@@ -2588,11 +2606,13 @@ noncomputable def familyEdgeAt
     (H : FiniteHypergraph V E) (F : Finset E) (v : V) : Option E :=
   if h : ∃ e, e ∈ F ∧ v ∈ H.support e then some h.choose else none
 
+omit [DecidableEq E] [Fintype E] in
 lemma familyEdgeAt_eq_some_of_unique
     (H : FiniteHypergraph V E) (F : Finset E) (v : V) (e : E)
     (huniq : ∃! f, f ∈ F ∧ v ∈ H.support f)
     (he : e ∈ F ∧ v ∈ H.support e) :
     H.familyEdgeAt F v = some e := by
+  classical
   let hex : ∃ f, f ∈ F ∧ v ∈ H.support f := ⟨e, he⟩
   rw [familyEdgeAt, dif_pos hex]
   congr 1
@@ -2693,7 +2713,7 @@ lemma familyAnchorCode_injOn
 lemma goodMatchingFamiliesWithAnchors_card_le
     (H : FiniteHypergraph V E) (A : Finset V) (j D : ℕ)
     (hdeg : ∀ v ∈ H.vertexSet, H.edgeDegree v ≤ D)
-    (B : Finset V) (hBA : B ⊆ A) (hBcard : B.card = j) :
+    (B : Finset V) (_ : B ⊆ A) (hBcard : B.card = j) :
     (H.goodMatchingFamiliesWithAnchors A j B).card ≤ D ^ j := by
   have hdegAll (v : V) : H.edgeDegree v ≤ D := by
     by_cases hv : v ∈ H.vertexSet
@@ -2701,7 +2721,7 @@ lemma goodMatchingFamiliesWithAnchors_card_le
     · have hno : ∀ e : E, v ∉ H.support e := by
         intro e hve
         exact hv (H.support_subset_vertexSet e hve)
-      simp [edgeDegree, incidentEdges, hno]
+      simp [edgeDegree, hno]
   calc
     (H.goodMatchingFamiliesWithAnchors A j B).card ≤
         (H.anchorChoiceCodes B).card :=
@@ -3253,7 +3273,6 @@ lemma signedRegularSurvivalStep_eq_sub
   obtain ⟨j, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hk)
   simp only [signedRegularSurvivalStep, signedRegularStep,
     Nat.succ_sub_one, pow_succ]
-  push_cast
   ring
 
 /-- Bernoulli bounds for the exact isolation factor. -/
@@ -3390,7 +3409,7 @@ theorem signedRegularSurvival_le_meanFieldSurvival_collisionAdjusted
       _ = (k : ℝ) * beta := by ring
       _ ≤ 1 := hbetaK
   induction r with
-  | zero => simp [alpha, p]
+  | zero => simp
   | succ r ih =>
       let ys := signedRegularSurvival k D p r
       let ym := meanFieldSurvival k alpha r
@@ -4659,6 +4678,7 @@ theorem staticConflict_profileErrorPart_le_exp
     _ ≤ rho * Real.exp mu :=
       sum_choose_mul_pow_mul_const_le_exp_mean N hp₀ hrho₀ hmean
 
+omit [DecidableEq E] [DecidableEq V] [Fintype E] in
 /-- The error from replacing the actual static-conflict exponent by the
 ideal regular exponent is normalized by `D`: the chosen-family loss gives
 `|F|/D`, and all low-codegree overlap losses give `C/D`. -/
@@ -4672,6 +4692,7 @@ theorem staticConflict_exponentError_le
       (((F.card : ℝ) / (D : ℝ)) +
           (((F.card * k) ^ 2 * k : ℕ) : ℝ) *
             ((C : ℝ) / (D : ℝ))) * beta := by
+  classical
   let loss : ℕ := F.card + (F.card * k) ^ 2 * C * k
   have hDreal : (0 : ℝ) < D := by exact_mod_cast hD
   have hp₀ : 0 ≤ beta / (D : ℝ) := div_nonneg hbeta₀ hDreal.le
@@ -4869,8 +4890,7 @@ theorem staticConflictSignedErrorCutoff_le
     · rw [← Finset.sum_add_distrib, ← Finset.sum_add_distrib]
       apply sum_congr rfl
       intro q _
-      by_cases hq : q ≤ Qcut <;> simp [profilePart, exceptionalPart,
-        tailPart, N, hq] <;> ring
+      by_cases hq : q ≤ Qcut <;> simp [N, hq] ; ring
   have hprofile : profilePart ≤
       rho * Real.exp (((F.card * k : ℕ) : ℝ) * beta) := by
     simpa [profilePart, N, p] using
@@ -5332,9 +5352,9 @@ lemma dominantStaticConflictDeltaEnvelope_nonneg
 
 lemma dominantStaticConflictDelta_le_envelope
     (a j k C D Qcut : ℕ) {beta rho tailBudget ratio invDegree : ℝ}
-    (hD : 0 < D) (hbeta₀ : 0 ≤ beta) (hrho₀ : 0 ≤ rho)
-    (htail₀ : 0 ≤ tailBudget) (hratio₀ : 0 ≤ ratio)
-    (hinv₀ : 0 ≤ invDegree)
+    (hD : 0 < D) (hbeta₀ : 0 ≤ beta) (_ : 0 ≤ rho)
+    (_ : 0 ≤ tailBudget) (_ : 0 ≤ ratio)
+    (_ : 0 ≤ invDegree)
     (hratio : (C : ℝ) / (D : ℝ) ≤ ratio)
     (hinv : 1 / (D : ℝ) ≤ invDegree) :
     dominantStaticConflictDelta a j k C D Qcut beta rho tailBudget ≤
@@ -5734,7 +5754,7 @@ lemma continuous_signedRegularErrorTrajectory
   | zero => exact continuous_const
   | succ r ih =>
       simp only [signedRegularErrorTrajectory, signedRegularRoundEnvelope]
-      apply continuous_finset_sum
+      apply continuous_finsetSum
       intro m _
       exact continuous_signedRegularOneStepEnvelope_comp
         (m + 1) k (conflictCutoff r) beta ih
@@ -5944,7 +5964,7 @@ lemma continuous_signedRegularRoundEnvelopeFull_tail
     Continuous (fun tail ↦ signedRegularRoundEnvelopeFull cap k Qcut
       beta 0 tail 0 0) := by
   unfold signedRegularRoundEnvelopeFull
-  apply continuous_finset_sum
+  apply continuous_finsetSum
   intro m _
   exact continuous_signedRegularOneStepEnvelope_tail (m + 1) k Qcut beta
 
@@ -5953,7 +5973,7 @@ lemma continuous_signedRegularRoundEnvelopeFull_diagonal
     Continuous (fun small ↦ signedRegularRoundEnvelopeFull cap k Qcut
       beta small tail small small) := by
   unfold signedRegularRoundEnvelopeFull
-  apply continuous_finset_sum
+  apply continuous_finsetSum
   intro m _
   exact continuous_signedRegularOneStepEnvelope_diagonal
     (m + 1) k Qcut beta tail
@@ -6246,7 +6266,7 @@ theorem SignedRegularScalarSchedule.moment_step
         (A.card - 1) * C + (j - 1) * (k * C) ≤
             (S.orderCap (r + 1) - 1) * C +
               (S.orderCap (r + 1) - 1) * (k * C) := by
-                gcongr <;> omega
+                gcongr ; omega
         _ ≤ D := hsufficient r hr
     have hone := H.sum_signedRegularMomentErrorCutoff_le_oneStepEnvelope
       A haPos hk hD hunif hdeg hpair hAcap hbeta₀ hy hpY htol₀

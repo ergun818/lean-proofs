@@ -347,7 +347,7 @@ theorem innerAcceptanceKernel_le_indicator_add_mul_innerLiveTimeKernel
                 H.innerLiveTimeKernel w n (H.innerStep M S) e := by
           simp_rw [mul_add]
           rw [sum_add_distrib]
-          apply congrArg₂ (.+.) rfl
+          apply congrArg₂ (· + ·) rfl
           rw [mul_sum]
           apply sum_congr rfl
           intro S _
@@ -429,6 +429,7 @@ lemma self_not_mem_innerLiveConflictNeighbors
     e ∉ H.innerLiveConflictNeighbors M e := by
   simp
 
+omit [Fintype E] in
 lemma eventDependsOn_mem_singleton (e : E) :
     FiniteNibble.EventDependsOn {e} (fun S : Finset E ↦ e ∈ S) := by
   intro S T hST
@@ -436,6 +437,7 @@ lemma eventDependsOn_mem_singleton (e : E) :
   have hmem := congrArg (fun U : Finset E ↦ e ∈ U) hST
   simpa using hmem
 
+omit [Fintype E] in
 lemma eventDependsOn_disjoint_right (B : Finset E) :
     FiniteNibble.EventDependsOn B (fun S : Finset E ↦ Disjoint S B) := by
   intro S T hST
@@ -569,6 +571,7 @@ theorem innerNewAcceptanceMass_eq
 
 /-! ### Exact simultaneous one-round acceptance -/
 
+omit [Fintype E] in
 /-- Requiring all coordinates in `A` to be selected depends only on `A`. -/
 lemma eventDependsOn_subset_left (A : Finset E) :
     FiniteNibble.EventDependsOn A (fun S : Finset E ↦ A ⊆ S) := by
@@ -817,6 +820,7 @@ theorem innerNewAcceptanceFamilyMass_const_indicator_mem_Icc
   · rw [H.innerNewAcceptanceFamilyMass_const_eq M F p hF]
     simp [hlive]
 
+omit [Fintype E] in
 /-- Real-valued finite inclusion--exclusion for the indicator that a
 finite set is empty. -/
 lemma indicator_eq_empty_eq_sum_powerset_neg_one_pow_card_real
@@ -826,6 +830,7 @@ lemma indicator_eq_empty_eq_sum_powerset_neg_one_pow_card_real
   have hInt := Finset.sum_powerset_neg_one_pow_card (x := N)
   exact_mod_cast hInt.symm
 
+omit [Fintype E] in
 /-- Choosing `j` elements of a subset `N ⊆ K` is the same as summing the
 subset indicator over all `j`-element subfamilies of `K`. -/
 lemma choose_card_eq_sum_powersetCard_subset
@@ -845,6 +850,7 @@ lemma choose_card_eq_sum_powersetCard_subset
   rw [← card_powersetCard j N, ← hfilter, card_eq_sum_ones,
     ← sum_filter]
 
+omit [Fintype E] in
 /-- Real-valued version of `choose_card_eq_sum_powersetCard_subset`. -/
 lemma natCast_choose_card_eq_sum_powersetCard_subset
     (N K : Finset E) (j : ℕ) (hNK : N ⊆ K) :
@@ -885,7 +891,7 @@ lemma uncoveredBy_innerStep_iff_innerNewAcceptedAt_eq_empty
     · exact hunc e heM hve
     · have : e ∈ H.innerNewAcceptedAt M S v := by
         exact (H.mem_innerNewAcceptedAt M S v e).2 ⟨heNew, hve⟩
-      simpa [hempty] using this
+      simp [hempty] at this
 
 /-- Pointwise indicator identity behind the vertex drift formula. -/
 lemma indicator_uncoveredBy_innerStep_eq_one_sub_card
@@ -964,7 +970,6 @@ theorem innerUncoveredAfterStepMass_eq
         rw [← sum_sub_distrib]
         apply sum_congr rfl
         intro S _
-        push_cast
         ring
       _ = 1 - ∑ e ∈ H.incidentEdges v,
           H.innerNewAcceptanceMass M p e := by
@@ -1018,7 +1023,7 @@ lemma jointUncovered_innerStep_iff_innerNewAcceptedMeeting_eq_empty
         not_disjoint_iff.mpr ⟨v, hve, hvA⟩
       have : e ∈ H.innerNewAcceptedMeeting M S A :=
         (H.mem_innerNewAcceptedMeeting M S A e).2 ⟨heNew, heMeet⟩
-      simpa [hempty] using this
+      simp [hempty] at this
 
 /-- The newly accepted edges meeting `A` inject into `A`: choose a meeting
 vertex for each edge, and use the matching property of the isolated sample.
@@ -1085,9 +1090,11 @@ lemma sum_bernoulliMass_mul_innerNewAcceptedMeeting_card
 def edgesMeeting (H : FiniteHypergraph V E) (A : Finset V) : Finset E :=
   univ.filter fun e ↦ ¬Disjoint (H.support e) A
 
+omit [DecidableEq E] in
 @[simp] lemma mem_edgesMeeting
     (H : FiniteHypergraph V E) (A : Finset V) (e : E) :
     e ∈ H.edgesMeeting A ↔ ¬Disjoint (H.support e) A := by
+  classical
   simp [edgesMeeting]
 
 lemma innerNewAcceptedMeeting_subset_edgesMeeting
@@ -1155,6 +1162,7 @@ lemma innerNewAcceptanceFamilyMass_eq_zero_of_not_isMatching
       (hsub heF) (hsub hfF) hef
   simp [hnot]
 
+omit [DecidableEq E] in
 /-- A set of at most `D` edges through each vertex has at most `|A| D`
 edges meeting `A`.  Vertices of `A` outside `vertexSet` have degree zero,
 so no containment hypothesis on `A` is needed. -/
@@ -1162,6 +1170,7 @@ lemma edgesMeeting_card_le_mul_degree
     (H : FiniteHypergraph V E) (A : Finset V) (D : ℕ)
     (hdeg : ∀ v ∈ H.vertexSet, H.edgeDegree v ≤ D) :
     (H.edgesMeeting A).card ≤ A.card * D := by
+  classical
   have hdeg' (v : V) : H.edgeDegree v ≤ D := by
     by_cases hv : v ∈ H.vertexSet
     · exact hdeg v hv
@@ -1194,36 +1203,43 @@ the multiple-meeting exceptions inside `edgesMeeting`. -/
 def singleMeetingEdges (H : FiniteHypergraph V E) (A : Finset V) : Finset E :=
   H.edgesMeeting A \ H.multiMeetingEdges A
 
+omit [DecidableEq E] in
 @[simp] lemma mem_multiMeetingEdges
     (H : FiniteHypergraph V E) (A : Finset V) (e : E) :
     e ∈ H.multiMeetingEdges A ↔ 2 ≤ (H.support e ∩ A).card := by
+  classical
   constructor
   · exact fun he ↦ (mem_filter.mp he).2
   · intro hcard
     have hne : (H.support e ∩ A).Nonempty :=
       nonempty_iff_ne_empty.mpr (by
         intro hempty
-        simpa [hempty] using hcard)
+        simp [hempty] at hcard)
     have hmeet : ¬Disjoint (H.support e) A :=
       not_disjoint_iff_nonempty_inter.mpr hne
     exact mem_filter.mpr ⟨(H.mem_edgesMeeting A e).2 hmeet, hcard⟩
 
+omit [DecidableEq E] in
 lemma one_le_inter_card_of_mem_edgesMeeting
     (H : FiniteHypergraph V E) (A : Finset V) {e : E}
     (he : e ∈ H.edgesMeeting A) :
     1 ≤ (H.support e ∩ A).card := by
+  classical
   exact card_pos.mpr (not_disjoint_iff_nonempty_inter.mp
     ((H.mem_edgesMeeting A e).1 he))
 
+omit [DecidableEq E] in
 lemma inter_card_eq_one_of_mem_edgesMeeting_not_multi
     (H : FiniteHypergraph V E) (A : Finset V) {e : E}
     (he : e ∈ H.edgesMeeting A) (heMulti : e ∉ H.multiMeetingEdges A) :
     (H.support e ∩ A).card = 1 := by
+  classical
   have hpos := H.one_le_inter_card_of_mem_edgesMeeting A he
   have hnot : ¬2 ≤ (H.support e ∩ A).card := fun htwo ↦
     heMulti ((H.mem_multiMeetingEdges A e).2 htwo)
   omega
 
+omit [DecidableEq E] in
 /-- A nonexceptional edge meeting `A` enlarges `A` by exactly `k - 1`
 vertices. -/
 lemma card_union_support_eq_of_mem_edgesMeeting_not_multi
@@ -1231,6 +1247,7 @@ lemma card_union_support_eq_of_mem_edgesMeeting_not_multi
     (hunif : H.IsUniform k)
     (he : e ∈ H.edgesMeeting A) (heMulti : e ∉ H.multiMeetingEdges A) :
     (A ∪ H.support e).card = A.card + k - 1 := by
+  classical
   have hinter : (A ∩ H.support e).card = 1 := by
     rw [inter_comm]
     exact H.inter_card_eq_one_of_mem_edgesMeeting_not_multi A he heMulti
@@ -1238,9 +1255,11 @@ lemma card_union_support_eq_of_mem_edgesMeeting_not_multi
   rw [hinter, hunif e] at hcount
   omega
 
+omit [DecidableEq E] in
 lemma multiMeetingEdges_subset_edgesMeeting
     (H : FiniteHypergraph V E) (A : Finset V) :
     H.multiMeetingEdges A ⊆ H.edgesMeeting A := by
+  classical
   exact filter_subset _ _
 
 @[simp] lemma mem_singleMeetingEdges
@@ -1337,9 +1356,7 @@ lemma edgeDegree_sub_pairError_le_singleMeetingAt_card
       _ = (A.erase v).card * C := by simp
   have hpartition :
       bad.card + (H.singleMeetingAt A v).card = H.edgeDegree v := by
-    simpa [bad, singleMeetingAt] using
-      card_sdiff_add_card_inter (H.incidentEdges v)
-        (H.singleMeetingEdges A)
+    simp [bad, singleMeetingAt]
   have herase : (A.erase v).card = A.card - 1 := card_erase_of_mem hvA
   rw [herase] at hbadCard
   omega
@@ -1481,7 +1498,7 @@ lemma card_union_biUnion_support_eq_of_matching_subset_singleMeeting
       A ∩ F.biUnion H.support =
         F.biUnion (fun e ↦ A ∩ H.support e) := by
     ext v
-    simp [and_left_comm, and_assoc]
+    simp [and_left_comm]
   have hdisjoint :
       ∀ e ∈ F, ∀ f ∈ F, e ≠ f →
         Disjoint (A ∩ H.support e) (A ∩ H.support f) := by
@@ -1522,6 +1539,7 @@ lemma sum_edgesMeeting_eq_sum_single_add_sum_multi
     exact sdiff_disjoint
   exact sum_union hdisj
 
+omit [DecidableEq E] in
 /-- Low pair degree bounds the number of edges which hit `A` more than
 once.  The deliberately coarse `|A|² C` form is stable under all later
 parameter substitutions. -/
@@ -1530,6 +1548,7 @@ lemma multiMeetingEdges_card_le_sq_mul_pairDegree
     (hpair : ∀ u ∈ H.vertexSet, ∀ v ∈ H.vertexSet, u ≠ v →
       H.edgePairDegree u v ≤ C) :
     (H.multiMeetingEdges A).card ≤ A.card ^ 2 * C := by
+  classical
   let pairEdges : V → V → Finset E := fun u v ↦
     (univ : Finset E).filter fun e ↦
       u ∈ H.support e ∧ v ∈ H.support e
@@ -1580,6 +1599,7 @@ lemma multiMeetingEdges_card_le_sq_mul_pairDegree
       exact Nat.mul_le_mul_right C card_erase_le
     _ = A.card ^ 2 * C := by simp [pow_two, Nat.mul_assoc]
 
+omit [DecidableEq E] in
 /-- Before imposing a uniform codegree cap, multiple-meeting edges are
 controlled by the sum of the pair degrees over ordered distinct pairs in
 `A`.  This form is useful when the codegree hypothesis is naturally stated
@@ -1588,6 +1608,7 @@ lemma multiMeetingEdges_card_le_sum_pairDegree
     (H : FiniteHypergraph V E) (A : Finset V) :
     (H.multiMeetingEdges A).card ≤
       ∑ u ∈ A, ∑ v ∈ A.erase u, H.edgePairDegree u v := by
+  classical
   let pairEdges : V → V → Finset E := fun u v ↦
     (univ : Finset E).filter fun e ↦
       u ∈ H.support e ∧ v ∈ H.support e
@@ -1622,6 +1643,7 @@ lemma multiMeetingEdges_card_le_sum_pairDegree
       intro v _
       exact hpairCard u v
 
+omit [DecidableEq E] in
 /-- Real-valued low codegree bounds the number of edges which meet `A` in
 at least two vertices.  The statement is aligned with the asymptotic
 near-regular hypotheses, so no floor or ceiling loss is introduced. -/
@@ -1632,6 +1654,7 @@ lemma natCast_multiMeetingEdges_card_le_sq_mul_pairDegree_real
       (H.edgePairDegree u v : ℝ) ≤ codegreeUpper) :
     ((H.multiMeetingEdges A).card : ℝ) ≤
       (A.card : ℝ) ^ 2 * codegreeUpper := by
+  classical
   have hpairAll (u v : V) (huv : u ≠ v) :
       (H.edgePairDegree u v : ℝ) ≤ codegreeUpper := by
     by_cases hu : u ∈ H.vertexSet
@@ -1670,11 +1693,13 @@ lemma natCast_multiMeetingEdges_card_le_sq_mul_pairDegree_real
       simp [pow_two]
       ring
 
+omit [DecidableEq E] in
 /-- Double-count incidences between `A` and the edge index set. -/
 lemma sum_edgeDegree_eq_sum_edgesMeeting_inter_card
     (H : FiniteHypergraph V E) (A : Finset V) :
     (∑ v ∈ A, H.edgeDegree v) =
       ∑ e ∈ H.edgesMeeting A, (H.support e ∩ A).card := by
+  classical
   have hdegree (v : V) : H.edgeDegree v =
       ∑ e : E, if v ∈ H.support e then 1 else 0 := by
     unfold edgeDegree
@@ -1708,6 +1733,7 @@ lemma sum_edgeDegree_eq_sum_edgesMeeting_inter_card
       · have hdisj : Disjoint (H.support e) A := not_not.mp hmeet
         simp [hmeet, disjoint_iff_inter_eq_empty.mp hdisj]
 
+omit [DecidableEq E] in
 /-- Incidence excess beyond one per meeting edge can only come from edges
 meeting `A` at least twice. -/
 lemma sum_edgeDegree_le_edgesMeeting_add_multi
@@ -1715,6 +1741,7 @@ lemma sum_edgeDegree_le_edgesMeeting_add_multi
     (hunif : H.IsUniform k) :
     (∑ v ∈ A, H.edgeDegree v) ≤
       (H.edgesMeeting A).card + (H.multiMeetingEdges A).card * k := by
+  classical
   rw [H.sum_edgeDegree_eq_sum_edgesMeeting_inter_card]
   calc
     (∑ e ∈ H.edgesMeeting A, (H.support e ∩ A).card) ≤
@@ -1749,6 +1776,7 @@ lemma sum_edgeDegree_le_edgesMeeting_add_multi
       rw [← sum_filter, hfilter]
       simp
 
+omit [DecidableEq E] in
 /-- Near-regular lower degrees and low pair degree force many distinct edges
 to meet `A`, up to the explicitly bounded multiple-intersection error. -/
 lemma card_mul_degreeLower_le_edgesMeeting_add_pairError
@@ -1759,6 +1787,7 @@ lemma card_mul_degreeLower_le_edgesMeeting_add_pairError
       H.edgePairDegree u v ≤ C) :
     A.card * degreeLower ≤
       (H.edgesMeeting A).card + A.card ^ 2 * C * k := by
+  classical
   calc
     A.card * degreeLower = ∑ _v ∈ A, degreeLower := by simp
     _ ≤ ∑ v ∈ A, H.edgeDegree v := by
@@ -1873,9 +1902,11 @@ lemma sum_bernoulliMass_mul_sampled_offDiag_card
   exact sum_bernoulliMass_mul_indicator_mem_mem p
     (mem_offDiag.mp hz).2.2
 
+omit [DecidableEq E] [Fintype E] in
 /-- Casting the cardinality of `offDiag` gives the real falling factorial. -/
 lemma natCast_offDiag_card (K : Finset E) :
     (K.offDiag.card : ℝ) = (K.card : ℝ) * ((K.card : ℝ) - 1) := by
+  classical
   have hnat : K.offDiag.card = K.card * (K.card - 1) := by
     rw [offDiag_card, Nat.mul_sub_left_distrib]
     simp

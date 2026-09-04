@@ -63,8 +63,7 @@ theorem almostCompleteExactStructuralCase {n a : ℕ}
 /-- Cases D5--D8, followed by the bounded downward missing-edge induction,
 prove the complete local two-order structural step. -/
 theorem almostCompleteStructuralStep : AlmostCompleteStructuralStep := by
-  intro n hn hstrong₁ hstrong₂
-  intro A _ _ hcard a ha G hmissing
+  intro n hn hstrong₁ hstrong₂ A _ _ hcard a ha G hmissing
   by_cases hlow : missingEdgeCount G ≤ n - 4
   · have hexactZero : ∀ H : SimpleGraph A,
         missingEdgeCount H = n - 4 →

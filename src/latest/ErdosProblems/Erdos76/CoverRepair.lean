@@ -57,23 +57,28 @@ lemma badTriples_card_le (G : SimpleGraph V) (z : Sym2 V → ℝ) (α : ℝ) :
 noncomputable def quantizedColor (q : ℕ) (z : Sym2 V → ℝ) : Sym2 V → Fin (q + 1) :=
   fun e ↦ CoverQuantization.label q (z e)
 
-noncomputable def rejectedPattern (q : ℕ) (α : ℝ) (p : Fin (q + 1) × Fin (q + 1) × Fin (q + 1)) : Prop :=
+noncomputable def rejectedPattern (q : ℕ) (α : ℝ)
+    (p : Fin (q + 1) × Fin (q + 1) × Fin (q + 1)) : Prop :=
   CoverQuantization.value p.1 + CoverQuantization.value p.2.1 +
     CoverQuantization.value p.2.2 < 1 - α
 
+omit [DecidableEq V] in
 lemma rejected_subset_badTriples (G : SimpleGraph V) (z : Sym2 V → ℝ) {q : ℕ} (hq : 0 < q)
     {α : ℝ} (hα : 0 < α) :
     PatternRemoval.rejectedTriples G (quantizedColor q z) (rejectedPattern q α) ⊆
       badTriples G z α := by
+  classical
   rintro ⟨a, b, c⟩ h
   simp only [PatternRemoval.rejectedTriples, badTriples, mem_filter, mem_univ, true_and] at h ⊢
   exact ⟨h.1, h.2.1, h.2.2.1, CoverQuantization.sum_lt_of_value_sum_lt hq hα h.2.2.2⟩
 
+omit [DecidableEq V] in
 lemma badTriples_subset_rejected (G : SimpleGraph V) (z : Sym2 V → ℝ)
     (hz : ∀ e ∈ G.edgeFinset, 0 ≤ z e) {q : ℕ} (hq : 0 < q)
     {α : ℝ} (hstep : 3 / (q : ℝ) ≤ α / 2) :
     badTriples G z α ⊆
       PatternRemoval.rejectedTriples G (quantizedColor q z) (rejectedPattern q (α / 2)) := by
+  classical
   rintro ⟨a, b, c⟩ h
   simp only [PatternRemoval.rejectedTriples, badTriples, mem_filter, mem_univ, true_and] at h ⊢
   refine ⟨h.1, h.2.1, h.2.2.1, ?_⟩

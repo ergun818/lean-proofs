@@ -60,10 +60,12 @@ variable [DecidableEq I]
 
 attribute [local instance] Classical.propDecidable
 
+omit [DecidableEq I] [Fintype I] in
 lemma positive_forced_sum_le_three (S : Finset I) (hS : S.card = 3) (z : I → ℝ)
     (hz : ∀ i ∈ S, 0 ≤ z i) (htight : ∑ i ∈ S, z i = 1)
     (F : I → Prop) (hF : ∀ i ∈ S, F i → 1 ≤ z i) :
     (∑ i ∈ S, ((if 0 < z i then (1 : ℝ) else 0) + 2 * (if F i then 1 else 0))) ≤ 3 := by
+  classical
   by_cases hex : ∃ i ∈ S, F i
   · obtain ⟨i, hi, hFi⟩ := hex
     have hzi := hF i hi hFi

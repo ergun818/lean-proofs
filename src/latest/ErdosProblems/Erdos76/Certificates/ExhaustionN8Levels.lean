@@ -25,8 +25,11 @@ def level1 : Array (BitVec (edgeCount 8)) := #[0x200000#28]
 
 def level2 : Array (BitVec (edgeCount 8)) := #[0x600000#28, 0x408000#28]
 
-def level3 : Array (BitVec (edgeCount 8)) := #[0xe00000#28, 0x608000#28, 0xc08000#28, 0x8208000#28, 0x810400#28]
+def level3 : Array (BitVec (edgeCount 8)) :=
+  #[0xe00000#28, 0x608000#28, 0xc08000#28, 0x8208000#28, 0x810400#28]
 
-def level4 : Array (BitVec (edgeCount 8)) := #[0x1e00000#28, 0xe08000#28, 0x1c08000#28, 0x8608000#28, 0x618000#28, 0x1818000#28, 0x610400#28, 0xa10400#28, 0x1810400#28, 0x4210400#28, 0x1020840#28]
+def level4 : Array (BitVec (edgeCount 8)) :=
+  #[0x1e00000#28, 0xe08000#28, 0x1c08000#28, 0x8608000#28, 0x618000#28, 0x1818000#28, 0x610400#28,
+    0xa10400#28, 0x1810400#28, 0x4210400#28, 0x1020840#28]
 
 end Erdos76.CertificateExhaustion.Certificates.ExhaustionN8

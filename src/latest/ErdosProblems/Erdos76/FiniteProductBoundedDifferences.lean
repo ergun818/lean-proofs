@@ -93,8 +93,10 @@ lemma sum_mass (w : ∀ i, Omega i → ℝ) (hw : ∀ i, ∑ a, w i a = 1) :
         (Finset.prod_univ_sum (fun i ↦ (univ : Finset (Omega i))) w)
     _ = 1 := by simp [hw]
 
+omit [(i : I) → Fintype (Omega i)] [DecidableEq I] in
 lemma mass_nonneg (w : ∀ i, Omega i → ℝ) (hw₀ : ∀ i a, 0 ≤ w i a)
     (x : ∀ i, Omega i) : 0 ≤ mass w x := by
+  classical
   exact prod_nonneg fun i _ ↦ hw₀ i (x i)
 
 private lemma finite_hoeffding
@@ -119,7 +121,7 @@ private lemma finite_hoeffding
   have hne : Nonempty A := by
     by_contra hn
     have : IsEmpty A := not_nonempty_iff.mp hn
-    simpa using hw
+    simp at hw
   let a₀ : A := Classical.choice hne
   have hlohi : lo ≤ hi := (hX a₀).1.trans (hX a₀).2
   have hintegral (f : A → ℝ) : ∫ a, f a ∂μ = ∑ a, w a * f a := by
@@ -155,7 +157,7 @@ private lemma finite_hoeffding_of_pairwise
   have hne : Nonempty A := by
     by_contra hn
     have : IsEmpty A := not_nonempty_iff.mp hn
-    simpa using hw
+    simp at hw
   let S : Finset ℝ := univ.image X
   have hS : S.Nonempty := by
     change (univ.image X).Nonempty
@@ -255,7 +257,7 @@ private theorem centered_mgf_le_fin
       rw [← (Fin.consEquiv Omega).sum_comp]
       simp only [Fintype.sum_prod_type]
       rw [sum_comm]
-      simp only [mass, Fin.prod_univ_succ, Fin.cons_zero, Fin.cons_succ, wt]
+      simp only [mass, Fin.prod_univ_succ, wt]
       calc
         ∑ y, ∑ a,
             (w 0 a * ∏ i, w i.succ (y i)) *

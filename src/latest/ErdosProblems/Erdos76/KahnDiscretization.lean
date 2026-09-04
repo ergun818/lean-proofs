@@ -49,20 +49,30 @@ def copyHypergraph (H : FiniteHypergraph V E) (D : ℕ) (w : E → ℝ) :
   support c := H.support c.1
   support_subset_vertexSet c := H.support_subset_vertexSet c.1
 
+omit [DecidableEq E] [DecidableEq V] [Fintype E] in
 @[simp] lemma copyHypergraph_vertexSet (H : FiniteHypergraph V E) (D : ℕ) (w : E → ℝ) :
-    (copyHypergraph H D w).vertexSet = H.vertexSet := rfl
+    (copyHypergraph H D w).vertexSet = H.vertexSet := by
+  classical
+  exact rfl
 
+omit [DecidableEq E] [DecidableEq V] [Fintype E] in
 @[simp] lemma copyHypergraph_support (H : FiniteHypergraph V E) (D : ℕ) (w : E → ℝ)
     (c : CopyIndex D w) :
-    (copyHypergraph H D w).support c = H.support c.1 := rfl
+    (copyHypergraph H D w).support c = H.support c.1 := by
+  classical
+  exact rfl
 
+omit [DecidableEq E] [DecidableEq V] [Fintype E] in
 lemma copyHypergraph_isUniform {H : FiniteHypergraph V E} {D : ℕ} {w : E → ℝ} {k : ℕ}
     (hH : H.IsUniform k) : (copyHypergraph H D w).IsUniform k := by
+  classical
   intro c
   exact hH c.1
 
+omit [DecidableEq E] in
 lemma card_copyIndex (D : ℕ) (w : E → ℝ) :
     Fintype.card (CopyIndex D w) = ∑ e, ⌊(D : ℝ) * w e⌋₊ := by
+  classical
   simp [CopyIndex, Fintype.card_sigma]
 
 /-- Filtering the copy type by a predicate on original edges is the sigma type over the
@@ -74,8 +84,10 @@ def copySubtypeEquiv (D : ℕ) (w : E → ℝ) (p : E → Prop) :
   left_inv c := by cases c with | mk c hc => cases c; rfl
   right_inv c := by cases c with | mk e i => cases e; rfl
 
+omit [DecidableEq E] in
 lemma card_copyIndex_filter (D : ℕ) (w : E → ℝ) (p : E → Prop) [DecidablePred p] :
     #{c : CopyIndex D w | p c.1} = ∑ e with p e, ⌊(D : ℝ) * w e⌋₊ := by
+  classical
   calc
     #{c : CopyIndex D w | p c.1} = Fintype.card {c : CopyIndex D w // p c.1} :=
       (Fintype.card_subtype (fun c : CopyIndex D w ↦ p c.1)).symm
@@ -87,25 +99,31 @@ lemma card_copyIndex_filter (D : ℕ) (w : E → ℝ) (p : E → Prop) [Decidabl
       (Finset.sum_subtype ((Finset.univ : Finset E).filter p) (by simp)
         (fun e ↦ ⌊(D : ℝ) * w e⌋₊)).symm
 
+omit [DecidableEq E] in
 lemma edgeDegree_copyHypergraph (H : FiniteHypergraph V E) (D : ℕ) (w : E → ℝ)
     (v : V) :
     (copyHypergraph H D w).edgeDegree v =
       ∑ e with v ∈ H.support e, ⌊(D : ℝ) * w e⌋₊ := by
+  classical
   rw [FiniteHypergraph.edgeDegree]
   change #{c : CopyIndex D w | v ∈ H.support c.1} = _
   exact card_copyIndex_filter D w (fun e ↦ v ∈ H.support e)
 
+omit [DecidableEq E] in
 lemma edgePairDegree_copyHypergraph (H : FiniteHypergraph V E) (D : ℕ) (w : E → ℝ)
     (u v : V) :
     (copyHypergraph H D w).edgePairDegree u v =
       ∑ e with u ∈ H.support e ∧ v ∈ H.support e, ⌊(D : ℝ) * w e⌋₊ := by
+  classical
   rw [FiniteHypergraph.edgePairDegree]
   change #{c : CopyIndex D w | u ∈ H.support c.1 ∧ v ∈ H.support c.1} = _
   exact card_copyIndex_filter D w (fun e ↦ u ∈ H.support e ∧ v ∈ H.support e)
 
+omit [DecidableEq E] in
 lemma edgeDegree_copyHypergraph_le {H : FiniteHypergraph V E} {D : ℕ} {w : E → ℝ}
     (hw : H.IsFractionalMatching w) {v : V} (hv : v ∈ H.vertexSet) :
     (copyHypergraph H D w).edgeDegree v ≤ D := by
+  classical
   rw [edgeDegree_copyHypergraph]
   apply_mod_cast (show
     (∑ e with v ∈ H.support e, (⌊(D : ℝ) * w e⌋₊ : ℝ)) ≤ (D : ℝ) from ?_)
@@ -121,10 +139,12 @@ lemma edgeDegree_copyHypergraph_le {H : FiniteHypergraph V E} {D : ℕ} {w : E �
       mul_le_mul_of_nonneg_left (hw.vertexLoad_le_one hv) (Nat.cast_nonneg D)
     _ = (D : ℝ) := mul_one _
 
+omit [DecidableEq E] in
 lemma edgePairDegree_copyHypergraph_lt {H : FiniteHypergraph V E} {D : ℕ} {w : E → ℝ}
     {eta : ℝ} (hD : 0 < D) (hw : H.IsFractionalMatching w)
     (hpair : H.PairCodegreeLT w eta) {u v : V} (huv : u ≠ v) :
     ((copyHypergraph H D w).edgePairDegree u v : ℝ) < eta * (D : ℝ) := by
+  classical
   rw [edgePairDegree_copyHypergraph, Nat.cast_sum]
   calc
     (∑ e with u ∈ H.support e ∧ v ∈ H.support e,
@@ -139,10 +159,12 @@ lemma edgePairDegree_copyHypergraph_lt {H : FiniteHypergraph V E} {D : ℕ} {w :
       mul_lt_mul_of_pos_left (hpair u v huv) (Nat.cast_pos.mpr hD)
     _ = eta * (D : ℝ) := mul_comm _ _
 
+omit [DecidableEq E] in
 /-- The total number of copies loses less than one copy per original indexed edge. -/
 lemma card_copyIndex_lower {H : FiniteHypergraph V E} {D : ℕ} {w : E → ℝ}
-    (hw : H.IsFractionalMatching w) :
+    (_ : H.IsFractionalMatching w) :
     (D : ℝ) * H.totalWeight w - Fintype.card E ≤ Fintype.card (CopyIndex D w) := by
+  classical
   rw [card_copyIndex, Nat.cast_sum]
   calc
     (D : ℝ) * H.totalWeight w - Fintype.card E =
@@ -159,9 +181,11 @@ lemma card_copyIndex_lower {H : FiniteHypergraph V E} {D : ℕ} {w : E → ℝ}
 def projectMatching (D : ℕ) (w : E → ℝ) (M : Finset (CopyIndex D w)) : Finset E :=
   M.image Sigma.fst
 
+omit [DecidableEq V] [Fintype E] in
 lemma projectMatching_isMatching {H : FiniteHypergraph V E} {D : ℕ} {w : E → ℝ}
     {M : Finset (CopyIndex D w)} (hM : (copyHypergraph H D w).IsMatching M) :
     H.IsMatching (projectMatching D w M) := by
+  classical
   rw [FiniteHypergraph.IsMatching]
   rintro e he f hf hef
   obtain ⟨c, hc, rfl⟩ := Finset.mem_image.mp he
@@ -169,13 +193,15 @@ lemma projectMatching_isMatching {H : FiniteHypergraph V E} {D : ℕ} {w : E →
   have hcd : c ≠ d := by
     intro h
     apply hef
-    simpa [h]
+    simp [h]
   exact hM hc hd hcd
 
+omit [DecidableEq V] [Fintype E] in
 lemma projectMatching_card {H : FiniteHypergraph V E} {D : ℕ} {w : E → ℝ}
     {k : ℕ} (hk : 0 < k) (hunif : H.IsUniform k)
     {M : Finset (CopyIndex D w)} (hM : (copyHypergraph H D w).IsMatching M) :
     (projectMatching D w M).card = M.card := by
+  classical
   rw [projectMatching, Finset.card_image_iff]
   intro c hc d hd hfst
   by_contra hcd

@@ -50,16 +50,20 @@ def fixedCardSubsets (m : ℕ) : Finset (Finset A) :=
 def fixedCardSubsetsContaining (m : ℕ) (s : Finset A) : Finset (Finset A) :=
   (fixedCardSubsets m).filter (s ⊆ ·)
 
+omit [DecidableEq A] in
 @[simp] lemma mem_fixedCardSubsets {m : ℕ} {s : Finset A} :
     s ∈ fixedCardSubsets m ↔ s.card = m := by
+  classical
   simp [fixedCardSubsets]
 
 @[simp] lemma mem_fixedCardSubsetsContaining {m : ℕ} {s t : Finset A} :
     t ∈ fixedCardSubsetsContaining m s ↔ t.card = m ∧ s ⊆ t := by
-  simp [fixedCardSubsetsContaining, and_comm]
+  simp [fixedCardSubsetsContaining]
 
+omit [DecidableEq A] in
 @[simp] lemma card_fixedCardSubsets (m : ℕ) :
     (fixedCardSubsets (A := A) m).card = (Fintype.card A).choose m := by
+  classical
   simp [fixedCardSubsets, card_powersetCard]
 
 /-- Exact count of the `m`-subsets which contain `s`. -/
@@ -82,7 +86,7 @@ lemma card_fixedCardSubsetsContaining_triple {m : ℕ} {t : Finset A}
       (Fintype.card A - 3).choose (m - 3) := by
   simpa [ht] using card_fixedCardSubsetsContaining (A := A) m t (by omega)
 
-lemma choose_sub_two_pos {m n : ℕ} (hm : 2 ≤ m) (hmn : m ≤ n) :
+lemma choose_sub_two_pos {m n : ℕ} (_ : 2 ≤ m) (hmn : m ≤ n) :
     0 < (n - 2).choose (m - 2) := by
   exact Nat.choose_pos (Nat.sub_le_sub_right hmn 2)
 
@@ -116,7 +120,7 @@ lemma cast_choose_div_choose_sub_two {m n : ℕ} (hm : 2 ≤ m) (hmn : m ≤ n) 
       rw [Nat.cast_choose_two, Nat.cast_choose_two]
       rw [Nat.cast_sub (by omega : 1 ≤ n), Nat.cast_sub (by omega : 1 ≤ m)]
       field_simp
-      <;> ring
+      ring
 
 /-- Double-count a fixed triple inside the `m`-sets through a fixed pair. -/
 lemma choose_sub_two_mul_sub_two {m n : ℕ} (hm : 3 ≤ m) :
@@ -245,7 +249,7 @@ private lemma totalWeight_averagedMonoWeight
 /-- Exact total-weight lower bound furnished by fam averaging. -/
 lemma averagedMonoWeight_totalWeight_lower
     {fam : Finset A → MonoTriangle G → ℝ}
-    {q : ℝ} (hm : 2 ≤ m) (hmA : m ≤ Fintype.card A)
+    {q : ℝ} (_ : 2 ≤ m) (_ : m ≤ Fintype.card A)
     (hsize : ∀ S ∈ fixedCardSubsets m,
       q ≤ (monochromaticTriangleHypergraph G).totalWeight (fam S)) :
     ((Fintype.card A).choose m : ℝ) /
@@ -276,7 +280,7 @@ through that triangle among the `m`-sets through one of its edges. -/
 lemma averagedMonoWeight_le_choose_ratio
     {fam : Finset A → MonoTriangle G → ℝ}
     (hlocal : IsLocalAveragingFamily G m fam)
-    (hm : 3 ≤ m) (hmA : m ≤ Fintype.card A) (t : MonoTriangle G) :
+    (hm : 3 ≤ m) (_ : m ≤ Fintype.card A) (t : MonoTriangle G) :
     averagedMonoWeight G m fam t ≤
       ((Fintype.card A - 3).choose (m - 3) : ℝ) /
         ((Fintype.card A - 2).choose (m - 2) : ℝ) := by
@@ -290,6 +294,7 @@ lemma averagedMonoWeight_le_choose_ratio
     _ = ((Fintype.card A - 3).choose (m - 3) : ℝ) :=
       sum_triple_subset_indicator G m t hm
 
+omit [Fintype A] in
 /-- Two distinct two-element subsets of a three-element set determine that
 set.  This is the elementary linearity property of the triangle hypergraph. -/
 lemma union_eq_of_two_pairs {e f t : Finset A}
@@ -307,11 +312,13 @@ lemma union_eq_of_two_pairs {e f t : Finset A}
     eq_of_subset_of_card_le subset_union_right (by omega)
   exact hef (heq.trans hfeq.symm)
 
+omit [DecidableEq A] [Fintype A] in
 lemma two_pairs_determine_triangle {e f s t : Finset A}
     (hef : e ≠ f)
     (hes : e ∈ triangleEdgeSet s) (hfs : f ∈ triangleEdgeSet s)
     (het : e ∈ triangleEdgeSet t) (hft : f ∈ triangleEdgeSet t)
     (hscard : s.card = 3) (htcard : t.card = 3) : s = t := by
+  classical
   have hes' := mem_powersetCard.mp hes
   have hfs' := mem_powersetCard.mp hfs
   have het' := mem_powersetCard.mp het
@@ -445,8 +452,10 @@ lemma monoColorWeight_le_one {wR wB : Finset A → ℝ}
   · exact hwR.weight_le_one G hred
   · exact hwB.weight_le_one Gᶜ (monoTriangle_blue_of_not_red G t hred)
 
+omit [DecidableEq A] [Fintype A] in
 private lemma not_red_of_blue {t : Finset A} (hblue : Gᶜ.IsNClique 3 t) :
     ¬ G.IsNClique 3 t := by
+  classical
   intro hred
   have hle := red_blue_triangle_inter_card_le_one hred hblue
   have hcard : (t ∩ t).card = 3 := by simpa using hred.card_eq

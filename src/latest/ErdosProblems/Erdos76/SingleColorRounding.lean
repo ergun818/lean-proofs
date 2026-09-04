@@ -19,7 +19,10 @@ noncomputable def triangleHypergraph (G : SimpleGraph V) :
   support t := triangleEdgeSet t.val
   support_subset_vertexSet t := triangleEdgeSet_subset_univ_edges t.val
 
-lemma triangleHypergraph_uniform (G : SimpleGraph V) : (triangleHypergraph G).IsUniform 3 :=
+omit [DecidableEq V] in
+lemma triangleHypergraph_uniform (G : SimpleGraph V) : (triangleHypergraph G).IsUniform 3 := by
+  classical
+  exact
   fun t ↦ card_triangleEdgeSet t.property.card_eq
 
 lemma vertexLoad_pair (G : SimpleGraph V) (w : Finset V → ℝ) {a b : V} (hab : a ≠ b) :
@@ -28,7 +31,7 @@ lemma vertexLoad_pair (G : SimpleGraph V) (w : Finset V → ℝ) {a b : V} (hab 
   have hpair : ∀ t : Finset V, {a, b} ∈ triangleEdgeSet t ↔ s(a, b) ∈ t.sym2 := by
     intro t
     simp [triangleEdgeSet, mem_powersetCard, insert_subset_iff, singleton_subset_iff,
-      hab, mk_mem_sym2_iff]
+      hab]
   simp only [FiniteHypergraph.vertexLoad, triangleHypergraph, sum_filter, hpair,
     fractionalEdgeLoad]
   exact (sum_subtype (G.cliqueFinset 3) (fun t ↦ SimpleGraph.mem_cliqueFinset_iff)
@@ -105,7 +108,8 @@ theorem small_weight_rounding (ζ : ℝ) (hζ : 0 < ζ) :
   · intro t ht
     obtain ⟨t', ht', rfl⟩ := mem_image.mp ht
     exact t'.property
-  · have hcard : (M.image Subtype.val).card = M.card := card_image_of_injective M Subtype.val_injective
+  · have hcard : (M.image Subtype.val).card = M.card :=
+      card_image_of_injective M Subtype.val_injective
     have htotal : (triangleHypergraph G).totalWeight (fun t ↦ w t.val) = fractionalSize G w :=
       (sum_subtype (G.cliqueFinset 3) (fun t ↦ SimpleGraph.mem_cliqueFinset_iff) w).symm
     rw [hcard]

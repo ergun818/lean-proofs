@@ -32,31 +32,42 @@ noncomputable def degree (G : SimpleGraph V) (p : V → ℝ) (i : V) : ℝ := by
   classical
   exact ∑ j, if G.Adj i j then p j else 0
 
+omit [DecidableEq V] [Fintype V] in
 lemma doubleCommon_symm {R B : SimpleGraph V} {i j : V}
     (h : DoubleCommon R B i j) : DoubleCommon R B j i := by
+  classical
   rcases h with ⟨⟨a, ha, ha'⟩, ⟨b, hb, hb'⟩⟩
   exact ⟨⟨a, ha', ha⟩, ⟨b, hb', hb⟩⟩
 
+omit [DecidableEq V] [Fintype V] in
 lemma doubleCommon_swap {R B : SimpleGraph V} {i j : V} :
-    DoubleCommon R B i j ↔ DoubleCommon B R i j := and_comm
+    DoubleCommon R B i j ↔ DoubleCommon B R i j := by
+  classical
+  exact and_comm
 
+omit [DecidableEq V] [Fintype V] in
 lemma doubleCommon_self {R B : SimpleGraph V} {i j : V}
     (h : DoubleCommon R B i j) : DoubleCommon R B i i := by
+  classical
   rcases h with ⟨⟨a, ha, _⟩, ⟨b, hb, _⟩⟩
   exact ⟨⟨a, ha, ha⟩, ⟨b, hb, hb⟩⟩
 
+omit [DecidableEq V] [Fintype V] in
 lemma doubleCommon_nonadj {R B : SimpleGraph V} (hR : NoTriangle R)
     (hB : NoTriangle B) {i j : V} (h : DoubleCommon R B i j) :
     ¬ R.Adj i j ∧ ¬ B.Adj i j := by
+  classical
   rcases h with ⟨⟨a, ha, ha'⟩, ⟨b, hb, hb'⟩⟩
   exact ⟨fun hij ↦ hR i j a hij ha' ha, fun hij ↦ hB i j b hij hb' hb⟩
 
+omit [DecidableEq V] [Fintype V] in
 lemma kernel_symm (R B : SimpleGraph V) (i j : V) : kernel R B i j = kernel R B j i := by
   classical
   have hD : DoubleCommon R B i j ↔ DoubleCommon R B j i :=
     ⟨doubleCommon_symm, doubleCommon_symm⟩
   simp only [kernel, R.adj_comm, B.adj_comm, hD]
 
+omit [DecidableEq V] [Fintype V] in
 lemma kernel_zero_curvature {R B : SimpleGraph V} (hR : NoTriangle R)
     (hB : NoTriangle B) {i j : V} (h : DoubleCommon R B i j) :
     kernel R B i i + kernel R B j j - 2 * kernel R B i j = 0 := by
@@ -64,16 +75,22 @@ lemma kernel_zero_curvature {R B : SimpleGraph V} (hR : NoTriangle R)
   obtain ⟨hijR, hijB⟩ := doubleCommon_nonadj hR hB h
   norm_num [kernel, h, doubleCommon_self h, doubleCommon_self (doubleCommon_symm h), hijR, hijB]
 
+omit [DecidableEq V] in
 lemma degree_nonneg {G : SimpleGraph V} {p : V → ℝ} (hp : ∀ i, 0 ≤ p i) (i : V) :
     0 ≤ degree G p i := by
   classical
-  exact sum_nonneg fun j _ ↦ by split_ifs; exact hp j; exact le_rfl
+  exact sum_nonneg fun j _ ↦ by
+    split_ifs
+    · exact hp j
+    · exact le_rfl
 
+omit [DecidableEq V] in
 lemma degree_zero_of_no_neighbor {G : SimpleGraph V} (p : V → ℝ) {i : V}
     (hi : ∀ j, ¬G.Adj i j) : degree G p i = 0 := by
   classical
   simp [degree, hi]
 
+omit [DecidableEq V] in
 lemma degree_eq_support_sum (G : SimpleGraph V) (p : V → ℝ) (i : V) :
     degree G p i = ∑ j ∈ WeightOptimization.support p, if G.Adj i j then p j else 0 := by
   classical
@@ -82,6 +99,7 @@ lemma degree_eq_support_sum (G : SimpleGraph V) (p : V → ℝ) (i : V) :
   have hpj : p j = 0 := not_not.mp (WeightOptimization.mem_support.not.mp hj)
   simp [hpj]
 
+omit [DecidableEq V] in
 lemma adjacent_degree_sum_le {G : SimpleGraph V} (hG : NoTriangle G)
     {p : V → ℝ} (hp : p ∈ stdSimplex ℝ V) {i j : V} (hij : G.Adj i j) :
     degree G p i + degree G p j ≤ 1 := by
@@ -96,6 +114,7 @@ lemma adjacent_degree_sum_le {G : SimpleGraph V} (hG : NoTriangle G)
   · simp [hik, hjk]
   · simpa [hik, hjk] using hp.1 k
 
+omit [DecidableEq V] in
 lemma row_kernel_on_support {R B : SimpleGraph V} {p : V → ℝ}
     (hp : p ∈ stdSimplex ℝ V)
     (hD : ∀ i j, i ≠ j → 0 < p i → 0 < p j → ¬DoubleCommon R B i j)
@@ -117,11 +136,13 @@ lemma row_kernel_on_support {R B : SimpleGraph V} {p : V → ℝ}
     sum_sub_distrib, sum_add_distrib, mul_assoc, ← mul_sum, hsum]
   congr 2 <;> apply sum_congr rfl <;> intro j _ <;> split_ifs <;> simp
 
+omit [DecidableEq V] [Fintype V] in
 /-- A constant counted over a predicate with at most one witness is at most
 that constant. This is used twice to count two-colour paths. -/
 lemma sum_indicator_le {S : Finset V} {P : V → Prop} [DecidablePred P]
     (huniq : ∀ i ∈ S, ∀ j ∈ S, P i → P j → i = j) {c : ℝ} (hc : 0 ≤ c) :
     (∑ i ∈ S, if P i then c else 0) ≤ c := by
+  classical
   by_cases hex : ∃ i ∈ S, P i
   · obtain ⟨i, hi, hPi⟩ := hex
     rw [sum_eq_single i]
@@ -135,6 +156,7 @@ lemma sum_indicator_le {S : Finset V} {P : V → Prop} [DecidablePred P]
       sum_eq_zero fun i hi ↦ by simp [hnone i hi]
     simpa [hzero] using hc
 
+omit [DecidableEq V] in
 lemma opposite_degree_sum_le_one {R B : SimpleGraph V} {p : V → ℝ}
     (hp : p ∈ stdSimplex ℝ V)
     (hD : ∀ i j, i ≠ j → 0 < p i → 0 < p j → ¬DoubleCommon R B i j)
@@ -155,6 +177,7 @@ lemma opposite_degree_sum_le_one {R B : SimpleGraph V} {p : V → ℝ}
   exact hD i j hij hip hjp
     ⟨⟨v, (mem_filter.mp hi).2.symm, (mem_filter.mp hj).2.symm⟩, ⟨x, hix, hjx⟩⟩
 
+omit [DecidableEq V] in
 lemma stationary_degree_lt_half {R B : SimpleGraph V} (hR : NoTriangle R)
     {p : V → ℝ} (hp : p ∈ stdSimplex ℝ V)
     (hD : ∀ i j, i ≠ j → 0 < p i → 0 < p j → ¬DoubleCommon R B i j)
@@ -162,6 +185,7 @@ lemma stationary_degree_lt_half {R B : SimpleGraph V} (hR : NoTriangle R)
     (hstation : ∀ i, 0 < p i → degree R p i + degree B p i -
       2 * (if DoubleCommon R B i i then p i else 0) = c)
     (v : V) : degree R p v < 1 / 2 := by
+  classical
   by_contra! hv
   let S := (WeightOptimization.support p).filter (R.Adj v)
   have hsum : degree R p v = ∑ u ∈ S, p u := by
@@ -195,10 +219,12 @@ lemma stationary_degree_lt_half {R B : SimpleGraph V} (hR : NoTriangle R)
   change (∑ u ∈ S, degree B p u) ≤ 1 at hupper
   linarith
 
+omit [DecidableEq V] in
 lemma sum_degree_product_le_one {R B : SimpleGraph V} {p : V → ℝ}
     (hp : p ∈ stdSimplex ℝ V)
     (hD : ∀ i j, i ≠ j → 0 < p i → 0 < p j → ¬DoubleCommon R B i j) :
     (∑ v ∈ WeightOptimization.support p, degree R p v * degree B p v) ≤ 1 := by
+  classical
   have hexpand : (∑ v ∈ WeightOptimization.support p, degree R p v * degree B p v) =
       ∑ a, ∑ b, ∑ v ∈ WeightOptimization.support p,
         if R.Adj v a ∧ B.Adj v b then p a * p b else 0 := by
@@ -228,11 +254,13 @@ lemma sum_degree_product_le_one {R B : SimpleGraph V} {p : V → ℝ}
         ⟨⟨a, hiP.1, hjP.1⟩, ⟨b, hiP.2, hjP.2⟩⟩
     _ = 1 := by simp [← mul_sum, hp.2]
 
+omit [DecidableEq V] in
 lemma stationary_value_le_half {R B : SimpleGraph V} (hR : NoTriangle R)
     (hB : NoTriangle B) {p : V → ℝ} (hp : p ∈ stdSimplex ℝ V)
     (hD : ∀ i j, i ≠ j → 0 < p i → 0 < p j → ¬DoubleCommon R B i j)
     {c : ℝ} (hstation : ∀ i, 0 < p i → degree R p i + degree B p i -
       2 * (if DoubleCommon R B i i then p i else 0) = c) : c ≤ 1 / 2 := by
+  classical
   by_contra! hc
   have hred := stationary_degree_lt_half hR hp hD hc hstation
   have hblue : ∀ v, degree B p v < 1 / 2 :=
@@ -277,6 +305,7 @@ lemma stationary_value_le_half {R B : SimpleGraph V} (hR : NoTriangle R)
   have hbound := sum_degree_product_le_one hp hD
   linarith
 
+omit [DecidableEq V] in
 /-- The weighted counting inequality, in ordered-pair normalization. The
 quadratic form is twice the edge-minus-penalty objective. -/
 theorem quadratic_kernel_le_half (R B : SimpleGraph V) (hR : NoTriangle R)
@@ -299,6 +328,7 @@ theorem quadratic_kernel_le_half (R B : SimpleGraph V) (hR : NoTriangle R)
   rw [← row_kernel_on_support hq hD hi]
   exact hrow i hi
 
+omit [DecidableEq V] in
 lemma sum_kernel_le (R B : SimpleGraph V) (hR : NoTriangle R) (hB : NoTriangle B) :
     (∑ i, ∑ j, kernel R B i j) ≤ (Fintype.card V : ℝ) ^ 2 / 2 := by
   classical
@@ -326,23 +356,27 @@ lemma sum_kernel_le (R B : SimpleGraph V) (hR : NoTriangle R) (hB : NoTriangle B
 
 def doubleCommonGraph (R B : SimpleGraph V) : SimpleGraph V where
   Adj i j := i ≠ j ∧ DoubleCommon R B i j
-  symm := ⟨fun i j h ↦ ⟨Ne.symm h.1, doubleCommon_symm h.2⟩⟩
-  loopless := ⟨fun i h ↦ h.1 rfl⟩
+  symm := ⟨fun _ _ h ↦ ⟨Ne.symm h.1, doubleCommon_symm h.2⟩⟩
+  loopless := ⟨fun _ h ↦ h.1 rfl⟩
 
+omit [DecidableEq V] in
 lemma sum_adj_indicator (G : SimpleGraph V) :
     (∑ i, ∑ j, if G.Adj i j then (1 : ℝ) else 0) = 2 * G.edgeFinset.card := by
+  classical
   have hdegree : ∀ i, (∑ j, if G.Adj i j then (1 : ℝ) else 0) = (G.degree i : ℝ) := by
     intro i
     simp [SimpleGraph.degree, SimpleGraph.neighborFinset_def]
   simp_rw [hdegree]
   exact_mod_cast G.sum_degrees_eq_twice_card_edges
 
+omit [DecidableEq V] in
 /-- Finite unweighted form. `doubleCommonGraph` counts unordered distinct
 pairs with a common neighbour of each colour. -/
 theorem edge_count_bound (R B : SimpleGraph V) (hR : NoTriangle R) (hB : NoTriangle B) :
     (R.edgeFinset.card : ℝ) + B.edgeFinset.card -
       2 * (doubleCommonGraph R B).edgeFinset.card ≤
         (Fintype.card V : ℝ) ^ 2 / 4 + Fintype.card V := by
+  classical
   let D := doubleCommonGraph R B
   have hpoint : ∀ i j,
       (if R.Adj i j then (1 : ℝ) else 0) + (if B.Adj i j then 1 else 0) -

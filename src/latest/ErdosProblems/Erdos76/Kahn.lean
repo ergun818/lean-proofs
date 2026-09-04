@@ -37,6 +37,7 @@ namespace FiniteHypergraph
 
 variable {V E : Type*} [DecidableEq V] [Fintype E] [DecidableEq E]
 
+omit [DecidableEq E] in
 /-- Double-counting incidences: the sum of the vertex loads is the sum of the
 edge weights multiplied by the sizes of their supports. -/
 lemma sum_vertexLoad_eq_sum_card_mul (H : FiniteHypergraph V E) (w : E → ℝ) :
@@ -58,11 +59,13 @@ lemma sum_vertexLoad_eq_sum_card_mul (H : FiniteHypergraph V E) (w : E → ℝ) 
   rw [hfilter]
   simp
 
+omit [DecidableEq E] in
 /-- A fractional matching in a `k`-uniform hypergraph has total weight at most
 `|V| / k`.  The multiplication form avoids division and also covers `k = 0`. -/
 lemma card_mul_totalWeight_le_vertexSet_card {H : FiniteHypergraph V E} {w : E → ℝ}
     {k : ℕ} (hunif : H.IsUniform k) (hw : H.IsFractionalMatching w) :
     (k : ℝ) * H.totalWeight w ≤ H.vertexSet.card := by
+  classical
   calc
     (k : ℝ) * H.totalWeight w = ∑ e, ((H.support e).card : ℝ) * w e := by
       simp only [totalWeight]
@@ -76,22 +79,26 @@ lemma card_mul_totalWeight_le_vertexSet_card {H : FiniteHypergraph V E} {w : E �
       exact sum_le_sum fun v hv ↦ hw.vertexLoad_le_one hv
     _ = H.vertexSet.card := by simp
 
+omit [DecidableEq E] [DecidableEq V] [Fintype E] in
 /-- In a positive-uniform hypergraph, every indexed edge is supported inside
 the declared vertex set and hence the vertex set is nonempty when `E` is. -/
 lemma support_nonempty_of_uniform {H : FiniteHypergraph V E} {k : ℕ}
     (hk : 0 < k) (hunif : H.IsUniform k) (e : E) : (H.support e).Nonempty := by
+  classical
   rw [nonempty_iff_ne_empty]
   intro hempty
   have := hunif e
   simp [hempty] at this
   omega
 
+omit [DecidableEq E] in
 /-- For rank at least two, the codegree hypothesis bounds every individual
 edge weight: choose two distinct vertices in its support. -/
 lemma weight_lt_of_pairCodegreeLT {H : FiniteHypergraph V E} {w : E → ℝ}
     {k : ℕ} {delta : ℝ} (hk : 2 ≤ k) (hunif : H.IsUniform k)
     (hw : H.IsFractionalMatching w) (hcodeg : H.PairCodegreeLT w delta) (e : E) :
     w e < delta := by
+  classical
   have hcard : 2 ≤ (H.support e).card := by simpa [hunif e] using hk
   obtain ⟨x, hx, y, hy, hxy⟩ := one_lt_card.mp (by omega : 1 < (H.support e).card)
   have he_le : w e ≤ H.pairLoad w x y := by
@@ -99,6 +106,7 @@ lemma weight_lt_of_pairCodegreeLT {H : FiniteHypergraph V E} {w : E → ℝ}
     exact single_le_sum (fun f _ ↦ hw.nonneg f) (mem_filter.mpr ⟨mem_univ e, hx, hy⟩)
   exact he_le.trans_lt (hcodeg x y hxy)
 
+omit [DecidableEq E] in
 /-- If the permitted additive error is at least `1/k` of the vertex set, the
 empty matching already proves the desired conclusion. -/
 lemma exists_matching_of_inv_nat_le_error {H : FiniteHypergraph V E} {w : E → ℝ}
@@ -106,6 +114,7 @@ lemma exists_matching_of_inv_nat_le_error {H : FiniteHypergraph V E} {w : E → 
     (hw : H.IsFractionalMatching w) (hzeta : (k : ℝ)⁻¹ ≤ zeta) :
     ∃ M : Finset E, H.IsMatching M ∧
       H.totalWeight w ≤ (M.card : ℝ) + zeta * H.vertexSet.card := by
+  classical
   refine ⟨∅, H.empty_isMatching, ?_⟩
   simp only [card_empty, Nat.cast_zero, zero_add]
   have hkR : (0 : ℝ) < k := by exact_mod_cast hk
@@ -145,36 +154,50 @@ def collectParallel (H : FiniteHypergraph V E) :
 def collectedWeight (H : FiniteHypergraph V E) (w : E → ℝ) (s : H.SupportIndex) : ℝ :=
   ∑ e with H.support e = s.1, w e
 
+omit [DecidableEq E] in
 @[simp] lemma collectParallel_vertexSet (H : FiniteHypergraph V E) :
-    H.collectParallel.vertexSet = H.vertexSet := rfl
+    H.collectParallel.vertexSet = H.vertexSet := by
+  classical
+  exact rfl
 
+omit [DecidableEq E] in
 @[simp] lemma collectParallel_support (H : FiniteHypergraph V E) (s : H.SupportIndex) :
-    H.collectParallel.support s = s.1 := rfl
+    H.collectParallel.support s = s.1 := by
+  classical
+  exact rfl
 
+omit [DecidableEq E] in
 /-- Collecting parallel edges preserves total weight. -/
 lemma totalWeight_collectedWeight (H : FiniteHypergraph V E) (w : E → ℝ) :
     H.collectParallel.totalWeight (H.collectedWeight w) = H.totalWeight w := by
+  classical
   rw [totalWeight, totalWeight]
   change (∑ s : H.SupportIndex, ∑ e with H.support e = s.1, w e) = ∑ e, w e
   rw [← sum_subtype H.supportSet (fun _ ↦ Iff.rfl)
     (fun s ↦ ∑ e with H.support e = s, w e)]
   exact sum_fiberwise_of_maps_to (fun e _ ↦ mem_image_of_mem H.support (mem_univ e)) w
 
+omit [DecidableEq E] in
 /-- Uniformity is unchanged by collecting parallel indexed edges. -/
 lemma isUniform_collectParallel {H : FiniteHypergraph V E} {k : ℕ}
     (hunif : H.IsUniform k) : H.collectParallel.IsUniform k := by
+  classical
   intro s
   obtain ⟨e, _, he⟩ := mem_image.mp s.2
   simpa [collectParallel, ← he] using hunif e
 
+omit [DecidableEq E] in
 /-- Nonnegativity is preserved when parallel weights are collected. -/
 lemma collectedWeight_nonneg {H : FiniteHypergraph V E} {w : E → ℝ}
     (hw : ∀ e, 0 ≤ w e) (s : H.SupportIndex) : 0 ≤ H.collectedWeight w s := by
+  classical
   exact sum_nonneg fun e _ ↦ hw e
 
+omit [DecidableEq E] in
 /-- Collecting parallel edges preserves every vertex load. -/
 lemma vertexLoad_collectedWeight (H : FiniteHypergraph V E) (w : E → ℝ) (v : V) :
     H.collectParallel.vertexLoad (H.collectedWeight w) v = H.vertexLoad w v := by
+  classical
   rw [vertexLoad, vertexLoad]
   change (∑ s : H.SupportIndex with v ∈ s.1,
       ∑ e with H.support e = s.1, w e) = ∑ e with v ∈ H.support e, w e
@@ -186,9 +209,11 @@ lemma vertexLoad_collectedWeight (H : FiniteHypergraph V E) (w : E → ℝ) (v :
     (sum_fiberwise_eq_sum_filter (univ : Finset E)
       (H.supportSet.filter fun s ↦ v ∈ s) H.support w)
 
+omit [DecidableEq E] in
 /-- Collecting parallel edges preserves every pair load. -/
 lemma pairLoad_collectedWeight (H : FiniteHypergraph V E) (w : E → ℝ) (x y : V) :
     H.collectParallel.pairLoad (H.collectedWeight w) x y = H.pairLoad w x y := by
+  classical
   rw [pairLoad, pairLoad]
   change (∑ s : H.SupportIndex with x ∈ s.1 ∧ y ∈ s.1,
       ∑ e with H.support e = s.1, w e) =
@@ -201,20 +226,24 @@ lemma pairLoad_collectedWeight (H : FiniteHypergraph V E) (w : E → ℝ) (x y :
     (sum_fiberwise_eq_sum_filter (univ : Finset E)
       (H.supportSet.filter fun s ↦ x ∈ s ∧ y ∈ s) H.support w)
 
+omit [DecidableEq E] in
 /-- Feasibility of a fractional matching is unchanged by collection. -/
 lemma isFractionalMatching_collectParallel {H : FiniteHypergraph V E} {w : E → ℝ}
     (hw : H.IsFractionalMatching w) :
     H.collectParallel.IsFractionalMatching (H.collectedWeight w) := by
+  classical
   constructor
   · exact H.collectedWeight_nonneg hw.1
   · intro v hv
     rw [vertexLoad_collectedWeight]
     exact hw.2 v hv
 
+omit [DecidableEq E] in
 /-- The fractional pair-codegree bound is unchanged by collection. -/
 lemma pairCodegreeLT_collectParallel {H : FiniteHypergraph V E} {w : E → ℝ} {δ : ℝ}
     (hcodeg : H.PairCodegreeLT w δ) :
     H.collectParallel.PairCodegreeLT (H.collectedWeight w) δ := by
+  classical
   intro x y hxy
   rw [pairLoad_collectedWeight]
   exact hcodeg x y hxy
@@ -223,12 +252,16 @@ lemma pairCodegreeLT_collectParallel {H : FiniteHypergraph V E} {w : E → ℝ} 
 def supportRepresentative (H : FiniteHypergraph V E) (s : H.SupportIndex) : E :=
   Classical.choose (mem_image.mp s.2)
 
+omit [DecidableEq E] in
 @[simp] lemma support_supportRepresentative (H : FiniteHypergraph V E)
     (s : H.SupportIndex) : H.support (H.supportRepresentative s) = s.1 := by
+  classical
   exact (Classical.choose_spec (mem_image.mp s.2)).2
 
+omit [DecidableEq E] in
 lemma supportRepresentative_injective (H : FiniteHypergraph V E) :
     Function.Injective H.supportRepresentative := by
+  classical
   intro s t hst
   apply Subtype.ext
   rw [← support_supportRepresentative H s, ← support_supportRepresentative H t, hst]
@@ -257,6 +290,7 @@ lemma isMatching_liftCollected {H : FiniteHypergraph V E} {M : Finset H.SupportI
     exact hef rfl
   simpa using hM hs ht hst
 
+omit [DecidableEq E] in
 /-- Any rounding statement proved after collecting parallel edges transfers
 back to the original indexed hypergraph with exactly the same cardinality. -/
 lemma lift_collected_rounding {H : FiniteHypergraph V E} {w : E → ℝ} {zeta : ℝ}
@@ -265,6 +299,7 @@ lemma lift_collected_rounding {H : FiniteHypergraph V E} {w : E → ℝ} {zeta :
         (M.card : ℝ) + zeta * H.collectParallel.vertexSet.card) :
     ∃ M : Finset E, H.IsMatching M ∧
       H.totalWeight w ≤ (M.card : ℝ) + zeta * H.vertexSet.card := by
+  classical
   obtain ⟨M, hM, hbound⟩ := hround
   refine ⟨H.liftCollected M, H.isMatching_liftCollected hM, ?_⟩
   rw [← H.totalWeight_collectedWeight w]
@@ -272,11 +307,13 @@ lemma lift_collected_rounding {H : FiniteHypergraph V E} {w : E → ℝ} {zeta :
 
 /-! ## The rank-one case -/
 
+omit [DecidableEq E] [DecidableEq V] in
 /-- A distinct-support, one-uniform hypergraph has all of its edges as a
 matching. -/
 lemma univ_isMatching_of_uniform_one {H : FiniteHypergraph V E}
     (hunif : H.IsUniform 1) (hinj : Function.Injective H.support) :
     H.IsMatching univ := by
+  classical
   rw [IsMatching]
   intro e _ f _ hef
   obtain ⟨x, hx⟩ := card_eq_one.mp (hunif e)
@@ -285,14 +322,16 @@ lemma univ_isMatching_of_uniform_one {H : FiniteHypergraph V E}
     intro h
     apply hef
     apply hinj
-    simpa [hx, hy, h]
+    simp [hx, hy, h]
   simp [hx, hy, hxy]
 
+omit [DecidableEq E] in
 /-- Every individual edge of a positive-uniform fractional matching has weight
 at most one. -/
 lemma weight_le_one_of_uniform_pos {H : FiniteHypergraph V E} {w : E → ℝ} {k : ℕ}
     (hk : 0 < k) (hunif : H.IsUniform k) (hw : H.IsFractionalMatching w) (e : E) :
     w e ≤ 1 := by
+  classical
   obtain ⟨v, hv⟩ := H.support_nonempty_of_uniform hk hunif e
   calc
     w e ≤ H.vertexLoad w v := by
@@ -300,28 +339,34 @@ lemma weight_le_one_of_uniform_pos {H : FiniteHypergraph V E} {w : E → ℝ} {k
       exact single_le_sum (fun f _ ↦ hw.nonneg f) (mem_filter.mpr ⟨mem_univ e, hv⟩)
     _ ≤ 1 := hw.vertexLoad_le_one (H.support_subset_vertexSet e hv)
 
+omit [DecidableEq E] in
 /-- For an injectively support-indexed one-uniform hypergraph, the total
 fractional weight is at most the number of edges. -/
 lemma totalWeight_le_card_of_uniform_one_injective {H : FiniteHypergraph V E} {w : E → ℝ}
-    (hunif : H.IsUniform 1) (hinj : Function.Injective H.support)
+    (hunif : H.IsUniform 1) (_ : Function.Injective H.support)
     (hw : H.IsFractionalMatching w) : H.totalWeight w ≤ Fintype.card E := by
+  classical
   rw [totalWeight]
   calc
     ∑ e, w e ≤ ∑ _e : E, (1 : ℝ) :=
       sum_le_sum fun e _ ↦ H.weight_le_one_of_uniform_pos (by omega) hunif hw e
     _ = Fintype.card E := by simp
 
+omit [DecidableEq E] in
 lemma support_collectParallel_injective (H : FiniteHypergraph V E) :
     Function.Injective H.collectParallel.support := by
+  classical
   intro s t hst
   exact Subtype.ext hst
 
+omit [DecidableEq E] in
 /-- Kahn's conclusion is exact in rank one: collect parallel singleton edges
 and take every distinct support. -/
 lemma exists_matching_uniform_one {H : FiniteHypergraph V E} {w : E → ℝ} {zeta : ℝ}
     (hzeta : 0 ≤ zeta) (hunif : H.IsUniform 1) (hw : H.IsFractionalMatching w) :
     ∃ M : Finset E, H.IsMatching M ∧
       H.totalWeight w ≤ (M.card : ℝ) + zeta * H.vertexSet.card := by
+  classical
   apply H.lift_collected_rounding
   refine ⟨univ,
     univ_isMatching_of_uniform_one (H := H.collectParallel)
@@ -342,8 +387,10 @@ lemma exists_matching_uniform_one {H : FiniteHypergraph V E} {w : E → ℝ} {ze
 def Conflicts (H : FiniteHypergraph V E) (e f : E) : Prop :=
   e ≠ f ∧ ¬Disjoint (H.support e) (H.support f)
 
+omit [DecidableEq E] [DecidableEq V] [Fintype E] in
 lemma Conflicts.symm {H : FiniteHypergraph V E} {e f : E}
     (h : H.Conflicts e f) : H.Conflicts f e := by
+  classical
   exact ⟨h.1.symm, fun hd ↦ h.2 hd.symm⟩
 
 /-- Keep precisely those sampled edges which have no sampled conflict. -/
@@ -358,8 +405,10 @@ def collisionCount (H : FiniteHypergraph V E) (S : Finset E) : ℕ :=
 def collisionScore (H : FiniteHypergraph V E) (S : Finset E) : ℝ :=
   ∑ e ∈ S, ∑ f ∈ S, if H.Conflicts e f then 1 else 0
 
+omit [DecidableEq E] [DecidableEq V] [Fintype E] in
 @[simp] lemma collisionScore_eq_collisionCount (H : FiniteHypergraph V E) (S : Finset E) :
     H.collisionScore S = H.collisionCount S := by
+  classical
   simp [collisionScore, collisionCount, sum_boole, Nat.cast_sum]
 
 lemma isolatedSample_subset (H : FiniteHypergraph V E) (S : Finset E) :
@@ -374,11 +423,13 @@ lemma isolatedSample_isMatching (H : FiniteHypergraph V E) (S : Finset E) :
   change f ∈ H.isolatedSample S at hf
   exact (mem_filter.mp he).2 f (mem_filter.mp hf).1 hef
 
+omit [DecidableEq E] [DecidableEq V] [Fintype E] in
 /-- Since the selected supports are disjoint, distinct selected edges
 conflicting with a fixed edge must use distinct vertices of that edge. -/
 lemma card_filter_conflicts_le_support_card (H : FiniteHypergraph V E)
     {M : Finset E} (hM : H.IsMatching M) (e : E) :
     (M.filter fun f ↦ H.Conflicts e f).card ≤ (H.support e).card := by
+  classical
   let F : Finset E := M.filter fun f ↦ H.Conflicts e f
   have hex : ∀ f : {x // x ∈ F},
       ∃ v, v ∈ H.support e ∧ v ∈ H.support f.1 := by
@@ -420,7 +471,7 @@ lemma card_sub_collisionCount_le_isolatedSample (H : FiniteHypergraph V E) (S : 
         have hnot : ¬∀ f ∈ S, e ≠ f → Disjoint (H.support e) (H.support f) := by
           intro hall
           exact (mem_sdiff.mp he).2 (mem_filter.mpr ⟨heS, hall⟩)
-        push_neg at hnot
+        push Not at hnot
         obtain ⟨f, hfS, hef, hconflict⟩ := hnot
         exact card_pos.mpr ⟨f, mem_filter.mpr ⟨hfS, hef, hconflict⟩⟩
       _ ≤ ∑ e ∈ S, (S.filter fun f ↦ H.Conflicts e f).card := by
@@ -487,7 +538,7 @@ lemma bernoulliMass_nonneg {U S : Finset E} {p : E → ℝ}
   · exact prod_nonneg fun e he ↦ sub_nonneg.mpr (hp₁ e (mem_sdiff.mp he).1)
 
 lemma bernoulliMass_insert {U T : Finset E} {p : E → ℝ} {e : E}
-    (heU : e ∈ U) (hT : T ⊆ U.erase e) :
+    (_ : e ∈ U) (hT : T ⊆ U.erase e) :
     bernoulliMass U p (insert e T) = p e * bernoulliMass (U.erase e) p T := by
   have heT : e ∉ T := by
     intro he
@@ -608,7 +659,7 @@ lemma exists_output_ge_average {Omega : Type*} [Fintype Omega]
   have hne : (univ : Finset Omega).Nonempty := by
     by_contra h
     have hempty : (univ : Finset Omega) = ∅ := not_nonempty_iff_eq_empty.mp h
-    simpa [hempty] using hsum
+    simp [hempty] at hsum
   obtain ⟨omega, _, homega⟩ := exists_max_image univ output hne
   refine ⟨omega, ?_⟩
   calc
@@ -621,11 +672,13 @@ section Hypergraph
 
 variable {V : Type*} [DecidableEq V] [Fintype E]
 
+omit [DecidableEq V] in
 /-- Expected number of ordered conflicts in an independent Bernoulli sample. -/
 lemma sum_bernoulliMass_mul_collisionScore (H : FiniteHypergraph V E) (p : E → ℝ) :
     ∑ S ∈ (univ : Finset E).powerset,
         bernoulliMass univ p S * H.collisionScore S =
       ∑ e, ∑ f, if H.Conflicts e f then p e * p f else 0 := by
+  classical
   calc
     ∑ S ∈ (univ : Finset E).powerset,
         bernoulliMass univ p S * H.collisionScore S =
@@ -696,6 +749,7 @@ lemma sum_bernoulliMass_mul_isolatedSample_card_ge
       · exact bernoulliMass_nonneg (mem_powerset.mp hS)
           (fun e _ ↦ hp₀ e) (fun e _ ↦ hp₁ e)
 
+omit [DecidableEq E] [DecidableEq V] in
 /-- One independent-sampling/alteration round.  The loss is the exact expected
 number of ordered conflicting pairs. -/
 lemma exists_matching_one_round (H : FiniteHypergraph V E) (p : E → ℝ)
@@ -703,6 +757,7 @@ lemma exists_matching_one_round (H : FiniteHypergraph V E) (p : E → ℝ)
     ∃ M : Finset E, H.IsMatching M ∧
       (∑ e, p e) - (∑ e, ∑ f, if H.Conflicts e f then p e * p f else 0) ≤
         (M.card : ℝ) := by
+  classical
   let mass : Finset E → ℝ := fun S ↦ bernoulliMass univ p S
   let output : Finset E → ℝ := fun S ↦ (S.card : ℝ) - H.collisionScore S
   have hmass₀ : ∀ S, 0 ≤ mass S := by
@@ -735,11 +790,13 @@ namespace FiniteHypergraph
 
 variable {V E : Type*} [DecidableEq V] [Fintype E] [DecidableEq E]
 
+omit [DecidableEq E] [Fintype E] in
 private lemma conflict_product_le_incidence_sum (H : FiniteHypergraph V E) (w : E → ℝ)
     (hw₀ : ∀ e, 0 ≤ w e) (e f : E) :
     (if H.Conflicts e f then w e * w f else 0) ≤
       ∑ v ∈ H.vertexSet,
         if v ∈ H.support e ∧ v ∈ H.support f then w e * w f else 0 := by
+  classical
   by_cases hconf : H.Conflicts e f
   · rw [if_pos hconf]
     obtain ⟨_, hnd⟩ := hconf
@@ -760,11 +817,13 @@ private lemma conflict_product_le_incidence_sum (H : FiniteHypergraph V E) (w : 
     exact sum_nonneg fun v _ ↦ by
       split <;> simp_all [mul_nonneg (hw₀ e) (hw₀ f)]
 
+omit [DecidableEq E] in
 private lemma sum_incidence_products_eq_sum_vertexLoad_sq
     (H : FiniteHypergraph V E) (w : E → ℝ) :
     (∑ e, ∑ f, ∑ v ∈ H.vertexSet,
         if v ∈ H.support e ∧ v ∈ H.support f then w e * w f else 0) =
       ∑ v ∈ H.vertexSet, (H.vertexLoad w v) ^ 2 := by
+  classical
   calc
     (∑ e, ∑ f, ∑ v ∈ H.vertexSet,
         if v ∈ H.support e ∧ v ∈ H.support f then w e * w f else 0) =
@@ -790,12 +849,14 @@ private lemma sum_incidence_products_eq_sum_vertexLoad_sq
       by_cases he : v ∈ H.support e <;> by_cases hf : v ∈ H.support f <;>
         simp [he, hf]
 
+omit [DecidableEq E] in
 /-- The weighted conflict quadratic form is controlled by the vertex loads.
 This is the basic loss estimate in one nibble round. -/
 lemma conflictWeight_le_sum_vertexLoad_sq (H : FiniteHypergraph V E) (w : E → ℝ)
     (hw₀ : ∀ e, 0 ≤ w e) :
     (∑ e, ∑ f, if H.Conflicts e f then w e * w f else 0) ≤
       ∑ v ∈ H.vertexSet, (H.vertexLoad w v) ^ 2 := by
+  classical
   calc
     (∑ e, ∑ f, if H.Conflicts e f then w e * w f else 0) ≤
       ∑ e, ∑ f, ∑ v ∈ H.vertexSet,
@@ -808,9 +869,11 @@ lemma conflictWeight_le_sum_vertexLoad_sq (H : FiniteHypergraph V E) (w : E → 
     _ = ∑ v ∈ H.vertexSet, (H.vertexLoad w v) ^ 2 :=
       H.sum_incidence_products_eq_sum_vertexLoad_sq w
 
+omit [DecidableEq E] in
 lemma sum_vertexLoad_sq_le_card_mul_totalWeight {H : FiniteHypergraph V E} {w : E → ℝ}
     {k : ℕ} (hunif : H.IsUniform k) (hw : H.IsFractionalMatching w) :
     (∑ v ∈ H.vertexSet, (H.vertexLoad w v) ^ 2) ≤ (k : ℝ) * H.totalWeight w := by
+  classical
   calc
     (∑ v ∈ H.vertexSet, (H.vertexLoad w v) ^ 2) ≤
         ∑ v ∈ H.vertexSet, H.vertexLoad w v := by
@@ -828,13 +891,16 @@ lemma sum_vertexLoad_sq_le_card_mul_totalWeight {H : FiniteHypergraph V E} {w : 
       intro e _
       rw [hunif e]
 
+omit [DecidableEq E] in
 lemma conflictWeight_le_card_mul_totalWeight {H : FiniteHypergraph V E} {w : E → ℝ}
     {k : ℕ} (hunif : H.IsUniform k) (hw : H.IsFractionalMatching w) :
     (∑ e, ∑ f, if H.Conflicts e f then w e * w f else 0) ≤
-      (k : ℝ) * H.totalWeight w :=
-  (H.conflictWeight_le_sum_vertexLoad_sq w hw.1).trans
+      (k : ℝ) * H.totalWeight w := by
+  classical
+  exact (H.conflictWeight_le_sum_vertexLoad_sq w hw.1).trans
     (H.sum_vertexLoad_sq_le_card_mul_totalWeight hunif hw)
 
+omit [DecidableEq E] in
 /-- A scaled one-round nibble extracts the expected first-order fraction of a
 fractional matching, with the standard quadratic collision loss. -/
 lemma exists_matching_one_round_scaled {H : FiniteHypergraph V E} {w : E → ℝ}
@@ -842,6 +908,7 @@ lemma exists_matching_one_round_scaled {H : FiniteHypergraph V E} {w : E → ℝ
     (hunif : H.IsUniform k) (hw : H.IsFractionalMatching w) :
     ∃ M : Finset E, H.IsMatching M ∧
       tau * (1 - (k : ℝ) * tau) * H.totalWeight w ≤ (M.card : ℝ) := by
+  classical
   have hp₀ : ∀ e, 0 ≤ tau * w e := fun e ↦ mul_nonneg htau₀ (hw.nonneg e)
   have hp₁ : ∀ e, tau * w e ≤ 1 := by
     intro e
@@ -864,7 +931,7 @@ lemma exists_matching_one_round_scaled {H : FiniteHypergraph V E} {w : E → ℝ
         intro e _
         apply sum_congr rfl
         intro f _
-        by_cases hconf : H.Conflicts e f <;> simp [hconf, pow_two] <;> ring
+        by_cases hconf : H.Conflicts e f <;> simp [hconf, pow_two] ; ring
       _ = tau ^ 2 * (∑ e, ∑ f, if H.Conflicts e f then w e * w f else 0) := by
         symm
         rw [mul_sum]
@@ -919,9 +986,11 @@ covered. -/
 def offConflictLink (H : FiniteHypergraph V E) (v : V) (f : E) : ℕ :=
   if v ∈ H.support f then 0 else H.conflictLink v f
 
+omit [DecidableEq E] in
 lemma conflictDegree_le_card_mul {H : FiniteHypergraph V E} {D : ℕ}
     (hdeg : ∀ v ∈ H.vertexSet, H.edgeDegree v ≤ D) (e : E) :
     H.conflictDegree e ≤ (H.support e).card * D := by
+  classical
   let A : V → Finset E := fun v ↦
     (Finset.univ : Finset E).filter fun f ↦ v ∈ H.support f
   have hsub :
@@ -939,15 +1008,19 @@ lemma conflictDegree_le_card_mul {H : FiniteHypergraph V E} {D : ℕ}
       exact sum_le_sum fun v hv ↦ hdeg v (H.support_subset_vertexSet e hv)
     _ = (H.support e).card * D := by simp
 
+omit [DecidableEq E] in
 lemma conflictDegree_le_uniform_mul {H : FiniteHypergraph V E} {D k : ℕ}
     (hunif : H.IsUniform k)
     (hdeg : ∀ v ∈ H.vertexSet, H.edgeDegree v ≤ D) (e : E) :
     H.conflictDegree e ≤ k * D := by
+  classical
   simpa [hunif e] using H.conflictDegree_le_card_mul hdeg e
 
+omit [DecidableEq E] in
 lemma conflictLink_le_sum_pairDegree (H : FiniteHypergraph V E) (v : V) (f : E)
-    (hvf : v ∉ H.support f) :
+    (_ : v ∉ H.support f) :
     H.conflictLink v f ≤ ∑ u ∈ H.support f, H.edgePairDegree v u := by
+  classical
   let A : V → Finset E := fun u ↦
     (Finset.univ : Finset E).filter fun e ↦ v ∈ H.support e ∧ u ∈ H.support e
   have hsub :
@@ -967,6 +1040,7 @@ lemma conflictLink_le_sum_pairDegree (H : FiniteHypergraph V E) (v : V) (f : E)
       intro u hu
       simp [A, edgePairDegree]
 
+omit [DecidableEq E] in
 /-- Off its sampled edge, every residual-degree loss coefficient is at most
 `k C` when all distinct pair-degrees are at most `C`. -/
 lemma conflictLink_le_uniform_mul {H : FiniteHypergraph V E} {C k : ℕ}
@@ -975,6 +1049,7 @@ lemma conflictLink_le_uniform_mul {H : FiniteHypergraph V E} {C k : ℕ}
       H.edgePairDegree u v ≤ C)
     {v : V} {f : E} (hvV : v ∈ H.vertexSet) (hvf : v ∉ H.support f) :
     H.conflictLink v f ≤ k * C := by
+  classical
   calc
     H.conflictLink v f ≤ ∑ u ∈ H.support f, H.edgePairDegree v u :=
       H.conflictLink_le_sum_pairDegree v f hvf
@@ -987,20 +1062,24 @@ lemma conflictLink_le_uniform_mul {H : FiniteHypergraph V E} {C k : ℕ}
       · exact fun hvu ↦ hvf (hvu ▸ hu)
     _ = k * C := by simp [hunif f]
 
+omit [DecidableEq E] in
 lemma offConflictLink_le_uniform_mul {H : FiniteHypergraph V E} {C k : ℕ}
     (hunif : H.IsUniform k)
     (hpair : ∀ u ∈ H.vertexSet, ∀ v ∈ H.vertexSet, u ≠ v →
       H.edgePairDegree u v ≤ C)
     {v : V} (hvV : v ∈ H.vertexSet) (f : E) :
     H.offConflictLink v f ≤ k * C := by
+  classical
   by_cases hvf : v ∈ H.support f
   · simp [offConflictLink, hvf]
   · simpa [offConflictLink, hvf] using
       H.conflictLink_le_uniform_mul hunif hpair hvV hvf
 
+omit [DecidableEq E] in
 lemma sum_conflictLink_eq (H : FiniteHypergraph V E) (v : V) :
     ∑ f, H.conflictLink v f =
       ∑ e with v ∈ H.support e, H.conflictDegree e := by
+  classical
   simp only [conflictLink, conflictDegree, card_eq_sum_ones, sum_filter]
   rw [sum_comm]
   apply sum_congr rfl
@@ -1009,11 +1088,13 @@ lemma sum_conflictLink_eq (H : FiniteHypergraph V E) (v : V) :
   · simp [hve]
   · simp [hve]
 
+omit [DecidableEq E] in
 /-- Summing a conflict link over all vertices counts every conflicting edge
 once for each vertex in its support. -/
 lemma sum_vertexSet_conflictLink_eq {H : FiniteHypergraph V E} {k : ℕ}
     (hunif : H.IsUniform k) (f : E) :
     ∑ v ∈ H.vertexSet, H.conflictLink v f = k * H.conflictDegree f := by
+  classical
   simp only [conflictLink, conflictDegree, card_eq_sum_ones, sum_filter]
   rw [sum_comm]
   calc
@@ -1043,11 +1124,13 @@ lemma sum_vertexSet_conflictLink_eq {H : FiniteHypergraph V E} {k : ℕ}
       · have hfe : ¬H.Conflicts f e := fun h ↦ hef h.symm
         simp [hef, hfe]
 
+omit [DecidableEq E] in
 /-- The total off-conflict coefficient of one sampled edge over the declared
 vertex set is at most `k` times its conflict degree. -/
 lemma sum_vertexSet_offConflictLink_le {H : FiniteHypergraph V E} {k : ℕ}
     (hunif : H.IsUniform k) (f : E) :
     ∑ v ∈ H.vertexSet, H.offConflictLink v f ≤ k * H.conflictDegree f := by
+  classical
   calc
     ∑ v ∈ H.vertexSet, H.offConflictLink v f ≤
         ∑ v ∈ H.vertexSet, H.conflictLink v f := by
@@ -1057,10 +1140,12 @@ lemma sum_vertexSet_offConflictLink_le {H : FiniteHypergraph V E} {k : ℕ}
       split <;> simp
     _ = k * H.conflictDegree f := H.sum_vertexSet_conflictLink_eq hunif f
 
+omit [DecidableEq E] in
 lemma sum_offConflictLink_le {H : FiniteHypergraph V E} {D k : ℕ}
     (hunif : H.IsUniform k)
     (hdeg : ∀ v ∈ H.vertexSet, H.edgeDegree v ≤ D) (v : V) :
     ∑ f, H.offConflictLink v f ≤ H.edgeDegree v * (k * D) := by
+  classical
   calc
     ∑ f, H.offConflictLink v f ≤ ∑ f, H.conflictLink v f := by
       apply sum_le_sum
@@ -1076,6 +1161,7 @@ lemma sum_offConflictLink_le {H : FiniteHypergraph V E} {D k : ℕ}
       rw [sum_const, nsmul_eq_mul]
       rfl
 
+omit [DecidableEq E] in
 /-- Double-counting the off-vertex conflict coefficients.  The right-hand
 side counts, for each edge through `v`, all conflicting edges which avoid
 `v`. -/
@@ -1084,6 +1170,7 @@ lemma sum_offConflictLink_eq (H : FiniteHypergraph V E) (v : V) :
       ∑ e with v ∈ H.support e,
         ((Finset.univ : Finset E).filter fun f ↦
           v ∉ H.support f ∧ H.Conflicts e f).card := by
+  classical
   simp only [offConflictLink, conflictLink, card_eq_sum_ones, sum_filter]
   calc
     (∑ f, if v ∈ H.support f then 0 else
@@ -1101,6 +1188,7 @@ lemma sum_offConflictLink_eq (H : FiniteHypergraph V E) (v : V) :
       intro e _
       by_cases hve : v ∈ H.support e <;> simp [hve]
 
+omit [DecidableEq E] in
 /-- Every edge through `v` has many off-`v` conflicts when all vertex
 degrees are large and all pair-degrees are small.  The proof chooses a
 second vertex of the edge and partitions the edges through it according to
@@ -1114,6 +1202,7 @@ lemma minDegree_sub_pairDegree_le_offConflictNeighborhood
     {v : V} {e : E} (hve : v ∈ H.support e) :
     D ≤ C + ((Finset.univ : Finset E).filter fun f ↦
       v ∉ H.support f ∧ H.Conflicts e f).card := by
+  classical
   have hcard : 1 < (H.support e).card := by
     rw [hunif e]
     omega
@@ -1137,7 +1226,7 @@ lemma minDegree_sub_pairDegree_le_offConflictNeighborhood
   have hB : B.card = H.edgePairDegree u v := by
     apply congrArg card
     ext f
-    simp [B, A, edgePairDegree, and_comm]
+    simp [B, A, and_comm]
   have hQN : Q ⊆ N := by
     intro f hfQ
     have hfQ' := mem_filter.mp hfQ
@@ -1159,6 +1248,7 @@ lemma minDegree_sub_pairDegree_le_offConflictNeighborhood
   change D ≤ C + N.card
   omega
 
+omit [DecidableEq E] in
 /-- Summed form of the preceding pointwise lower bound. -/
 lemma edgeDegree_mul_sub_le_sum_offConflictLink
     {H : FiniteHypergraph V E} {k D C : ℕ} (hk : 2 ≤ k)
@@ -1168,6 +1258,7 @@ lemma edgeDegree_mul_sub_le_sum_offConflictLink
       H.edgePairDegree u v ≤ C)
     (v : V) :
     H.edgeDegree v * (D - C) ≤ ∑ f, H.offConflictLink v f := by
+  classical
   rw [H.sum_offConflictLink_eq v]
   calc
     H.edgeDegree v * (D - C) =
@@ -1183,6 +1274,7 @@ lemma edgeDegree_mul_sub_le_sum_offConflictLink
         hk hunif hmin hpair (v := v) (e := e) (mem_filter.mp he).2
       omega
 
+omit [DecidableEq E] in
 /-- Square-sum bound for the coefficients governing one residual vertex
 degree.  After multiplying by the Bernoulli probability `tau / D`, this is
 the variance estimate `O(k² C tau d(v))`. -/
@@ -1194,6 +1286,7 @@ lemma sum_offConflictLink_sq_le {H : FiniteHypergraph V E} {C D k : ℕ}
     {v : V} (hvV : v ∈ H.vertexSet) :
     ∑ f, (H.offConflictLink v f) ^ 2 ≤
       (k * C) * (H.edgeDegree v * (k * D)) := by
+  classical
   calc
     ∑ f, (H.offConflictLink v f) ^ 2 ≤
         ∑ f, (k * C) * H.offConflictLink v f := by
@@ -1226,9 +1319,11 @@ def UncoveredBy (H : FiniteHypergraph V E) (M : Finset E) (v : V) : Prop :=
 def sampleConflictLoad (H : FiniteHypergraph V E) (v : V) (S : Finset E) : ℕ :=
   ∑ f ∈ S, H.offConflictLink v f
 
+omit [DecidableEq E] in
 lemma sum_conflictLink_on_eq (H : FiniteHypergraph V E) (v : V) (M : Finset E) :
     ∑ f ∈ M, H.conflictLink v f =
       ∑ e with v ∈ H.support e, (M.filter fun f ↦ H.Conflicts e f).card := by
+  classical
   simp only [conflictLink, card_eq_sum_ones, sum_filter]
   rw [sum_comm]
   apply sum_congr rfl
@@ -1241,7 +1336,7 @@ lemma residualDegree_le_edgeDegree (H : FiniteHypergraph V E) (M : Finset E) (v 
     H.residualDegree M v ≤ H.edgeDegree v := by
   apply card_le_card
   intro e he
-  simp only [residualDegree, mem_filter, residualEdges] at he ⊢
+  simp only [mem_filter, residualEdges] at he ⊢
   exact ⟨mem_univ e, he.2⟩
 
 /-- Every edge through an uncovered vertex which is deleted from the residual
@@ -1288,9 +1383,11 @@ lemma edgeDegree_le_residualDegree_add_sampleConflictLoad
       have hvf : v ∉ H.support f := hv f hfM
       simp [L, offConflictLink, conflictLink, hvf]
 
+omit [DecidableEq E] in
 lemma sampleConflictLoad_mono (H : FiniteHypergraph V E) (v : V)
     {S T : Finset E} (hST : S ⊆ T) :
     H.sampleConflictLoad v S ≤ H.sampleConflictLoad v T := by
+  classical
   exact sum_le_sum_of_subset_of_nonneg hST (fun _ _ _ ↦ Nat.zero_le _)
 
 /-- For an uncovered vertex, each deleted incident edge is charged by at most
@@ -1363,22 +1460,28 @@ lemma edgeDegree_le_residual_isolated_add_sampleConflictLoad
     (H.isolatedSample S) v hv).trans (Nat.add_le_add_left
       (H.sampleConflictLoad_mono v (H.isolatedSample_subset S)) _)
 
+omit [DecidableEq E] in
 @[simp] lemma vertexLoad_const_eq_edgeDegree_div (H : FiniteHypergraph V E)
     (D : ℕ) (v : V) :
     H.vertexLoad (fun _ ↦ ((D : ℝ)⁻¹)) v = (H.edgeDegree v : ℝ) / (D : ℝ) := by
+  classical
   simp [vertexLoad, edgeDegree, div_eq_mul_inv]
 
+omit [DecidableEq E] [DecidableEq V] in
 @[simp] lemma totalWeight_const_inv (H : FiniteHypergraph V E) (D : ℕ) :
     H.totalWeight (fun _ ↦ ((D : ℝ)⁻¹)) =
       (Fintype.card E : ℝ) / (D : ℝ) := by
+  classical
   simp [totalWeight, div_eq_mul_inv]
 
+omit [DecidableEq E] in
 /-- The reciprocal of a maximum degree is an unweighted fractional matching.
 This is the bridge from integer degree hypotheses to the weighted one-round
 alteration estimate. -/
 lemma isFractionalMatching_const_inv {H : FiniteHypergraph V E} {D : ℕ}
     (hD : 0 < D) (hdeg : ∀ v ∈ H.vertexSet, H.edgeDegree v ≤ D) :
     H.IsFractionalMatching (fun _ ↦ ((D : ℝ)⁻¹)) := by
+  classical
   constructor
   · intro e
     positivity
@@ -1386,6 +1489,7 @@ lemma isFractionalMatching_const_inv {H : FiniteHypergraph V E} {D : ℕ}
     rw [H.vertexLoad_const_eq_edgeDegree_div]
     exact (div_le_one (by exact_mod_cast hD)).2 (by exact_mod_cast hdeg v hv)
 
+omit [DecidableEq E] in
 /-- One unweighted alteration round under a maximum-degree bound.  The
 codegree assumption is not yet needed at this first-order stage; it enters
 when controlling the residual degrees through subsequent rounds. -/
@@ -1395,14 +1499,17 @@ lemma exists_matching_degree_round {H : FiniteHypergraph V E} {D k : ℕ}
     ∃ M : Finset E, H.IsMatching M ∧
       tau * (1 - (k : ℝ) * tau) *
           ((Fintype.card E : ℝ) / (D : ℝ)) ≤ (M.card : ℝ) := by
+  classical
   simpa using H.exists_matching_one_round_scaled hk htau₀ htau₁ hunif
     (H.isFractionalMatching_const_inv hD hdeg)
 
+omit [DecidableEq E] [DecidableEq V] [Fintype E] in
 /-- A matching in a `k`-uniform hypergraph covers exactly `k` vertices per
 edge, and all covered vertices lie in the declared vertex set. -/
 lemma card_mul_matching_le_vertexSet {H : FiniteHypergraph V E} {k : ℕ}
     (hunif : H.IsUniform k) {M : Finset E} (hM : H.IsMatching M) :
     k * M.card ≤ H.vertexSet.card := by
+  classical
   have hsub : M.biUnion H.support ⊆ H.vertexSet := by
     intro v hv
     obtain ⟨e, heM, hve⟩ := mem_biUnion.mp hv

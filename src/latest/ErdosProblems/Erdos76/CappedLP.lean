@@ -14,6 +14,7 @@ namespace Erdos76.CappedLP
 
 variable {I J : Type*} [Fintype I] [Fintype J] [DecidableEq I] [DecidableEq J]
 
+omit [DecidableEq I] [DecidableEq J] in
 theorem exists_capped_primal_dual (A : Matrix I J ℝ) (hA : ∀ i j, 0 ≤ A i j)
     (μ : ℝ) (hμ : 0 < μ) :
     ∃ w : J → ℝ, ∃ z : I → ℝ, ∃ r : J → ℝ,

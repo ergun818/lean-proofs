@@ -692,7 +692,7 @@ lemma d7DeletedGraph_edgeFinset_eq_three_orbits (G : SimpleGraph A)
             change s(d7NonUniversalDeletedEmbedding G z₀ uy,
               d7RemainingUniversalEmbedding G (z₀ : A) rx) = s(x, y)
             rw [show s(x, y) = s(y, x) from Sym2.eq_swap]
-            congr 1 <;> apply Subtype.ext <;> rfl
+            congr 1
         · by_cases hyZ : (y : A) ∈ universalVertices G
           · rw [Finset.mem_union]
             left
@@ -705,7 +705,7 @@ lemma d7DeletedGraph_edgeFinset_eq_three_orbits (G : SimpleGraph A)
             refine ⟨(ux, ry), Finset.mem_univ _, ?_⟩
             change s(d7NonUniversalDeletedEmbedding G z₀ ux,
               d7RemainingUniversalEmbedding G (z₀ : A) ry) = s(x, y)
-            congr 1 <;> apply Subtype.ext <;> rfl
+            congr 1
           · rw [Finset.mem_union]
             left
             rw [Finset.mem_union]
@@ -721,7 +721,7 @@ lemma d7DeletedGraph_edgeFinset_eq_three_orbits (G : SimpleGraph A)
             · change Sym2.map (d7NonUniversalDeletedEmbedding G z₀)
                 s(ux, uy) = s(x, y)
               rw [Sym2.map_mk]
-              congr 1 <;> apply Subtype.ext <;> rfl
+              congr 1
   · intro e he
     rw [Finset.mem_union] at he
     rcases he with he | he
@@ -985,7 +985,7 @@ lemma d7ExtractedSeparatedParameters_normalization
     (G : SimpleGraph A) (z₀ : ↑(universalVertices G))
     (w₀ : Finset (↑(d7DeletedFinset (A := A) (z₀ : A))) → ℝ)
     (hm : 4 ≤ (universalVertices G).card)
-    (hw : IsFractionalPacking (d7DeletedGraph G (z₀ : A)) w₀)
+    (_ : IsFractionalPacking (d7DeletedGraph G (z₀ : A)) w₀)
     (hone : 1 ≤ fractionalUncoveredWeight
       (d7DeletedGraph G (z₀ : A)) w₀)
     (hsymm : ∀ p : Equiv.Perm (d7RemainingUniversalVertices G (z₀ : A)),

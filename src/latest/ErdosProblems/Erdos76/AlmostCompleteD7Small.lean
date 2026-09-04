@@ -70,7 +70,7 @@ lemma sum_d7HallCapacity {n a : ℕ}
     (G : SimpleGraph A) (hexact : missingEdgeCount G = n - 4 + a)
     (sigma : A → ℕ)
     (hsigma : ∀ u, sigma u ≤ d7ResidualAllowance G a u)
-    (hsupport : ∀ u ∉ nonUniversalVertices G, sigma u = 0)
+    (_ : ∀ u ∉ nonUniversalVertices G, sigma u = 0)
     (hsum : ∑ u ∈ nonUniversalVertices G, sigma u = 2 * a) :
     (∑ u : ↑(nonUniversalVertices G), d7HallCapacity G sigma u) =
       (n + (universalVertices G).card - 8 : ℕ) := by
@@ -214,7 +214,7 @@ theorem exists_d7HallRedistribution {n a : ℕ}
     (hsigma : ∀ u, sigma u ≤ d7ResidualAllowance G a u)
     (hsupport : ∀ u ∉ nonUniversalVertices G, sigma u = 0)
     (hsum : ∑ u ∈ nonUniversalVertices G, sigma u = 2 * a) :
-    ∃ R : D7HallRedistribution G P sigma, True := by
+    ∃ _ : D7HallRedistribution G P sigma, True := by
   let d : Option ↑(nonUniversalVertices G) → ℝ := fun src ↦
     match src with
     | none => d7HallAlphaSource G P
@@ -295,7 +295,7 @@ def d7SmallHallDeduction (G : SimpleGraph A) (P : D7SeparatedParameters G)
 lemma d7SmallHallDeduction_nonneg (G : SimpleGraph A)
     (P : D7SeparatedParameters G) (sigma : A → ℕ)
     (R : D7HallRedistribution G P sigma)
-    (hm : 4 ≤ (universalVertices G).card)
+    (_ : 4 ≤ (universalVertices G).card)
     (u : ↑(nonUniversalVertices G))
     (e : Sym2 (↑(d7DeletedFinset (u : A)))) :
     0 ≤ d7SmallHallDeduction G P sigma R u e := by
@@ -578,7 +578,7 @@ lemma sum_d7SmallHallDeductionExpanded (G : SimpleGraph A)
           q.property)
     _ = R.alphaFlow u := by
       simp only [Finset.sum_const, Finset.card_univ, Fintype.card_coe,
-        SimpleGraph.card_edgeSet, SimpleGraph.card_edgeFinset_top_eq_card_choose_two,
+        SimpleGraph.card_edgeFinset_top_eq_card_choose_two,
         nsmul_eq_mul]
       field_simp
 
@@ -886,7 +886,7 @@ lemma d7SmallHallDeductionExpanded_eq (G : SimpleGraph A)
             change s(x, y) =
               s(d7SmallUniversalDeletedEmbedding G u zx,
                 d7SmallUniversalDeletedEmbedding G u zy)
-            congr 1 <;> apply Subtype.ext <;> rfl
+            congr 1
           rw [hedge,
             d7SmallHallDeductionExpanded_universal G P sigma R u s(zx, zy) hq]
           change R.alphaFlow u /
@@ -897,9 +897,9 @@ lemma d7SmallHallDeductionExpanded_eq (G : SimpleGraph A)
           unfold d7SmallHallDeduction
           simp only [Sym2.lift_mk]
           have hzx : (d7SmallUniversalDeletedEmbedding G u zx : A) ∈
-              universalVertices G := by simpa using zx.property
+              universalVertices G := by simp
           have hzy : (d7SmallUniversalDeletedEmbedding G u zy : A) ∈
-              universalVertices G := by simpa using zy.property
+              universalVertices G := by simp
           rw [dif_pos hzx, dif_pos hzy]
         · let vy : ↑(nonUniversalVertices G) :=
             ⟨(y : A),
@@ -914,7 +914,7 @@ lemma d7SmallHallDeductionExpanded_eq (G : SimpleGraph A)
               s(d7SmallNonUniversalDeletedVertex G u vy hvu,
                 d7SmallUniversalDeletedEmbedding G u zx) := by
             rw [Sym2.eq_swap]
-            congr 1 <;> apply Subtype.ext <;> rfl
+            congr 1
           rw [hedge,
             d7SmallHallDeductionExpanded_mixed G P sigma R u vy hvu zx]
           unfold d7SmallHallDeduction
@@ -923,7 +923,7 @@ lemma d7SmallHallDeductionExpanded_eq (G : SimpleGraph A)
               universalVertices G := by
             simpa using nonUniversalVertex_not_mem_universalVertices G vy.property
           have hzx : (d7SmallUniversalDeletedEmbedding G u zx : A) ∈
-              universalVertices G := by simpa using zx.property
+              universalVertices G := by simp
           rw [dif_neg hvy, dif_pos hzx]
           congr 2
       · let vx : ↑(nonUniversalVertices G) :=
@@ -940,7 +940,7 @@ lemma d7SmallHallDeductionExpanded_eq (G : SimpleGraph A)
           have hedge : s(x, y) =
               s(d7SmallNonUniversalDeletedVertex G u vx hvu,
                 d7SmallUniversalDeletedEmbedding G u zy) := by
-            congr 1 <;> apply Subtype.ext <;> rfl
+            congr 1
           rw [hedge,
             d7SmallHallDeductionExpanded_mixed G P sigma R u vx hvu zy]
           unfold d7SmallHallDeduction
@@ -949,7 +949,7 @@ lemma d7SmallHallDeductionExpanded_eq (G : SimpleGraph A)
               universalVertices G := by
             simpa using nonUniversalVertex_not_mem_universalVertices G vx.property
           have hzy : (d7SmallUniversalDeletedEmbedding G u zy : A) ∈
-              universalVertices G := by simpa using zy.property
+              universalVertices G := by simp
           rw [dif_neg hvx, dif_pos hzy]
           congr 2
         · let vy : ↑(nonUniversalVertices G) :=
@@ -964,7 +964,7 @@ lemma d7SmallHallDeductionExpanded_eq (G : SimpleGraph A)
           have hedge : s(x, y) =
               s(d7SmallNonUniversalDeletedVertex G u vx hvu,
                 d7SmallNonUniversalDeletedVertex G u vy hwu) := by
-            congr 1 <;> apply Subtype.ext <;> rfl
+            congr 1
           rw [hedge,
             d7SmallHallDeductionExpanded_nonUniversal G P sigma R u
               vx vy hvu hwu]
@@ -1093,7 +1093,7 @@ lemma capacityMissingWeight_d7SmallDeletedCapacity_le (G : SimpleGraph A)
     _ ≤ d7HallCapacity G sigma u := R.target_le u
 
 lemma capacityMissingWeight_d7SmallDeletedCapacity_inductionBound
-    {n a : ℕ} (hcard : Fintype.card A = n) (hn : 14 ≤ n)
+    {n a : ℕ} (_ : Fintype.card A = n) (hn : 14 ≤ n)
     (G : SimpleGraph A) (hexact : missingEdgeCount G = n - 4 + a)
     (P : D7SeparatedParameters G) (sigma : A → ℕ)
     (hsigma : ∀ v, sigma v ≤ d7ResidualAllowance G a v)
@@ -1213,7 +1213,7 @@ private lemma d7SmallLiftedWeight_nonUniversal_le
     (hw : ∀ u : ↑(nonUniversalVertices G),
       IsCapacityPacking (d7DeletedGraph G (u : A))
       (d7SmallDeletedCapacity G P sigma R u) (w u))
-    (d v x : ↑(nonUniversalVertices G)) (hvx : v ≠ x)
+    (d v x : ↑(nonUniversalVertices G)) (_ : v ≠ x)
     (he : s(v, x) ∈ (G.induce
       (↑(nonUniversalVertices G) : Set A)).edgeFinset) :
     fractionalEdgeLoad G (d7LiftedWeight (d : A) (w d))
@@ -1332,7 +1332,7 @@ private lemma d7SmallLiftedWeight_mixed_le
             universalVertices G := by
           simpa using nonUniversalVertex_not_mem_universalVertices G v.property
         have hzZ : (d7DeletedVertex (d : A) (z : A) hzd : A) ∈
-            universalVertices G := by simpa using z.property
+            universalVertices G := by simp
         rw [dif_neg hvNZ, dif_pos hzZ]
         congr 2
 
@@ -1422,9 +1422,9 @@ private lemma d7SmallLiftedWeight_universal_le
       unfold d7SmallHallDeduction
       simp only [e, Sym2.lift_mk]
       have hxZ : (d7DeletedVertex (d : A) (x : A) hxd : A) ∈
-          universalVertices G := by simpa using x.property
+          universalVertices G := by simp
       have hyZ : (d7DeletedVertex (d : A) (y : A) hyd : A) ∈
-          universalVertices G := by simpa using y.property
+          universalVertices G := by simp
       rw [dif_pos hxZ, dif_pos hyZ]
 
 lemma sum_d7SmallLiftedWeight_universal_le
@@ -2208,7 +2208,7 @@ lemma fractionalSize_d7SmallCorrection (G : SimpleGraph A)
 
 lemma three_mul_fractionalSize_d7SmallCorrection (G : SimpleGraph A)
     (P : D7SeparatedParameters G)
-    (hm : 4 ≤ (universalVertices G).card) :
+    (_ : 4 ≤ (universalVertices G).card) :
     3 * fractionalSize G (d7SmallCorrection G P) =
       ((universalVertices G).card : ℝ) +
         2 * ((universalVertices G).card : ℝ) * P.betaMass +
@@ -2347,7 +2347,7 @@ lemma sum_d7DeletedGraph_edgeSet_card (G : SimpleGraph A)
         exact_mod_cast G.sum_degrees_eq_twice_card_edges
       rw [hdegrees] at hsum
       simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul,
-        Nat.cast_mul, Nat.cast_ofNat] at hsum
+        ] at hsum
       rw [Nat.cast_sub hcard, Nat.cast_ofNat]
       linarith
 
@@ -2596,7 +2596,7 @@ lemma sum_fractionalUncoveredWeight_d7SmallDeleted_le {a : ℕ}
       rw [← Finset.sum_add_distrib,
         sum_d7HallRedistribution_outflow G P sigma R]
       simp only [Finset.sum_const, Finset.card_univ, Fintype.card_coe,
-        nsmul_eq_mul, mul_one, hsigmaSubtype, Nat.cast_mul, Nat.cast_ofNat]
+        nsmul_eq_mul, hsigmaSubtype, Nat.cast_mul, Nat.cast_ofNat]
       ring
 
 lemma sum_fractionalUncoveredWeight_d7CoherentUniversalDeletedWeight_le
@@ -3037,10 +3037,11 @@ lemma d7LiftedWeight_le_half_of_top
   · rw [extendInducedWeight_eq_zero hsub]
     norm_num
 
-lemma sum_le_one_zero {B : Type} [Fintype B] [DecidableEq B]
+lemma sum_le_one_zero {B : Type} [Fintype B]
     (f : B → ℝ) (x : B) (hx : f x ≤ 0)
     (hrest : ∀ y, y ≠ x → f y ≤ 1 / 2) :
     (∑ y : B, f y) ≤ ((Fintype.card B : ℝ) - 1) * (1 / 2) := by
+  classical
   calc
     (∑ y : B, f y) ≤
         ∑ y : B, if y = x then 0 else 1 / 2 := by
@@ -3054,8 +3055,7 @@ lemma sum_le_one_zero {B : Type} [Fintype B] [DecidableEq B]
         exact hrest y hy
     _ = ((Fintype.card B : ℝ) - 1) * (1 / 2) := by
       rw [Finset.sum_ite]
-      simp only [Finset.filter_eq', Finset.mem_univ, if_true,
-        Finset.sum_const_zero, zero_add]
+      simp only [Finset.sum_const_zero, zero_add]
       rw [show (Finset.univ : Finset B).filter (fun y ↦ y ≠ x) =
           Finset.univ \ {x} by ext y; simp]
       rw [Finset.sum_const, Finset.card_sdiff_of_subset (Finset.subset_univ _)]

@@ -220,6 +220,7 @@ lemma averageSubgraphPacking_isCapacityDecomposition_in_set
 def triangleEdges (x y z : A) : Finset (Sym2 A) :=
   {s(x, y), s(x, z), s(y, z)}
 
+omit [Fintype A] in
 lemma mem_triangleEdges_iff_mem_sym2 {x y z : A}
     (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z)
     {e : Sym2 A} (heND : ¬ e.IsDiag) :
@@ -232,7 +233,7 @@ lemma mem_triangleEdges_iff_mem_sym2 {x y z : A}
       · rintro (h | h | h) <;> rcases Sym2.eq_iff.mp h with h | h <;>
           simp [h.1, h.2]
       · rintro ⟨(rfl | rfl | rfl), (rfl | rfl | rfl)⟩ <;>
-          simp_all [Sym2.eq_iff]
+          simp_all
 
 /-- Delete, in turn, the three edges of an explicitly enumerated triangle. -/
 def triangleDeletionFamily (G : SimpleGraph A) (x y z : A) :
@@ -241,8 +242,10 @@ def triangleDeletionFamily (G : SimpleGraph A) (x y z : A) :
   | ⟨1, _⟩ => G.deleteEdges ({s(x, z)} : Finset (Sym2 A))
   | ⟨2, _⟩ => G.deleteEdges ({s(y, z)} : Finset (Sym2 A))
 
+omit [DecidableEq A] [Fintype A] in
 lemma triangleDeletionFamily_le (G : SimpleGraph A) (x y z : A) (i : Fin 3) :
     triangleDeletionFamily G x y z i ≤ G := by
+  classical
   fin_cases i <;> exact SimpleGraph.deleteEdges_le _
 
 lemma averageGraphCapacity_triangleDeletionFamily
@@ -277,7 +280,7 @@ lemma averageGraphCapacity_triangleDeletionFamily
   by_cases h₁ : e = s(x, y) <;>
     by_cases h₂ : e = s(x, z) <;>
       by_cases h₃ : e = s(y, z) <;>
-        simp [h₁, h₂, h₃, Sym2.eq_iff, hxy, hxz, hyz,
+        simp [h₁, h₂, h₃, hxy, hxz, hyz,
           hxy.symm, hxz.symm, hyz.symm] <;> norm_num
 
 lemma triple_not_mem_triangleDeletionFamily

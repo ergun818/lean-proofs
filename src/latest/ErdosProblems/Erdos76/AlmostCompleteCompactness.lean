@@ -50,24 +50,30 @@ def upperCapacityDeficit (c : Sym2 A → ℝ) (k : ℕ)
     (e : CompleteEdge A) : ℕ :=
   k + 1 - Nat.ceil (((k + 1 : ℕ) : ℝ) * c e)
 
+omit [Fintype A] in
 lemma upperCapacityApprox_eq_zero_of_isDiag (c : Sym2 A → ℝ) (k : ℕ)
     {e : Sym2 A} (he : e.IsDiag) : upperCapacityApprox c k e = 0 := by
   simp [upperCapacityApprox, he]
 
+omit [Fintype A] in
 lemma upperCapacityApprox_nonDiag (c : Sym2 A → ℝ) (k : ℕ)
     (e : CompleteEdge A) :
     upperCapacityApprox c k e =
       (Nat.ceil (((k + 1 : ℕ) : ℝ) * c e) : ℝ) / (k + 1 : ℕ) := by
   simp [upperCapacityApprox, e.2]
 
+omit [DecidableEq A] [Fintype A] in
 lemma upperCapacityDeficit_le (c : Sym2 A → ℝ) (k : ℕ)
     (e : CompleteEdge A) : upperCapacityDeficit c k e ≤ k + 1 := by
+  classical
   exact Nat.sub_le _ _
 
+omit [DecidableEq A] in
 lemma ceil_scaled_capacity_le {c : Sym2 A → ℝ}
     (hc : IsEdgeCapacity (⊤ : SimpleGraph A) c) (k : ℕ)
     (e : CompleteEdge A) :
     Nat.ceil (((k + 1 : ℕ) : ℝ) * c e) ≤ k + 1 := by
+  classical
   apply Nat.ceil_le.mpr
   have he : (e : Sym2 A) ∈
       @SimpleGraph.edgeFinset A (⊤ : SimpleGraph A)

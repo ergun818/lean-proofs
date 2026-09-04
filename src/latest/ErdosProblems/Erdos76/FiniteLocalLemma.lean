@@ -63,12 +63,15 @@ lemma eventMass_mono (mass : Omega → ℝ) (hmass : ∀ omega, 0 ≤ mass omega
   · simp [he, h omega he]
   · by_cases he' : event' omega <;> simp [he, he', hmass omega]
 
+omit [DecidableEq I] [Fintype I] [Fintype Omega] in
 lemma avoid_anti {bad : I → Omega → Prop} {S T : Finset I} (hTS : T ⊆ S)
     {omega : Omega} (h : Avoid bad S omega) :
     Avoid bad T omega := by
+  classical
   intro i hiT
   exact h i (hTS hiT)
 
+omit [Fintype I] in
 lemma eventMass_avoid_insert_add (mass : Omega → ℝ) (bad : I → Omega → Prop)
     (i : I) (S : Finset I) :
     eventMass mass (Avoid bad (insert i S)) +
@@ -101,28 +104,32 @@ def IndependentOutside (mass : Omega → ℝ) (bad : I → Omega → Prop)
     eventMass mass (fun omega ↦ bad i omega ∧ Avoid bad S omega) =
       eventMass mass (bad i) * eventMass mass (Avoid bad S)
 
+omit [DecidableEq I] [Fintype I] in
 lemma hasLocalBound_of_independentOutside
     (mass : Omega → ℝ) (hmass : ∀ omega, 0 ≤ mass omega)
     (bad : I → Omega → Prop) (dependency : I → Finset I) {p : ℝ}
     (hindep : IndependentOutside mass bad dependency)
     (hmarginal : ∀ i, eventMass mass (bad i) ≤ p) :
     HasLocalBound mass bad dependency p := by
+  classical
   intro i S hiS hdisj
   rw [hindep i S hiS hdisj]
   exact mul_le_mul_of_nonneg_right (hmarginal i)
     (eventMass_nonneg mass hmass (Avoid bad S))
 
+omit [DecidableEq I] [Fintype I] in
 private lemma conditional_event_le
     (mass : Omega → ℝ) (hmass : ∀ omega, 0 ≤ mass omega)
     (bad : I → Omega → Prop) (dependency : I → Finset I)
     {p x : ℝ} {d : ℕ}
-    (hp : 0 ≤ p) (hx0 : 0 ≤ x) (hx1 : x < 1)
+    (_ : 0 ≤ p) (hx0 : 0 ≤ x) (hx1 : x < 1)
     (hparameter : p ≤ x * (1 - x) ^ d)
     (hdegree : ∀ i, (dependency i).card ≤ d)
     (hlocal : HasLocalBound mass bad dependency p)
     (S : Finset I) (i : I) (hiS : i ∉ S) :
     eventMass mass (fun omega ↦ bad i omega ∧ Avoid bad S omega) ≤
       x * eventMass mass (Avoid bad S) := by
+  classical
   induction hcard : S.card using Nat.strong_induction_on generalizing S i with
   | h n ih =>
       let T := S \ dependency i
@@ -197,7 +204,7 @@ private lemma conditional_event_le
               _ = eventMass mass (Avoid bad (T ∪ insert j U)) := by
                 congr 2
                 ext a
-                simp [or_left_comm, or_assoc]
+                simp
       have hlower :
           (1 - x) ^ R.card * eventMass mass (Avoid bad T) ≤
             eventMass mass (Avoid bad S) := by
@@ -218,13 +225,14 @@ private lemma conditional_event_le
         _ ≤ x * eventMass mass (Avoid bad S) :=
           mul_le_mul_of_nonneg_left hlower hx0
 
+omit [DecidableEq I] [Fintype I] in
 /-- **Finite symmetric Lovasz local lemma**, in the standard
 `p ≤ x(1-x)^d` form.
 
 The dependency neighbourhoods need not be symmetric; only their cardinality
 and the stated local conditional bound are used.  The conclusion supplies an
 actual point of the finite sample space at which no bad event occurs. -/
-theorem exists_avoiding_all
+theorem exists_avoiding_all [Finite I]
     (mass : Omega → ℝ) (hmass : ∀ omega, 0 ≤ mass omega)
     (hmass_total : ∑ omega, mass omega = 1)
     (bad : I → Omega → Prop) (dependency : I → Finset I)
@@ -234,6 +242,8 @@ theorem exists_avoiding_all
     (hdegree : ∀ i, (dependency i).card ≤ d)
     (hlocal : HasLocalBound mass bad dependency p) :
     ∃ omega, ∀ i, ¬ bad i omega := by
+  classical
+  let _ := Fintype.ofFinite I
   have hcond : ∀ (S : Finset I) (i : I), i ∉ S →
       eventMass mass (fun omega ↦ bad i omega ∧ Avoid bad S omega) ≤
         x * eventMass mass (Avoid bad S) :=
@@ -260,7 +270,7 @@ theorem exists_avoiding_all
             mul_le_mul_of_nonneg_left ihS (sub_nonneg.mpr hx1.le)
           _ ≤ eventMass mass (Avoid bad (insert i S)) := hstep
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   have hzero : eventMass mass (Avoid bad (univ : Finset I)) = 0 := by
     unfold eventMass
     apply sum_eq_zero
@@ -276,9 +286,10 @@ theorem exists_avoiding_all
   rw [hzero] at this
   linarith
 
+omit [DecidableEq I] [Fintype I] in
 /-- Convenient wrapper using ordinary factorisation outside dependency
 neighbourhoods and a uniform marginal bound. -/
-theorem exists_avoiding_all_of_independentOutside
+theorem exists_avoiding_all_of_independentOutside [Finite I]
     (mass : Omega → ℝ) (hmass : ∀ omega, 0 ≤ mass omega)
     (hmass_total : ∑ omega, mass omega = 1)
     (bad : I → Omega → Prop) (dependency : I → Finset I)
@@ -289,6 +300,7 @@ theorem exists_avoiding_all_of_independentOutside
     (hindep : IndependentOutside mass bad dependency)
     (hmarginal : ∀ i, eventMass mass (bad i) ≤ p) :
     ∃ omega, ∀ i, ¬ bad i omega := by
+  classical
   exact exists_avoiding_all mass hmass hmass_total bad dependency hp hx0 hx1
     hparameter hdegree
     (hasLocalBound_of_independentOutside mass hmass bad dependency hindep hmarginal)

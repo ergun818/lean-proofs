@@ -72,18 +72,22 @@ def innerEdgeDependency (H : FiniteHypergraph V E) (L : ℕ) (e : E) :
     Finset E :=
   (H.conflictBall (4 * L + 2) e).erase e
 
+omit [DecidableEq V] in
 @[simp] lemma mem_innerEdgeDependency
     (H : FiniteHypergraph V E) (L : ℕ) (e f : E) :
     f ∈ H.innerEdgeDependency L e ↔
       f ≠ e ∧ f ∈ H.conflictBall (4 * L + 2) e := by
+  classical
   simp [innerEdgeDependency]
 
+omit [DecidableEq V] in
 /-- The inner dependency neighbourhood contains every overlap of explicit
 coordinate supports. -/
 lemma innerEdgeInfluence_contains_overlaps
     (H : FiniteHypergraph V E) (L : ℕ) :
     FiniteNibble.ContainsSupportOverlaps
       (H.innerEdgeInfluenceSupport L) (H.innerEdgeDependency L) := by
+  classical
   intro e f hef hoverlap
   obtain ⟨z, hze, hzf⟩ := not_disjoint_iff.mp hoverlap
   have hge : z.2 ∈ H.conflictBall (2 * L + 1) e :=

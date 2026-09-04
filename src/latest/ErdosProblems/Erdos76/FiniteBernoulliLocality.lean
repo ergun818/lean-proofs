@@ -46,14 +46,18 @@ def AgreesOn (R S T : Finset E) : Prop := S ∩ R = T ∩ R
 def EventDependsOn (R : Finset E) (event : Finset E → Prop) : Prop :=
   ∀ S T, AgreesOn R S T → (event S ↔ event T)
 
+omit [Fintype E] in
 lemma agreesOn_refl (R S : Finset E) : AgreesOn R S S := rfl
 
+omit [Fintype E] in
 lemma agreesOn_symm {R S T : Finset E} (h : AgreesOn R S T) : AgreesOn R T S := h.symm
 
+omit [Fintype E] in
 lemma agreesOn_trans {R S T V : Finset E}
     (hST : AgreesOn R S T) (hTV : AgreesOn R T V) : AgreesOn R S V :=
   hST.trans hTV
 
+omit [Fintype E] in
 lemma agreesOn_mono {R R' S T : Finset E} (hRR' : R ⊆ R')
     (h : AgreesOn R' S T) : AgreesOn R S T := by
   unfold AgreesOn at h ⊢
@@ -66,15 +70,18 @@ lemma agreesOn_mono {R R' S T : Finset E} (hRR' : R ⊆ R')
   · rintro ⟨heT, heR⟩
     exact ⟨(hmem.mpr ⟨heT, hRR' heR⟩).1, heR⟩
 
+omit [Fintype E] in
 lemma eventDependsOn_mono {R R' : Finset E} {event : Finset E → Prop}
     (hRR' : R ⊆ R') (h : EventDependsOn R event) : EventDependsOn R' event := by
   intro S T hST
   exact h S T (agreesOn_mono hRR' hST)
 
+omit [Fintype E] in
 lemma eventDependsOn_true (R : Finset E) : EventDependsOn R (fun _ ↦ True) := by
   intro S T hST
   simp
 
+omit [Fintype E] in
 lemma eventDependsOn_and {R T : Finset E} {A B : Finset E → Prop}
     (hA : EventDependsOn R A) (hB : EventDependsOn T B) :
     EventDependsOn (R ∪ T) (fun S ↦ A S ∧ B S) := by
@@ -95,8 +102,8 @@ def subsetsEquivPowersetAttach (U : Finset E) :
 def subsetsUnivEquiv : Subsets (Finset.univ : Finset E) ≃ Finset E where
   toFun S := S.1
   invFun S := ⟨S, subset_univ S⟩
-  left_inv S := Subtype.ext rfl
-  right_inv S := rfl
+  left_inv _ := Subtype.ext rfl
+  right_inv _ := rfl
 
 /-- Splitting a subset of a disjoint union into its two coordinate blocks. -/
 def disjointSubsetsEquiv {U V : Finset E} (hUV : Disjoint U V) :
@@ -177,6 +184,7 @@ lemma eventMass_eq_restrictedEventMass_univ (p : E → ℝ)
   intro S
   by_cases h : event S.1 <;> simp [h, subsetsUnivEquiv]
 
+omit [Fintype E] in
 lemma bernoulliMass_union_of_disjoint {U V A B : Finset E} {p : E → ℝ}
     (hUV : Disjoint U V) (hA : A ⊆ U) (hB : B ⊆ V) :
     bernoulliMass (U ∪ V) p (A ∪ B) =
@@ -326,11 +334,13 @@ theorem eventMass_and_of_disjoint {R T : Finset E} {p : E → ℝ}
 
 variable [Fintype I] [DecidableEq I]
 
+omit [DecidableEq I] [Fintype E] [Fintype I] in
 /-- Avoiding a finite family of local events depends only on the union of
 their coordinate supports. -/
 lemma eventDependsOn_avoid {R : I → Finset E} {bad : I → Finset E → Prop}
     (hlocal : ∀ i, EventDependsOn (R i) (bad i)) (J : Finset I) :
     EventDependsOn (J.biUnion R) (FiniteLocalLemma.Avoid bad J) := by
+  classical
   intro S T hST
   constructor
   · intro hAvoid j hj hbadT
@@ -349,10 +359,12 @@ def ContainsSupportOverlaps (R : I → Finset E)
     (dependency : I → Finset I) : Prop :=
   ∀ i j, i ≠ j → ¬ Disjoint (R i) (R j) → j ∈ dependency i
 
+omit [DecidableEq I] [Fintype E] [Fintype I] in
 lemma support_disjoint_biUnion_outside {R : I → Finset E}
     {dependency : I → Finset I} (hoverlap : ContainsSupportOverlaps R dependency)
     {i : I} {J : Finset I} (hiJ : i ∉ J) (houtside : Disjoint J (dependency i)) :
     Disjoint (R i) (J.biUnion R) := by
+  classical
   rw [Finset.disjoint_left]
   intro e hei heJ
   obtain ⟨j, hjJ, hej⟩ := mem_biUnion.mp heJ
@@ -368,6 +380,7 @@ lemma support_disjoint_biUnion_outside {R : I → Finset E}
     exact hjOutside (hoverlap i j hij hnot)
   exact (Finset.disjoint_left.mp hijDisjoint) hei hej
 
+omit [DecidableEq I] [Fintype I] in
 /-- A dependency graph containing every overlap of supports gives exact
 independence outside each dependency neighbourhood. -/
 theorem independentOutside_of_eventDependsOn
@@ -377,11 +390,13 @@ theorem independentOutside_of_eventDependsOn
     (hoverlap : ContainsSupportOverlaps R dependency) :
     FiniteLocalLemma.IndependentOutside
       (fun S : Finset E ↦ bernoulliMass Finset.univ p S) bad dependency := by
+  classical
   intro i J hiJ houtside
   exact eventMass_and_of_disjoint
     (support_disjoint_biUnion_outside hoverlap hiJ houtside)
     (hlocal i) (eventDependsOn_avoid hlocal J)
 
+omit [DecidableEq I] [Fintype I] in
 /-- The local-bound interface needed by the finite local lemma follows from
 local coordinate supports, an overlap dependency graph, and marginal event
 bounds. -/
@@ -395,6 +410,7 @@ theorem hasLocalBound_of_eventDependsOn
       (fun S : Finset E ↦ bernoulliMass Finset.univ p S) (bad i) ≤ bound) :
     FiniteLocalLemma.HasLocalBound
       (fun S : Finset E ↦ bernoulliMass Finset.univ p S) bad dependency bound := by
+  classical
   apply FiniteLocalLemma.hasLocalBound_of_independentOutside
     (fun S : Finset E ↦ bernoulliMass Finset.univ p S)
   · intro S

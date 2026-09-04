@@ -210,9 +210,11 @@ lemma innerMatching_isMatching (H : FiniteHypergraph V E) {L : ℕ}
         · exact ih
   exact hstate L
 
+omit [DecidableEq V] in
 /-- Conflict balls are monotone in their radius. -/
 lemma conflictBall_mono_of_le (H : FiniteHypergraph V E) {r s : ℕ}
     (hrs : r ≤ s) (e : E) : H.conflictBall r e ⊆ H.conflictBall s e := by
+  classical
   obtain ⟨t, rfl⟩ := Nat.exists_eq_add_of_le hrs
   intro f hf
   exact H.conflictBall_comp hf t (H.mem_conflictBall_self t f)
@@ -266,10 +268,12 @@ def innerEdgeInfluenceSupport (H : FiniteHypergraph V E) (L : ℕ) (e : E) :
     Finset (Fin L × E) :=
   (univ : Finset (Fin L)).product (H.conflictBall (2 * L + 1) e)
 
+omit [DecidableEq V] in
 @[simp] lemma mem_innerEdgeInfluenceSupport
     (H : FiniteHypergraph V E) (L : ℕ) (e : E) (z : Fin L × E) :
     z ∈ H.innerEdgeInfluenceSupport L e ↔
       z.2 ∈ H.conflictBall (2 * L + 1) e := by
+  classical
   simp [innerEdgeInfluenceSupport]
 
 lemma innerEdgeInfluenceSupport_card_le

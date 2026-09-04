@@ -258,7 +258,7 @@ theorem oneRoundJointUncoveredMass_indicator_mem_Icc
       exact H.innerNewAcceptanceMass_const_mem_Icc hunif hdeg M e hp₀ hp₁ |>.1
     change Q ∈ Set.Icc _ _
     rw [if_pos hA]
-    simp only [mul_one, one_mul]
+    simp only [mul_one]
     change Q ∈ Set.Icc (1 - p * liveCount)
       (1 - (p - (((k * D : ℕ) : ℝ) * p ^ 2)) * liveCount + pairError)
     change Q ∈ Set.Icc (1 - first) (1 - first + pairError) at hone
@@ -380,7 +380,7 @@ theorem innerJointUncoveredMass_succ_mem_Icc
             FiniteProduct.productMass w X * oldIndicator X * liveCount X) := by
         simp_rw [mul_sub]
         rw [sum_sub_distrib, mul_sum]
-        apply congrArg₂ (.-.) rfl
+        apply congrArg₂ (· - ·) rfl
         apply sum_congr rfl
         intro X _
         ring
@@ -402,8 +402,8 @@ theorem innerJointUncoveredMass_succ_mem_Icc
             FiniteProduct.productMass w X * oldIndicator X) := by
         simp_rw [mul_add, mul_sub]
         rw [sum_add_distrib, sum_sub_distrib, mul_sum, mul_sum]
-        apply congrArg₂ (.+.)
-        · apply congrArg₂ (.-.) rfl
+        apply congrArg₂ (· + ·)
+        · apply congrArg₂ (· - ·) rfl
           apply sum_congr rfl
           intro X _
           ring
@@ -515,8 +515,9 @@ theorem sum_edgesMeeting_profile_mem_Icc
           ((H.singleMeetingEdges A).card : ℝ) *
             (target - epsilon) :=
         mul_le_mul_of_nonneg_right hsingleCard.1 htargetMinus₀
-      _ = ∑ _e ∈ H.singleMeetingEdges A, (target - epsilon) := by simp
-        <;> ring
+      _ = ∑ _e ∈ H.singleMeetingEdges A, (target - epsilon) := by
+        simp
+        ring
       _ ≤ ∑ e ∈ H.singleMeetingEdges A, U (A ∪ H.support e) := by
         apply sum_le_sum
         intro e he
@@ -537,7 +538,7 @@ theorem sum_edgesMeeting_profile_mem_Icc
               intro e he
               exact (hsingleBounds e he).2
             _ = ((H.singleMeetingEdges A).card : ℝ) *
-                (target + epsilon) := by simp <;> ring
+                (target + epsilon) := by simp ; ring
         · calc
             ∑ e ∈ H.multiMeetingEdges A, U (A ∪ H.support e) ≤
                 ∑ _e ∈ H.multiMeetingEdges A, (1 : ℝ) := by
@@ -624,7 +625,7 @@ theorem sum_edgesMeeting_profile_max_mem_Icc
               intro e he
               exact (hsingleBounds e he).2
             _ = ((H.singleMeetingEdges A).card : ℝ) *
-                (target + epsilon) := by simp <;> ring
+                (target + epsilon) := by simp ; ring
         · calc
             ∑ e ∈ H.multiMeetingEdges A, U (A ∪ H.support e) ≤
                 ∑ _e ∈ H.multiMeetingEdges A, (1 : ℝ) := by
@@ -718,7 +719,7 @@ theorem sum_edgesMeeting_profile_real_max_mem_Icc
               intro e he
               exact (hsingleBounds e he).2
             _ = ((H.singleMeetingEdges A).card : ℝ) *
-                (target + epsilon) := by simp <;> ring
+                (target + epsilon) := by simp ; ring
         · calc
             ∑ e ∈ H.multiMeetingEdges A, U (A ∪ H.support e) ≤
                 ∑ _e ∈ H.multiMeetingEdges A, (1 : ℝ) := by
@@ -927,7 +928,7 @@ theorem innerJointUncoveredMass_succ_profile_real_max_mem_Icc
           (sub_le_sub hcenterBounds.2
             (mul_le_mul_of_nonneg_left hprofile.1 hq₀))
           (mul_le_mul_of_nonneg_left hcenterBounds.2 hpairError₀)
-  
+
 
 /-- A uniform round-by-round comparison with the mean-field live-edge
 profile gives the desired two-sided marginal.  The two scalar hypotheses are

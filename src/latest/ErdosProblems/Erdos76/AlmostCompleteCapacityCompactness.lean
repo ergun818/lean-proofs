@@ -83,7 +83,7 @@ theorem almostCompleteFractionalDecomposition_on_fintype
   have hmap : H.map e.symm.toEmbedding = G := by
     dsimp only [H]
     rw [SimpleGraph.map_map]
-    simpa using G.map_id
+    simp
   refine ⟨u, ?_⟩
   simpa only [u, hmap] using hw.relabel_capacity e.symm
 

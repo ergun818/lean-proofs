@@ -88,6 +88,7 @@ lemma removal_canonical (G : SimpleGraph V) {ε : ℝ}
   refine ⟨H, hH, ?_, hfree⟩
   simpa only [NewProof.edgeFinset_eq_canonical, Nat.cast_pow] using hsize
 
+omit [Fintype V] in
 lemma projected_sdiff_card_le {W : Type*} [Fintype W] [DecidableEq W]
     (G H : SimpleGraph W) (hH : H ≤ G) (f : W → V) :
     (((G.edgeFinset \ H.edgeFinset).image (Sym2.map f)).card : ℝ) ≤
@@ -103,10 +104,11 @@ lemma projected_sdiff_card_le {W : Type*} [Fintype W] [DecidableEq W]
     exact_mod_cast hcard
   simpa only [NewProof.edgeFinset_eq_canonical] using hcard'
 
+omit [DecidableEq V] in
 /-- A pair-closed triple family of sufficiently small size can be hit by
 deleting few original unordered pairs. -/
 theorem exists_small_pair_cover {t : Finset (V × V × V)} (ht : PairClosed t)
-    {ε : ℝ} (hε : 0 < ε)
+    {ε : ℝ} (_ : 0 < ε)
     (hsmall : (t.card : ℝ) < triangleRemovalBound ε * (3 * (Fintype.card V : ℝ)) ^ 3) :
     ∃ E : Finset (Sym2 V), (E.card : ℝ) < 9 * ε * (Fintype.card V : ℝ) ^ 2 ∧
       ∀ a b c, (a, b, c) ∈ t → s(a, b) ∈ E ∨ s(a, c) ∈ E ∨ s(b, c) ∈ E := by
@@ -141,8 +143,10 @@ noncomputable def rejectedTriples (G : SimpleGraph V) (col : Sym2 V → K)
   univ.filter fun x ↦ G.Adj x.1 x.2.1 ∧ G.Adj x.1 x.2.2 ∧ G.Adj x.2.1 x.2.2 ∧
     P (col s(x.1, x.2.1), col s(x.1, x.2.2), col s(x.2.1, x.2.2))
 
+omit [DecidableEq V] [Fintype K] in
 lemma patternTriples_pairClosed (G : SimpleGraph V) (col : Sym2 V → K) (p : K × K × K) :
     PairClosed (patternTriples G col p) := by
+  classical
   intro a b c hab hac hbc
   rcases hab with ⟨c', hab⟩
   rcases hac with ⟨b', hac⟩
@@ -150,14 +154,17 @@ lemma patternTriples_pairClosed (G : SimpleGraph V) (col : Sym2 V → K) (p : K 
   simp only [patternTriples, mem_filter, mem_univ, true_and] at hab hac hbc ⊢
   exact ⟨hab.1, hac.2.1, hbc.2.2.1, hab.2.2.2.1, hac.2.2.2.2.1, hbc.2.2.2.2.2⟩
 
+omit [DecidableEq V] [Fintype K] in
 lemma patternTriples_subset_rejected (G : SimpleGraph V) (col : Sym2 V → K)
     (P : K × K × K → Prop) {p : K × K × K} (hp : P p) :
     patternTriples G col p ⊆ rejectedTriples G col P := by
+  classical
   intro x hx
   simp only [patternTriples, rejectedTriples, mem_filter, mem_univ, true_and] at hx ⊢
   refine ⟨hx.1, hx.2.1, hx.2.2.1, ?_⟩
   simpa only [hx.2.2.2.1, hx.2.2.2.2.1, hx.2.2.2.2.2, Prod.eta] using hp
 
+omit [DecidableEq K] [DecidableEq V] in
 /-- A finite set of forbidden edge-label patterns can all be removed using
 the ordinary uncoloured triangle removal theorem. -/
 theorem exists_rejected_pair_cover (G : SimpleGraph V) (col : Sym2 V → K)

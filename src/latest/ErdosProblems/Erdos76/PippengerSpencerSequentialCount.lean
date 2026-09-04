@@ -69,11 +69,13 @@ def anchorSet (H : FiniteHypergraph V E)
     (A : Finset V) (G : Finset E) : Finset V :=
   G.biUnion fun e ↦ H.support e ∩ A
 
+omit [DecidableEq E] [Fintype E] in
 @[simp] lemma mem_anchorSet
     (H : FiniteHypergraph V E) (A : Finset V) (G : Finset E) (v : V) :
     v ∈ H.anchorSet A G ↔
       ∃ e ∈ G, v ∈ H.support e ∧ v ∈ A := by
-  simp [anchorSet, and_assoc]
+  classical
+  simp [anchorSet]
 
 /-- Every leaf of the recursive tree is a matching family of
 nonexceptional edges, with one edge per listed anchor and no other anchor. -/
@@ -279,7 +281,7 @@ theorem sequentialChoiceBase_pow_le_card_anchorFamilyTree_toList
     (degreeLower - (A.card - 1) * C - (j - 1) * (k * C)) ^ j ≤
       (H.anchorFamilyTree A B.toList).card := by
   let q := degreeLower - (A.card - 1) * C - (j - 1) * (k * C)
-  have hlength : B.toList.length = j := by simpa [hBcard]
+  have hlength : B.toList.length = j := by simp [hBcard]
   have hmemA : ∀ v ∈ B.toList, v ∈ A := by
     intro v hv
     exact hBsub (by simpa using hv)

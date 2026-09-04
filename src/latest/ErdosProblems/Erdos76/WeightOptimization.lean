@@ -27,16 +27,22 @@ def row (A : V → V → ℝ) (p : V → ℝ) (i : V) : ℝ := ∑ j, A i j * p 
 def transfer (p : V → ℝ) (i j : V) (t : ℝ) : V → ℝ :=
   fun k ↦ p k + t * ((if k = i then 1 else 0) - (if k = j then 1 else 0))
 
+omit [DecidableEq V] in
 lemma bilinear_add_left (A : V → V → ℝ) (p q r : V → ℝ) :
     bilinear A (p + q) r = bilinear A p r + bilinear A q r := by
+  classical
   simp [bilinear, mul_add, add_mul, sum_add_distrib]
 
+omit [DecidableEq V] in
 lemma bilinear_add_right (A : V → V → ℝ) (p q r : V → ℝ) :
     bilinear A p (q + r) = bilinear A p q + bilinear A p r := by
+  classical
   simp [bilinear, mul_add, sum_add_distrib]
 
+omit [DecidableEq V] in
 lemma bilinear_symmetric (A : V → V → ℝ) (hA : ∀ i j, A i j = A j i)
     (p q : V → ℝ) : bilinear A p q = bilinear A q p := by
+  classical
   unfold bilinear
   rw [sum_comm]
   apply sum_congr rfl
@@ -90,16 +96,20 @@ lemma transfer_mem_simplex {p : V → ℝ} (hp : p ∈ stdSimplex ℝ V)
         simp only [transfer, if_true, if_false, Ne.symm hij, zero_sub, mul_neg, mul_one]
         linarith
       · simpa [transfer, hki, hkj] using hp.1 k
-  · simp [transfer, sum_add_distrib, mul_sub, sum_sub_distrib, ← mul_sum, hp.2]
+  · simp [transfer, sum_add_distrib, mul_sub, sum_sub_distrib, hp.2]
 
+omit [DecidableEq V] in
 lemma continuous_quadratic (A : V → V → ℝ) : Continuous (quadratic A) := by
+  classical
   unfold quadratic bilinear
   fun_prop
 
+omit [DecidableEq V] in
 lemma rows_eq_at_max {A : V → V → ℝ} (hA : ∀ i j, A i j = A j i)
     {p : V → ℝ} (hp : p ∈ stdSimplex ℝ V)
     (hmax : ∀ q ∈ stdSimplex ℝ V, quadratic A q ≤ quadratic A p)
     {i j : V} (hi : 0 < p i) (hj : 0 < p j) : row A p i = row A p j := by
+  classical
   by_cases hij : i = j
   · rw [hij]
   let f : ℝ → ℝ := fun t ↦ quadratic A p +
@@ -121,10 +131,12 @@ lemma rows_eq_at_max {A : V → V → ℝ} (hA : ∀ i j, A i j = A j i)
   have hzero := hlocal.hasDerivAt_eq_zero hderiv
   linarith
 
+omit [DecidableEq V] in
 lemma row_eq_quadratic_at_max {A : V → V → ℝ} (hA : ∀ i j, A i j = A j i)
     {p : V → ℝ} (hp : p ∈ stdSimplex ℝ V)
     (hmax : ∀ q ∈ stdSimplex ℝ V, quadratic A q ≤ quadratic A p)
     {i : V} (hi : 0 < p i) : row A p i = quadratic A p := by
+  classical
   calc
     row A p i = ∑ j, p j * row A p i := by rw [← sum_mul, hp.2, one_mul]
     _ = ∑ j, p j * row A p j := by
@@ -145,11 +157,12 @@ noncomputable def support (p : V → ℝ) : Finset V := by
   classical
   exact univ.filter (fun i ↦ p i ≠ 0)
 
+omit [DecidableEq V] in
 lemma mem_support {p : V → ℝ} {i : V} : i ∈ support p ↔ p i ≠ 0 := by
   classical
   simp [support]
 
-lemma transfer_support_lt {p : V → ℝ} (hp : p ∈ stdSimplex ℝ V)
+lemma transfer_support_lt {p : V → ℝ} (_ : p ∈ stdSimplex ℝ V)
     {i j : V} (hij : i ≠ j) (hi : 0 < p i) (hj : 0 < p j) :
     (support (transfer p i j (p j))).card < (support p).card := by
   apply Finset.card_lt_card
@@ -169,6 +182,7 @@ lemma transfer_support_lt {p : V → ℝ} (hp : p ∈ stdSimplex ℝ V)
     rw [mem_support] at hjmem
     simp [transfer, Ne.symm hij] at hjmem
 
+omit [DecidableEq V] in
 /-- A quadratic form has a maximizing probability vector for which no pair of
 positive coordinates has zero transfer curvature. -/
 theorem exists_sparse_maximizer [Nonempty V] (A : V → V → ℝ)

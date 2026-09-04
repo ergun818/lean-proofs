@@ -55,11 +55,13 @@ def offDiagonalAllowed (c : I → ℕ) {r : Option I → ℕ}
     | none => True
     | some i => y.1 ≠ i
 
+omit [DecidableEq I] in
 @[simp] lemma mem_offDiagonalAllowed {c : I → ℕ} {r : Option I → ℕ}
     (x : HallLeftToken r) (y : HallRightToken c) :
     y ∈ offDiagonalAllowed c x ↔ match x.1 with
       | none => True
       | some i => y.1 ≠ i := by
+  classical
   simp [offDiagonalAllowed]
 
 private def hallRightFiberEquiv (c : I → ℕ) (i : I) :
@@ -120,9 +122,12 @@ private lemma card_hallLeftFiber (r : Option I → ℕ) (src : Option I) :
   rw [← Fintype.card_coe, Fintype.card_congr e]
   simp
 
-private lemma card_finset_le_leftFiber {r : Option I → ℕ}
+omit [DecidableEq I] [Fintype I] in
+private lemma card_finset_le_leftFiber [Finite I] {r : Option I → ℕ}
     {S : Finset (HallLeftToken r)} {src : Option I}
     (hsrc : ∀ x ∈ S, x.1 = src) : S.card ≤ r src := by
+  classical
+  let _ := Fintype.ofFinite I
   calc
     S.card ≤ ((Finset.univ : Finset (HallLeftToken r)).filter
         (fun x ↦ x.1 = src)).card := by
@@ -132,6 +137,7 @@ private lemma card_finset_le_leftFiber {r : Option I → ℕ}
       exact hsrc x hx
     _ = r src := card_hallLeftFiber r src
 
+omit [DecidableEq I] in
 /-- Integral Hall transport.  The output records how many cloned tokens of
 each source use each right fiber. -/
 theorem exists_offDiagonalTransport_nat (r : Option I → ℕ) (c : I → ℕ)
@@ -165,7 +171,7 @@ theorem exists_offDiagonalTransport_nat (r : Option I → ℕ) (c : I → ℕ)
         obtain ⟨x, hxS, hxsrc⟩ := Finset.mem_image.mp hsrcLabel
         refine ⟨x, hxS, ?_⟩
         rcases src with _ | i
-        · simpa [allowed, offDiagonalAllowed, hxsrc]
+        · simp [allowed, offDiagonalAllowed, hxsrc]
         · have hiy : i ≠ y.1 := by
             intro h
             apply hsrcNe
@@ -254,7 +260,7 @@ theorem exists_offDiagonalTransport_nat (r : Option I → ℕ) (c : I → ℕ)
       rw [mem_offDiagonalAllowed, hxi] at ha
       exact (ha hfi).elim
     · intro hx
-      simpa using hx
+      simp at hx
   · intro j
     let T := (Finset.univ : Finset (HallLeftToken r)).filter fun x ↦
       (f x).1 = j
@@ -318,7 +324,7 @@ lemma hallLowerApprox_le {x : ℝ} (hx : 0 ≤ x) (k : ℕ) :
       (Nat.floor (((k + 1 : ℕ) : ℝ) * x) : ℝ) ≤
         ((k + 1 : ℕ) : ℝ) * x)
 
-lemma hallLowerApprox_lt_add_inv {x : ℝ} (hx : 0 ≤ x) (k : ℕ) :
+lemma hallLowerApprox_lt_add_inv {x : ℝ} (_ : 0 ≤ x) (k : ℕ) :
     x < hallLowerApprox x k + 1 / (k + 1 : ℕ) := by
   unfold hallLowerApprox
   have hk : (0 : ℝ) < (k + 1 : ℕ) := by positivity
@@ -331,12 +337,12 @@ lemma hallLowerApprox_lt_add_inv {x : ℝ} (hx : 0 ≤ x) (k : ℕ) :
     _ = (Nat.floor (((k + 1 : ℕ) : ℝ) * x) : ℝ) /
           (k + 1 : ℕ) + 1 / (k + 1 : ℕ) := by ring
 
-lemma hallUpperApprox_nonneg {x : ℝ} (hx : 0 ≤ x) (k : ℕ) :
+lemma hallUpperApprox_nonneg {x : ℝ} (_ : 0 ≤ x) (k : ℕ) :
     0 ≤ hallUpperApprox x k := by
   unfold hallUpperApprox
   positivity
 
-lemma le_hallUpperApprox {x : ℝ} (hx : 0 ≤ x) (k : ℕ) :
+lemma le_hallUpperApprox {x : ℝ} (_ : 0 ≤ x) (k : ℕ) :
     x ≤ hallUpperApprox x k := by
   unfold hallUpperApprox
   have hk : (0 : ℝ) < (k + 1 : ℕ) := by positivity
@@ -381,6 +387,7 @@ lemma tendsto_hallUpperApprox (x : ℝ) (hx : 0 ≤ x) :
   · exact fun k ↦ le_hallUpperApprox hx k
   · exact fun k ↦ (hallUpperApprox_lt_add_inv hx k).le
 
+omit [DecidableEq I] in
 /-- Fractional Hall transport in the complete bipartite graph minus its
 diagonal, with one unrestricted source `none`.  Source masses are saturated,
 right capacities are respected, and diagonal entries vanish exactly. -/
@@ -434,7 +441,7 @@ theorem exists_offDiagonalTransport_real
         (∑ j, c j) - c i := by
       have h := Finset.sum_erase_add (Finset.univ : Finset I) c
         (Finset.mem_univ i)
-      simpa using (eq_sub_of_add_eq h)
+      simp
     calc
       (r k (some i) : ℝ) ≤ ((k + 1 : ℕ) : ℝ) * d (some i) :=
         Nat.floor_le (mul_nonneg (by positivity) (hd _))

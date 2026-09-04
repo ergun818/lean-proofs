@@ -244,8 +244,7 @@ private lemma internalEdgeFinset_insertLastPart {n : ℕ}
       | last =>
           induction b using Fin.lastCases with
           | last =>
-              simp [internalEdgeFinset, SimpleGraph.mem_edgeFinset,
-                SimpleGraph.mem_edgeSet]
+              simp [internalEdgeFinset, SimpleGraph.mem_edgeFinset]
           | cast b =>
               simp [internalEdgeFinset, SimpleGraph.mem_edgeFinset,
                 SimpleGraph.mem_edgeSet, SimpleGraph.adj_comm, sameSide_mk,
@@ -580,7 +579,7 @@ private lemma exists_unsaturated_left {n : ℕ}
     (hlt : M.card < B₁.card) :
     ∃ a ∈ B₁, a ∉ blueMatchingLeftVertices M := by
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   have hsub : B₁ ⊆ blueMatchingLeftVertices M := fun a ha ↦ hnone a ha
   have := card_le_card hsub
   rw [hM.card_leftVertices] at this
@@ -593,7 +592,7 @@ private lemma exists_unsaturated_right {n : ℕ}
     (hlt : M.card < B₂.card) :
     ∃ b ∈ B₂, b ∉ blueMatchingRightVertices M := by
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   have hsub : B₂ ⊆ blueMatchingRightVertices M := fun b hb ↦ hnone b hb
   have := card_le_card hsub
   rw [hM.card_rightVertices] at this
@@ -1024,7 +1023,7 @@ theorem extensionBlueTriangles_certificate {n : ℕ}
     intro t htOld htNew
     have hinter := hCross t htOld t htNew
     have hcard := (hOldTri t htOld).card_eq
-    simpa [hcard] using hinter
+    simp [hcard] at hinter
   refine ⟨?_, ?_, ?_⟩
   · intro t ht
     rcases mem_union.mp ht with ht | ht
@@ -1222,7 +1221,7 @@ lemma claim46_final_neighbor_bound_of_saturating_matching
       have hInternalNew :
           (internalEdgeFinset G (insertLastPart s₁)).card = k + M.card := by
         rw [card_internalEdgeFinset_insertLastPart H G hHG s₁]
-        simpa [k, hm]
+        simp [k, hm]
       have hsmallBound : k + M.card + 4 ≤ s₁ᶜ.ncard := by
         dsimp only [k] at hfirst ⊢
         omega
@@ -1250,7 +1249,7 @@ lemma claim46_final_neighbor_bound_of_saturating_matching
           (internalEdgeFinset G (insertLastPart s₁ᶜ)).card = k + M.card := by
         rw [card_internalEdgeFinset_insertLastPart H G hHG s₁ᶜ,
           hInternalCompl]
-        simpa [k, hm]
+        simp [k, hm]
       have hsmallBound : k + M.card + 4 ≤ s₁ᶜ.ncard := by
         dsimp only [k] at hfirst ⊢
         omega
@@ -1309,7 +1308,7 @@ lemma claim46_final_neighbor_bound_of_saturating_matching
       have hInternalNew :
           (internalEdgeFinset G (insertLastPart s₁)).card = k + M.card := by
         rw [card_internalEdgeFinset_insertLastPart H G hHG s₁]
-        simpa [k, hm]
+        simp [k, hm]
       have hfinal := claim46_final_of_augmented_partition hAC G hG
         (insertLastPart s₁) hInternalNew
         (by simp only [ncard_insertLastPart]; omega)
@@ -1326,7 +1325,7 @@ lemma claim46_final_neighbor_bound_of_saturating_matching
           (internalEdgeFinset G (insertLastPart s₁ᶜ)).card = k + M.card := by
         rw [card_internalEdgeFinset_insertLastPart H G hHG s₁ᶜ,
           hInternalCompl]
-        simpa [k, hm]
+        simp [k, hm]
       have hfinal := claim46_final_of_augmented_partition hAC G hG
         (insertLastPart s₁ᶜ) hInternalNew
         (by simp only [ncard_insertLastPart]; omega)
@@ -1494,7 +1493,7 @@ private lemma almostCompleteFractionalDecomposition_fintype_forExtension
   have hmap : H.map e.symm.toEmbedding = G := by
     dsimp only [H]
     rw [SimpleGraph.map_map]
-    simpa using G.map_id
+    simp
   refine ⟨u, ?_⟩
   simpa only [u, hmap] using hw.relabelForExtension e.symm
 
@@ -1544,7 +1543,7 @@ private lemma natCard_edgeSet_add_missing_forExtension
   exact h
 
 private lemma missingEdgeCount_compl_induce_forExtension
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*} [DecidableEq α]
     (G : SimpleGraph α) (S : Finset α) :
     missingEdgeCount (Gᶜ.induce (S : Set α)) =
       (G.induce (S : Set α)).edgeFinset.card := by
@@ -1580,7 +1579,7 @@ private lemma missingEdgeCount_mono_le_add_edgeSet_card_sub
   omega
 
 private lemma map_induced_edges_lost_to_deleteEdges_subset
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*} [DecidableEq α]
     (R : SimpleGraph α) (S : Finset α) (D : Finset (Sym2 α)) :
     ((R.induce (S : Set α)).edgeFinset \
         ((R.deleteEdges (D : Set (Sym2 α))).induce
@@ -1604,19 +1603,21 @@ private lemma map_induced_edges_lost_to_deleteEdges_subset
       simpa [inducedEmbedding] using habD
 
 private lemma induce_deleteEdges_le
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*}
     (R : SimpleGraph α) (S : Finset α) (D : Finset (Sym2 α)) :
     (R.deleteEdges (D : Set (Sym2 α))).induce (S : Set α) ≤
       R.induce (S : Set α) := by
+  classical
   intro a b hab
   exact (SimpleGraph.deleteEdges_adj.mp hab).1
 
 private lemma card_induced_edges_lost_to_deleteEdges_le
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*}
     (R : SimpleGraph α) (S : Finset α) (D : Finset (Sym2 α)) :
     Nat.card (R.induce (S : Set α)).edgeSet -
       Nat.card ((R.deleteEdges (D : Set (Sym2 α))).induce
         (S : Set α)).edgeSet ≤ D.card := by
+  classical
   let E := (R.induce (S : Set α)).edgeFinset \
     ((R.deleteEdges (D : Set (Sym2 α))).induce (S : Set α)).edgeFinset
   have hsub :
@@ -1651,7 +1652,7 @@ private lemma card_induced_edges_lost_to_deleteEdges_le
 /-- Deleting `D` before restricting to a finite induced side creates at
 most `D.card` additional missing edges on that side. -/
 private lemma missingEdgeCount_induce_deleteEdges_le
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*} [DecidableEq α]
     (R : SimpleGraph α) (S : Finset α) (D : Finset (Sym2 α)) :
     missingEdgeCount
         ((R.deleteEdges (D : Set (Sym2 α))).induce (S : Set α)) ≤
@@ -2231,8 +2232,6 @@ private lemma exists_twoStarRedPacking_on_oldSide
         chosenEndpointCover (edgesInsideOutside H R ∅),
       Gᶜ.Adj w v.castSucc) :
     ∃ MA MR : Gᶜ.Subgraph,
-      let PA := attachedMatchingTriangles MA z
-      let PR := attachedMatchingTriangles MR w
       let P := twoStarFamily MA MR z w
       MA.IsMatching ∧ MR.IsMatching ∧
         MA.verts ⊆ Fin.castSucc ''
@@ -2900,7 +2899,7 @@ private lemma familyPairs_inter_side_subset_covered_first
     {α : Type*} [Fintype α] [DecidableEq α]
     (R : SimpleGraph α) (S T : Finset α) (hST : Disjoint S T)
     (P₁ P₂ : Finset (Finset α))
-    (hP₁ : IsInternalCrossPacking R (S : Set α) P₁)
+    (_ : IsInternalCrossPacking R (S : Set α) P₁)
     (hP₂ : IsInternalCrossPacking R (T : Set α) P₂)
     (hP₂side : ∀ t ∈ P₂,
       (t.filter fun x ↦ x ∈ T).card = 2) :
@@ -3050,7 +3049,7 @@ private lemma exists_claim45_residual_and_integral_packing
       (K.induce (S : Set α))
     have hcard : Fintype.card (S : Set α) = S.card := by
       symm
-      simpa using Set.toFinset_card (S : Set α)
+      simp
     rw [hcard] at hsum
     omega
   have hedgeT : T.card.choose 2 ≤
@@ -3059,7 +3058,7 @@ private lemma exists_claim45_residual_and_integral_packing
       (K.induce (T : Set α))
     have hcard : Fintype.card (T : Set α) = T.card := by
       symm
-      simpa using Set.toFinset_card (T : Set α)
+      simp
     rw [hcard] at hsum
     omega
   refine ⟨w, hw, ?_⟩

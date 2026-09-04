@@ -149,12 +149,13 @@ def innerBatchResidualEdges {J : Type*} [Fintype J]
 
 /-- The residual-degree indicator expansion for inner-generated colours. -/
 lemma innerBatchResidualDegree_eq_sum_never_accepted
-    {J : Type*} [Fintype J] [DecidableEq J]
+    {J : Type*} [Fintype J]
     (H : FiniteHypergraph V E) {L : ℕ}
     (X : J → (Fin L → Finset E)) (v : V) :
     (H.innerBatchResidualDegree X v : ℝ) =
       ∑ e : E, if v ∈ H.support e ∧
           ∀ j : J, e ∉ H.innerMatching (X j) then 1 else 0 := by
+  classical
   rw [innerBatchResidualDegree, H.batchResidualDegree_eq_sum_never_accepted]
   apply sum_congr rfl
   intro e _
@@ -238,7 +239,7 @@ lemma productExpectation_innerBatchResidualDegree_le
     {J : Type*} [Fintype J] [DecidableEq J]
     (H : FiniteHypergraph V E) {L : ℕ} {prob : E → ℝ}
     (hprob0 : ∀ e, 0 ≤ prob e) (hprob1 : ∀ e, prob e ≤ 1)
-    {a : ℝ} (ha0 : 0 ≤ a)
+    {a : ℝ} (_ : 0 ≤ a)
     (haccept : ∀ e, a ≤ H.innerAcceptanceMass L prob e) (v : V) :
     FiniteProduct.productExpectation (innerTrialMass L prob)
         (fun X : J → (Fin L → Finset E) ↦
@@ -291,7 +292,7 @@ keep the residual hypergraph near-regular throughout the outer iteration. -/
 lemma productExpectation_innerBatchResidualDegree_ge
     {J : Type*} [Fintype J] [DecidableEq J]
     (H : FiniteHypergraph V E) {L : ℕ} {prob : E → ℝ}
-    (hprob0 : ∀ e, 0 ≤ prob e) (hprob1 : ∀ e, prob e ≤ 1)
+    (_ : ∀ e, 0 ≤ prob e) (_ : ∀ e, prob e ≤ 1)
     {b : ℝ} (hb1 : b ≤ 1)
     (haccept : ∀ e, H.innerAcceptanceMass L prob e ≤ b) (v : V) :
     (H.edgeDegree v : ℝ) * (1 - b) ^ Fintype.card J ≤
@@ -726,7 +727,7 @@ lemma eventMass_flattenedInnerResidualDegreeBad_eq
     simp [hb, hbR, hd, hm]
   · have hbR : ¬ (threshold v : ℝ) ≤ (H.innerBatchResidualDegree X v.1 : ℝ) := by
       exact_mod_cast hb
-    simp [hb, hbR, hd, hm]
+    simp [hb, hbR, hd]
 
 /-- The event that a residual degree is far from its exact mean is local in
 the same finite coordinate support as either one-sided threshold event. -/
@@ -752,7 +753,7 @@ lemma flattenedInnerResidualDegreeCenteredBad_eventDependsOn
         (fun X : J → (Fin L → Finset E) ↦
           (H.innerBatchResidualDegree X v.1 : ℝ))|
   have hd := H.flattenedInnerBatchResidualDegree_eq_of_agreesOn L v.1 hZT
-  simpa only [hd]
+  simp only [hd]
 
 /-- Flattening preserves the mass of the centered two-sided residual-degree
 event. -/
@@ -791,12 +792,12 @@ lemma eventMass_flattenedInnerResidualDegreeCenteredBad_eq
         |(H.flattenedInnerBatchResidualDegree L (flattenInnerBatch X) v.1 : ℝ) -
           mean| := by
       simpa only [hd] using hb
-    simp [mean, hb, hb', hm]
+    simp [mean, hb, hm]
   · have hb' : ¬ t ≤
         |(H.flattenedInnerBatchResidualDegree L (flattenInnerBatch X) v.1 : ℝ) -
           mean| := by
       simpa only [hd] using hb
-    simp [mean, hb, hb', hm]
+    simp [mean, hb, ]
 
 /-- A symmetric finite-LLL batch: every active vertex simultaneously has
 residual degree strictly within `t` of its exact expectation. -/
@@ -1160,14 +1161,17 @@ def restrictCompletionMatching
     (M : Finset (CompletionEdge H D k q hdegree)) : Finset E :=
   univ.filter fun e ↦ originalEdgeEmbedding H D q hk hdegree e ∈ M
 
+omit [DecidableEq E] in
 @[simp] lemma mem_restrictCompletionMatching
     (H : FiniteHypergraph V E) (D k q : ℕ) (hk : 0 < k)
     (hdegree : ∀ v ∈ H.vertexSet, H.edgeDegree v ≤ D)
     (M : Finset (CompletionEdge H D k q hdegree)) (e : E) :
     e ∈ H.restrictCompletionMatching D k q hk hdegree M ↔
       originalEdgeEmbedding H D q hk hdegree e ∈ M := by
+  classical
   simp [restrictCompletionMatching]
 
+omit [DecidableEq E] in
 /-- A matching in the completion restricts to a matching of original edges. -/
 lemma restrictCompletionMatching_isMatching
     (H : FiniteHypergraph V E) (D k q : ℕ) [NeZero q] (hk : 0 < k)
@@ -1175,6 +1179,7 @@ lemma restrictCompletionMatching_isMatching
     {M : Finset (CompletionEdge H D k q hdegree)}
     (hM : (regularCompletion H D k q hdegree).IsMatching M) :
     H.IsMatching (H.restrictCompletionMatching D k q hk hdegree M) := by
+  classical
   intro e he f hf hef
   have heM := (H.mem_restrictCompletionMatching D k q hk hdegree M e).mp he
   have hfM := (H.mem_restrictCompletionMatching D k q hk hdegree M f).mp hf
@@ -1361,7 +1366,7 @@ theorem hasBatchReduction_via_regularCompletion
         k zeta eta L D₀)
     (hk : 0 < k) (hm : 0 < m) (hD₀ : D₀ ≤ degreeIn)
     (hDinTwo : 2 ≤ degreeIn)
-    (heta0 : 0 ≤ eta) (hetaD : 1 < eta * (degreeIn : ℝ))
+    (_ : 0 ≤ eta) (hetaD : 1 < eta * (degreeIn : ℝ))
     (hzeta0 : 0 ≤ zeta) (hzeta1 : zeta ≤ 1)
     (hpairNear : pairBound ≤ eta * (degreeIn : ℝ))
     (ht : 0 ≤ t) (hx0 : 0 ≤ x) (hx1 : x < 1)
@@ -1519,6 +1524,7 @@ theorem hasBatchReduction_of_fixedLengthInnerMarginal
     change H.batchResidualDegree X v < degreeOut + 1 at hlt
     omega
 
+omit [DecidableEq E] in
 /-- Finitely many universally available batch reductions iterate.  The final
 residual hypergraph is coloured greedily with `k * degreeCap s + 1` colours,
 and each earlier batch contributes exactly `batchSize i` matching colours. -/
@@ -1537,6 +1543,7 @@ theorem exists_edgeColoring_of_batchReductions
     (hpair : ∀ u ∈ H.vertexSet, ∀ v ∈ H.vertexSet, u ≠ v →
       (H.edgePairDegree u v : ℝ) < pairBound) :
     Nonempty (H.EdgeColoring (outerColorCount k degreeCap batchSize s)) := by
+  classical
   induction s generalizing E degreeFloor degreeCap batchSize with
   | zero =>
       simpa [outerColorCount] using
@@ -1587,6 +1594,7 @@ theorem exists_edgeColoring_of_batchReductions
           hsizeTail hbatchTail HR hunifR hdegreeLowerR hdegreeR hpairR
       exact H.nonempty_edgeColoring_add_batch hm0 X hcR
 
+omit [DecidableEq E] in
 /-- Maximum-degree-only outer iteration.  Each reduction may be obtained by
 fresh regular completion, so the original residual hypergraph need not remain
 near-regular. -/
@@ -1601,6 +1609,7 @@ theorem exists_edgeColoring_of_completedBatchReductions
     (hpair : ∀ u ∈ H.vertexSet, ∀ v ∈ H.vertexSet, u ≠ v →
       (H.edgePairDegree u v : ℝ) < pairBound) :
     Nonempty (H.EdgeColoring (outerColorCount k degreeCap batchSize s)) := by
+  classical
   apply exists_edgeColoring_of_batchReductions k s (fun _ ↦ 0)
     degreeCap batchSize pairBound hsize hbatch H hunif
   · intro v _
@@ -1608,6 +1617,7 @@ theorem exists_edgeColoring_of_completedBatchReductions
   · exact hdegree
   · exact hpair
 
+omit [DecidableEq E] in
 /-- Fully assembled finite schedule theorem.  Every hypothesis after the
 fixed-length marginal is a scalar inequality; all hypergraph probability,
 locality, LLL, restriction, iteration, and residual colouring are discharged
@@ -1646,6 +1656,7 @@ theorem exists_edgeColoring_of_fixedLengthMarginal_schedule
     (hpair : ∀ u ∈ H.vertexSet, ∀ v ∈ H.vertexSet, u ≠ v →
       (H.edgePairDegree u v : ℝ) < pairBound) :
     Nonempty (H.EdgeColoring (outerColorCount k degreeCap batchSize s)) := by
+  classical
   apply exists_edgeColoring_of_batchReductions k s degreeFloor degreeCap batchSize
     pairBound hsize
   · intro i hi
@@ -1658,6 +1669,7 @@ theorem exists_edgeColoring_of_fixedLengthMarginal_schedule
   · exact hdegree
   · exact hpair
 
+omit [DecidableEq E] in
 /-- Source-faithful finite schedule assembly using a two-sided inner marginal
 and two-sided residual-degree concentration. -/
 theorem exists_edgeColoring_of_twoSidedFixedLengthMarginal_schedule
@@ -1697,6 +1709,7 @@ theorem exists_edgeColoring_of_twoSidedFixedLengthMarginal_schedule
     (hpair : ∀ u ∈ H.vertexSet, ∀ v ∈ H.vertexSet, u ≠ v →
       (H.edgePairDegree u v : ℝ) < pairBound) :
     Nonempty (H.EdgeColoring (outerColorCount k degreeCap batchSize s)) := by
+  classical
   apply exists_edgeColoring_of_batchReductions k s degreeFloor degreeCap batchSize
     pairBound hsize
   · intro i hi
@@ -1741,12 +1754,13 @@ theorem exists_edgeColoring_of_completedMarginal_schedule
     (hll : ∀ i, i < s →
       Real.exp (-2 * deviation i ^ 2 / (batchSize i : ℝ)) ≤
         lllChoice i * (1 - lllChoice i) ^ depDegree i)
-    {V₀ E₀ : Type} [DecidableEq V₀] [Fintype E₀] [DecidableEq E₀]
+    {V₀ E₀ : Type} [DecidableEq V₀] [Fintype E₀]
     (H : FiniteHypergraph V₀ E₀) (hunif : H.IsUniform k)
     (hdegree : ∀ v ∈ H.vertexSet, H.edgeDegree v ≤ degreeCap 0)
     (hpair : ∀ u ∈ H.vertexSet, ∀ v ∈ H.vertexSet, u ≠ v →
       (H.edgePairDegree u v : ℝ) < pairBound) :
     Nonempty (H.EdgeColoring (outerColorCount k degreeCap batchSize s)) := by
+  classical
   apply exists_edgeColoring_of_completedBatchReductions k s degreeCap batchSize
     pairBound hsize
   · intro i hi
@@ -1760,7 +1774,7 @@ theorem exists_edgeColoring_of_completedMarginal_schedule
 
 /-! ### Scalar estimates used when constructing outer schedules -/
 
-lemma pow_one_sub_le_exp_neg_mul {a : ℝ} (ha0 : 0 ≤ a) (ha1 : a ≤ 1)
+lemma pow_one_sub_le_exp_neg_mul {a : ℝ} (_ : 0 ≤ a) (ha1 : a ≤ 1)
     (m : ℕ) :
     (1 - a) ^ m ≤ Real.exp (-a * (m : ℝ)) := by
   calc
@@ -1944,7 +1958,7 @@ lemma sum_floor_mul_ceilGeometricCap_le
 absorbs the single unit lost when rounding the batch size down. -/
 lemma floor_batch_mean_le_ceil_contraction
     {theta rho sigma q zeta : ℝ} {C : ℕ}
-    (hC : 0 < C) (htheta : 0 ≤ theta) (hrho : 0 ≤ rho)
+    (hC : 0 < C) (_ : 0 ≤ theta) (_ : 0 ≤ rho)
     (hzeta0 : 0 ≤ zeta) (hzeta1 : zeta ≤ 1)
     (hsigma : (1 - zeta) / (C : ℝ) ≤ sigma)
     (hrate : Real.exp (-((1 - zeta) * theta - sigma)) + rho ≤ q) :
@@ -1994,7 +2008,7 @@ lemma floor_batch_mean_le_ceil_contraction
 floor-sized batch. -/
 lemma floor_batch_tail_le_exp_linear
     {theta rho : ℝ} {C : ℕ}
-    (htheta : 0 < theta) (hrho : 0 ≤ rho)
+    (htheta : 0 < theta) (_ : 0 ≤ rho)
     (hm : 0 < ⌊theta * (C : ℝ)⌋₊) :
     Real.exp (-2 * (rho * (C : ℝ)) ^ 2 /
         (⌊theta * (C : ℝ)⌋₊ : ℝ)) ≤
@@ -2065,7 +2079,7 @@ integer rounding and local-lemma conditions hold for sufficiently large
 initial degree. -/
 theorem exists_completedOuterSchedule_of_rates
     {k L D₀ s : ℕ} {zeta eta epsilon theta rho q : ℝ}
-    (hepsilon : 0 < epsilon) (heta : 0 < eta)
+    (_ : 0 < epsilon) (heta : 0 < eta)
     (hzeta0 : 0 ≤ zeta) (hzeta1 : zeta < 1)
     (htheta : 0 < theta) (hrho : 0 < rho)
     (hq0 : 0 < q) (hq1 : q < 1)

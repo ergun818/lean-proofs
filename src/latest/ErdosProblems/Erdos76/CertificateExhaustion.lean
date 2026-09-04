@@ -67,12 +67,13 @@ instance (p : VertexPermutation n) : Decidable p.Valid := by
 /-- Executable permutation checker. -/
 def check (p : VertexPermutation n) : Bool := decide p.Valid
 
+omit [NeZero n] in
 @[simp] theorem check_eq_true_iff (p : VertexPermutation n) :
     p.check = true ↔ p.Valid := by
   simp [check]
 
 lemma apply_eq_getElem (p : VertexPermutation n) (hp : p.Valid) (i : Fin n) :
-    p.apply i = p.images[i.1]'(by simpa [hp.1] using i.isLt) := by
+    p.apply i = p.images[i.1]'(by simp [hp.1]) := by
   exact (Array.getElem_eq_getD 0).symm
 
 /-- A checked array produces an actual permutation in the kernel. -/
@@ -82,8 +83,8 @@ noncomputable def equiv (p : VertexPermutation n) (hp : p.Valid) : Equiv.Perm (F
   refine ⟨?_, rfl⟩
   intro i j hij
   have hlen : p.images.toList.length = n := by simpa using hp.1
-  have hi : i.1 < p.images.toList.length := by simpa [hlen] using i.isLt
-  have hj : j.1 < p.images.toList.length := by simpa [hlen] using j.isLt
+  have hi : i.1 < p.images.toList.length := by simp [hlen]
+  have hj : j.1 < p.images.toList.length := by simp [hlen]
   have hget : p.images.toList[i.1] = p.images.toList[j.1] := by
     rw [Array.getElem_toList hi, Array.getElem_toList hj]
     simpa [apply_eq_getElem p hp] using hij
@@ -338,17 +339,17 @@ theorem StepValid.of_rowsValidFrom {n : ℕ} [NeZero n]
     StepValid parents children table := by
   refine ⟨hsize, ?_⟩
   intro p
-  have hpList : p.1 < table.toList.length := by simpa [hsize] using p.isLt
+  have hpList : p.1 < table.toList.length := by simp [hsize]
   obtain ⟨p', hp', hrow⟩ :=
     RowsValidListFrom.get hrows p.1 hpList
   have hpp : p' = p := by
     apply Fin.ext
     simpa using hp'
   subst p'
-  have hlist : table.toList[p.1] = table[p.1]'(by simpa [hsize] using p.isLt) := by
+  have hlist : table.toList[p.1] = table[p.1]'(by simp [hsize]) := by
     exact Array.getElem_toList _
   rw [hlist] at hrow
-  have hgetD : table.getD p.1 #[] = table[p.1]'(by simpa [hsize] using p.isLt) :=
+  have hgetD : table.getD p.1 #[] = table[p.1]'(by simp [hsize]) :=
     (Array.getElem_eq_getD #[]).symm
   simpa only [RowValid, transitionAt, hgetD] using hrow
 
@@ -372,7 +373,7 @@ noncomputable def SimpleGraph.Iso.addEdge {n : ℕ}
       (s(f x, f y) = s(f i, f j) ∧ f x ≠ f y)) ↔
         G.Adj x y ∨ (s(x, y) = s(i, j) ∧ x ≠ y)
     rw [f.map_rel_iff]
-    simp [Sym2.eq_iff, f.toEquiv.injective.eq_iff]
+    simp
 
 /-- Semantic isomorphism certified by one accepted transition record. -/
 noncomputable def Transition.Valid.iso {n : ℕ} [NeZero n]
@@ -503,6 +504,7 @@ lemma Valid.stepValid {d : ExhaustionData n} (hd : d.Valid)
     StepValid (d.level k) (d.level (k + 1)) (d.step k) :=
   hd.2.2.2 ⟨k, hk⟩
 
+omit [NeZero n] in
 @[simp] lemma graphOfBits_zero :
     graphOfBits (0 : BitVec (edgeCount n)) = (⊥ : SimpleGraph (Fin n)) := by
   ext i j
@@ -549,7 +551,7 @@ theorem Valid.represents_fromEdgeFinset {d : ExhaustionData n} (hd : d.Valid)
                 addEdge (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin n)))) x y := by
             ext a b
             simp [addEdge, SimpleGraph.fromEdgeSet_adj, and_or_left, and_comm,
-              and_left_comm, and_assoc, or_comm]
+              and_assoc, or_comm]
           have hcardInsert : (insert s(x, y) S).card = S.card + 1 := by simp [he]
           rw [hcardInsert, hg]
           exact hstep

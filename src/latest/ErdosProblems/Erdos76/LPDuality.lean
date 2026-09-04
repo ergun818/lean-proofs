@@ -64,6 +64,7 @@ theorem matrix_game_saddle (A : Matrix I J ℝ) :
   · simpa [f, B] using hpq p hp q' hq'
   · simpa [f, B] using hpq p' hp' q hq
 
+omit [Nonempty I] [Nonempty J] in
 /-- A positive saddle value rescales the two optimal mixed strategies to a feasible fractional
 packing and a feasible fractional cover of the same total weight. -/
 theorem primal_dual_of_positive_saddle (A : Matrix I J ℝ)
@@ -109,11 +110,12 @@ theorem primal_dual_of_positive_saddle (A : Matrix I J ℝ)
   · simp only [x, y, div_eq_mul_inv]
     rw [← Finset.sum_mul, ← Finset.sum_mul, hp.2, hq.2]
 
+omit [Nonempty I] [Nonempty J] in
 /-- It is enough for one mixed row strategy to give every column strictly positive payoff in
 order to know that the saddle value is positive. -/
 theorem saddle_value_pos_of_positive_mixed_row (A : Matrix I J ℝ)
     (p : J → ℝ) (hp : p ∈ stdSimplex ℝ J)
-    (q : I → ℝ) (hq : q ∈ stdSimplex ℝ I)
+    (q : I → ℝ) (_ : q ∈ stdSimplex ℝ I)
     (hsaddle : ∀ p' ∈ stdSimplex ℝ J, ∀ q' ∈ stdSimplex ℝ I,
       Matrix.toLinearMap₂' ℝ A q' p ≤ Matrix.toLinearMap₂' ℝ A q p ∧
         Matrix.toLinearMap₂' ℝ A q p ≤ Matrix.toLinearMap₂' ℝ A q p')
@@ -134,6 +136,7 @@ theorem saddle_value_pos_of_positive_mixed_row (A : Matrix I J ℝ)
       ⟨j, Finset.mem_univ _, mul_pos (hq₀A j) hj⟩
   exact hpositive.trans_le ((hsaddle p hp q₀ hq₀).1)
 
+omit [DecidableEq I] [DecidableEq J] in
 /-- Strong finite packing/covering duality for a matrix admitting a strictly positive mixed row.
 The witnesses have equal total weight. -/
 theorem matrix_fractional_matching_cover (A : Matrix I J ℝ)
@@ -143,10 +146,12 @@ theorem matrix_fractional_matching_cover (A : Matrix I J ℝ)
       (∀ j, 0 ≤ x j) ∧ (∀ i, (A *ᵥ x) i ≤ 1) ∧
       (∀ i, 0 ≤ y i) ∧ (∀ j, 1 ≤ (y ᵥ* A) j) ∧
       ∑ j, x j = ∑ i, y i := by
+  classical
   obtain ⟨p, hp, q, hq, hsaddle⟩ := matrix_game_saddle A
   exact primal_dual_of_positive_saddle A p hp q hq hsaddle
     (saddle_value_pos_of_positive_mixed_row A p hp q hq hsaddle q₀ hq₀ hq₀A)
 
+omit [DecidableEq I] [DecidableEq J] in
 /-- If every matrix entry is nonnegative and every column has a positive entry, the barycenter of
 the row simplex is a strictly positive mixed row. -/
 theorem matrix_fractional_matching_cover_of_column_pos (A : Matrix I J ℝ)
@@ -225,11 +230,13 @@ noncomputable def edgeCoverWeight (G : SimpleGraph α)
   classical
   exact fun e ↦ if he : e ∈ G.edgeSet then y ⟨e, he⟩ else 0
 
+omit [Fintype α] in
 @[simp] lemma triangleWeight_index (G : SimpleGraph α) (x : TriangleIndex G → ℝ)
     (t : TriangleIndex G) : triangleWeight G x t.val = x t := by
   classical
   rw [triangleWeight, dif_pos t.property]
 
+omit [DecidableEq α] [Fintype α] in
 @[simp] lemma edgeCoverWeight_index (G : SimpleGraph α) (y : EdgeIndex G → ℝ)
     (e : EdgeIndex G) : edgeCoverWeight G y e.val = y e := by
   classical
@@ -296,6 +303,7 @@ lemma triangleWeight_fractionalSize (G : SimpleGraph α) (x : TriangleIndex G �
         (fun t ↦ SimpleGraph.mem_cliqueFinset_iff) (triangleWeight G x)
     _ = ∑ t, x t := Finset.sum_congr rfl (fun t _ ↦ triangleWeight_index G x t)
 
+omit [DecidableEq α] in
 lemma edgeCoverWeight_sum (G : SimpleGraph α) (y : EdgeIndex G → ℝ) :
     ∑ e ∈ G.edgeFinset, edgeCoverWeight G y e = ∑ e, y e := by
   classical
@@ -306,6 +314,7 @@ lemma edgeCoverWeight_sum (G : SimpleGraph α) (y : EdgeIndex G → ℝ) :
         (fun e ↦ SimpleGraph.mem_edgeFinset) (edgeCoverWeight G y)
     _ = ∑ e, y e := Finset.sum_congr rfl (fun e _ ↦ edgeCoverWeight_index G y e)
 
+omit [Fintype α] in
 /-- Every triangle column of the incidence matrix contains an entry equal to one. -/
 lemma triangleIncidenceMatrix_exists_one (G : SimpleGraph α) (t : TriangleIndex G) :
     ∃ e : EdgeIndex G, triangleIncidenceMatrix G e t = 1 := by

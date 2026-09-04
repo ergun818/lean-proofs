@@ -45,23 +45,29 @@ variable {α : Type*} [Fintype α] [DecidableEq α]
 def inducedEmbedding (S : Finset α) : S ↪ α :=
   Function.Embedding.subtype (fun x : α ↦ x ∈ S)
 
+omit [DecidableEq α] [Fintype α] in
 @[simp] lemma inducedEmbedding_apply (S : Finset α) (x : S) :
-    inducedEmbedding S x = x := rfl
+    inducedEmbedding S x = x := by
+  classical
+  exact rfl
 
+omit [DecidableEq α] [Fintype α] in
 /-- The two syntactically different subtype inclusions used by `Finset` and
 `SimpleGraph.induce` agree.  The proof does not rely on their proof fields
 being definitionally equal. -/
 lemma inducedEmbedding_eq_setEmbedding (S : Finset α) :
     inducedEmbedding S =
       Function.Embedding.subtype (fun x : α ↦ x ∈ (S : Set α)) := by
+  classical
   ext x
   rfl
 
 /-- Restrict an ambient finset known to lie in `S` to the subtype `S`. -/
 def restrictToInduced (S : Finset α) (t : Finset α)
-    (ht : t ⊆ S) : Finset S :=
+    (_ : t ⊆ S) : Finset S :=
   t.subtype (· ∈ S)
 
+omit [Fintype α] in
 /-- Restriction is inverse to the subtype inclusion.  `Subtype.ext` is used
 explicitly here: the membership proofs in the two subtype values need not be
 definitionally identical. -/
@@ -84,6 +90,7 @@ lemma restrictToInduced_map (S : Finset α) (t : Finset S) :
 def extendInducedWeight (S : Finset α) (w : Finset S → ℝ) : Finset α → ℝ :=
   fun t ↦ if ht : t ⊆ S then w (restrictToInduced S t ht) else 0
 
+omit [Fintype α] in
 @[simp]
 lemma extendInducedWeight_map (S : Finset α) (w : Finset S → ℝ)
     (t : Finset S) :
@@ -93,22 +100,27 @@ lemma extendInducedWeight_map (S : Finset α) (w : Finset S → ℝ)
   · rw [restrictToInduced_map]
   · exact fun x hx ↦ Finset.property_of_mem_map_subtype t hx
 
+omit [Fintype α] in
 lemma extendInducedWeight_eq_zero {S : Finset α} {w : Finset S → ℝ}
     {t : Finset α} (ht : ¬t ⊆ S) :
     extendInducedWeight S w t = 0 := by
   simp [extendInducedWeight, ht]
 
+omit [DecidableEq α] [Fintype α] in
 private lemma inducedClique_map_iff (G : SimpleGraph α) (S : Finset α)
     (t : Finset S) (n : ℕ) :
     (G.induce (S : Set α)).IsNClique n t ↔
       G.IsNClique n (t.map (inducedEmbedding S)) := by
+  classical
   rw [inducedEmbedding_eq_setEmbedding]
   exact SimpleGraph.isNClique_induce_iff (G := G) (S : Set α) t n
 
+omit [DecidableEq α] [Fintype α] in
 private lemma edge_mem_map_iff (S : Finset α) (p : Sym2 S)
     (t : Finset S) :
     (inducedEmbedding S).sym2Map p ∈ (t.map (inducedEmbedding S)).sym2 ↔
       p ∈ t.sym2 := by
+  classical
   rw [Finset.sym2_map]
   constructor
   · intro hp
@@ -260,9 +272,11 @@ lemma IsFractionalPacking.extendInduced {G : SimpleGraph α} {S : Finset α}
       · rw [edgeLoad_extendInducedWeight_eq_zero_of_not_subset G S w a b ha]
         norm_num
 
+omit [DecidableEq α] [Fintype α] in
 /-- Taking complements commutes with taking an induced subgraph. -/
 lemma compl_induce (G : SimpleGraph α) (S : Finset α) :
     Gᶜ.induce (S : Set α) = (G.induce (S : Set α))ᶜ := by
+  classical
   ext x y
   simp [SimpleGraph.compl_adj]
 

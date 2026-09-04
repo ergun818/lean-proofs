@@ -54,37 +54,50 @@ def restrictTo (H : FiniteHypergraph V E) (A : Finset V) (R : Finset E)
   support e := H.support e.1
   support_subset_vertexSet e := hR e.1 e.2
 
+omit [DecidableEq E] [DecidableEq V] [Fintype E] in
 @[simp] lemma restrictTo_vertexSet (H : FiniteHypergraph V E)
     (A : Finset V) (R : Finset E) (hR : ∀ e ∈ R, H.support e ⊆ A) :
-    (H.restrictTo A R hR).vertexSet = A := rfl
+    (H.restrictTo A R hR).vertexSet = A := by
+  classical
+  exact rfl
 
+omit [DecidableEq E] [DecidableEq V] [Fintype E] in
 @[simp] lemma restrictTo_support (H : FiniteHypergraph V E)
     (A : Finset V) (R : Finset E) (hR : ∀ e ∈ R, H.support e ⊆ A)
     (e : ↥R) :
-    (H.restrictTo A R hR).support e = H.support e.1 := rfl
+    (H.restrictTo A R hR).support e = H.support e.1 := by
+  classical
+  exact rfl
 
+omit [DecidableEq E] [DecidableEq V] [Fintype E] in
 lemma restrictTo_isUniform {H : FiniteHypergraph V E} {A : Finset V}
     {R : Finset E} {hR : ∀ e ∈ R, H.support e ⊆ A} {k : ℕ}
     (hunif : H.IsUniform k) :
-    (H.restrictTo A R hR).IsUniform k := fun e ↦ hunif e.1
+    (H.restrictTo A R hR).IsUniform k := by
+  classical
+  exact fun e ↦ hunif e.1
 
 /-- Forget the restriction proof on a selected edge family. -/
 def liftRestrictedEdges {R : Finset E} (M : Finset ↥R) : Finset E :=
   M.image Subtype.val
 
+omit [Fintype E] in
 @[simp] lemma mem_liftRestrictedEdges {R : Finset E} {M : Finset ↥R} {e : E} :
     e ∈ liftRestrictedEdges M ↔ ∃ he : e ∈ R, (⟨e, he⟩ : ↥R) ∈ M := by
   simp [liftRestrictedEdges]
 
+omit [Fintype E] in
 @[simp] lemma card_liftRestrictedEdges {R : Finset E} (M : Finset ↥R) :
     (liftRestrictedEdges M).card = M.card := by
   exact card_image_of_injective M Subtype.val_injective
 
+omit [DecidableEq V] [Fintype E] in
 lemma isMatching_liftRestrictedEdges
     {H : FiniteHypergraph V E} {A : Finset V} {R : Finset E}
     {hR : ∀ e ∈ R, H.support e ⊆ A} {M : Finset ↥R}
     (hM : (H.restrictTo A R hR).IsMatching M) :
     H.IsMatching (liftRestrictedEdges M) := by
+  classical
   intro e he f hf hef
   obtain ⟨heR, heM⟩ := mem_liftRestrictedEdges.mp he
   obtain ⟨hfR, hfM⟩ := mem_liftRestrictedEdges.mp hf
@@ -92,10 +105,12 @@ lemma isMatching_liftRestrictedEdges
   intro h
   exact hef (congrArg Subtype.val h)
 
+omit [DecidableEq E] in
 lemma edgeDegree_restrictTo_le
     (H : FiniteHypergraph V E) (A : Finset V) (R : Finset E)
     (hR : ∀ e ∈ R, H.support e ⊆ A) (v : V) :
     (H.restrictTo A R hR).edgeDegree v ≤ H.edgeDegree v := by
+  classical
   let F : Finset ↥R := (univ : Finset ↥R).filter fun e ↦
     v ∈ (H.restrictTo A R hR).support e
   let G : Finset E := (univ : Finset E).filter fun e ↦ v ∈ H.support e
@@ -109,10 +124,12 @@ lemma edgeDegree_restrictTo_le
   have hc := Fintype.card_le_of_injective phi hphi
   simpa only [edgeDegree, Fintype.card_coe, F, G] using hc
 
+omit [DecidableEq E] in
 lemma edgePairDegree_restrictTo_le
     (H : FiniteHypergraph V E) (A : Finset V) (R : Finset E)
     (hR : ∀ e ∈ R, H.support e ⊆ A) (u v : V) :
     (H.restrictTo A R hR).edgePairDegree u v ≤ H.edgePairDegree u v := by
+  classical
   let F : Finset ↥R := (univ : Finset ↥R).filter fun e ↦
     u ∈ (H.restrictTo A R hR).support e ∧
       v ∈ (H.restrictTo A R hR).support e
@@ -176,17 +193,18 @@ lemma weightedCenteredSum_offConflictCoefficient
       ring
     _ = _ := by rw [hindicator]
 
+omit [DecidableEq E] in
 /-- With constant sampling probability `tau / D`, the expected raw
 off-conflict load is the same factor times the total coefficient. -/
 lemma expected_offConflictLoad_const (H : FiniteHypergraph V E)
     (tau : ℝ) (D : ℕ) (v : V) :
     (∑ e, (H.offConflictLink v e : ℝ) * (tau / (D : ℝ))) =
       (tau / (D : ℝ)) * ∑ e, H.offConflictLink v e := by
+  classical
   push_cast
   rw [mul_sum]
   apply sum_congr rfl
   intro e _
-  push_cast
   ring
 
 /-- Sampled edges removed by the isolation alteration. -/
@@ -214,7 +232,7 @@ lemma discardedSample_card_le_collisionCount (H : FiniteHypergraph V E)
     have hfS : f ∈ S := (mem_sdiff.mp hf).1
     have hfnot : f ∉ H.isolatedSample S := (mem_sdiff.mp hf).2
     simp only [isolatedSample, mem_filter, hfS, true_and] at hfnot
-    push_neg at hfnot
+    push Not at hfnot
     obtain ⟨g, hgS, hfg, hnd⟩ := hfnot
     have hg : g ∈ S.filter fun g ↦ H.Conflicts f g :=
       mem_filter.mpr ⟨hgS, hfg, hnd⟩
@@ -603,7 +621,6 @@ lemma abs_batchResidualDegree_update_sub_le_one
         (H.batchResidualDegree (Function.update X j T) v : ℝ) + 1 := by
       exact_mod_cast hbackward
     linarith
-
   · have hforwardR :
         (H.batchResidualDegree (Function.update X j T) v : ℝ) ≤
           (H.batchResidualDegree X v : ℝ) + 1 := by
@@ -649,11 +666,12 @@ theorem upperTailMass_batchResidualDegree_le
 /-- The residual degree is the sum of the indicators of incident edges
 which were accepted in none of the batch trials. -/
 lemma batchResidualDegree_eq_sum_never_accepted
-    {J : Type*} [Fintype J] [DecidableEq J]
+    {J : Type*} [Fintype J]
     (H : FiniteHypergraph V E) (X : J → Finset E) (v : V) :
     (H.batchResidualDegree X v : ℝ) =
       ∑ e : E, if v ∈ H.support e ∧
           ∀ j : J, e ∉ H.isolatedSample (X j) then 1 else 0 := by
+  classical
   unfold batchResidualDegree batchResidualEdges
   rw [show (∑ e : E, if v ∈ H.support e ∧
       ∀ j : J, e ∉ H.isolatedSample (X j) then (1 : ℝ) else 0) =
@@ -664,10 +682,12 @@ lemma batchResidualDegree_eq_sum_never_accepted
   ext e
   simp [batchAcceptedEdges, and_comm]
 
+omit [DecidableEq E] [DecidableEq V] [Fintype E] in
 lemma matching_card_le_vertexSet_div
     {H : FiniteHypergraph V E} {k : ℕ} (hk : 0 < k)
     (hunif : H.IsUniform k) {M : Finset E} (hM : H.IsMatching M) :
     (M.card : ℝ) ≤ (H.vertexSet.card : ℝ) / (k : ℝ) := by
+  classical
   have hkR : (0 : ℝ) < k := by exact_mod_cast hk
   rw [le_div_iff₀ hkR]
   have hnat := H.card_mul_matching_le_vertexSet hunif hM
@@ -717,7 +737,7 @@ lemma trialAcceptanceMass_le_one
 trial is the complement of its acceptance mass. -/
 lemma sum_bernoulliMass_not_mem_isolatedSample
     (H : FiniteHypergraph V E) {p : E → ℝ}
-    (hp₀ : ∀ e, 0 ≤ p e) (hp₁ : ∀ e, p e ≤ 1) (e : E) :
+    (_ : ∀ e, 0 ≤ p e) (_ : ∀ e, p e ≤ 1) (e : E) :
     (∑ S : Finset E, bernoulliMass univ p S *
         if e ∉ H.isolatedSample S then 1 else 0) =
       1 - trialAcceptanceMass H p e := by
@@ -832,7 +852,7 @@ lemma productExpectation_batchResidualDegree_le
     {J : Type*} [Fintype J] [DecidableEq J]
     (H : FiniteHypergraph V E) {p : E → ℝ}
     (hp₀ : ∀ e, 0 ≤ p e) (hp₁ : ∀ e, p e ≤ 1)
-    {a : ℝ} (ha₀ : 0 ≤ a) (ha₁ : a ≤ 1)
+    {a : ℝ} (_ : 0 ≤ a) (_ : a ≤ 1)
     (haccept : ∀ e, a ≤ trialAcceptanceMass H p e) (v : V) :
     FiniteProduct.productExpectation (bernoulliMass univ p)
         (fun X : J → Finset E ↦ (H.batchResidualDegree X v : ℝ)) ≤
@@ -990,13 +1010,15 @@ lemma productExpectation_batchResidualDegree_const_le
     (fun _ ↦ hp₀) (fun _ ↦ hp₁) ha₀ ha₁
     (fun e ↦ trialAcceptanceMass_const_ge hunif hdeg hp₀ hp₁ e) v
 
+omit [DecidableEq E] in
 /-- The ordered-collision expectation for constant sampling is bounded by
 `|E| · kD · p²`. -/
 lemma sum_conflictProbability_const_le
     {H : FiniteHypergraph V E} {k D : ℕ} (hunif : H.IsUniform k)
-    (hdeg : ∀ v ∈ H.vertexSet, H.edgeDegree v ≤ D) {p : ℝ} (hp : 0 ≤ p) :
+    (hdeg : ∀ v ∈ H.vertexSet, H.edgeDegree v ≤ D) {p : ℝ} (_ : 0 ≤ p) :
     (∑ e, ∑ f, if H.Conflicts e f then p * p else 0) ≤
       (Fintype.card E : ℝ) * (k * D : ℕ) * p ^ 2 := by
+  classical
   have hinner (e : E) :
       (∑ f, if H.Conflicts e f then p * p else 0) =
         (H.conflictDegree e : ℝ) * p ^ 2 := by
@@ -1026,6 +1048,7 @@ lemma sum_conflictProbability_const_le
       push_cast
       ring
 
+omit [DecidableEq E] in
 /-- The aggregate variance numerator for the off-conflict coefficient
 family is bounded explicitly by the maximum degree and pair-degree. -/
 lemma sum_offConflictCoefficient_sq_mul_le
@@ -1038,6 +1061,7 @@ lemma sum_offConflictCoefficient_sq_mul_le
         (H.offConflictCoefficient v e) ^ 2 * p * (1 - p)) ≤
       (H.vertexSet.card : ℝ) *
         (((k * C) * (D * (k * D)) : ℕ) : ℝ) * p * (1 - p) := by
+  classical
   have hfactor : 0 ≤ p * (1 - p) :=
     mul_nonneg hp₀ (sub_nonneg.mpr hp₁)
   have hpoint (v : ↥H.vertexSet) :
@@ -1249,7 +1273,7 @@ theorem exists_isolatedSample_reward_and_penalty_of_bounds
     (hunif : H.IsUniform k) {p : E → ℝ} {t q L B : ℝ}
     (hp₀ : ∀ e, 0 ≤ p e) (hp₁ : ∀ e, p e ≤ 1)
     (ht : 0 < t) (hq : 0 ≤ q) (hL : 0 < L) (hB : 0 < B)
-    (hreward : L ≤ ( ∑ e, p e) -
+    (hreward : L ≤ (∑ e, p e) -
       (∑ e, ∑ f, if H.Conflicts e f then p e * p f else 0))
     (hbudget :
       (t ^ 2)⁻¹ * ∑ v : ↥H.vertexSet, ∑ e,

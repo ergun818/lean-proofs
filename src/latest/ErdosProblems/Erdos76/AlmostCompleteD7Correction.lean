@@ -54,6 +54,7 @@ lemma induce_universalVertices_eq_top (G : SimpleGraph A) :
     exact adj_of_mem_universalVertices G x.property
       (fun h ↦ hxy (Subtype.ext h))
 
+omit [Fintype A] in
 lemma inducedEdge_mem_attachedEdgeTriangle_sym2_iff_public
     {S : Finset A} {u : A} {p f : Sym2 S} (hu : u ∉ S)
     (hp : ¬p.IsDiag) (hf : ¬f.IsDiag) :
@@ -74,12 +75,11 @@ lemma inducedEdge_mem_attachedEdgeTriangle_sym2_iff_public
             apply hu
             rw [← h]
             exact b.property
-          simp only [attachedEdgeTriangle, Sym2.map_mk,
-            Sym2.toFinset_mk_eq, Finset.map_insert, Finset.map_singleton,
-            Finset.mk_mem_sym2_iff, Finset.mem_insert, Finset.mem_singleton,
-            Sym2.eq_iff]
+          simp only [attachedEdgeTriangle, Sym2.toFinset_mk_eq, Finset.map_insert,
+            Finset.map_singleton, Sym2.eq_iff]
           aesop
 
+omit [Fintype A] in
 lemma starEdge_mem_attachedEdgeTriangle_sym2_iff_public
     {S : Finset A} {u : A} (hu : u ∉ S) (x : S) (f : Sym2 S) :
     s(u, (x : A)) ∈ (attachedEdgeTriangle S u f).sym2 ↔ x ∈ f := by
@@ -95,6 +95,7 @@ lemma starEdge_mem_attachedEdgeTriangle_sym2_iff_public
         Finset.mem_insert, Finset.mem_singleton, Sym2.mem_iff]
       aesop
 
+omit [Fintype A] in
 lemma starEdge_not_mem_attachedEdgeTriangle_of_ne_attachment
     {S : Finset A} {u v : A} (hu : u ∉ S) (hv : v ∉ S)
     (huv : u ≠ v) (x : S) (f : Sym2 S) :
@@ -121,6 +122,7 @@ lemma starEdge_not_mem_attachedEdgeTriangle_of_ne_attachment
         Finset.mem_insert, Finset.mem_singleton]
       aesop
 
+omit [Fintype A] in
 lemma outsidePair_not_mem_attachedEdgeTriangle
     {S : Finset A} {u x y : A} (hx : x ∉ S) (hy : y ∉ S)
     (hxy : x ≠ y) (f : Sym2 S) :
@@ -659,8 +661,6 @@ lemma fractionalEdgeLoad_d7LargeCorrection_universal
 lemma sum_ite_mem_sym2_eq_two_mul {B : Type} [Fintype B]
     [DecidableEq B] (e : Sym2 B) (heND : ¬e.IsDiag) (c : ℝ) :
     (∑ x : B, if x ∈ e then c else 0) = 2 * c := by
-  change (∑ x ∈ (Finset.univ : Finset B),
-    if x ∈ e then c else 0) = _
   rw [← Finset.sum_filter]
   have hfilter : (Finset.univ : Finset B).filter (fun x ↦ x ∈ e) =
       e.toFinset := by
@@ -719,7 +719,7 @@ lemma D7SeparatedParameters.sum_largeMixedCoefficient
   rw [← Finset.sum_div]
   congr 1
   rw [Finset.sum_sub_distrib, Finset.sum_add_distrib]
-  simp only [Finset.sum_const, nsmul_eq_mul, Finset.mul_sum]
+  simp only [Finset.sum_const, nsmul_eq_mul]
   rw [P.sum_betaIncident_eq_two_betaMass]
   unfold D7SeparatedParameters.alphaMass
   have hpart := card_nonUniversalVertices_add_card_universalVertices G

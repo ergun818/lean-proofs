@@ -77,40 +77,56 @@ def PairCodegreeLT (H : FiniteHypergraph V E) (w : E → ℝ) (δ : ℝ) : Prop 
 def IsMatching (H : FiniteHypergraph V E) (M : Finset E) : Prop :=
   (M : Set E).Pairwise fun e f ↦ Disjoint (H.support e) (H.support f)
 
+omit [DecidableEq E] in
 lemma IsFractionalMatching.nonneg {H : FiniteHypergraph V E} {w : E → ℝ}
-    (hw : H.IsFractionalMatching w) (e : E) : 0 ≤ w e :=
-  hw.1 e
+    (hw : H.IsFractionalMatching w) (e : E) : 0 ≤ w e := by
+  classical
+  exact hw.1 e
 
+omit [DecidableEq E] in
 lemma IsFractionalMatching.vertexLoad_le_one
     {H : FiniteHypergraph V E} {w : E → ℝ}
     (hw : H.IsFractionalMatching w) {v : V} (hv : v ∈ H.vertexSet) :
-    H.vertexLoad w v ≤ 1 :=
-  hw.2 v hv
+    H.vertexLoad w v ≤ 1 := by
+  classical
+  exact hw.2 v hv
 
+omit [DecidableEq E] in
 lemma totalWeight_nonneg {H : FiniteHypergraph V E} {w : E → ℝ}
     (hw : H.IsFractionalMatching w) : 0 ≤ H.totalWeight w := by
+  classical
   exact sum_nonneg fun e _ ↦ hw.nonneg e
 
+omit [DecidableEq E] [DecidableEq V] in
 @[simp] lemma totalWeight_zero (H : FiniteHypergraph V E) :
     H.totalWeight (fun _ : E ↦ (0 : ℝ)) = 0 := by
+  classical
   simp [totalWeight]
 
+omit [DecidableEq E] in
 @[simp] lemma vertexLoad_zero (H : FiniteHypergraph V E) (v : V) :
     H.vertexLoad (fun _ ↦ 0) v = 0 := by
+  classical
   simp [vertexLoad]
 
+omit [DecidableEq E] in
 @[simp] lemma pairLoad_zero (H : FiniteHypergraph V E) (x y : V) :
     H.pairLoad (fun _ ↦ 0) x y = 0 := by
+  classical
   simp [pairLoad]
 
+omit [DecidableEq E] in
 lemma isFractionalMatching_zero (H : FiniteHypergraph V E) :
     H.IsFractionalMatching (fun _ ↦ 0) := by
+  classical
   constructor
   · simp
   · intro v hv
     simp
 
+omit [DecidableEq E] [DecidableEq V] [Fintype E] in
 lemma empty_isMatching (H : FiniteHypergraph V E) : H.IsMatching ∅ := by
+  classical
   simp [IsMatching]
 
 end FiniteHypergraph

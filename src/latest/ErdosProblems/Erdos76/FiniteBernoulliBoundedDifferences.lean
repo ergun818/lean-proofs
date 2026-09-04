@@ -153,7 +153,7 @@ private lemma two_point_hoeffding {q x₀ x₁ c s : ℝ}
     simp [X]
   rw [ProbabilityTheory.mgf, hmean] at hmgf
   rw [hintegral] at hmgf
-  simp only [X, Bool.false_eq_true, ↓reduceIte, Bool.true_eq] at hmgf
+  simp only [X, Bool.false_eq_true, ↓reduceIte] at hmgf
   calc
     (1 - q) * exp (s * (x₀ - ((1 - q) * x₀ + q * x₁))) +
           q * exp (s * (x₁ - ((1 - q) * x₀ + q * x₁))) ≤
@@ -224,7 +224,7 @@ theorem sum_bernoulliMass_mul_exp_centered_le
         have h₁ := hbd i (mem_insert_of_mem hiU) (insert e T) heTbig
         have hins : insert i (insert e T) = insert e (insert i T) := by
           ext x
-          simp [or_comm, or_left_comm]
+          simp [or_left_comm]
         rw [hins] at h₁
         change |((1 - p e) * F (insert i T) + p e * F (insert e (insert i T))) -
           ((1 - p e) * F T + p e * F (insert e T))| ≤ c i

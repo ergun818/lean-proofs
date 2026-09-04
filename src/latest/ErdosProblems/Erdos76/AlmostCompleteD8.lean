@@ -40,13 +40,17 @@ variable {A : Type} [Fintype A] [DecidableEq A]
 def addPair (G : SimpleGraph A) (x y : A) : SimpleGraph A :=
   G ⊔ SimpleGraph.fromEdgeSet {s(x, y)}
 
+omit [DecidableEq A] [Fintype A] in
 @[simp] lemma addPair_adj (G : SimpleGraph A) (x y u v : A) :
     (addPair G x y).Adj u v ↔
       G.Adj u v ∨ (s(u, v) = s(x, y) ∧ u ≠ v) := by
+  classical
   simp [addPair, SimpleGraph.fromEdgeSet_adj]
 
+omit [DecidableEq A] [Fintype A] in
 lemma addPair_comm (G : SimpleGraph A) (x y : A) :
     addPair G x y = addPair G y x := by
+  classical
   unfold addPair
   rw [Sym2.eq_swap]
 
@@ -163,7 +167,8 @@ def stripEdgeTriangles (e : Sym2 A) (w : Finset A → ℝ) : Finset A → ℝ :=
 def edgeTrianglesPart (e : Sym2 A) (w : Finset A → ℝ) : Finset A → ℝ :=
   fun t ↦ if e ∈ t.sym2 then w t else 0
 
-lemma relabelWeight_edgeTrianglesPart {B : Type} [Fintype B]
+omit [Fintype A] in
+lemma relabelWeight_edgeTrianglesPart {B : Type}
     [DecidableEq B] (q : A ≃ B) (e : Sym2 A) (w : Finset A → ℝ) :
     relabelWeight q (edgeTrianglesPart e w) =
       edgeTrianglesPart (q.toEmbedding.sym2Map e) (relabelWeight q w) := by
@@ -189,6 +194,7 @@ lemma relabelWeight_edgeTrianglesPart {B : Type} [Fintype B]
       rwa [← hpEq]
   rw [if_congr hmem.symm rfl rfl]
 
+omit [Fintype A] in
 lemma stripEdgeTriangles_add_edgeTrianglesPart
     (e : Sym2 A) (w : Finset A → ℝ) :
     (fun t ↦ stripEdgeTriangles e w t + edgeTrianglesPart e w t) = w := by
@@ -232,6 +238,7 @@ def fixedPairEmbedding (u : A) : A ↪ Sym2 A where
     · exact h.2
     · exact h.2.trans h.1
 
+omit [Fintype A] in
 lemma sym2_filter_mem_fixed_eq_map_erase (t : Finset A) {u : A}
     (hu : u ∈ t) :
     t.sym2.filter (fun e ↦ u ∈ e ∧ ¬e.IsDiag) =
@@ -259,6 +266,7 @@ lemma sym2_filter_mem_fixed_eq_map_erase (t : Finset A) {u : A}
     change ¬s(u, v).IsDiag
     simpa only [Sym2.mk_isDiag_iff] using hvu.symm
 
+omit [Fintype A] in
 lemma card_sym2_filter_mem_fixed (t : Finset A) {u : A}
     (hu : u ∈ t) :
     (t.sym2.filter (fun e ↦ u ∈ e ∧ ¬e.IsDiag)).card = t.card - 1 := by
@@ -1243,18 +1251,18 @@ lemma d8ExtractedBetaIncident_le_one
       exact hux
     apply oldIncidentRemovedLoad_le_one_of_added_endpoint
       K hxy' hmissing'
-    rw [hu']
-    exact Sym2.mem_mk_left _ _
-    simpa only [d8AugmentedDeletedGraph, K, x', y'] using hw
+    · rw [hu']
+      exact Sym2.mem_mk_left _ _
+    · simpa only [d8AugmentedDeletedGraph, K, x', y'] using hw
   · by_cases huy : (u : A) = y
     · have hu' : u' = y' := by
         apply Subtype.ext
         exact huy
       apply oldIncidentRemovedLoad_le_one_of_added_endpoint
         K hxy' hmissing'
-      rw [hu']
-      exact Sym2.mem_mk_right _ _
-      simpa only [d8AugmentedDeletedGraph, K, x', y'] using hw
+      · rw [hu']
+        exact Sym2.mem_mk_right _ _
+      · simpa only [d8AugmentedDeletedGraph, K, x', y'] using hw
     · have hux' : u' ≠ x' := by
         intro h
         exact hux (congrArg Subtype.val h)
@@ -2288,7 +2296,7 @@ lemma D8SeparatedParameters.sum_shortcutMixedCoefficient
   rw [← Finset.sum_div]
   congr 1
   rw [Finset.sum_sub_distrib, Finset.sum_add_distrib]
-  simp only [Finset.sum_const, nsmul_eq_mul, Finset.mul_sum]
+  simp only [Finset.sum_const, nsmul_eq_mul]
   rw [P.sum_betaIncident_eq_two_betaMass]
   unfold D8SeparatedParameters.alphaMass
   have hpart := card_nonUniversalVertices_add_card_universalVertices G
@@ -2807,7 +2815,7 @@ structure D8SeparatedParameters.RealizesCoherentRemovedFamily
         d7DeletedVertex (z : A) (v : A) hvz) = P.alpha u
   gamma_eq : ∀ (z x y : ↑(universalVertices G))
     (hxz : (x : A) ≠ (z : A)) (hyz : (y : A) ≠ (z : A))
-    (hxy : (x : A) ≠ (y : A)),
+    (_ : (x : A) ≠ (y : A)),
     d8RemovedLoad G (z : A) a b
       (d8MissingLeft_ne_universal G hab z)
       (d8MissingRight_ne_universal G hab z)
@@ -4462,6 +4470,7 @@ lemma d8UUZCorrection_apply_UUU_eq_zero
   · exact (universalVertex_not_mem_nonUniversalVertices G z.property
       (h ▸ w.property)).elim
 
+omit [Fintype A] in
 private lemma weightedAttachedEdgeWeight_eq_zero_of_not_exists_d8
     {S : Finset A} {u : A} {C : Finset (Sym2 S)}
     {r : Sym2 S → ℝ} {t : Finset A}
@@ -4547,8 +4556,8 @@ lemma d8CoherentLiftedStrippedWeight_add_beta_le_one
       (d8AugmentedDeletedGraph G (z₀ : A) a b
         (d8MissingLeft_ne_universal G hab z₀)
         (d8MissingRight_ne_universal G hab z₀)) w₀)
-    (u v : ↑(nonUniversalVertices G)) (huv : u ≠ v)
-    (z y : ↑(universalVertices G)) (hyz : y ≠ z)
+    (u v : ↑(nonUniversalVertices G)) (_ : u ≠ v)
+    (z y : ↑(universalVertices G)) (_ : y ≠ z)
     (he : s(u, v) ∈ (G.induce
       (↑(nonUniversalVertices G) : Set A)).edgeFinset)
     (ht : ({(z : A), (u : A), (v : A)} : Finset A) ∈
@@ -4567,8 +4576,7 @@ lemma d8CoherentLiftedStrippedWeight_add_beta_le_one
       (S := d7DeletedFinset (y : A)) hwStrip
   have het : (inducedEmbedding (nonUniversalVertices G)).sym2Map e ∈
       ({(z : A), (u : A), (v : A)} : Finset A).sym2 := by
-    simp only [e, Sym2.map_mk, inducedEmbedding_apply,
-      Finset.mk_mem_sym2_iff]
+    simp only [e, ]
     simp
   have hweight := hwLift.weight_le_fractionalEdgeLoad ht het
   rw [fractionalEdgeLoad_d7LiftedWeight_nonUniversal G y ws e] at hweight
@@ -5136,7 +5144,7 @@ lemma sum_d8HallCapacity {n s : ℕ}
     (G : SimpleGraph A) (hexact : missingEdgeCount G = n)
     (sigma : A → ℕ)
     (hsigma : ∀ u, sigma u ≤ d7ResidualAllowance G 4 u)
-    (hsupport : ∀ u ∉ nonUniversalVertices G, sigma u = 0)
+    (_ : ∀ u ∉ nonUniversalVertices G, sigma u = 0)
     (hsum : ∑ u ∈ nonUniversalVertices G, sigma u = 8 + s) :
     (∑ u : ↑(nonUniversalVertices G), d8HallCapacity G sigma u) =
       (n : ℝ) + (universalVertices G).card - 8 - s := by
@@ -5178,7 +5186,7 @@ lemma sum_d8HallCapacity {n s : ℕ}
       ((universalVertices G).card : ℝ) = n := by
     exact_mod_cast hparts
   simp only [hdegrees, hsigmaSubtype, Finset.sum_const, Finset.card_univ,
-    Fintype.card_coe, nsmul_eq_mul, mul_one, Nat.cast_add, Nat.cast_ofNat]
+    Fintype.card_coe, nsmul_eq_mul, mul_one, ]
   linarith
 
 /-- Claim 5.7 in graph form.  The first component is the basic eight-unit
@@ -5296,12 +5304,13 @@ theorem d8_claim57 {n : ℕ}
     exact d8_claim57_strong_arithmetic hn rfl hk hR haggregate
 
 private lemma exists_boundedAssignment_on_finset_d8
-    {B : Type*} [DecidableEq B]
+    {B : Type*}
     (S : Finset B) (r : B → ℕ) {t : ℕ}
     (ht : t ≤ ∑ u ∈ S, r u) :
     ∃ sigma : B → ℕ,
       (∀ u ∈ S, sigma u ≤ r u) ∧
       ∑ u ∈ S, sigma u = t := by
+  classical
   induction S using Finset.induction_on generalizing t with
   | empty =>
       have ht0 : t = 0 := by simpa using ht
@@ -5573,7 +5582,7 @@ theorem exists_d8HallRedistribution_of_bounds
     (hsingle : ∀ u : ↑(nonUniversalVertices G),
       d8HallBetaSource G P rho u ≤
         (∑ v, d8HallCapacity G sigma v) - d8HallCapacity G sigma u) :
-    ∃ R : D8HallRedistribution G P rho sigma, True := by
+    ∃ _ : D8HallRedistribution G P rho sigma, True := by
   let d : Option ↑(nonUniversalVertices G) → ℝ := fun src ↦
     match src with
     | none => d8HallAlphaSource G P
@@ -5615,7 +5624,7 @@ theorem exists_d8HallRedistribution_zero {n : ℕ}
     (hnoD5 : ∀ u : A, 3 * Gᶜ.degree u ≤ n + 4)
     (P : D8SeparatedParameters G) :
     ∃ sigma : A → ℕ,
-    ∃ R : D8HallRedistribution G P 0 sigma,
+    ∃ _ : D8HallRedistribution G P 0 sigma,
       (∀ u, sigma u ≤ d7ResidualAllowance G 4 u) ∧
       (∀ u ∉ nonUniversalVertices G, sigma u = 0) ∧
       ∑ u ∈ nonUniversalVertices G, sigma u = 8 := by
@@ -5683,7 +5692,7 @@ theorem exists_d8HallRedistribution_full_beta {n : ℕ}
     (P : D8SeparatedParameters G) :
     let rho := ((universalVertices G).card : ℝ) * P.betaMass
     ∃ sigma : A → ℕ,
-    ∃ R : D8HallRedistribution G P rho sigma,
+    ∃ _ : D8HallRedistribution G P rho sigma,
       (∀ u, sigma u ≤ d7ResidualAllowance G 4 u) ∧
       (∀ u ∉ nonUniversalVertices G, sigma u = 0) ∧
       ∑ u ∈ nonUniversalVertices G, sigma u = 14 := by
@@ -5739,7 +5748,7 @@ theorem exists_d8HallRedistribution_six {n : ℕ}
     (hfail : 3 * ((universalVertices G).card : ℝ) <
       (n : ℝ) + 4 - 3 * P.betaMass) :
     ∃ sigma : A → ℕ,
-    ∃ R : D8HallRedistribution G P 6 sigma,
+    ∃ _ : D8HallRedistribution G P 6 sigma,
       (∀ u, sigma u ≤ d7ResidualAllowance G 4 u) ∧
       (∀ u ∉ nonUniversalVertices G, sigma u = 0) ∧
       ∑ u ∈ nonUniversalVertices G, sigma u = 14 := by
@@ -5812,7 +5821,7 @@ theorem exists_d8HallRedistribution {n : ℕ}
       (n : ℝ) + 4 - 3 * P.betaMass) :
     ∃ rho : ℝ,
     ∃ sigma : A → ℕ,
-    ∃ R : D8HallRedistribution G P rho sigma,
+    ∃ _ : D8HallRedistribution G P rho sigma,
       0 ≤ rho ∧ rho ≤ 6 ∧
       rho ≤ ((universalVertices G).card : ℝ) * P.betaMass ∧
       (∀ u, sigma u ≤ d7ResidualAllowance G 4 u) ∧
@@ -6423,7 +6432,7 @@ lemma capacityMissingWeight_d8HallDeletedCapacity_le
     _ ≤ d8HallCapacity G sigma u := R.target_le u
 
 lemma capacityMissingWeight_d8HallDeletedCapacity_inductionBound
-    {n : ℕ} (hcard : Fintype.card A = n) (hn : 14 ≤ n)
+    {n : ℕ} (_ : Fintype.card A = n) (hn : 14 ≤ n)
     (G : SimpleGraph A) (hexact : missingEdgeCount G = n)
     (P : D8SeparatedParameters G) {rho : ℝ} (sigma : A → ℕ)
     (hsigma : ∀ v, sigma v ≤ d7ResidualAllowance G 4 v)
@@ -7154,9 +7163,9 @@ lemma sum_fractionalUncoveredWeight_d8CoherentStrippedWeight_le
 lemma fractionalUncoveredWeight_d8HallDeleted_eq
     (G : SimpleGraph A) (P : D8SeparatedParameters G) {rho : ℝ}
     (sigma : A → ℕ) (R : D8HallRedistribution G P rho sigma)
-    (hm : 4 ≤ (universalVertices G).card)
-    (hrho0 : 0 ≤ rho)
-    (hrhoLe : rho ≤ ((universalVertices G).card : ℝ) * P.betaMass)
+    (_ : 4 ≤ (universalVertices G).card)
+    (_ : 0 ≤ rho)
+    (_ : rho ≤ ((universalVertices G).card : ℝ) * P.betaMass)
     (u : ↑(nonUniversalVertices G))
     (w : Finset (↑(d7DeletedFinset (u : A))) → ℝ)
     (hwTop : IsCapacityPacking
@@ -7345,7 +7354,7 @@ lemma sum_fractionalUncoveredWeight_d8HallDeleted_le
         G P sigma R hrho0 hrhoLe
       rw [Finset.sum_add_distrib] at hout
       simp only [Finset.sum_const, Finset.card_univ, Fintype.card_coe,
-        nsmul_eq_mul, mul_one]
+        nsmul_eq_mul]
       linarith
 
 lemma fractionalUncoveredWeight_d8HallAverageWeight_le_four
@@ -7439,7 +7448,7 @@ private lemma d8HallLiftedWeight_nonUniversal_le
     (hw : ∀ u : ↑(nonUniversalVertices G),
       IsCapacityPacking (d7DeletedGraph G (u : A))
         (d8HallDeletedCapacity G P rho sigma R u) (w u))
-    (d v x : ↑(nonUniversalVertices G)) (hvx : v ≠ x)
+    (d v x : ↑(nonUniversalVertices G)) (_ : v ≠ x)
     (he : s(v, x) ∈ (G.induce
       (↑(nonUniversalVertices G) : Set A)).edgeFinset) :
     fractionalEdgeLoad G (d7LiftedWeight (d : A) (w d))
@@ -7554,7 +7563,7 @@ private lemma d8HallLiftedWeight_mixed_le
             universalVertices G := by
           simpa using nonUniversalVertex_not_mem_universalVertices G v.property
         have hzZ : (d7DeletedVertex (d : A) (z : A) hzd : A) ∈
-            universalVertices G := by simpa using z.property
+            universalVertices G := by simp
         rw [dif_neg hvNZ, dif_pos hzZ]
         congr 2
 
@@ -7643,9 +7652,9 @@ private lemma d8HallLiftedWeight_universal_le
       unfold d8HallDeduction
       simp only [e, Sym2.lift_mk]
       have hxZ : (d7DeletedVertex (d : A) (x : A) hxd : A) ∈
-          universalVertices G := by simpa using x.property
+          universalVertices G := by simp
       have hyZ : (d7DeletedVertex (d : A) (y : A) hyd : A) ∈
-          universalVertices G := by simpa using y.property
+          universalVertices G := by simp
       rw [dif_pos hxZ, dif_pos hyZ]
 
 lemma sum_d8HallLiftedWeight_universal_le
@@ -7745,7 +7754,7 @@ lemma d8HallCorrection_numerator_mixed_le
         (d8MissingLeft_ne_universal G hab z₀)
         (d8MissingRight_ne_universal G hab z₀)) w₀)
     (hm : 4 ≤ (universalVertices G).card)
-    {rho : ℝ} (hrho0 : 0 ≤ rho)
+    {rho : ℝ} (_ : 0 ≤ rho)
     (u : ↑(nonUniversalVertices G)) (y : ↑(universalVertices G)) :
     (∑ z : ↑(universalVertices G),
         fractionalEdgeLoad G
@@ -8180,7 +8189,7 @@ lemma d8RemovedLoad_le_half_of_universal_endpoint
       intro t ht
       exact hwHalf t (Finset.mem_filter.mp ht).1
     _ = (T.card : ℝ) * (1 / 2) := by
-      simp only [Finset.sum_const, nsmul_eq_mul, Nat.cast_ofNat]
+      simp only [Finset.sum_const, nsmul_eq_mul]
     _ ≤ 1 * (1 / 2) := by
       exact mul_le_mul_of_nonneg_right (by exact_mod_cast hTcard) (by norm_num)
     _ = 1 / 2 := by ring

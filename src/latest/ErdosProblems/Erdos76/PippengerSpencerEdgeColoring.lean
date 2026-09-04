@@ -54,8 +54,10 @@ variable {V E : Type*} [DecidableEq V] [Fintype E] [DecidableEq E]
 abbrev IncidentEdges (H : FiniteHypergraph V E) (v : V) :=
   {e : E // v ∈ H.support e}
 
+omit [DecidableEq E] in
 lemma card_incidentEdges (H : FiniteHypergraph V E) (v : V) :
     Fintype.card (IncidentEdges H v) = H.edgeDegree v := by
+  classical
   simpa [IncidentEdges, FiniteHypergraph.edgeDegree] using
     (Fintype.card_subtype (fun e : E ↦ v ∈ H.support e))
 
@@ -90,10 +92,12 @@ def gadgetSupport (H : FiniteHypergraph V E) (k q : ℕ)
   (Finset.univ : Finset (Fin k)).image fun j ↦
     (g.1, (j, g.2.2 + (j.1 : ZMod q) * (g.2.1.1 : ZMod q)))
 
+omit [DecidableEq E] [Fintype E] in
 lemma mem_gadgetSupport_iff (H : FiniteHypergraph V E) (k q : ℕ)
     (g : GadgetEdge H D q) (z : PrivateVertex H k q) :
     z ∈ gadgetSupport H k q g ↔
       z.1 = g.1 ∧ z.2.2 = g.2.2 + (z.2.1.1 : ZMod q) * (g.2.1.1 : ZMod q) := by
+  classical
   rcases z with ⟨zv, ⟨j, y⟩⟩
   simp only [gadgetSupport, mem_image, mem_univ, true_and]
   constructor
@@ -110,8 +114,10 @@ lemma mem_gadgetSupport_iff (H : FiniteHypergraph V E) (k q : ℕ)
       · rfl
       · exact hvalue.symm
 
+omit [DecidableEq E] [Fintype E] in
 lemma card_gadgetSupport (H : FiniteHypergraph V E) (k q : ℕ)
     (g : GadgetEdge H D q) : (gadgetSupport H k q g).card = k := by
+  classical
   rw [gadgetSupport, card_image_iff.mpr]
   · simp
   · intro i _ j _ hij
@@ -129,9 +135,11 @@ def IsSelectedRow (H : FiniteHypergraph V E) (D q : ℕ)
     (g : GadgetEdge H D q) : Prop :=
   ∃ e : IncidentEdges H g.1.1, selectedRow H D q hdeg g.1 e = g
 
+omit [DecidableEq E] in
 lemma selectedRow_injective (H : FiniteHypergraph V E) (D q : ℕ)
     (hdeg : ∀ v ∈ H.vertexSet, H.edgeDegree v ≤ D) (v : ↑H.vertexSet) :
     Function.Injective (selectedRow H D q hdeg v) := by
+  classical
   intro e f hef
   exact (incidenceSlot H D hdeg v).injective (congrArg (fun g ↦ g.2.1) hef)
 
@@ -154,6 +162,7 @@ def tradeSupport (H : FiniteHypergraph V E) (D k q : ℕ)
     let e' : IncidentEdges H v.1 := ⟨e, v.2⟩
     (v', (c, (c.1 : ZMod q) * ((incidenceSlot H D hdeg v' e').1 : ZMod q)))
 
+omit [DecidableEq E] in
 lemma mem_tradeSupport_iff (H : FiniteHypergraph V E) (D k q : ℕ)
     (hdeg : ∀ v ∈ H.vertexSet, H.edgeDegree v ≤ D) (e : E) (c : Fin k)
     (z : PrivateVertex H k q) :
@@ -161,6 +170,7 @@ lemma mem_tradeSupport_iff (H : FiniteHypergraph V E) (D k q : ℕ)
       ∃ hz : z.1.1 ∈ H.support e, z.2.1 = c ∧
         z.2.2 = (c.1 : ZMod q) *
           ((incidenceSlot H D hdeg z.1 ⟨e, hz⟩).1 : ZMod q) := by
+  classical
   rcases z with ⟨zv, ⟨j, y⟩⟩
   simp only [tradeSupport, mem_image]
   constructor
@@ -180,9 +190,11 @@ lemma mem_tradeSupport_iff (H : FiniteHypergraph V E) (D k q : ℕ)
       · exact hc.symm
       · simpa [hc] using hz.symm
 
+omit [DecidableEq E] in
 lemma card_tradeSupport (H : FiniteHypergraph V E) (D k q : ℕ)
     (hdeg : ∀ v ∈ H.vertexSet, H.edgeDegree v ≤ D) (e : E) {c : Fin k} :
     (tradeSupport H D k q hdeg e c).card = (H.support e).card := by
+  classical
   rw [tradeSupport, card_image_of_injective]
   · exact card_attach
   · intro u v huv
@@ -198,14 +210,19 @@ def regularCompletion (H : FiniteHypergraph V E) (D k q : ℕ)
     | Sum.inr ec => tradeSupport H D k q hdeg ec.1 ec.2
   support_subset_vertexSet _ := by simp
 
+omit [DecidableEq E] in
 @[simp] lemma regularCompletion_vertexSet (H : FiniteHypergraph V E) (D k q : ℕ)
     [NeZero q] (hdeg : ∀ v ∈ H.vertexSet, H.edgeDegree v ≤ D) :
-    (regularCompletion H D k q hdeg).vertexSet = Finset.univ := rfl
+    (regularCompletion H D k q hdeg).vertexSet = Finset.univ := by
+  classical
+  exact rfl
 
+omit [DecidableEq E] in
 lemma regularCompletion_isUniform {H : FiniteHypergraph V E} {D k q : ℕ}
     [NeZero q] (hdeg : ∀ v ∈ H.vertexSet, H.edgeDegree v ≤ D)
     (hunif : H.IsUniform k) :
     (regularCompletion H D k q hdeg).IsUniform k := by
+  classical
   rintro (g | ⟨e, c⟩)
   · exact card_gadgetSupport H k q g.1
   · rw [regularCompletion, card_tradeSupport, hunif]
@@ -215,19 +232,23 @@ def rowThrough (H : FiniteHypergraph V E) (D k q : ℕ)
     (z : PrivateVertex H k q) (s : Fin D) : GadgetEdge H D q :=
   (z.1, (s, z.2.2 - (z.2.1.1 : ZMod q) * (s.1 : ZMod q)))
 
+omit [DecidableEq E] [Fintype E] in
 lemma mem_gadgetSupport_rowThrough (H : FiniteHypergraph V E) (D k q : ℕ)
     (z : PrivateVertex H k q) (s : Fin D) :
     z ∈ gadgetSupport H k q (rowThrough H D k q z s) := by
+  classical
   rw [mem_gadgetSupport_iff]
   constructor
   · rfl
   · dsimp [rowThrough]
     ring
 
+omit [DecidableEq E] [Fintype E] in
 lemma rowThrough_eq_of_mem {H : FiniteHypergraph V E} {D k q : ℕ}
     {z : PrivateVertex H k q} {g : GadgetEdge H D q}
     (hz : z ∈ gadgetSupport H k q g) :
     rowThrough H D k q z g.2.1 = g := by
+  classical
   rw [mem_gadgetSupport_iff] at hz
   apply Prod.ext
   · exact hz.1
@@ -237,12 +258,14 @@ lemma rowThrough_eq_of_mem {H : FiniteHypergraph V E} {D k q : ℕ}
       rw [hz.2]
       ring
 
+omit [DecidableEq E] in
 /-- The selected row through a point determines a completion trade column through it. -/
 lemma mem_tradeSupport_of_selected_rowThrough {H : FiniteHypergraph V E} {D k q : ℕ}
     (hdeg : ∀ v ∈ H.vertexSet, H.edgeDegree v ≤ D)
     (z : PrivateVertex H k q) (s : Fin D)
     (hs : IsSelectedRow H D q hdeg (rowThrough H D k q z s)) :
     z ∈ tradeSupport H D k q hdeg hs.choose.1 z.2.1 := by
+  classical
   rw [mem_tradeSupport_iff]
   let e : IncidentEdges H z.1.1 := hs.choose
   have hrow : selectedRow H D q hdeg z.1 e = rowThrough H D k q z s := hs.choose_spec
@@ -268,19 +291,23 @@ def completionIncidenceSlope {H : FiniteHypergraph V E} (D k q : ℕ) [NeZero q]
       exact incidenceSlot H D hdeg z.1
         ⟨ec.1, (mem_tradeSupport_iff H D k q hdeg ec.1 ec.2 z).mp ha |>.choose⟩
 
+omit [DecidableEq E] in
 @[simp] lemma completionIncidenceSlope_inl {H : FiniteHypergraph V E} (D k q : ℕ)
     [NeZero q] (hdeg : ∀ v ∈ H.vertexSet, H.edgeDegree v ≤ D)
     (z : PrivateVertex H k q) (g : RemainingRow H D q hdeg)
     (hz : z ∈ gadgetSupport H k q g.1) :
     completionIncidenceSlope D k q hdeg z ⟨Sum.inl g, hz⟩ = g.1.2.1 := by
+  classical
   rfl
 
+omit [DecidableEq E] in
 @[simp] lemma completionIncidenceSlope_inr {H : FiniteHypergraph V E} (D k q : ℕ)
     [NeZero q] (hdeg : ∀ v ∈ H.vertexSet, H.edgeDegree v ≤ D)
     (z : PrivateVertex H k q) (e : E) (c : Fin k)
     (hz : z ∈ tradeSupport H D k q hdeg e c) (he : z.1.1 ∈ H.support e) :
     completionIncidenceSlope D k q hdeg z ⟨Sum.inr (e, c), hz⟩ =
       incidenceSlot H D hdeg z.1 ⟨e, he⟩ := by
+  classical
   unfold completionIncidenceSlope
   congr 2
 
@@ -295,27 +322,33 @@ def completionIncidenceOfSlope {H : FiniteHypergraph V E} (D k q : ℕ) [NeZero 
   else
     ⟨Sum.inl ⟨g, hs⟩, mem_gadgetSupport_rowThrough H D k q z s⟩
 
+omit [DecidableEq E] in
 lemma completionIncidenceOfSlope_val_neg {H : FiniteHypergraph V E} (D k q : ℕ)
     [NeZero q] (hdeg : ∀ v ∈ H.vertexSet, H.edgeDegree v ≤ D)
     (z : PrivateVertex H k q) (s : Fin D)
     (hs : ¬IsSelectedRow H D q hdeg (rowThrough H D k q z s)) :
     (completionIncidenceOfSlope D k q hdeg z s).1 =
       Sum.inl (⟨rowThrough H D k q z s, hs⟩ : RemainingRow H D q hdeg) := by
+  classical
   simp [completionIncidenceOfSlope, hs]
 
+omit [DecidableEq E] in
 lemma completionIncidenceOfSlope_val_pos {H : FiniteHypergraph V E} (D k q : ℕ)
     [NeZero q] (hdeg : ∀ v ∈ H.vertexSet, H.edgeDegree v ≤ D)
     (z : PrivateVertex H k q) (s : Fin D)
     (hs : IsSelectedRow H D q hdeg (rowThrough H D k q z s)) :
     (completionIncidenceOfSlope D k q hdeg z s).1 =
       Sum.inr (hs.choose.1, z.2.1) := by
+  classical
   simp [completionIncidenceOfSlope, hs]
 
+omit [DecidableEq E] in
 lemma completionIncidenceSlope_ofSlope {H : FiniteHypergraph V E} (D k q : ℕ)
     [NeZero q] (hdeg : ∀ v ∈ H.vertexSet, H.edgeDegree v ≤ D)
     (z : PrivateVertex H k q) (s : Fin D) :
     completionIncidenceSlope D k q hdeg z
         (completionIncidenceOfSlope D k q hdeg z s) = s := by
+  classical
   by_cases hs : IsSelectedRow H D q hdeg (rowThrough H D k q z s)
   · have hval := completionIncidenceOfSlope_val_pos D k q hdeg z s hs
     have hmem : z ∈ tradeSupport H D k q hdeg hs.choose.1 z.2.1 :=
@@ -324,9 +357,9 @@ lemma completionIncidenceSlope_ofSlope {H : FiniteHypergraph V E} (D k q : ℕ)
     rw [show completionIncidenceOfSlope D k q hdeg z s =
         ⟨Sum.inr (hs.choose.1, z.2.1), hmem⟩ from Subtype.ext hval]
     rw [completionIncidenceSlope_inr]
-    convert hslope using 1
-    · congr 2
-    · rfl
+    · convert hslope using 1
+      · congr 2
+      · rfl
     · simpa [rowThrough] using hs.choose.2
   · have hval := completionIncidenceOfSlope_val_neg D k q hdeg z s hs
     have hmem := mem_gadgetSupport_rowThrough H D k q z s
@@ -399,10 +432,12 @@ def completionIncidenceEquivSlope {H : FiniteHypergraph V E} (D k q : ℕ) [NeZe
         · exact hc
   right_inv := completionIncidenceSlope_ofSlope D k q hdeg z
 
+omit [DecidableEq E] in
 lemma edgeDegree_regularCompletion {H : FiniteHypergraph V E} {D k q : ℕ} [NeZero q]
     (hdeg : ∀ v ∈ H.vertexSet, H.edgeDegree v ≤ D)
     (z : PrivateVertex H k q) :
     (regularCompletion H D k q hdeg).edgeDegree z = D := by
+  classical
   rw [← card_incidentEdges]
   simpa using Fintype.card_congr (completionIncidenceEquivSlope D k q hdeg z)
 
@@ -415,6 +450,7 @@ lemma fin_natCast_zmod_injective {n q : ℕ} [NeZero q] (hnq : n ≤ q) :
   simpa [Nat.mod_eq_of_lt (lt_of_lt_of_le i.2 hnq),
     Nat.mod_eq_of_lt (lt_of_lt_of_le j.2 hnq)] using hij
 
+omit [DecidableEq E] [Fintype E] in
 /-- Two distinct points of one private gadget lie on at most one affine row. -/
 lemma gadgetEdge_eq_of_pair_mem {H : FiniteHypergraph V E} {D k q : ℕ}
     [NeZero q] [Fact q.Prime] (hkq : k ≤ q) (hDq : D ≤ q)
@@ -423,6 +459,7 @@ lemma gadgetEdge_eq_of_pair_mem {H : FiniteHypergraph V E} {D k q : ℕ}
     (hzg : z ∈ gadgetSupport H k q g) (hz'g : z' ∈ gadgetSupport H k q g)
     (hzg' : z ∈ gadgetSupport H k q g') (hz'g' : z' ∈ gadgetSupport H k q g') :
     g = g' := by
+  classical
   rw [mem_gadgetSupport_iff] at hzg hz'g hzg' hz'g'
   have hcol : z.2.1 ≠ z'.2.1 := by
     intro hc
@@ -468,6 +505,7 @@ lemma gadgetEdge_eq_of_pair_mem {H : FiniteHypergraph V E} {D k q : ℕ}
           rw [hzg'.2]
           ring
 
+omit [DecidableEq E] in
 /-- A trade column contains at most one vertex owned by each original vertex. -/
 lemma eq_of_mem_tradeSupport_of_same_owner {H : FiniteHypergraph V E} {D k q : ℕ}
     (hdeg : ∀ v ∈ H.vertexSet, H.edgeDegree v ≤ D)
@@ -475,6 +513,7 @@ lemma eq_of_mem_tradeSupport_of_same_owner {H : FiniteHypergraph V E} {D k q : �
     (hz : z ∈ tradeSupport H D k q hdeg e c)
     (hz' : z' ∈ tradeSupport H D k q hdeg e c) (howner : z.1 = z'.1) :
     z = z' := by
+  classical
   rcases z with ⟨zv, ⟨j, y⟩⟩
   rcases z' with ⟨zv', ⟨j', y'⟩⟩
   simp only at howner
@@ -492,11 +531,14 @@ lemma eq_of_mem_tradeSupport_of_same_owner {H : FiniteHypergraph V E} {D k q : �
 abbrev PairEdges (H : FiniteHypergraph V E) (u v : V) :=
   {e : E // u ∈ H.support e ∧ v ∈ H.support e}
 
+omit [DecidableEq E] in
 lemma card_pairEdges (H : FiniteHypergraph V E) (u v : V) :
     Fintype.card (PairEdges H u v) = H.edgePairDegree u v := by
+  classical
   simpa [PairEdges, FiniteHypergraph.edgePairDegree] using
     (Fintype.card_subtype (fun e : E ↦ u ∈ H.support e ∧ v ∈ H.support e))
 
+omit [DecidableEq E] in
 /-- Inside one private gadget the completed codegree is at most one. -/
 lemma edgePairDegree_regularCompletion_le_one_same_owner
     {H : FiniteHypergraph V E} {D k q : ℕ} [NeZero q] [Fact q.Prime]
@@ -504,6 +546,7 @@ lemma edgePairDegree_regularCompletion_le_one_same_owner
     (hdeg : ∀ v ∈ H.vertexSet, H.edgeDegree v ≤ D)
     {z z' : PrivateVertex H k q} (hzz' : z ≠ z') (howner : z.1 = z'.1) :
     (regularCompletion H D k q hdeg).edgePairDegree z z' ≤ 1 := by
+  classical
   rw [← card_pairEdges, Fintype.card_le_one_iff]
   intro a b
   apply Subtype.ext
@@ -521,10 +564,12 @@ lemma edgePairDegree_regularCompletion_le_one_same_owner
   | inr ea =>
       exact (hzz' (eq_of_mem_tradeSupport_of_same_owner hdeg ha.1 ha.2 howner)).elim
 
+omit [DecidableEq E] [Fintype E] in
 lemma owner_eq_of_pair_mem_gadgetSupport {H : FiniteHypergraph V E} {D k q : ℕ}
     {z z' : PrivateVertex H k q} {g : GadgetEdge H D q}
     (hz : z ∈ gadgetSupport H k q g) (hz' : z' ∈ gadgetSupport H k q g) :
     z.1 = z'.1 := by
+  classical
   rw [mem_gadgetSupport_iff] at hz hz'
   exact hz.1.trans hz'.1.symm
 
@@ -545,10 +590,12 @@ def pairProjection {H : FiniteHypergraph V E} (D k q : ℕ) [NeZero q]
       have hz' := (mem_tradeSupport_iff H D k q hdeg e c z').mp ha.2
       exact ⟨e, hz.choose, hz'.choose⟩
 
+omit [DecidableEq E] in
 lemma pairProjection_injective {H : FiniteHypergraph V E} (D k q : ℕ) [NeZero q]
     (hdeg : ∀ v ∈ H.vertexSet, H.edgeDegree v ≤ D)
     (z z' : PrivateVertex H k q) (howner : z.1 ≠ z'.1) :
     Function.Injective (pairProjection D k q hdeg z z' howner) := by
+  classical
   intro a b hab
   rcases a with ⟨a, ha⟩
   rcases b with ⟨b, hb⟩
@@ -571,6 +618,7 @@ lemma pairProjection_injective {H : FiniteHypergraph V E} (D k q : ℕ) [NeZero 
           · exact he
           · exact hc.symm.trans hd
 
+omit [DecidableEq E] in
 /-- Between different owners, the completion codegree is bounded by the original codegree. -/
 lemma edgePairDegree_regularCompletion_le_of_owner_ne
     {H : FiniteHypergraph V E} {D k q : ℕ} [NeZero q]
@@ -578,9 +626,11 @@ lemma edgePairDegree_regularCompletion_le_of_owner_ne
     {z z' : PrivateVertex H k q} (howner : z.1 ≠ z'.1) :
     (regularCompletion H D k q hdeg).edgePairDegree z z' ≤
       H.edgePairDegree z.1.1 z'.1.1 := by
+  classical
   rw [← card_pairEdges, ← card_pairEdges]
   exact Fintype.card_le_of_injective _ (pairProjection_injective D k q hdeg z z' howner)
 
+omit [DecidableEq E] in
 /-- The completion codegree is at most the larger of the corresponding original codegree and one. -/
 lemma edgePairDegree_regularCompletion_le_max
     {H : FiniteHypergraph V E} {D k q : ℕ} [NeZero q] [Fact q.Prime]
@@ -589,6 +639,7 @@ lemma edgePairDegree_regularCompletion_le_max
     {z z' : PrivateVertex H k q} (hzz' : z ≠ z') :
     (regularCompletion H D k q hdeg).edgePairDegree z z' ≤
       max (H.edgePairDegree z.1.1 z'.1.1) 1 := by
+  classical
   by_cases howner : z.1 = z'.1
   · exact (edgePairDegree_regularCompletion_le_one_same_owner hkq hDq hdeg hzz' howner).trans
       (le_max_right _ _)
@@ -610,12 +661,14 @@ def originalEdgeEmbedding (H : FiniteHypergraph V E) (D q : ℕ) {k : ℕ} (hk :
   toFun e := Sum.inr (e, zeroColumn hk)
   inj' := by intro e f hef; simpa using hef
 
+omit [DecidableEq E] in
 lemma distinguishedVertex_mem_originalEdge {H : FiniteHypergraph V E}
     {D k q : ℕ} (hk : 0 < k)
     (hdeg : ∀ v ∈ H.vertexSet, H.edgeDegree v ≤ D)
     {e : E} {v : V} (hve : v ∈ H.support e) :
     distinguishedVertex H hk ⟨v, H.support_subset_vertexSet e hve⟩ ∈
       tradeSupport H D k q hdeg e (zeroColumn hk) := by
+  classical
   rw [mem_tradeSupport_iff]
   refine ⟨hve, rfl, ?_⟩
   simp [distinguishedVertex, zeroColumn]

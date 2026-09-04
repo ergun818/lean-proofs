@@ -35,7 +35,8 @@ theorem haxellRodlRounding : HaxellRodlRounding := by
   have hα₁ : α < 1 := by have := min_le_right (η / 8) (1 / 4 : ℝ); dsimp [α]; linarith
   have hα₂ : α ≤ 1 / 2 := by have := min_le_right (η / 8) (1 / 4 : ℝ); dsimp [α]; linarith
   have hαη : α ≤ η / 8 := min_le_left _ _
-  obtain ⟨θ, hθ, hrepair⟩ := CoverRepair.exists_uniform_cover_repair α (η / 4) hα hα₁ (by positivity)
+  obtain ⟨θ, hθ, hrepair⟩ :=
+    CoverRepair.exists_uniform_cover_repair α (η / 4) hα hα₁ (by positivity)
   obtain ⟨δ, hδ, hround⟩ := SingleColorRounding.small_weight_rounding (η / 2) (by positivity)
   obtain ⟨N, hN⟩ := exists_nat_gt (max 1 (4 / (α * θ * δ)))
   filter_upwards [eventually_ge_atTop N] with n hn

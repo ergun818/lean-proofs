@@ -48,10 +48,12 @@ def sideResidualCapacity (G : SimpleGraph α) (S : Finset α)
     1 - fractionalEdgeLoad G w ((inducedEmbedding S).sym2Map p)
   else 0
 
+omit [DecidableEq α] in
 private lemma mapped_induced_edge_mem
     (G : SimpleGraph α) (S : Finset α) {p : Sym2 S}
     (hp : p ∈ (G.induce (S : Set α)).edgeFinset) :
     (inducedEmbedding S).sym2Map p ∈ G.edgeFinset := by
+  classical
   induction p using Sym2.inductionOn with
   | hf a b =>
       apply SimpleGraph.mem_edgeFinset.mpr
@@ -92,6 +94,7 @@ lemma sideResidualCapacity_isEdgeCapacity
         simpa only [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet,
           SimpleGraph.top_adj] using hab.ne
 
+omit [Fintype α] in
 private lemma filter_topEdgeFinset_induced_eq
     (G : SimpleGraph α) (S : Finset α) :
     (⊤ : SimpleGraph S).edgeFinset.filter
@@ -111,6 +114,7 @@ private lemma filter_topEdgeFinset_induced_eq
     · exact fun hp ↦ ⟨hKsub hp, hp⟩
   simpa only [K, E] using hfilterK
 
+omit [Fintype α] in
 private lemma filter_topEdgeFinset_not_induced_eq
     (G : SimpleGraph α) (S : Finset α) :
     (⊤ : SimpleGraph S).edgeFinset.filter
@@ -480,7 +484,6 @@ theorem isFractionalPacking_add_cross_and_sideResiduals
           rw [hzS, hzT]
           norm_num
           exact hw.1.edgeLoad_le_one he
-
       · have haT : a ∈ T := by
           simpa only [T, Set.mem_toFinset, Set.mem_compl_iff, S,
             Set.mem_toFinset] using ha

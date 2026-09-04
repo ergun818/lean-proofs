@@ -165,13 +165,17 @@ def IsCapacityDecomposition (G : SimpleGraph A) (c : Sym2 A → ℝ)
   IsCapacityPacking G c w ∧
     ∀ e ∈ G.edgeFinset, fractionalEdgeLoad G w e = c e
 
+omit [DecidableEq A] in
 lemma IsEdgeCapacity.nonneg {G : SimpleGraph A} {c : Sym2 A → ℝ}
-    (hc : IsEdgeCapacity G c) {e : Sym2 A} (he : e ∈ G.edgeFinset) : 0 ≤ c e :=
-  (hc.1 e he).1
+    (hc : IsEdgeCapacity G c) {e : Sym2 A} (he : e ∈ G.edgeFinset) : 0 ≤ c e := by
+  classical
+  exact (hc.1 e he).1
 
+omit [DecidableEq A] in
 lemma IsEdgeCapacity.le_one {G : SimpleGraph A} {c : Sym2 A → ℝ}
-    (hc : IsEdgeCapacity G c) {e : Sym2 A} (he : e ∈ G.edgeFinset) : c e ≤ 1 :=
-  (hc.1 e he).2
+    (hc : IsEdgeCapacity G c) {e : Sym2 A} (he : e ∈ G.edgeFinset) : c e ≤ 1 := by
+  classical
+  exact (hc.1 e he).2
 
 lemma IsCapacityPacking.toFractionalPacking
     {G : SimpleGraph A} {c : Sym2 A → ℝ} {w : Finset A → ℝ}
@@ -268,6 +272,7 @@ section DeficitDistribution
 
 variable {I : Type*} [Fintype I] [DecidableEq I]
 
+omit [DecidableEq I] [Fintype I] in
 /-- Extend a prescribed finite set `h` inside `p` either up to size `m`, or
 all the way to `p` if `p` itself is smaller.  This is the selection step in
 the inductive proof of Claim 3.1. -/
@@ -275,6 +280,7 @@ lemma exists_intermediate_finset {h p : Finset I} {m : ℕ}
     (hhp : h ⊆ p) (hhm : h.card ≤ m) :
     ∃ s : Finset I,
       h ⊆ s ∧ s ⊆ p ∧ s.card ≤ m ∧ (s.card = m ∨ s = p) := by
+  classical
   by_cases hpm : p.card ≤ m
   · exact ⟨p, hhp, Subset.rfl, hpm, Or.inr rfl⟩
   · have hmp : m < p.card := Nat.lt_of_not_ge hpm
@@ -295,10 +301,12 @@ lemma exists_intermediate_finset {h p : Finset I} {m : ℕ}
 def rowMultiplicity {r : ℕ} (S : Fin r → Finset I) (i : I) : ℕ :=
   ∑ j, if i ∈ S j then 1 else 0
 
+omit [Fintype I] in
 @[simp] lemma rowMultiplicity_zero (S : Fin 0 → Finset I) (i : I) :
     rowMultiplicity S i = 0 := by
   simp [rowMultiplicity]
 
+omit [Fintype I] in
 @[simp] lemma rowMultiplicity_cons {r : ℕ} (s : Finset I)
     (S : Fin r → Finset I) (i : I) :
     rowMultiplicity (Fin.cases s S) i =
@@ -320,8 +328,10 @@ def saturatedDeficitSupport (r : ℕ) (d : I → ℕ) : Finset I :=
 def decrementDeficit (s : Finset I) (d : I → ℕ) (i : I) : ℕ :=
   if i ∈ s then d i - 1 else d i
 
+omit [DecidableEq I] in
 lemma saturatedDeficitSupport_subset_positive {r : ℕ} (hr : 0 < r) (d : I → ℕ) :
     saturatedDeficitSupport r d ⊆ positiveDeficitSupport d := by
+  classical
   intro i hi
   have hid : d i = r := (mem_filter.mp hi).2
   exact mem_filter.mpr ⟨mem_univ _, hid.symm ▸ hr⟩
@@ -393,9 +403,11 @@ lemma sum_decrementDeficit_le_of_all_positive {r m : ℕ} {d : I → ℕ}
     _ ≤ m * r := Nat.mul_le_mul_right r hp
     _ = r * m := Nat.mul_comm _ _
 
+omit [DecidableEq I] in
 lemma card_saturatedDeficitSupport_le {r m : ℕ} (hr : 0 < r) (d : I → ℕ)
     (htotal : ∑ i, d i ≤ r * m) :
     (saturatedDeficitSupport r d).card ≤ m := by
+  classical
   have hprod : r * (saturatedDeficitSupport r d).card ≤ r * m := by
     calc
       r * (saturatedDeficitSupport r d).card
@@ -533,7 +545,7 @@ lemma fractionalEdgeLoad_eq_zero_of_not_edge (H : SimpleGraph A)
         (SimpleGraph.mem_cliqueFinset_iff.mp htData.1).isClique hmem.1 hmem.2 hxy
       exact heH (by simpa using hadj)
 
-lemma zeroExtendTriangleWeight_nonneg {H G : SimpleGraph A} (hHG : H ≤ G)
+lemma zeroExtendTriangleWeight_nonneg {H G : SimpleGraph A} (_ : H ≤ G)
     {w : Finset A → ℝ} (hw : IsFractionalPacking H w) :
     ∀ t ∈ G.cliqueFinset 3, 0 ≤ zeroExtendTriangleWeight H w t := by
   intro t htG
@@ -541,7 +553,7 @@ lemma zeroExtendTriangleWeight_nonneg {H G : SimpleGraph A} (hHG : H ≤ G)
   · simpa [zeroExtendTriangleWeight, htH] using hw.nonneg_on htH
   · simp [zeroExtendTriangleWeight, htH]
 
-lemma zeroExtendTriangleWeight_le_half {H G : SimpleGraph A} (hHG : H ≤ G)
+lemma zeroExtendTriangleWeight_le_half {H G : SimpleGraph A} (_ : H ≤ G)
     {w : Finset A → ℝ} (hw : IsHalfBounded H w) :
     IsHalfBounded G (zeroExtendTriangleWeight H w) := by
   intro t htG
@@ -579,6 +591,7 @@ lemma averageGraphCapacity_isEdgeCapacity (H : I → SimpleGraph A) :
       (SimpleGraph.not_isDiag_of_mem_edgeFinset hi) heDiag
     simp [averageGraphCapacity, heNo]
 
+omit [Nonempty I] in
 lemma averageSubgraphPacking_isCapacityPacking
     (H : I → SimpleGraph A) (w : I → Finset A → ℝ)
     (hw : ∀ i, IsFractionalPacking (H i) (w i)) :
@@ -604,6 +617,7 @@ lemma averageSubgraphPacking_isCapacityPacking
           heND hei
       simp [hei, hz]
 
+omit [Nonempty I] in
 lemma averageSubgraphPacking_isCapacityDecomposition
     (H : I → SimpleGraph A) (w : I → Finset A → ℝ)
     (hw : ∀ i, IsFractionalDecomposition (H i) (w i)) :
@@ -675,6 +689,7 @@ lemma capacityUncoveredWeight_indicator_zeroExtend
       intro e he
       simp [he]
 
+omit [Nonempty I] in
 /-- Both edge capacities and triangle loads commute with the finite average;
 consequently, so does the total uncovered weight. -/
 lemma capacityUncoveredWeight_averageSubgraphPacking
@@ -709,13 +724,17 @@ def deficitRowEdges (s : Finset (CompleteEdge A)) : Finset (Sym2 A) :=
 def graphOfDeficitRow (s : Finset (CompleteEdge A)) : SimpleGraph A :=
   (⊤ : SimpleGraph A).deleteEdges (deficitRowEdges s)
 
+omit [DecidableEq A] [Fintype A] in
 @[simp] lemma mem_deficitRowEdges {s : Finset (CompleteEdge A)} {e : CompleteEdge A} :
     (e : Sym2 A) ∈ deficitRowEdges s ↔ e ∈ s := by
+  classical
   simp [deficitRowEdges]
 
+omit [DecidableEq A] [Fintype A] in
 @[simp] lemma mem_graphOfDeficitRow_edgeSet
     {s : Finset (CompleteEdge A)} {e : CompleteEdge A} :
     (e : Sym2 A) ∈ (graphOfDeficitRow s).edgeSet ↔ e ∉ s := by
+  classical
   rw [graphOfDeficitRow, SimpleGraph.edgeSet_deleteEdges]
   simp [e.property]
 
@@ -739,6 +758,7 @@ lemma missingEdgeCount_graphOfDeficitRow (s : Finset (CompleteEdge A)) :
             (not_congr (mem_graphOfDeficitRow_edgeSet (s := s) (e := e')))
   rw [hedge, deficitRowEdges, card_map]
 
+omit [Fintype A] in
 lemma absentRowMultiplicity_add {r : ℕ} (S : Fin r → Finset (CompleteEdge A))
     (e : CompleteEdge A) :
     (∑ j, if e ∉ S j then 1 else 0) + rowMultiplicity S e = r := by
@@ -807,7 +827,7 @@ lemma capacityMissingWeight_eq_sum_completeEdges (c : Sym2 A → ℝ) :
   apply Finset.sum_subtype
   intro e
   induction e using Sym2.inductionOn with
-  | hf x y => simp [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet]
+  | hf x y => simp
 
 lemma integralDeficits_total_le {r m : ℕ} (hr : 0 < r)
     (c : Sym2 A → ℝ) (d : CompleteEdge A → ℕ)
@@ -827,9 +847,11 @@ lemma integralDeficits_total_le {r m : ℕ} (hr : 0 < r)
     by simpa [mul_comm] using (div_le_iff₀ hrReal).mp hmissing
   exact_mod_cast hreal
 
+omit [DecidableEq A] in
 lemma IsEdgeCapacity.eq_zero_of_isDiag {c : Sym2 A → ℝ}
     (hc : IsEdgeCapacity (⊤ : SimpleGraph A) c) {e : Sym2 A}
     (heDiag : e.IsDiag) : c e = 0 := by
+  classical
   apply hc.2 e
   intro he
   have heND : ¬ e.IsDiag :=

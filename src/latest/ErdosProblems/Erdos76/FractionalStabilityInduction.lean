@@ -76,7 +76,7 @@ def AlmostBipartiteStabilityExtension : Prop :=
         CloseToBipartite Gᶜ ((n + 1) / 8)
 
 private lemma FractionalCoveredSizeAtMost.relabel
-    { α β : Type* } [Fintype α] [DecidableEq α]
+    {α β : Type*} [Fintype α] [DecidableEq α]
     [Fintype β] [DecidableEq β]
     {G : SimpleGraph α} {q : ℝ}
     (hG : FractionalCoveredSizeAtMost G q) (φ : α ≃ β) :
@@ -89,7 +89,7 @@ private lemma FractionalCoveredSizeAtMost.relabel
   let uB : Finset α → ℝ := relabelWeight φ.symm wB
   have hmap : (G.map φ.toEmbedding).map φ.symm.toEmbedding = G := by
     rw [SimpleGraph.map_map]
-    simpa using G.map_id
+    simp
   have huR : IsFractionalPacking G uR := by
     simpa only [uR, hmap] using hwR.relabel φ.symm
   have hc : (G.map φ.toEmbedding)ᶜ.map φ.symm.toEmbedding = Gᶜ := by
@@ -108,8 +108,8 @@ private lemma FractionalCoveredSizeAtMost.relabel
   simpa [twoColorCoveredSize, hsR, hsB] using hupper
 
 private lemma partitionCloseToBipartite_relabel
-    { α β : Type* } [Fintype α] [DecidableEq α]
-    [Fintype β] [DecidableEq β]
+    {α β : Type*} [Fintype α]
+    [Fintype β]
     {G : SimpleGraph α} {k : ℕ}
     (hG : PartitionCloseToBipartite G k) (φ : α ≃ β) :
     PartitionCloseToBipartite (G.map φ.toEmbedding) k := by
@@ -138,7 +138,7 @@ private lemma partitionCloseToBipartite_relabel
           refine ⟨s(x, y), ⟨?_, ?_⟩, ?_⟩
           · exact hmapAdj.mp hab
           · simpa [x, y, hax, hby, t] using hside
-          · simpa [x, y, hax, hby]
+          · simp [x, y, hax, hby]
         · rintro ⟨q, hq, hqeq⟩
           have hq' : q = s(x, y) := by
             apply φ.toEmbedding.sym2Map.injective
@@ -152,7 +152,7 @@ private lemma partitionCloseToBipartite_relabel
 /-- A partition with at most `k` same-side edges gives an explicit deletion
 witness making the graph bipartite. -/
 theorem closeToBipartite_of_partitionClose
-    { α : Type* } [Fintype α] [DecidableEq α]
+    {α : Type*} [Fintype α]
     {G : SimpleGraph α} {k : ℕ}
     (hG : PartitionCloseToBipartite G k) : CloseToBipartite G k := by
   classical
@@ -184,12 +184,13 @@ theorem closeToBipartite_of_partitionClose
     exact hbip.isBipartite
 
 private lemma CloseToBipartite.relabel
-    { α β : Type* } [Fintype α] [DecidableEq α]
-    [Fintype β] [DecidableEq β]
+    {α β : Type*} [Fintype α]
+    [Fintype β]
     {G : SimpleGraph α} {k : ℕ}
     (hG : CloseToBipartite G k) (φ : α ≃ β) :
-    CloseToBipartite (G.map φ.toEmbedding) k :=
-  closeToBipartite_of_partitionClose
+    CloseToBipartite (G.map φ.toEmbedding) k := by
+  classical
+  exact closeToBipartite_of_partitionClose
     (partitionCloseToBipartite_relabel hG.partition_witness φ)
 
 private lemma stabilityThreshold_scale (m : ℕ) (hm : 2 ≤ m) :
@@ -208,7 +209,7 @@ private lemma stabilityThreshold_scale (m : ℕ) (hm : 2 ≤ m) :
 on the remaining vertices.  This is the transport step deliberately kept
 separate from the averaging calculation in `GruslysLetzter`. -/
 private lemma fractionalCoveredSizeAtMost_induce_erase
-    { α : Type* } [Fintype α] [DecidableEq α]
+    {α : Type*} [Fintype α] [DecidableEq α]
     (G : SimpleGraph α) (u : α) (q : ℝ)
     (hdel : DeletionFractionalCoveredSizeAtMost G u q) :
     FractionalCoveredSizeAtMost
@@ -466,7 +467,7 @@ theorem fractionalStabilityUpperBound_of_classification_extension
     rw [htop] at hCloseTop
     have hmap : (G.map φ.toEmbedding).map φ.symm.toEmbedding = G := by
       rw [SimpleGraph.map_map]
-      simpa using G.map_id
+      simp
     rcases hCloseTop with hR | hB
     · left
       simpa only [hmap] using hR.relabel φ.symm
