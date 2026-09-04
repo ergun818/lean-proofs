@@ -72,7 +72,7 @@ theorem eventually_four_mul_smallPowerBlockExponent_sq_le_log (S : ℕ) :
   have hqSq : q ^ 2 = Real.sqrt L := by
     dsimp only [q]
     rw [← Real.rpow_natCast, ← Real.rpow_mul hL0]
-    convert (Real.sqrt_eq_rpow L).symm using 1 <;> norm_num
+    convert (Real.sqrt_eq_rpow L).symm using 1; norm_num
   have hKsq : (K : ℝ) ^ 2 ≤ Real.sqrt L := by
     rw [← hqSq]
     exact pow_le_pow_left₀ (by positivity) hKq 2

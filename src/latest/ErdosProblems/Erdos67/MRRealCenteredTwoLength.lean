@@ -64,7 +64,7 @@ def dyadicRestrictedCenteredShortAverageMeanSquareAt
 /-- The two adjacent dyadic restrictions recover the normalized short
 average, provided the short length is at most the spatial scale. -/
 theorem normalizedShortAverage_eq_two_dyadicRestricted
-    (a : ℕ → ℂ) {X H x : ℕ} (hH : 0 < H) (hHX : H ≤ X)
+    (a : ℕ → ℂ) {X H x : ℕ} (_hH : 0 < H) (hHX : H ≤ X)
     (hx : x ∈ Finset.Ioc X (2 * X)) :
     (∑ j ∈ Finset.Icc 1 H, a (x + j)) / (H : ℂ) =
       dyadicRestrictedShortAverage (Finset.Ioc X (2 * X)) a X x H +

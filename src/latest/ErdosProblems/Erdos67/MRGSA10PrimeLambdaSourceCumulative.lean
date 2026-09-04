@@ -861,27 +861,27 @@ theorem exists_rpow_half_mul_gsA10WeightedVerticalEnergy_tao_sourceCutoff_symmet
 
 end
 
-end Erdos67.MRHalaszBands
+#print axioms
+  intervalIntegral_normSq_gsA10PrimeLambdaPolynomial_le_affineRow
+#print axioms
+  two_intervalIntegral_normSq_gsA10PrimeLambda_tao_le_affineRow
+#print axioms
+  two_gsA10WeightedVerticalEnergy_tao_le_affineRow
+#print axioms
+  two_gsA10WeightedVerticalEnergy_tao_le_affineRow_above
+#print axioms
+  sum_gsA10PrimeWindow_log_div_gaussian_le_sourceAffineRow
+#print axioms
+  exists_two_gsA10WeightedVerticalEnergy_tao_sourceSchedule
+#print axioms
+  exists_two_gsA10WeightedVerticalEnergy_tao_sourceCutoff
+#print axioms
+  two_gsA10WeightedVerticalEnergy_tao_le_affineRow_diagonal
+#print axioms
+  rpow_half_mul_gsA10WeightedVerticalEnergy_tao_le_affineRow_symmetric
+#print axioms
+  exists_rpow_half_mul_gsA10WeightedVerticalEnergy_tao_sourceSchedule_symmetric
+#print axioms
+  exists_rpow_half_mul_gsA10WeightedVerticalEnergy_tao_sourceCutoff_symmetric
 
-#print axioms
-  Erdos67.MRHalaszBands.intervalIntegral_normSq_gsA10PrimeLambdaPolynomial_le_affineRow
-#print axioms
-  Erdos67.MRHalaszBands.two_intervalIntegral_normSq_gsA10PrimeLambda_tao_le_affineRow
-#print axioms
-  Erdos67.MRHalaszBands.two_gsA10WeightedVerticalEnergy_tao_le_affineRow
-#print axioms
-  Erdos67.MRHalaszBands.two_gsA10WeightedVerticalEnergy_tao_le_affineRow_above
-#print axioms
-  Erdos67.MRHalaszBands.sum_gsA10PrimeWindow_log_div_gaussian_le_sourceAffineRow
-#print axioms
-  Erdos67.MRHalaszBands.exists_two_gsA10WeightedVerticalEnergy_tao_sourceSchedule
-#print axioms
-  Erdos67.MRHalaszBands.exists_two_gsA10WeightedVerticalEnergy_tao_sourceCutoff
-#print axioms
-  Erdos67.MRHalaszBands.two_gsA10WeightedVerticalEnergy_tao_le_affineRow_diagonal
-#print axioms
-  Erdos67.MRHalaszBands.rpow_half_mul_gsA10WeightedVerticalEnergy_tao_le_affineRow_symmetric
-#print axioms
-  Erdos67.MRHalaszBands.exists_rpow_half_mul_gsA10WeightedVerticalEnergy_tao_sourceSchedule_symmetric
-#print axioms
-  Erdos67.MRHalaszBands.exists_rpow_half_mul_gsA10WeightedVerticalEnergy_tao_sourceCutoff_symmetric
+end Erdos67.MRHalaszBands

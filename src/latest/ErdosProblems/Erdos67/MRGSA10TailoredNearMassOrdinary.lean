@@ -284,4 +284,5 @@ end Erdos67.MRHalaszBands
 
 #print axioms Erdos67.MRHalaszBands.norm_gsRealShift_gsA10LambdaWindow_le_ordinaryNearWeight
 #print axioms Erdos67.MRHalaszBands.sum_gsA10HigherPrimePowerLambdaWindowWeight_div_le_mass
-#print axioms Erdos67.MRHalaszBands.dirichletPerronNearMass_gsA10TwoBlockTailoredCoefficient_le_ordinary
+#print axioms
+  Erdos67.MRHalaszBands.dirichletPerronNearMass_gsA10TwoBlockTailoredCoefficient_le_ordinary

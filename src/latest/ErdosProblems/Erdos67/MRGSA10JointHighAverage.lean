@@ -63,7 +63,7 @@ theorem gsA10JointHighMajorant_nonneg
   positivity
 
 private theorem exp_three_shift_eq
-    {a b e : ℕ} (ha : 0 < a) (hb : 0 < b) (he : 0 < e)
+    {a b e : ℕ} (_ha : 0 < a) (hb : 0 < b) (he : 0 < e)
     (alpha beta : ℝ) :
     Real.exp (-alpha * Real.log (a : ℝ)) *
           ArithmeticFunction.vonMangoldt a *
@@ -105,10 +105,10 @@ private theorem jointHigh_term_average_le
   · simp [hLb]
   have ha2 : 2 ≤ a := by
     by_contra h
-    interval_cases a <;> simp_all
+    interval_cases a; simp_all
   have hb2 : 2 ≤ b := by
     by_contra h
-    interval_cases b <;> simp_all
+    interval_cases b; simp_all
   have hbe2 : 2 ≤ b * e := by nlinarith
   have havg := intervalIntegral_intervalIntegral_exp_natLog_two_shift_le
     (m := a) (n := b * e) ha2 hbe2 heta

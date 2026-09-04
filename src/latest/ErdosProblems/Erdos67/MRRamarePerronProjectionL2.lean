@@ -37,8 +37,7 @@ theorem normSq_intervalIntegral_le_length_mul_integral_normSq
     · exact hg.norm.aestronglyMeasurable
   have hmemone : MeasureTheory.MemLp (fun _ : ℝ ↦ (1 : ℝ)) 2 μ := by
     rw [MeasureTheory.memLp_two_iff_integrable_sq]
-    · simpa using (MeasureTheory.integrableOn_const :
-          MeasureTheory.IntegrableOn (fun _ : ℝ ↦ (1 : ℝ)) (Set.Ioc a b))
+    · simp
     · fun_prop
   have hmemg' : MeasureTheory.MemLp (fun x ↦ ‖g x‖)
       (ENNReal.ofReal 2) μ := by simpa using hmemg

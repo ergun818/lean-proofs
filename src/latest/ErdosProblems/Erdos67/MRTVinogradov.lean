@@ -43,7 +43,7 @@ lemma approximateResidueWeight_le_two_reciprocals
   · exact le_add_of_nonneg_left (inv_nonneg.mpr (Nat.cast_nonneg _))
 
 lemma sum_approximateResidueWeight_le_harmonic
-    (cap : ℝ) (q : ℕ) [NeZero q] (hcap : 0 ≤ cap) :
+    (cap : ℝ) (q : ℕ) [NeZero q] (_hcap : 0 ≤ cap) :
     (∑ r : Fin q, approximateResidueWeight cap q r.val) ≤
       cap + 4 * q * harmonicBefore q := by
   have hqpos : 0 < q := Nat.pos_of_ne_zero (NeZero.ne q)
@@ -113,7 +113,7 @@ lemma sum_range_mul_mod (G : ℕ → ℝ) (q B : ℕ) :
         apply sum_congr rfl
         intro x hx
         have hxq : x < q := mem_range.mp hx
-        simp [Nat.add_mod, Nat.mul_mod, Nat.mod_eq_of_lt hxq]
+        simp [Nat.add_mod, Nat.mod_eq_of_lt hxq]
       rw [htail]
       push_cast
       ring
@@ -274,7 +274,6 @@ theorem cappedInvDist_four_mul_le_minor_arc
       ((4 * P : ℕ) : ℝ) * ((W : ℝ) / ((H : ℝ) * q)) =
           ((((4 * P : ℕ) : ℝ) * (W : ℝ)) / (H : ℝ)) / (q : ℝ) := by
         field_simp
-        <;> ring
       _ ≤ (1 / 2) / (q : ℝ) := div_le_div_of_nonneg_right hcore hqr.le
       _ = 1 / (2 * (q : ℝ)) := by ring
   have hraw := cappedInvDist_prefix_bound_log
@@ -296,7 +295,6 @@ theorem cappedInvDist_four_mul_le_minor_arc
       _ = 4 * (P : ℝ) / q + 1 / q + 1 := by
         push_cast
         field_simp
-        <;> ring
       _ ≤ 4 * (P : ℝ) / q + 2 := by linarith
   have hqT : (q : ℝ) ≤ (H : ℝ) / W := by
     apply (le_div_iff₀ hWr).2
@@ -361,7 +359,7 @@ theorem cappedInvDist_four_mul_le_minor_arc
           2 * ((H : ℝ) / P) +
           8 * (q : ℝ) * (1 + Real.log q) := by
     field_simp
-    <;> ring
+    ring
   rw [hexpand] at hupper
   calc
     (∑ n ∈ range (4 * P + 1),
@@ -405,7 +403,8 @@ theorem cappedInvDist_two_mul_le_minor_arc
       exact cappedInvDist_le_cap _
     have hcount :
         ((2 * P + 1 : ℕ) : ℝ) * ((H : ℝ) / P) ≤ 3 * (H : ℝ) := by
-      have hPone : (1 : ℝ) ≤ P := by exact_mod_cast (Nat.one_le_iff_ne_zero.mpr (Nat.ne_of_gt hPpos))
+      have hPone : (1 : ℝ) ≤ P := by
+        exact_mod_cast (Nat.one_le_iff_ne_zero.mpr (Nat.ne_of_gt hPpos))
       field_simp
       push_cast
       nlinarith [show (0 : ℝ) ≤ H from Nat.cast_nonneg H]
@@ -492,7 +491,6 @@ theorem cappedInvDist_two_mul_le_minor_arc_succ
           ((((2 * P : ℕ) : ℝ) * (W : ℝ)) / (H : ℝ)) /
             (q : ℝ) := by
         field_simp
-        <;> ring
       _ ≤ (1 / 2) / (q : ℝ) :=
         div_le_div_of_nonneg_right hcore hqr.le
       _ = 1 / (2 * (q : ℝ)) := by ring
@@ -515,7 +513,6 @@ theorem cappedInvDist_two_mul_le_minor_arc_succ
       _ = 2 * (P : ℝ) / q + 1 / q + 1 := by
         push_cast
         field_simp
-        <;> ring
       _ ≤ 2 * (P : ℝ) / q + 2 := by linarith
   have hdivFloor : ((H / W : ℕ) : ℝ) ≤ (H : ℝ) / W :=
     Nat.cast_div_le
@@ -598,7 +595,7 @@ theorem cappedInvDist_two_mul_le_minor_arc_succ
           2 * ((H : ℝ) / P) +
           8 * (q : ℝ) * (1 + Real.log q) := by
     field_simp
-    <;> ring
+    ring
   rw [hexpand] at hupper
   calc
     (∑ n ∈ range (2 * P + 1),

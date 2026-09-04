@@ -142,9 +142,9 @@ theorem sum_Icc_nested_antidiagonal_eq_triple
 residual factor is merely one-bounded; the two distinguished nonnegative
 weights retain both their hyperbolic term and reciprocal product. -/
 theorem sum_Icc_nested_antidiagonal_near_le
-    {x : ℕ} (hx : 0 < x) {T : ℝ} (hT : 0 < T)
+    {x : ℕ} (_hx : 0 < x) {T : ℝ} (hT : 0 < T)
     (A B C : ℕ → ℝ)
-    (hA0 : ∀ d, 0 ≤ A d) (hA1 : ∀ d, A d ≤ 1)
+    (_hA0 : ∀ d, 0 ≤ A d) (hA1 : ∀ d, A d ≤ 1)
     (hB0 : ∀ a, 0 ≤ B a) (hC0 : ∀ b, 0 ≤ C b) :
     (∑ n ∈ Finset.Icc 1 (2 * x),
       ∑ uv ∈ n.divisorsAntidiagonal,
@@ -204,7 +204,7 @@ theorem norm_mul_mul_apply_le_nested
     (a b c : ArithmeticFunction ℂ) (A B C : ℕ → ℝ)
     (hA : ∀ n, ‖a n‖ ≤ A n) (hB : ∀ n, ‖b n‖ ≤ B n)
     (hC : ∀ n, ‖c n‖ ≤ C n)
-    (hA0 : ∀ n, 0 ≤ A n) (hB0 : ∀ n, 0 ≤ B n)
+    (_hA0 : ∀ n, 0 ≤ A n) (hB0 : ∀ n, 0 ≤ B n)
     (hC0 : ∀ n, 0 ≤ C n) (n : ℕ) :
     ‖((b * c) * a) n‖ ≤
       ∑ uv ∈ n.divisorsAntidiagonal,

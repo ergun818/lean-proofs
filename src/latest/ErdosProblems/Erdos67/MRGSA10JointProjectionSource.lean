@@ -270,7 +270,7 @@ theorem norm_gsA10TwoBlockTailoredIntegratedPrefix_sub_movingPerronIntegrated_di
 
 end
 
-end Erdos67.MRHalaszBands
-
 #print axioms
-  Erdos67.MRHalaszBands.norm_gsA10TwoBlockTailoredIntegratedPrefix_sub_movingPerronIntegrated_div_le_jointSource
+  norm_gsA10TwoBlockTailoredIntegratedPrefix_sub_movingPerronIntegrated_div_le_jointSource
+
+end Erdos67.MRHalaszBands

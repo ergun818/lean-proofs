@@ -220,9 +220,9 @@ theorem exists_eventually_norm_positivePrefixMean_real_largeZero_twoBlock_le_joi
 
 end
 
-end Erdos67.MRHalaszBands
+#print axioms
+  norm_positivePrefixMean_twoBlock_le_contour_add_jointSource
+#print axioms
+  exists_eventually_norm_positivePrefixMean_real_largeZero_twoBlock_le_jointSource
 
-#print axioms
-  Erdos67.MRHalaszBands.norm_positivePrefixMean_twoBlock_le_contour_add_jointSource
-#print axioms
-  Erdos67.MRHalaszBands.exists_eventually_norm_positivePrefixMean_real_largeZero_twoBlock_le_jointSource
+end Erdos67.MRHalaszBands

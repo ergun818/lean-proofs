@@ -162,7 +162,7 @@ theorem norm_finiteShiftedResidueConvolution_sub_le
     (centers : Finset ℕ) (weight : ℕ → ℝ)
     (uResidue : ZMod r → ℂ) (hu : ∀ b, ‖uResidue b‖ ≤ 1)
     {H L : ℕ} (hL : L ≤ 2 * H) (a : ZMod r)
-    {sigma : ℝ} (hsigma : 1 < sigma) (Tail : ℝ) (hTail : 0 ≤ Tail)
+    {sigma : ℝ} (hsigma : 1 < sigma) (Tail : ℝ) (_hTail : 0 ≤ Tail)
     (htail : ∀ m ∈ Finset.Icc 1 L,
       ‖finiteShiftedResidueSeries centers weight h a m -
           shiftedResidueSeries h a m (sigma : ℂ)‖ ≤ Tail) :
@@ -732,7 +732,7 @@ theorem Section4CharacterData.primitiveModified_periodic_on_cyclicGood
     · exact hm
     · have hmpos : 0 < m := (Finset.mem_Icc.mp hm).1
       omega
-    · simpa only [Nat.cast_add, hn]
+    · simp only [Nat.cast_add, hn]
 
 /-- Primitive/cyclic-good specialization of the complete finite-to-infinite
 bridge.  Factorization, unit norms, good-class periodicity, nearby-frequency

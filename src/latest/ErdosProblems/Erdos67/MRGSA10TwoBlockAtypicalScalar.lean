@@ -37,7 +37,7 @@ def gsA10CanonicalBlockExponent (S Z : ℕ) : ℕ :=
 
 /-- The two canonical blocks are disjoint as sets of primes. -/
 theorem disjoint_primesInBlock_gsA10Canonical
-    {K : ℕ} (hK : 2 ≤ K) :
+    {K : ℕ} (_hK : 2 ≤ K) :
     Disjoint (primesInBlock (gsA10CanonicalFirstBlock K))
       (primesInBlock (gsA10CanonicalSecondBlock K)) := by
   rw [Finset.disjoint_left]
@@ -64,7 +64,7 @@ theorem gsA10CanonicalBlock_uppers_le
 This supplies `houtside` in the high-order scheduled annulus with the
 viable choice `Ylow=3`. -/
 theorem mrTwoBlockOutside_gsA10Canonical_of_le_three
-    {K p : ℕ} (hK : 2 ≤ K) (hp : p.Prime) (hp3 : p ≤ 3) :
+    {K p : ℕ} (hK : 2 ≤ K) (_hp : p.Prime) (hp3 : p ≤ 3) :
     mrTwoBlockOutside (gsA10CanonicalFirstBlock K)
       (gsA10CanonicalSecondBlock K) p := by
   constructor
@@ -354,8 +354,10 @@ theorem sum_gsA10Canonical_betaRemainder_le_density
   have hpowLog : 2 ^ L ≤ Z := by
     by_cases hZ : Z = 0
     · subst Z
-      simp only [nonpos_iff_eq_zero, Nat.pow_eq_zero, OfNat.ofNat_ne_zero, ne_eq, false_and] at hExp
-      rcases hExp with hS0 | hK0 <;> omega
+      have hKpos : 0 < K := lt_of_lt_of_le (by norm_num : (0 : ℕ) < 2) hK
+      have hpos : 0 < 4 * S * K ^ 2 := by positivity
+      have hExp0 : 4 * S * K ^ 2 ≤ 0 := hExp
+      omega
     · exact Nat.pow_log_le_self 2 hZ
   have hEeq : E ^ 2 = 2 ^ (4 * S * K ^ 2) := by
     dsimp only [E]

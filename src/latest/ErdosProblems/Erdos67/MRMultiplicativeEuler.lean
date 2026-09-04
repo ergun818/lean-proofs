@@ -171,7 +171,7 @@ theorem multiplicativeLSeriesTerm_prime_pow
   calc
     ((p : ℂ) ^ e) ^ (-s) = (p : ℂ) ^ ((e : ℂ) * (-s)) :=
       (Complex.natCast_cpow_natCast_mul p e (-s)).symm
-    _ = (p : ℂ) ^ ((-s) * e) := by congr 1 <;> ring
+    _ = (p : ℂ) ^ ((-s) * e) := by congr 1; ring
     _ = ((p : ℂ) ^ (-s)) ^ e := Complex.cpow_mul_nat _ _ _
 
 theorem summable_norm_multiplicativeLSeriesTerm

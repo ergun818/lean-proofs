@@ -67,7 +67,7 @@ def gsA10SourceTailoredCoefficient
 
 /-- The joined alternating-low/high A.9 factor on the shifted source line. -/
 def gsA10SourceWindowCoreBudget
-    (f : ℕ → ℂ) (y X : ℕ) (beta t : ℝ) : ℝ :=
+    (f : ℕ → ℂ) (_y X : ℕ) (beta t : ℝ) : ℝ :=
   let g := gsA10SourceDeleted f
   let c₀ := Erdos67.EulerResidue.taoExponent X
   let sHigh : ℂ := ((c₀ + beta : ℝ) : ℂ) + Complex.I * (t : ℂ)
@@ -83,7 +83,6 @@ the two finite generalized-Mangoldt Dirichlet-series norms. -/
 def gsA10SourceWindowVerticalBudget
     (f : ℕ → ℂ) (hmul : IsMultiplicativeOnPositiveNat f)
     (y X : ℕ) (beta t : ℝ) : ℝ :=
-  let g := gsA10SourceDeleted f
   let hmulG := gsDeletePrimeBand_isMultiplicativeOnPositiveNat
     hmul gsA9SmallPrime
   let c₀ := Erdos67.EulerResidue.taoExponent X
@@ -97,11 +96,9 @@ def gsA10SourceWindowVerticalBudget
 def gsA10SourceWindowMassBudget
     (f : ℕ → ℂ) (hmul : IsMultiplicativeOnPositiveNat f)
     (y X : ℕ) (beta t : ℝ) : ℝ :=
-  let g := gsA10SourceDeleted f
   let hmulG := gsDeletePrimeBand_isMultiplicativeOnPositiveNat
     hmul gsA9SmallPrime
   let c₀ := Erdos67.EulerResidue.taoExponent X
-  let sHigh : ℂ := ((c₀ + beta : ℝ) : ℂ) + Complex.I * (t : ℂ)
   let W := gsA10LambdaWindow (gsA9HighGeneralizedMangoldt hmulG y) y X
   gsA10SourceWindowCoreBudget f y X beta t *
   dirichletPerronCoefficientMass W (c₀ - beta) *
@@ -289,7 +286,7 @@ theorem norm_mul_pair_le_mul_three
 theorem mul_three_le_mul_three
     {a b c A B C : ℝ}
     (ha : a ≤ A) (hb : b ≤ B) (hc : c ≤ C)
-    (ha0 : 0 ≤ a) (hb0 : 0 ≤ b) (hc0 : 0 ≤ c)
+    (_ha0 : 0 ≤ a) (hb0 : 0 ≤ b) (hc0 : 0 ≤ c)
     (hA0 : 0 ≤ A) (hB0 : 0 ≤ B) :
     a * b * c ≤ A * B * C := by
   calc

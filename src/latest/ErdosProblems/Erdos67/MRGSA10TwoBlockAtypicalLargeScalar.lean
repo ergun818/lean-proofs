@@ -38,7 +38,7 @@ theorem one_le_gsA10CanonicalLargeLogRatioConstant :
 
 /-- The narrowed blocks are disjoint. -/
 theorem disjoint_primesInBlock_gsA10CanonicalLarge
-    {K : ℕ} (hK : 5 ≤ K) :
+    {K : ℕ} (_hK : 5 ≤ K) :
     Disjoint (primesInBlock (gsA10CanonicalLargeFirstBlock K))
       (primesInBlock (gsA10CanonicalLargeSecondBlock K)) := by
   rw [Finset.disjoint_left]
@@ -59,7 +59,7 @@ theorem gsA10CanonicalLargeBlock_uppers_le
 
 /-- Every prime at most `23` belongs to the outside factor. -/
 theorem mrTwoBlockOutside_gsA10CanonicalLarge_of_le_twentyThree
-    {K p : ℕ} (hK : 5 ≤ K) (hp : p.Prime) (hp23 : p ≤ 23) :
+    {K p : ℕ} (hK : 5 ≤ K) (_hp : p.Prime) (hp23 : p ≤ 23) :
     mrTwoBlockOutside (gsA10CanonicalLargeFirstBlock K)
       (gsA10CanonicalLargeSecondBlock K) p := by
   constructor
@@ -80,7 +80,7 @@ theorem mrTwoBlockOutside_gsA10CanonicalLarge_of_le_twentyThree
 /-- Membership in either selected block forces the prime to be at least
 `23`, the exact compatibility hypothesis used by the moving contour. -/
 theorem twentyThree_le_of_mem_gsA10CanonicalLarge
-    {K p : ℕ} (hK : 5 ≤ K) (hp : p.Prime)
+    {K p : ℕ} (hK : 5 ≤ K) (_hp : p.Prime)
     (hmem : p ∈ primesInBlock (gsA10CanonicalLargeFirstBlock K) ∨
       p ∈ primesInBlock (gsA10CanonicalLargeSecondBlock K)) :
     23 ≤ p := by

@@ -197,7 +197,7 @@ theorem uniform_positivePrefixMean_stable_of_real_of_norm_stable
         ((g Z - g X : ℝ) : ℂ) by push_cast; ring,
       Complex.norm_real, Real.norm_eq_abs]
   rw [hre]
-  convert hsigned using 1 <;> ring
+  convert hsigned using 1; ring
 
 end
 

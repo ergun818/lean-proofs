@@ -193,7 +193,7 @@ theorem tendsto_principalEulerFactor (r : ℕ) :
     Filter.Tendsto (principalEulerFactor r) Filter.atTop
       (𝓝 (∏ p ∈ r.primeFactors, (1 - (p : ℂ)⁻¹))) := by
   unfold principalEulerFactor
-  apply tendsto_finset_prod
+  apply tendsto_finsetProd
   intro p hp
   have hp0 : (p : ℂ) ≠ 0 :=
     Nat.cast_ne_zero.mpr (Nat.prime_of_mem_primeFactors hp).ne_zero

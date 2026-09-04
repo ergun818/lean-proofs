@@ -156,10 +156,10 @@ theorem norm_positivePrefixSum_secondSecondaryPrimeIntegrand_le
       apply Finset.sum_le_sum
       intro d hd
       apply mul_le_mul_of_nonneg_left
-      apply mul_le_mul_of_nonneg_left
-      · exact cast_div_rpow_le_mul_rpow_neg_prime
-          (Finset.mem_Icc.mp hd).1 hsigma
-      · positivity
+      · apply mul_le_mul_of_nonneg_left
+        · exact cast_div_rpow_le_mul_rpow_neg_prime
+            (Finset.mem_Icc.mp hd).1 hsigma
+        · positivity
       · exact norm_nonneg _
     _ = C * (X : ℝ) ^ (1 - alpha) *
         gsFiniteNormDirichletMass (low * highShift) X (1 - alpha) := by

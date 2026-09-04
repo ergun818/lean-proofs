@@ -177,7 +177,8 @@ theorem sum_mrTypicalCommonCoefficient_eq_commonRamareShortSum
   classical
   rw [mrCommonDenominatorRamareShortSum_eq_coefficient_sum
     (fun p hp ↦ (mem_primesInBlock.mp hp).1)]
-  simp [additivePhase]
+  simp only [additivePhase, Complex.ofReal_zero, mul_zero, zero_mul, Complex.exp_zero,
+    one_mul]
   unfold mrTypicalCommonCoefficient
   rw [← Finset.sum_filter]
   apply Finset.sum_bij (fun j _ ↦ n + j)

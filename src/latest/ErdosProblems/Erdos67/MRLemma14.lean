@@ -328,9 +328,9 @@ theorem dirichletPerronIntegral_shortDifference_eq
   change (c * (∫ t in -T..T, A t) - c * (∫ t in -T..T, B t)) / (h : ℂ) =
     c * ∫ t in -T..T, L t * perronIncrementKernel x h t
   have hA : IntervalIntegrable A volume (-T) T := by
-    convert hplus using 1 <;> norm_num [A, L, mul_div_assoc]
+    convert hplus using 1; norm_num [A, L, mul_div_assoc]
   have hB : IntervalIntegrable B volume (-T) T := by
-    convert hbase using 1 <;> norm_num [B, L, mul_div_assoc]
+    convert hbase using 1; norm_num [B, L, mul_div_assoc]
   rw [← mul_sub]
   rw [mul_div_assoc]
   rw [← intervalIntegral.integral_sub hA hB]
@@ -425,7 +425,6 @@ theorem norm_realExponentialPhase_sub_le (u v : ℝ) :
         (Complex.exp ((u - v) * Complex.I) - 1) := by
     rw [mul_sub, mul_one, ← Complex.exp_add]
     congr 2
-    push_cast
     ring
   rw [hid, norm_mul, Complex.norm_exp_ofReal_mul_I, one_mul]
   convert (Real.norm_exp_I_mul_ofReal_sub_one_le (x := u - v)) using 1 <;>
@@ -644,7 +643,7 @@ theorem tendsto_dirichletPerronNearMass_atTop (a : ℕ → ℂ) (z : ℕ) :
     · intro h
       exact (not_lt_of_ge hnLowerR) h.2.2.1
   rw [heq]
-  simpa using tendsto_finset_sum (Finset.range (2 * z)) (fun n hn ↦
+  simpa using tendsto_finsetSum (Finset.range (2 * z)) (fun n hn ↦
     (tendsto_dirichletPerronNearError_atTop z n).const_mul ‖a n‖)
 
 /-- The explicit Perron truncation error tends to zero for every fixed
@@ -912,7 +911,7 @@ theorem tendsto_dyadicTwoLengthPerronTruncationErrorMeanSquare_atTop
         dyadicTwoLengthPerronTruncationErrorMeanSquare S f X H₁ H₂ T)
       Filter.atTop (nhds 0) := by
   unfold dyadicTwoLengthPerronTruncationErrorMeanSquare
-  simpa using tendsto_finset_sum (Finset.Ioc X (2 * X)) (fun x hx ↦
+  simpa using tendsto_finsetSum (Finset.Ioc X (2 * X)) (fun x hx ↦
     (((tendsto_lemma14PerronTruncationError_atTop
         (dyadicRestrictedCoefficient S f X) x H₁).add
       (tendsto_lemma14PerronTruncationError_atTop
@@ -938,7 +937,7 @@ theorem exists_dyadicTwoLengthPerronTruncationErrorMeanSquare_lt
 /-- The genuine two-length Perron comparison with a vanishing error. -/
 theorem dyadicTwoLengthShortMeanSquare_le_correctedPerron
     (S : Finset ℕ) (f : ℕ → ℂ) {X H₁ H₂ : ℕ}
-    (hX : 0 < X) (hH₁ : 0 < H₁) (hH₂ : 0 < H₂)
+    (_hX : 0 < X) (hH₁ : 0 < H₁) (hH₂ : 0 < H₂)
     {T : ℝ} (hT : 0 < T) :
     dyadicTwoLengthShortMeanSquare S f X H₁ H₂ ≤
       2 * dyadicTwoLengthCorrectedPerronMeanSquare S f X H₁ H₂ T +
@@ -1097,7 +1096,7 @@ theorem uncenteredShortIntervalMeanSquare_dyadicRestricted_eq_at
 /-- Single-length squared Perron approximation. -/
 theorem dyadicRestrictedShortAverageMeanSquare_le_perron
     (S : Finset ℕ) (f : ℕ → ℂ) {X H : ℕ}
-    (hX : 0 < X) (hH : 0 < H) {T : ℝ} (hT : 0 < T) :
+    (_hX : 0 < X) (hH : 0 < H) {T : ℝ} (hT : 0 < T) :
     dyadicRestrictedShortAverageMeanSquare S f X H ≤
       2 * dyadicRestrictedPerronAverageMeanSquare S f X H T +
         2 * dyadicRestrictedPerronErrorMeanSquare S f X H T := by
@@ -1175,7 +1174,7 @@ actual two-length mean square to the kernel-model mean square plus a fully
 explicit endpoint-error square mass. -/
 theorem dyadicTwoLengthShortMeanSquare_le_perron
     (S : Finset ℕ) (f : ℕ → ℂ) {X H₁ H₂ : ℕ}
-    (hX : 0 < X) (hH₁ : 0 < H₁) (hH₂ : 0 < H₂)
+    (_hX : 0 < X) (hH₁ : 0 < H₁) (hH₂ : 0 < H₂)
     {T : ℝ} (hT : 0 < T) :
     dyadicTwoLengthShortMeanSquare S f X H₁ H₂ ≤
       2 * dyadicTwoLengthPerronMeanSquare S f X H₁ H₂ T +
@@ -1228,7 +1227,7 @@ step needed in Lemma 14: integrating a continuous vertical coefficient
 against separated phases and then squaring over the phases costs only the
 vertical length plus the inverse separation. -/
 theorem sum_normSq_finiteFrequencyAnalysisCoefficient_le
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (freq : ι → ℝ) (g : ℝ → ℂ) (hg : Continuous g)
     {T δ : ℝ} (hT : 0 ≤ T) (hδ : 0 < δ)
     (hsep : ∀ r s, r ≠ s → δ ≤ |freq r - freq s|) :
@@ -1236,6 +1235,7 @@ theorem sum_normSq_finiteFrequencyAnalysisCoefficient_le
       (finiteFrequencyAnalysisCoefficient freq g T r)) ≤
       (2 * T + 2 * Real.pi * δ⁻¹) *
         ∫ t in -T..T, Complex.normSq (g t) := by
+  classical
   let z : ι → ℂ := finiteFrequencyAnalysisCoefficient freq g T
   let P : ℝ → ℂ := finiteFrequencyPolynomial freq z
   let S : ℝ := ∑ r, Complex.normSq (z r)
@@ -1301,7 +1301,8 @@ theorem sum_normSq_finiteFrequencyAnalysisCoefficient_le
     apply intervalIntegral.integral_mono (by linarith)
     · exact (hP.norm.mul hg.norm).const_mul _ |>.intervalIntegrable _ _
     · exact ((by fun_prop : Continuous fun t ↦ Complex.normSq (P t)).add
-          ((by fun_prop : Continuous fun t ↦ Complex.normSq (g t)).const_mul _)).intervalIntegrable _ _
+          ((by fun_prop : Continuous fun t ↦ Complex.normSq (g t)).const_mul _))
+      |>.intervalIntegrable _ _
     · exact hyoung
   have hPenergy :
       (∫ t in -T..T, Complex.normSq (P t)) ≤ C * S := by
@@ -1334,7 +1335,8 @@ theorem sum_normSq_finiteFrequencyAnalysisCoefficient_le
         rw [intervalIntegral.integral_add]
         · rw [intervalIntegral.integral_const_mul]
         · exact (by fun_prop : Continuous fun t ↦ Complex.normSq (P t)).intervalIntegrable _ _
-        · exact (by fun_prop : Continuous fun t ↦ C ^ 2 * Complex.normSq (g t)).intervalIntegrable _ _
+        · exact
+            (by fun_prop : Continuous fun t ↦ C ^ 2 * Complex.normSq (g t)).intervalIntegrable _ _
   nlinarith
 
 /-- Integer-logarithm specialization of the dual mean-square theorem.  For
@@ -1375,7 +1377,7 @@ def finiteFrequencyAnalysisCoefficientOn
 /-- Arbitrary-interval form of dual logarithmic Plancherel.  This is the
 form applied separately to each positive and negative dyadic shell. -/
 theorem sum_normSq_finiteFrequencyAnalysisCoefficientOn_le
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (freq : ι → ℝ) (g : ℝ → ℂ) (hg : Continuous g)
     {A B δ : ℝ} (hAB : A ≤ B) (hδ : 0 < δ)
     (hsep : ∀ r s, r ≠ s → δ ≤ |freq r - freq s|) :
@@ -1383,6 +1385,7 @@ theorem sum_normSq_finiteFrequencyAnalysisCoefficientOn_le
       (finiteFrequencyAnalysisCoefficientOn freq g A B r)) ≤
       (B - A + 2 * Real.pi * δ⁻¹) *
         ∫ t in A..B, Complex.normSq (g t) := by
+  classical
   let R : ℝ := (B - A) / 2
   let c : ℝ := (A + B) / 2
   let g' : ℝ → ℂ := fun u ↦ g (u + c)
@@ -1442,7 +1445,7 @@ endpoint.  The bound is valid on any vertical interval and the only scale
 loss is the expected `N² (length + 2πN)` before using `|1+it|⁻²` on a
 high-frequency shell. -/
 theorem sum_normSq_perronEndpointOn_le
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (F : ℝ → ℂ) (hF : Continuous F) (y : ι → ℕ) {N : ℕ}
     (hN : 0 < N) (hypos : ∀ i, 0 < y i) (hyN : ∀ i, y i ≤ N)
     (hyinj : Function.Injective y) {A B : ℝ} (hAB : A ≤ B) :
@@ -1450,6 +1453,7 @@ theorem sum_normSq_perronEndpointOn_le
       (N : ℝ) ^ 2 * (B - A + 2 * Real.pi * N) *
         ∫ t in A..B,
           Complex.normSq (F t / ((1 : ℂ) + (t : ℂ) * Complex.I)) := by
+  classical
   let g : ℝ → ℂ := fun t ↦ F t / ((1 : ℂ) + (t : ℂ) * Complex.I)
   let freq : ι → ℝ := fun i ↦ -Real.log (y i)
   have hg : Continuous g := by
@@ -1600,7 +1604,7 @@ theorem integral_normSq_div_perronLine_le_one
 /-- High-frequency shell form of the endpoint estimate, with the Perron
 divisor already converted into an explicit `T⁻²` factor. -/
 theorem sum_normSq_perronEndpointOn_high_le
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (F : ℝ → ℂ) (hF : Continuous F) (y : ι → ℕ) {N : ℕ}
     (hN : 0 < N) (hypos : ∀ i, 0 < y i) (hyN : ∀ i, y i ≤ N)
     (hyinj : Function.Injective y) {A B T : ℝ}
@@ -1609,6 +1613,7 @@ theorem sum_normSq_perronEndpointOn_high_le
     (∑ i, Complex.normSq (perronEndpointOn F (y i) A B)) ≤
       (N : ℝ) ^ 2 * (B - A + 2 * Real.pi * N) * (T ^ 2)⁻¹ *
         ∫ t in A..B, Complex.normSq (F t) := by
+  classical
   have hend := sum_normSq_perronEndpointOn_le
     F hF y hN hypos hyN hyinj hAB
   have hdiv := integral_normSq_div_perronLine_le F hF hAB hT haway

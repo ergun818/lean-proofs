@@ -207,7 +207,7 @@ theorem inv_one_sub_two_rpow_taoExponent_sub_one_le
       exact Real.strictMonoOn_log.monotoneOn
         (by norm_num)
         (by
-          show (0 : ℝ) < (X : ℝ)
+          change (0 : ℝ) < (X : ℝ)
           exact_mod_cast (lt_of_lt_of_le (by omega : 0 < 3) hX))
         h3X
     linarith [Real.log_three_gt_d9]

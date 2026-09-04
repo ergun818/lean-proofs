@@ -25,14 +25,15 @@ noncomputable section
 
 section FiniteFourier
 
-variable {G E : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+variable {G E : Type*} [AddCommGroup G] [Fintype G]
   [NormedAddCommGroup E] [InnerProductSpace ℂ E]
 
 /-- The unnormalised Fourier coefficient of a vector-valued function on a finite abelian group. -/
 def rawCoeff (F : G → E) (psi : AddChar G ℂ) : E :=
   ∑ x : G, conj (psi x) • F x
 
-private lemma char_mul_conj (psi : AddChar G ℂ) (x y : G) :
+omit [Fintype G] in
+private lemma char_mul_conj [Finite G] (psi : AddChar G ℂ) (x y : G) :
     psi x * conj (psi y) = psi (x - y) := by
   calc
     psi x * conj (psi y) = psi x * (psi y)⁻¹ := by rw [psi.inv_apply_eq_conj]
@@ -40,7 +41,7 @@ private lemma char_mul_conj (psi : AddChar G ℂ) (x y : G) :
     _ = psi (x + -y) := (psi.map_add_eq_mul x (-y)).symm
     _ = psi (x - y) := by rw [sub_eq_add_neg]
 
-private lemma sum_char_mul_conj (x y : G) :
+private lemma sum_char_mul_conj [DecidableEq G] (x y : G) :
     ∑ psi : AddChar G ℂ, psi x * conj (psi y) =
       if x = y then (Fintype.card G : ℂ) else 0 := by
   simp_rw [char_mul_conj]
@@ -69,12 +70,13 @@ theorem rawCoeff_inner_expansion (F K : G → E) :
         star (psi y) * (psi x * inner ℂ (F x) (K y)) := Finset.sum_comm
     _ = ∑ x : G, ∑ y : G, ∑ psi : AddChar G ℂ,
         psi x * star (psi y) * inner ℂ (F x) (K y) := by
-      simp only [mul_assoc, mul_left_comm, mul_comm]
+      simp only [mul_assoc, mul_comm]
 
 /-- Polarised Parseval identity for the unnormalised transform. -/
 theorem sum_inner_rawCoeff (F K : G → E) :
     ∑ psi : AddChar G ℂ, inner ℂ (rawCoeff F psi) (rawCoeff K psi) =
       (Fintype.card G : ℂ) * ∑ x : G, inner ℂ (F x) (K x) := by
+  classical
   rw [rawCoeff_inner_expansion]
   simp_rw [sum_char_mul_conj]
   rw [Finset.mul_sum]
@@ -90,6 +92,7 @@ theorem sum_inner_rawCoeff (F K : G → E) :
 theorem sum_sq_norm_rawCoeff (F : G → E) :
     ∑ psi : AddChar G ℂ, ‖rawCoeff F psi‖ ^ 2 =
       (Fintype.card G : ℝ) * ∑ x : G, ‖F x‖ ^ 2 := by
+  classical
   have h := sum_inner_rawCoeff F F
   simp_rw [inner_self_eq_norm_sq_to_K] at h
   simpa [pow_two, Complex.mul_re] using congrArg Complex.re h
@@ -122,6 +125,7 @@ theorem rawCoeff_translateSum {I : Type*} (s : Finset I) (v : I → G) (F : G �
     (psi : AddChar G ℂ) :
     rawCoeff (translateSum s v F) psi =
       (∑ i ∈ s, psi (v i)) • rawCoeff F psi := by
+  classical
   calc
     rawCoeff (translateSum s v F) psi =
         ∑ i ∈ s, rawCoeff (fun x ↦ F (x + v i)) psi := by
@@ -139,6 +143,7 @@ theorem spectral_energy_identity {I : Type*} (s : Finset I) (v : I → G) (F : G
     (Fintype.card G : ℝ) * ∑ x : G, ‖translateSum s v F x‖ ^ 2 =
       ∑ psi : AddChar G ℂ,
         ‖∑ i ∈ s, psi (v i)‖ ^ 2 * ‖rawCoeff F psi‖ ^ 2 := by
+  classical
   rw [← sum_sq_norm_rawCoeff (translateSum s v F)]
   apply Finset.sum_congr rfl
   intro psi _
@@ -147,6 +152,7 @@ theorem spectral_energy_identity {I : Type*} (s : Finset I) (v : I → G) (F : G
 /-- For a unit-vector-valued function, the squared Fourier masses have total mass `N²`. -/
 theorem sum_sq_norm_rawCoeff_of_unit (F : G → E) (hF : ∀ x, ‖F x‖ = 1) :
     ∑ psi : AddChar G ℂ, ‖rawCoeff F psi‖ ^ 2 = (Fintype.card G : ℝ) ^ 2 := by
+  classical
   rw [sum_sq_norm_rawCoeff]
   simp_rw [hF, one_pow, Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one]
   norm_num [pow_two]
@@ -155,6 +161,7 @@ theorem sum_sq_norm_rawCoeff_of_unit (F : G → E) (hF : ∀ x, ‖F x‖ = 1) :
 theorem sum_normalized_sq_norm_rawCoeff_of_unit (F : G → E) (hF : ∀ x, ‖F x‖ = 1) :
     ∑ psi : AddChar G ℂ,
       ‖rawCoeff F psi‖ ^ 2 / (Fintype.card G : ℝ) ^ 2 = 1 := by
+  classical
   rw [← Finset.sum_div, sum_sq_norm_rawCoeff_of_unit F hF]
   exact div_self (pow_ne_zero 2 (by exact_mod_cast Fintype.card_ne_zero))
 
@@ -164,6 +171,7 @@ def spectralWeight (F : G → E) (psi : AddChar G ℂ) : ℝ≥0 :=
 
 theorem sum_spectralWeight_of_unit (F : G → E) (hF : ∀ x, ‖F x‖ = 1) :
     ∑ psi : AddChar G ℂ, spectralWeight F psi = 1 := by
+  classical
   apply NNReal.eq
   simpa [spectralWeight] using sum_normalized_sq_norm_rawCoeff_of_unit F hF
 
@@ -186,6 +194,7 @@ theorem spectral_probability_identity {I : Type*} (s : Finset I) (v : I → G) (
         (‖rawCoeff F psi‖ ^ 2 / (Fintype.card G : ℝ) ^ 2) *
           ‖∑ i ∈ s, psi (v i)‖ ^ 2 =
       (∑ x : G, ‖translateSum s v F x‖ ^ 2) / Fintype.card G := by
+  classical
   have hcard : (Fintype.card G : ℝ) ≠ 0 := by
     exact_mod_cast Fintype.card_ne_zero
   simp_rw [div_mul_eq_mul_div]

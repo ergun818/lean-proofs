@@ -223,4 +223,5 @@ end
 
 end Erdos67.MRHalaszBands
 
-#print axioms Erdos67.MRHalaszBands.exists_intervalIntegral_normSq_gsA10PrimeLambdaPolynomial_le_betaSchur
+#print axioms
+  Erdos67.MRHalaszBands.exists_intervalIntegral_normSq_gsA10PrimeLambdaPolynomial_le_betaSchur

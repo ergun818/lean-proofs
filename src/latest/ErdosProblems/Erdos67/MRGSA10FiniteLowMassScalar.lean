@@ -311,7 +311,8 @@ theorem gsFiniteNormDirichletMass_twoBlockAlternatingLow_le_sourceConstant
 
 end
 
-end Erdos67.MRHalaszBands
+#print axioms gsFiniteNormDirichletMass_twoBlockAlternatingLow_le_positive_LSeries_explicit
+#print axioms
+  gsFiniteNormDirichletMass_twoBlockAlternatingLow_le_sourceConstant
 
-#print axioms Erdos67.MRHalaszBands.gsFiniteNormDirichletMass_twoBlockAlternatingLow_le_positive_LSeries_explicit
-#print axioms Erdos67.MRHalaszBands.gsFiniteNormDirichletMass_twoBlockAlternatingLow_le_sourceConstant
+end Erdos67.MRHalaszBands

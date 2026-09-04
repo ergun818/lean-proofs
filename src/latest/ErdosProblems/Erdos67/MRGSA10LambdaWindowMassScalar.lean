@@ -26,7 +26,7 @@ open BoundedGaps.Maynard
 the width of the source rectangle. -/
 theorem one_sub_min_taoExponent_sub_le_inv_log
     {y X : ℕ} (hX : 2 ≤ X)
-    (hlogy : 4 ≤ Real.log (y : ℝ))
+    (_hlogy : 4 ≤ Real.log (y : ℝ))
     {beta : ℝ} (hbeta0 : 0 ≤ beta)
     (hbeta : beta ≤ (Real.log (y : ℝ))⁻¹) :
     1 - min (Erdos67.EulerResidue.taoExponent X - beta) 1 ≤
@@ -188,14 +188,14 @@ theorem mul_dirichletPerronCoefficientMass_gsA10SourceDeleted_lines_le_rpow_thre
 
 end
 
-end Erdos67.MRHalaszBands
+#print axioms one_sub_min_taoExponent_sub_le_inv_log
+#print axioms
+  mul_dirichletPerronCoefficientMass_gsA10LambdaWindow_sourceLines_le_rpow_inv_log
+#print axioms
+  mul_dirichletPerronCoefficientMass_gsA10SourceDeleted_sourceLines_le_rpow_inv_log
+#print axioms
+  mul_dirichletPerronCoefficientMass_gsA10LambdaWindow_lines_le
+#print axioms
+  mul_dirichletPerronCoefficientMass_gsA10SourceDeleted_lines_le_rpow_three_inv_log
 
-#print axioms Erdos67.MRHalaszBands.one_sub_min_taoExponent_sub_le_inv_log
-#print axioms
-  Erdos67.MRHalaszBands.mul_dirichletPerronCoefficientMass_gsA10LambdaWindow_sourceLines_le_rpow_inv_log
-#print axioms
-  Erdos67.MRHalaszBands.mul_dirichletPerronCoefficientMass_gsA10SourceDeleted_sourceLines_le_rpow_inv_log
-#print axioms
-  Erdos67.MRHalaszBands.mul_dirichletPerronCoefficientMass_gsA10LambdaWindow_lines_le
-#print axioms
-  Erdos67.MRHalaszBands.mul_dirichletPerronCoefficientMass_gsA10SourceDeleted_lines_le_rpow_three_inv_log
+end Erdos67.MRHalaszBands

@@ -257,8 +257,7 @@ theorem exists_eventually_uniform_gsA10Canonical_atypicalDensity_le_one_thousand
     Erdos67.exists_gsA10Canonical_scheduled_atypicalFactorizationSet_le_realLog_half
   refine ⟨C, hC, S, hS, ?_⟩
   refine Filter.eventually_atTop.2 ⟨max (2 ^ (16 * S)) 3, ?_⟩
-  intro X hX
-  intro Z hXZ _
+  intro X hX Z hXZ _
   dsimp only
   have hcut : 2 ^ (16 * S) ≤ Z :=
     (le_max_left _ _).trans hX |>.trans hXZ

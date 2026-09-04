@@ -70,7 +70,6 @@ theorem residueIntervalLength_sub_one_le_start_div
     have hnat : firstResidueAtOrAbove A c <
         q * (firstResidueAtOrAbove A c / q + 1) :=
       Nat.lt_mul_div_succ _ hq
-    push_cast
     exact_mod_cast (show firstResidueAtOrAbove A c <
         (firstResidueAtOrAbove A c / q + 1) * q by
       simpa only [mul_comm] using hnat)
@@ -181,7 +180,6 @@ theorem norm_residueClassSum_natLogTwist_le_fixedDepth
     have hnat : n₀ < q * (n₀ / q + 1) := by
       simpa only [mul_comm] using Nat.lt_mul_div_succ n₀ hq
     apply (div_lt_iff₀ (by exact_mod_cast hq : (0 : ℝ) < q)).2
-    push_cast
     exact_mod_cast (show n₀ < (X + 1) * q by
       simpa only [X, mul_comm] using hnat)
   have hUX : U ≤ 2 * X := by
@@ -350,7 +348,6 @@ theorem norm_residueClassSum_natLogTwist_le_rOnePower
       simpa only [mul_comm] using
         Nat.lt_mul_div_succ (firstResidueAtOrAbove A c) hq
     apply (div_lt_iff₀ (by exact_mod_cast hq : (0 : ℝ) < q)).2
-    push_cast
     exact_mod_cast (by simpa only [X, mul_comm] using hnat)
   have hUX : U ≤ 2 * X := by linarith
   have hraw := norm_residueClassSum_natLogTwist_le_secondDerivative

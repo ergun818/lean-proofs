@@ -95,7 +95,7 @@ theorem norm_intervalCorrelation_blockPhase_le
     dsimp only [lam]
     simp only [pow_one, Nat.factorial_one]
     rw [zpow_neg, zpow_natCast]
-    field_simp <;> ring_nf
+    field_simp; ring_nf
     all_goals exact le_rfl
   have hupperQuarter : ((2 : ℝ) * r) ^ 1 *
       (a * (Nat.factorial 1 : ℝ) *
@@ -318,7 +318,7 @@ lemma intervalCorrelation_realStartBlockPhase_eq (a U : ℝ) (P r : ℕ) :
 /-- Reciprocal-lag bound at an arbitrary positive real start. -/
 theorem norm_intervalCorrelation_realStartBlockPhase_le
     {a U : ℝ} {P r : ℕ}
-    (ha : 0 < a) (hU : 0 < U) (hr : 0 < r) (hrP : r < P)
+    (ha : 0 < a) (hU : 0 < U) (hr : 0 < r) (_hrP : r < P)
     (hwindow : ((P - r : ℕ) : ℝ) + 2 * r + 1 ≤ 2 * U)
     (hscale : 8 * (r : ℝ) * a ≤ U ^ 2) :
     ‖intervalCorrelation (realStartBlockPhase a U) P r‖ ≤
@@ -339,7 +339,7 @@ theorem norm_intervalCorrelation_realStartBlockPhase_le
     dsimp only [lam]
     simp only [pow_one, Nat.factorial_one]
     rw [zpow_neg, zpow_natCast]
-    field_simp <;> ring_nf
+    field_simp; ring_nf
     all_goals exact le_rfl
   have hupperQuarter : ((2 : ℝ) * r) ^ 1 *
       (a * (Nat.factorial 1 : ℝ) * U ^ (-((1 + 1 : ℕ) : ℤ))) ≤ 1 / 4 := by
@@ -607,7 +607,7 @@ theorem eventually_norm_logBlock_le_rpow :
           rw [← Real.rpow_add hNpos]
           norm_num
         rw [Real.rpow_sub hNpos, Real.rpow_two, hden]
-        field_simp <;> ring_nf <;> rfl
+        field_simp; ring_nf
   have hexponent :
       (N : ℝ) ^ (2 - 3 / 256 : ℝ) ≤
         (N : ℝ) ^ (2 - 1 / 512 : ℝ) :=
@@ -620,7 +620,7 @@ theorem eventually_norm_logBlock_le_rpow :
       calc
         74 * (N : ℝ) ^ (2 - 3 / 256 : ℝ) ≤
             74 * (N : ℝ) ^ (2 - 1 / 512 : ℝ) := by gcongr
-        _ ≤ 81 * (N : ℝ) ^ (2 - 1 / 512 : ℝ) := by gcongr <;> norm_num
+        _ ≤ 81 * (N : ℝ) ^ (2 - 1 / 512 : ℝ) := by gcongr; norm_num
     _ = (9 * (N : ℝ) ^ (1 - 1 / 1024 : ℝ)) ^ 2 := by
       have hrpowSq : ((N : ℝ) ^ (1 - 1 / 1024 : ℝ)) ^ 2 =
           (N : ℝ) ^ (2 - 1 / 512 : ℝ) := by
@@ -772,7 +772,7 @@ theorem eventually_norm_realStartBlock_le_rpow :
             rw [← Real.rpow_add hXpos]
             norm_num
           rw [Real.rpow_sub hXpos, Real.rpow_two, hden]
-          field_simp <;> ring_nf
+          field_simp; ring_nf
     have hexponent : (X : ℝ) ^ (2 - 3 / 256 : ℝ) ≤
         (X : ℝ) ^ (2 - 1 / 512 : ℝ) :=
       Real.rpow_le_rpow_of_exponent_le hXR (by norm_num)
@@ -784,7 +784,7 @@ theorem eventually_norm_realStartBlock_le_rpow :
         calc
           290 * (X : ℝ) ^ (2 - 3 / 256 : ℝ) ≤
               290 * (X : ℝ) ^ (2 - 1 / 512 : ℝ) := by gcongr
-          _ ≤ 324 * (X : ℝ) ^ (2 - 1 / 512 : ℝ) := by gcongr <;> norm_num
+          _ ≤ 324 * (X : ℝ) ^ (2 - 1 / 512 : ℝ) := by gcongr; norm_num
       _ = (18 * (X : ℝ) ^ (1 - 1 / 1024 : ℝ)) ^ 2 := by
         have hrpowSq : ((X : ℝ) ^ (1 - 1 / 1024 : ℝ)) ^ 2 =
             (X : ℝ) ^ (2 - 1 / 512 : ℝ) := by

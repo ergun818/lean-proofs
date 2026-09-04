@@ -20,7 +20,7 @@ dichotomy: the remote minimizer is not used after central-window separation.
 theorem exists_eventually_norm_positivePrefixMean_real_largeZero_smallPower_fixedSource :
     ∃ C : ℝ, 0 < C ∧
       ∀ᶠ X : ℕ in atTop, ∀ (f : ℕ → ℂ)
-        (hmul : IsMultiplicativeOnPositiveNat f),
+        (_hmul : IsMultiplicativeOnPositiveNat f),
         IsCompletelyMultiplicativeOnPositive f →
         (∀ n, 0 < n → conj (f n) = f n) →
         (∀ n, ‖f n‖ ≤ 1) →
@@ -178,7 +178,7 @@ theorem exists_eventually_norm_positivePrefixMean_real_largeZero_smallPower_fixe
 
 end
 
-end Erdos67.MRHalaszBands
-
 #print axioms
-  Erdos67.MRHalaszBands.exists_eventually_norm_positivePrefixMean_real_largeZero_smallPower_fixedSource
+  exists_eventually_norm_positivePrefixMean_real_largeZero_smallPower_fixedSource
+
+end Erdos67.MRHalaszBands

@@ -235,7 +235,7 @@ theorem tendsto_factorErrorAt_zero {d : ℕ} (hd0 : d ≠ 0) :
     Tendsto (factorErrorAt · d) atTop (nhds 0) := by
   have hexponent : Tendsto
       (fun X : ℕ ↦ (1 : ℂ) - (taoExponent X : ℂ)) atTop (nhds 0) := by
-    convert tendsto_const_nhds.sub EulerResidue.tendsto_taoExponent.ofReal using 1 <;>
+    convert tendsto_const_nhds.sub EulerResidue.tendsto_taoExponent.ofReal using 1;
       norm_num
   have hpow := (continuousAt_const_cpow
     (Nat.cast_ne_zero.mpr hd0 : (d : ℂ) ≠ 0)).tendsto.comp hexponent

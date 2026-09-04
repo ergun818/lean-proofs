@@ -854,7 +854,9 @@ theorem intervalIntegral_normSq_smoothedPrimeBandPolynomial_one_mul_twoPow_le_dy
 /-- The final finite form of the cutoff reassembly: every shell is bounded
 by the explicit Gaussian beta-sieve quantity, and the lower cutoff `L`
 suppresses the finite sieve-level remainder. -/
-theorem exists_intervalIntegral_normSq_smoothedPrimeBandPolynomial_cutoff_gaussian_mertens_beta_bound :
+theorem
+  exists_intervalIntegral_normSq_smoothedPrimeBandPolynomial_cutoff_gaussian_mertens_beta_bound
+    :
     ∃ Cβ : ℝ, 1 ≤ Cβ ∧
       ∀ (I : ℕ × ℕ) (Q : ℕ → Prop) [DecidablePred Q]
         (f : ℕ → ℂ) (L J S : ℕ) {sigma T : ℝ},
@@ -1032,7 +1034,9 @@ theorem intervalIntegral_normSq_smoothedPrimeBandPolynomial_one_twoPow_le_dyadic
 /-- Power-of-two prefix energy with every dyadic shell discharged by the
 same beta-sieve/Mertens constant.  All finite sieve remainders remain
 explicit in the shell sum. -/
-theorem exists_intervalIntegral_normSq_smoothedPrimeBandPolynomial_one_twoPow_gaussian_mertens_beta_bound :
+theorem
+  exists_intervalIntegral_normSq_smoothedPrimeBandPolynomial_one_twoPow_gaussian_mertens_beta_bound
+    :
     ∃ Cβ : ℝ, 1 ≤ Cβ ∧
       ∀ (I : ℕ × ℕ) (Q : ℕ → Prop) [DecidablePred Q]
         (f : ℕ → ℂ) (J S : ℕ) {sigma T : ℝ},

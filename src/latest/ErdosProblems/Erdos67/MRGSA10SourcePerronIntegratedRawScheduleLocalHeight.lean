@@ -106,7 +106,7 @@ theorem exists_norm_gsA10TwoBlockSourcePerronIntegrated_le_rawSchedule_of_localH
 
 end
 
-end Erdos67.MRHalaszBands
-
 #print axioms
-  Erdos67.MRHalaszBands.exists_norm_gsA10TwoBlockSourcePerronIntegrated_le_rawSchedule_of_localHeight
+  exists_norm_gsA10TwoBlockSourcePerronIntegrated_le_rawSchedule_of_localHeight
+
+end Erdos67.MRHalaszBands

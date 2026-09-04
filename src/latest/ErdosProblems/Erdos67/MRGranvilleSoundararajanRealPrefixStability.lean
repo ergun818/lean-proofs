@@ -43,8 +43,7 @@ theorem positivePrefixMean_im_eq_zero_of_real
   rw [hprefix]
   rw [map_div₀, map_sum]
   congr 1
-  ·
-    apply Finset.sum_congr rfl
+  · apply Finset.sum_congr rfl
     intro n hn
     exact hreal n (Finset.mem_Ioc.mp hn).1
   · simp

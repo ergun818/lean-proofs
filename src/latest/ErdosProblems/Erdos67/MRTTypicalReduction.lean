@@ -77,7 +77,7 @@ theorem typicalModulatedShortSum_eq_ramare_bilinear
     typicalModulatedShortSum blocks X f n H α =
       ∑ p ∈ primesInBlock I,
         ∑ m ∈ typicalShortSupport blocks X n H,
-          if hpm : p ∣ m then
+          if _hpm : p ∣ m then
             additivePhase α (m - n) * (f p * f (m / p)) /
               (ramareDenominator (primesInBlock I) p (m / p) : ℂ)
           else 0 := by
@@ -110,7 +110,7 @@ theorem mem_divisorCofactorImage {S : Finset ℕ} {p k : ℕ} :
 
 /-- Reindex a divisibility-restricted sum by its cofactor. -/
 theorem sum_dvd_eq_sum_divisorCofactorImage
-    {E : Type*} [AddCommMonoid E] (S : Finset ℕ) {p : ℕ} (hp : 0 < p)
+    {E : Type*} [AddCommMonoid E] (S : Finset ℕ) {p : ℕ} (_hp : 0 < p)
     (F : ℕ → ℕ → E) :
     (∑ m ∈ S, if p ∣ m then F m (m / p) else 0) =
       ∑ k ∈ divisorCofactorImage S p, F (p * k) k := by

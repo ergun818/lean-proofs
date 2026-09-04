@@ -20,7 +20,7 @@ noncomputable section
 
 section FiniteConvolution
 
-variable {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+variable {G : Type*} [AddCommGroup G] [Fintype G]
 
 /-- Forward-shift convolution.  This orientation makes its value at `x`
 equal to a short sum of `F (x+j)` when `K` is an interval indicator. -/
@@ -65,6 +65,7 @@ theorem card_mul_sum_normSq_forwardShiftConvolution
         ∑ x : G, ‖forwardShiftConvolution F K x‖ ^ 2 =
       ∑ psi : AddChar G ℂ,
         ‖rawCoeff F psi‖ ^ 2 * ‖forwardRawCoeff K psi‖ ^ 2 := by
+  classical
   rw [← sum_sq_norm_rawCoeff (forwardShiftConvolution F K)]
   apply Finset.sum_congr rfl
   intro psi hpsi

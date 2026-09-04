@@ -47,7 +47,7 @@ the actual two-length Perron segment with only the standard quadratic
 triangle factor. -/
 theorem sum_normSq_dyadicTwoLengthPerronSegment_le_of_singleBounds
     (S : Finset ℕ) (f : ℕ → ℂ)
-    {Y X H₁ H₂ : ℕ} (hX : 0 < X) (hH₁ : 0 < H₁) (hH₂ : 0 < H₂)
+    {Y X H₁ H₂ : ℕ} (_hX : 0 < X) (hH₁ : 0 < H₁) (hH₂ : 0 < H₂)
     (A B E₁ E₂ : ℝ)
     (h₁ : (∑ x ∈ Finset.Ioc X (2 * X),
       Complex.normSq

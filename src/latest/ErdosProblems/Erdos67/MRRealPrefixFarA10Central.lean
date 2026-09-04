@@ -159,9 +159,9 @@ theorem exists_eventually_norm_gsA10MovingPerronIntegrated_real_largeZero_le_mov
 
 end
 
-end Erdos67.MRHalaszBands
+#print axioms
+  exists_eventually_norm_gsA10MovingPerronIntegral_real_largeZero_le_movingRpow
+#print axioms
+  exists_eventually_norm_gsA10MovingPerronIntegrated_real_largeZero_le_movingRpow
 
-#print axioms
-  Erdos67.MRHalaszBands.exists_eventually_norm_gsA10MovingPerronIntegral_real_largeZero_le_movingRpow
-#print axioms
-  Erdos67.MRHalaszBands.exists_eventually_norm_gsA10MovingPerronIntegrated_real_largeZero_le_movingRpow
+end Erdos67.MRHalaszBands

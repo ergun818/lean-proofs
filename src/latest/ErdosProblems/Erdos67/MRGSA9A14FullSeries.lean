@@ -168,13 +168,14 @@ theorem sum_norm_prime_cpow_sq_le_primeQuadraticConstant
 /-- Three disjoint filters (`Q`, `R`, and their common complement) recover
 the original finite product. -/
 theorem prod_neither_mul_prod_left_mul_prod_right_eq
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (S : Finset ι) (Q R : ι → Prop) [DecidablePred Q] [DecidablePred R]
     (hdisj : ∀ x ∈ S, Q x → R x → False) (a : ι → ℂ) :
     (∏ x ∈ S with ¬ Q x ∧ ¬ R x, a x) *
         (∏ x ∈ S with Q x, a x) *
         (∏ x ∈ S with R x, a x) =
       ∏ x ∈ S, a x := by
+  classical
   let A := S.filter Q
   let B := S.filter R
   let O := S.filter (fun x ↦ ¬ Q x ∧ ¬ R x)
@@ -228,7 +229,7 @@ theorem sq_le_exp_radius_add_twenty_mul_square_mul_of_block_bounds
     (mul_nonneg ha (Real.exp_pos _).le) hupper
   have hcancel : Real.exp (-R / 2) ^ 2 * Real.exp R = 1 := by
     rw [pow_two, ← Real.exp_add, ← Real.exp_add]
-    convert Real.exp_zero using 1 <;> ring_nf
+    convert Real.exp_zero using 1; ring_nf
   calc
     a ^ 2 = (a * Real.exp (-R / 2)) ^ 2 * Real.exp R := by
       rw [mul_pow]
@@ -249,7 +250,7 @@ theorem norm_twoBlock_alternatingLow_mul_high_le_sqrt_full_mul_sqrt_zeta
     (hbound : ∀ n, 0 < n → ‖f n‖ ≤ 1)
     (Q₂ Q₃ : ℕ → Prop) [DecidablePred Q₂] [DecidablePred Q₃]
     (y : ℕ)
-    (hQ₂ : ∀ p, Q₂ p → p ≤ y) (hQ₃ : ∀ p, Q₃ p → p ≤ y)
+    (_hQ₂ : ∀ p, Q₂ p → p ≤ y) (_hQ₃ : ∀ p, Q₃ p → p ≤ y)
     (hdisj : ∀ p ∈ primesUpTo y, Q₂ p → Q₃ p → False)
     (hthree₂ : ∀ p ∈ primesUpTo y, Q₂ p → 3 ≤ p)
     (hthree₃ : ∀ p ∈ primesUpTo y, Q₃ p → 3 ≤ p)

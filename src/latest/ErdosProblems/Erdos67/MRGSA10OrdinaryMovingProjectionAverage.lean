@@ -871,12 +871,12 @@ theorem norm_two_mul_doubleIntervalIntegral_twoBlockTailored_sub_movingPerron_di
 
 end
 
-end Erdos67.MRHalaszBands
+#print axioms sum_integral_ordinaryNearKernel_le
+#print axioms
+  norm_positivePrefixSum_gsA10TwoBlockTailored_sub_movingPerron_le_ordinaryMajorant
+#print axioms
+  gsA10OrdinaryMovingProjectionRectangleMajorant_le
+#print axioms
+  norm_two_mul_doubleIntervalIntegral_twoBlockTailored_sub_movingPerron_div_le_ordinary
 
-#print axioms Erdos67.MRHalaszBands.sum_integral_ordinaryNearKernel_le
-#print axioms
-  Erdos67.MRHalaszBands.norm_positivePrefixSum_gsA10TwoBlockTailored_sub_movingPerron_le_ordinaryMajorant
-#print axioms
-  Erdos67.MRHalaszBands.gsA10OrdinaryMovingProjectionRectangleMajorant_le
-#print axioms
-  Erdos67.MRHalaszBands.norm_two_mul_doubleIntervalIntegral_twoBlockTailored_sub_movingPerron_div_le_ordinary
+end Erdos67.MRHalaszBands

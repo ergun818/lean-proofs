@@ -66,7 +66,7 @@ private theorem zpow_neg_nat_anti_of_le
   exact inv_anti₀ (pow_pos hx m) (pow_le_pow_left₀ hx.le hxy m)
 
 private theorem scaled_lower_zpow
-    {X U : ℝ} (hX : 0 < X) (hU : 0 < U) (hUX : U ≤ 2 * X)
+    {X U : ℝ} (_hX : 0 < X) (hU : 0 < U) (hUX : U ≤ 2 * X)
     (m : ℕ) :
     (3 * X) ^ (-(m : ℤ)) / (2 : ℝ) ^ m ≤
       (3 * U) ^ (-(m : ℤ)) := by

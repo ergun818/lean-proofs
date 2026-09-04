@@ -107,7 +107,7 @@ theorem sum_gsA10CanonicalLarge_betaRemainder_le_density_of_exponent
 /-- The source exponent automatically satisfies the beta-remainder
 exponent condition once the maximal exponent is nonzero. -/
 theorem four_mul_sourceBlockExponent_sq_le_log
-    {S Z : ℕ} (hS : 1 ≤ S)
+    {S Z : ℕ} (_hS : 1 ≤ S)
     (hK0 : 1 ≤ gsA10CanonicalBlockExponent S Z) :
     4 * S * (gsA10SourceBlockExponent S Z) ^ 2 ≤ Nat.log 2 Z := by
   let K0 := gsA10CanonicalBlockExponent S Z
@@ -195,7 +195,6 @@ theorem one_div_sourceBlockExponent_le_natLog_rpow_neg_quarter
   have hcgt : 1 < c := by
     dsimp only [c]
     have hSR : (1 : ℝ) ≤ S := by exact_mod_cast hS
-    norm_num
     nlinarith
   have hc0 : 0 ≤ c := zero_le_one.trans hcgt.le
   let w : ℝ := Real.sqrt (Real.sqrt L)
@@ -294,7 +293,7 @@ theorem natLog_two_rpow_neg_quarter_le_realLog_rpow_neg_quarter
 the reciprocal square root of the binary logarithm. -/
 theorem log_sourceBlockCutoff_div_log_le_natLog_rpow_neg_half
     {S Z : ℕ} (hS : 1 ≤ S)
-    (hK : 1 ≤ gsA10SourceBlockExponent S Z) (hZ : 4 ≤ Z) :
+    (_hK : 1 ≤ gsA10SourceBlockExponent S Z) (hZ : 4 ≤ Z) :
     Real.log
           ((2 ^ ((gsA10SourceBlockExponent S Z) ^ 2) : ℕ) : ℝ) /
         Real.log (Z : ℝ) ≤
@@ -343,9 +342,9 @@ theorem log_sourceBlockCutoff_div_log_le_natLog_rpow_neg_half
         norm_num
       _ ≤ Real.log (Z : ℝ) := by
         apply Real.strictMonoOn_log.monotoneOn
-        · show (0 : ℝ) < (2 ^ L : ℕ)
+        · change (0 : ℝ) < (2 ^ L : ℕ)
           positivity
-        · show (0 : ℝ) < Z
+        · change (0 : ℝ) < Z
           positivity
         · exact_mod_cast hpow
   have hsqrtL : 0 < Real.sqrt (L : ℝ) := Real.sqrt_pos.2 hLpos

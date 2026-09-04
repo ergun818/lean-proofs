@@ -172,7 +172,7 @@ theorem gsMoebiusNorm_localFactor_le
     have hden : (0 : ℝ) < ((p ^ (j + 2) : ℕ) : ℝ) := by
       exact_mod_cast Nat.pow_pos hp.pos
     have hnum : gsMoebiusNorm f (p ^ (j + 2)) ≤ 2 := by
-      convert gsMoebiusNorm_prime_pow_succ_le_two hone hp using 1 <;> omega
+      convert gsMoebiusNorm_prime_pow_succ_le_two hone hp using 1
     calc
       term (j + 2) = gsMoebiusNorm f (p ^ (j + 2)) /
           ((p ^ (j + 2) : ℕ) : ℝ) := rfl

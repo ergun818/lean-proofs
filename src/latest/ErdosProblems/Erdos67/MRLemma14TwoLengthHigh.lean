@@ -669,7 +669,7 @@ theorem perronIncrementKernel_eq_sourceSmoothed
               perronRatioIncrement u t)) := by
   convert perronIncrementKernel_eq_sourceSmoothed_real
       (x := (x : ℝ)) (h := (h : ℝ))
-      (by exact_mod_cast hx) (by exact_mod_cast hh) t using 1 <;>
+      (by exact_mod_cast hx) (by exact_mod_cast hh) t using 1;
     norm_num only [Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat,
       Complex.ofReal_natCast, Complex.ofReal_add, Complex.ofReal_mul,
       Complex.ofReal_ofNat]
@@ -856,9 +856,8 @@ theorem sum_normSq_sourceSmoothedLeftOn_le_uniform
           ((2 * (h : ℝ) / x) *
             ∫ u in (h : ℝ) / x..3 * h / x,
               Complex.normSq (safeSmoothedLogTransformOn F u x A B)) := by
-          apply mul_le_mul_of_nonneg_left
-          simpa only [hlen] using hcs
-          exact Complex.normSq_nonneg _
+          exact mul_le_mul_of_nonneg_left (by simpa only [hlen] using hcs)
+            (Complex.normSq_nonneg _)
       _ ≤ ((X : ℝ) / (h : ℝ) ^ 3) *
           ∫ u in (h : ℝ) / x..3 * h / x,
             Complex.normSq (safeSmoothedLogTransformOn F u x A B) := by
@@ -893,7 +892,7 @@ theorem sum_normSq_sourceSmoothedLeftOn_le_uniform
         ∫ u in a₀..b₀,
           ∑ x ∈ D,
             Complex.normSq (safeSmoothedLogTransformOn F u x A B) := by
-      rw [intervalIntegral.integral_finset_sum, Finset.mul_sum]
+      rw [intervalIntegral.integral_finsetSum, Finset.mul_sum]
       intro x hxmem
       exact (Complex.continuous_normSq.comp
         (continuous_safeSmoothedLogTransformOn F hF x
@@ -1292,7 +1291,7 @@ theorem sum_normSq_sourceSmoothedRightOn_le_uniform
           ∑ x ∈ D,
             Complex.normSq
               (safeSmoothedLogTransformOn F u (x + h) A B) := by
-      rw [intervalIntegral.integral_finset_sum, Finset.mul_sum]
+      rw [intervalIntegral.integral_finsetSum, Finset.mul_sum]
       intro x hxmem
       exact (Complex.continuous_normSq.comp
         (continuous_safeSmoothedLogTransformOn F hF (x + h)
@@ -1497,7 +1496,7 @@ theorem sum_normSq_sourceSmoothedRightOn_le_shellEnergy
 one normalized Perron segment. -/
 theorem sum_normSq_perronKernelSegmentOn_le_of_sourceBounds
     (F : ℝ → ℂ) (hF : Continuous F) {X h : ℕ}
-    (hX : 0 < X) (hh : 0 < h) (A B Eₗ Eᵣ : ℝ)
+    (_hX : 0 < X) (hh : 0 < h) (A B Eₗ Eᵣ : ℝ)
     (hleft : (∑ x ∈ Finset.Ioc X (2 * X),
       Complex.normSq (sourceSmoothedLeftOn F x h A B)) ≤ Eₗ)
     (hright : (∑ x ∈ Finset.Ioc X (2 * X),

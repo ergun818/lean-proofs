@@ -285,7 +285,7 @@ private theorem primeDivisorSet_mul_eq_of_dvd
 
 private theorem primeDivisorSet_mul_eq_insert_of_not_dvd
     {P : Finset ℕ} (hP : ∀ q ∈ P, q.Prime) {p m : ℕ}
-    (hpP : p ∈ P) (hpm : ¬p ∣ m) :
+    (hpP : p ∈ P) (_hpm : ¬p ∣ m) :
     primeDivisorSet P (p * m) = insert p (primeDivisorSet P m) := by
   ext q
   simp only [mem_primeDivisorSet, Finset.mem_insert]
@@ -389,7 +389,7 @@ theorem sum_eq_ramare_expansion_commuted
     (hS : ∀ n ∈ S, ∃ p ∈ P, p ∣ n) (F : ℕ → ℂ) :
     (∑ n ∈ S, F n) =
       ∑ p ∈ P, ∑ n ∈ S,
-        if hpn : p ∣ n then
+        if _hpn : p ∣ n then
           F n / (ramareDenominator P p (n / p) : ℂ)
         else 0 := by
   rw [sum_eq_ramare_expansion hP hS]
@@ -404,7 +404,7 @@ theorem sum_typicalFactorizationSet_eq_ramare
     (∑ n ∈ typicalFactorizationSet blocks X, F n) =
       ∑ p ∈ primesInBlock I,
         ∑ n ∈ typicalFactorizationSet blocks X,
-          if hpn : p ∣ n then
+          if _hpn : p ∣ n then
             F n / (ramareDenominator (primesInBlock I) p (n / p) : ℂ)
           else 0 := by
   classical
@@ -423,7 +423,7 @@ theorem completelyMultiplicative_ramare_bilinear
     (g w : ℕ → ℂ) (hg : IsCompletelyMultiplicativeOnPositive g) :
     (∑ n ∈ S, w n * g n) =
       ∑ p ∈ P, ∑ n ∈ S,
-        if hpn : p ∣ n then
+        if _hpn : p ∣ n then
           w n * (g p * g (n / p)) /
             (ramareDenominator P p (n / p) : ℂ)
         else 0 := by
@@ -452,7 +452,7 @@ theorem finiteDirichletPolynomial_eq_ramare
     (a : ℕ → ℂ) (t : ℝ) :
     finiteDirichletPolynomial S a t =
       ∑ p ∈ P, ∑ n ∈ S,
-        if hpn : p ∣ n then
+        if _hpn : p ∣ n then
           (a n * (n : ℂ) ^ (-(Complex.I * (t : ℂ)))) /
             (ramareDenominator P p (n / p) : ℂ)
         else 0 := by

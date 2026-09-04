@@ -112,7 +112,7 @@ theorem exists_cutoffGeometry_threshold
   have hKlower : T / 32 ≤ K := by
     dsimp only [K]
     have htwo : (2 : ℝ) ≤ T / 16 := by linarith
-    convert Erdos1149.AnalyticParameters.half_le_natFloor htwo using 1 <;> ring
+    convert Erdos1149.AnalyticParameters.half_le_natFloor htwo using 1; ring
   have hMK : M ≤ K := by
     exact_mod_cast hMreal.trans hKlower
   have hKupper : (K : ℝ) ≤ T / 16 := by

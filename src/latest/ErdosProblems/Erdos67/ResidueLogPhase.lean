@@ -140,7 +140,7 @@ theorem residueClassSum_Icc_eq_sum_range
       rw [hdiff, Nat.mul_div_cancel_left _ hq]
     have hn₀M : n₀ ≤ M := hn₀n.trans hn.1.2
     change firstResidueAtOrAbove A c ≤ M at hn₀M
-    simp only [P, residueIntervalLength, if_pos hn₀M, Finset.mem_range]
+    simp only [residueIntervalLength, if_pos hn₀M, Finset.mem_range]
     rw [hdiv]
     apply Nat.lt_succ_of_le
     rw [Nat.le_div_iff_mul_le hq]
@@ -163,7 +163,7 @@ theorem residueClassSum_Icc_eq_sum_range
     rw [hd₁, hd₂, Nat.mul_div_cancel_left _ hq,
       Nat.mul_div_cancel_left _ hq] at heq
     have : k₁ = k₂ := tsub_inj_left hk₀₁ hk₀₂ heq
-    simpa [hk₁, hk₂, this]
+    simp [hk₁, hk₂, this]
   · intro j hj
     simp only [Finset.mem_range] at hj
     let n := n₀ + q * j
@@ -195,8 +195,7 @@ theorem residueClassSum_Icc_eq_sum_range
       ring
     refine ⟨n, ?_, ?_⟩
     · exact Finset.mem_filter.2 ⟨Finset.mem_Icc.2 ⟨hAn, hnM⟩, hncast⟩
-    ·
-      dsimp only [n]
+    · dsimp only [n]
       rw [Nat.add_sub_cancel_left, Nat.mul_div_cancel_left _ hq]
   · intro n hn
     simp only [Finset.mem_filter, Finset.mem_Icc] at hn

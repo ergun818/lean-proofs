@@ -232,7 +232,7 @@ private theorem norm_higherPrimePowerPart_div_le_weight
     have hk1 : k ≠ 1 := by
       intro heq
       subst k
-      simp at hpk
+      simp only [pow_one] at hpk
       exact hcond.2 (hpk ▸ hp)
     omega
   have hpX : p ≤ X := by

@@ -258,7 +258,6 @@ theorem exists_uniformResidueBlock_threshold (R : ℕ) (hR : 2 ≤ R) :
       simpa only [mul_comm] using
         Nat.lt_mul_div_succ (firstResidueAtOrAbove A c) hq
     apply (div_lt_iff₀ (by exact_mod_cast hq : (0 : ℝ) < q)).2
-    push_cast
     exact_mod_cast (by simpa only [X, mul_comm] using hnat)
   have hUX : U ≤ 2 * X := by
     have hXR : (1 : ℝ) ≤ X := by exact_mod_cast hXone

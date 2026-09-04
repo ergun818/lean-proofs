@@ -173,7 +173,7 @@ theorem doubleIntervalIntegral_tailored_near_add_half_endpoint_le
         (gsA10TwoBlockTailoredCoefficient
           f hmul P₁ P₂ y X alpha beta) X T) := by
     simp_rw [dirichletPerronNearMass_eq_sum_range_jointNear]
-    apply continuous_finset_sum
+    apply continuous_finsetSum
     intro n hn
     exact (continuous_uncurry_norm_gsA10TwoBlockTailoredCoefficient
       hmul P₁ P₂ y X n).mul continuous_const
@@ -240,7 +240,7 @@ theorem two_div_eta_mul_X_mul_doubleIntervalIntegral_tailored_near_add_half_le
   have hfac : 0 ≤ 2 / (eta * (X : ℝ)) := by positivity
   refine (mul_le_mul_of_nonneg_left h hfac).trans_eq ?_
   field_simp
-  <;> ring
+  ring
 
 /-- Source specialization `T = log(X)^2`, `eta = 1/log y`.  The exact
 remaining scalar is `4 H_X log y / log(X)^2 + log y/(2X)`. -/
@@ -273,7 +273,7 @@ theorem source_doubleIntervalIntegral_tailored_near_add_half_le
     two_div_eta_mul_X_mul_doubleIntervalIntegral_tailored_near_add_half_le
       hmul hcomp hbound P₁ P₂ y (X := X) (by omega) hQ₂ hQ₃
         (sq_pos_of_pos hlogX) (inv_pos.mpr hlogy)
-  convert h using 1 <;> field_simp
+  convert h using 1; field_simp
 
 end
 

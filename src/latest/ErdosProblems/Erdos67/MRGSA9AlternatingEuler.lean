@@ -16,7 +16,7 @@ noncomputable section
 
 /-- Inclusion--exclusion for products over two disjoint subfamilies. -/
 theorem alternating_filtered_products_eq
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (S : Finset ι) (Q R : ι → Prop) [DecidablePred Q] [DecidablePred R]
     (hdisj : ∀ x ∈ S, Q x → R x → False) (a : ι → ℂ) :
     (∏ x ∈ S, a x) - (∏ x ∈ S with ¬ Q x, a x) -
@@ -25,6 +25,7 @@ theorem alternating_filtered_products_eq
       (∏ x ∈ S with ¬ Q x ∧ ¬ R x, a x) *
         ((∏ x ∈ S with Q x, a x) - 1) *
         ((∏ x ∈ S with R x, a x) - 1) := by
+  classical
   let A := S.filter Q
   let B := S.filter R
   let O := S.filter (fun x ↦ ¬ Q x ∧ ¬ R x)

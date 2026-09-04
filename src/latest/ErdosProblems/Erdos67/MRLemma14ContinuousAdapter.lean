@@ -453,7 +453,7 @@ theorem tendsto_perronKernelSegmentOn_dyadic_on_cell
     have hsource := dyadicRestrictedPerron_shortDifference_eq S f Y hxpos
       (show (0 : ℝ) < H by exact_mod_cast hH) U
     unfold perronKernelSegmentOn
-    convert hsource using 1 <;> norm_num
+    convert hsource using 1; norm_num
   rw [show (fun U : ℝ ↦ perronKernelSegmentOn
       (dyadicVerticalDirichletPolynomial S f Y) x H (-U) U) =
     fun U ↦
@@ -478,15 +478,15 @@ theorem integrable_normSq_realEndpointStepShortAverage
       ∑ n ∈ Finset.Ioc X (2 * X),
         (Set.Ico (n : ℝ) ((n : ℝ) + 1)).indicator
           (fun _ ↦ Complex.normSq (integerShortSum a n H)) x) := by
-    apply MeasureTheory.integrable_finset_sum
+    apply MeasureTheory.integrable_finsetSum
     intro n hn
     have hconst : IntegrableOn
         (fun _x : ℝ ↦ Complex.normSq (integerShortSum a n H))
         (Set.Ico (n : ℝ) ((n : ℝ) + 1)) := by
       apply MeasureTheory.integrableOn_const
-      rw [Real.volume_Ico]
-      exact ENNReal.ofReal_ne_top
-      exact enorm_ne_top
+      · rw [Real.volume_Ico]
+        exact ENNReal.ofReal_ne_top
+      · exact enorm_ne_top
     exact hconst.integrable_indicator measurableSet_Ico
   have hstep : Integrable (fun x : ℝ ↦
       Complex.normSq (realEndpointStepShortSum a X H x)) :=
@@ -499,7 +499,7 @@ theorem integrable_normSq_realEndpointStepShortAverage
   rw [Complex.normSq_div, Complex.normSq_natCast, pow_two]
 
 theorem integral_normSq_realEndpointStepShortAverage_window_eq
-    (a : ℕ → ℂ) (X : ℕ) {H : ℕ} (hH : 0 < H) :
+    (a : ℕ → ℂ) (X : ℕ) {H : ℕ} (_hH : 0 < H) :
     (∫ x in Set.Ioc ((X : ℝ) + 1) (((2 * X : ℕ) : ℝ) + 1),
         Complex.normSq (realEndpointStepShortAverage a X H x)) =
       uncenteredShortIntervalMeanSquare a X H / (H : ℝ) ^ 2 := by
@@ -597,7 +597,7 @@ outer Perron height is sent to infinity; there is no squared truncation
 error. -/
 theorem normalized_uncenteredShortIntervalMeanSquare_le_of_uniform_continuousPerron
     (S : Finset ℕ) (f : ℕ → ℂ) (Y : ℕ)
-    {X H : ℕ} (hH : 0 < H) {T E : ℝ} (hT : 0 ≤ T) (hE : 0 ≤ E)
+    {X H : ℕ} (hH : 0 < H) {T E : ℝ} (_hT : 0 ≤ T) (hE : 0 ≤ E)
     (huniform : ∀ U : ℝ, T ≤ U →
       (∫ x in ((X : ℝ) + 1)..(((2 * X : ℕ) : ℝ) + 1),
         Complex.normSq (perronKernelSegmentOn
@@ -955,7 +955,7 @@ theorem normalized_uncenteredShortIntervalMeanSquare_le_central_add_invHigh
     normalized_uncenteredShortIntervalMeanSquare_le_central_add_weightedHigh
       S f Y (X := X) hH hT
         (mul_nonneg (by norm_num) (inv_nonneg.mpr hT.le)) hfar
-  convert hbase using 1 <;> ring
+  convert hbase using 1; ring
 
 /-- Step-function embedding of the difference of two normalized dyadic
 short averages. -/
@@ -1032,9 +1032,9 @@ theorem integrable_normSq_dyadicTwoLengthStepAverage
           dyadicRestrictedShortAverage S f Y n H₂))
         (Set.Ico (n : ℝ) ((n : ℝ) + 1)) := by
       apply MeasureTheory.integrableOn_const
-      rw [Real.volume_Ico]
-      exact ENNReal.ofReal_ne_top
-      exact enorm_ne_top
+      · rw [Real.volume_Ico]
+        exact ENNReal.ofReal_ne_top
+      · exact enorm_ne_top
     exact hconst.integrable_indicator measurableSet_Ico
   exact hsum.congr (Filter.Eventually.of_forall fun x ↦
     (normSq_dyadicTwoLengthStepAverage S f Y X H₁ H₂ x).symm)
@@ -1068,9 +1068,9 @@ theorem integral_normSq_dyadicTwoLengthStepAverage_window_eq
             dyadicRestrictedShortAverage S f Y n H₂))
           (Set.Ico (n : ℝ) ((n : ℝ) + 1)) := by
         apply MeasureTheory.integrableOn_const
-        rw [Real.volume_Ico]
-        exact ENNReal.ofReal_ne_top
-        exact enorm_ne_top
+        · rw [Real.volume_Ico]
+          exact ENNReal.ofReal_ne_top
+        · exact enorm_ne_top
       exact hconst.integrable_indicator measurableSet_Ico
   have hzero : ∀ x ∉ W, q x = 0 := by
     intro x hx
@@ -1305,8 +1305,8 @@ theorem integral_normSq_dyadicTwoLengthPerronCentral_le_verticalEnergy
     have hFK : Continuous (fun t ↦ F t * K t) := by
       have h₁ := continuous_mul_perronIncrementKernel_real F hF hxpos hH₁R
       have h₂ := continuous_mul_perronIncrementKernel_real F hF hxpos hH₂R
-      convert h₁.sub h₂ using 1 <;>
-        ext t <;> simp only [K, Pi.sub_apply] <;> ring
+      convert h₁.sub h₂ using 1;
+        ext t; simp only [K, Pi.sub_apply]; ring
     have hkernel (t : ℝ) (ht : t ∈ Set.Icc (-T) T) : ‖K t‖ ≤ D := by
       have habst : |t| ≤ T := abs_le.mpr ⟨by linarith [ht.1], ht.2⟩
       have hk := norm_perronIncrementKernel_sub_le_relative
@@ -1505,7 +1505,7 @@ theorem dyadicTwoLengthShortMeanSquare_le_central_add_weightedHigh_continuous
       S f Y hn ⟨hx.1.le, hx.2⟩]
     refine Filter.Tendsto.congr' ?_ hsub
     filter_upwards [] with k
-    simp only [A, U, Nat.add_comm, Function.comp_apply]
+    simp only [A, U, Nat.add_comm]
   have hbound (k : ℕ) :
       (∫ x in W, Complex.normSq (A k x)) ≤
         2 * Ecentral + 8 * (C₁ + C₂) * Efar := by
@@ -1652,7 +1652,7 @@ theorem dyadicTwoLengthShortMeanSquare_le_central_add_invHigh_continuous
     dyadicTwoLengthShortMeanSquare_le_central_add_weightedHigh_continuous
       S f Y (X := X) hH₁ hH₂ hT
         (mul_nonneg (by norm_num) (inv_nonneg.mpr hT.le)) hfar
-  convert hbase using 1 <;> ring
+  convert hbase using 1; ring
 
 end
 

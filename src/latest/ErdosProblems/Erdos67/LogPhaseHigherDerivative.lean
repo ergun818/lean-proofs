@@ -96,7 +96,7 @@ theorem lower_abs_logDerivative_succ_of_le
     pow_le_pow_left₀ hx.le hB _
   have hinv : (B ^ (j + 1))⁻¹ ≤ (x ^ (j + 1))⁻¹ :=
     inv_anti₀ (pow_pos hx _) hpow
-  simp only [zpow_neg, zpow_natCast]
+  simp only [zpow_neg]
   exact mul_le_mul_of_nonneg_left hinv
     (mul_nonneg (abs_nonneg a) (Nat.cast_nonneg _))
 
@@ -112,7 +112,7 @@ theorem upper_abs_logDerivative_succ_of_le
     pow_le_pow_left₀ hX.le hXx _
   have hinv : (x ^ (j + 1))⁻¹ ≤ (X ^ (j + 1))⁻¹ :=
     inv_anti₀ (pow_pos hX _) hpow
-  simp only [zpow_neg, zpow_natCast]
+  simp only [zpow_neg]
   exact mul_le_mul_of_nonneg_left hinv
     (mul_nonneg (abs_nonneg a) (Nat.cast_nonneg _))
 

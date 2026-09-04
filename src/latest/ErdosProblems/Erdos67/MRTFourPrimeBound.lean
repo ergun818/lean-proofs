@@ -75,7 +75,7 @@ theorem signedDifferencePairs_ofNat (A : Finset ℕ) (h : ℕ) :
   ext x
   simp only [mem_signedDifferencePairs, mem_forwardDifferencePairs, and_congr_right_iff]
   intro _ _
-  simp only [pairDifference, Int.ofNat_eq_coe]
+  simp only [pairDifference]
   omega
 
 /-- Negating a signed difference just reverses every pair. -/
@@ -844,7 +844,7 @@ fourth-logarithm square-sum saving. -/
 theorem forwardPrimeDifference_square_sum_eventually_of_parameters
     {A C : ℝ} (hA : 1 ≤ A) (hC : 0 < C) {S : ℕ}
     (hS : 101 ≤ S)
-    (hlog : Real.log A ≤ 4 * (S - 100 : ℕ) / 99)
+    (_hlog : Real.log A ≤ 4 * (S - 100 : ℕ) / 99)
     (hpair : ∀ P h y : ℕ, h ≤ 2 * P → 2 ≤ y →
       ((forwardDifferencePairs (Nat.primesLE (2 * P)) h).card : ℝ) ≤
         (2 * P : ℕ) *

@@ -185,7 +185,7 @@ theorem norm_gsA10SourceTailoredPerronIntegral_le_affineVerticalBudget_of_localH
 
 end
 
-end Erdos67.MRHalaszBands
-
 #print axioms
-  Erdos67.MRHalaszBands.norm_gsA10SourceTailoredPerronIntegral_le_affineVerticalBudget_of_localHeight
+  norm_gsA10SourceTailoredPerronIntegral_le_affineVerticalBudget_of_localHeight
+
+end Erdos67.MRHalaszBands

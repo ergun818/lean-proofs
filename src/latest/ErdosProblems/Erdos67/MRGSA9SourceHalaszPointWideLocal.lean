@@ -287,11 +287,11 @@ theorem norm_twoBlock_alternatingLow_mul_high_le_wideHalaszPoint_of_distance
 
 end
 
-end Erdos67.MRHalaszBands
+#print axioms
+  norm_LSeries_halaszPoint_le_one_add_log_mul_exp_of_distance
+#print axioms
+  norm_twoBlock_alternatingLow_deleteSmallPrimes_mul_high_le_wideHalaszPoint_of_distance
+#print axioms
+  norm_twoBlock_alternatingLow_mul_high_le_wideHalaszPoint_of_distance
 
-#print axioms
-  Erdos67.MRHalaszBands.norm_LSeries_halaszPoint_le_one_add_log_mul_exp_of_distance
-#print axioms
-  Erdos67.MRHalaszBands.norm_twoBlock_alternatingLow_deleteSmallPrimes_mul_high_le_wideHalaszPoint_of_distance
-#print axioms
-  Erdos67.MRHalaszBands.norm_twoBlock_alternatingLow_mul_high_le_wideHalaszPoint_of_distance
+end Erdos67.MRHalaszBands

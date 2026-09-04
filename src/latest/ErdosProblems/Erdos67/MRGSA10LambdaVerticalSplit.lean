@@ -448,4 +448,5 @@ end Erdos67.MRHalaszBands
 #print axioms Erdos67.MRHalaszBands.LSeries_gsA10LambdaWindow_eq_prime_add_higherPrimePower
 #print axioms Erdos67.MRHalaszBands.norm_gsA10HigherPrimePowerLambdaPolynomial_le
 #print axioms Erdos67.MRHalaszBands.norm_LSeries_gsA10LambdaWindow_product_sub_primeProduct_le
-#print axioms Erdos67.MRHalaszBands.norm_intervalIntegral_mul_LambdaWindowProduct_sub_primeProduct_le
+#print axioms
+  Erdos67.MRHalaszBands.norm_intervalIntegral_mul_LambdaWindowProduct_sub_primeProduct_le

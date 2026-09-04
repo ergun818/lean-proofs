@@ -119,7 +119,7 @@ theorem integral_normSq_lemma14MellinSegment_eq_log
     rw [Complex.normSq_mul]
     have hsq : Complex.normSq (Real.exp (-y) : ℂ) = Real.exp (-2 * y) := by
       rw [Complex.normSq_ofReal]
-      simp only [sq, ← Real.exp_add]
+      simp only [← Real.exp_add]
       congr 1
       ring
     rw [hsq]
@@ -342,7 +342,7 @@ theorem intervalIntegral_normSq_logSpatialTransform_le_universal
     _ ≤ lemma14FourierCauchyConstant
           (lemma14PositiveLogCutoff 1 (-Real.log 3 - 2) 2 (by norm_num)) *
         Real.pi * ∫ t in A..B, Complex.normSq (g' t) := by
-      convert hfixed using 1 <;> ring_nf
+      convert hfixed using 1; ring_nf
     _ = lemma14UniversalFourierCauchyConstant * Real.pi *
         ∫ t in A..B, Complex.normSq (g t) := by
       unfold lemma14UniversalFourierCauchyConstant lemma14UniversalLogCutoff
@@ -487,9 +487,10 @@ theorem integral_normSq_mul_safePerronRatioIncrement_le_div
         Complex.normSq (F t * safePerronRatioIncrement u t)) ≤
       ((2 + u) / T) ^ 2 * ∫ t in A..B, Complex.normSq (F t) := by
   rcases hu.eq_or_lt with rfl | hu
-  · simp only [map_mul, add_zero]
-    exact mul_nonneg (sq_nonneg _) (intervalIntegral.integral_nonneg_of_forall
-      hAB (fun t ↦ Complex.normSq_nonneg _))
+  · simpa [safePerronRatioIncrement, perronRatioIncrement] using
+      mul_nonneg (sq_nonneg (2 / T))
+        (intervalIntegral.integral_nonneg_of_forall hAB
+          (fun t ↦ Complex.normSq_nonneg (F t)))
   · simpa only [safePerronRatioIncrement_eq_of_nonneg hu.le] using
       integral_normSq_mul_perronRatioIncrement_le_div
         F hF hu hAB hT haway
@@ -538,8 +539,8 @@ theorem integral_normSq_mul_safePerronRatioIncrement_le_weighted
   have hnum : 0 ≤ 2 + u := by linarith
   have hratioNonneg : 0 ≤ (2 + u) / |t| := div_nonneg hnum habs.le
   rcases hu.eq_or_lt with rfl | hu
-  · simp only [map_mul, add_zero, ge_iff_le]
-    exact mul_nonneg (sq_nonneg _) (Complex.normSq_nonneg _)
+  · simpa [safePerronRatioIncrement, perronRatioIncrement] using
+      mul_nonneg (sq_nonneg (2 / |t|)) (Complex.normSq_nonneg (F t))
   · rw [safePerronRatioIncrement_eq_of_nonneg hu.le,
       Complex.normSq_mul]
     have hnorm := norm_perronRatioIncrement_le_div_abs hu htne
@@ -874,7 +875,7 @@ source transform.  The clamp is used only inside the proof to provide a
 globally continuous extension. -/
 theorem intervalIntegral_intervalIntegral_normSq_realSafeSmoothed_eq_swap
     (F : ℝ → ℂ) (hF : Continuous F)
-    {P Q C D : ℝ} (hP : 0 < P) (hPQ : P ≤ Q) (hCD : C ≤ D)
+    {P Q C D : ℝ} (hP : 0 < P) (hPQ : P ≤ Q) (_hCD : C ≤ D)
     (A B : ℝ) :
     (∫ x in P..Q, ∫ u in C..D,
         Complex.normSq
@@ -1498,9 +1499,8 @@ theorem normSq_lemma14RealSourceSmoothedLeftOn_le_common
         ((2 * h / x) * ∫ u in h / x..3 * h / x,
           Complex.normSq
             (lemma14RealSafeSmoothedMellinSegment F u A B x)) := by
-        apply mul_le_mul_of_nonneg_left
-        simpa only [hlen] using hcs
-        exact Complex.normSq_nonneg _
+        exact mul_le_mul_of_nonneg_left (by simpa only [hlen] using hcs)
+          (Complex.normSq_nonneg _)
     _ = (Complex.normSq
           ((h : ℂ)⁻¹ * ((2 * h : ℝ) : ℂ)⁻¹ * (x : ℂ)) *
         (2 * h / x)) * ∫ u in h / x..3 * h / x,
@@ -1557,7 +1557,8 @@ theorem integral_normSq_lemma14RealSourceSmoothedLeftOn_le_rectangle
         Complex.normSq
           (lemma14RealSafeSmoothedMellinSegment F u A B x)) volume P Q := by
     apply ContinuousOn.intervalIntegrable_of_Icc hPQ
-    apply (continuous_const.mul hcommonExt).continuousOn.congr
+    apply ((continuous_const : Continuous fun _ : ℝ ↦ Q / h ^ 3).mul
+      hcommonExt).continuousOn.congr
     intro x hx
     apply congrArg ((Q / h ^ 3) * ·)
     apply intervalIntegral.integral_congr
@@ -1953,9 +1954,8 @@ theorem normSq_lemma14RealSourceSmoothedRightOn_le_common
         ((2 * h / (x + h)) * ∫ u in 0..2 * h / (x + h),
           Complex.normSq
             (lemma14RealSafeSmoothedMellinSegment F u A B (x + h))) := by
-        apply mul_le_mul_of_nonneg_left
-        simpa only [sub_zero] using hcs
-        exact Complex.normSq_nonneg _
+        exact mul_le_mul_of_nonneg_left (by simpa only [sub_zero] using hcs)
+          (Complex.normSq_nonneg _)
     _ = (Complex.normSq
           ((h : ℂ)⁻¹ * ((2 * h : ℝ) : ℂ)⁻¹ * ((x + h : ℝ) : ℂ)) *
         (2 * h / (x + h))) * ∫ u in 0..2 * h / (x + h),
@@ -2025,7 +2025,8 @@ theorem integral_normSq_lemma14RealSourceSmoothedRightOn_le_rectangle
         Complex.normSq
           (lemma14RealSafeSmoothedMellinSegment F u A B (x + h))) volume P Q := by
     apply ContinuousOn.intervalIntegrable_of_Icc hPQ
-    apply (continuous_const.mul hcommonExt).continuousOn.congr
+    apply ((continuous_const : Continuous fun _ : ℝ ↦ (Q + h) / h ^ 3).mul
+      hcommonExt).continuousOn.congr
     intro x hx
     apply congrArg (((Q + h) / h ^ 3) * ·)
     apply intervalIntegral.integral_congr
@@ -2370,7 +2371,8 @@ theorem continuousOn_perronKernelSegmentOn
     continuousOn_lemma14RealSourceSmoothedLeftOn hP F hF hh A B
   have hRc : ContinuousOn R (Set.Ici P) :=
     continuousOn_lemma14RealSourceSmoothedRightOn hP hh F hF A B
-  apply (continuousOn_const.mul (hLc.sub hRc)).congr
+  apply ((continuousOn_const : ContinuousOn (fun _ : ℝ ↦ c) (Set.Ici P)).mul
+    (hLc.sub hRc)).congr
   intro x hx
   change perronKernelSegmentOn F x h A B = c * (L x - R x)
   exact perronKernelSegmentOn_eq_realSourceSmoothed
@@ -2594,7 +2596,7 @@ theorem lemma14_left_source_moment_le
     rw [heq]
     calc
       H / X / 2 = (1 / 2 : ℝ) * (H / X) := by ring
-      _ ≤ 3 * (H / X) := by gcongr <;> norm_num
+      _ ≤ 3 * (H / X) := by gcongr; norm_num
       _ = 3 * H / X := by ring
   calc
     (∫ u in H / (2 * X)..3 * H / X, (2 + u) ^ 2) ≤
@@ -2613,7 +2615,7 @@ theorem lemma14_left_source_moment_le
       calc
         25 * (3 * H / X - H / X / 2) =
             (125 / 2 : ℝ) * (H / X) := by ring
-        _ ≤ 75 * (H / X) := by gcongr <;> norm_num
+        _ ≤ 75 * (H / X) := by gcongr; norm_num
         _ = 75 * H / X := by ring
 
 theorem lemma14_right_source_moment_le
@@ -2672,7 +2674,7 @@ theorem lemma14UniversalPerronSegmentSafeWeightedCoefficient_le
       rw [heq]
       calc
         H / X / 2 = (1 / 2 : ℝ) * (H / X) := by ring
-        _ ≤ 3 * (H / X) := by gcongr <;> norm_num
+        _ ≤ 3 * (H / X) := by gcongr; norm_num
         _ = 3 * H / X := by ring
     · intro u hu
       exact sq_nonneg _

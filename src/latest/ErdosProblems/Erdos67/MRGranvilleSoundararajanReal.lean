@@ -29,15 +29,15 @@ theorem norm_sub_one_eq_one_sub_re_of_real_of_norm_le_one
   have hz : z = (z.re : ℂ) := by
     apply Complex.ext
     · simp
-    · simpa [him]
+    · simp [him]
   rw [hz, ← Complex.ofReal_one, ← Complex.ofReal_sub, Complex.norm_real,
     Real.norm_eq_abs, abs_of_nonpos (sub_nonpos.mpr hre)]
   simp
 
-theorem archimedeanTwist_zero_of_pos {n : ℕ} (hn : 0 < n) :
+theorem archimedeanTwist_zero_of_pos {n : ℕ} (_hn : 0 < n) :
     archimedeanTwist 0 n = 1 := by
   rw [archimedeanTwist]
-  simp [Nat.ne_of_gt hn]
+  simp
 
 theorem pretentiousTerm_archimedeanTwist_zero {f : ℕ → ℂ}
     {p : ℕ} (hp : 0 < p) :

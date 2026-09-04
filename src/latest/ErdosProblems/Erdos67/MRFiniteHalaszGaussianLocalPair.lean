@@ -77,7 +77,7 @@ theorem finiteHalaszGaussianPairKernel_inv_sq_le_pow_half
     by_cases hk : k = 0
     · subst k
       norm_num only [Nat.cast_zero]
-      show (0 : ℝ) ≤ (T * |x|) ^ 2 / 4
+      change (0 : ℝ) ≤ (T * |x|) ^ 2 / 4
       exact div_nonneg (sq_nonneg _) (by norm_num : (0 : ℝ) ≤ 4)
     · have hk1 : (1 : ℝ) ≤ k := by
         exact_mod_cast (Nat.one_le_iff_ne_zero.mpr hk)
@@ -276,7 +276,7 @@ Gaussian distance fiber. -/
 theorem card_finiteHalaszGaussianDistanceFiber_le_of_intervalBeta
     {I : ℕ × ℕ} {L U n k : ℕ} {T density remainder : ℝ}
     (hT : 0 < T) (hU : 0 < U) (hdensity : 0 ≤ density)
-    (hrem : 0 ≤ remainder)
+    (_hrem : 0 ≤ remainder)
     (hbeta : ∀ A B : ℕ, A ≤ B →
       ((intervalMissingPrimeBlockSet I A B).card : ℝ) ≤
         (((B - A : ℕ) : ℝ) * density + remainder)) :

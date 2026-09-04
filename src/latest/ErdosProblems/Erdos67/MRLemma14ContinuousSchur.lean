@@ -43,7 +43,7 @@ theorem continuous_lemma14CauchyKernel :
 
 /-- Every row of the Cauchy kernel has interval mass at most `π`. -/
 theorem intervalIntegral_lemma14CauchyKernel_le_pi
-    {A B : ℝ} (hAB : A ≤ B) (s : ℝ) :
+    {A B : ℝ} (_hAB : A ≤ B) (s : ℝ) :
     (∫ t in A..B, lemma14CauchyKernel s t) ≤ Real.pi := by
   unfold lemma14CauchyKernel
   change (∫ t in A..B, (fun u : ℝ ↦ (1 + u ^ 2)⁻¹) (s - t)) ≤ _

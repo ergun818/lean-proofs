@@ -151,7 +151,7 @@ theorem norm_positivePrefixSum_mul_le_cutoff
 two finite weighted masses. -/
 theorem gsFiniteNormDirichletMass_mul_le
     (a b : ArithmeticFunction ℂ) (X : ℕ) {sigma : ℝ}
-    (hsigma : 0 ≤ sigma) :
+    (_hsigma : 0 ≤ sigma) :
     gsFiniteNormDirichletMass (a * b) X sigma ≤
       gsFiniteNormDirichletMass a X sigma *
         gsFiniteNormDirichletMass b X sigma := by
@@ -340,10 +340,10 @@ theorem norm_positivePrefixSum_secondSecondaryIntegrand_le
     (hbound : ∀ n, 0 < n → ‖f n‖ ≤ 1)
     (P₁ P₂ : ℕ → Prop) [DecidablePred P₁] [DecidablePred P₂]
     {y X : ℕ}
-    (hQ₂ : ∀ p, (¬ P₁ p ∧ P₂ p) → p ≤ y)
-    (hQ₃ : ∀ p, (¬ P₁ p ∧ ¬ P₂ p) → p ≤ y)
+    (_hQ₂ : ∀ p, (¬ P₁ p ∧ P₂ p) → p ≤ y)
+    (_hQ₃ : ∀ p, (¬ P₁ p ∧ ¬ P₂ p) → p ≤ y)
     {eta alpha : ℝ} (halpha0 : 0 ≤ alpha)
-    (halphaHalf : alpha ≤ 1 / 2) (halphaOne : alpha ≤ 1) :
+    (halphaHalf : alpha ≤ 1 / 2) (_halphaOne : alpha ≤ 1) :
     ‖positivePrefixSum
         (fun n ↦ ((gsA10TwoBlockAlternatingLow f P₁ P₂ y *
             gsRealShift alpha (gsA9HighGeneralizedMangoldt hmul y)) *
@@ -383,10 +383,10 @@ theorem norm_positivePrefixSum_secondSecondaryIntegrand_le
       apply Finset.sum_le_sum
       intro d hd
       apply mul_le_mul_of_nonneg_left
-      apply mul_le_mul_of_nonneg_left
-      · exact cast_div_rpow_le_mul_rpow_neg
-          (Finset.mem_Icc.mp hd).1 (by linarith)
-      · positivity
+      · apply mul_le_mul_of_nonneg_left
+        · exact cast_div_rpow_le_mul_rpow_neg
+            (Finset.mem_Icc.mp hd).1 (by linarith)
+        · positivity
       · exact norm_nonneg _
     _ = C * (X : ℝ) ^ (1 - alpha) *
         gsFiniteNormDirichletMass (low * highShift) X (1 - alpha) := by
