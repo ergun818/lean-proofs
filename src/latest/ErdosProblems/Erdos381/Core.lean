@@ -2747,7 +2747,7 @@ theorem three_pow_localExponentLimit_le_ceil_pow
   have hexpFour : Real.exp 4 ≤ 81 := by
     calc
       Real.exp 4 = Real.exp 1 ^ 4 := by
-        simpa using Real.exp_nat_mul (1 : ℝ) 4
+        simp [← Real.exp_nat_mul]
       _ ≤ (3 : ℝ) ^ 4 :=
         pow_le_pow_left₀ (Real.exp_pos 1).le Real.exp_one_lt_three.le 4
       _ = 81 := by norm_num

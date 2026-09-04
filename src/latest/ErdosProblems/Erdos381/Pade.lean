@@ -22,7 +22,6 @@ lemma padePoly_scale_four (m : ℕ) :
       C (4 ^ (3 * m) : ℤ) * padeLowQuotient m := by
   simp only [padePoly, padeLowQuotient, mul_comp, sub_comp, pow_comp,
     X_comp, C_comp]
-  push_cast
   rw [show (C 3 * (C 4 * X) - C 2 : ℤ[X]) =
       C 2 * (C 6 * X - C 1) by norm_num; ring]
   rw [show (C 3 * (C 4 * X) - C 4 : ℤ[X]) =
@@ -32,7 +31,7 @@ lemma padePoly_scale_four (m : ℕ) :
   have hscalar : (4 : ℤ) ^ (3 * m) =
       2 ^ (2 * m) * 4 ^ (2 * m) := by
     calc
-      (4 : ℤ) ^ (3 * m) = 4 ^ (m + 2 * m) := by congr 1 <;> omega
+      (4 : ℤ) ^ (3 * m) = 4 ^ (m + 2 * m) := by congr 1; omega
       _ = 4 ^ m * 4 ^ (2 * m) := by rw [pow_add]
       _ = 2 ^ (2 * m) * 4 ^ (2 * m) := by
         rw [show (4 : ℤ) = 2 ^ 2 by norm_num, ← pow_mul]
@@ -186,7 +185,7 @@ lemma padePoly_high_coeff_dvd (m r : ℕ) (hr : 3 * m ≤ r)
     refine ⟨(padeHighQuotient m).coeff (6 * m - r), ?_⟩
     exact mul_right_cancel₀
       (pow_ne_zero (6 * m - r) (by norm_num : (3 : ℤ) ≠ 0)) hmul
-  exact dvd_trans (⟨3 ^ m, by rw [← pow_add]; congr 1 <;> omega⟩) hstrong
+  exact dvd_trans (⟨3 ^ m, by rw [← pow_add]; congr 1; omega⟩) hstrong
 
 noncomputable def padeKernelMinus (t : ℝ) : ℝ :=
   3 * t ^ 2 * (1 - t ^ 2) ^ 2 / (3 - t) ^ 3
@@ -194,7 +193,7 @@ noncomputable def padeKernelMinus (t : ℝ) : ℝ :=
 noncomputable def padeKernelPlus (t : ℝ) : ℝ :=
   3 * t ^ 2 * (1 - t ^ 2) ^ 2 / (3 + t) ^ 3
 
-lemma padeKernelMinus_nonneg {t : ℝ} (ht0 : 0 ≤ t) (ht1 : t ≤ 1) :
+lemma padeKernelMinus_nonneg {t : ℝ} (_ : 0 ≤ t) (ht1 : t ≤ 1) :
     0 ≤ padeKernelMinus t := by
   dsimp [padeKernelMinus]
   have hnum : 0 ≤ 3 * t ^ 2 * (1 - t ^ 2) ^ 2 := by positivity
@@ -502,7 +501,7 @@ lemma padeMinusIntegral_lower (m : ℕ) :
       (padeIntegrand_intervalIntegrable m (by norm_num) (by norm_num))
       (fun z hz ↦ padeIntegrand_lower m hz.1 hz.2)
     rw [intervalIntegral.integral_const] at hmono
-    convert hmono using 1 <;> ring
+    convert hmono using 1; ring
   apply hsub.trans
   rw [padeMinusIntegral]
   apply intervalIntegral.integral_mono_interval
@@ -530,8 +529,7 @@ lemma padePoly_eval_real (m : ℕ) (z : ℝ) :
     (padePoly m).eval₂ (Int.castRingHom ℝ) z =
       (z - 1) ^ (2 * m) * (3 * z - 2) ^ (2 * m) *
         (3 * z - 4) ^ (2 * m) := by
-  simp only [padePoly, eval₂_mul, eval₂_pow, eval₂_sub, eval₂_X, eval₂_C,
-    eval₂_ofNat]
+  simp only [padePoly, eval₂_mul, eval₂_pow, eval₂_sub, eval₂_X, eval₂_C]
   norm_num
 
 lemma padeIntegrand_eq_laurentSum (m : ℕ) {z : ℝ} (hz : z ≠ 0) :
@@ -589,8 +587,8 @@ lemma integral_padeLaurentTerm (m r : ℕ) {a : ℝ} (ha : 0 < a) :
       push_cast
       omega
     have hzero : (0 : ℝ) ∉ Set.uIcc 1 a := by
-      simp only [Set.mem_uIcc, Set.mem_Icc]
-      push_neg
+      simp only [Set.mem_uIcc]
+      push Not
       constructor <;> intro h <;> linarith
     rw [integral_zpow (Or.inr ⟨hexp, hzero⟩)]
     have hk : ((r : ℤ) - (3 * m : ℕ) - 1) + 1 =
@@ -624,7 +622,7 @@ lemma padeIntegral_eq_log_add_remainder (m : ℕ) {a : ℝ} (ha : 0 < a) :
         ((lt_min (by norm_num : (0 : ℝ) < 1) ha).trans_le hz.1).ne'
     _ = ∑ r ∈ Finset.range (6 * m + 1),
           ∫ z in (1 : ℝ)..a, padeLaurentTerm m r z := by
-      apply intervalIntegral.integral_finset_sum
+      apply intervalIntegral.integral_finsetSum
       intro r hr
       exact padeLaurentTerm_intervalIntegrable m r ha
     _ = ∑ r ∈ Finset.range (6 * m + 1),
@@ -654,7 +652,7 @@ lemma padeIntegral_eq_log_add_remainder (m : ℕ) {a : ℝ} (ha : 0 < a) :
       intro r hr
       by_cases h : r = 3 * m
       · subst r
-        simp [hmem]
+        simp
       · simp [h]
 
 noncomputable def padeLcm (m : ℕ) : ℕ := Nat.lcmUpto (3 * m)
@@ -716,7 +714,6 @@ lemma scaled_two_thirds_remainder_term_isInt (m r : ℕ)
     refine ⟨(d : ℤ) * c * ((2 : ℤ) ^ k - 3 ^ k), ?_⟩
     have he : (r : ℤ) - (3 * m : ℕ) = -(k : ℤ) := by
       dsimp [k]
-      push_cast
       omega
     have hdR : (padeLcm m : ℝ) = (k : ℝ) * d := by exact_mod_cast hd
     have hcR : ((padePoly m).coeff r : ℝ) = (2 : ℝ) ^ k * c := by
@@ -738,7 +735,6 @@ lemma scaled_two_thirds_remainder_term_isInt (m r : ℕ)
     refine ⟨(d : ℤ) * c * ((2 : ℤ) ^ k - 3 ^ k), ?_⟩
     have he : (r : ℤ) - (3 * m : ℕ) = (k : ℤ) := by
       dsimp [k]
-      push_cast
       omega
     have hdR : (padeLcm m : ℝ) = (k : ℝ) * d := by exact_mod_cast hd
     have hcR : ((padePoly m).coeff r : ℝ) = (3 : ℝ) ^ k * c := by
@@ -766,7 +762,6 @@ lemma scaled_four_thirds_remainder_term_isInt (m r : ℕ)
     refine ⟨(d : ℤ) * c * ((4 : ℤ) ^ k - 3 ^ k), ?_⟩
     have he : (r : ℤ) - (3 * m : ℕ) = -(k : ℤ) := by
       dsimp [k]
-      push_cast
       omega
     have hdR : (padeLcm m : ℝ) = (k : ℝ) * d := by exact_mod_cast hd
     have hcR : ((padePoly m).coeff r : ℝ) = (4 : ℝ) ^ k * c := by
@@ -787,7 +782,6 @@ lemma scaled_four_thirds_remainder_term_isInt (m r : ℕ)
     refine ⟨(d : ℤ) * c * ((4 : ℤ) ^ k - 3 ^ k), ?_⟩
     have he : (r : ℤ) - (3 * m : ℕ) = (k : ℤ) := by
       dsimp [k]
-      push_cast
       omega
     have hdR : (padeLcm m : ℝ) = (k : ℝ) * d := by exact_mod_cast hd
     have hcR : ((padePoly m).coeff r : ℝ) = (3 : ℝ) ^ k * c := by
@@ -1198,7 +1192,7 @@ lemma padeThetaError_upper (m : ℕ) (hL : padeLcm m ≤ 27 ^ m) :
       rw [mul_add, ← mul_pow, ← mul_pow]
       norm_num
     _ ≤ 2 * (9 / 10 : ℝ) ^ m := by
-      have hpow : (9 / 20 : ℝ) ^ m ≤ (9 / 10 : ℝ) ^ m := by gcongr <;> norm_num
+      have hpow : (9 / 20 : ℝ) ^ m ≤ (9 / 10 : ℝ) ^ m := by gcongr; norm_num
       linarith
 
 lemma padeThetaError_lower (m : ℕ) (hm : 8 ≤ m) :
@@ -1430,7 +1424,7 @@ lemma pade_index_power_bound (T v : ℕ) (hv : 0 < v) :
       _ = 2 ^ (34 * (32 * s)) := (pow_mul 2 34 (32 * s)).symm
       _ = 2 ^ (s * (32 * 34)) := by congr 1; omega
       _ = (2 ^ s) ^ (32 * 34) := by rw [pow_mul]
-      _ ≤ v ^ (32 * 34) := Nat.pow_le_pow_left hs _
+      _ ≤ v ^ (32 * 34) := pow_le_pow_left' hs (32 * 34)
   change A ^ (T + 32 * (s + 1)) ≤ A ^ (T + 32) * v ^ (32 * 34)
   rw [show T + 32 * (s + 1) = (T + 32) + 32 * s by omega, pow_add]
   exact Nat.mul_le_mul_left _ hsmall
@@ -1442,8 +1436,7 @@ lemma pade_separation_scale_eq (m : ℕ) :
   field_simp
   have hcancel : (1 / 32 : ℝ) ^ m * 32 ^ m = 1 := by
     rw [one_div_pow]
-    simpa [one_div] using
-      inv_mul_cancel₀ (pow_ne_zero m (by norm_num : (32 : ℝ) ≠ 0))
+    simp
   calc
     (1 / 32 : ℝ) ^ m * 32 ^ m * (429981696 : ℝ) ^ m =
         1 * (429981696 : ℝ) ^ m := by rw [hcancel]

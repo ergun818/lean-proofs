@@ -47,7 +47,7 @@ theorem norm_dirichletExplicitFormulaKernel_sub_le
   have hypos : 0 < y := hxpos.trans_le hxy
   rw [dirichletExplicitFormulaKernel_eq_cpow_sub_one_div hypos hrho,
     dirichletExplicitFormulaKernel_eq_cpow_sub_one_div hxpos hrho]
-  convert hmv using 1 <;> dsimp [F]
+  convert hmv using 1; dsimp [F]
   ring_nf
 
 theorem riemannZeta₀_conj (s : ℂ) :
@@ -104,7 +104,7 @@ theorem analyticOrderNatAt_riemannZeta₁_conj (rho : ℂ) :
       rw [hgf, iteratedDeriv_conj_comp_conj]
       simp only [Function.comp_apply, map_eq_zero]
       simpa [f] using H i hi
-  simpa only [analyticOrderNatAt, f, horder]
+  simp only [analyticOrderNatAt, f, horder]
 
 private theorem riemannZeta₁_eq_zero_of_modOne_nontrivialZero
     {rho : ℂ}
@@ -577,7 +577,6 @@ private theorem zetaExplicitHighFar_eq_nextBand_union_far
     · exact Or.inr ⟨⟨hrho, him⟩, by
         have h := lt_of_not_ge hlow
         push_cast at h ⊢
-        norm_num at h ⊢
         linarith⟩
   · rintro (hband | hfar)
     · exact ⟨⟨hband.1, hband.2.1⟩, hband.2.2.2⟩
@@ -685,7 +684,7 @@ theorem sum_zetaExplicitHighZeros_eq_sum_linearBands_add_far
 classical conductor-one zero-free region. -/
 theorem zetaExplicitHighRealBand_zero_eq_empty
     {M : ℕ} (hM : 2 ≤ M) {eta T : ℝ}
-    (hT : 2 ≤ T) (heta : 0 ≤ eta)
+    (hT : 2 ≤ T) (_ : 0 ≤ eta)
     (hetaZF : eta ≤
       1 / ((M : ℝ) ^ 2 * Real.log (T + 2)))
     (hzeroFree : ∀ rho : ℂ, riemannZeta rho = 0 →
@@ -734,7 +733,7 @@ noncomputable def zetaExplicitFar (delta T : ℝ) : Finset ℂ :=
 reciprocal-height zero multiplicity, at the cost of `1+T`. -/
 theorem sum_norm_zetaExplicitFarKernelDiff_le_reciprocal
     {x y delta T : ℝ}
-    (hx : 1 ≤ x) (hxy : x ≤ y) (hdelta : 0 ≤ delta)
+    (hx : 1 ≤ x) (hxy : x ≤ y) (_ : 0 ≤ delta)
     (hT : 0 ≤ T) :
     (∑ rho ∈ zetaExplicitFar delta T,
       ‖(analyticOrderNatAt

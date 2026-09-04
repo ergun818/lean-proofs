@@ -487,7 +487,7 @@ theorem exists_zeta_variable_pointwise_zero_detector :
 thirty-second of the factorial once the Turán scale is normalized. -/
 theorem zeta_scaled_regularized_derivative_to_weightedLSeries
     {j : ℕ} {t eta X : ℝ}
-    (hj2 : 2 ≤ j) (ht : 1 ≤ |t|) (heta : 0 < eta)
+    (_ : 2 ≤ j) (ht : 1 ≤ |t|) (heta : 0 < eta)
     (hX0 : 0 ≤ X) (hX : X ≤ 1 / 32)
     (hlarge :
       ((j - 1).factorial : ℝ) * (1 / 2 : ℝ) <
@@ -712,12 +712,12 @@ theorem exists_zeta_variable_finite_series_detector :
     have hKH : K ≤ κ * H := by simpa only [Z, K] using hKκ
     exact hKH.trans (by
       calc
-        κ * H ≤ (D + κ) * H := by gcongr <;> omega
+        κ * H ≤ (D + κ) * H := by gcongr; omega
         _ ≤ J := hJ)
   have hMJ : M ≤ J := by
     dsimp [M]
     calc
-      D * H ≤ (D + κ) * H := by gcongr <;> omega
+      D * H ≤ (D + κ) * H := by gcongr; omega
       _ ≤ J := hJ
   have htailBudget := variable_weighted_vonMangoldt_tail_budget
     hK hKJ hMJ hjJ hjPos heta (by linarith : eta ≤ 1)
@@ -787,12 +787,12 @@ theorem exists_zeta_variable_propagated_finite_series_detector :
   have hKH : K ≤ κ * H := by simpa only [Z, K] using hKκ
   have hKJ : K ≤ J := hKH.trans <| by
     calc
-      κ * H ≤ (D + κ) * H := by gcongr <;> omega
+      κ * H ≤ (D + κ) * H := by gcongr; omega
       _ ≤ J := hJ
   have hMJ : M ≤ J := by
     dsimp [M]
     calc
-      D * H ≤ (D + κ) * H := by gcongr <;> omega
+      D * H ≤ (D + κ) * H := by gcongr; omega
       _ ≤ J := hJ
   let P : ℝ → ℂ := fun u ↦
     finiteZeroDetectorPolynomial chi eta (j - 1) N u
@@ -924,7 +924,7 @@ theorem exists_zeta_variable_propagated_band_series_detector :
     dsimp [M, E]
     calc
       D * H ≤ D * (j - 1) := Nat.mul_le_mul_left D hHj
-      _ ≤ (D + κ) * (j - 1) := by gcongr <;> omega
+      _ ≤ (D + κ) * (j - 1) := by gcongr; omega
   have hcut : variableDetectorLowerCutoff E eta j ≤ N := by
     simpa only [N, R] using
       variableDetectorLowerCutoff_le_zeroDetectorCutoff
@@ -1102,11 +1102,11 @@ theorem exists_zeta_variable_detected_zero_selection :
     have hKJ : K ≤ J := by
       calc
         K ≤ κ * H := by simpa only [Z, K] using hKH
-        _ ≤ (D + κ) * H := by gcongr <;> omega
+        _ ≤ (D + κ) * H := by gcongr; omega
         _ = J := by rfl
     have hMJ : M ≤ J := by
       dsimp [M, J]
-      gcongr <;> omega
+      gcongr; omega
     have hloss := turanSecondLoss_le_orderEnvelope hK hKJ hMJ
     have hpow : (2 * eta) ^ j ≤ (1 : ℝ) :=
       pow_le_one₀ (by positivity) (by linarith)

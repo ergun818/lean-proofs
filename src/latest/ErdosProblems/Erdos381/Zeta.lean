@@ -466,7 +466,7 @@ theorem exists_zetaSmallDiskZeroMultiplicity_bound :
         nlinarith)
 
 theorem zetaSmallDiskZeroFinsupp_eq_radiusSix_restrict
-    (t eta : ℝ) (heta0 : 0 < eta) (heta1 : eta ≤ 1) (rho : ℂ) :
+    (t eta : ℝ) (_ : 0 < eta) (heta1 : eta ≤ 1) (rho : ℂ) :
     zetaSmallDiskZeroFinsupp t eta rho =
       if dist rho (((1 + eta : ℝ) : ℂ) + t * I) ≤ 4 * eta then
         zetaRadiusSixZeroFinsupp t rho
@@ -1818,13 +1818,12 @@ theorem exists_uniform_propagated_zeta_finite_series_detector :
 /-- Zeros of the entire regularization in the upper high-zero rectangle;
 the lower ordinate is one so that the zeta pole-removal estimate is uniform. -/
 noncomputable def zetaHighZeroRectangle (eta T : ℝ) : Finset ℂ :=
-  let U : Set ℂ := closedBall 0 (T + 2)
   (divisor_riemannZeta₁_closedBall_support_finite 0 (T + 2)).toFinset.filter
     fun rho ↦
       1 - eta ≤ rho.re ∧ rho.re ≤ 1 ∧ 1 ≤ rho.im ∧ rho.im ≤ T
 
 private theorem zetaHighZero_mem_closedBall
-    {rho : ℂ} {eta T : ℝ} (heta1 : eta ≤ 1) (hT : 1 ≤ T)
+    {rho : ℂ} {eta T : ℝ} (heta1 : eta ≤ 1) (_ : 1 ≤ T)
     (hrelo : 1 - eta ≤ rho.re) (hrehi : rho.re ≤ 1)
     (himlo : 1 ≤ rho.im) (himhi : rho.im ≤ T) :
     rho ∈ closedBall (0 : ℂ) (T + 2) := by

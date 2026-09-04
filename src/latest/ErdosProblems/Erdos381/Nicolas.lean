@@ -236,13 +236,14 @@ theorem prime_blocks_log_error
           hrootLow (hup i).2.1.le (by exact_mod_cast (hup i).2.2)
       have hmain' : Real.log (up i) - Real.log x ≤
           (L : ℝ) * (((H + 1 : ℕ) : ℝ) / (a : ℝ)) := by
-        convert hmain using 1 <;>
-          norm_num only [Nat.cast_add, Nat.cast_one] <;> ring
+        convert hmain using 1
+        norm_num only [Nat.cast_add, Nat.cast_one]
+        ring
       calc
         Real.log (up i) - Real.log x ≤
             (L : ℝ) * (((H + 1 : ℕ) : ℝ) / (a : ℝ)) := hmain'
         _ ≤ (L : ℝ) * (((H + 2 : ℕ) : ℝ) / (a : ℝ)) := by
-          gcongr <;> norm_num
+          gcongr; norm_num
         _ ≤ (2 * L : ℕ) * ((H + 2 : ℕ) : ℝ) / (a : ℝ) := by
           have ht : 0 ≤ (L : ℝ) * (((H + 2 : ℕ) : ℝ) / (a : ℝ)) := by
             positivity
@@ -557,8 +558,7 @@ theorem Superior.factorization_eq_zero_of_threshold_one_lt
     exact not_le_of_gt hpAbove
   rcases hN.factorization_eq_canonical_or_tiedLower hε hp with h | h
   · exact h.trans hcanon0
-  ·
-    rw [hcanon0] at h
+  · rw [hcanon0] at h
     omega
 
 /-- The primes strictly between the first and second thresholds have
@@ -915,16 +915,16 @@ theorem exists_two_signedBlock_trial
     by_cases hz : 0 ≤ z <;> by_cases hw : 0 ≤ w
     · have hnz : ¬z < 0 := not_lt.mpr hz
       have hnw : ¬w < 0 := not_lt.mpr hw
-      simp [signedBlockUp, signedBlockDown, hz, hw, hnz, hnw, or_comm]
+      simp [signedBlockUp, signedBlockDown, hz, hw, hnz, hnw]
     · have hw' : w < 0 := lt_of_not_ge hw
       have hnz : ¬z < 0 := not_lt.mpr hz
-      simp [signedBlockUp, signedBlockDown, hz, hw, hw', hnz, or_comm]
+      simp [signedBlockUp, signedBlockDown, hz, hw, hw', hnz]
     · have hz' : z < 0 := lt_of_not_ge hz
       have hnw : ¬w < 0 := not_lt.mpr hw
       simp [signedBlockUp, signedBlockDown, hz, hz', hw, hnw, or_comm]
     · have hz' : z < 0 := lt_of_not_ge hz
       have hw' : w < 0 := lt_of_not_ge hw
-      simp [signedBlockUp, signedBlockDown, hz, hz', hw, hw', or_comm]
+      simp [signedBlockUp, signedBlockDown, hz, hz', hw, hw']
   obtain ⟨M, hM, hMfact, hbenefit, htau⟩ :=
     exists_modified_integer_summary (ε := ε) hN hupPrime hdownPrime hdownPos
   refine ⟨M, hM, ?_, ?_⟩
@@ -1052,7 +1052,7 @@ theorem tau_mul_prime_of_factorization_eq_zero
     omega
   have hcop : N.Coprime P := (hP.coprime_iff_not_dvd.2 hnot).symm
   rw [tau, hcop.card_divisors_mul, hP.divisors]
-  simp [tau, mul_comm, hP.ne_one.symm, hN.ne']
+  simp [tau, mul_comm, hP.ne_one.symm]
 
 theorem tau_mul_prime_le_two_mul {N P : ℕ}
     (hN : 0 < N) (hP : P.Prime) :
@@ -1090,7 +1090,6 @@ theorem tau_mul_prime_le_two_mul {N P : ℕ}
       Real.log (((N.factorization P + 2 : ℕ) : ℝ) /
         ((N.factorization P + 1 : ℕ) : ℝ)) := by
     simp [up, down, g, modifyFactorization_apply]
-    push_cast
     ring_nf
   rw [hsum, hfrom] at hlog
   have hratioPos : 0 < ((N.factorization P + 2 : ℕ) : ℝ) /
@@ -1202,7 +1201,7 @@ theorem benefit_le_of_trial_net
         obtain ⟨M0, r0, hM0, hB0, hlog0, herr0⟩ := htrialZero
         have hnonneg := superior_benefit_nonneg hN hM0
         linarith
-      · simp [tau_pos hN.1.ne']
+      · simp
       · linarith
     · have ht0 : 0 ≤ s - 2 * d := by linarith
       have ht1 : s - 2 * d ≤ 1 := by linarith

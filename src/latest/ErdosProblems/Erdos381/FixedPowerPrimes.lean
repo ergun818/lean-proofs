@@ -58,7 +58,7 @@ theorem log_natSq_add_two_le_three_log {n : ℕ} (hn : 2 ≤ n) :
     _ = 3 * Real.log (n : ℝ) := by rw [Real.log_pow]; norm_num
 
 theorem natPow_rpow_neg_le_inv_four
-    {n L : ℕ} {delta : ℝ} (hn : 1 ≤ n) (hdelta : 0 ≤ delta)
+    {n L : ℕ} {delta : ℝ} (hn : 1 ≤ n) (_ : 0 ≤ delta)
     (hLdelta : 4 ≤ (L : ℝ) * delta) :
     (((n ^ L : ℕ) : ℝ) ^ (-delta)) ≤ 1 / (n : ℝ) ^ 4 := by
   have hnR : (1 : ℝ) ≤ n := by exact_mod_cast hn
@@ -111,7 +111,6 @@ theorem explicitFormula_powerEndpoints_le_gap_mul
     unfold dirichletExplicitFormulaErrorScale
     simp only [Nat.cast_one, mul_one, Nat.cast_pow]
     rw [Real.log_pow]
-    norm_num only [Nat.cast_pow]
     rw [← hpowEq]
     field_simp
   have hyPow : (((n + 1) ^ L : ℕ) : ℝ) ≤
@@ -187,7 +186,7 @@ theorem explicitFormula_powerEndpoints_le_gap_mul
 
 theorem exists_hoheisel_even_exponent
     {lambda delta C c : ℝ}
-    (hlambda : 0 < lambda) (hdelta : 0 < delta) (hC : 0 < C) :
+    (hlambda : 0 < lambda) (_ : 0 < delta) (_ : 0 < C) :
     ∃ k : ℕ,
       8 ≤ 2 * k ∧
       16 * c ≤ (2 * k : ℕ) ∧
@@ -410,7 +409,7 @@ theorem abs_chebyshevPsi_interval_sub_length_le
       ← BoundedGaps.PrimeNumberTheorem.twistedChebyshevSum_one_eq_psi]
     simp only [Ey, Ex, Z, dirichletExplicitFormulaMainZeroTerms,
       if_pos, dirichletNontrivialZeroKernelSum, Nat.cast_sub hxy,
-      Complex.ofReal_sub, Complex.ofReal_natCast]
+      Complex.ofReal_natCast]
     simp_rw [mul_sub]
     rw [Finset.sum_sub_distrib]
     ring
@@ -436,7 +435,7 @@ theorem abs_chebyshevPsi_interval_sub_length_le
       exact norm_sum_le _ _
 
 theorem chebyshevTheta_lt_of_psi_interval_error
-    {x y : ℕ} {E P : ℝ} (hxy : x ≤ y)
+    {x y : ℕ} {E P : ℝ} (_ : x ≤ y)
     (hpsi :
       |(Chebyshev.psi (y : ℝ) - Chebyshev.psi (x : ℝ)) - (y - x : ℕ)| ≤ E)
     (hpower : Chebyshev.psi (y : ℝ) - Chebyshev.theta (y : ℝ) ≤ P)
@@ -455,7 +454,7 @@ theorem exists_prime_between_of_chebyshevTheta_lt
     (htheta : Chebyshev.theta (x : ℝ) < Chebyshev.theta (y : ℝ)) :
     ∃ p : ℕ, p.Prime ∧ x < p ∧ p ≤ y := by
   by_contra hnot
-  push_neg at hnot
+  push Not at hnot
   have hsets : Nat.primesLE x = Nat.primesLE y := by
     apply Finset.Subset.antisymm
     · intro p hp
@@ -487,7 +486,7 @@ private lemma lambda_le_cast_add_two_mul_log_of_mul_log_eq
 
 private theorem power_density_scale_bounds
     {n L : ℕ} {B eta lambda c x : ℝ}
-    (heta : 0 ≤ eta) (hlambda : 0 ≤ lambda) (hc : 0 ≤ c)
+    (heta : 0 ≤ eta) (_ : 0 ≤ lambda) (hc : 0 ≤ c)
     (hlogn : 0 ≤ Real.log (n : ℝ))
     (hetaLogB : eta * Real.log B = lambda)
     (hlogBupper : Real.log B ≤ 4 * Real.log (n : ℝ))
@@ -549,7 +548,7 @@ private theorem density_majorant_lt_eighth
     (div_le_div_iff_of_pos_right (by norm_num : (0 : ℝ) < 4)).2
       hetaLogxLower
   have hsave : lambda * L / 16 ≤ eta * Real.log x / 4 := by
-    convert hsave0 using 1 <;> ring
+    convert hsave0 using 1; ring
   have hexp : c * eta * Real.log B - eta * Real.log x / 4 ≤
       c * lambda - lambda * L / 16 := by
     rw [show c * eta * Real.log B = c * (eta * Real.log B) by ring,
@@ -562,7 +561,7 @@ private theorem density_majorant_lt_eighth
   exact hband.trans_lt (mul_lt_mul_of_pos_right hcoef hh)
 
 private lemma sq_le_nine_sq_of_nonneg_le_three_mul
-    {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hab : a ≤ 3 * b) :
+    {a b : ℝ} (ha : 0 ≤ a) (_ : 0 ≤ b) (hab : a ≤ 3 * b) :
     a ^ 2 ≤ 9 * b ^ 2 := by
   nlinarith [sq_nonneg (3 * b - a)]
 
