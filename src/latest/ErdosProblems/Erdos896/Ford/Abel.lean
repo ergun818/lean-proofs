@@ -81,7 +81,7 @@ theorem abelPolynomial_binomial (t : ℕ) (b : ℝ) :
           derivative_C, zero_mul, zero_add]
         simp_rw [derivative_abelPolynomial_succ]
         simp only [mul_zero, add_zero, abelPolynomial_zero, derivative_one,
-          C_0, zero_mul]
+          zero_mul]
         rw [derivative_comp, derivative_abelPolynomial_succ]
         simp only [derivative_add, derivative_X, derivative_C, add_zero,
           one_mul]
@@ -213,7 +213,7 @@ private theorem normalized_pow_mono {m n : ℕ} {c : ℝ}
   have hbase : p ^ w ≤ 1 + c / (n : ℝ) := by
     norm_num at hamgm
     dsimp [w, p] at hamgm ⊢
-    convert hamgm using 1 <;> field_simp <;> ring
+    convert hamgm using 1; field_simp; ring
   have hright : 0 ≤ 1 + c / (n : ℝ) := by
     have hmnR : (m : ℝ) ≤ n := by exact_mod_cast hmn
     have hcn : 0 ≤ (n : ℝ) + c := by linarith
@@ -552,7 +552,7 @@ theorem lemma_four_two {t : ℕ} {a b : ℝ}
         exfalso
         linarith
       · intro hj
-        simpa using hj
+        simp at hj
     rw [fordLemmaFourTwoSum, hempty]
     simp only [Finset.sum_empty]
     positivity

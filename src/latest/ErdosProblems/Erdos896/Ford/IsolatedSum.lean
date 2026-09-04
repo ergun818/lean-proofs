@@ -1158,7 +1158,7 @@ theorem ford_lemma_four_five_weighted (A : Finset ℕ) {sigma : ℝ}
     rw [div_div]
     have h := div_le_div_of_nonneg_right
       (ford_lemma_four_five_one (a := a) hsigma) haR.le
-    convert h using 1 <;> ring
+    convert h using 1; ring
 
 /-- Dyadic form of the weighted close-pair defect inequality. -/
 theorem ford_lemma_four_five_dyadic (A : Finset ℕ) :
@@ -1384,7 +1384,7 @@ theorem countConstant_mul_critical_factorial_le_placementProfile_of_sharp
         C * (2 : ℝ) ^ profilePrimeCount blocks b *
           profileTupleMass start blocks b * (1 / (2 : ℝ) ^ start) *
             profilePrefixPotential blocks b)
-    {start v : ℕ} (hv : 1 ≤ v) {B c : ℚ} (hB : 0 ≤ B) (hc : 0 ≤ c)
+    {start v : ℕ} (hv : 1 ≤ v) {B c : ℚ} (hB : 0 ≤ B) (_hc : 0 ≤ c)
     (P : Finset (Fin v → Fin v))
     (hinvariant : Occupancy.OccupancyInvariant P)
     (hgood : ∀ f ∈ P, Occupancy.GoodPotential B f)
@@ -1438,7 +1438,7 @@ theorem countConstant_mul_critical_factorial_le_isolatedMass_of_sharp
         C * (2 : ℝ) ^ profilePrimeCount blocks b *
           profileTupleMass start blocks b * (1 / (2 : ℝ) ^ start) *
             profilePrefixPotential blocks b)
-    {start v : ℕ} (hv : 1 ≤ v) {B c : ℚ} (hB : 0 ≤ B) (hc : 0 ≤ c)
+    {start v : ℕ} (hv : 1 ≤ v) {B c : ℚ} (hB : 0 ≤ B) (_hc : 0 ≤ c)
     (hcount : c * (v : ℚ) ^ v ≤
       (v : ℚ) * ((goodPotentialPlacements v B).card : ℚ))
     (hcontrol : ProfileStartControlled 1 start)
@@ -1692,7 +1692,7 @@ private theorem exists_eventually_weightedIsolatedSum_lower_of_capped_package
         exact shiftedCriticalConstant_mul_stirlingTerm_le ht hk
       _ ≤ weightedDyadicIsolatedMass A := by
         dsimp only [criticalFactorialTerm, A]
-        convert hfinite using 1 <;> ring
+        convert hfinite using 1; ring
 
 /-- Assumption-free eventual weighted isolated-divisor lower bound.  The
 family is the union of the squarefree profile families represented by the

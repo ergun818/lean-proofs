@@ -139,7 +139,7 @@ theorem empiricalOrderQSet_inter_orderedSimplex
     simpa [hidx] using hcard
 
 theorem empiricalOrderQSet_permute (k U V : ℕ)
-    (hUk : U ≤ k) (hU : 1 ≤ U) (hV : 1 ≤ V)
+    (_hUk : U ≤ k) (_hU : 1 ≤ U) (_hV : 1 ≤ V)
     (Q : Equiv.Perm (Fin k)) (x : Fin k → ℝ) :
     permuteCoordinates Q x ∈ empiricalOrderQSet k U V ↔
       x ∈ empiricalOrderQSet k U V := by
@@ -283,7 +283,7 @@ theorem volume_unitCubeTopBoundary (k : ℕ) :
   · exact bot_le
 
 theorem empiricalOrderQSet_subset_goodParkingGridUnion_union_boundary
-    (k U W : ℕ) (hU : 1 ≤ U) (hUk : U ≤ k) (hW : 1 ≤ W) :
+    (k U W : ℕ) (_hU : 1 ≤ U) (_hUk : U ≤ k) (hW : 1 ≤ W) :
     empiricalOrderQSet k U (k - U + W) ⊆
       goodParkingGridUnion k U W ∪ unitCubeTopBoundary k := by
   classical
@@ -326,7 +326,7 @@ theorem empiricalOrderQSet_subset_goodParkingGridUnion_union_boundary
 
 /-- Every good grid cell lies in the corresponding empirical event. -/
 theorem goodParkingGridUnion_subset_empiricalOrderQSet
-    (k U W : ℕ) (hU : 1 ≤ U) (hUk : U ≤ k) (hW : 1 ≤ W) :
+    (k U W : ℕ) (_hU : 1 ≤ U) (_hUk : U ≤ k) (hW : 1 ≤ W) :
     goodParkingGridUnion k U W ⊆
       empiricalOrderQSet k U (k - U + W) := by
   classical
@@ -502,7 +502,7 @@ theorem orderQRoundU_pos (u : ℝ) : 1 ≤ orderQRoundU u := by
 theorem orderQRoundW_pos (w : ℝ) : 1 ≤ orderQRoundW w := by
   simp [orderQRoundW]
 
-theorem le_orderQRoundU {u : ℝ} (hu : 0 ≤ u) :
+theorem le_orderQRoundU {u : ℝ} (_hu : 0 ≤ u) :
     u ≤ (orderQRoundU u : ℝ) := by
   exact (Nat.le_ceil u).trans (by simp [orderQRoundU])
 
@@ -520,7 +520,7 @@ theorem orderQRoundW_lt {w : ℝ} (hw : 0 ≤ w) :
   push_cast
   linarith
 
-theorem orderQRoundW_margin {w : ℝ} (hw : 0 ≤ w) :
+theorem orderQRoundW_margin {w : ℝ} (_hw : 0 ≤ w) :
     w + 2 ≤ (orderQRoundW w : ℝ) := by
   dsimp [orderQRoundW]
   push_cast

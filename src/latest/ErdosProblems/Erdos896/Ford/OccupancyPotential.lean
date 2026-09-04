@@ -36,8 +36,7 @@ theorem sum_pow_suffixOccupancy (v d : ℕ) (hd : d ≤ v) :
   have hwprod : ∀ f : Fin v → Fin v,
       (∏ i, w (f i)) = (2 : ℝ) ^ suffixOccupancy f d := by
     intro f
-    simp only [w, suffixOccupancy, Finset.prod_ite, Finset.prod_const_one,
-      one_pow]
+    simp only [w, suffixOccupancy, Finset.prod_ite, Finset.prod_const_one]
     rw [Finset.prod_const]
     simp
   have hwsum : (∑ y : Fin v, w y) = (v + d : ℕ) := by
@@ -63,7 +62,6 @@ theorem sum_pow_suffixOccupancy (v d : ℕ) (hd : d ≤ v) :
       simp only [w, Finset.sum_ite]]
     rw [Finset.sum_const, Finset.sum_const, nsmul_eq_mul, nsmul_eq_mul, hc, hccomp]
     norm_num
-    push_cast
     rw [Nat.cast_sub hd]
     ring
   calc
@@ -78,7 +76,7 @@ theorem sum_pow_suffixOccupancy (v d : ℕ) (hd : d ≤ v) :
     _ = (v + d : ℕ) ^ v := by rw [hwsum]
 
 private theorem card_filter_orderIsoOfFin
-    {α : Type*} [Fintype α] [LinearOrder α]
+    {α : Type*} [LinearOrder α]
     (S : Finset α) {n : ℕ} (hS : S.card = n) (p : α → Prop)
     [DecidablePred p] :
     ((Finset.univ : Finset (Fin n)).filter fun i ↦
@@ -420,7 +418,7 @@ private theorem self_pow_div_factorial_le_exp_one_pow (a : ℕ) :
     a (fun _ _ ↦ by positivity)
 
 private theorem pow_div_factorial_le_half_pow {d a : ℕ}
-    (ha : 1 ≤ a) (hda : 6 * d ≤ a) :
+    (_ha : 1 ≤ a) (hda : 6 * d ≤ a) :
     (d : ℝ) ^ a / (a.factorial : ℝ) ≤ (1 / 2 : ℝ) ^ a := by
   have hself := self_pow_div_factorial_le_exp_one_pow a
   have hexp : Real.exp 1 ^ a ≤ (3 : ℝ) ^ a := by
@@ -438,7 +436,7 @@ private theorem pow_div_factorial_le_half_pow {d a : ℕ}
           ((6 * d : ℕ) : ℝ) ^ a := by
             rw [← mul_pow, ← mul_pow]
             simp only [Nat.cast_mul, Nat.cast_ofNat]
-            congr 1 <;> ring
+            congr 1; ring
       _ ≤ (a : ℝ) ^ a := hpow
       _ ≤ (3 : ℝ) ^ a * (a.factorial : ℝ) := haa
   have hcancel : (2 : ℝ) ^ a * (d : ℝ) ^ a ≤ (a.factorial : ℝ) :=
@@ -459,7 +457,6 @@ private theorem highCapTail_recurrence (n : ℕ) :
     highCapTail n = ((n + 1 : ℕ) : ℝ) ^ 6 + highCapTail (n + 1) / 4 := by
   unfold highCapTail
   norm_num
-  push_cast
   ring
 
 private theorem highCapTail_nonneg (n : ℕ) : 0 ≤ highCapTail n := by
@@ -488,7 +485,6 @@ private theorem sum_sixth_geometric_with_tail (n : ℕ) :
             congr 1
             rw [hrec]
             field_simp
-            <;> ring
         _ = 71120 / 243 := ih
 
 private theorem sum_sixth_geometric_le (n : ℕ) :
@@ -585,7 +581,7 @@ private theorem goodSuffixAtLeast_cap_real_le {v d : ℕ}
           (@GoodSuffixAtLeast v d (40 + d ^ 2 + 1))).card : ℝ) ≤
       64 * ((a + 1 : ℕ) : ℝ) ^ 3 *
           ((d : ℝ) ^ a / (a.factorial : ℝ)) * (v : ℝ) ^ v := by
-        convert hcount using 1 <;> ring
+        convert hcount using 1; ring
     _ ≤ 64 * ((a + 1 : ℕ) : ℝ) ^ 3 *
           (1 / 2 : ℝ) ^ a * (v : ℝ) ^ v := by gcongr
     _ ≤ 64 * ((43 : ℝ) ^ 3 * (d : ℝ) ^ 6) *
@@ -609,10 +605,10 @@ private theorem good_not_highOccupancyCap_subset_cover (v : ℕ) :
   intro f hf
   simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hf
   unfold HighOccupancyCap at hf
-  push_neg at hf
+  push Not at hf
   obtain ⟨i, hi⟩ := hf.2
   rw [highCapBadCover, Finset.mem_biUnion]
-  refine ⟨i.val, by simpa using i.isLt, ?_⟩
+  refine ⟨i.val, by simp, ?_⟩
   simp only [Finset.mem_filter, Finset.mem_univ, true_and,
     GoodSuffixAtLeast, suffixOccupancy]
   exact ⟨hf.1, by omega⟩
@@ -732,7 +728,6 @@ theorem suffixOccupancy_eq_of_occupancyVector_eq {v d : ℕ}
   · intro y hy
     refine ⟨p.symm y, ?_, p.apply_symm_apply y⟩
     simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hy ⊢
-    change v - d ≤ (f (p.symm y)).val
     rw [← permOfSameOccupancy_map f g hbox (p.symm y),
       p.apply_symm_apply]
     exact hy

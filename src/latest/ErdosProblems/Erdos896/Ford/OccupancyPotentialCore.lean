@@ -81,7 +81,7 @@ noncomputable instance {v : ℕ} (B : ℚ) :
 theorem prefixOccupancy_le {v : ℕ} {f : Fin v → Fin v}
     (hf : Good f) (j : Fin v) :
     prefixOccupancy f j ≤ j.1 + 1 := by
-  exact hf (j.1 + 1) (by simpa using j.isLt)
+  exact hf (j.1 + 1) (by simp)
 
 theorem expPotential_nonneg {v : ℕ} (f : Fin v → Fin v) :
     0 ≤ expPotential f := by
@@ -108,7 +108,7 @@ theorem expPotential_le_card {v : ℕ} {f : Fin v → Fin v}
 
 /-- Elementary counting form of Markov's inequality over `ℚ`. -/
 theorem counting_markov_rat {Ω : Type*} [Fintype Ω]
-    (g : Ω → ℚ) (c : ℚ) (hc : 0 < c)
+    (g : Ω → ℚ) (c : ℚ) (_hc : 0 < c)
     (hg : ∀ ω, 0 ≤ g ω) :
     ((Finset.univ.filter fun ω ↦ c ≤ g ω).card : ℚ) * c ≤
       ∑ ω, g ω := by
@@ -142,7 +142,7 @@ private theorem card_cutSet {v : ℕ} (f : Fin v → Fin v) (k : ℕ) :
   rfl
 
 private theorem card_filter_orderIsoOfFin
-    {α : Type*} [Fintype α] [LinearOrder α]
+    {α : Type*} [LinearOrder α]
     (S : Finset α) {n : ℕ} (hS : S.card = n) (p : α → Prop)
     [DecidablePred p] :
     ((Finset.univ : Finset (Fin n)).filter fun i ↦
@@ -497,7 +497,6 @@ private theorem potentialTail_recurrence (n : ℕ) :
     potentialTail n = (n + 1 : ℕ) ^ 4 + potentialTail (n + 1) / 2 := by
   unfold potentialTail
   norm_num
-  push_cast
   ring
 
 private theorem potentialTail_nonneg (n : ℕ) : 0 ≤ potentialTail n := by
@@ -530,7 +529,6 @@ private theorem sum_polynomial_geometric_with_tail (n : ℕ) :
             congr 1
             rw [hrec]
             field_simp
-            <;> ring
         _ = 300 := ih
 
 private theorem sum_polynomial_geometric_le (n : ℕ) :
@@ -597,11 +595,9 @@ private theorem sum_interior_kernel_le {v d : ℕ} (hv : 2 ≤ v) :
       have hexp : v - (k - d) - 1 = v - k + d - 1 := by omega
       have hleft : (-(d : ℝ) + (v - k + d : ℕ) : ℝ) = v - k := by
         rw [Nat.cast_add, Nat.cast_sub hkv]
-        push_cast
         ring
       have hright : (d : ℝ) + (v - (v - k + d) : ℕ) = k := by
         rw [hcomp, Nat.cast_sub hkd]
-        push_cast
         ring
       have hcastvk : ((v - k : ℕ) : ℝ) = (v : ℝ) - k := by
         exact Nat.cast_sub hkv
@@ -1009,7 +1005,7 @@ private theorem cut_slice_real_le_of_parking
     have hinterior :
         (v : ℝ) * (∑ k ∈ Finset.Icc 1 (v - 1), t k) ≤
           5308416 * (v : ℝ) ^ v := by
-      convert interior_cut_sum_real_le_of_parking hpark hv 0 using 1 <;>
+      convert interior_cut_sum_real_le_of_parking hpark hv 0 using 1 ;
         norm_num [t]
     rw [hdecomp]
     calc

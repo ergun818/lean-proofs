@@ -445,10 +445,10 @@ lemma orderStatisticY_eq_of_le {k v m : ℕ} (hkv : k ≤ v) :
       ((m + 6 + (v - k) : ℕ) : ℝ) ^ 2 * (m + 2 : ℕ) := by
   have hex := orderStatisticExcess_eq_neg_of_le hkv
   rw [orderStatisticY, hex, if_neg]
-  norm_num only [Nat.cast_add, Nat.cast_ofNat, Int.cast_add, Int.cast_ofNat,
-    Int.cast_sub, Int.cast_neg, Int.cast_natCast]
-  ring
-  omega
+  · norm_num only [Nat.cast_add, Nat.cast_ofNat, Int.cast_add, Int.cast_ofNat,
+      Int.cast_sub, Int.cast_neg, Int.cast_natCast]
+    ring
+  · omega
 
 lemma ukSeriesTerm_le_of_le {k v m : ℕ} (hkv : k ≤ v) :
     ukSeriesTerm k v m ≤

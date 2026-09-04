@@ -71,7 +71,6 @@ theorem parkingAbel_power_identity_real (k : ℕ) (W B : ℝ) :
               have hn : k + 1 - j = (k - j) + 1 := by omega
               rw [hn, eval_abelPolynomial_succ]
               rw [Nat.cast_sub hj]
-              push_cast
               congr 1
               ring
             · simp
@@ -104,7 +103,7 @@ theorem parkingAbel_power_identity_real (k : ℕ) (W B : ℝ) :
           push_cast [Nat.cast_sub (by omega : j ≤ k + 1)] at hnR
           simpa using hnR
         rw [show B - j = (B - (k + 1)) + (k + 1 - j) by
-          push_cast; ring]
+          ring]
         rw [add_mul]
         linear_combination
           (abelPolynomial j).eval W * (B - j) ^ (k - j) * hchoose
@@ -130,7 +129,6 @@ theorem parkingAbel_power_identity_real (k : ℕ) (W B : ℝ) :
               (k + 1) * (W + B) ^ k := by rw [hfirst, ih]
         _ = (W + B) ^ (k + 1) := by
               rw [eval_abelPolynomial_succ]
-              push_cast
               ring
 
 /-- The endpoint form of Abel's identity.  This is precisely the recurrence
@@ -174,7 +172,7 @@ theorem parkingAbelP_recurrence (k W : ℕ) (hk : 1 ≤ k) :
 /-- For the parameters arising from the parking remainder, the positivity
 cutoff in Ford's sum is exactly `U < j`.  This is the form in which the
 partial Abel estimate is normally applied. -/
-theorem fordLemmaFourTwoSum_parking (k U W : ℕ) (hU : 1 ≤ U) (hUk : U ≤ k) :
+theorem fordLemmaFourTwoSum_parking (k U W : ℕ) (hU : 1 ≤ U) (_hUk : U ≤ k) :
     fordLemmaFourTwoSum (k + 1) (-(U : ℝ)) ((W : ℝ) - 1) =
       ∑ j ∈ Finset.Icc (U + 1) k,
         ((k + 1).choose j : ℝ) * ((j : ℝ) - U) ^ (j - 1) *
@@ -205,7 +203,6 @@ theorem fordLemmaFourTwoSum_parking (k U W : ℕ) (hU : 1 ≤ U) (hUk : U ≤ k)
   · congr 1
     rw [show k + 1 - j = (k - j) + 1 by omega,
       Nat.cast_add, Nat.cast_one, Nat.cast_sub hjtop]
-    push_cast
     ring
 
 /-! ## The strict Raney multiplicity bound -/
@@ -249,14 +246,14 @@ private theorem strictNegativeRotate_take_wrap
   have hsub : l.length - q + r - (l.drop q).length = r := by omega
   rw [hsub, List.take_take, min_eq_left]
   · have hsplit : (l.take q).sum + (l.drop q).sum = l.sum := by
-      simpa using congrArg List.sum (l.take_append_drop q)
+      simp
     omega
   · omega
 
 private theorem strictNegativeRotate_score_pair
     {l : List ℤ} {U r q : ℕ}
     (hsum : l.sum = -(U : ℤ))
-    (hr : r < l.length) (hq : q < l.length)
+    (_hr : r < l.length) (hq : q < l.length)
     (hgoodr : strictNegativeRotate l r)
     (hgoodq : strictNegativeRotate l q)
     (hrq : r < q) :
@@ -299,7 +296,7 @@ theorem card_strictNegativeRotate_le
         rw [List.rotate_eq_drop_append_take (Nat.le_of_lt hrange),
           List.sum_append]
         have hsplit : (l.take r).sum + (l.drop r).sum = l.sum := by
-          simpa using congrArg List.sum (l.take_append_drop r)
+          simp
         omega
       rw [hrotSum, hsum] at hfull
       omega

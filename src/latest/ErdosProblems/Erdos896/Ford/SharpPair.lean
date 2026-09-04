@@ -96,7 +96,6 @@ theorem exists_primeBlock_dyadicLogSlice_le :
           linarith
         have hlog4q : Real.log q + 2 * Real.log 2 = Real.log (4 * q) := by
           have hq0 : (q : ℝ) ≠ 0 := by exact_mod_cast hqPrime.ne_zero
-          push_cast
           rw [Real.log_mul (by norm_num : (4 : ℝ) ≠ 0) hq0,
             show (4 : ℝ) = 2 * 2 by norm_num,
             Real.log_mul (by norm_num : (2 : ℝ) ≠ 0)
@@ -394,7 +393,7 @@ private theorem exists_dyadic_center_of_mem_symmDiff
       fun q hq ↦ ?_⟩
     rw [profileOrderedDivisorLog_split, profileOrderedDivisorLog_split,
       if_pos hsY, if_neg hsZ] at hq
-    convert hq using 1 <;> ring_nf
+    convert hq using 1; ring_nf
   · refine ⟨profileRestDivisorLog s r Y - profileRestDivisorLog s r Z,
       fun q hq ↦ ?_⟩
     rw [profileOrderedDivisorLog_split, profileOrderedDivisorLog_split,
@@ -586,7 +585,7 @@ private theorem fixed_rest_lastDiff_mass_le
                 ((Equiv.funSplitAt s ℕ).symm (q, r)) YZ.2| ≤ Real.log 2),
             (1 : ℝ) / q := by
       simp only [profileCloseLastDiffPairs, Finset.card_filter,
-        Nat.cast_sum, Nat.cast_one, mul_one, Finset.sum_filter]
+        Nat.cast_sum, Finset.sum_filter]
       rw [Finset.sum_comm]
       apply Finset.sum_congr rfl
       intro q hq

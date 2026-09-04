@@ -108,7 +108,7 @@ theorem squarefull_squarefullComponent (n : ℕ) :
     (hp.dvd_iff_one_le_factorization hne).mp hpdvd
   have hnotone : n.factorization p ≠ 1 := by
     intro h
-    simpa [factorization_squarefullComponent, Finsupp.filter_apply, h] using hone
+    simp [factorization_squarefullComponent, h] at hone
   have htwo : 2 ≤ n.factorization p := by
     have hone' : 1 ≤ n.factorization p := by
       simpa [factorization_squarefullComponent, Finsupp.filter_apply, hnotone] using hone
@@ -127,8 +127,8 @@ theorem coprime_components (n : ℕ) :
   have hfullfac : 1 ≤ (squarefullComponent n).factorization p :=
     (hp.dvd_iff_one_le_factorization hfullne).mp hpsfull
   by_cases hpn : n.factorization p = 1
-  · simpa [factorization_squarefullComponent, Finsupp.filter_apply, hpn] using hfullfac
-  · simpa [factorization_squarefreeComponent, Finsupp.filter_apply, hpn] using hsfac
+  · simp [factorization_squarefullComponent, hpn] at hfullfac
+  · simp [factorization_squarefreeComponent, hpn] at hsfac
 
 /-- A divisor of a product of the two canonical coprime components splits as
 the product of one divisor of each component.  The concrete factors are gcds,

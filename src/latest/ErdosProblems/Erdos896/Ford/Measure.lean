@@ -75,8 +75,7 @@ theorem L_le_card_divisors_mul {a : ℕ} {σ : ℝ} (hσ : 0 ≤ σ) :
           (Set.Ico (-σ + Real.log (d : ℕ)) (Real.log (d : ℕ))) = σ
         rw [Real.volume_real_Ico_of_le]
         · ring
-        ·
-          linarith
+        · linarith
       simp_rw [hinterval]
       simp
 
@@ -135,8 +134,7 @@ theorem L_mul_le_card_divisors {a b : ℕ} (ha : a ≠ 0) (hb : b ≠ 0) (σ : �
     (fun x : ℝ ↦ -Real.log (d : ℕ) + x) ⁻¹' logDivisorUnion a σ
   have hTmeasure (d : ↑b.divisors) :
       volume (T d) = volume (logDivisorUnion a σ) := by
-    simpa [T] using
-      (measure_preimage_add volume (-Real.log (d : ℕ)) (logDivisorUnion a σ))
+    simp [T]
   have hTfinite : volume (⋃ d, T d) ≠ ∞ := by
     refine ne_of_lt <| (measure_iUnion_fintype_le volume T).trans_lt ?_
     rw [ENNReal.sum_lt_top]

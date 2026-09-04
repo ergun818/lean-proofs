@@ -485,7 +485,7 @@ private lemma geometric_tail_le_inv_succ (v : ℕ) :
     simp only [pow_one]
     calc
       (v + 1 : ℝ) * (((9 / 10 : ℝ) ^ 10) ^ v * (9 / 10 : ℝ)) ≤
-          (2 : ℝ) ^ v * (((1 : ℝ) / 2) ^ v * 1) := by gcongr <;> norm_num
+          (2 : ℝ) ^ v * (((1 : ℝ) / 2) ^ v * 1) := by gcongr; norm_num
       _ = 1 := by
         rw [mul_one, ← mul_pow]
         norm_num

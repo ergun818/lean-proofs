@@ -50,13 +50,13 @@ theorem measurableSet_fordFirstCrossingCell
         measurableSet_le measurable_const (measurable_pi_apply i)
       convert hi using 1
       ext x
-      simp only [mem_setOf_eq]
+      simp only [mem_ofPred_eq]
       exact ⟨fun h ↦ h hip, fun h _ ↦ h⟩
     · have hi : MeasurableSet (Set.univ : Set (Fin k → ℝ)) :=
         MeasurableSet.univ
       convert hi using 1
       ext x
-      simp only [mem_setOf_eq, mem_univ, iff_true]
+      simp only [mem_ofPred_eq, mem_univ, iff_true]
       exact fun h ↦ (hip h).elim
   have hlast : MeasurableSet
       {x : Fin k → ℝ | x p < fordBarrier u v p.val} :=
@@ -67,7 +67,7 @@ theorem measurableSet_fordFirstCrossingCell
           i < p → fordBarrier u v i.val ≤ x i})) ∩
         {x : Fin k → ℝ | x p < fordBarrier u v p.val} by
       ext x
-      simp only [fordFirstCrossingCell, mem_setOf_eq, mem_inter_iff,
+      simp only [fordFirstCrossingCell, mem_ofPred_eq, mem_inter_iff,
         mem_iInter]
       tauto]
   exact ((measurableSet_orderedSimplex k 0 b).inter hprev).inter hlast
@@ -130,7 +130,7 @@ theorem fordBadSet_eq_diff_orderQSet (k : ℕ) (u v : ℝ) :
   classical
   ext x
   rw [mem_fordBadSet_iff]
-  simp only [mem_diff, orderQSet, mem_setOf_eq]
+  simp only [mem_sdiff, orderQSet, mem_ofPred_eq]
   constructor
   · rintro ⟨hord, i, hi⟩
     refine ⟨hord, ?_⟩
@@ -139,7 +139,7 @@ theorem fordBadSet_eq_diff_orderQSet (k : ℕ) (u v : ℝ) :
     exact (not_lt_of_ge (by simpa [fordBarrier] using this)) hi
   · rintro ⟨hord, hq⟩
     refine ⟨hord, ?_⟩
-    push_neg at hq
+    push Not at hq
     rcases hq hord with ⟨i, hi⟩
     exact ⟨i, by simpa [fordBarrier] using hi⟩
 
@@ -196,14 +196,14 @@ theorem orderQ_le_one_sub_of_truncation
   have hdiff : volume (fordBadSet k u v 1) =
       volume (orderedSimplex k 0 1) - volume (orderQSet k u v) := by
     rw [fordBadSet_eq_diff_orderQSet]
-    exact measure_diff (orderQSet_subset_orderedSimplex k u v)
+    exact measure_sdiff (orderQSet_subset_orderedSimplex k u v)
       (measurableSet_orderQSet k u v).nullMeasurableSet hqfinite
   have hfinite : volume (fordBadSet k u v 1) ≠ ⊤ := by
     apply ne_of_lt
     calc
       volume (fordBadSet k u v 1) ≤ volume (orderedSimplex k 0 1) := by
         rw [fordBadSet_eq_diff_orderQSet]
-        exact measure_mono diff_subset
+        exact measure_mono sdiff_subset
       _ < ⊤ := by
         rw [volume_orderedSimplex k (by norm_num)]
         simp
@@ -264,7 +264,7 @@ private theorem ford_log_ratio_aux {x y : ℝ}
     · rw [Even.neg_pow heven]
       have hp := pow_le_pow_left₀ hy hyx (n + 1)
       have hden : (0 : ℝ) < n + 1 := by positivity
-      convert div_nonpos_of_nonpos_of_nonneg (sub_nonpos.mpr hp) hden.le using 1 <;>
+      convert div_nonpos_of_nonpos_of_nonneg (sub_nonpos.mpr hp) hden.le using 1 ;
         ring
     · have hodd : Odd (n + 1) := (Nat.not_even_iff_odd).mp heven
       rw [Odd.neg_pow hodd]
@@ -310,7 +310,7 @@ theorem ford_ratio_pow_le_exp_neg {n : ℕ} {w lam : ℝ}
           ((n : ℝ) + w + lam)) ≤ (-2 * w - 2) / (n : ℝ) := by
       rw [hrewrite, Real.log_div (by linarith : 1 - x ≠ 0)
         (by positivity : 1 + y ≠ 0)]
-      convert hlog using 1 <;> dsimp [x, y] <;> field_simp <;> ring
+      convert hlog using 1; dsimp [x, y]; field_simp; ring
     rw [← Real.exp_log hratioPos, ← Real.exp_nat_mul]
     apply Real.exp_le_exp.mpr
     calc
@@ -385,10 +385,10 @@ theorem fordFirstCrossingCell_eq_splitOrderedCell
     fordFirstCrossingCell (m + n + 1) u v c ⟨m, by omega⟩ =
       splitOrderedCell m n c (fordPrefixSection m u v c) := by
   ext x
-  simp only [fordFirstCrossingCell, mem_setOf_eq, splitOrderedCell, mem_preimage,
+  simp only [fordFirstCrossingCell, mem_ofPred_eq, splitOrderedCell, mem_preimage,
     orderedSuffixCell, fordPrefixSection]
   simp only [splitAtFubini_pivot, splitAtFubini_prefix,
-    splitAtFubini_suffix, orderedSimplex, mem_setOf_eq]
+    splitAtFubini_suffix, orderedSimplex, mem_ofPred_eq]
   constructor
   · intro hx
     refine ⟨?_, ?_, ?_⟩
@@ -586,7 +586,7 @@ theorem ford_suffix_section_comparison {m n : ℕ} {u v w c : ℝ}
   have hprod : Real.exp (2 * w + 2) * (c - y) ^ n ≤ (1 - y) ^ n := by
     have hcancel : Real.exp (2 * w + 2) * Real.exp (-2 * w - 2) = 1 := by
       rw [← Real.exp_add]
-      convert Real.exp_zero using 1 <;> ring_nf
+      convert Real.exp_zero using 1; ring_nf
     have hm : Real.exp (2 * w + 2) * ((c - y) / (1 - y)) ^ n ≤
         Real.exp (2 * w + 2) * Real.exp (-2 * w - 2) :=
       mul_le_mul_of_nonneg_left hp (Real.exp_pos (2 * w + 2)).le
@@ -781,7 +781,7 @@ theorem orderQ_le_of_ford_hard_estimate {k : ℕ} {u v w : ℝ}
   have hqx : orderQ k u v ≤ X := by
     have hq' : orderQ k u v ≤
         1 - Real.exp a * (1 - a / v) ^ k := by
-      convert hq using 1 <;> dsimp [a] <;> ring_nf
+      convert hq using 1; dsimp [a]; ring_nf
     exact hq'.trans (by linarith [hprod])
   have hX : X ≤ 128 * (u + 1) * (w + 1) ^ 2 / (k : ℝ) := by
     dsimp [X]

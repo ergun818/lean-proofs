@@ -271,7 +271,7 @@ theorem nearby_logUnionPrimes_subset_realRatioTwoPrimes
       calc
         Real.exp (u - t + Real.log 2 / 2) =
             Real.exp ((u - t - Real.log 2 / 2) + Real.log 2) := by
-              congr 1 <;> ring
+              congr 1; ring
         _ = Real.exp (u - t - Real.log 2 / 2) * Real.exp (Real.log 2) :=
           Real.exp_add _ _
         _ = 2 * Real.exp (u - t - Real.log 2 / 2) := by
@@ -318,7 +318,8 @@ theorem integrable_primeLogKernel (a p : ℕ) (u : ℝ) :
           simp [primeLogKernel, Set.indicator]]
     have hne : volume (centeredLogNeighborhood (u - Real.log p)) ≠ ⊤ := by
       simp [centeredLogNeighborhood]
-    exact (integrableOn_const (s := centeredLogNeighborhood (u - Real.log p)) hne).integrable_indicator
+    exact (integrableOn_const
+      (s := centeredLogNeighborhood (u - Real.log p)) hne).integrable_indicator
       (measurableSet_centeredLogNeighborhood _)
   exact hglobal.mono_measure volume.restrict_le_self
 
@@ -358,7 +359,7 @@ theorem sum_inv_logUnionPrimes_le
   have hsum_integrable :
       Integrable (fun t ↦ ∑ p ∈ logUnionPrimes T Q a u, primeLogKernel u p t)
         (volume.restrict U) :=
-    integrable_finset_sum _ hkernel
+    integrable_finsetSum _ hkernel
   have hconst_integrable :
       Integrable (fun _ : ℝ ↦ K) (volume.restrict U) := by
     change IntegrableOn (fun _ : ℝ ↦ K) U volume
@@ -387,7 +388,7 @@ theorem sum_inv_logUnionPrimes_le
           (half_log_two_le_volume_inter_centeredLogNeighborhood hpdata.2.2.2)
           (by positivity)
       _ = ∫ t in U, ∑ p ∈ logUnionPrimes T Q a u, primeLogKernel u p t := by
-        exact (integral_finset_sum _ hkernel).symm
+        exact (integral_finsetSum _ hkernel).symm
   have hupper :
       (∫ t in U, ∑ p ∈ logUnionPrimes T Q a u, primeLogKernel u p t) ≤
         L a (Real.log 2) * K := by

@@ -465,7 +465,7 @@ private theorem weighted_log_cube_eq_triple (P : Finset ℕ)
           ∑ s ∈ subsetContaining P {p, q, r}, fordWeight s := by
       unfold subsetContaining
       simp only [Finset.sum_filter]
-      simp [pow_three, Finset.mul_sum, Finset.sum_mul]
+      simp only [pow_three, Finset.mul_sum, Finset.sum_mul, mul_ite, mul_zero]
       let F : ℕ → ℕ → ℕ → Finset ℕ → ℝ := fun p q r s ↦
         if {p, q, r} ⊆ s then
           Real.log p * Real.log q * Real.log r * fordWeight s else 0

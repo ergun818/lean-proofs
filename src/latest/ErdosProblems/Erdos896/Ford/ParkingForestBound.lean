@@ -74,7 +74,7 @@ private theorem card_filter_eq_of_firstFailure
   · have hprev := hf.1 (j - 1) (by omega)
     have hprev' : j ≤
         (Finset.univ.filter fun i ↦ (f i).val < W + (j - 1)).card := by
-      convert hprev using 1 <;> omega
+      convert hprev using 1; omega
     have hsub :
         (Finset.univ.filter fun i ↦ (f i).val < W + (j - 1)) ⊆
           Finset.univ.filter fun i ↦ (f i).val < W + j := by
@@ -107,7 +107,7 @@ private abbrev firstFailureCode (k U W j : ℕ) :=
     (Fin (k - j) → Fin (k - U - j))
 
 private theorem card_filter_orderIsoOfFin
-    {α : Type*} [Fintype α] [LinearOrder α]
+    {α : Type*} [LinearOrder α]
     (S : Finset α) {n : ℕ} (hS : S.card = n) (p : α → Prop)
     [DecidablePred p] :
     ((Finset.univ : Finset (Fin n)).filter fun i ↦
@@ -222,11 +222,11 @@ private theorem decodeFirstFailure_right_apply
       simpa only [Finset.mem_compl] using (e q).property
     exact False.elim (hnot hi)
   · rename_i hi
-    have hidx : e.symm ⟨(e q).val, by simpa using (e q).property⟩ = q := by
+    have hidx : e.symm ⟨(e q).val, by simp⟩ = q := by
       apply e.injective
       rw [e.apply_symm_apply]
     change W + j + (c.2.2
-      (e.symm ⟨(e q).val, by simpa using (e q).property⟩)).val =
+      (e.symm ⟨(e q).val, by simp⟩)).val =
         W + j + (c.2.2 q).val
     rw [hidx]
 
@@ -278,7 +278,7 @@ private theorem filter_decodeFirstFailure_lt_before
           (Finset.orderIsoOfFin c.1.1 c.1.2 q).val).val =
         (c.2.1.1 q).val := by
     let e := Finset.orderIsoOfFin c.1.1 c.1.2
-    simp only [decodeFirstFailure, e]
+    simp only [decodeFirstFailure]
     split
     · rename_i hi
       have hsub : (⟨(e q).val, hi⟩ : {i // i ∈ c.1.1}) = e q :=
@@ -364,7 +364,7 @@ private def encodeFirstFailure
         simp only [L, S, Finset.mem_filter, Finset.mem_univ, true_and] at hi ⊢
         omega
       have hLcard : j ≤ L.card := by
-        convert hf.1 (j - 1) (by omega) using 1 <;> omega
+        convert hf.1 (j - 1) (by omega) using 1; omega
       have hSL : S ⊆ L := by
         exact (Finset.eq_of_subset_of_card_le hLS (by omega)).symm.subset
       have hi : (eL q).val ∈ L := hSL (eL q).property
@@ -527,7 +527,7 @@ private theorem not_confinedParkingGood_iff_exists_firstFailure
   constructor
   · intro hf
     unfold confinedParkingGood at hf
-    push_neg at hf
+    push Not at hf
     let j := Nat.find hf
     have hj := Nat.find_spec hf
     refine ⟨j, hj.1, ?_, hj.2⟩
@@ -559,7 +559,7 @@ private theorem sigmaSubtype_ext
   exact Subtype.ext hval
 
 private noncomputable def badConfinedParkingWordEquiv
-    {k U W : ℕ} (hUk : U ≤ k) :
+    {k U W : ℕ} (_hUk : U ≤ k) :
     badConfinedParkingWord k U W ≃ indexedFirstFailureWord k U W where
   toFun f := by
     let hex :=
@@ -648,8 +648,7 @@ theorem card_ordinaryParkingGood_eq_parkingAbelP (k W : ℕ) :
         simp only [parkingAbelP_zero]
         rw [Finset.filter_eq_self.mpr]
         · simp
-        · intro f _hf
-          intro s hs
+        · intro f _hf s hs
           omega
       · have hk : 1 ≤ k := by omega
         have hrec := card_confinedParkingGood_eq_remainder

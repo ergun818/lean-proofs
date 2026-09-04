@@ -267,7 +267,7 @@ private theorem orderQ_zero (u v : ℝ) : orderQ 0 u v = 1 := by
 private theorem orderQ_one_one_one : orderQ 1 1 1 = 1 := by
   have hset : orderQSet 1 1 1 = orderedSimplex 1 0 1 := by
     ext x
-    simp only [orderQSet, mem_setOf_eq]
+    simp only [orderQSet, mem_ofPred_eq]
     constructor
     · exact fun hx ↦ hx.1
     · intro hx
@@ -329,7 +329,6 @@ private theorem orderQ_bound_succ_of_bound
             have hn0 : (0 : ℝ) ≤ n := by positivity
             nlinarith
           have := mul_le_mul_of_nonneg_right hcoef (hA.trans' (by norm_num))
-          norm_num at this ⊢
           nlinarith
         _ = 2 * (C + 1) * (a + 1) *
             (a + b - (n + 1 : ℕ) + 1) ^ 2 / (n + 2 : ℕ) := by
@@ -354,7 +353,7 @@ private theorem orderQ_prefix_cluster_bound
     ((l.1 : ℝ) + 2 - u) (Nat.cast_nonneg u) (by rw [hslack]; positivity)
   rw [hslack] at h
   norm_num at h ⊢
-  convert h using 1 <;> ring
+  convert h using 1; ring
 
 private theorem orderQ_suffix_cluster_bound
     {C : ℝ} (hC : 0 < C)
@@ -396,13 +395,13 @@ private theorem mem_affineOrderQSet_iff {k : ℕ} {u v a t : ℝ}
     funext i
     simp only [MeasurableEquiv.coe_addLeft, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
     field_simp
-    <;> ring
+    ring
   · intro hx
     refine ⟨t • (fun i ↦ (x i - a) / t), ⟨_, hx, rfl⟩, ?_⟩
     funext i
     simp only [MeasurableEquiv.coe_addLeft, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
     field_simp
-    <;> ring
+    ring
 
 /-! ## The cluster in Lemma 4.3 -/
 
@@ -445,7 +444,7 @@ private theorem measurableSet_clusterSlice (g k s u v : ℕ) (l : Fin k) :
     MeasurableSet (clusterSlice g k s u v l) := by
   unfold clusterSlice
   apply (measurableSet_orderQSet k u v).inter
-  show MeasurableSet ({x : Fin k → ℝ |
+  change MeasurableSet ({x : Fin k → ℝ |
     (((l.1 : ℝ) + 1 - u) / v ≤ x l) ∧
     (x l ≤ ((l.1 : ℝ) + 2 - u) / v) ∧
     (((l.1 : ℝ) + 1 - u - s) / v ≤
@@ -663,12 +662,12 @@ private theorem clusterWitnessVolume_le_raw
   have hpre'' : orderQ (l.1 - g) u ((l.1 : ℝ) + 1 - u + 1) ≤
       D * (u + 1) * (16 * (g : ℝ) ^ 2) / (l.1 - g + 1 : ℕ) := by
     dsimp only [n₁, W₁] at hpre'
-    convert hpre' using 1 <;> ring_nf
+    convert hpre' using 1; ring_nf
   have hsuf'' : orderQ (k - l.1 - 1) 0
       ((u : ℝ) + v - ((l.1 : ℝ) + 1)) ≤
       D * (4 * w ^ 2) / (k - l.1 - 1 + 1 : ℕ) := by
     dsimp only [n₄, W₄] at hsuf'
-    convert hsuf' using 1 <;> norm_num
+    convert hsuf' using 1; norm_num
   have hdim : n₁ + g + 1 + n₄ = k := by
     dsimp only [n₁, n₄]
     omega
@@ -680,7 +679,6 @@ private theorem clusterWitnessVolume_le_raw
   have hscalePre : 0 ≤ ((l.1 : ℝ) + 1 - u + 1) / v := by
     apply div_nonneg
     · dsimp only [W₁] at hW₁
-      norm_num only [Nat.cast_add, Nat.cast_one] at hW₁ ⊢
       linarith
     · exact hvR.le
   have hscaleSuf : 0 ≤ ((u : ℝ) + v - ((l.1 : ℝ) + 1)) / v := by
@@ -1045,7 +1043,6 @@ private theorem fixedCluster_subset_clusterBlockEnvelope
           apply (le_div_iff₀ hvR).2
           have hm' := mul_le_mul_of_nonneg_right hm hvR.le
           have hl' := (le_div_iff₀ hvR).mp hx.2.2.1
-          norm_num only [Nat.cast_add, Nat.cast_one] at hl' ⊢
           nlinarith
       · intro i j hij
         apply (div_le_div_iff_of_pos_right ht₂).2
@@ -1074,7 +1071,6 @@ private theorem fixedCluster_subset_clusterBlockEnvelope
           rw [← add_div]
           apply (le_div_iff₀ hvR).2
           have hl' := (le_div_iff₀ hvR).mp hx.2.2.1
-          norm_num only [Nat.cast_add, Nat.cast_one] at hl' ⊢
           nlinarith
       · intro i j hij
         exact le_rfl
@@ -1218,7 +1214,7 @@ theorem volume_clusterRegion_le_sum_witnessVolumes
         _ = clusterWitnessVolume g k s u v l := by
           rw [volume_clusterBlockEnvelope g k s u v l hgl hv hul huvk]
           rfl
-    · simp only [hul, if_neg]
+    · simp only [hul]
       rw [volume_clusterSlice_zero_of_lt hv (Nat.lt_of_not_ge hul)]
       simp
   · simp [hgl]
@@ -1259,7 +1255,7 @@ theorem clusterRegion_volume_bound_of_orderQ
   have hvol' : (volume (clusterRegion g k s u v)).toReal ≤
       ∑ l ∈ Ls, clusterWitnessVolume g k s u v l := by
     refine hvol.trans_eq ?_
-    simp only [Ls, Finset.sum_filter, Finset.mem_univ, true_and]
+    simp only [Ls, Finset.sum_filter]
     apply Finset.sum_congr rfl
     intro l hl
     by_cases hgl : g ≤ l.1 <;> by_cases hul : u ≤ l.1 + 1 <;>
@@ -1353,7 +1349,7 @@ private theorem factorial_power_ratio_bound
         (2 * ((k : ℝ) ^ g * ((k + 1 - g).factorial : ℝ))) := by
       apply mul_le_mul_of_nonneg_left _ (by positivity)
       convert mul_le_mul_of_nonneg_left hfac
-        (show (0 : ℝ) ≤ 2 by norm_num) using 1 <;> ring
+        (show (0 : ℝ) ≤ 2 by norm_num) using 1; ring
     _ ≤ (v : ℝ) ^ (k - g) *
         (2 * ((10 : ℝ) ^ g * (v : ℝ) ^ g *
           ((k + 1 - g).factorial : ℝ))) := by
@@ -1450,7 +1446,7 @@ theorem fordT_orderQ_or_defectBucket
       intro i
       norm_num only [Nat.cast_add, Nat.cast_one] at h ⊢
       exact h i
-    push_neg at hbarrier
+    push Not at hbarrier
     obtain ⟨j, hj⟩ := hbarrier
     obtain ⟨l, -, hl⟩ := Finset.exists_min_image
       (Finset.univ : Finset (Fin k)) (fordDefect v γ x) ⟨j, by simp⟩
@@ -1504,12 +1500,12 @@ membership in the clustered region used by Lemma 4.3.  Its cluster width is
 `2^m`; enlarging the exact slack `2m-h` to `2m` gives Ford's convenient
 summable majorant. -/
 theorem defectBucket_extraction_mem_clusterRegion
-    {k v γ h m : ℕ} (hv : 0 < v) (hh : 6 ≤ h) {x : Fin k → ℝ}
+    {k v γ h m : ℕ} (hv : 0 < v) (_hh : 6 ≤ h) {x : Fin k → ℝ}
     (hx : x ∈ fordT k v γ) {l : Fin k}
     (hmin : ∀ i : Fin k, fordDefect v γ x l ≤ fordDefect v γ x i)
     (hlower : -((h : ℝ) / v) ≤ fordDefect v γ x l)
     (hupper : fordDefect v γ x l < (1 - (h : ℝ)) / v)
-    (hmh : h - 3 ≤ m) (hml : 2 ^ m ≤ l.1)
+    (_hmh : h - 3 ≤ m) (hml : 2 ^ m ≤ l.1)
     (hextract : (((l.1 : ℝ) + 1 - γ - 2 * m) / v) ≤
       x ⟨l.1 - 2 ^ m, (Nat.sub_le _ _).trans_lt l.isLt⟩) :
     x ∈ clusterRegion (2 ^ m) k (2 * m) (γ + h) v := by
@@ -1709,7 +1705,7 @@ theorem measurableSet_orderStatisticRegion (k v γ : ℕ) :
     MeasurableSet (orderStatisticRegion k v γ) := by
   unfold orderStatisticRegion
   apply (measurableSet_orderedSimplex k 0 1).inter
-  show MeasurableSet ({x : Fin k → ℝ |
+  change MeasurableSet ({x : Fin k → ℝ |
     ∀ j : Fin k, (2 : ℝ) ^ ((j.1 + 1 : ℝ) - γ) ≤ prefixExpSum v x j} : Set _)
   rw [show {x : Fin k → ℝ |
       ∀ j : Fin k, (2 : ℝ) ^ ((j.1 + 1 : ℝ) - γ) ≤ prefixExpSum v x j} =
@@ -1760,7 +1756,7 @@ noncomputable def fordTVolumeScale (k v γ : ℕ) : ℝ :=
   orderStatisticY k v γ /
     (orderStatisticDoubleExp k v γ * ((k + 1).factorial : ℝ))
 
-theorem orderStatisticY_pos {k v γ : ℕ} (hk : 1 ≤ k) :
+theorem orderStatisticY_pos {k v γ : ℕ} (_hk : 1 ≤ k) :
     0 < orderStatisticY k v γ := by
   by_cases h : (γ : ℤ) + 5 ≤ orderStatisticExcess k v
   · simp only [orderStatisticY, h, if_pos]
@@ -1769,7 +1765,7 @@ theorem orderStatisticY_pos {k v γ : ℕ} (hk : 1 ≤ k) :
     have hdR : (0 : ℝ) < (((γ : ℤ) + 5 - orderStatisticExcess k v : ℤ) : ℝ) := by
       exact_mod_cast hd
     have hγ : (0 : ℝ) < (γ : ℝ) + 1 := by positivity
-    simp only [orderStatisticY, h, if_neg]
+    simp only [orderStatisticY, h]
     exact mul_pos (sq_pos_of_pos hdR) hγ
 
 theorem fordTVolumeScale_pos {k v γ : ℕ} (hk : 1 ≤ k) :
@@ -1813,7 +1809,7 @@ theorem fordT_subset_goodPart_union_clusterCover
       (r := orderStatisticR k v γ) hv hx with hgood | hbad
   · apply Or.inl
     refine ⟨hx, ?_⟩
-    convert hgood using 1 <;> norm_num
+    convert hgood using 1; norm_num
   · rcases hbad with ⟨h, hrh, l, hmin, hlower, hupper⟩
     have hr5 : 5 ≤ orderStatisticR k v γ := by
       unfold orderStatisticR
@@ -2146,7 +2142,7 @@ theorem cluster_factorialCoefficient_bound (m : ℕ) :
       _ ≤ clusterFactorialConstant / (256 : ℝ) ^ (2 ^ m) := by
         unfold clusterFactorialConstant
         gcongr
-        linarith
+        exact le_add_of_nonneg_right zero_le_one
 
 private lemma cluster_denominator_ratio_bound {d m : ℕ} (hdm : d ≤ m + 2) :
     (2 : ℝ) ^ (2 ^ d) / (256 : ℝ) ^ (2 ^ m) ≤
@@ -2210,9 +2206,10 @@ private lemma clusterGeomConstant_pos : 0 < clusterGeomConstant := by
   positivity
 
 private lemma cluster_sum_reindexed_le_tsum
-    {α : Type*} [DecidableEq α] (s : Finset α) (f : α → ℕ) (g : ℕ → ℝ)
+    {α : Type*} (s : Finset α) (f : α → ℕ) (g : ℕ → ℝ)
     (hf : Set.InjOn f s) (hg : Summable g) (hg0 : ∀ n, 0 ≤ g n) :
     ∑ k ∈ s, g (f k) ≤ ∑' n, g n := by
+  classical
   let t := s.image f
   have hsum : ∑ k ∈ s, g (f k) = ∑ n ∈ t, g n := by
     apply Finset.sum_bij (fun k _ ↦ f k)
@@ -2416,7 +2413,7 @@ private lemma clusterCoverScaleSum_large
           else 0) =
           ∑ m ∈ M,
             clusterVolumeScale (2 ^ m.1) k (2 * m.1) (γ + h.1) v := by
-        simp only [M, Finset.sum_filter, Finset.mem_univ, true_and]
+        simp only [M, Finset.sum_filter]
       _ ≤ ∑ m ∈ M,
           T * clusterGeomMajorant (h.1 - (d + 1)) *
             ((1 : ℝ) / 2) ^ (m.1 - (h.1 - 3)) := by
@@ -2461,7 +2458,7 @@ private lemma clusterCoverScaleSum_large
             · exact hinner h hdh
             · exact le_rfl
           _ = _ := by
-            simp only [H, Finset.sum_filter, Finset.mem_univ, true_and]
+            simp only [H, Finset.sum_filter]
     _ = T * 2 * (∑ h ∈ H, clusterGeomMajorant (h.1 - (d + 1))) := by
       rw [Finset.mul_sum]
       apply Finset.sum_congr rfl
@@ -2606,7 +2603,7 @@ private lemma clusterVolumeScale_small_pointwise
       _ = (a : ℝ) ^ 2 * ((γ : ℝ) + 1) * ((e : ℝ) + 7) *
           ((e : ℝ) + 2) ^ 2 := by ring
       _ ≤ (a : ℝ) ^ 2 * ((γ : ℝ) + 1) * ((e : ℝ) + 7) *
-          ((e : ℝ) + 7) ^ 2 := by gcongr <;> norm_num
+          ((e : ℝ) + 7) ^ 2 := by gcongr; norm_num
       _ = ((a : ℝ) ^ 2 * ((γ : ℝ) + 1)) * ((e : ℝ) + 7) ^ 3 := by ring
   have hratio := cluster_small_denominator_ratio
     (k := k) (v := v) (γ := γ) (e := e) (t := t) hsmall
@@ -2708,7 +2705,7 @@ private lemma clusterCoverScaleSum_small
           else 0) =
           ∑ m ∈ M,
             clusterVolumeScale (2 ^ m.1) k (2 * m.1) (γ + h.1) v := by
-        simp only [M, Finset.sum_filter, Finset.mem_univ, true_and]
+        simp only [M, Finset.sum_filter]
       _ ≤ ∑ m ∈ M,
           T * clusterGeomMajorant (h.1 - 6) *
             ((1 : ℝ) / 2) ^ (m.1 - (h.1 - 3)) := by
@@ -2753,7 +2750,7 @@ private lemma clusterCoverScaleSum_small
             · exact hinner h hh6
             · exact le_rfl
           _ = _ := by
-            simp only [H, Finset.sum_filter, Finset.mem_univ, true_and]
+            simp only [H, Finset.sum_filter]
     _ = T * 2 * (∑ h ∈ H, clusterGeomMajorant (h.1 - 6)) := by
       rw [Finset.mul_sum]
       apply Finset.sum_congr rfl
@@ -2778,7 +2775,7 @@ private lemma clusterCoverScaleSum_small
       nlinarith
 
 /-- The complete finite cover sum, at the scale in Ford's Lemma 4.4. -/
-theorem clusterCoverScaleSum_bound {k v γ : ℕ} (hk : 1 ≤ k) :
+theorem clusterCoverScaleSum_bound {k v γ : ℕ} (_hk : 1 ≤ k) :
     clusterCoverScaleSum k v γ (orderStatisticR k v γ) ≤
       clusterFactorialConstant * clusterGeomConstant * fordTVolumeScale k v γ := by
   by_cases hlarge : v + γ + 5 ≤ k
@@ -2804,10 +2801,10 @@ theorem clusterCoverScaleSum_bound {k v γ : ℕ} (hk : 1 ≤ k) :
       rw [Real.rpow_natCast]
     unfold fordTVolumeScale
     rw [hYeq, hDeq]
-    convert h using 1 <;> field_simp
+    convert h using 1; field_simp
   · have h := clusterCoverScaleSum_small (by omega : k < v + γ + 5)
     unfold fordTVolumeScale
-    convert h using 1 <;> field_simp
+    convert h using 1; field_simp
 
 private theorem fordClusterCover_volume_bound_of_orderQ
     {C : ℝ} (hC : 0 < C)

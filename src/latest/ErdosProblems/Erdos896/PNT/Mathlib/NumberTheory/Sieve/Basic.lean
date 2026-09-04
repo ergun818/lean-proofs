@@ -241,7 +241,6 @@ theorem lambdaSquared_mainSum_eq_quad_form (w : ℕ → ℝ) :
     rw [sum_mul, sum_congr rfl]; intro d1 _
     rw [sum_mul, sum_congr rfl]; intro d2 _
     rw [ite_zero_mul]
-
   trans (∑ d ∈ divisors P, ∑ d1 ∈ divisors P, ∑ d2 ∈ divisors P,
           if d = d1.lcm d2 then w d1 * w d2 * ν d else 0)
   · apply conv_lambda_sq_larger_sum

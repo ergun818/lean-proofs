@@ -288,7 +288,7 @@ theorem eventually_lowerAnalyticPrimeCore_harmonic_lower :
     have : Real.log (N : ℝ) ≤ 4096 / 24 * (m : ℝ) * Real.log 2 := by
       calc
         Real.log (N : ℝ) ≤ 100 * (m : ℝ) * Real.log 2 := hratio
-        _ ≤ 4096 / 24 * (m : ℝ) * Real.log 2 := by gcongr <;> norm_num
+        _ ≤ 4096 / 24 * (m : ℝ) * Real.log 2 := by gcongr; norm_num
     calc
       (1 / 4096 : ℝ) ≤
           ((m : ℝ) * Real.log 2) / (24 * Real.log (N : ℝ)) := by
@@ -426,7 +426,7 @@ theorem log_X_le_nine_log_of_quotient_band
   have hNypos : 0 < N * y := Nat.mul_pos hNpos hypos
   have hlogmono : Real.log (X N p) ≤ Real.log (2 * (N * y) : ℕ) := by
     by_cases hX0 : X N p = 0
-    · simp only [Nat.cast_mul, Nat.cast_ofNat]
+    · simp only [hX0, Nat.cast_zero, Real.log_zero]
       have hone : 1 ≤ 2 * (N * y) :=
         Nat.one_le_iff_ne_zero.mpr
           (Nat.mul_ne_zero (by omega) (Nat.mul_ne_zero hNpos.ne' hypos.ne'))
@@ -856,7 +856,7 @@ theorem half_unfloored_X_le_X {N p : ℕ} (hp : 0 < p)
       have hNN : N ≤ N * N := Nat.le_mul_of_pos_right N hNpos
       exact Nat.one_le_iff_ne_zero.mpr (Nat.ne_of_gt
         (Nat.div_pos (hN.trans hNN) (by positivity))))
-  convert hhalf using 1 <;> push_cast <;> ring
+  convert hhalf using 1; push_cast; ring
 
 /-- The generic global aggregation.  Its only input is the frozen
 per-`y` isolated-family theorem; all prime-band, endpoint, and scale

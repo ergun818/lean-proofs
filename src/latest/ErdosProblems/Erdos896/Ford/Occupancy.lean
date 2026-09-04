@@ -84,7 +84,7 @@ theorem exists_rotate_belowDiagonal (l : List ℕ) (hl : l.sum = l.length)
     rw [List.take_take, min_eq_left htr]
     have hscore := hrmax t (Finset.mem_range.mpr ht)
     have hsplit : (l.take r).sum + (l.drop r).sum = l.sum := by
-      simpa using congrArg List.sum (l.take_append_drop r)
+      simp
     simp only [cutScore] at hscore
     omega
 

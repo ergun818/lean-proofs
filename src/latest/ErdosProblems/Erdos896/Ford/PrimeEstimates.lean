@@ -278,7 +278,7 @@ private lemma prime_lcm_triple_le
   · subst q
     by_cases hpr : p = r
     · subst r
-      simp only [Nat.lcm_self, if_pos rfl, true_and]
+      simp only [Nat.lcm_self, true_and]
       have hpR : (0 : ℝ) < p := by exact_mod_cast hp.pos
       have hlog : 0 ≤ Real.log p := Real.log_nonneg (by exact_mod_cast hp.one_le)
       ring_nf
@@ -286,7 +286,7 @@ private lemma prime_lcm_triple_le
       positivity
     · have hcop : p.Coprime r := (Nat.coprime_primes hp hr).2 hpr
       rw [hcop.lcm_eq_mul, Nat.lcm_eq_right (Nat.dvd_mul_right p r)]
-      simp only [if_pos rfl, if_neg hpr, hpr, and_false]
+      simp only [hpr, and_false]
       have hpR : (p : ℝ) ≠ 0 := by exact_mod_cast hp.ne_zero
       have hrR : (r : ℝ) ≠ 0 := by exact_mod_cast hr.ne_zero
       have hlogp : 0 ≤ Real.log p := Real.log_nonneg (by exact_mod_cast hp.one_le)
@@ -301,7 +301,7 @@ private lemma prime_lcm_triple_le
       have hcop : p.Coprime q := (Nat.coprime_primes hp hq).2 hpq
       rw [Nat.lcm_comm q p, hcop.lcm_eq_mul,
         Nat.lcm_eq_right (Nat.dvd_mul_right p q)]
-      simp only [if_neg hpq, if_neg (Ne.symm hpq), if_pos rfl, hpq, false_and]
+      simp only [if_neg (Ne.symm hpq), hpq, false_and]
       have hpR : (p : ℝ) ≠ 0 := by exact_mod_cast hp.ne_zero
       have hqR : (q : ℝ) ≠ 0 := by exact_mod_cast hq.ne_zero
       have hlogp : 0 ≤ Real.log p := Real.log_nonneg (by exact_mod_cast hp.one_le)
@@ -309,24 +309,24 @@ private lemma prime_lcm_triple_le
       push_cast
       field_simp
       ring_nf
-      simp_all only [le_add_iff_nonneg_left] <;> positivity
+      simp_all only [le_add_iff_nonneg_left]; positivity
     · by_cases hqr : q = r
       · subst r
         have hcop : p.Coprime q := (Nat.coprime_primes hp hq).2 hpq
         rw [Nat.lcm_self, hcop.lcm_eq_mul]
-        simp only [if_neg hpq, if_neg hpr, if_pos rfl, hpq, false_and]
+        simp only [hpq, false_and]
         have hpR : (p : ℝ) ≠ 0 := by exact_mod_cast hp.ne_zero
         have hqR : (q : ℝ) ≠ 0 := by exact_mod_cast hq.ne_zero
         have hlogp : 0 ≤ Real.log p := Real.log_nonneg (by exact_mod_cast hp.one_le)
         have hlogq : 0 ≤ Real.log q := Real.log_nonneg (by exact_mod_cast hq.one_le)
         push_cast
         field_simp
-        ring_nf <;> simp_all only [le_add_iff_nonneg_left] <;> positivity
+        ring_nf; simp_all only [le_add_iff_nonneg_left]; positivity
       · have hqrCop : q.Coprime r := (Nat.coprime_primes hq hr).2 hqr
         have hpqCop : p.Coprime q := (Nat.coprime_primes hp hq).2 hpq
         have hprCop : p.Coprime r := (Nat.coprime_primes hp hr).2 hpr
         rw [hqrCop.lcm_eq_mul, (hpqCop.mul_right hprCop).lcm_eq_mul]
-        simp only [if_neg hpq, if_neg hpr, if_neg hqr, hpq, false_and,
+        simp only [if_neg hpr, if_neg hqr, hpq, false_and,
           add_zero]
         have hpR : (p : ℝ) ≠ 0 := by exact_mod_cast hp.ne_zero
         have hqR : (q : ℝ) ≠ 0 := by exact_mod_cast hq.ne_zero

@@ -63,7 +63,7 @@ theorem tau_eq_zero_iff {n y z : ℕ} :
   · intro hempty d hdn hn0 hdyz
     have hdmem : d ∈ divisorWindow n y z :=
       mem_divisorWindow.mpr ⟨hdn, hn0, hdyz.1, hdyz.2⟩
-    simpa [hempty] using hdmem
+    simp [hempty] at hdmem
   · intro h
     apply Finset.eq_empty_iff_forall_notMem.mpr
     intro d hd

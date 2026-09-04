@@ -72,7 +72,6 @@ theorem moebius_inv_dvd_lower_bound (l m : ℕ) (hm : Squarefree m) :
     · have hmul : m / l * l = m := Nat.div_mul_cancel hl
       rw [if_pos rfl, smul_eq_mul, ←isMultiplicative_moebius.map_mul_of_coprime,
         hmul]
-
       apply coprime_of_squarefree_mul; rw [hmul]; exact hm
     · intro d _ hdl; rw [if_neg hdl.symm, smul_zero]
     · intro h; rw[mem_divisors] at h; exfalso; exact h ⟨hl, (Nat.ne_of_lt hm_pos).symm⟩
@@ -202,7 +201,6 @@ theorem sum_pow_cardDistinctFactors_div_self_le_log_pow {P k : ℕ} (x : ℝ) (h
     _ = (∑ d ∈ P.divisors, if ↑d ≤ x then (d : ℝ)⁻¹ else 0) ^ k := by
       rw [prod_const, Finset.card_fin]
     _ ≤ (1 + Real.log x) ^ k := ?_
-
   · apply sum_congr rfl; intro d hd
     rw [mem_divisors] at hd
     simp_rw [ite_and];
