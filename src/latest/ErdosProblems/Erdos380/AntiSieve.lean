@@ -273,7 +273,7 @@ lemma productResidueMaskCoefficient_eq_zero_of_exists_eq_zero
   obtain ⟨i, hi⟩ := hzero
   unfold productResidueMaskCoefficient
   apply Finset.prod_eq_zero (Finset.mem_univ i)
-  simpa [hi] using residueMaskCoefficient_zero (vanishing i)
+  simp [hi]
 
 /-- Exact factorization of the product-mask Fourier energy. -/
 lemma sum_norm_sq_productResidueMaskCoefficient
@@ -757,7 +757,7 @@ open scoped Function in
 /-- Pairwise coprimality makes the product frequencies distinct points of
 the circle. -/
 theorem productResidueFrequencyPoint_injective
-    {I : Type*} [Fintype I] [DecidableEq I]
+    {I : Type*} [Fintype I]
     (modulus : I → ℕ) [∀ i, NeZero (modulus i)]
     (hcoprime : Pairwise (Nat.Coprime on modulus)) :
     Function.Injective
@@ -779,7 +779,7 @@ open scoped Function in
 /-- Distinct product frequencies are separated by the reciprocal of the
 product modulus. -/
 theorem one_div_prod_le_dist_productResidueFrequencyPoint
-    {I : Type*} [Fintype I] [DecidableEq I]
+    {I : Type*} [Fintype I]
     (modulus : I → ℕ) [∀ i, NeZero (modulus i)]
     (hcoprime : Pairwise (Nat.Coprime on modulus))
     {a b : residueVectors modulus} (hab : a ≠ b) :
@@ -955,7 +955,7 @@ theorem kSubsetResidueFrequencyPoint_injective
 /-- A circle frequency supported on `S` is annihilated by the product of
 the moduli in `S`. -/
 lemma prod_nsmul_productResidueFrequencyPoint_eq_zero_of_eq_zero_outside
-    {I : Type*} [Fintype I] [DecidableEq I]
+    {I : Type*} [Fintype I]
     (modulus : I → ℕ) [∀ i, NeZero (modulus i)]
     (S : Finset I) (a : residueVectors modulus)
     (ha : ∀ i, i ∉ S → a i = 0) :
@@ -1083,7 +1083,7 @@ open scoped Function in
 a consecutive interval.  The large-sieve constant is exactly interval
 length plus the product modulus. -/
 theorem montgomery_uncertainty_Ioc_le_largeSieve
-    {I : Type*} [Fintype I] [DecidableEq I]
+    {I : Type*} [Fintype I]
     (modulus : I → ℕ) [∀ i, NeZero (modulus i)]
     (hcoprime : Pairwise (Nat.Coprime on modulus))
     (vanishing : ∀ i, Finset (ZMod (modulus i)))
@@ -1180,7 +1180,7 @@ large-sieve inequality to the resulting cross-subset frequency family.
 The hypothesis on products is the square-root cutoff in Corollary 2.8,
 written without a natural-number square root. -/
 theorem montgomery_uncertainty_powerset_Ioc_le_largeSieve
-    {I : Type*} [Fintype I] [DecidableEq I]
+    {I : Type*} [Fintype I]
     (modulus : I → ℕ) [∀ i, NeZero (modulus i)]
     (hcoprime : Pairwise (Nat.Coprime on modulus))
     (vanishing : ∀ i, Finset (ZMod (modulus i)))
@@ -1261,11 +1261,11 @@ theorem montgomery_uncertainty_powerset_Ioc_le_largeSieve
                   BoundedGaps.Maynard.unitAddCircleAddChar
                     (n • productResidueFrequencyPoint a)‖ ^ 2 := by
             apply Finset.sum_congr rfl
-            intro a _ha
-            apply congrArg fun z : ℂ => ‖z‖ ^ 2
-            apply Finset.sum_congr rfl
-            intro n _hn
-            rw [productResidueAddChar_residueVectorOfNat]
+            · intro a _ha
+              apply congrArg fun z : ℂ => ‖z‖ ^ 2
+              · apply Finset.sum_congr rfl
+                · intro n _hn
+                  rw [productResidueAddChar_residueVectorOfNat]
           _ = ∑ a : {a : residueVectors
                 (fun i : {i // i ∈ T.1} => modulus i.1) //
                 a ∈ allNonzeroResidueFrequencies},
@@ -1534,7 +1534,7 @@ elementary symmetric sum.  This separates the bookkeeping part of Tao's
 trimmed elementary-symmetric argument from the construction of the
 enlarging subset. -/
 theorem sum_pow_le_pow_mul_powersetCard_prod_of_tuple_extension
-    {I : Type*} [Fintype I] [DecidableEq I]
+    {I : Type*} [Fintype I]
     (w : I → ℝ) (J : Finset I) (k : ℕ)
     (hw : ∀ i, 0 ≤ w i)
     (hextend : ∀ p ∈ Fintype.piFinset (fun _ : Fin k => J),

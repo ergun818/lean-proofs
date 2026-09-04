@@ -9,7 +9,8 @@ lemma smoothRunStarts_subset_unit_survivors (N H T : ℕ) :
     letI : ∀ q : dyadicPrimes T, NeZero q.1 :=
       fun q => ⟨(Finset.mem_filter.mp q.2).2.ne_zero⟩
     smoothRunStarts N H T ⊆
-      residueClassSurvivors (fun q : dyadicPrimes T => unitShiftResidues (1 : (ZMod q.1)ˣ) H) 0 N := by
+      residueClassSurvivors
+        (fun q : dyadicPrimes T => unitShiftResidues (1 : (ZMod q.1)ˣ) H) 0 N := by
   classical
   let : ∀ q : dyadicPrimes T, NeZero q.1 :=
     fun q => ⟨(Finset.mem_filter.mp q.2).2.ne_zero⟩
@@ -39,7 +40,8 @@ theorem exists_uniform_smoothRunStarts_highOrder_bound : ∃ T₀ : ℕ, ∀ T �
     fun q => ⟨(Finset.mem_filter.mp q.2).2.ne_zero⟩
   have h := hbound T hT k H hk hH hHT hkT 0 N hpower (fun _ => 1)
   exact (show ((smoothRunStarts N H T).card : ℝ) ≤
-    (residueClassSurvivors (fun q : dyadicPrimes T => unitShiftResidues (1 : (ZMod q.1)ˣ) H) 0 N).card by
+    (residueClassSurvivors
+      (fun q : dyadicPrimes T => unitShiftResidues (1 : (ZMod q.1)ˣ) H) 0 N).card by
       exact_mod_cast Finset.card_le_card (smoothRunStarts_subset_unit_survivors N H T)).trans h
 
 lemma excessPointsUpTo_subset_short_large_runs {N W H T : ℕ} (hH : 0 < H) (hHW : 2 * H ≤ W + 1) :
@@ -63,7 +65,8 @@ lemma excessPointsUpTo_subset_short_large_runs {N W H T : ℕ} (hH : 0 < H) (hHW
   have hQT : intervalPrime u v ≤ T := by omega
   have hsmooth : ∀ m ∈ Finset.Icc u v, largestPrimeFactor m ≤ T := by
     intro m hm
-    exact (largestPrimeFactor_mono_dvd (intervalProduct_pos hbad.1).ne' (dvd_intervalProduct hm)).trans hQT
+    exact (largestPrimeFactor_mono_dvd (intervalProduct_pos hbad.1).ne'
+      (dvd_intervalProduct hm)).trans hQT
   by_cases hright : n + H - 1 ≤ v
   · apply Finset.mem_union_left
     apply Finset.mem_filter.mpr

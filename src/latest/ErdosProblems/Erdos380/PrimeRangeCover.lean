@@ -50,11 +50,13 @@ lemma exceptionalPrimeBands_rankin_margin {j : ℕ} (hj : j ∈ exceptionalPrime
   exact_mod_cast hcast
 
 noncomputable def exceptionalPrimeBandSingletons (N : ℕ) : Finset ℕ :=
-  exceptionalPrimeBands.biUnion fun j => singletonPrimeBand N (scaleBase N ^ j) (scaleBase N ^ (j + 1))
+  exceptionalPrimeBands.biUnion fun j => singletonPrimeBand N (scaleBase N ^ j)
+    (scaleBase N ^ (j + 1))
 
 lemma singletonPrimeBand_power_subset_biUnion (N S a b : ℕ) (hS : 1 ≤ S) (F : Finset ℕ)
     (hab : Finset.Ico a b ⊆ F) :
-    singletonPrimeBand N (S ^ a) (S ^ b) ⊆ F.biUnion (fun j => singletonPrimeBand N (S ^ j) (S ^ (j + 1))) := by
+    singletonPrimeBand N (S ^ a) (S ^ b) ⊆
+      F.biUnion (fun j => singletonPrimeBand N (S ^ j) (S ^ (j + 1))) := by
   classical
   intro n hn
   obtain ⟨hnA, hlo, hhi⟩ := Finset.mem_filter.mp hn
@@ -64,7 +66,8 @@ lemma singletonPrimeBand_power_subset_biUnion (N S a b : ℕ) (hS : 1 ≤ S) (F 
 lemma singletonPrimeBand_power_subset_exceptional (N a b : ℕ)
     (hab : Finset.Ico a b ⊆ exceptionalPrimeBands) :
     singletonPrimeBand N (scaleBase N ^ a) (scaleBase N ^ b) ⊆ exceptionalPrimeBandSingletons N :=
-  singletonPrimeBand_power_subset_biUnion N (scaleBase N) a b (one_le_scaleBase N) exceptionalPrimeBands hab
+  singletonPrimeBand_power_subset_biUnion N (scaleBase N) a b (one_le_scaleBase N)
+    exceptionalPrimeBands hab
 
 theorem eventually_exceptionalPrimeBandSingletons_bound : ∀ᶠ N : ℕ in atTop,
     ((exceptionalPrimeBandSingletons N).card : ℝ) ≤

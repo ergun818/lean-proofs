@@ -46,7 +46,7 @@ lemma prime_residue_hit_pair_moment (s : Fin 10 → Finset ℕ) {H : ℕ}
   let : NeZero j.1 := ⟨(ht j.1 hjp).ne_zero⟩
   by_cases hij : i = j
   · subst j
-    simp only [ite_true, if_pos rfl, ← pow_two, tupleResidueIndicator_sq]
+    simp only [ite_true, ← pow_two, tupleResidueIndicator_sq]
     have h := (abs_le.mp (expect_ten_prime_residue_error_le s (ha i.1 hip i.2) hs hne)).2
     have hD := tenPrimeResidueError_nonneg s (i.1 ^ 2)
     nlinarith [sq_nonneg (1 / (i.1.totient : ℝ))]
@@ -170,7 +170,8 @@ theorem primeResidueHitCount_second_moment_le
   exact prime_hit_moment_error_combine H
     (Finset.sum_nonneg fun _ _ => by positivity)
     (Finset.sum_nonneg fun p _ => tenPrimeResidueError_nonneg s p)
-    (Finset.sum_nonneg fun p _ => Finset.sum_nonneg fun q _ => tenPrimeResidueError_nonneg s (p * q))
+    (Finset.sum_nonneg fun p _ => Finset.sum_nonneg fun q _ =>
+      tenPrimeResidueError_nonneg s (p * q))
 
 lemma prime_hit_variance_scalar_le (H : ℕ) {r S E : ℝ}
     (hr : 0 ≤ r) (hrS : r ≤ S) (hE : 0 ≤ E) (hsmall : (H : ℝ) * E ≤ 1) :
@@ -198,7 +199,8 @@ theorem primeResidueHitCount_second_moment_le_of_small_error
   apply prime_hit_variance_scalar_le H (Finset.sum_nonneg fun _ _ => by positivity) hS
     _ hsmall
   exact add_nonneg (Finset.sum_nonneg fun p _ => tenPrimeResidueError_nonneg s p)
-    (Finset.sum_nonneg fun p _ => Finset.sum_nonneg fun q _ => tenPrimeResidueError_nonneg s (p * q))
+    (Finset.sum_nonneg fun p _ => Finset.sum_nonneg fun q _ =>
+      tenPrimeResidueError_nonneg s (p * q))
 
 lemma finite_upper_tail_le_centered_second_moment {Ω : Type*} [Fintype Ω]
     (f : Ω → ℝ) {μ b t : ℝ} (ht : 0 < t) (hbt : μ + t ≤ b) :
@@ -225,7 +227,8 @@ theorem primeResidueHitCount_tail_le
     {S U : ℝ} (hS : (∑ p ∈ t, 1 / (p.totient : ℝ)) ≤ S)
     (hsmall : (H : ℝ) * modulusPairSum t (tenPrimeResidueError s) ≤ 1)
     (hH : 0 < H) (hU : 0 < U) (hUS : 2 * S ≤ U) :
-    ((Finset.univ.filter fun f : ∀ i, s i => (H : ℝ) * U ≤ primeResidueHitCount s t H a f).card : ℝ) /
+    ((Finset.univ.filter fun f : ∀ i, s i =>
+      (H : ℝ) * U ≤ primeResidueHitCount s t H a f).card : ℝ) /
         (Fintype.card (∀ i, s i) : ℝ) ≤ 4 * (2 + 3 * S) / ((H : ℝ) * U ^ 2) := by
   classical
   have hHR : (0 : ℝ) < H := by exact_mod_cast hH

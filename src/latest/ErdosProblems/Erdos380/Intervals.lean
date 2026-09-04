@@ -114,7 +114,7 @@ lemma BadInterval.exists_square_anchor_of_short {u v : ℕ} (hbad : BadInterval 
     omega
   exact prime_le_largestPrimeFactor ha0 hp hpa
 
-lemma eq_of_dvd_lt_two_mul {p n : ℕ} (hp : 0 < p) (hn : 0 < n)
+lemma eq_of_dvd_lt_two_mul {p n : ℕ} (_hp : 0 < p) (hn : 0 < n)
     (hdvd : p ∣ n) (hlt : n < 2 * p) : n = p := by
   obtain ⟨k, rfl⟩ := hdvd
   have hk1 : 1 ≤ k := by

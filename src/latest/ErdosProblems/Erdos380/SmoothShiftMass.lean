@@ -3,17 +3,19 @@ import ErdosProblems.Erdos380.SmallPrimeTupleMoments
 
 /-! # A smooth shifted integer forces a large prime-divisibility mass -/
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 namespace Erdos380
 
 noncomputable def smallShiftPrimes (T : ℕ) (h : ℤ) : Finset ℕ :=
   (Nat.primesLE T).filter fun p => ¬ (p : ℤ) ∣ h
 
+open Classical in
 noncomputable def largeShiftPrimeCount (T Y c V : ℕ) (h : ℤ) : ℝ :=
   ∑ p ∈ (Finset.Ioc T Y).filter Nat.Prime,
     if smallPrimeDivisibilityEvent c h p V then (1 : ℝ) else 0
 
+open Classical in
 lemma log_mul_normalizedSmallPrimeMass (t : Finset ℕ) {T : ℕ} (hT : 2 ≤ T)
     (c : ℕ) (h : ℤ) (V : ℕ) :
     Real.log (T : ℝ) * normalizedSmallPrimeMass t T c h V =
@@ -73,7 +75,8 @@ theorem primeFactors_log_sum_le_shift_masses
     intro p hp
     obtain ⟨hp, _, hpT⟩ := Finset.mem_filter.mp hp
     have hpP := Nat.prime_of_mem_primeFactors hp
-    have hpY := (prime_le_largestPrimeFactor hn.ne' hpP (Nat.dvd_of_mem_primeFactors hp)).trans hsmooth
+    have hpY := (prime_le_largestPrimeFactor hn.ne' hpP
+      (Nat.dvd_of_mem_primeFactors hp)).trans hsmooth
     exact Finset.mem_filter.mpr ⟨Finset.mem_Ioc.mpr ⟨hpT, hpY⟩, hpP⟩
   have hC : (∑ p ∈ C, Real.log (p : ℝ)) ≤ Real.log (Y : ℝ) * largeShiftPrimeCount T Y c V h := by
     unfold largeShiftPrimeCount

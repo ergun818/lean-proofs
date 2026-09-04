@@ -85,7 +85,8 @@ lemma highOrder_denominator_lower {N k : ℕ} (hB : 60 ≤ logarithmicCeiling N)
     change 2 * runWidth N + shortWidth N % 2 = shortWidth N at hdiv
     omega
   have hHcast : (logarithmicCeiling N : ℝ) ^ 20 ≤ 3 * runWidth N := by exact_mod_cast hW3
-  have hkb := (le_div_iff₀ (show 0 < 2 * Real.log (2 * largePrimeScale N : ℕ) by positivity)).mp hkhi
+  have hkb := (le_div_iff₀
+    (show 0 < 2 * Real.log (2 * largePrimeScale N : ℕ) by positivity)).mp hkhi
   have hden : 40 * (k : ℝ) * Real.log (largePrimeScale N : ℝ) ≤ 20 * logarithmicCeiling N := by
     have hm := mul_le_mul_of_nonneg_left htlog (show (0 : ℝ) ≤ k by positivity)
     have hLB := (logarithmicCeiling_bounds hN hL).1
@@ -146,7 +147,8 @@ theorem eventually_smoothRunStarts_scale_bound : ∀ᶠ N : ℕ in atTop,
   have hsieve := hbound (largePrimeScale N) hTT₀ k (runWidth N) hk hH hHT hkT N hkpow
   apply hsieve.trans
   have hSpos : (0 : ℝ) < scaleBase N := by exact_mod_cast (by omega : 0 < scaleBase N)
-  have hh := div_le_div_of_nonneg_left (show 0 ≤ (N : ℝ) + N by positivity) (pow_pos hSpos 2200) hden
+  have hh := div_le_div_of_nonneg_left (show 0 ≤ (N : ℝ) + N by positivity)
+    (pow_pos hSpos 2200) hden
   simpa only [two_mul] using hh
 
 end Erdos380

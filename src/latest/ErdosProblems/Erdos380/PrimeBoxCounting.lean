@@ -55,7 +55,8 @@ lemma primeBoxMass_le_shifted {k : ℕ} (b : PrimeBox k)
       Nat.mul_le_mul h₀ (Finset.prod_le_prod' fun i _ => hi i)
     _ = _ := by
       rw [Finset.prod_mul_distrib]
-      simp only [Finset.prod_const, Finset.card_univ, Fintype.card_fin, shiftedPrimeBoxMass, pow_succ]
+      simp only [Finset.prod_const, Finset.card_univ, Fintype.card_fin,
+        shiftedPrimeBoxMass, pow_succ]
       ring
 
 theorem exists_primeBoxMass_sum_bound (k : ℕ) (hk : 0 < k) :
@@ -77,7 +78,8 @@ theorem exists_primeBoxMass_sum_bound (k : ℕ) (hk : 0 < k) :
     _ = 60 ^ (k + 1) * ∑ b ∈ B, shiftedPrimeBoxMass b := (Finset.mul_sum ..).symm
     _ ≤ 60 ^ (k + 1) * (k.factorial *
         (largeCofactorSingletons (primeBoxEnlargement k * N) R).card) :=
-      Nat.mul_le_mul_left _ (shiftedPrimeBoxMass_sum_le_largeCofactorSingletons hk B hvalid hsize hlarge)
+      Nat.mul_le_mul_left _ (shiftedPrimeBoxMass_sum_le_largeCofactorSingletons hk B
+        hvalid hsize hlarge)
     _ = _ := by ring
 
 /-- The total box mass is bounded by the original singleton count, losing

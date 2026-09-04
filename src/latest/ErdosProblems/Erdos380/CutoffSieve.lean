@@ -226,7 +226,7 @@ large-sieve inequality to the resulting cross-subset frequency family.
 The hypothesis on products is the square-root cutoff in Corollary 2.8,
 written without a natural-number square root. -/
 theorem montgomery_uncertainty_selected_Ioc_le_largeSieve
-    {I : Type*} [Fintype I] [DecidableEq I]
+    {I : Type*} [Finite I]
     (modulus : I → ℕ) [∀ i, NeZero (modulus i)]
     (hcoprime : Pairwise (Nat.Coprime on modulus))
     (vanishing : ∀ i, Finset (ZMod (modulus i)))
@@ -244,6 +244,7 @@ theorem montgomery_uncertainty_selected_Ioc_le_largeSieve
       ((N : ℝ) + N) *
         ∑ n ∈ Finset.Ioc m0 (m0 + N), ‖g n‖ ^ 2 := by
   classical
+  let := Fintype.ofFinite I
   let A := selectedResidueFrequencies modulus family
   let point : A → UnitAddCircle :=
     selectedResidueFrequencyPoint modulus
@@ -307,11 +308,11 @@ theorem montgomery_uncertainty_selected_Ioc_le_largeSieve
                   BoundedGaps.Maynard.unitAddCircleAddChar
                     (n • productResidueFrequencyPoint a)‖ ^ 2 := by
             apply Finset.sum_congr rfl
-            intro a _ha
-            apply congrArg fun z : ℂ => ‖z‖ ^ 2
-            apply Finset.sum_congr rfl
-            intro n _hn
-            rw [productResidueAddChar_residueVectorOfNat]
+            · intro a _ha
+              apply congrArg fun z : ℂ => ‖z‖ ^ 2
+              · apply Finset.sum_congr rfl
+                · intro n _hn
+                  rw [productResidueAddChar_residueVectorOfNat]
           _ = ∑ a : {a : residueVectors
                 (fun i : {i // i ∈ T.1} => modulus i.1) //
                 a ∈ allNonzeroResidueFrequencies},

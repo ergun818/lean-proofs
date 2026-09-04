@@ -54,7 +54,8 @@ lemma log_nat_tendsto_atTop : Tendsto (fun N : ℕ => Real.log (N : ℝ)) atTop 
 theorem saddleLog_tendsto_atTop : Tendsto saddleLog atTop atTop := by
   have hloglog := Real.tendsto_log_atTop.comp log_nat_tendsto_atTop
   exact (Real.tendsto_sqrt_atTop.comp
-    ((log_nat_tendsto_atTop.atTop_mul_atTop₀ hloglog).atTop_div_const (by norm_num : (0 : ℝ) < 2))).atTop_div_const
+    ((log_nat_tendsto_atTop.atTop_mul_atTop₀ hloglog).atTop_div_const
+      (by norm_num : (0 : ℝ) < 2))).atTop_div_const
       (by norm_num : (0 : ℝ) < 1000)
 
 theorem scaleBase_tendsto_atTop : Tendsto scaleBase atTop atTop :=
@@ -109,7 +110,8 @@ theorem eventually_scaleBase_pow_le (a : ℕ) : ∀ᶠ N : ℕ in atTop, scaleBa
     simpa only [one_mul] using (div_le_iff₀ hlog).mp h'
   have hreal : (scaleBase N : ℝ) ^ a ≤ N := by
     apply (Real.log_le_log_iff (by
-      exact_mod_cast (pow_pos (show 0 < scaleBase N from lt_of_lt_of_le Nat.zero_lt_one (one_le_scaleBase N)) a))
+      exact_mod_cast (pow_pos
+        (show 0 < scaleBase N from lt_of_lt_of_le Nat.zero_lt_one (one_le_scaleBase N)) a))
       (by exact_mod_cast (by omega : 0 < N))).mp
     rwa [Real.log_pow]
   exact_mod_cast hreal
@@ -122,7 +124,7 @@ lemma log_scaleBase_tendsto_atTop :
     Tendsto (fun N => Real.log (scaleBase N : ℝ)) atTop atTop :=
   Real.tendsto_log_atTop.comp (tendsto_natCast_atTop_atTop.comp scaleBase_tendsto_atTop)
 
-lemma saddleLog_sq {N : ℕ} (hL : 0 ≤ Real.log (N : ℝ))
+lemma saddleLog_sq {N : ℕ} (_hL : 0 ≤ Real.log (N : ℝ))
     (hll : 0 ≤ Real.log (Real.log (N : ℝ))) :
     saddleLog N ^ 2 = Real.log N * Real.log (Real.log N) / 2000000 := by
   rw [saddleLog, div_pow, Real.sq_sqrt (by positivity)]
@@ -148,10 +150,12 @@ theorem log_saddleLog_div_loglog_tendsto_half :
   rw [saddleLog, Real.log_div hsqrt.ne' (by norm_num), Real.log_sqrt (by positivity),
     Real.log_div (mul_ne_zero hL.ne' hll.ne') (by norm_num), Real.log_mul hL.ne' hll.ne']
   dsimp [c]
-  field_simp <;> ring
+  field_simp
+  ring
 
 theorem loglog_scaleBase_sub_log_saddleLog_tendsto_zero :
-    Tendsto (fun N => Real.log (Real.log (scaleBase N : ℝ)) - Real.log (saddleLog N)) atTop (𝓝 0) := by
+    Tendsto (fun N => Real.log (Real.log (scaleBase N : ℝ)) - Real.log (saddleLog N))
+      atTop (𝓝 0) := by
   have h := (Real.continuousAt_log (by norm_num : (1 : ℝ) ≠ 0)).tendsto.comp
     log_scaleBase_div_saddleLog_tendsto_one
   rw [Real.log_one] at h
@@ -184,7 +188,7 @@ theorem scaleBase_saddle_relation :
   have h' : Tendsto (fun N => (2000000 : ℝ) *
       (Real.log (Real.log (scaleBase N : ℝ)) / Real.log (Real.log (N : ℝ)) *
         (saddleLog N / Real.log (scaleBase N : ℝ)) ^ 2)) atTop (𝓝 1000000) := by
-    convert h using 1 <;> norm_num
+    convert h using 1
   apply h'.congr'
   filter_upwards [log_nat_tendsto_atTop.eventually (eventually_gt_atTop (1 : ℝ)),
     log_scaleBase_tendsto_atTop.eventually (eventually_gt_atTop (0 : ℝ))] with N hN hS
@@ -194,7 +198,8 @@ theorem scaleBase_saddle_relation :
   field_simp
 
 theorem loglog_div_log_scaleBase_tendsto_zero :
-    Tendsto (fun N : ℕ => Real.log (Real.log (N : ℝ)) / Real.log (scaleBase N : ℝ)) atTop (𝓝 0) := by
+    Tendsto (fun N : ℕ => Real.log (Real.log (N : ℝ)) / Real.log (scaleBase N : ℝ))
+      atTop (𝓝 0) := by
   have hinv := loglog_scaleBase_div_loglog_tendsto_half.inv₀ (by norm_num : (1 / 2 : ℝ) ≠ 0)
   simp only [inv_div] at hinv
   have hslow : Tendsto (fun N => Real.log (Real.log (scaleBase N : ℝ)) /
@@ -237,7 +242,7 @@ theorem saddleLog_loglog_div_log_tendsto_zero :
   have hsq : (Real.log (Real.log (N : ℝ)) * saddleLog N / Real.log N) ^ 2 =
       Real.log (Real.log (N : ℝ)) ^ 3 / Real.log N / 2000000 := by
     rw [div_pow, mul_pow, saddleLog_sq hL.le hll]
-    field_simp <;> ring
+    field_simp
   rw [← hsq, Real.sqrt_sq (div_nonneg (mul_nonneg hll (saddleLog_nonneg N)) hL.le)]
 
 theorem loglog_mul_log_scaleBase_div_log_tendsto_zero :

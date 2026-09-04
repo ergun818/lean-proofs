@@ -100,8 +100,10 @@ theorem eventually_probability_scale_thresholds (T₀ d₀ P₀ : ℕ) :
   filter_upwards [scaleBase_tendsto_atTop.eventually
     (eventually_ge_atTop (max (max (max T₀ P₀) (2 ^ d₀ + 1))
       (max 2 (128 * primeBoxEnlargement 10))))] with N hS
-  have hT : T₀ ≤ scaleBase N := (le_max_left _ _).trans ((le_max_left _ _).trans ((le_max_left _ _).trans hS))
-  have hP : P₀ ≤ scaleBase N := (le_max_right _ _).trans ((le_max_left _ _).trans ((le_max_left _ _).trans hS))
+  have hT : T₀ ≤ scaleBase N := (le_max_left _ _).trans ((le_max_left _ _).trans
+    ((le_max_left _ _).trans hS))
+  have hP : P₀ ≤ scaleBase N := (le_max_right _ _).trans ((le_max_left _ _).trans
+    ((le_max_left _ _).trans hS))
   have hd : 2 ^ d₀ < scaleBase N := lt_of_lt_of_le (Nat.lt_succ_self _)
     ((le_max_right _ _).trans ((le_max_left _ _).trans hS))
   have hS2 : 2 ≤ scaleBase N := (le_max_left _ _).trans ((le_max_right _ _).trans hS)

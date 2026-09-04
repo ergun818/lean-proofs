@@ -5,7 +5,7 @@ import BoundedGaps.Maynard.PrimeMertens
 
 /-! # Bounded-order divisibility moments for small primes -/
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 namespace Erdos380
 
@@ -43,6 +43,7 @@ lemma prime_product_int_dvd (t : Finset ℕ) (ht : ∀ p ∈ t, p.Prime)
   exact Finset.prod_primes_dvd n.natAbs (fun p hp => (ht p hp).prime)
     (fun p hp => Int.natCast_dvd.mp (hd p hp))
 
+open Classical in
 /-- A joint-event upper bound on the actual uniform dyadic prime pool.
 The coefficient and the signed shift are arbitrary; primes dividing the
 shift are excluded explicitly. -/
@@ -85,7 +86,8 @@ theorem smallPrime_joint_bound
             simpa using hz
           simpa [a] using (unit_affine_zero_iff u 1 r h).mp hz'
         rw [if_pos ha]
-        split_ifs <;> norm_num
+        split_ifs
+        norm_num
       · simp only [if_neg hevent]
         split_ifs <;> norm_num
     calc
@@ -108,6 +110,7 @@ theorem smallPrime_joint_bound
     simp only [hz, Finset.expect_const_zero]
     positivity
 
+open Classical in
 noncomputable def normalizedSmallPrimeMass (t : Finset ℕ) (T c : ℕ) (h : ℤ) (r : ℕ) : ℝ :=
   ∑ p ∈ t, (Real.log p / Real.log T) *
     if smallPrimeDivisibilityEvent c h p r then (1 : ℝ) else 0

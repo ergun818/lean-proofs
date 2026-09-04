@@ -2,7 +2,7 @@ import ErdosProblems.Erdos380.BoxProbability
 
 /-! # The normalized estimate for actual singleton anchors with ten large prime factors -/
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 namespace Erdos380
 
@@ -18,6 +18,7 @@ lemma mem_eligibleSingletons {N Q Y n : ℕ} : n ∈ eligibleSingletons N Q Y �
 noncomputable def eligiblePrimeBoxes (N Q Y : ℕ) : Finset (PrimeBox 10) :=
   (eligibleSingletons N Q Y).image (fun n => canonicalPrimeBox n 10)
 
+open Classical in
 noncomputable def goodEligibleAnchors (N Q T H D : ℕ) (ε : ℤˣ) (L : ℝ) : Finset ℕ :=
   (eligibleSingletons N Q (T ^ 110)).filter (SmoothShiftAt T H D ε L)
 
@@ -28,6 +29,7 @@ lemma goodEligibleAnchors_subset_goodPrimeBoxAnchors {N Q T H D : ℕ}
     (hQ : 2 ≤ Q) (ε : ℤˣ) (L : ℝ) :
     goodEligibleAnchors N Q T H D ε L ⊆
       goodPrimeBoxAnchors (eligiblePrimeBoxes N Q (T ^ 110)) T H D ε L := by
+  classical
   intro n hn
   obtain ⟨hneligible, hnsmooth⟩ := Finset.mem_filter.mp hn
   obtain ⟨_, _, hbad, hlarge, _⟩ := mem_eligibleSingletons.mp hneligible
@@ -115,6 +117,7 @@ theorem exists_uniform_goodEligibleAnchors_bound :
     H hH hHT hmix D hD ε U L hU hHU hL
   exact (show ((goodEligibleAnchors N Q T H D ε L).card : ℝ) ≤
       (goodPrimeBoxAnchors (eligiblePrimeBoxes N Q (T ^ 110)) T H D ε L).card by
-    exact_mod_cast Finset.card_le_card (goodEligibleAnchors_subset_goodPrimeBoxAnchors hQ ε L)).trans h
+    exact_mod_cast Finset.card_le_card
+      (goodEligibleAnchors_subset_goodPrimeBoxAnchors hQ ε L)).trans h
 
 end Erdos380

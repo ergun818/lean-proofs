@@ -71,7 +71,8 @@ lemma validPrimeRecords_fiber_card_le {k : ℕ} (S : Finset (PrimeRecord k))
       · intro r hr
         have heq := (Finset.mem_filter.mp hr).2.trans hsval.symm
         exact List.mem_toFinset.mpr (List.mem_permutations.mpr
-          (validPrimeRecord_fiber_unique (hvalid r (Finset.mem_filter.mp hr).1) (hvalid s hsS) heq).2.2)
+          (validPrimeRecord_fiber_unique (hvalid r (Finset.mem_filter.mp hr).1)
+            (hvalid s hsS) heq).2.2)
       · intro r hr t ht hlist
         have heq := (Finset.mem_filter.mp hr).2.trans (Finset.mem_filter.mp ht).2.symm
         obtain ⟨hp, hb, _⟩ := validPrimeRecord_fiber_unique

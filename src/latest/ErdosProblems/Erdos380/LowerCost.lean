@@ -24,7 +24,8 @@ theorem lowerSmoothParameter_log_cost :
     lowerPrimeExponent_tendsto_atTop.eventually (eventually_ge_atTop 1)] with N hL hS1 hY1
   have hS : 0 < Real.log (scaleBase N : ℝ) := by linarith
   have hls := Real.log_pos hS1
-  have hY0 : (lowerPrimeExponent N : ℝ) ≠ 0 := by exact_mod_cast (by omega : lowerPrimeExponent N ≠ 0)
+  have hY0 : (lowerPrimeExponent N : ℝ) ≠ 0 := by
+    exact_mod_cast (by omega : lowerPrimeExponent N ≠ 0)
   simp only [lowerSmoothParameter]
   field_simp
 
@@ -51,7 +52,8 @@ theorem lowerSmoothExponent_div_prime_sq_tendsto_zero :
   filter_upwards [log_nat_tendsto_atTop.eventually (eventually_gt_atTop (0 : ℝ)),
     log_scaleBase_tendsto_atTop.eventually (eventually_gt_atTop (0 : ℝ)),
     lowerPrimeExponent_tendsto_atTop.eventually (eventually_ge_atTop 1)] with N hL hS hY1
-  have hY0 : (lowerPrimeExponent N : ℝ) ≠ 0 := by exact_mod_cast (by omega : lowerPrimeExponent N ≠ 0)
+  have hY0 : (lowerPrimeExponent N : ℝ) ≠ 0 := by
+    exact_mod_cast (by omega : lowerPrimeExponent N ≠ 0)
   field_simp
 
 theorem log_scaled_lowerPrimeExponent_ratio (c : ℝ) (hc : 0 < c) :
@@ -63,7 +65,8 @@ theorem log_scaled_lowerPrimeExponent_ratio (c : ℝ) (hc : 0 < c) :
   rw [zero_add] at h
   apply h.congr'
   filter_upwards [lowerPrimeExponent_tendsto_atTop.eventually (eventually_ge_atTop 1)] with N hY
-  have hY0 : (lowerPrimeExponent N : ℝ) ≠ 0 := by exact_mod_cast (by omega : lowerPrimeExponent N ≠ 0)
+  have hY0 : (lowerPrimeExponent N : ℝ) ≠ 0 := by
+    exact_mod_cast (by omega : lowerPrimeExponent N ≠ 0)
   rw [Real.log_mul hc.ne' hY0]
   ring
 
@@ -80,7 +83,8 @@ theorem log_scaled_lowerPrimeExponent_div_log_scaleBase (c : ℝ) (hc : 0 < c) :
 theorem lowerPrimeExponent_log_budget_ratio :
     Tendsto (fun N : ℕ => Real.log (20 * lowerPrimeExponent N : ℝ) /
       Real.log (lowerSmoothParameter N)) atTop (𝓝 1) := by
-  have h := (log_scaled_lowerPrimeExponent_ratio 20 (by norm_num)).div log_lowerSmoothParameter_ratio
+  have h := (log_scaled_lowerPrimeExponent_ratio 20 (by norm_num)).div
+    log_lowerSmoothParameter_ratio
     (by norm_num : (1 / 2 : ℝ) ≠ 0)
   rw [div_self (by norm_num : (1 / 2 : ℝ) ≠ 0)] at h
   apply h.congr'
@@ -119,7 +123,8 @@ theorem lowerExponent_linear_cost :
         Real.log (scaleBase N : ℝ)) atTop (𝓝 1000) := by
   have hc : Tendsto (fun N : ℕ => (2 * Real.log 2) / Real.log (scaleBase N : ℝ)) atTop (𝓝 0) :=
     tendsto_const_nhds.div_atTop log_scaleBase_tendsto_atTop
-  have h := (lowerTotalExponent_rounding_error.add (lowerPrimeExponent_ratio.mul_const (Real.log 2))).add hc
+  have h := (lowerTotalExponent_rounding_error.add
+    (lowerPrimeExponent_ratio.mul_const (Real.log 2))).add hc
   have heq : 0 + (1000 / Real.log 2) * Real.log 2 + 0 = (1000 : ℝ) := by
     field_simp
     norm_num
@@ -137,7 +142,8 @@ noncomputable def lowerSingletonCost (ε : ℝ) (N : ℕ) : ℝ :=
 
 theorem lowerSingletonCost_tendsto (ε : ℝ) :
     Tendsto (lowerSingletonCost ε) atTop (𝓝 (2000 + 3000 * ε)) := by
-  have h := (lowerExponent_linear_cost.add (lowerSmoothParameter_log_cost.const_mul (1 + 3 * ε))).add
+  have h := (lowerExponent_linear_cost.add
+    (lowerSmoothParameter_log_cost.const_mul (1 + 3 * ε))).add
     (log_scaled_lowerPrimeExponent_div_log_scaleBase 10 (by norm_num))
   convert h using 1
   · funext N

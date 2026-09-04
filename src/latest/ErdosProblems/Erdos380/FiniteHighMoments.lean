@@ -9,12 +9,12 @@ No assertion of independence or unrestricted exponential-moment estimate
 is made.
 -/
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 namespace Erdos380
 
 theorem sum_pow_le_pow_mul_smallSubsets_prod_of_tuple_extension
-    {I : Type*} [Fintype I] [DecidableEq I]
+    {I : Type*} [Fintype I]
     (w : I → ℝ) (J : Finset I) (k : ℕ)
     (hw : ∀ i, 0 ≤ w i)
     (hextend : ∀ p ∈ Fintype.piFinset (fun _ : Fin k => J),
@@ -103,11 +103,12 @@ lemma prod_comp_le_prod_image_of_le_one
 /-- A deterministic inequality that uses only products of at most `k`
 distinct factors. -/
 theorem sum_pow_le_smallSubsets
-    {I : Type*} [Fintype I] [DecidableEq I]
+    {I : Type*} [Fintype I]
     (w : I → ℝ) (k : ℕ) (hw0 : ∀ i, 0 ≤ w i) (hw1 : ∀ i, w i ≤ 1) :
     (∑ i, w i) ^ k ≤ (k : ℝ) ^ k *
       ∑ U ∈ ((Finset.univ : Finset I).powerset.filter fun U => U.card ≤ k),
         ∏ i ∈ U, w i := by
+  classical
   apply sum_pow_le_pow_mul_smallSubsets_prod_of_tuple_extension w Finset.univ k hw0
   intro p _hp
   let U : Finset I := Finset.univ.image p
@@ -126,10 +127,11 @@ lemma sum_powerset_prod_le_exp {I : Type*} (s : Finset I) (b : I → ℝ)
   · intro i _hi
     simpa only [add_comm] using Real.add_one_le_exp (b i)
 
+open Classical in
 /-- A finite high-moment inequality from joint-event bounds through order
 `k`.  Higher-order intersections are not hypotheses. -/
 theorem finite_high_moment_from_joint_bounds
-    {I Ω : Type*} [Fintype I] [DecidableEq I]
+    {I Ω : Type*} [Fintype I]
     (s : Finset Ω) (w b : I → ℝ) (E : I → Ω → Prop) (k : ℕ) (C : ℝ)
     (hw0 : ∀ i, 0 ≤ w i) (hw1 : ∀ i, w i ≤ 1)
     (hb : ∀ i, 0 ≤ b i) (hC : 0 ≤ C)
@@ -218,7 +220,8 @@ theorem finite_markov_pow {Ω : Type*} (s : Finset Ω) (f : Ω → ℝ)
   apply (le_div_iff₀ (pow_pos hU k)).mpr
   rw [Finset.expect_eq_sum_div_card]
   have hdiv := div_le_div_of_nonneg_right hcount (Nat.cast_nonneg s.card : (0 : ℝ) ≤ s.card)
-  convert hdiv using 1 <;> ring
+  convert hdiv using 1
+  ring
 
 theorem finite_sum_fiftieth_tail_le {I Ω : Type*} (J : Finset I) (hJ : J.Nonempty)
     (s : Finset Ω) (f : I → Ω → ℝ) (K : ℝ)

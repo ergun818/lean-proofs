@@ -121,6 +121,7 @@ theorem tupleResidueProbability_discrepancy_le (s : ι → Finset ℕ)
   exact mul_le_of_le_one_left (Finset.prod_nonneg fun _ _ => norm_nonneg _)
     (χ.norm_le_one a⁻¹)
 
+omit [DecidableEq ι] in
 /-- A deliberately coarse form of the equal-exponent product inequality. -/
 lemma prod_nonneg_le_sum_pow_card (f : ι → ℝ) [Nonempty ι]
     (hf : ∀ i, 0 ≤ f i) :

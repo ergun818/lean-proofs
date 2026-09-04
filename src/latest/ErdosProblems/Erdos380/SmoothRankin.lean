@@ -59,7 +59,8 @@ lemma smoothRankinEulerProduct_le_primeReciprocal {y : ℕ} {δ : ℝ}
 theorem smoothCount_rankin_primeReciprocal {x y : ℕ} {δ : ℝ}
     (hx : 0 < x) (hδ0 : 0 < δ) (hδhalf : δ ≤ 1 / 2) :
     (smoothCount x y : ℝ) ≤ (x : ℝ) *
-      Real.exp (-δ * Real.log x + Erdos469.rankinEulerConstant * (y : ℝ) ^ δ * primeReciprocalSum y) := by
+      Real.exp (-δ * Real.log x + Erdos469.rankinEulerConstant * (y : ℝ) ^ δ *
+        primeReciprocalSum y) := by
   have hbase := Erdos469.card_smoothNumbersUpTo_rankin_le (x := x) (y := y)
     hx hδ0 (hδhalf.trans_lt (by norm_num))
   have hbound := hbase.trans (mul_le_mul_of_nonneg_left
@@ -138,7 +139,7 @@ lemma smoothCount_rankin_parameter_bound {x y : ℕ} {u ε A : ℝ}
 The condition relating `log log y` to `log u` is explicit; it includes the
 saddle range needed for this problem. -/
 theorem smoothCount_growing_parameter_upper
-    {ε A : ℝ} (hε : 0 < ε) (hε1 : ε < 1) (hA : 0 ≤ A) :
+    {ε A : ℝ} (hε : 0 < ε) (hε1 : ε < 1) (_hA : 0 ≤ A) :
     ∃ u₀ : ℝ, 1 < u₀ ∧ ∀ x y : ℕ, 0 < x → 2 ≤ y →
       ∀ u : ℝ, u₀ ≤ u → Real.log (x : ℝ) = u * Real.log y →
       Real.log (Real.log y) ≤ A * Real.log u → Real.log u ≤ Real.log (y : ℝ) / 2 →

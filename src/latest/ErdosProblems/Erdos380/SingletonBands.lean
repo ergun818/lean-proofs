@@ -34,7 +34,8 @@ lemma singletonPrimeBand_card_le_sum (N a b : ℕ) :
         _ = n := hnm.symm
         _ ≤ N := hnN
     apply Finset.mem_biUnion.mpr
-    refine ⟨largestPrimeFactor n, Finset.mem_Ioc.mpr ⟨hap, hpb⟩, Finset.mem_image.mpr ⟨m, ?_, hnm.symm⟩⟩
+    refine ⟨largestPrimeFactor n, Finset.mem_Ioc.mpr ⟨hap, hpb⟩, Finset.mem_image.mpr
+      ⟨m, ?_, hnm.symm⟩⟩
     exact Nat.mem_smoothNumbersUpTo.mpr ⟨hmN,
       (mem_smoothNumbers_iff_largestPrimeFactor (hp.one_le.trans hpb)).mpr ⟨hm0, hmb⟩⟩
   calc
@@ -58,7 +59,8 @@ lemma singletonPrimeBand_card_bound {N a b : ℕ} {F : ℝ} (ha : 1 ≤ a) (hF :
     exact (sum_Ioo_inv_sq_le (α := ℝ) a (b + 1)).trans
       (div_le_div_of_nonneg_left (by norm_num) haR (by linarith))
   calc
-    ((singletonPrimeBand N a b).card : ℝ) ≤ ∑ p ∈ Finset.Ioc a b, (smoothCount (N / p ^ 2) b : ℝ) := by
+    ((singletonPrimeBand N a b).card : ℝ) ≤
+        ∑ p ∈ Finset.Ioc a b, (smoothCount (N / p ^ 2) b : ℝ) := by
       exact_mod_cast singletonPrimeBand_card_le_sum N a b
     _ ≤ ∑ p ∈ Finset.Ioc a b, (N : ℝ) / (p : ℝ) ^ 2 / F := Finset.sum_le_sum hbound
     _ = ((N : ℝ) / F) * ∑ p ∈ Finset.Ioc a b, ((p : ℝ) ^ 2)⁻¹ := by

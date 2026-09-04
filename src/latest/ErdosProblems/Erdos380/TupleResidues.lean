@@ -25,12 +25,14 @@ def tupleResidueIndicator (s : ι → Finset ℕ) (q : ℕ) (a : ZMod q)
   classical
   exact if (tupleNaturalProduct s f : ZMod q) = a then 1 else 0
 
+omit [DecidableEq ι] in
 lemma tupleResidueIndicator_nonneg (s : ι → Finset ℕ) (q : ℕ) (a : ZMod q) (f : ∀ i, s i) :
     0 ≤ tupleResidueIndicator s q a f := by
   classical
   unfold tupleResidueIndicator
   split_ifs <;> norm_num
 
+omit [DecidableEq ι] in
 lemma tupleResidueIndicator_sq (s : ι → Finset ℕ) (q : ℕ) (a : ZMod q) (f : ∀ i, s i) :
     tupleResidueIndicator s q a f ^ 2 = tupleResidueIndicator s q a f := by
   classical
@@ -44,6 +46,7 @@ lemma expect_tupleResidueIndicator (s : ι → Finset ℕ) (q : ℕ) (a : ZMod q
   simp only [tupleResidueIndicator, Finset.sum_boole, tupleResidueProbability, tupleResidueCount,
     tupleNaturalProduct, Fintype.card_pi, Fintype.card_coe, Nat.cast_prod]
 
+omit [DecidableEq ι] in
 lemma tupleResidueIndicator_mul_eq_zero (s : ι → Finset ℕ) {q : ℕ}
     {a b : ZMod q} (hab : a ≠ b) (f : ∀ i, s i) :
     tupleResidueIndicator s q a f * tupleResidueIndicator s q b f = 0 := by
@@ -107,6 +110,7 @@ lemma natCast_eq_combinedResidue {p q : ℕ} (hpq : p.Coprime q)
     rw [map_natCast, combinedResidue, RingEquiv.apply_symm_apply] at heq
     exact Prod.mk.inj heq
 
+omit [DecidableEq ι] in
 lemma tupleResidueIndicator_mul_coprime (s : ι → Finset ℕ) {p q : ℕ}
     (hpq : p.Coprime q) (a : ZMod p) (b : ZMod q) (f : ∀ i, s i) :
     tupleResidueIndicator s p a f * tupleResidueIndicator s q b f =

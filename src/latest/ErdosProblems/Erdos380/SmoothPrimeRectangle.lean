@@ -15,7 +15,7 @@ namespace Erdos380
 
 noncomputable section
 
-variable {I : Type*} [Fintype I] [DecidableEq I]
+variable {I : Type*} [Fintype I]
 
 def smoothRectangleValue (s : I → Finset ℕ) (M : ℕ)
     (v : (Finset.Icc 1 M) × (∀ i, s i)) : ℕ := v.1.1 * tupleNaturalProduct s v.2
@@ -62,7 +62,8 @@ lemma smoothRectangleValue_mem (s : I → Finset ℕ) (P : I → ℕ) {M x y : �
   have hnpos : 0 < smoothRectangleValue s M v := Nat.mul_pos (by omega) hprodpos
   apply Nat.mem_smoothNumbersUpTo.mpr
   constructor
-  · exact (Nat.mul_le_mul ha.2 (Finset.prod_le_prod' fun i _ => hP i (v.2 i).1 (v.2 i).2)).trans hsize
+  · exact (Nat.mul_le_mul ha.2
+      (Finset.prod_le_prod' fun i _ => hP i (v.2 i).1 (v.2 i).2)).trans hsize
   · apply (mem_smoothNumbers_iff_largestPrimeFactor hy).mpr
     refine ⟨hnpos.ne', largestPrimeFactor_le hy ?_⟩
     intro p hp hpn

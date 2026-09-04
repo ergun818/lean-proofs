@@ -98,7 +98,8 @@ theorem shiftedPrimeHitCount_tail_le
     {S U : ℝ} (hS : (∑ p ∈ t, 1 / (p.totient : ℝ)) ≤ S)
     (hsmall : (H : ℝ) * modulusPairSum t (tenPrimeResidueError s) ≤ 1)
     (hH : 0 < H) (hU : 0 < U) (hUS : 2 * S ≤ U) :
-    ((Finset.univ.filter fun f : ∀ i, s i => (H : ℝ) * U ≤ shiftedPrimeHitCount s t H c ε f).card : ℝ) /
+    ((Finset.univ.filter fun f : ∀ i, s i =>
+      (H : ℝ) * U ≤ shiftedPrimeHitCount s t H c ε f).card : ℝ) /
         (Fintype.card (∀ i, s i) : ℝ) ≤ 4 * (2 + 3 * S) / ((H : ℝ) * U ^ 2) := by
   classical
   simp only [shiftedPrimeHitCount_eq s t H c ε hc]
@@ -144,7 +145,8 @@ lemma modulusPairSum_mono_set {u t : Finset ℕ} (hut : u ⊆ t) (F : ℕ → �
   · exact Finset.sum_le_sum_of_subset_of_nonneg hut (fun n _ _ => hF n)
   · calc
       _ ≤ ∑ p ∈ u, ∑ q ∈ t, F (p * q) :=
-        Finset.sum_le_sum fun p _ => Finset.sum_le_sum_of_subset_of_nonneg hut (fun q _ _ => hF (p * q))
+        Finset.sum_le_sum fun p _ =>
+          Finset.sum_le_sum_of_subset_of_nonneg hut (fun q _ _ => hF (p * q))
       _ ≤ _ := Finset.sum_le_sum_of_subset_of_nonneg hut
         (fun p _ _ => Finset.sum_nonneg fun q _ => hF (p * q))
 
@@ -157,7 +159,8 @@ theorem shiftedPrimeHitCount_tail_le_unrestricted_coefficient
     {S U : ℝ} (hS : (∑ p ∈ t, 1 / (p.totient : ℝ)) ≤ S)
     (hsmall : (H : ℝ) * modulusPairSum t (tenPrimeResidueError s) ≤ 1)
     (hH : 0 < H) (hU : 0 < U) (hUS : 2 * S ≤ U) :
-    ((Finset.univ.filter fun f : ∀ i, s i => (H : ℝ) * U ≤ shiftedPrimeHitCount s t H c ε f).card : ℝ) /
+    ((Finset.univ.filter fun f : ∀ i, s i =>
+      (H : ℝ) * U ≤ shiftedPrimeHitCount s t H c ε f).card : ℝ) /
         (Fintype.card (∀ i, s i) : ℝ) ≤ 4 * (2 + 3 * S) / ((H : ℝ) * U ^ 2) := by
   classical
   let u := t.filter fun p => c.Coprime p
@@ -171,7 +174,8 @@ theorem shiftedPrimeHitCount_tail_le_unrestricted_coefficient
     (fun p hp => (Finset.mem_filter.mp hp).2) hs hne
   · exact (Finset.sum_le_sum_of_subset_of_nonneg hut (fun _ _ _ => by positivity)).trans hS
   · exact (mul_le_mul_of_nonneg_left
-      (modulusPairSum_mono_set hut _ (tenPrimeResidueError_nonneg s)) (Nat.cast_nonneg H)).trans hsmall
+      (modulusPairSum_mono_set hut _ (tenPrimeResidueError_nonneg s))
+      (Nat.cast_nonneg H)).trans hsmall
   · exact hH
   · exact hU
   · exact hUS

@@ -30,7 +30,8 @@ lemma logarithmicCeiling_bounds {N : ℕ} (hN : 1 ≤ N) (hL : 2 ≤ Real.log (N
     have h := Real.log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 2)
     norm_num at h
     exact h
-  have hlog2N : 0 ≤ Real.log (2 * N : ℕ) := Real.log_nonneg (by exact_mod_cast (by omega : 1 ≤ 2 * N))
+  have hlog2N : 0 ≤ Real.log (2 * N : ℕ) :=
+    Real.log_nonneg (by exact_mod_cast (by omega : 1 ≤ 2 * N))
   have hlow : Real.log (N : ℝ) ≤ Real.log (2 * N : ℕ) :=
     Real.log_le_log hNpos (by exact_mod_cast (by omega : N ≤ 2 * N))
   have hceil := Nat.ceil_lt_add_one hlog2N

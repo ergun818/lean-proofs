@@ -102,12 +102,14 @@ theorem exists_smoothCount_dyadic_lower : ∃ b₀ : ℕ, ∀ b ≥ b₀, ∀ a 
   have hprod' : (2 : ℝ) ^ dyadicRectangleExponent b k ≤
       (20 * (b + k) : ℝ) ^ k * ∏ i : Fin k, ((dyadicPrimes (2 ^ (b + i.val))).card : ℝ) := by
     simpa only [dyadicRectangleExponent, ← Finset.prod_pow_eq_pow_sum,
-      Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, Fintype.card_fin, mul_pow] using hprod
+      Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, Fintype.card_fin,
+      mul_pow] using hprod
   have hrectangle : (2 : ℝ) ^ a * ∏ i : Fin k, ((dyadicPrimes (2 ^ (b + i.val))).card : ℝ) ≤
       (smoothCount (2 ^ (a + dyadicRectangleExponent b k)) (2 ^ (b + k)) : ℝ) := by
     exact_mod_cast smoothCount_ge_dyadic_prime_rectangle a b k hab
   calc
-    (2 : ℝ) ^ (a + dyadicRectangleExponent b k) = (2 : ℝ) ^ a * (2 : ℝ) ^ dyadicRectangleExponent b k := pow_add _ _ _
+    (2 : ℝ) ^ (a + dyadicRectangleExponent b k) =
+        (2 : ℝ) ^ a * (2 : ℝ) ^ dyadicRectangleExponent b k := pow_add _ _ _
     _ ≤ (2 : ℝ) ^ a * ((20 * (b + k) : ℝ) ^ k *
         ∏ i : Fin k, ((dyadicPrimes (2 ^ (b + i.val))).card : ℝ)) :=
       mul_le_mul_of_nonneg_left hprod' (by positivity)

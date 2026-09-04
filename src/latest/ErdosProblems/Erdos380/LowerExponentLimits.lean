@@ -74,7 +74,8 @@ theorem lowerSmoothExponent_ratio :
 
 theorem lowerPrimeExponent_tendsto_atTop : Tendsto lowerPrimeExponent atTop atTop := by
   apply (tendsto_natCast_atTop_iff (R := ℝ)).mp
-  exact tendsto_atTop_of_pos_ratio (by positivity) lowerPrimeExponent_ratio log_scaleBase_tendsto_atTop
+  exact tendsto_atTop_of_pos_ratio (by positivity) lowerPrimeExponent_ratio
+    log_scaleBase_tendsto_atTop
 
 theorem lowerSmoothExponent_tendsto_atTop : Tendsto lowerSmoothExponent atTop atTop := by
   apply (tendsto_natCast_atTop_iff (R := ℝ)).mp
@@ -105,12 +106,15 @@ theorem log_lowerSmoothParameter_ratio :
   have h' : Tendsto (fun N : ℕ =>
       Real.log (lowerSmoothExponent N : ℝ) / Real.log (Real.log N) -
         Real.log (lowerPrimeExponent N : ℝ) / Real.log (Real.log N)) atTop (𝓝 (1 / 2)) := by
-    convert h using 1 <;> norm_num
+    convert h using 1
+    norm_num
   apply h'.congr'
   filter_upwards [lowerSmoothExponent_tendsto_atTop.eventually (eventually_ge_atTop 1),
     lowerPrimeExponent_tendsto_atTop.eventually (eventually_ge_atTop 1)] with N hX hY
-  have hX0 : (lowerSmoothExponent N : ℝ) ≠ 0 := by exact_mod_cast (by omega : lowerSmoothExponent N ≠ 0)
-  have hY0 : (lowerPrimeExponent N : ℝ) ≠ 0 := by exact_mod_cast (by omega : lowerPrimeExponent N ≠ 0)
+  have hX0 : (lowerSmoothExponent N : ℝ) ≠ 0 := by
+    exact_mod_cast (by omega : lowerSmoothExponent N ≠ 0)
+  have hY0 : (lowerPrimeExponent N : ℝ) ≠ 0 := by
+    exact_mod_cast (by omega : lowerPrimeExponent N ≠ 0)
   rw [lowerSmoothParameter, Real.log_div hX0 hY0]
   ring
 
@@ -121,8 +125,10 @@ theorem lowerSmoothParameter_tendsto_atTop : Tendsto lowerSmoothParameter atTop 
   apply h.congr'
   filter_upwards [lowerSmoothExponent_tendsto_atTop.eventually (eventually_ge_atTop 1),
     lowerPrimeExponent_tendsto_atTop.eventually (eventually_ge_atTop 1)] with N hX hY
-  have hXpos : (0 : ℝ) < lowerSmoothExponent N := by exact_mod_cast (by omega : 0 < lowerSmoothExponent N)
-  have hYpos : (0 : ℝ) < lowerPrimeExponent N := by exact_mod_cast (by omega : 0 < lowerPrimeExponent N)
+  have hXpos : (0 : ℝ) < lowerSmoothExponent N := by
+    exact_mod_cast (by omega : 0 < lowerSmoothExponent N)
+  have hYpos : (0 : ℝ) < lowerPrimeExponent N := by
+    exact_mod_cast (by omega : 0 < lowerPrimeExponent N)
   exact Real.exp_log (div_pos hXpos hYpos)
 
 theorem log_lowerSmoothParameter_div_loglog_scaleBase :

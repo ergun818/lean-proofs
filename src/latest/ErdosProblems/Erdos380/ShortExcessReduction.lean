@@ -10,10 +10,11 @@ segment, a cutoff boundary, ineligible anchors, and large square divisors,
 the point is one of the neighbors counted by the harmonic probability bound.
 -/
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 namespace Erdos380
 
+open Classical in
 noncomputable def shortExcessPointsUpTo (N W : ℕ) : Finset ℕ :=
   (excessPointsUpTo N).filter fun n => ∃ u v : ℕ,
     BadInterval u v ∧ u ≤ n ∧ n ≤ v ∧ v - u ≤ W
@@ -69,6 +70,7 @@ lemma shortExcessPointsUpTo_subset {u₀ N W M Q T D : ℕ} {L : ℝ}
       (Finset.Icc (N - W) N ∪
       (integerNeighborhoods (ineligibleSingletons N Q (T ^ 110)) W ∪
       (squareNeighborhoodsUpTo N W (D + 1) ∪ goodAnchorNeighbors N Q T W D L))) := by
+  classical
   intro n hn
   obtain ⟨hnexcess, u, v, hbad, hun, hnv, hwidth⟩ := Finset.mem_filter.mp hn
   obtain ⟨hnbad, hnnot⟩ := Finset.mem_sdiff.mp hnexcess
@@ -104,8 +106,10 @@ lemma shortExcessPointsUpTo_subset {u₀ N W M Q T D : ℕ} {L : ℝ}
       obtain ⟨hum, hmv⟩ := Finset.mem_Icc.mp hm
       have hm1 : 1 ≤ m := hbad.1.trans hum
       exact ⟨by omega, (largestPrimeFactor_le_intervalPrime hbad.1 hm).trans htop,
-        square_divisors_small_outside_neighborhood hn1 hnN hm1 (by omega) (by omega) (by omega) hsquare,
-        hL.trans (Real.log_le_log (by exact_mod_cast (by omega : 0 < M)) (by exact_mod_cast huM.trans hum))⟩
+        square_divisors_small_outside_neighborhood hn1 hnN hm1
+          (by omega) (by omega) (by omega) hsquare,
+        hL.trans (Real.log_le_log (by exact_mod_cast (by omega : 0 < M))
+          (by exact_mod_cast huM.trans hum))⟩
     apply Finset.mem_biUnion.mpr
     rcases lt_or_gt_of_ne han with hal | hna
     · let H := n - a
@@ -116,7 +120,9 @@ lemma shortExcessPointsUpTo_subset {u₀ N W M Q T D : ℕ} {L : ℝ}
       intro j
       let m := a + (j.val + 1)
       have hj := j.isLt
-      have hm : m ∈ Finset.Icc u v := by dsimp [m, H] at *; exact Finset.mem_Icc.mpr ⟨by omega, by omega⟩
+      have hm : m ∈ Finset.Icc u v := by
+        dsimp [m, H] at *
+        exact Finset.mem_Icc.mpr ⟨by omega, by omega⟩
       obtain ⟨hmpos, hmsmooth, hmsq, hmlog⟩ := hregular m hm
       refine ⟨m, hmpos, ?_, hmsmooth, hmsq, hmlog⟩
       simp [m, signedShift, Nat.cast_add]
@@ -129,7 +135,9 @@ lemma shortExcessPointsUpTo_subset {u₀ N W M Q T D : ℕ} {L : ℝ}
       let m := a - (j.val + 1)
       have hj := j.isLt
       have hja : j.val + 1 ≤ a := by dsimp [H] at hj; omega
-      have hm : m ∈ Finset.Icc u v := by dsimp [m, H] at *; exact Finset.mem_Icc.mpr ⟨by omega, by omega⟩
+      have hm : m ∈ Finset.Icc u v := by
+        dsimp [m, H] at *
+        exact Finset.mem_Icc.mpr ⟨by omega, by omega⟩
       obtain ⟨hmpos, hmsmooth, hmsq, hmlog⟩ := hregular m hm
       refine ⟨m, hmpos, ?_, hmsmooth, hmsq, hmlog⟩
       simp [m, signedShift, Nat.cast_sub hja, Nat.cast_add, sub_eq_add_neg]
@@ -145,7 +153,8 @@ theorem exists_shortExcess_card_reduction : ∃ E : ℕ, ∀ N W M Q T D : ℕ, 
   obtain ⟨u₀, hanchor⟩ := exists_badInterval_square_anchor_threshold
   refine ⟨2 * u₀ + 1, ?_⟩
   intro N W M Q T D L hM hL
-  have hsub := shortExcessPointsUpTo_subset (N := N) (W := W) (Q := Q) (T := T) (D := D) hanchor hM hL
+  have hsub := shortExcessPointsUpTo_subset (N := N) (W := W) (Q := Q) (T := T) (D := D)
+    hanchor hM hL
   have hc := Finset.card_le_card hsub
   have h₁ := Finset.card_union_le (Finset.Icc 1 (2 * u₀ + M + W))
     (Finset.Icc (N - W) N ∪ (integerNeighborhoods (ineligibleSingletons N Q (T ^ 110)) W ∪
@@ -155,7 +164,8 @@ theorem exists_shortExcess_card_reduction : ∃ E : ℕ, ∀ N W M Q T D : ℕ, 
       (squareNeighborhoodsUpTo N W (D + 1) ∪ goodAnchorNeighbors N Q T W D L))
   have h₃ := Finset.card_union_le (integerNeighborhoods (ineligibleSingletons N Q (T ^ 110)) W)
     (squareNeighborhoodsUpTo N W (D + 1) ∪ goodAnchorNeighbors N Q T W D L)
-  have h₄ := Finset.card_union_le (squareNeighborhoodsUpTo N W (D + 1)) (goodAnchorNeighbors N Q T W D L)
+  have h₄ := Finset.card_union_le (squareNeighborhoodsUpTo N W (D + 1))
+    (goodAnchorNeighbors N Q T W D L)
   have hnear := integerNeighborhoods_card_le (ineligibleSingletons N Q (T ^ 110)) W
   have hinit : (Finset.Icc 1 (2 * u₀ + M + W)).card = 2 * u₀ + M + W := by simp
   have hboundary : (Finset.Icc (N - W) N).card ≤ W + 1 := by rw [Nat.card_Icc]; omega

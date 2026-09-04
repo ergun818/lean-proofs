@@ -35,11 +35,13 @@ theorem eventually_lower_exponent_hypotheses (Y₀ : ℕ) {ε : ℝ} (hε : 0 < 
   filter_upwards [lowerPrimeExponent_tendsto_atTop.eventually (eventually_ge_atTop (max Y₀ 1)),
     hYcast.eventually (eventually_ge_atTop (4 / ε)),
     lowerSmoothParameter_tendsto_atTop.eventually (eventually_ge_atTop (2 : ℝ)),
-    lowerSmoothExponent_div_prime_sq_tendsto_zero.eventually (gt_mem_nhds (by positivity : (0 : ℝ) < ε / 8)),
+    lowerSmoothExponent_div_prime_sq_tendsto_zero.eventually
+      (gt_mem_nhds (by positivity : (0 : ℝ) < ε / 8)),
     lowerPrimeExponent_log_budget_ratio.eventually (gt_mem_nhds (by linarith : (1 : ℝ) < 1 + ε))]
       with N hY hεY hu hXY hlog
   have hY1 : 1 ≤ lowerPrimeExponent N := (le_max_right _ _).trans hY
-  have hYpos : (0 : ℝ) < lowerPrimeExponent N := by exact_mod_cast (by omega : 0 < lowerPrimeExponent N)
+  have hYpos : (0 : ℝ) < lowerPrimeExponent N := by
+    exact_mod_cast (by omega : 0 < lowerPrimeExponent N)
   have hlogu : 0 < Real.log (lowerSmoothParameter N) := Real.log_pos (by linarith)
   refine ⟨(le_max_left _ _).trans hY, hY1, by linarith, ?_, ?_, ?_⟩
   · have h := (div_le_iff₀ hε).mp hεY
@@ -55,7 +57,8 @@ noncomputable def dyadicSingletonLower (ε : ℝ) (N : ℕ) : ℝ :=
 
 lemma dyadicSingletonLower_pos {N : ℕ} (hY : 1 ≤ lowerPrimeExponent N) (ε : ℝ) :
     0 < dyadicSingletonLower ε N := by
-  have hYpos : (0 : ℝ) < lowerPrimeExponent N := by exact_mod_cast (by omega : 0 < lowerPrimeExponent N)
+  have hYpos : (0 : ℝ) < lowerPrimeExponent N := by
+    exact_mod_cast (by omega : 0 < lowerPrimeExponent N)
   unfold dyadicSingletonLower
   positivity
 
@@ -64,10 +67,11 @@ lemma log_dyadicSingletonLower {N : ℕ} (hY : 1 ≤ lowerPrimeExponent N) (ε :
       (lowerSmoothExponent N + lowerPrimeExponent N : ℕ) * Real.log 2 -
         (1 + 3 * ε) * lowerSmoothParameter N * Real.log (lowerSmoothParameter N) -
           Real.log (10 * lowerPrimeExponent N : ℝ) := by
-  have hYpos : (0 : ℝ) < lowerPrimeExponent N := by exact_mod_cast (by omega : 0 < lowerPrimeExponent N)
+  have hYpos : (0 : ℝ) < lowerPrimeExponent N := by
+    exact_mod_cast (by omega : 0 < lowerPrimeExponent N)
   unfold dyadicSingletonLower
-  rw [Real.log_div (by positivity) (by positivity), Real.log_mul (by positivity) (Real.exp_ne_zero _),
-    Real.log_pow, Real.log_exp]
+  rw [Real.log_div (by positivity) (by positivity),
+    Real.log_mul (by positivity) (Real.exp_ne_zero _), Real.log_pow, Real.log_exp]
   ring
 
 theorem eventually_dyadicSingletonLower_le_count {ε : ℝ} (hε : 0 < ε) (hε1 : ε ≤ 1) :
@@ -76,7 +80,8 @@ theorem eventually_dyadicSingletonLower_le_count {ε : ℝ} (hε : 0 < ε) (hε1
   filter_upwards [eventually_lower_exponent_hypotheses Y₀ hε,
     eventually_lowerExponent_padding_le, eventually_ge_atTop 1] with N hparams hpad hN
   obtain ⟨hY₀, hY1, hu, hεY, hXY, hlog⟩ := hparams
-  have hY0 : (lowerPrimeExponent N : ℝ) ≠ 0 := by exact_mod_cast (by omega : lowerPrimeExponent N ≠ 0)
+  have hY0 : (lowerPrimeExponent N : ℝ) ≠ 0 := by
+    exact_mod_cast (by omega : lowerPrimeExponent N ≠ 0)
   have hX : (lowerSmoothExponent N : ℝ) = lowerSmoothParameter N * lowerPrimeExponent N := by
     rw [lowerSmoothParameter, div_mul_cancel₀ _ hY0]
   have h := hbound (lowerSmoothExponent N) (lowerPrimeExponent N) hY₀ ε (lowerSmoothParameter N)
@@ -84,7 +89,8 @@ theorem eventually_dyadicSingletonLower_le_count {ε : ℝ} (hε : 0 < ε) (hε1
   have hsize : 2 ^ (lowerSmoothExponent N + 2 * (lowerPrimeExponent N + 1)) ≤ N := by
     rw [lowerSmoothExponent, Nat.sub_add_cancel hpad]
     exact lowerTotalExponent_pow_le hN
-  have hmono : (singletonBadUpTo (2 ^ (lowerSmoothExponent N + 2 * (lowerPrimeExponent N + 1)))).card ≤
+  have hmono :
+      (singletonBadUpTo (2 ^ (lowerSmoothExponent N + 2 * (lowerPrimeExponent N + 1)))).card ≤
       (singletonBadUpTo N).card := by
     apply Finset.card_le_card
     intro n hn
@@ -110,7 +116,8 @@ theorem eventually_singletonBadUpTo_scale_lower : ∀ᶠ N : ℕ in atTop,
     (lt_of_lt_of_le Nat.zero_lt_one (one_le_scaleBase N))
   have hcost' := (div_le_iff₀ hS).mp hcost.le
   have hlower : (N : ℝ) / (scaleBase N : ℝ) ^ 2001 ≤ dyadicSingletonLower ε N := by
-    apply (Real.log_le_log_iff (div_pos hNpos (pow_pos hSpos 2001)) (dyadicSingletonLower_pos hY ε)).mp
+    apply (Real.log_le_log_iff (div_pos hNpos (pow_pos hSpos 2001))
+      (dyadicSingletonLower_pos hY ε)).mp
     rw [Real.log_div hNpos.ne' (pow_ne_zero 2001 hSpos.ne'), Real.log_pow,
       log_dyadicSingletonLower hY ε]
     norm_num only [Nat.cast_ofNat]

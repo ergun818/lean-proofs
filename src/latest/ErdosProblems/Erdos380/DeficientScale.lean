@@ -56,12 +56,15 @@ theorem eventually_cofactorDeficientSingletons_scale_bound : ∀ᶠ N : ℕ in a
         rw [show 2006 = 2005 + 1 from rfl, pow_succ]
         field_simp
   · intro p hp f hf
-    have hppos : 0 < p := lt_of_lt_of_le (pow_pos (by omega : 0 < scaleBase N) 920) (Finset.mem_Icc.mp hp).1
-    have hdpos : 0 < p ^ 2 * ∏ i, f i := mul_pos (pow_pos hppos 2) (positiveFactorTuples_prod_pos hf)
+    have hppos : 0 < p := lt_of_lt_of_le (pow_pos (by omega : 0 < scaleBase N) 920)
+      (Finset.mem_Icc.mp hp).1
+    have hdpos : 0 < p ^ 2 * ∏ i, f i := mul_pos (pow_pos hppos 2)
+      (positiveFactorTuples_prod_pos hf)
     have hdsize : p ^ 2 * (∏ i, f i) ≤ scaleBase N ^ 12100 := by
       calc
         p ^ 2 * (∏ i, f i) ≤ (scaleBase N ^ 1100) ^ 2 * (scaleBase N ^ 1100) ^ 9 :=
-          Nat.mul_le_mul (Nat.pow_le_pow_left (Finset.mem_Icc.mp hp).2 2) (positiveFactorTuples_prod_le hf)
+          Nat.mul_le_mul (Nat.pow_le_pow_left (Finset.mem_Icc.mp hp).2 2)
+            (positiveFactorTuples_prod_le hf)
         _ = scaleBase N ^ 12100 := by rw [← pow_add, ← pow_mul]
     exact hbound (p ^ 2 * ∏ i, f i) hdpos hdsize
 

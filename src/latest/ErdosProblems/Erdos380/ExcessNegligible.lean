@@ -30,7 +30,8 @@ theorem exists_eventually_excess_relative_bound : ∃ K : ℝ, 0 < K ∧ ∀ᶠ 
   have hcover : ((excessPointsUpTo N).card : ℝ) ≤ (shortExcessPointsUpTo N (shortWidth N)).card +
       (badPointsWithLargeIntervalPrime N (largePrimeScale N)).card +
         2 * (smoothRunStarts N (runWidth N) (largePrimeScale N)).card := by
-    exact_mod_cast excessPointsUpTo_card_le_short_large_runs (N := N) (T := largePrimeScale N) hH hHW
+    exact_mod_cast excessPointsUpTo_card_le_short_large_runs
+      (N := N) (T := largePrimeScale N) hH hHW
   have hruns' : ((smoothRunStarts N (runWidth N) (largePrimeScale N)).card : ℝ) ≤
       2 * N / (scaleBase N : ℝ) ^ 2002 := by
     apply hruns.trans
@@ -42,7 +43,8 @@ theorem exists_eventually_excess_relative_bound : ∃ K : ℝ, 0 < K ∧ ∀ᶠ 
     linarith
   have hSpos : (0 : ℝ) < scaleBase N := by exact_mod_cast
     (lt_of_lt_of_le Nat.zero_lt_one (one_le_scaleBase N))
-  have hnorm : (N : ℝ) / (scaleBase N : ℝ) ^ 2002 ≤ (singletonBadUpTo N).card / (scaleBase N : ℝ) := by
+  have hnorm : (N : ℝ) / (scaleBase N : ℝ) ^ 2002 ≤
+      (singletonBadUpTo N).card / (scaleBase N : ℝ) := by
     apply (le_div_iff₀ hSpos).mpr
     exact (scale_quotient_succ_mul N 2001).le.trans hA
   calc

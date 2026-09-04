@@ -9,7 +9,7 @@ namespace Erdos380
 def primeRadical (n : ℕ) : ℕ := ∏ p ∈ n.primeFactors, p
 
 lemma primeRadical_pos (n : ℕ) : 0 < primeRadical n :=
-  Finset.prod_pos fun p hp => (Nat.prime_of_mem_primeFactors hp).pos
+  Finset.prod_pos fun _ hp => (Nat.prime_of_mem_primeFactors hp).pos
 
 lemma primeRadical_dvd (n : ℕ) : primeRadical n ∣ n := Nat.prod_primeFactors_dvd n
 
@@ -50,7 +50,8 @@ theorem log_le_square_cutoff_add_primeFactors {n D : ℕ}
     Real.log (n : ℝ) ≤ Real.log (D ^ 2 * primeRadical n : ℝ) := by
       apply Real.log_le_log hnR
       exact_mod_cast le_square_cutoff_mul_primeRadical hn hD
-    _ = _ := by rw [Real.log_mul (pow_ne_zero 2 hDR) hradR, Real.log_pow, log_primeRadical]; norm_num
+    _ = _ := by
+      rw [Real.log_mul (pow_ne_zero 2 hDR) hradR, Real.log_pow, log_primeRadical]; norm_num
 
 lemma sum_log_distinct_prime_divisors_le {t : Finset ℕ} {n : ℕ}
     (hn : 0 < n) (ht : ∀ p ∈ t, p.Prime) (hd : ∀ p ∈ t, p ∣ n) :

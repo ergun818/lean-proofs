@@ -105,13 +105,15 @@ lemma strict_primeCounting_dilation_bounds
   have hcl : (c : ℝ) * n ≤ 4 * Real.log n * Nat.primeCounting' (c * n) := by
     have h := (div_le_iff₀ hLC).mp (show ((c * n : ℕ) : ℝ) / Real.log (c * n : ℕ) ≤
       2 * Nat.primeCounting' (c * n) by linarith)
-    have hm := mul_le_mul_of_nonneg_right hloghi (Nat.cast_nonneg (Nat.primeCounting' (c * n)) : (0 : ℝ) ≤ _)
+    have hm := mul_le_mul_of_nonneg_right hloghi
+      (Nat.cast_nonneg (Nat.primeCounting' (c * n)) : (0 : ℝ) ≤ _)
     push_cast at h hm
     nlinarith
   have hcu : (Nat.primeCounting' (c * n) : ℝ) * Real.log n ≤ 2 * c * n := by
     have h := (le_div_iff₀ hLC).mp (show (Nat.primeCounting' (c * n) : ℝ) ≤
       (2 * ((c * n : ℕ) : ℝ)) / Real.log (c * n : ℕ) by simpa only [mul_div_assoc] using hhiC)
-    have hm := mul_le_mul_of_nonneg_right hloglo (Nat.cast_nonneg (Nat.primeCounting' (c * n)) : (0 : ℝ) ≤ _)
+    have hm := mul_le_mul_of_nonneg_right hloglo
+      (Nat.cast_nonneg (Nat.primeCounting' (c * n)) : (0 : ℝ) ≤ _)
     push_cast at h hm
     nlinarith
   constructor

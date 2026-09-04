@@ -78,6 +78,7 @@ theorem finite_chebyshev {Ω : Type*} (s : Finset Ω) (f : Ω → ℝ) (μ t : �
   apply (le_div_iff₀ (sq_pos_of_pos ht)).mpr
   rw [Finset.expect_eq_sum_div_card]
   have hdiv := div_le_div_of_nonneg_right hcount (Nat.cast_nonneg s.card : (0 : ℝ) ≤ s.card)
-  convert hdiv using 1 <;> ring
+  convert hdiv using 1
+  ring
 
 end Erdos380

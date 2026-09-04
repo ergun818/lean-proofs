@@ -101,7 +101,7 @@ theorem exists_mixingModulusPrimes_totient_bound : ∃ S : ℝ, 0 ≤ S ∧
   · exact fun _ hp => mixingModulusPrimes_upper hp
 
 lemma mixing_modulus_coefficient_le {T : ℕ} (hT : 1 ≤ T) {S s : ℝ}
-    (hs0 : 0 ≤ s) (hs : s ≤ S) :
+    (_hs0 : 0 ≤ s) (hs : s ≤ S) :
     (1 / (T : ℝ)) * (1 + 2 * s) + 2 * (1 / (T : ℝ)) ^ 2 ≤
       (3 + 2 * S) / (T : ℝ) := by
   have hTreal : (1 : ℝ) ≤ T := by exact_mod_cast hT
@@ -114,13 +114,12 @@ lemma mixing_modulus_coefficient_le {T : ℕ} (hT : 1 ≤ T) {S s : ℝ}
 
 lemma mixing_scale_fifth_product_dominates {T N : ℕ} (hT : 1 ≤ T) (hN : T ^ 90 ≤ N) :
     (T ^ 110) ^ 4 ≤ N ^ 5 := by
-  calc
-    (T ^ 110) ^ 4 = T ^ 440 := by rw [← pow_mul]
-    _ ≤ T ^ 450 := Nat.pow_le_pow_right hT (by decide)
-    _ = (T ^ 90) ^ 5 := by rw [← pow_mul]
-    _ ≤ N ^ 5 := Nat.pow_le_pow_left hN 5
+  have hexponents := Nat.pow_le_pow_right hT (by decide : 110 * 4 ≤ 90 * 5)
+  have hpowers : (T ^ 110) ^ 4 ≤ (T ^ 90) ^ 5 := by
+    simpa only [pow_mul] using hexponents
+  exact hpowers.trans (Nat.pow_le_pow_left hN 5)
 
-lemma mixing_scale_log_le {T N : ℕ} (hT : 1 ≤ T) (hN0 : 0 < N) (hN : N ≤ T ^ 110) :
+lemma mixing_scale_log_le {T N : ℕ} (_hT : 1 ≤ T) (hN0 : 0 < N) (hN : N ≤ T ^ 110) :
     Real.log (N : ℝ) ≤ 110 * Real.log T := by
   have h := Real.log_le_log (by exact_mod_cast hN0 : (0 : ℝ) < N)
     (by exact_mod_cast hN : (N : ℝ) ≤ (T : ℝ) ^ 110)

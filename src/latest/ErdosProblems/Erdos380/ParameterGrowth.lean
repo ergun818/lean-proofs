@@ -53,7 +53,8 @@ theorem eventually_probabilityParameter_sq_lower : ∀ᶠ N : ℕ in atTop,
   rw [mul_pow, saddleLog_sq hL.le hll.le] at hSsq
   unfold probabilityParameter
   rw [div_pow]
-  apply (div_le_div_iff₀ (by positivity) (pow_pos (show 0 < 10000 * Real.log (scaleBase N : ℝ) by positivity) 2)).mpr
+  apply (div_le_div_iff₀ (by positivity)
+    (pow_pos (show 0 < 10000 * Real.log (scaleBase N : ℝ) by positivity) 2)).mpr
   have hmul := mul_le_mul_of_nonneg_left hSsq hL.le
   nlinarith
 

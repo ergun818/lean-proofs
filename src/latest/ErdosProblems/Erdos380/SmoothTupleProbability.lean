@@ -2,7 +2,7 @@ import ErdosProblems.Erdos380.SmoothShiftMass
 
 /-! # A uniform smooth-interval probability bound on prime products -/
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 namespace Erdos380
 
@@ -41,8 +41,7 @@ lemma sum_largeShiftPrimeCount (s : Fin 10 → Finset ℕ) (T H c : ℕ) (ε : �
   intro p _
   apply Finset.sum_congr rfl
   intro j _
-  by_cases hd : (p : ℤ) ∣ (c * tupleNaturalProduct s f : ℕ) + (ε : ℤ) * (j.val + 1 : ℕ) <;>
-    simp [hd]
+  simp
 
 lemma SmoothShiftEvent.log_mass_bound
     {s : Fin 10 → Finset ℕ} {T H c D : ℕ} {ε : ℤˣ} {L : ℝ} {f : ∀ i, s i}
@@ -53,12 +52,14 @@ lemma SmoothShiftEvent.log_mass_bound
   have hpoint (j : Fin H) : L ≤ 2 * Real.log D + Real.log H +
       Real.log T * normalizedSmallPrimeMass (smallShiftPrimes T (signedShift ε j)) T c
         (signedShift ε j) (tupleNaturalProduct s f) +
-      Real.log (T ^ 110 : ℕ) * largeShiftPrimeCount T (T ^ 110) c (tupleNaturalProduct s f) (signedShift ε j) := by
+      Real.log (T ^ 110 : ℕ) *
+        largeShiftPrimeCount T (T ^ 110) c (tupleNaturalProduct s f) (signedShift ε j) := by
     obtain ⟨n, hn, heq, hsmooth, hsq, hL⟩ := hevent j
     have hmass := smooth_shift_log_le_masses hn hD hsq hT (signedShift_ne_zero ε j) heq hsmooth
     have hlog : Real.log ((signedShift ε j).natAbs : ℝ) ≤ Real.log (H : ℝ) := by
       rw [signedShift_natAbs]
-      exact Real.log_le_log (by positivity) (by exact_mod_cast (by have := j.isLt; omega : j.val + 1 ≤ H))
+      exact Real.log_le_log (by positivity)
+        (by exact_mod_cast (by have := j.isLt; omega : j.val + 1 ≤ H))
     linarith
   have hsum := Finset.sum_le_sum (s := (Finset.univ : Finset (Fin H))) (fun j _ => hpoint j)
   simpa only [Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
@@ -103,6 +104,7 @@ theorem exists_uniform_smallShiftMassSum_tail :
   simp only [Finset.card_univ, Fintype.card_fin, smallShiftMassSum]
   rfl
 
+open Classical in
 lemma finite_probability_union_bound {Ω : Type*} (s : Finset Ω) (A B E : Ω → Prop)
     (hE : ∀ ω ∈ s, E ω → A ω ∨ B ω) :
     ((s.filter E).card : ℝ) / (s.card : ℝ) ≤
@@ -119,6 +121,7 @@ lemma finite_probability_union_bound {Ω : Type*} (s : Finset Ω) (A B E : Ω �
   rw [← add_div]
   exact div_le_div_of_nonneg_right (by exact_mod_cast hc) (by positivity)
 
+open Classical in
 /-- The finite probability estimate for a smooth interval adjacent to a
 ten-prime product. Every size condition and square-divisor exception is
 explicit. No smooth-number asymptotic or prime-gap result is used here. -/

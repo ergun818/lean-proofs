@@ -9,7 +9,7 @@ each direction. Summing the `1 / H` anchor bounds therefore costs only a
 harmonic sum, with no separate covering lemma or dyadic decomposition.
 -/
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 namespace Erdos380
 
@@ -79,7 +79,8 @@ theorem exists_uniform_goodAnchorNeighbors_bound :
       have hlogT : 0 ≤ Real.log (T : ℝ) := Real.log_nonneg (by exact_mod_cast (by omega : 1 ≤ T))
       positivity
     have hmixH : (H : ℝ) * (C * (Real.log T ^ 5 / (T : ℝ))) ≤ 1 :=
-      (mul_le_mul_of_nonneg_right (show (H : ℝ) ≤ Hmax by exact_mod_cast hHHmax) hmixfactor).trans hmix
+      (mul_le_mul_of_nonneg_right (show (H : ℝ) ≤ Hmax by exact_mod_cast hHHmax)
+        hmixfactor).trans hmix
     have hlogH : Real.log (H : ℝ) ≤ Real.log Hmax :=
       Real.log_le_log (by exact_mod_cast hH0) (by exact_mod_cast hHHmax)
     have h := hbound T hT₁ N R Q hR hQ hdQ hTQ hPQ H hH0 (hHHmax.trans hHT)

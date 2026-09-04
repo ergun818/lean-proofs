@@ -7,7 +7,7 @@ One prime coordinate is averaged first, with the other coordinates frozen.
 The bound remains uniform in their product and in the external coefficient.
 -/
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 namespace Erdos380
 
@@ -64,7 +64,8 @@ theorem exists_uniform_smallPrime_tuple_moment :
       ∀ c : ℕ, ∀ h : ℤ, ∀ t : Finset ℕ,
       t ⊆ Nat.primesLE T → (∀ p ∈ t, ¬ (p : ℤ) ∣ h) →
       (𝔼 f : ∀ i, dyadicPrimes (N i),
-        normalizedSmallPrimeMass t T c h (tupleNaturalProduct (fun i => dyadicPrimes (N i)) f) ^ 50) ≤ K := by
+        normalizedSmallPrimeMass t T c h
+          (tupleNaturalProduct (fun i => dyadicPrimes (N i)) f) ^ 50) ≤ K := by
   obtain ⟨K, hK, T₀, hmoment⟩ := exists_uniform_smallPrime_fiftieth_moment
   refine ⟨K, hK, T₀, ?_⟩
   intro T hT N hlow hhigh c h t ht hth

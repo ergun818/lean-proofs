@@ -32,7 +32,7 @@ lemma choose_ge_half_ratio_pow {M k : ℕ} (hk : 0 < k) (hMk : 2 * k ≤ M) :
     _ ≤ _ := Nat.pow_le_choose k M
 
 lemma fixedCardSubsets_weight_sum_ge
-    {I : Type*} [Fintype I] [DecidableEq I] (k : ℕ) (w : I → ℝ)
+    {I : Type*} [Fintype I] (k : ℕ) (w : I → ℝ)
     {a : ℝ} (ha : 0 ≤ a) (hw : ∀ i, a ≤ w i) :
     ((Fintype.card I).choose k : ℝ) * a ^ k ≤
       ∑ T : fixedCardSubsets I k, ∏ i ∈ T.1, w i := by

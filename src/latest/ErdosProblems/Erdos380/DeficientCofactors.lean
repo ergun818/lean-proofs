@@ -23,12 +23,14 @@ lemma mem_positiveFactorTuples {Y k : ℕ} {f : Fin k → ℕ} :
 
 lemma positiveFactorTuples_prod_pos {Y k : ℕ} {f : Fin k → ℕ}
     (hf : f ∈ positiveFactorTuples Y k) : 0 < ∏ i, f i := by
-  exact Finset.prod_pos (fun i _ => lt_of_lt_of_le Nat.zero_lt_one ((mem_positiveFactorTuples.mp hf i).1))
+  exact Finset.prod_pos (fun i _ => lt_of_lt_of_le Nat.zero_lt_one
+    ((mem_positiveFactorTuples.mp hf i).1))
 
 lemma positiveFactorTuples_prod_le {Y k : ℕ} {f : Fin k → ℕ}
     (hf : f ∈ positiveFactorTuples Y k) : (∏ i, f i) ≤ Y ^ k := by
   calc
-    (∏ i, f i) ≤ ∏ _ : Fin k, Y := Finset.prod_le_prod' (fun i _ => (mem_positiveFactorTuples.mp hf i).2)
+    (∏ i, f i) ≤ ∏ _ : Fin k, Y := Finset.prod_le_prod' (fun i _ =>
+      (mem_positiveFactorTuples.mp hf i).2)
     _ = Y ^ k := by simp
 
 noncomputable def cofactorDeficientSingletons (N Q Y k : ℕ) : Finset ℕ :=
@@ -63,7 +65,8 @@ lemma cofactorDeficientSingletons_card_le_sum (N Q Y k : ℕ) :
     have hbN : b ≤ N / (largestPrimeFactor n ^ 2 * ∏ i, f i) := by
       apply (Nat.le_div_iff_mul_le hdpos).mpr
       calc
-        b * (largestPrimeFactor n ^ 2 * ∏ i, f i) = largestPrimeFactor n ^ 2 * ((∏ i, f i) * b) := by ring
+        b * (largestPrimeFactor n ^ 2 * ∏ i, f i) =
+            largestPrimeFactor n ^ 2 * ((∏ i, f i) * b) := by ring
         _ = n := hval
         _ ≤ N := hnN
     exact Finset.mem_biUnion.mpr ⟨largestPrimeFactor n, Finset.mem_Icc.mpr ⟨hQp, hpY⟩,

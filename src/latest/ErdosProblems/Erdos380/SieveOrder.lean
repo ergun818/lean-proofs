@@ -43,7 +43,8 @@ theorem exists_sieve_order {p M : ℕ} (hp : 256 ≤ p)
     (le_div_iff₀ (by positivity)).mp hkt
   refine ⟨k, hk, ?_, ?_, ?_, hkt⟩
   · have hR : (((2 * p) ^ (2 * k) : ℕ) : ℝ) ≤ M := by
-      apply (Real.log_le_log_iff (by exact_mod_cast (pow_pos (by omega : 0 < 2 * p) (2 * k))) hMR).mp
+      apply (Real.log_le_log_iff
+        (by exact_mod_cast (pow_pos (by omega : 0 < 2 * p) (2 * k))) hMR).mp
       rw [Nat.cast_pow, Real.log_pow]
       push_cast
       push_cast at hklog
@@ -52,7 +53,8 @@ theorem exists_sieve_order {p M : ℕ} (hp : 256 ≤ p)
   · have h := mul_le_mul_of_nonneg_left hlogpq (show (0 : ℝ) ≤ k by positivity)
     nlinarith
   · have hktlower : (9 / 10 : ℝ) * t ≤ k := by linarith
-    have hmul := mul_le_mul_of_nonneg_right hktlower (show 0 ≤ 2 * Real.log (2 * p : ℕ) by positivity)
+    have hmul := mul_le_mul_of_nonneg_right hktlower
+      (show 0 ≤ 2 * Real.log (2 * p : ℕ) by positivity)
     have hcancel : t * (2 * Real.log (2 * p : ℕ)) = Real.log M :=
       div_mul_cancel₀ _ (by positivity)
     have hcompare := mul_le_mul_of_nonneg_left hlogqp (show (0 : ℝ) ≤ k by positivity)

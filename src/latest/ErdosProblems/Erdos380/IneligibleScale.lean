@@ -57,7 +57,8 @@ lemma ineligibleSingletons_scale_subset (N : ℕ) :
   ineligibleSingletons_subset_from_bands N (scaleBase N ^ 490) (scaleBase N ^ 920)
     (scaleBase N ^ 1100) (scaleBase N ^ 2005) (exceptionalPrimeBandSingletons N)
     (singletonPrimeBand_power_subset_exceptional N 490 920 (fun _ hj => Finset.mem_union_left _ hj))
-    (singletonPrimeBand_power_subset_exceptional N 1100 2005 (fun _ hj => Finset.mem_union_right _ hj))
+    (singletonPrimeBand_power_subset_exceptional N 1100 2005 (fun _ hj =>
+      Finset.mem_union_right _ hj))
 
 lemma ineligibleSingletons_scale_card_reduction (N : ℕ) :
     (ineligibleSingletons N (scaleBase N ^ 920) (scaleBase N ^ 1100)).card ≤
@@ -81,8 +82,10 @@ theorem eventually_ineligibleSingletons_scale_bound : ∀ᶠ N : ℕ in atTop,
     ((ineligibleSingletons N (scaleBase N ^ 920) (scaleBase N ^ 1100)).card : ℝ) ≤
       (N : ℝ) / (scaleBase N : ℝ) ^ 2004 := by
   let C : ℕ := 2 * exceptionalPrimeBands.card + 4
-  filter_upwards [eventually_smoothCount_scale_upper (k := 490) (r := 2040) (by norm_num) (by norm_num) 0,
-    eventually_exceptionalPrimeBandSingletons_bound, eventually_cofactorDeficientSingletons_scale_bound,
+  filter_upwards [eventually_smoothCount_scale_upper (k := 490) (r := 2040)
+    (by norm_num) (by norm_num) 0,
+    eventually_exceptionalPrimeBandSingletons_bound,
+    eventually_cofactorDeficientSingletons_scale_bound,
     scaleBase_tendsto_atTop.eventually (eventually_ge_atTop C)] with N hsmooth hbands hthin hC
   have hS1 := one_le_scaleBase N
   have hS1R : (1 : ℝ) ≤ scaleBase N := by exact_mod_cast hS1
@@ -91,7 +94,8 @@ theorem eventually_ineligibleSingletons_scale_bound : ∀ᶠ N : ℕ in atTop,
   have hsmall' : (smoothCount N (scaleBase N ^ 490) : ℝ) ≤ (N : ℝ) / (scaleBase N : ℝ) ^ 2005 :=
     hsmall.trans (div_le_div_of_nonneg_left (Nat.cast_nonneg N) (pow_pos hSpos 2005)
       (pow_le_pow_right₀ hS1R (by decide : 2005 ≤ 2040)))
-  have hlarge := largeSquareDivisorsUpTo_card_le (N := N) (D := scaleBase N ^ 2005) (one_le_pow₀ hS1)
+  have hlarge := largeSquareDivisorsUpTo_card_le (N := N) (D := scaleBase N ^ 2005)
+    (one_le_pow₀ hS1)
   rw [Nat.cast_pow] at hlarge
   have hred : ((ineligibleSingletons N (scaleBase N ^ 920) (scaleBase N ^ 1100)).card : ℝ) ≤
       smoothCount N (scaleBase N ^ 490) + (exceptionalPrimeBandSingletons N).card +
@@ -121,7 +125,8 @@ theorem eventually_ineligibleSingletons_parameter_bound : ∀ᶠ N : ℕ in atTo
       (N : ℝ) / (scaleBase N : ℝ) ^ 2004 := by
   filter_upwards [eventually_ineligibleSingletons_scale_bound] with N hN
   change ((ineligibleSingletons N (scaleBase N ^ 920) ((scaleBase N ^ 10) ^ 110)).card : ℝ) ≤ _
-  rw [← pow_mul]
-  exact hN
+  have hpower : (scaleBase N ^ 10) ^ 110 = scaleBase N ^ 1100 := by
+    rw [← pow_mul]
+  simpa only [hpower] using hN
 
 end Erdos380

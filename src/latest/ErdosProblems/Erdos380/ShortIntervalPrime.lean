@@ -63,7 +63,7 @@ lemma choose_cube_le_of_small_prime_factors {n k : ℕ} (hn : 0 < n)
     _ = n ^ (3 * (n.choose k).primeFactors.card) := by rw [← pow_mul, Nat.mul_comm]
     _ ≤ _ := Nat.pow_le_pow_right (by omega) he
 
-lemma intervalProduct_eq_factorial_mul_choose {u v k : ℕ} (hu : 1 ≤ u)
+lemma intervalProduct_eq_factorial_mul_choose {u v k : ℕ} (_hu : 1 ≤ u)
     (hku : u + k = v + 1) : intervalProduct u v = k.factorial * v.choose k := by
   have hlen : v + 1 - u = k := by omega
   have hend : u + k - 1 = v := by omega

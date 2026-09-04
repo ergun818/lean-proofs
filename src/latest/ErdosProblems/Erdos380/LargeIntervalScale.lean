@@ -20,8 +20,9 @@ theorem eventually_largeIntervalPrime_scale_bound : ∀ᶠ N : ℕ in atTop,
   have hH : 0 < squareScale N := pow_pos (by omega : 0 < scaleBase N) 3000
   have hHsq : squareScale N ^ 2 ≤ 2 * N := by
     change (scaleBase N ^ 3000) ^ 2 ≤ 2 * N
-    rw [← pow_mul]
-    exact hpow.trans (by omega)
+    calc
+      (scaleBase N ^ 3000) ^ 2 = scaleBase N ^ 6000 := by rw [← pow_mul]
+      _ ≤ 2 * N := hpow.trans (by omega)
   have hD : 1 ≤ largePrimeScale N := one_le_pow₀ hS1
   have hcount := hbound N hN (squareScale N) (largePrimeScale N) hH hHsq hD
   have hE : (E : ℝ) ≤ 4 * N / (scaleBase N : ℝ) ^ 2002 := by
@@ -33,7 +34,8 @@ theorem eventually_largeIntervalPrime_scale_bound : ∀ᶠ N : ℕ in atTop,
     calc
       _ ≤ 7680 * (N : ℝ) * scaleBase N / (scaleBase N : ℝ) ^ 3000 := by
         rw [squareScale, Nat.cast_pow]
-        exact div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_left hlog' (by positivity)) (by positivity)
+        exact div_le_div_of_nonneg_right
+          (mul_le_mul_of_nonneg_left hlog' (by positivity)) (by positivity)
       _ = 7680 * ((N : ℝ) / (scaleBase N : ℝ) ^ 2999) := by
         have h := scale_quotient_succ_mul N 2999
         calc
@@ -44,11 +46,13 @@ theorem eventually_largeIntervalPrime_scale_bound : ∀ᶠ N : ℕ in atTop,
       _ = _ := by ring
   have hsecond : (16 * squareScale N + 4 : ℝ) * N / largePrimeScale N ≤
       20 * N / (scaleBase N : ℝ) ^ 2002 := by
-    have hH1 : (1 : ℝ) ≤ squareScale N := by exact_mod_cast (one_le_pow₀ hS1 : 1 ≤ scaleBase N ^ 3000)
+    have hH1 : (1 : ℝ) ≤ squareScale N := by
+      exact_mod_cast (one_le_pow₀ hS1 : 1 ≤ scaleBase N ^ 3000)
     have hcoef : (16 * squareScale N + 4 : ℝ) ≤ 20 * squareScale N := by linarith
     calc
       _ ≤ (20 * squareScale N : ℝ) * N / largePrimeScale N :=
-        div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_right hcoef (Nat.cast_nonneg N)) (Nat.cast_nonneg _)
+        div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_right hcoef (Nat.cast_nonneg N))
+          (Nat.cast_nonneg _)
       _ = 20 * ((N : ℝ) / (scaleBase N : ℝ) ^ 3000) := by
         rw [squareScale, largePrimeScale, Nat.cast_pow, Nat.cast_pow,
           show 6000 = 3000 + 3000 from rfl, pow_add]

@@ -11,9 +11,9 @@ def anchoredSmoothRunStarts (p M H : ℕ) (left : Bool) : Finset ℕ :=
   (Finset.Icc 1 M).filter fun m => ∀ j ∈ Finset.range H,
     largestPrimeFactor (anchorShiftValue p m j left) ≤ p
 
-lemma anchorShiftValue_pos {p m j H : ℕ} (hp : p.Prime) (hm : 1 ≤ m)
+lemma anchorShiftValue_pos {p m j H : ℕ} (_hp : p.Prime) (hm : 1 ≤ m)
     (hj : j < H) (hH : H ≤ p) (left : Bool) : 0 < anchorShiftValue p m j left := by
-  have hpm : p ≤ p ^ 2 * m := by nlinarith [hp.two_le]
+  have hpm : p ≤ p ^ 2 * m := by nlinarith
   cases left <;> simp only [anchorShiftValue, Bool.false_eq_true, ↓reduceIte] <;> omega
 
 noncomputable def anchorSieveUnit {p : ℕ} (hp : p.Prime)

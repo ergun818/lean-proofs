@@ -30,11 +30,13 @@ lemma eventually_initial_short_error_bound (E : ℕ) : ∀ᶠ N : ℕ in atTop,
     scaleBase_tendsto_atTop.eventually (eventually_ge_atTop E)] with N hpow hW hE
   have hS1 := one_le_scaleBase N
   have hSpos : (0 : ℝ) < scaleBase N := by exact_mod_cast (by omega : 0 < scaleBase N)
-  have hsmallpow : scaleBase N ^ 2003 ≤ N := (pow_le_pow_right₀ hS1 (by decide : 2003 ≤ 4004)).trans hpow
+  have hsmallpow : scaleBase N ^ 2003 ≤ N :=
+    (pow_le_pow_right₀ hS1 (by decide : 2003 ≤ 4004)).trans hpow
   have hroot : scaleBase N ^ 2002 ≤ Nat.sqrt N := by
     apply Nat.le_sqrt'.mpr
-    rw [← pow_mul]
-    exact hpow
+    calc
+      (scaleBase N ^ 2002) ^ 2 = scaleBase N ^ 4004 := by rw [← pow_mul]
+      _ ≤ N := hpow
   have hrootmul : Nat.sqrt N * scaleBase N ^ 2002 ≤ N := by
     calc
       _ ≤ Nat.sqrt N * Nat.sqrt N := Nat.mul_le_mul_left _ hroot
@@ -43,12 +45,12 @@ lemma eventually_initial_short_error_bound (E : ℕ) : ∀ᶠ N : ℕ in atTop,
   have hEmul : E * scaleBase N ^ 2002 ≤ N := by
     calc
       _ ≤ scaleBase N * scaleBase N ^ 2002 := Nat.mul_le_mul_right _ hE
-      _ = scaleBase N ^ 2003 := (pow_succ' _ _).symm
+      _ = scaleBase N ^ 2003 := by conv_rhs => rw [pow_succ']
       _ ≤ N := hsmallpow
   have hWmul : shortWidth N * scaleBase N ^ 2002 ≤ N := by
     calc
       _ ≤ scaleBase N * scaleBase N ^ 2002 := Nat.mul_le_mul_right _ hW
-      _ = scaleBase N ^ 2003 := (pow_succ' _ _).symm
+      _ = scaleBase N ^ 2003 := by conv_rhs => rw [pow_succ']
       _ ≤ N := hsmallpow
   have hrootR : (Nat.sqrt N : ℝ) ≤ (N : ℝ) / (scaleBase N : ℝ) ^ 2002 := by
     apply (le_div_iff₀ (pow_pos hSpos 2002)).mpr
@@ -65,7 +67,8 @@ lemma eventually_initial_short_error_bound (E : ℕ) : ∀ᶠ N : ℕ in atTop,
 lemma short_ineligible_error_bound {N : ℕ} (hW : shortWidth N ≤ scaleBase N)
     (hI : ((ineligibleSingletons N (cofactorScale N) (mixingBase N ^ 110)).card : ℝ) ≤
       (N : ℝ) / (scaleBase N : ℝ) ^ 2004) :
-    (2 * shortWidth N + 1 : ℝ) * (ineligibleSingletons N (cofactorScale N) (mixingBase N ^ 110)).card ≤
+    (2 * shortWidth N + 1 : ℝ) *
+      (ineligibleSingletons N (cofactorScale N) (mixingBase N ^ 110)).card ≤
       3 * N / (scaleBase N : ℝ) ^ 2002 := by
   have hS1 : (1 : ℝ) ≤ scaleBase N := by exact_mod_cast one_le_scaleBase N
   have hWR : (shortWidth N : ℝ) ≤ scaleBase N := by exact_mod_cast hW
@@ -112,17 +115,20 @@ theorem exists_eventually_shortExcess_relative_bound : ∃ K : ℝ, 0 < K ∧ �
   obtain ⟨K, hK, E, hbound⟩ := exists_eventually_shortExcess_scale_bound
   refine ⟨K, hK, ?_⟩
   filter_upwards [hbound, eventually_initial_short_error_bound E,
-    eventually_logarithmicCeiling_pow_le_scaleBase 20, eventually_ineligibleSingletons_parameter_bound,
+    eventually_logarithmicCeiling_pow_le_scaleBase 20,
+    eventually_ineligibleSingletons_parameter_bound,
     eventually_singletonBadUpTo_scale_lower] with N hcount hinit hW hI hA
   have hthin := short_ineligible_error_bound hW hI
   have hsquare := short_square_error_bound hW
   have hsum : ((shortExcessPointsUpTo N (shortWidth N)).card : ℝ) ≤
-      19 * N / (scaleBase N : ℝ) ^ 2002 + K * neighborErrorFactor N * (singletonBadUpTo N).card := by
+      19 * N / (scaleBase N : ℝ) ^ 2002 +
+        K * neighborErrorFactor N * (singletonBadUpTo N).card := by
     simp only [mul_div_assoc] at hcount hinit hthin hsquare ⊢
     linarith
   have hSpos : (0 : ℝ) < scaleBase N := by exact_mod_cast
     (lt_of_lt_of_le Nat.zero_lt_one (one_le_scaleBase N))
-  have hnorm : (N : ℝ) / (scaleBase N : ℝ) ^ 2002 ≤ (singletonBadUpTo N).card / (scaleBase N : ℝ) := by
+  have hnorm : (N : ℝ) / (scaleBase N : ℝ) ^ 2002 ≤
+      (singletonBadUpTo N).card / (scaleBase N : ℝ) := by
     apply (le_div_iff₀ hSpos).mpr
     exact (scale_quotient_succ_mul N 2001).le.trans hA
   calc
