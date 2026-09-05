@@ -4034,6 +4034,27 @@ diff --git a/projects/HasseWeil/HasseWeil/Foundation/EC/Translation.lean b/proje
 diff --git a/projects/HasseWeil/HasseWeil/Foundation/EC/TranslationOrd.lean b/projects/HasseWeil/HasseWeil/Foundation/EC/TranslationOrd.lean
 --- a/projects/HasseWeil/HasseWeil/Foundation/EC/TranslationOrd.lean
 +++ b/projects/HasseWeil/HasseWeil/Foundation/EC/TranslationOrd.lean
+@@ -1399,9 +1399,9 @@
+           have h_smul : ((2 : ℕ) • ((n : ℤ) : WithTop ℤ)) =
+               (((n + n) : ℤ) : WithTop ℤ) := by
+             change (1 + 1) • ((n : ℤ) : WithTop ℤ) = (((n + n) : ℤ) : WithTop ℤ)
+-            rw [add_smul, one_smul]; push_cast; ring
++            rw [add_smul, one_smul]; push_cast; ring_nf
+           rw [h_smul, show ((k : ℤ) : WithTop ℤ) + (((n + n) : ℤ) : WithTop ℤ) =
+-            ((k + (n + n) : ℤ) : WithTop ℤ) from by push_cast; ring] at hfg
++            ((k + (n + n) : ℤ) : WithTop ℤ) from by push_cast; ring_nf] at hfg
+           have h_eq : k + (n + n) = 0 := by exact_mod_cast hfg
+           exact_mod_cast (show k < 0 by omega)
+ 
+@@ -1492,7 +1492,7 @@
+         have h_sum : ((k + n : ℤ) : WithTop ℤ) = ((0 : ℤ) : WithTop ℤ) := by
+           rw [show ((k + n : ℤ) : WithTop ℤ) =
+             ((k : ℤ) : WithTop ℤ) + ((n : ℤ) : WithTop ℤ) from by
+-              push_cast; ring]
++              push_cast; ring_nf]
+           exact h
+         exact_mod_cast h_sum
+       have h_k_eq : k = -n := by omega
 @@ -2004,6 +2004,7 @@
    · rfl
    · rw [WKE_negY_algebraMap, negY_negY_eq]
@@ -6788,7 +6809,35 @@ diff --git a/projects/HasseWeil/HasseWeil/HasseBound/WeilPairing/PairingProps.le
 diff --git a/projects/HasseWeil/HasseWeil/HasseBound/WeilPairing/PencilComapPointValuation.lean b/projects/HasseWeil/HasseWeil/HasseBound/WeilPairing/PencilComapPointValuation.lean
 --- a/projects/HasseWeil/HasseWeil/HasseBound/WeilPairing/PencilComapPointValuation.lean
 +++ b/projects/HasseWeil/HasseWeil/HasseBound/WeilPairing/PencilComapPointValuation.lean
-@@ -226,6 +226,7 @@
+@@ -75,21 +75,12 @@
+ `= ord_R(x_gen − x) ≥ 1` (∞-source transport `ordProj_translate_infinity` + `x_gen − x ∈ m_R`), with
+ `R = φ P`.  `pencil_two_residues` is the application to the canonical pencil.
+ 
+-**Remaining (exactly ONE isolated `sorry`, a genuine geometric residual):**
+-* `pencilScalingComapDataCard_pDvdR` — the **`p ∣ r'` separable** bundle (`(r' : K) = 0` but
+-  `p ∤ s'`, so `rπ − s` is separable, `a = −s' ≠ 0`).  The irreducible obstruction is the **infinity
+-  order-transport** `InftyOrdTransport (rπ − s)_{K̄}` / the exact `∞`-orders `-2`, `-3`: for
+-  `p ∤ r'` these transport from the K-level `ord_addPullback_x_pair = -2`, whose proof rests
+-  essentially on `(r' : K) ≠ 0` (the inner Frobenius factor `ord_∞((r'π)^* x) = q·(-2)` needs
+-  separable `[r']`); for `p ∣ r'` the summand decomposition gives only `ord_∞ < 0`
+-  (`ordAtInfty_mulByInt_x_neg`), not the exact `-2` the separable whole pencil has.  Closing this
+-  needs the **inseparable** division-polynomial pole computation (the inseparable
+-  `natDegree (ΨSq r')`) or a general "separable isogeny ⟹ unramified at `O`" theorem — a substantial
+-  separate development.  See its docstring.
+-
+-`comap_pointValuation_pencil_eq_affine` is now **axiom-clean**; `pencilScaling_holds` carries
+-`sorryAx` only through the single `p ∣ r'` leaf; leaves 1 (`frobeniusScaling_holds`) and 2
+-(`oneSubFrobeniusScaling_holds`) are axiom-clean.
++**The `p ∣ r'` separable bundle is proved** by
++`PencilSeparabilityProof.pencilScalingComapDataCard_of_separable`. The unequal summand
++pole orders give a genuine pencil pullback over `K`. Its nonzero constant differential
++coefficient gives infinity orders `-2` and `-3`; base change, translation covariance,
++and the residue bridges then supply the complete comap and finite-kernel bundle.
++`pencilScalingComapDataCard_pDvdR` applies this construction to the remaining separable case.
+ 
+ ## References
+ 
+@@ -226,6 +217,7 @@
  
  /-! ### The omega-coefficient of `(rπ − s)_{K̄}` (separability datum for the affine comap) -/
  
@@ -6796,7 +6845,7 @@ diff --git a/projects/HasseWeil/HasseWeil/HasseBound/WeilPairing/PencilComapPoin
  /-- **`omegaPullbackCoeff (rπ − s)_{K̄} = algebraMap (−s')`** (CoordHom-free).  The `≠ 0`
  separability datum for the affine comap (`p ∤ s'` ⟹ `−s' ≠ 0`). -/
  theorem omegaPullbackCoeff_pencil (r' s' : ℤ) (hr : r' ≠ 0) (hs : s' ≠ 0)
-@@ -246,6 +247,7 @@
+@@ -246,6 +238,7 @@
      (W.baseChange (AlgebraicClosure K)).toAffine.FunctionField]
    rfl
  
@@ -6804,7 +6853,7 @@ diff --git a/projects/HasseWeil/HasseWeil/HasseBound/WeilPairing/PencilComapPoin
  /-- **`omegaPullbackCoeff (rπ − s)_{K̄} ∈ range (algebraMap K̄ K(E_{K̄}))`** — the constancy datum.
  -/
  theorem omegaPullbackCoeff_pencil_mem_range (r' s' : ℤ) (hr : r' ≠ 0) (hs : s' ≠ 0)
-@@ -258,6 +260,7 @@
+@@ -258,6 +251,7 @@
    rw [omegaPullbackCoeff_pencil W p r r' s' hr hs hrK hsK]
    exact ⟨_, rfl⟩
  
@@ -6812,7 +6861,7 @@ diff --git a/projects/HasseWeil/HasseWeil/HasseBound/WeilPairing/PencilComapPoin
  /-- **`omegaPullbackCoeff (rπ − s)_{K̄} ≠ 0`** — the separability datum (`p ∤ s'` ⟹ `−s' ≠ 0`). -/
  theorem omegaPullbackCoeff_pencil_ne_zero (r' s' : ℤ) (hr : r' ≠ 0) (hs : s' ≠ 0)
      (hrK : (r' : K) ≠ 0) (hsK : (s' : K) ≠ 0) :
-@@ -771,9 +774,9 @@
+@@ -771,9 +765,9 @@
  theorem card_eq_zero_in_functionField (p r : ℕ) [Fact p.Prime] [CharP K p]
      [Fact (Fintype.card K = p ^ r)] :
      ((Fintype.card K : ℕ) : (W.baseChange (AlgebraicClosure K)).toAffine.FunctionField) = 0 := by
@@ -6824,7 +6873,391 @@ diff --git a/projects/HasseWeil/HasseWeil/HasseBound/WeilPairing/PencilComapPoin
      charP_of_injective_algebraMap (FaithfulSMul.algebraMap_injective (AlgebraicClosure K)
        (W.baseChange (AlgebraicClosure K)).toAffine.FunctionField) p
    rw [CharP.cast_eq_zero_iff (W.baseChange (AlgebraicClosure K)).toAffine.FunctionField p]
-@@ -1812,7 +1815,7 @@
+@@ -1708,58 +1702,333 @@
+           (mulByInt (W.baseChange (AlgebraicClosure K)).toAffine (-s'))
+           (mapTranslateGenericPoint_mulByInt_canonical W (-s') hmne) k z) }
+ 
+-/-- **The `p ∣ r'` separable comap bundle** (with `p ∤ s'`, so `(s' : K) = 0` is *false* and the
+-member `rπ − s` is separable, `a_{rπ−s} = −s' ≠ 0`), the **off-domain** case `(r' : K) = 0` for
+-which the canonical construction `pencilBaseChangePullback` (needing `(r' : K) ≠ 0`) is unavailable.
+-
+-**The SOLE remaining residual of the unconditional Hasse bound**, and a genuine geometric gap (not
+-assembly).  The pencil pullback can be rebuilt over `K̄` through the `rFrobBaseChange r'` summand
+-(`addIsog (rFrobBaseChange r') (mulByInt (-s'))`, valid for any `r'`), and most of the bundle is
+-then reachable:
+-
+-* the **affine comap** field is now `O`-summand-free via the transport-to-`O` lemma
+-  `isog_resid_at_affine_of_hgcomm_hinfty` (no addition-formula decomposition, so the
+-  inseparable-summand secant/doubling breakdown is avoided);
+-* the **generic-point covariance** `hgcomm` is reachable from `addIsog_isGenuineWith` (genuineness
+-  of the two summands over `K̄`) + the pullback-parametric `mapTranslateGenericPoint_gKbarPencil`;
+-* `finiteKer` follows from the covariance via `finite_kernel_of_hcov`.
+-
+-The remaining obstruction is the two `∞`-orders `ord_∞((rπ − s)_{K̄}^* x_gen) = -2`,
+-`ord_∞(… y_gen) = -3` (the unramifiedness of the *separable* pencil at `O`); from them
+-`InftyOrdTransport` follows (`inftyOrdTransport_of_ordAtInfty_x_y`) and the whole bundle assembles.
+-
+-**The `∞`-differential route (Route B) is now ELIMINATED** by the Route C keystone
+-`ordAtInfty_isog_pullback_x_y_of_comap_at_point` (above, axiom-clean): for any `φ` with the
+-canonical `hgcomm` and the affine comap identity
+-`(pointValuation P).comap φ^* = pointValuation ⟨xR, yR⟩` at a *single* smooth point `P` with finite
+-image `φ(P) = some xR yR`, the two `∞`-orders are `-2`, `-3`.  The mechanism is transport-to-`O`
+-(`ord_P_isog_pullback_eq_ordAtInfty_translate`, needs only `hgcomm`) + the comap identity
+-(`ord_P_isog_pullback_eq_of_comap`) + the translation transport
+-(`ord_P_translate_neg_eq_ordAtInfty`).  So **NO `ω`-derivative machinery at `∞` is needed**; the gap
+-reduces to the comap at *one* finite-image point.
+-
+-That comap, in turn, needs the two generator residues at `P` (secant branch via the
+-**separability-free** `rFrobBaseChange_resid_xy_of_ne_zero` + `mulByInt_neg_resid_xy`, both
+-`(r' : K) = 0`-compatible) plus the `e = 1` datum — all reachable — once the
+-`addIsog (rFrobBaseChange r') (mulByInt (-s'))` is constructed, which requires the
+-**transcendence/injectivity** of `addPullback_x_pair (rFrobBaseChange r') (mulByInt (-s'))`, i.e.
+-its pole `ord_∞(addPullback_x_pair (rFrobBaseChange r') (mulByInt (-s'))) < 0`.
+-
+-**Key fact (verified):** for `p ∣ r'` the two summand `x`-pole orders are *asymmetric*
+-(`ord_∞((rFrobBaseChange r')^* x) = q·M ≤ -4` with `M = ord_∞(mulByInt_x r') ≤ -2`, vs
+-`ord_∞((mulByInt (-s'))^* x) = -2`), so the Weierstrass-reduced addition numerator has the
+-**unique** strictly-dominant term `X₁²·X₂` at order `2qM - 2` (all other reduced terms are strictly
+-less negative, using `ord_∞(mulByInt_y r') = (3/2)·M`); hence
+-`ord_∞(addPullback_x_pair …) = (2qM - 2) - 2qM = -2` **exactly**.  This is *not* blocked by the
+-BRIDGE-003 "3-way tie" of `addPullback_x_pair_x_ord_neg` (`Verschiebung/Genuine.lean`), which is the
+-*symmetric*-pole case.  Closing this requires the inseparable generalisation of
+-`ord_addPullback_x_pair_zsmul_frobenius_mulByInt_neg` (the general `ord_∞(mulByInt_y n)` + the
+-reduced-numerator unique-dominant analysis with `M ≤ -2` in place of `-2`) — a substantial but
+-mechanical mirror.  Isolated here as the single remaining `sorry`. -/
++end BaseChange
++
++end HasseWeil.WeilPairing
++
++namespace HasseWeil.WeilPairing.PencilSeparabilityProof
++
++open HasseWeil WeierstrassCurve
++
++variable {F : Type*} [Field F]
++
++private lemma ofPowerSeries_orderTop_one (f : PowerSeries F)
++    (h0 : PowerSeries.constantCoeff f = 0) (h1 : PowerSeries.coeff 1 f ≠ 0) :
++    (HahnSeries.ofPowerSeries ℤ F f).orderTop = (1 : ℤ) := by
++  apply laurent_orderTop_eq_of_coeff
++  · intro j hj
++    by_cases hj0 : j < 0
++    · exact laurent_ofPowerSeries_coeff_neg f hj0
++    · have hj_eq : j = 0 := by omega
++      subst j
++      change (HahnSeries.ofPowerSeries ℤ F f).coeff ((0 : ℕ) : ℤ) = 0
++      rw [HahnSeries.ofPowerSeries_apply_coeff, PowerSeries.coeff_zero_eq_constantCoeff_apply]
++      exact h0
++  · change (HahnSeries.ofPowerSeries ℤ F f).coeff ((1 : ℕ) : ℤ) ≠ 0
++    rw [HahnSeries.ofPowerSeries_apply_coeff]
++    exact h1
++
++private lemma ofPowerSeries_orderTop_zero_of_unit (f : PowerSeries F) (hf : IsUnit f) :
++    (HahnSeries.ofPowerSeries ℤ F f).orderTop = (0 : ℤ) := by
++  apply laurent_orderTop_eq_of_coeff
++  · intro j hj
++    exact laurent_ofPowerSeries_coeff_neg f hj
++  · have h0 : PowerSeries.constantCoeff f ≠ 0 :=
++      (PowerSeries.isUnit_iff_constantCoeff.mp hf).ne_zero
++    change (HahnSeries.ofPowerSeries ℤ F f).coeff ((0 : ℕ) : ℤ) ≠ 0
++    rw [HahnSeries.ofPowerSeries_apply_coeff, PowerSeries.coeff_zero_eq_constantCoeff_apply]
++    exact h0
++
++variable [DecidableEq F] (W : WeierstrassCurve F) [W.toAffine.IsElliptic]
++
++theorem ordAtInfty_pullback_generators_of_nonzero_constant
++    (α : HasseWeil.Isogeny W.toAffine W.toAffine)
++    (hα : (W_smooth W).ordAtInfty (α.pullback (x_gen W)) < 0)
++    (c : F) (hc : c ≠ 0)
++    (hω : omegaPullbackCoeff W α = algebraMap F W.toAffine.FunctionField c) :
++    (W_smooth W).ordAtInfty (α.pullback (x_gen W)) = ((-2 : ℤ) : WithTop ℤ) ∧
++      (W_smooth W).ordAtInfty (α.pullback (y_gen W)) = ((-3 : ℤ) : WithTop ℤ) := by
++  let f := formalIsogenySeries W α
++  have hf0 : PowerSeries.constantCoeff f = 0 :=
++    constantCoeff_formalIsogenySeries_of_orderTop_pos W α
++      (orderTop_localExpand_pullback_localParam_pos_of_ord_x_neg W α hα)
++  have hf1 : PowerSeries.coeff 1 f ≠ 0 := by
++    rw [← omegaPullbackCoeff_F_value_eq_coeff_one W α hα c hω]
++    exact hc
++  have hford : (HahnSeries.ofPowerSeries ℤ F f).orderTop = (1 : ℤ) :=
++    ofPowerSeries_orderTop_one f hf0 hf1
++  have hsub : PowerSeries.HasSubst f := PowerSeries.HasSubst.of_constantCoeff_zero' hf0
++  have hU : IsUnit (PowerSeries.subst f (formalU W) : PowerSeries F) := by
++    rw [← PowerSeries.coe_substAlgHom hsub]
++    exact (formalU_isUnit W).map (PowerSeries.substAlgHom hsub)
++  have hUord : (HahnSeries.ofPowerSeries ℤ F
++      (PowerSeries.subst f (formalU W))).orderTop = (0 : ℤ) :=
++    ofPowerSeries_orderTop_zero_of_unit _ hU
++  have hTord : (HahnSeries.ofPowerSeries ℤ F
++      (PowerSeries.subst f (formalW W))).orderTop = (3 : ℤ) := by
++    rw [formalW_eq_X3_mul_U, PowerSeries.subst_mul hsub,
++      PowerSeries.subst_pow hsub, PowerSeries.subst_X hsub, map_mul, map_pow]
++    simp only [pow_succ, pow_zero, HahnSeries.orderTop_mul, hford, hUord]
++    norm_num
++  have hTne : HahnSeries.ofPowerSeries ℤ F
++      (PowerSeries.subst f (formalW W)) ≠ 0 := by
++    intro hzero
++    rw [hzero, HahnSeries.orderTop_zero] at hTord
++    exact WithTop.top_ne_coe hTord
++  constructor
++  · rw [← orderTop_localExpand_eq_ordAtInfty W, localExpand_pullback_x_gen W α hα,
++      div_eq_mul_inv, HahnSeries.orderTop_mul, HahnSeries.orderTop_inv_eq_neg hTne]
++    change (HahnSeries.ofPowerSeries ℤ F f).orderTop +
++      -(HahnSeries.ofPowerSeries ℤ F (PowerSeries.subst f (formalW W))).orderTop = _
++    rw [hford, hTord]
++    rfl
++  · rw [← orderTop_localExpand_eq_ordAtInfty W, localExpand_pullback_y_gen W α hα,
++      HahnSeries.orderTop_neg, HahnSeries.orderTop_inv_eq_neg hTne]
++    change -(HahnSeries.ofPowerSeries ℤ F (PowerSeries.subst f (formalW W))).orderTop = _
++    rw [hTord]
++    rfl
++
++
++end HasseWeil.WeilPairing.PencilSeparabilityProof
++
++namespace HasseWeil.WeilPairing.PencilSeparabilityProof
++
++open HasseWeil WeierstrassCurve HasseWeil.Curves HasseWeil.WeilPairing
++
++variable {K : Type*} [Field K] [Fintype K] [DecidableEq K]
++variable (W : WeierstrassCurve K) [W.toAffine.IsElliptic]
++
++omit [DecidableEq K] [Fintype K] [W.toAffine.IsElliptic] in
++private theorem transcendental_of_negative_infinity_order [Finite K] {f : W.toAffine.FunctionField}
++    (hf : (W_smooth W).ordAtInfty f < 0) : Transcendental K f := by
++  classical
++  let : Fintype K := Fintype.ofFinite K
++  intro halg
++  let L := IntermediateField.adjoin K ({f} : Set W.toAffine.FunctionField)
++  have : FiniteDimensional K L := IntermediateField.adjoin.finiteDimensional halg.isIntegral
++  have : Finite L := Finite.of_injective (Module.finBasis K L).repr
++    (Module.finBasis K L).repr.injective
++  let : Fintype L := Fintype.ofFinite L
++  let a : L := ⟨f, IntermediateField.mem_adjoin_simple_self K f⟩
++  have hpow : f ^ Fintype.card L = f := by
++    have h := congrArg (fun z : L ↦ (z : W.toAffine.FunctionField)) (FiniteField.pow_card a)
++    exact h
++  have hfne : f ≠ 0 := ne_zero_of_ordAtInfty_neg W hf
++  obtain ⟨m, hm⟩ : ∃ m : ℤ, (W_smooth W).ordAtInfty f = (m : WithTop ℤ) := by
++    obtain ⟨m, hm⟩ := WithTop.ne_top_iff_exists.mp
++      (((W_smooth W).ordAtInfty_eq_top_iff f).not.mpr hfne)
++    exact ⟨m, hm.symm⟩
++  have hmneg : m < 0 := by rw [hm] at hf; exact_mod_cast hf
++  have horder : (((Fintype.card L : ℤ) * m) : WithTop ℤ) = (m : WithTop ℤ) :=
++    ((W_smooth W).ord_pow_concrete hfne m (Fintype.card L) hm).symm.trans
++      ((congrArg (W_smooth W).ordAtInfty hpow).trans hm)
++  have hint : (Fintype.card L : ℤ) * m = m := by exact_mod_cast horder
++  have hcard : (1 : ℤ) < Fintype.card L := by
++    exact_mod_cast Fintype.one_lt_card_iff_nontrivial.mpr (inferInstance : Nontrivial L)
++  nlinarith
++
++theorem exists_separable_pencil_pullback (r s : ℤ) (hr : r ≠ 0) (hs : s ≠ 0)
++    (hsK : (s : K) ≠ 0) :
++    ∃ α : HasseWeil.Isogeny W.toAffine W.toAffine,
++      IsGenuineWith W α
++        (((zsmulPointHom W r).comp (frobeniusW_KE W)) + zsmulPointHom W (-s)) ∧
++      omegaPullbackCoeff W α = algebraMap K W.toAffine.FunctionField (-s : K) ∧
++      (W_smooth W).ordAtInfty (α.pullback (x_gen W)) = ((-2 : ℤ) : WithTop ℤ) ∧
++      (W_smooth W).ordAtInfty (α.pullback (y_gen W)) = ((-3 : ℤ) : WithTop ℤ) := by
++  classical
++  let α₁ := (frobeniusIsog W).zsmul r
++  let α₂ := mulByInt W.toAffine (-s)
++  obtain ⟨M, hM, hMle, _⟩ := exists_ordAtInfty_mulByInt_x_eq_even_le_neg_two W r hr
++  have hq : (2 : ℤ) ≤ Fintype.card K := by
++    have hqnat : 2 ≤ Fintype.card K :=
++      Fintype.one_lt_card_iff_nontrivial.mpr (inferInstance : Nontrivial K)
++    exact_mod_cast hqnat
++  have hX₁ : (W_smooth W).ordAtInfty (α₁.pullback (x_gen W)) =
++      (((Fintype.card K : ℤ) * M) : WithTop ℤ) := by
++    have hx : α₁.pullback (x_gen W) = (mulByInt_x W r) ^ Fintype.card K := by
++      change (frobeniusIsog W).pullback ((mulByInt W.toAffine r).pullback (x_gen W)) = _
++      have hm : (mulByInt W.toAffine r).pullback (x_gen W) = mulByInt_x W r :=
++        mulByInt_pullback_x W r hr
++      rw [hm, frobeniusIsog_pullback_apply]
++    exact (congrArg (W_smooth W).ordAtInfty hx).trans
++      ((W_smooth W).ord_pow_concrete (mulByInt_x_ne_zero W r hr) M (Fintype.card K) hM)
++  have hX₂ : (W_smooth W).ordAtInfty (α₂.pullback (x_gen W)) =
++      ((-2 : ℤ) : WithTop ℤ) :=
++    ordAtInfty_mulByInt_neg_pullback_x_gen W s hs hsK
++  have hMdeep : (Fintype.card K : ℤ) * M < -2 := by nlinarith
++  have hxne : α₁.pullback (x_gen W) ≠ α₂.pullback (x_gen W) := by
++    intro heq
++    have horders := congrArg (W_smooth W).ordAtInfty heq
++    rw [hX₁, hX₂] at horders
++    have hint : (Fintype.card K : ℤ) * M = -2 := by exact_mod_cast horders
++    omega
++  have hpole : (W_smooth W).ordAtInfty (addPullback_x_pair α₁ α₂) < 0 :=
++    addPullback_x_pair_x_ord_neg W hxne
++      (by rw [hX₁]; exact_mod_cast (show (Fintype.card K : ℤ) * M < 0 by omega))
++      (by rw [hX₂]; exact_mod_cast (show (-2 : ℤ) < 0 by omega))
++  have hxy : AddNonInversePair α₁ α₂ := AddNonInversePair_of_x_ne hxne
++  have hinj : Function.Injective (addCoordAlgHomPair hxy) := by
++    apply addCoordAlgHomPair_injective_of_baseHom_inj
++    rw [addBaseHomPair_eq_aeval]
++    exact transcendental_iff_injective.mp (transcendental_of_negative_infinity_order W hpole)
++  let α := addIsog hxy hinj
++  have hαpole : (W_smooth W).ordAtInfty (α.pullback (x_gen W)) < 0 := by
++    change (W_smooth W).ordAtInfty ((addIsog hxy hinj).pullback (x_gen W)) < 0
++    rw [addIsog_pullback, OpenLemmaPrimitives.addPullbackAlgHomPair_x_gen_eq]
++    exact hpole
++  have hgen : IsGenuineWith W α
++      (((zsmulPointHom W r).comp (frobeniusW_KE W)) + zsmulPointHom W (-s)) :=
++    addIsog_isGenuineWith W hxy hinj
++      (zsmul_frobeniusIsog_isGenuineWith W r hr)
++      (mulByInt_isGenuineWith W (-s) (neg_ne_zero.mpr hs))
++  have hω₁ : omegaPullbackCoeff W α₁ = 0 := by
++    change omegaPullbackCoeff W ((mulByInt W.toAffine r).comp (frobeniusIsog W)) = 0
++    rw [omegaPullbackCoeff_comp_of_base W (mulByInt W.toAffine r) (frobeniusIsog W)
++      (r : K) (omegaPullbackCoeff_mulByInt_routeB W r hr), omegaPullbackCoeff_frobenius,
++      mul_zero]
++  have hω₂ : omegaPullbackCoeff W α₂ = algebraMap K W.toAffine.FunctionField (-s : K) := by
++    rw [show α₂ = mulByInt W.toAffine (-s) from rfl,
++      omegaPullbackCoeff_mulByInt_routeB W (-s) (neg_ne_zero.mpr hs), Int.cast_neg]
++  have hω : omegaPullbackCoeff W α = algebraMap K W.toAffine.FunctionField (-s : K) := by
++    rw [show α = addIsog hxy hinj from rfl, omegaPullbackCoeff_addIsog_pair W hxy hinj hxne,
++      hω₁, hω₂, zero_add]
++  obtain ⟨hx, hy⟩ := ordAtInfty_pullback_generators_of_nonzero_constant W α hαpole
++    (-s : K) (neg_ne_zero.mpr hsK) hω
++  exact ⟨α, hgen, hω, hx, hy⟩
++
++
++end HasseWeil.WeilPairing.PencilSeparabilityProof
++namespace HasseWeil.WeilPairing.PencilSeparabilityProof
++
++open HasseWeil WeierstrassCurve HasseWeil.Curves HasseWeil.WeilPairing
++open HasseWeil.WeilPairing.IsogenyBaseChangeConcrete HasseWeil.WeilPairing.DivisorPullback
++
++variable {K : Type*} [Field K] [Fintype K] [DecidableEq K]
++variable (W : WeierstrassCurve K) [W.toAffine.IsElliptic] [Fintype W.toAffine.Point]
++variable (p r : ℕ) [Fact p.Prime] [CharP K p] [Fact (Fintype.card K = p ^ r)]
++
++noncomputable local instance pencilProofDecidableEq : DecidableEq (AlgebraicClosure K) :=
++  Classical.decEq _
++
++variable [(W.baseChange (AlgebraicClosure K)).toAffine.IsElliptic]
++
++noncomputable def pencilScalingComapDataCard_of_separable
++    (r' s' : ℤ) (hr : r' ≠ 0) (hsK : (s' : K) ≠ 0) :
++    PencilScalingComapDataCard W p r r' s' := by
++  classical
++  have hs : s' ≠ 0 := fun hs0 ↦ hsK (by rw [hs0, Int.cast_zero])
++  let α := Classical.choose (exists_separable_pencil_pullback W r' s' hr hs hsK)
++  have hα := Classical.choose_spec (exists_separable_pencil_pullback W r' s' hr hs hsK)
++  let pb := baseChangePullback (⟨W.toAffine⟩ : SmoothPlaneCurve K)
++    (AlgebraicClosure K) α.pullback
++  let β := pencilIsogBaseChange W p r (AlgebraicClosure K) r' s' pb
++  have hβpb : β.pullback = baseChangePullback (⟨W.toAffine⟩ : SmoothPlaneCurve K)
++      (AlgebraicClosure K) α.pullback := rfl
++  have hgen : IsGenuineWith (W.baseChange (AlgebraicClosure K)) β (gKbarPencil W r' s') := by
++    obtain ⟨X, Y, hns, hgK, hXeq, hYeq⟩ := hα.1
++    have hgen' : gKbarPencil W r' s' (genericPoint (W.baseChange (AlgebraicClosure K))) =
++        Affine.Point.some
++          ((⟨W.toAffine⟩ : SmoothPlaneCurve K).functionFieldMap (AlgebraicClosure K) X)
++          ((⟨W.toAffine⟩ : SmoothPlaneCurve K).functionFieldMap (AlgebraicClosure K) Y)
++          ((Affine.baseChange_nonsingular W.toAffine
++            ((⟨W.toAffine⟩ : SmoothPlaneCurve K).functionField_baseChange
++              (AlgebraicClosure K)).injective X Y).mpr hns) := by
++      rw [gKbarPencil_genericPoint W r' s', hgK]
++      exact ffBaseChangePoint_some W (AlgebraicClosure K) X Y hns
++    have hpbx : β.pullback (x_gen (W.baseChange (AlgebraicClosure K))) =
++        (⟨W.toAffine⟩ : SmoothPlaneCurve K).functionFieldMap (AlgebraicClosure K) X := by
++      rw [hβpb, hXeq, ← functionFieldMap_x_gen W (AlgebraicClosure K)]
++      exact baseChangePullback_functionFieldMap _ _ _ _
++    have hpby : β.pullback (y_gen (W.baseChange (AlgebraicClosure K))) =
++        (⟨W.toAffine⟩ : SmoothPlaneCurve K).functionFieldMap (AlgebraicClosure K) Y := by
++      rw [hβpb, hYeq, ← functionFieldMap_y_gen W (AlgebraicClosure K)]
++      exact baseChangePullback_functionFieldMap _ _ _ _
++    exact ⟨_, _, _, hgen', hpbx.symm, hpby.symm⟩
++  have hgcomm : MapTranslateGenericPoint (W.baseChange (AlgebraicClosure K)) β
++      (WeierstrassCurve.Affine.Point.map
++        (W' := W.baseChange (AlgebraicClosure K)) β.pullback) :=
++    mapTranslateGenericPoint_canonical_of_genuine (W.baseChange (AlgebraicClosure K)) β hgen
++      (mapTranslateGenericPoint_gKbarPencil W p r r' s' pb)
++  have hcov : ∀ (k : β.kernel) (z : (W.baseChange (AlgebraicClosure K)).toAffine.FunctionField),
++      translateAlgEquivOfPoint (W.baseChange (AlgebraicClosure K)) k.val (β.pullback z) =
++        β.pullback z :=
++    hcov_of_mapTranslateGenericPoint_canonical (W.baseChange (AlgebraicClosure K)) β hgcomm
++  have hω : omegaPullbackCoeff (W.baseChange (AlgebraicClosure K)) β =
++      algebraMap (AlgebraicClosure K) (W.baseChange (AlgebraicClosure K)).toAffine.FunctionField
++        (algebraMap K (AlgebraicClosure K) (-s' : K)) := by
++    rw [omegaPullbackCoeff_baseChangePullback W (AlgebraicClosure K) α β hβpb,
++      hα.2.1, SmoothPlaneCurve.functionFieldMap_algebraMap_F]
++    exact (IsScalarTower.algebraMap_apply K (AlgebraicClosure K)
++      (W.baseChange (AlgebraicClosure K)).toAffine.FunctionField (-s' : K)).symm
++  have hωrange : omegaPullbackCoeff (W.baseChange (AlgebraicClosure K)) β ∈
++      (algebraMap (AlgebraicClosure K)
++        (W.baseChange (AlgebraicClosure K)).toAffine.FunctionField).range :=
++    ⟨algebraMap K (AlgebraicClosure K) (-s' : K), hω.symm⟩
++  have hωne : omegaPullbackCoeff (W.baseChange (AlgebraicClosure K)) β ≠ 0 := by
++    rw [hω, Ne, map_eq_zero, map_eq_zero]
++    exact neg_ne_zero.mpr hsK
++  have hxK : (W_smooth W).ordAtInfty (α.pullback (x_gen W)) = ((-2 : ℤ) : WithTop ℤ) := hα.2.2.1
++  have hyK : (W_smooth W).ordAtInfty (α.pullback (y_gen W)) = ((-3 : ℤ) : WithTop ℤ) := hα.2.2.2
++  have hxne : α.pullback (x_gen W) ≠ 0 :=
++    ne_zero_of_ordAtInfty_neg W (hxK ▸ (by exact_mod_cast (show (-2 : ℤ) < 0 by omega)))
++  have hyne : α.pullback (y_gen W) ≠ 0 :=
++    ne_zero_of_ordAtInfty_neg W (hyK ▸ (by exact_mod_cast (show (-3 : ℤ) < 0 by omega)))
++  have hxpb : β.pullback (x_gen (W.baseChange (AlgebraicClosure K))) =
++      (W_smooth W).functionFieldMap (AlgebraicClosure K) (α.pullback (x_gen W)) := by
++    rw [hβpb, ← functionFieldMap_x_gen W (AlgebraicClosure K)]
++    exact baseChangePullback_functionFieldMap _ _ _ _
++  have hypb : β.pullback (y_gen (W.baseChange (AlgebraicClosure K))) =
++      (W_smooth W).functionFieldMap (AlgebraicClosure K) (α.pullback (y_gen W)) := by
++    rw [hβpb, ← functionFieldMap_y_gen W (AlgebraicClosure K)]
++    exact baseChangePullback_functionFieldMap _ _ _ _
++  have hx : (W_smooth (W.baseChange (AlgebraicClosure K))).ordAtInfty
++      (β.pullback (x_gen (W.baseChange (AlgebraicClosure K)))) = ((-2 : ℤ) : WithTop ℤ) :=
++    (congrArg (W_smooth (W.baseChange (AlgebraicClosure K))).ordAtInfty hxpb).trans
++      ((ordAtInftyBaseChange_holds W (AlgebraicClosure K) _ hxne).trans hxK)
++  have hy : (W_smooth (W.baseChange (AlgebraicClosure K))).ordAtInfty
++      (β.pullback (y_gen (W.baseChange (AlgebraicClosure K)))) = ((-3 : ℤ) : WithTop ℤ) :=
++    (congrArg (W_smooth (W.baseChange (AlgebraicClosure K))).ordAtInfty hypb).trans
++      ((ordAtInftyBaseChange_holds W (AlgebraicClosure K) _ hyne).trans hyK)
++  have hinfty : InftyOrdTransport β :=
++    inftyOrdTransport_of_ordAtInfty_x_y (W.baseChange (AlgebraicClosure K)) β hx hy
++  refine {
++    pullback_L := pb
++    hgcomm := hgcomm
++    hcomap := ?_
++    finiteKer := finite_kernel_of_hcov (W.baseChange (AlgebraicClosure K)) β hcov }
++  refine { infinity := hinfty, affineToInfty := ?_, affine := ?_ }
++  · intro P x y hns hQ
++    obtain ⟨hresx, hresy⟩ := isog_resid_at_affine_of_hgcomm_hinfty W β hgcomm hinfty P hns hQ
++    by_cases h2tor : 2 * y + (W.baseChange (AlgebraicClosure K)).a₁ * x +
++        (W.baseChange (AlgebraicClosure K)).a₃ = 0
++    · exact comap_pointValuation_isog_eq_affine_y hωrange hωne P hns hresx hresy
++        (alpha_star_polyX_ord_eq_zero_of_residues W β P hns hresx hresy h2tor)
++    · exact comap_pointValuation_isog_eq_affine hωrange hωne P hns hresx hresy
++        (alpha_star_u_ord_eq_zero_of_residues W β P hresx hresy h2tor)
++  · exact comap_pointValuation_eq_infty_of_ordAtInfty_x_y_of_kernelInvariant
++      (W.baseChange (AlgebraicClosure K)) β hx hy hcov
++
++
++end HasseWeil.WeilPairing.PencilSeparabilityProof
++
++namespace HasseWeil.WeilPairing
++
++open HasseWeil IsogenyBaseChangeConcrete HasseWeil.WeilPairing.DivisorPullback
++
++section BaseChange
++variable {K : Type*} [Field K] [Fintype K] [DecidableEq K]
++variable (W : WeierstrassCurve K) [W.toAffine.IsElliptic] [Fintype W.toAffine.Point]
++variable (p r : ℕ) [Fact p.Prime] [CharP K p] [Fact (Fintype.card K = p ^ r)]
++attribute [local instance] instDecEqACPCW
++variable [(W.baseChange (AlgebraicClosure K)).toAffine.IsElliptic]
++
++/-- The separable pencil comap bundle when `p ∣ r'`. Unequal summand pole orders construct
++the pullback; its nonzero constant differential coefficient gives the generator orders,
++and base change and translation covariance provide the comap and finite-kernel witnesses. -/
+ noncomputable def pencilScalingComapDataCard_pDvdR (r' s' : ℤ) (hr : r' ≠ 0)
+-    (hrK0 : (r' : K) = 0) (hsK : (s' : K) ≠ 0) :
++    (_hrK0 : (r' : K) = 0) (hsK : (s' : K) ≠ 0) :
+     PencilScalingComapDataCard W p r r' s' := by
+-  sorry
++  exact PencilSeparabilityProof.pencilScalingComapDataCard_of_separable W p r r' s' hr hsK
+ 
+ /-- A `PencilScalingComapDataCard` bundle for a **separable** `(r', s')` (`(s' : K) ≠ 0`, i.e.
+ `p ∤ s'`) — the canonical bundle when also `r' ≠ 0`, `(r' : K) ≠ 0` (`p ∤ r'`); the `r' = 0`
+@@ -1812,7 +2081,7 @@
      PencilScaling W p r (AlgebraicClosure K)
        (pencilKerCard W p r (pencilJunkPullback W)) := by
    intro r' s' hps ℓ hℓp hℓne hℓF
@@ -6833,7 +7266,7 @@ diff --git a/projects/HasseWeil/HasseWeil/HasseBound/WeilPairing/PencilComapPoin
    -- `p ∤ s'`, hence `(s' : K) ≠ 0` (char `p`, `ringChar K = p`).
    have hpchar : ringChar K = p := by rw [ringChar.eq_iff]; infer_instance
    have hsK : (s' : K) ≠ 0 := by
-@@ -1843,7 +1846,7 @@
+@@ -1843,7 +2112,7 @@
      PencilScalingCoprime W p r (AlgebraicClosure K)
        (pencilKerCard W p r (pencilJunkPullback W)) := by
    intro r' s' hpr hps ℓ hℓp hℓne hℓF
@@ -7371,7 +7804,118 @@ diff --git a/projects/HasseWeil/HasseWeil/Isogeny/ClassGroup.lean b/projects/Has
 diff --git a/projects/HasseWeil/HasseWeil/Isogeny/FormalSeries.lean b/projects/HasseWeil/HasseWeil/Isogeny/FormalSeries.lean
 --- a/projects/HasseWeil/HasseWeil/Isogeny/FormalSeries.lean
 +++ b/projects/HasseWeil/HasseWeil/Isogeny/FormalSeries.lean
-@@ -922,6 +922,7 @@
+@@ -29,8 +29,8 @@
+ 
+ * `T-IV-BRIDGE-001` / `omegaPullbackCoeff_eq_formalIsogenyLeading` —
+   `omegaPullbackCoeff W α = coeff 1 (formalIsogenySeries W α)` (Silverman
+-  IV.4.3, "a_φ = φ′(0)"), under the genuineness hypothesis
+-  `0 < orderTop (localExpand (α.pullback t))` (the t-adic form of `α(O) = O`).
++  IV.4.3, "a_φ = φ′(0)"), under the hypothesis that `α*x` has a pole at infinity.
++  Its proof and statement live downstream in `OmegaCoeffViaFormalGroup`.
+ 
+ * `T-IV-BRIDGE-003` / `formalIsogenySeries_add` — Silverman IV.1.4: the local
+   expansion of the `z = −x/y` coordinate of the genuine pair sum
+@@ -45,12 +45,10 @@
+   `FormalGroupLawSpec`/`ChordExpansion` chord apparatus, which imports this
+   file).
+ 
+-BRIDGE-001 remains `sorry` at the substantive mathematical step. Both
+-bridges were **restated 2026-06-11** into guarded true forms: the original
+-unguarded statements were refutable because the project's `Isogeny.pullback`
+-is an unconstrained `AlgHom`, decoupled from the point map (B2 log
+-`BRIDGE-003-B2` in `.mathlib-quality/b2_log.jsonl`; the individual
+-docstrings record the counterexamples).
++The general coefficient bridge is placed in `OmegaCoeffViaFormalGroup`, after the
++regularity and localization proofs it uses. Its x-pole hypothesis excludes translations
++to affine points where `t` vanishes: positive order of `α*t` alone does not imply
++`α(O) = O`. The project's `Isogeny` structure does not connect its pullback to its point map.
+ 
+ ## References
+ 
+@@ -102,14 +100,15 @@
+ forcing `pullback` to fix `O`** (and no compatibility between the two
+ components). So this brick is gated on the genuine-isogeny hypothesis, stated
+ here in the form already used for `[n]`/Frobenius in `SilvermanIV14.lean`:
+-`0 < orderTop (localExpand (α.pullback t))`. Every concrete isogeny in the
+-development supplies this (e.g.
++`0 < orderTop (localExpand (α.pullback t))`. This positivity follows from a pole
++of `α*x`, but alone does not characterize `α(O) = O`. Concrete genuine isogenies
++in the development supply it (e.g.
+ `orderTop_localExpand_mulByInt_neg_one_pullback_localParam = 1`). -/
+ 
+ /-- **`constantCoeff (formalIsogenySeries W α) = 0` for a genuine isogeny**:
+     if the local expansion of `α.pullback t` has positive `orderTop` (i.e.
+-    `α.pullback t` vanishes at `O`, which is the t-adic form of `α(O) = O`),
+-    then the formal isogeny series has zero constant term. -/
++    `α.pullback t` vanishes at `O`), then the formal isogeny series has zero constant term.
++    The positivity hypothesis alone does not characterize `α(O) = O`. -/
+ theorem constantCoeff_formalIsogenySeries_of_orderTop_pos (α : Isogeny W.toAffine W.toAffine)
+     (h_orderTop : (0 : WithTop ℤ) < (localExpand W (α.pullback (localParam W))).orderTop) :
+     PowerSeries.constantCoeff (formalIsogenySeries W α) = 0 := by
+@@ -313,55 +312,16 @@
+   order_subst_bivariate_pos (formalGroupLaw W).toMvPowerSeries
+     (constantCoeff_formalGroupLaw W) f g hf hg
+ 
+-/-- **T-IV-BRIDGE-001** (Silverman IV.4.3, "a_φ = φ′(0)"): for a *genuine*
+-    isogeny, the linear coefficient of `formalIsogenySeries W α` equals the
+-    invariant-differential pullback coefficient `omegaPullbackCoeff W α`.
+-
+-    Mathematical content: the expansion `α.pullback(t) = a_α · t + O(t²)`
+-    in `K(E)` has its linear coefficient equal to the coefficient by which
+-    `α*` scales the invariant differential `ω = dx/(2y + a₁x + a₃)` in the
+-    Kähler differential module. This is the bridge between the III.5
+-    invariant-differential definition and the IV.4 formal-series
+-    definition of `a_α`.
+-
+-    **Why the `h_orderTop` genuineness hypothesis is REQUIRED** (restated
+-    2026-06-11; the unguarded form was refutable): the project `Isogeny`
+-    structure (`Basic.lean`) carries `pullback` as an *unconstrained*
+-    `AlgHom`, so translation pullbacks `τ_S^*` qualify as isogenies. For
+-    those, `ω` is translation-invariant (Silverman III.5.1), hence
+-    `omegaPullbackCoeff = 1`; but `localExpand (τ_S^* t)` is the expansion
+-    at `O` of `t ∘ τ_S`, whose linear coefficient is a derivative value at
+-    `S` (`≠ 1` generically — its constant term `t(S)` is even nonzero). The
+-    hypothesis is the brick-4 shape used throughout this file
+-    (`constantCoeff_formalIsogenySeries_of_orderTop_pos` above): the t-adic
+-    form of `α(O) = O`, which excludes the translation pathology.
+-
+-    Per-α instances discharge the bridge directly, sorry-free:
+-    `omegaPullbackCoeff_eq_formalIsogenyLeading_id` (below),
+-    `omegaPullbackCoeff_eq_formalIsogenyLeading_negFrobeniusIsog` and the
+-    char-2 `bridge_001_γ_isogOneSub_negFrobenius_char_two`
+-    (`AdditionPullback/SilvermanIV14.lean`). Matching `orderTop` witnesses:
+-    `localExpand_localParam` (id),
+-    `orderTop_localExpand_mulByInt_neg_one_pullback_localParam`,
+-    `orderTop_localExpand_isogOneSub_negFrobenius_pullback_localParam`, and
+-    the generic pole bridge
+-    `orderTop_localExpand_pullback_localParam_pos_of_ord_x_neg` (below).
+-
+-    **Discharge route** (kept open): prove the chain-rule leaf
+-    `pullback_invariantDiff_coeff_zero` (P, `GapQfKernel.lean`); then this
+-    statement follows via
+-    `omegaPullbackCoeff_eq_formalIsogenyLeading_via_localization` (ibid.,
+-    identical signature). -/
+-theorem omegaPullbackCoeff_eq_formalIsogenyLeading (α : Isogeny W.toAffine W.toAffine)
+-    (h_orderTop : (0 : WithTop ℤ) < (localExpand W (α.pullback (localParam W))).orderTop) :
+-    omegaPullbackCoeff W α =
+-      algebraMap F KE (PowerSeries.coeff 1 (formalIsogenySeries W α)) := by
+-  sorry
++/-! The general curve-to-formal coefficient identity is proved in
++`HasseWeil.Isogeny.OmegaCoeffViaFormalGroup` as
++`omegaPullbackCoeff_eq_formalIsogenyLeading`. Its hypothesis requires a pole of `α*x`
++at infinity. Positive order of `α*t` alone also permits translation to an affine
++point with `t = 0`, where the claimed coefficient equality need not hold. -/
+ 
+ /-! #### Witness-parametric factorization of BRIDGE-001
+ 
+-The sorry above has TWO mathematical components, which we factor here so each
+-can be discharged independently:
++The coefficient identity has two mathematical components, factored here so each
++can be proved independently:
+ 
+ 1. **III.1.5 content** (`a_α ∈ F`): the omega pullback coefficient lies in the
+    image of `algebraMap F KE`. Mathematically, this is "the invariant
+@@ -922,6 +882,7 @@
      unfold W_KE; rw [Affine.map, WeierstrassCurve.map_map]
      congr 1; ext x; exact α.pullback.commutes x] at hmapped
  
@@ -7379,7 +7923,7 @@ diff --git a/projects/HasseWeil/HasseWeil/Isogeny/FormalSeries.lean b/projects/H
  /-- `0 ≤ ordAtInfty (algebraMap F KE c)`: a constant from the base field is
  regular at `O` (`ord = 0` when `c ≠ 0`, `⊤` when `c = 0`). -/
  theorem ord_algebraMap_F_nonneg (c : F) :
-@@ -1095,6 +1096,7 @@
+@@ -1095,6 +1056,7 @@
  No formal-group law is used here — only the curve equation and the shipped
  `ordAtInfty` valuation API. -/
  
@@ -7387,7 +7931,7 @@ diff --git a/projects/HasseWeil/HasseWeil/Isogeny/FormalSeries.lean b/projects/H
  /-- **Generic: a pole of `X` forces `Y ≠ 0`.** For `(X, Y)` on `W_KE W` satisfying
  the Weierstrass equation, if the `x`-coordinate `X` has a pole at `O`
  (`ord_∞ X < 0`) then `Y ≠ 0`.
-@@ -1176,6 +1178,7 @@
+@@ -1176,6 +1138,7 @@
    rw [hsum_top] at hRHS'
    exact absurd hRHS'.symm (WithTop.coe_ne_top)
  
@@ -7395,7 +7939,7 @@ diff --git a/projects/HasseWeil/HasseWeil/Isogeny/FormalSeries.lean b/projects/H
  /-- **Generic: a pole of `X` forces a strictly deeper pole of `Y`.** For `(X, Y)`
  on `W_KE W` satisfying the Weierstrass equation with `X, Y ≠ 0` and `ord_∞ X < 0`,
  the order of `Y` is strictly below that of `X`: `ord_∞ Y < ord_∞ X`. -/
-@@ -1295,6 +1298,7 @@
+@@ -1295,6 +1258,7 @@
    rw [hLHS_eq_RHS] at hLHS_gt
    exact absurd hLHS_gt (lt_irrefl _)
  
@@ -7403,7 +7947,7 @@ diff --git a/projects/HasseWeil/HasseWeil/Isogeny/FormalSeries.lean b/projects/H
  /-- **Generic `z`-reduction brick (the `x`-pole ⟹ `z` reduces direction).** For
  `(X, Y)` on `W_KE W` satisfying the Weierstrass equation with `X, Y ≠ 0`, if the
  `x`-coordinate `X` has a pole at `O` (`ord_∞ X < 0`), then the local parameter
-@@ -1323,6 +1327,7 @@
+@@ -1323,6 +1287,7 @@
    rw [h_div, WithTop.coe_pos]
    omega
  
@@ -7411,7 +7955,7 @@ diff --git a/projects/HasseWeil/HasseWeil/Isogeny/FormalSeries.lean b/projects/H
  /-- **Generic converse: `z` reduces ⟹ `x` has a pole.** For `(X, Y)` on `W_KE W`
  satisfying the Weierstrass equation with `X, Y ≠ 0`, if the local parameter
  `z = −X/Y` *reduces to `O`* (`ord_∞ (−X/Y) > 0`) **and** `X` is not a unit at `O`
-@@ -1455,6 +1460,7 @@
+@@ -1455,6 +1420,7 @@
  side reuses the parity structure already shipped in `LocalExpansion.lean`
  (`localExpand_inner_orderTop_eq`, `formalY_orderTop`). -/
  
@@ -7419,7 +7963,7 @@ diff --git a/projects/HasseWeil/HasseWeil/Isogeny/FormalSeries.lean b/projects/H
  /-- `localExpand` of a nonzero `F(X)`-image has formal order `-2 · intDegree`,
  matching `ordAtInfty` on `F(X)` (`ordAtInfty_algebraMap_fracPolyX_of_ne_zero`).
  
-@@ -1537,12 +1543,14 @@
+@@ -1537,12 +1503,14 @@
    rw [hk, h_intDeg, WithTop.coe_inj]
    linarith [h_ord]
  
@@ -7434,7 +7978,7 @@ diff --git a/projects/HasseWeil/HasseWeil/Isogeny/FormalSeries.lean b/projects/H
  /-- **Parity / min formula for `orderTop ∘ localExpand`** on the basis
  decomposition `f = algebraMap r₁ + algebraMap r₂ · y_gen` (`r₁, r₂ ∈ F(X)`),
  the exact analogue of `Curves/Infinity.lean`'s `ordAtInfty_basis_eq_min`:
-@@ -1597,6 +1605,7 @@
+@@ -1597,6 +1565,7 @@
        · rw [HahnSeries.orderTop_add_eq_right h_lt]
          exact (min_eq_right h_lt.le).symm
  
@@ -7442,7 +7986,7 @@ diff --git a/projects/HasseWeil/HasseWeil/Isogeny/FormalSeries.lean b/projects/H
  /-- The two valuations agree on every `F(X)`-image (including `0`):
  `orderTop (localExpand (algebraMap r)) = ordAtInfty (algebraMap r)`. For `r ≠ 0`
  both are `-2 · intDegree r`; for `r = 0` both are `⊤`. -/
-@@ -1610,6 +1619,7 @@
+@@ -1610,6 +1579,7 @@
    · rw [orderTop_localExpand_algebraMap_fracPolyX W hr]
      exact ((W_smooth W).ordAtInfty_algebraMap_fracPolyX_of_ne_zero hr).symm
  
@@ -7450,7 +7994,7 @@ diff --git a/projects/HasseWeil/HasseWeil/Isogeny/FormalSeries.lean b/projects/H
  /-- **The formal valuation `orderTop ∘ localExpand` equals `ordAtInfty`**
  on all of `K(E)`. Decompose `f = algebraMap r₁ + algebraMap r₂ · y_gen`
  (`exists_decomp`); both valuations equal the same `min` of the two summand
-@@ -1645,6 +1655,7 @@
+@@ -1645,6 +1615,7 @@
    rw [orderTop_localExpand_y_gen, y_gen_eq_coordYInFunctionField,
      (W_smooth W).ordAtInfty_coordYInFunctionField]
  
@@ -7458,7 +8002,7 @@ diff --git a/projects/HasseWeil/HasseWeil/Isogeny/FormalSeries.lean b/projects/H
  /-- **Residual R5b (`<0`-direction valuation bridge `orderTop ∘ localExpand
  → ordAtInfty`)**: if the formal `t`-adic expansion of `f` at `O` has a pole
  (`orderTop (localExpand f) < 0`), then so does `f` in the norm-based order:
-@@ -1757,7 +1768,7 @@
+@@ -1757,7 +1728,7 @@
      rcases lt_or_eq_of_le hj0 with hjneg | hjeq
      · have hnr : j ∉ Set.range ((↑) : ℕ → ℤ) := by rintro ⟨n, rfl⟩; omega
        rw [HahnSeries.ofPowerSeries_apply]
@@ -7898,6 +8442,32 @@ diff --git a/projects/HasseWeil/HasseWeil/Isogeny/Kernel.lean b/projects/HasseWe
 diff --git a/projects/HasseWeil/HasseWeil/Isogeny/OmegaCoeffViaFormalGroup.lean b/projects/HasseWeil/HasseWeil/Isogeny/OmegaCoeffViaFormalGroup.lean
 --- a/projects/HasseWeil/HasseWeil/Isogeny/OmegaCoeffViaFormalGroup.lean
 +++ b/projects/HasseWeil/HasseWeil/Isogeny/OmegaCoeffViaFormalGroup.lean
+@@ -9,6 +9,9 @@
+ import HasseWeil.Foundation.Ramification
+ import HasseWeil.Foundation.OmegaCoeffMulByIntFiniteField
+ import HasseWeil.Foundation.Curves.Valuation.Infinity
++import HasseWeil.Foundation.Curves.Map.CurveMapBaseChange
++import HasseWeil.Foundation.EC.DifferentialOrd
++import HasseWeil.Foundation.EC.TranslateOrdInfty
+ 
+ /-!
+ # GAP-QF kernel: `omegaPullbackCoeff (mulByInt m) = m` via the formal group
+@@ -34,12 +37,9 @@
+ * **BRIDGE-001** `omegaPullbackCoeff_eq_formalIsogenyLeading_via_localization` — discharges the
+   curve↔formal bridge from L-KL-main + `localExpand` injectivity.
+ * **TOP** `omegaPullbackCoeff_mulByInt_via_formalGroup` — Silverman III.5.3 (`[m]*ω = m·ω`,
+-  `m ≠ 0`), obtained here via the formal group (IV) rather than the EDS wronskian. Still
+-  carries `sorryAx` through exactly the three remaining leaves: the III.1.5 `mem_F`
+-  substrate pair (`omegaPullbackCoeff_isIntegral_polynomialX` /
+-  `omegaPullbackCoeff_ordAtInfty_nonneg`, ticket FG-D1) and the IV.4.3 chain rule (P)
+-  `pullback_invariantDiff_coeff_zero` (ticket FG-C4). L-F1 is *not* among its blockers
+-  anymore.
++  `m ≠ 0`), obtained through the formal group. The coefficient is constant by the proved
++  integrality and infinity-regularity theorems; the x-pole chart and normalized invariant
++  differential identify that constant with the linear coefficient of the formal series.
+ 
+ Full decomposition + fillability: `.mathlib-quality/GAP-QF-KERNEL-SKELETON.md`.
+ -/
 @@ -166,6 +166,7 @@
      PowerSeries.coeff 1 (formalIsogenySeries W (mulByInt W.toAffine 0)) = 1 := by
    rw [formalIsogenySeries_mulByInt_zero, PowerSeries.coeff_X, if_pos rfl]
@@ -7949,7 +8519,98 @@ diff --git a/projects/HasseWeil/HasseWeil/Isogeny/OmegaCoeffViaFormalGroup.lean 
  @[simp] theorem out_sub (x y : LExp W) : (x - y).out = x.out - y.out := rfl
  
  noncomputable instance : AddCommGroup (LExp W) where
-@@ -1039,7 +1048,7 @@
+@@ -617,84 +626,12 @@
+       localExpand W c * (localExpandKaehlerLift W ω).out := by
+   simp only [map_smul, LExp.out_smul_KE]
+ 
+-/-! ### Silverman III.1.5 substrate (sub-tickets, bare-sorry recursive dispatch)
+-
+-These two helpers are the substantive III.1.5 obligation: ω has no zeros/poles on `E`
+-(genus-1 invariant differential, Silverman III.1.5), and `α*ω` has no zeros/poles
+-(functoriality of pullback of differentials on smooth curves). From these two,
+-`a_α = α*ω / ω` has divisor 0, hence no finite poles (⟹ integral over `F[X]`)
+-and `ord_∞ a_α = 0` (⟹ nonneg at infinity). Per /beastmode protocol, these are
+-stated with bare `sorry` as sub-ticket leaves; the unconditional discharge of
+-`omegaPullbackCoeff_mem_F` (below) composes them via the existing axiom-clean
+-algebraic-Liouville chain (`const_of_isIntegral_polynomialX_of_ordAtInfty`,
+-`HasseWeil/Curves/Infinity.lean:1446`).
+-
+-Reviewer Round 9 (2026-05-25) endorsed this discharge route: the elementary
+-`no poles ⟹ f ∈ A ⟹ f = u(x) + v(x)y ⟹ ord_O(f) < 0 unless f ∈ F ⟹ f ∈ F`
+-argument, packaged through the existing CoordinateRing-Liouville theorems. -/
+-
+-/-- **Sub-leaf (mem_F.A1) — `a_α` is integral over `F[X]`** (Silverman III.1.5
+-substrate). The invariant differential `ω` has divisor 0, hence so does its
+-pullback `α*ω`; the ratio `a_α = α*ω/ω` has no finite poles, hence is in the
+-integral closure of `F[X]` in `K(E)`.
+-
+-Bare sorry — sub-ticket leaf for the no-finite-poles substrate. The substantive
+-content requires divisor-of-Kähler-differential infrastructure (Silverman III.1
+-divisor of ω = 0 at every smooth point + functoriality of pullback). Not
+-shipped in project; needs own focused /develop --decompose pass on the III.1
+-development. -/
+-theorem omegaPullbackCoeff_isIntegral_polynomialX
+-    (α : Isogeny W.toAffine W.toAffine) :
+-    IsIntegral (Polynomial F) (omegaPullbackCoeff W α) := by
+-  sorry
+-
+-/-- **Sub-leaf (mem_F.A2) — `a_α` has nonneg order at infinity** (Silverman
+-III.1.5 substrate). Same source: `ω` and `α*ω` have divisor 0, in particular
+-`ord_∞ ω = 0` and `ord_∞ (α*ω) = 0`, so `ord_∞ a_α = 0 ≥ 0`.
+-
+-Bare sorry — sub-ticket leaf for the ord-at-infinity substrate. -/
+-theorem omegaPullbackCoeff_ordAtInfty_nonneg
+-    (α : Isogeny W.toAffine W.toAffine) :
+-    (0 : WithTop ℤ) ≤
+-      (⟨W.toAffine⟩ : HasseWeil.Curves.SmoothPlaneCurve F).ordAtInfty
+-        (omegaPullbackCoeff W α) := by
+-  sorry
+-
+-/-- **L-KL-main sub-leaf (A), Silverman III.1.5**: `a_α` is a constant — it lies in the image of
+-`algebraMap F KE`. (ω is a global generator of `Ω[K(E)/F]` with no zeros/poles, so `α*ω = a_α·ω`
+-forces `a_α` constant.)
+-
+-**Discharge (2026-05-25, /beastmode Wave 2, reviewer Round 9 endorsed)**: combines the
+-two substrate sub-leaves (`omegaPullbackCoeff_isIntegral_polynomialX` for no finite poles,
+-`omegaPullbackCoeff_ordAtInfty_nonneg` for nonneg at infinity) via the shipped algebraic-
+-Liouville theorem `HasseWeil.Curves.SmoothPlaneCurve.const_of_isIntegral_polynomialX_of_ordAtInfty`
+-(`HasseWeil/Curves/Infinity.lean:1446`), which is itself the pole-order-parity argument at
+-`O` (Weierstrass basis: `ord_O(x) = -2`, `ord_O(y) = -3`, parities don't cancel). -/
+-theorem omegaPullbackCoeff_mem_F (α : Isogeny W.toAffine W.toAffine) :
+-    ∃ c : F, omegaPullbackCoeff W α = algebraMap F KE c := by
+-  have h_int := omegaPullbackCoeff_isIntegral_polynomialX W α
+-  have h_inf := omegaPullbackCoeff_ordAtInfty_nonneg W α
+-  have h_const :=
+-    HasseWeil.Curves.SmoothPlaneCurve.const_of_isIntegral_polynomialX_of_ordAtInfty
+-      (C := (⟨W.toAffine⟩ : HasseWeil.Curves.SmoothPlaneCurve F)) h_int h_inf
+-  obtain ⟨c, hc⟩ := h_const
+-  exact ⟨c, hc⟩
+-
+-/-! ### Per-α DISPATCHABLE versions of the mem_F sub-leaves
+-
+-Per the III.1-substrate decompose pass (2026-05-25,
+-`.mathlib-quality/decomposition-III-1-substrate-2026-05-25.md`) with the
+-Attack 9 DRY-RUN GATE enforced: the UNIVERSAL forms of the two mem_F sub-leaves
+-are REJECTED (category-4 inputs: ord-on-Kähler-differential not shipped).
+-The PER-α versions for α = π (Frobenius) ARE dispatchable because
+-`omegaPullbackCoeff_frobenius = 0` is shipped axiom-clean.
+-
+-These ship `mem_F` for α = π specifically axiom-clean, providing concrete
+-content for the W4-A.1 chain's π half without needing the III.1 substrate
+-development.
+-
+-The `[Fintype F]` typeclass is required because `frobeniusIsog` is only
+-defined over finite fields. (Dry-run-gate post-hoc catch 2026-05-25.) -/
++/-! ### Direct Frobenius instances
++
++The Frobenius coefficient is zero, so its integrality, nonnegative infinity order,
++and membership in the base field follow directly. These proofs remain independent
++of the general regularity and integrality arguments below. The finite-field
++hypothesis is required by `frobeniusIsog`. -/
+ 
+ /-- **Wave 2.0 PASS leaf (Leaf 1.π)** — `a_π` is integral over `F[X]`.
+ Trivial since `a_π = 0 = algebraMap _ _ 0` ∈ algebraMap image. Axiom-clean. -/
+@@ -1039,7 +976,7 @@
      (HahnSeries.ofPowerSeries ℤ F g).coeff j = 0 := by
    have hnr : j ∉ Set.range ((↑) : ℕ → ℤ) := by rintro ⟨n, rfl⟩; omega
    rw [HahnSeries.ofPowerSeries_apply]
@@ -7958,7 +8619,7 @@ diff --git a/projects/HasseWeil/HasseWeil/Isogeny/OmegaCoeffViaFormalGroup.lean 
  
  omit [DecidableEq F] in
  /-- `ofPowerSeries` Laurent series have nonnegative `orderTop`. -/
-@@ -1085,36 +1094,44 @@
+@@ -1085,36 +1022,44 @@
          laurent_ofPowerSeries_coeff_neg (d⁄dX F g) hm]
      · rw [h, zero_smul, laurent_ofPowerSeries_coeff_neg (d⁄dX F g) hm]
  
@@ -8003,7 +8664,7 @@ diff --git a/projects/HasseWeil/HasseWeil/Isogeny/OmegaCoeffViaFormalGroup.lean 
  /-- `localExpand u_gen` as an explicit Laurent-series sum (numeral-free: `2y` is `y + y`). -/
  theorem localExpand_u_gen :
      localExpand W (u_gen W) =
-@@ -1131,6 +1148,7 @@
+@@ -1131,6 +1076,7 @@
      show (HahnSeries.C W.a₃ : LaurentSeries F) = HahnSeries.single (0 : ℤ) W.a₃ from rfl]
    ring
  
@@ -8011,7 +8672,1083 @@ diff --git a/projects/HasseWeil/HasseWeil/Isogeny/OmegaCoeffViaFormalGroup.lean 
  /-- The `t`-derivative of the Weierstrass relation between `formalX` and `formalY`:
  `(2y + a₁x + a₃)·y′ = (3x² + 2a₂x + a₄ − a₁y)·x′` in `LaurentSeries F`, spelled with
  numeral-free sums. Differentiates `formalXY_weierstrass` term-by-term with the product rule
-@@ -1709,7 +1727,7 @@
+@@ -1634,6 +1580,1040 @@
+     HahnSeries.single_zero_mul_eq_smul, HahnSeries.coeff_smul,
+     invariantDiff_localExpand_coeff_zero W, smul_eq_mul, mul_one]
+ 
++end HasseWeil
++
++open HasseWeil WeierstrassCurve PowerSeries
++
++namespace HasseWeil.OmegaRegularityProof
++
++variable {F : Type*} [Field F]
++
++private lemma pullback_diff_rearrange {A : Type*} [CommRing A] (a₁ a₂ a₃ a₄ a₆ f v f' dv w' : A)
++    (hfix : v = f ^ 3 + a₁ * f * v + a₂ * f ^ 2 * v + a₃ * v ^ 2 + a₄ * f * v ^ 2 + a₆ * v ^ 3)
++    (hkey : w' * (1 - (a₁ * f + a₂ * f ^ 2 + 2 * (a₃ * v) + 2 * (a₄ * (f * v))
++        + 3 * (a₆ * v ^ 2)))
++      = 3 * f ^ 2 + a₁ * v + 2 * (a₂ * (f * v)) + a₄ * v ^ 2)
++    (hchain : dv = w' * f') :
++    (f' * v - f * dv)
++        * (1 - (a₁ * f + a₂ * f ^ 2 + 2 * (a₃ * v) + 2 * (a₄ * (f * v)) + 3 * (a₆ * v ^ 2)))
++      = f' * v * (a₁ * f + a₃ * v - 2) := by
++  linear_combination (3 * f') * hfix - f * f' * hkey
++    - ((1 - (a₁ * f + a₂ * f ^ 2 + 2 * (a₃ * v) + 2 * (a₄ * (f * v)) + 3 * (a₆ * v ^ 2))) * f)
++      * hchain
++
++variable (W : WeierstrassCurve F)
++
++theorem pullback_invariantDiff_core_nonneg (f : PowerSeries F)
++    (hf0 : PowerSeries.constantCoeff f = 0)
++    (xL U : LaurentSeries F)
++    (hT_ne : HahnSeries.ofPowerSeries ℤ F (PowerSeries.subst f (formalW W)) ≠ 0)
++    (hU_ne : U ≠ 0)
++    (hxT : xL * HahnSeries.ofPowerSeries ℤ F (PowerSeries.subst f (formalW W)) =
++      HahnSeries.ofPowerSeries ℤ F f)
++    (hUT : U * HahnSeries.ofPowerSeries ℤ F (PowerSeries.subst f (formalW W)) =
++      HahnSeries.ofPowerSeries ℤ F (PowerSeries.C W.a₁) * HahnSeries.ofPowerSeries ℤ F f
++        + HahnSeries.ofPowerSeries ℤ F (PowerSeries.C W.a₃)
++            * HahnSeries.ofPowerSeries ℤ F (PowerSeries.subst f (formalW W)) - 2) :
++    (0 : WithTop ℤ) ≤ (U⁻¹ * LaurentSeries.derivative F xL).orderTop := by
++  classical
++  have hford : 1 ≤ f.order := PowerSeries.one_le_order_iff_constCoeff_eq_zero.mpr hf0
++  have hfsub : PowerSeries.HasSubst f := PowerSeries.HasSubst.of_constantCoeff_zero' hf0
++  have hv0 : PowerSeries.constantCoeff (PowerSeries.subst f (formalW W)) = 0 :=
++    constantCoeff_subst_formalW W f hf0
++  have hfix : PowerSeries.subst f (formalW W) = f ^ 3
++      + PowerSeries.C W.a₁ * f * PowerSeries.subst f (formalW W)
++      + PowerSeries.C W.a₂ * f ^ 2 * PowerSeries.subst f (formalW W)
++      + PowerSeries.C W.a₃ * PowerSeries.subst f (formalW W) ^ 2
++      + PowerSeries.C W.a₄ * f * PowerSeries.subst f (formalW W) ^ 2
++      + PowerSeries.C W.a₆ * PowerSeries.subst f (formalW W) ^ 3 :=
++    subst_formalW_fixedPoint W f hford
++  have hkey := subst_derivative_formalW_key W f hfsub
++  have hchain : d⁄dX F (PowerSeries.subst f (formalW W)) =
++      PowerSeries.subst f (d⁄dX F (formalW W)) * d⁄dX F f :=
++    PowerSeries.derivative_subst hfsub
++  have hstar := pullback_diff_rearrange (PowerSeries.C W.a₁) (PowerSeries.C W.a₂)
++    (PowerSeries.C W.a₃) (PowerSeries.C W.a₄) (PowerSeries.C W.a₆) f
++    (PowerSeries.subst f (formalW W)) (d⁄dX F f)
++    (d⁄dX F (PowerSeries.subst f (formalW W)))
++    (PowerSeries.subst f (d⁄dX F (formalW W))) hfix hkey hchain
++  have hstar_L := congrArg (HahnSeries.ofPowerSeries ℤ F) hstar
++  simp only [map_mul, map_sub, map_add, map_pow, map_one,
++    show (HahnSeries.ofPowerSeries ℤ F) (2 : PowerSeries F) = 2 from map_ofNat _ 2,
++    show (HahnSeries.ofPowerSeries ℤ F) (3 : PowerSeries F) = 3 from map_ofNat _ 3] at hstar_L
++  have hDx := congrArg (LaurentSeries.derivative F) hxT
++  rw [laurentSeries_derivative_mul, laurent_derivative_ofPowerSeries,
++    laurent_derivative_ofPowerSeries] at hDx
++  have hP0 : PowerSeries.constantCoeff
++      (PowerSeries.C W.a₁ * f + PowerSeries.C W.a₂ * f ^ 2
++        + 2 * (PowerSeries.C W.a₃ * PowerSeries.subst f (formalW W))
++        + 2 * (PowerSeries.C W.a₄ * (f * PowerSeries.subst f (formalW W)))
++        + 3 * (PowerSeries.C W.a₆ * PowerSeries.subst f (formalW W) ^ 2)) = 0 := by
++    simp [hf0, hv0]
++  have hPL1 : (1 : WithTop ℤ) ≤ (HahnSeries.ofPowerSeries ℤ F
++      (PowerSeries.C W.a₁ * f + PowerSeries.C W.a₂ * f ^ 2
++        + 2 * (PowerSeries.C W.a₃ * PowerSeries.subst f (formalW W))
++        + 2 * (PowerSeries.C W.a₄ * (f * PowerSeries.subst f (formalW W)))
++        + 3 * (PowerSeries.C W.a₆ * PowerSeries.subst f (formalW W) ^ 2))).orderTop :=
++    laurent_ofPowerSeries_orderTop_one_le _ hP0
++  have hPL_push : HahnSeries.ofPowerSeries ℤ F
++      (PowerSeries.C W.a₁ * f + PowerSeries.C W.a₂ * f ^ 2
++        + 2 * (PowerSeries.C W.a₃ * PowerSeries.subst f (formalW W))
++        + 2 * (PowerSeries.C W.a₄ * (f * PowerSeries.subst f (formalW W)))
++        + 3 * (PowerSeries.C W.a₆ * PowerSeries.subst f (formalW W) ^ 2)) =
++      HahnSeries.ofPowerSeries ℤ F (PowerSeries.C W.a₁) * HahnSeries.ofPowerSeries ℤ F f
++        + HahnSeries.ofPowerSeries ℤ F (PowerSeries.C W.a₂)
++            * HahnSeries.ofPowerSeries ℤ F f ^ 2
++        + 2 * (HahnSeries.ofPowerSeries ℤ F (PowerSeries.C W.a₃)
++            * HahnSeries.ofPowerSeries ℤ F (PowerSeries.subst f (formalW W)))
++        + 2 * (HahnSeries.ofPowerSeries ℤ F (PowerSeries.C W.a₄)
++            * (HahnSeries.ofPowerSeries ℤ F f
++                * HahnSeries.ofPowerSeries ℤ F (PowerSeries.subst f (formalW W))))
++        + 3 * (HahnSeries.ofPowerSeries ℤ F (PowerSeries.C W.a₆)
++            * HahnSeries.ofPowerSeries ℤ F (PowerSeries.subst f (formalW W)) ^ 2) := by
++    simp only [map_mul, map_add, map_pow,
++      show (HahnSeries.ofPowerSeries ℤ F) (2 : PowerSeries F) = 2 from map_ofNat _ 2,
++      show (HahnSeries.ofPowerSeries ℤ F) (3 : PowerSeries F) = 3 from map_ofNat _ 3]
++  set PL : LaurentSeries F := HahnSeries.ofPowerSeries ℤ F
++    (PowerSeries.C W.a₁ * f + PowerSeries.C W.a₂ * f ^ 2
++      + 2 * (PowerSeries.C W.a₃ * PowerSeries.subst f (formalW W))
++      + 2 * (PowerSeries.C W.a₄ * (f * PowerSeries.subst f (formalW W)))
++      + 3 * (PowerSeries.C W.a₆ * PowerSeries.subst f (formalW W) ^ 2)) with hPL_def
++  have hPL_coeff0 : PL.coeff 0 = 0 :=
++    HahnSeries.coeff_eq_zero_of_lt_orderTop
++      (lt_of_lt_of_le (by exact_mod_cast zero_lt_one) hPL1)
++  have h1P_coeff0 : ((1 : LaurentSeries F) - PL).coeff 0 = 1 := by
++    rw [HahnSeries.coeff_sub, hPL_coeff0, sub_zero, HahnSeries.coeff_one, if_pos rfl]
++  have h1P_lt : ∀ j : ℤ, j < 0 → ((1 : LaurentSeries F) - PL).coeff j = 0 := by
++    intro j hj
++    rw [HahnSeries.coeff_sub, hPL_def, laurent_ofPowerSeries_coeff_neg _ hj,
++      HahnSeries.coeff_one, if_neg (by omega), sub_zero]
++  have h1P_ord : ((1 : LaurentSeries F) - PL).orderTop = ((0 : ℤ) : WithTop ℤ) :=
++    laurent_orderTop_eq_of_coeff h1P_lt (by rw [h1P_coeff0]; exact one_ne_zero)
++  have h1P_ne : (1 : LaurentSeries F) - PL ≠ 0 := fun h ↦
++    one_ne_zero (by rw [← h1P_coeff0, h, HahnSeries.coeff_zero])
++  have hDxU2 : LaurentSeries.derivative F xL * ((1 : LaurentSeries F) - PL)
++        * (HahnSeries.ofPowerSeries ℤ F (PowerSeries.subst f (formalW W))
++          * HahnSeries.ofPowerSeries ℤ F (PowerSeries.subst f (formalW W)))
++      = HahnSeries.ofPowerSeries ℤ F (d⁄dX F f) * U
++        * (HahnSeries.ofPowerSeries ℤ F (PowerSeries.subst f (formalW W))
++          * HahnSeries.ofPowerSeries ℤ F (PowerSeries.subst f (formalW W))) := by
++    rw [hPL_push]
++    linear_combination
++      (((1 : LaurentSeries F)
++            - (HahnSeries.ofPowerSeries ℤ F (PowerSeries.C W.a₁)
++                  * HahnSeries.ofPowerSeries ℤ F f
++              + HahnSeries.ofPowerSeries ℤ F (PowerSeries.C W.a₂)
++                  * HahnSeries.ofPowerSeries ℤ F f ^ 2
++              + 2 * (HahnSeries.ofPowerSeries ℤ F (PowerSeries.C W.a₃)
++                  * HahnSeries.ofPowerSeries ℤ F (PowerSeries.subst f (formalW W)))
++              + 2 * (HahnSeries.ofPowerSeries ℤ F (PowerSeries.C W.a₄)
++                  * (HahnSeries.ofPowerSeries ℤ F f
++                      * HahnSeries.ofPowerSeries ℤ F (PowerSeries.subst f (formalW W))))
++              + 3 * (HahnSeries.ofPowerSeries ℤ F (PowerSeries.C W.a₆)
++                  * HahnSeries.ofPowerSeries ℤ F (PowerSeries.subst f (formalW W)) ^ 2)))
++          * HahnSeries.ofPowerSeries ℤ F (PowerSeries.subst f (formalW W))) * hDx
++      - (((1 : LaurentSeries F)
++            - (HahnSeries.ofPowerSeries ℤ F (PowerSeries.C W.a₁)
++                  * HahnSeries.ofPowerSeries ℤ F f
++              + HahnSeries.ofPowerSeries ℤ F (PowerSeries.C W.a₂)
++                  * HahnSeries.ofPowerSeries ℤ F f ^ 2
++              + 2 * (HahnSeries.ofPowerSeries ℤ F (PowerSeries.C W.a₃)
++                  * HahnSeries.ofPowerSeries ℤ F (PowerSeries.subst f (formalW W)))
++              + 2 * (HahnSeries.ofPowerSeries ℤ F (PowerSeries.C W.a₄)
++                  * (HahnSeries.ofPowerSeries ℤ F f
++                      * HahnSeries.ofPowerSeries ℤ F (PowerSeries.subst f (formalW W))))
++              + 3 * (HahnSeries.ofPowerSeries ℤ F (PowerSeries.C W.a₆)
++                  * HahnSeries.ofPowerSeries ℤ F (PowerSeries.subst f (formalW W)) ^ 2)))
++          * HahnSeries.ofPowerSeries ℤ F (d⁄dX F (PowerSeries.subst f (formalW W)))) * hxT
++      + hstar_L
++      - (HahnSeries.ofPowerSeries ℤ F (d⁄dX F f)
++          * HahnSeries.ofPowerSeries ℤ F (PowerSeries.subst f (formalW W))) * hUT
++  have hDxU : LaurentSeries.derivative F xL * ((1 : LaurentSeries F) - PL)
++      = HahnSeries.ofPowerSeries ℤ F (d⁄dX F f) * U :=
++    mul_right_cancel₀ (mul_ne_zero hT_ne hT_ne) hDxU2
++  have hMP : (U⁻¹ * LaurentSeries.derivative F xL) * ((1 : LaurentSeries F) - PL) =
++      HahnSeries.ofPowerSeries ℤ F (d⁄dX F f) := by
++    rw [mul_assoc, hDxU, mul_comm _ U, ← mul_assoc, inv_mul_cancel₀ hU_ne, one_mul]
++  have hM_eq : U⁻¹ * LaurentSeries.derivative F xL =
++      HahnSeries.ofPowerSeries ℤ F (d⁄dX F f) * ((1 : LaurentSeries F) - PL)⁻¹ :=
++    (eq_mul_inv_iff_mul_eq₀ h1P_ne).mpr hMP
++  have h1Pinv_ord : (((1 : LaurentSeries F) - PL)⁻¹).orderTop = ((0 : ℤ) : WithTop ℤ) := by
++    rw [HahnSeries.orderTop_inv_eq_neg h1P_ne, h1P_ord]
++    rfl
++  have hM_ord : (0 : WithTop ℤ) ≤ (U⁻¹ * LaurentSeries.derivative F xL).orderTop := by
++    rw [hM_eq, HahnSeries.orderTop_mul, h1Pinv_ord,
++      show ((0 : ℤ) : WithTop ℤ) = (0 : WithTop ℤ) from rfl, add_zero]
++    exact laurent_ofPowerSeries_orderTop_nonneg _
++  exact hM_ord
++
++variable [DecidableEq F] [W.toAffine.IsElliptic]
++
++local notation "KE" => W.toAffine.FunctionField
++
++theorem pullback_invariantDiff_nonneg_of_x_pole (α : Isogeny W.toAffine W.toAffine)
++    (h_α : (W_smooth W).ordAtInfty (α.pullback (x_gen W)) < 0) :
++    (0 : WithTop ℤ) ≤ ((localExpand W (alpha_star_u W α))⁻¹ *
++      LaurentSeries.derivative F (localExpand W (α.pullback (x_gen W)))).orderTop := by
++  classical
++  have hf0 : PowerSeries.constantCoeff (formalIsogenySeries W α) = 0 :=
++    constantCoeff_formalIsogenySeries_of_orderTop_pos W α
++      (orderTop_localExpand_pullback_localParam_pos_of_ord_x_neg W α h_α)
++  have hT_ne : HahnSeries.ofPowerSeries ℤ F
++      (PowerSeries.subst (formalIsogenySeries W α) (formalW W)) ≠ 0 := by
++    intro h
++    exact subst_formalIsogenySeries_formalW_ne_zero W α h_α
++      (HahnSeries.ofPowerSeries_injective (by rw [h, map_zero]))
++  have hU_ne : localExpand W (alpha_star_u W α) ≠ 0 := by
++    intro h
++    apply u_gen_ne_zero W
++    apply α.pullback_injective
++    rw [map_zero, ← alpha_star_u_eq]
++    exact localExpand_injective W (by rw [h, map_zero])
++  have hxT : localExpand W (α.pullback (x_gen W)) *
++      HahnSeries.ofPowerSeries ℤ F
++        (PowerSeries.subst (formalIsogenySeries W α) (formalW W)) =
++      HahnSeries.ofPowerSeries ℤ F (formalIsogenySeries W α) := by
++    rw [localExpand_pullback_x_gen W α h_α, div_mul_cancel₀ _ hT_ne]
++  have hTinv : (HahnSeries.ofPowerSeries ℤ F
++      (PowerSeries.subst (formalIsogenySeries W α) (formalW W)))⁻¹ *
++      HahnSeries.ofPowerSeries ℤ F
++        (PowerSeries.subst (formalIsogenySeries W α) (formalW W)) = 1 :=
++    inv_mul_cancel₀ hT_ne
++  have hu_def : alpha_star_u W α = 2 * α.pullback (y_gen W)
++      + algebraMap F KE W.a₁ * α.pullback (x_gen W) + algebraMap F KE W.a₃ := rfl
++  have hUT : localExpand W (alpha_star_u W α) *
++      HahnSeries.ofPowerSeries ℤ F
++        (PowerSeries.subst (formalIsogenySeries W α) (formalW W)) =
++      HahnSeries.ofPowerSeries ℤ F (PowerSeries.C W.a₁)
++          * HahnSeries.ofPowerSeries ℤ F (formalIsogenySeries W α)
++        + HahnSeries.ofPowerSeries ℤ F (PowerSeries.C W.a₃)
++            * HahnSeries.ofPowerSeries ℤ F
++                (PowerSeries.subst (formalIsogenySeries W α) (formalW W)) - 2 := by
++    rw [hu_def, map_add, map_add, map_mul, map_mul, map_ofNat, localExpand_algebraMap,
++      localExpand_algebraMap, localExpand_pullback_y_gen W α h_α]
++    linear_combination HahnSeries.ofPowerSeries ℤ F (PowerSeries.C W.a₁) * hxT - 2 * hTinv
++  exact pullback_invariantDiff_core_nonneg W (formalIsogenySeries W α) hf0 _ _ hT_ne hU_ne hxT hUT
++
++
++omit [DecidableEq F] in
++private theorem laurent_nonneg_add {a b : LaurentSeries F}
++    (ha : (0 : WithTop ℤ) ≤ a.orderTop) (hb : (0 : WithTop ℤ) ≤ b.orderTop) :
++    (0 : WithTop ℤ) ≤ (a + b).orderTop :=
++  (le_min ha hb).trans HahnSeries.min_orderTop_le_orderTop_add
++
++omit [DecidableEq F] in
++private theorem laurent_nonneg_mul {a b : LaurentSeries F}
++    (ha : (0 : WithTop ℤ) ≤ a.orderTop) (hb : (0 : WithTop ℤ) ≤ b.orderTop) :
++    (0 : WithTop ℤ) ≤ (a * b).orderTop := by
++  rw [HahnSeries.orderTop_mul]
++  exact add_nonneg ha hb
++
++omit [DecidableEq F] in
++private theorem laurent_nonneg_pow {a : LaurentSeries F}
++    (ha : (0 : WithTop ℤ) ≤ a.orderTop) (n : ℕ) :
++    (0 : WithTop ℤ) ≤ (a ^ n).orderTop := by
++  induction n with
++  | zero => simp
++  | succ n ih => rw [pow_succ]; exact laurent_nonneg_mul ih ha
++
++omit [DecidableEq F] in
++private theorem laurent_derivative_nonneg {a : LaurentSeries F}
++    (ha : (0 : WithTop ℤ) ≤ a.orderTop) :
++    (0 : WithTop ℤ) ≤ (LaurentSeries.derivative F a).orderTop := by
++  rw [HahnSeries.le_orderTop_iff_forall]
++  intro j hj
++  rw [laurent_derivative_coeff]
++  have hjneg : j < 0 := by exact_mod_cast hj
++  by_cases hj1 : j + 1 = 0
++  · rw [hj1, zero_smul]
++  · rw [HahnSeries.coeff_eq_zero_of_lt_orderTop
++      (lt_of_lt_of_le (by exact_mod_cast (show j + 1 < 0 by omega)) ha), smul_zero]
++
++omit [DecidableEq F] in
++private theorem laurent_exists_powerSeries_of_nonneg {a : LaurentSeries F}
++    (ha : (0 : WithTop ℤ) ≤ a.orderTop) :
++    ∃ f : PowerSeries F, HahnSeries.ofPowerSeries ℤ F f = a := by
++  refine ⟨PowerSeries.mk (fun n ↦ a.coeff (n : ℤ)), ?_⟩
++  ext j
++  by_cases hj : j < 0
++  · rw [laurent_ofPowerSeries_coeff_neg _ hj,
++      HahnSeries.coeff_eq_zero_of_lt_orderTop
++        (lt_of_lt_of_le (by exact_mod_cast hj) ha)]
++  · obtain ⟨n, rfl⟩ := Int.eq_ofNat_of_zero_le (le_of_not_gt hj)
++    rw [HahnSeries.ofPowerSeries_apply_coeff, PowerSeries.coeff_mk]
++
++omit [DecidableEq F] in
++private theorem laurent_quadratic_nonneg {b c y : LaurentSeries F}
++    (hb : (0 : WithTop ℤ) ≤ b.orderTop) (hc : (0 : WithTop ℤ) ≤ c.orderTop)
++    (h : y ^ 2 + b * y = c) : (0 : WithTop ℤ) ≤ y.orderTop := by
++  by_contra! hy
++  obtain ⟨n, hn⟩ : ∃ n : ℤ, y.orderTop = (n : WithTop ℤ) := by
++    cases heq : y.orderTop with
++    | top => simp [heq] at hy
++    | coe n => exact ⟨n, rfl⟩
++  have hnneg : n < 0 := by rw [hn] at hy; exact_mod_cast hy
++  have hby : (n : WithTop ℤ) ≤ (b * y).orderTop := by
++    rw [HahnSeries.orderTop_mul, hn]
++    simpa only [zero_add] using add_le_add hb (le_refl (n : WithTop ℤ))
++  have hy2 : (y ^ 2).orderTop = ((2 * n : ℤ) : WithTop ℤ) := by
++    rw [sq, HahnSeries.orderTop_mul, hn]
++    exact_mod_cast (show n + n = 2 * n by omega)
++  have hleft : (y ^ 2 + b * y).orderTop = ((2 * n : ℤ) : WithTop ℤ) := by
++    rw [HahnSeries.orderTop_add_eq_left (hy2 ▸
++      lt_of_lt_of_le (by exact_mod_cast (show 2 * n < n by omega)) hby), hy2]
++  rw [h] at hleft
++  rw [hleft] at hc
++  have : 0 ≤ 2 * n := by exact_mod_cast hc
++  omega
++
++private theorem invariantDiff_localExpand_orderTop_zero :
++    ((localExpand W (u_gen W))⁻¹ *
++      LaurentSeries.derivative F (localExpand W (x_gen W))).orderTop = (0 : ℤ) := by
++  have hnonneg := pullback_invariantDiff_nonneg_of_x_pole W (Isogeny.id W.toAffine)
++    (by simpa using (show (W_smooth W).ordAtInfty (x_gen W) < 0 by
++      rw [ordAtInfty_x_gen]; exact_mod_cast (show (-2 : ℤ) < 0 by decide)))
++  have hnonneg' : (0 : WithTop ℤ) ≤ ((localExpand W (u_gen W))⁻¹ *
++      LaurentSeries.derivative F (localExpand W (x_gen W))).orderTop := by
++    simpa [alpha_star_u_eq] using hnonneg
++  apply laurent_orderTop_eq_of_coeff
++  · intro j hj
++    exact HahnSeries.coeff_eq_zero_of_lt_orderTop
++      (lt_of_lt_of_le (by exact_mod_cast hj) hnonneg')
++  · rw [invariantDiff_localExpand_coeff_zero W]
++    exact one_ne_zero
++
++private theorem localExpand_omega_lift :
++    (localExpandKaehlerLift W (invariantDifferential W.toAffine)).out =
++      (localExpand W (u_gen W))⁻¹ * LaurentSeries.derivative F (localExpand W (x_gen W)) := by
++  change (localExpandKaehlerLift W
++    ((u_gen W)⁻¹ • KaehlerDifferential.D F KE (x_gen W))).out = _
++  rw [localExpandKaehlerLift_smul, localExpandKaehlerLift_D, map_inv₀]
++
++private theorem omega_order_nonneg_of_unit_factor (a d : LaurentSeries F)
++    (ha : a.orderTop = (0 : ℤ))
++    (hd : (0 : WithTop ℤ) ≤ d.orderTop)
++    (f : KE) (heq : d = a * localExpand W f *
++      (localExpandKaehlerLift W (invariantDifferential W.toAffine)).out) :
++    (0 : WithTop ℤ) ≤ (W_smooth W).ordAtInfty f := by
++  rw [heq, HahnSeries.orderTop_mul, HahnSeries.orderTop_mul, ha,
++    localExpand_omega_lift W, invariantDiff_localExpand_orderTop_zero W,
++    show ((0 : ℤ) : WithTop ℤ) = 0 from rfl, zero_add, add_zero,
++    orderTop_localExpand_eq_ordAtInfty W] at hd
++  exact hd
++
++private theorem omega_order_nonneg_of_x_pole (α : Isogeny W.toAffine W.toAffine)
++    (hα : (W_smooth W).ordAtInfty (α.pullback (x_gen W)) < 0) :
++    (0 : WithTop ℤ) ≤ (W_smooth W).ordAtInfty (omegaPullbackCoeff W α) := by
++  have hnonneg := pullback_invariantDiff_nonneg_of_x_pole W α hα
++  have hspec := omegaPullbackCoeff_spec W α
++  change omegaPullbackCoeff W α • invariantDifferential W.toAffine =
++    (alpha_star_u W α)⁻¹ • KaehlerDifferential.D F KE (α.pullback (x_gen W)) at hspec
++  have hKI := congrArg (fun ω ↦ (localExpandKaehlerLift W ω).out) hspec
++  simp only [localExpandKaehlerLift_smul, localExpandKaehlerLift_D, map_inv₀] at hKI
++  rw [← hKI, HahnSeries.orderTop_mul, localExpand_omega_lift W,
++    invariantDiff_localExpand_orderTop_zero W,
++    show ((0 : ℤ) : WithTop ℤ) = 0 from rfl, add_zero,
++    orderTop_localExpand_eq_ordAtInfty W] at hnonneg
++  exact hnonneg
++
++omit [DecidableEq F] in
++private theorem ofPowerSeries_orderTop_zero_of_constant {f : PowerSeries F}
++    (hf : PowerSeries.constantCoeff f ≠ 0) :
++    (HahnSeries.ofPowerSeries ℤ F f).orderTop = (0 : ℤ) := by
++  apply laurent_orderTop_eq_of_coeff
++  · intro j hj
++    exact laurent_ofPowerSeries_coeff_neg f hj
++  · change (HahnSeries.ofPowerSeries ℤ F f).coeff ((0 : ℕ) : ℤ) ≠ 0
++    rw [HahnSeries.ofPowerSeries_apply_coeff, PowerSeries.coeff_zero_eq_constantCoeff_apply]
++    exact hf
++
++private theorem omega_order_nonneg_of_x_nonneg (α : Isogeny W.toAffine W.toAffine)
++    (hα : (0 : WithTop ℤ) ≤ (W_smooth W).ordAtInfty (α.pullback (x_gen W))) :
++    (0 : WithTop ℤ) ≤ (W_smooth W).ordAtInfty (omegaPullbackCoeff W α) := by
++  let x := localExpand W (α.pullback (x_gen W))
++  let y := localExpand W (α.pullback (y_gen W))
++  let c : F → LaurentSeries F := fun a ↦ HahnSeries.ofPowerSeries ℤ F (PowerSeries.C a)
++  have hc (a : F) : (0 : WithTop ℤ) ≤ (c a).orderTop :=
++    laurent_ofPowerSeries_orderTop_nonneg _
++  have hx : (0 : WithTop ℤ) ≤ x.orderTop := by
++    simpa only [x, orderTop_localExpand_eq_ordAtInfty W] using hα
++  have heq : y ^ 2 + c W.a₁ * x * y + c W.a₃ * y =
++      x ^ 3 + c W.a₂ * x ^ 2 + c W.a₄ * x + c W.a₆ := by
++    have heq := pullback_equation_inl W α
++    rw [Affine.equation_iff] at heq
++    change (α.pullback (y_gen W)) ^ 2 +
++      algebraMap F W.toAffine.FunctionField W.a₁ * α.pullback (x_gen W) * α.pullback (y_gen W) +
++        algebraMap F W.toAffine.FunctionField W.a₃ * α.pullback (y_gen W) =
++      (α.pullback (x_gen W)) ^ 3 +
++        algebraMap F W.toAffine.FunctionField W.a₂ * (α.pullback (x_gen W)) ^ 2 +
++          algebraMap F W.toAffine.FunctionField W.a₄ * α.pullback (x_gen W) +
++            algebraMap F W.toAffine.FunctionField W.a₆ at heq
++    have heqL := congrArg (localExpand W) heq
++    change localExpand W (α.pullback (y_gen W)) ^ 2 +
++      (HahnSeries.ofPowerSeries ℤ F (PowerSeries.C W.a₁)) * localExpand W (α.pullback (x_gen W)) *
++        localExpand W (α.pullback (y_gen W)) +
++      (HahnSeries.ofPowerSeries ℤ F (PowerSeries.C W.a₃)) * localExpand W (α.pullback (y_gen W)) = _
++    simpa only [map_add, map_mul, map_pow, localExpand_algebraMap] using heqL
++  have hy : (0 : WithTop ℤ) ≤ y.orderTop := by
++    apply laurent_quadratic_nonneg
++      (laurent_nonneg_add (laurent_nonneg_mul (hc W.a₁) hx) (hc W.a₃))
++      (laurent_nonneg_add
++        (laurent_nonneg_add
++          (laurent_nonneg_add (laurent_nonneg_pow hx 3)
++            (laurent_nonneg_mul (hc W.a₂) (laurent_nonneg_pow hx 2)))
++          (laurent_nonneg_mul (hc W.a₄) hx)) (hc W.a₆))
++    linear_combination heq
++  obtain ⟨xp, hxp⟩ := laurent_exists_powerSeries_of_nonneg hx
++  obtain ⟨yp, hyp⟩ := laurent_exists_powerSeries_of_nonneg hy
++  have hps : yp ^ 2 + PowerSeries.C W.a₁ * xp * yp + PowerSeries.C W.a₃ * yp =
++      xp ^ 3 + PowerSeries.C W.a₂ * xp ^ 2 + PowerSeries.C W.a₄ * xp +
++        PowerSeries.C W.a₆ := by
++    apply HahnSeries.ofPowerSeries_injective (Γ := ℤ)
++    simpa only [map_add, map_mul, map_pow, hxp, hyp] using heq
++  have hconst := congrArg PowerSeries.constantCoeff hps
++  simp only [map_add, map_mul, map_pow, PowerSeries.constantCoeff_C] at hconst
++  have hns : W.toAffine.Nonsingular (PowerSeries.constantCoeff xp)
++      (PowerSeries.constantCoeff yp) :=
++    W.toAffine.equation_iff_nonsingular.mp ((W.toAffine.equation_iff _ _).mpr hconst)
++  rw [Affine.nonsingular_iff'] at hns
++  let up := 2 * yp + PowerSeries.C W.a₁ * xp + PowerSeries.C W.a₃
++  let vp := 3 * xp ^ 2 + 2 * PowerSeries.C W.a₂ * xp + PowerSeries.C W.a₄ -
++    PowerSeries.C W.a₁ * yp
++  have hu : HahnSeries.ofPowerSeries ℤ F up = localExpand W (alpha_star_u W α) := by
++    simp only [up, map_add, map_mul, map_ofNat, hxp, hyp, alpha_star_u,
++      localExpand_algebraMap]
++    rfl
++  have hv : HahnSeries.ofPowerSeries ℤ F vp = localExpand W
++      (3 * (α.pullback (x_gen W)) ^ 2 +
++        2 * algebraMap F KE W.a₂ * α.pullback (x_gen W) + algebraMap F KE W.a₄ -
++        algebraMap F KE W.a₁ * α.pullback (y_gen W)) := by
++    simp only [vp, map_sub, map_add, map_mul, map_pow, map_ofNat, hxp, hyp,
++      localExpand_algebraMap]
++    rfl
++  rcases hns.2 with hV | hU
++  · have hv0 : PowerSeries.constantCoeff vp ≠ 0 := by
++      intro hv0
++      apply hV
++      simp only [vp, map_sub, map_add, map_mul, map_pow, map_ofNat,
++        PowerSeries.constantCoeff_C] at hv0
++      linear_combination -hv0
++    have hDY := congrArg (fun ω ↦ (localExpandKaehlerLift W ω).out)
++      (kaehler_D_alpha_pullback_y_eq_smul_omega W α)
++    simp only [localExpandKaehlerLift_D, localExpandKaehlerLift_smul, map_mul] at hDY
++    rw [← hv] at hDY
++    exact omega_order_nonneg_of_unit_factor W _ _
++      (ofPowerSeries_orderTop_zero_of_constant hv0) (laurent_derivative_nonneg hy) _ hDY
++  · have hu0 : PowerSeries.constantCoeff up ≠ 0 := by
++      simpa only [up, map_add, map_mul, map_ofNat, PowerSeries.constantCoeff_C] using hU
++    have hDX := congrArg (fun ω ↦ (localExpandKaehlerLift W ω).out)
++      (kaehler_D_alpha_pullback_x_eq_smul_omega W α)
++    simp only [localExpandKaehlerLift_D, localExpandKaehlerLift_smul, map_mul] at hDX
++    rw [← hu] at hDX
++    exact omega_order_nonneg_of_unit_factor W _ _
++      (ofPowerSeries_orderTop_zero_of_constant hu0) (laurent_derivative_nonneg hx) _ hDX
++
++theorem omegaPullbackCoeff_ordAtInfty_nonneg_proof
++    (α : Isogeny W.toAffine W.toAffine) :
++    (0 : WithTop ℤ) ≤ (W_smooth W).ordAtInfty (omegaPullbackCoeff W α) := by
++  by_cases hα : (W_smooth W).ordAtInfty (α.pullback (x_gen W)) < 0
++  · exact omega_order_nonneg_of_x_pole W α hα
++  · exact omega_order_nonneg_of_x_nonneg W α (le_of_not_gt hα)
++
++
++end HasseWeil.OmegaRegularityProof
++
++open WeierstrassCurve HasseWeil HasseWeil.Curves
++open scoped TensorProduct
++
++namespace HasseWeil.OmegaBaseChangeProof
++
++section Compat
++variable {F : Type*} [Field F] (C : SmoothPlaneCurve F)
++variable (L : Type*) [Field L] [Algebra F L] [Algebra.IsAlgebraic F L]
++
++noncomputable def tensorFunctionFieldEquiv :
++    letI := C.isDomain_tensorCoordRing L
++    (L ⊗[F] C.toAffine.FunctionField) ≃ₐ[L] (C.baseChange L).toAffine.FunctionField :=
++  letI := C.isDomain_tensorCoordRing L
++  (C.functionField_tensor_locBaseChange L).trans (C.functionField_baseChange_fracEquiv L)
++
++/-- **The `L`-linear scalar extension `id_L ⊗ f`** of an `F`-algebra hom `f : K(C) →ₐ[F] K(C)`:
++`Algebra.TensorProduct.map (AlgHom.id L) f : (L ⊗_F K(C)) →ₐ[L] (L ⊗_F K(C))`.  It is `L`-linear by
++`Algebra.TensorProduct.map` (the left factor is the `L`-algebra identity). -/
++noncomputable def lTensorMap (f : C.toAffine.FunctionField →ₐ[F] C.toAffine.FunctionField) :
++    (L ⊗[F] C.toAffine.FunctionField) →ₐ[L] (L ⊗[F] C.toAffine.FunctionField) :=
++  Algebra.TensorProduct.map (AlgHom.id L L) f
++
++omit [Algebra.IsAlgebraic F L] in
++@[simp] theorem lTensorMap_tmul
++    (f : C.toAffine.FunctionField →ₐ[F] C.toAffine.FunctionField) (l : L)
++    (u : C.toAffine.FunctionField) :
++    lTensorMap C L f (l ⊗ₜ u) = l ⊗ₜ f u := by
++  simp [lTensorMap]
++
++/-- **The base-changed pullback** `baseChangePullback f : K(C_L) →ₐ[L] K(C_L)`, the conjugate
++`Φ ∘ (id_L ⊗ f) ∘ Φ⁻¹` of the scalar extension `id_L ⊗ f` by the function-field iso `Φ`.
++
++This is the honest base-change of the function-field hom `f` along `F → L`, requiring **no**
++`CoordHom`.  It is an `L`-algebra hom by construction (composite of `L`-algebra homs). -/
++noncomputable def baseChangePullback
++    (f : C.toAffine.FunctionField →ₐ[F] C.toAffine.FunctionField) :
++    (C.baseChange L).toAffine.FunctionField →ₐ[L] (C.baseChange L).toAffine.FunctionField :=
++  letI := C.isDomain_tensorCoordRing L
++  (tensorFunctionFieldEquiv C L).toAlgHom.comp
++    ((lTensorMap C L f).comp (tensorFunctionFieldEquiv C L).symm.toAlgHom)
++
++theorem baseChangePullback_apply
++    (f : C.toAffine.FunctionField →ₐ[F] C.toAffine.FunctionField)
++    (z : (C.baseChange L).toAffine.FunctionField) :
++    baseChangePullback C L f z =
++      tensorFunctionFieldEquiv C L (lTensorMap C L f
++        ((tensorFunctionFieldEquiv C L).symm z)) :=
++  rfl
++
++theorem tensorFunctionFieldEquiv_one_tmul (z : C.toAffine.FunctionField) :
++    letI := C.isDomain_tensorCoordRing L
++    tensorFunctionFieldEquiv C L (1 ⊗ₜ[F] z) = C.functionFieldMap L z := by
++  let := C.isDomain_tensorCoordRing L
++  have hrh : ((tensorFunctionFieldEquiv C L).toRingHom.comp
++        (Algebra.TensorProduct.includeRight (R := F) (A := L)
++          (B := C.toAffine.FunctionField)).toRingHom) =
++      (C.functionFieldMap L) := by
++    refine IsFractionRing.ringHom_ext (A := C.toAffine.CoordinateRing) ?_
++    intro u
++    rw [RingHom.comp_apply]
++    rw [C.functionFieldMap_algebraMap L u]
++    change tensorFunctionFieldEquiv C L
++        (Algebra.TensorProduct.includeRight
++          (algebraMap C.toAffine.CoordinateRing C.toAffine.FunctionField u)) = _
++    rw [Algebra.TensorProduct.includeRight_apply]
++    have hstruct : (1 : L) ⊗ₜ[F]
++          (algebraMap C.toAffine.CoordinateRing C.toAffine.FunctionField u) =
++        C.tensorFunctionFieldStructureHom L (1 ⊗ₜ[F] u) := by
++      change _ = Algebra.TensorProduct.map (AlgHom.id L L)
++        (IsScalarTower.toAlgHom F C.toAffine.CoordinateRing C.toAffine.FunctionField) (1 ⊗ₜ[F] u)
++      rw [Algebra.TensorProduct.map_tmul]
++      rfl
++    rw [hstruct]
++    let := C.tensorFunctionFieldAlgebra L
++    let : IsScalarTower L (L ⊗[F] C.toAffine.CoordinateRing)
++        (L ⊗[F] C.toAffine.FunctionField) :=
++      IsScalarTower.of_algebraMap_eq fun l ↦
++        ((C.tensorFunctionFieldStructureHom L).commutes l).symm
++    have halg : C.tensorFunctionFieldStructureHom L (1 ⊗ₜ[F] u) =
++        algebraMap (L ⊗[F] C.toAffine.CoordinateRing) (L ⊗[F] C.toAffine.FunctionField)
++           (1 ⊗ₜ[F] u) := rfl
++    rw [halg]
++    change (C.functionField_baseChange_fracEquiv L)
++        (C.functionField_tensor_locBaseChange L
++          (algebraMap (L ⊗[F] C.toAffine.CoordinateRing) (L ⊗[F] C.toAffine.FunctionField)
++            (1 ⊗ₜ[F] u))) = _
++    rw [show C.functionField_tensor_locBaseChange L
++          (algebraMap (L ⊗[F] C.toAffine.CoordinateRing) (L ⊗[F] C.toAffine.FunctionField)
++            (1 ⊗ₜ[F] u)) =
++        algebraMap (L ⊗[F] C.toAffine.CoordinateRing)
++          (FractionRing (L ⊗[F] C.toAffine.CoordinateRing)) (1 ⊗ₜ[F] u) from ?_]
++    · rw [show C.functionField_baseChange_fracEquiv L =
++            IsFractionRing.algEquivOfAlgEquiv (C.coordRingScalarExtPinned L) from rfl]
++      rw [IsFractionRing.algEquivOfAlgEquiv_algebraMap]
++      congr 1
++      change C.fwdPinned L (1 ⊗ₜ[F] u) = C.coordRingMap L u
++      rw [C.fwdPinned_tmul, one_smul]
++    · have := C.tensor_functionField_isFractionRing L
++      have hinner : C.functionField_tensor_locBaseChange L =
++          (IsLocalization.algEquiv (nonZeroDivisors (L ⊗[F] C.toAffine.CoordinateRing))
++            (L ⊗[F] C.toAffine.FunctionField)
++            (FractionRing (L ⊗[F] C.toAffine.CoordinateRing))).restrictScalars L := rfl
++      rw [hinner, AlgEquiv.restrictScalars_apply]
++      exact (IsLocalization.algEquiv (nonZeroDivisors (L ⊗[F] C.toAffine.CoordinateRing))
++          (L ⊗[F] C.toAffine.FunctionField)
++          (FractionRing (L ⊗[F] C.toAffine.CoordinateRing))).commutes (1 ⊗ₜ[F] u)
++  have h := RingHom.congr_fun hrh z
++  rw [RingHom.comp_apply] at h
++  rw [← h]
++  rfl
++
++/-- **The base-changed pullback intertwines `f` with the natural inclusion** (Silverman I.2):
++
++  `baseChangePullback f (functionFieldMap z) = functionFieldMap (f z)`.
++
++Immediate from `tensorFunctionFieldEquiv_one_tmul`: `Φ⁻¹(functionFieldMap z) = 1 ⊗ z`,
++`(id_L ⊗ f)(1 ⊗ z) = 1 ⊗ f z` (`lTensorMap_tmul`), `Φ(1 ⊗ f z) = functionFieldMap (f z)`. -/
++theorem baseChangePullback_functionFieldMap
++    (f : C.toAffine.FunctionField →ₐ[F] C.toAffine.FunctionField)
++    (z : C.toAffine.FunctionField) :
++    baseChangePullback C L f (C.functionFieldMap L z) =
++      C.functionFieldMap L (f z) := by
++  let := C.isDomain_tensorCoordRing L
++  rw [baseChangePullback_apply]
++  rw [show (tensorFunctionFieldEquiv C L).symm (C.functionFieldMap L z) = 1 ⊗ₜ[F] z from ?_]
++  · rw [lTensorMap_tmul, tensorFunctionFieldEquiv_one_tmul]
++  · rw [← tensorFunctionFieldEquiv_one_tmul C L z, AlgEquiv.symm_apply_apply]
++
++
++end Compat
++
++section GenericCoords
++
++variable {K : Type*} [Field K] (W : WeierstrassCurve K)
++variable (L : Type*) [Field L] [Algebra K L]
++
++/-- `coordRingMap` sends the `X`-generator class to the `X`-generator class. -/
++theorem coordRingMap_X_gen :
++    (⟨W.toAffine⟩ : SmoothPlaneCurve K).coordRingMap L
++        (algebraMap (Polynomial K) W.toAffine.CoordinateRing Polynomial.X) =
++      algebraMap (Polynomial L) (W.baseChange L).toAffine.CoordinateRing Polynomial.X := by
++  change WeierstrassCurve.Affine.CoordinateRing.map W.toAffine (algebraMap K L)
++    (WeierstrassCurve.Affine.CoordinateRing.mk W.toAffine (Polynomial.C Polynomial.X)) = _
++  rw [WeierstrassCurve.Affine.CoordinateRing.map_mk]
++  rw [show ((Polynomial.C Polynomial.X : Polynomial (Polynomial K)).map
++        (Polynomial.mapRingHom (algebraMap K L))) =
++        Polynomial.C Polynomial.X by
++      rw [Polynomial.map_C, Polynomial.coe_mapRingHom, Polynomial.map_X]]
++  change WeierstrassCurve.Affine.CoordinateRing.mk (W.baseChange L).toAffine
++    (Polynomial.C Polynomial.X) =
++    algebraMap (Polynomial L) (W.baseChange L).toAffine.CoordinateRing Polynomial.X
++  rfl
++
++/-- `coordRingMap` sends the `Y`-generator (the `AdjoinRoot` root) to the `Y`-generator. -/
++theorem coordRingMap_Y_gen :
++    (⟨W.toAffine⟩ : SmoothPlaneCurve K).coordRingMap L
++        (AdjoinRoot.root W.toAffine.polynomial) =
++      AdjoinRoot.root (W.baseChange L).toAffine.polynomial := by
++  rw [← AdjoinRoot.mk_X]
++  change WeierstrassCurve.Affine.CoordinateRing.map W.toAffine (algebraMap K L)
++    (AdjoinRoot.mk W.toAffine.polynomial Polynomial.X) = _
++  rw [WeierstrassCurve.Affine.CoordinateRing.map_mk, Polynomial.map_X, AdjoinRoot.mk_X]
++  rfl
++
++/-- **Base change sends `x_gen^K` to `x_gen^{K̄}`** (Silverman I.2): `functionFieldMap (x_gen W) =
++x_gen (W.baseChange L)`. -/
++theorem functionFieldMap_x_gen :
++    (⟨W.toAffine⟩ : SmoothPlaneCurve K).functionFieldMap L (HasseWeil.x_gen W) =
++      HasseWeil.x_gen (W.baseChange L) := by
++  rw [HasseWeil.x_gen]
++  rw [SmoothPlaneCurve.functionFieldMap_algebraMap, coordRingMap_X_gen]
++  rfl
++
++/-- **Base change sends `y_gen^K` to `y_gen^{K̄}`** (Silverman I.2): `functionFieldMap (y_gen W) =
++y_gen (W.baseChange L)`. -/
++theorem functionFieldMap_y_gen :
++    (⟨W.toAffine⟩ : SmoothPlaneCurve K).functionFieldMap L (HasseWeil.y_gen W) =
++      HasseWeil.y_gen (W.baseChange L) := by
++  rw [HasseWeil.y_gen]
++  rw [SmoothPlaneCurve.functionFieldMap_algebraMap, coordRingMap_Y_gen]
++  rfl
++
++end GenericCoords
++
++variable {K : Type*} [Field K] [DecidableEq K]
++variable (W : WeierstrassCurve K) [W.toAffine.IsElliptic]
++variable (L : Type*) [Field L] [DecidableEq L] [Algebra K L] [Algebra.IsAlgebraic K L]
++  [(W.baseChange L).toAffine.IsElliptic]
++
++/-! ### The algebra `K(E) → K(E_L)` and the square instances for `KaehlerDifferential.map` -/
++
++/-- The `K(E)`-algebra structure on `K(E_L)` via the function-field base-change `K`-algebra hom
++`functionField_baseChange` (so `algebraMap K(E) K(E_L) = functionFieldMap`). -/
++noncomputable scoped instance algFunctionFieldBaseChange :
++    Algebra W.toAffine.FunctionField (W.baseChange L).toAffine.FunctionField :=
++  ((⟨W.toAffine⟩ : SmoothPlaneCurve K).functionField_baseChange L).toAlgebra
++
++omit [DecidableEq K] [W.toAffine.IsElliptic] [DecidableEq L] [Algebra.IsAlgebraic K L]
++  [(W.baseChange L).toAffine.IsElliptic] in
++/-- `algebraMap K(E) K(E_L) = functionFieldMap` (definitional via `functionField_baseChange`). -/
++theorem algebraMap_functionField_baseChange_eq (z : W.toAffine.FunctionField) :
++    algebraMap W.toAffine.FunctionField (W.baseChange L).toAffine.FunctionField z =
++      (⟨W.toAffine⟩ : SmoothPlaneCurve K).functionFieldMap L z := rfl
++
++/-- The bottom-left/top tower `K → K(E) → K(E_L)` (the `K`-algebra hom `functionField_baseChange`
++factors `K → K(E_L)` through `K → K(E)`). -/
++noncomputable scoped instance towerFunctionFieldBaseChange :
++    IsScalarTower K W.toAffine.FunctionField (W.baseChange L).toAffine.FunctionField :=
++  IsScalarTower.of_algebraMap_eq fun k ↦ by
++    change algebraMap K (W.baseChange L).toAffine.FunctionField k =
++      (⟨W.toAffine⟩ : SmoothPlaneCurve K).functionFieldMap L
++        (algebraMap K W.toAffine.FunctionField k)
++    rw [SmoothPlaneCurve.functionFieldMap_algebraMap_F]
++    rfl
++
++/-- `SMulCommClass L K(E) K(E_L)`: both act by multiplication in the commutative ring `K(E_L)`. -/
++noncomputable scoped instance smulCommFunctionFieldBaseChange :
++    SMulCommClass L W.toAffine.FunctionField (W.baseChange L).toAffine.FunctionField where
++  smul_comm l s b := by
++    rw [Algebra.smul_def, Algebra.smul_def, Algebra.smul_def, Algebra.smul_def]
++    ring
++
++/-! ### The differential transport map `diffMap : Ω[K(E)/K] → Ω[K(E_L)/L]` -/
++
++/-- **The base-change map on Kähler differentials** `Ω[K(E)/K] →ₗ[K(E)] Ω[K(E_L)/L]`, for the
++square `K → K(E)`, `L → K(E_L)` with `algebraMap K(E) K(E_L) = functionFieldMap`. -/
++noncomputable def omegaDiffMap :
++    KaehlerDifferential K W.toAffine.FunctionField →ₗ[W.toAffine.FunctionField]
++      KaehlerDifferential L (W.baseChange L).toAffine.FunctionField :=
++  KaehlerDifferential.map K L W.toAffine.FunctionField (W.baseChange L).toAffine.FunctionField
++
++omit [DecidableEq K] [W.toAffine.IsElliptic] [DecidableEq L] [Algebra.IsAlgebraic K L]
++  [(W.baseChange L).toAffine.IsElliptic] in
++/-- `omegaDiffMap (D_K z) = D_L (functionFieldMap z)` (`KaehlerDifferential.map_D`). -/
++theorem omegaDiffMap_D (z : W.toAffine.FunctionField) :
++    omegaDiffMap W L (KaehlerDifferential.D K W.toAffine.FunctionField z) =
++      KaehlerDifferential.D L (W.baseChange L).toAffine.FunctionField
++        (algebraMap W.toAffine.FunctionField (W.baseChange L).toAffine.FunctionField z) :=
++  KaehlerDifferential.map_D K L W.toAffine.FunctionField (W.baseChange L).toAffine.FunctionField z
++
++omit [DecidableEq K] [W.toAffine.IsElliptic] [DecidableEq L] [Algebra.IsAlgebraic K L]
++  [(W.baseChange L).toAffine.IsElliptic] in
++/-- `omegaDiffMap (s • ω) = s • omegaDiffMap ω` (`K(E)`-linearity, the `K(E)`-action on
++`Ω[K(E_L)/L]`
++factoring through `functionFieldMap`). -/
++theorem omegaDiffMap_smul (s : W.toAffine.FunctionField)
++  (ω : KaehlerDifferential K W.toAffine.FunctionField) :
++    omegaDiffMap W L (s • ω) = s • omegaDiffMap W L ω :=
++  LinearMap.map_smul (omegaDiffMap W L) s ω
++
++/-- **`functionFieldMap` intertwines `α.pullback` with `α_L.pullback`** for a base-changed isogeny,
++i.e. the function-field shadow of `α_L = α` over `L` (`baseChangePullback_functionFieldMap`). -/
++theorem functionFieldMap_pullback
++    (α : Isogeny W.toAffine W.toAffine)
++    (α_L : Isogeny (W.baseChange L).toAffine (W.baseChange L).toAffine)
++    (hpb : α_L.pullback = baseChangePullback (⟨W.toAffine⟩ : SmoothPlaneCurve K) L α.pullback)
++    (z : W.toAffine.FunctionField) :
++    (⟨W.toAffine⟩ : SmoothPlaneCurve K).functionFieldMap L (α.pullback z) =
++      α_L.pullback ((⟨W.toAffine⟩ : SmoothPlaneCurve K).functionFieldMap L z) := by
++  rw [hpb]
++  exact (baseChangePullback_functionFieldMap
++    (⟨W.toAffine⟩ : SmoothPlaneCurve K) L α.pullback z).symm
++
++/-- **Pullback compatibility**: `omegaDiffMap ∘ α.pullbackKaehler = α_L.pullbackKaehler ∘
++omegaDiffMap`
++for a base-changed isogeny `α_L` whose pullback is `baseChangePullback α.pullback`.  Proved by span
++induction over the generators `D_K z`; the generator step is exactly `functionFieldMap_pullback`. -/
++theorem omegaDiffMap_pullbackKaehler
++    (α : Isogeny W.toAffine W.toAffine)
++    (α_L : Isogeny (W.baseChange L).toAffine (W.baseChange L).toAffine)
++    (hpb : α_L.pullback = baseChangePullback (⟨W.toAffine⟩ : SmoothPlaneCurve K) L α.pullback)
++    (ω : KaehlerDifferential K W.toAffine.FunctionField) :
++    omegaDiffMap W L (α.pullbackKaehler ω) = α_L.pullbackKaehler (omegaDiffMap W L ω) := by
++  have hω : ω ∈ Submodule.span W.toAffine.FunctionField
++      (Set.range (KaehlerDifferential.D K W.toAffine.FunctionField)) := by
++    rw [KaehlerDifferential.span_range_derivation]; exact Submodule.mem_top
++  induction hω using Submodule.span_induction with
++  | mem x hx =>
++    obtain ⟨z, rfl⟩ := hx
++    rw [Isogeny.pullbackKaehler_D, omegaDiffMap_D, omegaDiffMap_D, Isogeny.pullbackKaehler_D]
++    congr 1
++    rw [algebraMap_functionField_baseChange_eq, algebraMap_functionField_baseChange_eq]
++    exact functionFieldMap_pullback W L α α_L hpb z
++  | zero => simp
++  | add x y _ _ hx hy => simp only [map_add, hx, hy]
++  | smul s x _ hx =>
++    rw [Isogeny.pullbackKaehler_smul_KE, omegaDiffMap_smul, hx, omegaDiffMap_smul]
++    rw [show (α.pullback s) • α_L.pullbackKaehler (omegaDiffMap W L x) =
++        algebraMap W.toAffine.FunctionField (W.baseChange L).toAffine.FunctionField (α.pullback s) •
++          α_L.pullbackKaehler (omegaDiffMap W L x) from (algebraMap_smul _ _ _).symm,
++      show s • omegaDiffMap W L x =
++        algebraMap W.toAffine.FunctionField (W.baseChange L).toAffine.FunctionField s •
++          omegaDiffMap W L x from (algebraMap_smul _ _ _).symm]
++    rw [Isogeny.pullbackKaehler_smul_KE]
++    congr 1
++    rw [algebraMap_functionField_baseChange_eq, algebraMap_functionField_baseChange_eq]
++    exact functionFieldMap_pullback W L α α_L hpb s
++
++omit [DecidableEq K] [DecidableEq L] [W.toAffine.IsElliptic]
++  [Algebra.IsAlgebraic K L] [(W.baseChange L).toAffine.IsElliptic] in
++/-- **`functionFieldMap (u_gen) = u_gen` over `L`** (the invariant-differential denominator
++`u = 2y + a₁x + a₃` base-changes, since `x_gen`, `y_gen`, `a₁`, `a₃` do). -/
++theorem functionFieldMap_u_gen :
++    (⟨W.toAffine⟩ : SmoothPlaneCurve K).functionFieldMap L (u_gen W) = u_gen (W.baseChange L) := by
++  have hx : (⟨W.toAffine⟩ : SmoothPlaneCurve K).functionFieldMap L (x_gen W) = x_gen
++    (W.baseChange L) :=
++    functionFieldMap_x_gen W L
++  have hy : (⟨W.toAffine⟩ : SmoothPlaneCurve K).functionFieldMap L (y_gen W) = y_gen
++    (W.baseChange L) :=
++    functionFieldMap_y_gen W L
++  rw [show u_gen W = 2 * y_gen W + algebraMap K W.toAffine.FunctionField W.a₁ * x_gen W +
++      algebraMap K W.toAffine.FunctionField W.a₃ from rfl]
++  rw [show u_gen (W.baseChange L) = 2 * y_gen (W.baseChange L) +
++      algebraMap L (W.baseChange L).toAffine.FunctionField (W.baseChange L).a₁ * x_gen
++        (W.baseChange L) +
++      algebraMap L (W.baseChange L).toAffine.FunctionField (W.baseChange L).a₃ from rfl]
++  rw [map_add, map_add, map_mul, map_mul, map_ofNat, hx, hy,
++    SmoothPlaneCurve.functionFieldMap_algebraMap_F, SmoothPlaneCurve.functionFieldMap_algebraMap_F]
++  congr 2
++
++omit [DecidableEq K] [DecidableEq L] in
++omit [W.toAffine.IsElliptic] [Algebra.IsAlgebraic K L] [(W.baseChange L).toAffine.IsElliptic] in
++/-- **The invariant differential transports**: `omegaDiffMap (ω_K) = ω_L`.  Both are
++`u⁻¹ • D(x_gen)`, and `functionFieldMap` carries `u_gen ↦ u_gen` (`functionFieldMap_u_gen`) and
++`x_gen ↦ x_gen` (`functionFieldMap_x_gen`). -/
++theorem omegaDiffMap_invariantDifferential :
++    omegaDiffMap W L (invariantDifferential W.toAffine) =
++      invariantDifferential (W.baseChange L).toAffine := by
++  rw [show invariantDifferential W.toAffine =
++      (u_gen W)⁻¹ • KaehlerDifferential.D K W.toAffine.FunctionField (x_gen W) from rfl]
++  rw [omegaDiffMap_smul, omegaDiffMap_D]
++  rw [show invariantDifferential (W.baseChange L).toAffine =
++      (u_gen (W.baseChange L))⁻¹ •
++        KaehlerDifferential.D L (W.baseChange L).toAffine.FunctionField (x_gen (W.baseChange L))
++      from rfl]
++  rw [show (u_gen W)⁻¹ • KaehlerDifferential.D L (W.baseChange L).toAffine.FunctionField
++        (algebraMap W.toAffine.FunctionField (W.baseChange L).toAffine.FunctionField (x_gen W)) =
++      algebraMap W.toAffine.FunctionField (W.baseChange L).toAffine.FunctionField ((u_gen W)⁻¹) •
++        KaehlerDifferential.D L (W.baseChange L).toAffine.FunctionField
++          (algebraMap W.toAffine.FunctionField (W.baseChange L).toAffine.FunctionField (x_gen W))
++      from (algebraMap_smul _ _ _).symm]
++  rw [algebraMap_functionField_baseChange_eq, algebraMap_functionField_baseChange_eq, map_inv₀,
++    functionFieldMap_u_gen]
++  congr 2
++  rw [show x_gen W = algebraMap W.toAffine.CoordinateRing W.toAffine.FunctionField
++      (algebraMap (Polynomial K) W.toAffine.CoordinateRing Polynomial.X) from rfl]
++  exact functionFieldMap_x_gen W L
++
++/-- **The omega-coefficient base-change transport (Silverman III.5)**: for a base-changed isogeny
++`α_L` whose pullback is the concrete `baseChangePullback α.pullback`,
++
++  `omegaPullbackCoeff (E_L) α_L = functionFieldMap (omegaPullbackCoeff E α)`.
++
++The differential analogue of the degree base change `baseChangePullback_finrank_eq`.  Proof:
++`a_{α_L} • ω_L = α_L^* ω_L = α_L^* (omegaDiffMap ω_K) = omegaDiffMap (α^* ω_K) =
++omegaDiffMap (a_α • ω_K) = a_α • ω_L = functionFieldMap(a_α) • ω_L`, then uniqueness of the
++omega coefficient. -/
++theorem omegaPullbackCoeff_baseChangePullback
++    (α : Isogeny W.toAffine W.toAffine)
++    (α_L : Isogeny (W.baseChange L).toAffine (W.baseChange L).toAffine)
++    (hpb : α_L.pullback = baseChangePullback (⟨W.toAffine⟩ : SmoothPlaneCurve K) L α.pullback) :
++    omegaPullbackCoeff (W.baseChange L) α_L =
++      (⟨W.toAffine⟩ : SmoothPlaneCurve K).functionFieldMap L (omegaPullbackCoeff W α) := by
++  apply omegaPullbackCoeff_unique
++  rw [← Isogeny.pullbackKaehler_invariantDifferential α_L,
++    ← omegaDiffMap_invariantDifferential W L,
++    ← omegaDiffMap_pullbackKaehler W L α α_L hpb,
++    Isogeny.pullbackKaehler_invariantDifferential α,
++    omegaDiffMap_smul, omegaDiffMap_invariantDifferential W L,
++    ← algebraMap_functionField_baseChange_eq, algebraMap_smul]
++
++
++
++end HasseWeil.OmegaBaseChangeProof
++
++open HasseWeil WeierstrassCurve HasseWeil.Curves
++
++namespace HasseWeil.OmegaIntegralityProof
++
++private theorem translation_derivative_identity {F : Type*} [Field F]
++    (a1 a2 a3 a4 a6 x y X Y : F) (hden : x - X ≠ 0)
++    (hW : y ^ 2 + a1 * x * y + a3 * y = x ^ 3 + a2 * x ^ 2 + a4 * x + a6)
++    (hP : Y ^ 2 + a1 * X * Y + a3 * Y = X ^ 3 + a2 * X ^ 2 + a4 * X + a6) :
++    let l := (y - Y) / (x - X)
++    let xt := l ^ 2 + a1 * l - a2 - x - X
++    let yt := -l * (xt - x) - y - a1 * xt - a3
++    (2 * l + a1) * ((3 * x ^ 2 + 2 * a2 * x + a4 - a1 * y) / (x - X) -
++      (y - Y) * (2 * y + a1 * x + a3) / (x - X) ^ 2) - (2 * y + a1 * x + a3) =
++      2 * yt + a1 * xt + a3 := by
++  dsimp only
++  field_simp [hden]
++  linear_combination
++    -(a1 * (x - X) + 2 * (y - Y)) * hW +
++      (a1 * (x - X) + 2 * (y - Y)) * hP
++
++variable {F : Type*} [Field F] [DecidableEq F]
++variable (W : WeierstrassCurve F) [W.toAffine.IsElliptic]
++
++local notation "KE" => W.toAffine.FunctionField
++
++private theorem Dω_translateSlope (x y : F) :
++    Dω W (translateSlope_xy W x y) =
++      (3 * x_gen W ^ 2 + 2 * algebraMap F KE W.a₂ * x_gen W +
++        algebraMap F KE W.a₄ - algebraMap F KE W.a₁ * y_gen W) /
++          (x_gen W - algebraMap F KE x) -
++        (y_gen W - algebraMap F KE y) * u_gen W /
++          (x_gen W - algebraMap F KE x) ^ 2 := by
++  rw [translateSlope_xy_eq, div_eq_mul_inv, Dω_mul, Dω_inv, Dω_sub, Dω_sub,
++    Dω_algebraMap, Dω_algebraMap, sub_zero, sub_zero, Dω_x_gen, Dω_y_gen]
++  simp only [div_eq_mul_inv, inv_pow]
++  ring
++
++private theorem Dω_translateX (x y : F) (hP : W.toAffine.Equation x y) :
++    Dω W (translateX_xy W x y) =
++      2 * translateY_xy W x y + algebraMap F KE W.a₁ * translateX_xy W x y +
++        algebraMap F KE W.a₃ := by
++  have hcurve := generic_equation W
++  have hpoint := translate_constant_equation W x y hP
++  rw [Affine.equation_iff] at hcurve hpoint
++  have hden : x_gen W - algebraMap F KE x ≠ 0 :=
++    x_gen_sub_const_ne_zero W x
++  have hderiv := translation_derivative_identity
++    (algebraMap F KE W.a₁) (algebraMap F KE W.a₂) (algebraMap F KE W.a₃)
++    (algebraMap F KE W.a₄) (algebraMap F KE W.a₆)
++    (x_gen W) (y_gen W) (algebraMap F KE x) (algebraMap F KE y) hden hcurve hpoint
++  have ha₁ : (W_KE W).toAffine.a₁ = algebraMap F KE W.a₁ := rfl
++  have ha₂ : (W_KE W).toAffine.a₂ = algebraMap F KE W.a₂ := rfl
++  have ha₃ : (W_KE W).toAffine.a₃ = algebraMap F KE W.a₃ := rfl
++  rw [translateX_xy, Affine.addX, ha₁, ha₂, Dω_sub, Dω_sub, Dω_sub, Dω_add, Dω_pow,
++    Dω_mul, Dω_algebraMap, Dω_algebraMap, Dω_algebraMap, Dω_x_gen]
++  simp only [Nat.cast_ofNat, Nat.reduceSub, pow_one, sub_zero]
++  rw [Dω_translateSlope, translateY_xy, Affine.addY, Affine.negY, Affine.negAddY,
++    Affine.addX, translateSlope_xy_eq]
++  have hu : u_gen W = 2 * y_gen W + algebraMap F KE W.a₁ * x_gen W +
++      algebraMap F KE W.a₃ := rfl
++  simp only [hu, ha₁, ha₂, ha₃]
++  dsimp only at hderiv
++  simp only [div_eq_mul_inv] at hderiv ⊢
++  convert hderiv using 1 <;> ring
++
++noncomputable def translationIsogeny (P : W.toAffine.Point) :
++    Isogeny W.toAffine W.toAffine where
++  pullback := (translateAlgEquivOfPoint W P).toAlgHom
++  toAddMonoidHom := 0
++
++private theorem omega_translationIsogeny (P : W.toAffine.Point) :
++    omegaPullbackCoeff W (translationIsogeny W P) = 1 := by
++  cases P with
++  | zero =>
++    apply omegaPullbackCoeff_unique
++    rw [omegaPullbackCoeff_spec]
++    change (u_gen W)⁻¹ • KaehlerDifferential.D F KE (x_gen W) =
++      (1 : KE) • invariantDifferential W.toAffine
++    rw [one_smul]
++    rfl
++  | some x y hns =>
++    have hD := Dω_spec W (translateX_xy W x y)
++    rw [Dω_translateX W x y hns.left] at hD
++    have hx : (translationIsogeny W (.some x y hns)).pullback (x_gen W) =
++        translateX_xy W x y := translateAlgEquivOfPoint_apply_x_gen W x y hns
++    have hy : (translationIsogeny W (.some x y hns)).pullback (y_gen W) =
++        translateY_xy W x y := translateAlgEquivOfPoint_apply_y_gen W x y hns
++    have hu : alpha_star_u W (translationIsogeny W (.some x y hns)) =
++        2 * translateY_xy W x y + algebraMap F KE W.a₁ * translateX_xy W x y +
++          algebraMap F KE W.a₃ := by
++      change 2 * (translationIsogeny W (.some x y hns)).pullback (y_gen W) +
++        algebraMap F KE W.a₁ * (translationIsogeny W (.some x y hns)).pullback (x_gen W) +
++          algebraMap F KE W.a₃ = _
++      rw [hx, hy]
++    apply omegaPullbackCoeff_unique
++    rw [omegaPullbackCoeff_spec]
++    change (alpha_star_u W (translationIsogeny W (.some x y hns)))⁻¹ •
++      KaehlerDifferential.D F KE ((translationIsogeny W (.some x y hns)).pullback (x_gen W)) = _
++    rw [hx, hD, ← hu, smul_smul,
++      inv_mul_cancel₀ (alpha_star_u_ne_zero W (translationIsogeny W (.some x y hns))), one_smul]
++
++private theorem omega_comp (α β : Isogeny W.toAffine W.toAffine) :
++    omegaPullbackCoeff W (α.comp β) =
++      β.pullback (omegaPullbackCoeff W α) * omegaPullbackCoeff W β := by
++  apply omegaPullbackCoeff_unique
++  rw [← Isogeny.pullbackKaehler_invariantDifferential (α.comp β),
++    Isogeny.pullbackKaehler_comp, AddMonoidHom.comp_apply,
++    Isogeny.pullbackKaehler_invariantDifferential α,
++    Isogeny.pullbackKaehler_smul_KE,
++    Isogeny.pullbackKaehler_invariantDifferential β, smul_smul]
++
++
++private theorem omega_order_at_point_nonneg (α : Isogeny W.toAffine W.toAffine)
++    (P : (W_smooth W).SmoothPoint) :
++    (0 : WithTop ℤ) ≤ (W_smooth W).ord_P P (omegaPullbackCoeff W α) := by
++  have hnonneg :=
++    HasseWeil.OmegaRegularityProof.omegaPullbackCoeff_ordAtInfty_nonneg_proof W
++    (α.comp (translationIsogeny W P.toAffinePoint))
++  have hcomp : omegaPullbackCoeff W (α.comp (translationIsogeny W P.toAffinePoint)) =
++      translateAlgEquivOfPoint W P.toAffinePoint (omegaPullbackCoeff W α) := by
++    calc
++      _ = (translationIsogeny W P.toAffinePoint).pullback (omegaPullbackCoeff W α) *
++          omegaPullbackCoeff W (translationIsogeny W P.toAffinePoint) := omega_comp W _ _
++      _ = (translationIsogeny W P.toAffinePoint).pullback (omegaPullbackCoeff W α) * 1 :=
++        congrArg (fun c : KE ↦ (translationIsogeny W P.toAffinePoint).pullback
++          (omegaPullbackCoeff W α) * c) (omega_translationIsogeny W P.toAffinePoint)
++      _ = _ := mul_one _
++  have hnonneg' : (0 : WithTop ℤ) ≤ (W_smooth W).ordAtInfty
++      (translateAlgEquivOfPoint W P.toAffinePoint (omegaPullbackCoeff W α)) :=
++    (congrArg (fun f : KE ↦ (0 : WithTop ℤ) ≤ (W_smooth W).ordAtInfty f) hcomp).mp hnonneg
++  have htransport := isTranslateOrdAtInftyCompatible_translateAlgEquivOfPoint W P
++    (-P.toAffinePoint) (add_neg_cancel P.toAffinePoint)
++    ((translateAlgEquivOfPoint W P.toAffinePoint) (omegaPullbackCoeff W α))
++  have hcancel : translateAlgEquivOfPoint W (-P.toAffinePoint)
++      (translateAlgEquivOfPoint W P.toAffinePoint (omegaPullbackCoeff W α)) =
++        omegaPullbackCoeff W α :=
++    (translateAlgEquivOfPoint_add_apply W P.toAffinePoint (-P.toAffinePoint)
++      (omegaPullbackCoeff W α)).symm.trans
++        ((congrArg (fun Q : W.toAffine.Point ↦ translateAlgEquivOfPoint W Q
++          (omegaPullbackCoeff W α))
++          (add_neg_cancel (P.toAffinePoint : W.toAffine.Point))).trans
++            (translateAlgEquivOfPoint_zero_apply W (omegaPullbackCoeff W α)))
++  have horder : (W_smooth W).ord_P P (omegaPullbackCoeff W α) =
++      (W_smooth W).ordAtInfty
++        (translateAlgEquivOfPoint W P.toAffinePoint (omegaPullbackCoeff W α)) :=
++    (congrArg ((W_smooth W).ord_P P) hcancel).symm.trans htransport
++  exact (congrArg (fun z : WithTop ℤ ↦ 0 ≤ z) horder).mpr hnonneg'
++
++private theorem omega_constant_of_algClosed [IsAlgClosed F]
++    (α : Isogeny W.toAffine W.toAffine) :
++    ∃ c : F, omegaPullbackCoeff W α = algebraMap F KE c := by
++  by_cases hzero : omegaPullbackCoeff W α = 0
++  · exact ⟨0, by simpa using hzero⟩
++  have hcoord := noFinitePolesBridge_unconditional W.toAffine (omegaPullbackCoeff W α) hzero
++    (omega_order_at_point_nonneg W α)
++  exact (W_smooth W).const_of_no_poles_of_coordinateRing _ hcoord
++    (HasseWeil.OmegaRegularityProof.omegaPullbackCoeff_ordAtInfty_nonneg_proof W α)
++
++
++theorem omegaPullbackCoeff_isIntegral_polynomialX_proof
++    (α : Isogeny W.toAffine W.toAffine) :
++    IsIntegral (Polynomial F) (omegaPullbackCoeff W α) := by
++  classical
++  let L := AlgebraicClosure F
++  let β : Isogeny (W.baseChange L).toAffine (W.baseChange L).toAffine :=
++    { pullback := HasseWeil.OmegaBaseChangeProof.baseChangePullback (W_smooth W) L α.pullback,
++      toAddMonoidHom := 0 }
++  have hbc := HasseWeil.OmegaBaseChangeProof.omegaPullbackCoeff_baseChangePullback W L α β rfl
++  obtain ⟨c, hc⟩ := omega_constant_of_algClosed (W.baseChange L) β
++  have hintL : IsIntegral F ((W_smooth W).functionFieldMap L (omegaPullbackCoeff W α)) := by
++    have hintC : IsIntegral F (algebraMap L (W.baseChange L).toAffine.FunctionField c) :=
++      (Algebra.IsIntegral.isIntegral c).map
++        (IsScalarTower.toAlgHom F L (W.baseChange L).toAffine.FunctionField)
++    exact (congrArg (fun f : (W.baseChange L).toAffine.FunctionField ↦ IsIntegral F f)
++      (hbc.symm.trans hc)).mpr hintC
++  have hint : IsIntegral F (omegaPullbackCoeff W α) :=
++    (isIntegral_algHom_iff ((W_smooth W).functionField_baseChange L)
++      ((W_smooth W).functionField_baseChange L).injective).mp hintL
++  exact hint.tower_top
++
++end HasseWeil.OmegaIntegralityProof
++
++namespace HasseWeil
++
++variable {F : Type*} [Field F] [DecidableEq F]
++variable (W : WeierstrassCurve F) [W.toAffine.IsElliptic]
++local notation "KE" => W.toAffine.FunctionField
++
++/-- The differential pullback coefficient has no finite poles, so it is integral over `F[X]`.
++Translation transports infinity regularity to every finite point; scalar extension to an
++algebraic closure and integral descent cover arbitrary base fields. -/
++theorem omegaPullbackCoeff_isIntegral_polynomialX
++    (α : Isogeny W.toAffine W.toAffine) :
++    IsIntegral (Polynomial F) (omegaPullbackCoeff W α) := by
++  exact OmegaIntegralityProof.omegaPullbackCoeff_isIntegral_polynomialX_proof W α
++
++/-- The differential pullback coefficient is regular at infinity. Use the formal chart when
++the pulled-back x-coordinate has a pole and a nonsingular affine chart otherwise. -/
++theorem omegaPullbackCoeff_ordAtInfty_nonneg
++    (α : Isogeny W.toAffine W.toAffine) :
++    (0 : WithTop ℤ) ≤
++      (⟨W.toAffine⟩ : HasseWeil.Curves.SmoothPlaneCurve F).ordAtInfty
++        (omegaPullbackCoeff W α) := by
++  exact OmegaRegularityProof.omegaPullbackCoeff_ordAtInfty_nonneg_proof W α
++
++/-- The differential pullback coefficient is constant: integrality excludes finite poles,
++and nonnegative infinity order completes the algebraic Liouville argument. -/
++theorem omegaPullbackCoeff_mem_F (α : Isogeny W.toAffine W.toAffine) :
++    ∃ c : F, omegaPullbackCoeff W α = algebraMap F KE c := by
++  have h_int := omegaPullbackCoeff_isIntegral_polynomialX W α
++  have h_inf := omegaPullbackCoeff_ordAtInfty_nonneg W α
++  have h_const :=
++    HasseWeil.Curves.SmoothPlaneCurve.const_of_isIntegral_polynomialX_of_ordAtInfty
++      (C := (⟨W.toAffine⟩ : HasseWeil.Curves.SmoothPlaneCurve F)) h_int h_inf
++  obtain ⟨c, hc⟩ := h_const
++  exact ⟨c, hc⟩
++
+ theorem omegaPullbackCoeff_localExpand_eq_coeff_one
+     (α : Isogeny W.toAffine W.toAffine)
+     (h_α : (W_smooth W).ordAtInfty (α.pullback (x_gen W)) < 0) :
+@@ -1643,15 +2623,9 @@
+   obtain ⟨c, hc⟩ := omegaPullbackCoeff_mem_F W α
+   rw [hc, localExpand_algebraMap W, omegaPullbackCoeff_F_value_eq_coeff_one W α h_α c hc]
+ 
+-/-- **BRIDGE-001 via localization** (Silverman III.5/IV.4): the curve↔formal bridge
+-`omegaPullbackCoeff α = algebraMap F KE (coeff 1 (formalIsogenySeries α))` for a genuine
+-isogeny, discharged from `omegaPullbackCoeff_localExpand_eq_coeff_one` + injectivity of
+-`localExpand`. Guarded by the **x-pole** `h_α` (the genuine FG-B/FG-C guard, *not* the weaker
+-`0 < orderTop (α*t)`, which is refutable for translations through a non-`O` base point — see
+-`pullback_invariantDiff_coeff_zero` for the worked counterexample). Concrete genuine isogenies
+-supply `h_α` directly (e.g. `ordAtInfty_mulByInt_x_neg`); the `0 < orderTop`-signed
+-`omegaPullbackCoeff_eq_formalIsogenyLeading` (`FormalIsogenySeries.lean`) downgrades from it via
+-`orderTop_localExpand_pullback_localParam_pos_of_ord_x_neg`. -/
++/-- The curve-to-formal coefficient bridge for an isogeny whose pulled-back x-coordinate
++has a pole at infinity. The x-pole hypothesis excludes translations to finite zeros of the
++local parameter, for which positive order of the pulled-back parameter alone is insufficient. -/
+ theorem omegaPullbackCoeff_eq_formalIsogenyLeading_via_localization
+     (α : Isogeny W.toAffine W.toAffine)
+     (h_α : (W_smooth W).ordAtInfty (α.pullback (x_gen W)) < 0) :
+@@ -1659,6 +2633,15 @@
+       algebraMap F KE (PowerSeries.coeff 1 (formalIsogenySeries W α)) := by
+   apply localExpand_injective W
+   rw [omegaPullbackCoeff_localExpand_eq_coeff_one W α h_α, localExpand_algebraMap W]
++
++/-- The invariant-differential pullback coefficient equals the linear coefficient of
++the formal isogeny series when the pulled-back x-coordinate has a pole at infinity. -/
++theorem omegaPullbackCoeff_eq_formalIsogenyLeading
++    (α : Isogeny W.toAffine W.toAffine)
++    (h_α : (W_smooth W).ordAtInfty (α.pullback (x_gen W)) < 0) :
++    omegaPullbackCoeff W α =
++      algebraMap F KE (PowerSeries.coeff 1 (formalIsogenySeries W α)) :=
++  omegaPullbackCoeff_eq_formalIsogenyLeading_via_localization W α h_α
+ 
+ /-- **TOP** (Silverman III.5.3, p. 79): `omegaPullbackCoeff [m] = m` for `m ≠ 0`, wronskian-free,
+ via the formal group. Chains BRIDGE-001 (localization route) + L-F1; the genuineness input is
+@@ -1709,7 +2692,7 @@
  /-- `D(gᵖ) = 0` in char `p` (`Derivation.leibniz_pow` + `p • · = 0`). -/
  theorem kaehlerD_pth_power_eq_zero (p : ℕ) [CharP F p] (g : KE) :
      KaehlerDifferential.D F KE (g ^ p) = 0 := by
@@ -8020,7 +9757,7 @@ diff --git a/projects/HasseWeil/HasseWeil/Isogeny/OmegaCoeffViaFormalGroup.lean 
    rw [Derivation.leibniz_pow,
      show (p : ℕ) • (g ^ (p - 1) • KaehlerDifferential.D F KE g) =
          ((p : ℕ) : KE) • (g ^ (p - 1) • KaehlerDifferential.D F KE g) from by
-@@ -1734,7 +1752,7 @@
+@@ -1734,7 +2717,7 @@
      rintro x ⟨w, rfl⟩
      simp only [SetLike.mem_coe, Submodule.mem_bot]
      exact h w
@@ -8029,7 +9766,7 @@ diff --git a/projects/HasseWeil/HasseWeil/Isogeny/OmegaCoeffViaFormalGroup.lean 
      have ha : a ∈ (⊥ : Submodule KE (KaehlerDifferential F KE)) := hbot ▸ Submodule.mem_top
      have hb : b ∈ (⊥ : Submodule KE (KaehlerDifferential F KE)) := hbot ▸ Submodule.mem_top
      rw [Submodule.mem_bot] at ha hb; rw [ha, hb]⟩
-@@ -1756,7 +1774,7 @@
+@@ -1756,7 +2739,7 @@
  theorem isPurelyInseparable_frobeniusRange_p (p : ℕ) [Fact p.Prime] [CharP F p] :
      haveI : CharP KE p := charP_of_injective_algebraMap (algebraMap F KE).injective p
      IsPurelyInseparable ↥((frobenius KE p).fieldRange) KE := by
@@ -8038,7 +9775,7 @@ diff --git a/projects/HasseWeil/HasseWeil/Isogeny/OmegaCoeffViaFormalGroup.lean 
    rw [isPurelyInseparable_iff_pow_mem _ p]
    intro x
    exact ⟨1, by rw [pow_one]; exact ⟨⟨x ^ p, x, rfl⟩, rfl⟩⟩
-@@ -1767,13 +1785,13 @@
+@@ -1767,13 +2750,13 @@
  theorem minpoly_x_gen_frobeniusRange_natDegree (p : ℕ) [Fact p.Prime] [CharP F p] [PerfectField F] :
      haveI : CharP KE p := charP_of_injective_algebraMap (algebraMap F KE).injective p
      (minpoly ↥((frobenius KE p).fieldRange) (x_gen W)).natDegree = p := by
@@ -8057,7 +9794,7 @@ diff --git a/projects/HasseWeil/HasseWeil/Isogeny/OmegaCoeffViaFormalGroup.lean 
    have hp1 : 1 < p := (Fact.out : p.Prime).one_lt
    obtain ⟨n, y, hmin⟩ :=
      IsPurelyInseparable.minpoly_eq_X_pow_sub_C (F := ↥((frobenius KE p).fieldRange)) (E := KE)
-@@ -1834,10 +1852,10 @@
+@@ -1834,10 +2817,10 @@
      haveI : CharP KE p := charP_of_injective_algebraMap (algebraMap F KE).injective p
      Algebra.IsSeparable
        ↥(IntermediateField.adjoin ↥((frobenius KE p).fieldRange) {x_gen W}) KE := by
@@ -8072,7 +9809,7 @@ diff --git a/projects/HasseWeil/HasseWeil/Isogeny/OmegaCoeffViaFormalGroup.lean 
    set L := IntermediateField.adjoin ↥((frobenius KE p).fieldRange) {x_gen W} with hLdef
    -- `himg`: `algebraMap (FractionRing _) KE` lands in `L` (image is `K(x_gen) ⊆ L`).
    have hx : x_gen W ∈ L := by
-@@ -1870,10 +1888,10 @@
+@@ -1870,10 +2853,10 @@
      rw [map_div₀, ← IsScalarTower.algebraMap_apply (Polynomial F) (FractionRing (Polynomial F)) KE,
        ← IsScalarTower.algebraMap_apply (Polynomial F) (FractionRing (Polynomial F)) KE]
      exact div_mem (hpoly r) (hpoly s)
@@ -8085,7 +9822,7 @@ diff --git a/projects/HasseWeil/HasseWeil/Isogeny/OmegaCoeffViaFormalGroup.lean 
      IsScalarTower.of_algebraMap_eq (fun _ ↦ rfl)
    exact Algebra.isSeparable_tower_top_of_isSeparable (FractionRing (Polynomial F)) ↥L KE
  
-@@ -1885,12 +1903,12 @@
+@@ -1885,12 +2868,12 @@
  theorem finrank_KE_over_frobeniusRange_p (p : ℕ) [Fact p.Prime] [CharP F p] [PerfectField F] :
      letI : CharP KE p := charP_of_injective_algebraMap (algebraMap F KE).injective p
      Module.finrank ↥((frobenius KE p).fieldRange) KE = p := by
@@ -8101,7 +9838,7 @@ diff --git a/projects/HasseWeil/HasseWeil/Isogeny/OmegaCoeffViaFormalGroup.lean 
      rw [isPurelyInseparable_iff_pow_mem _ p]
      intro x
      refine ⟨1, ?_⟩
-@@ -1900,7 +1918,7 @@
+@@ -1900,7 +2883,7 @@
    -- [SK-FINRANK-P-2 separable input] `KE/L` separable; from the helper lemma above, with the
    -- FractionRing `Algebra`/`IsSeparable` instances passed as terms (synthesised in their own
    -- context).
@@ -8110,7 +9847,7 @@ diff --git a/projects/HasseWeil/HasseWeil/Isogeny/OmegaCoeffViaFormalGroup.lean 
      isSeparable_KE_over_frobeniusRange_adjoin_x_gen W p
        (functionField_algebra_fractionRing W.toAffine) (functionField_isSeparable W.toAffine)
        (functionField_isScalarTower W.toAffine)
-@@ -1920,7 +1938,7 @@
+@@ -1920,7 +2903,7 @@
  theorem kaehlerD_eq_zero_iff_mem_pth_powers (p : ℕ) [Fact p.Prime] [CharP F p] [PerfectField F]
      (w : KE) :
      KaehlerDifferential.D F KE w = 0 ↔ ∃ g : KE, g ^ p = w := by
@@ -8119,7 +9856,7 @@ diff --git a/projects/HasseWeil/HasseWeil/Isogeny/OmegaCoeffViaFormalGroup.lean 
    refine ⟨?_, ?_⟩
    · -- ⟹ : `ker D` is an IntermediateField `K(E)ᵖ ⊆ ker D ⊊ K(E)`;
      -- `[K(E):K(E)ᵖ]=p` prime ⟹ `ker D = ⊥`.
-@@ -1930,15 +1948,15 @@
+@@ -1930,15 +2913,15 @@
      let M : IntermediateField ↥((frobenius KE p).fieldRange) KE :=
        { carrier := {v | KaehlerDifferential.D F KE v = 0}
          mul_mem' := fun {a b} ha hb ↦ by
@@ -8140,7 +9877,7 @@ diff --git a/projects/HasseWeil/HasseWeil/Isogeny/OmegaCoeffViaFormalGroup.lean 
          algebraMap_mem' := fun c ↦ by
            obtain ⟨g, hg⟩ := c.2
            have hval : (c : KE) = g ^ p := hg.symm
-@@ -1952,7 +1970,7 @@
+@@ -1952,7 +2935,7 @@
        have hvM : v ∈ M := by rw [hMtop]; exact IntermediateField.mem_top
        exact hv hvM
      have hMbot : M = ⊥ := by
@@ -9307,3 +11044,715 @@ diff --git a/projects/HasseWeil/HasseWeil/Pic0/ToClassSurjective.lean b/projects
        finiteDimensional_quotient_of_ne_bot _ (mem_nonZeroDivisors_iff_ne_zero.mp hJmem)
      have hone : ClassGroup.mk0 ⟨J, hJmem⟩ = 1 :=
        mk0_eq_one_of_finrank_quotient_eq_zero J hJmem h0
+diff --git a/projects/HasseWeil/HasseWeil/Foundation/OmegaPullbackCoeff.lean b/projects/HasseWeil/HasseWeil/Foundation/OmegaPullbackCoeff.lean
+--- a/projects/HasseWeil/HasseWeil/Foundation/OmegaPullbackCoeff.lean
++++ b/projects/HasseWeil/HasseWeil/Foundation/OmegaPullbackCoeff.lean
+@@ -7,6 +7,8 @@
+ import HasseWeil.Foundation.Auxiliary.DiffQuotientRule
+ import HasseWeil.Foundation.WronskianAux
+ import Mathlib.Algebra.Polynomial.Derivation
++import HasseWeil.Foundation.EC.GenericPoint
++import HasseWeil.Foundation.EC.AffinePointMap
+ 
+ /-!
+ # The Omega-Based Pullback Coefficient
+@@ -419,96 +421,6 @@
+   have haux := wronskian_aux_four W
+   simp only [Polynomial.C_ofNat] at haux ⊢
+   linear_combination haux
+-
+-omit [DecidableEq F] [W.toAffine.IsElliptic] in
+-/-- The polynomial Wronskian identity for non-negative integers, by **strong induction**.
+-
+-    Base cases `m = 0,1,2` use direct computation; `m = 3,4` use the factored ring identities
+-    (`wronskian_aux_three`, `wronskian_aux_four`). For `m = n+5` the proof is by strong induction:
+-    the induction hypothesis `ih` provides the identity at **all** smaller indices `k < m`.
+-
+-    ## Status of the `m ≥ 5` inductive step
+-
+-    The inductive step is the elliptic-divisibility-sequence (EDS) Wronskian recursion. Writing
+-    `p k := W.preΨ k` and `s := W.Ψ₂Sq`, and `W(k) := Φ_k' ΨSq_k − Φ_k ΨSq_k'`, the target is
+-    `W(k) = k · p(2k)`. The two halving recursions that drive the induction are (both verified by
+-    computer algebra against the actual division polynomials):
+-
+-    * **Even step.** `W(2m) = 2 · complEDS₂(2m) · W(m)`, where
+-      `complEDS₂(2m) = p(2m-1)² p(2m+2) − p(2m-2) p(2m+1)²`. Combined with the induction hypothesis
+-      `W(m) = m · p(2m)` and `p(4m) = complEDS₂(2m) · p(2m)` (mathlib's `preNormEDS_mul_complEDS₂`)
+-      this collapses to `W(2m) = 2m · p(4m)`, i.e. the claim at `2m`. Both `m` and `m±1 < 2m`.
+-    * **Odd step.** The analogous reduction of `W(2m+1)` to `W(m)` and `W(m+1)`.
+-
+-    The irreducible algebraic content of *each* halving step is the **EDS addition formula**
+-    (Ward's relation), verified by CAS in the exact form
+-    `p(i+j) p(i-j) = Aᵢ · p(i+1) p(i-1) p(j)² − Aⱼ · p(j+1) p(j-1) p(i)²`,
+-    with `Aᵢ = s²` iff (`i` odd and `j` even) else `1`, and `Aⱼ = s²` iff (`i` even and `j` odd)
+-    else `1`. Its `j = 2` specialisation is the Somos‑4 relation
+-    `p(m+2) p(m-2) = (Even m ? 1 : s²) · p(m+1) p(m-1) − Ψ₃ · p(m)²`.
+-
+-    The even step `W(2m) = 2·complEDS₂(2m)·W(m)` is **not** a free-ring identity in the consecutive
+-    `preΨ` values alone — it is provably *false* without further relations, and is *not* closed by
+-    Somos‑4 together with the Weierstrass `b`-relation either: it genuinely requires the addition
+-    formula at general index `j`. Mathlib does not currently provide the EDS addition formula
+-    (only the duplication recursions `preΨ_even`/`preΨ_odd`), so closing this step needs that
+-    formula to be developed first. The `WronskianAux` `m = 3,4` proofs avoid it only because, at
+-    fixed small index, the difference factors through the single `b`-relation with an explicitly
+-    computed multiplier;
+-    that multiplier grows with the index, so the same device does not generalise.
+-
+-    An **axiom-clean** alternative is available downstream of this file via the function field:
+-    the field-general Route-B chord induction `omegaCoeff_mulByInt`
+-    (`HasseWeil/RouteBGeneral.lean`) proves the differential statement `[n]*ω = n·ω`
+-    (Silverman III.5.3) over any field, with no EDS Wronskian; it cannot be imported here (it
+-    depends transitively on this file), but every former geometric consumer of the Wronskian
+-    (`Hasse/Separability.lean`, `PullbackCoeff.lean`) now routes through it, so this `sorry` is
+-    **consumer-free**. The polynomial identity itself also has an axiom-clean downstream proof:
+-    `wronskian_Φ_ΨSq_general` (`EC/WronskianGeneral.lean`). -/
+-private lemma wronskian_Φ_ΨSq_nat (m : ℕ) :
+-    Polynomial.derivative (W.Φ (m : ℤ)) * W.ΨSq (m : ℤ) -
+-      W.Φ (m : ℤ) * Polynomial.derivative (W.ΨSq (m : ℤ)) =
+-    Polynomial.C ((m : ℤ) : F) * W.preΨ (2 * (m : ℤ)) := by
+-  induction m using Nat.strong_induction_on with
+-  | _ m ih =>
+-    -- `ih : ∀ k < m, (the identity at k)` — the strong induction hypothesis.
+-    match m, ih with
+-    | 0, _ => exact wronskian_Φ_ΨSq_zero W
+-    | 1, _ => exact_mod_cast wronskian_Φ_ΨSq_one W
+-    | 2, _ => exact_mod_cast wronskian_Φ_ΨSq_two W
+-    | 3, _ => exact_mod_cast wronskian_Φ_ΨSq_three W
+-    | 4, _ => exact_mod_cast wronskian_Φ_ΨSq_four W
+-    | (n + 5), ih =>
+-      -- General case `m = n+5 ≥ 5`. The induction hypothesis `ih k hk` gives the identity at
+-      -- every `k < n+5`, in particular at the halves `⌊(n+5)/2⌋`, `⌈(n+5)/2⌉` needed by the EDS
+-      -- Wronskian recursion (even/odd halving step). The single missing ingredient is the EDS
+-      -- addition formula (see the docstring above); supplying it closes this step via
+-      -- `linear_combination` of the induction hypothesis at the halves with the
+-      -- addition-formula / Somos‑4 instances.
+-      sorry
+-
+-omit [DecidableEq F] [W.toAffine.IsElliptic] in
+-/-- The division polynomial Wronskian identity:
+-    `Φ_n' · ΨSq_n - Φ_n · ΨSq_n' = n · preΨ(2n)` as polynomials in `F[X]`.
+-
+-    Reference: Silverman Exercise III.3.7.
+-
+-    Proved by reducing to the natural number case via `wronskian_Φ_ΨSq_neg_of`
+-    (negation symmetry) and `wronskian_Φ_ΨSq_nat` (positive case by induction). -/
+-theorem wronskian_Φ_ΨSq (n : ℤ) :
+-    Polynomial.derivative (W.Φ n) * W.ΨSq n - W.Φ n * Polynomial.derivative (W.ΨSq n) =
+-    Polynomial.C (n : F) * W.preΨ (2 * n) := by
+-  rcases lt_or_ge n 0 with hneg | hpos
+-  · -- n < 0: use negation symmetry on the positive case
+-    have hm : (0 : ℤ) ≤ -n := by omega
+-    obtain ⟨m, hm_eq⟩ := Int.eq_ofNat_of_zero_le hm
+-    have hn_eq : n = -(m : ℤ) := by omega
+-    rw [hn_eq]
+-    exact wronskian_Φ_ΨSq_neg_of W (wronskian_Φ_ΨSq_nat W m)
+-  · -- n ≥ 0: directly from wronskian_Φ_ΨSq_nat
+-    obtain ⟨m, hm_eq⟩ := Int.eq_ofNat_of_zero_le hpos
+-    subst hm_eq
+-    exact wronskian_Φ_ΨSq_nat W m
+ 
+ omit [DecidableEq F] [W.toAffine.IsElliptic] in
+ /-- `Φ_ff` and `ΨSq_ff` factor through `algebraMap (Polynomial F) KE`. -/
+@@ -645,20 +557,6 @@
+       by ring,
+     h_preΨ_u, h_alpha_u, show ΨSq_ff W n = ψn ^ 2 from (ψ_ff_sq_eq W n).symm]
+   field_simp
+-
+-/-- The division polynomial Wronskian identity in K(E) (general `n`), via the
+-    general polynomial-level identity `wronskian_Φ_ΨSq`.
+-    Reference: Silverman Exercise III.3.7, III.5.3 -/
+-theorem divPoly_wronskian_identity (n : ℤ) (hn : n ≠ 0) :
+-    (algebraMap (Polynomial F) KE (Polynomial.derivative (W.Φ n)) *
+-      ΨSq_ff W n -
+-    Φ_ff W n *
+-      algebraMap (Polynomial F) KE (Polynomial.derivative (W.ΨSq n))) *
+-    u_gen W =
+-    algebraMap F KE n *
+-    ΨSq_ff W n ^ 2 *
+-    alpha_star_u W (mulByInt W.toAffine n) :=
+-  divPoly_wronskian_identity_of_poly W n hn (wronskian_Φ_ΨSq (W := W) n)
+ 
+ -- Chain rule for `D` on polynomial images in K(E), using `Derivation.comp_aeval_eq`: for
+ -- `p : F[X]` and `a ∈ KE`, `D(aeval a p) = aeval a (derivative p) • D(a)`.
+@@ -843,33 +741,557 @@
+   -- Goal is already in the `set` names `Φ, Ψ, Φ', Ψ', u, αu`; `hfin` matches up to symmetry.
+   linear_combination -hfin
+ 
+-/-- For [n], the omega-based pullback coefficient is n (general `n`, via the
+-    general polynomial-level Wronskian identity `wronskian_Φ_ΨSq`).
+-    Silverman III.5.3, IV.2.3.
+-
+-    NOTE: this routing through `wronskian_Φ_ΨSq` inherits its `sorryAx` taint
+-    (the `m ≥ 5` branch of `wronskian_Φ_ΨSq_nat`). The **axiom-clean, field-general**
+-    proof of the same statement, via the Route-B chord recurrence (Silverman
+-    III.5.2/3 at the differential level), is `HasseWeil.omegaCoeff_mulByInt` in
+-    `HasseWeil/RouteBGeneral.lean`. That module cannot be imported here (its chord
+-    step lives downstream of this file), so the replacement cannot be applied in
+-    place — instead all former consumers (`Hasse/Separability.lean`,
+-    `PullbackCoeff.lean`) now route through `omegaCoeff_mulByInt`, leaving this
+-    theorem (and its Wronskian `sorry`) **consumer-free**. -/
+-theorem omegaPullbackCoeff_mulByInt (n : ℤ) (hn : n ≠ 0) :
+-    omegaPullbackCoeff W (mulByInt W.toAffine n) = algebraMap F KE n :=
+-  omegaPullbackCoeff_mulByInt_of_poly W n hn (wronskian_Φ_ΨSq (W := W) n)
+-
+-/-- **Axiom-clean base case `[2]`**: `omegaPullbackCoeff W (mulByInt 2) = 2`.
+-
+-    Uses the per-value polynomial Wronskian lemma `wronskian_Φ_ΨSq_two` (a direct
+-    `ring` computation, axiom-clean) through `omegaPullbackCoeff_mulByInt_of_poly`,
+-    so it does NOT depend on the general `wronskian_Φ_ΨSq` (whose `m ≥ 5` branch
+-    is unproved). Seeds the Route-B chord induction (`m ≥ 3` follows from the
+-    chord step `omegaPullbackCoeff_mulByInt_succ`). -/
++/-- The independent `[2]` base case, obtained from the explicit degree-two Wronskian.
++It seeds the chord induction used to prove the general Wronskian below. -/
+ theorem omegaPullbackCoeff_mulByInt_two :
+     omegaPullbackCoeff W (mulByInt W.toAffine 2) = algebraMap F KE (2 : ℤ) :=
+   omegaPullbackCoeff_mulByInt_of_poly W 2 (by norm_num)
+     (by simpa using wronskian_Φ_ΨSq_two W)
+ 
+ end HasseWeil
++
++open HasseWeil WeierstrassCurve Polynomial
++
++namespace HasseWeil.WronskianProof
++
++variable {F : Type*} [Field F] [DecidableEq F]
++variable (W : WeierstrassCurve F) [W.toAffine.IsElliptic]
++local notation "KE" => W.toAffine.FunctionField
++
++omit [DecidableEq F] [W.toAffine.IsElliptic] in
++/-- The Jacobian point `smulEval (W_KE W) x₀ y₀ m` (the `m`-fold scalar multiple of a
++    nonsingular affine point, read in Jacobian coordinates) is itself nonsingular. -/
++private lemma jacobian_nonsingular_smulEval (m : ℤ) {x₀ y₀ : KE}
++    (h_ns : (W_KE W).toAffine.Nonsingular x₀ y₀) :
++    WeierstrassCurve.Jacobian.Nonsingular (W_KE W).toJacobian
++      (smulEval (W_KE W) x₀ y₀ m) := by
++  have h_smulEval := WeierstrassCurve.zsmul_eq_smulEval (W := W_KE W) h_ns m
++  have h_ns_jac := (m • WeierstrassCurve.Jacobian.Point.fromAffine
++    (Affine.Point.some x₀ y₀ h_ns)).nonsingular
++  change WeierstrassCurve.Jacobian.NonsingularLift _ _ at h_ns_jac
++  rw [h_smulEval] at h_ns_jac
++  exact h_ns_jac
++
++omit [DecidableEq F] [W.toAffine.IsElliptic] in
++/-- Transport across the affine ↔ Jacobian equivalence: the `m`-fold scalar multiple of an
++    affine point `.some x₀ y₀ _` is the `toAffineLift` of the `m`-fold multiple of its Jacobian
++    image `fromAffine (.some x₀ y₀ _)`. -/
++private lemma zsmul_some_eq_toAffineLift_fromAffine (m : ℤ) {x₀ y₀ : KE}
++    (h_ns : (W_KE W).toAffine.Nonsingular x₀ y₀) :
++    m • Affine.Point.some x₀ y₀ h_ns =
++      WeierstrassCurve.Jacobian.Point.toAffineLift
++        (m • WeierstrassCurve.Jacobian.Point.fromAffine
++          (Affine.Point.some x₀ y₀ h_ns)) := by
++  have h_inv :
++      WeierstrassCurve.Jacobian.Point.toAffineAddEquiv (W_KE W)
++        (WeierstrassCurve.Jacobian.Point.fromAffine
++          (Affine.Point.some x₀ y₀ h_ns)) =
++      Affine.Point.some x₀ y₀ h_ns :=
++    (WeierstrassCurve.Jacobian.Point.toAffineAddEquiv (W_KE W)).right_inv _
++  have h := map_zsmul (WeierstrassCurve.Jacobian.Point.toAffineAddEquiv (W_KE W))
++    m (WeierstrassCurve.Jacobian.Point.fromAffine
++      (Affine.Point.some x₀ y₀ h_ns))
++  rw [WeierstrassCurve.Jacobian.Point.toAffineAddEquiv_apply] at h
++  rw [show WeierstrassCurve.Jacobian.Point.toAffineAddEquiv (W_KE W)
++    (WeierstrassCurve.Jacobian.Point.fromAffine _) =
++    WeierstrassCurve.Jacobian.Point.toAffineLift
++      (WeierstrassCurve.Jacobian.Point.fromAffine _) from rfl] at h
++  have h2 : WeierstrassCurve.Jacobian.Point.toAffineLift
++      (WeierstrassCurve.Jacobian.Point.fromAffine
++        (Affine.Point.some x₀ y₀ h_ns)) =
++      Affine.Point.some x₀ y₀ h_ns := by
++    rw [← WeierstrassCurve.Jacobian.Point.toAffineAddEquiv_apply]
++    exact h_inv
++  rw [h2] at h
++  exact h.symm
++
++omit [DecidableEq F] [W.toAffine.IsElliptic] in
++/-- The `toAffineLift` of the `m`-fold Jacobian multiple of `fromAffine (.some x₀ y₀ _)` is the
++    plain `toAffine` of the explicit division-polynomial coordinate vector `smulEval`. -/
++private lemma toAffineLift_zsmul_fromAffine_eq_toAffine (m : ℤ) {x₀ y₀ : KE}
++    (h_ns : (W_KE W).toAffine.Nonsingular x₀ y₀) :
++    WeierstrassCurve.Jacobian.Point.toAffineLift
++        (m • WeierstrassCurve.Jacobian.Point.fromAffine
++          (Affine.Point.some x₀ y₀ h_ns)) =
++      WeierstrassCurve.Jacobian.Point.toAffine (W_KE W)
++        (smulEval (W_KE W) x₀ y₀ m) := by
++  simp only [WeierstrassCurve.Jacobian.Point.toAffineLift]
++  rw [WeierstrassCurve.zsmul_eq_smulEval (W := W_KE W) h_ns m]
++  rfl
++
++omit [DecidableEq F] in
++/-- **Main theorem (Silverman III.4.2)**: for every `n ≠ 0`, `n • genericPoint W`
++    has coordinates `(mulByInt_x W n, mulByInt_y W n)`. -/
++theorem zsmul_genericPoint_eq (n : ℤ) (hn : n ≠ 0) :
++    ∃ h : (W_KE W).toAffine.Nonsingular (mulByInt_x W n) (mulByInt_y W n),
++      n • genericPoint W =
++        Affine.Point.some (mulByInt_x W n) (mulByInt_y W n) h := by
++  have hψ : ψ_ff W n ≠ 0 := ψ_ff_ne_zero W hn
++  have hns := generic_nonsingular W
++  have hZ : smulEval (W_KE W) (x_gen W) (y_gen W) n 2 ≠ 0 := by
++    rw [smulEval_generic_Z]; exact hψ
++  -- The `m`-fold multiple is nonsingular in Jacobian coordinates.
++  have h_ns_smulEval := jacobian_nonsingular_smulEval W n hns
++  -- Reading off the affine nonsingularity from `Z ≠ 0`, then identifying the
++  -- generic-point coordinates with `Φ_ff / ψ_ff²` etc. and finally `mulByInt_x`.
++  have h_ns_affine :
++      (W_KE W).toAffine.Nonsingular
++        (smulEval (W_KE W) (x_gen W) (y_gen W) n 0 /
++          smulEval (W_KE W) (x_gen W) (y_gen W) n 2 ^ 2)
++        (smulEval (W_KE W) (x_gen W) (y_gen W) n 1 /
++          smulEval (W_KE W) (x_gen W) (y_gen W) n 2 ^ 3) :=
++    (WeierstrassCurve.Jacobian.nonsingular_of_Z_ne_zero hZ).mp h_ns_smulEval
++  rw [smulEval_generic_X, smulEval_generic_Y, smulEval_generic_Z] at h_ns_affine
++  have h_x_eq : Φ_ff W n / ψ_ff W n ^ 2 = mulByInt_x W n := by
++    change _ = Φ_ff W n / ΨSq_ff W n
++    rw [ψ_ff_sq_eq_ΨSq_ff]
++  rw [h_x_eq] at h_ns_affine
++  -- Re-type the nonsingularity proof at the *folded* `mulByInt_y W n` (defeq to
++  -- `ω_ff W n / ψ_ff W n ^ 3`), so the `Point.some` ascriptions in the goal below
++  -- stay type-correct at implicit transparency and `some.injEq` can match.
++  have h_ns_affine' :
++      (W_KE W).toAffine.Nonsingular (mulByInt_x W n) (mulByInt_y W n) := h_ns_affine
++  refine ⟨h_ns_affine', ?_⟩
++  -- Transport `n • genericPoint` across the affine ↔ Jacobian equivalence and unfold to
++  -- the explicit `smulEval` coordinate vector, then read off both coordinates.
++  change n • Affine.Point.some (x_gen W) (y_gen W) hns = _
++  rw [zsmul_some_eq_toAffineLift_fromAffine W n hns,
++    toAffineLift_zsmul_fromAffine_eq_toAffine W n hns,
++    WeierstrassCurve.Jacobian.Point.toAffine_of_Z_ne_zero h_ns_smulEval hZ,
++    Affine.Point.some.injEq]
++  refine ⟨?_, ?_⟩
++  · rw [smulEval_generic_X, smulEval_generic_Z]
++    exact h_x_eq
++  · rw [smulEval_generic_Y, smulEval_generic_Z]
++    rfl
++
++omit [DecidableEq F] in
++/-- **Group-law successor step on the generic point** (Silverman III.5.3 prep): chord-addition
++    of `P = (x_gen, y_gen)` against `[m]P = (mulByInt_x m, mulByInt_y m)` realises the
++    `[m+1]`-coordinates, stated as `addX`/`addY` identities.
++
++    The secant slope is written out as `(y_gen - mulByInt_y m)/(x_gen - mulByInt_x m)` rather
++    than via the `slope` function, whose `if x₁ = x₂` branch carries a `DecidableEq K(E)`
++    instance that diamonds across import boundaries (`AdditionPullback`'s
++    `instDecidableEqFunctionField` vs mathlib's `FractionRing.instDecidableEq`). With `slope`
++    eliminated the conclusion uses only instance-stable `K(E)` field operations, so it is
++    consumed verbatim in `MulByIntAddRecurrence`. -/
++theorem addX_addY_genericPoint_mulByInt_eq_succ (m : ℤ) (hm : m ≠ 0) (hm1 : m + 1 ≠ 0)
++    (hx_ne : x_gen W ≠ mulByInt_x W m) :
++    (W_KE W).toAffine.addX (x_gen W) (mulByInt_x W m)
++        ((y_gen W - mulByInt_y W m) / (x_gen W - mulByInt_x W m))
++          = mulByInt_x W (m + 1) ∧
++      (W_KE W).toAffine.addY (x_gen W) (mulByInt_x W m) (y_gen W)
++          ((y_gen W - mulByInt_y W m) / (x_gen W - mulByInt_x W m))
++            = mulByInt_y W (m + 1) := by
++  obtain ⟨h_ns_m, h_m⟩ := zsmul_genericPoint_eq W m hm
++  obtain ⟨h_ns_m1, h_m1⟩ := zsmul_genericPoint_eq W (m + 1) hm1
++  have key : Affine.Point.some (mulByInt_x W (m + 1)) (mulByInt_y W (m + 1)) h_ns_m1
++      = genericPoint W + Affine.Point.some (mulByInt_x W m) (mulByInt_y W m) h_ns_m := by
++    rw [← h_m, ← h_m1, add_comm m 1, one_add_zsmul]
++  rw [show genericPoint W
++        = Affine.Point.some (x_gen W) (y_gen W) (generic_nonsingular W) from rfl,
++    Affine.Point.add_of_X_ne hx_ne, Affine.Point.some.injEq,
++    WeierstrassCurve.Affine.slope_of_X_ne hx_ne] at key
++  exact ⟨key.1.symm, key.2.symm⟩
++
++
++omit [DecidableEq F] in
++private theorem zsmul_genericPoint_ne_zero (n : ℤ) (hn : n ≠ 0) :
++    n • genericPoint W ≠ 0 := by
++  obtain ⟨h, heq⟩ := zsmul_genericPoint_eq W n hn
++  rw [heq]
++  intro hzero
++  cases hzero
++
++omit [DecidableEq F] in
++private theorem x_gen_ne_mulByInt_x (n : ℤ) (hn : 2 ≤ n) :
++    x_gen W ≠ mulByInt_x W n := by
++  intro heq
++  obtain ⟨hns, hz⟩ := zsmul_genericPoint_eq W n (by omega)
++  have hpoints := (Affine.Point.X_eq_iff
++    (h₁ := generic_nonsingular W) (h₂ := hns)).mp heq
++  change genericPoint W = _ ∨ genericPoint W = -_ at hpoints
++  rw [← hz] at hpoints
++  rcases hpoints with hpos | hneg
++  · apply zsmul_genericPoint_ne_zero W (n - 1) (by omega)
++    rw [sub_smul, one_zsmul, ← hpos, sub_self]
++  · apply zsmul_genericPoint_ne_zero W (n + 1) (by omega)
++    rw [add_smul, one_zsmul]
++    exact (congrArg (fun Q ↦ n • genericPoint W + Q) hneg).trans (add_neg_cancel _)
++
++private theorem map_wronskian {R S : Type*} [CommRing R] [CommRing S]
++    (V : WeierstrassCurve R) (f : R →+* S) (n : ℤ) :
++    Polynomial.map f (Polynomial.derivative (V.Φ n) * V.ΨSq n -
++      V.Φ n * Polynomial.derivative (V.ΨSq n)) =
++      Polynomial.derivative ((V.map f).Φ n) * (V.map f).ΨSq n -
++        (V.map f).Φ n * Polynomial.derivative ((V.map f).ΨSq n) := by
++  rw [WeierstrassCurve.map_Φ, WeierstrassCurve.map_ΨSq,
++    Polynomial.derivative_map, Polynomial.derivative_map,
++    Polynomial.map_sub, Polynomial.map_mul, Polynomial.map_mul]
++
++private theorem map_wronskian_rhs {R S : Type*} [CommRing R] [CommRing S]
++    (V : WeierstrassCurve R) (f : R →+* S) (n : ℤ) :
++    Polynomial.map f (Polynomial.C (n : R) * V.preΨ (2 * n)) =
++      Polynomial.C (n : S) * (V.map f).preΨ (2 * n) := by
++  rw [Polynomial.map_mul, Polynomial.map_C, map_intCast, WeierstrassCurve.map_preΨ]
++
++omit [DecidableEq F] [W.toAffine.IsElliptic] in
++private theorem wronskian_specialize_universal (n : ℤ)
++    (h : Polynomial.derivative (Universal.pointedCurve.Φ n) * Universal.pointedCurve.ΨSq n -
++      Universal.pointedCurve.Φ n * Polynomial.derivative (Universal.pointedCurve.ΨSq n) =
++      Polynomial.C (n : Universal.Field) * Universal.pointedCurve.preΨ (2 * n)) :
++    Polynomial.derivative (W.Φ n) * W.ΨSq n - W.Φ n * Polynomial.derivative (W.ΨSq n) =
++      Polynomial.C (n : F) * W.preΨ (2 * n) := by
++  have hU : Polynomial.derivative (Universal.curve.Φ n) * Universal.curve.ΨSq n -
++      Universal.curve.Φ n * Polynomial.derivative (Universal.curve.ΨSq n) =
++      Polynomial.C (n : MvPolynomial Coeff ℤ) * Universal.curve.preΨ (2 * n) := by
++    apply Polynomial.map_injective (algebraMap (MvPolynomial Coeff ℤ) Universal.Field)
++      Universal.algebraMap_field_injective
++    rw [map_wronskian, map_wronskian_rhs]
++    exact h
++  have hF := congrArg (Polynomial.map W.specialize) hU
++  rw [map_wronskian, map_wronskian_rhs] at hF
++  have hspecial : WeierstrassCurve.map Universal.curve W.specialize = W :=
++    WeierstrassCurve.map_specialize W
++  exact (congrArg (fun V : WeierstrassCurve F ↦
++    Polynomial.derivative (V.Φ n) * V.ΨSq n - V.Φ n * Polynomial.derivative (V.ΨSq n) =
++      Polynomial.C (n : F) * V.preΨ (2 * n)) hspecial).mp hF
++
++private noncomputable def Dω (f : KE) : KE :=
++  (exists_smul_eq_of_finrank_eq_one (kaehler_rank_one W.toAffine)
++    (invariantDifferential_ne_zero W.toAffine) (KaehlerDifferential.D F KE f)).choose
++
++
++private theorem Dω_spec (f : KE) :
++    KaehlerDifferential.D F KE f = Dω W f • invariantDifferential W.toAffine :=
++  (exists_smul_eq_of_finrank_eq_one (kaehler_rank_one W.toAffine)
++    (invariantDifferential_ne_zero W.toAffine) (KaehlerDifferential.D F KE f)).choose_spec.symm
++
++
++private theorem Dω_eq_of_smul {f : KE} {c : KE}
++    (h : c • invariantDifferential W.toAffine = KaehlerDifferential.D F KE f) :
++    c = Dω W f :=
++  omegaPullbackCoeff_unique W c (Dω W f) (h.trans (Dω_spec W f))
++
++
++@[simp] private theorem Dω_add (f g : KE) : Dω W (f + g) = Dω W f + Dω W g := by
++  refine (Dω_eq_of_smul W ?_).symm
++  rw [add_smul, ← Dω_spec, ← Dω_spec, map_add]
++
++
++@[simp] private theorem Dω_algebraMap (a : F) : Dω W (algebraMap F KE a) = 0 := by
++  refine (Dω_eq_of_smul W ?_).symm
++  rw [zero_smul, (KaehlerDifferential.D F KE).map_algebraMap]
++
++
++@[simp] private theorem Dω_zero : Dω W (0 : KE) = 0 := by
++  simpa using Dω_algebraMap W (0 : F)
++
++
++@[simp] private theorem Dω_mul (f g : KE) : Dω W (f * g) = f * Dω W g + g * Dω W f := by
++  refine (Dω_eq_of_smul W ?_).symm
++  rw [add_smul, mul_smul, mul_smul, ← Dω_spec, ← Dω_spec,
++    (KaehlerDifferential.D F KE).leibniz, add_comm]
++
++
++@[simp] private theorem Dω_smul (a : F) (f : KE) : Dω W (a • f) = a • Dω W f := by
++  refine (Dω_eq_of_smul W ?_).symm
++  rw [smul_assoc, ← Dω_spec, (KaehlerDifferential.D F KE).map_smul]
++
++
++@[simp] private theorem Dω_sub (f g : KE) : Dω W (f - g) = Dω W f - Dω W g := by
++  refine (Dω_eq_of_smul W ?_).symm
++  rw [sub_smul, ← Dω_spec, ← Dω_spec, map_sub]
++
++
++@[simp] private theorem Dω_neg (f : KE) : Dω W (-f) = -Dω W f := by
++  rw [show (-f : KE) = 0 - f by ring, Dω_sub, Dω_zero, zero_sub]
++
++
++private theorem Dω_pow (f : KE) (n : ℕ) : Dω W (f ^ n) = (n : KE) * f ^ (n - 1) * Dω W f := by
++  refine (Dω_eq_of_smul W ?_).symm
++  rw [(KaehlerDifferential.D F KE).leibniz_pow, Dω_spec W f, smul_smul,
++    ← Nat.cast_smul_eq_nsmul KE, smul_smul, mul_assoc]
++
++
++private theorem Dω_inv (f : KE) : Dω W f⁻¹ = -f⁻¹ ^ 2 * Dω W f := by
++  refine (Dω_eq_of_smul W ?_).symm
++  rw [mul_smul, ← Dω_spec, (KaehlerDifferential.D F KE).leibniz_inv, neg_smul]
++
++
++private theorem Dω_pullback_x (α : Isogeny W.toAffine W.toAffine) :
++    Dω W (α.pullback (x_gen W)) = alpha_star_u W α * omegaPullbackCoeff W α := by
++  apply (Dω_eq_of_smul W ?_).symm
++  rw [mul_smul, omegaPullbackCoeff_spec]
++  change alpha_star_u W α • ((alpha_star_u W α)⁻¹ •
++    KaehlerDifferential.D F KE (α.pullback (x_gen W))) = _
++  rw [smul_smul, mul_inv_cancel₀ (by
++    rw [alpha_star_u_eq]
++    exact fun h ↦ u_gen_ne_zero W (α.pullback_injective (by rw [h, map_zero]))), one_smul]
++
++private theorem Dω_weierstrass (x y : KE)
++    (heq : y ^ 2 + algebraMap F KE W.a₁ * x * y + algebraMap F KE W.a₃ * y =
++      x ^ 3 + algebraMap F KE W.a₂ * x ^ 2 + algebraMap F KE W.a₄ * x +
++        algebraMap F KE W.a₆) :
++    (2 * y + algebraMap F KE W.a₁ * x + algebraMap F KE W.a₃) * Dω W y =
++      (3 * x ^ 2 + 2 * algebraMap F KE W.a₂ * x + algebraMap F KE W.a₄ -
++        algebraMap F KE W.a₁ * y) * Dω W x := by
++  have hd := congrArg (Dω W) heq
++  simp only [Dω_add, Dω_mul, Dω_pow, Dω_algebraMap, mul_zero,
++    add_zero, Nat.cast_ofNat, Nat.reduceSub, pow_one] at hd
++  linear_combination hd
++
++private theorem Dω_pullback_y (α : Isogeny W.toAffine W.toAffine) :
++    Dω W (α.pullback (y_gen W)) =
++      (3 * (α.pullback (x_gen W)) ^ 2 +
++        2 * algebraMap F KE W.a₂ * α.pullback (x_gen W) + algebraMap F KE W.a₄ -
++        algebraMap F KE W.a₁ * α.pullback (y_gen W)) * omegaPullbackCoeff W α := by
++  have hgen := generic_equation W
++  rw [Affine.equation_iff] at hgen
++  change y_gen W ^ 2 + algebraMap F KE W.a₁ * x_gen W * y_gen W +
++    algebraMap F KE W.a₃ * y_gen W = x_gen W ^ 3 +
++      algebraMap F KE W.a₂ * x_gen W ^ 2 + algebraMap F KE W.a₄ * x_gen W +
++        algebraMap F KE W.a₆ at hgen
++  have heq := congrArg α.pullback hgen
++  simp only [map_add, map_mul, map_pow, AlgHom.commutes] at heq
++  have hd := Dω_weierstrass W _ _ heq
++  rw [Dω_pullback_x] at hd
++  have hu : alpha_star_u W α ≠ 0 := by
++    rw [alpha_star_u_eq]
++    exact fun h ↦ u_gen_ne_zero W (α.pullback_injective (by rw [h, map_zero]))
++  apply mul_left_cancel₀ hu
++  change alpha_star_u W α * Dω W (α.pullback (y_gen W)) = _ at hd
++  rw [hd]
++  ring
++
++private theorem Dω_x_gen : Dω W (x_gen W) = u_gen W := by
++  apply (Dω_eq_of_smul W ?_).symm
++  change u_gen W • ((u_gen W)⁻¹ • KaehlerDifferential.D F KE (x_gen W)) = _
++  rw [smul_smul, mul_inv_cancel₀ (u_gen_ne_zero W), one_smul]
++
++private theorem Dω_y_gen :
++    Dω W (y_gen W) = 3 * x_gen W ^ 2 + 2 * algebraMap F KE W.a₂ * x_gen W +
++      algebraMap F KE W.a₄ - algebraMap F KE W.a₁ * y_gen W := by
++  have hgen := generic_equation W
++  rw [Affine.equation_iff] at hgen
++  change y_gen W ^ 2 + algebraMap F KE W.a₁ * x_gen W * y_gen W +
++    algebraMap F KE W.a₃ * y_gen W = x_gen W ^ 3 +
++      algebraMap F KE W.a₂ * x_gen W ^ 2 + algebraMap F KE W.a₄ * x_gen W +
++        algebraMap F KE W.a₆ at hgen
++  have hd := Dω_weierstrass W _ _ hgen
++  rw [Dω_x_gen] at hd
++  apply mul_left_cancel₀ (u_gen_ne_zero W)
++  change u_gen W * Dω W (y_gen W) = _ at hd
++  rw [hd]
++  ring
++
++private theorem chord_derivative_identity {L : Type*} [Field L]
++    (a1 a2 a3 a4 a6 x y X Y A B : L) (hden : x - X ≠ 0)
++    (hW : y ^ 2 + a1 * x * y + a3 * y = x ^ 3 + a2 * x ^ 2 + a4 * x + a6)
++    (hP : Y ^ 2 + a1 * X * Y + a3 * Y = X ^ 3 + a2 * X ^ 2 + a4 * X + a6) :
++    let l := (y - Y) / (x - X)
++    let xt := l ^ 2 + a1 * l - a2 - x - X
++    let yt := -l * (xt - x) - y - a1 * xt - a3
++    (2 * l + a1) * (((3 * x ^ 2 + 2 * a2 * x + a4 - a1 * y) * A -
++      (3 * X ^ 2 + 2 * a2 * X + a4 - a1 * Y) * B) / (x - X) -
++      (y - Y) * ((2 * y + a1 * x + a3) * A - (2 * Y + a1 * X + a3) * B) /
++        (x - X) ^ 2) - (2 * y + a1 * x + a3) * A - (2 * Y + a1 * X + a3) * B =
++      (2 * yt + a1 * xt + a3) * (A + B) := by
++  dsimp only
++  field_simp [hden]
++  linear_combination
++    -((A - B) * (a1 * (x - X) + 2 * (y - Y))) * hW +
++      ((A - B) * (a1 * (x - X) + 2 * (y - Y))) * hP
++
++private theorem Dω_div (f g : KE) :
++    Dω W (f / g) = Dω W f / g - f * Dω W g / g ^ 2 := by
++  rw [div_eq_mul_inv, Dω_mul, Dω_inv]
++  ring
++
++private theorem omega_mulByInt_succ (n : ℤ) (hn : 2 ≤ n) :
++    omegaPullbackCoeff W (mulByInt W.toAffine (n + 1)) =
++      1 + omegaPullbackCoeff W (mulByInt W.toAffine n) := by
++  have hn0 : n ≠ 0 := by omega
++  have hn1 : n + 1 ≠ 0 := by omega
++  have hxne := x_gen_ne_mulByInt_x W n hn
++  obtain ⟨hrecx, hrecy⟩ := addX_addY_genericPoint_mulByInt_eq_succ W n hn0 hn1 hxne
++  let α := mulByInt W.toAffine n
++  let β := mulByInt W.toAffine (n + 1)
++  have hxα : α.pullback (x_gen W) = mulByInt_x W n := mulByInt_pullback_x W n hn0
++  have hyα : α.pullback (y_gen W) = mulByInt_y W n := mulByInt_pullback_y W n hn0
++  have hDX := Dω_pullback_x W α
++  have hDY := Dω_pullback_y W α
++  rw [hxα] at hDX
++  rw [hxα, hyα] at hDY
++  have hgen := generic_equation W
++  rw [Affine.equation_iff] at hgen
++  change y_gen W ^ 2 + algebraMap F KE W.a₁ * x_gen W * y_gen W +
++    algebraMap F KE W.a₃ * y_gen W = x_gen W ^ 3 +
++      algebraMap F KE W.a₂ * x_gen W ^ 2 + algebraMap F KE W.a₄ * x_gen W +
++        algebraMap F KE W.a₆ at hgen
++  have himg := congrArg α.pullback hgen
++  simp only [map_add, map_mul, map_pow, AlgHom.commutes, hxα, hyα] at himg
++  have hpure := chord_derivative_identity
++    (algebraMap F KE W.a₁) (algebraMap F KE W.a₂) (algebraMap F KE W.a₃)
++    (algebraMap F KE W.a₄) (algebraMap F KE W.a₆)
++    (x_gen W) (y_gen W) (mulByInt_x W n) (mulByInt_y W n)
++    1 (omegaPullbackCoeff W α) (sub_ne_zero.mpr hxne) hgen himg
++  have ha₁ : (W_KE W).toAffine.a₁ = algebraMap F KE W.a₁ := rfl
++  have ha₂ : (W_KE W).toAffine.a₂ = algebraMap F KE W.a₂ := rfl
++  have ha₃ : (W_KE W).toAffine.a₃ = algebraMap F KE W.a₃ := rfl
++  have hDrec := congrArg (Dω W) hrecx
++  simp only [Affine.addX, ha₁, ha₂, Dω_sub, Dω_add, Dω_mul, Dω_pow, Dω_div,
++    Dω_algebraMap, Dω_x_gen, Dω_y_gen, hDX, hDY,
++    Nat.cast_ofNat, Nat.reduceSub, pow_one, mul_zero, add_zero, sub_zero] at hDrec
++  have hβD := Dω_pullback_x W β
++  rw [show β.pullback (x_gen W) = mulByInt_x W (n + 1) from
++    mulByInt_pullback_x W (n + 1) hn1] at hβD
++  have hualpha : alpha_star_u W α =
++      2 * mulByInt_y W n + algebraMap F KE W.a₁ * mulByInt_x W n + algebraMap F KE W.a₃ :=
++    alpha_star_u_mulByInt W n hn0
++  have hubeta : alpha_star_u W β =
++      2 * (W_KE W).toAffine.addY (x_gen W) (mulByInt_x W n) (y_gen W)
++        ((y_gen W - mulByInt_y W n) / (x_gen W - mulByInt_x W n)) +
++      algebraMap F KE W.a₁ * (W_KE W).toAffine.addX (x_gen W) (mulByInt_x W n)
++        ((y_gen W - mulByInt_y W n) / (x_gen W - mulByInt_x W n)) +
++      algebraMap F KE W.a₃ := by
++    rw [hrecx, hrecy]
++    exact alpha_star_u_mulByInt W (n + 1) hn1
++  have hu : alpha_star_u W β ≠ 0 := by
++    rw [alpha_star_u_eq]
++    exact fun h ↦ u_gen_ne_zero W (β.pullback_injective (by rw [h, map_zero]))
++  apply mul_left_cancel₀ hu
++  rw [← hβD, ← hDrec, hubeta, hualpha]
++  have huf : u_gen W = 2 * y_gen W + algebraMap F KE W.a₁ * x_gen W +
++      algebraMap F KE W.a₃ := rfl
++  simp only [huf, Affine.addY, Affine.negY, Affine.negAddY, Affine.addX, ha₁, ha₂, ha₃]
++  dsimp only [α] at hpure ⊢
++  simp only [div_eq_mul_inv] at hpure ⊢
++  convert hpure using 1 <;> ring
++
++private theorem omega_mulByInt_ge_two (n : ℤ) (hn : 2 ≤ n) :
++    omegaPullbackCoeff W (mulByInt W.toAffine n) = algebraMap F KE n := by
++  induction n, hn using Int.leInduction with
++  | base => exact omegaPullbackCoeff_mulByInt_two W
++  | succ k hk ih =>
++    rw [omega_mulByInt_succ W k hk, ih, Int.cast_add, Int.cast_one, map_add, map_one, add_comm]
++
++
++omit [DecidableEq F] in
++private theorem wronskian_ge_two_elliptic (n : ℤ) (hn2 : 2 ≤ n) :
++    Polynomial.derivative (W.Φ n) * W.ΨSq n - W.Φ n * Polynomial.derivative (W.ΨSq n) =
++    Polynomial.C ((n : ℤ) : F) * W.preΨ (2 * n) := by
++  classical
++  have hn : n ≠ 0 := by omega
++  have homega := omega_mulByInt_ge_two W n hn2
++  have hKE := divPoly_wronskian_identity_of_omega W n hn homega
++  have hbridge := preΨ_two_mul_u_eq_ΨSq_sq_mul_alpha_star_u W n hn
++  rw [mul_assoc, ← hbridge] at hKE
++  have hΦ_ff : Φ_ff W n = algebraMap (Polynomial F) KE (W.Φ n) :=
++    (IsScalarTower.algebraMap_apply (Polynomial F) W.toAffine.CoordinateRing KE (W.Φ n)).symm
++  have hΨSq_ff : ΨSq_ff W n = algebraMap (Polynomial F) KE (W.ΨSq n) :=
++    (IsScalarTower.algebraMap_apply (Polynomial F) W.toAffine.CoordinateRing KE (W.ΨSq n)).symm
++  rw [hΦ_ff, hΨSq_ff] at hKE
++  have hn_cast : algebraMap F KE (n : F) =
++      algebraMap (Polynomial F) KE (Polynomial.C ((n : ℤ) : F)) := by
++    rw [Polynomial.C_eq_algebraMap, ← IsScalarTower.algebraMap_apply F (Polynomial F) KE]
++  rw [hn_cast] at hKE
++  have hLHS : (algebraMap (Polynomial F) KE (Polynomial.derivative (W.Φ n)) *
++        algebraMap (Polynomial F) KE (W.ΨSq n) -
++      algebraMap (Polynomial F) KE (W.Φ n) *
++        algebraMap (Polynomial F) KE (Polynomial.derivative (W.ΨSq n))) =
++      algebraMap (Polynomial F) KE
++        (Polynomial.derivative (W.Φ n) * W.ΨSq n -
++          W.Φ n * Polynomial.derivative (W.ΨSq n)) := by
++    rw [map_sub, map_mul, map_mul]
++  have hRHS : algebraMap (Polynomial F) KE (Polynomial.C ((n : ℤ) : F)) *
++        algebraMap (Polynomial F) KE (W.preΨ (2 * n)) =
++      algebraMap (Polynomial F) KE (Polynomial.C ((n : ℤ) : F) * W.preΨ (2 * n)) := by
++    rw [map_mul]
++  rw [hLHS, ← mul_assoc, hRHS] at hKE
++  have hu := mul_right_cancel₀ (u_gen_ne_zero W) hKE
++  have hinj : Function.Injective (algebraMap (Polynomial F) KE) := by
++    rw [IsScalarTower.algebraMap_eq (Polynomial F) W.toAffine.CoordinateRing KE]
++    exact (IsFractionRing.injective W.toAffine.CoordinateRing KE).comp
++      Affine.CoordinateRing.algebraMap_poly_injective
++  exact hinj hu
++
++omit [DecidableEq F] [W.toAffine.IsElliptic] in
++theorem wronskian_ge_two (n : ℤ) (hn : 2 ≤ n) :
++    Polynomial.derivative (W.Φ n) * W.ΨSq n - W.Φ n * Polynomial.derivative (W.ΨSq n) =
++      Polynomial.C (n : F) * W.preΨ (2 * n) := by
++  classical
++  apply wronskian_specialize_universal W n
++  exact wronskian_ge_two_elliptic Universal.pointedCurve n hn
++
++
++end HasseWeil.WronskianProof
++
++namespace HasseWeil
++
++variable {F : Type*} [Field F] [DecidableEq F]
++variable (W : WeierstrassCurve F) [W.toAffine.IsElliptic]
++local notation "KE" => W.toAffine.FunctionField
++
++omit [DecidableEq F] [W.toAffine.IsElliptic] in
++/-- The natural-number Wronskian identity. The general case follows from chord induction
++on the universal smooth curve and specialization of the resulting polynomial identity. -/
++private lemma wronskian_Φ_ΨSq_nat (m : ℕ) :
++    Polynomial.derivative (W.Φ (m : ℤ)) * W.ΨSq (m : ℤ) -
++      W.Φ (m : ℤ) * Polynomial.derivative (W.ΨSq (m : ℤ)) =
++    Polynomial.C ((m : ℤ) : F) * W.preΨ (2 * (m : ℤ)) := by
++  match m with
++  | 0 => exact wronskian_Φ_ΨSq_zero W
++  | 1 => exact_mod_cast wronskian_Φ_ΨSq_one W
++  | 2 => exact_mod_cast wronskian_Φ_ΨSq_two W
++  | 3 => exact_mod_cast wronskian_Φ_ΨSq_three W
++  | 4 => exact_mod_cast wronskian_Φ_ΨSq_four W
++  | n + 5 =>
++    apply WronskianProof.wronskian_ge_two
++    omega
++
++omit [DecidableEq F] [W.toAffine.IsElliptic] in
++/-- The division polynomial Wronskian identity:
++    `Φ_n' · ΨSq_n - Φ_n · ΨSq_n' = n · preΨ(2n)` as polynomials in `F[X]`.
++
++    Reference: Silverman Exercise III.3.7.
++
++    Proved by reducing to the natural number case via `wronskian_Φ_ΨSq_neg_of`
++    (negation symmetry) and `wronskian_Φ_ΨSq_nat` (the natural-number case). -/
++theorem wronskian_Φ_ΨSq (n : ℤ) :
++    Polynomial.derivative (W.Φ n) * W.ΨSq n - W.Φ n * Polynomial.derivative (W.ΨSq n) =
++    Polynomial.C (n : F) * W.preΨ (2 * n) := by
++  rcases lt_or_ge n 0 with hneg | hpos
++  · -- n < 0: use negation symmetry on the positive case
++    have hm : (0 : ℤ) ≤ -n := by omega
++    obtain ⟨m, hm_eq⟩ := Int.eq_ofNat_of_zero_le hm
++    have hn_eq : n = -(m : ℤ) := by omega
++    rw [hn_eq]
++    exact wronskian_Φ_ΨSq_neg_of W (wronskian_Φ_ΨSq_nat W m)
++  · -- n ≥ 0: directly from wronskian_Φ_ΨSq_nat
++    obtain ⟨m, hm_eq⟩ := Int.eq_ofNat_of_zero_le hpos
++    subst hm_eq
++    exact wronskian_Φ_ΨSq_nat W m
++
++/-- The division polynomial Wronskian identity in K(E) (general `n`), via the
++    general polynomial-level identity `wronskian_Φ_ΨSq`.
++    Reference: Silverman Exercise III.3.7, III.5.3 -/
++theorem divPoly_wronskian_identity (n : ℤ) (hn : n ≠ 0) :
++    (algebraMap (Polynomial F) KE (Polynomial.derivative (W.Φ n)) *
++      ΨSq_ff W n -
++    Φ_ff W n *
++      algebraMap (Polynomial F) KE (Polynomial.derivative (W.ΨSq n))) *
++    u_gen W =
++    algebraMap F KE n *
++    ΨSq_ff W n ^ 2 *
++    alpha_star_u W (mulByInt W.toAffine n) :=
++  divPoly_wronskian_identity_of_poly W n hn (wronskian_Φ_ΨSq (W := W) n)
++
++/-- The pullback coefficient of multiplication by a nonzero integer is that integer.
++This follows from the general polynomial Wronskian identity (Silverman III.5.3). -/
++theorem omegaPullbackCoeff_mulByInt (n : ℤ) (hn : n ≠ 0) :
++    omegaPullbackCoeff W (mulByInt W.toAffine n) = algebraMap F KE n :=
++  omegaPullbackCoeff_mulByInt_of_poly W n hn (wronskian_Φ_ΨSq (W := W) n)
++
++end HasseWeil
