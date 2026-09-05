@@ -96,6 +96,7 @@ def usedRoots (i : Fin s)
     (prior j.1 (Fin.mk_lt_mk.mp
       (Finset.mem_Iio.mp (Finset.mem_filter.mp j.2).1))).rootImage
 
+omit [DecidableRel G.Adj] in
 theorem card_usedRoots_lt_load (i : Fin s)
     (prior : ∀ j : Fin s, j.val < i.val →
       SegmentRealization F G rootCandidate interiorCandidate j) :
@@ -119,10 +120,11 @@ theorem card_usedRoots_lt_load (i : Fin s)
       have hiEarlier : i ∈ Finset.Iio i :=
         (Finset.mem_filter.mp (hsub (Finset.mem_filter.mpr
           ⟨Finset.mem_univ _, rfl⟩))).1
-      simpa using hiEarlier
+      simp at hiEarlier
   exact hcardImage.trans_lt (by
     simpa [earlierSame, rootLoad] using Finset.card_lt_card hproper)
 
+omit [DecidableRel G.Adj] in
 theorem card_usedInterior_add_current_le_load (i : Fin s)
     (prior : ∀ j : Fin s, j.val < i.val →
       SegmentRealization F G rootCandidate interiorCandidate j) :
@@ -474,10 +476,12 @@ structure HierarchicalCandidateEmbedding where
 include rootGroup group horiginalInj horiginalOutsideRoot
   horiginalOutsideInterior hrootDisjoint hinteriorDisjoint
   hrootInteriorDisjoint hattachOriginal hattachSegment hinternal in
-theorem exists_hierarchicalCandidateEmbedding :
+omit [Fintype B] in
+theorem exists_hierarchicalCandidateEmbedding [Finite B] :
     Nonempty (HierarchicalCandidateEmbedding F G originalImage
       rootCandidate interiorCandidate) := by
   classical
+  let := Fintype.ofFinite B
   let D : ∀ i, SegmentRealization F G rootCandidate interiorCandidate i :=
     fun i ↦ onlineSegment F G originalImage rootGroup group rootCandidate
       interiorCandidate hrootDisjoint hinteriorDisjoint hrootInteriorDisjoint
@@ -556,4 +560,5 @@ end HierarchicalSegmentForest
 
 end Erdos547b.ZhaoLemma59HierarchicalOnline
 
-#print axioms Erdos547b.ZhaoLemma59HierarchicalOnline.HierarchicalSegmentForest.exists_hierarchicalCandidateEmbedding
+open Erdos547b.ZhaoLemma59HierarchicalOnline.HierarchicalSegmentForest in
+#print axioms exists_hierarchicalCandidateEmbedding

@@ -9,7 +9,7 @@ scale distinct available matching edges. These are actual original
 matching edges outside both allocated families and both root clusters.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceCleanCrossingAccess
@@ -76,7 +76,8 @@ theorem available_covered : ∀ v ∈ availableVertices W Q S O,
   exact ⟨e, Finset.mem_inter.mpr ⟨Finset.mem_sdiff.mpr ⟨he, hnotMb⟩,
     Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp he).1, hnotIncident⟩⟩, hends⟩
 
-theorem availableEdges_subset_away : availableEdges W Q S O ⊆ awayEdges W Q := Finset.inter_subset_right
+theorem availableEdges_subset_away : availableEdges W Q S O ⊆ awayEdges W Q :=
+  Finset.inter_subset_right
 
 theorem exists_cleanCrossingClusters
     (hα : 0 < α) (hα1 : α ≤ 1 / 4) (hhost : hostN = 2 * q)
@@ -100,7 +101,8 @@ theorem exists_cleanCrossingClusters
     have hscaled := mul_le_mul_of_nonneg_right hscale
       (Nat.cast_nonneg (paddedHalf (Index W)) : (0 : ℝ) ≤ paddedHalf (Index W))
     have hR : 10 * (crossingScale W : ℝ) * paddedHalf (Index W) <
-        ((padGraph (reduced W)).interedges O.D.V1 O.D.V2).card := by nlinarith only [hscaled, hcross]
+        ((padGraph (reduced W)).interedges O.D.V1 O.D.V2).card :=
+          by nlinarith only [hscaled, hcross]
     exact_mod_cast hR
   have hheavy := card_crossHeavy_ge_of_balanced_cut (padGraph (reduced W)) O.D.V1 O.D.V2
     (crossingScale W) (paddedHalf (Index W)) O.D.V1_card_upper hST h9 hcrossNat
@@ -111,7 +113,8 @@ theorem exists_cleanCrossingClusters
       O.D.support_union O.D.V1_subset_O (by omega) hheavy
   refine ⟨C, hCV1, hCO, hCcard, ?_⟩
   intro x hx
-  have hd : 8 * crossingScale W ≤ degreeInto (padGraph (reduced W)) x (availableVertices W Q S O) := hdegree x hx
+  have hd : 8 * crossingScale W ≤ degreeInto (padGraph (reduced W)) x (availableVertices W Q S O) :=
+    hdegree x hx
   exact ⟨hd, four_mul_le_card_matchingAccessEdges (padGraph (reduced W))
     (availableEdges W Q S O) (edgeVertex W Q) x (availableVertices W Q S O)
     (crossingScale W) (available_covered W Q S O) hd⟩

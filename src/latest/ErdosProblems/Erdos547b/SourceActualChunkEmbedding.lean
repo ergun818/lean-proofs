@@ -11,7 +11,7 @@ the branch mass, actual prescribed-root degrees, and the literal permanent
 deletion sets used by the online embedding.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceActualChunkEmbedding
@@ -66,6 +66,7 @@ theorem edgeWhole_disjoint (e : MatchingEdge Q.claim67.M) :
 theorem source_entry_le_one (S : CleanSourceWitness W Q) (C : Index W)
     (hC : C = Q.A ∨ C = Q.B) (x : EvenPadding (Index W)) :
     rootDensity W S (Sum.inl C) x ≤ 1 := by
+  classical
   have hN : (0 : ℝ) < W.clusterSize := by exact_mod_cast W.clusterSize_pos
   have hcard : (padCluster (fun i : Index W => i.1) x).card ≤ W.clusterSize := by
     cases x with

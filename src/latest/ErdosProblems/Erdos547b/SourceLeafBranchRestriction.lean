@@ -9,7 +9,7 @@ Every removed branch is a singleton. All original component roots and
 every recorded cut parent survive the deletion.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceLeafBranchRestriction
@@ -37,7 +37,8 @@ theorem branch_leaf_coordinate_root
   exact hm.2
 
 theorem branch_mem_originalLeaves_iff
-    (j : Fin (Fintype.card (ChildKey P.orderedForest))) (a : Fin ((branchForest P).branches.size j)) :
+    (j : Fin (Fintype.card (ChildKey P.orderedForest))) (a : Fin ((branchForest P).branches.size j))
+      :
     coordinateVertex P (Sum.inr ⟨j, a⟩) ∈ originalLevelOneLeaves P ↔
       actualBranchRoot P j ∈ originalLevelOneLeaves P := by
   constructor
@@ -58,7 +59,8 @@ def keptBranches : Finset (Fin (Fintype.card (ChildKey P.orderedForest))) :=
   Finset.univ.filter fun j => actualBranchRoot P j ∉ originalLevelOneLeaves P
 
 theorem retained_iff_not_originalLeaves (x : (branchForest P).Vertex) :
-    retained (branchForest P) (keptBranches P) x ↔ coordinateVertex P x ∉ originalLevelOneLeaves P := by
+    retained (branchForest P) (keptBranches P) x ↔ coordinateVertex P x ∉ originalLevelOneLeaves P
+      := by
   cases x with
   | inl i =>
       exact iff_of_true trivial (partitionRoot_not_mem_originalLevelOneLeaves P i)

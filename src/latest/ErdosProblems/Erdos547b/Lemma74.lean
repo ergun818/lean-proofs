@@ -99,6 +99,7 @@ def selectedTwoPathMiddles {k : ℕ} (middle : Fin k → V) (J : Finset (Fin k))
 def allTwoPathMiddles {k : ℕ} (middle : Fin k → V) : Finset V :=
   Finset.univ.image middle
 
+omit [Fintype V] in
 lemma card_twoPathEnds {k : ℕ} {left right : Fin k → V}
     (hleft : Function.Injective left) (hright : Function.Injective right)
     (hdisj : Disjoint (Finset.univ.image left) (Finset.univ.image right)) :
@@ -107,6 +108,7 @@ lemma card_twoPathEnds {k : ℕ} {left right : Fin k → V}
     Finset.card_image_of_injective _ hleft, Finset.card_image_of_injective _ hright]
   simp [two_mul]
 
+omit [Fintype V] in
 lemma card_selectedTwoPathMiddles {k : ℕ} {middle : Fin k → V}
     (J : Finset (Fin k)) (hmiddle : Function.Injective middle) :
     (selectedTwoPathMiddles middle J).card = J.card := by
@@ -144,8 +146,8 @@ theorem card_union_selectedTwoPathMiddles_ge
     (hmiddleInj : Function.Injective middle)
     (hrightInj : Function.Injective right)
     (hendsDisj : Disjoint (Finset.univ.image left) (Finset.univ.image right))
-    (hpathLeft : ∀ i, G.Adj (left i) (middle i))
-    (hpathRight : ∀ i, G.Adj (middle i) (right i))
+    (_hpathLeft : ∀ i, G.Adj (left i) (middle i))
+    (_hpathRight : ∀ i, G.Adj (middle i) (right i))
     (hJcard : J.card = min k (n - A.card - B₁.card))
     (hmax : ∀ x ∈ A \ twoPathEnds left right,
       ∀ z ∈ A \ twoPathEnds left right, x ≠ z →
@@ -159,7 +161,6 @@ theorem card_union_selectedTwoPathMiddles_ge
   let U : Finset V := A ∪ B₁ ∪ B₂
   let C : Finset V := Finset.univ \ U
   let A' : Finset V := A \ E
-
   have hB₂card : B₂.card = J.card := by
     exact card_selectedTwoPathMiddles J hmiddleInj
   have hAB₁B₂ : Disjoint (A ∪ B₁) B₂ := by
@@ -179,7 +180,6 @@ theorem card_union_selectedTwoPathMiddles_ge
   have hAsubU : A ⊆ U := by
     intro v hv
     simp [U, hv]
-
   by_contra hgoal
   change ¬n - 1 ≤ U.card at hgoal
   have hUsmall : U.card ≤ n - 2 := by
@@ -197,7 +197,6 @@ theorem card_union_selectedTwoPathMiddles_ge
     exact Finset.eq_univ_of_card J (by simpa using hJcardk)
   have hB₂M : B₂ = M := by
     simp [B₂, M, selectedTwoPathMiddles, allTwoPathMiddles, hJuniv]
-
   have hcap_le_q : n - A.card - B₁.card ≤ q := by omega
   have hk_le_q : k ≤ q := hkltcap.le.trans hcap_le_q
   have hEsubA : E ⊆ A := by
@@ -214,7 +213,6 @@ theorem card_union_selectedTwoPathMiddles_ge
     rw [Finset.card_sdiff_of_subset hEsubA, hEcard]
   have htwokA : 2 * k ≤ A.card := by omega
   have hA'large : n + q < 3 * A'.card := by omega
-
   have hCcard : C.card = 2 * n - U.card := by
     simp only [C]
     rw [Finset.card_sdiff_of_subset (Finset.subset_univ U),
@@ -224,7 +222,6 @@ theorem card_union_selectedTwoPathMiddles_ge
     simpa only [C] using (Finset.disjoint_sdiff : Disjoint U (Finset.univ \ U))
   have hcoverUC : U ∪ C = Finset.univ := by
     exact Finset.union_sdiff_of_subset (Finset.subset_univ U)
-
   have hdegC : ∀ v ∈ A', 3 ≤ degreeInto G v C := by
     intro v hvA'
     have hvA : v ∈ A := (Finset.mem_sdiff.mp hvA').1
@@ -245,7 +242,6 @@ theorem card_union_selectedTwoPathMiddles_ge
     have hsplit := degreeInto_partition G v hdisjUC hcoverUC
     have hvlarge := hlarge v hvA
     omega
-
   have hedgeUpper : (G.interedges A' C).card ≤ C.card := by
     apply Finset.card_le_card_of_injOn Prod.snd
     · intro p hp
@@ -267,7 +263,6 @@ theorem card_union_selectedTwoPathMiddles_ge
         apply hforbid
         exact ⟨hpdata.2.2, by simpa [hpr] using hrdata.2.2.symm⟩
       · exact hpr
-
   have hedgeLower : A'.card * 3 ≤ (G.interedges A' C).card := by
     exact card_mul_le_card_interedges_of_subset_of_degreeInto G
       (Finset.Subset.rfl) hdegC
@@ -372,19 +367,22 @@ def IsDisjointTwoPathFamily (G : SimpleGraph V) (A B₁ : Finset V)
   (∀ p ∈ F, p.IsAdmissible G A B₁) ∧
     ∀ p ∈ F, ∀ q ∈ F, p ≠ q → Disjoint p.vertices q.vertices
 
+omit [Fintype V] in
 lemma isDisjointTwoPathFamily_empty (G : SimpleGraph V) (A B₁ : Finset V) :
     IsDisjointTwoPathFamily G A B₁ ∅ := by
   simp [IsDisjointTwoPathFamily]
 
+omit [Fintype V] in
 /-- Among the finitely many disjoint admissible two-path families, one has
 maximum cardinality. -/
-lemma exists_max_card_disjointTwoPathFamily
+lemma exists_max_card_disjointTwoPathFamily [Finite V]
     (G : SimpleGraph V) (A B₁ : Finset V) :
     ∃ F : Finset (TwoPath (V := V)),
       IsDisjointTwoPathFamily G A B₁ F ∧
       ∀ F' : Finset (TwoPath (V := V)),
         IsDisjointTwoPathFamily G A B₁ F' → F'.card ≤ F.card := by
   classical
+  let := Fintype.ofFinite V
   let families : Finset (Finset (TwoPath (V := V))) :=
     Finset.univ.filter (IsDisjointTwoPathFamily G A B₁)
   have hne : families.Nonempty := by
@@ -397,6 +395,7 @@ lemma exists_max_card_disjointTwoPathFamily
     apply hFmax F'
     simp [families, hF']
 
+omit [Fintype V] in
 private lemma newPath_disjoint
     (G : SimpleGraph V) (A B₁ : Finset V)
     {F : Finset (TwoPath (V := V))}
@@ -435,7 +434,8 @@ private lemma newPath_disjoint
       exact Finset.mem_union_left _ (h ▸ hzA)
     · exact (hzUnused p hp).2 h
 
-private lemma insert_newPath_family
+omit [Fintype V] in
+private lemma insert_newPath_family [Finite V]
     (G : SimpleGraph V) (A B₁ : Finset V)
     {F : Finset (TwoPath (V := V))}
     (hF : IsDisjointTwoPathFamily G A B₁ F)
@@ -448,6 +448,8 @@ private lemma insert_newPath_family
     (hyUnused : ∀ p ∈ F, y ≠ p.middle) :
     IsDisjointTwoPathFamily G A B₁
       (insert ⟨x, y, z⟩ F) := by
+  classical
+  let := Fintype.ofFinite V
   let t : TwoPath (V := V) := ⟨x, y, z⟩
   have htAdm : t.IsAdmissible G A B₁ := by
     exact ⟨hxA, hzA, hxz, hyOut, hxy, hyz⟩
@@ -468,12 +470,13 @@ private lemma insert_newPath_family
       · exact (htDisj p hpF).symm
       · exact hF.2 p hpF q hqF hpq
 
+omit [Fintype V] in
 /-- An indexed, inclusion-maximal family of vertex-disjoint
 `A`--outside-`(A ∪ B₁)`--`A` two-paths exists.  The final conjunct is exactly
 the maximality premise consumed by `zhao_lemma74_maximal_two_path_count`.
 The selected index set `J` has Zhao's required cardinality. -/
-theorem exists_indexed_maximal_two_path_family
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+theorem exists_indexed_maximal_two_path_family [Finite V]
+    (G : SimpleGraph V)
     (A B₁ : Finset V) (n : ℕ) :
     ∃ (k : ℕ) (left middle right : Fin k → V) (J : Finset (Fin k)),
       (∀ i, left i ∈ A) ∧
@@ -491,6 +494,7 @@ theorem exists_indexed_maximal_two_path_family
         ∀ y ∉ A ∪ B₁ ∪ allTwoPathMiddles middle,
           ¬(G.Adj x y ∧ G.Adj y z)) := by
   classical
+  let := Fintype.ofFinite V
   obtain ⟨F, hF, hFmax⟩ := exists_max_card_disjointTwoPathFamily G A B₁
   let e : Fin F.card ≃ {p // p ∈ F} := F.equivFin.symm
   let left : Fin F.card → V := fun i ↦ (e i).1.left
@@ -499,7 +503,7 @@ theorem exists_indexed_maximal_two_path_family
   obtain ⟨J, -, hJcard⟩ := Finset.exists_subset_card_eq
     (s := (Finset.univ : Finset (Fin F.card)))
     (n := min F.card (n - A.card - B₁.card))
-    (by simpa using min_le_left F.card (n - A.card - B₁.card))
+    (by simp)
   refine ⟨F.card, left, middle, right, J, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, hJcard, ?_⟩
   · intro i
     exact (hF.1 (e i).1 (e i).2).1
@@ -714,10 +718,12 @@ private def selectedIndex {k : ℕ} (middle : Fin k → V) (J : Finset (Fin k))
     (y : selectedTwoPathMiddles middle J) : Fin k :=
   Classical.choose (Finset.mem_image.mp y.property)
 
+omit [Fintype V] in
 private theorem selectedIndex_mem {k : ℕ} (middle : Fin k → V) (J : Finset (Fin k))
     (y : selectedTwoPathMiddles middle J) : selectedIndex middle J y ∈ J :=
   (Classical.choose_spec (Finset.mem_image.mp y.property)).1
 
+omit [Fintype V] in
 private theorem middle_selectedIndex {k : ℕ} (middle : Fin k → V)
     (J : Finset (Fin k)) (y : selectedTwoPathMiddles middle J) :
     middle (selectedIndex middle J y) = y :=
@@ -775,7 +781,6 @@ theorem exists_lowLeafHostPackage
   let B₂ : Finset V := selectedTwoPathMiddles middle J
   let B : Finset V := B₁ ∪ B₂
   let H : SimpleGraph V := lowLeafHostGraph G A B
-
   have hB₂card : B₂.card = J.card := by
     exact card_selectedTwoPathMiddles J hmiddleInj
   have hB₁B₂ : Disjoint B₁ B₂ := by
@@ -816,14 +821,12 @@ theorem exists_lowLeafHostPackage
   have hBlower : n / 2 - 1 ≤ B.card := by
     rw [hsameUnion, hABcard] at hcount
     omega
-
   have hB₁subB : B₁ ⊆ B := by
     intro b hb
     exact Finset.mem_union_left B₂ hb
   have hB₂subB : B₂ ⊆ B := by
     intro b hb
     exact Finset.mem_union_right B₁ hb
-
   let idx : B₂ → Fin k := selectedIndex middle J
   have hidxMem : ∀ y : B₂, idx y ∈ J := selectedIndex_mem middle J
   have hidxMiddle : ∀ y : B₂, middle (idx y) = y := middle_selectedIndex middle J
@@ -861,17 +864,16 @@ theorem exists_lowLeafHostPackage
       endpointInjective := by
         rintro ⟨y, a⟩ ⟨z, b⟩ heq
         fin_cases a <;> fin_cases b
-        · simp only [Fin.isValue, if_pos] at heq
+        · simp only [Fin.isValue] at heq
           have hi : idx y = idx z := hleftInj heq
           simp [hidxInj hi]
-        · simp only [Fin.isValue, if_pos, OfNat.zero_ne_ofNat, if_false] at heq
+        · simp only [Fin.isValue] at heq
           exact (hleftRight (idx y) (idx z) heq).elim
-        · simp only [Fin.isValue, OfNat.one_ne_ofNat, if_false, if_pos] at heq
+        · simp only [Fin.isValue] at heq
           exact (hleftRight (idx z) (idx y) heq.symm).elim
-        · simp only [Fin.isValue, OfNat.one_ne_ofNat, if_false] at heq
+        · simp only [Fin.isValue] at heq
           have hi : idx y = idx z := hrightInj heq
           simp [hidxInj hi] }
-
   have hleftEq : ∀ a ∈ A,
       (H.neighborFinset a ∩ B₁) = (G.neighborFinset a ∩ B₁) := by
     intro a ha
@@ -880,7 +882,6 @@ theorem exists_lowLeafHostPackage
       (H.neighborFinset b ∩ A) = (G.neighborFinset b ∩ A) := by
     intro b hb
     exact neighborFinset_lowLeafHostGraph_inter_left G (Finset.Subset.rfl) (hB₁subB hb)
-
   let P : LowLeafHostPackage G A B₁ n l :=
     { k := k
       left := left
@@ -949,10 +950,10 @@ abbrev LeafCore {A : Type*} [DecidableEq A] (D : Finset A) :=
 /-- Assemble a copy of the whole graph from a copy on the complement of a
 set of leaves and distinct new images for those leaves. -/
 theorem extend_copy_by_leaf_images
-    {A V : Type*} [Fintype A] [Fintype V]
-    [DecidableEq A] [DecidableEq V]
+    {A V : Type*} [Fintype A] [Finite V]
+    [DecidableEq A]
     (T : SimpleGraph A) (G : SimpleGraph V)
-    [DecidableRel T.Adj] [DecidableRel G.Adj]
+    [DecidableRel T.Adj]
     (D : Finset A)
     (hleaf : ∀ d : D, T.degree d.1 = 1)
     (parent : D → LeafCore D)
@@ -966,6 +967,7 @@ theorem extend_copy_by_leaf_images
       (∀ c : LeafCore D, full c.1 = core c) ∧
       ∀ d : D, full d.1 = leafImage d := by
   classical
+  let := Fintype.ofFinite V
   let F : A → V := fun a =>
     if ha : a ∈ D then leafImage ⟨a, ha⟩ else core ⟨a, ha⟩
   have hparent_unique (d : D) :
@@ -1028,7 +1030,7 @@ theorem extend_copy_by_leaf_images
 whole tree if every embedded parent has host degree at least `|T|-1`. -/
 theorem exists_copy_extending_core_of_parent_degree
     {A V : Type*} [Fintype A] [Fintype V]
-    [DecidableEq A] [DecidableEq V]
+    [DecidableEq A]
     (T : SimpleGraph A) (G : SimpleGraph V)
     [DecidableRel T.Adj] [DecidableRel G.Adj]
     (D : Finset A)
@@ -1110,7 +1112,7 @@ theorem exists_copy_extending_core_of_parent_degree
 embedded core vertex (as in Zhao's global high-degree set). -/
 theorem exists_copy_extending_core_of_degree
     {A V : Type*} [Fintype A] [Fintype V]
-    [DecidableEq A] [DecidableEq V]
+    [DecidableEq A]
     (T : SimpleGraph A) (G : SimpleGraph V)
     [DecidableRel T.Adj] [DecidableRel G.Adj]
     (D : Finset A)
@@ -1122,6 +1124,7 @@ theorem exists_copy_extending_core_of_degree
       Fintype.card A - 1 ≤ G.degree (core c)) :
     ∃ full : Copy T G,
       ∀ c : LeafCore D, full c.1 = core c := by
+  classical
   exact exists_copy_extending_core_of_parent_degree T G D hleaf parent hparent core
     (fun d => hdegree (parent d))
 
@@ -1134,7 +1137,7 @@ The proof above only needs the local pendant-vertex data; the tree hypothesis
 is retained here because this is the interface used by Lemma 7.4. -/
 theorem global_degree_leaf_extension
     {A V : Type*} [Fintype A] [Fintype V]
-    [DecidableEq A] [DecidableEq V]
+    [DecidableEq A]
     (T : SimpleGraph A) (G : SimpleGraph V)
     [DecidableRel T.Adj] [DecidableRel G.Adj]
     (n : ℕ) (hcard : Fintype.card A = n + 1) (_hT : T.IsTree)
@@ -1145,6 +1148,7 @@ theorem global_degree_leaf_extension
     (core : Copy (T.induce ({a : A | a ∉ W} : Set A)) G)
     (hdegree : ∀ w : W, n ≤ G.degree (core (parent w))) :
     T.IsContained G := by
+  classical
   have hdegree' : ∀ w : W,
       Fintype.card A - 1 ≤ G.degree (core (parent w)) := by
     intro w
@@ -1183,6 +1187,7 @@ def retainedPart (T : SimpleGraph V) [DecidableRel T.Adj]
     (O A : Finset V) : Finset {v : V // v ∉ deletedLeaves T O} :=
   Finset.univ.filter fun v => v.1 ∈ A
 
+omit [DecidableEq V] in
 @[simp] theorem mem_deletedLeaves {T : SimpleGraph V} [DecidableRel T.Adj]
     {O : Finset V} {v : V} :
     v ∈ deletedLeaves T O ↔ v ∈ O ∧ T.degree v = 1 := by
@@ -1209,17 +1214,22 @@ theorem card_retainedPart_eq {T : SimpleGraph V} [DecidableRel T.Adj]
       Finset.disjoint_left.mp hdisj hv hvdel
     exact ⟨⟨v, hvnot⟩, mem_retainedPart.mpr hv, rfl⟩
 
+omit [DecidableEq V] in
 theorem deletedLeaves_subset_right {T : SimpleGraph V} [DecidableRel T.Adj]
     (O : Finset V) : deletedLeaves T O ⊆ O := by
+  classical
   intro v hv
   exact (mem_deletedLeaves.mp hv).1
 
+omit [DecidableEq V] in
 theorem deletedLeaves_subset_allLeaves {T : SimpleGraph V} [DecidableRel T.Adj]
     (O : Finset V) :
     deletedLeaves T O ⊆ Erdos547b.ZhaoLemma710.leafVertices T := by
+  classical
   intro v hv
   simpa [Erdos547b.ZhaoLemma710.leafVertices] using (mem_deletedLeaves.mp hv).2
 
+omit [DecidableEq V] in
 /-- Deleting any collection of degree-one vertices from a connected graph,
 provided at least one vertex remains, preserves connectedness. -/
 theorem connected_induce_compl_leaves
@@ -1254,6 +1264,7 @@ theorem connected_induce_compl_leaves
     omega
   exact ⟨(p.induce {v : V | v ∉ W} hav).copy (Subtype.ext rfl) (Subtype.ext rfl)⟩
 
+omit [DecidableEq V] in
 /-- The induced graph obtained by deleting all right-side leaves is a tree. -/
 theorem core_isTree
     (T : SimpleGraph V) [DecidableRel T.Adj] (E O : Finset V)
@@ -1339,6 +1350,7 @@ theorem card_coreRight
   apply card_retainedPart_eq
   exact Finset.sdiff_disjoint
 
+omit [DecidableEq V] in
 theorem deletedLeaves_eq_leavesIn
     (T : SimpleGraph V) [DecidableRel T.Adj] (O : Finset V) :
     deletedLeaves T O = Erdos547b.leavesIn T O := by
@@ -1447,7 +1459,7 @@ theorem card_leafVertices_core_le [Nontrivial V]
       exact hxy.ne (Subsingleton.elim x y)
     have hempty : Erdos547b.ZhaoLemma710.leafVertices (core T O) = ∅ := by
       ext x
-      simp [Erdos547b.ZhaoLemma710.leafVertices, hzero x]
+      simp [Erdos547b.ZhaoLemma710.leafVertices]
     rw [hempty]
     simp
   · let : Nontrivial S := not_subsingleton_iff_nontrivial.mp hsub
@@ -1457,6 +1469,7 @@ theorem card_leafVertices_core_le [Nontrivial V]
     have hmono := branchExcess_core_le T O
     omega
 
+omit [DecidableEq V] in
 theorem ec2_leafVertices_eq
     (G : SimpleGraph V) [DecidableRel G.Adj] :
     Erdos547EC2.leafVertices G = Erdos547b.ZhaoLemma710.leafVertices G := by
@@ -1625,7 +1638,7 @@ def Copy.extendChosenLeaves {V W : Type*}
 
 /-- Proposition-valued version of `Copy.extendChosenLeaves`. -/
 theorem isContained_of_copy_induce_compl_leaves {V W : Type*}
-    [Fintype V] [DecidableEq V] [DecidableEq W]
+    [Fintype V] [DecidableEq V]
     (T : SimpleGraph V) (G : SimpleGraph W) [DecidableRel T.Adj]
     (L : Finset V)
     (hleaf : ∀ l : ChosenLeaves L, T.degree l.1 = 1)
@@ -1637,6 +1650,7 @@ theorem isContained_of_copy_induce_compl_leaves {V W : Type*}
     (hdisj : ∀ c l, f c ≠ g l)
     (hadj : ∀ l, G.Adj (f (parent l)) (g l)) :
     T ⊑ G :=
+  open Classical in
   ⟨Copy.extendChosenLeaves T G L hleaf parent hparent f g hg hdisj hadj⟩
 
 
@@ -1660,6 +1674,7 @@ at least two vertices. -/
 def leaves (T : SimpleGraph A) [DecidableRel T.Adj] : Finset A :=
   Finset.univ.filter fun x => T.degree x = 1
 
+omit [DecidableEq A] in
 @[simp] theorem mem_leaves {T : SimpleGraph A} [DecidableRel T.Adj] {x : A} :
     x ∈ leaves T ↔ T.degree x = 1 := by
   simp [leaves]
@@ -1669,12 +1684,14 @@ def colorGap {T : SimpleGraph A} (c : T.Coloring (Fin 2)) : ℕ :=
   max (Coloring.partCard c 0) (Coloring.partCard c 1) -
     min (Coloring.partCard c 0) (Coloring.partCard c 1)
 
+omit [DecidableEq A] in
 /-- The elementary parity-free estimate used in Zhao's large-gap case. -/
 theorem min_partCard_le_floor_sub_of_gap
     {T : SimpleGraph A} (c : T.Coloring (Fin 2))
     {n r : ℕ} (hcard : Fintype.card A = n + 1)
     (hgap : 2 * r + 1 ≤ colorGap c) :
     min (Coloring.partCard c 0) (Coloring.partCard c 1) ≤ n / 2 - r := by
+  classical
   have hsum := Erdos547b.EC1Scratch.partCard_zero_add_one c
   rw [hcard] at hsum
   unfold colorGap at hgap
@@ -1687,10 +1704,11 @@ theorem min_partCard_le_floor_sub_of_gap
     rw [min_eq_right hba] at hgap ⊢
     omega
 
+omit [DecidableEq A] in
 /-- The two fibers of a proper two-coloring of a nontrivial tree form a
 proper bipartition in the sense used by Fact 6.9 and Lemma 7.7. -/
 theorem properBipartition_colorClasses
-    (T : SimpleGraph A) [DecidableRel T.Adj] [Nontrivial A]
+    (T : SimpleGraph A) [Nontrivial A]
     (hT : T.IsTree) (c : T.Coloring (Fin 2)) :
     IsProperBipartition T
       (Erdos547b.EC1Scratch.colorClassFinset c 0)
@@ -1719,9 +1737,9 @@ theorem properBipartition_colorClasses
       left_nonempty := ?_
       right_nonempty := ?_ }
   · ext x
-    simp only [Erdos547b.EC1Scratch.colorClassFinset, Finset.coe_union,
-      Finset.coe_filter, Finset.coe_univ, Set.mem_union, Set.mem_setOf_eq,
-      Set.mem_univ, true_and, iff_true]
+    simp only [Erdos547b.EC1Scratch.colorClassFinset,
+      Finset.coe_filter, Set.mem_union, Set.mem_ofPred_eq,
+      Set.mem_univ, iff_true]
     rcases Erdos547b.EC1Scratch.fin_two_eq_zero_or_one (c x) with hx | hx
     · exact Or.inl ⟨Finset.mem_univ x, hx⟩
     · exact Or.inr ⟨Finset.mem_univ x, hx⟩
@@ -1734,6 +1752,7 @@ theorem properBipartition_colorClasses
 def highVertices (G : SimpleGraph V) [DecidableRel G.Adj] (n : ℕ) : Finset V :=
   Finset.univ.filter fun v => n ≤ G.degree v
 
+omit [DecidableEq V] in
 @[simp] theorem mem_highVertices {G : SimpleGraph V} [DecidableRel G.Adj]
     {n : ℕ} {v : V} : v ∈ highVertices G n ↔ n ≤ G.degree v := by
   simp [highVertices]
@@ -1843,6 +1862,7 @@ def missingVertices (G : SimpleGraph V) [DecidableRel G.Adj]
     (v : V) (S : Finset V) : Finset V :=
   S.filter fun w => ¬G.Adj v w
 
+omit [DecidableEq V] [Fintype V] in
 theorem degreeInto_add_missingVertices
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (v : V) (S : Finset V) :
@@ -1851,25 +1871,32 @@ theorem degreeInto_add_missingVertices
   unfold Erdos547EC2.degreeInto missingVertices
   exact Finset.card_filter_add_card_filter_not _
 
-theorem missesAtMost_iff_card_missing_le
+omit [DecidableEq V] [Fintype V] in
+theorem missesAtMost_iff_card_missing_le [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (v : V) (S : Finset V) (q : ℕ) :
     MissesAtMost G v S q ↔ (missingVertices G v S).card ≤ q := by
+  classical
+  let := Fintype.ofFinite V
   unfold MissesAtMost
   have hpart := degreeInto_add_missingVertices G v S
   omega
 
-theorem MissesAtMost.mono_set
+omit [DecidableEq V] [Fintype V] in
+theorem MissesAtMost.mono_set [Finite V]
     {G : SimpleGraph V} [DecidableRel G.Adj]
     {v : V} {R S : Finset V} {q : ℕ}
     (h : MissesAtMost G v S q) (hRS : R ⊆ S) :
     MissesAtMost G v R q := by
+  classical
+  let := Fintype.ofFinite V
   rw [missesAtMost_iff_card_missing_le] at h ⊢
   apply (Finset.card_le_card ?_).trans h
   intro w hw
   simp only [missingVertices, Finset.mem_filter] at hw ⊢
   exact ⟨hRS hw.1, hw.2⟩
 
+omit [DecidableEq V] [Fintype V] in
 theorem missesAtMost_of_degreeInto_sub
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (v : V) (S : Finset V) (q : ℕ)
@@ -1878,6 +1905,7 @@ theorem missesAtMost_of_degreeInto_sub
   unfold MissesAtMost
   omega
 
+omit [Fintype V] in
 theorem degreeInto_sdiff_lower
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (v : V) (S R : Finset V) :
@@ -1901,13 +1929,16 @@ theorem degreeInto_sdiff_lower
     omega
   exact hcard.trans hc
 
+omit [Fintype V] in
 /-- Removing a set of host vertices worsens a defect bound by at most the
 number removed. -/
-theorem MissesAtMost.sdiff
+theorem MissesAtMost.sdiff [Finite V]
     {G : SimpleGraph V} [DecidableRel G.Adj]
     {v : V} {S R : Finset V} {q : ℕ}
     (h : MissesAtMost G v S q) :
     MissesAtMost G v (S \ R) (q + R.card) := by
+  classical
+  let := Fintype.ofFinite V
   unfold MissesAtMost at h ⊢
   rw [Finset.card_sdiff]
   have hd := degreeInto_sdiff_lower G v S R
@@ -2012,6 +2043,7 @@ theorem EC3Witness.exists_prunedPair
   rw [Finset.card_sdiff_of_subset h.A₀_subset, h.card_V₁, h.card_A₀]
   omega
 
+omit [DecidableEq A] in
 /-- The ideal-partition branch of Zhao Lemma 7.4, obtained by applying the
 full finite Lemma 7.8 to the pruned host pair. -/
 theorem EC3Witness.contains_of_idealPartition
@@ -2020,7 +2052,7 @@ theorem EC3Witness.contains_of_idealPartition
     (hqr : q ≤ r) (hsr : s ≤ r) (hsq : s + q ≤ r)
     (hrsource : 1782 * r ≤ n)
     (hrpos : 0 < r)
-    (T : SimpleGraph A) [DecidableRel T.Adj] [Nontrivial A]
+    (T : SimpleGraph A) [Nontrivial A]
     (hT : T.IsTree) (hcardT : Fintype.card A = n + 1)
     (U₁ U₂ : Finset A)
     (hU : Erdos547b.ZhaoLemma77.IsIdealPartition r T U₁ U₂) :
@@ -2075,7 +2107,7 @@ theorem EC3Witness.contains_of_idealPartition
     exact hU.right_independent hu₂ hv₂ (T.ne_of_adj huv) huv
   have hactive : ∀ x ∈ active, side x = 1 := by
     intro x hx
-    simp [side, active, (Finset.mem_sdiff.mp hx).1]
+    simp [side, (Finset.mem_sdiff.mp hx).1]
   have hdeferred : ∀ x, side x = 1 → x ∉ active → T.degree x = 1 := by
     intro x hxside hxactive
     have hx₂ : x ∈ U₂ := by simpa [side] using hxside
@@ -2141,16 +2173,7 @@ theorem EC3Witness.contains_of_idealPartition
   have hleftLeaves :
       5 * r ≤ (Finset.univ.filter fun x ↦ side x = 0 ∧ T.degree x = 1).card := by
     rw [hleafZero]
-    convert hU.left_leaves using 1
-    apply congrArg Finset.card
-    ext x
-    simp only [Erdos547b.ZhaoLemma77.leavesIn, Finset.mem_filter]
-    apply and_congr_right
-    intro _
-    unfold Erdos547b.ZhaoLemma77.IsLeaf
-    apply iff_of_eq
-    apply congrArg (fun d : ℕ ↦ d = 1)
-    apply Erdos547b.ZhaoLemma77Full74.degree_instance_eq
+    exact hU.left_leaves
   have hXYdeg : ∀ a ∈ h.A₀,
       max (B₁.card - r) active.card ≤ (G.neighborFinset a ∩ B₁).card := by
     intro a ha
@@ -2178,12 +2201,13 @@ theorem EC3Witness.contains_of_idealPartition
     T G n r hrn hT (by omega) side hindep active hactive hdeferred hleftLeaves
     h.A₀ B₁ hABdisj (by simpa [hpartZero] using hU₁cap) hAA hBA hXYdeg hglobal hfirst
 
+omit [DecidableEq A] in
 /-- The large-bipartition-gap branch of Zhao Lemma 7.4.  It is precisely the
 application of Fact 7.2(1) after Proposition 7.3. -/
 theorem EC3Witness.contains_of_small_colorClass
     {G : SimpleGraph V} [DecidableRel G.Adj] {n q s : ℕ}
     (h : EC3Witness G n q) (hscale : q * n ≤ s * (s + 1))
-    (T : SimpleGraph A) [DecidableRel T.Adj] [Nontrivial A]
+    (T : SimpleGraph A) [Nontrivial A]
     (hT : T.IsTree) (hcardT : Fintype.card A = n + 1)
     (c : T.Coloring (Fin 2))
     (hsmall : min (Coloring.partCard c 0) (Coloring.partCard c 1) ≤
@@ -2213,32 +2237,36 @@ theorem EC3Witness.contains_of_small_colorClass
   · intro a ha
     simpa [hcardT] using h.high_A₀ a ha
 
+omit [DecidableEq A] in
 /-- Source-style numerical corollary of the preceding branch: a color class
 of size at most `floor(n/2)-s-q` is small enough for the pruned pair. -/
 theorem EC3Witness.contains_of_small_colorClass_floor
     {G : SimpleGraph V} [DecidableRel G.Adj] {n q s : ℕ}
     (h : EC3Witness G n q) (hscale : q * n ≤ s * (s + 1))
-    (T : SimpleGraph A) [DecidableRel T.Adj] [Nontrivial A]
+    (T : SimpleGraph A) [Nontrivial A]
     (hT : T.IsTree) (hcardT : Fintype.card A = n + 1)
     (c : T.Coloring (Fin 2))
     (hsmall : min (Coloring.partCard c 0) (Coloring.partCard c 1) ≤
       n / 2 - s - q) :
     T ⊑ G := by
+  classical
   apply h.contains_of_small_colorClass hscale T hT hcardT c
   rw [h.card_V₁_sdiff_A₀, h.card_A₀]
   apply le_min
   · exact hsmall
   · omega
 
+omit [DecidableEq A] in
 /-- The literal large-gap subcase of Zhao Lemma 7.4. -/
 theorem EC3Witness.contains_of_colorGap
     {G : SimpleGraph V} [DecidableRel G.Adj] {n q s : ℕ}
     (h : EC3Witness G n q) (hscale : q * n ≤ s * (s + 1))
-    (T : SimpleGraph A) [DecidableRel T.Adj] [Nontrivial A]
+    (T : SimpleGraph A) [Nontrivial A]
     (hT : T.IsTree) (hcardT : Fintype.card A = n + 1)
     (c : T.Coloring (Fin 2))
     (hgap : 2 * (s + q) + 1 ≤ colorGap c) :
     T ⊑ G := by
+  classical
   apply h.contains_of_small_colorClass_floor hscale T hT hcardT c
   have hsmall := min_partCard_le_floor_sub_of_gap c hcardT hgap
   omega
@@ -2267,10 +2295,11 @@ theorem ideal_active_card_bound
     u₁ ≤ (n + 1) / 2 ∧ u₂ - w ≤ n / 2 - r := by
   omega
 
+omit [Fintype V] in
 /-- The set of selected midpoints in the maximal two-path construction has
 the same cardinality as its index set and is disjoint from both `A` and
 `B₁`. -/
-theorem selected_middles_card_and_disjoint
+theorem selected_middles_card_and_disjoint [Finite V]
     {k : ℕ} {middle : Fin k → V} (J : Finset (Fin k))
     (hmiddleInj : Function.Injective middle)
     {A B₁ : Finset V} (hmiddleOut : ∀ i, middle i ∉ A ∪ B₁) :
@@ -2278,6 +2307,7 @@ theorem selected_middles_card_and_disjoint
       Disjoint A (Erdos547EC2.selectedTwoPathMiddles middle J) ∧
       Disjoint B₁ (Erdos547EC2.selectedTwoPathMiddles middle J) := by
   classical
+  let := Fintype.ofFinite V
   constructor
   · exact Erdos547EC2.card_selectedTwoPathMiddles J hmiddleInj
   constructor <;> rw [Finset.disjoint_left] <;> intro x hx hxm
@@ -2346,6 +2376,7 @@ theorem augmented_side_card_bounds
       omega
     omega
 
+omit [DecidableEq A] in
 /-- Zhao's noncomputable leaf finset and the explicit degree-one finset used
 in this file have the same cardinality; this also transports across the two
 extensionally equal local-finiteness instances that arise in the imported
@@ -2363,6 +2394,7 @@ theorem leaves_card_eq_zhaoLeaves
   apply congrArg (fun d : ℕ ↦ d = 1)
   apply Erdos547b.ZhaoLemma77Full74.degree_instance_eq
 
+omit [DecidableEq A] in
 /-- The large-leaf part of Lemma 7.4 reduced to its final near-ideal branch.
 All other alternatives of Lemma 7.7 are discharged by the already checked
 large-gap and ideal-partition embedding theorems. -/
@@ -2488,6 +2520,7 @@ theorem lowLeafHostPackage_coreCopy
   · intro x hx
     simpa [f] using hfU₂ x hx
 
+omit [DecidableEq V] in
 /-- Select the unique parents of a finite family of leaves and invoke the
 global-degree extension theorem.  The cardinality-three hypothesis excludes
 the only case in which two degree-one vertices can be adjacent. -/
@@ -2600,7 +2633,6 @@ theorem EC3Witness.exists_lowLeafHostPackage
     G h.A₀ B₁ n s r l h.card_host hdisj h.card_A₀ ?_
       hBlower hBupper hAA hBA ?_ ?_ ?_ ?_⟩
   · intro a ha
-    change n ≤ Erdos547EC2.degreeInto G a Finset.univ
     rw [degreeInto_eq_neighborFinset_inter, Finset.inter_univ,
       G.card_neighborFinset_eq_degree]
     exact h.high_A₀ a ha
@@ -2612,7 +2644,7 @@ theorem EC3Witness.exists_lowLeafHostPackage
   · simp [r]
     omega
 
-/-- The regular low-leaf branch of Zhao's Lemma 7.4.  The only information
+/-- The regular low-leaf branch of Zhao's Lemma 7.4. The only information
 about the augmented host side used here is its proved lower bound
 `floor(n/2)-1`; hence the exceptional path case is isolated precisely by the
 failure of `hcoreFit`. -/
@@ -2674,6 +2706,7 @@ theorem deletedLeaves_union_of_bipartition
   · intro hd
     exact hx.elim (fun hxE ↦ Or.inl ⟨hxE, hd⟩) (fun hxO ↦ Or.inr ⟨hxO, hd⟩)
 
+omit [DecidableEq A] in
 theorem card_deletedLeaves_add_of_bipartition
     (T : SimpleGraph A) [DecidableRel T.Adj]
     (E O : Finset A) (hpart : IsProperBipartition T E O) :
@@ -2687,6 +2720,7 @@ theorem card_deletedLeaves_add_of_bipartition
       (Erdos547b.ZhaoLowLeafCore74.deletedLeaves_subset_right E)
       (Erdos547b.ZhaoLowLeafCore74.deletedLeaves_subset_right O)
 
+omit [DecidableEq A] in
 /-- Apart from the unique odd balanced exception in Zhao's low-leaf proof,
 one orientation of the leaf-pruned source core fits the augmented host side.
 The conclusion records the exceptional source invariant exactly: at most two
@@ -2756,6 +2790,7 @@ theorem EC3Witness.contains_of_lowLeaves_or_atMostTwoLeaves
   · right
     exact ⟨by omega, hnodd⟩
 
+omit [DecidableEq A] in
 /-- The complete few-leaf reduction, including the small-color-class branch.
 Only the path exception (a tree with at most two leaves) remains in the
 right disjunct. -/
@@ -2800,6 +2835,7 @@ theorem EC3Witness.contains_of_fewLeaves_or_atMostTwoLeaves
         T hT hcardT C₁ C₀ hproper' h10 hleaves
       simpa [C₁, Erdos547b.EC1Scratch.colorClassFinset_card] using hlargeBoth.2
 
+omit [DecidableEq A] in
 /-- All already-formalized branches of Zhao's Lemma 7.4, with the two
 specialized source configurations exposed for their dedicated reinsertion
 arguments. -/
@@ -2842,13 +2878,16 @@ variable {V A : Type*} [Fintype V] [Fintype A]
 def liftFinset (H S : Finset V) : Finset {v // v ∈ H} :=
   Finset.univ.filter fun v => v.1 ∈ S
 
+omit [Fintype V] in
 @[simp] theorem mem_liftFinset {H S : Finset V} {v : {v // v ∈ H}} :
     v ∈ liftFinset H S ↔ v.1 ∈ S := by
   simp [liftFinset]
 
-theorem card_liftFinset (H S : Finset V) (hSH : S ⊆ H) :
+omit [Fintype V] in
+theorem card_liftFinset [Finite V] (H S : Finset V) (hSH : S ⊆ H) :
     (liftFinset H S).card = S.card := by
   classical
+  let := Fintype.ofFinite V
   let e : (v : {v // v ∈ H}) → v ∈ liftFinset H S → V :=
     fun v _ => v.1
   apply Finset.card_bij e
@@ -2879,8 +2918,9 @@ theorem card_neighbor_inter_liftFinset
     exact Finset.mem_inter.mpr ⟨by simpa using (Finset.mem_inter.mp hw).1,
       mem_liftFinset.mpr (Finset.mem_inter.mp hw).2⟩
 
+omit [DecidableEq V] in
 /- Two nonadjacent vertices of degree at least half the order have a common
-neighbor.  The two forbidden endpoints provide the two units of slack. -/
+neighbor. The two forbidden endpoints provide the two units of slack. -/
 theorem exists_common_neighbor_of_half_degree
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (n : ℕ) (hcard : Fintype.card V = 2 * n)
@@ -2969,8 +3009,7 @@ theorem EC3Witness.exists_reserved_path_from_A₀
     Erdos547b.ZhaoLemma74.mem_highVertices.mp hv₀high
   by_cases hav : G.Adj a v₀
   · exact ⟨a, haA, v₀, hv₀A, hvdeg, Or.inl hav⟩
-  ·
-    obtain ⟨b, hab, hbv, hba, hbvne⟩ :=
+  · obtain ⟨b, hab, hbv, hba, hbvne⟩ :=
       exists_common_neighbor_of_half_degree G n h.card_host
         (by intro hEq; subst v₀; exact hv₀A haA) hav (h.high_A₀ a haA)
         hvdeg
@@ -3034,6 +3073,7 @@ theorem terminal_two_path_core_isTree
         exact hyx.ne.symm (congrArg Subtype.val hxy')⟩
   · exact hTz.isAcyclic.induce _
 
+omit [DecidableEq A] in
 /- The other neighbour of a degree-two vertex after one specified neighbour
 is removed. -/
 theorem exists_other_neighbor_of_degree_two
@@ -3065,7 +3105,7 @@ theorem exists_other_neighbor_of_degree_two
 the distinguished leaf is absorbed by running Lemma 7.8 at `r-1`. -/
 theorem nearIdeal_core_left_data
     (T : SimpleGraph A) [DecidableRel T.Adj]
-    (n r : ℕ) (hT : T.IsTree) (hcardT : Fintype.card A = n + 1)
+    (n r : ℕ) (hT : T.IsTree) (_hcardT : Fintype.card A = n + 1)
     (U₁ U₂ : Finset A)
     (hU : Erdos547b.ZhaoLemma77.IsNearIdealPartition r n T U₁ U₂)
     (z y x : A) (hzU : z ∈ U₁)
@@ -3328,7 +3368,7 @@ theorem nearIdeal_core_right_data
       exact Fin.zero_ne_one (h0.symm.trans h1)
     have hcoverP : P₀ ∪ P₁ = Finset.univ := by
       ext w
-      simp only [Finset.mem_union, Finset.mem_filter, Finset.mem_univ, true_and,
+      simp only [Finset.mem_union, Finset.mem_univ,
         iff_true]
       rcases Erdos547b.EC1Scratch.fin_two_eq_zero_or_one (side w) with h | h
       · exact Or.inl (Finset.mem_filter.mpr ⟨Finset.mem_univ _, h⟩)
@@ -3429,13 +3469,14 @@ theorem nearIdeal_core_right_data
     omega
   exact ⟨hindep, hactive, hdeferred, hactiveCard⟩
 
+omit [DecidableEq V] [Fintype V] in
 /- Reinsert the terminal path `x-y-z` after a copy of the twice-deleted
-core has been found in an induced host set.  This is the exact gluing step
+core has been found in an induced host set. This is the exact gluing step
 needed in the near-ideal branch; using `extendChosenLeaves` twice keeps the
 proof independent of the particular construction of the core copy. -/
 theorem extend_copy_over_terminal_two_path
     (T : SimpleGraph A) (G : SimpleGraph V)
-    [DecidableRel T.Adj] [DecidableRel G.Adj]
+    [DecidableRel T.Adj]
     (z y x : A) (H : Finset V) (a p zImage : V)
     (hz : T.degree z = 1) (hyz : T.Adj y z)
     (hy : T.degree y = 2) (hyx : T.Adj y x) (hxz : x ≠ z)
@@ -3597,7 +3638,7 @@ theorem nearIdeal_core_copy_avoiding
       ⟨⟨x, by simpa using hxz⟩, by
         simp only [Finset.mem_singleton, Subtype.ext_iff]
         exact hyx.ne.symm⟩
-    let B := B₁ \ R
+    let _B := B₁ \ R
     let H := Finset.univ \ R
     ∃ f : Tzy.Copy (G.induce (H : Set V)),
       f x' = ⟨a, by
@@ -3748,7 +3789,8 @@ theorem nearIdeal_core_copy_avoiding
     X Y hXY (by rw [hleft.2.1, hXcard, h.card_A₀]; omega)
     hXX hYX hXYdeg hglobal x' hxSide ⟨a, haH⟩ (mem_liftFinset.mpr haA)
 
-/- The exceptional near-ideal branch of Zhao's Lemma 7.4.  The two deleted
+omit [DecidableEq A] in
+/- The exceptional near-ideal branch of Zhao's Lemma 7.4. The two deleted
 source vertices are put back along a one- or two-edge path reserved outside
 the core image. -/
 theorem EC3Witness.contains_of_nearIdealPartition
@@ -3758,7 +3800,7 @@ theorem EC3Witness.contains_of_nearIdealPartition
     (hscale : q * n ≤ s * (s + 1))
     (hsource : 1782 * (s + q) ≤ n)
     (hrpos : 0 < s + q)
-    (T : SimpleGraph A) [DecidableRel T.Adj]
+    (T : SimpleGraph A)
     (hT : T.IsTree) (hcardT : Fintype.card A = n + 1)
     (U₁ U₂ : Finset A)
     (hU : Erdos547b.ZhaoLemma77.IsNearIdealPartition (s + q) n T U₁ U₂) :
@@ -3775,7 +3817,7 @@ theorem EC3Witness.contains_of_nearIdealPartition
     by_contra hs
     have hs0 : s = 0 := by omega
     subst s
-    simp at hscale
+    simp only [Nat.zero_mul] at hscale
     exact hq (by
       have : q * n = 0 := by omega
       exact (Nat.mul_eq_zero.mp this).resolve_right (by omega))
@@ -3961,10 +4003,11 @@ theorem card_odd_indices_two_mul_sub_one (m : ℕ) (hm : 1 ≤ m) :
 
 /-- A Hamiltonian path in a finite tree uses every edge of the tree. -/
 theorem hamiltonian_toSubgraph_eq_top
-    [Fintype S] [DecidableEq S]
+    [Finite S] [DecidableEq S]
     (T : SimpleGraph S) {u w : S} (p : T.Walk u w)
     (hT : T.IsTree) (hp : p.IsHamiltonian) : p.toSubgraph = ⊤ := by
   classical
+  let := Fintype.ofFinite S
   have hpath : p.IsPath := hp.isPath
   have hcardP : p.edges.toFinset.card = p.length := by
     rw [List.toFinset_card_of_nodup hpath.isTrail.edges_nodup,
@@ -3997,10 +4040,12 @@ theorem hamiltonian_toSubgraph_eq_top
       simpa using he
 
 theorem hamiltonian_tree_first_neighbor
-    [Fintype S] [DecidableEq S]
+    [Finite S] [DecidableEq S]
     (T : SimpleGraph S) {u w : S} (p : T.Walk u w)
     (hT : T.IsTree) (hp : p.IsHamiltonian) (hlen : 1 ≤ p.length) :
     ∀ z, T.Adj (p.getVert 0) z → z = p.getVert 1 := by
+  classical
+  let := Fintype.ofFinite S
   intro z hz
   have hz' : p.toSubgraph.Adj (p.getVert 0) z := by
     rw [hamiltonian_toSubgraph_eq_top T p hT hp]
@@ -4014,11 +4059,13 @@ theorem hamiltonian_tree_first_neighbor
   grind [Sym2.eq]
 
 theorem hamiltonian_tree_second_neighbors
-    [Fintype S] [DecidableEq S]
+    [Finite S] [DecidableEq S]
     (T : SimpleGraph S) {u w : S} (p : T.Walk u w)
     (hT : T.IsTree) (hp : p.IsHamiltonian) (hlen : 2 ≤ p.length) :
     ∀ z, T.Adj (p.getVert 1) z →
       z = p.getVert 0 ∨ z = p.getVert 2 := by
+  classical
+  let := Fintype.ofFinite S
   intro z hz
   have hz' : p.toSubgraph.Adj (p.getVert 1) z := by
     rw [hamiltonian_toSubgraph_eq_top T p hT hp]
@@ -4032,11 +4079,13 @@ theorem hamiltonian_tree_second_neighbors
   grind [Sym2.eq]
 
 theorem hamiltonian_tree_last_neighbor
-    [Fintype S] [DecidableEq S]
+    [Finite S] [DecidableEq S]
     (T : SimpleGraph S) {u w : S} (p : T.Walk u w)
     (hT : T.IsTree) (hp : p.IsHamiltonian) (hlen : 1 ≤ p.length) :
     ∀ z, T.Adj (p.getVert p.length) z →
       z = p.getVert (p.length - 1) := by
+  classical
+  let := Fintype.ofFinite S
   intro z hz
   have hz' : p.toSubgraph.Adj (p.getVert p.length) z := by
     rw [hamiltonian_toSubgraph_eq_top T p hT hp]
@@ -4314,7 +4363,7 @@ theorem path_iso_odd_core_data
 
 /-- A tree with at most two degree-one vertices has maximum degree two. -/
 theorem degree_le_two_of_leafVertices_le_two
-    [Fintype S] [DecidableEq S] [Nontrivial S]
+    [Fintype S] [Nontrivial S]
     (T : SimpleGraph S) [DecidableRel T.Adj]
     (hT : T.IsTree) (hleaves : #(Erdos547EC2.leafVertices T) ≤ 2) :
     ∀ z, T.degree z ≤ 2 := by
@@ -4326,7 +4375,8 @@ theorem degree_le_two_of_leafVertices_le_two
   have hq (x : S) : 2 ≤ q x := by
     have hpos : 0 < T.degree x :=
       hT.connected.preconnected.degree_pos_of_nontrivial x
-    by_cases hx : T.degree x = 1 <;> simp [q, hx] <;> omega
+    dsimp only [q]
+    split <;> omega
   have hqz : 2 < q z := by
     have hznot : T.degree z ≠ 1 := by omega
     simp [q, hznot]
@@ -4441,15 +4491,16 @@ theorem exists_hamiltonian_path_of_leafVertices_le_two
     (degree_le_two_of_leafVertices_le_two T hT hleaves)
 
 private theorem card_used
-    [Fintype S] [DecidableEq S] [DecidableEq V]
+    [Fintype S] [DecidableEq V]
     {H : SimpleGraph S} {G : SimpleGraph V} (f : H.Copy G) :
     #(Finset.univ.image f) = Fintype.card S := by
+  classical
   simpa using Finset.card_image_of_injective Finset.univ f.injective
 
 /-- A high-degree arbitrary host vertex has a neighbour outside a given
 embedded copy. -/
 theorem exists_neighbor_outside_copy
-    [Fintype S] [DecidableEq S] [Fintype V] [DecidableEq V]
+    [Fintype S] [Fintype V]
     (H : SimpleGraph S) (G : SimpleGraph V) [DecidableRel G.Adj]
     (f : H.Copy G) (a : V) (hdeg : Fintype.card S < G.degree a) :
     ∃ w, G.Adj a w ∧ ∀ s, f s ≠ w := by
@@ -4467,7 +4518,7 @@ theorem exists_neighbor_outside_copy
 vertex.  Thus a surplus of two over the copy order permits avoiding two
 additional reserved vertices. -/
 theorem exists_neighbor_outside_copy_and_pair
-    [Fintype S] [DecidableEq S] [Fintype V] [DecidableEq V]
+    [Fintype S] [Fintype V]
     (H : SimpleGraph S) (G : SimpleGraph V) [DecidableRel G.Adj]
     (f : H.Copy G) (r : S) (a b : V) (hab : a ≠ b)
     (hdeg : Fintype.card S + 1 < G.degree (f r)) :
@@ -4516,7 +4567,7 @@ Hamiltonian ordering of a tree: `x0-x1-x2-...-xLast-xEnd`.  The core copy is
 the induced graph after deleting `x0`, `x1`, and `xEnd`; `x2` is prescribed
 to `a`.  The images are `x1 ↦ v`, `x0 ↦ w0`, and `xEnd ↦ wEnd`. -/
 theorem extend_triply_trimmed_path_copy
-    [Fintype S] [DecidableEq S] [DecidableEq V]
+    [Finite S] [DecidableEq S]
     (T : SimpleGraph S) (G : SimpleGraph V)
     (x0 x1 x2 xLast xEnd : S)
     (h01 : x0 ≠ x1) (h0E : x0 ≠ xEnd) (h1E : x1 ≠ xEnd)
@@ -4538,6 +4589,7 @@ theorem extend_triply_trimmed_path_copy
       F x0 = w0 ∧ F x1 = v ∧ F xEnd = wEnd ∧
       ∀ z : ↥(((({x0, x1, xEnd} : Finset S) : Set S)ᶜ)), F z = f z := by
   classical
+  let := Fintype.ofFinite S
   let D : Finset S := {x0, x1, xEnd}
   let g : D → V := fun z =>
     if z.1 = x0 then w0 else if z.1 = x1 then v else wEnd
@@ -4621,7 +4673,7 @@ theorem extend_triply_trimmed_path_copy
 `v` and at the embedded opposite support supplies two distinct unused
 endpoint images. -/
 theorem extend_triply_trimmed_path_copy_of_degree
-    [Fintype S] [DecidableEq S] [Fintype V] [DecidableEq V]
+    [Fintype S] [DecidableEq S] [Fintype V]
     (T : SimpleGraph S) (G : SimpleGraph V) [DecidableRel G.Adj]
     (x0 x1 x2 xLast xEnd : S)
     (n : ℕ) (hcoreCard :
@@ -4642,6 +4694,7 @@ theorem extend_triply_trimmed_path_copy_of_degree
     (hLastDegree : n ≤ G.degree (f ⟨xLast, by simpa using hxLastD⟩)) :
     ∃ F : T.Copy G, F x1 = v ∧
       ∀ z : ↥(((({x0, x1, xEnd} : Finset S) : Set S)ᶜ)), F z = f z := by
+  classical
   let core := T.induce ((({x0, x1, xEnd} : Finset S) : Set S)ᶜ)
   have hvDeg' : Fintype.card ↥(((({x0, x1, xEnd} : Finset S) : Set S)ᶜ)) <
       G.degree v := by rw [hcoreCard]; omega
@@ -4886,7 +4939,7 @@ theorem odd_path_exception_of_core_data
       (fun z : S => z ∈ ({x0, x1, xEnd} : Finset S))]
     rw [Fintype.card_coe]
     have htriple : ({x0, x1, xEnd} : Finset S).card = 3 := by
-      simp [h01, h0E, h1E, h01.symm, h0E.symm, h1E.symm]
+      simp [h01, h0E, h1E]
     rw [htriple, hcard]
     omega
   obtain ⟨F, -, -⟩ := extend_triply_trimmed_path_copy_of_degree
@@ -4900,7 +4953,7 @@ theorem odd_path_exception_of_core_data
 theorem odd_path_exception_of_hamiltonian
     [Fintype S] [DecidableEq S] [Fintype V] [DecidableEq V]
     (T : SimpleGraph S) (G : SimpleGraph V)
-    [DecidableRel T.Adj] [DecidableRel G.Adj]
+    [DecidableRel G.Adj]
     (n l : ℕ) (hcard : Fintype.card S = n + 1)
     (hodd : n % 2 = 1) (hn : 4 ≤ n) (hl : 2 ≤ l)
     (hlarge : 26 * l + 1 ≤ n / 2)
@@ -5023,7 +5076,7 @@ theorem odd_path_exception_of_hamiltonian
 leaves is a path; the Hamiltonian ordering furnished by the preceding lemma
 then supplies the triply-trimmed core used by Zhao's Lemma 7.10. -/
 theorem odd_path_exception_of_tree
-    [Fintype S] [DecidableEq S] [Fintype V] [DecidableEq V]
+    [Fintype S] [Fintype V] [DecidableEq V]
     (T : SimpleGraph S) (G : SimpleGraph V)
     [DecidableRel T.Adj] [DecidableRel G.Adj]
     (n l : ℕ) (hcard : Fintype.card S = n + 1)
@@ -5066,6 +5119,7 @@ open SimpleGraph
 variable {A V : Type*} [Fintype A] [DecidableEq A]
   [Fintype V] [DecidableEq V]
 
+omit [DecidableEq A] in
 /-- The last low-leaf exception is a path.  Reconstruct the pruned host
 package, take a Hamiltonian ordering of the source, and invoke the checked
 odd-path endpoint of Lemma 7.10. -/
@@ -5122,12 +5176,13 @@ theorem EC3Witness.contains_of_odd_path
         P.card_B_lower hABhost P.B_split P.B₁_B₂_disjoint hB₂sub P.card_B₂_le
           hleftG hrightG hAA h.high_A₀ paths
 
+omit [DecidableEq A] in
 /-- Zhao's EC3 embedding lemma (Lemma 7.4), in exact finite form. -/
 theorem EC3Witness.contains_every_exact_tree
     {G : SimpleGraph V} [DecidableRel G.Adj] {n q s : ℕ}
     (h : EC3Witness G n q) (hscale : q * n ≤ s * (s + 1))
     (hsource : 1782 * (s + q) ≤ n) (hrpos : 0 < s + q)
-    (T : SimpleGraph A) [DecidableRel T.Adj]
+    (T : SimpleGraph A)
     (hT : T.IsTree) (hcardT : Fintype.card A = n + 1) :
     T ⊑ G := by
   classical
@@ -5142,13 +5197,15 @@ theorem EC3Witness.contains_every_exact_tree
   · exact h.contains_of_odd_path hscale hsource hrpos T hT hcardT
       hpath.1 hpath.2
 
+omit [DecidableEq A] in
 theorem RawEC3Witness.contains_every_exact_tree
     {G : SimpleGraph V} [DecidableRel G.Adj] {n q s : ℕ}
     (h : RawEC3Witness G n q) (hscale : q * n ≤ s * (s + 1))
     (hsource : 1782 * (s + q) ≤ n) (hrpos : 0 < s + q)
-    (T : SimpleGraph A) [DecidableRel T.Adj]
+    (T : SimpleGraph A)
     (hT : T.IsTree) (hcardT : Fintype.card A = n + 1) :
     T ⊑ G :=
+  open Classical in
   h.normalize.contains_every_exact_tree hscale hsource hrpos T hT hcardT
 
 end Erdos547b.ZhaoLemma74

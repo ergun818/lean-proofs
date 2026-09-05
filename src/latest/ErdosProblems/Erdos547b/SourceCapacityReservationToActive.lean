@@ -10,7 +10,7 @@ owner's prefix. The concrete kind controls both the capacity and the root
 test. All later root-map values remain unconstrained.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceCapacityReservationToActive

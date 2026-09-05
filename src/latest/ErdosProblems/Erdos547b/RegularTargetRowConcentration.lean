@@ -4,7 +4,7 @@ import ErdosProblems.Erdos547b.HierarchicalCanonicalCleaning
 
 /-! # Small root exclusions and aggregate capacity of target subreservoirs -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoRegularTargetRowConcentration
@@ -19,11 +19,13 @@ variable (A : Finset V) (J : Finset I) (whole raw : I → Finset V) (ε δ : ℝ
 def targetBad : Finset V :=
   manyBadRoots A J (fun j => targetLowDegreeVertices H ε A (whole j) A (raw j)) δ
 
+omit [DecidableEq I] in
 theorem card_targetBad_le (hε : ε ≤ 1) (hδ : 0 < δ) (hεδ : ε ≤ δ ^ 2)
     (huniform : ∀ j ∈ J, H.IsUniform ε A (whole j))
     (hraw : ∀ j ∈ J, raw j ⊆ whole j)
     (hrawLarge : ∀ j ∈ J, ε * (whole j).card ≤ (raw j).card) :
     ((targetBad H A J whole raw ε δ).card : ℝ) ≤ δ * A.card := by
+  classical
   apply card_manyBadRoots_le A J _ ε δ hδ hεδ
   intro j hj
   exact card_targetLowDegreeVertices_le H (huniform j hj) (Finset.Subset.refl _)
@@ -40,12 +42,14 @@ theorem degreeInto_biUnion (z : V)
   unfold degreeInto
   rw [Finset.filter_biUnion, Finset.card_biUnion hfiltered]
 
+omit [DecidableEq I] in
 theorem degree_union_lower (c L : ℝ) (hc : 0 ≤ c) (hL : 0 ≤ L)
     (hdis : (J : Set I).PairwiseDisjoint raw)
     (hdensity : ∀ j ∈ J, c ≤ (H.edgeDensity A (whole j) : ℝ) - ε)
     (hsize : ∀ j ∈ J, L ≤ (raw j).card)
     {z : V} (hz : z ∈ A) (hzBad : z ∉ targetBad H A J whole raw ε δ) :
     c * L * (1 - δ) * J.card ≤ (degreeInto H z (J.biUnion raw) : ℝ) := by
+  classical
   let D := badTargets J (fun j => targetLowDegreeVertices H ε A (whole j) A (raw j)) z
   have hD : D ⊆ J := Finset.filter_subset _ _
   have hcount : (D.card : ℝ) ≤ δ * J.card := by

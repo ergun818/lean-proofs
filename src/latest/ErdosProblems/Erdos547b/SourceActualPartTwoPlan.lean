@@ -9,7 +9,7 @@ Every parameter gate comes from the same degree-form witness as Part 1.
 The resulting plan uses only the original positive-entry root tests.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceActualPartTwoPlan

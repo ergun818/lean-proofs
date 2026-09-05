@@ -6,7 +6,7 @@ import ErdosProblems.Erdos547b.Lemma58CutForestReconstruction
 # The reconnected coordinate graph is the original source tree
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePartitionReconnectedGraph
@@ -71,12 +71,16 @@ theorem reconnected_adj_iff_tree (x y : U) :
       obtain ⟨i, _, hi⟩ := hdeleted
       rcases Sym2.eq_iff.mp hi with h | h
       · rcases h with ⟨rfl, rfl⟩
-        exact Or.inr ⟨i.1, i.2, Or.inr ⟨cutBranchGraphIso_parent P i.1 i.2, cutBranchGraphIso_root P i.1⟩⟩
+        exact Or.inr ⟨i.1, i.2, Or.inr ⟨cutBranchGraphIso_parent P i.1 i.2, cutBranchGraphIso_root P
+          i.1⟩⟩
       · rcases h with ⟨rfl, rfl⟩
-        exact Or.inr ⟨i.1, i.2, Or.inl ⟨cutBranchGraphIso_parent P i.1 i.2, cutBranchGraphIso_root P i.1⟩⟩
-    · exact Or.inl ((cutBranchGraphIso P).toHom.map_rel (SimpleGraph.deleteEdges_adj.mpr ⟨hxy, hdeleted⟩))
+        exact Or.inr ⟨i.1, i.2, Or.inl ⟨cutBranchGraphIso_parent P i.1 i.2, cutBranchGraphIso_root P
+          i.1⟩⟩
+    · exact Or.inl ((cutBranchGraphIso P).toHom.map_rel (SimpleGraph.deleteEdges_adj.mpr ⟨hxy,
+        hdeleted⟩))
 
-def reconnectedPartitionIso : T ≃g reconnectedGraph (branchForest P) (partitionCutSource P hT locate hlocate) where
+def reconnectedPartitionIso : T ≃g reconnectedGraph (branchForest P) (partitionCutSource P hT locate
+  hlocate) where
   toEquiv := (cutBranchGraphIso P).toEquiv
   map_rel_iff' := reconnected_adj_iff_tree P hT locate hlocate _ _
 

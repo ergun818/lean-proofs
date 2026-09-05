@@ -24,13 +24,14 @@ open Erdos547b.ZhaoStability
 first row at most its proportional share, with one summand of overshoot.
 The zero first-row and whole-set cases are included. -/
 theorem exists_efficient_subset_univ
-    {E : Type*} [Fintype E] [DecidableEq E]
+    {E : Type*} [Fintype E]
     (a b : E → ℝ) (C q : ℝ)
     (ha : ∀ e, 0 ≤ a e) (hb : ∀ e, 0 ≤ b e)
     (haC : ∀ e, a e ≤ C) (hbC : ∀ e, b e ≤ C)
     (hC : 0 < C) (hq : 0 < q) (hqB : q ≤ ∑ e, b e) :
     ∃ P : Finset E, q ≤ ∑ e ∈ P, b e ∧
       (∑ e ∈ P, a e) ≤ (∑ e, a e) * (q + C) / (∑ e, b e) := by
+  classical
   let A : ℝ := ∑ e, a e
   let B : ℝ := ∑ e, b e
   have hA0 : 0 ≤ A := Finset.sum_nonneg fun e _ ↦ ha e
@@ -74,13 +75,14 @@ theorem exists_efficient_subset_univ
 
 /-- The efficient-subset lemma on an arbitrary finite edge set. -/
 theorem exists_efficient_subset
-    {E : Type*} [DecidableEq E]
+    {E : Type*}
     (M : Finset E) (a b : E → ℝ) (C q : ℝ)
     (ha : ∀ e ∈ M, 0 ≤ a e) (hb : ∀ e ∈ M, 0 ≤ b e)
     (haC : ∀ e ∈ M, a e ≤ C) (hbC : ∀ e ∈ M, b e ≤ C)
     (hC : 0 < C) (hq : 0 < q) (hqB : q ≤ ∑ e ∈ M, b e) :
     ∃ P ⊆ M, q ≤ ∑ e ∈ P, b e ∧
       (∑ e ∈ P, a e) ≤ (∑ e ∈ M, a e) * (q + C) / (∑ e ∈ M, b e) := by
+  classical
   have hsum (w : E → ℝ) : (∑ e : M, w e) = ∑ e ∈ M, w e := by
     rw [Finset.univ_eq_attach, Finset.sum_attach]
   obtain ⟨P, hPq, hPa⟩ := exists_efficient_subset_univ
@@ -300,7 +302,7 @@ def normalizedRow {E : Type*} (M : Finset E) (a : E → ℝ) (D : ℝ) : E → �
 /-- Normalization preserves a positive prescribed total, decreases every
 entry, and decreases each submatching sum by at most the total row loss. -/
 theorem normalizedRow_spec
-    {E : Type*} [DecidableEq E]
+    {E : Type*}
     (M : Finset E) (a : E → ℝ) (D : ℝ)
     (ha : ∀ e ∈ M, 0 ≤ a e) (hD : 0 < D) (hDA : D ≤ ∑ e ∈ M, a e) :
     (∀ e ∈ M, 0 ≤ normalizedRow M a D e ∧ normalizedRow M a D e ≤ a e) ∧
@@ -308,6 +310,7 @@ theorem normalizedRow_spec
     ∀ S ⊆ M, 0 ≤ (∑ e ∈ S, a e) - ∑ e ∈ S, normalizedRow M a D e ∧
       (∑ e ∈ S, a e) - (∑ e ∈ S, normalizedRow M a D e) ≤
         (∑ e ∈ M, a e) - D := by
+  classical
   have hA : 0 < ∑ e ∈ M, a e := hD.trans_le hDA
   have hfactor : D / (∑ e ∈ M, a e) ≤ 1 := (div_le_one hA).2 hDA
   have hentry : ∀ e ∈ M,

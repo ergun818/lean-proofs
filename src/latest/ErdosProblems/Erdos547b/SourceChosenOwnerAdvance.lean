@@ -10,7 +10,7 @@ sets. Reparenting the old prefix and reindexing the new batch change no
 copy. The resulting used sets and all earlier maps are exposed exactly.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoLemma58ChosenOwnerBatches
@@ -94,9 +94,11 @@ theorem exists_chosen_owner_advance
   · intro i hi
     change joined.state.forestCopy.componentCopy i (Finset.mem_union_left t hi) =
       E.state.forestCopy.componentCopy i hi
-    exact appendChosen_copy_left F H parent' whole available havailable hwhole s t hst old batch i hi
+    exact appendChosen_copy_left F H parent' whole available havailable hwhole s t hst old batch i
+      hi
   · intro i hi
-    exact appendChosen_orient_left F H parent' whole available havailable hwhole s t hst old batch i hi
+    exact appendChosen_orient_left F H parent' whole available havailable hwhole s t hst old batch i
+      hi
 
 end Erdos547b.ZhaoLemma58ChosenOwnerBatches
 

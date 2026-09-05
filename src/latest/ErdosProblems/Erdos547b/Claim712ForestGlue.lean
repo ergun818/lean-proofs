@@ -120,7 +120,7 @@ leaves to previously unused neighbours of the root image. -/
 theorem exists_copy_of_natural_split_and_root_leaves
     {α β : Type*} [Fintype α] [Fintype β] [DecidableEq α] [DecidableEq β]
     (T : SimpleGraph α) (G : SimpleGraph β)
-    [DecidableRel T.Adj] [DecidableRel G.Adj]
+    [DecidableRel G.Adj]
     (root : α) (C₁ C₂ L : Finset α)
     (hdisj₁₂ : Disjoint C₁ C₂)
     (hdisj₁L : Disjoint C₁ L) (hdisj₂L : Disjoint C₂ L)
@@ -156,7 +156,7 @@ theorem exists_copy_of_natural_split_and_root_leaves
     if hx₁ : x ∈ C₁ then f₁ ⟨x, hx₁⟩
     else if hx₂ : x ∈ C₂ then f₂ ⟨x, hx₂⟩
     else g ⟨x, by
-      have hxall : x ∈ (C₁ ∪ C₂) ∪ L := by simpa [hcover]
+      have hxall : x ∈ (C₁ ∪ C₂) ∪ L := by simp [hcover]
       exact (Finset.mem_union.mp hxall).resolve_left
         (fun hxcore => (Finset.mem_union.mp hxcore).elim hx₁ hx₂)⟩
   have hF₁ (x : {x // x ∈ C₁}) : F x = f₁ x := by
@@ -190,7 +190,7 @@ theorem exists_copy_of_natural_split_and_root_leaves
           rw [← heq] at hyH
           exact False.elim (Finset.disjoint_left.mp hH hxH hyH)
         · have hyL : y ∈ L := by
-            have hyall : y ∈ (C₁ ∪ C₂) ∪ L := by simpa [hcover]
+            have hyall : y ∈ (C₁ ∪ C₂) ∪ L := by simp [hcover]
             exact (Finset.mem_union.mp hyall).resolve_left
               (fun hycore => (Finset.mem_union.mp hycore).elim hy₁ hy₂)
           exfalso
@@ -212,7 +212,7 @@ theorem exists_copy_of_natural_split_and_root_leaves
               simpa [F, hx₁, hx₂, hy₁, hy₂] using hxy
             exact Subtype.ext_iff.mp hsub
           · have hyL : y ∈ L := by
-              have hyall : y ∈ (C₁ ∪ C₂) ∪ L := by simpa [hcover]
+              have hyall : y ∈ (C₁ ∪ C₂) ∪ L := by simp [hcover]
               exact (Finset.mem_union.mp hyall).resolve_left
                 (fun hycore => (Finset.mem_union.mp hycore).elim hy₁ hy₂)
             exfalso
@@ -222,7 +222,7 @@ theorem exists_copy_of_natural_split_and_root_leaves
             exact ⟨⟨x, hx₂⟩, Finset.mem_univ _, by
               simpa [F, hx₁, hx₂, hy₁, hy₂] using hxy⟩
       · have hxL : x ∈ L := by
-          have hxall : x ∈ (C₁ ∪ C₂) ∪ L := by simpa [hcover]
+          have hxall : x ∈ (C₁ ∪ C₂) ∪ L := by simp [hcover]
           exact (Finset.mem_union.mp hxall).resolve_left
             (fun hxcore => (Finset.mem_union.mp hxcore).elim hx₁ hx₂)
         by_cases hy₁ : y ∈ C₁
@@ -240,7 +240,7 @@ theorem exists_copy_of_natural_split_and_root_leaves
             exact ⟨⟨y, hy₂⟩, Finset.mem_univ _, by
               simpa [F, hx₁, hx₂, hy₁, hy₂] using hxy.symm⟩
           · have hyL : y ∈ L := by
-              have hyall : y ∈ (C₁ ∪ C₂) ∪ L := by simpa [hcover]
+              have hyall : y ∈ (C₁ ∪ C₂) ∪ L := by simp [hcover]
               exact (Finset.mem_union.mp hyall).resolve_left
                 (fun hycore => (Finset.mem_union.mp hycore).elim hy₁ hy₂)
             have hsub : (⟨x, hxL⟩ : {x // x ∈ L}) = ⟨y, hyL⟩ := by
@@ -270,10 +270,10 @@ theorem exists_copy_of_natural_split_and_root_leaves
         have hr₁ : root ∉ C₁ := fun h => Finset.disjoint_left.mp hdisj₁₂ h hroot
         simpa [F, p, hy₁, hy₂, hr₁, hroot] using hadj
       · have hxcore : x ∈ C₁ ∪ C₂ := by
-          have hxall : x ∈ (C₁ ∪ C₂) ∪ L := by simpa [hcover]
+          have hxall : x ∈ (C₁ ∪ C₂) ∪ L := by simp [hcover]
           exact (Finset.mem_union.mp hxall).resolve_right hxL
         have hycore : y ∈ C₁ ∪ C₂ := by
-          have hyall : y ∈ (C₁ ∪ C₂) ∪ L := by simpa [hcover]
+          have hyall : y ∈ (C₁ ∪ C₂) ∪ L := by simp [hcover]
           exact (Finset.mem_union.mp hyall).resolve_right hyL
         rcases Finset.mem_union.mp hxcore with hx₁ | hx₂ <;>
           rcases Finset.mem_union.mp hycore with hy₁ | hy₂
@@ -317,9 +317,10 @@ def twoParts {β : Type*} (A B : Finset β) (i : Fin 2) : Finset β :=
 @[simp] theorem twoParts_one {β : Type*} (A B : Finset β) :
     twoParts A B 1 = B := by simp [twoParts]
 
-theorem twoParts_pairwiseDisjoint {β : Type*} [DecidableEq β]
+theorem twoParts_pairwiseDisjoint {β : Type*}
     {A B : Finset β} (hAB : Disjoint A B) :
     Set.PairwiseDisjoint Set.univ (twoParts A B) := by
+  classical
   intro i _ j _ hij
   fin_cases i <;> fin_cases j
   · exact (hij rfl).elim
@@ -343,7 +344,7 @@ at least the order of the cone, every component root has at least `q`
 candidate neighbours of `rootImage`, and every oriented forest edge has at
 least `q` candidates at its far endpoint. -/
 theorem exists_forest_copy_attached_at
-    {γ β : Type*} [Fintype γ] [Fintype β] [DecidableEq γ] [DecidableEq β]
+    {γ β : Type*} [Fintype γ] [Finite β] [DecidableEq γ]
     (F : SimpleGraph γ) (G : SimpleGraph β) [DecidableRel G.Adj]
     (roots : Finset γ)
     (hforest : (Erdos547b.ZhaoLemma59.rootedForestCone F roots).IsTree)
@@ -357,6 +358,7 @@ theorem exists_forest_copy_attached_at
       (∀ x, f x ∈ candidate x) ∧
       (∀ x ∈ roots, G.Adj rootImage (f x)) := by
   classical
+  let := Fintype.ofFinite β
   let cone := Erdos547b.ZhaoLemma59.rootedForestCone F roots
   let coneCandidate : Option γ → Finset β
     | none => ∅
@@ -418,7 +420,7 @@ The hypotheses headed by `q` are the exact discrete three-way minimum-degree
 bounds: the `(0,0)`, `(0,1)`, and `(1,0)` directions are required, while the
 independent second side never requires `(1,1)`. -/
 theorem exists_claim712_piece_copies
-    {α β : Type*} [Fintype α] [Fintype β] [DecidableEq α] [DecidableEq β]
+    {α β : Type*} [Finite α] [Fintype β] [DecidableEq α] [DecidableEq β]
     (T : SimpleGraph α) (G : SimpleGraph β) [DecidableRel G.Adj]
     (root : α) (C₁ C₂ : Finset α) (hroot : root ∈ C₂)
     (roots₁ : Finset {x // x ∈ C₁})
@@ -432,8 +434,8 @@ theorem exists_claim712_piece_copies
     (hindep₂ : ∀ ⦃x y⦄, (T.induce (C₂ : Set α)).Adj x y →
       side₂ x = 1 → side₂ y ≠ 1)
     (A₁ B₁ A₂ B₂ : Finset β)
-    (hAB₁ : Disjoint A₁ B₁) (hAB₂ : Disjoint A₂ B₂)
-    (hhost12 : Disjoint (A₁ ∪ B₁) (A₂ ∪ B₂))
+    (_hAB₁ : Disjoint A₁ B₁) (hAB₂ : Disjoint A₂ B₂)
+    (_hhost12 : Disjoint (A₁ ∪ B₁) (A₂ ∪ B₂))
     (v₀ : β) (q : ℕ)
     (horder₁ : Fintype.card {x // x ∈ C₁} + 1 ≤ q)
     (hrootNbr₁ : ∀ x ∈ roots₁,
@@ -454,6 +456,7 @@ theorem exists_claim712_piece_copies
       (∀ x : {x // x ∈ C₁}, T.Adj x root →
         G.Adj (f₁ x) (f₂ ⟨root, hroot⟩)) := by
   classical
+  let := Fintype.ofFinite α
   let candidate₁ : {x // x ∈ C₁} → Finset β := fun x =>
     twoParts A₁ B₁ (side₁ x)
   obtain ⟨f₁, hf₁mem, hf₁root⟩ :=
@@ -503,7 +506,7 @@ containment, so it can be reused by the surrounding EC2 argument. -/
 theorem exists_claim712_full_copy
     {α β : Type*} [Fintype α] [Fintype β] [DecidableEq α] [DecidableEq β]
     (T : SimpleGraph α) (G : SimpleGraph β)
-    [DecidableRel T.Adj] [DecidableRel G.Adj]
+    [DecidableRel G.Adj]
     (hT : T.IsTree)
     (root : α) (C₁ C₂ L : Finset α)
     (hdisj₁₂ : Disjoint C₁ C₂)
@@ -539,6 +542,7 @@ theorem exists_claim712_full_copy
     (hv₀ : v₀ ∈ twoParts A₂ B₂ (side₂ ⟨root, hroot⟩))
     (hheavy : Fintype.card α - 1 ≤ G.degree v₀) :
     Nonempty (T.Copy G) := by
+  classical
   have hTree₂ : (T.induce (C₂ : Set α)).IsTree :=
     ⟨hconnected₂, hT.isAcyclic.induce (C₂ : Set α)⟩
   obtain ⟨f₁, f₂, hf₁, hf₂, hf₂root, hattach⟩ :=
@@ -562,8 +566,8 @@ components using only the *total* supply of neighbours of `v₀` in
 `A₁ ∪ B₁`.  The later choice of component orientation records, for each
 reserved image, whether it lies in `A₁` or `B₁`. -/
 theorem exists_injective_root_images_in_neighborhood
-    {γ β : Type*} [Fintype γ] [Fintype β]
-    [DecidableEq γ] [DecidableEq β]
+    {γ β : Type*} [Finite γ] [Fintype β]
+    [DecidableEq β]
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (roots : Finset γ) (v₀ : β) (A₁ B₁ : Finset β)
     (hcard : roots.card ≤
@@ -571,6 +575,7 @@ theorem exists_injective_root_images_in_neighborhood
     ∃ e : {x // x ∈ roots} ↪ β,
       ∀ x, G.Adj v₀ (e x) ∧ e x ∈ A₁ ∪ B₁ := by
   classical
+  let := Fintype.ofFinite γ
   have hcard' : Fintype.card {x // x ∈ roots} ≤
       ((G.neighborFinset v₀) ∩ (A₁ ∪ B₁)).card := by
     simpa only [Fintype.card_coe] using hcard
@@ -636,11 +641,11 @@ theorem orientComponents_root
     then c (rootVertex r) else flipTwo (c (rootVertex r))) = rootSide r
   rw [hroot r]
   by_cases hsame : rootSide r = c (rootVertex r)
-  · simpa [orientComponents, hsame] using hsame.symm
+  · simp [hsame]
   · have hne : c (rootVertex r) ≠ rootSide r := Ne.symm hsame
     rcases fin2_eq_zero_or_one (c (rootVertex r)) with hc | hc <;>
       rcases fin2_eq_zero_or_one (rootSide r) with hs | hs <;>
-      simp_all [orientComponents, flipTwo]
+      simp_all [flipTwo]
 
 /-- Choose the host side containing a reserved root image.  Disjointness is
 not needed for existence; if an image lies in both sides, side zero is used. -/
@@ -656,7 +661,7 @@ theorem rootImage_mem_selected_side
     (hmem : ∀ r, rootImage r ∈ A₁ ∪ B₁) (r : ρ) :
     rootImage r ∈ twoParts A₁ B₁ (rootImageSide A₁ rootImage r) := by
   by_cases hA : rootImage r ∈ A₁
-  · simpa [rootImageSide, hA] using hA
+  · simp [rootImageSide, hA]
   · have hB : rootImage r ∈ B₁ :=
       (Finset.mem_union.mp (hmem r)).resolve_left hA
     simpa [rootImageSide, hA] using hB
@@ -670,10 +675,10 @@ total forest order by one class size.  The selected natural subtree is
 embedded with its root sent to the external vertex `v₀`; all of its other
 vertices lie in `A₂ ∪ B₂`, so `v₀` need not belong to either set. -/
 theorem exists_claim712_piece_copies_sharp
-    {α β : Type*} [Fintype α] [Fintype β]
+    {α β : Type*} [Finite α] [Fintype β]
     [DecidableEq α] [DecidableEq β]
     (T : SimpleGraph α) (G : SimpleGraph β)
-    [DecidableRel T.Adj] [DecidableRel G.Adj]
+    [DecidableRel G.Adj]
     (root : α) (C₁ C₂ : Finset α) (hroot : root ∈ C₂)
     (roots₁ : Finset {x // x ∈ C₁})
     (hrootIndependent₁ :
@@ -710,6 +715,8 @@ theorem exists_claim712_piece_copies_sharp
         f₂ ⟨root, hroot⟩ = v₀ ∧
         (∀ x : {x // x ∈ C₁}, T.Adj x root →
           G.Adj (f₁ x) (f₂ ⟨root, hroot⟩)) := by
+  classical
+  let := Fintype.ofFinite α
   have hparts₁ : Set.PairwiseDisjoint Set.univ (twoParts A₁ B₁) :=
     twoParts_pairwiseDisjoint hAB₁
   obtain ⟨f₁, hf₁parts, hf₁roots⟩ :=
@@ -738,10 +745,10 @@ one ordinary bipartite colouring of the forest and a component-root map.
 Each component is then flipped automatically according to whether its
 reserved root image lies in `A₁` or `B₁`. -/
 theorem exists_claim712_piece_copies_oriented
-    {α β : Type*} [Fintype α] [Fintype β]
+    {α β : Type*} [Finite α] [Fintype β]
     [DecidableEq α] [DecidableEq β]
     (T : SimpleGraph α) (G : SimpleGraph β)
-    [DecidableRel T.Adj] [DecidableRel G.Adj]
+    [DecidableRel G.Adj]
     (root : α) (C₁ C₂ : Finset α) (hroot : root ∈ C₂)
     (roots₁ : Finset {x // x ∈ C₁})
     (hrootIndependent₁ :
@@ -787,6 +794,8 @@ theorem exists_claim712_piece_copies_oriented
         f₂ ⟨root, hroot⟩ = v₀ ∧
         (∀ x : {x // x ∈ C₁}, T.Adj x root →
           G.Adj (f₁ x) (f₂ ⟨root, hroot⟩)) := by
+  classical
+  let := Fintype.ofFinite α
   let rootVertex : {x // x ∈ roots₁} → {x // x ∈ C₁} := fun r => r
   let side₁ := orientComponents baseColor₁ componentRoot rootVertex
     (rootImageSide A₁ rootImage₁) hadjComponent
@@ -818,7 +827,7 @@ theorem exists_claim712_full_copy_sharp
     {α β : Type*} [Fintype α] [Fintype β]
     [DecidableEq α] [DecidableEq β]
     (T : SimpleGraph α) (G : SimpleGraph β)
-    [DecidableRel T.Adj] [DecidableRel G.Adj]
+    [DecidableRel G.Adj]
     (root : α) (C₁ C₂ L : Finset α)
     (hdisj₁₂ : Disjoint C₁ C₂)
     (hdisj₁L : Disjoint C₁ L) (hdisj₂L : Disjoint C₂ L)
@@ -856,6 +865,7 @@ theorem exists_claim712_full_copy_sharp
         ((G.neighborFinset v) ∩ (A₂ ∪ B₂)).card)
     (hheavy : Fintype.card α - 1 ≤ G.degree v₀) :
     Nonempty (T.Copy G) := by
+  classical
   obtain ⟨f₁, f₂, hf₁, hf₂away, hf₂root, hattach⟩ :=
     exists_claim712_piece_copies_sharp T G root C₁ C₂ hroot roots₁
       hrootIndependent₁ hpeel₁ hboundaryRoots side₁ hTree₂

@@ -4,7 +4,7 @@ import ErdosProblems.Erdos547b.SourceLeafCoreMass
 
 /-! # Exact source mass of the literal postponed-path core -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePathCoreMass
@@ -42,7 +42,8 @@ theorem retained_vertex_count : P.numParts + OrderedBranchForest.edgeDemand (cor
     2 * p = Fintype.card U := by
   have h := Fintype.card_congr (pathCoreGraphIso P hp hT
     (sideLocate (branchForest P) (componentReservoirSide P)) (fun _ => rfl)).toEquiv
-  simp only [OrderedBranchForest.Vertex, Fintype.card_sum, Fintype.card_fin, Fintype.card_sigma] at h
+  simp only [OrderedBranchForest.Vertex, Fintype.card_sum, Fintype.card_fin,
+    Fintype.card_sigma] at h
   have hc := selectedCore_card P hp
   change _ = P.numParts + OrderedBranchForest.edgeDemand (coreForest P hp) at h
   omega

@@ -112,9 +112,9 @@ theorem branchCopy_extend_before
   unfold extendOnlineOwnerPrefixState
   dsimp only
   erw [castChosenSelected_componentCopy]
-  erw [appendChosen_componentCopy_left]
-  rfl
-  exact Finset.mem_union_left _ hmem
+  · erw [appendChosen_componentCopy_left]
+    rfl
+  · exact Finset.mem_union_left _ hmem
 
 end Erdos547b.ZhaoLemma58GlobalOwnerBranchImage
 

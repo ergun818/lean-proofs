@@ -12,7 +12,7 @@ The selected family may lie on either root side. Its complement on that
 side and the whole opposite side complete a covering decomposition.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceExceptionalFamilies
@@ -40,7 +40,8 @@ theorem sideBranches_disjoint (s : Fin 2) :
     Disjoint (sideBranches P s) (sideBranches P (otherSide s)) := by
   rw [Finset.disjoint_left]
   intro i hi hj
-  exact otherSide_ne s ((mem_sideBranches P _ i).mp hj |>.symm.trans ((mem_sideBranches P _ i).mp hi))
+  exact otherSide_ne s ((mem_sideBranches P _ i).mp hj |>.symm.trans ((mem_sideBranches P _ i).mp
+    hi))
 
 theorem mem_sideBranches_or_other (s : Fin 2) (i : BranchIndex P) :
     i ∈ sideBranches P s ∨ i ∈ sideBranches P (otherSide s) := by

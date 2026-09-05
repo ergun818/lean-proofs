@@ -84,7 +84,8 @@ theorem postponedCount_lt_low_capacity {α : ℚ} {q M : ℕ}
   have hdρ : 5 * (degreeError α : ℝ) < rho α := by exact_mod_cast five_degreeError_lt_rho hα hα1
   have hm := mul_le_mul_of_nonneg_right hdρ.le (Nat.cast_nonneg q : (0 : ℝ) ≤ q)
   have hr : (0 : ℝ) ≤ rho α := by exact_mod_cast (parameter_pos hα).2.1.le
-  have hc : (postponedCount α q : ℝ) < 4 * (rho α : ℝ) * q + 1 := Nat.ceil_lt_add_one (by positivity)
+  have hc : (postponedCount α q : ℝ) < 4 * (rho α : ℝ) * q + 1 := Nat.ceil_lt_add_one
+    (by positivity)
   linarith only [hdq, hm, hc]
 
 theorem highCount_lt_high_capacity {α : ℚ} {q M : ℕ}
@@ -95,7 +96,8 @@ theorem highCount_lt_high_capacity {α : ℚ} {q M : ℕ}
     exact_mod_cast high_reservoir_margin hα hα1
   have hm := mul_le_mul_of_nonneg_right hmargin.le (Nat.cast_nonneg q : (0 : ℝ) ≤ q)
   have hd : (0 : ℝ) ≤ degreeError α := by exact_mod_cast (parameter_pos hα).2.2.2.2.1.le
-  have hc : (highCount α q : ℝ) < 5 * (degreeError α : ℝ) * q + 1 := Nat.ceil_lt_add_one (by positivity)
+  have hc : (highCount α q : ℝ) < 5 * (degreeError α : ℝ) * q + 1 := Nat.ceil_lt_add_one
+    (by positivity)
   nlinarith only [hdq, hm, hc]
 
 theorem low_degree_integer {α : ℚ} {q deg : ℕ}

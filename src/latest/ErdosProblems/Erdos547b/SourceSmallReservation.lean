@@ -12,7 +12,7 @@ count. Actual matching volume then pays the opposite-row weight cost;
 the possibly padded half is used only for the exceptional exclusion.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceSmallReservation
@@ -110,19 +110,23 @@ theorem exists_smallReservation (hα : 0 < α) (hα1 : α ≤ 1 / 4)
         (∑ e ∈ awayEdges W Q, sideWeight W Q S s e) := by
     have hsum := mul_le_mul_of_nonneg_left htotal (show 0 ≤ 2 * (fourthRoot α : ℝ) by positivity)
     have hgate' := hgate.trans hsum
-    have h := mul_le_mul_of_nonneg_left hgate' (Nat.cast_nonneg (awayEdges W Q).card : (0 : ℝ) ≤ (awayEdges W Q).card)
+    have h := mul_le_mul_of_nonneg_left hgate' (Nat.cast_nonneg (awayEdges W Q).card : (0 : ℝ) ≤
+      (awayEdges W Q).card)
     nlinarith only [h]
-  obtain ⟨Eb, hEb, hlo, hup, hcount⟩ := exists_small_submatching (awayEdges W Q) (sideWeight W Q S s)
+  obtain ⟨Eb, hEb, hlo, hup, hcount⟩ := exists_small_submatching (awayEdges W Q) (sideWeight W Q S
+    s)
     (fb + 3 * (gamma α : ℝ) * q) (2 * W.clusterSize) (2 * (fourthRoot α : ℝ) * (awayEdges W Q).card)
     (fun e _ => sideWeight_nonneg W Q S s e) (by positivity) (by positivity)
     (fun e _ => sideWeight_le W Q S s e) htarget (hD.trans_le htotal) hcardGate
   have hawayCount : (awayEdges W Q).card ≤ paddedHalf (Index W) :=
     (Finset.card_le_card (edgesAwayFromDistinguished_subset _ _ _ _)).trans
       (allMatchingEdges_card_le_paddedHalf Q.claim67.M Q.claim67.isMatching (padFinset (large W)))
-  have hawayCountR : ((awayEdges W Q).card : ℝ) ≤ paddedHalf (Index W) := by exact_mod_cast hawayCount
+  have hawayCountR : ((awayEdges W Q).card : ℝ) ≤ paddedHalf (Index W) :=
+    by exact_mod_cast hawayCount
   have hcountHalf : (Eb.card : ℝ) ≤ (eta α : ℝ) * paddedHalf (Index W) / 2 := by
     have hc := mul_le_mul_of_nonneg_left hawayCountR (show 0 ≤ 2 * (fourthRoot α : ℝ) by positivity)
-    have htK := mul_le_mul_of_nonneg_right h4t (Nat.cast_nonneg (paddedHalf (Index W)) : (0 : ℝ) ≤ paddedHalf (Index W))
+    have htK := mul_le_mul_of_nonneg_right h4t (Nat.cast_nonneg (paddedHalf (Index W)) : (0 : ℝ) ≤
+      paddedHalf (Index W))
     nlinarith only [hcount, hc, htK]
   refine ⟨Eb, hEb, hlo, hup, hcount, hcountHalf, ?_⟩
   intro u

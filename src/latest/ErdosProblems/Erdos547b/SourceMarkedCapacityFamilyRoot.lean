@@ -9,7 +9,7 @@ Active requirements and live targets are read from the stored ordinary
 states. The common root additionally has the verified marked-group degrees.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMarkedCapacityFamilyRoot
@@ -66,7 +66,8 @@ theorem exists_marked_capacityFamily_root
         ((bad j).card : ℝ) ≤ 2 * (rootTypicality α : ℝ) * globalCount ∧
         ∀ e ∈ (A j).unusedEdges W Q S (rootCluster W Q 0) F owner (kinds j) \ bad j,
           requirementGood W Q S (rootCluster W Q 0) (initialRequirement W Q (kinds j) e) z := by
-  let requirements := fun j => activeRequirement W Q S (rootCluster W Q 0) F owner (kinds j) (A j).active
+  let requirements := fun j => activeRequirement W Q S (rootCluster W Q 0) F owner (kinds j) (A
+    j).active
   let unused := fun j => (A j).unusedEdges W Q S (rootCluster W Q 0) F owner (kinds j)
   let remaining := Finset.univ.biUnion unused
   let raw := allocatedTarget W Q kinds allocation
@@ -84,7 +85,8 @@ theorem exists_marked_capacityFamily_root
       (epsilon α : ℝ) * W.clusterSize ≤ (raw e c).card :=
     fun e _ c => allocatedTarget_large W Q hα hα1 hhost horder kinds allocation e c
   have hremainingCard : remaining.card ≤ globalCount := by
-    apply (Finset.card_le_card (show remaining ⊆ Finset.univ.biUnion allocation from ?_)).trans hglobal
+    apply (Finset.card_le_card (show remaining ⊆ Finset.univ.biUnion allocation from ?_)).trans
+      hglobal
     intro e he
     obtain ⟨j, hj, hje⟩ := Finset.mem_biUnion.mp he
     exact Finset.mem_biUnion.mpr ⟨j, hj, (Finset.mem_sdiff.mp hje).1⟩

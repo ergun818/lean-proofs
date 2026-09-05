@@ -5,7 +5,7 @@ import ErdosProblems.Erdos547b.SourceLeafCoreMass
 # The source leaf saving pays the two matching margins and rounding
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceLeafCoreNumerics
@@ -46,7 +46,8 @@ theorem core_row_surplus (hα : 0 < α) (hα1 : α ≤ 1 / 4)
     (hhost : hostN = 2 * q) (horder : orderThreshold α M ≤ q)
     (hcard : Fintype.card U = q + 1)
     (hleaves : 11 * (fourthRoot α : ℝ) ^ 2 * q ≤ (originalLevelOneLeaves P).card) (s : Fin 2) :
-    (OrderedBranchForest.edgeDemand (OrderedBranchForest.restrict (branchForest P) (keptBranches P)) : ℝ) +
+    (OrderedBranchForest.edgeDemand (OrderedBranchForest.restrict (branchForest P) (keptBranches P))
+      : ℝ) +
       2 * (3 * (gamma α : ℝ) * q) + 2 * (2 * (W.clusterSize : ℝ)) ≤
         ∑ e ∈ awayEdges W Q, sideWeight W Q S s e := by
   have hmass := retained_mass_le P hT hcard

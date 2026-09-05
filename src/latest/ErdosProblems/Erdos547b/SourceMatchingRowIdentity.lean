@@ -4,7 +4,7 @@ import ErdosProblems.Erdos547b.SourceSwitchRows
 
 /-! # The arbitrary matching's indexed rows are its literal support rows -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMatchingRowIdentity

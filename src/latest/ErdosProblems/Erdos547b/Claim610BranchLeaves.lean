@@ -34,6 +34,7 @@ def treeColourClass (T : SimpleGraph V) (hT : T.IsTree) (root : V)
     (c : Fin 2) : Finset V :=
   Finset.univ.filter fun v => hT.coloringTwoOfVert root v = c
 
+omit [DecidableEq V] in
 @[simp] theorem mem_treeColourClass
     (T : SimpleGraph V) (hT : T.IsTree) (root : V) (c : Fin 2) (v : V) :
     v ∈ treeColourClass T hT root c ↔
@@ -49,22 +50,26 @@ theorem treeColourClass_zero_union_one
   simp only [Finset.mem_union, mem_treeColourClass, Finset.mem_univ, iff_true]
   omega
 
+omit [DecidableEq V] in
 theorem treeColourClass_zero_disjoint_one
     (T : SimpleGraph V) (hT : T.IsTree) (root : V) :
     Disjoint (treeColourClass T hT root 0)
       (treeColourClass T hT root 1) := by
+  classical
   rw [Finset.disjoint_left]
   intro v hv0 hv1
   rw [mem_treeColourClass] at hv0 hv1
   omega
 
+omit [DecidableEq V] in
 /-- The canonical color classes form a proper bipartition as soon as the
 tree has at least two vertices. -/
 theorem canonical_isProperBipartition
-    (T : SimpleGraph V) [DecidableRel T.Adj] (hT : T.IsTree) (root : V)
+    (T : SimpleGraph V) (hT : T.IsTree) (root : V)
     (hcard : 2 ≤ Fintype.card V) :
     Erdos547b.IsProperBipartition T
       (treeColourClass T hT root 0) (treeColourClass T hT root 1) := by
+  classical
   let color := hT.coloringTwoOfVert root
   have hnontrivial : Nontrivial V :=
     Fintype.one_lt_card_iff_nontrivial.mp (by omega)
@@ -110,22 +115,25 @@ theorem canonical_isProperBipartition
     · change color w = 1
       exact hw
 
+omit [DecidableEq V] in
 /-- The two canonical class cardinalities add to the order of the tree. -/
 theorem card_treeColourClass_add
     (T : SimpleGraph V) (hT : T.IsTree) (root : V) :
     #(treeColourClass T hT root 0) + #(treeColourClass T hT root 1) =
       Fintype.card V := by
+  classical
   rw [← Finset.card_union_of_disjoint
     (treeColourClass_zero_disjoint_one T hT root),
     treeColourClass_zero_union_one, Finset.card_univ]
 
+omit [DecidableEq V] in
 /-- Zhao Fact 6.9 in the sharpened real ratio form used by Claim 6.10.
 The extra one is exactly what pays for the possible loss of the rooted
 branch vertex when the branch is reattached to its component root. -/
 theorem many_leaves_of_ratio_not_between_add_one
     (T : SimpleGraph V) [DecidableRel T.Adj] (hT : T.IsTree) (root : V)
     (hcard : 2 ≤ Fintype.card V)
-    (alpha : ℝ) (halpha0 : 0 ≤ alpha) (halphaHalf : alpha ≤ 1 / 2)
+    (alpha : ℝ) (_halpha0 : 0 ≤ alpha) (halphaHalf : alpha ≤ 1 / 2)
     (hunbalanced : ¬(alpha <
         (#(treeColourClass T hT root 0) : ℝ) / Fintype.card V ∧
       (#(treeColourClass T hT root 0) : ℝ) / Fintype.card V <
@@ -177,7 +185,6 @@ theorem many_leaves_of_ratio_not_between_add_one
         (Erdos547b.leavesIn T B).card := by exact_mod_cast hfact
     have htarget : (1 - 2 * alpha) * Fintype.card V + 1 ≤
         (B.card - A.card + 1 : ℝ) := by
-      push_cast
       have hsumR : (A.card : ℝ) + B.card = Fintype.card V := by
         exact_mod_cast hsumNat
       nlinarith
@@ -210,13 +217,13 @@ theorem many_leaves_of_ratio_not_between_add_one
         (Erdos547b.leavesIn T A).card := by exact_mod_cast hfact
     have htarget : (1 - 2 * alpha) * Fintype.card V + 1 ≤
         (A.card - B.card + 1 : ℝ) := by
-      push_cast
       have hsumR : (A.card : ℝ) + B.card = Fintype.card V := by
         exact_mod_cast hsumNat
       nlinarith
     exact htarget.trans (hfactR.trans (by
       exact_mod_cast Finset.card_le_card hleavesA))
 
+omit [DecidableEq V] in
 /-- The slightly weaker display without the integral `+1`. -/
 theorem many_leaves_of_ratio_not_between
     (T : SimpleGraph V) [DecidableRel T.Adj] (hT : T.IsTree) (root : V)
@@ -228,6 +235,7 @@ theorem many_leaves_of_ratio_not_between
         1 - alpha)) :
     (1 - 2 * alpha) * Fintype.card V ≤
       (#(Erdos547b.leavesIn T (Finset.univ : Finset V)) : ℕ) := by
+  classical
   have h := many_leaves_of_ratio_not_between_add_one T hT root hcard alpha
     halpha0 halphaHalf hunbalanced
   linarith

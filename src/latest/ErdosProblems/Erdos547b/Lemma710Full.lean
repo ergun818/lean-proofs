@@ -47,8 +47,10 @@ namespace TwoPath
 variable [Fintype A] [DecidableEq A]
 variable {T : SimpleGraph A}
 
+omit [DecidableEq A] [Fintype A] in
 theorem middle_ne_left (P : TwoPath T) : P.middle ≠ P.left := P.adj_left.ne'
 
+omit [DecidableEq A] [Fintype A] in
 theorem middle_ne_right (P : TwoPath T) : P.middle ≠ P.right := P.adj_right.ne
 
 /-- If the middle of a two-path has degree two, its only neighbors are its
@@ -66,15 +68,17 @@ theorem neighborFinset_middle_eq (P : TwoPath T) [DecidableRel T.Adj]
     rw [T.card_neighborFinset_eq_degree, hdeg, Finset.card_pair P.left_ne_right]
   exact (Finset.eq_of_subset_of_card_le hsub hcard).symm
 
+omit [DecidableEq A] in
 /-- In a rooted tree, the endpoints of a degree-two-middle two-path not
 containing the root lie at different root distances.  Thus the phrases
 "nearer endpoint" and "farther endpoint" in Zhao's proof are unambiguous. -/
 theorem endpoint_dist_ne (P : TwoPath T) [DecidableRel T.Adj]
     (hT : T.IsTree) (root : A)
-    (hroot_left : root ≠ P.left) (hroot_middle : root ≠ P.middle)
-    (hroot_right : root ≠ P.right)
+    (_hroot_left : root ≠ P.left) (hroot_middle : root ≠ P.middle)
+    (_hroot_right : root ≠ P.right)
     (hdeg : T.degree P.middle = 2) :
     T.dist root P.left ≠ T.dist root P.right := by
+  classical
   intro heq
   have hLM := hT.dist_eq_dist_add_one_of_adj root P.adj_left
   have hMR := hT.dist_eq_dist_add_one_of_adj root P.adj_right
@@ -109,7 +113,7 @@ set and prescribed, pairwise distinct images of the deleted vertices.  This
 is the graph-theoretic assembly step used after the two Hall matchings in
 Zhao's Lemma 7.10. -/
 theorem copy_of_induce_compl_and_extension
-    [Fintype A] [DecidableEq A] [DecidableEq B]
+    [Finite A]
     (T : SimpleGraph A) (G : SimpleGraph B) (D : Finset A)
     (f : (T.induce ((D : Set A)ᶜ)).Copy G) (g : D → B)
     (hg : Function.Injective g)
@@ -121,6 +125,7 @@ theorem copy_of_induce_compl_and_extension
       (∀ x : D, F x = g x) ∧
       (∀ x : ↥((D : Set A)ᶜ), F x = f x) := by
   classical
+  let := Fintype.ofFinite A
   let F : A → B := fun x => if hx : x ∈ D then g ⟨x, hx⟩ else f ⟨x, by simpa using hx⟩
   have hmap : ∀ {x y : A}, T.Adj x y → G.Adj (F x) (F y) := by
     intro x y hxy
@@ -158,13 +163,13 @@ theorem copy_of_induce_compl_and_extension
   let C : T.Copy G := ⟨⟨F, @hmap⟩, hinj⟩
   refine ⟨C, ?_, ?_⟩
   · intro x
-    simpa [C, F] using x.property
+    simp [C, F]
   · intro x
     have hxSet := x.property
     change x.1 ∉ (D : Set A) at hxSet
     have hx : x.1 ∉ D := by simpa using hxSet
     change F x.1 = f x
-    rw [show F x.1 = f ⟨x.1, by simpa using hx⟩ by simp [F, hx]]
+    rw [show F x.1 = f ⟨x.1, by simp⟩ by simp [F, hx]]
 
 /-- The exact host path system in condition (3) of Zhao's Lemma 7.10.
 The midpoint index is the actual vertex of `Y₂`; endpoint injectivity encodes
@@ -254,7 +259,7 @@ theorem card_neighbors_add_defect_ge
 /-- The singleton-target branch of Lemma 7.10.  This is separated because
 Proposition 7.11(3) is naturally stated for nontrivial trees. -/
 theorem zhao_lemma_7_10_of_subsingleton
-    [Fintype A] [DecidableEq A] [Fintype B] [DecidableEq B]
+    [Finite A] [Finite B]
     (T : SimpleGraph A) (G : SimpleGraph B)
     (U1 U2 : Finset A) (X Y : Finset B) (z : A) (a : B)
     (hsub : Subsingleton A)
@@ -262,6 +267,9 @@ theorem zhao_lemma_7_10_of_subsingleton
     (hz : z ∈ U1) (ha : a ∈ X) :
     ∃ f : T.Copy G, f z = a ∧
       (∀ v ∈ U1, f v ∈ X) ∧ (∀ v ∈ U2, f v ∈ Y) := by
+  classical
+  let := Fintype.ofFinite A
+  let := Fintype.ofFinite B
   let F : A → B := fun _ => a
   have hFinj : Function.Injective F := fun x y _ => hsub.elim x y
   have hFmap : ∀ ⦃x y : A⦄, T.Adj x y → G.Adj (F x) (F y) := by
@@ -322,7 +330,7 @@ structure Proposition711Part3Witness
   avoid_root : ∀ c ∈ P ∪ Q, z ∉ twoPathVertices T c
 
 private theorem exists_disjoint_support_packing
-    {α β : Type*} [DecidableEq α] [DecidableEq β]
+    {α β : Type*} [DecidableEq β]
     (support : α → Finset β) (D : Finset α) (r k : ℕ)
     (hr : 0 < r)
     (hne : ∀ x ∈ D, (support x).Nonempty)
@@ -330,6 +338,7 @@ private theorem exists_disjoint_support_packing
       (D.filter fun y => ¬Disjoint (support x) (support y)).card ≤ r)
     (hcard : r * k ≤ D.card) :
     ∃ P : Finset α, P ⊆ D ∧ P.card = k ∧ (P : Set α).PairwiseDisjoint support := by
+  classical
   induction k generalizing D with
   | zero => exact ⟨∅, by simp⟩
   | succ k ih =>
@@ -382,12 +391,12 @@ private theorem exists_disjoint_support_packing
 
 @[simp] private theorem mem_twoPathVertices {T : SimpleGraph V} [DecidableRel T.Adj]
     {u v : V} : u ∈ twoPathVertices T v ↔ u = v ∨ T.Adj v u := by
-  simp [twoPathVertices, eq_comm]
+  simp [twoPathVertices]
 
 private theorem card_twoPathVertices {T : SimpleGraph V} [DecidableRel T.Adj]
     {v : V} (hv : T.degree v = 2) : (twoPathVertices T v).card = 3 := by
   rw [twoPathVertices, Finset.card_insert_of_notMem]
-  · simpa [T.card_neighborFinset_eq_degree, hv]
+  · simp [T.card_neighborFinset_eq_degree, hv]
   · simp
 
 private theorem card_secondNeighborhood_le_three
@@ -396,7 +405,7 @@ private theorem card_secondNeighborhood_le_three
     (hend : ∀ x, T.Adj v x → T.degree x ≤ 2) :
     (Erdos547EC2.openNeighborFinset T (T.neighborFinset v)).card ≤ 3 := by
   have hcardN : (T.neighborFinset v).card = 2 := by
-    simpa [T.card_neighborFinset_eq_degree, hv]
+    simp [T.card_neighborFinset_eq_degree, hv]
   obtain ⟨a, b, hab, hN⟩ := Finset.card_eq_two.mp hcardN
   have hva : T.Adj v a := by
     rw [← T.mem_neighborFinset]
@@ -441,7 +450,7 @@ private theorem card_conflicting_centers_le_three
     by_cases hxy : y = x
     · subst y
       have hpos : 0 < (T.neighborFinset x).card := by
-        simpa [T.card_neighborFinset_eq_degree, hxdeg]
+        simp [T.card_neighborFinset_eq_degree, hxdeg]
       obtain ⟨u, hu⟩ := Finset.card_pos.mp hpos
       apply Finset.mem_biUnion.mpr
       exact ⟨u, hu, (T.mem_neighborFinset u x).mpr ((T.mem_neighborFinset x u).mp hu).symm⟩
@@ -522,7 +531,6 @@ theorem zhao_proposition_7_11_part_three
     rw [heq, Finset.card_union_of_disjoint hd]
   have hN (S : Finset V) : (N S).card + 2 ≤ 2 * S.card + L.card := by
     simpa only [N, L] using Erdos547EC2.zhao_prop_7_11_part_two T hT S
-
   let firstBad := N (B1 ∪ {z})
   let secondBad := N (N B2)
   let badP := ((L ∪ Br) ∩ U2) ∪ firstBad ∪ secondBad
@@ -658,7 +666,6 @@ theorem zhao_proposition_7_11_part_three
   obtain ⟨P, hPD2, hPcard, hPpair⟩ :=
     exists_disjoint_support_packing (twoPathVertices T) D2 3 (5 * l)
       (by omega) hsupportNonempty hD2conflict (by omega)
-
   let Pends := P.biUnion fun p => T.neighborFinset p
   have hPends : Pends.card ≤ 10 * l := by
     calc
@@ -666,7 +673,7 @@ theorem zhao_proposition_7_11_part_three
       _ = ∑ _p ∈ P, 2 := by
         apply Finset.sum_congr rfl
         intro p hp
-        simpa [T.card_neighborFinset_eq_degree, (hD2prop p (hPD2 hp)).2]
+        simp [T.card_neighborFinset_eq_degree, (hD2prop p (hPD2 hp)).2]
       _ = 10 * l := by simp [hPcard]; omega
   let nearB2 := N B2
   let baseBadQ := ((L ∪ Br) ∩ U1) ∪ {z} ∪ nearB2
@@ -768,7 +775,6 @@ theorem zhao_proposition_7_11_part_three
   obtain ⟨Q, hQD1, hQcard, hQpair⟩ :=
     exists_disjoint_support_packing (twoPathVertices T) D1 3 (4 * l)
       (by omega) hsupportNonempty1 hD1conflict (by omega)
-
   have hcross : ∀ p ∈ (P : Set V), ∀ q ∈ (Q : Set V), p ≠ q →
       Disjoint (twoPathVertices T p) (twoPathVertices T q) := by
     intro p hp q hq hpq
@@ -1004,23 +1010,30 @@ variable {T : SimpleGraph V}
 
 def vertices (P : TwoPath T) : Finset V := {P.left, P.center, P.right}
 
+omit [Fintype V] in
 @[simp] theorem left_mem_vertices (P : TwoPath T) : P.left ∈ P.vertices := by
   simp [vertices]
 
+omit [Fintype V] in
 @[simp] theorem center_mem_vertices (P : TwoPath T) : P.center ∈ P.vertices := by
   simp [vertices]
 
+omit [Fintype V] in
 @[simp] theorem right_mem_vertices (P : TwoPath T) : P.right ∈ P.vertices := by
   simp [vertices]
 
+omit [Fintype V] in
 theorem card_vertices (P : TwoPath T) : #P.vertices = 3 := by
   simp [vertices, P.left_ne_center, P.left_ne_right, P.center_ne_right]
 
+omit [DecidableEq V] [Fintype V] in
 /-- A degree-two centre of a named two-path has no neighbour other than its
 two displayed endpoints. -/
-theorem eq_left_or_right_of_adj_center (P : TwoPath T)
+theorem eq_left_or_right_of_adj_center [Finite V] (P : TwoPath T)
     (hcard : (T.neighborSet P.center).ncard = 2)
     {x : V} (hx : T.Adj x P.center) : x = P.left ∨ x = P.right := by
+  classical
+  let := Fintype.ofFinite V
   have hsub : ({P.left, P.right} : Set V) ⊆ T.neighborSet P.center := by
     intro y hy
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hy
@@ -1036,11 +1049,14 @@ theorem eq_left_or_right_of_adj_center (P : TwoPath T)
     exact hx.symm
   simpa only [Set.mem_insert_iff, Set.mem_singleton_iff] using this
 
+omit [DecidableEq V] [Fintype V] in
 /-- Relative to a root different from a degree-two centre, the endpoints of
 a two-path cannot lie on the same level. -/
-theorem endpoint_dist_ne (P : TwoPath T) (hT : T.IsTree) (z : V)
+theorem endpoint_dist_ne [Finite V] (P : TwoPath T) (hT : T.IsTree) (z : V)
     (hz : P.center ≠ z) (hcard : (T.neighborSet P.center).ncard = 2) :
     T.dist z P.left ≠ T.dist z P.right := by
+  classical
+  let := Fintype.ofFinite V
   intro heq
   rcases hT.dist_eq_dist_add_one_of_adj z P.adj_left with hL | hL <;>
     rcases hT.dist_eq_dist_add_one_of_adj z P.adj_right with hR | hR
@@ -1074,42 +1090,54 @@ def nearEndpoint (P : TwoPath T) (z : V) : V :=
 def farEndpoint (P : TwoPath T) (z : V) : V :=
   if T.dist z P.left < T.dist z P.right then P.right else P.left
 
-theorem nearEndpoint_mem_vertices (P : TwoPath T) (z : V) :
+omit [Fintype V] in
+theorem nearEndpoint_mem_vertices [Finite V] (P : TwoPath T) (z : V) :
     P.nearEndpoint z ∈ P.vertices := by
+  classical
+  let := Fintype.ofFinite V
   simp only [nearEndpoint]
   split_ifs
   · exact P.left_mem_vertices
   · exact P.right_mem_vertices
 
-theorem farEndpoint_mem_vertices (P : TwoPath T) (z : V) :
+omit [Fintype V] in
+theorem farEndpoint_mem_vertices [Finite V] (P : TwoPath T) (z : V) :
     P.farEndpoint z ∈ P.vertices := by
+  classical
+  let := Fintype.ofFinite V
   simp only [farEndpoint]
   split_ifs
   · exact P.right_mem_vertices
   · exact P.left_mem_vertices
 
+omit [DecidableEq V] [Fintype V] in
 theorem nearEndpoint_eq_left_or_right (P : TwoPath T) (z : V) :
     P.nearEndpoint z = P.left ∨ P.nearEndpoint z = P.right := by
   simp only [nearEndpoint]
   split_ifs <;> simp
 
+omit [DecidableEq V] [Fintype V] in
 theorem farEndpoint_eq_left_or_right (P : TwoPath T) (z : V) :
     P.farEndpoint z = P.left ∨ P.farEndpoint z = P.right := by
   simp only [farEndpoint]
   split_ifs <;> simp
 
+omit [Fintype V] in
 theorem endpoints_eq_near_far (P : TwoPath T) (z : V) :
     ({P.left, P.right} : Finset V) = {P.nearEndpoint z, P.farEndpoint z} := by
   by_cases h : T.dist z P.left < T.dist z P.right
   · simp [nearEndpoint, farEndpoint, h]
   · simp [nearEndpoint, farEndpoint, h, Finset.pair_comm]
 
+omit [DecidableEq V] [Fintype V] in
 /-- The two-path is oriented away from the root: its centre is one level
 after the near endpoint, and the far endpoint one level after that. -/
-theorem near_center_far_dist (P : TwoPath T) (hT : T.IsTree) (z : V)
+theorem near_center_far_dist [Finite V] (P : TwoPath T) (hT : T.IsTree) (z : V)
     (hz : P.center ≠ z) (hcard : (T.neighborSet P.center).ncard = 2) :
     T.dist z (P.nearEndpoint z) + 1 = T.dist z P.center ∧
       T.dist z (P.nearEndpoint z) + 2 = T.dist z (P.farEndpoint z) := by
+  classical
+  let := Fintype.ofFinite V
   have hne := P.endpoint_dist_ne hT z hz hcard
   rcases hT.dist_eq_dist_add_one_of_adj z P.adj_left with hL | hL <;>
     rcases hT.dist_eq_dist_add_one_of_adj z P.adj_right with hR | hR
@@ -1614,6 +1642,7 @@ private noncomputable def twoPathOfDegreeTwo
     (twoPathOfDegreeTwo T v hv).vertices = twoPathVertices T v :=
   (Classical.choose_spec (exists_twoPath_of_degree_two T v hv)).2
 
+omit [DecidableEq V] in
 private theorem degree_eq_neighborSet_ncard
     (T : SimpleGraph V) [DecidableRel T.Adj] (v : V) :
     T.degree v = (T.neighborSet v).ncard := by
@@ -1781,10 +1810,12 @@ universe u v
 variable {A : Type u} {B : Type v}
 
 private theorem exists_maximal_path
-    [Fintype A] (F : SimpleGraph A) [DecidableRel F.Adj] [Nonempty A] :
+    [Finite A] (F : SimpleGraph A) [Nonempty A] :
     ∃ (u v : A) (p : F.Walk u v) (_ : p.IsPath),
       ∀ (u' v' : A) (p' : F.Walk u' v') (_ : p'.IsPath),
         p'.length ≤ p.length := by
+  classical
+  let := Fintype.ofFinite A
   let lengths : Set ℕ :=
     {n | ∃ (u v : A) (p : F.Walk u v), p.IsPath ∧ p.length = n}
   have hfinite : lengths.Finite :=
@@ -1802,9 +1833,10 @@ private theorem exists_maximal_path
 
 /-- Every nonempty finite forest has a vertex of degree at most one. -/
 theorem IsAcyclic.exists_neighborFinset_card_le_one
-    [Fintype A] [DecidableEq A] {F : SimpleGraph A} [DecidableRel F.Adj]
+    [Fintype A] {F : SimpleGraph A} [DecidableRel F.Adj]
     (hF : F.IsAcyclic) [Nonempty A] :
     ∃ x : A, (F.neighborFinset x).card ≤ 1 := by
+  classical
   obtain ⟨u, v, p, hp, hmax⟩ := exists_maximal_path F
   refine ⟨u, ?_⟩
   rw [Finset.card_le_one_iff]
@@ -1870,7 +1902,7 @@ private structure PartialCopy [Fintype A] [DecidableEq A] [DecidableEq B]
   outside_part : ∀ x : ↥(S ∪ R), x.1 ∈ R → toFun x ∈ Q (c x)
 
 private theorem exists_candidate
-    [Fintype B] [DecidableEq B]
+    [Finite B]
     (G : SimpleGraph B) [DecidableRel G.Adj]
     (Q Z used : Finset B) (l demand : ℕ)
     (hZ : Z.card ≤ 2)
@@ -1879,6 +1911,7 @@ private theorem exists_candidate
     (hcapacity : demand + 4 * l ≤ Q.card) :
     ∃ w ∈ Q, w ∉ used ∧ ∀ z ∈ Z, G.Adj z w := by
   classical
+  let := Fintype.ofFinite B
   let bad : Finset B := Z.biUnion fun z => Q.filter fun w => ¬G.Adj z w
   have hbad : bad.card ≤ 2 * l := by
     calc
@@ -1935,7 +1968,7 @@ private theorem card_neighbors_in_union_le_two
       simpa only [F.card_neighborFinset_eq_degree] using hdegree)
 
 private theorem exists_partial_copy
-    [Fintype A] [DecidableEq A] [Fintype B] [DecidableEq B]
+    [Fintype A] [DecidableEq A] [Finite B] [DecidableEq B]
     (F : SimpleGraph A) (G : SimpleGraph B)
     [DecidableRel F.Adj] [DecidableRel G.Adj]
     (hF : F.IsAcyclic) (c : F.Coloring (Fin 2))
@@ -1955,6 +1988,7 @@ private theorem exists_partial_copy
     ∀ R : Finset A, Disjoint S R →
       Nonempty (PartialCopy F G c S R p Q) := by
   classical
+  let := Fintype.ofFinite B
   apply Finset.strongInduction
   intro R ih hSR
   by_cases hRempty : R = ∅
@@ -2116,7 +2150,6 @@ private theorem exists_partial_copy
             apply e.injective
             simpa [f, ha, hb] using hab
           apply Subtype.ext
-          change (a : A) = (b : A)
           exact congrArg (fun q : ↥(S ∪ R') => (q : A)) hold
     · intro a b hab
       by_cases ha : a.1 = x
@@ -2160,7 +2193,7 @@ degree is at most two. The host loses at most 2*l candidates to its at most
 two embedded neighbors; the stated 4*l reserve is the form needed in Lemma
 7.10. -/
 theorem fixed_forest_embedding
-    [Fintype A] [DecidableEq A] [Fintype B] [DecidableEq B]
+    [Fintype A] [DecidableEq A] [Finite B] [DecidableEq B]
     (F : SimpleGraph A) (G : SimpleGraph B)
     [DecidableRel F.Adj] [DecidableRel G.Adj]
     (hF : F.IsAcyclic) (c : F.Coloring (Fin 2))
@@ -2181,6 +2214,7 @@ theorem fixed_forest_embedding
       (∀ x : S, f x = p x) ∧
       ∀ x, x ∉ S → f x ∈ Q (c x) := by
   classical
+  let := Fintype.ofFinite B
   let R : Finset A := Finset.univ \ S
   have hSR : Disjoint S R := by
     simp [R, Finset.disjoint_left]
@@ -2188,18 +2222,18 @@ theorem fixed_forest_embedding
     hp_core_color hboundary hfixed_neighbor_core hmiss hcapacity R hSR
   have hcover : S ∪ R = Finset.univ := by
     simp [R]
-  let eAll : A → B := fun x => e.toFun ⟨x, by simpa [hcover]⟩
+  let eAll : A → B := fun x => e.toFun ⟨x, by simp [hcover]⟩
   have heInj : Function.Injective eAll := by
     intro x y hxy
-    have hsub : (⟨x, by simpa [hcover]⟩ : ↥(S ∪ R)) =
-        ⟨y, by simpa [hcover]⟩ := by
+    have hsub : (⟨x, by simp [hcover]⟩ : ↥(S ∪ R)) =
+        ⟨y, by simp [hcover]⟩ := by
       apply e.injective
       exact hxy
     exact congrArg Subtype.val hsub
   let f : F.Copy G :=
     ⟨⟨eAll, by
       intro x y hxy
-      exact e.map_adj ⟨x, by simpa [hcover]⟩ ⟨y, by simpa [hcover]⟩ hxy⟩,
+      exact e.map_adj ⟨x, by simp [hcover]⟩ ⟨y, by simp [hcover]⟩ hxy⟩,
       heInj⟩
   refine ⟨f, ?_, ?_⟩
   · intro x
@@ -2207,7 +2241,7 @@ theorem fixed_forest_embedding
   · intro x hxS
     have hxR : x ∈ R := by simp [R, hxS]
     simpa [f, eAll, hcover] using
-      e.outside_part ⟨x, by simpa [hcover]⟩ hxR
+      e.outside_part ⟨x, by simp [hcover]⟩ hxR
 
 #print axioms fixed_forest_embedding
 
@@ -2437,7 +2471,7 @@ variable {U₁ U₂ : Finset V} {X Y Y₂ : Finset W} {z : V} {l k : ℕ}
 
 /-- An explicit equivalence when `k` is the cardinality of `Y₂`. -/
 def finEquivY₂ (hk : k = #Y₂) : Fin k ≃ Y₂ :=
-  (Fintype.equivFinOfCardEq (by simpa [hk])).symm
+  (Fintype.equivFinOfCardEq (by simp [hk])).symm
 
 /-- The prescribed host image of each exceptional source name. -/
 def targetVertex (P : CenteredTwoPathSystem G X Y₂)
@@ -3170,6 +3204,7 @@ def exceptionalCenters (D : SurgeryData T U₁ U₂ z l k) :
   Finset.univ.image fun i : Fin k =>
     ExceptionalIndex.sourceVertex D (.center i)
 
+omit [DecidableEq V] in
 private theorem degree_eq_two_of_neighbor_ncard_eq_two
     (G : SimpleGraph V) [DecidableRel G.Adj] {v : V}
     (h : (G.neighborSet v).ncard = 2) : G.degree v = 2 := by
@@ -3177,6 +3212,7 @@ private theorem degree_eq_two_of_neighbor_ncard_eq_two
     ← Set.ncard_eq_toFinset_card']
   exact h
 
+omit [DecidableEq V] in
 private theorem degree_le_two_of_neighbor_ncard_le_two
     (G : SimpleGraph V) [DecidableRel G.Adj] {v : V}
     (h : (G.neighborSet v).ncard ≤ 2) : G.degree v ≤ 2 := by
@@ -3201,6 +3237,7 @@ theorem forest_degree_le_original
   have hc := Finset.card_le_card hsub
   simpa [e] using hc
 
+omit [DecidableRel T.Adj] in
 /-- Each exceptional centre remains a Zhao-special centre after the surgery. -/
 theorem exceptionalCenter_special
     (D : SurgeryData T U₁ U₂ z l k) (i : Fin k) :
@@ -3256,7 +3293,6 @@ theorem exceptionalCenter_special
   obtain ⟨y, hyN, hyx⟩ := Finset.mem_biUnion.mp hx
   have hcyF : D.forest.Adj c y := (D.forest.mem_neighborFinset c y).mp hyN
   have hcyT : T.Adj P.center y.1 := by
-    change T.Adj P.center y.1
     exact hcyF
   rcases P.eq_left_or_right_of_adj_center
       (D.p_special (exceptionalPIndex l i)).1 hcyT.symm with hyL | hyR
@@ -3277,6 +3313,7 @@ theorem exceptionalCenter_special
     exact (forest_degree_le_original D x).trans
       (degree_le_two_of_neighbor_ncard_le_two T hsmall)
 
+omit [DecidableRel T.Adj] in
 theorem exceptionalCenters_special
     (D : SurgeryData T U₁ U₂ z l k) :
     ∀ c ∈ exceptionalCenters D, IsSpecialTwoPathCenter D.forest c := by
@@ -3286,6 +3323,7 @@ theorem exceptionalCenters_special
   obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hc
   exact exceptionalCenter_special D i
 
+omit [DecidableRel T.Adj] in
 /-- The abstract protected set of the exceptional centres is literally the
 canonical source set used by the exceptional premap. -/
 theorem protectedTwoPathSet_exceptionalCenters_eq_sourceSet
@@ -3347,6 +3385,7 @@ theorem protectedTwoPathSet_exceptionalCenters_eq_sourceSet
         · exact Finset.mem_image.mpr ⟨i, Finset.mem_univ _, rfl⟩
         · exact (D.exceptional_path_survives i).2
 
+omit [DecidableRel T.Adj] in
 /-- Boundary sparsity in the exact `SurgeryData`/`sourceSet` interface used
 by the full proof of Zhao's Lemma 7.10. -/
 theorem forest_sourceSet_boundary_sparse
@@ -3392,7 +3431,7 @@ universe u v w
 /-- A balanced bipartite relation with `4*l` vertices on each side and
 minimum degree at least `2*l` has a matching saturating the left side. -/
 theorem exists_injective_assignment_of_balanced_half_degree
-    {I : Type u} {Y : Type v} [Fintype I] [DecidableEq I] [DecidableEq Y]
+    {I : Type u} {Y : Type v} [Fintype I]
     (l : ℕ) (C : Finset Y) (Good : I → Y → Prop) [DecidableRel Good]
     (hI : Fintype.card I = 4 * l) (hC : #C = 4 * l)
     (hleft : ∀ i : I, 2 * l ≤ #(C.filter (Good i)))
@@ -3471,7 +3510,7 @@ The two defect assumptions count missing edges in the candidate set `C`
 and in the whole endpoint-side type `X`, respectively. -/
 theorem exists_injective_common_neighbor_assignment
     {I : Type u} {X : Type v} {Y : Type w}
-    [Fintype I] [DecidableEq I] [Fintype X] [DecidableEq X] [DecidableEq Y]
+    [Fintype I] [Fintype X]
     (l : ℕ) (C : Finset Y) (R : X → Y → Prop) [DecidableRel R]
     (left right : I → X)
     (hI : Fintype.card I = 4 * l) (hC : #C = 4 * l)
@@ -3528,7 +3567,7 @@ theorem exists_injective_common_neighbor_assignment
           intro hiRight
           exact hibad ⟨hiLeft, hiRight⟩
         simpa [pick, hiLeft] using hiRight
-      · simpa [pick, hiLeft] using hiLeft
+      · simp [pick, hiLeft]
     have hbadcard : #bad ≤ l := by
       calc
         #bad = #(bad.image pick) := (Finset.card_image_of_injective _ hpick).symm
@@ -3572,17 +3611,22 @@ variable [Fintype V] [DecidableEq V] [Fintype W] [DecidableEq W]
 def usedVertices {H : SimpleGraph V} {G : SimpleGraph W} (f : H.Copy G) : Finset W :=
   Finset.univ.image f
 
+omit [DecidableEq V] [Fintype W] in
 theorem mem_usedVertices {H : SimpleGraph V} {G : SimpleGraph W} (f : H.Copy G)
     (x : V) : f x ∈ usedVertices f := by
   exact Finset.mem_image.mpr ⟨x, Finset.mem_univ _, rfl⟩
 
-theorem not_mem_range_of_mem_sdiff_used
+omit [DecidableEq V] [Fintype W] in
+theorem not_mem_range_of_mem_sdiff_used [Finite W]
     {H : SimpleGraph V} {G : SimpleGraph W} (f : H.Copy G)
     {S : Finset W} {y : W} (hy : y ∈ S \ usedVertices f) (x : V) :
     f x ≠ y := by
+  classical
+  let := Fintype.ofFinite W
   intro h
   exact (Finset.mem_sdiff.mp hy).2 (h ▸ mem_usedVertices f x)
 
+omit [DecidableEq V] [Fintype W] in
 /-- Choose exactly `r` unused vertices from a host set. -/
 theorem exists_exact_unused
     {H : SimpleGraph V} {G : SimpleGraph W} (f : H.Copy G)
@@ -3595,7 +3639,7 @@ The fixed vertices consume precisely the fixed part of `coreDemand`, while
 every nonfixed vertex consumes precisely the part indexed by its colour. -/
 theorem four_mul_le_card_part_sdiff_used_of_coreDemand
     {A : Type u} {B : Type v}
-    [Fintype A] [DecidableEq A] [Fintype B] [DecidableEq B]
+    [Fintype A] [DecidableEq A] [Finite B] [DecidableEq B]
     {F : SimpleGraph A} {G : SimpleGraph B}
     (c : F.Coloring (Fin 2)) (S : Finset A) (p : S → B)
     (Q : Fin 2 → Finset B) (l : ℕ) (i : Fin 2) (f : F.Copy G)
@@ -3606,6 +3650,7 @@ theorem four_mul_le_card_part_sdiff_used_of_coreDemand
     (hcapacity : #(coreDemand c S p i (Q i)) + 4 * l ≤ #(Q i)) :
     4 * l ≤ #((Q i) \ usedVertices f) := by
   classical
+  let := Fintype.ofFinite B
   let Dmd : Finset A := coreDemand c S p i (Q i)
   have himage : Q i ∩ usedVertices f = Dmd.image f := by
     ext y
@@ -3841,6 +3886,7 @@ private theorem q_raw_endpoints_injective
     subst j
     rfl
 
+omit [DecidableEq W] [Fintype W] in
 theorem p_image_endpoints_injective {G : SimpleGraph W}
     (D : SurgeryData T U₁ U₂ z l k) (f : D.forest.Copy G) :
     Function.Injective fun ib : Fin (4 * l) × Bool =>
@@ -3855,6 +3901,7 @@ theorem p_image_endpoints_injective {G : SimpleGraph W}
     simpa only [apply_ite] using h
   simpa only [apply_ite, pRightVertex, pLeftVertex] using congrArg Subtype.val hv
 
+omit [DecidableEq W] [Fintype W] in
 theorem q_image_endpoints_injective {G : SimpleGraph W}
     (D : SurgeryData T U₁ U₂ z l k) (f : D.forest.Copy G) :
     Function.Injective fun ib : Fin (4 * l) × Bool =>
@@ -3869,6 +3916,7 @@ theorem q_image_endpoints_injective {G : SimpleGraph W}
     simpa only [apply_ite] using h
   simpa only [apply_ite, qRightVertex, qLeftVertex] using congrArg Subtype.val hv
 
+omit [DecidableEq W] [Fintype W] in
 private theorem card_filter_subtype_eq_filter (S : Finset W) (p : W → Prop)
     [DecidablePred p] :
     #(Finset.filter (fun x : S => p x) Finset.univ) = #(S.filter p) := by
@@ -3878,10 +3926,11 @@ private theorem card_filter_subtype_eq_filter (S : Finset W) (p : W → Prop)
     simp [e, and_comm]
   rw [← hmap, Finset.card_map]
 
+omit [Fintype W] in
 /-- Hall assignment for the deleted `P` centres.  The endpoints have already
 been embedded in `X`, and the new centres are chosen, distinctly, from an
 unused `4*l`-set in `Y₁`. -/
-theorem exists_P_center_assignment {G : SimpleGraph W} [DecidableRel G.Adj]
+theorem exists_P_center_assignment [Finite W] {G : SimpleGraph W} [DecidableRel G.Adj]
     (D : SurgeryData T U₁ U₂ z l k) (f : D.forest.Copy G)
     (X Y₁ C : Finset W)
     (hCsub : C ⊆ Y₁ \ usedVertices f) (hCcard : #C = 4 * l)
@@ -3893,6 +3942,7 @@ theorem exists_P_center_assignment {G : SimpleGraph W} [DecidableRel G.Adj]
       ∀ i, gP i ∈ C ∧ G.Adj (f (pLeftVertex D i)) (gP i) ∧
         G.Adj (f (pRightVertex D i)) (gP i) := by
   classical
+  let := Fintype.ofFinite W
   let left : Fin (4 * l) → X := fun i => ⟨f (pLeftVertex D i), hleftX i⟩
   let right : Fin (4 * l) → X := fun i => ⟨f (pRightVertex D i), hrightX i⟩
   let R : X → W → Prop := fun x y => G.Adj x y
@@ -3925,9 +3975,10 @@ theorem exists_P_center_assignment {G : SimpleGraph W} [DecidableRel G.Adj]
   intro i
   simpa only [R, left, right] using hgP i
 
+omit [Fintype W] in
 /-- The symmetric Hall assignment for the deleted `Q` centres.  Here their
 endpoints lie in `Y₁`, and their new images are unused vertices of `X`. -/
-theorem exists_Q_center_assignment {G : SimpleGraph W} [DecidableRel G.Adj]
+theorem exists_Q_center_assignment [Finite W] {G : SimpleGraph W} [DecidableRel G.Adj]
     (D : SurgeryData T U₁ U₂ z l k) (f : D.forest.Copy G)
     (X Y₁ C : Finset W)
     (hCsub : C ⊆ X \ usedVertices f) (hCcard : #C = 4 * l)
@@ -3939,6 +3990,7 @@ theorem exists_Q_center_assignment {G : SimpleGraph W} [DecidableRel G.Adj]
       ∀ i, gQ i ∈ C ∧ G.Adj (gQ i) (f (qLeftVertex D i)) ∧
         G.Adj (gQ i) (f (qRightVertex D i)) := by
   classical
+  let := Fintype.ofFinite W
   let left : Fin (4 * l) → Y₁ := fun i => ⟨f (qLeftVertex D i), hleftY i⟩
   let right : Fin (4 * l) → Y₁ := fun i => ⟨f (qRightVertex D i), hrightY i⟩
   let R : Y₁ → W → Prop := fun y x => G.Adj x y
@@ -4000,6 +4052,7 @@ universe u v
 variable {V : Type u} {W : Type v}
 variable [Fintype V] [DecidableEq V] [Fintype W] [DecidableEq W]
 
+omit [Fintype W] in
 private theorem defect_le_of_dense_inter
     (S N : Finset W) (l : ℕ) (h : #S - l ≤ #(N ∩ S)) :
     #(S \ N) ≤ l := by
@@ -4013,6 +4066,7 @@ variable {T : SimpleGraph V} {G : SimpleGraph W}
 variable [DecidableRel T.Adj] [DecidableRel G.Adj]
 variable {U₁ U₂ : Finset V} {z : V} {l k : ℕ}
 
+omit [DecidableRel T.Adj] in
 /-- Once the forest from the surgery has been embedded, the `8*l` deleted
 centres can be reinserted.  The two applications of Hall use respectively
 unused vertices of `Y₁` for the deleted `P`-centres and unused vertices of
@@ -4040,7 +4094,6 @@ theorem reinsert_deleted_centers
   classical
   obtain ⟨CP, hCPsub, hCPcard⟩ := exists_exact_unused f Y₁ (4 * l) hfreeY₁
   obtain ⟨CQ, hCQsub, hCQcard⟩ := exists_exact_unused f X (4 * l) hfreeX
-
   have hdefXY₁ : ∀ x ∈ X, #(Y₁.filter fun y => ¬ G.Adj x y) ≤ l := by
     intro x hx
     have heq : Y₁.filter (fun y => ¬ G.Adj x y) = Y₁ \ G.neighborFinset x := by
@@ -4063,7 +4116,6 @@ theorem reinsert_deleted_centers
   obtain ⟨qA, hqAinj, hqA⟩ :=
     exists_Q_center_assignment D f X Y₁ CQ hCQsub hCQcard
       hfQleft hfQright hdefXY₁ hdefY₁X
-
   -- Canonical inverse indices for the two centre images.
   have hpExists (x : D.deletedP) :
       ∃ i : Fin (4 * l), (D.P (initialPIndex l k i)).center = x := by
@@ -4079,11 +4131,9 @@ theorem reinsert_deleted_centers
   let qIndex : D.deletedQ → Fin (4 * l) := fun x => Classical.choose (hqExists x)
   have hqIndex_spec (x : D.deletedQ) : (D.Q (qIndex x)).center = x := by
     exact Classical.choose_spec (hqExists x)
-
   let g : D.deleted → W := fun x =>
     if hx : x.1 ∈ D.deletedP then pA (pIndex ⟨x.1, hx⟩)
     else qA (qIndex ⟨x.1, (Finset.mem_union.mp x.2).resolve_left hx⟩)
-
   have hgP (x : D.deleted) (hx : x.1 ∈ D.deletedP) :
       g x = pA (pIndex ⟨x.1, hx⟩) := by simp [g, hx]
   have hgQ (x : D.deleted) (hx : x.1 ∈ D.deletedQ) :
@@ -4130,7 +4180,6 @@ theorem reinsert_deleted_centers
             (hqIndex_spec ⟨x.1, hxQ⟩).symm
           _ = (D.Q (qIndex ⟨y.1, hyQ⟩)).center := by rw [hi]
           _ = y.1 := hqIndex_spec ⟨y.1, hyQ⟩
-
   have hfg : ∀ x y, f x ≠ g y := by
     intro x y h
     rcases Finset.mem_union.mp y.2 with hyP | hyQ
@@ -4144,7 +4193,6 @@ theorem reinsert_deleted_centers
       apply hu
       rw [hgQ y hyQ] at h
       exact h ▸ mem_usedVertices f x
-
   have hDD : ∀ x y : D.deleted, T.Adj x y → G.Adj (g x) (g y) := by
     intro x y hxy
     exfalso
@@ -4175,7 +4223,6 @@ theorem reinsert_deleted_centers
         change (D.Q i).right ∈ D.deleted
         rw [← hy]
         exact y.2
-
   have hDC : ∀ x : D.deleted, ∀ y : ↑((D.deleted : Set V)ᶜ),
       T.Adj x y → G.Adj (g x) (f y) := by
     intro x y hxy
@@ -4206,7 +4253,6 @@ theorem reinsert_deleted_centers
         subst y
         dsimp only [i]
         exact (hqA _).2.2
-
   obtain ⟨F, hFdel, hFforest⟩ :=
     Erdos547b.ZhaoLemma710Alt.copy_of_induce_compl_and_extension
       T G D.deleted f g hg hfg hDD hDC
@@ -4281,13 +4327,15 @@ def forestColoring (D : SurgeryData T U₁ U₂ z l k) :
           D.bipartite.symm.mem_of_mem_adj hx₂ hxyT
         simp [hx, hy₁])
 
+omit [DecidableRel T.Adj] in
 @[simp] theorem forestColoring_eq_zero_iff
     (D : SurgeryData T U₁ U₂ z l k)
     (x : {v : V // v ∉ D.deleted}) :
     forestColoring D x = 0 ↔ x.1 ∈ U₁ := by
   change (if x.1 ∈ U₁ then (0 : Fin 2) else 1) = 0 ↔ x.1 ∈ U₁
-  simp [forestColoring]
+  simp
 
+omit [DecidableRel T.Adj] in
 @[simp] theorem forestColoring_eq_one_iff
     (D : SurgeryData T U₁ U₂ z l k)
     (x : {v : V // v ∉ D.deleted}) :
@@ -4308,11 +4356,13 @@ def forestColoring (D : SurgeryData T U₁ U₂ z l k) :
     change (if x.1 ∈ U₁ then (0 : Fin 2) else 1) = 1
     simp [hxnot]
 
+omit [DecidableRel T.Adj] in
 /-- The zero colour class is in cardinality-preserving bijection with
     `forestLeft`. -/
 theorem card_filter_forestColoring_zero
     (D : SurgeryData T U₁ U₂ z l k) :
     #(Finset.univ.filter fun x => forestColoring D x = 0) = #D.forestLeft := by
+  classical
   let q : (x : {v : V // v ∉ D.deleted}) →
       x ∈ Finset.univ.filter (fun x => forestColoring D x = 0) → V :=
     fun x _ => x.1
@@ -4329,11 +4379,13 @@ theorem card_filter_forestColoring_zero
     exact Finset.mem_filter.mpr
       ⟨Finset.mem_univ _, (forestColoring_eq_zero_iff D _).mpr hv'.1⟩
 
+omit [DecidableRel T.Adj] in
 /-- The one colour class is in cardinality-preserving bijection with
     `forestRight`. -/
 theorem card_filter_forestColoring_one
     (D : SurgeryData T U₁ U₂ z l k) :
     #(Finset.univ.filter fun x => forestColoring D x = 1) = #D.forestRight := by
+  classical
   let q : (x : {v : V // v ∉ D.deleted}) →
       x ∈ Finset.univ.filter (fun x => forestColoring D x = 1) → V :=
     fun x _ => x.1
@@ -4350,15 +4402,19 @@ theorem card_filter_forestColoring_one
     exact Finset.mem_filter.mpr
       ⟨Finset.mem_univ _, (forestColoring_eq_one_iff D _).mpr hv'.1⟩
 
+omit [DecidableRel T.Adj] in
 theorem partCard_forestColoring_zero
     (D : SurgeryData T U₁ U₂ z l k) :
     Coloring.partCard (forestColoring D) 0 = #U₁ - 4 * l := by
+  classical
   rw [Coloring.partCard, card_filter_forestColoring_zero D,
     D.card_forestLeft]
 
+omit [DecidableRel T.Adj] in
 theorem partCard_forestColoring_one
     (D : SurgeryData T U₁ U₂ z l k) :
     Coloring.partCard (forestColoring D) 1 = #U₂ - 4 * l := by
+  classical
   rw [Coloring.partCard, card_filter_forestColoring_one D,
     D.card_forestRight]
 
@@ -4453,7 +4509,7 @@ private theorem card_exceptionalCenters
 the surgery data used in Zhao's Lemma 7.10. -/
 theorem zhao_lemma_7_10_of_surgeryData
     {T : SimpleGraph V} {G : SimpleGraph W}
-    [DecidableRel T.Adj] [DecidableRel G.Adj]
+    [DecidableRel G.Adj]
     (U₁ U₂ : Finset V) (X Y Y₁ Y₂ : Finset W)
     (l k : ℕ) (z : V) (a : W)
     (D : SurgeryData T U₁ U₂ z l k)

@@ -10,7 +10,7 @@ earlier root. The output retains source-degree eligibility, which supports
 the fixed pending orientation, as well as almost-all-unused-edge access.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePendingRootSelection
@@ -90,7 +90,8 @@ theorem exists_eligible_root_after_parent_degree
     W Q hα hα1 S (rootCluster W Q s) (rootCluster_cases W Q s) remaining hremaining
       (parentPool W Q s v excluded) (parentPool_subset W Q s v excluded) hpool
   obtain ⟨hzR, hzAdj, hzFresh⟩ := (mem_parentPool W Q).mp hz
-  have hnotUsed : z ∉ used := fun hu => hzFresh (Finset.mem_union_left _ (Finset.mem_union_left _ hu))
+  have hnotUsed : z ∉ used := fun hu => hzFresh (Finset.mem_union_left _ (Finset.mem_union_left _
+    hu))
   have hnotEdge : z ∉ badForEdge W Q S (rootCluster W Q s) fixed :=
     fun he => hzFresh (Finset.mem_union_left _ (Finset.mem_union_right _ he))
   have hnotReservoir : z ∉ badToward W Q (Sum.inl (rootCluster W Q s)) t :=

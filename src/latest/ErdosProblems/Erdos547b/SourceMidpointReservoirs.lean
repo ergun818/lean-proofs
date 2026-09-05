@@ -4,7 +4,7 @@ import ErdosProblems.Erdos547b.SourceFreshChunkBounds
 
 /-! # The two actual, disjoint, rounded midpoint reservoirs -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMidpointReservoirs
@@ -60,7 +60,8 @@ theorem exists_reservoirs
     exact (Finset.mem_sdiff.mp hzlow).2 (Finset.mem_union_right _ hz)
   · have hsplit := Finset.card_sdiff_add_card_inter A (bad ∪ high)
     change low.card + (A ∩ (bad ∪ high)).card = A.card at hsplit
-    have hinter := (Finset.card_le_card (Finset.inter_subset_right : A ∩ (bad ∪ high) ⊆ bad ∪ high)).trans
+    have hinter := (Finset.card_le_card (Finset.inter_subset_right : A ∩ (bad ∪ high) ⊆ bad ∪
+      high)).trans
       (Finset.card_union_le bad high)
     have hN : A.card = W.clusterSize := by
       change (clusterVertices (assignment W) C).card = _
@@ -95,7 +96,8 @@ theorem low_large (hα : 0 < α) (hα1 : α ≤ 1 / 4) (hhost : hostN = 2 * q)
     exact epsilon_mul_clusterSize_gt_two hα hα1 W horder
   have hm : 2 * (fourthRoot α : ℝ) ^ 2 + (rootTypicality α : ℝ) + 2 * (epsilon α : ℝ) ≤ 1 := by
     exact_mod_cast reservoir_coefficient_margin hα hα1
-  have hmN := mul_le_mul_of_nonneg_right hm (Nat.cast_nonneg W.clusterSize : (0 : ℝ) ≤ W.clusterSize)
+  have hmN := mul_le_mul_of_nonneg_right hm (Nat.cast_nonneg W.clusterSize : (0 : ℝ) ≤
+    W.clusterSize)
   nlinarith only [hceil, hscale, hmN, R.low_card]
 
 end Erdos547b.ZhaoSourceMidpointReservoirs

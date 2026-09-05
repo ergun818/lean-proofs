@@ -11,7 +11,7 @@ bounds are derived from source orders and prescribed marks. The only
 current-root input is its genuine good-group count, not an embedding premise.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMarkedHistoryStep
@@ -37,7 +37,7 @@ variable (copy : ∀ j, (T j).Copy (embeddingHost W)) (assign : J → {c // c �
 
 def historyImage (j : J) : Finset (Fin hostN) := Finset.univ.image (copy j)
 
-omit [Fintype J] in
+omit [Fintype J] [(j : J) → DecidableEq (A j)] in
 theorem history_image_bounds
     (hroot : ∀ j, copy j (root j) ∈ whole W (P.center (assign j)))
     (hmark : ∀ j a, a ∈ special j → copy j a ∈ whole W (P.center (assign j)))
@@ -46,6 +46,7 @@ theorem history_image_bounds
     (∀ j, historyImage W A T copy j ⊆ P.support W Q S O (assign j)) ∧
     (∀ j, 3 * (historyImage W A T copy j ∩ whole W (P.center (assign j))).card ≤
       Fintype.card (A j) + 3 * (special j).card) := by
+  classical
   have hothers : ∀ j a, a ≠ root j → a ∉ special j →
       copy j a ∈ P.pairs W Q S O (assign j) ∪ ∅ := by
     intro j a har ham
@@ -62,6 +63,7 @@ theorem history_image_bounds
       (hroot j) (hmark j) (hothers j) (P.center_disjoint_pairs W Q S O _ _)
       (Finset.disjoint_empty_right _) (hsize j)
 
+omit [(j : J) → DecidableEq (A j)] in
 theorem history_occupied_bounds (hα : 0 < α) (hα1 : α ≤ 1 / 4)
     (base : Finset (Fin hostN)) (hbase : ∀ x, Disjoint base (P.support W Q S O x))
     (hroot : ∀ j, copy j (root j) ∈ whole W (P.center (assign j)))
@@ -74,6 +76,7 @@ theorem history_occupied_bounds (hα : 0 < α) (hα1 : α ≤ 1 / 4)
     ((used base (historyImage W A T copy) ∩ whole W (P.center x)).card : ℝ) ≤
         (1 - 2 * (eta α : ℝ) - 3 * (gamma α : ℝ)) * W.clusterSize ∧
       (used base (historyImage W A T copy) ∩ P.pairs W Q S O x).card ≤ 3 * W.clusterSize := by
+  classical
   obtain ⟨himage, hlocal⟩ := history_image_bounds W Q S O P A T root special copy assign
     hroot hmark hother hsize
   have hmarksLocal : (groupLoad assign (fun j => (special j).card) x : ℝ) ≤
@@ -92,6 +95,7 @@ theorem history_occupied_bounds (hα : 0 < α) (hα1 : α ≤ 1 / 4)
 
 variable {B : Type*} [Fintype B] [DecidableEq B]
 
+omit [(j : J) → DecidableEq (A j)] in
 theorem exists_historyStep (hα : 0 < α) (hα1 : α ≤ 1 / 4) (hC : 0 < C.card)
     (base : Finset (Fin hostN)) (hbase : ∀ x, Disjoint base (P.support W Q S O x))
     (hroot : ∀ j, copy j (root j) ∈ whole W (P.center (assign j)))
@@ -108,7 +112,8 @@ theorem exists_historyStep (hα : 0 < α) (hα1 : α ≤ 1 / 4) (hC : 0 < C.card
     (hcolor : ∀ a ∈ marks, htree.coloringTwoOfVert r a = 0)
     (hsmall : Fintype.card B ≤ freshBranchBound α W.clusterSize) :
     ∃ (x : {c // c ∈ C}) (i : Fin 4) (f : tree.Copy (embeddingHost W)),
-      (groupLoad assign (fun j => Fintype.card (A j)) x : ℝ) + Fintype.card B ≤ capacity α W.clusterSize ∧
+      (groupLoad assign (fun j => Fintype.card (A j)) x : ℝ) + Fintype.card B ≤ capacity α
+        W.clusterSize ∧
       (embeddingHost W).Adj z (f r) ∧
       (∀ a, f a ∉ used base (historyImage W A T copy)) ∧
       (∀ a ∈ insert r marks, f a ∈ whole W (P.center x) ∧
@@ -118,6 +123,7 @@ theorem exists_historyStep (hα : 0 < α) (hα1 : α ≤ 1 / 4) (hC : 0 < C.card
         if htree.coloringTwoOfVert r a = 0 then whole W (P.Y (x, i)) else whole W (P.X (x, i))) ∧
       ((Finset.univ.image f) ∩ whole W (P.center x)).card ≤ 1 + marks.card ∧
       Finset.univ.image f ⊆ P.support W Q S O x := by
+  classical
   have hsum : (∑ x : {c // c ∈ C}, (groupLoad assign (fun j => Fintype.card (A j)) x : ℝ)) =
       ∑ j, (Fintype.card (A j) : ℝ) := by
     exact_mod_cast sum_groupLoad assign (fun j => Fintype.card (A j))
@@ -135,10 +141,12 @@ theorem exists_historyStep (hα : 0 < α) (hα1 : α ≤ 1 / 4) (hC : 0 < C.card
     (P.center_adj x) (fun i => P.center_X (x, i)) (fun i => P.Y_X (x, i))
     (fun i => P.center_pair_disjoint x (x, i))
     (fun i j hij => P.pairs_disjoint (x, i) (x, j) (fun h => hij (congrArg Prod.snd h)))
-    (used base (historyImage W A T copy)) z (hparent x hx) husedC husedPairs tree htree r marks hcolor hsmall
+    (used base (historyImage W A T copy)) z (hparent x hx) husedC husedPairs tree htree r marks
+      hcolor hsmall
   refine ⟨x, i, f, ?_, hfattach, hfresh, ?_, hordinary, hload,
     hsupport.trans (P.three_sets_subset_support W Q S O x i)⟩
-  · have hsmallR : (Fintype.card B : ℝ) ≤ freshBranchBound α W.clusterSize := by exact_mod_cast hsmall
+  · have hsmallR : (Fintype.card B : ℝ) ≤ freshBranchBound α W.clusterSize :=
+      by exact_mod_cast hsmall
     linarith only [hroom, hsmallR]
   · intro a ha
     exact ⟨(Finset.mem_sdiff.mp (hmarked a ha).1).1, (hmarked a ha).2⟩

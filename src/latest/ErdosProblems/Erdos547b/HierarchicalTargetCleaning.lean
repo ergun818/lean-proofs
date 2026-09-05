@@ -146,7 +146,7 @@ theorem sourceCandidate_target_eq
       targetInteriorCandidate, targetInteriorRemoved,
       targetCoordinateCandidate,
       ZhaoLemma59HierarchicalRegular.HierarchicalSegmentForest.rawCandidate,
-      ha, and_assoc]
+      ha]
 
 theorem targetCandidate_not_lowDegree_child
     [Fintype B] [DecidableEq B]
@@ -248,8 +248,8 @@ noncomputable def targetCleanedRegularSystem
           (ZhaoLemma59HierarchicalRegular.HierarchicalSegmentForest.rawCandidate
             F rootGroup rootWhole interiorWhole i a)
           (interiorWhole i b) - rho) * #(interiorRaw i b))
-    (hrootSubset : ∀ C, rootRaw C ⊆ rootWhole C)
-    (hinteriorSubset : ∀ i a, interiorRaw i a ⊆ interiorWhole i a)
+    (_hrootSubset : ∀ C, rootRaw C ⊆ rootWhole C)
+    (_hinteriorSubset : ∀ i a, interiorRaw i a ⊆ interiorWhole i a)
     (horiginalInjective : Function.Injective originalImage)
     (hrootRawDisjoint : ∀ C D, C ≠ D →
       Disjoint (rootRaw C) (rootRaw D))
@@ -329,7 +329,7 @@ noncomputable def targetCleanedRegularSystem
   · intro q i a hz
     by_cases ha : a = F.segments.root i
     · subst a
-      simpa [targetInteriorCandidate, targetInteriorRemoved] using hz
+      simp [targetInteriorCandidate, targetInteriorRemoved] at hz
     · apply (Finset.mem_sdiff.mp hz).2
       rw [targetInteriorRemoved, if_neg ha]
       exact Finset.mem_union_right _
@@ -486,7 +486,7 @@ noncomputable def targetUnifiedCleanedRegularSystem
   · intro q i a hz
     by_cases ha : a = F.segments.root i
     · subst a
-      simpa [targetInteriorCandidate, targetInteriorRemoved] using hz
+      simp [targetInteriorCandidate, targetInteriorRemoved] at hz
     · apply (Finset.mem_sdiff.mp hz).2
       rw [targetInteriorRemoved, if_neg ha]
       exact Finset.mem_union_right _
@@ -524,5 +524,7 @@ end HierarchicalSegmentForest
 
 end Erdos547b.ZhaoLemma59HierarchicalTargetCleaning
 
-#print axioms Erdos547b.ZhaoLemma59HierarchicalTargetCleaning.HierarchicalSegmentForest.targetCleanedRegularSystem
-#print axioms Erdos547b.ZhaoLemma59HierarchicalTargetCleaning.HierarchicalSegmentForest.targetUnifiedCleanedRegularSystem
+open Erdos547b.ZhaoLemma59HierarchicalTargetCleaning.HierarchicalSegmentForest in
+#print axioms targetCleanedRegularSystem
+open Erdos547b.ZhaoLemma59HierarchicalTargetCleaning.HierarchicalSegmentForest in
+#print axioms targetUnifiedCleanedRegularSystem

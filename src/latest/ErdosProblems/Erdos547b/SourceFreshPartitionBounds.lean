@@ -11,7 +11,7 @@ order threshold pays its total root count, using the actual degree-form
 cover. No larger-scale partition is silently treated as a fresh one.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceFreshPartitionBounds
@@ -33,7 +33,8 @@ theorem degreeForm_q_le_mul_clusterSize
   have hEq : (W.exceptional.card : ℝ) ≤ q := by
     have h := mul_le_mul_of_nonneg_right hd (Nat.cast_nonneg q : (0 : ℝ) ≤ q)
     linarith only [hE, h]
-  have hcover : (W.exceptional.card : ℝ) + (W.partition.parts.card : ℝ) * W.clusterSize = 2 * q := by
+  have hcover : (W.exceptional.card : ℝ) + (W.partition.parts.card : ℝ) * W.clusterSize = 2 * q :=
+    by
     exact_mod_cast exceptional_add_clusters_eq_host W
   have hparts : W.partition.parts.card ≤ M := W.cleaned_le_ordinary.trans W.upper_parts
   have hmul : (W.partition.parts.card : ℝ) * W.clusterSize ≤ (M : ℝ) * W.clusterSize := by

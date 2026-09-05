@@ -11,7 +11,7 @@ The occurrence is independent of prefix length, so an image-preserving
 prefix extension induces an image-preserving original-index extension.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePendingPlacement
@@ -74,7 +74,8 @@ private theorem castBranchCopy_map_side {b : ℕ} {V : Type*}
     {i j : Fin b} (h : i = j) (f : (F.tree i).Copy H)
     (orient : Fin 2 ≃ Fin 2) (available : Fin 2 → Finset V)
     (hside : ∀ a, f a ∈ available (orient ((F.isTree i).coloringTwoOfVert (F.root i) a))) :
-    ∀ a, castBranchCopy F H h f a ∈ available (orient ((F.isTree j).coloringTwoOfVert (F.root j) a)) := by
+    ∀ a, castBranchCopy F H h f a ∈ available (orient ((F.isTree j).coloringTwoOfVert (F.root j) a))
+      := by
   subst j
   exact hside
 
@@ -118,7 +119,8 @@ def toPlacement {n : ℕ}
         intro h
         apply hij
         calc
-          i = items[(position items i (prefixSelected_mem_items hi)).val] := (get_position _ _ _).symm
+          i = items[(position items i (prefixSelected_mem_items hi)).val] := (get_position _ _
+            _).symm
           _ = items[(position items j (prefixSelected_mem_items hj)).val] :=
             congrArg (fun p : Fin items.length => items[p.val]) h
           _ = j := get_position _ _ _
@@ -135,7 +137,8 @@ def toPlacement {n : ℕ}
     intro i hi a
     exact castBranchCopy_map_side F H (get_position items i (prefixSelected_mem_items hi)) _
       (orient (position items i (prefixSelected_mem_items hi))) (endpoint e)
-      (E.map_side (position items i (prefixSelected_mem_items hi)) (position_mem_prefix items i hi)) a
+      (E.map_side (position items i (prefixSelected_mem_items hi)) (position_mem_prefix items i hi))
+        a
 
 theorem toPlacement_edge {n : ℕ}
     (E : PartialDynamicAttachedForestEmbedding (listForest F items) H
@@ -157,7 +160,8 @@ theorem toPlacement_copy_of_extension {n m : ℕ} (hnm : n ≤ m) (parent' : Fin
         (prefixSelected_mono items hnm hj) =
       (toPlacement F H items parent orient endpoint e E).forestCopy.componentCopy j hj := by
   ext a
-  change originalCopy F H items parent' orient endpoint e E' j (prefixSelected_mono items hnm hj) a =
+  change originalCopy F H items parent' orient endpoint e E' j (prefixSelected_mono items hnm hj) a
+    =
     originalCopy F H items parent orient endpoint e E j hj a
   rw [originalCopy_apply, originalCopy_apply]
   exact congrArg (fun f => f (Fin.cast

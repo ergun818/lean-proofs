@@ -10,7 +10,7 @@ edge then supplies exactly the parent-neighbor hypotheses of the actual
 fresh-chunk embedding, with the same selected root on every retained edge.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceOnlineMatchingRoot
@@ -90,6 +90,7 @@ theorem exists_eligible_root_most_edges
     ∃ z ∈ pool, ∃ bad ⊆ remaining,
       (bad.card : ℝ) ≤ 2 * (rootTypicality α : ℝ) * remaining.card ∧
       ∀ e ∈ remaining \ bad, EligibleRoot W Q S C e z := by
+  classical
   let J : Finset (MatchingEdge Q.claim67.M × Fin 2) :=
     (remaining ×ˢ Finset.univ).filter fun p =>
       0 < rootDensity W S (Sum.inl C) (edgeVertex W Q p.1 p.2)

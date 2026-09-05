@@ -29,7 +29,7 @@ candidate set for every source vertex.  The total forest order in the two
 degree hypotheses is exactly the reserve which pays for deleting all images
 of earlier components. -/
 theorem exists_embedding_in_vertex_candidates
-    {B : Type*} [Fintype B] [DecidableEq B]
+    {B : Type*} [Finite B]
     (F : OrderedRootedForest m) (G : SimpleGraph B) [DecidableRel G.Adj]
     (rootImage : Fin m → B)
     (candidate : (Σ i, Fin (F.size i)) → Finset B)
@@ -45,6 +45,7 @@ theorem exists_embedding_in_vertex_candidates
       (∀ i, E.copy i (F.root i) = rootImage i) ∧
       ∀ i a, a ≠ F.root i → E.copy i a ∈ candidate ⟨i, a⟩ := by
   classical
+  let := Fintype.ofFinite B
   induction m with
   | zero =>
       let copies : ∀ i : Fin 0, (F.tree i).Copy G := fun i ↦ Fin.elim0 i
@@ -206,7 +207,7 @@ copy is built component-by-component by
 `exists_embedding_in_vertex_candidates`.
 -/
 theorem flexibleEmbedding_of_vertex_candidates
-    {B : Type*} [Fintype B] [DecidableEq B]
+    {B : Type*} [Finite B] [DecidableEq B]
     (F : OrderedRootedForest m) (G : SimpleGraph B) [DecidableRel G.Adj]
     (rootCluster : Finset B)
     (candidate : (Σ i, Fin (F.size i)) → Finset B)
@@ -225,6 +226,7 @@ theorem flexibleEmbedding_of_vertex_candidates
     Nonempty (FlexibleEmbedding F.graph G (orderedRoots F) rootCluster
       (vertexCandidateTarget F candidate) slack) := by
   classical
+  let := Fintype.ofFinite B
   refine ⟨
     { bad := bad
       bad_subset := hbadSubset

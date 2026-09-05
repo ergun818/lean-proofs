@@ -10,7 +10,7 @@ re-enumerating a selected finset. The external parent is fixed throughout
 the interval, and every earlier component copy is preserved exactly.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePendingInterval

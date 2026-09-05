@@ -5,7 +5,7 @@ import ErdosProblems.Erdos547b.StabilityPropertyFull
 
 /-! # Unconditional sufficiently-large tree containment on the Ramsey host -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 namespace Erdos547b.ZhaoSourceZhaoRamseyHost
 
@@ -15,6 +15,7 @@ open Erdos547b.ZhaoSourceParameterSchedule Erdos547b.ZhaoSourceClaim61Entry
 open Erdos547b.ZhaoSourceNearFullFromHost Erdos547b.ZhaoSourceEC2FromHost
 open Erdos547b.ZhaoStabilityPropertyFull Erdos547b.ZhaoSparseAssembly
 
+open scoped Classical in
 theorem eventual_tree_containment :
     ∃ n₀ : ℕ, ∀ n : ℕ, n₀ ≤ n → ∀ G : SimpleGraph (Fin (2 * n - 2)),
       n - 1 ≤ #(Finset.univ.filter fun v => n - 1 ≤ G.degree v) →
@@ -30,7 +31,8 @@ theorem eventual_tree_containment :
   intro n hn G hlarge T hT
   have hn₁ : n₁ ≤ n := (le_max_left _ _).trans hn
   have hnSparse : largeThreshold + 1 ≤ n := (le_max_left _ _).trans ((le_max_right _ _).trans hn)
-  have hnSource : sourceRamseyThreshold β ≤ n := (le_max_right _ _).trans ((le_max_right _ _).trans hn)
+  have hnSource : sourceRamseyThreshold β ≤ n := (le_max_right _ _).trans ((le_max_right _ _).trans
+    hn)
   by_cases hEC1 : ZhaoExtremalCaseOne β G
   · exact (hdense n hn₁ G hlarge (extremalCaseOne_mono_parameter hβc hEC1)) n T hT le_rfl
   by_contra hnot

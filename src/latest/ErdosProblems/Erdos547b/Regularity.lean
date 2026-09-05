@@ -328,7 +328,9 @@ private theorem sum_card_upperAtypicalPartnersAt
   congr 1 with V
   by_cases hV : U ≠ V ∧ G.IsUniform η U V
   · rcases hV with ⟨hne, huni⟩
-    simp [hne, huni, SimpleGraph.upperAtypicalVertices]
+    simp only [ne_eq, hne, not_false_eq_true, huni, SimpleGraph.upperAtypicalVertices,
+      mem_filter, true_and, sum_boole, Nat.cast_id, and_self, ↓reduceIte, sum_const,
+      smul_eq_mul, mul_one]
     apply congrArg Finset.card
     ext x
     simp

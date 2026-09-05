@@ -9,7 +9,7 @@ marked A-reservoir degrees are constructed from the actual used set.
 No old image is changed, and the returned copy avoids every old image.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMarkedGroupStep
@@ -67,7 +67,8 @@ theorem exists_groupStep (hα : 0 < α) (hα1 : α ≤ 1 / 4)
     exact ⟨Finset.mem_sdiff.mpr ⟨hC' hv, fun hb => hn (Finset.mem_union_right _ hb)⟩,
       fun hu => hn (Finset.mem_union_left _ hu)⟩
   have hCLarge := intermediateAvailable_card_ge W Q hα hα1 C used z hparent husedC
-  obtain ⟨i, hXlarge, hYlarge⟩ := exists_available_private_pair W hα hα1 X Y used hdisjoint husedPairs
+  obtain ⟨i, hXlarge, hYlarge⟩ := exists_available_private_pair W hα hα1 X Y used hdisjoint
+    husedPairs
   obtain ⟨f, hfattach, hfroot, hfspecial, hfother⟩ := exists_markedBranchCopy W hα hα1
     C (X i) (Y i) (hCX i) (hYX i) C' (whole W (X i) \ used) (whole W (Y i) \ used)
     hC' Finset.sdiff_subset Finset.sdiff_subset hCLarge hXlarge hYlarge

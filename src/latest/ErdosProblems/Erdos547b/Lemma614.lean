@@ -147,7 +147,7 @@ online/flexible object is *constructed* from cardinal and regularity
 hypotheses rather than accepted as an embedding continuation.
 -/
 theorem exists_flexibleEmbedding_of_uniformPairs
-    {m : ℕ} {B : Type v} [Fintype B] [DecidableEq B]
+    {m : ℕ} {B : Type v} [Finite B] [DecidableEq B]
     (F : Erdos547b.RegularPair.OrderedRootedForest m)
     (G : SimpleGraph B) [DecidableRel G.Adj]
     (rootCluster : Finset B) {rho : ℝ}
@@ -175,6 +175,7 @@ theorem exists_flexibleEmbedding_of_uniformPairs
         Erdos547b.RegularPair.cleanedSide G rho (X i) (Y i)
       else Erdos547b.RegularPair.cleanedSide G rho (Y i) (X i))) 0) := by
   classical
+  let := Fintype.ofFinite B
   let candidate : Fin m → Fin 2 → Finset B := fun i c ↦ if c = 0 then
     Erdos547b.RegularPair.cleanedSide G rho (X i) (Y i)
     else Erdos547b.RegularPair.cleanedSide G rho (Y i) (X i)
@@ -244,7 +245,7 @@ theorem lemma6_14_of_uniformPairs
     {T : SimpleGraph V} [DecidableRel T.Adj]
     {globalRoot : V} {small : ℕ}
     (P : ZhaoForestPartition T globalRoot small)
-    [Fintype B] [DecidableEq B]
+    [Finite B] [DecidableEq B]
     (G : SimpleGraph B) [DecidableRel G.Adj]
     (rootImage : Fin P.numParts → B) {rho : ℝ}
     (X Y : Fin P.numParts → Finset B)
@@ -282,6 +283,8 @@ theorem lemma6_14_of_uniformPairs
               (Y p.1) (X p.1)) →
         G.Adj z (rootImage j)) :
     T.IsContained G := by
+  classical
+  let := Fintype.ofFinite B
   obtain ⟨E, hEroot, hEmem⟩ :=
     P.orderedForest.exists_embedding_over_disjoint_uniform_pairs
       G rootImage X Y hrootInjective hunif hrho hcapX hcapY hrootDegree
@@ -313,8 +316,8 @@ theorem lemma6_14_of_uniformPairs
 the root-subforest in Claim 6.16.  Unlike the paper's arrow notation, the
 conclusion exposes the actual copy and all three placement assertions. -/
 theorem exists_threeLayerRootSubforestCopy
-    {A B : Type*} [Fintype A] [Fintype B]
-    [DecidableEq A] [DecidableEq B]
+    {A B : Type*} [Fintype A] [Finite B]
+    [DecidableEq A]
     (F : SimpleGraph A) (G : SimpleGraph B) [DecidableRel G.Adj]
     (roots special : Finset A)
     (hforest : (Erdos547b.ZhaoLemma59.rootedForestCone F roots).IsTree)
@@ -333,6 +336,8 @@ theorem exists_threeLayerRootSubforestCopy
       (∀ a ∈ roots, f a ∈ A0) ∧
       (∀ a, level a = 1 ∨ a ∈ special → f a ∈ C0) ∧
       (∀ a, a ∉ roots → level a ≠ 1 → a ∉ special → f a ∈ M0) := by
+  classical
+  let := Fintype.ofFinite B
   exact Erdos547b.ZhaoLemma59.lemma5_9_three_layer_candidate_core
     F G roots special hforest level hrootLevel hspecialOdd A0 C0 M0
       hsize hcross
@@ -341,13 +346,14 @@ theorem exists_threeLayerRootSubforestCopy
 Lemma 6.14.  This is the actual bin-packing theorem, not a proposition-valued
 "if an allocation exists then embed" continuation. -/
 theorem exists_matchingAllocation
-    {ι κ : Type*} [DecidableEq ι] [Fintype κ] [DecidableEq κ] [Nonempty κ]
+    {ι κ : Type*} [Fintype κ] [DecidableEq κ] [Nonempty κ]
     (items : Finset ι) (weight : ι → ℕ) (capacity : κ → ℕ) (slack : ℕ)
     (hsmall : ∀ i ∈ items, weight i ≤ slack)
     (hbudget : (∑ i ∈ items, weight i) + Fintype.card κ * slack ≤
       ∑ j : κ, capacity j) :
     ∃ assign : ι → κ, ∀ j : κ,
       ∑ i ∈ items.filter (assign · = j), weight i ≤ capacity j := by
+  classical
   exact Erdos547b.ForestMatching.capacity_packing
     items weight capacity slack hsmall hbudget
 

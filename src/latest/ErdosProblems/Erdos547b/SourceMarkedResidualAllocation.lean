@@ -10,7 +10,7 @@ The small case keeps the literal reserved matching. The large case splits
 Min minus Mzero at its first A-weight threshold and uses the raw-row bound.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMarkedResidualAllocation
@@ -59,15 +59,18 @@ theorem exists_residualAllocation
   have hN : (0 : ℝ) < W.clusterSize := by exact_mod_cast W.clusterSize_pos
   by_cases hsmall : fb < (fourthRoot α : ℝ) * q
   · let E1 := O.D.minEdges \ MatchingDecomposition.MzeroEdges O.D C
-    have ha : (branchMass sourceP (sideBranches sourceP 0 \ F.selected) : ℝ) + 3 * (gamma α : ℝ) * q ≤
+    have ha : (branchMass sourceP (sideBranches sourceP 0 \ F.selected) : ℝ) + 3 * (gamma α : ℝ) * q
+      ≤
         ∑ e ∈ E1, sideWeight W Q S 0 e := by
       have hsum := Finset.sum_sdiff hM0 (f := sideWeight W Q S 0)
       have hγq : 0 ≤ (gamma α : ℝ) * q := by positivity
       have htq : 0 ≤ (fourthRoot α : ℝ) * q := by positivity
-      have hminor : (0 : ℝ) ≤ branchMass sourceP (sideBranches sourceP 1 \ F.selected) := Nat.cast_nonneg _
+      have hminor : (0 : ℝ) ≤ branchMass sourceP (sideBranches sourceP 1 \ F.selected) :=
+        Nat.cast_nonneg _
       change _ ≤ ∑ e ∈ O.D.minEdges \ MatchingDecomposition.MzeroEdges O.D C, sideWeight W Q S 0 e
       nlinarith only [hsum, hsave, hforest, htotal, hmargin, hγq, htq, hN, hminor]
-    have hb : (branchMass sourceP (sideBranches sourceP 1 \ F.selected) : ℝ) + 3 * (gamma α : ℝ) * q ≤
+    have hb : (branchMass sourceP (sideBranches sourceP 1 \ F.selected) : ℝ) + 3 * (gamma α : ℝ) * q
+      ≤
         ∑ e ∈ O.D.mbEdges, sideWeight W Q S 1 e := by
       rw [minorResidual_eq W Q S O C sourceP F, O.reserved_eq, ← hfb]
       exact O.reserved.small_lower hsmall

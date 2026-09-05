@@ -244,30 +244,33 @@ lemma claim712_root_selected_supply
   obtain ⟨hrootMargin, hselectedMargin⟩ := claim712_supply_margins m hm
   constructor <;> omega
 
-lemma microScale_lt_heavyThreshold (m : ℕ) (hm : largeThreshold ≤ m) :
+lemma microScale_lt_heavyThreshold (m : ℕ) (_hm : largeThreshold ≤ m) :
     microScale m < heavyScale m + 1 := by
   have h := microScale_le_heavyScale m
   omega
 
 lemma degreeInto_univ_eq_degree
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (v : V) :
     Erdos547EC2.degreeInto G v Finset.univ = G.degree v := by
+  classical
   unfold Erdos547EC2.degreeInto
   rw [← G.card_neighborFinset_eq_degree]
   congr 1
   ext w
-  simp [and_comm]
+  simp
 
 /- A density at most `sparseCap` is far below the square of the integral
 classification scale.  This form feeds the EC2 rebalancing lemma directly. -/
 lemma interedges_lt_heavyScale_sq
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (X Y : Finset V) (m : ℕ)
     (hX : X.card = m) (hY : Y.card = m) (hm : 1 ≤ m)
     (hdensity : G.edgeDensity X Y ≤ sparseCap) :
     (G.interedges X Y).card < (heavyScale m + 1) * (heavyScale m + 1) := by
+  classical
+  let := Fintype.ofFinite V
   have hdenQ : (0 : ℚ) < (m : ℚ) * m := by positivity
   have hdensity' :
       ((G.interedges X Y).card : ℚ) / ((m : ℚ) * m) ≤
@@ -303,12 +306,14 @@ lemma interedges_lt_heavyScale_sq
 /- The sharper `sqrt(alpha) * m` error scale used by Proposition 7.3 inside
 Claim 7.12. -/
 lemma interedges_lt_microScale_sq
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (X Y : Finset V) (m : ℕ)
     (hX : X.card = m) (hY : Y.card = m) (hm : 1 ≤ m)
     (hdensity : G.edgeDensity X Y ≤ sparseCap) :
     (G.interedges X Y).card < (microScale m + 1) * (microScale m + 1) := by
+  classical
+  let := Fintype.ofFinite V
   have hdenQ : (0 : ℚ) < (m : ℚ) * m := by positivity
   have hdensity' :
       ((G.interedges X Y).card : ℚ) / ((m : ℚ) * m) ≤
@@ -484,7 +489,7 @@ lemma claim712_reservoir_card_bounds
       · exact (Finset.mem_inter.mp hvi).2
       · exact (Finset.mem_inter.mp hvj).2
     · intro hvL
-      have hvU : v ∈ Vᵢ ∪ Vⱼ := by simpa [hcover]
+      have hvU : v ∈ Vᵢ ∪ Vⱼ := by simp [hcover]
       rcases Finset.mem_union.mp hvU with hvi | hvj
       · exact Finset.mem_union_left _ (Finset.mem_inter.mpr ⟨hvi, hvL⟩)
       · exact Finset.mem_union_right _ (Finset.mem_inter.mpr ⟨hvj, hvL⟩)
@@ -554,10 +559,11 @@ lemma claim712_wrapper_arithmetic (m : ℕ) (hm : largeThreshold ≤ m) :
 
 /- Select exactly `m` high vertices, as Zhao does before classifying them. -/
 lemma exists_exact_high_set
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (m : ℕ)
     (hlarge : m ≤ (Finset.univ.filter fun v => m ≤ G.degree v).card) :
     ∃ L : Finset V, L.card = m ∧ ∀ v ∈ L, m ≤ G.degree v := by
+  classical
   obtain ⟨L, hLsub, hLcard⟩ := Finset.exists_subset_card_eq hlarge
   refine ⟨L, hLcard, ?_⟩
   intro v hv
@@ -656,7 +662,7 @@ theorem exists_ec3Witness_of_sparseCut_of_noBoth
     (hnoBoth : ∀ v ∈ L,
       ¬(heavyScale m < Erdos547EC2.degreeInto G v X ∧
         heavyScale m < Erdos547EC2.degreeInto G v Y)) :
-    ∃ h : Erdos547b.ZhaoLemma74.RawEC3Witness G m (defectScale m), True := by
+    ∃ _h : Erdos547b.ZhaoLemma74.RawEC3Witness G m (defectScale m), True := by
   let k := heavyScale m
   have hk : 2 * k < m := by
     dsimp [k, heavyScale, scaleDenom]
@@ -721,7 +727,7 @@ theorem exists_early_ec3_or_balanced_large
     (hlarge : ∀ v ∈ L, m ≤ G.degree v)
     (hm : 2 ≤ m)
     (hdensity : G.edgeDensity X Y ≤ sparseCap) :
-    (∃ h : Erdos547b.ZhaoLemma74.RawEC3Witness G m (defectScale m), True) ∨
+    (∃ _h : Erdos547b.ZhaoLemma74.RawEC3Witness G m (defectScale m), True) ∨
       ((X ∩ L).card < (m + 1) / 2 + microScale m ∧
        (Y ∩ L).card < (m + 1) / 2 + microScale m) := by
   have hcross :
@@ -820,9 +826,9 @@ an omitted exact-order tree forces the sparse balanced cut to normalize to
 EC3.  The early unbalanced branch and Claim 7.12 are both internal here. -/
 theorem exists_rawEC3_of_sparseCut_of_omitted_exact_tree
     {V A : Type*} [Fintype V] [Fintype A]
-    [DecidableEq V] [DecidableEq A]
+    [DecidableEq V]
     (G : SimpleGraph V) (T : SimpleGraph A)
-    [DecidableRel G.Adj] [DecidableRel T.Adj]
+    [DecidableRel G.Adj]
     (X Y L : Finset V) (m : ℕ)
     (hT : T.IsTree) (homit : ¬ T ⊑ G)
     (hcardT : Fintype.card A = m + 1)
@@ -833,7 +839,7 @@ theorem exists_rawEC3_of_sparseCut_of_omitted_exact_tree
     (hlarge : ∀ v ∈ L, m ≤ G.degree v)
     (hm : largeThreshold ≤ m)
     (hdensity : G.edgeDensity X Y ≤ sparseCap) :
-    ∃ h : Erdos547b.ZhaoLemma74.RawEC3Witness G m (defectScale m), True := by
+    ∃ _h : Erdos547b.ZhaoLemma74.RawEC3Witness G m (defectScale m), True := by
   classical
   have hm2 : 2 ≤ m := by
     have : 2 ≤ largeThreshold := by
@@ -856,7 +862,7 @@ theorem exists_rawEC3_of_sparseCut_of_omitted_exact_tree
         · exact (Finset.mem_inter.mp hv).2
         · exact (Finset.mem_inter.mp hv).2
       · intro hvL
-        have hvU : v ∈ X ∪ Y := by simpa [hcover]
+        have hvU : v ∈ X ∪ Y := by simp [hcover]
         rcases Finset.mem_union.mp hvU with hvX | hvY
         · exact Finset.mem_union_left _ (Finset.mem_inter.mpr ⟨hvX, hvL⟩)
         · exact Finset.mem_union_right _ (Finset.mem_inter.mpr ⟨hvY, hvL⟩)

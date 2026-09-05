@@ -9,7 +9,7 @@ excludes its literal earlier image, constructs both sides' family states,
 and preserves root injectivity, reservoir degrees and earlier branch maps.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceCapacityGlobalPrefix
@@ -53,7 +53,8 @@ theorem PrefixState.mem_usedRoots (z : Fin hostN) :
       ∃ i : Fin r, i.val < stage ∧ A.rootImage i = z := by
   simp only [PrefixState.usedRoots, Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and]
 
-theorem PrefixState.card_usedRoots : (A.usedRoots W Q S F owner rootSide kinds allocation family).card ≤ r := by
+theorem PrefixState.card_usedRoots : (A.usedRoots W Q S F owner rootSide kinds allocation
+  family).card ≤ r := by
   have h := (Finset.card_image_le (f := A.rootImage)
     (s := Finset.univ.filter (fun i : Fin r => i.val < stage))).trans
       (Finset.card_filter_le Finset.univ (fun i : Fin r => i.val < stage))
@@ -62,7 +63,8 @@ theorem PrefixState.card_usedRoots : (A.usedRoots W Q S F owner rootSide kinds a
 def emptyPrefixState
     (hnd : ∀ s j, (family s j).Nodup)
     (hordered : ∀ s j, (family s j).Pairwise (fun i j => owner i ≤ owner j))
-    (rootImage : Fin r → Fin hostN) : PrefixState W Q S F owner rootSide kinds allocation family 0 where
+    (rootImage : Fin r → Fin hostN) : PrefixState W Q S F owner rootSide kinds allocation family 0
+      where
   rootImage := rootImage
   root_mem := by omega
   root_injective := by omega
@@ -96,9 +98,11 @@ theorem exists_prefixAdvance
       D.rootImage = Function.update A.rootImage n z ∧
       (∀ v, parent = some v → (embeddingHost W).Adj v z) ∧
       ∀ s j i hi,
-        ((D.families s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s j)).forestCopy.componentCopy i
+        ((D.families s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s
+          j)).forestCopy.componentCopy i
           (processedFamily_mono owner (Nat.le_succ n.val) (family s j) hi) =
-        ((A.families s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s j)).forestCopy.componentCopy i hi := by
+        ((A.families s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s
+          j)).forestCopy.componentCopy i hi := by
   have hused : ((A.usedRoots W Q S F owner rootSide kinds allocation family).card : ℝ) ≤
       (epsilon α : ℝ) * W.clusterSize := by
     have hc : ((A.usedRoots W Q S F owner rootSide kinds allocation family).card : ℝ) ≤ r := by
@@ -107,7 +111,8 @@ theorem exists_prefixAdvance
   obtain ⟨z, hz, hfresh, hAdj, hdegree, Dfamily, hcopies⟩ :=
     exists_twoSideFamilyAdvance W Q S F owner hα hα1 hhost horder hk rootSide kinds hkind
       allocation family hdisjoint hside A.rootImage n A.families hbranch hedge hsmall haway
-      globalCount hglobal hbudget (A.usedRoots W Q S F owner rootSide kinds allocation family) hused parent hparent
+      globalCount hglobal hbudget (A.usedRoots W Q S F owner rootSide kinds allocation family) hused
+        parent hparent
   let root' := Function.update A.rootImage n z
   have hbefore (i : Fin r) (hi : i.val < n.val) : root' i = A.rootImage i :=
     Function.update_of_ne (fun h => Nat.ne_of_lt hi (congrArg Fin.val h)) z A.rootImage

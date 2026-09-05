@@ -9,7 +9,7 @@ Ordinary coverage is required only outside the selected marked family.
 Reconnection degrees on selected branches are used only at actual marks.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMarkedGlobalPrefix
@@ -37,33 +37,44 @@ variable (rootSide : Fin r → Fin 2) (kinds : Fin 2 → Fin k → FamilyKind)
 variable (allocation : Fin 2 → Fin k → Finset (MatchingEdge Q.claim67.M))
 variable (family : Fin 2 → Fin k → List (Fin b)) (locate : Fin b → Fin 2 × Fin k)
 variable (hcover : ∀ i, i ∉ selected → i ∈ family (locate i).1 (locate i).2)
-variable {stage : ℕ} (A : PrefixState W Q S O P F owner marks selected rootSide kinds allocation family stage)
+variable {stage : ℕ} (A : PrefixState W Q S O P F owner marks selected rootSide kinds allocation
+  family stage)
 
-def PrefixState.branchCopy (i : Fin b) (hi : (owner i).val < stage) : (F.tree i).Copy (embeddingHost W) :=
+def PrefixState.branchCopy (i : Fin b) (hi : (owner i).val < stage) : (F.tree i).Copy (embeddingHost
+  W) :=
   if hs : i ∈ selected then A.marked.forestCopy.componentCopy i (Finset.mem_filter.mpr ⟨hs, hi⟩)
   else ((A.ordinary.families (locate i).1 (locate i).2).currentPlacement W Q S
-    (rootCluster W Q (locate i).1) F owner (kinds (locate i).1 (locate i).2)).forestCopy.componentCopy i
+    (rootCluster W Q (locate i).1) F owner (kinds (locate i).1 (locate
+      i).2)).forestCopy.componentCopy i
       (Finset.mem_filter.mpr ⟨List.mem_toFinset.mpr (hcover i hs), hi⟩)
 
-theorem PrefixState.branchCopy_eq_marked (i : Fin b) (hi : (owner i).val < stage) (hs : i ∈ selected) :
-    A.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family locate hcover i hi =
+theorem PrefixState.branchCopy_eq_marked (i : Fin b) (hi : (owner i).val < stage) (hs : i ∈
+  selected) :
+    A.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family locate hcover i
+      hi =
       A.marked.forestCopy.componentCopy i (Finset.mem_filter.mpr ⟨hs, hi⟩) := by
   simp only [PrefixState.branchCopy, dif_pos hs]
 
-theorem PrefixState.branchCopy_eq_ordinary (i : Fin b) (hi : (owner i).val < stage) (hs : i ∉ selected) :
-    A.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family locate hcover i hi =
+theorem PrefixState.branchCopy_eq_ordinary (i : Fin b) (hi : (owner i).val < stage) (hs : i ∉
+  selected) :
+    A.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family locate hcover i
+      hi =
       ((A.ordinary.families (locate i).1 (locate i).2).currentPlacement W Q S
-        (rootCluster W Q (locate i).1) F owner (kinds (locate i).1 (locate i).2)).forestCopy.componentCopy i
+        (rootCluster W Q (locate i).1) F owner (kinds (locate i).1 (locate
+          i).2)).forestCopy.componentCopy i
         (Finset.mem_filter.mpr ⟨List.mem_toFinset.mpr (hcover i hs), hi⟩) := by
   simp only [PrefixState.branchCopy, dif_neg hs]
 
 theorem PrefixState.branchCopy_attach (i : Fin b) (hi : (owner i).val < stage) :
     (embeddingHost W).Adj (A.ordinary.rootImage (owner i))
-      (A.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family locate hcover i hi (F.root i)) := by
+      (A.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family locate hcover
+        i hi (F.root i)) := by
   by_cases hs : i ∈ selected
-  · rw [A.branchCopy_eq_marked W Q S O P F owner marks selected rootSide kinds allocation family locate hcover i hi hs]
+  · rw [A.branchCopy_eq_marked W Q S O P F owner marks selected rootSide kinds allocation family
+      locate hcover i hi hs]
     exact A.marked.attach i (Finset.mem_filter.mpr ⟨hs, hi⟩)
-  · rw [A.branchCopy_eq_ordinary W Q S O P F owner marks selected rootSide kinds allocation family locate hcover i hi hs]
+  · rw [A.branchCopy_eq_ordinary W Q S O P F owner marks selected rootSide kinds allocation family
+      locate hcover i hi hs]
     exact ((A.ordinary.families (locate i).1 (locate i).2).currentPlacement W Q S
       (rootCluster W Q (locate i).1) F owner (kinds (locate i).1 (locate i).2)).attach i _
 
@@ -74,18 +85,23 @@ theorem PrefixState.branchCopy_degree
     (hmark : i ∈ selected → a ∈ marks i) :
     ((densityCutoff α : ℝ) - (epsilon α : ℝ)) * (sourceQuota W : ℝ) ≤
       ((reservoir W Q (locate i).1).filter ((embeddingHost W).Adj
-        (A.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family locate hcover i hi a))).card := by
+        (A.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family locate
+          hcover i hi a))).card := by
   by_cases hs : i ∈ selected
-  · rw [A.branchCopy_eq_marked W Q S O P F owner marks selected rootSide kinds allocation family locate hcover i hi hs]
+  · rw [A.branchCopy_eq_marked W Q S O P F owner marks selected rootSide kinds allocation family
+      locate hcover i hi hs]
     have h := (A.marked.marked i (Finset.mem_filter.mpr ⟨hs, hi⟩) a
       (Finset.mem_insert_of_mem (hmark hs))).2
     rw [hselectedLocate i hs]
     simpa only [reservoir, ↓reduceIte] using h
-  · rw [A.branchCopy_eq_ordinary W Q S O P F owner marks selected rootSide kinds allocation family locate hcover i hi hs]
+  · rw [A.branchCopy_eq_ordinary W Q S O P F owner marks selected rootSide kinds allocation family
+      locate hcover i hi hs]
     exact placement_rootColor_degree W Q S (locate i).1 F _ _
-      ((A.ordinary.families (locate i).1 (locate i).2).currentPlacement W Q S (rootCluster W Q (locate i).1)
+      ((A.ordinary.families (locate i).1 (locate i).2).currentPlacement W Q S (rootCluster W Q
+        (locate i).1)
         F owner (kinds (locate i).1 (locate i).2))
-      ((A.ordinary.families (locate i).1 (locate i).2).current_root_positive W Q S (rootCluster W Q (locate i).1)
+      ((A.ordinary.families (locate i).1 (locate i).2).current_root_positive W Q S (rootCluster W Q
+        (locate i).1)
         F owner (kinds (locate i).1 (locate i).2))
       i (Finset.mem_filter.mpr ⟨List.mem_toFinset.mpr (hcover i hs), hi⟩) a hcolor
 
@@ -100,19 +116,25 @@ theorem PrefixState.marked_copy_mem_support (i : Fin b) (hi : i ∈ ownerPrefix 
 theorem PrefixState.branchCopy_preserved
     (D : PrefixState W Q S O P F owner marks selected rootSide kinds allocation family (stage + 1))
     (hcopies : ∀ s j i hi,
-      ((D.ordinary.families s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s j)).forestCopy.componentCopy i
+      ((D.ordinary.families s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s
+        j)).forestCopy.componentCopy i
           (processedFamily_mono owner (Nat.le_succ stage) (family s j) hi) =
-        ((A.ordinary.families s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s j)).forestCopy.componentCopy i hi)
+        ((A.ordinary.families s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s
+          j)).forestCopy.componentCopy i hi)
     (hmarked : ∀ i (hi : i ∈ ownerPrefix selected owner stage), D.marked.forestCopy.componentCopy i
-      (ownerPrefix_mono selected owner (Nat.le_succ stage) hi) = A.marked.forestCopy.componentCopy i hi)
+      (ownerPrefix_mono selected owner (Nat.le_succ stage) hi) = A.marked.forestCopy.componentCopy i
+        hi)
     (i : Fin b) (hi : (owner i).val < stage) :
-    D.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family locate hcover i (Nat.lt_succ_of_lt hi) =
-      A.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family locate hcover i hi := by
+    D.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family locate hcover i
+      (Nat.lt_succ_of_lt hi) =
+      A.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family locate hcover i
+        hi := by
   by_cases hs : i ∈ selected
   · simp only [PrefixState.branchCopy, dif_pos hs]
     exact hmarked i (Finset.mem_filter.mpr ⟨hs, hi⟩)
   · simp only [PrefixState.branchCopy, dif_neg hs]
-    exact hcopies (locate i).1 (locate i).2 i (Finset.mem_filter.mpr ⟨List.mem_toFinset.mpr (hcover i hs), hi⟩)
+    exact hcopies (locate i).1 (locate i).2 i (Finset.mem_filter.mpr ⟨List.mem_toFinset.mpr (hcover
+      i hs), hi⟩)
 
 end Erdos547b.ZhaoSourceMarkedGlobalPrefix
 

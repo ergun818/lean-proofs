@@ -9,7 +9,7 @@ orientations with that side permutation restores the original endpoints,
 and the exact used sets are transported by the same permutation.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoLemma58GroupedSmallForest
@@ -29,7 +29,8 @@ def DynamicAttachedForestEmbedding.relabelSides (side : Fin 2 ≃ Fin 2)
   map_side := E.map_side
 
 theorem DynamicAttachedForestEmbedding.used_relabelSides (side : Fin 2 ≃ Fin 2)
-    (E : DynamicAttachedForestEmbedding F H parent orient (fun c => available (side c))) (c : Fin 2) :
+    (E : DynamicAttachedForestEmbedding F H parent orient (fun c => available (side c))) (c : Fin 2)
+      :
     ((E.relabelSides side).used (side c)) = E.used c := by
   unfold DynamicAttachedForestEmbedding.used DynamicAttachedForestEmbedding.relabelSides
   apply Finset.biUnion_congr rfl
@@ -42,4 +43,5 @@ theorem DynamicAttachedForestEmbedding.used_relabelSides (side : Fin 2 ≃ Fin 2
 end Erdos547b.ZhaoLemma58GroupedSmallForest
 
 #print axioms Erdos547b.ZhaoLemma58GroupedSmallForest.DynamicAttachedForestEmbedding.relabelSides
-#print axioms Erdos547b.ZhaoLemma58GroupedSmallForest.DynamicAttachedForestEmbedding.used_relabelSides
+open Erdos547b.ZhaoLemma58GroupedSmallForest.DynamicAttachedForestEmbedding in
+#print axioms used_relabelSides

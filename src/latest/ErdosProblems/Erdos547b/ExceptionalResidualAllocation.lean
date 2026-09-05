@@ -9,7 +9,7 @@ mathematical writeup. It constructs the residual matchings rather than
 assuming that their degree margins already give an embedding.
 -/
 
-open scoped BigOperators Classical
+open scoped BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoExceptionalResidualAllocation
@@ -18,11 +18,13 @@ open Finset
 
 variable {E : Type*} [DecidableEq E]
 
+omit [DecidableEq E] in
 /-- Order-free first crossing, including the zero target and empty set. -/
 theorem exists_first_threshold_subset (M : Finset E) (w : E → ℝ)
     (target cap : ℝ) (htarget : 0 ≤ target) (hcap : 0 < cap)
     (hbound : ∀ e ∈ M, w e ≤ cap) (htotal : target ≤ ∑ e ∈ M, w e) :
     ∃ P ⊆ M, target ≤ ∑ e ∈ P, w e ∧ (∑ e ∈ P, w e) < target + cap := by
+  classical
   induction M using Finset.induction_on generalizing target with
   | empty =>
       refine ⟨∅, Finset.Subset.refl _, ?_, ?_⟩

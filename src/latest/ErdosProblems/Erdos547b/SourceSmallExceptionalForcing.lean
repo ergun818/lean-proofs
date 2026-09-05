@@ -10,7 +10,7 @@ edges avoiding it. The source target depends on that actual exceptional
 selection. Both concrete gains and all source budgets are discharged.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceSmallExceptionalForcing
@@ -33,11 +33,12 @@ variable {α : ℚ} {hostN q M : ℕ}
 variable {G : SimpleGraph (Fin hostN)} [DecidableRel G.Adj]
 variable (W : Witness α q M G) (Q : Certificate W) (S : CleanSourceWitness W Q)
 
-theorem exists_subset_exceptionalCount_avoiding {E : Type*} [DecidableEq E]
+theorem exists_subset_exceptionalCount_avoiding {E : Type*}
     (hα : 0 < α) (family forbidden : Finset E)
     (hlarge : (eta α : ℝ) * paddedHalf (Index W) ≤ family.card)
     (hforbidden : (forbidden.card : ℝ) ≤ (eta α : ℝ) * paddedHalf (Index W) / 2) :
     ∃ E0 ⊆ family, Disjoint E0 forbidden ∧ E0.card = exceptionalCount W := by
+  classical
   have heta : (0 : ℝ) ≤ eta α := by exact_mod_cast (parameter_pos hα).2.2.1.le
   have hceil : (exceptionalCount W : ℝ) < (eta α : ℝ) * paddedHalf (Index W) / 2 + 1 :=
     Nat.ceil_lt_add_one (by positivity)
@@ -45,7 +46,8 @@ theorem exists_subset_exceptionalCount_avoiding {E : Type*} [DecidableEq E]
     push_cast
     linarith only [hceil, hlarge, hforbidden]
   have hroom : exceptionalCount W + forbidden.card < family.card + 1 := by exact_mod_cast hroomR
-  have hinter : (family ∩ forbidden).card ≤ forbidden.card := Finset.card_le_card Finset.inter_subset_right
+  have hinter : (family ∩ forbidden).card ≤ forbidden.card := Finset.card_le_card
+    Finset.inter_subset_right
   have hsplit := Finset.card_sdiff_add_card_inter family forbidden
   have hcount : exceptionalCount W ≤ (family \ forbidden).card := by omega
   obtain ⟨E0, hE0, hE0card⟩ := Finset.exists_subset_card_eq hcount
@@ -70,7 +72,8 @@ theorem exists_treeCopy_of_smallUnbalancedFamily
     (hroots : (P.numParts : ℝ) ≤ (epsilon α : ℝ) * W.clusterSize) :
     Nonempty (T.Copy (embeddingHost W)) := by
   obtain ⟨Eb, hEb, hbudgetb, _hupperb, _hcountb, hhalf, hcost⟩ := exists_smallReservation W Q S
-    hα hα1 hhost horder (otherSide s) (branchMass P (sideBranches P (otherSide s))) (Nat.cast_nonneg _) hother
+    hα hα1 hhost horder (otherSide s) (branchMass P (sideBranches P (otherSide s))) (Nat.cast_nonneg
+      _) hother
   obtain ⟨E0, hE0, h0b, hcount⟩ := exists_subset_exceptionalCount_avoiding W hα
     (unbalancedAway W Q S s) Eb hfamily hhalf
   obtain ⟨havailable, hgain⟩ := actual_half_selection_gates W hα hα1 hhost horder
@@ -103,7 +106,8 @@ theorem exists_treeCopy_of_smallUnbalancedFamily
     (by linarith only [hweight, havailable, hmass]) (by linarith only [hgain, hcapacity])
   apply exists_treeCopy_of_smallExceptionalSaving W Q S hT P hα hα1 hhost horder hcard s
     F0.selected (F0.selected_available.trans (Finset.filter_subset _ _)) (.threshold ((α : ℝ) / 16))
-    ⟨hr0, hr1⟩ (fun i hi => balancedSide_branchValid P s ((α : ℝ) / 16) i (F0.selected_available hi))
+    ⟨hr0, hr1⟩ (fun i hi => balancedSide_branchValid P s ((α : ℝ) / 16) i (F0.selected_available
+      hi))
     E0 Eb (hE0.trans (unbalancedEdges_subset _ _ _)) hEb h0b (fun _ _ => trivial)
     (selected_real_lower P F0)
   · simpa only [branchMass, Nat.cast_sum] using hbudget0
@@ -124,7 +128,8 @@ theorem exists_treeCopy_of_smallNonextremeFamily
     (hroots : (P.numParts : ℝ) ≤ (epsilon α : ℝ) * W.clusterSize) :
     Nonempty (T.Copy (embeddingHost W)) := by
   obtain ⟨Eb, hEb, hbudgetb, _hupperb, _hcountb, hhalf, hcost⟩ := exists_smallReservation W Q S
-    hα hα1 hhost horder (otherSide s) (branchMass P (sideBranches P (otherSide s))) (Nat.cast_nonneg _) hother
+    hα hα1 hhost horder (otherSide s) (branchMass P (sideBranches P (otherSide s))) (Nat.cast_nonneg
+      _) hother
   obtain ⟨E0, hE0, h0b, hcount⟩ := exists_subset_exceptionalCount_avoiding W hα
     (nonextremeAway W Q S s) Eb hfamily hhalf
   obtain ⟨havailable, hgain⟩ := actual_nonextreme_gates W hα hα1 hhost horder

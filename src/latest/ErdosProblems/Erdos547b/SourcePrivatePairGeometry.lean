@@ -10,7 +10,7 @@ are actual partition indices. The disjointness is derived from the original
 matching and partition, including disjointness across different groups.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePrivatePairGeometry

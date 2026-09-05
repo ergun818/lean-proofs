@@ -339,10 +339,12 @@ noncomputable def rootAttachedBranchEmbeddingOfMatchingFibers
             let i : Fin s.card := fiberIndex assign e j hej
             let i' : Fin s.card := fiberIndex assign e j' hej'
             let aLocal :
-                Fin ((Erdos547b.ZhaoClaim616SourceBridge.OrderedBranchForest.restrict F s).branches.size i) := by
+                Fin ((Erdos547b.ZhaoClaim616SourceBridge.OrderedBranchForest.restrict F
+                  s).branches.size i) := by
               exact fiberVertex F assign e j hej a
             let aLocal' :
-                Fin ((Erdos547b.ZhaoClaim616SourceBridge.OrderedBranchForest.restrict F s).branches.size i') := by
+                Fin ((Erdos547b.ZhaoClaim616SourceBridge.OrderedBranchForest.restrict F
+                  s).branches.size i') := by
               exact fiberVertex F assign e j' hej' a'
             have hlocalEq :
                 (localEmb e).embedding.copy i aLocal =
@@ -361,7 +363,8 @@ noncomputable def rootAttachedBranchEmbeddingOfMatchingFibers
                     assign endpoint orient localEmb e j' hej' a'
             have hsigma :
                 (⟨i, aLocal⟩ : Σ z, Fin
-                  ((Erdos547b.ZhaoClaim616SourceBridge.OrderedBranchForest.restrict F s).branches.size z)) =
+                  ((Erdos547b.ZhaoClaim616SourceBridge.OrderedBranchForest.restrict F
+                    s).branches.size z)) =
                   ⟨i', aLocal'⟩ :=
               (localEmb e).embedding.injective hlocalEq
             have hii' : i = i' := congrArg Sigma.fst hsigma

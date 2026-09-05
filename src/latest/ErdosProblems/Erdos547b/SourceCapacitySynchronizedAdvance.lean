@@ -10,7 +10,7 @@ each family's complete successor from its concrete capacity budget.
 Initial and cut-parent roots use the same image-preserving interface.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceCapacitySynchronizedAdvance
@@ -63,15 +63,19 @@ theorem exists_synchronizedFamilyAdvance
           (#((reservoir W Q t).filter ((embeddingHost W).Adj z)) : ℝ)) ∧
       ∃ D : ∀ j, FamilyState W Q S (rootCluster W Q s) F owner (kinds j) (allocation j) (family j)
           (Function.update rootImage n z) (n.val + 1),
-        ∀ j i hi, ((D j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds j)).forestCopy.componentCopy i
+        ∀ j i hi, ((D j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds
+          j)).forestCopy.componentCopy i
             (processedFamily_mono owner (Nat.le_succ n.val) (family j) hi) =
-          ((A j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds j)).forestCopy.componentCopy i hi := by
-  obtain ⟨z, hz, hfresh, hAdj, hactive, hdegree, bad, hbad⟩ := exists_capacityFamily_root W Q S s t F owner
+          ((A j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds
+            j)).forestCopy.componentCopy i hi := by
+  obtain ⟨z, hz, hfresh, hAdj, hactive, hdegree, bad, hbad⟩ := exists_capacityFamily_root W Q S s t
+    F owner
     hα hα1 hhost horder hk kinds hkind allocation family hdisjoint rootImage n.val A haway
     globalCount hglobal used hused parent hparent
   have hstep (j : Fin k) := exists_familyAdvance W Q S (rootCluster W Q s) F owner (kinds j)
     hα hα1 hhost horder (rootCluster_cases W Q s) (hkind j) (hbranch j) (hedge j) hsmall (haway j)
-    rootImage n (A j) globalCount (hbudget j) z (hactive j) (bad j) (hbad j).1 (hbad j).2.1 (hbad j).2.2
+    rootImage n (A j) globalCount (hbudget j) z (hactive j) (bad j) (hbad j).1 (hbad j).2.1 (hbad
+      j).2.2
   choose D hD using hstep
   exact ⟨z, hz, hfresh, hAdj, hdegree, D, hD⟩
 

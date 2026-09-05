@@ -3,7 +3,7 @@ import ErdosProblems.Erdos547b.Section6Dichotomy
 
 /-! # Restore deleted graph edges and exceptional vertices in a disjoint cut -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 namespace Erdos547b.ZhaoCutRestoration
 
@@ -21,7 +21,8 @@ theorem crossing_le_add_deleted (X Y : Finset V) (hXY : Disjoint X Y) :
       apply Finset.mem_sdiff.mpr
       refine ⟨by simpa only [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] using hg.2.2, ?_⟩
       intro he
-      have hh : H.Adj p.1 p.2 := by simpa only [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] using he
+      have hh : H.Adj p.1 p.2 :=
+        by simpa only [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] using he
       exact (Finset.mem_sdiff.mp hp).2 ((SimpleGraph.mem_interedges_iff H).mpr ⟨hg.1, hg.2.1, hh⟩)
     · intro p hp r hr hpr
       have hp' := (SimpleGraph.mem_interedges_iff G).mp (Finset.mem_sdiff.mp hp).1

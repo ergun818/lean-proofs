@@ -9,7 +9,7 @@ Only marked vertices, not all vertices of the root colour, are required to
 have the permanent A-reservoir reconnection degree.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMarkedBranchPlacement
@@ -41,7 +41,8 @@ structure Placement (selected : Finset (Fin b)) (parent : Fin b → Fin hostN) w
 variable {selected : Finset (Fin b)} {parent : Fin b → Fin hostN}
 
 def Placement.used (E : Placement W Q S O P F marks selected parent) : Finset (Fin hostN) :=
-  Finset.univ.biUnion fun i : {i // i ∈ selected} => Finset.univ.image (E.forestCopy.componentCopy i.1 i.2)
+  Finset.univ.biUnion fun i : {i // i ∈ selected} => Finset.univ.image (E.forestCopy.componentCopy
+    i.1 i.2)
 
 theorem Placement.copy_mem_used (E : Placement W Q S O P F marks selected parent)
     (i : Fin b) (hi : i ∈ selected) (a : Fin (F.size i)) :
@@ -75,7 +76,8 @@ private def insertCopy (E : Placement W Q S O P F marks selected parent)
 
 private theorem insertCopy_old (E : Placement W Q S O P F marks selected parent)
     (i : Fin b) (f : (F.tree i).Copy (embeddingHost W)) (j : Fin b) (hj : j ∈ selected) :
-    insertCopy W Q S O P F marks E i f j (Finset.mem_insert_of_mem hj) = E.forestCopy.componentCopy j hj := by
+    insertCopy W Q S O P F marks E i f j (Finset.mem_insert_of_mem hj) = E.forestCopy.componentCopy
+      j hj := by
   simp only [insertCopy, dif_pos hj]
 
 private theorem insertCopy_new (E : Placement W Q S O P F marks selected parent)
@@ -114,7 +116,8 @@ def Placement.appendBranch (E : Placement W Q S O P F marks selected parent)
     by_cases hjs : j ∈ selected
     · by_cases hks : k ∈ selected
       · simpa only [insertCopy_old W Q S O P F marks E i f j hjs,
-          insertCopy_old W Q S O P F marks E i f k hks] using E.forestCopy.disjoint_ranges j hjs k hks hjk
+          insertCopy_old W Q S O P F marks E i f k hks] using E.forestCopy.disjoint_ranges j hjs k
+            hks hjk
       · have hki : k = i := (Finset.mem_insert.mp hk).resolve_right hks
         subst k
         simpa only [insertCopy_old W Q S O P F marks E i f j hjs,
@@ -132,16 +135,19 @@ def Placement.appendBranch (E : Placement W Q S O P F marks selected parent)
       simpa only [insertCopy_new W Q S O P F marks E i hi f] using hattach
   · intro j hj a ha
     by_cases hjs : j ∈ selected
-    · simpa only [insertCopy_old W Q S O P F marks E i f j hjs, group, dif_pos hjs] using E.marked j hjs a ha
+    · simpa only [insertCopy_old W Q S O P F marks E i f j hjs, group, dif_pos hjs] using E.marked j
+        hjs a ha
     · have hji : j = i := (Finset.mem_insert.mp hj).resolve_right hjs
       subst j
       simpa only [insertCopy_new W Q S O P F marks E i hi f, group, dif_neg hi] using hmarked a ha
   · intro j hj a har ham
     by_cases hjs : j ∈ selected
-    · simpa only [insertCopy_old W Q S O P F marks E i f j hjs, group, dif_pos hjs] using E.other j hjs a har ham
+    · simpa only [insertCopy_old W Q S O P F marks E i f j hjs, group, dif_pos hjs] using E.other j
+        hjs a har ham
     · have hji : j = i := (Finset.mem_insert.mp hj).resolve_right hjs
       subst j
-      simpa only [insertCopy_new W Q S O P F marks E i hi f, group, dif_neg hi] using hother a har ham
+      simpa only [insertCopy_new W Q S O P F marks E i hi f, group, dif_neg hi] using hother a har
+        ham
 
 theorem Placement.appendBranch_preserves_copy (E : Placement W Q S O P F marks selected parent)
     (i : Fin b) (hi : i ∉ selected) (x : {c // c ∈ C}) (f : (F.tree i).Copy (embeddingHost W))
@@ -152,7 +158,8 @@ theorem Placement.appendBranch_preserves_copy (E : Placement W Q S O P F marks s
         (Q.A₀.filter ((embeddingHost W).Adj (f a))).card)
     (hother : ∀ a, a ≠ F.root i → a ∉ marks i → f a ∈ P.pairs W Q S O x)
     (j : Fin b) (hj : j ∈ selected) :
-    (E.appendBranch W Q S O P F marks i hi x f hattach hfresh hmarked hother).forestCopy.componentCopy j
+    (E.appendBranch W Q S O P F marks i hi x f hattach hfresh hmarked
+      hother).forestCopy.componentCopy j
       (Finset.mem_insert_of_mem hj) = E.forestCopy.componentCopy j hj :=
   insertCopy_old W Q S O P F marks E i f j hj
 
@@ -166,7 +173,8 @@ variable (hmarked : ∀ a ∈ insert (F.root i) (marks i), f a ∈ whole W (P.ce
 variable (hother : ∀ a, a ≠ F.root i → a ∉ marks i → f a ∈ P.pairs W Q S O x)
 
 theorem Placement.appendBranch_new_copy :
-    (E.appendBranch W Q S O P F marks i hi x f hattach hfresh hmarked hother).forestCopy.componentCopy i
+    (E.appendBranch W Q S O P F marks i hi x f hattach hfresh hmarked
+      hother).forestCopy.componentCopy i
       (Finset.mem_insert_self _ _) = f :=
   insertCopy_new W Q S O P F marks E i hi f
 

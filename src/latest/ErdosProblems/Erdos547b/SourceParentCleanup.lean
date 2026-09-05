@@ -10,7 +10,7 @@ the number of matching edges. Every retained vertex has the required
 root-reservoir degree whenever the corresponding reduced edge exists.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceParentCleanup

@@ -11,7 +11,7 @@ disjointness and ideal-weight inequalities suffice for the checked global
 embedding; no graph-copy callback is introduced here.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceExceptionalTreeCopy
@@ -67,7 +67,7 @@ theorem exists_treeCopy_of_exceptionalBudgets
     simp only [branchMass, Nat.cast_sum]
   apply exists_treeCopy_of_taggedIdealBudgets W Q S hT P hα hα1 hhost horder
     (by decide) (exceptionalTags s) kinds
-    (by intro j; fin_cases j; exact hkind; exact hkind0; exact hkind0)
+    (by intro j; fin_cases j <;> assumption)
     allocation (exceptionalFamilies P s selected)
     (exceptionalFamilies_cover P s selected) (exceptionalFamilies_side P s selected hselected)
   · intro j i hi

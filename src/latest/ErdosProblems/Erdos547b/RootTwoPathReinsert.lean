@@ -79,13 +79,13 @@ noncomputable def select (P : PendantRootTwoPathFamily T)
   leaf i := P.leaf (P.selectedIndex hq i)
   middle_injective := Subtype.val_injective.comp (P.selectedIndex_injective hq)
   leaf_injective := P.leaf_injective.comp (P.selectedIndex_injective hq)
-  middle_ne_leaf i j := P.middle_ne_leaf _ _
-  parent_ne_middle i j := P.parent_ne_middle _ _
-  parent_ne_leaf i j := P.parent_ne_leaf _ _
-  parent_middle_adj i := P.parent_middle_adj _
-  middle_leaf_adj i := P.middle_leaf_adj _
-  middle_neighbors i x h := P.middle_neighbors _ x h
-  leaf_neighbors i x h := P.leaf_neighbors _ x h
+  middle_ne_leaf _i _j := P.middle_ne_leaf _ _
+  parent_ne_middle _i _j := P.parent_ne_middle _ _
+  parent_ne_leaf _i _j := P.parent_ne_leaf _ _
+  parent_middle_adj _i := P.parent_middle_adj _
+  middle_leaf_adj _i := P.middle_leaf_adj _
+  middle_neighbors _i x h := P.middle_neighbors _ x h
+  leaf_neighbors _i x h := P.leaf_neighbors _ x h
 
 end PendantRootTwoPathFamily
 
@@ -100,12 +100,14 @@ def leafSet (D : RootTwoPathSystem T I) : Finset V :=
 def pruned (D : RootTwoPathSystem T I) : SimpleGraph {x // x ∉ D.leafSet} :=
   T.induce ((D.leafSet : Set V)ᶜ)
 
+omit [DecidableEq I] in
 theorem middle_not_mem_leafSet (D : RootTwoPathSystem T I) (i : I) :
     D.middle i ∉ D.leafSet := by
   intro h
   obtain ⟨j, -, hj⟩ := Finset.mem_image.mp h
   exact D.middle_ne_leaf i j hj.symm
 
+omit [DecidableEq I] in
 theorem parent_not_mem_leafSet (D : RootTwoPathSystem T I) (i : I) :
     D.parent i ∉ D.leafSet := by
   intro h
@@ -124,6 +126,7 @@ def parentVertex (D : RootTwoPathSystem T I) (i : I) :
     {x // x ∉ D.leafSet} :=
   ⟨D.parent i, D.parent_not_mem_leafSet i⟩
 
+omit [DecidableEq I] in
 theorem parentVertex_not_mem_middleSet
     (D : RootTwoPathSystem T I) (i : I) :
     D.parentVertex i ∉ D.middleSet := by
@@ -139,9 +142,10 @@ def parentCoreVertex (D : RootTwoPathSystem T I) (i : I) :
     {x // x ∉ D.middleSet} :=
   ⟨D.parentVertex i, D.parentVertex_not_mem_middleSet i⟩
 
+omit [DecidableEq I] in
 theorem root_not_mem_leafSet_of_oriented
-    (D : RootTwoPathSystem T I) (hT : T.IsTree) (root : V)
-    (hparentDist : ∀ i, T.dist root (D.parent i) + 1 =
+    (D : RootTwoPathSystem T I) (_hT : T.IsTree) (root : V)
+    (_hparentDist : ∀ i, T.dist root (D.parent i) + 1 =
       T.dist root (D.middle i))
     (hleafDist : ∀ i, T.dist root (D.middle i) + 1 =
       T.dist root (D.leaf i)) :
@@ -152,6 +156,7 @@ theorem root_not_mem_leafSet_of_oriented
   rw [hi] at hl
   simp at hl
 
+omit [DecidableEq I] in
 theorem root_not_mem_middleSet_of_oriented
     (D : RootTwoPathSystem T I) (hT : T.IsTree) (root : V)
     (hparentDist : ∀ i, T.dist root (D.parent i) + 1 =
@@ -176,11 +181,12 @@ def coreRootOfOriented
   ⟨⟨root, D.root_not_mem_leafSet_of_oriented hT root hparentDist hleafDist⟩,
     D.root_not_mem_middleSet_of_oriented hT root hparentDist hleafDist⟩
 
+omit [DecidableEq I] in
 private theorem parent_survives_oriented_core
     (D : RootTwoPathSystem T I) (hT : T.IsTree) (root : V)
     (hparentDist : ∀ i, T.dist root (D.parent i) + 1 =
       T.dist root (D.middle i))
-    (hleafDist : ∀ i, T.dist root (D.middle i) + 1 =
+    (_hleafDist : ∀ i, T.dist root (D.middle i) + 1 =
       T.dist root (D.leaf i))
     (x : {x // x ∉ D.middleSet}) (hx : x.1.1 ≠ root) :
     ∃ p : {x // x ∉ D.middleSet},
@@ -219,6 +225,7 @@ private theorem parent_survives_oriented_core
   refine ⟨p, ?_, hp₀dist⟩
   simpa [core, pruned, p, p₁] using hp₀adj
 
+omit [DecidableEq I] in
 theorem core_isTree_of_oriented
     (D : RootTwoPathSystem T I) (hT : T.IsTree) (root : V)
     (hparentDist : ∀ i, T.dist root (D.parent i) + 1 =
@@ -226,6 +233,7 @@ theorem core_isTree_of_oriented
     (hleafDist : ∀ i, T.dist root (D.middle i) + 1 =
       T.dist root (D.leaf i)) :
     D.core.IsTree := by
+  classical
   let r := D.coreRootOfOriented hT root hparentDist hleafDist
   have hconn : D.core.Connected := by
     rw [SimpleGraph.connected_iff_exists_forall_reachable]
@@ -262,6 +270,7 @@ def middleChoices (D : RootTwoPathSystem T I) (G : SimpleGraph B)
     Finset B :=
   (G.neighborFinset (f (D.parentCoreVertex i)) ∩ pool) \ D.coreImages f
 
+omit [DecidableEq I] in
 theorem exists_middleAssignment
     (D : RootTwoPathSystem T I) (G : SimpleGraph B) [DecidableRel G.Adj]
     (f : D.core.Copy G) (pool : Finset B)
@@ -282,6 +291,7 @@ theorem exists_middleAssignment
         Finset.card_le_card
           (Finset.subset_biUnion_of_mem (D.middleChoices G f pool) hi)
 
+omit [DecidableEq I] in
 private theorem middleSet_nonempty_index
     (D : RootTwoPathSystem T I) (x : D.middleSet) :
     ∃ i : I, D.middleVertex i = x := by
@@ -292,11 +302,13 @@ private noncomputable def middleIndex
     (D : RootTwoPathSystem T I) (x : D.middleSet) : I :=
   Classical.choose (D.middleSet_nonempty_index x)
 
+omit [DecidableEq I] in
 private theorem middleIndex_spec
     (D : RootTwoPathSystem T I) (x : D.middleSet) :
     D.middleVertex (D.middleIndex x) = x :=
   Classical.choose_spec (D.middleSet_nonempty_index x)
 
+omit [DecidableEq I] in
 private theorem leafSet_nonempty_index
     (D : RootTwoPathSystem T I) (x : D.leafSet) :
     ∃ i : I, D.leaf i = x.1 := by
@@ -307,11 +319,13 @@ private noncomputable def leafIndex
     (D : RootTwoPathSystem T I) (x : D.leafSet) : I :=
   Classical.choose (D.leafSet_nonempty_index x)
 
+omit [DecidableEq I] in
 private theorem leafIndex_spec
     (D : RootTwoPathSystem T I) (x : D.leafSet) :
     D.leaf (D.leafIndex x) = x.1 :=
   Classical.choose_spec (D.leafSet_nonempty_index x)
 
+omit [DecidableEq I] in
 /-- Hall restores the middles beside their embedded parents, then the usual
 large-degree leaf completion restores the terminal leaves. -/
 theorem exists_copy_of_core_of_rootTwoPaths

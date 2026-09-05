@@ -19,13 +19,16 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 def degreeInto (G : SimpleGraph V) [DecidableRel G.Adj] (v : V) (S : Finset V) : ℕ :=
   (S.filter fun w ↦ G.Adj v w).card
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem degreeInto_empty (G : SimpleGraph V) [DecidableRel G.Adj] (v : V) :
     degreeInto G v ∅ = 0 := by simp [degreeInto]
 
+omit [DecidableEq V] [Fintype V] in
 theorem degreeInto_le_card (G : SimpleGraph V) [DecidableRel G.Adj] (v : V)
     (S : Finset V) : degreeInto G v S ≤ S.card := by
   exact Finset.card_filter_le _ _
 
+omit [DecidableEq V] [Fintype V] in
 theorem degreeInto_eq_card_interedges_singleton (G : SimpleGraph V)
     [DecidableRel G.Adj] (v : V) (S : Finset V) :
     degreeInto G v S = (G.interedges {v} S).card := by
@@ -34,7 +37,7 @@ theorem degreeInto_eq_card_interedges_singleton (G : SimpleGraph V)
   apply Finset.card_bij (fun w _ ↦ (v, w))
   · intro w hw
     simp only [Finset.mem_filter] at hw
-    simp [Rel.mem_interedges_iff, hw]
+    simp [hw]
   · intro a ha b hb hab
     exact congrArg Prod.snd hab
   · intro p hp
@@ -45,11 +48,13 @@ theorem degreeInto_eq_card_interedges_singleton (G : SimpleGraph V)
       · exact hp.1.1.symm
       · rfl
 
+omit [DecidableEq V] [Fintype V] in
 /-- Counting cross-edges by their first endpoint. -/
-theorem sum_degreeInto_eq_card_interedges (G : SimpleGraph V)
+theorem sum_degreeInto_eq_card_interedges [Finite V] (G : SimpleGraph V)
     [DecidableRel G.Adj] (S T : Finset V) :
     ∑ v ∈ S, degreeInto G v T = (G.interedges S T).card := by
   classical
+  let := Fintype.ofFinite V
   induction S using Finset.induction_on with
   | empty => simp [degreeInto]
   | @insert v S hv ih =>
@@ -68,13 +73,16 @@ theorem sum_degreeInto_eq_card_interedges (G : SimpleGraph V)
             Finset.mem_insert]
           aesop
 
+omit [DecidableEq V] [Fintype V] in
 /-- A discrete Markov bound: if every vertex in `B` has at least `k`
 neighbors in `T`, then `|B| k` is at most the number of `S`--`T` edges. -/
-theorem card_mul_le_card_interedges_of_subset_of_degreeInto
+theorem card_mul_le_card_interedges_of_subset_of_degreeInto [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {B S T : Finset V} {k : ℕ} (hBS : B ⊆ S)
     (hdeg : ∀ v ∈ B, k ≤ degreeInto G v T) :
     B.card * k ≤ (G.interedges S T).card := by
+  classical
+  let := Fintype.ofFinite V
   rw [← sum_degreeInto_eq_card_interedges]
   calc
     B.card * k = ∑ _ ∈ B, k := by simp
@@ -88,13 +96,17 @@ def crossHeavy (G : SimpleGraph V) [DecidableRel G.Adj]
     (S T : Finset V) (k : ℕ) : Finset V :=
   S.filter fun v ↦ k ≤ degreeInto G v T
 
+omit [DecidableEq V] [Fintype V] in
 theorem crossHeavy_subset (G : SimpleGraph V) [DecidableRel G.Adj]
     (S T : Finset V) (k : ℕ) : crossHeavy G S T k ⊆ S := by
   exact Finset.filter_subset _ _
 
-theorem crossHeavy_card_mul_le_interedges (G : SimpleGraph V)
+omit [DecidableEq V] [Fintype V] in
+theorem crossHeavy_card_mul_le_interedges [Finite V] (G : SimpleGraph V)
     [DecidableRel G.Adj] (S T : Finset V) (k : ℕ) :
     (crossHeavy G S T k).card * k ≤ (G.interedges S T).card := by
+  classical
+  let := Fintype.ofFinite V
   apply card_mul_le_card_interedges_of_subset_of_degreeInto G
   · exact crossHeavy_subset G S T k
   · intro v hv
@@ -139,6 +151,7 @@ theorem exists_balanced_near
       omega
     · simp [Finset.sdiff_eq_empty_iff_subset.mpr hWC]
 
+omit [Fintype V] in
 /-- Deleting at most `b` vertices from a target set can lower the number of
 available neighbors by at most `b`. -/
 theorem degreeInto_le_add_removed
@@ -159,13 +172,17 @@ theorem degreeInto_le_add_removed
     _ ≤ (W.filter fun w ↦ G.Adj v w).card + (C \ W).card :=
       Finset.card_union_le _ _
 
-theorem degreeInto_sub_le_of_removed_le
+omit [Fintype V] in
+theorem degreeInto_sub_le_of_removed_le [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (v : V) {C W : Finset V} {b : ℕ} (hremoved : (C \ W).card ≤ b) :
     degreeInto G v C - b ≤ degreeInto G v W := by
+  classical
+  let := Fintype.ofFinite V
   have h := degreeInto_le_add_removed G v C W
   omega
 
+omit [Fintype V] in
 theorem degreeInto_union_of_disjoint
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (v : V) {S T : Finset V} (hST : Disjoint S T) :
@@ -189,10 +206,12 @@ def classified (G : SimpleGraph V) [DecidableRel G.Adj]
     (L S : Finset V) (k : ℕ) : Finset V :=
   L.filter fun v ↦ k < degreeInto G v S
 
+omit [DecidableEq V] [Fintype V] in
 theorem classified_subset_left (G : SimpleGraph V) [DecidableRel G.Adj]
     (L S : Finset V) (k : ℕ) : classified G L S k ⊆ L :=
   Finset.filter_subset _ _
 
+omit [DecidableEq V] [Fintype V] in
 theorem classified_mem_degree (G : SimpleGraph V) [DecidableRel G.Adj]
     {L S : Finset V} {k : ℕ} {v : V} (hv : v ∈ classified G L S k) :
     k < degreeInto G v S := by
@@ -298,7 +317,7 @@ theorem exists_dense_balanced_side_of_classification
     omega
   have hL₁C : L₁ ⊆ C := by
     intro v hvL₁
-    have hvV : v ∈ V₁ ∪ V₂ := by simpa [hcover]
+    have hvV : v ∈ V₁ ∪ V₂ := by simp [hcover]
     rcases Finset.mem_union.mp hvV with hvV₁ | hvV₂
     · apply Finset.mem_union_left
       exact Finset.mem_sdiff.mpr ⟨hvV₁, fun hvM₂₁ ↦
@@ -426,12 +445,14 @@ def leafVertices (G : SimpleGraph V) [DecidableRel G.Adj] : Finset V :=
 def branchVertices (G : SimpleGraph V) [DecidableRel G.Adj] : Finset V :=
   Finset.univ.filter fun v => 3 <= G.degree v
 
+omit [DecidableEq V] in
 lemma tree_one_le_degree
     (G : SimpleGraph V) [DecidableRel G.Adj] [Nontrivial V]
     (hT : G.IsTree) (v : V) : 1 <= G.degree v := by
   rw [<- hT.minDegree_eq_one_of_nontrivial]
   exact G.minDegree_le_degree v
 
+omit [DecidableEq V] in
 lemma sum_degree_sub_two_eq_neg_two
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hT : G.IsTree) :
@@ -450,12 +471,14 @@ lemma sum_degree_sub_two_eq_neg_two
       have hedge := hT.card_edgeFinset
       omega
 
+omit [DecidableEq V] in
 lemma sum_degree_sub_two_decomposition
     (G : SimpleGraph V) [DecidableRel G.Adj] [Nontrivial V]
     (hT : G.IsTree) :
     (∑ v : V, ((G.degree v : Int) - 2)) =
       - (leafVertices G).card +
         ∑ v ∈ branchVertices G, ((G.degree v : Int) - 2) := by
+  classical
   rw [show (∑ v : V, ((G.degree v : Int) - 2)) =
       ∑ v : V, ((if G.degree v = 1 then (-1 : Int) else 0) +
         if 3 <= G.degree v then (G.degree v : Int) - 2 else 0) by
@@ -468,28 +491,31 @@ lemma sum_degree_sub_two_decomposition
       by_cases h3 : 3 <= G.degree v
       · simp [h1, h3]
       · have heq : G.degree v = 2 := by omega
-        simp [h1, h3, heq]]
+        simp [heq]]
   rw [Finset.sum_add_distrib]
-  simp only [leafVertices, branchVertices, Finset.sum_ite, Finset.mem_filter,
-    Finset.mem_univ, true_and]
+  simp only [leafVertices, branchVertices, Finset.sum_ite]
   simp
 
+omit [DecidableEq V] in
 /-- Zhao Proposition 7.11(1), in its exact degree-excess form. -/
 theorem branch_excess_eq_leaf_card_sub_two
     (G : SimpleGraph V) [DecidableRel G.Adj] [Nontrivial V]
     (hT : G.IsTree) :
     (∑ v ∈ branchVertices G, ((G.degree v : Int) - 2)) =
       (leafVertices G).card - 2 := by
+  classical
   have hsum := sum_degree_sub_two_eq_neg_two G hT
   rw [sum_degree_sub_two_decomposition G hT] at hsum
   omega
 
+omit [DecidableEq V] in
 /-- Zhao Proposition 7.11(1): the number of vertices of degree at least three
 is at most the number of leaves minus two. -/
 theorem zhao_prop_7_11_part_one
     (G : SimpleGraph V) [DecidableRel G.Adj] [Nontrivial V]
     (hT : G.IsTree) :
     (branchVertices G).card <= (leafVertices G).card - 2 := by
+  classical
   have hterm : ∀ v ∈ branchVertices G,
       (1 : Int) <= (G.degree v : Int) - 2 := by
     intro v hv
@@ -530,11 +556,13 @@ lemma card_openNeighborFinset_le_sum_degree
 def branchExcess (G : SimpleGraph V) [DecidableRel G.Adj] (v : V) : Int :=
   if 3 <= G.degree v then (G.degree v : Int) - 2 else 0
 
+omit [DecidableEq V] in
 lemma branchExcess_nonneg (G : SimpleGraph V) [DecidableRel G.Adj] (v : V) :
     0 <= branchExcess G v := by
   simp only [branchExcess]
   split_ifs with h <;> omega
 
+omit [DecidableEq V] in
 lemma sum_branchExcess_eq_sum_branchVertices
     (G : SimpleGraph V) [DecidableRel G.Adj] :
     (∑ v : V, branchExcess G v) =
@@ -545,12 +573,14 @@ lemma sum_branchExcess_eq_sum_branchVertices
       ((G.degree v : Int) - 2)
   rw [Finset.sum_filter]
 
+omit [DecidableEq V] in
 lemma sum_degree_le_two_mul_card_add_branch_excess
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (S : Finset V) :
     (∑ v ∈ S, (G.degree v : Int)) <=
       2 * S.card +
         ∑ v ∈ branchVertices G, ((G.degree v : Int) - 2) := by
+  classical
   have hpoint : ∀ v : V, (G.degree v : Int) <=
       2 + branchExcess G v := by
     intro v

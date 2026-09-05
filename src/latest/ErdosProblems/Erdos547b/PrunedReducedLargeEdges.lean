@@ -95,7 +95,7 @@ endpoint.
 the high-degree reservoir of its left cluster or in that of its right
 cluster. -/
 theorem pruned_interedges_subset_reservoir_products
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Fintype V] [Finite ι]
     [DecidableEq V] [DecidableEq ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (threshold : ℕ) (P : ClusterAssignment V ι)
@@ -106,6 +106,7 @@ theorem pruned_interedges_subset_reservoir_products
       (largeVertexReservoir P G threshold i ×ˢ C j) ∪
         (C i ×ˢ largeVertexReservoir P G threshold j) := by
   classical
+  let := Fintype.ofFinite ι
   dsimp only
   intro p hp
   have hp' := (SimpleGraph.mem_interedges_iff
@@ -133,7 +134,7 @@ theorem pruned_interedges_subset_reservoir_products
 
 /-- Cardinal form of `pruned_interedges_subset_reservoir_products`. -/
 theorem pruned_interedges_card_le_reservoir_products
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Fintype V] [Finite ι]
     [DecidableEq V] [DecidableEq ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (threshold : ℕ) (P : ClusterAssignment V ι)
@@ -144,6 +145,7 @@ theorem pruned_interedges_card_le_reservoir_products
       (largeVertexReservoir P G threshold i).card * (C j).card +
         (C i).card * (largeVertexReservoir P G threshold j).card := by
   classical
+  let := Fintype.ofFinite ι
   dsimp only
   calc
     ((pruneSmallEdges G {v | threshold ≤ G.degree v}).interedges
@@ -451,10 +453,11 @@ theorem every_degreeForm_reduced_edge_meets_quantitativelyLarge
 the selected large-cluster set. -/
 theorem every_padGraph_edge_meets_padFinset
     {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (R : SimpleGraph ι) [DecidableRel R.Adj] (L : Finset ι)
+    (R : SimpleGraph ι) (L : Finset ι)
     (hlarge : ∀ ⦃i j⦄, R.Adj i j → i ∈ L ∨ j ∈ L) :
     ∀ ⦃x y : EvenPadding ι⦄,
       (padGraph R).Adj x y → x ∈ padFinset L ∨ y ∈ padFinset L := by
+  classical
   intro x y hxy
   cases x with
   | inl i =>
@@ -470,11 +473,13 @@ theorem every_padGraph_edge_meets_padFinset
 from its ambient graph.  This is exactly the raw-endpoint premise used by
 the canonical orientation in Lemma 6.11. -/
 theorem every_matching_edge_meets_finset
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
-    {R : SimpleGraph ι} [DecidableRel R.Adj]
+    {ι : Type*} [Finite ι]
+    {R : SimpleGraph ι}
     (L : Finset ι) (M : R.Subgraph)
     (hlarge : ∀ ⦃i j⦄, R.Adj i j → i ∈ L ∨ j ∈ L) :
     ∀ e : MatchingEdge M, e.1.out.1 ∈ L ∨ e.1.out.2 ∈ L := by
+  classical
+  let := Fintype.ofFinite ι
   intro e
   have h := hlarge (M.adj_sub (orientedEndpoint_adj M L e))
   by_cases hfirst : e.1.out.1 ∈ L

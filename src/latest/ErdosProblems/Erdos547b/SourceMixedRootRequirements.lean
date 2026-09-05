@@ -10,7 +10,7 @@ current live subsets. Missing chunks impose no condition. Both genuine
 requirements cost at most two epsilon-cluster exceptional sets.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMixedRootRequirements
@@ -34,7 +34,8 @@ variable (W : Witness α q M G) (Q : Certificate W)
 
 abbrev Requirement := Option (PendingRequirement (Fin hostN) (MatchingEdge Q.claim67.M))
 
-def requirementBad (S : CleanSourceWitness W Q) (C : Index W) (r : Requirement W Q) : Finset (Fin hostN) :=
+def requirementBad (S : CleanSourceWitness W Q) (C : Index W) (r : Requirement W Q) : Finset (Fin
+  hostN) :=
   match r with
   | none => ∅
   | some (.threshold e) => badForEdge W Q S C e
@@ -100,7 +101,8 @@ theorem card_mixedForbidden_le (hα : 0 < α) (hα1 : α ≤ 1 / 4)
     (used : Finset (Fin hostN)) (hused : (used.card : ℝ) ≤ (epsilon α : ℝ) * W.clusterSize) :
     ((mixedForbidden W Q S s t requirements used).card : ℝ) ≤
       (3 * (rootTypicality α : ℝ) + 6 * (epsilon α : ℝ)) * W.clusterSize := by
-  let bad := Finset.univ.biUnion (fun j => requirementBad W Q S (rootCluster W Q s) (requirements j))
+  let bad := Finset.univ.biUnion (fun j => requirementBad W Q S (rootCluster W Q s) (requirements
+    j))
   have he : (0 : ℝ) ≤ epsilon α := by exact_mod_cast (parameter_pos hα).2.2.2.2.2.2.2.le
   have hN : (0 : ℝ) ≤ W.clusterSize := Nat.cast_nonneg _
   have hbad : (bad.card : ℝ) ≤ (k : ℝ) * (2 * (epsilon α : ℝ) * W.clusterSize) := by
@@ -115,7 +117,8 @@ theorem card_mixedForbidden_le (hα : 0 < α) (hα1 : α ≤ 1 / 4)
       _ = _ := by simp [nsmul_eq_mul]
   have hkReal : (k : ℝ) ≤ 3 := by exact_mod_cast hk
   have hbadSix : (bad.card : ℝ) ≤ 6 * (epsilon α : ℝ) * W.clusterSize := by
-    have hm := mul_le_mul_of_nonneg_right hkReal (by positivity : 0 ≤ 2 * (epsilon α : ℝ) * W.clusterSize)
+    have hm := mul_le_mul_of_nonneg_right hkReal
+      (by positivity : 0 ≤ 2 * (epsilon α : ℝ) * W.clusterSize)
     nlinarith only [hbad, hm]
   have hr := card_badToward_le W Q hα hα1 (Sum.inl (rootCluster W Q s)) t
   have hc : (padCluster (clusterVertices (assignment W)) (Sum.inl (rootCluster W Q s))).card =

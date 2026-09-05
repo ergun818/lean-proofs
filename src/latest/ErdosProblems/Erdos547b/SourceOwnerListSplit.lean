@@ -9,7 +9,6 @@ owner followed by strictly later owners. A current tail followed by later
 owners has an exact literal owner cutoff, needed by active reservations.
 -/
 
-open scoped Classical
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceOwnerListSplit

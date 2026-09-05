@@ -41,7 +41,7 @@ the reserve for each pair is its total non-root demand plus one, rather than
 the global forest order. -/
 theorem exists_embedding_in_grouped_candidates_oriented
     {K : Type u} [DecidableEq K]
-    {B : Type v} [Fintype B] [DecidableEq B]
+    {B : Type v} [Finite B] [DecidableEq B]
     (F : OrderedRootedForest m) (G : SimpleGraph B) [DecidableRel G.Adj]
     (group : Fin m → K) (orient : Fin m → (Fin 2 ≃ Fin 2))
     (rootImage : Fin m → B)
@@ -61,6 +61,7 @@ theorem exists_embedding_in_grouped_candidates_oriented
         E.copy i a ∈ candidate (group i)
           (orient i ((F.isTree i).coloringTwoOfVert (F.root i) a)) := by
   classical
+  let := Fintype.ofFinite B
   induction m generalizing candidate with
   | zero =>
       let copies : ∀ i : Fin 0, (F.tree i).Copy G := fun i => Fin.elim0 i
@@ -244,7 +245,8 @@ theorem exists_embedding_in_grouped_candidates_oriented
               have hcUnion : Etail.copy i c ∈
                   candidate (groupTail i) 0 ∪ candidate (groupTail i) 1 := by
                 rcases OrderedRootedForest.fin_two_eq_zero_or_one
-                    (orientTail i ((Ftail.isTree i).coloringTwoOfVert (Ftail.root i) c)) with h0 | h1
+                    (orientTail i ((Ftail.isTree i).coloringTwoOfVert (Ftail.root i) c)) with h0 |
+                      h1
                 · exact Finset.mem_union_left _ (h0 ▸ hother)
                 · exact Finset.mem_union_right _ (h1 ▸ hother)
               exact (Finset.disjoint_left.mp hd) haUnion (hac ▸ hcUnion)
@@ -289,4 +291,5 @@ theorem exists_embedding_in_grouped_candidates_oriented
 end GroupedBranches
 end Erdos547b.ZhaoLemma59FullOnline
 
-#print axioms Erdos547b.ZhaoLemma59FullOnline.GroupedBranches.exists_embedding_in_grouped_candidates_oriented
+open Erdos547b.ZhaoLemma59FullOnline.GroupedBranches in
+#print axioms exists_embedding_in_grouped_candidates_oriented

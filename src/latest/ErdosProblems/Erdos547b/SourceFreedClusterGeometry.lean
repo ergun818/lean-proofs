@@ -4,7 +4,7 @@ import ErdosProblems.Erdos547b.SourceMatchingCopySupport
 
 /-! # The actual freed clusters and their compatible dense root pairs -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceFreedClusterGeometry
@@ -78,7 +78,8 @@ theorem partner_away (e : FreedIndex W Q S O sw) :
   · intro h
     exact hn (Finset.mem_union_right _ (Finset.mem_insert.mpr (Or.inl h)))
   · intro h
-    exact hn (Finset.mem_union_right _ (Finset.mem_insert.mpr (Or.inr (Finset.mem_singleton.mpr h))))
+    exact hn (Finset.mem_union_right _ (Finset.mem_insert.mpr (Or.inr (Finset.mem_singleton.mpr
+      h))))
 
 theorem partner_source_lower (hα : 0 < α) (hα1 : α ≤ 1 / 4)
     (e : FreedIndex W Q S O sw) :
@@ -95,7 +96,8 @@ theorem root_pair (hα : 0 < α) (hα1 : α ≤ 1 / 4) (e : FreedIndex W Q S O s
     (embeddingHost W).IsUniform (epsilon α : ℝ)
       (clusterVertices (assignment W) Q.A) (whole W Q S O sw e) ∧
       1 - 2 * (eta α : ℝ) - (epsilon α : ℝ) <
-        ((embeddingHost W).edgeDensity (clusterVertices (assignment W) Q.A) (whole W Q S O sw e) : ℝ) := by
+        ((embeddingHost W).edgeDensity (clusterVertices (assignment W) Q.A) (whole W Q S O sw e) :
+          ℝ) := by
   have hl := partner_source_lower W Q S O sw hα hα1 e
   have hη : (eta α : ℝ) ≤ 1 / 1000000 := by
     obtain ⟨hr11, hrr1, her, _⟩ := parameter_upper_bounds hα hα1
@@ -112,7 +114,8 @@ theorem whole_disjoint_hostSupport (e : FreedIndex W Q S O sw) :
     Disjoint (whole W Q S O sw e) (hostSupport W Q (fullMatching W Q S O sw)) := by
   have hmem : sw.partner e ∈ sw.partnerSet := Finset.mem_image.mpr ⟨e, Finset.mem_univ _, rfl⟩
   have hroot (s : Fin 2) : Disjoint (whole W Q S O sw e) (reservoir W Q s) := by
-    apply (clusterVertices_disjoint (assignment W) (show freedCluster W Q S O sw e ≠ rootCluster W Q s from ?_)).mono_right
+    apply (clusterVertices_disjoint (assignment W) (show freedCluster W Q S O sw e ≠ rootCluster W Q
+      s from ?_)).mono_right
       (reservoir_subset W Q s)
     intro heq
     have heq' := (partner_eq W Q S O sw e).trans (congrArg Sum.inl heq)

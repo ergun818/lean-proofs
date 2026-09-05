@@ -79,6 +79,7 @@ def RelevantSlot :
       e ∈ Erdos547b.ZhaoClaim616.MatchingDecomposition.MoneEdges D C ∨
         e ∈ allMatchingEdges C67.M \ D.minEdges
 
+omit [Fintype B] in
 theorem removeRootReserves_subset
     (rootReserve companionReserve X : Finset B) :
     removeRootReserves rootReserve companionReserve X ⊆ X :=
@@ -106,6 +107,7 @@ theorem slotRaw_subset
         (removeRootReserves_subset H.rootReserve H.companionReserve
           (cluster (matchingEdgeEndpoint e.1 side)))
 
+omit [DecidableEq B] [Fintype B] in
 /-- Endpoint occurrences of the original matching are injective. -/
 theorem matchingEndpoint_injective :
     Function.Injective (fun ec : MatchingEdge C67.M × Fin 2 ↦
@@ -115,7 +117,7 @@ theorem matchingEndpoint_injective :
   have horiented (g : MatchingEdge C67.M) (q : Fin 2) :
       orientedEndpoint C67.M ∅ g (flip q) = matchingEdgeEndpoint g.1 q := by
     fin_cases q <;>
-      simp [flip, orientedEndpoint, rawEndpoint, matchingEdgeEndpoint]
+      simp [flip, orientedEndpoint, matchingEdgeEndpoint]
   have horientedEq :
       orientedEndpoint C67.M ∅ e (flip c) =
         orientedEndpoint C67.M ∅ f (flip d) := by
@@ -131,6 +133,7 @@ theorem matchingEndpoint_injective :
   subst d
   rfl
 
+omit [DecidableEq B] [Fintype B] in
 /-- Both endpoints of an edge selected by `edgeFinsetSubgraph` belong to its
 literal support. -/
 theorem matchingEndpoint_mem_edgeFinsetSupport
@@ -144,6 +147,7 @@ theorem matchingEndpoint_mem_edgeFinsetSupport
   fin_cases side <;> by_cases h : e.1.out.1 ∈ L <;>
     simp [orientedEndpoint, rawEndpoint, matchingEdgeEndpoint, h]
 
+omit [Fintype B] in
 theorem rootReserve_disjoint_removed
     (rootReserve companionReserve X : Finset B) :
     Disjoint rootReserve
@@ -152,6 +156,7 @@ theorem rootReserve_disjoint_removed
   intro z hz hzX
   exact (Finset.mem_sdiff.mp hzX).2 (Finset.mem_union_left _ hz)
 
+omit [Fintype B] in
 theorem companionReserve_disjoint_removed
     (rootReserve companionReserve X : Finset B) :
     Disjoint companionReserve
@@ -208,7 +213,7 @@ theorem selected_disjoint_matching_of_relevant
       simpa only [he1, if_false, h] using hy
   exact (H.cluster_disjoint _ _ hne).mono
     ((removeRootReserves_subset H.rootReserve H.companionReserve _).trans
-      (by simpa [indexedCluster]))
+      (by simp [indexedCluster]))
     (removeRootReserves_subset H.rootReserve H.companionReserve _)
 
 /-- Distinct relevant coordinate slots have disjoint raw reservoirs. -/
@@ -280,9 +285,9 @@ theorem slotRaw_disjoint_of_relevant_of_ne
             exact hij (finsetValue_injective C h)
           exact (H.cluster_disjoint _ _ hcluster).mono
             ((removeRootReserves_subset H.rootReserve H.companionReserve _).trans
-              (by simpa [indexedCluster]))
+              (by simp [indexedCluster]))
             ((removeRootReserves_subset H.rootReserve H.companionReserve _).trans
-              (by simpa [indexedCluster]))
+              (by simp [indexedCluster]))
         · rcases edgeY with ⟨e, side⟩
           exact selected_disjoint_matching_of_relevant (G := G)
             (cluster := cluster) (epsilon := epsilon) (density := density)
@@ -309,4 +314,5 @@ theorem slotRaw_disjoint_of_relevant_of_ne
 
 end Erdos547b.ZhaoClaim616HierarchicalCoordinateHostLayout
 
-#print axioms Erdos547b.ZhaoClaim616HierarchicalCoordinateHostLayout.slotRaw_disjoint_of_relevant_of_ne
+open Erdos547b.ZhaoClaim616HierarchicalCoordinateHostLayout in
+#print axioms slotRaw_disjoint_of_relevant_of_ne

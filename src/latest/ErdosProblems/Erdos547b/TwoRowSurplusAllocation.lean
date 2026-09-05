@@ -8,7 +8,7 @@ Each row total pays the two source demands, two reserves and two per-edge
 caps. Fact 6.4 then gives a genuine disjoint matching partition.
 -/
 
-open scoped BigOperators Classical
+open scoped BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoTwoRowSurplusAllocation

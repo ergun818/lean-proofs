@@ -8,7 +8,7 @@ The four membership cases use the checked marked and ordinary separation
 lemmas. Root separation follows from the actual cluster supports.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMarkedGlobalPrefix
@@ -40,52 +40,71 @@ variable (A : PrefixState W Q S O P F owner marks selected rootSide kinds alloca
 theorem PrefixState.terminalBranch_injective (hCV1 : C ⊆ O.D.V1)
     (hresidual : ∀ s j e, e ∈ allocation s j →
       e ∈ O.D.minEdges \ MatchingDecomposition.MzeroEdges O.D C ∨ e ∈ O.D.mbEdges)
-    (hdisjoint : ∀ x y : Fin 2 × Fin k, x ≠ y → Disjoint (allocation x.1 x.2) (allocation y.1 y.2)) :
+    (hdisjoint : ∀ x y : Fin 2 × Fin k, x ≠ y → Disjoint (allocation x.1 x.2) (allocation y.1 y.2))
+      :
     Function.Injective (fun x : Σ i : Fin b, Fin (F.size i) =>
-      A.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family locate hcover x.1 (owner x.1).isLt x.2) := by
+      A.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family locate hcover
+        x.1 (owner x.1).isLt x.2) := by
   rintro ⟨i, a⟩ ⟨j, d⟩ heq
-  change A.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family locate hcover i (owner i).isLt a =
-    A.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family locate hcover j (owner j).isLt d at heq
+  change A.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family locate
+    hcover i (owner i).isLt a =
+    A.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family locate hcover j
+      (owner j).isLt d at heq
   by_cases hij : i = j
   · subst j
-    have had := (A.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family locate hcover i (owner i).isLt).injective heq
+    have had := (A.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family
+      locate hcover i (owner i).isLt).injective heq
     subst d
     rfl
   exfalso
   by_cases hi : i ∈ selected
   · by_cases hj : j ∈ selected
-    · exact A.marked_copies_ne W Q S O P F owner marks selected rootSide kinds allocation family locate hcover i j hi hj hij a d heq
-    · exact A.mixed_copies_ne W Q S O P F owner marks selected rootSide kinds allocation family locate hcover hCV1 hresidual i j hi hj a d heq
+    · exact A.marked_copies_ne W Q S O P F owner marks selected rootSide kinds allocation family
+        locate hcover i j hi hj hij a d heq
+    · exact A.mixed_copies_ne W Q S O P F owner marks selected rootSide kinds allocation family
+        locate hcover hCV1 hresidual i j hi hj a d heq
   · by_cases hj : j ∈ selected
-    · exact A.mixed_copies_ne W Q S O P F owner marks selected rootSide kinds allocation family locate hcover hCV1 hresidual j i hj hi d a heq.symm
-    · exact A.ordinary_copies_ne W Q S O P F owner marks selected rootSide kinds allocation family locate hcover hdisjoint i j hi hj hij a d heq
+    · exact A.mixed_copies_ne W Q S O P F owner marks selected rootSide kinds allocation family
+        locate hcover hCV1 hresidual j i hj hi d a heq.symm
+    · exact A.ordinary_copies_ne W Q S O P F owner marks selected rootSide kinds allocation family
+        locate hcover hdisjoint i j hi hj hij a d heq
 
 def PrefixState.terminalBranchEmbedding (hCV1 : C ⊆ O.D.V1)
     (hresidual : ∀ s j e, e ∈ allocation s j →
       e ∈ O.D.minEdges \ MatchingDecomposition.MzeroEdges O.D C ∨ e ∈ O.D.mbEdges)
-    (hdisjoint : ∀ x y : Fin 2 × Fin k, x ≠ y → Disjoint (allocation x.1 x.2) (allocation y.1 y.2)) :
+    (hdisjoint : ∀ x y : Fin 2 × Fin k, x ≠ y → Disjoint (allocation x.1 x.2) (allocation y.1 y.2))
+      :
     F.Embedding (embeddingHost W) where
-  copy i := A.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family locate hcover i (owner i).isLt
-  injective := A.terminalBranch_injective W Q S O P F owner marks selected rootSide kinds allocation family locate hcover hCV1 hresidual hdisjoint
+  copy i := A.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family locate
+    hcover i (owner i).isLt
+  injective := A.terminalBranch_injective W Q S O P F owner marks selected rootSide kinds allocation
+    family locate hcover hCV1 hresidual hdisjoint
 
 theorem PrefixState.root_ne_branchCopy (hCV1 : C ⊆ O.D.V1)
     (haway : ∀ s j, allocation s j ⊆ edgesAwayFromDistinguished Q.claim67.M
       (padFinset (large W)) (Sum.inl Q.A) (Sum.inl Q.B))
     (u : Fin r) (i : Fin b) (a : Fin (F.size i)) :
-    A.ordinary.rootImage u ≠ A.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family locate hcover i (owner i).isLt a := by
+    A.ordinary.rootImage u ≠ A.branchCopy W Q S O P F owner marks selected rootSide kinds allocation
+      family locate hcover i (owner i).isLt a := by
   intro heq
   have hr := A.ordinary.root_mem u u.isLt
   by_cases hi : i ∈ selected
   · let himem : i ∈ ownerPrefix selected owner r := Finset.mem_filter.mpr ⟨hi, (owner i).isLt⟩
     let x := A.marked.group ⟨i, himem⟩
-    have ha : A.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family locate hcover i (owner i).isLt a ∈
+    have ha : A.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family locate
+      hcover i (owner i).isLt a ∈
         P.support W Q S O x := by
-      rw [A.branchCopy_eq_marked W Q S O P F owner marks selected rootSide kinds allocation family locate hcover i (owner i).isLt hi]
-      exact A.marked_copy_mem_support W Q S O P F owner marks selected rootSide kinds allocation family i himem a
-    exact Finset.disjoint_left.mp (reservoir_disjoint_group W Q S O P hCV1 (rootSide u) x) hr (heq.symm ▸ ha)
-  · obtain ⟨e, he, c, ha⟩ := A.ordinary_branch_support W Q S F owner O P marks selected rootSide kinds allocation family locate hcover
+      rw [A.branchCopy_eq_marked W Q S O P F owner marks selected rootSide kinds allocation family
+        locate hcover i (owner i).isLt hi]
+      exact A.marked_copy_mem_support W Q S O P F owner marks selected rootSide kinds allocation
+        family i himem a
+    exact Finset.disjoint_left.mp (reservoir_disjoint_group W Q S O P hCV1 (rootSide u) x) hr
+      (heq.symm ▸ ha)
+  · obtain ⟨e, he, c, ha⟩ := A.ordinary_branch_support W Q S F owner O P marks selected rootSide
+      kinds allocation family locate hcover
       i hi (owner i).isLt a
-    exact Finset.disjoint_left.mp (reservoir_disjoint_edgeWhole W Q (rootSide u) e (haway _ _ he) c) hr (heq.symm ▸ ha)
+    exact Finset.disjoint_left.mp (reservoir_disjoint_edgeWhole W Q (rootSide u) e (haway _ _ he) c)
+      hr (heq.symm ▸ ha)
 
 end Erdos547b.ZhaoSourceMarkedGlobalPrefix
 

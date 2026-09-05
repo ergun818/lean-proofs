@@ -11,7 +11,7 @@ budget constructs the finite packing, then the actual graph successor.
 No later root image or graph realization is assumed.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceFamilyBudgetAdvance

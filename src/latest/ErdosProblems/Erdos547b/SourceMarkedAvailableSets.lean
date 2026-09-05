@@ -10,7 +10,7 @@ The intermediate loss is charged only to occupied vertices of that
 cluster. The pair loss is charged only to the four private pairs.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMarkedAvailableSets
@@ -68,7 +68,8 @@ theorem intermediateAvailable_card_ge (hα : 0 < α) (hα1 : α ≤ 1 / 4)
       (intermediateAvailable W Q C used z).card + (used ∩ whole W C).card +
         (badToward W Q (Sum.inl C) 0).card := by exact_mod_cast hbound
   have he := (parameter_margin hα hα1 W.clusterSize).1.le
-  have heN := mul_le_mul_of_nonneg_right he (Nat.cast_nonneg W.clusterSize : (0 : ℝ) ≤ W.clusterSize)
+  have heN := mul_le_mul_of_nonneg_right he (Nat.cast_nonneg W.clusterSize : (0 : ℝ) ≤
+    W.clusterSize)
   linarith only [hparent, hused, hbad, hboundR, heN]
 
 def privatePairUnion (X Y : Fin 4 → Index W) : Finset (Fin hostN) :=
@@ -82,7 +83,8 @@ theorem exists_available_private_pair (hα : 0 < α) (hα1 : α ≤ 1 / 4)
     ∃ i : Fin 4,
       (gamma α : ℝ) * W.clusterSize ≤ ((whole W (X i) \ used).card : ℝ) ∧
       (gamma α : ℝ) * W.clusterSize ≤ ((whole W (Y i) \ used).card : ℝ) := by
-  let sides : Fin 4 → Fin 2 → Finset (Fin hostN) := fun i c => if c = 0 then whole W (X i) else whole W (Y i)
+  let sides : Fin 4 → Fin 2 → Finset (Fin hostN) := fun i c => if c = 0 then whole W (X i) else
+    whole W (Y i)
   have hγQ : 4 * gamma α ≤ 1 := by
     have hu := parameter_upper_bounds hα hα1
     linarith only [hu.2.2.2.2.2.1, (reservoir_cleanup_bounds hα hα1).2.2.2.2.2]

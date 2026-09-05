@@ -11,7 +11,7 @@ Every component root and recorded cut parent survives. This is the literal
 source restriction needed by the switched matching's core embedding.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePathBranchRestriction

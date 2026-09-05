@@ -229,13 +229,14 @@ theorem neighborFinset_subset_exceptional_union_reduced
 If clusters have size at most `m`, a cleaned degree can use at most all
 exceptional vertices plus `m` vertices per reduced neighbor. -/
 theorem degree_le_exceptional_add_reduced_degree_mul
-    {V ι : Type*} [Fintype V] [Fintype ι] [DecidableEq V] [DecidableEq ι]
+    {V ι : Type*} [Fintype V] [Fintype ι] [DecidableEq ι]
     (P : ClusterAssignment V ι) (H : SimpleGraph V) (R : SimpleGraph ι)
     [DecidableRel H.Adj] [DecidableRel R.Adj]
     (hrespect : EdgesRespectReducedGraph P H R) (m : ℕ)
     (hcluster : ∀ i, (clusterVertices P i).card ≤ m)
     {v : V} {i : ι} (hv : P v = some i) :
     H.degree v ≤ (exceptionalVertices P).card + R.degree i * m := by
+  classical
   calc
     H.degree v = (H.neighborFinset v).card := rfl
     _ ≤ (exceptionalVertices P ∪
@@ -254,13 +255,14 @@ theorem degree_le_exceptional_add_reduced_degree_mul
 /-- Subtraction form of the preceding transfer: a degree lower bound forces
 many reduced-neighbor slots. -/
 theorem threshold_sub_exceptional_le_reduced_degree_mul
-    {V ι : Type*} [Fintype V] [Fintype ι] [DecidableEq V] [DecidableEq ι]
+    {V ι : Type*} [Fintype V] [Fintype ι] [DecidableEq ι]
     (P : ClusterAssignment V ι) (H : SimpleGraph V) (R : SimpleGraph ι)
     [DecidableRel H.Adj] [DecidableRel R.Adj]
     (hrespect : EdgesRespectReducedGraph P H R) (m threshold : ℕ)
     (hcluster : ∀ i, (clusterVertices P i).card ≤ m)
     {v : V} {i : ι} (hv : P v = some i) (hdegree : threshold ≤ H.degree v) :
     threshold - (exceptionalVertices P).card ≤ R.degree i * m := by
+  classical
   have hupper := degree_le_exceptional_add_reduced_degree_mul
     P H R hrespect m hcluster hv
   omega
@@ -669,7 +671,7 @@ def ForestCapacityEmbeddingProperty {τ V : Type*}
 the matching capacities, the forest-capacity embedding property gives the
 desired tree copy. -/
 theorem zhaoLemma6_5_part1_of_capacity
-    {τ V : Type*} [Fintype τ]
+    {τ V : Type*} [Finite τ]
     (T : SimpleGraph τ) (G : SimpleGraph V)
     (partA partB : SimpleGraph τ) (capacityA capacityB : ℕ)
     (hproperty : ForestCapacityEmbeddingProperty T G capacityA capacityB)
@@ -677,6 +679,8 @@ theorem zhaoLemma6_5_part1_of_capacity
     (hA : Nat.card partA.edgeSet ≤ capacityA)
     (hB : Nat.card partB.edgeSet ≤ capacityB) :
     T ⊑ G :=
+  open Classical in
+  let := Fintype.ofFinite τ
   hproperty partA partB hcover hA hB
 
 /-- End-to-end interface from Claim 6.7 to Lemma 6.5 Part 1.  The matching
@@ -684,7 +688,7 @@ certificate supplies adjacent large clusters and their two numerical
 capacities; if the two forest parts fit below the common lower bound, the
 regular-pair embedding property finishes the tree copy. -/
 theorem zhaoLemma6_5_of_claim67_weightedCapacity
-    {ι τ V : Type*} [Fintype ι] [DecidableEq ι] [Fintype τ]
+    {ι τ V : Type*} [Fintype ι] [DecidableEq ι] [Finite τ]
     {R : SimpleGraph ι} [DecidableRel R.Adj] {L : Finset ι} {miss D : ℕ}
     (C : Claim67Certificate R L miss) (weight : ι → ι → ℕ)
     (clusterSize : ℕ)
@@ -702,6 +706,8 @@ theorem zhaoLemma6_5_of_claim67_weightedCapacity
         (matchingWeightedCapacity R C.M weight A)
         (matchingWeightedCapacity R C.M weight B)) :
     T ⊑ G := by
+  classical
+  let := Fintype.ofFinite τ
   obtain ⟨A, hA, B, hB, hAB, hcapA, hcapB⟩ :=
     claim67_exists_adjacentLarge_with_weighted_capacity
       C weight clusterSize hweight hlargeDegree

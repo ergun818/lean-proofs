@@ -9,7 +9,7 @@ size, and different matching edges have disjoint supports. Their literal
 union therefore bounds the global and every local allocation count.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMatchingVolume
@@ -43,6 +43,7 @@ theorem matchingVolume_bound (hhost : hostN = 2 * q)
   have hboundR : (edges.card : ℝ) * (2 * W.clusterSize) ≤ 2 * q := by exact_mod_cast hbound
   nlinarith only [hboundR]
 
+open scoped Classical in
 theorem fullMatchingVolume_bound (hhost : hostN = 2 * q) :
     (W.clusterSize : ℝ) * Fintype.card (MatchingEdge Q.claim67.M) ≤ q := by
   simpa only [Finset.card_univ] using matchingVolume_bound W Q hhost Finset.univ

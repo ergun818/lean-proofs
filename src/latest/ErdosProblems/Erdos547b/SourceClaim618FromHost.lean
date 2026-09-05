@@ -7,7 +7,7 @@ import ErdosProblems.Erdos547b.Lemma611Claim618Adapter
 
 /-! # Actual-host Claim 6.18 and the full high-density crossing bound -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 namespace Erdos547b.ZhaoSourceClaim618FromHost
 
@@ -51,6 +51,7 @@ variable (P : ZhaoForestPartition T globalRoot (freshBranchBound α Z.clusterSiz
 variable (O : Output Z R F (branchMass P (sideBranches P 1)))
 
 include hT in
+open scoped Classical in
 theorem sourceL1_highDensity_crossing_lt
     (hα : 0 < α) (hα1 : α ≤ 1 / 4) (horder : orderThreshold α M ≤ n - 1)
     (hlarge : n - 1 ≤ #(Finset.univ.filter fun v => n - 1 ≤ H.degree v))
@@ -112,6 +113,7 @@ theorem sourceL1_highDensity_crossing_lt
   · exact hbound
 
 include hT in
+open scoped Classical in
 theorem sourceV1_highDensity_crossing_lt
     (hα : 0 < α) (hα1 : α ≤ 1 / 4) (horder : orderThreshold α M ≤ n - 1)
     (hlarge : n - 1 ≤ #(Finset.univ.filter fun v => n - 1 ≤ H.degree v))

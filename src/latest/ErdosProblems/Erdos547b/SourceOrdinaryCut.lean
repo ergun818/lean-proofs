@@ -4,7 +4,7 @@ import ErdosProblems.Erdos547b.SourceClaim618FromHost
 
 /-! # The actual pair-pruned ordinary crossing, including low-density pairs -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 namespace Erdos547b.ZhaoSourceOrdinaryCut
 
@@ -43,9 +43,11 @@ theorem padded_volume_square_le (hα : 0 < α) (hα1 : α ≤ 1 / 4)
   have hdq := mul_le_mul_of_nonneg_right hd (Nat.cast_nonneg q : (0 : ℝ) ≤ q)
   have hvol' : (paddedHalf (Index W) : ℝ) * W.clusterSize ≤ (501 / 500 : ℝ) * q := by
     linarith only [hvol, hN, hdq]
-  have hsq := pow_le_pow_left₀ (by positivity : (0 : ℝ) ≤ (paddedHalf (Index W) : ℝ) * W.clusterSize) hvol' 2
+  have hsq := pow_le_pow_left₀
+    (by positivity : (0 : ℝ) ≤ (paddedHalf (Index W) : ℝ) * W.clusterSize) hvol' 2
   nlinarith only [hsq, sq_nonneg (q : ℝ)]
 
+open scoped Classical in
 theorem ordinary_crossing_lt (hα : 0 < α) (hα1 : α ≤ 1 / 4)
     (hhost : hostN = 2 * q) (horder : orderThreshold α M ≤ q)
     (hcross : (((threshold W (4 * (eta α : ℝ))).interedges O.D.V1 O.D.V2).card : ℝ) <
@@ -75,7 +77,8 @@ theorem ordinary_crossing_lt (hα : 0 < α) (hα1 : α ≤ 1 / 4)
   have hlift := thresholded_clusterUnion_crossing_le (padAssignment (assignment W)) (host W)
     (threshold W (4 * (eta α : ℝ))) O.D.V1 O.D.V2 W.clusterSize (4 * (eta α : ℝ))
     (by positivity) hcluster hlow
-  have hpair := mul_le_mul_of_nonneg_left (side_product_le W Q S O) (by positivity : 0 ≤ 4 * (eta α : ℝ))
+  have hpair := mul_le_mul_of_nonneg_left (side_product_le W Q S O)
+    (by positivity : 0 ≤ 4 * (eta α : ℝ))
   have hslots : (((threshold W (4 * (eta α : ℝ))).interedges O.D.V1 O.D.V2).card : ℝ) +
       4 * (eta α : ℝ) * O.D.V1.card * O.D.V2.card <
         coefficient (α := α) * (paddedHalf (Index W) : ℝ) ^ 2 := by

@@ -56,7 +56,7 @@ def candidateEdges {E : Type u} [DecidableEq E]
 
 /-- The elementary high-degree pruning at the start of Claim 6.18. -/
 theorem exists_many_high_degree_of_many_interedges
-    {K : Type*} [Fintype K] [DecidableEq K]
+    {K : Type*} [Finite K]
     (R : SimpleGraph K) [DecidableRel R.Adj]
     (L V₂ : Finset K) (a k : ℕ)
     (hk : 0 < k)
@@ -65,6 +65,7 @@ theorem exists_many_high_degree_of_many_interedges
     ∃ L₀ ⊆ L, L₀.card = a ∧
       ∀ C ∈ L₀, a ≤ Erdos547EC2.degreeInto R C V₂ := by
   classical
+  let := Fintype.ofFinite K
   let : Std.Symm R.Adj := ⟨fun _ _ h ↦ h.symm⟩
   let H := L.filter fun C ↦ a ≤ Erdos547EC2.degreeInto R C V₂
   by_cases ha0 : a = 0
@@ -145,14 +146,14 @@ rounding parameters for `8ρ₁k, 3ρ₁k, 12ρ₁²k, 11ρ₁²k` and
 `3(1-8η)ρ₁k/2`.  Their displayed hypotheses are precisely the finite
 inequalities used in (6.24)--(6.25) and in the double count on page 38. -/
 theorem zhaoClaim618
-    {E : Type u} [Fintype E] [DecidableEq E]
+    {E : Type u} [Finite E] [DecidableEq E]
     {K : Type v} [Fintype K] [DecidableEq K]
     {TreeVertex : Type w} [Fintype TreeVertex] [DecidableEq TreeVertex]
-    {HostVertex : Type x} [Fintype HostVertex] [DecidableEq HostVertex]
+    {HostVertex : Type x} [Finite HostVertex]
     (T : SimpleGraph TreeVertex) [DecidableRel T.Adj]
     (globalRoot : TreeVertex) (small : ℕ)
-    (P : Erdos547b.TreePartition.ZhaoForestPartition T globalRoot small)
-    (G : SimpleGraph HostVertex) [DecidableRel G.Adj]
+    (_P : Erdos547b.TreePartition.ZhaoForestPartition T globalRoot small)
+    (_G : SimpleGraph HostVertex)
     (R R' : SimpleGraph K) [DecidableRel R.Adj] [DecidableRel R'.Adj]
     (hR'R : R' ≤ R)
     (L L₁ V₂ S₁ : Finset K)
@@ -160,8 +161,8 @@ theorem zhaoClaim618
     (edgeOf : K → E) (density : K → K → ℝ)
     (eta rho rho₁ : ℝ) (k a b q miss t u z : ℕ)
     (C67 : Claim67Certificate R L miss)
-    (hrho₁ : rho₁ = Real.rpow rho (1 / 3 : ℝ))
-    (heta : 0 < eta) (hk : 0 < k) (haNat : 0 < a) (hq : 0 < q)
+    (_hrho₁ : rho₁ = Real.rpow rho (1 / 3 : ℝ))
+    (heta : 0 < eta) (hk : 0 < k) (haNat : 0 < a) (_hq : 0 < q)
     (ha : (a : ℝ) ≤ 8 * rho₁ * k)
     (hcutCard : L₁.card + V₂.card ≤ 2 * k)
     (hlocalArithmetic : 2 * (b + q + 1) + miss ≤ a)
@@ -189,6 +190,8 @@ theorem zhaoClaim618
         (fun e c ↦ density A (endpoint e c)) eta).card ≤ q) :
     ((R'.interedges L₁ V₂).card : ℝ) < 16 * rho₁ * (k : ℝ) ^ 2 := by
   classical
+  let := Fintype.ofFinite E
+  let := Fintype.ofFinite HostVertex
   let : Std.Symm R.Adj := ⟨fun _ _ h ↦ h.symm⟩
   have hscale : ((2 * a * k : ℕ) : ℝ) ≤ 16 * rho₁ * (k : ℝ) ^ 2 := by
     push_cast

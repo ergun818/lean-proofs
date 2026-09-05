@@ -3,7 +3,7 @@ import ErdosProblems.Erdos547b.SourceCutLosses
 
 /-! # A balanced sparse cut in the vertex-pruned actual host -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 namespace Erdos547b.ZhaoSourceSparseCut
 
@@ -23,6 +23,7 @@ variable {fb : ℝ} (O : Output W Q S fb)
 
 local instance : DecidableRel W.graph.Adj := W.graph_decidable
 
+open scoped Classical in
 theorem exists_balanced_sparse_cut
     (hα : 0 < α) (hα1 : α ≤ 1 / 4) (hhost : hostN = 2 * q)
     (horder : orderThreshold α M ≤ q)
@@ -47,7 +48,8 @@ theorem exists_balanced_sparse_cut
     dsimp only [B]
     rw [Finset.card_sdiff_of_subset (Finset.subset_univ _), Finset.card_univ, hV, hA]
     omega
-  refine ⟨A, B, Finset.disjoint_sdiff, Finset.union_sdiff_of_subset (Finset.subset_univ A), hA, hB, ?_⟩
+  refine ⟨A, B, Finset.disjoint_sdiff, Finset.union_sdiff_of_subset (Finset.subset_univ A), hA, hB,
+    ?_⟩
   have hrebalance := card_interedges_rebalance_le G0 X Y A q hXY hcover hV hA
   have hmoveNat : q * ((A \ X).card + (X \ A).card) ≤ 2 * q * b := by
     have h := Nat.mul_le_mul_left q (Nat.add_le_add hAX hXA)
@@ -66,7 +68,8 @@ theorem exists_balanced_sparse_cut
     have hn : (G0.interedges X Y).card ≤
         ((host W).interedges (clusterUnion (padAssignment (assignment W)) O.D.V1)
           (clusterUnion (padAssignment (assignment W)) O.D.V2)).card +
-        X.card * (W.exceptional.card + W.loss) + (W.graph.edgeFinset \ (host W).edgeFinset).card := by
+        X.card * (W.exceptional.card + W.loss) + (W.graph.edgeFinset \ (host W).edgeFinset).card :=
+          by
       simpa only [X, Y, leftSide, rightSide, exceptionalVertices_padAssignment,
         exceptionalVertices_partitionAssignment] using hrestore
     exact_mod_cast hn
@@ -84,7 +87,8 @@ theorem exists_balanced_sparse_cut
   have hXupper : (X.card : ℝ) ≤ 2 * q := by linarith only [hXcard, hXvolume, hvol, hN, hdq]
   have hEL : (W.exceptional.card : ℝ) + W.loss ≤ 2 * (degreeError α : ℝ) * q := by
     linarith only [hE, hLoss]
-  have hcleanupProduct := mul_le_mul hXupper hEL (by positivity : (0 : ℝ) ≤ W.exceptional.card + W.loss)
+  have hcleanupProduct := mul_le_mul hXupper hEL
+    (by positivity : (0 : ℝ) ≤ W.exceptional.card + W.loss)
     (by positivity : (0 : ℝ) ≤ 2 * q)
   have hcleanup : (X.card : ℝ) * ((W.exceptional.card : ℝ) + W.loss) ≤
       4 * (degreeError α : ℝ) * (q : ℝ) ^ 2 := by nlinarith only [hcleanupProduct]

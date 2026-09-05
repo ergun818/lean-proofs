@@ -43,9 +43,10 @@ def clusterUnion {V ι : Type*} [Fintype V] [DecidableEq V] [DecidableEq ι]
   simp
 
 theorem clusterVertices_disjoint {V ι : Type*} [Fintype V]
-    [DecidableEq V] [DecidableEq ι]
+    [DecidableEq ι]
     (P : ClusterAssignment V ι) {i j : ι} (hij : i ≠ j) :
     Disjoint (clusterVertices P i) (clusterVertices P j) := by
+  classical
   rw [Finset.disjoint_left]
   intro v hvi hvj
   have hi : P v = some i := (mem_clusterVertices P i v).mp hvi
@@ -123,10 +124,12 @@ theorem card_clusterUnion_eq_of_equal {V ι : Type*} [Fintype V]
 
 /-! ## Pointwise degree loss restricted to a target set -/
 
-theorem degreeInto_le_of_le {V : Type*} [Fintype V] [DecidableEq V]
+theorem degreeInto_le_of_le {V : Type*} [Finite V]
     (G H : SimpleGraph V) [DecidableRel G.Adj] [DecidableRel H.Adj]
     (hHG : H ≤ G) (v : V) (S : Finset V) :
     Erdos547EC2.degreeInto H v S ≤ Erdos547EC2.degreeInto G v S := by
+  classical
+  let := Fintype.ofFinite V
   unfold Erdos547EC2.degreeInto
   apply Finset.card_le_card
   intro w hw
@@ -137,12 +140,12 @@ theorem degreeInto_le_of_le {V : Type*} [Fintype V] [DecidableEq V]
 vertex, then the same loss bound holds after restricting neighbors to any
 set `S`. -/
 theorem degreeInto_le_cleaned_add_loss {V : Type*} [Fintype V]
-    [DecidableEq V]
     (G H : SimpleGraph V) [DecidableRel G.Adj] [DecidableRel H.Adj]
     (hHG : H ≤ G) (loss : ℕ) (hloss : DegreeLossAtMost G H loss)
     (v : V) (S : Finset V) :
     Erdos547EC2.degreeInto G v S ≤
       Erdos547EC2.degreeInto H v S + loss := by
+  classical
   let A := S.filter fun w => H.Adj v w
   let B := S.filter fun w => G.Adj v w
   have hAB : A ⊆ B := by
@@ -177,7 +180,7 @@ theorem card_interedges_rebalance_le {V : Type*} [Fintype V]
     [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (X Y W : Finset V) (q : ℕ)
-    (hXY : Disjoint X Y) (hcover : X ∪ Y = Finset.univ)
+    (_hXY : Disjoint X Y) (hcover : X ∪ Y = Finset.univ)
     (hV : Fintype.card V = 2 * q) (hW : W.card = q) :
     (G.interedges W (Finset.univ \ W)).card ≤
       (G.interedges X Y).card + q * ((W \ X).card + (X \ W).card) := by
@@ -197,7 +200,7 @@ theorem card_interedges_rebalance_le {V : Type*} [Fintype V]
         exact (SimpleGraph.mem_interedges_iff G).mpr ⟨hpX, hpY, hpadj⟩
       · apply Finset.mem_union_right
         have hp2X : p.2 ∈ X := by
-          have : p.2 ∈ X ∪ Y := by simpa [hcover]
+          have : p.2 ∈ X ∪ Y := by simp [hcover]
           exact (Finset.mem_union.mp this).resolve_right hpY
         exact Finset.mem_product.mpr ⟨hpW, Finset.mem_sdiff.mpr ⟨hp2X, hpWc⟩⟩
     · apply Finset.mem_union_left
@@ -228,7 +231,7 @@ theorem card_interedges_rebalance_le {V : Type*} [Fintype V]
 /-! ## Cleaned reduced cut to an original-host cut -/
 
 theorem cleaned_interedges_le_reduced_slots
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Fintype V] [Finite ι]
     [DecidableEq V] [DecidableEq ι]
     (P : ClusterAssignment V ι)
     (H : SimpleGraph V) (R : SimpleGraph ι)
@@ -239,6 +242,7 @@ theorem cleaned_interedges_le_reduced_slots
     (H.interedges (clusterUnion P I) (clusterUnion P J)).card ≤
       (R.interedges I J).card * (m * m) := by
   classical
+  let := Fintype.ofFinite ι
   let block : ι × ι → Finset (V × V) := fun ij =>
     H.interedges (clusterVertices P ij.1) (clusterVertices P ij.2)
   let E : Finset (ι × ι) := R.interedges I J
@@ -279,13 +283,14 @@ theorem cleaned_interedges_le_reduced_slots
 then the crossing edges of the thresholded reduced graph split between the
 two estimates furnished by Claims 6.17 and 6.18. -/
 theorem thresholded_crossing_le_claim617_add_claim618
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Finite ι] [DecidableEq ι]
     (R R' : SimpleGraph ι) [DecidableRel R.Adj] [DecidableRel R'.Adj]
     (hR'R : R' ≤ R) (V₁ V₂ S₁ L₁ : Finset ι)
     (hV₁ : V₁ ⊆ S₁ ∪ L₁) :
     (R'.interedges V₁ V₂).card ≤
       (R.interedges S₁ V₂).card + (R'.interedges L₁ V₂).card := by
   classical
+  let := Fintype.ofFinite ι
   have hsub : R'.interedges V₁ V₂ ⊆
       R.interedges S₁ V₂ ∪ R'.interedges L₁ V₂ := by
     intro p hp
@@ -299,7 +304,7 @@ theorem thresholded_crossing_le_claim617_add_claim618
 
 /-- Numerical form of the last display combining Claims 6.17 and 6.18. -/
 theorem thresholded_crossing_lt_of_claim617_claim618
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Finite ι] [DecidableEq ι]
     (R R' : SimpleGraph ι) [DecidableRel R.Adj] [DecidableRel R'.Adj]
     (hR'R : R' ≤ R) (V₁ V₂ S₁ L₁ : Finset ι)
     (hV₁ : V₁ ⊆ S₁ ∪ L₁) (a b cross : ℕ)
@@ -307,6 +312,8 @@ theorem thresholded_crossing_lt_of_claim617_claim618
     (h618 : (R'.interedges L₁ V₂).card < b)
     (hab : a + b ≤ cross + 1) :
     (R'.interedges V₁ V₂).card ≤ cross := by
+  classical
+  let := Fintype.ofFinite ι
   have hsum := thresholded_crossing_le_claim617_add_claim618
     R R' hR'R V₁ V₂ S₁ L₁ hV₁
   omega
@@ -314,11 +321,12 @@ theorem thresholded_crossing_lt_of_claim617_claim618
 /-- Passing from the cleaned graph back to the original graph costs at most
 `loss` edges at each vertex of the left side. -/
 theorem original_interedges_le_cleaned_add_loss
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G H : SimpleGraph V) [DecidableRel G.Adj] [DecidableRel H.Adj]
     (hHG : H ≤ G) (loss : ℕ) (hloss : DegreeLossAtMost G H loss)
     (X Y : Finset V) :
     (G.interedges X Y).card ≤ (H.interedges X Y).card + X.card * loss := by
+  classical
   rw [← Erdos547EC2.sum_degreeInto_eq_card_interedges,
     ← Erdos547EC2.sum_degreeInto_eq_card_interedges]
   calc
@@ -335,7 +343,7 @@ theorem original_interedges_le_cleaned_add_loss
 actual sources of crossing edges: positive reduced pairs, exceptional
 vertices, and edges removed by degree-form regularity. -/
 theorem original_clusterCut_interedges_le
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Fintype V] [Finite ι]
     [DecidableEq V] [DecidableEq ι]
     (P : ClusterAssignment V ι)
     (G H : SimpleGraph V) (R : SimpleGraph ι)
@@ -350,6 +358,7 @@ theorem original_clusterCut_interedges_le
       (R.interedges I J).card * (m * m) +
         X.card * ((exceptionalVertices P).card + loss) := by
   classical
+  let := Fintype.ofFinite ι
   dsimp only
   let X := clusterUnion P I
   let C := clusterUnion P J
@@ -489,26 +498,30 @@ theorem exists_balanced_sparse_cut_of_degreeForm
       ring
 
 theorem edgeDensity_le_of_card_interedges_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (A B : Finset V) (q : ℕ) (hq : 0 < q)
     (hA : A.card = q) (hB : B.card = q) (α : ℚ)
     (hcross : ((G.interedges A B).card : ℚ) ≤
       α * (q : ℚ) * (q : ℚ)) :
     G.edgeDensity A B ≤ α := by
+  classical
+  let := Fintype.ofFinite V
   rw [G.edgeDensity_def, hA, hB]
   have hdenom : (0 : ℚ) < (q : ℚ) * (q : ℚ) := by positivity
   apply (div_le_iff₀ hdenom).2
   simpa [mul_assoc] using hcross
 
 theorem edgeDensity_ge_of_card_interedges_ge
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (A B : Finset V) (q : ℕ) (hq : 0 < q)
     (hA : A.card = q) (hB : B.card = q) (α : ℚ)
     (hcross : α * (q : ℚ) * (q : ℚ) ≤
       ((G.interedges A B).card : ℚ)) :
     α ≤ G.edgeDensity A B := by
+  classical
+  let := Fintype.ofFinite V
   rw [G.edgeDensity_def, hA, hB]
   have hdenom : (0 : ℚ) < (q : ℚ) * (q : ℚ) := by positivity
   apply (le_div_iff₀ hdenom).2
@@ -521,7 +534,7 @@ theorem exists_balanced_dense_cut_of_cleaned
     {V : Type*} [Fintype V] [DecidableEq V]
     (G H : SimpleGraph V) [DecidableRel G.Adj] [DecidableRel H.Adj]
     (hHG : H ≤ G) (X Y : Finset V) (q b lower : ℕ)
-    (hXY : Disjoint X Y) (hcover : X ∪ Y = Finset.univ)
+    (hXY : Disjoint X Y) (_hcover : X ∪ Y = Finset.univ)
     (hV : Fintype.card V = 2 * q)
     (hXupper : X.card ≤ q) (hXlower : q ≤ X.card + b)
     (hhigh : lower ≤ (H.interedges X Y).card) :
@@ -578,7 +591,7 @@ Ramsey-sized host.  This theorem is the final implication on p.38 of the
 paper once Claims 6.17 and 6.18 have supplied `hcross` and the displayed
 constant hierarchy has supplied `hnumeric`. -/
 theorem zhaoExtremalCaseTwo_of_degreeForm_reducedCut
-    {n : ℕ} { ι : Type*} [Fintype ι] [DecidableEq ι]
+    {n : ℕ} {ι : Type*} [Fintype ι] [DecidableEq ι]
     (P : ClusterAssignment (Fin (2 * n - 2)) ι)
     (G H : SimpleGraph (Fin (2 * n - 2))) (R : SimpleGraph ι)
     [DecidableRel G.Adj] [DecidableRel H.Adj] [DecidableRel R.Adj]
@@ -625,7 +638,7 @@ theorem zhaoExtremalCaseTwo_of_degreeForm_reducedCut
 theorem zhaoExtremalCaseOne_of_cleaned_denseCut
     {n : ℕ}
     (G H : SimpleGraph (Fin (2 * n - 2)))
-    [DecidableRel G.Adj] [DecidableRel H.Adj]
+    [DecidableRel H.Adj]
     (α : ℚ) (hn : 2 ≤ n) (hHG : H ≤ G)
     (X Y : Finset (Fin (2 * n - 2))) (b lower : ℕ)
     (hXY : Disjoint X Y) (hcover : X ∪ Y = Finset.univ)

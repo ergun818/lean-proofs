@@ -10,7 +10,7 @@ on the actual disjoint source domains. The exact used-image union is proved
 as well, so later root exclusions can be tied to the constructed state.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceOriginalBranchPlacement
@@ -86,15 +86,18 @@ def BranchPlacement.append
   · intro i hi j hj hij
     by_cases his : i ∈ s
     · by_cases hjs : j ∈ s
-      · simpa only [copy, dif_pos his, dif_pos hjs] using E₁.forestCopy.disjoint_ranges i his j hjs hij
+      · simpa only [copy, dif_pos his, dif_pos hjs] using E₁.forestCopy.disjoint_ranges i his j hjs
+          hij
       · simpa only [copy, dif_pos his, dif_neg hjs] using
-          disjoint_ranges_of_support E₁ E₂ hsupport i his j ((Finset.mem_union.mp hj).resolve_left hjs)
+          disjoint_ranges_of_support E₁ E₂ hsupport i his j ((Finset.mem_union.mp hj).resolve_left
+            hjs)
     · have hit := (Finset.mem_union.mp hi).resolve_left his
       by_cases hjs : j ∈ s
       · simpa only [copy, dif_neg his, dif_pos hjs] using
           (disjoint_ranges_of_support E₁ E₂ hsupport j hjs i hit).symm
       · have hjt := (Finset.mem_union.mp hj).resolve_left hjs
-        simpa only [copy, dif_neg his, dif_neg hjs] using E₂.forestCopy.disjoint_ranges i hit j hjt hij
+        simpa only [copy, dif_neg his, dif_neg hjs] using E₂.forestCopy.disjoint_ranges i hit j hjt
+          hij
   · intro i hi
     by_cases his : i ∈ s
     · simpa only [copy, dif_pos his] using E₁.attach i his
@@ -201,7 +204,8 @@ theorem BranchPlacement.used_append [DecidableEq V]
       Disjoint (endpoint (E₁.edge i) c) (endpoint (E₂.edge j) d))
     (hst : Disjoint s t) : (E₁.append E₂ hsupport).used = E₁.used ∪ E₂.used := by
   ext x
-  rw [BranchPlacement.mem_used, Finset.mem_union, BranchPlacement.mem_used, BranchPlacement.mem_used]
+  rw [BranchPlacement.mem_used, Finset.mem_union, BranchPlacement.mem_used,
+    BranchPlacement.mem_used]
   constructor
   · rintro ⟨i, hi, a, h⟩
     by_cases his : i ∈ s

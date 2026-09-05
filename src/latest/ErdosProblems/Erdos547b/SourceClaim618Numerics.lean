@@ -5,7 +5,7 @@ import ErdosProblems.Erdos547b.SourceNearFullFromHost
 
 /-! # The actual source schedule supplies all rounded Claim 6.18 gates -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 namespace Erdos547b.ZhaoSourceClaim618Numerics
 
@@ -56,7 +56,8 @@ theorem actual_scales (hα : 0 < α) (hα1 : α ≤ 1 / 4) :
   have ht' : 8 * (fourthRoot α : ℝ) ^ 2 ≤ (eta α : ℝ) / 1000 := by
     nlinarith only [ht, ht0, sq_nonneg (fourthRoot α : ℝ)]
   have htk := mul_le_mul_of_nonneg_right ht' hk
-  have hceil := Nat.ceil_lt_add_one (by positivity : 0 ≤ 4 * (fourthRoot α : ℝ) ^ 2 * paddedHalf (Index W))
+  have hceil := Nat.ceil_lt_add_one
+    (by positivity : 0 ≤ 4 * (fourthRoot α : ℝ) ^ 2 * paddedHalf (Index W))
   have hm : (missed W : ℝ) ≤ 8 * (fourthRoot α : ℝ) ^ 2 * paddedHalf (Index W) + 3 := by
     dsimp only [missed, matchingDefect]
     push_cast

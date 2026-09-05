@@ -41,12 +41,14 @@ def openNeighborhood (G : SimpleGraph V) [DecidableRel G.Adj]
     (S : Finset V) : Finset V :=
   S.biUnion fun v => G.neighborFinset v
 
+omit [DecidableEq V] in
 private theorem sum_indicator_leaf_eq_card
     (G : SimpleGraph V) [DecidableRel G.Adj] :
     (∑ v : V, if G.degree v = 1 then 1 else 0) = #(leafVertices G) := by
   classical
   simp [leafVertices]
 
+omit [DecidableEq V] in
 private theorem sum_indicator_branchExcess_eq
     (G : SimpleGraph V) [DecidableRel G.Adj] :
     (∑ v : V, if 3 ≤ G.degree v then G.degree v - 2 else 0) = branchExcess G := by
@@ -54,6 +56,7 @@ private theorem sum_indicator_branchExcess_eq
   rw [branchExcess, branchVertices]
   exact (Finset.sum_filter _ _).symm
 
+omit [DecidableEq V] in
 /-- Zhao, Proposition 7.11(1), in subtraction-free natural-number form.
 The total excess over degree two plus two is the number of leaves. -/
 theorem branchExcess_add_two_eq_card_leaves
@@ -96,29 +99,35 @@ theorem branchExcess_add_two_eq_card_leaves
         simp [mul_comm]
   omega
 
+omit [DecidableEq V] in
 /-- A finite nontrivial tree has at least two leaves. -/
 theorem two_le_card_leafVertices
     (G : SimpleGraph V) [DecidableRel G.Adj] [Nontrivial V]
     (hG : G.IsTree) :
     2 ≤ #(leafVertices G) := by
+  classical
   rw [← branchExcess_add_two_eq_card_leaves G hG]
   omega
 
+omit [DecidableEq V] in
 /-- Zhao's integer-looking identity, rendered with truncated subtraction only
 after proving the requisite lower bound on the number of leaves. -/
 theorem branchExcess_eq_card_leaves_sub_two
     (G : SimpleGraph V) [DecidableRel G.Adj] [Nontrivial V]
     (hG : G.IsTree) :
     branchExcess G = #(leafVertices G) - 2 := by
+  classical
   rw [← branchExcess_add_two_eq_card_leaves G hG]
   omega
 
+omit [DecidableEq V] in
 /-- The number of vertices of degree at least three is at most the number of
 leaves minus two, the second assertion in Zhao's Proposition 7.11(1). -/
 theorem card_branchVertices_le_card_leaves_sub_two
     (G : SimpleGraph V) [DecidableRel G.Adj] [Nontrivial V]
     (hG : G.IsTree) :
     #(branchVertices G) ≤ #(leafVertices G) - 2 := by
+  classical
   rw [← branchExcess_eq_card_leaves_sub_two G hG]
   calc
     #(branchVertices G) = ∑ _v ∈ branchVertices G, 1 := by simp
@@ -135,6 +144,7 @@ private theorem card_openNeighborhood_le_sum_degrees
   simpa only [G.card_neighborFinset_eq_degree] using
     (Finset.card_biUnion_le (s := S) (t := fun v => G.neighborFinset v))
 
+omit [DecidableEq V] in
 private theorem sum_degree_sub_two_eq_branchExcess
     (G : SimpleGraph V) [DecidableRel G.Adj] [Nontrivial V]
     (hG : G.IsTree) :
@@ -183,6 +193,7 @@ theorem card_openNeighborhood_le
 
 /-! ## The balanced Hall step used twice at the end of Lemma 7.10 -/
 
+omit [DecidableEq V] [Fintype V] in
 /-- A bipartite graph with equal finite sides and minimum degree at least half
 the opposite side has a perfect matching.  This is the exact Hall argument
 used twice in the final paragraph of Zhao's proof of Lemma 7.10 (there both
@@ -345,8 +356,8 @@ of `M` to unused host vertices which respects all attachment edges completes
 the embedding.  This is the exact gluing operation after each of the two Hall
 matchings in Zhao's proof. -/
 theorem copy_of_induce_compl_and_bijective_attachment
-    {A W : Type*} [Fintype A] [DecidableEq A]
-    [Fintype W] [DecidableEq W]
+    {A W : Type*} [Finite A]
+    [Finite W]
     (T : SimpleGraph A) (G : SimpleGraph W)
     (M : Finset A) (B : Finset W)
     (hM : T.IsIndepSet (M : Set A))
@@ -359,6 +370,8 @@ theorem copy_of_induce_compl_and_bijective_attachment
       (∀ m : M, F m = (q m : W)) ∧
       (∀ v : {v : A // v ∉ M}, F v = f v) := by
   classical
+  let := Fintype.ofFinite A
+  let := Fintype.ofFinite W
   let F : A → W := fun v =>
     if hv : v ∈ M then (q ⟨v, hv⟩ : W)
     else f ⟨v, by simpa using hv⟩

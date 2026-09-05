@@ -94,7 +94,7 @@ def coordinateHierarchyInteriorSlot
     (i : SegmentIndex hT P optional)
     (a : Fin ((AllocationHierarchy hT P optional).segments.size i)) :
     RootSlot CIndex Edge :=
-  match hclass : segmentSourceClass hT P optional i with
+  match _hclass : segmentSourceClass hT P optional i with
   | Sum.inl q => Sum.inl (componentReservoirSide P q)
   | Sum.inr j =>
       let side := orient j (segmentEndpointSide hT P optional i j a)
@@ -104,6 +104,7 @@ def coordinateHierarchyInteriorSlot
         Sum.inr (Sum.inr ⟨edge1 (A.F1edge j), side⟩)
       else Sum.inr (Sum.inr ⟨edgeb (A.Fbedge j), side⟩)
 
+omit [DecidableEq Edge] in
 @[simp] theorem coordinateHierarchyRootSlot_branch
     (i : SegmentIndex hT P optional) (j : BranchIndex P)
     (hclass : segmentSourceClass hT P optional i = Sum.inr j) :
@@ -113,6 +114,7 @@ def coordinateHierarchyInteriorSlot
         capacity1 capacityb base0 A edge1 edgeb orient j := by
   simp [coordinateHierarchyRootSlot, hclass]
 
+omit [DecidableEq Edge] in
 @[simp] theorem coordinateHierarchyInteriorSlot_branch
     (i : SegmentIndex hT P optional) (j : BranchIndex P)
     (hclass : segmentSourceClass hT P optional i = Sum.inr j)
@@ -128,6 +130,7 @@ def coordinateHierarchyInteriorSlot
   unfold coordinateHierarchyInteriorSlot
   rw [hclass]
 
+omit [DecidableEq Edge] in
 /-- For every non-selected branch-class segment, the coordinate root pool is
 the same endpoint selected by local side zero. -/
 theorem coordinateRootSlot_eq_interiorSlot_root_of_not_selected
@@ -140,6 +143,7 @@ theorem coordinateRootSlot_eq_interiorSlot_root_of_not_selected
       coordinateHierarchyInteriorSlot hT P optional S clusterCapacity allowed0
         capacity1 capacityb base0 A edge0 edge1 edgeb orient i
           ((AllocationHierarchy hT P optional).segments.root i) := by
+  classical
   have hside := segmentEndpointSide_root_zero_of_optionalParity
     hT P optional hparity i j hclass
   rw [coordinateHierarchyRootSlot_branch hT P optional S clusterCapacity
@@ -153,4 +157,5 @@ end Allocated
 
 end Erdos547b.ZhaoClaim616HierarchicalCoordinateSourceLayout
 
-#print axioms Erdos547b.ZhaoClaim616HierarchicalCoordinateSourceLayout.coordinateRootSlot_eq_interiorSlot_root_of_not_selected
+open Erdos547b.ZhaoClaim616HierarchicalCoordinateSourceLayout in
+#print axioms coordinateRootSlot_eq_interiorSlot_root_of_not_selected

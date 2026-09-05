@@ -61,10 +61,12 @@ theorem exists_two_clean_both_roots
           ((H.edgeDensity (clusterVertices P B) (clusterVertices P j) : ℝ) - ε) *
             (clusterVertices P j).card ≤ (degreeInto Hsource zB (clusterVertices P j) : ℝ)) := by
   classical
-  obtain ⟨zA, hzA, DA, hDA, LA, hLA, hDAcard, hLAcard, hAupper, hAlower⟩ := exists_root_bothTypical_most H
+  obtain ⟨zA, hzA, DA, hDA, LA, hLA, hDAcard, hLAcard, hAupper, hAlower⟩ :=
+    exists_root_bothTypical_most H
     (clusterVertices P A) poolA J (clusterVertices P) ε δ hδ hεδ
     hAuniform hpoolA hAcard
-  obtain ⟨zB, hzB, DB, hDB, LB, hLB, hDBcard, hLBcard, hBupper, hBlower⟩ := exists_root_bothTypical_most H
+  obtain ⟨zB, hzB, DB, hDB, LB, hLB, hDBcard, hLBcard, hBupper, hBlower⟩ :=
+    exists_root_bothTypical_most H
     (clusterVertices P B) poolB J (clusterVertices P) ε δ hδ hεδ
     hBuniform hpoolB hBcard
   have hzAP : P zA = some A := (mem_clusterVertices P A zA).mp (hpoolA hzA)
@@ -131,7 +133,6 @@ theorem exists_two_clean_both_roots
         degreeInto H zB (clusterVertices P j) := by
       exact_mod_cast degreeInto_le_of_le H Hsource hsource zB (clusterVertices P j)
     exact hmono.trans hupper
-
   · refine ⟨LA, hLA, LB, hLB, hDAcard, hDBcard, hLAcard, hLBcard, ?_, ?_⟩
     · intro j hj
       have hjJ := (Finset.mem_sdiff.mp hj).1
@@ -145,7 +146,8 @@ theorem exists_two_clean_both_roots
         exact hjDA (hij ▸ hi)
       change _ ≤ (degreeInto (truncateRoot (truncateRoot H zA (clusterUnion P DA)) zB
         (clusterUnion P DB)) zA (clusterVertices P j) : ℝ)
-      rw [degreeInto_other_root_eq _ zB zA (clusterUnion P DB) (clusterVertices P j) hroots hzAclean,
+      rw [degreeInto_other_root_eq _ zB zA (clusterUnion P DB) (clusterVertices P j) hroots
+        hzAclean,
         degreeInto_root_eq_of_disjoint _ _ _ _ hdis]
       exact hAlower j (Finset.mem_sdiff.mpr ⟨hjJ, hjLA⟩)
     · intro j hj
@@ -161,7 +163,8 @@ theorem exists_two_clean_both_roots
       change _ ≤ (degreeInto (truncateRoot (truncateRoot H zA (clusterUnion P DA)) zB
         (clusterUnion P DB)) zB (clusterVertices P j) : ℝ)
       rw [degreeInto_root_eq_of_disjoint _ _ _ _ hdis,
-        degreeInto_other_root_eq _ zA zB (clusterUnion P DA) (clusterVertices P j) hroots.symm hzBclean]
+        degreeInto_other_root_eq _ zA zB (clusterUnion P DA) (clusterVertices P j) hroots.symm
+          hzBclean]
       exact hBlower j (Finset.mem_sdiff.mpr ⟨hjJ, hjLB⟩)
 
 end Erdos547b.ZhaoTwoSidedRootRowsPreparation

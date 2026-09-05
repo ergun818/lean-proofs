@@ -10,7 +10,7 @@ The existing disjoint-edge assembly then pastes those concrete copies and
 retains positive source support at their attachment endpoints.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceCapacityClosedPacking

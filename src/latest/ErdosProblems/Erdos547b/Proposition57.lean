@@ -85,6 +85,7 @@ structure FlexibleEmbedding (F : SimpleGraph A) (G : SimpleGraph B)
     (∀ ⦃r : A⦄, r ∈ roots → rootImage r ∉ bad r) →
     Nonempty (RootedTargetEmbedding F G roots target rootImage)
 
+omit [Fintype B] in
 /-- The abstract merging lemma underlying Proposition 5.7.  Two online
 certificates on a root-partition merge, and their exceptional-root losses
 add.  Disjointness of the two matching supports and of the root cluster from
@@ -270,12 +271,13 @@ theorem merge_flexiblePartialEmbedding
       intro x hx
       simpa [copy] using hgluedNonroot hx)⟩⟩
 
+omit [Fintype B] in
 /-- Zhao, Proposition 5.7, with integral slack `s`: two disjoint
 root-partition embeddings having `2s` exceptional choices merge into an
 embedding having `4s` exceptional choices.  In the paper `s = √ε N` (with
 integer rounding understood), the root cluster is `A`, and the target sets
 are the vertex sets of the disjoint cluster-matchings `M₀` and `M₁`. -/
-theorem proposition_5_7
+theorem proposition_5_7 [Finite B]
     (F : SimpleGraph A) (G : SimpleGraph B)
     (roots left right : Finset A)
     (rootCluster targetLeft targetRight : Finset B)
@@ -288,6 +290,8 @@ theorem proposition_5_7
     (embRight : FlexiblePartialEmbedding F G roots right rootCluster targetRight (2 * s)) :
     Nonempty (FlexibleEmbedding F G roots rootCluster
       (targetLeft ∪ targetRight) (4 * s)) := by
+  classical
+  let := Fintype.ofFinite B
   have h :=
     merge_flexiblePartialEmbedding F G roots left right rootCluster targetLeft targetRight
       (2 * s) (2 * s) part hrootLeft hrootRight htarget embLeft embRight

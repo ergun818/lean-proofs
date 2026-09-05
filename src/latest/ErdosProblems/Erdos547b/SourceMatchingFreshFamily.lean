@@ -12,7 +12,7 @@ current prefix is actually embedded. The terminal unsaturated case is
 kept separate from the nonterminal reservation ledger.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMatchingFreshFamily
@@ -71,14 +71,16 @@ theorem exists_fresh_familyState (hP : P.IsMatching)
     intro i hi
     obtain ⟨p, hp, hip⟩ := List.mem_flatMap.mp hi
     have hc := hcurrent i
-      (Erdos547b.ZhaoSourceResidualRootPacking.SaturatedPacking.chunk_mem packing (List.mem_append_left _ hp) hip)
+      (Erdos547b.ZhaoSourceResidualRootPacking.SaturatedPacking.chunk_mem packing
+        (List.mem_append_left _ hp) hip)
     rw [hc]
     exact Nat.lt_succ_self _
   have hledger := closed_saturation_mass packing
   cases hpending : packing.pending with
   | none =>
     have hflat : packing.closed.flatMap Prod.snd = current := by
-      simpa only [hpending, Option.toList_none, List.flatMap_nil, List.append_nil] using packing.flatten
+      simpa only [hpending, Option.toList_none, List.flatMap_nil, List.append_nil] using
+        packing.flatten
     refine ⟨{
       matching := hP
       family_nodup := hnd

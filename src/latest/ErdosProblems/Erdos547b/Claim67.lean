@@ -39,10 +39,12 @@ structure ZhaoGallaiEdmondsMatching (Z : ZhaoGallaiEdmondsWitness H) where
         ∃ (u' v' : ↑(Z.separatorᶜ : Set W)),
           u'.1 = u ∧ v'.1 = v ∧ u' ∈ C.supp ∧ v' ∈ C.supp
 
-theorem ZhaoGallaiEdmondsWitness.exists_assembledMatching
+omit [DecidableEq W] [DecidableRel H.Adj] [Fintype W] in
+theorem ZhaoGallaiEdmondsWitness.exists_assembledMatching [Finite W]
     (Z : ZhaoGallaiEdmondsWitness H) :
     Nonempty (ZhaoGallaiEdmondsMatching H Z) := by
   classical
+  let := Fintype.ofFinite W
   let K : SimpleGraph ↑(Z.separatorᶜ : Set W) := H.induce Z.separatorᶜ
   let representative : (C : K.ConnectedComponent) → C.supp := fun C ↦
     if h : ∃ s : Z.separator, Z.targetComponent s = C then
@@ -524,8 +526,7 @@ theorem exists_claim67Certificate_of_reducedGraph
   have hlargeEdge : ∃ a ∈ L, ∃ b ∈ L, R.Adj a b := by
     by_contra h
     apply hL_nonindependent
-    intro a ha b hb hab
-    intro hadj
+    intro a ha b hb hab hadj
     apply h
     exact ⟨a, ha, b, hb, hadj⟩
   by_cases hlocal : ∃ C : K.ConnectedComponent,

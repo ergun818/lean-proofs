@@ -27,6 +27,7 @@ private def denseSubsets (G : SimpleGraph V) [DecidableRel G.Adj] (k : ℕ) :
   (Finset.univ : Finset V).powerset.filter fun U =>
     k * U.card < #(G.induce (U : Set V)).edgeFinset
 
+omit [Fintype V] in
 /-- Deleting one vertex from an induced graph deletes exactly its induced
 degree.  This explicit finite-set form is convenient for minimal-subset
 arguments. -/
@@ -63,6 +64,7 @@ theorem card_edges_induce_erase
     _ = #H.edgeFinset - H.degree v :=
       H.card_edgeFinset_deleteIncidenceSet v
 
+omit [DecidableEq V] in
 /-- Inducing on the literal finite universe does not change the edge count. -/
 theorem card_edges_induce_univ
     (G : SimpleGraph V) [DecidableRel G.Adj] :
@@ -80,6 +82,7 @@ theorem card_edges_induce_univ
         rfl }
   exact iso.card_edgeFinset_eq
 
+omit [DecidableEq V] in
 /-- If a finite graph has more than `k |V|` edges, some nonempty induced
 subgraph has minimum degree strictly larger than `k`. -/
 theorem exists_induced_minDegree_gt_of_mul_card_lt_edges

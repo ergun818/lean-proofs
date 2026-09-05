@@ -48,11 +48,11 @@ theorem degreeInto_eq_card_inter {V : Type*} [Fintype V] [DecidableEq V]
     degreeInto G v S = (G.neighborFinset v ∩ S).card := by
   apply congr_arg Finset.card
   ext w
-  simp [degreeInto, G.mem_neighborFinset, and_comm]
+  simp [G.mem_neighborFinset, and_comm]
 
 /-- A nontrivial finite tree admits a bipartition covering every vertex. -/
 theorem exists_treeBipartition {V : Type*} [Fintype V] [DecidableEq V] [Nontrivial V]
-    (T : SimpleGraph V) [DecidableRel T.Adj] (hT : T.IsTree) :
+    (T : SimpleGraph V) (hT : T.IsTree) :
     ∃ U W : Finset V,
       Disjoint U W ∧ U ∪ W = Finset.univ ∧ T.IsBipartiteWith (U : Set V) (W : Set V) := by
   classical
@@ -112,7 +112,7 @@ by an explicit rational parameter `eps`. -/
 theorem dense_prune {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (A B : Finset V) (eps : ℚ)
-    (hA : A.Nonempty) (hB : B.Nonempty) (heps : 0 < eps) (heps1 : eps < 1)
+    (hA : A.Nonempty) (hB : B.Nonempty) (heps : 0 < eps) (_heps1 : eps < 1)
     (hdense : 1 - eps ^ 2 ≤ G.edgeDensity A B) :
     ∃ B' ⊆ B,
       (1 - eps) * (B.card : ℚ) ≤ (B'.card : ℚ) ∧
@@ -218,24 +218,27 @@ theorem colorClassFinset_zero_union_one {V : Type*} [Fintype V] [DecidableEq V]
     Finset.mem_univ, true_and]
   exact iff_true_intro (fin_two_eq_zero_or_one (c v))
 
-theorem colorClassFinset_zero_disjoint_one {V : Type*} [Fintype V] [DecidableEq V]
+theorem colorClassFinset_zero_disjoint_one {V : Type*} [Fintype V]
     {T : SimpleGraph V} (c : T.Coloring (Fin 2)) :
     Disjoint (colorClassFinset c 0) (colorClassFinset c 1) := by
+  classical
   rw [Finset.disjoint_left]
   intro v hv0 hv1
   simp only [colorClassFinset, Finset.mem_filter, Finset.mem_univ, true_and] at hv0 hv1
   omega
 
-theorem partCard_zero_add_one {V : Type*} [Fintype V] [DecidableEq V]
+theorem partCard_zero_add_one {V : Type*} [Fintype V]
     {T : SimpleGraph V} (c : T.Coloring (Fin 2)) :
     Coloring.partCard c 0 + Coloring.partCard c 1 = Fintype.card V := by
+  classical
   rw [← colorClassFinset_card, ← colorClassFinset_card,
     ← Finset.card_union_of_disjoint (colorClassFinset_zero_disjoint_one c),
     colorClassFinset_zero_union_one, Finset.card_univ]
 
-theorem coloring_isBipartiteWith_zero_one {V : Type*} [Fintype V] [DecidableEq V]
+theorem coloring_isBipartiteWith_zero_one {V : Type*} [Fintype V]
     {T : SimpleGraph V} (c : T.Coloring (Fin 2)) :
     T.IsBipartiteWith (colorClassFinset c 0 : Set V) (colorClassFinset c 1 : Set V) := by
+  classical
   constructor
   · exact Finset.disjoint_coe.mpr (colorClassFinset_zero_disjoint_one c)
   · intro v w hvw
@@ -256,13 +259,13 @@ theorem coloring_isBipartiteWith_zero_one {V : Type*} [Fintype V] [DecidableEq V
 /-- Fact 6.9 in the only form needed for Fact 7.2: the larger colour class
 of a nontrivial bipartite tree contains a leaf. -/
 theorem exists_leaf_color_one_of_partCard_lt {V : Type*} [Fintype V]
-    [DecidableEq V] [Nontrivial V] (T : SimpleGraph V) [DecidableRel T.Adj]
+    [Nontrivial V] (T : SimpleGraph V) [DecidableRel T.Adj]
     (hT : T.IsTree) (c : T.Coloring (Fin 2))
     (hlt : Coloring.partCard c 0 < Coloring.partCard c 1) :
     ∃ x : V, c x = 1 ∧ T.degree x = 1 := by
   classical
   by_contra hleaf
-  push_neg at hleaf
+  push Not at hleaf
   let W := colorClassFinset c 1
   have hdegpos : ∀ x : V, 0 < T.degree x := by
     intro x
@@ -342,8 +345,8 @@ theorem partCard_induce_compl_singleton_add_one {r : ℕ} {V : Type*}
   · simp
 
 private theorem fact72_part1_oriented_aux {V W : Type*}
-    [Fintype V] [Fintype W] [DecidableEq V] [DecidableEq W] [Nontrivial V]
-    (T : SimpleGraph V) (G : SimpleGraph W) [DecidableRel T.Adj] [DecidableRel G.Adj]
+    [Fintype V] [Fintype W] [Nontrivial V]
+    (T : SimpleGraph V) (G : SimpleGraph W) [DecidableRel G.Adj]
     (hT : T.IsTree) (c : T.Coloring (Fin 2)) (A B : Finset W)
     (hAB : Disjoint A B) (d : ℕ)
     (hbalance : Coloring.partCard c 1 = Coloring.partCard c 0 + d)
@@ -405,13 +408,13 @@ private theorem fact72_part1_oriented_aux {V W : Type*}
         change Fintype.card {a : V // ¬a = x} + 1 = Fintype.card V
         rw [hc]
         have hVpos : 0 < Fintype.card V := Fintype.card_pos
-        simp only [Fintype.card_subtype_eq, Finset.filter_eq']
+        simp only [Fintype.card_subtype_eq]
         omega
       have hT' : T'.IsTree := by
         exact ⟨hT.connected.induce_compl_singleton_of_degree_eq_one hxdeg,
           hT.isAcyclic.induce s⟩
       have hpart0 : Coloring.partCard c' 0 = Coloring.partCard c 0 := by
-        exact partCard_induce_compl_singleton_of_ne c x 0 (by simpa [hcx])
+        exact partCard_induce_compl_singleton_of_ne c x 0 (by simp [hcx])
       have hpart1 : Coloring.partCard c 1 = Coloring.partCard c' 1 + 1 := by
         simpa [c', s, hcx] using partCard_induce_compl_singleton_add_one c x
       have hbalance' : Coloring.partCard c' 1 = Coloring.partCard c' 0 + d := by
@@ -518,12 +521,12 @@ def Coloring.swapTwo {V : Type*} {T : SimpleGraph V}
 @[simp] theorem Coloring.swapTwo_eq_zero_iff {V : Type*} {T : SimpleGraph V}
     (c : T.Coloring (Fin 2)) (x : V) : Coloring.swapTwo c x = 0 ↔ c x = 1 := by
   change (if c x = 0 then 1 else 0) = 0 ↔ c x = 1
-  rcases fin_two_eq_zero_or_one (c x) with h | h <;> simp [Coloring.swapTwo, h]
+  rcases fin_two_eq_zero_or_one (c x) with h | h <;> simp [h]
 
 @[simp] theorem Coloring.swapTwo_eq_one_iff {V : Type*} {T : SimpleGraph V}
     (c : T.Coloring (Fin 2)) (x : V) : Coloring.swapTwo c x = 1 ↔ c x = 0 := by
   change (if c x = 0 then 1 else 0) = 1 ↔ c x = 0
-  rcases fin_two_eq_zero_or_one (c x) with h | h <;> simp [Coloring.swapTwo, h]
+  rcases fin_two_eq_zero_or_one (c x) with h | h <;> simp [h]
 
 @[simp] theorem Coloring.partCard_swapTwo_zero {V : Type*} [Fintype V]
     {T : SimpleGraph V} (c : T.Coloring (Fin 2)) :
@@ -546,8 +549,8 @@ def Coloring.swapTwo {V : Type*} {T : SimpleGraph V}
 /-- Zhao's Fact 7.2(1), in a finite form convenient for the dense-cut proof.
 The target colour class placed in `A` may be whichever class is smaller. -/
 theorem fact72_part1 {V W : Type*}
-    [Fintype V] [Fintype W] [DecidableEq V] [DecidableEq W] [Nontrivial V]
-    (T : SimpleGraph V) (G : SimpleGraph W) [DecidableRel T.Adj] [DecidableRel G.Adj]
+    [Fintype V] [Fintype W] [Nontrivial V]
+    (T : SimpleGraph V) (G : SimpleGraph W) [DecidableRel G.Adj]
     (hT : T.IsTree) (c : T.Coloring (Fin 2)) (A B : Finset W)
     (hAB : Disjoint A B)
     (hcardA : min (Coloring.partCard c 0) (Coloring.partCard c 1) ≤ A.card)
@@ -589,7 +592,6 @@ theorem fact72_part1 {V W : Type*}
         (by simpa only [hmin] using hcrossA) (by simpa only [hmin] using hcrossB)
         hdegreeA with ⟨f, _⟩
     exact ⟨f⟩
-
   · have hle' : Coloring.partCard c 1 ≤ Coloring.partCard c 0 := by omega
     let cs := Coloring.swapTwo c
     let d := Coloring.partCard cs 1 - Coloring.partCard cs 0
@@ -615,7 +617,7 @@ theorem edgeDensity_ge_of_degreeInto {V : Type*} [Fintype V]
       ∑ a ∈ A, (degreeInto G a B : ℚ) := by
     calc
       (A.card : ℚ) * (r * B.card) = ∑ _a ∈ A, r * (B.card : ℚ) := by
-        simp [Finset.sum_const, nsmul_eq_mul, mul_comm]
+        simp [Finset.sum_const, nsmul_eq_mul]
       _ ≤ _ := Finset.sum_le_sum fun a ha => hdeg a ha
   have hedge : (A.card : ℚ) * (r * B.card) ≤ (G.interedges A B).card := by
     rw [card_interedges_eq_sum_degreeInto]
@@ -865,7 +867,6 @@ private theorem dense_cut_oriented {W : Type*} [Fintype W] [DecidableEq W] {m t 
     · intro i _ j _ hij
       fin_cases i <;> fin_cases j
       · exact False.elim (hij rfl)
-
       · change Disjoint X' Y'
         exact hXY.mono hX'X hY'Y
       · change Disjoint Y' X'

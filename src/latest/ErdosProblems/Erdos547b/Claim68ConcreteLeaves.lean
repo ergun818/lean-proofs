@@ -234,7 +234,7 @@ noncomputable def leafCompletionCertificateOfCoreCopy
 
 /-- Direct full-copy endpoint for the actual Claim-6.8 leaf set. -/
 theorem exists_copy_of_originalLevelOneLeaves_core
-    {B : Type v} [Fintype B] [DecidableEq B]
+    {B : Type v} [Fintype B]
     (P : ZhaoForestPartition T globalRoot small) (hT : T.IsTree)
     (hcard : 3 ≤ Fintype.card V)
     (G : SimpleGraph B) [DecidableRel G.Adj]
@@ -244,6 +244,7 @@ theorem exists_copy_of_originalLevelOneLeaves_core
       G.degree (coreCopy
         ⟨originalLeafParent P hT x, originalLeafParent_not_mem P hT hcard x⟩)) :
     Nonempty (T.Copy G) := by
+  classical
   let C := leafCompletionCertificateOfCoreCopy P hT hcard G coreCopy hdegree
   obtain ⟨F, -, -⟩ := exists_copy_of_induce_compl_of_leaves
     T G (originalLevelOneLeaves P) C.parent C.parent_not_mem C.parent_adj

@@ -29,7 +29,7 @@ private theorem partCount_induce_compl_singleton_le
 
 /-- Inductive core of the rooted semibipartite greedy lemma. -/
 private theorem exists_rooted_semibipartite_copy_aux
-    {α β : Type*} [Fintype α] [Fintype β] [DecidableEq α] [DecidableEq β]
+    {α β : Type*} [Fintype α] [Fintype β] [DecidableEq β]
     (T : SimpleGraph α) (G : SimpleGraph β) [DecidableRel G.Adj]
     (n : ℕ) (hcard : Fintype.card α = n + 1) (hT : T.IsTree)
     (side : α → Fin 2)
@@ -106,7 +106,7 @@ private theorem exists_rooted_semibipartite_copy_aux
             simpa [s] using this⟩)
           · intro a ha
             simp only [mem_erase, mem_filter, mem_univ, true_and] at ha
-            simpa [side', s, ha.2]
+            simp [side', s, ha.2]
           · intro a₁ ha₁ a₂ ha₂ h
             exact Subtype.ext_iff.mp h
           · intro a ha
@@ -185,7 +185,7 @@ private theorem exists_rooted_semibipartite_copy_aux
 /-- Root-preserving greedy embedding for a target whose second part is
 independent.  Edges inside the first target part are allowed. -/
 theorem exists_rooted_semibipartite_copy
-    {α β : Type*} [Fintype α] [Fintype β] [DecidableEq α] [DecidableEq β]
+    {α β : Type*} [Fintype α] [Fintype β] [DecidableEq β]
     (T : SimpleGraph α) (G : SimpleGraph β) [DecidableRel G.Adj]
     (hT : T.IsTree) (side : α → Fin 2)
     (hindep : ∀ ⦃u v⦄, T.Adj u v → side u = 1 → side v ≠ 1)
@@ -194,6 +194,7 @@ theorem exists_rooted_semibipartite_copy
       partCount side j ≤ #((G.neighborFinset v) ∩ A j))
     (root : α) (rootImage : β) (hrootImage : rootImage ∈ A (side root)) :
     ∃ f : T.Copy G, f root = rootImage ∧ ∀ x, f x ∈ A (side x) := by
+  classical
   apply exists_rooted_semibipartite_copy_aux T G (Fintype.card α - 1)
     (by
       have hpos : 0 < Fintype.card α := Fintype.card_pos_iff.mpr hT.connected.nonempty
@@ -212,7 +213,7 @@ private theorem card_restrict_le {α : Type*} [Fintype α] [DecidableEq α]
 /-- Induction which first removes the deferred leaves in the second target
 part and then invokes the semibipartite core embedding. -/
 private theorem fact72_part3_aux
-    {α β : Type*} [Fintype α] [Fintype β] [DecidableEq α] [DecidableEq β]
+    {α β : Type*} [Fintype α] [Fintype β] [DecidableEq β]
     (T : SimpleGraph α) (G : SimpleGraph β) [DecidableRel T.Adj] [DecidableRel G.Adj]
     (n : ℕ) (hcard : Fintype.card α = n + 1) (hT : T.IsTree)
     (side : α → Fin 2)
@@ -301,7 +302,7 @@ private theorem fact72_part3_aux
           rw [T.degree_induce_of_neighborSet_subset]
           · exact hydeg
           · intro z hyz
-            show z ≠ x
+            change z ≠ x
             intro hzx
             subst z
             exact hindep hyz hyside' hxside
@@ -344,7 +345,7 @@ private theorem fact72_part3_aux
             refine Finset.ssubset_iff_subset_ne.mpr ⟨hsubset, ?_⟩
             intro heq
             have : f parent' ∈ G.neighborFinset (f parent') := heq ▸ hparentUsed
-            simpa using this
+            simp at this
           have hlt : G.degree (f parent') < #used := by
             exact card_lt_card hproper
           have hglob := hglobal (f parent') hparentPart
@@ -442,7 +443,7 @@ private theorem fact72_part3_aux
 The set `active` is the source's `Ũ₂`; all second-part vertices outside it
 are required to be leaves. -/
 theorem fact72_part3
-    {α β : Type*} [Fintype α] [Fintype β] [DecidableEq α] [DecidableEq β]
+    {α β : Type*} [Fintype α] [Fintype β] [DecidableEq β]
     (T : SimpleGraph α) (G : SimpleGraph β) [DecidableRel T.Adj] [DecidableRel G.Adj]
     (hT : T.IsTree) (side : α → Fin 2)
     (hindep : ∀ ⦃u v⦄, T.Adj u v → side u = 1 → side v ≠ 1)
@@ -459,6 +460,7 @@ theorem fact72_part3
     (root : α) (hrootCore : side root = 0 ∨ root ∈ active)
     (rootImage : β) (hrootImage : rootImage ∈ parts (side root)) :
     ∃ f : T.Copy G, f root = rootImage := by
+  classical
   obtain ⟨f, hf, -, -⟩ := fact72_part3_aux T G (Fintype.card α - 1)
     (by
       have hpos : 0 < Fintype.card α := Fintype.card_pos_iff.mpr hT.connected.nonempty
@@ -471,7 +473,7 @@ theorem fact72_part3
 nonleaves are fewer than the vertices on the first side.  This is the count
 used implicitly in Zhao's proof of Fact 7.2(2). -/
 theorem card_nonleaves_second_lt_first
-    {α : Type*} [Fintype α] [DecidableEq α] [Nontrivial α]
+    {α : Type*} [Fintype α] [Nontrivial α]
     (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree)
     (side : α → Fin 2)
     (hindep : ∀ ⦃u v⦄, T.Adj u v → side u = 1 → side v ≠ 1)
@@ -558,9 +560,9 @@ theorem card_nonleaves_second_lt_first
 implicit in the paper's positive-size-tree setting and make `A.Nonempty`
 explicit so that a root image can be chosen. -/
 theorem fact72_part2
-    {α β : Type*} [Fintype α] [Fintype β] [DecidableEq α] [DecidableEq β]
+    {α β : Type*} [Fintype α] [Fintype β] [DecidableEq β]
     [Nontrivial α]
-    (T : SimpleGraph α) (G : SimpleGraph β) [DecidableRel T.Adj] [DecidableRel G.Adj]
+    (T : SimpleGraph α) (G : SimpleGraph β) [DecidableRel G.Adj]
     (hT : T.IsTree) (side : α → Fin 2)
     (hindep : ∀ ⦃u v⦄, T.Adj u v → side u = 1 → side v ≠ 1)
     (parts : Fin 2 → Finset β) (hparts : Set.PairwiseDisjoint Set.univ parts)

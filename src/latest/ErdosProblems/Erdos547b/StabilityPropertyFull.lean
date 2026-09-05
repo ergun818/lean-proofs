@@ -68,11 +68,8 @@ theorem exists_ramseyBalancedCut (n : ℕ) (hn : 1 ≤ n) :
 cases.  This removes the large-`α` branch before regularity is invoked. -/
 theorem extremalCaseOne_or_two_of_half_le
     {n : ℕ} (G : SimpleGraph (Fin (2 * n - 2)))
-    [hGdec : DecidableRel G.Adj]
     (α : ℚ) (hn : 1 ≤ n) (hα : (1 : ℚ) / 2 ≤ α) :
     ZhaoExtremalCaseOne α G ∨ ZhaoExtremalCaseTwo α G := by
-  have hdec : hGdec = Classical.decRel G.Adj := Subsingleton.elim _ _
-  cases hdec
   classical
   unfold ZhaoExtremalCaseOne ZhaoExtremalCaseTwo
   obtain ⟨V₁, V₂, hcut⟩ := exists_ramseyBalancedCut n hn
@@ -87,13 +84,8 @@ theorem extremalCaseOne_or_two_of_half_le
 /-- Dense extremality is monotone when edges are added. -/
 theorem extremalCaseOne_mono_graph
     {n : ℕ} {H G : SimpleGraph (Fin (2 * n - 2))}
-    [hHdec : DecidableRel H.Adj] [hGdec : DecidableRel G.Adj]
     (hHG : H ≤ G) {α : ℚ} (hH : ZhaoExtremalCaseOne α H) :
     ZhaoExtremalCaseOne α G := by
-  have hdecH : hHdec = Classical.decRel H.Adj := Subsingleton.elim _ _
-  have hdecG : hGdec = Classical.decRel G.Adj := Subsingleton.elim _ _
-  cases hdecH
-  cases hdecG
   classical
   unfold ZhaoExtremalCaseOne at hH ⊢
   obtain ⟨V₁, V₂, hcut, hdense⟩ := hH
@@ -296,11 +288,12 @@ theorem pruned_degreeForm_ec1_or_claim67_of_error_capacities
 actual host: it is the regularity reduced graph of the empty-extended cluster
 family. -/
 theorem padded_reducedGraph_eq_actual
-    {V ι : Type*} [Fintype ι] [DecidableEq ι]
+    {V ι : Type*} [Fintype ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (C : ι → Finset V) (ε d : ℚ) (hd : 0 < d) :
     padGraph (regularityReducedGraph G C ε d) =
       regularityReducedGraph G (padCluster C) ε d :=
+  open Classical in
   padGraph_regularityReducedGraph G C ε d hd
 
 #print axioms exists_ramseyBalancedCut

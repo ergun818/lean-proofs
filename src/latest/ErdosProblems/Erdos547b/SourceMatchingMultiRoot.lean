@@ -6,11 +6,12 @@ import ErdosProblems.Erdos547b.SourcePendingInitialRoot
 # Simultaneous roots on arbitrary matching pairs with extra exclusions
 
 The concrete union of fixed-pair bad sets fits the existing reconnection
-margin even after two square-root fractions of extra root deletions. One root then works for all active pending pairs, the opposite
+margin even after two square-root fractions of extra root deletions. One root then works for all
+  active pending pairs, the opposite
 root reservoir, and almost all unused pairs. The empty fixed set is allowed.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMatchingMultiRoot
@@ -49,7 +50,8 @@ theorem card_multiForbidden_le (hα : 0 < α) (hα1 : α ≤ 1 / 4)
     (fixed : Finset (MatchingEdge P))
     (hfixed : fixed ⊆ edgesAwayFromDistinguished P (padFinset (large W))
       (Sum.inl Q.A) (Sum.inl Q.B)) (hcount : fixed.card ≤ 3)
-    (used : Finset (Fin hostN)) (hused : (used.card : ℝ) ≤ ((epsilon α : ℝ) + 2 * (rootTypicality α : ℝ)) * W.clusterSize) :
+    (used : Finset (Fin hostN)) (hused : (used.card : ℝ) ≤ ((epsilon α : ℝ) + 2 * (rootTypicality α
+      : ℝ)) * W.clusterSize) :
     ((multiForbidden W Q P S s t fixed used).card : ℝ) ≤
       (3 * (rootTypicality α : ℝ) + 6 * (epsilon α : ℝ)) * W.clusterSize := by
   have hε : (0 : ℝ) ≤ epsilon α := by exact_mod_cast (parameter_pos hα).2.2.2.2.2.2.2.le
@@ -131,7 +133,8 @@ theorem exists_multi_eligible_from_pool
         (Sum.inl Q.A) (Sum.inl Q.B) (hremaining he) c) pool
       (hpool.trans (Finset.sdiff_subset.trans (reservoir_subset W Q s))) hpoolCard
   obtain ⟨hzR, hzFresh⟩ := Finset.mem_sdiff.mp (hpool hz)
-  have hnotUsed : z ∉ used := fun hu => hzFresh (Finset.mem_union_left _ (Finset.mem_union_left _ hu))
+  have hnotUsed : z ∉ used := fun hu => hzFresh (Finset.mem_union_left _ (Finset.mem_union_left _
+    hu))
   have hnotReservoir : z ∉ badToward W Q (Sum.inl (rootCluster W Q s)) t :=
     fun hr => hzFresh (Finset.mem_union_right _ hr)
   refine ⟨z, hz, hnotUsed, fixed_eligible_of_not_mem_multiForbidden W Q P S s t fixed hfixed
@@ -149,7 +152,8 @@ theorem exists_multi_eligible_after_parent_degree
     (fixed : Finset (MatchingEdge P))
     (hfixed : fixed ⊆ edgesAwayFromDistinguished P (padFinset (large W))
       (Sum.inl Q.A) (Sum.inl Q.B)) (hcount : fixed.card ≤ 3)
-    (used : Finset (Fin hostN)) (hused : (used.card : ℝ) ≤ ((epsilon α : ℝ) + 2 * (rootTypicality α : ℝ)) * W.clusterSize)
+    (used : Finset (Fin hostN)) (hused : (used.card : ℝ) ≤ ((epsilon α : ℝ) + 2 * (rootTypicality α
+      : ℝ)) * W.clusterSize)
     (remaining : Finset (MatchingEdge P))
     (hremaining : remaining ⊆ edgesAwayFromDistinguished P (padFinset (large W))
       (Sum.inl Q.A) (Sum.inl Q.B)) :
@@ -164,7 +168,9 @@ theorem exists_multi_eligible_after_parent_degree
   let excluded := multiForbidden W Q P S s t fixed used
   obtain ⟨z, hz, hfresh, hfixedGood, hroot, hremainingGood⟩ := exists_multi_eligible_from_pool
     W Q P hα hα1 S s t fixed hfixed used remaining hremaining (parentPool W Q s v excluded)
-    (by intro z hz; obtain ⟨hm, _, hn⟩ := (mem_parentPool W Q).mp hz; exact Finset.mem_sdiff.mpr ⟨hm, hn⟩)
+    (by
+      intro z hz; obtain ⟨hm, _, hn⟩ := (mem_parentPool W Q).mp hz; exact Finset.mem_sdiff.mpr ⟨hm,
+        hn⟩)
     (parentPool_large_of_degree W Q hα hα1 s v hdegree excluded
       (card_multiForbidden_le W Q P hα hα1 S s t fixed hfixed hcount used hused))
   obtain ⟨hzR, hzAdj, _⟩ := (mem_parentPool W Q).mp hz
@@ -178,7 +184,8 @@ theorem exists_initial_multi_eligible_root
     (fixed : Finset (MatchingEdge P))
     (hfixed : fixed ⊆ edgesAwayFromDistinguished P (padFinset (large W))
       (Sum.inl Q.A) (Sum.inl Q.B)) (hcount : fixed.card ≤ 3)
-    (used : Finset (Fin hostN)) (hused : (used.card : ℝ) ≤ ((epsilon α : ℝ) + 2 * (rootTypicality α : ℝ)) * W.clusterSize)
+    (used : Finset (Fin hostN)) (hused : (used.card : ℝ) ≤ ((epsilon α : ℝ) + 2 * (rootTypicality α
+      : ℝ)) * W.clusterSize)
     (remaining : Finset (MatchingEdge P))
     (hremaining : remaining ⊆ edgesAwayFromDistinguished P (padFinset (large W))
       (Sum.inl Q.A) (Sum.inl Q.B)) :

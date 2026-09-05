@@ -6,7 +6,7 @@ import ErdosProblems.Erdos547b.SourceReconnectedTwoRowCopy
 # Exact source-order saving for the literal leaf-deleted core
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceLeafCoreMass
@@ -39,26 +39,31 @@ variable {globalRoot : U} {small : ℕ} (P : ZhaoForestPartition T globalRoot sm
 
 include hT in
 theorem retained_vertex_count : P.numParts +
-    OrderedBranchForest.edgeDemand (OrderedBranchForest.restrict (branchForest P) (keptBranches P)) +
+    OrderedBranchForest.edgeDemand (OrderedBranchForest.restrict (branchForest P) (keptBranches P))
+      +
       (originalLevelOneLeaves P).card = Fintype.card U := by
   have h := Fintype.card_congr (leafCoreGraphIso P hT
     (sideLocate (branchForest P) (componentReservoirSide P)) (fun _ => rfl)).toEquiv
   change Fintype.card (LeafDeletedVertex P) =
     Fintype.card (OrderedBranchForest.restrict (branchForest P) (keptBranches P)).Vertex at h
-  simp only [OrderedBranchForest.Vertex, Fintype.card_sum, Fintype.card_fin, Fintype.card_sigma] at h
+  simp only [OrderedBranchForest.Vertex, Fintype.card_sum, Fintype.card_fin,
+    Fintype.card_sigma] at h
   rw [card_leafDeletedVertex] at h
   have hle : (originalLevelOneLeaves P).card ≤ Fintype.card U := Finset.card_le_univ _
   change Fintype.card U - (originalLevelOneLeaves P).card =
-    P.numParts + OrderedBranchForest.edgeDemand (OrderedBranchForest.restrict (branchForest P) (keptBranches P)) at h
+    P.numParts + OrderedBranchForest.edgeDemand (OrderedBranchForest.restrict (branchForest P)
+      (keptBranches P)) at h
   omega
 
 include hT in
 theorem retained_mass_le {q : ℕ} (hcard : Fintype.card U = q + 1) :
-    (OrderedBranchForest.edgeDemand (OrderedBranchForest.restrict (branchForest P) (keptBranches P)) : ℝ) +
+    (OrderedBranchForest.edgeDemand (OrderedBranchForest.restrict (branchForest P) (keptBranches P))
+      : ℝ) +
       (originalLevelOneLeaves P).card ≤ q := by
   have h := retained_vertex_count P hT
   have hpos := P.numParts_pos
-  have hnat : OrderedBranchForest.edgeDemand (OrderedBranchForest.restrict (branchForest P) (keptBranches P)) +
+  have hnat : OrderedBranchForest.edgeDemand (OrderedBranchForest.restrict (branchForest P)
+    (keptBranches P)) +
       (originalLevelOneLeaves P).card ≤ q := by omega
   exact_mod_cast hnat
 

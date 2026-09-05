@@ -8,7 +8,7 @@ The bound retains the literal incident matching, rounded target, and fresh
 branch overshoot. It applies to the same selected forest already constructed.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceSelectedGroupMass

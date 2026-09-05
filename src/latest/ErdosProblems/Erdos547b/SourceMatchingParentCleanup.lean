@@ -9,7 +9,7 @@ Only the two original root reservoirs are used. The physical endpoints
 may belong to a switched matching and need no new coverage certificate.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMatchingParentCleanup

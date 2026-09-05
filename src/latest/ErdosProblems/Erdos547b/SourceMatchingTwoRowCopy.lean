@@ -10,7 +10,7 @@ Source-family lists are constructed from the existing owner-sorted list.
 The extra root exclusions survive in the actual returned graph copy.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMatchingTwoRowCopy
@@ -54,6 +54,7 @@ theorem exists_reconnectedCopy_of_twoRowBudgets (hP : P.IsMatching)
       q ≤ G.degree (f (Sum.inl i)) ∧
       f (Sum.inl i) ∈ reservoir W Q (rootSide i) ∧
       f (Sum.inl i) ∉ avoid (rootSide i)) ∧ ∀ x, f x ∈ hostSupport W Q P := by
+  classical
   let family := fun (s : Fin 2) (_ : Fin 1) => familyList F.owner (sideFamily F rootSide s)
   have hcover : ∀ i, i ∈ family (sideLocate F rootSide i).1 (sideLocate F rootSide i).2 := by
     intro i

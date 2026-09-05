@@ -4,7 +4,7 @@ import ErdosProblems.Erdos547b.SourceDegreeFormRootRows
 
 /-! # A genuine source witness retaining lower physical-row estimates -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceTwoSidedRows
@@ -20,6 +20,7 @@ variable {α : ℚ} {hostN q M : ℕ}
 variable {G : SimpleGraph (Fin hostN)} [DecidableRel G.Adj]
 variable (W : Witness α q M G)
 
+open scoped Classical in
 structure TwoSidedSource (Q : Certificate W) where
   clean : CleanSourceWitness W Q
   badA : Finset (Index W)
@@ -27,11 +28,15 @@ structure TwoSidedSource (Q : Certificate W) where
   badA_card : (badA.card : ℝ) ≤ 2 * (rootTypicality α : ℝ) * Fintype.card (Index W)
   badB_card : (badB.card : ℝ) ≤ 2 * (rootTypicality α : ℝ) * Fintype.card (Index W)
   lowerA : ∀ j : Index W, j ≠ Q.A → j ≠ Q.B → j ∉ badA →
-    (((host W).edgeDensity (clusterVertices (assignment W) Q.A) (clusterVertices (assignment W) j) : ℝ) -
-      (epsilon α : ℝ)) * W.clusterSize ≤ (degreeInto clean.source clean.zA (clusterVertices (assignment W) j) : ℝ)
+    (((host W).edgeDensity (clusterVertices (assignment W) Q.A) (clusterVertices (assignment W) j) :
+      ℝ) -
+      (epsilon α : ℝ)) * W.clusterSize ≤ (degreeInto clean.source clean.zA (clusterVertices
+        (assignment W) j) : ℝ)
   lowerB : ∀ j : Index W, j ≠ Q.A → j ≠ Q.B → j ∉ badB →
-    (((host W).edgeDensity (clusterVertices (assignment W) Q.B) (clusterVertices (assignment W) j) : ℝ) -
-      (epsilon α : ℝ)) * W.clusterSize ≤ (degreeInto clean.source clean.zB (clusterVertices (assignment W) j) : ℝ)
+    (((host W).edgeDensity (clusterVertices (assignment W) Q.B) (clusterVertices (assignment W) j) :
+      ℝ) -
+      (epsilon α : ℝ)) * W.clusterSize ≤ (degreeInto clean.source clean.zB (clusterVertices
+        (assignment W) j) : ℝ)
 
 private theorem uniform_real_of_rat
     {V : Type*} (H : SimpleGraph V) [DecidableRel H.Adj]
@@ -46,6 +51,7 @@ theorem exists_twoSidedSource
     (hα : 0 < α) (hα1 : α ≤ 1 / 4) (Q : Certificate W)
     (hhost : hostN = 2 * q) (horder : orderThreshold α M ≤ q) :
     Nonempty (TwoSidedSource W Q) := by
+  classical
   subst hostN
   let _ : DecidableRel W.graph.Adj := W.graph_decidable
   let J : Finset (Index W) := Finset.univ \ {Q.A, Q.B}
@@ -134,7 +140,8 @@ theorem exists_twoSidedSource
       (hX : (X.card : ℝ) ≤ (rootTypicality α : ℝ) * J.card)
       (hY : (Y.card : ℝ) ≤ (rootTypicality α : ℝ) * J.card) :
       ((X ∪ Y).card : ℝ) ≤ 2 * (rootTypicality α : ℝ) * Fintype.card (Index W) := by
-    have hu : ((X ∪ Y).card : ℝ) ≤ (X.card : ℝ) + Y.card := by exact_mod_cast Finset.card_union_le X Y
+    have hu : ((X ∪ Y).card : ℝ) ≤ (X.card : ℝ) + Y.card :=
+      by exact_mod_cast Finset.card_union_le X Y
     have hJall : (J.card : ℝ) ≤ Fintype.card (Index W) := by exact_mod_cast Finset.card_le_univ J
     have hscale := mul_le_mul_of_nonneg_left hJall (by positivity : 0 ≤ 2 * (rootTypicality α : ℝ))
     linarith only [hu, hX, hY, hscale]

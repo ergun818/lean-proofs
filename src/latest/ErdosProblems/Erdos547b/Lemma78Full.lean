@@ -28,7 +28,7 @@ theorem exists_injective_choice_of_large_common_reservoir
     {ι β : Type*} [DecidableEq β]
     (W : Finset ι) (available : Finset β) (candidate : ι → Finset β) (l : ℕ)
     (hdouble : 2 * l ≤ #W)
-    (hcandidate : ∀ w ∈ W, candidate w ⊆ available)
+    (_hcandidate : ∀ w ∈ W, candidate w ⊆ available)
     (hsmall : ∀ w ∈ W, #W - l ≤ #(candidate w))
     (hlarge : ∀ S : Finset ι, S ⊆ W → l < #S → available ⊆ S.biUnion candidate)
     (hcapacity : #W ≤ #available) :
@@ -74,7 +74,7 @@ theorem exists_injective_choice_of_large_common_reservoir
 condition is supplied by a bound on the number of leaves missing each
 available vertex. -/
 theorem exists_injective_choice_of_miss_bound
-    {ι β : Type*} [DecidableEq ι] [DecidableEq β]
+    {ι β : Type*} [DecidableEq β]
     (W : Finset ι) (available : Finset β) (candidate : ι → Finset β) (l : ℕ)
     (hdouble : 2 * l ≤ #W)
     (hcandidate : ∀ w ∈ W, candidate w ⊆ available)
@@ -83,12 +83,13 @@ theorem exists_injective_choice_of_miss_bound
     (hcapacity : #W ≤ #available) :
     ∃ image : W → β, Function.Injective image ∧
       ∀ w : W, image w ∈ candidate w := by
+  classical
   apply exists_injective_choice_of_large_common_reservoir W available candidate l
     hdouble hcandidate hsmall
   · intro S hSW hlS x hx
     rw [mem_biUnion]
     by_contra hnone
-    push_neg at hnone
+    push Not at hnone
     have hsub : S ⊆ W.filter fun w ↦ x ∉ candidate w := by
       intro w hw
       exact mem_filter.mpr ⟨hSW hw, hnone w hw⟩
@@ -99,7 +100,7 @@ theorem exists_injective_choice_of_miss_bound
 /-- Finite-type wrapper avoiding the extra subtype introduced by indexing a
 Hall family with `univ`. -/
 theorem exists_injective_choice_fintype_of_miss_bound
-    {ι β : Type*} [Fintype ι] [DecidableEq ι] [DecidableEq β]
+    {ι β : Type*} [Fintype ι] [DecidableEq β]
     (available : Finset β) (candidate : ι → Finset β) (l : ℕ)
     (hdouble : 2 * l ≤ Fintype.card ι)
     (hcandidate : ∀ w, candidate w ⊆ available)
@@ -108,6 +109,7 @@ theorem exists_injective_choice_fintype_of_miss_bound
     (hcapacity : Fintype.card ι ≤ #available) :
     ∃ image : ι → β, Function.Injective image ∧
       ∀ w, image w ∈ candidate w := by
+  classical
   obtain ⟨image, hinj, hmem⟩ :=
     exists_injective_choice_of_miss_bound (univ : Finset ι) available candidate l
       (by simpa using hdouble) (fun w _ ↦ hcandidate w)
@@ -141,7 +143,7 @@ Besides producing a genuine graph copy, the theorem says that the final copy
 agrees with the prescribed copy on every core vertex. -/
 theorem extend_core_by_many_and_deferred_leaves
     {α β : Type*} [Fintype α] [Fintype β] [DecidableEq α] [DecidableEq β]
-    (T : SimpleGraph α) (G : SimpleGraph β) [DecidableRel T.Adj] [DecidableRel G.Adj]
+    (T : SimpleGraph α) (G : SimpleGraph β) [DecidableRel G.Adj]
     (C W D : Finset α)
     (hCW : Disjoint C W) (hCD : Disjoint C D) (hWD : Disjoint W D)
     (hcover : (C ∪ W) ∪ D = univ)
@@ -318,11 +320,11 @@ theorem extend_core_by_many_and_deferred_leaves
             _ ≤ #(S.biUnion candidateD) := by
               apply card_le_card
               exact subset_biUnion_of_mem candidateD hdS
-        · simpa [not_nonempty_iff_eq_empty.mp hS])
+        · simp [not_nonempty_iff_eq_empty.mp hS])
   let fullMap : α → β := fun a ↦
     if ha : a ∈ D then imageD ⟨a, ha⟩
     else baseCopy ⟨a, by
-      have haUniv : a ∈ (C ∪ W) ∪ D := by simpa [hcover]
+      have haUniv : a ∈ (C ∪ W) ∪ D := by simp [hcover]
       exact (mem_union.mp haUniv).resolve_right ha⟩
   have fullMap_of_base (a : Base) : fullMap a = baseCopy a := by
     have haD : (a : α) ∉ D :=
@@ -343,7 +345,7 @@ theorem extend_core_by_many_and_deferred_leaves
         apply hfresh
         apply mem_image.mpr
         refine ⟨(⟨b, ?_⟩ : Base), mem_univ _, ?_⟩
-        · have hbUniv : b ∈ (C ∪ W) ∪ D := by simpa [hcover]
+        · have hbUniv : b ∈ (C ∪ W) ∪ D := by simp [hcover]
           exact (mem_union.mp hbUniv).resolve_right hb
         · simpa [fullMap, ha, hb] using hab.symm
     · by_cases hb : b ∈ D
@@ -352,14 +354,14 @@ theorem extend_core_by_many_and_deferred_leaves
         apply hfresh
         apply mem_image.mpr
         refine ⟨(⟨a, ?_⟩ : Base), mem_univ _, ?_⟩
-        · have haUniv : a ∈ (C ∪ W) ∪ D := by simpa [hcover]
+        · have haUniv : a ∈ (C ∪ W) ∪ D := by simp [hcover]
           exact (mem_union.mp haUniv).resolve_right ha
         · simpa [fullMap, ha, hb] using hab
       · have hbase : (⟨a, by
-            have haUniv : a ∈ (C ∪ W) ∪ D := by simpa [hcover]
+            have haUniv : a ∈ (C ∪ W) ∪ D := by simp [hcover]
             exact (mem_union.mp haUniv).resolve_right ha⟩ : Base) =
             ⟨b, by
-              have hbUniv : b ∈ (C ∪ W) ∪ D := by simpa [hcover]
+              have hbUniv : b ∈ (C ∪ W) ∪ D := by simp [hcover]
               exact (mem_union.mp hbUniv).resolve_right hb⟩ := by
           apply baseCopy.injective
           simpa [fullMap, ha, hb] using hab
@@ -386,10 +388,10 @@ theorem extend_core_by_many_and_deferred_leaves
         simpa [fullMap, hb, hpD] using hadj
       · have habBase : (T.induce (↑(C ∪ W) : Set α)).Adj
             ⟨a, by
-              have haUniv : a ∈ (C ∪ W) ∪ D := by simpa [hcover]
+              have haUniv : a ∈ (C ∪ W) ∪ D := by simp [hcover]
               exact (mem_union.mp haUniv).resolve_right ha⟩
             ⟨b, by
-              have hbUniv : b ∈ (C ∪ W) ∪ D := by simpa [hcover]
+              have hbUniv : b ∈ (C ∪ W) ∪ D := by simp [hcover]
               exact (mem_union.mp hbUniv).resolve_right hb⟩ := by
           simpa using hab
         have := baseCopy.toHom.map_rel habBase
@@ -410,7 +412,7 @@ The remaining deferred leaves are then handled by
 `extend_core_by_many_and_deferred_leaves` using the global degree bound. -/
 theorem extend_core_by_many_and_deferred_leaves_of_ambient
     {α β : Type*} [Fintype α] [Fintype β] [DecidableEq α] [DecidableEq β]
-    (T : SimpleGraph α) (G : SimpleGraph β) [DecidableRel T.Adj] [DecidableRel G.Adj]
+    (T : SimpleGraph α) (G : SimpleGraph β) [DecidableRel G.Adj]
     (C W D : Finset α)
     (hCW : Disjoint C W) (hCD : Disjoint C D) (hWD : Disjoint W D)
     (hcover : (C ∪ W) ∪ D = univ)
@@ -524,11 +526,13 @@ noncomputable def leafParent (v : V) : V :=
   @dite V (T.IsLeaf v) (Classical.propDecidable _) (fun h =>
     Classical.choose (degree_eq_one_iff_existsUnique_adj.mp h).exists) (fun _ => v)
 
+omit [DecidableEq V] in
 lemma adj_leafParent {v : V} (hv : T.IsLeaf v) :
     T.Adj v (T.leafParent v) := by
   rw [leafParent, dif_pos hv]
   exact Classical.choose_spec (degree_eq_one_iff_existsUnique_adj.mp hv).exists
 
+omit [DecidableEq V] in
 lemma eq_leafParent_of_adj {v w : V} (hv : T.IsLeaf v) (hvw : T.Adj v w) :
     w = T.leafParent v := by
   have hu := degree_eq_one_iff_existsUnique_adj.mp hv
@@ -566,6 +570,7 @@ noncomputable def flipSide (side : V → Fin 2) (W : Finset V) (v : V) : Fin 2 :
 def sidePart (side : V → Fin 2) (q : Fin 2) : Finset V :=
   Finset.univ.filter fun v => side v = q
 
+omit [DecidableEq V] in
 @[simp] lemma mem_sidePart {side : V → Fin 2} {q : Fin 2} {v : V} :
     v ∈ sidePart side q ↔ side v = q := by
   simp [sidePart]
@@ -578,9 +583,11 @@ lemma leafParents_subset_one {side : V → Fin 2} {W : Finset V}
   obtain ⟨w, hw, rfl⟩ := T.mem_leafParents.mp hp
   exact mem_sidePart.mpr (hP1 w hw)
 
+omit [DecidableEq V] in
 lemma leaves_subset_zero {side : V → Fin 2} {W : Finset V}
     (hW0 : ∀ w ∈ W, side w = 0) :
     W ⊆ sidePart side 0 := by
+  classical
   intro w hw
   exact mem_sidePart.mpr (hW0 w hw)
 
@@ -794,10 +801,12 @@ def fiberIn (W : Finset α) (p : α → β) (y : β) : Finset α :=
 def uniqueFiberElements (W : Finset α) (p : α → β) : Finset α :=
   W.filter fun w ↦ (fiberIn W p (p w)).card = 1
 
+omit [DecidableEq α] in
 @[simp] theorem mem_fiberIn {W : Finset α} {p : α → β} {y : β} {w : α} :
     w ∈ fiberIn W p y ↔ w ∈ W ∧ p w = y := by
   simp [fiberIn]
 
+omit [DecidableEq α] in
 @[simp] theorem mem_uniqueFiberElements {W : Finset α} {p : α → β} {w : α} :
     w ∈ uniqueFiberElements W p ↔
       w ∈ W ∧ (fiberIn W p (p w)).card = 1 := by
@@ -905,7 +914,7 @@ open Finset Fintype SimpleGraph
 open Erdos547b.ZhaoFact72
 
 theorem lemma78_of_reassignment
-    {α β : Type*} [Fintype α] [Fintype β] [DecidableEq α] [DecidableEq β]
+    {α β : Type*} [Fintype α] [Fintype β] [DecidableEq β]
     (T : SimpleGraph α) (G : SimpleGraph β) [DecidableRel T.Adj] [DecidableRel G.Adj]
     (hT : T.IsTree) (oldSide newSide : α → Fin 2)
     (newActive oldActive : Finset α)
@@ -980,7 +989,7 @@ open Erdos547b.ZhaoFact72
 /-- Zhao Lemma 7.8 in the zero-defect case, including either prescribed-root
 alternative.  This is the exact `l = 0` branch of the published lemma. -/
 theorem lemma7_8_zero_defect
-    {α β : Type*} [Fintype α] [Fintype β] [DecidableEq α] [DecidableEq β]
+    {α β : Type*} [Fintype α] [Fintype β] [DecidableEq β]
     (T : SimpleGraph α) (G : SimpleGraph β) [DecidableRel T.Adj] [DecidableRel G.Adj]
     (hT : T.IsTree) (side : α → Fin 2)
     (hindep : ∀ ⦃u v⦄, T.Adj u v → side u = 1 → side v ≠ 1)
@@ -996,6 +1005,7 @@ theorem lemma7_8_zero_defect
     (root : α) (hrootCore : side root = 0 ∨ root ∈ active)
     (rootImage : β) (hrootImage : rootImage ∈ if side root = 0 then X else Y) :
     ∃ f : T.Copy G, f root = rootImage := by
+  classical
   apply lemma78_of_reassignment T G hT side side active active hindep hactive hdeferred
     0 (by omega) (by rfl) X Y hXY hXcap
   · simpa using hXX
@@ -1099,10 +1109,11 @@ open Finset Fintype SimpleGraph
 
 /-- In a finite tree with at least three vertices, two leaves cannot be adjacent. -/
 theorem not_adj_of_both_degree_one_of_three_le_card
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*} [Fintype α]
     (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree)
     {u v : α} (hu : T.degree u = 1) (hv : T.degree v = 1)
     (hcard : 3 ≤ Fintype.card α) : ¬T.Adj u v := by
+  classical
   intro huv
   obtain ⟨pu, hupu, huniqU⟩ := degree_eq_one_iff_existsUnique_adj.mp hu
   obtain ⟨pv, hvpv, huniqV⟩ := degree_eq_one_iff_existsUnique_adj.mp hv
@@ -1196,13 +1207,15 @@ theorem partCount_moveZeroLeaves74_zero
     exact mem_inter.mpr ⟨hx, mem_filter.mpr ⟨mem_univ _, hWzero x hx⟩⟩
 
 theorem moveZeroLeaves74_independent
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*} [Finite α] [DecidableEq α]
     (T : SimpleGraph α) (side : α → Fin 2) (W : Finset α)
     (hindep : ∀ ⦃u v⦄, T.Adj u v → side u = 1 → side v ≠ 1)
     (hWindep : T.IsIndepSet (W : Set α))
     (hWaway : ∀ ⦃w v⦄, w ∈ W → T.Adj w v → side v ≠ 1) :
     ∀ ⦃u v⦄, T.Adj u v → moveZeroLeaves74 side W u = 1 →
       moveZeroLeaves74 side W v ≠ 1 := by
+  classical
+  let := Fintype.ofFinite α
   intro u v huv hu hv
   by_cases huW : u ∈ W
   · by_cases hvW : v ∈ W
@@ -1220,7 +1233,7 @@ theorem moveZeroLeaves74_independent
 have all their neighbors on side zero, move those leaves to the deferred side
 and apply Fact 7.2(3).  This helper includes the prescribed-root conclusion. -/
 theorem lemma7_8_movable_parent_branch
-    {α β : Type*} [Fintype α] [Fintype β] [DecidableEq α] [DecidableEq β]
+    {α β : Type*} [Fintype α] [Fintype β] [DecidableEq β]
     (T : SimpleGraph α) (G : SimpleGraph β) [DecidableRel T.Adj] [DecidableRel G.Adj]
     (hT : T.IsTree) (side : α → Fin 2)
     (hindep : ∀ ⦃u v⦄, T.Adj u v → side u = 1 → side v ≠ 1)
@@ -1252,7 +1265,7 @@ theorem lemma7_8_movable_parent_branch
     have hxnotW : x ∉ W := by
       intro hxW
       have := hactive x hx
-      simpa [hWzero x hxW] using this
+      simp [hWzero x hxW] at this
     rw [show side' x = side x from moveZeroLeaves74_of_notMem hxnotW]
     exact hactive x hx
   have hdeferred' : ∀ x, side' x = 1 → x ∉ active → T.degree x = 1 := by
@@ -1270,14 +1283,14 @@ theorem lemma7_8_movable_parent_branch
   have hAA : ∀ a ∈ parts 0,
       partCount side' 0 ≤ #((G.neighborFinset a) ∩ parts 0) := by
     intro a ha
-    simp [parts] at ha
+    have ha : a ∈ X := by simpa [parts] using ha
     change partCount side' 0 ≤ #((G.neighborFinset a) ∩ X)
     rw [hcount]
     exact (Nat.sub_le_sub_right hXcap l).trans (hXX a ha)
   have hBA : ∀ b ∈ parts 1,
       partCount side' 0 ≤ #((G.neighborFinset b) ∩ parts 0) := by
     intro b hb
-    simp [parts] at hb
+    have hb : b ∈ Y := by simpa [parts] using hb
     change partCount side' 0 ≤ #((G.neighborFinset b) ∩ X)
     rw [hcount]
     exact (Nat.sub_le_sub_right hXcap l).trans (hYX b hb)
@@ -1327,7 +1340,7 @@ lower-level Hall extender, this theorem constructs the prescribed core copy
 by the rooted semibipartite greedy lemma and derives the occupied-`X` count. -/
 theorem lemma7_8_hard_branch_of_core
     {α β : Type*} [Fintype α] [Fintype β] [DecidableEq α] [DecidableEq β]
-    (T : SimpleGraph α) (G : SimpleGraph β) [DecidableRel T.Adj] [DecidableRel G.Adj]
+    (T : SimpleGraph α) (G : SimpleGraph β) [DecidableRel G.Adj]
     (C W D : Finset α)
     (hCW : Disjoint C W) (hCD : Disjoint C D) (hWD : Disjoint W D)
     (hcover : (C ∪ W) ∪ D = (Finset.univ : Finset α))
@@ -1503,11 +1516,11 @@ in the published statement, although the proof of the lemma uses only the
 remaining hypotheses. -/
 theorem lemma7_8
     {alpha beta : Type*} [Fintype alpha] [Fintype beta]
-    [DecidableEq alpha] [DecidableEq beta]
+    [DecidableEq beta]
     (T : SimpleGraph alpha) (G : SimpleGraph beta)
     [DecidableRel T.Adj] [DecidableRel G.Adj]
     (n l : Nat) (hln : l < n)
-    (hT : T.IsTree) (hedges : #T.edgeFinset ≤ n)
+    (hT : T.IsTree) (_hedges : #T.edgeFinset ≤ n)
     (side : alpha → Fin 2)
     (hindep : ∀ ⦃u v⦄, T.Adj u v → side u = 1 → side v ≠ 1)
     (active : Finset alpha)
@@ -1678,10 +1691,8 @@ theorem lemma7_8
         refine ⟨mem_univ _, ?_⟩
         intro hp
         rcases Finset.mem_union.mp hp with hpW | hpD
-        ·
-          exact Fin.zero_ne_one ((hWzero _ hpW).symm.trans (hWparentOne w w.2))
-        ·
-          exact not_adj_of_both_degree_one_of_three_le_card T hT
+        · exact Fin.zero_ne_one ((hWzero _ hpW).symm.trans (hWparentOne w w.2))
+        · exact not_adj_of_both_degree_one_of_three_le_card T hT
             (hWleaf w w.2) (hDleaf _ hpD) hcardLarge
             (T.adj_leafParent (hWleaf w w.2))
         ⟩
@@ -1846,7 +1857,7 @@ first source class is exactly what is needed to choose the prescribed vertex
 in the rooted statement (and it forces `X` to be nonempty by `hXcap`). -/
 theorem lemma7_8_unrooted
     {alpha beta : Type*} [Fintype alpha] [Fintype beta]
-    [DecidableEq alpha] [DecidableEq beta]
+    [DecidableEq beta]
     (T : SimpleGraph alpha) (G : SimpleGraph beta)
     [DecidableRel T.Adj] [DecidableRel G.Adj]
     (n l : Nat) (hln : l < n)

@@ -336,11 +336,13 @@ theorem coordinateOnlineSegment_parent_adj_segment (i j : Fin s)
 include small rootPool interiorPool hsmall horiginalInj horiginalOutsideRoot
   horiginalOutsideInterior hrootDisjoint hinteriorDisjoint
   hrootInteriorDisjoint hattachOriginal hattachSegment hinternal in
+omit [Fintype B] in
 /-- Full cut-aware hierarchy embedding from coordinate-side load bounds. -/
-theorem exists_hierarchicalCandidateEmbedding_coordinatePools :
+theorem exists_hierarchicalCandidateEmbedding_coordinatePools [Finite B] :
     Nonempty (HierarchicalCandidateEmbedding F G originalImage
       rootCandidate interiorCandidate) := by
   classical
+  let := Fintype.ofFinite B
   let D : ∀ i, SegmentRealization F G rootCandidate interiorCandidate i :=
     fun i ↦ coordinateOnlineSegment F G originalImage small rootPool interiorPool
       rootCandidate interiorCandidate hsmall hrootDisjoint hinteriorDisjoint
@@ -420,4 +422,5 @@ end HierarchicalSegmentForest
 
 end Erdos547b.ZhaoLemma59HierarchicalCoordinateOnline
 
-#print axioms Erdos547b.ZhaoLemma59HierarchicalCoordinateOnline.HierarchicalSegmentForest.exists_hierarchicalCandidateEmbedding_coordinatePools
+open Erdos547b.ZhaoLemma59HierarchicalCoordinateOnline.HierarchicalSegmentForest in
+#print axioms exists_hierarchicalCandidateEmbedding_coordinatePools

@@ -4,7 +4,7 @@ import ErdosProblems.Erdos547b.SourceRestrictedReconnectedGraph
 
 /-! The literal postponed-path core in retained branch coordinates. -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePathCoreGraph
@@ -51,14 +51,16 @@ def pathCoreGraphIso : (selectedPaths P hp).core ≃g
       (restrictCutSource (branchForest P) (keptBranches P hp) (componentReservoirSide P) locate
         (partitionCutSource P hT locate hlocate) (partitionParent_retained P hp)) :=
   (selectedPaths P hp).flatCoreIso.trans ((pathCoreCoordinateIso P hp hT locate hlocate).trans
-    (restrictedReconnectedGraphIso (branchForest P) (keptBranches P hp) (componentReservoirSide P) locate
+    (restrictedReconnectedGraphIso (branchForest P) (keptBranches P hp) (componentReservoirSide P)
+      locate
       (partitionCutSource P hT locate hlocate) (partitionParent_retained P hp)).symm)
 
 theorem pathCoreGraphIso_root (i : Fin P.numParts) :
     pathCoreGraphIso P hp hT locate hlocate (pathCorePartitionRoot P hp i) = Sum.inl i := by
   apply coordinateInclusion_injective (branchForest P) (keptBranches P hp)
   change coordinateInclusion (branchForest P) (keptBranches P hp)
-    (lowerCoordinate (branchForest P) (keptBranches P hp) (cutBranchGraphIso P (P.roots i)) _) = Sum.inl i
+    (lowerCoordinate (branchForest P) (keptBranches P hp) (cutBranchGraphIso P (P.roots i)) _) =
+      Sum.inl i
   exact (coordinateInclusion_lower (branchForest P) (keptBranches P hp) _ _).trans
     (cutBranchGraphIso_root P i)
 

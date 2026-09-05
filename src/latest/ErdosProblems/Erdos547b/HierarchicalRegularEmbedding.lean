@@ -32,11 +32,13 @@ def rawCandidate [DecidableEq B]
 /-- Removing an explicit exceptional/occupied set from a raw target costs at
 most its cardinality.  This is the non-regular part of every capacity check. -/
 theorem card_neighbors_sdiff_ge_of_real
-    [Fintype B] [DecidableEq B]
+    [Finite B] [DecidableEq B]
     (G : SimpleGraph B) [DecidableRel G.Adj]
     (Y removed : Finset B) (z : B) (n : ℕ)
     (hcap : (n : ℝ) + #removed ≤ (#(Y.filter (G.Adj z)) : ℝ)) :
     n ≤ #((Y \ removed).filter (G.Adj z)) := by
+  classical
+  let := Fintype.ofFinite B
   have hcapNat : n + #removed ≤ #(Y.filter (G.Adj z)) := by
     exact_mod_cast hcap
   exact card_neighbors_cleaned_ge G Y removed z n hcapNat
@@ -45,13 +47,15 @@ theorem card_neighbors_sdiff_ge_of_real
 degree after the explicit target removals, provided the aggregate capacity
 inequality holds. -/
 theorem card_neighbors_sdiff_ge_of_mem_cleaned
-    [Fintype B] [DecidableEq B]
+    [Finite B] [DecidableEq B]
     (G : SimpleGraph B) [DecidableRel G.Adj]
     (rho : ℝ) (X Y removed : Finset B) (z : B) (n : ℕ)
     (hz : z ∈ cleanedSide G rho X Y)
     (hcap : (n : ℝ) + #removed ≤
       (G.edgeDensity X Y - rho) * #Y) :
     n ≤ #((Y \ removed).filter (G.Adj z)) := by
+  classical
+  let := Fintype.ofFinite B
   have hz' : z ∈ X \ atypicalVertices G rho X Y := by
     simpa [cleanedSide] using hz
   have hzX := (Finset.mem_sdiff.mp hz').1
@@ -61,7 +65,7 @@ theorem card_neighbors_sdiff_ge_of_mem_cleaned
     apply le_of_not_gt
     intro hlt
     apply hzNot
-    simpa [atypicalVertices, hzX, hlt]
+    simp [atypicalVertices, hzX, hlt]
   exact card_neighbors_sdiff_ge_of_real G Y removed z n (hcap.trans hzDeg)
 
 /-- Source-shaped data for a hierarchical special-set realization.  The
@@ -141,7 +145,8 @@ theorem exists_hierarchicalRegularEmbedding
       (ZhaoLemma59HierarchicalOnline.HierarchicalSegmentForest.HierarchicalCandidateEmbedding
         F G originalImage rootCandidate interiorCandidate) := by
   classical
-  apply ZhaoLemma59HierarchicalOnline.HierarchicalSegmentForest.exists_hierarchicalCandidateEmbedding
+  apply
+    ZhaoLemma59HierarchicalOnline.HierarchicalSegmentForest.exists_hierarchicalCandidateEmbedding
     F G originalImage rootGroup group rootCandidate interiorCandidate
     S.original_injective S.original_outside_root S.original_outside_interior
     S.root_disjoint S.interior_disjoint S.root_interior_disjoint
@@ -174,4 +179,5 @@ end HierarchicalSegmentForest
 
 end Erdos547b.ZhaoLemma59HierarchicalRegular
 
-#print axioms Erdos547b.ZhaoLemma59HierarchicalRegular.HierarchicalSegmentForest.exists_hierarchicalRegularEmbedding
+open Erdos547b.ZhaoLemma59HierarchicalRegular.HierarchicalSegmentForest in
+#print axioms exists_hierarchicalRegularEmbedding

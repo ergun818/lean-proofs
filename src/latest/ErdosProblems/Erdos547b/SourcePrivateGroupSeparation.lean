@@ -11,7 +11,7 @@ Their separation is a consequence of the matching allocation, not a new
 host-disjointness premise for the global marked history.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePrivateGroupSeparation
@@ -41,7 +41,8 @@ theorem reservoir_disjoint_group (hCV1 : C ⊆ O.D.V1) (s : Fin 2) (x : {c // c 
     · exact hn.1 (congrArg Sum.inl (h.symm.trans hs))
     · exact hn.2 (congrArg Sum.inl (h.symm.trans hs))
   have hc : Disjoint (reservoir W Q s) (whole W (P.center x)) :=
-    (clusterVertices_disjoint (assignment W) hne).mono (reservoir_subset W Q s) (Finset.Subset.refl _)
+    (clusterVertices_disjoint (assignment W) hne).mono (reservoir_subset W Q s) (Finset.Subset.refl
+      _)
   apply Finset.disjoint_union_right.mpr
   refine ⟨hc, ?_⟩
   apply Finset.disjoint_left.mpr
@@ -99,7 +100,8 @@ theorem group_disjoint_ordinary (hCV1 : C ⊆ O.D.V1)
   intro v hvp hve
   obtain ⟨i, _, hi⟩ := Finset.mem_biUnion.mp hvp
   rw [P.pair_eq (x, i)] at hi
-  exact Finset.disjoint_left.mp (pairWhole_disjoint W Q _ e (private_ne_ordinary W Q S O P (x, i) e he)) hi hve
+  exact Finset.disjoint_left.mp (pairWhole_disjoint W Q _ e (private_ne_ordinary W Q S O P (x, i) e
+    he)) hi hve
 
 end Erdos547b.ZhaoSourcePrivateGroupSeparation
 

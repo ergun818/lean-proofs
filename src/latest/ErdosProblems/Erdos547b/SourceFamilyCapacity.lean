@@ -10,7 +10,7 @@ uses the conservative fresh capacity that pays permanent deletion before
 the live-state loop. No embedding operation is part of this source data.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceFamilyCapacity
@@ -31,7 +31,8 @@ def FamilyKind.Valid (α : ℚ) : FamilyKind → Prop
   | .threshold ratio => 0 ≤ ratio ∧ ratio ≤ 1 / 2
   | .appendix lambda => (densityCutoff α : ℝ) ≤ lambda ∧ lambda ≤ 1 / 2
 
-def FamilyKind.BranchValid {b : ℕ} (kind : FamilyKind) (F : OrderedRootedForest b) (i : Fin b) : Prop :=
+def FamilyKind.BranchValid {b : ℕ} (kind : FamilyKind) (F : OrderedRootedForest b) (i : Fin b) :
+  Prop :=
   match kind with
   | .threshold ratio => ratio ≤ (#(colourClass F i 0) : ℝ) / F.size i ∧
       (#(colourClass F i 0) : ℝ) / F.size i ≤ 1 - ratio
@@ -44,7 +45,8 @@ theorem ordinary_branchValid {b : ℕ} (F : OrderedRootedForest b) (i : Fin b) :
   have hsize : (0 : ℝ) < F.size i := by exact_mod_cast hsizeNat
   have hcard : #(colourClass F i 0) ≤ F.size i := by
     simpa only [colourClass, Finset.card_univ, Fintype.card_fin] using Finset.card_filter_le
-      (Finset.univ : Finset (Fin (F.size i))) (fun a => (F.isTree i).coloringTwoOfVert (F.root i) a = 0)
+      (Finset.univ : Finset (Fin (F.size i))) (fun a => (F.isTree i).coloringTwoOfVert (F.root i) a
+        = 0)
   constructor
   · exact div_nonneg (Nat.cast_nonneg _) hsize.le
   · rw [sub_zero, div_le_one hsize]
@@ -71,13 +73,15 @@ def edgeValid (S : CleanSourceWitness W Q) (C : Index W) (kind : FamilyKind)
       lambda ≤ rootDensity W S (Sum.inl C) (edgeVertex W Q e c) ∧
       rootDensity W S (Sum.inl C) (edgeVertex W Q e c) ≤ 1 - lambda
 
-def initialTarget (kind : FamilyKind) (e : MatchingEdge Q.claim67.M) (c : Fin 2) : Finset (Fin hostN) :=
+def initialTarget (kind : FamilyKind) (e : MatchingEdge Q.claim67.M) (c : Fin 2) : Finset (Fin
+  hostN) :=
   match kind with
   | .threshold _ => edgeWhole W Q e c
   | .appendix _ => residualSide (edgeWhole W Q e) (deleted W Q e) c
 
 @[simp] theorem ordinary_capacity (S : CleanSourceWitness W Q) (C : Index W)
-    (e : MatchingEdge Q.claim67.M) : capacity W Q S C (.threshold 0) e = partOneCapacity W Q S C e := by
+    (e : MatchingEdge Q.claim67.M) : capacity W Q S C (.threshold 0) e = partOneCapacity W Q S C e
+      := by
   simp only [capacity, partTwoCapacity, zero_div, zero_mul, add_zero]
 
 /-- The same absolute bad-edge accounting applies to both concrete kinds. -/
@@ -132,8 +136,10 @@ theorem initialTarget_large (hα : 0 < α) (hα1 : α ≤ 1 / 4)
         exact_mod_cast card_deleted_le W Q hα hα1 e c
       have hsplit : ((residualSide (edgeWhole W Q e) (deleted W Q e) c).card : ℝ) +
           (deleted W Q e c).card = W.clusterSize := by
-        exact_mod_cast (Finset.card_sdiff_add_card_eq_card (deleted_subset W Q e c)).trans (edgeWhole_card W Q e c)
-      change (epsilon α : ℝ) * W.clusterSize ≤ (residualSide (edgeWhole W Q e) (deleted W Q e) c).card
+        exact_mod_cast (Finset.card_sdiff_add_card_eq_card (deleted_subset W Q e c)).trans
+          (edgeWhole_card W Q e c)
+      change (epsilon α : ℝ) * W.clusterSize ≤ (residualSide (edgeWhole W Q e) (deleted W Q e)
+        c).card
       nlinarith only [hmargin, hγN, hL, hsplit, mul_nonneg he.le hN]
 
 end Erdos547b.ZhaoSourceFamilyCapacity

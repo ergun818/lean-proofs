@@ -9,7 +9,7 @@ The integral scale is floor(rho*k/10). All rounding, missed-support and
 reserved-support losses are paid from the actual degree-form volume.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceCrossingClusters
@@ -56,7 +56,8 @@ theorem scale_bounds {fb : ℝ} (O : Output W Q S fb)
     nlinarith only [hNk, hv, hq]
   have hρk : (250 : ℝ) ≤ (rho α : ℝ) * paddedHalf (Index W) :=
     hdk.trans (mul_le_mul_of_nonneg_right hdρ hk0)
-  have hflo : (rho α : ℝ) * paddedHalf (Index W) / 10 < (crossingScale W : ℝ) + 1 := Nat.lt_floor_add_one _
+  have hflo : (rho α : ℝ) * paddedHalf (Index W) / 10 < (crossingScale W : ℝ) + 1 :=
+    Nat.lt_floor_add_one _
   have hfhi : (crossingScale W : ℝ) ≤ (rho α : ℝ) * paddedHalf (Index W) / 10 :=
     Nat.floor_le (by positivity)
   have hlo : (rho α : ℝ) * paddedHalf (Index W) / 20 ≤ (crossingScale W : ℝ) := by
@@ -103,7 +104,8 @@ theorem exists_crossingClusters {fb : ℝ} (O : Output W Q S fb)
     have hscaled := mul_le_mul_of_nonneg_right hscale
       (Nat.cast_nonneg (paddedHalf (Index W)) : (0 : ℝ) ≤ paddedHalf (Index W))
     have hR : 10 * (crossingScale W : ℝ) * paddedHalf (Index W) <
-        ((padGraph (reduced W)).interedges O.D.V1 O.D.V2).card := by nlinarith only [hscaled, hcross]
+        ((padGraph (reduced W)).interedges O.D.V1 O.D.V2).card :=
+          by nlinarith only [hscaled, hcross]
     exact_mod_cast hR
   have hheavy := card_crossHeavy_ge_of_balanced_cut (padGraph (reduced W)) O.D.V1 O.D.V2
     (crossingScale W) (paddedHalf (Index W)) O.D.V1_card_upper hST h9 hcrossNat

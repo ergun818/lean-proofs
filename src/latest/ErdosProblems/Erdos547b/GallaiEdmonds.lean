@@ -26,10 +26,12 @@ def IsMaximumMatching (M : G.Subgraph) : Prop :=
   M.IsMatching ∧ ∀ N : G.Subgraph, N.IsMatching →
     N.verts.ncard ≤ M.verts.ncard
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- The vertices of a finite matching are exactly twice as numerous as its edges. -/
-theorem card_verts_eq_two_mul_card_edges {M : G.Subgraph} (hM : M.IsMatching) :
+theorem card_verts_eq_two_mul_card_edges [Finite V] {M : G.Subgraph} (hM : M.IsMatching) :
     M.verts.ncard = 2 * M.coe.edgeSet.ncard := by
   classical
+  let := Fintype.ofFinite V
   let : Fintype M.verts := Fintype.ofFinite _
   have hdeg (v : M.verts) : M.coe.degree v = 1 := by
     rw [SimpleGraph.degree_eq_one_iff_existsUnique_adj]
@@ -61,57 +63,70 @@ theorem card_verts_eq_two_mul_card_edges {M : G.Subgraph} (hM : M.IsMatching) :
         simp
       rw [hedge]
 
+omit [DecidableEq V] [Fintype V] in
 /-- Every finite graph has a maximum-cardinality matching. -/
-theorem exists_isMaximumMatching (G : SimpleGraph V) :
+theorem exists_isMaximumMatching [Finite V] (G : SimpleGraph V) :
     ∃ M : G.Subgraph, IsMaximumMatching M := by
   classical
+  let := Fintype.ofFinite V
   let good : Set G.Subgraph := {M | M.IsMatching}
   have hgood_finite : good.Finite := Set.toFinite good
   have hgood_nonempty : good.Nonempty := by
     refine ⟨⊥, ?_⟩
     change (⊥ : G.Subgraph).IsMatching
     intro v hv
-    simpa using hv
+    simp at hv
   obtain ⟨M, hM, hmax⟩ :=
     Set.exists_max_image good (fun N : G.Subgraph => N.verts.ncard)
       hgood_finite hgood_nonempty
   exact ⟨M, hM, fun N hN => hmax N hN⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- The vertex-count definition of maximum matching also maximizes edge count. -/
-theorem IsMaximumMatching.edge_card_le {M N : G.Subgraph}
+theorem IsMaximumMatching.edge_card_le [Finite V] {M N : G.Subgraph}
     (hM : IsMaximumMatching M) (hN : N.IsMatching) :
     N.coe.edgeSet.ncard ≤ M.coe.edgeSet.ncard := by
+  classical
+  let := Fintype.ofFinite V
   have hverts : N.verts.ncard ≤ M.verts.ncard := hM.2 N hN
   rw [card_verts_eq_two_mul_card_edges hN,
     card_verts_eq_two_mul_card_edges hM.1] at hverts
   omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 theorem IsNearPerfectMatchingMissing.card_compl {M : G.Subgraph} {x : V}
     (hM : IsNearPerfectMatchingMissing M x) : M.vertsᶜ.ncard = 1 := by
   rw [hM.2, Set.ncard_singleton]
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 theorem IsNearPerfectMatchingMissing.mem_verts_iff {M : G.Subgraph} {x y : V}
     (hM : IsNearPerfectMatchingMissing M x) : y ∈ M.verts ↔ y ≠ x := by
+  classical
   have hc : y ∈ M.vertsᶜ ↔ y ∈ ({x} : Set V) := by rw [hM.2]
   simp only [Set.mem_compl_iff, Set.mem_singleton_iff] at hc
   tauto
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 theorem IsNearPerfectMatchingMissing.card_verts {M : G.Subgraph} {x : V}
     (hM : IsNearPerfectMatchingMissing M x) :
     M.verts.ncard = Fintype.card V - 1 := by
+  classical
   have hsum : M.verts.ncard + M.vertsᶜ.ncard = Fintype.card V := by
     simpa [Nat.card_eq_fintype_card] using Set.ncard_add_ncard_compl M.verts
   have hcompl : M.vertsᶜ.ncard = 1 := hM.card_compl
   omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 theorem IsNearPerfectMatchingMissing.card_eq_two_mul_card_edges_add_one
     {M : G.Subgraph} {x : V} (hM : IsNearPerfectMatchingMissing M x) :
     Fintype.card V = 2 * M.coe.edgeSet.ncard + 1 := by
+  classical
   have hsum : M.verts.ncard + M.vertsᶜ.ncard = Fintype.card V := by
     simpa [Nat.card_eq_fintype_card] using Set.ncard_add_ncard_compl M.verts
   rw [card_verts_eq_two_mul_card_edges hM.1, hM.card_compl] at hsum
   omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- On an odd-order graph, a matching missing at most one vertex is near-perfect. -/
 theorem IsMatching.isNearPerfectMatching_of_odd_of_card_le_succ {M : G.Subgraph}
     (hM : M.IsMatching) (hodd : Odd (Fintype.card V))
@@ -134,6 +149,7 @@ theorem IsMatching.isNearPerfectMatching_of_odd_of_card_le_succ {M : G.Subgraph}
 def IsFactorCritical (G : SimpleGraph V) : Prop :=
   ∀ x : V, ∃ M : G.Subgraph, IsNearPerfectMatchingMissing M x
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 theorem IsFactorCritical.odd_card [Nonempty V]
     (hG : IsFactorCritical G) : Odd (Fintype.card V) := by
   classical
@@ -152,6 +168,7 @@ theorem IsFactorCritical.odd_card [Nonempty V]
 
 namespace ConnectedComponent
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- A perfect matching of a connected component becomes an ambient matching
 covering exactly that component. -/
 theorem map_perfectMatching_to_ambient (C : G.ConnectedComponent)
@@ -170,6 +187,7 @@ theorem map_perfectMatching_to_ambient (C : G.ConnectedComponent)
     refine ⟨⟨v, hv⟩, Set.mem_univ _, ?_⟩
     rfl
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- A near-perfect matching of a connected component becomes an ambient matching
 covering the component except for the same specified vertex. -/
 theorem map_nearPerfectMatching_to_ambient (C : G.ConnectedComponent)

@@ -44,7 +44,7 @@ theorem exists_dynamicGroupEmbedding_of_thresholdSwitch
     (externalParent : Fin b → B)
     (whole available : Fin 2 → Finset B)
     (reserve : Fin 2 → ℕ) (rho density : ℝ)
-    (hlowHigh : lowBudget ≤ highBudget)
+    (_hlowHigh : lowBudget ≤ highBudget)
     (hunif : G.IsUniform rho (whole 0) (whole 1))
     (havailable : ∀ c, available c ⊆ whole c)
     (hwholeDisjoint : Disjoint (whole 0) (whole 1))
@@ -286,5 +286,7 @@ theorem exists_fullPrefixBalancedDynamicGroupEmbedding
 end Erdos547b.ZhaoLemma58ThresholdGroupEmbedding
 
 #print axioms Erdos547b.ZhaoLemma58ThresholdGroupEmbedding.exists_thresholdDynamicGroupEmbedding
-#print axioms Erdos547b.ZhaoLemma58ThresholdGroupEmbedding.exists_actualThresholdDynamicGroupEmbedding
-#print axioms Erdos547b.ZhaoLemma58ThresholdGroupEmbedding.exists_fullPrefixBalancedDynamicGroupEmbedding
+open Erdos547b.ZhaoLemma58ThresholdGroupEmbedding in
+#print axioms exists_actualThresholdDynamicGroupEmbedding
+open Erdos547b.ZhaoLemma58ThresholdGroupEmbedding in
+#print axioms exists_fullPrefixBalancedDynamicGroupEmbedding

@@ -5,7 +5,7 @@ import ErdosProblems.Erdos547b.SourceRestrictedCutCoordinates
 # The branch forest with its actual recorded cut edges restored
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceReconnectedGraph

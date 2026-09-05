@@ -5,7 +5,7 @@ import ErdosProblems.Erdos547b.RegularTargetRowConcentration
 
 /-! # Actual midpoint families and the two-square-root root exclusion -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceFreedMidpointSystem
@@ -106,7 +106,8 @@ theorem bad_card (hα : 0 < α) (hα1 : α ≤ 1 / 4) (hhost : hostN = 2 * q)
     (fun e _ => (root_pair W Q S O sw hα hα1 e).1)
     (fun e _ => raw_subset W Q S O sw D s e)
     (fun e _ => raw_large W Q S O sw D hα hα1 hhost horder s e)
-  simpa only [bad, clusterVertices_partitionAssignment, W.equal_clusters Q.A.val Q.A.property] using h
+  simpa only [bad, clusterVertices_partitionAssignment, W.equal_clusters Q.A.val Q.A.property] using
+    h
 
 theorem rootAvoid_card (hα : 0 < α) (hα1 : α ≤ 1 / 4) (hhost : hostN = 2 * q)
     (horder : orderThreshold α M ≤ q) (s : Fin 2) :

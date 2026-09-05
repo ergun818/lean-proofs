@@ -10,7 +10,7 @@ branch placements share this same root map and preserve their old copies.
 The deleted tree cut edges are handled by the subsequent cut-prefix layer.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMarkedGlobalPrefix
@@ -40,27 +40,33 @@ variable (allocation : Fin 2 → Fin k → Finset (MatchingEdge Q.claim67.M))
 variable (family : Fin 2 → Fin k → List (Fin b))
 
 structure PrefixState (stage : ℕ) where
-  ordinary : Erdos547b.ZhaoSourceCapacityGlobalPrefix.PrefixState W Q S F owner rootSide kinds allocation family stage
-  marked : Placement W Q S O P F marks (ownerPrefix selected owner stage) (fun i => ordinary.rootImage (owner i))
+  ordinary : Erdos547b.ZhaoSourceCapacityGlobalPrefix.PrefixState W Q S F owner rootSide kinds
+    allocation family stage
+  marked : Placement W Q S O P F marks (ownerPrefix selected owner stage) (fun i =>
+    ordinary.rootImage (owner i))
 
 def emptyPrefixState
     (hnd : ∀ s j, (family s j).Nodup)
     (hordered : ∀ s j, (family s j).Pairwise (fun i j => owner i ≤ owner j)) :
     PrefixState W Q S O P F owner marks selected rootSide kinds allocation family 0 := by
-  let A := Erdos547b.ZhaoSourceCapacityGlobalPrefix.emptyPrefixState W Q S F owner rootSide kinds allocation family
+  let A := Erdos547b.ZhaoSourceCapacityGlobalPrefix.emptyPrefixState W Q S F owner rootSide kinds
+    allocation family
     hnd hordered (fun _ => S.zA)
   refine ⟨A, ?_⟩
-  simpa only [ownerPrefix_zero] using Placement.empty W Q S O P F marks (fun i => A.rootImage (owner i))
+  simpa only [ownerPrefix_zero] using Placement.empty W Q S O P F marks (fun i => A.rootImage (owner
+    i))
 
 def ordinarySuccessor (n : Fin r)
-    (A : Erdos547b.ZhaoSourceCapacityGlobalPrefix.PrefixState W Q S F owner rootSide kinds allocation family n.val)
+    (A : Erdos547b.ZhaoSourceCapacityGlobalPrefix.PrefixState W Q S F owner rootSide kinds
+      allocation family n.val)
     (z : Fin hostN) (hz : z ∈ reservoir W Q (rootSide n))
     (hfresh : z ∉ A.usedRoots W Q S F owner rootSide kinds allocation family)
     (hdegree : ((densityCutoff α : ℝ) - (epsilon α : ℝ)) * (sourceQuota W : ℝ) ≤
       ((reservoir W Q (otherSide (rootSide n))).filter ((embeddingHost W).Adj z)).card)
     (Dfamily : ∀ s j, FamilyState W Q S (rootCluster W Q s) F owner (kinds s j)
       (allocation s j) (family s j) (Function.update A.rootImage n z) (n.val + 1)) :
-    Erdos547b.ZhaoSourceCapacityGlobalPrefix.PrefixState W Q S F owner rootSide kinds allocation family (n.val + 1) := by
+    Erdos547b.ZhaoSourceCapacityGlobalPrefix.PrefixState W Q S F owner rootSide kinds allocation
+      family (n.val + 1) := by
   let root' := Function.update A.rootImage n z
   have hbefore (i : Fin r) (hi : i.val < n.val) : root' i = A.rootImage i :=
     Function.update_of_ne (fun h => Nat.ne_of_lt hi (congrArg Fin.val h)) z A.rootImage
@@ -114,7 +120,8 @@ theorem exists_prefixAdvance
     (hdisjoint : ∀ s, Pairwise (fun i j => Disjoint (allocation s i) (allocation s j)))
     (hside : ∀ s j i, i ∈ family s j → rootSide (owner i) = s)
     (hselectedSide : ∀ i ∈ selected, rootSide (owner i) = 0)
-    (n : Fin r) (A : PrefixState W Q S O P F owner marks selected rootSide kinds allocation family n.val)
+    (n : Fin r) (A : PrefixState W Q S O P F owner marks selected rootSide kinds allocation family
+      n.val)
     (hbranch : ∀ s j, ∀ i ∈ family s j, (kinds s j).BranchValid F i)
     (hedge : ∀ s j, ∀ e ∈ allocation s j, edgeValid W Q S (rootCluster W Q s) (kinds s j) e)
     (hsmall : ∀ i, F.size i ≤ freshBranchBound α W.clusterSize)
@@ -135,20 +142,25 @@ theorem exists_prefixAdvance
     (hparent : ∀ v, parent = some v →
       ((densityCutoff α : ℝ) - (epsilon α : ℝ)) * (sourceQuota W : ℝ) ≤
         ((reservoir W Q (rootSide n)).filter ((embeddingHost W).Adj v)).card) :
-    ∃ z, ∃ D : PrefixState W Q S O P F owner marks selected rootSide kinds allocation family (n.val + 1),
+    ∃ z, ∃ D : PrefixState W Q S O P F owner marks selected rootSide kinds allocation family (n.val
+      + 1),
       D.ordinary.rootImage = Function.update A.ordinary.rootImage n z ∧
       (∀ v, parent = some v → (embeddingHost W).Adj v z) ∧
       (∀ s j i hi,
-        ((D.ordinary.families s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s j)).forestCopy.componentCopy i
+        ((D.ordinary.families s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s
+          j)).forestCopy.componentCopy i
           (processedFamily_mono owner (Nat.le_succ n.val) (family s j) hi) =
-        ((A.ordinary.families s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s j)).forestCopy.componentCopy i hi) ∧
+        ((A.ordinary.families s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s
+          j)).forestCopy.componentCopy i hi) ∧
       (∀ i (hi : i ∈ ownerPrefix selected owner n.val), D.marked.forestCopy.componentCopy i
-        (ownerPrefix_mono selected owner (Nat.le_succ n.val) hi) = A.marked.forestCopy.componentCopy i hi) ∧
+        (ownerPrefix_mono selected owner (Nat.le_succ n.val) hi) = A.marked.forestCopy.componentCopy
+          i hi) ∧
       (∀ i (hi : i ∈ ownerPrefix selected owner n.val), D.marked.group
         ⟨i, ownerPrefix_mono selected owner (Nat.le_succ n.val) hi⟩ = A.marked.group ⟨i, hi⟩) := by
   have hused : ((A.ordinary.usedRoots W Q S F owner rootSide kinds allocation family).card : ℝ) ≤
       (epsilon α : ℝ) * W.clusterSize := by
-    have hc : ((A.ordinary.usedRoots W Q S F owner rootSide kinds allocation family).card : ℝ) ≤ r := by
+    have hc : ((A.ordinary.usedRoots W Q S F owner rootSide kinds allocation family).card : ℝ) ≤ r
+      := by
       exact_mod_cast A.ordinary.card_usedRoots W Q S F owner rootSide kinds allocation family
     exact hc.trans hroots
   obtain ⟨z, hz, hfresh, hAdj, hdegree, Dfamily, hcopies, E', hmarkedCopies, hmarkedGroups⟩ :=
@@ -157,8 +169,10 @@ theorem exists_prefixAdvance
       A.ordinary.families A.marked hbranch hedge hsmall haway globalCount hglobal hbudget
       hselectedSize hmarks hselectedMass hcolor
       (A.ordinary.usedRoots W Q S F owner rootSide kinds allocation family) hused parent hparent
-  let D : PrefixState W Q S O P F owner marks selected rootSide kinds allocation family (n.val + 1) := {
-    ordinary := ordinarySuccessor W Q S F owner rootSide kinds allocation family n A.ordinary z hz hfresh hdegree Dfamily
+  let D : PrefixState W Q S O P F owner marks selected rootSide kinds allocation family (n.val + 1)
+    := {
+    ordinary := ordinarySuccessor W Q S F owner rootSide kinds allocation family n A.ordinary z hz
+      hfresh hdegree Dfamily
     marked := E' }
   exact ⟨z, D, rfl, hAdj, hcopies, hmarkedCopies, hmarkedGroups⟩
 

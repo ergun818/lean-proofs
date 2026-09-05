@@ -233,4 +233,5 @@ theorem isContained_of_coordinateHierarchyHostFacts
 
 end Erdos547b.ZhaoHierarchicalCoordinateContainment
 
-#print axioms Erdos547b.ZhaoHierarchicalCoordinateContainment.isContained_of_coordinateHierarchyHostFacts
+open Erdos547b.ZhaoHierarchicalCoordinateContainment in
+#print axioms isContained_of_coordinateHierarchyHostFacts

@@ -72,10 +72,10 @@ theorem card_targetCoordinateRemoved_le
       rho * #(interiorWhole i b) ≤ #(interiorRaw i b)) :
     (#(targetCoordinateRemoved F G rho rootGroup rootWhole rootRaw
       interiorWhole interiorRaw i a) : ℝ) ≤
-      (∑ t ∈ childSegments F i a,
+      (∑ _t ∈ childSegments F i a,
         rho * #(ZhaoLemma59HierarchicalRegular.HierarchicalSegmentForest.rawCandidate
           F rootGroup rootWhole interiorWhole i a)) +
-      ∑ b ∈ internalTargets F i a,
+      ∑ _b ∈ internalTargets F i a,
         rho * #(ZhaoLemma59HierarchicalRegular.HierarchicalSegmentForest.rawCandidate
           F rootGroup rootWhole interiorWhole i a) := by
   classical
@@ -155,18 +155,18 @@ theorem card_targetCoordinateRemoved_union_le
     (hremoved :
       (#(targetCoordinateRemoved F G rho rootGroup rootWhole rootRaw
         interiorWhole interiorRaw i a) : ℝ) ≤
-        (∑ t ∈ childSegments F i a,
+        (∑ _t ∈ childSegments F i a,
           rho * #(ZhaoLemma59HierarchicalRegular.HierarchicalSegmentForest.rawCandidate
             F rootGroup rootWhole interiorWhole i a)) +
-        ∑ b ∈ internalTargets F i a,
+        ∑ _b ∈ internalTargets F i a,
           rho * #(ZhaoLemma59HierarchicalRegular.HierarchicalSegmentForest.rawCandidate
             F rootGroup rootWhole interiorWhole i a)) :
     (#(targetCoordinateRemoved F G rho rootGroup rootWhole rootRaw
         interiorWhole interiorRaw i a ∪ reserved) : ℝ) ≤
-      (∑ t ∈ childSegments F i a,
+      (∑ _t ∈ childSegments F i a,
         rho * #(ZhaoLemma59HierarchicalRegular.HierarchicalSegmentForest.rawCandidate
           F rootGroup rootWhole interiorWhole i a)) +
-      (∑ b ∈ internalTargets F i a,
+      (∑ _b ∈ internalTargets F i a,
         rho * #(ZhaoLemma59HierarchicalRegular.HierarchicalSegmentForest.rawCandidate
           F rootGroup rootWhole interiorWhole i a)) + #reserved := by
   have hcardNat := Finset.card_union_le
@@ -196,18 +196,18 @@ theorem card_targetInteriorRemoved_le
     (hremoved :
       (#(targetCoordinateRemoved F G rho rootGroup rootWhole rootRaw
         interiorWhole interiorRaw i a) : ℝ) ≤
-        (∑ t ∈ childSegments F i a,
+        (∑ _t ∈ childSegments F i a,
           rho * #(ZhaoLemma59HierarchicalRegular.HierarchicalSegmentForest.rawCandidate
             F rootGroup rootWhole interiorWhole i a)) +
-        ∑ b ∈ internalTargets F i a,
+        ∑ _b ∈ internalTargets F i a,
           rho * #(ZhaoLemma59HierarchicalRegular.HierarchicalSegmentForest.rawCandidate
             F rootGroup rootWhole interiorWhole i a)) :
     (#(targetInteriorRemoved F G rho rootGroup rootWhole rootRaw
         interiorWhole interiorRaw reserved i a) : ℝ) ≤
-      (∑ t ∈ childSegments F i a,
+      (∑ _t ∈ childSegments F i a,
         rho * #(ZhaoLemma59HierarchicalRegular.HierarchicalSegmentForest.rawCandidate
           F rootGroup rootWhole interiorWhole i a)) +
-      (∑ b ∈ internalTargets F i a,
+      (∑ _b ∈ internalTargets F i a,
         rho * #(ZhaoLemma59HierarchicalRegular.HierarchicalSegmentForest.rawCandidate
           F rootGroup rootWhole interiorWhole i a)) + #reserved := by
   rw [targetInteriorRemoved, if_neg ha]
@@ -218,4 +218,5 @@ end HierarchicalSegmentForest
 
 end Erdos547b.ZhaoLemma59HierarchicalTargetRemovalBounds
 
-#print axioms Erdos547b.ZhaoLemma59HierarchicalTargetRemovalBounds.HierarchicalSegmentForest.card_targetCoordinateRemoved_le
+open Erdos547b.ZhaoLemma59HierarchicalTargetRemovalBounds.HierarchicalSegmentForest in
+#print axioms card_targetCoordinateRemoved_le

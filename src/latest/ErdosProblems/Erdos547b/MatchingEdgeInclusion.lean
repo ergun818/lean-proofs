@@ -3,7 +3,7 @@ import ErdosProblems.Erdos547b.Lemma611Full
 
 /-! # Faithful edge indices under reduced-subgraph inclusions -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoMatchingEdgeInclusion
@@ -39,10 +39,12 @@ theorem sum_liftedEdges (h : M ≤ N) (E : Finset (MatchingEdge M)) (w : Matchin
     (∑ e ∈ liftedEdges h E, w e) = ∑ e ∈ E, w (edgeInclusion h e) :=
   Finset.sum_image (fun _ _ _ _ hef => edgeInclusion_injective h hef)
 
+omit [DecidableRel R.Adj] in
 theorem liftedEdges_disjoint_of_support (hM : M ≤ P) (hN : N ≤ P)
     (hdis : Disjoint (matchingSupport M) (matchingSupport N))
     (E : Finset (MatchingEdge M)) (F : Finset (MatchingEdge N)) :
     Disjoint (liftedEdges hM E) (liftedEdges hN F) := by
+  classical
   apply Finset.disjoint_left.mpr
   intro e he hf
   obtain ⟨a, _, ha⟩ := Finset.mem_image.mp he

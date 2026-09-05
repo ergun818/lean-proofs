@@ -156,7 +156,7 @@ theorem target_degree_ge_of_not_mem_lowDegree
       (#(T.filter (G.Adj z)) : ℝ) := by
   apply le_of_not_gt
   intro hlt
-  exact hzGood (by simpa [targetLowDegreeVertices, hzS, hlt])
+  exact hzGood (by simp [targetLowDegreeVertices, hzS, hlt])
 
 /-- Union of all atypical sets which can obstruct an outgoing attachment
 from one hierarchy coordinate. -/
@@ -188,7 +188,7 @@ noncomputable def coordinateCandidate
     (interiorRaw : (i : Fin s) → Fin (F.segments.size i) → Finset B)
     (i : Fin s) (a : Fin (F.segments.size i)) : Finset B :=
   ZhaoLemma59HierarchicalRegular.HierarchicalSegmentForest.rawCandidate
-      F rootGroup rootRaw interiorRaw i a \ 
+      F rootGroup rootRaw interiorRaw i a \
     coordinateRemoved F G rho rootGroup rootRaw interiorRaw i a
 
 /-- Also reserve a fixed finite set, in particular the already prescribed
@@ -342,7 +342,7 @@ noncomputable def canonicalCleanedRegularSystem
           #(coordinateRemoved F G rho rootGroup rootRaw interiorRaw i
             (F.segments.root i) ∪ Finset.univ.image originalImage) ≤
         (#((rootRaw (rootGroup i)).filter (G.Adj (originalImage q))) : ℝ))
-    (hattachUniform : ∀ i j a, F.parent i = Sum.inr ⟨j, a⟩ →
+    (_hattachUniform : ∀ i j a, F.parent i = Sum.inr ⟨j, a⟩ →
       G.IsUniform rho
         (ZhaoLemma59HierarchicalRegular.HierarchicalSegmentForest.rawCandidate
           F rootGroup rootRaw interiorRaw j a)
@@ -356,7 +356,7 @@ noncomputable def canonicalCleanedRegularSystem
           (ZhaoLemma59HierarchicalRegular.HierarchicalSegmentForest.rawCandidate
             F rootGroup rootRaw interiorRaw j a)
           (rootRaw (rootGroup i)) - rho) * #(rootRaw (rootGroup i)))
-    (hinternalUniform : ∀ i a b, (F.segments.tree i).Adj a b →
+    (_hinternalUniform : ∀ i a b, (F.segments.tree i).Adj a b →
       b ≠ F.segments.root i →
       G.IsUniform rho
         (ZhaoLemma59HierarchicalRegular.HierarchicalSegmentForest.rawCandidate
@@ -436,7 +436,7 @@ noncomputable def canonicalCleanedRegularSystem
       apply le_of_not_gt
       intro hlt
       exact (Finset.mem_sdiff.mp hz').2 (by
-        simpa [atypicalVertices, (Finset.mem_sdiff.mp hz').1, hlt])
+        simp [atypicalVertices, (Finset.mem_sdiff.mp hz').1, hlt])
     exact (hattachCapacity i j a hp).trans hzDeg
   · intro i a b hab hb z hz
     have hzClean : z ∈ cleanedSide G rho
@@ -463,7 +463,7 @@ noncomputable def canonicalCleanedRegularSystem
       apply le_of_not_gt
       intro hlt
       exact (Finset.mem_sdiff.mp hz').2 (by
-        simpa [atypicalVertices, (Finset.mem_sdiff.mp hz').1, hlt])
+        simp [atypicalVertices, (Finset.mem_sdiff.mp hz').1, hlt])
     exact (hinternalCapacity i a b hab hb).trans hzDeg
   · intro q i hmem
     have hmem' : originalImage q ∈
@@ -517,4 +517,5 @@ end HierarchicalSegmentForest
 
 end Erdos547b.ZhaoLemma59HierarchicalCanonical
 
-#print axioms Erdos547b.ZhaoLemma59HierarchicalCanonical.HierarchicalSegmentForest.canonicalCleanedRegularSystem
+open Erdos547b.ZhaoLemma59HierarchicalCanonical.HierarchicalSegmentForest in
+#print axioms canonicalCleanedRegularSystem

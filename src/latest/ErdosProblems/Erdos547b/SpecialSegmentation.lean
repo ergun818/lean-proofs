@@ -94,7 +94,7 @@ theorem card_branchRoots_le_marks (F : OrderedBranchForest r b)
     exact Finset.mem_union_left _ hz
   have hcard : #R = b := by
     rw [Finset.card_image_iff.mpr]
-    · simp [R]
+    · simp
     · intro i _ j _ h
       exact (Sigma.mk.inj_iff.mp h).1
   exact hcard.symm.trans_le (Finset.card_le_card hsub)
@@ -178,7 +178,7 @@ theorem nearestMark_dist_le (F : OrderedBranchForest r b)
   | h d ih =>
       by_cases ha : (⟨j, a⟩ : BranchVertex F) ∈ marks F special
       · rw [nearestMark_eq_self_of_mem F special j ha]
-        simpa [hd]
+        simp [hd]
       · have haroot : a ≠ F.branches.root j := by
           intro hroot
           apply ha
@@ -359,6 +359,7 @@ theorem markKey_injective (F : OrderedBranchForest r b) :
   apply (Fintype.equivFin (BranchVertex F)).injective
   exact Fin.ext hval
 
+@[instance_reducible]
 def markLinearOrder (F : OrderedBranchForest r b) : LinearOrder (BranchVertex F) :=
   LinearOrder.lift' (markKey F) (markKey_injective F)
 
@@ -515,7 +516,7 @@ theorem segmentParent_earlier (F : OrderedBranchForest r b)
   · have hbad : (Sum.inl (F.owner q.1) :
         Sum (Fin r) (Σ j, Fin ((segmentedOrderedForest F special).size j))) =
           Sum.inr ⟨j, a⟩ := by
-      simpa [segmentParent, q, hroot] using hparent
+      simp [segmentParent, q, hroot] at hparent
     cases hbad
   · let p := TreePartition.parent (F.branches.isTree q.1)
       (F.branches.root q.1) hroot
@@ -606,7 +607,7 @@ theorem flatten_unflatten (F : OrderedBranchForest r b)
     rw [happly]
     apply congrArg Sum.inr
     apply Sigma.ext
-    · simpa [i, q] using congrArg Sigma.fst henum
+    · simp [i, q]
     · exact fiberPointAtMark_val_heq F special q hq a (by rfl)
 
 def nearestMarkedVertex (F : OrderedBranchForest r b)
@@ -822,8 +823,7 @@ theorem flatten_segmentParent_of_not_root
   rw [happly]
   apply congrArg Sum.inr
   apply Sigma.ext
-  · simpa [k, pm] using congrArg Sigma.fst
-      (markEnum_index F special pm hpm)
+  · simp [k, pm]
   · exact fiberPointAtMark_val_heq F special pm hpm p (by rfl)
 
 theorem segmentParent_eq_unflatten_parent
@@ -861,7 +861,7 @@ theorem flatten_segmentPoint (F : OrderedBranchForest r b)
   rw [happly]
   apply congrArg Sum.inr
   apply Sigma.ext
-  · simpa [i] using congrArg Sigma.fst (markEnum_index F special q hq)
+  · simp [i]
   · exact fiberPointAtMark_val_heq F special q hq a ha
 
 theorem unflatten_segmentPoint (F : OrderedBranchForest r b)
@@ -898,14 +898,14 @@ theorem graph_adj_unflatten_of_same_fiber (F : OrderedBranchForest r b)
     (fiberEquiv F special (markIndex F special q hq)).symm
       (fiberPointAtMark F special q hq c hc), rfl, rfl, ?_⟩
   simp only [toHierarchicalSegmentForest, segmentedOrderedForest,
-    SimpleGraph.comap_adj, SimpleGraph.induce_adj]
+    SimpleGraph.comap_adj]
   rw [Equiv.apply_symm_apply, Equiv.apply_symm_apply]
   convert hadj using 1
   · exact congrArg (fun k ↦ Fin (F.branches.size k)) (by
-      simpa [q] using congrArg Sigma.fst (markEnum_index F special q hq))
+      simp [q])
   · let k := (markEnum F special (markIndex F special q hq)).1.1
     have hkj : k = j := by
-      simpa [k, q] using congrArg Sigma.fst (markEnum_index F special q hq)
+      simp [k, q]
     have hpack := congrArg
       (fun l ↦ (⟨l, F.branches.tree l⟩ :
         Σ n, SimpleGraph (Fin (F.branches.size n)))) hkj

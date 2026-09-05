@@ -10,7 +10,7 @@ The nonleaf core has the actual integer scale floor(alpha*q/4).
 The source schedule pays its rounding and the partition-root loss.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceBalancedMassFromHost
@@ -36,7 +36,8 @@ theorem root_loss_margin (hα : 0 < α) (hα1 : α ≤ 1 / 4)
   have hN := (degreeForm_source_bounds hα hα1 W horder).2.2
   have hd1R : (degreeError α : ℝ) ≤ 1 := by exact_mod_cast hd1
   have hdq := mul_le_mul_of_nonneg_right hd1R (Nat.cast_nonneg q : (0 : ℝ) ≤ q)
-  have hNq : (W.clusterSize : ℝ) ≤ q := by nlinarith only [hN, hdq, (Nat.cast_nonneg q : (0 : ℝ) ≤ q)]
+  have hNq : (W.clusterSize : ℝ) ≤ q :=
+    by nlinarith only [hN, hdq, (Nat.cast_nonneg q : (0 : ℝ) ≤ q)]
   have heps : (0 : ℝ) ≤ epsilon α := by exact_mod_cast (parameter_pos hα).2.2.2.2.2.2.2.le
   have hcountq := hcount.trans (mul_le_mul_of_nonneg_left hNq heps)
   have heαq := mul_le_mul_of_nonneg_right heαR (Nat.cast_nonneg q : (0 : ℝ) ≤ q)
@@ -46,12 +47,14 @@ variable {U : Type*} [Fintype U] [DecidableEq U]
 variable {T : SimpleGraph U} [DecidableRel T.Adj]
 variable {n : ℕ} (H : SimpleGraph (Fin (2 * n - 2))) [DecidableRel H.Adj]
 
+omit [DecidableEq U] in
 theorem leaf_bound_of_not_contained
     (hα : 0 < α) (hα1 : α ≤ 1 / 4) (hn : 3 ≤ n)
     (hlarge : n - 1 ≤ #(Finset.univ.filter fun v => n - 1 ≤ H.degree v))
     (hnotEC1 : ¬ZhaoExtremalCaseOne α H)
     (hT : T.IsTree) (hcard : Fintype.card U = n) (hnot : ¬T.IsContained H) :
     ((graphLeaves T).card : ℝ) < (1 - (α : ℝ) / 4) * (n - 1 : ℕ) + 1 := by
+  classical
   let q := n - 1
   let k : ℕ := ⌊α * (q : ℚ) / 4⌋₊
   have hqQ : (0 : ℚ) ≤ q := Nat.cast_nonneg _

@@ -10,7 +10,7 @@ the actual fixed plan, so they retain positive source density at their
 branch-root endpoints rather than only arbitrary attachment edges.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMatchingActiveChunk
@@ -47,7 +47,8 @@ def PendingChunk.closePlacement (rootImage : Fin r → Fin hostN) (n : ℕ)
     (E : D.Prefix W Q S P C F owner rootImage n) (howners : ∀ i ∈ D.items, (owner i).val < n) :
     BranchPlacement F (embeddingHost W) D.items.toFinset (fun i => rootImage (owner i))
       (fun e => residualSide (pairWhole W P e) (deleted W Q P e)) :=
-  castPlacement W Q P F owner (D.closedDomain W Q S P C F owner n howners) (D.placement W Q S P C F owner E)
+  castPlacement W Q P F owner (D.closedDomain W Q S P C F owner n howners) (D.placement W Q S P C F
+    owner E)
 
 theorem PendingChunk.close_copy (rootImage : Fin r → Fin hostN) (n : ℕ)
     (E : D.Prefix W Q S P C F owner rootImage n) (howners : ∀ i ∈ D.items, (owner i).val < n)
@@ -65,7 +66,8 @@ theorem PendingChunk.close_root_positive (rootImage : Fin r → Fin hostN) (n : 
     (E : D.Prefix W Q S P C F owner rootImage n) (howners : ∀ i ∈ D.items, (owner i).val < n)
     (i : {i // i ∈ D.items.toFinset}) :
     let pendingPlan := D.closePlacement W Q S P C F owner rootImage n E howners
-    0 < rootDensity W S (Sum.inl C) (pairVertex W P (pendingPlan.edge i) (pendingPlan.orient i 0)) := by
+    0 < rootDensity W S (Sum.inl C) (pairVertex W P (pendingPlan.edge i) (pendingPlan.orient i 0))
+      := by
   exact D.plan.root_positive (position D.items i.1 (List.mem_toFinset.mp i.2))
 
 /-- Build a fresh closed chunk using the actual source parameters and one
@@ -83,24 +85,29 @@ theorem exists_fresh_closed_placement
     (hmass : mass (fun i => (F.size i : ℝ)) items ≤ capacity W Q P S C e)
     (rootImage : Fin r → Fin hostN) (z : Fin hostN) (hz : EligibleRoot W Q S P C e z)
     (hparent : ∀ i ∈ items, rootImage (owner i) = z) :
-    ∃ pendingPlan : BranchPlacement F (embeddingHost W) items.toFinset (fun i => rootImage (owner i))
+    ∃ pendingPlan : BranchPlacement F (embeddingHost W) items.toFinset (fun i => rootImage (owner
+      i))
         (fun e => residualSide (pairWhole W P e) (deleted W Q P e)),
       (∀ i, pendingPlan.edge i = e) ∧
-      ∀ i, 0 < rootDensity W S (Sum.inl C) (pairVertex W P (pendingPlan.edge i) (pendingPlan.orient i 0)) := by
+      ∀ i, 0 < rootDensity W S (Sum.inl C) (pairVertex W P (pendingPlan.edge i) (pendingPlan.orient
+        i 0)) := by
   obtain ⟨plan⟩ := exists_actual_pending_plan W Q P hα hα1 hhost horder S C hC e
     (listForest F items) (fun i => hsmall items[i.val]) (by rw [listForest_order]; exact hmass)
   let D : PendingChunk W Q S P C F owner := ⟨e, he, items, hnd, hmono, hmass, plan⟩
   let parent := fun i : Fin items.length => rootImage (listOwner owner items i)
   let available := residualSide (pairWhole W P e) (deleted W Q P e)
-  let initial := castPartialSelected (listForest F items) (embeddingHost W) parent plan.orient available
+  let initial := castPartialSelected (listForest F items) (embeddingHost W) parent plan.orient
+    available
     (branchPrefix_zero items.length).symm
     (emptyPartial (listForest F items) (embeddingHost W) parent plan.orient available)
-  obtain ⟨E, _⟩ := plan.extend_interval W Q P parent 0 items.length (Nat.zero_le _) le_rfl initial z hz
+  obtain ⟨E, _⟩ := plan.extend_interval W Q P parent 0 items.length (Nat.zero_le _) le_rfl initial z
+    hz
     (by intro i _ _; exact hparent _ (List.get_mem items i))
   have hE : D.Prefix W Q S P C F owner rootImage r := by
     simpa only [PendingChunk.Prefix, D, ownerCutoff_full] using E
   let pendingPlan := D.closePlacement W Q S P C F owner rootImage r hE (fun i _ => (owner i).isLt)
-  exact ⟨pendingPlan, fun _ => rfl, D.close_root_positive W Q S P C F owner rootImage r hE (fun i _ => (owner i).isLt)⟩
+  exact ⟨pendingPlan, fun _ => rfl, D.close_root_positive W Q S P C F owner rootImage r hE (fun i _
+    => (owner i).isLt)⟩
 
 end Erdos547b.ZhaoSourceMatchingActiveChunk
 

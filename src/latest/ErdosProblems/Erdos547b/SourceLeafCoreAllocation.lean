@@ -4,7 +4,7 @@ import ErdosProblems.Erdos547b.TwoRowSurplusAllocation
 
 /-! # The actual two matching allocations for the leaf-deleted core -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceLeafCoreAllocation
@@ -30,7 +30,8 @@ def coreMass (s : Fin 2) : ℝ :=
 theorem coreMass_nonneg (s : Fin 2) : 0 ≤ coreMass P s :=
   Finset.sum_nonneg (fun _ _ => Nat.cast_nonneg _)
 
-theorem coreMass_sum : coreMass P 0 + coreMass P 1 = (OrderedBranchForest.edgeDemand (coreForest P) : ℝ) := by
+theorem coreMass_sum : coreMass P 0 + coreMass P 1 = (OrderedBranchForest.edgeDemand (coreForest P)
+  : ℝ) := by
   rw [coreMass, coreMass, sum_sideFamily_zero_add_one]
   simp only [OrderedBranchForest.edgeDemand, Nat.cast_sum]
 
@@ -55,12 +56,20 @@ theorem exists_coreAllocation
   have hN : (0 : ℝ) < W.clusterSize := by exact_mod_cast W.clusterSize_pos
   obtain ⟨Ea, Eb, hEa, hEb, hdis, _, ha, hb⟩ := exists_twoRowSurplus (awayEdges W Q)
     (sideWeight W Q S 0) (sideWeight W Q S 1) (coreMass P 0) (coreMass P 1) (3 * (gamma α : ℝ) * q)
-    (2 * W.clusterSize) (fun e _ => sideWeight_nonneg W Q S 0 e) (fun e _ => sideWeight_nonneg W Q S 1 e)
+    (2 * W.clusterSize) (fun e _ => sideWeight_nonneg W Q S 0 e) (fun e _ => sideWeight_nonneg W Q S
+      1 e)
     (fun e _ => sideWeight_le W Q S 0 e) (fun e _ => sideWeight_le W Q S 1 e)
     (coreMass_nonneg P 0) (coreMass_nonneg P 1) (by positivity) (by positivity)
     (hsurplus 0) (hsurplus 1)
-  exact ⟨![Ea, Eb], hdis, (by intro s; fin_cases s; exact hEa; exact hEb),
-    (by intro s; fin_cases s; exact ha.le; exact hb.le)⟩
+  refine ⟨![Ea, Eb], hdis, ?_, ?_⟩
+  · intro s
+    fin_cases s
+    · exact hEa
+    · exact hEb
+  · intro s
+    fin_cases s
+    · exact ha.le
+    · exact hb.le
 
 end Erdos547b.ZhaoSourceLeafCoreAllocation
 

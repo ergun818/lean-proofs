@@ -13,7 +13,7 @@ is small and a preliminary reservation is constructed. The actual root
 exchange proves both physical rows' bounds from the same chosen parity.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceExceptionalRestrictions
@@ -56,7 +56,8 @@ theorem exceptional_card_bounds_of_notEC1
   have hcard' : Fintype.card U = (n - 1) + 1 := by omega
   have hnotHost : ¬Nonempty (T.Copy (embeddingHost W)) := by
     rintro ⟨E⟩
-    exact hnot (((SimpleGraph.Copy.ofLE (embeddingHost W) H (embeddingHost_le_original W)).comp E).isContained)
+    exact hnot (((SimpleGraph.Copy.ofLE (embeddingHost W) H (embeddingHost_le_original W)).comp
+      E).isContained)
   obtain ⟨s, hmass⟩ := exists_balancedSide_mass_of_notEC1 H W hα hα1 horder hlarge hnotEC1
     hT hcard hnot P hroots
   have hbound (Q' : Certificate W) (S' : CleanSourceWitness W Q') :

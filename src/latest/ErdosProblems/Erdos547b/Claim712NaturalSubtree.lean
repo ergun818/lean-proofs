@@ -22,6 +22,7 @@ noncomputable def children (T : SimpleGraph V) (r x : V) : Finset V :=
     classical
     exact Finset.univ.filter fun y => IsChild T r x y
 
+omit [DecidableEq V] in
 @[simp] theorem mem_children {T : SimpleGraph V} {r x y : V} :
     y ∈ children T r x ↔ IsChild T r x y := by
   classical
@@ -36,6 +37,7 @@ noncomputable def IsNaturalVertexSet (T : SimpleGraph V) (r : V) (S : Finset V) 
       kept ⊆ children T r x ∧
       S = insert x (kept.biUnion fun y => rootedDescendants T r y)
 
+omit [DecidableEq V] in
 theorem root_not_mem_rootedDescendants_child
     {T : SimpleGraph V} {r x y : V} (hy : IsChild T r x y) :
     x ∉ rootedDescendants T r y := by
@@ -46,6 +48,7 @@ theorem root_not_mem_rootedDescendants_child
   rw [hy.2, hxy]
   omega
 
+omit [DecidableEq V] in
 /-- Every strict descendant of `x` lies below a unique first child of `x`.
 Only existence is needed for the cardinal decomposition below. -/
 theorem exists_child_of_mem_rootedDescendants
@@ -92,6 +95,7 @@ theorem rootedDescendants_eq_insert_biUnion_children
     · exact self_mem_rootedDescendants T r _
     · exact rootedDescendants_mono_of_child hT (mem_children.mp hy) hz
 
+omit [DecidableEq V] in
 theorem pairwiseDisjoint_rootedDescendants_children
     {T : SimpleGraph V} (hT : T.IsTree) (r x : V) :
     ((children T r x : Finset V) : Set V).PairwiseDisjoint
@@ -101,6 +105,7 @@ theorem pairwiseDisjoint_rootedDescendants_children
   exact disjoint_rootedDescendants_of_distinct_children hT
     (mem_children.mp hy) (mem_children.mp hz) hyz
 
+omit [DecidableEq V] in
 /-- Cardinal form of the child-branch decomposition. -/
 theorem card_rootedDescendants_eq_one_add_sum_children
     {T : SimpleGraph V} (hT : T.IsTree) (r x : V) :
@@ -202,7 +207,7 @@ theorem exists_naturalVertexSet_card
           ∑ y ∈ s, (rootedDescendants T r y).card := by
       induction s using Finset.induction_on with
       | empty => simp
-      | @insert a s ha ih => simp [ha, ih]
+      | @insert a s ha ih => simp [ha]
     have hsum : weights.sum = ∑ y ∈ children T r x,
         (rootedDescendants T r y).card := by
       simpa only [weights, cs] using hsumList (children T r x)
@@ -234,7 +239,7 @@ theorem exists_naturalVertexSet_card
     rw [show S = insert x (kept.biUnion fun y => rootedDescendants T r y) by rfl,
       Finset.card_insert_of_notMem hxnot, Finset.card_biUnion hpair]
     rw [List.sum_toFinset (fun y => (rootedDescendants T r y).card) htakeNodup]
-    simp only [kept, weights, cs, List.map_take]
+    simp only [weights, cs, List.map_take]
     omega
   refine ⟨S, ⟨x, kept, hkept, rfl⟩, ?_, ?_⟩
   · rw [hScard]
@@ -284,6 +289,7 @@ theorem exists_naturalVertexSetAt_card
   classical
   simp [naturalVertices, eq_comm]
 
+omit [DecidableEq V] in
 /-- A shortest path from the root of a descendant branch to a vertex in the
 branch never leaves that branch. -/
 theorem support_shortestPath_subset_rootedDescendants
@@ -291,6 +297,7 @@ theorem support_shortestPath_subset_rootedDescendants
     (hv : v ∈ rootedDescendants T r x)
     (p : T.Walk x v) (hpLength : p.length = T.dist x v) :
     ∀ z ∈ p.support, z ∈ rootedDescendants T r x := by
+  classical
   intro z hz
   have htake : (p.takeUntil z hz).length = T.dist x z :=
     SimpleGraph.length_eq_dist_of_subwalk hpLength (p.isSubwalk_takeUntil hz)
@@ -306,10 +313,12 @@ theorem support_shortestPath_subset_rootedDescendants
   rw [mem_rootedDescendants]
   omega
 
+omit [DecidableEq V] in
 /-- Every rooted-descendant branch induces a connected subgraph. -/
 theorem connected_induce_rootedDescendants
     {T : SimpleGraph V} (hT : T.IsTree) (r x : V) :
     (T.induce (rootedDescendants T r x : Set V)).Connected := by
+  classical
   apply T.induce_connected_of_patches x (by simp)
   intro v hv
   obtain ⟨p, hpPath, hpLength⟩ := hT.connected.exists_path_of_dist x v
@@ -322,12 +331,14 @@ theorem connected_induce_rootedDescendants
   refine ⟨P, hPsub, hxP, hvP, ?_⟩
   exact (p.connected_induce_support) ⟨x, hxP⟩ ⟨v, hvP⟩
 
+omit [DecidableEq V] in
 /-- An edge incident to a non-root vertex of a rooted-descendant branch
 cannot leave that branch. -/
 theorem adj_mem_rootedDescendants_of_mem_of_ne
     {T : SimpleGraph V} (hT : T.IsTree) {r x u v : V}
     (hu : u ∈ rootedDescendants T r x) (hux : u ≠ x)
     (huv : T.Adj u v) : v ∈ rootedDescendants T r x := by
+  classical
   have huDist := mem_rootedDescendants.mp hu
   rcases hT.dist_eq_dist_add_one_of_adj r huv with hup | hdown
   · have hur : u ≠ r := by
@@ -703,14 +714,14 @@ theorem IsNaturalVertexSetAt.rootedForestCone_complement_isTree
           | some b =>
               exfalso
               change x = (b : V) at hab
-              have : x ∈ C₁ := by simpa [hab] using b.property
+              have : x ∈ C₁ := by simp [hab]
               exact hxC this
       | some a =>
           cases b with
           | none =>
               exfalso
               change (a : V) = x at hab
-              have : x ∈ C₁ := by simpa [← hab] using a.property
+              have : x ∈ C₁ := by simp [← hab]
               exact hxC this
           | some b => simp only [Option.some.injEq, Subtype.ext_iff] at hab ⊢; exact hab
     map_rel_iff' := by
@@ -734,9 +745,10 @@ child of the root.  This is the abstract uniqueness fact used to assign
 each vertex of the complementary forest to its prescribed attachment
 root. -/
 theorem existsUnique_child_rootedBranch
-    {A : Type*} [Fintype A] [DecidableEq A]
+    {A : Type*} [Fintype A]
     {K : SimpleGraph A} (hK : K.IsTree) (z : A) {v : A} (hv : v ≠ z) :
     ∃! a : A, IsChild K z z a ∧ v ∈ rootedDescendants K z a := by
+  classical
   have hvAll : v ∈ rootedDescendants K z z := by simp
   obtain ⟨a, haChild, hvBranch⟩ :=
     exists_child_of_mem_rootedDescendants hK hvAll hv
@@ -867,7 +879,7 @@ theorem IsNaturalVertexSetAt.componentRoot_eq_of_adj
     by_cases hua : u = a
     · have huvAK : K.Adj (some a) (some v) := by simpa [hua] using huvK
       have haR : a ∈ R := by
-        simpa [R, a] using hS.componentRoot_mem hT u
+        simp [R, a]
       have haAdj : K.Adj none (some a) := by
         simpa [K, rootedForestCone] using haR
       have hda : K.dist none (some a) = 1 := K.dist_eq_one_iff_adj.mpr haAdj
@@ -885,7 +897,7 @@ theorem IsNaturalVertexSetAt.componentRoot_eq_of_adj
   apply Subtype.ext
   change (hS.componentRoot hT u).val = (hS.componentRoot hT v).val
   simpa [a] using (hS.eq_componentRoot_of_mem_branch hT v a
-    (by simpa [R, a] using hS.componentRoot_mem hT u)
+    (by simp [a])
     (by simpa [K, F, R] using hvBranch))
 
 /-- Component-wise distance parity flips across every complementary-core
@@ -925,7 +937,7 @@ theorem IsNaturalVertexSetAt.two_mul_card_complementRoots_le
   have adj_partner (a : {u // u ∈ R}) : T.Adj a (partner a) :=
     (hex a).choose_spec.2
   have root_adj (a : {u // u ∈ R}) : T.Adj a x := by
-    have ha : a.val ∈ complementRoots T x S := by simpa [R] using a.property
+    have ha : a.val ∈ complementRoots T x S := by simp [R]
     exact mem_complementRoots.mp ha
   have partner_mem_C₁ (a : {u // u ∈ R}) : partner a ∈ C₁ := by
     rw [show C₁ = complementNonisolated T x S by rfl,
@@ -1003,14 +1015,17 @@ noncomputable def parityPart (T : SimpleGraph V) (x : V) (U : Finset V)
   classical
   exact U.filter fun v => T.dist x v % 2 = q
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem mem_parityPart {T : SimpleGraph V} {x v : V} {U : Finset V}
     {q : ℕ} : v ∈ parityPart T x U q ↔ v ∈ U ∧ T.dist x v % 2 = q := by
   classical
   simp [parityPart]
 
-theorem parityPart_zero_union_one (T : SimpleGraph V) (x : V) (U : Finset V) :
+omit [Fintype V] in
+theorem parityPart_zero_union_one [Finite V] (T : SimpleGraph V) (x : V) (U : Finset V) :
     parityPart T x U 0 ∪ parityPart T x U 1 = U := by
   classical
+  let := Fintype.ofFinite V
   ext v
   simp only [Finset.mem_union, mem_parityPart]
   constructor
@@ -1021,28 +1036,35 @@ theorem parityPart_zero_union_one (T : SimpleGraph V) (x : V) (U : Finset V) :
     · exact Or.inl ⟨hv, hzero⟩
     · exact Or.inr ⟨hv, by omega⟩
 
-theorem disjoint_parityPart_zero_one (T : SimpleGraph V) (x : V) (U : Finset V) :
+omit [DecidableEq V] [Fintype V] in
+theorem disjoint_parityPart_zero_one [Finite V] (T : SimpleGraph V) (x : V) (U : Finset V) :
     Disjoint (parityPart T x U 0) (parityPart T x U 1) := by
   classical
+  let := Fintype.ofFinite V
   rw [Finset.disjoint_left]
   intro v hv0 hv1
   have h0 := (mem_parityPart.mp hv0).2
   have h1 := (mem_parityPart.mp hv1).2
   omega
 
+omit [DecidableEq V] [Fintype V] in
 /-- Each distance-parity class in a tree is independent. -/
-theorem isIndepSet_parityPart
+theorem isIndepSet_parityPart [Finite V]
     {T : SimpleGraph V} (hT : T.IsTree) (x : V) (U : Finset V) (q : ℕ) :
     T.IsIndepSet (parityPart T x U q : Set V) := by
+  classical
+  let := Fintype.ofFinite V
   rw [T.isIndepSet_iff]
-  intro u hu v hv huv
-  intro hadj
+  intro u hu v hv huv hadj
   have hparity := rootParity_ne_of_adj hT x hadj
   exact hparity ((mem_parityPart.mp hu).2.trans (mem_parityPart.mp hv).2.symm)
 
-theorem card_parityPart_zero_add_one
+omit [DecidableEq V] [Fintype V] in
+theorem card_parityPart_zero_add_one [Finite V]
     (T : SimpleGraph V) (x : V) (U : Finset V) :
     (parityPart T x U 0).card + (parityPart T x U 1).card = U.card := by
+  classical
+  let := Fintype.ofFinite V
   rw [← Finset.card_union_of_disjoint (disjoint_parityPart_zero_one T x U),
     parityPart_zero_union_one]
 
@@ -1050,7 +1072,7 @@ theorem card_parityPart_zero_add_one
 its attachment root removed. -/
 theorem IsNaturalVertexSetAt.complement_and_selected_card_splits
     {T : SimpleGraph V} {r x : V} {S : Finset V}
-    (hS : IsNaturalVertexSetAt T r x S) :
+    (_hS : IsNaturalVertexSetAt T r x S) :
     (parityPart T x (complementNonisolated T x S) 0).card +
         (parityPart T x (complementNonisolated T x S) 1).card =
           (complementNonisolated T x S).card ∧
@@ -1060,7 +1082,7 @@ theorem IsNaturalVertexSetAt.complement_and_selected_card_splits
 
 theorem IsNaturalVertexSetAt.complement_and_selected_independent_parts
     {T : SimpleGraph V} (hT : T.IsTree) {r x : V} {S : Finset V}
-    (hS : IsNaturalVertexSetAt T r x S) :
+    (_hS : IsNaturalVertexSetAt T r x S) :
     T.IsIndepSet (parityPart T x (complementNonisolated T x S) 0 : Set V) ∧
       T.IsIndepSet (parityPart T x (complementNonisolated T x S) 1 : Set V) ∧
       T.IsIndepSet (parityPart T x (S.erase x) 0 : Set V) ∧

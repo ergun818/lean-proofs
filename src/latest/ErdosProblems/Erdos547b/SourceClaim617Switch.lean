@@ -11,7 +11,7 @@ The targets avoid the reserved matching and both distinguished clusters.
 The new matching is kept separate from the original Claim-6.7 certificate.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceClaim617Switch
@@ -73,7 +73,8 @@ theorem min_disjoint_excluded : Disjoint (matchingSupport O.D.Min) (excluded W Q
     exact (Finset.mem_sdiff.mp (O.D.mb_subset hmb)).2 he
   · rw [Finset.disjoint_left]
     intro x hx hy
-    obtain ⟨e, he, c, hc⟩ := (mem_selectedSupport_iff Q.claim67.M (padFinset (large W)) O.D.minEdges x).mp hx
+    obtain ⟨e, he, c, hc⟩ := (mem_selectedSupport_iff Q.claim67.M (padFinset (large W)) O.D.minEdges
+      x).mp hx
     have hn := endpoint_ne_distinguished_of_mem_away Q.claim67.M (padFinset (large W))
       (Sum.inl Q.A) (Sum.inl Q.B) (O.min_subset_away W Q S he) c
     rcases Finset.mem_insert.mp hy with h | h
@@ -96,7 +97,8 @@ theorem exists_switch
   exact exists_distinctSwitch_of_dense O.D.Min O.D.Min_isMatching (padFinset (large W))
     O.D.S1 O.D.V2 (excluded W Q S O) (rho α : ℝ) (eta α : ℝ) (fourthRoot α : ℝ)
     (paddedHalf (Index W)) hr he ht (scale_lower W Q S O hα hα1 hhost horder)
-    (sourceS1_subset_support _ _) ((Finset.card_le_card (sourceS1_subset_support _ _)).trans O.D.V1_card_upper)
+    (sourceS1_subset_support _ _) ((Finset.card_le_card (sourceS1_subset_support _ _)).trans
+      O.D.V1_card_upper)
     (support_bounds W Q S O).2.2.2 (excluded_card_bound W Q S O hα) hm hdense
 
 theorem switched_properties (D : Switch W Q S O) :

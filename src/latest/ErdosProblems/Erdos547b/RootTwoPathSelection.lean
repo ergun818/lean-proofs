@@ -52,7 +52,7 @@ theorem parentDist_of_ne_root (D : RootTwoPathSystem T I) (hT : T.IsTree)
     omega
 
 /-- Deleting all middle/leaf pairs saves exactly two vertices per path. -/
-theorem core_card_add_twice [DecidableEq I] (D : RootTwoPathSystem T I) :
+theorem core_card_add_twice (D : RootTwoPathSystem T I) :
     Fintype.card {x // x ∉ D.middleSet} + 2 * Fintype.card I = Fintype.card V := by
   classical
   have hl : D.leafSet.card = Fintype.card I := by

@@ -10,7 +10,7 @@ the actual current-owner step. A current-only chunk gives a fully closed
 original-index placement; a chunk with later owners gives an active state.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceGeneralizedChunk
@@ -41,7 +41,8 @@ theorem ChunkSource.exists_fresh_advance
     (hafter : ∀ i ∈ D.items, n.val ≤ (owner i).val)
     (z : Fin hostN) (hz : requirementGood W Q S C (initialRequirement W Q kind D.edge) z) :
     ∃ backend : D.Backend W Q S C F owner kind,
-      Nonempty (D.Prefix W Q S C F owner kind backend (Function.update rootImage n z) (n.val + 1)) := by
+      Nonempty (D.Prefix W Q S C F owner kind backend (Function.update rootImage n z) (n.val + 1))
+        := by
   obtain ⟨backend⟩ := D.exists_backend W Q S C F owner kind hα hα1 hhost horder hC hkind
   obtain ⟨initial⟩ := D.exists_prefix_of_no_earlier_owner W Q S C F owner kind hα hα1 hhost horder
     backend rootImage n.val hafter

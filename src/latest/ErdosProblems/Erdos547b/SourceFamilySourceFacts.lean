@@ -9,7 +9,7 @@ identities. If a current-owner branch remains unreserved, every branch in
 the old active chunk has owner at most the current one.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceReservationFamilyState

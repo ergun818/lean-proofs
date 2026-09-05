@@ -152,7 +152,7 @@ theorem exists_threeLayerCopy_of_cleanedRegularSystem
   · intro i a ha
     let H := toHierarchicalSegmentForest F (branchSpecial F special)
     let a' : Fin (H.segments.size i) :=
-      ⟨a.val, by simpa [H, toHierarchicalSegmentForest] using a.isLt⟩
+      ⟨a.val, by simp [H, toHierarchicalSegmentForest]⟩
     have ha' : a' ≠ H.segments.root i := by
       simpa [a', H, toHierarchicalSegmentForest] using ha
     have hmem := hinteriorTarget i a'

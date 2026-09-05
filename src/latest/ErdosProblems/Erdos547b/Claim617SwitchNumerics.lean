@@ -9,7 +9,7 @@ The floor never increases the sparse-case count. Its lower bound uses
 `rho*k >= 10`; no divisibility of a real scale is imposed.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoClaim617SwitchNumerics
@@ -38,7 +38,7 @@ theorem parameter_margin {α : ℚ} (hα : 0 < α) (hα1 : α ≤ 1 / 4) :
   linarith only [hprod, hte3, he3, her, hr0]
 
 theorem sparse_count_lt {rho eta t : ℝ} {k r s v b : ℕ}
-    (hrho : 0 < rho) (heta : 0 ≤ eta) (ht : 0 ≤ t)
+    (hrho : 0 < rho) (_heta : 0 ≤ eta) (_ht : 0 ≤ t)
     (hk : 10 ≤ rho * k) (hr : (r : ℝ) ≤ 5 * rho * k)
     (hs : s ≤ k) (hv : (v : ℝ) ≤ (1 + 8 * eta) * k)
     (hb : (b : ℝ) ≤ 4 * t * k + 2)

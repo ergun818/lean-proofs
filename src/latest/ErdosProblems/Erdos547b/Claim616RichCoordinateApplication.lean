@@ -106,13 +106,15 @@ private abbrev richRootSlotFn
       (fun _ : Fin C.card ↦ clusterCap)
       (richAllowed0 G cluster epsilon density D C)
       (fun _ : RemainingMinEdge (R := regularityReducedGraph G cluster epsilon density) D C ↦ base1)
-      (fun _ : ReservedEdge (R := regularityReducedGraph G cluster epsilon density) D ↦ baseb) base0)
+      (fun _ : ReservedEdge (R := regularityReducedGraph G cluster epsilon density) D ↦ baseb)
+        base0)
     (orient : BranchIndex P → Fin 2 ≃ Fin 2) :=
   coordinateHierarchyRootSlot hT P optional S
     (fun _ : Fin C.card ↦ clusterCap)
     (richAllowed0 G cluster epsilon density D C)
     (fun _ : RemainingMinEdge (R := regularityReducedGraph G cluster epsilon density) D C ↦ base1)
-    (fun _ : ReservedEdge (R := regularityReducedGraph G cluster epsilon density) D ↦ baseb) base0 Aalloc
+    (fun _ : ReservedEdge (R := regularityReducedGraph G cluster epsilon density) D ↦ baseb) base0
+      Aalloc
     (fun e : RemainingMinEdge (R := regularityReducedGraph G cluster epsilon density) D C ↦ e.1)
     (fun e : ReservedEdge (R := regularityReducedGraph G cluster epsilon density) D ↦ e.1) orient
 
@@ -125,14 +127,17 @@ private abbrev richInteriorSlotFn
       (fun _ : Fin C.card ↦ clusterCap)
       (richAllowed0 G cluster epsilon density D C)
       (fun _ : RemainingMinEdge (R := regularityReducedGraph G cluster epsilon density) D C ↦ base1)
-      (fun _ : ReservedEdge (R := regularityReducedGraph G cluster epsilon density) D ↦ baseb) base0)
+      (fun _ : ReservedEdge (R := regularityReducedGraph G cluster epsilon density) D ↦ baseb)
+        base0)
     (orient : BranchIndex P → Fin 2 ≃ Fin 2) :=
   coordinateHierarchyInteriorSlot hT P optional S
     (fun _ : Fin C.card ↦ clusterCap)
     (richAllowed0 G cluster epsilon density D C)
     (fun _ : RemainingMinEdge (R := regularityReducedGraph G cluster epsilon density) D C ↦ base1)
-    (fun _ : ReservedEdge (R := regularityReducedGraph G cluster epsilon density) D ↦ baseb) base0 Aalloc
-    (moutOriginalEdge (R := regularityReducedGraph G cluster epsilon density) D) (fun e : RemainingMinEdge (R := regularityReducedGraph G cluster epsilon density) D C ↦ e.1)
+    (fun _ : ReservedEdge (R := regularityReducedGraph G cluster epsilon density) D ↦ baseb) base0
+      Aalloc
+    (moutOriginalEdge (R := regularityReducedGraph G cluster epsilon density) D) (fun e :
+      RemainingMinEdge (R := regularityReducedGraph G cluster epsilon density) D C ↦ e.1)
     (fun e : ReservedEdge (R := regularityReducedGraph G cluster epsilon density) D ↦ e.1) orient
 
 private abbrev richCoordinateCapacityFn
@@ -144,14 +149,17 @@ private abbrev richCoordinateCapacityFn
       (fun _ : Fin C.card ↦ clusterCap)
       (richAllowed0 G cluster epsilon density D C)
       (fun _ : RemainingMinEdge (R := regularityReducedGraph G cluster epsilon density) D C ↦ base1)
-      (fun _ : ReservedEdge (R := regularityReducedGraph G cluster epsilon density) D ↦ baseb) base0)
+      (fun _ : ReservedEdge (R := regularityReducedGraph G cluster epsilon density) D ↦ baseb)
+        base0)
     (orient : BranchIndex P → Fin 2 ≃ Fin 2) :=
   exactCoordinateCapacity hT P optional S
     (fun _ : Fin C.card ↦ clusterCap)
     (richAllowed0 G cluster epsilon density D C)
     (fun _ : RemainingMinEdge (R := regularityReducedGraph G cluster epsilon density) D C ↦ base1)
-    (fun _ : ReservedEdge (R := regularityReducedGraph G cluster epsilon density) D ↦ baseb) base0 Aalloc
-    (moutOriginalEdge (R := regularityReducedGraph G cluster epsilon density) D) (fun e : RemainingMinEdge (R := regularityReducedGraph G cluster epsilon density) D C ↦ e.1)
+    (fun _ : ReservedEdge (R := regularityReducedGraph G cluster epsilon density) D ↦ baseb) base0
+      Aalloc
+    (moutOriginalEdge (R := regularityReducedGraph G cluster epsilon density) D) (fun e :
+      RemainingMinEdge (R := regularityReducedGraph G cluster epsilon density) D C ↦ e.1)
     (fun e : ReservedEdge (R := regularityReducedGraph G cluster epsilon density) D ↦ e.1) orient
 
 /-- The six regular-pair obligations used by the coordinate hierarchy,
@@ -210,7 +218,8 @@ structure CoordinateCapacityFacts
     rho * #(rootWhole (interiorGroup i a)) ≤
       #(rootRaw (interiorGroup i a))
   removal : ∀ i a,
-    Erdos547b.ZhaoLemma59HierarchicalTargetUnifiedApplication.HierarchicalSegmentForest.coordinateRemovalBudget
+    open Erdos547b.ZhaoLemma59HierarchicalTargetUnifiedApplication.HierarchicalSegmentForest in
+    coordinateRemovalBudget
       F rho rootGroup rootWhole (fun i a ↦ rootWhole (interiorGroup i a)) i a ≤
         removalBudget
   rootCapacity : ∀ i,
@@ -242,7 +251,8 @@ private abbrev RichCoordinatePairFacts
       (fun _ : Fin C.card ↦ clusterCap)
       (richAllowed0 G cluster epsilon density D C)
       (fun _ : RemainingMinEdge (R := regularityReducedGraph G cluster epsilon density) D C ↦ base1)
-      (fun _ : ReservedEdge (R := regularityReducedGraph G cluster epsilon density) D ↦ baseb) base0)
+      (fun _ : ReservedEdge (R := regularityReducedGraph G cluster epsilon density) D ↦ baseb)
+        base0)
     (orient : BranchIndex P → Fin 2 ≃ Fin 2) :=
   CoordinatePairFacts (AllocationHierarchy hT P optional) G
     (epsilon : ℝ) (density : ℝ)
@@ -271,7 +281,8 @@ private abbrev RichCoordinateCapacityFacts
       (fun _ : Fin C.card ↦ clusterCap)
       (richAllowed0 G cluster epsilon density D C)
       (fun _ : RemainingMinEdge (R := regularityReducedGraph G cluster epsilon density) D C ↦ base1)
-      (fun _ : ReservedEdge (R := regularityReducedGraph G cluster epsilon density) D ↦ baseb) base0)
+      (fun _ : ReservedEdge (R := regularityReducedGraph G cluster epsilon density) D ↦ baseb)
+        base0)
     (orient : BranchIndex P → Fin 2 ≃ Fin 2)
     (rootReserve companionReserve : Finset B) (removalBudget : ℝ) :=
   CoordinateCapacityFacts (AllocationHierarchy hT P optional)
@@ -322,7 +333,8 @@ theorem isContained_of_richCoordinateHostFacts
       (fun _ : Fin C.card ↦ clusterCap)
       (richAllowed0 G cluster epsilon density D C)
       (fun _ : RemainingMinEdge (R := regularityReducedGraph G cluster epsilon density) D C ↦ base1)
-      (fun _ : ReservedEdge (R := regularityReducedGraph G cluster epsilon density) D ↦ baseb) base0)
+      (fun _ : ReservedEdge (R := regularityReducedGraph G cluster epsilon density) D ↦ baseb)
+        base0)
     (orient : BranchIndex P → Fin 2 ≃ Fin 2)
     (hsegmentSmall : ∀ i,
       (AllocationHierarchy hT P optional).segments.size i ≤ small)
@@ -338,12 +350,14 @@ theorem isContained_of_richCoordinateHostFacts
   let rootSlot : SegmentIndex hT P optional →
       ZhaoClaim616HierarchicalSourceLayout.RootSlot
         (Fin C.card) (MatchingEdge C67.M) :=
-    richRootSlotFn G cluster epsilon density D C hT P optional S clusterCap base0 base1 baseb Aalloc orient
+    richRootSlotFn G cluster epsilon density D C hT P optional S clusterCap base0 base1 baseb Aalloc
+      orient
   let interiorSlot : ∀ i : SegmentIndex hT P optional,
       Fin ((AllocationHierarchy hT P optional).segments.size i) →
         ZhaoClaim616HierarchicalSourceLayout.RootSlot
           (Fin C.card) (MatchingEdge C67.M) :=
-    richInteriorSlotFn G cluster epsilon density D C hT P optional S clusterCap base0 base1 baseb Aalloc orient
+    richInteriorSlotFn G cluster epsilon density D C hT P optional S clusterCap base0 base1 baseb
+      Aalloc orient
   have hrootRelevant : ∀ i, RelevantSlot (G := G) (cluster := cluster)
       (epsilon := epsilon) (density := density) (D := D) (C := C)
       (rootSlot i) := by
@@ -385,18 +399,24 @@ theorem isContained_of_richCoordinateHostFacts
     (fun _ : Fin C.card ↦ clusterCap)
     (richAllowed0 G cluster epsilon density D C)
     (fun _ : RemainingMinEdge (R := regularityReducedGraph G cluster epsilon density) D C ↦ base1)
-    (fun _ : ReservedEdge (R := regularityReducedGraph G cluster epsilon density) D ↦ baseb) base0 Aalloc
-    (moutOriginalEdge (R := regularityReducedGraph G cluster epsilon density) D) (fun e : RemainingMinEdge (R := regularityReducedGraph G cluster epsilon density) D C ↦ e.1)
+    (fun _ : ReservedEdge (R := regularityReducedGraph G cluster epsilon density) D ↦ baseb) base0
+      Aalloc
+    (moutOriginalEdge (R := regularityReducedGraph G cluster epsilon density) D) (fun e :
+      RemainingMinEdge (R := regularityReducedGraph G cluster epsilon density) D C ↦ e.1)
     (fun e : ReservedEdge (R := regularityReducedGraph G cluster epsilon density) D ↦ e.1) orient G
     (epsilon : ℝ) (density : ℝ)
-    (richWhole (G := G) (cluster := cluster) (epsilon := epsilon) (density := density) (Aroot := Aroot) (Broot := Broot) (C := C) (C67 := C67)
+    (richWhole (G := G) (cluster := cluster) (epsilon := epsilon) (density := density) (Aroot :=
+      Aroot) (Broot := Broot) (C := C) (C67 := C67)
       (Sum.inl (componentReservoirSide P ⟨0, P.numParts_pos⟩)))
-    (richRaw (G := G) (cluster := cluster) (epsilon := epsilon) (density := density) (C := C) (C67 := C67) H.rootReserve H.companionReserve
+    (richRaw (G := G) (cluster := cluster) (epsilon := epsilon) (density := density) (C := C) (C67
+      := C67) H.rootReserve H.companionReserve
       (Sum.inl (componentReservoirSide P ⟨0, P.numParts_pos⟩) :
         ZhaoClaim616HierarchicalSourceLayout.RootSlot
           (Fin C.card) (MatchingEdge C67.M)))
-    (richWhole (G := G) (cluster := cluster) (epsilon := epsilon) (density := density) (Aroot := Aroot) (Broot := Broot) (C := C) (C67 := C67))
-    (richRaw (G := G) (cluster := cluster) (epsilon := epsilon) (density := density) (C := C) (C67 := C67) H.rootReserve H.companionReserve)
+    (richWhole (G := G) (cluster := cluster) (epsilon := epsilon) (density := density) (Aroot :=
+      Aroot) (Broot := Broot) (C := C) (C67 := C67))
+    (richRaw (G := G) (cluster := cluster) (epsilon := epsilon) (density := density) (C := C) (C67
+      := C67) H.rootReserve H.companionReserve)
     removalBudget hsegmentSmall
   · exact hrawSubset
       (Sum.inl (componentReservoirSide P ⟨0, P.numParts_pos⟩) :

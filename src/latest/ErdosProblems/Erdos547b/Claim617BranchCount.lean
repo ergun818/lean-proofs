@@ -115,7 +115,7 @@ theorem branchRoot_degree_eq_one_iff {r b : ℕ}
           subst i
           exact ⟨rfl, trivial⟩
       · simp only [OrderedBranchForest.graph_adj_branch_branch,
-          Finset.mem_singleton, Sum.inr.injEq, reduceCtorEq, iff_false]
+          Finset.mem_singleton, reduceCtorEq, iff_false]
         rintro ⟨hidx, hadj⟩
         rcases z with ⟨q, a⟩
         dsimp only at hidx
@@ -418,7 +418,7 @@ noncomputable def halfBranchEquivMajorPart
     rfl
   · intro x
     have hxParity : x.1 ∈ parityPart P (majorParity P) := by
-      simpa using x.2
+      simp
     have hxNonroot : x.1 ∈ partitionNonroots P :=
       (Finset.mem_filter.mp hxParity).1
     let z := (partitionBranchEquivNonroots P).symm ⟨x.1, hxNonroot⟩
@@ -777,6 +777,7 @@ theorem pathCount_le_of_branch_masses
 end Erdos547b.ZhaoClaim617BranchCount
 
 #print axioms Erdos547b.ZhaoClaim617BranchCount.nontrivialHalfMass_eq_two_mul_add_large
-#print axioms Erdos547b.ZhaoClaim617BranchCount.majorPart_sdiff_levelOneLeaves_card_eq_nontrivialHalfMass
+open Erdos547b.ZhaoClaim617BranchCount in
+#print axioms majorPart_sdiff_levelOneLeaves_card_eq_nontrivialHalfMass
 #print axioms Erdos547b.ZhaoClaim617BranchCount.claim6_8_nontrivialHalfMass_lower
 #print axioms Erdos547b.ZhaoClaim617BranchCount.pathCount_le_of_branch_masses

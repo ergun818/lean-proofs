@@ -9,7 +9,7 @@ One further set pays for the opposite raw root reservoir. These exclusions
 and the already used roots fit the proved cut-parent reconnection margin.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceRootExclusions
@@ -188,7 +188,8 @@ theorem exists_root_with_fixed_edge_after_parent
     exists_root_partOne_access_after_parent W Q hα hα1 hhost horder S parentEdge c s v hv hadj
       (forbidden W Q S s t fixed used)
       (card_forbidden_le W Q hα hα1 S s t fixed hfixed used hused) remaining hremaining
-  have hnotUsed : z ∉ used := fun hu => hzFresh (Finset.mem_union_left _ (Finset.mem_union_left _ hu))
+  have hnotUsed : z ∉ used := fun hu => hzFresh (Finset.mem_union_left _ (Finset.mem_union_left _
+    hu))
   have hnotEdge : z ∉ badForEdge W Q S (rootCluster W Q s) fixed :=
     fun he => hzFresh (Finset.mem_union_left _ (Finset.mem_union_right _ he))
   have hnotReservoir : z ∉ badToward W Q (Sum.inl (rootCluster W Q s)) t :=

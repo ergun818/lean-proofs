@@ -13,7 +13,6 @@ nondecreasing owner sequence, without modifying any branch. Every chunk
 of the saturated packing inherits this order from the flattening identity.
 -/
 
-open scoped Classical
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceSortedBranchOrder

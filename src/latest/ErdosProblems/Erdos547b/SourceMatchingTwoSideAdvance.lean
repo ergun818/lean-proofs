@@ -11,7 +11,7 @@ this owner without any eligibility premise. Both sides share the same
 updated root map and preserve every earlier original-index copy.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMatchingTwoSideAdvance
@@ -47,7 +47,8 @@ theorem exists_twoSideFamilyAdvance
     (family : Fin 2 → Fin k → List (Fin b))
     (hside : ∀ s j i, i ∈ family s j → rootSide (owner i) = s)
     (rootImage : Fin r → Fin hostN) (n : Fin r)
-    (A : ∀ s j, FamilyState W Q S P (rootCluster W Q s) F owner (all s j) (family s j) rootImage n.val)
+    (A : ∀ s j, FamilyState W Q S P (rootCluster W Q s) F owner (all s j) (family s j) rootImage
+      n.val)
     (hsmall : ∀ i, F.size i ≤ freshBranchBound α W.clusterSize)
     (haway : ∀ s j, all s j ⊆ edgesAwayFromDistinguished P
       (padFinset (large W)) (Sum.inl Q.A) (Sum.inl Q.B))
@@ -56,7 +57,8 @@ theorem exists_twoSideFamilyAdvance
       (∑ e ∈ all s j, capacity W Q P S (rootCluster W Q s) e) -
         (freshBranchBound α W.clusterSize : ℝ) * (all s j).card -
         4 * (rootTypicality α : ℝ) * W.clusterSize * globalCount)
-    (used : Finset (Fin hostN)) (hused : (used.card : ℝ) ≤ ((epsilon α : ℝ) + 2 * (rootTypicality α : ℝ)) * W.clusterSize)
+    (used : Finset (Fin hostN)) (hused : (used.card : ℝ) ≤ ((epsilon α : ℝ) + 2 * (rootTypicality α
+      : ℝ)) * W.clusterSize)
     (parent : Option (Fin hostN))
     (hparent : ∀ v, parent = some v →
       ((densityCutoff α : ℝ) - (epsilon α : ℝ)) * (sourceQuota W : ℝ) ≤
@@ -67,9 +69,11 @@ theorem exists_twoSideFamilyAdvance
         (#((reservoir W Q (otherSide (rootSide n))).filter ((embeddingHost W).Adj z)) : ℝ)) ∧
       ∃ D : ∀ s j, FamilyState W Q S P (rootCluster W Q s) F owner (all s j) (family s j)
           (Function.update rootImage n z) (n.val + 1),
-        ∀ s j i hi, ((D s j).currentPlacement W Q S P (rootCluster W Q s) F owner).forestCopy.componentCopy i
+        ∀ s j i hi, ((D s j).currentPlacement W Q S P (rootCluster W Q s) F
+          owner).forestCopy.componentCopy i
             (processedFamily_mono owner (Nat.le_succ n.val) (family s j) hi) =
-          ((A s j).currentPlacement W Q S P (rootCluster W Q s) F owner).forestCopy.componentCopy i hi := by
+          ((A s j).currentPlacement W Q S P (rootCluster W Q s) F owner).forestCopy.componentCopy i
+            hi := by
   obtain ⟨z, hz, hfresh, hAdj, hdegree, Dcurrent, hcurrent⟩ :=
     exists_synchronizedFamilyAdvance W Q S P (rootSide n) (otherSide (rootSide n)) F owner
       hα hα1 hhost horder hk (all (rootSide n)) (family (rootSide n)) rootImage n
@@ -78,9 +82,11 @@ theorem exists_twoSideFamilyAdvance
   have hnext (s : Fin 2) :
       ∃ D : ∀ j, FamilyState W Q S P (rootCluster W Q s) F owner (all s j) (family s j)
           (Function.update rootImage n z) (n.val + 1),
-        ∀ j i hi, ((D j).currentPlacement W Q S P (rootCluster W Q s) F owner).forestCopy.componentCopy i
+        ∀ j i hi, ((D j).currentPlacement W Q S P (rootCluster W Q s) F
+          owner).forestCopy.componentCopy i
             (processedFamily_mono owner (Nat.le_succ n.val) (family s j) hi) =
-          ((A s j).currentPlacement W Q S P (rootCluster W Q s) F owner).forestCopy.componentCopy i hi := by
+          ((A s j).currentPlacement W Q S P (rootCluster W Q s) F owner).forestCopy.componentCopy i
+            hi := by
     by_cases hs : s = rootSide n
     · subst s
       exact ⟨Dcurrent, hcurrent⟩
@@ -89,7 +95,8 @@ theorem exists_twoSideFamilyAdvance
         have h := hside s j i hi
         rw [ho] at h
         exact hs h.symm
-      have hstep (j : Fin k) := exists_familyAdvance_noAllocation W Q S P (rootCluster W Q s) F owner
+      have hstep (j : Fin k) := exists_familyAdvance_noAllocation W Q S P (rootCluster W Q s) F
+        owner
         rootImage n (A s j) z
         (by
           intro i hi

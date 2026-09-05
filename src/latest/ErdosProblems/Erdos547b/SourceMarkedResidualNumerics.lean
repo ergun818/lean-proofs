@@ -8,7 +8,7 @@ The integral scale yields saving at least rho*q/80. The near-full defect,
 two source margins, first-crossing overshoot and raw discrepancy all fit.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMarkedResidualNumerics
@@ -43,7 +43,8 @@ theorem crossing_saving_lower (hα : 0 < α) (hα1 : α ≤ 1 / 4)
   have hs := (scale_bounds W Q S O hα hα1 hhost horder).2.1
   have hv := (paddedVolume_bounds W hα hα1 hhost horder).1
   have hρ : (0 : ℝ) ≤ rho α := by exact_mod_cast (parameter_pos hα).2.1.le
-  have hsN := mul_le_mul_of_nonneg_right hs (Nat.cast_nonneg W.clusterSize : (0 : ℝ) ≤ W.clusterSize)
+  have hsN := mul_le_mul_of_nonneg_right hs (Nat.cast_nonneg W.clusterSize : (0 : ℝ) ≤
+    W.clusterSize)
   have hvρ := mul_le_mul_of_nonneg_left hv hρ
   nlinarith only [hsN, hvρ]
 

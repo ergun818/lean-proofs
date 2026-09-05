@@ -3,7 +3,7 @@ import ErdosProblems.Erdos547b.SourceSparseCut
 
 /-! # The omitted-tree non-EC1 host has an actual sparse cut after vertex pruning -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 namespace Erdos547b.ZhaoSourceEC2FromHost
 

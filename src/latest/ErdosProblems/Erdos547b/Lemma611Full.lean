@@ -47,29 +47,36 @@ def orientedEndpoint (M : R.Subgraph) (L : Finset K)
   if e.1.out.1 ∈ L then rawEndpoint M e c
   else if c = 0 then e.1.out.2 else e.1.out.1
 
+omit [DecidableEq K] [DecidableRel R.Adj] [Fintype K] in
 @[simp] theorem rawEndpoint_zero (M : R.Subgraph) (e : MatchingEdge M) :
     rawEndpoint M e 0 = e.1.out.1 := by
   simp [rawEndpoint]
 
+omit [DecidableEq K] [DecidableRel R.Adj] [Fintype K] in
 @[simp] theorem rawEndpoint_one (M : R.Subgraph) (e : MatchingEdge M) :
     rawEndpoint M e 1 = e.1.out.2 := by
   simp [rawEndpoint]
 
+omit [DecidableRel R.Adj] [Fintype K] in
 theorem orientedEndpoint_pair_eq (M : R.Subgraph) (L : Finset K)
     (e : MatchingEdge M) :
     s(orientedEndpoint M L e 0, orientedEndpoint M L e 1) = e.1 := by
   classical
   by_cases h : e.1.out.1 ∈ L
   · simp [orientedEndpoint, h, rawEndpoint, Sym2.mk, e.1.out_eq]
-  · simp [orientedEndpoint, h, rawEndpoint, Sym2.mk, e.1.out_eq,
+  · simp [orientedEndpoint, h, Sym2.mk, e.1.out_eq,
       Sym2.eq_swap]
 
-theorem orientedEndpoint_adj (M : R.Subgraph) (L : Finset K)
+omit [DecidableRel R.Adj] [Fintype K] in
+theorem orientedEndpoint_adj [Finite K] (M : R.Subgraph) (L : Finset K)
     (e : MatchingEdge M) :
     M.Adj (orientedEndpoint M L e 0) (orientedEndpoint M L e 1) := by
+  classical
+  let := Fintype.ofFinite K
   rw [← Subgraph.mem_edgeSet, orientedEndpoint_pair_eq]
   exact e.2
 
+omit [DecidableRel R.Adj] [Fintype K] in
 theorem orientedEndpoint_zero_mem (M : R.Subgraph) (L : Finset K)
     (hlarge : ∀ e : MatchingEdge M,
       e.1.out.1 ∈ L ∨ e.1.out.2 ∈ L) (e : MatchingEdge M) :
@@ -78,19 +85,25 @@ theorem orientedEndpoint_zero_mem (M : R.Subgraph) (L : Finset K)
   · simp [orientedEndpoint, h, rawEndpoint]
   · by_cases h0 : e.1.out.1 ∈ L
     · simp [orientedEndpoint, h0, rawEndpoint]
-    · simp [orientedEndpoint, h0, rawEndpoint, h]
+    · simp [orientedEndpoint, h0, h]
 
-theorem orientedEndpoint_ne (M : R.Subgraph) (L : Finset K)
+omit [DecidableRel R.Adj] [Fintype K] in
+theorem orientedEndpoint_ne [Finite K] (M : R.Subgraph) (L : Finset K)
     (e : MatchingEdge M) :
     orientedEndpoint M L e 0 ≠ orientedEndpoint M L e 1 :=
+  open Classical in
+  let := Fintype.ofFinite K
   (orientedEndpoint_adj M L e).ne
 
+omit [DecidableRel R.Adj] [Fintype K] in
 /-- The two endpoint occurrences of a genuine matching are all distinct.
 This is the exact endpoint-injectivity hypothesis used by Claim 6.18. -/
-theorem orientedEndpoint_injective
+theorem orientedEndpoint_injective [Finite K]
     (M : R.Subgraph) (hM : M.IsMatching) (L : Finset K) :
     Function.Injective
       (fun ec : MatchingEdge M × Fin 2 => orientedEndpoint M L ec.1 ec.2) := by
+  classical
+  let := Fintype.ofFinite K
   rintro ⟨e, c⟩ ⟨f, d⟩ hcd
   change orientedEndpoint M L e c = orientedEndpoint M L f d at hcd
   have hef : e = f := by
@@ -172,6 +185,7 @@ def edgeFinsetSubgraph (M : R.Subgraph) (L : Finset K)
     · exact ⟨e, he, Or.inr ⟨hxy.2, hxy.1⟩⟩
     · exact ⟨e, he, Or.inl ⟨hxy.2, hxy.1⟩⟩⟩
 
+omit [DecidableRel R.Adj] in
 @[simp] theorem mem_edgeFinsetSubgraph_verts
     (M : R.Subgraph) (L : Finset K) (S : Finset (MatchingEdge M)) (x : K) :
     x ∈ (edgeFinsetSubgraph M L S).verts ↔
@@ -179,6 +193,7 @@ def edgeFinsetSubgraph (M : R.Subgraph) (L : Finset K)
         x = orientedEndpoint M L e 1 := by
   rfl
 
+omit [DecidableRel R.Adj] in
 theorem edgeFinsetSubgraph_adj
     (M : R.Subgraph) (L : Finset K) (S : Finset (MatchingEdge M))
     {x y : K} :
@@ -187,6 +202,7 @@ theorem edgeFinsetSubgraph_adj
       (x = orientedEndpoint M L e 1 ∧ y = orientedEndpoint M L e 0) := by
   rfl
 
+omit [DecidableRel R.Adj] in
 theorem edgeFinsetSubgraph_isMatching
     (M : R.Subgraph) (hM : M.IsMatching) (L : Finset K)
     (S : Finset (MatchingEdge M)) :
@@ -214,6 +230,7 @@ theorem edgeFinsetSubgraph_isMatching
           (hx1 ▸ (orientedEndpoint_adj M L e).symm)
           (hxy1.1 ▸ hxy1.2 ▸ (orientedEndpoint_adj M L f).symm)).symm
 
+omit [DecidableRel R.Adj] in
 theorem matchingSupport_edgeFinsetSubgraph
     (M : R.Subgraph) (L : Finset K) (S : Finset (MatchingEdge M)) :
     matchingSupport (edgeFinsetSubgraph M L S) =
@@ -223,6 +240,7 @@ theorem matchingSupport_edgeFinsetSubgraph
   ext x
   simp [mem_matchingSupport, mem_edgeFinsetSubgraph_verts]
 
+omit [DecidableRel R.Adj] in
 theorem edgeFinsetSubgraph_support_card
     (M : R.Subgraph) (hM : M.IsMatching) (L : Finset K)
     (S : Finset (MatchingEdge M)) :
@@ -283,11 +301,13 @@ def allMatchingEdges (M : R.Subgraph) : Finset (MatchingEdge M) := by
   letI : Fintype (MatchingEdge M) := Fintype.ofFinite (MatchingEdge M)
   exact Finset.univ
 
+omit [DecidableEq K] [DecidableRel R.Adj] in
 @[simp] theorem mem_allMatchingEdges (M : R.Subgraph) (e : MatchingEdge M) :
     e ∈ allMatchingEdges M := by
   classical
   simp [allMatchingEdges]
 
+omit [DecidableRel R.Adj] in
 theorem support_partition
     (M : R.Subgraph) (hM : M.IsMatching) (L : Finset K)
     (S : Finset (MatchingEdge M)) :
@@ -366,12 +386,15 @@ def sourceS1 (Min : R.Subgraph) (L : Finset K) : Finset K :=
 def sourceL1 (Min : R.Subgraph) (L : Finset K) : Finset K :=
   matchingSupport Min \ sourceS1 Min L
 
+omit [DecidableEq K] [DecidableRel R.Adj] in
 theorem sourceS1_subset_support (Min : R.Subgraph) (L : Finset K) :
     sourceS1 Min L ⊆ matchingSupport Min :=
+  open Classical in
   Erdos547b.ZhaoClaim617.matchingPartnerSet_subset_support Min L
 
+omit [DecidableRel R.Adj] in
 theorem sourceL1_subset_large
-    (M : R.Subgraph) (hM : M.IsMatching) (L : Finset K)
+    (M : R.Subgraph) (_hM : M.IsMatching) (L : Finset K)
     (hlarge : ∀ e : MatchingEdge M,
       e.1.out.1 ∈ L ∨ e.1.out.2 ∈ L)
     (S : Finset (MatchingEdge M)) :
@@ -391,6 +414,7 @@ theorem sourceL1_subset_large
       orientedEndpoint_zero_mem M L hlarge e, ?_⟩
     exact ⟨e, he, Or.inl ⟨rfl, hx1⟩⟩
 
+omit [DecidableRel R.Adj] in
 theorem sourceL1_subset_large_inter
     (M : R.Subgraph) (hM : M.IsMatching) (L O : Finset K)
     (hlarge : ∀ e : MatchingEdge M,
@@ -398,6 +422,7 @@ theorem sourceL1_subset_large_inter
     (S : Finset (MatchingEdge M))
     (hO : matchingSupport (edgeFinsetSubgraph M L S) ⊆ O) :
     sourceL1 (edgeFinsetSubgraph M L S) L ⊆ L ∩ O := by
+  classical
   intro x hx
   exact Finset.mem_inter.mpr ⟨sourceL1_subset_large M hM L hlarge S hx,
     hO (Finset.mem_sdiff.mp hx).1⟩
@@ -413,6 +438,7 @@ def sourceEdgeOf (M : R.Subgraph) (L : Finset K)
   · exact Classical.choose h
   · exact default
 
+omit [DecidableRel R.Adj] in
 theorem sourceEdgeOf_spec
     (M : R.Subgraph) (hM : M.IsMatching) (L : Finset K)
     (hlarge : ∀ e : MatchingEdge M,
@@ -674,6 +700,7 @@ def outsideEndpoint (M : R.Subgraph) (L O : Finset K)
     (e : MatchingEdge M) : K :=
   orientedEndpoint M L e (outsideSide M L O e)
 
+omit [DecidableRel R.Adj] in
 theorem sourceCleanEdges_subset_all
     (M : R.Subgraph) (L O : Finset K) (density : K → K → ℝ)
     (A : K) (eta : ℝ) (Mb : Finset (MatchingEdge M)) :
@@ -683,6 +710,7 @@ theorem sourceCleanEdges_subset_all
     Finset.mem_sdiff] at he
   exact he.1.1.1.1.1
 
+omit [DecidableRel R.Adj] in
 theorem sourceCleanEdges_disjoint_reserved
     (M : R.Subgraph) (L O : Finset K) (density : K → K → ℝ)
     (A : K) (eta : ℝ) (Mb : Finset (MatchingEdge M)) :
@@ -693,6 +721,7 @@ theorem sourceCleanEdges_disjoint_reserved
     Finset.mem_sdiff] at he
   exact he.1.2 hMb
 
+omit [DecidableRel R.Adj] in
 /-- Every edge surviving the literal filters has the endpoint estimates in
 Lemma 6.11(i). -/
 theorem sourceCleanEdges_density
@@ -786,7 +815,7 @@ theorem sourceOutsideEdges_card_le_one
         intro h1
         exact hbad ⟨h0, h1⟩
       simpa [outsideEndpoint, outsideSide, h0] using h1
-    · simpa [outsideEndpoint, outsideSide, h0] using h0
+    · simp [outsideEndpoint, outsideSide, h0]
   have hmap : Bad.image (outsideEndpoint C67.M L C67.O) ⊆ Outside := by
     intro x hx
     obtain ⟨e, heBad, rfl⟩ := Finset.mem_image.mp hx
@@ -815,7 +844,7 @@ theorem sourceOutsideEdges_card_le_one
           matchingDoubleNeighborSet R C67.M A \ (C67.O : Set K) from
             ⟨hdouble1, hout⟩)
     · have hout : orientedEndpoint C67.M L e 0 ∉ C67.O := by
-        simpa [outsideEndpoint, outsideSide, h0] using houtside e heBad
+        simp [h0]
       simpa [outsideEndpoint, outsideSide, h0] using
         (show orientedEndpoint C67.M L e 0 ∈
           matchingDoubleNeighborSet R C67.M A \ (C67.O : Set K) from
@@ -840,6 +869,7 @@ def sourceDegree (M : R.Subgraph) (L : Finset K)
     (S : Finset (MatchingEdge M)) : ℝ :=
   clusterMatchingDegree S (orientedEndpoint M L) density N C
 
+omit [DecidableRel R.Adj] [Fintype K] in
 theorem sourceDegree_eq_sum (M : R.Subgraph) (L : Finset K)
     (density : K → K → ℝ) (N : ℝ) (C : K)
     (S : Finset (MatchingEdge M)) :
@@ -860,7 +890,7 @@ noncomputable def matchingDecomposition_of_source_filters
     (cap lowerV1 upperV1 upperV2 mbBound : ℕ)
     (MbEdges : Finset (MatchingEdge C67.M))
     (hN : 0 < N) (heta : 0 < eta) (htarget : 0 ≤ targetA)
-    (hnonneg : ∀ e : MatchingEdge C67.M,
+    (_hnonneg : ∀ e : MatchingEdge C67.M,
       0 ≤ N * (density A (orientedEndpoint C67.M L e 0) +
         density A (orientedEndpoint C67.M L e 1)))
     (hdeletionBudget :
@@ -1109,25 +1139,26 @@ theorem exists_matchingDecomposition_of_claim67
 variable {TreeVertex : Type v} [Fintype TreeVertex] [DecidableEq TreeVertex]
 variable {HostVertex : Type w} [Fintype HostVertex] [DecidableEq HostVertex]
 
+omit [DecidableEq HostVertex] [Fintype HostVertex] in
 /-- Under actual noncontainment, both exceptional families used in the
 source construction are below the `eta*k` threshold.  This is the direct
 contrapositive of the copy-valued Lemma 6.15. -/
 theorem exceptional_families_lt_of_not_contained
     {globalRoot : TreeVertex} {small : ℕ}
     (T : SimpleGraph TreeVertex) [DecidableRel T.Adj]
-    (P : Erdos547b.TreePartition.ZhaoForestPartition T globalRoot small)
-    (G : SimpleGraph HostVertex) [DecidableRel G.Adj]
+    (_P : Erdos547b.TreePartition.ZhaoForestPartition T globalRoot small)
+    (G : SimpleGraph HostVertex)
     (C67 : Claim67Certificate R L miss)
-    (A B : K) (hAB : R.Adj A B)
+    (A B : K) (_hAB : R.Adj A B)
     (density : K → K → ℝ) (eta d n N k : ℝ)
-    (hendpoints : ∀ e ∈ allMatchingEdges C67.M, ∀ c,
+    (_hendpoints : ∀ e ∈ allMatchingEdges C67.M, ∀ c,
       orientedEndpoint C67.M L e c ≠ A ∧
       orientedEndpoint C67.M L e c ≠ B)
-    (hdegreeA : (1 - 10 * Real.sqrt d) * n ≤
+    (_hdegreeA : (1 - 10 * Real.sqrt d) * n ≤
       sourceDegree C67.M L density N A (allMatchingEdges C67.M))
-    (hdegreeB : (1 - 10 * Real.sqrt d) * n ≤
+    (_hdegreeB : (1 - 10 * Real.sqrt d) * n ≤
       sourceDegree C67.M L density N B (allMatchingEdges C67.M))
-    (hthreshold : 0 < eta * k)
+    (_hthreshold : 0 < eta * k)
     (hforce :
       eta * k ≤ ((unbalancedEdges (allMatchingEdges C67.M)
           (fun e c => density A
@@ -1143,6 +1174,7 @@ theorem exceptional_families_lt_of_not_contained
     (((nonextremeEdges (allMatchingEdges C67.M)
       (fun e c => density A (orientedEndpoint C67.M L e c)) eta).card : ℕ) : ℝ) <
         eta * k := by
+  classical
   have hmatchingAdj : ∀ e ∈ allMatchingEdges C67.M,
       R.Adj (orientedEndpoint C67.M L e 0)
         (orientedEndpoint C67.M L e 1) := by
@@ -1171,19 +1203,20 @@ theorem exceptional_families_lt_of_not_contained
     apply hnot
     exact hforce (Or.inr hlarge)
 
+omit [DecidableEq HostVertex] [Fintype HostVertex] in
 /-- Full Lemma-6.13 balance with its embedding branch discharged by the
 actual cut-forest constructor.  `hexcessForcesExceptional` is only the
 finite numerical implication relating excess to the two explicit edge
 filters; no copy or continuation is assumed. -/
 theorem matching_balance_of_full_zhaoLemma615
-    {E : Type*} [DecidableEq E]
+    {E : Type*}
     {globalRoot : TreeVertex} {small : ℕ}
     (T : SimpleGraph TreeVertex) [DecidableRel T.Adj]
-    (P : Erdos547b.TreePartition.ZhaoForestPartition T globalRoot small)
-    (G : SimpleGraph HostVertex) [DecidableRel G.Adj]
+    (_P : Erdos547b.TreePartition.ZhaoForestPartition T globalRoot small)
+    (G : SimpleGraph HostVertex)
     (M : Finset E) (density : E → Fin 2 → ℝ) (eta q : ℝ)
     (a b : E → ℝ) (fb delta bound : ℝ)
-    (hq : 0 < q)
+    (_hq : 0 < q)
     (htotal : (∑ e ∈ M, a e) = ∑ e ∈ M, b e)
     (hfb : delta ≤ fb)
     (hexcessForcesExceptional :
@@ -1196,6 +1229,7 @@ theorem matching_balance_of_full_zhaoLemma615
     (hnot : ¬ T.IsContained G) :
     ∀ S : Finset E, S ⊆ M →
       |(∑ e ∈ S, a e) - (∑ e ∈ S, b e)| < bound := by
+  classical
   apply Erdos547b.ZhaoStability.zhaoLemma613_matchingDegreeBalance
     M a b fb delta bound (T.IsContained G) htotal hfb
   · intro _ hexcess
@@ -1205,12 +1239,13 @@ theorem matching_balance_of_full_zhaoLemma615
 /-- The elementary final step giving Lemma 6.11(v) from the concrete
 degree-balance theorem. -/
 theorem degreeB_lower_of_balance
-    {E : Type*} [DecidableEq E] (S : Finset E) (a b : E → ℝ)
+    {E : Type*} (S : Finset E) (a b : E → ℝ)
     (targetA targetB bound : ℝ)
     (hA : targetA < ∑ e ∈ S, a e)
     (hbalance : |(∑ e ∈ S, a e) - (∑ e ∈ S, b e)| < bound)
     (hnumeric : targetB + bound ≤ targetA) :
     targetB < ∑ e ∈ S, b e := by
+  classical
   have := (abs_lt.mp hbalance).2
   linarith
 

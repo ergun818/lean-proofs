@@ -43,13 +43,13 @@ def sideLoadPrefix {b : ℕ} (F : OrderedRootedForest b)
 
 @[simp] theorem prefixOrder_last {b : ℕ} (F : OrderedRootedForest b) :
     prefixOrder F (Fin.last b) = F.order := by
-  simp [prefixOrder, OrderedRootedForest.order, Fin.isLt]
+  simp [prefixOrder, OrderedRootedForest.order]
 
 @[simp] theorem sideLoadPrefix_last {b : ℕ}
     (F : OrderedRootedForest b) (orient : Fin b → Fin 2 ≃ Fin 2)
     (c : Fin 2) :
     sideLoadPrefix F orient (Fin.last b) c = sideLoad F orient c := by
-  simp [sideLoadPrefix, sideLoad, Fin.isLt]
+  simp [sideLoadPrefix, sideLoad]
 
 theorem prefixOrder_mono {b : ℕ} (F : OrderedRootedForest b)
     {s t : Fin (b + 1)} (hst : s.val ≤ t.val) :
@@ -238,7 +238,7 @@ def fixedSuffixLoad {b : ℕ} (F : OrderedRootedForest b)
 @[simp] theorem fixedSuffixLoad_last {b : ℕ}
     (F : OrderedRootedForest b) (highSide c : Fin 2) :
     fixedSuffixLoad F (Fin.last b) highSide c = 0 := by
-  simp [fixedSuffixLoad, Fin.isLt]
+  simp [fixedSuffixLoad]
 
 /-- Integral source thresholds.  `prefixThreshold` is obtained by the low
 density display; `finalThreshold` is obtained from the colour-class ratio
@@ -253,7 +253,7 @@ structure ThresholdMassBudget {b : ℕ}
 
 /-- Keep the prefix-balanced orientation before the cutoff and orient every
 later root toward the high side. -/
-def thresholdOrientation {b : ℕ} (F : OrderedRootedForest b)
+def thresholdOrientation {b : ℕ} (_F : OrderedRootedForest b)
     (base : Fin b → Fin 2 ≃ Fin 2) (cutoff : Fin (b + 1))
     (highSide : Fin 2) (i : Fin b) : Fin 2 ≃ Fin 2 :=
   if i.val < cutoff.val then base i else rootToSide highSide

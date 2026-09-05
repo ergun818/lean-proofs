@@ -8,7 +8,7 @@ Place each source family and its matching on its designated root side.
 The opposite-side slot is empty and carries no budget obligation.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceTaggedIdealTreeCopy

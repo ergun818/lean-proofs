@@ -12,7 +12,7 @@ The second allocation alternative uses the explicitly exchanged rich
 certificate and clean roots, without changing the original tree data.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceOrdinaryTwoFamilyTreeCopy
@@ -91,11 +91,13 @@ theorem exists_treeCopy_of_twoRowAllocationOrSwap
     (horder : orderThreshold α M ≤ q)
     (hallocation :
       (∃ E ⊆ awayEdges W Q,
-        (branchMass P (sideBranches P 1) : ℝ) + 3 * (gamma α : ℝ) * q ≤ ∑ e ∈ E, sideWeight W Q S 1 e ∧
+        (branchMass P (sideBranches P 1) : ℝ) + 3 * (gamma α : ℝ) * q ≤ ∑ e ∈ E, sideWeight W Q S 1
+          e ∧
         (branchMass P (sideBranches P 0) : ℝ) + 3 * (gamma α : ℝ) * q ≤
           ∑ e ∈ awayEdges W Q \ E, sideWeight W Q S 0 e) ∨
       (∃ E ⊆ awayEdges W Q,
-        (branchMass P (sideBranches P 1) : ℝ) + 3 * (gamma α : ℝ) * q ≤ ∑ e ∈ E, sideWeight W Q S 0 e ∧
+        (branchMass P (sideBranches P 1) : ℝ) + 3 * (gamma α : ℝ) * q ≤ ∑ e ∈ E, sideWeight W Q S 0
+          e ∧
         (branchMass P (sideBranches P 0) : ℝ) + 3 * (gamma α : ℝ) * q ≤
           ∑ e ∈ awayEdges W Q \ E, sideWeight W Q S 1 e))
     (hsmall : ∀ i, (branchForest P).branches.size i ≤ freshBranchBound α W.clusterSize)
@@ -126,4 +128,5 @@ theorem exists_treeCopy_of_twoRowAllocationOrSwap
 end Erdos547b.ZhaoSourceOrdinaryTwoFamilyTreeCopy
 
 #print axioms Erdos547b.ZhaoSourceOrdinaryTwoFamilyTreeCopy.exists_treeCopy_of_twoRowBudgets
-#print axioms Erdos547b.ZhaoSourceOrdinaryTwoFamilyTreeCopy.exists_treeCopy_of_twoRowAllocationOrSwap
+open Erdos547b.ZhaoSourceOrdinaryTwoFamilyTreeCopy in
+#print axioms exists_treeCopy_of_twoRowAllocationOrSwap

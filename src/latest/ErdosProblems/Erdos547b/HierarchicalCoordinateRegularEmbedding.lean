@@ -126,4 +126,5 @@ end HierarchicalSegmentForest
 
 end Erdos547b.ZhaoLemma59HierarchicalCoordinateRegular
 
-#print axioms Erdos547b.ZhaoLemma59HierarchicalCoordinateRegular.HierarchicalSegmentForest.exists_hierarchicalCoordinateRegularEmbedding
+open Erdos547b.ZhaoLemma59HierarchicalCoordinateRegular.HierarchicalSegmentForest in
+#print axioms exists_hierarchicalCoordinateRegularEmbedding

@@ -219,6 +219,7 @@ theorem branchCoordinate_eq_root_of_cutAdj_partitionRoot
 
 /-! ## Orientation of Zhao cut edges -/
 
+omit [DecidableEq V] [DecidableRel T.Adj] [Fintype V] in
 /-- In a rooted tree, every vertex strictly closer to the root than `u`
 remains reachable from the root after deleting an arbitrary edge incident
 with `u`.  The parent-chain proof avoids all path-list bookkeeping. -/
@@ -226,6 +227,7 @@ theorem reachable_deleteEdge_of_dist_lt
     (hT : T.IsTree) (root u v x : V)
     (hx : T.dist root x < T.dist root u) :
     (T.deleteEdges ({s(u, v)} : Set (Sym2 V))).Reachable root x := by
+  classical
   induction hd : T.dist root x using Nat.strong_induction_on generalizing x with
   | h d ih =>
       by_cases hxr : x = root
@@ -294,7 +296,7 @@ theorem cutEdge_ne_of_lt
 /-- Every vertex of an earlier component remains connected to the global
 root when only the later cut edge `j` is deleted. -/
 theorem reachable_earlierComponent_delete_cutEdge
-    (hT : T.IsTree) (P : ZhaoForestPartition T globalRoot small)
+    (_hT : T.IsTree) (P : ZhaoForestPartition T globalRoot small)
     (j : Fin P.numParts) (hj : j.val ≠ 0)
     (k : Fin P.numParts) (hkj : k.val < j.val)
     (x : V) (hx : x ∈ (P.components k).supp) :
@@ -313,9 +315,7 @@ theorem reachable_earlierComponent_delete_cutEdge
       simpa only [Set.mem_singleton_iff] using he
     apply hab'.2
     rw [heq]
-    change s(P.roots j, P.parent j hj) ∈
-      (↑(zhaoCutEdges P.roots P.parent) : Set (Sym2 V))
-    simp only [Set.mem_setOf_eq, Finset.mem_coe]
+    simp only [Finset.mem_coe]
     rw [zhaoCutEdges, Finset.mem_image]
     exact ⟨⟨j, hj⟩, Finset.mem_univ _, rfl⟩
   induction hkval : k.val using Nat.strong_induction_on generalizing k x with
@@ -363,7 +363,7 @@ theorem cutParent_dist_add_one
     have hj0 : j = ⟨0, P.numParts_pos⟩ := by
       apply roots_injective P
       simpa only [P.first_root] using hroot
-    exact hj (by simpa [hj0])
+    exact hj (by simp [hj0])
   rcases hT.dist_eq_dist_add_one_of_adj globalRoot (P.cut_adj j hj) with
       hgood | hbad
   · exact hgood.symm
@@ -521,6 +521,7 @@ abbrev SegmentIndex
   Fin #(marks (wholeBranchForest T hT globalRoot)
     (AllocationSpecial hT P optional))
 
+omit [DecidableEq V] [DecidableRel T.Adj] in
 theorem fromSingleCoordinate_injective
     (hT : T.IsTree) : Function.Injective
       (fromSingleCoordinate T hT globalRoot) := by
@@ -530,6 +531,7 @@ theorem fromSingleCoordinate_injective
   refine Sigma.ext rfl ?_
   exact heq_of_eq ((vertexEquiv (V := V)).injective hab)
 
+omit [DecidableEq V] [DecidableRel T.Adj] in
 @[simp] theorem toSingle_fromSingleCoordinate
     (hT : T.IsTree)
     (z : Σ i, Fin ((wholeOrderedTree T hT globalRoot).size i)) :
@@ -541,6 +543,7 @@ theorem fromSingleCoordinate_injective
   refine Sigma.ext rfl ?_
   exact heq_of_eq ((vertexEquiv (V := V)).symm_apply_apply a)
 
+omit [DecidableEq V] [DecidableRel T.Adj] in
 @[simp] theorem toWholeBranchForestVertex_wholeBranchLiteralVertex
     (hT : T.IsTree)
     (j : Fin (Fintype.card (ChildKey (wholeOrderedTree T hT globalRoot))))
@@ -549,10 +552,12 @@ theorem fromSingleCoordinate_injective
         (wholeBranchLiteralVertex hT j a) =
       Sum.inr (⟨j, a⟩ : BranchVertex
         (wholeBranchForest T hT globalRoot)) := by
+  classical
   unfold toWholeBranchForestVertex wholeBranchLiteralVertex
   rw [toSingle_fromSingleCoordinate]
   exact (branchGraphIso (wholeOrderedTree T hT globalRoot)).symm_apply_apply _
 
+omit [DecidableEq V] [DecidableRel T.Adj] in
 @[simp] theorem wholeBranchLiteralVertex_eq_wholeBranchOriginal
     (hT : T.IsTree)
     (j : Fin (Fintype.card (ChildKey (wholeOrderedTree T hT globalRoot))))
@@ -561,11 +566,13 @@ theorem fromSingleCoordinate_injective
       wholeBranchOriginalVertex T hT globalRoot (Sum.inr ⟨j, a⟩) := by
   rfl
 
+omit [DecidableEq V] [DecidableRel T.Adj] in
 theorem wholeBranchLiteralVertex_ne_globalRoot
     (hT : T.IsTree)
     (j : Fin (Fintype.card (ChildKey (wholeOrderedTree T hT globalRoot))))
     (a : Fin ((wholeBranchForest T hT globalRoot).branches.size j)) :
     wholeBranchLiteralVertex hT j a ≠ globalRoot := by
+  classical
   intro hroot
   have hcoord := congrArg
     (toWholeBranchForestVertex T hT globalRoot) hroot
@@ -589,11 +596,13 @@ theorem wholeBranchCoordinate_mem_marks_of_literal_marked
   exact ⟨wholeBranchLiteralVertex hT j a, hmarked,
     toWholeBranchForestVertex_wholeBranchLiteralVertex hT j a⟩
 
+omit [DecidableEq V] [DecidableRel T.Adj] in
 theorem wholeHierarchyOriginalVertex_injective
     (hT : T.IsTree)
     (special : Finset (WholeBranchVertex T hT globalRoot)) :
     Function.Injective
       (wholeHierarchyOriginalVertex T hT globalRoot special) := by
+  classical
   intro x y hxy
   apply flatten_injective (wholeBranchForest T hT globalRoot) special
   apply (branchGraphIso (wholeOrderedTree T hT globalRoot)).injective
@@ -663,6 +672,7 @@ def OptionalSpecialCoordinates
     Finset (WholeBranchVertex T hT globalRoot) :=
   wholeSpecialCoordinates T hT globalRoot optional
 
+omit [DecidableEq V] [DecidableRel T.Adj] in
 theorem card_OptionalSpecialCoordinates_le
     (hT : T.IsTree) (optional : Finset V) :
     #(OptionalSpecialCoordinates (globalRoot := globalRoot) hT optional) ≤ #optional := by
@@ -674,10 +684,12 @@ theorem card_OptionalSpecialCoordinates_le
         (optional.image (toWholeBranchForestVertex T hT globalRoot))
     _ ≤ #optional := Finset.card_image_le
 
+omit [DecidableEq V] [DecidableRel T.Adj] in
 theorem card_OptionalSpecialCoordinates_le_small
     (hT : T.IsTree) (optional : Finset V)
     (hoptional : #optional ≤ small) :
     #(OptionalSpecialCoordinates (globalRoot := globalRoot) hT optional) ≤ small :=
+  open Classical in
   (card_OptionalSpecialCoordinates_le (globalRoot := globalRoot) hT optional).trans hoptional
 
 theorem OptionalSpecialCoordinates_subset_AllocationSpecial
@@ -789,10 +801,12 @@ abbrev WholeBranchParentTransport (hT : T.IsTree) : Prop :=
       TreePartition.parent hT globalRoot
         (wholeBranchLiteralVertex_ne_globalRoot hT j a)
 
+omit [DecidableEq V] [DecidableRel T.Adj] in
 /-- The canonical one-root branch decomposition has the required literal
 parent transport; no source or host premise is needed. -/
 theorem canonicalWholeBranchParentTransport (hT : T.IsTree) :
     WholeBranchParentTransport (globalRoot := globalRoot) hT := by
+  classical
   intro j a haRoot
   rw [wholeBranchLiteralVertex_eq_wholeBranchOriginal]
   change wholeBranchOriginalVertex T hT globalRoot

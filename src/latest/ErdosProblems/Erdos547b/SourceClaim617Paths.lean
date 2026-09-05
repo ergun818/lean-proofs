@@ -4,7 +4,7 @@ import ErdosProblems.Erdos547b.Claim617CleanSelection
 
 /-! The literal postponed core supplied by the source host estimates. -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceClaim617Paths

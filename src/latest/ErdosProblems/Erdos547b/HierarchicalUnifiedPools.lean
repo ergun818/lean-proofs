@@ -94,6 +94,7 @@ def usedPool (i : Fin s) (e : Pool)
     usedPiece F G rootPool interiorPool rootCandidate interiorCandidate j.1 e
       (prior j.1 (Fin.mk_lt_mk.mp (Finset.mem_Iio.mp j.2)))
 
+omit [DecidableRel G.Adj] in
 theorem card_usedPiece_le_weight (j : Fin s) (e : Pool)
     (R : SegmentRealization F G rootCandidate interiorCandidate j) :
     #(usedPiece F G rootPool interiorPool rootCandidate interiorCandidate j e R) ≤
@@ -116,6 +117,7 @@ theorem card_usedPiece_le_weight (j : Fin s) (e : Pool)
         · exact Finset.card_image_le.trans_eq (by simp)
         · simp
 
+omit [DecidableRel G.Adj] in
 theorem card_usedPool_add_weight_le_load (i : Fin s) (e : Pool)
     (prior : ∀ j : Fin s, j.val < i.val →
       SegmentRealization F G rootCandidate interiorCandidate j) :
@@ -162,6 +164,7 @@ theorem card_usedPool_add_weight_le_load (i : Fin s) (e : Pool)
       rw [Finset.sum_erase_add _ _ (Finset.mem_univ i)]
       rfl
 
+omit [DecidableRel G.Adj] in
 theorem root_mem_usedPool (i j : Fin s) (hj : j.val < i.val)
     (e : Pool) (he : rootPool j = e)
     (prior : ∀ t : Fin s, t.val < i.val →
@@ -175,6 +178,7 @@ theorem root_mem_usedPool (i j : Fin s) (hj : j.val < i.val)
   rw [usedPiece, if_pos he]
   exact Finset.mem_union_left _ (Finset.mem_singleton_self _)
 
+omit [DecidableRel G.Adj] in
 theorem nonroot_mem_usedPool (i j : Fin s) (hj : j.val < i.val)
     (e : Pool) (he : interiorPool j = e)
     (b : Fin (F.segments.size j)) (hb : b ≠ F.segments.root j)
@@ -455,12 +459,14 @@ theorem unifiedOnlineSegment_parent_adj_segment (i j : Fin s)
 include rootPool interiorPool horiginalInj horiginalOutsideRoot
   horiginalOutsideInterior hrootDisjoint hinteriorDisjoint
   hrootInteriorDisjoint hattachOriginal hattachSegment hinternal in
+omit [Fintype B] in
 /-- Copy-valued arbitrary-special endpoint with unified physical occupancy.
 Every hierarchy parent edge is constructed online. -/
-theorem exists_hierarchicalCandidateEmbedding_unifiedPools :
+theorem exists_hierarchicalCandidateEmbedding_unifiedPools [Finite B] :
     Nonempty (HierarchicalCandidateEmbedding F G originalImage
       rootCandidate interiorCandidate) := by
   classical
+  let := Fintype.ofFinite B
   let D : ∀ i, SegmentRealization F G rootCandidate interiorCandidate i :=
     fun i ↦ unifiedOnlineSegment F G originalImage rootPool interiorPool
       rootCandidate interiorCandidate hrootDisjoint hinteriorDisjoint
@@ -540,4 +546,5 @@ end HierarchicalSegmentForest
 
 end Erdos547b.ZhaoLemma59HierarchicalUnified
 
-#print axioms Erdos547b.ZhaoLemma59HierarchicalUnified.HierarchicalSegmentForest.exists_hierarchicalCandidateEmbedding_unifiedPools
+open Erdos547b.ZhaoLemma59HierarchicalUnified.HierarchicalSegmentForest in
+#print axioms exists_hierarchicalCandidateEmbedding_unifiedPools

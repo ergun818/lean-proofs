@@ -9,7 +9,7 @@ later eligible current root gives a genuine branch-prefix extension in
 that same orientation. A branch root always uses a positive source entry.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePendingPairPlan

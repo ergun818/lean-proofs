@@ -12,7 +12,7 @@ separately from the actual source matching and is not inferred from this
 pair of componentwise successors alone.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMarkedMajorAdvance
@@ -48,7 +48,8 @@ theorem exists_majorAdvance
     (rootImage : Fin r → Fin hostN) (n : Fin r)
     (A : ∀ j, FamilyState W Q S (rootCluster W Q 0) F owner (kinds j)
       (allocation j) (family j) rootImage n.val)
-    (E : Placement W Q S O P F marks (ownerPrefix selected owner n.val) (fun i => rootImage (owner i)))
+    (E : Placement W Q S O P F marks (ownerPrefix selected owner n.val) (fun i => rootImage (owner
+      i)))
     (hbranch : ∀ j, ∀ i ∈ family j, (kinds j).BranchValid F i)
     (hedge : ∀ j, ∀ e ∈ allocation j, edgeValid W Q S (rootCluster W Q 0) (kinds j) e)
     (hsmall : ∀ i, F.size i ≤ freshBranchBound α W.clusterSize)
@@ -76,13 +77,16 @@ theorem exists_majorAdvance
           ((reservoir W Q t).filter ((embeddingHost W).Adj z)).card) ∧
       ∃ D : ∀ j, FamilyState W Q S (rootCluster W Q 0) F owner (kinds j) (allocation j) (family j)
           (Function.update rootImage n z) (n.val + 1),
-        (∀ j i hi, ((D j).currentPlacement W Q S (rootCluster W Q 0) F owner (kinds j)).forestCopy.componentCopy i
+        (∀ j i hi, ((D j).currentPlacement W Q S (rootCluster W Q 0) F owner (kinds
+          j)).forestCopy.componentCopy i
             (processedFamily_mono owner (Nat.le_succ n.val) (family j) hi) =
-          ((A j).currentPlacement W Q S (rootCluster W Q 0) F owner (kinds j)).forestCopy.componentCopy i hi) ∧
+          ((A j).currentPlacement W Q S (rootCluster W Q 0) F owner (kinds
+            j)).forestCopy.componentCopy i hi) ∧
         ∃ E' : Placement W Q S O P F marks (ownerPrefix selected owner (n.val + 1))
             (fun i => Function.update rootImage n z (owner i)),
           (∀ i (hi : i ∈ ownerPrefix selected owner n.val), E'.forestCopy.componentCopy i
-            (ownerPrefix_mono selected owner (Nat.le_succ n.val) hi) = E.forestCopy.componentCopy i hi) ∧
+            (ownerPrefix_mono selected owner (Nat.le_succ n.val) hi) = E.forestCopy.componentCopy i
+              hi) ∧
           (∀ i (hi : i ∈ ownerPrefix selected owner n.val), E'.group
             ⟨i, ownerPrefix_mono selected owner (Nat.le_succ n.val) hi⟩ = E.group ⟨i, hi⟩) := by
   obtain ⟨z, hz, hfresh, hAdj, hactive, hdegree, hgcount, hggood, bad, hbad⟩ :=
@@ -91,7 +95,8 @@ theorem exists_majorAdvance
       used hused parent hparent
   have hstep (j : Fin k) := exists_familyAdvance W Q S (rootCluster W Q 0) F owner (kinds j)
     hα hα1 hhost horder (rootCluster_cases W Q 0) (hkind j) (hbranch j) (hedge j) hsmall (haway j)
-    rootImage n (A j) globalCount (hbudget j) z (hactive j) (bad j) (hbad j).1 (hbad j).2.1 (hbad j).2.2
+    rootImage n (A j) globalCount (hbudget j) z (hactive j) (bad j) (hbad j).1 (hbad j).2.1 (hbad
+      j).2.2
   choose D hD using hstep
   obtain ⟨E', hcopies, hgroups⟩ := exists_ownerAdvance W Q S O P F marks selected owner
     hα hα1 hC rootImage n E ∅ (fun _ => Finset.disjoint_empty_left _)

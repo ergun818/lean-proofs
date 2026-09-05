@@ -10,7 +10,7 @@ placement of exactly the processed owners. The reserved-mass ledger is
 separate from the actual graph-copy domain.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceReservationFamilyState
@@ -122,7 +122,8 @@ variable (A : FamilyState W Q S C F owner all family rootImage n)
 theorem FamilyState.domain_eq :
     A.completed.toFinset ∪ activeSelected W Q S C F owner A.active =
       family.toFinset.filter (fun i => (owner i).val < n) := by
-  have hclosed : A.completed.toFinset.filter (fun i => (owner i).val < n) = A.completed.toFinset := by
+  have hclosed : A.completed.toFinset.filter (fun i => (owner i).val < n) = A.completed.toFinset :=
+    by
     apply Finset.filter_eq_self.mpr
     intro i hi
     exact A.completed_before i (List.mem_toFinset.mp hi)
@@ -130,8 +131,10 @@ theorem FamilyState.domain_eq :
     apply Finset.filter_eq_empty_iff.mpr
     intro i hi hlt
     exact (not_lt_of_ge (A.remaining_after i (List.mem_toFinset.mp hi))) hlt
-  have h := congrArg (fun l : List (Fin b) => l.toFinset.filter (fun i => (owner i).val < n)) A.flatten
-  simp only [List.toFinset_append, Finset.filter_union, hclosed, hremaining, Finset.union_empty] at h
+  have h := congrArg (fun l : List (Fin b) => l.toFinset.filter (fun i => (owner i).val < n))
+    A.flatten
+  simp only [List.toFinset_append, Finset.filter_union, hclosed, hremaining,
+    Finset.union_empty] at h
   rw [activeSelected_eq_filter]
   exact h
 
@@ -192,7 +195,8 @@ def castPlacement {s t : Finset (Fin b)} (hst : s = t)
   orient i := E.orient ⟨i.1, hst.symm ▸ i.2⟩
   forestCopy := {
     componentCopy := fun i hi => E.forestCopy.componentCopy i (hst.symm ▸ hi)
-    disjoint_ranges := fun i hi j hj hne => E.forestCopy.disjoint_ranges i (hst.symm ▸ hi) j (hst.symm ▸ hj) hne }
+    disjoint_ranges := fun i hi j hj hne => E.forestCopy.disjoint_ranges i (hst.symm ▸ hi) j
+      (hst.symm ▸ hj) hne }
   attach i hi := E.attach i (hst.symm ▸ hi)
   map_side i hi a := E.map_side i (hst.symm ▸ hi) a
 

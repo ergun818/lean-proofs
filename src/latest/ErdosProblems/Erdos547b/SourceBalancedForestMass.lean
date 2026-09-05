@@ -10,7 +10,7 @@ only over the canonical major half. Then choose a parity carrying at
 least half of the resulting balanced mass.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceBalancedForestMass
@@ -32,7 +32,8 @@ def unbalancedBranches (ratio : ℝ) : Finset (BranchIndex P) :=
   Finset.univ \ balancedBranches P ratio
 
 theorem mass_split (ratio : ℝ) :
-    branchMass P (balancedBranches P ratio) + branchMass P (unbalancedBranches P ratio) + P.numParts =
+    branchMass P (balancedBranches P ratio) + branchMass P (unbalancedBranches P ratio) + P.numParts
+      =
       Fintype.card U := by
   have hs := Finset.sum_sdiff (Finset.subset_univ (balancedBranches P ratio))
     (f := (branchForest P).branches.size)
@@ -92,7 +93,8 @@ theorem exists_balancedSide_mass_gt {q : ℕ} (ratio : ℝ)
     (hmass : ratio * q < (branchMass P (balancedBranches P ratio) : ℝ)) :
     ∃ s : Fin 2, ratio * q / 2 < (branchMass P (balancedSideBranches P s ratio) : ℝ) := by
   have hsplit : (branchMass P (balancedSideBranches P 0 ratio) : ℝ) +
-      (branchMass P (balancedSideBranches P 1 ratio) : ℝ) = branchMass P (balancedBranches P ratio) := by
+      (branchMass P (balancedSideBranches P 1 ratio) : ℝ) = branchMass P (balancedBranches P ratio)
+        := by
     exact_mod_cast balancedSide_mass_sum P ratio
   by_cases h0 : ratio * q / 2 < (branchMass P (balancedSideBranches P 0 ratio) : ℝ)
   · exact ⟨0, h0⟩

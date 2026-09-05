@@ -13,7 +13,7 @@ reservoir degree. The recorded partition cut parent has this colour, and
 literal branch-list transport preserves it.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePendingParentDegree

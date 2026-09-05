@@ -10,7 +10,7 @@ literally. The new used set is exactly the union, including after canonical
 selected-forest reindexing. These are set identities, not estimates.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoLemma58ChosenOwnerBatches
@@ -51,12 +51,14 @@ theorem appendChosen_orient_right (i : Fin b) (hi : i ∈ t) :
   simp only [appendChosen, pasteOrient, if_neg hn]
 
 theorem appendChosen_copy_left (i : Fin b) (hi : i ∈ s) :
-    (appendChosen F H parent whole available havailable hwhole s t hst E₁ E₂).state.forestCopy.componentCopy
+    (appendChosen F H parent whole available havailable hwhole s t hst E₁
+      E₂).state.forestCopy.componentCopy
       i (Finset.mem_union_left t hi) = E₁.state.forestCopy.componentCopy i hi := by
   simp only [appendChosen, appendPartial, reorientPartial, dif_pos hi]
 
 theorem appendChosen_copy_right (i : Fin b) (hi : i ∈ t) :
-    (appendChosen F H parent whole available havailable hwhole s t hst E₁ E₂).state.forestCopy.componentCopy
+    (appendChosen F H parent whole available havailable hwhole s t hst E₁
+      E₂).state.forestCopy.componentCopy
       i (Finset.mem_union_right s hi) = E₂.state.forestCopy.componentCopy i hi := by
   have hn : i ∉ s := fun hs => Finset.disjoint_left.mp hst hs hi
   simp only [appendChosen, appendPartial, reorientPartial, dif_neg hn]
@@ -71,18 +73,34 @@ theorem used_appendChosen (c : Fin 2) :
   · rintro ⟨i, hi, a, hc, hv⟩
     rcases Finset.mem_union.mp hi with hs | ht
     · exact Or.inl ⟨i, hs, a,
-        (by simpa only [appendChosen_orient_left F H parent whole available havailable hwhole s t hst E₁ E₂ i hs] using hc),
-        (by simpa only [appendChosen_copy_left F H parent whole available havailable hwhole s t hst E₁ E₂ i hs] using hv)⟩
+        (by
+          simpa only [appendChosen_orient_left F H parent whole available havailable hwhole s t hst
+            E₁ E₂ i hs] using hc),
+        (by
+          simpa only [appendChosen_copy_left F H parent whole available havailable hwhole s t hst E₁
+            E₂ i hs] using hv)⟩
     · exact Or.inr ⟨i, ht, a,
-        (by simpa only [appendChosen_orient_right F H parent whole available havailable hwhole s t hst E₁ E₂ i ht] using hc),
-        (by simpa only [appendChosen_copy_right F H parent whole available havailable hwhole s t hst E₁ E₂ i ht] using hv)⟩
+        (by
+          simpa only [appendChosen_orient_right F H parent whole available havailable hwhole s t hst
+            E₁ E₂ i ht] using hc),
+        (by
+          simpa only [appendChosen_copy_right F H parent whole available havailable hwhole s t hst
+            E₁ E₂ i ht] using hv)⟩
   · rintro (⟨i, hi, a, hc, hv⟩ | ⟨i, hi, a, hc, hv⟩)
     · exact ⟨i, Finset.mem_union_left t hi, a,
-        (by simpa only [appendChosen_orient_left F H parent whole available havailable hwhole s t hst E₁ E₂ i hi] using hc),
-        (by simpa only [appendChosen_copy_left F H parent whole available havailable hwhole s t hst E₁ E₂ i hi] using hv)⟩
+        (by
+          simpa only [appendChosen_orient_left F H parent whole available havailable hwhole s t hst
+            E₁ E₂ i hi] using hc),
+        (by
+          simpa only [appendChosen_copy_left F H parent whole available havailable hwhole s t hst E₁
+            E₂ i hi] using hv)⟩
     · exact ⟨i, Finset.mem_union_right s hi, a,
-        (by simpa only [appendChosen_orient_right F H parent whole available havailable hwhole s t hst E₁ E₂ i hi] using hc),
-        (by simpa only [appendChosen_copy_right F H parent whole available havailable hwhole s t hst E₁ E₂ i hi] using hv)⟩
+        (by
+          simpa only [appendChosen_orient_right F H parent whole available havailable hwhole s t hst
+            E₁ E₂ i hi] using hc),
+        (by
+          simpa only [appendChosen_copy_right F H parent whole available havailable hwhole s t hst
+            E₁ E₂ i hi] using hv)⟩
 
 theorem used_chosenPartialOfSelectedForest
     (localOrient : Fin s.card → Fin 2 ≃ Fin 2)

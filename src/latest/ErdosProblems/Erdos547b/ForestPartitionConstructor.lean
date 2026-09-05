@@ -28,7 +28,7 @@ abbrev residualCutGraph (P : ZhaoResidualForestPartition T hT r m) :
   T.deleteEdges (↑(residualCutEdges T hT r m P) : Set (Sym2 V))
 
 theorem residualCutEdge_injective
-    (P : ZhaoResidualForestPartition T hT r m)
+    (_P : ZhaoResidualForestPartition T hT r m)
     {x y : V} (hxr : x ≠ r) (hyr : y ≠ r)
     (hxy : s(x, parent hT r hxr) = s(y, parent hT r hyr)) : x = y := by
   rcases Sym2.eq_iff.mp hxy with h | h
@@ -167,6 +167,7 @@ theorem residualCutGraph_connectedComponentMk_eq_iff
 def rootDistanceKey (x : V) : ℕ ×ₗ ℕ :=
   toLex (T.dist r x, (Fintype.equivFin V x).val)
 
+omit [DecidableEq V] in
 theorem rootDistanceKey_injective :
     Function.Injective (rootDistanceKey T r : V → ℕ ×ₗ ℕ) := by
   intro x y h
@@ -177,9 +178,11 @@ theorem rootDistanceKey_injective :
   exact Fin.ext hval
 
 /-- The linear order used to number roots.  It refines strict root distance. -/
+@[instance_reducible]
 def rootDistanceLinearOrder : LinearOrder V :=
   LinearOrder.lift' (rootDistanceKey T r) (rootDistanceKey_injective T r)
 
+omit [DecidableEq V] in
 theorem lt_rootDistanceLinearOrder_of_dist_lt {x y : V}
     (hxy : T.dist r x < T.dist r y) :
     @LT.lt V (rootDistanceLinearOrder T r).toLT x y := by
@@ -397,6 +400,7 @@ theorem residualNumberedParent_mem_component
 
 /-! ### The rooted `m`-tree bound inside each component -/
 
+omit [DecidableEq V] in
 theorem residualVertices_child_subset {x y : V}
     (hxy : IsChild T r x y) (hsmall : residualSize T hT r m y ≤ m) :
     residualVertices T hT r m y ⊆ residualVertices T hT r m x := by
@@ -411,6 +415,7 @@ theorem residualVertices_child_subset {x y : V}
   rw [if_pos hsmall]
   exact hz
 
+omit [DecidableEq V] in
 theorem residualVertices_transitive (x : V) :
     ∀ {z : V}, z ∈ residualVertices T hT r m x →
       residualVertices T hT r m z ⊆ residualVertices T hT r m x := by
@@ -517,7 +522,7 @@ theorem residualComponent_dist_root_add
     have hplift := SimpleGraph.dist_le plift
     simp only [C.toSimpleGraph_hom_apply] at hplift
     have hlength : plift.length = p.length := by
-      simp only [plift, SimpleGraph.Walk.length_mapLe,
+      simp only [plift,
         SimpleGraph.Walk.length_map]
     exact hplift.trans_eq hlength
   have htriangle := hT.connected.dist_triangle (u := r) (v := a) (w := x.1)
@@ -569,7 +574,7 @@ theorem residualComponent_ambient_dist_le
   have hdist := SimpleGraph.dist_le plift
   simp only [C.toSimpleGraph_hom_apply] at hdist
   have hlength : plift.length = p.length := by
-    simp only [plift, SimpleGraph.Walk.length_mapLe,
+    simp only [plift,
       SimpleGraph.Walk.length_map]
   rw [← hp]
   exact hdist.trans_eq hlength
@@ -596,7 +601,6 @@ theorem residualComponent_child_is_global_child
   change C.toSimpleGraph.dist a y +
     T.dist r (residualRootEnum T hT r m P i).1 = T.dist r y.1 at hydist
   refine ⟨hadjT, ?_⟩
-  change T.dist r y.1 = T.dist r x.1 + 1
   have hlevel := hxy.2
   change C.toSimpleGraph.dist a y = C.toSimpleGraph.dist a x + 1 at hlevel
   omega
@@ -699,6 +703,7 @@ theorem card_filter_residualRootEnum
         simpa only [i, residualRootEnum_index] using hx.2⟩
     · exact residualRootEnum_index T hT r m P x hx.1
 
+omit [DecidableEq V] [Fintype V] in
 theorem cast_connectedComponentMk
     {G H : SimpleGraph V} (h : G = H) (x : V) :
     Equiv.cast (congrArg (fun K : SimpleGraph V => K.ConnectedComponent) h)
@@ -706,6 +711,7 @@ theorem cast_connectedComponentMk
   subst H
   rfl
 
+omit [DecidableEq V] [Fintype V] in
 theorem mem_cast_connectedComponent
     {G H : SimpleGraph V} (h : G = H) (C : G.ConnectedComponent)
     {x : V} (hx : x ∈ C.supp) :
@@ -714,7 +720,8 @@ theorem mem_cast_connectedComponent
   subst H
   exact hx
 
-theorem cast_connectedComponent_isRootedMTreeNcard
+omit [DecidableEq V] [Fintype V] in
+theorem cast_connectedComponent_isRootedMTreeNcard [Finite V]
     {G H : SimpleGraph V} (h : G = H) (C : G.ConnectedComponent)
     (root : V) (hroot : root ∈ C.supp)
     (hm : IsRootedMTreeNcard m C.toSimpleGraph ⟨root, hroot⟩) :
@@ -722,6 +729,8 @@ theorem cast_connectedComponent_isRootedMTreeNcard
       (Equiv.cast
         (congrArg (fun K : SimpleGraph V => K.ConnectedComponent) h) C).toSimpleGraph
       ⟨root, mem_cast_connectedComponent h C hroot⟩ := by
+  classical
+  let := Fintype.ofFinite V
   subst H
   simpa using hm
 

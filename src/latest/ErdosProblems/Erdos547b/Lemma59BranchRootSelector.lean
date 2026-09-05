@@ -47,6 +47,7 @@ def choices (j : Fin b) : Finset B :=
     (G.Adj (rootImage (owner j)))
 
 include hunif hrho hrootDegree in
+omit [Fintype B] in
 theorem card_choices (j : Fin b) :
     capacity (assign j) ≤
       #(choices G rho rootImage owner cluster assign endpoint j) := by
@@ -155,6 +156,7 @@ noncomputable def realization (j : Fin b) :
     (fun k _hk => realization k)).data
 termination_by j.val
 
+omit [Fintype B] in
 theorem realization_fresh (j k : Fin b) (hk : k.val < j.val) :
     (realization G rho rootImage owner cluster assign endpoint capacity hunif
       hrho hrootDegree hload hclusterDisjoint j).image ≠
@@ -168,10 +170,11 @@ theorem realization_fresh (j k : Fin b) (hk : k.val < j.val) :
 
 end BranchRootSelector
 
+omit [Fintype B] in
 /-- Sequential branch-root selection from actual uniform cluster-endpoint
 pairs. The arbitrary owner-root degree is the only live-root premise;
 typicality toward matching endpoints is derived. -/
-theorem exists_branchRootSelection_of_uniform
+theorem exists_branchRootSelection_of_uniform [Finite B]
     {r b C : ℕ}
     (G : SimpleGraph B) [DecidableRel G.Adj] (rho : ℝ)
     (rootImage : Fin r → B) (owner : Fin b → Fin r)
@@ -188,6 +191,7 @@ theorem exists_branchRootSelection_of_uniform
     (hclusterDisjoint : ∀ c d, c ≠ d → Disjoint (cluster c) (cluster d)) :
     Nonempty (BranchRootSelection G rho rootImage owner cluster assign endpoint) := by
   classical
+  let := Fintype.ofFinite B
   let R := fun j => BranchRootSelector.realization G rho rootImage owner cluster
     assign endpoint capacity hunif hrho hrootDegree hload hclusterDisjoint j
   let image : Fin b → B := fun j => (R j).image

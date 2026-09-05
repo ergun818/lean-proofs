@@ -18,6 +18,7 @@ open Finset Fintype SimpleGraph
 
 variable {V : Type*} [DecidableEq V]
 
+omit [DecidableEq V] in
 /-- A local spelling of the standard typical-vertex estimate.  This is the
 single-pair counting input used in Zhao's Proposition 4.5 and in every greedy
 regular-pair embedding argument. -/
@@ -90,11 +91,13 @@ def cleanedSide (G : SimpleGraph V) [DecidableRel G.Adj]
     (rho : ℝ) (C D : Finset V) : Finset V :=
   C \ atypicalVertices G rho C D
 
+omit [DecidableEq V] in
 theorem card_atypicalVertices_le
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {rho : ℝ} {C D : Finset V}
     (hunif : G.IsUniform rho C D) (hrho : rho ≤ 1) :
     (#(atypicalVertices G rho C D) : ℝ) ≤ rho * #C := by
+  classical
   have hC : rho * (#C : ℝ) ≤ #C := by
     nlinarith [hunif.pos.le, (Nat.cast_nonneg (#C) : (0 : ℝ) ≤ #C)]
   have hD : rho * (#D : ℝ) ≤ #D := by
@@ -128,7 +131,7 @@ theorem card_neighbors_cleaned_ge
 vertices are sent to the candidate set indexed by their color.  The root may
 lie outside those candidate sets. -/
 private theorem exists_rooted_colored_copy_aux
-    {A B : Type*} [Fintype A] [Fintype B] [DecidableEq B]
+    {A B : Type*} [Fintype A] [Finite B]
     (T : SimpleGraph A) (G : SimpleGraph B) [DecidableRel G.Adj]
     (n : ℕ) (hcard : Fintype.card A = n + 1) (hT : T.IsTree)
     (root : A) (color : A → Fin 2)
@@ -141,6 +144,7 @@ private theorem exists_rooted_colored_copy_aux
     ∃ f : T.Copy G, f root = rootImage ∧
       ∀ a, a ≠ root → f a ∈ candidate (color a) := by
   classical
+  let := Fintype.ofFinite B
   induction n generalizing A with
   | zero =>
       have hsub : Subsingleton A := Fintype.card_le_one_iff_subsingleton.mp (by omega)
@@ -282,7 +286,7 @@ private theorem exists_rooted_colored_copy_aux
 a finite tree.  The cardinal assumptions are deliberately expressed as
 candidate counts, so the regularity consequences can be applied directly. -/
 theorem exists_rooted_colored_copy
-    {A B : Type*} [Fintype A] [Fintype B] [DecidableEq B]
+    {A B : Type*} [Fintype A] [Finite B]
     (T : SimpleGraph A) (G : SimpleGraph B) [DecidableRel G.Adj]
     (hT : T.IsTree) (root : A) (color : A → Fin 2)
     (hcolor : ∀ ⦃a b⦄, T.Adj a b → color a ≠ color b)
@@ -293,6 +297,8 @@ theorem exists_rooted_colored_copy
       Fintype.card A ≤ #{w ∈ candidate j | G.Adj v w}) :
     ∃ f : T.Copy G, f root = rootImage ∧
       ∀ a, a ≠ root → f a ∈ candidate (color a) := by
+  classical
+  let := Fintype.ofFinite B
   apply exists_rooted_colored_copy_aux T G (Fintype.card A - 1)
   · have hpos : 0 < Fintype.card A :=
       Fintype.card_pos_iff.mpr hT.connected.nonempty
@@ -304,8 +310,10 @@ theorem exists_rooted_colored_copy
 
 /-- The canonical rooted two-coloring of a tree colors its root by `0`. -/
 @[simp] theorem coloringTwoOfVert_root
-    {A : Type*} [Fintype A] (T : SimpleGraph A) (hT : T.IsTree) (root : A) :
+    {A : Type*} [Finite A] (T : SimpleGraph A) (hT : T.IsTree) (root : A) :
     hT.coloringTwoOfVert root root = 0 := by
+  classical
+  let := Fintype.ofFinite A
   change (⟨T.dist root root % 2, _⟩ : Fin 2) = 0
   apply Fin.eq_of_val_eq
   simp
@@ -315,7 +323,7 @@ the tree.  This is the form used after deleting the atypical vertices of a
 regular pair: `candidate 0` and `candidate 1` are the two cleaned clusters,
 and `hcross` is the residual minimum-degree estimate. -/
 theorem exists_rooted_tree_copy
-    {A B : Type*} [Fintype A] [Fintype B] [DecidableEq B]
+    {A B : Type*} [Fintype A] [Finite B]
     (T : SimpleGraph A) (G : SimpleGraph B) [DecidableRel G.Adj]
     (hT : T.IsTree) (root : A)
     (candidate : Fin 2 → Finset B) (rootImage : B)
@@ -325,6 +333,8 @@ theorem exists_rooted_tree_copy
       Fintype.card A ≤ #{w ∈ candidate j | G.Adj v w}) :
     ∃ f : T.Copy G, f root = rootImage ∧
       ∀ a, a ≠ root → f a ∈ candidate (hT.coloringTwoOfVert root a) := by
+  classical
+  let := Fintype.ofFinite B
   apply exists_rooted_colored_copy T G hT root (hT.coloringTwoOfVert root)
   · intro a b hab
     exact (hT.coloringTwoOfVert root).valid hab
@@ -347,7 +357,7 @@ are first cleaned by deleting the vertices below the usual
 typical vertex still has `card A` available neighbors after the atypical
 vertices on the other side have been deleted. -/
 theorem exists_rooted_tree_copy_of_uniform
-    {A B : Type*} [Fintype A] [Fintype B] [DecidableEq B]
+    {A B : Type*} [Fintype A] [Finite B] [DecidableEq B]
     (T : SimpleGraph A) (G : SimpleGraph B) [DecidableRel G.Adj]
     (hT : T.IsTree) (root : A) (rootImage : B)
     {rho : ℝ} {X Y : Finset B}
@@ -363,6 +373,7 @@ theorem exists_rooted_tree_copy_of_uniform
         f a ∈ if hT.coloringTwoOfVert root a = 0 then
           cleanedSide G rho X Y else cleanedSide G rho Y X := by
   classical
+  let := Fintype.ofFinite B
   let badX := atypicalVertices G rho X Y
   let badY := atypicalVertices G rho Y X
   let goodX := X \ badX
@@ -392,7 +403,7 @@ theorem exists_rooted_tree_copy_of_uniform
       apply le_of_not_gt
       intro hlt
       apply hvnot
-      simpa [badX, atypicalVertices, hvX, hlt]
+      simp [badX, atypicalVertices, hvX, hlt]
     have hvReal : (Fintype.card A : ℝ) + #badY ≤
         (#(Y.filter (G.Adj v)) : ℝ) := by
       calc
@@ -419,7 +430,7 @@ theorem exists_rooted_tree_copy_of_uniform
       have hlt' : (#(X.filter (G.Adj v)) : ℝ) <
           (G.edgeDensity Y X - rho) * #X := by
         simpa [G.edgeDensity_comm X Y] using hlt
-      simpa [badY, atypicalVertices, hvY, hlt']
+      simp [badY, atypicalVertices, hvY, hlt']
     have hvReal : (Fintype.card A : ℝ) + #badX ≤
         (#(X.filter (G.Adj v)) : ℝ) := by
       calc
@@ -516,7 +527,7 @@ The candidate blocks assigned to different components are disjoint, and all
 root images lie outside every candidate block.  These are exactly the
 separation invariants maintained by the allocation steps in Zhao 5.4/5.8. -/
 theorem embedding_of_component_copies
-    {B : Type*} [Fintype B] [DecidableEq B]
+    {B : Type*} [Finite B] [DecidableEq B]
     (F : OrderedRootedForest m) (G : SimpleGraph B)
     (rootImage : Fin m → B)
     (candidate : Fin m → Fin 2 → Finset B)
@@ -535,6 +546,7 @@ theorem embedding_of_component_copies
         E.copy i a ∈ candidate i
           ((F.isTree i).coloringTwoOfVert (F.root i) a) := by
   classical
+  let := Fintype.ofFinite B
   have hinjective : Function.Injective
       (fun z : Σ i, Fin (F.size i) ↦ f z.1 z.2) := by
     rintro ⟨i, a⟩ ⟨k, b⟩ hxy
@@ -589,7 +601,7 @@ theorem embedding_of_component_copies
 pair of candidate blocks to each component.  All numerical hypotheses are
 explicit minimum-degree/capacity inequalities. -/
 theorem exists_embedding_of_disjoint_candidates
-    {B : Type*} [Fintype B] [DecidableEq B]
+    {B : Type*} [Finite B] [DecidableEq B]
     (F : OrderedRootedForest m) (G : SimpleGraph B) [DecidableRel G.Adj]
     (rootImage : Fin m → B)
     (candidate : Fin m → Fin 2 → Finset B)
@@ -608,6 +620,7 @@ theorem exists_embedding_of_disjoint_candidates
         E.copy i a ∈ candidate i
           ((F.isTree i).coloringTwoOfVert (F.root i) a) := by
   classical
+  let := Fintype.ofFinite B
   have hex : ∀ i, ∃ f : (F.tree i).Copy G,
       f (F.root i) = rootImage i ∧
       ∀ a, a ≠ F.root i →
@@ -632,7 +645,7 @@ theorem exists_embedding_of_disjoint_candidates
 forest order is used as a reserve: after each component is embedded, deleting
 its image leaves enough degree for the tail of the ordered forest. -/
 theorem exists_embedding_in_shared_candidates
-    {B : Type*} [Fintype B] [DecidableEq B]
+    {B : Type*} [Finite B]
     (F : OrderedRootedForest m) (G : SimpleGraph B) [DecidableRel G.Adj]
     (rootImage : Fin m → B) (candidate : Fin 2 → Finset B)
     (hrootInjective : Function.Injective rootImage)
@@ -647,6 +660,7 @@ theorem exists_embedding_in_shared_candidates
         E.copy i a ∈ candidate
           ((F.isTree i).coloringTwoOfVert (F.root i) a) := by
   classical
+  let := Fintype.ofFinite B
   induction m generalizing candidate with
   | zero =>
       let copies : ∀ i : Fin 0, (F.tree i).Copy G := fun i ↦ Fin.elim0 i
@@ -783,7 +797,7 @@ with the analytic/numerical assumptions stated explicitly.  The roots have
 prescribed distinct images outside the pair.  The total forest order, rather
 than the size of one component, is reserved at every greedy step. -/
 theorem exists_embedding_in_uniform_pair
-    {B : Type*} [Fintype B] [DecidableEq B]
+    {B : Type*} [Finite B] [DecidableEq B]
     (F : OrderedRootedForest m) (G : SimpleGraph B) [DecidableRel G.Adj]
     (rootImage : Fin m → B) {rho : ℝ} {X Y : Finset B}
     (hrootInjective : Function.Injective rootImage)
@@ -805,6 +819,7 @@ theorem exists_embedding_in_uniform_pair
             cleanedSide G rho X Y
           else cleanedSide G rho Y X := by
   classical
+  let := Fintype.ofFinite B
   let badX := atypicalVertices G rho X Y
   let badY := atypicalVertices G rho Y X
   let goodX := X \ badX
@@ -835,7 +850,7 @@ theorem exists_embedding_in_uniform_pair
       apply le_of_not_gt
       intro hlt
       apply hvnot
-      simpa [badX, atypicalVertices, hvX, hlt]
+      simp [badX, atypicalVertices, hvX, hlt]
     have hvReal : (F.order : ℝ) + #badY ≤
         (#(Y.filter (G.Adj v)) : ℝ) := by
       calc
@@ -861,7 +876,7 @@ theorem exists_embedding_in_uniform_pair
       have hlt' : (#(X.filter (G.Adj v)) : ℝ) <
           (G.edgeDensity Y X - rho) * #X := by
         simpa [G.edgeDensity_comm X Y] using hlt
-      simpa [badY, atypicalVertices, hvY, hlt']
+      simp [badY, atypicalVertices, hvY, hlt']
     have hvReal : (F.order : ℝ) + #badX ≤
         (#(X.filter (G.Adj v)) : ℝ) := by
       calc
@@ -901,7 +916,7 @@ Each component is assigned a (possibly sliced) uniform pair.  Distinct
 assignments have disjoint cleaned sides, as happens for different edges of a
 cluster matching or for disjoint slices of one regular pair. -/
 theorem exists_embedding_over_disjoint_uniform_pairs
-    {B : Type*} [Fintype B] [DecidableEq B]
+    {B : Type*} [Finite B] [DecidableEq B]
     (F : OrderedRootedForest m) (G : SimpleGraph B) [DecidableRel G.Adj]
     (rootImage : Fin m → B) {rho : ℝ}
     (X Y : Fin m → Finset B)
@@ -930,6 +945,7 @@ theorem exists_embedding_over_disjoint_uniform_pairs
             cleanedSide G rho (X i) (Y i)
           else cleanedSide G rho (Y i) (X i) := by
   classical
+  let := Fintype.ofFinite B
   let candidate : Fin m → Fin 2 → Finset B := fun i c ↦
     if c = 0 then cleanedSide G rho (X i) (Y i)
     else cleanedSide G rho (Y i) (X i)

@@ -105,22 +105,24 @@ instance padGraph.instDecidableRel {ι : Type*} [Fintype ι] [DecidableEq ι]
   infer_instance
 
 @[simp] theorem padGraph_adj_inl {ι : Type*} [Fintype ι]
-    [DecidableEq ι] (R : SimpleGraph ι) (i j : ι) :
+    (R : SimpleGraph ι) (i j : ι) :
     (padGraph R).Adj (Sum.inl i) (Sum.inl j) ↔ R.Adj i j := by
+  classical
   exact SimpleGraph.map_adj_apply
 
-@[simp] theorem padGraph_not_adj_inr_left {ι : Type*} [Fintype ι]
-    [DecidableEq ι] (R : SimpleGraph ι)
+@[simp] theorem padGraph_not_adj_inr_left {ι : Type*} [Fintype ι] (R : SimpleGraph ι)
     (d : Fin (paddedCard ι - Fintype.card ι)) (x : EvenPadding ι) :
     ¬(padGraph R).Adj (Sum.inr d) x := by
+  classical
   rw [padGraph, SimpleGraph.map_adj padEmbedding R]
   rintro ⟨i, j, hij, hi, hj⟩
   cases hi
 
 @[simp] theorem padGraph_not_adj_inr_right {ι : Type*} [Fintype ι]
-    [DecidableEq ι] (R : SimpleGraph ι)
+    (R : SimpleGraph ι)
     (x : EvenPadding ι) (d : Fin (paddedCard ι - Fintype.card ι)) :
     ¬(padGraph R).Adj x (Sum.inr d) := by
+  classical
   exact fun h => padGraph_not_adj_inr_left R d x h.symm
 
 theorem neighborFinset_padGraph_inl {ι : Type*} [Fintype ι]
@@ -232,11 +234,12 @@ provided the density cutoff is positive.  Thus the new vertices are not only
 isolated in the transported graph: they are literally the empty-cluster
 vertices of the padded regularity reduced graph. -/
 theorem padGraph_regularityReducedGraph
-    {V ι : Type*} [Fintype ι] [DecidableEq ι]
+    {V ι : Type*} [Fintype ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (C : ι → Finset V) (epsilon d : ℚ) (hd : 0 < d) :
     padGraph (regularityReducedGraph G C epsilon d) =
       regularityReducedGraph G (padCluster C) epsilon d := by
+  classical
   ext x y
   cases x with
   | inl i =>
@@ -256,41 +259,46 @@ theorem padGraph_regularityReducedGraph
 
 @[simp] theorem exceptionalVertices_padAssignment
     {V ι : Type*} [Fintype V] [Fintype ι]
-    [DecidableEq V] [DecidableEq ι] (P : ClusterAssignment V ι) :
+    [DecidableEq ι] (P : ClusterAssignment V ι) :
     exceptionalVertices (padAssignment P) = exceptionalVertices P := by
+  classical
   ext v
   simp [padAssignment, mem_exceptionalVertices]
 
 @[simp] theorem clusterVertices_padAssignment_inl
     {V ι : Type*} [Fintype V] [Fintype ι]
-    [DecidableEq V] [DecidableEq ι] (P : ClusterAssignment V ι) (i : ι) :
+    [DecidableEq ι] (P : ClusterAssignment V ι) (i : ι) :
     clusterVertices (padAssignment P) (Sum.inl i) = clusterVertices P i := by
+  classical
   ext v
   simp [padAssignment, mem_clusterVertices]
 
 @[simp] theorem clusterVertices_padAssignment_inr
     {V ι : Type*} [Fintype V] [Fintype ι]
-    [DecidableEq V] [DecidableEq ι] (P : ClusterAssignment V ι)
+    [DecidableEq ι] (P : ClusterAssignment V ι)
     (d : Fin (paddedCard ι - Fintype.card ι)) :
     clusterVertices (padAssignment P) (Sum.inr d) = ∅ := by
+  classical
   ext v
   simp [padAssignment, mem_clusterVertices]
 
 theorem clusterVertices_padAssignment
     {V ι : Type*} [Fintype V] [Fintype ι]
-    [DecidableEq V] [DecidableEq ι] (P : ClusterAssignment V ι) :
+    [DecidableEq ι] (P : ClusterAssignment V ι) :
     clusterVertices (padAssignment P) = padCluster (clusterVertices P) := by
+  classical
   funext i
   cases i <;> simp [padCluster]
 
 theorem padGraph_regularityReducedGraph_clusterVertices
     {V ι : Type*} [Fintype V] [Fintype ι]
-    [DecidableEq V] [DecidableEq ι]
+    [DecidableEq ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (P : ClusterAssignment V ι) (epsilon d : ℚ) (hd : 0 < d) :
     padGraph (regularityReducedGraph G (clusterVertices P) epsilon d) =
       regularityReducedGraph G
         (clusterVertices (padAssignment P)) epsilon d := by
+  classical
   rw [clusterVertices_padAssignment]
   exact padGraph_regularityReducedGraph G (clusterVertices P) epsilon d hd
 
@@ -325,10 +333,11 @@ theorem padGraph_regularityReducedGraph_clusterVertices
 
 /-- Every cleaned host edge still respects the padded reduced graph. -/
 theorem edgesRespect_pad
-    {V ι : Type*} [Fintype ι] [DecidableEq ι]
+    {V ι : Type*} [Fintype ι]
     (P : ClusterAssignment V ι) (H : SimpleGraph V) (R : SimpleGraph ι)
     (hrespect : EdgesRespectReducedGraph P H R) :
     EdgesRespectReducedGraph (padAssignment P) H (padGraph R) := by
+  classical
   intro u v i j hui hvj huv
   cases i with
   | inl i =>

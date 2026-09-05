@@ -13,13 +13,14 @@ open Finset Fintype SimpleGraph Erdos547EC2
 
 variable {I B : Type*} [Fintype I] [DecidableEq I] [Fintype B] [DecidableEq B]
 
-omit [Fintype B] in
+omit [Fintype B] [DecidableEq B] [DecidableEq I] in
 theorem exists_injective_twoPools
     (High : Finset I) (choices : I → Finset B) (P Q : Finset B) (hPQ : Disjoint P Q)
     (hhighSub : ∀ i ∈ High, choices i ⊆ P) (hlowSub : ∀ i ∉ High, choices i ⊆ Q)
     (hhighCard : ∀ i ∈ High, High.card ≤ (choices i).card)
     (hlowCard : ∀ i ∉ High, Fintype.card I - High.card ≤ (choices i).card) :
     ∃ g : I → B, Function.Injective g ∧ ∀ i, g i ∈ choices i := by
+  classical
   apply (Finset.all_card_le_biUnion_card_iff_exists_injective choices).mp
   intro s
   by_cases hs : s = ∅
@@ -33,7 +34,8 @@ theorem exists_injective_twoPools
   · obtain ⟨i, hi, hiHigh⟩ := hsome
     have hdis := hPQ.mono (hhighSub i hiHigh) (hlowSub j hjLow)
     have hsubChoices : choices i ∪ choices j ⊆ s.biUnion choices :=
-      Finset.union_subset (Finset.subset_biUnion_of_mem choices hi) (Finset.subset_biUnion_of_mem choices hj)
+      Finset.union_subset (Finset.subset_biUnion_of_mem choices hi) (Finset.subset_biUnion_of_mem
+        choices hj)
     have hu := Finset.card_le_card hsubChoices
     rw [Finset.card_union_of_disjoint hdis] at hu
     have hsCard := Finset.card_le_univ s
@@ -50,7 +52,7 @@ theorem exists_injective_twoPools
     exact hcard.trans ((hlowCard j hjLow).trans
       (Finset.card_le_card (Finset.subset_biUnion_of_mem choices hj)))
 
-omit [Fintype B] in
+omit [Fintype B] [DecidableEq B] [DecidableEq I] in
 theorem exists_adjacent_twoPools
     (G : SimpleGraph B) [DecidableRel G.Adj] (parent : I → B)
     (High : Finset I) (P Q : Finset B) (hPQ : Disjoint P Q)
@@ -59,7 +61,8 @@ theorem exists_adjacent_twoPools
     ∃ g : I → B, Function.Injective g ∧ (∀ i, G.Adj (parent i) (g i)) ∧
       (∀ i ∈ High, g i ∈ P) ∧ (∀ i ∉ High, g i ∈ Q) := by
   classical
-  let choices := fun i => if i ∈ High then P.filter (G.Adj (parent i)) else Q.filter (G.Adj (parent i))
+  let choices := fun i => if i ∈ High then P.filter (G.Adj (parent i)) else Q.filter (G.Adj (parent
+    i))
   obtain ⟨g, hinj, hmem⟩ := exists_injective_twoPools High choices P Q hPQ
     (fun i hi => by simpa only [choices, if_pos hi] using Finset.filter_subset (G.Adj (parent i)) P)
     (fun i hi => by simpa only [choices, if_neg hi] using Finset.filter_subset (G.Adj (parent i)) Q)
@@ -69,12 +72,16 @@ theorem exists_adjacent_twoPools
   · intro i
     have h := hmem i
     by_cases hi : i ∈ High
-    · exact (Finset.mem_filter.mp (show g i ∈ P.filter (G.Adj (parent i)) from by simpa only [choices, if_pos hi] using h)).2
-    · exact (Finset.mem_filter.mp (show g i ∈ Q.filter (G.Adj (parent i)) from by simpa only [choices, if_neg hi] using h)).2
+    · exact (Finset.mem_filter.mp (show g i ∈ P.filter (G.Adj (parent i)) from
+        by simpa only [choices, if_pos hi] using h)).2
+    · exact (Finset.mem_filter.mp (show g i ∈ Q.filter (G.Adj (parent i)) from
+        by simpa only [choices, if_neg hi] using h)).2
   · intro i hi
-    exact (Finset.mem_filter.mp (show g i ∈ P.filter (G.Adj (parent i)) from by simpa only [choices, if_pos hi] using hmem i)).1
+    exact (Finset.mem_filter.mp (show g i ∈ P.filter (G.Adj (parent i)) from
+      by simpa only [choices, if_pos hi] using hmem i)).1
   · intro i hi
-    exact (Finset.mem_filter.mp (show g i ∈ Q.filter (G.Adj (parent i)) from by simpa only [choices, if_neg hi] using hmem i)).1
+    exact (Finset.mem_filter.mp (show g i ∈ Q.filter (G.Adj (parent i)) from
+      by simpa only [choices, if_neg hi] using hmem i)).1
 
 end Erdos547b.ZhaoTwoPoolAssignment
 

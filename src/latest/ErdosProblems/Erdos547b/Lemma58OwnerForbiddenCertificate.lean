@@ -67,7 +67,7 @@ noncomputable def emptyCertified
   }
   avoids := by
     intro i hi
-    have : False := by simpa using hi
+    have : False := by simp at hi
     exact False.elim this
 
 /-- `appendChosen` uses the old component copy literally on the first
@@ -301,4 +301,5 @@ theorem exists_certifiedDynamicEmbedding_of_ownerLocalStepsWithForbidden
 
 end Erdos547b.ZhaoLemma58OwnerForbiddenCertificate
 
-#print axioms Erdos547b.ZhaoLemma58OwnerForbiddenCertificate.exists_certifiedDynamicEmbedding_of_ownerLocalStepsWithForbidden
+open Erdos547b.ZhaoLemma58OwnerForbiddenCertificate in
+#print axioms exists_certifiedDynamicEmbedding_of_ownerLocalStepsWithForbidden

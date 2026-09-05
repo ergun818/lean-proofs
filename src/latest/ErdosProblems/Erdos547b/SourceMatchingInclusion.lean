@@ -4,7 +4,7 @@ import ErdosProblems.Erdos547b.SourceMatchingRowIdentity
 
 /-! # Source weights are unchanged by physical-subgraph edge inclusions -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMatchingInclusion

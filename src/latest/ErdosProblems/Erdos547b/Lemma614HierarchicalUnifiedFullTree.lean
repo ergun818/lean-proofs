@@ -75,6 +75,7 @@ def fullTreeRegularEmbeddingOfHierarchyEmbedding
               (toWholeBranchForestVertex T hT globalRoot x))
         rfl }
 
+omit [DecidableEq V] in
 /-- Unified physical-pool counterpart of
 `exists_fullTreeRegularEmbedding_of_cleanedRegularSystem`. -/
 theorem exists_fullTreeRegularEmbedding_of_unifiedCleanedRegularSystem
@@ -96,6 +97,7 @@ theorem exists_fullTreeRegularEmbedding_of_unifiedCleanedRegularSystem
         rootPool interiorPool rootCandidate interiorCandidate) :
     Nonempty (FullTreeRegularEmbedding T hT globalRoot special G
       globalRootImage rootCandidate interiorCandidate) := by
+  classical
   obtain ⟨E⟩ :=
     HierarchicalSegmentForest.exists_hierarchicalUnifiedRegularEmbedding
       (wholeHierarchy T hT globalRoot special) G globalRootImage
@@ -103,6 +105,7 @@ theorem exists_fullTreeRegularEmbedding_of_unifiedCleanedRegularSystem
   exact ⟨fullTreeRegularEmbeddingOfHierarchyEmbedding T hT globalRoot special G
     globalRootImage rootCandidate interiorCandidate E⟩
 
+omit [DecidableEq V] in
 /-- Copy-only spelling of the unified full-tree endpoint. -/
 theorem exists_fullTreeCopy_of_unifiedCleanedRegularSystem
     {Pool : Type*} [DecidableEq Pool]
@@ -122,12 +125,14 @@ theorem exists_fullTreeCopy_of_unifiedCleanedRegularSystem
       (wholeHierarchy T hT globalRoot special) G globalRootImage
         rootPool interiorPool rootCandidate interiorCandidate) :
     Nonempty (T.Copy G) := by
+  classical
   obtain ⟨E⟩ :=
     exists_fullTreeRegularEmbedding_of_unifiedCleanedRegularSystem
       T hT globalRoot special G globalRootImage rootPool interiorPool
         rootCandidate interiorCandidate S
   exact ⟨E.fullCopy⟩
 
+omit [DecidableEq V] in
 /-- Literal containment conclusion used by Claim 6.16 and Claim 6.17. -/
 theorem isContained_of_unifiedCleanedRegularSystem
     {Pool : Type*} [DecidableEq Pool]
@@ -147,10 +152,13 @@ theorem isContained_of_unifiedCleanedRegularSystem
       (wholeHierarchy T hT globalRoot special) G globalRootImage
         rootPool interiorPool rootCandidate interiorCandidate) :
     T.IsContained G :=
+  open Classical in
   (exists_fullTreeCopy_of_unifiedCleanedRegularSystem T hT globalRoot special G
     globalRootImage rootPool interiorPool rootCandidate interiorCandidate S).some.isContained
 
 end Erdos547b.ZhaoLemma614HierarchicalUnifiedFullTree
 
-#print axioms Erdos547b.ZhaoLemma614HierarchicalUnifiedFullTree.exists_fullTreeRegularEmbedding_of_unifiedCleanedRegularSystem
-#print axioms Erdos547b.ZhaoLemma614HierarchicalUnifiedFullTree.isContained_of_unifiedCleanedRegularSystem
+open Erdos547b.ZhaoLemma614HierarchicalUnifiedFullTree in
+#print axioms exists_fullTreeRegularEmbedding_of_unifiedCleanedRegularSystem
+open Erdos547b.ZhaoLemma614HierarchicalUnifiedFullTree in
+#print axioms isContained_of_unifiedCleanedRegularSystem

@@ -4,7 +4,7 @@ import ErdosProblems.Erdos547b.ClusterDegreeAccounting
 
 /-! # Aggregate upper and lower degree concentration over regular rows -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoRegularRowConcentration
@@ -40,28 +40,33 @@ def upperBad : Finset V :=
 def lowerBad : Finset V :=
   manyBadRoots A J (fun j => lowerAtypicalVertices H ε A (whole j)) δ
 
-omit [Fintype V] in
+omit [Fintype V] [DecidableEq I] in
 theorem card_upperBad_le (hδ : 0 < δ) (hεδ : ε ≤ δ ^ 2)
     (huniform : ∀ j ∈ J, H.IsUniform ε A (whole j)) :
     ((upperBad H A J whole ε δ).card : ℝ) ≤ δ * A.card := by
+  classical
   apply card_manyBadRoots_le A J _ ε δ hδ hεδ
   intro j hj
   simpa only [mul_comm] using (huniform j hj).card_upperAtypicalVertices_le
 
-omit [Fintype V] in
+omit [Fintype V] [DecidableEq I] in
 theorem card_lowerBad_le (hδ : 0 < δ) (hεδ : ε ≤ δ ^ 2)
     (huniform : ∀ j ∈ J, H.IsUniform ε A (whole j)) :
     ((lowerBad H A J whole ε δ).card : ℝ) ≤ δ * A.card := by
+  classical
   apply card_manyBadRoots_le A J _ ε δ hδ hεδ
   intro j hj
   simpa only [mul_comm] using (huniform j hj).card_lowerAtypicalVertices_le
 
 def rowMean (N : ℕ) : ℝ := ∑ j ∈ J, (H.edgeDensity A (whole j) : ℝ) * N
 
-theorem upper_sum_le (N : ℕ) (hN : ∀ j ∈ J, (whole j).card = N)
+omit [DecidableEq I] [Fintype V] in
+theorem upper_sum_le [Finite V] (N : ℕ) (hN : ∀ j ∈ J, (whole j).card = N)
     (hε : 0 ≤ ε) {z : V} (hz : z ∈ A) (hbad : z ∉ upperBad H A J whole ε δ) :
     (∑ j ∈ J, (degreeInto H z (whole j) : ℝ)) ≤
       rowMean H A J whole N + (ε + δ) * N * J.card := by
+  classical
+  let := Fintype.ofFinite V
   let D := badTargets J (fun j => upperAtypicalVertices H ε A (whole j)) z
   have hcount : (D.card : ℝ) ≤ δ * J.card := by
     apply le_of_not_gt
@@ -83,11 +88,12 @@ theorem upper_sum_le (N : ℕ) (hN : ∀ j ∈ J, (whole j).card = N)
     rw [hN j (Finset.mem_sdiff.mp hj).1] at hdeg
     nlinarith only [hdeg]
 
-omit [Fintype V] in
+omit [Fintype V] [DecidableEq I] in
 theorem lower_sum_le (N : ℕ) (hN : ∀ j ∈ J, (whole j).card = N)
     (hε : 0 ≤ ε) {z : V} (hz : z ∈ A) (hbad : z ∉ lowerBad H A J whole ε δ) :
     rowMean H A J whole N ≤
       (∑ j ∈ J, (degreeInto H z (whole j) : ℝ)) + (ε + δ) * N * J.card := by
+  classical
   let D := badTargets J (fun j => lowerAtypicalVertices H ε A (whole j)) z
   have hcount : (D.card : ℝ) ≤ δ * J.card := by
     apply le_of_not_gt
@@ -96,7 +102,8 @@ theorem lower_sum_le (N : ℕ) (hN : ∀ j ∈ J, (whole j).card = N)
   apply sum_le_sum_add_of_few_bad J D _ _ N ε δ (Finset.filter_subset _ _) hcount
     (Nat.cast_nonneg _) hε
   · intro j _
-    have hden : (H.edgeDensity A (whole j) : ℝ) ≤ 1 := by exact_mod_cast H.edgeDensity_le_one A (whole j)
+    have hden : (H.edgeDensity A (whole j) : ℝ) ≤ 1 :=
+      by exact_mod_cast H.edgeDensity_le_one A (whole j)
     simpa only [one_mul] using mul_le_mul_of_nonneg_right hden (Nat.cast_nonneg N : (0 : ℝ) ≤ N)
   · intro j _
     exact Nat.cast_nonneg _

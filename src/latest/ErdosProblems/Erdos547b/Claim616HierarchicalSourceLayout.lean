@@ -141,7 +141,7 @@ def hierarchyInteriorSlot
     (i : SegmentIndex hT P optional)
     (a : Fin ((AllocationHierarchy hT P optional).segments.size i)) :
     RootSlot CIndex Edge :=
-  match hclass : segmentSourceClass hT P optional i with
+  match _hclass : segmentSourceClass hT P optional i with
   | Sum.inl q => Sum.inl (componentReservoirSide P q)
   | Sum.inr j =>
       let localSide := segmentEndpointSide hT P optional i j a
@@ -156,6 +156,7 @@ def hierarchyInteriorSlot
         Sum.inr (Sum.inr
           ⟨edgeb (A.Fbedge j), orientedSide (rootSideb (A.Fbedge j)) localSide⟩)
 
+omit [DecidableEq Edge] in
 @[simp] theorem rootSlotPool_hierarchyInteriorSlot
     (i : SegmentIndex hT P optional)
     (a : Fin ((AllocationHierarchy hT P optional).segments.size i)) :
@@ -167,14 +168,14 @@ def hierarchyInteriorSlot
   unfold hierarchyInteriorSlot hierarchyInteriorPool
   split
   · rename_i q hclass
-    simp [hierarchyInteriorPool, hclass, rootSlotPool]
+    simp [hclass, rootSlotPool]
   · rename_i j hclass
     by_cases hj0 : j ∈ S.selected
-    · simp [hierarchyInteriorPool, hclass, rootSlotPool, branchEdge, hj0]
+    · simp [hclass, rootSlotPool, branchEdge, hj0]
     · by_cases hj1 : j ∈ halfBranches P
-      · simp [hierarchyInteriorPool, hclass, rootSlotPool, branchEdge, hj0, hj1,
+      · simp [hclass, rootSlotPool, branchEdge, hj0, hj1,
           majorResidualBranches]
-      · simp [hierarchyInteriorPool, hclass, rootSlotPool, branchEdge, hj0, hj1,
+      · simp [hclass, rootSlotPool, branchEdge, hj0, hj1,
           majorResidualBranches]
 
 end Allocated

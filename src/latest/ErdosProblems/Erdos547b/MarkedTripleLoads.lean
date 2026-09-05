@@ -8,7 +8,7 @@ Only the branch root and prescribed marks use the intermediate cluster.
 Four disjoint pairs retain a usable pair below the three-cluster load.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoMarkedTripleLoads
@@ -42,33 +42,36 @@ theorem image_inter_eq_marked
     · exact hspecial a ha
 
 theorem intermediate_load_bound
-    {A B : Type*} [Fintype A] [DecidableEq A] [DecidableEq B]
+    {A B : Type*} [Fintype A] [DecidableEq B]
     (f : A → B) (root : A) (special : Finset A) (C X Y : Finset B)
     (hroot : f root ∈ C) (hspecial : ∀ a ∈ special, f a ∈ C)
     (hother : ∀ a, a ≠ root → a ∉ special → f a ∈ X ∪ Y)
     (hCX : Disjoint C X) (hCY : Disjoint C Y) :
     ((Finset.univ.image f) ∩ C).card ≤ 1 + special.card := by
+  classical
   rw [image_inter_eq_marked f root special C X Y hroot hspecial hother hCX hCY]
   have h := Finset.card_image_le (s := insert root special) (f := f)
   have hi := Finset.card_insert_le root special
   omega
 
 theorem three_mul_intermediate_load_le
-    {A B : Type*} [Fintype A] [DecidableEq A] [DecidableEq B]
+    {A B : Type*} [Fintype A] [DecidableEq B]
     (f : A → B) (root : A) (special : Finset A) (C X Y : Finset B)
     (hroot : f root ∈ C) (hspecial : ∀ a ∈ special, f a ∈ C)
     (hother : ∀ a, a ≠ root → a ∉ special → f a ∈ X ∪ Y)
     (hCX : Disjoint C X) (hCY : Disjoint C Y) (hsize : 3 ≤ Fintype.card A) :
     3 * ((Finset.univ.image f) ∩ C).card ≤ Fintype.card A + 3 * special.card := by
+  classical
   have h := intermediate_load_bound f root special C X Y hroot hspecial hother hCX hCY
   omega
 
 theorem image_subset_three_sets
-    {A B : Type*} [Fintype A] [DecidableEq A] [DecidableEq B]
+    {A B : Type*} [Fintype A] [DecidableEq B]
     (f : A → B) (root : A) (special : Finset A) (C X Y : Finset B)
     (hroot : f root ∈ C) (hspecial : ∀ a ∈ special, f a ∈ C)
     (hother : ∀ a, a ≠ root → a ∉ special → f a ∈ X ∪ Y) :
     Finset.univ.image f ⊆ C ∪ X ∪ Y := by
+  classical
   intro v hv
   obtain ⟨a, _, rfl⟩ := Finset.mem_image.mp hv
   by_cases har : a = root
@@ -101,9 +104,11 @@ theorem exists_private_pair_with_two_large_sides
       rcases Erdos547b.RegularPair.OrderedRootedForest.fin_two_eq_zero_or_one (side i) with hs | hs
       · exact Finset.mem_union_left _ (by simpa only [hs] using (Finset.mem_inter.mp hv).1)
       · exact Finset.mem_union_right _ (by simpa only [hs] using (Finset.mem_inter.mp hv).1)
-    have hsubR : ((whole i (side i) ∩ used).card : ℝ) ≤ (occupied i).card := by exact_mod_cast Finset.card_le_card hsub
+    have hsubR : ((whole i (side i) ∩ used).card : ℝ) ≤ (occupied i).card :=
+      by exact_mod_cast Finset.card_le_card hsub
     linarith only [hsplitR, hsubR, hside i]
-  have hoccDisj : ∀ i ∈ (Finset.univ : Finset (Fin 4)), ∀ j ∈ Finset.univ, i ≠ j → Disjoint (occupied i) (occupied j) := by
+  have hoccDisj : ∀ i ∈ (Finset.univ : Finset (Fin 4)), ∀ j ∈ Finset.univ, i ≠ j → Disjoint
+    (occupied i) (occupied j) := by
     intro i _ j _ hij
     exact (hdisjoint i j hij).mono Finset.inter_subset_right Finset.inter_subset_right
   have hsum : (∑ i : Fin 4, (occupied i).card) ≤ used.card := by
@@ -114,7 +119,8 @@ theorem exists_private_pair_with_two_large_sides
     (show (Finset.univ : Finset (Fin 4)).Nonempty by simp)
     (fun i (_ : i ∈ (Finset.univ : Finset (Fin 4))) => hlower i)
   have hstrictR : 4 * ((1 - γ) * N) < ∑ i : Fin 4, ((occupied i).card : ℝ) := by
-    simpa only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, Nat.cast_ofNat] using hstrict
+    simpa only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, Nat.cast_ofNat]
+      using hstrict
   have husedR : (used.card : ℝ) ≤ 3 * N := by exact_mod_cast hused
   have hγN := mul_le_mul_of_nonneg_right hγ (Nat.cast_nonneg N : (0 : ℝ) ≤ N)
   nlinarith only [hsumR, hstrictR, husedR, hγN]

@@ -10,7 +10,7 @@ tags force every other family to skip this owner without any root test.
 Both sides retain a single updated root map and exact earlier copies.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceCapacityTwoSideAdvance
@@ -65,9 +65,11 @@ theorem exists_twoSideFamilyAdvance
         (#((reservoir W Q (otherSide (rootSide n))).filter ((embeddingHost W).Adj z)) : ℝ)) ∧
       ∃ D : ∀ s j, FamilyState W Q S (rootCluster W Q s) F owner (kinds s j)
           (allocation s j) (family s j) (Function.update rootImage n z) (n.val + 1),
-        ∀ s j i hi, ((D s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s j)).forestCopy.componentCopy i
+        ∀ s j i hi, ((D s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s
+          j)).forestCopy.componentCopy i
             (processedFamily_mono owner (Nat.le_succ n.val) (family s j) hi) =
-          ((A s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s j)).forestCopy.componentCopy i hi := by
+          ((A s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s
+            j)).forestCopy.componentCopy i hi := by
   obtain ⟨z, hz, hfresh, hAdj, hdegree, Dcurrent, hcurrent⟩ :=
     exists_synchronizedFamilyAdvance W Q S (rootSide n) (otherSide (rootSide n)) F owner
       hα hα1 hhost horder hk (kinds (rootSide n)) (hkind (rootSide n))
@@ -77,9 +79,11 @@ theorem exists_twoSideFamilyAdvance
   have hnext (s : Fin 2) :
       ∃ D : ∀ j, FamilyState W Q S (rootCluster W Q s) F owner (kinds s j)
           (allocation s j) (family s j) (Function.update rootImage n z) (n.val + 1),
-        ∀ j i hi, ((D j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s j)).forestCopy.componentCopy i
+        ∀ j i hi, ((D j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s
+          j)).forestCopy.componentCopy i
             (processedFamily_mono owner (Nat.le_succ n.val) (family s j) hi) =
-          ((A s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s j)).forestCopy.componentCopy i hi := by
+          ((A s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s
+            j)).forestCopy.componentCopy i hi := by
     by_cases hs : s = rootSide n
     · subst s
       exact ⟨Dcurrent, hcurrent⟩
@@ -88,7 +92,8 @@ theorem exists_twoSideFamilyAdvance
         have h := hside s j i hi
         rw [ho] at h
         exact hs h.symm
-      have hstep (j : Fin k) := exists_familyAdvance_noAllocation W Q S (rootCluster W Q s) F owner (kinds s j)
+      have hstep (j : Fin k) := exists_familyAdvance_noAllocation W Q S (rootCluster W Q s) F owner
+        (kinds s j)
         hα hα1 hhost horder (hkind s j) rootImage n (A s j) z
         (by
           intro i hi
@@ -97,7 +102,8 @@ theorem exists_twoSideFamilyAdvance
         (by
           intro x hx howner
           obtain ⟨i, hi, hoi⟩ := howner
-          have hm : i ∈ activeItems W Q S (rootCluster W Q s) F owner (kinds s j) (A s j).active := by
+          have hm : i ∈ activeItems W Q S (rootCluster W Q s) F owner (kinds s j) (A s j).active :=
+            by
             rw [hx]
             exact hi
           have hf : i ∈ family s j :=

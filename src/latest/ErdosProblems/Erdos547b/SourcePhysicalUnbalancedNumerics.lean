@@ -3,7 +3,7 @@ import ErdosProblems.Erdos547b.SourceNearFullNumerics
 
 /-! # Pay the physical-row exceptional-target and distinguished-edge errors -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePhysicalUnbalancedNumerics

@@ -12,7 +12,7 @@ the already selected root. Future parent-map values are unconstrained and
 no graph copies or degree certificates for future owners are inputs.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceActualReservation
@@ -67,7 +67,8 @@ theorem exists_actualReservation
     (listForest F R.reserved) (fun i => hsmall R.reserved[i.val]) hmass
   let p := fun i : Fin R.reserved.length => parent R.reserved[i.val]
   let available := residualSide (edgeWhole W Q e) (deleted W Q e)
-  let initial := castPartialSelected (listForest F R.reserved) (embeddingHost W) p P.orient available
+  let initial := castPartialSelected (listForest F R.reserved) (embeddingHost W) p P.orient
+    available
     (branchPrefix_zero R.reserved.length).symm
     (emptyPartial (listForest F R.reserved) (embeddingHost W) p P.orient available)
   have hlength : pending.length ≤ R.reserved.length := by
@@ -78,7 +79,8 @@ theorem exists_actualReservation
     change parent ((pending ++ future.take R.count)[i.val]) = z
     rw [List.getElem_append_left hi]
     exact hparent _ (List.getElem_mem hi)
-  obtain ⟨E, _⟩ := P.extend_interval W Q p 0 pending.length (Nat.zero_le _) hlength initial z hz hcurrent
+  obtain ⟨E, _⟩ := P.extend_interval W Q p 0 pending.length (Nat.zero_le _) hlength initial z hz
+    hcurrent
   exact ⟨⟨R, P, E⟩⟩
 
 end Erdos547b.ZhaoSourceActualReservation

@@ -66,16 +66,20 @@ def toWholeBranchForestVertex
   fun x ↦ (branchGraphIso (wholeOrderedTree T hT root)).symm
     (toSingleCoordinate T hT root x)
 
+omit [DecidableEq V] in
 theorem toWholeBranchForestVertex_injective
     (T : SimpleGraph V) (hT : T.IsTree) (root : V) :
     Function.Injective (toWholeBranchForestVertex T hT root) := by
+  classical
   intro x y hxy
   apply toSingleCoordinate_injective T hT root
   exact (branchGraphIso (wholeOrderedTree T hT root)).symm.injective hxy
 
+omit [DecidableEq V] in
 @[simp] theorem toWholeBranchForestVertex_root
     (T : SimpleGraph V) (hT : T.IsTree) (root : V) :
     toWholeBranchForestVertex T hT root root = Sum.inl 0 := by
+  classical
   let e := branchGraphIso (wholeOrderedTree T hT root)
   apply e.injective
   change e (e.symm (toSingleCoordinate T hT root root)) =
@@ -85,6 +89,7 @@ theorem toWholeBranchForestVertex_injective
     flattenBranch (wholeOrderedTree T hT root) (Sum.inl 0)
   rw [toSingleCoordinate_root, flattenBranch_root]
 
+omit [DecidableEq V] in
 theorem wholeBranchOriginal_branch
     (T : SimpleGraph V) (hT : T.IsTree) (root : V)
     (j : Fin (Fintype.card (ChildKey (wholeOrderedTree T hT root))))
@@ -94,11 +99,13 @@ theorem wholeBranchOriginal_branch
   rw [wholeBranchOriginalVertex, flattenBranch_branch_eq_local]
   rfl
 
+omit [DecidableEq V] in
 theorem wholeBranchOriginal_branch_ne_root
     (T : SimpleGraph V) (hT : T.IsTree) (root : V)
     (j : Fin (Fintype.card (ChildKey (wholeOrderedTree T hT root))))
     (a : Fin ((wholeBranchForest T hT root).branches.size j)) :
     wholeBranchOriginalVertex T hT root (Sum.inr ⟨j, a⟩) ≠ root := by
+  classical
   rw [wholeBranchOriginal_branch]
   intro heq
   apply branchLocalVertex_ne_componentRoot
@@ -106,6 +113,7 @@ theorem wholeBranchOriginal_branch_ne_root
   apply (vertexEquiv (V := V)).injective
   simpa [wholeOrderedTree, singleOrderedRootedTree] using heq
 
+omit [DecidableEq V] in
 /-- Parent transport through the canonical one-component reindexing. -/
 theorem singleOrdered_parent_original
     (T : SimpleGraph V) (hT : T.IsTree) (root : V)
@@ -164,6 +172,7 @@ theorem singleOrdered_parent_original
         exact haIso.symm
   exact TreePartition.eq_parent_of_adj_of_dist_add_one hT root _ hAdj hDist
 
+omit [DecidableEq V] in
 /-- Literal whole-tree spelling of `flattenBranch_localParent`.  This is the
 boundary theorem consumed by the F₀/F₁/F_b hierarchy classifier. -/
 theorem wholeBranch_localParent_original
@@ -178,6 +187,7 @@ theorem wholeBranch_localParent_original
     wholeBranchOriginalVertex T hT globalRoot (Sum.inr ⟨j, p⟩) =
       TreePartition.parent hT globalRoot
         (wholeBranchOriginal_branch_ne_root T hT globalRoot j a) := by
+  classical
   dsimp only
   let p := TreePartition.parent
     ((wholeBranchForest T hT globalRoot).branches.isTree j)
@@ -312,20 +322,24 @@ def toWholeHierarchyVertex
   fun x ↦ unflatten (wholeBranchForest T hT root) special
     (toWholeBranchForestVertex T hT root x)
 
+omit [DecidableEq V] in
 @[simp] theorem wholeHierarchyOriginal_toWholeHierarchyVertex
     (T : SimpleGraph V) (hT : T.IsTree) (root : V)
     (special : Finset (WholeBranchVertex T hT root)) (x : V) :
     wholeHierarchyOriginalVertex T hT root special
       (toWholeHierarchyVertex T hT root special x) = x := by
+  classical
   rw [wholeHierarchyOriginalVertex, toWholeHierarchyVertex,
     flatten_unflatten, toWholeBranchForestVertex,
     (branchGraphIso (wholeOrderedTree T hT root)).apply_symm_apply,
     from_toSingleCoordinate]
 
+omit [DecidableEq V] in
 theorem toWholeHierarchyVertex_injective
     (T : SimpleGraph V) (hT : T.IsTree) (root : V)
     (special : Finset (WholeBranchVertex T hT root)) :
     Function.Injective (toWholeHierarchyVertex T hT root special) := by
+  classical
   intro x y hxy
   simpa only [wholeHierarchyOriginal_toWholeHierarchyVertex] using
     congrArg (wholeHierarchyOriginalVertex T hT root special) hxy
@@ -352,6 +366,7 @@ structure FullTreeRegularEmbedding
     fullCopy x = specialEmbedding.hierarchyEmbedding.fullCopy
       (toWholeHierarchyVertex T hT globalRoot special x)
 
+omit [DecidableEq V] in
 theorem FullTreeRegularEmbedding.map_globalRoot
     (T : SimpleGraph V) (hT : T.IsTree) (globalRoot : V)
     (special : Finset (WholeBranchVertex T hT globalRoot))
@@ -365,6 +380,7 @@ theorem FullTreeRegularEmbedding.map_globalRoot
     (E : FullTreeRegularEmbedding T hT globalRoot special G
       globalRootImage rootCandidate interiorCandidate) :
     E.fullCopy globalRoot = globalRootImage 0 := by
+  classical
   rw [E.fullCopy_apply]
   change E.specialEmbedding.hierarchyEmbedding.fullCopy
     (unflatten (wholeBranchForest T hT globalRoot) special
@@ -372,6 +388,7 @@ theorem FullTreeRegularEmbedding.map_globalRoot
   rw [toWholeBranchForestVertex_root]
   exact E.specialEmbedding.hierarchyEmbedding.fullCopy_root 0
 
+omit [DecidableEq V] in
 /-- Every requested non-global mark is realized in a hierarchy-root
 candidate.  This is the placement statement used to retain future leaf
 parents in the large host layer. -/
@@ -414,7 +431,6 @@ theorem FullTreeRegularEmbedding.map_markedVertex_eq_segmentRoot
       exact False.elim (hxRoot hxr)
   | inr z =>
       have hz : (Sum.inr z : F.Vertex) ∈ rawSpecial := by
-        change (Sum.inr z : F.Vertex) ∈ rawSpecial
         rw [← hcoord]
         exact hxImage
       obtain ⟨i, hi⟩ := unflatten_branchSpecial_is_segmentRoot
@@ -423,7 +439,7 @@ theorem FullTreeRegularEmbedding.map_markedVertex_eq_segmentRoot
           (marks (wholeBranchForest T hT globalRoot)
             (wholeSpecialCoordinates T hT globalRoot markedVertices)).card :=
         ⟨i.val, by
-          simpa [F, rawSpecial, wholeSpecialCoordinates] using i.isLt⟩
+          simp [F, rawSpecial, wholeSpecialCoordinates]⟩
       have hi' :
           toWholeHierarchyVertex T hT globalRoot
               (wholeSpecialCoordinates T hT globalRoot markedVertices) x =
@@ -443,6 +459,7 @@ theorem FullTreeRegularEmbedding.map_markedVertex_eq_segmentRoot
         E.specialEmbedding.hierarchyEmbedding.map_root]
       exact E.specialEmbedding.hierarchyEmbedding.root_mem i'
 
+omit [DecidableEq V] in
 theorem FullTreeRegularEmbedding.map_markedVertex
     (T : SimpleGraph V) (hT : T.IsTree) (globalRoot : V)
     (markedVertices : Finset V)
@@ -462,10 +479,12 @@ theorem FullTreeRegularEmbedding.map_markedVertex
       globalRootImage rootCandidate interiorCandidate)
     (x : V) (hx : x ∈ markedVertices) (hxRoot : x ≠ globalRoot) :
     ∃ i, E.fullCopy x ∈ rootCandidate i := by
+  classical
   obtain ⟨i, -, hi⟩ := E.map_markedVertex_eq_segmentRoot T hT globalRoot
     markedVertices G globalRootImage rootCandidate interiorCandidate x hx hxRoot
   exact ⟨i, hi⟩
 
+omit [DecidableEq V] in
 /-- Full-tree realization retaining both the candidate-placement witness and
 the literal copy.  No source copy or deleted-edge adjacency is an input. -/
 theorem exists_fullTreeRegularEmbedding_of_cleanedRegularSystem
@@ -488,6 +507,7 @@ theorem exists_fullTreeRegularEmbedding_of_cleanedRegularSystem
         rootGroup group rootCandidate interiorCandidate) :
     Nonempty (FullTreeRegularEmbedding T hT globalRoot special G
       globalRootImage rootCandidate interiorCandidate) := by
+  classical
   obtain ⟨E⟩ := exists_specialRegularEmbedding
     (wholeBranchForest T hT globalRoot) special G rho globalRootImage
       rootGroup group rootCandidate interiorCandidate S
@@ -506,6 +526,7 @@ theorem exists_fullTreeRegularEmbedding_of_cleanedRegularSystem
         (toWholeBranchForestVertex T hT globalRoot x))
   exact E.originalCopy_apply _
 
+omit [DecidableEq V] in
 /-- Full-tree, no-link conclusion used by Lemma 6.14 Part 2 and by the
 Claim-6.17 switch.  All parent edges are realized by the hierarchical online
 constructor before any graph transport occurs. -/
@@ -528,11 +549,13 @@ theorem exists_fullTreeCopy_of_cleanedRegularSystem
         (wholeHierarchy T hT globalRoot special) G rho globalRootImage
         rootGroup group rootCandidate interiorCandidate) :
     Nonempty (T.Copy G) := by
+  classical
   obtain ⟨E⟩ := exists_fullTreeRegularEmbedding_of_cleanedRegularSystem
     T hT globalRoot special G rho globalRootImage rootGroup group
       rootCandidate interiorCandidate S
   exact ⟨E.fullCopy⟩
 
+omit [DecidableEq V] in
 /-- Containment spelling for the stability contradiction. -/
 theorem isContained_of_cleanedRegularSystem
     {c k : ℕ}
@@ -553,9 +576,11 @@ theorem isContained_of_cleanedRegularSystem
         (wholeHierarchy T hT globalRoot special) G rho globalRootImage
         rootGroup group rootCandidate interiorCandidate) :
     T.IsContained G := by
+  classical
   exact (exists_fullTreeCopy_of_cleanedRegularSystem T hT globalRoot special G
     rho globalRootImage rootGroup group rootCandidate interiorCandidate S).some.isContained
 
+omit [DecidableEq V] in
 /-- Literal-vertex spelling used by the Zhao partition adapters.  In the
 Lemma-6.14 application `markedVertices` is the union of all non-initial Zhao
 roots with the optional parent-vertex set selected by Lemma 6.3. -/
@@ -587,6 +612,7 @@ theorem exists_fullTreeCopy_of_markedVertices_cleanedRegularSystem
           (wholeSpecialCoordinates T hT globalRoot markedVertices))
         G rho globalRootImage rootGroup group rootCandidate interiorCandidate) :
     Nonempty (T.Copy G) := by
+  classical
   exact exists_fullTreeCopy_of_cleanedRegularSystem T hT globalRoot
     (wholeSpecialCoordinates T hT globalRoot markedVertices) G rho
       globalRootImage rootGroup group rootCandidate interiorCandidate S
@@ -594,6 +620,8 @@ theorem exists_fullTreeCopy_of_markedVertices_cleanedRegularSystem
 end Erdos547b.ZhaoLemma614HierarchicalFullTree
 
 #print axioms Erdos547b.ZhaoLemma614HierarchicalFullTree.exists_fullTreeCopy_of_cleanedRegularSystem
-#print axioms Erdos547b.ZhaoLemma614HierarchicalFullTree.exists_fullTreeRegularEmbedding_of_cleanedRegularSystem
+open Erdos547b.ZhaoLemma614HierarchicalFullTree in
+#print axioms exists_fullTreeRegularEmbedding_of_cleanedRegularSystem
 #print axioms Erdos547b.ZhaoLemma614HierarchicalFullTree.isContained_of_cleanedRegularSystem
-#print axioms Erdos547b.ZhaoLemma614HierarchicalFullTree.exists_fullTreeCopy_of_markedVertices_cleanedRegularSystem
+open Erdos547b.ZhaoLemma614HierarchicalFullTree in
+#print axioms exists_fullTreeCopy_of_markedVertices_cleanedRegularSystem

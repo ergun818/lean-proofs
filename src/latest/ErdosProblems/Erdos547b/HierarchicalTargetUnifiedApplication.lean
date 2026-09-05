@@ -365,4 +365,5 @@ end HierarchicalSegmentForest
 
 end Erdos547b.ZhaoLemma59HierarchicalTargetUnifiedApplication
 
-#print axioms Erdos547b.ZhaoLemma59HierarchicalTargetUnifiedApplication.HierarchicalSegmentForest.exists_targetUnifiedHierarchyEmbedding
+open Erdos547b.ZhaoLemma59HierarchicalTargetUnifiedApplication.HierarchicalSegmentForest in
+#print axioms exists_targetUnifiedHierarchyEmbedding

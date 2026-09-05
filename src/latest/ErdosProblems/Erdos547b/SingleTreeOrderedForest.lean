@@ -48,23 +48,28 @@ def fromSingleCoordinate (T : SimpleGraph V) (hT : T.IsTree) (root : V) :
     (Σ i, Fin ((singleOrderedRootedTree T hT root).size i)) → V :=
   fun z ↦ vertexEquiv z.2
 
+omit [DecidableEq V] in
 @[simp] theorem from_toSingleCoordinate
     (T : SimpleGraph V) (hT : T.IsTree) (root x : V) :
     fromSingleCoordinate T hT root (toSingleCoordinate T hT root x) = x := by
   simp [fromSingleCoordinate, toSingleCoordinate, vertexEquiv]
 
+omit [DecidableEq V] in
 @[simp] theorem toSingleCoordinate_injective
     (T : SimpleGraph V) (hT : T.IsTree) (root : V) :
     Function.Injective (toSingleCoordinate T hT root) := by
+  classical
   intro x y hxy
   have hxy' := congrArg (fromSingleCoordinate T hT root) hxy
   simpa using hxy'
 
+omit [DecidableEq V] in
 @[simp] theorem toSingleCoordinate_root
     (T : SimpleGraph V) (hT : T.IsTree) (root : V) :
     toSingleCoordinate T hT root root =
       ⟨0, (singleOrderedRootedTree T hT root).root 0⟩ := rfl
 
+omit [DecidableEq V] in
 theorem toSingleCoordinate_map_adj
     (T : SimpleGraph V) (hT : T.IsTree) (root : V) {x y : V}
     (hxy : T.Adj x y) :

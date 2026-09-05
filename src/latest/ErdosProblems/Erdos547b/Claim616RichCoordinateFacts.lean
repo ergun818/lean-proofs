@@ -97,6 +97,7 @@ theorem coordinateSeparationFacts_of_indexedHostSystem
 
 omit H
 
+omit [Fintype B] in
 /-- Removing two exact-size distinguished reserves from a host set loses at
 most `2 * quota` vertices. -/
 private theorem card_le_removeRootReserves_card_add_two_mul
@@ -114,15 +115,18 @@ private theorem card_le_removeRootReserves_card_add_two_mul
       rootReserve.card + companionReserve.card := Finset.card_union_le _ _
   omega
 
+omit [Fintype B] in
 /-- The exact natural loss bound plus the regularity-scale slack gives the
 large-raw-reservoir inequality needed by the online embedding backend. -/
-private theorem epsilon_mul_card_le_removeRootReserves_card
+private theorem epsilon_mul_card_le_removeRootReserves_card [Finite B]
     (rootReserve companionReserve X : Finset B)
     (hroot : rootReserve.card = quota)
     (hcompanion : companionReserve.card = quota)
     (hslack : (epsilon : ℝ) * #X + (2 * quota : ℕ) ≤ #X) :
     (epsilon : ℝ) * #X ≤
       #(X \ (rootReserve ∪ companionReserve)) := by
+  classical
+  let := Fintype.ofFinite B
   have hcardNat := card_le_removeRootReserves_card_add_two_mul
     (quota := quota) rootReserve companionReserve X hroot hcompanion
   have hcard : (#X : ℝ) ≤
@@ -289,12 +293,14 @@ private abbrev factsCapacity
 
 /-! ## Literal edge-map separation and endpoint loads -/
 
+omit [DecidableEq B] [Fintype B] in
 private theorem factsEdge0_injective :
     Function.Injective
       (moutOriginalEdge
         (R := regularityReducedGraph G cluster epsilon density) D) :=
   moutOriginalEdge_injective D
 
+omit [DecidableEq B] [Fintype B] in
 private theorem factsEdge1_injective :
     Function.Injective
       (fun e : RemainingMinEdge
@@ -302,6 +308,7 @@ private theorem factsEdge1_injective :
   intro e f hef
   exact Subtype.ext hef
 
+omit [DecidableEq B] [Fintype B] in
 private theorem factsEdgeb_injective :
     Function.Injective
       (fun e : ReservedEdge
@@ -309,6 +316,7 @@ private theorem factsEdgeb_injective :
   intro e f hef
   exact Subtype.ext hef
 
+omit [DecidableEq B] [Fintype B] in
 /-- The accessible `M_out` edges and residual `M_1` edges are literal
 disjoint families: the former lie outside `minEdges`, while the latter lie
 inside it. -/
@@ -333,6 +341,7 @@ private theorem factsEdge0_disjoint_edge1 :
     (Finset.mem_sdiff.mp e1.2).1
   exact (Finset.mem_sdiff.mp hout).2 (heq.symm ▸ hin)
 
+omit [DecidableEq B] [Fintype B] in
 /-- The residual `M_1` and reserved `M_b` edge families are literal
 disjoint families, on opposite sides of `minEdges`. -/
 private theorem factsEdge1_disjoint_edgeb :
@@ -354,11 +363,12 @@ private theorem factsEdge1_disjoint_edgeb :
     (R := regularityReducedGraph G cluster epsilon density) D eb.2
   exact (Finset.mem_sdiff.mp hout).2 (heq ▸ hin)
 
+omit [DecidableEq B] [Fintype B] in
 /-- An actually assigned accessible `M_out` edge cannot be an `M_b` edge.
 The proof uses the endpoint selected by `indexedAccessSide`, which belongs to
 `V_2 ∩ (V(M_out) \ V(M_b))`; this is the exact assigned-only separation
 required by the coordinate load theorem. -/
-private theorem factsAssignedEdge0_ne_edgeb
+private theorem factsAssignedEdge0_ne_edgeb [Finite B]
     (hT : T.IsTree) (P : ZhaoForestPartition T globalRoot small)
     (optional : Finset V)
     (S : SelectedF0Within (branchForest P) (halfBranches P) target slack)
@@ -375,6 +385,8 @@ private theorem factsAssignedEdge0_ne_edgeb
       moutOriginalEdge
           (R := regularityReducedGraph G cluster epsilon density) D
           (Aalloc.F0edge j) ≠ eb.1 := by
+  classical
+  let := Fintype.ofFinite B
   intro j hj eb heq
   let side := indexedAccessSide
     (regularityReducedGraph G cluster epsilon density)
@@ -439,11 +451,12 @@ private theorem factsAssignedEdge0_ne_edgeb
       (R := regularityReducedGraph G cluster epsilon density) D)
     (e := eb.1) eb.2 (orientedSide side 1)
 
+omit [DecidableEq B] [Fintype B] in
 /-- Actual coordinate occupancy of an assigned accessible `M_out` endpoint
 is bounded by the corresponding selected-branch colour-class load.  All
 edge-map injectivity and separation facts are derived from the literal
 decomposition and the indexed-access condition. -/
-theorem richCoordinatePoolLoad_edge0_le
+theorem richCoordinatePoolLoad_edge0_le [Finite B]
     (hT : T.IsTree) (P : ZhaoForestPartition T globalRoot small)
     (optional : Finset V)
     (S : SelectedF0Within (branchForest P) (halfBranches P) target slack)
@@ -468,6 +481,8 @@ theorem richCoordinatePoolLoad_edge0_le
       ∑ j ∈ S.selected.filter (Aalloc.F0edge · = e),
         Erdos547b.ZhaoLemma58GroupedSmallForest.orientedClassSize
           (branchForest P).branches orient j c := by
+  classical
+  let := Fintype.ofFinite B
   exact coordinatePoolLoad_edge0_le hT P optional S
     (fun _ : Fin C.card ↦ clusterCap)
     (factsAllowed0 G cluster epsilon density D C)
@@ -488,9 +503,10 @@ theorem richCoordinatePoolLoad_edge0_le
       S clusterCap base0 base1 baseb Aalloc)
     e heAssigned c
 
+omit [DecidableEq B] [Fintype B] in
 /-- Actual coordinate occupancy of an `M_1` endpoint is bounded by the
 corresponding residual-branch colour-class load. -/
-theorem richCoordinatePoolLoad_edge1_le
+theorem richCoordinatePoolLoad_edge1_le [Finite B]
     (hT : T.IsTree) (P : ZhaoForestPartition T globalRoot small)
     (optional : Finset V) (hparity : OptionalBranchRootParity P optional)
     (S : SelectedF0Within (branchForest P) (halfBranches P) target slack)
@@ -513,6 +529,8 @@ theorem richCoordinatePoolLoad_edge1_le
       ∑ j ∈ (majorResidualBranches P S).filter (Aalloc.F1edge · = e),
         Erdos547b.ZhaoLemma58GroupedSmallForest.orientedClassSize
           (branchForest P).branches orient j c := by
+  classical
+  let := Fintype.ofFinite B
   exact coordinatePoolLoad_edge1_le hT P optional S
     (fun _ : Fin C.card ↦ clusterCap)
     (factsAllowed0 G cluster epsilon density D C)
@@ -531,9 +549,10 @@ theorem richCoordinatePoolLoad_edge1_le
     (factsEdge0_disjoint_edge1 G cluster epsilon density D C)
     (factsEdge1_disjoint_edgeb G cluster epsilon density D C) e c
 
+omit [DecidableEq B] [Fintype B] in
 /-- Actual coordinate occupancy of an `M_b` endpoint is bounded by the
 corresponding minor-branch colour-class load. -/
-theorem richCoordinatePoolLoad_edgeb_le
+theorem richCoordinatePoolLoad_edgeb_le [Finite B]
     (hT : T.IsTree) (P : ZhaoForestPartition T globalRoot small)
     (optional : Finset V) (hparity : OptionalBranchRootParity P optional)
     (S : SelectedF0Within (branchForest P) (halfBranches P) target slack)
@@ -556,6 +575,8 @@ theorem richCoordinatePoolLoad_edgeb_le
       ∑ j ∈ (minorBranches P).filter (Aalloc.Fbedge · = e),
         Erdos547b.ZhaoLemma58GroupedSmallForest.orientedClassSize
           (branchForest P).branches orient j c := by
+  classical
+  let := Fintype.ofFinite B
   exact coordinatePoolLoad_edgeb_le hT P optional S
     (fun _ : Fin C.card ↦ clusterCap)
     (factsAllowed0 G cluster epsilon density D C)
@@ -1076,14 +1097,17 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 variable {T : SimpleGraph V} [DecidableRel T.Adj]
 variable {globalRoot : V} {small target slack : ℕ}
 
+omit [DecidableEq B] [Fintype B] in
 /-- Every raw endpoint of a residual `M_1` edge belongs to `V_1`. -/
-theorem remainingEndpoint_mem_V1
+theorem remainingEndpoint_mem_V1 [Finite B]
     (e : RemainingMinEdge
       (R := regularityReducedGraph G cluster epsilon density) D C)
     (c : Fin 2) :
     matchingEdgeEndpoint e.1.1 c ∈
       MatchingDecomposition.V1
         (R := regularityReducedGraph G cluster epsilon density) D := by
+  classical
+  let := Fintype.ofFinite B
   apply MatchingDecomposition.Mone_support_subset_V1
     (R := regularityReducedGraph G cluster epsilon density) D C
   exact matchingEndpoint_mem_edgeFinsetSupport (G := G)
@@ -1093,9 +1117,10 @@ theorem remainingEndpoint_mem_V1
       (R := regularityReducedGraph G cluster epsilon density) D C)
     (e := e.1) e.2 c
 
+omit [DecidableEq B] [Fintype B] in
 /-- The genuine Lemma-6.11 `A` row turns every residual endpoint into the
 whole regular pair used for a major-residual branch root. -/
-theorem remainingEndpointPair_of_V1_adj
+theorem remainingEndpointPair_of_V1_adj [Finite B]
     (hV1Adj : ∀ x ∈ MatchingDecomposition.V1
       (R := regularityReducedGraph G cluster epsilon density) D,
         (regularityReducedGraph G cluster epsilon density).Adj Aroot x)
@@ -1106,14 +1131,17 @@ theorem remainingEndpointPair_of_V1_adj
         (cluster (matchingEdgeEndpoint e.1.1 c)) ∧
       density ≤ G.edgeDensity (cluster Aroot)
         (cluster (matchingEdgeEndpoint e.1.1 c)) := by
+  classical
+  let := Fintype.ofFinite B
   exact pair_of_reducedAdj G cluster epsilon density
     (hV1Adj _ (remainingEndpoint_mem_V1 G cluster epsilon density D C e c))
 
+omit [DecidableEq B] [Fintype B] in
 /-- A supplied canonical `M_b` root side and its genuine reduced adjacency
 give the whole `B`-facing pair.  The final rich wrapper instantiates this
 adjacency with the positive-density theorem, rather than an arbitrary pair
 oracle. -/
-theorem reservedRootEndpointPair_of_adj
+theorem reservedRootEndpointPair_of_adj [Finite B]
     (mbSide : ReservedEdge
       (R := regularityReducedGraph G cluster epsilon density) D → Fin 2)
     (hMbAdj : ∀ e : ReservedEdge
@@ -1126,6 +1154,8 @@ theorem reservedRootEndpointPair_of_adj
         (cluster (matchingEdgeEndpoint e.1.1 (mbSide e))) ∧
       density ≤ G.edgeDensity (cluster Broot)
         (cluster (matchingEdgeEndpoint e.1.1 (mbSide e))) := by
+  classical
+  let := Fintype.ofFinite B
   exact pair_of_reducedAdj G cluster epsilon density (hMbAdj e)
 
 include H
@@ -1178,9 +1208,10 @@ theorem canonicalSelectedAccessPair
 
 omit H
 
+omit [DecidableEq B] [Fintype B] in
 /-- The canonical residual orientation roots the branch at endpoint zero,
 which is paired with distinguished `A` by the Lemma-6.11 `V_1` row. -/
-theorem canonicalResidualRootPair
+theorem canonicalResidualRootPair [Finite B]
     (hT : T.IsTree) (P : ZhaoForestPartition T globalRoot small)
     (optional : Finset V)
     (S : SelectedF0Within (branchForest P) (halfBranches P) target slack)
@@ -1206,15 +1237,18 @@ theorem canonicalResidualRootPair
         (cluster (matchingEdgeEndpoint (Aalloc.F1edge j).1.1
           (canonicalCoordinateOrientation G cluster epsilon density D C hT P
             optional S clusterCap base0 base1 baseb Aalloc mbSide j 0))) := by
+  classical
+  let := Fintype.ofFinite B
   simpa only [canonicalCoordinateOrientation_residual_apply G cluster epsilon
     density D C hT P optional S clusterCap base0 base1 baseb Aalloc mbSide j
     hj 0] using
       (remainingEndpointPair_of_V1_adj G cluster epsilon density D Aroot C
         hV1Adj (Aalloc.F1edge j) 0)
 
+omit [DecidableEq B] [Fintype B] in
 /-- The canonical minor orientation roots the branch at its prescribed
 positive-`B` endpoint. -/
-theorem canonicalMinorRootPair
+theorem canonicalMinorRootPair [Finite B]
     (hT : T.IsTree) (P : ZhaoForestPartition T globalRoot small)
     (optional : Finset V)
     (S : SelectedF0Within (branchForest P) (halfBranches P) target slack)
@@ -1241,6 +1275,8 @@ theorem canonicalMinorRootPair
         (cluster (matchingEdgeEndpoint (Aalloc.Fbedge j).1.1
           (canonicalCoordinateOrientation G cluster epsilon density D C hT P
             optional S clusterCap base0 base1 baseb Aalloc mbSide j 0))) := by
+  classical
+  let := Fintype.ofFinite B
   simpa only [canonicalCoordinateOrientation_minor_zero G cluster epsilon
     density D C hT P optional S clusterCap base0 base1 baseb Aalloc mbSide j
     hj] using
@@ -1380,7 +1416,8 @@ end Pair
 
 end Erdos547b.ZhaoClaim616RichCoordinateFacts
 
-#print axioms Erdos547b.ZhaoClaim616RichCoordinateFacts.coordinateSeparationFacts_of_indexedHostSystem
+open Erdos547b.ZhaoClaim616RichCoordinateFacts in
+#print axioms coordinateSeparationFacts_of_indexedHostSystem
 #print axioms Erdos547b.ZhaoClaim616RichCoordinateFacts.richSlotRaw_large
 #print axioms Erdos547b.ZhaoClaim616RichCoordinateFacts.richCoordinateCapacityFacts
 #print axioms Erdos547b.ZhaoClaim616RichCoordinateFacts.richCoordinateCapacityFacts_of_sourceLoads

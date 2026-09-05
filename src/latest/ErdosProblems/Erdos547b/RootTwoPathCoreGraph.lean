@@ -3,7 +3,7 @@ import ErdosProblems.Erdos547b.RootTwoPathSelection
 
 /-! Flatten the literal two-stage pendant-path deletion to one induced graph. -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoClaim617RootPaths.RootTwoPathSystem
@@ -15,6 +15,7 @@ variable {T : SimpleGraph V} (D : RootTwoPathSystem T I)
 
 def removedSet : Finset V := (Finset.univ.image D.middle) ∪ D.leafSet
 
+omit [DecidableEq I] in
 theorem mem_middleSet_iff (x : {x // x ∉ D.leafSet}) :
     x ∈ D.middleSet ↔ x.1 ∈ Finset.univ.image D.middle := by
   constructor
@@ -40,6 +41,7 @@ def flatCoreIso : D.core ≃g T.induce {x | x ∉ D.removedSet} where
   toEquiv := D.coreVertexEquiv
   map_rel_iff' := by intro x y; rfl
 
+omit [DecidableEq I] in
 theorem coreVertexEquiv_val (x : {x // x ∉ D.middleSet}) :
     (D.coreVertexEquiv x).1 = x.1.1 := rfl
 

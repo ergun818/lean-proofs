@@ -11,7 +11,7 @@ Disjoint matching supports preserve injectivity; disjoint edge sums and
 source concatenation preserve the concrete capacity ledger.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceCapacityFamilyAllocationAdvance
@@ -75,7 +75,8 @@ theorem exists_prepend_prepared (z : Fin hostN)
   let joined := E.placement.append B.closed hsupport
   have hdomain : oldItems.toFinset ∪ B.completed.toFinset =
       (oldItems ++ B.completed).toFinset := List.toFinset_append.symm
-  let closed := castPlacement W Q F owner (rootImage := Function.update rootImage n z) hdomain joined
+  let closed := castPlacement W Q F owner (rootImage := Function.update rootImage n z) hdomain
+    joined
   have hclosedMem : ∀ i, closed.edge i ∈ oldEdges ∪ B.closedEdges := by
     intro i
     have hi : i.1 ∈ oldItems.toFinset ∪ B.completed.toFinset := hdomain.symm ▸ i.2
@@ -137,7 +138,8 @@ theorem exists_prepend_prepared (z : Fin hostN)
     List.mem_toFinset.mpr (List.mem_append_left _ (List.mem_toFinset.mp ho))
   calc
     _ = D.closed.forestCopy.componentCopy i hd := D.current_copy_completed W Q S C F owner kind i hd
-    _ = E.placement.forestCopy.componentCopy i ho := E.placement.append_copy_left B.closed hsupport i ho
+    _ = E.placement.forestCopy.componentCopy i ho := E.placement.append_copy_left B.closed hsupport
+      i ho
     _ = _ := E.old_copies i hi
 
 theorem exists_familyAdvance_withPacking

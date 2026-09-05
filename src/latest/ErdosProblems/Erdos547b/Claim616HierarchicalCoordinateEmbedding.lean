@@ -90,7 +90,7 @@ of the original tree.  The hypotheses are only host pair, raw-reservoir, and
 numeric capacity facts; the theorem takes no copy, continuation, or cleaned
 system premise. -/
 theorem isContained_of_coordinateHostFacts
-    {B : Type v} [Fintype B] [DecidableEq B]
+    {B : Type v} [Finite B] [DecidableEq B]
     (G : SimpleGraph B) [DecidableRel G.Adj]
     (rho density : ℝ)
     (sourceWhole sourceRaw : Finset B)
@@ -242,6 +242,8 @@ theorem isContained_of_coordinateHostFacts
         (rootRaw (coordinateInteriorSlot hT P optional S clusterCapacity
           allowed0 capacity1 capacityb base0 A edge0 edge1 edgeb orient j a))) :
     T.IsContained G := by
+  classical
+  let := Fintype.ofFinite B
   let F := AllocationHierarchy hT P optional
   let rslot := coordinateRootSlot hT P optional S clusterCapacity allowed0
     capacity1 capacityb base0 A edge1 edgeb orient
@@ -272,4 +274,5 @@ end
 
 end Erdos547b.ZhaoClaim616HierarchicalCoordinateEmbedding
 
-#print axioms Erdos547b.ZhaoClaim616HierarchicalCoordinateEmbedding.isContained_of_coordinateHostFacts
+open Erdos547b.ZhaoClaim616HierarchicalCoordinateEmbedding in
+#print axioms isContained_of_coordinateHostFacts

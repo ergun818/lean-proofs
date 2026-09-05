@@ -12,7 +12,7 @@ images are assumed. Prefix occupancy, rather than the full endpoint load,
 is subtracted from the current root's neighborhood.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePendingBranchStep
@@ -33,7 +33,8 @@ omit [DecidableRel H.Adj] in
 /-- The actual prefix image is bounded by the literal oriented prefix
 load, without any re-enumeration of the selected branch indices. -/
 theorem prefix_used_le (i : Fin b)
-    (E : PartialDynamicAttachedForestEmbedding F H parent orient available (Finset.Iio i)) (c : Fin 2) :
+    (E : PartialDynamicAttachedForestEmbedding F H parent orient available (Finset.Iio i)) (c : Fin
+      2) :
     (E.used c).card ≤ sideLoadBefore F orient i c := by
   let chosen : ChosenPartialDynamicEmbedding F H parent available (Finset.Iio i) := ⟨orient, E⟩
   exact card_chosenPartial_used_le_orientedLoad chosen orient (fun _ _ _ => rfl) c
@@ -80,14 +81,17 @@ theorem exists_next_branch_copy
     omega
   have hroot : (1 : ℝ) + ρ * (whole (orient i 0)).card ≤
       (((live (orient i 0)).filter (H.Adj z)).card : ℝ) := by
-    have hn : (1 : ℝ) + reserve (orient i 0) ≤ (((live (orient i 0)).filter (H.Adj z)).card : ℝ) := by
+    have hn : (1 : ℝ) + reserve (orient i 0) ≤ (((live (orient i 0)).filter (H.Adj z)).card : ℝ) :=
+      by
       exact_mod_cast hrootNat
     linarith only [hn, hreserve (orient i 0)]
   have hbranch (c) : (Fintype.card (Fin (F.size i)) : ℝ) + ρ * (whole c).card + 1 ≤
       (d - ρ) * (live c).card := by
-    have hc : ((live c).card : ℝ) + (E.used c).card = (available c).card := by exact_mod_cast hcard c
+    have hc : ((live c).card : ℝ) + (E.used c).card = (available c).card :=
+      by exact_mod_cast hcard c
     have hu : ((E.used c).card : ℝ) ≤ sideLoad F orient c := by exact_mod_cast husedFinal c
-    have hroom : ((available c).card : ℝ) - sideLoad F orient c ≤ (live c).card := by linarith only [hc, hu]
+    have hroom : ((available c).card : ℝ) - sideLoad F orient c ≤ (live c).card :=
+      by linarith only [hc, hu]
     simpa only [Fintype.card_fin] using
       (hmargin c).trans (mul_le_mul_of_nonneg_left hroom hfactor)
   exact exists_dynamic_rooted_tree_copy_of_uniform (F.tree i) (F.isTree i) (F.root i) H z
@@ -141,7 +145,8 @@ theorem exists_next_prefix
         (Finset.Iio i ∪ {i}),
       ∀ j hj, E'.forestCopy.componentCopy j (Finset.mem_union_left _ hj) =
         E.forestCopy.componentCopy j hj := by
-  obtain ⟨f, hf, hside⟩ := exists_next_branch_copy F H parent orient whole available reserve ρ d i E z
+  obtain ⟨f, hf, hside⟩ := exists_next_branch_copy F H parent orient whole available reserve ρ d i E
+    z
     huniform havailable hdisjoint hdensity hfactor hreserve hcapacity hparent hmargin
   let parent' := Function.update parent i z
   have hagrees : ∀ j ∈ Finset.Iio i, parent' j = parent j := by
@@ -182,7 +187,8 @@ theorem exists_next_prefix_of_thresholdData
         E.forestCopy.componentCopy j hj := by
   let O := thresholdSwitchOfData F H whole available ρ d z D
   refine exists_next_prefix F H parent O.orient whole available D.reserve ρ d i E z
-    D.uniform D.live_subset D.whole_disjoint D.density_lower D.factor_nonneg D.reserve_regular ?_ ?_ ?_
+    D.uniform D.live_subset D.whole_disjoint D.density_lower D.factor_nonneg D.reserve_regular ?_ ?_
+      ?_
   · intro c
     exact (Nat.add_le_add_right (O.final_load c) (D.reserve c)).trans (D.live_capacity c)
   · exact D.parent_neighbours (canonicalPrefixBalancedOrientation F D.slack D.small)

@@ -10,7 +10,7 @@ vertices use the common side, and the remaining root-colour vertices use
 the other matching side. All atypical-vertex losses are explicit.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoMarkedTripleEmbedding
@@ -31,9 +31,11 @@ private theorem cleaned_degree
     apply le_of_not_gt
     intro h
     exact (Finset.mem_sdiff.mp hv).2 (Finset.mem_filter.mpr ⟨(Finset.mem_sdiff.mp hv).1, h⟩)
-  have hmul := mul_le_mul_of_nonneg_right (sub_le_sub_right hd ε) (Nat.cast_nonneg V.card : (0 : ℝ) ≤ V.card)
+  have hmul := mul_le_mul_of_nonneg_right (sub_le_sub_right hd ε) (Nat.cast_nonneg V.card : (0 : ℝ)
+    ≤ V.card)
   have hnat : b + bad.card ≤ # (V.filter (G.Adj v)) := by
-    have hreal : (b : ℝ) + bad.card ≤ # (V.filter (G.Adj v)) := by linarith only [hraw, hmul, hmargin, hbad]
+    have hreal : (b : ℝ) + bad.card ≤ # (V.filter (G.Adj v)) :=
+      by linarith only [hraw, hmul, hmargin, hbad]
     exact_mod_cast hreal
   exact card_neighbors_cleaned_ge G V bad v b hnat
 
@@ -50,7 +52,8 @@ structure TripleCandidates (C' X' Y' : Finset B) (b : ℕ) where
   XC : ∀ v ∈ X, b ≤ #(C.filter (G.Adj v))
   XY : ∀ v ∈ X, b ≤ #(Y.filter (G.Adj v))
 
-theorem exists_tripleCandidates
+omit [DecidableEq B] [Fintype B] in
+theorem exists_tripleCandidates [Finite B]
     (C X Y C' X' Y' : Finset B) (ε dC dY : ℝ) (b : ℕ)
     (hCX : G.IsUniform ε C X) (hYX : G.IsUniform ε Y X)
     (hC : C' ⊆ C) (hX : X' ⊆ X) (hY : Y' ⊆ Y)
@@ -63,6 +66,8 @@ theorem exists_tripleCandidates
     (hmXC : (b : ℝ) + ε * C.card ≤ (dC - ε) * C'.card)
     (hmXY : (b : ℝ) + ε * Y.card ≤ (dY - ε) * Y'.card) :
     Nonempty (TripleCandidates G C' X' Y' b) := by
+  classical
+  let := Fintype.ofFinite B
   let badC := dynamicLowDegreeVertices G ε C X C' X'
   let badY := dynamicLowDegreeVertices G ε Y X Y' X'
   let badXC := dynamicLowDegreeVertices G ε X C X' C'
@@ -70,10 +75,13 @@ theorem exists_tripleCandidates
   let badX := badXC ∪ badXY
   have hc : (badC.card : ℝ) ≤ ε * C.card := card_lowDegreeVertices_le G hCX hC hX hCLarge.le hXLarge
   have hy : (badY.card : ℝ) ≤ ε * Y.card := card_lowDegreeVertices_le G hYX hY hX hYLarge hXLarge
-  have hxc : (badXC.card : ℝ) ≤ ε * X.card := card_lowDegreeVertices_le G hCX.symm hX hC hXLarge hCLarge.le
-  have hxy : (badXY.card : ℝ) ≤ ε * X.card := card_lowDegreeVertices_le G hYX.symm hX hY hXLarge hYLarge
+  have hxc : (badXC.card : ℝ) ≤ ε * X.card := card_lowDegreeVertices_le G hCX.symm hX hC hXLarge
+    hCLarge.le
+  have hxy : (badXY.card : ℝ) ≤ ε * X.card := card_lowDegreeVertices_le G hYX.symm hX hY hXLarge
+    hYLarge
   have hx : (badX.card : ℝ) ≤ 2 * ε * X.card := by
-    have hcard : (badX.card : ℝ) ≤ badXC.card + badXY.card := by exact_mod_cast Finset.card_union_le badXC badXY
+    have hcard : (badX.card : ℝ) ≤ badXC.card + badXY.card :=
+      by exact_mod_cast Finset.card_union_le badXC badXY
     linarith only [hcard, hxc, hxy]
   have hCnonempty : (C' \ badC).Nonempty := by
     have hlt : badC.card < C'.card := by exact_mod_cast hc.trans_lt hCLarge
@@ -102,8 +110,9 @@ theorem exists_tripleCandidates
     exact Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hv).1,
       fun h => (Finset.mem_sdiff.mp hv).2 (Finset.mem_union_right _ h)⟩
 
-theorem exists_markedCopy_of_candidates
-    {A : Type*} [Fintype A] [DecidableEq A]
+omit [DecidableEq B] [Fintype B] in
+theorem exists_markedCopy_of_candidates [Finite B]
+    {A : Type*} [Fintype A]
     (T : SimpleGraph A) (hT : T.IsTree) (root : A) (special : Finset A)
     (hspecial : ∀ a ∈ special, hT.coloringTwoOfVert root a = 0)
     (z : B) (C' X' Y' : Finset B)
@@ -113,6 +122,8 @@ theorem exists_markedCopy_of_candidates
       (∀ a ∈ special, f a ∈ C') ∧
       ∀ a, a ≠ root → a ∉ special →
         f a ∈ if hT.coloringTwoOfVert root a = 0 then Y' else X' := by
+  classical
+  let := Fintype.ofFinite B
   let marked := insert root special
   let color := hT.coloringTwoOfVert root
   have hmarked : ∀ a ∈ marked, color a = 0 := by
@@ -121,7 +132,8 @@ theorem exists_markedCopy_of_candidates
     · subst a
       exact coloringTwoOfVert_root T hT root
     · exact hspecial a ha
-  let candidate : A → Finset B := fun a => if a ∈ marked then H.C else if color a = 0 then H.Y else H.X
+  let candidate : A → Finset B := fun a => if a ∈ marked then H.C else if color a = 0 then H.Y else
+    H.X
   have hrootCandidate : candidate root = H.C := by simp [candidate, marked]
   have hone (a : A) (ha : color a = 1) : candidate a = H.X := by
     have hnot : a ∉ marked := fun hm => Fin.zero_ne_one ((hmarked a hm).symm.trans ha)
@@ -153,7 +165,8 @@ theorem exists_markedCopy_of_candidates
       have ham : a ∈ marked := Finset.mem_insert_of_mem ha
       simpa only [candidate, if_pos ham] using hmem a har
   · intro a har ha
-    have hnot : a ∉ marked := by simpa only [marked, Finset.mem_insert, not_or] using And.intro har ha
+    have hnot : a ∉ marked :=
+      by simpa only [marked, Finset.mem_insert, not_or] using And.intro har ha
     have hm := hmem a har
     simp only [candidate, if_neg hnot] at hm
     change f a ∈ if color a = 0 then Y' else X'
@@ -161,8 +174,9 @@ theorem exists_markedCopy_of_candidates
     · simpa only [if_pos hc] using H.Y_subset (by simpa only [if_pos hc] using hm)
     · simpa only [if_neg hc] using H.X_subset (by simpa only [if_neg hc] using hm)
 
-theorem exists_markedCopy_of_uniform
-    {A : Type*} [Fintype A] [DecidableEq A]
+omit [DecidableEq B] [Fintype B] in
+theorem exists_markedCopy_of_uniform [Finite B]
+    {A : Type*} [Fintype A]
     (T : SimpleGraph A) (hT : T.IsTree) (root : A) (special : Finset A)
     (hspecial : ∀ a ∈ special, hT.coloringTwoOfVert root a = 0)
     (z : B) (C X Y C' X' Y' : Finset B) (ε dC dY : ℝ)
@@ -181,6 +195,8 @@ theorem exists_markedCopy_of_uniform
       (∀ a ∈ special, f a ∈ C') ∧
       ∀ a, a ≠ root → a ∉ special →
         f a ∈ if hT.coloringTwoOfVert root a = 0 then Y' else X' := by
+  classical
+  let := Fintype.ofFinite B
   obtain ⟨H⟩ := exists_tripleCandidates G C X Y C' X' Y' ε dC dY (Fintype.card A)
     hCX hYX hC hX hY hCLarge hXLarge hYLarge hdC hdY hmCX hmYX hmXC hmXY
   exact exists_markedCopy_of_candidates G T hT root special hspecial z C' X' Y' H hattach

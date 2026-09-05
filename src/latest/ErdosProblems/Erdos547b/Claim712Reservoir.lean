@@ -19,7 +19,7 @@ The three explicit cardinal assumptions are exactly what is needed to turn
 the Proposition 7.3 conclusions into the common threshold `Q` for
 `A–A`, `A–B`, and `B–A`. -/
 theorem exists_claim712_reservoir_side
-    {W : Type*} [Fintype W] [DecidableEq W]
+    {W : Type*} [Finite W] [DecidableEq W]
     (G : SimpleGraph W) [DecidableRel G.Adj]
     (Vᵢ A : Finset W) (n t s Q : ℕ)
     (hVcard : Vᵢ.card = n)
@@ -36,6 +36,7 @@ theorem exists_claim712_reservoir_side
       (∀ a ∈ A, Q ≤ Erdos547EC2.degreeInto G a B) ∧
       (∀ b ∈ B, Q ≤ Erdos547EC2.degreeInto G b A) := by
   classical
+  let := Fintype.ofFinite W
   let C : Finset W := Vᵢ \ A
   have hAC : Disjoint A C := Finset.disjoint_sdiff
   have hcover : A ∪ C = Vᵢ := Finset.union_sdiff_of_subset hA
@@ -82,7 +83,7 @@ theorem exists_claim712_reservoir_side
 reservoir.  Constructing at threshold `Q+1` absorbs the loss of its possible
 single contribution to an `A–B` degree. -/
 theorem exists_claim712_reservoir_side_avoiding
-    {W : Type*} [Fintype W] [DecidableEq W]
+    {W : Type*} [Finite W] [DecidableEq W]
     (G : SimpleGraph W) [DecidableRel G.Adj]
     (Vᵢ A : Finset W) (v₀ : W) (n t s Q : ℕ)
     (hVcard : Vᵢ.card = n)
@@ -99,6 +100,7 @@ theorem exists_claim712_reservoir_side_avoiding
       (∀ a ∈ A, Q ≤ Erdos547EC2.degreeInto G a B) ∧
       (∀ b ∈ B, Q ≤ Erdos547EC2.degreeInto G b A) := by
   classical
+  let := Fintype.ofFinite W
   obtain ⟨B₀, hB₀, hAB₀, hAA, hAB, hBA⟩ :=
     exists_claim712_reservoir_side G Vᵢ A n t s (Q + 1)
       hVcard hA hinternal (by omega) (by omega) (by omega) hscale

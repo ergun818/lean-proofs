@@ -10,7 +10,7 @@ Only the two reservoir tags are reversed. This realizes the swapped
 alternative of the finite raw-discrepancy allocation lemma.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceSwappedRootRows

@@ -10,7 +10,7 @@ leaving the source parity unchanged. A small canonical minor family cannot
 be the parity carrying the required balanced mass.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceExceptionalRootExchange

@@ -23,16 +23,18 @@ variable {V : Type*} [DecidableEq V]
 def truncateRoot (H : SimpleGraph V) (z : V) (D : Finset V) : SimpleGraph V where
   Adj u v := H.Adj u v ∧ (u ≠ z ∨ v ∉ D) ∧ (v ≠ z ∨ u ∉ D)
   symm := ⟨fun _ _ huv => ⟨huv.1.symm, huv.2.2, huv.2.1⟩⟩
-  loopless := ⟨fun u huu => (H.ne_of_adj huu.1) rfl⟩
+  loopless := ⟨fun _u huu => (H.ne_of_adj huu.1) rfl⟩
 
 instance (H : SimpleGraph V) [DecidableRel H.Adj] (z : V) (D : Finset V) :
     DecidableRel (truncateRoot H z D).Adj := by
   unfold truncateRoot
   infer_instance
 
+omit [DecidableEq V] in
 theorem truncateRoot_le (H : SimpleGraph V) (z : V) (D : Finset V) :
     truncateRoot H z D ≤ H := fun _ _ h => h.1
 
+omit [DecidableEq V] in
 theorem adj_root_iff (H : SimpleGraph V) (z v : V) (D : Finset V) :
     (truncateRoot H z D).Adj z v ↔ H.Adj z v ∧ v ∉ D := by
   constructor
@@ -41,11 +43,13 @@ theorem adj_root_iff (H : SimpleGraph V) (z v : V) (D : Finset V) :
   · intro h
     exact ⟨h.1, Or.inr h.2, Or.inl h.1.ne.symm⟩
 
+omit [DecidableEq V] in
 theorem adj_away_iff (H : SimpleGraph V) (z u v : V) (D : Finset V)
     (hu : u ≠ z) (hv : v ≠ z) :
     (truncateRoot H z D).Adj u v ↔ H.Adj u v := by
   exact ⟨fun h => h.1, fun h => ⟨h, Or.inl hu, Or.inl hv⟩⟩
 
+omit [DecidableEq V] in
 theorem adj_other_root_iff (H : SimpleGraph V) (z u v : V) (D : Finset V)
     (hu : u ≠ z) (huD : u ∉ D) :
     (truncateRoot H z D).Adj u v ↔ H.Adj u v := by
@@ -91,9 +95,11 @@ theorem degree_other_root_eq [Fintype V]
     simp only [SimpleGraph.mem_neighborFinset, adj_other_root_iff H z u v D hu huD]
   exact congrArg Finset.card hneighbors
 
-theorem degreeInto_root_eq_zero [Fintype V]
+theorem degreeInto_root_eq_zero [Finite V]
     (H : SimpleGraph V) [DecidableRel H.Adj] (z : V) (D Y : Finset V)
     (hY : Y ⊆ D) : degreeInto (truncateRoot H z D) z Y = 0 := by
+  classical
+  let := Fintype.ofFinite V
   unfold degreeInto
   apply Finset.card_eq_zero.mpr
   apply Finset.eq_empty_iff_forall_notMem.mpr
@@ -101,9 +107,11 @@ theorem degreeInto_root_eq_zero [Fintype V]
   obtain ⟨hvY, hvAdj⟩ := Finset.mem_filter.mp hv
   exact ((adj_root_iff H z v D).mp hvAdj).2 (hY hvY)
 
-theorem degreeInto_root_eq_of_disjoint [Fintype V]
+theorem degreeInto_root_eq_of_disjoint [Finite V]
     (H : SimpleGraph V) [DecidableRel H.Adj] (z : V) (D Y : Finset V)
     (hY : Disjoint Y D) : degreeInto (truncateRoot H z D) z Y = degreeInto H z Y := by
+  classical
+  let := Fintype.ofFinite V
   unfold degreeInto
   congr 1
   ext v
@@ -113,10 +121,12 @@ theorem degreeInto_root_eq_of_disjoint [Fintype V]
       and_true]
   · simp only [Finset.mem_filter, hv, false_and]
 
-theorem degreeInto_other_root_eq [Fintype V]
+theorem degreeInto_other_root_eq [Finite V]
     (H : SimpleGraph V) [DecidableRel H.Adj] (z u : V) (D Y : Finset V)
     (hu : u ≠ z) (huD : u ∉ D) :
     degreeInto (truncateRoot H z D) u Y = degreeInto H u Y := by
+  classical
+  let := Fintype.ofFinite V
   unfold degreeInto
   congr 1
   ext v

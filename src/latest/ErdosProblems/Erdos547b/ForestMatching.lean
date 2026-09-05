@@ -102,7 +102,7 @@ the small rooted trees, the bins are the regular pairs of a cluster matching,
 and `slack` is the common upper bound on the size of one item. -/
 
 theorem capacity_packing
-    {ι κ : Type*} [DecidableEq ι] [Fintype κ] [DecidableEq κ] [Nonempty κ]
+    {ι κ : Type*} [Fintype κ] [DecidableEq κ] [Nonempty κ]
     (items : Finset ι) (weight : ι → ℕ) (capacity : κ → ℕ) (slack : ℕ)
     (hsmall : ∀ i ∈ items, weight i ≤ slack)
     (hbudget : (∑ i ∈ items, weight i) + Fintype.card κ * slack ≤
@@ -172,7 +172,7 @@ capacity, the small components can be distributed over all pairs and every
 local embedding certificate can be invoked.  This is precisely the
 Lemma-5.4-to-Lemma-5.8 passage, separated from graph-specific notation. -/
 theorem capacity_packing_with_local_certificates
-    {ι κ : Type*} [DecidableEq ι] [Fintype κ] [DecidableEq κ] [Nonempty κ]
+    {ι κ : Type*} [Fintype κ] [DecidableEq κ] [Nonempty κ]
     (items : Finset ι) (weight : ι → ℕ) (capacity : κ → ℕ) (slack : ℕ)
     (P : κ → Finset ι → Prop)
     (hsmall : ∀ i ∈ items, weight i ≤ slack)
@@ -183,6 +183,7 @@ theorem capacity_packing_with_local_certificates
     ∃ assign : ι → κ,
       (∀ j : κ, ∑ i ∈ items.filter (assign · = j), weight i ≤ capacity j) ∧
       ∀ j : κ, P j (items.filter (assign · = j)) := by
+  classical
   obtain ⟨assign, hload⟩ :=
     capacity_packing items weight capacity slack hsmall hbudget
   refine ⟨assign, hload, ?_⟩
@@ -222,7 +223,7 @@ tree is embedded by the checked greedy two-colour theorem.  Pairwise-disjoint
 candidate sets and distinct prescribed root images make the resulting copies
 a genuine (globally injective) forest copy. -/
 theorem exists_orderedForestCopy_of_disjoint_candidates
-    {ι : Type u} [DecidableEq ι] {B : Type w} [Fintype B] [DecidableEq B]
+    {ι : Type u} {B : Type w} [Finite B]
     (items : Finset ι) (A : ι → Type v) [∀ i, Fintype (A i)]
     (T : ∀ i, SimpleGraph (A i)) (hT : ∀ i, (T i).IsTree)
     (root : ∀ i, A i) (G : SimpleGraph B) [DecidableRel G.Adj]
@@ -241,6 +242,7 @@ theorem exists_orderedForestCopy_of_disjoint_candidates
       ∀ c d, Disjoint (candidate i c) (candidate j d)) :
     Nonempty (OrderedForestCopy items A T G) := by
   classical
+  let := Fintype.ofFinite B
   have hcomponent : ∀ i : ι, ∀ hi : i ∈ items,
       ∃ f : (T i).Copy G, f (root i) = rootImage i ∧
         ∀ a, a ≠ root i →
@@ -292,8 +294,8 @@ theorem exists_orderedForestCopy_of_disjoint_candidates
 is the genuine graph embedding core of Zhao Lemma 5.8 in the clean case where
 different components have been assigned different matching edges. -/
 theorem exists_orderedForestCopy_of_clusterMatching
-    {ι : Type u} [DecidableEq ι] {κ : Type v} {B : Type w}
-    [Fintype B] [DecidableEq B]
+    {ι : Type u} {κ : Type v} {B : Type w}
+    [Finite B]
     (items : Finset ι) (A : ι → Type*) [∀ i, Fintype (A i)]
     (T : ∀ i, SimpleGraph (A i)) (hT : ∀ i, (T i).IsTree)
     (root : ∀ i, A i) (G : SimpleGraph B) [DecidableRel G.Adj]
@@ -312,6 +314,8 @@ theorem exists_orderedForestCopy_of_clusterMatching
     (hroot_outside : ∀ i ∈ items, ∀ p : κ, ∀ c,
       rootImage i ∉ M.side p c) :
     Nonempty (OrderedForestCopy items A T G) := by
+  classical
+  let := Fintype.ofFinite B
   apply exists_orderedForestCopy_of_disjoint_candidates items A T hT root G
     (fun i => M.side (assign i)) rootImage hrootDegree hcross hroots_injective
   · intro i hi j hj c

@@ -195,7 +195,7 @@ theorem rootTypicality_margin {α : ℚ} (hα : 0 < α) (hα1 : α ≤ 1 / 4) :
   · unfold rootTypicality
     linarith only [hg6, hgd, hdSmall, hsigma]
 
-theorem sqrt_epsilon {α : ℚ} (hα : 0 < α) :
+theorem sqrt_epsilon {α : ℚ} (_hα : 0 < α) :
     Real.sqrt (epsilon α : ℝ) = (rootTypicality α : ℝ) := by
   have hsq : (rootTypicality α : ℝ) ^ 2 = (epsilon α : ℝ) := by
     exact_mod_cast rootTypicality_sq α

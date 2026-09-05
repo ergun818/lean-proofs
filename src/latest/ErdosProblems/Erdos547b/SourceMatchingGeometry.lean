@@ -8,7 +8,7 @@ In particular these definitions apply to a switched matching without
 asserting a new Claim-6.7 coverage certificate.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMatchingGeometry
@@ -59,7 +59,8 @@ theorem pairWhole_disjoint (e : MatchingEdge P) :
 
 theorem pair_regular (e : MatchingEdge P) :
     (embeddingHost W).IsUniform (epsilon α : ℝ) (pairWhole W P e 0) (pairWhole W P e 1) ∧
-      (densityCutoff α : ℝ) ≤ (embeddingHost W).edgeDensity (pairWhole W P e 0) (pairWhole W P e 1) :=
+      (densityCutoff α : ℝ) ≤ (embeddingHost W).edgeDensity (pairWhole W P e 0) (pairWhole W P e 1)
+        :=
   (embedding_pair_realization W).pair_of_adj _ _ (pair_adj W P e)
 
 theorem pairWhole_cross_disjoint (hP : P.IsMatching) (e f : MatchingEdge P) (hef : e ≠ f)
@@ -80,7 +81,8 @@ theorem matchingVolume_bound (hP : P.IsMatching) (hhost : hostN = 2 * q)
   have hd : ∀ e ∈ E, ∀ f ∈ E, e ≠ f → Disjoint (pair e) (pair f) := by
     intro e _ f _ hef
     rw [Finset.disjoint_union_left, Finset.disjoint_union_right, Finset.disjoint_union_right]
-    exact ⟨⟨pairWhole_cross_disjoint W P hP e f hef 0 0, pairWhole_cross_disjoint W P hP e f hef 0 1⟩,
+    exact ⟨⟨pairWhole_cross_disjoint W P hP e f hef 0 0, pairWhole_cross_disjoint W P hP e f hef 0
+      1⟩,
       ⟨pairWhole_cross_disjoint W P hP e f hef 1 0, pairWhole_cross_disjoint W P hP e f hef 1 1⟩⟩
   have hc : (E.biUnion pair).card = E.card * (2 * W.clusterSize) := by
     rw [Finset.card_biUnion hd]

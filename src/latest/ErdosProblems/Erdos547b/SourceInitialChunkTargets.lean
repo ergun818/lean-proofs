@@ -9,7 +9,7 @@ is exactly the designated initial target used by the incidence selector.
 This connects that selector to the actual first chunk successor.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceFamilyCapacity
@@ -102,7 +102,8 @@ theorem ChunkSource.exists_prefix_of_no_earlier_owner
     (backend : D.Backend W Q S C F owner kind) (rootImage : Fin r → Fin hostN) (n : ℕ)
     (hafter : ∀ i ∈ D.items, n ≤ (owner i).val) :
     Nonempty (D.Prefix W Q S C F owner kind backend rootImage n) := by
-  obtain ⟨initial⟩ := D.exists_initial_prefix W Q S C F owner kind hα hα1 hhost horder backend rootImage
+  obtain ⟨initial⟩ := D.exists_initial_prefix W Q S C F owner kind hα hα1 hhost horder backend
+    rootImage
   have hcut := D.cutoff_zero_of_no_earlier_owner W Q S C F owner kind n hafter
   have hselected : branchPrefix (b := D.items.length) (ownerCutoff (listOwner owner D.items) 0) =
       branchPrefix (ownerCutoff (listOwner owner D.items) n) := by

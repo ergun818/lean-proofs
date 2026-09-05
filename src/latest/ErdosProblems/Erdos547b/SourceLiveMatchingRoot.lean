@@ -10,7 +10,7 @@ Threshold families may use whole endpoints; Part-3 families may use
 their cleaned initial live sets. One incidence selection serves both.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceLiveMatchingRoot
@@ -43,6 +43,7 @@ theorem exists_live_eligible_root_most_edges
     ∃ z ∈ pool, ∃ bad ⊆ remaining,
       (bad.card : ℝ) ≤ 2 * (rootTypicality α : ℝ) * remaining.card ∧
       ∀ e ∈ remaining \ bad, EligibleLiveRoot W Q S C e (raw e) z := by
+  classical
   let J : Finset (MatchingEdge Q.claim67.M × Fin 2) :=
     (remaining ×ˢ Finset.univ).filter fun p =>
       0 < rootDensity W S (Sum.inl C) (edgeVertex W Q p.1 p.2)

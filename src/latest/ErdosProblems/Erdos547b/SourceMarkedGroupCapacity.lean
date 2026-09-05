@@ -9,7 +9,7 @@ schedule leaves a uniform gap between total selected mass and the capacity
 of the good groups, even when the exceptional groups change with the root.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMarkedGroupCapacity
@@ -72,12 +72,13 @@ theorem occupied_bounds {α : ℚ} (hα : 0 < α) (hα1 : α ≤ 1 / 4)
     exact hPairs.trans hmNat
 
 theorem exists_good_group_with_room {α : ℚ} (hα : 0 < α) (hα1 : α ≤ 1 / 4)
-    {I : Type*} [Fintype I] [DecidableEq I] (hI : 0 < Fintype.card I)
+    {I : Type*} [Fintype I] (hI : 0 < Fintype.card I)
     (N : ℕ) (hN : 0 < N) (load : I → ℕ) (bad : Finset I)
     (hbad : 16 * bad.card ≤ Fintype.card I)
     (htotal : (∑ i, (load i : ℝ)) ≤
       (5 / 2 + (epsilon α : ℝ)) * Fintype.card I * N) :
     ∃ i : I, i ∉ bad ∧ (load i : ℝ) + freshBranchBound α N ≤ capacity α N := by
+  classical
   let good : Finset I := Finset.univ \ bad
   have hcount : 15 * Fintype.card I ≤ 16 * good.card := by
     have hsplit := Finset.card_sdiff_add_card_inter (Finset.univ : Finset I) bad

@@ -8,7 +8,7 @@ Heavy vertices are first thinned on their incident edge set. The subsequent
 Hall injection therefore frees one distinct old partner per new edge.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoClaim617DistinctSwitch
@@ -22,8 +22,10 @@ variable (M : R.Subgraph) (L : Finset K)
 def incidentEdges (H : Finset K) : Finset (MatchingEdge M) :=
   (allMatchingEdges M).filter fun e => ∃ c : Fin 2, orientedEndpoint M L e c ∈ H
 
+omit [DecidableRel R.Adj] in
 theorem card_le_twice_incidentEdges (hM : M.IsMatching) (H : Finset K)
     (hH : H ⊆ matchingSupport M) : H.card ≤ 2 * (incidentEdges M L H).card := by
+  classical
   have hsub : H ⊆ matchingSupport (edgeFinsetSubgraph M L (incidentEdges M L H)) := by
     intro x hx
     obtain ⟨y, hxy, _⟩ := hM ((mem_matchingSupport M x).mp (hH hx))
@@ -80,8 +82,10 @@ theorem exists_distinctSwitch_of_many_heavy (hM : M.IsMatching)
         A.card ≤ Fintype.card {e // e ∈ E} := Finset.card_le_univ _
         _ = m := (Fintype.card_coe E).trans hEcard
         _ ≤ (choices e).card := hc e
-        _ ≤ (A.biUnion choices).card := Finset.card_le_card (Finset.subset_biUnion_of_mem choices he)
-  obtain ⟨f, hfinj, hfmem⟩ := (Finset.all_card_le_biUnion_card_iff_exists_injective choices).mp hHall
+        _ ≤ (A.biUnion choices).card := Finset.card_le_card (Finset.subset_biUnion_of_mem choices
+          he)
+  obtain ⟨f, hfinj, hfmem⟩ := (Finset.all_card_le_biUnion_card_iff_exists_injective choices).mp
+    hHall
   exact ⟨{ edges := E
            card_edges := hEcard
            side := side
@@ -100,13 +104,19 @@ def source (e : {e // e ∈ D.edges}) : K := orientedEndpoint M L e.1 (D.side e)
 def partner (e : {e // e ∈ D.edges}) : K :=
   orientedEndpoint M L e.1 (if D.side e = 0 then 1 else 0)
 
-theorem source_injective (hM : M.IsMatching) : Function.Injective D.source := by
+omit [DecidableRel R.Adj] [Fintype K] in
+theorem source_injective [Finite K] (hM : M.IsMatching) : Function.Injective D.source := by
+  classical
+  let := Fintype.ofFinite K
   intro e f h
   change orientedEndpoint M L e.1 (D.side e) = orientedEndpoint M L f.1 (D.side f) at h
   have hpair : (e.1, D.side e) = (f.1, D.side f) := orientedEndpoint_injective M hM L h
   exact Subtype.ext (congrArg Prod.fst hpair)
 
-theorem partner_injective (hM : M.IsMatching) : Function.Injective D.partner := by
+omit [DecidableRel R.Adj] [Fintype K] in
+theorem partner_injective [Finite K] (hM : M.IsMatching) : Function.Injective D.partner := by
+  classical
+  let := Fintype.ofFinite K
   intro e f h
   change orientedEndpoint M L e.1 (if D.side e = 0 then 1 else 0) =
     orientedEndpoint M L f.1 (if D.side f = 0 then 1 else 0) at h
@@ -114,15 +124,22 @@ theorem partner_injective (hM : M.IsMatching) : Function.Injective D.partner := 
       (f.1, if D.side f = 0 then 1 else 0) := orientedEndpoint_injective M hM L h
   exact Subtype.ext (congrArg Prod.fst hpair)
 
-theorem source_partner_adj (e : {e // e ∈ D.edges}) : M.Adj (D.source e) (D.partner e) := by
+omit [DecidableRel R.Adj] [Fintype K] in
+theorem source_partner_adj [Finite K] (e : {e // e ∈ D.edges}) : M.Adj (D.source e) (D.partner e) :=
+  by
+  classical
+  let := Fintype.ofFinite K
   unfold source partner
   generalize D.side e = c
   fin_cases c
   · simpa using orientedEndpoint_adj M L e.1
   · simpa using (orientedEndpoint_adj M L e.1).symm
 
-theorem source_ne_partner (hM : M.IsMatching) (e f : {e // e ∈ D.edges}) :
+omit [DecidableRel R.Adj] [Fintype K] in
+theorem source_ne_partner [Finite K] (hM : M.IsMatching) (e f : {e // e ∈ D.edges}) :
     D.source e ≠ D.partner f := by
+  classical
+  let := Fintype.ofFinite K
   intro h
   have heq : (e.1, D.side e) = (f.1, if D.side f = 0 then 1 else 0) :=
     orientedEndpoint_injective M hM L h
@@ -130,8 +147,10 @@ theorem source_ne_partner (hM : M.IsMatching) (e f : {e // e ∈ D.edges}) :
   subst f
   exact (D.source_partner_adj e).ne h
 
+omit [DecidableRel R.Adj] in
 theorem partner_mem_large (hM : M.IsMatching) (hS : S ⊆ sourceS1 M L)
     (e : {e // e ∈ D.edges}) : D.partner e ∈ L := by
+  classical
   obtain ⟨x, hx, hxadj⟩ := (Finset.mem_filter.mp (hS (D.source_mem e))).2
   have heq : D.partner e = x := hM.eq_of_adj_left (D.source_partner_adj e) hxadj.symm
   exact heq ▸ hx

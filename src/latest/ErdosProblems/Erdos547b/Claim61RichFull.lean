@@ -56,7 +56,7 @@ theorem cleaned_denseCut_of_independent_quantitativeLargeClusters
     [DecidableEq V] [DecidableEq ι]
     (P : ClusterAssignment V ι)
     (G H : SimpleGraph V) (R : SimpleGraph ι)
-    [DecidableRel G.Adj] [DecidableRel H.Adj] [DecidableRel R.Adj]
+    [DecidableRel G.Adj] [DecidableRel H.Adj]
     (threshold quota loss : ℕ)
     (hrespect : EdgesRespectReducedGraph P H R)
     (hretained : ∀ v ∈ highDegreeVerticesInLargeClusters P G threshold quota,

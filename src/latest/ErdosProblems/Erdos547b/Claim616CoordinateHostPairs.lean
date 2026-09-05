@@ -43,6 +43,8 @@ variable
   (H : IndexedHostSystem G cluster epsilon density A Broot C D.Mout W rhoK
     Pcluster threshold quota Gdegree)
 
+omit [DecidableEq B] [DecidableEq I] [DecidableRel (regularityReducedGraph G cluster epsilon
+  density).Adj] [Fintype B] [Fintype I] in
 /-- Any actual reduced edge supplies its defining whole regular pair. -/
 theorem pair_of_reducedAdj {x y : I}
     (hxy : (regularityReducedGraph G cluster epsilon density).Adj x y) :
@@ -108,6 +110,7 @@ theorem selected_accessPair
 
 omit H
 
+omit [DecidableEq B] [Fintype B] in
 /-- Every literal original matching edge is a genuine whole regular pair. -/
 theorem originalMatchingPair (e : MatchingEdge C67.M) :
     G.IsUniform epsilon
@@ -125,8 +128,9 @@ theorem originalMatchingPair (e : MatchingEdge C67.M) :
       C67.M.adj_sub hadj
   exact ⟨he.2.1, he.2.2⟩
 
+omit [DecidableEq B] [Fintype B] in
 /-- The same genuine matching pair in either endpoint orientation. -/
-theorem originalMatchingPair_of_ne (e : MatchingEdge C67.M)
+theorem originalMatchingPair_of_ne [Finite B] (e : MatchingEdge C67.M)
     (sourceSide targetSide : Fin 2) (hne : sourceSide ≠ targetSide) :
     G.IsUniform epsilon
         (cluster (matchingEdgeEndpoint e.1 sourceSide))
@@ -134,6 +138,8 @@ theorem originalMatchingPair_of_ne (e : MatchingEdge C67.M)
       density ≤ G.edgeDensity
         (cluster (matchingEdgeEndpoint e.1 sourceSide))
         (cluster (matchingEdgeEndpoint e.1 targetSide)) := by
+  classical
+  let := Fintype.ofFinite B
   have hpair := originalMatchingPair (C67 := C67)
     G cluster epsilon density e
   fin_cases sourceSide <;> fin_cases targetSide

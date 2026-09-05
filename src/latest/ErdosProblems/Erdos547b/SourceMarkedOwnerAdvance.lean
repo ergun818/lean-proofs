@@ -8,7 +8,7 @@ The root map is updated only at the current owner. Old attachments, copies
 and groups are preserved; one root's good-group bound serves its whole batch.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMarkedOwnerAdvance
@@ -32,7 +32,8 @@ variable (selected : Finset (Fin b)) (owner : Fin b → Fin r)
 theorem ownerPrefix_mono {n m : ℕ} (hnm : n ≤ m) :
     ownerPrefix selected owner n ⊆ ownerPrefix selected owner m := by
   intro i hi
-  exact Finset.mem_filter.mpr ⟨(Finset.mem_filter.mp hi).1, (Finset.mem_filter.mp hi).2.trans_le hnm⟩
+  exact Finset.mem_filter.mpr ⟨(Finset.mem_filter.mp hi).1, (Finset.mem_filter.mp hi).2.trans_le
+    hnm⟩
 
 private def castPlacement {s t : Finset (Fin b)} {parent : Fin b → Fin hostN} (h : s = t)
     (E : Placement W Q S O P F marks s parent) : Placement W Q S O P F marks t parent := h ▸ E
@@ -52,7 +53,8 @@ private theorem castPlacement_group {s t : Finset (Fin b)} {parent : Fin b → F
 
 theorem exists_ownerAdvance (hα : 0 < α) (hα1 : α ≤ 1 / 4) (hC : 0 < C.card)
     (rootImage : Fin r → Fin hostN) (n : Fin r)
-    (E : Placement W Q S O P F marks (ownerPrefix selected owner n.val) (fun i => rootImage (owner i)))
+    (E : Placement W Q S O P F marks (ownerPrefix selected owner n.val) (fun i => rootImage (owner
+      i)))
     (base : Finset (Fin hostN)) (hbase : ∀ x, Disjoint base (P.support W Q S O x))
     (hsize : ∀ j ∈ selected, 3 ≤ F.size j)
     (hmarks : (∑ j ∈ selected, ((marks j).card : ℝ)) ≤ (epsilon α : ℝ) * W.clusterSize)
@@ -66,7 +68,8 @@ theorem exists_ownerAdvance (hα : 0 < α) (hα1 : α ≤ 1 / 4) (hC : 0 < C.car
     ∃ E' : Placement W Q S O P F marks (ownerPrefix selected owner (n.val + 1))
         (fun i => Function.update rootImage n z (owner i)),
       (∀ j (hj : j ∈ ownerPrefix selected owner n.val), E'.forestCopy.componentCopy j
-        (ownerPrefix_mono selected owner (Nat.le_succ n.val) hj) = E.forestCopy.componentCopy j hj) ∧
+        (ownerPrefix_mono selected owner (Nat.le_succ n.val) hj) = E.forestCopy.componentCopy j hj)
+          ∧
       (∀ j (hj : j ∈ ownerPrefix selected owner n.val), E'.group
         ⟨j, ownerPrefix_mono selected owner (Nat.le_succ n.val) hj⟩ = E.group ⟨j, hj⟩) := by
   let parent' := fun i => Function.update rootImage n z (owner i)
@@ -104,12 +107,14 @@ theorem exists_ownerAdvance (hα : 0 < α) (hα1 : α ≤ 1 / 4) (hC : 0 < C.car
     exact hgroups j hj
 
 theorem exists_ownerSkip (rootImage : Fin r → Fin hostN) (n : Fin r)
-    (E : Placement W Q S O P F marks (ownerPrefix selected owner n.val) (fun i => rootImage (owner i)))
+    (E : Placement W Q S O P F marks (ownerPrefix selected owner n.val) (fun i => rootImage (owner
+      i)))
     (z : Fin hostN) (hno : ∀ i ∈ selected, owner i ≠ n) :
     ∃ E' : Placement W Q S O P F marks (ownerPrefix selected owner (n.val + 1))
         (fun i => Function.update rootImage n z (owner i)),
       (∀ j (hj : j ∈ ownerPrefix selected owner n.val), E'.forestCopy.componentCopy j
-        (ownerPrefix_mono selected owner (Nat.le_succ n.val) hj) = E.forestCopy.componentCopy j hj) ∧
+        (ownerPrefix_mono selected owner (Nat.le_succ n.val) hj) = E.forestCopy.componentCopy j hj)
+          ∧
       (∀ j (hj : j ∈ ownerPrefix selected owner n.val), E'.group
         ⟨j, ownerPrefix_mono selected owner (Nat.le_succ n.val) hj⟩ = E.group ⟨j, hj⟩) := by
   have hdom : ownerPrefix selected owner (n.val + 1) = ownerPrefix selected owner n.val := by

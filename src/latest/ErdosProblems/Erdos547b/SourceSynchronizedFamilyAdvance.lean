@@ -10,7 +10,7 @@ the same explicit global bad-edge allowance. Both the initial root and
 an already embedded cut parent are handled without future-root premises.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceSynchronizedFamilyAdvance
@@ -62,9 +62,11 @@ theorem exists_synchronizedFamilyAdvance
           (#((reservoir W Q t).filter ((embeddingHost W).Adj z)) : ℝ)) ∧
       ∃ D : ∀ j, FamilyState W Q S (rootCluster W Q s) F owner (all j) (family j)
           (Function.update rootImage n z) (n.val + 1),
-        ∀ j i hi, ((D j).currentPlacement W Q S (rootCluster W Q s) F owner).forestCopy.componentCopy i
+        ∀ j i hi, ((D j).currentPlacement W Q S (rootCluster W Q s) F
+          owner).forestCopy.componentCopy i
             (processedFamily_mono owner (Nat.le_succ n.val) (family j) hi) =
-          ((A j).currentPlacement W Q S (rootCluster W Q s) F owner).forestCopy.componentCopy i hi := by
+          ((A j).currentPlacement W Q S (rootCluster W Q s) F owner).forestCopy.componentCopy i hi
+            := by
   let fixed := Finset.univ.biUnion fun j : Fin k =>
     activeEdges W Q S (rootCluster W Q s) F owner (A j).active
   let remaining := Finset.univ.biUnion fun j : Fin k =>
@@ -75,7 +77,8 @@ theorem exists_synchronizedFamilyAdvance
     obtain ⟨j, _, hj⟩ := Finset.mem_biUnion.mp he
     exact haway j ((A j).active_subset hj)
   have hfixedCard : fixed.card ≤ 3 := by
-    have hone (j : Fin k) : (activeEdges W Q S (rootCluster W Q s) F owner (A j).active).card ≤ 1 := by
+    have hone (j : Fin k) : (activeEdges W Q S (rootCluster W Q s) F owner (A j).active).card ≤ 1 :=
+      by
       cases (A j).active <;> simp [activeEdges]
     calc
       fixed.card ≤ ∑ j : Fin k, (activeEdges W Q S (rootCluster W Q s) F owner (A j).active).card :=
@@ -126,7 +129,8 @@ theorem exists_synchronizedFamilyAdvance
           (Function.update rootImage n z) (n.val + 1),
         ∀ i hi, (D.currentPlacement W Q S (rootCluster W Q s) F owner).forestCopy.componentCopy i
             (processedFamily_mono owner (Nat.le_succ n.val) (family j) hi) =
-          ((A j).currentPlacement W Q S (rootCluster W Q s) F owner).forestCopy.componentCopy i hi := by
+          ((A j).currentPlacement W Q S (rootCluster W Q s) F owner).forestCopy.componentCopy i hi
+            := by
     let unused := all j \ (A j).reservedEdges W Q S (rootCluster W Q s) F owner
     apply exists_familyAdvance W Q S (rootCluster W Q s) F owner rootImage n (A j)
       hα hα1 hhost horder (rootCluster_cases W Q s) hsmall (haway j) globalCount (hbudget j) z

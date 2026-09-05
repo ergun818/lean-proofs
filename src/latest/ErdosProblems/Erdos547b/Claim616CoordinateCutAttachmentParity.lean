@@ -37,6 +37,7 @@ variable {T : SimpleGraph V} [DecidableRel T.Adj]
 variable {globalRoot : V} {small : ℕ}
 variable {target slack : ℕ}
 
+omit [DecidableEq V] [DecidableRel T.Adj] [Fintype V] in
 /-- In a tree, two vertices have the same parity from a fixed root exactly
 when their mutual distance is even. -/
 private theorem dist_mod_two_eq_zero_iff_rootParity_eq
@@ -216,7 +217,7 @@ theorem componentRoot_cutAttachment_parity_selected
       orientedSide 0 (segmentEndpointSide hT P optional k j a) := by
   have h := componentRoot_cutAttachment_parity
     hT P optional i k a q j hi hparent hk
-  rw [Erdos547b.ZhaoClaim616CoordinateSourceParity.componentReservoirSide_owner_eq_zero_of_mem_selected
+  rw [ZhaoClaim616CoordinateSourceParity.componentReservoirSide_owner_eq_zero_of_mem_selected
     P S j hj] at h
   exact h
 
@@ -235,7 +236,7 @@ theorem componentRoot_cutAttachment_parity_majorResidual
       orientedSide 0 (segmentEndpointSide hT P optional k j a) := by
   have h := componentRoot_cutAttachment_parity
     hT P optional i k a q j hi hparent hk
-  rw [Erdos547b.ZhaoClaim616CoordinateSourceParity.componentReservoirSide_owner_eq_zero_of_mem_majorResidual
+  rw [ZhaoClaim616CoordinateSourceParity.componentReservoirSide_owner_eq_zero_of_mem_majorResidual
     P S j hj] at h
   exact h
 
@@ -243,7 +244,7 @@ theorem componentRoot_cutAttachment_parity_majorResidual
 theorem componentRoot_cutAttachment_parity_minor
     (hT : T.IsTree) (P : ZhaoForestPartition T globalRoot small)
     (optional : Finset V)
-    (S : SelectedF0Within (branchForest P) (halfBranches P) target slack)
+    (_S : SelectedF0Within (branchForest P) (halfBranches P) target slack)
     (i k : SegmentIndex hT P optional)
     (a : Fin ((AllocationHierarchy hT P optional).segments.size k))
     (q : Fin P.numParts) (j : BranchIndex P)
@@ -255,7 +256,7 @@ theorem componentRoot_cutAttachment_parity_minor
       orientedSide 1 (segmentEndpointSide hT P optional k j a) := by
   have h := componentRoot_cutAttachment_parity
     hT P optional i k a q j hi hparent hk
-  rw [Erdos547b.ZhaoClaim616CoordinateSourceParity.componentReservoirSide_owner_eq_one_of_mem_minorBranches
+  rw [ZhaoClaim616CoordinateSourceParity.componentReservoirSide_owner_eq_one_of_mem_minorBranches
     P j hj] at h
   exact h
 

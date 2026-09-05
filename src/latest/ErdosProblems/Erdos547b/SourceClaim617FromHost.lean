@@ -4,7 +4,7 @@ import ErdosProblems.Erdos547b.SourceClaim617Paths
 
 /-! # Actual-host Claim 6.17: the S1 crossing is sparse -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceClaim617FromHost

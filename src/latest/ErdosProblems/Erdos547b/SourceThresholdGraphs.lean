@@ -3,7 +3,7 @@ import ErdosProblems.Erdos547b.SourceDegreeFormRootRows
 
 /-! # Physical degree-form densities and their two threshold graphs -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceThresholdGraphs
@@ -24,24 +24,31 @@ theorem host_respects :
       (fun i : Index W => i.val) (epsilon α) (densityCutoff α)) (large W) W.respects_reduced
 
 def density (x y : EvenPadding (Index W)) : ℝ :=
-  (host W).edgeDensity (clusterVertices (padAssignment (assignment W)) x)
-    (clusterVertices (padAssignment (assignment W)) y)
+  open scoped Classical in
+    (host W).edgeDensity (clusterVertices (padAssignment (assignment W)) x)
+      (clusterVertices (padAssignment (assignment W)) y)
 
 theorem density_symm (x y : EvenPadding (Index W)) : density W x y = density W y x := by
+  classical
   exact congrArg (fun r : ℚ => (r : ℝ)) ((host W).edgeDensity_comm _ _)
 
 theorem density_nonneg (x y : EvenPadding (Index W)) : 0 ≤ density W x y := by
+  classical
   unfold density
   exact_mod_cast (host W).edgeDensity_nonneg
-    (clusterVertices (padAssignment (assignment W)) x) (clusterVertices (padAssignment (assignment W)) y)
+    (clusterVertices (padAssignment (assignment W)) x) (clusterVertices (padAssignment (assignment
+      W)) y)
 
 theorem density_le_one (x y : EvenPadding (Index W)) : density W x y ≤ 1 := by
+  classical
   unfold density
   exact_mod_cast (host W).edgeDensity_le_one
-    (clusterVertices (padAssignment (assignment W)) x) (clusterVertices (padAssignment (assignment W)) y)
+    (clusterVertices (padAssignment (assignment W)) x) (clusterVertices (padAssignment (assignment
+      W)) y)
 
 theorem density_nonadj_zero {x y : EvenPadding (Index W)}
     (hxy : ¬(padGraph (reduced W)).Adj x y) : density W x y = 0 := by
+  classical
   have hempty : (host W).interedges (clusterVertices (padAssignment (assignment W)) x)
       (clusterVertices (padAssignment (assignment W)) y) = ∅ := by
     apply Finset.eq_empty_iff_forall_notMem.mpr

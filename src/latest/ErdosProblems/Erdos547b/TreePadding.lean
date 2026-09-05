@@ -67,12 +67,13 @@ theorem isContained_of_forall_fin_tree {α : Type u} {β : Type v}
 /-- Edge-count form of the padding lemma.  For a finite tree, at most `n`
 edges is equivalent to at most `n + 1` vertices. -/
 theorem isContained_of_forall_fin_tree_of_edgeSet_card_le
-    {α : Type u} {β : Type v} [Fintype α]
+    {α : Type u} {β : Type v} [Finite α]
     (T : SimpleGraph α) (G : SimpleGraph β) (n : ℕ)
     (hedges : Nat.card T.edgeSet ≤ n) (hT : T.IsTree)
     (hlarge : ∀ T' : SimpleGraph (Fin (n + 1)), T'.IsTree → T' ⊑ G) :
     T ⊑ G := by
   classical
+  let := Fintype.ofFinite α
   let : Fintype T.edgeSet := Fintype.ofFinite T.edgeSet
   have hcardEq : Nat.card T.edgeSet + 1 = Fintype.card α := by
     rw [Nat.card_eq_fintype_card, ← T.edgeFinset_card]

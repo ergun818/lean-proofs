@@ -87,22 +87,24 @@ theorem matchingAccessSide_spec
     y ∈ W ∧ R.Adj C y := by
   have he' := (mem_filter.mp he).2
   by_cases hzero : endpoint e 0 ∈ W ∧ R.Adj C (endpoint e 0)
-  · simpa [matchingAccessSide, hzero] using hzero
+  · simp [matchingAccessSide, hzero]
   · have hone : endpoint e 1 ∈ W ∧ R.Adj C (endpoint e 1) :=
       he'.resolve_left hzero
     simpa [matchingAccessSide, hzero] using hone
 
 theorem matchingEdgeEndpoint_adj
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Finite ι]
     {R : SimpleGraph ι} (M : R.Subgraph) (e : Sym2 ι)
     (he : e ∈ M.edgeSet) :
     R.Adj (matchingEdgeEndpoint e 0) (matchingEdgeEndpoint e 1) := by
+  classical
+  let := Fintype.ofFinite ι
   apply M.adj_sub
   rw [← Subgraph.mem_edgeSet, matchingEdgeEndpoint_pair_eq]
   exact he
 
 theorem matchingSupport_covered_by_edgeEndpoints
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {R : SimpleGraph ι} (M : R.Subgraph) (hM : M.IsMatching)
     (v : ι) (hv : v ∈ matchingSupport M) :
     ∃ e ∈ M.edgeSet.toFinite.toFinset,
@@ -148,10 +150,11 @@ theorem matchingSupport_covered_by_orientedEndpoints
     exact hve
 
 theorem matchingEdgeEndpoint_mem_support
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {R : SimpleGraph ι} (M : R.Subgraph) (e : Sym2 ι)
     (he : e ∈ M.edgeSet) (c : Fin 2) :
     matchingEdgeEndpoint e c ∈ matchingSupport M := by
+  classical
   have hadj : M.Adj (matchingEdgeEndpoint e 0)
       (matchingEdgeEndpoint e 1) := by
     rw [← Subgraph.mem_edgeSet, matchingEdgeEndpoint_pair_eq]
@@ -164,7 +167,7 @@ theorem matchingEdgeEndpoint_mem_support
 edges. -/
 theorem four_mul_le_card_matchingAccessEdges
     {E : Type*} [DecidableEq E]
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Finite ι] [DecidableEq ι]
     (R : SimpleGraph ι) [DecidableRel R.Adj]
     (M : Finset E) (endpoint : E → Fin 2 → ι)
     (C : ι) (W : Finset ι) (rhoK : ℕ)
@@ -173,6 +176,7 @@ theorem four_mul_le_card_matchingAccessEdges
     (hdegree : 8 * rhoK ≤ degreeInto R C W) :
     4 * rhoK ≤ (matchingAccessEdges R M endpoint C W).card := by
   classical
+  let := Fintype.ofFinite ι
   let N := W.filter (R.Adj C)
   let A := matchingAccessEdges R M endpoint C W
   let occurrences : Finset (E × Fin 2) := A ×ˢ Finset.univ
@@ -239,10 +243,9 @@ theorem uniform_dense_accessPair
 /-- Every genuine matching edge in the reduced graph yields its actual host
 regular pair. -/
 theorem uniform_dense_matchingPair
-    {B ι : Type*} [Fintype ι] [DecidableEq ι]
+    {B ι : Type*} [Finite ι]
     (G : SimpleGraph B) [DecidableRel G.Adj]
     (cluster : ι → Finset B) (epsilon density : ℚ)
-    [DecidableRel (regularityReducedGraph G cluster epsilon density).Adj]
     (M : (regularityReducedGraph G cluster epsilon density).Subgraph)
     (e : Sym2 ι) (he : e ∈ M.edgeSet) :
     G.IsUniform epsilon
@@ -251,6 +254,8 @@ theorem uniform_dense_matchingPair
       density ≤ G.edgeDensity
         (cluster (matchingEdgeEndpoint e 0))
         (cluster (matchingEdgeEndpoint e 1)) := by
+  classical
+  let := Fintype.ofFinite ι
   have hadj := matchingEdgeEndpoint_adj M e he
   exact ⟨hadj.2.1, hadj.2.2⟩
 
@@ -305,20 +310,22 @@ def indexedMatchingEdge
 /-- The two endpoint occurrences of the canonically indexed genuine matching
 edges are all distinct. -/
 theorem indexedMatchingEndpoint_injective
-    {I : Type*} [Fintype I] [DecidableEq I]
-    {R : SimpleGraph I} [DecidableRel R.Adj]
+    {I : Type*} [Finite I] [DecidableEq I]
+    {R : SimpleGraph I}
     (M : R.Subgraph) (hM : M.IsMatching) :
     Function.Injective (fun ec :
         Fin M.edgeSet.toFinite.toFinset.card × Fin 2 ↦
       matchingEdgeEndpoint
         (finsetValue M.edgeSet.toFinite.toFinset ec.1) ec.2) := by
+  classical
+  let := Fintype.ofFinite I
   rintro ⟨e, c⟩ ⟨f, d⟩ hendpoint
   let flip : Fin 2 → Fin 2 := fun q ↦ if q = 0 then 1 else 0
   have horiented (j : Fin M.edgeSet.toFinite.toFinset.card) (q : Fin 2) :
       orientedEndpoint M ∅ (indexedMatchingEdge M j) (flip q) =
         matchingEdgeEndpoint (finsetValue M.edgeSet.toFinite.toFinset j) q := by
     fin_cases q <;>
-      simp [flip, indexedMatchingEdge, orientedEndpoint, rawEndpoint,
+      simp [flip, indexedMatchingEdge, orientedEndpoint,
         matchingEdgeEndpoint]
   have horientedEq :
       orientedEndpoint M ∅ (indexedMatchingEdge M e) (flip c) =
@@ -475,10 +482,9 @@ theorem uniform_dense_indexedAccessPair
 
 /-- Indexed genuine matching edges retain their host uniformity and density. -/
 theorem uniform_dense_indexedMatchingPair
-    {B I : Type*} [Fintype I] [DecidableEq I]
+    {B I : Type*} [Finite I] [DecidableEq I]
     (G : SimpleGraph B) [DecidableRel G.Adj]
     (cluster : I → Finset B) (epsilon density : ℚ)
-    [DecidableRel (regularityReducedGraph G cluster epsilon density).Adj]
     (M : (regularityReducedGraph G cluster epsilon density).Subgraph)
     (e : Fin M.edgeSet.toFinite.toFinset.card) :
     G.IsUniform epsilon
@@ -491,6 +497,8 @@ theorem uniform_dense_indexedMatchingPair
           (finsetValue M.edgeSet.toFinite.toFinset e) 0))
         (cluster (matchingEdgeEndpoint
           (finsetValue M.edgeSet.toFinite.toFinset e) 1)) := by
+  classical
+  let := Fintype.ofFinite I
   apply uniform_dense_matchingPair G cluster epsilon density M
   exact M.edgeSet.toFinite.mem_toFinset.mp
     (finsetValue_mem M.edgeSet.toFinite.toFinset e)
@@ -501,13 +509,13 @@ theorem uniform_dense_indexedRootPair
     {B I : Type*} [DecidableEq I]
     (G : SimpleGraph B) [DecidableRel G.Adj]
     (cluster : I → Finset B) (epsilon density : ℚ)
-    [DecidableRel (regularityReducedGraph G cluster epsilon density).Adj]
-    (A Broot : I) (C : Finset I)
+    (A _Broot : I) (C : Finset I)
     (hAC : ∀ x ∈ C,
       (regularityReducedGraph G cluster epsilon density).Adj A x)
     (i : Fin C.card) :
     G.IsUniform epsilon (cluster A) (cluster (finsetValue C i)) ∧
       density ≤ G.edgeDensity (cluster A) (cluster (finsetValue C i)) := by
+  classical
   have h := hAC (finsetValue C i) (finsetValue_mem C i)
   exact ⟨h.2.1, h.2.2⟩
 
@@ -1271,12 +1279,13 @@ inequality therefore forces at least `r` heavy vertices.
 
 The paper applies this with `r = rho0*k` and `q = 9*rho0*k`. -/
 theorem card_crossHeavy_ge_of_crossing_gt
-    {ι : Type u} [Fintype ι] [DecidableEq ι]
+    {ι : Type u} [Finite ι]
     (R : SimpleGraph ι) [DecidableRel R.Adj]
     (S T : Finset ι) (r q : ℕ)
     (hcross : r * T.card + S.card * q < (R.interedges S T).card) :
     r ≤ (crossHeavy R S T q).card := by
   classical
+  let := Fintype.ofFinite ι
   let H := crossHeavy R S T q
   change r ≤ H.card
   by_contra hcard
@@ -1382,7 +1391,7 @@ theorem degreeInto_available_ge
 /-- The support of a finite matching has twice as many vertices as it has
 edges, in the exact `Finset` form needed for the deletion loss in (6.22). -/
 theorem card_matchingSupport_eq_two_mul_edges
-    {ι : Type u} [Fintype ι] [DecidableEq ι]
+    {ι : Type u} [Fintype ι]
     {R : SimpleGraph ι} (M : R.Subgraph) (hM : M.IsMatching) :
     (Erdos547b.ZhaoStability.matchingSupport M).card =
       2 * M.edgeSet.ncard := by
@@ -1499,7 +1508,7 @@ theorem incidentCoverSubgraph_isMatching
 the ambient subgraph is a matching. -/
 theorem incidentCoverEdges_card_le
     {I : Type*} [Fintype I] [DecidableEq I]
-    {R : SimpleGraph I} [DecidableRel R.Adj]
+    {R : SimpleGraph I}
     (M : R.Subgraph) (hM : M.IsMatching)
     (L C : Finset I) :
     (incidentCoverEdges M L C).card ≤ C.card := by
@@ -1508,7 +1517,7 @@ theorem incidentCoverEdges_card_le
   · intro e he
     have he' := (Finset.mem_filter.mp he).2
     by_cases hzero : orientedEndpoint M L e 0 ∈ C
-    · simpa [incidentCoverEndpoint, hzero] using hzero
+    · simp [incidentCoverEndpoint, hzero]
     · simpa [incidentCoverEndpoint, hzero] using he'.resolve_left hzero
   · intro e he f hf hef
     by_cases hezero : orientedEndpoint M L e 0 ∈ C <;>
@@ -1840,8 +1849,8 @@ theorem MatchingDecomposition.Mzero_Mone_support_disjoint
 degree, so the canonical cover has the source upper bound used before
 (6.23).  This is an ordinary density estimate, not an embedding premise. -/
 theorem sourceDegree_le_two_mul_N_mul_card
-    {I : Type*} [Fintype I] [DecidableEq I]
-    {R : SimpleGraph I} [DecidableRel R.Adj]
+    {I : Type*} [Finite I] [DecidableEq I]
+    {R : SimpleGraph I}
     (M : R.Subgraph) (L : Finset I)
     (density : I → I → ℝ) (N : ℝ) (A : I)
     (S : Finset (MatchingEdge M))
@@ -1849,6 +1858,8 @@ theorem sourceDegree_le_two_mul_N_mul_card
     (hdensity : ∀ e ∈ S, ∀ c,
       density A (orientedEndpoint M L e c) ≤ 1) :
     sourceDegree M L density N A S ≤ 2 * N * S.card := by
+  classical
+  let := Fintype.ofFinite I
   rw [sourceDegree_eq_sum]
   calc
     ∑ e ∈ S, N * (density A (orientedEndpoint M L e 0) +
@@ -1860,7 +1871,7 @@ theorem sourceDegree_le_two_mul_N_mul_card
       have hone := hdensity e he 1
       nlinarith
     _ = 2 * N * S.card := by
-      simp [mul_comm, mul_left_comm, mul_assoc]
+      simp [mul_comm, mul_assoc]
 
 theorem MatchingDecomposition.Mzero_sourceDegree_le
     {I : Type*} [Fintype I] [DecidableEq I]
@@ -2047,7 +2058,7 @@ the regularity reduced graph of the displayed host clusters, so every partner
 and matching edge in the conclusion is an actual uniform dense host pair. -/
 theorem exists_claim616_host_cluster_set
     {B : Type u} {ι : Type v}
-    [Fintype B] [DecidableEq B]
+    [Finite B]
     [Fintype ι] [DecidableEq ι]
     (G : SimpleGraph B) [DecidableRel G.Adj]
     (cluster : ι → Finset B) (epsilon density : ℚ)
@@ -2087,6 +2098,7 @@ theorem exists_claim616_host_cluster_set
             Mout.edgeSet.toFinite.toFinset matchingEdgeEndpoint x
             available).card := by
   classical
+  let := Fintype.ofFinite B
   let R := regularityReducedGraph G cluster epsilon density
   obtain ⟨C, hCV1, hCO, hCcard, hdegree⟩ :=
     exists_claim616_cluster_set R L miss rhoK C67 Min Mout Mb hMb
@@ -2350,13 +2362,16 @@ end Erdos547b.ZhaoClaim616
 #print axioms Erdos547b.ZhaoClaim616.IndexedHostSystem.quota_le_companionReservoir_card
 #print axioms Erdos547b.ZhaoClaim616.IndexedHostSystem.rootReservoir_card_eq
 #print axioms Erdos547b.ZhaoClaim616.IndexedHostSystem.companionReservoir_card_eq
-#print axioms Erdos547b.ZhaoClaim616.IndexedHostSystem.rootReservoir_union_companionReservoir_card_le
+open Erdos547b.ZhaoClaim616.IndexedHostSystem in
+#print axioms rootReservoir_union_companionReservoir_card_le
 #print axioms Erdos547b.ZhaoClaim616.IndexedHostSystem.card_le_card_remove_rootReservoirs_add
 #print axioms Erdos547b.ZhaoClaim616.IndexedHostSystem.rootReservoir_disjoint_companionReservoir
 #print axioms Erdos547b.ZhaoClaim616.IndexedHostSystem.rootReservoir_disjoint_after_rootRemoval
-#print axioms Erdos547b.ZhaoClaim616.IndexedHostSystem.companionReservoir_disjoint_after_companionRemoval
+open Erdos547b.ZhaoClaim616.IndexedHostSystem in
+#print axioms companionReservoir_disjoint_after_companionRemoval
 #print axioms Erdos547b.ZhaoClaim616.IndexedHostSystem.rootReservoir_disjoint_after_bothRemovals
-#print axioms Erdos547b.ZhaoClaim616.IndexedHostSystem.companionReservoir_disjoint_after_bothRemovals
+open Erdos547b.ZhaoClaim616.IndexedHostSystem in
+#print axioms companionReservoir_disjoint_after_bothRemovals
 #print axioms Erdos547b.ZhaoClaim616.IndexedHostSystem.indexTypes_nonempty
 #print axioms Erdos547b.ZhaoClaim616.IndexedHostSystem.isContained_degreeGraph
 #print axioms Erdos547b.ZhaoClaim616.exists_selectedHalfF0

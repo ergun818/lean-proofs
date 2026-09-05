@@ -6,7 +6,7 @@ import ErdosProblems.Erdos547b.SourceReconnectedGraph
 # Restriction commutes with restoring the surviving cut edges
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceRestrictedCutCoordinates
@@ -43,7 +43,8 @@ theorem reconnected_adj_inclusion_iff (x y : (OrderedBranchForest.restrict F kee
       exact Or.inr ⟨i, hi, Or.inr ⟨coordinateInclusion_lower F keep _ (hparent i hi), rfl⟩⟩
 
 def restrictedReconnectedGraphIso :
-    reconnectedGraph (OrderedBranchForest.restrict F keep) (restrictCutSource F keep rootSide locate L hparent) ≃g
+    reconnectedGraph (OrderedBranchForest.restrict F keep) (restrictCutSource F keep rootSide locate
+      L hparent) ≃g
       (reconnectedGraph F L).induce {x | retained F keep x} where
   toEquiv := coordinateEquiv F keep
   map_rel_iff' := reconnected_adj_inclusion_iff F keep rootSide locate L hparent _ _

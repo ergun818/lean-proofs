@@ -10,7 +10,7 @@ The successor excludes the literal used-root image and constructs all new
 family states with exact preservation of earlier branch copies.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceGlobalPrefixState
@@ -93,9 +93,11 @@ theorem exists_prefixAdvance
     ∃ z, ∃ D : PrefixState W Q S F owner rootSide all family (n.val + 1),
       D.rootImage = Function.update A.rootImage n z ∧
       (∀ v, parent = some v → (embeddingHost W).Adj v z) ∧
-      ∀ s j i hi, ((D.families s j).currentPlacement W Q S (rootCluster W Q s) F owner).forestCopy.componentCopy i
+      ∀ s j i hi, ((D.families s j).currentPlacement W Q S (rootCluster W Q s) F
+        owner).forestCopy.componentCopy i
           (processedFamily_mono owner (Nat.le_succ n.val) (family s j) hi) =
-        ((A.families s j).currentPlacement W Q S (rootCluster W Q s) F owner).forestCopy.componentCopy i hi := by
+        ((A.families s j).currentPlacement W Q S (rootCluster W Q s) F
+          owner).forestCopy.componentCopy i hi := by
   have hused : ((A.usedRoots W Q S F owner rootSide all family).card : ℝ) ≤
       (epsilon α : ℝ) * W.clusterSize := by
     have hc : ((A.usedRoots W Q S F owner rootSide all family).card : ℝ) ≤ r := by

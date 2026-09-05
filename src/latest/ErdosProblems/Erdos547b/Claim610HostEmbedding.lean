@@ -32,12 +32,13 @@ theorem isContained_of_leaf_bound_of_not_extremalCaseOne
     (hnotEC1 : ¬ZhaoExtremalCaseOne beta G)
     (hnumeric : (2 * k * ((n - 1 : ℕ) : ℚ)) ≤
       beta * ((n - 1 : ℕ) : ℚ) * ((n - 1 : ℕ) : ℚ))
-    {A : Type u} [Fintype A] [DecidableEq A]
+    {A : Type u} [Fintype A]
     (T : SimpleGraph A) [DecidableRel T.Adj]
     (hT : T.IsTree) (hcard : 3 ≤ Fintype.card A)
     (horder : Fintype.card A - 1 ≤ n - 1)
     (hleaf : Fintype.card A ≤ k + 1 + #(graphLeaves T)) :
     T.IsContained G := by
+  classical
   obtain ⟨X, hlargeX, U, hUne, hmin⟩ :=
     exists_large_induced_minDegree_of_not_extremalCaseOne hn beta G
       hlarge hnotEC1 hnumeric
@@ -56,12 +57,13 @@ theorem card_graphLeaves_lt_sub_of_not_isContained
     (hnotEC1 : ¬ZhaoExtremalCaseOne beta G)
     (hnumeric : (2 * k * ((n - 1 : ℕ) : ℚ)) ≤
       beta * ((n - 1 : ℕ) : ℚ) * ((n - 1 : ℕ) : ℚ))
-    {A : Type u} [Fintype A] [DecidableEq A]
+    {A : Type u} [Fintype A]
     (T : SimpleGraph A) [DecidableRel T.Adj]
     (hT : T.IsTree) (hcard : 3 ≤ Fintype.card A)
     (horder : Fintype.card A - 1 ≤ n - 1)
     (hnotContained : ¬T.IsContained G) :
     #(graphLeaves T) < Fintype.card A - (k + 1) := by
+  classical
   by_contra h
   have hleaf : Fintype.card A ≤ k + 1 + #(graphLeaves T) := by omega
   exact hnotContained

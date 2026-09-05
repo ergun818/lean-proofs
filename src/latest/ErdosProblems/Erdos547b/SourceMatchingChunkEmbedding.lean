@@ -10,7 +10,7 @@ the physical edge is independent of its old matching. The existing local
 threshold proof supplies the copy from literal parent degrees.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMatchingChunkEmbedding

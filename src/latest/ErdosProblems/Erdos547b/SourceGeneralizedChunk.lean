@@ -12,7 +12,7 @@ trichotomy. Both expose literal original-index placements and concrete
 mixed-root requirements. No future embedding operation is a field.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceGeneralizedChunk
@@ -70,8 +70,10 @@ def ChunkSource.LiveInvariant {rootImage : Fin r → Fin hostN} {n : ℕ}
     (rootDensity W S (Sum.inl C) (edgeVertex W Q D.edge 0))
     (rootDensity W S (Sum.inl C) (edgeVertex W Q D.edge 1))
     W.clusterSize ((epsilon α : ℝ) * W.clusterSize)
-    ((W.clusterSize : ℝ) - (residualSide (edgeWhole W Q D.edge) (deleted W Q D.edge) 0 \ E.used 0).card)
-    ((W.clusterSize : ℝ) - (residualSide (edgeWhole W Q D.edge) (deleted W Q D.edge) 1 \ E.used 1).card)
+    ((W.clusterSize : ℝ) - (residualSide (edgeWhole W Q D.edge) (deleted W Q D.edge) 0 \ E.used
+      0).card)
+    ((W.clusterSize : ℝ) - (residualSide (edgeWhole W Q D.edge) (deleted W Q D.edge) 1 \ E.used
+      1).card)
 
 def ChunkSource.Prefix (backend : D.Backend W Q S C F owner kind)
     (rootImage : Fin r → Fin hostN) (n : ℕ) : Type := by
@@ -144,7 +146,8 @@ theorem ChunkSource.requirement_valid
   cases kind with
   | threshold _ => exact D.edge_away
   | appendix lambda =>
-      have hfits : ((listForest F D.items).order : ℝ) ≤ capacity W Q S C (.appendix lambda) D.edge := by
+      have hfits : ((listForest F D.items).order : ℝ) ≤ capacity W Q S C (.appendix lambda) D.edge
+        := by
         rw [listForest_order]
         exact D.fits
       have hlarge := live_large_before_root W Q hα hα1 hhost horder S C D.edge lambda hkind

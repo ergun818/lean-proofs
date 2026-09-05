@@ -69,9 +69,9 @@ def graph (F : OrderedBranchForest r b) : SimpleGraph F.Vertex where
   loopless := ⟨by
     rintro (i | z) h
     · exact h
-    · rcases h with ⟨hzz, hadj⟩
+    · rcases h with ⟨_, hadj⟩
       apply (F.branches.tree z.1).loopless.irrefl z.2
-      simpa [hzz] using hadj⟩
+      simp at hadj⟩
 
 @[simp] theorem graph_adj_root_root (F : OrderedBranchForest r b)
     (i k : Fin r) : ¬F.graph.Adj (Sum.inl i) (Sum.inl k) := by
@@ -179,7 +179,7 @@ theorem card_levelGeTwo (F : OrderedBranchForest r b) :
             exfalso
             have hp := x.2
             rw [hx] at hp
-            simpa [levelGeTwo] using hp
+            simp [levelGeTwo] at hp
         | inr z =>
             refine ⟨z.1, ⟨z.2, ?_⟩⟩
             have hp := x.2
@@ -201,9 +201,7 @@ theorem card_levelGeTwo (F : OrderedBranchForest r b) :
   intro j _
   change Fintype.card {a : Fin (F.branches.size j) //
       ¬a = F.branches.root j} = F.branches.size j - 1
-  simpa [Fintype.card_subtype_eq] using
-    (Fintype.card_subtype_compl
-      (fun a : Fin (F.branches.size j) ↦ a = F.branches.root j))
+  simp
 
 /-! ## Copy assembly -/
 
@@ -377,7 +375,7 @@ theorem FlexibleThreeLayerEmbedding.toZhaoFlexibleEmbedding
         · apply Finset.mem_union_right
           apply R.map_remaining
           · intro hroot
-            simpa [OrderedBranchForest.roots] using hroot
+            simp [OrderedBranchForest.roots] at hroot
           · intro hlevel
             obtain ⟨q, -, hq⟩ := Finset.mem_image.mp hlevel
             have hs : (Sigma.mk q (F.branches.root q) :
@@ -422,7 +420,7 @@ having positive reduced density from `C`. -/
 theorem exists_sourceAggregateAllocation
     {r b : ℕ} {C K : Type*}
     [Fintype C] [DecidableEq C] [Nonempty C]
-    [Fintype K] [DecidableEq K] [Nonempty K]
+    [Finite K] [DecidableEq K] [Nonempty K]
     (F : OrderedBranchForest r b)
     (clusterCapacity : C → ℕ) (allowedEdges : C → Finset K)
     (m base slack : ℕ) (hmpos : 0 < m)
@@ -433,6 +431,8 @@ theorem exists_sourceAggregateAllocation
     Nonempty (Erdos547b.ZhaoLemma59FullOnline.AggregateAllocation
       Finset.univ (fun j : Fin b ↦ F.branches.size j - 1)
       clusterCapacity allowedEdges base slack) := by
+  classical
+  let := Fintype.ofFinite K
   apply Erdos547b.ZhaoLemma59FullOnline.exists_orderedBranchAggregateAllocation
     F.branches F.owner clusterCapacity allowedEdges m base slack hmpos
   · simpa [levelOneDemand] using hlevelOne
@@ -542,7 +542,7 @@ packing form of the two-stage allocation actually used in Lemma 5.9(2). -/
 theorem exists_eligibleAggregateAllocation
     {r b : ℕ} {C K : Type*}
     [Fintype C] [DecidableEq C]
-    [Fintype K] [DecidableEq K] [Nonempty K]
+    [Finite K] [DecidableEq K] [Nonempty K]
     (F : OrderedBranchForest r b)
     (capacity : C → ℕ) (eligible : Fin r → C → Prop)
     [DecidableRel eligible] (allowedEdges : C → Finset K)
@@ -558,6 +558,7 @@ theorem exists_eligibleAggregateAllocation
       capacity allowedEdges base slack,
       ∀ j, eligible (F.owner j) (alloc.levelOneCluster j) := by
   classical
+  let := Fintype.ofFinite K
   obtain ⟨clusterAssign, hclusterEligible, hclusterLoad⟩ :=
     exists_eligibleClusterAssignment F.owner capacity eligible hprefix
   obtain ⟨edgeAssign, hedgeAllowed, hedgeLoad⟩ :=
@@ -585,7 +586,7 @@ theorem exists_eligibleAggregateAllocation
 /-- A typical vertex keeps `demand` neighbors after the atypical vertices on
 the opposite side of an actual uniform pair are deleted. -/
 theorem card_cleanedSide_neighbors_ge
-    {B : Type*} [Fintype B] [DecidableEq B]
+    {B : Type*} [Finite B] [DecidableEq B]
     (G : SimpleGraph B) [DecidableRel G.Adj]
     {rho : ℝ} {X Y : Finset B} (demand : ℕ)
     (hunif : G.IsUniform rho X Y) (hrho : rho ≤ 1)
@@ -594,6 +595,7 @@ theorem card_cleanedSide_neighbors_ge
     {z : B} (hz : z ∈ cleanedSide G rho X Y) :
     demand ≤ #((cleanedSide G rho Y X).filter (G.Adj z)) := by
   classical
+  let := Fintype.ofFinite B
   let badY := atypicalVertices G rho Y X
   have hbadY : (#badY : ℝ) ≤ rho * #Y := by
     simpa [badY] using card_atypicalVertices_le G hunif.symm hrho
@@ -620,16 +622,17 @@ theorem card_cleanedSide_neighbors_ge
 /-- A vertex selected typical from `C` toward the matching endpoint `X`
 keeps the requested degree after `X` is cleaned relative to its mate `Y`. -/
 theorem card_selectedEndpoint_neighbors_ge
-    {B : Type*} [Fintype B] [DecidableEq B]
+    {B : Type*} [Finite B] [DecidableEq B]
     (G : SimpleGraph B) [DecidableRel G.Adj]
     {rho : ℝ} {C X Y : Finset B} (demand : ℕ)
-    (hunifCX : G.IsUniform rho C X)
+    (_hunifCX : G.IsUniform rho C X)
     (hunifXY : G.IsUniform rho X Y) (hrho : rho ≤ 1)
     (hcap : (demand : ℝ) + rho * #X ≤
       (G.edgeDensity C X - rho) * #X)
     {z : B} (hz : z ∈ cleanedSide G rho C X) :
     demand ≤ #((cleanedSide G rho X Y).filter (G.Adj z)) := by
   classical
+  let := Fintype.ofFinite B
   let badX := atypicalVertices G rho X Y
   have hbadX : (#badX : ℝ) ≤ rho * #X := by
     simpa [badX] using card_atypicalVertices_le G hunifXY hrho
@@ -950,8 +953,7 @@ theorem card_aggregateBadRoots_mul_threshold_le
           ∑ z ∈ A, ∑ C0 : C, if z ∈ bad C0 then 1 else 0 := by
             apply Finset.sum_congr rfl
             intro z _
-            simpa [count] using
-              (Finset.card_filter (fun C0 : C ↦ z ∈ bad C0) Finset.univ)
+            simp [count]
       _ = ∑ C0 : C, ∑ z ∈ A, if z ∈ bad C0 then 1 else 0 := by
             rw [Finset.sum_comm]
       _ = ∑ C0 : C, #(bad C0) := by

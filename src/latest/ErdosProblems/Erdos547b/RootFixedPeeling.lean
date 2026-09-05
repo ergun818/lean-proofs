@@ -60,7 +60,7 @@ private theorem partCard_delete_eq {r : ℕ} {α : Type*}
     · intro a ha
       simp only [Finset.mem_erase, Finset.mem_filter, Finset.mem_univ,
         true_and] at ha
-      simpa [c', s, ha.2]
+      simp [ha.2]
     · intro a₁ ha₁ a₂ ha₂ h
       exact Subtype.ext_iff.mp h
     · intro a ha

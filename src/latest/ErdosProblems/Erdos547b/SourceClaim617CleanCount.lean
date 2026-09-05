@@ -6,7 +6,7 @@ import ErdosProblems.Erdos547b.SourceClaim617PathNumerics
 
 /-! The actual source host provides enough clean major-half two-paths. -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceClaim617CleanCount
@@ -46,7 +46,8 @@ theorem eighth_lt_cleanBranches
       (embeddingHost_le_original W)).comp f).isContained)
   have hl := largeHalfMass_lt_of_crossing W Q S hT P O hα hα1 hhost horder hcard hnotHost hcross
   have hs := (scale_bounds W Q S O hα hα1 hhost horder).2.2.1
-  have hsN := mul_le_mul_of_nonneg_right hs (Nat.cast_nonneg W.clusterSize : (0 : ℝ) ≤ W.clusterSize)
+  have hsN := mul_le_mul_of_nonneg_right hs (Nat.cast_nonneg W.clusterSize : (0 : ℝ) ≤
+    W.clusterSize)
   have hv := (paddedVolume_bounds W hα hα1 hhost horder).2
   have hr : (0 : ℝ) ≤ rho α := by exact_mod_cast (parameter_pos hα).2.1.le
   have hvr := mul_le_mul_of_nonneg_left hv hr

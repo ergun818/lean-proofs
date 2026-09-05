@@ -11,7 +11,7 @@ remain as inputs. Mark counts, branch scale, selected mass, owner sides and
 the number of roots follow from the same literal fresh partition.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceSelectedMarkedTreeCopy
@@ -47,7 +47,8 @@ variable (allocation : Fin 2 → Fin k → Finset (MatchingEdge Q.claim67.M))
 variable (family : Fin 2 → Fin k → List (Fin (Fintype.card (ChildKey sourceP.orderedForest))))
 variable (locate : Fin (Fintype.card (ChildKey sourceP.orderedForest)) → Fin 2 × Fin k)
 variable (hcover : ∀ i, i ∉ F.selected → i ∈ family (locate i).1 (locate i).2)
-variable (hlocate : ∀ i, (locate i).1 = componentReservoirSide sourceP ((branchForest sourceP).owner i))
+variable (hlocate : ∀ i, (locate i).1 = componentReservoirSide sourceP ((branchForest sourceP).owner
+  i))
 
 include P hT locate hcover hlocate in
 theorem exists_treeCopy_of_residualBudgets
@@ -56,8 +57,10 @@ theorem exists_treeCopy_of_residualBudgets
     (hk : k ≤ 3) (hCV1 : C ⊆ O.D.V1) (hCcard : C.card = crossingScale W)
     (hkind : ∀ s j, (kinds s j).Valid α)
     (hnd : ∀ s j, (family s j).Nodup)
-    (hordered : ∀ s j, (family s j).Pairwise (fun i j => (branchForest sourceP).owner i ≤ (branchForest sourceP).owner j))
-    (hside : ∀ s j i, i ∈ family s j → componentReservoirSide sourceP ((branchForest sourceP).owner i) = s)
+    (hordered : ∀ s j, (family s j).Pairwise (fun i j => (branchForest sourceP).owner i ≤
+      (branchForest sourceP).owner j))
+    (hside : ∀ s j i, i ∈ family s j → componentReservoirSide sourceP ((branchForest sourceP).owner
+      i) = s)
     (hbranch : ∀ s j, ∀ i ∈ family s j, (kinds s j).BranchValid (branchForest sourceP).branches i)
     (hedge : ∀ s j, ∀ e ∈ allocation s j, edgeValid W Q S (rootCluster W Q s) (kinds s j) e)
     (hdisjoint : ∀ x y : Fin 2 × Fin k, x ≠ y → Disjoint (allocation x.1 x.2) (allocation y.1 y.2))
@@ -66,7 +69,8 @@ theorem exists_treeCopy_of_residualBudgets
     (hresidual : ∀ s j e, e ∈ allocation s j →
       e ∈ O.D.minEdges \ MatchingDecomposition.MzeroEdges O.D C ∨ e ∈ O.D.mbEdges)
     (globalCount : ℕ) (hglobal : ∀ s, (Finset.univ.biUnion (allocation s)).card ≤ globalCount)
-    (hbudget : ∀ s j, family s j ≠ [] → mass (fun i => ((branchForest sourceP).branches.size i : ℝ)) (family s j) ≤
+    (hbudget : ∀ s j, family s j ≠ [] → mass (fun i => ((branchForest sourceP).branches.size i : ℝ))
+      (family s j) ≤
       (∑ e ∈ allocation s j, capacity W Q S (rootCluster W Q s) (kinds s j) e) -
         (freshBranchBound α W.clusterSize : ℝ) * (allocation s j).card -
         4 * (rootTypicality α : ℝ) * W.clusterSize * globalCount) :
@@ -75,13 +79,16 @@ theorem exists_treeCopy_of_residualBudgets
   have hroots : (sourceP.numParts : ℝ) ≤ (epsilon α : ℝ) * W.clusterSize := by
     subst hostN
     exact freshPartition_root_bound hα hα1 W horder hcard sourceP
-  exact exists_treeCopy_of_sourceBudgets W Q S O P hT sourceP F.selected kinds allocation family locate hcover hlocate
+  exact exists_treeCopy_of_sourceBudgets W Q S O P hT sourceP F.selected kinds allocation family
+    locate hcover hlocate
     hα hα1 hhost horder hk hCV1 hC hkind hnd hordered hside
     (componentReservoirSide_owner_eq_zero_of_mem_selected sourceP F)
-    hbranch hedge (canonical_branch_size_le_small sourceP) hdisjoint haway hresidual globalCount hglobal hbudget
+    hbranch hedge (canonical_branch_size_le_small sourceP) hdisjoint haway hresidual globalCount
+      hglobal hbudget
     (fun i hi => (selected_branch_bounds W Q S O C sourceP F i hi).1)
     (prefix_marks_bound W sourceP hα hα1 hhost horder hcard F.selected)
-    (prefix_mass_bound W Q S O C sourceP hα hα1 hhost horder hCcard F F.selected (Finset.Subset.refl _)).le hroots
+    (prefix_mass_bound W Q S O C sourceP hα hα1 hhost horder hCcard F F.selected (Finset.Subset.refl
+      _)).le hroots
 
 end Erdos547b.ZhaoSourceSelectedMarkedTreeCopy
 

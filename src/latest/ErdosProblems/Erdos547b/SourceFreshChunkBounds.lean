@@ -10,7 +10,7 @@ The permanent cleanup, parent eligibility, and internal greedy margins
 then follow from the proved source parameter schedule.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceFreshChunkBounds

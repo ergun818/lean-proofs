@@ -12,7 +12,7 @@ Owner-sorted filtered lists supply the source layout. The source three-gamma
 row-weight margin pays all ordinary capacity and bad-edge losses.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMarkedTwoRowTreeCopy
@@ -59,9 +59,11 @@ theorem exists_treeCopy_of_twoRowBudgets
       (branchMass sourceP (sideBranches sourceP s \ F.selected) : ℝ) + 3 * (gamma α : ℝ) * q ≤
         ∑ e ∈ E s, sideWeight W Q S s e) :
     Nonempty (T.Copy (embeddingHost W)) := by
+  classical
   let family := fun (s : Fin 2) (_ : Fin 1) =>
     familyList (branchForest sourceP).owner (sideBranches sourceP s \ F.selected)
-  let locate := fun i => (componentReservoirSide sourceP ((branchForest sourceP).owner i), (0 : Fin 1))
+  let locate := fun i => (componentReservoirSide sourceP ((branchForest sourceP).owner i), (0 : Fin
+    1))
   have hcover : ∀ i, i ∉ F.selected → i ∈ family (locate i).1 (locate i).2 := by
     intro i hi
     apply (mem_familyList _ _ _).mpr
@@ -93,7 +95,8 @@ theorem exists_treeCopy_of_twoRowBudgets
     change mass _ (familyList _ _) ≤ _
     rw [mass_familyList]
     apply capacityBudget_of_ideal_margin W Q S (rootCluster W Q s) hα hα1 (.threshold 0) (E s)
-      (Fintype.card (MatchingEdge Q.claim67.M)) (matchingVolume_bound W Q hhost _) (fullMatchingVolume_bound W Q hhost)
+      (Fintype.card (MatchingEdge Q.claim67.M)) (matchingVolume_bound W Q hhost _)
+        (fullMatchingVolume_bound W Q hhost)
     simpa only [ordinary_idealCapacity, branchMass, Nat.cast_sum] using hbudget s hne
 
 end Erdos547b.ZhaoSourceMarkedTwoRowTreeCopy

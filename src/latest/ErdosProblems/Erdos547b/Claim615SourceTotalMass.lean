@@ -95,6 +95,7 @@ theorem branchMass_minor_le_half
 
 end Erdos547b.ZhaoClaim615SourceTotalMass
 
-#print axioms Erdos547b.ZhaoClaim615SourceTotalMass.edgeDemand_branchForest_eq_card_partitionNonroots
+open Erdos547b.ZhaoClaim615SourceTotalMass in
+#print axioms edgeDemand_branchForest_eq_card_partitionNonroots
 #print axioms Erdos547b.ZhaoClaim615SourceTotalMass.edgeDemand_branchForest_add_numParts
 #print axioms Erdos547b.ZhaoClaim615SourceTotalMass.branchMass_minor_le_half

@@ -10,7 +10,7 @@ Exact partial image counts and source disjointness then supply the current
 batch budget, and the root-selection size gate follows before root choice.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceAppendixCapacityBounds
@@ -99,7 +99,8 @@ theorem live_large_before_root (hα : 0 < α) (hα1 : α ≤ 1 / 4)
     positivity
   have hcard (c : Fin 2) : ((live c).card : ℝ) ≤ W.clusterSize := by
     exact_mod_cast (Finset.card_le_card (Finset.sdiff_subset.trans (Finset.sdiff_subset :
-      residualSide (edgeWhole W Q e) (deleted W Q e) c ⊆ edgeWhole W Q e c))).trans_eq (edgeWhole_card W Q e c)
+      residualSide (edgeWhole W Q e) (deleted W Q e) c ⊆ edgeWhole W Q e c))).trans_eq
+        (edgeWhole_card W Q e c)
   have hlambda : 0 ≤ lambda := by
     have hd : (0 : ℝ) < densityCutoff α := by exact_mod_cast (parameter_pos hα).2.2.2.2.2.1
     exact hd.le.trans hkind.1

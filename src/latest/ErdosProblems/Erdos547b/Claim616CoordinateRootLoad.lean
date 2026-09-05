@@ -150,31 +150,27 @@ theorem coordinatePoolLoad_rootReservoir (side : Fin 2) :
   cases hclass : segmentSourceClass hT P optional i with
   | inl q =>
       simp [coordinatePoolWeight, sourceRootPool,
-        sourceInteriorPool, coordinateHierarchyRootSlot,
-        coordinateHierarchyInteriorSlot, hclass,
+        sourceInteriorPool, coordinateHierarchyRootSlot, hclass,
         interiorCoordinatesAt_rootReservoir_eq_empty hT P optional S
           clusterCapacity allowed0 capacity1 capacityb base0 A edge0 edge1
           edgeb orient i side]
   | inr j =>
       by_cases hj0 : j ∈ S.selected
       · simp [coordinatePoolWeight, sourceRootPool,
-          sourceInteriorPool, coordinateHierarchyRootSlot,
-          coordinateHierarchyInteriorSlot, coordinateBranchRootSlot,
+          sourceInteriorPool, coordinateHierarchyRootSlot, coordinateBranchRootSlot,
           hclass, hj0,
           interiorCoordinatesAt_rootReservoir_eq_empty hT P optional S
             clusterCapacity allowed0 capacity1 capacityb base0 A edge0 edge1
             edgeb orient i side]
       · by_cases hj1 : j ∈ majorResidualBranches P S
         · simp [coordinatePoolWeight, sourceRootPool,
-            sourceInteriorPool, coordinateHierarchyRootSlot,
-            coordinateHierarchyInteriorSlot, coordinateBranchRootSlot,
+            sourceInteriorPool, coordinateHierarchyRootSlot, coordinateBranchRootSlot,
             hclass, hj0, hj1,
             interiorCoordinatesAt_rootReservoir_eq_empty hT P optional S
               clusterCapacity allowed0 capacity1 capacityb base0 A edge0 edge1
               edgeb orient i side]
         · simp [coordinatePoolWeight, sourceRootPool,
-            sourceInteriorPool, coordinateHierarchyRootSlot,
-            coordinateHierarchyInteriorSlot, coordinateBranchRootSlot,
+            sourceInteriorPool, coordinateHierarchyRootSlot, coordinateBranchRootSlot,
             hclass, hj0, hj1,
             interiorCoordinatesAt_rootReservoir_eq_empty hT P optional S
               clusterCapacity allowed0 capacity1 capacityb base0 A edge0 edge1
@@ -196,8 +192,7 @@ theorem coordinatePoolLoad_selectedCluster (C0 : CIndex) :
   cases hclass : segmentSourceClass hT P optional i with
   | inl q =>
       simp [coordinatePoolWeight, sourceRootPool,
-        sourceInteriorPool, coordinateHierarchyRootSlot,
-        coordinateHierarchyInteriorSlot, F0Segments, hclass,
+        sourceInteriorPool, coordinateHierarchyRootSlot, hclass,
         interiorCoordinatesAt_selectedCluster_eq_empty hT P optional S
           clusterCapacity allowed0 capacity1 capacityb base0 A edge0 edge1
           edgeb orient i C0]
@@ -206,30 +201,25 @@ theorem coordinatePoolLoad_selectedCluster (C0 : CIndex) :
       · by_cases hjhalf : j ∈ halfBranches P
         · simp [coordinatePoolWeight,
             sourceRootPool, sourceInteriorPool, coordinateHierarchyRootSlot,
-            coordinateHierarchyInteriorSlot, coordinateBranchRootSlot,
-            F0Segments, hclass, hj0, hjhalf,
+              coordinateBranchRootSlot, hclass, hj0,
             interiorCoordinatesAt_selectedCluster_eq_empty hT P optional S
               clusterCapacity allowed0 capacity1 capacityb base0 A edge0 edge1
               edgeb orient i C0]
         · simp [coordinatePoolWeight,
             sourceRootPool, sourceInteriorPool, coordinateHierarchyRootSlot,
-            coordinateHierarchyInteriorSlot, coordinateBranchRootSlot,
-            F0Segments, hclass, hj0, hjhalf,
+              coordinateBranchRootSlot, hclass, hj0,
             interiorCoordinatesAt_selectedCluster_eq_empty hT P optional S
               clusterCapacity allowed0 capacity1 capacityb base0 A edge0 edge1
               edgeb orient i C0]
       · by_cases hjhalf : j ∈ halfBranches P
         · simp [coordinatePoolWeight, sourceRootPool,
-            sourceInteriorPool, coordinateHierarchyRootSlot,
-            coordinateHierarchyInteriorSlot, coordinateBranchRootSlot,
-            F0Segments, hclass, hj0, hjhalf,
+            sourceInteriorPool, coordinateHierarchyRootSlot, coordinateBranchRootSlot, hclass, hj0,
+              hjhalf,
             interiorCoordinatesAt_selectedCluster_eq_empty hT P optional S
               clusterCapacity allowed0 capacity1 capacityb base0 A edge0 edge1
               edgeb orient i C0]
-        · simp [coordinatePoolWeight, sourceRootPool,
-            sourceInteriorPool, coordinateHierarchyRootSlot,
-            coordinateHierarchyInteriorSlot, coordinateBranchRootSlot,
-            F0Segments, hclass, hj0, hjhalf,
+        · simp [coordinatePoolWeight, sourceRootPool, sourceInteriorPool,
+            coordinateHierarchyRootSlot, coordinateBranchRootSlot, hclass, hj0, hjhalf,
             interiorCoordinatesAt_selectedCluster_eq_empty hT P optional S
               clusterCapacity allowed0 capacity1 capacityb base0 A edge0 edge1
               edgeb orient i C0]

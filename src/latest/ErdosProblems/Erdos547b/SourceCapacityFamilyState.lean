@@ -10,7 +10,7 @@ appropriate concrete prefix, not a presumed continuation. The original
 source-domain and copy-preservation identities remain exact.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceCapacityFamilyState
@@ -58,7 +58,8 @@ def activeItems {rootImage : Fin r → Fin hostN} {n : ℕ}
   | some x => x.source.items
 
 def activeEdges {rootImage : Fin r → Fin hostN} {n : ℕ}
-    (a : Option (ActiveState W Q S C F owner kind rootImage n)) : Finset (MatchingEdge Q.claim67.M) :=
+    (a : Option (ActiveState W Q S C F owner kind rootImage n)) : Finset (MatchingEdge Q.claim67.M)
+      :=
   match a with
   | none => ∅
   | some x => {x.source.edge}
@@ -134,13 +135,16 @@ variable (A : FamilyState W Q S C F owner kind all family rootImage n)
 theorem FamilyState.domain_eq :
     A.completed.toFinset ∪ activeSelected W Q S C F owner kind A.active =
       family.toFinset.filter (fun i => (owner i).val < n) := by
-  have hclosed : A.completed.toFinset.filter (fun i => (owner i).val < n) = A.completed.toFinset := by
+  have hclosed : A.completed.toFinset.filter (fun i => (owner i).val < n) = A.completed.toFinset :=
+    by
     exact Finset.filter_eq_self.mpr (fun i hi => A.completed_before i (List.mem_toFinset.mp hi))
   have hremaining : A.remaining.toFinset.filter (fun i => (owner i).val < n) = ∅ := by
     exact Finset.filter_eq_empty_iff.mpr (fun i hi hlt =>
       (not_lt_of_ge (A.remaining_after i (List.mem_toFinset.mp hi))) hlt)
-  have h := congrArg (fun l : List (Fin b) => l.toFinset.filter (fun i => (owner i).val < n)) A.flatten
-  simp only [List.toFinset_append, Finset.filter_union, hclosed, hremaining, Finset.union_empty] at h
+  have h := congrArg (fun l : List (Fin b) => l.toFinset.filter (fun i => (owner i).val < n))
+    A.flatten
+  simp only [List.toFinset_append, Finset.filter_union, hclosed, hremaining,
+    Finset.union_empty] at h
   rw [activeSelected_eq_filter]
   exact h
 

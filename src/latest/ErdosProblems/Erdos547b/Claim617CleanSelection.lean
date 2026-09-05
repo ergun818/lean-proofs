@@ -9,7 +9,7 @@ Selection is injective on the clean branches themselves. In particular it
 retains their common major parity, not merely the number of usable middles.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoClaim617CleanSelection

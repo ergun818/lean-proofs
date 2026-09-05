@@ -9,7 +9,7 @@ This constructs every list-order and classifier requirement and preserves
 the exact source mass. Empty source slots impose no scalar budget.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceFiniteCapacityLayout
@@ -37,7 +37,8 @@ theorem familyList_toFinset {b r : ℕ} (owner : Fin b → Fin r) (selected : Fi
   ext i
   simp only [List.mem_toFinset, mem_familyList]
 
-theorem mass_familyList {b r : ℕ} (owner : Fin b → Fin r) (selected : Finset (Fin b)) (weight : Fin b → ℝ) :
+theorem mass_familyList {b r : ℕ} (owner : Fin b → Fin r) (selected : Finset (Fin b)) (weight : Fin
+  b → ℝ) :
     mass weight (familyList owner selected) = ∑ i ∈ selected, weight i := by
   unfold mass
   rw [← List.sum_toFinset weight (familyList_nodup owner selected), familyList_toFinset]

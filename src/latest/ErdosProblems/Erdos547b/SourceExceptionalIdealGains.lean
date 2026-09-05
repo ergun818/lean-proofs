@@ -10,7 +10,7 @@ the Appendix gain is exactly lambda times the matching volume. Both
 are compared with the literal family-dependent ceiling and overshoot.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceExceptionalIdealGains
@@ -45,7 +45,8 @@ theorem threshold_idealGain (ratio eta : ℝ)
     nlinarith only [sq_nonneg ratio]
   have hgain := (mul_le_mul_of_nonneg_left hgap hratio).trans
     (mul_le_mul_of_nonneg_right hrdiv (abs_nonneg _))
-  have hN := mul_le_mul_of_nonneg_right hgain (Nat.cast_nonneg W.clusterSize : (0 : ℝ) ≤ W.clusterSize)
+  have hN := mul_le_mul_of_nonneg_right hgain (Nat.cast_nonneg W.clusterSize : (0 : ℝ) ≤
+    W.clusterSize)
   dsimp only [idealCapacity, rowWeight, edgeVertex]
   dsimp only [edgeVertex] at hN
   nlinarith only [hN]
@@ -57,7 +58,8 @@ theorem threshold_idealGain_sum (ratio eta : ℝ)
       rootDensity W S (Sum.inl C) (edgeVertex W Q e 0)|) :
     (∑ e ∈ edges, rowWeight W S (Sum.inl C) e) + ratio * eta * W.clusterSize * edges.card ≤
       ∑ e ∈ edges, idealCapacity W Q S C (.threshold ratio) e := by
-  have h := Finset.sum_le_sum (fun e he => threshold_idealGain W Q S C ratio eta hratio hratio1 e (hgap e he))
+  have h := Finset.sum_le_sum (fun e he => threshold_idealGain W Q S C ratio eta hratio hratio1 e
+    (hgap e he))
   simpa only [Finset.sum_add_distrib, Finset.sum_const, nsmul_eq_mul,
     mul_comm (edges.card : ℝ)] using h
 
@@ -102,7 +104,8 @@ theorem exists_selectedF0_with_idealBudget
     (hslack : 0 < slack)
     (hsmall : ∀ i ∈ available, (branchForest P).branches.size i ≤ slack)
     (hnonneg : 0 ≤ (∑ e ∈ edges, rowWeight W S (Sum.inl C) e) + eta ^ 3 * q)
-    (hmass : (∑ e ∈ edges, rowWeight W S (Sum.inl C) e) + eta ^ 3 * q ≤ (branchMass P available : ℝ))
+    (hmass : (∑ e ∈ edges, rowWeight W S (Sum.inl C) e) + eta ^ 3 * q ≤ (branchMass P available :
+      ℝ))
     (hgain : (∑ e ∈ edges, rowWeight W S (Sum.inl C) e) + eta ^ 3 * q + 1 + slack +
         3 * (gamma α : ℝ) * q ≤ ∑ e ∈ edges, idealCapacity W Q S C kind e) :
     ∃ F0 : SelectedF0 P available

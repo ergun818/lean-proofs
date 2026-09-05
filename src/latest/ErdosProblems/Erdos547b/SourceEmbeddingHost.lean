@@ -11,7 +11,7 @@ the degree-form subgraph. The source graph is contained in this embedding
 host, and its upper bounds transfer by monotonicity of pair density.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceEmbeddingHost
@@ -107,6 +107,7 @@ theorem normalized_upper_A {Q : Certificate W} (F : CleanSourceWitness W Q)
     rootDensity W F (Sum.inl Q.A) (Sum.inl j) ≤
       (embeddingHost W).edgeDensity (clusterVertices (assignment W) Q.A)
         (clusterVertices (assignment W) j) + (epsilon α : ℝ) := by
+  classical
   have hN : (0 : ℝ) < W.clusterSize := by exact_mod_cast W.clusterSize_pos
   have hcluster : clusterVertices (assignment W) j = j.1 :=
     clusterVertices_partitionAssignment W.exceptional W.partition j
@@ -137,6 +138,7 @@ theorem normalized_upper_B {Q : Certificate W} (F : CleanSourceWitness W Q)
     rootDensity W F (Sum.inl Q.B) (Sum.inl j) ≤
       (embeddingHost W).edgeDensity (clusterVertices (assignment W) Q.B)
         (clusterVertices (assignment W) j) + (epsilon α : ℝ) := by
+  classical
   have hN : (0 : ℝ) < W.clusterSize := by exact_mod_cast W.clusterSize_pos
   have hcluster : clusterVertices (assignment W) j = j.1 :=
     clusterVertices_partitionAssignment W.exceptional W.partition j

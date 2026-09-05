@@ -10,7 +10,7 @@ already proved global injectivity of the chosen chunk copies; it does not
 choose new images for branches or rely on a default edge outside the domain.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceOriginalBranchPlacement
@@ -72,7 +72,8 @@ theorem exists_branchPlacement_with_positions_of_indexedCopies
     ∃ E : BranchPlacement F G selected parent endpoint,
       ∀ i, ∃ t, index t = i.1 ∧ E.edge i = edge t := by
   let pick : {i // i ∈ selected} → I := fun i => Classical.choose (hcover i.1 i.2)
-  have hindex (i : {i // i ∈ selected}) : index (pick i) = i.1 := Classical.choose_spec (hcover i.1 i.2)
+  have hindex (i : {i // i ∈ selected}) : index (pick i) = i.1 := Classical.choose_spec (hcover i.1
+    i.2)
   let f := fun i hi => transportCopy F G (hindex ⟨i, hi⟩) (copies (pick ⟨i, hi⟩))
   refine ⟨{
     edge := fun i => edge (pick i)
@@ -119,7 +120,8 @@ theorem exists_branchPlacement_of_indexedCopies
     (hside : ∀ t a, copies t a ∈ endpoint (edge t)
       (orient t ((F.isTree (index t)).coloringTwoOfVert (F.root (index t)) a))) :
     Nonempty (BranchPlacement F G selected parent endpoint) := by
-  obtain ⟨E, _⟩ := exists_branchPlacement_with_positions_of_indexedCopies F G selected parent endpoint
+  obtain ⟨E, _⟩ := exists_branchPlacement_with_positions_of_indexedCopies F G selected parent
+    endpoint
     index hcover edge orient copies hinj hattach hside
   exact ⟨E⟩
 
@@ -203,7 +205,8 @@ theorem exists_original_closed_placement_in_bins (z : Fin hostN)
     ∃ D : BranchPlacement F (embeddingHost W) (closedSelected W Q S C F items bins P)
         (fun _ => z) (fun e => residualSide (edgeWhole W Q e) (deleted W Q e)),
       ∀ i, D.edge i ∈ bins := by
-  obtain ⟨D, hclosed⟩ := exists_original_closed_placement_with_closed_edges W Q S C F items bins P z E
+  obtain ⟨D, hclosed⟩ := exists_original_closed_placement_with_closed_edges W Q S C F items bins P z
+    E
   refine ⟨D, ?_⟩
   intro i
   obtain ⟨p, hp, hpi⟩ := List.mem_map.mp (List.mem_toFinset.mp (hclosed i))
@@ -229,8 +232,11 @@ theorem exists_original_closed_placement_of_realized (z : Fin hostN)
 end Erdos547b.ZhaoSourceOriginalBranchPlacement
 
 #print axioms Erdos547b.ZhaoSourceOriginalBranchPlacement.exists_branchPlacement_of_indexedCopies
-#print axioms Erdos547b.ZhaoSourceOriginalBranchPlacement.exists_branchPlacement_with_positions_of_indexedCopies
+open Erdos547b.ZhaoSourceOriginalBranchPlacement in
+#print axioms exists_branchPlacement_with_positions_of_indexedCopies
 #print axioms Erdos547b.ZhaoSourceOriginalBranchPlacement.exists_original_closed_placement_in_bins
-#print axioms Erdos547b.ZhaoSourceOriginalBranchPlacement.exists_original_closed_placement_with_closed_edges
+open Erdos547b.ZhaoSourceOriginalBranchPlacement in
+#print axioms exists_original_closed_placement_with_closed_edges
 #print axioms Erdos547b.ZhaoSourceOriginalBranchPlacement.exists_original_closed_placement
-#print axioms Erdos547b.ZhaoSourceOriginalBranchPlacement.exists_original_closed_placement_of_realized
+open Erdos547b.ZhaoSourceOriginalBranchPlacement in
+#print axioms exists_original_closed_placement_of_realized

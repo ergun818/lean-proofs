@@ -191,7 +191,7 @@ theorem groupSideLoad_zero_add_one
   · simp [hi]
 
 /-- The endpoint occupied by the root of branch `i`. -/
-def branchRootSide {b : ℕ} (F : OrderedRootedForest b)
+def branchRootSide {b : ℕ} (_F : OrderedRootedForest b)
     (orient : Fin b → Fin 2 ≃ Fin 2) (i : Fin b) : Fin 2 :=
   orient i 0
 
@@ -466,7 +466,7 @@ theorem card_ineligibleEdges_le_atypicalClusterCount
     have hchosen : z ∈ atypicalVertices G rho A
         (endpoint e (badSide e)) := by
       by_cases h0 : z ∈ atypicalVertices G rho A (endpoint e 0)
-      · simpa [badSide, h0] using h0
+      · simp [badSide, h0]
       · have h1 : z ∈ atypicalVertices G rho A (endpoint e 1) := by
           by_contra h1
           apply heBad
@@ -1160,8 +1160,8 @@ uses at most a `(1-c)` fraction, its load is at most the source-density gap.
 -/
 theorem partTwo_threshold_suffix_load_le_gap
     (c mass prefixMass low gap slack suffixLoad : ℝ)
-    (hc0 : 0 ≤ c) (hc1 : c < 1)
-    (hgap : 0 ≤ gap) (hslack : 0 ≤ slack)
+    (_hc0 : 0 ≤ c) (hc1 : c < 1)
+    (_hgap : 0 ≤ gap) (hslack : 0 ≤ slack)
     (hmass : mass ≤ 2 * low - 3 * slack + gap / (1 - c))
     (hmaximal : 2 * low < prefixMass + 2 * slack)
     (hsuffix : suffixLoad ≤ (1 - c) * (mass - prefixMass)) :

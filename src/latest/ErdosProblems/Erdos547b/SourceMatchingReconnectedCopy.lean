@@ -10,7 +10,7 @@ Its component-root images are retained in their actual high-degree
 reservoirs, as required when omitted leaves are restored later.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMatchingReconnectedCopy
@@ -34,19 +34,25 @@ variable (family : Fin 2 → Fin k → List (Fin b))
 variable (avoid : Fin 2 → Finset (Fin hostN)) (locate : Fin b → Fin 2 × Fin k)
 variable (hcover : ∀ i, i ∈ family (locate i).1 (locate i).2)
 variable (L : CutSource F.branches F.owner rootSide locate)
-variable (A : CutPrefixState W Q S P F.branches F.owner rootSide allocation family avoid locate hcover L r)
-variable (hdisjoint : ∀ x y : Fin 2 × Fin k, x ≠ y → Disjoint (allocation x.1 x.2) (allocation y.1 y.2))
+variable (A : CutPrefixState W Q S P F.branches F.owner rootSide allocation family avoid locate
+  hcover L r)
+variable (hdisjoint : ∀ x y : Fin 2 × Fin k, x ≠ y → Disjoint (allocation x.1 x.2) (allocation y.1
+  y.2))
 variable (haway : ∀ s j, allocation s j ⊆ edgesAwayFromDistinguished P
   (padFinset (large W)) (Sum.inl Q.A) (Sum.inl Q.B))
 
 def terminalReconnectedCopy : (reconnectedGraph F L).Copy (embeddingHost W) := by
-  let E := A.state.terminalBranchEmbedding W Q S P F.branches F.owner rootSide allocation family avoid locate hcover hdisjoint
+  let E := A.state.terminalBranchEmbedding W Q S P F.branches F.owner rootSide allocation family
+    avoid locate hcover hdisjoint
   let graphCopy := F.copyOfBranchEmbedding (embeddingHost W) A.state.rootImage E
     (fun i j h => A.state.root_injective i j i.isLt j.isLt h)
-    (A.state.root_ne_branchCopy W Q S P F.branches F.owner rootSide allocation family avoid locate hcover haway)
-    (fun i => A.state.branchCopy_attach W Q S P F.branches F.owner rootSide allocation family avoid locate hcover i (F.owner i).isLt)
+    (A.state.root_ne_branchCopy W Q S P F.branches F.owner rootSide allocation family avoid locate
+      hcover haway)
+    (fun i => A.state.branchCopy_attach W Q S P F.branches F.owner rootSide allocation family avoid
+      locate hcover i (F.owner i).isLt)
   have hcoord (x : F.Vertex) : graphCopy x =
-      A.state.coordinateImage F.branches F.owner W Q S P rootSide allocation family avoid locate hcover x
+      A.state.coordinateImage F.branches F.owner W Q S P rootSide allocation family avoid locate
+        hcover x
         (coordinateOwner F.branches F.owner x).isLt := by
     cases x <;> rfl
   exact copyOfForestCopy F L (embeddingHost W) graphCopy (by
@@ -55,11 +61,13 @@ def terminalReconnectedCopy : (reconnectedGraph F L).Copy (embeddingHost W) := b
     exact A.cut_adj i hi i.isLt)
 
 theorem terminalReconnectedCopy_root (i : Fin r) :
-    terminalReconnectedCopy W Q S P F rootSide allocation family avoid locate hcover L A hdisjoint haway (Sum.inl i) =
+    terminalReconnectedCopy W Q S P F rootSide allocation family avoid locate hcover L A hdisjoint
+      haway (Sum.inl i) =
       A.state.rootImage i := rfl
 
 theorem terminalReconnectedCopy_root_high (i : Fin r) :
-    q ≤ G.degree (terminalReconnectedCopy W Q S P F rootSide allocation family avoid locate hcover L A hdisjoint haway (Sum.inl i)) := by
+    q ≤ G.degree (terminalReconnectedCopy W Q S P F rootSide allocation family avoid locate hcover L
+      A hdisjoint haway (Sum.inl i)) := by
   rw [terminalReconnectedCopy_root]
   have hi := A.state.root_mem i i.isLt
   rcases OrderedRootedForest.fin_two_eq_zero_or_one (rootSide i) with hs | hs
@@ -70,7 +78,8 @@ theorem terminalReconnectedCopy_root_high (i : Fin r) :
 
 
 theorem terminalReconnectedCopy_root_avoid (i : Fin r) :
-    terminalReconnectedCopy W Q S P F rootSide allocation family avoid locate hcover L A hdisjoint haway
+    terminalReconnectedCopy W Q S P F rootSide allocation family avoid locate hcover L A hdisjoint
+      haway
       (Sum.inl i) ∉ avoid (rootSide i) :=
   A.state.root_avoid i i.isLt
 
@@ -103,7 +112,8 @@ theorem exists_copy_of_sourceBudgets (hP : P.IsMatching)
   refine ⟨terminalReconnectedCopy W Q S P F rootSide allocation family avoid locate hcover L
     D hdisjoint haway, ?_⟩
   intro i
-  exact ⟨terminalReconnectedCopy_root_high W Q S P F rootSide allocation family avoid locate hcover L
+  exact ⟨terminalReconnectedCopy_root_high W Q S P F rootSide allocation family avoid locate hcover
+    L
     D hdisjoint haway i, D.state.root_mem i i.isLt, D.state.root_avoid i i.isLt⟩
 
 end Erdos547b.ZhaoSourceMatchingReconnectedCopy

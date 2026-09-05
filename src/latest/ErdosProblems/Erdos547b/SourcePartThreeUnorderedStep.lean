@@ -9,7 +9,7 @@ Order the two current live sets only for the local Appendix call, then
 restore their physical labels without changing the graph-copy maps.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePartThreeLiveStep

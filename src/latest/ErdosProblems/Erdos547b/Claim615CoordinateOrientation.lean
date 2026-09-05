@@ -136,6 +136,8 @@ end Allocated
 
 end Erdos547b.ZhaoClaim615CoordinateOrientation
 
-#print axioms Erdos547b.ZhaoClaim615CoordinateOrientation.canonicalCoordinateOrientation_selected_apply
-#print axioms Erdos547b.ZhaoClaim615CoordinateOrientation.canonicalCoordinateOrientation_residual_apply
+open Erdos547b.ZhaoClaim615CoordinateOrientation in
+#print axioms canonicalCoordinateOrientation_selected_apply
+open Erdos547b.ZhaoClaim615CoordinateOrientation in
+#print axioms canonicalCoordinateOrientation_residual_apply
 #print axioms Erdos547b.ZhaoClaim615CoordinateOrientation.canonicalCoordinateOrientation_minor_apply

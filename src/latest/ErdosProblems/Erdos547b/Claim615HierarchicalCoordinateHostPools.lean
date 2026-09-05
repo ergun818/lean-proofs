@@ -142,7 +142,7 @@ private theorem matchingEndpoint_injective :
       orientedEndpoint Q.claim67.M ∅ g (flip q) =
         matchingEdgeEndpoint g.1 q := by
     fin_cases q <;>
-      simp [flip, orientedEndpoint, rawEndpoint, matchingEdgeEndpoint]
+      simp [flip, orientedEndpoint, matchingEdgeEndpoint]
   have hpair : (e, flip c) = (f, flip d) := by
     apply orientedEndpoint_injective Q.claim67.M Q.claim67.isMatching
       (∅ : Finset (EvenPadding I))

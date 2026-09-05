@@ -46,10 +46,11 @@ theorem lowerScale_pos {x : ℝ} (hx : 1 ≤ x) : 0 < lowerScale x := by
 /-- Summing downward-rounded real capacities loses at most one unit per
 finite index. -/
 theorem sum_le_cast_sum_lowerScale_add_card
-    {α : Type*} [DecidableEq α]
+    {α : Type*}
     (s : Finset α) (x : α → ℝ) :
     ∑ a ∈ s, x a ≤
       (((∑ a ∈ s, lowerScale (x a)) + s.card : ℕ) : ℝ) := by
+  classical
   push_cast
   calc
     ∑ a ∈ s, x a ≤
@@ -65,11 +66,12 @@ theorem sum_le_cast_sum_lowerScale_add_card
 /-- A real aggregate budget with one extra unit per bin implies the natural
 capacity-packing budget for the downward-rounded capacities. -/
 theorem demand_add_slack_le_sum_lowerScale
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*} [Fintype α]
     (x : α → ℝ) (demand slack : ℕ)
     (hbudget : ((demand + Fintype.card α * slack +
         Fintype.card α : ℕ) : ℝ) ≤ ∑ a, x a) :
     demand + Fintype.card α * slack ≤ ∑ a, lowerScale (x a) := by
+  classical
   have hround := sum_le_cast_sum_lowerScale_add_card
     (Finset.univ : Finset α) x
   simp only [Finset.card_univ] at hround

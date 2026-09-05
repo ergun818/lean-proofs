@@ -57,11 +57,12 @@ theorem claim618_indexing_of_decomposition
     obtain ⟨e, he, hv0 | hv1⟩ :=
       MatchingDecomposition.support_covered (R := R) (L := L)
         (C67 := C67) v hv
-    exact mem_indexedMatchingSupport.mpr ⟨e, he, Or.inl hv0⟩
-    exact mem_indexedMatchingSupport.mpr ⟨e, he, Or.inr hv1⟩
+    · exact mem_indexedMatchingSupport.mpr ⟨e, he, Or.inl hv0⟩
+    · exact mem_indexedMatchingSupport.mpr ⟨e, he, Or.inr hv1⟩
   · intro C hC
     exact D.edgeOf_spec hlarge hC
 
+omit [DecidableEq K] [Fintype K] in
 /-- Convert the strict natural Claim-6.17 count to the real source scale
 without requiring an impossible exact equality `r = ρk`. -/
 theorem claim617_real_of_nat_bound
@@ -170,11 +171,11 @@ theorem claim617_of_matchingDecomposition
 Lemma-6.11 decomposition.  No copy or embedding conclusion is a premise. -/
 theorem claim618_of_matchingDecomposition
     {TreeVertex : Type v} [Fintype TreeVertex] [DecidableEq TreeVertex]
-    {HostVertex : Type w} [Fintype HostVertex] [DecidableEq HostVertex]
+    {HostVertex : Type w} [Finite HostVertex]
     (T : SimpleGraph TreeVertex) [DecidableRel T.Adj]
     (globalRoot : TreeVertex) (small : ℕ)
     (P : Erdos547b.TreePartition.ZhaoForestPartition T globalRoot small)
-    (G : SimpleGraph HostVertex) [DecidableRel G.Adj]
+    (G : SimpleGraph HostVertex)
     (R' : SimpleGraph K) [DecidableRel R'.Adj] (hR'R : R' ≤ R)
     {L : Finset K} {miss lowerV1 upperV1 upperV2 mbBound : ℕ}
     (C67 : Claim67Certificate R L miss)
@@ -206,6 +207,7 @@ theorem claim618_of_matchingDecomposition
     ((R'.interedges D.L1 D.V2).card : ℝ) <
       16 * rho₁ * (k : ℝ) ^ 2 := by
   classical
+  let := Fintype.ofFinite HostVertex
   obtain ⟨hendpoint, hMedge, hlargeEnd, hV2pair, hV2covered, hedgeOf⟩ :=
     claim618_indexing_of_decomposition D hlarge
   exact zhaoClaim618 T globalRoot small P G R R' hR'R

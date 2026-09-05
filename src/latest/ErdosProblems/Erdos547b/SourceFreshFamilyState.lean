@@ -12,7 +12,7 @@ current prefix is actually embedded. The terminal unsaturated case is
 kept separate from the nonterminal reservation ledger.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceFreshFamilyState
@@ -70,7 +70,8 @@ theorem exists_fresh_familyState
     intro i hi
     obtain ⟨p, hp, hip⟩ := List.mem_flatMap.mp hi
     have hc := hcurrent i
-      (Erdos547b.ZhaoSourceResidualRootPacking.SaturatedPacking.chunk_mem P (List.mem_append_left _ hp) hip)
+      (Erdos547b.ZhaoSourceResidualRootPacking.SaturatedPacking.chunk_mem P (List.mem_append_left _
+        hp) hip)
     rw [hc]
     exact Nat.lt_succ_self _
   have hledger := closed_saturation_mass P

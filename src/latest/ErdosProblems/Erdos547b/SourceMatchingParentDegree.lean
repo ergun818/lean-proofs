@@ -10,7 +10,7 @@ Thus every root-colour image has the permanent-cleanup degree bound,
 without reconstructing a pending plan or changing the stored copy.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMatchingParentDegree
@@ -67,8 +67,10 @@ theorem family_rootColor_degree
     (a : Fin (F.size i)) (hcolor : (F.isTree i).coloringTwoOfVert (F.root i) a = 0) :
     ((densityCutoff α : ℝ) - (epsilon α : ℝ)) * (sourceQuota W : ℝ) ≤
       (#((reservoir W Q s).filter ((embeddingHost W).Adj
-        ((A.currentPlacement W Q S P (rootCluster W Q s) F owner).forestCopy.componentCopy i hi a))) : ℝ) :=
-  placement_rootColor_degree W Q S P s F _ _ (A.currentPlacement W Q S P (rootCluster W Q s) F owner)
+        ((A.currentPlacement W Q S P (rootCluster W Q s) F owner).forestCopy.componentCopy i hi a)))
+          : ℝ) :=
+  placement_rootColor_degree W Q S P s F _ _ (A.currentPlacement W Q S P (rootCluster W Q s) F
+    owner)
     (A.current_root_positive W Q S P (rootCluster W Q s) F owner) i hi a hcolor
 
 end Erdos547b.ZhaoSourceMatchingParentDegree

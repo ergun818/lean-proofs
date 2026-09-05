@@ -4,7 +4,7 @@ import ErdosProblems.Erdos547b.SourceAbsoluteBadBudget
 
 /-! # The three-gamma reserve for an arbitrary physical matching -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMatchingCapacityMargins

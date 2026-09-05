@@ -182,7 +182,7 @@ theorem card_oneRootTargetBad_le
 degree into every actual direct target reservoir. -/
 theorem exists_oneRootImage_in_targetReservoir
     {s : ℕ} {B : Type u} {RootGroup : Type*}
-    [Fintype B] [DecidableEq B]
+    [Finite B]
     (F : Erdos547b.ZhaoLemma59Hierarchical.HierarchicalSegmentForest 1 s)
     (G : SimpleGraph B) [DecidableRel G.Adj] (rho : ℝ)
     (sourceWhole sourceRaw : Finset B)
@@ -204,6 +204,7 @@ theorem exists_oneRootImage_in_targetReservoir
           #(rootRaw (rootGroup i)) ≤
         (#((rootRaw (rootGroup i)).filter (G.Adj z)) : ℝ) := by
   classical
+  let := Fintype.ofFinite B
   have hbadReal :
       (#(oneRootTargetBad F G rho sourceWhole sourceRaw rootGroup
           rootWhole rootRaw) : ℝ) < #sourceRaw :=

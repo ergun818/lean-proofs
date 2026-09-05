@@ -11,7 +11,7 @@ are all constructed. In the large-minor case the same actual matching
 has the second-row lower bound, by the checked raw discrepancy theorem.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceNearFullFromHost
@@ -111,7 +111,8 @@ theorem exists_output_of_notEC1
   refine ⟨O, degreeB_order_of_largeMinor Z R C hT P O hα hα1 hhost horder (by omega)
     hsmall hroots ?_⟩
   rintro ⟨E⟩
-  exact hnot (((SimpleGraph.Copy.ofLE (embeddingHost Z) H (embeddingHost_le_original Z)).comp E).isContained)
+  exact hnot (((SimpleGraph.Copy.ofLE (embeddingHost Z) H (embeddingHost_le_original Z)).comp
+    E).isContained)
 
 include hT in
 theorem exists_partition_and_output_of_notEC1

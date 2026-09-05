@@ -3,16 +3,17 @@ import ErdosProblems.Erdos547b.Section6Dichotomy
 
 /-! # Lift a thresholded crossing count, retaining the low-density pairs -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 namespace Erdos547b.ZhaoThresholdClusterCut
 
 open Finset SimpleGraph Erdos547b.ZhaoStability Erdos547b.ZhaoSection6Dichotomy
 
 theorem card_interedges_le_density_bound
-    {V : Type*} [DecidableEq V] (H : SimpleGraph V) [DecidableRel H.Adj]
+    {V : Type*} (H : SimpleGraph V) [DecidableRel H.Adj]
     (A B : Finset V) (τ : ℝ) (hden : (H.edgeDensity A B : ℝ) ≤ τ) :
     ((H.interedges A B).card : ℝ) ≤ τ * A.card * B.card := by
+  classical
   by_cases hA : A.Nonempty
   · by_cases hB : B.Nonempty
     · have hprod : (0 : ℝ) < (A.card : ℝ) * B.card := by
@@ -45,7 +46,8 @@ theorem thresholded_clusterUnion_crossing_le
     exact H.interedges_biUnion A B (clusterVertices P) (clusterVertices P)
   have hblock (ij : I × I) : ((block ij).card : ℝ) ≤
       (if R.Adj ij.1 ij.2 then (N : ℝ) ^ 2 else 0) + τ * (N : ℝ) ^ 2 := by
-    have hc : ((clusterVertices P ij.1).card : ℝ) * (clusterVertices P ij.2).card ≤ (N : ℝ) ^ 2 := by
+    have hc : ((clusterVertices P ij.1).card : ℝ) * (clusterVertices P ij.2).card ≤ (N : ℝ) ^ 2 :=
+      by
       have hn := Nat.mul_le_mul (hcluster ij.1) (hcluster ij.2)
       simpa only [pow_two, Nat.cast_mul] using (show
         (((clusterVertices P ij.1).card * (clusterVertices P ij.2).card : ℕ) : ℝ) ≤
@@ -70,7 +72,8 @@ theorem thresholded_clusterUnion_crossing_le
     ((H.interedges (clusterUnion P A) (clusterUnion P B)).card : ℝ) =
         (((A ×ˢ B).biUnion block).card : ℝ) := by rw [hunion]
     _ ≤ ∑ ij ∈ A ×ˢ B, ((block ij).card : ℝ) := by
-      exact_mod_cast (Finset.card_biUnion_le : ((A ×ˢ B).biUnion block).card ≤ ∑ ij ∈ A ×ˢ B, (block ij).card)
+      exact_mod_cast (Finset.card_biUnion_le : ((A ×ˢ B).biUnion block).card ≤ ∑ ij ∈ A ×ˢ B, (block
+        ij).card)
     _ ≤ ∑ ij ∈ A ×ˢ B, ((if R.Adj ij.1 ij.2 then (N : ℝ) ^ 2 else 0) + τ * (N : ℝ) ^ 2) :=
       Finset.sum_le_sum (fun ij _ => hblock ij)
     _ = ((R.interedges A B).card + τ * A.card * B.card) * (N : ℝ) ^ 2 := by

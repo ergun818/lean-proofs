@@ -56,7 +56,7 @@ embedding.  `orient` says which physical side receives each canonical
 bipartition color of the source tree. -/
 theorem exists_dynamic_rooted_tree_copy_of_uniform
     {A : Type u} {B : Type v}
-    [Fintype A] [Fintype B] [DecidableEq B]
+    [Fintype A] [Finite B]
     (T : SimpleGraph A) (hT : T.IsTree) (root : A)
     (G : SimpleGraph B) [DecidableRel G.Adj]
     (z : B) (orient : Fin 2 ≃ Fin 2)
@@ -77,6 +77,7 @@ theorem exists_dynamic_rooted_tree_copy_of_uniform
       G.Adj z (f root) ∧
       ∀ a, f a ∈ available (orient (hT.coloringTwoOfVert root a)) := by
   classical
+  let := Fintype.ofFinite B
   let W₀ := whole (orient 0)
   let W₁ := whole (orient 1)
   let A₀ := available (orient 0)

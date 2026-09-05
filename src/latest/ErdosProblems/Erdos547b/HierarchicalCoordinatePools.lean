@@ -90,7 +90,7 @@ theorem coordinatePoolWeight_eq_card_filter
       exact haNe haEq
     · have hempty : R = ∅ := by simp [R, heq]
       rw [hempty] at haR
-      simpa using haR
+      simp at haR
   have hunion : R ∪ I =
       Finset.univ.filter fun a : Fin (F.segments.size i) ↦
         if a = F.segments.root i then rootPool i = e
@@ -283,5 +283,7 @@ end HierarchicalSegmentForest
 
 end Erdos547b.ZhaoLemma59HierarchicalCoordinatePools
 
-#print axioms Erdos547b.ZhaoLemma59HierarchicalCoordinatePools.HierarchicalSegmentForest.card_coordinateUsedPool_le_load
-#print axioms Erdos547b.ZhaoLemma59HierarchicalCoordinatePools.HierarchicalSegmentForest.card_coordinateUsedPool_add_size_le_load_add_small
+open Erdos547b.ZhaoLemma59HierarchicalCoordinatePools.HierarchicalSegmentForest in
+#print axioms card_coordinateUsedPool_le_load
+open Erdos547b.ZhaoLemma59HierarchicalCoordinatePools.HierarchicalSegmentForest in
+#print axioms card_coordinateUsedPool_add_size_le_load_add_small

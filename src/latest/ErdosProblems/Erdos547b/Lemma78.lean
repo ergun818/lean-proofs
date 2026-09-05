@@ -23,9 +23,10 @@ namespace Erdos547b.ZhaoLemma78
 open Finset Function SimpleGraph
 
 private theorem card_filter_finset_subtype
-    {A : Type*} [DecidableEq A] (S : Finset A) (p : A → Prop)
+    {A : Type*} (S : Finset A) (p : A → Prop)
     [DecidablePred p] :
     #{x : S | p x} = #{x ∈ S | p x} := by
+  classical
   have huniv : (univ : Finset S) = S.attach := by
     ext x
     simp
@@ -94,7 +95,7 @@ theorem exists_bijective_of_balanced_minDegree
 after restricting to any subset `T`.  This is the degree-loss calculation
 used when Zhao passes from the ambient pair `X,Y` to `X',Y'`. -/
 private theorem restricted_minDegree
-    {A : Type*} [DecidableEq A] (S T : Finset A) (p : A → Prop)
+    {A : Type*} (S T : Finset A) (p : A → Prop)
     [DecidablePred p] (l : ℕ) (hTS : T ⊆ S)
     (hdeg : #S - l ≤ #(S.filter p)) :
     #T - l ≤ #(T.filter p) := by
@@ -114,13 +115,15 @@ private theorem restricted_minDegree
 /-- Graph-theoretic specialization of the balanced Hall core. It produces
 a bijection from `P` to `Q` made entirely of host edges. -/
 theorem exists_bijective_adj_on_finsets
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (P Q : Finset V) (l : ℕ)
     (hcard : #P = #Q) (hlarge : 2 * l ≤ #P)
     (hdegP : ∀ p ∈ P, #Q - l ≤ #{q ∈ Q | G.Adj p q})
     (hdegQ : ∀ q ∈ Q, #P - l ≤ #{p ∈ P | G.Adj p q}) :
     ∃ f : P → Q, Function.Bijective f ∧ ∀ p : P, G.Adj p (f p) := by
+  classical
+  let := Fintype.ofFinite V
   let r : P → Q → Prop := fun p q ↦ G.Adj p q
   have hdegP' : ∀ p : P, Fintype.card Q - l ≤ #{q : Q | r p q} := by
     intro p
@@ -142,7 +145,7 @@ theorem exists_bijective_adj_on_finsets
 ambient sides `X,Y`, while the resulting perfect matching is between any
 equal subpair `P ⊆ Y`, `Q ⊆ X` of size at least `2*l`. -/
 theorem exists_bijective_adj_on_subsets
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (X Y P Q : Finset V) (l : ℕ)
     (hPY : P ⊆ Y) (hQX : Q ⊆ X)
@@ -150,6 +153,8 @@ theorem exists_bijective_adj_on_subsets
     (hdegX : ∀ x ∈ X, #Y - l ≤ #{y ∈ Y | G.Adj x y})
     (hdegY : ∀ y ∈ Y, #X - l ≤ #{x ∈ X | G.Adj y x}) :
     ∃ f : P → Q, Function.Bijective f ∧ ∀ p : P, G.Adj p (f p) := by
+  classical
+  let := Fintype.ofFinite V
   apply exists_bijective_adj_on_finsets G P Q l hcard hlarge
   · intro p hp
     exact restricted_minDegree X Q (G.Adj p) l hQX (hdegY p (hPY hp))
@@ -162,7 +167,7 @@ target leaves have distinct already embedded parents. If the remaining
 host vertices and the parent images form a balanced high-semidegree pair,
 then all leaves can be added simultaneously and injectively. -/
 theorem exists_injective_leaf_images
-    {W V : Type*} [Fintype W] [Fintype V] [DecidableEq V]
+    {W V : Type*} [Fintype W] [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (parentImage : W → V) (_hparent_inj : Function.Injective parentImage)
     (free : Finset V) (l : ℕ)
@@ -175,6 +180,8 @@ theorem exists_injective_leaf_images
       Function.Injective leafImage ∧
       (∀ w, leafImage w ∈ free) ∧
       ∀ w, G.Adj (parentImage w) (leafImage w) := by
+  classical
+  let := Fintype.ofFinite V
   let r : W → free → Prop := fun w q ↦ G.Adj (parentImage w) q
   have hdegParent' : ∀ w, Fintype.card free - l ≤ #{q : free | r w q} := by
     intro w
@@ -200,7 +207,7 @@ step in Zhao's Lemma 7.8.  The already embedded parents lie in `Y`, the
 chosen free vertices lie in `X`, and the ambient pair has deficiency at
 most `l` in both directions. -/
 theorem exists_injective_leaf_images_of_ambient
-    {W V : Type*} [Fintype W] [Fintype V] [DecidableEq V]
+    {W V : Type*} [Fintype W] [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (parentImage : W → V) (hparent_inj : Function.Injective parentImage)
     (X Y free : Finset V) (l : ℕ)
@@ -215,6 +222,7 @@ theorem exists_injective_leaf_images_of_ambient
       (∀ w, leafImage w ∈ free) ∧
       ∀ w, G.Adj (parentImage w) (leafImage w) := by
   classical
+  let := Fintype.ofFinite V
   let parents : Finset V := univ.image parentImage
   have hparentsCard : #parents = Fintype.card W := by
     dsimp only [parents]
@@ -386,10 +394,8 @@ leaves and simultaneous, pairwise distinct images for those leaves.  The
 parent interface records the degree-one fact in the exact form needed by
 the construction. -/
 theorem extend_copy_by_distinct_leaves
-    {A V : Type*} [Fintype A] [Fintype V]
-    [DecidableEq A] [DecidableEq V]
+    {A V : Type*} [Finite A] [Finite V]
     (T : SimpleGraph A) (G : SimpleGraph V)
-    [DecidableRel T.Adj] [DecidableRel G.Adj]
     (leaves : Finset A)
     (parent : leaves → {a : A // a ∉ leaves})
     (hparent_edge : ∀ w : leaves, ∀ a : A, T.Adj w a → a = parent w)
@@ -402,6 +408,8 @@ theorem extend_copy_by_distinct_leaves
       (∀ w : leaves, f w = leafImage w) ∧
       ∀ a : {a : A // a ∉ leaves}, f a = core a := by
   classical
+  let := Fintype.ofFinite A
+  let := Fintype.ofFinite V
   let F : A → V := fun a ↦
     if h : a ∈ leaves then leafImage ⟨a, h⟩ else core ⟨a, h⟩
   have hF_adj : ∀ ⦃a b⦄, T.Adj a b → G.Adj (F a) (F b) := by
@@ -474,10 +482,9 @@ theorem extend_copy_by_distinct_leaves
 a full copy whenever the parents and a free host set sit in the ambient
 high-semidegree pair from Lemma 7.8. -/
 theorem exists_copy_extending_leaves_of_ambient
-    {A V : Type*} [Fintype A] [Fintype V]
-    [DecidableEq A] [DecidableEq V]
+    {A V : Type*} [Finite A] [Finite V]
     (T : SimpleGraph A) (G : SimpleGraph V)
-    [DecidableRel T.Adj] [DecidableRel G.Adj]
+    [DecidableRel G.Adj]
     (leaves : Finset A)
     (parent : leaves → {a : A // a ∉ leaves})
     (hparent_inj : Function.Injective parent)
@@ -494,6 +501,9 @@ theorem exists_copy_extending_leaves_of_ambient
     ∃ f : Copy T G,
       (∀ w : leaves, f w ∈ free) ∧
       ∀ a : {a : A // a ∉ leaves}, f a = core a := by
+  classical
+  let := Fintype.ofFinite A
+  let := Fintype.ofFinite V
   have hparentImage_inj :
       Function.Injective (fun w ↦ core (parent w)) :=
     core.injective.comp hparent_inj

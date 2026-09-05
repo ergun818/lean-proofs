@@ -49,13 +49,15 @@ that many neighbours.  Unlike `ResidualThresholdHostFacts.parent_neighbours`,
 this pointwise form can be applied only to the endpoint selected by Zhao's
 canonical maximal-cutoff orientation. -/
 theorem residualSide_filter_card_ge_of_deleted_card_add_le
-    {B : Type v} [Fintype B] [DecidableEq B]
+    {B : Type v} [Finite B] [DecidableEq B]
     (G : SimpleGraph B) [DecidableRel G.Adj]
     (whole deleted : Fin 2 → Finset B)
     (parent : B) (c : Fin 2) (need : ℕ)
     (hbound : #(deleted c) + need ≤
       #((whole c).filter (G.Adj parent))) :
     need ≤ #((residualSide whole deleted c).filter (G.Adj parent)) := by
+  classical
+  let := Fintype.ofFinite B
   let wholeNeighbors := (whole c).filter (G.Adj parent)
   let liveNeighbors :=
     (residualSide whole deleted c).filter (G.Adj parent)

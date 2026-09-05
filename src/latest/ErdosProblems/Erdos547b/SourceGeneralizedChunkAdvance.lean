@@ -11,7 +11,7 @@ batch in the literal live sets, and propagates the residual invariant.
 Both preserve every earlier copy and already chosen orientation.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceGeneralizedChunk
@@ -50,7 +50,8 @@ theorem ChunkSource.exists_advance
     ∃ E' : D.Prefix W Q S C F owner kind backend (Function.update rootImage n z) (n.val + 1),
       (∀ i (hi : i ∈ branchPrefix (ownerCutoff (listOwner owner D.items) n.val)),
         (D.chosen W Q S C F owner kind E').state.forestCopy.componentCopy i
-            (branchPrefix_mono (ownerCutoff_mono (listOwner owner D.items) (Nat.le_succ n.val)) hi) =
+            (branchPrefix_mono (ownerCutoff_mono (listOwner owner D.items) (Nat.le_succ n.val)) hi)
+              =
           (D.chosen W Q S C F owner kind E).state.forestCopy.componentCopy i hi) ∧
       ∀ i ∈ branchPrefix (ownerCutoff (listOwner owner D.items) n.val),
         (D.chosen W Q S C F owner kind E').orient i =
@@ -97,8 +98,10 @@ theorem ChunkSource.exists_advance
         exact (sdiff_sdiff _ _ _).symm
       have hout : D.LiveInvariant W Q S C F owner (.appendix lambda) out := by
         change ResidualInvariant _ _ _ _
-          ((W.clusterSize : ℝ) - (residualSide (edgeWhole W Q D.edge) (deleted W Q D.edge) 0 \ out.used 0).card)
-          ((W.clusterSize : ℝ) - (residualSide (edgeWhole W Q D.edge) (deleted W Q D.edge) 1 \ out.used 1).card)
+          ((W.clusterSize : ℝ) - (residualSide (edgeWhole W Q D.edge) (deleted W Q D.edge) 0 \
+            out.used 0).card)
+          ((W.clusterSize : ℝ) - (residualSide (edgeWhole W Q D.edge) (deleted W Q D.edge) 1 \
+            out.used 1).card)
         rw [hresidual 0, hresidual 1]
         exact hnew
       exact ⟨⟨out, hout⟩, hcopy, horient⟩

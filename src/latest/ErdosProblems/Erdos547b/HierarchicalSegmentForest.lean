@@ -121,7 +121,7 @@ theorem card_remaining (F : HierarchicalSegmentForest r s) :
             exfalso
             have hp := x.2
             rw [hx] at hp
-            simpa [remaining] using hp
+            simp [remaining] at hp
         | inr z =>
             refine ⟨z.1, ⟨z.2, ?_⟩⟩
             have hp := x.2
@@ -140,9 +140,7 @@ theorem card_remaining (F : HierarchicalSegmentForest r s) :
   intro j _
   change Fintype.card {a : Fin (F.segments.size j) //
       ¬a = F.segments.root j} = F.segments.size j - 1
-  simpa [Fintype.card_subtype_eq] using
-    (Fintype.card_subtype_compl
-      (fun a : Fin (F.segments.size j) ↦ a = F.segments.root j))
+  simp
 
 def assembledMap {B : Type u} (F : HierarchicalSegmentForest r s)
     (rootImage : Fin r → B) (segmentCopy : ∀ j, Fin (F.segments.size j) → B) :

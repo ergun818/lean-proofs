@@ -92,6 +92,7 @@ theorem segmentRootOriginal_ne_globalRoot
   rw [segmentRootOriginal_eq_wholeBranchLiteralVertex]
   exact wholeBranchLiteralVertex_ne_globalRoot hT _ _
 
+omit [DecidableEq V] [DecidableRel T.Adj] in
 /-- Forgetting the unique component coordinate reflects an edge of the
 one-component ordered forest back to an edge of the literal tree. -/
 theorem fromSingleCoordinate_map_adj
@@ -119,6 +120,7 @@ theorem fromSingleCoordinate_map_adj
   change T.Adj (vertexEquiv a) (vertexEquiv b)
   exact hcd
 
+omit [DecidableEq V] [DecidableRel T.Adj] in
 /-- The root of a canonical branch in the one-root decomposition is an
 actual child of the global root. -/
 theorem wholeBranchRoot_treeParent
@@ -129,6 +131,7 @@ theorem wholeBranchRoot_treeParent
         (wholeBranchLiteralVertex_ne_globalRoot hT j
           ((wholeBranchForest T hT globalRoot).branches.root j)) =
       globalRoot := by
+  classical
   let F := wholeBranchForest T hT globalRoot
   have hbranch : F.graph.Adj (Sum.inl (F.owner j))
       (Sum.inr (⟨j, F.branches.root j⟩ : BranchVertex F)) := ⟨rfl, rfl⟩

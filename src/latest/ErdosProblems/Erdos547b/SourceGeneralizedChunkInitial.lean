@@ -9,7 +9,7 @@ is paid by the permanent deletion bound. Every subsequently stored root
 endpoint is supported by a positive source entry in either concrete kind.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceGeneralizedChunk
@@ -43,7 +43,8 @@ theorem ChunkSource.exists_initial_prefix
     Nonempty (D.Prefix W Q S C F owner kind backend rootImage 0) := by
   cases kind with
   | threshold ratio =>
-      change Nonempty (PartialDynamicAttachedForestEmbedding (listForest F D.items) (embeddingHost W)
+      change Nonempty (PartialDynamicAttachedForestEmbedding (listForest F D.items) (embeddingHost
+        W)
         (fun i => rootImage (listOwner owner D.items i)) backend.orient
         (residualSide (edgeWhole W Q D.edge) (deleted W Q D.edge))
         (branchPrefix (ownerCutoff (listOwner owner D.items) 0)))
@@ -65,11 +66,14 @@ theorem ChunkSource.exists_initial_prefix
         rw [initial.state.card_used]
         simp only [ownerCutoff_zero, branchPrefix_zero, Finset.sum_empty]
       change ResidualInvariant _ _ _ _
-        ((W.clusterSize : ℝ) - (residualSide (edgeWhole W Q D.edge) (deleted W Q D.edge) 0 \ initial.used 0).card)
-        ((W.clusterSize : ℝ) - (residualSide (edgeWhole W Q D.edge) (deleted W Q D.edge) 1 \ initial.used 1).card)
+        ((W.clusterSize : ℝ) - (residualSide (edgeWhole W Q D.edge) (deleted W Q D.edge) 0 \
+          initial.used 0).card)
+        ((W.clusterSize : ℝ) - (residualSide (edgeWhole W Q D.edge) (deleted W Q D.edge) 1 \
+          initial.used 1).card)
       rw [hused 0, hused 1, Finset.sdiff_empty, Finset.sdiff_empty]
       have hcount (c : Fin 2) :
-          ((W.clusterSize : ℝ) - (residualSide (edgeWhole W Q D.edge) (deleted W Q D.edge) c).card) =
+          ((W.clusterSize : ℝ) - (residualSide (edgeWhole W Q D.edge) (deleted W Q D.edge) c).card)
+            =
             (deleted W Q D.edge c).card := by
         have hc : ((residualSide (edgeWhole W Q D.edge) (deleted W Q D.edge) c).card : ℝ) +
             (deleted W Q D.edge c).card = W.clusterSize := by

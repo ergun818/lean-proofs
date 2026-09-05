@@ -4,7 +4,7 @@ import ErdosProblems.Erdos547b.SourceExceptionalFamilies
 
 /-! # Retaining whole branches does not increase either source-side mass -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePathCoreSideMass

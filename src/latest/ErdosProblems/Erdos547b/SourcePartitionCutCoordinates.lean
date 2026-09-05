@@ -9,7 +9,7 @@ Earlier ownership, reservoir-side compatibility and rooted colour zero
 follow from the partition ordering, tree parity and the reconnect rule.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePartitionCutCoordinates
@@ -68,7 +68,8 @@ theorem partitionParent_vertex (i : Fin P.numParts) (hi : i.val ≠ 0) :
   · exact cutParentBranchCoordinate_value P i hi hroot
 
 theorem partitionParent_before (i : Fin P.numParts) (hi : i.val ≠ 0) :
-    (coordinateOwner (branchForest P).branches (branchForest P).owner (partitionParent P i hi)).val < i.val := by
+    (coordinateOwner (branchForest P).branches (branchForest P).owner (partitionParent P i hi)).val
+      < i.val := by
   unfold partitionParent
   split_ifs with hroot
   · exact P.parent_earlier i hi
@@ -87,7 +88,8 @@ theorem partitionParent_side (hT : T.IsTree) {k : ℕ}
     (locate : Fin (Fintype.card (ChildKey P.orderedForest)) → Fin 2 × Fin k)
     (hlocate : ∀ j, (locate j).1 = componentReservoirSide P ((branchForest P).owner j))
     (i : Fin P.numParts) (hi : i.val ≠ 0) :
-    coordinateSide (branchForest P).branches (componentReservoirSide P) locate (partitionParent P i hi) =
+    coordinateSide (branchForest P).branches (componentReservoirSide P) locate (partitionParent P i
+      hi) =
       componentReservoirSide P i := by
   unfold partitionParent
   split_ifs with hroot
@@ -107,7 +109,8 @@ family tags. There is no host-side premise in this constructor. -/
 def partitionCutSource (hT : T.IsTree) {k : ℕ}
     (locate : Fin (Fintype.card (ChildKey P.orderedForest)) → Fin 2 × Fin k)
     (hlocate : ∀ j, (locate j).1 = componentReservoirSide P ((branchForest P).owner j)) :
-    CutSource (branchForest P).branches (branchForest P).owner (componentReservoirSide P) locate where
+    CutSource (branchForest P).branches (branchForest P).owner (componentReservoirSide P) locate
+      where
   parent := partitionParent P
   before := partitionParent_before P
   side := partitionParent_side P hT locate hlocate

@@ -5,7 +5,7 @@ import ErdosProblems.Erdos547b.SourceNearFullNumerics
 
 /-! # Actual midpoint neighbor capacities pay the integral path counts -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceFreedMidpointCapacity
@@ -34,7 +34,8 @@ theorem freed_volume_lower (hα : 0 < α) (hα1 : α ≤ 1 / 4) (hhost : hostN =
     exact (switchCount_bounds (scale_lower W Q S O hα hα1 hhost horder)).1
   have hvol := (sharp_paddedVolume W hα hα1 hhost horder).1
   have hr : (0 : ℝ) ≤ rho α := by exact_mod_cast (parameter_pos hα).2.1.le
-  have hmN := mul_le_mul_of_nonneg_right hm.le (Nat.cast_nonneg W.clusterSize : (0 : ℝ) ≤ W.clusterSize)
+  have hmN := mul_le_mul_of_nonneg_right hm.le (Nat.cast_nonneg W.clusterSize : (0 : ℝ) ≤
+    W.clusterSize)
   have hvolScale := mul_le_mul_of_nonneg_left hvol (by positivity : 0 ≤ (49 / 10 : ℝ) * (rho α : ℝ))
   nlinarith only [hmN, hvolScale]
 
@@ -47,7 +48,8 @@ private theorem factors_nonneg (hα : 0 < α) (hα1 : α ≤ 1 / 4) :
   · exact_mod_cast (show 0 ≤ 1 - 2 * eta α - 2 * epsilon α by linarith only [h₁])
   constructor
   · exact_mod_cast (show 0 ≤ 1 - rootTypicality α by linarith only [h₂])
-  · exact_mod_cast (show 0 ≤ 1 - 2 * fourthRoot α ^ 2 - rootTypicality α - epsilon α by linarith only [h₃])
+  · exact_mod_cast (show 0 ≤ 1 - 2 * fourthRoot α ^ 2 - rootTypicality α - epsilon α
+      by linarith only [h₃])
 
 variable (D : Data W Q S O sw)
 
@@ -81,9 +83,11 @@ theorem low_pool_capacity (hα : 0 < α) (hα1 : α ≤ 1 / 4) (hhost : hostN = 
   have hvol := freed_volume_lower W Q S O sw hα hα1 hhost horder
   have hvolScale := mul_le_mul_of_nonneg_left hvol (mul_nonneg (mul_nonneg hc hr) hl)
   have hcoef := (Rat.cast_le (K := ℝ)).mpr (low_coefficient_margin hα hα1)
-  norm_num only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_mul, Rat.cast_sub, Rat.cast_one, Rat.cast_pow] at hcoef
+  norm_num only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_mul, Rat.cast_sub, Rat.cast_one,
+    Rat.cast_pow] at hcoef
   have hρ : (0 : ℝ) ≤ rho α := by exact_mod_cast (parameter_pos hα).2.1.le
-  have hcoefScale := mul_le_mul_of_nonneg_right hcoef (mul_nonneg hρ (Nat.cast_nonneg q : (0 : ℝ) ≤ q))
+  have hcoefScale := mul_le_mul_of_nonneg_right hcoef (mul_nonneg hρ (Nat.cast_nonneg q : (0 : ℝ) ≤
+    q))
   nlinarith only [hactual, hvolScale, hcoefScale]
 
 theorem high_pool_capacity (hα : 0 < α) (hα1 : α ≤ 1 / 4) (hhost : hostN = 2 * q)

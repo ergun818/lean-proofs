@@ -10,7 +10,7 @@ from Part 2 of the small-forest lemma. Future outer roots are still revealed
 only at their actual branch step, without changing the fixed orientation.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceClassifiedPendingPlan

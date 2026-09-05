@@ -54,7 +54,7 @@ theorem sourceVertexReservoirSide_ne_of_adj
   have hylt : T.dist globalRoot y % 2 < 2 := Nat.mod_lt _ (by omega)
   have hmlt : (majorParity P).val < 2 := (majorParity P).isLt
   simp only [sourceVertexReservoirSide]
-  split <;> split <;> simp_all <;> omega
+  split <;> split <;> omega
 
 section Allocated
 
@@ -93,7 +93,7 @@ def coordinateHierarchyRootSlot
   if SegmentRootOriginal hT P optional i ∈ distinguished then
     Sum.inl (distinguishedSide (SegmentRootOriginal hT P optional i))
   else
-    match hclass : segmentSourceClass hT P optional i with
+    match _hclass : segmentSourceClass hT P optional i with
     | Sum.inl q => Sum.inl (componentReservoirSide P q)
     | Sum.inr j => coordinateBranchSlot P S capacity0 capacity1 capacityb A
         edge0 edge1 edgeb orient j
@@ -105,12 +105,13 @@ def coordinateHierarchyInteriorSlot
     (i : SegmentIndex hT P optional)
     (a : Fin ((AllocationHierarchy hT P optional).segments.size i)) :
     RootSlot Edge :=
-  match hclass : segmentSourceClass hT P optional i with
+  match _hclass : segmentSourceClass hT P optional i with
   | Sum.inl q => Sum.inl (componentReservoirSide P q)
   | Sum.inr j => coordinateBranchSlot P S capacity0 capacity1 capacityb A
       edge0 edge1 edgeb orient j
       (segmentEndpointSide hT P optional i j a)
 
+omit [DecidableEq Edge] in
 @[simp] theorem coordinateHierarchyRootSlot_distinguished
     (i : SegmentIndex hT P optional)
     (hi : SegmentRootOriginal hT P optional i ∈ distinguished) :
@@ -119,6 +120,7 @@ def coordinateHierarchyInteriorSlot
       Sum.inl (distinguishedSide (SegmentRootOriginal hT P optional i)) := by
   simp [coordinateHierarchyRootSlot, hi]
 
+omit [DecidableEq Edge] in
 @[simp] theorem coordinateHierarchyRootSlot_branch
     (i : SegmentIndex hT P optional) (j : BranchIndex P)
     (hi : SegmentRootOriginal hT P optional i ∉ distinguished)
@@ -141,6 +143,7 @@ def coordinateHierarchyInteriorSlot
       subst k
       rfl
 
+omit [DecidableEq Edge] in
 @[simp] theorem coordinateHierarchyRootSlot_component
     (i : SegmentIndex hT P optional) (q : Fin P.numParts)
     (hi : SegmentRootOriginal hT P optional i ∉ distinguished)
@@ -160,6 +163,7 @@ def coordinateHierarchyInteriorSlot
         hc.symm.trans hclass
       cases hbad
 
+omit [DecidableEq Edge] in
 @[simp] theorem coordinateHierarchyInteriorSlot_branch
     (i : SegmentIndex hT P optional) (j : BranchIndex P)
     (hclass : segmentSourceClass hT P optional i = Sum.inr j)
@@ -180,6 +184,7 @@ def coordinateHierarchyInteriorSlot
       subst k
       rfl
 
+omit [DecidableEq Edge] in
 @[simp] theorem coordinateHierarchyInteriorSlot_component
     (i : SegmentIndex hT P optional) (q : Fin P.numParts)
     (hclass : segmentSourceClass hT P optional i = Sum.inl q)
@@ -199,6 +204,7 @@ def coordinateHierarchyInteriorSlot
         hc.symm.trans hclass
       cases hbad
 
+omit [DecidableEq Edge] in
 /-- Away from the distinguished A/B marks, a branch segment root uses the
 same coordinate endpoint as its interior-slot view of that root. -/
 theorem coordinateRootSlot_eq_interiorSlot_root
@@ -210,6 +216,7 @@ theorem coordinateRootSlot_eq_interiorSlot_root
       coordinateHierarchyInteriorSlot hT P optional S capacity0
         capacity1 capacityb A edge0 edge1 edgeb orient i
           ((AllocationHierarchy hT P optional).segments.root i) := by
+  classical
   rw [coordinateHierarchyRootSlot_branch hT P optional distinguished distinguishedSide S
       capacity0 capacity1 capacityb A edge0 edge1 edgeb orient i j hi hclass,
     coordinateHierarchyInteriorSlot_branch hT P optional S
@@ -219,4 +226,5 @@ end Allocated
 
 end Erdos547b.ZhaoClaim615HierarchicalCoordinateSourceLayout
 
-#print axioms Erdos547b.ZhaoClaim615HierarchicalCoordinateSourceLayout.coordinateRootSlot_eq_interiorSlot_root
+open Erdos547b.ZhaoClaim615HierarchicalCoordinateSourceLayout in
+#print axioms coordinateRootSlot_eq_interiorSlot_root

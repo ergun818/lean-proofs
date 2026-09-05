@@ -58,7 +58,7 @@ reservoir is assumed: the rooted-copy constructor itself keeps the fixed root
 image distinct from every subsequently chosen image. -/
 theorem exists_dynamic_rooted_tree_copy_with_root_pool
     {A : Type u} {B : Type v}
-    [Fintype A] [Fintype B] [DecidableEq B]
+    [Fintype A] [Finite B]
     (T : SimpleGraph A) (hT : T.IsTree) (root : A)
     (G : SimpleGraph B) [DecidableRel G.Adj]
     (orient : Fin 2 ≃ Fin 2)
@@ -82,6 +82,7 @@ theorem exists_dynamic_rooted_tree_copy_with_root_pool
         f a ∈ interiorAvailable
           (orient (hT.coloringTwoOfVert root a)) := by
   classical
+  let := Fintype.ofFinite B
   let W₀ := whole (orient 0)
   let W₁ := whole (orient 1)
   let A₀ := interiorAvailable (orient 0)
@@ -117,7 +118,6 @@ theorem exists_dynamic_rooted_tree_copy_with_root_pool
       (Fintype.card A : ℝ) + rho * (#W₁ : ℝ) ≤
         (density - rho) * #A₁ := by
     simpa [W₁, A₁] using hmargin (orient 1)
-
   let bad₀ := dynamicLowDegreeVertices G rho W₀ W₁ A₀ A₁
   let bad₁ := dynamicLowDegreeVertices G rho W₁ W₀ A₁ A₀
   let rootBad := dynamicLowDegreeVertices G rho W₀ W₁ rootPool A₁
@@ -135,7 +135,6 @@ theorem exists_dynamic_rooted_tree_copy_with_root_pool
     simpa [rootBad, dynamicLowDegreeVertices] using
       card_lowDegreeVertices_le G hunifO hrootW₀ hA₁W₁
         hrootLarge hA₁large
-
   have hdegree₀ (v : B) (hv : v ∈ good₀) :
       (G.edgeDensity W₀ W₁ - rho) * #A₁ ≤
         (#(A₁.filter (G.Adj v)) : ℝ) := by
@@ -164,7 +163,6 @@ theorem exists_dynamic_rooted_tree_copy_with_root_pool
       simpa [G.edgeDensity_comm W₀ W₁] using hdensityO
     have hcard : (0 : ℝ) ≤ (#A₀ : ℝ) := by positivity
     nlinarith
-
   have hrootBadltReal : (#rootBad : ℝ) < #rootPool := by linarith
   have hrootBadlt : #rootBad < #rootPool := by exact_mod_cast hrootBadltReal
   have hex : ∃ w ∈ rootPool, w ∉ rootBad := by
@@ -208,7 +206,6 @@ theorem exists_dynamic_rooted_tree_copy_with_root_pool
     have hnat : Fintype.card A + #bad₀ ≤
         #(A₀.filter (G.Adj v)) := by exact_mod_cast hreal
     exact card_neighbors_cleaned_ge G A₀ bad₀ v (Fintype.card A) hnat
-
   let candidate : Fin 2 → Finset B := fun c ↦ if c = 0 then good₀ else good₁
   have hcandidate₀ : candidate 0 = good₀ := by simp [candidate]
   have hcandidate₁ : candidate 1 = good₁ := by simp [candidate]
@@ -246,7 +243,7 @@ The caller may take `rootPool` to be a live neighborhood of an already
 embedded external parent. -/
 theorem exists_dynamic_attached_rooted_tree_copy_with_root_pool
     {A : Type u} {B : Type v}
-    [Fintype A] [Fintype B] [DecidableEq B]
+    [Fintype A] [Finite B]
     (T : SimpleGraph A) (hT : T.IsTree) (root : A)
     (G : SimpleGraph B) [DecidableRel G.Adj]
     (z : B) (orient : Fin 2 ≃ Fin 2)
@@ -271,6 +268,8 @@ theorem exists_dynamic_attached_rooted_tree_copy_with_root_pool
       ∀ a, a ≠ root →
         f a ∈ interiorAvailable
           (orient (hT.coloringTwoOfVert root a)) := by
+  classical
+  let := Fintype.ofFinite B
   obtain ⟨f, hfroot, hfinterior⟩ :=
     exists_dynamic_rooted_tree_copy_with_root_pool T hT root G orient
       whole interiorAvailable rootPool rho density hunif hinterior hrootPool
@@ -280,4 +279,5 @@ theorem exists_dynamic_attached_rooted_tree_copy_with_root_pool
 end Erdos547b.ZhaoLemma51DynamicRootPool
 
 #print axioms Erdos547b.ZhaoLemma51DynamicRootPool.exists_dynamic_rooted_tree_copy_with_root_pool
-#print axioms Erdos547b.ZhaoLemma51DynamicRootPool.exists_dynamic_attached_rooted_tree_copy_with_root_pool
+open Erdos547b.ZhaoLemma51DynamicRootPool in
+#print axioms exists_dynamic_attached_rooted_tree_copy_with_root_pool

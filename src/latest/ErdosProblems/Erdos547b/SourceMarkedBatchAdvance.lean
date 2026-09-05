@@ -8,7 +8,7 @@ All intermediate mass and mark budgets follow by restriction from the
 fixed old-plus-batch set. Previously chosen graph images are preserved.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMarkedBatchAdvance
@@ -82,17 +82,21 @@ theorem exists_batchAdvance (hα : 0 < α) (hα1 : α ≤ 1 / 4) (hC : 0 < C.car
       have htotal' : (∑ j ∈ selected ∪ batch, (F.size j : ℝ)) ≤
           (5 / 2 + (epsilon α : ℝ)) * C.card * W.clusterSize :=
         (Finset.sum_le_sum_of_subset_of_nonneg hsub (by intros; positivity)).trans htotal
-      obtain ⟨E₁, hcopies₁, hgroups₁⟩ := ih hdisjoint' (fun j hj => hsize j (hsub hj)) hmarks' htotal'
+      obtain ⟨E₁, hcopies₁, hgroups₁⟩ := ih hdisjoint' (fun j hj => hsize j (hsub hj)) hmarks'
+        htotal'
         (fun j hj => hcolor j (Finset.mem_insert_of_mem hj))
         (fun j hj => hsmall j (Finset.mem_insert_of_mem hj))
         (fun j hj => hbad j (Finset.mem_insert_of_mem hj))
         (fun j hj => hparent j (Finset.mem_insert_of_mem hj))
       have hin : i ∈ insert i batch := Finset.mem_insert_self _ _
       have hiSelected : i ∉ selected := fun hs => Finset.disjoint_left.mp hdisjoint hs hin
-      have hiOld : i ∉ selected ∪ batch := by simpa only [Finset.mem_union, not_or] using And.intro hiSelected hi
+      have hiOld : i ∉ selected ∪ batch :=
+        by simpa only [Finset.mem_union, not_or] using And.intro hiSelected hi
       obtain ⟨E₂, hcopies₂, hgroups₂, _⟩ := exists_placementAdvance W Q S O P F marks hα hα1 hC
         E₁ base hbase (fun j hj => hsize j (hsub hj))
-        (by rw [Finset.sum_coe_sort (selected ∪ batch) (fun j => ((marks j).card : ℝ))]; exact hmarks')
+        (by
+          rw [Finset.sum_coe_sort (selected ∪ batch) (fun j => ((marks j).card : ℝ))]; exact
+            hmarks')
         (by rw [Finset.sum_coe_sort (selected ∪ batch) (fun j => (F.size j : ℝ))]; exact htotal')
         i hiOld (bad i) (hbad i hin) (hparent i hin) (hcolor i hin) (hsmall i hin)
       have hdom : selected ∪ insert i batch = insert i (selected ∪ batch) := by

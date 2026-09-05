@@ -14,7 +14,7 @@ when that branch's actual outer root has been chosen. No future root map
 or graph realization is an input to the plan constructor.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMatchingPendingPlan
@@ -45,14 +45,17 @@ def capacity (S : CleanSourceWitness W Q) (C : Index W) (e : MatchingEdge P) : �
 structure ActualPendingPlan (S : CleanSourceWitness W Q) (C : Index W)
     (e : MatchingEdge P) {b : ℕ} (F : OrderedRootedForest b) where
   orient : Fin b → Fin 2 ≃ Fin 2
-  root_positive : ∀ i, 0 < rootDensity W S (Sum.inl C) (pairVertex W P e (branchRootSide F orient i))
+  root_positive : ∀ i, 0 < rootDensity W S (Sum.inl C) (pairVertex W P e (branchRootSide F orient
+    i))
   step : ∀ (i : Fin b) (parent : Fin b → Fin hostN)
     (E : PartialDynamicAttachedForestEmbedding F (embeddingHost W) parent orient
       (residualSide (pairWhole W P e) (deleted W Q P e)) (Finset.Iio i)) (z : Fin hostN),
     EligibleRoot W Q S P C e z →
-    ∃ E' : PartialDynamicAttachedForestEmbedding F (embeddingHost W) (Function.update parent i z) orient
+    ∃ E' : PartialDynamicAttachedForestEmbedding F (embeddingHost W) (Function.update parent i z)
+      orient
         (residualSide (pairWhole W P e) (deleted W Q P e)) (Finset.Iio i ∪ {i}),
-      ∀ j hj, E'.forestCopy.componentCopy j (Finset.mem_union_left _ hj) = E.forestCopy.componentCopy j hj
+      ∀ j hj, E'.forestCopy.componentCopy j (Finset.mem_union_left _ hj) =
+        E.forestCopy.componentCopy j hj
 
 private theorem exists_ordered_actual_pending_plan
     (hα : 0 < α) (hα1 : α ≤ 1 / 4)

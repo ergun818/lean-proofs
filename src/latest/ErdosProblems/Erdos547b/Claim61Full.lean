@@ -33,7 +33,7 @@ theorem cleaned_denseCut_of_independent_largeClusters
     {n : ℕ} {ι : Type*} [Fintype ι] [DecidableEq ι]
     (P : ClusterAssignment (Fin (2 * n - 2)) ι)
     (G H : SimpleGraph (Fin (2 * n - 2))) (R : SimpleGraph ι)
-    [DecidableRel G.Adj] [DecidableRel H.Adj] [DecidableRel R.Adj]
+    [DecidableRel G.Adj] [DecidableRel H.Adj]
     (hrespect : EdgesRespectReducedGraph P H R)
     (loss : ℕ) (hloss : DegreeLossAtMost G H loss)
     (hlarge : n - 1 ≤

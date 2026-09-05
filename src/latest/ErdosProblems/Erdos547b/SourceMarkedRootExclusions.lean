@@ -10,7 +10,7 @@ This costs only rootTypicality times one cluster, independently of the
 number of private groups. The same deletion fits the mixed-root budget.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMarkedRootExclusions
@@ -126,7 +126,8 @@ theorem good_groups_of_not_excluded (hα : 0 < α) (hα1 : α ≤ 1 / 4)
       ((embeddingHost W).edgeDensity (whole W Q.A) (whole W (P.center x)) : ℝ) +
         (epsilon α : ℝ) at hsource
     have hcoeff : 1 - 2 * (eta α : ℝ) - (gamma α : ℝ) ≤
-        ((embeddingHost W).edgeDensity (whole W Q.A) (whole W (P.center x)) : ℝ) - (epsilon α : ℝ) := by
+        ((embeddingHost W).edgeDensity (whole W Q.A) (whole W (P.center x)) : ℝ) - (epsilon α : ℝ)
+          := by
       linarith only [hd, hsource, (typicality_bounds hα hα1).2.2.2]
     exact (mul_le_mul_of_nonneg_right hcoeff (Nat.cast_nonneg W.clusterSize)).trans hlower
 

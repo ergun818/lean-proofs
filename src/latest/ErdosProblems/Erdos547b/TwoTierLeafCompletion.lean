@@ -62,7 +62,8 @@ theorem exists_leafRepresentatives_twoTier
   · simp [hs]
   by_cases hh : ∃ x ∈ s, x ∈ High
   · obtain ⟨x, hx, hxH⟩ := hh
-    have hchoices := card_leafChoices_add_slack W G parent hparent f 0 x (by simpa using hhigh x hxH)
+    have hchoices := card_leafChoices_add_slack W G parent hparent f 0 x
+      (by simpa using hhigh x hxH)
     have hcard : s.card ≤ W.card := by simpa only [Fintype.card_coe] using Finset.card_le_univ s
     have hlarge : W.card ≤ (leafChoices W G parent hparent f x).card := by simpa using hchoices
     exact hcard.trans (hlarge.trans (Finset.card_le_card (Finset.subset_biUnion_of_mem _ hx)))
@@ -83,7 +84,6 @@ theorem exists_leafRepresentatives_twoTier
 
 theorem exists_copy_of_twoTier_leaves
     {α : Type u} {β : Type v} [Fintype α] [Fintype β]
-    [DecidableEq α] [DecidableEq β]
     (T : SimpleGraph α) (G : SimpleGraph β) [DecidableRel G.Adj]
     (W : Finset α)
     (parent : (x : {x // x ∈ W}) → α)
@@ -93,10 +93,12 @@ theorem exists_copy_of_twoTier_leaves
     (f : (T.induce (↑W : Set α)ᶜ).Copy G)
     (High : Finset {x // x ∈ W})
     (hhigh : ∀ x ∈ High, Fintype.card α - 1 ≤ G.degree (f ⟨parent x, hparent_not_mem x⟩))
-    (hlow : ∀ x ∉ High, Fintype.card α - 1 - High.card ≤ G.degree (f ⟨parent x, hparent_not_mem x⟩)) :
+    (hlow : ∀ x ∉ High, Fintype.card α - 1 - High.card ≤ G.degree (f ⟨parent x, hparent_not_mem x⟩))
+      :
     ∃ F : T.Copy G,
       (∀ x : {x // x ∉ W}, F x = f x) ∧
       (∀ x : {x // x ∈ W}, G.Adj (f ⟨parent x, hparent_not_mem x⟩) (F x)) := by
+  classical
   obtain ⟨g, hginj, hgchoice⟩ :=
     exists_leafRepresentatives_twoTier W G parent hparent_not_mem f High hhigh hlow
   let F0 : α → β := fun x => if hx : x ∈ W then g ⟨x, hx⟩ else f ⟨x, hx⟩

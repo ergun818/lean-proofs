@@ -115,7 +115,7 @@ theorem minor_card_le_major_card
     (P : ZhaoForestPartition T globalRoot small) :
     (minorPart P).card ≤ (majorPart P).card := by
   by_cases h : (parityPart P 1).card ≤ (parityPart P 0).card
-  · simpa [majorPart, minorPart, h] using h
+  · simp [majorPart, minorPart, h]
   · simp only [majorPart, minorPart, h, if_false]
     omega
 

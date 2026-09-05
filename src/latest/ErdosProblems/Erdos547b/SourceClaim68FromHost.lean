@@ -10,7 +10,7 @@ reconnected copy preserves the original high-degree roots, so all deleted
 leaves are restored by the checked leaf-completion theorem.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceClaim68FromHost
@@ -46,13 +46,15 @@ theorem exists_treeCopy_of_manyOriginalLeaves
   let locate := sideLocate (branchForest P) rootSide
   let L := restrictCutSource (branchForest P) (keptBranches P) rootSide locate
     (partitionCutSource P hT locate (fun _ => rfl)) (partitionParent_retained P)
-  obtain ⟨E, hdis, haway, hbudget⟩ := exists_coreAllocation P W Q S hT hα hα1 hhost horder hcard hleaves
+  obtain ⟨E, hdis, haway, hbudget⟩ := exists_coreAllocation P W Q S hT hα hα1 hhost horder hcard
+    hleaves
   have hroots : (P.numParts : ℝ) ≤ (epsilon α : ℝ) * W.clusterSize := by
     subst hostN
     exact freshPartition_root_bound hα hα1 W horder hcard P
   obtain ⟨f, hf⟩ := exists_reconnectedCopy_of_twoRowBudgets W Q S F rootSide L hα hα1 hhost horder
     E hdis haway
-    (fun i => canonical_branch_size_le_small P (OrderedBranchForest.selectedEquiv (keptBranches P) i))
+    (fun i => canonical_branch_size_le_small P (OrderedBranchForest.selectedEquiv (keptBranches P)
+      i))
     hroots (fun s _ => hbudget s)
   let core := f.comp (leafCoreGraphIso P hT locate (fun _ => rfl)).toCopy
   let coreG := (SimpleGraph.Copy.ofLE (embeddingHost W) G (embeddingHost_le_original W)).comp core
@@ -64,10 +66,12 @@ theorem exists_treeCopy_of_manyOriginalLeaves
   apply exists_copy_of_originalLevelOneLeaves_core P hT hc G coreG
   intro x
   obtain ⟨i, hi⟩ := originalLeafParent_eq_partitionRoot P hT x
-  have hparent : (⟨originalLeafParent P hT x, originalLeafParent_not_mem P hT hc x⟩ : LeafDeletedVertex P) =
+  have hparent : (⟨originalLeafParent P hT x, originalLeafParent_not_mem P hT hc x⟩ :
+    LeafDeletedVertex P) =
       leafDeletedPartitionRoot P i := Subtype.ext hi
   rw [hparent, hcard]
-  change q ≤ G.degree (f (leafCoreGraphIso P hT locate (fun _ => rfl) (leafDeletedPartitionRoot P i)))
+  change q ≤ G.degree (f (leafCoreGraphIso P hT locate (fun _ => rfl) (leafDeletedPartitionRoot P
+    i)))
   exact Eq.mpr (congrArg (fun v : F.Vertex => q ≤ G.degree (f v))
     (leafCoreGraphIso_root P hT locate (fun _ => rfl) i)) (hf i)
 

@@ -33,30 +33,36 @@ noncomputable def leafParent (x : {x // x ∈ graphLeaves T}) : A :=
   Classical.choose (degree_eq_one_iff_existsUnique_adj.mp
     (Finset.mem_filter.mp x.2).2)
 
+omit [DecidableEq A] in
 theorem leafParent_adj (x : {x // x ∈ graphLeaves T}) :
     T.Adj (leafParent x) x.1 := by
   exact (Classical.choose_spec (degree_eq_one_iff_existsUnique_adj.mp
     (Finset.mem_filter.mp x.2).2)).1.symm
 
+omit [DecidableEq A] in
 theorem leaf_unique (x : {x // x ∈ graphLeaves T}) (y : A)
     (hxy : T.Adj x.1 y) : y = leafParent x := by
   exact (Classical.choose_spec (degree_eq_one_iff_existsUnique_adj.mp
     (Finset.mem_filter.mp x.2).2)).2 y hxy
 
+omit [DecidableEq A] in
 /-- In a tree of order at least three, the neighbor of a leaf is not a leaf. -/
 theorem leafParent_not_mem (hT : T.IsTree) (hcard : 3 ≤ Fintype.card A)
     (x : {x // x ∈ graphLeaves T}) :
     leafParent x ∉ graphLeaves T := by
+  classical
   intro hp
   exact not_adj_of_both_degree_one_of_three_le_card T hT
     (Finset.mem_filter.mp hp).2 (Finset.mem_filter.mp x.2).2 hcard
     (leafParent_adj x)
 
+omit [DecidableEq A] in
 /-- The complement of all graph leaves is nonempty once the tree has at
 least three vertices. -/
 theorem graphLeaves_compl_nonempty (hT : T.IsTree)
     (hcard : 3 ≤ Fintype.card A) :
     ((graphLeaves T : Set A)ᶜ).Nonempty := by
+  classical
   have hnontrivial : Nontrivial A :=
     Fintype.one_lt_card_iff_nontrivial.mp (by omega)
   obtain ⟨x, hx⟩ :=
@@ -65,9 +71,11 @@ theorem graphLeaves_compl_nonempty (hT : T.IsTree)
   let xs : {x // x ∈ graphLeaves T} := ⟨x, hxLeaf⟩
   exact ⟨leafParent xs, leafParent_not_mem hT hcard xs⟩
 
+omit [DecidableEq A] in
 /-- Deleting all leaves from a tree of order at least three leaves a tree. -/
 theorem leafCore_isTree (hT : T.IsTree) (hcard : 3 ≤ Fintype.card A) :
     (T.induce ((graphLeaves T : Set A)ᶜ)).IsTree := by
+  classical
   refine ⟨Erdos547b.connected_induce_compl_of_leaves T
     (graphLeaves T : Set A) hT.connected ?_ (graphLeaves_compl_nonempty hT hcard),
     hT.isAcyclic.induce _⟩
@@ -80,11 +88,12 @@ theorem leafCore_isTree (hT : T.IsTree) (hcard : 3 ≤ Fintype.card A) :
   simpa only [Fintype.card_coe] using
     Fintype.card_subtype_compl (fun x : A ↦ x ∈ graphLeaves T)
 
+omit [DecidableEq A] in
 /-- The concrete small-core argument: a high-minimum-degree induced host
 contains the leaf-deleted core, and ambient large degree then attaches every
 leaf by Hall's theorem. -/
 theorem isContained_of_leaf_bound_and_induced_minDegree
-    {B : Type v} [Fintype B] [DecidableEq B]
+    {B : Type v} [Fintype B]
     (G : SimpleGraph B) [DecidableRel G.Adj]
     (hT : T.IsTree) (hcard : 3 ≤ Fintype.card A)
     (k : ℕ)
@@ -94,6 +103,7 @@ theorem isContained_of_leaf_bound_and_induced_minDegree
     (hlarge : ∀ u : {x // x ∈ U},
       Fintype.card A - 1 ≤ G.degree u.1) :
     T.IsContained G := by
+  classical
   let core := T.induce ((graphLeaves T : Set A)ᶜ)
   have hcoreTree : core.IsTree := leafCore_isTree hT hcard
   have hcoreCard : Fintype.card {x : A // x ∉ graphLeaves T} ≤ k + 1 := by
@@ -121,10 +131,11 @@ theorem isContained_of_leaf_bound_and_induced_minDegree
       leafParent_adj leaf_unique ambientCoreCopy hparentDegree
   exact fullCopy.isContained
 
+omit [DecidableEq A] in
 /-- Nested form used by the host-density argument: `X` is the balanced
 large-degree half, and `U` is the dense induced subgraph found inside `X`. -/
 theorem isContained_of_leaf_bound_and_twoStage_induced_minDegree
-    {B : Type v} [Fintype B] [DecidableEq B]
+    {B : Type v} [Fintype B]
     (G : SimpleGraph B) [DecidableRel G.Adj]
     (hT : T.IsTree) (hcard : 3 ≤ Fintype.card A)
     (k : ℕ)
@@ -135,6 +146,7 @@ theorem isContained_of_leaf_bound_and_twoStage_induced_minDegree
     (hmin : ∀ u : {x // x ∈ U},
       k < ((G.induce (X : Set B)).induce (U : Set _)).degree u) :
     T.IsContained G := by
+  classical
   let core := T.induce ((graphLeaves T : Set A)ᶜ)
   have hcoreTree : core.IsTree := leafCore_isTree hT hcard
   have hcoreCard : Fintype.card {x : A // x ∉ graphLeaves T} ≤ k + 1 := by
@@ -169,5 +181,7 @@ theorem isContained_of_leaf_bound_and_twoStage_induced_minDegree
 
 end Erdos547b.ZhaoClaim610LeafCoreEmbedding
 
-#print axioms Erdos547b.ZhaoClaim610LeafCoreEmbedding.isContained_of_leaf_bound_and_induced_minDegree
-#print axioms Erdos547b.ZhaoClaim610LeafCoreEmbedding.isContained_of_leaf_bound_and_twoStage_induced_minDegree
+open Erdos547b.ZhaoClaim610LeafCoreEmbedding in
+#print axioms isContained_of_leaf_bound_and_induced_minDegree
+open Erdos547b.ZhaoClaim610LeafCoreEmbedding in
+#print axioms isContained_of_leaf_bound_and_twoStage_induced_minDegree

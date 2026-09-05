@@ -8,7 +8,7 @@ Finite Hall gives a simultaneous injective assignment. The allowed
 edges are the literal cleaned access sets, not independent host pairs.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePrivateCrossingPairs
@@ -20,10 +20,11 @@ open Erdos547b.ZhaoSourceDegreeFormBounds Erdos547b.ZhaoSourceParameterSchedule
 open Erdos547b.ZhaoSourceActualChunkEmbedding Erdos547b.ZhaoEvenReducedPadding
 open Erdos547b.ZhaoLemma611Full Erdos547b.ZhaoClaim616
 
-theorem exists_injective_slots {C E : Type*} [Fintype C] [DecidableEq C] [DecidableEq E]
+theorem exists_injective_slots {C E : Type*} [Fintype C]
     (allowed : C → Finset E) (m : ℕ)
     (hallowed : ∀ c, Fintype.card C * m ≤ (allowed c).card) :
     ∃ f : C × Fin m → E, Function.Injective f ∧ ∀ p, f p ∈ allowed p.1 := by
+  classical
   let choices : C × Fin m → Finset E := fun p => allowed p.1
   apply (Finset.all_card_le_biUnion_card_iff_exists_injective choices).mp
   intro F

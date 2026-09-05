@@ -4,7 +4,7 @@ import ErdosProblems.Erdos547b.SourceThresholdGraphs
 
 /-! # Physical pair densities and realized source entries agree on good targets -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePhysicalRowError
@@ -45,12 +45,14 @@ theorem source_density_error_A (hα : 0 < α)
     {j : Index W} (hjA : j ≠ Q.A) (hjB : j ≠ Q.B) (hj : j ∉ S.badA) :
     |rootDensity W S.clean (Sum.inl Q.A) (Sum.inl j) -
       density W (Sum.inl Q.A) (Sum.inl j)| ≤ (epsilon α : ℝ) := by
+  classical
   have hN : (0 : ℝ) < W.clusterSize := by exact_mod_cast W.clusterSize_pos
   have hε : (0 : ℝ) ≤ epsilon α := by exact_mod_cast (parameter_pos hα).2.2.2.2.2.2.2.le
   have hcluster : clusterVertices (assignment W) j = j.val :=
     clusterVertices_partitionAssignment W.exceptional W.partition j
   have heq : rootDensity W S.clean (Sum.inl Q.A) (Sum.inl j) =
-      (degreeInto S.clean.source S.clean.zA (clusterVertices (assignment W) j) : ℝ) / W.clusterSize := by
+      (degreeInto S.clean.source S.clean.zA (clusterVertices (assignment W) j) : ℝ) / W.clusterSize
+        := by
     simp only [rootDensity, twoRootSourceDensity_row_A, rootedSourceDensity, padCluster, hcluster]
   rw [heq]
   simp only [density, clusterVertices_padAssignment_inl]
@@ -70,12 +72,14 @@ theorem source_density_error_B (hα : 0 < α)
     {j : Index W} (hjA : j ≠ Q.A) (hjB : j ≠ Q.B) (hj : j ∉ S.badB) :
     |rootDensity W S.clean (Sum.inl Q.B) (Sum.inl j) -
       density W (Sum.inl Q.B) (Sum.inl j)| ≤ (epsilon α : ℝ) := by
+  classical
   have hN : (0 : ℝ) < W.clusterSize := by exact_mod_cast W.clusterSize_pos
   have hε : (0 : ℝ) ≤ epsilon α := by exact_mod_cast (parameter_pos hα).2.2.2.2.2.2.2.le
   have hcluster : clusterVertices (assignment W) j = j.val :=
     clusterVertices_partitionAssignment W.exceptional W.partition j
   have heq : rootDensity W S.clean (Sum.inl Q.B) (Sum.inl j) =
-      (degreeInto S.clean.source S.clean.zB (clusterVertices (assignment W) j) : ℝ) / W.clusterSize := by
+      (degreeInto S.clean.source S.clean.zB (clusterVertices (assignment W) j) : ℝ) / W.clusterSize
+        := by
     have hAB : (Sum.inl Q.A : EvenPadding (Index W)) ≠ Sum.inl Q.B :=
       fun h => Q.adj.ne (Sum.inl.inj h)
     rw [rootDensity, twoRootSourceDensity_row_B _ _ _ _ _ _ _ hAB]

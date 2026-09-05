@@ -40,15 +40,19 @@ def matchingPositivePart (M : Finset E) (a b : E → ℝ) : Finset E :=
 def matchingPositiveExcess (M : Finset E) (a b : E → ℝ) : ℝ :=
   ∑ e ∈ matchingPositivePart M a b, (a e - b e)
 
+omit [DecidableEq E] in
 @[simp] theorem mem_matchingPositivePart {M : Finset E} {a b : E → ℝ} {e : E} :
     e ∈ matchingPositivePart M a b ↔ e ∈ M ∧ b e < a e := by
   simp [matchingPositivePart]
 
+omit [DecidableEq E] in
 theorem matchingPositivePart_subset (M : Finset E) (a b : E → ℝ) :
     matchingPositivePart M a b ⊆ M := by
+  classical
   intro e he
   exact (mem_matchingPositivePart.mp he).1
 
+omit [DecidableEq E] in
 theorem sum_difference_le_matchingPositiveExcess
     (M S : Finset E) (a b : E → ℝ) (hS : S ⊆ M) :
     (∑ e ∈ S, a e) - (∑ e ∈ S, b e) ≤ matchingPositiveExcess M a b := by
@@ -65,7 +69,8 @@ theorem sum_difference_le_matchingPositiveExcess
           ∑ e ∈ S.filter (fun e => ¬ b e < a e), (a e - b e)
         ≤ (∑ e ∈ S.filter (fun e => b e < a e), (a e - b e)) + 0 := by
           gcongr
-          exact Finset.sum_nonpos fun e he => sub_nonpos.mpr (le_of_not_gt (Finset.mem_filter.mp he).2)
+          exact Finset.sum_nonpos fun e he => sub_nonpos.mpr (le_of_not_gt (Finset.mem_filter.mp
+            he).2)
     _ = ∑ e ∈ S.filter (fun e => b e < a e), (a e - b e) := by simp
     _ ≤ ∑ e ∈ matchingPositivePart M a b, (a e - b e) := by
       apply Finset.sum_le_sum_of_subset_of_nonneg
@@ -77,6 +82,7 @@ theorem sum_difference_le_matchingPositiveExcess
         exact sub_nonneg.mpr (le_of_lt (mem_matchingPositivePart.mp he_big).2)
     _ = matchingPositiveExcess M a b := rfl
 
+omit [DecidableEq E] in
 /-- If the total `A`- and `B`-degrees agree, every submatching's absolute
 degree difference is at most the excess on `M⁺`. -/
 theorem abs_sum_difference_le_matchingPositiveExcess
@@ -97,6 +103,7 @@ theorem abs_sum_difference_le_matchingPositiveExcess
     linarith
   · exact sum_difference_le_matchingPositiveExcess M S a b hS
 
+omit [DecidableEq E] in
 /-- The positive part itself attains the upper bound.  Thus the preceding
 bound is sharp, matching Zhao's identity
 `a⁺ - b⁺ = max_{M' ⊆ M} |deg(A,M') - deg(B,M')|`. -/
@@ -106,6 +113,7 @@ theorem matchingPositivePart_attains_excess (M : Finset E) (a b : E → ℝ) :
       matchingPositiveExcess M a b := by
   simp only [matchingPositiveExcess, ← Finset.sum_sub_distrib]
 
+omit [DecidableEq E] in
 /-- Exact maximum characterization of Zhao's positive excess. -/
 theorem matchingPositiveExcess_isGreatest_abs_difference
     (M : Finset E) (a b : E → ℝ)
@@ -114,6 +122,7 @@ theorem matchingPositiveExcess_isGreatest_abs_difference
       {x : ℝ | ∃ S : Finset E, S ⊆ M ∧
         x = |(∑ e ∈ S, a e) - (∑ e ∈ S, b e)|}
       (matchingPositiveExcess M a b) := by
+  classical
   constructor
   · refine ⟨matchingPositivePart M a b, matchingPositivePart_subset M a b, ?_⟩
     rw [matchingPositivePart_attains_excess]
@@ -125,6 +134,7 @@ theorem matchingPositiveExcess_isGreatest_abs_difference
   · rintro x ⟨S, hS, rfl⟩
     exact abs_sum_difference_le_matchingPositiveExcess M S a b hS htotal
 
+omit [DecidableEq E] in
 /-- The matching-degree conclusion of Zhao's Lemma 6.13.  `target` is the
 statement `T ⊂ G`; `hlarge_excess_embeds` is precisely the preceding part of
 Zhao's proof (the application of Lemma 6.5 after the ratio-ordering argument).
@@ -138,6 +148,7 @@ theorem zhaoLemma613_matchingDegreeBalance
     (hnot_target : ¬ target) :
     ∀ S : Finset E, S ⊆ M →
       |(∑ e ∈ S, a e) - (∑ e ∈ S, b e)| < bound := by
+  classical
   have hexcess_lt : matchingPositiveExcess M a b < bound := by
     by_contra h
     exact hnot_target (hlarge_excess_embeds hfb (le_of_not_gt h))
@@ -146,6 +157,7 @@ theorem zhaoLemma613_matchingDegreeBalance
     (abs_sum_difference_le_matchingPositiveExcess M S a b hS htotal)
     hexcess_lt
 
+omit [DecidableEq E] in
 /-- Zhao's published constants in Lemma 6.13.  The weights are already the
 unnormalized quantities contributing to `deg(A, M)` and `deg(B, M)`; hence
 both total degrees are `(1 - 10 √d)n`, the forest-side lower bound is
@@ -166,6 +178,7 @@ theorem zhaoLemma613_matchingDegreeBalance_exactScale
     ∀ S : Finset E, S ⊆ M →
       |(∑ e ∈ S, a e) - (∑ e ∈ S, b e)| <
         15 * (Real.rpow d (1 / 4 : ℝ) * n) := by
+  classical
   apply zhaoLemma613_matchingDegreeBalance M a b fb
     (Real.rpow d (1 / 4 : ℝ) * n)
     (15 * (Real.rpow d (1 / 4 : ℝ) * n)) target
@@ -187,12 +200,15 @@ def subgraphEdgeFinset (M : G.Subgraph) : Finset (Sym2 V) := by
   classical
   exact Finset.univ.filter fun e => e ∈ M.edgeSet
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 @[simp] theorem mem_subgraphEdgeFinset {M : G.Subgraph} {e : Sym2 V} :
     e ∈ subgraphEdgeFinset M ↔ e ∈ M.edgeSet := by
   simp [subgraphEdgeFinset]
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 theorem subgraphEdgeFinset_mono {M N : G.Subgraph} (hNM : N ≤ M) :
     subgraphEdgeFinset N ⊆ subgraphEdgeFinset M := by
+  classical
   intro e he
   rw [mem_subgraphEdgeFinset] at he ⊢
   exact Subgraph.edgeSet_mono hNM he
@@ -201,6 +217,7 @@ theorem subgraphEdgeFinset_mono {M N : G.Subgraph} (hNM : N ≤ M) :
 def matchingWeightedDegree (M : G.Subgraph) (w : Sym2 V → ℝ) : ℝ :=
   ∑ e ∈ subgraphEdgeFinset M, w e
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- Zhao's Lemma 6.13 degree-balance conclusion, specialized to a genuine
 subgraph matching. -/
 theorem zhaoLemma613_for_isMatching
@@ -213,6 +230,7 @@ theorem zhaoLemma613_for_isMatching
     (hnot_target : ¬ target) :
     ∀ N : G.Subgraph, N.IsMatching → N ≤ M →
       |matchingWeightedDegree N a - matchingWeightedDegree N b| < bound := by
+  classical
   intro N _hN hNM
   exact zhaoLemma613_matchingDegreeBalance (subgraphEdgeFinset M) a b
     fb delta bound target htotal hfb hlarge_excess_embeds hnot_target

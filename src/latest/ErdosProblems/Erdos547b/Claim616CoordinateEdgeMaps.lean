@@ -23,10 +23,11 @@ universe u
 
 theorem edgeFinsetSubgraph_edge_mem_parent
     {K : Type u} [Fintype K] [DecidableEq K]
-    {R : SimpleGraph K} [DecidableRel R.Adj]
+    {R : SimpleGraph K}
     (M : R.Subgraph) (L : Finset K) (S : Finset (MatchingEdge M))
     {e : Sym2 K} (he : e ∈ (edgeFinsetSubgraph M L S).edgeSet) :
     e ∈ M.edgeSet := by
+  classical
   have hsub : (edgeFinsetSubgraph M L S).Adj e.out.1 e.out.2 := by
     rw [← Subgraph.mem_edgeSet]
     simpa only [e.out_eq] using he
@@ -50,10 +51,11 @@ theorem edgeFinsetSubgraph_edge_mem_parent
 
 theorem edgeFinsetSubgraph_edge_selected_witness
     {K : Type u} [Fintype K] [DecidableEq K]
-    {R : SimpleGraph K} [DecidableRel R.Adj]
+    {R : SimpleGraph K}
     (M : R.Subgraph) (L : Finset K) (S : Finset (MatchingEdge M))
     {e : Sym2 K} (he : e ∈ (edgeFinsetSubgraph M L S).edgeSet) :
     ∃ f ∈ S, e = f.1 := by
+  classical
   have hsub : (edgeFinsetSubgraph M L S).Adj e.out.1 e.out.2 := by
     rw [← Subgraph.mem_edgeSet]
     simpa only [e.out_eq] using he

@@ -58,7 +58,7 @@ theorem card_allowedMatchingEdges_ge_half_side_degree
 
 /-- Unit items fit arbitrary integral capacities without a per-bin loss. -/
 theorem unit_capacity_packing
-    {ι κ : Type*} [DecidableEq ι] [Fintype κ] [DecidableEq κ] [Nonempty κ]
+    {ι κ : Type*} [Fintype κ] [DecidableEq κ] [Nonempty κ]
     (items : Finset ι) (capacity : κ → ℕ)
     (hbudget : #items ≤ ∑ j : κ, capacity j) :
     ∃ assign : ι → κ, ∀ j : κ,
@@ -115,7 +115,7 @@ allowed matching edges. A total load at most `m * base` yields an allowed edge
 of current load at most `base`; inserting one item costs at most `slack`.
 This permits many branch components on one matching edge. -/
 theorem allowed_capacity_packing
-    {ι κ : Type*} [DecidableEq ι] [Fintype κ] [DecidableEq κ] [Nonempty κ]
+    {ι κ : Type*} [Finite κ] [DecidableEq κ] [Nonempty κ]
     (items : Finset ι) (weight : ι → ℕ)
     (allowed : ι → Finset κ) (m base slack : ℕ)
     (hmpos : 0 < m)
@@ -127,6 +127,7 @@ theorem allowed_capacity_packing
       ∀ j : κ,
         ∑ i ∈ items.filter (assign · = j), weight i ≤ base + slack := by
   classical
+  let := Fintype.ofFinite κ
   induction items using Finset.induction_on with
   | empty =>
       exact ⟨fun _ => Classical.choice inferInstance, by simp, by simp⟩
@@ -229,7 +230,7 @@ allowed-matching-edge assignment. -/
 theorem exists_aggregateAllocation
     {ι C K : Type*} [DecidableEq ι]
     [Fintype C] [DecidableEq C] [Nonempty C]
-    [Fintype K] [DecidableEq K] [Nonempty K]
+    [Finite K] [DecidableEq K] [Nonempty K]
     (items : Finset ι) (weight : ι → ℕ)
     (clusterCapacity : C → ℕ) (allowedEdges : C → Finset K)
     (m base slack : ℕ) (hmpos : 0 < m)
@@ -240,6 +241,7 @@ theorem exists_aggregateAllocation
     Nonempty (AggregateAllocation items weight clusterCapacity allowedEdges
       base slack) := by
   classical
+  let := Fintype.ofFinite K
   obtain ⟨cluster, hcluster⟩ :=
     unit_capacity_packing items clusterCapacity hlevelOne
   obtain ⟨edge, hedgeAllowed, hedgeLoad⟩ :=
@@ -260,7 +262,7 @@ original root in `A` joined to the branch root. -/
 theorem exists_orderedBranchAggregateAllocation
     {r b : ℕ} {C K : Type*}
     [Fintype C] [DecidableEq C] [Nonempty C]
-    [Fintype K] [DecidableEq K] [Nonempty K]
+    [Finite K] [DecidableEq K] [Nonempty K]
     (branches : RegularPair.OrderedRootedForest b)
     (_owner : Fin b → Fin r)
     (clusterCapacity : C → ℕ) (allowedEdges : C → Finset K)
@@ -272,6 +274,8 @@ theorem exists_orderedBranchAggregateAllocation
     Nonempty (AggregateAllocation Finset.univ
       (fun j : Fin b => branches.size j - 1)
       clusterCapacity allowedEdges base slack) := by
+  classical
+  let := Fintype.ofFinite K
   apply exists_aggregateAllocation Finset.univ
     (fun j : Fin b => branches.size j - 1)
     clusterCapacity allowedEdges m base slack hmpos

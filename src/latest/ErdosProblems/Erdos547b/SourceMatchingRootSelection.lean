@@ -9,7 +9,7 @@ The prescribed root pool may already include parent and reservoir
 restrictions. Bad target incidences are projected to actual edge indices.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMatchingRootSelection
@@ -72,6 +72,7 @@ theorem exists_eligible_root_most_edges
     ∃ z ∈ pool, ∃ bad ⊆ remaining,
       (bad.card : ℝ) ≤ 2 * (rootTypicality α : ℝ) * remaining.card ∧
       ∀ e ∈ remaining \ bad, EligibleRoot W Q S P C e z := by
+  classical
   let J : Finset (MatchingEdge P × Fin 2) :=
     (remaining ×ˢ Finset.univ).filter fun ec =>
       0 < rootDensity W S (Sum.inl C) (pairVertex W P ec.1 ec.2)

@@ -10,7 +10,7 @@ Its support, attachment, physical side and cleanup degree are inherited
 from that same copy, and the global successor preserves it exactly.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceCapacityGlobalPrefix
@@ -56,7 +56,8 @@ variable {stage : ℕ} (A : PrefixState W Q S F owner rootSide kinds allocation 
 def PrefixState.branchCopy (i : Fin b) (hi : (owner i).val < stage) :
     (F.tree i).Copy (embeddingHost W) :=
   ((A.families (locate i).1 (locate i).2).currentPlacement W Q S
-      (rootCluster W Q (locate i).1) F owner (kinds (locate i).1 (locate i).2)).forestCopy.componentCopy i
+      (rootCluster W Q (locate i).1) F owner (kinds (locate i).1 (locate
+        i).2)).forestCopy.componentCopy i
     (Finset.mem_filter.mpr ⟨List.mem_toFinset.mpr (hcover i), hi⟩)
 
 def PrefixState.branchEdge (i : Fin b) (hi : (owner i).val < stage) : MatchingEdge Q.claim67.M :=
@@ -82,8 +83,10 @@ theorem PrefixState.branchCopy_attach (i : Fin b) (hi : (owner i).val < stage) :
 
 theorem PrefixState.branchCopy_side (i : Fin b) (hi : (owner i).val < stage) (a : Fin (F.size i)) :
     A.branchCopy W Q S F owner rootSide kinds allocation family locate hcover i hi a ∈
-      residualSide (edgeWhole W Q (A.branchEdge W Q S F owner rootSide kinds allocation family locate hcover i hi))
-        (deleted W Q (A.branchEdge W Q S F owner rootSide kinds allocation family locate hcover i hi))
+      residualSide (edgeWhole W Q (A.branchEdge W Q S F owner rootSide kinds allocation family
+        locate hcover i hi))
+        (deleted W Q (A.branchEdge W Q S F owner rootSide kinds allocation family locate hcover i
+          hi))
         (A.branchOrient W Q S F owner rootSide kinds allocation family locate hcover i hi
           ((F.isTree i).coloringTwoOfVert (F.root i) a)) :=
   ((A.families (locate i).1 (locate i).2).currentPlacement W Q S
@@ -97,18 +100,22 @@ theorem PrefixState.branch_rootColor_degree (i : Fin b) (hi : (owner i).val < st
   placement_rootColor_degree W Q S (locate i).1 F _ _
     ((A.families (locate i).1 (locate i).2).currentPlacement W Q S (rootCluster W Q (locate i).1)
       F owner (kinds (locate i).1 (locate i).2))
-    ((A.families (locate i).1 (locate i).2).current_root_positive W Q S (rootCluster W Q (locate i).1)
+    ((A.families (locate i).1 (locate i).2).current_root_positive W Q S (rootCluster W Q (locate
+      i).1)
       F owner (kinds (locate i).1 (locate i).2))
     i (Finset.mem_filter.mpr ⟨List.mem_toFinset.mpr (hcover i), hi⟩) a hcolor
 
 theorem PrefixState.branchCopy_preserved
     (D : PrefixState W Q S F owner rootSide kinds allocation family (stage + 1))
     (hcopies : ∀ s j i hi,
-      ((D.families s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s j)).forestCopy.componentCopy i
+      ((D.families s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s
+        j)).forestCopy.componentCopy i
           (processedFamily_mono owner (Nat.le_succ stage) (family s j) hi) =
-        ((A.families s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s j)).forestCopy.componentCopy i hi)
+        ((A.families s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s
+          j)).forestCopy.componentCopy i hi)
     (i : Fin b) (hi : (owner i).val < stage) :
-    D.branchCopy W Q S F owner rootSide kinds allocation family locate hcover i (Nat.lt_succ_of_lt hi) =
+    D.branchCopy W Q S F owner rootSide kinds allocation family locate hcover i (Nat.lt_succ_of_lt
+      hi) =
       A.branchCopy W Q S F owner rootSide kinds allocation family locate hcover i hi :=
   hcopies (locate i).1 (locate i).2 i (Finset.mem_filter.mpr ⟨List.mem_toFinset.mpr (hcover i), hi⟩)
 

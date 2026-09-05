@@ -10,7 +10,7 @@ disjoint current batch is charged only once. Adding permanent deletions
 therefore gives the actual occupied-plus-batch bound used by Part 3.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoLemma58DynamicBatchAppend
@@ -71,7 +71,8 @@ Part-3 mass bound, with permanent deletions charged separately. -/
 theorem PartialDynamicAttachedForestEmbedding.occupied_add_batch_le
     (whole deleted : Fin 2 → Finset V) (N : ℕ)
     (hwhole : ∀ c, (whole c).card = N) (hdeleted : ∀ c, deleted c ⊆ whole c)
-    (E : PartialDynamicAttachedForestEmbedding F H parent orient (fun c => whole c \ deleted c) selected)
+    (E : PartialDynamicAttachedForestEmbedding F H parent orient (fun c => whole c \ deleted c)
+      selected)
     (batch : Finset (Fin b)) (hdisjoint : Disjoint selected batch) :
     ((N : ℝ) - ((whole 0 \ deleted 0) \ E.used 0).card) +
       ((N : ℝ) - ((whole 1 \ deleted 1) \ E.used 1).card) + (∑ i ∈ batch, F.size i : ℕ) ≤
@@ -86,7 +87,11 @@ theorem PartialDynamicAttachedForestEmbedding.occupied_add_batch_le
 
 end Erdos547b.ZhaoLemma58DynamicBatchAppend
 
-#print axioms Erdos547b.ZhaoLemma58DynamicBatchAppend.PartialDynamicAttachedForestEmbedding.card_used
-#print axioms Erdos547b.ZhaoLemma58DynamicBatchAppend.PartialDynamicAttachedForestEmbedding.card_used_zero_add_one
-#print axioms Erdos547b.ZhaoLemma58DynamicBatchAppend.PartialDynamicAttachedForestEmbedding.card_used_add_batch_le_order
-#print axioms Erdos547b.ZhaoLemma58DynamicBatchAppend.PartialDynamicAttachedForestEmbedding.occupied_add_batch_le
+open Erdos547b.ZhaoLemma58DynamicBatchAppend.PartialDynamicAttachedForestEmbedding in
+#print axioms card_used
+open Erdos547b.ZhaoLemma58DynamicBatchAppend.PartialDynamicAttachedForestEmbedding in
+#print axioms card_used_zero_add_one
+open Erdos547b.ZhaoLemma58DynamicBatchAppend.PartialDynamicAttachedForestEmbedding in
+#print axioms card_used_add_batch_le_order
+open Erdos547b.ZhaoLemma58DynamicBatchAppend.PartialDynamicAttachedForestEmbedding in
+#print axioms occupied_add_batch_le

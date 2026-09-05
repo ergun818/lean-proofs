@@ -362,20 +362,20 @@ noncomputable def emptyPartial
   forestCopy := {
     componentCopy := by
       intro i hi
-      have : False := by simpa using hi
+      have : False := by simp at hi
       exact False.elim this
     disjoint_ranges := by
       intro i hi
-      have : False := by simpa using hi
+      have : False := by simp at hi
       exact False.elim this
   }
   attach := by
     intro i hi
-    have : False := by simpa using hi
+    have : False := by simp at hi
     exact False.elim this
   map_side := by
     intro i hi
-    have : False := by simpa using hi
+    have : False := by simp at hi
     exact False.elim this
 
 /-- Merge two disjoint batches on one matching edge.  The second batch is
@@ -388,7 +388,7 @@ noncomputable def appendPartial
     (whole available : Fin 2 → Finset B)
     (havailable : ∀ c, available c ⊆ whole c)
     (hwholeDisjoint : Disjoint (whole 0) (whole 1))
-    (s t : Finset (Fin b)) (hst : Disjoint s t)
+    (s t : Finset (Fin b)) (_hst : Disjoint s t)
     (E₁ : PartialDynamicAttachedForestEmbedding
       F G externalParent orient available s)
     (E₂ : PartialDynamicAttachedForestEmbedding F G externalParent orient
@@ -529,7 +529,7 @@ theorem ownerPrefix_succ {b r : ℕ}
     · exact Or.inl ⟨hi, hbefore⟩
     · apply Or.inr
       refine ⟨hi, Fin.ext ?_⟩
-      simp only [Fin.val_mk]
+      simp only []
       omega
 
 theorem ownerPrefix_disjoint_ownerBatch {b r : ℕ}
@@ -683,4 +683,5 @@ theorem exists_dynamicAttachedForestEmbedding_of_ownerBatches
 end Erdos547b.ZhaoLemma58DynamicBatchAppend
 
 #print axioms Erdos547b.ZhaoLemma58DynamicBatchAppend.appendPartial
-#print axioms Erdos547b.ZhaoLemma58DynamicBatchAppend.PartialDynamicAttachedForestEmbedding.toDynamic
+open Erdos547b.ZhaoLemma58DynamicBatchAppend.PartialDynamicAttachedForestEmbedding in
+#print axioms toDynamic

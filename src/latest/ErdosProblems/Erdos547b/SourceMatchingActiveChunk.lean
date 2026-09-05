@@ -12,7 +12,7 @@ roots are revealed. Only the actual owner prefix grows. Original-index
 placement makes preservation of every earlier image explicit.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMatchingActiveChunk
@@ -91,7 +91,8 @@ theorem PendingChunk.exists_skip (rootImage : Fin r → Fin hostN) (n : Fin r)
         E.forestCopy.componentCopy i hi := by
   have hcut := ownerCutoff_succ_eq_of_absent D.items owner n habsent
   have hagrees : ∀ i ∈ branchPrefix (ownerCutoff (listOwner owner D.items) n.val),
-      Function.update rootImage n z (listOwner owner D.items i) = rootImage (listOwner owner D.items i) := by
+      Function.update rootImage n z (listOwner owner D.items i) = rootImage (listOwner owner D.items
+        i) := by
     intro i _
     exact Function.update_of_ne (habsent _ (List.get_mem D.items i)) z rootImage
   let old := partialReparent (listForest F D.items) (embeddingHost W)

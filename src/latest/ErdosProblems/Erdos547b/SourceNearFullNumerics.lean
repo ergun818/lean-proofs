@@ -8,7 +8,7 @@ The target controls both source order and padded cluster count. The
 extra distinguished-edge deletion and floor loss remain explicit.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceNearFullNumerics
@@ -32,7 +32,8 @@ theorem sharp_paddedVolume (hα : 0 < α) (hα1 : α ≤ 1 / 4)
       (paddedHalf (Index W) : ℝ) * W.clusterSize ≤ q + W.clusterSize := by
   subst hostN
   have hE := (degreeForm_source_bounds hα hα1 W horder).1
-  have hcover : (W.exceptional.card : ℝ) + (Fintype.card (Index W) : ℝ) * W.clusterSize = 2 * q := by
+  have hcover : (W.exceptional.card : ℝ) + (Fintype.card (Index W) : ℝ) * W.clusterSize = 2 * q :=
+    by
     have hn : W.exceptional.card + Fintype.card (Index W) * W.clusterSize = 2 * q := by
       simpa only [Index, Fintype.card_coe] using exceptional_add_clusters_eq_host W
     exact_mod_cast hn
@@ -45,7 +46,8 @@ theorem sharp_paddedVolume (hα : 0 < α) (hα1 : α ≤ 1 / 4)
   have hd : (0 : ℝ) ≤ degreeError α := by exact_mod_cast (parameter_pos hα).2.2.2.2.1.le
   constructor
   · nlinarith only [hcover, hlo, hE, mul_nonneg hd (Nat.cast_nonneg q : (0 : ℝ) ≤ q)]
-  · nlinarith only [hcover, hup, (Nat.cast_nonneg W.exceptional.card : (0 : ℝ) ≤ W.exceptional.card),
+  · nlinarith only [hcover, hup, (Nat.cast_nonneg W.exceptional.card : (0 : ℝ) ≤
+      W.exceptional.card),
       (Nat.cast_nonneg W.clusterSize : (0 : ℝ) ≤ W.clusterSize)]
 
 theorem parameter_bounds (hα : 0 < α) (hα1 : α ≤ 1 / 4) :

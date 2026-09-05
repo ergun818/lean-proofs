@@ -5,7 +5,7 @@ import ErdosProblems.Erdos547b.SourceRestrictedCutCoordinates
 # Exact graph transport for a retained branch family
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceRestrictedCutCoordinates

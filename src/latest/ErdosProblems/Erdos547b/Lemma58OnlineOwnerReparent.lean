@@ -94,11 +94,12 @@ theorem used_chosenReparent
 /-- Updating a total root map at owner `n` leaves every parent belonging to
 the strict owner prefix `< n` unchanged. -/
 theorem update_rootMap_agrees_on_ownerPrefix
-    {b r : ℕ} {B : Type v} [DecidableEq B]
+    {b r : ℕ} {B : Type v}
     (selected : Finset (Fin b)) (owner : Fin b → Fin r)
     (rootImage : Fin r → B) (n : ℕ) (hn : n < r) (z : B) :
     ∀ i, i ∈ ownerPrefix selected owner n →
       Function.update rootImage ⟨n, hn⟩ z (owner i) = rootImage (owner i) := by
+  classical
   intro i hi
   have hlt : (owner i).val < n := (Finset.mem_filter.mp hi).2
   have hne : owner i ≠ ⟨n, hn⟩ := by

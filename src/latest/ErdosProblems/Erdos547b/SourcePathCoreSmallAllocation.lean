@@ -5,7 +5,7 @@ import ErdosProblems.Erdos547b.SourceSwitchUnion
 
 /-! # Actual union-matching allocations for the small-minor postponed core -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePathCoreSmallAllocation

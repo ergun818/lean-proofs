@@ -96,4 +96,5 @@ theorem exists_dynamicEmbedding_of_ownerLocalStepsWithForbidden
 
 end Erdos547b.ZhaoLemma58OwnerForbidden
 
-#print axioms Erdos547b.ZhaoLemma58OwnerForbidden.exists_dynamicEmbedding_of_ownerLocalStepsWithForbidden
+open Erdos547b.ZhaoLemma58OwnerForbidden in
+#print axioms exists_dynamicEmbedding_of_ownerLocalStepsWithForbidden

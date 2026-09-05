@@ -9,7 +9,7 @@ The degree-form cover and the possible single dummy cluster give the
 padded volume inequalities. The fresh scale absorbs both integer losses.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceExceptionalCountBounds
@@ -35,7 +35,8 @@ theorem paddedVolume_bounds (hα : 0 < α) (hα1 : α ≤ 1 / 4)
   have hd : (degreeError α : ℝ) ≤ 1 := by
     exact_mod_cast (reservoir_cleanup_bounds hα hα1).2.2.2.2.2
   have hdq := mul_le_mul_of_nonneg_right hd (Nat.cast_nonneg q : (0 : ℝ) ≤ q)
-  have hcover : (W.exceptional.card : ℝ) + (Fintype.card (Index W) : ℝ) * W.clusterSize = 2 * q := by
+  have hcover : (W.exceptional.card : ℝ) + (Fintype.card (Index W) : ℝ) * W.clusterSize = 2 * q :=
+    by
     have hn : W.exceptional.card + Fintype.card (Index W) * W.clusterSize = 2 * q := by
       simpa only [Index, Fintype.card_coe] using exceptional_add_clusters_eq_host W
     exact_mod_cast hn
@@ -48,7 +49,8 @@ theorem paddedVolume_bounds (hα : 0 < α) (hα1 : α ≤ 1 / 4)
   have hq : (0 : ℝ) ≤ q := Nat.cast_nonneg _
   constructor
   · nlinarith only [hcover, hlo, hE, hdq]
-  · nlinarith only [hcover, hup, hN, hdq, hq, (Nat.cast_nonneg W.exceptional.card : (0 : ℝ) ≤ W.exceptional.card)]
+  · nlinarith only [hcover, hup, hN, hdq, hq, (Nat.cast_nonneg W.exceptional.card : (0 : ℝ) ≤
+      W.exceptional.card)]
 
 theorem actual_half_selection_gates (hα : 0 < α) (hα1 : α ≤ 1 / 4)
     (hhost : hostN = 2 * q) (horder : orderThreshold α M ≤ q) :

@@ -4,7 +4,7 @@ import ErdosProblems.Erdos547b.SourceDegreeFormRootRows
 
 /-! # Actual near-large vertices in each source large cluster -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceNearLargeVertices
@@ -58,7 +58,8 @@ theorem nearLargeBad_card (hα : 0 < α) (hα1 : α ≤ 1 / 4) (C : Index W) :
     (by exact_mod_cast (rootTypicality_margin hα hα1).1)
     (by exact_mod_cast (rootTypicality_sq α).symm.le)
     (fun j _ => graph_pair_uniform W C j)
-  simpa only [nearLargeBad, clusterVertices_partitionAssignment, W.equal_clusters C.val C.property] using h
+  simpa only [nearLargeBad, clusterVertices_partitionAssignment, W.equal_clusters C.val C.property]
+    using h
 
 theorem nearLarge_degree
     (hα : 0 < α) (hα1 : α ≤ 1 / 4) (hhost : hostN = 2 * q)

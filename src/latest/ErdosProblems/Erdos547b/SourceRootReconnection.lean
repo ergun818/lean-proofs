@@ -9,7 +9,7 @@ The source parameter schedule pays for used roots and additional local
 exclusions before the almost-all-unused-edges root selector is applied.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceRootReconnection

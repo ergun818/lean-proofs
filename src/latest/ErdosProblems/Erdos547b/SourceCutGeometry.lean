@@ -5,7 +5,7 @@ import ErdosProblems.Erdos547b.SourceMidpointNumerics
 
 /-! # Physical cut sides and a rounded balanced-cut movement budget -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 namespace Erdos547b.ZhaoSourceCutGeometry
 
@@ -24,7 +24,8 @@ variable {fb : ℝ} (O : Output W Q S fb)
 
 def leftSide : Finset (Fin hostN) := clusterUnion (padAssignment (assignment W)) O.D.V1
 def rightSide : Finset (Fin hostN) :=
-  exceptionalVertices (padAssignment (assignment W)) ∪ clusterUnion (padAssignment (assignment W)) O.D.V2
+  exceptionalVertices (padAssignment (assignment W)) ∪ clusterUnion (padAssignment (assignment W))
+    O.D.V2
 
 def moveBudget : ℕ := ⌈(8 * (eta α : ℝ) + (degreeError α : ℝ)) * q + W.clusterSize⌉₊
 

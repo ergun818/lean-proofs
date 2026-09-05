@@ -11,7 +11,7 @@ one final chunk may remain pending. This is the finite allocation part of
 the online construction; no graph embedding is assumed or asserted here.
 -/
 
-open scoped BigOperators Classical
+open scoped BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceSaturatedPacking
@@ -250,9 +250,10 @@ theorem residual_capacity_after_bad_targets
 /-- Bins smaller than one branch slack contribute nonpositively and may
 be ignored without losing any of the residual sufficient budget. -/
 theorem sum_le_positive_capacity_bins
-    [DecidableEq Bin] (M : Finset Bin) (capacity : Bin → ℝ) (slack : ℝ) :
+    (M : Finset Bin) (capacity : Bin → ℝ) (slack : ℝ) :
     (∑ e ∈ M, (capacity e - slack)) ≤
       ∑ e ∈ M.filter (fun e => slack < capacity e), (capacity e - slack) := by
+  classical
   have hsplit := Finset.sum_filter_add_sum_filter_not M
     (fun e => slack < capacity e) (fun e => capacity e - slack)
   have hnonpos : (∑ e ∈ M.filter (fun e => ¬ slack < capacity e),

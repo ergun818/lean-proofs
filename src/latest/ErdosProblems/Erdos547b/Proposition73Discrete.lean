@@ -11,17 +11,21 @@ open Finset SimpleGraph
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
+omit [Fintype V] in
 /-- On a set not containing `v`, adjacency and complementary adjacency
 partition all possible neighbors. -/
-theorem degreeInto_add_degreeInto_compl_discrete74
+theorem degreeInto_add_degreeInto_compl_discrete74 [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (v : V) (S : Finset V) (hvS : v ∉ S) :
     degreeInto G v S + degreeInto Gᶜ v S = S.card := by
+  classical
+  let := Fintype.ofFinite V
   rw [degreeInto_eq_card_interedges_singleton,
     degreeInto_eq_card_interedges_singleton]
   simpa using G.card_interedges_add_card_interedges_compl
     (s := ({v} : Finset V)) (t := S) (by simpa [Finset.disjoint_left])
 
+omit [DecidableEq V] [Fintype V] in
 /-- Restricting the target can only decrease `degreeInto`. -/
 theorem degreeInto_mono_discrete74
     (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -39,6 +43,7 @@ def zhaoPrunedSideDiscrete74 (G : SimpleGraph V) [DecidableRel G.Adj]
     (X B : Finset V) (s : ℕ) : Finset V :=
   B.filter fun b ↦ degreeInto Gᶜ b X ≤ s
 
+omit [Fintype V] in
 /-- A discrete form of the finite-set pruning in Zhao's Proposition 7.3.
 
 If every vertex of `X` misses at most `q` vertices of the disjoint set
@@ -48,7 +53,7 @@ The two surviving one-sided minimum-degree estimates are stated without
 division, so the lemma is directly usable with natural-number parameters.
 The last two hypotheses imply the convenient bound `|B \ B₁| ≤ s` whenever
 `s(s+1) ≥ qn` and `|X| ≤ n`. -/
-theorem zhao_proposition_7_3_discrete74
+theorem zhao_proposition_7_3_discrete74 [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {X B : Finset V} {q s n : ℕ}
     (hXB : Disjoint X B)
@@ -63,6 +68,7 @@ theorem zhao_proposition_7_3_discrete74
       (∀ x ∈ X, B₁.card - q ≤ degreeInto G x B₁) ∧
       ∀ b ∈ B₁, X.card - s ≤ degreeInto G b X := by
   classical
+  let := Fintype.ofFinite V
   let bad : Finset V := crossHeavy Gᶜ B X (s + 1)
   let B₁ : Finset V := B \ bad
   have hbadB : bad ⊆ B := crossHeavy_subset Gᶜ B X (s + 1)

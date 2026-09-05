@@ -10,7 +10,7 @@ certificate. Exact endpoint sums identify the old row and charge only the
 freed partner set.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceSwitchRows

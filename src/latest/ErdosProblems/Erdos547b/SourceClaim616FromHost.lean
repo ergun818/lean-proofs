@@ -11,7 +11,7 @@ forbidden whole tree. Both minor-family cases are handled by the literal
 residual allocation; no graph embedding continuation is assumed.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceClaim616FromHost

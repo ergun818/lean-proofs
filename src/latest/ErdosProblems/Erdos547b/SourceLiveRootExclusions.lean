@@ -10,7 +10,7 @@ gate is supplied by the residual source budget before root selection.
 Each endpoint still costs at most epsilon times the whole cluster order.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceLiveRootExclusions
@@ -94,7 +94,8 @@ theorem card_badForLiveEdge_le (hα : 0 < α) (hα1 : α ≤ 1 / 4)
   have h1 := card_badForLiveEntry_le W Q hα hα1 S C hC e he live 1 (hpos 1) (hlive 1) (hlarge 1)
   have hu : ((badForLiveEdge W Q C e live).card : ℝ) ≤
       ((badForLiveEntry W Q C e live 0).card : ℝ) + (badForLiveEntry W Q C e live 1).card := by
-    exact_mod_cast Finset.card_union_le (badForLiveEntry W Q C e live 0) (badForLiveEntry W Q C e live 1)
+    exact_mod_cast Finset.card_union_le (badForLiveEntry W Q C e live 0) (badForLiveEntry W Q C e
+      live 1)
   linarith only [h0, h1, hu]
 
 /-- Outside the two actual live exceptional sets, the selected root

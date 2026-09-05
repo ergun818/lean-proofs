@@ -45,6 +45,7 @@ noncomputable def matchingPartnerSet (M : R.Subgraph) (L : Finset ι) : Finset �
   classical
   exact (matchingSupport M).filter fun y => ∃ x ∈ L, M.Adj x y
 
+omit [DecidableEq ι] [DecidableRel R.Adj] in
 theorem matchingPartnerSet_subset_support (M : R.Subgraph) (L : Finset ι) :
     matchingPartnerSet M L ⊆ matchingSupport M := by
   classical
@@ -59,6 +60,7 @@ def HasZhaoSwitch (R : SimpleGraph ι) (S W : Finset ι) (m : ℕ) : Prop :=
     ∃ f : {x // x ∈ S₀} → {y // y ∈ W},
       Function.Injective f ∧ ∀ x, R.Adj x.1 (f x).1
 
+omit [DecidableEq ι] [DecidableRel R.Adj] [Fintype ι] in
 /-- The injective adjacent map in `HasZhaoSwitch` really is a subgraph
 matching.  This packages it using the Gallai--Edmonds matching constructor
 already used elsewhere in Section 6. -/
@@ -97,13 +99,15 @@ theorem HasZhaoSwitch.exists_subgraphMatching
     obtain ⟨x, rfl⟩ := hz
     exact Set.mem_union_right _ (f' x).2
 
+omit [DecidableEq ι] [Fintype ι] in
 /-- If at least `2m` vertices of `S` have `m` neighbors in `W`, one can
 choose `m` of them and Hall's theorem gives the switch used by Zhao. -/
-theorem hasZhaoSwitch_of_many_crossHeavy
+theorem hasZhaoSwitch_of_many_crossHeavy [Finite ι]
     (S W : Finset ι) (m : ℕ)
     (hmany : 2 * m ≤ (Erdos547EC2.crossHeavy R S W m).card) :
     HasZhaoSwitch R S W m := by
   classical
+  let := Fintype.ofFinite ι
   have hm : m ≤ (Erdos547EC2.crossHeavy R S W m).card := by omega
   obtain ⟨S₀, hS₀heavy, hS₀card⟩ := Finset.exists_subset_card_eq hm
   have hS₀S : S₀ ⊆ S :=
@@ -139,6 +143,7 @@ theorem hasZhaoSwitch_of_many_crossHeavy
   intro x
   exact (Finset.mem_filter.mp (hfmem x)).2
 
+omit [Fintype ι] in
 /-- Deleting a set `B` from the target side loses at most `|B|` neighbors. -/
 theorem degreeInto_le_sdiff_add_card
     (v : ι) (V B : Finset ι) :
@@ -163,16 +168,18 @@ theorem degreeInto_le_sdiff_add_card
   rw [hdecomp]
   exact Nat.add_le_add_left (Finset.card_le_card hdiff) _
 
+omit [Fintype ι] in
 /-- The counting half of Claim 6.17.  If at most `heavyCap` vertices have
 `r` neighbors after the reserved matching support is removed, then the
 original cut has at most
 `heavyCap |V₂| + |S₁| (r + |V(Mᵦ)|)` edges. -/
-theorem interedges_le_of_crossHeavy_card_le
+theorem interedges_le_of_crossHeavy_card_le [Finite ι]
     (S₁ V₂ B : Finset ι) (r heavyCap : ℕ)
     (hheavy : (Erdos547EC2.crossHeavy R S₁ (V₂ \ B) r).card ≤ heavyCap) :
     (R.interedges S₁ V₂).card ≤
       heavyCap * V₂.card + S₁.card * (r + B.card) := by
   classical
+  let := Fintype.ofFinite ι
   let H := Erdos547EC2.crossHeavy R S₁ (V₂ \ B) r
   let L := S₁ \ H
   have hsplit : H ∪ L = S₁ := by

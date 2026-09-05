@@ -99,7 +99,8 @@ noncomputable def ZhaoForestPartition.vertexInComponent
     ↑(P.components (P.componentIndex v)) := by
   refine ⟨v, ?_⟩
   change v ∈ (P.components (P.components.symm
-    ((T.deleteEdges (↑(zhaoCutEdges P.roots P.parent) : Set (Sym2 V))).connectedComponentMk v))).supp
+    ((T.deleteEdges (↑(zhaoCutEdges P.roots P.parent) : Set (Sym2 V))).connectedComponentMk
+      v))).supp
   rw [P.components.apply_symm_apply]
   exact ConnectedComponent.connectedComponentMk_mem
 
@@ -280,7 +281,7 @@ capacity interface used in Stability.  The two arbitrary cover graphs in
 `ForestCapacityEmbeddingProperty` need no oracle: the checked ordered-forest
 embedding has already produced one global injective graph homomorphism. -/
 theorem forestCapacityEmbeddingProperty_of_orderedForest_uniformPairs
-    {B : Type*} [Fintype B] [DecidableEq B]
+    {B : Type*} [Finite B] [DecidableEq B]
     (F : OrderedRootedForest m) (G : SimpleGraph B) [DecidableRel G.Adj]
     (rootImage : Fin m → B) {rho : ℝ}
     (X Y : Fin m → Finset B)
@@ -303,6 +304,8 @@ theorem forestCapacityEmbeddingProperty_of_orderedForest_uniformPairs
           cleanedSide G rho (Y k) (X k)))
     (capacityA capacityB : ℕ) :
     ForestCapacityEmbeddingProperty F.graph G capacityA capacityB := by
+  classical
+  let := Fintype.ofFinite B
   obtain ⟨E, _hroot, _hmem⟩ :=
     F.exists_embedding_over_disjoint_uniform_pairs G rootImage X Y
       hrootInjective hunif hrho hcapX hcapY hrootDegree hrootOutside hdisjoint
@@ -314,7 +317,7 @@ copy is purely the checked identification of `T` with the disjoint union of
 the ordered components; the host copy itself is constructed by the regular
 pair theorem above. -/
 theorem forestCapacityEmbeddingProperty_of_cutForest_uniformPairs
-    {τ B : Type*} [Fintype B] [DecidableEq B]
+    {τ B : Type*} [Finite B] [DecidableEq B]
     (T : SimpleGraph τ) (F : OrderedRootedForest m)
     (source : T.Copy F.graph)
     (G : SimpleGraph B) [DecidableRel G.Adj]
@@ -339,6 +342,8 @@ theorem forestCapacityEmbeddingProperty_of_cutForest_uniformPairs
           cleanedSide G rho (Y k) (X k)))
     (capacityA capacityB : ℕ) :
     ForestCapacityEmbeddingProperty T G capacityA capacityB := by
+  classical
+  let := Fintype.ofFinite B
   obtain ⟨E, _hroot, _hmem⟩ :=
     F.exists_embedding_over_disjoint_uniform_pairs G rootImage X Y
       hrootInjective hunif hrho hcapX hcapY hrootDegree hrootOutside hdisjoint
@@ -354,7 +359,7 @@ theorem exists_zhaoCutForestCopy_of_uniformPairs
     {T : SimpleGraph V} [DecidableRel T.Adj]
     {globalRoot : V} {small : ℕ}
     (P : ZhaoForestPartition T globalRoot small)
-    [Fintype B] [DecidableEq B]
+    [Finite B] [DecidableEq B]
     (G : SimpleGraph B) [DecidableRel G.Adj]
     (rootImage : Fin P.numParts → B) {rho : ℝ}
     (X Y : Fin P.numParts → Finset B)
@@ -376,6 +381,8 @@ theorem exists_zhaoCutForestCopy_of_uniformPairs
         (cleanedSide G rho (X k) (Y k) ∪
           cleanedSide G rho (Y k) (X k))) :
     Nonempty (P.cutForest.Copy G) := by
+  classical
+  let := Fintype.ofFinite B
   obtain ⟨E, _hroot, _hmem⟩ :=
     P.orderedForest.exists_embedding_over_disjoint_uniform_pairs
       G rootImage X Y hrootInjective hunif hrho hcapX hcapY hrootDegree
@@ -390,7 +397,7 @@ theorem forestCapacityEmbeddingProperty_of_zhaoCutForest_uniformPairs
     {T : SimpleGraph V} [DecidableRel T.Adj]
     {globalRoot : V} {small : ℕ}
     (P : ZhaoForestPartition T globalRoot small)
-    [Fintype B] [DecidableEq B]
+    [Finite B] [DecidableEq B]
     (G : SimpleGraph B) [DecidableRel G.Adj]
     (rootImage : Fin P.numParts → B) {rho : ℝ}
     (X Y : Fin P.numParts → Finset B)
@@ -413,6 +420,8 @@ theorem forestCapacityEmbeddingProperty_of_zhaoCutForest_uniformPairs
           cleanedSide G rho (Y k) (X k)))
     (capacityA capacityB : ℕ) :
     ForestCapacityEmbeddingProperty P.cutForest G capacityA capacityB := by
+  classical
+  let := Fintype.ofFinite B
   obtain ⟨f⟩ := exists_zhaoCutForestCopy_of_uniformPairs P G rootImage X Y
     hrootInjective hunif hrho hcapX hcapY hrootDegree hrootOutside hdisjoint
   intro _partA _partB _hcover _hA _hB

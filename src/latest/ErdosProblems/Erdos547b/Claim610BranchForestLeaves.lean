@@ -78,7 +78,7 @@ theorem attached_degree_eq_one_of_local_leaf_of_ne_root
 theorem localLeaves_erase_root_subset_attachedBranchLeaves
     {r b : ℕ} (F : OrderedBranchForest r b) (j : Fin b) :
     Erdos547b.leavesIn (F.branches.tree j)
-        (Finset.univ : Finset (Fin (F.branches.size j))) \ 
+        (Finset.univ : Finset (Fin (F.branches.size j))) \
         {F.branches.root j} ⊆
       attachedBranchLeaves F j := by
   intro a ha
@@ -156,7 +156,7 @@ theorem factor_mul_size_le_attachedBranchLeaves
         subst q
         have hadj' : (F.branches.tree j).Adj
             (F.branches.root j) (F.branches.root j) := by
-          simpa using hadj
+          simp at hadj
         exact False.elim ((F.branches.tree j).loopless.irrefl _ hadj')
     have hcard : 1 ≤ #(attachedBranchLeaves F j) := by
       simpa using Finset.card_pos.mpr ⟨_, hrootMem⟩
@@ -329,12 +329,12 @@ noncomputable def graphLeavesEquivOfIso
 
 theorem card_graphLeaves_eq_of_iso
     {A : Type u} {B : Type v} [Fintype A] [Fintype B]
-    [DecidableEq A] [DecidableEq B]
     {G : SimpleGraph A} {H : SimpleGraph B}
     [DecidableRel G.Adj] [DecidableRel H.Adj]
     (e : G ≃g H) :
     #(Erdos547b.ZhaoClaim68.graphLeaves G) =
       #(Erdos547b.ZhaoClaim68.graphLeaves H) := by
+  classical
   have hcard := Fintype.card_congr (graphLeavesEquivOfIso e)
   simpa only [Fintype.card_coe] using hcard
 
@@ -484,4 +484,5 @@ end Erdos547b.ZhaoClaim610BranchForestLeaves
 #print axioms Erdos547b.ZhaoClaim610BranchForestLeaves.factor_mul_size_le_attachedBranchLeaves
 #print axioms Erdos547b.ZhaoClaim610BranchForestLeaves.factor_mul_branchMass_le_graphLeaves
 #print axioms Erdos547b.ZhaoClaim610BranchForestLeaves.factor_mul_branchMass_le_cutForestLeaves
-#print axioms Erdos547b.ZhaoClaim610BranchForestLeaves.factor_mul_branchMass_sub_cutLoss_le_originalLeaves
+open Erdos547b.ZhaoClaim610BranchForestLeaves in
+#print axioms factor_mul_branchMass_sub_cutLoss_le_originalLeaves

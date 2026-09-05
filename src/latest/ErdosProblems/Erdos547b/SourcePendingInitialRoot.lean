@@ -9,7 +9,7 @@ same concrete used-root, fixed-edge, and opposite-reservoir exclusions.
 This supplies the first root, where no parent adjacency is required.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePendingInitialRoot
@@ -75,7 +75,8 @@ theorem exists_initial_eligible_root
     W Q hα hα1 S (rootCluster W Q s) (rootCluster_cases W Q s) remaining hremaining pool
       (Finset.sdiff_subset.trans (reservoir_subset W Q s)) hpool
   obtain ⟨hzR, hzFresh⟩ := Finset.mem_sdiff.mp hz
-  have hnotUsed : z ∉ used := fun hu => hzFresh (Finset.mem_union_left _ (Finset.mem_union_left _ hu))
+  have hnotUsed : z ∉ used := fun hu => hzFresh (Finset.mem_union_left _ (Finset.mem_union_left _
+    hu))
   have hnotEdge : z ∉ badForEdge W Q S (rootCluster W Q s) fixed :=
     fun he => hzFresh (Finset.mem_union_left _ (Finset.mem_union_right _ he))
   have hnotReservoir : z ∉ badToward W Q (Sum.inl (rootCluster W Q s)) t :=

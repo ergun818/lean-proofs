@@ -26,6 +26,7 @@ universe u
 
 variable {V : Type u} [Fintype V] [DecidableEq V]
 
+omit [DecidableEq V] [Fintype V] in
 /-- Degree in an induced graph is the number of ambient neighbors in the
 inducing set. -/
 theorem degree_induce_eq_degreeInto
@@ -47,11 +48,14 @@ theorem degree_induce_eq_degreeInto
     rw [SimpleGraph.mem_neighborFinset]
     exact hy.2
 
+omit [DecidableEq V] [Fintype V] in
 /-- The internal degree sum on `X` is twice the number of induced edges. -/
-theorem sum_degreeInto_self_eq_twice_card_induced_edges
+theorem sum_degreeInto_self_eq_twice_card_induced_edges [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (X : Finset V) :
     ∑ x ∈ X, degreeInto G x X =
       2 * #(G.induce (X : Set V)).edgeFinset := by
+  classical
+  let := Fintype.ofFinite V
   calc
     ∑ x ∈ X, degreeInto G x X =
         ∑ x : {x // x ∈ X}, (G.induce (X : Set V)).degree x := by
@@ -77,7 +81,6 @@ theorem induced_edges_large_of_crossing_density_small
     have h := degreeInto_partition G x hdisj hcover
     have huniv : degreeInto G x Finset.univ = G.degree x := by
       rw [degreeInto]
-      change #(Finset.univ.filter fun w ↦ G.Adj x w) = _
       rw [← G.card_neighborFinset_eq_degree]
       congr 1
       ext w
@@ -202,4 +205,5 @@ theorem exists_large_induced_minDegree_of_not_extremalCaseOne
 
 end Erdos547b.ZhaoClaim610HostDensity
 
-#print axioms Erdos547b.ZhaoClaim610HostDensity.exists_large_induced_minDegree_of_not_extremalCaseOne
+open Erdos547b.ZhaoClaim610HostDensity in
+#print axioms exists_large_induced_minDegree_of_not_extremalCaseOne

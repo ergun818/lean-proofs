@@ -8,7 +8,7 @@ The fresh-partition root count pays both hierarchy losses. The proved
 host leaf bound supplies the remaining premise of the exact source count.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceClaim68Mass
@@ -63,7 +63,9 @@ theorem nontrivialHalfMass_lower
   have hd : (0 : ℝ) ≤ degreeError α := by exact_mod_cast (parameter_pos hα).2.2.2.2.1.le
   have h := claim6_8_nontrivialHalfMass_lower P (degreeError α : ℝ) hd q hcard
     (by rw [sqrt_degreeError]; exact hl)
-    (by rw [sqrt_degreeError]; linarith only [hc, (Nat.cast_nonneg P.numParts : (0 : ℝ) ≤ P.numParts)])
+    (by
+      rw [sqrt_degreeError]; linarith only [hc, (Nat.cast_nonneg P.numParts : (0 : ℝ) ≤
+        P.numParts)])
     (by rw [sqrt_degreeError]; linarith only [hc, htq])
   simpa only [sqrt_degreeError] using h
 

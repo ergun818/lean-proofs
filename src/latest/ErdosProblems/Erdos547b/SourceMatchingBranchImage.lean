@@ -10,7 +10,7 @@ original-index copy. Its attachment, physical side and positive source
 support are inherited, and successor preservation is literal copy equality.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMatchingGlobalPrefix
@@ -72,7 +72,8 @@ def PrefixState.branchOrient (i : Fin b) (hi : (owner i).val < stage) : Fin 2 �
     ⟨i, Finset.mem_filter.mpr ⟨List.mem_toFinset.mpr (hcover i), hi⟩⟩
 
 theorem PrefixState.branchEdge_mem (i : Fin b) (hi : (owner i).val < stage) :
-    A.branchEdge W Q S P F owner rootSide all family avoid locate hcover i hi ∈ all (locate i).1 (locate i).2 :=
+    A.branchEdge W Q S P F owner rootSide all family avoid locate hcover i hi ∈ all (locate i).1
+      (locate i).2 :=
   current_edge_mem W Q S P F owner _ (A.families (locate i).1 (locate i).2) _
 
 theorem PrefixState.branchCopy_attach (i : Fin b) (hi : (owner i).val < stage) :
@@ -83,7 +84,8 @@ theorem PrefixState.branchCopy_attach (i : Fin b) (hi : (owner i).val < stage) :
 
 theorem PrefixState.branchCopy_side (i : Fin b) (hi : (owner i).val < stage) (a : Fin (F.size i)) :
     A.branchCopy W Q S P F owner rootSide all family avoid locate hcover i hi a ∈
-      residualSide (pairWhole W P (A.branchEdge W Q S P F owner rootSide all family avoid locate hcover i hi))
+      residualSide (pairWhole W P (A.branchEdge W Q S P F owner rootSide all family avoid locate
+        hcover i hi))
         (deleted W Q P (A.branchEdge W Q S P F owner rootSide all family avoid locate hcover i hi))
         (A.branchOrient W Q S P F owner rootSide all family avoid locate hcover i hi
           ((F.isTree i).coloringTwoOfVert (F.root i) a)) :=
@@ -101,9 +103,11 @@ theorem PrefixState.branch_rootColor_degree (i : Fin b) (hi : (owner i).val < st
 theorem PrefixState.branchCopy_preserved
     (D : PrefixState W Q S P F owner rootSide all family avoid (stage + 1))
     (hcopies : ∀ s j i hi,
-      ((D.families s j).currentPlacement W Q S P (rootCluster W Q s) F owner).forestCopy.componentCopy i
+      ((D.families s j).currentPlacement W Q S P (rootCluster W Q s) F
+        owner).forestCopy.componentCopy i
           (processedFamily_mono owner (Nat.le_succ stage) (family s j) hi) =
-        ((A.families s j).currentPlacement W Q S P (rootCluster W Q s) F owner).forestCopy.componentCopy i hi)
+        ((A.families s j).currentPlacement W Q S P (rootCluster W Q s) F
+          owner).forestCopy.componentCopy i hi)
     (i : Fin b) (hi : (owner i).val < stage) :
     D.branchCopy W Q S P F owner rootSide all family avoid locate hcover i (Nat.lt_succ_of_lt hi) =
       A.branchCopy W Q S P F owner rootSide all family avoid locate hcover i hi :=

@@ -88,9 +88,10 @@ theorem card_clusterUnion_padAssignment_eq
 vertex. -/
 theorem matchingSupport_subset_padFinset_univ
     {ι : Type u} [Fintype ι] [DecidableEq ι]
-    (R : SimpleGraph ι) [DecidableRel R.Adj]
+    (R : SimpleGraph ι)
     (M : (padGraph R).Subgraph) (hM : M.IsMatching) :
     matchingSupport M ⊆ padFinset (Finset.univ : Finset ι) := by
+  classical
   intro x hx
   cases x with
   | inl i => simp
@@ -137,9 +138,10 @@ theorem card_decomposition_V1_clusterUnion
 
 /-- Padding is monotone in the underlying graph. -/
 theorem padGraph_mono
-    {ι : Type u} [Fintype ι] [DecidableEq ι]
+    {ι : Type u} [Fintype ι]
     {R' R : SimpleGraph ι} (h : R' ≤ R) :
     padGraph R' ≤ padGraph R := by
+  classical
   intro x y hxy
   cases x with
   | inl i =>
@@ -218,16 +220,8 @@ theorem zhaoExtremalCaseTwo_of_padded_cleanedDegreeForm
     exact hXupper
   · rw [hXcard]
     exact hXlower
-  · change
-      ((padGraph (cleanedReducedGraph W δ)).interedges D.V1 D.V2).card ≤ cross
-    exact hcross
-  · change
-      ((cross * (W.clusterSize * W.clusterSize) +
-          (clusterUnion (padAssignment P) D.V1).card *
-            ((exceptionalVertices (padAssignment P)).card + W.loss) +
-          2 * (n - 1) * b : ℕ) : ℚ) ≤
-        α * ((n - 1 : ℕ) : ℚ) * ((n - 1 : ℕ) : ℚ)
-    rw [hXcard, exceptionalVertices_padAssignment]
+  · exact hcross
+  · rw [hXcard, exceptionalVertices_padAssignment]
     simpa only [P, exceptionalVertices_partitionAssignment] using hnumeric
 
 /-- Real-bound spelling matching the outputs of Claims 6.17 and 6.18.  The

@@ -10,7 +10,7 @@ ceiling and fresh-branch overshoot are retained. This is source selection,
 not yet the three-layer graph embedding of the selected forest.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceClaim616Selection
@@ -83,11 +83,13 @@ theorem exists_selectedForest
     Nat.floor_le (by positivity)
   have hovershoot : 1 + (freshBranchBound α W.clusterSize : ℝ) ≤
       (epsilon α : ℝ) * crossingScale W * W.clusterSize := by
-    have hrεN := mul_le_mul_of_nonneg_right hr1 (show 0 ≤ (epsilon α : ℝ) * W.clusterSize by positivity)
+    have hrεN := mul_le_mul_of_nonneg_right hr1 (show 0 ≤ (epsilon α : ℝ) * W.clusterSize
+      by positivity)
     nlinarith only [hrεN, hm, hεN]
   have hMcard : (MatchingDecomposition.MzeroEdges O.D C).card ≤ crossingScale W :=
     (MatchingDecomposition.Mzero_edge_card_le O.D C).trans_eq hCcard
-  have hMcardR : ((MatchingDecomposition.MzeroEdges O.D C).card : ℝ) ≤ crossingScale W := by exact_mod_cast hMcard
+  have hMcardR : ((MatchingDecomposition.MzeroEdges O.D C).card : ℝ) ≤ crossingScale W :=
+    by exact_mod_cast hMcard
   have hA := (sideWeight_sum_le W Q S 0 (MatchingDecomposition.MzeroEdges O.D C)).trans
     (mul_le_mul_of_nonneg_left hMcardR (by positivity : 0 ≤ 2 * (W.clusterSize : ℝ)))
   have hnonneg : 0 ≤ (∑ e ∈ MatchingDecomposition.MzeroEdges O.D C, sideWeight W Q S 0 e) +
@@ -104,7 +106,8 @@ theorem exists_selectedForest
   have hlower : (selectionTarget W Q S O C : ℝ) ≤
       (OrderedBranchForest.edgeDemand F.toSelectedF0.forest : ℝ) := by exact_mod_cast F.lower
   have hupper : (OrderedBranchForest.edgeDemand F.toSelectedF0.forest : ℝ) <
-      (selectionTarget W Q S O C : ℝ) + freshBranchBound α W.clusterSize := by exact_mod_cast F.upper
+      (selectionTarget W Q S O C : ℝ) + freshBranchBound α W.clusterSize :=
+        by exact_mod_cast F.upper
   have hthree : 3 * (levelOneDemand F.toSelectedF0.forest : ℝ) ≤
       (OrderedBranchForest.edgeDemand F.toSelectedF0.forest : ℝ) := by
     exact_mod_cast F.toSelectedF0.three_mul_levelOne_le_edgeDemand

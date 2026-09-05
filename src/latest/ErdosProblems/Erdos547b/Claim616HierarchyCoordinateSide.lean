@@ -59,7 +59,7 @@ theorem embedding_dist_eq_of_tree_of_connected
   obtain ⟨q, hqPath, hqLength⟩ :=
     hG.connected.exists_path_of_dist (e x) (e y)
   have hpMapPath : (p.map e).IsPath :=
-    SimpleGraph.Walk.map_isPath_of_injective he hpPath
+    SimpleGraph.Walk.IsPath.map he hpPath
   have hpEq : p.map e = q :=
     (hG.existsUnique_path (e x) (e y)).unique hpMapPath hqPath
   have hlen := congrArg SimpleGraph.Walk.length hpEq
@@ -404,6 +404,7 @@ theorem coordinatePoolLoad_le_branch_side_load
 
 end Erdos547b.ZhaoClaim616HierarchyCoordinateSide
 
-#print axioms Erdos547b.ZhaoClaim616HierarchyCoordinateSide.canonicalBranchSide_partitionBranchCoordinate
+open Erdos547b.ZhaoClaim616HierarchyCoordinateSide in
+#print axioms canonicalBranchSide_partitionBranchCoordinate
 #print axioms Erdos547b.ZhaoClaim616HierarchyCoordinateSide.hierarchy_side_load_le_branch_side_load
 #print axioms Erdos547b.ZhaoClaim616HierarchyCoordinateSide.coordinatePoolLoad_le_branch_side_load

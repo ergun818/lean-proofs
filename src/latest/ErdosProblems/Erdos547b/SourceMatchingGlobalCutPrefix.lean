@@ -10,7 +10,7 @@ ones by root and branch image equalities. Finite induction gives a terminal
 cut-aware state from source-only finite data and scalar capacity bounds.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMatchingGlobalPrefix
@@ -52,7 +52,8 @@ def emptyCutPrefixState (hP : P.IsMatching)
     (hnd : ∀ s j, (family s j).Nodup)
     (hordered : ∀ s j, (family s j).Pairwise (fun i j => owner i ≤ owner j)) :
     CutPrefixState W Q S P F owner rootSide all family avoid locate hcover L 0 where
-  state := emptyPrefixState W Q S P F owner rootSide all family avoid hP hnd hordered (fun _ => S.zA)
+  state := emptyPrefixState W Q S P F owner rootSide all family avoid hP hnd hordered (fun _ =>
+    S.zA)
   cut_adj := by omega
 
 variable (hα : 0 < α) (hα1 : α ≤ 1 / 4)
@@ -75,7 +76,8 @@ include hα hα1 hhost horder hk hside hsmall haway globalCount hglobal hbudget 
 Every old cut adjacency is preserved, not assumed again for the new state. -/
 theorem exists_cutPrefixAdvance (n : Fin r)
     (A : CutPrefixState W Q S P F owner rootSide all family avoid locate hcover L n.val) :
-    Nonempty (CutPrefixState W Q S P F owner rootSide all family avoid locate hcover L (n.val + 1)) := by
+    Nonempty (CutPrefixState W Q S P F owner rootSide all family avoid locate hcover L (n.val + 1))
+      := by
   let poolParent : Option (Fin hostN) := if hn : n.val = 0 then none else
     some (A.state.coordinateImage F owner W Q S P rootSide all family avoid locate hcover
       (L.parent n hn) (L.before n hn))
@@ -90,20 +92,24 @@ theorem exists_cutPrefixAdvance (n : Fin r)
           (A.state.coordinateImage F owner W Q S P rootSide all family avoid locate hcover
             (L.parent n hn) (L.before n hn)) = some v from by
           simpa only [poolParent, dif_neg hn] using hv)
-      have hd := A.state.coordinateImage_degree F owner W Q S P rootSide all family avoid locate hcover
+      have hd := A.state.coordinateImage_degree F owner W Q S P rootSide all family avoid locate
+        hcover
         (L.parent n hn) (L.before n hn) (L.color n hn)
       rw [L.side n hn, heq] at hd
       exact hd
-  obtain ⟨z, D, hroot, hAdj, hcopies⟩ := exists_prefixAdvance W Q S P F owner rootSide all family avoid
+  obtain ⟨z, D, hroot, hAdj, hcopies⟩ := exists_prefixAdvance W Q S P F owner rootSide all family
+    avoid
     hα hα1 hhost horder hk hside n A.state hsmall haway globalCount hglobal hbudget hroots havoid
     poolParent hparent
   have hbefore (i : Fin r) (hi : i.val < n.val) : D.rootImage i = A.state.rootImage i := by
     rw [hroot]
     exact Function.update_of_ne (fun h => Nat.ne_of_lt hi (congrArg Fin.val h)) z A.state.rootImage
   have hcoord (x : CutCoordinate F r) (hx : (coordinateOwner F owner x).val < n.val) :
-      D.coordinateImage F owner W Q S P rootSide all family avoid locate hcover x (Nat.lt_succ_of_lt hx) =
+      D.coordinateImage F owner W Q S P rootSide all family avoid locate hcover x (Nat.lt_succ_of_lt
+        hx) =
         A.state.coordinateImage F owner W Q S P rootSide all family avoid locate hcover x hx :=
-    A.state.coordinateImage_preserved F owner W Q S P rootSide all family avoid locate hcover D hbefore hcopies x hx
+    A.state.coordinateImage_preserved F owner W Q S P rootSide all family avoid locate hcover D
+      hbefore hcopies x hx
   refine ⟨⟨D, ?_⟩⟩
   intro i hi histage
   by_cases hin : i = n
@@ -128,13 +134,15 @@ theorem exists_terminalCutPrefix (hP : P.IsMatching)
     induction n with
     | zero =>
       intro _
-      exact ⟨emptyCutPrefixState W Q S P F owner rootSide all family avoid locate hcover L hP hnd hordered⟩
+      exact ⟨emptyCutPrefixState W Q S P F owner rootSide all family avoid locate hcover L hP hnd
+        hordered⟩
     | succ n ih =>
       intro hn
       have hnr : n < r := by omega
       obtain ⟨A⟩ := ih (Nat.le_of_lt hnr)
       exact exists_cutPrefixAdvance W Q S P F owner rootSide all family avoid locate hcover L
-        hα hα1 hhost horder hk hside hsmall haway globalCount hglobal hbudget hroots havoid ⟨n, hnr⟩ A
+        hα hα1 hhost horder hk hside hsmall haway globalCount hglobal hbudget hroots havoid ⟨n, hnr⟩
+          A
   exact hstates r le_rfl
 
 end Erdos547b.ZhaoSourceMatchingGlobalPrefix

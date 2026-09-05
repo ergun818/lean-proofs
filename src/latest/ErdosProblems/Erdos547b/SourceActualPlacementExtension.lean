@@ -9,7 +9,7 @@ original branch counts identify their saturation mass with actual host
 vertices. The joined state preserves every earlier branch image.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceActualPlacementExtension
@@ -40,13 +40,15 @@ theorem closed_saturation_mass
     {Bin Item : Type*} [DecidableEq Bin] {bins : List Bin} {items : List Item}
     {w : Item → ℝ} {cap : Bin → ℝ} {slack : ℝ}
     (P : SaturatedPacking bins items w cap slack) :
-    (∑ e ∈ (P.closed.map Prod.fst).toFinset, (cap e - slack)) ≤ mass w (P.closed.flatMap Prod.snd) := by
+    (∑ e ∈ (P.closed.map Prod.fst).toFinset, (cap e - slack)) ≤ mass w (P.closed.flatMap Prod.snd)
+      := by
   have hnd : (P.closed.map Prod.fst).Nodup := by
     have h := P.bins_nodup
     rw [List.map_append] at h
     exact (List.nodup_append.mp h).1
   rw [List.sum_toFinset (fun e => cap e - slack) hnd, List.map_map]
-  exact (sum_map_mono P.closed _ _ (fun p hp => (P.saturated p hp).le)).trans_eq (mass_flatMap P.closed w)
+  exact (sum_map_mono P.closed _ _ (fun p hp => (P.saturated p hp).le)).trans_eq (mass_flatMap
+    P.closed w)
 
 theorem closed_mass_eq_sum
     {Bin Item : Type*} [DecidableEq Item] {bins : List Bin} {items : List Item}
@@ -76,7 +78,8 @@ variable (P : SaturatedPacking (goodBins W Q S C all used bad) items (fun i => (
 
 abbrev newSelected := closedSelected W Q S C F items (goodBins W Q S C all used bad) P
 abbrev newEdges : Finset (MatchingEdge Q.claim67.M) := (P.closed.map Prod.fst).toFinset
-abbrev cleanEndpoint (e : MatchingEdge Q.claim67.M) := residualSide (edgeWhole W Q e) (deleted W Q e)
+abbrev cleanEndpoint (e : MatchingEdge Q.claim67.M) := residualSide (edgeWhole W Q e) (deleted W Q
+  e)
 
 theorem newEdges_subset_unused : newEdges W Q S C F items all used bad P ⊆ all \ used := by
   intro e he
@@ -105,28 +108,33 @@ theorem exists_extended_source_placement
     (R : RealizedPacking W Q S C F items (goodBins W Q S C all used bad) P z) :
     ∃ D : BranchPlacement F (embeddingHost W)
         (oldSelected ∪ newSelected W Q S C F items all used bad P) parent (cleanEndpoint W Q),
-      (∀ i hi, D.forestCopy.componentCopy i (Finset.mem_union_left _ hi) = old.forestCopy.componentCopy i hi) ∧
+      (∀ i hi, D.forestCopy.componentCopy i (Finset.mem_union_left _ hi) =
+        old.forestCopy.componentCopy i hi) ∧
       (∀ i, D.edge i ∈ used ∪ newEdges W Q S C F items all used bad P) ∧
       D.used.card = old.used.card + ∑ i ∈ newSelected W Q S C F items all used bad P, F.size i ∧
       (∑ e ∈ used ∪ newEdges W Q S C F items all used bad P,
         (partOneCapacity W Q S C e - freshBranchBound α W.clusterSize)) ≤ (D.used.card : ℝ) := by
   obtain ⟨A⟩ := exists_closedAssembly W Q S C F items _ P z R
-  obtain ⟨fresh, hfreshEdges⟩ := exists_original_closed_placement_with_closed_edges W Q S C F items _ P z A
+  obtain ⟨fresh, hfreshEdges⟩ := exists_original_closed_placement_with_closed_edges W Q S C F items
+    _ P z A
   let next := fresh.reparent parent hparent
   have hdisjoint : Disjoint oldSelected (newSelected W Q S C F items all used bad P) := by
     rw [Finset.disjoint_left]
     intro i hi hnew
-    exact hfresh i (List.mem_toFinset.mp (newSelected_subset_items W Q S C F items all used bad P hnew)) hi
+    exact hfresh i (List.mem_toFinset.mp (newSelected_subset_items W Q S C F items all used bad P
+      hnew)) hi
   have hsides : ∀ i : {i // i ∈ oldSelected},
       ∀ j : {j // j ∈ newSelected W Q S C F items all used bad P}, ∀ c d,
         Disjoint (cleanEndpoint W Q (old.edge i) c) (cleanEndpoint W Q (next.edge j) d) := by
     intro i j c d
     have hnew : next.edge j ∈ newEdges W Q S C F items all used bad P := hfreshEdges j
-    have hnot := (Finset.mem_sdiff.mp (newEdges_subset_unused W Q S C F items all used bad P hnew)).2
+    have hnot := (Finset.mem_sdiff.mp (newEdges_subset_unused W Q S C F items all used bad P
+      hnew)).2
     have hne : old.edge i ≠ next.edge j := fun h => hnot (h ▸ holdEdges i)
     exact (edgeWhole_cross_disjoint W Q _ _ hne c d).mono Finset.sdiff_subset Finset.sdiff_subset
   let D := old.append next hsides
-  have hcard : D.used.card = old.used.card + ∑ i ∈ newSelected W Q S C F items all used bad P, F.size i := by
+  have hcard : D.used.card = old.used.card + ∑ i ∈ newSelected W Q S C F items all used bad P,
+    F.size i := by
     rw [BranchPlacement.card_used, Finset.sum_union hdisjoint, BranchPlacement.card_used]
   refine ⟨D, ?_, ?_, hcard, ?_⟩
   · intro i hi
@@ -136,7 +144,8 @@ theorem exists_extended_source_placement
     · rw [show D.edge i = old.edge ⟨i.1, hi⟩ from old.append_edge_left next hsides i.1 hi]
       exact Finset.mem_union_left _ (holdEdges _)
     · have hin := (Finset.mem_union.mp i.2).resolve_left hi
-      rw [show D.edge i = next.edge ⟨i.1, hin⟩ from old.append_edge_right next hsides hdisjoint i.1 hin]
+      rw [show D.edge i = next.edge ⟨i.1, hin⟩ from old.append_edge_right next hsides hdisjoint i.1
+        hin]
       exact Finset.mem_union_right _ (hfreshEdges _)
   · have hedgeDisj : Disjoint used (newEdges W Q S C F items all used bad P) := by
       rw [Finset.disjoint_left]

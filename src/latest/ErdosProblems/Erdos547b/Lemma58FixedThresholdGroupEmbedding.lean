@@ -77,4 +77,5 @@ theorem exists_canonicalActualThresholdDynamicGroupEmbedding
 
 end Erdos547b.ZhaoLemma58FixedThresholdGroupEmbedding
 
-#print axioms Erdos547b.ZhaoLemma58FixedThresholdGroupEmbedding.exists_canonicalActualThresholdDynamicGroupEmbedding
+open Erdos547b.ZhaoLemma58FixedThresholdGroupEmbedding in
+#print axioms exists_canonicalActualThresholdDynamicGroupEmbedding

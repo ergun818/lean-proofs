@@ -11,7 +11,7 @@ Their totals, capacities, branch mass and all residual loss margins are
 proved, so only the exceptional selection and its genuine gain remain.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceExceptionalResidualTreeCopy
@@ -130,5 +130,7 @@ theorem exists_treeCopy_of_smallExceptionalSaving
 
 end Erdos547b.ZhaoSourceExceptionalResidualTreeCopy
 
-#print axioms Erdos547b.ZhaoSourceExceptionalResidualTreeCopy.exists_treeCopy_of_largeExceptionalSaving
-#print axioms Erdos547b.ZhaoSourceExceptionalResidualTreeCopy.exists_treeCopy_of_smallExceptionalSaving
+open Erdos547b.ZhaoSourceExceptionalResidualTreeCopy in
+#print axioms exists_treeCopy_of_largeExceptionalSaving
+open Erdos547b.ZhaoSourceExceptionalResidualTreeCopy in
+#print axioms exists_treeCopy_of_smallExceptionalSaving

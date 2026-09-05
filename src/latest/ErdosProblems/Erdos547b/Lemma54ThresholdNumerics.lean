@@ -120,7 +120,7 @@ theorem maximalFittingCutoff_eq_last_or_next_overflow {b : ℕ}
         simpa using h)
     let next : Fin (b + 1) := ⟨cutoff.val + 1, by omega⟩
     have hlt : cutoff < next := by
-      exact Fin.lt_iff_val_lt_val.mpr (by simp [next])
+      exact Fin.lt_def.mpr (by simp [next])
     have hnot : ¬prefixFits F orient lowBudget next :=
       not_prefixFits_of_maximalFittingCutoff_lt F orient lowBudget hlt
     simp only [prefixFits, not_forall, not_le] at hnot
@@ -152,11 +152,6 @@ theorem maximalFittingCutoff_eq_zero_of_budget_zero {b : ℕ}
           then F.size i else 0 := by simp [hi]
       _ ≤ ∑ j, if j.val < (maximalFittingCutoff F orient 0).val
           then F.size j else 0 := by
-        change (if i.val < (maximalFittingCutoff F orient 0).val
-            then F.size i else 0) ≤
-          (Finset.univ : Finset (Fin b)).sum (fun j ↦
-            if j.val < (maximalFittingCutoff F orient 0).val
-              then F.size j else 0)
         exact Finset.single_le_sum
           (s := (Finset.univ : Finset (Fin b)))
           (f := fun j : Fin b ↦
@@ -180,7 +175,7 @@ rather than for every abstract `ThresholdSwitchOrientation`. -/
 noncomputable def actualThresholdSwitchOrientation
     {b : ℕ} (F : OrderedRootedForest b)
     (slack lowBudget highBudget : ℕ) (lowSide highSide : Fin 2)
-    (hsmall : ∀ i, F.size i ≤ slack)
+    (_hsmall : ∀ i, F.size i ≤ slack)
     (hsides : highSide ≠ lowSide)
     (hfinal : ∀ (base : Fin b → Fin 2 ≃ Fin 2),
       (∀ t c, 2 * sideLoadPrefix F base t c ≤ prefixOrder F t + slack) →

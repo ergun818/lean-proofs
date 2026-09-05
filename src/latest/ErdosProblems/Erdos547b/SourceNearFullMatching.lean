@@ -10,7 +10,7 @@ filters and the two distinguished clusters have been removed. Its
 quantitative support and row bounds use the same padded finite target.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceNearFullMatching
@@ -99,7 +99,8 @@ theorem exists_output (hα : 0 < α) (hα1 : α ≤ 1 / 4)
     simp only [hz, Finset.sum_empty] at hweight
     linarith only [hweight, htarget]
   have hcountUpper : 2 * E.card ≤ paddedHalf (Index W) := by
-    have hc : E.card ≤ paddedHalf (Index W) / 2 := (card_cappedSubfamily _ _).trans_le (min_le_right _ _)
+    have hc : E.card ≤ paddedHalf (Index W) / 2 := (card_cappedSubfamily _ _).trans_le (min_le_right
+      _ _)
     omega
   have hcountLower : lowerCount W ≤ 2 * E.card := by
     apply Nat.ceil_le.mpr
@@ -108,7 +109,8 @@ theorem exists_output (hα : 0 < α) (hα1 : α ≤ 1 / 4)
       linarith only [(parameter_bounds hα hα1).2.1]
     have htargetK := mul_le_mul_of_nonneg_left
       (le_max_right (q : ℝ) ((paddedHalf (Index W) : ℝ) * W.clusterSize)) hcoef
-    change (1 - 8 * (eta α : ℝ)) * ((paddedHalf (Index W) : ℝ) * W.clusterSize) ≤ targetA W at htargetK
+    change (1 - 8 * (eta α : ℝ)) * ((paddedHalf (Index W) : ℝ) * W.clusterSize) ≤
+      targetA W at htargetK
     have hreal : (1 - 8 * (eta α : ℝ)) * paddedHalf (Index W) < 2 * (E.card : ℝ) := by
       nlinarith only [hupper, hweight, htargetK, hN]
     exact_mod_cast hreal.le

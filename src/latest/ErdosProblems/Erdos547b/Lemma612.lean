@@ -203,7 +203,7 @@ theorem pairwise_decreasingList {Edge : Type*} [DecidableEq Edge]
 decreasing ordering with `decreasingList`, so callers only supply the finite
 matching edge set and its contributions. -/
 theorem exists_small_submatching
-    {Edge : Type*} [DecidableEq Edge]
+    {Edge : Type*}
     (M : Finset Edge) (contribution : Edge → ℝ)
     (target cap cardBound : ℝ)
     (hnonneg : ∀ e ∈ M, 0 ≤ contribution e)
@@ -218,6 +218,7 @@ theorem exists_small_submatching
       target ≤ ∑ e ∈ Mb, contribution e ∧
       (∑ e ∈ Mb, contribution e) < target + cap ∧
       ((Mb.card : ℕ) : ℝ) ≤ cardBound := by
+  classical
   have hM : M.Nonempty := by
     rw [Finset.nonempty_iff_ne_empty]
     intro hMempty
@@ -338,7 +339,7 @@ edges are removed before taking the decreasing prefix.  Thus every selected
 edge has strictly positive contribution, while the total weight and all
 quantitative conclusions are unchanged. -/
 theorem exists_small_submatching_positive
-    {Edge : Type*} [DecidableEq Edge]
+    {Edge : Type*}
     (M : Finset Edge) (contribution : Edge → ℝ)
     (target cap cardBound : ℝ)
     (hnonneg : ∀ e ∈ M, 0 ≤ contribution e)
@@ -492,7 +493,7 @@ theorem zhao_lemma_6_12
 an actual finite cluster matching: the decreasing enumeration is constructed
 internally and does not appear among the hypotheses. -/
 theorem zhao_lemma_6_12_unordered
-    {Edge : Type*} [DecidableEq Edge]
+    {Edge : Type*}
     (M : Finset Edge) (contribution : Edge → ℝ) (k : ℕ)
     (target cap dQuarter lower : ℝ)
     (hmk : M.card ≤ k)
@@ -508,6 +509,7 @@ theorem zhao_lemma_6_12_unordered
       target ≤ ∑ e ∈ Mb, contribution e ∧
       (∑ e ∈ Mb, contribution e) < target + cap ∧
       ((Mb.card : ℕ) : ℝ) ≤ 2 * dQuarter * k := by
+  classical
   have htotalpos : 0 < ∑ e ∈ M, contribution e := hlowerpos.trans_le hlower
   have htargetcap : 0 ≤ target + cap := by linarith
   have hmk' : (M.card : ℝ) ≤ (k : ℝ) := by exact_mod_cast hmk
@@ -536,11 +538,11 @@ theorem zhao_lemma_6_12_unordered
 The result is equation (6.13), including `|M_b| ≤ 2 d^(1/4) k`.
 -/
 theorem zhao_lemma_6_12_source_constants
-    {Edge : Type*} [DecidableEq Edge]
+    {Edge : Type*}
     (M : Finset Edge) (contribution : Edge → ℝ) (k : ℕ)
     (f_b γ n N d : ℝ)
     (hmk : M.card ≤ k)
-    (hfb : 0 ≤ f_b) (hγ : 0 ≤ γ) (hn : 0 ≤ n) (hN : 0 < N) (hd : 0 ≤ d)
+    (hfb : 0 ≤ f_b) (hγ : 0 ≤ γ) (hn : 0 ≤ n) (hN : 0 < N) (_hd : 0 ≤ d)
     (hnonneg : ∀ e ∈ M, 0 ≤ contribution e)
     (hedgecap : ∀ e ∈ M, contribution e ≤ 2 * N)
     (htotal : (1 - 10 * Real.sqrt d) * n ≤ ∑ e ∈ M, contribution e)
@@ -557,6 +559,7 @@ theorem zhao_lemma_6_12_source_constants
       f_b + 3 * γ * n ≤ ∑ e ∈ M_b, contribution e ∧
       (∑ e ∈ M_b, contribution e) < f_b + 3 * γ * n + 2 * N ∧
       ((M_b.card : ℕ) : ℝ) ≤ 2 * Real.sqrt (Real.sqrt d) * k := by
+  classical
   have hdQuarter : 0 ≤ Real.sqrt (Real.sqrt d) := Real.sqrt_nonneg _
   have htarget : 0 ≤ f_b + 3 * γ * n := by positivity
   have hcap : 0 < 2 * N := by positivity

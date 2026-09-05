@@ -172,7 +172,7 @@ theorem orientedClassSize_flip_zero {b : ℕ}
   ext a
   have hswap (z : Fin 2) :
       (Equiv.swap (0 : Fin 2) 1 z = 0) ↔ z = 1 := by
-    fin_cases z <;> simp [Equiv.swap_apply_def]
+    fin_cases z <;> simp
   simpa only [Finset.mem_filter, Finset.mem_univ, true_and] using
       hswap (orient i ((F.isTree i).coloringTwoOfVert (F.root i) a))
 
@@ -191,7 +191,7 @@ theorem orientedClassSize_flip_one {b : ℕ}
   ext a
   have hswap (z : Fin 2) :
       (Equiv.swap (0 : Fin 2) 1 z = 1) ↔ z = 0 := by
-    fin_cases z <;> simp [Equiv.swap_apply_def]
+    fin_cases z <;> simp
   simpa only [Finset.mem_filter, Finset.mem_univ, true_and] using
       hswap (orient i ((F.isTree i).coloringTwoOfVert (F.root i) a))
 
@@ -376,7 +376,6 @@ theorem exists_appendixA2Orientation
       obtain ⟨S, _hSuniv, hScard⟩ :=
         Finset.exists_subset_card_eq (s := (Finset.univ : Finset (Fin b)))
           (n := b - q) (by
-            change b - q ≤ #(Finset.univ : Finset (Fin b))
             simpa only [Finset.card_univ, Fintype.card_fin] using hrb)
       let orient := orientationForRootSet S
       have hroot0 : rootLoad F orient 0 + rootReserve ≤ P := by

@@ -8,7 +8,7 @@ Retaining the light-set cardinality gives the source coefficient ten.
 The coarser bound charging all vertices as light would not suffice.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoClaim616SharpCrossing
@@ -16,11 +16,13 @@ namespace Erdos547b.ZhaoClaim616SharpCrossing
 open Finset SimpleGraph Erdos547EC2 Erdos547b.ZhaoClaim616 Erdos547b.ZhaoStability
 
 theorem card_crossHeavy_ge_of_balanced_cut
-    {K : Type*} [Fintype K] [DecidableEq K]
+    {K : Type*} [Finite K]
     (R : SimpleGraph K) [DecidableRel R.Adj] (S T : Finset K) (r k : ℕ)
     (hS : S.card ≤ k) (hST : S.card + T.card = 2 * k) (hr : 9 * r ≤ k)
     (hcross : 10 * r * k < (R.interedges S T).card) :
     r ≤ (crossHeavy R S T (9 * r)).card := by
+  classical
+  let := Fintype.ofFinite K
   let H := crossHeavy R S T (9 * r)
   by_contra hnot
   change ¬r ≤ H.card at hnot

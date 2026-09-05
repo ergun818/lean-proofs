@@ -11,7 +11,7 @@ roots are revealed. Only the actual owner prefix grows. Original-index
 placement makes preservation of every earlier image explicit.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceActiveChunk
@@ -41,12 +41,14 @@ theorem prefixSelected_ownerCutoff {b r : ℕ} (items : List (Fin b)) (owner : F
     have hm' := List.mem_toFinset.mp hm
     have hpOwner : (listOwner owner items (position items j hm')).val < n := by
       simpa only [listOwner, List.get_eq_getElem, get_position] using ho
-    have hp := (lt_ownerCutoff_iff (listOwner owner items) hmono (position items j hm') n).mpr hpOwner
+    have hp := (lt_ownerCutoff_iff (listOwner owner items) hmono (position items j hm') n).mpr
+      hpOwner
     exact List.mem_toFinset.mpr ((List.mem_take_iff_idxOf_lt hm').mpr hp)
 
 theorem ownerCutoff_succ_eq_of_absent {b r : ℕ} (items : List (Fin b))
     (owner : Fin b → Fin r) (n : Fin r) (habsent : ∀ i ∈ items, owner i ≠ n) :
-    ownerCutoff (listOwner owner items) (n.val + 1) = ownerCutoff (listOwner owner items) n.val := by
+    ownerCutoff (listOwner owner items) (n.val + 1) = ownerCutoff (listOwner owner items) n.val :=
+      by
   unfold ownerCutoff
   congr 1
   ext i
@@ -120,7 +122,8 @@ theorem PendingChunk.exists_skip (rootImage : Fin r → Fin hostN) (n : Fin r)
         E.forestCopy.componentCopy i hi := by
   have hcut := ownerCutoff_succ_eq_of_absent D.items owner n habsent
   have hagrees : ∀ i ∈ branchPrefix (ownerCutoff (listOwner owner D.items) n.val),
-      Function.update rootImage n z (listOwner owner D.items i) = rootImage (listOwner owner D.items i) := by
+      Function.update rootImage n z (listOwner owner D.items i) = rootImage (listOwner owner D.items
+        i) := by
     intro i _
     exact Function.update_of_ne (habsent _ (List.get_mem D.items i)) z rootImage
   let old := partialReparent (listForest F D.items) (embeddingHost W)

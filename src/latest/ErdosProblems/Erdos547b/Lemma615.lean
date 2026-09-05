@@ -51,12 +51,14 @@ def positiveZeroEdges (M : Finset E) (density : E → Fin 2 → ℝ)
     (eta : ℝ) : Finset E :=
   M.filter fun e ↦ eta ≤ density e 0 ∧ density e 1 = 0
 
+omit [DecidableEq E] in
 @[simp] theorem mem_unbalancedEdges {M : Finset E}
     {density : E → Fin 2 → ℝ} {eta : ℝ} {e : E} :
     e ∈ unbalancedEdges M density eta ↔
       e ∈ M ∧ eta ≤ |density e 0 - density e 1| := by
   simp [unbalancedEdges]
 
+omit [DecidableEq E] in
 @[simp] theorem mem_nonextremeEdges {M : Finset E}
     {density : E → Fin 2 → ℝ} {eta : ℝ} {e : E} :
     e ∈ nonextremeEdges M density eta ↔
@@ -64,25 +66,30 @@ def positiveZeroEdges (M : Finset E) (density : E → Fin 2 → ℝ)
         eta ≤ density e 1 ∧ density e 1 ≤ 1 - eta := by
   simp [nonextremeEdges]
 
+omit [DecidableEq E] in
 @[simp] theorem mem_positiveZeroEdges {M : Finset E}
     {density : E → Fin 2 → ℝ} {eta : ℝ} {e : E} :
     e ∈ positiveZeroEdges M density eta ↔
       e ∈ M ∧ eta ≤ density e 0 ∧ density e 1 = 0 := by
   simp [positiveZeroEdges]
 
+omit [DecidableEq E] in
 theorem unbalancedEdges_subset (M : Finset E) (density : E → Fin 2 → ℝ)
     (eta : ℝ) : unbalancedEdges M density eta ⊆ M := by
   exact filter_subset _ _
 
+omit [DecidableEq E] in
 theorem nonextremeEdges_subset (M : Finset E) (density : E → Fin 2 → ℝ)
     (eta : ℝ) : nonextremeEdges M density eta ⊆ M := by
   exact filter_subset _ _
 
+omit [DecidableEq E] in
 /-- A pair with one density at least `eta` and the other equal to zero is
 unbalanced.  This is the exact inclusion used in Claim 6.18. -/
 theorem positiveZeroEdges_subset_unbalancedEdges
     (M : Finset E) (density : E → Fin 2 → ℝ) (eta : ℝ) (heta : 0 ≤ eta) :
     positiveZeroEdges M density eta ⊆ unbalancedEdges M density eta := by
+  classical
   intro e he
   rw [mem_positiveZeroEdges] at he
   rw [mem_unbalancedEdges]
@@ -101,7 +108,7 @@ variable {HostVertex : Type w} [Fintype HostVertex] [DecidableEq HostVertex]
 
 /-- Concrete local conclusion supplied by the regular-pair calculation on
 one matching edge.  These are neighbour counts, not an assumed copy. -/
-def LocallyHostsTree (T : SimpleGraph TreeVertex) (G : SimpleGraph HostVertex)
+def LocallyHostsTree (_T : SimpleGraph TreeVertex) (G : SimpleGraph HostVertex)
     [DecidableRel G.Adj] (CM : ClusterMatching E HostVertex)
     (rootImage : E → HostVertex) (e : E) : Prop :=
   Fintype.card TreeVertex ≤
@@ -109,10 +116,11 @@ def LocallyHostsTree (T : SimpleGraph TreeVertex) (G : SimpleGraph HostVertex)
     ∀ c d : Fin 2, c ≠ d → ∀ z ∈ CM.side e c,
       Fintype.card TreeVertex ≤ #{y ∈ CM.side e d | G.Adj z y}
 
+omit [DecidableEq E] [DecidableEq HostVertex] [DecidableEq TreeVertex] [Fintype HostVertex] in
 /-- One eligible edge of the cluster matching yields a genuine tree copy.
 The proof deliberately goes through the shared forest-matching theorem;
 for the singleton forest, its component copy is the requested copy of `T`. -/
-theorem exists_tree_copy_of_eligible_edge
+theorem exists_tree_copy_of_eligible_edge [Finite HostVertex]
     (T : SimpleGraph TreeVertex) (hT : T.IsTree) (root : TreeVertex)
     (G : SimpleGraph HostVertex) [DecidableRel G.Adj]
     (CM : ClusterMatching E HostVertex) (eligible : Finset E)
@@ -122,6 +130,7 @@ theorem exists_tree_copy_of_eligible_edge
       rootImage e ∉ CM.side p c)
     {e : E} (he : e ∈ eligible) : Nonempty (T.Copy G) := by
   classical
+  let := Fintype.ofFinite HostVertex
   let items : Finset Unit := {()}
   let A : Unit → Type v := fun _ ↦ TreeVertex
   let trees : ∀ i : Unit, SimpleGraph (A i) := fun _ ↦ T
@@ -145,6 +154,7 @@ theorem exists_tree_copy_of_eligible_edge
       simpa [rootImages] using hrootOutside e he p c
   exact ⟨hcopy.some.componentCopy () (by simp [items])⟩
 
+omit [DecidableEq HostVertex] [DecidableEq TreeVertex] [Fintype HostVertex] in
 /-- Copy-valued form of Zhao's Lemma 6.15.  The threshold `q` is `eta*k`
 in the paper.  The two alternatives are literally `|M_unbal| ≥ q` and
 `|M_nonex| ≥ q`.
@@ -152,7 +162,7 @@ in the paper.  The two alternatives are literally `|M_unbal| ≥ q` and
 All embedding input is pointwise graph data in `LocallyHostsTree`; in
 particular there is no hypothesis of the form "if the continuation
 conditions hold, then `T` embeds". -/
-theorem zhaoLemma615_concrete
+theorem zhaoLemma615_concrete [Finite HostVertex]
     (T : SimpleGraph TreeVertex) (hT : T.IsTree) (root : TreeVertex)
     (G : SimpleGraph HostVertex) [DecidableRel G.Adj]
     (CM : ClusterMatching E HostVertex) (M : Finset E)
@@ -169,6 +179,7 @@ theorem zhaoLemma615_concrete
       ∀ p : E, ∀ c : Fin 2, rootImage e ∉ CM.side p c) :
     Nonempty (T.Copy G) := by
   classical
+  let := Fintype.ofFinite HostVertex
   let eligible := unbalancedEdges M density eta ∪
     nonextremeEdges M density eta
   have heligPos : 0 < (eligible.card : ℝ) := by
@@ -266,8 +277,9 @@ private theorem toOrderedForestVertex_root
       ((P.componentEquiv i).symm ⟨P.roots i, P.root_mem i⟩)).1
   rw [Equiv.apply_symm_apply]
 
+omit [Fintype HostVertex] in
 /-- The no-oracle Lemma 6.14 endpoint used below. -/
-private theorem fullTreeContained_of_uniformPairs
+private theorem fullTreeContained_of_uniformPairs [Finite HostVertex]
     {T : SimpleGraph TreeVertex} [DecidableRel T.Adj]
     {globalRoot : TreeVertex} {small : ℕ}
     (P : ZhaoForestPartition T globalRoot small)
@@ -306,6 +318,8 @@ private theorem fullTreeContained_of_uniformPairs
             Erdos547b.RegularPair.cleanedSide G rho (Y p.1) (X p.1)) →
         G.Adj z (rootImage j)) :
     T.IsContained G := by
+  classical
+  let := Fintype.ofFinite HostVertex
   obtain ⟨Emb, hEroot, hEmem⟩ :=
     P.orderedForest.exists_embedding_over_disjoint_uniform_pairs
       G rootImage X Y hrootInjective hunif hrho hcapX hcapY hrootDegree
@@ -374,11 +388,12 @@ structure UniformCutForestData
           Erdos547b.RegularPair.cleanedSide G rho (Y p.1) (X p.1)) →
       G.Adj z (rootImage j)
 
+omit [Fintype HostVertex] in
 /-- Concise public form of the actual Lemma 6.15 embedding conclusion.  The
 threshold is `q = eta*k`; the input `data` provides only checked local
 regular-pair and root--parent adjacency facts for exceptional matching
 edges. -/
-theorem zhaoLemma615_full
+theorem zhaoLemma615_full [Finite HostVertex]
     (T : SimpleGraph TreeVertex) [DecidableRel T.Adj]
     (globalRoot : TreeVertex) (small : ℕ)
     (P : ZhaoForestPartition T globalRoot small)
@@ -391,6 +406,7 @@ theorem zhaoLemma615_full
         nonextremeEdges M density eta → UniformCutForestData P G) :
     T.IsContained G := by
   classical
+  let := Fintype.ofFinite HostVertex
   let eligible := unbalancedEdges M density eta ∪
     nonextremeEdges M density eta
   have heligPos : 0 < (eligible.card : ℝ) := by
@@ -410,6 +426,7 @@ theorem zhaoLemma615_full
     D.rootInjective D.uniform D.rho_le_one D.capX D.capY D.rootDegree
     D.rootOutside D.disjoint D.rootParentAdj D.sideParentAdj
 
+omit [Fintype HostVertex] in
 /-- Full Zhao-forest form of Lemma 6.15.  For every exceptional matching
 edge the hypotheses display the uniform slices, capacities and root images
 which Zhao obtains from Lemma 5.8 and then passes to Lemma 6.14.  The
@@ -418,7 +435,7 @@ embeds the literal cut forest and restores every deleted root--parent edge.
 
 Unlike a continuation interface, every premise below is either a numerical
 uniform-pair inequality, disjointness, or an ordinary host adjacency. -/
-theorem zhaoLemma615_full_of_uniformPairs
+theorem zhaoLemma615_full_of_uniformPairs [Finite HostVertex]
     (T : SimpleGraph TreeVertex) [DecidableRel T.Adj]
     (globalRoot : TreeVertex) (small : ℕ)
     (P : ZhaoForestPartition T globalRoot small)
@@ -479,6 +496,7 @@ theorem zhaoLemma615_full_of_uniformPairs
         G.Adj z (rootImage e j)) :
     T.IsContained G := by
   classical
+  let := Fintype.ofFinite HostVertex
   let eligible := unbalancedEdges M density eta ∪
     nonextremeEdges M density eta
   have heligPos : 0 < (eligible.card : ℝ) := by
@@ -521,14 +539,16 @@ def clusterMatchingDegree (M : Finset E) (endpoint : E → Fin 2 → K)
     (density : K → K → ℝ) (N : ℝ) (A : K) : ℝ :=
   ∑ e ∈ M, N * (density A (endpoint e 0) + density A (endpoint e 1))
 
+omit [DecidableEq HostVertex] [DecidableEq K] [DecidableEq TreeVertex] [Fintype HostVertex] [Fintype
+  K] in
 /-- Literal source-shaped wrapper for Lemma 6.15.  `hdegreeA` and
 `hdegreeB` are (6.14), while `hAB` is the adjacency of `A,B` in the reduced
 graph.  The host-side hypotheses explicitly discharge the regular-pair
 embedding step and the conclusion is a concrete copy of `T`. -/
-theorem zhaoLemma615_source
+theorem zhaoLemma615_source [Finite HostVertex]
     (T : SimpleGraph TreeVertex) (hT : T.IsTree) (root : TreeVertex)
     (G : SimpleGraph HostVertex) [DecidableRel G.Adj]
-    (R : SimpleGraph K) [DecidableRel R.Adj] (A B : K) (hAB : R.Adj A B)
+    (R : SimpleGraph K) (A B : K) (hAB : R.Adj A B)
     (CM : ClusterMatching E HostVertex) (M : Finset E)
     (endpoint : E → Fin 2 → K) (clusters : K → Finset HostVertex)
     (density : K → K → ℝ) (rootImage : E → HostVertex)
@@ -554,6 +574,8 @@ theorem zhaoLemma615_source
           nonextremeEdges M (fun e c ↦ density A (endpoint e c)) eta,
       ∀ p : E, ∀ c : Fin 2, rootImage e ∉ CM.side p c) :
     Nonempty (T.Copy G) := by
+  classical
+  let := Fintype.ofFinite HostVertex
   -- These source hypotheses identify the wrapper with Zhao's setting;
   -- the checked local graph counts are the part used by the copy constructor.
   have _ := hAB
@@ -565,18 +587,19 @@ theorem zhaoLemma615_source
     (fun e c ↦ density A (endpoint e c)) eta (eta * k) rootImage
     hthreshold hlarge hlocal hrootOutside
 
+omit [DecidableEq K] [Fintype HostVertex] [Fintype K] in
 /-- Source statement with the full cut-forest constructor.  This is the
 literal Lemma 6.15 configuration: `A,B` are adjacent, `M` is a matching on
 clusters outside them, (6.14) is stated verbatim, and the two exceptional
 families have the paper's threshold `eta*k`.  `data` is the concrete output
 of the preceding forest-allocation lemmas, expressed without an embedding
 or continuation field. -/
-theorem zhaoLemma615_source_full
+theorem zhaoLemma615_source_full [Finite HostVertex]
     {globalRoot : TreeVertex} {small : ℕ}
     (T : SimpleGraph TreeVertex) [DecidableRel T.Adj]
     (P : Erdos547b.TreePartition.ZhaoForestPartition T globalRoot small)
     (G : SimpleGraph HostVertex) [DecidableRel G.Adj]
-    (R : SimpleGraph K) [DecidableRel R.Adj] (A B : K) (hAB : R.Adj A B)
+    (R : SimpleGraph K) (A B : K) (hAB : R.Adj A B)
     (M : Finset E) (endpoint : E → Fin 2 → K)
     (density : K → K → ℝ) (eta d n N k : ℝ)
     (hmatchingAdj : ∀ e ∈ M, R.Adj (endpoint e 0) (endpoint e 1))
@@ -598,6 +621,8 @@ theorem zhaoLemma615_source_full
           nonextremeEdges M (fun e c ↦ density A (endpoint e c)) eta →
       UniformCutForestData P G) :
     T.IsContained G := by
+  classical
+  let := Fintype.ofFinite HostVertex
   have _ := hAB
   have _ := hmatchingAdj
   have _ := hmatchingDisjoint
@@ -616,10 +641,11 @@ variable {E : Type u} [DecidableEq E]
 variable {TreeVertex : Type v} [Fintype TreeVertex] [DecidableEq TreeVertex]
 variable {HostVertex : Type w} [Fintype HostVertex] [DecidableEq HostVertex]
 
+omit [DecidableEq HostVertex] [DecidableEq TreeVertex] [Fintype HostVertex] in
 /-- The small-`f_b` branch of the source proof.  Lemma 6.12 first reserves
 `M_b`; the hierarchy `2 d^(1/4) k < q` leaves an eligible edge outside that
 reserve, and the shared forest theorem constructs the tree copy there. -/
-theorem zhaoLemma615_small_branch_with_reserved_matching
+theorem zhaoLemma615_small_branch_with_reserved_matching [Finite HostVertex]
     (T : SimpleGraph TreeVertex) (hT : T.IsTree) (root : TreeVertex)
     (G : SimpleGraph HostVertex) [DecidableRel G.Adj]
     (CM : ClusterMatching E HostVertex) (M : Finset E)
@@ -639,7 +665,7 @@ theorem zhaoLemma615_small_branch_with_reserved_matching
       (1 - 10 * Real.sqrt d) * n)
     (hcardHierarchy : f_b + 3 * gamma * n + 2 * N ≤
       2 * Real.sqrt (Real.sqrt d) * ((1 - 10 * Real.sqrt d) * n))
-    (hq : 0 < q)
+    (_hq : 0 < q)
     (hreserveSmall : 2 * Real.sqrt (Real.sqrt d) * kNat < q)
     (hlarge : q ≤ ((unbalancedEdges M density eta).card : ℝ) ∨
       q ≤ ((nonextremeEdges M density eta).card : ℝ))
@@ -656,6 +682,7 @@ theorem zhaoLemma615_small_branch_with_reserved_matching
       ((M_b.card : ℕ) : ℝ) ≤ 2 * Real.sqrt (Real.sqrt d) * kNat ∧
       Nonempty (T.Copy G) := by
   classical
+  let := Fintype.ofFinite HostVertex
   obtain ⟨M_b, hMbM, hMbLower, hMbUpper, hMbCard⟩ :=
     Erdos547b.ZhaoLemma612.zhao_lemma_6_12_source_constants
       M contribution kNat f_b gamma n N d hmk hfb hgamma hn hN hd
@@ -693,10 +720,11 @@ variable {E : Type u} [DecidableEq E]
 variable {TreeVertex : Type v} [Fintype TreeVertex] [DecidableEq TreeVertex]
 variable {HostVertex : Type w} [Fintype HostVertex] [DecidableEq HostVertex]
 
+omit [DecidableEq HostVertex] [DecidableEq TreeVertex] [Fintype HostVertex] in
 /-- Lemma 6.13's balance conclusion with its formerly abstract embedding
 implication discharged by the concrete Lemma 6.15 constructor above.
 `hexcessForcesExceptional` is a purely numerical/cardinality assertion. -/
-theorem matching_balance_of_concrete_zhaoLemma615
+theorem matching_balance_of_concrete_zhaoLemma615 [Finite HostVertex]
     (T : SimpleGraph TreeVertex) (hT : T.IsTree) (root : TreeVertex)
     (G : SimpleGraph HostVertex) [DecidableRel G.Adj]
     (CM : ClusterMatching E HostVertex) (M : Finset E)
@@ -719,6 +747,8 @@ theorem matching_balance_of_concrete_zhaoLemma615
     (hnot : ¬ Nonempty (T.Copy G)) :
     ∀ S : Finset E, S ⊆ M →
       |(∑ e ∈ S, a e) - (∑ e ∈ S, b e)| < bound := by
+  classical
+  let := Fintype.ofFinite HostVertex
   apply Erdos547b.ZhaoStability.zhaoLemma613_matchingDegreeBalance
     M a b fb delta bound (Nonempty (T.Copy G)) htotal hfb
   · intro _hdelta hexcess
@@ -736,9 +766,10 @@ variable {E : Type u} [DecidableEq E]
 variable {TreeVertex : Type v} [Fintype TreeVertex] [DecidableEq TreeVertex]
 variable {HostVertex : Type w} [Fintype HostVertex] [DecidableEq HostVertex]
 
+omit [Fintype HostVertex] in
 /-- Claim 6.18 contrapositive using the full Zhao cut-forest embedding, not
 the one-pair specialization. -/
-theorem claim618_unbalanced_submatching_card_lt_full
+theorem claim618_unbalanced_submatching_card_lt_full [Finite HostVertex]
     (T : SimpleGraph TreeVertex) [DecidableRel T.Adj]
     (globalRoot : TreeVertex) (small : ℕ)
     (P : ZhaoForestPartition T globalRoot small)
@@ -750,6 +781,8 @@ theorem claim618_unbalanced_submatching_card_lt_full
         nonextremeEdges M density eta → UniformCutForestData P G)
     (hnot : ¬ T.IsContained G) :
     (S.card : ℝ) < q := by
+  classical
+  let := Fintype.ofFinite HostVertex
   have hSU : S ⊆ unbalancedEdges M density eta := by
     intro e he
     exact mem_unbalancedEdges.mpr ⟨hS he, hSunbalanced e he⟩
@@ -760,9 +793,10 @@ theorem claim618_unbalanced_submatching_card_lt_full
   exact hnot (zhaoLemma615_full T globalRoot small P G M density eta q hq
     (Or.inl hlarge) data)
 
+omit [Fintype HostVertex] in
 /-- One-positive/one-zero specialization of the preceding full Claim 6.18
 API. -/
-theorem claim618_positive_zero_card_lt_full
+theorem claim618_positive_zero_card_lt_full [Finite HostVertex]
     (T : SimpleGraph TreeVertex) [DecidableRel T.Adj]
     (globalRoot : TreeVertex) (small : ℕ)
     (P : ZhaoForestPartition T globalRoot small)
@@ -773,6 +807,8 @@ theorem claim618_positive_zero_card_lt_full
         nonextremeEdges M density eta → UniformCutForestData P G)
     (hnot : ¬ T.IsContained G) :
     ((positiveZeroEdges M density eta).card : ℝ) < q := by
+  classical
+  let := Fintype.ofFinite HostVertex
   apply claim618_unbalanced_submatching_card_lt_full
     T globalRoot small P G M (positiveZeroEdges M density eta)
       density eta q hq (filter_subset _ _)
@@ -782,10 +818,11 @@ theorem claim618_positive_zero_card_lt_full
   · exact data
   · exact hnot
 
+omit [DecidableEq HostVertex] [DecidableEq TreeVertex] [Fintype HostVertex] in
 /-- Contrapositive form used in Claim 6.18: if the tree is absent, every
 submatching consisting only of unbalanced pairs has cardinality below the
 Lemma 6.15 threshold. -/
-theorem claim618_unbalanced_submatching_card_lt
+theorem claim618_unbalanced_submatching_card_lt [Finite HostVertex]
     (T : SimpleGraph TreeVertex) (hT : T.IsTree) (root : TreeVertex)
     (G : SimpleGraph HostVertex) [DecidableRel G.Adj]
     (CM : ClusterMatching E HostVertex) (M S : Finset E)
@@ -801,6 +838,8 @@ theorem claim618_unbalanced_submatching_card_lt
       ∀ p : E, ∀ c : Fin 2, rootImage e ∉ CM.side p c)
     (hnot : ¬ Nonempty (T.Copy G)) :
     (S.card : ℝ) < q := by
+  classical
+  let := Fintype.ofFinite HostVertex
   have hSU : S ⊆ unbalancedEdges M density eta := by
     intro e he
     exact mem_unbalancedEdges.mpr ⟨hS he, hSunbalanced e he⟩
@@ -811,9 +850,10 @@ theorem claim618_unbalanced_submatching_card_lt
   exact hnot (zhaoLemma615_concrete T hT root G CM M density eta q rootImage hq
     (Or.inl hlarge) hlocal hrootOutside)
 
+omit [DecidableEq HostVertex] [DecidableEq TreeVertex] [Fintype HostVertex] in
 /-- The second use in Claim 6.18: pairs with endpoint densities at least
 `eta` and zero are a subfamily of `M_unbal`, so they obey the same bound. -/
-theorem claim618_positive_zero_card_lt
+theorem claim618_positive_zero_card_lt [Finite HostVertex]
     (T : SimpleGraph TreeVertex) (hT : T.IsTree) (root : TreeVertex)
     (G : SimpleGraph HostVertex) [DecidableRel G.Adj]
     (CM : ClusterMatching E HostVertex) (M : Finset E)
@@ -827,6 +867,8 @@ theorem claim618_positive_zero_card_lt
       ∀ p : E, ∀ c : Fin 2, rootImage e ∉ CM.side p c)
     (hnot : ¬ Nonempty (T.Copy G)) :
     ((positiveZeroEdges M density eta).card : ℝ) < q := by
+  classical
+  let := Fintype.ofFinite HostVertex
   exact claim618_unbalanced_submatching_card_lt T hT root G CM M
     (positiveZeroEdges M density eta) density eta q rootImage hq
     (filter_subset _ _)

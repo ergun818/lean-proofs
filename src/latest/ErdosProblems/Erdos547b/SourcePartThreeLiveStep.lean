@@ -12,7 +12,7 @@ live typicality. The resulting graph images are counted exactly, so the
 output invariant is about the actual remaining endpoint sets.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePartThreeLiveStep

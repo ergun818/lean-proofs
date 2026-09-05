@@ -24,7 +24,7 @@ still has an unused candidate.
 every non-root vertex.  The asymmetric `b ≠ root` condition is intentional:
 the induction never has to embed the distinguished root. -/
 private theorem exists_rooted_candidate_copy_aux
-    {A B : Type*} [Fintype A] [Fintype B] [DecidableEq B]
+    {A B : Type*} [Fintype A] [Finite B]
     (T : SimpleGraph A) (G : SimpleGraph B) [DecidableRel G.Adj]
     (n : ℕ) (hcard : Fintype.card A = n + 1) (hT : T.IsTree)
     (root : A) (candidate : A → Finset B) (rootImage : B)
@@ -35,6 +35,7 @@ private theorem exists_rooted_candidate_copy_aux
     ∃ f : T.Copy G, f root = rootImage ∧
       ∀ a, a ≠ root → f a ∈ candidate a := by
   classical
+  let := Fintype.ofFinite B
   induction n generalizing A with
   | zero =>
       have hsub : Subsingleton A := Fintype.card_le_one_iff_subsingleton.mp (by omega)
@@ -151,7 +152,7 @@ private theorem exists_rooted_candidate_copy_aux
             exact Subtype.ext_iff.mp hsub
       let f' : T.Copy G := ⟨⟨F, fun {a b} hab ↦ hF_adj hab⟩, hF_inj⟩
       refine ⟨f', ?_, ?_⟩
-      · show F root = rootImage
+      · change F root = rootImage
         simp only [F, dif_neg hxroot.symm]
         simpa [root'] using hfroot
       · intro a haroot
@@ -167,7 +168,7 @@ private theorem exists_rooted_candidate_copy_aux
 
 /-- Candidate-set form of the greedy rooted-tree embedding lemma. -/
 theorem exists_rooted_candidate_copy
-    {A B : Type*} [Fintype A] [Fintype B] [DecidableEq B]
+    {A B : Type*} [Fintype A] [Finite B]
     (T : SimpleGraph A) (G : SimpleGraph B) [DecidableRel G.Adj]
     (hT : T.IsTree) (root : A) (candidate : A → Finset B) (rootImage : B)
     (hroot : ∀ ⦃a⦄, T.Adj root a →
@@ -176,6 +177,8 @@ theorem exists_rooted_candidate_copy
       Fintype.card A ≤ #{w ∈ candidate b | G.Adj v w}) :
     ∃ f : T.Copy G, f root = rootImage ∧
       ∀ a, a ≠ root → f a ∈ candidate a := by
+  classical
+  let := Fintype.ofFinite B
   apply exists_rooted_candidate_copy_aux T G (Fintype.card A - 1)
   · have hpos : 0 < Fintype.card A :=
       Fintype.card_pos_iff.mpr hT.connected.nonempty
@@ -224,7 +227,7 @@ def hostCone {B : Type*} (G : SimpleGraph B) : SimpleGraph (Option B) where
 sets.  `rootedForestCone F roots` being a tree is the rooted-forest
 hypothesis; the `+ 1` is the harmless artificial cone vertex. -/
 theorem exists_forest_candidate_copy
-    {A B : Type*} [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B]
+    {A B : Type*} [Fintype A] [Finite B] [DecidableEq A]
     (F : SimpleGraph A) (G : SimpleGraph B) [DecidableRel G.Adj]
     (roots : Finset A) (hforest : (rootedForestCone F roots).IsTree)
     (candidate : A → Finset B)
@@ -233,6 +236,7 @@ theorem exists_forest_candidate_copy
       Fintype.card A + 1 ≤ #{w ∈ candidate b | G.Adj v w}) :
     ∃ f : F.Copy G, ∀ a, f a ∈ candidate a := by
   classical
+  let := Fintype.ofFinite B
   let candidateCone : Option A → Finset (Option B)
     | none => ∅
     | some a => (candidate a).image some
@@ -321,7 +325,7 @@ most `q` previously occupied target vertices may be forbidden.  This is the
 formal content of Zhao's notation that every prescribed image has `q`
 choices. -/
 theorem exists_forest_candidate_copy_avoiding
-    {A B : Type*} [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B]
+    {A B : Type*} [Fintype A] [Finite B] [DecidableEq A]
     (F : SimpleGraph A) (G : SimpleGraph B) [DecidableRel G.Adj]
     (roots : Finset A) (hforest : (rootedForestCone F roots).IsTree)
     (candidate : A → Finset B) (q : ℕ)
@@ -330,6 +334,8 @@ theorem exists_forest_candidate_copy_avoiding
       Fintype.card A + 1 + q ≤ #{w ∈ candidate b | G.Adj v w})
     (forbidden : Finset B) (hforbidden : #forbidden ≤ q) :
     ∃ f : F.Copy G, ∀ a, f a ∈ candidate a ∧ f a ∉ forbidden := by
+  classical
+  let := Fintype.ofFinite B
   let available : A → Finset B := fun a ↦ candidate a \ forbidden
   have havailSize : ∀ a ∈ roots,
       Fintype.card A + 1 ≤ #(available a) := by
@@ -365,11 +371,11 @@ vertices use `X1`, and odd-level vertices may use either `Y1` or `Z1`.
 The pointwise inequalities are precisely the invariant supplied by regular
 pair typicality after already occupied vertices have been removed. -/
 theorem lemma5_2_candidate_core
-    {A B : Type*} [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B]
+    {A B : Type*} [Fintype A] [Finite B] [DecidableEq A] [DecidableEq B]
     (F : SimpleGraph A) (G : SimpleGraph B) [DecidableRel G.Adj]
     (roots : Finset A) (hforest : (rootedForestCone F roots).IsTree)
     (level : A → ℕ) (hrootLevel : ∀ a ∈ roots, level a = 0)
-    (hparity : ∀ ⦃a b⦄, F.Adj a b → level a % 2 ≠ level b % 2)
+    (_hparity : ∀ ⦃a b⦄, F.Adj a b → level a % 2 ≠ level b % 2)
     (X0 X1 Y1 Z1 : Finset B)
     (hsize : Fintype.card A + 1 ≤ #X0)
     (hcross : ∀ ⦃a b⦄, F.Adj a b →
@@ -381,6 +387,8 @@ theorem lemma5_2_candidate_core
       (∀ a ∈ roots, f a ∈ X0) ∧
       (∀ a, a ∉ roots → level a % 2 = 0 → f a ∈ X1) ∧
       (∀ a, level a % 2 = 1 → f a ∈ Y1 ∪ Z1) := by
+  classical
+  let := Fintype.ofFinite B
   let candidate : A → Finset B := fun a =>
     if a ∈ roots then X0 else if level a % 2 = 0 then X1 else Y1 ∪ Z1
   obtain ⟨f, hf⟩ := exists_forest_candidate_copy F G roots hforest candidate (by
@@ -404,7 +412,7 @@ theorem lemma5_2_candidate_core
 arbitrary, so every odd-level vertex may independently be assigned to `Y1`
 or `Z1` before the local greedy embedding is run. -/
 theorem lemma5_2_selected_side_candidate_core
-    {A B : Type*} [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B]
+    {A B : Type*} [Fintype A] [Finite B] [DecidableEq A]
     (F : SimpleGraph A) (G : SimpleGraph B) [DecidableRel G.Adj]
     (roots : Finset A) (hforest : (rootedForestCone F roots).IsTree)
     (level : A → ℕ) (hrootLevel : ∀ a ∈ roots, level a = 0)
@@ -421,6 +429,8 @@ theorem lemma5_2_selected_side_candidate_core
       (∀ a, a ∉ roots → level a % 2 = 0 → f a ∈ X1) ∧
       (∀ a, level a % 2 = 1 →
         f a ∈ if side a = 0 then Y1 else Z1) := by
+  classical
+  let := Fintype.ofFinite B
   let candidate : A → Finset B := fun a =>
     if a ∈ roots then X0 else if level a % 2 = 0 then X1
       else if side a = 0 then Y1 else Z1
@@ -447,7 +457,7 @@ embedded in `C0`; all remaining vertices are embedded in the matching layer
 `M0`.  This is the exact online invariant used after Lemma 5.9's aggregate
 cluster-degree hypotheses have supplied the pointwise candidate bounds. -/
 theorem lemma5_9_three_layer_candidate_core
-    {A B : Type*} [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B]
+    {A B : Type*} [Fintype A] [Finite B] [DecidableEq A]
     (F : SimpleGraph A) (G : SimpleGraph B) [DecidableRel G.Adj]
     (roots special : Finset A) (hforest : (rootedForestCone F roots).IsTree)
     (level : A → ℕ) (hrootLevel : ∀ a ∈ roots, level a = 0)
@@ -463,6 +473,8 @@ theorem lemma5_9_three_layer_candidate_core
       (∀ a ∈ roots, f a ∈ A0) ∧
       (∀ a, level a = 1 ∨ a ∈ special → f a ∈ C0) ∧
       (∀ a, a ∉ roots → level a ≠ 1 → a ∉ special → f a ∈ M0) := by
+  classical
+  let := Fintype.ofFinite B
   let candidate : A → Finset B := fun a =>
     if a ∈ roots then A0 else if level a = 1 ∨ a ∈ special then C0 else M0
   obtain ⟨f, hf⟩ := exists_forest_candidate_copy F G roots hforest candidate (by

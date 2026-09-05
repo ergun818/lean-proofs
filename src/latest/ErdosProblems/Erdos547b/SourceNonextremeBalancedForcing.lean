@@ -10,7 +10,7 @@ the actual half-count target, and the Appendix gain is at least the
 unbalanced gain. No Claim-6.8 mass estimate is needed for this step.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceNonextremeBalancedForcing
@@ -86,7 +86,8 @@ theorem exists_treeCopy_of_largeNonextremeBalanced
   apply exists_treeCopy_of_largeExceptionalSaving W Q S hT P hα hα1 hhost horder hcard s
     F0.selected (F0.selected_available.trans (Finset.filter_subset _ _)) (.appendix (eta α : ℝ))
     (eta_appendix_valid hα hα1)
-    (fun i hi => balancedSide_nontrivial P s ((α : ℝ) / 16) (by positivity) i (F0.selected_available hi))
+    (fun i hi => balancedSide_nontrivial P s ((α : ℝ) / 16) (by positivity) i (F0.selected_available
+      hi))
     E0 (hE0.trans (nonextremeEdges_subset _ _ _))
   · intro e he c
     have h := (mem_nonextremeEdges.mp (hE0 he)).2
@@ -110,7 +111,8 @@ theorem exists_treeCopy_of_smallNonextremeBalanced
     (hroots : (P.numParts : ℝ) ≤ (epsilon α : ℝ) * W.clusterSize) :
     Nonempty (T.Copy (embeddingHost W)) := by
   obtain ⟨Eb, hEb, hbudgetb, _hupperb, _hcountb, hhalf, hcost⟩ := exists_smallReservation W Q S
-    hα hα1 hhost horder (otherSide s) (branchMass P (sideBranches P (otherSide s))) (Nat.cast_nonneg _) hother
+    hα hα1 hhost horder (otherSide s) (branchMass P (sideBranches P (otherSide s))) (Nat.cast_nonneg
+      _) hother
   obtain ⟨E0, hE0, h0b, hcount⟩ := exists_subset_exceptionalCount_avoiding W hα
     (nonextremeAway W Q S s) Eb hfamily hhalf
   obtain ⟨F0, hbudget⟩ := exists_balancedSelection_with_appendixBudget W Q S P hα hα1
@@ -119,7 +121,8 @@ theorem exists_treeCopy_of_smallNonextremeBalanced
   apply exists_treeCopy_of_smallExceptionalSaving W Q S hT P hα hα1 hhost horder hcard s
     F0.selected (F0.selected_available.trans (Finset.filter_subset _ _)) (.appendix (eta α : ℝ))
     (eta_appendix_valid hα hα1)
-    (fun i hi => balancedSide_nontrivial P s ((α : ℝ) / 16) (by positivity) i (F0.selected_available hi))
+    (fun i hi => balancedSide_nontrivial P s ((α : ℝ) / 16) (by positivity) i (F0.selected_available
+      hi))
     E0 Eb (hE0.trans (nonextremeEdges_subset _ _ _)) hEb h0b
   · intro e he c
     have h := (mem_nonextremeEdges.mp (hE0 he)).2
@@ -135,6 +138,9 @@ theorem exists_treeCopy_of_smallNonextremeBalanced
 
 end Erdos547b.ZhaoSourceNonextremeBalancedForcing
 
-#print axioms Erdos547b.ZhaoSourceNonextremeBalancedForcing.exists_balancedSelection_with_appendixBudget
-#print axioms Erdos547b.ZhaoSourceNonextremeBalancedForcing.exists_treeCopy_of_largeNonextremeBalanced
-#print axioms Erdos547b.ZhaoSourceNonextremeBalancedForcing.exists_treeCopy_of_smallNonextremeBalanced
+open Erdos547b.ZhaoSourceNonextremeBalancedForcing in
+#print axioms exists_balancedSelection_with_appendixBudget
+open Erdos547b.ZhaoSourceNonextremeBalancedForcing in
+#print axioms exists_treeCopy_of_largeNonextremeBalanced
+open Erdos547b.ZhaoSourceNonextremeBalancedForcing in
+#print axioms exists_treeCopy_of_smallNonextremeBalanced

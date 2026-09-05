@@ -17,7 +17,6 @@ source statement.
 namespace Erdos547b.ZhaoLemma77
 
 open Finset SimpleGraph
-open scoped Classical
 
 universe u
 
@@ -27,10 +26,12 @@ variable {V : Type u}
 def IsLeaf (T : SimpleGraph V) [T.LocallyFinite] (v : V) : Prop :=
   T.degree v = 1
 
+open scoped Classical in
 /-- The finite set of all leaves. -/
 noncomputable def leaves [Fintype V] (T : SimpleGraph V) [T.LocallyFinite] : Finset V :=
   Finset.univ.filter (IsLeaf T)
 
+open scoped Classical in
 /-- Leaves lying in a specified part. -/
 noncomputable def leavesIn [Fintype V] (T : SimpleGraph V) [T.LocallyFinite]
     (U : Finset V) : Finset V :=
@@ -45,11 +46,13 @@ noncomputable def leavesIn [Fintype V] (T : SimpleGraph V) [T.LocallyFinite]
     v ∈ leavesIn T U ↔ v ∈ U ∧ IsLeaf T v := by
   simp [leavesIn]
 
+open scoped Classical in
 theorem leavesIn_eq_inter [Fintype V] (T : SimpleGraph V) [T.LocallyFinite]
     (U : Finset V) : leavesIn T U = U ∩ leaves T := by
   ext v
   simp
 
+open scoped Classical in
 /-- A genuine bipartition covering every vertex of the tree. -/
 structure IsVertexBipartition [Fintype V] (T : SimpleGraph V)
     (A B : Finset V) : Prop where
@@ -63,19 +66,20 @@ theorem IsVertexBipartition.disjoint [Fintype V] {T : SimpleGraph V}
 theorem IsVertexBipartition.card_add_card [Fintype V] {T : SimpleGraph V}
     {A B : Finset V} (h : IsVertexBipartition T A B) :
     A.card + B.card = Fintype.card V := by
+  classical
   rw [← Finset.card_univ, ← h.cover, Finset.card_union_of_disjoint h.disjoint]
 
 theorem IsVertexBipartition.symm [Fintype V] {T : SimpleGraph V}
     {A B : Finset V} (h : IsVertexBipartition T A B) :
-    IsVertexBipartition T B A :=
-  ⟨h.bipartite.symm, by rw [Finset.union_comm, h.cover]⟩
+    IsVertexBipartition T B A := by
+  classical
+  exact ⟨h.bipartite.symm, by rw [Finset.union_comm, h.cover]⟩
 
 theorem IsVertexBipartition.right_independent [Fintype V] {T : SimpleGraph V}
     {A B : Finset V} (h : IsVertexBipartition T A B) :
     T.IsIndepSet (B : Set V) := by
   rw [SimpleGraph.isIndepSet_iff]
-  intro x hx y hy hxy
-  intro hadj
+  intro x hx y hy hxy hadj
   rcases h.bipartite.mem_of_adj hadj with hAB | hBA
   · exact (Set.disjoint_left.mp h.bipartite.disjoint hAB.1) hx
   · exact (Set.disjoint_left.mp h.bipartite.disjoint hBA.2) hy
@@ -119,16 +123,17 @@ theorem rootBipartition [Fintype V] (T : SimpleGraph V) (hT : T.IsTree) (r : V) 
       by_cases hx : T.dist r x % 2 = 0
       · left
         have hy : T.dist r y % 2 = 1 := by omega
-        simpa [evenPart, oddPart, hx, hy]
+        simp [evenPart, oddPart, hx, hy]
       · right
         have hx' : T.dist r x % 2 = 1 := by omega
         have hy : T.dist r y % 2 = 0 := by omega
-        simpa [evenPart, oddPart, hx', hy]
+        simp [evenPart, oddPart, hx', hy]
   · ext v
     simp only [Finset.mem_union, evenPart, oddPart, Finset.mem_filter,
       Finset.mem_univ, true_and]
     exact iff_true_intro (Nat.mod_two_eq_zero_or_one _)
 
+open scoped Classical in
 /-- A leaf has a unique neighbour. -/
 theorem existsUnique_neighbor_of_isLeaf [Fintype V] {T : SimpleGraph V} {v : V}
     (hv : IsLeaf T v) : ∃! w, T.Adj v w := by
@@ -136,21 +141,25 @@ theorem existsUnique_neighbor_of_isLeaf [Fintype V] {T : SimpleGraph V} {v : V}
   rw [SimpleGraph.degree_eq_one_iff_existsUnique_adj] at hv
   exact hv
 
+open scoped Classical in
 /-- The unique neighbour of a leaf.  Its value away from leaves is immaterial. -/
 noncomputable def leafParent [Fintype V] (T : SimpleGraph V) (v : V) : V :=
   if hv : IsLeaf T v then (existsUnique_neighbor_of_isLeaf hv).exists.choose else v
 
+open scoped Classical in
 theorem leafParent_adj [Fintype V] {T : SimpleGraph V} {v : V}
     (hv : IsLeaf T v) : T.Adj v (leafParent T v) := by
   rw [leafParent, dif_pos hv]
   exact (existsUnique_neighbor_of_isLeaf hv).exists.choose_spec
 
+open scoped Classical in
 theorem eq_leafParent_of_adj [Fintype V] {T : SimpleGraph V} {v w : V}
     (hv : IsLeaf T v) (hvw : T.Adj v w) : w = leafParent T v := by
   rw [leafParent, dif_pos hv]
   exact (existsUnique_neighbor_of_isLeaf hv).unique hvw
     (existsUnique_neighbor_of_isLeaf hv).exists.choose_spec
 
+open scoped Classical in
 /-- Parents of a finite family of leaves. -/
 noncomputable def leafParents [Fintype V] (T : SimpleGraph V) (W : Finset V) : Finset V :=
   W.image (leafParent T)
@@ -159,17 +168,20 @@ noncomputable def leafParents [Fintype V] (T : SimpleGraph V) (W : Finset V) : F
     y ∈ leafParents T W ↔ ∃ z ∈ W, leafParent T z = y := by
   simp [leafParents]
 
+open scoped Classical in
 /-- The second class after Zhao's Case-a flip: delete the parents of the
 selected leaves from `B`, and insert the leaves themselves. -/
 noncomputable def leafFlipRight [Fintype V] (T : SimpleGraph V)
     (B W : Finset V) : Finset V :=
   (B \ leafParents T W) ∪ W
 
+open scoped Classical in
 /-- Complementary class after the same flip. -/
 noncomputable def leafFlipLeft [Fintype V] (T : SimpleGraph V)
-    (A B W : Finset V) : Finset V :=
+    (_A B W : Finset V) : Finset V :=
   Finset.univ \ leafFlipRight T B W
 
+open scoped Classical in
 theorem leafFlip_partition [Fintype V] (T : SimpleGraph V) (A B W : Finset V) :
     Disjoint (leafFlipLeft T A B W) (leafFlipRight T B W) ∧
       leafFlipLeft T A B W ∪ leafFlipRight T B W = Finset.univ := by
@@ -181,6 +193,7 @@ theorem leafFlip_partition [Fintype V] (T : SimpleGraph V) (A B W : Finset V) :
     exact hx hxr
   · simp [leafFlipLeft]
 
+open scoped Classical in
 /-- The key graph-theoretic point in Zhao's Case-a flip.  If `W` consists of
 leaves in the left class of a bipartition, then replacing their parents in the
 right class by the leaves leaves the right class independent. -/
@@ -210,6 +223,7 @@ theorem leafFlipRight_independent [Fintype V]
     have hyA : y ∈ A := (mem_leavesIn.mp (hW hy)).1
     exact hpart.left_independent hxA hyA hxy hAdj
 
+open scoped Classical in
 /-- No selected leaf is also one of the selected parents (the two sets lie in
 opposite bipartition classes). -/
 theorem disjoint_leafParents_selectedLeaves [Fintype V]
@@ -233,6 +247,7 @@ theorem card_leafParents_le [Fintype V] (T : SimpleGraph V) (W : Finset V) :
   classical
   simpa only [leafParents] using (Finset.card_image_le (s := W) (f := leafParent T))
 
+open scoped Classical in
 /-- The leaf flip never decreases the size of the right class: each removed
 parent is paid for by at least one selected leaf. -/
 theorem card_right_le_card_leafFlipRight [Fintype V]
@@ -261,6 +276,7 @@ theorem card_right_le_card_leafFlipRight [Fintype V]
   have hparents := card_leafParents_le T W
   omega
 
+open scoped Classical in
 /-- Zhao Definition 7.6(1), with `q` standing for the rounded value of
 `sqrt(theta) n`. -/
 structure IsIdealPartition [Fintype V] (q : ℕ) (T : SimpleGraph V)
@@ -271,6 +287,7 @@ structure IsIdealPartition [Fintype V] (q : ℕ) (T : SimpleGraph V)
   left_leaves : 5 * q ≤ (leavesIn T U₁).card
   right_leaves : 2 * q ≤ (leavesIn T U₂).card
 
+open scoped Classical in
 /-- Zhao Definition 7.6(2).  The last field is the root-free equivalent of
 "a leaf `z` in `U₁` whose parent `y` in `U₂` has degree two": a leaf has a
 unique neighbour, so that neighbour is its parent for every rooting away from
@@ -291,6 +308,7 @@ two possible displayed bipartitions differ only by swapping the sides, hence
 this is Zhao's `g(T)`. -/
 def bipartitionGap (A B : Finset V) : ℕ := Nat.dist A.card B.card
 
+open scoped Classical in
 /-- The canonical bipartition itself is ideal as soon as its smaller side and
 larger side already contain the required numbers of leaves.  This is the
 first branch of Zhao's proof of Lemma 7.7. -/
@@ -302,6 +320,7 @@ theorem ideal_of_bipartition_leaf_bounds [Fintype V]
     IsIdealPartition q T A B := by
   exact ⟨⟨hpart.disjoint, hpart.cover⟩, hcard, hpart.right_independent, hA, hB⟩
 
+open scoped Classical in
 /-- The leaf sets in the two classes of a vertex bipartition partition the
 full leaf set. -/
 theorem leavesIn_union_leavesIn [Fintype V]
@@ -315,10 +334,11 @@ theorem leavesIn_union_leavesIn [Fintype V]
   · intro hv
     have hvLeaf : IsLeaf T v := mem_leaves.mp hv
     have hvAB : v ∈ A ∨ v ∈ B := by
-      have : v ∈ A ∪ B := by simpa [hpart.cover]
+      have : v ∈ A ∪ B := by simp [hpart.cover]
       simpa using this
     simpa [hvLeaf] using hvAB
 
+open scoped Classical in
 theorem disjoint_leavesIn_of_bipartition [Fintype V]
     (T : SimpleGraph V) (A B : Finset V)
     (hpart : IsVertexBipartition T A B) :
@@ -327,6 +347,7 @@ theorem disjoint_leavesIn_of_bipartition [Fintype V]
     Finset.disjoint_of_subset_right (by intro v hv; exact (mem_leavesIn.mp hv).1)
       hpart.disjoint
 
+open scoped Classical in
 theorem card_leaves_eq_card_leavesIn_add [Fintype V]
     (T : SimpleGraph V) (A B : Finset V)
     (hpart : IsVertexBipartition T A B) :
@@ -334,6 +355,7 @@ theorem card_leaves_eq_card_leavesIn_add [Fintype V]
   rw [← leavesIn_union_leavesIn T A B hpart,
     Finset.card_union_of_disjoint (disjoint_leavesIn_of_bipartition T A B hpart)]
 
+open scoped Classical in
 /-- Zhao Lemma 7.7, Case (a): when the larger bipartition class has fewer
 than `2q` leaves, flip `2q` leaves from the smaller class together with their
 parents.  The generous constant `33` leaves more than enough leaves on the
@@ -393,6 +415,7 @@ theorem exists_ideal_of_right_leaf_deficit [Fintype V]
   exact ⟨U₁, U₂,
     ⟨hPartition, hUcard, hIndep, hLeftLeaves, hRightLeaves⟩⟩
 
+open scoped Classical in
 /-- Complete, assumption-free reduction of Lemma 7.7 to Zhao's hard natural-
 subtree branch.  Once the bipartition is oriented with `A` no larger than
 `B`, every case except `A` having fewer than `5q` leaves is discharged by the
@@ -500,18 +523,20 @@ def HasSingleOutsideBoundaryAttachment
 noncomputable def naturalComplement [Fintype V] (U : Finset V) (x : V) : Finset V :=
   by classical exact insert x (Finset.univ \ U)
 
-@[simp] theorem mem_naturalComplement [Fintype V] [DecidableEq V]
+@[simp] theorem mem_naturalComplement [Fintype V]
     {U : Finset V} {x v : V} :
     v ∈ naturalComplement U x ↔ v = x ∨ v ∉ U := by
+  classical
   simp [naturalComplement]
 
 /-- First-threshold crossing for a finite family of weights. -/
 theorem exists_subset_sum_in_half_open_interval
-    {α : Type*} [DecidableEq α] (q : ℕ) (hq : 0 < q)
+    {α : Type*} (q : ℕ) (hq : 0 < q)
     (s : Finset α) (w : α → ℕ)
     (hsmall : ∀ a ∈ s, w a < q)
     (htotal : q ≤ ∑ a ∈ s, w a) :
     ∃ t ⊆ s, q ≤ ∑ a ∈ t, w a ∧ ∑ a ∈ t, w a < 2 * q := by
+  classical
   let xs := s.toList
   let weights := xs.map w
   let P : ℕ → Prop := fun i => q ≤ (weights.take i).sum
@@ -667,7 +692,7 @@ theorem leavesIn_rootedDescendants_eq_biUnion [Fintype V] [DecidableEq V]
     exact rootedDescendants_mono_of_child hT (mem_children.mp hyChild)
       (mem_leavesIn.mp hzLeaf).1
 
-theorem card_leavesIn_rootedDescendants_eq_sum [Fintype V] [DecidableEq V]
+theorem card_leavesIn_rootedDescendants_eq_sum [Fintype V]
     {T : SimpleGraph V} (hT : T.IsTree) {r x : V}
     (hx : ¬IsLeaf T x) :
     (leavesIn T (rootedDescendants T r x)).card =
@@ -972,23 +997,26 @@ boundary and leaf facts delivered by the chosen natural subtree.
 namespace Erdos547b.ZhaoLemma77HardCase
 
 open Finset SimpleGraph
-open scoped Classical
 
 noncomputable section
 
 universe u
 variable {V : Type u}
 
+open scoped Classical in
 @[simp] theorem mem_leavesIn' [Fintype V] {T : SimpleGraph V}
     {U : Finset V} {x : V} : x ∈ leavesIn T U ↔ x ∈ U ∧ IsLeaf T x := by
   simp [leavesIn]
 
+open scoped Classical in
 def flipFirst (E O S : Finset V) : Finset V :=
   (E \ S) ∪ (O ∩ S)
 
+open scoped Classical in
 def flipSecond (E O S : Finset V) : Finset V :=
   (O \ S) ∪ (E ∩ S)
 
+open scoped Classical in
 theorem flip_union (E O S : Finset V) :
     flipFirst E O S ∪ flipSecond E O S = E ∪ O := by
   ext x
@@ -1008,6 +1036,7 @@ theorem flip_disjoint {E O S : Finset V} (hEO : Disjoint E O) :
   · exact hxO'.2 hxO.2
   · exact hEO hxE'.1 hxO.1
 
+open scoped Classical in
 theorem card_flipFirst {E O S : Finset V} (hEO : Disjoint E O) :
     (flipFirst E O S).card =
       E.card - (E ∩ S).card + (O ∩ S).card := by
@@ -1018,6 +1047,7 @@ theorem card_flipFirst {E O S : Finset V} (hEO : Disjoint E O) :
   rw [flipFirst, Finset.card_union_of_disjoint hd, Finset.card_sdiff,
     Finset.inter_comm S E]
 
+open scoped Classical in
 theorem card_flipSecond {E O S : Finset V} (hEO : Disjoint E O) :
     (flipSecond E O S).card =
       O.card - (O ∩ S).card + (E ∩ S).card := by
@@ -1028,6 +1058,7 @@ theorem card_flipSecond {E O S : Finset V} (hEO : Disjoint E O) :
   rw [flipSecond, Finset.card_union_of_disjoint hd, Finset.card_sdiff,
     Finset.inter_comm S O]
 
+open scoped Classical in
 theorem card_flip_difference {E O S : Finset V} (hEO : Disjoint E O) :
     ((flipFirst E O S).card : ℤ) - (flipSecond E O S).card =
       ((E.card : ℤ) - O.card) +
@@ -1056,6 +1087,7 @@ theorem flipSecond_isIndepSet {T : SimpleGraph V} {E O S : Finset V}
   · exact hcross hxE.1 hxE.2 hyO.1 hyO.2
   · exact hE hxE.1 hyE.1 hxy
 
+open scoped Classical in
 structure NaturalSplit [Fintype V] (l : ℕ) (T : SimpleGraph V)
     (E O S : Finset V) (r : V) : Prop where
   root_mem : r ∈ S
@@ -1066,6 +1098,7 @@ structure NaturalSplit [Fintype V] (l : ℕ) (T : SimpleGraph V)
   inner_odd_leaves : 6 * l + 1 ≤ (leavesIn T (O ∩ S)).card
   outer_odd_leaves : 6 * l + 1 ≤ (leavesIn T (O \ S)).card
 
+open scoped Classical in
 structure IsIdealPartition [Fintype V] (l : ℕ) (T : SimpleGraph V)
     (U₁ U₂ : Finset V) : Prop where
   partition : Disjoint U₁ U₂ ∧ U₁ ∪ U₂ = Finset.univ
@@ -1074,6 +1107,7 @@ structure IsIdealPartition [Fintype V] (l : ℕ) (T : SimpleGraph V)
   left_leaves : 5 * l ≤ (leavesIn T U₁).card
   right_leaves : 2 * l ≤ (leavesIn T U₂).card
 
+open scoped Classical in
 /-- Everything in a near-ideal partition except the final special degree-two
 leaf.  Zhao's Fact-6.9 pruning argument supplies that leaf or turns this core
 into an ideal partition by the three-vertex flip. -/
@@ -1087,12 +1121,14 @@ structure NearIdealCore [Fintype V] (l n : ℕ) (T : SimpleGraph V)
   left_leaves : 6 * l + 1 ≤ (leavesIn T U₁).card
   right_leaves : 6 * l + 1 ≤ (leavesIn T U₂).card
 
+open scoped Classical in
 theorem leavesIn_mono [Fintype V] (T : SimpleGraph V) {A B : Finset V}
     (hAB : A ⊆ B) : leavesIn T A ⊆ leavesIn T B := by
   intro x hx
   have h := mem_leavesIn'.mp hx
   exact mem_leavesIn'.mpr ⟨hAB h.1, h.2⟩
 
+open scoped Classical in
 theorem card_leavesIn_flipFirst_of_inner [Fintype V]
     (T : SimpleGraph V) (E O S : Finset V) :
     (leavesIn T (O ∩ S)).card ≤ (leavesIn T (flipFirst E O S)).card := by
@@ -1100,6 +1136,7 @@ theorem card_leavesIn_flipFirst_of_inner [Fintype V]
   apply leavesIn_mono T
   exact Finset.subset_union_right
 
+open scoped Classical in
 theorem card_leavesIn_flipSecond_of_outer [Fintype V]
     (T : SimpleGraph V) (E O S : Finset V) :
     (leavesIn T (O \ S)).card ≤ (leavesIn T (flipSecond E O S)).card := by
@@ -1144,6 +1181,7 @@ theorem flipSecond_indep_of_outside_boundary [Fintype V]
   intro e o heE heS hoO hoS heo
   exact hrO ((hboundary heo heS hoS) ▸ hoO)
 
+open scoped Classical in
 theorem naturalSplit_inner_leaves_after_delete_root [Fintype V]
     {l : ℕ} {T : SimpleGraph V} {E O S : Finset V} {r : V}
     (h : NaturalSplit l T E O S r) :
@@ -1162,6 +1200,7 @@ theorem naturalSplit_inner_leaves_after_delete_root [Fintype V]
   subst x
   exact h.root_not_leaf hxp.2
 
+open scoped Classical in
 theorem naturalSplit_outer_leaves_after_delete_root [Fintype V]
     {l : ℕ} {T : SimpleGraph V} {E O S : Finset V} {r : V}
     (h : NaturalSplit l T E O S r) :
@@ -1173,6 +1212,7 @@ theorem naturalSplit_outer_leaves_after_delete_root [Fintype V]
   have hx' := Finset.mem_sdiff.mp hx
   exact Finset.mem_sdiff.mpr ⟨hx'.1, fun hxS0 => hx'.2 (Finset.mem_sdiff.mp hxS0).1⟩
 
+open scoped Classical in
 theorem flipped_partition [Fintype V] {T : SimpleGraph V}
     {E O S : Finset V} (hpart : IsProperBipartition T E O) :
     Disjoint (flipFirst E O S) (flipSecond E O S) ∧
@@ -1184,6 +1224,7 @@ theorem flipped_partition [Fintype V] {T : SimpleGraph V}
   have hx := Set.ext_iff.mp hpart.cover x
   simpa using hx
 
+open scoped Classical in
 theorem nearCore_of_succ [Fintype V] {l n : ℕ} {T : SimpleGraph V}
     {U₁ U₂ : Finset V}
     (hcardV : Fintype.card V = n + 1)
@@ -1206,13 +1247,14 @@ theorem nearCore_of_succ [Fintype V] {l n : ℕ} {T : SimpleGraph V}
       left_leaves := hl₁
       right_leaves := hl₂ }
 
+open scoped Classical in
 /-- The full nonexceptional flip calculation and the exact parity-one
 exceptional output in Zhao's Case (b). -/
 theorem case_b_ideal_or_nearCore [Fintype V]
     (l n : ℕ) (T : SimpleGraph V) (E O S : Finset V) (r : V)
     (hcardV : Fintype.card V = n + 1)
     (hpart : IsProperBipartition T E O) (hEO : E.card ≤ O.card)
-    (hgap : O.card - E.card < 2 * l + 1)
+    (_hgap : O.card - E.card < 2 * l + 1)
     (hsplit : NaturalSplit l T E O S r) :
     (∃ U₁ U₂, IsIdealPartition l T U₁ U₂) ∨
       ((∃ U₁ U₂, NearIdealCore l n T U₁ U₂) ∧
@@ -1572,7 +1614,6 @@ main Lemma 7.7 development without importing scratch modules.
 namespace Erdos547b.ZhaoLemma77Rooted
 
 open Finset SimpleGraph
-open scoped Classical
 
 noncomputable section
 
@@ -1583,6 +1624,7 @@ variable {V : Type u}
 def IsLeaf (T : SimpleGraph V) [T.LocallyFinite] (v : V) : Prop :=
   T.degree v = 1
 
+open scoped Classical in
 noncomputable def leavesIn [Fintype V] (T : SimpleGraph V) [T.LocallyFinite]
     (U : Finset V) : Finset V :=
   U.filter (IsLeaf T)
@@ -1592,6 +1634,7 @@ noncomputable def leavesIn [Fintype V] (T : SimpleGraph V) [T.LocallyFinite]
     v ∈ leavesIn T U ↔ v ∈ U ∧ IsLeaf T v := by
   simp [leavesIn]
 
+open scoped Classical in
 structure IsIdealPartition [Fintype V] (l : ℕ) (T : SimpleGraph V)
     (U₁ U₂ : Finset V) : Prop where
   partition : Disjoint U₁ U₂ ∧ U₁ ∪ U₂ = Finset.univ
@@ -1600,6 +1643,7 @@ structure IsIdealPartition [Fintype V] (l : ℕ) (T : SimpleGraph V)
   left_leaves : 5 * l ≤ (leavesIn T U₁).card
   right_leaves : 2 * l ≤ (leavesIn T U₂).card
 
+open scoped Classical in
 structure IsNearIdealPartition [Fintype V] (l n : ℕ) (T : SimpleGraph V)
     (U₁ U₂ : Finset V) : Prop where
   partition : Disjoint U₁ U₂ ∧ U₁ ∪ U₂ = Finset.univ
@@ -1612,30 +1656,36 @@ structure IsNearIdealPartition [Fintype V] (l n : ℕ) (T : SimpleGraph V)
   special_leaf : ∃ z ∈ U₁, IsLeaf T z ∧
     ∃ y ∈ U₂, T.Adj y z ∧ T.degree y = 2
 
+open scoped Classical in
 /-- `y` has exactly one neighbour which is not a leaf.  This is the
 intermediate conclusion Zhao obtains from Fact 6.9 in the exceptional parity
 case. -/
 def HasExactlyOneNonleafNeighbor [Fintype V] (T : SimpleGraph V) (y : V) : Prop :=
   ∃! x : V, T.Adj y x ∧ ¬ IsLeaf T x
 
+open scoped Classical in
 /-- The nonleaf neighbours of a vertex. -/
 noncomputable def nonleafNeighbors [Fintype V] (T : SimpleGraph V)
     (y : V) : Finset V :=
   (T.neighborFinset y).filter fun x => ¬ IsLeaf T x
 
+open scoped Classical in
 /-- The leaf neighbours of a vertex. -/
 noncomputable def leafNeighbors [Fintype V] (T : SimpleGraph V)
     (y : V) : Finset V :=
   (T.neighborFinset y).filter (IsLeaf T)
 
+open scoped Classical in
 @[simp] theorem mem_nonleafNeighbors [Fintype V] {T : SimpleGraph V} {x y : V} :
     x ∈ nonleafNeighbors T y ↔ T.Adj y x ∧ ¬ IsLeaf T x := by
   simp [nonleafNeighbors]
 
+open scoped Classical in
 @[simp] theorem mem_leafNeighbors [Fintype V] {T : SimpleGraph V} {x y : V} :
     x ∈ leafNeighbors T y ↔ T.Adj y x ∧ IsLeaf T x := by
   simp [leafNeighbors]
 
+open scoped Classical in
 theorem card_leafNeighbors_add_card_nonleafNeighbors [Fintype V]
     (T : SimpleGraph V) (y : V) :
     (leafNeighbors T y).card + (nonleafNeighbors T y).card = T.degree y := by
@@ -1657,6 +1707,7 @@ theorem card_leafNeighbors_add_card_nonleafNeighbors [Fintype V]
     exact (mem_nonleafNeighbors.mp hxN).2 (mem_leafNeighbors.mp hxL).2
   rw [← Finset.card_union_of_disjoint hd, hu]
 
+open scoped Classical in
 /-- If a nonleaf vertex of degree other than two has at most one nonleaf
 neighbour and is adjacent to a specified leaf, then it has another leaf
 neighbour.  This includes the zero-nonleaf-neighbour case omitted by the
@@ -1685,6 +1736,7 @@ theorem exists_second_leaf_neighbor_of_card_nonleaf_le_one [Fintype V]
   have hz'Leaf := mem_leafNeighbors.mp hz'Parts.1
   exact ⟨z', by simpa using hz'Parts.2, hz'Leaf.1, hz'Leaf.2⟩
 
+open scoped Classical in
 /-- A degree-at-least-three vertex with exactly one nonleaf neighbour and one
 specified leaf neighbour has a second, distinct leaf neighbour. -/
 theorem exists_second_leaf_neighbor [Fintype V]
@@ -1741,14 +1793,17 @@ theorem exists_second_leaf_neighbor [Fintype V]
     exact hz'parts.2 (by simp)
   exact ⟨z', hz'ne, hz'adj, hz'leaf⟩
 
+open scoped Classical in
 /-- The partition obtained in Zhao's last subcase by moving `y` to the left
 and two of its leaf neighbours to the right. -/
-noncomputable def exceptionalFlipLeft (U₁ U₂ : Finset V) (y z z' : V) : Finset V :=
+noncomputable def exceptionalFlipLeft (U₁ _U₂ : Finset V) (y z z' : V) : Finset V :=
   (U₁ \ {z, z'}) ∪ {y}
 
-noncomputable def exceptionalFlipRight (U₁ U₂ : Finset V) (y z z' : V) : Finset V :=
+open scoped Classical in
+noncomputable def exceptionalFlipRight (_U₁ U₂ : Finset V) (y z z' : V) : Finset V :=
   (U₂ \ {y}) ∪ {z, z'}
 
+open scoped Classical in
 theorem exceptionalFlip_partition [Fintype V]
     {U₁ U₂ : Finset V} {y z z' : V}
     (hpart : Disjoint U₁ U₂ ∧ U₁ ∪ U₂ = Finset.univ)
@@ -1804,15 +1859,16 @@ theorem exceptionalFlip_partition [Fintype V]
         right
         apply Finset.mem_union.mpr
         left
-        exact Finset.mem_sdiff.mpr ⟨hv₂, by simpa [hvy]⟩
+        exact Finset.mem_sdiff.mpr ⟨hv₂, by simp [hvy]⟩
 
-theorem exceptionalFlip_cards [Fintype V]
+theorem exceptionalFlip_cards [Finite V]
     {U₁ U₂ : Finset V} {y z z' : V}
     (hpart : Disjoint U₁ U₂) (hy : y ∈ U₂)
     (hz : z ∈ U₁) (hz' : z' ∈ U₁) (hzz' : z ≠ z') :
     (exceptionalFlipLeft U₁ U₂ y z z').card = U₁.card - 2 + 1 ∧
       (exceptionalFlipRight U₁ U₂ y z z').card = U₂.card - 1 + 2 := by
   classical
+  let := Fintype.ofFinite V
   have hpairSub₁ : ({z, z'} : Finset V) ⊆ U₁ := by
     intro v hv
     simp only [Finset.mem_insert, Finset.mem_singleton] at hv
@@ -1839,6 +1895,7 @@ theorem exceptionalFlip_cards [Fintype V]
       Finset.card_sdiff_of_subset hySub₂, Finset.card_singleton,
       Finset.card_pair hzz']
 
+open scoped Classical in
 theorem exceptionalFlipRight_independent [Fintype V]
     (T : SimpleGraph V) {U₁ U₂ : Finset V} {y z z' : V}
     (hpart : Disjoint U₁ U₂) (hind : T.IsIndepSet (U₂ : Set V))
@@ -1866,11 +1923,11 @@ theorem exceptionalFlipRight_independent [Fintype V]
   rcases ha with ha | ha <;> rcases hb with hb | hb
   · exact hind ha.1 hb.1 hab hAdj
   · rcases hb with (rfl : b = z) | (rfl : b = z')
-    · exact ha.2 (by simpa [hzUnique a hAdj.symm])
-    · exact ha.2 (by simpa [hz'Unique a hAdj.symm])
+    · exact ha.2 (by simp [hzUnique a hAdj.symm])
+    · exact ha.2 (by simp [hz'Unique a hAdj.symm])
   · rcases ha with (rfl : a = z) | (rfl : a = z')
-    · exact hb.2 (by simpa [hzUnique b hAdj])
-    · exact hb.2 (by simpa [hz'Unique b hAdj])
+    · exact hb.2 (by simp [hzUnique b hAdj])
+    · exact hb.2 (by simp [hz'Unique b hAdj])
   · rcases ha with ha | ha
     · have haz : a = z := ha
       subst a
@@ -1895,6 +1952,7 @@ theorem exceptionalFlipRight_independent [Fintype V]
         subst b
         exact hab rfl
 
+open scoped Classical in
 theorem exceptionalFlip_left_leaf_lower [Fintype V]
     (T : SimpleGraph V) {U₁ U₂ : Finset V} {y z z' : V} :
     (leavesIn T U₁).card - 2 ≤
@@ -1924,6 +1982,7 @@ theorem exceptionalFlip_left_leaf_lower [Fintype V]
   rw [Finset.card_sdiff] at hcard
   omega
 
+open scoped Classical in
 theorem exceptionalFlip_right_leaf_mono [Fintype V]
     (T : SimpleGraph V) {U₁ U₂ : Finset V} {y z z' : V}
     (hyNotLeaf : ¬ IsLeaf T y) :
@@ -1941,12 +2000,13 @@ theorem exceptionalFlip_right_leaf_mono [Fintype V]
     have hEq : v = y := by simpa using hvy
     exact hyNotLeaf (hEq ▸ hvLeaf.2)⟩
 
+open scoped Classical in
 /-- Zhao's final exceptional conversion: the almost-balanced partition is
 near-ideal if the special parent has degree two; otherwise a second leaf
 neighbour exists, and moving the parent and the two leaves produces an ideal
 partition. -/
 theorem exceptional_nearIdeal_or_ideal [Fintype V]
-    (l n : ℕ) (hl : 0 < l) (T : SimpleGraph V)
+    (l n : ℕ) (_hl : 0 < l) (T : SimpleGraph V)
     (U₁ U₂ : Finset V)
     (hpart : Disjoint U₁ U₂ ∧ U₁ ∪ U₂ = Finset.univ)
     (hnEven : Even n)
@@ -2019,6 +2079,7 @@ theorem exceptional_nearIdeal_or_ideal [Fintype V]
         (U₁ := U₁) (U₂ := U₂) (z := z) (z' := z') hyNotLeaf
       omega
 
+open scoped Classical in
 /-- The exceptional conversion in the form needed by the direct degree-sum
 argument: it is enough that the parent have *at most* one nonleaf neighbour.
 When it has degree two we obtain the near-ideal witness.  Otherwise the
@@ -2116,12 +2177,10 @@ theorem leaf_imbalance_of_two_nonleaf_neighbors {V : Type*} [Fintype V]
   have hcardOpos : 0 < O.card := Finset.card_pos.mpr hpart.right_nonempty
   have hcardVtwo : 1 < Fintype.card V := by omega
   let : Nontrivial V := Fintype.one_lt_card_iff_nontrivial.mp hcardVtwo
-
   let leafNbr : V → Finset V := fun y =>
     (T.neighborFinset y).filter fun z => z ∈ leavesIn T O
   let nonleafNbr : V → Finset V := fun y =>
     (T.neighborFinset y).filter fun z => ¬ IsLeaf T z
-
   have hlocal_union (y : V) :
       (leafNbr y).card + (nonleafNbr y).card ≤ T.degree y := by
     have hd : Disjoint (leafNbr y) (nonleafNbr y) := by
@@ -2136,7 +2195,6 @@ theorem leaf_imbalance_of_two_nonleaf_neighbors {V : Type*} [Fintype V]
       rcases Finset.mem_union.mp hz with hz | hz
       · exact (Finset.mem_filter.mp hz).1
       · exact (Finset.mem_filter.mp hz).1)
-
   have hpoint (y : V) (hy : y ∈ E) :
       2 + (leafNbr y).card ≤
         T.degree y + if IsLeaf T y then 1 else 0 := by
@@ -2167,7 +2225,6 @@ theorem leaf_imbalance_of_two_nonleaf_neighbors {V : Type*} [Fintype V]
         omega
       rw [if_neg hynonleaf]
       omega
-
   have hdouble :
       (∑ y ∈ E, (leafNbr y).card) = (leavesIn T O).card := by
     calc
@@ -2198,7 +2255,6 @@ theorem leaf_imbalance_of_two_nonleaf_neighbors {V : Type*} [Fintype V]
         rw [hbelow, T.card_neighborFinset_eq_degree]
         exact (Finset.mem_filter.mp hz).2
       _ = (leavesIn T O).card := by simp
-
   have hsumE : (∑ y ∈ E, T.degree y) = T.edgeFinset.card :=
     SimpleGraph.isBipartiteWith_sum_degrees_eq_card_edges hpart.bipartite
   have hedge : T.edgeFinset.card = E.card + O.card - 1 := by
@@ -2255,12 +2311,10 @@ theorem leaf_imbalance_of_two_nonleaf_neighbors_except {V : Type*} [Fintype V]
     have hO : 0 < O.card := Finset.card_pos.mpr hpart.right_nonempty
     omega
   let : Nontrivial V := Fintype.one_lt_card_iff_nontrivial.mp hcardVtwo
-
   let leafNbr : V → Finset V := fun y =>
     (T.neighborFinset y).filter fun z => z ∈ leavesIn T O
   let nonleafNbr : V → Finset V := fun y =>
     (T.neighborFinset y).filter fun z => ¬ IsLeaf T z
-
   have hlocal_union (y : V) :
       (leafNbr y).card + (nonleafNbr y).card ≤ T.degree y := by
     have hd : Disjoint (leafNbr y) (nonleafNbr y) := by
@@ -2275,7 +2329,6 @@ theorem leaf_imbalance_of_two_nonleaf_neighbors_except {V : Type*} [Fintype V]
       rcases Finset.mem_union.mp hz with hz | hz
       · exact (Finset.mem_filter.mp hz).1
       · exact (Finset.mem_filter.mp hz).1)
-
   have hpoint (y : V) (hy : y ∈ E) :
       (if y = r then 0 else 2) + (leafNbr y).card ≤
         T.degree y + if IsLeaf T y then 1 else 0 := by
@@ -2312,7 +2365,6 @@ theorem leaf_imbalance_of_two_nonleaf_neighbors_except {V : Type*} [Fintype V]
           omega
         rw [if_neg hynonleaf]
         omega
-
   have hdouble :
       (∑ y ∈ E, (leafNbr y).card) = (leavesIn T O).card := by
     calc
@@ -2342,7 +2394,6 @@ theorem leaf_imbalance_of_two_nonleaf_neighbors_except {V : Type*} [Fintype V]
         rw [hbelow, T.card_neighborFinset_eq_degree]
         exact (Finset.mem_filter.mp hz).2
       _ = (leavesIn T O).card := by simp
-
   have hconst :
       (∑ y ∈ E, if y = r then 0 else 2) = 2 * (E.card - 1) := by
     have hersum :
@@ -2394,7 +2445,6 @@ special-leaf step is developed below it.
 namespace Erdos547b.ZhaoLemma77Full74
 
 open Finset SimpleGraph
-open scoped Classical
 
 noncomputable section
 
@@ -2410,6 +2460,7 @@ theorem degree_instance_eq (T : SimpleGraph V) (v : V)
       ← @SimpleGraph.card_neighborSet_eq_degree V T v j]
   exact @Fintype.card_congr _ _ i j (Equiv.refl _)
 
+open scoped Classical in
 theorem rooted_isLeaf_iff_shared [Fintype V] (T : SimpleGraph V) (v : V) :
     Erdos547b.Lemma77Rooted.IsLeaf T v ↔ Erdos547b.IsLeaf T v := by
   unfold Erdos547b.Lemma77Rooted.IsLeaf Erdos547b.IsLeaf
@@ -2417,6 +2468,7 @@ theorem rooted_isLeaf_iff_shared [Fintype V] (T : SimpleGraph V) (v : V) :
   apply congrArg (fun d : ℕ => d = 1)
   apply degree_instance_eq
 
+open scoped Classical in
 theorem rooted_leaves_eq_shared [Fintype V] (T : SimpleGraph V) :
     Erdos547b.Lemma77Rooted.leaves T = Finset.univ.filter (Erdos547b.IsLeaf T) := by
   classical
@@ -2425,6 +2477,7 @@ theorem rooted_leaves_eq_shared [Fintype V] (T : SimpleGraph V) :
     Finset.mem_univ, true_and]
   exact rooted_isLeaf_iff_shared T v
 
+open scoped Classical in
 theorem rooted_leavesIn_eq_shared [Fintype V] (T : SimpleGraph V) (S : Finset V) :
     Erdos547b.Lemma77Rooted.leavesIn T S = Erdos547b.leavesIn T S := by
   classical
@@ -2433,6 +2486,7 @@ theorem rooted_leavesIn_eq_shared [Fintype V] (T : SimpleGraph V) (S : Finset V)
     Finset.mem_filter]
   exact and_congr_right (fun _ => rooted_isLeaf_iff_shared T v)
 
+open scoped Classical in
 theorem main_leaves_eq_rooted [Fintype V] (T : SimpleGraph V) :
     Erdos547b.ZhaoLemma77.leaves T = Erdos547b.Lemma77Rooted.leaves T := by
   classical
@@ -2444,10 +2498,12 @@ theorem main_leaves_eq_rooted [Fintype V] (T : SimpleGraph V) :
   apply congrArg (fun d : ℕ => d = 1)
   apply degree_instance_eq
 
+open scoped Classical in
 theorem main_leavesIn_eq_shared [Fintype V] (T : SimpleGraph V) (S : Finset V) :
     Erdos547b.ZhaoLemma77.leavesIn T S = Erdos547b.leavesIn T S := by
   rfl
 
+open scoped Classical in
 theorem rootedExceptional_isLeaf_iff_shared [Fintype V]
     (T : SimpleGraph V) (v : V) :
     Erdos547b.ZhaoLemma77Rooted.IsLeaf T v ↔ Erdos547b.IsLeaf T v := by
@@ -2456,6 +2512,7 @@ theorem rootedExceptional_isLeaf_iff_shared [Fintype V]
   apply congrArg (fun d : ℕ => d = 1)
   apply degree_instance_eq
 
+open scoped Classical in
 theorem rootedExceptional_nonleafNeighbors_eq_sharedFilter [Fintype V]
     (T : SimpleGraph V) (y : V) :
     Erdos547b.ZhaoLemma77Rooted.nonleafNeighbors T y =
@@ -2482,7 +2539,7 @@ theorem exists_nonleaf_root [Fintype V]
   let rootLF : T.LocallyFinite := fun _ => Subtype.fintype _
   let : T.LocallyFinite := rootLF
   by_contra h
-  push_neg at h
+  push Not at h
   have hsumOne :
       (∑ v : V, @SimpleGraph.degree V T v (rootLF v)) = Fintype.card V := by
     calc
@@ -2508,7 +2565,8 @@ theorem exists_nonleaf_root [Fintype V]
         2 * T.edgeFinset.card := hsumBridge.trans hsumStd
   have hedge := hT.card_edgeFinset
   have hcardLarge : 33 ≤ Fintype.card V := by
-    have hleafSub : Erdos547b.Lemma77Rooted.leaves T ⊆ (Finset.univ : Finset V) := Finset.subset_univ _
+    have hleafSub : Erdos547b.Lemma77Rooted.leaves T ⊆ (Finset.univ : Finset V) :=
+      Finset.subset_univ _
     have hc : (Erdos547b.Lemma77Rooted.leaves T).card ≤ Fintype.card V := by
       simpa using Finset.card_le_card hleafSub
     omega
@@ -2517,6 +2575,7 @@ theorem exists_nonleaf_root [Fintype V]
   have hedgeOne : T.edgeFinset.card = 1 := by omega
   omega
 
+open scoped Classical in
 theorem naturalSplit_of_fact79 [Fintype V]
     (l : ℕ) (hl : 0 < l) (T : SimpleGraph V) (hT : T.IsTree)
     (E O : Finset V) (hpart : IsProperBipartition T E O)
@@ -2526,9 +2585,11 @@ theorem naturalSplit_of_fact79 [Fintype V]
   classical
   obtain ⟨r, hr⟩ := exists_nonleaf_root T hT l hl hmany
   obtain ⟨x, kept, S, hkept, hS, hnatural, hboundary,
-      hSin, hSupper, hSout⟩ := Erdos547b.Lemma77Rooted.fact79_leaf_natural_subtree T hT r hr l hl hmany
+      hSin, hSupper, hSout⟩ := Erdos547b.Lemma77Rooted.fact79_leaf_natural_subtree T hT r hr l hl
+        hmany
   have hxNonleafR : ¬ Erdos547b.Lemma77Rooted.IsLeaf T x :=
-    Erdos547b.Lemma77Rooted.natural_root_not_leaf_of_eleven_leaves hT hr l hl kept hkept (by simpa [hS] using hSin)
+    Erdos547b.Lemma77Rooted.natural_root_not_leaf_of_eleven_leaves hT hr l hl kept hkept
+      (by simpa [hS] using hSin)
   have hxNonleaf : ¬ Erdos547b.IsLeaf T x := by simpa [rooted_isLeaf_iff_shared] using hxNonleafR
   have hAinner : (Erdos547b.leavesIn T (E ∩ S)).card ≤
       (Erdos547b.leavesIn T E).card := by
@@ -2627,7 +2688,8 @@ theorem naturalSplit_of_fact79 [Fintype V]
   · intro u v huv hu hv
     exact hboundary huv hu hv
   · subst S
-    have hout := Erdos547b.Lemma77Rooted.naturalVertices_sdiff_root_hasSingleOutsideBoundaryAttachment
+    have hout :=
+      Erdos547b.Lemma77Rooted.naturalVertices_sdiff_root_hasSingleOutsideBoundaryAttachment
       hT kept hkept
     intro u v huv hu hv
     refine hout huv ?_ ?_
@@ -2654,6 +2716,7 @@ theorem rootedExceptional_near_to_main [Fintype V] {l n : ℕ} {T : SimpleGraph 
   exact ⟨h.partition, h.n_even, h.left_card, h.right_card,
     h.right_independent, h.left_leaves, h.right_leaves, h.special_leaf⟩
 
+open scoped Classical in
 /-- In a connected graph containing some nonleaf vertex, the neighbor of a
 leaf cannot itself be a leaf. -/
 theorem neighbor_of_leaf_not_leaf_of_exists_nonleaf [Fintype V]
@@ -2685,6 +2748,7 @@ theorem neighbor_of_leaf_not_leaf_of_exists_nonleaf [Fintype V]
   have huniq := (SimpleGraph.degree_eq_one_iff_existsUnique_adj.mp hy).unique hywT hyz
   exact w.property (by simpa using huniq)
 
+open scoped Classical in
 /-- Exact Lemma-7.7 assembly through the parity-one core.  No mathematical
 assumption is hidden: `NearIdealCore` is precisely Definition 7.6(2) with
 only its final degree-two witness omitted. -/
@@ -2698,7 +2762,8 @@ theorem lemma7_7_ideal_or_nearCore [Fintype V]
       (∃ U₁ U₂, Erdos547b.ZhaoLemma77HardCase.NearIdealCore l n T U₁ U₂) := by
   classical
   have hmainPart := proper_to_main_bipartition hpart
-  rcases Erdos547b.ZhaoLemma77.lemma7_7_reduction_to_left_leaf_deficit l T E O hmainPart hEO hmany with
+  rcases Erdos547b.ZhaoLemma77.lemma7_7_reduction_to_left_leaf_deficit l T E O hmainPart hEO hmany
+    with
     hgap | hideal | hhard
   · exact Or.inl hgap
   · exact Or.inr (Or.inl hideal)
@@ -2708,7 +2773,8 @@ theorem lemma7_7_ideal_or_nearCore [Fintype V]
       have hl0 : l = 0 := Nat.eq_zero_of_not_pos h
       subst l
       simp at hhard
-    have hmanyR : 33 * l ≤ (Erdos547b.Lemma77Rooted.leaves T).card := by simpa [main_leaves_eq_rooted] using hmany
+    have hmanyR : 33 * l ≤ (Erdos547b.Lemma77Rooted.leaves T).card :=
+      by simpa [main_leaves_eq_rooted] using hmany
     obtain ⟨S, x, hsplit⟩ := naturalSplit_of_fact79 l hl T hT E O hpart hhard.1 hmanyR
     have hcardV : Fintype.card V = n + 1 := by
       have hedgeTree := hT.card_edgeFinset
@@ -2717,13 +2783,15 @@ theorem lemma7_7_ideal_or_nearCore [Fintype V]
       have hg := hhard.2.2
       rw [Erdos547b.ZhaoLemma77.bipartitionGap, Nat.dist_eq_sub_of_le hEO] at hg
       exact hg
-    rcases Erdos547b.ZhaoLemma77HardCase.case_b_ideal_or_nearCore l n T E O S x hcardV hpart hEO hgapSub hsplit with
+    rcases Erdos547b.ZhaoLemma77HardCase.case_b_ideal_or_nearCore l n T E O S x hcardV hpart hEO
+      hgapSub hsplit with
       hI | hN
     · left
       obtain ⟨U₁, U₂, hU⟩ := hI
       exact ⟨U₁, U₂, hard_ideal_to_main hU⟩
     · exact Or.inr hN.1
 
+open scoped Classical in
 /-- Zhao's Lemma 7.7, with the real threshold `sqrt θ * n` replaced by an
 integer parameter `l`.  This is the exact trichotomy: the final branch
 includes the degree-two parent required in Definition 7.6. -/

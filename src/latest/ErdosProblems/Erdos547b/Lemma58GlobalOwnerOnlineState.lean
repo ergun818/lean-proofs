@@ -369,7 +369,7 @@ theorem exists_onlineOwnerPrefixState
     (hwholeDisjoint : ∀ e, Disjoint (whole e 0) (whole e 1))
     (rho density : Fin k → ℝ)
     (rootCandidate : Fin r → Finset B) (initialRootImage : Fin r → B)
-    (eligible : ∀ n (hn : n < r),
+    (eligible : ∀ n (_hn : n < r),
       OnlineOwnerPrefixState F G assign endpoint rootCandidate n → Finset B)
     (heligible_card : ∀ n hn S, n < #(eligible n hn S))
     (heligible_subset : ∀ n hn S,
@@ -453,4 +453,5 @@ end Erdos547b.ZhaoLemma58GlobalOwnerOnlineState
 #print axioms Erdos547b.ZhaoLemma58GlobalOwnerOnlineState.emptyOnlineOwnerPrefixState
 #print axioms Erdos547b.ZhaoLemma58GlobalOwnerOnlineState.extendOnlineOwnerPrefixState
 #print axioms Erdos547b.ZhaoLemma58GlobalOwnerOnlineState.exists_onlineOwnerPrefixState
-#print axioms Erdos547b.ZhaoLemma58GlobalOwnerOnlineState.OnlineOwnerPrefixState.exists_fullEdgeEmbedding
+open Erdos547b.ZhaoLemma58GlobalOwnerOnlineState.OnlineOwnerPrefixState in
+#print axioms exists_fullEdgeEmbedding

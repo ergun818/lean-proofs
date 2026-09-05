@@ -94,6 +94,7 @@ structure ReducedPairRealization
         (padCluster (clusterVertices Pcluster) x)
         (padCluster (clusterVertices Pcluster) y)
 
+omit [DecidableEq Bv] [Fintype Bv] in
 private theorem isUniform_real_of_rat
     (G : SimpleGraph Bv) [DecidableRel G.Adj]
     {epsilon : ℚ} {X Y : Finset Bv}
@@ -106,6 +107,7 @@ private theorem isUniform_real_of_rat
     exact_mod_cast hYlarge
   exact_mod_cast h hX' hY' hXlargeQ hYlargeQ
 
+omit [DecidableEq Bv] [DecidableRel R.Adj] in
 /-- The regularity reduced graph itself supplies the realization record;
 no per-pair premise remains at applications. -/
 theorem reducedPairRealization_of_graph_eq
@@ -114,6 +116,7 @@ theorem reducedPairRealization_of_graph_eq
     (hgraph : padGraph R = regularityReducedGraph G
       (padCluster (clusterVertices Pcluster)) epsilon density) :
     ReducedPairRealization Pcluster R G (epsilon : ℝ) (density : ℝ) := by
+  classical
   refine ⟨?_⟩
   intro x y hxy
   have hred : (regularityReducedGraph G
@@ -204,7 +207,7 @@ private abbrev sourceSlot : RichSlot Pcluster Gdegree threshold quota R miss Q :
   Sum.inl (componentReservoirSide P ⟨0, P.numParts_pos⟩)
 
 private theorem branchClass_mem_selected_or_residual_or_minor'
-    (havailable : available ⊆ halfBranches P)
+    (_havailable : available ⊆ halfBranches P)
     (j : ZhaoClaim615CoordinateSourceAllocation.BranchIndex P) :
     j ∈ S.selected ∨ j ∈ majorResidualBranches P S ∨ j ∈ minorBranches P := by
   by_cases hjHalf : j ∈ halfBranches P
@@ -289,16 +292,14 @@ theorem canonicalDirectPair
     · have hside := componentReservoirSide_owner_eq_zero_of_mem_halfBranches
         P j (havailable (S.selected_available hj))
       rw [howner] at hside
-      simp [sourceSlot, richSlotVertex, coordinateBranchSlot,
-        coordinateBranchEdge, pairOrient, hj, hside]
-      exact hroot0 (A.F0edge j)
+      simpa [richSlotVertex, coordinateBranchSlot,
+        coordinateBranchEdge, pairOrient, hj, hside] using hroot0 (A.F0edge j)
     · have hside := componentReservoirSide_owner_eq_zero_of_mem_halfBranches
         P j ((mem_majorResidualBranches P S j).mp hj).1
       rw [howner] at hside
       have hj0 := (mem_majorResidualBranches P S j).mp hj |>.2
-      simp [sourceSlot, richSlotVertex, coordinateBranchSlot,
-        coordinateBranchEdge, pairOrient, hj0, hj, hside]
-      exact hroot1 (A.F1edge j)
+      simpa [richSlotVertex, coordinateBranchSlot,
+        coordinateBranchEdge, pairOrient, hj0, hj, hside] using hroot1 (A.F1edge j)
     · have hside :=
         componentReservoirSide_owner_eq_one_of_mem_minorBranches P j hj
       rw [howner] at hside
@@ -313,9 +314,8 @@ theorem canonicalDirectPair
         exact hjHalf ((mem_majorResidualBranches P S j).mp h).1
       have horient := canonicalCoordinateOrientation_minor_zero P S capacity0
         capacity1 capacityb A rootSide0 rootSide1 rootSideb havailable j hj
-      simp [sourceSlot, richSlotVertex, coordinateBranchSlot,
-        coordinateBranchEdge, pairOrient, hj0, hj1, hside, horient]
-      exact hrootb (A.Fbedge j)
+      simpa [richSlotVertex, coordinateBranchSlot,
+        coordinateBranchEdge, pairOrient, hj0, hj1, hside, horient] using hrootb (A.Fbedge j)
 
 /-- A component-root attachment is either an edge between the two root
 reservoirs or the reverse of the source-facing root pair of its parent

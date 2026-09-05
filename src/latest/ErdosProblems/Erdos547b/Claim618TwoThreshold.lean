@@ -19,9 +19,9 @@ open Finset SimpleGraph Erdos547b.ZhaoStability Erdos547b.ZhaoLemma615
 universe u v
 
 theorem crossing_lt_of_local_twoThresholds
-    {E : Type u} [Fintype E] [DecidableEq E]
+    {E : Type u} [Finite E] [DecidableEq E]
     {K : Type v} [Fintype K] [DecidableEq K]
-    (R H R' : SimpleGraph K) [DecidableRel R.Adj] [DecidableRel H.Adj] [DecidableRel R'.Adj]
+    (R H R' : SimpleGraph K) [DecidableRel R.Adj] [DecidableRel R'.Adj]
     (hHR : H ≤ R) (hR'H : R' ≤ H)
     (L L₁ V₂ S₁ : Finset K)
     (M : Finset E) (endpoint : E → Fin 2 → K)
@@ -58,6 +58,7 @@ theorem crossing_lt_of_local_twoThresholds
       (unbalancedEdges M (fun e c ↦ density A (endpoint e c)) eta).card ≤ q) :
     ((R'.interedges L₁ V₂).card : ℝ) < 16 * rho₁ * (k : ℝ) ^ 2 := by
   classical
+  let := Fintype.ofFinite E
   let : Std.Symm R.Adj := ⟨fun _ _ h ↦ h.symm⟩
   let : Std.Symm H.Adj := ⟨fun _ _ h ↦ h.symm⟩
   have hR'R : R' ≤ R := hR'H.trans hHR
@@ -194,7 +195,8 @@ theorem crossing_lt_of_local_twoThresholds
         have heM : e ∈ M := (mem_candidateEdges.mp (Finset.mem_sdiff.mp heGood).1).1
         have hadj := hgoodAdj A e heGood
         have hdouble : endpoint e 0 ∈ matchingDoubleNeighborSet R C67.M A := by
-          refine ⟨C67.M.edge_vert (hMedge e heM), endpoint e 1, hMedge e heM, hHR hadj.1, hHR hadj.2⟩
+          refine ⟨C67.M.edge_vert (hMedge e heM), endpoint e 1, hMedge e heM, hHR hadj.1, hHR
+            hadj.2⟩
         simp only [Finset.mem_filter, Finset.mem_univ, true_and]
         exact ⟨hdouble, hvO⟩
       have hcard := Finset.card_le_card hsub
@@ -385,9 +387,9 @@ theorem crossing_lt_of_local_twoThresholds
   linarith
 
 theorem crossing_lt_of_twoThresholds
-    {E : Type u} [Fintype E] [DecidableEq E]
+    {E : Type u} [Finite E] [DecidableEq E]
     {K : Type v} [Fintype K] [DecidableEq K]
-    (R H R' : SimpleGraph K) [DecidableRel R.Adj] [DecidableRel H.Adj] [DecidableRel R'.Adj]
+    (R H R' : SimpleGraph K) [DecidableRel R.Adj] [DecidableRel R'.Adj]
     (hHR : H ≤ R) (hR'H : R' ≤ H)
     (L L₁ V₂ S₁ : Finset K)
     (M : Finset E) (endpoint : E → Fin 2 → K)
@@ -421,6 +423,8 @@ theorem crossing_lt_of_twoThresholds
       (unbalancedEdges M
         (fun e c ↦ density A (endpoint e c)) eta).card ≤ q) :
     ((R'.interedges L₁ V₂).card : ℝ) < 16 * rho₁ * (k : ℝ) ^ 2 := by
+  classical
+  let := Fintype.ofFinite E
   exact crossing_lt_of_local_twoThresholds R H R' hHR hR'H L L₁ V₂ S₁ M endpoint
     edgeOf density eta rho rho₁ k a b q miss t u z C67 heta hk haNat ha hcutCard
     hlocalArithmetic hpartnerArithmetic hdoubleCountArithmetic hfinalArithmetic h617 hL₁

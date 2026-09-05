@@ -9,7 +9,7 @@ vertex of rooted colour zero. Source side compatibility gives its actual
 reservoir degree, and prefix preservation keeps the same host image.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceGlobalPrefixState
@@ -74,15 +74,18 @@ theorem PrefixState.coordinateImage_degree (x : CutCoordinate F r)
   cases x with
   | inl i => exact A.root_degree i hx
   | inr a =>
-    exact A.branch_rootColor_degree W Q S F owner rootSide all family locate hcover a.1 hx a.2 hcolor
+    exact A.branch_rootColor_degree W Q S F owner rootSide all family locate hcover a.1 hx a.2
+      hcolor
 
 theorem PrefixState.coordinateImage_preserved
     (D : PrefixState W Q S F owner rootSide all family (stage + 1))
     (hroots : ∀ i : Fin r, i.val < stage → D.rootImage i = A.rootImage i)
     (hcopies : ∀ s j i hi,
-      ((D.families s j).currentPlacement W Q S (rootCluster W Q s) F owner).forestCopy.componentCopy i
+      ((D.families s j).currentPlacement W Q S (rootCluster W Q s) F owner).forestCopy.componentCopy
+        i
           (processedFamily_mono owner (Nat.le_succ stage) (family s j) hi) =
-        ((A.families s j).currentPlacement W Q S (rootCluster W Q s) F owner).forestCopy.componentCopy i hi)
+        ((A.families s j).currentPlacement W Q S (rootCluster W Q s) F
+          owner).forestCopy.componentCopy i hi)
     (x : CutCoordinate F r) (hx : (coordinateOwner F owner x).val < stage) :
     D.coordinateImage F owner W Q S rootSide all family locate hcover x (Nat.lt_succ_of_lt hx) =
       A.coordinateImage F owner W Q S rootSide all family locate hcover x hx := by

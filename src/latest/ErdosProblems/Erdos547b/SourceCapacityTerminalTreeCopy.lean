@@ -12,7 +12,7 @@ family induction. Reuse the existing source partition isomorphism and
 cut-edge reconstruction, retaining every root and branch image.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceCapacityTerminalTreeCopy
@@ -48,7 +48,8 @@ variable (hlocate : ∀ i, (locate i).1 = componentReservoirSide P ((branchFores
 
 def terminalTreeCopy
     (A : CutPrefixState W Q S (branchForest P).branches (branchForest P).owner
-      (componentReservoirSide P) kinds allocation family locate hcover (partitionCutSource P hT locate hlocate) P.numParts)
+      (componentReservoirSide P) kinds allocation family locate hcover (partitionCutSource P hT
+        locate hlocate) P.numParts)
     (hdisjoint : ∀ x y : Fin 2 × Fin k, x ≠ y → Disjoint (allocation x.1 x.2) (allocation y.1 y.2))
     (haway : ∀ s j, allocation s j ⊆ edgesAwayFromDistinguished Q.claim67.M
       (padFinset (large W)) (Sum.inl Q.A) (Sum.inl Q.B)) : T.Copy (embeddingHost W) := by
@@ -56,11 +57,13 @@ def terminalTreeCopy
     (componentReservoirSide P) kinds allocation family locate hcover hdisjoint
   have hroot : Function.Injective A.state.rootImage :=
     fun i j h => A.state.root_injective i j i.isLt j.isLt h
-  let graphCopy := (branchForest P).copyOfBranchEmbedding (embeddingHost W) A.state.rootImage E hroot
+  let graphCopy := (branchForest P).copyOfBranchEmbedding (embeddingHost W) A.state.rootImage E
+    hroot
     (A.state.root_ne_branchCopy W Q S (branchForest P).branches (branchForest P).owner
       (componentReservoirSide P) kinds allocation family locate hcover haway)
     (fun i => A.state.branchCopy_attach W Q S (branchForest P).branches (branchForest P).owner
-      (componentReservoirSide P) kinds allocation family locate hcover i ((branchForest P).owner i).isLt)
+      (componentReservoirSide P) kinds allocation family locate hcover i ((branchForest P).owner
+        i).isLt)
   let cutCopy : P.cutForest.Copy (embeddingHost W) := graphCopy.comp (cutBranchGraphIso P).toCopy
   have hrootMap (i : Fin P.numParts) : cutCopy (P.roots i) = A.state.rootImage i := by
     change graphCopy (cutBranchGraphIso P (P.roots i)) = _
@@ -76,7 +79,8 @@ def terminalTreeCopy
     | inr a =>
         change graphCopy (cutBranchGraphIso P (partitionBranchEquivNonroots P a).1) = _
         rw [cutBranchGraphIso_nonroot P _ (partitionBranchEquivNonroots P a).2]
-        change graphCopy (Sum.inr ((partitionBranchEquivNonroots P).symm (partitionBranchEquivNonroots P a))) = _
+        change graphCopy (Sum.inr ((partitionBranchEquivNonroots P).symm
+          (partitionBranchEquivNonroots P a))) = _
         rw [(partitionBranchEquivNonroots P).symm_apply_apply]
         rfl
   apply copy_of_cutForestCopy_of_cutAdj P cutCopy
@@ -95,7 +99,8 @@ theorem exists_treeCopy_of_sourceBudgets
     (horder : orderThreshold α M ≤ q) (hk : k ≤ 3)
     (hkind : ∀ s j, (kinds s j).Valid α)
     (hnd : ∀ s j, (family s j).Nodup)
-    (hordered : ∀ s j, (family s j).Pairwise (fun i j => (branchForest P).owner i ≤ (branchForest P).owner j))
+    (hordered : ∀ s j, (family s j).Pairwise (fun i j => (branchForest P).owner i ≤ (branchForest
+      P).owner j))
     (hside : ∀ s j i, i ∈ family s j → componentReservoirSide P ((branchForest P).owner i) = s)
     (hbranch : ∀ s j, ∀ i ∈ family s j, (kinds s j).BranchValid (branchForest P).branches i)
     (hedge : ∀ s j, ∀ e ∈ allocation s j, edgeValid W Q S (rootCluster W Q s) (kinds s j) e)
@@ -104,7 +109,8 @@ theorem exists_treeCopy_of_sourceBudgets
     (haway : ∀ s j, allocation s j ⊆ edgesAwayFromDistinguished Q.claim67.M
       (padFinset (large W)) (Sum.inl Q.A) (Sum.inl Q.B))
     (globalCount : ℕ) (hglobal : ∀ s, (Finset.univ.biUnion (allocation s)).card ≤ globalCount)
-    (hbudget : ∀ s j, family s j ≠ [] → mass (fun i => ((branchForest P).branches.size i : ℝ)) (family s j) ≤
+    (hbudget : ∀ s j, family s j ≠ [] → mass (fun i => ((branchForest P).branches.size i : ℝ))
+      (family s j) ≤
       (∑ e ∈ allocation s j, capacity W Q S (rootCluster W Q s) (kinds s j) e) -
         (freshBranchBound α W.clusterSize : ℝ) * (allocation s j).card -
         4 * (rootTypicality α : ℝ) * W.clusterSize * globalCount)
@@ -112,14 +118,17 @@ theorem exists_treeCopy_of_sourceBudgets
     Nonempty (T.Copy (embeddingHost W)) := by
   have hlocate : ∀ i, (locate i).1 = componentReservoirSide P ((branchForest P).owner i) :=
     fun i => (hside (locate i).1 (locate i).2 i (hcover i)).symm
-  have hsameSide (s : Fin 2) : Pairwise (fun i j => Disjoint (allocation s i) (allocation s j)) := by
+  have hsameSide (s : Fin 2) : Pairwise (fun i j => Disjoint (allocation s i) (allocation s j)) :=
+    by
     intro i j hne
     exact hdisjoint ⟨s, i⟩ ⟨s, j⟩ (fun h => hne (congrArg Prod.snd h))
   obtain ⟨A⟩ := exists_terminalCutPrefix W Q S (branchForest P).branches (branchForest P).owner
-    (componentReservoirSide P) kinds allocation family locate hcover (partitionCutSource P hT locate hlocate)
+    (componentReservoirSide P) kinds allocation family locate hcover (partitionCutSource P hT locate
+      hlocate)
     hα hα1 hhost horder hk hkind hsameSide hside hbranch hedge hsmall haway
     globalCount hglobal hbudget hroots hnd hordered
-  exact ⟨terminalTreeCopy W Q S hT P kinds allocation family locate hcover hlocate A hdisjoint haway⟩
+  exact ⟨terminalTreeCopy W Q S hT P kinds allocation family locate hcover hlocate A hdisjoint
+    haway⟩
 
 end Erdos547b.ZhaoSourceCapacityTerminalTreeCopy
 

@@ -5,7 +5,7 @@ import ErdosProblems.Erdos547b.SourceFreedMidpointCapacity
 
 /-! # The actual original-host core has unused pools and live parent neighborhoods -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePathCoreReady
@@ -36,7 +36,8 @@ variable (hp : postponedCount α q ≤ (cleanBranches P).card)
 variable (O : Output W Q S (branchMass P (sideBranches P 1))) (sw : Switch W Q S O)
 
 theorem parentCore_eq_root (i : Fin (postponedCount α q)) :
-    (selectedPaths P hp).parentCoreVertex i = pathCorePartitionRoot P hp (selectedRootIndex P hp i) := by
+    (selectedPaths P hp).parentCoreVertex i = pathCorePartitionRoot P hp (selectedRootIndex P hp i)
+      := by
   apply Subtype.ext
   apply Subtype.ext
   exact selectedPaths_parent P hp i
@@ -91,9 +92,12 @@ theorem exists_readyCore
     have hcount := pool_degree_counts W Q S O sw D hα hα1 hhost horder
       (reservoir_subset W Q 0 hroot.2.1) hroot.2.2
     rw [parentCore_eq_root W P hp]
-    change highCount α q ≤ degreeInto G (f (pathCorePartitionRoot P hp (selectedRootIndex P hp i))) _ ∧
-      postponedCount α q ≤ degreeInto G (f (pathCorePartitionRoot P hp (selectedRootIndex P hp i))) _
-    exact ⟨hcount.1.trans (degreeInto_le_of_le G (embeddingHost W) (embeddingHost_le_original W) _ _),
+    change highCount α q ≤ degreeInto G (f (pathCorePartitionRoot P hp (selectedRootIndex P hp i)))
+      _ ∧
+      postponedCount α q ≤ degreeInto G (f (pathCorePartitionRoot P hp (selectedRootIndex P hp i)))
+        _
+    exact ⟨hcount.1.trans (degreeInto_le_of_le G (embeddingHost W) (embeddingHost_le_original W) _
+      _),
       hcount.2.trans (degreeInto_le_of_le G (embeddingHost W) (embeddingHost_le_original W) _ _)⟩
 
 end Erdos547b.ZhaoSourcePathCoreReady

@@ -10,7 +10,7 @@ same absolute global bad-edge allowance applies to this larger capacity.
 The residual packing constructed here uses that actual larger capacity.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePartTwoCapacity
@@ -53,7 +53,8 @@ theorem partTwoCapacity_le_twice_clusterSize
   have hg : (0 : ℝ) < gamma α := by exact_mod_cast (parameter_pos hα).2.2.2.2.2.2.1
   have he : (0 : ℝ) < epsilon α := by exact_mod_cast (parameter_pos hα).2.2.2.2.2.2.2
   have hgain := mul_le_mul_of_nonneg_right
-    (mul_le_mul_of_nonneg_right (ratio_coefficient_le_one hratio hratioHalf).2 (abs_nonneg (dy - dx)))
+    (mul_le_mul_of_nonneg_right (ratio_coefficient_le_one hratio hratioHalf).2 (abs_nonneg (dy -
+      dx)))
     (Nat.cast_nonneg W.clusterSize : (0 : ℝ) ≤ W.clusterSize)
   have hcoeff : dx + dy - 2 * (gamma α : ℝ) - 3 * (epsilon α : ℝ) + |dy - dx| ≤ 2 := by
     rcases le_total dx dy with hxy | hyx
@@ -101,7 +102,8 @@ theorem exists_partTwoResidualPacking
     (weight : Item → ℝ) (consumed : ℝ) (globalCount : ℕ)
     (hused : used ⊆ all) (hbad : bad ⊆ all \ used)
     (hcount : (bad.card : ℝ) ≤ 2 * (rootTypicality α : ℝ) * globalCount)
-    (hledger : (∑ e ∈ used, (partTwoCapacity W Q S C ratio e - freshBranchBound α W.clusterSize)) ≤ consumed)
+    (hledger : (∑ e ∈ used, (partTwoCapacity W Q S C ratio e - freshBranchBound α W.clusterSize)) ≤
+      consumed)
     (hsmall : ∀ i ∈ items, 0 < weight i ∧ weight i ≤ freshBranchBound α W.clusterSize)
     (hbudget : mass weight items + consumed ≤
       (∑ e ∈ all, partTwoCapacity W Q S C ratio e) -

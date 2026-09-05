@@ -67,5 +67,7 @@ variable {globalRoot : V} {small target slack : ℕ}
 
 end Erdos547b.ZhaoClaim616CoordinateSourceParity
 
-#print axioms Erdos547b.ZhaoClaim616CoordinateSourceParity.componentReservoirSide_owner_eq_zero_of_mem_halfBranches
-#print axioms Erdos547b.ZhaoClaim616CoordinateSourceParity.componentReservoirSide_owner_eq_one_of_mem_minorBranches
+open Erdos547b.ZhaoClaim616CoordinateSourceParity in
+#print axioms componentReservoirSide_owner_eq_zero_of_mem_halfBranches
+open Erdos547b.ZhaoClaim616CoordinateSourceParity in
+#print axioms componentReservoirSide_owner_eq_one_of_mem_minorBranches

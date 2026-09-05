@@ -300,7 +300,7 @@ theorem of_partTwoLocalData {b : ℕ} (F : OrderedRootedForest b)
             ratio / (1 - ratio) * (dy - dx) * N =
           2 * ((dx - gamma) * N) - 3 * (epsilon * N) +
             ((dy - dx) * N) / (1 - ratio) := by
-      field_simp [hden] <;> ring
+      field_simp [hden]; ring
     have hmass := P.mass_le
     have horder : ∑ i ∈ (Finset.univ : Finset (Fin b)), F.size i = F.order := by
       simp [OrderedRootedForest.order]
@@ -329,7 +329,7 @@ theorem fixedSuffixLoad_cast_le {b : ℕ} {F : OrderedRootedForest b}
     congr 1
     ext a
     simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-    exact (rootToSide highSide).apply_eq_iff_eq_symm_apply
+    exact (rootToSide highSide).eq_symm_apply.symm
   rw [fixedSuffixLoad, suffixOrder, Nat.cast_sum]
   simp_rw [Nat.cast_ite, Nat.cast_zero]
   calc

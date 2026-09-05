@@ -4,7 +4,7 @@ import ErdosProblems.Erdos547b.SourceMatchingInclusion
 
 /-! # The switched and reserved physical matchings have a separated union -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceSwitchUnion

@@ -138,6 +138,7 @@ private abbrev physicalInteriorPool :=
   hierarchyInteriorPool hT P optional S clusterCapacity allowed0 capacity1
     capacityb base0 A edge0 edge1 edgeb
 
+omit [DecidableEq Edge] in
 private theorem rootSlotPool_coordinateRootPool (i : SegmentIndex hT P optional) :
     rootSlotPool
         (coordinateRootPool hT P optional S clusterCapacity allowed0 capacity1
@@ -163,6 +164,7 @@ private theorem rootSlotPool_coordinateRootPool (i : SegmentIndex hT P optional)
             hierarchyRootPool, hierarchyRootSlot, branchRootSlot, hclass,
             hj0, hj1, rootSlotPool]
 
+omit [DecidableEq Edge] in
 private theorem rootSlotPool_coordinateInteriorPool
     (i : SegmentIndex hT P optional)
     (a : Fin ((AllocationHierarchy hT P optional).segments.size i)) :
@@ -171,6 +173,7 @@ private theorem rootSlotPool_coordinateInteriorPool
           capacity1 capacityb base0 A edge0 edge1 edgeb orient i a) =
       physicalInteriorPool hT P optional S clusterCapacity allowed0 capacity1
         capacityb base0 A edge0 edge1 edgeb i := by
+  classical
   cases hclass : segmentSourceClass hT P optional i with
   | inl q =>
       change rootSlotPool
@@ -222,14 +225,14 @@ private theorem physicalPoolLoad_edge0
   | inl q =>
       simp [poolWeight, physicalRootPool, physicalInteriorPool,
         hierarchyRootPool, hierarchyRootSlot, hierarchyInteriorPool,
-        rootSlotPool, F0Segments, hclass]
+        rootSlotPool, hclass]
   | inr j =>
       by_cases hj0 : j ∈ S.selected
       · have heq : edge0 (A.F0edge j) = edge0 e ↔ A.F0edge j = e :=
           hedge0.eq_iff
         simp [poolWeight, physicalRootPool, physicalInteriorPool,
           hierarchyRootPool, hierarchyRootSlot, hierarchyInteriorPool,
-          branchRootSlot, branchEdge, rootSlotPool, F0Segments,
+          branchRootSlot, branchEdge, rootSlotPool,
           segmentDeepWeight, hclass, hj0, heq]
       · by_cases hj1 : j ∈ majorResidualBranches P S
         · have hne : edge1 (A.F1edge j) ≠ edge0 e := by
@@ -239,7 +242,7 @@ private theorem physicalPoolLoad_edge0
               (Finset.mem_image.mpr ⟨A.F1edge j, Finset.mem_univ _, he⟩)
           simp [poolWeight, physicalRootPool, physicalInteriorPool,
             hierarchyRootPool, hierarchyRootSlot, hierarchyInteriorPool,
-            branchRootSlot, branchEdge, rootSlotPool, F0Segments,
+            branchRootSlot, branchEdge, rootSlotPool,
             hclass, hj0, hj1, hne]
         · have hne : edgeb (A.Fbedge j) ≠ edge0 e := by
             obtain ⟨j0, hj0Selected, hj0Edge⟩ := heAssigned
@@ -247,7 +250,7 @@ private theorem physicalPoolLoad_edge0
             exact (hF0b j0 hj0Selected (A.Fbedge j)).symm
           simp [poolWeight, physicalRootPool, physicalInteriorPool,
             hierarchyRootPool, hierarchyRootSlot, hierarchyInteriorPool,
-            branchRootSlot, branchEdge, rootSlotPool, F0Segments,
+            branchRootSlot, branchEdge, rootSlotPool,
             hclass, hj0, hj1, hne]
 /-- An endpoint of an actually assigned selected edge carries at most the
 stored selected deep load `base0 + small`; selected branch roots are not
@@ -312,7 +315,7 @@ private theorem orientedClassSize_le_branchSize
         #(Finset.univ : Finset (Fin ((branchForest P).branches.size j))) :=
       Finset.card_le_card (Finset.filter_subset _ _)
     _ = (branchForest P).branches.size j := by
-      simpa only [Finset.card_univ, Fintype.card_fin]
+      simp only [Finset.card_univ, Fintype.card_fin]
 
 /-- One residual endpoint carries at most the allocation capacity of its
 literal `M₁` edge. -/

@@ -82,7 +82,8 @@ theorem rounded_gates (r η : ℝ) (k miss v : ℕ)
     have haposR : (0 : ℝ) < initialCount r k := by linarith only [ha, hunit]
     exact_mod_cast haposR
   refine ⟨hk, haPos, haU, ?_, ?_, ?_, ?_⟩
-  · have h : 2 * ((neighborCount r k : ℝ) + exceptionalCount η k + 1) + miss ≤ initialCount r k := by
+  · have h : 2 * ((neighborCount r k : ℝ) + exceptionalCount η k + 1) + miss ≤ initialCount r k :=
+      by
       linarith only [ha, hb, he, hmiss, hunit, hrk]
     exact_mod_cast h
   · have h : (partnerDegree r k : ℝ) + exceptionalCount η k ≤ auxiliaryDegree r k := by

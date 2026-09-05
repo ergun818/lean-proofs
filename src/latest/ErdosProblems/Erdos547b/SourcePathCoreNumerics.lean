@@ -5,7 +5,7 @@ import ErdosProblems.Erdos547b.SourceNearFullNumerics
 
 /-! # The integral path saving pays the switched two-row surplus -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePathCoreNumerics
@@ -44,7 +44,8 @@ theorem switch_surplus_margin (hα : 0 < α) (hα1 : α ≤ 1 / 4)
     exact_mod_cast switch_coefficient_margin hα hα1
   have hscaled := mul_le_mul_of_nonneg_right hcoef (Nat.cast_nonneg q : (0 : ℝ) ≤ q)
   have hvolume := mul_le_mul_of_nonneg_left hv (by positivity : 0 ≤ 5 * (rho α : ℝ))
-  have hρN := mul_le_mul_of_nonneg_right hr1 (Nat.cast_nonneg W.clusterSize : (0 : ℝ) ≤ W.clusterSize)
+  have hρN := mul_le_mul_of_nonneg_right hr1 (Nat.cast_nonneg W.clusterSize : (0 : ℝ) ≤
+    W.clusterSize)
   have hrq := mul_nonneg hr (Nat.cast_nonneg q : (0 : ℝ) ≤ q)
   nlinarith only [hN, hscaled, hvolume, hρN, hrq]
 

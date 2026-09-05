@@ -18,6 +18,7 @@ variable {V : Type u} [Fintype V] [DecidableEq V]
 variable {T : SimpleGraph V} {I : Type v} [Fintype I] [DecidableEq I]
 variable {B : Type w} [Fintype B] [DecidableEq B]
 
+omit [DecidableEq I] in
 private theorem twoTierMiddleSet_nonempty_index
     (D : RootTwoPathSystem T I) (x : D.middleSet) :
     ∃ i : I, D.middleVertex i = x := by
@@ -28,6 +29,7 @@ private noncomputable def twoTierMiddleIndex
     (D : RootTwoPathSystem T I) (x : D.middleSet) : I :=
   Classical.choose (D.twoTierMiddleSet_nonempty_index x)
 
+omit [DecidableEq I] in
 private theorem twoTierMiddleIndex_spec
     (D : RootTwoPathSystem T I) (x : D.middleSet) :
     D.middleVertex (D.twoTierMiddleIndex x) = x :=
@@ -50,25 +52,29 @@ private theorem twoTierLeafIndex_spec
     D.leaf (D.twoTierLeafIndex x) = x.1 :=
   Classical.choose_spec (D.twoTierLeafSet_nonempty_index x)
 
+omit [DecidableEq B] [DecidableEq I] in
 theorem exists_copy_of_core_twoTier
     (D : RootTwoPathSystem T I) (G : SimpleGraph B) [DecidableRel G.Adj]
     (f : D.core.Copy G) (High : Finset I) (P Q : Finset B) (hPQ : Disjoint P Q)
     (hfreeP : ∀ x, f x ∉ P) (hfreeQ : ∀ x, f x ∉ Q)
     (hhighLive : ∀ i, High.card ≤ Erdos547EC2.degreeInto G (f (D.parentCoreVertex i)) P)
-    (hlowLive : ∀ i, Fintype.card I - High.card ≤ Erdos547EC2.degreeInto G (f (D.parentCoreVertex i)) Q)
+    (hlowLive : ∀ i, Fintype.card I - High.card ≤ Erdos547EC2.degreeInto G (f (D.parentCoreVertex
+      i)) Q)
     (hhighDegree : ∀ z ∈ P, Fintype.card V - 1 ≤ G.degree z)
     (hlowDegree : ∀ z ∈ Q, Fintype.card V - 1 - High.card ≤ G.degree z) :
     Nonempty (T.Copy G) := by
   classical
   obtain ⟨mid, hmidInj, hmidAdj, hmidHigh, hmidLow⟩ :=
     Erdos547b.ZhaoTwoPoolAssignment.exists_adjacent_twoPools G
-      (fun i => f (D.parentCoreVertex i)) High P Q hPQ (fun i _ => hhighLive i) (fun i _ => hlowLive i)
+      (fun i => f (D.parentCoreVertex i)) High P Q hPQ (fun i _ => hhighLive i) (fun i _ => hlowLive
+        i)
   have hmidChoice (i : I) : mid i ∈ D.middleChoices G f (P ∪ Q) i := by
     have hpool : mid i ∈ P ∪ Q := by
       by_cases hi : i ∈ High
       · exact Finset.mem_union_left _ (hmidHigh i hi)
       · exact Finset.mem_union_right _ (hmidLow i hi)
-    refine Finset.mem_sdiff.mpr ⟨Finset.mem_inter.mpr ⟨(G.mem_neighborFinset _ _).mpr (hmidAdj i), hpool⟩, ?_⟩
+    refine Finset.mem_sdiff.mpr ⟨Finset.mem_inter.mpr ⟨(G.mem_neighborFinset _ _).mpr (hmidAdj i),
+      hpool⟩, ?_⟩
     intro hused
     obtain ⟨x, _, hx⟩ := Finset.mem_image.mp hused
     rcases Finset.mem_union.mp hpool with hP | hQ
@@ -176,7 +182,8 @@ theorem exists_copy_of_core_twoTier
       exact (Finset.mem_filter.mp hx).2
     · intro x _ y _ hxy
       apply Subtype.ext
-      exact (D.twoTierLeafIndex_spec x).symm.trans ((congrArg D.leaf hxy).trans (D.twoTierLeafIndex_spec y))
+      exact (D.twoTierLeafIndex_spec x).symm.trans ((congrArg D.leaf hxy).trans
+        (D.twoTierLeafIndex_spec y))
     · intro i hi
       let x : D.leafSet := ⟨D.leaf i, Finset.mem_image.mpr ⟨i, Finset.mem_univ _, rfl⟩⟩
       have hidx : D.twoTierLeafIndex x = i := D.leaf_injective (D.twoTierLeafIndex_spec x)
@@ -186,7 +193,8 @@ theorem exists_copy_of_core_twoTier
     rw [hleafMap]
     exact hhighDegree _ (hmidHigh _ (Finset.mem_filter.mp hx).2)
   have hlowLeaf (x : D.leafSet) (hx : x ∉ HighLeaves) :
-      Fintype.card V - 1 - HighLeaves.card ≤ G.degree (prunedCopy ⟨leafParent x, hleafParentNot x⟩) := by
+      Fintype.card V - 1 - HighLeaves.card ≤ G.degree (prunedCopy ⟨leafParent x, hleafParentNot x⟩)
+        := by
     rw [hleafMap, hHighCard]
     exact hlowDegree _ (hmidLow _ (fun h => hx (Finset.mem_filter.mpr ⟨Finset.mem_univ _, h⟩)))
   obtain ⟨full, _, _⟩ :=

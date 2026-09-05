@@ -10,7 +10,7 @@ owner has no selected marked branches, so their actual images are retained.
 Ordinary families on the opposite side also retain their previous copies.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMarkedTwoSideAdvance
@@ -51,7 +51,8 @@ theorem exists_twoSideAdvance
     (rootImage : Fin r → Fin hostN) (n : Fin r)
     (A : ∀ s j, FamilyState W Q S (rootCluster W Q s) F owner (kinds s j)
       (allocation s j) (family s j) rootImage n.val)
-    (E : Placement W Q S O P F marks (ownerPrefix selected owner n.val) (fun i => rootImage (owner i)))
+    (E : Placement W Q S O P F marks (ownerPrefix selected owner n.val) (fun i => rootImage (owner
+      i)))
     (hbranch : ∀ s j, ∀ i ∈ family s j, (kinds s j).BranchValid F i)
     (hedge : ∀ s j, ∀ e ∈ allocation s j, edgeValid W Q S (rootCluster W Q s) (kinds s j) e)
     (hsmall : ∀ i, F.size i ≤ freshBranchBound α W.clusterSize)
@@ -78,44 +79,54 @@ theorem exists_twoSideAdvance
         ((reservoir W Q (otherSide (rootSide n))).filter ((embeddingHost W).Adj z)).card) ∧
       ∃ D : ∀ s j, FamilyState W Q S (rootCluster W Q s) F owner (kinds s j)
           (allocation s j) (family s j) (Function.update rootImage n z) (n.val + 1),
-        (∀ s j i hi, ((D s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s j)).forestCopy.componentCopy i
+        (∀ s j i hi, ((D s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s
+          j)).forestCopy.componentCopy i
             (processedFamily_mono owner (Nat.le_succ n.val) (family s j) hi) =
-          ((A s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s j)).forestCopy.componentCopy i hi) ∧
+          ((A s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s
+            j)).forestCopy.componentCopy i hi) ∧
         ∃ E' : Placement W Q S O P F marks (ownerPrefix selected owner (n.val + 1))
             (fun i => Function.update rootImage n z (owner i)),
           (∀ i (hi : i ∈ ownerPrefix selected owner n.val), E'.forestCopy.componentCopy i
-            (ownerPrefix_mono selected owner (Nat.le_succ n.val) hi) = E.forestCopy.componentCopy i hi) ∧
+            (ownerPrefix_mono selected owner (Nat.le_succ n.val) hi) = E.forestCopy.componentCopy i
+              hi) ∧
           (∀ i (hi : i ∈ ownerPrefix selected owner n.val), E'.group
             ⟨i, ownerPrefix_mono selected owner (Nat.le_succ n.val) hi⟩ = E.group ⟨i, hi⟩) := by
   let Step (s : Fin 2) : Prop :=
     ∃ z ∈ reservoir W Q s, z ∉ used ∧
       (∀ v, parent = some v → (embeddingHost W).Adj v z) ∧
-      ((padGraph (reduced W)).Adj (Sum.inl (rootCluster W Q s)) (Sum.inl (rootCluster W Q (otherSide s))) →
+      ((padGraph (reduced W)).Adj (Sum.inl (rootCluster W Q s)) (Sum.inl (rootCluster W Q (otherSide
+        s))) →
         ((densityCutoff α : ℝ) - (epsilon α : ℝ)) * (sourceQuota W : ℝ) ≤
           ((reservoir W Q (otherSide s)).filter ((embeddingHost W).Adj z)).card) ∧
-      ∃ D : ∀ j, FamilyState W Q S (rootCluster W Q s) F owner (kinds s j) (allocation s j) (family s j)
+      ∃ D : ∀ j, FamilyState W Q S (rootCluster W Q s) F owner (kinds s j) (allocation s j) (family
+        s j)
           (Function.update rootImage n z) (n.val + 1),
-        (∀ j i hi, ((D j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s j)).forestCopy.componentCopy i
+        (∀ j i hi, ((D j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s
+          j)).forestCopy.componentCopy i
             (processedFamily_mono owner (Nat.le_succ n.val) (family s j) hi) =
-          ((A s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s j)).forestCopy.componentCopy i hi) ∧
+          ((A s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s
+            j)).forestCopy.componentCopy i hi) ∧
         ∃ E' : Placement W Q S O P F marks (ownerPrefix selected owner (n.val + 1))
             (fun i => Function.update rootImage n z (owner i)),
           (∀ i (hi : i ∈ ownerPrefix selected owner n.val), E'.forestCopy.componentCopy i
-            (ownerPrefix_mono selected owner (Nat.le_succ n.val) hi) = E.forestCopy.componentCopy i hi) ∧
+            (ownerPrefix_mono selected owner (Nat.le_succ n.val) hi) = E.forestCopy.componentCopy i
+              hi) ∧
           (∀ i (hi : i ∈ ownerPrefix selected owner n.val), E'.group
             ⟨i, ownerPrefix_mono selected owner (Nat.le_succ n.val) hi⟩ = E.group ⟨i, hi⟩)
   have hcurrent : Step (rootSide n) := by
     by_cases hs : rootSide n = 0
     · rw [hs]
       exact exists_majorAdvance W Q S O P F owner marks selected hα hα1 hhost horder hk hCV1 hC
-        (otherSide 0) (kinds 0) (hkind 0) (allocation 0) (family 0) (hdisjoint 0) rootImage n (A 0) E
+        (otherSide 0) (kinds 0) (hkind 0) (allocation 0) (family 0) (hdisjoint 0) rootImage n (A 0)
+          E
         (hbranch 0) (hedge 0) hsmall (haway 0) globalCount (hglobal 0) (hbudget 0)
         hselectedSize hmarks hselectedMass hcolor used hused parent (fun v hv => by
           simpa only [hs] using hparent v hv)
     · obtain ⟨z, hz, hfresh, hAdj, hdegree, D, hD⟩ := exists_synchronizedFamilyAdvance W Q S
         (rootSide n) (otherSide (rootSide n)) F owner hα hα1 hhost horder hk
         (kinds (rootSide n)) (hkind (rootSide n)) (allocation (rootSide n)) (family (rootSide n))
-        (hdisjoint (rootSide n)) rootImage n (A (rootSide n)) (hbranch (rootSide n)) (hedge (rootSide n))
+        (hdisjoint (rootSide n)) rootImage n (A (rootSide n)) (hbranch (rootSide n)) (hedge
+          (rootSide n))
         hsmall (haway (rootSide n)) globalCount (hglobal (rootSide n)) (hbudget (rootSide n))
         used hused parent hparent
       have hno : ∀ i ∈ selected, owner i ≠ n := by
@@ -123,15 +134,18 @@ theorem exists_twoSideAdvance
         have h := hselectedSide i hi
         rw [ho] at h
         exact hs h
-      obtain ⟨E', hcopies, hgroups⟩ := exists_ownerSkip W Q S O P F marks selected owner rootImage n E z hno
+      obtain ⟨E', hcopies, hgroups⟩ := exists_ownerSkip W Q S O P F marks selected owner rootImage n
+        E z hno
       exact ⟨z, hz, hfresh, hAdj, hdegree, D, hD, E', hcopies, hgroups⟩
   obtain ⟨z, hz, hfresh, hAdj, hdegree, Dcurrent, hcurrent, E', hEcopies, hEgroups⟩ := hcurrent
   have hnext (s : Fin 2) :
       ∃ D : ∀ j, FamilyState W Q S (rootCluster W Q s) F owner (kinds s j)
           (allocation s j) (family s j) (Function.update rootImage n z) (n.val + 1),
-        ∀ j i hi, ((D j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s j)).forestCopy.componentCopy i
+        ∀ j i hi, ((D j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s
+          j)).forestCopy.componentCopy i
             (processedFamily_mono owner (Nat.le_succ n.val) (family s j) hi) =
-          ((A s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s j)).forestCopy.componentCopy i hi := by
+          ((A s j).currentPlacement W Q S (rootCluster W Q s) F owner (kinds s
+            j)).forestCopy.componentCopy i hi := by
     by_cases hs : s = rootSide n
     · subst s
       exact ⟨Dcurrent, hcurrent⟩
@@ -140,7 +154,8 @@ theorem exists_twoSideAdvance
         have h := hside s j i hi
         rw [ho] at h
         exact hs h.symm
-      have hstep (j : Fin k) := exists_familyAdvance_noAllocation W Q S (rootCluster W Q s) F owner (kinds s j)
+      have hstep (j : Fin k) := exists_familyAdvance_noAllocation W Q S (rootCluster W Q s) F owner
+        (kinds s j)
         hα hα1 hhost horder (hkind s j) rootImage n (A s j) z
         (by
           intro i hi
@@ -149,7 +164,8 @@ theorem exists_twoSideAdvance
         (by
           intro x hx howner
           obtain ⟨i, hi, hoi⟩ := howner
-          have hm : i ∈ activeItems W Q S (rootCluster W Q s) F owner (kinds s j) (A s j).active := by
+          have hm : i ∈ activeItems W Q S (rootCluster W Q s) F owner (kinds s j) (A s j).active :=
+            by
             rw [hx]
             exact hi
           have hf : i ∈ family s j :=
@@ -158,7 +174,8 @@ theorem exists_twoSideAdvance
       choose D _ _ _ _ _ hD using hstep
       exact ⟨D, hD⟩
   choose D hD using hnext
-  exact ⟨z, hz, hfresh, hAdj, hdegree (rootClusters_adj W Q (rootSide n)), D, hD, E', hEcopies, hEgroups⟩
+  exact ⟨z, hz, hfresh, hAdj, hdegree (rootClusters_adj W Q (rootSide n)), D, hD, E', hEcopies,
+    hEgroups⟩
 
 end Erdos547b.ZhaoSourceMarkedTwoSideAdvance
 

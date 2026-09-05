@@ -5,7 +5,7 @@ import ErdosProblems.Erdos547b.TwoRowSurplusAllocation
 
 /-! # Actual switched allocations for the large-minor postponed core -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePathCoreAllocation
@@ -74,8 +74,15 @@ theorem exists_large_coreAllocation
     (fun e _ => pairWeight_le W Q S sw.switched _ (rootCluster_cases W Q 1) e)
     (coreMass_nonneg P hp 0) (coreMass_nonneg P hp 1) (by positivity) (by positivity)
     (hsurplus 0) (hsurplus 1)
-  exact ⟨![Ea, Eb], hdis, (by intro s; fin_cases s; exact hEa.trans haway; exact hEb.trans haway),
-    (by intro s; fin_cases s; exact ha.le; exact hb.le)⟩
+  refine ⟨![Ea, Eb], hdis, ?_, ?_⟩
+  · intro s
+    fin_cases s
+    · exact hEa.trans haway
+    · exact hEb.trans haway
+  · intro s
+    fin_cases s
+    · exact ha.le
+    · exact hb.le
 
 end Erdos547b.ZhaoSourcePathCoreAllocation
 

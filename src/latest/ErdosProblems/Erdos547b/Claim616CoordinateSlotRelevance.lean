@@ -64,6 +64,7 @@ the theorem usable with the actual indexed allowed sets, the main statements
 below quantify that function rather than using the convenient `univ` value
 from the section declaration. -/
 
+omit [DecidableEq B] [Fintype B] in
 theorem coordinateRootSlot_relevant
     (allowed0 : Fin C.card →
       Finset (Fin D.Mout.edgeSet.toFinite.toFinset.card))
@@ -87,12 +88,13 @@ theorem coordinateRootSlot_relevant
       · simp [coordinateHierarchyRootSlot, coordinateBranchRootSlot,
           RelevantSlot, hclass, hj0]
       · by_cases hj1 : j ∈ majorResidualBranches P S
-        · simpa [coordinateHierarchyRootSlot, coordinateBranchRootSlot,
-            RelevantSlot, hclass, hj0, hj1] using (Or.inl (A.F1edge j).2)
+        · simp [coordinateHierarchyRootSlot, coordinateBranchRootSlot,
+            RelevantSlot, hclass, hj0, hj1]
         · simpa [coordinateHierarchyRootSlot, coordinateBranchRootSlot,
             RelevantSlot, hclass, hj0, hj1] using
             (Or.inr (D.mb_subset (A.Fbedge j).2))
 
+omit [DecidableEq B] [Fintype B] in
 theorem coordinateInteriorSlot_relevant
     (allowed0 : Fin C.card →
       Finset (Fin D.Mout.edgeSet.toFinite.toFinset.card))
@@ -128,7 +130,7 @@ theorem coordinateInteriorSlot_relevant
       · simpa [hj0, RelevantSlot] using
           (Or.inr (moutOriginalEdge_mem D (A.F0edge j)))
       · by_cases hj1 : j ∈ majorResidualBranches P S
-        · simpa [hj0, hj1, RelevantSlot] using (Or.inl (A.F1edge j).2)
+        · simp [hj0, hj1, RelevantSlot]
         · simpa [hj0, hj1, RelevantSlot] using
             (Or.inr (D.mb_subset (A.Fbedge j).2))
 

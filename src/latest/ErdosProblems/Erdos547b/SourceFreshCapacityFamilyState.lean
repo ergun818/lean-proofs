@@ -11,7 +11,7 @@ receives a source-only look-ahead reservation and its actual current-owner
 prefix. The nonterminal ledger charges the full reserved source mass.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceFreshCapacityFamilyState
@@ -69,7 +69,8 @@ theorem exists_fresh_familyState
     intro i hi
     obtain ⟨p, hp, hip⟩ := List.mem_flatMap.mp hi
     have hc := hcurrent i
-      (Erdos547b.ZhaoSourceResidualRootPacking.SaturatedPacking.chunk_mem P (List.mem_append_left _ hp) hip)
+      (Erdos547b.ZhaoSourceResidualRootPacking.SaturatedPacking.chunk_mem P (List.mem_append_left _
+        hp) hip)
     rw [hc]
     exact Nat.lt_succ_self _
   have hledger := closed_saturation_mass P
@@ -138,7 +139,8 @@ theorem exists_fresh_familyState
         reserved_ledger := ?_ }⟩
       · change (P.closed.flatMap Prod.snd ++ X.source.items) ++ R.remaining = current ++ future
         rw [hXitems, List.append_assoc, R.flatten, ← List.append_assoc, hflat]
-      · simpa only [activeEdges, hXedge, Finset.singleton_subset_iff] using List.mem_toFinset.mpr hbin
+      · simpa only [activeEdges, hXedge, Finset.singleton_subset_iff] using List.mem_toFinset.mpr
+          hbin
       · simpa only [activeEdges, hXedge, Finset.disjoint_singleton_right] using hpNotClosed
       · intro hremaining
         have hl := R.extend_ledger (capacity W Q S C kind) closedEdges p.1 hpNotClosed

@@ -125,7 +125,7 @@ end OrderedBranchForest
 weights.  The overshoot is strictly smaller than the uniform branch bound.
 This is the precise finite sentence used to obtain display (6.23). -/
 theorem exists_subset_sum_between_target_and_target_add
-    {α : Type*} [DecidableEq α]
+    {α : Type*}
     (s : Finset α) (w : α → ℕ) (target slack : ℕ)
     (hslack : 0 < slack)
     (hsmall : ∀ a ∈ s, w a ≤ slack)

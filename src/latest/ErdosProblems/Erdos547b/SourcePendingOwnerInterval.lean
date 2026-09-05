@@ -10,7 +10,7 @@ fibers. Updating one root map value and extending that owner's interval
 therefore preserves all earlier component copies.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePendingOwnerInterval

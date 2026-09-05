@@ -155,7 +155,7 @@ noncomputable def targetCoordinateCleanedRegularSystem
   · intro q i a hz
     by_cases ha : a = F.segments.root i
     · subst a
-      simpa [targetInteriorCandidate, targetInteriorRemoved] using hz
+      simp [targetInteriorCandidate, targetInteriorRemoved] at hz
     · apply (Finset.mem_sdiff.mp hz).2
       rw [targetInteriorRemoved, if_neg ha]
       exact Finset.mem_union_right _
@@ -191,4 +191,5 @@ end HierarchicalSegmentForest
 
 end Erdos547b.ZhaoLemma59HierarchicalTargetCoordinateCleaning
 
-#print axioms Erdos547b.ZhaoLemma59HierarchicalTargetCoordinateCleaning.HierarchicalSegmentForest.targetCoordinateCleanedRegularSystem
+open Erdos547b.ZhaoLemma59HierarchicalTargetCoordinateCleaning.HierarchicalSegmentForest in
+#print axioms targetCoordinateCleanedRegularSystem

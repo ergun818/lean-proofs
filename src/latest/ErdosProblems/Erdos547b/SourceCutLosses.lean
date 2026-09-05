@@ -4,7 +4,7 @@ import ErdosProblems.Erdos547b.CutRestoration
 
 /-! # Actual cleanup and whole-pair deletion costs for the final sparse cut -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 namespace Erdos547b.ZhaoSourceCutLosses
 
@@ -68,13 +68,16 @@ theorem pair_deleted_edges_le (hα : 0 < α) (hα1 : α ≤ 1 / 4)
       (2 * (degreeError α : ℝ) + 8 * (fourthRoot α : ℝ) ^ 2) * (q : ℝ) ^ 2 := by
   have h := quantitative_card_deleted_edges_le (assignment W) G W.graph q (sourceQuota W) W.graph_le
   change (W.graph.edgeFinset \ (host W).edgeFinset).card ≤
-    ((exceptionalVertices (assignment W)).card + nonLargeHighError (assignment W) G q (sourceQuota W)) *
+    ((exceptionalVertices (assignment W)).card + nonLargeHighError (assignment W) G q (sourceQuota
+      W)) *
       Fintype.card (Fin hostN) at h
   rw [exceptionalVertices_partitionAssignment, Fintype.card_fin] at h
   have h' := h.trans_eq (congrArg
-    (fun m => (W.exceptional.card + nonLargeHighError (assignment W) G q (sourceQuota W)) * m) hhost)
+    (fun m => (W.exceptional.card + nonLargeHighError (assignment W) G q (sourceQuota W)) * m)
+      hhost)
   have hR : ((W.graph.edgeFinset \ (host W).edgeFinset).card : ℝ) ≤
-      ((W.exceptional.card : ℝ) + nonLargeHighError (assignment W) G q (sourceQuota W)) * (2 * q) := by
+      ((W.exceptional.card : ℝ) + nonLargeHighError (assignment W) G q (sourceQuota W)) * (2 * q) :=
+        by
     exact_mod_cast h'
   have he := (cleanup_bounds W hα hα1 hhost horder).1
   have hn := nonlarge_error_le W hα hhost

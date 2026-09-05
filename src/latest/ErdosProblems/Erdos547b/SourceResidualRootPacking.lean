@@ -11,7 +11,7 @@ permanently cleaned endpoints; one pending chunk keeps access at that root.
 This is a residual transition, not yet the full ordered-forest induction.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceResidualRootPacking
@@ -51,7 +51,8 @@ theorem exists_residual_saturatedPacking_bad_edges
     exact Finset.mem_product.mpr ⟨hbad (Finset.mem_product.mp hp).1, Finset.mem_univ _⟩
   have hDcount : (D.card : ℝ) ≤ δ * ((all \ used) ×ˢ (Finset.univ : Finset (Fin 2))).card := by
     simpa only [D, Finset.card_product, Finset.card_singleton, mul_one, Finset.card_univ,
-      Fintype.card_fin, Nat.cast_mul, Nat.cast_ofNat, mul_assoc, mul_comm, mul_left_comm] using hcount
+      Fintype.card_fin, Nat.cast_mul, Nat.cast_ofNat, mul_assoc, mul_comm, mul_left_comm] using
+        hcount
   have hproj : D.image Prod.fst = bad := Finset.product_image_fst (by simp)
   simpa only [hproj] using exists_residual_saturatedPacking all used D items weight capacity
     δ N slack consumed hused hD hDcount hδ hN hslack hcap hprocessed hsmall hbudget
@@ -226,7 +227,8 @@ theorem exists_realized_residual_after_parent
     (hsmall : ∀ i ∈ items, F.size i ≤ freshBranchBound α W.clusterSize)
     (hbudget : mass (fun i => (F.size i : ℝ)) items + consumed ≤
       (∑ e ∈ all, partOneCapacity W Q S (rootCluster W Q s) e) -
-        (4 * (rootTypicality α : ℝ) * W.clusterSize + freshBranchBound α W.clusterSize) * all.card) :
+        (4 * (rootTypicality α : ℝ) * W.clusterSize + freshBranchBound α W.clusterSize) * all.card)
+          :
     ∃ z ∈ reservoir W Q s, (embeddingHost W).Adj v z ∧ z ∉ usedRoots ∧
       PartOneAccess W Q S (rootCluster W Q s) fixed z ∧
       ((padGraph (reduced W)).Adj (Sum.inl (rootCluster W Q s)) (Sum.inl (rootCluster W Q t)) →

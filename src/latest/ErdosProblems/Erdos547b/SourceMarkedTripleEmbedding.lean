@@ -10,7 +10,7 @@ Two actual reduced edges and three current sets of gamma*N vertices
 supply every local typicality and greedy-embedding inequality.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMarkedTripleEmbedding
@@ -58,7 +58,7 @@ theorem exists_markedBranchCopy
     (hCLarge : (gamma α : ℝ) * W.clusterSize ≤ (C'.card : ℝ))
     (hXLarge : (gamma α : ℝ) * W.clusterSize ≤ (X'.card : ℝ))
     (hYLarge : (gamma α : ℝ) * W.clusterSize ≤ (Y'.card : ℝ))
-    {A : Type*} [Fintype A] [DecidableEq A]
+    {A : Type*} [Fintype A]
     (T : SimpleGraph A) (hT : T.IsTree) (root : A) (special : Finset A)
     (hspecial : ∀ a ∈ special, hT.coloringTwoOfVert root a = 0)
     (hsmall : Fintype.card A ≤ freshBranchBound α W.clusterSize)
@@ -67,6 +67,7 @@ theorem exists_markedBranchCopy
       (∀ a ∈ special, f a ∈ C') ∧
       ∀ a, a ≠ root → a ∉ special →
         f a ∈ if hT.coloringTwoOfVert root a = 0 then Y' else X' := by
+  classical
   have hcard (i : Index W) : (clusterVertices (assignment W) i).card = W.clusterSize := by
     rw [clusterVertices_partitionAssignment]
     exact W.equal_clusters i.1 i.2

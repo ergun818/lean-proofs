@@ -42,6 +42,7 @@ coloring, label zero is allowed to contain edges. -/
 def labelCard (c : V → Fin 2) (i : Fin 2) : ℕ :=
   (Finset.univ.filter fun x => c x = i).card
 
+omit [DecidableEq V] in
 @[simp] theorem labelCard_eq_card_filter (c : V → Fin 2) (i : Fin 2) :
     labelCard c i = (Finset.univ.filter fun x => c x = i).card := rfl
 
@@ -76,6 +77,7 @@ theorem labelCard_induce_compl_singleton_eq_of_ne
     refine ⟨⟨y, by simpa using hyx⟩, ?_, rfl⟩
     simpa using hy
 
+omit [DecidableEq V] in
 /-- Leaf-induction embedding with an arbitrary two-labeling.  Edges may lie
 inside label zero; label one is independent.  The host compatibility relation
 is therefore exactly “at least one endpoint has label zero”. -/
@@ -157,7 +159,7 @@ private theorem tree_embedding_respecting_semibipartition_aux
           · intro a ha
             simp only [Finset.mem_erase, Finset.mem_filter, Finset.mem_univ,
               true_and] at ha
-            simpa [c', s, ha.2]
+            simp [c', s, ha.2]
           · intro a₁ ha₁ a₂ ha₂ h
             exact Subtype.ext_iff.mp h
           · intro a ha
@@ -229,6 +231,7 @@ private theorem tree_embedding_respecting_semibipartition_aux
         · change F u ∈ A (c u)
           simpa [F, hu, c'] using hf ⟨u, by simpa [s] using hu⟩
 
+omit [DecidableEq V] in
 /-- Public semibipartite embedding lemma used in Fact 7.2(2). -/
 theorem tree_embedding_respecting_semibipartition
     (T : SimpleGraph V) (G : SimpleGraph W) [DecidableRel G.Adj]
@@ -239,6 +242,7 @@ theorem tree_embedding_respecting_semibipartition
     (hdeg : ∀ i j, (i = 0 ∨ j = 0) → ∀ w ∈ A i,
       labelCard c j ≤ ((G.neighborFinset w) ∩ A j).card) :
     ∃ f : Copy T G, ∀ x, f x ∈ A (c x) := by
+  classical
   apply tree_embedding_respecting_semibipartition_aux T G hT c A hA hcompat hcap hdeg
     (Fintype.card V - 1)
   have hpos : 0 < Fintype.card V := Fintype.card_pos_iff.mpr hT.connected.nonempty
@@ -274,7 +278,7 @@ theorem independent_side_card_lt_of_no_leaves
       · exact fun h => h.1
       · intro hxy
         have hy : y ∈ U₀ ∨ y ∈ U₁ := by
-          have : y ∈ U₀ ∪ U₁ := by simpa [hcover]
+          have : y ∈ U₀ ∪ U₁ := by simp [hcover]
           exact Finset.mem_union.mp this
         rcases hy with hy0 | hy1
         · exact ⟨hxy, Or.inl ⟨hx, hy0⟩⟩
@@ -323,7 +327,7 @@ theorem labelCard_partitionLabel_one_of_partition (U₀ U₁ : Finset V)
   congr 1
   ext x
   have hxcover : x ∈ U₀ ∨ x ∈ U₁ := by
-    have : x ∈ U₀ ∪ U₁ := by simpa [hcover]
+    have : x ∈ U₀ ∪ U₁ := by simp [hcover]
     exact Finset.mem_union.mp this
   constructor
   · intro hx
@@ -335,8 +339,9 @@ theorem labelCard_partitionLabel_one_of_partition (U₀ U₁ : Finset V)
     have hx0 : x ∉ U₀ := fun hx0 => Finset.disjoint_left.mp hdisj hx0 hx1
     simp [partitionLabel, hx0]
 
+omit [DecidableEq W] in
 private theorem fact72_part2_aux
-    (T : SimpleGraph V) (G : SimpleGraph W) [DecidableRel T.Adj]
+    (T : SimpleGraph V) (G : SimpleGraph W)
     [DecidableRel G.Adj] (hT : T.IsTree)
     (U₀ U₁ : Finset V) (hdisjU : Disjoint U₀ U₁)
     (hcoverU : U₀ ∪ U₁ = Finset.univ) (hU₀ : U₀.Nonempty)
@@ -371,7 +376,7 @@ private theorem fact72_part2_aux
         obtain ⟨p, hxp, hpuniq⟩ := degree_eq_one_iff_existsUnique_adj.mp hxdeg
         have hpU₀ : p ∈ U₀ := by
           have hpcover : p ∈ U₀ ∨ p ∈ U₁ := by
-            have : p ∈ U₀ ∪ U₁ := by simpa [hcoverU]
+            have : p ∈ U₀ ∪ U₁ := by simp [hcoverU]
             exact Finset.mem_union.mp this
           exact hpcover.resolve_right fun hpU₁ => hindep hxU₁ hpU₁ hxp.ne hxp
         let s : Set V := {x}ᶜ
@@ -407,7 +412,7 @@ private theorem fact72_part2_aux
           dsimp only [U₀', U₁']
           ext y
           simp only [Finset.mem_union, Finset.mem_filter, Finset.mem_univ, true_and]
-          have : (y : V) ∈ U₀ ∪ U₁ := by simpa [hcoverU]
+          have : (y : V) ∈ U₀ ∪ U₁ := by simp [hcoverU]
           exact iff_true_intro (Finset.mem_union.mp this)
         have hU₀' : U₀'.Nonempty := by
           obtain ⟨u, hu⟩ := hU₀
@@ -529,15 +534,15 @@ private theorem fact72_part2_aux
         have hcompat : ∀ ⦃x y⦄, T.Adj x y → c x = 0 ∨ c y = 0 := by
           intro x y hxy
           by_contra h
-          push_neg at h
+          push Not at h
           have hx1 : x ∈ U₁ := by
             have hxcover : x ∈ U₀ ∨ x ∈ U₁ := by
-              have : x ∈ U₀ ∪ U₁ := by simpa [hcoverU]
+              have : x ∈ U₀ ∪ U₁ := by simp [hcoverU]
               exact Finset.mem_union.mp this
             exact hxcover.resolve_left (by simpa [c, partitionLabel] using h.1)
           have hy1 : y ∈ U₁ := by
             have hycover : y ∈ U₀ ∨ y ∈ U₁ := by
-              have : y ∈ U₀ ∪ U₁ := by simpa [hcoverU]
+              have : y ∈ U₀ ∪ U₁ := by simp [hcoverU]
               exact Finset.mem_union.mp this
             exact hycover.resolve_left (by simpa [c, partitionLabel] using h.2)
           exact hindep hx1 hy1 hxy.ne hxy
@@ -573,12 +578,12 @@ private theorem fact72_part2_aux
         have hcx : c x = 0 := by simp [c, partitionLabel, hx]
         simpa [hcx, hP0] using hf x
 
+omit [DecidableEq W] in
 /-- Zhao's Fact 7.2(2), in a finite exact form.  `U₁` is the possibly
 non-independent side and is embedded first into `A`; the independent side's
 leaves are delayed and then added using the full degree condition on `A`. -/
 theorem fact72_part2
-    (T : SimpleGraph V) (G : SimpleGraph W) [DecidableRel T.Adj]
-    [DecidableRel G.Adj] (hT : T.IsTree)
+    (T : SimpleGraph V) (G : SimpleGraph W) [DecidableRel G.Adj] (hT : T.IsTree)
     (U₁ U₂ : Finset V) (hdisjU : Disjoint U₁ U₂)
     (hcoverU : U₁ ∪ U₂ = Finset.univ) (hU₁ : U₁.Nonempty)
     (hindep : T.IsIndepSet (U₂ : Set V))
@@ -588,18 +593,19 @@ theorem fact72_part2
     (hBA : ∀ b ∈ B, U₁.card ≤ Erdos547EC2.degreeInto G b A)
     (hdegreeA : ∀ a ∈ A, Fintype.card V - 1 ≤ G.degree a) :
     T ⊑ G := by
+  classical
   obtain ⟨f, -⟩ := fact72_part2_aux T G hT U₁ U₂ hdisjU hcoverU hU₁ hindep
     A B hdisjAB hA hAA hAB hBA hdegreeA (Fintype.card V - 1) (by
       have hpos : 0 < Fintype.card V := Fintype.card_pos_iff.mpr hT.connected.nonempty
       omega)
   exact ⟨f⟩
 
+omit [DecidableEq W] in
 /-- The exact consequence of Fact 7.2(2) used at the start of Claim 7.12:
 if `T` is omitted, then it has no partition with an independent second side
 whose first side fits below the common three-way minimum-degree threshold. -/
 theorem omitted_tree_has_no_small_independent_complement
-    (T : SimpleGraph V) (G : SimpleGraph W) [DecidableRel T.Adj]
-    [DecidableRel G.Adj] (hT : T.IsTree) (homit : ¬ T ⊑ G)
+    (T : SimpleGraph V) (G : SimpleGraph W) [DecidableRel G.Adj] (hT : T.IsTree) (homit : ¬ T ⊑ G)
     (A B : Finset W) (hdisjAB : Disjoint A B) (hA : A.Nonempty)
     (q : ℕ)
     (hAA : ∀ a ∈ A, q ≤ Erdos547EC2.degreeInto G a A)
@@ -609,6 +615,7 @@ theorem omitted_tree_has_no_small_independent_complement
     ¬ ∃ U₁ U₂ : Finset V,
       Disjoint U₁ U₂ ∧ U₁ ∪ U₂ = Finset.univ ∧ U₁.Nonempty ∧
       T.IsIndepSet (U₂ : Set V) ∧ U₁.card ≤ q := by
+  classical
   rintro ⟨U₁, U₂, hdisjU, hcoverU, hU₁, hindep, hsmall⟩
   apply homit
   apply fact72_part2 T G hT U₁ U₂ hdisjU hcoverU hU₁ hindep A B hdisjAB hA
@@ -635,6 +642,7 @@ theorem claim712_final_partition_estimate
     y₁ + y₂ + 1 ≤ q := by
   omega
 
+omit [DecidableEq W] in
 /-- The large-class contradiction at the end of Zhao's Claim 7.12, stated
 with the actual vertex sets.  `X₁,Y₁` are the two classes of the
 nonisolated complementary forest, while `X₂,Y₂` are the two classes of
@@ -646,8 +654,7 @@ estimate would make `Y₁ ∪ Y₂ ∪ {r}` small.  Its complement
 what permits the two bipartitions to be oriented independently).  Fact
 7.2(2) would then embed the allegedly omitted tree. -/
 theorem omitted_tree_forces_complement_large_class_le
-    (T : SimpleGraph V) (G : SimpleGraph W) [DecidableRel T.Adj]
-    [DecidableRel G.Adj] (hT : T.IsTree) (homit : ¬ T ⊑ G)
+    (T : SimpleGraph V) (G : SimpleGraph W) [DecidableRel G.Adj] (hT : T.IsTree) (homit : ¬ T ⊑ G)
     (A B : Finset W) (hdisjAB : Disjoint A B) (hA : A.Nonempty)
     (q n m : ℕ)
     (hAA : ∀ a ∈ A, q ≤ Erdos547EC2.degreeInto G a A)
@@ -663,6 +670,7 @@ theorem omitted_tree_forces_complement_large_class_le
     (hU₁card : (Y₁ ∪ Y₂ ∪ {r}).card = Y₁.card + Y₂.card + 1)
     (hindep : T.IsIndepSet (↑((X₁ ∪ X₂) ∪ L₀) : Set V)) :
     X₁.card ≤ q := by
+  classical
   by_contra hnot
   have hlarge : q < X₁.card := by omega
   have hsmall : Y₁.card + Y₂.card + 1 ≤ q :=
@@ -700,7 +708,6 @@ theorem exists_low_cross_large_side
     intro v hv
     have := (Finset.mem_filter.mp hv).2
     omega
-
   have hBadMul : Bad.card * (s + 1) ≤ (G.interedges Vᵢ Vⱼ).card :=
     Erdos547EC2.card_mul_le_card_interedges_of_subset_of_degreeInto
       G hBadSub hBadDeg
@@ -728,12 +735,13 @@ theorem exists_low_cross_large_side
     have htot := hlarge v hvL
     omega
 
+omit [Fintype W] in
 /-- The root-placement step for the complementary forest in Claim 7.12.
 If the number of nontrivial components is at most the number of available
 neighbours of `v₀` in `A ∪ B`, their roots can be mapped injectively to
 those neighbours.  The two membership alternatives record the orientation
 of each component's bipartition used by the subsequent forest embedding. -/
-theorem exists_injective_root_placement
+theorem exists_injective_root_placement [Finite W]
     {R : Type*} [Fintype R]
     (G : SimpleGraph W) [DecidableRel G.Adj]
     (v₀ : W) (A B : Finset W)
@@ -742,6 +750,7 @@ theorem exists_injective_root_placement
       (∀ r, G.Adj v₀ (f r)) ∧
       (∀ r, f r ∈ A ∨ f r ∈ B) := by
   classical
+  let := Fintype.ofFinite W
   let N : Finset W := (G.neighborFinset v₀) ∩ (A ∪ B)
   have hNcard : Fintype.card R ≤ N.card := by
     rw [degreeInto_eq_card_neighbor_inter] at hcard
@@ -840,6 +849,7 @@ noncomputable def inducedPartVertices
   classical
   exact (Finset.univ.filter fun v => c v = i).image Subtype.val
 
+omit [Fintype V] in
 theorem card_inducedPartVertices
     (C : Finset V) {T : SimpleGraph V}
     (c : (T.induce (C : Set V)).Coloring (Fin 2)) (i : Fin 2) :
@@ -848,6 +858,7 @@ theorem card_inducedPartVertices
   rw [inducedPartVertices, Finset.card_image_of_injective _ Subtype.val_injective]
   rfl
 
+omit [Fintype V] in
 @[simp] theorem mem_inducedPartVertices
     {C : Finset V} {T : SimpleGraph V}
     {c : (T.induce (C : Set V)).Coloring (Fin 2)} {i : Fin 2} {v : V} :
@@ -861,11 +872,13 @@ theorem card_inducedPartVertices
     obtain ⟨hvC, hvi⟩ := hv
     exact Finset.mem_image.mpr ⟨⟨v, hvC⟩, by simp [hvi], rfl⟩
 
-theorem inducedPartVertices_union
+omit [Fintype V] in
+theorem inducedPartVertices_union [Finite V]
     (C : Finset V) {T : SimpleGraph V}
     (c : (T.induce (C : Set V)).Coloring (Fin 2)) :
     inducedPartVertices C c 0 ∪ inducedPartVertices C c 1 = C := by
   classical
+  let := Fintype.ofFinite V
   ext v
   constructor
   · intro hv
@@ -877,11 +890,13 @@ theorem inducedPartVertices_union
     · exact Finset.mem_union_left _ (mem_inducedPartVertices.mpr ⟨hv, h⟩)
     · exact Finset.mem_union_right _ (mem_inducedPartVertices.mpr ⟨hv, h⟩)
 
-theorem disjoint_inducedPartVertices
+omit [Fintype V] in
+theorem disjoint_inducedPartVertices [Finite V]
     (C : Finset V) {T : SimpleGraph V}
     (c : (T.induce (C : Set V)).Coloring (Fin 2)) :
     Disjoint (inducedPartVertices C c 0) (inducedPartVertices C c 1) := by
   classical
+  let := Fintype.ofFinite V
   rw [Finset.disjoint_left]
   intro v hv0 hv1
   obtain ⟨hvC0, h0⟩ := mem_inducedPartVertices.mp hv0
@@ -890,11 +905,13 @@ theorem disjoint_inducedPartVertices
   rw [this] at h0
   omega
 
-theorem inducedPartVertices_isIndep
+omit [Fintype V] in
+theorem inducedPartVertices_isIndep [Finite V]
     (C : Finset V) {T : SimpleGraph V}
     (c : (T.induce (C : Set V)).Coloring (Fin 2)) (i : Fin 2) :
     T.IsIndepSet (inducedPartVertices C c i : Set V) := by
   classical
+  let := Fintype.ofFinite V
   rw [T.isIndepSet_iff]
   intro u hu v hv huv hadj
   obtain ⟨huC, huc⟩ := mem_inducedPartVertices.mp hu
@@ -959,12 +976,13 @@ theorem independent_core_selected_leaves
     · have hvOut := (SimpleGraphRose547.mem_complementRootLeaves.mp hvL).1
       exact hvOut (hux ▸ hxS)
 
+omit [DecidableEq W] in
 /-- Both independently oriented colour classes of the complementary forest
 have size at most `q`; otherwise the smaller complementary class, the
 smaller selected-subtree class, and the attachment root form the small side
 of Fact 7.2(2). -/
 theorem omitted_tree_forces_both_core_parts_le
-    (T : SimpleGraph V) (G : SimpleGraph W) [DecidableRel T.Adj]
+    (T : SimpleGraph V) (G : SimpleGraph W)
     [DecidableRel G.Adj] (hT : T.IsTree) (homit : ¬ T ⊑ G)
     (A B : Finset W) (hdisjAB : Disjoint A B) (hA : A.Nonempty)
     (q n m : ℕ)
@@ -1154,6 +1172,7 @@ theorem omitted_tree_forces_both_core_parts_le
     · exact hsecondData.2.2.1
     · exact hsecondData.2.2.2
 
+omit [DecidableEq V] in
 /-- The complete embedding contradiction at the heart of Zhao's Claim 7.12.
 The four host reservoirs already have the three degree properties delivered
 by Proposition 7.3.  Fact 7.9 is invoked internally; the remaining four
@@ -1161,8 +1180,7 @@ numeric hypotheses are precisely the root-reservation, selected-subtree,
 forest-minimum-degree, and final Fact 7.2 estimates, uniformly at the lower
 endpoint returned by Fact 7.9. -/
 theorem claim712_core_contradiction
-    (T : SimpleGraph V) (G : SimpleGraph W) [DecidableRel T.Adj]
-    [DecidableRel G.Adj] (hT : T.IsTree) (homit : ¬ T ⊑ G)
+    (T : SimpleGraph V) (G : SimpleGraph W) [DecidableRel G.Adj] (hT : T.IsTree) (homit : ¬ T ⊑ G)
     (n q k : ℕ) (hcardT : Fintype.card V = n + 1)
     (hk2 : 2 ≤ k) (hkT : k ≤ Fintype.card V)
     (A₁ B₁ A₂ B₂ : Finset W)
@@ -1172,7 +1190,7 @@ theorem claim712_core_contradiction
     (hAA₁ : ∀ a ∈ A₁, q ≤ Erdos547EC2.degreeInto G a A₁)
     (hABdeg₁ : ∀ a ∈ A₁, q ≤ Erdos547EC2.degreeInto G a B₁)
     (hBA₁ : ∀ b ∈ B₁, q ≤ Erdos547EC2.degreeInto G b A₁)
-    (hAA₂ : ∀ a ∈ A₂, q ≤ Erdos547EC2.degreeInto G a A₂)
+    (_hAA₂ : ∀ a ∈ A₂, q ≤ Erdos547EC2.degreeInto G a A₂)
     (hABdeg₂ : ∀ a ∈ A₂, q ≤ Erdos547EC2.degreeInto G a B₂)
     (hBA₂ : ∀ b ∈ B₂, q ≤ Erdos547EC2.degreeInto G b A₂)
     (hdegreeA₁ : ∀ a ∈ A₁, Fintype.card V - 1 ≤ G.degree a)
@@ -1337,9 +1355,10 @@ theorem claim712_core_contradiction
     hrootImageMem hcap₁ hdegree₁ hrootDegree₂ hminDegree₂ hheavy
   exact homit hcopy
 
+omit [Fintype W] in
 /-- Proposition 7.3 reservoir with the quantitative exceptional-set bound
 retained after deleting the possible heavy vertex. -/
-theorem exists_claim712_reservoir_side_avoiding_strong
+theorem exists_claim712_reservoir_side_avoiding_strong [Finite W]
     (G : SimpleGraph W) [DecidableRel G.Adj]
     (Vᵢ A : Finset W) (v₀ : W) (n t s q : ℕ)
     (hVcard : Vᵢ.card = n) (hA : A ⊆ Vᵢ)
@@ -1355,6 +1374,7 @@ theorem exists_claim712_reservoir_side_avoiding_strong
       (∀ b ∈ B, q ≤ Erdos547EC2.degreeInto G b A) ∧
       (Vᵢ \ (A ∪ B)).card ≤ s + 1 := by
   classical
+  let := Fintype.ofFinite W
   let C := Vᵢ \ A
   have hAC : Disjoint A C := Finset.disjoint_sdiff
   have hcoverAC : A ∪ C = Vᵢ := Finset.union_sdiff_of_subset hA
@@ -1434,13 +1454,13 @@ theorem exists_claim712_reservoir_side_avoiding_strong
     rw [heq]
     exact hCminusB
 
+omit [DecidableEq V] in
 /-- Zhao's Claim 7.12 in a fully source-shaped, reservoir-free interface.
 The hypotheses are the balanced sparse-cut estimates needed for the two
 applications of Proposition 7.3.  The conclusion says that no selected
 large vertex is heavy into both sides. -/
 theorem claim712_no_biheavy_of_sparse_balanced
-    (T : SimpleGraph V) (G : SimpleGraph W) [DecidableRel T.Adj]
-    [DecidableRel G.Adj] (hT : T.IsTree) (homit : ¬ T ⊑ G)
+    (T : SimpleGraph V) (G : SimpleGraph W) [DecidableRel G.Adj] (hT : T.IsTree) (homit : ¬ T ⊑ G)
     (X Y L : Finset W) (n t b s q k h : ℕ)
     (hcardT : Fintype.card V = n + 1)
     (hXcard : X.card = n) (hYcard : Y.card = n)
@@ -1470,7 +1490,7 @@ theorem claim712_no_biheavy_of_sparse_balanced
     unfold Erdos547EC2.degreeInto
     rw [show (Finset.univ.filter fun w => G.Adj v w) = G.neighborFinset v by
       ext w
-      simp [and_comm]]
+      simp]
     simpa using hlarge v hv
   obtain ⟨Aₓ, hAₓsub, hAₓcard, hAₓcross, hAₓinternal⟩ :=
     exists_low_cross_large_side G hXY hcoverXY hlargeInto hcross

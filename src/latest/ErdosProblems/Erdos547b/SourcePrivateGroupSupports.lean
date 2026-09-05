@@ -5,7 +5,7 @@ import ErdosProblems.Erdos547b.SourcePrivatePairGeometry
 # Disjoint whole supports of the actual private groups
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePrivatePairGeometry

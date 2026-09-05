@@ -10,7 +10,7 @@ roots. The explicit parameter schedule pays the large-case residual
 losses, including the whole matching-edge crossing overshoot.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceExceptionalRowBounds

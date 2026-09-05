@@ -10,7 +10,7 @@ residual source allocation constructs the rest of the tree. The remaining
 input gates are exactly the source-mass and exceptional-gain inequalities.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceLargeExceptionalSelection

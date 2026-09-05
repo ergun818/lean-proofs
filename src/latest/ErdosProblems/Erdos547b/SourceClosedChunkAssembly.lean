@@ -10,7 +10,7 @@ retaining all attachments to its prescribed outer root and all permanent
 endpoint-cleaning constraints. The pending chunk is deliberately absent.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceClosedChunkAssembly
@@ -52,10 +52,12 @@ variable (P : SaturatedPacking bins items (fun i => (F.size i : ℝ))
 
 abbrev closedChunk (j : Fin P.closed.length) := P.closed[j.val]
 
-abbrev closedForest (j : Fin P.closed.length) := listForest F (closedChunk W Q S C F items bins P j).2
+abbrev closedForest (j : Fin P.closed.length) := listForest F (closedChunk W Q S C F items bins P
+  j).2
 
 theorem closedEdge_injective :
-    Function.Injective (fun j : Fin P.closed.length => (closedChunk W Q S C F items bins P j).1) := by
+    Function.Injective (fun j : Fin P.closed.length => (closedChunk W Q S C F items bins P j).1) :=
+      by
   exact closed_bin_injective P
 
 structure ClosedAssembly (z : Fin hostN) where

@@ -8,7 +8,7 @@ Every branch-coordinate cut parent is marked. All marks have rooted colour
 zero, and the sum of their cardinalities is bounded by the number of parts.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePartitionCutMarks
@@ -33,7 +33,8 @@ def branchMarks (j : Fin (Fintype.card (ChildKey P.orderedForest))) :
 theorem branchMarks_color (hT : T.IsTree)
     (j : Fin (Fintype.card (ChildKey P.orderedForest)))
     (a : Fin ((branchForest P).branches.size j)) (ha : a ∈ branchMarks P j) :
-    ((branchForest P).branches.isTree j).coloringTwoOfVert ((branchForest P).branches.root j) a = 0 := by
+    ((branchForest P).branches.isTree j).coloringTwoOfVert ((branchForest P).branches.root j) a = 0
+      := by
   obtain ⟨i, _, hi⟩ := Finset.mem_image.mp (Finset.mem_filter.mp ha).2
   have h := partitionParent_color P hT i.1 i.2
   rw [hi] at h
@@ -44,7 +45,8 @@ theorem parentCoordinates_card_le : (parentCoordinates P).card ≤ P.numParts :=
     (s := (Finset.univ : Finset {i : Fin P.numParts // i.val ≠ 0}))
     (f := fun i => partitionParent P i.1 i.2)
   have ht : Fintype.card {i : Fin P.numParts // i.val ≠ 0} ≤ P.numParts := by
-    simpa only [Fintype.card_fin] using Fintype.card_subtype_le (fun i : Fin P.numParts => i.val ≠ 0)
+    simpa only [Fintype.card_fin] using Fintype.card_subtype_le (fun i : Fin P.numParts => i.val ≠
+      0)
   exact h.trans (by simpa only [Finset.card_univ] using ht)
 
 theorem sum_branchMarks_card_le : (∑ j, (branchMarks P j).card) ≤ P.numParts := by

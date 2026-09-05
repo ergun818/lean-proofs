@@ -9,7 +9,7 @@ cut-adjacent when needed, retains its opposite-reservoir degree, and works
 on the designated targets of almost all unused matching edges.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMixedRootSelection
@@ -55,7 +55,8 @@ theorem exists_mixed_root_from_pool
     (rootCluster W Q s) (rootCluster_cases W Q s) remaining hremaining raw hraw hrawLarge pool
     (hpool.trans (Finset.sdiff_subset.trans (reservoir_subset W Q s))) hpoolCard
   obtain ⟨hzR, hzFresh⟩ := Finset.mem_sdiff.mp (hpool hz)
-  have hnotUsed : z ∉ used := fun hu => hzFresh (Finset.mem_union_left _ (Finset.mem_union_left _ hu))
+  have hnotUsed : z ∉ used := fun hu => hzFresh (Finset.mem_union_left _ (Finset.mem_union_left _
+    hu))
   have hnotReservoir : z ∉ badToward W Q (Sum.inl (rootCluster W Q s)) t :=
     fun hr => hzFresh (Finset.mem_union_right _ hr)
   refine ⟨z, hz, hnotUsed,
@@ -90,8 +91,11 @@ theorem exists_mixed_root_after_parent_degree
         ∀ e ∈ remaining \ bad, EligibleLiveRoot W Q S (rootCluster W Q s) e (raw e) z := by
   let excluded := mixedForbidden W Q S s t requirements used
   obtain ⟨z, hz, hfresh, hfixed, hroot, hremainingGood⟩ := exists_mixed_root_from_pool W Q hα hα1
-    S s t requirements hvalid used remaining hremaining raw hraw hrawLarge (parentPool W Q s v excluded)
-    (by intro z hz; obtain ⟨hm, _, hn⟩ := (mem_parentPool W Q).mp hz; exact Finset.mem_sdiff.mpr ⟨hm, hn⟩)
+    S s t requirements hvalid used remaining hremaining raw hraw hrawLarge (parentPool W Q s v
+      excluded)
+    (by
+      intro z hz; obtain ⟨hm, _, hn⟩ := (mem_parentPool W Q).mp hz; exact Finset.mem_sdiff.mpr ⟨hm,
+        hn⟩)
     (parentPool_large_of_degree W Q hα hα1 s v hdegree excluded
       (card_mixedForbidden_le W Q hα hα1 S s t hk requirements hvalid used hused))
   obtain ⟨hzR, hzAdj, _⟩ := (mem_parentPool W Q).mp hz
@@ -120,7 +124,8 @@ theorem exists_initial_mixed_root
         ∀ e ∈ remaining \ bad, EligibleLiveRoot W Q S (rootCluster W Q s) e (raw e) z := by
   let excluded := mixedForbidden W Q S s t requirements used
   obtain ⟨z, hz, hfresh, hfixed, hroot, hremainingGood⟩ := exists_mixed_root_from_pool W Q hα hα1
-    S s t requirements hvalid used remaining hremaining raw hraw hrawLarge (reservoir W Q s \ excluded)
+    S s t requirements hvalid used remaining hremaining raw hraw hrawLarge (reservoir W Q s \
+      excluded)
     (Finset.Subset.refl _)
     (initialPool_large W Q hα hα1 s excluded
       (card_mixedForbidden_le W Q hα hα1 S s t hk requirements hvalid used hused))

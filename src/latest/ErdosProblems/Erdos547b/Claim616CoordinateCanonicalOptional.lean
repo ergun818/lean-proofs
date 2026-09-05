@@ -65,4 +65,5 @@ theorem canonicalOptional_segment_size_le_small
 end Erdos547b.ZhaoClaim616CoordinateCanonicalOptional
 
 #print axioms Erdos547b.ZhaoClaim616CoordinateCanonicalOptional.canonicalOptional_parity
-#print axioms Erdos547b.ZhaoClaim616CoordinateCanonicalOptional.canonicalOptional_segment_size_le_small
+open Erdos547b.ZhaoClaim616CoordinateCanonicalOptional in
+#print axioms canonicalOptional_segment_size_le_small

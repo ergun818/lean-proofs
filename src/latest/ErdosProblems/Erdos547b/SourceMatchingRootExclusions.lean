@@ -10,7 +10,7 @@ One further set pays for the opposite raw root reservoir. These exclusions
 and the already used roots fit the proved cut-parent reconnection margin.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMatchingRootExclusions

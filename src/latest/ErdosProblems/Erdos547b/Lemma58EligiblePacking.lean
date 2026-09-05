@@ -23,7 +23,7 @@ open Finset Fintype
 `skip * capMax` term pays once for the bins unavailable to the item currently
 inserted; it is not multiplied by the number of owners. -/
 theorem eligible_capacity_packing
-    {Item Bin Owner : Type*} [DecidableEq Item]
+    {Item Bin Owner : Type*}
     [Fintype Bin] [DecidableEq Bin] [Nonempty Bin]
     (items : Finset Item) (weight : Item → ℕ)
     (capacity : Bin → ℕ) (owner : Item → Owner)
@@ -107,7 +107,7 @@ theorem eligible_capacity_packing
                 (∑ j ∈ good, load j) + good.card * weight x := by
               rw [Finset.sum_add_distrib]
               congr 1
-              simp [Finset.sum_const, nsmul_eq_mul]
+              simp [Finset.sum_const]
             _ ≤ (∑ j : Bin, load j) + Fintype.card Bin * slack :=
               Nat.add_le_add hgoodLoad hgoodWeight
             _ = (∑ i ∈ s, weight i) + Fintype.card Bin * slack := by

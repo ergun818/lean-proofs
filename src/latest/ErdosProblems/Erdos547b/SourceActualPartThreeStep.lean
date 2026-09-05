@@ -11,7 +11,7 @@ Nonextreme source entries preserve positive support at every branch root.
 The current endpoint order is chosen locally, not imposed on the stored state.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceActualPartThreeStep
@@ -104,7 +104,8 @@ theorem exists_actual_partThree_step
     have hs : (F.size i : ℝ) ≤ freshBranchBound α W.clusterSize := by exact_mod_cast hsmall i
     have hlocal := (degreeForm_fresh_chunk_gates hα hα1 W horder).2.2.2
     have hm := mul_le_mul_of_nonneg_left
-      (sub_le_self ((gamma α : ℝ) * W.clusterSize) (Nat.cast_nonneg (freshDeletionBudget α W.clusterSize))) hfactor
+      (sub_le_self ((gamma α : ℝ) * W.clusterSize) (Nat.cast_nonneg (freshDeletionBudget α
+        W.clusterSize))) hfactor
     linarith only [hs, hlocal, hm]
   have hpair := (embedding_pair_realization W).pair_of_adj _ _ (edge_pair_adj W Q e)
   obtain ⟨orient, E, hnew⟩ := exists_partThree_live_step_unordered F (embeddingHost W) z
@@ -116,7 +117,9 @@ theorem exists_actual_partThree_step
     hgate (edgeWhole_card W Q e) hlive (hdegree 0) (hdegree 1) hinv hbudget hlower hsmall
     (Nat.floor_le (by positivity)) hpair.1 (edgeWhole_disjoint W Q e) hpair.2 hfactor
     (by nlinarith only [hscale])
-    (by exact_mod_cast mul_le_mul_of_nonneg_right heγ (Nat.cast_nonneg W.clusterSize : (0 : ℚ) ≤ W.clusterSize))
+    (by
+      exact_mod_cast mul_le_mul_of_nonneg_right heγ (Nat.cast_nonneg W.clusterSize : (0 : ℚ) ≤
+        W.clusterSize))
     hcomponent
   exact ⟨orient, E, hnew, fun i => hlambdaPos.trans_le (hsource (orient i 0)).1⟩
 

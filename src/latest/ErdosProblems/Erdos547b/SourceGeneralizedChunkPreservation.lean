@@ -9,7 +9,7 @@ its empty owner interval leaves the exact live sets unchanged. For either
 kind, prefix-copy and orientation preservation descend to original indices.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceGeneralizedChunk
@@ -40,7 +40,8 @@ theorem ChunkSource.exists_skip
     ∃ E' : D.Prefix W Q S C F owner kind backend (Function.update rootImage n z) (n.val + 1),
       (∀ i (hi : i ∈ branchPrefix (ownerCutoff (listOwner owner D.items) n.val)),
         (D.chosen W Q S C F owner kind E').state.forestCopy.componentCopy i
-            (branchPrefix_mono (ownerCutoff_mono (listOwner owner D.items) (Nat.le_succ n.val)) hi) =
+            (branchPrefix_mono (ownerCutoff_mono (listOwner owner D.items) (Nat.le_succ n.val)) hi)
+              =
           (D.chosen W Q S C F owner kind E).state.forestCopy.componentCopy i hi) ∧
       ∀ i, (D.chosen W Q S C F owner kind E').orient i =
         (D.chosen W Q S C F owner kind E).orient i := by

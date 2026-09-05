@@ -10,7 +10,7 @@ targets are read from the source family kind. No root-access promise is
 stored in the state or substituted for a live-set size proof.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceCapacityFamilyState
@@ -89,8 +89,10 @@ theorem FamilyState.ledger_of_current (n : Fin r)
 /-- A matching edge has one concrete source kind because the family
 matchings are disjoint. Outside them use the harmless ordinary label. -/
 def allocatedKind {k : ℕ} (kinds : Fin k → FamilyKind)
-    (allocation : Fin k → Finset (MatchingEdge Q.claim67.M)) (e : MatchingEdge Q.claim67.M) : FamilyKind :=
-  if h : ∃ j, e ∈ allocation j then kinds (Classical.choose h) else .threshold 0
+    (allocation : Fin k → Finset (MatchingEdge Q.claim67.M)) (e : MatchingEdge Q.claim67.M) :
+      FamilyKind :=
+  open scoped Classical in
+    if h : ∃ j, e ∈ allocation j then kinds (Classical.choose h) else .threshold 0
 
 theorem allocatedKind_eq {k : ℕ} (kinds : Fin k → FamilyKind)
     (allocation : Fin k → Finset (MatchingEdge Q.claim67.M))

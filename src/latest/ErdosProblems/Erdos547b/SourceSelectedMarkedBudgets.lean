@@ -11,7 +11,7 @@ same fresh partition and selected F0 certificate. No occupancy assumption
 or arbitrary optional-mark set is required.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceSelectedMarkedBudgets

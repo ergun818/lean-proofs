@@ -8,7 +8,7 @@ The history theorem supplies the actual fresh graph copy; appendBranch
 stores it while preserving all previous copies and their group assignments.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMarkedPlacementAdvance
@@ -77,7 +77,8 @@ theorem exists_placementAdvance (hα : 0 < α) (hα1 : α ≤ 1 / 4) (hC : 0 < C
   let E' := E.appendBranch W Q S O P F marks i hi x f hfattach hfresh' hfmarked hfpairs
   refine ⟨E', ?_, ?_, ?_⟩
   · exact E.appendBranch_preserves_copy W Q S O P F marks i hi x f hfattach hfresh' hfmarked hfpairs
-  · exact E.appendBranch_preserves_group W Q S O P F marks i hi x f hfattach hfresh' hfmarked hfpairs
+  · exact E.appendBranch_preserves_group W Q S O P F marks i hi x f hfattach hfresh' hfmarked
+      hfpairs
   · intro a
     have heq := E.appendBranch_new_copy W Q S O P F marks i hi x f hfattach hfresh' hfmarked hfpairs
     change E'.forestCopy.componentCopy i (Finset.mem_insert_self _ _) a ∉ base

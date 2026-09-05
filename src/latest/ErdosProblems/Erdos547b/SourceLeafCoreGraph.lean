@@ -8,7 +8,7 @@ import ErdosProblems.Erdos547b.SourceRestrictedReconnectedGraph
 The isomorphism keeps every original component root at its original index.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceLeafCoreGraph
@@ -47,15 +47,18 @@ def leafCoreGraphIso : leafDeletedCore P ≃g
       (restrictCutSource (branchForest P) (keptBranches P) (componentReservoirSide P) locate
         (partitionCutSource P hT locate hlocate) (partitionParent_retained P)) :=
   (leafCoreCoordinateIso P hT locate hlocate).trans
-    (restrictedReconnectedGraphIso (branchForest P) (keptBranches P) (componentReservoirSide P) locate
+    (restrictedReconnectedGraphIso (branchForest P) (keptBranches P) (componentReservoirSide P)
+      locate
       (partitionCutSource P hT locate hlocate) (partitionParent_retained P)).symm
 
 theorem leafCoreGraphIso_root (i : Fin P.numParts) :
     leafCoreGraphIso P hT locate hlocate (leafDeletedPartitionRoot P i) = Sum.inl i := by
   apply coordinateInclusion_injective (branchForest P) (keptBranches P)
   change coordinateInclusion (branchForest P) (keptBranches P)
-    (lowerCoordinate (branchForest P) (keptBranches P) (cutBranchGraphIso P (P.roots i)) _) = Sum.inl i
-  exact (coordinateInclusion_lower (branchForest P) (keptBranches P) _ _).trans (cutBranchGraphIso_root P i)
+    (lowerCoordinate (branchForest P) (keptBranches P) (cutBranchGraphIso P (P.roots i)) _) =
+      Sum.inl i
+  exact (coordinateInclusion_lower (branchForest P) (keptBranches P) _ _).trans
+    (cutBranchGraphIso_root P i)
 
 end Erdos547b.ZhaoSourceLeafCoreGraph
 

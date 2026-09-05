@@ -11,7 +11,7 @@ The reserved source ledger and total family budget therefore construct a
 saturated packing of the current owner into the retained unused edges.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceCapacityFamilyPacking
@@ -28,13 +28,16 @@ variable {G : SimpleGraph (Fin hostN)} [DecidableRel G.Adj]
 variable (W : Witness α q M G) (Q : Certificate W)
 variable (S : CleanSourceWitness W Q) (C : Index W) (kind : FamilyKind)
 
-def capacityBins (all used bad : Finset (MatchingEdge Q.claim67.M)) : List (MatchingEdge Q.claim67.M) :=
+def capacityBins (all used bad : Finset (MatchingEdge Q.claim67.M)) : List (MatchingEdge
+  Q.claim67.M) :=
   (((all \ used) \ bad).filter (fun e => (freshBranchBound α W.clusterSize : ℝ) <
     capacity W Q S C kind e)).toList
 
-theorem mem_capacityBins (all used bad : Finset (MatchingEdge Q.claim67.M)) (e : MatchingEdge Q.claim67.M) :
+theorem mem_capacityBins (all used bad : Finset (MatchingEdge Q.claim67.M)) (e : MatchingEdge
+  Q.claim67.M) :
     e ∈ capacityBins W Q S C kind all used bad ↔
-      e ∈ (all \ used) \ bad ∧ (freshBranchBound α W.clusterSize : ℝ) < capacity W Q S C kind e := by
+      e ∈ (all \ used) \ bad ∧ (freshBranchBound α W.clusterSize : ℝ) < capacity W Q S C kind e :=
+        by
   simp only [capacityBins, Finset.mem_toList, Finset.mem_filter]
 
 variable {b r : ℕ} (F : OrderedRootedForest b) (owner : Fin b → Fin r)
@@ -78,7 +81,8 @@ theorem exists_currentOwnerPacking
   refine ⟨R, ?_⟩
   exact exists_residualPacking_absolute all (A.reservedEdges W Q S C F owner kind) bad R.current
     (fun i => (F.size i : ℝ)) (capacity W Q S C kind) (freshBranchBound α W.clusterSize)
-    (rootTypicality α) W.clusterSize (mass (fun i => (F.size i : ℝ)) (A.reservedItems W Q S C F owner kind))
+    (rootTypicality α) W.clusterSize (mass (fun i => (F.size i : ℝ)) (A.reservedItems W Q S C F
+      owner kind))
     globalCount (A.reserved_edges_subset W Q S C F owner kind) hbad hcount
     (Nat.cast_nonneg _) (Nat.cast_nonneg _)
     (fun e he => capacity_le_twice_clusterSize W Q hα S C hC kind hkind e

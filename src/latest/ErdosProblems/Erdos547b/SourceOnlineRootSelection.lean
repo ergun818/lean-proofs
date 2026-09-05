@@ -11,7 +11,7 @@ The exceptional count is independent of the regularity bound. This is a
 root-selection step, not a completed online forest embedding.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceOnlineRootSelection
@@ -23,7 +23,7 @@ open Erdos547b.ZhaoLemma59HierarchicalCanonical.HierarchicalSegmentForest
 /-- Choose a root with source-relative lower degree on almost all targets,
 even when the root pool has been restricted by earlier embedding choices. -/
 theorem exists_root_source_lower_most
-    {V I : Type*} [Fintype V] [DecidableEq V] [DecidableEq I]
+    {V I : Type*} [Finite V] [DecidableEq I]
     (H : SimpleGraph V) [DecidableRel H.Adj]
     (A pool : Finset V) (J : Finset I) (whole raw : I → Finset V)
     (source : I → ℝ) (ε δ : ℝ)
@@ -36,6 +36,8 @@ theorem exists_root_source_lower_most
     ∃ z ∈ pool, ∃ D ⊆ J, (D.card : ℝ) ≤ δ * J.card ∧
       ∀ j ∈ J \ D,
         (source j - 2 * ε) * (raw j).card ≤ (degreeInto H z (raw j) : ℝ) := by
+  classical
+  let := Fintype.ofFinite V
   let bad := fun j => targetLowDegreeVertices H ε A (whole j) A (raw j)
   have hA : ε * A.card ≤ (A.card : ℝ) := by
     simpa only [one_mul] using mul_le_mul_of_nonneg_right hε (Nat.cast_nonneg A.card)

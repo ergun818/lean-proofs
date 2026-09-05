@@ -53,20 +53,24 @@ def edgesAwayFromDistinguished
     Finset (MatchingEdge M) :=
   allMatchingEdges M \ distinguishedIncidentEdges M L A B
 
+omit [DecidableRel R.Adj] in
 theorem distinguishedIncidentEdges_card_le_two
     (M : R.Subgraph) (hM : M.IsMatching) (L : Finset K) (A B : K) :
     (distinguishedIncidentEdges M L A B).card ≤ 2 := by
+  classical
   have h := incidentCoverEdges_card_le M hM L ({A, B} : Finset K)
   have hcard : ({A, B} : Finset K).card ≤ 2 := by
     have hinsert := Finset.card_insert_le A ({B} : Finset K)
     simpa only [Finset.card_singleton] using hinsert
   exact h.trans hcard
 
+omit [DecidableRel R.Adj] in
 theorem edgesAwayFromDistinguished_subset
     (M : R.Subgraph) (L : Finset K) (A B : K) :
     edgesAwayFromDistinguished M L A B ⊆ allMatchingEdges M :=
   Finset.sdiff_subset
 
+omit [DecidableRel R.Adj] in
 /-- Every endpoint of an edge in the cleaned family avoids both `A` and
 `B`; this is the exact endpoint premise of the source-shaped Lemma 6.15. -/
 theorem endpoint_ne_distinguished_of_mem_away
@@ -99,6 +103,7 @@ theorem endpoint_ne_distinguished_of_mem_away
     · exact Or.inr
         (Finset.mem_insert.mpr (Or.inr (Finset.mem_singleton.mpr hB)))
 
+omit [DecidableRel R.Adj] in
 /-- Removing the distinguished incident edges costs at most `4*N` in either
 source degree.  The statement is deliberately about the literal
 `sourceDegree`, so it composes definitionally with Lemma 6.11. -/
@@ -106,7 +111,7 @@ theorem sourceDegree_away_add_four_mul_le
     (M : R.Subgraph) (hM : M.IsMatching) (L : Finset K)
     (density : K → K → ℝ) (N : ℝ) (C A B : K)
     (hN : 0 ≤ N)
-    (hnonneg : ∀ e : MatchingEdge M,
+    (_hnonneg : ∀ e : MatchingEdge M,
       0 ≤ N * (density C (orientedEndpoint M L e 0) +
         density C (orientedEndpoint M L e 1)))
     (hcap : ∀ e : MatchingEdge M,
@@ -115,6 +120,7 @@ theorem sourceDegree_away_add_four_mul_le
     sourceDegree M L density N C (allMatchingEdges M) ≤
       sourceDegree M L density N C
           (edgesAwayFromDistinguished M L A B) + 4 * N := by
+  classical
   let I := distinguishedIncidentEdges M L A B
   let Away := edgesAwayFromDistinguished M L A B
   let contribution := fun e : MatchingEdge M ↦
@@ -143,6 +149,7 @@ theorem sourceDegree_away_add_four_mul_le
   rw [sourceDegree_eq_sum, sourceDegree_eq_sum, hsplit]
   linarith
 
+omit [DecidableRel R.Adj] in
 /-- Convenient subtraction form of `sourceDegree_away_add_four_mul_le`. -/
 theorem sourceDegree_away_lower
     (M : R.Subgraph) (hM : M.IsMatching) (L : Finset K)
@@ -158,6 +165,7 @@ theorem sourceDegree_away_lower
       sourceDegree M L density N C (allMatchingEdges M)) :
     lower ≤ sourceDegree M L density N C
       (edgesAwayFromDistinguished M L A B) := by
+  classical
   have hupper := sourceDegree_away_add_four_mul_le
     M hM L density N C A B hN hnonneg hcap
   linarith
@@ -195,6 +203,7 @@ noncomputable def matchingEndpointEquiv
     · refine ⟨(e, 1), Subtype.ext ?_⟩
       exact hx1.symm
 
+omit [DecidableRel R.Adj] in
 theorem sum_matchingEndpoints_eq_sum_support
     (M : R.Subgraph) (hM : M.IsMatching) (L : Finset K)
     (f : K → ℝ) :
@@ -236,6 +245,7 @@ def twoRootSourceDensity
   else if C = B then rootedSourceDensity H cluster N zB j
   else 0
 
+omit [Fintype K] in
 theorem twoRootSourceDensity_row_A
     {V : Type*} [Fintype V]
     (H : SimpleGraph V) [DecidableRel H.Adj]
@@ -245,6 +255,7 @@ theorem twoRootSourceDensity_row_A
       rootedSourceDensity H cluster N zA j := by
   simp [twoRootSourceDensity]
 
+omit [Fintype K] in
 theorem twoRootSourceDensity_row_B
     {V : Type*} [Fintype V]
     (H : SimpleGraph V) [DecidableRel H.Adj]
@@ -252,8 +263,9 @@ theorem twoRootSourceDensity_row_B
     (A B : K) (zA zB : V) (hAB : A ≠ B) (j : K) :
     twoRootSourceDensity H cluster N A B zA zB B j =
       rootedSourceDensity H cluster N zB j := by
-  simp [twoRootSourceDensity, hAB, hAB.symm]
+  simp [twoRootSourceDensity, hAB.symm]
 
+omit [DecidableRel R.Adj] in
 theorem sourceDegree_rooted_eq_sum_support_degreeInto
     {V : Type*} [Fintype V]
     (H : SimpleGraph V) [DecidableRel H.Adj]
@@ -264,6 +276,7 @@ theorem sourceDegree_rooted_eq_sum_support_degreeInto
         (allMatchingEdges M) =
       ∑ j ∈ matchingSupport M,
         (Erdos547EC2.degreeInto H z (cluster j) : ℝ) := by
+  classical
   rw [sourceDegree_eq_sum]
   calc
     (∑ e ∈ allMatchingEdges M,
@@ -286,7 +299,7 @@ theorem sourceDegree_rooted_eq_sum_support_degreeInto
 /-- A cleaned host degree is accounted for by exceptional vertices and the
 actual degrees into reduced-neighbor clusters. -/
 theorem degree_le_exceptional_add_sum_degreeInto_reduced
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (P : ClusterAssignment V K)
     (H : SimpleGraph V) [DecidableRel H.Adj]
     (R : SimpleGraph K) [DecidableRel R.Adj]
@@ -329,7 +342,7 @@ theorem degree_le_exceptional_add_sum_degreeInto_reduced
       intro j _
       apply congrArg Finset.card
       ext y
-      simp only [pieces, Erdos547EC2.degreeInto, Finset.mem_inter,
+      simp only [pieces, Finset.mem_inter,
         Finset.mem_filter, SimpleGraph.mem_neighborFinset]
       tauto
 
@@ -337,7 +350,7 @@ theorem degree_le_exceptional_add_sum_degreeInto_reduced
 to matching-supported host degree, with only the exceptional class and
 `miss*N` charged. -/
 theorem matchingSupport_degree_lower_of_retainedRoot
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (P : ClusterAssignment V K)
     (H : SimpleGraph V) [DecidableRel H.Adj]
     (R : SimpleGraph K) [DecidableRel R.Adj]
@@ -405,7 +418,7 @@ theorem matchingSupport_degree_lower_of_retainedRoot
 to matching-supported host degree, with only the exceptional class and
 `miss*N` charged. -/
 theorem matchingSupport_degree_lower_of_highRoot
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (P : ClusterAssignment V K)
     (G H : SimpleGraph V)
     [DecidableRel G.Adj] [DecidableRel H.Adj]
@@ -422,6 +435,7 @@ theorem matchingSupport_degree_lower_of_highRoot
     threshold - loss - (exceptionalVertices P).card - miss * clusterSize ≤
       ∑ j ∈ matchingSupport C67.M,
         Erdos547EC2.degreeInto H z (cluster j) := by
+  classical
   exact matchingSupport_degree_lower_of_retainedRoot P H R hrespect cluster
     hcluster clusterSize threshold loss miss hclusterCard C67 hzA
     (cleaned_degree_ge_threshold_sub_loss G H loss threshold hloss hzHigh) hAO
@@ -439,7 +453,7 @@ theorem exists_twoRootSourceDensity_of_richClaim61_localDegree
     (cluster : I → Finset V)
     (hcluster : ∀ i, cluster i = clusterVertices Pcluster i)
     (threshold quota miss clusterSize loss : ℕ)
-    (hquota : 0 < quota) (hclusterSize : 0 < clusterSize)
+    (_hquota : 0 < quota) (hclusterSize : 0 < clusterSize)
     (hclusterCard : ∀ i, (cluster i).card ≤ clusterSize)
     (hrespect : EdgesRespectReducedGraph (padAssignment Pcluster) H
       (padGraph R0))
@@ -540,12 +554,12 @@ theorem exists_twoRootSourceDensity_of_richClaim61_localDegree
     have hz := Q.A₀_subset hzA
     have : Pcluster zA = some Q.A :=
       (mem_clusterVertices Pcluster Q.A zA).mp hz
-    simpa [A, padAssignment, this]
+    simp [A, padAssignment, this]
   have hzBassign : padAssignment Pcluster zB = some B := by
     have hz := Q.B₀_subset hzB
     have : Pcluster zB = some Q.B :=
       (mem_clusterVertices Pcluster Q.B zB).mp hz
-    simpa [B, padAssignment, this]
+    simp [B, padAssignment, this]
   have hSupportA := matchingSupport_degree_lower_of_retainedRoot
     (padAssignment Pcluster) H (padGraph R0) hrespect
       (padCluster cluster) hclusterPad clusterSize threshold loss miss
@@ -774,12 +788,13 @@ theorem exists_twoRootSourceDensity_of_richClaim61
 variable {TreeVertex : Type v} [Fintype TreeVertex] [DecidableEq TreeVertex]
 variable {HostVertex : Type w} [Fintype HostVertex] [DecidableEq HostVertex]
 
+omit [DecidableEq HostVertex] [DecidableEq TreeVertex] [Fintype HostVertex] [Fintype TreeVertex] in
 /-- The honest Lemma-6.15 contrapositive after deleting the at-most-two
 matching edges incident with `A` or `B`. -/
 theorem exceptional_families_away_lt_of_not_contained
     {L : Finset K} {miss : ℕ}
-    (T : SimpleGraph TreeVertex) [DecidableRel T.Adj]
-    (G : SimpleGraph HostVertex) [DecidableRel G.Adj]
+    (T : SimpleGraph TreeVertex)
+    (G : SimpleGraph HostVertex)
     (C67 : Claim67Certificate R L miss)
     (A B : K) (density : K → K → ℝ) (eta k : ℝ)
     (hforce :
@@ -799,6 +814,7 @@ theorem exceptional_families_away_lt_of_not_contained
     (((nonextremeEdges (edgesAwayFromDistinguished C67.M L A B)
       (fun e c ↦ density A (orientedEndpoint C67.M L e c)) eta).card : ℕ) : ℝ) <
         eta * k := by
+  classical
   let S := edgesAwayFromDistinguished C67.M L A B
   constructor
   · by_contra h
@@ -901,7 +917,7 @@ filters.  This is the source arithmetic formerly exposed as the large
 `hdeletionBudget` premise. -/
 theorem source_filter_deletion_sum_le
     {L : Finset K} {miss : ℕ}
-    (C67 : Claim67Certificate R L miss) (A B : K) (hAO : A ∈ C67.O)
+    (C67 : Claim67Certificate R L miss) (A _B : K) (hAO : A ∈ C67.O)
     (density : K → K → ℝ) (N eta : ℝ)
     (hN : 0 ≤ N) (heta : 0 < eta) (hetaHalf : eta < 1 / 2)
     (hnonnegDensity : ∀ e : MatchingEdge C67.M, ∀ c,
@@ -916,7 +932,7 @@ theorem source_filter_deletion_sum_le
     (hx : (nonextremeEdges (allMatchingEdges C67.M)
       (fun e c ↦ density A (orientedEndpoint C67.M L e c)) eta).card ≤ x)
     (Mb : Finset (MatchingEdge C67.M))
-    (hMb : Mb ⊆ allMatchingEdges C67.M) (hMbcard : Mb.card ≤ q) :
+    (_hMb : Mb ⊆ allMatchingEdges C67.M) (hMbcard : Mb.card ≤ q) :
     (∑ e ∈ allMatchingEdges C67.M \
         sourceCleanEdges C67.M L C67.O density A eta Mb,
       N * (density A (orientedEndpoint C67.M L e 0) +
@@ -1058,15 +1074,15 @@ theorem source_filter_deletion_sum_le
           (mul_nonneg (by norm_num) hN)
       _ = 2 * N := by ring
   change (∑ e ∈ Deleted, contribution e) ≤ _
-  push_cast
   nlinarith
 
 theorem allMatchingEdges_card_le_paddedHalf
-    {I : Type*} [Fintype I] [DecidableEq I]
-    {R0 : SimpleGraph I} [DecidableRel R0.Adj]
+    {I : Type*} [Fintype I]
+    {R0 : SimpleGraph I}
     (M : (padGraph R0).Subgraph) (hM : M.IsMatching)
     (L : Finset (EvenPadding I)) :
     (allMatchingEdges M).card ≤ paddedHalf I := by
+  classical
   have hsupp := edgeFinsetSubgraph_support_card M hM L (allMatchingEdges M)
   have hcard : (matchingSupport
       (edgeFinsetSubgraph M L (allMatchingEdges M))).card ≤
@@ -1078,10 +1094,11 @@ theorem allMatchingEdges_card_le_paddedHalf
   omega
 
 theorem away_exceptional_card_le_auxiliaryScale
-    {beta : ℚ} {reducedK : ℕ} {E : Type*} [DecidableEq E]
+    {beta : ℚ} {reducedK : ℕ} {E : Type*}
     (S : Finset E)
     (hS : (S.card : ℝ) < (eta beta : ℝ) * reducedK) :
     S.card ≤ auxiliaryScale beta reducedK := by
+  classical
   have hceil : (eta beta : ℝ) * reducedK ≤
       (auxiliaryScale beta reducedK : ℝ) :=
     Erdos547b.ZhaoRoundedScales.le_upperScale_cast _
@@ -1187,7 +1204,6 @@ theorem source_filter_deletion_budget_of_away
             claim617Q beta reducedK + 1) +
           3 * (eta beta : ℝ) * N *
             ((allMatchingEdges C67.M).card : ℝ) := by
-        push_cast
         ring
       _ ≤ 2 * N * (2 * (auxiliaryScale beta reducedK + 2) +
             claim617Q beta reducedK + 1) +
@@ -1520,14 +1536,16 @@ noncomputable def explicitMatchingDecompositionOfRichClaim61OfExceptionalBounds
   · exact hclean
   · exact hdegreeA
   · exact hdegreeB
-  · convert hAwayA using 1 <;> simp [A, B, Lp] <;> ring
-  · convert hAwayB using 1 <;> simp [A, B, Lp] <;> ring
+  · convert hAwayA using 1; simp
+  · convert hAwayB using 1; simp
   · exact hexceptional.1
   · exact hexceptional.2
 
 end Erdos547b.ZhaoRichClaim61Lemma611
 
-#print axioms Erdos547b.ZhaoRichClaim61Lemma611.explicitMatchingDecompositionOfRichClaim61OfExceptionalBounds
+open Erdos547b.ZhaoRichClaim61Lemma611 in
+#print axioms explicitMatchingDecompositionOfRichClaim61OfExceptionalBounds
 #print axioms Erdos547b.ZhaoRichClaim61Lemma611.matchingSupport_degree_lower_of_retainedRoot
-#print axioms Erdos547b.ZhaoRichClaim61Lemma611.exists_twoRootSourceDensity_of_richClaim61_localDegree
+open Erdos547b.ZhaoRichClaim61Lemma611 in
+#print axioms exists_twoRootSourceDensity_of_richClaim61_localDegree
 #print axioms Erdos547b.ZhaoRichClaim61Lemma611.exists_twoRootSourceDensity_of_richClaim61

@@ -11,7 +11,7 @@ parameter hierarchy pays every capacity, packing and bad-edge loss from
 three gamma times q. All family lists and host images are constructed.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceIdealCapacityTreeCopy
@@ -54,13 +54,15 @@ theorem exists_treeCopy_of_idealSourceBudgets
         ∑ e ∈ allocation s j, idealCapacity W Q S (rootCluster W Q s) (kinds s j) e)
     (hroots : (P.numParts : ℝ) ≤ (epsilon α : ℝ) * W.clusterSize) :
     Nonempty (T.Copy (embeddingHost W)) := by
+  classical
   apply exists_treeCopy_of_finsetSourceBudgets W Q S hT P hα hα1 hhost horder hk kinds hkind
     allocation family hcover hside hbranch hedge hsmall hdisjoint haway
     (Fintype.card (MatchingEdge Q.claim67.M)) (fun _ => Finset.card_le_univ _)
   · intro s j hnonempty
     exact capacityBudget_of_ideal_margin W Q S (rootCluster W Q s) hα hα1 (kinds s j)
       (allocation s j) (Fintype.card (MatchingEdge Q.claim67.M))
-      (matchingVolume_bound W Q hhost _) (fullMatchingVolume_bound W Q hhost) _ (hbudget s j hnonempty)
+      (matchingVolume_bound W Q hhost _) (fullMatchingVolume_bound W Q hhost) _ (hbudget s j
+        hnonempty)
   · exact hroots
 
 end Erdos547b.ZhaoSourceIdealCapacityTreeCopy

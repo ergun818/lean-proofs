@@ -8,7 +8,7 @@ The finite branch enumeration changes no owner, side or rooted colour.
 This source-only transport is used for leaf and pendant-path deletion.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceRestrictedCutCoordinates
@@ -58,7 +58,8 @@ theorem exists_coordinate_of_retained (x : F.Vertex) (hx : retained F keep x) :
       subst i
       exact ⟨Sum.inr ⟨j, a⟩, rfl⟩
 
-def coordinateEquiv : (OrderedBranchForest.restrict F keep).Vertex ≃ {x : F.Vertex // retained F keep x} :=
+def coordinateEquiv : (OrderedBranchForest.restrict F keep).Vertex ≃ {x : F.Vertex // retained F
+  keep x} :=
   Equiv.ofBijective (fun x => ⟨coordinateInclusion F keep x, coordinateInclusion_retained F keep x⟩)
     ⟨fun x y h => coordinateInclusion_injective F keep (congrArg Subtype.val h), by
       rintro ⟨x, hx⟩
@@ -74,7 +75,8 @@ theorem coordinateInclusion_lower (x : F.Vertex) (hx : retained F keep x) :
 
 theorem coordinateOwner_inclusion (x : (OrderedBranchForest.restrict F keep).Vertex) :
     coordinateOwner F.branches F.owner (coordinateInclusion F keep x) =
-      coordinateOwner (OrderedBranchForest.restrict F keep).branches (OrderedBranchForest.restrict F keep).owner x := by
+      coordinateOwner (OrderedBranchForest.restrict F keep).branches (OrderedBranchForest.restrict F
+        keep).owner x := by
   cases x <;> rfl
 
 def restrictedLocate (locate : Fin b → Fin 2 × Fin k) : Fin keep.card → Fin 2 × Fin k :=
@@ -83,7 +85,8 @@ def restrictedLocate (locate : Fin b → Fin 2 × Fin k) : Fin keep.card → Fin
 theorem coordinateSide_inclusion (rootSide : Fin r → Fin 2) (locate : Fin b → Fin 2 × Fin k)
     (x : (OrderedBranchForest.restrict F keep).Vertex) :
     coordinateSide F.branches rootSide locate (coordinateInclusion F keep x) =
-      coordinateSide (OrderedBranchForest.restrict F keep).branches rootSide (restrictedLocate keep locate) x := by
+      coordinateSide (OrderedBranchForest.restrict F keep).branches rootSide (restrictedLocate keep
+        locate) x := by
   cases x <;> rfl
 
 theorem coordinateColor_inclusion (x : (OrderedBranchForest.restrict F keep).Vertex) :
@@ -94,7 +97,8 @@ theorem coordinateColor_inclusion (x : (OrderedBranchForest.restrict F keep).Ver
 def restrictCutSource (rootSide : Fin r → Fin 2) (locate : Fin b → Fin 2 × Fin k)
     (L : CutSource F.branches F.owner rootSide locate)
     (hparent : ∀ i hi, retained F keep (L.parent i hi)) :
-    CutSource (OrderedBranchForest.restrict F keep).branches (OrderedBranchForest.restrict F keep).owner
+    CutSource (OrderedBranchForest.restrict F keep).branches (OrderedBranchForest.restrict F
+      keep).owner
       rootSide (restrictedLocate keep locate) where
   parent i hi := lowerCoordinate F keep (L.parent i hi) (hparent i hi)
   before i hi := by

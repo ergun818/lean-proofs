@@ -3,7 +3,7 @@ import ErdosProblems.Erdos547b.Lemma611Full
 
 /-! Literal support separation for disjoint subfamilies of a matching. -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoMatchingSupportSeparation
@@ -13,6 +13,7 @@ open Finset SimpleGraph Erdos547b.ZhaoStability Erdos547b.ZhaoLemma611Full
 variable {K : Type*} [Fintype K] [DecidableEq K]
 variable {R : SimpleGraph K} [DecidableRel R.Adj]
 
+omit [DecidableRel R.Adj] in
 theorem mem_selectedSupport_iff (M : R.Subgraph) (L : Finset K)
     (E : Finset (MatchingEdge M)) (x : K) :
     x ∈ matchingSupport (edgeFinsetSubgraph M L E) ↔
@@ -28,10 +29,12 @@ theorem mem_selectedSupport_iff (M : R.Subgraph) (L : Finset K)
     · exact Or.inl h.symm
     · exact Or.inr h.symm
 
+omit [DecidableRel R.Adj] in
 theorem selectedSupport_disjoint (M : R.Subgraph) (hM : M.IsMatching) (L : Finset K)
     (E F : Finset (MatchingEdge M)) (hEF : Disjoint E F) :
     Disjoint (matchingSupport (edgeFinsetSubgraph M L E))
       (matchingSupport (edgeFinsetSubgraph M L F)) := by
+  classical
   rw [Finset.disjoint_left]
   intro x hx hy
   obtain ⟨e, he, c, hc⟩ := (mem_selectedSupport_iff M L E x).mp hx
@@ -40,10 +43,12 @@ theorem selectedSupport_disjoint (M : R.Subgraph) (hM : M.IsMatching) (L : Finse
   have hef : e = f := congrArg Prod.fst hpair
   exact Finset.disjoint_left.mp hEF he (hef.symm ▸ hf)
 
+omit [DecidableRel R.Adj] in
 theorem sum_selectedSupport (M : R.Subgraph) (hM : M.IsMatching) (L : Finset K)
     (E : Finset (MatchingEdge M)) (w : K → ℝ) :
     (∑ x ∈ matchingSupport (edgeFinsetSubgraph M L E), w x) =
       ∑ e ∈ E, (w (orientedEndpoint M L e 0) + w (orientedEndpoint M L e 1)) := by
+  classical
   rw [matchingSupport_edgeFinsetSubgraph, Finset.sum_biUnion]
   · apply Finset.sum_congr rfl
     intro e _

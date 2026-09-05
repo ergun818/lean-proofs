@@ -155,8 +155,8 @@ theorem basicRootOf_eq_self_of_large [Fintype V] [DecidableEq V]
     (hx : m < residualSize T hT r m x) : basicRootOf T hT r m x = x := by
   rw [basicRootOf.eq_def]
   split
-  · next hxr => simpa [hxr]
-  · simp [hx]
+  · next hxr => simp [hxr]
+  · simp
 
 theorem basicRootOf_eq_parent_of_small [Fintype V] [DecidableEq V]
     (T : SimpleGraph V)
@@ -306,7 +306,7 @@ theorem card_basicRoots_le [Fintype V] [DecidableEq V]
   have hr : r ∈ R := by simp [R]
   have hroot : 1 ≤ (F r).card := by
     exact Finset.card_pos.mpr ⟨r, by
-      simpa [F] using basicRoot_mem_basicFiber T hT r m hr⟩
+      simp [F]⟩
   have hparts : ∀ x ∈ R.erase r, m + 1 ≤ (F x).card := by
     intro x hx
     have hxR := (Finset.mem_erase.mp hx).2
@@ -354,7 +354,7 @@ theorem parent_mem_same_basicFiber_of_ne_root [Fintype V] [DecidableEq V]
     intro hxr
     subst x
     rw [mem_basicFiber] at hx
-    simp at hx
+    have hx : r = a := by simpa using hx
     exact hxa hx
   have hsmall := residualSize_le_of_mem_basicFiber_of_ne_root T hT r m hx hxa
   refine ⟨hxr, ?_⟩
@@ -451,7 +451,7 @@ theorem exists_basicForestCarving [Fintype V] [DecidableEq V]
 actual parent is added as a new root in the parity-repair step. -/
 def IsBadBasicRoot [Fintype V] [DecidableEq V] (T : SimpleGraph V)
     (hT : T.IsTree) (r : V) (m : ℕ) (w : V) : Prop :=
-  ∃ (hw : w ∈ basicRoots T hT r m) (hwr : w ≠ r),
+  ∃ (_hw : w ∈ basicRoots T hT r m) (hwr : w ≠ r),
     let p := parent hT r hwr
     p ≠ basicRootOf T hT r m p ∧
       T.dist r w % 2 ≠ T.dist r (basicRootOf T hT r m p) % 2
@@ -466,7 +466,7 @@ noncomputable def repairParents [Fintype V] [DecidableEq V]
 @[simp] theorem mem_repairParents [Fintype V] [DecidableEq V]
     (T : SimpleGraph V) (hT : T.IsTree) (r : V) (m : ℕ) (p : V) :
     p ∈ repairParents T hT r m ↔
-      ∃ w : V, ∃ hw : w ∈ basicRoots T hT r m, ∃ hwr : w ≠ r,
+      ∃ w : V, ∃ _hw : w ∈ basicRoots T hT r m, ∃ hwr : w ≠ r,
         IsBadBasicRoot T hT r m w ∧ parent hT r hwr = p := by
   classical
   simp [repairParents]
@@ -503,7 +503,7 @@ noncomputable def repairWitness [Fintype V] [DecidableEq V]
 theorem repairWitness_spec [Fintype V] [DecidableEq V]
     (T : SimpleGraph V) (hT : T.IsTree) (r : V) (m : ℕ)
     (p : V) (hp : p ∈ repairParents T hT r m) :
-    ∃ hw : repairWitness T hT r m p hp ∈ basicRoots T hT r m,
+    ∃ _hw : repairWitness T hT r m p hp ∈ basicRoots T hT r m,
       ∃ hwr : repairWitness T hT r m p hp ≠ r,
         IsBadBasicRoot T hT r m (repairWitness T hT r m p hp) ∧
           parent hT r hwr = p :=
@@ -528,7 +528,7 @@ noncomputable def repairedRootCode [Fintype V] [DecidableEq V]
 theorem repairCode_spec [Fintype V] [DecidableEq V]
     (T : SimpleGraph V) (hT : T.IsTree) (r : V) (m : ℕ) {p : V}
     (hp : p ∈ repairParents T hT r m) :
-    ∃ hw : repairCode T hT r m p ∈ basicRoots T hT r m,
+    ∃ _hw : repairCode T hT r m p ∈ basicRoots T hT r m,
       ∃ hwr : repairCode T hT r m p ≠ r,
         IsBadBasicRoot T hT r m (repairCode T hT r m p) ∧
           parent hT r hwr = p := by
@@ -553,7 +553,7 @@ theorem repairedRootCode_mapsTo_basicRoots [Fintype V] [DecidableEq V]
   have hxR := (Finset.mem_filter.mp hx).1
   rw [repairedRoots, Finset.mem_union] at hxR
   by_cases hxBasic : x ∈ basicRoots T hT r m
-  · simpa [repairedRootCode, hxBasic]
+  · simp [repairedRootCode, hxBasic]
   · have hxRepair : x ∈ repairParents T hT r m := hxR.resolve_left hxBasic
     simp only [repairedRootCode, if_neg hxBasic]
     exact (repairCode_spec T hT r m hxRepair).choose

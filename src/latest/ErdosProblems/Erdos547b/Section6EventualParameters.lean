@@ -553,7 +553,6 @@ theorem sigma_le_beta_div {β : ℚ}
     push_cast
     ring
   rw [htβ] at hsx
-  norm_num at hsx ⊢
   linarith
 
 /-- Continuous margin underlying the rounded Claim-6.17 inequality. -/
@@ -695,7 +694,7 @@ theorem lemma611_minEdgeCap_capacity
     {k : ℕ} {N n error : ℝ}
     (hN : 0 < N) (hn : 0 < n) (herror : 0 ≤ error)
     (hnCovered : n ≤ (k : ℝ) * N + error)
-    (hcover : (k : ℝ) * N ≤ n + N)
+    (_hcover : (k : ℝ) * N ≤ n + N)
     (herrorSmall : error ≤ (sigma β : ℝ) * n)
     (hcluster : N ≤ 3 * (sigma β : ℝ) * n) :
     lemma611TargetA β n <
@@ -1130,7 +1129,6 @@ theorem claim618_local_inequality {β : ℚ}
       (mul_le_mul_of_nonneg_right hfx hkRpos.le).trans_eq (by ring)
     nlinarith
   have hreal : (2 : ℝ) * (b + q + 1) + (2 * c + 1) < a := by
-    push_cast
     nlinarith
   have hnat : 2 * (b + q + 1) + (2 * c + 1) < a := by
     exact_mod_cast hreal
@@ -1496,7 +1494,7 @@ private theorem degreeForm_exceptional_small
       2 * cf * ((K : ℝ) * A) + 2 * K := by
     change (W.exceptional.card : ℝ) <
       (K : ℝ) * (cf * A + 2) + cf * K * A at hEraw
-    convert hEraw using 1 <;> ring
+    convert hEraw using 1; ring
   have hKsmall : (2 : ℝ) * K ≤
       (2 / 1000000 : ℝ) * ((sigma β : ℝ) * N) := by
     have h := mul_le_mul_of_nonneg_left hKfixed
@@ -2120,7 +2118,7 @@ theorem richQuota_total_error_explicit
 /-- Upward rounding of `c` turns the scale-level capacity `100*sigma*k*m`
 into the exact natural capacity consumed by quantitative Claim 6.1. -/
 theorem claim61_capacity_of_real_bound
-    {β : ℚ} (hβ : 0 < β) {k m e exceptional : ℕ}
+    {β : ℚ} (_hβ : 0 < β) {k m e exceptional : ℕ}
     (hbound :
       ((m + 2 * e + exceptional : ℕ) : ℝ) ≤
         100 * (sigma β : ℝ) * k * m) :

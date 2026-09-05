@@ -10,7 +10,7 @@ whole-endpoint degrees and one permanent deletion budget. In particular a
 previously chosen pending root is never changed by this construction.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceFreshChunkEmbedding
@@ -119,7 +119,8 @@ noncomputable def classifiedFreshChunkData
           exact_mod_cast hpref).trans hhigh⟩
     have hneed : ((deleted c).card + (1 + thresholdReserve ρ (whole c).card + before) : ℕ) ≤
         #((whole c).filter (H.Adj (parent i))) := by
-      have hneedR : (((deleted c).card + (1 + thresholdReserve ρ (whole c).card + before) : ℕ) : ℝ) ≤
+      have hneedR : (((deleted c).card + (1 + thresholdReserve ρ (whole c).card + before) : ℕ) : ℝ)
+        ≤
           ((if c = lowSide then dx else dy) - 2 * ρ) * N := by
         push_cast
         nlinarith only [hdeleteR c, hreserve c, htarget.2, hparentMargin]

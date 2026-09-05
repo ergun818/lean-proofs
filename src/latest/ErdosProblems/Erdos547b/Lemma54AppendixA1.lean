@@ -319,7 +319,6 @@ theorem exists_adaptiveAppendixEmbedding
       let Ftail : OrderedRootedForest b := F.tail
       let orientTail : Fin b → Fin 2 ≃ Fin 2 := tailOrient orient
       let parentTail : Fin b → B := fun i ↦ externalParent i.succ
-
       have husedInterRoots (c : Fin 2)
           (hlarge : gamma * N ≤ (#(live c \ roots c) : ℝ)) :
           used c ∩ roots c =
@@ -338,7 +337,7 @@ theorem exists_adaptiveAppendixEmbedding
             have haSide := (Finset.mem_filter.mp ha).2
             by_cases haroot : a = F.root 0
             · subst a
-              simpa [hax]
+              simp [hax]
             · have haInterior := hfheadInterior a haroot
               rw [haSide, hinteriorEq] at haInterior
               exact False.elim
@@ -369,14 +368,13 @@ theorem exists_adaptiveAppendixEmbedding
           · have haInterior := hfheadInterior a haroot
             rw [haSide, hinteriorEq] at haInterior
             exact (Finset.mem_sdiff.mp haInterior).2 (hax ▸ hxRoot)
-
       have hrootsTailCard (c : Fin 2)
           (hlarge : gamma * N ≤ (#(live c \ roots c) : ℝ)) :
           (#(rootsTail c) : ℝ) = (#(roots c) : ℝ) -
             (if rootSide = c then 1 else 0) := by
         have hset : rootsTail c = roots c \ (used c ∩ roots c) := by
           ext x
-          simp [rootsTail, and_assoc, and_left_comm, and_comm]
+          simp [rootsTail]
         rw [hset, show #(roots c \ (used c ∩ roots c)) =
             #(roots c) - #(used c ∩ roots c) by
           exact Finset.card_sdiff_of_subset Finset.inter_subset_right]
@@ -393,7 +391,6 @@ theorem exists_adaptiveAppendixEmbedding
         · have hc' : c ≠ rootSide := Ne.symm hc
           rw [if_neg hc', if_neg hc, Finset.card_empty]
           norm_num
-
       have htailLiveWhole (c : Fin 2) : liveTail c ⊆ whole c :=
         Finset.sdiff_subset.trans (hliveWhole c)
       have htailRootsSubset (c : Fin 2) : rootsTail c ⊆ liveTail c := by
@@ -463,7 +460,6 @@ theorem exists_adaptiveAppendixEmbedding
         exact hattach i.succ w (Finset.mem_sdiff.mp hw).1
       obtain ⟨Etail⟩ := ih Ftail parentTail orientTail liveTail
         rootsTail htailLiveWhole htailMargin htailAttach Ltail
-
       have hwholeDisjoint' : ∀ c d, c ≠ d → Disjoint (whole c) (whole d) := by
         intro c d hcd
         fin_cases c <;> fin_cases d
@@ -584,4 +580,5 @@ theorem exists_dynamicAttachedForestEmbedding_of_appendixOneCapacity
 
 end Erdos547b.ZhaoLemma54AppendixA1
 
-#print axioms Erdos547b.ZhaoLemma54AppendixA1.exists_dynamicAttachedForestEmbedding_of_appendixOneCapacity
+open Erdos547b.ZhaoLemma54AppendixA1 in
+#print axioms exists_dynamicAttachedForestEmbedding_of_appendixOneCapacity

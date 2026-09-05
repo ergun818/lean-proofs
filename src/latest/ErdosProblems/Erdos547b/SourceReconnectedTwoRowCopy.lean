@@ -12,7 +12,7 @@ Every source list, root image and branch image is constructed. All original
 root images retain their high degree in the original host.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceReconnectedTwoRowCopy
@@ -53,6 +53,7 @@ theorem exists_reconnectedCopy_of_twoRowBudgets
       (∑ i ∈ sideFamily F rootSide s, (F.branches.size i : ℝ)) + 3 * (gamma α : ℝ) * q ≤
         ∑ e ∈ E s, sideWeight W Q S s e) :
     ∃ f : (reconnectedGraph F L).Copy (embeddingHost W), ∀ i, q ≤ G.degree (f (Sum.inl i)) := by
+  classical
   let family := fun (s : Fin 2) (_ : Fin 1) => familyList F.owner (sideFamily F rootSide s)
   have hcover : ∀ i, i ∈ family (sideLocate F rootSide i).1 (sideLocate F rootSide i).2 := by
     intro i
@@ -71,7 +72,8 @@ theorem exists_reconnectedCopy_of_twoRowBudgets
     change mass _ (familyList _ _) ≤ _
     rw [mass_familyList]
     apply capacityBudget_of_ideal_margin W Q S (rootCluster W Q s) hα hα1 (.threshold 0) (E s)
-      (Fintype.card (MatchingEdge Q.claim67.M)) (matchingVolume_bound W Q hhost _) (fullMatchingVolume_bound W Q hhost)
+      (Fintype.card (MatchingEdge Q.claim67.M)) (matchingVolume_bound W Q hhost _)
+        (fullMatchingVolume_bound W Q hhost)
     have hne : sideFamily F rootSide s ≠ ∅ := by
       intro he
       apply hnonempty
@@ -94,8 +96,10 @@ theorem exists_reconnectedCopy_of_twoRowBudgets
     · exact hdisjoint
     · exact hdisjoint.symm
     · exact (hst rfl).elim
-  exact ⟨terminalReconnectedCopy W Q S F rootSide _ _ family _ hcover L A hallDisjoint (fun s _ => haway s),
-    terminalReconnectedCopy_root_high W Q S F rootSide _ _ family _ hcover L A hallDisjoint (fun s _ => haway s)⟩
+  exact ⟨terminalReconnectedCopy W Q S F rootSide _ _ family _ hcover L A hallDisjoint (fun s _ =>
+    haway s),
+    terminalReconnectedCopy_root_high W Q S F rootSide _ _ family _ hcover L A hallDisjoint (fun s _
+      => haway s)⟩
 
 end Erdos547b.ZhaoSourceReconnectedTwoRowCopy
 

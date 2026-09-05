@@ -5,7 +5,7 @@ import ErdosProblems.Erdos547b.SourceFreshPartitionBounds
 
 /-! # The literal small-minor postponed core is actually copied -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePathCoreSmallCopy
@@ -59,9 +59,11 @@ theorem exists_small_coreCopy
   have hroots : (P.numParts : ℝ) ≤ (epsilon α : ℝ) * W.clusterSize := by
     subst hostN
     exact freshPartition_root_bound hα hα1 W horder hcard P
-  obtain ⟨f, hf, hsupport⟩ := exists_reconnectedCopy_of_twoRowBudgets W Q S (fullMatching W Q S O sw) F rootSide L
+  obtain ⟨f, hf, hsupport⟩ := exists_reconnectedCopy_of_twoRowBudgets W Q S (fullMatching W Q S O
+    sw) F rootSide L
     (fullMatching_isMatching W Q S O sw) hα hα1 hhost horder E hdis haway
-    (fun i => canonical_branch_size_le_small P (OrderedBranchForest.selectedEquiv (keptBranches P hp) i))
+    (fun i => canonical_branch_size_le_small P (OrderedBranchForest.selectedEquiv (keptBranches P
+      hp) i))
     hroots avoid havoid (fun s _ => hbudget s)
   let core := f.comp (pathCoreGraphIso P hp hT locate (fun _ => rfl)).toCopy
   have hmap (i : Fin P.numParts) : core (pathCorePartitionRoot P hp i) = f (Sum.inl i) :=

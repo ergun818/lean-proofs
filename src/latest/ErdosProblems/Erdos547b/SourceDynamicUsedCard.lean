@@ -9,7 +9,7 @@ actual used cardinality equals its source side load, which is essential
 when propagating the Part-3 residual trichotomy.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoLemma58GroupedSmallForest
@@ -21,7 +21,8 @@ variable {F : OrderedRootedForest b} {H : SimpleGraph V}
 variable {parent : Fin b → V} {orient : Fin b → Fin 2 ≃ Fin 2}
 variable {available : Fin 2 → Finset V}
 
-def DynamicAttachedForestEmbedding.used (E : DynamicAttachedForestEmbedding F H parent orient available)
+def DynamicAttachedForestEmbedding.used (E : DynamicAttachedForestEmbedding F H parent orient
+  available)
     (c : Fin 2) : Finset V :=
   Finset.univ.biUnion fun i => orientedCopyImage (F.tree i) (F.isTree i) (F.root i)
     (orient i) H (E.embedding.copy i) c

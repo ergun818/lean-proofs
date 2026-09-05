@@ -9,7 +9,7 @@ actual union of previous images and the outside prefix; the outside prefix
 is allowed to be arbitrarily large, but must avoid the group supports.
 -/
 
-open scoped BigOperators Classical
+open scoped BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoMarkedPrefixLoads
@@ -76,7 +76,8 @@ theorem used_center_bound (base : Finset V) (image : J → Finset V)
     (himage : ∀ j, image j ⊆ center (assign j) ∪ pair (assign j))
     (hlocal : ∀ j, 3 * ((image j) ∩ center (assign j)).card ≤ mass j + 3 * marks j)
     (i : I) :
-    3 * (used base image ∩ center i).card ≤ groupLoad assign mass i + 3 * groupLoad assign marks i := by
+    3 * (used base image ∩ center i).card ≤ groupLoad assign mass i + 3 * groupLoad assign marks i
+      := by
   have hsub := used_inter_subset base image (fun i => center i ∪ pair i) assign
     hbase hsupport himage i (center i) Finset.subset_union_left
   have hcard := (Finset.card_le_card hsub).trans Finset.card_biUnion_le

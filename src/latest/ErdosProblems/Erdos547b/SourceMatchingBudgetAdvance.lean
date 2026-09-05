@@ -11,7 +11,7 @@ budget constructs the finite packing, then the actual graph successor.
 No later root image or graph realization is assumed.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMatchingBudgetAdvance
@@ -116,7 +116,8 @@ theorem exists_familyAdvance
         · exact_mod_cast Nat.zero_lt_of_lt (F.root i).isLt
         · exact_mod_cast hsmall i) hbudget'
     apply exists_familyAdvance_withPacking W Q S P C F owner rootImage n A hα hα1 hhost horder hC
-      z hcurrent heligible R (goodBins W Q S P C all (A.reservedEdges W Q S P C F owner) bad) packing hsmall
+      z hcurrent heligible R (goodBins W Q S P C all (A.reservedEdges W Q S P C F owner) bad)
+        packing hsmall
     · intro e he
       have hg := Finset.mem_filter.mp (Finset.mem_toList.mp (List.mem_toFinset.mp he))
       exact (Finset.mem_sdiff.mp hg.1).1

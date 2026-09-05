@@ -11,7 +11,7 @@ images. The exact source concatenation and the two disjoint reservation
 ledgers give the full successor invariant.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMatchingAllocationAdvance

@@ -4,7 +4,7 @@ import ErdosProblems.Erdos547b.SourceMatchingRowIdentity
 
 /-! # The actual terminal copy uses only its literal physical support -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMatchingCopySupport
@@ -46,30 +46,37 @@ variable (allocation : Fin 2 → Fin k → Finset (MatchingEdge P))
 variable (family : Fin 2 → Fin k → List (Fin b)) (avoid : Fin 2 → Finset (Fin hostN))
 variable (locate : Fin b → Fin 2 × Fin k) (hcover : ∀ i, i ∈ family (locate i).1 (locate i).2)
 variable (L : CutSource F.branches F.owner rootSide locate)
-variable (A : CutPrefixState W Q S P F.branches F.owner rootSide allocation family avoid locate hcover L r)
-variable (hdisjoint : ∀ x y : Fin 2 × Fin k, x ≠ y → Disjoint (allocation x.1 x.2) (allocation y.1 y.2))
+variable (A : CutPrefixState W Q S P F.branches F.owner rootSide allocation family avoid locate
+  hcover L r)
+variable (hdisjoint : ∀ x y : Fin 2 × Fin k, x ≠ y → Disjoint (allocation x.1 x.2) (allocation y.1
+  y.2))
 variable (haway : ∀ s j, allocation s j ⊆ edgesAwayFromDistinguished P
   (padFinset (large W)) (Sum.inl Q.A) (Sum.inl Q.B))
 
 theorem terminalCopy_mem_hostSupport (x : F.Vertex) :
-    terminalReconnectedCopy W Q S P F rootSide allocation family avoid locate hcover L A hdisjoint haway x ∈
+    terminalReconnectedCopy W Q S P F rootSide allocation family avoid locate hcover L A hdisjoint
+      haway x ∈
       hostSupport W Q P := by
   rcases x with i | ⟨j, a⟩
   · rw [terminalReconnectedCopy_root]
     exact reservoir_subset_hostSupport W Q P (rootSide i) (A.state.root_mem i i.isLt)
-  · change A.state.branchCopy W Q S P F.branches F.owner rootSide allocation family avoid locate hcover
+  · change A.state.branchCopy W Q S P F.branches F.owner rootSide allocation family avoid locate
+      hcover
       j (F.owner j).isLt a ∈ hostSupport W Q P
     exact pairWhole_subset_hostSupport W Q P _ _ (Finset.mem_sdiff.mp
-      (A.state.branchCopy_side W Q S P F.branches F.owner rootSide allocation family avoid locate hcover
+      (A.state.branchCopy_side W Q S P F.branches F.owner rootSide allocation family avoid locate
+        hcover
         j (F.owner j).isLt a)).1
 
 theorem terminalCopy_avoids (unused : Finset (Fin hostN))
     (hdis : Disjoint (hostSupport W Q P) unused) (x : F.Vertex) :
-    terminalReconnectedCopy W Q S P F rootSide allocation family avoid locate hcover L A hdisjoint haway x ∉
+    terminalReconnectedCopy W Q S P F rootSide allocation family avoid locate hcover L A hdisjoint
+      haway x ∉
       unused := by
   intro hx
   exact Finset.disjoint_left.mp hdis
-    (terminalCopy_mem_hostSupport W Q P S F rootSide allocation family avoid locate hcover L A hdisjoint haway x) hx
+    (terminalCopy_mem_hostSupport W Q P S F rootSide allocation family avoid locate hcover L A
+      hdisjoint haway x) hx
 
 open Erdos547b.ZhaoSourceSaturatedPacking Erdos547b.ZhaoSourceFreshChunkBounds
 open Erdos547b.ZhaoSourceDegreeFormBounds Erdos547b.ZhaoSourceParameterSchedule
@@ -101,7 +108,8 @@ theorem exists_supported_copy_of_sourceBudgets (hP : P.IsMatching)
   refine ⟨terminalReconnectedCopy W Q S P F rootSide allocation family avoid locate hcover L
     D hdisjoint haway, ?_, ?_⟩
   · intro i
-    exact ⟨terminalReconnectedCopy_root_high W Q S P F rootSide allocation family avoid locate hcover L
+    exact ⟨terminalReconnectedCopy_root_high W Q S P F rootSide allocation family avoid locate
+      hcover L
       D hdisjoint haway i, D.state.root_mem i i.isLt, D.state.root_avoid i i.isLt⟩
   · exact terminalCopy_mem_hostSupport W Q P S F rootSide allocation family avoid locate hcover L
       D hdisjoint haway

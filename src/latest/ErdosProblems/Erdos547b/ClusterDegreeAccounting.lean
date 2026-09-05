@@ -3,7 +3,7 @@ import ErdosProblems.Erdos547b.Section6Dichotomy
 
 /-! # Exact degree accounting over disjoint physical clusters -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoClusterDegreeAccounting
@@ -19,12 +19,15 @@ theorem degreeInto_clusterUnion (J : Finset I) (z : V) :
   have hdis : (J : Set I).PairwiseDisjoint
       (fun j => (clusterVertices P j).filter (H.Adj z)) := by
     intro i _ j _ hij
-    exact (clusterVertices_disjoint P hij).mono (Finset.filter_subset _ _) (Finset.filter_subset _ _)
+    exact (clusterVertices_disjoint P hij).mono (Finset.filter_subset _ _) (Finset.filter_subset _
+      _)
   unfold degreeInto clusterUnion
   rw [Finset.filter_biUnion, Finset.card_biUnion hdis]
 
+omit [DecidableEq V] in
 theorem sum_degreeInto_le_degree (J : Finset I) (z : V) :
     (∑ j ∈ J, degreeInto H z (clusterVertices P j)) ≤ H.degree z := by
+  classical
   rw [← degreeInto_clusterUnion]
   change ((clusterUnion P J).filter (H.Adj z)).card ≤ (H.neighborFinset z).card
   apply Finset.card_le_card
@@ -33,9 +36,11 @@ theorem sum_degreeInto_le_degree (J : Finset I) (z : V) :
 
 variable [Fintype I]
 
+omit [DecidableEq V] in
 theorem degree_le_exceptional_add_sum (z : V) :
     H.degree z ≤ (exceptionalVertices P).card +
       ∑ j : I, degreeInto H z (clusterVertices P j) := by
+  classical
   let ordinary := (clusterUnion P Finset.univ).filter (H.Adj z)
   have hsub : H.neighborFinset z ⊆ exceptionalVertices P ∪ ordinary := by
     intro y hy
@@ -50,8 +55,10 @@ theorem degree_le_exceptional_add_sum (z : V) :
     degreeInto_clusterUnion P H Finset.univ z
   simpa only [H.card_neighborFinset_eq_degree, heq] using hcard
 
+omit [DecidableEq V] in
 theorem clusterVolume_le_card (N : ℕ) (hN : ∀ j, (clusterVertices P j).card = N) :
     Fintype.card I * N ≤ Fintype.card V := by
+  classical
   have hdis : (↑(Finset.univ : Finset I) : Set I).PairwiseDisjoint (clusterVertices P) := by
     intro i _ j _ hij
     exact clusterVertices_disjoint P hij

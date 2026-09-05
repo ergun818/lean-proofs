@@ -4,7 +4,7 @@ import ErdosProblems.Erdos547b.TwoTierRootPaths
 
 /-! # Complete actual reinsertion of the postponed Claim-6.17 paths -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceClaim617Reinsert
@@ -32,7 +32,8 @@ theorem exists_copy_of_postponed_switch
     (hα : 0 < α) (hα1 : α ≤ 1 / 4) (hhost : hostN = 2 * q)
     (horder : orderThreshold α M ≤ q) (hcard : Fintype.card U = q + 1)
     (hnot : ¬T.IsContained G) : Nonempty (T.Copy G) := by
-  obtain ⟨D, f, hfree, hcounts⟩ := exists_readyCore W Q S hT P hp O sw hα hα1 hhost horder hcard hnot
+  obtain ⟨D, f, hfree, hcounts⟩ := exists_readyCore W Q S hT P hp O sw hα hα1 hhost horder hcard
+    hnot
   have hcount : highCount α q ≤ (Finset.univ : Finset (Fin (postponedCount α q))).card := by
     simpa only [Finset.card_univ, Fintype.card_fin] using highCount_le_postponed (q := q) hα hα1
   obtain ⟨High, _, hHigh⟩ := Finset.exists_subset_card_eq hcount

@@ -111,6 +111,7 @@ def canonicalCoordinateOrientation
     Equiv.refl (Fin 2)
   else endpointOrientation (mbSide (Aalloc.Fbedge j))
 
+omit [DecidableEq B] [Fintype B] in
 @[simp] theorem canonicalCoordinateOrientation_selected_apply
     (hT : T.IsTree) (P : ZhaoForestPartition T globalRoot small)
     (optional : Finset V)
@@ -135,6 +136,7 @@ def canonicalCoordinateOrientation
           (Aalloc.F0cluster j) (Aalloc.F0edge j)) localSide := by
   simp [canonicalCoordinateOrientation, hj]
 
+omit [DecidableEq B] [Fintype B] in
 @[simp] theorem canonicalCoordinateOrientation_residual_apply
     (hT : T.IsTree) (P : ZhaoForestPartition T globalRoot small)
     (optional : Finset V)
@@ -156,6 +158,7 @@ def canonicalCoordinateOrientation
   have hj0 : j ∉ S.selected := (mem_majorResidualBranches P S j).mp hj |>.2
   simp [canonicalCoordinateOrientation, hj0, hj]
 
+omit [DecidableEq B] [Fintype B] in
 @[simp] theorem canonicalCoordinateOrientation_minor_apply
     (hT : T.IsTree) (P : ZhaoForestPartition T globalRoot small)
     (optional : Finset V)
@@ -186,7 +189,8 @@ def canonicalCoordinateOrientation
     exact hjHalf ((mem_majorResidualBranches P S j).mp hjResidual).1
   simp [canonicalCoordinateOrientation, hj0, hj1]
 
-@[simp] theorem canonicalCoordinateOrientation_selected_zero
+omit [DecidableEq B] [Fintype B] in
+@[simp] theorem canonicalCoordinateOrientation_selected_zero [Finite B]
     (hT : T.IsTree) (P : ZhaoForestPartition T globalRoot small)
     (optional : Finset V)
     (S : SelectedF0Within (branchForest P) (halfBranches P) target slack)
@@ -207,11 +211,14 @@ def canonicalCoordinateOrientation
         (orientationMoutEdges G cluster epsilon density D)
         matchingEdgeEndpoint C (orientationW G cluster epsilon density D)
         (Aalloc.F0cluster j) (Aalloc.F0edge j) := by
+  classical
+  let := Fintype.ofFinite B
   rw [canonicalCoordinateOrientation_selected_apply G cluster epsilon density
     D C hT P optional S clusterCap base0 base1 baseb Aalloc mbSide j hj]
   exact orientedSide_zero _
 
-@[simp] theorem canonicalCoordinateOrientation_minor_zero
+omit [DecidableEq B] [Fintype B] in
+@[simp] theorem canonicalCoordinateOrientation_minor_zero [Finite B]
     (hT : T.IsTree) (P : ZhaoForestPartition T globalRoot small)
     (optional : Finset V)
     (S : SelectedF0Within (branchForest P) (halfBranches P) target slack)
@@ -229,6 +236,8 @@ def canonicalCoordinateOrientation
     canonicalCoordinateOrientation G cluster epsilon density D C hT P optional
         S clusterCap base0 base1 baseb Aalloc mbSide j 0 =
       mbSide (Aalloc.Fbedge j) := by
+  classical
+  let := Fintype.ofFinite B
   rw [canonicalCoordinateOrientation_minor_apply G cluster epsilon density D C
     hT P optional S clusterCap base0 base1 baseb Aalloc mbSide j hj]
   exact orientedSide_zero _
@@ -236,6 +245,8 @@ def canonicalCoordinateOrientation
 end Erdos547b.ZhaoClaim616CoordinateOrientation
 
 #print axioms Erdos547b.ZhaoClaim616CoordinateOrientation.endpointOrientation_apply
-#print axioms Erdos547b.ZhaoClaim616CoordinateOrientation.canonicalCoordinateOrientation_selected_apply
-#print axioms Erdos547b.ZhaoClaim616CoordinateOrientation.canonicalCoordinateOrientation_residual_apply
+open Erdos547b.ZhaoClaim616CoordinateOrientation in
+#print axioms canonicalCoordinateOrientation_selected_apply
+open Erdos547b.ZhaoClaim616CoordinateOrientation in
+#print axioms canonicalCoordinateOrientation_residual_apply
 #print axioms Erdos547b.ZhaoClaim616CoordinateOrientation.canonicalCoordinateOrientation_minor_apply

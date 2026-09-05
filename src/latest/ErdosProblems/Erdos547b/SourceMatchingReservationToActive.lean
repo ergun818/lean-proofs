@@ -11,7 +11,7 @@ owner. Its already constructed tail copy is therefore exactly the active
 chunk's global prefix at `n+1`. No future root image is constrained.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMatchingReservationToActive

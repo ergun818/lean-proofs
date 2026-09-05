@@ -10,7 +10,7 @@ The reservation is saturated unless it exhausts all remaining branches.
 Reserved source mass, not yet embedded host mass, pays for its bin.
 -/
 
-open scoped BigOperators Classical
+open scoped BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePendingReservation
@@ -95,7 +95,8 @@ which have not yet been embedded. -/
 theorem PendingReservation.mass_accounting
     {weight : Item → ℝ} {pending future : List Item} {cap slack : ℝ}
     (R : PendingReservation weight pending future cap slack) :
-    mass weight R.reserved + mass weight R.remaining = mass weight pending + mass weight future := by
+    mass weight R.reserved + mass weight R.remaining = mass weight pending + mass weight future :=
+      by
   have h := congrArg (mass weight) R.flatten
   simpa only [mass, List.map_append, List.sum_append] using h
 

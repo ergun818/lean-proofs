@@ -11,7 +11,7 @@ parameters. The source graph is a further subgraph of the pair-pruned host;
 the graph used for regular-pair embeddings remains unchanged.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceDegreeFormRootRows
@@ -49,6 +49,7 @@ abbrev missed := 2 * matchingDefect ((fourthRoot α : ℝ) ^ 2) (paddedHalf (Ind
 abbrev Certificate :=
   RichClaim61Certificate (assignment W) G q (sourceQuota W) (reduced W) (large W) (missed W)
 
+open scoped Classical in
 /-- The two chosen roots and their actual source graph, with all extra
 cleanup charged to the unused square-root margin. -/
 structure CleanSourceWitness (Q : Certificate W) where
@@ -90,6 +91,7 @@ theorem exists_clean_source
     (hα : 0 < α) (hα1 : α ≤ 1 / 4) (Q : Certificate W)
     (hhost : hostN = 2 * q) (horder : orderThreshold α M ≤ q) :
     Nonempty (CleanSourceWitness W Q) := by
+  classical
   subst hostN
   let _ : DecidableRel W.graph.Adj := W.graph_decidable
   let J : Finset (Index W) := Finset.univ \ {Q.A, Q.B}
@@ -183,6 +185,7 @@ theorem CleanSourceWitness.respects {Q : Certificate W} (F : CleanSourceWitness 
   intro u v i j hui hvj huv
   exact h hui hvj (F.source_le huv)
 
+open scoped Classical in
 /-- At a high vertex in a large cluster, whole-pair pruning costs nothing;
 only the degree-form and root-truncation losses are subtracted. -/
 theorem CleanSourceWitness.retained_degree {Q : Certificate W} (F : CleanSourceWitness W Q)
@@ -227,8 +230,9 @@ theorem CleanSourceWitness.rowFloor_lower
 
 /-- Literal normalized neighbor rows of the two fixed, cleaned roots. -/
 abbrev rootDensity {Q : Certificate W} (F : CleanSourceWitness W Q) :=
-  twoRootSourceDensity F.source (padCluster (fun i : Index W => i.1))
-    (W.clusterSize : ℝ) (Sum.inl Q.A) (Sum.inl Q.B) F.zA F.zB
+  open scoped Classical in
+    twoRootSourceDensity F.source (padCluster (fun i : Index W => i.1))
+      (W.clusterSize : ℝ) (Sum.inl Q.A) (Sum.inl Q.B) F.zA F.zB
 
 /-- The contribution of one actual matching edge to a chosen source row. -/
 abbrev rowWeight {Q : Certificate W} (F : CleanSourceWitness W Q)
@@ -258,6 +262,7 @@ structure SourceRowFacts (Q : Certificate W) (F : CleanSourceWitness W Q) : Prop
 selector by excluding every other vertex of each reservoir. -/
 theorem CleanSourceWitness.source_rows {Q : Certificate W} (F : CleanSourceWitness W Q) :
     SourceRowFacts W Q F := by
+  classical
   have hquota : 0 < sourceQuota W := by
     rw [← Q.A₀_card]
     exact Finset.card_pos.mpr ⟨F.zA, F.zA_mem⟩

@@ -10,7 +10,7 @@ reparented without changing their maps. Source lists, assigned edges and
 the capacity-specific reservation ledger are preserved.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceCapacityOwnerAdvance
@@ -37,8 +37,10 @@ structure ActiveAdvance (rootImage : Fin r → Fin hostN) (n : Fin r) (z : Fin h
   after : Option (ActiveState W Q S C F owner kind (Function.update rootImage n z) (n.val + 1))
   items_eq : activeItems W Q S C F owner kind after = activeItems W Q S C F owner kind before
   edges_eq : activeEdges W Q S C F owner kind after = activeEdges W Q S C F owner kind before
-  selected_mono : activeSelected W Q S C F owner kind before ⊆ activeSelected W Q S C F owner kind after
-  copies_eq : ∀ i hi, (activePlacement W Q S C F owner kind after).forestCopy.componentCopy i (selected_mono hi) =
+  selected_mono : activeSelected W Q S C F owner kind before ⊆ activeSelected W Q S C F owner kind
+    after
+  copies_eq : ∀ i hi, (activePlacement W Q S C F owner kind after).forestCopy.componentCopy i
+    (selected_mono hi) =
     (activePlacement W Q S C F owner kind before).forestCopy.componentCopy i hi
   orient_eq : ∀ i hi, (activePlacement W Q S C F owner kind after).orient ⟨i, selected_mono hi⟩ =
     (activePlacement W Q S C F owner kind before).orient ⟨i, hi⟩
@@ -64,15 +66,18 @@ theorem exists_activeAdvance
       have hnext : ∃ E' : x.source.Prefix W Q S C F owner kind x.backend
           (Function.update rootImage n z) (n.val + 1),
           (∀ i hi, (x.source.chosen W Q S C F owner kind E').state.forestCopy.componentCopy i
-              (branchPrefix_mono (ownerCutoff_mono (listOwner owner x.source.items) (Nat.le_succ n.val)) hi) =
-            (x.source.chosen W Q S C F owner kind x.copyPrefix).state.forestCopy.componentCopy i hi) ∧
+              (branchPrefix_mono (ownerCutoff_mono (listOwner owner x.source.items) (Nat.le_succ
+                n.val)) hi) =
+            (x.source.chosen W Q S C F owner kind x.copyPrefix).state.forestCopy.componentCopy i hi)
+              ∧
           ∀ i ∈ branchPrefix (ownerCutoff (listOwner owner x.source.items) n.val),
             (x.source.chosen W Q S C F owner kind E').orient i =
               (x.source.chosen W Q S C F owner kind x.copyPrefix).orient i := by
         by_cases hc : ∃ i ∈ x.source.items, owner i = n
         · exact x.source.exists_advance W Q S C F owner kind hα hα1 hhost horder hkind
             rootImage n x.copyPrefix z (heligible x rfl hc)
-        · obtain ⟨E', hcopy, horient⟩ := x.source.exists_skip W Q S C F owner kind rootImage n x.copyPrefix z
+        · obtain ⟨E', hcopy, horient⟩ := x.source.exists_skip W Q S C F owner kind rootImage n
+            x.copyPrefix z
             (fun i hi he => hc ⟨i, hi, he⟩)
           exact ⟨E', hcopy, fun i _ => horient i⟩
       obtain ⟨E', hcopy, horient⟩ := hnext
@@ -84,9 +89,11 @@ theorem exists_activeAdvance
           (ownerCutoff_mono (listOwner owner x.source.items) (Nat.le_succ n.val))
         copies_eq := ?_
         orient_eq := ?_ }⟩
-      · exact x.source.placement_preserved W Q S C F owner kind rootImage (Function.update rootImage n z)
+      · exact x.source.placement_preserved W Q S C F owner kind rootImage (Function.update rootImage
+          n z)
           (Nat.le_succ n.val) x.copyPrefix E' hcopy
-      · exact x.source.placement_orient_preserved W Q S C F owner kind rootImage (Function.update rootImage n z)
+      · exact x.source.placement_orient_preserved W Q S C F owner kind rootImage (Function.update
+          rootImage n z)
           (Nat.le_succ n.val) x.copyPrefix E' horient
 
 theorem exists_familyAdvance_noAllocation
@@ -103,7 +110,8 @@ theorem exists_familyAdvance_noAllocation
       activeItems W Q S C F owner kind B.active = activeItems W Q S C F owner kind A.active ∧
       activeEdges W Q S C F owner kind B.active = activeEdges W Q S C F owner kind A.active ∧
       ∀ i hi, (B.currentPlacement W Q S C F owner kind).forestCopy.componentCopy i
-          (Erdos547b.ZhaoSourceFamilyOwnerAdvance.processedFamily_mono owner (Nat.le_succ n.val) family hi) =
+          (Erdos547b.ZhaoSourceFamilyOwnerAdvance.processedFamily_mono owner (Nat.le_succ n.val)
+            family hi) =
         (A.currentPlacement W Q S C F owner kind).forestCopy.componentCopy i hi := by
   obtain ⟨R⟩ := exists_activeAdvance W Q S C F owner kind hα hα1 hhost horder hkind
     rootImage n z A.active heligible
@@ -113,7 +121,8 @@ theorem exists_familyAdvance_noAllocation
     have hlt := A.completed_before i (List.mem_toFinset.mp hi)
     have hne : owner i ≠ n := fun h => (Nat.ne_of_lt hlt) (congrArg Fin.val h)
     exact Function.update_of_ne hne z rootImage
-  let B : FamilyState W Q S C F owner kind all family (Function.update rootImage n z) (n.val + 1) := {
+  let B : FamilyState W Q S C F owner kind all family (Function.update rootImage n z) (n.val + 1) :=
+    {
     family_nodup := A.family_nodup
     family_order := A.family_order
     completed := A.completed
@@ -143,13 +152,16 @@ theorem exists_familyAdvance_noAllocation
     (A.domain_eq W Q S C F owner kind).symm ▸ hi
   rcases Finset.mem_union.mp hdomain with hclosed | hactive
   · calc
-      _ = B.closed.forestCopy.componentCopy i hclosed := B.current_copy_completed W Q S C F owner kind i hclosed
+      _ = B.closed.forestCopy.componentCopy i hclosed := B.current_copy_completed W Q S C F owner
+        kind i hclosed
       _ = A.closed.forestCopy.componentCopy i hclosed := rfl
       _ = _ := (A.current_copy_completed W Q S C F owner kind i hclosed).symm
   · calc
       _ = (activePlacement W Q S C F owner kind R.after).forestCopy.componentCopy i
-          (R.selected_mono hactive) := B.current_copy_active W Q S C F owner kind i (R.selected_mono hactive)
-      _ = (activePlacement W Q S C F owner kind A.active).forestCopy.componentCopy i hactive := R.copies_eq i hactive
+          (R.selected_mono hactive) := B.current_copy_active W Q S C F owner kind i (R.selected_mono
+            hactive)
+      _ = (activePlacement W Q S C F owner kind A.active).forestCopy.componentCopy i hactive :=
+        R.copies_eq i hactive
       _ = _ := (A.current_copy_active W Q S C F owner kind i hactive).symm
 
 end Erdos547b.ZhaoSourceCapacityOwnerAdvance

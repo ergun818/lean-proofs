@@ -10,7 +10,7 @@ the new active reservation are then constructed, including empty current
 fibers and terminal reservations. No future-root realization is assumed.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceCapacityFamilyBudgetAdvance

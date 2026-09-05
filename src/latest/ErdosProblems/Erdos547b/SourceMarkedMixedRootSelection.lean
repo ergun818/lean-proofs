@@ -9,7 +9,7 @@ The additional many-bad-groups exclusion fits the existing parent-pool
 budget. Ordinary matching selection is performed inside the same live pool.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMarkedMixedRootSelection
@@ -39,7 +39,8 @@ theorem mixedForbidden_sharp (hα : 0 < α) (hα1 : α ≤ 1 / 4)
     (used : Finset (Fin hostN)) (hused : (used.card : ℝ) ≤ (epsilon α : ℝ) * W.clusterSize) :
     ((mixedForbidden W Q S s t requirements used).card : ℝ) ≤
       8 * (epsilon α : ℝ) * W.clusterSize := by
-  let bad := Finset.univ.biUnion (fun j => requirementBad W Q S (rootCluster W Q s) (requirements j))
+  let bad := Finset.univ.biUnion (fun j => requirementBad W Q S (rootCluster W Q s) (requirements
+    j))
   have he : (0 : ℝ) ≤ epsilon α := by exact_mod_cast (parameter_pos hα).2.2.2.2.2.2.2.le
   have hbad : (bad.card : ℝ) ≤ (k : ℝ) * (2 * (epsilon α : ℝ) * W.clusterSize) := by
     calc
@@ -81,7 +82,8 @@ theorem combinedForbidden_card_le (hα : 0 < α) (hα1 : α ≤ 1 / 4)
     (Nat.cast_nonneg W.clusterSize : (0 : ℝ) ≤ W.clusterSize)
   have hu : ((combinedForbidden W Q S O P t requirements used).card : ℝ) ≤
       (mixedForbidden W Q S 0 t requirements used).card + (excludedRoots W Q S O P).card := by
-    exact_mod_cast Finset.card_union_le (mixedForbidden W Q S 0 t requirements used) (excludedRoots W Q S O P)
+    exact_mod_cast Finset.card_union_le (mixedForbidden W Q S 0 t requirements used) (excludedRoots
+      W Q S O P)
   nlinarith only [hm, hg, he, hu]
 
 theorem exists_mixed_marked_root (hα : 0 < α) (hα1 : α ≤ 1 / 4)
@@ -135,7 +137,8 @@ theorem exists_mixed_marked_root (hα : 0 < α) (hα1 : α ≤ 1 / 4)
     | none => exact initialPool_large W Q hα hα1 0 excluded hexcluded
     | some v => exact parentPool_large_of_degree W Q hα hα1 0 v (hparent v rfl) excluded hexcluded
   obtain ⟨z, hz, hfresh, hactive, hdegree, hremainingGood⟩ := exists_mixed_root_from_pool W Q
-    hα hα1 S 0 t requirements hvalid used remaining hremaining raw hraw hrawLarge pool hpool hpoolCard
+    hα hα1 S 0 t requirements hvalid used remaining hremaining raw hraw hrawLarge pool hpool
+      hpoolCard
   have hfacts := hpoolFacts z hz
   have hzA : z ∈ whole W Q.A := by
     simpa [rootCluster] using reservoir_subset W Q 0 hfacts.1

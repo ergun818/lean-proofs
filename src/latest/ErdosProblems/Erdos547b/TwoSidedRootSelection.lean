@@ -3,7 +3,7 @@ import ErdosProblems.Erdos547b.RegularRowConcentration
 
 /-! # One actual root with both upper and lower almost-all-target typicality -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoTwoSidedRootSelection
@@ -13,6 +13,7 @@ open Erdos547b.ZhaoSourceRootIncidence Erdos547b.ZhaoRegularRowConcentration
 
 variable {V I : Type*} [DecidableEq V] [DecidableEq I]
 
+omit [DecidableEq V] in
 theorem exists_root_bothTypical_most
     (H : SimpleGraph V) [DecidableRel H.Adj]
     (A pool : Finset V) (J : Finset I) (whole : I → Finset V)
@@ -25,6 +26,7 @@ theorem exists_root_bothTypical_most
         ((H.edgeDensity A (whole j) : ℝ) + ε) * (whole j).card) ∧
       (∀ j ∈ J \ DL, ((H.edgeDensity A (whole j) : ℝ) - ε) * (whole j).card ≤
         (degreeInto H z (whole j) : ℝ)) := by
+  classical
   let BU := upperBad H A J whole ε δ
   let BL := lowerBad H A J whole ε δ
   have hBU := card_upperBad_le H A J whole ε δ hδ hεδ huniform

@@ -9,7 +9,7 @@ bad-edge allowance all fit the same source margin. Ideal weights retain
 the genuine threshold or nonextreme gain; they are not graph premises.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceCapacityBudgetMargins
@@ -69,10 +69,12 @@ theorem effectiveCapacity_lower (hα : 0 < α) (hα1 : α ≤ 1 / 4)
   have hsum : (∑ e ∈ edges, idealCapacity W Q S C kind e) -
       (2 * (gamma α : ℝ) + 30 * (epsilon α : ℝ)) * W.clusterSize * edges.card ≤
         ∑ e ∈ edges, capacity W Q S C kind e := by
-    have h := Finset.sum_le_sum (fun e (_ : e ∈ edges) => idealCapacity_sub_loss_le W Q S C hα kind e)
+    have h := Finset.sum_le_sum (fun e (_ : e ∈ edges) => idealCapacity_sub_loss_le W Q S C hα kind
+      e)
     simpa only [Finset.sum_sub_distrib, Finset.sum_const, nsmul_eq_mul,
       mul_comm (edges.card : ℝ)] using h
-  have hloss := mul_le_mul_of_nonneg_left hedges (by positivity : 0 ≤ 2 * (gamma α : ℝ) + 30 * (epsilon α : ℝ))
+  have hloss := mul_le_mul_of_nonneg_left hedges
+    (by positivity : 0 ≤ 2 * (gamma α : ℝ) + 30 * (epsilon α : ℝ))
   have hbad := mul_le_mul_of_nonneg_left hglobal (by positivity : 0 ≤ 4 * (rootTypicality α : ℝ))
   have hsmall : (freshBranchBound α W.clusterSize : ℝ) ≤ (epsilon α : ℝ) * W.clusterSize := by
     have hfloor : (freshBranchBound α W.clusterSize : ℝ) ≤ (epsilon α : ℝ) * W.clusterSize / 2 :=
@@ -91,7 +93,8 @@ theorem capacityBudget_of_ideal_margin (hα : 0 < α) (hα1 : α ≤ 1 / 4)
     (kind : FamilyKind) (edges : Finset (MatchingEdge Q.claim67.M)) (globalCount : ℕ)
     (hedges : (W.clusterSize : ℝ) * edges.card ≤ q)
     (hglobal : (W.clusterSize : ℝ) * globalCount ≤ q)
-    (demand : ℝ) (hbudget : demand + 3 * (gamma α : ℝ) * q ≤ ∑ e ∈ edges, idealCapacity W Q S C kind e) :
+    (demand : ℝ) (hbudget : demand + 3 * (gamma α : ℝ) * q ≤ ∑ e ∈ edges, idealCapacity W Q S C kind
+      e) :
     demand ≤ (∑ e ∈ edges, capacity W Q S C kind e) -
       (freshBranchBound α W.clusterSize : ℝ) * edges.card -
       4 * (rootTypicality α : ℝ) * W.clusterSize * globalCount := by

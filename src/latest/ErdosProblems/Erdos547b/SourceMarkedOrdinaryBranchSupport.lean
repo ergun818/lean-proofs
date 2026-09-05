@@ -5,7 +5,7 @@ import ErdosProblems.Erdos547b.SourceMarkedBranchImage
 # Actual allocated matching support for each ordinary branch image
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMarkedGlobalPrefix
@@ -47,19 +47,25 @@ variable (rootSide : Fin r → Fin 2) (kinds : Fin 2 → Fin k → FamilyKind)
 variable (allocation : Fin 2 → Fin k → Finset (MatchingEdge Q.claim67.M))
 variable (family : Fin 2 → Fin k → List (Fin b)) (locate : Fin b → Fin 2 × Fin k)
 variable (hcover : ∀ i, i ∉ selected → i ∈ family (locate i).1 (locate i).2)
-variable {stage : ℕ} (A : PrefixState W Q S O P F owner marks selected rootSide kinds allocation family stage)
+variable {stage : ℕ} (A : PrefixState W Q S O P F owner marks selected rootSide kinds allocation
+  family stage)
 
 theorem PrefixState.ordinary_branch_support (i : Fin b) (hs : i ∉ selected)
     (hi : (owner i).val < stage) (a : Fin (F.size i)) :
     ∃ e ∈ allocation (locate i).1 (locate i).2, ∃ c : Fin 2,
-      A.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family locate hcover i hi a ∈ edgeWhole W Q e c := by
+      A.branchCopy W Q S O P F owner marks selected rootSide kinds allocation family locate hcover i
+        hi a ∈ edgeWhole W Q e c := by
   let E := (A.ordinary.families (locate i).1 (locate i).2).currentPlacement W Q S
     (rootCluster W Q (locate i).1) F owner (kinds (locate i).1 (locate i).2)
-  let himem : i ∈ (family (locate i).1 (locate i).2).toFinset.filter (fun i => (owner i).val < stage) :=
+  let himem : i ∈ (family (locate i).1 (locate i).2).toFinset.filter (fun i => (owner i).val <
+    stage) :=
     Finset.mem_filter.mpr ⟨List.mem_toFinset.mpr (hcover i hs), hi⟩
-  refine ⟨E.edge ⟨i, himem⟩, ?_, E.orient ⟨i, himem⟩ ((F.isTree i).coloringTwoOfVert (F.root i) a), ?_⟩
-  · exact ordinary_current_edge_mem W Q S F owner _ _ (A.ordinary.families (locate i).1 (locate i).2) ⟨i, himem⟩
-  · rw [A.branchCopy_eq_ordinary W Q S O P F owner marks selected rootSide kinds allocation family locate hcover i hi hs]
+  refine ⟨E.edge ⟨i, himem⟩, ?_, E.orient ⟨i, himem⟩ ((F.isTree i).coloringTwoOfVert (F.root i) a),
+    ?_⟩
+  · exact ordinary_current_edge_mem W Q S F owner _ _ (A.ordinary.families (locate i).1 (locate
+      i).2) ⟨i, himem⟩
+  · rw [A.branchCopy_eq_ordinary W Q S O P F owner marks selected rootSide kinds allocation family
+      locate hcover i hi hs]
     exact (Finset.mem_sdiff.mp (E.map_side i himem a)).1
 
 end Erdos547b.ZhaoSourceMarkedGlobalPrefix

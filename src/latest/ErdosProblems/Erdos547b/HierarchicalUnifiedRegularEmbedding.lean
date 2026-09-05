@@ -112,4 +112,5 @@ end HierarchicalSegmentForest
 
 end Erdos547b.ZhaoLemma59HierarchicalUnifiedRegular
 
-#print axioms Erdos547b.ZhaoLemma59HierarchicalUnifiedRegular.HierarchicalSegmentForest.exists_hierarchicalUnifiedRegularEmbedding
+open Erdos547b.ZhaoLemma59HierarchicalUnifiedRegular.HierarchicalSegmentForest in
+#print axioms exists_hierarchicalUnifiedRegularEmbedding

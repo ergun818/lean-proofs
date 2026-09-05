@@ -110,12 +110,13 @@ theorem orderedGraph_adj_mk (F : OrderedRootedForest r)
 rooted branch containing its neighbor.  This includes the boundary case in
 which the first vertex is itself the child defining the branch. -/
 theorem adj_mem_rootedBranch_of_mem_of_ne_root
-    {A : Type*} [Fintype A] [DecidableEq A]
+    {A : Type*} [Fintype A]
     {T : SimpleGraph A} (hT : T.IsTree) {root child u v : A}
     (hchild : IsChild T root root child)
     (hu : u ∈ rootedDescendants T root child)
     (hv : v ≠ root) (huv : T.Adj u v) :
     v ∈ rootedDescendants T root child := by
+  classical
   by_cases huc : u = child
   · subst u
     rw [mem_rootedDescendants]
@@ -411,7 +412,7 @@ theorem induce_dist_eq_of_tree_of_connected
     hT.connected.exists_path_of_dist x.1 y.1
   let e : T.induce S ↪g T := SimpleGraph.Embedding.induce S
   have hpMapPath : (p.map e.toHom).IsPath :=
-    SimpleGraph.Walk.map_isPath_of_injective e.injective hpPath
+    SimpleGraph.Walk.IsPath.map e.injective hpPath
   have hpEq : p.map e.toHom = q :=
     (hT.existsUnique_path x.1 y.1).unique hpMapPath hqPath
   have hlen := congrArg SimpleGraph.Walk.length hpEq

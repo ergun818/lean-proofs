@@ -5,7 +5,7 @@ import ErdosProblems.Erdos547b.SourceLargeExceptionalForcing
 
 /-! # Charge physical row discrepancies to source discrepancies and bad targets -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePhysicalUnbalanced
@@ -20,7 +20,7 @@ open Erdos547b.ZhaoSourceLargeExceptionalForcing
 
 theorem unbalanced_card_le_source_add_bad
     {K : Type*} [Fintype K] [DecidableEq K]
-    {R : SimpleGraph K} [DecidableRel R.Adj]
+    {R : SimpleGraph K}
     (M : R.Subgraph) (hM : M.IsMatching) (L B : Finset K)
     (physical source : K → ℝ) (ε η : ℝ) (hε : 2 * ε ≤ η)
     (herror : ∀ e : MatchingEdge M, ∀ c : Fin 2,
@@ -30,10 +30,12 @@ theorem unbalanced_card_le_source_add_bad
       (2 * η)).card ≤
     (unbalancedEdges (allMatchingEdges M) (fun e c => source (orientedEndpoint M L e c)) η).card +
       B.card := by
+  classical
   let Bad := incidentCoverEdges M L B
   have hsub : unbalancedEdges (allMatchingEdges M)
       (fun e c => physical (orientedEndpoint M L e c)) (2 * η) ⊆
-      unbalancedEdges (allMatchingEdges M) (fun e c => source (orientedEndpoint M L e c)) η ∪ Bad := by
+      unbalancedEdges (allMatchingEdges M) (fun e c => source (orientedEndpoint M L e c)) η ∪ Bad :=
+        by
     intro e he
     by_cases hb : e ∈ Bad
     · exact Finset.mem_union_right _ hb

@@ -10,7 +10,7 @@ margin. One root then works for all active pending pairs, the opposite
 root reservoir, and almost all unused pairs. The empty fixed set is allowed.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMultiPendingRoot
@@ -128,7 +128,8 @@ theorem exists_multi_eligible_from_pool
     W Q hα hα1 S (rootCluster W Q s) (rootCluster_cases W Q s) remaining hremaining pool
       (hpool.trans (Finset.sdiff_subset.trans (reservoir_subset W Q s))) hpoolCard
   obtain ⟨hzR, hzFresh⟩ := Finset.mem_sdiff.mp (hpool hz)
-  have hnotUsed : z ∉ used := fun hu => hzFresh (Finset.mem_union_left _ (Finset.mem_union_left _ hu))
+  have hnotUsed : z ∉ used := fun hu => hzFresh (Finset.mem_union_left _ (Finset.mem_union_left _
+    hu))
   have hnotReservoir : z ∉ badToward W Q (Sum.inl (rootCluster W Q s)) t :=
     fun hr => hzFresh (Finset.mem_union_right _ hr)
   refine ⟨z, hz, hnotUsed, fixed_eligible_of_not_mem_multiForbidden W Q S s t fixed hfixed
@@ -161,7 +162,9 @@ theorem exists_multi_eligible_after_parent_degree
   let excluded := multiForbidden W Q S s t fixed used
   obtain ⟨z, hz, hfresh, hfixedGood, hroot, hremainingGood⟩ := exists_multi_eligible_from_pool
     W Q hα hα1 S s t fixed hfixed used remaining hremaining (parentPool W Q s v excluded)
-    (by intro z hz; obtain ⟨hm, _, hn⟩ := (mem_parentPool W Q).mp hz; exact Finset.mem_sdiff.mpr ⟨hm, hn⟩)
+    (by
+      intro z hz; obtain ⟨hm, _, hn⟩ := (mem_parentPool W Q).mp hz; exact Finset.mem_sdiff.mpr ⟨hm,
+        hn⟩)
     (parentPool_large_of_degree W Q hα hα1 s v hdegree excluded
       (card_multiForbidden_le W Q hα hα1 S s t fixed hfixed hcount used hused))
   obtain ⟨hzR, hzAdj, _⟩ := (mem_parentPool W Q).mp hz

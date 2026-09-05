@@ -11,7 +11,7 @@ root assignments are now combined. No row normalization or embedding
 continuation is retained in the resulting discrepancy bound.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceRawDiscrepancy

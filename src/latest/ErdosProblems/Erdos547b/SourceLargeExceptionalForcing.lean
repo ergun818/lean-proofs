@@ -12,7 +12,7 @@ actual source schedule. The remaining forest-mass and raw discrepancy
 premises are the preceding source claims, not embedding callbacks.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceLargeExceptionalForcing
@@ -41,10 +41,11 @@ abbrev unbalancedAway (s : Fin 2) :=
 abbrev nonextremeAway (s : Fin 2) :=
   nonextremeEdges (awayEdges W Q) (sideDensity W Q S s) (eta α : ℝ)
 
-theorem exists_subset_exceptionalCount {E : Type*} [DecidableEq E]
+theorem exists_subset_exceptionalCount {E : Type*}
     (hα : 0 < α) (family : Finset E)
     (hlarge : (eta α : ℝ) * paddedHalf (Index W) ≤ family.card) :
     ∃ E0 ⊆ family, E0.card = exceptionalCount W := by
+  classical
   apply Finset.exists_subset_card_eq
   apply Nat.ceil_le.mpr
   have heta : (0 : ℝ) ≤ eta α := by exact_mod_cast (parameter_pos hα).2.2.1.le

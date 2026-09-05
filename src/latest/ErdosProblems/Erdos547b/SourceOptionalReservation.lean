@@ -8,7 +8,7 @@ Filtering zero-contribution edges preserves its precise capacity, while
 retaining the actual-volume cardinal allowance and root avoidance.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceOptionalReservation

@@ -9,7 +9,7 @@ earlier when a current branch remains unreserved. Complete the active
 prefix, reparent the earlier closed copies, and preserve their exact maps.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceCapacityFamilyState
@@ -126,7 +126,8 @@ theorem exists_preparedAllocation
       (A.reservedItems W Q S C F owner kind).toFinset := by
     simp only [FamilyState.reservedItems, List.toFinset_append, hactiveFull]
   let P := castPlacement W Q F owner (rootImage := root') hdomain joined
-  have hsourceDisjoint : Disjoint A.completed.toFinset (activeSelected W Q S C F owner kind R.after) := by
+  have hsourceDisjoint : Disjoint A.completed.toFinset (activeSelected W Q S C F owner kind R.after)
+    := by
     rw [hactiveFull]
     exact A.completed_active_items_disjoint W Q S C F owner kind
   have hOldMem : family.toFinset.filter (fun i => (owner i).val < n.val) ⊆
@@ -146,9 +147,11 @@ theorem exists_preparedAllocation
     owners_before := hbefore
     ledger := A.ledger_of_current W Q S C F owner kind n hcurrent }⟩
   · intro i
-    have hi : i.1 ∈ A.completed.toFinset ∪ activeSelected W Q S C F owner kind R.after := hdomain.symm ▸ i.2
+    have hi : i.1 ∈ A.completed.toFinset ∪ activeSelected W Q S C F owner kind R.after :=
+      hdomain.symm ▸ i.2
     by_cases hc : i.1 ∈ A.completed.toFinset
-    · have he := Finset.mem_union_left (activeEdges W Q S C F owner kind A.active) (A.closed_edge_mem ⟨i.1, hc⟩)
+    · have he := Finset.mem_union_left (activeEdges W Q S C F owner kind A.active)
+        (A.closed_edge_mem ⟨i.1, hc⟩)
       simpa only [P, castPlacement, joined, BranchPlacement.append, dif_pos hc,
         closed, BranchPlacement.reparent] using he
     · have ha := (Finset.mem_union.mp hi).resolve_left hc
@@ -157,7 +160,8 @@ theorem exists_preparedAllocation
       simpa only [P, castPlacement, joined, BranchPlacement.append, dif_neg hc, active] using
         Finset.mem_union_right A.closedEdges he
   · intro i
-    have hi : i.1 ∈ A.completed.toFinset ∪ activeSelected W Q S C F owner kind R.after := hdomain.symm ▸ i.2
+    have hi : i.1 ∈ A.completed.toFinset ∪ activeSelected W Q S C F owner kind R.after :=
+      hdomain.symm ▸ i.2
     by_cases hc : i.1 ∈ A.completed.toFinset
     · simpa only [P, castPlacement, joined, BranchPlacement.append, dif_pos hc,
         closed, BranchPlacement.reparent] using A.closed_root_positive ⟨i.1, hc⟩
@@ -175,7 +179,8 @@ theorem exists_preparedAllocation
     · calc
         _ = active.forestCopy.componentCopy i (R.selected_mono ha) :=
           closed.append_copy_right active hsupport hsourceDisjoint i (R.selected_mono ha)
-        _ = (activePlacement W Q S C F owner kind A.active).forestCopy.componentCopy i ha := R.copies_eq i ha
+        _ = (activePlacement W Q S C F owner kind A.active).forestCopy.componentCopy i ha :=
+          R.copies_eq i ha
         _ = _ := (A.current_copy_active W Q S C F owner kind i ha).symm
 
 end Erdos547b.ZhaoSourceCapacityPrepareAllocation

@@ -6,7 +6,7 @@ import ErdosProblems.Erdos547b.SourceExceptionalFamilies
 # Literal source masses and saving of the selected marked forest
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMarkedResidualSource
@@ -50,7 +50,8 @@ theorem residual_mass_le (hcard : Fintype.card U = q + 1) :
       (branchMass sourceP (sideBranches sourceP 0 \ F.selected) : ℝ) +
       (branchMass sourceP (sideBranches sourceP 1 \ F.selected) : ℝ) ≤ q := by
   rw [minorResidual_eq W Q S O C sourceP F]
-  exact exceptional_mass_le sourceP hcard 0 F.selected (by simpa only [sideBranches_zero] using F.selected_available)
+  exact exceptional_mass_le sourceP hcard 0 F.selected
+    (by simpa only [sideBranches_zero] using F.selected_available)
 
 end Erdos547b.ZhaoSourceMarkedResidualSource
 

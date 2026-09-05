@@ -13,7 +13,7 @@ almost all unused matching edges. An already prescribed first root has a
 separate image-preserving extension, without selecting a replacement.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePendingOwnerStep

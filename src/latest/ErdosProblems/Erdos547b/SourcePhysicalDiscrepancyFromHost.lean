@@ -5,7 +5,7 @@ import ErdosProblems.Erdos547b.SourceExceptionalRestrictions
 
 /-! # Actual physical discrepancy at every adjacent large pair in the original O -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePhysicalDiscrepancyFromHost
@@ -105,4 +105,5 @@ end Erdos547b.ZhaoSourcePhysicalDiscrepancyFromHost
 
 #print axioms Erdos547b.ZhaoSourcePhysicalDiscrepancyFromHost.retargetCertificate
 #print axioms Erdos547b.ZhaoSourcePhysicalDiscrepancyFromHost.physicalUnbalanced_A_lt_of_notEC1
-#print axioms Erdos547b.ZhaoSourcePhysicalDiscrepancyFromHost.physicalUnbalanced_lt_of_large_neighbor
+open Erdos547b.ZhaoSourcePhysicalDiscrepancyFromHost in
+#print axioms physicalUnbalanced_lt_of_large_neighbor

@@ -6,7 +6,7 @@ import ErdosProblems.Erdos547b.SourceMarkedCutCoordinates
 # Actual cut parents satisfy the combined marked-coordinate invariant
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourcePartitionCutMarks
@@ -23,7 +23,8 @@ variable (P : ZhaoForestPartition T globalRoot small)
 theorem partitionParent_marked
     (selected : Finset (Fin (Fintype.card (ChildKey P.orderedForest))))
     (i : Fin P.numParts) (hi : i.val ≠ 0) :
-    coordinateMarked (branchForest P).branches (branchMarks P) selected (partitionParent P i hi) := by
+    coordinateMarked (branchForest P).branches (branchMarks P) selected (partitionParent P i hi) :=
+      by
   cases hparent : partitionParent P i hi with
   | inl j => trivial
   | inr a =>

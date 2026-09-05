@@ -10,7 +10,7 @@ the actual fixed plan, so they retain positive source density at their
 branch-root endpoints rather than only arbitrary attachment edges.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceActiveChunk
@@ -46,7 +46,8 @@ def PendingChunk.closePlacement (rootImage : Fin r → Fin hostN) (n : ℕ)
     (E : D.Prefix W Q S C F owner rootImage n) (howners : ∀ i ∈ D.items, (owner i).val < n) :
     BranchPlacement F (embeddingHost W) D.items.toFinset (fun i => rootImage (owner i))
       (fun e => residualSide (edgeWhole W Q e) (deleted W Q e)) :=
-  castPlacement W Q F owner (D.closedDomain W Q S C F owner n howners) (D.placement W Q S C F owner E)
+  castPlacement W Q F owner (D.closedDomain W Q S C F owner n howners) (D.placement W Q S C F owner
+    E)
 
 theorem PendingChunk.close_copy (rootImage : Fin r → Fin hostN) (n : ℕ)
     (E : D.Prefix W Q S C F owner rootImage n) (howners : ∀ i ∈ D.items, (owner i).val < n)
@@ -91,15 +92,18 @@ theorem exists_fresh_closed_placement
   let D : PendingChunk W Q S C F owner := ⟨e, he, items, hnd, hmono, hmass, plan⟩
   let parent := fun i : Fin items.length => rootImage (listOwner owner items i)
   let available := residualSide (edgeWhole W Q e) (deleted W Q e)
-  let initial := castPartialSelected (listForest F items) (embeddingHost W) parent plan.orient available
+  let initial := castPartialSelected (listForest F items) (embeddingHost W) parent plan.orient
+    available
     (branchPrefix_zero items.length).symm
     (emptyPartial (listForest F items) (embeddingHost W) parent plan.orient available)
-  obtain ⟨E, _⟩ := plan.extend_interval W Q parent 0 items.length (Nat.zero_le _) le_rfl initial z hz
+  obtain ⟨E, _⟩ := plan.extend_interval W Q parent 0 items.length (Nat.zero_le _) le_rfl initial z
+    hz
     (by intro i _ _; exact hparent _ (List.get_mem items i))
   have hE : D.Prefix W Q S C F owner rootImage r := by
     simpa only [PendingChunk.Prefix, D, ownerCutoff_full] using E
   let P := D.closePlacement W Q S C F owner rootImage r hE (fun i _ => (owner i).isLt)
-  exact ⟨P, fun _ => rfl, D.close_root_positive W Q S C F owner rootImage r hE (fun i _ => (owner i).isLt)⟩
+  exact ⟨P, fun _ => rfl, D.close_root_positive W Q S C F owner rootImage r hE (fun i _ => (owner
+    i).isLt)⟩
 
 end Erdos547b.ZhaoSourceActiveChunk
 

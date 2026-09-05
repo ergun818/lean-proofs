@@ -55,7 +55,7 @@ private theorem partCard_induce_compl_singleton_le {r : ℕ} {α : Type*}
 
 /-- Inductive core of the partite greedy embedding lemma. -/
 private theorem tree_embedding_respecting_parts_aux {α β : Type*}
-    [Fintype α] [Fintype β] [DecidableEq α] [DecidableEq β]
+    [Fintype α] [Fintype β] [DecidableEq β]
     (T : SimpleGraph α) (G : SimpleGraph β) [DecidableRel G.Adj]
     (c : T.Coloring (Fin 2)) (A : Fin 2 → Finset β)
     (hA : Set.PairwiseDisjoint Set.univ A)
@@ -128,7 +128,7 @@ private theorem tree_embedding_respecting_parts_aux {α β : Type*}
             simpa [s] using this⟩)
           · intro a ha
             simp only [Finset.mem_erase, Finset.mem_filter, Finset.mem_univ, true_and] at ha
-            simpa [c', s, ha.2]
+            simp [c', s, ha.2]
           · intro a₁ ha₁ a₂ ha₂ h
             exact Subtype.ext_iff.mp h
           · intro a ha
@@ -207,7 +207,7 @@ private theorem tree_embedding_respecting_parts_aux {α β : Type*}
 target colour classes fit and every host vertex in one part has enough
 neighbours in the other part for the entire opposite target class. -/
 theorem tree_embedding_respecting_parts {α β : Type*}
-    [Fintype α] [Fintype β] [DecidableEq α] [DecidableEq β]
+    [Fintype α] [Fintype β] [DecidableEq β]
     (T : SimpleGraph α) (G : SimpleGraph β) [DecidableRel G.Adj]
     (hT : T.IsTree) (c : T.Coloring (Fin 2)) (A : Fin 2 → Finset β)
     (hA : Set.PairwiseDisjoint Set.univ A)
@@ -215,6 +215,7 @@ theorem tree_embedding_respecting_parts {α β : Type*}
     (hdeg : ∀ i j, i ≠ j → ∀ v ∈ A i,
       Coloring.partCard c j ≤ ((G.neighborFinset v) ∩ (A j)).card) :
     ∃ f : Copy T G, Copy.RespectsParts c A f := by
+  classical
   apply tree_embedding_respecting_parts_aux T G c A hA hcap hdeg (Fintype.card α - 1)
   · have hpos : 0 < Fintype.card α := Fintype.card_pos_iff.mpr hT.connected.nonempty
     omega
@@ -222,13 +223,14 @@ theorem tree_embedding_respecting_parts {α β : Type*}
 
 /-- Containment-only corollary of `tree_embedding_respecting_parts`. -/
 theorem tree_isContained_of_bicolored_minDegree {α β : Type*}
-    [Fintype α] [Fintype β] [DecidableEq α] [DecidableEq β]
+    [Fintype α] [Fintype β] [DecidableEq β]
     (T : SimpleGraph α) (G : SimpleGraph β) [DecidableRel G.Adj]
     (hT : T.IsTree) (c : T.Coloring (Fin 2)) (A : Fin 2 → Finset β)
     (hA : Set.PairwiseDisjoint Set.univ A)
     (hcap : ∀ i, Coloring.partCard c i ≤ (A i).card)
     (hdeg : ∀ i j, i ≠ j → ∀ v ∈ A i,
       Coloring.partCard c j ≤ ((G.neighborFinset v) ∩ (A j)).card) : T ⊑ G := by
+  classical
   rcases tree_embedding_respecting_parts T G hT c A hA hcap hdeg with ⟨f, -⟩
   exact ⟨f⟩
 

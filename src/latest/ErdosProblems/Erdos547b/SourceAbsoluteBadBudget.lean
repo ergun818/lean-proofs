@@ -10,7 +10,7 @@ unused size. Charge an explicit absolute loss in each family instead.
 The source hierarchy pays for that global loss without changing parameters.
 -/
 
-open scoped BigOperators Classical
+open scoped BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceAbsoluteBadBudget

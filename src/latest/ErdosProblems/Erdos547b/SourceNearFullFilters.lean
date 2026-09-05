@@ -11,7 +11,7 @@ The generic Claim-6.11 deletion estimate is used with the actual counts,
 not an independently assumed deletion budget.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceNearFullFilters
@@ -84,9 +84,11 @@ theorem cleanAway_weight_gt (hα : 0 < α) (hα1 : α ≤ 1 / 4)
   change (∑ e ∈ allMatchingEdges Q.claim67.M \ C, sideWeight W Q S 0 e) ≤ _ at hdelete
   have hUscaled := mul_le_mul_of_nonneg_left hU (show 0 ≤ (2 : ℝ) * W.clusterSize by positivity)
   have hXscaled := mul_le_mul_of_nonneg_left hX (show 0 ≤ (2 : ℝ) * W.clusterSize by positivity)
-  have hEbscaled := mul_le_mul_of_nonneg_left hEbcount (show 0 ≤ (2 : ℝ) * W.clusterSize by positivity)
+  have hEbscaled := mul_le_mul_of_nonneg_left hEbcount (show 0 ≤ (2 : ℝ) * W.clusterSize
+    by positivity)
   have ht : (0 : ℝ) ≤ fourthRoot α := by exact_mod_cast (parameter_pos hα).2.2.2.1.le
-  have hvolume := mul_le_mul_of_nonneg_left (matchingVolume_bound W Q hhost (allMatchingEdges Q.claim67.M))
+  have hvolume := mul_le_mul_of_nonneg_left (matchingVolume_bound W Q hhost (allMatchingEdges
+    Q.claim67.M))
     (show 0 ≤ 3 * (eta α : ℝ) by positivity)
   have hreserve := mul_le_mul_of_nonneg_left (matchingVolume_bound W Q hhost (awayEdges W Q))
     (show 0 ≤ 4 * (fourthRoot α : ℝ) by positivity)
@@ -100,7 +102,8 @@ theorem cleanAway_weight_gt (hα : 0 < α) (hα1 : α ≤ 1 / 4)
     (f := sideWeight W Q S 0)
   have hclean := sum_inter_away_lower W Q S C 0
   have hall := Finset.sum_le_sum_of_subset_of_nonneg
-    (edgesAwayFromDistinguished_subset Q.claim67.M (padFinset (large W)) (Sum.inl Q.A) (Sum.inl Q.B))
+    (edgesAwayFromDistinguished_subset Q.claim67.M (padFinset (large W)) (Sum.inl Q.A) (Sum.inl
+      Q.B))
     (fun e _ _ => sideWeight_nonneg W Q S 0 e)
   have htotal := awayWeight_lower W Q S hα hα1 hhost horder 0
   have hgate := (actual_matching_gates W hα hα1 hhost horder).2.1

@@ -27,6 +27,7 @@ def manyBadRoots (A : Finset V) (J : Finset I) (bad : I → Finset V)
     (δ : ℝ) : Finset V :=
   A.filter fun z => δ * J.card < ((badTargets J bad z).card : ℝ)
 
+omit [DecidableEq I] in
 /-- The exact incidence identity, before any real-valued estimate. -/
 theorem sum_card_badTargets (A : Finset V) (J : Finset I) (bad : I → Finset V) :
     ∑ z ∈ A, (badTargets J bad z).card =
@@ -34,12 +35,14 @@ theorem sum_card_badTargets (A : Finset V) (J : Finset I) (bad : I → Finset V)
   simp only [badTargets, Finset.card_filter]
   exact Finset.sum_comm
 
+omit [DecidableEq I] in
 /-- A square-error Markov bound, independent of the number of targets. -/
 theorem card_manyBadRoots_le
     (A : Finset V) (J : Finset I) (bad : I → Finset V)
     (ε δ : ℝ) (hδ : 0 < δ) (hεδ : ε ≤ δ ^ 2)
     (hbad : ∀ j ∈ J, ((bad j).card : ℝ) ≤ ε * A.card) :
     ((manyBadRoots A J bad δ).card : ℝ) ≤ δ * A.card := by
+  classical
   by_cases hJ : J = ∅
   · simp only [hJ, manyBadRoots, badTargets, Finset.filter_empty,
       Finset.card_empty, Nat.cast_zero, mul_zero, lt_self_iff_false,
@@ -107,6 +110,7 @@ theorem exists_root_few_badTargets
     exact (Finset.mem_sdiff.mp hj).2
       (Finset.mem_filter.mpr ⟨(Finset.mem_sdiff.mp hj).1, hbadj⟩)
 
+omit [DecidableEq V] in
 /-- The regular-pair specialization used for the upper source witnesses. -/
 theorem exists_root_upperTypical_most
     (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -118,6 +122,7 @@ theorem exists_root_upperTypical_most
       (D.card : ℝ) ≤ δ * J.card ∧
       ∀ j ∈ J \ D, (Erdos547EC2.degreeInto G z (target j) : ℝ) ≤
         (G.edgeDensity A (target j) + ε) * (target j).card := by
+  classical
   let bad := fun j => upperAtypicalVertices G ε A (target j)
   have hbad : ∀ j ∈ J, ((bad j).card : ℝ) ≤ ε * A.card := by
     intro j hj

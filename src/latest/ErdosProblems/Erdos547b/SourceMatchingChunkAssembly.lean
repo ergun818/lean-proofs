@@ -10,7 +10,7 @@ survive the assembly. The source-specialized constructor builds every
 local placement from the checked fixed-plan embedding theorem.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMatchingChunkAssembly

@@ -134,12 +134,11 @@ has degree at least `|V(T)| - 1`.  This formalizes the "add the leaves greedily"
 sentence in the proof of Zhao's Claim 6.8. -/
 theorem exists_copy_of_induce_compl_of_leaves
     {α : Type u} {β : Type v} [Fintype α] [Fintype β]
-    [DecidableEq α] [DecidableEq β]
     (T : SimpleGraph α) (G : SimpleGraph β) [DecidableRel G.Adj]
     (W : Finset α)
     (parent : (x : {x // x ∈ W}) → α)
     (hparent_not_mem : ∀ x, parent x ∉ W)
-    (hparent_adj : ∀ x, T.Adj (parent x) x)
+    (_hparent_adj : ∀ x, T.Adj (parent x) x)
     (hleaf : ∀ x : {x // x ∈ W}, ∀ y, T.Adj x y → y = parent x)
     (f : (T.induce (↑W : Set α)ᶜ).Copy G)
     (hdegree : ∀ x, Fintype.card α - 1 ≤
@@ -147,6 +146,7 @@ theorem exists_copy_of_induce_compl_of_leaves
     ∃ F : T.Copy G,
       (∀ x : {x // x ∉ W}, F x = f x) ∧
       (∀ x : {x // x ∈ W}, G.Adj (f ⟨parent x, hparent_not_mem x⟩) (F x)) := by
+  classical
   obtain ⟨g, hginj, hgchoice⟩ :=
     exists_leafRepresentatives W G parent hparent_not_mem f hdegree
   let F0 : α → β := fun x => if hx : x ∈ W then g ⟨x, hx⟩ else f ⟨x, hx⟩
@@ -230,7 +230,7 @@ theorem LeafCompletionCertificate.exists_copy
     [DecidableEq α] [DecidableEq β]
     {T : SimpleGraph α} {G : SimpleGraph β} [DecidableRel G.Adj]
     {W : Finset α} (C : LeafCompletionCertificate T G W) :
-    ∃ F : T.Copy G, True := by
+    ∃ _F : T.Copy G, True := by
   obtain ⟨F, -, -⟩ := exists_copy_of_induce_compl_of_leaves T G W
     C.parent C.parent_not_mem C.parent_adj C.leaf_unique C.coreCopy C.parentDegree
   exact ⟨F, trivial⟩
@@ -482,7 +482,7 @@ theorem claim6_8
     {V : Type u} [Fintype V] [DecidableEq V]
     {T : SimpleGraph V} [DecidableRel T.Adj] {r : V} {m n : ℕ}
     (P : ZhaoForestPartition T r m)
-    (d : ℝ) (hd : 0 ≤ d)
+    (d : ℝ) (_hd : 0 ≤ d)
     (hcardT : Fintype.card V = n + 1)
     (partA partB : Finset V)
     (hparts_disjoint : Disjoint partA partB)
@@ -514,9 +514,7 @@ theorem claim6_8
     rw [← hL1decomp, Finset.card_union_of_disjoint hL1disj]
     norm_cast
   have hL1bound : (L1.card : ℝ) < 11 * Real.sqrt d * n + P.numParts := by
-    change (L1.card : ℝ) < 11 * Real.sqrt d * n + P.numParts
     rw [hL1card]
-    change (W1.card : ℝ) + (W1'.card : ℝ) < _
     change (W1.card : ℝ) < 11 * Real.sqrt d * n at horiginalLeaves
     linarith
   have hnonroots : (partitionNonroots P).card + P.numParts = n + 1 := by
@@ -547,12 +545,8 @@ theorem claim6_8
     exact Finset.cast_card_sdiff Finset.inter_subset_right
   constructor
   · rw [htildeF]
-    change (1 - 12 * Real.sqrt d) * (n : ℝ) ≤
-      (partitionNonroots P).card - L1.card
     linarith only [hnonrootsR, hL1bound, hhierarchyF]
   · rw [htildeA]
-    change (n : ℝ) / 2 - 12 * Real.sqrt d * n <
-      (partA.card : ℝ) - (L1 ∩ partA).card
     linarith only [hnonrootsR, hL1bound, hAhalf, hinterR, hhierarchyA]
 
 /-- The source-faithful form of Claim 6.8: the reduced-graph matching

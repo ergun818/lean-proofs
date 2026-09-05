@@ -11,7 +11,7 @@ copies. Source lists and the reservation ledger are unchanged, and every
 earlier original-index image is preserved.
 -/
 
-open scoped SimpleGraph Classical
+open scoped SimpleGraph
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMatchingFamilyOwnerAdvance
@@ -38,7 +38,8 @@ structure ActiveAdvance (rootImage : Fin r → Fin hostN) (n : Fin r) (z : Fin h
   items_eq : activeItems W Q S P C F owner after = activeItems W Q S P C F owner before
   edges_eq : activeEdges W Q S P C F owner after = activeEdges W Q S P C F owner before
   selected_mono : activeSelected W Q S P C F owner before ⊆ activeSelected W Q S P C F owner after
-  copies_eq : ∀ i hi, (activePlacement W Q S P C F owner after).forestCopy.componentCopy i (selected_mono hi) =
+  copies_eq : ∀ i hi, (activePlacement W Q S P C F owner after).forestCopy.componentCopy i
+    (selected_mono hi) =
     (activePlacement W Q S P C F owner before).forestCopy.componentCopy i hi
 
 theorem exists_activeAdvance (rootImage : Fin r → Fin hostN) (n : Fin r) (z : Fin hostN)

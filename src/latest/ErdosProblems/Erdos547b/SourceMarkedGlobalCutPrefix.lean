@@ -9,7 +9,7 @@ required to be prescribed marks, while ordinary parents use rooted colour.
 Each step constructs the new cut edge and preserves every previous edge.
 -/
 
-open scoped SimpleGraph BigOperators Classical
+open scoped SimpleGraph BigOperators
 noncomputable section
 
 namespace Erdos547b.ZhaoSourceMarkedGlobalPrefix
@@ -18,7 +18,8 @@ open Finset SimpleGraph Erdos547b.RegularPair
 open Erdos547b.ZhaoSourceCapacityFamilyState Erdos547b.ZhaoSourceSaturatedPacking
 open Erdos547b.ZhaoSourceFamilyCapacity Erdos547b.ZhaoSourceMarkedOwnerAdvance
 open Erdos547b.ZhaoLemma58DynamicBatchAppend Erdos547b.ZhaoSourceNearFullMatching
-open Erdos547b.ZhaoSourcePrivatePairGeometry Erdos547b.ZhaoStability Erdos547b.ZhaoEvenReducedPadding
+open Erdos547b.ZhaoSourcePrivatePairGeometry Erdos547b.ZhaoStability
+  Erdos547b.ZhaoEvenReducedPadding
 open Erdos547b.ZhaoLemma611Full Erdos547b.ZhaoRichClaim61Lemma611
 open Erdos547b.ZhaoSourceDegreeFormRootRows Erdos547b.ZhaoSourceDegreeFormBounds
 open Erdos547b.ZhaoSourceParameterSchedule Erdos547b.ZhaoSourceFreshChunkBounds
@@ -42,15 +43,18 @@ structure CutPrefixState (stage : ℕ) where
   state : PrefixState W Q S O P F owner marks selected rootSide kinds allocation family stage
   cut_adj : ∀ i (hi : i.val ≠ 0) (hstage : i.val < stage),
     (embeddingHost W).Adj
-      (state.coordinateImage F owner marks selected W Q S O P rootSide kinds allocation family locate hcover
+      (state.coordinateImage F owner marks selected W Q S O P rootSide kinds allocation family
+        locate hcover
         (L.parent i hi) ((L.before i hi).trans hstage))
       (state.ordinary.rootImage i)
 
 def emptyCutPrefixState
     (hnd : ∀ s j, (family s j).Nodup)
     (hordered : ∀ s j, (family s j).Pairwise (fun i j => owner i ≤ owner j)) :
-    CutPrefixState W Q S O P F owner marks selected rootSide kinds allocation family locate hcover L 0 where
-  state := emptyPrefixState W Q S O P F owner marks selected rootSide kinds allocation family hnd hordered
+    CutPrefixState W Q S O P F owner marks selected rootSide kinds allocation family locate hcover L
+      0 where
+  state := emptyPrefixState W Q S O P F owner marks selected rootSide kinds allocation family hnd
+    hordered
   cut_adj := by omega
 
 variable (hα : 0 < α) (hα1 : α ≤ 1 / 4) (hhost : hostN = 2 * q)
@@ -79,13 +83,17 @@ variable (hroots : (r : ℝ) ≤ (epsilon α : ℝ) * W.clusterSize)
 variable (hparentMarked : ∀ i hi, coordinateMarked F marks selected (L.parent i hi))
 
 include hα hα1 hhost horder hk hCV1 hC hkind hdisjoint hside hselectedSide hselectedLocate
-  hbranch hedge hsmall haway globalCount hglobal hbudget hselectedSize hmarks hselectedMass hcolor hroots hparentMarked
+  hbranch hedge hsmall haway globalCount hglobal hbudget hselectedSize hmarks hselectedMass hcolor
+    hroots hparentMarked
 
 theorem exists_cutPrefixAdvance (n : Fin r)
-    (A : CutPrefixState W Q S O P F owner marks selected rootSide kinds allocation family locate hcover L n.val) :
-    Nonempty (CutPrefixState W Q S O P F owner marks selected rootSide kinds allocation family locate hcover L (n.val + 1)) := by
+    (A : CutPrefixState W Q S O P F owner marks selected rootSide kinds allocation family locate
+      hcover L n.val) :
+    Nonempty (CutPrefixState W Q S O P F owner marks selected rootSide kinds allocation family
+      locate hcover L (n.val + 1)) := by
   let poolParent : Option (Fin hostN) := if hn : n.val = 0 then none else
-    some (A.state.coordinateImage F owner marks selected W Q S O P rootSide kinds allocation family locate hcover
+    some (A.state.coordinateImage F owner marks selected W Q S O P rootSide kinds allocation family
+      locate hcover
       (L.parent n hn) (L.before n hn))
   have hparent : ∀ v, poolParent = some v →
       ((densityCutoff α : ℝ) - (epsilon α : ℝ)) * (sourceQuota W : ℝ) ≤
@@ -95,25 +103,35 @@ theorem exists_cutPrefixAdvance (n : Fin r)
     · simp only [poolParent, dif_pos hn] at hv
       cases hv
     · have heq := Option.some.inj (show some
-          (A.state.coordinateImage F owner marks selected W Q S O P rootSide kinds allocation family locate hcover
+          (A.state.coordinateImage F owner marks selected W Q S O P rootSide kinds allocation family
+            locate hcover
             (L.parent n hn) (L.before n hn)) = some v from by
           simpa only [poolParent, dif_neg hn] using hv)
-      have hd := A.state.coordinateImage_degree F owner marks selected W Q S O P rootSide kinds allocation family locate hcover
+      have hd := A.state.coordinateImage_degree F owner marks selected W Q S O P rootSide kinds
+        allocation family locate hcover
         hselectedLocate (L.parent n hn) (L.before n hn) (L.color n hn) (hparentMarked n hn)
       rw [L.side n hn, heq] at hd
       exact hd
-  obtain ⟨z, D, hroot, hAdj, hcopies, hmarkedCopies, _⟩ := exists_prefixAdvance W Q S O P F owner marks selected
-    rootSide kinds allocation family hα hα1 hhost horder hk hCV1 hC hkind hdisjoint hside hselectedSide
-    n A.state hbranch hedge hsmall haway globalCount hglobal hbudget hselectedSize hmarks hselectedMass hcolor hroots
+  obtain ⟨z, D, hroot, hAdj, hcopies, hmarkedCopies, _⟩ := exists_prefixAdvance W Q S O P F owner
+    marks selected
+    rootSide kinds allocation family hα hα1 hhost horder hk hCV1 hC hkind hdisjoint hside
+      hselectedSide
+    n A.state hbranch hedge hsmall haway globalCount hglobal hbudget hselectedSize hmarks
+      hselectedMass hcolor hroots
     poolParent hparent
-  have hbefore (i : Fin r) (hi : i.val < n.val) : D.ordinary.rootImage i = A.state.ordinary.rootImage i := by
+  have hbefore (i : Fin r) (hi : i.val < n.val) : D.ordinary.rootImage i =
+    A.state.ordinary.rootImage i := by
     rw [hroot]
-    exact Function.update_of_ne (fun h => Nat.ne_of_lt hi (congrArg Fin.val h)) z A.state.ordinary.rootImage
+    exact Function.update_of_ne (fun h => Nat.ne_of_lt hi (congrArg Fin.val h)) z
+      A.state.ordinary.rootImage
   have hcoord (x : CutCoordinate F r) (hx : (coordinateOwner F owner x).val < n.val) :
-      D.coordinateImage F owner marks selected W Q S O P rootSide kinds allocation family locate hcover x
+      D.coordinateImage F owner marks selected W Q S O P rootSide kinds allocation family locate
+        hcover x
           (Nat.lt_succ_of_lt hx) =
-        A.state.coordinateImage F owner marks selected W Q S O P rootSide kinds allocation family locate hcover x hx :=
-    A.state.coordinateImage_preserved F owner marks selected W Q S O P rootSide kinds allocation family locate hcover
+        A.state.coordinateImage F owner marks selected W Q S O P rootSide kinds allocation family
+          locate hcover x hx :=
+    A.state.coordinateImage_preserved F owner marks selected W Q S O P rootSide kinds allocation
+      family locate hcover
       D hbefore hcopies hmarkedCopies x hx
   refine ⟨⟨D, ?_⟩⟩
   intro i hi histage
@@ -130,21 +148,26 @@ theorem exists_cutPrefixAdvance (n : Fin r)
 theorem exists_terminalCutPrefix
     (hnd : ∀ s j, (family s j).Nodup)
     (hordered : ∀ s j, (family s j).Pairwise (fun i j => owner i ≤ owner j)) :
-    Nonempty (CutPrefixState W Q S O P F owner marks selected rootSide kinds allocation family locate hcover L r) := by
+    Nonempty (CutPrefixState W Q S O P F owner marks selected rootSide kinds allocation family
+      locate hcover L r) := by
   have hstates : ∀ n : ℕ, n ≤ r →
-      Nonempty (CutPrefixState W Q S O P F owner marks selected rootSide kinds allocation family locate hcover L n) := by
+      Nonempty (CutPrefixState W Q S O P F owner marks selected rootSide kinds allocation family
+        locate hcover L n) := by
     intro n
     induction n with
     | zero =>
         intro _
-        exact ⟨emptyCutPrefixState W Q S O P F owner marks selected rootSide kinds allocation family locate hcover L hnd hordered⟩
+        exact ⟨emptyCutPrefixState W Q S O P F owner marks selected rootSide kinds allocation family
+          locate hcover L hnd hordered⟩
     | succ n ih =>
         intro hn
         have hnr : n < r := by omega
         obtain ⟨A⟩ := ih (Nat.le_of_lt hnr)
-        exact exists_cutPrefixAdvance W Q S O P F owner marks selected rootSide kinds allocation family locate hcover L
+        exact exists_cutPrefixAdvance W Q S O P F owner marks selected rootSide kinds allocation
+          family locate hcover L
           hα hα1 hhost horder hk hCV1 hC hkind hdisjoint hside hselectedSide hselectedLocate
-          hbranch hedge hsmall haway globalCount hglobal hbudget hselectedSize hmarks hselectedMass hcolor hroots
+          hbranch hedge hsmall haway globalCount hglobal hbudget hselectedSize hmarks hselectedMass
+            hcolor hroots
           hparentMarked ⟨n, hnr⟩ A
   exact hstates r le_rfl
 
