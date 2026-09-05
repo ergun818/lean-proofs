@@ -8,7 +8,7 @@ noncomputable section
 
 lemma monotoneOn_dickmanRho_gsScale_sub
     {chi : ℝ → ℝ} (hchi : IsGSKernel chi)
-    {u a b : ℝ} (ha : 0 ≤ a) (hab : a ≤ b) (hb : b ≤ u - 1) :
+    {u a b : ℝ} (_ha : 0 ≤ a) (_hab : a ≤ b) (hb : b ≤ u - 1) :
     MonotoneOn (fun t ↦ dickmanRho (gsScale chi (u - t))) (Icc a b) := by
   intro s hs t ht hst
   have hus0 : 0 ≤ u - s := by linarith [hs.2, hb]
@@ -72,7 +72,7 @@ lemma gs_champion_I3_preliminary
       (a := (0 : ℝ)) (b := gsB chi u₀) u
     rw [hsub]
     rw [hV]
-    congr 1 <;> ring
+    congr 1; ring
   simpa [g, hchange] using hbathtub
 
 lemma gs_champion_dickman_integral_lower
@@ -101,7 +101,6 @@ lemma gs_champion_dickman_integral_lower
       calc
         u * (e - 1) = e * (u - u / e) := by
           field_simp [hePos.ne']
-          <;> ring
         _ ≤ e * V := mul_le_mul_of_nonneg_left hVu1' hePos.le
         _ = V * e := by ring
     have hmul' : V * e ≤ u * eV := by
@@ -352,7 +351,7 @@ lemma gs_champion_certificate
     let a₁ := gsScale chi u₁
     let EV := gsScale chi V
     let c := dickmanRho a / dickmanRho (e - 1)
-    let eta := u₀ * EV / V
+    let _eta := u₀ * EV / V
     let tau := EV / V * c * (gsB chi u - gsB chi u₁) - a₁ + e - 1
     let tau' := EV / V * (gsB chi u₁ - gsB chi u₀)
     GSChampionCertificate chi u e u₀ u₁ V a a₁ EV c tau tau' := by
@@ -502,7 +501,7 @@ lemma gs_champion_certificate
       _ = u * a₁ / e - u₁ := by
         rw [huEq, hu₁Eq]
         field_simp [hePos.ne']
-        <;> ring
+        ring
       _ ≤ gsB chi u - gsB chi u₁ := hscale
   have htau0 : 0 ≤ tau := by
     have hscaled := mul_le_mul_of_nonneg_left hBtailLower

@@ -194,10 +194,11 @@ lemma reciprocalMass_mono {A B : Finset ℕ} (hAB : A ⊆ B)
 sum.  It is recorded here in a completely generic finite form because all
 three truncation estimates below use it. -/
 theorem sum_powersetCard_prod_le_sum_pow_div_factorial
-    {α : Type*} [DecidableEq α] (s : Finset α) (w : α → ℝ)
+    {α : Type*} (s : Finset α) (w : α → ℝ)
     (hw : ∀ a ∈ s, 0 ≤ w a) (t : ℕ) :
     (∑ x ∈ s.powersetCard t, ∏ a ∈ x, w a) ≤
       (∑ a ∈ s, w a) ^ t / t.factorial := by
+  classical
   induction s using Finset.induction_on generalizing t with
   | empty =>
       cases t with
@@ -2000,7 +2001,7 @@ lemma sieveDensity_le_truncatedSieveApprox_add_error
 /-- Exact finite inclusion--exclusion for every pairwise-coprime family. -/
 lemma cutoffElementaryReciprocalMass_le_budget
     {C : ℝ} {N j : ℕ} {A : Finset ℕ}
-    (hC : 0 ≤ C) (hmass : reciprocalMass A ≤ C) :
+    (_hC : 0 ≤ C) (hmass : reciprocalMass A ≤ C) :
     cutoffElementaryReciprocalMass N A j ≤ C ^ j / j.factorial := by
   exact (cutoffElementaryReciprocalMass_le_elementary N A j).trans
     ((elementaryReciprocalMass_le A j).trans
@@ -2389,7 +2390,7 @@ def splitDefectPairs (N : ℕ) (A₁ A₂ : Finset ℕ) (r : ℕ) :
 @[simp] lemma mem_cutoffSubsets {N r : ℕ} {A S : Finset ℕ} :
     S ∈ cutoffSubsets N A r ↔
       S ⊆ A ∧ S.card ≤ r ∧ subsetProduct S ≤ N := by
-  simp [cutoffSubsets, and_assoc]
+  simp [cutoffSubsets]
 
 lemma subsetProduct_mono_union_left {S T : Finset ℕ}
     (hdisj : Disjoint S T) (hpos : ∀ a ∈ S ∪ T, 0 < a) :
@@ -3171,7 +3172,7 @@ lemma crossWitnessImage_subset_allWindow
     Finset.mem_powerset.mpr hwindows.2.2.2⟩
 
 lemma splitPrimeWindow_subset_primesLE
-    {N K y : ℕ} (hK : 0 < K) (hyN : y ≤ N) :
+    {N K y : ℕ} (_hK : 0 < K) (hyN : y ≤ N) :
     splitPrimeWindow y K ⊆ Nat.primesLE (K * (N + 1)) := by
   intro q hq
   have hq' := mem_splitPrimeWindow.mp hq
@@ -3282,7 +3283,7 @@ lemma allWindowWitnessMass_le
 
 lemma crossCutoffSplitMass_le
     {C δ : ℝ} {N r z zplus Y : ℕ} {A₁ A₂ : Finset ℕ}
-    (hC : 0 ≤ C) (hδ : 0 ≤ δ) (hz : 0 < z)
+    (_hC : 0 ≤ C) (hδ : 0 ≤ δ) (hz : 0 < z)
     (hdisj : Disjoint A₁ A₂)
     (hpos : ∀ a ∈ A₁ ∪ A₂, 0 < a)
     (hmass : reciprocalMass (A₁ ∪ A₂) ≤ C)
@@ -3440,7 +3441,7 @@ def scaleGap (A : Finset ℕ) (z : ℕ → ℕ) (j : ℕ) : Finset ℕ :=
 
 @[simp] lemma mem_scaleGap {A : Finset ℕ} {z : ℕ → ℕ} {j a : ℕ} :
     a ∈ scaleGap A z j ↔ a ∈ A ∧ z j < a ∧ a ≤ z (j + 1) := by
-  simp [scaleGap, and_assoc]
+  simp [scaleGap]
 
 lemma scaleGap_subset (A : Finset ℕ) (z : ℕ → ℕ) (j : ℕ) :
     scaleGap A z j ⊆ A := by
@@ -3490,7 +3491,7 @@ theorem exists_scaleGap_mass_le
     (z : ℕ → ℕ) (hz : StrictMono z) {k : ℕ} (hk : 0 < k) :
     ∃ j < k, reciprocalMass (scaleGap A z j) ≤ C / k := by
   by_contra hnot
-  push_neg at hnot
+  push Not at hnot
   have hsum := sum_reciprocalMass_scaleGap_le hmass z hz k
   have hrange : (Finset.range k).Nonempty := by
     simp [Nat.ne_of_gt hk]
@@ -3800,8 +3801,7 @@ term.  The imported proof is entirely internal to Lean and Mathlib. -/
 lemma primeReciprocalCumulative_eq_mertens (N : ℕ) :
     primeReciprocalCumulative N =
       Real.log (Real.log (N : ℝ)) + Mertens.M + Mertens.E₂p N := by
-  simpa [primeReciprocalCumulative, Nat.floor_natCast, one_div] using
-    Mertens.sum_prime_div_eq (N : ℝ)
+  simp [primeReciprocalCumulative, Nat.floor_natCast, one_div]
 
 lemma reciprocalMass_terminalPrimeBlock_eq_mertens
     (N y : ℕ) (hyN : y ≤ N) :
@@ -4411,7 +4411,7 @@ lemma dickmanRho_exp_inv_nat {q : ℕ} (hq : 2 ≤ q) :
       (inv_le_inv₀ hqPos (by norm_num : (0 : ℝ) < 2)).2
         (by exact_mod_cast hq : (2 : ℝ) ≤ q)
   have hexp1 : 1 ≤ Real.exp ((q : ℝ)⁻¹) := by
-    simpa using (Real.exp_le_exp.mpr hinv0)
+    exact Real.one_le_exp hinv0
   have hlog2 : (q : ℝ)⁻¹ ≤ Real.log 2 :=
     hinvHalf.trans half_lt_log_two.le
   have hexp2 : Real.exp ((q : ℝ)⁻¹) ≤ 2 := by
@@ -5978,7 +5978,7 @@ theorem eventually_dickmanRoundedPrimeQuadrature (k : ℕ) :
       norm_num [Nat.cast_add, Nat.cast_one] at ⊢
       linarith [hu])
     dsimp only [D]
-    convert h using 1 <;> push_cast <;> ring_nf
+    convert h using 1; push_cast; ring_nf
   have hquad' := hquad x hyx
   have hfloor' := hfloor x hyx
   let primes : Finset ℕ := (Finset.Ioc y x).filter Nat.Prime
@@ -6184,13 +6184,13 @@ theorem uniformSmoothApproximationUpTo :
         simp [hxR.ne', hε]
       · have hu1' : 1 < smoothParameter x y := lt_of_not_ge hu1
         have hmodel' := hmodel x hyx (by
-          convert hu using 1 <;> push_cast <;> ring)
+          convert hu using 1; push_cast; ring)
         have hmass' :
             (∑ p ∈ (Finset.Ioc y x).filter Nat.Prime,
                 (p : ℝ)⁻¹) ≤ D := by
           have h := hmass x hyx hu
           dsimp only [D]
-          convert h using 1 <;> push_cast <;> ring_nf
+          convert h using 1; push_cast; ring_nf
         let primes : Finset ℕ := (Finset.Ioc y x).filter Nat.Prime
         let actualTerm : ℕ → ℝ := fun p ↦
           (smoothCountingFunction (x / p) p : ℝ) / (x : ℝ)
@@ -6703,7 +6703,7 @@ theorem boundedCompositeLowerBound_of_primeOnly_of_product
 
 /-- Tao's composite-removal step: an endpoint-uniform estimate with bounded
 composite moduli implies the unrestricted estimate. -/
-theorem taoLowerBound_of_boundedComposite { ρ : ℝ → ℝ }
+theorem taoLowerBound_of_boundedComposite {ρ : ℝ → ℝ}
     (hBounded : BoundedCompositeLowerBound ρ) :
     TaoLowerBound ρ := by
   intro C hC ε hε

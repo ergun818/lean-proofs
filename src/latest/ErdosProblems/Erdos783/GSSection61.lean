@@ -20,7 +20,7 @@ def gsExpAlternatingSum (z : ℝ) (N : ℕ) : ℝ :=
 
 lemma gs_fill_even_prefix_eq_exp
     {chi : ℝ → ℝ} (hchi : IsGSKernel chi)
-    {u0 u : ℝ} (hu0 : 1 ≤ u0) (hu : 1 ≤ u)
+    {u0 u : ℝ} (hu0 : 1 ≤ u0) (_hu : 1 ≤ u)
     (r : ℕ) (hfit : ((2 * r : ℕ) : ℝ) * u0 ≤ u) :
     (∑ j ∈ Finset.range (2 * r + 1),
         (-1 : ℝ) ^ j * gsMoment (gsFillAbove chi u0) j u /
@@ -241,7 +241,7 @@ lemma dickmanRho_le_refined_two_three
     dsimp only [F, g]
     convert ((hz.pow 2).div_const 4).add ((hz.pow 3).div_const 12) using 1 <;>
       norm_num [Function.id_def]
-    all_goals first | rfl | (field_simp [hne] <;> ring)
+    all_goals first | rfl | (field_simp [hne]; ring)
   have hgInt : IntervalIntegrable g volume 2 e := by
     have hc : ContinuousOn g (Icc (2 : ℝ) e) := by
       intro t ht
@@ -675,7 +675,7 @@ lemma hasDerivAt_gsSection61LowModel
     have hraw := (((hasDerivAt_const e 1).sub hE).add
       ((hW.pow 2).div_const 2)).sub ((hW.pow 3).div_const 6)
     convert hraw using 1 <;> norm_num [Function.id_def]
-    all_goals first | rfl | (field_simp [hem0] <;> ring)
+    all_goals first | rfl | (field_simp [hem0]; ring)
   have hBonus : HasDerivAt
       (fun x : ℝ ↦
         (Real.log x + Real.log (x - 1) - Real.log 4) ^ 4 / 24 *
@@ -686,7 +686,7 @@ lemma hasDerivAt_gsSection61LowModel
           (120 * e)) e := by
     have hraw := ((hQ.pow 4).div_const 24).mul hOneSub
     convert hraw using 1 <;> norm_num [Function.id_def]
-    all_goals first | rfl | (field_simp [he0, hem0] <;> ring)
+    all_goals first | rfl | (field_simp [he0, hem0]; ring)
   dsimp only [gsSection61LowModel, gsSection61LowModelDeriv]
   convert hMain.add hBonus using 1 <;> try rfl
   ring
@@ -1245,7 +1245,7 @@ lemma gsSection61LowModel_seven_halves_gt_one_twentieth :
     rw [← Real.log_mul (by norm_num : (7 / 2 : ℝ) ≠ 0) (by norm_num)]
     rw [show (7 / 2 : ℝ) * (5 / 2) = 35 / 4 by norm_num]
     rw [← Real.log_div (by norm_num : (35 / 4 : ℝ) ≠ 0) (by norm_num)]
-    congr 1 <;> norm_num
+    congr 1; norm_num
   dsimp only [gsSection61LowModel]
   rw [show (7 / 2 : ℝ) - 1 = 5 / 2 by norm_num, hqEq]
   dsimp only [w] at hg
@@ -1291,7 +1291,7 @@ lemma gsSection61LowModel_nineteen_fifths_gt_one_twentyfifth :
     rw [← Real.log_mul (by norm_num : (19 / 5 : ℝ) ≠ 0) (by norm_num)]
     rw [show (19 / 5 : ℝ) * (14 / 5) = 266 / 25 by norm_num]
     rw [← Real.log_div (by norm_num : (266 / 25 : ℝ) ≠ 0) (by norm_num)]
-    congr 1 <;> norm_num
+    congr 1; norm_num
   dsimp only [gsSection61LowModel]
   rw [show (19 / 5 : ℝ) - 1 = 14 / 5 by norm_num, hqEq]
   dsimp only [w] at hg
@@ -1674,7 +1674,6 @@ lemma one_hundredth_lt_gsSection61MidModel_four_six
               (by norm_num)
             norm_num [gsTaylorFiveErrorLower] at hmodel ⊢
             linarith
-
           · have hlo5 : 23 / 4 ≤ e := le_of_not_ge h5
             have hX : (1 / 5 : ℝ) ≤ 1 / (e - 1) := by
               rw [le_div_iff₀ hem0]
@@ -2274,7 +2273,7 @@ lemma exp_neg_sub_odd_sum_le_alt
       gsExpAlternatingSum z (2 * r + 1) := by
     dsimp only [N]
     unfold gsExpAlternatingSum
-    apply Finset.sum_congr (by congr 1 <;> omega)
+    apply Finset.sum_congr (by congr 1)
     intro j hj
     rw [neg_pow]
   rw [hsum] at hbound
@@ -2373,8 +2372,9 @@ lemma factorialMajorant_succ_le {r : ℕ} (hr : 4 ≤ r) :
     calc
       (9 / 16 : ℝ) * ((2 * r + 4 : ℕ) : ℝ) ^ (r + 2) =
           (9 / 16 : ℝ) * ((2 * r + 4 : ℕ) : ℝ) ^ (r + 1) *
-            ((2 * r + 4 : ℕ) : ℝ) := by rw [pow_succ]
-              <;> ring
+            ((2 * r + 4 : ℕ) : ℝ) := by
+              rw [pow_succ]
+              ring
       _ ≤ (9 / 16 : ℝ) *
           (3 * ((2 * r + 2 : ℕ) : ℝ) ^ (r + 1)) *
             ((2 * r + 4 : ℕ) : ℝ) := by gcongr
@@ -2419,7 +2419,7 @@ lemma log_power_div_factorial_le
     have hlog0 : 0 ≤ Real.log (8 : ℝ) := Real.log_nonneg (by norm_num)
     have hp := pow_le_pow_left₀ hlog0 hlog8 (2 * 3 + 2)
     have hp8 : Real.log (8 : ℝ) ^ 8 ≤ (41589 / 20000 : ℝ) ^ 8 := by
-      convert hp using 1 <;> norm_num
+      exact hp
     have hpdiv : Real.log (8 : ℝ) ^ 8 / 720 ≤
         (41589 / 20000 : ℝ) ^ 8 / 720 := by
       exact div_le_div_of_nonneg_right hp8 (by norm_num)

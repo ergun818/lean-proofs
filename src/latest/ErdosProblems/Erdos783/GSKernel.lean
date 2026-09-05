@@ -30,7 +30,7 @@ def gsScale (chi : ℝ → ℝ) (y : ℝ) : ℝ :=
   Real.exp (gsLogScale chi y)
 
 lemma gsB_sub {chi : ℝ → ℝ} (hchi : IsGSKernel chi)
-    {t y : ℝ} (ht : 0 ≤ t) (hty : t ≤ y) :
+    {t y : ℝ} (_ht : 0 ≤ t) (_hty : t ≤ y) :
     gsB chi y - gsB chi t = ∫ v : ℝ in t..y, chi v := by
   have hleft := hchi.1 0 t
   have hright := hchi.1 t y
@@ -259,7 +259,7 @@ lemma continuousOn_gsScale_Icc_zero
     {K : ℝ} (hK : 1 ≤ K) :
     ContinuousOn (gsScale chi) (Icc 0 K) := by
   have hleft : ContinuousOn (gsScale chi) (Icc (0 : ℝ) 1) := by
-    apply continuousOn_const.congr
+    apply (continuousOn_const (c := (1 : ℝ))).congr
     intro y hy
     exact gsScale_eq_one hchi hy.1 hy.2
   have hright : ContinuousOn (gsScale chi) (Icc 1 K) :=

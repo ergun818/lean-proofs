@@ -7,9 +7,9 @@ namespace Erdos783
 
 noncomputable section
 
-variable {α : Type*} [DecidableEq α]
+variable {α : Type*}
 
-lemma sum_powersetCard_erase_insert
+lemma sum_powersetCard_erase_insert [DecidableEq α]
     (A : Finset α) (a : α) (ha : a ∈ A) (n : ℕ) (g : Finset α → ℝ) :
     ∑ S ∈ (A.erase a).powersetCard n, g (insert a S) =
       ∑ T ∈ A.powersetCard (n + 1), if a ∈ T then g T else 0 := by
@@ -46,7 +46,7 @@ lemma sum_powersetCard_erase_insert
   · intro S hS
     rfl
 
-lemma sum_insert_over_powersetCard
+lemma sum_insert_over_powersetCard [DecidableEq α]
     (A : Finset α) (n : ℕ) (g : Finset α → ℝ) :
     ∑ a ∈ A, ∑ S ∈ (A.erase a).powersetCard n, g (insert a S) =
       ((n + 1 : ℕ) : ℝ) * ∑ T ∈ A.powersetCard (n + 1), g T := by
@@ -80,9 +80,10 @@ def atomSubsetMoment (A : Finset α) (w x : α → ℝ) (n : ℕ) (u : ℝ) : �
 
 @[simp] lemma atomSubsetMoment_zero (A : Finset α) (w x : α → ℝ) (u : ℝ) :
     atomSubsetMoment A w x 0 u = 1 := by
+  classical
   simp [atomSubsetMoment]
 
-lemma distinctAtomMoment_eq_factorial_mul_subset
+lemma distinctAtomMoment_eq_factorial_mul_subset [DecidableEq α]
     {A : Finset α} {w x : α → ℝ}
     (hx : ∀ a ∈ A, 0 ≤ x a) (n : ℕ) (u : ℝ) :
     distinctAtomMoment w x A n u =
@@ -225,6 +226,7 @@ lemma atomMoment_mono_location
     (hw : ∀ a ∈ A, 0 ≤ w a) (hx : ∀ a ∈ A, 0 ≤ x a)
     (hxy : ∀ a ∈ A, x a ≤ y a) (n : ℕ) (u : ℝ) :
     atomMoment A w y n u ≤ atomMoment A w x n u := by
+  classical
   induction n generalizing u with
   | zero => simp
   | succ n ih =>
@@ -245,7 +247,7 @@ lemma atomMoment_mono_location
         · exact le_rfl
 
 lemma atomMoment_bij
-    {β : Type*} [DecidableEq β]
+    {β : Type*}
     {A : Finset α} {B : Finset β} (f : α → β)
     (hf : ∀ a ∈ A, f a ∈ B)
     (hinj : ∀ a₁ ∈ A, ∀ a₂ ∈ A, f a₁ = f a₂ → a₁ = a₂)
@@ -255,6 +257,7 @@ lemma atomMoment_bij
     (hx : ∀ a ∈ A, xA a = xB (f a))
     (n : ℕ) (u : ℝ) :
     atomMoment A wA xA n u = atomMoment B wB xB n u := by
+  classical
   induction n generalizing u with
   | zero => simp
   | succ n ih =>
@@ -283,6 +286,7 @@ lemma atomMoment_endpoint_increment_le
     (n : ℕ) (u : ℝ) :
     atomMoment A w x n (u + delta) - atomMoment A w x n u ≤
       (n : ℝ) * B * M ^ (n - 1) := by
+  classical
   have hM0 : 0 ≤ M := zero_le_one.trans hM1
   induction n generalizing u with
   | zero => simp
@@ -376,11 +380,12 @@ lemma atomMoment_endpoint_increment_le
 lemma atomMoment_location_shift_le
     {A : Finset α} {w x y : α → ℝ}
     (hw : ∀ a ∈ A, 0 ≤ w a)
-    (hx : ∀ a ∈ A, 0 ≤ x a) (hy : ∀ a ∈ A, 0 ≤ y a)
+    (_hx : ∀ a ∈ A, 0 ≤ x a) (hy : ∀ a ∈ A, 0 ≤ y a)
     {delta : ℝ} (hdelta : 0 ≤ delta)
     (hxy : ∀ a ∈ A, y a ≤ x a + delta)
     (n : ℕ) (u : ℝ) :
     atomMoment A w x n u ≤ atomMoment A w y n (u + n * delta) := by
+  classical
   induction n generalizing u with
   | zero => simp
   | succ n ih =>
@@ -415,6 +420,7 @@ lemma atomIntervalMass_location_shift_le
     (v : ℝ) :
     atomIntervalMass A w y v delta ≤
       atomIntervalMass A w x (v - shift) (delta + shift) := by
+  classical
   unfold atomIntervalMass
   apply Finset.sum_le_sum
   intro a ha
@@ -432,6 +438,7 @@ lemma atomMoment_const_mul_weight
     (A : Finset α) (w x : α → ℝ) (lambda : ℝ) (n : ℕ) (u : ℝ) :
     atomMoment A (fun a ↦ lambda * w a) x n u =
       lambda ^ n * atomMoment A w x n u := by
+  classical
   induction n generalizing u with
   | zero => simp
   | succ n ih =>
@@ -443,7 +450,7 @@ lemma atomMoment_const_mul_weight
         ring
       · ring
 
-lemma distinctAtomMoment_const_mul_weight
+lemma distinctAtomMoment_const_mul_weight [DecidableEq α]
     (A : Finset α) (w x : α → ℝ) (lambda : ℝ) (n : ℕ) (u : ℝ) :
     distinctAtomMoment (fun a ↦ lambda * w a) x A n u =
       lambda ^ n * distinctAtomMoment w x A n u := by

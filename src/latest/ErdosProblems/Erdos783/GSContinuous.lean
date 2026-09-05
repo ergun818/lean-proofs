@@ -152,7 +152,7 @@ lemma gs_small_scale_refined
   have hI3 := gsMoment_three_le_logScale_mul_two hchi hu
   have hlower := gs_lower_three_of_odd hodd hu
     (xi := gsLogScale chi u / 3) (by
-      convert hI3 using 1 <;> ring)
+      convert hI3 using 1; ring)
   rw [dickmanRho_eq_one_sub_log hEone hE]
   have hlog : Real.log (gsScale chi u) = gsLogScale chi u := by
     simp [gsScale]

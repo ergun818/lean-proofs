@@ -87,7 +87,7 @@ lemma intervalIntegrable_gsTailKernel
 
 lemma isGSKernel_gsTailKernel
     {chi : ℝ → ℝ} (hchi : IsGSKernel chi)
-    {u0 : ℝ} (hu0 : 1 ≤ u0) :
+    {u0 : ℝ} (_hu0 : 1 ≤ u0) :
     IsGSKernel (gsTailKernel chi u0) := by
   refine ⟨intervalIntegrable_gsTailKernel hchi u0, ?_, ?_, ?_⟩
   · intro t ht

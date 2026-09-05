@@ -7,7 +7,7 @@ namespace Erdos783
 
 noncomputable section
 
-variable {α : Type*} [DecidableEq α]
+variable {α : Type*}
 
 def atomMass (A : Finset α) (w : α → ℝ) : ℝ :=
   ∑ a ∈ A, w a
@@ -17,7 +17,7 @@ def atomMoment (A : Finset α) (w x : α → ℝ) : ℕ → ℝ → ℝ
   | n + 1, u =>
       ∑ a ∈ A, if x a ≤ u then w a * atomMoment A w x n (u - x a) else 0
 
-def distinctAtomMoment (w x : α → ℝ) : Finset α → ℕ → ℝ → ℝ
+def distinctAtomMoment [DecidableEq α] (w x : α → ℝ) : Finset α → ℕ → ℝ → ℝ
   | _A, 0, _u => 1
   | A, n + 1, u =>
       ∑ a ∈ A,
@@ -28,7 +28,8 @@ def distinctAtomMoment (w x : α → ℝ) : Finset α → ℕ → ℝ → ℝ
 @[simp] lemma atomMoment_zero (A : Finset α) (w x : α → ℝ) (u : ℝ) :
     atomMoment A w x 0 u = 1 := rfl
 
-@[simp] lemma distinctAtomMoment_zero (A : Finset α) (w x : α → ℝ) (u : ℝ) :
+@[simp] lemma distinctAtomMoment_zero [DecidableEq α]
+    (A : Finset α) (w x : α → ℝ) (u : ℝ) :
     distinctAtomMoment w x A 0 u = 1 := rfl
 
 lemma atomMass_nonneg {A : Finset α} {w : α → ℝ}
@@ -56,7 +57,7 @@ lemma atomMoment_nonneg {A : Finset α} {w x : α → ℝ}
       · exact mul_nonneg (hw a ha) (ih _)
       · exact le_rfl
 
-lemma distinctAtomMoment_nonneg {A : Finset α} {w x : α → ℝ}
+lemma distinctAtomMoment_nonneg [DecidableEq α] {A : Finset α} {w x : α → ℝ}
     (hw : ∀ a ∈ A, 0 ≤ w a) (n : ℕ) (u : ℝ) :
     0 ≤ distinctAtomMoment w x A n u := by
   induction n generalizing A u with
@@ -71,8 +72,9 @@ lemma distinctAtomMoment_nonneg {A : Finset α} {w x : α → ℝ}
       · exact le_rfl
 
 lemma atomMoment_mono_endpoint {A : Finset α} {w x : α → ℝ}
-    (hw : ∀ a ∈ A, 0 ≤ w a) (hx : ∀ a ∈ A, 0 ≤ x a)
+    (hw : ∀ a ∈ A, 0 ≤ w a) (_hx : ∀ a ∈ A, 0 ≤ x a)
     (n : ℕ) : Monotone (atomMoment A w x n) := by
+  classical
   induction n with
   | zero => exact monotone_const
   | succ n ih =>
@@ -92,6 +94,7 @@ lemma atomMoment_mono_endpoint {A : Finset α} {w x : α → ℝ}
 lemma atomMoment_le_mass_pow {A : Finset α} {w x : α → ℝ}
     (hw : ∀ a ∈ A, 0 ≤ w a) (n : ℕ) (u : ℝ) :
     atomMoment A w x n u ≤ atomMass A w ^ n := by
+  classical
   induction n generalizing u with
   | zero => simp
   | succ n ih =>
@@ -113,6 +116,7 @@ lemma atomMoment_le_mass_pow {A : Finset α} {w x : α → ℝ}
 lemma atomMoment_mono_finset {A B : Finset α} {w x : α → ℝ}
     (hAB : A ⊆ B) (hw : ∀ a ∈ B, 0 ≤ w a) (n : ℕ) (u : ℝ) :
     atomMoment A w x n u ≤ atomMoment B w x n u := by
+  classical
   induction n generalizing u with
   | zero => simp
   | succ n ih =>
@@ -135,7 +139,7 @@ lemma atomMoment_mono_finset {A B : Finset α} {w x : α → ℝ}
           · exact mul_nonneg (hw a haB) (atomMoment_nonneg hw _ _)
           · exact le_rfl
 
-lemma distinctAtomMoment_le_atomMoment {A : Finset α} {w x : α → ℝ}
+lemma distinctAtomMoment_le_atomMoment [DecidableEq α] {A : Finset α} {w x : α → ℝ}
     (hw : ∀ a ∈ A, 0 ≤ w a) (n : ℕ) (u : ℝ) :
     distinctAtomMoment w x A n u ≤ atomMoment A w x n u := by
   induction n generalizing A u with
@@ -150,7 +154,7 @@ lemma distinctAtomMoment_le_atomMoment {A : Finset α} {w x : α → ℝ}
           (atomMoment_mono_finset (Finset.erase_subset _ _) hw _ _)
       · exact le_rfl
 
-lemma atomMoment_erase_sub_le
+lemma atomMoment_erase_sub_le [DecidableEq α]
     {A : Finset α} {w x : α → ℝ} {p : α}
     (hp : p ∈ A) (hw : ∀ a ∈ A, 0 ≤ w a)
     {M : ℝ} (hM1 : 1 ≤ M) (hmass : atomMass A w ≤ M)
@@ -205,7 +209,7 @@ lemma atomMoment_erase_sub_le
         by_cases hau : x a ≤ u
         · rw [if_pos hau, if_pos hau, ← mul_sub]
           exact mul_le_mul_of_nonneg_left (ih _) (hwErase a ha)
-        · simp only [tsub_le_iff_right]
+        · rw [if_neg hau, if_neg hau, sub_self]
           exact mul_nonneg (hwErase a ha) (by positivity)
       rw [hrewrite]
       calc
@@ -230,7 +234,7 @@ lemma atomMoment_erase_sub_le
           rw [pow_succ]
           ring
 
-lemma atomMoment_sub_distinct_le
+lemma atomMoment_sub_distinct_le [DecidableEq α]
     {A : Finset α} {w x : α → ℝ}
     (hw0 : ∀ a ∈ A, 0 ≤ w a) {delta M : ℝ}
     (hdelta : 0 ≤ delta) (hwdelta : ∀ a ∈ A, w a ≤ delta)
@@ -284,10 +288,10 @@ lemma atomMoment_sub_distinct_le
                 add_le_add (hremove.trans hremove') hcollision
               _ = ((n : ℝ) ^ 2 + n) * delta * M ^ n := by ring
           exact mul_le_mul_of_nonneg_left hinner (hw0 a ha)
-        · simp only [tsub_le_iff_right]
-          exact mul_nonneg (hw0 a ha) (by
-            dsimp only [Q]
-            positivity)
+        · rw [if_neg hau, if_neg hau, sub_self]
+          apply mul_nonneg (hw0 a ha)
+          dsimp only [Q]
+          positivity
       calc
         (∑ a ∈ A,
             ((if x a ≤ u then w a * atomMoment A w x n (u - x a) else 0) -

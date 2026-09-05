@@ -159,7 +159,7 @@ lemma dickmanRho_fiftyseven_fifty_div_eight_fifths :
   norm_num at h114 h16 ⊢
   nlinarith
 
-lemma gs_champion_corner_three_halves (eta : ℝ) (heta : 1 ≤ eta) :
+lemma gs_champion_corner_three_halves (eta : ℝ) (_heta : 1 ≤ eta) :
     (3 / 2 : ℝ) ≥
       eta * (1 + 1 - 1 * eta) * ((13 / 5 : ℝ) - (3 / 2 : ℝ)⁻¹) +
         1 + eta - (13 / 5 : ℝ) := by
@@ -167,7 +167,7 @@ lemma gs_champion_corner_three_halves (eta : ℝ) (heta : 1 ≤ eta) :
   nlinarith [sq_nonneg (eta - (73 / 58 : ℝ))]
 
 lemma gs_champion_corner_thirtythree_twentyfive
-    (eta : ℝ) (heta : 1 ≤ eta) :
+    (eta : ℝ) (_heta : 1 ≤ eta) :
     (33 / 25 : ℝ) ≥
       eta * (1 + (28 / 25 : ℝ) - (28 / 25 : ℝ) * eta) *
           ((13 / 5 : ℝ) - (33 / 25 : ℝ)⁻¹) +
@@ -324,7 +324,7 @@ lemma one_add_inv_scale_le_endpoint_ratio
     _ = e / (e - 1) := by
       rw [inv_eq_one_div]
       field_simp [hsmall.ne']
-      <;> ring
+      ring
 
 lemma endpoint_ratio_antitone
     {e₀ e : ℝ} (he₀ : 1 < e₀) (hee₀ : e₀ ≤ e) :
@@ -334,9 +334,9 @@ lemma endpoint_ratio_antitone
     apply (inv_le_inv₀ (by linarith) (by linarith)).2
     linarith
   rw [show e / (e - 1) = 1 + (e - 1)⁻¹ by
-      rw [inv_eq_one_div]; field_simp [ne_of_gt (by linarith : 0 < e - 1)] <;> ring,
+      rw [inv_eq_one_div]; field_simp [ne_of_gt (by linarith : 0 < e - 1)]; ring,
     show e₀ / (e₀ - 1) = 1 + (e₀ - 1)⁻¹ by
-      rw [inv_eq_one_div]; field_simp [ne_of_gt (by linarith : 0 < e₀ - 1)] <;> ring]
+      rw [inv_eq_one_div]; field_simp [ne_of_gt (by linarith : 0 < e₀ - 1)]; ring]
   linarith
 
 /-- The exact rational, six-cell certificate for the numerical inequality in
@@ -481,7 +481,6 @@ lemma gsChampionScaleAlgebra
   have huTerm : u * EV / e = u₀ * EV := by
     rw [hu]
     field_simp [hePos.ne']
-    <;> ring
   rw [huTerm]
   field_simp [hEV.ne']
   have hUE : EV * u₀ = eta * V := by nlinarith [heta']
@@ -534,7 +533,6 @@ lemma gsChampionTauCondition
         (tau + a₁ - e + 1) + EV / V * (B₁ - B₀) by ring,
       htau]
     field_simp [hV.ne', hEV.ne']
-    <;> ring
   rw [← hidentity] at hmain
   apply (mul_le_mul_iff_of_pos_left hVEV).mp
   nlinarith [hmain]

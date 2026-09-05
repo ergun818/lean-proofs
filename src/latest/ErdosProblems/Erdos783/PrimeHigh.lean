@@ -197,7 +197,7 @@ lemma packetGridCoefficient_le_one_of_close
     _ = Real.log (gsGridPoint h (i + 1) / gsGridPoint h i) := by ring
 
 lemma exists_damping_parameter
-    {C M eta : ℝ} (hC : 0 ≤ C) (hM : 0 ≤ M) (heta : 0 < eta)
+    {C M eta : ℝ} (_hC : 0 ≤ C) (hM : 0 ≤ M) (heta : 0 < eta)
     (r : ℕ) :
     ∃ lambda : ℝ,
       0 < lambda ∧ lambda < 1 ∧
@@ -262,7 +262,8 @@ lemma exists_damping_parameter
       ring
     rw [hone]
     dsimp only [A] at hAeta ⊢
-    convert hAeta using 1 <;> field_simp <;> ring
+    convert hAeta using 1
+    field_simp
   · intro m hm
     have hlambda0' : 0 ≤ lambda := hlambda0.le
     have hlambda1' : lambda ≤ 1 := hlambda1.le
@@ -324,7 +325,7 @@ theorem tendsto_highGridLowerStep (b : ℝ) :
     atTop (nhds 0)
   exact tendsto_const_div_atTop_nhds_zero_nat (highGridLowerEndpoint b - 1)
 
-theorem tendsto_highGridLogWidth (b : ℝ) (hU : highGridUpperEndpoint b ≠ 0) :
+theorem tendsto_highGridLogWidth (b : ℝ) (_hU : highGridUpperEndpoint b ≠ 0) :
     Tendsto (highGridLogWidth b) atTop (nhds 0) := by
   have harg : Tendsto
       (fun K : ℕ ↦ 1 + highGridLowerStep b K / highGridUpperEndpoint b)

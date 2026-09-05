@@ -45,7 +45,8 @@ lemma intervalIntegrable_gsGridCellDefectWeight
   rw [intervalIntegrable_iff]
   apply Measure.integrableOn_of_bounded (M := |c i|)
     ((measure_mono uIoc_subset_uIcc).trans_lt measure_Icc_lt_top).ne
-    ((measurable_const.div measurable_id).ite measurableSet_Ioc measurable_const).aestronglyMeasurable
+    ((measurable_const.div measurable_id).ite measurableSet_Ioc
+      measurable_const).aestronglyMeasurable
   filter_upwards [ae_restrict_mem measurableSet_uIoc] with t ht
   rw [Real.norm_eq_abs]
   simp only [Pi.div_apply, id_eq]
@@ -88,7 +89,7 @@ lemma integral_gsGridCellDefectWeight_cell
 
 lemma integral_gsGridCellDefectWeight_full
     {h : ℝ} (hh : 0 < h) {K : ℕ} {c : ℕ → ℝ}
-    (hc0 : ∀ i < K, 0 ≤ c i) (hc1 : ∀ i < K, c i ≤ 1)
+    (_hc0 : ∀ i < K, 0 ≤ c i) (_hc1 : ∀ i < K, c i ≤ 1)
     {i : ℕ} (hi : i < K) :
     (∫ t : ℝ in 1..gsGridPoint h K, gsGridCellDefectWeight h c i t) =
       gsGridCellMass h c i := by
@@ -194,13 +195,13 @@ lemma gsMoment_gsGridKernel_succ_eq_sum
           gsMoment (gsGridKernel h K c) n (u - t) by
     funext t
     rw [Finset.sum_mul]]
-  rw [intervalIntegral.integral_finset_sum]
+  rw [intervalIntegral.integral_finsetSum]
   intro i hi
   exact intervalIntegrable_gsGridCellDefect_mul_moment hh hc0 hc1
     (Finset.mem_range.mp hi) hu
 
 lemma integral_gsGridCellDefectWeight_nonneg
-    {h : ℝ} (hh : 0 < h) {c : ℕ → ℝ} {i : ℕ} (hci : 0 ≤ c i)
+    {h : ℝ} (_hh : 0 < h) {c : ℕ → ℝ} {i : ℕ} (hci : 0 ≤ c i)
     {u : ℝ} (hu : 1 ≤ u) :
     0 ≤ ∫ t : ℝ in 1..u, gsGridCellDefectWeight h c i t := by
   apply intervalIntegral.integral_nonneg hu
@@ -525,7 +526,7 @@ lemma packetGridProjection_bij
     exact (Finset.mem_inter.mp hm.2).1
   constructor
   · rintro ⟨i, p⟩ hq₁ ⟨j, q⟩ hq₂ hpq
-    simp only [Prod.snd] at hpq
+    change p = q at hpq
     subst q
     have hm₁ := mem_packetGridAtoms.mp hq₁
     have hm₂ := mem_packetGridAtoms.mp hq₂
@@ -560,7 +561,7 @@ lemma packetExponentCell_grid_unique
     omega
 
 lemma exists_mem_primeExponentCell_grid
-    {y : ℕ} (hy : 1 ≤ y) {h : ℝ} (hh : 0 ≤ h)
+    {y : ℕ} (_hy : 1 ≤ y) {h : ℝ} (_hh : 0 ≤ h)
     {K p : ℕ}
     (hlow : ⌊(y : ℝ) ^ gsGridPoint h 0⌋₊ < p)
     (hhigh : p ≤ ⌊(y : ℝ) ^ gsGridPoint h K⌋₊)
@@ -674,7 +675,7 @@ lemma atomIntervalMass_primeLogLocation_le
     (hcover : ∀ p ∈ P, ∃ i < K, p ∈ packetExponentCell P y
       (gsGridPoint h i) (gsGridPoint h (i + 1)))
     {lambda delta error : ℝ} (hlambda0 : 0 ≤ lambda) (hlambda1 : lambda ≤ 1)
-    (hdelta : 0 ≤ delta) (herror : 0 ≤ error)
+    (hdelta : 0 ≤ delta) (_herror : 0 ≤ error)
     (hclose : ∀ a b : ℝ, 1 ≤ a → a ≤ b →
       |primeExponentCellMass y a b - (Real.log b - Real.log a)| < error)
     (v : ℝ) :
@@ -910,8 +911,7 @@ lemma atomMoment_packetGridAtoms_lower
       apply Finset.sum_congr rfl
       intro i hi
       rw [gsGridCellMass_packetGridCoefficient hh]
-      simp only [packetGridAtomLowerLocation, packetGridAtomWeight,
-        Prod.fst, Prod.snd, ih]
+      simp only [packetGridAtomLowerLocation, packetGridAtomWeight, ih]
       by_cases hiu : gsGridPoint h i ≤ u
       · rw [if_pos hiu]
         simp_rw [if_pos hiu]
@@ -942,8 +942,7 @@ lemma atomMoment_packetGridAtoms_upper
       apply Finset.sum_congr rfl
       intro i hi
       rw [gsGridCellMass_packetGridCoefficient hh]
-      simp only [packetGridAtomUpperLocation, packetGridAtomWeight,
-        Prod.fst, Prod.snd, ih]
+      simp only [packetGridAtomUpperLocation, packetGridAtomWeight, ih]
       by_cases hiu : gsGridPoint h (i + 1) ≤ u
       · rw [if_pos hiu]
         simp_rw [if_pos hiu]
@@ -1258,8 +1257,7 @@ theorem abs_gsAlternatingMomentSum_packetGrid_sub_scaledTruncated_le
                     (Real.log N / Real.log y) -
                 lambda ^ j * (j.factorial : ℝ) *
                   cutoffElementaryReciprocalMass N P j) by
-            field_simp
-            <;> ring]
+            field_simp]
       rw [abs_mul, abs_div, abs_pow, abs_neg, abs_one, one_pow,
         one_div, abs_of_pos hjfact]
       simpa [div_eq_mul_inv, mul_comm] using

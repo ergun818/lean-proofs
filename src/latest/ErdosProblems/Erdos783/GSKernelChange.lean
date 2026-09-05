@@ -43,7 +43,7 @@ lemma gsPerturbCoord_nonpos (theta sigma : ℝ → ℝ) (K : ℝ) (n : ℕ)
   gsLocalize_eq_zero_of_nonpos K _ ht
 
 lemma integrable_gsLocalize_solution
-    {psi sigma : ℝ → ℝ} (hpsi : IsGSKernel psi)
+    {psi sigma : ℝ → ℝ} (_hpsi : IsGSKernel psi)
     (hsigma : IsGSSolution psi sigma)
     {K : ℝ} (hK : 0 ≤ K) : Integrable (gsLocalize K sigma) := by
   apply integrable_gsLocalize hK
@@ -130,7 +130,7 @@ lemma gsPerturbCoord_bound
 lemma gs_solution_kernel_convolution_base
     {psi sigma : ℝ → ℝ} (hpsi : IsGSKernel psi)
     (hsigma : IsGSSolution psi sigma)
-    {K x : ℝ} (hK : 1 ≤ K) (hx0 : 0 ≤ x) (hxK : x < K) :
+    {K x : ℝ} (_hK : 1 ≤ K) (hx0 : 0 ≤ x) (hxK : x < K) :
     (gsKernelLocal psi K ⋆[ContinuousLinearMap.mul ℝ ℝ]
       gsPerturbIterate (fun _ ↦ 1) sigma K 0) x =
       x * gsPerturbIterate (fun _ ↦ 1) sigma K 0 x := by
@@ -590,7 +590,8 @@ theorem gs_kernelChange_alternating_residual
           gsLocalize K sigma by
         funext y
         simp [gsPerturbAlternating, gsPerturbIterate, smul_eq_mul]]
-      convert h using 1 <;> norm_num [gsPerturbIterate] <;> ring
+      convert h using 1 <;> norm_num [gsPerturbIterate]
+      ring
   | succ N ih =>
       intro K x hK hx0 hxK
       let Q : ℝ → ℝ := gsKernelLocal target K
@@ -706,7 +707,7 @@ lemma gsPerturbIterate_nonneg
       exact mul_nonneg (gsDefectLocal_nonneg htheta K t) (ih (x - t))
 
 lemma gsPerturbIterate_one_eq_zero_of_le_one
-    {theta psi sigma : ℝ → ℝ} (htheta : IsGSKernel theta)
+    {theta _psi sigma : ℝ → ℝ} (htheta : IsGSKernel theta)
     {K x : ℝ} (hx0 : 0 ≤ x) (hx1 : x ≤ 1) (hxK : x < K) :
     gsPerturbIterate theta sigma K 1 x = 0 := by
   rw [gsPerturbIterate,
@@ -789,7 +790,7 @@ lemma gsPerturbFirstApprox_eq_one
           (show u ∈ Ioo (0 : ℝ) K from ⟨hupos, huK⟩),
         hsigma.2.1 u hu0 hu1]
     have hT1 := gsPerturbIterate_one_eq_zero_of_le_one
-      (psi := psi) (sigma := sigma) htheta hu0 hu1 huK
+      (_psi := psi) (sigma := sigma) htheta hu0 hu1 huK
     rw [gsPerturbFirstApprox, if_neg hu]
     change (∑ j ∈ Finset.range 2,
       ((-1 : ℝ) ^ j / j.factorial) *

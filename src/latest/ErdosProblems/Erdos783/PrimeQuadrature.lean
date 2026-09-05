@@ -188,8 +188,7 @@ def primeReciprocalCumulativeReal (x : ℝ) : ℝ :=
 theorem primeReciprocalCumulativeReal_eq_mertens (x : ℝ) :
     primeReciprocalCumulativeReal x =
       Real.log (Real.log x) + Mertens.M + Mertens.E₂p x := by
-  simpa [primeReciprocalCumulativeReal, one_div] using
-    Mertens.sum_prime_div_eq x
+  simp [primeReciprocalCumulativeReal, one_div]
 
 lemma floor_rpow_mono {y : ℕ} {a b : ℝ} (hy : 1 ≤ y) (hab : a ≤ b) :
     ⌊(y : ℝ) ^ a⌋₊ ≤ ⌊(y : ℝ) ^ b⌋₊ := by
@@ -440,7 +439,7 @@ theorem primeIntervalMass_eq_cumulative_sub
 /-- At natural endpoints the cumulative discrepancy is exactly the
 difference of two Mertens errors. -/
 theorem finiteIocCumulative_primeLogLogDiscrepancyCoefficient_eq_errors
-    {lo hi : ℕ} (hlo : 2 ≤ lo) (hlohi : lo ≤ hi) :
+    {lo hi : ℕ} (_hlo : 2 ≤ lo) (hlohi : lo ≤ hi) :
     finiteIocCumulative primeLogLogDiscrepancyCoefficient lo hi =
       Mertens.E₂p (hi : ℝ) - Mertens.E₂p (lo : ℝ) := by
   rw [finiteIocCumulative_primeLogLogDiscrepancyCoefficient hlohi,

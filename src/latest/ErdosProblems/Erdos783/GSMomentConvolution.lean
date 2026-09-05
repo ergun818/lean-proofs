@@ -232,7 +232,7 @@ lemma gsKernelLocal_bound
   · simp [gsKernelLocal, gsLocalize, hx]
 
 lemma gsKernelLocal_eq_step_sub_weighted
-    {chi : ℝ → ℝ} (hchi : IsGSKernel chi) (K : ℝ) :
+    {chi : ℝ → ℝ} (_hchi : IsGSKernel chi) (K : ℝ) :
     gsKernelLocal chi K = gsStepLocal K - gsWeightedDefectLocal chi K := by
   funext t
   by_cases ht : t ∈ Ioo (0 : ℝ) K
@@ -336,7 +336,7 @@ lemma gsDefectLocal_convolution_momentLocal
 
 lemma gsMomentLocal_succ_eq_defect_convolution_on_Icc
     {chi : ℝ → ℝ} (hchi : IsGSKernel chi) (n : ℕ)
-    {K x : ℝ} (hx0 : 0 ≤ x) (hxK : x < K) :
+    {K x : ℝ} (_hx0 : 0 ≤ x) (hxK : x < K) :
     ∀ y ∈ Icc (0 : ℝ) x,
       gsMomentLocal chi K (n + 1) y =
         (gsDefectLocal chi K ⋆[ContinuousLinearMap.mul ℝ ℝ]
@@ -722,7 +722,7 @@ lemma gs_kernel_convolution_alternating_identity
       intro K u hK hu0 huK
       have h := gs_kernel_convolution_moment_identity hchi 0 hK hu0 huK
       simp only [gsAlternatingMomentSum, Finset.sum_range_succ,
-        Finset.sum_range_zero, Finset.sum_empty, zero_add, gsMoment_zero,
+        Finset.sum_range_zero, zero_add, gsMoment_zero,
         pow_zero, Nat.factorial_zero, Nat.cast_one, div_one, one_mul,
         Nat.cast_zero, zero_mul, sub_zero] at h ⊢
       linarith
@@ -824,7 +824,6 @@ lemma gs_weightedDefect_convolution_moment_eq_zero_of_lt
     · have htOne : 1 < t := lt_of_not_ge ht1
       have harg0 : 0 ≤ u - t := sub_nonneg.mpr ht.2
       have hargN : u - t < N := by
-        push_cast at huN ⊢
         linarith
       change (t * gsDefectWeight chi t) * gsMoment chi N (u - t) = 0
       rw [gsMoment_eq_zero_of_lt harg0 hargN, mul_zero]]

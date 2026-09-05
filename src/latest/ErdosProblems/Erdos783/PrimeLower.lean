@@ -62,7 +62,6 @@ theorem eventually_powerCutoff_pow_mul_le
           (r : ℝ) * Real.log (powerCutoff a N : ℝ) +
             Real.log (powerCutoff c N : ℝ) := by
       field_simp [hlogN.ne']
-      <;> ring
     have hrightEq :
         (Real.log (powerCutoff d N : ℝ) / Real.log (N : ℝ)) *
             Real.log (N : ℝ) =
@@ -131,7 +130,7 @@ lemma windowExponent_le
         (Real.log (y : ℝ) +
           (Real.log (K : ℝ) + Real.log 2)) /
             Real.log (y : ℝ) by
-      field_simp [hlogy.ne'] <;> ring]
+      field_simp [hlogy.ne']]
     exact div_le_div_of_nonneg_right hnum hlogy.le
   have hdiv := div_le_div_of_nonneg_left (add_nonneg hlogK hlog2)
     hlogY hlogYy
@@ -333,7 +332,7 @@ lemma exists_scaleGap_mass_le_monotone
       (fun _q _hq _hnot ↦ by positivity)
   rw [hsum] at hle
   by_contra hnot
-  push_neg at hnot
+  push Not at hnot
   have hrange : (Finset.range k).Nonempty := by
     simp [Nat.ne_of_gt hk]
   have hlt :
@@ -352,7 +351,7 @@ lemma exists_scaleGap_mass_le_monotone
   linarith
 
 lemma powerCutoff_pow_le_self
-    {a : ℝ} (ha : 0 ≤ a) (r : ℕ)
+    {a : ℝ} (_ha : 0 ≤ a) (r : ℕ)
     (har : a * (r : ℝ) ≤ 1) {N : ℕ} (hN : 1 ≤ N) :
     powerCutoff a N ^ r ≤ N := by
   have hfloor : (powerCutoff a N : ℝ) ≤ (N : ℝ) ^ a :=

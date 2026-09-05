@@ -443,7 +443,7 @@ lemma gsCompactPerturbFirstApprox_eq_one
           (show u ∈ Ioo (0 : ℝ) K from ⟨hupos, huK⟩),
         hbase.one u hu0 hu1]
     have hT1 := gsPerturbIterate_one_eq_zero_of_le_one
-      (psi := psi) (sigma := base) htheta hu0 hu1 huK
+      (_psi := psi) (sigma := base) htheta hu0 hu1 huK
     rw [gsPerturbFirstApprox, if_neg hu, gsPerturbAlternating_one,
       hT0, hT1]
     norm_num

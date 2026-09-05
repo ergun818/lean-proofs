@@ -102,7 +102,7 @@ lemma gsLocalize_convolution_apply
       simp [gsLocalize, ht, htK, hsubK]
     · have hzero : t ∉ Ioo (0 : ℝ) K ∨ x - t ∉ Ioo (0 : ℝ) K := by
         by_contra hnot
-        push_neg at hnot
+        push Not at hnot
         exact ht ⟨hnot.1.1, by linarith [hnot.2.1]⟩
       rcases hzero with hleft | hright
       · simp [gsLocalize, ht, hleft]
@@ -217,7 +217,7 @@ lemma gs_convolutionExistsAt_of_integrable_bounded
 localized iterated convolutions bounded. -/
 lemma gs_norm_convolution_le_integral_norm_mul
     {f g : ℝ → ℝ} {C x : ℝ} (hf : Integrable f)
-    (hC : 0 ≤ C) (hgbound : ∀ y : ℝ, ‖g y‖ ≤ C) :
+    (_hC : 0 ≤ C) (hgbound : ∀ y : ℝ, ‖g y‖ ≤ C) :
     ‖(f ⋆[ContinuousLinearMap.mul ℝ ℝ] g) x‖ ≤
       (∫ t : ℝ, ‖f t‖) * C := by
   rw [convolution_def]

@@ -23,7 +23,7 @@ lemma integral_inv_div_scale
   rw [harg, gsScale, Real.log_exp]
 
 lemma integral_inv_scale_ratio
-    {chi : ℝ → ℝ} (hchi : IsGSKernel chi)
+    {chi : ℝ → ℝ} (_hchi : IsGSKernel chi)
     {y u : ℝ} (hy : 1 ≤ y) (hyu : y ≤ u) :
     (∫ t : ℝ in u * gsScale chi y / gsScale chi u..u, 1 / t) =
       gsLogScale chi u - gsLogScale chi y := by
@@ -392,8 +392,10 @@ lemma gsMoment_two_lower_segments
       have hv0 : 0 ≤ v := hc₁Pos.le.trans hv.1
       simpa [div_eq_mul_inv, mul_comm] using
         mul_le_mul_of_nonneg_left hpoint (inv_nonneg.mpr hv0))
-    convert hm using 1 <;>
-      apply intervalIntegral.integral_congr <;> intro v _hv <;> ring
+    convert hm using 1
+    apply intervalIntegral.integral_congr
+    intro v _hv
+    ring
   have hmodelC₂Z : IntervalIntegrable
       (fun v : ℝ => (1 / v) * gsMoment chi 1 (u - v)) volume c₂ z := by
     apply hmodelRight.mono_set
@@ -501,7 +503,7 @@ lemma gsMoment_two_lower_segments
   linarith
 
 lemma scaled_first_correction
-    {u e ey : ℝ} (hu : 0 < u) (he : 0 < e) (hey : 0 < ey) :
+    {u e ey : ℝ} (hu : 0 < u) (_he : 0 < e) (hey : 0 < ey) :
     (∫ v : ℝ in u / (3 * ey)..u / 3,
         Real.log (e * (u - v) / u) / v) =
       ∫ t : ℝ in 1..ey,
@@ -1357,7 +1359,9 @@ lemma dickmanRho_eq_one_sub_log_add_shifted
   have hinv : IntervalIntegrable (fun t : ℝ => 1 / t) volume 2 e := by
     have hc : ContinuousOn (fun t : ℝ => 1 / t) (Icc (2 : ℝ) e) := by
       intro t ht
-      exact (continuousAt_const.div₀ continuousAt_id (by linarith [ht.1] : t ≠ 0)).continuousWithinAt
+      exact
+        (continuousAt_const.div₀ continuousAt_id
+          (by linarith [ht.1] : t ≠ 0)).continuousWithinAt
     exact hc.intervalIntegrable_of_Icc he2
   have hlog : IntervalIntegrable (fun t : ℝ => Real.log (t - 1) / t)
       volume 2 e := by

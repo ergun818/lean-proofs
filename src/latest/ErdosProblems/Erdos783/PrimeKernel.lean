@@ -103,7 +103,7 @@ lemma isGSKernel_primeSieveKernel
   refine ⟨?_, fun t ht ↦ (hb t ht).1, fun t ht ↦ (hb t ht).2, ?_⟩
   · intro a b
     rw [intervalIntegrable_iff]
-    apply Measure.integrableOn_of_bounded
+    apply Measure.integrableOn_of_bounded (M := (1 : ℝ))
       ((measure_mono uIoc_subset_uIcc).trans_lt measure_Icc_lt_top).ne
       hmeas.aestronglyMeasurable
     filter_upwards [ae_restrict_mem measurableSet_uIoc] with t ht
@@ -182,7 +182,7 @@ lemma gsGridDefect_le_one {h : ℝ} (hh : 0 < h) {K : ℕ} {c : ℕ → ℝ}
       t ∈ Set.Ioc (gsGridPoint h i) (gsGridPoint h (i + 1))
   · obtain ⟨i, hiK, hit⟩ := hex
     rw [Finset.sum_eq_single i]
-    · simp only [Set.mem_Ioc]
+    · rw [if_pos hit]
       exact hc1 i (Finset.mem_range.mp hiK)
     · intro j hjK hji
       have hjnot : t ∉ Set.Ioc (gsGridPoint h j) (gsGridPoint h (j + 1)) := by
@@ -190,7 +190,7 @@ lemma gsGridDefect_le_one {h : ℝ} (hh : 0 < h) {K : ℕ} {c : ℕ → ℝ}
         exact hji (gsGridCell_unique hh hjt hit)
       simp [hjnot]
     · exact fun hiNot ↦ (hiNot hiK).elim
-  · push_neg at hex
+  · push Not at hex
     rw [Finset.sum_eq_zero]
     · norm_num
     · intro i hi
