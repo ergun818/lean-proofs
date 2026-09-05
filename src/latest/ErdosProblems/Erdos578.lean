@@ -52,7 +52,7 @@ theorem cube_neighborFinset (d : ℕ) (v : CubeVertex d) :
       Finset.univ.image (fun i ↦ Function.update v i (v i + 1)) := by
   ext w
   simp only [mem_neighborFinset, Finset.mem_image, Finset.mem_univ, true_and]
-  constructor <;> intro h <;> simp_all +decide [hammingDist]
+  constructor <;> intro h <;> simp_all +decide only [hammingDist, ne_eq]
   · obtain ⟨i, hi⟩ := Finset.card_eq_one.mp h
     use i
     ext j
@@ -226,8 +226,7 @@ def fixedEdgeSamples (d M : ℕ) :
 @[simp] theorem card_fixedEdgeSamples (d M : ℕ) :
     (fixedEdgeSamples d M).card =
       Nat.choose ((2 ^ d).choose 2) M := by
-  simp [fixedEdgeSamples, Finset.card_powersetCard, card_allEdges,
-    card_cubeVertex]
+  simp [fixedEdgeSamples, Finset.card_powersetCard, card_allEdges]
 
 /-- Double-counting incidences between fixed-size samples and relabelled
 cubes gives the exact first moment. -/
@@ -346,10 +345,11 @@ theorem sum_sq_copyMultiplicity (d M : ℕ)
 /-- Cauchy--Schwarz restricted to the positive support of a natural-valued
 counting function. -/
 theorem sq_sum_natCast_le_card_pos_mul_sum_sq
-    {ι : Type*} [DecidableEq ι] (S : Finset ι) (R : ι → ℕ) :
+    {ι : Type*} (S : Finset ι) (R : ι → ℕ) :
     (∑ i ∈ S, (R i : ℝ)) ^ 2 ≤
       ((S.filter fun i ↦ 0 < R i).card : ℝ) *
         ∑ i ∈ S, (R i : ℝ) ^ 2 := by
+  classical
   let T := S.filter fun i ↦ 0 < R i
   have hsum : (∑ i ∈ T, (R i : ℝ)) = ∑ i ∈ S, (R i : ℝ) := by
     apply Finset.sum_subset (Finset.filter_subset _ _)
@@ -911,7 +911,7 @@ theorem backgroundProduct_le_exp {N M e : ℕ}
             have hden_le :
                 (((N - e - i : ℕ) : ℝ) * (M - i : ℕ)) ≤
                   (N : ℝ) * M := by
-              gcongr <;> norm_cast <;> omega
+              gcongr <;> omega
             have hx₀_nonneg : 0 ≤ (e : ℝ) * (N - M : ℕ) := by
               positivity
             have hx : x₀ ≤ xi := by
@@ -1048,7 +1048,7 @@ noncomputable def downPairs [DecidableEq α]
   (upwardLayer U P (k + 1)).sigma fun T => T
 
 theorem card_upPairs [DecidableEq α] (U : Finset α) (P : Finset α → Prop)
-    {k : ℕ} (hk : k ≤ U.card) :
+    {k : ℕ} (_hk : k ≤ U.card) :
     (upPairs U P k).card = (upwardLayer U P k).card * (U.card - k) := by
   classical
   rw [upPairs, Finset.card_sigma]
@@ -1213,10 +1213,11 @@ theorem fixedSuccessProbability_mono (d : ℕ) {M K : ℕ}
 subset, with denominators cleared: the sum of `(2|S|-|U|)^2` is
 `|U| 2^|U|`. -/
 theorem sum_powerset_doubled_deviation_sq
-    {α : Type*} [DecidableEq α] (U : Finset α) :
+    {α : Type*} (U : Finset α) :
     (∑ S ∈ U.powerset,
         ((2 : ℝ) * S.card - U.card) ^ 2) =
       (U.card : ℝ) * 2 ^ U.card := by
+  classical
   induction U using Finset.induction with
   | empty => simp
   | @insert a U ha ih =>
@@ -1402,7 +1403,9 @@ theorem graphOfEdges_finiteEdges {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) : graphOfEdges (finiteEdges G) = G := by
   classical
   ext v w
-  simp [graphOfEdges, finiteEdges, allEdges, SimpleGraph.edgeSet_top]
+  simp only [graphOfEdges, finiteEdges, allEdges, edgeFinset_top, Set.toFinset_compl,
+    Finset.coe_filter, Finset.mem_compl, Set.mem_toFinset, Sym2.mem_diagSet, fromEdgeSet_adj,
+    Set.mem_ofPred_eq, Sym2.mk_isDiag_iff, mem_edgeSet, ne_eq]
   exact ⟨fun h => h.1.2, fun h => ⟨⟨G.ne_of_adj h, h⟩, G.ne_of_adj h⟩⟩
 
 theorem finiteEdges_graphOfEdges {V : Type*} [Fintype V] [DecidableEq V]
@@ -1522,7 +1525,7 @@ theorem successEdgeSets_card_eq_sum_layers (d : ℕ) :
   intro K hK
   congr 1
   ext S
-  simp only [Finset.mem_filter, successEdgeSets, fixedSuccessCount,
+  simp only [Finset.mem_filter, successEdgeSets,
     fixedEdgeSamples, Finset.mem_powersetCard]
   aesop
 
@@ -1551,14 +1554,14 @@ theorem card_highCardSubsets_eq_sum_choose
   aesop
 
 theorem successEdgeSets_card_ge_fixed_mul_high (d M : ℕ)
-    (hM : M ≤ ambientEdgeCount d) :
+    (_hM : M ≤ ambientEdgeCount d) :
     (fixedSuccessProbability d M) *
         ((highCardSubsets (allEdges (CubeVertex d)) M).card : ℝ) ≤
       (successEdgeSets d).card := by
   classical
   let N := ambientEdgeCount d
   have hUN : (allEdges (CubeVertex d)).card = N := by
-    simp [N, ambientEdgeCount, card_allEdges, card_cubeVertex]
+    simp [N, ambientEdgeCount, card_allEdges]
   have hsumSub :
       (∑ K ∈ Finset.Icc M N, (fixedSuccessCount d K : ℝ)) ≤
         ∑ K ∈ Finset.range (N + 1), (fixedSuccessCount d K : ℝ) := by
@@ -1626,7 +1629,7 @@ theorem highEdgeRatio_eq_one_sub_low (d : ℕ) :
   have hcard := card_highCardSubsets_add_lowCardSubsets
     (allEdges (CubeVertex d)) (comparisonLayer d)
   have hU : (allEdges (CubeVertex d)).card = ambientEdgeCount d := by
-    simp [ambientEdgeCount, card_allEdges, card_cubeVertex]
+    simp [ambientEdgeCount, card_allEdges]
   rw [hU] at hcard
   rw [lowEdgeProbability]
   have hpow : (0 : ℝ) < 2 ^ ambientEdgeCount d := by positivity
@@ -1862,7 +1865,7 @@ theorem walk_cons_intermediate_eq {V : Type*} {G : SimpleGraph V}
   have htail : p.support = q.support := (List.cons.inj hs).2
   calc
     w = p.support.head p.support_ne_nil := p.head_support.symm
-    _ = q.support.head q.support_ne_nil := by simpa [htail]
+    _ = q.support.head q.support_ne_nil := by simp [htail]
     _ = z := q.head_support
 
 /-- A length-`l` cube walk from a fixed start has `d ^ l` possible endpoints
@@ -1875,7 +1878,7 @@ theorem sum_card_finsetWalkLength_cube (d l : ℕ) (u : CubeVertex d) :
       rw [Finset.sum_eq_single u]
       · simp [SimpleGraph.finsetWalkLength]
       · intro v hv hvu
-        simp [SimpleGraph.finsetWalkLength, hvu, Ne.symm hvu]
+        simp [SimpleGraph.finsetWalkLength, Ne.symm hvu]
       · simp
   | succ l ih =>
       simp only [SimpleGraph.finsetWalkLength]
@@ -1926,14 +1929,15 @@ theorem sum_card_finsetWalkLength_cube (d l : ℕ) (u : CubeVertex d) :
 
 theorem connected_exists_covering_closedWalk :
     ∀ n : ℕ, ∀ (V : Type*) [Fintype V] [DecidableEq V]
-      (G : SimpleGraph V) [DecidableRel G.Adj],
+      (G : SimpleGraph V),
       Fintype.card V = n → G.Connected →
         ∃ u : V, ∃ p : G.Walk u u,
           p.support.toFinset = Finset.univ ∧ p.length = 2 * (n - 1) := by
+  classical
   intro n
   induction n using Nat.strong_induction_on with
   | h n ih =>
-      intro V _ _ G _ hcard hconn
+      intro V _ _ G hcard hconn
       have hnpos : 0 < n := by
         rw [← hcard]
         exact Fintype.card_pos_iff.mpr hconn.nonempty
@@ -1994,7 +1998,7 @@ theorem connected_exists_covering_closedWalk :
                 exact List.mem_map.mpr
                   ⟨(⟨x, by simpa [V'] using hx⟩ : V'), hx', rfl⟩
               have hcons : w :: q.support.tail = q.support := by
-                simpa using List.cons_head_tail q.support_ne_nil
+                simp
               rw [← hcons] at hxq
               simpa only [List.mem_toFinset] using
                 (List.mem_cons.mp hxq).resolve_left hxw
@@ -2036,7 +2040,7 @@ theorem card_cubeWalkLength (d l : ℕ) :
       apply Finset.sum_congr rfl
       intro u hu
       exact sum_card_finsetWalkLength_cube d l u
-    _ = 2 ^ d * d ^ l := by simp [card_cubeVertex]
+    _ = 2 ^ d * d ^ l := by simp
 
 /-- The walk tuple associated with one integer composition. -/
 abbrev CubeWalkTuple (d r : ℕ) (c : Composition r) :=
@@ -2174,8 +2178,8 @@ def connectedComponentEquivSupp {V : Type*} {G : SimpleGraph V}
     (c : G.ConnectedComponent) : c ≃ c.supp where
   toFun x := ⟨x.1, x.2⟩
   invFun x := ⟨x.1, x.2⟩
-  left_inv x := rfl
-  right_inv x := rfl
+  left_inv _x := rfl
+  right_inv _x := rfl
 
 theorem sum_card_connectedComponent_supp {V : Type*} [Fintype V]
     [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj] :
@@ -2354,7 +2358,7 @@ theorem card_perms_fixing_finset {α : Type*} [Fintype α] [DecidableEq α]
     · intro hfix
       have hsupp : (σ.support : Set α) ⊆ {x | x ∉ S} := by
         intro x hx
-        simpa only [Set.mem_setOf_eq] using fun hxS =>
+        simpa only [Set.mem_ofPred_eq] using fun hxS =>
           (Equiv.Perm.mem_support.mp hx) (hfix x hxS)
       rw [← Equiv.Perm.mem_range_ofSubtype_iff] at hsupp
       obtain ⟨τ, hτ⟩ := hsupp
@@ -2594,7 +2598,7 @@ theorem overlapCore_hasNoIsolatedEdge {V : Type*} [DecidableEq V]
   intro heIsoCore
   have hex : ∃ f ∈ F, f ≠ e ∧ ¬Disjoint e.toFinset f.toFinset := by
     unfold IsIsolatedEdge at hnotIsoF
-    push_neg at hnotIsoF
+    push Not at hnotIsoF
     exact hnotIsoF heF
   obtain ⟨f, hfF, hfe, hndis⟩ := hex
   have hfNotIso : f ∉ isolatedEdges F := by
@@ -2619,7 +2623,7 @@ theorem supportComponent_card_core_three_le {V : Type*} [Fintype V]
   have hediag : ¬e.IsDiag := hdiag e heF
   have hnotIso := overlapCore_hasNoIsolatedEdge F heCore
   unfold IsIsolatedEdge at hnotIso
-  push_neg at hnotIso
+  push Not at hnotIso
   obtain ⟨f, hfCore, hfe, hndis⟩ := hnotIso heCore
   have hfF : f ∈ F := (Finset.mem_sdiff.mp hfCore).1
   have hfdiag : ¬f.IsDiag := hdiag f hfF
@@ -2689,7 +2693,7 @@ theorem two_mul_card_edges_induce_cube_le (d : ℕ)
     calc
       (∑ v : S, H.degree v) ≤ ∑ _v : S, d := by
         exact Finset.sum_le_sum fun v _ => cube_induce_degree_le d S v
-      _ = d * S.card := by simp [hcard, mul_comm]
+      _ = d * S.card := by simp [mul_comm]
   have hcomplete : 2 * H.edgeFinset.card ≤ S.card * (S.card - 1) := by
     calc
       2 * H.edgeFinset.card ≤ 2 * (Fintype.card S).choose 2 := by
@@ -2828,7 +2832,7 @@ of `F`, there are precisely `(2^d-|supp F|)!` possible extensions to an
 ambient permutation. -/
 theorem card_perms_containing_edge_set_le (d : ℕ)
     (F : Finset (Sym2 (CubeVertex d)))
-    (hF : F ⊆ (cubeGraph d).edgeFinset) :
+    (_hF : F ⊆ (cubeGraph d).edgeFinset) :
     ((Finset.univ : Finset (Equiv.Perm (CubeVertex d))).filter fun σ =>
         F ⊆ cubePattern d σ).card ≤
       Nat.card
@@ -2873,7 +2877,7 @@ theorem card_perms_containing_edge_set_le (d : ℕ)
         apply Finset.card_le_card_of_injOn (fun a : A => a.1)
         · intro a ha
           have haφ : φ a = f := (Finset.mem_filter.mp ha).2
-          show a.1 ∈ E
+          change a.1 ∈ E
           refine Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩
           intro x
           rw [← haφ]
@@ -2951,7 +2955,7 @@ theorem cubeStep_step (d : ℕ) (v : CubeVertex d) (i : Fin d) :
   by_cases hji : j = i
   · subst j
     simpa [cubeStep, add_assoc] using htwo'
-  · simp [cubeStep, hji, Ne.symm hji]
+  · simp [cubeStep, hji]
 
 noncomputable def cubeStepCoordinate (d : ℕ) {x y : CubeVertex d}
     (h : (cubeGraph d).Adj x y) : Fin d := by
@@ -3050,7 +3054,7 @@ noncomputable def componentRoot {V : Type*} {G : SimpleGraph V}
     (c : G.ConnectedComponent) : c :=
   ⟨Classical.choose c.nonempty_supp, Classical.choose_spec c.nonempty_supp⟩
 
-noncomputable def treeEdgeAdj {V : Type*} [Fintype V]
+theorem treeEdgeAdj {V : Type*} [Fintype V]
     [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
     (c : G.ConnectedComponent)
     (e : (componentSpanningTree G c).edgeSet) :
@@ -3203,7 +3207,7 @@ theorem natCard_SharpCopyCode {V : Type*} [Fintype V]
         simp [Nat.card_eq_fintype_card]
 
 theorem natCard_copy_le_cube_tree_bound {V : Type*} [Fintype V]
-    [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj] (d : ℕ) :
+    (G : SimpleGraph V) (d : ℕ) :
     Nat.card (SimpleGraph.Copy G (cubeGraph d)) ≤
       (2 ^ d) ^ Nat.card G.ConnectedComponent *
         d ^ (Fintype.card V - Nat.card G.ConnectedComponent) := by
@@ -3250,7 +3254,7 @@ theorem pow_le_nine_pow_mul_descFactorial {n s : ℕ}
     have hmainNat : n ^ s ≤ 9 ^ s * n.descFactorial s := by
       calc
         n ^ s ≤ 2 ^ s * (n + 1 - s) ^ s := hpowNat
-        _ ≤ 9 ^ s * n.descFactorial s := by gcongr <;> omega
+        _ ≤ 9 ^ s * n.descFactorial s := by gcongr; omega
     exact_mod_cast hmainNat
   · have hn2s : n ≤ 2 * s := by omega
     have hsqrt : (1 : ℝ) ≤ Real.sqrt (2 * Real.pi * n) := by
@@ -3304,7 +3308,7 @@ theorem pow_le_nine_pow_mul_descFactorial {n s : ℕ}
       exact le_of_mul_le_mul_left hmul hpowpos
     have hthreeNine : (3 : ℝ) ^ n ≤ 9 ^ s := by
       calc
-        (3 : ℝ) ^ n ≤ 3 ^ (2 * s) := by gcongr <;> norm_num
+        (3 : ℝ) ^ n ≤ 3 ^ (2 * s) := by gcongr; norm_num
         _ = 9 ^ s := by rw [pow_mul]; norm_num
     exact hcancel.trans (mul_le_mul_of_nonneg_right hthreeNine (by positivity))
 
@@ -3343,7 +3347,7 @@ theorem rooted_factorial_ratio_le {n s k : ℕ}
     nlinarith [pow_pos hnR k]
   have hnine : (9 : ℝ) ^ s ≤ 81 ^ (s - k) := by
     calc
-      (9 : ℝ) ^ s ≤ 9 ^ (2 * (s - k)) := by gcongr <;> norm_num
+      (9 : ℝ) ^ s ≤ 9 ^ (2 * (s - k)) := by gcongr; norm_num
       _ = 81 ^ (s - k) := by rw [pow_mul]; norm_num
   exact hbase.trans (by
     apply div_le_div_of_nonneg_right hnine
@@ -3456,7 +3460,7 @@ theorem overlapSupportComponentMap_injective (d : ℕ)
         by_cases hp : p.Nil
         · have hpSupp : p.support = [x.1] := Walk.nil_iff_support_eq.mp hp
           have hzEq : z = x.1 := by simpa [hpSupp] using hz
-          simpa [hzEq] using x.2
+          simp [hzEq]
         · have hzSupp : z ∈ (graphOfEdges F).support :=
             mem_support_of_mem_walk_support p hp hz
           rw [← mem_ambientSetFinset,
@@ -3884,10 +3888,11 @@ lemma self_le_two_pow (d : ℕ) : d ≤ 2 ^ d := by
       omega
 
 theorem edgeSupport_card_eq_core_add_twice_isolated
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     (F : Finset (Sym2 V)) (hdiag : ∀ e ∈ F, ¬e.IsDiag) :
     (edgeSupport F).card = (edgeSupport (overlapCore F)).card +
       2 * (isolatedEdges F).card := by
+  let := Fintype.ofFinite V
   rw [edgeSupport_eq_core_union_isolated,
     Finset.card_union_of_disjoint (edgeSupport_disjoint_core_isolated F),
     edgeSupport_isolatedEdges_card hdiag]
@@ -4113,7 +4118,7 @@ theorem supportComponent_card_three_le_of_no_isolated
   have hediag := hdiag e heF
   have hnotIso := hno e heF
   unfold IsIsolatedEdge at hnotIso
-  push_neg at hnotIso
+  push Not at hnotIso
   obtain ⟨f, hfF, hfe, hndis⟩ := hnotIso heF
   have hfdiag := hdiag f hfF
   have hvcomp : v ∈ ((graphOfEdges F).connectedComponentMk v).supp :=
@@ -4445,8 +4450,7 @@ theorem overlapCore_idem {V : Type*} [DecidableEq V]
     · rintro ⟨he, hiso⟩
       exact (overlapCore_hasNoIsolatedEdge F he hiso).elim
     · intro he
-      have : False := by simpa using he
-      exact this.elim
+      simp at he
   rw [overlapCore, hiso, Finset.sdiff_empty]
 
 noncomputable def coreAllEdgeSets (d : ℕ) :
@@ -4537,7 +4541,7 @@ theorem sum_powerset_by_core_isolated (d : ℕ)
   have hfiber (C : Finset (Sym2 (CubeVertex d))) (t : ℕ) :
       U.filter (fun F => g F = (C, t)) = overlapCoreFiber d C t := by
     ext F
-    simp [U, g, overlapCoreFiber, and_assoc]
+    simp [U, g, overlapCoreFiber]
   calc
     (∑ F ∈ (cubeGraph d).edgeFinset.powerset, f F) =
         ∑ F ∈ U, f F := by rfl
@@ -4680,7 +4684,7 @@ noncomputable def isolatedWeight (d : ℕ) (a : ℝ)
 
 theorem choose_mul_coreIsolatedUpperTerm_eq (d : ℕ) (a : ℝ)
     (C : Finset (Sym2 (CubeVertex d))) (t : ℕ)
-    (hk : overlapComponentCount d C ≤ (edgeSupport C).card) :
+    (_hk : overlapComponentCount d C ≤ (edgeSupport C).card) :
     (Nat.choose (cubeEdgeCount d) t : ℝ) *
         coreIsolatedUpperTerm d a C t =
       coreWeight d a C * isolatedWeight d a (edgeSupport C).card t := by
@@ -4761,7 +4765,7 @@ theorem coreWeight_le_rank_weight (d : ℕ) (a : ℝ)
           ((edgeSupport C).card - overlapComponentCount d C) := by
       rw [mul_pow]
       ring
-    _ = _ := by congr 2 <;> ring
+    _ = _ := by congr 2; ring
 
 end Erdos578
 
@@ -4772,10 +4776,10 @@ open scoped BigOperators SimpleGraph
 
 noncomputable def coreCopyOfPermutation (d : ℕ)
     (F : Finset (Sym2 (CubeVertex d)))
-    (hF : F ⊆ (cubeGraph d).edgeFinset)
+    (_hF : F ⊆ (cubeGraph d).edgeFinset)
     (a : { σ : Equiv.Perm (CubeVertex d) // F ⊆ cubePattern d σ⁻¹ }) :
     SimpleGraph.Copy (overlapSupportGraph d (overlapCore F)) (cubeGraph d) :=
-  permutationCopyOfSubset d (overlapCore F) a.1 (fun e he =>
+  permutationCopyOfSubset d (overlapCore F) a.1 (fun _e he =>
     a.2 (Finset.mem_sdiff.mp he).1)
 
 noncomputable def unusedCoreVertices (d : ℕ)
@@ -4812,7 +4816,7 @@ abbrev CoreIsolatedCode (d : ℕ)
       (cubeGraph d),
     ∀ _e : isolatedEdges F, (unusedCoreVertices d f) × Fin d
 
-noncomputable def isolatedEndpointAdj (d : ℕ)
+theorem isolatedEndpointAdj (d : ℕ)
     {F : Finset (Sym2 (CubeVertex d))}
     (hF : F ⊆ (cubeGraph d).edgeFinset)
     (a : { σ : Equiv.Perm (CubeVertex d) // F ⊆ cubePattern d σ⁻¹ })
@@ -4995,7 +4999,7 @@ theorem card_perms_containing_edge_set_le_core_isolated (d : ℕ)
       have hsub : (A.attach.filter fun b => φ b = z).card ≤ E.card := by
         apply Finset.card_le_card_of_injOn (fun b => b.1)
         · intro b hb
-          show b.1 ∈ E
+          change b.1 ∈ E
           rw [show E =
             (Finset.univ : Finset (Equiv.Perm (CubeVertex d))).filter fun σ =>
               ∀ x ∈ edgeSupport F, σ x = a.1 x by rfl,
@@ -5108,7 +5112,7 @@ theorem card_overlapCoreFiber_le_available_choose (d : ℕ)
   classical
   let T := (availableCoreEdges d C).powersetCard t
   have hcardT : T.card = Nat.choose (availableCoreEdges d C).card t := by
-    simpa [T] using Finset.card_powersetCard t (availableCoreEdges d C)
+    simp [T]
   rw [← hcardT]
   apply Finset.card_le_card_of_injOn isolatedEdges
   · intro F hFmem
@@ -5566,7 +5570,7 @@ theorem coreDefectFiber_eq_coreEdgeSets (d u k : ℕ) :
 
 theorem coreDefect_le_cubeVertexCard (d : ℕ)
     {C : Finset (Sym2 (CubeVertex d))}
-    (hC : C ∈ coreAllEdgeSets d) : coreDefect d C ≤ 2 ^ d := by
+    (_hC : C ∈ coreAllEdgeSets d) : coreDefect d C ≤ 2 ^ d := by
   unfold coreDefect
   exact (Nat.sub_le _ _).trans (by
     rw [← card_cubeVertex]
@@ -5774,7 +5778,7 @@ theorem weighted_geometric_sum_le_two {b : ℝ}
         gcongr
         exact_mod_cast nat_succ_le_two_pow u
       _ = ((2 : ℝ) * b) ^ u := by rw [mul_pow]
-      _ ≤ ((1 : ℝ) / 2) ^ u := by gcongr <;> linarith
+      _ ≤ ((1 : ℝ) / 2) ^ u := by gcongr; linarith
   calc
     (∑ u ∈ s, (u + 1 : ℝ) * b ^ u) ≤
         ∑ u ∈ s, ((1 : ℝ) / 2) ^ u := by
@@ -5842,7 +5846,7 @@ theorem weighted_geometric_tail_le {b : ℝ}
             gcongr
             exact_mod_cast nat_succ_le_two_pow u
           _ = ((2 : ℝ) * b) ^ u := by rw [mul_pow]
-          _ ≤ ((1 : ℝ) / 2) ^ u := by gcongr <;> linarith
+          _ ≤ ((1 : ℝ) / 2) ^ u := by gcongr; linarith
       _ = ((2 : ℝ) / 3) ^ u * ((3 : ℝ) / 4) ^ u := by
         rw [← mul_pow]
         norm_num
@@ -6272,7 +6276,7 @@ noncomputable def comparisonBackgroundExponent (d : ℕ) : ℝ :=
     (ambientEdgeCount d - comparisonLayer d : ℕ) /
       ((ambientEdgeCount d : ℝ) * comparisonLayer d)
 
-theorem cast_cubeEdgeCount {d : ℕ} (hd : 1 ≤ d) :
+theorem cast_cubeEdgeCount {d : ℕ} (_hd : 1 ≤ d) :
     (cubeEdgeCount d : ℝ) = (d : ℝ) * ((2 ^ d : ℕ) : ℝ) / 2 := by
   have h := two_mul_cubeEdgeCount d
   have hR : (2 : ℝ) * cubeEdgeCount d = (d : ℝ) * (2 ^ d : ℕ) := by
@@ -6430,11 +6434,11 @@ theorem comparisonExcess_tendsto_one :
     simpa [z1] using polynomial_div_two_pow_tendsto_zero 1
   have hnum : Tendsto (fun d => 1 - z0 d + 4 * z1 d)
       atTop (nhds 1) := by
-    convert (tendsto_const_nhds.sub hz0).add (tendsto_const_nhds.mul hz1) using 1 <;>
+    convert (tendsto_const_nhds.sub hz0).add (tendsto_const_nhds.mul hz1) using 1;
       ring_nf
   have hden : Tendsto (fun d => 1 - z0 d - 8 * z1 d)
       atTop (nhds 1) := by
-    convert (tendsto_const_nhds.sub hz0).sub (tendsto_const_nhds.mul hz1) using 1 <;>
+    convert (tendsto_const_nhds.sub hz0).sub (tendsto_const_nhds.mul hz1) using 1;
       ring_nf
   have hquot := hnum.div hden (by norm_num : (1 : ℝ) ≠ 0)
   have heq :
@@ -6641,7 +6645,7 @@ theorem cutoffFactor_tendsto_one :
   have hden : Tendsto
       (fun d : ℕ => 1 - (d : ℝ) ^ 4 / (((2 ^ d : ℕ) : ℝ)))
       atTop (nhds 1) := by
-    convert tendsto_const_nhds.sub h4 using 1 <;> ring_nf
+    convert tendsto_const_nhds.sub h4 using 1; ring_nf
   have hone : Tendsto (fun _d : ℕ => (1 : ℝ)) atTop (nhds 1) :=
     tendsto_const_nhds
   let R : ℕ → ℝ := fun d =>
@@ -6687,7 +6691,7 @@ theorem cutoffCorrectionDenominator_tendsto_one :
   have hone : Tendsto (fun _d : ℕ => (1 : ℝ)) atTop (nhds 1) :=
     tendsto_const_nhds
   unfold cutoffCorrectionDenominator
-  convert (hone.sub h4).pow 2 using 1 <;> ring_nf
+  convert (hone.sub h4).pow 2 using 1; ring_nf
 
 theorem cutoffFactor_rate_tendsto_zero :
     Tendsto (fun d : ℕ => (d : ℝ) ^ 2 * (cutoffFactor d - 1))
@@ -6921,7 +6925,7 @@ theorem leadingOverlapTerm_tendsto_one :
     Tendsto leadingOverlapTerm atTop (nhds 1) := by
   have hcore : Tendsto (fun d : ℕ => 1 + 4 * coreDecay d)
       atTop (nhds 1) := by
-    convert tendsto_const_nhds.add (coreDecay_tendsto_zero.const_mul 4) using 1 <;>
+    convert tendsto_const_nhds.add (coreDecay_tendsto_zero.const_mul 4) using 1;
       ring_nf
   have hexp : Tendsto (fun d : ℕ =>
       Real.exp (isolatedSmallLambda d (comparisonExcess d) (d ^ 4) -
@@ -6933,7 +6937,7 @@ theorem leadingOverlapTerm_tendsto_one :
       rfl
     · norm_num
   unfold leadingOverlapTerm
-  convert hcore.mul hexp using 1 <;> ring_nf
+  convert hcore.mul hexp using 1; ring_nf
 
 theorem momentUpperBound_tendsto_one :
     Tendsto momentUpperBound atTop (nhds 1) := by
@@ -7138,7 +7142,7 @@ by the total number `2^(choose (2^d) 2)` of labelled graphs. -/
 theorem erdos_578 : Tendsto successProbability atTop (nhds 1) := by
   have honeMinusLow : Tendsto (fun d : ℕ => 1 - lowEdgeProbability d)
       atTop (nhds 1) := by
-    convert tendsto_const_nhds.sub lowEdgeProbability_tendsto_zero using 1 <;>
+    convert tendsto_const_nhds.sub lowEdgeProbability_tendsto_zero using 1;
       ring_nf
   have hlowerLimit := fixedSuccessProbability_comparison_tendsto_one.mul
     honeMinusLow
