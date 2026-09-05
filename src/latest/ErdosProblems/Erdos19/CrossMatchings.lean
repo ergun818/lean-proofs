@@ -88,7 +88,8 @@ theorem crossMatching_mem_of_not_outlier (G : _root_.SimpleGraph V)
     (partner : ActiveRequest active → V)
     (hadj : ∀ e, G.Adj (requestSource X active e) (partner e))
     (i : J) {v : V} (hv : v ∉ X) :
-    v ∈ (crossMatching X active G partner hadj i).verts ↔ v ∈ partnerVertices X active partner i := by
+    v ∈ (crossMatching X active G partner hadj i).verts ↔ v ∈ partnerVertices X active partner
+      i := by
   rw [crossMatching_verts]
   constructor
   · rintro ⟨e, hi, hs | hp⟩
@@ -120,7 +121,8 @@ theorem crossMatching_pairwise_disjoint (G : _root_.SimpleGraph V)
   intro x y hixy hjxy
   obtain ⟨e, he, hexy⟩ := (crossMatching_adj X active G partner hadj i x y).mp hixy
   obtain ⟨f, hf, hfxy⟩ := (crossMatching_adj X active G partner hadj j x y).mp hjxy
-  have hcolors (hef : e = f) : False := hij (he.symm.trans ((congrArg (fun e ↦ e.1.2) hef).trans hf))
+  have hcolors (hef : e = f) : False :=
+    hij (he.symm.trans ((congrArg (fun e ↦ e.1.2) hef).trans hf))
   rcases hexy with hexy | hexy <;> rcases hfxy with hfxy | hfxy
   · exact hcolors (hsame e f (hexy.1.trans hfxy.1.symm) (hexy.2.trans hfxy.2.symm))
   · exact hne e f (hexy.1.trans hfxy.2.symm)
@@ -132,10 +134,12 @@ theorem partnerVertices_subset_compl (partner : ActiveRequest active → V)
   rintro v ⟨e, _, rfl⟩
   exact hout e
 
-theorem partnerVertices_ncard_le [Fintype V] [Fintype J]
+theorem partnerVertices_ncard_le [Finite V] [Finite J]
     (partner : ActiveRequest active → V) (i : J) :
     (partnerVertices X active partner i).ncard ≤ X.ncard := by
   classical
+  let := Fintype.ofFinite J
+  let := Fintype.ofFinite V
   let D : Set (ActiveRequest active) := {e | e.1.2 = i}
   let code : D → X := fun e ↦ e.1.1.1
   have hinj : Function.Injective code := by
@@ -147,23 +151,25 @@ theorem partnerVertices_ncard_le [Fintype V] [Fintype J]
     simpa only [Set.fintypeCard_eq_ncard] using Fintype.card_le_of_injective code hinj
   have himage : partnerVertices X active partner i = partner '' D := by
     ext v
-    simp only [partnerVertices, Set.mem_setOf_eq, Set.mem_image, D]
+    simp only [partnerVertices, Set.mem_ofPred_eq, Set.mem_image, D]
   rw [himage]
   exact (Set.ncard_image_le).trans hcard
 
-theorem partnerVertices_color_count_le [Fintype V] [Fintype J]
+theorem partnerVertices_color_count_le [Finite V] [Fintype J]
     (partner : ActiveRequest active → V) (q : ℕ)
-    (hquota : ∀ v, ({e : ActiveRequest active | partner e = v} : Set (ActiveRequest active)).ncard ≤ q)
+    (hquota : ∀ v, ({e : ActiveRequest active | partner e = v} : Set (ActiveRequest
+      active)).ncard ≤ q)
     (v : V) : (∑ i : J, if v ∈ partnerVertices X active partner i then 1 else 0) ≤ q := by
   classical
+  let := Fintype.ofFinite V
   have hcount := ncard_eq_sum_indicator
     ({i : J | v ∈ partnerVertices X active partner i} : Set J)
-  simp only [Set.mem_setOf_eq] at hcount
+  simp only [Set.mem_ofPred_eq] at hcount
   rw [← hcount]
   have himage : ({i : J | v ∈ partnerVertices X active partner i} : Set J) =
       (fun e : ActiveRequest active ↦ e.1.2) '' {e | partner e = v} := by
     ext i
-    simp only [partnerVertices, Set.mem_setOf_eq, Set.mem_image]
+    simp only [partnerVertices, Set.mem_ofPred_eq, Set.mem_image]
     constructor
     · rintro ⟨e, he, hp⟩
       exact ⟨e, hp, he⟩

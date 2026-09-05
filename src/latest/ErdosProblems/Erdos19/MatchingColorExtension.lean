@@ -8,6 +8,7 @@ namespace Erdos19.SetHypergraph
 
 variable {V I : Type*} [Fintype V]
 
+omit [Fintype V] in
 theorem unionColoring_covered_eq_of_disjoint (J K : SetHypergraph V)
     (cJ : J.EdgeColoring I) (cK : K.EdgeColoring I) (hJK : Disjoint J K)
     (hcross : ∀ e : J, ∀ f : K, (e.1 ∩ f.1).Nonempty → cJ e ≠ cK f) (i : I) :
@@ -26,7 +27,8 @@ theorem unionColoring_covered_eq_of_disjoint (J K : SetHypergraph V)
     exact (J.unionColoring_right K cJ cK hcross e
       (fun heJ ↦ Set.disjoint_left.mp hJK heJ e.2)).trans hei
 
-theorem extend_coloring_by_matching_family (J : SetHypergraph V)
+omit [Fintype V] in
+theorem extend_coloring_by_matching_family [Finite V] (J : SetHypergraph V)
     {G : _root_.SimpleGraph V} (M : I → G.Subgraph)
     (hM : ∀ i, (M i).IsMatching)
     (hdis : Pairwise fun i j ↦ Disjoint (M i).spanningCoe (M j).spanningCoe)
@@ -36,6 +38,8 @@ theorem extend_coloring_by_matching_family (J : SetHypergraph V)
       (∀ e : J, c ⟨e.1, Or.inl e.2⟩ = color e) ∧
       ∀ i, (J ∪ matchingFamilyHypergraph M).coveredVertices {e | c e = i} =
         J.coveredVertices {e | color e = i} ∪ (M i).verts := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨cM, _, hcoverM⟩ := exists_matching_family_hypergraph_coloring M hM hdis
   have hcross : ∀ e : J, ∀ f : matchingFamilyHypergraph M,
       (e.1 ∩ f.1).Nonempty → color e ≠ cM f := by
@@ -50,19 +54,22 @@ theorem extend_coloring_by_matching_family (J : SetHypergraph V)
   intro i
   rw [unionColoring_covered_eq_of_disjoint J _ color cM hnew hcross i, hcoverM i]
 
+omit [Fintype V] in
 theorem twoGraph_union (H J : SetHypergraph V) : (H ∪ J).twoGraph = H.twoGraph ⊔ J.twoGraph := by
   ext x y
   change (x ≠ y ∧ (({x, y} : Set V) ∈ H ∨ {x, y} ∈ J)) ↔
     ((x ≠ y ∧ ({x, y} : Set V) ∈ H) ∨ (x ≠ y ∧ ({x, y} : Set V) ∈ J))
   tauto
 
+omit [Fintype V] in
 theorem twoGraph_sdiff (H J : SetHypergraph V) : (H \ J).twoGraph = H.twoGraph \ J.twoGraph := by
   ext x y
   change (x ≠ y ∧ (({x, y} : Set V) ∈ H ∧ {x, y} ∉ J)) ↔
     ((x ≠ y ∧ ({x, y} : Set V) ∈ H) ∧ ¬(x ≠ y ∧ ({x, y} : Set V) ∈ J))
   tauto
 
-theorem extend_coloring_by_indexed_matching_family {P : Type*}
+omit [Fintype V] in
+theorem extend_coloring_by_indexed_matching_family [Finite V] {P : Type*}
     (J : SetHypergraph V) {G : _root_.SimpleGraph V} (M : P → G.Subgraph)
     (hM : ∀ i, (M i).IsMatching)
     (hdis : Pairwise fun i j ↦ Disjoint (M i).spanningCoe (M j).spanningCoe)
@@ -76,6 +83,8 @@ theorem extend_coloring_by_indexed_matching_family {P : Type*}
       (∀ a, J.coveredVertices {e | color e = a} ⊆
         (J ∪ matchingFamilyHypergraph M).coveredVertices {e | c e = a}) ∧
       ∀ e : matchingFamilyHypergraph M, c ⟨e.1, Or.inr e.2⟩ ∈ Set.range index := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨cM, _, hcoverM⟩ := exists_matching_family_hypergraph_coloring M hM hdis
   let cM' := cM.mapEmbedding index
   have hcoverIndex (i : P) :

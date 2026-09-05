@@ -97,10 +97,11 @@ private theorem cycleGraph_six_card_edgeFinset :
   simp [SimpleGraph.cycleGraph_degree_three_le] at h
   omega
 
-private theorem cycleGraph_six_free_edge {V : Type*} [Fintype V]
+private theorem cycleGraph_six_free_edge {V : Type*} [Finite V]
     {u v : V} (huv : u ≠ v) :
     (SimpleGraph.cycleGraph 6).Free (SimpleGraph.edge u v) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   rintro ⟨f⟩
   have hcard := Fintype.card_le_of_embedding f.mapEdgeSet
   rw [SimpleGraph.card_edgeSet, SimpleGraph.card_edgeSet,
@@ -189,7 +190,7 @@ private noncomputable def edgeSubsetEmbedding {W : Type*} {H : SimpleGraph W}
     Finset G.edgeSet ↪ LabelledFreeGraphs H n where
   toFun s := ⟨graphOfEdgeSubset G s, fun hcopy ↦
     hG (hcopy.mono_right (graphOfEdgeSubset_le G s))⟩
-  inj' s t h := graphOfEdgeSubset_injective G (Subtype.ext_iff.mp h)
+  inj' _ _ h := graphOfEdgeSubset_injective G (Subtype.ext_iff.mp h)
 
 /-- The elementary lower bound: all spanning subgraphs of an extremal
 `H`-free graph are again `H`-free. -/

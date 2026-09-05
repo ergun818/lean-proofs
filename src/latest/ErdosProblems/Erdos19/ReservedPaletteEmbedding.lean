@@ -11,7 +11,7 @@ variable {V C D : Type*}
 def EdgeColoring.mapEmbedding {H : SetHypergraph V} (c : H.EdgeColoring C) (j : C ↪ D) :
     H.EdgeColoring D where
   color e := j (c.color e)
-  valid := fun {e f} hne hinter heq ↦ c.valid hne hinter (j.injective heq)
+  valid := fun {_ _} hne hinter heq ↦ c.valid hne hinter (j.injective heq)
 
 theorem IsCoverBoundedColoring.mapEmbedding {H : SetHypergraph V}
     (c : H.EdgeColoring C) (A : ℕ) (hc : H.IsCoverBoundedColoring c A) (j : C ↪ D) :

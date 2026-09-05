@@ -34,7 +34,7 @@ theorem exists_representatives_of_capacity_and_bounded_forbidden
         apply sum_congr rfl
         intro v _
         split_ifs <;> simp
-      _ = ∑ v ∈ L i, capacity v := by simp [← sum_filter]
+      _ = ∑ v ∈ L i, capacity v := by simp []
   obtain ⟨g, hg, hmem⟩ := exists_injective_mem_of_bounded_forbidden
     (univ : Finset Slot) lists a (by simpa only [card_univ, hslots] using htotal)
     (fun i ↦ by rw [hlists]; exact hlist i) (by

@@ -16,7 +16,7 @@ open Finset
 attribute [local instance] Classical.propDecidable
 
 private theorem card_mul_sub_le_of_bipartite_degree_slack
-    {V : Type*} [DecidableEq V] (G : _root_.SimpleGraph V)
+    {V : Type*} (G : _root_.SimpleGraph V)
     (W X Y : Finset V) (hXW : X ⊆ W) (hYW : Y ⊆ W) (hXY : Disjoint X Y)
     (m b u : ℕ)
     (hleft : ∀ x ∈ X, m ≤ (Y.filter (G.Adj x)).card + u + b)

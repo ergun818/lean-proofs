@@ -289,7 +289,7 @@ theorem properCosetCardBound_zmod_div {x m R : ℕ}
       have haK : a ∈ K := by rw [htop]; simp
       exact haK
     subst H
-    simpa using hHlt
+    simp at hHlt
   apply (Nat.le_div_iff_mul_le hR0).mpr
   rw [← hKcard]
   simpa [mul_comm] using

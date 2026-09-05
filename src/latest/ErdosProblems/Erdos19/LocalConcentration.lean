@@ -36,10 +36,11 @@ theorem uniform_abs_deviation_cardRatio_le_fintype
   rw [hcard, Fintype.card_congr A] at htail
   exact htail
 
-theorem uniformBinCount_restrict {V K : Type*} [Fintype V] [DecidableEq V]
+theorem uniformBinCount_restrict {V K : Type*} [Finite V]
     [DecidableEq K] (S : Finset V) (a : K) (z : V → K) :
     uniformBinCount S a z = uniformBinCount (univ : Finset S) a (fun x ↦ z x.1) := by
   classical
+  let := Fintype.ofFinite V
   change (∑ v ∈ S, if z v = a then (1 : ℝ) else 0) =
     ∑ v : S, if z v.1 = a then (1 : ℝ) else 0
   exact Finset.sum_subtype S (fun _ ↦ Iff.rfl) _

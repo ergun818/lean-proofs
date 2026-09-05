@@ -155,20 +155,20 @@ theorem exists_arcs_of_cycle {v : V} {c : G.Walk v v} (hc : c.IsCycle) {a b : V}
       exact hinj (by simp only [Set.mem_ofPred_eq]; omega)
         (by simp only [Set.mem_ofPred_eq]; omega) he
   · refine ⟨by omega, ?_, ?_, ?_, ?_, ?_⟩
-    · show c'.getVert (L - 0) = a
+    · change c'.getVert (L - 0) = a
       rw [Nat.sub_zero]
       exact hLa
-    · show c'.getVert (L - (L - j)) = b
+    · change c'.getVert (L - (L - j)) = b
       rw [show L - (L - j) = j from by omega]
       exact hjget
     · intro t ht
-      show G.Adj (c'.getVert (L - t)) (c'.getVert (L - (t + 1)))
+      change G.Adj (c'.getVert (L - t)) (c'.getVert (L - (t + 1)))
       have hstep := c'.adj_getVert_succ (i := L - t - 1) (by omega)
       rw [show L - t - 1 + 1 = L - t from by omega] at hstep
       rw [show L - (t + 1) = L - t - 1 from by omega]
       exact hstep.symm
     · intro t ht0 htb
-      show c'.getVert (L - t) ≠ a ∧ c'.getVert (L - t) ≠ b
+      change c'.getVert (L - t) ≠ a ∧ c'.getVert (L - t) ≠ b
       refine ⟨fun he ↦ ?_, fun he ↦ ?_⟩
       · have : L - t = 0 := hinj (by simp only [Set.mem_ofPred_eq]; omega)
           (by simp only [Set.mem_ofPred_eq]; omega) (by rw [he, h0])
@@ -190,7 +190,7 @@ theorem exists_arcs_of_cycle {v : V} {c : G.Walk v v} (hc : c.IsCycle) {a b : V}
   · exact fun t _ ↦ (hmem _).mp (c'.getVert_mem_support (L - t))
   · exact fun t ht ↦ (hedg _).mp (getVert_mem_edges c' (by omega))
   · intro t ht
-    show s(c'.getVert (L - t), c'.getVert (L - (t + 1))) ∈ c.edges
+    change s(c'.getVert (L - t), c'.getVert (L - (t + 1))) ∈ c.edges
     have hstep := getVert_mem_edges c' (i := L - t - 1) (by omega)
     rw [show L - t - 1 + 1 = L - t from by omega] at hstep
     rw [show L - (t + 1) = L - t - 1 from by omega, Sym2.eq_swap]
@@ -201,7 +201,7 @@ theorem exists_arcs_of_cycle {v : V} {c : G.Walk v v} (hc : c.IsCycle) {a b : V}
     rcases (by omega : n ≤ j ∨ j < n) with h | h
     · exact Or.inl ⟨n, h, hn⟩
     · refine Or.inr ⟨L - n, by omega, ?_⟩
-      show c'.getVert (L - (L - n)) = x
+      change c'.getVert (L - (L - n)) = x
       rw [show L - (L - n) = n from by omega]
       exact hn
 

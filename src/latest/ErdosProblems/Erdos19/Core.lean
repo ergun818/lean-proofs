@@ -57,10 +57,11 @@ lemma exists_injective_extension {A B : Type*} [Fintype A] [Fintype B]
 /-- A deliberately strong finite system-of-distinct-representatives lemma.
 If every member of an indexed family contains at least as many elements as
 there are indices, then the family has distinct representatives. -/
-lemma exists_injective_mem_of_card_le {I A : Type*} [Fintype I] [Fintype A]
+lemma exists_injective_mem_of_card_le {I A : Type*} [Fintype I] [Finite A]
     (S : I → Finset A) (hcard : ∀ i, Fintype.card I ≤ (S i).card) :
     ∃ f : I → A, Function.Injective f ∧ ∀ i, f i ∈ S i := by
   classical
+  let := Fintype.ofFinite A
   apply (Finset.all_card_le_biUnion_card_iff_exists_injective S).mp
   intro T
   by_cases hT : T.Nonempty
@@ -70,7 +71,7 @@ lemma exists_injective_mem_of_card_le {I A : Type*} [Fintype I] [Fintype A]
       _ ≤ (S i).card := hcard i
       _ ≤ (T.biUnion S).card :=
         Finset.card_le_card (Finset.subset_biUnion_of_mem S hi)
-  · simpa [Finset.not_nonempty_iff_eq_empty.mp hT]
+  · simp [Finset.not_nonempty_iff_eq_empty.mp hT]
 
 /-- Finite union-bound form of the probabilistic method.  If the total
 cardinality of a finite family of bad sets is smaller than the sample space,
@@ -80,7 +81,7 @@ lemma exists_avoiding_of_sum_ncard_lt_card {Ω I : Type*}
     (hbad : (∑ i : I, (bad i).ncard) < Fintype.card Ω) :
     ∃ ω : Ω, ∀ i, ω ∉ bad i := by
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   have hunion : (⋃ i, bad i) = Set.univ := by
     apply Set.eq_univ_of_forall
     intro ω
@@ -162,7 +163,7 @@ spaces: independence proves the last inequality by cancelling the number of
 assignments on the coordinates outside the support of event `i`. -/
 theorem finite_local_lemma_of_conditional_card
     {Ω I : Type*} [Fintype Ω] [Fintype I] [Nonempty Ω]
-    [DecidableEq Ω] [DecidableEq I]
+    [DecidableEq Ω]
     (bad : I → Set Ω) (dep : I → I → Prop) [DecidableRel dep]
     (D : ℕ) (hD : 0 < D)
     (hdegree : ∀ i,
@@ -195,7 +196,7 @@ theorem finite_local_lemma_of_conditional_card
             have hjnot : ¬dep i j := by
               intro hjdep
               have : j ∈ near := Finset.mem_filter.mpr ⟨hjT, hjdep⟩
-              simpa [hnearEmpty] using this
+              simp [hnearEmpty] at this
             exact Finset.mem_filter.mpr ⟨hjT, hjnot⟩
           · intro hj
             exact hfarSub hj
@@ -300,8 +301,7 @@ theorem finite_local_lemma_of_conditional_card
     intro S
     induction S using Finset.induction with
     | empty =>
-        simpa [avoidingBad] using (Finset.univ_nonempty :
-          (Finset.univ : Finset Ω).Nonempty)
+        simp [avoidingBad]
     | @insert i S hi ih =>
         have hbound := hconditional S i hi
         have hinterLt : (eventFinset (bad i) ∩ avoidingBad bad S).card <
@@ -336,7 +336,7 @@ is unconditional, and the displayed cross-multiplication says that event `i`
 is independent of avoiding any family of its nondependencies. -/
 theorem finite_local_lemma_of_card_independence
     {Ω I : Type*} [Fintype Ω] [Fintype I] [Nonempty Ω]
-    [DecidableEq Ω] [DecidableEq I]
+    [DecidableEq Ω]
     (bad : I → Set Ω) (dep : I → I → Prop) [DecidableRel dep]
     (D : ℕ) (hD : 0 < D)
     (hdegree : ∀ i,
@@ -348,6 +348,7 @@ theorem finite_local_lemma_of_card_independence
         (eventFinset (bad i) ∩ avoidingBad bad S).card * Fintype.card Ω =
           (eventFinset (bad i)).card * (avoidingBad bad S).card) :
     ∃ ω : Ω, ∀ i, ω ∉ bad i := by
+  classical
   apply finite_local_lemma_of_conditional_card bad dep D hD hdegree
   intro i S hfar
   have hind := hindependent i S hfar
@@ -465,7 +466,7 @@ bijection above supplies exactly the independence equation required by the
 finite local lemma. -/
 theorem exists_avoiding_of_local_product_events
     {A K I : Type*} [Fintype A] [Fintype K] [Nonempty K] [Fintype I]
-    [DecidableEq A] [DecidableEq K] [DecidableEq I]
+    [DecidableEq A]
     (bad : I → Set (A → K)) (support : I → Set A)
     (dep : I → I → Prop) [DecidableRel dep]
     (D : ℕ) (hD : 0 < D)
@@ -655,7 +656,7 @@ lemma exists_capacity_partition_with_at_most_one_small
     have huP : p ∪ q ∈ P.parts := Finset.mem_of_mem_erase huEraseP
     have hunionNeP : p ∪ q ≠ p := Finset.ne_of_mem_erase huEraseP
     obtain ⟨x, hxp⟩ := P.nonempty_of_mem_parts hpP
-    exact Finset.disjoint_left.mp (P.disjoint huP hpP hunionNeP) 
+    exact Finset.disjoint_left.mp (P.disjoint huP hpP hunionNeP)
       (Finset.mem_union_left q hxp) hxp
   have hQcard : Q.parts.card < P.parts.card := by
     change mergedParts.card < P.parts.card
@@ -736,7 +737,7 @@ lemma card_fun_eq_at {A : Type*} [Fintype A] (k : ℕ) {x y : A}
       funext z
       by_cases hz : z = y
       · subst z
-        simp [hxy, f.2]
+        simp [f.2]
       · simp [hz]
     right_inv g := by
       funext z
@@ -773,10 +774,10 @@ lemma card_fun_eq_at_three {A : Type*} [Fintype A] (k : ℕ) {x y z : A}
       funext u
       by_cases huy : u = y
       · subst u
-        simp [T, hxT, f.2.1]
+        simp [T, f.2.1]
       by_cases huz : u = z
       · subst u
-        simp [T, hxT, f.2.2]
+        simp [T, f.2.2]
       · simp [T, huy, huz]
     right_inv g := by
       funext u
@@ -789,7 +790,7 @@ lemma card_fun_eq_at_three {A : Type*} [Fintype A] (k : ℕ) {x y z : A}
     dsimp only [B]
     rw [Fintype.card_subtype_compl (fun u : A ↦ u ∈ T)]
     have hmem : Fintype.card {u : A // u ∈ T} = T.card := by
-      simpa using Fintype.card_coe T
+      simp
     rw [hmem, hTcard]
   calc
     Nat.card {f : A → Fin k // f x = f y ∧ f x = f z} =
@@ -826,7 +827,7 @@ lemma card_fun_restrict_eq {A K : Type*} [Fintype A] [Fintype K]
     dsimp only [B]
     rw [Fintype.card_subtype_compl (fun x : A ↦ x ∈ S)]
     have hmem : Fintype.card {x : A // x ∈ S} = S.card := by
-      simpa using Fintype.card_coe S
+      simp
     rw [hmem]
   calc
     Nat.card {f : A → K // ∀ x : S, f x.1 = g x} = Nat.card (B → K) :=
@@ -940,13 +941,15 @@ lemma sum_eq_mul_of_restriction
 /-- Restriction to finitely many relevant coordinates preserves the uniform
 average of a statistic that depends only on those coordinates. -/
 lemma finiteAverage_eq_of_restriction
-    {A K : Type*} [Fintype A] [Fintype K] [Nonempty K]
+    {A K : Type*} [Finite A] [Finite K] [Nonempty K]
     (S : Finset A) [Fintype (A → K)] [Fintype (S → K)]
     (X : (S → K) → ℕ) :
     finiteAverage (fun g : S → K ↦ (X g : ℝ)) =
       (∑ f : A → K, (X (fun x : S ↦ f x.1) : ℝ)) /
         Fintype.card (A → K) := by
   classical
+  let := Fintype.ofFinite A
+  let := Fintype.ofFinite K
   have hsumNat := sum_eq_mul_of_restriction S X
   have hsumReal :
       (∑ f : A → K, (X (fun x : S ↦ f x.1) : ℝ)) =
@@ -998,7 +1001,7 @@ lemma finiteAverage_eq_of_restriction
 /-- The normalized cardinality of a cylinder event is the normalized
 cardinality of its restriction to the relevant coordinates. -/
 lemma eventRatio_eq_of_restriction
-    {A K : Type*} [Fintype A] [Fintype K] [Nonempty K]
+    {A K : Type*} [Finite A] [Finite K] [Nonempty K]
     (S : Finset A) [Fintype (A → K)] [Fintype (S → K)]
     (P : (S → K) → Prop) (E : Set (A → K))
     (hE : ∀ f, f ∈ E ↔ P (fun x : S ↦ f x.1)) :
@@ -1006,6 +1009,8 @@ lemma eventRatio_eq_of_restriction
       (Set.ncard {g : S → K | P g} : ℝ) /
         Fintype.card (S → K) := by
   classical
+  let := Fintype.ofFinite A
+  let := Fintype.ofFinite K
   have hcard := card_eventFinset_eq_mul_of_restriction S P E hE
   have hS : S.card ≤ Fintype.card A := by
     simpa using Finset.card_le_card (Finset.subset_univ S)
@@ -1050,10 +1055,12 @@ lemma eventRatio_eq_of_restriction
 /-- Reindexing a finite sample space preserves the cardinality of every
 predicate-defined event. -/
 lemma ncard_setOf_comp_equiv
-    {A B : Type*} [Fintype A] [Fintype B]
+    {A B : Type*} [Finite A] [Finite B]
     (e : A ≃ B) (P : B → Prop) :
     Set.ncard {a : A | P (e a)} = Set.ncard {b : B | P b} := by
   classical
+  let := Fintype.ofFinite A
+  let := Fintype.ofFinite B
   let restrictedEquiv : {a : A // P (e a)} ≃ {b : B // P b} := {
     toFun a := ⟨e a.1, a.2⟩
     invFun b := ⟨e.symm b.1, by simpa using b.2⟩
@@ -1102,9 +1109,9 @@ lemma card_fun_eq_two_avoid_finset {A : Type*} [Fintype A]
         else g.2 ⟨x, by simp [T, hxp, hxq, hxS]⟩,
        by
         constructor
-        · simp [hpq]
+        · simp
         constructor
-        · simp [hpq]
+        · simp
         · intro x hxS
           have hxp : x ≠ p := by
             intro h
@@ -1114,17 +1121,17 @@ lemma card_fun_eq_two_avoid_finset {A : Type*} [Fintype A]
             intro h
             subst x
             exact hqS hxS
-          simp only [hxp, hxq, hxS, ↓reduceIte]
+          simp only [hxp, hxq, hxS]
           exact (g.1 ⟨x, hxS⟩).2⟩
     left_inv f := by
       apply Subtype.ext
       funext x
       by_cases hxp : x = p
       · subst x
-        simp [hpq, f.2.1]
+        simp [f.2.1]
       by_cases hxq : x = q
       · subst x
-        simp [hpq, f.2.2.1]
+        simp [f.2.2.1]
       by_cases hxS : x ∈ S
       · simp [hxp, hxq, hxS]
       · simp [hxp, hxq, hxS]
@@ -1164,7 +1171,7 @@ lemma card_fun_eq_two_avoid_finset {A : Type*} [Fintype A]
     dsimp only [R]
     rw [Fintype.card_subtype_compl (fun x : A ↦ x ∈ T)]
     have hmem : Fintype.card {x : A // x ∈ T} = T.card := by
-      simpa using Fintype.card_coe T
+      simp
     rw [hmem, hTcard]
     omega
   calc
@@ -1206,9 +1213,9 @@ lemma card_fun_eq_two_avoid_finset_generic
         else g.2 ⟨x, by simp [T, hxp, hxq, hxS]⟩,
        by
         constructor
-        · simp [hpq]
+        · simp
         constructor
-        · simp [hpq]
+        · simp
         · intro x hxS
           have hxp : x ≠ p := by
             intro h
@@ -1218,17 +1225,17 @@ lemma card_fun_eq_two_avoid_finset_generic
             intro h
             subst x
             exact hqS hxS
-          simp only [hxp, hxq, hxS, ↓reduceIte]
+          simp only [hxp, hxq, hxS]
           exact (g.1 ⟨x, hxS⟩).2⟩
     left_inv f := by
       apply Subtype.ext
       funext x
       by_cases hxp : x = p
       · subst x
-        simp [hpq, f.2.1]
+        simp [f.2.1]
       by_cases hxq : x = q
       · subst x
-        simp [hpq, f.2.2.1]
+        simp [f.2.2.1]
       by_cases hxS : x ∈ S
       · simp [hxp, hxq, hxS]
       · simp [hxp, hxq, hxS]
@@ -1268,7 +1275,7 @@ lemma card_fun_eq_two_avoid_finset_generic
     dsimp only [R]
     rw [Fintype.card_subtype_compl (fun x : A ↦ x ∈ T)]
     have hmem : Fintype.card {x : A // x ∈ T} = T.card := by
-      simpa using Fintype.card_coe T
+      simp
     rw [hmem, hTcard]
     omega
   calc
@@ -1559,10 +1566,11 @@ lemma finset_card_mul_le_of_bipartite_degrees {A B : Type*}
 /-! ## Generic finite matching utilities -/
 
 /-- Every finite simple graph has a matching of maximum cardinality. -/
-lemma exists_maximum_matching {V : Type*} [Fintype V] (G : SimpleGraph V) :
+lemma exists_maximum_matching {V : Type*} [Finite V] (G : SimpleGraph V) :
     ∃ M : G.Subgraph, M.IsMatching ∧
       ∀ N : G.Subgraph, N.IsMatching → N.edgeSet.ncard ≤ M.edgeSet.ncard := by
   classical
+  let := Fintype.ofFinite V
   let matchings : Finset G.Subgraph :=
     Finset.univ.filter SimpleGraph.Subgraph.IsMatching
   have hbottom : (⊥ : G.Subgraph).IsMatching := by
@@ -1579,13 +1587,14 @@ lemma exists_maximum_matching {V : Type*} [Fintype V] (G : SimpleGraph V) :
 
 /-- Choose and orient any prescribed number of edges from a graph matching.
 All chosen endpoints are distinct. -/
-lemma exists_injective_endpoints_of_matching {V : Type*} [Fintype V]
+lemma exists_injective_endpoints_of_matching {V : Type*} [Finite V]
     {G : SimpleGraph V} (M : G.Subgraph) (hM : M.IsMatching) {t : ℕ}
     (ht : t ≤ M.edgeSet.ncard) :
     ∃ left right : Fin t → V,
       Function.Injective (Sum.elim left right) ∧
         ∀ i, G.Adj (left i) (right i) := by
   classical
+  let := Fintype.ofFinite V
   let _ : Fintype M.edgeSet := Fintype.ofFinite M.edgeSet
   have hcard : Fintype.card (Fin t) ≤ Fintype.card M.edgeSet := by
     simpa only [Fintype.card_fin, Set.fintypeCard_eq_ncard] using ht
@@ -1643,10 +1652,11 @@ lemma exists_injective_endpoints_of_matching {V : Type*} [Fintype V]
 
 /-- A finite graph matching has exactly twice as many incident vertices as
 edges. -/
-lemma matching_verts_ncard_generic {V : Type*} [Fintype V]
+lemma matching_verts_ncard_generic {V : Type*} [Finite V]
     {G : SimpleGraph V} (M : G.Subgraph) (hM : M.IsMatching) :
     M.verts.ncard = 2 * M.edgeSet.ncard := by
   classical
+  let := Fintype.ofFinite V
   let _ : Fintype M.verts := Fintype.ofFinite M.verts
   let _ : Fintype M.edgeSet := Fintype.ofFinite M.edgeSet
   have hfiber (y : M.edgeSet) :
@@ -1682,18 +1692,19 @@ lemma matching_verts_ncard_generic {V : Type*} [Fintype V]
     _ = 2 * M.edgeSet.ncard := by rw [Set.fintypeCard_eq_ncard]
 
 /-- The uncovered vertices of a maximum matching form an independent set. -/
-lemma maximum_matching_unmatched_pairwise_not_adj {V : Type*} [Fintype V]
+lemma maximum_matching_unmatched_pairwise_not_adj {V : Type*} [Finite V]
     {G : SimpleGraph V} (M : G.Subgraph) (hM : M.IsMatching)
     (hmax : ∀ N : G.Subgraph, N.IsMatching →
       N.edgeSet.ncard ≤ M.edgeSet.ncard) :
     M.vertsᶜ.Pairwise fun v w ↦ ¬ G.Adj v w := by
   classical
+  let := Fintype.ofFinite V
   intro v hv w hw hvw hadj
   let P := G.subgraphOfAdj hadj
   have hP : P.IsMatching := SimpleGraph.Subgraph.IsMatching.subgraphOfAdj hadj
   have hsupports : Disjoint M.support P.support := by
     rw [hM.support_eq_verts, show P.support = {v, w} by
-      simpa [P] using SimpleGraph.Subgraph.support_subgraphOfAdj hadj]
+      simp [P]]
     rw [Set.disjoint_left]
     intro x hxM hxpair
     rcases hxpair with (rfl | rfl)
@@ -1709,7 +1720,7 @@ lemma maximum_matching_unmatched_pairwise_not_adj {V : Type*} [Fintype V]
     rw [show N.edgeSet = M.edgeSet ∪ P.edgeSet from
       SimpleGraph.Subgraph.edgeSet_sup]
     rw [show P.edgeSet = {s(v, w)} by
-      simpa [P] using SimpleGraph.Subgraph.edgeSet_subgraphOfAdj hadj]
+      simp [P]]
     rw [Set.union_singleton, Set.ncard_insert_of_notMem hnew]
   have := hmax N hN
   omega
@@ -1719,13 +1730,14 @@ enough edges to cover the graph's edge set: every graph edge has an endpoint
 covered by the matching, and the incidence sets of the covered vertices have
 total size at most `2 |M| D`. -/
 lemma card_edgeFinset_le_two_mul_maximumMatching_mul_degree
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     (M : G.Subgraph) (hM : M.IsMatching)
     (hmax : ∀ N : G.Subgraph, N.IsMatching →
       N.edgeSet.ncard ≤ M.edgeSet.ncard)
     (D : ℕ) (hdegree : ∀ v, (G.neighborSet v).ncard ≤ D) :
     G.edgeSet.ncard ≤ 2 * M.edgeSet.ncard * D := by
   classical
+  let := Fintype.ofFinite V
   let : Fintype G.edgeSet := Fintype.ofFinite _
   let (v : V) : Fintype (G.neighborSet v) := Fintype.ofFinite _
   let covered : Finset V := M.verts.toFinset
@@ -1788,11 +1800,13 @@ lemma card_edgeFinset_le_two_mul_maximumMatching_mul_degree
 finite graph of maximum degree `D` has at least `2 t D` edges, it contains a
 matching of size at least `t`. -/
 lemma exists_matching_of_two_mul_mul_le_edgeSet_ncard
-    {V : Type*} [Fintype V] (G : SimpleGraph V) (t D : ℕ)
+    {V : Type*} [Finite V] (G : SimpleGraph V) (t D : ℕ)
     (hD : 0 < D)
     (hdegree : ∀ v, (G.neighborSet v).ncard ≤ D)
     (hedges : 2 * t * D ≤ G.edgeSet.ncard) :
     ∃ M : G.Subgraph, M.IsMatching ∧ t ≤ M.edgeSet.ncard := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨M, hM, hmax⟩ := exists_maximum_matching G
   refine ⟨M, hM, ?_⟩
   have hcover :=
@@ -2987,7 +3001,7 @@ the number of colors forbidden by precolored neighbors plus the total number
 of uncolored neighbors is smaller than the palette.  This is the deterministic
 completion endpoint for the random partial-coloring proof of a locally sparse
 graph-coloring saving. -/
-theorem SimpleGraph.colorable_of_partialColoring [Fintype V]
+theorem SimpleGraph.colorable_of_partialColoring [Finite V]
     (G : SimpleGraph V) {k : ℕ} (hk : 0 < k)
     (S : Set V) (c : S → Fin k)
     (hc : ∀ ⦃x y : S⦄, G.Adj x.1 y.1 → c x ≠ c y)
@@ -2996,6 +3010,7 @@ theorem SimpleGraph.colorable_of_partialColoring [Fintype V]
           (uncoloredNeighborSet G S v).ncard < k) :
     G.Colorable k := by
   classical
+  let := Fintype.ofFinite V
   let fallback : Fin k := ⟨0, hk⟩
   let U : Finset V := Sᶜ.toFinset
   have aux (T : Finset V) (hTU : T ⊆ U) :
@@ -3125,18 +3140,20 @@ def coloredNeighborSet {V : Type*} (G : SimpleGraph V)
   {w | w ∈ S ∧ G.Adj v w}
 
 /-- The colored and uncolored neighbors partition the full neighborhood. -/
-lemma SimpleGraph.coloredNeighbor_ncard_add_uncoloredNeighbor_ncard [Fintype V]
+lemma SimpleGraph.coloredNeighbor_ncard_add_uncoloredNeighbor_ncard [Finite V]
     (G : SimpleGraph V) (S : Set V) (v : V) :
     (coloredNeighborSet G S v).ncard +
         (uncoloredNeighborSet G S v).ncard = (G.neighborSet v).ncard := by
+  classical
+  let := Fintype.ofFinite V
   have hcolored : coloredNeighborSet G S v = G.neighborSet v ∩ S := by
     ext w
-    simp only [coloredNeighborSet, Set.mem_setOf_eq, Set.mem_inter_iff,
+    simp only [coloredNeighborSet, Set.mem_ofPred_eq, Set.mem_inter_iff,
       G.mem_neighborSet]
     tauto
   have huncolored : uncoloredNeighborSet G S v = G.neighborSet v \ S := by
     ext w
-    simp only [uncoloredNeighborSet, Set.mem_setOf_eq, Set.mem_sdiff,
+    simp only [uncoloredNeighborSet, Set.mem_ofPred_eq, Set.mem_sdiff,
       G.mem_neighborSet]
     tauto
   rw [hcolored, huncolored,
@@ -3144,11 +3161,12 @@ lemma SimpleGraph.coloredNeighbor_ncard_add_uncoloredNeighbor_ncard [Fintype V]
 
 /-- The colors visible on the precolored neighbors are no more numerous than
 the precolored neighbors themselves. -/
-lemma fixedNeighborColors_ncard_le_coloredNeighborSet_ncard [Fintype V]
+lemma fixedNeighborColors_ncard_le_coloredNeighborSet_ncard [Finite V]
     (G : SimpleGraph V) {k : ℕ} (S : Set V) (c : S → Fin k) (v : V) :
     (fixedNeighborColors G S c v).ncard ≤
       (coloredNeighborSet G S v).ncard := by
   classical
+  let := Fintype.ofFinite V
   let colorOn : coloredNeighborSet G S v → Fin k := fun x ↦
     c ⟨x.1, x.2.1⟩
   have hrange : fixedNeighborColors G S c v = Set.range colorOn := by
@@ -3172,7 +3190,7 @@ lemma fixedNeighborColors_ncard_le_coloredNeighborSet_ncard [Fintype V]
 on precolored neighbors saves one unit relative to greedy coloring.  If every
 uncolored vertex has enough such savings to bridge the gap from maximum
 degree `Δ` to the target palette `k`, the partial coloring extends. -/
-theorem SimpleGraph.colorable_of_partialColoring_savings [Fintype V]
+theorem SimpleGraph.colorable_of_partialColoring_savings [Finite V]
     (G : SimpleGraph V) {k Δ : ℕ} (hk : 0 < k)
     (S : Set V) (c : S → Fin k)
     (hc : ∀ ⦃x y : S⦄, G.Adj x.1 y.1 → c x ≠ c y)
@@ -3181,6 +3199,8 @@ theorem SimpleGraph.colorable_of_partialColoring_savings [Fintype V]
       Δ + 1 - k ≤ (coloredNeighborSet G S v).ncard -
         (fixedNeighborColors G S c v).ncard) :
     G.Colorable k := by
+  classical
+  let := Fintype.ofFinite V
   apply SimpleGraph.colorable_of_partialColoring G hk S c hc
   intro v hvS
   have hpartition :=
@@ -3196,7 +3216,7 @@ pairs of coloured neighbours, one pair in each of `t` distinct colours.  The
 two members of a pair need not be adjacent (and in a proper partial colouring
 they automatically are not); their repeated colour supplies one unit of the
 required greedy saving. -/
-theorem SimpleGraph.colorable_of_partialColoring_collisionPairs [Fintype V]
+theorem SimpleGraph.colorable_of_partialColoring_collisionPairs [Finite V]
     (G : SimpleGraph V) {k Δ t : ℕ} (hk : 0 < k)
     (S : Set V) (c : S → Fin k)
     (hc : ∀ ⦃x y : S⦄, G.Adj x.1 y.1 → c x ≠ c y)
@@ -3209,6 +3229,8 @@ theorem SimpleGraph.colorable_of_partialColoring_collisionPairs [Fintype V]
           c ⟨(right i).1, (right i).2.1⟩) ∧
         Function.Injective (fun i ↦ c ⟨(left i).1, (left i).2.1⟩)) :
     G.Colorable k := by
+  classical
+  let := Fintype.ofFinite V
   apply SimpleGraph.colorable_of_partialColoring_savings G hk S c hc hdegree
   intro v hvS
   let : Fintype (coloredNeighborSet G S v) := Fintype.ofFinite _
@@ -3362,14 +3384,14 @@ lemma left_notMem_mrPairForbiddenFinset
     p ∉ mrPairForbiddenFinset G v p q := by
   classical
   have hnonadj' : ¬G.Adj q p := fun h ↦ hnonadj h.symm
-  simp [mrPairForbiddenFinset, G.loopless, hnonadj, hnonadj', hpq]
+  simp [mrPairForbiddenFinset, hnonadj', hpq]
 
 lemma right_notMem_mrPairForbiddenFinset
     {V : Type*} [Fintype V] (G : SimpleGraph V) (v p q : V)
-    (hpq : p ≠ q) (hnonadj : ¬G.Adj p q) :
+    (hnonadj : ¬G.Adj p q) :
     q ∉ mrPairForbiddenFinset G v p q := by
   classical
-  simp [mrPairForbiddenFinset, G.loopless, hnonadj, hpq]
+  simp [mrPairForbiddenFinset, hnonadj]
 
 /-- Exact cardinality of a retained-pair cylinder. -/
 lemma card_mrRetainedPairEvent
@@ -3391,18 +3413,19 @@ lemma card_mrRetainedPairEvent
   simpa [mrRetainedPairEvent, Nat.card_eq_fintype_card] using
     (card_fun_eq_two_avoid_finset a (mrPairForbiddenFinset G v p q) hpq
       (left_notMem_mrPairForbiddenFinset G v p q hpq hnonadj)
-      (right_notMem_mrPairForbiddenFinset G v p q hpq hnonadj))
+      (right_notMem_mrPairForbiddenFinset G v p q hnonadj))
 
 /-- Under a maximum-degree bound `Δ`, a retained-pair cylinder forbids at
 most `3Δ-2` coordinates.  The two-unit saving records that the prescribed
 endpoints have been removed from `N(v)`. -/
 lemma mrPairForbiddenFinset_card_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G : SimpleGraph V) (Δ : ℕ)
     (hdegree : ∀ x, (G.neighborSet x).ncard ≤ Δ)
     (v p q : V) (hpq : p ≠ q)
     (hvp : G.Adj v p) (hvq : G.Adj v q) :
     (mrPairForbiddenFinset G v p q).card ≤ 3 * Δ - 2 := by
+  classical
   let Nv := eventFinset (G.neighborSet v)
   let Np := eventFinset (G.neighborSet p)
   let Nq := eventFinset (G.neighborSet q)
@@ -3425,9 +3448,7 @@ lemma mrPairForbiddenFinset_card_le
   calc
     (mrPairForbiddenFinset G v p q).card =
         (((Nv.erase p).erase q) ∪ Np ∪ Nq).card := by
-      congr 1
-      ext x
-      simp [mrPairForbiddenFinset, Nv, Np, Nq]
+      rfl
     _ ≤ ((Nv.erase p).erase q).card + Np.card + Nq.card := by
       exact (Finset.card_union_le _ _).trans
         (Nat.add_le_add_right (Finset.card_union_le _ _) _)
@@ -3525,8 +3546,7 @@ lemma mem_retainedNeighborColorFiber_alwaysActive
 selected color to the retained collision set. -/
 lemma mrRetainedPairEvent_subset_retainedCollisionColors
     {V : Type*} [Fintype V] (G : SimpleGraph V) {C : ℕ}
-    (v p q : V) (a : Fin C)
-    (hpq : p ≠ q) (hnonadj : ¬G.Adj p q)
+    (v p q : V) (a : Fin C) (hpq : p ≠ q)
     (hvp : G.Adj v p) (hvq : G.Adj v q) :
     mrRetainedPairEvent G v p q a ⊆
       {sample | a ∈ retainedCollisionColors G (alwaysActiveSample sample) v} := by
@@ -3616,7 +3636,7 @@ lemma retainedCollision_of_mrRetainedPairWitness
     a ∈ retainedCollisionColors G (alwaysActiveSample sample) v := by
   have he := nonadjacentNeighborPairGraph_edge_out G v e
   exact mrRetainedPairEvent_subset_retainedCollisionColors
-    G v e.1.out.1 e.1.out.2 a he.1 he.2.2.2 he.2.1 he.2.2.1 h
+    G v e.1.out.1 e.1.out.2 a he.1 he.2.1 he.2.2.1 h
 
 /-- Summing realized retained-pair cylinders over colors does not exceed the
 number of retained collision colors in the sample. -/
@@ -3650,7 +3670,7 @@ sample.  The uniqueness lemma bounds the latter multiplicity by the number
 of retained collision colors. -/
 lemma sum_card_mrRetainedPairEvent_le_sum_retainedCollisionColors
     {V : Type*} [Fintype V] [DecidableEq V]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    (G : SimpleGraph V)
     {C : ℕ} (v : V)
     [DecidableRel (nonadjacentNeighborPairGraph G v).Adj] :
     (∑ a : Fin C,
@@ -3720,9 +3740,8 @@ lemma sum_card_mrRetainedPairEvent_le_sum_retainedCollisionColors
 `m` on the forbidden support of the retained-pair cylinders. -/
 lemma retainedCollisionColors_expectation_lower_bound
     {V : Type*} [Fintype V] [DecidableEq V]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    (G : SimpleGraph V)
     {C m : ℕ} (v : V)
-    [DecidableRel (nonadjacentNeighborPairGraph G v).Adj]
     (hsupport : ∀ e : (nonadjacentNeighborPairGraph G v).edgeSet,
       (mrPairForbiddenFinset G v e.1.out.1 e.1.out.2).card ≤ m)
     (hmV : m + 2 ≤ Fintype.card V) :
@@ -3764,9 +3783,8 @@ lemma retainedCollisionColors_expectation_lower_bound
 `3Δ-2` discharged from a maximum-degree hypothesis. -/
 lemma retainedCollisionColors_expectation_lower_bound_of_degree
     {V : Type*} [Fintype V] [DecidableEq V]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    (G : SimpleGraph V)
     {C Δ : ℕ} (v : V)
-    [DecidableRel (nonadjacentNeighborPairGraph G v).Adj]
     (hdegree : ∀ x, (G.neighborSet x).ncard ≤ Δ)
     (hambient : (3 * Δ - 2) + 2 ≤ Fintype.card V) :
     C * (nonadjacentNeighborPairGraph G v).edgeSet.ncard *
@@ -3774,6 +3792,7 @@ lemma retainedCollisionColors_expectation_lower_bound_of_degree
           C ^ (Fintype.card V - (3 * Δ - 2) - 2)) ≤
       ∑ sample : V → Fin C,
         (retainedCollisionColors G (alwaysActiveSample sample) v).ncard := by
+  classical
   apply retainedCollisionColors_expectation_lower_bound G v
   · intro e
     have he := nonadjacentNeighborPairGraph_edge_out G v e
@@ -4557,9 +4576,11 @@ lemma mem_mrDeletedCollisionColors_iff_of_agreeAwayFrom
 /-- If membership in two finite sets agrees outside two exceptional points,
 then either set has cardinality at most the other's cardinality plus two. -/
 lemma ncard_le_ncard_add_two_of_mem_iff_outside
-    {A : Type*} [Fintype A] (S T : Set A) (p q : A)
+    {A : Type*} [Finite A] (S T : Set A) (p q : A)
     (hiff : ∀ a, a ≠ p → a ≠ q → (a ∈ S ↔ a ∈ T)) :
     S.ncard ≤ T.ncard + 2 := by
+  classical
+  let := Fintype.ofFinite A
   have hsubset : S ⊆ T ∪ {p, q} := by
     intro a ha
     by_cases hap : a = p
@@ -4586,11 +4607,13 @@ def CoordinateLipschitz {A K : Type*}
 /-- The tentative-collision count in the diluted experiment is still
 two-Lipschitz under a one-coordinate change. -/
 lemma dilutedTentativeCollisionColors_ncard_coordinateLipschitz
-    {V : Type*} [Fintype V] (G : SimpleGraph V) {A C : ℕ}
+    {V : Type*} [Finite V] (G : SimpleGraph V) {A C : ℕ}
     (active : Fin A) (v : V) :
     CoordinateLipschitz
       (fun sample : V → Fin A × Fin C ↦
         (tentativeCollisionColors G (dilutedSample active sample) v).ncard) 2 := by
+  classical
+  let := Fintype.ofFinite V
   intro sample sample' x heq
   have hlift :
       AgreeAwayFrom (dilutedSample active sample)
@@ -4601,16 +4624,16 @@ lemma dilutedTentativeCollisionColors_ncard_coordinateLipschitz
       (tentativeCollisionColors G (dilutedSample active sample) v).ncard ≤
         (tentativeCollisionColors G (dilutedSample active sample') v).ncard + 2 := by
     apply ncard_le_ncard_add_two_of_mem_iff_outside
-    intro a ha ha'
-    exact mem_tentativeCollisionColors_iff_of_agreeAwayFrom_general
-      G hlift ha ha'
+    · intro a ha ha'
+      exact mem_tentativeCollisionColors_iff_of_agreeAwayFrom_general
+        G hlift ha ha'
   have hbackward :
       (tentativeCollisionColors G (dilutedSample active sample') v).ncard ≤
         (tentativeCollisionColors G (dilutedSample active sample) v).ncard + 2 := by
     apply ncard_le_ncard_add_two_of_mem_iff_outside
-    intro a ha' ha
-    exact mem_tentativeCollisionColors_iff_of_agreeAwayFrom_general
-      G hlift.symm ha' ha
+    · intro a ha' ha
+      exact mem_tentativeCollisionColors_iff_of_agreeAwayFrom_general
+        G hlift.symm ha' ha
   change Nat.dist
     (tentativeCollisionColors G (dilutedSample active sample) v).ncard
     (tentativeCollisionColors G (dilutedSample active sample') v).ncard ≤ 2
@@ -4684,7 +4707,7 @@ high outcome on the high outcome's certificate: if their statistic values
 are separated by `t`, then the certificate contains enough changed
 coordinates to pay at least `t/c`. -/
 lemma exists_certificate_with_lipschitz_separation
-    {A K : Type*} [Fintype A] [DecidableEq A]
+    {A K : Type*} [Fintype A]
     {X : (A → K) → ℕ} {c r : ℕ}
     (hLip : CoordinateLipschitz X c)
     (hCert : CoordinateCertifiable X r)
@@ -4692,6 +4715,7 @@ lemma exists_certificate_with_lipschitz_separation
     (hhigh : s ≤ X high) (hlow : X low + t ≤ s) :
     ∃ Q : Finset A, Q.card ≤ r * s ∧ t ≤ c * Q.card ∧
       ∀ sample', (∀ x ∈ Q, sample' x = high x) → s ≤ X sample' := by
+  classical
   obtain ⟨Q, hQcard, hQcert⟩ := hCert high s hhigh
   refine ⟨Q, hQcard, ?_, hQcert⟩
   let patched := patchAssignment Q low high
@@ -4708,24 +4732,26 @@ lemma exists_certificate_with_lipschitz_separation
 /-- The number of tentative collision colors is `2`-Lipschitz, exactly as in
 the bounded-difference half of Molloy--Reed Lemma 10.7. -/
 lemma mrTentativeCollisionColors_ncard_coordinateLipschitz
-    {V : Type*} [Fintype V] (G : SimpleGraph V) {C : ℕ} (v : V) :
+    {V : Type*} [Finite V] (G : SimpleGraph V) {C : ℕ} (v : V) :
     CoordinateLipschitz
       (fun sample : V → Fin C ↦
         (tentativeCollisionColors G (alwaysActiveSample sample) v).ncard) 2 := by
+  classical
+  let := Fintype.ofFinite V
   intro sample sample' x heq
   have hforward :
       (tentativeCollisionColors G (alwaysActiveSample sample) v).ncard ≤
         (tentativeCollisionColors G (alwaysActiveSample sample') v).ncard + 2 := by
     apply ncard_le_ncard_add_two_of_mem_iff_outside
-    intro a ha ha'
-    exact mem_tentativeCollisionColors_iff_of_agreeAwayFrom G heq ha ha'
+    · intro a ha ha'
+      exact mem_tentativeCollisionColors_iff_of_agreeAwayFrom G heq ha ha'
   have hbackward :
       (tentativeCollisionColors G (alwaysActiveSample sample') v).ncard ≤
         (tentativeCollisionColors G (alwaysActiveSample sample) v).ncard + 2 := by
     apply ncard_le_ncard_add_two_of_mem_iff_outside
-    intro a ha' ha
-    exact mem_tentativeCollisionColors_iff_of_agreeAwayFrom
-      G heq.symm ha' ha
+    · intro a ha' ha
+      exact mem_tentativeCollisionColors_iff_of_agreeAwayFrom
+        G heq.symm ha' ha
   change Nat.dist
     (tentativeCollisionColors G (alwaysActiveSample sample) v).ncard
     (tentativeCollisionColors G (alwaysActiveSample sample') v).ncard ≤ 2
@@ -5333,24 +5359,26 @@ lemma mrTentativeCollisionColors_ncard_coordinateCertifiable
 /-- The number of spoiled collision colors is also `2`-Lipschitz: one changed
 coordinate can affect only its old and new colors. -/
 lemma mrSpoiledCollisionColors_ncard_coordinateLipschitz
-    {V : Type*} [Fintype V] (G : SimpleGraph V) {C : ℕ} (v : V) :
+    {V : Type*} [Finite V] (G : SimpleGraph V) {C : ℕ} (v : V) :
     CoordinateLipschitz
       (fun sample : V → Fin C ↦
         (spoiledCollisionColors G (alwaysActiveSample sample) v).ncard) 2 := by
+  classical
+  let := Fintype.ofFinite V
   intro sample sample' x heq
   have hforward :
       (spoiledCollisionColors G (alwaysActiveSample sample) v).ncard ≤
         (spoiledCollisionColors G (alwaysActiveSample sample') v).ncard + 2 := by
     apply ncard_le_ncard_add_two_of_mem_iff_outside
-    intro a ha ha'
-    exact mem_spoiledCollisionColors_iff_of_agreeAwayFrom G heq ha ha'
+    · intro a ha ha'
+      exact mem_spoiledCollisionColors_iff_of_agreeAwayFrom G heq ha ha'
   have hbackward :
       (spoiledCollisionColors G (alwaysActiveSample sample') v).ncard ≤
         (spoiledCollisionColors G (alwaysActiveSample sample) v).ncard + 2 := by
     apply ncard_le_ncard_add_two_of_mem_iff_outside
-    intro a ha' ha
-    exact mem_spoiledCollisionColors_iff_of_agreeAwayFrom
-      G heq.symm ha' ha
+    · intro a ha' ha
+      exact mem_spoiledCollisionColors_iff_of_agreeAwayFrom
+        G heq.symm ha' ha
   change Nat.dist
     (spoiledCollisionColors G (alwaysActiveSample sample) v).ncard
     (spoiledCollisionColors G (alwaysActiveSample sample') v).ncard ≤ 2
@@ -5359,24 +5387,26 @@ lemma mrSpoiledCollisionColors_ncard_coordinateLipschitz
 
 /-- Molloy--Reed's actual deletion variable is `2`-Lipschitz. -/
 lemma mrDeletedCollisionColors_ncard_coordinateLipschitz
-    {V : Type*} [Fintype V] (G : SimpleGraph V) {C : ℕ} (v : V) :
+    {V : Type*} [Finite V] (G : SimpleGraph V) {C : ℕ} (v : V) :
     CoordinateLipschitz
       (fun sample : V → Fin C ↦
         (mrDeletedCollisionColors G sample v).ncard) 2 := by
+  classical
+  let := Fintype.ofFinite V
   intro sample sample' x heq
   have hforward :
       (mrDeletedCollisionColors G sample v).ncard ≤
         (mrDeletedCollisionColors G sample' v).ncard + 2 := by
     apply ncard_le_ncard_add_two_of_mem_iff_outside
-    intro a ha ha'
-    exact mem_mrDeletedCollisionColors_iff_of_agreeAwayFrom G heq ha ha'
+    · intro a ha ha'
+      exact mem_mrDeletedCollisionColors_iff_of_agreeAwayFrom G heq ha ha'
   have hbackward :
       (mrDeletedCollisionColors G sample' v).ncard ≤
         (mrDeletedCollisionColors G sample v).ncard + 2 := by
     apply ncard_le_ncard_add_two_of_mem_iff_outside
-    intro a ha' ha
-    exact mem_mrDeletedCollisionColors_iff_of_agreeAwayFrom
-      G heq.symm ha' ha
+    · intro a ha' ha
+      exact mem_mrDeletedCollisionColors_iff_of_agreeAwayFrom
+        G heq.symm ha' ha
   change Nat.dist
     (mrDeletedCollisionColors G sample v).ncard
     (mrDeletedCollisionColors G sample' v).ncard ≤ 2
@@ -5476,9 +5506,8 @@ lemma retainedCollisionColors_subset_tentativeCollisionColors
 the source's tentative-collision statistic. -/
 lemma tentativeCollisionColors_expectation_lower_bound_of_degree
     {V : Type*} [Fintype V] [DecidableEq V]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    (G : SimpleGraph V)
     {C Δ : ℕ} (v : V)
-    [DecidableRel (nonadjacentNeighborPairGraph G v).Adj]
     (hdegree : ∀ x, (G.neighborSet x).ncard ≤ Δ)
     (hambient : (3 * Δ - 2) + 2 ≤ Fintype.card V) :
     C * (nonadjacentNeighborPairGraph G v).edgeSet.ncard *
@@ -5486,6 +5515,7 @@ lemma tentativeCollisionColors_expectation_lower_bound_of_degree
           C ^ (Fintype.card V - (3 * Δ - 2) - 2)) ≤
       ∑ sample : V → Fin C,
         (tentativeCollisionColors G (alwaysActiveSample sample) v).ncard := by
+  classical
   have hretained := retainedCollisionColors_expectation_lower_bound_of_degree
     (C := C) (Δ := Δ) G v hdegree hambient
   apply hretained.trans
@@ -5501,9 +5531,8 @@ is a lower bound for the mean of the neighborhood-reindexed tentative
 statistic. -/
 lemma mrTentativeFinStatistic_finiteAverage_lower_bound_of_degree
     {V : Type*} [Fintype V] [DecidableEq V]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    (G : SimpleGraph V)
     {C Δ : ℕ} [Nonempty (Fin C)] (v : V)
-    [DecidableRel (nonadjacentNeighborPairGraph G v).Adj]
     [Fintype (G.neighborSet v)] (default : Fin C)
     (hdegree : ∀ x, (G.neighborSet x).ncard ≤ Δ)
     (hambient : (3 * Δ - 2) + 2 ≤ Fintype.card V) :
@@ -5513,6 +5542,7 @@ lemma mrTentativeFinStatistic_finiteAverage_lower_bound_of_degree
         Fintype.card (V → Fin C) ≤
       finiteAverage
         (fun z ↦ (mrTentativeFinStatistic G v default z : ℝ)) := by
+  classical
   have hsum := tentativeCollisionColors_expectation_lower_bound_of_degree
     (C := C) (Δ := Δ) G v hdegree hambient
   have hsumReal :
@@ -5529,11 +5559,13 @@ lemma mrTentativeFinStatistic_finiteAverage_lower_bound_of_degree
 
 /-- Tentative collisions split disjointly into retained and spoiled colors. -/
 lemma spoiledCollisionColors_ncard_add_retainedCollisionColors_ncard
-    {V : Type*} [Fintype V] (G : SimpleGraph V) {k : ℕ}
+    {V : Type*} [Finite V] (G : SimpleGraph V) {k : ℕ}
     (sample : V → Bool × Fin k) (v : V) :
     (spoiledCollisionColors G sample v).ncard +
         (retainedCollisionColors G sample v).ncard =
       (tentativeCollisionColors G sample v).ncard := by
+  classical
+  let := Fintype.ofFinite V
   exact Set.ncard_sdiff_add_ncard_of_subset
     (retainedCollisionColors_subset_tentativeCollisionColors G sample v)
 
@@ -5542,11 +5574,12 @@ cardinality condition that at least `t` colors occur twice on retained
 neighbors.  This is the exact deterministic bridge used by the later
 concentration estimate. -/
 lemma hasRandomCollisionCertificate_iff_le_retainedCollisionColors_ncard
-    {V : Type*} [Fintype V] (G : SimpleGraph V) {k t : ℕ}
+    {V : Type*} [Finite V] (G : SimpleGraph V) {k t : ℕ}
     (sample : V → Bool × Fin k) (v : V) :
     HasRandomCollisionCertificate G sample t v ↔
       t ≤ (retainedCollisionColors G sample v).ncard := by
   classical
+  let := Fintype.ofFinite V
   constructor
   · rintro ⟨left, right, hendpoints, hretained, hcollision, hcolors⟩
     let color : Fin t → Fin k := fun i ↦ (sample (left i)).2
@@ -5679,9 +5712,8 @@ def mrSpoiledCollisionExcessEvent {V : Type*} [Fintype V]
 event, with its mean margin discharged by the retained-pair cylinder count. -/
 lemma card_mrTentativeCollisionShortfallEvent_le_exp_of_degree
     {V : Type*} [Fintype V] [DecidableEq V]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    (G : SimpleGraph V)
     {C Δ : ℕ} (hC : 0 < C) (a : ℕ) (v : V)
-    [DecidableRel (nonadjacentNeighborPairGraph G v).Adj]
     [Fintype (G.neighborSet v)]
     (hneighbor : 0 < Fintype.card (G.neighborFinset v))
     (default : Fin C) {ε : ℝ} (hε : 0 ≤ ε)
@@ -5697,6 +5729,7 @@ lemma card_mrTentativeCollisionShortfallEvent_le_exp_of_degree
         Fintype.card (V → Fin C) ≤
       Real.exp (-ε ^ 2 /
         (2 * Fintype.card (G.neighborFinset v) * (2 : ℝ) ^ 2)) := by
+  classical
   let : Nonempty (Fin C) := Fin.pos_iff_nonempty.mp hC
   have hmean := mrTentativeFinStatistic_finiteAverage_lower_bound_of_degree
     (C := C) (Δ := Δ) G v default hdegree hambient
@@ -5772,11 +5805,13 @@ lemma mrRetainedCollisionShortfallEvent_subset_tentative_union_spoiled
     omega
 
 lemma mem_localColoringBadEvent_iff_retainedCollisionColors_ncard_lt
-    {V : Type*} [Fintype V] (G : SimpleGraph V) {k t : ℕ}
+    {V : Type*} [Finite V] (G : SimpleGraph V) {k t : ℕ}
     (sample : V → Bool × Fin k) (v : V) :
     sample ∈ localColoringBadEvent G t v ↔
       v ∉ randomRetainedSet G sample ∧
         (retainedCollisionColors G sample v).ncard < t := by
+  classical
+  let := Fintype.ofFinite V
   rw [show sample ∈ localColoringBadEvent G t v ↔
       v ∉ randomRetainedSet G sample ∧
         ¬HasRandomCollisionCertificate G sample t v from Iff.rfl,
@@ -5800,7 +5835,7 @@ def twoStepSupport {V : Type*} (G : SimpleGraph V) (v : V) : Set V :=
 /-- If one sample avoids every local bad event, its retained vertices and
 tentative colors form a proper partial coloring with enough repeated-color
 certificates to extend to a total coloring. -/
-theorem SimpleGraph.colorable_of_no_localColoringBadEvents [Fintype V]
+theorem SimpleGraph.colorable_of_no_localColoringBadEvents [Finite V]
     (G : SimpleGraph V) {k Δ t : ℕ} (hk : 0 < k)
     (hdegree : ∀ v, (G.neighborSet v).ncard ≤ Δ)
     (hgap : Δ + 1 - k ≤ t)
@@ -5808,6 +5843,7 @@ theorem SimpleGraph.colorable_of_no_localColoringBadEvents [Fintype V]
     (havoid : ∀ v, sample ∉ localColoringBadEvent G t v) :
     G.Colorable k := by
   classical
+  let := Fintype.ofFinite V
   let S := randomRetainedSet G sample
   let c : S → Fin k := fun v ↦ (sample v.1).2
   have hc : ∀ ⦃x y : S⦄, G.Adj x.1 y.1 → c x ≠ c y := by
@@ -5841,7 +5877,7 @@ round uses only `C` tentative colors, while the final greedy coloring may use
 the larger palette `Fin k`.  Retained tentative colors are embedded into that
 larger palette, and `t` repeated retained colors at every vertex supply the
 savings needed to complete the coloring. -/
-theorem SimpleGraph.colorable_of_mr_collision_certificates [Fintype V]
+theorem SimpleGraph.colorable_of_mr_collision_certificates [Finite V]
     (G : SimpleGraph V) {C k Δ t : ℕ} (hk : 0 < k) (hCk : C ≤ k)
     (hdegree : ∀ v, (G.neighborSet v).ncard ≤ Δ)
     (hgap : Δ + 1 - k ≤ t)
@@ -5850,6 +5886,7 @@ theorem SimpleGraph.colorable_of_mr_collision_certificates [Fintype V]
       HasRandomCollisionCertificate G (alwaysActiveSample sample) t v) :
     G.Colorable k := by
   classical
+  let := Fintype.ofFinite V
   let S := randomRetainedSet G (alwaysActiveSample sample)
   let emb : Fin C ↪ Fin k := Fin.castLEEmb hCk
   let c : S → Fin k := fun v ↦ emb (sample v.1)
@@ -6059,8 +6096,7 @@ lemma closedNeighborFinset_card_le {V : Type*} [Fintype V] [DecidableEq V]
   calc
     (closedNeighborFinset G v).card ≤
         1 + (eventFinset (G.neighborSet v)).card := by
-      simpa [closedNeighborFinset, Nat.add_comm] using
-        Finset.card_insert_le v (eventFinset (G.neighborSet v))
+      simp [closedNeighborFinset, Nat.add_comm]
     _ ≤ 1 + Δ := Nat.add_le_add_left hneighbor 1
     _ = Δ + 1 := by omega
 
@@ -6550,10 +6586,11 @@ def internalNeighborSet (H : IndexedHypergraph X E) (S : Set E) (e : E) : Set E 
 every labeled edge suffice for a proper `k`-coloring.  This is the elementary
 greedy endpoint used repeatedly after the large-edge ordering estimates in the
 Kang--Kelly--Kühn--Methuku--Osthus proof. -/
-theorem edgeColorable_of_neighbor_ncard_lt [Fintype E]
+theorem edgeColorable_of_neighbor_ncard_lt [Finite E]
     (H : IndexedHypergraph X E) {k : ℕ} (hk : 0 < k)
     (hneighbors : ∀ e, (H.neighborSet e).ncard < k) : H.EdgeColorable k := by
   classical
+  let := Fintype.ofFinite E
   let fallback : Fin k := ⟨0, hk⟩
   have aux : ∀ S : Finset E, ∃ c : E → Fin k,
       ∀ ⦃e f : E⦄, e ∈ S → f ∈ S → e ≠ f →
@@ -6614,12 +6651,13 @@ theorem edgeColorable_of_neighbor_ncard_lt [Fintype E]
 /-- Ordered greedy edge coloring.  It is enough that every edge have fewer
 than `k` conflicting predecessors in one injective numerical ordering; later
 neighbors do not constrain the color at the moment it is chosen. -/
-theorem edgeColorable_of_earlierNeighbor_ncard_lt [Fintype E]
+theorem edgeColorable_of_earlierNeighbor_ncard_lt [Finite E]
     (H : IndexedHypergraph X E) {k : ℕ} (hk : 0 < k)
     (rank : E → ℕ) (hrank : Function.Injective rank)
     (hearlier : ∀ e, (H.earlierNeighborSet rank e).ncard < k) :
     H.EdgeColorable k := by
   classical
+  let := Fintype.ofFinite E
   let fallback : Fin k := ⟨0, hk⟩
   have aux : ∀ m : ℕ, ∃ c : E → Fin k,
       ∀ ⦃e f : E⦄, rank e < m → rank f < m → e ≠ f →
@@ -6700,12 +6738,13 @@ theorem edgeColorable_of_earlierNeighbor_ncard_lt [Fintype E]
 /-- Finite peeling/degeneracy coloring.  If every nonempty edge subfamily has
 an edge with fewer than `k` conflicts inside that subfamily, recursively remove
 such an edge and color it last. -/
-theorem edgeColorable_of_peelable [Fintype E]
+theorem edgeColorable_of_peelable [Finite E]
     (H : IndexedHypergraph X E) {k : ℕ} (hk : 0 < k)
     (hpeel : ∀ S : Set E, S.Nonempty →
       ∃ e ∈ S, (H.internalNeighborSet S e).ncard < k) :
     H.EdgeColorable k := by
   classical
+  let := Fintype.ofFinite E
   let fallback : Fin k := ⟨0, hk⟩
   have aux (S : Finset E) : ∃ c : E → Fin k,
       ∀ ⦃e f : E⦄, e ∈ S → f ∈ S → e ≠ f →
@@ -6766,12 +6805,13 @@ theorem edgeColorable_of_peelable [Fintype E]
 /-- The peeling dichotomy: either greedy peeling yields a `k`-edge-coloring,
 or some nonempty subfamily has internal conflict degree at least `k` at every
 edge.  KKKMO's reordering lemma refines the structure of this dense branch. -/
-theorem edgeColorable_or_dense_subfamily [Fintype E]
+theorem edgeColorable_or_dense_subfamily [Finite E]
     (H : IndexedHypergraph X E) {k : ℕ} (hk : 0 < k) :
     H.EdgeColorable k ∨
       ∃ S : Set E, S.Nonempty ∧
         ∀ e ∈ S, k ≤ (H.internalNeighborSet S e).ncard := by
   classical
+  let := Fintype.ofFinite E
   by_cases hpeel : ∀ S : Set E, S.Nonempty →
       ∃ e ∈ S, (H.internalNeighborSet S e).ncard < k
   · exact Or.inl (H.edgeColorable_of_peelable hk hpeel)
@@ -6851,7 +6891,7 @@ lemma incidentEdges_ncard_le [Fintype X] (H : SetHypergraph X)
       have hyx : y = x := by
         by_contra hyx
         exact he ⟨y, hy, hyx⟩
-      simpa [hyx]
+      simp [hyx]
     · intro hy
       have hyx : y = x := by simpa using hy
       subst y
@@ -6886,7 +6926,7 @@ lemma incidentEdges_ncard_le [Fintype X] (H : SetHypergraph X)
 
 /-- Incidence double counting for an edge family `S` and vertex family
 `bad`.  This is the abstract form of (5.11). -/
-lemma vertex_edge_incidence_bound [Fintype X] (H : SetHypergraph X)
+lemma vertex_edge_incidence_bound [Finite X] (H : SetHypergraph X)
     (S : Finset H) (bad : Finset X)
     [DecidableRel fun (e : H) (x : X) ↦ x ∈ e.1]
     (q k : ℕ)
@@ -6894,11 +6934,12 @@ lemma vertex_edge_incidence_bound [Fintype X] (H : SetHypergraph X)
     (hedge : ∀ e ∈ S, (bad.filter fun x ↦ x ∈ e.1).card ≤ k) :
     bad.card * q ≤ S.card * k := by
   classical
+  let := Fintype.ofFinite X
   exact finset_card_mul_le_of_bipartite_degrees S bad
     (fun e x ↦ x ∈ e.1) q k hvertex hedge
 
 /-- The same incidence count with the two bipartition classes exchanged. -/
-lemma edge_vertex_incidence_bound [Fintype X] (H : SetHypergraph X)
+lemma edge_vertex_incidence_bound [Finite X] (H : SetHypergraph X)
     (S : Finset H) (bad : Finset X)
     [DecidableRel fun (x : X) (e : H) ↦ x ∈ e.1]
     (q k : ℕ)
@@ -6906,6 +6947,7 @@ lemma edge_vertex_incidence_bound [Fintype X] (H : SetHypergraph X)
     (hvertex : ∀ x ∈ bad, (S.filter fun e ↦ x ∈ e.1).card ≤ k) :
     S.card * q ≤ bad.card * k := by
   classical
+  let := Fintype.ofFinite X
   exact finset_card_mul_le_of_bipartite_degrees bad S
     (fun x e ↦ x ∈ e.1) q k hedge hvertex
 
@@ -7010,21 +7052,23 @@ This is the family denoted `A_x` in Proposition 5.5. -/
 def smallIncidentEdges (H : SetHypergraph X) (x : X) (k : ℕ) : Set H :=
   {e | x ∈ e.1 ∧ e.1.ncard < k}
 
-lemma smallIncidentEdges_ncard_le_incidentEdges [Fintype X]
+lemma smallIncidentEdges_ncard_le_incidentEdges [Finite X]
     (H : SetHypergraph X) (x : X) (k : ℕ) :
     (H.smallIncidentEdges x k).ncard ≤ (H.incidentEdges x).ncard := by
   classical
+  let := Fintype.ofFinite X
   let _ : Fintype H := Fintype.ofFinite H
   exact Set.ncard_le_ncard (fun _e he ↦ he.1) (Set.toFinite _)
 
 /-- Equation (5.11) before the paper's asymptotic simplification.  Vertices
 incident with at least `q` sub-scale edges are few because every such edge has
 at most `k-1` vertices. -/
-lemma badVertices_ncard_mul_le_subscaleEdges [Fintype X]
+lemma badVertices_ncard_mul_le_subscaleEdges [Finite X]
     (H : SetHypergraph X) (k q : ℕ) :
     ({x | q ≤ (H.smallIncidentEdges x k).ncard} : Set X).ncard * q ≤
       ({e : H | e.1.ncard < k} : Set H).ncard * (k - 1) := by
   classical
+  let := Fintype.ofFinite X
   let _ : Fintype H := Fintype.ofFinite H
   let S : Set H := {e | e.1.ncard < k}
   let bad : Set X := {x | q ≤ (H.smallIncidentEdges x k).ncard}
@@ -7147,15 +7191,17 @@ lemma heavyProjectiveEdges_ncard_mul_le_badVertices [Fintype X]
 /-- A projective-scale edge which is not heavy on `bad` retains many vertices
 outside `bad`.  The hypothesis `q+s ≤ k+1` is the exact integral rounding of
 `q ≤ k-(s-1)`. -/
-lemma ncard_sdiff_ge_of_ncard_inter_lt [Fintype X]
+lemma ncard_sdiff_ge_of_ncard_inter_lt [Finite X]
     (e bad : Set X) (k s q : ℕ) (he : e.ncard = k)
     (hinter : (e ∩ bad).ncard < s) (hqs : q + s ≤ k + 1) :
     q ≤ (e \ bad).ncard := by
+  classical
+  let := Fintype.ofFinite X
   have hsubset : e ∩ bad ⊆ e := Set.inter_subset_left
   have hdiff : (e \ bad).ncard = e.ncard - (e ∩ bad).ncard := by
     rw [show e \ bad = e \ (e ∩ bad) by
       ext x
-      simp only [Set.mem_diff, Set.mem_inter_iff]
+      simp only [Set.mem_sdiff, Set.mem_inter_iff]
       tauto]
     exact Set.ncard_sdiff hsubset
   rw [hdiff, he]
@@ -7294,13 +7340,14 @@ If distinct linear-hypergraph edges `e` and `f` meet at `w`, then a common
 neighbor through `w` is one of the other edges incident with `w`; a common
 neighbor not through `w` injects into `(e \ {w}) × (f \ {w})` by its two
 intersection points. -/
-lemma commonNeighborEdges_ncard_le [Fintype X] (H : SetHypergraph X)
+lemma commonNeighborEdges_ncard_le [Finite X] (H : SetHypergraph X)
     (hlinear : H.IsLinear) (e f : H) (hef : e ≠ f)
     (w : X) (hwe : w ∈ e.1) (hwf : w ∈ f.1) :
     (H.commonNeighborEdges e f).ncard ≤
       (e.1.ncard - 1) * (f.1.ncard - 1) +
         (H.incidentEdges w).ncard - 2 := by
   classical
+  let := Fintype.ofFinite X
   let _ : Fintype (H.commonNeighborEdges e f) :=
     Fintype.ofFinite (H.commonNeighborEdges e f)
   let meetE (g : H.commonNeighborEdges e f) : X :=
@@ -7353,29 +7400,9 @@ lemma commonNeighborEdges_ncard_le [Fintype X] (H : SetHypergraph X)
           simpa [code, hwg, hwh] using hproject
         apply Subtype.ext
         exact congrArg (fun z : B ↦ z.1) hright
-      · have hcontra :
-            (Sum.inr ⟨g.1, by
-              exact ⟨hwg, by
-                simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
-                exact ⟨fun hge ↦ g.2.1.1 hge.symm,
-                  fun hgf ↦ g.2.2.1 hgf.symm⟩⟩⟩ : A ⊕ B) =
-              Sum.inl
-                (⟨meetE h, meetE_mem_e h, by simpa using meetE_ne_w h hwh⟩,
-                  ⟨meetF h, meetF_mem_f h, by simpa using meetF_ne_w h hwh⟩) := by
-          simpa [code, hwg, hwh] using hcode
-        exact (Sum.inr_ne_inl hcontra).elim
+      · simp [code, hwg, hwh] at hcode
     · by_cases hwh : w ∈ h.1.1
-      · have hcontra :
-            (Sum.inl
-              (⟨meetE g, meetE_mem_e g, by simpa using meetE_ne_w g hwg⟩,
-                ⟨meetF g, meetF_mem_f g, by simpa using meetF_ne_w g hwg⟩) : A ⊕ B) =
-              Sum.inr ⟨h.1, by
-                exact ⟨hwh, by
-                  simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
-                  exact ⟨fun hhe ↦ h.2.1.1 hhe.symm,
-                    fun hhf ↦ h.2.2.1 hhf.symm⟩⟩⟩ := by
-          simpa [code, hwg, hwh] using hcode
-        exact (Sum.inl_ne_inr hcontra).elim
+      · simp [code, hwg, hwh] at hcode
       · have hleft :
             ((⟨meetE g, meetE_mem_e g, by simpa using meetE_ne_w g hwg⟩,
               ⟨meetF g, meetF_mem_f g, by simpa using meetF_ne_w g hwg⟩) : A) =
@@ -7468,7 +7495,7 @@ of Lemma 5.1 as an ordinary matching problem. -/
 def usefulPairGraph (H : SetHypergraph X) (n : ℕ) : SimpleGraph H where
   Adj e f := H.IsUseful n e f
   symm := ⟨fun _ _ h ↦ h.symm⟩
-  loopless := ⟨fun e h ↦ h.1 rfl⟩
+  loopless := ⟨fun _ h ↦ h.1 rfl⟩
 
 @[simp]
 lemma usefulPairGraph_adj (H : SetHypergraph X) (n : ℕ) {e f : H} :
@@ -7480,12 +7507,12 @@ def usefulPairGraphOn (H : SetHypergraph X) (n : ℕ) (S : Set H) :
     SimpleGraph S where
   Adj e f := H.IsUseful n e.1 f.1
   symm := ⟨fun _ _ h ↦ h.symm⟩
-  loopless := ⟨fun e h ↦ h.1 (Subtype.ext rfl)⟩
+  loopless := ⟨fun _ h ↦ h.1 (Subtype.ext rfl)⟩
 
 /-- A residual-set condition produces `t` vertex-disjoint useful pairs.
 This is the finite matching form of the iterative selection in Claim 1 of
 Lemma 5.1. -/
-lemma exists_useful_pairs_of_residual_condition [Fintype X]
+lemma exists_useful_pairs_of_residual_condition [Finite X]
     (H : SetHypergraph X) (n : ℕ) (S : Set H) (t : ℕ)
     (hresidual : ∀ T : Set S, S.ncard - 2 * (t - 1) ≤ T.ncard →
       ∃ e ∈ T, ∃ f ∈ T, e ≠ f ∧ H.IsUseful n e.1 f.1) :
@@ -7494,6 +7521,7 @@ lemma exists_useful_pairs_of_residual_condition [Fintype X]
         (∀ i, H.IsUseful n (left i) (right i)) ∧
         (∀ i, left i ∈ S ∧ right i ∈ S) := by
   classical
+  let := Fintype.ofFinite X
   by_cases ht0 : t = 0
   · subst t
     let empty : Fin 0 → H := fun i ↦ Fin.elim0 i
@@ -7543,12 +7571,14 @@ lemma exists_useful_pairs_of_residual_condition [Fintype X]
       exact ⟨(leftS i).2, (rightS i).2⟩
 
 /-- Arithmetic wrapper for the common-neighborhood injection. -/
-lemma isUseful_of_commonNeighbor_bound [Fintype X] (H : SetHypergraph X)
+lemma isUseful_of_commonNeighbor_bound [Finite X] (H : SetHypergraph X)
     (hlinear : H.IsLinear) (n : ℕ) (e f : H) (hef : e ≠ f)
     (w : X) (hwe : w ∈ e.1) (hwf : w ∈ f.1)
     (hbound : (e.1.ncard - 1) * (f.1.ncard - 1) +
       (H.incidentEdges w).ncard - 2 ≤ n - 2) :
     H.IsUseful n e f := by
+  classical
+  let := Fintype.ofFinite X
   refine ⟨hef, ⟨w, hwe, hwf⟩, ?_⟩
   exact (H.commonNeighborEdges_ncard_le hlinear e f hef w hwe hwf).trans hbound
 
@@ -7972,10 +8002,11 @@ lemma earlierNeighborEdges_ncard_le_card_add_div [Fintype X]
 which lists edges by nonincreasing cardinality.  The rank of an edge is the
 number of strictly earlier edges in the lexicographic order on
 `(dual cardinality, tie breaker)`. -/
-lemma exists_rank_ordered_by_ncard [Fintype X] (H : SetHypergraph X) :
+lemma exists_rank_ordered_by_ncard [Finite X] (H : SetHypergraph X) :
     ∃ rank : H → ℕ, Function.Injective rank ∧
       ∀ ⦃e f : H⦄, rank f < rank e → e.1.ncard ≤ f.1.ncard := by
   classical
+  let := Fintype.ofFinite X
   let tie : H ≃ Fin (Fintype.card H) := Fintype.equivFin H
   let key : H → (OrderDual ℕ ×ₗ Fin (Fintype.card H)) := fun e ↦
     toLex ((e.1.ncard : OrderDual ℕ), tie e)
@@ -8064,10 +8095,11 @@ lemma IsMatching.matchingPart {H : SetHypergraph X} {M : Set H}
 
 /-- The vertices covered by a finite hypergraph matching are counted without
 overlap: their number is the sum of the sizes of the matching edges. -/
-lemma IsMatching.coveredVertices_ncard_eq_sum [Fintype X]
+lemma IsMatching.coveredVertices_ncard_eq_sum [Finite X]
     {H : SetHypergraph X} {M : Set H} (hM : H.IsMatching M) :
     (H.coveredVertices M).ncard = ∑ᶠ e ∈ M, e.1.ncard := by
   classical
+  let := Fintype.ofFinite X
   have hpairwise : M.PairwiseDisjoint (fun e : H ↦ e.1) := by
     intro e he f hf hef
     exact hM he hf hef
@@ -8078,11 +8110,12 @@ lemma IsMatching.coveredVertices_ncard_eq_sum [Fintype X]
 
 /-- The coverage of a finite part of a matching is the sum of the sizes of
 its edges. -/
-lemma IsMatching.coveredVertices_matchingPart_ncard_eq_sum [Fintype X]
+lemma IsMatching.coveredVertices_matchingPart_ncard_eq_sum [Finite X]
     {H : SetHypergraph X} {M : Set H} (hM : H.IsMatching M) (p : Finset M) :
     (H.coveredVertices (H.matchingPart M p)).ncard =
       ∑ e ∈ p, e.1.1.ncard := by
   classical
+  let := Fintype.ofFinite X
   have hpMatching := hM.matchingPart p
   have hcover := hpMatching.coveredVertices_ncard_eq_sum
   let Mp := H.matchingPart M p
@@ -8109,7 +8142,7 @@ lemma IsMatching.coveredVertices_matchingPart_ncard_eq_sum [Fintype X]
 either a singleton or covers at most `A` vertices, and the number of parts is
 bounded by the total coverage divided (in multiplicative form) by
 `A / 2 + 1`. -/
-lemma IsMatching.exists_cover_bounded_partition [Fintype X]
+lemma IsMatching.exists_cover_bounded_partition [Finite X]
     {H : SetHypergraph X} {M : Set H} [Fintype M]
     (hM : H.IsMatching M) (A : ℕ) :
     ∃ P : Finpartition (Finset.univ : Finset M),
@@ -8118,6 +8151,7 @@ lemma IsMatching.exists_cover_bounded_partition [Fintype X]
       (P.parts.card - 1) * (A / 2 + 1) ≤
         (H.coveredVertices M).ncard := by
   classical
+  let := Fintype.ofFinite X
   obtain ⟨P, hcapacity, hcard⟩ :=
     exists_capacity_partition_card_bound
       (fun e : M ↦ e.1.1.ncard) A
@@ -8141,7 +8175,7 @@ lemma IsMatching.exists_cover_bounded_partition [Fintype X]
       (∑ e : M, e.1.1.ncard) =
           ∑ e ∈ M.toFinset, e.1.ncard := by
         symm
-        exact Finset.sum_subtype M.toFinset (fun e ↦ Set.mem_toFinset) 
+        exact Finset.sum_subtype M.toFinset (fun e ↦ Set.mem_toFinset)
           (fun e : H ↦ e.1.ncard)
       _ = (H.coveredVertices M).ncard := hcover.symm
   refine ⟨P, hcapacity', ?_⟩
@@ -8150,7 +8184,7 @@ lemma IsMatching.exists_cover_bounded_partition [Fintype X]
 /-- Refined cover-bounded partition: a matching which already covers at most
 `A` vertices is kept in a single part, while the same quantitative bound is
 retained in the other case. -/
-lemma IsMatching.exists_cover_bounded_partition_refined [Fintype X]
+lemma IsMatching.exists_cover_bounded_partition_refined [Finite X]
     {H : SetHypergraph X} {M : Set H} [Fintype M]
     (hM : H.IsMatching M) (A : ℕ) :
     ∃ P : Finpartition (Finset.univ : Finset M),
@@ -8160,6 +8194,7 @@ lemma IsMatching.exists_cover_bounded_partition_refined [Fintype X]
       (P.parts.card - 1) * (A / 2 + 1) ≤
         (H.coveredVertices M).ncard := by
   classical
+  let := Fintype.ofFinite X
   by_cases hcover : (H.coveredVertices M).ncard ≤ A
   · by_cases hMnonempty : Nonempty M
     · have huniv : (Finset.univ : Finset M) ≠ ∅ :=
@@ -8191,7 +8226,7 @@ lemma IsMatching.exists_cover_bounded_partition_refined [Fintype X]
       have hpartsCard : P.parts.card = 0 := by
         change ((⊥ : Finpartition (Finset.univ : Finset M)).parts).card = 0
         rw [Finpartition.card_bot]
-        simpa using hMcard
+        simp
       refine ⟨P, ?_, ?_, ?_⟩
       · intro p hp
         exfalso
@@ -8207,12 +8242,13 @@ lemma IsMatching.exists_cover_bounded_partition_refined [Fintype X]
 
 /-- If every edge of a matching has size at least `r+1`, its covered-vertex
 count times `r` is at most the ordered-pair volume consumed by its edges. -/
-lemma IsMatching.coveredVertices_ncard_mul_le_pairWeight [Fintype X]
+lemma IsMatching.coveredVertices_ncard_mul_le_pairWeight [Finite X]
     {H : SetHypergraph X} {M : Set H} (hM : H.IsMatching M) (r : ℕ)
     (hmin : ∀ e ∈ M, r + 1 ≤ e.1.ncard) :
     (H.coveredVertices M).ncard * r ≤
       ∑ᶠ e ∈ M, e.1.ncard * (e.1.ncard - 1) := by
   classical
+  let := Fintype.ofFinite X
   let hMfinite : M.Finite := M.toFinite
   have hcover := hM.coveredVertices_ncard_eq_sum
   rw [finsum_mem_eq_finite_toFinset_sum (fun e : H ↦ e.1.ncard) hMfinite]
@@ -8596,7 +8632,6 @@ theorem edgeColorable_of_useful_pairs [Fintype X] (H : SetHypergraph X)
       _ = n := by omega
   have hcandidate (i : Fin t) : t ≤ (candidate i).card := by
     rw [← Set.ncard_eq_toFinset_card']
-    change t ≤ (forbidden i)ᶜ.ncard
     rw [Set.ncard_compl, Nat.card_eq_fintype_card, hcard]
     have hi := hforbidden i
     omega
@@ -8677,7 +8712,7 @@ theorem edgeColorable_of_useful_pairs [Fintype X] (H : SetHypergraph X)
     simpa only [← chosen_eq_endpoint] using hij
   have hchosen_disjoint (i : Fin t) : Disjoint (chosen i).1 (z i).1 := by
     by_cases hl : chooseLeft i
-    · simpa [chosen, hl, chooseLeft] using hl
+    · simp [chosen, hl, chooseLeft]
     · simpa [chosen, hl] using (hsome_disjoint i).resolve_left hl
   have hchosen_z_injective : Function.Injective (Sum.elim chosen z) := by
     intro a b hab
@@ -8714,11 +8749,12 @@ lemma disjointnessGraph_adj (H : SetHypergraph X) {e f : H} :
   Iff.rfl
 
 /-- A finite disjointness graph has a matching with maximum edge cardinality. -/
-lemma exists_maximum_disjointnessMatching [Fintype X] (H : SetHypergraph X) :
+lemma exists_maximum_disjointnessMatching [Finite X] (H : SetHypergraph X) :
     ∃ M : H.disjointnessGraph.Subgraph, M.IsMatching ∧
       ∀ N : H.disjointnessGraph.Subgraph, N.IsMatching →
         N.edgeSet.ncard ≤ M.edgeSet.ncard := by
   classical
+  let := Fintype.ofFinite X
   let matchings : Finset H.disjointnessGraph.Subgraph :=
     Finset.univ.filter SimpleGraph.Subgraph.IsMatching
   have hbottom : (⊥ : H.disjointnessGraph.Subgraph).IsMatching := by
@@ -8738,13 +8774,14 @@ lemma exists_maximum_disjointnessMatching [Fintype X] (H : SetHypergraph X) :
 /-- The vertices left uncovered by a maximum matching in the hyperedge
 disjointness graph are pairwise intersecting.  Otherwise their disjoint pair
 could be added to the matching. -/
-lemma maximum_disjointnessMatching_unmatched_pairwise_intersect [Fintype X]
+lemma maximum_disjointnessMatching_unmatched_pairwise_intersect [Finite X]
     (H : SetHypergraph X) (M : H.disjointnessGraph.Subgraph)
     (hM : M.IsMatching)
     (hmax : ∀ N : H.disjointnessGraph.Subgraph, N.IsMatching →
       N.edgeSet.ncard ≤ M.edgeSet.ncard) :
     M.vertsᶜ.Pairwise fun e f ↦ (e.1 ∩ f.1).Nonempty := by
   classical
+  let := Fintype.ofFinite X
   intro e he f hf hef
   by_contra hinter
   have hdisjoint : Disjoint e.1 f.1 := by
@@ -8755,7 +8792,7 @@ lemma maximum_disjointnessMatching_unmatched_pairwise_intersect [Fintype X]
   have hP : P.IsMatching := SimpleGraph.Subgraph.IsMatching.subgraphOfAdj hadj
   have hsupports : Disjoint M.support P.support := by
     rw [hM.support_eq_verts, show P.support = {e, f} by
-      simpa [P] using SimpleGraph.Subgraph.support_subgraphOfAdj hadj]
+      simp [P]]
     rw [Set.disjoint_left]
     intro x hxM hxpair
     rcases hxpair with (rfl | rfl)
@@ -8771,7 +8808,7 @@ lemma maximum_disjointnessMatching_unmatched_pairwise_intersect [Fintype X]
     rw [show N.edgeSet = M.edgeSet ∪ P.edgeSet from
       SimpleGraph.Subgraph.edgeSet_sup]
     rw [show P.edgeSet = {s(e, f)} by
-      simpa [P] using SimpleGraph.Subgraph.edgeSet_subgraphOfAdj hadj]
+      simp [P]]
     rw [Set.union_singleton, Set.ncard_insert_of_notMem hnew]
   have := hmax N hN
   omega
@@ -8779,10 +8816,11 @@ lemma maximum_disjointnessMatching_unmatched_pairwise_intersect [Fintype X]
 /-- A finite graph matching has exactly twice as many incident vertices as
 edges.  We prove this by counting the two-element fibers of Mathlib's
 `IsMatching.toEdge` map. -/
-lemma matching_verts_ncard [Fintype X] (H : SetHypergraph X)
+lemma matching_verts_ncard [Finite X] (H : SetHypergraph X)
     (M : H.disjointnessGraph.Subgraph) (hM : M.IsMatching) :
     M.verts.ncard = 2 * M.edgeSet.ncard := by
   classical
+  let := Fintype.ofFinite X
   let : Fintype M.verts := Fintype.ofFinite M.verts
   let : Fintype M.edgeSet := Fintype.ofFinite M.edgeSet
   have hfiber (y : M.edgeSet) :
@@ -8850,17 +8888,9 @@ theorem edgeColorable_of_disjointnessMatching [Fintype X]
           rw [← haeq]
           exact a.2)
         exact (M.adj_sub hadj).2
-      · have : False := by
-          have hcontra : (Sum.inl (hM.toEdge ⟨e, he⟩) : Label) =
-              Sum.inr ⟨f, hf⟩ := by simpa [label, he, hf] using hsame
-          exact Sum.inl_ne_inr hcontra
-        exact this.elim
+      · simp [label, he, hf] at hsame
     · by_cases hf : f ∈ M.verts
-      · have : False := by
-          have hcontra : (Sum.inr ⟨e, he⟩ : Label) =
-              Sum.inl (hM.toEdge ⟨f, hf⟩) := by simpa [label, he, hf] using hsame
-          exact Sum.inr_ne_inl hcontra
-        exact this.elim
+      · simp [label, he, hf] at hsame
       · have hunmatched : (⟨e, he⟩ : {e : H // e ∉ M.verts}) = ⟨f, hf⟩ := by
           simp only [label, dif_neg he, dif_neg hf] at hsame
           exact Sum.inr_injective hsame
@@ -8890,7 +8920,7 @@ theorem edgeColorable_of_disjointnessMatching [Fintype X]
 is partitioned into `A` and `B`, the excess over `n` is at most one quarter of
 `A`, and every intersecting pair in `A` is useful, then `H` is `n`-edge
 colorable. -/
-theorem edgeColorable_of_useful_partition [Fintype X]
+theorem edgeColorable_of_useful_partition [Finite X]
     (H : SetHypergraph X) {n : ℕ} (hn : 2 ≤ n) (A B : Set H)
     (hdisjoint : Disjoint A B) (hpartition : A ∪ B = Set.univ)
     (hsurplus : A.ncard + B.ncard - n ≤ A.ncard / 4)
@@ -8898,6 +8928,7 @@ theorem edgeColorable_of_useful_partition [Fintype X]
       e ≠ f → (e.1 ∩ f.1).Nonempty → H.IsUseful n e f) :
     H.EdgeColorable n := by
   classical
+  let := Fintype.ofFinite X
   have hpartition_card : Fintype.card H = A.ncard + B.ncard := by
     calc
       Fintype.card H = (Set.univ : Set H).ncard := by simp
@@ -9555,7 +9586,7 @@ has size at least `r + 1`, then the number of colors whose classes cover more
 than `A` vertices satisfies the displayed integral pair-budget bound. -/
 lemma large_colorClasses_mul_le_pairBudget [Fintype X]
     (H : SetHypergraph X) (hlinear : H.IsLinear)
-    {K : Type*} [Fintype K] (color : H → K)
+    {K : Type*} [Finite K] (color : H → K)
     (hproper :
       ∀ {e f : H}, e ≠ f → (e.1 ∩ f.1).Nonempty → color e ≠ color f)
     (A r : ℕ) (hmin : ∀ e : H, r + 1 ≤ e.1.ncard) :
@@ -9563,6 +9594,7 @@ lemma large_colorClasses_mul_le_pairBudget [Fintype X]
         (A + 1) * r ≤
       Fintype.card X * (Fintype.card X - 1) := by
   classical
+  let := Fintype.ofFinite K
   let C : Set K :=
     {c | A < (H.coveredVertices {e | color e = c}).ncard}
   let M : C → Set H := fun c ↦ {e | color e = c.1}
@@ -9592,12 +9624,14 @@ lemma large_colorClasses_mul_le_pairBudget [Fintype X]
 /-- Division form of `large_colorClasses_mul_le_pairBudget`. -/
 lemma large_colorClasses_ncard_le_div [Fintype X]
     (H : SetHypergraph X) (hlinear : H.IsLinear)
-    {K : Type*} [Fintype K] (color : H → K)
+    {K : Type*} [Finite K] (color : H → K)
     (hproper :
       ∀ {e f : H}, e ≠ f → (e.1 ∩ f.1).Nonempty → color e ≠ color f)
     (A r : ℕ) (hr : 0 < r) (hmin : ∀ e : H, r + 1 ≤ e.1.ncard) :
     ({c : K | A < (H.coveredVertices {e | color e = c}).ncard} : Set K).ncard ≤
       (Fintype.card X * (Fintype.card X - 1)) / ((A + 1) * r) := by
+  classical
+  let := Fintype.ofFinite K
   apply (Nat.le_div_iff_mul_le (Nat.mul_pos (Nat.succ_pos A) hr)).2
   simpa [Nat.mul_assoc] using
     H.large_colorClasses_mul_le_pairBudget hlinear color hproper A r hmin
@@ -9608,7 +9642,7 @@ classes, the number covering at least `B` vertices is bounded by the same
 global pair budget. -/
 lemma partial_large_colorClasses_ncard_le_div [Fintype X]
     (H : SetHypergraph X) (hlinear : H.IsLinear)
-    {K : Type*} [Fintype K] (S : Set H) (color : H → K)
+    {K : Type*} [Finite K] (S : Set H) (color : H → K)
     (hproper : ∀ {e f : H}, e ∈ S → f ∈ S → e ≠ f →
       (e.1 ∩ f.1).Nonempty → color e ≠ color f)
     (B r : ℕ) (hB : 0 < B) (hr : 0 < r)
@@ -9617,6 +9651,7 @@ lemma partial_large_colorClasses_ncard_le_div [Fintype X]
       (H.coveredVertices {e : H | e ∈ S ∧ color e = c}).ncard} : Set K).ncard ≤
       (Fintype.card X * (Fintype.card X - 1)) / (B * r) := by
   classical
+  let := Fintype.ofFinite K
   let C : Set K := {c | B ≤
     (H.coveredVertices {e : H | e ∈ S ∧ color e = c}).ncard}
   let M : C → Set H := fun c ↦ {e | e ∈ S ∧ color e = c.1}
@@ -9785,7 +9820,7 @@ lemma exists_coverBounded_edgeColoring_of_earlierNeighbor_margin [Fintype X]
                     exact ⟨hfm, by simpa [c', hfe] using hf.2⟩
               · intro hf
                 rcases Set.mem_insert_iff.mp hf with rfl | hf
-                · exact ⟨by simpa [pref, he], by simp [c']⟩
+                · exact ⟨by simp [pref, he], by simp [c']⟩
                 · have hfe : f ≠ e := fun h ↦ by
                     subst f
                     exact (Nat.lt_irrefl m) (by simpa [oldClass, pref, he] using hf.1)
@@ -9863,7 +9898,7 @@ lemma exists_coverBounded_edgeColoring_of_earlierNeighbor_margin [Fintype X]
       ({e : H | color e = a} : Set H) =
         {e : H | e ∈ pref bound ∧ c e = a} := by
     ext e
-    simp only [color, Set.mem_setOf_eq, true_and]
+    simp only [color, Set.mem_ofPred_eq]
     exact ⟨fun h ↦ ⟨hbelow e, h⟩, fun h ↦ h.2⟩
   simpa only [hclass] using hcbounded a
 
@@ -10099,7 +10134,7 @@ theorem edgeColorable_of_few_subscale_edges [Fintype X]
     intro e heB
     have hek : projectiveScale n + 1 ≤ e.1.ncard := by
       dsimp only [B, A] at heB
-      simp only [Set.mem_compl_iff, Set.mem_setOf_eq, not_le] at heB
+      simp only [Set.mem_compl_iff, Set.mem_ofPred_eq, not_le] at heB
       omega
     have hscale : n - 1 ≤ projectiveScale n * (projectiveScale n + 1) := by
       have hupper := le_projectiveScale_sq_add n
@@ -10873,11 +10908,13 @@ lemma ncard_mul_edgePairWeight_le [Fintype X] (H : SetHypergraph X)
     _ ≤ Fintype.card X * (Fintype.card X - 1) := htotal
 
 /-- Set-valued form of the finite peeling dichotomy. -/
-theorem edgeColorable_or_dense_subfamily [Fintype X]
+theorem edgeColorable_or_dense_subfamily [Finite X]
     (H : SetHypergraph X) {k : ℕ} (hk : 0 < k) :
     H.EdgeColorable k ∨
       ∃ W : Set H, W.Nonempty ∧
         ∀ e ∈ W, k ≤ (H.asIndexed.internalNeighborSet W e).ncard := by
+  classical
+  let := Fintype.ofFinite X
   rcases H.asIndexed.edgeColorable_or_dense_subfamily hk with hcolor | hdense
   · left
     obtain ⟨c⟩ := hcolor
@@ -11002,7 +11039,7 @@ theorem edgeColorable_of_nontrivialEdges [Fintype X] [Nonempty X]
         constructor
         · intro hy
           have : y = x := hfsub hy hxf
-          simpa [this]
+          simp [this]
         · intro hy
           have : y = x := by simpa using hy
           simpa [this] using hxf
@@ -11029,7 +11066,7 @@ theorem edgeColorable_of_nontrivialEdges [Fintype X] [Nonempty X]
         constructor
         · intro hy
           have : y = x := hesum hy hxe
-          simpa [this]
+          simp [this]
         · intro hy
           have : y = x := by simpa using hy
           simpa [this] using hxe
@@ -11168,9 +11205,10 @@ noncomputable def chromaticIndex (H : SetHypergraph X) : ℕ :=
 
 /-- A finite set-valued hypergraph can always color every edge with its own
 color. -/
-lemma edgeColorable_some [Fintype X] (H : SetHypergraph X) :
+lemma edgeColorable_some [Finite X] (H : SetHypergraph X) :
     ∃ k : ℕ, H.EdgeColorable k := by
   classical
+  let := Fintype.ofFinite X
   let _ : Fintype H := Fintype.ofFinite H
   refine ⟨Fintype.card H, ⟨{ color := Fintype.equivFin H, valid := ?_ }⟩⟩
   intro e f hef _ hsame
@@ -11178,9 +11216,10 @@ lemma edgeColorable_some [Fintype X] (H : SetHypergraph X) :
 
 /-- On a finite vertex type the minimum in `chromaticIndex` is attained, and
 `chromaticIndex ≤ n` is equivalent to an explicit `Fin n` coloring. -/
-lemma chromaticIndex_le_iff_edgeColorable [Fintype X] (H : SetHypergraph X) (n : ℕ) :
+lemma chromaticIndex_le_iff_edgeColorable [Finite X] (H : SetHypergraph X) (n : ℕ) :
     H.chromaticIndex ≤ n ↔ H.EdgeColorable n := by
   classical
+  let := Fintype.ofFinite X
   obtain ⟨k, hk⟩ := H.edgeColorable_some
   have hnonempty : ({k : ℕ | H.EdgeColorable k} : Set ℕ).Nonempty := ⟨k, hk⟩
   constructor
@@ -11220,11 +11259,12 @@ linearity.  At each vertex, the colors of nonsingleton edges form a partial
 injection; `exists_injective_extension` assigns the remaining colors to all
 singleton copies.  Empty edges may all receive an arbitrary color because
 they meet no edge. -/
-theorem edgeColorable_of_toSetHypergraph_edgeColorable {n : ℕ} [Fintype E]
+theorem edgeColorable_of_toSetHypergraph_edgeColorable {n : ℕ} [Finite E]
     (H : IndexedHypergraph (Fin n) E) (hn : 0 < n) (hlinear : H.IsLinear)
     (hdegree : H.DegreeLE n) (hset : H.toSetHypergraph.EdgeColorable n) :
     H.EdgeColorable n := by
   classical
+  let := Fintype.ofFinite E
   obtain ⟨c⟩ := hset
   let Incident (x : Fin n) := {e : E // x ∈ H.edge e}
   have hlocal : ∀ x : Fin n,

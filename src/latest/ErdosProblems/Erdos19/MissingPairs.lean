@@ -12,6 +12,7 @@ noncomputable def missingOrderedPairs (H : SetHypergraph X) : Finset (X × X) :=
   classical
   exact univ.filter fun p ↦ p.1 ≠ p.2 ∧ ¬H.twoGraph.Adj p.1 p.2
 
+omit [Fintype X] in
 theorem not_twoGraph_adj_of_large_edge (H : SetHypergraph X)
     (hlinear : H.IsLinear) (e : H) (he : 3 ≤ e.1.ncard)
     {x y : X} (hx : x ∈ e.1) (hy : y ∈ e.1) : ¬H.twoGraph.Adj x y := by

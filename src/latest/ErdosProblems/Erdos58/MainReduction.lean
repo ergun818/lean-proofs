@@ -96,12 +96,14 @@ lemma colorable_two_mul_add_two_of_ncard_le {V : Type u} [Finite V]
 /-- The sharp critical reduction: if `2*k+1` colors do not suffice, the
 ambient graph contains `K_(2*k+2)`. -/
 lemma completeGraph_isContained_of_not_colorable_of_structural
-    {V : Type u} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
-    [DecidableRel G.Adj] (k : ℕ) (hkpos : 0 < k)
+    {V : Type u} [Finite V] (G : SimpleGraph V)
+    (k : ℕ) (hkpos : 0 < k)
     (hcount : (oddCycleLengths G).ncard ≤ k)
     (hstruct : StructuralTheorem.{u})
     (hnot : ¬G.Colorable (2 * k + 1)) :
     SimpleGraph.completeGraph (Fin (2 * k + 2)) ⊑ G := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨W, hdegree, htwo⟩ :=
     Critical.exists_vertexTwoConnected_witness (G := G) (n := 2 * k + 1)
       (by omega) hnot

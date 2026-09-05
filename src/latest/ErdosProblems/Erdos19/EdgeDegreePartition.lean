@@ -31,9 +31,12 @@ theorem incident_degree_eq_sum (H : SetHypergraph V) (v : V) :
     (H.incidentEdges v).ncard = ∑ e : H, if v ∈ e.1 then 1 else 0 :=
   ncard_eq_sum_indicator (H.incidentEdges v)
 
-theorem incident_degree_add_sdiff (H J : SetHypergraph V) (hJH : J ⊆ H) (v : V) :
+omit [Fintype V] in
+theorem incident_degree_add_sdiff [Finite V] (H J : SetHypergraph V) (hJH : J ⊆ H) (v : V) :
     (J.incidentEdges v).ncard + ((H \ J).incidentEdges v).ncard =
       (H.incidentEdges v).ncard := by
+  classical
+  let := Fintype.ofFinite V
   simp only [incident_degree_eq_sum]
   exact H.sum_edge_weight_add_sdiff J hJH (fun e ↦ if v ∈ e then 1 else 0)
 

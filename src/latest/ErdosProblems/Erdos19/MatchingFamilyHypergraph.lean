@@ -34,9 +34,11 @@ theorem matchingEdges_vertex_mem (M : G.Subgraph) {e : Set V}
   · exact hxy.fst_mem
   · exact hxy.snd_mem
 
-theorem matchingEdges_intersect_eq [Fintype V] (M : G.Subgraph) (hM : M.IsMatching)
+theorem matchingEdges_intersect_eq [Finite V] (M : G.Subgraph) (hM : M.IsMatching)
     {e f : Set V} (he : e ∈ matchingEdges M) (hf : f ∈ matchingEdges M)
     (hinter : (e ∩ f).Nonempty) : e = f := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨v, hve, hvf⟩ := hinter
   obtain ⟨x, _, hex⟩ := exists_pair_at (matchingEdges_size M he) hve
   obtain ⟨y, _, hfy⟩ := exists_pair_at (matchingEdges_size M hf) hvf
@@ -78,13 +80,14 @@ theorem matchingFamily_disjoint_of_graph_disjoint (J : SetHypergraph V)
   exact _root_.SimpleGraph.disjoint_left.mp hdis x y ⟨hxy.adj_sub.ne, heJ⟩
     (iSup_adj.mpr ⟨i, hxy⟩)
 
-theorem exists_matching_family_hypergraph_coloring [Fintype V]
+theorem exists_matching_family_hypergraph_coloring [Finite V]
     (M : I → G.Subgraph) (hM : ∀ i, (M i).IsMatching)
     (hdis : Pairwise fun i j ↦ Disjoint (M i).spanningCoe (M j).spanningCoe) :
     ∃ c : (matchingFamilyHypergraph M).EdgeColoring I,
       (∀ (e : matchingFamilyHypergraph M) i, e.1 ∈ matchingEdges (M i) → c e = i) ∧
       (∀ i, (matchingFamilyHypergraph M).coveredVertices {e | c e = i} = (M i).verts) := by
   classical
+  let := Fintype.ofFinite V
   let H := matchingFamilyHypergraph M
   have hex (e : H) : ∃ i, e.1 ∈ matchingEdges (M i) := Set.mem_iUnion.mp e.2
   choose color hcolor using hex

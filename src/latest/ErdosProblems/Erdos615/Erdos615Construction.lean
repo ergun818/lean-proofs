@@ -43,6 +43,7 @@ lemma net_finite (hρ : 0 < ρ) : (net h ρ).Finite := by
   rw [Metric.encard_maximalSeparatedSet htop]
   exact htop
 
+@[instance_reducible]
 noncomputable def netFintype (hρ : 0 < ρ) : Fintype (net h ρ) :=
   (net_finite h ρ hρ).fintype
 
@@ -68,7 +69,7 @@ lemma netCard_pos (hh : 0 < h) (hρ : 0 < ρ) : 0 < netCard h ρ hρ := by
   have hsphere : (Set.univ : Set (Sphere h)).Nonempty := by
     let i : Fin h := ⟨0, hh⟩
     refine ⟨⟨EuclideanSpace.single i 1, ?_⟩, Set.mem_univ _⟩
-    simp [Metric.mem_sphere, dist_zero_right]
+    simp
   have hp : 0 < Metric.packingNumber (Real.toNNReal ρ)
       (Set.univ : Set (Sphere h)) := Metric.packingNumber_pos_iff.mpr hsphere
   have htop := packingNumber_ne_top_of_isCompact
@@ -189,7 +190,7 @@ lemma center_dist_gt (hρ : 0 < ρ)
     (dist_pos.mpr ((center_injective h ρ hρ).ne hij))).mp
   simpa [ENNReal.ofReal, Real.coe_toNNReal ρ hρ.le] using hed
 
-lemma netCard_mul_ballBound_le (hh : 0 < h) (hρ : 0 < ρ) :
+lemma netCard_mul_ballBound_le (_ : 0 < h) (hρ : 0 < ρ) :
     (netCard h ρ hρ : ℝ≥0∞) *
         (Measure.toSphereBallBound h (ρ / 2) : ℝ≥0∞) ≤ (h : ℝ≥0∞) := by
   let μ : Measure (Sphere h) :=
@@ -231,7 +232,7 @@ lemma netCard_mul_ballBound_le (hh : 0 < h) (hρ : 0 < ρ) :
       (measure_ball_lt_top : volume
         (Metric.ball (0 : EuclideanSpace ℝ (Fin h)) 1) < ∞))
   have htotal : μ Set.univ = (h : ℝ≥0∞) * V := by
-    simp [μ, V, Measure.toSphere_apply_univ, finrank_euclideanSpace_fin]
+    simp [μ, V, Measure.toSphere_apply_univ]
   rw [htotal] at hsum
   have : ((netCard h ρ hρ : ℝ≥0∞) * q) * V ≤ (h : ℝ≥0∞) * V := by
     simpa [mul_assoc] using hsum
@@ -249,8 +250,7 @@ lemma netCard_le_pow (hh : 0 < h) (hρ : 0 < ρ) (hρ4 : ρ ≤ 4) :
     · congr 2
       · rw [Real.coe_toNNReal (ρ / 2) (half_pos hρ).le]
         ring
-    · simp only [Real.coe_toNNReal (ρ / 2) (half_pos hρ).le,
-        NNReal.coe_ofNat]
+    · simp only [Real.coe_toNNReal (ρ / 2) (half_pos hρ).le]
       linarith
   have hmain := netCard_mul_ballBound_le h ρ hh hρ
   have hmainReal : (netCard h ρ hρ : ℝ) *
@@ -268,7 +268,7 @@ lemma netCard_le_pow (hh : 0 < h) (hρ : 0 < ρ) (hρ4 : ρ ≤ 4) :
     simp
   nlinarith
 
-noncomputable def sphereNonempty (hh : 0 < h) : Nonempty (Sphere h) := by
+lemma sphereNonempty (hh : 0 < h) : Nonempty (Sphere h) := by
   let i : Fin h := ⟨0, hh⟩
   exact ⟨⟨EuclideanSpace.single i 1, by simp⟩⟩
 
@@ -294,12 +294,9 @@ lemma sphereProbability_le_of_toSphere_le (hh : 0 < h)
     simp only [ENNReal.coe_mul, FiniteMeasure.ennreal_coeFn_eq_coeFn_toMeasure]
     simpa [M, sphereFiniteMeasure, ENNReal.ofReal] using H
   have hMne : M ≠ 0 := by
-    have hμ : (volume : Measure (EuclideanSpace ℝ (Fin h))).toSphere ≠ 0 :=
-      Measure.toSphere_ne_zero (volume : Measure (EuclideanSpace ℝ (Fin h)))
     intro hzero
-    have hcoe := congrArg (fun N : FiniteMeasure (Sphere h) ↦
-      (N : Measure (Sphere h))) hzero
-    exact hμ (by simpa [M, sphereFiniteMeasure] using hcoe)
+    exact Measure.toSphere_ne_zero (volume : Measure (EuclideanSpace ℝ (Fin h)))
+      (congrArg (fun N : FiniteMeasure (Sphere h) ↦ (N : Measure (Sphere h))) hzero)
   have hmass : 0 < M.mass := pos_iff_ne_zero.mpr (M.mass_nonzero_iff.mpr hMne)
   have hleft : M A = M.mass * M.normalize A := M.self_eq_mass_mul_normalize A
   have huniv : M Set.univ = M.mass := by simp
@@ -368,12 +365,9 @@ lemma sphereProbability_neg_preimage (hh : 0 < h) (A : Set (Sphere h))
   have H : M (negS ⁻¹' A) = M A := by
     exact congrArg ENNReal.toNNReal Henn
   have hMne : M ≠ 0 := by
-    have hμ : (volume : Measure (EuclideanSpace ℝ (Fin h))).toSphere ≠ 0 :=
-      Measure.toSphere_ne_zero (volume : Measure (EuclideanSpace ℝ (Fin h)))
     intro hzero
-    have hcoe := congrArg (fun N : FiniteMeasure (Sphere h) ↦
-      (N : Measure (Sphere h))) hzero
-    exact hμ (by simpa [M, sphereFiniteMeasure] using hcoe)
+    exact Measure.toSphere_ne_zero (volume : Measure (EuclideanSpace ℝ (Fin h)))
+      (congrArg (fun N : FiniteMeasure (Sphere h) ↦ (N : Measure (Sphere h))) hzero)
   have hmass : M.mass ≠ 0 := M.mass_nonzero_iff.mpr hMne
   apply (mul_left_cancel₀ hmass)
   calc
@@ -419,7 +413,7 @@ lemma sphereProbability_positive_inner_bound (hh : 1 < h)
     rw [← hpre, sphereProbability_neg_preimage h (Nat.zero_lt_of_lt hh) Pos hPos]
   have hcover : (Set.univ : Set (Sphere h)) ⊆ Pos ∪ Neg ∪ Strip := by
     intro y hy
-    simp only [Set.mem_union, Set.mem_setOf_eq, Pos, Neg, Strip]
+    simp only [Set.mem_union, Set.mem_ofPred_eq, Pos, Neg, Strip]
     by_cases hp : t < inner ℝ x (y : EuclideanSpace ℝ (Fin h))
     · exact Or.inl (Or.inl hp)
     by_cases hn : inner ℝ x (y : EuclideanSpace ℝ (Fin h)) < -t
@@ -474,11 +468,11 @@ lemma sphereProbability_near_fixed_bound (hh : 1 < h)
       (y : EuclideanSpace ℝ (Fin h))}
   let Near : Set (Sphere h) := {y | dist x y < Real.sqrt 2 - β}
   have hx : ‖(x : EuclideanSpace ℝ (Fin h))‖ = 1 := by
-    simpa [Metric.mem_sphere, dist_zero_right] using x.property
+    simp
   have hsub : Pos ⊆ Near := by
     intro y hy
     have hyNorm : ‖(y : EuclideanSpace ℝ (Fin h))‖ = 1 := by
-      simpa [Metric.mem_sphere, dist_zero_right] using y.property
+      simp
     exact dist_lt_sqrt_two_sub_of_inner_gt (h := h) hx hyNorm hβ0 hβ1 hy
   have hcap := sphereProbability_positive_inner_bound h hh
     (x : EuclideanSpace ℝ (Fin h)) hx (2 * β) (mul_nonneg (by positivity) hβ0)
@@ -982,8 +976,7 @@ lemma BEGraph_edgeCard_lower (hh : 1 < h) (hρ : 0 < ρ) (L : ℕ) (a : ℝ)
 lemma position_norm (hh : 0 < h) (hρ : 0 < ρ) (L : ℕ)
     (v : CopyVertex h ρ hh hρ L) :
     ‖(position h ρ hh hρ L v : EuclideanSpace ℝ (Fin h))‖ = 1 := by
-  simpa [position, Metric.mem_sphere, dist_zero_right] using
-    (position h ρ hh hρ L v).property
+  simp
 
 lemma BEGraph_cliqueFree_four (hh : 0 < h) (hρ : 0 < ρ) (L : ℕ) (a : ℝ)
     (ha0 : 0 ≤ a) (ha4 : a < 1 / 4)
@@ -1090,11 +1083,9 @@ lemma sphereProbability_le_isodiametric (hh : 0 < h)
     simp only [ENNReal.coe_mul, FiniteMeasure.ennreal_coeFn_eq_coeFn_toMeasure]
     simpa [M, sphereFiniteMeasure, ENNReal.ofReal] using H
   have hMne : M ≠ 0 := by
-    have hμ : (volume : Measure (EuclideanSpace ℝ (Fin h))).toSphere ≠ 0 :=
-      Measure.toSphere_ne_zero (volume : Measure (EuclideanSpace ℝ (Fin h)))
     intro hzero
-    have hcoe := congrArg (fun N : FiniteMeasure (Sphere h) ↦ (N : Measure (Sphere h))) hzero
-    exact hμ (by simpa [M, sphereFiniteMeasure] using hcoe)
+    exact Measure.toSphere_ne_zero (volume : Measure (EuclideanSpace ℝ (Fin h)))
+      (congrArg (fun N : FiniteMeasure (Sphere h) ↦ (N : Measure (Sphere h))) hzero)
   have hmass : 0 < M.mass := pos_iff_ne_zero.mpr (M.mass_nonzero_iff.mpr hMne)
   have hleft : M A = M.mass * M.normalize A := M.self_eq_mass_mul_normalize A
   have huniv : M Set.univ = M.mass := by simp

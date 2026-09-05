@@ -16,9 +16,11 @@ def overloadedVertices (K : ℕ) (load : V → ℕ) : Finset V :=
 def IsLoadBalanced (K : ℕ) (load : V → ℕ) : Prop :=
   ∀ v, Fintype.card V * load v ≤ K * totalLoad load + 2 * Fintype.card V
 
+omit [DecidableEq V] in
 theorem overloadedVertices_card_mul_lt (K : ℕ) (load : V → ℕ)
     (hV : 0 < Fintype.card V) :
     K * (overloadedVertices K load).card < Fintype.card V := by
+  classical
   let B := overloadedVertices K load
   let n := Fintype.card V
   let S := totalLoad load
@@ -39,14 +41,19 @@ theorem overloadedVertices_card_mul_lt (K : ℕ) (load : V → ℕ)
   simp only [hBzero, Nat.mul_zero] at hK
   omega
 
+omit [DecidableEq V] in
 theorem totalLoad_mono {load next : V → ℕ} (h : ∀ v, load v ≤ next v) :
-    totalLoad load ≤ totalLoad next := sum_le_sum (fun v _ ↦ h v)
+    totalLoad load ≤ totalLoad next := by
+  classical
+  exact sum_le_sum (fun v _ ↦ h v)
 
+omit [DecidableEq V] in
 theorem IsLoadBalanced.step {K : ℕ} {load next : V → ℕ}
     (hbal : IsLoadBalanced K load) (hmono : ∀ v, load v ≤ next v)
     (hone : ∀ v, next v ≤ load v + 1)
     (havoid : ∀ v, load v < next v → v ∉ overloadedVertices K load) :
     IsLoadBalanced K next := by
+  classical
   have htotal := Nat.mul_le_mul_left K (totalLoad_mono hmono)
   intro v
   by_cases heq : next v = load v
@@ -59,10 +66,12 @@ theorem IsLoadBalanced.step {K : ℕ} {load next : V → ℕ}
     have hstep := Nat.mul_le_mul_left (Fintype.card V) (hone v)
     nlinarith only [hsmall, hstep, htotal]
 
+omit [DecidableEq V] in
 theorem totalLoad_step_le_add_card {load next : V → ℕ} (T : Finset V)
     (hone : ∀ v, next v ≤ load v + 1)
     (hfixed : ∀ v ∉ T, next v = load v) :
     totalLoad next ≤ totalLoad load + T.card := by
+  classical
   have hp : ∀ v, next v ≤ load v + if v ∈ T then 1 else 0 := by
     intro v
     by_cases hv : v ∈ T

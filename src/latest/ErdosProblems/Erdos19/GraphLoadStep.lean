@@ -13,11 +13,13 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 noncomputable def reservoirLoad (U R : _root_.SimpleGraph V) (v : V) : ℕ :=
   ((U ⊓ R).neighborSet v).ncard
 
+omit [DecidableEq V] [Fintype V] in
 theorem reservoir_inter_support_subset {G : _root_.SimpleGraph V}
     (R : _root_.SimpleGraph V) (M N : G.Subgraph) (T : Finset V)
     (hdis : Disjoint M.edgeSet R.edgeSet)
     (hnew : ∀ e ∈ N.edgeSet \ M.edgeSet, ∀ x ∈ e, x ∈ T) :
     (N.spanningCoe ⊓ R).support ⊆ (T : Set V) := by
+  classical
   intro v hv
   obtain ⟨w, hvw⟩ := hv
   have heN : s(v, w) ∈ N.edgeSet := Subgraph.mem_edgeSet.mpr hvw.1
@@ -25,6 +27,7 @@ theorem reservoir_inter_support_subset {G : _root_.SimpleGraph V}
   have heM : s(v, w) ∉ M.edgeSet := fun h ↦ Set.disjoint_left.mp hdis h heR
   exact hnew _ ⟨heN, heM⟩ v (by simp)
 
+omit [DecidableEq V] in
 theorem reservoirLoad_step {G : _root_.SimpleGraph V}
     (U R : _root_.SimpleGraph V) (M : G.Subgraph) (hM : M.IsMatching)
     (hdis : Disjoint U M.spanningCoe) (T : Finset V)

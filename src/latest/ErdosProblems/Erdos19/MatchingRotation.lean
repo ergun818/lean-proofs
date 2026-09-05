@@ -6,7 +6,7 @@ namespace Erdos19
 
 open _root_.SimpleGraph
 
-theorem exists_matching_rotation_with_edge_control {V : Type*} [Fintype V]
+theorem exists_matching_rotation_with_edge_control {V : Type*} [Finite V]
     {G : _root_.SimpleGraph V} (M : G.Subgraph) (hM : M.IsMatching)
     {u v w : V} (hu : u ∉ M.verts) (hvw : M.Adj v w) (huv : G.Adj u v) :
     ∃ N : G.Subgraph, N.IsMatching ∧
@@ -14,6 +14,7 @@ theorem exists_matching_rotation_with_edge_control {V : Type*} [Fintype V]
       N.edgeSet ⊆ M.edgeSet ∪ {s(u, v)} ∧
       (∀ x y, M.Adj x y → x ≠ v → x ≠ w → y ≠ v → y ≠ w → N.Adj x y) := by
   classical
+  let := Fintype.ofFinite V
   let R := M.deleteVerts {v, w}
   let P := G.subgraphOfAdj huv
   have hR : R.IsMatching := matching_delete_endpoints M hM hvw
@@ -66,21 +67,24 @@ theorem exists_matching_rotation_with_edge_control {V : Type*} [Fintype V]
       ⟨hxy.fst_mem, fun h ↦ h.elim hxv hxw,
         hxy.snd_mem, fun h ↦ h.elim hyv hyw, hxy⟩
 
-theorem exists_matching_rotation {V : Type*} [Fintype V]
+theorem exists_matching_rotation {V : Type*} [Finite V]
     {G : _root_.SimpleGraph V} (M : G.Subgraph) (hM : M.IsMatching)
     {u v w : V} (hu : u ∉ M.verts) (hvw : M.Adj v w) (huv : G.Adj u v) :
     ∃ N : G.Subgraph, N.IsMatching ∧
       N.verts = insert u (M.verts \ {w}) ∧ N.edgeSet.ncard = M.edgeSet.ncard := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨N, hN, hNv, hNc, _, _⟩ := exists_matching_rotation_with_edge_control M hM hu hvw huv
   exact ⟨N, hN, hNv, hNc⟩
 
-theorem exists_matching_maximizing_edges_and_coverage {V : Type*} [Fintype V]
+theorem exists_matching_maximizing_edges_and_coverage {V : Type*} [Finite V]
     (G : _root_.SimpleGraph V) (U : Set V) :
     ∃ M : G.Subgraph, M.IsMatching ∧
       (∀ N : G.Subgraph, N.IsMatching → N.edgeSet.ncard ≤ M.edgeSet.ncard) ∧
       (∀ N : G.Subgraph, N.IsMatching → N.edgeSet.ncard = M.edgeSet.ncard →
         (N.verts ∩ U).ncard ≤ (M.verts ∩ U).ncard) := by
   classical
+  let := Fintype.ofFinite V
   let score (N : G.Subgraph) :=
     (Fintype.card V + 1) * N.edgeSet.ncard + (N.verts ∩ U).ncard
   obtain ⟨M, hM, hscore⟩ := exists_matching_maximizing G score

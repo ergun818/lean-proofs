@@ -50,6 +50,8 @@ instance : DecidableEq (Path3 G) := inferInstance
 
 namespace Path3
 
+omit [Fintype V]
+
 /-- The vertex at position `i` of a length-three path. -/
 def vertex {G : SimpleGraph V} (p : Path3 G) (i : Fin 4) : V := p.1 i
 
@@ -80,6 +82,7 @@ end Path3
 def pathFiber (pi : EndpointPair V) : Finset (Path3 G) :=
   Finset.univ.filter fun p ↦ p.endpoints = pi
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem mem_pathFiber {pi : EndpointPair V} {p : Path3 G} :
     p ∈ pathFiber G pi ↔ p.endpoints = pi := by
   simp [pathFiber]
@@ -90,6 +93,7 @@ def pathMultiplicity (pi : EndpointPair V) : ℕ := (pathFiber G pi).card
 /-- The closed neighbourhood of a vertex. -/
 def closedNeighborFinset (v : V) : Finset V := insert v (G.neighborFinset v)
 
+omit [LinearOrder V] in
 @[simp] theorem mem_closedNeighborFinset {v w : V} :
     w ∈ closedNeighborFinset G v ↔ w = v ∨ G.Adj v w := by
   simp [closedNeighborFinset]

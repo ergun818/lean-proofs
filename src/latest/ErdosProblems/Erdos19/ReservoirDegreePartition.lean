@@ -14,10 +14,13 @@ variable {V : Type*} [Fintype V]
 def outsideReservoir (H J : SetHypergraph V) (R : _root_.SimpleGraph V) : SetHypergraph V :=
   H \ (J ∪ graphPairs R)
 
-theorem incident_degree_reservoir_partition (H J : SetHypergraph V) (hJH : J ⊆ H)
+omit [Fintype V] in
+theorem incident_degree_reservoir_partition [Finite V] (H J : SetHypergraph V) (hJH : J ⊆ H)
     (R : _root_.SimpleGraph V) (v : V) :
     (J.incidentEdges v).ncard + ((H.outsideReservoir J R).incidentEdges v).ncard +
       (((H \ J).twoGraph ⊓ R).neighborSet v).ncard = (H.incidentEdges v).ncard := by
+  classical
+  let := Fintype.ofFinite V
   let K := H \ J
   let P := K ∩ graphPairs R
   have hsplit := H.incident_degree_add_sdiff J hJH v
@@ -34,11 +37,15 @@ theorem incident_degree_reservoir_partition (H J : SetHypergraph V) (hJH : J ⊆
   dsimp only [K, P] at hsplit'
   omega
 
-theorem reservoir_degree_split (H J : SetHypergraph V) (R : _root_.SimpleGraph V)
+omit [Fintype V] in
+theorem reservoir_degree_split [Finite V] (H J : SetHypergraph V) (R : _root_.SimpleGraph V)
     (hR : R ≤ H.twoGraph) (v : V) :
     (((H \ J).twoGraph ⊓ R).neighborSet v).ncard +
       ((J.twoGraph ⊓ R).neighborSet v).ncard = (R.neighborSet v).ncard := by
-  have hrest : ((H \ J).twoGraph ⊓ R).neighborSet v = R.neighborSet v \ J.twoGraph.neighborSet v := by
+  classical
+  let := Fintype.ofFinite V
+  have hrest : ((H \ J).twoGraph ⊓ R).neighborSet v = R.neighborSet v \ J.twoGraph.neighborSet
+    v := by
     ext w
     constructor
     · rintro ⟨hH, hR⟩
@@ -56,12 +63,14 @@ theorem outsideReservoir_degree_budget (H J : SetHypergraph V) (hJH : J ⊆ H)
     (R : _root_.SimpleGraph V) (hR : R ≤ H.twoGraph) (v : V) (load : ℕ)
     (hload : ((J.twoGraph ⊓ R).neighborSet v).ncard ≤ load) :
     2 * (((H.outsideReservoir J R).incidentEdges v).ncard + (J.incidentEdges v).ncard +
-      (R.neighborSet v).ncard) ≤ Fintype.card V - 1 + (H.twoGraph.neighborSet v).ncard + 2 * load := by
+      (R.neighborSet v).ncard) ≤ Fintype.card V - 1 + (H.twoGraph.neighborSet v).ncard + 2 *
+        load := by
   have hsplit := H.incident_degree_reservoir_partition J hJH R v
   have hres := H.reservoir_degree_split J R hR v
   have hbudget := H.twice_incident_degree_le_card_add_pair_degree hlinear hmin v
   omega
 
+omit [Fintype V] in
 theorem remaining_after_outsideReservoir_subset_pairs (H J : SetHypergraph V)
     (R : _root_.SimpleGraph V) : H \ (J ∪ H.outsideReservoir J R) ⊆ graphPairs R := by
   intro e he
@@ -69,9 +78,12 @@ theorem remaining_after_outsideReservoir_subset_pairs (H J : SetHypergraph V)
   have heJ : e ∉ J := fun h ↦ he.2 (Or.inl h)
   exact he.2 (Or.inr ⟨he.1, fun h ↦ h.elim heJ heR⟩)
 
-theorem remaining_after_outsideReservoir_graph (H J : SetHypergraph V)
+omit [Fintype V] in
+theorem remaining_after_outsideReservoir_graph [Finite V] (H J : SetHypergraph V)
     (R : _root_.SimpleGraph V) (hR : R ≤ H.twoGraph) :
     (H \ (J ∪ H.outsideReservoir J R)).twoGraph = R \ J.twoGraph := by
+  classical
+  let := Fintype.ofFinite V
   ext x y
   constructor
   · intro h

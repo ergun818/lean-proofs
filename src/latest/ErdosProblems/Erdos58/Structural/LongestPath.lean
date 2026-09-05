@@ -263,9 +263,10 @@ lemma lastExteriorNeighbors_subset_support [Fintype V] [DecidableEq V]
   exact P.last_exterior_neighbor_mem_ambient_support hw'.2 hw'.1
 
 /-- A longest exterior path exists whenever the exterior is nonempty. -/
-theorem exists_of_exterior_nonempty [Fintype V] [DecidableEq V]
-    [DecidableRel G.Adj] (hE : C.carrierᶜ.Nonempty) :
+theorem exists_of_exterior_nonempty [Finite V] (hE : C.carrierᶜ.Nonempty) :
     Nonempty (LongestExteriorPath C) := by
+  classical
+  let := Fintype.ofFinite V
   let x : ↑(C.carrierᶜ) := ⟨hE.choose, hE.choose_spec⟩
   let : Nonempty ↑(C.carrierᶜ) := ⟨x⟩
   obtain ⟨u, v, p, hp, hmax⟩ :=
@@ -274,10 +275,10 @@ theorem exists_of_exterior_nonempty [Fintype V] [DecidableEq V]
 
 /-- If the exterior is not independent, a longest exterior path exists and
 has at least one edge. -/
-theorem exists_positive_of_not_independent [Fintype V] [DecidableEq V]
-    [DecidableRel G.Adj] (hE : ¬ G.IsIndepSet C.carrierᶜ) :
+theorem exists_positive_of_not_independent [Finite V] (hE : ¬ G.IsIndepSet C.carrierᶜ) :
     ∃ P : LongestExteriorPath C, 0 < P.path.length := by
   classical
+  let := Fintype.ofFinite V
   have hnonempty : C.carrierᶜ.Nonempty := by
     by_contra hempty
     apply hE

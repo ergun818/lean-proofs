@@ -175,12 +175,13 @@ theorem card_permutations_hits_mul_factorial_le {A : Type*} [Fintype A] [Decidab
 /-- Simultaneous sparse-hit control by one permutation. The numerical
 criterion is exact: the number of constraints times `f ^ s` is less than `s!`.
 No independence between the different constraints is needed. -/
-theorem exists_permutation_few_hits {A I : Type*} [Fintype A] [DecidableEq A]
+theorem exists_permutation_few_hits {A I : Type*} [Finite A] [DecidableEq A]
     [Fintype I] (T : I → Finset A) (F : I → A → Finset A) (f s : ℕ)
     (hF : ∀ i x, x ∈ T i → (F i x).card ≤ f)
     (hsmall : Fintype.card I * f ^ s < s.factorial) :
     ∃ p : Equiv.Perm A, ∀ i, ((T i).filter fun x ↦ p x ∈ F i x).card < s := by
   classical
+  let := Fintype.ofFinite A
   let bad : I → Finset (Equiv.Perm A) := fun i ↦
     univ.filter fun p ↦ s ≤ ((T i).filter fun x ↦ p x ∈ F i x).card
   have hbad : ∀ i, (bad i).card * s.factorial ≤ f ^ s * (Fintype.card A).factorial := by
@@ -213,13 +214,14 @@ theorem exists_permutation_few_hits {A I : Type*} [Fintype A] [DecidableEq A]
 distinct initial colors in each set. Forbidden sets belong to the objects,
 and may differ between objects of the same initial color. -/
 theorem exists_permutation_few_forbidden {A E I : Type*}
-    [Fintype A] [DecidableEq A] [DecidableEq E] [Fintype I]
+    [Finite A] [DecidableEq A] [Fintype I]
     (T : I → Finset E) (c : E → A) (hc : ∀ i, Set.InjOn c (T i))
     (F : E → Finset A) (f s : ℕ) (hF : ∀ i e, e ∈ T i → (F e).card ≤ f)
     (hsmall : Fintype.card I * f ^ s < s.factorial) :
     ∃ p : Equiv.Perm A, ∀ i,
       ((T i).filter fun e ↦ p (c e) ∈ F e).card < s := by
   classical
+  let := Fintype.ofFinite A
   let C : I → Finset A := fun i ↦ (T i).image c
   have hex : ∀ i (a : ↥(C i)), ∃ e, e ∈ T i ∧ c e = a.val := by
     intro i a

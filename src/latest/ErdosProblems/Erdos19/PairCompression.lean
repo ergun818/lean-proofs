@@ -47,9 +47,10 @@ theorem PairCompressible.edgeColorable {H : SetHypergraph X} {k : ℕ}
   obtain ⟨t, left, right, hinj, hpairs, hcard⟩ := h
   exact H.edgeColorable_of_disjoint_pairs left right hinj hpairs hcard
 
+omit [Fintype X] in
 /-- Embedding a finite palette preserves a bound on the number of edges in
 each color class. -/
-theorem exists_bounded_fiber_coloring_of_compression (H : SetHypergraph X)
+theorem exists_bounded_fiber_coloring_of_compression [Finite X] (H : SetHypergraph X)
     {C : Type*} [Fintype C] {k b : ℕ} (label : H → C)
     (hlabel : ∀ ⦃e f : H⦄, e ≠ f → label e = label f → Disjoint e.1 f.1)
     (hcard : Fintype.card C ≤ k)
@@ -57,6 +58,7 @@ theorem exists_bounded_fiber_coloring_of_compression (H : SetHypergraph X)
     ∃ color : H.EdgeColoring (Fin k),
       ∀ c, ({e : H | color.color e = c} : Set H).ncard ≤ b := by
   classical
+  let := Fintype.ofFinite X
   have hcard' : Fintype.card C ≤ Fintype.card (Fin k) := by simpa using hcard
   obtain ⟨embedding : C ↪ Fin k⟩ :=
     Function.Embedding.nonempty_of_card_le hcard'
@@ -181,7 +183,7 @@ theorem exists_pair_bounded_coloring_of_disjoint_pairs (H : SetHypergraph X)
         by_cases her : e ∈ Set.range endpoint
         · have hindex : pairIndex (rangeEquiv.symm ⟨e, her⟩) = i := by
             apply Sum.inl_injective
-            simpa only [Set.mem_setOf_eq, label, dif_pos her] using he
+            simpa only [Set.mem_ofPred_eq, label, dif_pos her] using he
           have heq : endpoint (rangeEquiv.symm ⟨e, her⟩) = e :=
             congrArg Subtype.val (rangeEquiv.apply_symm_apply ⟨e, her⟩)
           generalize hs : rangeEquiv.symm ⟨e, her⟩ = a at hindex heq
@@ -193,7 +195,7 @@ theorem exists_pair_bounded_coloring_of_disjoint_pairs (H : SetHypergraph X)
             subst j
             exact Or.inr heq.symm
         · have hh : (Sum.inr ⟨e, her⟩ : Label) = Sum.inl i := by
-            simpa only [Set.mem_setOf_eq, label, dif_neg her] using he
+            simpa only [Set.mem_ofPred_eq, label, dif_neg her] using he
           exact (Sum.inr_ne_inl hh).elim
       have hne : left i ≠ right i := fun h ↦ Sum.inl_ne_inr (hendpoints h)
       simpa only [Set.ncard_pair hne] using Set.ncard_le_ncard hsub
@@ -202,11 +204,11 @@ theorem exists_pair_bounded_coloring_of_disjoint_pairs (H : SetHypergraph X)
         by_cases her : e ∈ Set.range endpoint
         · have hh : (Sum.inl (pairIndex (rangeEquiv.symm ⟨e, her⟩)) : Label) =
               Sum.inr u := by
-            simpa only [Set.mem_setOf_eq, label, dif_pos her] using he
+            simpa only [Set.mem_ofPred_eq, label, dif_pos her] using he
           exact (Sum.inl_ne_inr hh).elim
         · have hh : (⟨e, her⟩ : {e : H // e ∉ Set.range endpoint}) = u := by
             apply Sum.inr_injective
-            simpa only [Set.mem_setOf_eq, label, dif_neg her] using he
+            simpa only [Set.mem_ofPred_eq, label, dif_neg her] using he
           exact congrArg Subtype.val hh
       have hc := Set.ncard_le_ncard hsub
       simp only [Set.ncard_singleton] at hc
@@ -225,14 +227,16 @@ theorem PairCompressible.exists_pair_bounded_coloring {H : SetHypergraph X} {k :
   obtain ⟨t, left, right, hinj, hpairs, hcard⟩ := h
   exact H.exists_pair_bounded_coloring_of_disjoint_pairs left right hinj hpairs hcard
 
+omit [Fintype X] in
 /-- A proper class with at most `b` edges of size at most `R` covers at most
 `b * R` vertices. -/
-theorem coveredVertices_le_of_class_bound (H : SetHypergraph X)
+theorem coveredVertices_le_of_class_bound [Finite X] (H : SetHypergraph X)
     {C : Type*} (color : H.EdgeColoring C) (c : C) (b R : ℕ)
     (hfiber : ({e : H | color.color e = c} : Set H).ncard ≤ b)
     (hmax : ∀ e : H, e.1.ncard ≤ R) :
     (H.coveredVertices {e : H | color.color e = c}).ncard ≤ b * R := by
   classical
+  let := Fintype.ofFinite X
   let M : Set H := {e | color.color e = c}
   have hM : H.IsMatching M :=
     (H.edgeColoring_iff_colorClasses_matching color.color).mp color.valid c

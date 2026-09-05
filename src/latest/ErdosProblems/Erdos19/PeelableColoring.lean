@@ -11,7 +11,7 @@ namespace Erdos19
 open Finset
 
 theorem IsPeelableOutside.exists_list_coloring_extension
-    {V C : Type*} [DecidableEq V] [DecidableEq C]
+    {V C : Type*} [DecidableEq V]
     {G : SimpleGraph V} {A S : Finset V} {k : ℕ}
     (hpeel : IsPeelableOutside G A S k) (hSA : S ⊆ A)
     (L : V → Finset C) (hL : ∀ v ∈ A \ S, k ≤ (L v).card)

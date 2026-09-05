@@ -9,10 +9,13 @@ open _root_.SimpleGraph
 
 variable {V : Type*} [Fintype V]
 
-theorem exists_matching_avoiding_with_independent_remainder (G : _root_.SimpleGraph V)
+omit [Fintype V] in
+theorem exists_matching_avoiding_with_independent_remainder [Finite V] (G : _root_.SimpleGraph V)
     (C : Set V) :
     ∃ M : G.Subgraph, M.IsMatching ∧ Disjoint M.verts C ∧
       ∀ x y, x ∉ C → y ∉ C → x ∉ M.verts → y ∉ M.verts → ¬G.Adj x y := by
+  classical
+  let := Fintype.ofFinite V
   let Q : _root_.SimpleGraph V :=
     { Adj := fun x y ↦ G.Adj x y ∧ x ∉ C ∧ y ∉ C
       symm := ⟨by intro x y h; exact ⟨h.1.symm, h.2.2, h.2.1⟩⟩

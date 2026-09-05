@@ -130,7 +130,6 @@ lemma reciprocal_sq_le_telescope {q : ℕ} (hq : 1 < q) :
     rw [hcast]
     ring
   rw [hright]
-  push_cast
   apply one_div_le_one_div_of_le (mul_pos hq0 hqm0)
   rw [hcast]
   nlinarith
@@ -151,7 +150,8 @@ lemma sum_Ioc_reciprocal_telescope {L N : ℕ} (hL : 0 < L) :
     rw [heq]
     exact sub_le_self _ (by positivity)
   · have hNL : N ≤ L := Nat.le_of_lt (Nat.lt_of_not_ge hLN)
-    simp [Finset.Ioc_eq_empty, hNL]
+    rw [Finset.Ioc_eq_empty_of_le hNL, Finset.sum_empty]
+    exact le_of_lt (one_div_pos.mpr (by exact_mod_cast hL))
 
 lemma sum_Ioc_reciprocal_sq_le {L N : ℕ} (hL : 0 < L) :
     (∑ q ∈ Finset.Ioc L N, (1 : ℝ) / q ^ 2) ≤ 1 / L := by

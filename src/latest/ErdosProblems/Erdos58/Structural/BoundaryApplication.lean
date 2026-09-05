@@ -746,10 +746,10 @@ private theorem commonNeighborPathCycles
     · exact start_not_mem_tail_of_isPath hP hzP
   constructor
   · convert cycleAtLength_of_append P shortYX hP hshort hP_short
-      (Or.inr (by simp [shortYX])) using 1 <;> simp [shortYX]
+      (Or.inr (by simp [shortYX])) using 1 ; simp [shortYX]
   · convert cycleAtLength_of_append P longYX hP hlong hP_long
-      (Or.inr (by simp [longYX])) using 1 <;>
-      simp [longYX] <;> omega
+      (Or.inr (by simp [longYX])) using 1 ;
+      simp [longYX] ; omega
 
 private theorem commonNeighborArcCycles
     (C : EndpointCount.LongestOddCycle G) (S : ExteriorPath C)
@@ -1003,8 +1003,8 @@ private theorem mixedEndpointPathCycle
     · exact start_not_mem_tail_of_isPath hclose hzQ
     · exact start_not_mem_tail_of_isPath hP hzP
   convert cycleAtLength_of_append P closeYX hP hclose hdisj
-    (Or.inr (by simp [closeYX])) using 1 <;>
-    simp [closeYX] <;> omega
+    (Or.inr (by simp [closeYX])) using 1 ;
+    simp [closeYX] ; omega
 
 private theorem mixedEndpointArcCycle
     (C : EndpointCount.LongestOddCycle G) (S : ExteriorPath C)
@@ -1084,7 +1084,7 @@ private theorem rightEndpointPathCycle
     · exact start_not_mem_tail_of_isPath hclose hzQ
     · exact start_not_mem_tail_of_isPath hP hzP
   convert cycleAtLength_of_append P closeYX hP hclose hdisj
-    (Or.inr (by simp [closeYX])) using 1 <;> simp [closeYX]
+    (Or.inr (by simp [closeYX])) using 1 ; simp [closeYX]
 
 private theorem rightEndpointArcCycle
     (C : EndpointCount.LongestOddCycle G) (S : ExteriorPath C)
@@ -1495,7 +1495,7 @@ private theorem oneChordBoundary_of_even_routes [Finite V]
     rcases hb with rfl | hb
     · simpa [Nat.add_assoc] using hlong₁
     · exact hshort b hb
-  · convert hlong₂ using 1 <;> omega
+  · convert hlong₂ using 1 ; omega
 
 /-- Counting core when two ordered endpoint routes have odd lengths.  Their
 base cycles give two lengths below the `j - 1` positive even-prefix cycles
@@ -1859,7 +1859,6 @@ theorem twoEndpointRoutesBoundary [Finite V]
       · intro t ht
         exact (R₂.arcCycles C base t (hbase_ne t ht)
           hbaseL hbaseR (hMXL ht) (hMXR ht)).2
-
     · have hr₂odd : Odd R₂.walk.length := by grind
       apply oneChordBoundary_of_odd_routes_indexed hj M hMcard
         (fun t ↦ (cycleCoarc C base t).length)
@@ -2839,7 +2838,6 @@ theorem sameNeighborhoodBoundary_one_of_exteriorPath [Finite V]
   let y : V := C.cycle.getVert j
   have hxy : x ≠ y := by
     exact getVert_ne_of_fin_ne C hij
-
   have hiL : i ∈ cycleNeighborPositions C D.exterior.left := by
     rw [hN]
     simp
@@ -2860,7 +2858,6 @@ theorem sameNeighborhoodBoundary_one_of_exteriorPath [Finite V]
     (mem_cycleNeighborPositions C D.exterior.right i).mp hiR
   have hRy : G.Adj D.exterior.right y :=
     (mem_cycleNeighborPositions C D.exterior.right j).mp hjR
-
   have hxC : x ∈ C.cycle.support := C.cycle.getVert_mem_support i
   have hyC : y ∈ C.cycle.support := C.cycle.getVert_mem_support j
   let c : G.Walk x x := C.cycle.rotate x hxC
@@ -2883,7 +2880,6 @@ theorem sameNeighborhoodBoundary_one_of_exteriorPath [Finite V]
         (Walk.length_append P Q).symm
       _ = c.length := congrArg Walk.length (c.take_spec hyc)
       _ = C.cycle.length := by simp [c]
-
   have hxOutside : x ∉ D.exterior.walk.support := by
     intro hx
     exact D.exterior.avoids_cycle hx hxC
@@ -2906,7 +2902,6 @@ theorem sameNeighborhoodBoundary_one_of_exteriorPath [Finite V]
     intro h
     have hnil : D.exterior.walk.Nil := D.exterior.isPath.nil_iff_eq.mpr h
     exact (Nat.ne_of_gt D.exterior.positive) hnil.length_eq_zero
-
   let shortXY : G.Walk x y := Walk.cons hLx.symm hLy.toWalk
   let shortYX : G.Walk y x := Walk.cons hLy.symm hLx.toWalk
   let longXY : G.Walk x y :=
@@ -2915,7 +2910,6 @@ theorem sameNeighborhoodBoundary_one_of_exteriorPath [Finite V]
     Walk.cons hRy.symm (D.exterior.walk.reverse.concat hLx)
   let baseX : G.Walk x x :=
     Walk.cons hLx.symm (D.exterior.walk.concat hRx)
-
   have hshortXY : shortXY.IsPath := by
     dsimp [shortXY]
     rw [Walk.cons_isPath_iff]
@@ -2960,7 +2954,6 @@ theorem sameNeighborhoodBoundary_one_of_exteriorPath [Finite V]
         rcases he with ⟨hxr, hLx'⟩ | ⟨-, hLR'⟩
         · exact hRx_ne hxr.symm
         · exact hLR hLR'
-
   have hshortXY_inter :
       ∀ z ∈ shortXY.support, z ∈ C.cycle.support → z = x ∨ z = y := by
     intro z hz hzC
@@ -3000,7 +2993,6 @@ theorem sameNeighborhoodBoundary_one_of_exteriorPath [Finite V]
     · exact Or.inl rfl
     · exact False.elim (D.exterior.avoids_cycle hz hzC)
     · exact Or.inr rfl
-
   have hPsub : ∀ z ∈ P.support, z ∈ C.cycle.support := by
     intro z hz
     apply mem_cycle_of_mem_rotated C hxC
@@ -3009,7 +3001,6 @@ theorem sameNeighborhoodBoundary_one_of_exteriorPath [Finite V]
     intro z hz
     apply mem_cycle_of_mem_rotated C hxC
     exact c.support_dropUntil_subset_support hyc hz
-
   have hP_shortYX : P.support.tail.Disjoint shortYX.support.tail := by
     intro z hzP hzS
     have hzPin : z ∈ P.support := List.mem_of_mem_tail hzP
@@ -3038,24 +3029,22 @@ theorem sameNeighborhoodBoundary_one_of_exteriorPath [Finite V]
     rcases hlongXY_inter z hzSin (hQsub z hzQin) with rfl | rfl
     · exact start_not_mem_tail_of_isPath hlongXY hzS
     · exact start_not_mem_tail_of_isPath hQ hzQ
-
   have hshortP : CycleAtLength G (P.length + 2) := by
     convert cycleAtLength_of_append P shortYX hP hshortYX hP_shortYX
-      (Or.inr (by simp [shortYX])) using 1 <;> simp [shortYX]
+      (Or.inr (by simp [shortYX])) using 1 ; simp [shortYX]
   have hlongP : CycleAtLength G (P.length + D.exterior.walk.length + 2) := by
     convert cycleAtLength_of_append P longYX hP hlongYX hP_longYX
-      (Or.inr (by simp [longYX])) using 1 <;>
-      simp [longYX] <;> omega
+      (Or.inr (by simp [longYX])) using 1 ;
+      simp [longYX] ; omega
   have hshortQ : CycleAtLength G (Q.length + 2) := by
     convert cycleAtLength_of_append Q shortXY hQ hshortXY hQ_shortXY
-      (Or.inr (by simp [shortXY])) using 1 <;> simp [shortXY]
+      (Or.inr (by simp [shortXY])) using 1 ; simp [shortXY]
   have hlongQ : CycleAtLength G (Q.length + D.exterior.walk.length + 2) := by
     convert cycleAtLength_of_append Q longXY hQ hlongXY hQ_longXY
-      (Or.inr (by simp [longXY])) using 1 <;>
-      simp [longXY] <;> omega
+      (Or.inr (by simp [longXY])) using 1 ;
+      simp [longXY] ; omega
   have hbase : CycleAtLength G (D.exterior.walk.length + 2) := by
     exact ⟨x, baseX, hbaseX, by simp [baseX]⟩
-
   have hparity : Odd P.length ∨ Odd Q.length := by
     have hsum : Odd (P.length + Q.length) := by
       rw [hPQlen]

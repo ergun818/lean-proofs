@@ -31,7 +31,8 @@ theorem eventually_edgeColorable_of_size_window (h : ℕ) (hh : 1 ≤ h) :
   apply hcolor D hD H H.lineGraph
     (H.lineGraph_degree_le_of_size_window hlinear r R D hr hmin hmax hdegree)
   intro e f hef
-  have hcount := H.commonNeighborEdges_ncard_le_of_size_range hlinear r R hr hmin hmax e f hef.1 hef.2
+  have hcount :=
+    H.commonNeighborEdges_ncard_le_of_size_range hlinear r R hr hmin hmax e f hef.1 hef.2
   change (H.commonNeighborEdges e f).ncard + D / h ≤ D
   have h' : (H.commonNeighborEdges e f).ncard ≤
       (R - 1) ^ 2 + (Fintype.card V - 1) / (r - 1) := by simpa only [pow_two] using hcount

@@ -29,7 +29,7 @@ theorem exists_small_class_recoloring {V K : Type*} [Fintype V] [Fintype K]
     have hclass : ({e : H | recolor.color e = i} : Set H) =
         {e : H | c₀.color e = sigma.symm i} := by
       ext e
-      exact sigma.apply_eq_iff_eq_symm_apply
+      exact sigma.eq_symm_apply.symm
     rw [hclass]
     rcases hbounded (sigma.symm i) with hsingle | hsmall
     · exact H.coveredVertices_ncard_le_of_singleton_class _ A hsingle hsize

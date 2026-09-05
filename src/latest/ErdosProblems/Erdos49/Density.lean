@@ -178,7 +178,7 @@ lemma fewSelectedDensity_tendsto_zero (k : ℕ) :
         exact (div_le_one (by positivity)).2 hpOne
       · apply Finset.mem_powerset.mpr
         intro p hp
-        simpa using p.property
+        simp
   · filter_upwards [hmean.eventually_ge_atTop (2 * (k + 1 : ℝ))] with M hM
     let P := (Finset.range M).filter Nat.Prime
     let p : ↑P → ℝ := fun q ↦ 1 / (q.1 : ℝ)
@@ -209,7 +209,7 @@ lemma fewSelectedDensity_tendsto_zero (k : ℕ) :
       ext T
       simp only [Finset.mem_univ, Finset.mem_powerset, true_iff]
       intro q hq
-      simpa using q.property]
+      simp]
     simpa [Nat.lt_succ_iff, c] using htail
   · exact hexp
 

@@ -100,22 +100,28 @@ section Degrees
 variable [Fintype A] [Fintype B]
 variable (G : Bigraph A B) [DecidableRel G.Adj]
 
+omit [Fintype A] in
 @[simp] theorem leftDegree_eq_card_filter (a : A) :
     G.leftDegree a = (Finset.univ.filter fun b ↦ G.Adj a b).card := rfl
 
+omit [Fintype B] in
 @[simp] theorem rightDegree_eq_card_filter (b : B) :
     G.rightDegree b = (Finset.univ.filter fun a ↦ G.Adj a b).card := rfl
 
+omit [Fintype A] in
 theorem leftDegree_le_card (a : A) : G.leftDegree a ≤ Fintype.card B := by
   simpa [leftDegree] using
     Finset.card_le_card (Finset.filter_subset (fun b ↦ G.Adj a b) (Finset.univ : Finset B))
 
+omit [Fintype B] in
 theorem rightDegree_le_card (b : B) : G.rightDegree b ≤ Fintype.card A := by
   simpa [rightDegree] using
     Finset.card_le_card (Finset.filter_subset (fun a ↦ G.Adj a b) (Finset.univ : Finset A))
 
+omit [Fintype B] in
 @[simp] theorem swap_leftDegree (b : B) : G.swap.leftDegree b = G.rightDegree b := rfl
 
+omit [Fintype A] in
 @[simp] theorem swap_rightDegree (a : A) : G.swap.rightDegree a = G.leftDegree a := rfl
 
 end Degrees
@@ -277,7 +283,7 @@ theorem mul_le_card_leftPathSigma (x : A) (d₀ d₁ d₂ : ℕ)
     have hxmem : x ∈ (Finset.univ.filter fun a ↦ F.Adj a b) := by simp [hadj]
     have heq : F.leftSecond x b = (Finset.univ.filter fun a ↦ F.Adj a b).erase x := by
       ext a
-      simp [leftSecond, and_left_comm, eq_comm]
+      simp [leftSecond, eq_comm]
     rw [heq, Finset.card_erase_of_mem hxmem]
     simpa [rightDegree] using Nat.sub_le_sub_right (h₁ hadj) 1
   have hthird : ∀ b ∈ F.leftFirst x, ∀ a ∈ F.leftSecond x b,
@@ -290,7 +296,7 @@ theorem mul_le_card_leftPathSigma (x : A) (d₀ d₁ d₂ : ℕ)
     have hbmem : b ∈ (Finset.univ.filter fun c ↦ F.Adj a c) := by simp [hab]
     have heq : F.leftThird b a = (Finset.univ.filter fun c ↦ F.Adj a c).erase b := by
       ext c
-      simp [leftThird, and_left_comm, eq_comm]
+      simp [leftThird, eq_comm]
     rw [heq, Finset.card_erase_of_mem hbmem]
     simpa [leftDegree] using Nat.sub_le_sub_right (h₂ hadj hax hab) 1
   rw [leftPathSigma, Finset.card_sigma]
@@ -314,16 +320,19 @@ theorem mul_le_card_leftPathSigma (x : A) (d₀ d₁ d₂ : ℕ)
         ((F.leftSecond x b).sigma fun a ↦ F.leftThird b a).card := by
       simp only [Finset.card_sigma]
 
+omit [DecidableEq A] [DecidableEq B] in
 /-- The left-root form of the FNV breadth-first estimate. -/
 theorem left_bfs_layer_bound (hF : F.GirthAtLeastEight) (x : A) (d₀ d₁ d₂ : ℕ)
     (h₀ : d₀ ≤ F.leftDegree x)
     (h₁ : ∀ ⦃b⦄, F.Adj x b → d₁ + 1 ≤ F.rightDegree b)
     (h₂ : ∀ ⦃b a⦄, F.Adj x b → a ≠ x → F.Adj a b →
       d₂ + 1 ≤ F.leftDegree a) :
-    d₀ * d₁ * d₂ ≤ Fintype.card B :=
-  (F.mul_le_card_leftPathSigma x d₀ d₁ d₂ h₀ h₁ h₂).trans
+    d₀ * d₁ * d₂ ≤ Fintype.card B := by
+  classical
+  exact (F.mul_le_card_leftPathSigma x d₀ d₁ d₂ h₀ h₁ h₂).trans
     ((F.card_leftPathSigma_le_leftThreePaths x).trans (F.card_leftThreePaths_le hF x))
 
+omit [DecidableEq A] [DecidableEq B] in
 /-- The symmetric, right-root form of the breadth-first estimate. -/
 theorem right_bfs_layer_bound (hF : F.GirthAtLeastEight) (x : B) (d₀ d₁ d₂ : ℕ)
     (h₀ : d₀ ≤ F.rightDegree x)
@@ -345,6 +354,7 @@ private lemma ceil_half_le_of_le_two_mul {x y : ℕ} (h : x ≤ 2 * y) :
 private lemma shifted_half_le_of_le_two_mul {x y : ℕ} (h : x ≤ 2 * y)
     (hy : 1 ≤ y) : (x - 1) / 2 + 1 ≤ y := by omega
 
+omit [DecidableEq A] [DecidableEq B] in
 /-- FNV U3 for a bipartite graph, stated with the U2 subgraph explicit.
 `F` has girth at least eight and retains at least half of every degree of
 `G`.  The maximum-degree witness may lie in either part. -/
@@ -432,6 +442,7 @@ theorem bipartite_degree_comparison (G F : Bigraph A B)
       _ ≤ 8 * max (Fintype.card A) (Fintype.card B) :=
         Nat.mul_le_mul_left 8 (Nat.le_max_left _ _)
 
+omit [DecidableEq A] [DecidableEq B] in
 /-- The numerical bridge from a locally balanced bipartition to the general
 FNV degree estimate.  Here `H` is the crossing bigraph, `D` is its maximum
 degree, and `F` is its U2 large-girth subgraph.  The hypotheses `hDelta` and
@@ -484,7 +495,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 def flipColor (c : V → Bool) (v : V) : V → Bool :=
   fun w ↦ if w = v then !(c w) else c w
 
-private def cutRelSymm (c : V → Bool) : Std.Symm (fun u w ↦ c u ≠ c w) :=
+omit [Fintype V] [DecidableEq V] in
+private theorem cutRelSymm (c : V → Bool) : Std.Symm (fun u w ↦ c u ≠ c w) :=
   ⟨fun _ _ ↦ Ne.symm⟩
 
 /-- Edges crossing a Boolean bipartition. -/
@@ -492,10 +504,11 @@ def cutEdgeFinset (G : SimpleGraph V) [DecidableRel G.Adj] (c : V → Bool) :
     Finset (Sym2 V) :=
   G.edgeFinset.filter fun e ↦ e ∈ Sym2.fromRel (cutRelSymm c)
 
+omit [DecidableEq V] in
 @[simp] theorem sym2_mem_cutEdgeFinset (G : SimpleGraph V) [DecidableRel G.Adj]
     (c : V → Bool) (u w : V) :
     s(u, w) ∈ cutEdgeFinset G c ↔ G.Adj u w ∧ c u ≠ c w := by
-  simp [cutEdgeFinset, cutRelSymm, SimpleGraph.mem_edgeFinset]
+  simp [cutEdgeFinset, SimpleGraph.mem_edgeFinset]
 
 /-- Flipping one vertex toggles precisely its incident edges in the cut. -/
 theorem cutEdgeFinset_flipColor (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -540,7 +553,7 @@ theorem card_cutEdges_inter_incidence (G : SimpleGraph V) [DecidableRel G.Adj]
     · intro he
       rcases Finset.mem_map.mp he with ⟨w, hw, rfl⟩
       have hw' : G.Adj v w ∧ c w ≠ c v := by simpa [N] using hw
-      simp [hw'.1, hw'.2, Ne.symm hw'.2, SimpleGraph.mem_incidenceFinset]
+      simp [hw'.1, Ne.symm hw'.2, SimpleGraph.mem_incidenceFinset]
     · intro he
       have hinc : e ∈ G.incidenceFinset v := (Finset.mem_inter.mp he).2
       have hve : v ∈ e := by
@@ -560,6 +573,7 @@ def IsLocallyBalancedCut (G : SimpleGraph V) [DecidableRel G.Adj]
     (c : V → Bool) : Prop :=
   ∀ v, G.degree v ≤ 2 * cutDegree G c v
 
+omit [DecidableEq V] in
 /-- Every finite graph has a locally balanced bipartition.  Choose a cut with
 the maximum possible number of crossing edges.  If a vertex saw fewer than
 half of its incident edges across the cut, flipping it would strictly enlarge
@@ -577,7 +591,7 @@ theorem exists_locallyBalancedCut (G : SimpleGraph V) [DecidableRel G.Adj] :
   let I := G.incidenceFinset v
   have hIC : (C ∩ I).card < (I \ C).card := by
     have hIcard : I.card = G.degree v := by
-      simpa [I] using G.card_incidenceFinset_eq_degree v
+      simp [I]
     have hsplit : (I \ C).card = I.card - (C ∩ I).card := by
       simpa [Finset.inter_comm] using Finset.card_sdiff (s := C) (t := I)
     have hcross : (C ∩ I).card = cutDegree G c v := by
@@ -623,6 +637,7 @@ instance (G : SimpleGraph V) [DecidableRel G.Adj] (c : V → Bool) :
     DecidableRel (crossingBigraph G c).Adj :=
   fun a b ↦ inferInstanceAs (Decidable (G.Adj a.1 b.1))
 
+omit [DecidableEq V] in
 theorem crossingBigraph_leftDegree (G : SimpleGraph V) [DecidableRel G.Adj]
     (c : V → Bool) (a : CutLeft c) :
     (crossingBigraph G c).leftDegree a = cutDegree G c a.1 := by
@@ -637,6 +652,7 @@ theorem crossingBigraph_leftDegree (G : SimpleGraph V) [DecidableRel G.Adj]
     S.card = (S.map (Function.Embedding.subtype _)).card := by simp
     _ = _ := by rw [himage]
 
+omit [DecidableEq V] in
 theorem crossingBigraph_rightDegree (G : SimpleGraph V) [DecidableRel G.Adj]
     (c : V → Bool) (b : CutRight c) :
     (crossingBigraph G c).rightDegree b = cutDegree G c b.1 := by
@@ -651,10 +667,12 @@ theorem crossingBigraph_rightDegree (G : SimpleGraph V) [DecidableRel G.Adj]
     S.card = (S.map (Function.Embedding.subtype _)).card := by simp
     _ = _ := by rw [himage]
 
+omit [DecidableEq V] in
 theorem card_cut_parts (c : V → Bool) :
     Fintype.card (CutLeft c) + Fintype.card (CutRight c) = Fintype.card V := by
   simpa using Fintype.card_congr (Equiv.sumCompl fun v : V ↦ c v = false)
 
+omit [DecidableEq V] [Fintype V] in
 /-- A standard `cycleGraph 6` freeness hypothesis passes to every crossing
 bigraph of a Boolean cut. -/
 theorem crossingBigraph_noSixCycle_of_free (G : SimpleGraph V)
@@ -695,6 +713,7 @@ theorem crossingBigraph_noSixCycle_of_free (G : SimpleGraph V)
     · simpa [crossingBigraph] using h₄
     · simpa [crossingBigraph] using h₅.symm
 
+omit [DecidableEq V] in
 /-- The general constant-64 comparison, assembled from the deterministic
 locally balanced cut and U2 on its crossing bigraph.  `hSix` is the direct
 typed form of the fact that C6-freeness passes to a spanning subgraph; the
@@ -749,6 +768,7 @@ theorem general_degree_comparison_of_u2 (G : SimpleGraph V) [DecidableRel G.Adj]
   exact Bigraph.degree_comparison H C.F hFgirth C.half_left C.half_right
     (Fintype.card V) delta Delta D (card_cut_parts c) hdeltaLeft hdeltaRight hmaxH hDelta
 
+omit [DecidableEq V] in
 /-- The deterministic-bipartition form of the general FNV degree comparison,
 with standard Mathlib `cycleGraph 6` freeness.  The remaining argument is the
 concrete U2 forest selector for each crossing bigraph. -/

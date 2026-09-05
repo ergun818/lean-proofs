@@ -139,7 +139,8 @@ theorem dilutedTentativeCollision_expectation_lower_bound {V : Type*} [Fintype V
       rfl
     _ = _ := hswap
     _ ≤ ∑ sample : V → Fin A × Fin C,
-        ∑ a : Fin C, if a ∈ tentativeCollisionColors G (dilutedSample active sample) v then 1 else 0 :=
+        ∑ a : Fin C, if a ∈ tentativeCollisionColors G (dilutedSample active sample) v then 1
+          else 0 :=
       sum_le_sum (fun sample _ ↦ sum_le_sum (fun a _ ↦ hW sample a))
     _ = _ := by simp only [← ncard_eq_sum_indicator]
 

@@ -23,7 +23,6 @@ end Rectangle
 
 
 /-- A `RectangleBorder` has corners `z` and `w`. -/
-
 def RectangleBorder (z w : ℂ) : Set ℂ :=
   [[z.re, w.re]] ×ℂ {z.im} ∪ {z.re} ×ℂ [[z.im, w.im]] ∪
     [[z.re, w.re]] ×ℂ {w.im} ∪ {w.re} ×ℂ [[z.im, w.im]]

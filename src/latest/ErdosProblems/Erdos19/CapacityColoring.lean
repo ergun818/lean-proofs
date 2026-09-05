@@ -10,6 +10,7 @@ open Finset Erdos76 Erdos76.FiniteHypergraph
 variable {V E A : Type*} [DecidableEq V] [Fintype E] [DecidableEq E]
   [DecidableEq A]
 
+omit [DecidableEq E] [Fintype E] in
 /-- Intersections of the supports of a matching consume at most the pool. -/
 theorem matching_sum_inter_card_le (K : FiniteHypergraph V E) (S : Finset E)
     (hS : K.IsMatching S) (P : Finset V) :

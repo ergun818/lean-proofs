@@ -9,7 +9,7 @@ open _root_.SimpleGraph
 
 attribute [local instance] Classical.propDecidable
 
-theorem exists_matching_partner_neighbor_set {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_matching_partner_neighbor_set {V : Type*} [Fintype V]
     {G : _root_.SimpleGraph V} (M : G.Subgraph) (hM : M.IsMatching)
     (R : _root_.SimpleGraph V) (u : V) (Z : Finset V) :
     ∃ X : Finset V,

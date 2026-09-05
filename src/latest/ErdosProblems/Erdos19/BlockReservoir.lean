@@ -32,9 +32,10 @@ theorem blockVertices_pairwise_disjoint [Fintype V] (z : V → K) :
   intro v hva hvb
   exact hab ((mem_filter.mp hva).2.symm.trans (mem_filter.mp hvb).2)
 
-theorem filtered_blocks_pairwise_disjoint [Fintype V] (z : V → K) (Y : Finset V) :
+theorem filtered_blocks_pairwise_disjoint [Finite V] (z : V → K) (Y : Finset V) :
     Pairwise fun a b ↦ Disjoint (Y.filter fun v ↦ z v = a) (Y.filter fun v ↦ z v = b) := by
   classical
+  let := Fintype.ofFinite V
   intro a b hab
   apply Finset.disjoint_left.mpr
   intro v hva hvb

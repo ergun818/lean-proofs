@@ -25,25 +25,30 @@ universe u
 variable {V : Type u} [Fintype V] [DecidableEq V]
 variable {G : SimpleGraph V} [DecidableRel G.Adj]
 
+omit [DecidableEq V] in
 /-- The independent-exterior versus positive longest-exterior-path split. -/
 theorem independentExterior_or_exists_positive_longestExteriorPath
-    {j : ℕ} (hj : 0 < j) (C : LongestOddCycle G)
-    (hdegree : ∀ v : V, 2 * j + 1 ≤ G.degree v)
-    (hodd : (oddCycleLengths G).ncard ≤ j) :
+    {j : ℕ} (_ : 0 < j) (C : LongestOddCycle G)
+    (_ : ∀ v : V, 2 * j + 1 ≤ G.degree v)
+    (_ : (oddCycleLengths G).ncard ≤ j) :
     HasIndependentExterior C ∨
       ∃ P : LongestExteriorPath C, 0 < P.path.length := by
+  classical
   by_cases hind : HasIndependentExterior C
   · exact Or.inl hind
   · exact Or.inr
       (LongestExteriorPath.exists_positive_of_not_independent (C := C) hind)
 
+omit [DecidableEq V] in
 /-- Even in the independent branch there is at least one exterior vertex. -/
 theorem independentExterior_has_vertex {j : ℕ} (hj : 0 < j)
     (C : LongestOddCycle G)
     (hdegree : ∀ v : V, 2 * j + 1 ≤ G.degree v)
     (hodd : (oddCycleLengths G).ncard ≤ j)
     (_hind : HasIndependentExterior C) :
-    C.carrierᶜ.Nonempty :=
+    C.carrierᶜ.Nonempty := by
+  classical
+  exact
   longestOddCycle_exterior_nonempty hj C hdegree hodd
 
 end Erdos58.Structural

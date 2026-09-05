@@ -16,7 +16,7 @@ namespace Erdos19
 open Finset Erdos76 Erdos76.FiniteHypergraph
 
 theorem card_filter_injective_preimage_le {A B : Type*} [Fintype A]
-    [DecidableEq A] [DecidableEq B] (j : A → B) (hj : Function.Injective j)
+    [DecidableEq B] (j : A → B) (hj : Function.Injective j)
     (S : Finset B) : (univ.filter fun a ↦ j a ∈ S).card ≤ S.card := by
   classical
   rw [← card_image_of_injective _ hj]
@@ -29,7 +29,7 @@ theorem card_filter_injective_preimage_le {A B : Type*} [Fintype A]
 greater than `r * s + f`, provided `|V(H)| * f^s < s!`. -/
 theorem exists_edgeColoring_avoiding_sparse {V E A B : Type*}
     [DecidableEq V] [Fintype E] [DecidableEq E]
-    [Fintype A] [DecidableEq A] [Fintype B] [DecidableEq B]
+    [Finite A] [Fintype B]
     (H : FiniteHypergraph V E) (r f s : ℕ) (hbound : H.IsBounded r)
     (c : H.conflictGraph.Coloring A) (F : E → Finset (A ⊕ B))
     (hF : ∀ e, (F e).card ≤ f)
@@ -37,6 +37,7 @@ theorem exists_edgeColoring_avoiding_sparse {V E A B : Type*}
     (hreserve : r * s + f < Fintype.card B) :
     ∃ d : H.conflictGraph.Coloring (A ⊕ B), ∀ e, d e ∉ F e := by
   classical
+  let := Fintype.ofFinite A
   let I := ↥H.vertexSet
   let T : I → Finset E := fun v ↦ univ.filter fun e ↦ v.val ∈ H.support e
   have hc : ∀ v : I, Set.InjOn c (T v) := by
@@ -111,7 +112,7 @@ theorem exists_edgeColoring_avoiding_sparse {V E A B : Type*}
 /-- The disjoint palettes may be embedded into any sufficiently large target
 palette. All forbidden sets are interpreted in that target palette. -/
 theorem exists_edgeColoring_avoiding_sparse_palette {V E P : Type*}
-    [DecidableEq V] [Fintype E] [DecidableEq E] [Fintype P] [DecidableEq P]
+    [DecidableEq V] [Fintype E] [DecidableEq E] [Fintype P]
     (H : FiniteHypergraph V E) (r f s q : ℕ) (hbound : H.IsBounded r)
     (c : H.EdgeColoring q) (F : E → Finset P) (hF : ∀ e, (F e).card ≤ f)
     (hsmall : H.vertexSet.card * f ^ s < s.factorial)

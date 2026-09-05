@@ -31,7 +31,8 @@ theorem eventually_prescribed_matching_packing (k : ℕ) (hk : 8 ≤ k) :
   have hkR : (0 : ℝ) < k := by exact_mod_cast hkpos
   let K := 1000 * k * k
   let B := 10000 * k * k
-  obtain ⟨epsilon, hepsilon, N₁, hN₁⟩ := eventually_packing_load_small k K B (by dsimp [B]; positivity)
+  obtain ⟨epsilon, hepsilon, N₁, hN₁⟩ :=
+    eventually_packing_load_small k K B (by dsimp [B]; positivity)
   let alpha : ℝ := 1 / (100 * k)
   have halpha : 0 < alpha := by dsimp [alpha]; positivity
   obtain ⟨deltaR, hdeltaR, N₂, hN₂⟩ := eventually_exists_reservoir_graph k hkpos
@@ -134,7 +135,7 @@ theorem eventually_prescribed_matching_packing (k : ℕ) (hk : 8 ≤ k) :
     exact_mod_cast hle.trans_lt h
   apply exists_prescribed_matching_packing G R hRG A m a r k q K b
     (by simpa only [Fintype.card_fin] using hnpos)
-    (by simpa only [Fintype.card_fin] using hmlen) heven hsmallNat habsNat
+    heven hsmallNat habsNat
     (by simpa only [Fintype.card_fin] using hri)
     (by simpa only [Fintype.card_fin] using hsize)
     (by simpa only [Fintype.card_fin] using hbad)

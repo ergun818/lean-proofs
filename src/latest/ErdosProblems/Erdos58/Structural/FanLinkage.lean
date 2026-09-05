@@ -40,6 +40,7 @@ variable {x y : V} {j : ℕ}
 
 namespace EndpointFanData
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- The two-spoke cycles of a fan outside `C` are genuine exterior odd
 cycles, so two-connectivity makes them strictly shorter than `C`. -/
 lemma betweenCycle_lt_longest (hG : TwoConnected G)
@@ -48,6 +49,7 @@ lemma betweenCycle_lt_longest (hG : TwoConnected G)
     (i i' : Fin (2 * j + 1)) (hii' : D.position i < D.position i')
     (hodd : Odd (D.betweenCycle i i' hii').length) :
     (D.betweenCycle i i' hii').length < C.length := by
+  classical
   let E : ExteriorOddCycle C :=
     { base := x
       cycle := D.betweenCycle i i' hii'
@@ -57,11 +59,14 @@ lemma betweenCycle_lt_longest (hG : TwoConnected G)
         houtside v (D.betweenCycle_support_subset i i' hii' hv) }
   exact Structural.outside_odd_cycle_is_shorter_of_twoConnected hG E
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- A finite realization supplies the corresponding lower bound for the
 global odd-cycle-length set. -/
-lemma ncard_oddCycleLengths_ge_of_realizes {r : ℕ}
+lemma ncard_oddCycleLengths_ge_of_realizes [Finite V] {r : ℕ}
     (h : RealizesOddCycleLengths G r) :
     r ≤ (oddCycleLengths G).ncard := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨lengths, hcard, hreal⟩ := h
   have hsub : (lengths : Set ℕ) ⊆ oddCycleLengths G := by
     intro n hn
@@ -70,6 +75,7 @@ lemma ncard_oddCycleLengths_ge_of_realizes {r : ℕ}
   exact hcard.trans (by
     simpa using Set.ncard_le_ncard hsub (oddCycleLengths_finite G))
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- The all-odd branch of the endpoint fan, closed through the actual
 two-linkage supplied by two-connectivity. -/
 theorem allOddSupportedPaths_force_many_lengths
@@ -81,6 +87,7 @@ theorem allOddSupportedPaths_force_many_lengths
       Nonempty (FanSupportedPathFamily D (D.path.getVert a)
         (D.path.getVert b) (j + 1))) :
     j + 1 ≤ (oddCycleLengths G).ncard := by
+  classical
   let B : Set V := {v | v ∈ D.path.support}
   have hAB : Disjoint C.carrier B := by
     rw [Set.disjoint_left]
@@ -91,8 +98,7 @@ theorem allOddSupportedPaths_force_many_lengths
     have hindex := D.isPath.getVert_injOn
       (show 0 ≤ D.path.length by omega)
       (show D.path.length ≤ D.path.length by omega)
-      (by simpa [hxy] using (show D.path.getVert 0 = D.path.getVert D.path.length by
-        simp [hxy]))
+      (by simp [hxy])
     omega
   have hpair : ({x, y} : Set V) ⊆ B := by
     intro v hv
@@ -145,6 +151,7 @@ theorem allOddSupportedPaths_force_many_lengths
   exact ncard_oddCycleLengths_ge_of_realizes (by
     simpa using F.realizes)
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- An endpoint fan of size `2*j+1` supported outside a longest odd cycle
 forces `j+1` odd cycle lengths.  The mixed branch is made disjoint from the
 longest length by the outside-cycle lemma; the all-odd branch is closed by
@@ -158,6 +165,7 @@ theorem endpointFan_force_many_lengths
     (hfirst : D.position iFirst = 1)
     (hlast : D.position iLast = D.path.length) :
     j + 1 ≤ (oddCycleLengths G).ncard := by
+  classical
   rcases D.mixedCyclesBelow_or_allOddSupportedPaths hj hfirst hlast
       (bound := C.length)
       (fun i i' hlt hodd ↦ D.betweenCycle_lt_longest
@@ -184,6 +192,7 @@ theorem endpointFan_force_many_lengths
       omega
     · exact hpaths
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- Exact `j` odd lengths therefore rule out an exterior endpoint carrying
 `2*j+1` selected spine neighbours with the two extremal portals present. -/
 theorem endpointFan_impossible_of_exact_count
@@ -195,6 +204,7 @@ theorem endpointFan_impossible_of_exact_count
     (hfirst : D.position iFirst = 1)
     (hlast : D.position iLast = D.path.length)
     (hodd : (oddCycleLengths G).ncard = j) : False := by
+  classical
   have := D.endpointFan_force_many_lengths hG (C := C) houtside hj hfirst hlast
   omega
 
@@ -281,9 +291,9 @@ theorem noCycleNeighbors_impossible
       (S.min' ⟨1, honeMem⟩)).mp (Finset.min'_mem S _)
     omega
   let D : EndpointFanData G (P.first : V) (P.exactAmbientPath.getVert m) j :=
-    { path := spine.copy rfl (by simp [spine, hmle])
+    { path := spine.copy rfl (by simp)
       isPath := (SimpleGraph.Walk.isPath_copy spine rfl
-        (by simp [spine, hmle'])).2 (P.exactAmbientPath_isPath.take m)
+        (by simp)).2 (P.exactAmbientPath_isPath.take m)
       position := position
       position_pos := hposition_pos
       position_le := by

@@ -40,12 +40,14 @@ theorem colorable_of_diluted_shortfall_card_bound {V : Type*} [Fintype V]
   let : Nonempty (Fin A × Fin k) := ⟨(active, ⟨0, hk⟩)⟩
   let dep : V → V → Prop := fun v w ↦ ¬Disjoint (twoStepSupport G v) (twoStepSupport G w)
   have hdep (v : V) : ((Finset.univ : Finset V).filter (dep v)).card ≤ (Δ + 1) ^ 4 := by
-    simpa only [dep, twoStepDependencyFinset] using twoStepDependencyFinset_card_le_pow_four G Δ hdegree v
+    simpa only [dep, twoStepDependencyFinset] using
+      twoStepDependencyFinset_card_le_pow_four G Δ hdegree v
   obtain ⟨sample, hs⟩ := exists_avoiding_of_local_product_events
     (fun v ↦ dilutedRetainedShortfall (k := k) G active t v) (twoStepSupport G) dep
     ((Δ + 1) ^ 4) (by positivity) hdep (dilutedRetainedShortfall_dependsOn G active)
     (fun h ↦ by simpa only [dep, not_not] using h) hshort
-  apply SimpleGraph.colorable_of_no_localColoringBadEvents G hk hdegree hgap (dilutedSample active sample)
+  apply SimpleGraph.colorable_of_no_localColoringBadEvents G hk hdegree hgap (dilutedSample
+    active sample)
   intro v hv
   have hle : t ≤ (retainedCollisionColors G (dilutedSample active sample) v).ncard :=
     Nat.le_of_not_lt (hs v)
@@ -88,7 +90,8 @@ theorem colorable_of_diluted_tail_parameters {V : Type*} [Fintype V]
   have htent := card_dilutedTentativeShortfall_ratio_le_exp G active v (active, ⟨0, hk⟩)
     a hk (hmin v) ((Nat.mul_le_mul_left 2 (hdegree v)).trans hpalette)
     epsilon hepsilon (hmargin v)
-  have hspoil := card_dilutedSpoiledExcess_ratio_le_half_pow G active v b hk hdegree hambient (hdelete v)
+  have hspoil :=
+    card_dilutedSpoiledExcess_ratio_le_half_pow G active v b hk hdegree hambient (hdelete v)
   change (T.card : ℝ) / q ≤ _ at htent
   change (S.card : ℝ) / q ≤ _ at hspoil
   have hratio : (B.card : ℝ) / q ≤

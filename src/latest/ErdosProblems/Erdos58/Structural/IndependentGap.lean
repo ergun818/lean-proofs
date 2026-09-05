@@ -98,16 +98,19 @@ def rimWalk (C : LongestOddCycle G) (x : Fin C.length) :
   exact q.copy (by change C.copy (x - 0) = C.copy x; simp)
     (by change C.copy (x - 0) = C.copy x; simp)
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 @[simp] theorem rimWalk_length (C : LongestOddCycle G) (x : Fin C.length) :
     (rimWalk C x).length = C.length := by
   simp [rimWalk]
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 theorem rimWalk_isCycle (C : LongestOddCycle G) (x : Fin C.length) :
     (rimWalk C x).IsCycle := by
   rw [rimWalk]
   simpa only [SimpleGraph.Walk.isCycle_copy] using
     (cycleWalk_isCycle C.length C.three_le).map (rebaseCopy C x).injective
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 theorem rimWalk_getVert (C : LongestOddCycle G) (x : Fin C.length)
     (i : ℕ) (hi : i ≤ C.length) :
     (rimWalk C x).getVert i =
@@ -148,12 +151,15 @@ theorem rimWalk_getVert (C : LongestOddCycle G) (x : Fin C.length)
   rw [hz]
   abel
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Closing a nontrivial rim arc through a vertex outside the rim gives an
 actual simple cycle of the expected length. -/
-theorem hubArc_cycleAtLength (C : LongestOddCycle G) {t : V}
+theorem hubArc_cycleAtLength [Finite V] (C : LongestOddCycle G) {t : V}
     (ht : t ∈ C.carrierᶜ) {x y : Fin C.length}
     (hxy : y ≠ x) (htx : G.Adj t (C.copy x)) (hty : G.Adj t (C.copy y)) :
     CycleAtLength G ((y - x).val + 2) := by
+  classical
+  let := Fintype.ofFinite V
   let : NeZero C.length := ⟨Nat.ne_of_gt (Nat.zero_lt_of_lt C.three_le)⟩
   let d := (y - x).val
   have hdpos : 0 < d := by
@@ -204,9 +210,12 @@ theorem hubArc_cycleAtLength (C : LongestOddCycle G) {t : V}
       omega
   · simp [q, p', p, d, hdlt.le]
 
-theorem mem_carrier_of_mem_rimWalk_support (C : LongestOddCycle G)
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+theorem mem_carrier_of_mem_rimWalk_support [Finite V] (C : LongestOddCycle G)
     (x : Fin C.length) {v : V} (hv : v ∈ (rimWalk C x).support) :
     v ∈ C.carrier := by
+  classical
+  let := Fintype.ofFinite V
   rcases SimpleGraph.Walk.mem_support_iff_exists_getVert.mp hv with
     ⟨i, hiEq, hi⟩
   refine ⟨x + ⟨i % C.length,
@@ -228,7 +237,6 @@ def cycleCutPath (C : LongestOddCycle G) (x : Fin C.length) : CycleCutPath C := 
     rw [htailLen]
     have hC := C.three_le
     omega
-
   refine
     { cut := C.copy x
       start := p.snd
@@ -272,6 +280,7 @@ def cycleCutPath (C : LongestOddCycle G) (x : Fin C.length) : CycleCutPath C := 
 def neighborIndices (C : LongestOddCycle G) (t : V) : Finset (Fin C.length) :=
   Finset.univ.filter fun x => G.Adj t (C.copy x)
 
+omit [DecidableEq V] in
 theorem card_neighborIndices_eq_degree (C : LongestOddCycle G) {t : V}
     (hind : HasIndependentExterior C) (ht : t ∈ C.carrierᶜ) :
     (neighborIndices C t).card = G.degree t := by
@@ -358,15 +367,17 @@ theorem reverseLength_injective {n : ℕ} [NeZero n] (x : Fin n) :
   have hv : (x - y).val = (x - z).val := Nat.add_right_cancel h
   exact sub_right_injective (Fin.ext hv)
 
+omit [DecidableEq V] [Fintype V] in
 /-- For a fixed selected neighbour `x`, the odd forward arcs already realize
 all allowable odd cycle lengths.  In particular one of them has length equal
 to the designated longest cycle. -/
-theorem selected_neighbors_have_long_arc (C : LongestOddCycle G) {t : V}
+theorem selected_neighbors_have_long_arc [Finite V] (C : LongestOddCycle G) {t : V}
     (ht : t ∈ C.carrierᶜ) {j : ℕ} (X : Finset (Fin C.length))
     (hXsub : X ⊆ neighborIndices C t) (hXcard : X.card = 2 * j + 1)
     (hcount : (oddCycleLengths G).ncard ≤ j) {x : Fin C.length} (hx : x ∈ X) :
     ∃ y ∈ X, (y - x).val + 2 = C.length := by
   classical
+  let := Fintype.ofFinite V
   let : NeZero C.length :=
     ⟨Nat.ne_of_gt (Nat.zero_lt_of_lt C.three_le)⟩
   let D := X.erase x
@@ -374,7 +385,6 @@ theorem selected_neighbors_have_long_arc (C : LongestOddCycle G) {t : V}
   let E := D.filter fun y => ¬Odd (y - x).val
   let LO := O.image fun y => (y - x).val + 2
   let LE := E.image fun y => (x - y).val + 2
-
   have hxAdj : G.Adj t (C.copy x) := by
     have hxN := hXsub hx
     exact (Finset.mem_filter.mp hxN).2
@@ -391,7 +401,6 @@ theorem selected_neighbors_have_long_arc (C : LongestOddCycle G) {t : V}
     exact Finset.card_image_of_injective O (forwardLength_injective x)
   have hLEcard : LE.card = E.card := by
     exact Finset.card_image_of_injective E (reverseLength_injective x)
-
   have hLOodd : ∀ n ∈ LO, Odd n := by
     intro n hn
     rcases Finset.mem_image.mp hn with ⟨y, hyO, rfl⟩
@@ -408,7 +417,6 @@ theorem selected_neighbors_have_long_arc (C : LongestOddCycle G) {t : V}
     have hyAdj : G.Adj t (C.copy y) := by
       exact (Finset.mem_filter.mp (hXsub hyX)).2
     exact hubArc_cycleAtLength C ht hyne hxAdj hyAdj
-
   have hLEodd : ∀ n ∈ LE, Odd n := by
     intro n hn
     rcases Finset.mem_image.mp hn with ⟨y, hyE, rfl⟩
@@ -429,7 +437,6 @@ theorem selected_neighbors_have_long_arc (C : LongestOddCycle G) {t : V}
     have hyAdj : G.Adj t (C.copy y) := by
       exact (Finset.mem_filter.mp (hXsub hyX)).2
     exact hubArc_cycleAtLength C ht hyne.symm hyAdj hxAdj
-
   have hOcard_le : O.card ≤ j := by
     rw [← hLOcard]
     exact (ncard_oddCycleLengths_ge_of_finset LO hLOodd hLOcycle).trans hcount
@@ -438,7 +445,6 @@ theorem selected_neighbors_have_long_arc (C : LongestOddCycle G) {t : V}
     exact (ncard_oddCycleLengths_ge_of_finset LE hLEodd hLEcycle).trans hcount
   have hOcard : O.card = j := by omega
   have hLOcard' : LO.card = j := hLOcard.trans hOcard
-
   have hLOsub : (LO : Set ℕ) ⊆ oddCycleLengths G := by
     intro n hn
     exact (hLOcycle n hn).mem_oddCycleLengths (hLOodd n hn)
@@ -460,7 +466,7 @@ theorem finRotate_sq_eq_of_long_arc {n : ℕ} (hn : 3 ≤ n) {x y : Fin n}
       apply Fin.ext
       change (((y - x).val + (2 : Fin n).val) % n) = 0
       have htwo : (2 : Fin n).val = 2 := by
-        simp [Fin.val_ofNat, Nat.mod_eq_of_lt hn]
+        simp [Nat.mod_eq_of_lt hn]
       rw [htwo, h]
       simp
     calc
@@ -477,14 +483,16 @@ theorem finRotate_sq_eq_of_long_arc {n : ℕ} (hn : 3 ≤ n) {x y : Fin n}
     _ = y + (2 : Fin n) := congrArg (fun z : Fin n => y + z) hone
     _ = x := hadd
 
+omit [DecidableEq V] [Fintype V] in
 /-- A selected set of `2j+1` neighbours of an exterior vertex must be the
 whole rim.  The key point is that it is closed under a two-step cyclic shift,
 and a two-step shift is a single cycle on an odd rim. -/
-theorem selected_neighbors_eq_univ (C : LongestOddCycle G) {t : V}
+theorem selected_neighbors_eq_univ [Finite V] (C : LongestOddCycle G) {t : V}
     (ht : t ∈ C.carrierᶜ) {j : ℕ} (X : Finset (Fin C.length))
     (hXsub : X ⊆ neighborIndices C t) (hXcard : X.card = 2 * j + 1)
     (hcount : (oddCycleLengths G).ncard ≤ j) : X = Finset.univ := by
   classical
+  let := Fintype.ofFinite V
   let : NeZero C.length :=
     ⟨Nat.ne_of_gt (Nat.zero_lt_of_lt C.three_le)⟩
   let r : Equiv.Perm (Fin C.length) := finRotate C.length
@@ -506,7 +514,6 @@ theorem selected_neighbors_eq_univ (C : LongestOddCycle G) {t : V}
     rw [hr.support_pow_of_pos_of_lt_orderOf (by omega)
         (by rw [hrOrder]; exact lt_of_lt_of_le (by omega) C.three_le),
       hrSupport]
-
   have hpre : ∀ x ∈ X, ∃ y ∈ X, σ y = x := by
     intro x hx
     rcases selected_neighbors_have_long_arc C ht X hXsub hXcard hcount hx with
@@ -525,7 +532,6 @@ theorem selected_neighbors_eq_univ (C : LongestOddCycle G) {t : V}
     intro x hx
     rw [← hMapEq]
     exact Finset.mem_map.mpr ⟨x, hx, rfl⟩
-
   have hXnonempty : X.Nonempty := by
     rw [← Finset.card_pos, hXcard]
     omega
@@ -546,6 +552,7 @@ theorem selected_neighbors_eq_univ (C : LongestOddCycle G) {t : V}
         exact hforward _ ih
   rwa [hk] at hpow
 
+omit [DecidableEq V] in
 /-- The cyclic-gap conclusion once an exterior vertex is known. -/
 theorem length_eq_of_exterior_vertex {j : ℕ} (C : LongestOddCycle G)
     (hind : HasIndependentExterior C)
@@ -561,6 +568,7 @@ theorem length_eq_of_exterior_vertex {j : ℕ} (C : LongestOddCycle G)
   have hcards := congrArg Finset.card hXuniv
   simpa [hXcard] using hcards.symm
 
+omit [DecidableEq V] in
 /-- Gyárfás's independent-exterior rigidity lemma.  The two-connectedness
 hypothesis used by the surrounding structural theorem is not needed in this
 branch: the minimum degree, the odd-length count, and independence suffice. -/
@@ -569,20 +577,24 @@ theorem independentExteriorRigidity_of_count {j : ℕ} (hj : 0 < j)
     (hdegree : ∀ v : V, 2 * j + 1 ≤ G.degree v)
     (hcount : (oddCycleLengths G).ncard ≤ j) :
     IndependentExteriorRigidity j C := by
+  classical
   obtain ⟨t, ht⟩ := longestOddCycle_exterior_nonempty hj C hdegree hcount
   have hlength : C.length = 2 * j + 1 :=
     length_eq_of_exterior_vertex C hind hdegree hcount ht
   exact independentExteriorRigidity_of_length hind hlength hdegree
 
+omit [DecidableEq V] in
 /-- The certificate-free complete-graph endpoint of the independent branch. -/
 theorem independent_exterior_forces_complete_of_count {j : ℕ} (hj : 0 < j)
     (C : LongestOddCycle G) (hind : HasIndependentExterior C)
     (hdegree : ∀ v : V, 2 * j + 1 ≤ G.degree v)
     (hcount : (oddCycleLengths G).ncard ≤ j) :
     G = SimpleGraph.completeGraph V := by
+  classical
   exact independent_exterior_forces_complete_of_rigidity hdegree
     (independentExteriorRigidity_of_count hj C hind hdegree hcount)
 
+omit [DecidableEq V] in
 /-- Exact-count wrapper matching the hypotheses of the main structural
 theorem. -/
 theorem independentExteriorRigidity {j : ℕ} (hj : 0 < j)
@@ -590,16 +602,21 @@ theorem independentExteriorRigidity {j : ℕ} (hj : 0 < j)
     (hind : HasIndependentExterior C)
     (hdegree : ∀ v : V, 2 * j + 1 ≤ G.degree v)
     (hodd : (oddCycleLengths G).ncard = j) :
-    IndependentExteriorRigidity j C :=
+    IndependentExteriorRigidity j C := by
+  classical
+  exact
   independentExteriorRigidity_of_count hj C hind hdegree hodd.le
 
+omit [DecidableEq V] in
 /-- Exact-count completeness wrapper matching the main structural theorem. -/
 theorem independentExteriorForcesComplete {j : ℕ} (hj : 0 < j)
     (_hG : TwoConnected G) (C : LongestOddCycle G)
     (hind : HasIndependentExterior C)
     (hdegree : ∀ v : V, 2 * j + 1 ≤ G.degree v)
     (hodd : (oddCycleLengths G).ncard = j) :
-    G = SimpleGraph.completeGraph V :=
+    G = SimpleGraph.completeGraph V := by
+  classical
+  exact
   independent_exterior_forces_complete_of_count hj C hind hdegree hodd.le
 
 end IndependentGap

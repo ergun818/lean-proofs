@@ -36,7 +36,8 @@ theorem eventually_large_edge_saving_or_projective_core_parametric
   have hb8192 : 8192 ≤ b := by omega
   have hbB₀ : B₀ ≤ b := (Nat.le_add_left _ _).trans (le_max_left _ _)
   have hbq : 32 * q ≤ b := (le_max_left _ _).trans (le_max_right _ _)
-  have hbC : 10 * C < b := lt_of_lt_of_le (Nat.lt_succ_self _) ((le_max_right _ _).trans (le_max_right _ _))
+  have hbC : 10 * C < b :=
+    lt_of_lt_of_le (Nat.lt_succ_self _) ((le_max_right _ _).trans (le_max_right _ _))
   have hb2 : b ≤ b ^ 2 := by nlinarith only [hb8192]
   have hb4 : b ^ 2 ≤ b ^ 4 := by nlinarith only [Nat.mul_le_mul hb2 hb2]
   have hbmin : 4 * s + 1 ≤ b ^ 4 := by
@@ -49,7 +50,8 @@ theorem eventually_large_edge_saving_or_projective_core_parametric
   intro n hn H hlinear hmin
   have hn₀ : N₀ ≤ n := (le_max_left _ _).trans hn
   have hnb : b ^ 4 ≤ n := ((le_max_left _ _).trans (le_max_right _ _)).trans hn
-  have hns : 5 * s ≤ n := ((le_max_left _ _).trans ((le_max_right _ _).trans (le_max_right _ _))).trans hn
+  have hns : 5 * s ≤ n :=
+    ((le_max_left _ _).trans ((le_max_right _ _).trans (le_max_right _ _))).trans hn
   have hnproj : (64 * t) * (64 * t) + 64 * t + 2 ≤ n :=
     ((le_max_right _ _).trans ((le_max_right _ _).trans (le_max_right _ _))).trans hn
   have hkproj := projectiveScale_ge_of_large_card (64 * t) n hnproj
@@ -72,7 +74,8 @@ theorem eventually_large_edge_saving_or_projective_core_parametric
     exact hmaxW f hf
   have hwidth : r + r / b ≤ r + r / (16 * q) :=
     Nat.add_le_add_left (Nat.div_le_div_left (show 16 * q ≤ b by omega) (by omega)) r
-  have hgap := subprojective_window_gap_parametric n r b t ht hkproj hbt (Nat.lt_of_not_ge hprojective)
+  have hgap :=
+    subprojective_window_gap_parametric n r b t ht hkproj hbt (Nat.lt_of_not_ge hprojective)
   have hJcolor := hN₀ n hn₀ J (H.restrictEdges_linear hlinear _) r (r + r / b)
     (by omega) (by omega) hJmin hJmax hwidth hgap
   have hfull := H.edgeColorable_of_high_volume_window hlinear W b s (n - n / (2 * q))

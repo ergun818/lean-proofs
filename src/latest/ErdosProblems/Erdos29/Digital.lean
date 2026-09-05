@@ -165,12 +165,13 @@ theorem place_level_le {n : ℕ} (hn : 0 < n) :
 
 theorem lt_place_level_succ {n : ℕ} (hn : 0 < n) :
     n < place S (level S n + 1) := by
+  obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hn)
   apply Nat.lt_of_not_ge
   intro hplace
-  have hkn : level S n + 1 ≤ n :=
-    (Nat.le_succ (level S n + 1)).trans
-      ((place_ge_succ S (level S n + 1)).trans hplace)
-  exact Nat.findGreatest_is_greatest (P := fun k => place S k ≤ n)
+  have hkn : level S (n + 1) + 1 ≤ n + 1 :=
+    (Nat.le_succ (level S (n + 1) + 1)).trans
+      ((place_ge_succ S (level S (n + 1) + 1)).trans hplace)
+  exact Nat.findGreatest_is_greatest (P := fun k => place S k ≤ n + 1)
     (Nat.lt_succ_self _) hkn hplace
 
 theorem level_mono : Monotone (level S) := by
@@ -364,20 +365,17 @@ theorem localCarryPairs_card_le_of_flat {M : ℕ}
   have heq : localCarryPairs S i r c =
       localPairs S i (r + S.base i - c) := by
     ext xy
-    simp only [localCarryPairs, localPairs, Finset.mem_filter, Finset.mem_product]
+    simp only [localCarryPairs, localPairs, Finset.mem_filter]
     apply and_congr_right
     intro _
     change Nat.ModEq (S.base i) (xy.1 + xy.2 + c) r ↔
       Nat.ModEq (S.base i) (xy.1 + xy.2) (r + S.base i - c)
-    have hradd : Nat.ModEq (S.base i) (r + S.base i) r := by
-      change (r + S.base i) % S.base i = r % S.base i
-      simp
     constructor
     · intro h
       apply Nat.ModEq.add_right_cancel' c
-      exact h.trans (by simpa [hadd] using hradd.symm)
+      exact h.trans (by simp [hadd])
     · intro h
-      exact h.add_right c |>.trans (by simpa [hadd] using hradd)
+      exact h.add_right c |>.trans (by simp [hadd])
   rw [heq]
   exact hflat i (r + S.base i - c)
 
@@ -667,8 +665,7 @@ theorem codeSpace_card_le_digitalBound (N : ℕ) :
   calc
     (codeSpace S N).card = 2 * U.card := by
       unfold codeSpace U
-      simpa using Finset.card_product (Finset.univ : Finset Bool)
-        ((Finset.range (level S N + 1)).biUnion (codesAt S N))
+      simp
     _ ≤ 2 * ∑ l ∈ Finset.range (level S N + 1),
           S.base l * prefixRepCount S l N := by
       apply Nat.mul_le_mul_left 2

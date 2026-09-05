@@ -245,13 +245,14 @@ theorem parabolaCoefficients_add_ne_zero {p : ℕ} (hp : p.Prime) (hp11 : 11 ≤
       calc
         (t + 1) ^ 2 = t * ((1 + t) + (1 + t⁻¹)) := by
           field_simp [ht0]
-          <;> ring
+          ring
         _ = 0 := by rw [h, mul_zero]
     have hz : t + 1 = 0 := (sq_eq_zero_iff).mp hsquare
     exact ht1 (eq_neg_of_add_eq_zero_left hz)
   simp only [parabolaCoefficients, Finset.mem_insert, Finset.mem_singleton] at hc hd
   rcases hc with rfl | rfl | rfl <;> rcases hd with rfl | rfl | rfl
-  · convert h4 using 1 <;> ring
+  · convert h4 using 1
+    ring
   · intro h; apply ht3; linear_combination h
   · intro h; apply hti3; linear_combination h
   · intro h; apply ht3; linear_combination h

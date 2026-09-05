@@ -9,6 +9,7 @@ open Finset Erdos76 Erdos76.FiniteHypergraph
 
 variable {V E : Type*} [DecidableEq V] [Fintype E] [DecidableEq E]
 
+omit [DecidableEq E] in
 /-- The sum of codegrees from a fixed vertex into any pool is at most rank
 times its degree. Diagonal codegrees are included, so no exception is hidden. -/
 theorem sum_pairDegree_le_rank_mul_degree (H : FiniteHypergraph V E)
@@ -36,6 +37,7 @@ theorem sum_pairDegree_le_rank_mul_degree (H : FiniteHypergraph V E)
       exact (card_le_card inter_subset_right).trans (hbound e)
     _ = R * H.edgeDegree v := by simp [edgeDegree, Nat.mul_comm]
 
+omit [DecidableEq E] in
 theorem high_pairDegree_card_mul_le (H : FiniteHypergraph V E)
     (R L : ℕ) (hbound : H.IsBounded R) (v : V) (P : Finset V) :
     (P.filter fun d ↦ L ≤ H.edgePairDegree v d).card * L ≤ R * H.edgeDegree v := by
@@ -48,6 +50,7 @@ theorem high_pairDegree_card_mul_le (H : FiniteHypergraph V E)
       sum_le_sum_of_subset_of_nonneg (filter_subset _ _) (fun _ _ _ ↦ Nat.zero_le _)
     _ ≤ R * H.edgeDegree v := sum_pairDegree_le_rank_mul_degree H R hbound v P
 
+omit [DecidableEq E] in
 theorem high_degree_card_mul_le (H : FiniteHypergraph V E) (D : ℕ) (P : Finset V) :
     (P.filter fun d ↦ D ≤ H.edgeDegree d).card * D ≤ ∑ d ∈ P, H.edgeDegree d := by
   classical
@@ -58,6 +61,7 @@ theorem high_degree_card_mul_le (H : FiniteHypergraph V E) (D : ℕ) (P : Finset
     _ ≤ ∑ d ∈ P, H.edgeDegree d :=
       sum_le_sum_of_subset_of_nonneg (filter_subset _ _) (fun _ _ _ ↦ Nat.zero_le _)
 
+omit [DecidableEq E] in
 /-- Choose a pool vertex that is not saturated, is not already in the current
 support, and has codegree below `L` with every current support vertex. The pool
 load budget may be the final demand budget of an iterative assignment. -/

@@ -98,7 +98,7 @@ def betweenCycle (D : EndpointFanData G x y j) (i i' : Fin (2 * j + 1))
 
 /-- A path segment addressed directly by natural positions. -/
 def spineSegment (D : EndpointFanData G x y j) (a b : ℕ)
-    (hab : a ≤ b) (hb : b ≤ D.path.length) :
+    (hab : a ≤ b) (_ : b ≤ D.path.length) :
     G.Walk (D.path.getVert a) (D.path.getVert b) :=
   ((D.path.drop a).take (b - a)).copy rfl (by
     rw [Walk.drop_getVert]
@@ -234,7 +234,7 @@ def middleLeftPath (D : EndpointFanData G x y j) (ip iq : Fin (2 * j + 1))
 /-- The cross path using a portal strictly between `a` and `b` and one
 after `b`. -/
 def middleRightPath (D : EndpointFanData G x y j) (ip iq : Fin (2 * j + 1))
-    (a b : ℕ) (hap : a < D.position ip) (hpb : D.position ip < b)
+    (a b : ℕ) (hap : a < D.position ip) (_ : D.position ip < b)
     (hbq : b ≤ D.position iq) :
     G.Walk (D.path.getVert a) (D.path.getVert b) :=
   (((D.spineSegment a (D.position ip) hap.le (D.position_le ip)).concat
@@ -731,7 +731,7 @@ noncomputable def outerDistinctSystem (D : EndpointFanData G x y j)
 
 /-- The left-middle Cauchy--Davenport system. -/
 noncomputable def middleLeftDistinctSystem (D : EndpointFanData G x y j)
-    {a b : ℕ} (hab : a < b) (hb : b ≤ D.path.length) :
+    {a b : ℕ} (_ : a < b) (hb : b ≤ D.path.length) :
     DistinctPathSystem G (D.path.getVert a) (D.path.getVert b)
       (Fin (D.middleLeftLengthSums a b).card) := by
   let raw : DistinctPathSystem G (D.path.getVert a) (D.path.getVert b)
@@ -758,7 +758,7 @@ noncomputable def middleLeftDistinctSystem (D : EndpointFanData G x y j)
 
 /-- The right-middle Cauchy--Davenport system. -/
 noncomputable def middleRightDistinctSystem (D : EndpointFanData G x y j)
-    {a b : ℕ} (ha : 0 < a) (hab : a < b) :
+    {a b : ℕ} (ha : 0 < a) (_ : a < b) :
     DistinctPathSystem G (D.path.getVert a) (D.path.getVert b)
       (Fin (D.middleRightLengthSums a b).card) := by
   let raw : DistinctPathSystem G (D.path.getVert a) (D.path.getVert b)
@@ -1238,7 +1238,7 @@ lemma card_left_add_strictRight (D : EndpointFanData G x y j) (b : ℕ) :
   simp
 
 theorem allOdd_pathFamily_from_hub (D : EndpointFanData G x y j)
-    (hj : 1 ≤ j) (hall : ∀ i, Odd (D.position i))
+    (_ : 1 ≤ j) (hall : ∀ i, Odd (D.position i))
     {b : ℕ} (hb0 : 0 < b) (hb : b ≤ D.path.length) :
     Nonempty (PathFamily G x (D.path.getVert b) (Fin (j + 1))) := by
   have hcard := D.card_left_add_strictRight b
@@ -1248,7 +1248,7 @@ theorem allOdd_pathFamily_from_hub (D : EndpointFanData G x y j)
     exact ⟨takePathFamily (D.hubRightPathFamily hall hb0) hright⟩
 
 theorem allOdd_supportedPathFamily_from_hub (D : EndpointFanData G x y j)
-    (hj : 1 ≤ j) (hall : ∀ i, Odd (D.position i))
+    (_ : 1 ≤ j) (hall : ∀ i, Odd (D.position i))
     {b : ℕ} (hb0 : 0 < b) (hb : b ≤ D.path.length) :
     Nonempty (FanSupportedPathFamily D x (D.path.getVert b) (j + 1)) := by
   have hcard := D.card_left_add_strictRight b
@@ -1405,7 +1405,7 @@ private def pairPathFamily {u v : V} (p q : G.Walk u v)
     intro i i' hii'
     fin_cases i <;> fin_cases i' <;> simp_all
   sameParity i i' := by
-    fin_cases i <;> fin_cases i' <;> simp_all [hparity]
+    fin_cases i <;> fin_cases i' <;> simp_all
 
 private def pairSpineSupportedPathFamily (D : EndpointFanData G x y j)
     {a b : ℕ} (p q : G.Walk (D.path.getVert a) (D.path.getVert b))
@@ -2451,8 +2451,7 @@ theorem externalMixed_or_terminalOpposite_or_allOddSupported
       let lengths : Finset ℕ := Finset.univ.image fun i : Fin (j + 1) ↦
         (D.betweenCycle (select i) iLast (hselectLt i)).length
       refine ⟨lengths, ?_, ?_⟩
-      · change j + 1 ≤ lengths.card
-        have hinj : Function.Injective (fun i : Fin (j + 1) ↦
+      · have hinj : Function.Injective (fun i : Fin (j + 1) ↦
             (D.betweenCycle (select i) iLast (hselectLt i)).length) := by
           intro i k hik
           have hik' : D.position iLast - D.position (select i) + 2 =

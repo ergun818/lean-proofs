@@ -13,6 +13,7 @@ attribute [local instance] Classical.propDecidable
 
 variable {V : Type*} [Fintype V] [DecidableEq V] {G : _root_.SimpleGraph V}
 
+omit [DecidableEq V] in
 theorem matching_spanning_degree_le_one (M : G.Subgraph) (hM : M.IsMatching) (v : V) :
     M.spanningCoe.degree v ≤ 1 := by
   classical

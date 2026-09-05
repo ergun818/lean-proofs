@@ -323,15 +323,15 @@ lemma rimWalkFrom_support (C : LongestOddCycle G) (x : Fin C.length) :
 arc into a genuine simple cycle.  This is the exact geometric constructor
 needed in the empty-exterior branch of the cyclic-gap argument. -/
 theorem chordArc_cycleAtLength [Finite V] (C : LongestOddCycle G)
-    {x y : Fin C.length} (hxy : y ≠ x)
+    {x y : Fin C.length} (_ : y ≠ x)
     (hchord : G.Adj (C.copy x) (C.copy y))
-    (hforward : 2 ≤ (y - x).val) (hreverse : 2 ≤ (x - y).val) :
+    (hforward : 2 ≤ (y - x).val) (_ : 2 ≤ (x - y).val) :
     CycleAtLength G ((y - x).val + 1) := by
   let d := (y - x).val
   have hdlt : d < C.length := (y - x).isLt
   let p := (C.rimWalkFrom x).take d
   have hpPath : p.IsPath :=
-    (C.rimWalkFrom_isCycle x).isPath_take (by simpa [d] using hdlt)
+    (C.rimWalkFrom_isCycle x).isPath_take (by simp [d])
   have hpEnd : (C.rimWalkFrom x).getVert d = C.copy y := by
     rw [C.rimWalkFrom_getVert x d hdlt.le]
     congr 1

@@ -44,7 +44,8 @@ theorem eventually_exists_graph_edge_sample (k : ℕ) (hk : 0 < k)
     simpa only [Fintype.card_fin] using (G.degree_lt_card_verts i).le
   have hBsize : ∀ p, (B p).card ≤ n ^ 2 := by
     intro p
-    exact ((G.between (p.1 : Set (Fin n)) (p.2 : Set (Fin n))).card_edgeFinset_le_card_choose_two).trans
+    exact ((G.between (p.1 : Set (Fin n)) (p.2 : Set (Fin
+      n))).card_edgeFinset_le_card_choose_two).trans
       (by simpa only [Fintype.card_fin] using Nat.choose_le_pow n 2)
   obtain ⟨P, hP, hPA, hPB⟩ := hN n hn (Sym2 (Fin n)) I J hI hJ
     G.edgeFinset A B hA hB hAsize hBsize

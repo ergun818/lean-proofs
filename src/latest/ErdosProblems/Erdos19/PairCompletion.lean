@@ -38,8 +38,10 @@ def pairCompletion (H : SetHypergraph X) : SetHypergraph X :=
 lemma subset_pairCompletion (H : SetHypergraph X) : H ⊆ H.pairCompletion :=
   Set.subset_union_left
 
-lemma pair_inter_subsingleton_or_subset [Fintype X] {e f : Set X}
+lemma pair_inter_subsingleton_or_subset [Finite X] {e f : Set X}
     (he : e.ncard = 2) : (e ∩ f).Subsingleton ∨ e ⊆ f := by
+  classical
+  let := Fintype.ofFinite X
   by_cases hi : (e ∩ f).Subsingleton
   · exact Or.inl hi
   · right
@@ -52,8 +54,10 @@ lemma pair_inter_subsingleton_or_subset [Fintype X] {e f : Set X}
     rw [← heq]
     exact Set.inter_subset_right
 
-lemma pairCompletion_isLinear [Fintype X] {H : SetHypergraph X}
+lemma pairCompletion_isLinear [Finite X] {H : SetHypergraph X}
     (hH : H.IsLinear) : H.pairCompletion.IsLinear := by
+  classical
+  let := Fintype.ofFinite X
   intro e he f hf hef
   rcases he with he | he <;> rcases hf with hf | hf
   · exact hH he hf hef
@@ -148,9 +152,11 @@ def twoGraph (H : SetHypergraph X) : SimpleGraph X where
 lemma twoGraph_adj (H : SetHypergraph X) (x y : X) :
     H.twoGraph.Adj x y ↔ x ≠ y ∧ ({x, y} : Set X) ∈ H := Iff.rfl
 
-lemma eq_pair_of_ncard_eq_two [Fintype X] {e : Set X} {x y : X}
+lemma eq_pair_of_ncard_eq_two [Finite X] {e : Set X} {x y : X}
     (he : e.ncard = 2) (hxy : x ≠ y) (hx : x ∈ e) (hy : y ∈ e) :
     e = {x, y} := by
+  classical
+  let := Fintype.ofFinite X
   have hsub : ({x, y} : Set X) ⊆ e := by
     intro z hz
     rcases hz with (rfl | rfl)

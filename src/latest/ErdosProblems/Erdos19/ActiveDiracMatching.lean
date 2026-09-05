@@ -7,11 +7,12 @@ namespace Erdos19
 open _root_.SimpleGraph
 
 theorem exists_matching_on_even_set_of_dense_induced
-    {V : Type*} [Fintype V] (G : _root_.SimpleGraph V) (A : Set V)
+    {V : Type*} [Finite V] (G : _root_.SimpleGraph V) (A : Set V)
     (heven : Even A.ncard)
     (hdegree : ∀ v ∈ A, A.ncard ≤ 2 * (A ∩ G.neighborSet v).ncard) :
     ∃ M : G.Subgraph, M.IsMatching ∧ M.verts = A := by
   classical
+  let := Fintype.ofFinite V
   let _ : Fintype A := Fintype.ofFinite A
   have hneighbors (v : A) : ((G.induce A).neighborSet v).ncard =
       (A ∩ G.neighborSet v.1).ncard := by

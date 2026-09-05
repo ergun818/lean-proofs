@@ -69,10 +69,8 @@ theorem pow_mul_lt_of_filtered_growth
         · simp only [hPn, if_true]
           rw [pow_succ, pow_succ]
           have han : 0 < a n := ha0.trans_le (ha (Nat.zero_le n))
-          have hd : 0 < d := by
-            by_contra hd0
-            simp only [Nat.not_lt, Nat.le_zero] at hd0
-            simpa [hd0] using hgrowth n hnq hPn
+          have hd : 0 < d :=
+            Nat.pos_of_mul_pos_right ((Nat.mul_pos hc han).trans (hgrowth n hnq hPn))
           have hstep :
               c ^ (growthStages P n).card * c * a 0 <
                 d ^ (growthStages P n).card * d * a (n + 1) := by
@@ -374,7 +372,8 @@ theorem cyclicNonbadStages_card_lt_four_mul
         (largeNonbadStages a x u R q).card := by
     exact (Finset.card_le_card hsubset).trans (Finset.card_union_le _ _)
   have hsmall := smallNonbadStages_card_lt_three_mul
-    (a := a) (x := x) (u := u) (q := q) hu ha0 ha hxpow hfinal
+    (a := a) (x := x) (u := u) (q := q)
+    ((by omega : 0 < R).trans_le hRu) ha0 ha hxpow hfinal
   have hlarge := largeNonbadStages_card_le_mul
     (a := a) (x := x) (u := u) (R := R) (v := v) (q := q)
     hu (by omega) ha0 ha huPow hfinal

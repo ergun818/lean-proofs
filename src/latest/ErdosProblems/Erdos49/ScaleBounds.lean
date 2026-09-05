@@ -130,7 +130,7 @@ lemma scale_medium_power_lower {N : ℕ} (hs : ScaleFacts N) :
     Real.exp (t / 20) =
         Real.exp (t / 2) ^ ((1 : ℝ) / 10) := by
       rw [Real.rpow_def_of_pos (Real.exp_pos _), Real.log_exp]
-      congr 1 <;> ring
+      congr 1; ring
     _ ≤ Real.log (scaleW N - 1 : ℕ) ^ ((1 : ℝ) / 10) := hrpow
 
 lemma primary_cell_factor_bound {N : ℕ} (hs : ScaleFacts N) :
@@ -181,7 +181,7 @@ lemma primary_cell_factor_bound {N : ℕ} (hs : ScaleFacts N) :
             Real.exp (2 * scaleT N ^ 4) =
           Real.exp (4 * scaleT N ^ 4 + 20 * scaleT N) := by
         rw [← Real.exp_add]
-        congr 1 <;> ring
+        congr 1; ring
       calc
         (3 * (40 * Real.exp
             (2 * scaleT N ^ 4 + 20 * scaleT N))) *

@@ -29,6 +29,7 @@ attribute [local instance] Classical.propDecidable
 
 /-! ## Concrete hexagon eliminators -/
 
+omit [DecidableRel G.Adj] [Fintype V] [LinearOrder V] in
 /-- Six distinct cyclically adjacent vertices contradict `WalkC6Free`.
 This explicit form is convenient in all of the local path classifications
 below. -/
@@ -44,6 +45,7 @@ private theorem false_of_six_cycle_direct (hC6 : WalkC6Free G)
     simp_all [Walk.isPath_def, List.nodup_cons, eq_comm]
   exact hC6 a q hq (by simp [q])
 
+omit [DecidableRel G.Adj] [Fintype V] [LinearOrder V] in
 /-- A four-edge path cannot lie in the open neighbourhood of one vertex in
 a hexagon-free graph. -/
 private theorem false_of_openNeighborhood_path_four (hC6 : WalkC6Free G)
@@ -66,10 +68,12 @@ private theorem false_of_openNeighborhood_path_four (hC6 : WalkC6Free G)
 def Path3.u8MiddleEdge (p : Path3 G) : Sym2 V :=
   s(p.vertex 1, p.vertex 2)
 
+omit [DecidableRel G.Adj] [Fintype V] in
 @[simp] theorem Path3.u8MiddleEdge_toFinset (p : Path3 G) :
     p.u8MiddleEdge.toFinset = {p.vertex 1, p.vertex 2} := by
   simp only [Path3.u8MiddleEdge, Sym2.toFinset_mk_eq]
 
+omit [DecidableRel G.Adj] in
 /-- In a hexagon-free graph, middle edges belonging to two paths with the
 same endpoints must intersect.  If they were disjoint, the two paths, one
 traversed backwards, would be a simple hexagon. -/
@@ -95,10 +99,10 @@ theorem pathFiber_middleEdges_not_disjoint (hC6 : WalkC6Free G)
     rw [Path3.u8MiddleEdge_toFinset, Path3.u8MiddleEdge_toFinset,
       Finset.disjoint_left] at hd
     exact ⟨
-      fun h ↦ hd (a := p.vertex 1) (by simp) (by simpa [h]),
-      fun h ↦ hd (a := p.vertex 1) (by simp) (by simpa [h]),
-      fun h ↦ hd (a := p.vertex 2) (by simp) (by simpa [h]),
-      fun h ↦ hd (a := p.vertex 2) (by simp) (by simpa [h])⟩
+      fun h ↦ hd (a := p.vertex 1) (by simp) (by simp [h]),
+      fun h ↦ hd (a := p.vertex 1) (by simp) (by simp [h]),
+      fun h ↦ hd (a := p.vertex 2) (by simp) (by simp [h]),
+      fun h ↦ hd (a := p.vertex 2) (by simp) (by simp [h])⟩
   have hbq : G.Adj (p.vertex 3) (q.vertex 2) := by
     rw [h3]
     exact q.adj_two_three.symm
@@ -115,7 +119,7 @@ theorem pathFiber_middleEdges_not_disjoint (hC6 : WalkC6Free G)
     p.adj_zero_one p.adj_one_two p.adj_two_three
     hbq q.adj_one_two.symm hqa
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
-    not_or, true_and]
+    not_or]
   aesop
 
 private theorem finset_eq_pair_of_card_two_mem {X : Type*} [DecidableEq X]
@@ -144,7 +148,7 @@ private theorem twoSet_family_star_or_triangle {X : Type*} [DecidableEq X]
   · exact Or.inl ⟨a, ha⟩
   by_cases hb : ∀ T ∈ F, b ∈ T
   · exact Or.inl ⟨b, hb⟩
-  push_neg at ha hb
+  push Not at ha hb
   obtain ⟨T, hTF, haT⟩ := ha
   obtain ⟨U, hUF, hbU⟩ := hb
   have hbT : b ∈ T := by
@@ -224,11 +228,13 @@ private theorem twoSet_family_star_or_triangle {X : Type*} [DecidableEq X]
 def middleEdgeFamily (pi : EndpointPair V) : Finset (Finset V) :=
   (pathFiber G pi).image fun p ↦ p.u8MiddleEdge.toFinset
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem mem_middleEdgeFamily {pi : EndpointPair V} {S : Finset V} :
     S ∈ middleEdgeFamily G pi ↔
       ∃ p ∈ pathFiber G pi, p.u8MiddleEdge.toFinset = S := by
   simp [middleEdgeFamily]
 
+omit [DecidableRel G.Adj] in
 theorem middleEdgeFamily_nonempty {pi : EndpointPair V}
     (hpi : 1 ≤ pathMultiplicity G pi) : (middleEdgeFamily G pi).Nonempty := by
   have hf : (pathFiber G pi).Nonempty := by
@@ -237,12 +243,14 @@ theorem middleEdgeFamily_nonempty {pi : EndpointPair V}
   obtain ⟨p, hp⟩ := hf
   exact ⟨p.u8MiddleEdge.toFinset, by simp only [mem_middleEdgeFamily]; exact ⟨p, hp, rfl⟩⟩
 
+omit [DecidableRel G.Adj] in
 theorem middleEdgeFamily_card_two {pi : EndpointPair V}
     {S : Finset V} (hS : S ∈ middleEdgeFamily G pi) : S.card = 2 := by
   obtain ⟨p, -, rfl⟩ := (mem_middleEdgeFamily (G := G)).mp hS
   rw [Path3.u8MiddleEdge_toFinset]
   exact Finset.card_pair (p.injective.ne (by decide))
 
+omit [DecidableRel G.Adj] in
 theorem middleEdgeFamily_inter_nonempty (hC6 : WalkC6Free G)
     {pi : EndpointPair V} {S T : Finset V}
     (hS : S ∈ middleEdgeFamily G pi) (hT : T ∈ middleEdgeFamily G pi) :
@@ -252,6 +260,7 @@ theorem middleEdgeFamily_inter_nonempty (hC6 : WalkC6Free G)
   rw [← not_disjoint_iff_nonempty_inter]
   exact pathFiber_middleEdges_not_disjoint G hC6 hp hq
 
+omit [DecidableRel G.Adj] in
 private theorem endpointAdjacency_of_middle_pair {pi : EndpointPair V} {a b : V}
     (hab : {a, b} ∈ middleEdgeFamily G pi) :
     G.Adj a b ∧
@@ -438,7 +447,7 @@ theorem noncentral_middle_star_normal_form (hC6 : WalkC6Free G)
     exists_common_middleVertex_of_not_central G hC6 hmul hnc
   by_cases hleft : ∀ p ∈ pathFiber G pi, w = p.vertex 1
   · exact ⟨w, Or.inl hleft⟩
-  · push_neg at hleft
+  · push Not at hleft
     obtain ⟨p, hp, hpne⟩ := hleft
     have hpw := hcommon p hp
     rw [Path3.u8MiddleEdge_toFinset] at hpw
@@ -620,8 +629,7 @@ theorem nondegenerateBaseOther_adj (hC6 : WalkC6Free G)
     simp only [nondegenerateOtherMiddles, if_pos hl] at hy
     obtain ⟨p, hp, hpy⟩ := Finset.mem_image.mp hy
     rcases hx with rfl | rfl
-    · change G.Adj (nondegenerateStarCentre G hC6 pi hpi) y
-      rw [hl p hp, ← hpy]
+    · rw [hl p hp, ← hpy]
       exact p.adj_one_two
     · have hend := (mem_pathFiber (G := G)).mp hp
       have h3 : p.vertex 3 = pi.1.2 :=
@@ -707,6 +715,7 @@ private noncomputable def crossingGraphEdges (L R : Finset V) :
     Finset (GraphEdge G) :=
   Finset.univ.filter fun e ↦ EdgeCrosses G L R e
 
+omit [LinearOrder V] in
 @[simp] private theorem mem_crossingGraphEdges {L R : Finset V} {e : GraphEdge G} :
     e ∈ crossingGraphEdges G L R ↔ EdgeCrosses G L R e := by
   simp [crossingGraphEdges]
@@ -896,6 +905,7 @@ theorem central_charge_direct :
 
 /-! ## Counting paths in a closed neighbourhood -/
 
+omit [LinearOrder V] in
 /-- The edges induced by a closed neighbourhood split into the star at its
 centre and the edges internal to the open neighbourhood. -/
 theorem card_induced_closedNeighbor_eq (v : V) :
@@ -912,8 +922,8 @@ theorem card_induced_closedNeighbor_eq (v : V) :
           Finset.insert_subset_iff, Finset.singleton_subset_iff]
         rw [G.mem_incidenceFinset]
         simp only [G.mk'_mem_incidenceSet_iff]
-        simp [closedNeighborFinset, openNeighborhoodEdges,
-          SimpleGraph.mem_edgeFinset, G.adj_comm, eq_comm]
+        simp only [mem_edgeFinset, mem_edgeSet, closedNeighborFinset, mem_insert, eq_comm,
+          mem_neighborFinset, openNeighborhoodEdges, mem_filter, Sym2.mem_iff]
         constructor
         · rintro ⟨hab, ha, hb⟩
           rcases ha with rfl | hva
@@ -938,9 +948,7 @@ theorem card_induced_closedNeighbor_eq (v : V) :
     | _ a b =>
         rw [G.mem_incidenceFinset] at heI
         simp only [G.mk'_mem_incidenceSet_iff] at heI
-        simp only [openNeighborhoodEdges, Finset.mem_filter,
-          Sym2.toFinset_mk_eq, Finset.insert_subset_iff,
-          Finset.singleton_subset_iff] at heO
+        simp only [openNeighborhoodEdges, Finset.mem_filter] at heO
         rcases heI.2 with (rfl | rfl) <;> simp_all
 
 /-- Ordered pairs of darts whose initial vertices are increasing occupy at
@@ -1082,7 +1090,6 @@ theorem erdos_gallai_neighborhood_direct (hC6 : WalkC6Free G) (v : V) :
     · rintro ⟨he, hadj⟩
       refine ⟨he, ?_⟩
       intro w hw
-      change w ∈ S
       exact hadj w (by simpa using hw)
   rw [hedge, hS] at hEG
   exact hEG

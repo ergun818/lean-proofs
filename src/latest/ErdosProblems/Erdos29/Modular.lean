@@ -48,25 +48,19 @@ def parabolaEquation (c d x y : F p) (q : F p × F p) : Prop :=
   x + y = q.1 ∧ c * x ^ 2 + d * y ^ 2 = q.2
 
 private lemma two_ne_zero {p : ℕ} (hp : p.Prime) (hp11 : 11 ≤ p) : (2 : F p) ≠ 0 := by
-  change ¬ (((2 : ℕ) : ZMod p) = 0)
-  rw [ZMod.natCast_eq_zero_iff]
-  intro h
-  have := Nat.le_of_dvd (by omega) h
-  omega
+  let : Fact p.Prime := ⟨hp⟩
+  exact CharP.cast_ne_zero_of_ne_of_prime (F p) Nat.prime_two
+    (Nat.ne_of_gt (lt_of_lt_of_le (by decide : 2 < 11) hp11))
 
 private lemma three_ne_zero {p : ℕ} (hp : p.Prime) (hp11 : 11 ≤ p) : (3 : F p) ≠ 0 := by
-  change ¬ (((3 : ℕ) : ZMod p) = 0)
-  rw [ZMod.natCast_eq_zero_iff]
-  intro h
-  have := Nat.le_of_dvd (by omega) h
-  omega
+  let : Fact p.Prime := ⟨hp⟩
+  exact CharP.cast_ne_zero_of_ne_of_prime (F p) Nat.prime_three
+    (Nat.ne_of_gt (lt_of_lt_of_le (by decide : 3 < 11) hp11))
 
 private lemma four_ne_zero {p : ℕ} (hp : p.Prime) (hp11 : 11 ≤ p) : (4 : F p) ≠ 0 := by
-  change ¬ (((4 : ℕ) : ZMod p) = 0)
-  rw [ZMod.natCast_eq_zero_iff]
-  intro h
-  have := Nat.le_of_dvd (by omega) h
-  omega
+  let : Fact p.Prime := ⟨hp⟩
+  convert mul_ne_zero (two_ne_zero hp hp11) (two_ne_zero hp hp11) using 1
+  norm_num
 
 /-- The two pairs of parabolas cover every point of `F_p²` when `2` is a
 nonsquare.  This is the finite-field heart of Ruzsa's construction. -/

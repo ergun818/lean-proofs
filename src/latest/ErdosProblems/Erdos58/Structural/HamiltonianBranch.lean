@@ -25,6 +25,7 @@ universe u
 variable {V : Type u} [Fintype V] [DecidableEq V]
 variable {G : SimpleGraph V} [DecidableRel G.Adj]
 
+omit [DecidableEq V] in
 /-- At the Gyárfás threshold a longest odd cycle cannot contain every vertex.
 The proof uses only the checked odd-Hamiltonian fan count. -/
 theorem longestOddCycle_exterior_nonempty {j : ℕ} (hj : 0 < j)
@@ -32,6 +33,7 @@ theorem longestOddCycle_exterior_nonempty {j : ℕ} (hj : 0 < j)
     (hdegree : ∀ v : V, 2 * j + 1 ≤ G.degree v)
     (hodd : (oddCycleLengths G).ncard ≤ j) :
     C.carrierᶜ.Nonempty := by
+  classical
   by_contra houtside
   have hempty : C.carrierᶜ = ∅ := Set.not_nonempty_iff_eq_empty.mp houtside
   have hcarrier : C.carrier = Set.univ := by

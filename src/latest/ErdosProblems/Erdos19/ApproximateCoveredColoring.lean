@@ -34,7 +34,7 @@ theorem bounded_approximate_covered_coloring
     hpair hroom hF hpalette
   let K := PoolPadding.withPool H p
   let B : Unit → Finset (V ⊕ Fin p) := fun _ ↦ PoolPadding.realVertices H p
-  let P : Unit → Finset (V ⊕ Fin p) := fun _ ↦ PoolPadding.dummyVertices H p
+  let P : Unit → Finset (V ⊕ Fin p) := fun _ ↦ PoolPadding.dummyVertices V p
   have hKbound : K.IsBounded r := by
     intro e
     simpa only [K, PoolPadding.support_card] using hbound e
@@ -44,16 +44,19 @@ theorem bounded_approximate_covered_coloring
     intro v hv
     rcases v with v | v
     · have hv' : v ∈ H.vertexSet := by
-        simpa [K, PoolPadding.withPool, PoolPadding.realVertices, PoolPadding.dummyVertices] using hv
+        simpa [K, PoolPadding.withPool, PoolPadding.realVertices, PoolPadding.dummyVertices] using
+          hv
       simpa only [K, PoolPadding.edgeDegree_inl] using (hdegree v hv').trans hd
     · simp only [K, PoolPadding.edgeDegree_inr, Nat.zero_le]
   have hKpair : ∀ x ∈ K.vertexSet, ∀ y ∈ K.vertexSet, x ≠ y → K.edgePairDegree x y ≤ L := by
     intro x hx y hy hxy
     rcases x with x | x <;> rcases y with y | y
     · have hx' : x ∈ H.vertexSet := by
-        simpa [K, PoolPadding.withPool, PoolPadding.realVertices, PoolPadding.dummyVertices] using hx
+        simpa [K, PoolPadding.withPool, PoolPadding.realVertices, PoolPadding.dummyVertices] using
+          hx
       have hy' : y ∈ H.vertexSet := by
-        simpa [K, PoolPadding.withPool, PoolPadding.realVertices, PoolPadding.dummyVertices] using hy
+        simpa [K, PoolPadding.withPool, PoolPadding.realVertices, PoolPadding.dummyVertices] using
+          hy
       simpa only [K, PoolPadding.edgePairDegree_inl_inl] using
         hpair x hx' y hy' (fun h ↦ hxy (congrArg Sum.inl h))
     · simp only [K, PoolPadding.edgePairDegree_inr_right, Nat.zero_le]

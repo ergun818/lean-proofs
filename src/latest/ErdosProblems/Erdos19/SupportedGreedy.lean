@@ -4,11 +4,12 @@ import ErdosProblems.Erdos19.VertexTransport
 
 namespace Erdos19.SetHypergraph
 
-theorem edgeColorable_support_add_div_add_one {V : Type*} [Fintype V]
+theorem edgeColorable_support_add_div_add_one {V : Type*} [Finite V]
     (H : SetHypergraph V) (B : Set V) (hlinear : H.IsLinear)
     (r : ℕ) (hr : 2 ≤ r) (hmin : ∀ e : H, r ≤ e.1.ncard) (hsupport : ∀ e : H, e.1 ⊆ B) :
     H.EdgeColorable (B.ncard + B.ncard / (r - 1) + 1) := by
   classical
+  let := Fintype.ofFinite V
   let J := H.onVertexSet B
   have himage : J.vertexImage Subtype.val = H :=
     H.vertexImage_onVertexSet_eq B (fun e he ↦ hsupport ⟨e, he⟩)
@@ -24,10 +25,12 @@ theorem edgeColorable_support_add_div_add_one {V : Type*} [Fintype V]
   have hc' := (J.vertexImage_edgeColorable_iff Subtype.val Subtype.val_injective _).mpr hc
   simpa only [himage] using hc'
 
-theorem edgeColorable_two_mul_support_add_one {V : Type*} [Fintype V]
+theorem edgeColorable_two_mul_support_add_one {V : Type*} [Finite V]
     (H : SetHypergraph V) (B : Set V) (hlinear : H.IsLinear)
     (hmin : ∀ e : H, 2 ≤ e.1.ncard) (hsupport : ∀ e : H, e.1 ⊆ B) :
     H.EdgeColorable (2 * B.ncard + 1) := by
+  classical
+  let := Fintype.ofFinite V
   have h := H.edgeColorable_support_add_div_add_one B hlinear 2 le_rfl hmin hsupport
   simpa only [Nat.reduceSub, Nat.div_one, ← two_mul] using h
 

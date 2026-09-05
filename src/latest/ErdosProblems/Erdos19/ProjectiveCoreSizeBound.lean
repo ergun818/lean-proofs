@@ -15,6 +15,7 @@ attribute [local instance] Classical.propDecidable
 
 variable {V : Type*} [Fintype V]
 
+omit [Fintype V] in
 theorem dense_core_card_lower (H : SetHypergraph V) (S : Finset H) (k : ℕ)
     (hS : S.Nonempty) (hdense : IsDenseCore H.lineGraph S k) : k ≤ S.card - 1 := by
   classical

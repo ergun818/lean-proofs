@@ -11,9 +11,12 @@ namespace Erdos19.SetHypergraph
 
 variable {V C : Type*} [Fintype V]
 
-theorem coveredVertices_eq_of_singleton_family (H : SetHypergraph V)
+omit [Fintype V] in
+theorem coveredVertices_eq_of_singleton_family [Finite V] (H : SetHypergraph V)
     (S : Set H) (hS : S.ncard ≤ 1) (e : H) (he : e ∈ S) :
     H.coveredVertices S = e.1 := by
+  classical
+  let := Fintype.ofFinite V
   ext v
   constructor
   · intro hv
@@ -23,11 +26,14 @@ theorem coveredVertices_eq_of_singleton_family (H : SetHypergraph V)
   · intro hv
     exact Set.mem_iUnion.mpr ⟨e, Set.mem_iUnion.mpr ⟨he, hv⟩⟩
 
-theorem exists_singleton_class_of_large_trace (H : SetHypergraph V)
+omit [Fintype V] in
+theorem exists_singleton_class_of_large_trace [Finite V] (H : SetHypergraph V)
     (c : H → C) (A : ℕ) (hbounded : H.IsCoverBoundedColoring c A)
     (Y : Set V) (hA : 2 * A ≤ Y.ncard + 1) (a : C)
     (ha : Y.ncard + 1 < 2 * (Y ∩ H.coveredVertices {e | c e = a}).ncard) :
     ∃ e : H, c e = a ∧ H.coveredVertices {f | c f = a} = e.1 := by
+  classical
+  let := Fintype.ofFinite V
   have hsmall : ({e : H | c e = a} : Set H).ncard ≤ 1 := by
     rcases hbounded a with hs | hc
     · exact hs
@@ -41,9 +47,12 @@ theorem exists_singleton_class_of_large_trace (H : SetHypergraph V)
   obtain ⟨hea, _⟩ := Set.mem_iUnion.mp he
   exact ⟨e, hea, H.coveredVertices_eq_of_singleton_family _ hsmall e hea⟩
 
-theorem linear_edge_trace_sum_le (H : SetHypergraph V) (hlinear : H.IsLinear)
+omit [Fintype V] in
+theorem linear_edge_trace_sum_le [Finite V] (H : SetHypergraph V) (hlinear : H.IsLinear)
     (Y : Set V) (e f : H) (hef : e ≠ f) :
     (Y ∩ e.1).ncard + (Y ∩ f.1).ncard ≤ Y.ncard + 1 := by
+  classical
+  let := Fintype.ofFinite V
   have hsub : (Y ∩ e.1) ∪ (Y ∩ f.1) ⊆ Y := Set.union_subset
     Set.inter_subset_left Set.inter_subset_left
   have hinter : ((Y ∩ e.1) ∩ (Y ∩ f.1)).Subsingleton := by
@@ -55,11 +64,14 @@ theorem linear_edge_trace_sum_le (H : SetHypergraph V) (hlinear : H.IsLinear)
   have hi := Set.ncard_le_one_iff_subsingleton.mpr hinter
   omega
 
-theorem large_trace_colors_subsingleton (H : SetHypergraph V) (hlinear : H.IsLinear)
+omit [Fintype V] in
+theorem large_trace_colors_subsingleton [Finite V] (H : SetHypergraph V) (hlinear : H.IsLinear)
     (c : H → C) (A : ℕ) (hbounded : H.IsCoverBoundedColoring c A)
     (Y : Set V) (hA : 2 * A ≤ Y.ncard + 1) :
     ({a : C | Y.ncard + 1 <
       2 * (Y ∩ H.coveredVertices {e | c e = a}).ncard} : Set C).Subsingleton := by
+  classical
+  let := Fintype.ofFinite V
   intro a ha b hb
   obtain ⟨e, hea, heCover⟩ := H.exists_singleton_class_of_large_trace c A hbounded Y hA a ha
   obtain ⟨f, hfb, hfCover⟩ := H.exists_singleton_class_of_large_trace c A hbounded Y hA b hb

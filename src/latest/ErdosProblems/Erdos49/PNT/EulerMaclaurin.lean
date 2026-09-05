@@ -2,7 +2,8 @@ module
 
 public import Mathlib.NumberTheory.AbelSummation
 
-/-! We prove the 1st order Euler-Maclaurin formula by specialising Abel summation and manipulating integrals. -/
+/-! We prove the 1st order Euler-Maclaurin formula by specialising Abel summation and manipulating
+integrals. -/
 
 @[expose] public section
 
@@ -25,7 +26,8 @@ lemma abs_B1_le_half {x : ℝ} (hx : 0 ≤ x) : |B1 x| ≤ 1 / 2 := by
   · grind [Nat.floor_le hx]
   · grind [Nat.lt_succ_floor x]
 
-lemma integral_deriv_mul_add_const (c : 𝕜) (hab : a ≤ b) (h_int : IntervalIntegrable (deriv f) volume a b)
+lemma integral_deriv_mul_add_const (c : 𝕜) (hab : a ≤ b) (h_int : IntervalIntegrable (deriv f)
+    volume a b)
     (hf_diff : ∀ t ∈ Set.Icc a b, DifferentiableAt ℝ f t) :
     ∫ t in a..b, (t + c) * deriv f t = (b + c) * f b - (a + c) * f a - ∫ t in a..b, f t := by
   rw [← Set.uIcc_of_le hab] at hf_diff
@@ -38,7 +40,8 @@ lemma integral_deriv_mul_add_const (c : 𝕜) (hab : a ≤ b) (h_int : IntervalI
   rw [intervalIntegral.integral_mul_deriv_eq_deriv_mul this hf_diff (by simp) h_int]
   simp
 
-lemma intervalIntegrable_deriv_mul_B1 (ha : 0 ≤ a) (hab : a ≤ b) (h_cont : ContinuousOn (deriv f) [[a, b]]) :
+lemma intervalIntegrable_deriv_mul_B1 (ha : 0 ≤ a) (hab : a ≤ b) (h_cont : ContinuousOn (deriv f)
+    [[a, b]]) :
     IntervalIntegrable (fun t ↦ deriv f t * B1 t) volume a b := by
   refine IntervalIntegrable.continuousOn_mul ?_ h_cont
   rw [intervalIntegrable_iff']
@@ -49,8 +52,10 @@ lemma intervalIntegrable_deriv_mul_B1 (ha : 0 ≤ a) (hab : a ≤ b) (h_cont : C
   exact abs_B1_le_half (by linarith)
 
 lemma integral_deriv_mul_floor_add_one (ha : 0 ≤ a) (hab : a ≤ b)
-    (hf_diff : ∀ t ∈ Set.Icc a b, DifferentiableAt ℝ f t) (h_cont : ContinuousOn (deriv f) [[a, b]]) :
-    ∫ t in a..b, deriv f t * (⌊t⌋₊ + 1) = (b + 1 / 2) * f b - (a + 1 / 2) * f a - (∫ t in a..b, f t) - ∫ t in a..b, deriv f t * B1 t := by
+    (hf_diff : ∀ t ∈ Set.Icc a b, DifferentiableAt ℝ f t) (h_cont : ContinuousOn (deriv f) [[a, b]])
+      :
+    ∫ t in a..b, deriv f t * (⌊t⌋₊ + 1) = (b + 1 / 2) * f b - (a + 1 / 2) * f a - (∫ t in a..b, f t)
+      - ∫ t in a..b, deriv f t * B1 t := by
   calc
   _ = ∫ t in a..b, (deriv f t * (t + 1 / 2) -deriv f t * B1 t) := by
     congr
@@ -59,7 +64,8 @@ lemma integral_deriv_mul_floor_add_one (ha : 0 ≤ a) (hab : a ≤ b)
     push_cast
     ring
   _ = (∫ t in a..b, deriv f t * (t + 1 / 2)) - ∫ t in a..b, deriv f t * B1 t := by
-    exact intervalIntegral.integral_sub (ContinuousOn.intervalIntegrable (by fun_prop)) (intervalIntegrable_deriv_mul_B1 ha hab h_cont)
+    exact intervalIntegral.integral_sub (ContinuousOn.intervalIntegrable (by fun_prop))
+      (intervalIntegrable_deriv_mul_B1 ha hab h_cont)
   _ = _ := by
     conv => lhs; arg 1; arg 1; ext; rw [mul_comm]
     rw [integral_deriv_mul_add_const _ hab h_cont.intervalIntegrable hf_diff]
@@ -69,7 +75,8 @@ theorem sum_eq_integral_add_integral_deriv (ha : 0 ≤ a) (hab : a ≤ b)
     (h_cont : ContinuousOn (deriv f) [[a, b]]) :
     ∑ k ∈ Ioc ⌊a⌋₊ ⌊b⌋₊, f k =
       f a * B1 a - f b * B1 b + (∫ t in a..b, f t) + ∫ t in a..b, deriv f t * B1 t  := by
-  have := sum_mul_eq_sub_sub_integral_mul (fun _ ↦ 1) ha hab hf_diff (Set.uIcc_of_le hab ▸ h_cont).integrableOn_Icc
+  have := sum_mul_eq_sub_sub_integral_mul (fun _ ↦ 1) ha hab hf_diff (Set.uIcc_of_le hab ▸
+    h_cont).integrableOn_Icc
   simp only [mul_one, sum_const, Nat.card_Icc, tsub_zero, nsmul_eq_mul, Nat.cast_add,
     Nat.cast_one] at this
   rw [this, ← intervalIntegral.integral_of_le hab]

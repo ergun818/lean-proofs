@@ -32,6 +32,7 @@ universe u
 variable {V : Type u} [Fintype V] [DecidableEq V]
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
+omit [DecidableEq V] in
 /-- A positive lower bound of the form occurring in the structural theorem
 forces a vertex-two-connected graph to have at least three vertices. -/
 theorem card_three_le_of_minDegree {j : ℕ} (hj : 0 < j)
@@ -44,6 +45,7 @@ theorem card_three_le_of_minDegree {j : ℕ} (hj : 0 < j)
   have hle := hdegree v
   omega
 
+omit [DecidableEq V] in
 /-- Once completeness is known, the minimum-degree hypothesis and the exact
 odd-cycle count force the sharp number of vertices.  This arithmetic endpoint
 is useful independently of the geometric part of Gyárfás's theorem. -/
@@ -118,6 +120,7 @@ theorem card_eq_two_mul_add_two_of_complete {j : ℕ} (hj : 0 < j)
     omega
   · exact hcardLower
 
+omit [DecidableEq V] in
 /-- The independent-exterior branch of Gyárfás's structural theorem,
 including both the complete-graph and sharp-cardinality conclusions. -/
 theorem complete_and_card_of_independentExterior {j : ℕ} (hj : 0 < j)
@@ -126,12 +129,14 @@ theorem complete_and_card_of_independentExterior {j : ℕ} (hj : 0 < j)
     (hdegree : ∀ v : V, 2 * j + 1 ≤ G.degree v)
     (hodd : (oddCycleLengths G).ncard = j) :
     G = SimpleGraph.completeGraph V ∧ Fintype.card V = 2 * j + 2 := by
+  classical
   have hcomplete : G = SimpleGraph.completeGraph V :=
     IndependentGap.independentExteriorForcesComplete
       hj hG C hind hdegree hodd
   exact ⟨hcomplete,
     card_eq_two_mul_add_two_of_complete G hj hcomplete hdegree hodd⟩
 
+omit [DecidableEq V] in
 /-- The independent-exterior branch in the exact isomorphism form required
 by `MainReduction.StructuralTheorem`. -/
 theorem iso_completeGraph_of_independentExterior {j : ℕ} (hj : 0 < j)
@@ -140,12 +145,14 @@ theorem iso_completeGraph_of_independentExterior {j : ℕ} (hj : 0 < j)
     (hdegree : ∀ v : V, 2 * j + 1 ≤ G.degree v)
     (hodd : (oddCycleLengths G).ncard = j) :
     Nonempty (G ≃g SimpleGraph.completeGraph (Fin (2 * j + 2))) := by
+  classical
   obtain ⟨hcomplete, hcard⟩ :=
     complete_and_card_of_independentExterior G hj hG C hind hdegree hodd
   let e : V ≃ Fin (2 * j + 2) := Fintype.equivFinOfCardEq hcard
   subst G
   exact ⟨SimpleGraph.Iso.completeGraph e⟩
 
+omit [DecidableEq V] in
 /-- Gyárfás's structural theorem in the connectivity interface used by the
 longest-cycle proof. -/
 theorem gyarfas_structural_twoConnected {j : ℕ} (hj : 0 < j)
@@ -153,6 +160,7 @@ theorem gyarfas_structural_twoConnected {j : ℕ} (hj : 0 < j)
     (hdegree : ∀ v : V, 2 * j + 1 ≤ G.degree v)
     (hodd : (oddCycleLengths G).ncard = j) :
     Nonempty (G ≃g SimpleGraph.completeGraph (Fin (2 * j + 2))) := by
+  classical
   obtain ⟨C⟩ := exists_longestOddCycle hj hodd
   rcases independentExterior_or_exists_positive_longestExteriorPath
       hj C hdegree hodd.le with hind | ⟨P, hpos⟩
@@ -164,12 +172,13 @@ theorem gyarfas_structural_twoConnected {j : ℕ} (hj : 0 < j)
 `MainReduction.StructuralTheorem`: a finite vertex-two-connected graph with
 minimum degree at least `2*j+1` and exactly `j>0` odd cycle lengths is the
 complete graph on `2*j+2` vertices. -/
-theorem gyarfas_structural {X : Type u} [Fintype X] [DecidableEq X]
+theorem gyarfas_structural {X : Type u} [Fintype X]
     (H : SimpleGraph X) [DecidableRel H.Adj] (j : ℕ) (hj : 0 < j)
     (hconn : Critical.VertexTwoConnected H)
     (hdegree : ∀ v : X, 2 * j + 1 ≤ H.degree v)
     (hodd : (oddCycleLengths H).ncard = j) :
     Nonempty (H ≃g SimpleGraph.completeGraph (Fin (2 * j + 2))) := by
+  classical
   have hH : TwoConnected H :=
     twoConnected_of_vertexTwoConnected_minDegree H hj hconn hdegree
   exact gyarfas_structural_twoConnected H hj hH hdegree hodd

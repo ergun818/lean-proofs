@@ -173,6 +173,7 @@ private lemma u4_rpow_neg_third_cube {x : ℝ} (hx : 0 ≤ x) :
   rw [← Real.rpow_natCast, ← Real.rpow_mul hx]
   norm_num [Real.rpow_neg_one]
 
+omit [DecidableEq V] in
 private lemma u4_sum_inv_left_le (A B : Finset V) :
     ∑ p ∈ u4OrientedEdgesBetween G A B, (G.degree p.1 : ℝ)⁻¹ ≤
       (A.card : ℝ) := by
@@ -211,6 +212,7 @@ private lemma u4_sum_inv_left_le (A B : Finset V) :
             exact_mod_cast hcard)
     _ = (A.card : ℝ) := by simp
 
+omit [DecidableEq V] in
 private lemma u4_sum_inv_right_le (A B : Finset V) :
     ∑ p ∈ u4OrientedEdgesBetween G A B, (G.degree p.2 : ℝ)⁻¹ ≤
       (B.card : ℝ) := by
@@ -252,6 +254,7 @@ private lemma u4_sum_inv_right_le (A B : Finset V) :
             exact_mod_cast hcard)
     _ = (B.card : ℝ) := by simp
 
+omit [DecidableEq V] in
 private theorem u4_walkWeight_lower_bound (A B : Finset V) :
     ((u4OrientedEdgesBetween G A B).card : ℝ) ^ 3 /
         ((A.card : ℝ) * (B.card : ℝ)) ≤
@@ -314,6 +317,7 @@ private theorem u4_walkWeight_lower_bound (A B : Finset V) :
     (Nat.cast_pos.mpr (Nat.pos_of_ne_zero hB)))]
   simpa only [mul_assoc] using hmul
 
+omit [DecidableEq V] [Fintype V] in
 private lemma u4_orientedEdgesBetween_card_eq_sum (A B : Finset V) :
     (u4OrientedEdgesBetween G A B).card =
       ∑ u ∈ A, (B.filter fun v ↦ G.Adj u v).card := by
@@ -326,6 +330,7 @@ private lemma u4_orientedEdgesBetween_card_eq_sum (A B : Finset V) :
       rw [Finset.sum_boole (R := ℕ)]
       norm_num
 
+omit [DecidableEq V] in
 private lemma u4_orientedEdgesBetween_univ_card :
     (u4OrientedEdgesBetween G Finset.univ Finset.univ).card =
       2 * G.edgeFinset.card := by
@@ -338,6 +343,7 @@ private lemma u4_orientedEdgesBetween_univ_card :
   simp_rw [hfilter]
   simpa [G.card_neighborFinset_eq_degree] using G.sum_degrees_eq_twice_card_edges
 
+omit [DecidableEq V] in
 private lemma u4_lengthThreeWalkWeightBetween_univ :
     u4WalkWeightBetween G Finset.univ Finset.univ =
       (u4OrientedWalkCount G : ℝ) := by
@@ -355,10 +361,10 @@ private lemma u4_lengthThreeWalkWeightBetween_univ :
     rw [← hfilter u, Finset.sum_filter]
   unfold u4WalkWeightBetween u4OrientedWalkCount
   push_cast
-  simp only [u4OrientedEdgesBetween, Finset.sum_filter, Finset.sum_product,
-    Finset.mem_univ, true_and]
+  simp only [u4OrientedEdgesBetween, Finset.sum_filter, Finset.sum_product]
   exact Finset.sum_congr rfl fun u hu ↦ hinner u
 
+omit [DecidableEq V] in
 /-- The global Blakley--Roy inequality obtained from the finite three-factor
 Hölder estimate, rather than assumed as an additional hypothesis. -/
 theorem fnv_u4_oriented_walk_lower_bound :
@@ -369,8 +375,10 @@ theorem fnv_u4_oriented_walk_lower_bound :
   rw [u4_orientedEdgesBetween_univ_card G,
     u4_lengthThreeWalkWeightBetween_univ G] at h
   norm_num [Nat.cast_mul, pow_two] at h ⊢
-  convert h using 1 <;> ring
+  convert h using 1
+  ring
 
+omit [DecidableEq V] in
 private lemma u4_orientedEdgesBetween_card_of_bipartite
     {A B : Finset V} (hG : G.IsBipartiteWith A B) :
     (u4OrientedEdgesBetween G A B).card = G.edgeFinset.card := by
@@ -392,10 +400,12 @@ private lemma u4_orientedEdgesBetween_card_of_bipartite
       rw [hneighbors u hu, G.card_neighborFinset_eq_degree]
     _ = G.edgeFinset.card := G.isBipartiteWith_sum_degrees_eq_card_edges hG
 
+omit [DecidableEq V] in
 private lemma u4_lengthThreeWalkWeightBetween_bipartite
     {A B : Finset V} (hG : G.IsBipartiteWith A B) :
     (u4OrientedWalkCount G : ℝ) =
       2 * u4WalkWeightBetween G A B := by
+  classical
   have hall : u4OrientedEdgesBetween G Finset.univ Finset.univ =
       u4OrientedEdgesBetween G A B ∪ u4OrientedEdgesBetween G B A := by
     ext p
@@ -429,7 +439,7 @@ private lemma u4_lengthThreeWalkWeightBetween_bipartite
   rw [← u4_lengthThreeWalkWeightBetween_univ G]
   unfold u4WalkWeightBetween
   rw [hall, Finset.sum_union hdisj, hswap, Finset.sum_map]
-  simp only [Function.Embedding.coeFn_mk, Prod.swap_prod_mk, Prod.fst_swap,
+  simp only [Function.Embedding.coeFn_mk, Prod.fst_swap,
     Prod.snd_swap]
   rw [two_mul]
   congr 1
@@ -437,6 +447,7 @@ private lemma u4_lengthThreeWalkWeightBetween_bipartite
   intro p hp
   ring
 
+omit [DecidableEq V] in
 /-- The global bipartite Hoory/Sidorenko three-walk inequality, obtained
 directly from finite Hölder on the oriented edges from `A` to `B`. -/
 theorem fnv_u4_bipartite_oriented_walk_lower_bound
@@ -524,7 +535,7 @@ private lemma u4_badChoices_subset (u v : V) :
     exact hp'.2 ⟨h₁, h₂, h₃⟩
   exact Or.inr ⟨hp'.1, h₃⟩
 
-private lemma u4_local_walk_le_path_add {u v : V} (huv : G.Adj u v) :
+private lemma u4_local_walk_le_path_add (u v : V) :
     G.degree u * G.degree v ≤
       (u4LocalPaths G u v).card + G.degree v + G.degree u + G.maxDegree := by
   have hpartition :
@@ -618,8 +629,7 @@ private lemma u4_walk_le_path_add_six :
       intro u hu
       apply Finset.sum_le_sum
       intro v hv
-      have huv := (G.mem_neighborFinset u v).1 hv
-      have hlocal := u4_local_walk_le_path_add G huv
+      have hlocal := u4_local_walk_le_path_add G u v
       have huD := G.degree_le_maxDegree u
       have hvD := G.degree_le_maxDegree v
       omega

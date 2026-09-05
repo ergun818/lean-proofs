@@ -130,7 +130,7 @@ theorem modImage_not_subset_addStab_of_primitive
   apply hWproper
   apply Subset.antisymm (subset_univ W)
   intro x hx
-  have hxH : x ∈ W.addStab := by simpa [hHuniv]
+  have hxH : x ∈ W.addStab := by simp [hHuniv]
   have hxsum : x ∈ W + W.addStab :=
     mem_add.mpr ⟨0, hW0, x, hxH, by simp⟩
   simpa only [add_addStab] using hxsum
@@ -171,7 +171,7 @@ theorem exists_residue_outside_prefix_saturation
     change C₀ + H ⊆ W + W.addStab at hs
     simpa only [add_addStab] using hs
   by_contra hn
-  push_neg at hn
+  push Not at hn
   have hWsub : W ⊆ C₀ + H := fun c hc ↦ hn c hc
   have hWeq : W = C₀ + H := Subset.antisymm hWsub hCsatW
   apply hnotA
@@ -240,7 +240,7 @@ theorem modImage_listSum (As : List (Finset ℕ)) (L : ℕ) :
     modImage (listSum As) L =
       groupListSum (As.map fun A ↦ modImage A L) := by
   induction As with
-  | nil => simp [listSum, groupListSum, modImage]
+  | nil => simp [listSum, modImage]
   | cons A As ih =>
       simp only [listSum_cons, List.map_cons, groupListSum_cons, ← ih]
       exact modImage_add A (listSum As) L
@@ -258,7 +258,7 @@ theorem mem_groupListSum_iff
       constructor
       · intro hz
         have hz0 : z = 0 := by simpa [groupListSum] using hz
-        exact ⟨[], rfl, .nil, by simpa [hz0]⟩
+        exact ⟨[], rfl, .nil, by simp [hz0]⟩
       · rintro ⟨xs, hlen, -, hsum⟩
         have hxs : xs = [] := List.eq_nil_of_length_eq_zero (by simpa using hlen)
         subst xs
@@ -955,7 +955,7 @@ theorem alternatingSplit_perm {α : Type*} (xs : List α) :
   | nil => simp
   | singleton a => simp
   | cons_cons a b xs ih =>
-      simp only [alternatingSplit_cons_cons, Prod.fst, Prod.snd, List.cons_append]
+      simp only [alternatingSplit_cons_cons, List.cons_append]
       exact List.Perm.cons a (List.perm_middle.trans (List.Perm.cons b ih))
 
 theorem alternatingSplit_fst_sublist {α : Type*} (xs : List α) :
@@ -964,7 +964,7 @@ theorem alternatingSplit_fst_sublist {α : Type*} (xs : List α) :
   | nil => simp
   | singleton a => simp
   | cons_cons a b xs ih =>
-      simp only [alternatingSplit_cons_cons, Prod.fst]
+      simp only [alternatingSplit_cons_cons]
       exact (ih.cons b).cons_cons a
 
 theorem alternatingSplit_snd_sublist {α : Type*} (xs : List α) :
@@ -973,7 +973,7 @@ theorem alternatingSplit_snd_sublist {α : Type*} (xs : List α) :
   | nil => simp
   | singleton a => simp
   | cons_cons a b xs ih =>
-      simp only [alternatingSplit_cons_cons, Prod.snd]
+      simp only [alternatingSplit_cons_cons]
       exact (ih.cons_cons b).cons a
 
 theorem alternatingSplit_lengths {α : Type*} {xs : List α} {k : ℕ}
@@ -994,7 +994,7 @@ theorem alternatingSplit_lengths {α : Type*} {xs : List α} {k : ℕ}
           | cons b xs =>
               have htail : xs.length = 2 * k := by simp at hlen; omega
               have ht := ih htail
-              simp only [alternatingSplit_cons_cons, Prod.fst, Prod.snd,
+              simp only [alternatingSplit_cons_cons,
                 List.length_cons]
               omega
 
@@ -1282,24 +1282,28 @@ theorem twenty_gain_bound
   have hgain := levGainAux_append d 0 L₁ L₂
   have htop₁ : topSum L₁ = setTop A0 + setTop A1 + setTop A2 + setTop A3 +
       setTop A4 + setTop A5 + setTop A6 + setTop A7 + setTop A8 + setTop A9 := by
-    simp [L₁, topSum] <;> omega
+    simp [L₁, topSum]
+    omega
   have htop₂ : topSum L₂ = setTop A10 + setTop A11 + setTop A12 + setTop A13 +
       setTop A14 + setTop A15 + setTop A16 + setTop A17 + setTop A18 + setTop A19 := by
-    simp [L₂, topSum] <;> omega
+    simp [L₂, topSum]
+    omega
   have hgain₁ : levGainAux d 0 L₁ =
       min (setTop A0) (d + 1) + min (setTop A1) (2*d + 1) +
       min (setTop A2) (3*d + 1) + min (setTop A3) (4*d + 1) +
       min (setTop A4) (5*d + 1) + min (setTop A5) (6*d + 1) +
       min (setTop A6) (7*d + 1) + min (setTop A7) (8*d + 1) +
       min (setTop A8) (9*d + 1) + min (setTop A9) (10*d + 1) := by
-    simp [L₁, levGainAux] <;> omega
+    simp [L₁, levGainAux]
+    omega
   have hgain₂ : levGainAux d 10 L₂ =
       min (setTop A10) (11*d + 1) + min (setTop A11) (12*d + 1) +
       min (setTop A12) (13*d + 1) + min (setTop A13) (14*d + 1) +
       min (setTop A14) (15*d + 1) + min (setTop A15) (16*d + 1) +
       min (setTop A16) (17*d + 1) + min (setTop A17) (18*d + 1) +
       min (setTop A18) (19*d + 1) + min (setTop A19) (20*d + 1) := by
-    simp [L₂, levGainAux] <;> omega
+    simp [L₂, levGainAux]
+    omega
   change topSum (L₁ ++ L₂) + 20 * (d + 1) ≤
     2 * levGainAux d 0 (L₁ ++ L₂)
   rw [htop, hgain, htop₁, htop₂, hgain₁]
@@ -1344,7 +1348,7 @@ theorem alternatingSplit_topSum_balance
               have hBQ : setTop B ≤ Q := hhi B (by simp)
               have hrec := ih htail hsTail hBQ hBtail hhiTail
               have hloA : lo ≤ setTop A := hlo A (by simp)
-              simp only [alternatingSplit_cons_cons, Prod.fst, Prod.snd, topSum,
+              simp only [alternatingSplit_cons_cons, topSum,
                 List.map_cons, List.sum_cons] at ⊢
               change
                 setTop A + topSum (alternatingSplit As).1 ≤

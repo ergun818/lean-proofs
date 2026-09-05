@@ -47,11 +47,13 @@ section FiniteGroup
 
 variable {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
 
+omit [Fintype G] in
 private lemma addStab_add_mem {C : Finset G} (hC : C.Nonempty) {x y : G}
     (hx : x ∈ C.addStab) (hy : y ∈ C.addStab) : x + y ∈ C.addStab := by
   rw [← Finset.mem_coe, Finset.coe_addStab hC] at hx hy ⊢
   exact (AddAction.stabilizer G (C : Set G)).add_mem hx hy
 
+omit [Fintype G] in
 private lemma addStab_neg_mem {C : Finset G} (hC : C.Nonempty) {x : G}
     (hx : x ∈ C.addStab) : -x ∈ C.addStab := by
   rw [← Finset.mem_coe, Finset.coe_addStab hC] at hx ⊢
@@ -72,6 +74,7 @@ lemma eq_univ_of_addStab_eq_univ {C : Finset G} (hC : C.Nonempty)
   rw [htranslate] at hxmem
   simpa using hxmem
 
+omit [Fintype G] in
 private lemma disjoint_vadd_vadd_of_not_mem {H : Finset G} {a b : G}
     (hadd : ∀ x ∈ H, ∀ y ∈ H, x + y ∈ H)
     (hneg : ∀ x ∈ H, -x ∈ H) (hb : b ∉ a +ᵥ H) :

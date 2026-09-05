@@ -9,7 +9,7 @@ open Finset
 attribute [local instance] Classical.propDecidable
 
 theorem exists_even_targets_with_distinct_corrections
-    {V I : Type*} [Fintype V] [Fintype I] (U : Set V) (C : I → Set V)
+    {V I : Type*} [Finite V] [Fintype I] (U : Set V) (C : I → Set V)
     (hCU : ∀ i, C i ⊆ U)
     (hroom : ∀ i, Fintype.card I + (C i).ncard ≤ U.ncard) :
     ∃ A : I → Set V,
@@ -18,6 +18,7 @@ theorem exists_even_targets_with_distinct_corrections
       (∀ v, (∑ i : I, if v ∈ A i then 0 else 1) ≤
         (∑ i : I, if v ∈ C i then 1 else 0) + if v ∈ U then 1 else 0) := by
   classical
+  let := Fintype.ofFinite V
   obtain ⟨f, hf, hmem⟩ := exists_injective_mem_of_card_le
     (fun i ↦ (U \ C i).toFinset) (fun i ↦ by
       rw [Set.toFinset_card, Set.fintypeCard_eq_ncard, Set.ncard_sdiff (hCU i)]

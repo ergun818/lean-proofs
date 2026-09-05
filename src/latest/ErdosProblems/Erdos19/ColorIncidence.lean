@@ -15,9 +15,11 @@ def colorCovered (H : SetHypergraph V) (c : H.EdgeColoring I) (i : I) : Set V :=
 
 def vertexSupport (H : SetHypergraph V) : Set V := {v | ∃ e : H, v ∈ e.1}
 
-theorem colorCovered_count (H : SetHypergraph V) (c : H.EdgeColoring I) (v : V) :
+omit [Fintype V] in
+theorem colorCovered_count [Finite V] (H : SetHypergraph V) (c : H.EdgeColoring I) (v : V) :
     (∑ i : I, if v ∈ H.colorCovered c i then 1 else 0) = (H.incidentEdges v).ncard := by
   classical
+  let := Fintype.ofFinite V
   let f : H.incidentEdges v → {i : I // v ∈ H.colorCovered c i} :=
     fun e ↦ ⟨c.color e.1, e.1, rfl, e.2⟩
   have hf : Function.Injective f := by

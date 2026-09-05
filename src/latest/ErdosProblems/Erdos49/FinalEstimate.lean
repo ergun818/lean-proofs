@@ -118,7 +118,7 @@ lemma prime_comparison_of_theta_error {N : ℕ} (hs : ScaleFacts N)
         _ ≤ t ^ 5 * h ^ 3 := by
           gcongr
           nlinarith
-    convert mul_le_mul_of_nonneg_left hpow hN0 using 1 <;> simp [t] <;> ring
+    convert mul_le_mul_of_nonneg_left hpow hN0 using 1; simp [t]; ring
   have hfirst : (N : ℝ) / h ≤
       (Nat.primeCounting N : ℝ) + taoErrorScale N := by
     linarith

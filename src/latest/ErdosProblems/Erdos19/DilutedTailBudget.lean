@@ -71,7 +71,8 @@ theorem exists_diluted_tail_budget (L : ℕ) (hL : 16 ≤ L) :
   have hLR : (0 : ℝ) < L := by exact_mod_cast (show 0 < L by omega)
   let c : ℝ := 1 / (32 * (L : ℝ) ^ 2)
   have hc : 0 < c := by dsimp only [c]; positivity
-  obtain ⟨N₀, hN₀⟩ := Erdos76.PippengerSpencerParameters.exists_exp_tail_mul_polynomial_le_one c 64 4 hc
+  obtain ⟨N₀, hN₀⟩ :=
+    Erdos76.PippengerSpencerParameters.exists_exp_tail_mul_polynomial_le_one c 64 4 hc
   refine ⟨max N₀ (2 * L), le_max_right _ _, ?_⟩
   intro D hD d hd hdD
   have hD₂ : 2 * L ≤ D := (le_max_right _ _).trans hD

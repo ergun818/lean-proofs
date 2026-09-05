@@ -17,7 +17,7 @@ theorem count_map_fst_eq_sum_count {E I : Type*} [DecidableEq E] [Fintype I]
     by_cases hfe : f = e
     · subst f
       simp [List.count_cons, ih, sum_add_distrib]
-    · simp [List.count_cons, ih, hfe, sum_add_distrib]
+    · simp [ih, hfe]
 
 theorem count_map_snd_eq_sum_count {E I : Type*} [Fintype E] [DecidableEq E]
     [DecidableEq I] (requests : List (E × I)) (i : I) :
@@ -29,7 +29,7 @@ theorem count_map_snd_eq_sum_count {E I : Type*} [Fintype E] [DecidableEq E]
     by_cases hji : j = i
     · subst j
       simp [List.count_cons, ih, sum_add_distrib]
-    · simp [List.count_cons, ih, hji, sum_add_distrib]
+    · simp [ih, hji]
 
 theorem exists_requests_of_demands {E I : Type*} [Fintype E] [DecidableEq E]
     [Fintype I] [DecidableEq I] (a : E → I → ℕ) :
@@ -62,7 +62,7 @@ theorem exists_requests_of_demands {E I : Type*} [Fintype E] [DecidableEq E]
 /-- Simultaneously meet every prescribed edge-pool incidence demand, without
 random choices. The exact budgets are expressed entirely as finite sums. -/
 theorem exists_augmentation_of_demands {V E I : Type*}
-    [DecidableEq V] [Fintype E] [DecidableEq E] [Fintype I] [DecidableEq I]
+    [DecidableEq V] [Fintype E] [Fintype I]
     (H : FiniteHypergraph V E) (R D L : ℕ) (hD : 0 < D) (hL : 0 < L)
     (P : I → Finset V) (hdisjoint : Pairwise fun i j ↦ Disjoint (P i) (P j))
     (hpool : ∀ i, P i ⊆ H.vertexSet) (M : I → ℕ) (a : E → I → ℕ)
@@ -76,6 +76,7 @@ theorem exists_augmentation_of_demands {V E I : Type*}
       K.IsBounded R ∧ (∀ v ∈ K.vertexSet, K.edgeDegree v ≤ D) ∧
       (∀ x ∈ K.vertexSet, ∀ y ∈ K.vertexSet, x ≠ y → K.edgePairDegree x y ≤ L) ∧
       ∀ e i, (K.support e ∩ P i).card = (H.support e ∩ P i).card + a e i := by
+  classical
   obtain ⟨requests, hcount, hfst, hsnd⟩ := exists_requests_of_demands a
   obtain ⟨K, hKvertices, hKsupport, hKrank, hKdeg, hKpair, hKcount⟩ :=
     exists_augmentation_by_requests R D L hD hL P hdisjoint M hroom requests H hpool hdeg hpair

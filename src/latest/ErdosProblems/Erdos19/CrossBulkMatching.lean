@@ -23,7 +23,7 @@ theorem crossMatching_touches_outliers (G : _root_.SimpleGraph V)
   · exact Or.inl (h.1 ▸ e.1.1.2)
   · exact Or.inr (h.1 ▸ e.1.1.2)
 
-theorem exists_merged_cross_bulk_matchings [Fintype V] [Fintype I]
+theorem exists_merged_cross_bulk_matchings [Finite V] [Fintype I]
     (G : _root_.SimpleGraph V) (partner : ActiveRequest active → V)
     (hadj : ∀ e, G.Adj (requestSource X active e) (partner e))
     (hout : ∀ e, partner e ∉ X)
@@ -42,6 +42,7 @@ theorem exists_merged_cross_bulk_matchings [Fintype V] [Fintype I]
       (∀ v, v ∉ X → (∑ i : I, if v ∈ (M i).verts then 0 else 1) ≤
         (∑ i : I, if v ∈ C i then 1 else 0) + if v ∈ U then 1 else 0) := by
   classical
+  let := Fintype.ofFinite V
   let P := crossMatching X active G partner hadj
   let M : I → G.Subgraph := fun i ↦ P i ⊔ inducedMatchingLift G X (B i)
   have hP (i : I) : (P i).IsMatching :=

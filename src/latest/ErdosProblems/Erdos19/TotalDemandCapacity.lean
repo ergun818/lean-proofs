@@ -13,7 +13,8 @@ open Finset Erdos76 Erdos76.FiniteHypergraph
 variable {V E I : Type*} [DecidableEq V] [Fintype E] [DecidableEq E]
   [Fintype I] [DecidableEq I]
 
-theorem exists_capacity_augmentation_of_demand_bound
+omit [DecidableEq E] [DecidableEq I] [Fintype I] in
+theorem exists_capacity_augmentation_of_demand_bound [Finite I]
     (H : FiniteHypergraph V E) (r D L : ℕ) (hD : 0 < D) (hL : 0 < L)
     (B P : I → Finset V) (T : I → ℕ)
     (hB : Pairwise fun i j ↦ Disjoint (B i) (B j))
@@ -32,6 +33,7 @@ theorem exists_capacity_augmentation_of_demand_bound
       (∀ x ∈ K.vertexSet, ∀ y ∈ K.vertexSet, x ≠ y → K.edgePairDegree x y ≤ L) ∧
       ∀ e i, (K.support e ∩ P i).card = (H.support e ∩ B i).card := by
   classical
+  let := Fintype.ofFinite I
   let a : E → I → ℕ := fun e i ↦ (H.support e ∩ B i).card
   let M : I → ℕ := T
   have hrank : ∀ e, (H.support e).card + ∑ i : I, a e i ≤ 2 * r := by

@@ -8,7 +8,8 @@ open _root_.SimpleGraph
 
 variable {V I : Type*} [Fintype V]
 
-theorem exists_disjoint_block_matching_repair (G used : _root_.SimpleGraph V)
+omit [Fintype V] in
+theorem exists_disjoint_block_matching_repair [Finite V] (G used : _root_.SimpleGraph V)
     (A B : I → Set V) (missing load : ℕ)
     (hblocks : Pairwise fun i j ↦ Disjoint (A i ∪ B i) (A j ∪ B j))
     (hAB : ∀ i, Disjoint (A i) (B i))
@@ -20,6 +21,7 @@ theorem exists_disjoint_block_matching_repair (G used : _root_.SimpleGraph V)
       M.verts.ncard ≤ 2 * (⋃ i, A i).ncard ∧ Disjoint used M.spanningCoe ∧
       ∀ u v, M.Adj u v → u ∈ (⋃ i, A i) ∨ v ∈ (⋃ i, A i) := by
   classical
+  let := Fintype.ofFinite V
   have hex (i : I) := exists_buffered_matching_repair G used (A i) (B i) missing load
     (hAB i) (hbuffer i) (hmissing i) (hload i)
   choose M hM hcover hverts hcard hdis hmeet using hex

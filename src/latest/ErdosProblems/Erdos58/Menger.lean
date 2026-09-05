@@ -82,22 +82,27 @@ def linkAugment (G : SimpleGraph V) (A B : Set V) :
     | inl x => exact h.ne rfl
     | inr i => cases i <;> exact False.elim h⟩
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem linkAugment_adj_inl_inl {A B : Set V} {x y : V} :
     (linkAugment G A B).Adj (Sum.inl x) (Sum.inl y) ↔ G.Adj x y :=
   Iff.rfl
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem linkAugment_adj_inl_left {A B : Set V} {x : V} :
     (linkAugment G A B).Adj (Sum.inl x) (Sum.inr false) ↔ x ∈ A :=
   Iff.rfl
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem linkAugment_adj_left_inl {A B : Set V} {x : V} :
     (linkAugment G A B).Adj (Sum.inr false) (Sum.inl x) ↔ x ∈ A :=
   Iff.rfl
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem linkAugment_adj_inl_right {A B : Set V} {x : V} :
     (linkAugment G A B).Adj (Sum.inl x) (Sum.inr true) ↔ x ∈ B :=
   Iff.rfl
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem linkAugment_adj_right_inl {A B : Set V} {x : V} :
     (linkAugment G A B).Adj (Sum.inr true) (Sum.inl x) ↔ x ∈ B :=
   Iff.rfl
@@ -111,12 +116,14 @@ def linkAugmentEmbedding (G : SimpleGraph V) (A B : Set V) :
 
 namespace TwoConnected
 
+omit [DecidableEq V] in
 /-- Every edge of a finite vertex-two-connected graph belongs to a simple
 cycle.  The proof chooses a second neighbor of one endpoint by finding a path
 in the graph with the other endpoint deleted. -/
 theorem exists_cycle_through_edge (hG : TwoConnected G) {x y : V}
     (hxy : G.Adj x y) :
     ∃ c : G.Walk x x, c.IsCycle ∧ y ∈ c.support := by
+  classical
   obtain ⟨r, s, hry, hsy, hrs⟩ := hG.exists_two_ne y
   let t : V := if r = x then s else r
   have hty : t ≠ y := by
@@ -152,6 +159,7 @@ theorem exists_cycle_through_edge (hG : TwoConnected G) {x y : V}
   refine ⟨c, hc, ?_⟩
   simp [c]
 
+omit [DecidableEq V] [Fintype V] in
 /-- The two arcs between distinct vertices of a cycle.  One of them contains
 any specified third vertex of the cycle. -/
 private theorem exists_cycle_arc_through
@@ -160,6 +168,7 @@ private theorem exists_cycle_arc_through
     (ht : t ∈ c.support) (hxw : x ≠ w) :
     ∃ r : G.Walk x w,
       r.IsPath ∧ t ∈ r.support ∧ (∀ v ∈ r.support, v ∈ c.support) := by
+  classical
   let c' : G.Walk x x := c.rotate x hx
   have hc' : c'.IsCycle := hc.rotate hx
   have hw' : w ∈ c'.support := by
@@ -193,16 +202,19 @@ private theorem exists_cycle_arc_through
     have htd : t ∈ d.support := htappend.resolve_left htr₁
     simpa [r₂] using htd
 
+omit [DecidableEq V] [Fintype V] in
 /-- Extend a common cycle through `root` and `x` across an edge `x-y`.
 
 The old cycle is avoided at `x`: in `G-x`, take a path from `y` to `root`
 and stop at its first hit `w` on the old cycle.  The `x-w` arc of the old
 cycle which contains `root`, together with the new path and the edge `x-y`,
 is the required cycle. -/
-private theorem onCommonCycle_of_adj_of_avoiding_path
+private theorem onCommonCycle_of_adj_of_avoiding_path [Finite V]
     {root x y : V} (hxy : G.Adj x y) (hcycle : OnCommonCycle G root x)
     (p : G.Walk y root) (hp : p.IsPath) (hpx : x ∉ p.support) :
     OnCommonCycle G root y := by
+  classical
+  let := Fintype.ofFinite V
   rcases hcycle with ⟨z, c, hc, hroot, hx⟩
   by_cases hyc : y ∈ c.support
   · exact ⟨z, c, hc, hroot, hyc⟩
@@ -257,14 +269,17 @@ private theorem onCommonCycle_of_adj_of_avoiding_path
     exact Or.inr this
   · simp [d]
 
+omit [DecidableEq V] in
 /-- The preceding geometric extension supplied by deletion connectivity. -/
 private theorem onCommonCycle_of_adj
     (hG : TwoConnected G) {root x y : V} (hrx : root ≠ x)
     (hxy : G.Adj x y) (hcycle : OnCommonCycle G root x) :
     OnCommonCycle G root y := by
+  classical
   obtain ⟨p, hp, hpx⟩ := hG.exists_path_avoiding x hxy.ne.symm hrx
   exact onCommonCycle_of_adj_of_avoiding_path hxy hcycle p hp hpx
 
+omit [DecidableEq V] in
 /-- Propagate the common-cycle property along an adjacency chain which
 avoids the fixed root. -/
 private theorem onCommonCycle_along_chain
@@ -272,6 +287,7 @@ private theorem onCommonCycle_along_chain
     ∀ (l : List V), List.IsChain G.Adj (x :: l) →
       root ∉ x :: l → OnCommonCycle G root x →
       ∀ y ∈ x :: l, OnCommonCycle G root y := by
+  classical
   intro l
   induction l generalizing x with
   | nil =>
@@ -296,6 +312,7 @@ private theorem onCommonCycle_along_chain
       · exact hcycle
       · exact ih htailchain hroottail hnext y (by simpa only [List.mem_cons] using hy)
 
+omit [DecidableEq V] in
 /-- Once a cycle contains `root` and the initial vertex of a path which
 avoids `root`, adjacency-chain propagation gives a cycle through `root` and
 the other endpoint. -/
@@ -304,15 +321,18 @@ private theorem onCommonCycle_along_path
     (p : G.Walk x y) (_hp : p.IsPath) (hroot : root ∉ p.support)
     (hcycle : OnCommonCycle G root x) :
     OnCommonCycle G root y := by
+  classical
   exact onCommonCycle_along_chain hG p.support.tail
     (by rw [p.cons_tail_support]; exact p.isChain_adj_support)
     (by rw [p.cons_tail_support]; exact hroot) hcycle y
     (by rw [p.cons_tail_support]; exact p.end_mem_support)
 
+omit [DecidableEq V] in
 /-- Every vertex of a finite vertex-two-connected graph lies on a simple
 cycle. -/
 theorem onCommonCycle_refl (hG : TwoConnected G) (x : V) :
     OnCommonCycle G x x := by
+  classical
   obtain ⟨t, htx⟩ := hG.exists_ne x
   obtain ⟨p, hp⟩ := hG.connected.exists_isPath x t
   have hp_nonNil : ¬ p.Nil := Walk.not_nil_of_ne htx.symm
@@ -320,11 +340,13 @@ theorem onCommonCycle_refl (hG : TwoConnected G) (x : V) :
   obtain ⟨c, hc, -⟩ := hG.exists_cycle_through_edge hxsnd
   exact ⟨x, c, hc, c.start_mem_support, c.start_mem_support⟩
 
+omit [DecidableEq V] in
 /-- Whitney's common-cycle characterization, in the direction needed here:
 any two vertices of a finite vertex-two-connected graph lie on one simple
 cycle. -/
 theorem onCommonCycle (hG : TwoConnected G) (x y : V) :
     OnCommonCycle G x y := by
+  classical
   by_cases hxy : x = y
   · subst y
     exact hG.onCommonCycle_refl x
@@ -354,10 +376,11 @@ private theorem connected_of_walks_to
 /-- If every vertex other than `z` has a walk to a fixed surviving anchor,
 and every such walk avoids `z`, then deleting `z` leaves a connected graph. -/
 private theorem connected_induce_compl_singleton_of_walks_to
-    {W : Type*} [DecidableEq W] {H : SimpleGraph W} (z r : W) (hr : r ≠ z)
+    {W : Type*} {H : SimpleGraph W} (z r : W) (hr : r ≠ z)
     (h : ∀ w : W, w ≠ z →
       ∃ p : H.Walk w r, z ∉ p.support) :
     (H.induce ({z}ᶜ : Set W)).Connected := by
+  classical
   let r' : ({z}ᶜ : Set W) := ⟨r, by simpa using hr⟩
   refine { preconnected := ?_, nonempty := ⟨r'⟩ }
   intro u v
@@ -379,6 +402,7 @@ private theorem connected_induce_compl_singleton_of_walks_to
   let wi := w.induce ({z}ᶜ : Set W) hw
   exact ⟨wi.copy (Subtype.ext rfl) (Subtype.ext rfl)⟩
 
+omit [DecidableEq V] [Fintype V] in
 /-- A base-graph walk maps to a walk between the corresponding old vertices
 of the augmentation. -/
 private theorem exists_old_walk (hG : G.Connected) (A B : Set V) (x y : V) :
@@ -400,12 +424,14 @@ private theorem exists_old_walk (hG : G.Connected) (A B : Set V) (x y : V) :
   intro z hz
   exact hr z (hsupp ▸ hz)
 
+omit [DecidableEq V] in
 /-- A base-graph path avoiding `z` maps to an augmentation walk avoiding the
 old copy of `z`. -/
 private theorem exists_old_walk_avoiding (hG : TwoConnected G)
     (A B : Set V) (z : V) {x y : V} (hx : x ≠ z) (hy : y ≠ z) :
     ∃ p : (linkAugment G A B).Walk (Sum.inl x) (Sum.inl y),
       Sum.inl z ∉ p.support := by
+  classical
   obtain ⟨p, -, hpz⟩ := hG.exists_path_avoiding z hx hy
   refine ⟨p.map (linkAugmentEmbedding G A B).toHom, ?_⟩
   intro hz
@@ -415,11 +441,14 @@ private theorem exists_old_walk_avoiding (hG : TwoConnected G)
   obtain ⟨w, hw, hwz⟩ := hz
   exact hpz ((Sum.inl_injective hwz) ▸ hw)
 
+omit [DecidableEq V] [Fintype V] in
 /-- The endpoint augmentation is connected as soon as both endpoint sets are
 nonempty. -/
-private theorem linkAugment_connected (hG : G.Connected)
+private theorem linkAugment_connected [Finite V] (hG : G.Connected)
     {A B : Set V} (hA : A.Nonempty) (hB : B.Nonempty) :
     (linkAugment G A B).Connected := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨a, ha⟩ := hA
   obtain ⟨b, hb⟩ := hB
   apply connected_of_walks_to (H := linkAugment G A B) (Sum.inl a)
@@ -436,11 +465,13 @@ private theorem linkAugment_connected (hG : G.Connected)
           obtain ⟨p, -⟩ := exists_old_walk hG A B b a
           exact ⟨Walk.cons (linkAugment_adj_right_inl.mpr hb) p⟩
 
+omit [DecidableEq V] in
 /-- Deleting an old vertex leaves the endpoint augmentation connected. -/
 private theorem linkAugment_delete_old_connected (hG : TwoConnected G)
     {A B : Set V} (hA : 2 ≤ A.ncard) (hB : 2 ≤ B.ncard) (z : V) :
     ((linkAugment G A B).induce
       ({Sum.inl z}ᶜ : Set (LinkAugment V))).Connected := by
+  classical
   obtain ⟨a, ha, haz⟩ := A.exists_ne_of_one_lt_ncard (by omega) z
   obtain ⟨b, hb, hbz⟩ := B.exists_ne_of_one_lt_ncard (by omega) z
   apply connected_induce_compl_singleton_of_walks_to
@@ -462,11 +493,14 @@ private theorem linkAugment_delete_old_connected (hG : TwoConnected G)
           refine ⟨Walk.cons (linkAugment_adj_right_inl.mpr hb) p, ?_⟩
           simpa using hp
 
+omit [DecidableEq V] [Fintype V] in
 /-- Deleting the left fresh endpoint leaves the augmentation connected. -/
-private theorem linkAugment_delete_left_connected (hG : G.Connected)
+private theorem linkAugment_delete_left_connected [Finite V] (hG : G.Connected)
     {A B : Set V} (hB : B.Nonempty) :
     ((linkAugment G A B).induce
       ({Sum.inr false}ᶜ : Set (LinkAugment V))).Connected := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨b, hb⟩ := hB
   apply connected_induce_compl_singleton_of_walks_to
     (H := linkAugment G A B) (Sum.inr false) (Sum.inl b) (by simp)
@@ -485,11 +519,14 @@ private theorem linkAugment_delete_left_connected (hG : G.Connected)
           refine ⟨Walk.cons (linkAugment_adj_right_inl.mpr hb) Walk.nil, ?_⟩
           simp
 
+omit [DecidableEq V] [Fintype V] in
 /-- Deleting the right fresh endpoint leaves the augmentation connected. -/
-private theorem linkAugment_delete_right_connected (hG : G.Connected)
+private theorem linkAugment_delete_right_connected [Finite V] (hG : G.Connected)
     {A B : Set V} (hA : A.Nonempty) :
     ((linkAugment G A B).induce
       ({Sum.inr true}ᶜ : Set (LinkAugment V))).Connected := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨a, ha⟩ := hA
   apply connected_induce_compl_singleton_of_walks_to
     (H := linkAugment G A B) (Sum.inr true) (Sum.inl a) (by simp)
@@ -508,12 +545,14 @@ private theorem linkAugment_delete_right_connected (hG : G.Connected)
           simp
       | true => exact (hw rfl).elim
 
+omit [DecidableEq V] in
 /-- Adding one fresh vertex on each side makes the graph two-connected when
 the base graph is two-connected and each attachment set has at least two
 vertices. -/
 theorem linkAugment_twoConnected (hG : TwoConnected G) {A B : Set V}
     (hA : 2 ≤ A.ncard) (hB : 2 ≤ B.ncard) :
     TwoConnected (linkAugment G A B) := by
+  classical
   have hAne : A.Nonempty := (Set.ncard_pos (Set.toFinite A)).mp (by omega)
   have hBne : B.Nonempty := (Set.ncard_pos (Set.toFinite B)).mp (by omega)
   refine ⟨?_, linkAugment_connected hG.connected hAne hBne, ?_⟩
@@ -544,11 +583,14 @@ private structure StrippedAugmentPath (G : SimpleGraph V) (A B : Set V)
   old_support : ∀ x ∈ walk.support,
     x ∈ Set.range (Sum.inl : V → LinkAugment V)
 
+omit [DecidableEq V] [Fintype V] in
 /-- Strip the two fresh endpoints from an augmentation path.  Simplicity
 ensures that neither fresh endpoint occurs in the remaining middle. -/
-private theorem strip_augment_path {A B : Set V}
+private theorem strip_augment_path [Finite V] {A B : Set V}
     (p : (linkAugment G A B).Walk (Sum.inr false) (Sum.inr true))
     (hp : p.IsPath) : Nonempty (StrippedAugmentPath G A B p) := by
+  classical
+  let := Fintype.ofFinite V
   have hp_nonNil : ¬p.Nil := Walk.not_nil_of_ne (by simp)
   have htailPath : p.tail.IsPath := hp.tail
   have htail_nonNil : ¬p.tail.Nil := by
@@ -556,7 +598,7 @@ private theorem strip_augment_path {A B : Set V}
     have hsnd : p.snd = Sum.inr true := htailPath.nil_iff_eq.mp hnil
     have hadj := p.adj_snd hp_nonNil
     rw [hsnd] at hadj
-    simpa [linkAugment] using hadj
+    simp [linkAugment] at hadj
   have hpen : p.tail.penultimate = p.penultimate := by
     have h := Walk.penultimate_cons_of_not_nil
       (p.adj_snd hp_nonNil) p.tail htail_nonNil
@@ -617,6 +659,7 @@ private theorem strip_augment_path {A B : Set V}
           | false => exact (halpha (hmsub hx)).elim
           | true => exact (hbeta hx).elim
 
+omit [DecidableEq V] [Fintype V] in
 /-- A walk in the augmentation all of whose vertices are old is the image of
 a unique old-graph walk.  Only existence and the mapping equality are needed
 below. -/
@@ -661,13 +704,16 @@ private theorem exists_old_preimage {A B : Set V} {a b : V}
       rw [Walk.support_induce]
       exact List.attachWith_map_subtype_val hold'
 
+omit [DecidableEq V] [Fintype V] in
 /-- Pull a stripped augmentation path back to the base graph, retaining the
 exact equality after mapping it into the augmentation. -/
-private theorem StrippedAugmentPath.exists_old_path {A B : Set V}
+private theorem StrippedAugmentPath.exists_old_path [Finite V] {A B : Set V}
     {p : (linkAugment G A B).Walk (Sum.inr false) (Sum.inr true)}
     (S : StrippedAugmentPath G A B p) :
     ∃ q : G.Walk S.a S.b,
       q.IsPath ∧ q.map (linkAugmentEmbedding G A B).toHom = S.walk := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨q, hq⟩ := exists_old_preimage S.walk S.old_support
   refine ⟨q, ?_, hq⟩
   have hmapped : (q.map (linkAugmentEmbedding G A B).toHom).IsPath := by
@@ -677,11 +723,13 @@ private theorem StrippedAugmentPath.exists_old_path {A B : Set V}
     (f := (linkAugmentEmbedding G A B).toHom)
     (linkAugmentEmbedding G A B).injective).mp hmapped
 
+omit [DecidableEq V] in
 /-- The fresh-endpoint cycle in the augmentation yields two fully disjoint
 base-graph paths from `A` to `B`. -/
 theorem exists_rawTwoPathPacking (hG : TwoConnected G) {A B : Set V}
     (hA : 2 ≤ A.ncard) (hB : 2 ≤ B.ncard) :
     Nonempty (RawTwoPathPacking G A B) := by
+  classical
   let H := linkAugment G A B
   have hH : TwoConnected H := hG.linkAugment_twoConnected hA hB
   obtain ⟨z, c, hc, hleft, hright⟩ :=
@@ -729,12 +777,14 @@ theorem exists_rawTwoPathPacking (hG : TwoConnected G) {A B : Set V}
     b₂_mem := Q.b_mem
     disjoint_support := hdisj }⟩
 
+omit [DecidableEq V] in
 /-- The unconditional finite two-path Menger consequence needed for the
 Gyárfás argument.  The endpoint-cardinality hypotheses are sharp for full
 support disjointness. -/
 theorem exists_twoLinkage (hG : TwoConnected G) {A B : Set V}
     (hA : 2 ≤ A.ncard) (hB : 2 ≤ B.ncard) :
     Nonempty (TwoLinkage G A B) := by
+  classical
   obtain ⟨P⟩ := hG.exists_rawTwoPathPacking hA hB
   exact hG.twoLinkage_of_rawPacking P
 

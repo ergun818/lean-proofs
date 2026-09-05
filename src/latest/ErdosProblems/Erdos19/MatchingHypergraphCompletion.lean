@@ -11,8 +11,8 @@ open _root_.SimpleGraph
 
 attribute [local instance] Classical.propDecidable
 
-theorem edgeColorable_of_avoiding_matching_family {V : Type*} [Fintype V]
-    (H J : SetHypergraph V) (hJH : J ⊆ H)
+theorem edgeColorable_of_avoiding_matching_family {V : Type*} [Finite V]
+    (H J : SetHypergraph V)
     (hrest : ∀ e : H, e.1 ∉ J → e.1.ncard = 2) (m D : ℕ)
     (large : J.EdgeColoring (Fin m)) (M : Fin m → H.twoGraph.Subgraph)
     (hM : ∀ i, (M i).IsMatching)
@@ -21,9 +21,11 @@ theorem edgeColorable_of_avoiding_matching_family {V : Type*} [Fintype V]
     (hbudget : ∀ v, (H.twoGraph.neighborSet v).ncard +
       (∑ i : Fin m, if v ∈ (M i).verts then 0 else 1) ≤ D + m) :
     H.EdgeColorable (m + (D + 1)) := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨pairs, hpairs, hclasses⟩ := exists_edgeLabeling_completing_matchings
     H.twoGraph M hM hdis D (by simpa only [Fintype.card_fin] using hbudget)
-  obtain ⟨color⟩ := H.edgeColoring_of_large_part_and_pairLabeling J hJH hrest large pairs hpairs (by
+  obtain ⟨color⟩ := H.edgeColoring_of_large_part_and_pairLabeling J hrest large pairs hpairs (by
     intro e x hx y hxy hcolor
     have hclass := hclasses ⟨s(x, y), hxy⟩ (large.color e) hcolor
     have hadj : (M (large.color e)).Adj x y := Subgraph.mem_edgeSet.mp hclass
@@ -49,7 +51,7 @@ theorem eventually_extend_coloring_with_sparse_classes (zeta : ℝ) (hzeta : 0 <
   classical
   obtain ⟨delta, hd, N₀, hN₀⟩ := eventually_matching_packing_avoiding zeta hzeta
   refine ⟨delta, hd, max N₀ 1, ?_⟩
-  intro n hn H J hJH hrest hG m hm large U C hcovered hCU hroom hsmall habs hbudget
+  intro n hn H J _ hrest hG m hm large U C hcovered hCU hroom hsmall habs hbudget
   have hnpos : 0 < n := by omega
   have hnR : (0 : ℝ) < n := by exact_mod_cast hnpos
   have hmn : m < n := by
@@ -67,7 +69,7 @@ theorem eventually_extend_coloring_with_sparse_classes (zeta : ℝ) (hzeta : 0 <
     have hb := hbudget v
     have hc := hcnt v
     omega
-  have hcolor := H.edgeColorable_of_avoiding_matching_family J hJH hrest m (n - m - 1)
+  have hcolor := H.edgeColorable_of_avoiding_matching_family J hrest m (n - m - 1)
     large M (fun i ↦ (hM i).1) hdis havoid hbudgetM
   have hpalette : m + (n - m - 1 + 1) = n := by omega
   simpa only [hpalette] using hcolor

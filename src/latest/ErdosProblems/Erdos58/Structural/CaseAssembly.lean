@@ -373,6 +373,7 @@ end RotatedCyclicOrientation
 
 variable [Fintype V] [DecidableEq V] [DecidableRel G.Adj]
 
+omit [DecidableRel G.Adj] [Fintype V] in
 private lemma image_cycleNeighborPositions_eq
     (x : V) (N : Finset V)
     (hN : ∀ v, v ∈ N ↔ G.Adj x v ∧ v ∈ C.carrier) :
@@ -481,6 +482,7 @@ lemma card_cycleNeighborPositions_last (P : LongestExteriorPath C) :
     _ = P.lastCycleNeighbors.card :=
       congrArg Finset.card (image_cycleNeighborPositions_last P)
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Forgetting the `Fin` bound identifies the boundary module's cyclic
 positions with the natural-number positions used by the endpoint module. -/
 lemma image_boundaryCycleNeighborPositions_val (x : V) :
@@ -505,10 +507,12 @@ lemma image_boundaryCycleNeighborPositions_val (x : V) :
     exact (Structural.mem_cycleNeighborPositions
       (toEndpointLongestOddCycle C) x i).mpr hn'.2
 
-lemma card_boundaryCycleNeighborPositions_eq_endpoint (x : V) :
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+lemma card_boundaryCycleNeighborPositions_eq_endpoint [Finite V] (x : V) :
     (Structural.cycleNeighborPositions (toEndpointLongestOddCycle C) x).card =
       (EndpointApplication.cycleNeighborPositions C.walk x).card := by
   classical
+  let := Fintype.ofFinite V
   have hinj : Set.InjOn
       (fun i : Fin (toEndpointLongestOddCycle C).cycle.length ↦ (i : ℕ))
       (Structural.cycleNeighborPositions (toEndpointLongestOddCycle C) x) := by
@@ -532,6 +536,7 @@ lemma card_boundaryCycleNeighborPositions_last (P : LongestExteriorPath C) :
   rw [card_boundaryCycleNeighborPositions_eq_endpoint,
     card_cycleNeighborPositions_last]
 
+omit [DecidableRel G.Adj] [Fintype V] in
 private lemma image_endpointCycleNeighborPositions_eq
     (L : EndpointCount.LongestOddCycle G)
     (hsupport : ∀ v : V, v ∈ L.cycle.support ↔ v ∈ C.carrier)
@@ -727,6 +732,7 @@ def firstExteriorNeighborPositions (P : LongestExteriorPath C) : Finset ℕ := b
   exact Finset.Icc 1 P.exactAmbientPath.length |>.filter fun n ↦
     G.Adj (P.first : V) (P.exactAmbientPath.getVert n)
 
+omit [DecidableEq V] [Fintype V] in
 lemma mem_firstExteriorNeighborPositions_iff (P : LongestExteriorPath C)
     (n : ℕ) :
     n ∈ firstExteriorNeighborPositions P ↔
@@ -807,6 +813,7 @@ def commonNeighborAugmentedSpine (P : LongestExteriorPath C)
     G.Walk (P.first : V) (C.walk.getVert base) :=
   P.exactAmbientPath.concat hbaseLast
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 lemma commonNeighborAugmentedSpine_isPath
     (P : LongestExteriorPath C) (base : Fin C.walk.length)
     (hbaseLast : G.Adj (P.last : V) (C.walk.getVert base)) :
@@ -817,6 +824,7 @@ lemma commonNeighborAugmentedSpine_isPath
       ((mem_toEndpointLongestOddCycle_support_iff C _).mp
         (C.walk.getVert_mem_support base))
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 @[simp] lemma commonNeighborAugmentedSpine_length
     (P : LongestExteriorPath C) (base : Fin C.walk.length)
     (hbaseLast : G.Adj (P.last : V) (C.walk.getVert base)) :
@@ -833,6 +841,7 @@ noncomputable def commonNeighborExteriorPosition {j : ℕ}
   (firstExteriorNeighborPositions P).orderEmbOfFin rfl
     ⟨i, i.isLt.trans_le hmany⟩
 
+omit [DecidableEq V] [Fintype V] in
 lemma commonNeighborExteriorPosition_mem {j : ℕ}
     (P : LongestExteriorPath C)
     (hmany : 2 * j ≤ (firstExteriorNeighborPositions P).card)
@@ -841,6 +850,7 @@ lemma commonNeighborExteriorPosition_mem {j : ℕ}
       firstExteriorNeighborPositions P := by
   exact Finset.orderEmbOfFin_mem _ rfl _
 
+omit [DecidableEq V] [Fintype V] in
 lemma commonNeighborExteriorPosition_injective {j : ℕ}
     (P : LongestExteriorPath C)
     (hmany : 2 * j ≤ (firstExteriorNeighborPositions P).card) :
@@ -865,12 +875,15 @@ noncomputable def commonNeighborAugmentedPosition {j : ℕ}
   Fin.lastCases (commonNeighborAugmentedSpine P base hbaseLast).length
     (commonNeighborExteriorPosition P hmany)
 
-lemma commonNeighborAugmentedPosition_pos {j : ℕ}
+omit [DecidableEq V] [Fintype V] in
+lemma commonNeighborAugmentedPosition_pos [Finite V] {j : ℕ}
     (P : LongestExteriorPath C) (base : Fin C.walk.length)
     (hbaseLast : G.Adj (P.last : V) (C.walk.getVert base))
     (hmany : 2 * j ≤ (firstExteriorNeighborPositions P).card)
     (i : Fin (2 * j + 1)) :
     0 < commonNeighborAugmentedPosition P base hbaseLast hmany i := by
+  classical
+  let := Fintype.ofFinite V
   induction i using Fin.lastCases with
   | last => simp [commonNeighborAugmentedPosition]
   | cast i =>
@@ -879,13 +892,16 @@ lemma commonNeighborAugmentedPosition_pos {j : ℕ}
       simp only [commonNeighborAugmentedPosition, Fin.lastCases_castSucc]
       exact Nat.lt_of_lt_of_le Nat.zero_lt_one hi.1
 
-lemma commonNeighborAugmentedPosition_le {j : ℕ}
+omit [DecidableEq V] [Fintype V] in
+lemma commonNeighborAugmentedPosition_le [Finite V] {j : ℕ}
     (P : LongestExteriorPath C) (base : Fin C.walk.length)
     (hbaseLast : G.Adj (P.last : V) (C.walk.getVert base))
     (hmany : 2 * j ≤ (firstExteriorNeighborPositions P).card)
     (i : Fin (2 * j + 1)) :
     commonNeighborAugmentedPosition P base hbaseLast hmany i ≤
       (commonNeighborAugmentedSpine P base hbaseLast).length := by
+  classical
+  let := Fintype.ofFinite V
   induction i using Fin.lastCases with
   | last => simp [commonNeighborAugmentedPosition]
   | cast i =>
@@ -895,12 +911,15 @@ lemma commonNeighborAugmentedPosition_le {j : ℕ}
         commonNeighborAugmentedSpine_length]
       omega
 
-lemma commonNeighborAugmentedPosition_injective {j : ℕ}
+omit [DecidableEq V] [Fintype V] in
+lemma commonNeighborAugmentedPosition_injective [Finite V] {j : ℕ}
     (P : LongestExteriorPath C) (base : Fin C.walk.length)
     (hbaseLast : G.Adj (P.last : V) (C.walk.getVert base))
     (hmany : 2 * j ≤ (firstExteriorNeighborPositions P).card) :
     Function.Injective
       (commonNeighborAugmentedPosition P base hbaseLast hmany) := by
+  classical
+  let := Fintype.ofFinite V
   intro a b hab
   induction a using Fin.lastCases with
   | last =>
@@ -969,6 +988,7 @@ noncomputable def commonNeighborAugmentedFan {j : ℕ}
           SimpleGraph.Walk.getVert_append', if_pos hile]
         exact hi.2.2
 
+omit [DecidableEq V] in
 @[simp] lemma commonNeighborAugmentedFan_position_last {j : ℕ}
     (P : LongestExteriorPath C) (base : Fin C.walk.length)
     (hbaseFirst : G.Adj (P.first : V) (C.walk.getVert base))
@@ -982,6 +1002,7 @@ noncomputable def commonNeighborAugmentedFan {j : ℕ}
     (commonNeighborAugmentedSpine P base hbaseLast).length
   simp [commonNeighborAugmentedPosition]
 
+omit [DecidableEq V] in
 @[simp] lemma commonNeighborAugmentedFan_position_zero {j : ℕ}
     (hj : 0 < j) (P : LongestExteriorPath C)
     (hpos : 0 < P.path.length) (base : Fin C.walk.length)
@@ -1029,14 +1050,16 @@ lemma two_mul_le_firstExteriorPositions_of_singleton {j : ℕ}
   rw [card_firstExteriorNeighborPositions]
   omega
 
+omit [DecidableEq V] [Fintype V] in
 /-- The compulsory first edge and all later neighbour positions (including
 the terminal endpoint when it is adjacent to the first endpoint) partition
 all exterior neighbours of the first endpoint. -/
-lemma firstExteriorNeighborPositions_eq_insert_interior
+lemma firstExteriorNeighborPositions_eq_insert_interior [Finite V]
     (P : LongestExteriorPath C) (hpos : 0 < P.path.length) :
     firstExteriorNeighborPositions P =
       insert 1 (EndpointApplication.interiorChordPositions P.exactAmbientPath) := by
   classical
+  let := Fintype.ofFinite V
   ext n
   constructor
   · intro hn
@@ -1115,6 +1138,7 @@ lemma RotatedCyclicOrientation.chordCount_eq_firstExterior_card_sub_one
   dsimp [s] at hsCard
   omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- The endpoint module's natural-number chord positions are exactly the
 left-chord positions used by the boundary module. -/
 lemma image_leftChordPositions_val
@@ -1150,13 +1174,15 @@ lemma image_leftChordPositions_val
     simpa [LongestExteriorPath.toBoundaryExteriorPath, i] using
       And.intro hn'.1 hn'.2.2
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Consequently the one-sided endpoint parameter `q` is exactly the
 number of left chords in the boundary representation. -/
-lemma leftChordPositions_card_eq_chordCount
+lemma leftChordPositions_card_eq_chordCount [Finite V]
     (P : LongestExteriorPath C) (D : CyclicOrientation P)
     (hpos : 0 < P.path.length) :
     (leftChordPositions (P.toBoundaryExteriorPath hpos)).card = D.chordCount := by
   classical
+  let := Fintype.ofFinite V
   have hinj : Set.InjOn
       (fun i : Fin ((P.toBoundaryExteriorPath hpos).walk.length + 1) ↦ (i : ℕ))
       (leftChordPositions (P.toBoundaryExteriorPath hpos)) := by
@@ -1166,13 +1192,17 @@ lemma leftChordPositions_card_eq_chordCount
   rw [image_leftChordPositions_val P hpos] at hcard
   exact hcard.symm
 
-lemma leftChordPositions_eq_empty_of_chordCount_eq_zero
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+lemma leftChordPositions_eq_empty_of_chordCount_eq_zero [Finite V]
     (P : LongestExteriorPath C) (D : CyclicOrientation P)
     (hpos : 0 < P.path.length) (hq : D.chordCount = 0) :
     leftChordPositions (P.toBoundaryExteriorPath hpos) = ∅ := by
+  classical
+  let := Fintype.ofFinite V
   apply Finset.card_eq_zero.mp
   rw [leftChordPositions_card_eq_chordCount P D hpos, hq]
 
+omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 lemma RotatedCyclicOrientation.leftChordPositions_card_eq_chordCount
     {P : LongestExteriorPath C} (D : RotatedCyclicOrientation P)
     (hpos : 0 < P.path.length) :
@@ -1187,6 +1217,7 @@ lemma RotatedCyclicOrientation.leftChordPositions_card_eq_chordCount
   rw [image_leftChordPositions_val P hpos] at hcard
   exact hcard.symm
 
+omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 lemma RotatedCyclicOrientation.leftChordPositions_eq_empty_of_chordCount_eq_zero
     {P : LongestExteriorPath C} (D : RotatedCyclicOrientation P)
     (hpos : 0 < P.path.length) (hq : D.chordCount = 0) :
@@ -1234,6 +1265,7 @@ def lastExteriorNeighborPositions (P : LongestExteriorPath C) : Finset ℕ := by
   exact Finset.range P.exactAmbientPath.length |>.filter fun n ↦
     G.Adj (P.last : V) (P.exactAmbientPath.getVert n)
 
+omit [DecidableEq V] [Fintype V] in
 lemma mem_lastExteriorNeighborPositions_iff
     (P : LongestExteriorPath C) (n : ℕ) :
     n ∈ lastExteriorNeighborPositions P ↔
@@ -1282,9 +1314,10 @@ lemma image_lastExteriorNeighborPositions (P : LongestExteriorPath C) :
     exact (mem_lastExteriorNeighborPositions_iff P n).mpr
       ⟨hnlt, by simpa [hget] using hv.1⟩
 
+omit [DecidableEq V] [Fintype V] in
 /-- Apart from the compulsory final path edge, the remaining last-endpoint
 neighbours are exactly the boundary module's right chords. -/
-lemma lastExteriorNeighborPositions_eq_insert_rightChords
+lemma lastExteriorNeighborPositions_eq_insert_rightChords [Finite V]
     (P : LongestExteriorPath C) (hpos : 0 < P.path.length) :
     lastExteriorNeighborPositions P =
       insert (P.exactAmbientPath.length - 1)
@@ -1292,6 +1325,7 @@ lemma lastExteriorNeighborPositions_eq_insert_rightChords
           (fun i : Fin ((P.toBoundaryExteriorPath hpos).walk.length + 1) ↦
             (i : ℕ))) := by
   classical
+  let := Fintype.ofFinite V
   ext n
   constructor
   · intro hn
@@ -1397,6 +1431,7 @@ theorem last_endpoint_degree_parameters {j : ℕ}
   have hext := lastExteriorNeighbors_card_pos P hpos
   omega
 
+omit [DecidableEq V] in
 /-- The last-endpoint degree split in the exact boundary-module
 representation.  Unlike the endpoint count, this is a statement about the
 right endpoint and is logically independent of its left-chord parameter. -/
@@ -1407,10 +1442,12 @@ theorem last_endpoint_boundary_degree_parameters {j : ℕ}
       (Structural.cycleNeighborPositions
         (toEndpointLongestOddCycle C) (P.last : V)).card +
       (rightChordPositions (P.toBoundaryExteriorPath hpos)).card := by
+  classical
   rw [card_boundaryCycleNeighborPositions_last,
     rightChordPositions_card_eq_lastExterior_card_sub_one]
   exact last_endpoint_degree_parameters P hpos hdegree
 
+omit [DecidableEq V] in
 /-- In the one-left-chord exceptional case, the last-endpoint degree bound
 and the common `2*j-1` cycle-neighbour count force at least one right chord.
 No claim is made that this right chord is unique. -/
@@ -1422,6 +1459,7 @@ theorem rightChordPositions_nonempty_of_degree_and_cycle_card
       (Structural.cycleNeighborPositions
         (toEndpointLongestOddCycle C) (P.last : V)).card = 2 * j - 1) :
     (rightChordPositions (P.toBoundaryExteriorPath hpos)).Nonempty := by
+  classical
   have hbound := last_endpoint_boundary_degree_parameters P hpos hdegree
   rw [hcycle] at hbound
   apply Finset.card_pos.mp
@@ -1452,6 +1490,7 @@ def CyclicOrientation.ReservesOneFirstCycleNeighbor
     {P : LongestExteriorPath C} (D : CyclicOrientation P) : Prop :=
   D.attachmentCount + 1 = P.firstCycleNeighbors.card
 
+omit [DecidableEq V] in
 /-- Unequal-neighbour arithmetic endgame from the actual longest path.
 
 The conclusion is the unique numerical boundary case.  Notice that the
@@ -1466,6 +1505,7 @@ theorem unequal_endpoint_boundary_of_longestExteriorPath [Finite V]
     (D : CyclicOrientation P) (hattach : 0 < D.attachmentCount)
     (hcover : D.CoversAllFirstCycleNeighbors) :
     D.chordCount = 0 ∧ D.attachmentCount = 2 * j := by
+  classical
   have hp := D.attachmentCount_eq_firstCycle_card hcover
   have hq := chordCount_eq_firstExterior_card_sub_one P D hpos
   have hparameters := first_endpoint_degree_parameters P hpos hdegree
@@ -1734,6 +1774,7 @@ noncomputable def rotated_different_boundary_configuration_of_longestExteriorPat
       left_card_le_right_card := hcard
       extra_right_neighbor := hextra }
 
+omit [DecidableEq V] in
 /-- Direct equal-neighbour dispatch with the cycle rotation constructed at
 an actual common attachment.  The lower bound two guarantees that, after
 reserving the base occurrence, the endpoint count still has a positive
@@ -1755,6 +1796,7 @@ theorem rotated_equal_boundary_configuration_of_longestExteriorPath
     Nonempty (OneChordEachConfiguration (toEndpointLongestOddCycle C) j) ∨
       Nonempty (SameNeighborhoodNoChordConfiguration
         (toEndpointLongestOddCycle C) j) := by
+  classical
   have hnonempty :
       (Structural.cycleNeighborPositions
         (toEndpointLongestOddCycle C) (P.first : V)).Nonempty :=
@@ -1800,6 +1842,7 @@ theorem rotated_equal_boundary_configuration_of_longestExteriorPath
 
 /-! ## Checked boundary case already available from the actual geometry -/
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Transport the concrete `j = 1` equal-neighbour boundary theorem from
 `ExteriorPath` to the selected longest exterior path. -/
 theorem sameNeighborhoodBoundary_one_of_longestExteriorPath [Finite V]

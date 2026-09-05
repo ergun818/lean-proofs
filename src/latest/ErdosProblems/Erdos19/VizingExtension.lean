@@ -15,14 +15,19 @@ variable {V K : Type*} [Fintype V]
 noncomputable def maskToGraph (H : SimpleGraph V) (C : PartialColoring V K) :
     PartialColoring V K := fun e ↦ if e ∈ H.edgeSet then C e else none
 
+omit [Fintype V] in
 @[simp] theorem maskToGraph_of_mem (H : SimpleGraph V) (C : PartialColoring V K)
     (e : Sym2 V) (he : e ∈ H.edgeSet) : maskToGraph H C e = C e := by simp [maskToGraph, he]
 
+omit [Fintype V] in
 @[simp] theorem maskToGraph_of_not_mem (H : SimpleGraph V) (C : PartialColoring V K)
     (e : Sym2 V) (he : e ∉ H.edgeSet) : maskToGraph H C e = none := by simp [maskToGraph, he]
 
-theorem maskToGraph_proper (G H : SimpleGraph V) (C : PartialColoring V K)
+omit [Fintype V] in
+theorem maskToGraph_proper [Finite V] (G H : SimpleGraph V) (C : PartialColoring V K)
     (hC : IsProper H C) : IsProper G (maskToGraph H C) := by
+  classical
+  let := Fintype.ofFinite V
   intro u v w a _ _ hvc hwc
   have huv : H.Adj u v := by
     by_contra h
@@ -67,7 +72,7 @@ theorem edge_card_le_colored_add_one (G : SimpleGraph V) (C : PartialColoring V 
 
 /-- With a degree-sized palette, a single uncolored edge can be completed
 when every other neighbor of its first endpoint has smaller degree. -/
-theorem exists_complete_extension_of_single_uncolored [Fintype K] [DecidableEq K]
+theorem exists_complete_extension_of_single_uncolored [Fintype K]
     (G : SimpleGraph V) (C : PartialColoring V K) (hC : IsProper G C)
     (x y : V) (hxy : G.Adj x y) (hzero : C s(x, y) = none)
     (hother : ∀ f, f ∈ G.edgeSet → f ≠ s(x, y) → (C f).isSome)
@@ -75,6 +80,7 @@ theorem exists_complete_extension_of_single_uncolored [Fintype K] [DecidableEq K
     (hlow : ∀ z, G.Adj x z → z ≠ y → G.degree z < Fintype.card K) :
     ∃ C' : PartialColoring V K, IsProper G C' ∧
       ∀ u v, G.Adj u v → ∃ a, C' s(u, v) = some a := by
+  classical
   have hxmiss := exists_missing_of_uncolored G C x y hxy hzero (hdegree x)
   have hymiss := exists_missing_of_uncolored G C y x hxy.symm
     (by simpa only [Sym2.eq_swap] using hzero) (hdegree y)

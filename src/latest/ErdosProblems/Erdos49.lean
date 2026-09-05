@@ -206,10 +206,8 @@ private lemma good_card_le {N q : ℕ} {A : Finset ℕ}
     have hnG := Finset.mem_filter.mp hn
     change Nat.totient m / q = Nat.totient n / q at hmn
     apply totient_injective_on_of_strict hA.2 hmG.1 hnG.1
-    calc
-      Nat.totient m = q * (Nat.totient m / q) := (Nat.mul_div_cancel' hmG.2).symm
-      _ = q * (Nat.totient n / q) := by rw [hmn]
-      _ = Nat.totient n := Nat.mul_div_cancel' hnG.2
+    exact ((Nat.div_eq_iff_eq_mul_right hq hmG.2).mp hmn).trans
+      (Nat.mul_div_cancel' hnG.2)
   have hcard_image : G.card = (G.image f).card := by
     symm
     exact Finset.card_image_iff.mpr fun m hm n hn hmn ↦ hf_inj hm hn hmn
@@ -233,7 +231,7 @@ private lemma bad_card_le_few {N k M : ℕ} {A : Finset ℕ}
     have hn' := Finset.mem_filter.mp hn
     have hnInterval : n ∈ Finset.Icc 1 N := hA.1 hn'.1
     refine ⟨?_, Nat.lt_succ_of_le (Finset.mem_Icc.mp hnInterval).2⟩
-    show (Density.selectedPrimes M n).card ≤ k
+    change (Density.selectedPrimes M n).card ≤ k
     by_contra hcard
     exact hn'.2 (Density.pow_two_dvd_totient_of_many_selected
       (Nat.lt_of_not_ge hcard))

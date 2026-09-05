@@ -5,7 +5,7 @@ import ErdosProblems.Erdos19.Core
 namespace Erdos19
 
 theorem cover_denominator_budget (n t s B : ℕ) (hn : 0 < n)
-    (ht : 0 < t) (hs : 0 < s) (hB : n ≤ t * B) :
+    (hB : n ≤ t * B) :
     (n * (n - 1) / (B * (t ^ 2 * s))) * (t * s) ≤ n - 1 := by
   let q := n * (n - 1) / (B * (t ^ 2 * s))
   have hdiv : q * (B * (t ^ 2 * s)) ≤ n * (n - 1) := by
@@ -25,7 +25,7 @@ theorem cover_extension_palette_budget (n t s : ℕ) (hn : 0 < n)
   have hfloor := Nat.lt_mul_div_succ n ht
   have hB : n ≤ t * (8 * (n / t) + 1) :=
     hfloor.le.trans (Nat.mul_le_mul_left t (by omega))
-  have h := cover_denominator_budget n t s (8 * (n / t) + 1) hn ht hs hB
+  have h := cover_denominator_budget n t s (8 * (n / t) + 1) hn hB
   apply (Nat.le_div_iff_mul_le hs).mpr
   have ht1 : 1 ≤ t := ht
   have hmul := Nat.mul_le_mul_left
@@ -39,7 +39,7 @@ theorem cover_refinement_palette_budget (n t s : ℕ) (hn : 0 < n)
   have hfloor := Nat.lt_mul_div_succ n ht
   have hB : n ≤ t * (16 * (n / t) + 1) :=
     hfloor.le.trans (Nat.mul_le_mul_left t (by omega))
-  have h := cover_denominator_budget n t s (16 * (n / t) + 1) hn ht hs hB
+  have h := cover_denominator_budget n t s (16 * (n / t) + 1) hn hB
   have hsecond : n / (8 * (n / t) + 1) ≤ t := by
     apply Nat.le_of_lt_succ
     apply (Nat.div_lt_iff_lt_mul (by omega)).mpr
@@ -62,6 +62,7 @@ namespace SetHypergraph
 
 variable {V : Type*} [Fintype V]
 
+omit [Fintype V] in
 theorem exists_cover_bounded_coloring_of_palette_card (H : SetHypergraph V)
     {C : Type*} [Fintype C] (color : H.EdgeColoring C) (A n : ℕ)
     (hbounded : H.IsCoverBoundedColoring color A) (hcard : Fintype.card C ≤ n) :

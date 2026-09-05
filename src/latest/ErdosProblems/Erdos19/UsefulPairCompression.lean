@@ -36,7 +36,6 @@ theorem pairCompressible_of_useful_pairs [Fintype X] (H : SetHypergraph X)
       _ = n := by omega
   have hcandidate (i : Fin t) : t ≤ (candidate i).card := by
     rw [← Set.ncard_eq_toFinset_card']
-    change t ≤ (forbidden i)ᶜ.ncard
     rw [Set.ncard_compl, Nat.card_eq_fintype_card, hcard]
     have hi := hforbidden i
     omega
@@ -117,7 +116,7 @@ theorem pairCompressible_of_useful_pairs [Fintype X] (H : SetHypergraph X)
     simpa only [← chosen_eq_endpoint] using hij
   have hchosen_disjoint (i : Fin t) : Disjoint (chosen i).1 (z i).1 := by
     by_cases hl : chooseLeft i
-    · simpa [chosen, hl, chooseLeft] using hl
+    · simp [chosen, hl, chooseLeft]
     · simpa [chosen, hl] using (hsome_disjoint i).resolve_left hl
   have hchosen_z_injective : Function.Injective (Sum.elim chosen z) := by
     intro a b hab

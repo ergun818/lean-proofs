@@ -21,7 +21,7 @@ private lemma fin5_vector_injective {V : Type*} {a b c d e : V}
   fin_cases i <;> fin_cases j <;> simp_all
 
 private lemma exists_path5_of_min_degree_two_of_degree_four
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (H : SimpleGraph V) [DecidableRel H.Adj]
     (hmin : ∀ w : V, 2 ≤ H.degree w) {v : V} (hv : 4 ≤ H.degree v) :
     ∃ p : Fin 5 → V, Function.Injective p ∧
@@ -86,7 +86,7 @@ private lemma exists_path5_of_min_degree_two_of_degree_four
 
 /-- The exact finite `P₅` case of the Erdős--Gallai path theorem. -/
 theorem erdosGallai_path5
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (H : SimpleGraph V) [DecidableRel H.Adj]
     (hP5 : ¬ ∃ p : Fin 5 → V, Function.Injective p ∧
       H.Adj (p 0) (p 1) ∧ H.Adj (p 1) (p 2) ∧

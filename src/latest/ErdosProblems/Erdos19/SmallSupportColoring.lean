@@ -13,10 +13,12 @@ namespace Erdos19.SetHypergraph
 
 attribute [local instance] Classical.propDecidable
 
-theorem twoGraph_adj_of_outside_large_support {V : Type*} [Fintype V]
+theorem twoGraph_adj_of_outside_large_support {V : Type*} [Finite V]
     (H : SetHypergraph V) (hcomplete : H.IsPairComplete)
     (hsize : ∀ e : H, 2 ≤ e.1.ncard) {x y : V} (hxy : x ≠ y)
     (hy : y ∉ H.largePart.vertexSupport) : H.twoGraph.Adj x y := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨e, he, hx, hye⟩ := hcomplete x y hxy
   have hsmall : e.ncard = 2 := by
     have hmin := hsize ⟨e, he⟩
@@ -36,13 +38,13 @@ theorem edgeColorable_of_auxiliary_palette {V : Type*} [Fintype V]
   let B := H.largePart.vertexSupport
   let q := 2 * t + 1
   have hq : q < Fintype.card V := by dsimp only [q, B]; omega
-  have hJH : H.largePart ⊆ H := fun _ h ↦ h.1
   let C := H.largePart.colorCovered large
   have hCB : ∀ i, C i ⊆ B := by
     intro i v hv
     obtain ⟨e, _, he⟩ := hv
     exact ⟨e, he⟩
-  obtain ⟨f, _, M, hM, hdis, hcover⟩ := exists_matching_packing_with_auxiliary_clique H.twoGraph B t C hCB
+  obtain ⟨f, _, M, hM, hdis, hcover⟩ :=
+    exists_matching_packing_with_auxiliary_clique H.twoGraph B t C hCB
     (fun x y hxy hy ↦ H.twoGraph_adj_of_outside_large_support hcomplete hsize hxy hy) hsmall
   have hbudget : ∀ v, (H.twoGraph.neighborSet v).ncard +
       (∑ i : Fin q, if v ∈ C i then 1 else 0) ≤ Fintype.card V - 1 := by
@@ -61,7 +63,7 @@ theorem edgeColorable_of_auxiliary_palette {V : Type*} [Fintype V]
     intro e x hx hMx
     rw [(hM (large.color e)).2] at hMx
     exact auxiliaryTarget_subset _ _ hMx ⟨e, rfl, hx⟩
-  have hc := H.edgeColorable_of_avoiding_matching_family_core H.largePart hJH hrest q
+  have hc := H.edgeColorable_of_avoiding_matching_family_core H.largePart hrest q
     (Fintype.card V - q) (by omega) large M (fun i ↦ (hM i).1) havoid hdegree hcore
   have hpalette : q + (Fintype.card V - q) = Fintype.card V := by omega
   simpa only [hpalette] using hc

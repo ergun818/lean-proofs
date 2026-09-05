@@ -10,11 +10,13 @@ open _root_.SimpleGraph
 
 variable {V : Type*} [Fintype V]
 
-theorem matching_covered_buffer_card_le {G : _root_.SimpleGraph V}
+omit [Fintype V] in
+theorem matching_covered_buffer_card_le [Finite V] {G : _root_.SimpleGraph V}
     (M : G.Subgraph) (hM : M.IsMatching) (B W : Set V) (hBW : Disjoint B W)
     (hcross : ∀ x y, M.Adj x y → (x ∈ B ∧ y ∈ W) ∨ (x ∈ W ∧ y ∈ B)) :
     (M.verts ∩ W).ncard ≤ B.ncard := by
   classical
+  let := Fintype.ofFinite V
   have hex : ∀ v : ↥(M.verts ∩ W), ∃ w ∈ B, M.Adj v.1 w := by
     intro v
     obtain ⟨w, hw, _⟩ := hM v.2.1
@@ -30,7 +32,8 @@ theorem matching_covered_buffer_card_le {G : _root_.SimpleGraph V}
     exact Subtype.ext (hM.eq_of_adj_right hv (hmate w))
   simpa only [Set.fintypeCard_eq_ncard] using Fintype.card_le_of_injective f hf
 
-theorem exists_matching_extension_with_buffer
+omit [Fintype V] in
+theorem exists_matching_extension_with_buffer [Finite V]
     (G : _root_.SimpleGraph V) (P : G.Subgraph) (hP : P.IsMatching)
     (A W : Set V) (heven : Even A.ncard) (hPA : P.verts ⊆ A) (hWA : W ⊆ A)
     (hWP : Disjoint W P.verts) (d : ℕ)
@@ -39,6 +42,7 @@ theorem exists_matching_extension_with_buffer
     ∃ M : G.Subgraph, M.IsMatching ∧ M.verts = A ∧ P ≤ M ∧
       ∀ x y, M.Adj x y → P.Adj x y ∨ x ∈ W ∨ y ∈ W := by
   classical
+  let := Fintype.ofFinite V
   let B := A \ (P.verts ∪ W)
   have hBW : Disjoint B W := by
     apply Set.disjoint_left.mpr

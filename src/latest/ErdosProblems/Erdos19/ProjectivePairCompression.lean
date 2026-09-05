@@ -39,7 +39,7 @@ theorem pairCompressible_of_few_subscale_edges [Fintype X]
     intro e heB
     have hek : projectiveScale n + 1 ≤ e.1.ncard := by
       dsimp only [B, A] at heB
-      simp only [Set.mem_compl_iff, Set.mem_setOf_eq, not_le] at heB
+      simp only [Set.mem_compl_iff, Set.mem_ofPred_eq, not_le] at heB
       omega
     have hscale : n - 1 ≤ projectiveScale n * (projectiveScale n + 1) := by
       have hupper := le_projectiveScale_sq_add n

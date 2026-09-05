@@ -181,7 +181,7 @@ lemma nat_div_three_of_exp_bound {N Q : ℕ} {h : ℝ}
       _ = Real.exp h / Real.exp (h / 2) := by
         apply (eq_div_iff (Real.exp_ne_zero _)).2
         rw [← Real.exp_add]
-        congr 1 <;> ring
+        congr 1; ring
       _ ≤ Real.exp h / (2 * Q) :=
         div_le_div_of_nonneg_left (Real.exp_pos h).le (by positivity) hNQexp
       _ = (N : ℝ) / (2 * Q) := by rw [hexph]
@@ -317,7 +317,7 @@ lemma scaleCeilingFacts_of_core {N : ℕ}
             (2 * Real.exp (20 * t)) :=
         mul_le_mul hfactor hLup (by positivity) (by positivity)
       _ ≤ (20 * Real.exp (2 * t ^ 4)) *
-            (2 * Real.exp (20 * t)) := by gcongr <;> nlinarith
+            (2 * Real.exp (20 * t)) := by gcongr; nlinarith
       _ = 40 * Real.exp (2 * t ^ 4 + 20 * t) := by
         rw [Real.exp_add]
         ring
@@ -389,7 +389,7 @@ lemma eight_scaleD_sq_le_scaleR {N : ℕ} {t r : ℝ}
       _ ≤ Real.exp 5 * Real.exp (2 * t ^ 4) := by gcongr
       _ = Real.exp (2 * t ^ 4 + 5) := by
         rw [← Real.exp_add]
-        congr 1 <;> ring
+        congr 1; ring
       _ ≤ Real.exp r := Real.exp_le_exp.mpr hratioD
       _ ≤ scaleR N := hRlow
   exact_mod_cast hreal
@@ -425,7 +425,7 @@ lemma secondary_scale_of_bounds {N : ℕ} {h t : ℝ}
   exact_mod_cast hreal
 
 lemma log_scaleR_upper_of_bounds {N : ℕ} {h t r : ℝ}
-    (ht : 0 < t) (hr : r = h / (1000 * t))
+    (_ht : 0 < t) (hr : r = h / (1000 * t))
     (hratioD : 2 * t ^ 4 + 5 ≤ h / (1000 * t))
     (hRlow : Real.exp r ≤ (scaleR N : ℝ))
     (hRup : (scaleR N : ℝ) ≤ 2 * Real.exp r) :
@@ -523,7 +523,7 @@ theorem eventually_scaleFacts : ∀ᶠ N : ℕ in atTop, ScaleFacts N := by
       _ ≤ Real.exp 7 * Real.exp (2 * t ^ 4 + 20 * t) := by gcongr
       _ = Real.exp (7 + 2 * t ^ 4 + 20 * t) := by
         rw [← Real.exp_add]
-        congr 1 <;> ring
+        congr 1; ring
       _ ≤ Real.exp (h / 2) := Real.exp_le_exp.mpr hBsmall
   have hNQ : (2 : ℝ) ≤ (N : ℝ) / scaleQ N := by
     apply (le_div_iff₀ (by exact_mod_cast hQpos)).2
@@ -554,7 +554,7 @@ theorem eventually_scaleFacts : ∀ᶠ N : ℕ in atTop, ScaleFacts N := by
           _ ≤ Real.exp 7 * Real.exp (2 * t ^ 4 + 20 * t) := by gcongr
           _ = Real.exp (7 + 2 * t ^ 4 + 20 * t) := by
             rw [← Real.exp_add]
-            congr 1 <;> ring
+            congr 1; ring
       _ = 7 + 2 * t ^ 4 + 20 * t := Real.log_exp _
   have hlogW : h / 2 ≤ Real.log (scaleW N : ℝ) := by
     have hWposR : (0 : ℝ) < scaleW N := by exact_mod_cast (by omega : 0 < scaleW N)
@@ -595,7 +595,7 @@ theorem eventually_scaleFacts : ∀ᶠ N : ℕ in atTop, ScaleFacts N := by
               Real.exp 3 * Real.exp (h / (2000 * t) + 40 * t) := by gcongr
           _ = Real.exp (3 + h / (2000 * t) + 40 * t) := by
             rw [← Real.exp_add]
-            congr 1 <;> ring
+            congr 1; ring
           _ ≤ Real.exp (h / (1000 * t)) := by
             apply Real.exp_le_exp.mpr
             have := hratioLarge

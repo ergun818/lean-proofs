@@ -100,8 +100,8 @@ theorem exists_augmentation_by_requests {V E I : Type*}
         · subst j
           simp [hdP, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
         · have hdnot : d ∉ P j := fun hmem ↦ hji ((hpoolmem j).mp hmem)
-          simp [List.count_cons, hdnot, hji, Ne.symm hji]
-      · simp [List.count_cons, hfe, Ne.symm hfe]
+          simp [hdnot, Ne.symm hji]
+      · simp [hfe, Ne.symm hfe]
 
 #print axioms exists_augmentation_by_requests
 

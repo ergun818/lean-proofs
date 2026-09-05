@@ -50,16 +50,19 @@ def suffixCycle {v x : V} (p : G.Walk v v) (hx : x ∈ p.support)
     (hchord : G.Adj x v) : G.Walk v v :=
   (p.dropUntil x hx).cons hchord.symm
 
+omit [Fintype V] in
 @[simp] theorem prefixCycle_length {v x : V} (p : G.Walk v v)
     (hx : x ∈ p.support) (hchord : G.Adj x v) :
     (prefixCycle p hx hchord).length = p.support.idxOf x + 1 := by
   simp [prefixCycle, SimpleGraph.Walk.length_takeUntil]
 
+omit [Fintype V] in
 @[simp] theorem suffixCycle_length {v x : V} (p : G.Walk v v)
     (hx : x ∈ p.support) (hchord : G.Adj x v) :
     (suffixCycle p hx hchord).length = p.length - p.support.idxOf x + 1 := by
   simp [suffixCycle, SimpleGraph.Walk.length_dropUntil]
 
+omit [Fintype V] in
 private theorem idxOf_start {v x : V} (p : G.Walk v v)
     (hidx : 0 < p.support.idxOf x) : x ≠ v := by
   intro hxv
@@ -69,12 +72,15 @@ private theorem idxOf_start {v x : V} (p : G.Walk v v)
     exact p.head_support
   omega
 
+omit [Fintype V] in
 /-- An internal chord endpoint at index at least two cuts off a genuine
 simple cycle on the initial side. -/
-theorem prefixCycle_isCycle {v x : V} {p : G.Walk v v} (hp : p.IsCycle)
+theorem prefixCycle_isCycle [Finite V] {v x : V} {p : G.Walk v v} (hp : p.IsCycle)
     (hx : x ∈ p.support) (hchord : G.Adj x v)
     (hidx : 2 ≤ p.support.idxOf x) :
     (prefixCycle p hx hchord).IsCycle := by
+  classical
+  let := Fintype.ofFinite V
   rw [SimpleGraph.Walk.isCycle_iff_isPath_tail_and_le_length]
   constructor
   · simp only [prefixCycle, SimpleGraph.Walk.tail_cons]
@@ -83,12 +89,15 @@ theorem prefixCycle_isCycle {v x : V} {p : G.Walk v v} (hp : p.IsCycle)
   · simp only [prefixCycle_length]
     omega
 
+omit [Fintype V] in
 /-- An internal chord endpoint at least two edges before the end cuts off a
 genuine simple cycle on the terminal side. -/
-theorem suffixCycle_isCycle {v x : V} {p : G.Walk v v} (hp : p.IsCycle)
+theorem suffixCycle_isCycle [Finite V] {v x : V} {p : G.Walk v v} (hp : p.IsCycle)
     (hx : x ∈ p.support) (hchord : G.Adj x v)
     (hidx : p.support.idxOf x + 2 ≤ p.length) :
     (suffixCycle p hx hchord).IsCycle := by
+  classical
+  let := Fintype.ofFinite V
   have htaken_nonempty : ¬(p.takeUntil x hx).Nil := by
     simpa only [SimpleGraph.Walk.nil_takeUntil] using hchord.ne.symm
   have hsplit :
@@ -104,21 +113,27 @@ theorem suffixCycle_isCycle {v x : V} {p : G.Walk v v} (hp : p.IsCycle)
   · simp only [suffixCycle_length]
     omega
 
+omit [Fintype V] in
 /-- Exact length certificate for the initial chord cycle. -/
-theorem prefixCycle_atLength {v x : V} {p : G.Walk v v} (hp : p.IsCycle)
+theorem prefixCycle_atLength [Finite V] {v x : V} {p : G.Walk v v} (hp : p.IsCycle)
     (hx : x ∈ p.support) (hchord : G.Adj x v)
     (hidx : 2 ≤ p.support.idxOf x) :
     ∃ c : G.Walk v v,
       c.IsCycle ∧ c.length = p.support.idxOf x + 1 := by
+  classical
+  let := Fintype.ofFinite V
   exact ⟨prefixCycle p hx hchord,
     prefixCycle_isCycle hp hx hchord hidx, prefixCycle_length p hx hchord⟩
 
+omit [Fintype V] in
 /-- Exact length certificate for the terminal chord cycle. -/
-theorem suffixCycle_atLength {v x : V} {p : G.Walk v v} (hp : p.IsCycle)
+theorem suffixCycle_atLength [Finite V] {v x : V} {p : G.Walk v v} (hp : p.IsCycle)
     (hx : x ∈ p.support) (hchord : G.Adj x v)
     (hidx : p.support.idxOf x + 2 ≤ p.length) :
     ∃ c : G.Walk v v,
       c.IsCycle ∧ c.length = p.length - p.support.idxOf x + 1 := by
+  classical
+  let := Fintype.ofFinite V
   exact ⟨suffixCycle p hx hchord,
     suffixCycle_isCycle hp hx hchord hidx, suffixCycle_length p hx hchord⟩
 
@@ -126,11 +141,12 @@ end Chord
 
 open Arithmetic
 
+omit [Fintype V] in
 /-- An odd cycle with at least `2*j-1` proper chords at one vertex already
 forces `j+1` distinct odd cycle lengths.  The endpoints are supplied merely
 as a finset of vertices; all cycles and their simplicity proofs are built in
 this theorem from the original cycle walk. -/
-theorem oddCycleLengths_ge_succ_of_odd_cycle_many_chords {v : V}
+theorem oddCycleLengths_ge_succ_of_odd_cycle_many_chords [Finite V] {v : V}
     {p : G.Walk v v} (hp : p.IsCycle) (hpodd : Odd p.length)
     (X : Finset V)
     (hXmem : ∀ x ∈ X, x ∈ p.support)
@@ -140,6 +156,7 @@ theorem oddCycleLengths_ge_succ_of_odd_cycle_many_chords {v : V}
     {j : ℕ} (hj : 0 < j) (hXcard : 2 * j - 1 ≤ X.card) :
     j + 1 ≤ (oddCycleLengths G).ncard := by
   classical
+  let := Fintype.ofFinite V
   let E : Finset V := X.filter fun x ↦ Even (p.support.idxOf x)
   let O : Finset V := X.filter fun x ↦ ¬Even (p.support.idxOf x)
   have hhalf : ceilHalf X.card ≤ E.card ∨ ceilHalf X.card ≤ O.card := by
@@ -254,7 +271,7 @@ theorem oddCycleLengths_ge_succ_of_hamiltonian_odd_cycle_degree
   let X : Finset V := N.filter internal
   let B : Finset V := N.filter fun x ↦ ¬internal x
   have hNcard : N.card = G.degree v := by
-    simpa only [N, SimpleGraph.card_neighborFinset_eq_degree]
+    simp only [N, SimpleGraph.card_neighborFinset_eq_degree]
   have hpartition : X.card + B.card = N.card := by
     simpa only [X, B] using
       (Finset.card_filter_add_card_filter_not (s := N) internal)

@@ -41,11 +41,14 @@ universe u
 variable {V : Type u} [Fintype V] [DecidableEq V]
 variable {G : SimpleGraph V}
 
+omit [DecidableEq V] [Fintype V] in
 /-- Every actual exterior cycle has at least two carrier vertices.  This is
 the endpoint-cardinality input needed by the set form of Menger's theorem. -/
-lemma ExteriorOddCycle.two_le_ncard_carrier
+lemma ExteriorOddCycle.two_le_ncard_carrier [Finite V]
     {C : Erdos58.LongestOddCycle G} (D : ExteriorOddCycle C) :
     2 ≤ D.carrier.ncard := by
+  classical
+  let := Fintype.ofFinite V
   have hne : D.base ≠ D.cycle.snd :=
     (D.cycle.adj_snd D.isCycle.not_nil).ne
   have hsub : ({D.base, D.cycle.snd} : Set V) ⊆ D.carrier := by
@@ -60,6 +63,7 @@ lemma ExteriorOddCycle.two_le_ncard_carrier
   rw [← hcard]
   exact Set.ncard_le_ncard hsub D.finite_carrier
 
+omit [DecidableEq V] [Fintype V] in
 /-- The designated longest cycle likewise has enough vertices to be one
 side of a two-linkage. -/
 lemma LongestOddCycle.two_le_ncard_carrier
@@ -68,6 +72,7 @@ lemma LongestOddCycle.two_le_ncard_carrier
   have hthree := C.three_le
   omega
 
+omit [DecidableEq V] [Fintype V] in
 /-- A non-endpoint vertex of a walk lies in the list used by the linkage
 interior convention. -/
 private lemma mem_tail_dropLast_of_mem_support_of_ne
@@ -77,12 +82,13 @@ private lemma mem_tail_dropLast_of_mem_support_of_ne
   have htailne : p.support.tail ≠ [] := by
     intro hnil
     have hb : b ∈ p.support.tail := p.end_mem_tail_support_of_ne hab
-    simpa [hnil] using hb
+    simp [hnil] at hb
   have hxdrop : x ∈ p.support.dropLast :=
     List.mem_dropLast_of_mem_of_ne_getLast hx (by simpa using hxb)
   rw [← p.cons_tail_support, List.dropLast_cons_of_ne_nil htailne] at hxdrop
   exact (List.mem_cons.mp hxdrop).resolve_left hxa
 
+omit [DecidableEq V] [Fintype V] in
 /-- Two paths which meet only at their common endpoint concatenate to a
 simple path. -/
 private lemma isPath_append_of_inter_eq_end
@@ -106,6 +112,7 @@ namespace TwoLinkage
 
 variable {A B : Set V}
 
+omit [DecidableEq V] [Fintype V] in
 private lemma endpoints_cross_ne (L : TwoLinkage G A B) (hAB : Disjoint A B) :
     L.a₁ ≠ L.b₁ ∧ L.a₂ ≠ L.b₂ := by
   constructor
@@ -114,8 +121,11 @@ private lemma endpoints_cross_ne (L : TwoLinkage G A B) (hAB : Disjoint A B) :
   · intro h
     exact Set.disjoint_left.mp hAB L.a₂_mem (h ▸ L.b₂_mem)
 
-private lemma p_meets_left_only (L : TwoLinkage G A B) (hAB : Disjoint A B)
+omit [DecidableEq V] [Fintype V] in
+private lemma p_meets_left_only [Finite V] (L : TwoLinkage G A B) (hAB : Disjoint A B)
     {x : V} (hxp : x ∈ L.p.support) (hxA : x ∈ A) : x = L.a₁ := by
+  classical
+  let := Fintype.ofFinite V
   by_cases hxa : x = L.a₁
   · exact hxa
   by_cases hxb : x = L.b₁
@@ -125,8 +135,11 @@ private lemma p_meets_left_only (L : TwoLinkage G A B) (hAB : Disjoint A B)
         (endpoints_cross_ne L hAB).1 hxp hxa hxb
     exact (L.p_interior x hxint (Or.inl hxA)).elim
 
-private lemma p_meets_right_only (L : TwoLinkage G A B) (hAB : Disjoint A B)
+omit [DecidableEq V] [Fintype V] in
+private lemma p_meets_right_only [Finite V] (L : TwoLinkage G A B) (hAB : Disjoint A B)
     {x : V} (hxp : x ∈ L.p.support) (hxB : x ∈ B) : x = L.b₁ := by
+  classical
+  let := Fintype.ofFinite V
   by_cases hxb : x = L.b₁
   · exact hxb
   by_cases hxa : x = L.a₁
@@ -136,8 +149,11 @@ private lemma p_meets_right_only (L : TwoLinkage G A B) (hAB : Disjoint A B)
         (endpoints_cross_ne L hAB).1 hxp hxa hxb
     exact (L.p_interior x hxint (Or.inr hxB)).elim
 
-private lemma q_meets_left_only (L : TwoLinkage G A B) (hAB : Disjoint A B)
+omit [DecidableEq V] [Fintype V] in
+private lemma q_meets_left_only [Finite V] (L : TwoLinkage G A B) (hAB : Disjoint A B)
     {x : V} (hxq : x ∈ L.q.support) (hxA : x ∈ A) : x = L.a₂ := by
+  classical
+  let := Fintype.ofFinite V
   by_cases hxa : x = L.a₂
   · exact hxa
   by_cases hxb : x = L.b₂
@@ -147,8 +163,11 @@ private lemma q_meets_left_only (L : TwoLinkage G A B) (hAB : Disjoint A B)
         (endpoints_cross_ne L hAB).2 hxq hxa hxb
     exact (L.q_interior x hxint (Or.inl hxA)).elim
 
-private lemma q_meets_right_only (L : TwoLinkage G A B) (hAB : Disjoint A B)
+omit [DecidableEq V] [Fintype V] in
+private lemma q_meets_right_only [Finite V] (L : TwoLinkage G A B) (hAB : Disjoint A B)
     {x : V} (hxq : x ∈ L.q.support) (hxB : x ∈ B) : x = L.b₂ := by
+  classical
+  let := Fintype.ofFinite V
   by_cases hxb : x = L.b₂
   · exact hxb
   by_cases hxa : x = L.a₂
@@ -160,16 +179,19 @@ private lemma q_meets_right_only (L : TwoLinkage G A B) (hAB : Disjoint A B)
 
 end TwoLinkage
 
+omit [DecidableEq V] [Fintype V] in
 /-- Four simple pieces close to a simple cycle when the two middle pieces
 stay in the disjoint endpoint sets of a truncated two-linkage.  This public
 form is also used to glue path families from the bipartite-fan branch. -/
-theorem linkage_close_isCycle
+theorem linkage_close_isCycle [Finite V]
     {A B : Set V} (L : TwoLinkage G A B) (hAB : Disjoint A B)
     (c : G.Walk L.a₁ L.a₂) (d : G.Walk L.b₁ L.b₂)
     (hc : c.IsPath) (hd : d.IsPath)
     (hcA : ∀ x ∈ c.support, x ∈ A)
     (hdB : ∀ x ∈ d.support, x ∈ B) :
     (SpliceData.close L.p d L.q c).IsCycle := by
+  classical
+  let := Fintype.ofFinite V
   have hpdMeet : ∀ x : V, x ∈ L.p.support → x ∈ d.support → x = L.b₁ := by
     intro x hxp hxd
     exact TwoLinkage.p_meets_right_only L hAB hxp (hdB x hxd)
@@ -216,9 +238,10 @@ theorem linkage_close_isCycle
   change (r.append c.reverse).IsCycle
   exact hrPath.isCycle_append hc.reverse htails (Or.inl hrLong)
 
+omit [DecidableEq V] [Fintype V] in
 /-- Complementary arcs of two disjoint actual cycles construct the full
 `TwoCycleSplice` certificate. -/
-theorem twoCycleSplice_of_cycles
+theorem twoCycleSplice_of_cycles [Finite V]
     {A B : Set V} {cBase dBase : V}
     (c : G.Walk cBase cBase) (d : G.Walk dBase dBase)
     (hc : c.IsCycle) (hd : d.IsCycle)
@@ -226,6 +249,8 @@ theorem twoCycleSplice_of_cycles
     (hA : ∀ x : V, x ∈ A ↔ x ∈ c.support)
     (hB : ∀ x : V, x ∈ B ↔ x ∈ d.support) :
     Nonempty (TwoCycleSplice L c.length d.length) := by
+  classical
+  let := Fintype.ofFinite V
   have ha₁ : L.a₁ ∈ c.support := (hA L.a₁).mp L.a₁_mem
   have ha₂ : L.a₂ ∈ c.support := (hA L.a₂).mp L.a₂_mem
   have hb₁ : L.b₁ ∈ d.support := (hB L.b₁).mp L.b₁_mem
@@ -260,11 +285,12 @@ theorem twoCycleSplice_of_cycles
     crossed₁_isCycle := linkage_close_isCycle L hAB c₁ d₂ hc₁ hd₂ hc₁A hd₂B
     crossed₂_isCycle := linkage_close_isCycle L hAB c₂ d₁ hc₂ hd₁ hc₂A hd₁B }⟩
 
+omit [DecidableEq V] [Fintype V] in
 /-- A same-parity, length-injective path family on one side of a two-linkage
 closes against one of the two arcs of an odd cycle to give a family of odd
 cycles with distinct lengths.  The support hypothesis is the precise
 fan-carrier condition needed for simplicity. -/
-theorem oddCycleFamily_of_pathFamily_linkage
+theorem oddCycleFamily_of_pathFamily_linkage [Finite V]
     {A B : Set V} {cBase : V} {I : Type*} [Nonempty I]
     (c : G.Walk cBase cBase) (hc : c.IsCycle) (hcOdd : Odd c.length)
     (L : TwoLinkage G A B) (hAB : Disjoint A B)
@@ -272,6 +298,8 @@ theorem oddCycleFamily_of_pathFamily_linkage
     (P : PathFamily G L.b₁ L.b₂ I)
     (hPB : ∀ i x, x ∈ (P.path i).support → x ∈ B) :
     Nonempty (OddCycleFamily G I) := by
+  classical
+  let := Fintype.ofFinite V
   have ha₁ : L.a₁ ∈ c.support := (hA L.a₁).mp L.a₁_mem
   have ha₂ : L.a₂ ∈ c.support := (hA L.a₂).mp L.a₂_mem
   obtain ⟨c₁, c₂, hc₁, hc₂, hc₁pos, hc₂pos, hcLen, hcMeet, hcSupp,
@@ -332,13 +360,16 @@ theorem oddCycleFamily_of_pathFamily_linkage
       (Nat.odd_add'.mp hsum).mpr heven₁
     exact ⟨makeFamily c₂ hc₂ hc₂A hodd₂⟩
 
+omit [DecidableEq V] [Fintype V] in
 /-- Specialization to the longest-cycle/exterior-cycle objects used in
 Gyárfás's proof.  In particular, the splice is now constructed rather than
 assumed in the outside-cycle lemma. -/
-theorem twoCycleSplice_longest_exterior
+theorem twoCycleSplice_longest_exterior [Finite V]
     {C : Erdos58.LongestOddCycle G} (D : ExteriorOddCycle C)
     (L : TwoLinkage G C.carrier D.carrier) :
     Nonempty (TwoCycleSplice L C.length D.cycle.length) := by
+  classical
+  let := Fintype.ofFinite V
   have hA : ∀ x : V, x ∈ C.carrier ↔ x ∈ C.walk.support := by
     intro x
     exact (mem_toEndpointLongestOddCycle_support_iff C x).symm
@@ -349,24 +380,33 @@ theorem twoCycleSplice_longest_exterior
     twoCycleSplice_of_cycles C.walk D.cycle C.walk_isCycle D.isCycle L
       D.disjoint_longest_carrier hA hB
 
+omit [DecidableEq V] [Fintype V] in
 /-- An exterior odd cycle linked twice to the longest odd cycle is strictly
 shorter.  This is the unconditional geometric form of the outside-cycle
 lemma: no splice certificate remains in the hypotheses. -/
-theorem outside_odd_cycle_is_shorter_of_twoLinkage
+theorem outside_odd_cycle_is_shorter_of_twoLinkage [Finite V]
     {C : Erdos58.LongestOddCycle G} (D : ExteriorOddCycle C)
     (L : TwoLinkage G C.carrier D.carrier) :
-    D.cycle.length < C.length :=
+    D.cycle.length < C.length := by
+  classical
+  let := Fintype.ofFinite V
+  exact
   outside_odd_cycle_is_shorter_of_splice D L
     (twoCycleSplice_longest_exterior D L).some
 
+omit [DecidableEq V] [Fintype V] in
 /-- Odd parity upgrades strict shortness to a gap of two. -/
-theorem outside_odd_cycle_add_two_le_of_twoLinkage
+theorem outside_odd_cycle_add_two_le_of_twoLinkage [Finite V]
     {C : Erdos58.LongestOddCycle G} (D : ExteriorOddCycle C)
     (L : TwoLinkage G C.carrier D.carrier) :
-    D.cycle.length + 2 ≤ C.length :=
+    D.cycle.length + 2 ≤ C.length := by
+  classical
+  let := Fintype.ofFinite V
+  exact
   outside_odd_cycle_add_two_le_of_splice D L
     (twoCycleSplice_longest_exterior D L).some
 
+omit [DecidableEq V] in
 /-- The actual outside-cycle lemma from Gyárfás's proof.  Two-connectedness
 supplies the linkage by the proved finite set-Menger theorem; the preceding
 construction supplies all four simple splices. -/
@@ -374,17 +414,20 @@ theorem outside_odd_cycle_is_shorter_of_twoConnected
     (hG : TwoConnected G) {C : Erdos58.LongestOddCycle G}
     (D : ExteriorOddCycle C) :
     D.cycle.length < C.length := by
+  classical
   obtain ⟨L⟩ := hG.exists_twoLinkage
     (LongestOddCycle.two_le_ncard_carrier C)
     (ExteriorOddCycle.two_le_ncard_carrier D)
   exact outside_odd_cycle_is_shorter_of_twoLinkage D L
 
+omit [DecidableEq V] in
 /-- Gap-of-two form of the unconditional two-connected outside-cycle
 lemma. -/
 theorem outside_odd_cycle_add_two_le_of_twoConnected
     (hG : TwoConnected G) {C : Erdos58.LongestOddCycle G}
     (D : ExteriorOddCycle C) :
     D.cycle.length + 2 ≤ C.length := by
+  classical
   have hlt := outside_odd_cycle_is_shorter_of_twoConnected hG D
   rcases D.odd_length with ⟨d, hd⟩
   rcases C.odd with ⟨c, hc⟩

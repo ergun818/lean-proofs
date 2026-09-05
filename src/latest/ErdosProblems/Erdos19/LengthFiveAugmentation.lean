@@ -6,7 +6,7 @@ namespace Erdos19
 
 open _root_.SimpleGraph
 
-theorem exists_matching_augment_five {V : Type*} [Fintype V]
+theorem exists_matching_augment_five {V : Type*} [Finite V]
     {G : _root_.SimpleGraph V} (M : G.Subgraph) (hM : M.IsMatching)
     (v : Fin 6 → V) (hinj : Function.Injective v)
     (h0 : v 0 ∉ M.verts) (h5 : v 5 ∉ M.verts)
@@ -17,6 +17,7 @@ theorem exists_matching_augment_five {V : Type*} [Fintype V]
       N.edgeSet.ncard = M.edgeSet.ncard + 1 ∧
       N.edgeSet ⊆ M.edgeSet ∪ {s(v 0, v 1), s(v 2, v 3), s(v 4, v 5)} := by
   classical
+  let := Fintype.ofFinite V
   obtain ⟨M₁, hM₁, hM₁v, _, hM₁e, hM₁keep⟩ :=
     exists_matching_rotation_with_edge_control M hM h0 h12 h01
   have h34' : M₁.Adj (v 3) (v 4) := hM₁keep _ _ h34

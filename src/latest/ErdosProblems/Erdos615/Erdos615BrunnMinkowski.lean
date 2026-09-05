@@ -40,8 +40,8 @@ theorem ennreal_geomMean_le_arithMean2_weighted
     apply NNReal.eq
     simpa [Real.toNNReal_of_nonneg hw₁, Real.toNNReal_of_nonneg hw₂] using hw
   convert NNReal.geom_mean_le_arith_mean2_weighted
-    w₁.toNNReal w₂.toNNReal p₁.toNNReal p₂.toNNReal hnn using 1 <;>
-      simp [Real.toNNReal_of_nonneg hw₁, Real.toNNReal_of_nonneg hw₂]
+    w₁.toNNReal w₂.toNNReal p₁.toNNReal p₂.toNNReal hnn using 1
+  simp [Real.toNNReal_of_nonneg hw₁, Real.toNNReal_of_nonneg hw₂]
 
 lemma brunnMinkowski_compact_one
     {A B : Set ℝ} (A_ne : A.Nonempty) (B_ne : B.Nonempty)
@@ -146,13 +146,13 @@ theorem lintegral_eq_lintegral_meas_lt_ennreal
         intro t ht
         apply measure_mono
         intro a ha
-        rw [mem_setOf_eq, ha]
+        rw [mem_ofPred_eq, ha]
         exact ENNReal.ofReal_lt_top
 
 lemma prekopa_slice_one
     (f g h : ℝ → ℝ≥0∞)
-    (f_meas : Measurable f) (g_meas : Measurable g) (h_meas : Measurable h)
-    (a b : ℝ) (hab : a + b = 1)
+    (_ : Measurable f) (g_meas : Measurable g) (h_meas : Measurable h)
+    (a b : ℝ) (_ : a + b = 1)
     (f_ineq : ∀ x y, f (a * x + b * y) ≥ g x ^ a * h y ^ b)
     (a_pos : 0 < a) (b_pos : 0 < b) {u v w : ℝ≥0∞}
     (hu : ∃ x, u < g x) (hv : ∃ y, v < h y)
@@ -178,7 +178,7 @@ lemma prekopa_slice_one
     _ ≤ volume {x | w < f x} := by
       apply measure_mono
       rintro _ ⟨_, ⟨x, hx, rfl⟩, _, ⟨y, hy, rfl⟩, rfl⟩
-      rw [mem_setOf_eq] at hx hy ⊢
+      rw [mem_ofPred_eq] at hx hy ⊢
       calc
         w ≤ u ^ a * v ^ b := hw
         _ < g x ^ a * h y ^ b :=
@@ -200,7 +200,7 @@ lemma prekopa_leindler_one_iSup_top
       ∃ t : ℝ≥0∞, 0 < t ∧ 0 < volume {x | t < g x} := by
     rw [lintegral_eq_lintegral_meas_lt_ennreal volume g_meas] at hg
     by_contra hnot
-    push_neg at hnot
+    push Not at hnot
     have hzero : ∀ t : ℝ, 0 < t →
         volume {x | ENNReal.ofReal t < g x} = 0 := by
       intro t ht
@@ -209,7 +209,7 @@ lemma prekopa_leindler_one_iSup_top
       apply setLIntegral_eq_zero measurableSet_Ioi
       intro t ht
       exact hzero t (mem_Ioi.mp ht)
-    exact (hg.ne' (by simpa [this] using this)).elim
+    exact (hg.ne' this).elim
   let c := volume {x | u < g x}
   have hc : 0 < c := hu
   suffices hnat : ∀ n : ℕ, (n : ℝ≥0∞) * (ENNReal.ofReal a * c) ≤ ∫⁻ x, f x by
@@ -230,7 +230,7 @@ lemma prekopa_leindler_one_iSup_top
         by_contra hutop
         have : u = ∞ := top_unique (not_lt.mp hutop)
         subst u
-        simpa using hu
+        simp at hu
       obtain ⟨v, v_fin, huv⟩ :
           ∃ v : ℝ≥0∞, v < ∞ ∧ (n : ℝ≥0∞) ≤ u ^ a * v ^ b := by
         have hua_pos : 0 < u ^ a := ENNReal.rpow_pos_of_nonneg u_pos a_pos.le
@@ -280,7 +280,7 @@ lemma prekopa_leindler_one_iSup_one
         · exact lt_iSup_iff.mp (hg ▸ ht1)
         · exact lt_iSup_iff.mp (hh ▸ ht1)
         · rcases eq_or_ne (ENNReal.ofReal t) 0 with ht0 | ht0
-          · simpa [ht0]
+          · simp [ht0]
           · rw [← ENNReal.rpow_add a b ht0 ENNReal.ofReal_ne_top,
               hab, ENNReal.rpow_one]
       · apply le_trans (le_of_eq ?_) bot_le
@@ -291,13 +291,13 @@ lemma prekopa_leindler_one_iSup_one
         · apply mul_eq_zero_of_right
           rw [show {x | ENNReal.ofReal t < g x} = ∅ by
             ext x
-            simp only [mem_setOf_eq, not_lt, mem_empty_iff_false, iff_false]
+            simp only [mem_ofPred_eq, not_lt, mem_empty_iff_false, iff_false]
             exact ((le_iSup g x).trans_eq hg).trans ht1]
           exact measure_empty
         · apply mul_eq_zero_of_right
           rw [show {x | ENNReal.ofReal t < h x} = ∅ by
             ext x
-            simp only [mem_setOf_eq, not_lt, mem_empty_iff_false, iff_false]
+            simp only [mem_ofPred_eq, not_lt, mem_empty_iff_false, iff_false]
             exact ((le_iSup h x).trans_eq hh).trans ht1]
           exact measure_empty
   all_goals
@@ -316,12 +316,14 @@ theorem prekopa_leindler_one
   · have hb : b = 1 := by linarith
     subst b
     convert lintegral_mono (fun y ↦ show h y ≤ f y by
-      simpa using f_ineq 0 y) using 1 <;> simp
+      simpa using f_ineq 0 y) using 1
+    simp
   rcases b_nonneg.eq_or_lt with rfl | b_pos
   · have ha : a = 1 := by linarith
     subst a
     convert lintegral_mono (fun x ↦ show g x ≤ f x by
-      simpa using f_ineq x 0) using 1 <;> simp
+      simpa using f_ineq x 0) using 1
+    simp
   rcases eq_or_lt_of_le (show 0 ≤ ∫⁻ x, g x from bot_le) with hg_zero | hg_pos
   · rw [← hg_zero, ENNReal.zero_rpow_of_pos a_pos, zero_mul]
     exact bot_le
@@ -333,13 +335,13 @@ theorem prekopa_leindler_one
     have hcg0 : ⨆ x, g x = 0 := bot_unique (not_lt.mp hcg)
     have : g = 0 := funext fun x ↦ bot_unique ((le_iSup g x).trans_eq hcg0)
     subst g
-    simpa using hg_pos
+    simp at hg_pos
   have ch_pos : 0 < ⨆ x, h x := by
     by_contra hch
     have hch0 : ⨆ x, h x = 0 := bot_unique (not_lt.mp hch)
     have : h = 0 := funext fun x ↦ bot_unique ((le_iSup h x).trans_eq hch0)
     subst h
-    simpa using hh_pos
+    simp at hh_pos
   rcases eq_or_ne (⨆ x, h x) ∞ with ch_top | ch_fin
   · exact prekopa_leindler_one_iSup_top f g h f_meas g_meas h_meas
       a b hab f_ineq a_pos b_pos hg_pos ch_top
@@ -592,7 +594,7 @@ theorem brunnMinkowski_multiplicative_euclidean {n : ℕ}
     (hasPrekopaLeindler_euclidean n) A B hA hB a b ha hb hab
 
 theorem euclidean_isodiametric {n : ℕ}
-    (A : Set (Fin n → ℝ)) (hA : MeasurableSet A) (d : ℝ) (hd : 0 ≤ d)
+    (A : Set (Fin n → ℝ)) (hA : MeasurableSet A) (d : ℝ) (_ : 0 ≤ d)
     (hdiam : ∀ x ∈ A, ∀ y ∈ A, dist x y ≤ d) :
     volume A ≤ volume (Metric.closedBall (0 : Fin n → ℝ) (d / 2)) := by
   let M : Set (Fin n → ℝ) := ((2 : ℝ)⁻¹ • A) + ((2 : ℝ)⁻¹ • (-A))
@@ -631,7 +633,7 @@ theorem euclidean_isodiametric {n : ℕ}
 
 theorem euclideanSpace_isodiametric {n : ℕ}
     (A : Set (EuclideanSpace ℝ (Fin n))) (hA : MeasurableSet A)
-    (d : ℝ) (hd : 0 ≤ d)
+    (d : ℝ) (_ : 0 ≤ d)
     (hdiam : ∀ x ∈ A, ∀ y ∈ A, dist x y ≤ d) :
     volume A ≤ volume (Metric.closedBall (0 : EuclideanSpace ℝ (Fin n)) (d / 2)) := by
   let M : Set (EuclideanSpace ℝ (Fin n)) :=
@@ -669,7 +671,7 @@ theorem euclideanSpace_isodiametric {n : ℕ}
       mul_le_mul_of_nonneg_left (hdiam x hx (-ny) hny) hhalf
     _ = d / 2 := by ring
 
-theorem sphere_isodiametric {n : ℕ} (hn : 0 < n)
+theorem sphere_isodiametric {n : ℕ} (_ : 0 < n)
     (A : Set (Metric.sphere (0 : EuclideanSpace ℝ (Fin n)) 1))
     (hA : MeasurableSet A) (d : ℝ) (hd1 : 1 ≤ d)
     (hdiam : ∀ x ∈ A, ∀ y ∈ A, dist x y ≤ d) :
@@ -680,7 +682,7 @@ theorem sphere_isodiametric {n : ℕ} (hn : 0 < n)
     Set.Ioo (0 : ℝ) 1 • ((↑) '' A)
   have hnorm (x : Metric.sphere (0 : EuclideanSpace ℝ (Fin n)) 1) :
       ‖(x : EuclideanSpace ℝ (Fin n))‖ = 1 := by
-    simpa [Metric.mem_sphere, dist_zero_right] using x.property
+    simp
   have hcone : ∀ p ∈ C, ∀ q ∈ C, dist p q ≤ d := by
     intro p hp q hq
     rcases hp with ⟨r, hr, xr, hxr, rfl⟩
@@ -699,7 +701,8 @@ theorem sphere_isodiametric {n : ℕ} (hn : 0 < n)
           rw [dist_eq_norm]
           congr 1
           module
-        _ ≤ ‖r • ((x : EuclideanSpace ℝ (Fin n)) - y)‖ + ‖(r - s) • (y : EuclideanSpace ℝ (Fin n))‖ :=
+        _ ≤ ‖r • ((x : EuclideanSpace ℝ (Fin n)) - y)‖ +
+            ‖(r - s) • (y : EuclideanSpace ℝ (Fin n))‖ :=
           norm_add_le _ _
         _ = r * dist (x : EuclideanSpace ℝ (Fin n)) y + (s - r) := by
           rw [norm_smul, norm_smul, Real.norm_eq_abs, Real.norm_eq_abs,
@@ -721,7 +724,8 @@ theorem sphere_isodiametric {n : ℕ} (hn : 0 < n)
           rw [dist_eq_norm]
           congr 1
           module
-        _ ≤ ‖s • ((y : EuclideanSpace ℝ (Fin n)) - x)‖ + ‖(s - r) • (x : EuclideanSpace ℝ (Fin n))‖ :=
+        _ ≤ ‖s • ((y : EuclideanSpace ℝ (Fin n)) - x)‖ +
+            ‖(s - r) • (x : EuclideanSpace ℝ (Fin n))‖ :=
           norm_add_le _ _
         _ = s * dist (y : EuclideanSpace ℝ (Fin n)) x + (r - s) := by
           rw [norm_smul, norm_smul, Real.norm_eq_abs, Real.norm_eq_abs,
@@ -854,7 +858,7 @@ lemma exists_orthonormalBasis_zero_eq {n : ℕ}
 
 lemma euclidean_unitBall_slab_volume_bound {n : ℕ}
     (x : EuclideanSpace ℝ (Fin (n + 1))) (hx : ‖x‖ = 1)
-    (t : ℝ) (ht : 0 ≤ t) :
+    (t : ℝ) (_ : 0 ≤ t) :
     volume {y : EuclideanSpace ℝ (Fin (n + 1)) |
         ‖y‖ ≤ 1 ∧ |inner ℝ x y| ≤ t} ≤
       ENNReal.ofReal (2 * t) *
@@ -947,7 +951,7 @@ lemma spherical_equatorial_strip_bound {n : ℕ} (hn : 0 < n)
   have hnorm (y : Metric.sphere
       (0 : EuclideanSpace ℝ (Fin (n + 1))) 1) :
       ‖(y : EuclideanSpace ℝ (Fin (n + 1)))‖ = 1 := by
-    simpa [Metric.mem_sphere, dist_zero_right] using y.property
+    simp
   have hCsubset : C ⊆ {y : EuclideanSpace ℝ (Fin (n + 1)) |
       ‖y‖ ≤ 1 ∧ |inner ℝ x y| ≤ t} := by
     intro p hp

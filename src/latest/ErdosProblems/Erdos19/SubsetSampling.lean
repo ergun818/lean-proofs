@@ -27,14 +27,14 @@ theorem bin_count_deviation_cardRatio_le_of_card_le
         (S.card : ℝ) / Fintype.card K|} = ∅ := by
       ext z
       simp only [hSempty, uniformBinCount, sum_empty, card_empty, Nat.cast_zero,
-        zero_div, sub_self, abs_zero, Set.mem_setOf_eq, Set.mem_empty_iff_false,
+        zero_div, sub_self, abs_zero, Set.mem_ofPred_eq, Set.mem_empty_iff_false,
         iff_false]
       exact not_le.mpr ht
     rw [hbad, Set.ncard_empty, Nat.cast_zero, zero_div]
     positivity
 
 theorem exists_uniform_bin_sample_close
-    {V K I : Type*} [Fintype V] [DecidableEq V] [Fintype K] [Nonempty K]
+    {V K I : Type*} [Finite V] [Fintype K] [Nonempty K]
     [DecidableEq K] [Fintype I] (S : I → Finset V) (a : K)
     (t L : I → ℝ) (ht : ∀ i, 0 < t i) (hL : ∀ i, 0 < L i)
     (hsize : ∀ i, ((S i).card : ℝ) ≤ L i)
@@ -42,6 +42,7 @@ theorem exists_uniform_bin_sample_close
     ∃ z : V → K, ∀ i,
       |uniformBinCount (S i) a z - ((S i).card : ℝ) / Fintype.card K| < t i := by
   classical
+  let := Fintype.ofFinite V
   let bad : I → Set (V → K) := fun i ↦
     {z | t i ≤ |uniformBinCount (S i) a z - ((S i).card : ℝ) / Fintype.card K|}
   let q : ℝ := Fintype.card (V → K)
@@ -66,8 +67,8 @@ theorem exists_uniform_bin_sample_close
   exact ⟨z, fun i ↦ lt_of_not_ge (hz i)⟩
 
 theorem exists_subset_with_simultaneous_counts
-    {V K I : Type*} [Fintype V] [DecidableEq V] [Fintype K] [Nonempty K]
-    [DecidableEq K] [Fintype I] (U : Finset V) (S : I → Finset V)
+    {V K I : Type*} [Finite V] [DecidableEq V] [Fintype K] [Nonempty K]
+    [Fintype I] (U : Finset V) (S : I → Finset V)
     (hSU : ∀ i, S i ⊆ U) (a : K) (t L : I → ℝ)
     (ht : ∀ i, 0 < t i) (hL : ∀ i, 0 < L i)
     (hsize : ∀ i, ((S i).card : ℝ) ≤ L i)
@@ -75,6 +76,7 @@ theorem exists_subset_with_simultaneous_counts
     ∃ R : Finset V, R ⊆ U ∧ ∀ i,
       |((S i ∩ R).card : ℝ) - ((S i).card : ℝ) / Fintype.card K| < t i := by
   classical
+  let := Fintype.ofFinite V
   obtain ⟨z, hz⟩ := exists_uniform_bin_sample_close S a t L ht hL hsize hprob
   let R := U.filter fun v ↦ z v = a
   refine ⟨R, filter_subset _ _, ?_⟩

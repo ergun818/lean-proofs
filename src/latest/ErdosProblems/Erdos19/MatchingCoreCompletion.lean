@@ -11,7 +11,7 @@ open _root_.SimpleGraph
 attribute [local instance] Classical.propDecidable
 
 theorem exists_edgeLabeling_from_matchings_and_residual
-    {V I K : Type*} [Fintype V] (G : _root_.SimpleGraph V)
+    {V I K : Type*} [Finite V] (G : _root_.SimpleGraph V)
     (M : I → G.Subgraph) (hM : ∀ i, (M i).IsMatching)
     (c₀ : (G \ ⨆ i, (M i).spanningCoe).EdgeLabeling K)
     (hc₀ : ∀ x y z (hxy : (G \ ⨆ i, (M i).spanningCoe).Adj x y)
@@ -21,6 +21,8 @@ theorem exists_edgeLabeling_from_matchings_and_residual
       (∀ x y z (hxy : G.Adj x y) (hxz : G.Adj x z),
         c.get x y hxy = c.get x z hxz → y = z) ∧
       (∀ (e : G.edgeSet) (i : I), c e = Sum.inl i → e.1 ∈ (M i).edgeSet) := by
+  classical
+  let := Fintype.ofFinite V
   let F : I ⊕ K → _root_.SimpleGraph V := Sum.elim (fun i ↦ (M i).spanningCoe) c₀.labelGraph
   have hFdegree : ∀ i v, ((F i).neighborSet v).ncard ≤ 1 := by
     intro i v
@@ -53,7 +55,7 @@ theorem exists_edgeLabeling_from_matchings_and_residual
 namespace SetHypergraph
 
 theorem edgeColorable_of_avoiding_matching_family_core {V : Type*} [Fintype V]
-    (H J : SetHypergraph V) (hJH : J ⊆ H)
+    (H J : SetHypergraph V)
     (hrest : ∀ e : H, e.1 ∉ J → e.1.ncard = 2) (m D : ℕ) (hD : 0 < D)
     (large : J.EdgeColoring (Fin m)) (M : Fin m → H.twoGraph.Subgraph)
     (hM : ∀ i, (M i).IsMatching)
@@ -75,8 +77,9 @@ theorem edgeColorable_of_avoiding_matching_family_core {V : Type*} [Fintype V]
     · simpa only [← card_neighborSet_eq_degree, Set.fintypeCard_eq_ncard] using hy
     · simpa only [← card_neighborSet_eq_degree, Set.fintypeCard_eq_ncard] using hz
   obtain ⟨c₀, hc₀⟩ := Vizing.exists_edgeLabeling_of_matching_core R D hD hdegree' hcore'
-  obtain ⟨pairs, hpairs, hclasses⟩ := exists_edgeLabeling_from_matchings_and_residual H.twoGraph M hM c₀ hc₀
-  obtain ⟨color⟩ := H.edgeColoring_of_large_part_and_pairLabeling J hJH hrest large pairs hpairs (by
+  obtain ⟨pairs, hpairs, hclasses⟩ :=
+    exists_edgeLabeling_from_matchings_and_residual H.twoGraph M hM c₀ hc₀
+  obtain ⟨color⟩ := H.edgeColoring_of_large_part_and_pairLabeling J hrest large pairs hpairs (by
     intro e x hx y hxy hcolor
     have hclass := hclasses ⟨s(x, y), hxy⟩ (large.color e) hcolor
     have hadj : (M (large.color e)).Adj x y := Subgraph.mem_edgeSet.mp hclass

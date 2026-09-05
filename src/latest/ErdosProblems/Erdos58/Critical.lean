@@ -51,11 +51,13 @@ abbrev deleteVertex {X : Type*} (J : SimpleGraph X) (v : X) :
 def VertexTwoConnected {X : Type*} (J : SimpleGraph X) : Prop :=
   J.Connected ∧ ∀ v : X, (deleteVertex J v).Connected
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- A finite non-`n`-colorable graph has an inclusion-minimal non-`n`-colorable
 induced subgraph. -/
-theorem exists_witness {n : ℕ} (hG : ¬G.Colorable n) :
+theorem exists_witness [Finite V] {n : ℕ} (hG : ¬G.Colorable n) :
     Nonempty (Witness G n) := by
   classical
+  let := Fintype.ofFinite V
   let bad : Finset V → Prop :=
     fun S => ¬(G.induce (fun v : V => v ∈ S)).Colorable n
   have hbad_univ : bad (Finset.univ : Finset V) := by
@@ -92,6 +94,7 @@ theorem exists_witness {n : ℕ} (hG : ¬G.Colorable n) :
     colorable_of_ssubset := hminimal
   }⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Every one-vertex deletion of a critical witness is `n`-colorable. -/
 theorem colorable_delete {n : ℕ} (W : Witness G n) (v : Carrier G W) :
     (deleteVertex (H G W) v).Colorable n := by
@@ -108,11 +111,13 @@ theorem colorable_delete {n : ℕ} (W : Witness G n) (v : Carrier G W) :
     apply C.valid
     simpa [deleteVertex, H, SimpleGraph.induce_adj] using hab
 
+omit [DecidableEq V] [Fintype V] in
 /-- In a critical witness every vertex has degree at least the forbidden number
 of colors. -/
-theorem degree_ge {n : ℕ} (W : Witness G n) (v : Carrier G W) :
+theorem degree_ge [Finite V] {n : ℕ} (W : Witness G n) (v : Carrier G W) :
     n ≤ (H G W).degree v := by
   classical
+  let := Fintype.ofFinite V
   by_contra hdeg
   have hcol := colorable_delete (G := G) W v
   rcases hcol with ⟨C⟩
@@ -166,6 +171,7 @@ theorem degree_ge {n : ℕ} (W : Witness G n) (v : Carrier G W) :
         simpa [color, ha, hb] using C.valid hdel
   exact W.not_colorable ⟨SimpleGraph.Coloring.mk color hvalid⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- The critical induced graph is connected. -/
 theorem connected {n : ℕ} (W : Witness G n) : (H G W).Connected := by
   classical
@@ -303,6 +309,7 @@ theorem colorable_of_cut_partition {X : Type*} {J : SimpleGraph X} {n : ℕ}
             simpa [SimpleGraph.induce_adj] using hab
           simpa [color, ha, hb, hPa, hPb] using CR'.valid hadj
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Every proper induced subgraph of a minimal witness is `n`-colorable.  This
 predicate form is more convenient than the stored finset form. -/
 theorem colorable_induce_of_exists_not {n : ℕ} (W : Witness G n)
@@ -331,11 +338,13 @@ theorem colorable_induce_of_exists_not {n : ℕ} (W : Witness G n)
     apply C.valid
     simpa [H, SimpleGraph.induce_adj] using hab
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- A finite minimal non-`n`-colorable induced subgraph is vertex-two-connected
 as soon as `n` is positive. -/
-theorem vertexTwoConnected {n : ℕ} (hn : 0 < n) (W : Witness G n) :
+theorem vertexTwoConnected [Finite V] {n : ℕ} (hn : 0 < n) (W : Witness G n) :
     VertexTwoConnected (H G W) := by
   classical
+  let := Fintype.ofFinite V
   refine ⟨connected (G := G) W, ?_⟩
   intro v
   let J : SimpleGraph {w : Carrier G W // w ≠ v} := deleteVertex (H G W) v
@@ -399,21 +408,27 @@ theorem vertexTwoConnected {n : ℕ} (hn : 0 < n) (W : Witness G n) :
   exact W.not_colorable
     (colorable_of_cut_partition v P hcross hleft hright)
 
+omit [DecidableEq V] [Fintype V] in
 /-- Bundled critical-subgraph reduction. -/
-theorem exists_vertexTwoConnected_witness {n : ℕ} (hn : 0 < n)
+theorem exists_vertexTwoConnected_witness [Finite V] {n : ℕ} (hn : 0 < n)
     (hG : ¬G.Colorable n) :
     ∃ W : Witness G n,
       (∀ v : Carrier G W, n ≤ (H G W).degree v) ∧
       VertexTwoConnected (H G W) := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨W⟩ := exists_witness (G := G) hG
   exact ⟨W, degree_ge (G := G) W, vertexTwoConnected (G := G) hn W⟩
 
+omit [DecidableEq V] [Fintype V] in
 /-- Chromatic-number form of the critical-subgraph reduction. -/
-theorem exists_vertexTwoConnected_witness_of_succ_le_chromaticNumber {n : ℕ}
+theorem exists_vertexTwoConnected_witness_of_succ_le_chromaticNumber [Finite V] {n : ℕ}
     (hn : 0 < n) (hχ : (n + 1 : ℕ∞) ≤ G.chromaticNumber) :
     ∃ W : Witness G n,
       (∀ v : Carrier G W, n ≤ (H G W).degree v) ∧
       VertexTwoConnected (H G W) := by
+  classical
+  let := Fintype.ofFinite V
   apply exists_vertexTwoConnected_witness (G := G) hn
   intro hcol
   have hle : (n + 1 : ℕ∞) ≤ (n : ℕ∞) := hχ.trans hcol.chromaticNumber_le

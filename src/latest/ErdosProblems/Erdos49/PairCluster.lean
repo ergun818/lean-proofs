@@ -87,7 +87,7 @@ lemma pairExceptional_subset_low_union_high
     exact Finset.mem_image.mpr ⟨p₁, hp₁mem, hnfac.symm⟩
 
 lemma pairUpper_le_split_mul
-    {N L d : ℕ} (hL : 0 < L) (hd : 0 < d) :
+    {N L d : ℕ} (hL : 0 < L) (_hd : 0 < d) :
     pairUpper N d ≤ (pairSplit N L d + 1) * L := by
   let m := N / d
   let q := m / L
@@ -182,7 +182,7 @@ lemma primeInterval_sum_cast_scaled_upper
     _ = 4 * (v : ℝ) ^ 2 / Real.log (Y - 1 : ℕ) := by ring
 
 lemma pairLow_inner_sum_le
-    {N L d X₀ Y : ℕ} (hL : 0 < L) (hd : 0 < d)
+    {N L d X₀ Y : ℕ} (hL : 0 < L) (_hd : 0 < d)
     (hY : 3 ≤ Y) (hX₀Y : X₀ ≤ Y)
     (hprime : ∀ x : ℕ, X₀ ≤ x →
       (Nat.primeCounting x : ℝ) ≤ 4 * x / Real.log x) :
@@ -247,7 +247,8 @@ lemma pairLow_inner_sum_le
         gcongr
         exact_mod_cast pairSplit_sq_mul_le_div (N := N) (d := d) hL
   · have hS : S = ∅ := by
-      simp [S, Analytic.primeInterval]
+      simp only [Analytic.primeInterval, Finset.filter_eq_empty_iff, Finset.mem_Icc,
+        Order.add_one_le_iff, and_imp, S]
       intro x hYx hx hp
       omega
     change (∑ p₂ ∈ S, ((Analytic.primeInterval p₂
@@ -320,7 +321,8 @@ lemma pairHigh_inner_sum_le
               Real.log (Y - 1 : ℕ)) * ((1 : ℝ) / p₂) := by ring
       · have hEmpty : Analytic.primeInterval p₂
             (min (p₂ * L) (N / (d * p₂))) = ∅ := by
-          simp [Analytic.primeInterval]
+          simp only [Analytic.primeInterval, Finset.filter_eq_empty_iff, Finset.mem_Icc,
+            le_inf_iff, and_imp]
           intro x hp₂x hxL hxQ hxPrime
           omega
         rw [hEmpty]
@@ -348,7 +350,8 @@ lemma pairHigh_inner_sum_le
             Real.log (Y - 1 : ℕ) ^ 2 := by
         field_simp
   · have hS : S = ∅ := by
-      simp [S, Analytic.primeInterval]
+      simp only [Analytic.primeInterval, Finset.filter_eq_empty_iff, Finset.mem_Icc,
+        and_imp, S]
       intro x hUx hxV hp
       omega
     change (∑ p₂ ∈ S, ((Analytic.primeInterval p₂

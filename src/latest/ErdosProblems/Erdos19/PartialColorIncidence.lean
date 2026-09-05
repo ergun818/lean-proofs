@@ -14,6 +14,7 @@ variable {V C : Type*} [Fintype V] [DecidableEq C]
 noncomputable def usedColorsOn (H : SetHypergraph V) (S : Finset H) (c : H → C)
     (v : V) : Finset C := (S.filter fun e ↦ v ∈ e.1).image c
 
+omit [Fintype V] in
 theorem mem_usedColorsOn (H : SetHypergraph V) (S : Finset H) (c : H → C)
     (v : V) (a : C) :
     a ∈ H.usedColorsOn S c v ↔ ∃ e ∈ S, v ∈ e.1 ∧ c e = a := by
@@ -24,9 +25,12 @@ theorem mem_usedColorsOn (H : SetHypergraph V) (S : Finset H) (c : H → C)
   · rintro ⟨e, he, hv, hcolor⟩
     exact ⟨e, ⟨he, hv⟩, hcolor⟩
 
-theorem usedColorsOn_iff_covered (H : SetHypergraph V) (S : Finset H) (c : H → C)
+omit [Fintype V] in
+theorem usedColorsOn_iff_covered [Finite V] (H : SetHypergraph V) (S : Finset H) (c : H → C)
     (v : V) (a : C) :
     a ∈ H.usedColorsOn S c v ↔ v ∈ H.coveredVertices {e | e ∈ S ∧ c e = a} := by
+  classical
+  let := Fintype.ofFinite V
   rw [H.mem_usedColorsOn]
   simp only [coveredVertices, Set.mem_iUnion, Set.mem_ofPred_eq]
   constructor
@@ -35,10 +39,13 @@ theorem usedColorsOn_iff_covered (H : SetHypergraph V) (S : Finset H) (c : H →
   · rintro ⟨e, ⟨he, hcolor⟩, hv⟩
     exact ⟨e, he, hv, hcolor⟩
 
-theorem exists_star_other_vertices (H : SetHypergraph V) (T : Finset H) (u : V)
+omit [Fintype V] in
+theorem exists_star_other_vertices [Finite V] (H : SetHypergraph V) (T : Finset H) (u : V)
     (hpair : ∀ e ∈ T, e.1.ncard = 2) (hcenter : ∀ e ∈ T, u ∈ e.1) :
     ∃ other : T → V, Function.Injective other ∧
       ∀ e : T, u ≠ other e ∧ e.1.1 = {u, other e} := by
+  classical
+  let := Fintype.ofFinite V
   have hex (e : T) := exists_pair_at (hpair e.1 e.2) (hcenter e.1 e.2)
   choose other hne hsupport using hex
   refine ⟨other, ?_, fun e ↦ ⟨hne e, hsupport e⟩⟩
@@ -47,12 +54,14 @@ theorem exists_star_other_vertices (H : SetHypergraph V) (T : Finset H) (u : V)
   apply Subtype.ext
   rw [hsupport e, hsupport f, hef]
 
-theorem card_blocked_indices_le_cover (H : SetHypergraph V) (S : Finset H)
+omit [Fintype V] in
+theorem card_blocked_indices_le_cover [Finite V] (H : SetHypergraph V) (S : Finset H)
     (c : H → C) {I : Type*} [Fintype I] (point : I → V)
     (hinj : Function.Injective point) (a : C) :
     (univ.filter fun i ↦ a ∈ H.usedColorsOn S c (point i)).card ≤
       (H.coveredVertices {e | e ∈ S ∧ c e = a}).ncard := by
   classical
+  let := Fintype.ofFinite V
   rw [← card_image_of_injective _ hinj]
   rw [Set.ncard_eq_toFinset_card']
   apply card_le_card

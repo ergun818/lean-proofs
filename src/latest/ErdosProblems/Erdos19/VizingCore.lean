@@ -69,6 +69,7 @@ def coloredEdges (G : SimpleGraph V) {K : Type*} (C : PartialColoring V K) :
     e ∈ coloredEdges G C ↔ e ∈ G.edgeSet ∧ (C e).isSome := by
   simp [coloredEdges]
 
+omit [Fintype V] in
 lemma missing_iff_not_exists (G : SimpleGraph V) {K : Type*}
     (C : PartialColoring V K) (v : V) (a : K) :
     Missing G C v a ↔ ¬ ∃ w, G.Adj v w ∧ C s(v, w) = some a := by
@@ -77,7 +78,7 @@ lemma missing_iff_not_exists (G : SimpleGraph V) {K : Type*}
 /-- With one more colour than the degree bound, every vertex misses a colour. -/
 lemma exists_missing (G : SimpleGraph V) (D : ℕ)
     (hdegree : ∀ v, G.degree v ≤ D)
-    {C : PartialColoring V (Fin (D + 1))} (hC : IsProper G C) (u : V) :
+    {C : PartialColoring V (Fin (D + 1))} (u : V) :
     ∃ a : Fin (D + 1), Missing G C u a := by
   by_contra h
   simp only [not_exists] at h
@@ -114,6 +115,7 @@ def bichromGraph (G : SimpleGraph V) {K : Type*} (C : PartialColoring V K)
   SimpleGraph.fromRel fun v w ↦
     G.Adj v w ∧ (C s(v, w) = some a ∨ C s(v, w) = some b)
 
+omit [Fintype V] in
 @[simp] lemma bichromGraph_adj (G : SimpleGraph V) {K : Type*}
     (C : PartialColoring V K) (a b : K) (v w : V) :
     (bichromGraph G C a b).Adj v w ↔
@@ -207,15 +209,18 @@ lemma not_three_endpoints {H : SimpleGraph V} (hconn : H.Connected)
   have hhandshake := H.sum_degrees_eq_twice_card_edges
   omega
 
+omit [Fintype V] in
 /-- A component of a proper two-colour graph cannot contain three distinct
 vertices at which the indicated endpoint colours are missing. -/
-lemma bichrom_component_not_three_missing (G : SimpleGraph V) {K : Type*}
+lemma bichrom_component_not_three_missing [Finite V] (G : SimpleGraph V) {K : Type*}
     (C : PartialColoring V K) (hC : IsProper G C) {a b : K}
     (Q : (bichromGraph G C a b).ConnectedComponent)
     {x y z : V} (hxQ : x ∈ Q.supp) (hyQ : y ∈ Q.supp) (hzQ : z ∈ Q.supp)
     (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z)
     (hx : Missing G C x a) (hy : Missing G C y b)
     (hz : Missing G C z b) : False := by
+  classical
+  let := Fintype.ofFinite V
   let B := bichromGraph G C a b
   let xx : Q := ⟨x, hxQ⟩
   let yy : Q := ⟨y, hyQ⟩
@@ -248,6 +253,7 @@ lemma bichrom_component_not_three_missing (G : SimpleGraph V) {K : Type*}
 /-- Whether an unordered pair touches a set of vertices. -/
 def Touches (S : Set V) (e : Sym2 V) : Prop := ∃ v, v ∈ S ∧ v ∈ e
 
+omit [Fintype V] in
 @[simp] lemma touches_s (S : Set V) (u v : V) :
     Touches S s(u, v) ↔ u ∈ S ∨ v ∈ S := by
   constructor
@@ -300,18 +306,24 @@ def kempeSwapOn (G : SimpleGraph V) {K : Type*} [DecidableEq K] (C : PartialColo
     PartialColoring V K := fun e ↦
   if Touches Q.supp e then swapOption a b (C e) else C e
 
-lemma kempeSwapOn_incident_of_mem (G : SimpleGraph V) {K : Type*} [DecidableEq K]
+omit [Fintype V] in
+lemma kempeSwapOn_incident_of_mem [Finite V] (G : SimpleGraph V) {K : Type*} [DecidableEq K]
     (C : PartialColoring V K) (a b : K)
     (Q : (bichromGraph G C a b).ConnectedComponent) {v w : V}
     (hv : v ∈ Q.supp) :
     kempeSwapOn G C a b Q s(v, w) = swapOption a b (C s(v, w)) := by
+  classical
+  let := Fintype.ofFinite V
   simp [kempeSwapOn, hv]
 
-lemma kempeSwapOn_incident_of_not_mem (G : SimpleGraph V) {K : Type*}
+omit [Fintype V] in
+lemma kempeSwapOn_incident_of_not_mem [Finite V] (G : SimpleGraph V) {K : Type*}
     [DecidableEq K] (C : PartialColoring V K) (a b : K)
     (Q : (bichromGraph G C a b).ConnectedComponent) {v w : V}
     (hv : v ∉ Q.supp) (hvw : G.Adj v w) :
     kempeSwapOn G C a b Q s(v, w) = C s(v, w) := by
+  classical
+  let := Fintype.ofFinite V
   rw [kempeSwapOn]
   split_ifs with ht
   · rw [touches_s] at ht
@@ -329,10 +341,13 @@ lemma kempeSwapOn_incident_of_not_mem (G : SimpleGraph V) {K : Type*}
       exact hv (Q.mem_supp_of_adj_mem_supp hw hB)
   · rfl
 
-lemma kempeSwapOn_proper (G : SimpleGraph V) {K : Type*} [DecidableEq K]
+omit [Fintype V] in
+lemma kempeSwapOn_proper [Finite V] (G : SimpleGraph V) {K : Type*} [DecidableEq K]
     (C : PartialColoring V K) (hC : IsProper G C) (a b : K)
     (Q : (bichromGraph G C a b).ConnectedComponent) :
     IsProper G (kempeSwapOn G C a b Q) := by
+  classical
+  let := Fintype.ofFinite V
   intro u v w k huv huw hvcolor hwcolor
   by_cases hu : u ∈ Q.supp
   · rw [kempeSwapOn_incident_of_mem G C a b Q hu] at hvcolor hwcolor
@@ -357,11 +372,14 @@ lemma coloredEdges_kempeSwapOn (G : SimpleGraph V) {K : Type*} [DecidableEq K]
   · rcases C e with (_ | k) <;> simp [swapOption]
   · rfl
 
-lemma missing_kempeSwapOn_of_mem (G : SimpleGraph V) {K : Type*}
+omit [Fintype V] in
+lemma missing_kempeSwapOn_of_mem [Finite V] (G : SimpleGraph V) {K : Type*}
     [DecidableEq K] (C : PartialColoring V K) (a b : K)
     (Q : (bichromGraph G C a b).ConnectedComponent) {v : V}
     (hv : v ∈ Q.supp) (ha : Missing G C v a) :
     Missing G (kempeSwapOn G C a b Q) v b := by
+  classical
+  let := Fintype.ofFinite V
   intro w hvw
   rw [kempeSwapOn_incident_of_mem G C a b Q hv]
   intro h
@@ -369,11 +387,14 @@ lemma missing_kempeSwapOn_of_mem (G : SimpleGraph V) {K : Type*}
     simpa using h
   exact ha w hvw (swapOption_injective a b this)
 
-lemma missing_kempeSwapOn_of_not_mem (G : SimpleGraph V) {K : Type*}
+omit [Fintype V] in
+lemma missing_kempeSwapOn_of_not_mem [Finite V] (G : SimpleGraph V) {K : Type*}
     [DecidableEq K] (C : PartialColoring V K) (a b : K)
     (Q : (bichromGraph G C a b).ConnectedComponent) {v : V} {k : K}
     (hv : v ∉ Q.supp) (hk : Missing G C v k) :
     Missing G (kempeSwapOn G C a b Q) v k := by
+  classical
+  let := Fintype.ofFinite V
   intro w hvw
   rw [kempeSwapOn_incident_of_not_mem G C a b Q hv hvw]
   exact hk w hvw
@@ -402,11 +423,15 @@ def singleton (hxy : G.Adj x y) : Fan G C x y 0 where
   adj _ := hxy
   step i := Fin.elim0 i
 
+omit [Fintype V] in
 lemma center_ne (F : Fan G C x y n) (i : Fin (n + 1)) : x ≠ F.vert i :=
   (F.adj i).ne
 
-lemma edge_injective (F : Fan G C x y n) :
+omit [Fintype V] in
+lemma edge_injective [Finite V] (F : Fan G C x y n) :
     Function.Injective (fun i ↦ s(x, F.vert i)) := by
+  classical
+  let := Fintype.ofFinite V
   intro i j hij
   apply F.injective
   rw [Sym2.eq_iff] at hij
@@ -456,12 +481,15 @@ def snoc (F : Fan G C x y n) (z : V) (hz : z ∉ Set.range F.vert)
 
 end Fan
 
+omit [Fintype V] in
 /-- There is a fan maximal under appending new spokes. -/
-lemma exists_maximal_fan (G : SimpleGraph V) {K : Type*}
+lemma exists_maximal_fan [Finite V] (G : SimpleGraph V) {K : Type*}
     (C : PartialColoring V K) {x y : V} (hxy : G.Adj x y) :
     ∃ n, ∃ F : Fan G C x y n,
       ∀ z, G.Adj x z → z ∉ Set.range F.vert →
         ∀ a, C s(x, z) = some a → ¬Missing G C (F.vert (Fin.last n)) a := by
+  classical
+  let := Fintype.ofFinite V
   let sizes : Finset ℕ := (range (Fintype.card V + 1)).filter fun n ↦
     Nonempty (Fan G C x y n)
   have hsizes : sizes.Nonempty := by

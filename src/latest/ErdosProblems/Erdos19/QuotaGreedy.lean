@@ -21,7 +21,7 @@ theorem saturated_colors_card_le {E A : Type*} [Fintype A] [DecidableEq A]
     _ = S.card := by simpa using sum_card_fiberwise_eq_card_filter S univ c
 
 private theorem exists_partial_list_coloring_with_quota {E A : Type*}
-    [Fintype E] [DecidableEq E] [Fintype A] [DecidableEq A] [Nonempty A]
+    [Fintype E] [Finite A] [DecidableEq A] [Nonempty A]
     (G : SimpleGraph E) [DecidableRel G.Adj] (L : E → Finset A) (q : ℕ) (hq : 0 < q)
     (hroom : ∀ e, (univ.filter (G.Adj e)).card + Fintype.card E / q < (L e).card)
     (S : Finset E) :
@@ -29,6 +29,7 @@ private theorem exists_partial_list_coloring_with_quota {E A : Type*}
       (∀ e ∈ S, ∀ f ∈ S, G.Adj e f → c e ≠ c f) ∧
       (∀ a, (S.filter fun e ↦ c e = a).card ≤ q) := by
   classical
+  let := Fintype.ofFinite A
   induction S using Finset.induction_on with
   | empty => exact ⟨fun _ ↦ Classical.arbitrary A, by simp, by simp, by simp⟩
   | @insert e S heS ih =>
@@ -67,9 +68,11 @@ private theorem exists_partial_list_coloring_with_quota {E A : Type*}
       · have hfS : f ∈ S := (mem_insert.mp hf).resolve_left hfe
         by_cases hge : g = e
         · have hadj : G.Adj e f := hge ▸ hfg.symm
-          simpa only [next, hge, Function.update_self, Function.update_of_ne hfe] using (hac f hfS hadj).symm
+          simpa only [next, hge, Function.update_self, Function.update_of_ne hfe] using
+            (hac f hfS hadj).symm
         · have hgS : g ∈ S := (mem_insert.mp hg).resolve_left hge
-          simpa only [next, Function.update_of_ne hfe, Function.update_of_ne hge] using hc f hfS g hgS hfg
+          simpa only [next, Function.update_of_ne hfe, Function.update_of_ne hge] using
+            hc f hfS g hgS hfg
     · intro b
       have hfilter : (S.filter fun v ↦ next v = b) = (S.filter fun v ↦ c v = b) := by
         apply filter_congr
@@ -88,11 +91,13 @@ private theorem exists_partial_list_coloring_with_quota {E A : Type*}
         exact hquota b
 
 theorem exists_list_coloring_with_quota {E A : Type*}
-    [Fintype E] [DecidableEq E] [Fintype A] [DecidableEq A] [Nonempty A]
+    [Fintype E] [Finite A] [DecidableEq A] [Nonempty A]
     (G : SimpleGraph E) [DecidableRel G.Adj] (L : E → Finset A) (q : ℕ) (hq : 0 < q)
     (hroom : ∀ e, (univ.filter (G.Adj e)).card + Fintype.card E / q < (L e).card) :
     ∃ c : G.Coloring A, (∀ e, c e ∈ L e) ∧
       ∀ a, ((univ : Finset E).filter fun e ↦ c e = a).card ≤ q := by
+  classical
+  let := Fintype.ofFinite A
   obtain ⟨c, hL, hc, hquota⟩ := exists_partial_list_coloring_with_quota G L q hq hroom univ
   refine ⟨SimpleGraph.Coloring.mk c (fun {e f} h ↦ hc e (mem_univ _) f (mem_univ _) h), ?_, hquota⟩
   exact fun e ↦ hL e (mem_univ _)

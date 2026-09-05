@@ -18,11 +18,13 @@ attribute [local instance] Classical.propDecidable
 
 variable {V : Type*} [Fintype V]
 
-theorem incident_degree_lower_of_one_color_exception (J : SetHypergraph V) (m : ℕ)
+omit [Fintype V] in
+theorem incident_degree_lower_of_one_color_exception [Finite V] (J : SetHypergraph V) (m : ℕ)
     (c : J.EdgeColoring (Fin m)) (v : V) (bad : Fin m)
     (hcover : ∀ a, a ≠ bad → v ∈ J.colorCovered c a) :
     m ≤ (J.incidentEdges v).ncard + 1 := by
   classical
+  let := Fintype.ofFinite V
   have hpoint (a : Fin m) : 1 ≤ (if v ∈ J.colorCovered c a then 1 else 0) +
       (if a = bad then 1 else 0 : ℕ) := by
     by_cases ha : a = bad
@@ -32,9 +34,12 @@ theorem incident_degree_lower_of_one_color_exception (J : SetHypergraph V) (m : 
   simpa only [sum_add_distrib, colorCovered_count, sum_const, card_univ, Fintype.card_fin,
     smul_eq_mul, mul_one, sum_ite_eq', mem_univ, ↓reduceIte] using hsum
 
-theorem incident_degree_eq_of_full_color_coverage (J : SetHypergraph V) (m : ℕ)
+omit [Fintype V] in
+theorem incident_degree_eq_of_full_color_coverage [Finite V] (J : SetHypergraph V) (m : ℕ)
     (c : J.EdgeColoring (Fin m)) (v : V)
     (hcover : ∀ a, v ∈ J.colorCovered c a) : (J.incidentEdges v).ncard = m := by
+  classical
+  let := Fintype.ofFinite V
   rw [← J.colorCovered_count c v]
   simp only [hcover, ↓reduceIte, sum_const, card_univ, Fintype.card_fin, smul_eq_mul, mul_one]
 
