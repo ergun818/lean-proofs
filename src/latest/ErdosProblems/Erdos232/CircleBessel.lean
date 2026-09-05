@@ -73,7 +73,7 @@ theorem integral_cos_fourier_one_mul_re (x : ℝ) (w : ℂ) :
   · have hrho : 0 < ‖w‖ := norm_pos_iff.mpr hw0
     let v : ℂ := w / (‖w‖ : ℂ)
     have hvnorm : ‖v‖ = 1 := by
-      simp [v, norm_div, abs_of_pos hrho, hw0]
+      simp [v, hw0]
     let vcircle : Circle := ⟨v, by simpa [Submonoid.unitSphere] using hvnorm⟩
     let phi : UnitAddCircle := (AddCircle.homeomorphCircle one_ne_zero).symm vcircle
     have hphi : fourier 1 phi = v := by

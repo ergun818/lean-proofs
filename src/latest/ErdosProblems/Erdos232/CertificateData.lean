@@ -107,7 +107,7 @@ private theorem sqrt_mem_orderedInterval {x : ℝ} {a b : ℚ}
   simp only [IntervalRat.mem_def, orderedInterval, Rat.cast_min, Rat.cast_max]
   have hs0 := Real.sqrt_nonneg x
   have hs2 := Real.sq_sqrt hx
-  have hab : (a : ℝ) ≤ b := by nlinarith
+  have hab : (a : ℝ) ≤ b := (sq_le_sq₀ ha hb).mp (hla.trans hub)
   rw [min_eq_left hab, max_eq_right hab]
   constructor <;> nlinarith
 
@@ -116,7 +116,7 @@ private theorem dualDistance_mem_00 :
   have hs0 : 0 ≤ Real.sqrt 33 := Real.sqrt_nonneg 33
   have hs2 : Real.sqrt 33 ^ 2 = 33 := Real.sq_sqrt (by norm_num)
   simp only [dualDistance, dualSquaredDistance, dualDistanceInterval]
-  apply sqrt_mem_orderedInterval <;> norm_num <;> nlinarith
+  apply sqrt_mem_orderedInterval <;> norm_num
 
 private theorem dualDistance_mem_01 :
     dualDistance (1 : Fin 27) ∈ dualDistanceInterval (1 : Fin 27) := by
@@ -144,7 +144,7 @@ private theorem dualDistance_mem_04 :
   have hs0 : 0 ≤ Real.sqrt 33 := Real.sqrt_nonneg 33
   have hs2 : Real.sqrt 33 ^ 2 = 33 := Real.sq_sqrt (by norm_num)
   simp only [dualDistance, dualSquaredDistance, dualDistanceInterval]
-  apply sqrt_mem_orderedInterval <;> norm_num <;> nlinarith
+  apply sqrt_mem_orderedInterval <;> norm_num
 
 private theorem dualDistance_mem_05 :
     dualDistance (5 : Fin 27) ∈ dualDistanceInterval (5 : Fin 27) := by
@@ -158,7 +158,7 @@ private theorem dualDistance_mem_06 :
   have hs0 : 0 ≤ Real.sqrt 33 := Real.sqrt_nonneg 33
   have hs2 : Real.sqrt 33 ^ 2 = 33 := Real.sq_sqrt (by norm_num)
   simp only [dualDistance, dualSquaredDistance, dualDistanceInterval]
-  apply sqrt_mem_orderedInterval <;> norm_num <;> nlinarith
+  apply sqrt_mem_orderedInterval <;> norm_num
 
 private theorem dualDistance_mem_07 :
     dualDistance (7 : Fin 27) ∈ dualDistanceInterval (7 : Fin 27) := by
@@ -179,14 +179,14 @@ private theorem dualDistance_mem_09 :
   have hs0 : 0 ≤ Real.sqrt 33 := Real.sqrt_nonneg 33
   have hs2 : Real.sqrt 33 ^ 2 = 33 := Real.sq_sqrt (by norm_num)
   simp only [dualDistance, dualSquaredDistance, dualDistanceInterval]
-  apply sqrt_mem_orderedInterval <;> norm_num <;> nlinarith
+  apply sqrt_mem_orderedInterval <;> norm_num
 
 private theorem dualDistance_mem_10 :
     dualDistance (10 : Fin 27) ∈ dualDistanceInterval (10 : Fin 27) := by
   have hs0 : 0 ≤ Real.sqrt 33 := Real.sqrt_nonneg 33
   have hs2 : Real.sqrt 33 ^ 2 = 33 := Real.sq_sqrt (by norm_num)
   simp only [dualDistance, dualSquaredDistance, dualDistanceInterval]
-  apply sqrt_mem_orderedInterval <;> norm_num <;> nlinarith
+  apply sqrt_mem_orderedInterval <;> norm_num
 
 private theorem dualDistance_mem_11 :
     dualDistance (11 : Fin 27) ∈ dualDistanceInterval (11 : Fin 27) := by
@@ -207,14 +207,14 @@ private theorem dualDistance_mem_13 :
   have hs0 : 0 ≤ Real.sqrt 33 := Real.sqrt_nonneg 33
   have hs2 : Real.sqrt 33 ^ 2 = 33 := Real.sq_sqrt (by norm_num)
   simp only [dualDistance, dualSquaredDistance, dualDistanceInterval]
-  apply sqrt_mem_orderedInterval <;> norm_num <;> nlinarith
+  apply sqrt_mem_orderedInterval <;> norm_num
 
 private theorem dualDistance_mem_14 :
     dualDistance (14 : Fin 27) ∈ dualDistanceInterval (14 : Fin 27) := by
   have hs0 : 0 ≤ Real.sqrt 33 := Real.sqrt_nonneg 33
   have hs2 : Real.sqrt 33 ^ 2 = 33 := Real.sq_sqrt (by norm_num)
   simp only [dualDistance, dualSquaredDistance, dualDistanceInterval]
-  apply sqrt_mem_orderedInterval <;> norm_num <;> nlinarith
+  apply sqrt_mem_orderedInterval <;> norm_num
 
 private theorem dualDistance_mem_15 :
     dualDistance (15 : Fin 27) ∈ dualDistanceInterval (15 : Fin 27) := by

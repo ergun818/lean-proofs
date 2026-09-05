@@ -15,24 +15,38 @@ noncomputable def configurationPoint (i : Fin 23) : ℂ :=
   | 2 => ⟨(1 / 2 : ℝ), (1 / 2 : ℝ) * Real.sqrt 3⟩
   | 3 => ⟨(3 / 2 : ℝ), (1 / 2 : ℝ) * Real.sqrt 3⟩
   | 4 => ⟨(5 / 6 : ℝ), (1 / 6 : ℝ) * Real.sqrt 11⟩
-  | 5 => ⟨-(1 / 12 : ℝ) * Real.sqrt 33 + (5 / 12 : ℝ), (5 / 12 : ℝ) * Real.sqrt 3 + (1 / 12 : ℝ) * Real.sqrt 11⟩
-  | 6 => ⟨-(1 / 12 : ℝ) * Real.sqrt 33 + (5 / 4 : ℝ), (5 / 12 : ℝ) * Real.sqrt 3 + (1 / 4 : ℝ) * Real.sqrt 11⟩
-  | 7 => ⟨(1 / 12 : ℝ) * Real.sqrt 33 + (13 / 12 : ℝ), (1 / 12 : ℝ) * Real.sqrt 3 - (1 / 12 : ℝ) * Real.sqrt 11⟩
-  | 8 => ⟨(1 / 12 : ℝ) * Real.sqrt 33 + (1 / 4 : ℝ), (1 / 12 : ℝ) * Real.sqrt 3 - (1 / 4 : ℝ) * Real.sqrt 11⟩
-  | 9 => ⟨-(1 / 12 : ℝ) * Real.sqrt 33 + (13 / 12 : ℝ), -(1 / 12 : ℝ) * Real.sqrt 3 - (1 / 12 : ℝ) * Real.sqrt 11⟩
+  | 5 => ⟨-(1 / 12 : ℝ) * Real.sqrt 33 + (5 / 12 : ℝ), (5 / 12 : ℝ) * Real.sqrt 3 + (1 / 12 : ℝ) *
+      Real.sqrt 11⟩
+  | 6 => ⟨-(1 / 12 : ℝ) * Real.sqrt 33 + (5 / 4 : ℝ), (5 / 12 : ℝ) * Real.sqrt 3 + (1 / 4 : ℝ) *
+      Real.sqrt 11⟩
+  | 7 => ⟨(1 / 12 : ℝ) * Real.sqrt 33 + (13 / 12 : ℝ), (1 / 12 : ℝ) * Real.sqrt 3 - (1 / 12 : ℝ) *
+      Real.sqrt 11⟩
+  | 8 => ⟨(1 / 12 : ℝ) * Real.sqrt 33 + (1 / 4 : ℝ), (1 / 12 : ℝ) * Real.sqrt 3 - (1 / 4 : ℝ) *
+      Real.sqrt 11⟩
+  | 9 => ⟨-(1 / 12 : ℝ) * Real.sqrt 33 + (13 / 12 : ℝ), -(1 / 12 : ℝ) * Real.sqrt 3 - (1 / 12 : ℝ) *
+      Real.sqrt 11⟩
   | 10 => ⟨(2 / 3 : ℝ), (1 / 2 : ℝ) * Real.sqrt 3 - (1 / 6 : ℝ) * Real.sqrt 11⟩
-  | 11 => ⟨-(1 / 12 : ℝ) * Real.sqrt 33 + (7 / 12 : ℝ), (5 / 12 : ℝ) * Real.sqrt 3 - (1 / 12 : ℝ) * Real.sqrt 11⟩
-  | 12 => ⟨-(1 / 6 : ℝ) * Real.sqrt 33 + (5 / 6 : ℝ), -(1 / 6 : ℝ) * Real.sqrt 3 + (1 / 6 : ℝ) * Real.sqrt 11⟩
-  | 13 => ⟨(1 / 12 : ℝ) * Real.sqrt 33 + (7 / 12 : ℝ), (7 / 12 : ℝ) * Real.sqrt 3 - (1 / 12 : ℝ) * Real.sqrt 11⟩
-  | 14 => ⟨-(1 / 12 : ℝ) * Real.sqrt 33 + (1 / 12 : ℝ), -(1 / 12 : ℝ) * Real.sqrt 3 - (1 / 12 : ℝ) * Real.sqrt 11⟩
-  | 15 => ⟨-(1 / 6 : ℝ) * Real.sqrt 33 + (2 / 3 : ℝ), (1 / 3 : ℝ) * Real.sqrt 3 - (1 / 6 : ℝ) * Real.sqrt 11⟩
-  | 16 => ⟨-(1 / 12 : ℝ) * Real.sqrt 33 + (19 / 12 : ℝ), (5 / 12 : ℝ) * Real.sqrt 3 - (1 / 12 : ℝ) * Real.sqrt 11⟩
+  | 11 => ⟨-(1 / 12 : ℝ) * Real.sqrt 33 + (7 / 12 : ℝ), (5 / 12 : ℝ) * Real.sqrt 3 - (1 / 12 : ℝ) *
+      Real.sqrt 11⟩
+  | 12 => ⟨-(1 / 6 : ℝ) * Real.sqrt 33 + (5 / 6 : ℝ), -(1 / 6 : ℝ) * Real.sqrt 3 + (1 / 6 : ℝ) *
+      Real.sqrt 11⟩
+  | 13 => ⟨(1 / 12 : ℝ) * Real.sqrt 33 + (7 / 12 : ℝ), (7 / 12 : ℝ) * Real.sqrt 3 - (1 / 12 : ℝ) *
+      Real.sqrt 11⟩
+  | 14 => ⟨-(1 / 12 : ℝ) * Real.sqrt 33 + (1 / 12 : ℝ), -(1 / 12 : ℝ) * Real.sqrt 3 - (1 / 12 : ℝ) *
+      Real.sqrt 11⟩
+  | 15 => ⟨-(1 / 6 : ℝ) * Real.sqrt 33 + (2 / 3 : ℝ), (1 / 3 : ℝ) * Real.sqrt 3 - (1 / 6 : ℝ) *
+      Real.sqrt 11⟩
+  | 16 => ⟨-(1 / 12 : ℝ) * Real.sqrt 33 + (19 / 12 : ℝ), (5 / 12 : ℝ) * Real.sqrt 3 - (1 / 12 : ℝ) *
+      Real.sqrt 11⟩
   | 17 => ⟨(1 / 3 : ℝ), (1 / 2 : ℝ) * Real.sqrt 3 + (1 / 6 : ℝ) * Real.sqrt 11⟩
-  | 18 => ⟨-(1 / 12 : ℝ) * Real.sqrt 33 + (3 / 4 : ℝ), -(1 / 12 : ℝ) * Real.sqrt 3 + (1 / 4 : ℝ) * Real.sqrt 11⟩
+  | 18 => ⟨-(1 / 12 : ℝ) * Real.sqrt 33 + (3 / 4 : ℝ), -(1 / 12 : ℝ) * Real.sqrt 3 + (1 / 4 : ℝ) *
+      Real.sqrt 11⟩
   | 19 => ⟨-(1 / 6 : ℝ) * Real.sqrt 33 + 1, -(1 / 6 : ℝ) * Real.sqrt 3⟩
   | 20 => ⟨(7 / 6 : ℝ), -(1 / 6 : ℝ) * Real.sqrt 11⟩
-  | 21 => ⟨-(1 / 6 : ℝ) * Real.sqrt 33 + (4 / 3 : ℝ), (1 / 3 : ℝ) * Real.sqrt 3 + (1 / 6 : ℝ) * Real.sqrt 11⟩
-  | _ => ⟨-(1 / 4 : ℝ) * Real.sqrt 33 + (19 / 12 : ℝ), (1 / 4 : ℝ) * Real.sqrt 3 - (1 / 12 : ℝ) * Real.sqrt 11⟩
+  | 21 => ⟨-(1 / 6 : ℝ) * Real.sqrt 33 + (4 / 3 : ℝ), (1 / 3 : ℝ) * Real.sqrt 3 + (1 / 6 : ℝ) *
+      Real.sqrt 11⟩
+  | _ => ⟨-(1 / 4 : ℝ) * Real.sqrt 33 + (19 / 12 : ℝ), (1 / 4 : ℝ) * Real.sqrt 3 - (1 / 12 : ℝ) *
+      Real.sqrt 11⟩
 
 /-- Index of the squared distance between two configuration points in `dualSquaredDistance`.
 The diagonal is assigned the harmless default label zero. -/

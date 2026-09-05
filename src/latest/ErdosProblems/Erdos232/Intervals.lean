@@ -39,7 +39,9 @@ theorem mem_intervalTaylorSum {c : ℕ → ℝ} {h : ℝ}
       rw [Finset.sum_range_succ, intervalTaylorSum]
       have hterm := IntervalRat.mem_scale (1 / n.factorial : ℚ)
         (IntervalRat.mem_mul (hc n) (IntervalRat.mem_pow hh n))
-      convert IntervalRat.mem_add (mem_intervalTaylorSum hc hh n) hterm using 1 <;> push_cast <;> ring
+      convert IntervalRat.mem_add (mem_intervalTaylorSum hc hh n) hterm using 1
+      push_cast
+      ring
 
 def intervalMaxAbs (I : IntervalRat) : ℚ := max |I.lo| |I.hi|
 
@@ -143,7 +145,8 @@ theorem mem_combinedDerivativeInterval {n : ℕ}
   have hpow := IntervalRat.mem_pow (hd j) r
   have harg := IntervalRat.mem_scale m (hd j)
   have hb := mem_besselOnInterval (grid j) r evalDegree _ harg
-  convert IntervalRat.mem_scale (weight j) (IntervalRat.mem_mul hpow hb) using 1 <;> ring
+  convert IntervalRat.mem_scale (weight j) (IntervalRat.mem_mul hpow hb) using 1
+  ring
 
 noncomputable def spectralSum {n : ℕ} (weight : Fin n → ℚ) (d : Fin n → ℝ)
     (t : ℝ) : ℝ :=

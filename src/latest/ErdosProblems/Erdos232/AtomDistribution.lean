@@ -102,7 +102,7 @@ theorem maskMass_atomMass {Ω : Type*} [MeasurableSpace Ω]
   rw [maskMass]
   have hleft : (∑ s, if natMaskSubset m s.val then atomMass μ X s else 0) =
       ∑ s ∈ good, μ.real (A ⁻¹' {s}) := by
-    simp only [good, Finset.sum_filter, atomMass, A, Bool.decide_coe]
+    simp only [good, Finset.sum_filter, atomMass, A]
   rw [hleft, hsum]
   apply congrArg μ.real
   ext ω

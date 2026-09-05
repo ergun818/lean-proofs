@@ -103,7 +103,7 @@ private theorem mFourier_neg_arg {d : Type*} [Fintype d]
   simp
   rfl
 
-theorem mFourierCoeff_translate {S : Set SquareTorus} (hS : MeasurableSet S)
+theorem mFourierCoeff_translate {S : Set SquareTorus}
     (v : SquareTorus) (n : Fin 2 → ℤ) :
     UnitAddTorus.mFourierCoeff (fun x ↦ torusIndicator S (x + v)) n =
       UnitAddTorus.mFourier n v *
@@ -182,8 +182,8 @@ theorem hasSum_torusFourierMass_mul_mFourier_re
       ((volume.real (torusPairEvent S v) : ℝ) : ℂ) := by
     convert hcomplex using 1
     · ext n
-      rw [hfcoeff, hgcoeff, mFourierCoeff_translate hS]
-      simp only [torusFourierMass, map_mul]
+      rw [hfcoeff, hgcoeff, mFourierCoeff_translate]
+      simp only [torusFourierMass]
       rw [mul_comm (UnitAddTorus.mFourier n v), ← mul_assoc, RCLike.conj_mul]
       norm_cast
     · have hfg : (fun x : SquareTorus ↦ conj ((⇑(torusIndicatorLp S hS)) x) *
@@ -197,8 +197,7 @@ theorem hasSum_torusFourierMass_mul_mFourier_re
         integral_indicator_const (1 : ℂ) (measurable_torusPairEvent hS v)]
       simp
   have hre := RCLike.hasSum_re ℂ hcomplex'
-  convert hre using 1 <;>
-    simp [Complex.mul_re]
+  convert hre using 1 <;> simp
 
 /-- Encode the integer frequency vector as the complex number whose product with a physical
 displacement has real part equal to their Euclidean dot product. -/
@@ -223,18 +222,15 @@ theorem mFourier_torusVector_re (L : ℝ) (z : ℂ) (n : Fin 2 → ℤ) :
     show torusVector L z 1 = (z.im / L : UnitAddCircle) by rfl]
   rw [fourier_coe_apply, fourier_coe_apply]
   rw [← Complex.exp_add]
-  simp only [Complex.exp_re, Complex.add_re, Complex.add_im,
-    Complex.ofReal_re, Complex.ofReal_im, Complex.I_re, Complex.I_im,
-    latticeComplex, Complex.mul_re, Complex.mul_im]
+  simp only [Complex.exp_re, Complex.add_re, Complex.add_im, latticeComplex, Complex.mul_re]
   simp
   congr 2
-  push_cast
   ring
 
 /-- Angular averaging of a square-torus character is exactly the Bessel kernel at its physical
 frequency times the displacement norm. -/
 theorem integral_mFourier_torusVector_rotate_re
-    {L : ℝ} (hL : 0 < L) (z : ℂ) (n : Fin 2 → ℤ) :
+    {L : ℝ} (z : ℂ) (n : Fin 2 → ℤ) :
     ∫ theta : UnitAddCircle,
         (UnitAddTorus.mFourier n (torusVector L (rotateComplex theta z))).re
           ∂AddCircle.haarAddCircle =
@@ -259,7 +255,7 @@ noncomputable def torusRadialCorrelation (S : Set SquareTorus) (L : ℝ) (z : �
 /-- Radial Parseval: angular averaging turns every torus character into the order-zero
 Bessel kernel at its physical frequency. -/
 theorem hasSum_torusFourierMass_mul_besselJ0
-    {S : Set SquareTorus} (hS : MeasurableSet S) {L : ℝ} (hL : 0 < L) (z : ℂ) :
+    {S : Set SquareTorus} (hS : MeasurableSet S) {L : ℝ} (z : ℂ) :
     HasSum (fun n : Fin 2 → ℤ ↦
       torusFourierMass S n * besselJ0 (torusFrequency L n * ‖z‖))
       (torusRadialCorrelation S L z) := by
@@ -316,7 +312,7 @@ theorem hasSum_torusFourierMass_mul_besselJ0
   apply Finset.sum_congr rfl
   intro n _
   unfold F
-  rw [MeasureTheory.integral_const_mul, integral_mFourier_torusVector_rotate_re hL]
+  rw [MeasureTheory.integral_const_mul, integral_mFourier_torusVector_rotate_re]
 
 end
 

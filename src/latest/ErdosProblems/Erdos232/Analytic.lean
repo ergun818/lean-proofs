@@ -322,7 +322,7 @@ theorem besselDifferentialEquation (x : ℝ) :
     ring_nf
     rw [Real.sin_sq]
     ring
-  simp only [zero_mul, zero_div, add_zero, one_mul] at ⊢
+  simp only [zero_mul, zero_div, add_zero] at ⊢
   have hc : x * (∫ θ in (0 : ℝ)..2 * Real.pi,
           -(Real.cos (x * Real.cos θ) * Real.cos θ ^ 2)) +
         (∫ θ in (0 : ℝ)..2 * Real.pi,
@@ -365,7 +365,6 @@ theorem besselDerivative_recurrence (n : ℕ) (x : ℝ) :
         have hpred : (n : ℝ) * besselDerivative (n - 1 + 1) x =
             n * besselDerivative n x := by
           cases n <;> simp
-        push_cast
         simp only [id_eq]
         rw [hpred]
         ring
@@ -374,7 +373,8 @@ theorem besselDerivative_recurrence (n : ℕ) (x : ℝ) :
         exact hasDerivAt_const x 0
       have hzero := hd.unique hz
       push_cast at hzero ⊢
-      convert hzero using 1 <;> ring
+      convert hzero using 1
+      ring
 
 theorem besselDerivative_differentiable (n : ℕ) :
     Differentiable ℝ (besselDerivative n) :=
@@ -426,9 +426,11 @@ private theorem taylorWithinEval_besselDerivative (r n : ℕ) {x y : ℝ} (hxy :
       rw [iteratedDerivWithin_eq_iteratedDeriv (n := n + 1) (uniqueDiffOn_uIcc hxy)
         (((besselDerivative_contDiff r).of_le hdegree).contDiffAt) Set.left_mem_uIcc]
       rw [iteratedDeriv_besselDerivative]
-      simp only [besselTaylor, Finset.sum_range_succ, Nat.cast_add, Nat.cast_one,
+      simp only [besselTaylor, Finset.sum_range_succ,
         Nat.factorial_succ, smul_eq_mul]
-      congr 1 <;> push_cast <;> ring
+      congr 1
+      push_cast
+      ring
 
 /-- Taylor's theorem with the uniform derivative bound specialized to the Bessel kernel. -/
 theorem besselTaylor_bound (r n : ℕ) (x y : ℝ) :
@@ -482,7 +484,9 @@ theorem besselDerivative_zero_eq_initial (n : ℕ) :
       rw [hn] at hrec
       have hrec' : ((n : ℝ) + 2) * besselDerivative (n + 2) 0 +
           ((n : ℝ) + 1) * (besselInitial n : ℝ) = 0 := by
-        convert hrec using 1 <;> push_cast <;> ring
+        convert hrec using 1
+        push_cast
+        ring
       rw [besselInitial]
       push_cast
       have hnpos : (0 : ℝ) < n + 2 := by positivity
@@ -735,7 +739,6 @@ theorem besselTaylor_zero_eq_transition (h : ℚ) (r n : ℕ) :
   push_cast
   apply Finset.sum_congr rfl
   intro k _
-  push_cast
   ring
 
 /-- A symmetric rational error interval. -/

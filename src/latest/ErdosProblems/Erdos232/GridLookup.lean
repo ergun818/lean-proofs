@@ -445,7 +445,7 @@ private theorem besselGridStateAt_valid_000_024
     (i : Fin 367) (hlo : 0 ≤ (i : ℕ)) (hhi : (i : ℕ) ≤ 24) :
     BesselStateValid ((i : ℕ) * 157 / 50 : ℚ) (besselGridStateAt i) := by
   rcases i with ⟨i, hi⟩
-  simp only [Fin.val_mk] at hlo hhi ⊢
+  dsimp at hlo hhi ⊢
   interval_cases i
   · simpa [besselGridStateAt, besselGridStateBlock00] using besselGridState000_valid
   · simpa [besselGridStateAt, besselGridStateBlock00] using besselGridState001_valid
@@ -477,7 +477,7 @@ private theorem besselGridStateAt_valid_025_049
     (i : Fin 367) (hlo : 25 ≤ (i : ℕ)) (hhi : (i : ℕ) ≤ 49) :
     BesselStateValid ((i : ℕ) * 157 / 50 : ℚ) (besselGridStateAt i) := by
   rcases i with ⟨i, hi⟩
-  simp only [Fin.val_mk] at hlo hhi ⊢
+  dsimp at hlo hhi ⊢
   interval_cases i
   · simpa [besselGridStateAt, besselGridStateBlock01] using besselGridState025_valid
   · simpa [besselGridStateAt, besselGridStateBlock01] using besselGridState026_valid
@@ -509,7 +509,7 @@ private theorem besselGridStateAt_valid_050_074
     (i : Fin 367) (hlo : 50 ≤ (i : ℕ)) (hhi : (i : ℕ) ≤ 74) :
     BesselStateValid ((i : ℕ) * 157 / 50 : ℚ) (besselGridStateAt i) := by
   rcases i with ⟨i, hi⟩
-  simp only [Fin.val_mk] at hlo hhi ⊢
+  dsimp at hlo hhi ⊢
   interval_cases i
   · simpa [besselGridStateAt, besselGridStateBlock02] using besselGridState050_valid
   · simpa [besselGridStateAt, besselGridStateBlock02] using besselGridState051_valid
@@ -541,7 +541,7 @@ private theorem besselGridStateAt_valid_075_099
     (i : Fin 367) (hlo : 75 ≤ (i : ℕ)) (hhi : (i : ℕ) ≤ 99) :
     BesselStateValid ((i : ℕ) * 157 / 50 : ℚ) (besselGridStateAt i) := by
   rcases i with ⟨i, hi⟩
-  simp only [Fin.val_mk] at hlo hhi ⊢
+  dsimp at hlo hhi ⊢
   interval_cases i
   · simpa [besselGridStateAt, besselGridStateBlock03] using besselGridState075_valid
   · simpa [besselGridStateAt, besselGridStateBlock03] using besselGridState076_valid
@@ -573,7 +573,7 @@ private theorem besselGridStateAt_valid_100_124
     (i : Fin 367) (hlo : 100 ≤ (i : ℕ)) (hhi : (i : ℕ) ≤ 124) :
     BesselStateValid ((i : ℕ) * 157 / 50 : ℚ) (besselGridStateAt i) := by
   rcases i with ⟨i, hi⟩
-  simp only [Fin.val_mk] at hlo hhi ⊢
+  dsimp at hlo hhi ⊢
   interval_cases i
   · simpa [besselGridStateAt, besselGridStateBlock04] using besselGridState100_valid
   · simpa [besselGridStateAt, besselGridStateBlock04] using besselGridState101_valid
@@ -605,7 +605,7 @@ private theorem besselGridStateAt_valid_125_149
     (i : Fin 367) (hlo : 125 ≤ (i : ℕ)) (hhi : (i : ℕ) ≤ 149) :
     BesselStateValid ((i : ℕ) * 157 / 50 : ℚ) (besselGridStateAt i) := by
   rcases i with ⟨i, hi⟩
-  simp only [Fin.val_mk] at hlo hhi ⊢
+  dsimp at hlo hhi ⊢
   interval_cases i
   · simpa [besselGridStateAt, besselGridStateBlock05] using besselGridState125_valid
   · simpa [besselGridStateAt, besselGridStateBlock05] using besselGridState126_valid
@@ -637,7 +637,7 @@ private theorem besselGridStateAt_valid_150_174
     (i : Fin 367) (hlo : 150 ≤ (i : ℕ)) (hhi : (i : ℕ) ≤ 174) :
     BesselStateValid ((i : ℕ) * 157 / 50 : ℚ) (besselGridStateAt i) := by
   rcases i with ⟨i, hi⟩
-  simp only [Fin.val_mk] at hlo hhi ⊢
+  dsimp at hlo hhi ⊢
   interval_cases i
   · simpa [besselGridStateAt, besselGridStateBlock06] using besselGridState150_valid
   · simpa [besselGridStateAt, besselGridStateBlock06] using besselGridState151_valid
@@ -669,7 +669,7 @@ private theorem besselGridStateAt_valid_175_199
     (i : Fin 367) (hlo : 175 ≤ (i : ℕ)) (hhi : (i : ℕ) ≤ 199) :
     BesselStateValid ((i : ℕ) * 157 / 50 : ℚ) (besselGridStateAt i) := by
   rcases i with ⟨i, hi⟩
-  simp only [Fin.val_mk] at hlo hhi ⊢
+  dsimp at hlo hhi ⊢
   interval_cases i
   · simpa [besselGridStateAt, besselGridStateBlock07] using besselGridState175_valid
   · simpa [besselGridStateAt, besselGridStateBlock07] using besselGridState176_valid
@@ -701,7 +701,7 @@ private theorem besselGridStateAt_valid_200_224
     (i : Fin 367) (hlo : 200 ≤ (i : ℕ)) (hhi : (i : ℕ) ≤ 224) :
     BesselStateValid ((i : ℕ) * 157 / 50 : ℚ) (besselGridStateAt i) := by
   rcases i with ⟨i, hi⟩
-  simp only [Fin.val_mk] at hlo hhi ⊢
+  dsimp at hlo hhi ⊢
   interval_cases i
   · simpa [besselGridStateAt, besselGridStateBlock08] using besselGridState200_valid
   · simpa [besselGridStateAt, besselGridStateBlock08] using besselGridState201_valid
@@ -733,7 +733,7 @@ private theorem besselGridStateAt_valid_225_249
     (i : Fin 367) (hlo : 225 ≤ (i : ℕ)) (hhi : (i : ℕ) ≤ 249) :
     BesselStateValid ((i : ℕ) * 157 / 50 : ℚ) (besselGridStateAt i) := by
   rcases i with ⟨i, hi⟩
-  simp only [Fin.val_mk] at hlo hhi ⊢
+  dsimp at hlo hhi ⊢
   interval_cases i
   · simpa [besselGridStateAt, besselGridStateBlock09] using besselGridState225_valid
   · simpa [besselGridStateAt, besselGridStateBlock09] using besselGridState226_valid
@@ -765,7 +765,7 @@ private theorem besselGridStateAt_valid_250_274
     (i : Fin 367) (hlo : 250 ≤ (i : ℕ)) (hhi : (i : ℕ) ≤ 274) :
     BesselStateValid ((i : ℕ) * 157 / 50 : ℚ) (besselGridStateAt i) := by
   rcases i with ⟨i, hi⟩
-  simp only [Fin.val_mk] at hlo hhi ⊢
+  dsimp at hlo hhi ⊢
   interval_cases i
   · simpa [besselGridStateAt, besselGridStateBlock10] using besselGridState250_valid
   · simpa [besselGridStateAt, besselGridStateBlock10] using besselGridState251_valid
@@ -797,7 +797,7 @@ private theorem besselGridStateAt_valid_275_299
     (i : Fin 367) (hlo : 275 ≤ (i : ℕ)) (hhi : (i : ℕ) ≤ 299) :
     BesselStateValid ((i : ℕ) * 157 / 50 : ℚ) (besselGridStateAt i) := by
   rcases i with ⟨i, hi⟩
-  simp only [Fin.val_mk] at hlo hhi ⊢
+  dsimp at hlo hhi ⊢
   interval_cases i
   · simpa [besselGridStateAt, besselGridStateBlock11] using besselGridState275_valid
   · simpa [besselGridStateAt, besselGridStateBlock11] using besselGridState276_valid
@@ -829,7 +829,7 @@ private theorem besselGridStateAt_valid_300_324
     (i : Fin 367) (hlo : 300 ≤ (i : ℕ)) (hhi : (i : ℕ) ≤ 324) :
     BesselStateValid ((i : ℕ) * 157 / 50 : ℚ) (besselGridStateAt i) := by
   rcases i with ⟨i, hi⟩
-  simp only [Fin.val_mk] at hlo hhi ⊢
+  dsimp at hlo hhi ⊢
   interval_cases i
   · simpa [besselGridStateAt, besselGridStateBlock12] using besselGridState300_valid
   · simpa [besselGridStateAt, besselGridStateBlock12] using besselGridState301_valid
@@ -861,7 +861,7 @@ private theorem besselGridStateAt_valid_325_349
     (i : Fin 367) (hlo : 325 ≤ (i : ℕ)) (hhi : (i : ℕ) ≤ 349) :
     BesselStateValid ((i : ℕ) * 157 / 50 : ℚ) (besselGridStateAt i) := by
   rcases i with ⟨i, hi⟩
-  simp only [Fin.val_mk] at hlo hhi ⊢
+  dsimp at hlo hhi ⊢
   interval_cases i
   · simpa [besselGridStateAt, besselGridStateBlock13] using besselGridState325_valid
   · simpa [besselGridStateAt, besselGridStateBlock13] using besselGridState326_valid
@@ -893,7 +893,7 @@ private theorem besselGridStateAt_valid_350_366
     (i : Fin 367) (hlo : 350 ≤ (i : ℕ)) (hhi : (i : ℕ) ≤ 366) :
     BesselStateValid ((i : ℕ) * 157 / 50 : ℚ) (besselGridStateAt i) := by
   rcases i with ⟨i, hi⟩
-  simp only [Fin.val_mk] at hlo hhi ⊢
+  dsimp at hlo hhi ⊢
   interval_cases i
   · simpa [besselGridStateAt, besselGridStateBlock14] using besselGridState350_valid
   · simpa [besselGridStateAt, besselGridStateBlock14] using besselGridState351_valid

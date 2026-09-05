@@ -111,7 +111,7 @@ theorem maskEvent_pairMask {Ω : Type*} (X : Ω → Assignment) (j : Fin 27) :
     maskEvent X (pairMask j) =
       {ω | X ω (pairLeft j) = true ∧ X ω (pairRight j) = true} := by
   ext ω
-  simp only [maskEvent, mem_setOf_eq]
+  simp only [maskEvent, mem_ofPred_eq]
   constructor
   · intro h
     constructor
@@ -137,7 +137,7 @@ theorem normSq_orientedConfigurationPoint_sub
       dualSquaredDistance (configurationDistanceLabel i j) := by
   cases reflected
   · simpa [orientedConfigurationPoint] using configuration_normSq i j hij
-  · simp only [orientedConfigurationPoint, Bool.true_eq, if_true]
+  · simp only [orientedConfigurationPoint, if_true]
     rw [← map_sub, Complex.normSq_conj]
     exact configuration_normSq i j hij
 
@@ -347,7 +347,7 @@ private theorem samplePoint_rigid_zero_neg_left
           (-orientedConfigurationPoint reflected (pairLeft j)) ω)
         (pairLeft j) = ω.2 := by
   unfold samplePoint rigidSampleMap
-  simp only [Prod.fst, Prod.snd, add_zero, rotateComplex_neg, torusVector_neg]
+  simp only [add_zero, rotateComplex_neg, torusVector_neg]
   abel
 
 private theorem samplePoint_rigid_zero_neg_right
@@ -358,7 +358,7 @@ private theorem samplePoint_rigid_zero_neg_right
         (pairRight j) =
       ω.2 + torusVector L (rotateComplex ω.1 (configurationDisplacement reflected j)) := by
   unfold samplePoint rigidSampleMap configurationDisplacement
-  simp only [Prod.fst, Prod.snd, add_zero, rotateComplex_neg, torusVector_neg,
+  simp only [add_zero, rotateComplex_neg, torusVector_neg,
     rotateComplex_sub, torusVector_sub]
   abel
 
@@ -369,7 +369,7 @@ theorem radialPairSampleEvent_eq_preimage_maskEvent
         maskEvent (sampleAssignment S L reflected) (pairMask j) := by
   ext ω
   rw [maskEvent_pairMask]
-  simp only [radialPairSampleEvent, mem_setOf_eq, mem_preimage, sampleAssignment,
+  simp only [radialPairSampleEvent, mem_ofPred_eq, mem_preimage, sampleAssignment,
     decide_eq_true_eq, samplePoint_rigid_zero_neg_left,
     samplePoint_rigid_zero_neg_right]
 
@@ -390,11 +390,11 @@ theorem volumeReal_maskEvent_pairMask
   rw [hmeasure, volumeReal_radialPairSampleEvent hS]
 
 theorem torusRadialCorrelation_eq_of_norm_eq
-    {S : Set SquareTorus} (hS : MeasurableSet S) {L : ℝ} (hL : 0 < L)
+    {S : Set SquareTorus} (hS : MeasurableSet S) {L : ℝ}
     {z w : ℂ} (hzw : ‖z‖ = ‖w‖) :
     torusRadialCorrelation S L z = torusRadialCorrelation S L w := by
-  exact (hasSum_torusFourierMass_mul_besselJ0 hS hL z).unique <| by
-    simpa only [hzw] using hasSum_torusFourierMass_mul_besselJ0 hS hL w
+  exact (hasSum_torusFourierMass_mul_besselJ0 (L := L) hS z).unique <| by
+    simpa only [hzw] using hasSum_torusFourierMass_mul_besselJ0 (L := L) hS w
 
 /-- The 27 correlations used in both halves of the dual certificate. -/
 def torusCertificateCorrelation (S : Set SquareTorus) (L : ℝ) (j : Fin 27) : ℝ :=
@@ -407,7 +407,7 @@ theorem pairMask_lt_two_pow (j : Fin 27) : pairMask j < 2 ^ 23 := by
 /-- Every two-point marginal of the radialized atom distribution is the corresponding radial
 correlation. -/
 theorem maskMass_torusAtomMass_pair
-    {S : Set SquareTorus} (hS : MeasurableSet S) {L : ℝ} (hL : 0 < L)
+    {S : Set SquareTorus} (hS : MeasurableSet S) {L : ℝ}
     (j : Fin 27) :
     maskMass (torusAtomMass S L) (pairMask j) = torusCertificateCorrelation S L j := by
   rw [maskMass_torusAtomMass hS L (pairMask j) (pairMask_lt_two_pow j),
@@ -416,7 +416,7 @@ theorem maskMass_torusAtomMass_pair
   have hreflect :
       torusRadialCorrelation S L (configurationDisplacement true j) =
         torusRadialCorrelation S L (configurationDisplacement false j) :=
-    torusRadialCorrelation_eq_of_norm_eq hS hL <| by
+    torusRadialCorrelation_eq_of_norm_eq (L := L) hS <| by
       rw [norm_configurationDisplacement, norm_configurationDisplacement]
   rw [hreflect]
   simp [torusCertificateCorrelation]
@@ -426,7 +426,7 @@ theorem maskMass_torusAtomMass_pair
 theorem maskEvent_one {Ω : Type*} (X : Ω → Assignment) :
     maskEvent X 1 = {ω | X ω 0 = true} := by
   ext ω
-  simp only [maskEvent, mem_setOf_eq]
+  simp only [maskEvent, mem_ofPred_eq]
   constructor
   · intro h
     exact h 0 Nat.testBit_one_zero
@@ -435,7 +435,7 @@ theorem maskEvent_one {Ω : Type*} (X : Ω → Assignment) :
     have hieq : i = 0 := Fin.ext hi0
     simpa [hieq] using h
 
-theorem samplePoint_zero (S : Set SquareTorus) (L : ℝ) (reflected : Bool)
+theorem samplePoint_zero (L : ℝ) (reflected : Bool)
     (ω : TorusSample) : samplePoint L reflected ω 0 = ω.2 := by
   have hzero : orientedConfigurationPoint reflected 0 = 0 := by
     have hc : configurationPoint (0 : Fin 23) = 0 := by
@@ -455,7 +455,7 @@ theorem maskEvent_sampleAssignment_one
   change (sampleAssignment S L reflected ω 0 = true) ↔
     ω.1 ∈ (Set.univ : Set UnitAddCircle) ∧ ω.2 ∈ S
   simp only [sampleAssignment, decide_eq_true_eq, mem_univ, true_and]
-  rw [samplePoint_zero S L reflected ω]
+  rw [samplePoint_zero L reflected ω]
 
 /-- The distinguished-vertex marginal equals Haar density of the torus set. -/
 theorem maskMass_torusAtomMass_one
@@ -470,14 +470,14 @@ theorem maskMass_torusAtomMass_one
   simp
 
 theorem torusCertificateCorrelation_eq_tsum
-    {S : Set SquareTorus} (hS : MeasurableSet S) {L : ℝ} (hL : 0 < L)
+    {S : Set SquareTorus} (hS : MeasurableSet S) {L : ℝ}
     (j : Fin 27) :
     torusCertificateCorrelation S L j =
       ∑' n : Fin 2 → ℤ, torusFourierMass S n *
         besselJ0 (torusFrequency L n * dualDistance j) := by
   unfold torusCertificateCorrelation
   simpa only [norm_configurationDisplacement] using
-    (hasSum_torusFourierMass_mul_besselJ0 hS hL
+    (hasSum_torusFourierMass_mul_besselJ0 (L := L) hS
       (configurationDisplacement false j)).tsum_eq.symm
 
 /-- The unit-distance row vanishes for an admissible torus set. -/
@@ -488,7 +488,7 @@ theorem torusCertificateCorrelation_zero
       torusPairEvent S
         (torusVector L (rotateComplex theta (configurationDisplacement false 0))) = ∅ := by
     ext x
-    simp only [torusPairEvent, mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+    simp only [torusPairEvent, mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
     exact hfree x (rotateComplex theta (configurationDisplacement false 0)) <| by
       rw [normSq_rotateComplex, configurationDisplacement,
         normSq_orientedConfigurationPoint_sub false (pairRight 0) (pairLeft 0)
@@ -500,7 +500,7 @@ theorem torusCertificateCorrelation_zero
   simp
 
 theorem torusAtomMass_pair_rows
-    {S : Set SquareTorus} (hS : MeasurableSet S) {L : ℝ} (hL : 0 < L) :
+    {S : Set SquareTorus} (hS : MeasurableSet S) {L : ℝ} :
     maskMass (torusAtomMass S L) 513 = torusCertificateCorrelation S L 1 ∧
     maskMass (torusAtomMass S L) 65537 = torusCertificateCorrelation S L 2 ∧
     maskMass (torusAtomMass S L) 4194305 = torusCertificateCorrelation S L 3 ∧
@@ -527,7 +527,7 @@ theorem torusAtomMass_pair_rows
     maskMass (torusAtomMass S L) 49152 = torusCertificateCorrelation S L 24 ∧
     maskMass (torusAtomMass S L) 3145728 = torusCertificateCorrelation S L 25 ∧
     maskMass (torusAtomMass S L) 5242880 = torusCertificateCorrelation S L 26 := by
-  have hrow (j : Fin 27) := maskMass_torusAtomMass_pair hS hL j
+  have hrow (j : Fin 27) := maskMass_torusAtomMass_pair (L := L) hS j
   have row (j : Fin 27) (m : Nat) (hm : pairMask j = m) :
       maskMass (torusAtomMass S L) m = torusCertificateCorrelation S L j := by
     simpa only [hm] using hrow j
@@ -568,7 +568,7 @@ theorem torus_density_le_dualTarget
     · exact torusAtomMass_support hfree
     · exact torusAtomMass_total hS L
     · exact maskMass_torusAtomMass_one hS L
-    · exact torusAtomMass_pair_rows hS hL
+    · exact torusAtomMass_pair_rows (L := L) hS
     · exact torusAtomMass_congruence_rows hS L
   have hspectral : volume.real S ≤ (1062576034 / 1000000000 : ℝ) * volume.real S +
       pairSpectralValue correlation := by
@@ -579,7 +579,7 @@ theorem torus_density_le_dualTarget
       · exact summable_torusFourierMass hS
       · exact torusFourierMass_nonnegative S
       · exact (hasSum_torusFourierMass hS).tsum_eq
-      · exact torusCertificateCorrelation_eq_tsum hS hL
+      · exact torusCertificateCorrelation_eq_tsum (L := L) hS
       · exact torusCertificateCorrelation_zero hfree
       · intro n
         exact dual_spectral_nonnegative (torusFrequency L n)

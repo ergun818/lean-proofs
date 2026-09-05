@@ -54,7 +54,7 @@ theorem volumeReal_coordinateBox (c : Plane) {r : ℝ} (hr : 0 ≤ r) :
 
 theorem mem_coordinateBox_comm {c x : Plane} {r : ℝ} :
     x ∈ coordinateBox c r ↔ c ∈ coordinateBox x r := by
-  simp only [coordinateBox, mem_setOf_eq, mem_Ioo]
+  simp only [coordinateBox, mem_ofPred_eq, mem_Ioo]
   constructor <;> intro h i <;> specialize h i <;> constructor <;> linarith
 
 theorem dist_lt_two_mul_of_mem_coordinateBox
@@ -62,7 +62,7 @@ theorem dist_lt_two_mul_of_mem_coordinateBox
     dist c x < 2 * r := by
   have h0 := hcx 0
   have h1 := hcx 1
-  simp only [coordinateBox, mem_setOf_eq, mem_Ioo] at h0 h1
+  simp only [mem_Ioo] at h0 h1
   have hsq : dist c x ^ 2 = (c 0 - x 0) ^ 2 + (c 1 - x 1) ^ 2 := by
     rw [dist_eq_norm, EuclideanSpace.real_norm_sq_eq]
     simp [Fin.sum_univ_two]
@@ -108,10 +108,7 @@ theorem torusRepresentative_mem (y : SquareTorus) (i : Fin 2) :
 
 theorem coe_torusRepresentative (y : SquareTorus) (i : Fin 2) :
     (torusRepresentative y i : UnitAddCircle) = y i := by
-  let e := UnitAddTorus.measurableEquivPiIoc centeredFundamentalBase
-  have h := congrArg (fun q : SquareTorus ↦ q i) (e.symm_apply_apply y)
-  simpa [e, torusRepresentative,
-    UnitAddTorus.coe_symm_measurableEquivPiIoc_apply] using h
+  simp [torusRepresentative]
 
 /-- Interpret a unit-square representative as a physical point in the square of side `L`
 centered at `c`. -/
@@ -203,7 +200,7 @@ theorem volume_rawAffinePoint_preimage {E : Set Plane} (hE : MeasurableSet E)
       rw [Measure.addHaar_preimage_smul volume hL.ne']
     _ = ENNReal.ofReal (L ^ 2)⁻¹ * volume E := by
       rw [measure_preimage_add]
-      simp [finrank_euclideanSpace_fin, abs_of_pos (sq_pos_of_pos hL)]
+      simp [abs_of_pos (sq_pos_of_pos hL)]
 
 /-- The Haar mass of a torus crop is the physical mass of the crop divided by the
 area of the physical fundamental square. -/
@@ -235,7 +232,7 @@ theorem volume_torusCrop {A : Set Plane} (hA : MeasurableSet A)
         intro i
         have hi := hubox i
         simp only [rawAffinePoint_apply, mem_Ioo] at hi
-        simp only [centeredFundamentalBox, centeredFundamentalBase, mem_setOf_eq, mem_Ioc]
+        simp only [centeredFundamentalBase, mem_Ioc]
         constructor <;> norm_num at * <;> nlinarith
       exact ⟨⟨u, hfund⟩, hu, rfl⟩
   calc
@@ -317,7 +314,7 @@ theorem torusCrop_unitDistanceFree {A : Set Plane} (hfree : UnitDistanceFree A)
         _ = L * (n : ℝ) + w := by field_simp
     have hxb := hxbox i
     have hyb := hybox i
-    simp only [coordinateBox, mem_setOf_eq, mem_Ioo] at hxb hyb
+    simp only [mem_Ioo] at hxb hyb
     have hdiff_lower : -2 * r <
         torusPhysicalPoint c L y i - torusPhysicalPoint c L x i := by linarith
     have hdiff_upper :
@@ -530,8 +527,8 @@ theorem upperDensity_le_of_local_bound_at_scale {A : Set Plane} (hA : Measurable
     (tendsto_id : Tendsto (fun R : ℝ ↦ R) atTop atTop).const_div_atTop (2 * r)
   have hg : Tendsto g atTop (nhds C) := by
     dsimp [g]
-    convert tendsto_const_nhds.mul ((tendsto_const_nhds.add hzero).pow 2) using 1 <;>
-      norm_num
+    convert tendsto_const_nhds.mul ((tendsto_const_nhds.add hzero).pow 2) using 1
+    norm_num
   have hpoint : ballDensity A ≤ᶠ[atTop] g := by
     filter_upwards [eventually_gt_atTop (0 : ℝ)] with R hR
     have h := ballDensity_le_of_local_bound hA hR hr hK hlocal
@@ -557,8 +554,8 @@ theorem upperDensity_le_of_all_local_bounds {A : Set Plane} (hA : MeasurableSet 
     (tendsto_id : Tendsto (fun r : ℝ ↦ r) atTop atTop).const_div_atTop 1
   have hf : Tendsto f atTop (nhds T) := by
     dsimp [f]
-    convert tendsto_const_nhds.mul ((tendsto_const_nhds.add hzero).pow 2) using 1 <;>
-      norm_num
+    convert tendsto_const_nhds.mul ((tendsto_const_nhds.add hzero).pow 2) using 1
+    norm_num
   apply ge_of_tendsto hf
   filter_upwards [eventually_gt_atTop (0 : ℝ)] with r hr
   have hscale := upperDensity_le_of_local_bound_at_scale hA hr

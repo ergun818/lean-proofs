@@ -139,31 +139,30 @@ theorem certificateMasks_bounded (i : Fin 24) :
       (h : l.all (fun c ↦ decide (c.1 < 2 ^ 23 ∧ c.2.1 < 2 ^ 23)) = true) :
       ∀ c ∈ l, c.1 < 2 ^ 23 ∧ c.2.1 < 2 ^ 23 := by
     simpa only [List.all_eq_true, decide_eq_true_eq] using h
-  fin_cases i <;>
-    first
-    | exact decode certificateMasks_bounded00
-    | exact decode certificateMasks_bounded01
-    | exact decode certificateMasks_bounded02
-    | exact decode certificateMasks_bounded03
-    | exact decode certificateMasks_bounded04
-    | exact decode certificateMasks_bounded05
-    | exact decode certificateMasks_bounded06
-    | exact decode certificateMasks_bounded07
-    | exact decode certificateMasks_bounded08
-    | exact decode certificateMasks_bounded09
-    | exact decode certificateMasks_bounded10
-    | exact decode certificateMasks_bounded11
-    | exact decode certificateMasks_bounded12
-    | exact decode certificateMasks_bounded13
-    | exact decode certificateMasks_bounded14
-    | exact decode certificateMasks_bounded15
-    | exact decode certificateMasks_bounded16
-    | exact decode certificateMasks_bounded17
-    | exact decode certificateMasks_bounded18
-    | exact decode certificateMasks_bounded19
-    | exact decode certificateMasks_bounded20
-    | exact decode certificateMasks_bounded21
-    | exact decode certificateMasks_bounded22
-    | exact decode certificateMasks_bounded23
+  fin_cases i
+  · exact decode certificateMasks_bounded00
+  · exact decode certificateMasks_bounded01
+  · exact decode certificateMasks_bounded02
+  · exact decode certificateMasks_bounded03
+  · exact decode certificateMasks_bounded04
+  · exact decode certificateMasks_bounded05
+  · exact decode certificateMasks_bounded06
+  · exact decode certificateMasks_bounded07
+  · exact decode certificateMasks_bounded08
+  · exact decode certificateMasks_bounded09
+  · exact decode certificateMasks_bounded10
+  · exact decode certificateMasks_bounded11
+  · exact decode certificateMasks_bounded12
+  · exact decode certificateMasks_bounded13
+  · exact decode certificateMasks_bounded14
+  · exact decode certificateMasks_bounded15
+  · exact decode certificateMasks_bounded16
+  · exact decode certificateMasks_bounded17
+  · exact decode certificateMasks_bounded18
+  · exact decode certificateMasks_bounded19
+  · exact decode certificateMasks_bounded20
+  · exact decode certificateMasks_bounded21
+  · exact decode certificateMasks_bounded22
+  · exact decode certificateMasks_bounded23
 
 end Erdos232

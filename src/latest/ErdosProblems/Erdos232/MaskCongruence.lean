@@ -71,10 +71,11 @@ theorem MaskCongruent.exists_rigid {m n : Nat} (h : MaskCongruent m n) :
     ∃ e : (↥(selectedVertices m)) ≃ (↥(selectedVertices n)),
       ∃ reflected : Bool, ∃ u c : ℂ, Complex.normSq u = 1 ∧
         ∀ i, configurationPoint (e i).1 =
-          u * (if reflected then conj (configurationPoint i.1) else configurationPoint i.1) + c := by
+          u * (if reflected then conj (configurationPoint i.1) else configurationPoint i.1) + c :=
+              by
   classical
   rcases h with ⟨⟨anchor, hanchor⟩, e, he⟩
-  letI : Nonempty (↥(selectedVertices m)) := ⟨⟨anchor, hanchor⟩⟩
+  let : Nonempty (↥(selectedVertices m)) := ⟨⟨anchor, hanchor⟩⟩
   refine ⟨e, ?_⟩
   apply exists_complex_rigid_of_fintype_normSq_eq
   intro i j

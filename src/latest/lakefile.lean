@@ -62,7 +62,8 @@ post_update pkg do
   for (name, patchName) in #[
       ("BoundedGaps", "formalpantheon-v4.33.0.patch"),
       ("BoundedGaps", "formalpantheon-v4.33.0-s2.patch"),
-      ("AINTLIB", "aintlib-v4.33.0.patch")] do
+      ("AINTLIB", "aintlib-v4.33.0.patch"),
+      ("leancert", "leancert-linter-v4.33.0.patch")] do
     let dependency := pkg.dir / ".lake" / "packages" / name
     let patch := pkg.dir / "patches" / patchName
     if !(← dependency.pathExists) then

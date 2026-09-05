@@ -84,12 +84,37 @@ theorem congruenceBlock23_expectation_zero
       weightedMaskMass a 5539848 (169269087) := by
     rw [weightedMaskMass_eq, weightedMaskMass_eq, hmass (5507112, 5539848, 169269087) (by decide)]
   calc
-    (∑ s, a s * (atomCongruenceContributionInt23 s.val : ℝ)) = (((((weightedMaskMass a 4489217 (136002196) + (-weightedMaskMass a 4719617 (136002196) + weightedMaskMass a 4489224 (160471052))) + (-weightedMaskMass a 4719680 (160471052) + (weightedMaskMass a 4489224 (-69839133) + -weightedMaskMass a 5505056 (-69839133)))) + ((weightedMaskMass a 4489225 (-120736053) + (-weightedMaskMass a 4719681 (-120736053) + weightedMaskMass a 4489236 (-239857632))) + (-weightedMaskMass a 4719636 (-239857632) + (weightedMaskMass a 4489240 (-162785421) + -weightedMaskMass a 4719684 (-162785421))))) + (((weightedMaskMass a 4491272 (113394222) + (-weightedMaskMass a 5507104 (113394222) + weightedMaskMass a 4505600 (86389790))) + (-weightedMaskMass a 4736000 (86389790) + (weightedMaskMass a 4505601 (-83590859) + -weightedMaskMass a 4736001 (-83590859)))) + ((weightedMaskMass a 4505604 (-119876439) + (-weightedMaskMass a 4736016 (-119876439) + weightedMaskMass a 4505608 (-15827094))) + (-weightedMaskMass a 4736064 (-15827094) + (weightedMaskMass a 4505609 (-56537170) + -weightedMaskMass a 4736065 (-56537170)))))) + ((((weightedMaskMass a 4505616 (-387746007) + (-weightedMaskMass a 4736004 (-387746007) + weightedMaskMass a 4505620 (638064904))) + (-weightedMaskMass a 4736020 (638064904) + (weightedMaskMass a 4505624 (374809555) + -weightedMaskMass a 4736068 (374809555)))) + ((weightedMaskMass a 4723776 (55712557) + (-weightedMaskMass a 5505060 (55712557) + weightedMaskMass a 4751369 (-94952655))) + (-weightedMaskMass a 4751425 (-94952655) + (weightedMaskMass a 4751384 (-35363714) + -weightedMaskMass a 4751428 (-35363714))))) + (((weightedMaskMass a 4767748 (68926203) + (-weightedMaskMass a 4767760 (68926203) + weightedMaskMass a 4767752 (-43222421))) + (-weightedMaskMass a 4767808 (-43222421) + (weightedMaskMass a 4767753 (7062562) + -weightedMaskMass a 4767809 (7062562)))) + ((weightedMaskMass a 4767768 (138658897) + (-weightedMaskMass a 4767812 (138658897) + weightedMaskMass a 5505064 (-102603613))) + (-weightedMaskMass a 5537800 (-102603613) + (weightedMaskMass a 5507112 (169269087) + -weightedMaskMass a 5539848 (169269087))))))) := by
+    (∑ s, a s * (atomCongruenceContributionInt23 s.val : ℝ)) = (((((weightedMaskMass a 4489217
+        (136002196) + (-weightedMaskMass a 4719617 (136002196) + weightedMaskMass a 4489224
+        (160471052))) + (-weightedMaskMass a 4719680 (160471052) + (weightedMaskMass a 4489224
+        (-69839133) + -weightedMaskMass a 5505056 (-69839133)))) + ((weightedMaskMass a 4489225
+        (-120736053) + (-weightedMaskMass a 4719681 (-120736053) + weightedMaskMass a 4489236
+        (-239857632))) + (-weightedMaskMass a 4719636 (-239857632) + (weightedMaskMass a 4489240
+        (-162785421) + -weightedMaskMass a 4719684 (-162785421))))) + (((weightedMaskMass a 4491272
+        (113394222) + (-weightedMaskMass a 5507104 (113394222) + weightedMaskMass a 4505600
+        (86389790))) + (-weightedMaskMass a 4736000 (86389790) + (weightedMaskMass a 4505601
+        (-83590859) + -weightedMaskMass a 4736001 (-83590859)))) + ((weightedMaskMass a 4505604
+        (-119876439) + (-weightedMaskMass a 4736016 (-119876439) + weightedMaskMass a 4505608
+        (-15827094))) + (-weightedMaskMass a 4736064 (-15827094) + (weightedMaskMass a 4505609
+        (-56537170) + -weightedMaskMass a 4736065 (-56537170)))))) + ((((weightedMaskMass a 4505616
+        (-387746007) + (-weightedMaskMass a 4736004 (-387746007) + weightedMaskMass a 4505620
+        (638064904))) + (-weightedMaskMass a 4736020 (638064904) + (weightedMaskMass a 4505624
+        (374809555) + -weightedMaskMass a 4736068 (374809555)))) + ((weightedMaskMass a 4723776
+        (55712557) + (-weightedMaskMass a 5505060 (55712557) + weightedMaskMass a 4751369
+        (-94952655))) + (-weightedMaskMass a 4751425 (-94952655) + (weightedMaskMass a 4751384
+        (-35363714) + -weightedMaskMass a 4751428 (-35363714))))) + (((weightedMaskMass a 4767748
+        (68926203) + (-weightedMaskMass a 4767760 (68926203) + weightedMaskMass a 4767752
+        (-43222421))) + (-weightedMaskMass a 4767808 (-43222421) + (weightedMaskMass a 4767753
+        (7062562) + -weightedMaskMass a 4767809 (7062562)))) + ((weightedMaskMass a 4767768
+        (138658897) + (-weightedMaskMass a 4767812 (138658897) + weightedMaskMass a 5505064
+        (-102603613))) + (-weightedMaskMass a 5537800 (-102603613) + (weightedMaskMass a 5507112
+        (169269087) + -weightedMaskMass a 5539848 (169269087))))))) := by
       simp only [atomCongruenceContributionInt23, weightedMaskMass, Int.cast_add, Int.cast_neg,
-        Int.cast_ite, Int.cast_ofNat, Int.cast_negSucc, mul_add, mul_neg,
+        Int.cast_ite, Int.cast_ofNat, mul_add, mul_neg,
         Finset.sum_add_distrib, Finset.sum_neg_distrib]
     _ = 0 := by
-      rw [h000, h001, h002, h003, h004, h005, h006, h007, h008, h009, h010, h011, h012, h013, h014, h015, h016, h017, h018, h019, h020, h021, h022, h023]
+      rw [h000, h001, h002, h003, h004, h005, h006, h007, h008, h009, h010, h011, h012, h013, h014,
+          h015, h016, h017, h018, h019, h020, h021, h022, h023]
       ring
 
 end Erdos232

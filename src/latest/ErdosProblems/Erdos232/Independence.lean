@@ -7,7 +7,7 @@ import ErdosProblems.Erdos232.CombinatorialInt
 
 namespace Erdos232
 
-@[simp] theorem bitVec_zero_eq (s : BitVec 0) : s = 0#0 :=
+theorem bitVec_zero_eq (s : BitVec 0) : s = 0#0 :=
   Subsingleton.elim _ _
 
 /-- A mask is independent precisely when it contains no unit-distance edge of the

@@ -207,7 +207,8 @@ theorem CompactCertificate.coefficientTargetNat_mem (C : CompactCertificate)
         besselDerivative r ((C.center : ℝ) * dualDistance j)) ∈ C.coefficientTarget ⟨r, hr⟩ := by
       rw [sum_fin27_blocks]
       exact mem_of_rationalIntervalSubset hc hm0
-    simpa [CompactCertificate.coefficientCheck, CompactCertificate.coefficientTargetNat, hr] using hm
+    simpa [CompactCertificate.coefficientCheck, CompactCertificate.coefficientTargetNat, hr]
+      using hm
   · simpa [CompactCertificate.coefficientTargetNat, CompactCertificate.coefficient, hr] using
       mem_intervalFinSumHull fun j => C.coefficientTerm_mem hstate r j
 

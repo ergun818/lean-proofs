@@ -45,7 +45,7 @@ private theorem opposite_im_of_three_centres (z w z₀ w₀ : ℂ)
   exact eq_neg_of_add_eq_zero_left ((mul_eq_zero.mp hprod).resolve_right hw₀)
 
 private theorem affine_of_normalized_eq (p q pa qa pb qb : ℂ)
-    (hp : pb - pa ≠ 0) (hq : qb - qa ≠ 0)
+    (hq : qb - qa ≠ 0)
     (h : (q - qa) / (qb - qa) = (p - pa) / (pb - pa)) :
     q = (qb - qa) / (pb - pa) * p +
       (qa - (qb - qa) / (pb - pa) * pa) := by
@@ -82,7 +82,7 @@ theorem exists_complex_rigid_of_normSq_eq
     simp only [Bool.false_eq_true, if_false, one_mul]
     rw [hp i, hq i]
     ring
-  · push_neg at hp
+  · push Not at hp
     obtain ⟨b, hb⟩ := hp
     have hpba : p b - p a ≠ 0 := sub_ne_zero.mpr hb
     have hqba : q b - q a ≠ 0 := by
@@ -106,8 +106,8 @@ theorem exists_complex_rigid_of_normSq_eq
     have hPQ (i j : Fin m) :
         Complex.normSq (P i - P j) = Complex.normSq (Q i - Q j) := by
       rw [hPsub, hQsub, Complex.normSq_div, Complex.normSq_div, h i j, hden]
-    have hPa : P a = 0 := by simp [P, hpba]
-    have hQa : Q a = 0 := by simp [Q, hqba]
+    have hPa : P a = 0 := by simp [P]
+    have hQa : Q a = 0 := by simp [Q]
     have hPb : P b = 1 := by simp [P, hpba]
     have hQb : Q b = 1 := by simp [Q, hqba]
     have hcoordinates (i : Fin m) :
@@ -135,8 +135,8 @@ theorem exists_complex_rigid_of_normSq_eq
         have hi := hPQeq i
         dsimp only [P, Q] at hi
         exact affine_of_normalized_eq (p i) (q i) (p a) (q a) (p b) (q b)
-          hpba hqba hi
-    · push_neg at hline
+          hqba hi
+    · push Not at hline
       obtain ⟨k, hk⟩ := hline
       have hkcases : (P k).im = (Q k).im ∨ (P k).im = -(Q k).im := by
         exact (sq_eq_sq_iff_eq_or_eq_neg).mp (hcoordinates k).2
@@ -158,7 +158,7 @@ theorem exists_complex_rigid_of_normSq_eq
           have hi := hPQeq i
           dsimp only [P, Q] at hi
           exact affine_of_normalized_eq (p i) (q i) (p a) (q a) (p b) (q b)
-            hpba hqba hi
+            hqba hi
       · have hPQconj : ∀ i, Q i = conj (P i) := by
           intro i
           apply Complex.ext
@@ -182,24 +182,19 @@ theorem exists_complex_rigid_of_normSq_eq
             calc
               _ = conj ((p i - p a) / (p b - p a)) := hi
               _ = _ := by rw [RCLike.conj_div, map_sub, map_sub]
-          have hpba' : conj (p b) - conj (p a) ≠ 0 := by
-            intro hz
-            apply hpba
-            apply Complex.normSq_eq_zero.mp
-            rw [← Complex.normSq_conj, show conj (p b - p a) = 0 by
-              simpa only [map_sub] using hz, Complex.normSq_zero]
           have hrigid : q i = (q b - q a) / (conj (p b) - conj (p a)) * conj (p i) +
               (q a - (q b - q a) / (conj (p b) - conj (p a)) * conj (p a)) :=
             affine_of_normalized_eq (conj (p i)) (q i) (conj (p a)) (q a)
-              (conj (p b)) (q b) hpba' hqba hi'
+              (conj (p b)) (q b) hqba hi'
           simpa only [map_sub] using hrigid
 
-/-- Fintype-indexed form of `exists_complex_rigid_of_normSq_eq`. -/
+/-- Finite-indexed form of `exists_complex_rigid_of_normSq_eq`. -/
 theorem exists_complex_rigid_of_fintype_normSq_eq
-    {ι : Type*} [Fintype ι] [Nonempty ι] (p q : ι → ℂ)
+    {ι : Type*} [Finite ι] [Nonempty ι] (p q : ι → ℂ)
     (h : ∀ i j, Complex.normSq (p i - p j) = Complex.normSq (q i - q j)) :
     ∃ reflected : Bool, ∃ u c : ℂ, Complex.normSq u = 1 ∧
       ∀ i, q i = u * (if reflected then conj (p i) else p i) + c := by
+  let := Fintype.ofFinite ι
   let e : Fin (Fintype.card ι) ≃ ι := (Fintype.equivFin ι).symm
   have hcard : 0 < Fintype.card ι := Fintype.card_pos
   obtain ⟨reflected, u, c, hu, hrigid⟩ :=

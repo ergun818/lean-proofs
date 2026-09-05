@@ -268,7 +268,7 @@ theorem maskEvent_eq_preimage_rigidSampleMap
     maskEvent (sampleAssignment S L Tref) n =
       rigidSampleMap L φ c ⁻¹' maskEvent (sampleAssignment S L Sref) m := by
   ext ω
-  simp only [maskEvent, mem_setOf_eq, mem_preimage, sampleAssignment,
+  simp only [maskEvent, mem_ofPred_eq, mem_preimage, sampleAssignment,
     decide_eq_true_eq]
   constructor
   · intro h i hi
@@ -339,7 +339,8 @@ theorem maskMass_torusAtomMass_eq_of_congruent
           (measurable_sampleAssignment hS L (!reflected)) m).nullMeasurableSet
   rw [maskMass_torusAtomMass hS L m hm, maskMass_torusAtomMass hS L n hn,
     hfalse, htrue]
-  cases reflected <;> simp <;> ring
+  cases reflected <;> simp
+  ring
 
 end
 

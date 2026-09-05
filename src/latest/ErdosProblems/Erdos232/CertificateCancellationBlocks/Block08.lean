@@ -312,12 +312,117 @@ theorem congruenceBlock08_expectation_zero
       weightedMaskMass a 1310728 (14187751) := by
     rw [weightedMaskMass_eq, weightedMaskMass_eq, hmass (41216, 1310728, 14187751) (by decide)]
   calc
-    (∑ s, a s * (atomCongruenceContributionInt08 s.val : ℝ)) = (((((((weightedMaskMass a 32836 (143241969) + (-weightedMaskMass a 132608 (143241969) + weightedMaskMass a 32836 (-41819812))) + (-weightedMaskMass a 393728 (-41819812) + (weightedMaskMass a 32836 (-103425970) + -weightedMaskMass a 524312 (-103425970)))) + ((weightedMaskMass a 32836 (20643385) + (-weightedMaskMass a 3145744 (20643385) + weightedMaskMass a 32961 (-84686719))) + (-weightedMaskMass a 37056 (-84686719) + (weightedMaskMass a 32962 (-62755972) + -weightedMaskMass a 35008 (-62755972))))) + (((weightedMaskMass a 32964 (-17325644) + (-weightedMaskMass a 98496 (-17325644) + weightedMaskMass a 33032 (28300802))) + (-weightedMaskMass a 135296 (28300802) + (weightedMaskMass a 33032 (-22596851) + -weightedMaskMass a 212992 (-22596851)))) + ((weightedMaskMass a 33040 (-42918810) + (-weightedMaskMass a 200704 (-42918810) + weightedMaskMass a 33042 (24528811))) + ((-weightedMaskMass a 35088 (24528811) + weightedMaskMass a 33042 (38536410)) + (-weightedMaskMass a 200736 (38536410) + weightedMaskMass a 33044 (-22266047)))))) + ((((-weightedMaskMass a 49424 (-22266047) + (weightedMaskMass a 33044 (52951681) + -weightedMaskMass a 200706 (52951681))) + (weightedMaskMass a 33044 (88654953) + (-weightedMaskMass a 200768 (88654953) + weightedMaskMass a 33044 (-70070135)))) + ((-weightedMaskMass a 1081616 (-70070135) + (weightedMaskMass a 33048 (0) + -weightedMaskMass a 200832 (0))) + (weightedMaskMass a 33048 (51362600) + (-weightedMaskMass a 217088 (51362600) + weightedMaskMass a 34825 (-55372211))))) + (((-weightedMaskMass a 2244640 (-55372211) + (weightedMaskMass a 671745 (-99313404) + -weightedMaskMass a 2097316 (-99313404))) + (weightedMaskMass a 671745 (-42832888) + (-weightedMaskMass a 2752576 (-42832888) + weightedMaskMass a 34836 (-6954135)))) + ((-weightedMaskMass a 132164 (-6954135) + (weightedMaskMass a 34836 (-149807171) + -weightedMaskMass a 197636 (-149807171))) + ((weightedMaskMass a 34836 (232229622) + -weightedMaskMass a 559108 (232229622)) + (weightedMaskMass a 34836 (-139481929) + -weightedMaskMass a 1048850 (-139481929))))))) + (((((weightedMaskMass a 34836 (-12922608) + (-weightedMaskMass a 5767680 (-12922608) + weightedMaskMass a 34840 (-65597170))) + (-weightedMaskMass a 151584 (-65597170) + (weightedMaskMass a 34840 (-850326) + -weightedMaskMass a 196740 (-850326)))) + ((weightedMaskMass a 34881 (1225337) + (-weightedMaskMass a 91136 (1225337) + weightedMaskMass a 34884 (-58252250))) + (-weightedMaskMass a 132612 (-58252250) + (weightedMaskMass a 34884 (13904685) + -weightedMaskMass a 3145746 (13904685))))) + (((weightedMaskMass a 35080 (-1589008) + (-weightedMaskMass a 213024 (-1589008) + weightedMaskMass a 35092 (20048265))) + (-weightedMaskMass a 1081618 (20048265) + (weightedMaskMass a 35096 (38360774) + -weightedMaskMass a 217120 (38360774)))) + ((weightedMaskMass a 36865 (10368978) + (-weightedMaskMass a 73744 (10368978) + weightedMaskMass a 36865 (738330))) + ((-weightedMaskMass a 4200448 (738330) + weightedMaskMass a 36866 (85518675)) + (-weightedMaskMass a 73760 (85518675) + weightedMaskMass a 36866 (-14071683)))))) + ((((-weightedMaskMass a 262660 (-14071683) + (weightedMaskMass a 36866 (-98851701) + -weightedMaskMass a 589840 (-98851701))) + (weightedMaskMass a 36866 (88070402) + (-weightedMaskMass a 1056784 (88070402) + weightedMaskMass a 36866 (-34644159)))) + ((-weightedMaskMass a 1572865 (-34644159) + (weightedMaskMass a 36866 (-36198983) + -weightedMaskMass a 2129924 (-36198983))) + (weightedMaskMass a 36866 (-57688974) + (-weightedMaskMass a 2228232 (-57688974) + weightedMaskMass a 36868 (109912946))))) + (((-weightedMaskMass a 73792 (109912946) + (weightedMaskMass a 36868 (-15865947) + -weightedMaskMass a 294916 (-15865947))) + (weightedMaskMass a 36868 (-18810878) + (-weightedMaskMass a 525328 (-18810878) + weightedMaskMass a 36868 (-90529031)))) + ((-weightedMaskMass a 2229248 (-90529031) + (weightedMaskMass a 36868 (-31548085) + -weightedMaskMass a 4198402 (-31548085))) + ((weightedMaskMass a 36929 (-30422801) + -weightedMaskMass a 36993 (-30422801)) + (weightedMaskMass a 36929 (19745894) + -weightedMaskMass a 90128 (19745894)))))))) + ((((((weightedMaskMass a 36930 (6199660) + (-weightedMaskMass a 1073168 (6199660) + weightedMaskMass a 36930 (47005696))) + (-weightedMaskMass a 2228744 (47005696) + (weightedMaskMass a 36930 (-38509091) + -weightedMaskMass a 3178500 (-38509091)))) + ((weightedMaskMass a 36932 (18669119) + (-weightedMaskMass a 2229760 (18669119) + weightedMaskMass a 37120 (-51141936))) + (-weightedMaskMass a 77824 (-51141936) + (weightedMaskMass a 37120 (-25092057) + -weightedMaskMass a 4329472 (-25092057))))) + (((weightedMaskMass a 37122 (24131443) + (-weightedMaskMass a 77856 (24131443) + weightedMaskMass a 37124 (41563185))) + (-weightedMaskMass a 77888 (41563185) + (weightedMaskMass a 37124 (40559202) + -weightedMaskMass a 4329474 (40559202)))) + ((weightedMaskMass a 38913 (31494903) + (-weightedMaskMass a 74768 (31494903) + weightedMaskMass a 38913 (-131840926))) + ((-weightedMaskMass a 561153 (-131840926) + weightedMaskMass a 38913 (43545730)) + (-weightedMaskMass a 4233216 (43545730) + weightedMaskMass a 38916 (83148194)))))) + ((((-weightedMaskMass a 296964 (83148194) + (weightedMaskMass a 38916 (-74716175) + -weightedMaskMass a 2229252 (-74716175))) + (weightedMaskMass a 38920 (443058) + (-weightedMaskMass a 2228356 (443058) + weightedMaskMass a 38977 (4030904)))) + ((-weightedMaskMass a 91152 (4030904) + (weightedMaskMass a 38980 (42102447) + -weightedMaskMass a 2229764 (42102447))) + (weightedMaskMass a 40960 (37021901) + (-weightedMaskMass a 163840 (37021901) + weightedMaskMass a 40960 (67730521))))) + (((-weightedMaskMass a 262272 (67730521) + (weightedMaskMass a 40960 (12329801) + -weightedMaskMass a 524416 (12329801))) + (weightedMaskMass a 40960 (-46248223) + (-weightedMaskMass a 1052672 (-46248223) + weightedMaskMass a 40960 (56859856)))) + ((-weightedMaskMass a 1310720 (56859856) + (weightedMaskMass a 40960 (-18000002) + -weightedMaskMass a 4194312 (-18000002))) + ((weightedMaskMass a 40960 (-151247873) + -weightedMaskMass a 4194368 (-151247873)) + (weightedMaskMass a 40961 (-822759) + -weightedMaskMass a 1052673 (-822759))))))) + (((((weightedMaskMass a 40961 (18886271) + (-weightedMaskMass a 2260992 (18886271) + weightedMaskMass a 40961 (7293476))) + (-weightedMaskMass a 4196416 (7293476) + (weightedMaskMass a 40962 (111494839) + -weightedMaskMass a 589952 (111494839)))) + ((weightedMaskMass a 40962 (-13131065) + (-weightedMaskMass a 1310721 (-13131065) + weightedMaskMass a 40964 (-55564846))) + (-weightedMaskMass a 163844 (-55564846) + (weightedMaskMass a 40964 (50610847) + -weightedMaskMass a 1052674 (50610847))))) + (((weightedMaskMass a 40964 (8462574) + (-weightedMaskMass a 1310736 (8462574) + weightedMaskMass a 40964 (-19012570))) + (-weightedMaskMass a 1311232 (-19012570) + (weightedMaskMass a 40964 (94649820) + -weightedMaskMass a 1572992 (94649820)))) + ((weightedMaskMass a 40964 (-3708889) + (-weightedMaskMass a 1576960 (-3708889) + weightedMaskMass a 40968 (-26798352))) + ((-weightedMaskMass a 180224 (-26798352) + weightedMaskMass a 40968 (-1509546)) + (-weightedMaskMass a 262304 (-1509546) + weightedMaskMass a 40968 (101934195)))))) + ((((-weightedMaskMass a 540800 (101934195) + (weightedMaskMass a 40968 (-49157495) + -weightedMaskMass a 1310752 (-49157495))) + (weightedMaskMass a 40968 (84898071) + (-weightedMaskMass a 4227080 (84898071) + weightedMaskMass a 40968 (-88881112)))) + ((-weightedMaskMass a 4718656 (-88881112) + (weightedMaskMass a 40969 (-49796559) + -weightedMaskMass a 2277376 (-49796559))) + (weightedMaskMass a 40976 (-30328255) + (-weightedMaskMass a 167936 (-30328255) + weightedMaskMass a 40976 (2496092))))) + (((-weightedMaskMass a 5246976 (2496092) + (weightedMaskMass a 40980 (-42976483) + -weightedMaskMass a 5771264 (-42976483))) + (weightedMaskMass a 40984 (5861069) + (-weightedMaskMass a 184320 (5861069) + weightedMaskMass a 41024 (-104923082)))) + ((-weightedMaskMass a 295040 (-104923082) + (weightedMaskMass a 41216 (-57454958) + -weightedMaskMass a 229376 (-57454958))) + ((weightedMaskMass a 41216 (-30405382) + -weightedMaskMass a 524420 (-30405382)) + (weightedMaskMass a 41216 (14187751) + -weightedMaskMass a 1310728 (14187751))))))))) := by
+    (∑ s, a s * (atomCongruenceContributionInt08 s.val : ℝ)) = (((((((weightedMaskMass a 32836
+        (143241969) + (-weightedMaskMass a 132608 (143241969) + weightedMaskMass a 32836
+        (-41819812))) + (-weightedMaskMass a 393728 (-41819812) + (weightedMaskMass a 32836
+        (-103425970) + -weightedMaskMass a 524312 (-103425970)))) + ((weightedMaskMass a 32836
+        (20643385) + (-weightedMaskMass a 3145744 (20643385) + weightedMaskMass a 32961
+        (-84686719))) + (-weightedMaskMass a 37056 (-84686719) + (weightedMaskMass a 32962
+        (-62755972) + -weightedMaskMass a 35008 (-62755972))))) + (((weightedMaskMass a 32964
+        (-17325644) + (-weightedMaskMass a 98496 (-17325644) + weightedMaskMass a 33032 (28300802)))
+        + (-weightedMaskMass a 135296 (28300802) + (weightedMaskMass a 33032 (-22596851) +
+        -weightedMaskMass a 212992 (-22596851)))) + ((weightedMaskMass a 33040 (-42918810) +
+        (-weightedMaskMass a 200704 (-42918810) + weightedMaskMass a 33042 (24528811))) +
+        ((-weightedMaskMass a 35088 (24528811) + weightedMaskMass a 33042 (38536410)) +
+        (-weightedMaskMass a 200736 (38536410) + weightedMaskMass a 33044 (-22266047)))))) +
+        ((((-weightedMaskMass a 49424 (-22266047) + (weightedMaskMass a 33044 (52951681) +
+        -weightedMaskMass a 200706 (52951681))) + (weightedMaskMass a 33044 (88654953) +
+        (-weightedMaskMass a 200768 (88654953) + weightedMaskMass a 33044 (-70070135)))) +
+        ((-weightedMaskMass a 1081616 (-70070135) + (weightedMaskMass a 33048 (0) +
+        -weightedMaskMass a 200832 (0))) + (weightedMaskMass a 33048 (51362600) + (-weightedMaskMass
+        a 217088 (51362600) + weightedMaskMass a 34825 (-55372211))))) + (((-weightedMaskMass a
+        2244640 (-55372211) + (weightedMaskMass a 671745 (-99313404) + -weightedMaskMass a 2097316
+        (-99313404))) + (weightedMaskMass a 671745 (-42832888) + (-weightedMaskMass a 2752576
+        (-42832888) + weightedMaskMass a 34836 (-6954135)))) + ((-weightedMaskMass a 132164
+        (-6954135) + (weightedMaskMass a 34836 (-149807171) + -weightedMaskMass a 197636
+        (-149807171))) + ((weightedMaskMass a 34836 (232229622) + -weightedMaskMass a 559108
+        (232229622)) + (weightedMaskMass a 34836 (-139481929) + -weightedMaskMass a 1048850
+        (-139481929))))))) + (((((weightedMaskMass a 34836 (-12922608) + (-weightedMaskMass a
+        5767680 (-12922608) + weightedMaskMass a 34840 (-65597170))) + (-weightedMaskMass a 151584
+        (-65597170) + (weightedMaskMass a 34840 (-850326) + -weightedMaskMass a 196740 (-850326))))
+        + ((weightedMaskMass a 34881 (1225337) + (-weightedMaskMass a 91136 (1225337) +
+        weightedMaskMass a 34884 (-58252250))) + (-weightedMaskMass a 132612 (-58252250) +
+        (weightedMaskMass a 34884 (13904685) + -weightedMaskMass a 3145746 (13904685))))) +
+        (((weightedMaskMass a 35080 (-1589008) + (-weightedMaskMass a 213024 (-1589008) +
+        weightedMaskMass a 35092 (20048265))) + (-weightedMaskMass a 1081618 (20048265) +
+        (weightedMaskMass a 35096 (38360774) + -weightedMaskMass a 217120 (38360774)))) +
+        ((weightedMaskMass a 36865 (10368978) + (-weightedMaskMass a 73744 (10368978) +
+        weightedMaskMass a 36865 (738330))) + ((-weightedMaskMass a 4200448 (738330) +
+        weightedMaskMass a 36866 (85518675)) + (-weightedMaskMass a 73760 (85518675) +
+        weightedMaskMass a 36866 (-14071683)))))) + ((((-weightedMaskMass a 262660 (-14071683) +
+        (weightedMaskMass a 36866 (-98851701) + -weightedMaskMass a 589840 (-98851701))) +
+        (weightedMaskMass a 36866 (88070402) + (-weightedMaskMass a 1056784 (88070402) +
+        weightedMaskMass a 36866 (-34644159)))) + ((-weightedMaskMass a 1572865 (-34644159) +
+        (weightedMaskMass a 36866 (-36198983) + -weightedMaskMass a 2129924 (-36198983))) +
+        (weightedMaskMass a 36866 (-57688974) + (-weightedMaskMass a 2228232 (-57688974) +
+        weightedMaskMass a 36868 (109912946))))) + (((-weightedMaskMass a 73792 (109912946) +
+        (weightedMaskMass a 36868 (-15865947) + -weightedMaskMass a 294916 (-15865947))) +
+        (weightedMaskMass a 36868 (-18810878) + (-weightedMaskMass a 525328 (-18810878) +
+        weightedMaskMass a 36868 (-90529031)))) + ((-weightedMaskMass a 2229248 (-90529031) +
+        (weightedMaskMass a 36868 (-31548085) + -weightedMaskMass a 4198402 (-31548085))) +
+        ((weightedMaskMass a 36929 (-30422801) + -weightedMaskMass a 36993 (-30422801)) +
+        (weightedMaskMass a 36929 (19745894) + -weightedMaskMass a 90128 (19745894)))))))) +
+        ((((((weightedMaskMass a 36930 (6199660) + (-weightedMaskMass a 1073168 (6199660) +
+        weightedMaskMass a 36930 (47005696))) + (-weightedMaskMass a 2228744 (47005696) +
+        (weightedMaskMass a 36930 (-38509091) + -weightedMaskMass a 3178500 (-38509091)))) +
+        ((weightedMaskMass a 36932 (18669119) + (-weightedMaskMass a 2229760 (18669119) +
+        weightedMaskMass a 37120 (-51141936))) + (-weightedMaskMass a 77824 (-51141936) +
+        (weightedMaskMass a 37120 (-25092057) + -weightedMaskMass a 4329472 (-25092057))))) +
+        (((weightedMaskMass a 37122 (24131443) + (-weightedMaskMass a 77856 (24131443) +
+        weightedMaskMass a 37124 (41563185))) + (-weightedMaskMass a 77888 (41563185) +
+        (weightedMaskMass a 37124 (40559202) + -weightedMaskMass a 4329474 (40559202)))) +
+        ((weightedMaskMass a 38913 (31494903) + (-weightedMaskMass a 74768 (31494903) +
+        weightedMaskMass a 38913 (-131840926))) + ((-weightedMaskMass a 561153 (-131840926) +
+        weightedMaskMass a 38913 (43545730)) + (-weightedMaskMass a 4233216 (43545730) +
+        weightedMaskMass a 38916 (83148194)))))) + ((((-weightedMaskMass a 296964 (83148194) +
+        (weightedMaskMass a 38916 (-74716175) + -weightedMaskMass a 2229252 (-74716175))) +
+        (weightedMaskMass a 38920 (443058) + (-weightedMaskMass a 2228356 (443058) +
+        weightedMaskMass a 38977 (4030904)))) + ((-weightedMaskMass a 91152 (4030904) +
+        (weightedMaskMass a 38980 (42102447) + -weightedMaskMass a 2229764 (42102447))) +
+        (weightedMaskMass a 40960 (37021901) + (-weightedMaskMass a 163840 (37021901) +
+        weightedMaskMass a 40960 (67730521))))) + (((-weightedMaskMass a 262272 (67730521) +
+        (weightedMaskMass a 40960 (12329801) + -weightedMaskMass a 524416 (12329801))) +
+        (weightedMaskMass a 40960 (-46248223) + (-weightedMaskMass a 1052672 (-46248223) +
+        weightedMaskMass a 40960 (56859856)))) + ((-weightedMaskMass a 1310720 (56859856) +
+        (weightedMaskMass a 40960 (-18000002) + -weightedMaskMass a 4194312 (-18000002))) +
+        ((weightedMaskMass a 40960 (-151247873) + -weightedMaskMass a 4194368 (-151247873)) +
+        (weightedMaskMass a 40961 (-822759) + -weightedMaskMass a 1052673 (-822759))))))) +
+        (((((weightedMaskMass a 40961 (18886271) + (-weightedMaskMass a 2260992 (18886271) +
+        weightedMaskMass a 40961 (7293476))) + (-weightedMaskMass a 4196416 (7293476) +
+        (weightedMaskMass a 40962 (111494839) + -weightedMaskMass a 589952 (111494839)))) +
+        ((weightedMaskMass a 40962 (-13131065) + (-weightedMaskMass a 1310721 (-13131065) +
+        weightedMaskMass a 40964 (-55564846))) + (-weightedMaskMass a 163844 (-55564846) +
+        (weightedMaskMass a 40964 (50610847) + -weightedMaskMass a 1052674 (50610847))))) +
+        (((weightedMaskMass a 40964 (8462574) + (-weightedMaskMass a 1310736 (8462574) +
+        weightedMaskMass a 40964 (-19012570))) + (-weightedMaskMass a 1311232 (-19012570) +
+        (weightedMaskMass a 40964 (94649820) + -weightedMaskMass a 1572992 (94649820)))) +
+        ((weightedMaskMass a 40964 (-3708889) + (-weightedMaskMass a 1576960 (-3708889) +
+        weightedMaskMass a 40968 (-26798352))) + ((-weightedMaskMass a 180224 (-26798352) +
+        weightedMaskMass a 40968 (-1509546)) + (-weightedMaskMass a 262304 (-1509546) +
+        weightedMaskMass a 40968 (101934195)))))) + ((((-weightedMaskMass a 540800 (101934195) +
+        (weightedMaskMass a 40968 (-49157495) + -weightedMaskMass a 1310752 (-49157495))) +
+        (weightedMaskMass a 40968 (84898071) + (-weightedMaskMass a 4227080 (84898071) +
+        weightedMaskMass a 40968 (-88881112)))) + ((-weightedMaskMass a 4718656 (-88881112) +
+        (weightedMaskMass a 40969 (-49796559) + -weightedMaskMass a 2277376 (-49796559))) +
+        (weightedMaskMass a 40976 (-30328255) + (-weightedMaskMass a 167936 (-30328255) +
+        weightedMaskMass a 40976 (2496092))))) + (((-weightedMaskMass a 5246976 (2496092) +
+        (weightedMaskMass a 40980 (-42976483) + -weightedMaskMass a 5771264 (-42976483))) +
+        (weightedMaskMass a 40984 (5861069) + (-weightedMaskMass a 184320 (5861069) +
+        weightedMaskMass a 41024 (-104923082)))) + ((-weightedMaskMass a 295040 (-104923082) +
+        (weightedMaskMass a 41216 (-57454958) + -weightedMaskMass a 229376 (-57454958))) +
+        ((weightedMaskMass a 41216 (-30405382) + -weightedMaskMass a 524420 (-30405382)) +
+        (weightedMaskMass a 41216 (14187751) + -weightedMaskMass a 1310728 (14187751))))))))) := by
       simp only [atomCongruenceContributionInt08, weightedMaskMass, Int.cast_add, Int.cast_neg,
-        Int.cast_ite, Int.cast_ofNat, Int.cast_negSucc, mul_add, mul_neg,
+        Int.cast_ite, Int.cast_ofNat, mul_add, mul_neg,
         Finset.sum_add_distrib, Finset.sum_neg_distrib]
     _ = 0 := by
-      rw [h000, h001, h002, h003, h004, h005, h006, h007, h008, h009, h010, h011, h012, h013, h014, h015, h016, h017, h018, h019, h020, h021, h022, h023, h024, h025, h026, h027, h028, h029, h030, h031, h032, h033, h034, h035, h036, h037, h038, h039, h040, h041, h042, h043, h044, h045, h046, h047, h048, h049, h050, h051, h052, h053, h054, h055, h056, h057, h058, h059, h060, h061, h062, h063, h064, h065, h066, h067, h068, h069, h070, h071, h072, h073, h074, h075, h076, h077, h078, h079, h080, h081, h082, h083, h084, h085, h086, h087, h088, h089, h090, h091, h092, h093, h094, h095, h096, h097, h098, h099]
+      rw [h000, h001, h002, h003, h004, h005, h006, h007, h008, h009, h010, h011, h012, h013, h014,
+          h015, h016, h017, h018, h019, h020, h021, h022, h023, h024, h025, h026, h027, h028, h029,
+          h030, h031, h032, h033, h034, h035, h036, h037, h038, h039, h040, h041, h042, h043, h044,
+          h045, h046, h047, h048, h049, h050, h051, h052, h053, h054, h055, h056, h057, h058, h059,
+          h060, h061, h062, h063, h064, h065, h066, h067, h068, h069, h070, h071, h072, h073, h074,
+          h075, h076, h077, h078, h079, h080, h081, h082, h083, h084, h085, h086, h087, h088, h089,
+          h090, h091, h092, h093, h094, h095, h096, h097, h098, h099]
       ring
 
 end Erdos232
