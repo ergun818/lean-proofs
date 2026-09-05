@@ -84,13 +84,13 @@ theorem translated_restrictedSumsets_disjoint_of_admissible
       mem_translateFinset.mp hzB
     have hmem := fixed_subset_sum_add_mem_restrictedSumset
       hVA hBA hBV hz
-    convert hmem using 1 <;> ring
+    convert hmem using 1; ring
   have hzC' : z ∈ restrictedSumset (C.card + s) A := by
     have hz : z - (∑ x ∈ C, x) ∈ restrictedSumset s V :=
       mem_translateFinset.mp hzC
     have hmem := fixed_subset_sum_add_mem_restrictedSumset
       hVA hCA hCV hz
-    convert hmem using 1 <;> ring
+    convert hmem using 1; ring
   exact (Finset.disjoint_left.mp (hA hr hs hne)) hzB' hzC'
 
 /-! ## The two corrected pigeonhole comparisons -/

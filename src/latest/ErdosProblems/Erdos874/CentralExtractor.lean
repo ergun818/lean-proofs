@@ -275,10 +275,8 @@ private theorem restrictedSumset_modEq_mul
     Int.ModEq (q : ℤ) z ((r : ℤ) * b) := by
   obtain ⟨R, hRB, hRcard, hRsum⟩ := mem_restrictedSumset.mp hz
   have hsum := Int.ModEq.sum (s := R) (f := fun x : ℤ ↦ x)
-    (g := fun _x : ℤ ↦ b) (fun x hx ↦ by
-      rw [Int.modEq_iff_dvd]
-      rw [← neg_sub]
-      exact dvd_neg.mpr (hdiv x (hRB hx) b hb))
+    (g := fun _x : ℤ ↦ b) (fun x hx ↦
+      (Int.modEq_iff_dvd.mpr (hdiv x (hRB hx) b hb)).symm)
   rw [← hRsum]
   simpa [Finset.sum_const, hRcard, nsmul_eq_mul] using hsum
 
@@ -333,9 +331,9 @@ paragraph of DF99, Theorem 3. -/
 theorem two_restricted_layers_card_le_of_not_modEq
     {A B : Finset ℤ} {q s : ℕ} {a b : ℤ}
     (hBA : B ⊆ A) (ha : a ∈ A) (hb : b ∈ B)
-    (hq : 0 < q) (hdiv : IsDifferenceDivisor q B)
+    (_hq : 0 < q) (hdiv : IsDifferenceDivisor q B)
     (hamis : ¬ Int.ModEq (q : ℤ) a b)
-    (hs : 1 ≤ s) (hsB : s ≤ B.card) :
+    (hs : 1 ≤ s) (_hsB : s ≤ B.card) :
     (restrictedSumset s B).card +
         (restrictedSumset (s - 1) B).card ≤
       (restrictedSumset s A).card := by
@@ -372,7 +370,7 @@ theorem two_restricted_layers_card_le_of_not_modEq
     have hza : Int.ModEq (q : ℤ) z
         (a + ((s - 1 : ℕ) : ℤ) * b) := by
       have := (Int.ModEq.refl a).add hzYmod
-      convert this using 1 <;> ring
+      convert this using 1; ring
     have hend : Int.ModEq (q : ℤ) ((s : ℤ) * b)
         (a + ((s - 1 : ℕ) : ℤ) * b) := hzXmod.symm.trans hza
     apply hamis
@@ -568,7 +566,7 @@ continuing with exact `q`-steps after its last member.  The extension is used
 only because `central_pair_bound_simplified` has a total gap hypothesis; all
 indices occurring in its endpoint sums remain inside the original set. -/
 def stepExtendedEntry (B : Finset ℤ) (q i : ℕ) : ℤ :=
-  if hi : i < B.card then roughEntry B i
+  if _hi : i < B.card then roughEntry B i
   else roughEntry B (B.card - 1) + (q : ℤ) * (i - B.card + 1)
 
 @[simp] theorem stepExtendedEntry_of_lt {B : Finset ℤ} {q i : ℕ}
@@ -714,7 +712,7 @@ theorem LargeSetStructure.central_pair_after_reinsertion
       have hidx₁ : A.card - B.card + t < A.card := by omega
       rcases Nat.eq_or_lt_of_le (show A.card - B.card + t ≤ u by
         dsimp [u]; omega) with heq | hlt
-      · simpa [heq]
+      · simp [heq]
       · exact (orderedEntry_strict hlt huIndex).le
     rw [show roughEntry B t = orderedEntry B t by
       simp [roughEntry, orderedEntry, htB]]
@@ -1417,7 +1415,6 @@ theorem centralBlock_hasLocalDensity
     have hTcast : ((T - 1 + R : ℕ) : ℤ) =
         (K : ℤ) - 2 * (u : ℤ) - 1 + (R : ℤ) := by
       dsimp [T]
-      push_cast
       omega
     have hq0 : (q : ℤ) ≠ 0 := by exact_mod_cast (Nat.ne_of_gt hq)
     apply mul_left_cancel₀ hq0
@@ -1586,7 +1583,7 @@ theorem OrderedCentralBlock.terminal_disjoint_central
 /-- Quantitative width between the first and last `s` sums of a central
 block. -/
 theorem central_endpoint_width
-    {a : ℕ → ℤ} {K q u T s : ℕ} (hq : 0 < q)
+    {a : ℕ → ℤ} {K q u T s : ℕ} (_hq : 0 < q)
     (hKT : K = 2 * u + T) (hsT : s ≤ T)
     (hsep : QSeparated a K q) :
     (q : ℤ) * (s : ℤ) * ((T - s : ℕ) : ℤ) ≤
@@ -1740,7 +1737,7 @@ theorem symmetricSecondDensityComparison_of_orderedCentralBlock
     have hraw := (hshiftY.add hmYmod).sub hshiftX
     have hraw' : Int.ModEq (D.q : ℤ) (shiftY + mY - shiftX)
         (((s + D.q : ℕ) : ℤ) * D.a D.u) := by
-      convert hraw using 1 <;> push_cast <;> ring
+      convert hraw using 1; push_cast; ring
     exact hraw'.trans hdrop
   have hcrossY : Int.ModEq (D.q : ℤ)
       (shiftX + mX - shiftY)
@@ -1748,7 +1745,7 @@ theorem symmetricSecondDensityComparison_of_orderedCentralBlock
     have hraw := (hshiftX.add hmXmod).sub hshiftY
     have hraw' : Int.ModEq (D.q : ℤ) (shiftX + mX - shiftY)
         ((s : ℤ) * D.a D.u) := by
-      convert hraw using 1 <;> push_cast <;> ring
+      convert hraw using 1; ring
     exact hraw'.trans hdrop.symm
   have hforwardMod : Int.ModEq (D.q : ℤ)
       (shiftX + MX) (shiftY + mY) := by
@@ -2009,14 +2006,14 @@ theorem densityEndgameData_of_orderedCentralBlock
     have hraw := (hshiftY.add hmYmod).sub hshiftX
     have hraw' : Int.ModEq (D.q : ℤ) (shiftY + mY - shiftX)
         (((s + D.q : ℕ) : ℤ) * D.a D.u) := by
-      convert hraw using 1 <;> push_cast <;> ring
+      convert hraw using 1; push_cast; ring
     exact hraw'.trans hdrop
   have hleftMod : Int.ModEq (D.q : ℤ) (shiftX + MX)
       (((D.u + s : ℕ) : ℤ) * D.a D.u) := by
-    convert hshiftX.add hMXmod using 1 <;> push_cast <;> ring
+    convert hshiftX.add hMXmod using 1; push_cast; ring
   have hrightMod : Int.ModEq (D.q : ℤ) (shiftY + mY)
       (((D.u + s + D.q : ℕ) : ℤ) * D.a D.u) := by
-    convert hshiftY.add hmYmod using 1 <;> push_cast <;> ring
+    convert hshiftY.add hmYmod using 1; push_cast; ring
   have hLRmod : Int.ModEq (D.q : ℤ) (shiftX + MX) (shiftY + mY) := by
     apply hleftMod.trans
     apply (Int.ModEq.trans ?_ hrightMod.symm)
@@ -2219,7 +2216,7 @@ eventual filter wrapper so that the dependent threshold application is checked
 in a small finite context. -/
 private theorem extractedCentralBlock_of_bounds
     {N : ℕ} {A : Finset ℤ} (D : OrderedCentralBlock N A)
-    (hA : IsBoundedAdmissible N A) (hNpos : 1 ≤ N)
+    (_hA : IsBoundedAdmissible N A) (hNpos : 1 ≤ N)
     (hKlower : 2 * Real.sqrt N - 2 ≤ (A.card : ℝ))
     (hdivD : IsDifferenceDivisor D.q A)
     (huBoundD : (D.u : ℝ) ≤
@@ -2338,7 +2335,7 @@ theorem eventually_extractedCentralBlock
     simpa [t, w] using dfCentralWindow_cast_lt_add_one N
   have hCpow : (S.exceptional.card : ℝ) ≤ 100000 * p := by
     dsimp [p]
-    convert S.exceptional_card_le using 1 <;> norm_num
+    convert S.exceptional_card_le using 1; norm_num
   rcases hscaleN with ⟨-, hshortScale, hpw, hwindow⟩
   have hpw' : 100010 * p ≤ w := by
     dsimp [p, w]

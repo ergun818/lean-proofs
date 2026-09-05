@@ -28,7 +28,7 @@ private lemma affine_injective {u c : ℤ} (hu : u ≠ 0) :
   apply mul_left_cancel₀ hu
   exact add_right_cancel hxy
 
-private lemma image_affinePullback {u c : ℤ} {A B : Finset ℤ} (hu : u ≠ 0)
+private lemma image_affinePullback {u c : ℤ} {A B : Finset ℤ} (_hu : u ≠ 0)
     (hB : B ⊆ A.image fun x ↦ u * x + c) :
     (affinePullback u c A B).image (fun x ↦ u * x + c) = B := by
   apply Finset.Subset.antisymm
@@ -209,15 +209,15 @@ private lemma chainIndex_lt {n r q s j : ℕ} (hrn : r ≤ n) (hq : q < r)
   unfold chainIndex
   split_ifs <;> omega
 
-private lemma chainIndex_strictMono {n r q s : ℕ} (hrn : r ≤ n) (hq : q < r)
+private lemma chainIndex_strictMono {n r q s : ℕ} (_hrn : r ≤ n) (_hq : q < r)
     (hs : s < n - r) : StrictMono fun j : Fin r ↦ chainIndex n r q s j := by
   intro i j hij
   simp only [chainIndex]
   split_ifs <;> omega
 
 private lemma chainIndex_le_of_lex {n r q₁ q₂ s₁ s₂ j : ℕ}
-    (hrn : r ≤ n) (hq₁ : q₁ < r) (hq₂ : q₂ < r)
-    (hs₁ : s₁ < n - r) (hs₂ : s₂ < n - r) (hj : j < r)
+    (_hrn : r ≤ n) (hq₁ : q₁ < r) (hq₂ : q₂ < r)
+    (hs₁ : s₁ < n - r) (hs₂ : s₂ < n - r) (_hj : j < r)
     (hlex : q₁ < q₂ ∨ q₁ = q₂ ∧ s₁ ≤ s₂) :
     chainIndex n r q₁ s₁ j ≤ chainIndex n r q₂ s₂ j := by
   have hd : 0 < n - r := by omega
@@ -225,7 +225,7 @@ private lemma chainIndex_le_of_lex {n r q₁ q₂ s₁ s₂ j : ℕ}
   split_ifs <;> omega
 
 private lemma chainIndex_exists_lt_of_lex {n r q₁ q₂ s₁ s₂ : ℕ}
-    (hrn : r ≤ n) (hq₁ : q₁ < r) (hq₂ : q₂ < r)
+    (_hrn : r ≤ n) (hq₁ : q₁ < r) (hq₂ : q₂ < r)
     (hs₁ : s₁ < n - r) (hs₂ : s₂ < n - r)
     (hlex : q₁ < q₂ ∨ q₁ = q₂ ∧ s₁ < s₂) :
     ∃ j : Fin r, chainIndex n r q₁ s₁ j < chainIndex n r q₂ s₂ j := by
@@ -277,7 +277,7 @@ private lemma chainValueAt_injective {n r : ℕ} (a : Fin n ↪o ℤ) (hrn : r �
     rcases lt_trichotomy s₁ s₂ with hs | hs | hs
     · exact ((chainValue_lt_of_lex a hrn h₁.1 h₂.1 h₁.2 h₂.2
         (Or.inr ⟨rfl, hs⟩)).ne heq).elim
-    · simpa [hs]
+    · simp [hs]
     · exact ((chainValue_lt_of_lex a hrn h₂.1 h₁.1 h₂.2 h₁.2
         (Or.inr ⟨rfl, hs⟩)).ne heq.symm).elim
   · exact ((chainValue_lt_of_lex a hrn h₂.1 h₁.1 h₂.2 h₁.2
@@ -320,13 +320,13 @@ private lemma chainValue_mem_restrictedSumset {A : Finset ℤ} {r : ℕ} (hr : r
 private def terminalValue {n r : ℕ} (a : Fin n → ℤ) (hrn : r ≤ n) : ℤ :=
   ∑ j : Fin r, a ⟨n - r + j, by omega⟩
 
-private lemma chainIndex_le_terminal {n r q s j : ℕ} (hrn : r ≤ n) (hq : q < r)
-    (hs : s < n - r) (hj : j < r) : chainIndex n r q s j ≤ n - r + j := by
+private lemma chainIndex_le_terminal {n r q s j : ℕ} (_hrn : r ≤ n) (_hq : q < r)
+    (hs : s < n - r) (_hj : j < r) : chainIndex n r q s j ≤ n - r + j := by
   unfold chainIndex
   split_ifs <;> omega
 
-private lemma chainIndex_lt_terminal_at_pivot {n r q s : ℕ} (hrn : r ≤ n)
-    (hq : q < r) (hs : s < n - r) :
+private lemma chainIndex_lt_terminal_at_pivot {n r q s : ℕ} (_hrn : r ≤ n)
+    (_hq : q < r) (hs : s < n - r) :
     chainIndex n r q s (r - q - 1) < n - r + (r - q - 1) := by
   unfold chainIndex
   split_ifs <;> omega

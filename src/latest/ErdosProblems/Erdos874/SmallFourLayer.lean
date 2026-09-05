@@ -354,7 +354,7 @@ private lemma window_layer_le_boundary (A : Finset ℤ) (s J : ℕ)
     unfold df95Window
     rw [sum_orderedBlock]
     simp only [df95Boundary]
-    simpa [Fin.sum_univ_add, add_assoc]
+    simp [Fin.sum_univ_add, add_assoc]
   dsimp [P, C] at hsplitP hfirst
   dsimp [C] at hsplitC
   rw [hRsum] at hsplitP

@@ -510,7 +510,7 @@ theorem representative_card_mul_le_restricted_layer
       · exact hxD
       · exact (Finset.mem_sdiff.mp (hW hyW)).1
     have hUcard : U.card = W.card + 1 := by
-      simp [U, hxW, Nat.add_comm]
+      simp [U, hxW]
     have hz : a + (q : ℤ) * (i : ℕ) ∈ restrictedSumset t B :=
       ha (mem_arithmeticProgression.mpr ⟨i, i.isLt, rfl⟩)
     have hadd := add_sum_mem_restrictedSumset_of_subset_sdiff hBA hUsub hz
@@ -994,7 +994,7 @@ This is the finite selection step needed by `AlignedBlockSum`: no disjoint
 block family remains as an external hypothesis of the modular constructor. -/
 theorem exists_pairwiseDisjoint_residueBlock_pairs
     {q k F : ℕ} {D : Finset ℤ} {g₀ : ZMod q}
-    (g : Fin k → ZMod q) (hF : 0 < F)
+    (g : Fin k → ZMod q) (_hF : 0 < F)
     (hg_ne : ∀ i, g i ≠ g₀) (hg_inj : Function.Injective g)
     (hbase : k * F ≤ (residueFiber q D g₀).card)
     (hfiber : ∀ i, F ≤ (residueFiber q D (g i)).card) :
@@ -1009,8 +1009,7 @@ theorem exists_pairwiseDisjoint_residueBlock_pairs
     ⟨(i : ℕ) * F + (j : ℕ), by
       have h₁ : (i : ℕ) * F + (j : ℕ) < ((i : ℕ) + 1) * F := by
         have := Nat.add_lt_add_left j.isLt ((i : ℕ) * F)
-        simpa [Nat.add_mul, Nat.add_comm, Nat.add_left_comm,
-          Nat.add_assoc] using this
+        simpa only [Nat.add_mul, one_mul] using this
       have h₂ : ((i : ℕ) + 1) * F ≤ k * F :=
         Nat.mul_le_mul_right F (Nat.succ_le_iff.mpr i.isLt)
       exact h₁.trans_le h₂⟩
@@ -1054,8 +1053,7 @@ theorem exists_pairwiseDisjoint_residueBlock_pairs
         Nat.mul_le_mul_right F hi1j
       have ha_lt : (i : ℕ) * F + (a : ℕ) < ((i : ℕ) + 1) * F := by
         have := Nat.add_lt_add_left a.isLt ((i : ℕ) * F)
-        simpa [Nat.add_mul, Nat.add_comm, Nat.add_left_comm,
-          Nat.add_assoc] using this
+        simpa only [Nat.add_mul, one_mul] using this
       have hb_ge : (j : ℕ) * F ≤ (j : ℕ) * F + (b : ℕ) :=
         Nat.le_add_right _ _
       omega
@@ -1064,8 +1062,7 @@ theorem exists_pairwiseDisjoint_residueBlock_pairs
         Nat.mul_le_mul_right F hj1i
       have hb_lt : (j : ℕ) * F + (b : ℕ) < ((j : ℕ) + 1) * F := by
         have := Nat.add_lt_add_left b.isLt ((j : ℕ) * F)
-        simpa [Nat.add_mul, Nat.add_comm, Nat.add_left_comm,
-          Nat.add_assoc] using this
+        simpa only [Nat.add_mul, one_mul] using this
       have ha_ge : (i : ℕ) * F ≤ (i : ℕ) * F + (a : ℕ) :=
         Nat.le_add_right _ _
       omega
@@ -1196,7 +1193,7 @@ theorem exists_short_richDifference_generator_family
     ext x
     constructor
     · rintro ⟨i, rfl⟩
-      simpa [delta, Lset] using List.get_mem l i
+      simp [delta, Lset]
     · intro hx
       have hxl : x ∈ l := by simpa [Lset] using hx
       obtain ⟨i, hi⟩ := List.mem_iff_get.mp hxl
@@ -1470,7 +1467,7 @@ allowance `R²*N/q+1`; no residue-coverage or progression conclusion is
 assumed. -/
 theorem ContainsAP.combine_richDifferenceSubgroup
     {N q R t L K : ℕ} {A B T : Finset ℤ} {g₀ : ZMod q}
-    (hA : A ⊆ ambient N) (hBA : B ⊆ A) (hT : T ⊆ A \ B)
+    (hA : A ⊆ ambient N) (_hBA : B ⊆ A) (hT : T ⊆ A \ B)
     (hq : 0 < q) (hg₀ : g₀ ∈ richResidues q R (A \ B))
     (hG : (richResidues q R (A \ B)).card < R)
     (hbase : R * R ≤ (residueFiber q T g₀).card)
@@ -2257,7 +2254,7 @@ theorem finite_DF95_modular_structure_aligned
   have hHcard : Nat.card (richDifferenceSubgroup q F D g₀) < R := by
     apply richDifferenceSubgroup_card_lt_of_layer_capacity
       hBA hT₀D hq hg₀ hG
-    · simpa [hT₀base]
+    · simp [hT₀base]
     · exact hT₀otherR
     · exact horders
     · exact hsubgroupEq

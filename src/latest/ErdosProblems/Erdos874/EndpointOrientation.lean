@@ -45,13 +45,13 @@ def mixedOuterSum (a : ℕ → ℤ) (K u t : ℕ) : ℤ :=
 
 private theorem mixedOuterIndex_lt
     {K u t i : ℕ} (hcentral : 2 * u + 1 < K)
-    (ht : t ≤ u) (hi : i < u) : mixedOuterIndex K t i < K := by
+    (_ht : t ≤ u) (hi : i < u) : mixedOuterIndex K t i < K := by
   unfold mixedOuterIndex
   split_ifs <;> omega
 
 private theorem mixedOuterIndex_injective
     {K u t i j : ℕ} (hcentral : 2 * u + 1 < K)
-    (ht : t ≤ u) (hi : i < u) (hj : j < u)
+    (_ht : t ≤ u) (hi : i < u) (hj : j < u)
     (hij : mixedOuterIndex K t i = mixedOuterIndex K t j) : i = j := by
   unfold mixedOuterIndex at hij
   split_ifs at hij <;> omega
@@ -241,7 +241,7 @@ theorem endpoint_order_of_mixed_shift_crossing
       (G + mY - F t) % q = residue % q := by
     have h' : Int.ModEq q (G + mY - F t) residue := by
       convert ((Int.ModEq.refl G).add hmY).sub (common_mod t htu.le)
-        using 1 <;> ring
+        using 1; ring
     exact h'
   have forward_align : q ∣ (F t + MX) - (G + mY) := by
     have hmod : Int.ModEq q (F t + MX) (G + mY) :=
@@ -256,7 +256,7 @@ theorem endpoint_order_of_mixed_shift_crossing
       (F (t + 1) + mX - G) % q = residue % q := by
     have h' : Int.ModEq q (F (t + 1) + mX - G) residue := by
       convert ((common_mod (t + 1) (by omega)).add hmX).sub
-        (Int.ModEq.refl G) using 1 <;> ring
+        (Int.ModEq.refl G) using 1; ring
     exact h'
   have reverse_align : q ∣ (G + MY) - (F (t + 1) + mX) := by
     exact Int.modEq_iff_dvd.mp
@@ -334,7 +334,6 @@ theorem OrderedCentralBlock.left_endpoints_ordered_of_orientation_scale
     dsimp [residue]
     rw [Int.modEq_iff_dvd]
     refine ⟨-(D.a D.u), ?_⟩
-    push_cast
     ring
   have hdensityY : HasLocalDensity Y mY MY residue
       (D.q : ℤ) D.R := by

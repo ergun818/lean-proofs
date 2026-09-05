@@ -371,12 +371,13 @@ theorem quotientWindow_mono_of_increment_mono_on
 /-- Abstract summation over disjoint residue supports.  This is the exact
 step that removes a spurious factor equal to the number of residue chains. -/
 theorem sum_chainCosts_le_two_mul_card
-    {R : Type*} [DecidableEq R] (rs : Finset R) (cost : R → ℕ)
+    {R : Type*} (rs : Finset R) (cost : R → ℕ)
     (support : R → Finset ℤ) (U : Finset ℤ)
     (hcost : ∀ r ∈ rs, cost r ≤ 2 * (support r).card)
     (hdis : (↑rs : Set R).PairwiseDisjoint support)
     (hsub : rs.biUnion support ⊆ U) :
     ∑ r ∈ rs, cost r ≤ 2 * U.card := by
+  classical
   calc
     ∑ r ∈ rs, cost r ≤ ∑ r ∈ rs, 2 * (support r).card :=
       Finset.sum_le_sum fun r hr => hcost r hr
@@ -391,7 +392,7 @@ at its sign crossing in every residue chain, supplying `left r` and
 consecutive gaps in those lists.  Pairwise disjoint residue supports remove
 the factor `o`. -/
 theorem sum_window_truncatedDisplacement_le_two_mul_card
-    {ι R : Type*} [DecidableEq ι] [DecidableEq R]
+    {ι R : Type*}
     (E : Finset ι) (D : ι → ℕ) (rs : Finset R)
     (c : R → ℤ) {q : ℤ} (left right : R → List ℤ)
     (L : ℕ) (support : R → Finset ℤ) (U : Finset ℤ) (hq : q ≠ 0)
@@ -406,6 +407,7 @@ theorem sum_window_truncatedDisplacement_le_two_mul_card
     (hdis : (↑rs : Set R).PairwiseDisjoint support)
     (hsub : rs.biUnion support ⊆ U) :
     ∑ i ∈ E, min (D i) L ≤ 2 * U.card := by
+  classical
   refine haccount.trans (sum_chainCosts_le_two_mul_card rs
     (fun r => truncatedGapSum L (left r) + truncatedGapSum L (right r))
     support U ?_ hdis hsub)
@@ -414,10 +416,11 @@ theorem sum_window_truncatedDisplacement_le_two_mul_card
     (hleft r hr) (hright r hr) (hsubLeft r hr) (hsubRight r hr)
 
 /-- Finite averaging in the multiplication form convenient over naturals. -/
-theorem exists_card_mul_le_of_sum_le {ι : Type*} [DecidableEq ι]
+theorem exists_card_mul_le_of_sum_le {ι : Type*}
     {E : Finset ι} {g : ι → ℕ} {B : ℕ} (hE : E.Nonempty)
     (hsum : ∑ i ∈ E, g i ≤ B) :
     ∃ i ∈ E, E.card * g i ≤ B := by
+  classical
   by_contra hn
   have h : ∀ i ∈ E, B < E.card * g i := by
     intro i hi
@@ -439,11 +442,12 @@ theorem exists_card_mul_le_of_sum_le {ι : Type*} [DecidableEq ι]
 /-- Pigeonhole the truncated sum, and use the strict capacity margin to
 show that the selected displacement was not truncated. -/
 theorem exists_small_displacement_of_sum_min_le
-    {ι : Type*} [DecidableEq ι] (E : Finset ι) (D : ι → ℕ)
+    {ι : Type*} (E : Finset ι) (D : ι → ℕ)
     {G L C : ℕ} (hG : G ≤ E.card) (hGpos : 0 < G)
     (hsum : ∑ i ∈ E, min (D i) L ≤ 2 * C)
     (hmargin : 2 * C < G * L) :
     ∃ i ∈ E, D i < L ∧ G * D i ≤ 2 * C := by
+  classical
   have hE : E.Nonempty := Finset.card_pos.mp (hGpos.trans_le hG)
   let values := E.image D
   have hvalues : values.Nonempty := hE.image D
@@ -483,7 +487,7 @@ theorem exists_small_displacement_of_sum_min_le
 /-- Complete range-level conclusion: a convex-chain accounting certificate
 and the capacity margin select an untruncated good window. -/
 theorem exists_small_window_of_disjoint_convex_chains
-    {ι R : Type*} [DecidableEq ι] [DecidableEq R]
+    {ι R : Type*}
     (E : Finset ι) (D : ι → ℕ) (rs : Finset R)
     (c : R → ℤ) {q : ℤ} (left right : R → List ℤ)
     (L G : ℕ) (support : R → Finset ℤ) (U : Finset ℤ) (hq : q ≠ 0)
@@ -499,13 +503,14 @@ theorem exists_small_window_of_disjoint_convex_chains
     (hdis : (↑rs : Set R).PairwiseDisjoint support)
     (hsub : rs.biUnion support ⊆ U) :
     ∃ i ∈ E, D i < L ∧ G * D i ≤ 2 * U.card := by
+  classical
   apply exists_small_displacement_of_sum_min_le E D hG hGpos _ hmargin
   exact sum_window_truncatedDisplacement_le_two_mul_card E D rs c left right L
     support U hq hleft hright hsubLeft hsubRight haccount hdis hsub
 
 /-- The residue-chain accounting plus averaging conclusion. -/
 theorem exists_window_card_mul_gap_le_two_mul_card
-    {ι R : Type*} [DecidableEq ι] [DecidableEq R]
+    {ι R : Type*}
     (E : Finset ι) (gap : ι → ℕ) (rs : Finset R) (cost : R → ℕ)
     (support : R → Finset ℤ) (U : Finset ℤ)
     (hE : E.Nonempty) (hgap : ∑ i ∈ E, gap i ≤ ∑ r ∈ rs, cost r)
@@ -513,6 +518,7 @@ theorem exists_window_card_mul_gap_le_two_mul_card
     (hdis : (↑rs : Set R).PairwiseDisjoint support)
     (hsub : rs.biUnion support ⊆ U) :
     ∃ i ∈ E, E.card * gap i ≤ 2 * U.card := by
+  classical
   apply exists_card_mul_le_of_sum_le hE
   exact hgap.trans (sum_chainCosts_le_two_mul_card rs cost support U hcost hdis hsub)
 
@@ -520,7 +526,7 @@ theorem exists_window_card_mul_gap_le_two_mul_card
 members, one retained window has normalized gap at most `2*C/(T-2*o)` in
 the division-free formulation used in Lean. -/
 theorem exists_window_sub_two_mul_mul_gap_le_two_mul_card
-    {ι R : Type*} [DecidableEq ι] [DecidableEq R]
+    {ι R : Type*}
     (T o : ℕ) (E : Finset ι) (gap : ι → ℕ)
     (rs : Finset R) (cost : R → ℕ) (support : R → Finset ℤ) (U : Finset ℤ)
     (hE : E.Nonempty) (hcard : T - 2 * o ≤ E.card)
@@ -529,6 +535,7 @@ theorem exists_window_sub_two_mul_mul_gap_le_two_mul_card
     (hdis : (↑rs : Set R).PairwiseDisjoint support)
     (hsub : rs.biUnion support ⊆ U) :
     ∃ i ∈ E, (T - 2 * o) * gap i ≤ 2 * U.card := by
+  classical
   obtain ⟨i, hi, hib⟩ := exists_window_card_mul_gap_le_two_mul_card
     E gap rs cost support U hE hgap hcost hdis hsub
   exact ⟨i, hi, (Nat.mul_le_mul_right (gap i) hcard).trans hib⟩
@@ -577,7 +584,7 @@ private theorem bad_window_start_lt
     (haT : a + o ≤ T) (hbT : b + o ≤ T)
     (hinc : ∀ i k : ℕ, i ≤ k → k < T → increment s i ≤ increment s k)
     (ha : ¬ HasUniformIncrementSign s a o)
-    (hb : ¬ HasUniformIncrementSign s b o) (hab : a ≤ b) :
+    (hb : ¬ HasUniformIncrementSign s b o) (_hab : a ≤ b) :
     b < a + (o - 1) := by
   obtain ⟨_haneg, hapos⟩ := endpoint_signs_of_not_uniform ho haT hinc ha
   obtain ⟨hbneg, _hbpos⟩ := endpoint_signs_of_not_uniform ho hbT hinc hb
@@ -664,7 +671,7 @@ theorem mem_valueSegment {w : ℕ → ℤ} {start n : ℕ} {x : ℤ} :
       constructor
       · rintro (rfl | ⟨k, hk, rfl⟩)
         · exact ⟨0, by omega, by simp⟩
-        · exact ⟨k + 1, by omega, by congr 1 <;> omega⟩
+        · exact ⟨k + 1, by omega, by congr 1; omega⟩
       · rintro ⟨k, hk, rfl⟩
         by_cases hk0 : k = 0
         · left
@@ -672,7 +679,7 @@ theorem mem_valueSegment {w : ℕ → ℤ} {start n : ℕ} {x : ℤ} :
           simp
         · right
           obtain ⟨l, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hk0
-          exact ⟨l, by omega, by congr 1 <;> omega⟩
+          exact ⟨l, by omega, by congr 1; omega⟩
 
 theorem truncatedGapSum_valueSegment (w : ℕ → ℤ) (start n L : ℕ) :
     truncatedGapSum L (valueSegment w start n) =
@@ -699,7 +706,7 @@ theorem truncatedGapSum_valueSegment (w : ℕ → ℤ) (start n L : ℕ) :
             apply Finset.sum_congr rfl
             intro i hi
             simp only [f]
-            simp only [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
+            simp only [Nat.add_comm, Nat.add_left_comm]
           rw [hzero, hshift, add_comm]
           exact (Finset.sum_range_succ' f (n + 1)).symm
 
@@ -715,7 +722,8 @@ private theorem pairwise_valueSegment_le
       · intro x hx
         obtain ⟨k, hk, rfl⟩ := mem_valueSegment.mp hx
         have := hmono 0 (k + 1) (by omega) (by omega)
-        convert this using 1 <;> congr 1 <;> omega
+        convert this using 1 <;> congr 1
+        omega
       · apply ih
         intro i j hij hj
         have := hmono (i + 1) (j + 1) (by omega) (by omega)
@@ -733,7 +741,8 @@ private theorem pairwise_valueSegment_ge
       · intro x hx
         obtain ⟨k, hk, rfl⟩ := mem_valueSegment.mp hx
         have := hmono 0 (k + 1) (by omega) (by omega)
-        convert this using 1 <;> congr 1 <;> omega
+        convert this using 1 <;> congr 1
+        omega
       · apply ih
         intro i j hij hj
         have := hmono (i + 1) (j + 1) (by omega) (by omega)
@@ -863,7 +872,7 @@ private theorem blockUnion_valueSegment_subset
   obtain ⟨k, hk, rfl⟩ := mem_valueSegment.mp hv
   refine ⟨w (start + k), ?_, hxv⟩
   apply mem_valueSegment.mpr
-  exact ⟨start + k, by omega, by congr 1 <;> omega⟩
+  exact ⟨start + k, by omega, by congr 1; omega⟩
 
 /-- Automatic convex-valley packing for one residue chain. -/
 theorem sum_truncatedGap_cumulative_le_two_mul_card
@@ -982,7 +991,7 @@ theorem canonicalChainBlocks_subset_of_pointwise
   have hcoord := mul_cumulative_chainQuotient_eq s z T o q hz (r : ℕ) n hjT
   have hmem := hU ((r : ℕ) + n * o) hjT k hkL
   rw [hkcast] at hmem
-  convert hmem using 1 <;> nlinarith
+  convert hmem using 1; nlinarith
 
 /-- The Euclidean residue-chain partition of all `o`-window starts. -/
 private theorem sum_windows_eq_sum_chains
@@ -1007,7 +1016,7 @@ private theorem sum_windows_eq_sum_chains
       rw [Nat.add_mul] at hmul
       have hindex : (r : ℕ) + n * o < T - o + 1 := by omega
       refine Finset.mem_filter.mpr ⟨Finset.mem_range.mpr hindex, ?_⟩
-      simpa [Nat.add_mul_mod_self_right, Nat.mod_eq_of_lt r.isLt]
+      simp [Nat.add_mul_mod_self_right, Nat.mod_eq_of_lt r.isLt]
     · intro j hj
       obtain ⟨hjrange, hjmod⟩ := Finset.mem_filter.mp hj
       have hjlt : j < T - o + 1 := Finset.mem_range.mp hjrange

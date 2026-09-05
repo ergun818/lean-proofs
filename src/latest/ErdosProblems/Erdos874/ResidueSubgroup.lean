@@ -32,13 +32,14 @@ noncomputable section
 attribute [local instance] Classical.propDecidable
 
 private theorem closure_image_exists_bounded_coefficients
-    {I M : Type*} [DecidableEq I] [AddCommGroup M]
+    {I M : Type*} [AddCommGroup M]
     (S : Finset I) (f : I → M)
     (horder : ∀ i ∈ S, 0 < addOrderOf (f i)) {x : M}
     (hx : x ∈ AddSubgroup.closure (f '' (S : Set I))) :
     ∃ c : I → ℕ,
       (∀ i ∈ S, c i < addOrderOf (f i)) ∧
       x = ∑ i ∈ S, c i • f i := by
+  classical
   induction hx using AddSubgroup.closure_induction with
   | mem x hx =>
       obtain ⟨i, hi, rfl⟩ := hx
@@ -511,13 +512,11 @@ theorem ContainsAP.combine_residue_witnesses
     simpa [i, j] using Nat.div_add_mod n h
   have hk_cast : (k : ℤ) = zhi - z j + (i : ℕ) := by
     dsimp [k]
-    push_cast
     rw [Int.toNat_of_nonneg hdiffnonneg]
   have heq :
       a + (q : ℤ) * (k : ℕ) + w j =
         a + c + (q : ℤ) * zhi + (d : ℤ) * (n : ℕ) := by
     rw [hwform j, hk_cast]
-    norm_cast at hn_decomp
     rw [← hn_decomp, hq]
     push_cast
     ring

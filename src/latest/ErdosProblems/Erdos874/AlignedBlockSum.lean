@@ -158,7 +158,7 @@ def combinedBlockWitness {ι : Type*} [Fintype ι]
     (x : ∀ i, H i) : Finset ℤ :=
   Finset.univ.biUnion fun i ↦ (B i).witness (x i)
 
-private lemma combinedBlockWitness_pairwise {ι : Type*} [Fintype ι]
+private lemma combinedBlockWitness_pairwise {ι : Type*}
     {q : ℕ} {T : ι → Finset ℤ} {layer loss : ι → ℕ}
     {H : ι → AddSubgroup (ZMod q)}
     (B : ∀ i, BoundedCosetBlock q (T i) (layer i) (loss i) (H i))

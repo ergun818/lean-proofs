@@ -272,7 +272,7 @@ noncomputable def boundedCosetWitnesses_of_orderedMixed_window
     (hXcard : X.card = F) (hYcard : Y.card = F)
     (hXres : ∀ x ∈ X, (x : ZMod q) = g₀)
     (hYres : ∀ y ∈ Y, (y : ZMod q) = g)
-    (horder : 0 < addOrderOf (g - g₀))
+    (_horder : 0 < addOrderOf (g - g₀))
     (hj : j + addOrderOf (g - g₀) ≤ F)
     (hbetween : ∀ r : Fin (addOrderOf (g - g₀)),
       min (orderedMixedSum X Y F j)
@@ -281,7 +281,7 @@ noncomputable def boundedCosetWitnesses_of_orderedMixed_window
       orderedMixedSum X Y F (j + (r : ℕ)) ≤
         max (orderedMixedSum X Y F j)
           (orderedMixedSum X Y F (j + addOrderOf (g - g₀))))
-    (hwidth :
+    (_hwidth :
       (orderedMixedSum X Y F (j + addOrderOf (g - g₀)) -
         orderedMixedSum X Y F j).natAbs ≤ q * Z) :
     BoundedCosetWitnesses q F (X ∪ Y)
@@ -638,11 +638,12 @@ packing estimate.  Keeping it independent of the way the candidates were
 constructed makes all rounding in the later `N^(1/4)` specialization
 explicit. -/
 theorem exists_small_displacement_of_sum_min_le
-    {ι : Type*} [DecidableEq ι] (good : Finset ι) (D : ι → ℕ)
+    {ι : Type*} (good : Finset ι) (D : ι → ℕ)
     {G L C : ℕ} (hG : G ≤ good.card) (hGpos : 0 < G)
     (hsum : ∑ i ∈ good, min (D i) L ≤ 2 * C)
     (hmargin : 2 * C < G * L) :
     ∃ i ∈ good, D i < L ∧ G * D i ≤ 2 * C := by
+  classical
   have hgood : good.Nonempty := Finset.card_pos.mp (hGpos.trans_le hG)
   let values := good.image D
   have hvalues : values.Nonempty := hgood.image D

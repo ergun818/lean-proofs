@@ -32,7 +32,7 @@ noncomputable section
 /-- Every fixed nonnegative multiple of `N^a` is eventually at most `N^b`
 when `a < b`. -/
 theorem eventually_const_mul_rpow_le_rpow
-    {a b C : ℝ} (hab : a < b) (hC : 0 ≤ C) :
+    {a b C : ℝ} (hab : a < b) (_hC : 0 ≤ C) :
     ∀ᶠ N : ℕ in atTop,
       C * (N : ℝ) ^ a ≤ (N : ℝ) ^ b := by
   have hdelta : 0 < b - a := sub_pos.mpr hab
@@ -53,7 +53,7 @@ theorem eventually_const_mul_rpow_le_rpow
 
 /-- Strict form of `eventually_const_mul_rpow_le_rpow`. -/
 theorem eventually_const_mul_rpow_lt_rpow
-    {a b C : ℝ} (hab : a < b) (hC : 0 ≤ C) :
+    {a b C : ℝ} (hab : a < b) (_hC : 0 ≤ C) :
     ∀ᶠ N : ℕ in atTop,
       C * (N : ℝ) ^ a < (N : ℝ) ^ b := by
   have hdelta : 0 < b - a := sub_pos.mpr hab
@@ -122,7 +122,7 @@ least half the square-root scale, the quadratic endpoint inequality and the
 near-extremal cardinality lower bound force both `q` and the deficit
 `√N-k` into the same explicit error scale. -/
 theorem central_q_k_error
-    {N k q : ℕ} {E : ℝ} (hE : 0 ≤ E)
+    {N k q : ℕ} {E : ℝ} (_hE : 0 ≤ E)
     (hkhalf : Real.sqrt N / 2 ≤ (k : ℝ))
     (hnear : 2 * Real.sqrt N - E ≤ 2 * (k : ℝ) + q)
     (hquad : (k : ℝ) ^ 2 + 2 * (k : ℝ) * q < N) :
@@ -298,7 +298,6 @@ theorem eventually_dfResidueScale_cast_ge :
   filter_upwards [hlarge] with N hN
   have hfloor := Nat.lt_floor_add_one ((N : ℝ) ^ ((1 : ℝ) / 6))
   dsimp [dfResidueScale]
-  push_cast at hfloor
   linarith
 
 /-- The central truncation floor is eventually at least `2.9 N^(5/12)`. -/
@@ -1283,7 +1282,7 @@ theorem central_orientation_signed_gap_int
   rw [Nat.cast_sub hN] at hgapCast
   have hRcast :
       2 * (R : ℤ) - 1 ≤ ((2 * R - 1 : ℕ) : ℤ) := by
-    cases R <;> simp <;> omega
+    cases R <;> simp
   have hscaled := mul_le_mul_of_nonneg_right hRcast
     (show (0 : ℤ) ≤ q by positivity)
   push_cast at hgapCast
@@ -1320,7 +1319,6 @@ theorem eventually_df_repeated_long_capacity :
   have hfloor := Nat.lt_floor_add_one y
   have hT : (7 : ℝ) / 2 * q ≤ (T : ℝ) := by
     dsimp [T]
-    push_cast at hfloor
     nlinarith
   have hprod : (63 : ℝ) / 20 * (N : ℝ) ≤
       (dfResidueScale N : ℝ) * (T : ℝ) := by
@@ -1333,7 +1331,6 @@ theorem eventually_df_repeated_long_capacity :
   have htarget : (2 * N + 1 : ℕ) ≤ dfResidueScale N * T := by
     exact_mod_cast (show (2 * N + 1 : ℝ) ≤
         (dfResidueScale N : ℝ) * (T : ℝ) by
-      push_cast
       have : (1 : ℝ) ≤ N := by exact_mod_cast hN
       nlinarith)
   simpa [T, y] using htarget
@@ -1522,7 +1519,6 @@ theorem eventually_df_rich_scales_le_large_window :
           dfResidueScale N ^ 2 : ℕ) : ℝ) ≤
         Real.sqrt N + 20001 * p := by
     push_cast
-    norm_num at hL ⊢
     nlinarith
   have hlt :
       ((dfBlockSize N + dfResidueScale N ^ 3 +
@@ -1549,7 +1545,6 @@ theorem eventually_dfBlockSize_le_div_large_window :
   have hL := dfBlockSize_cast_le N
   have hmul : 2000 * dfBlockSize N ≤ K := by
     have hmulreal : (2000 : ℝ) * (dfBlockSize N : ℝ) < K := by
-      push_cast
       calc
         (2000 : ℝ) * dfBlockSize N ≤
             40000000 * (N : ℝ) ^ ((5 : ℝ) / 12) := by nlinarith
@@ -1656,7 +1651,6 @@ theorem df95_layer_capacity_of_large_window
     have hdiv : K < 10 * (K / 10 + 1) := by omega
     dsimp [X, A, a]
     have hdivR : (K : ℝ) < 10 * ((K / 10 : ℕ) + 1) := by exact_mod_cast hdiv
-    push_cast at hdivR
     linarith
   have hAle : A ≤ X / 10 := by
     have hdiv : 10 * (K / 10) ≤ K := by omega
@@ -1668,13 +1662,11 @@ theorem df95_layer_capacity_of_large_window
     dsimp [X, B, b]
     have hdivR : (3 : ℝ) * K < 4 * ((3 * K / 4 : ℕ) + 1) := by
       exact_mod_cast hdiv
-    push_cast at hdivR
     linarith
   have hBhi : B ≤ 3 * X / 4 + 1 := by
     have hdiv : 4 * (3 * K / 4) ≤ 3 * K := by omega
     dsimp [X, B, b]
     have hdivR : (4 : ℝ) * (3 * K / 4 : ℕ) ≤ 3 * K := by exact_mod_cast hdiv
-    push_cast at hdivR
     linarith
   have hmonoA : weightPrefix X A ≤ weightPrefix X (X / 10) :=
     weightPrefix_mono_df_range (hX.trans' (by norm_num)) hAlo hAle (by nlinarith)

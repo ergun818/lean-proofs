@@ -284,7 +284,7 @@ theorem exists_full_block_of_few_holes (S : Finset ℤ) (a : ℤ) (R L : ℕ)
     intro i hi j hj hij
     have hilt : i < R + 1 := Finset.mem_range.mp hi
     have hjlt : j < R + 1 := Finset.mem_range.mp hj
-    simp [f, show i ≤ R by omega, show j ≤ R by omega] at hij
+    simp only [f, dif_pos hilt, dif_pos hjlt] at hij
     have hiBlock := holeInBlock_mem S a L i (h i hilt)
     have hjBlock := holeInBlock_mem S a L j (h j hjlt)
     simp only [Finset.mem_Ico] at hiBlock hjBlock

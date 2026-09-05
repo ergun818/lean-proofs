@@ -146,7 +146,7 @@ lemma card_pathHoles_le_pathExcess : ∀ p : List ℤ,
           exact Nat.add_le_add_left (by simpa using ih) _
 
 lemma mem_toFinset_or_pathHoles_of_between : ∀ {x y : ℤ} {xs : List ℤ} {z : ℤ},
-    (x :: y :: xs).Pairwise (.<.) →
+    (x :: y :: xs).Pairwise (· < ·) →
       x ≤ z → z ≤ (x :: y :: xs).getLast (by simp) →
       z ∈ (x :: y :: xs).toFinset ∨ z ∈ pathHoles (x :: y :: xs) := by
   intro x y xs
@@ -158,7 +158,7 @@ lemma mem_toFinset_or_pathHoles_of_between : ∀ {x y : ℤ} {xs : List ℤ} {z 
         · left
           simp [hzx]
         · right
-          simp [pathHoles]
+          simp only [pathHoles, Finset.union_empty, Finset.mem_Ioo]
           exact ⟨by omega, hzy⟩
       · left
         have hzy' : z = y := by
@@ -187,7 +187,7 @@ lemma mem_toFinset_or_pathHoles_of_between : ∀ {x y : ℤ} {xs : List ℤ} {z 
 /-- Every missing integer between the endpoints of a strictly increasing path
 is charged to a skipped integer of that path. -/
 lemma interval_sdiff_subset_pathHoles {x y : ℤ} {xs : List ℤ}
-    (hp : (x :: y :: xs).Pairwise (.<.))
+    (hp : (x :: y :: xs).Pairwise (· < ·))
     {S : Finset ℤ} (hpath : ∀ z ∈ (x :: y :: xs), z ∈ S) :
     Finset.Icc x ((x :: y :: xs).getLast (by simp)) \ S ⊆
       pathHoles (x :: y :: xs) := by
@@ -201,7 +201,7 @@ lemma interval_sdiff_subset_pathHoles {x y : ℤ} {xs : List ℤ}
 
 /-- Cardinal form of `interval_sdiff_subset_pathHoles`. -/
 lemma card_interval_sdiff_le_pathExcess {x y : ℤ} {xs : List ℤ}
-    (hp : (x :: y :: xs).Pairwise (.<.))
+    (hp : (x :: y :: xs).Pairwise (· < ·))
     {S : Finset ℤ} (hpath : ∀ z ∈ (x :: y :: xs), z ∈ S) :
     (Finset.Icc x ((x :: y :: xs).getLast (by simp)) \ S).card ≤
       pathExcess (x :: y :: xs) := by
@@ -216,7 +216,7 @@ theorem hasLocalDensity_one_of_spanning_paths {S : Finset ℤ} {m M residue : �
     {R : ℕ}
     (hpaths : ∀ z : ℤ, m ≤ z → z + (2 * R : ℕ) ≤ M →
       ∃ x y : ℤ, ∃ xs : List ℤ,
-        (x :: y :: xs).Pairwise (.<.) ∧
+        (x :: y :: xs).Pairwise (· < ·) ∧
         x ≤ z ∧ z + (2 * R : ℕ) ≤ (x :: y :: xs).getLast (by simp) ∧
         (∀ w ∈ (x :: y :: xs), w ∈ S) ∧
         pathExcess (x :: y :: xs) ≤ R) :
@@ -242,7 +242,7 @@ theorem hasLocalDensity_one_of_spanning_paths {S : Finset ℤ} {m M residue : �
       push_cast
       ring
     simp [B, hcast]
-    <;> omega
+    omega
   rw [progressionBlock_one_odd_eq_Icc]
   change R + 1 ≤ (B ∩ S).card
   have hpartition := Finset.card_sdiff_add_card_inter B S
@@ -589,7 +589,7 @@ private lemma canonicalDFValue_mem_restrictedSumset
       (canonicalDFIndices_subset_range hj hjk hk hy) hxy
 
 private lemma canonicalDFValue_eq
-    (d : ℕ → ℤ) {L s j k : ℕ} (hj : j < s)
+    (d : ℕ → ℤ) {L s j k : ℕ} (_hj : j < s)
     (hjk : j ≤ k) (hk : k ≤ L + j) :
     canonicalDFValue d L s j k =
       (∑ i ∈ Finset.range j, d i) + d k +
@@ -645,7 +645,7 @@ apart, whereas every edge meeting the target block starts in a window of
 diameter less than `3 * R`. -/
 
 theorem localDensity_of_labeled_path
-    {Edge Label Hole : Type*} [DecidableEq Edge] [DecidableEq Label] [DecidableEq Hole]
+    {Edge Label Hole : Type*}
     (S : Finset ℤ) (H : Finset Hole) (R : ℕ) (y : ℤ)
     (edge : ℤ → Edge) (label : Edge → Label) (start : Edge → ℤ)
     (charge : ℤ → Hole)
@@ -663,6 +663,7 @@ theorem localDensity_of_labeled_path
         edge z = edge w → charge z = charge w → z = w)
     (hH : H.card ≤ R) :
     R + 1 ≤ (Finset.Icc y (y + (2 * R : ℕ)) ∩ S).card := by
+  classical
   let B : Finset ℤ := Finset.Icc y (y + (2 * R : ℕ))
   have hinj : Set.InjOn charge ↑(B \ S) := by
     intro z hz w hw hzw
@@ -820,7 +821,7 @@ lemma cdfValue_mem
     exact hinj (cdfIndices_subset_range hj hjk hk hx)
       (cdfIndices_subset_range hj hjk hk hy) hxy
 
-lemma cdfValue_eq (d : ℕ → ℤ) {L s j k : ℕ} (hj : j < s)
+lemma cdfValue_eq (d : ℕ → ℤ) {L s j k : ℕ} (_hj : j < s)
     (hjk : j ≤ k) (hk : k ≤ L + j) :
     cdfValue d L s j k =
       (∑ i ∈ Finset.range j, d i) + d k +
@@ -1147,7 +1148,7 @@ theorem canonicalDF_localDensity
       omega
     have hd0k : d 0 ≤ d k := by
       by_cases hk0 : k = 0
-      · simpa [hk0]
+      · simp [hk0]
       · exact (hmono (by omega) (by omega)).le
     have hdkLast : d (k + 1) ≤ d (L + s - 1) := by
       by_cases heq : k + 1 = L + s - 1
@@ -1252,7 +1253,6 @@ theorem canonicalDF_localDensity
     change z ∈ Finset.Icc y (y + 2 * R) at hzB
     have hzmem := Finset.mem_Icc.mp hzB
     dsimp [edgeStart] at *
-    push_cast at hgap
     constructor <;> omega
   have hoffset : ∀ z ∈ B \ S, ∀ w ∈ B \ S,
       edge z = edge w → charge z = charge w → z = w := by

@@ -106,7 +106,7 @@ theorem lev_smelianski_self_sum_inductive
     simpa [C] using card_add_natify hBnonneg
   rw [hCcard, hCsum] at hruzsa
   simp only [min_self] at hruzsa
-  convert hruzsa using 1 <;> omega
+  convert hruzsa using 1; omega
 
 /-- The endpoint-normalized form of Freiman's `3k - 4` theorem.  The common
 difference in the resulting progression is the gcd of the differences from

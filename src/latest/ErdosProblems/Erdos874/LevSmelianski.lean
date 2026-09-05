@@ -68,6 +68,6 @@ theorem lev_smelianski_self_sum
   have h := Erdos13Additive.ruzsa_normalized_diameter_bound
     hAIcc hAIcc (le_refl q) hq hA0 hqA hA0 hqA hgcd'
   simp only [Nat.min_self] at h
-  convert h using 1 <;> omega
+  convert h using 1; omega
 
 end Erdos874

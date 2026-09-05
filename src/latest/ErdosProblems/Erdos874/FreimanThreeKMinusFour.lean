@@ -32,9 +32,10 @@ attribute [local instance] Classical.propDecidable
 cardinality defect `|T| - |f(T)|`.  The subtraction-free formulation is the
 one used after reducing an integer sumset modulo its diameter. -/
 theorem card_image_add_card_le_card_add_card_image_of_subset
-    {X Y : Type*} [DecidableEq X] [DecidableEq Y]
+    {X Y : Type*} [DecidableEq Y]
     (f : X → Y) {S T : Finset X} (hST : S ⊆ T) :
     (T.image f).card + S.card ≤ T.card + (S.image f).card := by
+  classical
   have himage : T.image f ⊆ S.image f ∪ (T \ S).image f := by
     intro y hy
     obtain ⟨x, hxT, rfl⟩ := Finset.mem_image.mp hy

@@ -35,10 +35,11 @@ attribute [local instance] Classical.propDecidable
 /-- The total size of pairwise-disjoint finite layers contained in `U` is at
 most `U.card`. -/
 theorem sum_card_le_card_of_pairwiseDisjoint_subset
-    {ι α : Type*} [DecidableEq α] (I : Finset ι) (f : ι → Finset α)
+    {ι α : Type*} (I : Finset ι) (f : ι → Finset α)
     (U : Finset α) (hdisj : (I : Set ι).PairwiseDisjoint f)
     (hsub : ∀ i ∈ I, f i ⊆ U) :
     ∑ i ∈ I, (f i).card ≤ U.card := by
+  classical
   rw [← Finset.card_biUnion hdisj]
   apply Finset.card_le_card
   intro x hx
@@ -50,12 +51,13 @@ theorem sum_card_le_card_of_pairwiseDisjoint_subset
 the ambient capacity is strictly smaller than `d` times the sum of the
 weights, some layer satisfies `c * card < d * weight`. -/
 theorem exists_card_mul_lt_weight_of_pairwiseDisjoint_subset
-    {ι α : Type*} [DecidableEq α] (I : Finset ι) (f : ι → Finset α)
+    {ι α : Type*} (I : Finset ι) (f : ι → Finset α)
     (U : Finset α) (w : ι → ℕ) (c d : ℕ)
     (hdisj : (I : Set ι).PairwiseDisjoint f)
     (hsub : ∀ i ∈ I, f i ⊆ U)
     (hcapacity : c * U.card < d * ∑ i ∈ I, w i) :
     ∃ i ∈ I, c * (f i).card < d * w i := by
+  classical
   by_contra h
   push Not at h
   have hterm : ∀ i ∈ I, d * w i ≤ c * (f i).card := by

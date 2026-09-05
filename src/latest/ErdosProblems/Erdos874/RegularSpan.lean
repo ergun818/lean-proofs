@@ -124,7 +124,7 @@ private lemma orderedBlock_succ
           (⟨offset + (i : ℕ), by omega⟩ : Fin D.card) =
             ⟨offset + length, by omega⟩ := by
         apply Fin.ext
-        simpa [hi]
+        simp [hi]
       exact congrArg (D.orderEmbOfFin rfl) hind
     · apply Finset.mem_insert.mpr
       right
@@ -238,11 +238,11 @@ private lemma sum_endpointMix_succ
           orderedBlock D 0 (T - (j + 1) + 1) (by omega) :=
       orderedBlock_eq_of_length_eq D 0 _ _ (by omega) (by omega) hlowlen
     rw [hb]
-    convert hlow using 1 <;>
-      first
-      | apply proof_irrel_heq
-      | (congr 1; apply congrArg (D.orderEmbOfFin rfl); apply Fin.ext;
-          change T - j - 1 = 0 + (T - (j + 1)); omega)
+    convert hlow using 1
+    first
+    | apply proof_irrel_heq
+    | (congr 1; apply congrArg (D.orderEmbOfFin rfl); apply Fin.ext;
+        change T - j - 1 = 0 + (T - (j + 1)); omega)
   simp only [endpointMix]
   rw [Finset.sum_union hdisj_j, Finset.sum_union hdisj_succ]
   rw [hlow', hhigh]
@@ -250,7 +250,7 @@ private lemma sum_endpointMix_succ
 
 private lemma endpointMix_sum_gap
     (D : Finset ℤ) (T d Δ : ℕ) (h2T : 2 * T ≤ D.card)
-    (hd : 0 < d) (hT : 0 < T) (hΔ :
+    (_hd : 0 < d) (hT : 0 < T) (hΔ :
       D.orderEmbOfFin rfl ⟨D.card - T, by omega⟩ -
           D.orderEmbOfFin rfl ⟨T - 1, by omega⟩ =
         (d : ℤ) * (Δ : ℤ))
@@ -381,7 +381,6 @@ theorem exists_regular_span_after_absorbing_extremes
       rw [Finset.disjoint_left]
       intro x hxW hxE
       exact (Finset.mem_sdiff.mp (hW hxW)).2 hxE
-
     let low : ℤ := D.orderEmbOfFin rfl ⟨T - 1, by omega⟩
     let high : ℤ := D.orderEmbOfFin rfl ⟨D.card - T, by omega⟩
     have hlowD : low ∈ D := D.orderEmbOfFin_mem rfl _
@@ -400,7 +399,6 @@ theorem exists_regular_span_after_absorbing_extremes
       exact Int.toNat_of_nonneg hzpos.le
     have hΔ : high - low = (d : ℤ) * (Δ : ℤ) := by
       simpa [hzcast] using hz
-
     let startsFull : Fin (T + 1) → ℤ := fun j =>
       (∑ x ∈ W, x) + ∑ x ∈ endpointMix D T h2T j, x
     have hstartsSucc : ∀ j : Fin T,
@@ -431,7 +429,6 @@ theorem exists_regular_span_after_absorbing_extremes
         apply Fin.mk_le_mk.mpr
         omega
       exact hadj.trans (hstartsMono hisucc)
-
     obtain ⟨a, ha⟩ := hlong
     have htranslate : ∀ i : Fin T,
         arithmeticProgression (a + starts i) (d : ℤ) (min Δ L) ⊆
@@ -469,12 +466,11 @@ theorem exists_regular_span_after_absorbing_extremes
       have hmin : min U L ≤ min Δ L := min_le_min_right L hUΔ
       have hmul := Nat.mul_le_mul_left T hmin
       omega
-
     let C' := C ∪ E
     have hCC' : C ⊆ C' := Finset.subset_union_left
     have hC'A : C' ⊆ A := by
       apply Finset.union_subset hCA
-      exact hED.trans (by simpa [D] using Finset.sdiff_subset)
+      exact hED.trans Finset.sdiff_subset
     have hC'card : C'.card ≤ C.card + 2 * T := by
       calc
         C'.card ≤ C.card + E.card := by

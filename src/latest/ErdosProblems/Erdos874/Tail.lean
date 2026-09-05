@@ -55,7 +55,7 @@ private def maxPositionSum (k r : ℕ) : ℤ :=
 private lemma minPositionSum_succ (r : ℕ) :
     minPositionSum (r + 1) = minPositionSum r + (r : ℤ) + 1 := by
   simp [minPositionSum, Finset.sum_range_succ]
-  <;> ring
+  ring
 
 @[simp] private lemma maxPositionSum_zero (k : ℕ) : maxPositionSum k 0 = 0 := by
   simp [maxPositionSum]
@@ -63,7 +63,7 @@ private lemma minPositionSum_succ (r : ℕ) :
 private lemma maxPositionSum_succ (k r : ℕ) :
     maxPositionSum k (r + 1) = maxPositionSum k r + (k : ℤ) - r := by
   simp [maxPositionSum, Finset.sum_range_succ]
-  <;> ring
+  ring
 
 private lemma two_mul_minPositionSum (r : ℕ) :
     2 * minPositionSum r = (r : ℤ) * (r + 1) := by
@@ -111,7 +111,6 @@ private lemma adjacent_realization_bridge (k r : ℕ)
   have ha : (0 : ℤ) ≤ (r : ℤ) - 1 := by omega
   have hb : (0 : ℤ) ≤ (k : ℤ) - r - 1 := by omega
   have hab := mul_nonneg ha hb
-  push_cast at h₁ h₂
   nlinarith
 
 /-- Every integer between the sharp minimum and maximum sums is the sum of
@@ -254,7 +253,7 @@ private lemma sum_range_lower_identity (N k r : ℕ) :
     _ = _ := by
       rw [Finset.sum_add_distrib]
       simp [minPositionSum]
-      <;> ring
+      ring
 
 private lemma terminal_sum_lower {N k r : ℕ} {B : Finset ℤ}
     (hB : B ⊆ terminalInterval N k) (hcard : B.card = r) :
@@ -267,7 +266,6 @@ private lemma terminal_sum_lower {N k r : ℕ} {B : Finset ℤ}
   have hsum := Finset.sum_range_le_sum hbound
   rw [hcard, sum_range_lower_identity] at hsum
   have hmin := two_mul_minPositionSum r
-  push_cast at hsum ⊢
   nlinarith
 
 private lemma terminal_sum_upper {N k r : ℕ} {B : Finset ℤ}
@@ -354,12 +352,11 @@ private lemma exists_terminal_collision_of_gap {N k r : ℕ}
       le_rfl (minPositionSum_le_maxPositionSum k (r + 1) hrsucck)
   refine ⟨shiftFinset b P, shiftFinset b Q, ?_, ?_, ?_, ?_, ?_⟩
   · simpa [b] using shiftFinset_subset_terminalInterval (N := N) (k := k) hPsub
-  · simpa [hPcard]
+  · simp [hPcard]
   · simpa [b] using shiftFinset_subset_terminalInterval (N := N) (k := k) hQsub
-  · simpa [hQcard]
+  · simp [hQcard]
   · rw [sum_shiftFinset, sum_shiftFinset, hPcard, hQcard, hPsum, hQsum]
     dsimp [z]
-    push_cast
     ring
 
 /-- Straus's exact criterion for the terminal interval construction. -/
