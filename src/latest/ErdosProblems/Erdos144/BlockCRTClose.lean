@@ -186,7 +186,7 @@ theorem hasCloseDivisors_of_blockGood
 
 /-! ## Exact CRT specialization -/
 
-variable [Fintype κ] [(i : κ) → NeZero (p i)]
+variable [Fintype κ]
 
 /-- The occupied-block theorem specialized to the zero set of the exact CRT
 product model.  This is the form consumed by `CRTModel.crt_zeroSet_good_hasDensity`. -/

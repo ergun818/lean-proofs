@@ -184,7 +184,7 @@ theorem abs_log_primeProduct_sub_le_of_approx
 
 /-! ## CRT zero coordinates -/
 
-variable [Fintype ι] [(i : ι) → NeZero (p i)]
+variable [Fintype ι]
 
 omit [DecidableEq ι] in
 /-- Under the CRT equivalence, coordinate `i` is zero exactly when its
@@ -247,7 +247,7 @@ theorem hasCloseDivisors_of_abs_log_sub_lt_log_two
   · exact ⟨d, e, hd, he, hde, by exact_mod_cast hratio_ed⟩
   · exact ⟨e, d, he, hd, hed, by exact_mod_cast hratio_de⟩
 
-omit [Fintype ι] [∀ i, NeZero (p i)] in
+omit [Fintype ι] in
 /-- Prime-product specialization of the logarithmic bridge. -/
 theorem hasCloseDivisors_of_primeProducts
     (hprime : ∀ i, (p i).Prime) (hinj : Function.Injective p)
