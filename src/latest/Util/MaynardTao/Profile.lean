@@ -89,7 +89,7 @@ theorem hasDerivAt_inverseAffineProfile_of_neg {lam x : ℝ}
 
 theorem slope_inverseAffineProfile_zero_of_neg {lam x : ℝ} (hx : x < 0) :
     slope (inverseAffineProfile lam) 0 x = -lam := by
-  simp [slope, inverseAffineProfile_zero, inverseAffineProfile, hx.le]
+  simp [slope, inverseAffineProfile, hx.le]
   field_simp [hx.ne]
 
 theorem slope_inverseAffineProfile_zero_of_pos {lam x : ℝ}

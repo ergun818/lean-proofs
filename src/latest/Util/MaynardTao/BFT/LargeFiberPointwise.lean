@@ -13,7 +13,7 @@ open scoped ArithmeticFunction.Moebius BigOperators Interval
 
 noncomputable section
 
-variable [P : Parameters] [T : ShiftTuple]
+variable [P : Parameters]
 
 def tupleFiberScalarSum {H : Finset ℕ} (R W : ℕ) (m : H)
     (r : H → ℕ) : ℝ :=
@@ -119,6 +119,7 @@ theorem tupleFiberEndpointIntegral_bounds
   simpa [tupleFiberEndpointIntegral, P, Q, q, s, c] using
     And.intro hlower hupper
 
+omit P in
 theorem largeOuterCutoff_eq_zero_of_bad_endpoint
     {H : Finset ℕ} {R W : ℕ} (m : H) {r : H → ℕ}
     (hr : BoundedGaps.Maynard.IsMaynardDivisorTuple H R W r)
@@ -209,6 +210,7 @@ def largeFiberRelativeError (K C : ℝ) (D R : ℕ) : ℝ :=
   22 * (K + Real.log D +
     (Real.log (Real.log R) + C + 2) + Real.log 2) / Real.log R
 
+omit P in
 theorem largeFiberRelativeError_nonneg
     {K C : ℝ} (hK : 0 < K) (hC : 0 ≤ C)
     {D R : ℕ} (hD : 1 ≤ D) (hlogR : 2 ≤ Real.log R) :
@@ -221,6 +223,7 @@ theorem largeFiberRelativeError_nonneg
   have hlog2 : 0 ≤ Real.log 2 := Real.log_nonneg (by norm_num)
   positivity
 
+omit P in
 theorem two_largeFiberAbelEnvelope_eq_relative
     {K C : ℝ} {D R : ℕ} {H : Finset ℕ} (m : H) (r : H → ℕ)
     (hlogR : Real.log R ≠ 0) :
@@ -231,6 +234,7 @@ theorem two_largeFiberAbelEnvelope_eq_relative
   field_simp [hlogR]
   ring
 
+omit P in
 theorem sq_ge_baseline_sq_sub_error
     {z y A eta b : ℝ}
     (hA : 0 ≤ A) (heta : 0 ≤ eta)

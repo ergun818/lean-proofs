@@ -55,7 +55,8 @@ theorem eventually_progression_excess_pos {q : ℕ} (hq : 0 < q) (v : ℕ → �
   have herr' : Tendsto (fun N : ℕ =>
       progressionS2Error largePowerTuple q (5 / 32) v largeTupleCandidate N /
         tupleMaynardScale largePowerTuple (5 / 32) N) atTop (nhds 0) := by
-    convert herr using 1 <;> norm_num
+    convert herr using 1
+    norm_num
   have hconst : Tendsto (fun _N : ℕ => J / q) atTop (nhds (J / q)) :=
     tendsto_const_nhds
   have hlim := (hconst.add herr').sub (hS1.const_mul rho)
@@ -86,7 +87,8 @@ theorem eventually_progression_excess_pos {q : ℕ} (hq : 0 < q) (v : ℕ → �
         (progressionWeight largePowerTuple q (5 / 32) v largeTupleCandidate N) =
       progressionS2Main largePowerTuple q (5 / 32) v largeTupleCandidate N +
         progressionS2Error largePowerTuple q (5 / 32) v largeTupleCandidate N := by
-    convert hsplit using 1 <;> norm_num
+    convert hsplit using 1
+    norm_num
   filter_upwards [hpositive, hmain, hsplit',
     eventually_progressionS2Main_eq hq largePowerTuple (5 / 32) v largeTupleCandidate,
     eventually_tupleMaynardScale_pos (H := largePowerTuple)

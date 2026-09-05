@@ -13,7 +13,7 @@ open Filter
 
 noncomputable section
 
-variable [P : Parameters] [T : ShiftTuple]
+variable [P : Parameters]
 
 theorem tendsto_normalizedTupleRestrictedCross_zero
     {H : Finset ℕ} {alpha : ℝ} (halpha : 0 < alpha) (m : H) :

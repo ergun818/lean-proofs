@@ -20,7 +20,7 @@ open scoped BigOperators Interval
 
 noncomputable section
 
-variable [P : Parameters] [T : ShiftTuple]
+variable [P : Parameters]
 
 def largeFiberSlope : ℝ := largeA * largeK
 
@@ -95,7 +95,7 @@ theorem hasDerivAt_largeFiberProfile_of_neg {x : ℝ} (hx : x < 0) :
 
 theorem slope_largeFiberProfile_zero_of_neg {x : ℝ} (hx : x < 0) :
     slope largeFiberProfile 0 x = -largeFiberSlope := by
-  simp [slope, largeFiberProfile_zero, largeFiberProfile, hx.le]
+  simp [slope, largeFiberProfile, hx.le]
   field_simp [hx.ne]
 
 theorem slope_largeFiberProfile_zero_of_pos {x : ℝ} (hx : 0 < x) :

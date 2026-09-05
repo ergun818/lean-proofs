@@ -87,7 +87,7 @@ theorem variableShortCandidateIntegral_eq
     (m : Fin K) (t : BoundedGaps.Maynard.maynardFaceIndex K m → ℝ)
     (ht : t ∈ variableGoodRegion q
       (BoundedGaps.Maynard.maynardFaceIndex K m))
-    (hqδ : q + δ ≤ 1) (hδ : 0 ≤ δ) :
+    (hqδ : q + δ ≤ 1) (_ : 0 ≤ δ) :
     (∫ x : ℝ in Set.Icc (0 : ℝ) δ,
       Erdos4.VariableMaynard.candidate K A
         (BoundedGaps.Maynard.maynardInsertCoordinate m x t)) =

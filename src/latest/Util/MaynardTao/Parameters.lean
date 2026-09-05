@@ -346,7 +346,7 @@ theorem logCard_gt_sixteen {m K : ℕ} (hm : 2 ≤ m)
         exact (by norm_num : (27 / 10 : ℝ) < 2.7182818283).trans
           Real.exp_one_gt_d9
       _ = Real.exp 3 := by
-        simpa using (Real.exp_one_pow 3)
+        simp
   have hlog16 : Real.log (16 : ℝ) < 3 :=
     (Real.log_lt_iff_lt_exp (by norm_num)).2 hexp3
   by_contra hnot
@@ -374,7 +374,7 @@ theorem tupleLogMass_lt_six_fifths_logCard
           gcongr
           exact (by norm_num : (27 / 10 : ℝ) < 2.7182818283).trans
             Real.exp_one_gt_d9
-        _ = Real.exp 3 := by simpa using (Real.exp_one_pow 3)
+        _ = Real.exp 3 := by simp
     exact (Real.log_lt_iff_lt_exp (by norm_num)).2 hexp3
   have hexpOne : Real.exp 1 ≤ (16 : ℝ) :=
     (Real.exp_one_lt_three.le).trans (by norm_num)
@@ -411,7 +411,7 @@ theorem tupleLogMass_lt_nineteen_sixteenths_logCard
           gcongr
           exact (by norm_num : (27 / 10 : ℝ) < 2.7182818283).trans
             Real.exp_one_gt_d9
-        _ = Real.exp 3 := by simpa using (Real.exp_one_pow 3)
+        _ = Real.exp 3 := by simp
     exact (Real.log_lt_iff_lt_exp (by norm_num)).2 hexp3
   have hexpOne : Real.exp 1 ≤ (16 : ℝ) :=
     (Real.exp_one_lt_three.le).trans (by norm_num)
@@ -443,7 +443,7 @@ theorem sharpDecay_mul_card_gt_thousand
       _ < Real.exp 1 ^ 16 := by
         gcongr
         exact Real.exp_one_gt_two
-      _ = Real.exp 16 := by simpa using (Real.exp_one_pow 16)
+      _ = Real.exp 16 := by simp
   have hKgt : (1000 : ℝ) < K :=
     hexp16.trans ((Real.lt_log_iff_exp_lt hKR).mp hlogK)
   have hA := sharpDecay_gt_thirty hm h
@@ -479,7 +479,7 @@ theorem sharp_logNumerator_lt
             gcongr
             exact (by norm_num : (27 / 10 : ℝ) < 2.7182818283).trans
               Real.exp_one_gt_d9
-          _ = Real.exp 5 := by simpa using (Real.exp_one_pow 5)
+          _ = Real.exp 5 := by simp
       exact lt_of_pow_lt_pow_left₀ 6 (Real.exp_pos _).le hpow
     exact hfive.trans_le (Real.exp_monotone (by linarith [hL]))
   have hcoef :
@@ -703,7 +703,7 @@ theorem logLogCard_lt_logCard_div_sixteen_add_two
           gcongr
           exact (by norm_num : (27 / 10 : ℝ) < 2.7182818283).trans
             Real.exp_one_gt_d9
-        _ = Real.exp 3 := by simpa using (Real.exp_one_pow 3)
+        _ = Real.exp 3 := by simp
     exact (Real.log_lt_iff_lt_exp (by norm_num)).2 hexp3
   have hquot : 0 < Real.log K / 16 := div_pos hx0 (by norm_num)
   have hlogquot : Real.log (Real.log K / 16) ≤

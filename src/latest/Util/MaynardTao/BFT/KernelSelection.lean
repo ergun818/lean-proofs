@@ -7,7 +7,7 @@ namespace MaynardBFT.Sieve
 
 noncomputable section
 
-variable [P : Parameters] [T : ShiftTuple]
+variable [P : Parameters]
 
 def kernelMargin : ℝ := (99 : ℝ) / 100 * largeFiberLowerCoefficient
 
@@ -40,7 +40,7 @@ theorem fiberLowerCoefficient_gt_explicit :
       ring
     _ < _ := hmul
 
-omit P T in
+omit P in
 theorem explicit_kernel_ratio_lower
     {K : ℕ} (hKpos : 0 < K) {A b : ℝ} (hA : 0 < A) (hb : 0 < b)
     (hbUpper : b < (A * (K : ℝ))⁻¹) :
@@ -99,6 +99,7 @@ theorem positive_sieve_margin {rho : ℝ} (hrho : 0 ≤ rho)
   have hAI := mul_le_mul_of_nonneg_right hA hI.le
   nlinarith
 
+omit P in
 theorem selected_prime_level : BoundedGaps.Maynard.hasPrimeLevel (3 / 8 : ℝ) :=
   BoundedGaps.Maynard.unconditional_bombieriVinogradov (3 / 8)
     (by norm_num) (by norm_num)

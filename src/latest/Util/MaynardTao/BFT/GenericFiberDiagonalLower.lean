@@ -12,7 +12,7 @@ open scoped BigOperators
 
 noncomputable section
 
-variable [P : Parameters] [T : ShiftTuple]
+variable [P : Parameters]
 
 theorem tupleCoordinateFiberSquareDiagonal_lower
     {K C : ℝ} (hK : 0 < K) (hC : 0 ≤ C)

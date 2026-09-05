@@ -16,6 +16,7 @@ noncomputable section
 
 variable [P : Parameters] [T : ShiftTuple]
 
+omit T in
 private theorem restricted_main_term_normalized_eq
     {H : Finset ℕ} {alpha : ℝ} {N : ℕ} (m : H)
     (hN : 0 < N)

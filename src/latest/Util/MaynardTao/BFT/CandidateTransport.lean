@@ -40,6 +40,7 @@ theorem largeTupleReindex_apply (t : largePowerTuple → ℝ) :
   simp [largeTupleReindex, MeasurableEquiv.piCongrLeft,
     Equiv.piCongrLeft_apply]
 
+omit T in
 theorem continuous_largeContinuousG : Continuous largeContinuousG := by
   unfold largeContinuousG
   apply Continuous.inv₀
@@ -49,6 +50,7 @@ theorem continuous_largeContinuousG : Continuous largeContinuousG := by
       mul_nonneg largeA_pos.le (le_max_right _ _)
     linarith
 
+omit T in
 theorem continuous_largeContinuousProduct :
     Continuous largeContinuousProduct := by
   unfold largeContinuousProduct
@@ -57,10 +59,12 @@ theorem continuous_largeContinuousProduct :
       (fun i hi => continuous_largeContinuousG.comp
         (continuous_const.mul (continuous_apply i))))
 
-theorem continuous_reindex {ι κ : Type*} [Fintype ι] [Fintype κ]
+omit P T in
+theorem continuous_reindex {ι κ : Type*}
     (e : ι ≃ κ) : Continuous (fun t : ι → ℝ => fun j => t (e.symm j)) := by
   exact continuous_pi fun j => continuous_apply (e.symm j)
 
+omit P T in
 theorem continuous_scaledCoordinateProduct {ι : Type*} [Fintype ι]
     {g : ℝ → ℝ} (hg : Continuous g) (c : ℝ) :
     Continuous (fun t : ι → ℝ => ∏ i, g (c * t i)) := by
@@ -81,10 +85,12 @@ theorem largeTupleContinuousProduct_eq_reindex
   exact (largeTupleIndexEquiv.symm.prod_comp
     (fun h => largeContinuousG (largeK * t h))).symm
 
+omit T in
 theorem largeContinuousG_eq_largeG {u : ℝ} (hu : 0 ≤ u) :
     largeContinuousG u = largeG u := by
   simp [largeContinuousG, largeG, max_eq_left hu]
 
+omit T in
 theorem largeContinuousProduct_eq_largeProduct_of_mem_cube
     {t : Fin largeK → ℝ}
     (ht : t ∈ BoundedGaps.Maynard.maynardCube largeK) :
@@ -152,6 +158,7 @@ theorem largeTupleContinuousProduct_eq_largeTupleCandidate_of_mem_simplex
   rw [largeCandidate, if_pos hexplicit]
   exact largeContinuousProduct_eq_largeProduct_of_mem_cube hexplicit.1
 
+omit T in
 theorem largeCandidate_eq_largeProduct_of_mem_simplex
     {t : Fin largeK → ℝ}
     (ht : t ∈ BoundedGaps.Maynard.maynardSimplex largeK) :

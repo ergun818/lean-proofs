@@ -154,7 +154,8 @@ theorem abs_tupleRestrictedY_le_transformEnvelopeFor
     simp [tupleRestrictedTransformEnvelopeFor,
       Erdos6.Maynard.tupleRestrictedTransformEnvelope,
       Erdos6.Maynard.maynardModulus,
-      BoundedGaps.Maynard.engelsmaMaynardModulus] <;> ring
+      BoundedGaps.Maynard.engelsmaMaynardModulus]
+  ring
 
 theorem abs_tupleRestrictedCross_le_explicitFor
     {H : Finset ℕ} {alpha : ℝ} {N : ℕ} (m : H)

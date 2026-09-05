@@ -12,7 +12,7 @@ open Filter MeasureTheory Set
 
 noncomputable section
 
-variable [P : Parameters] [T : ShiftTuple]
+variable [P : Parameters]
 
 def largeFiberLowerCoefficient : ℝ :=
   largeShortMass ^ 2 *
@@ -27,6 +27,7 @@ theorem largeFiberLowerCoefficient_pos : 0 < largeFiberLowerCoefficient := by
   exact mul_pos (sq_pos_of_pos hm)
     (mul_pos (by norm_num) (pow_pos largeBaseMass_pos _))
 
+omit P in
 theorem tendsto_largeFiberRelativeError_zero
     {alpha : ℝ} (halpha : 0 < alpha) (K C : ℝ) :
     Tendsto (fun N : ℕ => largeFiberRelativeError K C
@@ -73,6 +74,7 @@ theorem tendsto_largeFiberRelativeError_zero
     ring
   · norm_num
 
+omit P in
 theorem eventually_largeFiber_conditions
     {alpha : ℝ} (halpha : 0 < alpha) :
     ∀ᶠ N : ℕ in atTop,
@@ -98,6 +100,8 @@ theorem eventually_largeFiber_conditions
   filter_upwards [eventually_ge_atTop (N₀ + 1),
       hL.eventually (eventually_ge_atTop 2), he2, he3] with N hN hLN h2 h3
   exact ⟨hN₀ (N - 1) (by omega), hLN, h2, h3⟩
+
+variable [T : ShiftTuple]
 
 theorem eventually_largeCoordinateFiberSquareDiagonal_normalized_gt
     (m : largePowerTuple) {alpha : ℝ} (halpha : 0 < alpha) :
@@ -135,7 +139,8 @@ theorem eventually_largeCoordinateFiberSquareDiagonal_normalized_gt
       atTop (nhds 0) := by
     have he : Tendsto (fun N : ℕ => 2 * eta N + eta N ^ 2)
         atTop (nhds 0) := by
-      convert (heta.const_mul 2).add (heta.pow 2) using 1 <;> norm_num
+      convert (heta.const_mul 2).add (heta.pow 2) using 1
+      norm_num
     simpa using he.mul hB
   have hbracket : Tendsto (fun N : ℕ =>
       largeShortMass ^ 2 * A N - (2 * eta N + eta N ^ 2) * B N)

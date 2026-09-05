@@ -14,8 +14,6 @@ open scoped BigOperators
 
 noncomputable section
 
-variable [P : Parameters] [T : ShiftTuple]
-
 def tupleCoordinateOneSquarePerturbationEnvelope
     (H : Finset ℕ) (R D : ℕ) (m : H) (B : ℝ) : ℝ :=
   2 * (B * BoundedGaps.Maynard.preSievedCoordinateInvTotientMass
@@ -137,6 +135,8 @@ theorem tupleCoordinateOneYDiagonal_eq_explicit
   congr 1
   funext d
   exact BoundedGaps.Maynard.maynardCoefficient_eq_fromYValue _ _ _ _ d
+
+variable [P : Parameters]
 
 theorem abs_tupleCoordinateOneYDiagonal_sub_fiberSquareDiagonal_le
     {H : Finset ℕ} {alpha : ℝ} (N : ℕ) (m : H)

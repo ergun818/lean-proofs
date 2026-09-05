@@ -61,8 +61,8 @@ theorem tupleVariableOuterProfile_nonneg_le_one
 theorem tupleVariableOuterProfile_sq_eq_density
     {H : Finset ℕ} {A : ℝ} {R W : ℕ} (m : H)
     (u : Erdos6.Maynard.tupleOffFace H m → ℕ)
-    (hu : u ∈ BoundedGaps.Maynard.maynardDivisorTupleSupport
-      (Erdos6.Maynard.tupleOffFace H m) R W) (hR : 1 < R) :
+    (_ : u ∈ BoundedGaps.Maynard.maynardDivisorTupleSupport
+      (Erdos6.Maynard.tupleOffFace H m) R W) (_ : 1 < R) :
     tupleVariableOuterProfile A R m
         (Erdos6.Maynard.tupleOffFaceExtension m u) ^ 2 =
       tupleVariableOuterDensity H.card A
@@ -128,7 +128,7 @@ theorem tupleVariableFiberArithmeticScale_eq_outer
 theorem tupleVariableFiberEndpointIntegral_nonneg
     {H : Finset ℕ} {A : ℝ} (hA : 0 < A)
     {R W : ℕ} (m : H) {r : H → ℕ}
-    (hr : BoundedGaps.Maynard.IsMaynardDivisorTuple H R W r)
+    (_ : BoundedGaps.Maynard.IsMaynardDivisorTuple H R W r)
     (hR : 1 < R) :
     0 ≤ tupleVariableFiberEndpointIntegral A R m r := by
   let Q := BoundedGaps.Maynard.maynardS2CoordinateFiberEndpoint R
@@ -209,7 +209,7 @@ theorem variableShortMass_eq_interval_inverseAffineProfile
 
 theorem tupleVariableFiberEndpointIntegral_ge_cutoff_shortMass_of_good_endpoint
     {H : Finset ℕ} {A q0 q1 δ : ℝ} (hA : 0 < A)
-    (hq : q0 < q1) (hδ : 0 < δ) (hslack : q1 + δ < 1)
+    (hq : q0 < q1) (hδ : 0 < δ) (_ : q1 + δ < 1)
     {R W : ℕ} (m : H) {r : H → ℕ}
     (hr : BoundedGaps.Maynard.IsMaynardDivisorTuple H R W r)
     (hR : 1 < R)
@@ -728,7 +728,7 @@ theorem eventually_tupleVariableCoordinateFiberSquareDiagonal_normalized_gt
     {H : Finset ℕ} (hcard2 : 2 ≤ H.card)
     {A q0 q1 δ γ alpha : ℝ} (hA : 0 < A)
     (hq : q0 < q1) (hq1 : q1 < 1) (hδ : 0 < δ)
-    (hslack : q1 + δ < 1) (hγ : 0 < γ)
+    (hslack : q1 + δ < 1) (_ : 0 < γ)
     (m : H) (halpha : 0 < alpha)
     (hgood : γ * Erdos4.VariableMaynard.baseMass H.card A ^
         Fintype.card (Erdos6.Maynard.tupleOffFace H m) <
@@ -808,7 +808,8 @@ theorem eventually_tupleVariableCoordinateFiberSquareDiagonal_normalized_gt
       atTop (nhds 0) := by
     have he : Tendsto (fun N : ℕ => 2 * eta N + eta N ^ 2)
         atTop (nhds 0) := by
-      convert (heta.const_mul 2).add (heta.pow 2) using 1 <;> norm_num
+      convert (heta.const_mul 2).add (heta.pow 2) using 1
+      norm_num
     simpa using he.mul hBseq
   have hbracket : Tendsto (fun N : ℕ =>
       variableShortMass H.card A δ ^ 2 * Aseq N -

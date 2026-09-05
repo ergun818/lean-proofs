@@ -35,7 +35,7 @@ import Mathlib.Data.Int.Star
 import Mathlib.Data.Nat.Nth
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.NumberTheory.DiophantineApproximation.Basic
-import ErdosProblems.Axioms
+import Util.MaynardTao.BFT.Result
 
 /-!
 # Erdős Problem 997: Fractional parts `{α pₙ}` are not well-distributed
@@ -49,8 +49,8 @@ in arithmetic progressions (specifically the Banks–Freiberg–Turnage-Butterba
 For every `α ∈ ℝ`, the sequence `{α pₙ}` of fractional parts is not well-distributed in the sense of
 Hlawka–Petersen.
 
-The Maynard–Tao–BFT theorem is proved in `Util.MaynardTao.BFT.Result` and exposed
-through `ErdosProblems.Axioms`. The proof uses only standard Lean axioms.
+The Maynard–Tao–BFT theorem is proved in `Util.MaynardTao.BFT.Result`.
+The proof uses only standard Lean axioms.
 
 ## References
 
@@ -107,13 +107,14 @@ theorem not_wellDistributed_of_clustering {x : ℕ → ℝ} (hc : HasClustering 
 /-! ## Step 3: Helper lemmas for the clustering proof -/
 
 /-
-Circle-clustering: using `maynardTaoBFT`, for any `α` and `m ≥ 1`, there exist `m` consecutive
-primes (starting at index `r+1`) whose fractional parts `{αp}` are pairwise within `1/8` on `ℝ/ℤ`.
+Circle-clustering: using `MaynardBFT.consecutive_primes`, for any `α` and `m ≥ 1`, there exist
+`m` consecutive primes (starting at index `r+1`) whose fractional parts `{αp}` are pairwise
+within `1/8` on `ℝ/ℤ`.
 -/
 theorem circleCluster (α : ℝ) (m : ℕ) (hm : 0 < m) :
     ∃ r, ∀ i j, i < m → j < m → ∃ k : ℤ,
       |fracSeq α (r + 1 + i) - fracSeq α (r + 1 + j) - ↑k| ≤ 1 / 8 := by
-  obtain ⟨C, hC₀, hC⟩ := _root_.maynardTaoBFT m hm
+  obtain ⟨C, hC₀, hC⟩ := MaynardBFT.consecutive_primes m hm
   obtain ⟨q, hq⟩ : ∃ q : ℚ, |α - q| ≤ 1 / ((8 * C + 1) * q.den) ∧ q.den ≤ 8 * C := by
     have := exists_rat_abs_sub_le_and_den_le α (show 0 < 8 * C by positivity)
     simp_all only [tsub_le_iff_right, Nat.cast_mul, Nat.cast_ofNat, one_div, mul_inv_rev]

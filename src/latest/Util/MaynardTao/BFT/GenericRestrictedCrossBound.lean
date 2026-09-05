@@ -14,7 +14,7 @@ open scoped BigOperators
 
 noncomputable section
 
-variable [P : Parameters] [T : ShiftTuple]
+variable [P : Parameters]
 
 def tupleRestrictedTransformEnvelope
     (H : Finset ℕ) (alpha : ℝ) (N : ℕ) (m : H) : ℝ :=
@@ -28,6 +28,7 @@ def tupleRestrictedTransformEnvelope
             (BoundedGaps.Maynard.tripleLogCutoff (N - 1) : ℝ)) ^
               ((Finset.univ.erase m).card - 1)))
 
+omit P in
 theorem tupleRestrictedTransformEnvelope_nonneg
     {H : Finset ℕ} {alpha : ℝ} {N : ℕ} {m : H}
     (hD : 0 < BoundedGaps.Maynard.tripleLogCutoff (N - 1))

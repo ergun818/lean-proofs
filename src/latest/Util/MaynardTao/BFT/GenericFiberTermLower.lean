@@ -16,8 +16,6 @@ open scoped BigOperators
 
 noncomputable section
 
-variable [P : Parameters] [T : ShiftTuple]
-
 theorem tupleOffFace_logProduct_eq_coordinateSum
     {H : Finset ℕ} {R W : ℕ} (m : H)
     (u : tupleOffFace H m → ℕ)
@@ -27,17 +25,20 @@ theorem tupleOffFace_logProduct_eq_coordinateSum
         (tupleOffFaceExtension m u)) / Real.log R =
       largeCoordinateSum
         (fun h : tupleOffFace H m => Real.log (u h) / Real.log R) := by
+  have hbox :=
+    (BoundedGaps.Maynard.isMaynardDivisorTuple_of_mem_support hu).mem_maynardDivisorTupleBox
   have hpos : ∀ h : tupleOffFace H m, 0 < u h := by
     intro h
     exact zero_lt_one.trans_le
-      ((BoundedGaps.Maynard.mem_maynardDivisorTupleBox_iff.mp
-        (BoundedGaps.Maynard.isMaynardDivisorTuple_of_mem_support hu).mem_maynardDivisorTupleBox) h).1
+      ((BoundedGaps.Maynard.mem_maynardDivisorTupleBox_iff.mp hbox) h).1
   rw [maynardS2OffCoordinateProduct_extension]
   have hsum :=
     BoundedGaps.Maynard.sum_normalizedDivisorLogTuple_eq_log_product_div
       hR hpos
   simpa [BoundedGaps.Maynard.normalizedDivisorLogTuple,
     largeCoordinateSum] using hsum.symm
+
+variable [P : Parameters]
 
 theorem tupleCoordinateFiberTerm_lower
     {K C : ℝ} (hK : 0 < K) (hC : 0 ≤ C)

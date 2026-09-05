@@ -20,8 +20,6 @@ open scoped BigOperators
 
 noncomputable section
 
-variable [P : Parameters] [T : ShiftTuple]
-
 def tupleMaynardDiagonal (H : Finset ℕ) (alpha : ℝ)
     (F : (H → ℝ) → ℝ) (N : ℕ) : ℝ :=
   ∑ u ∈ BoundedGaps.Maynard.maynardDivisorTupleSupport H
@@ -109,6 +107,8 @@ theorem tupleWeightedMoment_sq_eq_diagonal_add_collision
               BoundedGaps.Maynard.reciprocalTotientTupleWeight H u) + z)
         hcollision
 
+variable [P : Parameters] [T : ShiftTuple]
+
 theorem tupleWeightedMoment_largeProduct_sq_eq_diagonal_add_collision
     {alpha : ℝ} {N : ℕ}
     (hR : 1 < BoundedGaps.Maynard.engelsmaMaynardRadius alpha N) :
@@ -118,7 +118,7 @@ theorem tupleWeightedMoment_largeProduct_sq_eq_diagonal_add_collision
         tupleCollisionMoment largePowerTuple alpha
           (fun t => largeTupleContinuousProduct t ^ 2) N :=
   tupleWeightedMoment_sq_eq_diagonal_add_collision hR
-    (fun t ht =>
+    (fun _ ht =>
       largeTupleContinuousProduct_eq_largeTupleCandidate_of_mem_simplex ht)
 
 theorem normalizedTupleMaynardDiagonal_eq_independent_sub_collision
@@ -172,6 +172,7 @@ def largeTupleYDiagonal (alpha : ℝ) (N : ℕ) : ℝ :=
       (BoundedGaps.Maynard.engelsmaMaynardModulus N)
       largeTupleCandidate)
 
+omit P T in
 theorem reciprocalTotientTupleWeight_eq_one_div_product
     {H : Finset ℕ} (u : H → ℕ) :
     BoundedGaps.Maynard.reciprocalTotientTupleWeight H u =
@@ -188,17 +189,10 @@ theorem largeTupleYDiagonal_eq_tupleMaynardDiagonal
   unfold tupleMaynardDiagonal tupleNormalizedLogPoint
   apply Finset.sum_congr rfl
   intro u hu
-  change largeTupleCandidate
-      (fun h => Real.log (u h) /
-        Real.log (BoundedGaps.Maynard.engelsmaMaynardRadius alpha n)) ^ 2 /
-        ∏ h : largePowerTuple, (Nat.totient (u h) : ℝ) =
-    largeTupleCandidate
-      (fun h => Real.log (u h) /
-        Real.log (BoundedGaps.Maynard.engelsmaMaynardRadius alpha n)) ^ 2 *
-      BoundedGaps.Maynard.reciprocalTotientTupleWeight largePowerTuple u
   rw [reciprocalTotientTupleWeight_eq_one_div_product]
   ring
 
+omit P T in
 theorem eventually_tupleMaynardScale_pos
     {H : Finset ℕ} {alpha : ℝ} (halpha : 0 < alpha) :
     ∀ᶠ N : ℕ in atTop, 0 < tupleMaynardScale H alpha N := by
@@ -211,6 +205,7 @@ theorem eventually_tupleMaynardScale_pos
     · omega
     · exact halpha
 
+omit P T in
 theorem normalized_maynardScale_eq_natural_mul_logRatio
     {H : Finset ℕ} {D N Rnat : ℕ} {Rreal Y : ℝ}
     (hN : 0 < (N : ℝ)) (hW : 0 < (primorial D : ℝ))

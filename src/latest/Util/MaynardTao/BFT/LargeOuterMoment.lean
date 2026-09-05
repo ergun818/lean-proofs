@@ -19,7 +19,7 @@ open scoped BigOperators
 
 noncomputable section
 
-variable [P : Parameters] [T : ShiftTuple]
+variable [P : Parameters]
 
 def largeOuterCutoff (s : ℝ) : ℝ := min 1 (max 0 (49 - 56 * s))
 
@@ -39,6 +39,7 @@ def largeInnerGoodRegion (ι : Type*) [Fintype ι] : Set (ι → ℝ) :=
   BoundedGaps.Maynard.maynardCubeOf ι ∩
     {t | largeCoordinateSum t ≤ (6 : ℝ) / 7}
 
+omit P in
 theorem continuous_largeOuterCutoff : Continuous largeOuterCutoff := by
   unfold largeOuterCutoff
   fun_prop
@@ -72,20 +73,24 @@ theorem continuous_largeOuterSquaredIntegrand
       fun_prop)).pow 2).mul
     (continuous_largeOuterContinuousDensity ι)
 
+omit P in
 theorem largeOuterCutoff_nonneg (s : ℝ) : 0 ≤ largeOuterCutoff s := by
   unfold largeOuterCutoff
   exact le_min (by norm_num) (le_max_left _ _)
 
+omit P in
 theorem largeOuterCutoff_le_one (s : ℝ) : largeOuterCutoff s ≤ 1 := by
   unfold largeOuterCutoff
   exact min_le_left _ _
 
+omit P in
 theorem largeOuterCutoff_eq_one {s : ℝ} (hs : s ≤ (6 : ℝ) / 7) :
     largeOuterCutoff s = 1 := by
   unfold largeOuterCutoff
   have h : 1 ≤ 49 - 56 * s := by linarith
   rw [max_eq_right ((by norm_num : (0 : ℝ) ≤ 1).trans h), min_eq_left h]
 
+omit P in
 theorem largeOuterCutoff_eq_zero {s : ℝ} (hs : (7 : ℝ) / 8 ≤ s) :
     largeOuterCutoff s = 0 := by
   unfold largeOuterCutoff
@@ -120,6 +125,7 @@ theorem largeOuterIntegrand_bounds
   · exact mul_nonneg hcut0 hd0
   · exact (mul_le_mul hcut1 hd1 hd0 (by norm_num)).trans_eq (by ring)
 
+omit P in
 theorem largeInnerGoodRegion_measurable
     (ι : Type*) [Fintype ι] :
     MeasurableSet (largeInnerGoodRegion ι) := by
@@ -138,7 +144,7 @@ theorem badInnerRegion_productDensity_integral_le
   have hleft : IntegrableOn
       (largeProductDensity : (ι → ℝ) → ℝ)
       (BoundedGaps.Maynard.maynardCubeOf ι \ largeInnerGoodRegion ι) :=
-    (productDensity_integrableOn_cube ι).mono_set Set.diff_subset
+    (productDensity_integrableOn_cube ι).mono_set Set.sdiff_subset
   have hright : IntegrableOn (fun t : ι → ℝ =>
       ((7 : ℝ) / 6) *
         (largeCoordinateSum t * largeProductDensity t))
@@ -150,7 +156,7 @@ theorem badInnerRegion_productDensity_integral_le
           (BoundedGaps.Maynard.maynardCubeOf ι) :=
         (coordinateSum_mul_productDensity_integrableOn_cube ι).const_mul
           ((7 : ℝ) / 6)
-      exact hfull.mono_set Set.diff_subset
+      exact hfull.mono_set Set.sdiff_subset
   have hmeas : MeasurableSet
       (BoundedGaps.Maynard.maynardCubeOf ι \ largeInnerGoodRegion ι) :=
     (MeasurableSet.pi Set.countable_univ
@@ -184,13 +190,14 @@ theorem badInnerRegion_productDensity_integral_le
                 exact Finset.sum_nonneg fun i hi =>
                   (ht i (Set.mem_univ i)).1)
                 (largeProductDensity_nonneg t)))
-      · exact Filter.Eventually.of_forall fun t ht => Set.diff_subset ht
+      · exact Filter.Eventually.of_forall fun t ht => Set.sdiff_subset ht
     _ = ((7 : ℝ) / 6) * (Fintype.card ι : ℝ) *
         largeFirstMoment * largeBaseMass ^ (Fintype.card ι - 1) := by
       rw [integral_const_mul,
         integral_coordinateSum_mul_productDensity_cube]
       ring
 
+omit P in
 theorem weighted_bad_inner_bound_lt_seven_eighths
     {K : ℕ} (hK2 : 2 ≤ K) {a b : ℝ} (ha : 0 < a)
     (hb : b < (3 / (4 * (K : ℝ))) * a) :
@@ -287,6 +294,7 @@ theorem largeOuterSquaredIntegrand_eq_productDensity_of_mem_innerGood
     largeOuterContinuousDensity_eq_productDensity_of_mem_cube ht.1]
   norm_num
 
+omit P in
 theorem largeInnerGoodRegion_subset_finiteSimplex
     (H : Finset ℕ) :
     largeInnerGoodRegion H ⊆ BoundedGaps.Maynard.finiteSimplexOf H := by
@@ -391,6 +399,8 @@ theorem integral_largeOuterSquaredIntegrand_finiteSimplex_gt_one_eighth
   rw [heq] at hmono
   exact hgood.trans_le hmono
 
+variable [T : ShiftTuple]
+
 def largeOffFace (m : largePowerTuple) : Finset ℕ :=
   largePowerTuple.erase m.1
 
@@ -470,6 +480,7 @@ theorem tendsto_normalizedLargeOffFaceMaynardSquaredOuterMoment
     (continuous_largeOuterSquaredIntegrand (largeOffFace m))
     (fun t ht => largeOuterSquaredIntegrand_bounds t ht)
 
+omit T in
 theorem largeOuterContinuousDensity_bounds
     {H : Finset ℕ} (t : H → ℝ)
     (ht : t ∈ BoundedGaps.Maynard.finiteSimplexOf H) :

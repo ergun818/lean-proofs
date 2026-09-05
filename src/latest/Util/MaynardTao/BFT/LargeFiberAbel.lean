@@ -17,8 +17,6 @@ open scoped ArithmeticFunction.Moebius BigOperators Interval
 
 noncomputable section
 
-variable [P : Parameters] [T : ShiftTuple]
-
 def largeFiberAbelEnvelope (K C : ℝ) (D R : ℕ)
     {H : Finset ℕ} (m : H) (r : H → ℕ) : ℝ :=
   11 * BoundedGaps.Maynard.maynardS2CoordinateFiberSingularSeries D m r *
@@ -43,6 +41,9 @@ theorem largeFiberAbelEnvelope_nonneg
   unfold largeFiberAbelEnvelope
   positivity
 
+variable [P : Parameters]
+
+open BoundedGaps.Maynard in
 theorem exists_uniform_largeFiberAbel_bound :
     ∃ K C : ℝ, 0 < K ∧ 0 ≤ C ∧
       ∀ {H : Finset ℕ} {D R : ℕ} (m : H) (r : H → ℕ),
@@ -64,7 +65,9 @@ theorem exists_uniform_largeFiberAbel_bound :
                 Real.log R), largeFiberProfile x)| ≤
           2 * largeFiberAbelEnvelope K C D R m r := by
   obtain ⟨K, C, hK, hC, hcum⟩ :=
-    BoundedGaps.Maynard.exists_uniform_abs_abelCumulative_maynardS2CoordinateFiberCoefficient_sub_density_log_le_logarithmic
+    (
+exists_uniform_abs_abelCumulative_maynardS2CoordinateFiberCoefficient_sub_density_log_le_logarithmic
+    )
   refine ⟨K, C, hK, hC, ?_⟩
   intro H D R m r hr hD hlogR hQ
   let Q := BoundedGaps.Maynard.maynardS2CoordinateFiberEndpoint R

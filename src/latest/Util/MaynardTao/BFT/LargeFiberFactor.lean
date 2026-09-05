@@ -31,12 +31,14 @@ def tupleCoordinateOuterProfile {H : Finset ℕ} (R : ℕ) (m : H)
   ∏ h ∈ (Finset.univ : Finset H).erase m,
     largeFiberProfile (Real.log (r h) / Real.log R)
 
+omit T in
 theorem tupleLargeCandidate_eq_product_of_mem
     {H : Finset ℕ} {t : H → ℝ}
     (ht : t ∈ BoundedGaps.Maynard.finiteSimplexOf H) :
     tupleLargeCandidate H t = ∏ h : H, largeFiberProfile (t h) := by
   simp [tupleLargeCandidate, ht]
 
+omit T in
 theorem tupleLargeCandidate_abs_le_one
     (H : Finset ℕ) (t : H → ℝ) :
     |tupleLargeCandidate H t| ≤ 1 := by
@@ -55,6 +57,7 @@ theorem tupleLargeCandidate_abs_le_one
   · rw [tupleLargeCandidate, if_neg ht]
     norm_num
 
+omit T in
 theorem tupleLargeCandidate_update_eq_outer_mul_profile
     {H : Finset ℕ} {R W : ℕ} (m : H) {r : H → ℕ}
     (hr : BoundedGaps.Maynard.IsMaynardDivisorTuple H R W r)
@@ -102,6 +105,7 @@ theorem tupleLargeCandidate_update_eq_outer_mul_profile
   rw [hprod]
   ring
 
+omit T in
 theorem tupleCoordinateFiberSum_eq_outer_mul_scalarSum
     {H : Finset ℕ} {R W : ℕ} (m : H) {r : H → ℕ}
     (hr : BoundedGaps.Maynard.IsMaynardDivisorTuple H R W r)

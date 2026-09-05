@@ -16,7 +16,7 @@ open scoped BigOperators
 
 noncomputable section
 
-variable [P : Parameters] [T : ShiftTuple]
+variable [P : Parameters]
 
 def tupleCoordinateFiberSquareDiagonal
     (H : Finset ℕ) (alpha : ℝ) (N : ℕ) (m : H) : ℝ :=
@@ -74,6 +74,7 @@ theorem tupleOffFaceExtension_outerProfile_sq
     largeContinuousG_eq_largeG
       (mul_nonneg (Nat.cast_nonneg largeK) (hcoord h))]
 
+omit P in
 theorem tupleOffFaceExtension_outerWeight
     {H : Finset ℕ} {R W : ℕ} (m : H)
     (u : tupleOffFace H m → ℕ)

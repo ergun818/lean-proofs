@@ -144,6 +144,7 @@ theorem inverseAffineAbelEnvelope_nonneg
   unfold inverseAffineAbelEnvelope
   positivity
 
+open BoundedGaps.Maynard in
 theorem exists_uniform_inverseAffineFiberAbel_bound
     {lam : ℝ} (hlam : 0 < lam) :
     ∃ U C : ℝ, 0 < U ∧ 0 ≤ C ∧
@@ -166,7 +167,9 @@ theorem exists_uniform_inverseAffineFiberAbel_bound
                 Real.log R), inverseAffineProfile lam x)| ≤
           2 * inverseAffineAbelEnvelope U C D R m r := by
   obtain ⟨U, C, hU, hC, hcum⟩ :=
-    BoundedGaps.Maynard.exists_uniform_abs_abelCumulative_maynardS2CoordinateFiberCoefficient_sub_density_log_le_logarithmic
+    (
+exists_uniform_abs_abelCumulative_maynardS2CoordinateFiberCoefficient_sub_density_log_le_logarithmic
+    )
   refine ⟨U, C, hU, hC, ?_⟩
   intro H D R m r hr hD hlogR hQ
   let Q := BoundedGaps.Maynard.maynardS2CoordinateFiberEndpoint R

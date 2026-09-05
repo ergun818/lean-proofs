@@ -300,6 +300,7 @@ theorem largeCandidate_admissible :
 noncomputable def inverseAffineSquareAntiderivative (A K x : ℝ) : ℝ :=
   -(A * K)⁻¹ * (1 + A * K * x)⁻¹
 
+omit P in
 theorem hasDerivAt_inverseAffineSquareAntiderivative
     {A K x : ℝ} (hA : 0 < A) (hK : 0 < K) (hx : 0 ≤ x) :
     HasDerivAt (inverseAffineSquareAntiderivative A K)
@@ -322,6 +323,7 @@ theorem hasDerivAt_inverseAffineSquareAntiderivative
   rw [heq] at hmul'
   exact hmul'
 
+omit P in
 theorem integral_inverseAffine_sq {A K : ℝ} (hA : 0 < A) (hK : 0 < K) :
     (∫ x : ℝ in (0 : ℝ)..1, (1 + A * K * x)⁻¹ ^ 2) =
       (1 + A * K)⁻¹ := by
@@ -359,6 +361,7 @@ theorem setIntegral_largeG_sq_Icc :
 noncomputable def inverseAffineAntiderivative (A K x : ℝ) : ℝ :=
   (A * K)⁻¹ * Real.log (1 + A * K * x)
 
+omit P in
 theorem hasDerivAt_inverseAffineAntiderivative
     {A K x : ℝ} (hA : 0 < A) (hK : 0 < K) (hx : 0 ≤ x) :
     HasDerivAt (inverseAffineAntiderivative A K)
@@ -381,6 +384,7 @@ theorem hasDerivAt_inverseAffineAntiderivative
   rw [heq] at hmul'
   exact hmul'
 
+omit P in
 theorem integral_inverseAffine {A K B : ℝ}
     (hA : 0 < A) (hK : 0 < K) (hB : 0 ≤ B) :
     (∫ x : ℝ in (0 : ℝ)..B, (1 + A * K * x)⁻¹) =
@@ -819,6 +823,7 @@ theorem integral_coordinateSum_mul_productDensity_cube
   · intro i hi
     exact coordinate_mul_productDensity_integrableOn_cube i
 
+omit P in
 theorem measurable_largeCoordinateSum
     (ι : Type*) [Fintype ι] :
     Measurable (largeCoordinateSum : (ι → ℝ) → ℝ) := by
@@ -881,6 +886,7 @@ def largeGoodRegion (ι : Type*) [Fintype ι] : Set (ι → ℝ) :=
   BoundedGaps.Maynard.maynardCubeOf ι ∩
     {t | largeCoordinateSum t ≤ (7 : ℝ) / 8}
 
+omit P in
 theorem largeGoodRegion_measurable
     (ι : Type*) [Fintype ι] :
     MeasurableSet (largeGoodRegion ι) := by
@@ -889,6 +895,7 @@ theorem largeGoodRegion_measurable
     (fun _ _ => measurableSet_Icc)).inter
       (measurableSet_Iic.preimage (measurable_largeCoordinateSum ι))
 
+omit P in
 theorem largeGoodRegion_subset_cube
     (ι : Type*) [Fintype ι] :
     largeGoodRegion ι ⊆ BoundedGaps.Maynard.maynardCubeOf ι := by
@@ -905,7 +912,7 @@ theorem badRegion_productDensity_integral_le
   have hleft : IntegrableOn
       (largeProductDensity : (ι → ℝ) → ℝ)
       (BoundedGaps.Maynard.maynardCubeOf ι \ largeGoodRegion ι) :=
-    (productDensity_integrableOn_cube ι).mono_set Set.diff_subset
+    (productDensity_integrableOn_cube ι).mono_set Set.sdiff_subset
   have hright : IntegrableOn (fun t : ι → ℝ =>
       ((8 : ℝ) / 7) *
         (largeCoordinateSum t * largeProductDensity t))
@@ -917,7 +924,7 @@ theorem badRegion_productDensity_integral_le
           (BoundedGaps.Maynard.maynardCubeOf ι) :=
         (coordinateSum_mul_productDensity_integrableOn_cube ι).const_mul
           ((8 : ℝ) / 7)
-      exact hfull.mono_set Set.diff_subset
+      exact hfull.mono_set Set.sdiff_subset
   have hmeas : MeasurableSet
       (BoundedGaps.Maynard.maynardCubeOf ι \ largeGoodRegion ι) :=
     (MeasurableSet.pi Set.countable_univ
@@ -959,7 +966,7 @@ theorem badRegion_productDensity_integral_le
                 exact Finset.sum_nonneg fun i hi =>
                   (ht i (Set.mem_univ i)).1)
                 (largeProductDensity_nonneg t)))
-      · exact Filter.Eventually.of_forall fun t ht => Set.diff_subset ht
+      · exact Filter.Eventually.of_forall fun t ht => Set.sdiff_subset ht
     _ = ((8 : ℝ) / 7) * (Fintype.card ι : ℝ) *
         largeFirstMoment * largeBaseMass ^ (Fintype.card ι - 1) := by
       rw [integral_const_mul,
@@ -968,6 +975,7 @@ theorem badRegion_productDensity_integral_le
 
 theorem largeK_ge_two : 2 ≤ largeK := P.two_le_k
 
+omit P in
 theorem weighted_bad_bound_lt_six_sevenths
     {K : ℕ} (hK2 : 2 ≤ K) {a b : ℝ} (ha : 0 < a)
     (hb : b < (3 / (4 * (K : ℝ))) * a) :
@@ -1055,6 +1063,7 @@ theorem goodFace_productDensity_integral_gt_one_seventh
 
 /-! ## The inner face integral on the good region -/
 
+omit P in
 theorem maynardInsertCoordinate_mem_simplex_of_pos
     {k : ℕ} (hk : 0 < k) (m : Fin k) (x : ℝ)
     (t : BoundedGaps.Maynard.maynardFaceIndex k m → ℝ)
@@ -1069,6 +1078,7 @@ theorem maynardInsertCoordinate_mem_simplex_of_pos
   rw [BoundedGaps.Maynard.insert_mem_simplex_iff m x t htface]
   exact ⟨hx, by linarith⟩
 
+omit P in
 theorem prod_maynardInsertCoordinate_of_pos
     {k : ℕ} (hk : 0 < k) (m : Fin k) (x : ℝ)
     (t : BoundedGaps.Maynard.maynardFaceIndex k m → ℝ)
@@ -1083,8 +1093,8 @@ theorem prod_maynardInsertCoordinate_of_pos
   apply Finset.prod_congr rfl
   intro i hi
   rw [BoundedGaps.Maynard.maynardInsertCoordinate_off]
-  congr 2
-  exact Fin.succAbove_ne m i
+  · congr 2
+  · exact Fin.succAbove_ne m i
 
 def largeFaceProduct {ι : Type*} [Fintype ι] (t : ι → ℝ) : ℝ :=
   ∏ j, largeG ((largeK : ℝ) * t j)
@@ -1401,6 +1411,7 @@ theorem sum_maynardJ_largeCandidate_gt :
       exact Finset.sum_lt_sum_of_nonempty huniv fun m hm =>
         maynardJ_largeCandidate_gt m
 
+omit P in
 theorem explicit_ratio_lower_bound
     {K : ℕ} (hKpos : 0 < K) {a : ℝ} (ha : 0 < a)
     (haUpper : a < (1024 * (K : ℝ))⁻¹) :

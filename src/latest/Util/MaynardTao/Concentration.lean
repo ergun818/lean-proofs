@@ -422,7 +422,7 @@ theorem integral_twoCenteredCoordinates_mul_productDensity_cube_eq_zero
       have haj : a ≠ j := (Finset.mem_erase.mp ha).1
       simp only [f, if_neg hai, if_neg haj]
     rw [hrest]
-    simp [f, hij, hij.symm, variableCenteredDensity]
+    simp [f, hij.symm, variableCenteredDensity]
     ring
   have hintegrals : ∏ a : ι,
       ∫ x : ℝ, f a x ∂(volume.restrict (Set.Icc (0 : ℝ) 1)) = 0 := by
@@ -883,7 +883,7 @@ theorem variableGoodRegion_productDensity_integral_gt_of_variance
     {K : ℕ} {A q γ : ℝ} (hK : 0 < K) (hA : 0 < A)
     (ι : Type*) [Fintype ι]
     (hmean : (Fintype.card ι : ℝ) * variableCoordinateMean K A < q)
-    (hγ : 0 ≤ γ)
+    (_ : 0 ≤ γ)
     (hvariance :
       (q - (Fintype.card ι : ℝ) * variableCoordinateMean K A)⁻¹ ^ 2 *
           ((Fintype.card ι : ℝ) * variableSecondMoment K A *

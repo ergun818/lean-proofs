@@ -14,8 +14,9 @@ open scoped BigOperators Interval
 
 noncomputable section
 
-variable [P : Parameters] [T : ShiftTuple]
+variable [P : Parameters]
 
+omit P in
 theorem mul_log_one_add_le_log_one_add_mul
     {c x : ℝ} (hc0 : 0 ≤ c) (hc1 : c ≤ 1) (hx : 0 ≤ x) :
     c * Real.log (1 + x) ≤ Real.log (1 + c * x) := by
@@ -27,7 +28,8 @@ theorem mul_log_one_add_le_log_one_add_mul
   have h' : c * Real.log (1 + x) ≤
       Real.log ((1 - c) * 1 + c * (1 + x)) := by
     simpa only [Real.log_one, smul_eq_mul, mul_zero, zero_add] using h
-  convert h' using 1 <;> ring_nf
+  convert h' using 1
+  ring_nf
 
 theorem integral_largeFiberProfile_interval {B : ℝ} (hB : 0 ≤ B) :
     (∫ x : ℝ in (0 : ℝ)..B, largeFiberProfile x) =
@@ -77,6 +79,7 @@ theorem cutoff_mul_largeShortMass_le_fiberIntegral
           largeFiberSlope := by ring
     _ ≤ _ := div_le_div_of_nonneg_right (hconc.trans hlogMono) hslope.le
 
+omit P in
 theorem coordinateFiberEndpoint_ratio_ge_complement_sub
     {H : Finset ℕ} {R W : ℕ} (m : H) {r : H → ℕ}
     (hr : BoundedGaps.Maynard.IsMaynardDivisorTuple H R W r)
@@ -140,6 +143,7 @@ theorem coordinateFiberEndpoint_ratio_ge_complement_sub
       apply div_le_div_of_nonneg_right _ hRlog.le
       linarith
 
+omit P in
 theorem largeOuterCutoff_mul_eighth_le_complement
     {s eps : ℝ} (heps : eps ≤ (1 : ℝ) / 56)
     (hq0 : 0 ≤ q)
