@@ -99,6 +99,7 @@ theorem finiteMainTerms_bounds_of_generalBetaCutoffs
   · intro r hr hstart
     simpa [P] using hproduct r (by simpa [P] using hr) hstart
   · intro r hstart hr
-    convert hlogA r hstart (by simpa [P] using hr) using 1 <;> ring
+    convert hlogA r hstart (by simpa [P] using hr) using 1
+    ring
 
 end Erdos387.GeneralBetaMainTerm
