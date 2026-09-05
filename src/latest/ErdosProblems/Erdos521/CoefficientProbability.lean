@@ -29,8 +29,10 @@ theorem pairedDirectionLaw_eq_prod : Pitman.pairedDirectionLaw = signLaw.prod si
   norm_num [ENNReal.smul_def]
   have hquarter : (2 : ℝ≥0∞)⁻¹ * 2⁻¹ = 4⁻¹ := by
     rw [← ENNReal.mul_inv] <;> norm_num
-  rw [hquarter]
-  ring
+  simp only [← mul_assoc, hquarter]
+  norm_num [Pitman.Direction, Fin.sum_univ_four, PMF.uniformOfFintype_apply,
+    Set.indicator, Pitman.signPair, Pitman.step]
+  split_ifs <;> ring
 
 def coefficientPairs (ε : ℕ → ℝ) : ℕ → ℝ × ℝ := fun i ↦ (ε (2 * i + 1), ε (2 * i))
 
