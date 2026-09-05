@@ -53,7 +53,7 @@ theorem mem_ofInternalPath_of_mem {x y a b v : V} (p : G.Walk x y) (hp : p.IsPat
     (hax : G.Adj a x) (hyb : G.Adj y b) (hv : v ∈ p.support) :
     v ∈ (ofInternalPath p hp hpS ha hb hab hax hyb).walk.support := by
   simp only [ofInternalPath, Walk.support_cons, Walk.support_concat, List.mem_cons,
-    List.mem_append, List.mem_singleton]
+    List.mem_append]
   exact Or.inr (Or.inl hv)
 
 /-- Insert an ear between two disjoint rim paths. All intersections are

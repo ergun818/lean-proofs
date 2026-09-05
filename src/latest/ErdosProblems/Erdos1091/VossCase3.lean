@@ -275,7 +275,8 @@ theorem crossed_external_returns_indexed_impossible
   have hmem₄ : ∀ t, i ≤ t → C.getVert t ∈ q₄.support := by
     intro t ht
     rw [hq₄sup]
-    simpa only [Walk.drop_getVert, Nat.add_sub_of_le ht] using (C.drop i).getVert_mem_support (t - i)
+    simpa only [Walk.drop_getVert, Nat.add_sub_of_le ht] using
+      (C.drop i).getVert_mem_support (t - i)
   have hBq₄ : E.finish ∈ q₄.support := by rw [← hfinish]; exact hmem₄ k (by omega)
   have hq₄len : q₄.length = C.length - i :=
     (Walk.length_copy _ _ _).trans (Walk.drop_length _ _)

@@ -193,7 +193,7 @@ theorem isRegularOfDegree_maxDegree_of_forall_le [Fintype V] [DecidableRel G.Adj
 `Q ⊆ Iᶜ` has exactly one neighbor in `I`. -/
 theorem existsUnique_adj_mem_of_isRegular [Fintype V] [DecidableRel G.Adj] {k : ℕ}
     (hk : 1 ≤ k) (hG : G.IsRegularOfDegree k) {I Q : Set V} (hI : Maximal G.IsIndepSet I)
-    (hQI : Q ⊆ Iᶜ) [DecidablePred (· ∈ Q)] [DecidablePred (· ∈ I)]
+    (hQI : Q ⊆ Iᶜ) [DecidablePred (· ∈ Q)]
     (hQ : (G.induce Q).IsRegularOfDegree (k - 1)) (v : V) (hv : v ∈ Q) :
     ∃! w, w ∈ I ∧ G.Adj v w := by
   classical
@@ -242,9 +242,10 @@ theorem Connected.exists_adj_ne_of_ne {β : Type*} (hG : G.Connected) (f : V →
     · exact ⟨u, v, h, hf⟩
 
 /-- STEP 8a: a complete graph has a Hamiltonian path between any two distinct vertices. -/
-theorem exists_isHamiltonian_walk_top [Fintype V] [DecidableEq V] {y z : V} (hyz : y ≠ z) :
+theorem exists_isHamiltonian_walk_top [Finite V] [DecidableEq V] {y z : V} (hyz : y ≠ z) :
     ∃ p : (⊤ : SimpleGraph V).Walk y z, p.IsHamiltonian := by
   classical
+  let := Fintype.ofFinite V
   have key : ∀ (s : Finset V) (a b : V), a ≠ b → a ∉ s → b ∉ s →
       ∃ p : (⊤ : SimpleGraph V).Walk a b,
         p.IsPath ∧ p.support.toFinset = insert a (insert b s) := by
@@ -509,7 +510,8 @@ theorem Colorable.of_induce_insert_color [DecidableEq V] {s : Finset V} {v : V} 
   · obtain ⟨C', _, _⟩ := exists_coloring_induce_insert_color hv C ha
     exact ⟨C'⟩
 
-/-- Same as `of_induce_insert`, returning the colouring with old colours preserved. Assumes `v ∉ s`. -/
+/-- Same as `of_induce_insert`, returning the colouring with old colours preserved.
+Assumes `v ∉ s`. -/
 theorem exists_coloring_induce_insert [Fintype V] [DecidableEq V] [DecidableRel G.Adj]
     {s : Finset V} {v : V} [NeZero n]
     (hv : v ∉ s)
@@ -557,8 +559,8 @@ theorem Colorable.of_induce_insert_image [Fintype V] [DecidableRel G.Adj]
 /-! ### The `K⁻` extension (STEP 2) -/
 
 section CliqueMinusEdgeColorable
-open Classical
 
+open Classical in
 lemma neighborFinset_cliqueMinusEdge_zero (n : ℕ) :
     (cliqueMinusEdge n).neighborFinset (0 : Fin (n + 2)) = (Finset.univ.erase 0).erase 1 := by
   apply Finset.ext
@@ -583,6 +585,7 @@ lemma neighborFinset_cliqueMinusEdge_zero (n : ℕ) :
     · exact hi1 rfl
     · exact Fin.zero_ne_one h01
 
+open Classical in
 lemma degree_cliqueMinusEdge_zero (n : ℕ) :
     (cliqueMinusEdge n).degree (0 : Fin (n + 2)) = n := by
   rw [← card_neighborFinset_eq_degree, neighborFinset_cliqueMinusEdge_zero,
@@ -590,6 +593,7 @@ lemma degree_cliqueMinusEdge_zero (n : ℕ) :
     Finset.card_erase_of_mem (Finset.mem_univ _), Finset.card_univ, Fintype.card_fin]
   omega
 
+open Classical in
 lemma neighborFinset_cliqueMinusEdge_one (n : ℕ) :
     (cliqueMinusEdge n).neighborFinset (1 : Fin (n + 2)) = (Finset.univ.erase 0).erase 1 := by
   apply Finset.ext
@@ -614,6 +618,7 @@ lemma neighborFinset_cliqueMinusEdge_one (n : ℕ) :
     · exact Fin.zero_ne_one h10.symm
     · exact hi0 hi0'
 
+open Classical in
 lemma degree_cliqueMinusEdge_one (n : ℕ) :
     (cliqueMinusEdge n).degree (1 : Fin (n + 2)) = n := by
   rw [← card_neighborFinset_eq_degree, neighborFinset_cliqueMinusEdge_one,
@@ -621,6 +626,7 @@ lemma degree_cliqueMinusEdge_one (n : ℕ) :
     Finset.card_erase_of_mem (Finset.mem_univ _), Finset.card_univ, Fintype.card_fin]
   omega
 
+open Classical in
 lemma degree_cliqueMinusEdge_of_ne_zero_one {n : ℕ} {i : Fin (n + 2)}
     (hi0 : i ≠ 0) (hi1 : i ≠ 1) :
     (cliqueMinusEdge n).degree i = n + 1 := by
@@ -643,6 +649,7 @@ lemma degree_cliqueMinusEdge_of_ne_zero_one {n : ℕ} {i : Fin (n + 2)}
   rw [hset, Finset.card_erase_of_mem (Finset.mem_univ _), Finset.card_univ, Fintype.card_fin]
   omega
 
+open Classical in
 lemma map_neighborFinset_cliqueMinusEdge_subset
     {V : Type u} {G : SimpleGraph V} [Fintype V] [DecidableRel G.Adj] {n : ℕ}
     (φ : Copy (cliqueMinusEdge n) G) (a : Fin (n + 2)) :
@@ -654,6 +661,7 @@ lemma map_neighborFinset_cliqueMinusEdge_subset
   · exact (mem_neighborFinset _ _ _).2 (φ.toHom.map_adj ((mem_neighborFinset _ _ _).1 hi))
   · exact Set.mem_toFinset.2 ⟨i, rfl⟩
 
+open Classical in
 lemma card_neighborFinset_sdiff_range_cliqueMinusEdge_le
     {V : Type u} {G : SimpleGraph V} [Fintype V] [DecidableRel G.Adj]
     {n : ℕ} (hΔ : G.maxDegree ≤ n + 1) (φ : Copy (cliqueMinusEdge n) G)
@@ -670,6 +678,7 @@ lemma card_neighborFinset_sdiff_range_cliqueMinusEdge_le
   have hdegG := (G.degree_le_maxDegree (φ a)).trans hΔ
   omega
 
+open Classical in
 lemma neighborFinset_subset_range_of_degree_cliqueMinusEdge
     {V : Type u} {G : SimpleGraph V} [Fintype V] [DecidableRel G.Adj]
     {n : ℕ} (hΔ : G.maxDegree ≤ n + 1) (φ : Copy (cliqueMinusEdge n) G)
@@ -719,6 +728,7 @@ theorem Colorable.of_cliqueMinusEdge_copy {V : Type u} {G : SimpleGraph V}
     (φ : Copy (cliqueMinusEdge (n - 1)) G)
     (hcol : (G.induce ((Set.range φ)ᶜ : Set V)).Colorable n) :
     G.Colorable n := by
+  classical
   have : NeZero n := ⟨by lia⟩
   obtain ⟨C⟩ := hcol
   let S : Set V := Set.range φ
@@ -837,7 +847,8 @@ theorem Colorable.of_cliqueMinusEdge_copy {V : Type u} {G : SimpleGraph V}
       have hN : G.neighborFinset (φ j) ⊆ S.toFinset := by
         simpa [S] using neighborFinset_subset_range_of_degree_cliqueMinusEdge
           (n := n - 1) (by omega) φ hdeg
-      exact absurd (Set.mem_toFinset.1 (hN (by simpa [hvj] using (mem_neighborFinset _ _ _).2 huv.symm)))
+      exact absurd (Set.mem_toFinset.1
+        (hN (by simpa [hvj] using (mem_neighborFinset _ _ _).2 huv.symm)))
         (mt Set.mem_toFinset.2 (by simpa [Set.mem_toFinset] using huS))
     · rw [colorH_end hj]
       have hj01 : j = 0 ∨ j = 1 := by
@@ -942,7 +953,7 @@ private theorem colorable_of_card_le_of_maxDegree_le
 
 /-- A complete graph on `n` vertices admits an `n`-colouring avoiding one forbidden colour
 per vertex, provided the forbidden colours are not all equal. -/
-theorem exists_coloring_avoiding_of_isClique [Fintype V] [DecidableEq V]
+theorem exists_coloring_avoiding_of_isClique [Finite V]
     {n : ℕ} {s : Finset V} (_hs : G.IsClique (s : Set V)) (hcard : s.card = n)
     (f : V → Fin n) (hne : ∃ a ∈ s, ∃ b ∈ s, f a ≠ f b) :
     ∃ c : V → Fin n, (∀ a ∈ s, ∀ b ∈ s, a ≠ b → c a ≠ c b) ∧ ∀ a ∈ s, c a ≠ f a := by
@@ -1024,7 +1035,7 @@ theorem exists_coloring_avoiding_of_isClique [Fintype V] [DecidableEq V]
     simpa [t, Finset.mem_erase] using this
 
 /-- The unique neighbour of `v ∈ Q` outside `Q` is its star in `I`. -/
-theorem eq_star_of_adj_mem_compl [Fintype V] [DecidableEq V] [DecidableRel G.Adj]
+theorem eq_star_of_adj_mem_compl [Fintype V] [DecidableRel G.Adj]
     {Δ : ℕ} {I Q : Set V} [DecidablePred (· ∈ Q)]
     (hreg : G.IsRegularOfDegree Δ) (hk : 1 ≤ Δ)
     (hQI : Q ⊆ Iᶜ)
@@ -1032,6 +1043,7 @@ theorem eq_star_of_adj_mem_compl [Fintype V] [DecidableEq V] [DecidableRel G.Adj
     {v : V} (hv : v ∈ Q) {w : V} (hw : w ∈ (Qᶜ : Set V)) (hadj : G.Adj v w)
     {ystar : V} (hystar : ystar ∈ I ∧ G.Adj v ystar) :
     w = ystar := by
+  classical
   have hinter : (G.neighborFinset v ∩ Q.toFinset).card = Δ - 1 := by
     have hdegQ : (G.induce Q).degree ⟨v, hv⟩ = Δ - 1 := hQreg _
     have hmap := congrArg Finset.card (G.map_neighborFinset_induce (s := Q) ⟨v, hv⟩)
@@ -1071,8 +1083,8 @@ theorem isNClique_of_const_star [Fintype V] [DecidableEq V] [DecidableRel G.Adj]
     (neighborFinset_eq_of_subset_of_card hsub hQcard hreg)
 
 /-- Combine a colouring of `Qᶜ` with a Hall colouring of the clique `Q` that avoids star colours. -/
-theorem Colorable.of_clique_block_with_stars [Fintype V] [DecidableEq V] [DecidableRel G.Adj]
-    {n : ℕ} {Q : Set V} [DecidablePred (· ∈ Q)] {I : Set V}
+theorem Colorable.of_clique_block_with_stars [Finite V]
+    {n : ℕ} {Q : Set V} {I : Set V}
     (hQclique : G.IsClique Q) (hQcard : Q.ncard = n)
     (hQI : Q ⊆ (Iᶜ : Set V))
     (C : (G.induce (Qᶜ : Set V)).Coloring (Fin n))
@@ -1084,6 +1096,7 @@ theorem Colorable.of_clique_block_with_stars [Fintype V] [DecidableEq V] [Decida
             C ⟨star b, fun h => absurd (hstar b hb).1 (Set.notMem_of_mem_compl (hQI h))⟩) :
     G.Colorable n := by
   classical
+  let := Fintype.ofFinite V
   let Qf : Finset V := Q.toFinset
   have hQf_coe : (Qf : Set V) = Q := Set.coe_toFinset _
   have hQf_card : Qf.card = n := by rw [← Set.ncard_eq_toFinset_card' Q, hQcard]
@@ -1216,10 +1229,11 @@ private theorem colorable_surgery_graph
   exact colorable_of_card_le_of_maxDegree_le (fun G => ih G) Gstar hcardQc hΔ3 hΔstar hcfstar
 
 /-- An induced clique of size `n` is `(n-1)`-regular. -/
-theorem isRegularOfDegree_induce_of_isClique [Fintype V] [DecidableEq V] [DecidableRel G.Adj]
+theorem isRegularOfDegree_induce_of_isClique [Fintype V] [DecidableRel G.Adj]
     {Q : Set V} [DecidablePred (· ∈ Q)] {n : ℕ}
     (hQclique : G.IsClique Q) (hQcard : Fintype.card ↥Q = n) :
     (G.induce Q).IsRegularOfDegree (n - 1) := by
+  classical
   intro v
   rw [← card_neighborFinset_eq_degree]
   have hset : (G.induce Q).neighborFinset v = Finset.univ.erase v := by
@@ -1234,9 +1248,10 @@ theorem isRegularOfDegree_induce_of_isClique [Fintype V] [DecidableEq V] [Decida
   rw [hset, Finset.card_erase_of_mem (Finset.mem_univ _), Finset.card_univ, hQcard]
 
 /-- An induced clique on a nonempty set is connected. -/
-theorem connected_induce_of_isClique [DecidableEq V]
+theorem connected_induce_of_isClique
     {Q : Set V} [Nonempty ↥Q] (hQclique : G.IsClique Q) :
     (G.induce Q).Connected := by
+  classical
   refine (connected_iff _).2 ⟨fun a b => ?_, ‹Nonempty ↥Q›⟩
   by_cases h : a = b
   · subst h; exact ⟨Walk.nil⟩
@@ -1304,8 +1319,8 @@ theorem Colorable.of_rabern_path_extension [Fintype V] [DecidableEq V] [Decidabl
   let colorY : ↥(↑sY : Set V) → Fin n := fun u =>
     if h : u.1 = y then a
     else C ⟨u.1, by
-      have hu : u.1 ∈ sY := by simpa [sY] using u.property
-      have hu' : u.1 ∈ (Qᶜ : Finset V) := (Finset.mem_insert.1 (by simpa [sY] using hu)).resolve_left h
+      have hu : u.1 ∈ sY := u.property
+      have hu' : u.1 ∈ (Qᶜ : Finset V) := (Finset.mem_insert.1 hu).resolve_left h
       simpa using hu'⟩
   have hCy_valid : ∀ {x y' : ↥(↑sY : Set V)},
       (G.induce (↑sY : Set V)).Adj x y' → colorY x ≠ colorY y' := by
@@ -1317,14 +1332,14 @@ theorem Colorable.of_rabern_path_extension [Fintype V] [DecidableEq V] [Decidabl
     · simp only [hx, hy', ↓reduceDIte]
       have hyQc : y'.1 ∈ ((↑Q : Set V)ᶜ) := by
         have : y'.1 ∈ (Qᶜ : Finset V) :=
-          (Finset.mem_insert.1 (by simpa [sY] using y'.property)).resolve_left hy'
+          (Finset.mem_insert.1 y'.property).resolve_left hy'
         simpa using this
       have : y'.1 = star y := honly y hyQ y'.1 hyQc (hx ▸ hadj)
       simpa [this, a] using Ne.symm hne
     · simp only [hx, hy', ↓reduceDIte]
       have hxQc : x.1 ∈ ((↑Q : Set V)ᶜ) := by
         have : x.1 ∈ (Qᶜ : Finset V) :=
-          (Finset.mem_insert.1 (by simpa [sY] using x.property)).resolve_left hx
+          (Finset.mem_insert.1 x.property).resolve_left hx
         simpa using this
       have : x.1 = star y := honly y hyQ x.1 hxQc (hy' ▸ hadj.symm)
       simpa [this, a] using hne
@@ -1437,14 +1452,18 @@ theorem Colorable.of_rabern_path_extension [Fintype V] [DecidableEq V] [Decidabl
     have hfinal := along q.length q rfl hq sY Cy (by simp [sY]) hzstar_mem hCy_y hCy_zstar
       (fun v hv => by
         have : v ∈ (Walk.cons hadj q).support.toFinset := by
-          simp only [Walk.support_cons, List.toFinset_cons, Finset.mem_insert, List.mem_toFinset] at hv ⊢; exact Or.inr hv
+          simp only [Walk.support_cons, List.toFinset_cons, Finset.mem_insert,
+            List.mem_toFinset] at hv ⊢
+          exact Or.inr hv
         simpa [← hspan] using this)
       (fun v hv => by
         simp only [sY, Finset.mem_insert, not_or]
         exact ⟨fun hvy => hy_not_q (hvy ▸ hv), by
           have hvQ : v ∈ Q := by
             have : v ∈ (Walk.cons hadj q).support.toFinset := by
-              simp only [Walk.support_cons, List.toFinset_cons, Finset.mem_insert, List.mem_toFinset] at hv ⊢; exact Or.inr hv
+              simp only [Walk.support_cons, List.toFinset_cons, Finset.mem_insert,
+                List.mem_toFinset] at hv ⊢
+              exact Or.inr hv
             simpa [← hspan] using this
           exact Finset.notMem_compl.2 hvQ⟩)
     have hsets : sY ∪ q.support.toFinset = Finset.univ := by
@@ -1471,12 +1490,12 @@ private theorem brooksSurgery_clique
     {V : Type u} (G : SimpleGraph V) [Fintype V] [DecidableRel G.Adj]
     {Δ : ℕ} (hΔ3 : 3 ≤ Δ) (hcf : G.CliqueFree (Δ + 1))
     (hH : ¬ cliqueMinusEdge (Δ - 1) ⊑ G) (hreg' : G.IsRegularOfDegree Δ)
-    {I : Set V} (hI : Maximal G.IsIndepSet I) [DecidablePred (· ∈ I)]
+    {I : Set V} (hI : Maximal G.IsIndepSet I)
     {k : ℕ} (hcardV : Fintype.card V ≤ k + 1)
     (ih : ∀ {V : Type u} (G : SimpleGraph V) [Fintype V] [DecidableRel G.Adj],
       Fintype.card V ≤ k → G.CliqueFree (G.maxDegree + 1) →
         (G.maxDegree = 2 → ¬G.HasOddCycle) → G.Colorable G.maxDegree)
-    (Q : Set V) [DecidablePred (· ∈ Q)]
+    (Q : Set V)
     (hQI : Q ⊆ (Iᶜ : Set V)) (hQcard : Q.ncard = Δ) (hQclique : G.IsClique Q) :
     G.Colorable Δ := by
   classical
@@ -1698,7 +1717,7 @@ private theorem brooksSurgery_longOddCycle
   let cQ : (G.induce Q).Walk y y := cGy.induce Q hsuppGy
   have hcQ : cQ.IsCycle := by
     have hmap : cQ.map (Embedding.induce (G := G) Q).toHom = cGy := by
-      simpa [cQ] using Walk.map_induce cGy hsuppGy
+      exact Walk.map_induce cGy hsuppGy
     exact (Walk.isCycle_map_iff_of_injective (G := G.induce Q) (G' := G)
       Subtype.val_injective).1 (hmap.symm ▸ hcGy)
   have hspanQ : ∀ t : ↥Q, t ∈ cQ.support := by
@@ -1736,7 +1755,7 @@ private theorem brooksSurgery_longOddCycle
       ↑z ∈ cGy.toSubgraph.neighborSet ↑y)
   have hadj_cycleQ : cQ.toSubgraph.Adj y z := by
     have hmap : cQ.map (Embedding.induce (G := G) Q).toHom = cGy := by
-      simpa [cQ] using Walk.map_induce cGy hsuppGy
+      exact Walk.map_induce cGy hsuppGy
     have heq : cGy.toSubgraph =
         cQ.toSubgraph.map (Embedding.induce (G := G) Q).toHom := by
       rw [← hmap]
@@ -1765,10 +1784,10 @@ private theorem brooksSurgery_longOddCycle
     constructor
     · intro hx
       have hxsup : x ∈ (pQ.map (Embedding.induce (G := G) Q).toHom).support := by
-        simpa [p] using List.mem_toFinset.1 hx
+        exact List.mem_toFinset.1 hx
       rw [Walk.support_map] at hxsup
       rcases List.mem_map.1 hxsup with ⟨x', _, rfl⟩
-      simpa [Q, Qf] using x'.property
+      exact x'.property
     · intro hx
       have hxQ : x ∈ Q := by simpa [Q] using hx
       have hxmem : (⟨x, hxQ⟩ : ↥Q) ∈ pQ.support := hpQ.mem_support _
@@ -1791,8 +1810,8 @@ private theorem brooksSurgery_longOddCycle
     rw [card_neighborFinset_eq_degree, hreg' v]
   let C' : (G.induce ((↑Qf : Set V)ᶜ)).Coloring (Fin Δ) := by convert C
   have hne' :
-      C' ⟨star ↑y, hstarQc ↑y (by simpa [Q, Qf] using y.property)⟩ ≠
-        C' ⟨star ↑z, hstarQc ↑z (by simpa [Q, Qf] using z.property)⟩ := by
+      C' ⟨star ↑y, hstarQc ↑y y.property⟩ ≠
+        C' ⟨star ↑z, hstarQc ↑z z.property⟩ := by
     change C ⟨ystar, hystar_Qc⟩ ≠ C ⟨zstar, hzstar_Qc⟩
     exact hneC
   exact Colorable.of_rabern_path_extension (n := Δ) (Q := Qf) p hp hspan C' star
@@ -1982,3 +2001,5 @@ theorem brooks (G : SimpleGraph V) [Fintype V] [DecidableRel G.Adj]
   exact h (brooksAux _ G le_rfl hcf fun h2 => (hodd h2).elim)
 
 end SimpleGraph
+
+end

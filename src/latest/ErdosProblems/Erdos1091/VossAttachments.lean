@@ -543,7 +543,7 @@ theorem noncrossed_return_parity_contradiction {a b c d s : ℕ}
 /-- Case 2(a): the two even doubly-chorded cycles and shortest oddness
 force the two rim arcs through the far endpoint to be edges. -/
 theorem one_external_return_parity {a b c s : ℕ}
-    (ha : 1 ≤ a) (hb : 1 ≤ b) (hc : 1 ≤ c)
+    (_ha : 1 ≤ a) (hb : 1 ≤ b) (hc : 1 ≤ c)
     (hodd : Odd (a + b + c))
     (hfirst : Even (s + 2 + a + b)) (hsecond : Even (s + 2 + a + c))
     (hminA : Odd (a + 2) → a + b + c ≤ a + 2) :

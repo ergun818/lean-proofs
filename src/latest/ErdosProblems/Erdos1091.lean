@@ -82,7 +82,7 @@ chord count can only increase. -/
 theorem chordCount_transfer_mono {V : Type u} [Fintype V]
     {G H : SimpleGraph V} (hHG : H ≤ G) {a b : V} (p : H.Walk a b) :
     Walk.chordCount p ≤
-      Walk.chordCount (p.transfer G fun e he ↦
+      Walk.chordCount (p.transfer G fun _e he ↦
         edgeSet_mono hHG (p.edges_subset_edgeSet he)) := by
   classical
   let q : G.Walk a b := p.transfer G fun e he ↦
@@ -494,9 +494,9 @@ theorem adj_hub_iff_exists_leaf (m : ℕ) (v : Vertex m) :
     (graph m).Adj (hub m) v ↔
       ∃ (l : LeafId m) (x : Fin 5), x ≠ attachmentPosition m l ∧ v = leaf m l x := by
   rcases v with a | (a | a)
-  · simp [graph, adjacent, hub, leaf]
+  · simp [graph, hub, leaf]
   · rcases a with ⟨i, x⟩
-    simp [graph, adjacent, hub, spine, leaf]
+    simp [graph, adjacent, hub, leaf]
   · rcases a with ⟨l, x⟩
     constructor
     · intro h
@@ -665,7 +665,7 @@ theorem leaf_external_unique (m : ℕ) (l : LeafId m) (x : Fin 5) (v w : Vertex 
     (hw : (graph m).Adj (leaf m l x) w) (hwr : ¬leafRimNeighbor m l x w) : v = w := by
   rcases v with a | (a | a) <;> rcases w with b | (b | b)
   all_goals
-    simp [graph, adjacent, leaf, spine, hub, leafRimNeighbor, spineLeafAdjacent] at *
+    simp [graph, adjacent, leaf, leafRimNeighbor, spineLeafAdjacent] at *
   all_goals aesop
 
 theorem spine_external_unique (m : ℕ) (i : Fin (m + 1)) (x : Fin 5) (v w : Vertex m)
@@ -737,7 +737,7 @@ theorem spine_external_unique (m : ℕ) (i : Fin (m + 1)) (x : Fin 5) (v w : Ver
     simp_all
 
 theorem degree_le_three_of_rim_partition {V : Type*} [Fintype V]
-    [DecidableEq V] {G : SimpleGraph V} [DecidableRel G.Adj]
+    {G : SimpleGraph V} [DecidableRel G.Adj]
     (u : V) (rim : V → Prop) (rimVertices : Finset V)
     (hrim : ∀ v, rim v → v ∈ rimVertices) (hrimCard : rimVertices.card ≤ 2)
     (hexternal : ∀ v w, G.Adj u v → ¬rim v → G.Adj u w → ¬rim w → v = w) :
@@ -1287,7 +1287,7 @@ theorem path_chord_same_block (m : ℕ) {u v : NonhubVertex m}
     (p : (nonhubGraph m).Walk u v) {e : Sym2 (NonhubVertex m)}
     (he : p.IsChord e) :
     e.lift ⟨fun a b ↦ blockOf m a = blockOf m b,
-      fun a b ↦ propext (eq_comm)⟩ := by
+      fun _a _b ↦ propext (eq_comm)⟩ := by
   classical
   induction e using Sym2.inductionOn with
   | _ a b =>
@@ -1371,7 +1371,7 @@ theorem exists_cycle_of_path_chord {V : Type*} {G : SimpleGraph V} {u v : V}
         refine ⟨a, c, ?_, ?_, ?_, ?_⟩
         · exact (SimpleGraph.Walk.cons_isCycle_iff r hab).2 ⟨hrPath, by
             simpa [Sym2.eq_swap] using hre⟩
-        · simp [c, Sym2.eq_swap]
+        · simp [c]
         · intro z hz
           change z ∈ a :: r.support at hz
           rcases List.mem_cons.mp hz with rfl | hz
@@ -1397,8 +1397,7 @@ theorem isPath_countP_edges_incident_start_le_one {V : Type*} {G : SimpleGraph V
       rw [SimpleGraph.Walk.support_cons, List.nodup_cons] at hn
       have hzero : q.edges.countP (fun e ↦ decide (u ∈ e)) = 0 := by
         rw [List.countP_eq_zero]
-        intro e he
-        intro htrue
+        intro e he htrue
         have hue : u ∈ e := of_decide_eq_true htrue
         exact hn.1 (q.mem_support_of_mem_edges he hue)
       simp [SimpleGraph.Walk.edges_cons, hzero]
@@ -1422,7 +1421,7 @@ theorem isPath_countP_edges_incident_le_two {V : Type*} {G : SimpleGraph V}
         omega
       · have ht := ih hq
         simp only [SimpleGraph.Walk.edges_cons, List.countP_cons, Sym2.mem_iff,
-          hxu, hxw, or_false, decide_false, ite_false]
+          hxu, hxw, or_false, decide_false]
         exact ht
 
 theorem isPath_card_incident_path_edges_le_two {V : Type*} {G : SimpleGraph V}
@@ -1433,10 +1432,11 @@ theorem isPath_card_incident_path_edges_le_two {V : Type*} {G : SimpleGraph V}
   exact isPath_countP_edges_incident_le_two (x := x) hp
 
 theorem isPath_not_three_distinct_incident_edges {V : Type*} {G : SimpleGraph V}
-    [DecidableEq V] {u v x : V} {p : G.Walk u v} (hp : p.IsPath)
+    {u v x : V} {p : G.Walk u v} (hp : p.IsPath)
     {e₁ e₂ e₃ : Sym2 V} (h₁ : e₁ ∈ p.edges) (h₂ : e₂ ∈ p.edges)
     (h₃ : e₃ ∈ p.edges) (hx₁ : x ∈ e₁) (hx₂ : x ∈ e₂) (hx₃ : x ∈ e₃)
     (h₁₂ : e₁ ≠ e₂) (h₁₃ : e₁ ≠ e₃) (h₂₃ : e₂ ≠ e₃) : False := by
+  classical
   let F := hp.isTrail.edgesFinset.filter fun e ↦ x ∈ e
   have hsub : ({e₁, e₂, e₃} : Finset (Sym2 V)) ⊆ F := by
     intro e he
@@ -1549,9 +1549,10 @@ theorem hubDeletedPath_isPath (m : ℕ)
 /-- In a finite graph of maximum degree two, every simple cycle is
 chordless. -/
 theorem cycle_chordless_of_degree_le_two {V : Type*} [Fintype V]
-    [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    (G : SimpleGraph V) [DecidableRel G.Adj]
     (hdeg : ∀ v, G.degree v ≤ 2) {u : V} (p : G.Walk u u)
     (hp : p.IsCycle) : p.IsChordless := by
+  classical
   rw [SimpleGraph.Walk.isChordless_iff_forall_mem_edges]
   intro a b ha hb hab
   let q := p.rotate a ha
@@ -1580,7 +1581,7 @@ theorem cycle_chordless_of_degree_le_two {V : Type*} [Fintype V]
     simpa [heq, Sym2.eq_swap] using hlast
   have hba : b = q.snd ∨ b = q.penultimate := by
     by_contra hne
-    push_neg at hne
+    push Not at hne
     have hsub : ({b, q.snd, q.penultimate} : Finset V) ⊆ G.neighborFinset a := by
       intro z hz
       simp only [Finset.mem_insert, Finset.mem_singleton] at hz
@@ -1598,10 +1599,11 @@ theorem cycle_chordless_of_degree_le_two {V : Type*} [Fintype V]
   exact (p.rotate_edges a ha).perm.mem_iff.mp hqe
 
 theorem cycle_neighbor_mem_support_of_degree_le_two {V : Type*} [Fintype V]
-    [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    (G : SimpleGraph V) [DecidableRel G.Adj]
     (hdeg : ∀ v, G.degree v ≤ 2) {u : V} (p : G.Walk u u)
     (hp : p.IsCycle) {a b : V} (ha : a ∈ p.support) (hab : G.Adj a b) :
     b ∈ p.support := by
+  classical
   let q := p.rotate a ha
   have hq : q.IsCycle := by simpa [q] using hp.rotate ha
   have hqNil : ¬q.Nil := hq.not_nil
@@ -1738,15 +1740,15 @@ noncomputable def spineBlockIso (m : ℕ) (i : Fin (m + 1)) :
       · omega
       · omega), fun h ↦ Or.inl ⟨rfl, h⟩⟩
 
-theorem chordless_cycle_of_induce_iso_cycleGraph {V : Type*} [Fintype V]
-    (G : SimpleGraph V) [DecidableRel G.Adj] (S : Set V)
+theorem chordless_cycle_of_induce_iso_cycleGraph {V : Type*} [Finite V]
+    (G : SimpleGraph V) (S : Set V)
     (f : cycleGraph 5 ≃g G.induce S) {u : V} (p : G.Walk u u)
     (hp : p.IsCycle) (hS : ∀ z ∈ p.support, z ∈ S) : p.IsChordless := by
   classical
   let q := p.induce S hS
   let inc : G.induce S ↪g G := SimpleGraph.Embedding.induce S
   have hmap : q.map inc.toHom = p := by
-    simpa [q, inc] using SimpleGraph.Walk.map_induce p hS
+    exact SimpleGraph.Walk.map_induce p hS
   have hq : q.IsCycle := by
     apply SimpleGraph.Walk.IsCycle.of_map (f := inc.toHom)
     change (q.map (SimpleGraph.Embedding.induce S).toHom).IsCycle
@@ -1762,8 +1764,8 @@ theorem chordless_cycle_of_induce_iso_cycleGraph {V : Type*} [Fintype V]
   rw [hmap] at hmapped
   exact hmapped
 
-theorem cycle_covers_induce_iso_cycleGraph {V : Type*} [Fintype V]
-    (G : SimpleGraph V) [DecidableRel G.Adj] (S : Set V)
+theorem cycle_covers_induce_iso_cycleGraph {V : Type*} [Finite V]
+    (G : SimpleGraph V) (S : Set V)
     (f : cycleGraph 5 ≃g G.induce S) {u : V} (p : G.Walk u u)
     (hp : p.IsCycle) (hS : ∀ z ∈ p.support, z ∈ S) :
     ∀ z, z ∈ S → z ∈ p.support := by
@@ -2061,9 +2063,9 @@ theorem spine_rim_chord_at_endpoint_index (m : ℕ) {u v : NonhubVertex m}
     · simp [spineBridgeEdge, hkLi]
     · simp
     · simp
-    · simp [spineBridgeEdge, Sym2.eq_iff, spineNH, spine, hkLi, kL]
-    · simp [spineBridgeEdge, Sym2.eq_iff, spineNH, spine, hkLi, kL]
-    · simp [Sym2.eq_iff, spineNH, spine]
+    · simp [spineBridgeEdge, spineNH, spine, hkLi, kL]
+    · simp [spineBridgeEdge, spineNH, spine, hkLi, kL]
+    · simp [spineNH, spine]
   have htwo : x = 2 ∨ y = 2 := by
     by_contra hne2
     push Not at hne2
@@ -2088,9 +2090,9 @@ theorem spine_rim_chord_at_endpoint_index (m : ℕ) {u v : NonhubVertex m}
     · simp [spineBridgeEdge, hkRi]
     · simp
     · simp
-    · simp [spineBridgeEdge, Sym2.eq_iff, spineNH, spine, hkRi, kR]
-    · simp [spineBridgeEdge, Sym2.eq_iff, spineNH, spine, hkRi, kR]
-    · simp [Sym2.eq_iff, spineNH, spine]
+    · simp [spineBridgeEdge, spineNH, spine, hkRi, kR]
+    · simp [spineBridgeEdge, spineNH, spine, hkRi, kR]
+    · simp [spineNH, spine]
   have hadj : (cycleGraph 5).Adj x y := by
     have hadj' := he.1
     change spineAdjacent i x i y at hadj'
@@ -2214,7 +2216,7 @@ theorem hubEdgesForLeaf_card_le_four (m : ℕ) (l : LeafId m) :
     (hubEdgesForLeaf m l).card ≤ 4 := by
   classical
   apply (Finset.card_image_le).trans
-  simp [hubEdgesForLeaf]
+  simp
 
 noncomputable def hubCandidateEdges (m : ℕ) {u v : NonhubVertex m}
     (q : (nonhubGraph m).Walk u v) : Finset (Sym2 (Vertex m)) := by
@@ -2441,8 +2443,8 @@ theorem toNonhubEdge_isChord_hubDeletedPath (m : ℕ)
           have heqMap : (toNonhubEdge m s(a, b)).map inc = s(a, b) := by
             apply Sym2.eq_iff.mpr
             left
-            exact ⟨by simp [toNonhubEdge, toNonhubVertex, haNH, inc],
-              by simp [toNonhubEdge, toNonhubVertex, hbNH, inc]⟩
+            exact ⟨by simp [toNonhubVertex, haNH, inc],
+              by simp [toNonhubVertex, hbNH, inc]⟩
           exact heqMap ▸ hm
         have hedgesEq := congrArg SimpleGraph.Walk.edges hmap
         have heDrop : s(a, b) ∈ p.tail.dropLast.edges := hedgesEq ▸ heMap
@@ -2557,9 +2559,10 @@ theorem isChord_map_iso_iff {V W : Type*} {G : SimpleGraph V}
       simp only [hadj, hedge, ha, hb]
 
 theorem chordCount_map_iso {V W : Type*} [Fintype V] [Fintype W]
-    [DecidableEq V] [DecidableEq W] {G : SimpleGraph V} {H : SimpleGraph W}
+    {G : SimpleGraph V} {H : SimpleGraph W}
     (f : G ≃g H) {u v : V} (p : G.Walk u v) :
     Walk.chordCount (p.map f.toHom) = Walk.chordCount p := by
+  classical
   let fe : Sym2 V ↪ Sym2 W :=
     ⟨Sym2.map f, Sym2.map.injective f.injective⟩
   have hfin : Walk.chordFinset (p.map f.toHom) =
@@ -2612,9 +2615,10 @@ target type can contain additional vertices, every chord of the mapped walk has
 both endpoints in the mapped support and therefore comes uniquely from a source
 edge. -/
 theorem chordCount_map_embedding {V W : Type*} [Fintype V] [Fintype W]
-    [DecidableEq V] [DecidableEq W] {G : SimpleGraph V} {H : SimpleGraph W}
+    {G : SimpleGraph V} {H : SimpleGraph W}
     (f : G ↪g H) {u v : V} (p : G.Walk u v) :
     Walk.chordCount (p.map f.toHom) = Walk.chordCount p := by
+  classical
   let fe : Sym2 V ↪ Sym2 W :=
     ⟨Sym2.map f, Sym2.map.injective f.injective⟩
   have hfin : Walk.chordFinset (p.map f.toHom) =
@@ -2908,7 +2912,7 @@ end Counterexample
 ambient graph.  Inducedness is essential for preservation of the exact chord
 set; it is supplied by Mathlib's canonical graph embedding. -/
 theorem hasOddCycleWithAtLeastChords_of_induce {V : Type*} [Fintype V]
-    [DecidableEq V] (G : SimpleGraph V) (s : Finset V) (d : ℕ)
+    (G : SimpleGraph V) (s : Finset V) (d : ℕ)
     (h : HasOddCycleWithAtLeastChords (G.induce (s : Set V)) d) :
     HasOddCycleWithAtLeastChords G d := by
   classical
@@ -2978,7 +2982,7 @@ the finite critical-core step used by Voss: choose an inclusion-minimal
 non-three-colorable induced subgraph, apply the critical theorem there, and
 map its witnessed cycle back to the original graph. -/
 theorem affirmative_of_vertex_critical_case
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (hcritical : ∀ (s : Finset V) (H : SimpleGraph s),
       H.chromaticNumber = (4 : ℕ∞) →
       (∀ v : s, (H.induce ({v}ᶜ : Set s)).Colorable 3) →
@@ -3081,10 +3085,11 @@ theorem colorable_three_of_deleted_edges_covered_by_independent_pair
           exact h.elim (fun hxb => hx (Or.inr hxb)) (fun hyb => hy (Or.inr hyb))⟩)) hcxy
 
 theorem independent_endpoint_pair_of_two_edges
-    {V : Type*} [DecidableEq V] {G : SimpleGraph V}
+    {V : Type*} {G : SimpleGraph V}
     (hfree : G.CliqueFree 4) {a b x y : V}
     (hab : G.Adj a b) (hxy : G.Adj x y) :
     ∃ u v, (u = a ∨ u = b) ∧ (v = x ∨ v = y) ∧ ¬ G.Adj u v := by
+  classical
   by_cases hax : G.Adj a x
   · by_cases hay : G.Adj a y
     · by_cases hbx : G.Adj b x
@@ -3094,7 +3099,7 @@ theorem independent_endpoint_pair_of_two_edges
           constructor
           · rw [SimpleGraph.isClique_iff]
             intro p hp q hq hpq
-            simp at hp hq
+            simp only [Finset.mem_coe, Finset.mem_insert, Finset.mem_singleton] at hp hq
             rcases hp with rfl | rfl | rfl | rfl <;>
               rcases hq with rfl | rfl | rfl | rfl
             · exact (hpq rfl).elim
@@ -3126,7 +3131,7 @@ theorem independent_endpoint_pair_of_two_edges
   · exact ⟨a, x, Or.inl rfl, Or.inl rfl, hax⟩
 
 theorem colorable_three_of_cliqueFree_four_of_canBipartizeBy_le_two
-    {V : Type*} [Fintype V] [DecidableEq V] {G : SimpleGraph V}
+    {V : Type*} [Fintype V] {G : SimpleGraph V}
     (hfree : G.CliqueFree 4) {m : ℕ} (hm : m ≤ 2)
     (hbip : Erdos744.CanBipartizeBy G m) :
     G.Colorable 3 := by

@@ -99,7 +99,8 @@ theorem innerCycle_support_subset (E : Ear G S) (hlen : 2 ≤ E.walk.length)
     (hxy : G.Adj E.walk.snd E.walk.penultimate) :
     (E.innerCycle hlen hxy).support ⊆ E.walk.support := by
   intro v hv
-  simp only [innerCycle, Walk.support_cons, Walk.support_reverse, List.mem_cons, List.mem_reverse] at hv
+  simp only [innerCycle, Walk.support_cons, Walk.support_reverse, List.mem_cons,
+    List.mem_reverse] at hv
   rcases hv with rfl | hv
   · exact E.walk.getVert_mem_support 1
   · exact E.innerPath_support_subset hlen hv
@@ -107,7 +108,8 @@ theorem innerCycle_support_subset (E : Ear G S) (hlen : 2 ≤ E.walk.length)
 theorem innerCycle_notMem (E : Ear G S) (hlen : 2 ≤ E.walk.length)
     (hxy : G.Adj E.walk.snd E.walk.penultimate)
     {v : V} (hv : v ∈ (E.innerCycle hlen hxy).support) : v ∉ S := by
-  simp only [innerCycle, Walk.support_cons, Walk.support_reverse, List.mem_cons, List.mem_reverse] at hv
+  simp only [innerCycle, Walk.support_cons, Walk.support_reverse, List.mem_cons,
+    List.mem_reverse] at hv
   rcases hv with rfl | hv
   · exact E.snd_notMem hlen
   · exact E.innerPath_notMem hlen hv

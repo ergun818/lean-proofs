@@ -146,3 +146,5 @@ theorem isBipartite_iff_not_hasOddCycle : G.IsBipartite ↔ ¬G.HasOddCycle :=
   colorable_two_iff_not_hasOddCycle
 
 end SimpleGraph
+
+end

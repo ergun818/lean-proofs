@@ -295,9 +295,10 @@ def close (P : AttachmentPath G S) {v : V} (h : G.Adj P.finish v)
     · exact Or.inr rfl
 
 /-- Finiteness gives a longest attachment path whenever one exists. -/
-theorem exists_longest [Fintype V] (P₀ : AttachmentPath G S) :
+theorem exists_longest [Finite V] (P₀ : AttachmentPath G S) :
     ∃ P : AttachmentPath G S,
       ∀ Q : AttachmentPath G S, Q.walk.length ≤ P.walk.length := by
+  let := Fintype.ofFinite V
   let lengths : Set ℕ := {n | ∃ P : AttachmentPath G S, P.walk.length = n}
   have hfinite : lengths.Finite :=
     (Set.finite_le_nat (Fintype.card V)).subset (by

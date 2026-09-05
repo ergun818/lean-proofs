@@ -28,7 +28,8 @@ theorem four_ordered_spokes_impossible
     (h₃ : G.Adj (D.getVert 3) (C.getVert k))
     (ho₁ : Odd (D.length + 1 + i)) (ho₂ : Odd (D.length + 1 + (j - i)))
     (ho₃ : Odd (D.length + 1 + (k - j))) : False := by
-  have hshort := four_spokes_short_inner_cycle_even C hC D hD hDlen hDC hno hi hij hjk hk h₀ h₁ h₂ h₃
+  have hshort :=
+    four_spokes_short_inner_cycle_even C hC D hD hDlen hDC hno hi hij hjk hk h₀ h₁ h₂ h₃
   have hlong := four_spokes_long_inner_cycle_even C hC D hD hDlen hDC hno hi hij hjk hk h₀ h₁ h₂ h₃
   simp only [Nat.odd_iff] at ho₁ ho₂ ho₃
   simp only [Nat.even_iff] at hshort hlong
