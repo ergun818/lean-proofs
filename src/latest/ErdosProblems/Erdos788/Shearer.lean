@@ -546,7 +546,6 @@ theorem sum_pointwiseResidual_nonneg :
   rw [vertexDrop]
   simpa only [mul_assoc] using! shearerWeight_residual_nonneg (G.degree x)
 
-set_option maxHeartbeats 800000 in
 theorem pointwiseResidualSum_le_base_add_common (htri : G.CliqueFree 3) :
     (∑ x : V,
       (1 - (((G.degree x + 1 : ℕ) : ℚ) * shearerWeight (G.degree x)) +
@@ -590,7 +589,6 @@ abbrev OutsideVertex (x : V) :=
 abbrev outsideGraph (x : V) : SimpleGraph (OutsideVertex G x) :=
   G.induce (outsideSet G x)
 
-set_option maxHeartbeats 800000 in
 theorem degree_outsideGraph (x : V) (z : OutsideVertex G x) :
     (outsideGraph G x).degree z = degreeOutsideClosed G x z.1 := by
   classical
@@ -621,7 +619,6 @@ theorem degree_outsideGraph (x : V) (z : OutsideVertex G x) :
       ext y
       simp [outsideClosedNeighborFinset]
 
-set_option maxHeartbeats 800000 in
 theorem graphWeight_outsideGraph (x : V) :
     graphWeight (outsideGraph G x) =
       ∑ z ∈ outsideClosedNeighborFinset G x,
@@ -658,7 +655,7 @@ theorem closedDeletionGain_eq (x : V) :
   simp only [closedNeighborFinset]
   linear_combination -hpartition
 
-set_option maxHeartbeats 800000 in
+omit [DecidableEq V] in
 /-- The harmonic graph weight is bounded by the independence number in every
 triangle-free finite graph. -/
 theorem graphWeight_le_indepNum (htri : G.CliqueFree 3) :
@@ -674,7 +671,7 @@ theorem graphWeight_le_indepNum (htri : G.CliqueFree 3) :
       exact (hab (Subsingleton.elim a b)).elim
     calc
       graphWeight H = (Fintype.card α : ℚ) := by
-        simp [graphWeight, SimpleGraph.degree_eq_zero_of_subsingleton]
+        simp [graphWeight]
       _ ≤ (H.indepNum : ℚ) := by
         exact_mod_cast hind.card_le_indepNum
   · intro α _ _ ih _ H _ htriH

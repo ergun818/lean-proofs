@@ -73,7 +73,6 @@ private theorem arithmeticCutoff_le_shearerCutoff_alt {b q : ℕ}
       simp only [V, U]
       ring
 
-set_option maxHeartbeats 1000000
 /-- Every normalized sum graph has score at least a fixed multiple of the
 square-root logarithmic scale. -/
 theorem normalizedScore_lower {N : ℕ} (A : Finset ℕ) (hN : 2 ≤ N) :

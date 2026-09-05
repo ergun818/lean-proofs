@@ -264,7 +264,7 @@ theorem finiteDot_wordSimplexRaw_self {p ell : ℕ} [NeZero p]
 construction.  A near-Plotkin pairwise agreement bound forces every strict
 agreement list to have the paper's explicit size bound. -/
 theorem card_lt_two_div_sq_add_one_of_pairwise_agreement
-    {p ell : ℕ} {ι : Type*} [Fintype ι] [DecidableEq ι] [Fact p.Prime]
+    {p ell : ℕ} {ι : Type*} [Fact p.Prime]
     (η τ : ℝ) (hη : 0 < η)
     (hτ : τ = (p : ℝ) * η ^ 2 / (2 * ((p : ℝ) - 1)))
     (L : Finset ι)

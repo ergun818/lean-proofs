@@ -50,7 +50,7 @@ theorem finiteDot_sum_norm_expand {κ ι : Type*} [Fintype κ]
 pairwise inner product at most `β` and correlate with one unit received word
 by more than `γ`, then the list has the standard rational size bound. -/
 theorem card_lt_simplex_list_bound
-    {κ ι : Type*} [Fintype κ] [DecidableEq ι]
+    {κ ι : Type*} [Fintype κ]
     (L : Finset ι) (v : ι → κ → ℝ) (w : κ → ℝ)
     (β γ : ℝ)
     (hL : L.Nonempty)
@@ -122,7 +122,7 @@ theorem card_lt_simplex_list_bound
 introducing square roots when the regular-simplex vectors all have the same
 positive squared norm `q`. -/
 theorem card_lt_simplex_list_bound_scaled
-    {κ ι : Type*} [Fintype κ] [DecidableEq ι]
+    {κ ι : Type*} [Fintype κ]
     (L : Finset ι) (v : ι → κ → ℝ) (w : κ → ℝ)
     (q β γ : ℝ)
     (hL : L.Nonempty) (hq : 0 < q)

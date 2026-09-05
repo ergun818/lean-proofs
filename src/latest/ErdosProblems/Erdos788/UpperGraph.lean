@@ -72,10 +72,11 @@ theorem eq_zero_of_eq_neg_ffVec {p r : ℕ} [Fact p.Prime] (hp : 2 < p)
 /-- A finite set containing no nonzero antipodal pair occupies at most one
 point from each antipodal pair, plus possibly zero. -/
 theorem antipodal_support_bound_twice {V : Type*}
-    [AddCommGroup V] [Fintype V] [DecidableEq V]
+    [AddCommGroup V] [Fintype V]
     (T : Finset V)
     (hanti : ∀ z, z ∈ T → -z ∈ T → z = 0) :
     2 * T.card ≤ Fintype.card V + 1 := by
+  classical
   let Tneg : Finset V := T.image (-·)
   have hnegcard : Tneg.card = T.card := by
     exact Finset.card_image_of_injective T neg_injective

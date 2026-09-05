@@ -68,7 +68,7 @@ theorem kernelFinset_card_of_surjective
   exact kernel_card_of_surjective p r F hF
 
 /-- The union of `|Y|` surjective kernels has size at most `|Y| p^r`. -/
-theorem kernel_palette_card_le {ι : Type*} [DecidableEq ι]
+theorem kernel_palette_card_le {ι : Type*}
     (Y : Finset ι)
     (F : ι → (Fin (2 * r) → ZMod p) →ₗ[ZMod p] (Fin r → ZMod p))
     (hF : ∀ y ∈ Y, Function.Surjective (F y)) :

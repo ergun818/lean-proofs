@@ -263,7 +263,7 @@ def paletteGraphIso (n : ℕ) (B : Finset ℕ) :
         exact hmem
 
 /-- A finite graph isomorphism preserves the independence number. -/
-theorem indepNum_eq_of_iso {V W : Type*} [Fintype V] [Fintype W]
+theorem indepNum_eq_of_iso {V W : Type*} [Finite V] [Finite W]
     {G : SimpleGraph V} {H : SimpleGraph W} (e : G ≃g H) :
     G.indepNum = H.indepNum := by
   apply le_antisymm

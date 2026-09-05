@@ -112,9 +112,10 @@ theorem tv_triangle [Fintype α] (P Q R : FinDist α) :
   nlinarith
 
 /-- An event-probability discrepancy is bounded by total variation. -/
-theorem event_gap_le_tv [Fintype α] [DecidableEq α]
+theorem event_gap_le_tv [Fintype α]
     (P Q : FinDist α) (T : Finset α) :
     |(∑ x ∈ T, P.mass x) - ∑ x ∈ T, Q.mass x| ≤ P.tv Q := by
+  classical
   let d : α → ℝ := fun x ↦ P.mass x - Q.mass x
   have htotal : ∑ x, d x = 0 := by
     simp only [d, Finset.sum_sub_distrib, P.sum_mass, Q.sum_mass, sub_self]
@@ -142,10 +143,11 @@ theorem event_gap_le_tv [Fintype α] [DecidableEq α]
 
 /-- A distribution supported on `T` is at least `1 - |T|/|α|` away
 from uniform. -/
-theorem tv_uniform_ge_one_sub_support [Fintype α] [DecidableEq α]
+theorem tv_uniform_ge_one_sub_support [Fintype α]
     [Nonempty α] (P : FinDist α) (T : Finset α)
     (hsupport : ∀ x, x ∉ T → P.mass x = 0) :
     1 - (T.card : ℝ) / Fintype.card α ≤ P.tv (uniform α) := by
+  classical
   have hout : ∑ x ∈ (Finset.univ \ T), P.mass x = 0 := by
     apply Finset.sum_eq_zero
     intro x hx

@@ -22,7 +22,7 @@ theorem local_row_has_suffix_slack {m t tail : ℕ}
     t ≤ (m - t - 1) + tail := by
   omega
 
-theorem sum_of_unit_costs_le_card {ι : Type*} [DecidableEq ι]
+theorem sum_of_unit_costs_le_card {ι : Type*}
     (s : Finset ι) (w : ι → ℕ) (hw : ∀ i ∈ s, w i ≤ 1) :
     ∑ i ∈ s, w i ≤ s.card := by
   simpa using! Finset.sum_le_sum hw

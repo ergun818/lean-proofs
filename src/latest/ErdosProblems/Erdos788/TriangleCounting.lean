@@ -471,8 +471,10 @@ theorem card_neighborhoodEdges_induce_le (v : s) :
     _ ≤ (neighborhoodEdges G v.1).card :=
       card_le_card (map_neighborhoodEdges_induce_subset G s v)
 
+omit [DecidableEq V] in
 theorem degree_induce_le (v : s) :
     (G.induce s).degree v ≤ G.degree v := by
+  classical
   rw [← SimpleGraph.card_neighborFinset_eq_degree,
     ← SimpleGraph.card_neighborFinset_eq_degree]
   calc

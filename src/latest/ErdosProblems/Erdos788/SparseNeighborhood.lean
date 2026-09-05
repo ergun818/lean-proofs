@@ -363,7 +363,7 @@ theorem card_sample_le_core_add_triangles (S : Finset W) :
     _ = _ := rfl
 
 omit [Fintype W] [DecidableEq W] [DecidableRel G.Adj] in
-theorem isNClique_map_induce {s : Set W} [DecidablePred (· ∈ s)]
+theorem isNClique_map_induce {s : Set W}
     {n : ℕ} {t : Finset s} (ht : (G.induce s).IsNClique n t) :
     G.IsNClique n (t.map (Function.Embedding.subtype s)) := by
   constructor
@@ -452,8 +452,8 @@ theorem isIndepSet_liftInducedFinset {S : Finset W}
   have hxy' : x ≠ y := fun h ↦ hxy (congrArg Subtype.val h)
   exact hC (by simpa using! hx) (by simpa using! hy) hxy'
 
-omit [DecidableEq W] [DecidableRel G.Adj] in
-theorem indepNum_induce_finset_le (S : Finset W) :
+omit [Fintype W] [DecidableEq W] [DecidableRel G.Adj] in
+theorem indepNum_induce_finset_le [Finite W] (S : Finset W) :
     (G.induce (S : Set W)).indepNum ≤ G.indepNum := by
   obtain ⟨C, hC⟩ := SimpleGraph.exists_isNIndepSet_indepNum
     (G := G.induce (S : Set W))
