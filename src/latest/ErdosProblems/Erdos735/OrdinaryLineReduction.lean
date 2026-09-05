@@ -222,14 +222,13 @@ lemma ordinaryGraph_degree_le_one {Q : Finset Point} {p : Point}
     (hp : p ∉ Q)
     (hthrough : ∀ a b, OrdinaryPair Q a b → Collinear3 a b p) :
     ∀ a : {x // x ∈ Q}, ((ordinaryGraph Q).neighborSet a).Subsingleton := by
-  intro a
-  intro b hab c hac
+  intro a b hab c hac
   have hab' : OrdinaryPair Q a.1 b.1 := hab
   have hac' : OrdinaryPair Q a.1 c.1 := hac
   have hpa : p ≠ a.1 := by
     intro h
     apply hp
-    simpa [h] using a.2
+    simp [h]
   have hpab : Collinear3 a.1 p b.1 := by
     exact (collinear3_swap_right a.1 p b.1).mp (hthrough _ _ hab')
   have hpac : Collinear3 a.1 p c.1 := by
@@ -260,10 +259,12 @@ lemma SimpleGraph.edgeFinset_eq_incidenceFinset_of_star
       · exact G.mk'_mem_incidenceSet_right_iff.2 he
   · exact G.incidenceFinset_subset c
 
+omit [DecidableEq V] in
 lemma SimpleGraph.card_edgeFinset_eq_degree_of_star
     (G : SimpleGraph V) [DecidableRel G.Adj] (c : V)
     (hstar : ∀ a b, G.Adj a b → a = c ∨ b = c) :
     G.edgeFinset.card = G.degree c := by
+  classical
   rw [SimpleGraph.edgeFinset_eq_incidenceFinset_of_star G c hstar,
     SimpleGraph.card_incidenceFinset_eq_degree]
 
