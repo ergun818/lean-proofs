@@ -7,7 +7,9 @@ import ErdosProblems.Erdos207.PreliminaryDegreePowerBudgets
 import ErdosProblems.Erdos207.SourceReservePowerFailure
 import ErdosProblems.Erdos207.EventualSourceMomentBudgets
 
-/-! # A fixed preliminary degree moment and cutoff work uniformly at every sufficiently large scale -/
+/-!
+# A fixed preliminary degree moment and cutoff work uniformly at every sufficiently large scale
+-/
 
 namespace Erdos207
 
