@@ -25,17 +25,19 @@ def DiracCircumferencePrinciple : Prop :=
     (∀ w, (E767EGApi.deleteVertex H w).Preconnected) →
     CycleLengthAtMost H c → ∃ w, 2 * H.degree w ≤ c
 
-lemma cycleLengthAtMost_induce {V : Type u} [Fintype V] [DecidableEq V]
+lemma cycleLengthAtMost_induce {V : Type u}
     (G : SimpleGraph V) (c : ℕ) (h : CycleLengthAtMost G c) (S : Set V) :
     CycleLengthAtMost (G.induce S) c := by
+  classical
   intro v p hp
   let f : G.induce S ↪g G := SimpleGraph.Embedding.induce S
   have hm : (p.map f.toHom).IsCycle := hp.map f.injective
   simpa using h (f v) (p.map f.toHom) hm
 
 private lemma twice_card_edgeFinset_le_complete {V : Type u}
-    [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj] :
+    [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj] :
     2 * G.edgeFinset.card ≤ Fintype.card V * (Fintype.card V - 1) := by
+  classical
   calc
     2 * G.edgeFinset.card ≤ 2 * (Fintype.card V).choose 2 :=
       Nat.mul_le_mul_left 2 G.card_edgeFinset_le_card_choose_two
@@ -123,10 +125,11 @@ private lemma combine_disconnected_bounds
 edge-count, subtype-cardinality, and induction work is internal; the sole
 input is `DiracCircumferencePrinciple`. -/
 theorem erdosGallai_cycle_conditional (hDirac : DiracCircumferencePrinciple.{u})
-    {V : Type u} [Fintype V] [DecidableEq V]
+    {V : Type u} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (c : ℕ)
     (hc : 2 ≤ c) (hcycle : CycleLengthAtMost G c) :
     2 * G.edgeFinset.card ≤ c * (Fintype.card V - 1) := by
+  classical
   induction n : Fintype.card V using Nat.strong_induction_on generalizing V G with
   | h n ih =>
       rw [← n]
@@ -219,7 +222,7 @@ theorem erdosGallai_cycle_conditional (hDirac : DiracCircumferencePrinciple.{u})
                   exact Or.inr ⟨by simp [B, hxD], by simp [B, hyD]⟩
           have hunion : A ∪ B = Finset.univ := by
             ext x
-            by_cases hxD : x ∈ D <;> simp [A, B, hxD]
+            by_cases hxD : x ∈ D <;> simp [A, B]
           have hinterEq : A ∩ B = {v} := by
             ext x
             by_cases hxv : x = v

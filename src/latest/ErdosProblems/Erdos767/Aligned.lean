@@ -17,14 +17,17 @@ better under taking prefixes and suffixes. -/
 def Aligned {x y a b : V} (p : G.Walk x y) (q : G.Walk a b) : Prop :=
   (q.support.filter fun v => v ∈ p.support).Sublist p.support
 
+omit [Fintype V] in
 @[simp] lemma filter_mem_self (l : List V) :
     l.filter (fun v => v ∈ l) = l := by
   apply List.filter_eq_self.mpr
   simp
 
+omit [Fintype V] in
 lemma aligned_refl {x y : V} (p : G.Walk x y) : Aligned p p := by
   simp [Aligned]
 
+omit [Fintype V] in
 /-- Taking a sublist of the second path preserves alignment. -/
 lemma aligned_of_support_sublist {x y a b c d : V}
     {p : G.Walk x y} {q : G.Walk a b} {r : G.Walk c d}
@@ -32,18 +35,21 @@ lemma aligned_of_support_sublist {x y a b c d : V}
     Aligned p r := by
   exact (hrq.filter _).trans hq
 
+omit [Fintype V] in
 lemma aligned_takeUntil {x y a b u : V}
     {p : G.Walk x y} {q : G.Walk a b} (hq : Aligned p q)
     (hu : u ∈ q.support) : Aligned p (q.takeUntil u hu) := by
   apply aligned_of_support_sublist hq
   exact q.support_takeUntil_prefix_support hu |>.sublist
 
+omit [Fintype V] in
 lemma aligned_dropUntil {x y a b u : V}
     {p : G.Walk x y} {q : G.Walk a b} (hq : Aligned p q)
     (hu : u ∈ q.support) : Aligned p (q.dropUntil u hu) := by
   apply aligned_of_support_sublist hq
   exact q.support_dropUntil_suffix_support hu |>.sublist
 
+omit [Fintype V] [DecidableEq V] in
 lemma isPath_append_of_disjoint_tail {a b c : V}
     {p : G.Walk a b} {q : G.Walk b c}
     (hp : p.IsPath) (hq : q.IsPath)
@@ -52,6 +58,7 @@ lemma isPath_append_of_disjoint_tail {a b c : V}
   rw [Walk.isPath_def, Walk.support_append]
   exact List.Nodup.append hp.support_nodup hq.support_nodup.tail hd
 
+omit [Fintype V] in
 lemma isPath_append_dropUntil_of_first_hit {a b c u : V}
     {p : G.Walk a u} {q : G.Walk b c}
     (hp : p.IsPath) (hq : q.IsPath) (hu : u ∈ q.support)
@@ -66,6 +73,7 @@ lemma isPath_append_dropUntil_of_first_hit {a b c u : V}
   subst v
   exact (hq.dropUntil hu).support_nodup.rel_head_tail hvqtail (by simp)
 
+omit [Fintype V] in
 lemma filter_eq_ite_singleton_of_nodup_of_forall_eq
     (l : List V) (s : V → Prop) [DecidablePred s] (u : V)
     (hl : l.Nodup) (honly : ∀ v, v ∈ l → s v → v = u) :
@@ -80,7 +88,7 @@ lemma filter_eq_ite_singleton_of_nodup_of_forall_eq
         subst a
         have hul : u ∉ l := hnodup.1
         simp [hsa, hul, ih']
-      · simp only [List.filter_cons, hsa, ↓reduceIte, ih']
+      · simp only [List.filter_cons, hsa, ih']
         by_cases hu : u ∈ l ∧ s u
         · have huna : u ≠ a := by
             intro hua
@@ -88,14 +96,15 @@ lemma filter_eq_ite_singleton_of_nodup_of_forall_eq
           simp [hu, huna]
         · by_cases hua : u = a
           · subst a
-            simp [hu, hsa]
+            simp [hsa]
           · simp [hu, hua]
 
+omit [Fintype V] in
 /-- Adding the common initial edge to both the reference path and an aligned
 path preserves alignment, provided the new initial vertex is genuinely new. -/
 lemma aligned_cons {x v y b : V} {h : G.Adj x v}
     {p : G.Walk v y} {q : G.Walk v b}
-    (hxp : x ∉ p.support) (hxq : x ∉ q.support) (hq : Aligned p q) :
+    (_hxp : x ∉ p.support) (hxq : x ∉ q.support) (hq : Aligned p q) :
     Aligned (Walk.cons h p) (Walk.cons h q) := by
   unfold Aligned at hq ⊢
   have hfilter :
@@ -115,6 +124,7 @@ lemma aligned_cons {x v y b : V} {h : G.Adj x v}
   rw [hfilter, Walk.support_cons]
   exact hq.cons_cons x
 
+omit [Fintype V] in
 /-- A path aligned with the tail remains aligned with the whole reference
 path when the removed first vertex is absent from it. -/
 lemma aligned_cons_reference {x v y a b : V} {h : G.Adj x v}
@@ -135,6 +145,7 @@ lemma aligned_cons_reference {x v y a b : V} {h : G.Adj x v}
   rw [hfilter, Walk.support_cons]
   exact hq.cons x
 
+omit [Fintype V] in
 /-- If a new reference initial vertex is also the initial vertex of `q`,
 then it may be added in front of a path already aligned with the reference
 tail. -/
@@ -162,6 +173,7 @@ lemma aligned_cons_left {x v y b : V} {h : G.Adj x v}
   rw [hfilter, Walk.support_cons]
   exact hq.cons_cons x
 
+omit [Fintype V] in
 /-- Alignment of the Case-2 splice: a path from the new root which first
 meets the old reference path at its endpoint is followed by the suffix of an
 already aligned branch through that endpoint. -/
@@ -189,7 +201,7 @@ lemma aligned_cons_append_dropUntil_of_first_hit
     have hxqt : x ∉ q.support.tail := by
       intro hx
       have hne := hq.support_nodup.rel_head_tail hx
-      exact hne (by simpa only [q.head_support])
+      exact hne (by simp only [q.head_support])
     have htailFull :
         q.support.tail.filter (fun w => w ∈ (Walk.cons h p).support) =
           q.support.tail.filter (fun w => w ∈ p.support) := by
@@ -247,6 +259,7 @@ lemma aligned_cons_append_dropUntil_of_first_hit
   rw [← hdSupport]
   exact hd
 
+omit [Fintype V] in
 lemma start_not_mem_dropUntil_of_ne {v y u : V} {p : G.Walk v y}
     (hp : p.IsPath) (hu : u ∈ p.support) (huv : u ≠ v) :
     v ∉ (p.dropUntil u hu).support := by
@@ -264,7 +277,7 @@ lemma start_not_mem_dropUntil_of_ne {v y u : V} {p : G.Walk v y}
           u = (p.dropUntil u hu).support.head
               (p.dropUntil u hu).support_ne_nil :=
             (p.dropUntil u hu).head_support.symm
-          _ = p.support.head p.support_ne_nil := by simpa only [hs]
+          _ = p.support.head p.support_ne_nil := by simp only [hs]
           _ = v := p.head_support
       exact huv huv'
   | cons a t =>
@@ -275,6 +288,7 @@ lemma start_not_mem_dropUntil_of_ne {v y u : V} {p : G.Walk v y}
         exact List.cons.inj hcons |>.1
       exact hsep a (by simp) v hv hav
 
+omit [Fintype V] [DecidableEq V] in
 private lemma tail_sublist_of_cons_sublist_append_cons
     {w : V} {cs pre post : List V}
     (hwpre : w ∉ pre) (hwpost : w ∉ post)
@@ -296,11 +310,13 @@ private lemma tail_sublist_of_cons_sublist_append_cons
       apply ih hwpre'
       exact h.of_cons_of_ne haw
 
+omit [DecidableEq V] [Fintype V] in
 private lemma append_tail_sublist_of_infix_of_last
     {w : V} {a cs l : List V}
     (hl : l.Nodup) (ha : a <:+: l) (ha0 : a ≠ [])
     (halast : a.getLast ha0 = w) (hc : (w :: cs).Sublist l) :
     (a ++ cs).Sublist l := by
+  classical
   obtain ⟨pre, post, hprepost⟩ := ha
   have hadecomp := a.dropLast_append_getLast ha0
   rw [halast] at hadecomp
@@ -331,6 +347,7 @@ private lemma append_tail_sublist_of_infix_of_last
   rw [hprepost] at hskip
   exact hskip
 
+omit [Fintype V] in
 lemma aligned_cons_indirect_splice
     {x v y z u w : V} {h : G.Adj x v}
     {ref : G.Walk v y} {q : G.Walk x u} {t : G.Walk u w}
@@ -354,7 +371,7 @@ lemma aligned_cons_indirect_splice
   have hxqtail : x ∉ q.support.tail := by
     intro hx
     have hne := hq.support_nodup.rel_head_tail hx
-    exact hne (by simpa only [q.head_support])
+    exact hne (by simp only [q.head_support])
   have hqFull :
       q.support.filter (fun a => a ∈ (Walk.cons h ref).support) = [x, u] := by
     rw [← q.cons_tail_support, List.filter_cons]
@@ -431,11 +448,13 @@ lemma aligned_cons_indirect_splice
     List.filter_append, hqFull, htTailFull, hsTailFull, Walk.support_cons]
   simpa [List.append_assoc] using htailSub.cons_cons x
 
+omit [DecidableEq V] [Fintype V] in
 lemma isPath_append_of_meet_eq_end {a b c : V}
     {p : G.Walk a b} {q : G.Walk b c}
     (hp : p.IsPath) (hq : q.IsPath)
     (hmeet : ∀ t, t ∈ p.support → t ∈ q.support → t = b) :
     (p.append q).IsPath := by
+  classical
   apply isPath_append_of_disjoint_tail hp hq
   rw [List.disjoint_left]
   intro t htp htqt
@@ -443,6 +462,7 @@ lemma isPath_append_of_meet_eq_end {a b c : V}
   subst t
   exact hq.support_nodup.rel_head_tail htqt (by simp)
 
+omit [Fintype V] in
 lemma isPath_indirect_splice
     {x u w v z : V} {q : G.Walk x u} {r : G.Walk u w}
     {a : G.Walk v z}
@@ -474,12 +494,14 @@ structure AlignedFan {x y z : V} (p : G.Walk x y) where
   toZ_aligned : Aligned p toZ
   toY_aligned : Aligned p toY
 
+omit [Fintype V] in
 @[simp] lemma aligned_nil {x y a : V} (p : G.Walk x y) :
     Aligned p (.nil : G.Walk a a) := by
   by_cases ha : a ∈ p.support
-  · simpa [Aligned, ha] using (List.singleton_sublist.mpr ha)
+  · simp [Aligned, ha]
   · simp [Aligned, ha]
 
+omit [Fintype V] in
 lemma aligned_edge_of_avoids_end {x y z : V} (hxy : G.Adj x y)
     (q : G.Walk x z) (hq : q.IsPath) (hy : y ∉ q.support) :
     Aligned hxy.toWalk q := by
@@ -525,6 +547,7 @@ lemma exists_first_connector
   · intro t htS htq
     exact hfirst t htS htq
 
+omit [Fintype V] in
 /-- Starting at a reference vertex, walk forward to the first point on
 either old branch.  Its support is a contiguous segment of the reference. -/
 lemma exists_first_branch_hit_along_reference
@@ -785,7 +808,7 @@ noncomputable def lift_of_mem_toZ {x v y z : V} {h : G.Adj x v}
           calc
             x = rz.support.head rz.support_ne_nil := rz.head_support.symm
             _ = F.toZ.support.head F.toZ.support_ne_nil := by
-              simpa only [hsupport]
+              simp only [hsupport]
             _ = v := F.toZ.head_support
         exact h.ne hxv
     | cons a t =>
@@ -813,7 +836,7 @@ noncomputable def lift_of_mem_toZ {x v y z : V} {h : G.Adj x v}
   · have hxrz : x ∉ rz.support.tail := by
       intro hxTail
       have hne := hrz.support_nodup.rel_head_tail hxTail
-      exact hne (by simpa only [rz.head_support])
+      exact hne (by simp only [rz.head_support])
     apply aligned_cons_left hxp hxrz
     exact aligned_dropUntil F.toZ_aligned hx
   · exact aligned_cons hxp hx_toY F.toY_aligned
@@ -845,7 +868,7 @@ noncomputable def lift_of_mem_toY {x v y z : V} {h : G.Adj x v}
           calc
             x = ry.support.head ry.support_ne_nil := ry.head_support.symm
             _ = F.toY.support.head F.toY.support_ne_nil := by
-              simpa only [hsupport]
+              simp only [hsupport]
             _ = v := F.toY.head_support
         exact h.ne hxv
     | cons a t =>
@@ -874,7 +897,7 @@ noncomputable def lift_of_mem_toY {x v y z : V} {h : G.Adj x v}
   · have hxry : x ∉ ry.support.tail := by
       intro hxTail
       have hne := hry.support_nodup.rel_head_tail hxTail
-      exact hne (by simpa only [ry.head_support])
+      exact hne (by simp only [ry.head_support])
     apply aligned_cons_left hxp hxry
     exact aligned_dropUntil F.toY_aligned hx
 
@@ -893,6 +916,7 @@ noncomputable def AlignedFan.atStart {x y : V} (p : G.Walk x y)
     toZ_aligned := aligned_nil p
     toY_aligned := aligned_refl p }
 
+omit [Fintype V] [DecidableEq V] in
 /-- An infix of a simple path which starts away from the path's initial
 vertex cannot contain that initial vertex. -/
 lemma start_not_mem_of_support_infix {v y u w : V}
@@ -951,7 +975,7 @@ theorem exists_alignedFan (hG : Erdos58.TwoConnected G) :
       have hvy : v ≠ y := by
         intro hvy
         subst y
-        have hpNil : p = .nil := Walk.isPath_iff_eq_nil.mp hp
+        have hpNil : p = .nil := (Walk.isPath_iff_nil.mp hp).eq_nil
         subst p
         have hzv : z = v := by simpa using hzp
         exact hzy hzv

@@ -19,10 +19,11 @@ universe u
 variable {V : Type u} [Fintype V] [DecidableEq V]
 variable {G : SimpleGraph V} [DecidableRel G.Adj]
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- One rooted ear which avoids the lollipop attachment replaces the deleted
 root edge of the cycle by at least two edges and hence lengthens the cycle. -/
 private theorem exists_longer_cycle_of_rooted_ear_avoiding_attachment
-    (B : BestLollipop G) (hpos : 0 < B.tail.length)
+    (B : BestLollipop G) (_hpos : 0 < B.tail.length)
     {b : V} (R : G.Walk B.rotatedCycle.snd b) (hR : R.IsPath)
     (hb : b ∈ B.tail.support)
     (hcycle : ∀ w, w ∈ R.support →
@@ -31,6 +32,7 @@ private theorem exists_longer_cycle_of_rooted_ear_avoiding_attachment
     (havoid : B.start ∉ R.support) :
     ∃ D : G.Walk B.rotatedCycle.snd B.rotatedCycle.snd,
       D.IsCycle ∧ B.cycle.length < D.length := by
+  classical
   let C := B.rotatedCycle
   let A : Finset V := C.support.dropLast.toFinset
   let T : Finset V := B.tail.support.toFinset
@@ -142,6 +144,7 @@ private theorem exists_longer_cycle_of_rooted_ear_avoiding_attachment
   refine ⟨D, hD, ?_⟩
   simpa [C] using hlong
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Exceptional equal-last-cycle-endpoint branch of the aligned-fan proof.
 
 After the two extracted ears have been rewritten to start at the common
@@ -165,6 +168,7 @@ theorem exists_longer_cycle_of_two_rooted_ears
       w = B.rotatedCycle.snd) :
     ∃ D : G.Walk B.rotatedCycle.snd B.rotatedCycle.snd,
       D.IsCycle ∧ B.cycle.length < D.length := by
+  classical
   by_cases hs₁ : B.start ∈ R₁.support
   · have hs₂ : B.start ∉ R₂.support := by
       intro hs₂
@@ -177,6 +181,7 @@ theorem exists_longer_cycle_of_two_rooted_ears
   · exact exists_longer_cycle_of_rooted_ear_avoiding_attachment
       B hpos R₁ hR₁ hb₁ hcycle₁ hs₁
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Direct wrapper for the exceptional branch as it arises from the two
 `BlockEar`s extracted from an aligned fan.  Equality of their last cycle
 vertices and branch disjointness force that common vertex to be the fan
@@ -186,7 +191,7 @@ theorem exists_longer_cycle_of_equal_blockEars
     {z₁ z₂ : V}
     (R₁ : G.Walk B.rotatedCycle.snd z₁)
     (R₂ : G.Walk B.rotatedCycle.snd z₂)
-    (hR₁ : R₁.IsPath) (hR₂ : R₂.IsPath)
+    (_hR₁ : R₁.IsPath) (_hR₂ : R₂.IsPath)
     (hmeet : ∀ w, w ∈ R₁.support → w ∈ R₂.support →
       w = B.rotatedCycle.snd)
     (Y : Finset V) (hYtail : Y ⊆ B.tail.support.toFinset)
@@ -197,6 +202,7 @@ theorem exists_longer_cycle_of_equal_blockEars
     (haeq : E₁.a = E₂.a) :
     ∃ D : G.Walk B.rotatedCycle.snd B.rotatedCycle.snd,
       D.IsCycle ∧ B.cycle.length < D.length := by
+  classical
   have ha₁root : E₁.a = B.rotatedCycle.snd := by
     apply hmeet E₁.a
     · exact E₁.support_subset E₁.a E₁.path.start_mem_support

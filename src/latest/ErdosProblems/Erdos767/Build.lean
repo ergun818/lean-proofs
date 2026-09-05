@@ -21,11 +21,13 @@ universe u
 variable {V : Type u} [Fintype V] [DecidableEq V]
 variable {G : SimpleGraph V} [DecidableRel G.Adj]
 
+omit [Fintype V] [DecidableRel G.Adj] [DecidableEq V] in
 lemma BestLollipop.neighbor_mem_cycle_or_tail (B : BestLollipop G)
     {w : V} (hw : G.Adj B.terminal w) :
     w ∈ B.cycle.support ∨ w ∈ B.tail.support := by
+  classical
   by_contra hout
-  push_neg at hout
+  push Not at hout
   let L : Lollipop G :=
     { cycleBase := B.cycleBase
       cycle := B.cycle
@@ -48,23 +50,29 @@ lemma BestLollipop.neighbor_mem_cycle_or_tail (B : BestLollipop G)
 def BestLollipop.rootedCycle (B : BestLollipop G) : G.Walk B.start B.start :=
   B.cycle.rotate B.start B.start_mem_cycle
 
+omit [Fintype V] [DecidableRel G.Adj] in
 lemma BestLollipop.rootedCycle_isCycle (B : BestLollipop G) :
     (rootedCycle B).IsCycle :=
   B.cycle_isCycle.rotate B.start_mem_cycle
 
+omit [Fintype V] [DecidableRel G.Adj] in
 @[simp] lemma BestLollipop.rootedCycle_length (B : BestLollipop G) :
     (rootedCycle B).length = B.cycle.length := by
   simp [BestLollipop.rootedCycle]
 
+omit [Fintype V] [DecidableRel G.Adj] in
 lemma BestLollipop.rootedCycle_support_iff (B : BestLollipop G) (v : V) :
     v ∈ (rootedCycle B).support ↔ v ∈ B.cycle.support := by
   exact Walk.mem_support_rotate_iff _ _ _
 
+omit [DecidableRel G.Adj] [Fintype V] in
 lemma BestLollipop.rooted_meet (B : BestLollipop G) {v : V}
     (hvC : v ∈ (rootedCycle B).support) (hvP : v ∈ B.tail.support) :
     v = B.start := by
+  classical
   exact B.cycle_tail_inter ((rootedCycle_support_iff B v).mp hvC) hvP
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Close the lollipop handle with either oriented arc from its attachment
 to a cycle vertex adjacent to the tip. -/
 lemma BestLollipop.exists_cycle_tail_append_arc (B : BestLollipop G)
@@ -75,6 +83,7 @@ lemma BestLollipop.exists_cycle_tail_append_arc (B : BestLollipop G)
     (hqC : ∀ x, x ∈ q.support → x ∈ (rootedCycle B).support) :
     ∃ d : G.Walk B.start B.start,
       d.IsCycle ∧ d.length = B.tail.length + 1 + q.length := by
+  classical
   have hvTail : v ∉ B.tail.support := by
     intro hv
     exact hvs (rooted_meet B hvC hv)
@@ -124,10 +133,12 @@ structure BlockEar {x y : V} (r : G.Walk x y) (A B : Finset V) where
   meet_A : ∀ v, v ∈ path.support → v ∈ A → v = a
   meet_B : ∀ v, v ∈ path.support → v ∈ B → v = b
 
+omit [Fintype V] [DecidableRel G.Adj] [DecidableEq V] in
 /-- Extract the last-`A`/first-`B` subpath of a simple route. -/
 theorem exists_blockEar {x y : V} {r : G.Walk x y} (hr : r.IsPath)
     (A B : Finset V) (hx : x ∈ A) (hy : y ∈ B) :
     Nonempty (BlockEar r A B) := by
+  classical
   have hB : {v ∈ B | v ∈ r.support}.Nonempty := by
     refine ⟨y, Finset.mem_filter.mpr ⟨hy, r.end_mem_support⟩⟩
   obtain ⟨b, hbB, hbR, hbFirst⟩ :=
@@ -137,7 +148,7 @@ theorem exists_blockEar {x y : V} {r : G.Walk x y} (hr : r.IsPath)
   have hxpre : x ∈ pre.support := pre.start_mem_support
   have hA : {v ∈ A | v ∈ pre.reverse.support}.Nonempty := by
     refine ⟨x, Finset.mem_filter.mpr ⟨hx, ?_⟩⟩
-    simpa [Walk.support_reverse] using hxpre
+    simp [Walk.support_reverse]
   obtain ⟨a, haA, haRev, haFirst⟩ :=
     pre.reverse.exists_mem_support_forall_mem_support_imp_eq A hA
   let qrev : G.Walk b a := pre.reverse.takeUntil a haRev
@@ -181,8 +192,10 @@ def BestLollipop.referencePath (B : BestLollipop G) :
     G.Walk (rootedCycle B).snd B.terminal :=
   (rootedCycle B).tail.append B.tail
 
+omit [DecidableRel G.Adj] [Fintype V] in
 lemma BestLollipop.referencePath_isPath (B : BestLollipop G) :
     (referencePath B).IsPath := by
+  classical
   let C := rootedCycle B
   have hC : C.IsCycle := rootedCycle_isCycle B
   have hD : C.tail.IsPath := hC.isPath_tail
@@ -201,23 +214,27 @@ lemma BestLollipop.referencePath_isPath (B : BestLollipop G) :
   rw [← B.tail.cons_tail_support, List.nodup_cons] at hn
   exact hn.1 hvP
 
+omit [DecidableRel G.Adj] [Fintype V] in
 lemma BestLollipop.reference_start_mem_cycle (B : BestLollipop G) :
     (rootedCycle B).snd ∈ (rootedCycle B).support := by
+  classical
   let C := rootedCycle B
   exact List.tail_subset C.support
     (C.snd_mem_tail_support (rootedCycle_isCycle B).not_nil)
 
+omit [Fintype V] [DecidableRel G.Adj] in
 lemma BestLollipop.tail_support_subset_reference (B : BestLollipop G) :
     ∀ v, v ∈ B.tail.support → v ∈ (referencePath B).support := by
   intro v hv
   rw [referencePath, Walk.mem_support_append_iff]
   exact Or.inr hv
 
+omit [Fintype V] [DecidableRel G.Adj] in
 /-- Alignment preserves the order from any common vertex to the terminal
 vertex of the aligned path. -/
 lemma aligned_idxOf_le_end {x y a b : V}
     {W : G.Walk x y} {R : G.Walk a b}
-    (hW : W.IsPath) (hR : R.IsPath) (hal : E767AlignedAlt.Aligned W R)
+    (hW : W.IsPath) (_hR : R.IsPath) (hal : E767AlignedAlt.Aligned W R)
     {v : V} (hvR : v ∈ R.support) (hvW : v ∈ W.support)
     (hbW : b ∈ W.support) :
     W.support.idxOf v ≤ W.support.idxOf b := by
@@ -242,9 +259,8 @@ lemma aligned_idxOf_le_end {x y a b : V}
     simp [L, hvR, hvW]
   have hbL : b ∈ L := by
     simp [L, R.end_mem_support, hbW]
-  have hdecomp : R.support = R.support.dropLast ++ [b] := by
-    simpa [R.getLast_support] using
-      (List.dropLast_append_getLast R.support_ne_nil).symm
+  have hdecomp : R.support = R.support.dropLast ++ [b] :=
+    R.dropLast_support_concat.symm
   let L₀ := R.support.dropLast.filter fun w ↦ w ∈ W.support
   have hLeq : L = L₀ ++ [b] := by
     change (R.support.filter fun w ↦ w ∈ W.support) =
@@ -269,10 +285,12 @@ lemma aligned_idxOf_le_end {x y a b : V}
     exact hpairL
   exact (List.pairwise_append.mp hpairAppend).2.2 v hvL₀ b (by simp)
 
+omit [DecidableRel G.Adj] [Fintype V] in
 lemma BestLollipop.reference_idxOf_tail_getVert (B : BestLollipop G)
     {j : ℕ} (hj : j ≤ B.tail.length) :
     (referencePath B).support.idxOf (B.tail.getVert j) =
       (rootedCycle B).tail.length + j := by
+  classical
   let D := (rootedCycle B).tail
   let W := referencePath B
   have hW : W.IsPath := referencePath_isPath B
@@ -284,6 +302,7 @@ lemma BestLollipop.reference_idxOf_tail_getVert (B : BestLollipop G)
   rw [← hget]
   exact E767WalkIndex.path_idxOf_getVert hW hjW
 
+omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 lemma exists_tail_index_of_mem_drop {x y : V} (P : G.Walk x y)
     {j : ℕ} (hj : j ≤ P.length) {v : V}
     (hv : v ∈ (P.drop j).support) :
@@ -389,6 +408,7 @@ theorem BestLollipop.exists_case2FanData
     j₂_le := hj₂le
     b₂_eq := hb₂.symm }⟩⟩
 
+omit [Fintype V] in
 lemma Case2FanData.j₁_lt_j₂ {B : BestLollipop G} {j₁ : ℕ}
     (D : Case2FanData B j₁) : j₁ < D.j₂ := by
   have hb₁F : D.E₁.b ∈ D.F.toZ.support :=

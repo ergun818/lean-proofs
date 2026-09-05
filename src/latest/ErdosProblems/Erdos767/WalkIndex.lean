@@ -29,28 +29,37 @@ def neighborIndices (p : G.Walk a b) (x : V) : Finset ℕ :=
 def indicesIn (p : G.Walk a b) (S : Finset V) : Finset ℕ :=
   (vertexIndices p).filter fun i ↦ p.getVert i ∈ S
 
+omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 @[simp] theorem mem_vertexIndices {p : G.Walk a b} {i : ℕ} :
     i ∈ vertexIndices p ↔ i ≤ p.length := by
   simp [vertexIndices]
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem mem_neighborIndices {p : G.Walk a b} {x : V} {i : ℕ} :
     i ∈ neighborIndices p x ↔ i ≤ p.length ∧ G.Adj x (p.getVert i) := by
+  classical
   simp [neighborIndices]
 
+omit [DecidableRel G.Adj] [Fintype V] in
 @[simp] theorem mem_indicesIn {p : G.Walk a b} {S : Finset V} {i : ℕ} :
     i ∈ indicesIn p S ↔ i ≤ p.length ∧ p.getVert i ∈ S := by
+  classical
   simp [indicesIn]
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 theorem path_getVert_injOn_vertexIndices {p : G.Walk a b} (hp : p.IsPath) :
     Set.InjOn p.getVert (vertexIndices p : Set ℕ) := by
+  classical
   intro i hi j hj hij
   exact hp.getVert_injOn (mem_vertexIndices.mp hi) (mem_vertexIndices.mp hj) hij
 
+omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 theorem path_getVert_eq_iff {p : G.Walk a b} (hp : p.IsPath)
     {i j : ℕ} (hi : i ≤ p.length) (hj : j ≤ p.length) :
     p.getVert i = p.getVert j ↔ i = j := by
   exact ⟨hp.getVert_injOn hi hj, congrArg p.getVert⟩
 
+omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 theorem path_mem_support_iff_exists_index {p : G.Walk a b} (hp : p.IsPath) {x : V} :
     x ∈ p.support ↔ ∃! i, i ≤ p.length ∧ p.getVert i = x := by
   constructor
@@ -62,8 +71,10 @@ theorem path_mem_support_iff_exists_index {p : G.Walk a b} (hp : p.IsPath) {x : 
   · rintro ⟨i, ⟨hi, hix⟩, -⟩
     exact SimpleGraph.Walk.mem_support_iff_exists_getVert.mpr ⟨i, hix, hi⟩
 
-theorem path_support_toFinset_eq_image_vertexIndices {p : G.Walk a b} (hp : p.IsPath) :
+omit [DecidableRel G.Adj] [Fintype V] in
+theorem path_support_toFinset_eq_image_vertexIndices {p : G.Walk a b} (_hp : p.IsPath) :
     p.support.toFinset = (vertexIndices p).image p.getVert := by
+  classical
   ext x
   simp only [List.mem_toFinset, Finset.mem_image]
   constructor
@@ -73,10 +84,12 @@ theorem path_support_toFinset_eq_image_vertexIndices {p : G.Walk a b} (hp : p.Is
   · rintro ⟨i, hi, rfl⟩
     exact p.getVert_mem_support i
 
+omit [Fintype V] [DecidableRel G.Adj] in
 theorem path_support_toFinset_card {p : G.Walk a b} (hp : p.IsPath) :
     p.support.toFinset.card = p.length + 1 := by
   rw [List.toFinset_card_of_nodup hp.support_nodup, p.length_support]
 
+omit [Fintype V] [DecidableRel G.Adj] in
 theorem path_idxOf_getVert {p : G.Walk a b} (hp : p.IsPath)
     {i : ℕ} (hi : i ≤ p.length) :
     p.support.idxOf (p.getVert i) = i := by
@@ -90,8 +103,10 @@ theorem path_idxOf_getVert {p : G.Walk a b} (hp : p.IsPath)
 
 /-! ### Exact cardinal transport along a path -/
 
-theorem image_indicesIn {p : G.Walk a b} (hp : p.IsPath) (S : Finset V) :
+omit [DecidableRel G.Adj] [Fintype V] in
+theorem image_indicesIn {p : G.Walk a b} (_hp : p.IsPath) (S : Finset V) :
     (indicesIn p S).image p.getVert = p.support.toFinset ∩ S := by
+  classical
   ext x
   simp only [Finset.mem_image, mem_indicesIn, Finset.mem_inter,
     List.mem_toFinset]
@@ -102,12 +117,14 @@ theorem image_indicesIn {p : G.Walk a b} (hp : p.IsPath) (S : Finset V) :
     obtain ⟨i, hix, hi⟩ := SimpleGraph.Walk.mem_support_iff_exists_getVert.mp hxp
     exact ⟨i, ⟨hi, hix ▸ hxS⟩, hix⟩
 
+omit [DecidableRel G.Adj] [Fintype V] in
 theorem card_indicesIn {p : G.Walk a b} (hp : p.IsPath) (S : Finset V) :
     (indicesIn p S).card = (p.support.toFinset ∩ S).card := by
+  classical
   rw [← image_indicesIn hp S, Finset.card_image_iff.mpr]
   exact hp.getVert_injOn.mono fun i hi ↦ (mem_indicesIn.mp hi).1
 
-theorem image_neighborIndices {p : G.Walk a b} (hp : p.IsPath) (x : V) :
+theorem image_neighborIndices {p : G.Walk a b} (_hp : p.IsPath) (x : V) :
     (neighborIndices p x).image p.getVert =
       G.neighborFinset x ∩ p.support.toFinset := by
   ext y
@@ -137,25 +154,31 @@ theorem card_neighborIndices_eq_degree {p : G.Walk a b} (hp : p.IsPath) (x : V)
 /-- The positions on `p` adjacent to its terminal endpoint. -/
 def endNeighborIndices (p : G.Walk a b) : Finset ℕ := neighborIndices p b
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem mem_endNeighborIndices {p : G.Walk a b} {i : ℕ} :
     i ∈ endNeighborIndices p ↔ i ≤ p.length ∧ G.Adj b (p.getVert i) := by
+  classical
   simp [endNeighborIndices]
 
-theorem mem_endNeighborIndices_iff_lt {p : G.Walk a b} (hp : p.IsPath) {i : ℕ} :
+omit [DecidableEq V] [Fintype V] in
+theorem mem_endNeighborIndices_iff_lt {p : G.Walk a b} (_hp : p.IsPath) {i : ℕ} :
     i ∈ endNeighborIndices p ↔ i < p.length ∧ G.Adj b (p.getVert i) := by
+  classical
   rw [mem_endNeighborIndices]
   constructor
   · rintro ⟨hi, hadj⟩
     exact ⟨by
       rcases hi.eq_or_lt with rfl | hlt
-      · simpa using hadj
+      · simp at hadj
       · exact hlt, hadj⟩
   · rintro ⟨hi, hadj⟩
     exact ⟨hi.le, hadj⟩
 
+omit [DecidableEq V] [Fintype V] in
 theorem endNeighborIndices_eq_filter_range {p : G.Walk a b} (hp : p.IsPath) :
     endNeighborIndices p =
       (Finset.range p.length).filter fun i ↦ G.Adj b (p.getVert i) := by
+  classical
   ext i
   simp [mem_endNeighborIndices_iff_lt hp]
 
@@ -171,14 +194,19 @@ theorem card_endNeighborIndices_eq_degree {p : G.Walk a b} (hp : p.IsPath)
 
 /-! ### `take`, `drop`, `takeUntil`, and `dropUntil` carriers -/
 
+omit [DecidableRel G.Adj] [Fintype V] in
 theorem take_support_toFinset_card {p : G.Walk a b} (hp : p.IsPath) (i : ℕ) :
     (p.take i).support.toFinset.card = min i p.length + 1 := by
+  classical
   simpa using path_support_toFinset_card (hp.take i)
 
+omit [DecidableRel G.Adj] [Fintype V] in
 theorem drop_support_toFinset_card {p : G.Walk a b} (hp : p.IsPath) (i : ℕ) :
     (p.drop i).support.toFinset.card = p.length - i + 1 := by
+  classical
   simpa using path_support_toFinset_card (hp.drop i)
 
+omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 theorem getVert_mem_take_support_iff {p : G.Walk a b} (hp : p.IsPath)
     {i j : ℕ} (hj : j ≤ p.length) :
     p.getVert j ∈ (p.take i).support ↔ j ≤ min i p.length := by
@@ -199,6 +227,7 @@ theorem getVert_mem_take_support_iff {p : G.Walk a b} (hp : p.IsPath)
     · simp [SimpleGraph.Walk.take_getVert, min_eq_right (hjmin.trans (min_le_left _ _))]
     · simpa using hjmin
 
+omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 theorem getVert_mem_drop_support_iff {p : G.Walk a b} (hp : p.IsPath)
     {i j : ℕ} (hi : i ≤ p.length) (hj : j ≤ p.length) :
     p.getVert j ∈ (p.drop i).support ↔ i ≤ j := by
@@ -219,16 +248,20 @@ theorem getVert_mem_drop_support_iff {p : G.Walk a b} (hp : p.IsPath)
     · rw [SimpleGraph.Walk.drop_length]
       omega
 
+omit [DecidableRel G.Adj] [Fintype V] in
 theorem takeUntil_getVert_support_card {p : G.Walk a b} (hp : p.IsPath)
     {i : ℕ} (hi : i ≤ p.length) :
     (p.takeUntil (p.getVert i) (p.getVert_mem_support i)).support.toFinset.card = i + 1 := by
+  classical
   rw [path_support_toFinset_card (hp.takeUntil _),
     SimpleGraph.Walk.length_takeUntil, path_idxOf_getVert hp hi]
 
+omit [DecidableRel G.Adj] [Fintype V] in
 theorem dropUntil_getVert_support_card {p : G.Walk a b} (hp : p.IsPath)
     {i : ℕ} (hi : i ≤ p.length) :
     (p.dropUntil (p.getVert i) (p.getVert_mem_support i)).support.toFinset.card =
       p.length - i + 1 := by
+  classical
   rw [path_support_toFinset_card (hp.dropUntil _),
     SimpleGraph.Walk.length_dropUntil, path_idxOf_getVert hp hi]
 
@@ -241,13 +274,16 @@ def cycleIndices {v : V} (c : G.Walk v v) : Finset ℕ := Finset.range c.length
 def cycleVertexFinset {v : V} (c : G.Walk v v) : Finset V :=
   c.support.dropLast.toFinset
 
+omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 @[simp] theorem mem_cycleIndices {v : V} {c : G.Walk v v} {i : ℕ} :
     i ∈ cycleIndices c ↔ i < c.length := by
   simp [cycleIndices]
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 theorem cycle_getVert_injOn_cycleIndices {v : V} {c : G.Walk v v}
     (hc : c.IsCycle) :
     Set.InjOn c.getVert (cycleIndices c : Set ℕ) := by
+  classical
   intro i hi j hj hij
   apply hc.getVert_injOn' (show i ≤ c.length - 1 by
       have := mem_cycleIndices.mp hi
@@ -257,19 +293,21 @@ theorem cycle_getVert_injOn_cycleIndices {v : V} {c : G.Walk v v}
       omega)
   exact hij
 
+omit [Fintype V] [DecidableRel G.Adj] in
 theorem cycle_support_dropLast_card {v : V} {c : G.Walk v v} (hc : c.IsCycle) :
     (cycleVertexFinset c).card = c.length := by
   rw [cycleVertexFinset, List.toFinset_card_of_nodup hc.nodup_dropLast_support,
     List.length_dropLast, c.length_support]
   omega
 
+omit [Fintype V] [DecidableRel G.Adj] in
 theorem cycle_support_toFinset_eq_cycleVertexFinset {v : V} {c : G.Walk v v}
     (hc : c.IsCycle) :
     c.support.toFinset = cycleVertexFinset c := by
   apply Finset.Subset.antisymm
   · intro x hx
-    have hdecomp : c.support.dropLast ++ [v] = c.support := by
-      simpa [c.getLast_support] using List.dropLast_append_getLast c.support_ne_nil
+    have hdecomp : c.support.dropLast ++ [v] = c.support :=
+      c.dropLast_support_concat
     rw [← hdecomp, List.mem_toFinset] at hx
     simp only [List.mem_append, List.mem_singleton] at hx
     rcases hx with hx | hx
@@ -285,9 +323,11 @@ theorem cycle_support_toFinset_eq_cycleVertexFinset {v : V} {c : G.Walk v v}
   · exact fun x hx ↦ List.mem_toFinset.mpr
       (List.mem_of_mem_dropLast (List.mem_toFinset.mp hx))
 
+omit [DecidableRel G.Adj] [Fintype V] in
 theorem cycleVertexFinset_eq_image_cycleIndices {v : V} {c : G.Walk v v}
     (hc : c.IsCycle) :
     cycleVertexFinset c = (cycleIndices c).image c.getVert := by
+  classical
   ext x
   simp only [cycleVertexFinset, List.mem_toFinset, Finset.mem_image]
   constructor

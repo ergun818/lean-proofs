@@ -18,6 +18,7 @@ universe u
 variable {V : Type u} [Fintype V] [DecidableEq V]
 variable {G : SimpleGraph V} [DecidableRel G.Adj]
 
+omit [Fintype V] in
 /-- The longer complementary arc of the rooted longest cycle, oriented from
 the second aligned ear to the first.  Its length is at least half the old
 cycle length and all its vertices lie in the non-repeated cycle carrier. -/

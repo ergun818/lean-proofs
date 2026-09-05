@@ -43,18 +43,21 @@ def IsLongestPath {a b : V} (p : G.Walk a b) : Prop :=
   p.IsPath ∧
     ∀ ⦃u v : V⦄ (q : G.Walk u v), q.IsPath → q.length ≤ p.length
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Every nonempty finite graph has a longest path. -/
-theorem exists_isLongestPath [Nonempty V] :
+theorem exists_isLongestPath [Finite V] [Nonempty V] :
     ∃ (a b : V) (p : G.Walk a b), IsLongestPath p := by
   obtain ⟨a, b, p, hp, hmax⟩ :=
     SimpleGraph.Walk.exists_isPath_forall_isPath_length_le_length G
   exact ⟨a, b, p, hp, fun {_ _} q hq ↦ hmax _ _ q hq⟩
 
+omit [Fintype V] [DecidableRel G.Adj] [DecidableEq V] in
 /-- Every neighbor of the terminal endpoint of a longest path already lies
 on the path. -/
 theorem IsLongestPath.end_neighbor_mem_support {a b z : V}
     {p : G.Walk a b} (hp : IsLongestPath p) (hbz : G.Adj b z) :
     z ∈ p.support := by
+  classical
   by_contra hz
   have hlonger : (p.concat hbz).IsPath := hp.1.concat hz hbz
   have hle := hp.2 (p.concat hbz) hlonger
@@ -70,11 +73,13 @@ theorem IsLongestPath.neighborFinset_end_subset_erase {a b : V}
   exact Finset.mem_erase.mpr
     ⟨hbz.ne.symm, List.mem_toFinset.mpr (hp.end_neighbor_mem_support hbz)⟩
 
+omit [DecidableEq V] in
 /-- The degree of the terminal endpoint is at most the length of a longest
 path. -/
 theorem IsLongestPath.degree_end_le_length {a b : V}
     {p : G.Walk a b} (hp : IsLongestPath p) :
     G.degree b ≤ p.length := by
+  classical
   rw [← G.card_neighborFinset_eq_degree]
   calc
     (G.neighborFinset b).card ≤ (p.support.toFinset.erase b).card :=
@@ -89,9 +94,11 @@ def IsLongestCycle {z : V} (c : G.Walk z z) : Prop :=
   c.IsCycle ∧
     ∀ ⦃z' : V⦄ (c' : G.Walk z' z'), c'.IsCycle → c'.length ≤ c.length
 
+omit [DecidableRel G.Adj] [DecidableEq V] in
 /-- The length of a simple cycle is at most the order of the graph. -/
 lemma isCycle_length_le_card {z : V} {c : G.Walk z z} (hc : c.IsCycle) :
     c.length ≤ Fintype.card V := by
+  classical
   have hnodup : c.support.tail.Nodup := hc.support_nodup
   have hsub : c.support.tail.toFinset ⊆ (Finset.univ : Finset V) :=
     Finset.subset_univ _
@@ -107,9 +114,11 @@ def cycleLengths (G : SimpleGraph V) : Finset ℕ :=
   (Finset.range (Fintype.card V + 1)).filter fun m ↦
     ∃ (z : V) (c : G.Walk z z), c.IsCycle ∧ c.length = m
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 lemma mem_cycleLengths_iff {m : ℕ} :
     m ∈ cycleLengths G ↔
       ∃ (z : V) (c : G.Walk z z), c.IsCycle ∧ c.length = m := by
+  classical
   constructor
   · intro hm
     exact (Finset.mem_filter.mp hm).2
@@ -118,9 +127,11 @@ lemma mem_cycleLengths_iff {m : ℕ} :
     exact ⟨Finset.mem_range.mpr (Nat.lt_succ_of_le (isCycle_length_le_card hc)),
       ⟨z, c, hc, rfl⟩⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- A finite two-connected graph has a longest cycle. -/
 theorem exists_isLongestCycle (hTwo : Erdos58.TwoConnected G) :
     ∃ (z : V) (c : G.Walk z z), IsLongestCycle c := by
+  classical
   let : Nonempty V := Fintype.card_pos_iff.mp (by
     have := hTwo.card_three_le
     omega)
@@ -141,6 +152,7 @@ theorem exists_isLongestCycle (hTwo : Erdos58.TwoConnected G) :
   have hc'mem := mem_cycleLengths_iff.mpr ⟨z', c', hc', rfl⟩
   simpa using hmax c'.length hc'mem
 
+omit [Fintype V] [DecidableRel G.Adj] in
 /-- The finite carrier of a genuine cycle has cardinality equal to its
 length: the base vertex is the sole repetition in the closed support. -/
 lemma cycleCarrier_card {z : V} {c : G.Walk z z} (hc : c.IsCycle) :
@@ -151,13 +163,15 @@ lemma cycleCarrier_card {z : V} {c : G.Walk z z} (hc : c.IsCycle) :
   rw [List.length_tail, c.length_support]
   omega
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- A cycle lifted to the graph induced on its carrier is Hamiltonian. -/
 lemma induced_cycle_isHamiltonianCycle {z : V} {c : G.Walk z z}
     (hc : c.IsCycle) :
     let C := c.support.toFinset
-    let hC : ∀ x ∈ c.support, x ∈ (C : Set V) := fun x hx ↦
+    let hC : ∀ x ∈ c.support, x ∈ (C : Set V) := fun _x hx ↦
       List.mem_toFinset.mpr hx
     (c.induce (C : Set V) hC).IsHamiltonianCycle := by
+  classical
   dsimp only
   let C := c.support.toFinset
   let hC : ∀ x ∈ c.support, x ∈ (C : Set V) := fun x hx ↦

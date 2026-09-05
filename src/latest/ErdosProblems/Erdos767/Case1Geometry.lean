@@ -18,6 +18,7 @@ universe u
 variable {V : Type u} [Fintype V] [DecidableEq V]
 variable {G : SimpleGraph V} [DecidableRel G.Adj]
 
+omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 /-- Membership in the support of a `take` implies membership in the original
 walk. -/
 private lemma mem_support_of_mem_take {a b x : V} (p : G.Walk a b) (n : ℕ)
@@ -26,6 +27,7 @@ private lemma mem_support_of_mem_take {a b x : V} (p : G.Walk a b) (n : ℕ)
   rw [Walk.take_getVert] at hjx
   exact hjx ▸ p.getVert_mem_support (min n j)
 
+omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 /-- Membership in the support of a `drop` implies membership in the original
 walk. -/
 private lemma mem_support_of_mem_drop {a b x : V} (p : G.Walk a b) (n : ℕ)
@@ -34,6 +36,7 @@ private lemma mem_support_of_mem_drop {a b x : V} (p : G.Walk a b) (n : ℕ)
   rw [Walk.drop_getVert] at hjx
   exact hjx ▸ p.getVert_mem_support (n + j)
 
+omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 /-- A simple path of length at least two, closed by an edge between its
 endpoints, gives a cycle.  The chosen orientation is convenient below. -/
 private lemma isCycle_cons_reverse_of_isPath {a b : V} (p : G.Walk a b)
@@ -47,6 +50,7 @@ private lemma isCycle_cons_reverse_of_isPath {a b : V} (p : G.Walk a b)
   have hone := hp.length_eq_one_of_mem_edges hedge'
   omega
 
+omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 /-- The terminal of a positive lollipop tail is outside its cycle. -/
 lemma Lollipop.terminal_not_mem_cycle (L : Lollipop G)
     (hpos : 0 < L.tail.length) : L.terminal ∉ L.cycle.support := by
@@ -65,24 +69,29 @@ def BestLollipop.rotatedCycle (B : BestLollipop G) :
     G.Walk B.start B.start :=
   B.cycle.rotate B.start B.start_mem_cycle
 
+omit [Fintype V] [DecidableRel G.Adj] in
 @[simp] lemma BestLollipop.rotatedCycle_length (B : BestLollipop G) :
     B.rotatedCycle.length = B.cycle.length :=
   Walk.length_rotate B.cycle B.start B.start_mem_cycle
 
+omit [Fintype V] [DecidableRel G.Adj] in
 lemma BestLollipop.rotatedCycle_isCycle (B : BestLollipop G) :
     B.rotatedCycle.IsCycle :=
   B.cycle_isCycle.rotate B.start_mem_cycle
 
+omit [Fintype V] [DecidableRel G.Adj] in
 lemma BestLollipop.mem_cycle_of_mem_rotatedCycle (B : BestLollipop G) {w : V}
     (hw : w ∈ B.rotatedCycle.support) : w ∈ B.cycle.support :=
   (Walk.mem_support_rotate_iff B.cycle B.start B.start_mem_cycle).mp hw
 
+omit [Fintype V] [DecidableRel G.Adj] [DecidableEq V] in
 /-- In the complementary prefix and suffix obtained by deleting the cycle
 edge at positions `i,i+1`, the only common vertex is the cycle base. -/
 private lemma drop_succ_meet_take_eq_start {x : V} {C : G.Walk x x}
     (hC : C.IsCycle) {i : ℕ} (hi : i + 1 < C.length) :
     ∀ ⦃w : V⦄, w ∈ (C.drop (i + 1)).support →
       w ∈ (C.take i).support → w = x := by
+  classical
   intro w hwD hwT
   obtain ⟨j, hjw, hjle⟩ := Walk.mem_support_iff_exists_getVert.mp hwD
   obtain ⟨k, hkw, hkle⟩ := Walk.mem_support_iff_exists_getVert.mp hwT
@@ -100,13 +109,14 @@ private lemma drop_succ_meet_take_eq_start {x : V} {C : G.Walk x x}
   · have hjlt : i + 1 + j < C.length := lt_of_le_of_ne hjbound hjend
     have hkeq : i + 1 + j = k := by
       apply hC.getVert_injOn' (x₁ := i + 1 + j) (x₂ := k)
-      · show i + 1 + j ≤ C.length - 1
+      · change i + 1 + j ≤ C.length - 1
         omega
-      · show k ≤ C.length - 1
+      · change k ≤ C.length - 1
         omega
       · exact hjw.trans hkw.symm
     omega
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Geometry of one positive-index cycle neighbor of the terminal.  Both
 complementary cycle arcs can be closed through the lollipop tail, so longest-
 cycle maximality puts the index in the exact interval
@@ -117,6 +127,7 @@ theorem BestLollipop.cycle_neighbor_index_bounds
     (hyi : G.Adj B.terminal (B.rotatedCycle.getVert i)) :
     B.tail.length + 1 ≤ i ∧
       i ≤ B.rotatedCycle.length - B.tail.length - 1 := by
+  classical
   let C := B.rotatedCycle
   let A₁ : G.Walk (C.getVert i) B.start := C.drop i
   have hA₁ : A₁.IsPath := B.rotatedCycle_isCycle.isPath_drop hi0
@@ -148,7 +159,6 @@ theorem BestLollipop.cycle_neighbor_index_bounds
   have hlower : B.tail.length + 1 ≤ i := by
     rw [hD₁len] at hmax₁'
     omega
-
   let A₂ : G.Walk (C.getVert i) B.start := (C.take i).reverse
   have hA₂ : A₂.IsPath := (B.rotatedCycle_isCycle.isPath_take hi).reverse
   have hmeet₂ : ∀ ⦃w : V⦄, w ∈ A₂.support →
@@ -178,6 +188,7 @@ theorem BestLollipop.cycle_neighbor_index_bounds
     omega
   exact ⟨hlower, hupper⟩
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Two positive cycle-neighbor indices of the lollipop terminal cannot be
 consecutive: replacing their intervening cycle edge by the two-edge detour
 through the terminal would produce a cycle one edge longer. -/
@@ -186,6 +197,7 @@ theorem BestLollipop.not_succ_cycle_neighbor
     {i : ℕ} (hi : i + 1 < B.rotatedCycle.length)
     (hyi : G.Adj B.terminal (B.rotatedCycle.getVert i)) :
     ¬ G.Adj B.terminal (B.rotatedCycle.getVert (i + 1)) := by
+  classical
   intro hyi1
   let C := B.rotatedCycle
   have hiC : i + 1 < C.length := by simpa [C] using hi
@@ -235,6 +247,7 @@ theorem BestLollipop.not_succ_cycle_neighbor
   rw [hDlen] at hmax'
   omega
 
+omit [Fintype V] in
 /-- The exact interval and successor-exclusion package consumed by the
 nonconsecutive-index count. -/
 theorem BestLollipop.positive_cycle_neighbor_geometry

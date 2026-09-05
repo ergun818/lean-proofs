@@ -50,6 +50,7 @@ theorem BestLollipop.relative_low_degree_case2
       hmiddle hQlong hshort
   exact (Nat.not_lt_of_ge (B.cycle_maximal C hC)) hlong
 
+omit [DecidableEq V] in
 /-- Relative Dirac bound at the terminal of a positive best lollipop.  This
 is the strengthened form used both for circumference and for exterior-edge
 peeling arguments. -/
@@ -57,16 +58,19 @@ theorem BestLollipop.relative_low_degree
     (hTwo : Erdos58.TwoConnected G) (B : BestLollipop G)
     (hpos : 0 < B.tail.length) :
     2 * G.degree B.terminal ≤ B.cycle.length := by
+  classical
   rcases B.degree_bound_or_all_neighbors_tail hpos with hcase₁ | hcase₂
   · exact hcase₁
   · exact B.relative_low_degree_case2 hTwo hpos hcase₂
 
+omit [DecidableEq V] in
 /-- Dirac's circumference theorem in minimum-degree lower-bound form. -/
 theorem exists_cycle_length_ge_min_card_two_mul
     (hTwo : Erdos58.TwoConnected G) (k : ℕ)
     (hdegree : ∀ v : V, k ≤ G.degree v) :
     ∃ (z : V) (C : G.Walk z z), C.IsCycle ∧
       min (Fintype.card V) (2 * k) ≤ C.length := by
+  classical
   obtain ⟨B⟩ := BestLollipop.exists_bestLollipop hTwo
   by_cases hspan : B.cycle.support.toFinset = (Finset.univ : Finset V)
   · refine ⟨B.cycleBase, B.cycle, B.cycle_isCycle, ?_⟩

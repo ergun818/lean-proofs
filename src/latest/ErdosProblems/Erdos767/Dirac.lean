@@ -68,7 +68,7 @@ theorem diracCircumferencePrinciple :
 
 /-- Erdős--Gallai's sharp edge bound for graphs of bounded circumference. -/
 theorem erdosGallai_cycle
-    {V : Type u} [Fintype V] [DecidableEq V]
+    {V : Type u} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (c : ℕ)
     (hc : 2 ≤ c) (hcycle : E767EGConditional.CycleLengthAtMost G c) :
     2 * G.edgeFinset.card ≤ c * (Fintype.card V - 1) :=
@@ -79,7 +79,7 @@ theorem erdosGallai_cycle
 a (possibly different) longest cycle with an exterior vertex whose doubled
 degree is at most the common longest-cycle length. -/
 theorem exists_nonspanning_longestCycle_lowDegree
-    {V : Type u} [Fintype V] [DecidableEq V]
+    {V : Type u} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hTwo : Erdos58.TwoConnected G)
     {z : V} {q : G.Walk z z}
@@ -88,6 +88,7 @@ theorem exists_nonspanning_longestCycle_lowDegree
     ∃ (w : V) (r : G.Walk w w) (v : V),
       Erdos767LongestCycle.IsLongestCycle r ∧
         v ∉ r.support ∧ 2 * G.degree v ≤ r.length := by
+  classical
   obtain ⟨B⟩ := BestLollipop.exists_bestLollipop hTwo
   have hlen : B.cycle.length = q.length := by
     apply Nat.le_antisymm
@@ -106,7 +107,7 @@ theorem exists_nonspanning_longestCycle_lowDegree
 
 /-- Dirac's circumference theorem in minimum-degree form. -/
 theorem exists_cycle_length_ge_min_card_two_mul
-    {V : Type u} [Fintype V] [DecidableEq V]
+    {V : Type u} [Fintype V]
     {G : SimpleGraph V} [DecidableRel G.Adj]
     (hTwo : Erdos58.TwoConnected G) (k : ℕ)
     (hdegree : ∀ v : V, k ≤ G.degree v) :

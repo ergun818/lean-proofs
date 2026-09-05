@@ -39,6 +39,7 @@ lemma Case2TailData.returnPath_support_indices
   apply S.T_support_indices
   simpa [Case2TailData.returnPath, Walk.support_copy, Walk.support_reverse] using hv
 
+omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 private lemma tail_index_eq_of_getVert_eq {B : BestLollipop G}
     {i j : ℕ} (hi : i ≤ B.tail.length) (hj : j ≤ B.tail.length)
     (h : B.tail.getVert i = B.tail.getVert j) : i = j :=

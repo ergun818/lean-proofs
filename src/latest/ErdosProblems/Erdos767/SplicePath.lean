@@ -12,6 +12,7 @@ universe u
 variable {V : Type u} [Fintype V] [DecidableEq V]
 variable {G : SimpleGraph V}
 
+omit [DecidableEq V] [Fintype V] in
 /-- A convenient qualitative constructor for the five-piece Case-2 body.
 The geometric proof only has to establish the successive intersection
 conditions; pathhood of the resulting nested append is then automatic. -/
@@ -28,6 +29,7 @@ lemma spliceBody_isPath_of_successive_meets
       w ∈ (((R₁.append A).concat hdy).append B).support →
       w ∈ R₂.reverse.support → w = b₂) :
     (Erdos767DiracCase2.spliceBody R₁ A hdy B R₂).IsPath := by
+  classical
   have hRA : (R₁.append A).IsPath :=
     E767AlignedAlt.isPath_append_of_meet_eq_end hR₁ hA hR₁A
   have hyRA : y ∉ (R₁.append A).support := by

@@ -155,6 +155,7 @@ lemma card_sub_one_add_card_sub_one_le_of_separation
   have hBpos : 1 ≤ B.card := Finset.one_le_card.mpr hB
   omega
 
+omit [DecidableEq V] in
 lemma card_coe_lt_card_of_ne_univ (A : Finset V)
     (hA : A ≠ Finset.univ) : Fintype.card ↑A < Fintype.card V := by
   simpa only [Fintype.card_coe, Finset.card_univ] using
@@ -163,6 +164,7 @@ lemma card_coe_lt_card_of_ne_univ (A : Finset V)
 
 /-! ## A connected component supplies such a cut -/
 
+omit [Fintype V] [DecidableEq V] in
 lemma component_closed (G : SimpleGraph V) (C : G.ConnectedComponent) :
     ∀ u v, G.Adj u v → (u ∈ C.supp ↔ v ∈ C.supp) := by
   intro u v huv
@@ -177,12 +179,13 @@ lemma card_edgeFinset_eq_component_add_compl
   intro u v huv
   simpa using component_closed G C u v huv
 
+omit [Fintype V] [DecidableEq V] in
 /-- A failure of preconnectedness gives a nonempty proper component support. -/
 lemma exists_component_with_nonempty_proper_support
     (G : SimpleGraph V) (hG : ¬ G.Preconnected) :
     ∃ C : G.ConnectedComponent, C.supp.Nonempty ∧ C.supp ≠ Set.univ := by
   simp only [SimpleGraph.Preconnected] at hG
-  push_neg at hG
+  push Not at hG
   obtain ⟨u, v, huv⟩ := hG
   let C := G.connectedComponentMk u
   refine ⟨C, C.nonempty_supp, ?_⟩
@@ -191,15 +194,18 @@ lemma exists_component_with_nonempty_proper_support
   have huC : u ∈ C.supp := by simp [C]
   exact huv (C.reachable_of_mem_supp huC hvC)
 
+omit [DecidableEq V] in
 lemma card_component_pos (G : SimpleGraph V) (C : G.ConnectedComponent) :
     0 < Fintype.card C := by
   exact Fintype.card_pos_iff.mpr ⟨⟨C.out, C.out_eq⟩⟩
 
+omit [DecidableEq V] in
 lemma card_component_lt_of_support_ne_univ
     (G : SimpleGraph V) (C : G.ConnectedComponent) (hC : C.supp ≠ Set.univ) :
     Fintype.card C < Fintype.card V := by
+  classical
   let e : C ≃ {x // x ∈ C.supp.toFinset} :=
-    { toFun := fun x ↦ ⟨x, by simpa using x.prop⟩
+    { toFun := fun x ↦ ⟨x, by simp⟩
       invFun := fun x ↦ ⟨x, by
         change ↑x ∈ C.supp
         exact Set.mem_toFinset.mp x.prop⟩

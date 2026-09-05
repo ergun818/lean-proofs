@@ -46,12 +46,15 @@ def nilOfCycle {z : V} (c : G.Walk z z) (hc : c.IsCycle) : Lollipop G where
     intro x _hxC hxP
     simpa using hxP
 
+omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 @[simp] lemma nilOfCycle_cycle {z : V} (c : G.Walk z z) (hc : c.IsCycle) :
     (nilOfCycle c hc).cycle = c := rfl
 
+omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 @[simp] lemma nilOfCycle_tail_length {z : V} (c : G.Walk z z) (hc : c.IsCycle) :
     (nilOfCycle c hc).tail.length = 0 := rfl
 
+omit [Fintype V] [DecidableRel G.Adj] in
 /-- Finset form of the defining intersection condition. -/
 lemma cycle_support_inter_tail_support (L : Lollipop G) :
     L.cycle.support.toFinset ∩ L.tail.support.toFinset = {L.start} := by
@@ -68,6 +71,7 @@ lemma cycle_support_inter_tail_support (L : Lollipop G) :
       ⟨List.mem_toFinset.mpr L.start_mem_cycle,
         List.mem_toFinset.mpr L.tail.start_mem_support⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- The tail of a lollipop is shorter than the number of ambient vertices. -/
 lemma tail_length_lt_card (L : Lollipop G) :
     L.tail.length < Fintype.card V :=
@@ -84,6 +88,7 @@ structure BestLollipop (G : SimpleGraph V) extends Lollipop G where
 
 namespace BestLollipop
 
+omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 /-- A path from a vertex in a set to a vertex outside it contains an edge
 crossing from the set to its complement. -/
 lemma exists_crossing_edge_of_walk {a b : V} (S : Set V)
@@ -96,11 +101,13 @@ lemma exists_crossing_edge_of_walk {a b : V} (S : Set V)
       · exact ih hx hb
       · exact ⟨a, x, ha, hx, hax⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- In a connected graph, every nonempty proper vertex set has a crossing
 edge. -/
 lemma exists_crossing_edge_of_connected (hconn : G.Connected) (S : Set V)
     {a b : V} (ha : a ∈ S) (hb : b ∉ S) :
     ∃ x y : V, x ∈ S ∧ y ∉ S ∧ G.Adj x y := by
+  classical
   obtain ⟨p, _hp⟩ := hconn.exists_isPath a b
   exact exists_crossing_edge_of_walk S p ha hb
 
@@ -125,16 +132,19 @@ def ofCycleCrossingEdge {z x y : V} (c : G.Walk z z) (hc : c.IsCycle)
       · exact (hy hwC).elim
       · simp at hwP
 
+omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 @[simp] lemma ofCycleCrossingEdge_tail_length {z x y : V}
     (c : G.Walk z z) (hc : c.IsCycle) (hx : x ∈ c.support)
     (hy : y ∉ c.support) (hxy : G.Adj x y) :
     (ofCycleCrossingEdge c hc hx hy hxy).tail.length = 1 := by
   simp [ofCycleCrossingEdge]
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- A lexicographically best lollipop exists in every finite two-connected
 graph. -/
 theorem exists_bestLollipop (hTwo : Erdos58.TwoConnected G) :
     Nonempty (BestLollipop G) := by
+  classical
   obtain ⟨z, c, hc⟩ := Erdos767LongestCycle.exists_isLongestCycle hTwo
   let T : Set ℕ := {n | ∃ L : Lollipop G,
     L.cycle.length = c.length ∧ L.tail.length = n}
@@ -163,6 +173,7 @@ theorem exists_bestLollipop (hTwo : Erdos58.TwoConnected G) :
     · exact hle
     · exact hmmax hmem hge
 
+omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 /-- The selected cycle is globally longest (standalone projection form). -/
 lemma isLongestCycle (B : BestLollipop G) :
     Erdos767LongestCycle.IsLongestCycle B.cycle := by
@@ -170,12 +181,14 @@ lemma isLongestCycle (B : BestLollipop G) :
   intro z' c' hc'
   exact B.cycle_maximal c' hc'
 
+omit [DecidableRel G.Adj] in
 /-- If the selected longest cycle is nonspanning, connectedness gives a
 crossing edge and tail maximality forces the selected tail to be positive. -/
 lemma tail_length_pos_of_cycle_not_spanning (hTwo : Erdos58.TwoConnected G)
     (B : BestLollipop G)
     (hnotspan : B.cycle.support.toFinset ≠ (Finset.univ : Finset V)) :
     0 < B.tail.length := by
+  classical
   have hproper : ∃ y : V, y ∉ B.cycle.support := by
     by_contra h
     apply hnotspan

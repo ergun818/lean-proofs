@@ -20,6 +20,7 @@ universe u
 variable {V : Type u} [Fintype V] [DecidableEq V]
 variable {G : SimpleGraph V} [DecidableRel G.Adj]
 
+omit [Fintype V] in
 /-- The two last cycle vertices of the aligned ears are distinct.  Equality
 would put both at the fan root and the checked exceptional splice would make
 a cycle longer than the chosen longest cycle. -/

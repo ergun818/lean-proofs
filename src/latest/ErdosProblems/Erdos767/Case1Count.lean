@@ -21,12 +21,12 @@ The attachment is already counted on the tail side of the degree estimate. -/
 def positiveCycleNeighborIndices {x : V} (C : G.Walk x x) (y : V) : Finset ℕ :=
   (E767DiracCase1.cycleNeighborIndices G C y).erase 0
 
+omit [Fintype V] in
 @[simp] lemma mem_positiveCycleNeighborIndices {x y : V}
     {C : G.Walk x x} {i : ℕ} :
     i ∈ positiveCycleNeighborIndices C y ↔
       i ≠ 0 ∧ i < C.length ∧ G.Adj y (C.getVert i) := by
-  simp [positiveCycleNeighborIndices, E767DiracCase1.cycleNeighborIndices,
-    and_assoc]
+  simp [positiveCycleNeighborIndices, E767DiracCase1.cycleNeighborIndices]
 
 /-- Corrected endpoint-degree estimate.  The index-zero cycle vertex is the
 initial tail vertex, so it is charged to the tail rather than to the set of

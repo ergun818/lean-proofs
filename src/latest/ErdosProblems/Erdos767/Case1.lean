@@ -17,10 +17,12 @@ universe u
 variable {V : Type u} [Fintype V] [DecidableEq V]
 variable {G : SimpleGraph V} [DecidableRel G.Adj]
 
+omit [Fintype V] [DecidableRel G.Adj] [DecidableEq V] in
 /-- Tail maximality gives the standard terminal-neighbour cover. -/
 lemma BestLollipop.neighbor_mem_cycle_or_tail' (B : BestLollipop G)
     {w : V} (hw : G.Adj B.terminal w) :
     w ∈ B.cycle.support ∨ w ∈ B.tail.support := by
+  classical
   by_contra hout
   push Not at hout
   let L : Lollipop G :=
@@ -41,10 +43,12 @@ lemma BestLollipop.neighbor_mem_cycle_or_tail' (B : BestLollipop G)
   have hle := B.tail_maximal L rfl
   simp [L] at hle
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- The non-repeated carrier of the rooted cycle is exactly the carrier of
 the original longest cycle. -/
 lemma BestLollipop.rotated_dropLast_toFinset_eq_cycle (B : BestLollipop G) :
     B.rotatedCycle.support.dropLast.toFinset = B.cycle.support.toFinset := by
+  classical
   let C := B.rotatedCycle
   have hdrop : C.support.toFinset = C.support.dropLast.toFinset := by
     simpa [E767WalkIndex.cycleVertexFinset] using

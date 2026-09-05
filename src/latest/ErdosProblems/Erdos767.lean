@@ -255,24 +255,28 @@ private def rightCycleVertices {z : L ⊕ R}
     (p : (completeBipartiteGraph L R).Walk z z) : Finset (L ⊕ R) :=
   (cycleVertices p).filter fun x ↦ x.isRight
 
+omit [Fintype L] [Fintype R] in
 private lemma card_leftCycleVertices {z : L ⊕ R}
     {p : (completeBipartiteGraph L R).Walk z z} (hp : p.IsCycle) :
     (leftCycleVertices p).card = leftCount p.support.dropLast := by
   simpa [leftCycleVertices, cycleVertices, leftCount] using
     (hp.nodup_dropLast_support.card_eq_countP (P := fun x ↦ x.isLeft))
 
+omit [Fintype L] [Fintype R] in
 private lemma card_rightCycleVertices {z : L ⊕ R}
     {p : (completeBipartiteGraph L R).Walk z z} (hp : p.IsCycle) :
     (rightCycleVertices p).card = rightCount p.support.dropLast := by
   simpa [rightCycleVertices, cycleVertices, rightCount] using
     (hp.nodup_dropLast_support.card_eq_countP (P := fun x ↦ x.isRight))
 
+omit [Fintype L] [Fintype R] in
 private lemma card_leftCycleVertices_eq_right {z : L ⊕ R}
     {p : (completeBipartiteGraph L R).Walk z z} (hp : p.IsCycle) :
     (leftCycleVertices p).card = (rightCycleVertices p).card := by
   rw [card_leftCycleVertices hp, card_rightCycleVertices hp,
     leftCount_dropLast_eq_rightCount_dropLast]
 
+omit [DecidableEq L] [DecidableEq R] in
 private lemma card_filter_univ_isLeft :
     (Finset.univ.filter fun x : L ⊕ R ↦ x.isLeft).card = Fintype.card L := by
   let e : L ↪ L ⊕ R := ⟨Sum.inl, Sum.inl_injective⟩
@@ -282,16 +286,19 @@ private lemma card_filter_univ_isLeft :
     cases x <;> simp [e]]
   simp
 
-private lemma card_leftCycleVertices_le {z : L ⊕ R}
+omit [Fintype R] in
+private lemma card_leftCycleVertices_le [Finite R] {z : L ⊕ R}
     (p : (completeBipartiteGraph L R).Walk z z) :
     (leftCycleVertices p).card ≤ Fintype.card L := by
+  let := Fintype.ofFinite R
   rw [← card_filter_univ_isLeft (L := L) (R := R)]
   exact Finset.card_le_card (by
     intro x hx
     exact Finset.mem_filter.mpr ⟨Finset.mem_univ x,
       (Finset.mem_filter.mp hx).2⟩)
 
-private lemma card_rightCycleVertices_le_left {z : L ⊕ R}
+omit [Fintype R] in
+private lemma card_rightCycleVertices_le_left [Finite R] {z : L ⊕ R}
     {p : (completeBipartiteGraph L R).Walk z z} (hp : p.IsCycle) :
     (rightCycleVertices p).card ≤ Fintype.card L := by
   rw [← card_leftCycleVertices_eq_right hp]
@@ -310,6 +317,7 @@ private def selectedVertices {k : ℕ}
     Finset (L ⊕ R) :=
   {p.snd, p.penultimate} ∪ Finset.univ.image f
 
+omit [Fintype L] [Fintype R] in
 private lemma selected_pair_disjoint {k : ℕ} (hp : p.IsCycle)
     {f : Fin k → L ⊕ R} (hfchord : ∀ i, p.IsChord s(z, f i)) :
     Disjoint ({p.snd, p.penultimate} : Finset (L ⊕ R))
@@ -325,6 +333,7 @@ private lemma selected_pair_disjoint {k : ℕ} (hp : p.IsCycle)
       simpa only [h, Sym2.eq_swap] using
         p.mk_penultimate_end_mem_edges hp.not_nil)
 
+omit [Fintype L] [Fintype R] in
 private lemma card_selectedVertices {k : ℕ} (hp : p.IsCycle)
     {f : Fin k → L ⊕ R} (hf : Function.Injective f)
     (hfchord : ∀ i, p.IsChord s(z, f i)) :
@@ -339,17 +348,20 @@ private lemma card_selectedVertices {k : ℕ} (hp : p.IsCycle)
   simp [hp.snd_ne_penultimate]
   omega
 
+omit [Fintype L] [Fintype R] in
 private lemma snd_mem_cycleVertices (hp : p.IsCycle) :
     p.snd ∈ cycleVertices p := by
   rw [cycleVertices, List.mem_toFinset]
   exact p.tail_support_perm_dropLast_support.mem_iff.mp
     (p.snd_mem_tail_support hp.not_nil)
 
+omit [Fintype L] [Fintype R] in
 private lemma penultimate_mem_cycleVertices (hp : p.IsCycle) :
     p.penultimate ∈ cycleVertices p := by
   rw [cycleVertices, List.mem_toFinset]
   exact p.penultimate_mem_dropLast_support hp.not_nil
 
+omit [Fintype L] [Fintype R] in
 private lemma chord_endpoint_mem_cycleVertices {x : L ⊕ R}
     (hx : p.IsChord s(z, x)) : x ∈ cycleVertices p := by
   have h := SimpleGraph.Walk.isChord_sym2Mk.mp hx
@@ -357,6 +369,7 @@ private lemma chord_endpoint_mem_cycleVertices {x : L ⊕ R}
   apply List.mem_dropLast_of_mem_of_ne_getLast h.2.2.2
   simpa only [p.getLast_support] using h.1.ne'
 
+omit [Fintype L] [Fintype R] in
 private lemma selected_subset_right_of_left {k : ℕ} (hp : p.IsCycle)
     (hz : IsLeft z) {f : Fin k → L ⊕ R}
     (hfchord : ∀ i, p.IsChord s(z, f i)) :
@@ -378,6 +391,7 @@ private lemma selected_subset_right_of_left {k : ℕ} (hp : p.IsCycle)
     refine ⟨chord_endpoint_mem_cycleVertices (hfchord i), ?_⟩
     exact (sum_isRight_iff _).mpr ((adj_left_iff_right hi.1).mp hz)
 
+omit [Fintype L] [Fintype R] in
 private lemma selected_subset_left_of_right {k : ℕ} (hp : p.IsCycle)
     (hz : IsRight z) {f : Fin k → L ⊕ R}
     (hfchord : ∀ i, p.IsChord s(z, f i)) :
@@ -481,12 +495,13 @@ private lemma isChord_rotate_iff {V : Type*} [DecidableEq V]
       rw [(c.rotate_edges v hv).mem_iff]
 
 lemma hasCycleWithKIncidentChords_of_isLongestPath_degree
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     {G : SimpleGraph V} [DecidableRel G.Adj] {k : ℕ}
     {a b : V} {p : G.Walk a b}
     (hp : Erdos767LongestCycle.IsLongestPath p)
     (hdeg : k + 2 ≤ G.degree b) :
     HasCycleWithKIncidentChords k G := by
+  classical
   let I : Finset ℕ := (Finset.range p.length).filter fun i ↦
     G.Adj b (p.getVert i)
   have htwo : 2 ≤ G.degree b := by omega
@@ -599,10 +614,11 @@ lemma hasCycleWithKIncidentChords_of_isLongestPath_degree
     exact Or.inr hxRs
 
 lemma exists_degree_le_add_one
-    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]
+    {V : Type*} [Fintype V] [Nonempty V]
     {G : SimpleGraph V} [DecidableRel G.Adj] {k : ℕ}
     (hG : AvoidsCycleWithKIncidentChords k G) :
     ∃ v : V, G.degree v ≤ k + 1 := by
+  classical
   obtain ⟨a, b, p, hp⟩ :=
     Erdos767LongestCycle.exists_isLongestPath (G := G)
   refine ⟨b, ?_⟩
@@ -617,13 +633,14 @@ lemma edge_count_add_sq_le_of_base (k : ℕ)
       Fintype.card W = 3 * (k + 1) →
         AvoidsCycleWithKIncidentChords k H →
         H.edgeFinset.card ≤ 2 * (k + 1) ^ 2) :
-    ∀ (V : Type u) [Fintype V] [DecidableEq V]
+    ∀ (V : Type u) [Fintype V]
       (G : SimpleGraph V) [DecidableRel G.Adj],
       3 * (k + 1) ≤ Fintype.card V →
         AvoidsCycleWithKIncidentChords k G →
         G.edgeFinset.card + (k + 1) ^ 2 ≤
           (k + 1) * Fintype.card V := by
-  intro V _ _ G _ hn hG
+  classical
+  intro V _ G _ hn hG
   generalize hcard : Fintype.card V = n at hn ⊢
   induction n using Nat.strong_induction_on generalizing V with
   | h n ih =>
@@ -660,12 +677,13 @@ lemma edge_count_le_of_base (k : ℕ)
       Fintype.card W = 3 * (k + 1) →
         AvoidsCycleWithKIncidentChords k H →
         H.edgeFinset.card ≤ 2 * (k + 1) ^ 2)
-    (V : Type u) [Fintype V] [DecidableEq V]
+    (V : Type u) [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hn : 3 * (k + 1) ≤ Fintype.card V)
     (hG : AvoidsCycleWithKIncidentChords k G) :
     G.edgeFinset.card ≤
       (k + 1) * Fintype.card V - (k + 1) ^ 2 := by
+  classical
   exact Nat.le_sub_of_add_le
     (edge_count_add_sq_le_of_base k hbase V G hn hG)
 
@@ -746,9 +764,10 @@ private lemma avoids_zero_of_isAcyclic
   exact hG c hc
 
 lemma card_edgeFinset_le_card_sub_one_of_isAcyclic
-    {V : Type u} [Fintype V] [DecidableEq V] [Nonempty V]
+    {V : Type u} [Fintype V] [Nonempty V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hG : G.IsAcyclic) :
     G.edgeFinset.card ≤ Fintype.card V - 1 := by
+  classical
   generalize hcard : Fintype.card V = n
   induction n using Nat.strong_induction_on generalizing V with
   | h n ih =>
@@ -785,17 +804,19 @@ private def InductionLongestCycle {V : Type u} {G : SimpleGraph V}
   q.IsCycle ∧ ∀ (w : V) (r : G.Walk w w), r.IsCycle → r.length ≤ q.length
 
 private lemma isCycle_length_le_card
-    {V : Type u} [Fintype V] [DecidableEq V]
-    {G : SimpleGraph V} [DecidableRel G.Adj]
+    {V : Type u} [Fintype V]
+    {G : SimpleGraph V}
     {z : V} {q : G.Walk z z} (hq : q.IsCycle) :
     q.length ≤ Fintype.card V := by
+  classical
   rw [← Erdos767LongestCycle.cycleCarrier_card hq]
   exact Finset.card_le_univ _
 
 private lemma card_setCoe_finset
-    {V : Type u} [Fintype V] [DecidableEq V] (A : Finset V) :
+    {V : Type u} (A : Finset V) :
     Fintype.card (↑A : Set V) = A.card := by
-  simpa using Set.ncard_coe_finset A
+  classical
+  simp
 
 private lemma card_insert_add_card_compl
     {V : Type u} [Fintype V] [DecidableEq V]
@@ -837,7 +858,7 @@ private lemma card_compl_lt_card_of_mem
 private lemma cut_edge_cover
     {V : Type u} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
-    (c : V) (A : Finset V) (hcA : c ∉ A)
+    (c : V) (A : Finset V) (_hcA : c ∉ A)
     (hcross : G.interedges A (Aᶜ.erase c) = ∅) :
     ∀ u v, G.Adj u v →
       (u ∈ insert c A ∧ v ∈ insert c A) ∨ (u ∈ Aᶜ ∧ v ∈ Aᶜ) := by
@@ -852,7 +873,7 @@ private lemma cut_edge_cover
         have he : (u, v) ∈ G.interedges A (Aᶜ.erase c) :=
           G.mk_mem_interedges_iff.mpr
             ⟨huA, Finset.mem_erase.mpr ⟨hvc, Finset.mem_compl.mpr hvA⟩, huv⟩
-        simpa [hcross] using he
+        simp [hcross] at he
   · by_cases hvA : v ∈ A
     · by_cases huc : u = c
       · subst u
@@ -861,7 +882,7 @@ private lemma cut_edge_cover
         have he : (v, u) ∈ G.interedges A (Aᶜ.erase c) :=
           G.mk_mem_interedges_iff.mpr
             ⟨hvA, Finset.mem_erase.mpr ⟨huc, Finset.mem_compl.mpr huA⟩, huv.symm⟩
-        simpa [hcross] using he
+        simp [hcross] at he
     · exact Or.inr ⟨Finset.mem_compl.mpr huA, Finset.mem_compl.mpr hvA⟩
 
 private lemma cut_inter_card_le_one
@@ -891,22 +912,24 @@ private lemma card_edgeFinset_eq_add_induce_of_cut
       (cut_inter_card_le_one c A hcA)
 
 private lemma reachable_induce_of_mem_support
-    {V : Type u} [Fintype V] [DecidableEq V]
-    {G : SimpleGraph V} [DecidableRel G.Adj]
+    {V : Type u}
+    {G : SimpleGraph V}
     {S : Set V} {u v x y : V} (p : G.Walk u v)
     (hS : ∀ z ∈ p.support, z ∈ S)
     (hx : x ∈ p.support) (hy : y ∈ p.support) :
     (G.induce S).Reachable ⟨x, hS x hx⟩ ⟨y, hS y hy⟩ := by
+  classical
   have hr := p.connected_induce_support.preconnected ⟨x, hx⟩ ⟨y, hy⟩
   exact hr.map (G.induceHomOfLE hS).toHom
 
 private lemma cycle_vertices_reachable_delete
-    {V : Type u} [Fintype V] [DecidableEq V]
-    {G : SimpleGraph V} [DecidableRel G.Adj]
+    {V : Type u}
+    {G : SimpleGraph V}
     {v c x y : V} {p : G.Walk v v}
     (hp : p.IsCycle) (hx : x ∈ p.support) (hy : y ∈ p.support)
     (hxc : x ≠ c) (hyc : y ≠ c) :
     (G.induce {z : V | z ≠ c}).Reachable ⟨x, hxc⟩ ⟨y, hyc⟩ := by
+  classical
   by_cases hc : c ∈ p.support
   · let q : G.Walk c c := p.rotate c hc
     have hq : q.IsCycle := hp.rotate hc
@@ -922,11 +945,11 @@ private lemma cycle_vertices_reachable_delete
     have hyq : y ∈ q.support := (p.mem_support_rotate_iff c hc).mpr hy
     have hxt : x ∈ q.tail.support := by
       rw [q.support_tail_of_not_nil hq.not_nil]
-      rw [q.support_eq_cons] at hxq
+      rw [← q.cons_tail_support] at hxq
       exact (List.mem_cons.mp hxq).resolve_left hxc
     have hyt : y ∈ q.tail.support := by
       rw [q.support_tail_of_not_nil hq.not_nil]
-      rw [q.support_eq_cons] at hyq
+      rw [← q.cons_tail_support] at hyq
       exact (List.mem_cons.mp hyq).resolve_left hyc
     have hxdrop : x ∈ q.tail.support.dropLast := by
       apply List.mem_dropLast_of_mem_of_ne_getLast hxt
@@ -1037,33 +1060,36 @@ private lemma cycle_support_subset_cut_side
       exact mem_cutComponent.mpr ⟨hwc, hxz.trans hwz.symm⟩
 
 private lemma induce_isCycle
-    {V : Type u} [Fintype V] [DecidableEq V]
-    {G : SimpleGraph V} [DecidableRel G.Adj]
+    {V : Type u}
+    {G : SimpleGraph V}
     {S : Set V} {v : V} {p : G.Walk v v}
     (hp : p.IsCycle) (hS : ∀ z ∈ p.support, z ∈ S) :
     (p.induce S hS).IsCycle := by
+  classical
   have hm : ((p.induce S hS).map
       (SimpleGraph.Embedding.induce (G := G) S).toHom).IsCycle := by
     simpa using hp
   exact hm.of_map
 
 private lemma length_induce_eq
-    {V : Type u} [Fintype V] [DecidableEq V]
-    {G : SimpleGraph V} [DecidableRel G.Adj]
+    {V : Type u}
+    {G : SimpleGraph V}
     {S : Set V} {x y : V} (p : G.Walk x y)
     (hS : ∀ z ∈ p.support, z ∈ S) :
     (p.induce S hS).length = p.length := by
+  classical
   have hm := congrArg (fun r ↦ r.length) (SimpleGraph.Walk.map_induce p hS)
   simp only [SimpleGraph.Walk.length_map] at hm
   exact hm
 
 private lemma induce_isLongestCycle
-    {V : Type u} [Fintype V] [DecidableEq V]
-    {G : SimpleGraph V} [DecidableRel G.Adj]
+    {V : Type u}
+    {G : SimpleGraph V}
     {S : Set V} {v : V} {p : G.Walk v v}
     (hp : InductionLongestCycle p)
     (hS : ∀ z ∈ p.support, z ∈ S) :
     InductionLongestCycle (p.induce S hS) := by
+  classical
   refine ⟨induce_isCycle hp.1 hS, ?_⟩
   intro w q hq
   have hqG : (q.map (SimpleGraph.Embedding.induce (G := G) S).toHom).IsCycle :=
@@ -1191,7 +1217,7 @@ allowed to change after a low-degree deletion; this is why the global
 best-lollipop theorem suffices. -/
 lemma cyclic_free_edge_bound
     (k : ℕ) :
-    ∀ (W : Type u) [Fintype W] [DecidableEq W]
+    ∀ (W : Type u) [Fintype W]
       (H : SimpleGraph W) [DecidableRel H.Adj]
       (z : W) (q : H.Walk z z),
       AvoidsCycleWithKIncidentChords k H →
@@ -1199,7 +1225,8 @@ lemma cyclic_free_edge_bound
       2 * H.edgeFinset.card ≤
         (k + 1) * q.length +
           q.length * (Fintype.card W - q.length) := by
-  intro W _ _ H _ z q hfree hq
+  classical
+  intro W _ H _ z q hfree hq
   generalize hn : Fintype.card W = n
   induction n using Nat.strong_induction_on generalizing W with
   | h n ih =>
@@ -1414,11 +1441,12 @@ lemma jiang_base_of_bondy
         2 * (cycleOutsideEdges G c.support.toFinset).card ≤
           c.length * (Fintype.card V - c.length))
     (k : ℕ) (hk : 0 < k)
-    (V : Type u) [Fintype V] [DecidableEq V]
+    (V : Type u) [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hcard : Fintype.card V = 3 * (k + 1))
     (hG : AvoidsCycleWithKIncidentChords k G) :
     G.edgeFinset.card ≤ 2 * (k + 1) ^ 2 := by
+  classical
   by_cases hacyc : G.IsAcyclic
   · let : Nonempty V := Fintype.card_pos_iff.mp (by omega)
     have hforest := card_edgeFinset_le_card_sub_one_of_isAcyclic G hacyc
@@ -1477,11 +1505,12 @@ lemma jiang_base_of_bondy
 /-- Jiang's sharp estimate at the threshold order `3 * (k + 1)`. -/
 lemma jiang_base
     (k : ℕ) (hk : 0 < k)
-    (V : Type u) [Fintype V] [DecidableEq V]
+    (V : Type u) [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hcard : Fintype.card V = 3 * (k + 1))
     (hG : AvoidsCycleWithKIncidentChords k G) :
     G.edgeFinset.card ≤ 2 * (k + 1) ^ 2 := by
+  classical
   by_cases hacyc : G.IsAcyclic
   · let : Nonempty V := Fintype.card_pos_iff.mp (by omega)
     have hforest := card_edgeFinset_le_card_sub_one_of_isAcyclic G hacyc
@@ -1540,7 +1569,8 @@ theorem erdos_767 (k n : ℕ) (hk : 0 < k) (hn : 3 * k + 3 ≤ n) :
   apply Nat.le_antisymm
   · obtain ⟨G, hG, hGcard⟩ := exists_extremizer k n
     rw [← hGcard]
-    simpa using edge_count_le_of_base k (jiang_base k hk) (Fin n) G
+    simpa using edge_count_le_of_base k
+      (fun W _ _ H _ ↦ jiang_base k hk W H) (Fin n) G
       (by
         rw [Fintype.card_fin]
         omega) hG
