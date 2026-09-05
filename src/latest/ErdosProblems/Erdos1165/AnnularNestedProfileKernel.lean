@@ -169,8 +169,8 @@ actually visited by the given list are assumed. -/
 theorem one_sub_pow_radialWordLength_mul_gapChainMass_le_nested_on :
     ∀ {State : ℕ → Type*} [∀ depth, Fintype (State depth)]
       {edge : NestedEdgeKernel State} {epsilon : ℝ}
-      (hepsilon1 : epsilon ≤ 1)
-      (hedge : ∀ depth a b g entrance next,
+      (_hepsilon1 : epsilon ≤ 1)
+      (_hedge : ∀ depth a b g entrance next,
         0 ≤ edge depth a b g entrance next)
       (first : ℕ) (rest : List ℕ),
       (∀ depth, first ≤ depth → depth < first + rest.length →

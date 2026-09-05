@@ -184,7 +184,7 @@ theorem upper_reciprocal_of_recurrence
               recurrence_upper_arithmetic N hN
         have hstep : q (N + 1) ≤ 1 / (N + 2 : ℝ) :=
           (mul_le_mul_iff_of_pos_left hden).mp hmul
-        convert hstep using 1 <;> (norm_num [N]; ring)
+        convert hstep using 1; (norm_num [N]; ring)
 
 /-- The same recurrence has the uniform lower bound `1/(5n)` at every
 positive index. -/
@@ -241,7 +241,7 @@ theorem lower_reciprocal_of_recurrence
               (hrec N (by omega)).symm
         have hstep : 1 / (5 * (N + 1) : ℝ) ≤ q (N + 1) :=
           (mul_le_mul_iff_of_pos_left hden).mp hmul
-        convert hstep using 1 <;> (norm_num [N]; ring)
+        convert hstep using 1; (norm_num [N]; ring)
 
 /-- Starting at time one, the external recurrence has the sharper
 supersolution `2/(5(n+1))`.  Treating time three as a base case avoids the
@@ -301,7 +301,7 @@ theorem upper_two_fifths_reciprocal_of_recurrence
               recurrence_upper_two_fifths_arithmetic N (by omega)
         have hstep : q (N + 1) ≤ 2 / (5 * (N + 2) : ℝ) :=
           (mul_le_mul_iff_of_pos_left hden).mp hmul
-        convert hstep using 1 <;> (norm_num [N]; ring)
+        convert hstep using 1; (norm_num [N]; ring)
 
 /-! ## Concrete coefficient bounds for the retained-block walk -/
 
@@ -522,7 +522,7 @@ theorem one_tenth_le_externalTruncatedGreenCount_dyadic_increment
     (externalReturnProbability o) (1 / 5) n hn (by norm_num)
     (fun k hk ↦ by
       have hl := one_div_five_mul_le_externalReturnProbability o k hk
-      convert hl using 1 <;> field_simp)
+      convert hl using 1; field_simp)
   norm_num at h ⊢
   exact h
 

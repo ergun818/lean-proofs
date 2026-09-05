@@ -61,7 +61,7 @@ lemma gapPattern_source_pos_of_target_pos
 /-- If the last count in a gap chain is positive, every earlier count is
 positive as well. -/
 theorem gapChain_all_positive_of_last_positive :
-    ∀ (head : ℕ) (tail : List ℕ) (chain : GapChain (head :: tail)),
+    ∀ (head : ℕ) (tail : List ℕ) (_chain : GapChain (head :: tail)),
       0 < (head :: tail).getLast (by simp) →
         ∀ a ∈ head :: tail, 0 < a
   | head, [], _chain, hlast => by

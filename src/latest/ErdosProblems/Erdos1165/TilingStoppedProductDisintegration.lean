@@ -211,7 +211,7 @@ theorem tilingConditionedGapVectorMass_factorization {i : ℕ}
     have hnall : ¬∀ b, TilingDominoAdmissible t x r D upper q b :=
       mt (tilingUpperTruncation_iff_forall_admissible
         t x r D upper q).mpr htr
-    push_neg at hnall
+    push Not at hnall
     obtain ⟨b, hb⟩ := hnall
     rw [Finset.prod_eq_zero (Finset.mem_univ b)]
     exact if_neg hb

@@ -332,7 +332,7 @@ theorem sourceCanonical_firstStructuralPast_iff
         s' ∉ firstLowGapFailureEvent t m a)
   simp only [mem_firstTransitionEvent_iff_creationTime,
     mem_firstLowGapFailureEvent_iff_creationTime, Set.mem_inter_iff,
-    Set.mem_setOf_eq]
+    Set.mem_ofPred_eq]
   have hsite₁ : s (creationTimeNat m 1 s) =
       s' (creationTimeNat m 1 s') := by
     simpa only [v, v', s, s'] using h₁.1
@@ -469,7 +469,7 @@ theorem sourceCanonical_secondStructuralPast_iff
   simp only [mem_union, mem_secondTransitionEvent_iff_creationTime,
     mem_firstLowGapFailureEvent_iff_creationTime,
     mem_secondLowGapFailureEvent_iff_creationTime, Set.mem_inter_iff,
-    Set.mem_setOf_eq]
+    Set.mem_ofPred_eq]
   have hsite₁ : s (creationTimeNat m 1 s) =
       s' (creationTimeNat m 1 s') := by
     simpa only [v, v', s, s'] using h₁.1

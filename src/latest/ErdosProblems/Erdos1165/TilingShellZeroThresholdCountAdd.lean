@@ -172,7 +172,7 @@ theorem card_listThresholdSites_add_of_endpointIncrement
           (tilingPartner t b.1.1) ≤
         prefixedTilingFixedBoundaryLocalTime initial x r terminal b.1.1)
     (hsource : ∀ b, tilingShellZeroSourceCoordinate
-      (cap := cap) (m := m) (w := w) t x r D upper b (ellSource b))
+      (_cap := cap) (m := m) (w := w) t x r D upper b (ellSource b))
     (hreplacement : prefixedShellZeroReplacementScreenAtIncrement
       (cap := cap) (m := m) (w := w) initial t x r terminal D upper
         central delta ellReplacement)
@@ -267,7 +267,7 @@ theorem thresholdCount_prefixedTilingInsertion_add_of_endpointIncrement
           (prefixedTilingInsertionTerminal initial t x r
             (fun j ↦ (qSource j : ℕ)) tail) b.1.1)
     (hsource : ∀ b, tilingShellZeroSourceCoordinate
-      (cap := cap) (m := m) (w := w) t x r D upper b (ellSource b))
+      (_cap := cap) (m := m) (w := w) t x r D upper b (ellSource b))
     (hreplacement : prefixedShellZeroReplacementScreenAtIncrement
       (cap := cap) (m := m) (w := w) initial.1 t x r
         (prefixedTilingInsertionTerminal initial t x r

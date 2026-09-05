@@ -72,7 +72,7 @@ theorem prefixedTilingStoppedInsertionAtom_eq_cylinder
           (prefixedTilingInsertionPrefixList initial t x r q tail)} := by
   ext ω
   unfold prefixedTilingStoppedInsertionAtom
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq]
   rw [incrementPrefixList_eq_iff_stepPrefix_eq_directionVector]
   constructor
   · exact fun h ↦ h.2
@@ -478,10 +478,8 @@ theorem prefixedTilingStoppedAcceptedGeometricMass_product_of_factorization
     (t : DominoTiling) (x : Point) (r : TilingRetainedWord t x i)
     (tail : List Direction)
     (base screened : TilingCappedCoordinates i cap → Prop)
-    [DecidablePred base] [DecidablePred screened]
     (D : Finset Point)
     (selected : TilingDistinguishedCoordinates (cap := cap) t x r D → Prop)
-    [DecidablePred selected]
     (upper : TilingCappedMarginalization.TilingAwayDomino t x r D → ℕ)
     (screen : FiniteDominoProductLaw.TruncatedTotals upper → Prop)
     [DecidablePred screen]

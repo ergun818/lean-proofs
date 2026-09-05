@@ -445,7 +445,7 @@ theorem totalSourceCorrectBandOverflowCoefficient_eq_add
     {t : TilingLazyDecomposition.DominoTiling} {m cutoff : ℕ}
     {band : RandomClockBand}
     (data : AllSixSourceCorrectBandProductData t m cutoff band)
-    (bounds : SharpPositiveShellBounds data.interfaces)
+    (_bounds : SharpPositiveShellBounds data.interfaces)
     (hstart : data.interfaces.lawStart ≤ m) (hm : 1 < m) :
     totalSourceCorrectBandOverflowCoefficient data =
       centralReplacementTailCost shellZeroLocalRatioConstant
@@ -674,7 +674,7 @@ by the separate Proposition 4.5 balance screen. -/
 theorem eventually_sum_totalFilteredSourceCorrectBandOverflowCoefficient_le_exp
     (t : TilingLazyDecomposition.DominoTiling)
     (cap externalThreshold : ℕ → ℕ)
-    (eligible : ∀ m, RandomClockBand → Set WalkPath)
+    (eligible : ∀ _m, RandomClockBand → Set WalkPath)
     (data : ∀ m band,
       AllSixFilteredSourceCorrectBandProductData t m
         (levelCutoffTime upperTailDelta m) band (eligible m band))

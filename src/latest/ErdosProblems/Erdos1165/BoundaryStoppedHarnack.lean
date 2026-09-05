@@ -114,7 +114,7 @@ theorem mem_walkHitBeforeExit_iff_exists
       ∃ n, (∀ k ≤ n, s k ∈ D) ∧ s n = target := by
   constructor
   · intro h
-    simp only [walkHitBeforeExit, mem_iUnion, mem_setOf_eq] at h
+    simp only [walkHitBeforeExit, mem_iUnion, mem_ofPred_eq] at h
     obtain ⟨n, hn⟩ := h
     exact ⟨n, hn.1.1, hn.1.2⟩
   · rintro ⟨n, hstay, htarget⟩
@@ -123,7 +123,7 @@ theorem mem_walkHitBeforeExit_iff_exists
     let first := Nat.find hP
     have hfirstLe : first ≤ n := Nat.find_min' hP htarget
     have hfirstTarget : s first = target := Nat.find_spec hP
-    simp only [walkHitBeforeExit, mem_iUnion, mem_setOf_eq]
+    simp only [walkHitBeforeExit, mem_iUnion, mem_ofPred_eq]
     refine ⟨first, ⟨⟨?_, hfirstTarget⟩, ?_⟩⟩
     · intro k hk
       exact hstay k (hk.trans hfirstLe)
@@ -134,7 +134,7 @@ theorem mem_walkHitBeforeBoundary_iff_exists
     (boundary : Set Point) (target : Point) (s : WalkPath) :
     s ∈ walkHitBeforeBoundary boundary target ↔
       ∃ n, s n = target ∧ ∀ k < n, s k ∉ boundary := by
-  simp only [walkHitBeforeBoundary, mem_iUnion, mem_setOf_eq]
+  simp only [walkHitBeforeBoundary, mem_iUnion, mem_ofPred_eq]
 
 private theorem trajectoryFrom_stays_boundaryInterior_until
     {R n : ℕ} {start target : Point} (omega : StepPath)
@@ -261,7 +261,7 @@ theorem mem_discBoundary_translate (center : Point) (r : ℝ) (z : Point) :
     z ∈ ThickPoint.discBoundary center r ↔
       z - center ∈ ThickPoint.discBoundary 0 r := by
   unfold ThickPoint.discBoundary ThickPoint.innerBoundary
-  simp only [mem_setOf_eq]
+  simp only [mem_ofPred_eq]
   constructor
   · rintro ⟨hz, w, hw, hzw⟩
     refine ⟨(mem_disc_translate center r z).mp hz, w - center, ?_, ?_⟩

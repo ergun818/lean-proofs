@@ -495,7 +495,8 @@ theorem listLocalTime_eq_phasedBoundary_add_external_add_lazy
           unfold listLocalTime at h
           simp only [listLocalTime, List.count_cons, phasedInput,
             phasedBoundaryLocalTime, phasedExternalLocalTime, phasedLazyLocalTime]
-          split_ifs <;> simp_all <;> omega
+          split_ifs <;> simp_all
+          omega
 
 theorem mem_phasedExternalVisitedSites_of_pos
     {t : DominoTiling} {o : Orientation} {p : List Point} {x : Point}

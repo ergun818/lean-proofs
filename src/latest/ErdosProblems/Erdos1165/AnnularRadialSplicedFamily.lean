@@ -124,7 +124,7 @@ private theorem word_tail_getLast?_eq_zero
     by_contra hnot
     have hzero : L = 0 := by omega
     subst L
-    have hindex : (⟨0, by omega⟩ : Fin (0 + 1)) = Fin.last 0 := by ext <;> rfl
+    have hindex : (⟨0, by omega⟩ : Fin (0 + 1)) = Fin.last 0 := by ext; rfl
     have hbad := word.startsAtOne.symm.trans
       ((congrArg word.level hindex).trans word.endsAtZero)
     have := congrArg Fin.val hbad
@@ -216,7 +216,7 @@ theorem spatiallySplicedRadialWordAtom_lower
 /-- Uniform eventual lower bound for the complete fixed-profile family,
 still expressed as the ideal finite word-reference sum. -/
 theorem eventually_fixedProfile_reference_sum_le_spliced_family :
-    ∀ᶠ n : ℕ in atTop, ∀ (hn : 5 ≤ n) (delta : ℝ)
+    ∀ᶠ n : ℕ in atTop, ∀ (_hn : 5 ≤ n) (delta : ℝ)
       (x : Point), x ∈ candidateBox n → ∀ m : Profile n,
       (1 / 128 : ℝ≥0∞) * (1 / 2 : ℝ≥0∞) *
           (∑ word : {word : BoundedRadialLabelWord n

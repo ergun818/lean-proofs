@@ -111,7 +111,7 @@ theorem positiveInterface_shell_loss_le
           (2 * (m : ℝ) ^ ((7 / 10 : ℝ) -
             ScreeningInstantiation.kappaOne)) *
             (2 * (m : ℝ) ^ ScreeningInstantiation.kappaOne) := by
-        gcongr <;> positivity
+        gcongr
       _ = 4 * (m : ℝ) ^ (((7 / 10 : ℝ) -
           ScreeningInstantiation.kappaOne) +
             ScreeningInstantiation.kappaOne) := by
@@ -367,7 +367,7 @@ theorem simpleRandomWalk_cutoffOriginPositiveInterfaceLocalTimeEvent_series_ne_t
 /-- Zero-prefix failures in one endpoint band.  This deliberately contains
 the whole physical failure, not just the unbalanced subevent. -/
 def bandPositiveInterfaceZeroPrefixEvent
-    (data : FullBetaSourceCorrectAllTilingProductData)
+    (_data : FullBetaSourceCorrectAllTilingProductData)
     (t : DominoTiling) (m : ℕ) (band : RandomClockBand) : Set WalkPath :=
   positiveInterfaceCreationNoNextProfileEvent m band.oldRank ∩
     {s | ∃ o : Orientation,
@@ -388,7 +388,7 @@ def positiveInterfaceZeroPrefixPaymentUnionAtRank
 theorem positiveInterfaceZeroPrefixPaymentUnionAtRank_subset_origin
     (data : FullBetaSourceCorrectAllTilingProductData)
     (t : DominoTiling) (rank m : ℕ) (hm : 1 < m)
-    (hthreshold : 0 < data.externalThreshold m) :
+    (_hthreshold : 0 < data.externalThreshold m) :
     positiveInterfaceZeroPrefixPaymentUnionAtRank data t rank m ⊆
       cutoffOriginPositiveInterfaceLocalTimeEvent m := by
   intro s hs
@@ -628,13 +628,13 @@ theorem bandPositiveInterfacePairArithmeticObstruction_subset_window_union_bound
           width_ge_four := hwidth
           window_ratio := hratio
           boundary_lt := hboundary }).elim
-    · push_neg at hboundary
+    · push Not at hboundary
       rcases hboundary with ⟨b, hb⟩
       exact Or.inr
         ⟨⟨hprofile, hunbalanced⟩,
           o, horientedFailure, shell, hshell, eta, cap, hcode, hcap, b,
             not_lt_of_ge hb⟩
-  · push_neg at hratio
+  · push Not at hratio
     rcases hratio with ⟨b, hb⟩
     exact Or.inl
       ⟨⟨hprofile, hunbalanced⟩,
@@ -674,7 +674,7 @@ theorem bandPositiveInterfaceProfiledUnbalanced_subset_zeroPrefix_union_arithmet
 theorem positiveInterfaceProfiledUnbalancedPairRemainderUnionAtRank_subset_split
     (data : FullBetaSourceCorrectAllTilingProductData)
     (t : DominoTiling) (rank m : ℕ) (hm : 1 < m)
-    (hthreshold : 0 < data.externalThreshold m) :
+    (_hthreshold : 0 < data.externalThreshold m) :
     positiveInterfaceProfiledUnbalancedPairRemainderUnionAtRank
         data t rank m ⊆
       positiveInterfaceZeroPrefixPaymentUnionAtRank data t rank m ∪

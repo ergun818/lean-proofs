@@ -150,7 +150,7 @@ theorem measurable_of_measurable_fibers
   intro U _
   have heq : f ⁻¹' U = ⋃ b : U, {x | f x = b.1} := by
     ext x
-    simp only [Set.mem_preimage, Set.mem_iUnion, Set.mem_setOf_eq]
+    simp only [Set.mem_preimage, Set.mem_iUnion, Set.mem_ofPred_eq]
     constructor
     · intro hx
       exact ⟨⟨f x, hx⟩, rfl⟩
@@ -168,8 +168,8 @@ theorem measurable_creationTimeNat (m k : ℕ) :
     have heq : {s | creationTimeNat m k s = 0} =
         (thresholdReachStage m k)ᶜ ∪ thresholdCreationSet m k 0 := by
       ext s
-      simp only [Set.mem_setOf_eq, Set.mem_union, Set.mem_compl_iff,
-        thresholdReachStage, Set.mem_ofPred_eq, thresholdCreationSet]
+      simp only [Set.mem_ofPred_eq, Set.mem_union, Set.mem_compl_iff,
+        thresholdReachStage, thresholdCreationSet]
       constructor
       · intro hzero
         by_cases hreach : ReachesThreshold s m k
@@ -188,7 +188,7 @@ theorem measurable_creationTimeNat (m k : ℕ) :
   · have heq : {s | creationTimeNat m k s = n} =
         thresholdCreationSet m k n := by
       ext s
-      simp only [Set.mem_setOf_eq, thresholdCreationSet, Set.mem_ofPred_eq]
+      simp only [Set.mem_ofPred_eq, thresholdCreationSet]
       constructor
       · intro htime
         by_cases hreach : ReachesThreshold s m k
@@ -215,7 +215,7 @@ theorem measurable_natIndexed
       ⋃ n, {x | index x = n} ∩ f n ⁻¹' U := by
     ext x
     simp only [Set.mem_preimage, Set.mem_iUnion, Set.mem_inter_iff,
-      Set.mem_setOf_eq]
+      Set.mem_ofPred_eq]
     constructor
     · intro hx
       exact ⟨index x, rfl, hx⟩

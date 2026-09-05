@@ -353,13 +353,13 @@ theorem singletonPairWindowScreenMass_le_two_mul_windowMass
   have htail :=
     sum_positiveInterfacePairWindow_coordinateMass_le_two_mul_windowMass
       eta cap b
-  convert htail using 1 <;>
-    simp only [data, D, c, pointMass, upper, singletonPairFiber,
-      singletonFiber, singletonPairCoordinate, singletonCoordinate,
-      pairCoarseIndex, singletonSupportedIndex, coordinateMass,
-      tilingAwayPointMass, tilingAwayExactTotalMass,
-      TilingOrientedExternalAllCreationStoppedCoordinate.concreteFiber] <;>
-    rfl
+  convert htail using 1
+  simp only [data, D, c, pointMass, upper, singletonPairFiber,
+    singletonFiber, singletonPairCoordinate, singletonCoordinate,
+    pairCoarseIndex, singletonSupportedIndex, coordinateMass,
+    tilingAwayPointMass, tilingAwayExactTotalMass,
+    TilingOrientedExternalAllCreationStoppedCoordinate.concreteFiber]
+  rfl
 
 /-- Failure of the adjacent-row comparison supplies the sharp exponential
 bound for the normalized singleton screen. -/
@@ -768,7 +768,7 @@ theorem positiveInterfaceExternalPairSourceStoppedGeometricMass_le_singleton
       eta.1.1.initial.1 eta.1.1.retainedCount (pairData.coordinateCap cap) t
       eta.1.1.start eta.1.1.retained eta.1.1.tail.1
       (positiveInterfaceExternalPairSourcePredicate eta cap threshold bound)
-      (Classical.decPred _) D
+      D
       (singletonPairSelected eta b cap) (Classical.decPred _)
       (data.upper cap) (singletonPairWindowScreen eta b cap)
       (Classical.decPred _)

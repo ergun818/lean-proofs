@@ -12,6 +12,10 @@ open Set
 
 namespace Erdos1165.AsymmetricSplitCompletionRecovered
 
+open TerminalSkeletonFactorization renaming
+  shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix →
+    shiftSteps_mem_assembledTerminalWordCylinder
+
 open AnnularBoundaryExcursionKernel AnnularProfileClocks
 open AsymmetricExtractedReturnClockRecovery
 open AsymmetricReturnPrefixRecovery AsymmetricSplitCompletionCode
@@ -214,7 +218,7 @@ theorem sourceSplitCompletionMemberCore
   have htail : shiftSteps start omega ∈
       stoppedWordCylinder (assembledTerminalWord data.skeleton words) := by
     exact
-      TerminalSkeletonFactorization.shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix
+      shiftSteps_mem_assembledTerminalWordCylinder
         hcylinder
   have hcanonicalFirst : AbsoluteBoundaryFirstAt
       (discBoundary (0, 0) (outerScale n)) (0, 0)
@@ -376,7 +380,7 @@ theorem sourceSplitCompletionData_recovered
   have htail : shiftSteps start omega ∈
       stoppedWordCylinder (assembledTerminalWord data.skeleton words) := by
     exact
-      TerminalSkeletonFactorization.shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix
+      shiftSteps_mem_assembledTerminalWordCylinder
         hcylinder
   have hpre : stepPrefix start omega = data.pre :=
     stepPrefix_eq_of_mem_assembleAfterPrefix hcylinder

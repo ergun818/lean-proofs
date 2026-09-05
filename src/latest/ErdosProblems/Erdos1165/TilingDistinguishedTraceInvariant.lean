@@ -31,14 +31,14 @@ theorem filter_blockPathTail_eraseAwayTilingReturns
   | cons b bs ih =>
       by_cases hskip : b = tilingRemovableBlock t x ∧ tilingBase t x ∉ D
       · rcases hskip with ⟨rfl, hx⟩
-        simp only [eraseAwayTilingReturns, true_and, hx, if_pos,
+        simp only [eraseAwayTilingReturns, true_and, hx,
           blockPathTail, blockMiddle_tilingRemovableBlock,
           blockEnd_tilingRemovableBlock]
         have hpartner : tilingBase t (tilingPartner t x) ∉ D := by
           rw [tilingBase_partner]
           exact hx
-        simp only [List.filter_cons, pointInTilingBases, decide_eq_false_iff_not,
-          hpartner, Bool.false_eq_true, if_false, hx]
+        simp only [List.filter_cons, pointInTilingBases,
+          hpartner, hx]
         exact ih x
       · simp only [eraseAwayTilingReturns, if_neg hskip, blockPathTail,
           List.filter_cons]
@@ -77,9 +77,9 @@ theorem eraseAwayTilingReturns_append (t : DominoTiling)
       by_cases hskip : a = tilingRemovableBlock t x ∧ tilingBase t x ∉ D
       · rcases hskip with ⟨rfl, hx⟩
         simp only [List.cons_append, eraseAwayTilingReturns, true_and, hx,
-          if_pos, blockEnd_tilingRemovableBlock]
+          blockEnd_tilingRemovableBlock]
         rw [ih]
-        simp [eraseAwayTilingReturns, hx, followBlocks]
+        simp [followBlocks]
       · simp only [List.cons_append, eraseAwayTilingReturns, if_neg hskip]
         rw [ih]
         rfl
@@ -248,8 +248,6 @@ theorem listThresholdSites_append_singleton (m : ℕ) (seen : List α)
         List.mem_append, List.mem_singleton, or_true, true_and,
         List.count_append, List.count_singleton, beq_self_eq_true,
         if_true]
-      change (m ≤ seen.count x + 1) ↔
-        (x ∈ seen ∧ m ≤ seen.count x)
       constructor
       · intro hnew
         have hle : m ≤ seen.count x := by omega
@@ -261,14 +259,12 @@ theorem listThresholdSites_append_singleton (m : ℕ) (seen : List α)
       · rintro ⟨_, hle⟩
         omega
   · simp only [listThresholdSites, Finset.mem_filter, List.mem_toFinset,
-      List.mem_append, List.mem_singleton, hyx, Ne.symm hyx, or_false,
-      Finset.mem_insert, false_or, List.count_append,
+      List.mem_append, List.mem_singleton, hyx, or_false,
+      List.count_append,
       List.count_singleton]
-    simp only [show (x == y) = false by simp [Ne.symm hyx], ite_false,
-      add_zero]
+    simp only [show (x == y) = false by simp [Ne.symm hyx]]
     by_cases hm : seen.count x + 1 = m
-    · simp only [Bool.false_eq_true, ↓reduceIte, add_zero]
-      exact fun h ↦ (hyx h).elim
+    · simp [hm, hyx]
     · simp [hm]
 
 theorem length_thresholdHitSequenceAux (m : ℕ) (hmpos : 0 < m)
@@ -300,6 +296,7 @@ theorem length_thresholdHitSequence (m : ℕ) (hmpos : 0 < m) (p : List α) :
   have h := length_thresholdHitSequenceAux m hmpos [] p
   simpa [thresholdHitSequence, listThresholdSites] using h
 
+omit [LawfulBEq α] [DecidableEq α] in
 theorem thresholdHitSequenceAux_append (m : ℕ) (seen p q : List α) :
     thresholdHitSequenceAux m seen (p ++ q) =
       thresholdHitSequenceAux m seen p ++
@@ -316,6 +313,7 @@ theorem thresholdHitSequenceAux_append (m : ℕ) (seen p q : List α) :
         rw [ih]
         simp only [List.append_assoc, List.singleton_append]
 
+omit [LawfulBEq α] [DecidableEq α] in
 theorem thresholdHitSequence_append_singleton_of_count (m : ℕ)
     (p : List α) (x : α) (hcount : p.count x + 1 = m) :
     thresholdHitSequence m (p ++ [x]) =
@@ -324,6 +322,7 @@ theorem thresholdHitSequence_append_singleton_of_count (m : ℕ)
   rw [thresholdHitSequenceAux_append]
   simp [thresholdHitSequenceAux, hcount]
 
+omit [LawfulBEq α] [DecidableEq α] in
 theorem thresholdHitSequence_prefix {m : ℕ} {p q : List α}
     (hpq : p <+: q) : thresholdHitSequence m p <+: thresholdHitSequence m q := by
   obtain ⟨tail, rfl⟩ := hpq
@@ -439,6 +438,7 @@ theorem thresholdHitSequence_getElem?_of_creation_of_le
   rw [← htail, List.getElem?_append_left (by rw [hdata.1]; omega)]
   rw [← hdata.1, ← List.getLast?_eq_getElem?, hdata.2]
 
+omit [DecidableEq α] in
 theorem filter_thresholdHitSequenceAux (m : ℕ) (P : α → Bool)
     (seen p : List α) :
     (thresholdHitSequenceAux m seen p).filter P =
@@ -456,6 +456,7 @@ theorem filter_thresholdHitSequenceAux (m : ℕ) (P : α → Bool)
         · simp [thresholdHitSequenceAux, hx, hm, ih, List.filter_append]
         · simp [thresholdHitSequenceAux, hx, hm, ih, List.filter_append]
 
+omit [DecidableEq α] in
 theorem mem_thresholdHitSequenceAux_count_le (m : ℕ) (seen p : List α)
     {y : α} (hy : y ∈ thresholdHitSequenceAux m seen p) :
     m ≤ (seen ++ p).count y := by
@@ -474,6 +475,7 @@ theorem mem_thresholdHitSequenceAux_count_le (m : ℕ) (seen p : List α)
         have h := ih (seen ++ [x]) hy
         simpa only [List.append_assoc, List.singleton_append] using h
 
+omit [DecidableEq α] in
 theorem thresholdHitSequence_filter_eq_self_of_outside_lt
     (m : ℕ) (P : α → Bool) (p : List α)
     (hout : ∀ y, P y = false → p.count y < m) :
@@ -486,6 +488,7 @@ theorem thresholdHitSequence_filter_eq_self_of_outside_lt
   simp only [List.nil_append] at hle
   exact (Nat.not_le_of_gt (hout y hfalse)) hle
 
+omit [DecidableEq α] in
 theorem thresholdHitSequence_eq_of_filter_eq_of_outside_lt
     (m : ℕ) (P : α → Bool) (p p' : List α)
     (hfilter : p.filter P = p'.filter P)
@@ -546,13 +549,13 @@ theorem thresholdCreation_iff_of_pathPrefix_eq {s s' : WalkPath}
 
 theorem firstCreationStage_iff_of_pathPrefix_eq_of_creation
     {s s' : WalkPath} {N m : ℕ}
-    (hp : pathPrefix s N = pathPrefix s' N)
+    (_hp : pathPrefix s N = pathPrefix s' N)
     (hfinal : ThresholdCreation s m 1 N)
     (hfinal' : ThresholdCreation s' m 1 N) :
     s ∈ HLOZStoppedProductRefinement.firstCreationStage m ↔
       s' ∈ HLOZStoppedProductRefinement.firstCreationStage m := by
   simp only [HLOZStoppedProductRefinement.firstCreationStage, Set.mem_iUnion,
-    thresholdCreationSet, Set.mem_setOf_eq]
+    thresholdCreationSet, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨n, hn⟩
     have hnN : n = N := HLOZSpatialAdapter.thresholdCreation_time_unique hn hfinal

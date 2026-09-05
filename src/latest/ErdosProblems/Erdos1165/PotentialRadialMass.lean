@@ -1011,7 +1011,7 @@ theorem abs_fourierPotential_sub_le_of_radiusSq_eq
       abs_sub_comm]
     dsimp [G, C, Q]
     rw [hindex] at hmass
-    convert hmass using 1 <;> ring
+    exact hmass
   have hlateAbsSummable : Summable (fun n : ℕ ↦ |f (n + M)|) := by
     exact (summable_nat_add_iff M).mpr hfAbsSummable
   have hlateRaw : ∑' n : ℕ, |f (n + M)| ≤ ∑' n : ℕ, G n := by
@@ -1191,7 +1191,7 @@ theorem abs_fourierPotential_sub_le_of_radiusSq_gap
       abs_sub_comm]
     dsimp [G, G₁, G₂, G₃, Δ, Qmin, Q, Q']
     rw [hindex] at hmass
-    convert hmass using 1 <;> ring
+    convert hmass using 1; ring
   have hlateAbsSummable : Summable (fun n : ℕ ↦ |f (n + M)|) :=
     (summable_nat_add_iff M).mpr hfAbsSummable
   have hlateRaw : ∑' n : ℕ, |f (n + M)| ≤ ∑' n : ℕ, G n :=

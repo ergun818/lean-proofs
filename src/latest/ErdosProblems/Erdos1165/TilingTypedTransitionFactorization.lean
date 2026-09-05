@@ -901,7 +901,7 @@ cap coherence, path coverage, and finite product mass. -/
 structure TypedFiniteAwayScreenData
     (t : DominoTiling) (m k : ℕ) (stage next : Set WalkPath)
     (cost : ℝ≥0∞) where
-  accepts : ∀ z : TypedFavoriteTilingTraceCode t, ∀ cap,
+  accepts : ∀ z : TypedFavoriteTilingTraceCode t, ∀ _cap,
     FiniteDominoProductLaw.TruncatedTotals
       (typedPositiveAwayUpper t m z) → Bool
   monotone_screened : ∀ z, Monotone fun cap ↦

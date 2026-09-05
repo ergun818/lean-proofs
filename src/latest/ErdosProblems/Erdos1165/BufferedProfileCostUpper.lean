@@ -66,7 +66,7 @@ lemma fillBufferedProfile_isConstrained
   · rw [fillBufferedProfile_apply_retained m i hi]
     simpa [InProfileWindow, profileCenter] using hm i hi
   · rw [fillBufferedProfile_apply_erased m i hi, InProfileWindow]
-    simp only [Nat.cast_ofNat, sub_self, abs_zero]
+    simp only [sub_self, abs_zero]
     exact Real.rpow_nonneg (by positivity) _
 
 /-- Sum of the exact profile coordinates which survive the buffer. -/

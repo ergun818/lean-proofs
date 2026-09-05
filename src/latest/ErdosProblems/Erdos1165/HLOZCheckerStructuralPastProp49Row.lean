@@ -143,16 +143,14 @@ theorem completeOriginSafeTargetFamily_someCandidate_subset_unrestricted
         change s ∈ completeOriginSafeCandidateNear eta a low e hm hk hwindow
           harithmetic hexternalArithmetic candidate at hnear
         by_cases horigin : targetOriginBase t e ∈ eta.1.2
-        · simp only [completeOriginSafeCandidateNear, heligible.1, horigin,
-            if_pos] at hnear
+        · simp only [completeOriginSafeCandidateNear, heligible.1, horigin] at hnear
           change s ∈ sourceOriginSafeCandidateNear eta a low e candidate at hnear
           simp only [sourceOriginSafeCandidateNear, horigin, hcandidateEta,
             dite_true] at hnear
           simp only [sourceProp49CandidateNear, hcandidateEta, dite_true]
           exact sourceOriginSafeNear_subset_sourceProp49Near eta a candidate
             hcandidateEta low e horigin hnear
-        · simp only [completeOriginSafeCandidateNear, heligible.1, horigin,
-            if_neg] at hnear
+        · simp only [completeOriginSafeCandidateNear, heligible.1, horigin] at hnear
           change s ∈ sourceDistinguishedOriginSafeCandidateNear eta a low e
             hm hk hwindow harithmetic hexternalArithmetic candidate at hnear
           have hdistEligible : DistinguishedOriginSafeEligibleHistory e eta :=

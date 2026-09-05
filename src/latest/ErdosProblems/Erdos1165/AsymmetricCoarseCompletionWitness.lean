@@ -15,6 +15,10 @@ open Set
 
 namespace Erdos1165.AsymmetricCoarseCompletionWitness
 
+open TerminalSkeletonFactorization renaming
+  shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix →
+    shiftSteps_mem_assembledTerminalWordCylinder
+
 open AnnularProfileClocks AppendixPair
 open AsymmetricCoarseCompletionSourceGeometry
 open AsymmetricCoarseSplitCompletion AsymmetricCoarseSplitCompletionSource
@@ -60,7 +64,7 @@ theorem sourceCoarseSplitCompletionAtom_subset_stoppedSuccessfulPointEvent_of_se
   let horizon := assembledTerminalHorizon data.skeleton words
   have htail : shiftSteps start omega ∈
       stoppedWordCylinder (assembledTerminalWord data.skeleton words) :=
-    TerminalSkeletonFactorization.shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix
+    shiftSteps_mem_assembledTerminalWordCylinder
       hcylinder
   have hcanonicalFirst : AbsoluteBoundaryFirstAt
       (discBoundary (0, 0) (outerScale n)) (0, 0)
@@ -93,7 +97,7 @@ theorem sourceCoarseSplitCompletionAtom_subset_stoppedSuccessfulPointEvent_of_se
   have hsourceTail : shiftSteps start source ∈
       stoppedWordCylinder
         (assembledTerminalWord data.skeleton referenceWords) := by
-    exact TerminalSkeletonFactorization.shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix
+    exact shiftSteps_mem_assembledTerminalWordCylinder
       hsourceCylinder
   have hreferenceFirst : AbsoluteBoundaryFirstAt
       (discBoundary (0, 0) (outerScale n)) (0, 0)

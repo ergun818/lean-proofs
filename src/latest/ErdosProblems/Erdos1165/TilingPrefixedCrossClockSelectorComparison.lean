@@ -63,8 +63,7 @@ theorem prefixedTilingDistinguishedSelectorMass_nonneg
   · unfold jointMass tilingAwayPointMass
     exact Finset.prod_nonneg fun b _ ↦
       tilingAwayExactTotalMass_nonneg t x r D b (ell b)
-  ·
-    by_cases hd : selected d
+  · by_cases hd : selected d
     · simp only [hd, if_true]
       unfold tilingDistinguishedAssignmentMass
       exact Finset.prod_nonneg fun b _ ↦
@@ -90,8 +89,7 @@ theorem prefixedTilingDistinguishedSelectorMass_mono
   apply Finset.sum_le_sum
   intro d _
   apply mul_le_mul_of_nonneg_left
-  ·
-    by_cases hr : replacementSelected d
+  · by_cases hr : replacementSelected d
     · have hs : sourceSelected d := hselected d hr
       simp only [hr, hs, if_true]
       exact le_rfl
@@ -116,7 +114,6 @@ theorem prefixedTilingStoppedAcceptedGeometricMass_le_of_crossClock
     (tail : List Direction)
     (sourcePredicate replacementPredicate :
       TilingCappedCoordinates i cap → Prop)
-    [DecidablePred sourcePredicate] [DecidablePred replacementPredicate]
     (D : Finset Point)
     (sourceSelected replacementSelected :
       TilingDistinguishedCoordinates (cap := cap) t x r D → Prop)

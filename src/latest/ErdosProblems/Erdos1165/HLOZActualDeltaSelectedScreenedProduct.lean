@@ -163,7 +163,7 @@ theorem actualDeltaSelectedScreenedStoppedGeometricMass_eq
       (sourceActualDeltaStoppingTime data cap delta) z.initial.1
       z.retainedCount (data.coordinateCap cap) t z.start z.retained z.tail.1
       (actualDeltaSelectedScreenedPredicate data selected cap screen delta)
-      (Classical.decPred _) D (selected cap) (Classical.decPred _)
+      D (selected cap) (Classical.decPred _)
       (data.upper cap)
       (fun ell ↦ sourceActualDeltaScreen data cap delta ell ∧ screen ell)
       (Classical.decPred _)
@@ -241,7 +241,6 @@ theorem sum_actualDeltaSelectedScreenedStoppedGeometricMass_eq
       (cap := data.coordinateCap cap) t z.start z.retained
         (supportComplementDistinguished t z.start z.retained S) → Prop)
     (cap : ℕ) (screen : TruncatedTotals (data.upper cap) → Prop)
-    [DecidablePred screen]
     (haccepted : ∀ (delta : SourceActualDeltaIndex data)
       (q : TilingCappedCoordinates z.retainedCount (data.coordinateCap cap)),
       selected cap

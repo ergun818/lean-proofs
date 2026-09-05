@@ -148,7 +148,7 @@ theorem rankMultiplicity_mul_fullSupportTail_le_fullSupportMass
     rw [Finset.card_univ, hsupport] at hraw
     simpa only [total, cut, div_mul_eq_mul_div] using hraw
   have henvelope :=
-    _root_.Erdos1165.HLOZSharpProductNumerics.rankMultiplicity_mul_thresholdedProductEnvelope_le_sharp
+    HLOZSharpProductNumerics.rankMultiplicity_mul_thresholdedProductEnvelope_le_sharp
       C hC0 hC threshold j total
   have hmult_nonneg :
       0 ≤ (((2 * Fintype.card Coordinate + 1 : ℕ) : ℝ)) := by positivity

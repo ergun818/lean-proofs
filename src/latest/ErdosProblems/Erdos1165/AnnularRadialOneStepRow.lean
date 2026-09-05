@@ -258,7 +258,7 @@ theorem adjacentRadialBoundaries_separates_other
     have hExitNe : exitLabel ≠ source := by
       intro heq
       subst exitLabel
-      simpa using hExit
+      simp at hExit
     have hNExit : trajectoryFrom start omega N ∈
         radialBoundary n center exitLabel := by
       simpa only [if_neg hExitNe] using hExit
@@ -649,7 +649,7 @@ theorem terminalRadialBoundary_separates_other
     have hExitNe : exitLabel ≠ source := by
       intro heq
       subst exitLabel
-      simpa using hExit
+      simp at hExit
     have hNExit : trajectoryFrom start path N ∈
         radialBoundary n center exitLabel := by
       simpa only [if_neg hExitNe] using hExit

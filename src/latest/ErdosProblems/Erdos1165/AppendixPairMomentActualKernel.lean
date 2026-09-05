@@ -105,7 +105,7 @@ theorem terminalMarkedKernel_family_markedKernelUpper
       markedPoissonUpperLoss (q j) (hitError j) (exitError j) := by
     unfold markedPoissonUpperError markedPoissonUpperLoss
     rw [add_max]
-    congr 1 <;> ring
+    congr 1; ring
   simpa only [hloss] using hcoordinate
 
 /-- Fully geometric literal-disc specialization.  Each coordinate may use
@@ -114,7 +114,7 @@ potential lower bound.  The conclusion is the exact event-defined joint
 visit-count/exit-point kernel comparison, ready for the complete stopped
 skeleton upper disintegration. -/
 theorem literalDiscTerminalMarkedKernel_family_markedKernelUpper
-    {Entrance Exit : Type*} [Fintype Entrance] {m : ℕ}
+    {Entrance Exit : Type*} [Finite Entrance] {m : ℕ}
     (R S r rho : Fin m → ℕ)
     (entrance : Fin m → Entrance → Point)
     (endpoint : Fin m → Exit → Point)
@@ -169,6 +169,8 @@ theorem literalDiscTerminalMarkedKernel_family_markedKernelUpper
       (fun j u k z ↦ terminalMarkedKernel
         (ThickPoint.discBoundary 0 (R j : ℝ)) 0
           (entrance j u) k (endpoint j z)) := by
+  classical
+  let _ : Fintype Entrance := Fintype.ofFinite Entrance
   let q : Fin m → ℝ := fun j ↦
     literalBoundaryStoppedHitKernel (R j) (entrance j) (referenceEntrance j)
   let p : Fin m → ℝ := fun j ↦ literalEscapeProbability (R j)
@@ -186,8 +188,7 @@ theorem literalDiscTerminalMarkedKernel_family_markedKernelUpper
     (boundary := fun j ↦ ThickPoint.discBoundary 0 (R j : ℝ))
     (target := fun _ ↦ 0) (entrance := entrance) (endpoint := endpoint)
     (q := q) (p := p) (hitError := hitError) (exitError := exitError)
-  · intro j
-    intro hzero
+  · intro j hzero
     have hbounds := discBoundary_zero_euclideanRadius_bounds_nat
       (show 1 ≤ R j from le_trans (by norm_num) (hR j)) hzero
     have hzeroRadius : euclideanRadius (0 : Point) = 0 := by

@@ -54,9 +54,7 @@ theorem filter_blockPathTail_eraseInsideTilingReturns
         have hpartner : tilingBase t (tilingPartner t x) ∈ S := by
           rw [tilingBase_partner]
           exact hx
-        simp only [List.filter_cons, pointOutsideTilingBases,
-          decide_eq_false_iff_not, not_not, hpartner, Bool.false_eq_true,
-          if_false, hx]
+        simp only [List.filter_cons, pointOutsideTilingBases, hpartner, hx]
         exact ih x
       · simp only [eraseInsideTilingReturns, if_neg hskip, blockPathTail,
           List.filter_cons]
@@ -97,7 +95,7 @@ theorem eraseInsideTilingReturns_append (t : DominoTiling)
         simp only [List.cons_append, eraseInsideTilingReturns, true_and, hx,
           if_pos, blockEnd_tilingRemovableBlock]
         rw [ih]
-        simp [eraseInsideTilingReturns, hx, followBlocks]
+        simp [followBlocks]
       · simp only [List.cons_append, eraseInsideTilingReturns, if_neg hskip]
         rw [ih]
         rfl

@@ -145,7 +145,7 @@ theorem killedPower_eq_avoiding_add_firstCut
           rw [← hsuccB]
           rw [Finset.sum_range_succ']
           simp only [firstCutWeight_zero, hxD, hxC, false_and, if_false,
-            and_false, zero_mul, Finset.sum_const_zero, zero_add, add_zero]
+            and_false, zero_mul, Finset.sum_const_zero, add_zero]
           simp only [firstCutWeight_succ, hxD, hxC, not_false_eq_true,
             and_self, if_true]
           simp_rw [Finset.mul_sum]
@@ -162,7 +162,7 @@ theorem killedPower_eq_avoiding_add_firstCut
           apply Finset.sum_congr rfl
           intro w hw
           ac_rfl
-      · simp [killedPower, firstCutWeight, hxD]
+      · simp [killedPower, hxD]
 
 /-! ## Reversal and the fixed-time last-exit form -/
 

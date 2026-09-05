@@ -51,7 +51,7 @@ structure LiteralShellZeroDeltaIndexedStoppedCoordinateSpec
     IsFiniteStoppingTime (replacementStoppingTime delta cap)
   sourcePredicate : ∀ cap,
     TilingCappedCoordinates z.retainedCount (coordinateCap cap) → Prop
-  replacementPredicate : ∀ delta cap,
+  replacementPredicate : ∀ _delta cap,
     TilingCappedCoordinates z.retainedCount (coordinateCap cap) → Prop
   geometric_bound : ∀ cap,
     ENNReal.ofReal (prefixedTilingStoppedAcceptedGeometricMass

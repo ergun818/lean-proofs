@@ -77,7 +77,7 @@ theorem sourceStaticSupport_subset_externalDominoBases
 
 /-- Literal cap and retained-count window data on the static moved support.
 No probability or asymptotic arithmetic is used. -/
-noncomputable def coordinateSupportData
+theorem coordinateSupportData
     (t : DominoTiling) (o : Orientation)
     (m k w low externalLow externalHigh total cap : ℕ)
     (eta : SupportedSourceStaticSupportIndex t o m k w low externalLow

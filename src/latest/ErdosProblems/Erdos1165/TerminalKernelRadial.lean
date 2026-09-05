@@ -78,7 +78,7 @@ factor. -/
 theorem visitMass_conditionStar
     {Entrance : Type*} [Fintype Entrance]
     {epsilon p : ℝ} {hit : Entrance → ℝ}
-    (hepsilon0 : 0 ≤ epsilon) (hepsilon1 : epsilon ≤ 1)
+    (hepsilon0 : 0 ≤ epsilon) (_hepsilon1 : epsilon ≤ 1)
     (hhit0 : ∀ u, 0 ≤ hit u) (hhitHalf : ∀ u, hit u ≤ 1 / 2)
     (hp0 : 0 < p) (hp1 : p ≤ 1)
     (hstar : AppendixDecoupling.ConditionStar epsilon hit) (k : ℕ) :

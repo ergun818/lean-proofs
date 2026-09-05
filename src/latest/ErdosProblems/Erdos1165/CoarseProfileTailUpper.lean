@@ -21,6 +21,10 @@ open scoped BigOperators ENNReal
 
 namespace Erdos1165.CoarseProfileTailUpper
 
+open TerminalSkeletonFactorization renaming
+  shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix →
+    shiftSteps_mem_assembledTerminalWordCylinder
+
 open AnnularBoundaryExcursionKernel AnnularProfileClocks
 open AnnularOffspringKernelRadial AnnularProfileGapAtoms
 open AnnularProfileLiteralAtoms AnnularProfileLevelSkeleton
@@ -93,7 +97,7 @@ theorem shift_coarseReturnCanonicalSource_mem_terminalCylinder
         (assembledTerminalWord code.1.skeleton
           (coarseTupleWords code bridges)) := by
   apply
-    TerminalSkeletonFactorization.shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix
+    shiftSteps_mem_assembledTerminalWordCylinder
   change stepPrefix
       ((coarseAtom code).assemble (Unit.unit, bridges)).1
         (coarseReturnCanonicalSource code bridges) =
@@ -339,7 +343,7 @@ theorem profileAtScale_coarseTailProfile_of_le
 the first retained high scale. -/
 theorem coarseReturnCount_eq_profileCompletedCount
     {start n k : ℕ} {hk : k + 1 ≤ n} {profileDelta : ℝ}
-    {x y : Point} (hn : 2 ≤ n)
+    {x y : Point} (_hn : 2 ≤ n)
     (code : CoarseSplitCompletionCode start n k hk profileDelta x y
       (profileInnerBoundary n k y)
       (discBoundary (0, 0) (outerScale n)) (0, 0))
@@ -1258,7 +1262,7 @@ private theorem tsum_constrained_count_prefix_le_sum_prefix
     intro m hm
     by_cases hP : m ∈ P
     · rw [Set.indicator_of_mem hP]
-    · simp only [Set.indicator, Pi.zero_apply, if_neg hP]
+    · simp only [Set.indicator, if_neg hP]
       exact bot_le
   · intro m hm
     have hnot : m ∉ P := by
@@ -1266,7 +1270,7 @@ private theorem tsum_constrained_count_prefix_le_sum_prefix
       apply hm
       rw [Finset.mem_filter]
       exact ⟨mem_constrainedProfiles.mpr hP.1, hP.2.2⟩
-    simp only [Set.indicator, Pi.zero_apply, if_neg hnot]
+    simp only [Set.indicator, if_neg hnot]
 
 private theorem tsum_constrained_count_prefix_eq_sum
     {n p count : ℕ} (hpTwo : 2 ≤ p) (hpn : p ≤ n)
@@ -1541,7 +1545,7 @@ theorem eventually_tsum_specifiedPrefixKeyMass_le_coreEnvelope :
 /-- Source-facing bridge-product form of the high-tail row. -/
 theorem eventually_tsum_constrainedCoarseTailBridgeMass_le_coreEnvelope :
     ∀ᶠ n : ℕ in atTop,
-      ∀ (k : ℕ) (hk : k + 1 ≤ n) (hkTwo : 2 ≤ k + 1),
+      ∀ (k : ℕ) (hk : k + 1 ≤ n) (_hkTwo : 2 ≤ k + 1),
         profileUpperTailStart ≤ k + 1 →
       ∀ (start : ℕ) (x y : Point),
       ∀ code : CoarseSplitCompletionCode start n k hk

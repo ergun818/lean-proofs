@@ -218,7 +218,7 @@ private lemma dist_eq_one_cases {a b : ℕ} (h : Nat.dist a b = 1) :
 /-- Every adjacent chronological row is eventually bounded above by one
 copy of `1+n⁻⁴` times its ideal label-chain row. -/
 theorem eventually_radialOneStepKernelENNReal_adjacent_upper :
-    ∀ᶠ n : ℕ in atTop, ∀ (hn : 2 ≤ n) (center : Point)
+    ∀ᶠ n : ℕ in atTop, ∀ (_hn : 2 ≤ n) (center : Point)
       (source target : Fin (n + 2)) (start : Point),
       start ∈ radialBoundary n center source →
       (source : ℕ) ≠ 0 → Nat.dist (source : ℕ) (target : ℕ) = 1 →
@@ -281,7 +281,7 @@ theorem eventually_radialOneStepKernelENNReal_adjacent_upper :
     · have hsourceEq : source = ⟨(source : ℕ), by omega⟩ := (Fin.eta source _).symm
       have htargetEq : target = ⟨(source : ℕ) - 1, by omega⟩ := by
         apply Fin.ext
-        simp only [Fin.val_mk]
+        change (target : ℕ) = (source : ℕ) - 1
         omega
       have hactual : radialOneStepKernelENNReal n center source target start ≤
           ENNReal.ofReal ((1 + 1 / (n : ℝ) ^ 4) / 2) := by
@@ -343,11 +343,11 @@ theorem eventually_radialOneStepKernelENNReal_adjacent_upper :
             have hideal : annularIdealEdge n source target =
                 ENNReal.ofReal (1 - terminalSuccess n) := by
               simp [annularIdealEdge, hsourceTerminal, htargetEq,
-                show n ≠ 0 by omega, show n - 1 + 1 = n by omega]
+                show n ≠ 0 by omega]
             rw [hideal]
       · have htargetEq : target = ⟨n - 1, by omega⟩ := by
           apply Fin.ext
-          simp only [Fin.val_mk]
+          change (target : ℕ) = n - 1
           omega
         have hactual : radialOneStepKernelENNReal n center source target start ≤
             ENNReal.ofReal ((1 + 1 / (n : ℝ) ^ 4) *
@@ -542,7 +542,7 @@ theorem eventually_fairSteps_radialLabelWordAtom_le_common_pow_mul_reference :
         rw [word.startsAtOne]
         exact hstart)
   have hlength : word.toList.tail.length = L := by
-    simpa using congrArg List.length (congrArg List.tail hlist)
+    simp
   simpa only [hlength] using hbound
 
 /-- Exact-cutoff specialization of the linear word comparison.  The common

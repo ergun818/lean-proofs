@@ -73,8 +73,8 @@ def profileThreeSplitEquiv {n start steps : ℕ}
     (profileThreeSplitEquiv hstart hstop m).2.1 i =
       profileFuture hstart (by omega) m
         ⟨i.1, by have := i.2; omega⟩ := by
-  simp [profileThreeSplitEquiv, tupleSplitEquivOfEq, tupleSplitEquiv,
-    Equiv.piCongrLeft, finSumFinEquiv]
+  simp only [profileThreeSplitEquiv, tupleSplitEquivOfEq, tupleSplitEquiv,
+    Equiv.piCongrLeft, Equiv.piCongrLeft'_symm]
   change m _ = m _
   congr 1
 
@@ -85,8 +85,8 @@ def profileThreeSplitEquiv {n start steps : ℕ}
     (profileThreeSplitEquiv hstart hstop m).2.2 i =
       profileFuture hstart (by omega) m
         ⟨steps + i.1, by have := i.2; omega⟩ := by
-  simp [profileThreeSplitEquiv, tupleSplitEquivOfEq, tupleSplitEquiv,
-    Equiv.piCongrLeft, finSumFinEquiv]
+  simp only [profileThreeSplitEquiv, tupleSplitEquivOfEq, tupleSplitEquiv,
+    Equiv.piCongrLeft, Equiv.piCongrLeft'_symm]
   change m _ = m _
   congr 1
 
@@ -108,7 +108,7 @@ theorem pathTransitionProduct_eq_transitionProduct_cons :
   induction steps with
   | zero =>
       intro a path
-      simp [pathTransitionProduct, transitionProduct]
+      simp [pathTransitionProduct]
   | succ steps ih =>
       intro a path
       rw [pathTransitionProduct, List.ofFn_succ,
@@ -417,7 +417,7 @@ def endpointCenterProfile (start a : ℕ) : Profile start :=
   simp [endpointCenterProfile, scaleIndex, show start - 2 + 2 = start by omega]
 
 theorem endpointCenterProfile_mem
-    {start a : ℕ} (hstart : 2 ≤ start) {delta : ℝ}
+    {start a : ℕ} (_hstart : 2 ≤ start) {delta : ℝ}
     (ha : a ∈ allowedValues delta start) :
     endpointCenterProfile start a ∈ constrainedProfiles start delta := by
   rw [mem_constrainedProfiles]
@@ -781,8 +781,7 @@ theorem endpointTailTerm_threeSplit
       unfold scaleIndex
       change low + 4 - 2 + 2 = low + 4
       omega)]
-    simpa only [profileThreeSplitEquiv_bridge_eq_profileAtScale,
-      Nat.reduceAdd, Fin.isValue]
+    simp only [profileThreeSplitEquiv_bridge_eq_profileAtScale]
   · have hjpos : 0 < j := Nat.pos_of_ne_zero hz
     let i : Fin (n - (low + 4)) := ⟨j - 1, by omega⟩
     have hscale : low + 4 + j = low + 4 + 1 + i.1 := by
@@ -1411,7 +1410,6 @@ theorem tsum_separatedProfileMajorant_le
       apply ENNReal.tsum_le_tsum
       intro pref
       unfold separatedProfileMajorant
-      simp only [Prod.fst, Prod.snd]
       simp_rw [mul_assoc]
       rw [ENNReal.tsum_mul_left]
       by_cases hpref : pref ∈ constrainedProfiles low profileUpperDelta
@@ -1471,7 +1469,6 @@ theorem tsum_separatedProfileMajorant_le_small
       apply ENNReal.tsum_le_tsum
       intro pref
       unfold separatedProfileMajorant
-      simp only [Prod.fst, Prod.snd]
       simp_rw [mul_assoc]
       rw [ENNReal.tsum_mul_left]
       by_cases hpref : pref ∈ constrainedProfiles low profileUpperDelta
@@ -1652,7 +1649,7 @@ theorem terminalWindowMass_le_one_of_buffered
 /-- One exact chronological radial-word profile cost is bounded by the
 retained cutoff constant times its tilted profile weight. -/
 theorem exactProfileCost_le_exp_nine_mul_tilted
-    {n low : ℕ} (hn : 5 ≤ n) (hlow : 2 ≤ low)
+    {n low : ℕ} (hn : 5 ≤ n) (_hlow : 2 ≤ low)
     (hstop : low + 4 ≤ n) {m : Profile n}
     (hm : IsBufferedInternalProfile low (low + 4) profileUpperDelta m) :
     ENNReal.ofReal
@@ -1824,7 +1821,6 @@ theorem tsum_buffered_exactProfileCost_le_exp_small
         2 * (profileUpperTailStart : ℝ) + 392 ≤
           profileUpperConstant := by
     unfold profileUpperConstant profileUpperCoreConstant
-    push_cast
     nlinarith
   have hcast : ((n - profileUpperTailStart : ℕ) : ℝ) =
       (n : ℝ) - profileUpperTailStart := by
@@ -2354,7 +2350,7 @@ theorem tsum_shortHeadProfileMajorant_le
       apply tsum_congr
       intro head
       unfold shortHeadProfileMajorant
-      simp only [Prod.fst, Prod.snd]
+      dsimp only
       rw [ENNReal.tsum_mul_left]
     _ ≤ ∑' head : Profile high,
         tiltedPathWeightENNReal (high - 1)

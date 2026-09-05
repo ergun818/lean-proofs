@@ -250,8 +250,7 @@ noncomputable def returningBlockWordsWithCountEquiv (o : Orientation) (n j : ℕ
       exact retainedIndices_inflateRetainedWord o s
         (Finset.mem_powersetCard.mp hs).2 v
     · apply Subtype.ext
-      simpa using extractRetainedWord_inflateRetainedWord o s
-        (Finset.mem_powersetCard.mp hs).2 v
+      simp
 
 theorem card_returningBlockWordsWithCount (o : Orientation) (n j : ℕ) :
     Fintype.card (ReturningBlockWordsWithCount o n j) =
@@ -266,7 +265,7 @@ theorem card_returningBlockWordsWithCount (o : Orientation) (n j : ℕ) :
   rw [Fintype.card_prod]
   congr 1
   · rw [Fintype.card_subtype]
-    simpa using Finset.card_powersetCard j (Finset.univ : Finset (Fin n))
+    simp
   · rw [Fintype.card_subtype]
     rfl
 

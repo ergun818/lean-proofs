@@ -47,14 +47,14 @@ theorem screenMass_allSourceVector_eq_product
     @screenMass (TilingAwayDomino t x r D) inferInstance inferInstance
         (tilingAwayPointMass (cap := cap) t x r D) upper
         (allSourceVector fun b v ↦ tilingShellZeroSourceCoordinate
-          (cap := cap) (m := m) (w := shellWidth48 m)
+          (_cap := cap) (m := m) (w := shellWidth48 m)
           t x r D upper b v)
         (Classical.decPred _) =
       tilingShellZeroAllSourceProductMass (cap := cap) (m := m)
         t x r D upper := by
   classical
   let source := fun b v ↦ tilingShellZeroSourceCoordinate
-    (cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v
+    (_cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v
   rw [@screenMass_eq_product (TilingAwayDomino t x r D) inferInstance
     inferInstance (tilingAwayPointMass (cap := cap) t x r D) upper
     (allSourceVector source) (Classical.decPred _)]
@@ -87,19 +87,19 @@ theorem screenMass_exactSourceSubsetVector_eq_product
         (tilingAwayPointMass (cap := cap) t x r D) upper
         (exactSourceSubsetVector
           (fun b v ↦ tilingShellZeroSourceCoordinate
-            (cap := cap) (m := m) (w := shellWidth48 m)
+            (_cap := cap) (m := m) (w := shellWidth48 m)
             t x r D upper b v)
           (fun b v ↦ tilingShellZeroReplacementCoordinate
-            (cap := cap) (m := m) (w := shellWidth48 m)
+            (_cap := cap) (m := m) (w := shellWidth48 m)
             t x r D upper b v) central)
         (Classical.decPred _) =
       tilingShellZeroCentralReplacementProductMass
         (cap := cap) (m := m) t x r D upper central := by
   classical
   let source := fun b v ↦ tilingShellZeroSourceCoordinate
-    (cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v
+    (_cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v
   let replacement := fun b v ↦ tilingShellZeroReplacementCoordinate
-    (cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v
+    (_cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v
   rw [@screenMass_eq_product (TilingAwayDomino t x r D) inferInstance
     inferInstance (tilingAwayPointMass (cap := cap) t x r D) upper
     (exactSourceSubsetVector source replacement central) (Classical.decPred _)]
@@ -147,7 +147,7 @@ theorem screenMass_source_le_ratio_mul_sum_actualDelta
     @screenMass (TilingAwayDomino t x r D) inferInstance inferInstance
         (tilingAwayPointMass (cap := cap) t x r D) upper
         (allSourceVector fun b v ↦ tilingShellZeroSourceCoordinate
-          (cap := cap) (m := m) (w := shellWidth48 m)
+          (_cap := cap) (m := m) (w := shellWidth48 m)
           t x r D upper b v)
         (Classical.decPred _) ≤
       centralReplacementRatio shellZeroLocalRatioConstant total *
@@ -188,10 +188,10 @@ theorem screenMass_source_le_ratio_mul_sum_actualDelta
           (tilingAwayPointMass (cap := cap) t x r D) upper
           (exactSourceSubsetVector
             (fun b v ↦ tilingShellZeroSourceCoordinate
-              (cap := cap) (m := m) (w := shellWidth48 m)
+              (_cap := cap) (m := m) (w := shellWidth48 m)
               t x r D upper b v)
             (fun b v ↦ tilingShellZeroReplacementCoordinate
-              (cap := cap) (m := m) (w := shellWidth48 m)
+              (_cap := cap) (m := m) (w := shellWidth48 m)
               t x r D upper b v)
             (centralReplacementUpperCount shellZeroLocalRatioConstant total))
           (Classical.decPred _) := congrArg _ hcentral.symm

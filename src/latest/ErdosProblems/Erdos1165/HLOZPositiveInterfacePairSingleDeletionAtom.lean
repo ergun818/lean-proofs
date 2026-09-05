@@ -15,6 +15,12 @@ open MeasureTheory Set
 
 namespace Erdos1165.HLOZPositiveInterfacePairSingleDeletionAtom
 
+open HLOZDominantPositiveInterfaceSupportSelector
+  (measurable_orientedDominantPositiveInterfacePairSupportAt
+    mem_orientedDominantPositiveInterfacePairSupportAt_iff
+    orientedDominantPositiveInterfacePairSupportAt_prefix_invariant
+    orientedEndpointCanonicallyDominantAt)
+
 open HLOZActualDeltaSelectedProduct
 open HLOZPathEvents
 open HLOZPositiveInterfaceExternalPairCoordinateRecovery
@@ -195,11 +201,11 @@ theorem orientedDominantPositiveInterfacePairSupportAt_erase_eq_of_localTime_eq_
   constructor
   · rintro ⟨hcb, hcReplacement⟩
     have hcReplacement' :=
-      (HLOZDominantPositiveInterfaceSupportSelector.mem_orientedDominantPositiveInterfacePairSupportAt_iff
+      (mem_orientedDominantPositiveInterfacePairSupportAt_iff
         t o m externalThreshold width shell sReplacement nReplacement c).mp
         hcReplacement
     refine ⟨hcb,
-      (HLOZDominantPositiveInterfaceSupportSelector.mem_orientedDominantPositiveInterfacePairSupportAt_iff
+      (mem_orientedDominantPositiveInterfacePairSupportAt_iff
         t o m externalThreshold width shell sSource nSource c).mpr ⟨?_, ?_⟩⟩
     · have hcErase :
           c ∈ (orientedPositiveInterfacePairSupportAt t o m externalThreshold
@@ -208,16 +214,16 @@ theorem orientedDominantPositiveInterfacePairSupportAt_erase_eq_of_localTime_eq_
       rw [hraw] at hcErase
       exact (Finset.mem_erase.mp hcErase).2
     · have hcDominant := hcReplacement'.2
-      unfold HLOZDominantPositiveInterfaceSupportSelector.orientedEndpointCanonicallyDominantAt at hcDominant ⊢
+      unfold orientedEndpointCanonicallyDominantAt at hcDominant ⊢
       rw [hcodeReplacement] at hcDominant
       rw [hcodeSource]
       exact hcDominant
   · rintro ⟨hcb, hcSource⟩
     have hcSource' :=
-      (HLOZDominantPositiveInterfaceSupportSelector.mem_orientedDominantPositiveInterfacePairSupportAt_iff
+      (mem_orientedDominantPositiveInterfacePairSupportAt_iff
         t o m externalThreshold width shell sSource nSource c).mp hcSource
     refine ⟨hcb,
-      (HLOZDominantPositiveInterfaceSupportSelector.mem_orientedDominantPositiveInterfacePairSupportAt_iff
+      (mem_orientedDominantPositiveInterfacePairSupportAt_iff
         t o m externalThreshold width shell sReplacement nReplacement c).mpr
         ⟨?_, ?_⟩⟩
     · have hcErase :
@@ -227,7 +233,7 @@ theorem orientedDominantPositiveInterfacePairSupportAt_erase_eq_of_localTime_eq_
       rw [← hraw] at hcErase
       exact (Finset.mem_erase.mp hcErase).2
     · have hcDominant := hcSource'.2
-      unfold HLOZDominantPositiveInterfaceSupportSelector.orientedEndpointCanonicallyDominantAt at hcDominant ⊢
+      unfold orientedEndpointCanonicallyDominantAt at hcDominant ⊢
       rw [hcodeSource] at hcDominant
       rw [hcodeReplacement]
       exact hcDominant
@@ -286,7 +292,7 @@ theorem measurableSet_positiveInterfaceExternalPairSingleDeletionRankAtom
       (measurable_creationTimeNat m (k + delta))
       (fun n s => PositiveInterfacePairSupportAt t o m
         externalThreshold width shell s n)
-      (HLOZDominantPositiveInterfaceSupportSelector.measurable_orientedDominantPositiveInterfacePairSupportAt t o m
+      (measurable_orientedDominantPositiveInterfacePairSupportAt t o m
         externalThreshold width shell)
 
 /-- Every observable singleton replacement is visible at its honest raised
@@ -480,7 +486,7 @@ theorem singletonPairObservableActualDeltaCap_subset_singleDeletionRankAtom
     (fixedOrientedTypedExternalWordCode_eq_of_pathPrefix_eq t o hp).trans
       hcodeReplacement
   have hsupportPrefix :=
-    HLOZDominantPositiveInterfaceSupportSelector.orientedDominantPositiveInterfacePairSupportAt_prefix_invariant t o m
+    orientedDominantPositiveInterfacePairSupportAt_prefix_invariant t o m
       externalThreshold (HLOZProposition48Candidates.shellWidth48 m) shell hp
   have hsupportS :
       PositiveInterfacePairSupportAt t o m externalThreshold

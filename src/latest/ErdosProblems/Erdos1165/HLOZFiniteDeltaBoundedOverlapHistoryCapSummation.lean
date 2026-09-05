@@ -150,12 +150,12 @@ theorem measure_event_le
       exact ENNReal.tsum_comm
     _ ≤ q * ∑' _delta : Delta, (N : ℝ≥0∞) := by
       apply mul_le_mul_of_nonneg_left
-      apply ENNReal.tsum_le_tsum
-      intro delta
-      exact tsum_measure_le_of_overlap_probability mu
-        (data.rankHistory delta) N (data.measurable_rankHistory delta)
-          (data.rankHistory_overlap delta)
-      exact bot_le
+      · apply ENNReal.tsum_le_tsum
+        intro delta
+        exact tsum_measure_le_of_overlap_probability mu
+          (data.rankHistory delta) N (data.measurable_rankHistory delta)
+            (data.rankHistory_overlap delta)
+      · exact bot_le
     _ = q * ((Fintype.card Delta : ℕ) : ℝ≥0∞) * (N : ℝ≥0∞) := by
       rw [tsum_fintype]
       simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]

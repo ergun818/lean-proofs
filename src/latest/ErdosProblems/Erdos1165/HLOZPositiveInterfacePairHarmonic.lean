@@ -292,9 +292,9 @@ theorem simpleRandomWalk_positiveInterfaceExternalPairBalancedSourceEvent_le
           externalThreshold width shell threshold bound) ≤
       variableDeltaHarmonic (2 * bound + 1) *
         ENNReal.ofReal (sharpRankConstant * sharpInterfaceCost threshold shell) := by
-  apply simpleRandomWalk_event_le_variableDeltaHarmonic hm hk threshold bound
-  intro s hs
-  exact hs
+  exact simpleRandomWalk_event_le_variableDeltaHarmonic
+    (t := t) (o := o) (externalThreshold := externalThreshold) (width := width)
+    hm hk threshold bound _ (fun _ hs ↦ hs)
 
 end
 

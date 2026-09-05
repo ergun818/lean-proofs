@@ -124,7 +124,7 @@ theorem eventually_pow_padding_le_exp :
     (by norm_num : (0 : ℝ) < 3 / 10)
   have hlog4 : Real.log 4 ≤ 3 := by
     convert Real.log_le_sub_one_of_pos (show (0 : ℝ) < 4 by norm_num)
-      using 1 <;> norm_num
+      using 1 ; norm_num
   have hlogB : Real.log B ≤ 10 * (n : ℝ) ^ (3 / 10 : ℝ) := by
     rw [Real.log_mul (by norm_num : (4 : ℝ) ≠ 0)
       (by positivity : (n : ℝ) ^ 2 ≠ 0), Real.log_pow] at hlogMono
@@ -443,7 +443,7 @@ theorem eventually_sum_earlierFixedPrefix_paddedPreludeContinuation_le :
       ∀ (hstart : 2 ≤ l + 1)
         (hstartp : l + 1 ≤ pairPrefixScale q l)
         (hpq : pairPrefixScale q l ≤ q)
-        (htail : profileUpperTailStart ≤ pairPrefixScale q l),
+        (_htail : profileUpperTailStart ≤ pairPrefixScale q l),
       ∀ (pref : Profile (l + 1)) (center : Point)
         (segments : List
           ((PaddedNearPoint q l center ⊕

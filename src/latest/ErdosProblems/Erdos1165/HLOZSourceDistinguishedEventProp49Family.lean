@@ -303,7 +303,7 @@ with membership of the canonical stopped-cylinder representative. -/
 theorem event_iff_canonical_of_mem_stopped
     {t : DominoTiling} {o : Orientation} {m k cap : ℕ}
     {eta : SourceSupportedIndex t o m k} {event : Set WalkPath}
-    (hk : 0 < k) (hprefix : SourceEventPrefixInvariant m k event)
+    (_hk : 0 < k) (hprefix : SourceEventPrefixInvariant m k event)
     (q : TilingCappedCoordinates eta.1.1.external.retainedCount
       ((SourceFiber eta).coordinateCap cap))
     (haccepted : PrefixedTilingStoppingAccepted

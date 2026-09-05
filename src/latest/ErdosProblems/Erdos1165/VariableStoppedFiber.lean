@@ -205,7 +205,7 @@ theorem iUnion_strictCappedCreationFiber {o : Orientation}
       {omega | truncatedLevelTime m k cutoff omega < cutoff} := by
   classical
   ext omega
-  simp only [Set.mem_iUnion, Set.mem_setOf_eq]
+  simp only [Set.mem_iUnion, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨code, homega⟩
     exact truncatedLevelTime_lt_of_mem_strictCappedCreationFiber homega

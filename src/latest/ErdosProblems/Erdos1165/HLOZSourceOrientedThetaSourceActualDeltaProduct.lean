@@ -334,7 +334,7 @@ theorem externalSourceSelected_replacement_accepted
     simpa only [hcb] using hdom qSource
   have hsource : ∀ c : TilingAwayDomino t eta.1.1.start
       eta.1.1.retained D,
-      tilingShellZeroSourceCoordinate (cap := data.coordinateCap cap)
+      tilingShellZeroSourceCoordinate (_cap := data.coordinateCap cap)
         (m := m) (w := w) t eta.1.1.start eta.1.1.retained D
         (data.upper cap) c (ellSource c) := by
     intro c
@@ -539,7 +539,7 @@ theorem sourceActualDeltaStoppedGeometricMass_eq
     eta.1.1.retainedCount (data.coordinateCap cap) t eta.1.1.start
     eta.1.1.retained eta.1.1.tail.1
     (sourceActualDeltaPredicate data w externalLow externalHigh cap delta)
-    (Classical.decPred _) D (sourceData.selected cap) (Classical.decPred _)
+    D (sourceData.selected cap) (Classical.decPred _)
     (data.upper cap) (sourceActualDeltaScreen data cap delta)
     (Classical.decPred _)
     (sourceActualDeltaPredicate_factorization supportData eta hm hk hfixedPos

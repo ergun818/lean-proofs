@@ -104,7 +104,7 @@ theorem replacement_sound
       externalHigh total cap eta hm).toWindowData hexternal).translate b
   have hsourceCoordinate : ∀ b,
       tilingShellZeroSourceCoordinate
-        (cap := coordinateCap eta.1.1 m cap) (m := m)
+        (_cap := coordinateCap eta.1.1 m cap) (m := m)
         (w := shellWidth48 m) t eta.1.1.start eta.1.1.retained
         (staticD eta.1.1 eta.1.2) (upper eta.1.1 eta.1.2 m)
         b (ellSource b) := by

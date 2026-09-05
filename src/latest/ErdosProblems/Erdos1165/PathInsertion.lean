@@ -91,8 +91,7 @@ abbrev RetainedBlock (o : Orientation) := {b : Block // b ≠ removableBlock o}
 @[simp] theorem card_retainedBlock (o : Orientation) :
     Fintype.card (RetainedBlock o) = 15 := by
   rw [← Nat.add_left_cancel_iff (n := 1)]
-  simpa [Fintype.card_unique] using
-    (Fintype.card_subtype_compl (fun b : Block ↦ b = removableBlock o)).symm
+  simp [Fintype.card_unique]
 
 /-! ## Insertion data and its block word -/
 
@@ -105,9 +104,7 @@ def gapMultiplicity {i j : ℕ} (g : GapPattern i j) (k : Fin i) : ℕ :=
 
 theorem sum_gapMultiplicity {i j : ℕ} (g : GapPattern i j) :
     ∑ k : Fin i, gapMultiplicity g k = j := by
-  simpa [gapMultiplicity] using
-    (Multiset.sum_count_eq_card (s := (Finset.univ : Finset (Fin i)))
-      (m := g.toMultiset) (fun _ _ ↦ Finset.mem_univ _))
+  simp [gapMultiplicity]
 
 /-- Insertion data: a gap pattern and the retained block at every external time. -/
 abbrev InsertionCode (o : Orientation) (i j : ℕ) :=
@@ -456,8 +453,7 @@ noncomputable def uniformBlockWords (n : ℕ) : PMF (Fin n → Block) :=
 
 @[simp] theorem uniformBlockWords_apply (n : ℕ) (w : Fin n → Block) :
     uniformBlockWords n w = ((16 : ℝ≥0∞)⁻¹) ^ n := by
-  simp [uniformBlockWords]
-  exact ENNReal.inv_pow
+  simp [uniformBlockWords, ENNReal.inv_pow]
 
 /-- Every length-`n` block word has this mass under the IID uniform block law. -/
 noncomputable def uniformBlockWordMass (n : ℕ) : ℝ := (1 / 16 : ℝ) ^ n

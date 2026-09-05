@@ -14,6 +14,10 @@ open Set
 
 namespace Erdos1165.AsymmetricSplitCompletionWitness
 
+open TerminalSkeletonFactorization renaming
+  shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix →
+    shiftSteps_mem_assembledTerminalWordCylinder
+
 open AnnularBoundaryExcursionKernel AnnularProfileClocks
 open AsymmetricReturnPrefixRecovery
 open AsymmetricSplitCompletionCode AsymmetricSplitCompletionRecovered
@@ -54,7 +58,7 @@ theorem sourceSplitCompletionAtom_subset_stoppedSuccessfulPointEvent
   let horizon := assembledTerminalHorizon data.skeleton words
   have htail : shiftSteps start omega ∈
       stoppedWordCylinder (assembledTerminalWord data.skeleton words) :=
-    TerminalSkeletonFactorization.shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix
+    shiftSteps_mem_assembledTerminalWordCylinder
       hcylinder
   have htrajectory : ∀ r ≤ horizon,
       trajectory (shiftSteps start omega) r =
@@ -102,7 +106,7 @@ theorem sourceSplitCompletionAtom_subset_stoppedSuccessfulPointEvent
 
 /-- The literal source data carries all three validity fields required by a
 countable split-completion code. -/
-def sourceSplitCompletionWitness
+theorem sourceSplitCompletionWitness
     {start n k : ℕ} {profileDelta : ℝ} {x y : Point} {source : StepPath}
     (hn : 2 ≤ n) (hk : k + 1 ≤ n)
     (hy : y ∈ candidateBox n)

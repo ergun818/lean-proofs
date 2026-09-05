@@ -548,12 +548,12 @@ theorem card_positiveInterfaceExternalPairPhysicalShell_eq_awayWindow
         eta.1.1.start eta.1.1.retained (fun j ↦ (q j : ℕ)) eta.1.1.tail.1
       let sq := trajectory (extendPrefix (directionVectorOfList v))
       pathPrefix s v.length = pathPrefix sq v.length)
-    (hvalid : s ∈ validStepWalk)
-    (hpositive :
+    (_hvalid : s ∈ validStepWalk)
+    (_hpositive :
       let v := prefixedTilingInsertionPrefixList eta.1.1.initial.1 t
         eta.1.1.start eta.1.1.retained (fun j ↦ (q j : ℕ)) eta.1.1.tail.1
       0 < v.length)
-    (hfavorite :
+    (_hfavorite :
       let v := prefixedTilingInsertionPrefixList eta.1.1.initial.1 t
         eta.1.1.start eta.1.1.retained (fun j ↦ (q j : ℕ)) eta.1.1.tail.1
       thresholdSites s v.length m = favoriteSites s v.length)
@@ -562,7 +562,7 @@ theorem card_positiveInterfaceExternalPairPhysicalShell_eq_awayWindow
         eta.1.1.start eta.1.1.retained (fun j ↦ (q j : ℕ)) eta.1.1.tail.1
       PositiveInterfacePairSupportAt t o m externalThreshold pairWidth
         pairShell s v.length = eta.1.2)
-    (hthreshold : 0 < externalThreshold)
+    (_hthreshold : 0 < externalThreshold)
     (hbelow :
       let v := prefixedTilingInsertionPrefixList eta.1.1.initial.1 t
         eta.1.1.start eta.1.1.retained (fun j ↦ (q j : ℕ)) eta.1.1.tail.1

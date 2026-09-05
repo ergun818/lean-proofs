@@ -404,7 +404,7 @@ theorem acceptedPhysicalAdjacent_card_ratio_le_four_thirds_global
     have hlowerCard : lower.card = if shell = 0 then width - 1 else width := by
       cases shell with
       | zero =>
-          simp only [if_pos rfl]
+          simp only
           have hwidthm : width ≤ m := by omega
           have hi0 : i ≤ m - width + 1 := by omega
           exact acceptedPhysicalDeficitFailureWindow_zero_card

@@ -62,7 +62,6 @@ theorem iUnion_validFavoriteTilingStagePiece (t : DominoTiling) (m k : ℕ)
   constructor
   · rintro ⟨z, hz⟩
     change s ∈ favoriteTilingCreationPiece t m k (some z) ∩ stage at hz
-    change s ∈ stage ∩ validStepWalk
     exact ⟨hz.2, hz.1.1.1.2⟩
   · rintro ⟨hs, hvalid⟩
     refine ⟨(tilingCreationExternalCode t m k s,
@@ -84,7 +83,7 @@ theorem simpleRandomWalk_inter_validStepWalk (A : Set WalkPath)
     exact Set.disjoint_left.2 fun _ hvalid hinvalid ↦ hinvalid.2 hvalid.2
   have hunion : (A ∩ validStepWalk) ∪ (A \ validStepWalk) = A := by
     ext s
-    by_cases hv : s ∈ validStepWalk <;> simp [hv]
+    by_cases hv : s ∈ validStepWalk <;> simp
   calc
     simpleRandomWalk (A ∩ validStepWalk) =
         simpleRandomWalk ((A ∩ validStepWalk) ∪ (A \ validStepWalk)) := by

@@ -231,7 +231,7 @@ by the accepted source reconstruction. -/
 theorem sourceCanonical_creationTime_record_eq
     {t : DominoTiling} {o : Orientation} {m k cap rank : ℕ}
     (eta : SourceSupportedIndex t o m k) (hm : 1 < m)
-    (hk : 0 < k) (hrank : 0 < rank) (hrank_le : rank ≤ k)
+    (_hk : 0 < k) (hrank : 0 < rank) (hrank_le : rank ≤ k)
     (q q' : TilingCappedCoordinates eta.1.1.external.retainedCount cap)
     (hdist : (splitTilingCoordinatesEquiv t eta.1.1.external.start
         eta.1.1.external.retained
@@ -333,7 +333,7 @@ the reconstructed prefix. -/
 theorem sourceCanonical_creationTime_data
     {t : DominoTiling} {o : Orientation} {m k cap rank : ℕ}
     (eta : SourceSupportedIndex t o m k)
-    (hrank : 0 < rank) (hrank_le : rank ≤ k)
+    (_hrank : 0 < rank) (hrank_le : rank ≤ k)
     (q : TilingCappedCoordinates eta.1.1.external.retainedCount cap)
     (haccepted : PrefixedTilingStoppingAccepted
       (truncatedLevelTime m k (orientedAllCreationCoordinateCutoff eta.1.1 cap))
@@ -373,7 +373,7 @@ theorem sourceCanonical_creationTime_data
 the canonical creation clock of its source rank. -/
 theorem sourceCanonical_creationTime_eq_length
     {t : DominoTiling} {o : Orientation} {m k cap : ℕ}
-    (eta : SourceSupportedIndex t o m k) (hk : 0 < k)
+    (eta : SourceSupportedIndex t o m k) (_hk : 0 < k)
     (q : TilingCappedCoordinates eta.1.1.external.retainedCount cap)
     (haccepted : PrefixedTilingStoppingAccepted
       (truncatedLevelTime m k (orientedAllCreationCoordinateCutoff eta.1.1 cap))
@@ -455,7 +455,7 @@ theorem lowGapDeficitFailure_iff_of_filtered_creation_records
     (hprefix :
       (finitePathList (pathPrefix s nOld)).filter P =
         (finitePathList (pathPrefix s' nOld')).filter P)
-    (hkeep : P (s nNew) = true) (hkeep' : P (s' nNew') = true) :
+    (hkeep : P (s nNew) = true) (_hkeep' : P (s' nNew') = true) :
     lowGapDeficitFailure s m nOld nNew ↔
       lowGapDeficitFailure s' m nOld' nNew' := by
   have hcount :

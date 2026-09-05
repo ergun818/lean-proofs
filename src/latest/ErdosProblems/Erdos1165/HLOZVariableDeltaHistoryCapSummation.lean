@@ -67,7 +67,7 @@ structure VariableDeltaHistoryCapData
   cap_le : ∀ cap history,
     (multiplicity history : ℝ≥0∞) * mu (sourceCap cap history) ≤
       q * ∑' d : ℕ,
-        if h : d < multiplicity history then mu (rankCap cap d history)
+        if _h : d < multiplicity history then mu (rankCap cap d history)
         else 0
   measurable_rankCap : ∀ cap d history,
     MeasurableSet (rankCap cap d history)
@@ -128,7 +128,7 @@ private theorem sourceHistory_le_inverse_sum
     (history : History) :
     mu (data.sourceHistory history) ≤
       q * ∑' d : ℕ,
-        if h : d < data.multiplicity history then
+        if _h : d < data.multiplicity history then
           (data.multiplicity history : ℝ≥0∞)⁻¹ *
             mu (data.rankHistory d history)
         else 0 := by
@@ -196,7 +196,7 @@ private theorem fixedDelta_weighted_rank_sum_le
     (data : VariableDeltaHistoryCapData (History := History) mu event q M)
     (d : ℕ) :
     (∑' history : History,
-      if h : d < data.multiplicity history then
+      if _h : d < data.multiplicity history then
         (data.multiplicity history : ℝ≥0∞)⁻¹ *
           mu (data.rankHistory d history)
       else 0) ≤

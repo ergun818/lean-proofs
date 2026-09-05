@@ -71,7 +71,7 @@ theorem thresholdCount_prefixedTilingInsertion_add_of_arbitraryEndpointIncrement
           (prefixedTilingInsertionTerminal initial t x r
             (fun j ↦ (qSource j : ℕ)) tail) b.1.1)
     (hsource : ∀ b, tilingShellZeroSourceCoordinate
-      (cap := cap) (m := m) (w := w) t x r D upper b (ellSource b))
+      (_cap := cap) (m := m) (w := w) t x r D upper b (ellSource b))
     (htotalSource : ∀ b,
       tilingDominoTotal t x r (fun j ↦ (qSource j : ℕ)) b.1 =
         (ellSource b : ℕ))
@@ -221,7 +221,7 @@ theorem prefixedTilingFinalLocalTime_eq_of_sourceCoordinates
           (prefixedTilingInsertionTerminal initial t x r
             (fun j ↦ (qSource j : ℕ)) tail) b.1.1)
     (hsource : ∀ b, tilingShellZeroSourceCoordinate
-      (cap := cap) (m := m) (w := w) t x r D upper b (ellSource b))
+      (_cap := cap) (m := m) (w := w) t x r D upper b (ellSource b))
     (htotalSource : ∀ b,
       tilingDominoTotal t x r (fun j ↦ (qSource j : ℕ)) b.1 =
         (ellSource b : ℕ))
@@ -386,7 +386,7 @@ theorem prefixedTilingStoppingAccepted_at_arbitraryEndpointIncrement
           (prefixedTilingInsertionTerminal initial t x r
             (fun j ↦ (qSource j : ℕ)) tail) b.1.1)
     (hsource : ∀ b, tilingShellZeroSourceCoordinate
-      (cap := cap) (m := m) (w := w) t x r D upper b (ellSource b))
+      (_cap := cap) (m := m) (w := w) t x r D upper b (ellSource b))
     (htotalSource : ∀ b,
       tilingDominoTotal t x r (fun j ↦ (qSource j : ℕ)) b.1 =
         (ellSource b : ℕ))
@@ -461,7 +461,7 @@ theorem prefixedTilingStoppingAccepted_at_arbitraryEndpointIncrement_staticSuppo
           (prefixedTilingInsertionTerminal initial t x r
             (fun j ↦ (qSource j : ℕ)) tail) b.1.1)
     (hsource : ∀ b, tilingShellZeroSourceCoordinate
-      (cap := cap) (m := m) (w := w) t x r
+      (_cap := cap) (m := m) (w := w) t x r
         (tilingExternalDominoBases t x r \ S) upper b (ellSource b))
     (htotalSource : ∀ b,
       tilingDominoTotal t x r (fun j ↦ (qSource j : ℕ)) b.1 =

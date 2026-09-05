@@ -75,7 +75,7 @@ theorem measurableSet_boundaryExitMarkedSteps
         {omega | boundaryExitTime boundary start omega = (n : WithTop ℕ)} ∩
           {omega | start + trajectory omega n ∈ mark} := by
     ext omega
-    simp only [boundaryExitMarkedSteps, mem_setOf_eq, mem_iUnion, mem_inter_iff]
+    simp only [boundaryExitMarkedSteps, mem_ofPred_eq, mem_iUnion, mem_inter_iff]
     constructor
     · rintro ⟨hfinite, hmark⟩
       have hne : boundaryExitTime boundary start omega ≠ ⊤ :=
@@ -567,7 +567,7 @@ lemma targetRelativeExitMarkSteps_eq_at_target
   have hboundary : relativeBoundary (relativeBoundary boundary target) 0 =
       relativeBoundary boundary target := by
     ext z
-    simp only [relativeBoundary, mem_setOf_eq, zero_add]
+    simp only [relativeBoundary, mem_ofPred_eq, zero_add]
   have htime : boundaryExitTime (relativeBoundary boundary target) 0 =
       boundaryExitTime boundary target := by
     unfold boundaryExitTime
@@ -575,7 +575,7 @@ lemma targetRelativeExitMarkSteps_eq_at_target
   unfold targetRelativeExitMarkSteps boundaryExitMarkedSteps
   rw [htime]
   ext omega
-  simp only [relativeBoundary, mem_setOf_eq, zero_add]
+  simp only [relativeBoundary, mem_ofPred_eq, zero_add]
 
 private lemma boundaryHitSteps_avoids_before_targetHit
     {boundary : Set Point} {target start : Point}
@@ -620,7 +620,7 @@ private lemma boundaryExitMarkedSteps_shift_targetHit_iff
       (shiftSteps t omega)).2
     refine ⟨N - t, hrelativeAbs, ?_⟩
     simp only [PlanarPotential.trajectoryFrom, zero_add, relativeBoundary,
-      mem_setOf_eq]
+      mem_ofPred_eq]
     rw [← trajectory_add_sub_trajectory, Nat.add_sub_of_le htN.le,
       htDisplacement]
     have heq : target + (trajectory omega N - (target - start)) =
@@ -666,7 +666,7 @@ private lemma boundaryExitMarkedSteps_shift_targetHit_iff
     refine ⟨t + M, hfirst, ?_⟩
     change start + trajectory omega (t + M) ∈ mark
     simp only [PlanarPotential.trajectoryFrom, zero_add, relativeBoundary,
-      mem_setOf_eq] at hrelativeMark
+      mem_ofPred_eq] at hrelativeMark
     have hshift := trajectory_add_sub_trajectory omega t M
     rw [← hshift, htDisplacement] at hrelativeMark
     have heq : target + (trajectory omega (t + M) - (target - start)) =
@@ -948,7 +948,7 @@ positive factorized comparison; all probabilistic identities have already
 been discharged above. -/
 theorem markedKernelLower_of_zero_and_positive_factor_bounds
     (m : ℕ) (boundary : Set Point) (target : Point)
-    (eta q p : ℝ) (htarget : target ∉ boundary)
+    (eta q p : ℝ) (_htarget : target ∉ boundary)
     (hzero : ∀ start exit,
       ENNReal.ofReal (1 - eta) *
           ENNReal.ofReal (AppendixLocalTime.visitMass q p 0) *
@@ -1075,7 +1075,7 @@ theorem boundaryExitEndpointSteps_discBoundary_eq_absorbedExit
       ⋃ n : ℕ, absorbedExitAt (boundaryInterior R) {exit} n start := by
   let D := boundaryInterior R
   ext omega
-  simp only [boundaryExitEndpointSteps, mem_iUnion, mem_setOf_eq,
+  simp only [boundaryExitEndpointSteps, mem_iUnion, mem_ofPred_eq,
     absorbedExitAt]
   constructor
   · rintro ⟨N, hfirst, hendpoint⟩

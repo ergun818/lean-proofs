@@ -266,7 +266,7 @@ theorem mem_orientedDominantPositiveInterfacePhysicalSites_one
     (hcompat : OrientationCompatible o d)
     (hpositive : 0 < localTime s n d)
     (hout : tilingBase t d ∉ (thresholdSites s n m).image (tilingBase t))
-    (hdominance : localTime s n (tilingPartner t d) ≤ localTime s n d) :
+    (_hdominance : localTime s n (tilingPartner t d) ≤ localTime s n d) :
     d ∈ orientedDominantPositiveInterfacePhysicalSites t o m 1 s n := by
   classical
   let b := tilingBase t d
@@ -478,7 +478,7 @@ theorem normalizedDominantShellZeroSites_subset_orientedCreationSources
     {band : RandomClockBand} {s : WalkPath}
     (hm : 1 < m)
     (hcreation : ThresholdCreation s m band.oldRank n)
-    (hclock : pathTruncatedLevelTime m band.oldRank cutoff s = n)
+    (_hclock : pathTruncatedLevelTime m band.oldRank cutoff s = n)
     (hnext : thresholdCount s n (m + 1) = 0)
     (hvalid : s ∈ validStepWalk) :
     shellCandidates

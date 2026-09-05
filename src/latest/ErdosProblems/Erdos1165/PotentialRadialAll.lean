@@ -56,8 +56,8 @@ private lemma abs_log_sub_log_le_two_div {r s : ℝ}
         rw [div_le_iff₀ hrpos]
         calc
           s ≤ r + 1 := by linarith
-          _ = (1 / r + 1) * r := by field_simp <;> ring
-      _ ≤ 2 / r := by gcongr <;> norm_num
+          _ = (1 / r + 1) * r := by field_simp; ring
+      _ ≤ 2 / r := by gcongr; norm_num
   · have hslow : r / 2 ≤ s := by linarith
     have hlog : Real.log s ≤ Real.log r := Real.log_le_log hs hsr
     rw [abs_of_nonpos (sub_nonpos.mpr hlog), neg_sub]
@@ -71,7 +71,7 @@ private lemma abs_log_sub_log_le_two_div {r s : ℝ}
         rw [div_le_iff₀ hs]
         calc
           r ≤ s + 1 := by linarith
-          _ = (1 / s + 1) * s := by field_simp <;> ring
+          _ = (1 / s + 1) * s := by field_simp; ring
       _ ≤ 2 / r := by
         rw [div_le_div_iff₀ hs hrpos]
         nlinarith

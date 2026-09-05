@@ -21,11 +21,13 @@ open HLOZShellZeroRankUnionCentralTail
 
 noncomputable section
 
+universe u
+
 structure LiteralShellZeroExactCountDeltaIndexedCapScreen
     (source : Set WalkPath) (C : ℝ) (sourceCut : ℕ) where
-  Index : ℕ → Type*
+  Index : ℕ → Type u
   indexCountable : ∀ n, Countable (Index n)
-  Delta : ℕ → Type*
+  Delta : ℕ → Type u
   deltaFintype : ∀ n, Fintype (Delta n)
   family : ∀ n, DeltaIndexedMonotoneCapStoppedFiberFamily
     (Index n) (Delta n) (centralReplacementRatio C (sourceCut + 1 + n))

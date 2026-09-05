@@ -80,7 +80,7 @@ private theorem candidateLocal_rankOne_mem_creationProfile
   · rcases onTimeCandidateLocalProductBeta_rankOne_creationSourceData hm hs with
       ⟨n, hcreation, hnext, _hD⟩
     simp only [positiveInterfaceCreationNoNextProfileEvent, if_pos hm,
-      Set.mem_setOf_eq]
+      Set.mem_ofPred_eq]
     exact ⟨n, hcreation, hnext⟩
   · simp [positiveInterfaceCreationNoNextProfileEvent, hm]
 
@@ -93,7 +93,7 @@ private theorem candidateLocal_rankTwo_mem_creationProfile
   · rcases onTimeCandidateLocalProductBeta_rankTwo_creationSourceData hm hs with
       ⟨n, hcreation, hnext, _hD⟩
     simp only [positiveInterfaceCreationNoNextProfileEvent, if_pos hm,
-      Set.mem_setOf_eq]
+      Set.mem_ofPred_eq]
     exact ⟨n, hcreation, hnext⟩
   · simp [positiveInterfaceCreationNoNextProfileEvent, hm]
 
@@ -106,7 +106,7 @@ private theorem candidateLocal_rankThree_mem_creationProfile
   · rcases onTimeCandidateLocalProductBeta_rankThree_creationSourceData hm hs with
       ⟨n, hcreation, hnext, _hD⟩
     simp only [positiveInterfaceCreationNoNextProfileEvent, if_pos hm,
-      Set.mem_setOf_eq]
+      Set.mem_ofPred_eq]
     exact ⟨n, hcreation, hnext⟩
   · simp [positiveInterfaceCreationNoNextProfileEvent, hm]
 

@@ -67,7 +67,7 @@ theorem euclideanRadius_pos_iff (x : Point) : 0 < euclideanRadius x ↔ x ≠ 0 
     unfold euclideanRadiusSq
     have : x.1 ≠ 0 ∨ x.2 ≠ 0 := by
       by_contra h
-      push_neg at h
+      push Not at h
       exact hx (Prod.ext h.1 h.2)
     rcases this with h | h
     · nlinarith [sq_pos_of_ne_zero (by exact_mod_cast h : (x.1 : ℝ) ≠ 0)]
@@ -105,11 +105,9 @@ theorem diagonal_sq_sum_eq_cartesian_half_of_even {x : Point}
     dsimp [b]
     omega
   have haabs : ((a.natAbs : ℕ) : ℝ) = |(a : ℝ)| := by
-    have h := congrArg (fun z : ℤ ↦ (z : ℝ)) (Int.natCast_natAbs a)
-    simpa using h
+    simp
   have hbabs : ((b.natAbs : ℕ) : ℝ) = |(b : ℝ)| := by
-    have h := congrArg (fun z : ℤ ↦ (z : ℝ)) (Int.natCast_natAbs b)
-    simpa using h
+    simp
   rw [hfirst, hsecond, haabs, hbabs]
   unfold euclideanRadiusSq
   rw [hx1, hx2]

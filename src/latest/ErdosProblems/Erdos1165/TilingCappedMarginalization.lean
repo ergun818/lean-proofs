@@ -15,6 +15,9 @@ of an explicit finite equivalence, not path-measure assumptions.
 
 namespace Erdos1165.TilingCappedMarginalization
 
+open TilingStoppedProductDisintegration
+  (tilingStoppedAcceptedGeometricMass_eq_screenMass_mul_of_marginals)
+
 open TilingLazyDecomposition TilingSpatialInsertionFiber
 open PathInsertion SpatialInsertionFiber StoppedInsertion VariableStoppedFiber
 open VariableStoppedTracePartition
@@ -140,7 +143,7 @@ theorem gapVectorMass_eq_tilingGroupedMass {i cap : ℕ}
     gapVectorMass (fun k ↦ (q k : ℕ)) =
       tilingGroupedMass t x r
         (regroupTilingCoordinatesEquiv t x r (Fin (cap + 1)) q) := by
-  rw [TilingStoppedProductDisintegration.gapVectorMass_tiling_factorization]
+  rw [TilingStoppedProductDisintegration.gapVectorMass_tiling_factorization t x r]
   unfold TilingStoppedProductDisintegration.tilingDominoCoordinateMass
     tilingGroupedMass
   apply Fintype.prod_congr
@@ -158,7 +161,7 @@ theorem gapVectorMass_split {i cap : ℕ}
         (((splitTilingCoordinatesEquiv t x r D).symm (d, a)) k : ℕ)) =
       tilingDistinguishedAssignmentMass t x r D d *
         tilingAwayAssignmentMass t x r D a := by
-  rw [gapVectorMass_eq_tilingGroupedMass]
+  rw [gapVectorMass_eq_tilingGroupedMass t x r]
   let q := (splitTilingCoordinatesEquiv t x r D).symm (d, a)
   have hcoord : regroupTilingCoordinatesEquiv t x r (Fin (cap + 1)) q =
       (splitGroupedCoordinatesEquiv t x r D).symm (d, a) := by
@@ -585,10 +588,8 @@ theorem tilingStoppedAcceptedGeometricMass_product_of_factorization
     (t : DominoTiling) (x : Point) (r : TilingRetainedWord t x i)
     (tail : List Direction)
     (base screened : TilingCappedCoordinates i cap → Prop)
-    [DecidablePred base] [DecidablePred screened]
     (D : Finset Point)
     (selected : TilingDistinguishedCoordinates (cap := cap) t x r D → Prop)
-    [DecidablePred selected]
     (upper : TilingAwayDomino t x r D → ℕ)
     (screen : FiniteDominoProductLaw.TruncatedTotals upper → Prop)
     [DecidablePred screen]
@@ -613,7 +614,7 @@ theorem tilingStoppedAcceptedGeometricMass_product_of_factorization
         TilingStoppedProductDisintegration.tilingStoppedAcceptedGeometricMass
           tau t x r cap tail base := by
   classical
-  apply TilingStoppedProductDisintegration.tilingStoppedAcceptedGeometricMass_eq_screenMass_mul_of_marginals
+  apply tilingStoppedAcceptedGeometricMass_eq_screenMass_mul_of_marginals
       t x r tail base screened D upper
       (tilingAwayPointMass (cap := cap) t x r D) screen
       (fun d ↦ if selected d then

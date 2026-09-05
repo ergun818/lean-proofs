@@ -231,7 +231,6 @@ theorem externalAcceptedSourceThetaStoppedGeometricMass_eq
     (data.stoppingTime cap) z.initial.1 z.retainedCount (data.coordinateCap cap)
     t z.start z.retained z.tail.1
     (externalAcceptedSourceThetaPredicate data w externalLow externalHigh cap)
-    (Classical.decPred _)
     (supportComplementDistinguished t z.start z.retained S)
     (data.selected cap) (Classical.decPred _) (data.upper cap)
     (externalAcceptedSourceThetaAtTotals data w externalLow externalHigh cap)

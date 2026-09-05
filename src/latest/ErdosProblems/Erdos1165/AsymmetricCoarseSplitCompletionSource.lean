@@ -267,10 +267,10 @@ same complete left scanner action at the geometric separation level. -/
 theorem xProfileScanCompatible_of_coarseReturnCodes
     {start n k : ℕ} {x y : Point}
     {data : CoarseSplitCompletionData start n k}
-    (hseparation : k = AppendixPair.separationLevel n x y)
-    (hlevel : k ≤ n) (j : Fin data.returnCount)
-    (hstart : data.skeleton.2.1 j ∈ disc y (scaleRadius n k))
-    (left right : CoarseSignatureReturnCode x y
+    (_hseparation : k = AppendixPair.separationLevel n x y)
+    (_hlevel : k ≤ n) (j : Fin data.returnCount)
+    (_hstart : data.skeleton.2.1 j ∈ disc y (scaleRadius n k))
+    (_left _right : CoarseSignatureReturnCode x y
       (profileInnerBoundary n k y) data j) :
     True := by
   trivial
@@ -280,11 +280,11 @@ deeper than the geometric separation level. -/
 theorem xProfileScanCompatible_of_coarseReturnCodes_of_separation_le
     {start n k : ℕ} {x y : Point}
     {data : CoarseSplitCompletionData start n k}
-    (hlevel : AppendixPair.separationLevel n x y ≤ n)
-    (hseparation : AppendixPair.separationLevel n x y ≤ k)
-    (hsplit : k ≤ n) (j : Fin data.returnCount)
-    (hstart : data.skeleton.2.1 j ∈ disc y (scaleRadius n k))
-    (left right : CoarseSignatureReturnCode x y
+    (_hlevel : AppendixPair.separationLevel n x y ≤ n)
+    (_hseparation : AppendixPair.separationLevel n x y ≤ k)
+    (_hsplit : k ≤ n) (j : Fin data.returnCount)
+    (_hstart : data.skeleton.2.1 j ∈ disc y (scaleRadius n k))
+    (_left _right : CoarseSignatureReturnCode x y
       (profileInnerBoundary n k y) data j) :
     True := by
   trivial

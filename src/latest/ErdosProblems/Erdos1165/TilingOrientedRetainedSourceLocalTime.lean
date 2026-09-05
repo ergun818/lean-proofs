@@ -41,7 +41,8 @@ private theorem shiftedCompletePrefixBlocks_eq_pairDirectionList_drop
     rw [List.get_ofFn, List.get_ofFn]
     simp only [Fin.val_cast]
     simp only [List.get_eq_getElem, List.drop_one, List.getElem_tail, Prod.mk.injEq]
-    constructor <;> apply congrArg omega <;> omega
+    simp only [incrementPrefixList, List.getElem_ofFn, stepPrefix]
+    constructor <;> (apply congrArg omega; omega)
 
 /-- The endpoint phase of a physical prefix is the endpoint list of the raw
 oriented block word before stateful tiling deletion. -/
@@ -98,7 +99,7 @@ private theorem list_ofFn_get_cast {alpha : Type*} {n : ℕ}
     (l : List alpha) (h : n = l.length) :
     List.ofFn (fun i : Fin n => l.get (Fin.cast h i)) = l := by
   subst n
-  simpa using List.ofFn_get l
+  simp
 
 /-- The function-valued retained word in the canonical code enumerates its
 statefully deleted raw block list. -/
@@ -115,16 +116,26 @@ theorem fixedOrientedTypedExternalWordCode_retainedList
           (pairDirectionList ((incrementPrefixList n omega).drop 1)) := by
   cases o with
   | even =>
-      simp [fixedOrientedTypedExternalWordCode,
-        orientedInitialPrefix, orientedIncrementPrefixList,
-        TilingTypedFavoriteTrace.deletedTilingRetainedWord,
-        prefixBlockWord]
-      apply list_ofFn_get_cast
-      rfl
+      change List.ofFn (deleteTilingBlocks t (0, 0)
+          (pairDirectionList (orientedIncrementPrefixList .even n
+            (trajectory omega)))).get = _
+      calc
+        _ = deleteTilingBlocks t (0, 0)
+            (pairDirectionList (orientedIncrementPrefixList .even n
+              (trajectory omega))) := list_ofFn_get_cast _ rfl
+        _ = _ := by
+          simp only [orientedIncrementPrefixList, stepsOfWalk_trajectory, prefixBlockWord]
   | shifted =>
-      simp only [List.drop_one]
-      apply list_ofFn_get_cast
-      rfl
+      change List.ofFn
+          (deleteTilingBlocks t
+            (fixedOrientedTypedExternalWordCode t .shifted n (trajectory omega)).start
+            (pairDirectionList (orientedIncrementPrefixList .shifted n
+              (trajectory omega)))).get =
+        deleteTilingBlocks t
+          (fixedOrientedTypedExternalWordCode t .shifted n (trajectory omega)).start
+          (pairDirectionList ((incrementPrefixList n omega).drop 1))
+      rw [List.ofFn_get]
+      simp only [orientedIncrementPrefixList, stepsOfWalk_trajectory]
 
 /-- The endpoint list stored by the canonical typed retained code is its
 orientation-specific raw endpoint list. -/

@@ -85,7 +85,6 @@ lemma tsum_exp_neg_mul_int_sq_le_five {a : ℝ} (ha : 1 ≤ a) :
       _ = (Real.exp (-1)) ^ (i : ℕ) := by
         rw [← Real.exp_nat_mul]
         congr 1
-        push_cast
         ring
       _ ≤ ((1 : ℝ) / 2) ^ (i : ℕ) := by
         exact pow_le_pow_left₀ (Real.exp_nonneg _) hexpHalf _
@@ -129,8 +128,8 @@ lemma one_le_tsum_gaussianStepWeight {l : ℕ} (hl : 0 < l) :
     exact hsqrta
   have hdualSummable :
       Summable (fun d : ℤ ↦ Real.exp (-Real.pi / a * (d : ℝ) ^ 2)) := by
-    convert summable_exp_neg_mul_int_sq (a := Real.pi / a) (div_pos Real.pi_pos ha) using 1 <;>
-      ring_nf
+    convert summable_exp_neg_mul_int_sq (a := Real.pi / a) (div_pos Real.pi_pos ha) using 1
+    ring_nf
   have hdual :
       1 ≤ ∑' d : ℤ, Real.exp (-Real.pi / a * (d : ℝ) ^ 2) := by
     have hzero :
@@ -216,7 +215,7 @@ lemma tsum_wideGaussian_le {l : ℕ} (hl : 0 < l) :
   have hdual := tsum_exp_neg_mul_int_sq_le_five hdualCoeff
   have hdual' :
       (∑' d : ℤ, Real.exp (-Real.pi / a * (d : ℝ) ^ 2)) ≤ 5 := by
-    convert hdual using 1 <;> ring_nf
+    convert hdual using 1; ring_nf
   have htheta := Real.tsum_exp_neg_mul_int_sq ha
   have hCD : C ≤ 2 * D := by
     dsimp [C, D]
@@ -232,10 +231,10 @@ lemma tsum_wideGaussian_le {l : ℕ} (hl : 0 < l) :
       C * (∑' d : ℤ, Real.exp (-Real.pi / a * (d : ℝ) ^ 2)) ≤ C * 5 :=
         mul_le_mul_of_nonneg_left hdual' hC.le
       _ ≤ 10 * D := by nlinarith
-  convert hmain using 1 <;>
-    · congr 2
-      dsimp [a]
-      field_simp
+  convert hmain using 1
+  congr 2
+  dsimp [a]
+  field_simp
 
 /-- A deliberately generous explicit second-moment bound.  The sharp value
 is asymptotic to `4*l^2`; the constant `160` keeps the theta-tail arithmetic
@@ -564,7 +563,7 @@ lemma gaussian_cos_add_sum (l R : ℕ) (x : ℤ) :
       gaussianStepWeight l d * Real.cos (boxAngle R * (x + d))) =
       Real.cos (boxAngle R * x) * gaussianCosineMultiplier l R := by
   have hadd (d : ℤ) : boxAngle R * ((x : ℝ) + (d : ℝ)) =
-      boxAngle R * (x : ℝ) + boxAngle R * (d : ℝ) := by push_cast; ring
+      boxAngle R * (x : ℝ) + boxAngle R * (d : ℝ) := by ring
   simp_rw [hadd, Real.cos_add, mul_sub]
   rw [Finset.sum_sub_distrib]
   have hcosfactor :

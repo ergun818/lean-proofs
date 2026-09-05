@@ -15,6 +15,9 @@ open MeasureTheory Set
 
 namespace Erdos1165.HLOZPositiveInterfacePairSourceCapAtom
 
+open HLOZDominantPositiveInterfaceSupportSelector
+  (orientedDominantPositiveInterfacePairSupportAt_prefix_invariant)
+
 open FiniteDominoProductLaw HeterogeneousProductTail
 open HLOZPathEvents
 open HLOZPositiveInterfaceExternalPairCoordinateRecovery
@@ -326,7 +329,7 @@ theorem positiveInterfaceExternalPairSourceCap_subset_pairRankAtom
       hcodeReplacement
   have hsupportS : PositiveInterfacePairSupportAt t o m
       externalThreshold width shell s vReplacement.length = eta.1.2 :=
-    (HLOZDominantPositiveInterfaceSupportSelector.orientedDominantPositiveInterfacePairSupportAt_prefix_invariant
+    (orientedDominantPositiveInterfacePairSupportAt_prefix_invariant
       t o m
       externalThreshold width shell hp).trans hsupportReplacement
   rw [positiveInterfaceExternalPairRankAtom,

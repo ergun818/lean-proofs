@@ -1422,7 +1422,7 @@ theorem enumeratesBoundary_sum_union
 /-- Exact `ENNReal` renewal identity before taking finite real parts. -/
 theorem annularKernel_renewal_ennreal
     {Middle Inner Exit : Type*}
-    [Fintype Middle] [Fintype Inner] [Fintype Exit]
+    [Fintype Middle] [Fintype Inner] [Finite Exit]
     (outer middle inner : Set Point)
     (middlePoint : Middle → Point) (innerPoint : Inner → Point)
     (exitPoint : Exit → Point)
@@ -1439,6 +1439,8 @@ theorem annularKernel_renewal_ennreal
           annularCycleKernel outer middle inner
               middlePoint innerPoint u v *
             annularUnmarkedKernel outer middlePoint exitPoint v w := by
+  classical
+  let _ : Fintype Exit := Fintype.ofFinite Exit
   let unionPoint : Inner ⊕ Exit → Point := Sum.elim innerPoint exitPoint
   have hunion : EnumeratesBoundary unionPoint (inner ∪ outer) :=
     enumeratesBoundary_sum_union hinner houter hdisjoint
@@ -1650,7 +1652,7 @@ the offspring algebra.  No kernel equality is assumed: it follows from the
 two strong-Markov boundary compositions above. -/
 theorem annularKernelsReal_isRenewalKernel
     {Middle Inner Exit : Type*}
-    [Fintype Middle] [Fintype Inner] [Fintype Exit]
+    [Fintype Middle] [Fintype Inner] [Finite Exit]
     (outer middle inner : Set Point)
     (middlePoint : Middle → Point) (innerPoint : Inner → Point)
     (exitPoint : Exit → Point)
@@ -1664,6 +1666,8 @@ theorem annularKernelsReal_isRenewalKernel
       (annularCycleKernelReal outer middle inner middlePoint innerPoint)
       (annularEscapeKernelReal outer inner middlePoint exitPoint)
       (annularUnmarkedKernelReal outer middlePoint exitPoint) := by
+  classical
+  let _ : Fintype Exit := Fintype.ofFinite Exit
   intro u w
   have hrenewal := annularKernel_renewal_ennreal outer middle inner
     middlePoint innerPoint exitPoint hmiddle hinner houter hdisjoint

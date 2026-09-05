@@ -115,13 +115,13 @@ theorem regeneratedMarkedKernel_zero_lower
     {Entrance Exit : Type*}
     {outer : Entrance → Exit → ℝ} {center u : Entrance} {w : Exit}
     {hit : Entrance → ℝ} {escape q hitError exitError : ℝ}
-    (houter0 : 0 ≤ outer u w)
-    (hhit0 : 0 ≤ hit u)
+    (_houter0 : 0 ≤ outer u w)
+    (_hhit0 : 0 ≤ hit u)
     (hcenter0 : 0 ≤ outer center w)
     (hhitUpper : hit u ≤ (1 + hitError) * q)
     (hexitUpper : outer center w ≤ (1 + exitError) * outer u w)
     (hhitUpperFactor0 : 0 ≤ (1 + hitError) * q)
-    (hexitUpperFactor0 : 0 ≤ 1 + exitError)
+    (_hexitUpperFactor0 : 0 ≤ 1 + exitError)
     (hq1 : q < 1) :
     (1 - (hitError + exitError + hitError * exitError) * q / (1 - q)) *
         visitMass q escape 0 * outer u w ≤
@@ -142,7 +142,7 @@ theorem regeneratedMarkedKernel_zero_upper
     {outer : Entrance → Exit → ℝ} {center u : Entrance} {w : Exit}
     {hit : Entrance → ℝ} {escape q hitError exitError : ℝ}
     (houter0 : 0 ≤ outer u w)
-    (hcenter0 : 0 ≤ outer center w)
+    (_hcenter0 : 0 ≤ outer center w)
     (hhitLower : (1 - hitError) * q ≤ hit u)
     (hexitLower : (1 - exitError) * outer u w ≤ outer center w)
     (hhitLowerFactor0 : 0 ≤ (1 - hitError) * q)

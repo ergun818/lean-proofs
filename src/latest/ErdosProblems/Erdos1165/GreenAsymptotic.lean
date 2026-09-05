@@ -105,9 +105,13 @@ lemma sum_endpointProbability_neighbor (N : ℕ) (x : Point) :
   rw [Fin.sum_univ_four, Fin.sum_univ_four]
   simp only [neighbor, directionVector]
   have h₀ : x + (1, 0) = x - (-1, 0) := by ext <;> simp
-  have h₁ : x + (-1, 0) = x - (1, 0) := by ext <;> simp <;> ring
+  have h₁ : x + (-1, 0) = x - (1, 0) := by
+    ext <;> simp
+    ring
   have h₂ : x + (0, 1) = x - (0, -1) := by ext <;> simp
-  have h₃ : x + (0, -1) = x - (0, 1) := by ext <;> simp <;> ring
+  have h₃ : x + (0, -1) = x - (0, 1) := by
+    ext <;> simp
+    ring
   rw [h₀, h₁, h₂, h₃]
   ring
 
@@ -212,7 +216,7 @@ theorem drift_planarPotentialKernel (x : Point) :
       atTop (nhds (neighborAverage planarPotentialKernel x)) := by
     unfold neighborAverage
     apply Tendsto.div_const
-    apply tendsto_finset_sum
+    apply tendsto_finsetSum
     intro d hd
     exact tendsto_potentialPartial_planarPotentialKernel (neighbor x d)
   have hself := tendsto_potentialPartial_planarPotentialKernel x
@@ -629,7 +633,7 @@ theorem tendsto_planarKilledMass_closedDisc_zero
     simpa [infiniteGreen] using
       infiniteGreen_ne_top_of_subset_coordinateBox (closedDisc R) R x y
         (fun z hz ↦ (mem_closedDisc R z).mp hz |>.1)
-  simpa using tendsto_finset_sum (closedDisc R) hterm
+  simpa using tendsto_finsetSum (closedDisc R) hterm
 
 theorem tendsto_planarKilledMass_toReal_closedDisc_zero
     (R : ℕ) (x : Point) :

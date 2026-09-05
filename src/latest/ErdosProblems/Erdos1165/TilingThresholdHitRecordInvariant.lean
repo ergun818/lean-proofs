@@ -32,6 +32,7 @@ def thresholdHitRecordsAux (m : ℕ) (seen : List α) :
 def thresholdHitRecords (m : ℕ) (p : List α) : List (α × List α) :=
   thresholdHitRecordsAux m [] p
 
+omit [LawfulBEq α] [DecidableEq α] in
 theorem thresholdHitRecordsAux_map_fst (m : ℕ) (seen p : List α) :
     (thresholdHitRecordsAux m seen p).map Prod.fst =
       thresholdHitSequenceAux m seen p := by
@@ -42,6 +43,7 @@ theorem thresholdHitRecordsAux_map_fst (m : ℕ) (seen p : List α) :
       · simp [thresholdHitRecordsAux, thresholdHitSequenceAux, hx, ih]
       · simp [thresholdHitRecordsAux, thresholdHitSequenceAux, hx, ih]
 
+omit [LawfulBEq α] [DecidableEq α] in
 theorem thresholdHitRecords_map_fst (m : ℕ) (p : List α) :
     (thresholdHitRecords m p).map Prod.fst = thresholdHitSequence m p :=
   thresholdHitRecordsAux_map_fst m [] p
@@ -51,6 +53,7 @@ theorem length_thresholdHitRecords (m : ℕ) (hm : 0 < m) (p : List α) :
   rw [← List.length_map, thresholdHitRecords_map_fst,
     length_thresholdHitSequence m hm]
 
+omit [LawfulBEq α] [DecidableEq α] in
 theorem thresholdHitRecordsAux_append (m : ℕ) (seen p q : List α) :
     thresholdHitRecordsAux m seen (p ++ q) =
       thresholdHitRecordsAux m seen p ++
@@ -67,6 +70,7 @@ theorem thresholdHitRecordsAux_append (m : ℕ) (seen p q : List α) :
         rw [ih]
         simp only [List.append_assoc, List.singleton_append]
 
+omit [LawfulBEq α] [DecidableEq α] in
 theorem thresholdHitRecords_append_singleton_of_count (m : ℕ)
     (p : List α) (x : α) (hcount : p.count x + 1 = m) :
     thresholdHitRecords m (p ++ [x]) =
@@ -75,6 +79,7 @@ theorem thresholdHitRecords_append_singleton_of_count (m : ℕ)
   rw [thresholdHitRecordsAux_append]
   simp [thresholdHitRecordsAux, hcount]
 
+omit [LawfulBEq α] [DecidableEq α] in
 theorem thresholdHitRecords_prefix {m : ℕ} {p q : List α}
     (hpq : p <+: q) : thresholdHitRecords m p <+:
       thresholdHitRecords m q := by
@@ -140,7 +145,8 @@ theorem thresholdHitRecords_getElem?_of_creation_of_le
   rw [← htail, List.getElem?_append_left (by rw [hdata.1]; omega)]
   rw [← hdata.1, ← List.getLast?_eq_getElem?, hdata.2]
 
-theorem thresholdHitRecordsAux_filter (m : ℕ) (hm : 0 < m)
+omit [DecidableEq α] in
+theorem thresholdHitRecordsAux_filter (m : ℕ) (_hm : 0 < m)
     (P : α → Bool) (seen p : List α)
     (hout : ∀ y, P y = false → (seen ++ p).count y < m) :
     (thresholdHitRecordsAux m seen p).map
@@ -162,10 +168,8 @@ theorem thresholdHitRecordsAux_filter (m : ℕ) (hm : 0 < m)
           constructor
           · simp [List.filter_append, hxP]
           · simpa [List.filter_append, hxP] using ih (seen ++ [x]) hout'
-        · have hx' : (seen.filter P).count x + 1 ≠ m := by
-            simpa only [hcount] using hx
-          simp only [thresholdHitRecordsAux, if_neg hx, List.filter_cons,
-            hxP, if_true, hcount, if_neg hx']
+        · simp only [thresholdHitRecordsAux, if_neg hx, List.filter_cons,
+            hxP, if_true, hcount]
           simpa [List.filter_append, hxP] using ih (seen ++ [x]) hout'
       · have hxPfalse : P x = false := Bool.eq_false_of_not_eq_true hxP
         have hxlt : seen.count x + 1 < m := by
@@ -179,6 +183,7 @@ theorem thresholdHitRecordsAux_filter (m : ℕ) (hm : 0 < m)
         have hrec := ih (seen ++ [x]) hout'
         simpa [List.filter_append, hxPfalse] using hrec
 
+omit [DecidableEq α] in
 theorem thresholdHitRecords_filter (m : ℕ) (hm : 0 < m)
     (P : α → Bool) (p : List α)
     (hout : ∀ y, P y = false → p.count y < m) :

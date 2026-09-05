@@ -203,7 +203,7 @@ theorem flatten_map_contourChildren_contourForest :
       exact le_rfl
     rw [← hflat]
     exact List.mem_flatten.mpr ⟨group, hgroup, hchild⟩
-  simp only [contourForest, children, sizes, groups, List.map_map,
+  simp only [contourForest, List.map_map,
     Function.comp_def]
   rw [List.map_congr_left (fun group hgroup ↦
     contourChildren_renderParent (hgroupShape group hgroup))]
@@ -243,7 +243,7 @@ theorem map_length_contourChildren_contourForest :
       exact le_rfl
     rw [← hflat]
     exact List.mem_flatten.mpr ⟨group, hgroup, hchild⟩
-  simp only [contourForest, children, sizes, groups, List.map_map,
+  simp only [contourForest, List.map_map,
     Function.comp_def]
   rw [List.map_congr_left (fun group hgroup ↦ congrArg List.length
     (contourChildren_renderParent (hgroupShape group hgroup)))]
@@ -346,7 +346,7 @@ private theorem natStepCount_flatten_excursions
         children.tail.length *
           (if source = base ∧ target = base + 1 then 1 else 0)
   | [], _ => by simp [natStepCount]
-  | [child], hchildren => by simp [natStepCount]
+  | [child], hchildren => by simp
   | child :: next :: rest, hchildren => by
       rw [List.flatten_cons,
         natStepCount_append source target child (next :: rest).flatten]
@@ -416,7 +416,7 @@ private theorem natStepCount_renderParent
         have : child = [] := by
           have := congrArg List.length hnil
           simp only [List.flatten_cons, List.length_append, List.length_nil,
-            Nat.add_eq_zero] at this
+            Nat.add_eq_zero_iff] at this
           exact List.eq_nil_of_length_eq_zero this.1
         simpa [this] using head?_eq_of_excursionShape hc
       rw [show base :: (child :: rest).flatten ++ [base - 1] =
@@ -439,13 +439,13 @@ private theorem natStepCount_renderParent
         List.getLast?_singleton, List.head?_singleton]
       by_cases hup : source = base ∧ target = base + 1
       · by_cases hdown : source = base ∧ target = base - 1
-        · simp [boundaryStepCount, hup, hdown, eq_comm]
+        · simp [boundaryStepCount, hup, eq_comm]
           omega
-        · simp [boundaryStepCount, hup, hdown, eq_comm]
+        · simp [boundaryStepCount, hup, eq_comm]
           omega
       · by_cases hdown : source = base ∧ target = base - 1
         · have hne : base + 1 ≠ base - 1 := by omega
-          simp [boundaryStepCount, hup, hdown, eq_comm, hne]
+          simp [boundaryStepCount, hdown, eq_comm, hne]
         · simp [boundaryStepCount, hup, hdown, eq_comm]
 
 private theorem natStepCount_eq_zero_of_source_not_mem_dropLast
@@ -529,7 +529,7 @@ theorem contourForest_upcrossingCount : ∀ (base : ℕ), 0 < base →
         apply hshape child
         rw [← hflat]
         exact List.mem_flatten.mpr ⟨group, hgroup, hchild⟩
-      simp only [contourForest, children, sizes, groups, List.map_map,
+      simp only [contourForest, List.map_map,
         Function.comp_def]
       rw [List.map_congr_left (fun group hgroup ↦
         natStepCount_renderParent (base + offset) (base + offset + 1)
@@ -554,7 +554,7 @@ theorem contourForest_upcrossingCount : ∀ (base : ℕ), 0 < base →
             intro count hcount
             obtain ⟨child, hchild, rfl⟩ := List.mem_map.mp hcount
             exact natStepCount_parentLowerUp_eq_zero (hshape child hchild)
-          simpa [hchildZero]
+          simp [hchildZero]
       | succ offset =>
           have ih := contourForest_upcrossingCount (base + 1) (by omega)
             (b :: rest) chain.2 offset
@@ -595,7 +595,7 @@ theorem contourForest_downcrossingCount : ∀ (base : ℕ), 0 < base →
           have hone : natStepCount base (base - 1) [base, base - 1] = 1 := by
             simp [natStepCount]
           rw [hone]
-          simp [nsmul_eq_mul]
+          simp
       | succ offset =>
           have hzero : natStepCount (base + (offset + 1))
               (base + (offset + 1) - 1) [base, base - 1] = 0 := by
@@ -622,7 +622,7 @@ theorem contourForest_downcrossingCount : ∀ (base : ℕ), 0 < base →
         apply hshape child
         rw [← hflat]
         exact List.mem_flatten.mpr ⟨group, hgroup, hchild⟩
-      simp only [contourForest, children, sizes, groups, List.map_map,
+      simp only [contourForest, List.map_map,
         Function.comp_def]
       rw [List.map_congr_left (fun group hgroup ↦
         natStepCount_renderParent (base + offset) (base + offset - 1)
@@ -648,7 +648,7 @@ theorem contourForest_downcrossingCount : ∀ (base : ℕ), 0 < base →
             simp only [Nat.mul_zero, Nat.add_zero] at h
             simpa [hflat] using h
           rw [List.sum_map_add, hgroupSum, hchildrenZero]
-          simp [hgroupsLen, nsmul_eq_mul]
+          simp [hgroupsLen]
       | succ offset =>
           have hdown : ¬(base + (offset + 1) = base ∧
               base + (offset + 1) - 1 = base - 1) := by omega
@@ -728,7 +728,7 @@ theorem contourForest_transitionLength : ∀ (base : ℕ), 0 < base →
         simp [hnil] at hEq
       have ih := contourForest_transitionLength (base + 1) (by omega)
         (b :: rest) chain.2
-      simp only [contourForest, children, sizes, groups, List.map_map,
+      simp only [contourForest, List.map_map,
         Function.comp_def]
       rw [List.map_congr_left (fun group _ ↦
         renderParent_transitionLength base group)]
@@ -770,7 +770,7 @@ private theorem excursionShape_head {base : ℕ} {path : List ℕ}
 private theorem excursionShape_getLast {base : ℕ} {path : List ℕ}
     (h : ExcursionShape base path) :
     path.getLast (excursionShape_ne_nil h) = base - 1 := by
-  rw [← Option.some_inj, ← List.getLast?_eq_getLast]
+  rw [← Option.some_inj, ← List.getLast?_eq_some_getLast]
   exact getLast?_eq_of_excursionShape h
 
 private theorem isChain_flatten_excursions
@@ -909,10 +909,10 @@ theorem contourForest_lt_base_add_length : ∀ (base : ℕ), 0 < base →
       simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
       rcases hx with hx | hx
       · subst x
-        simp only [List.length_cons, List.length_nil, Nat.add_zero]
+        simp only [List.length_cons, List.length_nil]
         omega
       · subst x
-        simp only [List.length_cons, List.length_nil, Nat.add_zero]
+        simp only [List.length_cons, List.length_nil]
         omega
   | base, hbase, a :: b :: rest, chain, path, hpath => by
       simp only [contourForest, List.mem_map] at hpath
@@ -920,26 +920,26 @@ theorem contourForest_lt_base_add_length : ∀ (base : ℕ), 0 < base →
       intro x hx
       change x ∈ (base :: group.flatten) ++ [base - 1] at hx
       rcases List.mem_append.mp hx with hleft | hlast
-      rw [List.mem_cons] at hleft
-      rcases hleft with rfl | hx
-      · simp
-      · obtain ⟨child, hchild, hxchild⟩ := List.mem_flatten.mp hx
-        have hflat :
-            ((List.ofFn (fun i : Fin a ↦ gapMultiplicity chain.1 i)).splitLengths
-              (contourForest (base + 1) (b :: rest) chain.2)).flatten =
-                contourForest (base + 1) (b :: rest) chain.2 := by
-          apply List.flatten_splitLengths
-          rw [length_contourForest]
-          simp only [List.headD_cons, List.sum_ofFn, sum_gapMultiplicity]
-          exact le_rfl
-        have hchildGlobal : child ∈
-            contourForest (base + 1) (b :: rest) chain.2 := by
-          rw [← hflat]
-          exact List.mem_flatten.mpr ⟨group, hgroup, hchild⟩
-        have := contourForest_lt_base_add_length (base + 1) (by omega)
-          (b :: rest) chain.2 child hchildGlobal x hxchild
-        simp only [List.length_cons] at this ⊢
-        omega
+      · rw [List.mem_cons] at hleft
+        rcases hleft with rfl | hx
+        · simp
+        · obtain ⟨child, hchild, hxchild⟩ := List.mem_flatten.mp hx
+          have hflat :
+              ((List.ofFn (fun i : Fin a ↦ gapMultiplicity chain.1 i)).splitLengths
+                (contourForest (base + 1) (b :: rest) chain.2)).flatten =
+                  contourForest (base + 1) (b :: rest) chain.2 := by
+            apply List.flatten_splitLengths
+            rw [length_contourForest]
+            simp only [List.headD_cons, List.sum_ofFn, sum_gapMultiplicity]
+            exact le_rfl
+          have hchildGlobal : child ∈
+              contourForest (base + 1) (b :: rest) chain.2 := by
+            rw [← hflat]
+            exact List.mem_flatten.mpr ⟨group, hgroup, hchild⟩
+          have := contourForest_lt_base_add_length (base + 1) (by omega)
+            (b :: rest) chain.2 child hchildGlobal x hxchild
+          simp only [List.length_cons] at this ⊢
+          omega
       · simp only [List.mem_singleton] at hlast
         subst x
         simp only [List.length_cons]

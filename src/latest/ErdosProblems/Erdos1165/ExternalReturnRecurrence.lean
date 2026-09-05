@@ -137,7 +137,7 @@ lemma coeff_subst_mobius_zero (f : ℝ⟦X⟧) :
     coeff 0 (f.subst mobius) = coeff 0 f := by
   rw [PowerSeries.coeff_subst' hasSubst_mobius]
   rw [finsum_eq_single _ 0]
-  · simp [coeff_mobius_pow]
+  · simp
   · intro j hj
     simp [coeff_mobius_pow, hj]
 
@@ -149,7 +149,7 @@ lemma coeff_subst_mobius_succ (f : ℝ⟦X⟧) (n : ℕ) :
   rw [finsum_eq_sum_of_support_subset (s := Finset.range (n + 2))]
   · rw [Finset.sum_range_succ']
     have hzero : (coeff 0 f) • coeff (n + 1) (mobius ^ 0) = (0 : ℝ) := by
-      simp [coeff_mobius_pow]
+      simp
     rw [hzero, add_zero]
     apply Finset.sum_congr rfl
     intro j hj
@@ -172,7 +172,7 @@ lemma coeff_one_sub_X_mul (f : ℝ⟦X⟧) (n : ℕ) :
       if n = 0 then coeff 0 f else coeff n f - coeff (n - 1) f := by
   rcases n with _ | n
   · simp
-  · simp [sub_mul, PowerSeries.coeff_X_pow_mul']
+  · simp [sub_mul]
 
 /-- Formal-series form of the exact binomial transform. -/
 theorem one_sub_X_mul_central_eq_subst_external (o : Orientation) :
@@ -238,7 +238,7 @@ lemma coeff_centralDifferentialExpression (n : ℕ) :
       centralBinomSqSeries]
     rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply,
       PowerSeries.coeff_derivative]
-    simp [centralBinomSqSeries]
+    simp
   · norm_num [centralDifferentialExpression, coeff_D, centralBinomSqSeries,
       PowerSeries.coeff_X_pow_mul']
     ring
@@ -421,7 +421,7 @@ theorem externalCountSeries_differential (o : Orientation) :
         dsimp [q, mobius]
         simp only [Algebra.smul_def, PowerSeries.algebraMap_apply,
           Algebra.algebraMap_self, RingHom.id_apply]
-        simp only [PowerSeries.C_eq_algebraMap, map_neg, map_ofNat]
+        simp only [map_neg, map_ofNat]
         ring
       _ = 0 := by rw [hrel]; ring
   rw [htransport] at hcentral

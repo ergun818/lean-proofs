@@ -34,6 +34,10 @@ open Set
 
 namespace Erdos1165.TerminalSkeletonInsertionInvariance
 
+open TerminalSkeletonInvariance renaming
+  shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix →
+    shiftSteps_mem_assembledTerminalWordCylinder
+
 open ThickPoint Proposition13Measurability TerminalExcursionPathwise
 open TerminalSkeletonWords MarkedBridgeFactorization
 open TerminalSkeletonInvariance TerminalSkeletonFactorization
@@ -117,7 +121,7 @@ theorem unmarkedTerminalInsertionEvent_subset_stoppedTerminalSkeletonAtom
   unfold unmarkedTerminalInsertionEvent stoppedWordEvent at hsample
   obtain ⟨⟨pre, bridges⟩, hcylinder⟩ := Set.mem_iUnion.mp hsample
   have htail :=
-    TerminalSkeletonInvariance.shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix
+    shiftSteps_mem_assembledTerminalWordCylinder
       hcylinder
   obtain ⟨horizon, omega, hexit, hx, hcode⟩ := hvalid
   subst code
@@ -177,7 +181,7 @@ theorem stoppedTerminalSkeletonAtom_eq_unmarkedTerminalInsertionEvent
         (x := x) code := by
   apply Set.Subset.antisymm
   · exact
-      TerminalSkeletonFactorization.stoppedTerminalSkeletonAtom_subset_unmarkedTerminalInsertionEvent
+      stoppedTerminalSkeletonAtom_subset_unmarkedTerminalInsertionEvent
         hscale code
   · exact
       unmarkedTerminalInsertionEvent_subset_stoppedTerminalSkeletonAtom
@@ -205,7 +209,7 @@ theorem markedTerminalInsertionEvent_subset_stoppedMarkedTerminalAtom
   unfold markedTerminalInsertionEvent stoppedWordEvent at hsample
   obtain ⟨⟨pre, bridges⟩, hcylinder⟩ := Set.mem_iUnion.mp hsample
   have htail :=
-    TerminalSkeletonInvariance.shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix
+    shiftSteps_mem_assembledTerminalWordCylinder
       hcylinder
   have hglobal := isOuterExitTime_assembled_marked_of_valid
     (by omega) hvalid visits bridges

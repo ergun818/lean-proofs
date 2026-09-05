@@ -126,7 +126,7 @@ def connectedGaussianBlockWeight :
     {bs : List GaussianBlock} → IndependentGaussianBlockPaths bs → ℝ
   | [], _ => 1
   | [b], p => gaussianBoxPathWeight b.start p.1
-  | b :: c :: bs, p =>
+  | b :: _c :: _bs, p =>
       gaussianBoxPathWeight b.start p.1 *
         gaussianStepWeight (b.start + b.steps)
           (-gaussianBoxPathEndpoint p.1) *
@@ -176,7 +176,7 @@ lemma exp_neg_gaussianConnectorCost_eq {l R : ℕ} (hl : 0 < l) :
       (2 * Real.sqrt (2 * Real.pi) * (l : ℝ))⁻¹ := by
     rw [Real.exp_neg, Real.exp_log hden]
   rw [hlog, div_eq_mul_inv]
-  congr 1 <;> ring_nf
+  congr 1; ring_nf
 
 lemma gaussianConnectorFloor_le {l R : ℕ} {x : ℤ}
     (hl : 0 < l) (hx : x ∈ gaussianBox R) :
@@ -301,8 +301,9 @@ theorem exp_neg_gaussianBlockTotalCost_le
             (hstart b (by simp))
             (show b.start + b.steps ≤ b.start + b.steps from le_rfl)
             (hscale b (by simp))
-          convert hb0 using 1 <;>
-            simp only [gaussianBlockSpectralCost, Nat.cast_add] <;> ring_nf
+          convert hb0 using 1
+          simp only [gaussianBlockSpectralCost, Nat.cast_add]
+          ring_nf
       | cons c bs =>
           rw [gaussianBlockTotalCost, gaussianBlockProductLower]
           have hb0 := gaussianBoxPartition_ge_exp
@@ -310,8 +311,9 @@ theorem exp_neg_gaussianBlockTotalCost_le
               b.start + b.steps by rfl) (hscale b (by simp))
           have hb : Real.exp (-gaussianBlockSpectralCost b) ≤
               gaussianBoxPartition b.start b.steps b.radius 0 := by
-            convert hb0 using 1 <;>
-              simp only [gaussianBlockSpectralCost, Nat.cast_add] <;> ring_nf
+            convert hb0 using 1
+            simp only [gaussianBlockSpectralCost, Nat.cast_add]
+            ring_nf
           have hc := ih
             (fun d hd ↦ hstart d (by simp [hd]))
             (fun d hd ↦ hscale d (by simp [hd]))

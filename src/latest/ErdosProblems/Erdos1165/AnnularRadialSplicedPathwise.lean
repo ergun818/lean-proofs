@@ -238,7 +238,7 @@ theorem radialWordChainFinalAtom_pathwise
     by_contra hnot
     have hLzero : L = 0 := by omega
     subst L
-    have hindex : (⟨0, by omega⟩ : Fin (0 + 1)) = Fin.last 0 := by ext <;> rfl
+    have hindex : (⟨0, by omega⟩ : Fin (0 + 1)) = Fin.last 0 := by ext; rfl
     have hlevel := congrArg word.level hindex
     have : (⟨1, by omega⟩ : Fin (n + 2)) = ⟨0, by omega⟩ := by
       rw [← word.startsAtOne, hlevel, word.endsAtZero]
@@ -447,7 +447,7 @@ private theorem compressLabelsFrom_eq_nil_of_all_eq
   | cons head tail ih =>
       have hhead := hall head (by simp)
       subst head
-      simp only [compressLabelsFrom, if_pos rfl]
+      simp only [compressLabelsFrom]
       exact ih (fun z hz ↦ hall z (by simp [hz]))
 
 private theorem compressLabels_eq_singleton_of_nonempty_all_eq
@@ -956,7 +956,7 @@ theorem spatiallySplicedRadialWordAtom_global_pathwise
     exists_innerBoundary_before_of_exit (trajectory omega)
       (disc 0 (outerScale n)) (adjacent_trajectory_succ omega)
       (by
-        show trajectory omega 0 ∈ disc 0 (outerScale n)
+        change trajectory omega 0 ∈ disc 0 (outerScale n)
         rw [trajectory_zero]
         change (0, 0) ∈ disc (0, 0) (outerScale n)
         exact zero_mem_outerDisc n)
@@ -1107,7 +1107,7 @@ private theorem foldl_radial_one_seekingOuter_of_avoids_zero
   | nil => rfl
   | cons label tail ih =>
       rw [List.foldl_cons]
-      simp only [radialLabelVisit, Bool.true_eq, if_true, Nat.reduceSubDiff,
+      simp only [radialLabelVisit, if_true, Nat.reduceSubDiff,
         if_neg (havoid label (by simp))]
       exact ih (fun z hz ↦ havoid z (by simp [hz]))
 
@@ -1117,15 +1117,7 @@ private theorem scanRadialLabels_zero_cons_eq
         ((⟨0, by omega⟩ : Fin (n + 2)) :: labels) =
       scanRadialLabels k labels := by
   have hne : (0 : ℕ) ≠ k - 1 := by omega
-  unfold scanRadialLabels
-  rw [List.foldl_cons]
-  change labels.foldl (radialLabelVisit k)
-      (radialLabelVisit k ⟨true, 0⟩
-        (⟨0, by omega⟩ : Fin (n + 2))) = _
-  simp only [Fin.zero_eta]
-  change labels.foldl (radialLabelVisit k) ⟨true, 0⟩ =
-    labels.foldl (radialLabelVisit k) ⟨true, 0⟩
-  rfl
+  simp [scanRadialLabels, initialState, radialLabelVisit, hne]
 
 private theorem scanRadialLabels_zero_cons_word_one
     {n L : ℕ} (word : RadialLabelWord n L) :
@@ -1137,7 +1129,7 @@ private theorem scanRadialLabels_zero_cons_word_one
     have hLzero : L = 0 := by omega
     subst L
     have hindex : (⟨0, by omega⟩ : Fin (0 + 1)) = Fin.last 0 := by
-      ext <;> rfl
+      ext; rfl
     have hlevel := congrArg word.level hindex
     have hbad : (⟨1, by omega⟩ : Fin (n + 2)) =
         (⟨0, by omega⟩ : Fin (n + 2)) := by
@@ -1333,8 +1325,7 @@ theorem spatiallySplicedRadialWordAtom_subset_stoppedFixedProfileEvent
     rw [Proposition13Assembly.shiftedWalk, hsteps]
   apply Set.mem_iUnion.mpr
   refine ⟨horizon, ?_, hx, ?_⟩
-  ·
-    rw [hshift]
+  · rw [hshift]
     exact hexit
   · apply fixedSuccessfulProfile_of_trace_zero_cons (by omega) word.2
       hfixed.1 hfixed.2.1 hfixed.2.2

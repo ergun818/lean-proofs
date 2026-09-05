@@ -31,7 +31,6 @@ theorem prefixedTilingStoppedAcceptedGeometricMass_le_screenMass_mul_distinguish
     {t : DominoTiling} {x : Point} {r : TilingRetainedWord t x i}
     {tail : List Direction}
     (screened : TilingCappedCoordinates i cap → Prop)
-    [DecidablePred screened]
     (D : Finset Point)
     (selected : TilingDistinguishedCoordinates (cap := cap) t x r D → Prop)
     [DecidablePred selected]

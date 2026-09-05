@@ -102,7 +102,7 @@ theorem prefixedReplacement_mem_actualDeltaStaticSupportAtom
         (tilingExternalDominoBases t x r \ S),
       Fintype.card (TilingCoordinatesAt t x r b.1) ≤ m - w + 1)
     (hsourceCoordinate : ∀ b, tilingShellZeroSourceCoordinate
-      (cap := cap) (m := m) (w := w) t x r
+      (_cap := cap) (m := m) (w := w) t x r
         (tilingExternalDominoBases t x r \ S) upper b (ellSource b))
     (hreplacementScreen : prefixedShellZeroReplacementScreenAtIncrement
       (cap := cap) (m := m) (w := w) initial.1 t x r

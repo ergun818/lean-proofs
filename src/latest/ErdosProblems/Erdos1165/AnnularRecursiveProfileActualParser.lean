@@ -46,7 +46,7 @@ inductive ActualProfileSegmentData
 namespace ActualProfileSegmentData
 
 /-- The first count in an actual segment is positive. -/
-def headPositive {omega : StepPath} {n horizon : ℕ} {x : Point} :
+theorem headPositive {omega : StepPath} {n horizon : ℕ} {x : Point} :
     ∀ {k a rest}, ActualProfileSegmentData omega n horizon x k (a :: rest) →
       0 < a
   | _, _, [], .singleton _ _ hpositive _ _ => hpositive
@@ -54,14 +54,14 @@ def headPositive {omega : StepPath} {n horizon : ℕ} {x : Point} :
 
 /-- The first literal count is the actual completed count at the first
 segment level. -/
-def headCount {omega : StepPath} {n horizon : ℕ} {x : Point} :
+theorem headCount {omega : StepPath} {n horizon : ℕ} {x : Point} :
     ∀ {k a rest}, ActualProfileSegmentData omega n horizon x k (a :: rest) →
       profileCompletedCount (trajectory omega) n horizon x k = a
   | _, _, [], .singleton _ _ _ hcount _ => hcount
   | _, _, _ :: _, .cons _ _ _ _ _ hcount _ _ => hcount
 
 /-- Every first-level parent gap of an actual segment is complete. -/
-def headComplete {omega : StepPath} {n horizon : ℕ} {x : Point} :
+theorem headComplete {omega : StepPath} {n horizon : ℕ} {x : Point} :
     ∀ {k a rest}, (data : ActualProfileSegmentData omega n horizon x k
       (a :: rest)) → ∀ i < a,
       profileGapExitTime (trajectory omega) n horizon x k i ≤ horizon
@@ -79,9 +79,9 @@ def tail {omega : StepPath} {n horizon : ℕ} {x : Point}
 def gapChain
     {omega : StepPath} {n horizon : ℕ} {x : Point}
     (hn : 2 ≤ n) (hx : x ∈ candidateBox n) :
-    ∀ {k a rest} (hk0 : 0 < k)
-      (hdepth : k + rest.length ≤ n)
-      (data : ActualProfileSegmentData omega n horizon x k (a :: rest)),
+    ∀ {k a rest} (_hk0 : 0 < k)
+      (_hdepth : k + rest.length ≤ n)
+      (_data : ActualProfileSegmentData omega n horizon x k (a :: rest)),
       GapChain (a :: rest)
   | _k, _a, [], _hk0, _hdepth, _data => ()
   | k, a, b :: rest, hk0, hdepth, data =>
@@ -215,7 +215,7 @@ noncomputable def childMiddlePoint
 noncomputable def extractedChildMiddlePoint
     {omega : StepPath} {n horizon : ℕ} {x : Point}
     {k parents children : ℕ}
-    (edge : ActualProfileEdgeData omega n horizon x k parents children)
+    (_edge : ActualProfileEdgeData omega n horizon x k parents children)
     (i : Fin parents)
     (j : Fin (profileGapOffspringCount omega n horizon x k i)) : Point :=
   trajectoryFrom (profileGapStartPoint omega n horizon x k i)
@@ -237,7 +237,7 @@ noncomputable def childOuterPoint
 noncomputable def extractedChildOuterPoint
     {omega : StepPath} {n horizon : ℕ} {x : Point}
     {k parents children : ℕ}
-    (edge : ActualProfileEdgeData omega n horizon x k parents children)
+    (_edge : ActualProfileEdgeData omega n horizon x k parents children)
     (i : Fin parents)
     (j : Fin (profileGapOffspringCount omega n horizon x k i)) : Point :=
   trajectoryFrom (profileGapStartPoint omega n horizon x k i)
@@ -316,7 +316,7 @@ namespace ActualProfileSegmentData
 
 /-- The consecutive pair of head levels carried by a segment of length at
 least two. -/
-def edgeData
+theorem edgeData
     {omega : StepPath} {n horizon : ℕ} {x : Point}
     (hn : 2 ≤ n) (hx : x ∈ candidateBox n)
     {k a b : ℕ} {rest : List ℕ} (hk0 : 0 < k)
@@ -338,9 +338,9 @@ offspring clocks of a complete profile segment. -/
 def refinementTrees
     {omega : StepPath} {n horizon : ℕ} {x : Point}
     (hn : 2 ≤ n) (hx : x ∈ candidateBox n) :
-    ∀ {k a rest} (hk0 : 0 < k)
-      (hdepth : k + rest.length ≤ n)
-      (data : ActualProfileSegmentData omega n horizon x k (a :: rest)),
+    ∀ {k a rest} (_hk0 : 0 < k)
+      (_hdepth : k + rest.length ≤ n)
+      (_data : ActualProfileSegmentData omega n horizon x k (a :: rest)),
       Fin a → ProfileRefinementTree
   | _k, _a, [], _hk0, _hdepth, _data => fun _ ↦ .leaf
   | k, _a, b :: rest, hk0, hdepth, data => fun i ↦

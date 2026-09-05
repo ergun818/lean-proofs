@@ -97,9 +97,9 @@ theorem eventually_paddedPredecessorSplit_bounds
   filter_upwards [hpadding, hpaddingLt] with N hpadding hpaddingLt
   intro l hl
   apply paddedPredecessorSplit_bounds hl
-  exact (show 1 ≤ 32 by omega).trans
-    (geometricCutoff_ge_thirty_two.trans hpadding)
-  exact hpaddingLt.le
+  · exact (show 1 ≤ 32 by omega).trans
+      (geometricCutoff_ge_thirty_two.trans hpadding)
+  · exact hpaddingLt.le
 
 end
 

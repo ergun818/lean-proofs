@@ -90,9 +90,10 @@ lemma biUnion_shell_eq (candidates : Finset Site) (label : Site → Shell)
 
 /-- Shell occupancies sum to the number of candidates. -/
 lemma sum_card_shell_eq (candidates : Finset Site) (label : Site → Shell)
-    [DecidableEq Site] (indices : Finset Shell)
+    (indices : Finset Shell)
     (hcover : ∀ x ∈ candidates, label x ∈ indices) :
     ∑ i ∈ indices, (shell candidates label i).card = candidates.card := by
+  classical
   rw [← Finset.card_biUnion]
   · exact congrArg Finset.card (biUnion_shell_eq candidates label indices hcover)
   · intro i hi j hj hij

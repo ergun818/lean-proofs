@@ -138,7 +138,7 @@ private theorem before_final_ne_zero_of_excursionShape
   intro i hi hiLast
   norm_num at hi hiLast ⊢
   have hiPrefix : i < (1 :: middle).length := by
-    simp only [List.length_cons, List.length_append, List.length_singleton] at hiLast ⊢
+    simp only [List.length_cons] at hiLast ⊢
     omega
   change ((1 :: middle) ++ [0])[i] ≠ 0
   rw [List.getElem_append_left hiPrefix]
@@ -203,8 +203,7 @@ private theorem radialListUpcrossingCount_eq_natStepCount
       cases tail with
       | nil => rfl
       | cons right tail =>
-          simp only [List.map_cons, radialListUpcrossingCount, natStepCount,
-            Fin.val_mk]
+          simp only [List.map_cons, radialListUpcrossingCount, natStepCount]
           simpa using ih
 
 private theorem radialLabelWord_sourcesNonzero
@@ -263,7 +262,6 @@ private theorem profileList_sum_le_three_mul_cube
 private theorem profile_drop_headD
     {n : ℕ} (m : Profile n) (i : Fin (n - 1)) (b : ℕ) :
     ((1 :: (profileList m ++ [b])).drop (i.val + 1)).headD 0 = m i := by
-  change ((1 :: (profileList m ++ [b])).drop (i.val + 1)).headD 0 = m i
   rw [List.drop_cons (by omega), Nat.add_sub_cancel]
   have hi : i.val < (profileList m).length := by simp [profileList]
   rw [show (profileList m ++ [b]).drop i.val =
@@ -271,7 +269,7 @@ private theorem profile_drop_headD
         simp only [List.length_append, List.length_singleton]
         omega) ::
         (profileList m ++ [b]).drop (i.val + 1) by
-      exact List.drop_eq_getElem_cons (by simpa [profileList] using hi)]
+      exact List.drop_eq_getElem_cons (by simp [profileList])]
   simp only [List.headD_cons]
   rw [List.getElem_append_left hi]
   simp [profileList]
@@ -279,7 +277,6 @@ private theorem profile_drop_headD
 private theorem terminal_drop_headD
     {n : ℕ} (hn : 2 ≤ n) (m : Profile n) (b : ℕ) :
     ((1 :: (profileList m ++ [b])).drop n).headD 0 = b := by
-  change ((1 :: (profileList m ++ [b])).drop n).headD 0 = b
   rw [List.drop_cons (by omega)]
   have hlength : (profileList m).length = n - 1 := by simp [profileList]
   rw [show n - 1 = (profileList m).length by exact hlength.symm]
@@ -325,7 +322,7 @@ noncomputable def exactSuccessfulContourWord
     change path.length - 1 =
       2 * (1 :: (profileList m ++ [b])).sum - 1 at htransition
     rw [htransition]
-    simp only [List.sum_cons, List.sum_append, List.sum_singleton,
+    simp only [List.sum_cons, List.sum_append,
       List.sum_nil, add_zero]
     unfold exactProfileRadialWordMaxTransitions
     omega
@@ -370,7 +367,7 @@ theorem exactSuccessfulContourWord_isFixed
           ⟨n + 1, by omega⟩ = b := by
       unfold radialUpcrossingCount
       rw [dif_neg (by omega : n + 1 ≠ 0)]
-      simp only [Fin.val_mk]
+      dsimp only
       rw [radialListUpcrossingCount_eq_natStepCount]
       rw [exactSuccessfulContourWord_toList_vals]
       have h := contourWord_upcrossingCount
@@ -385,7 +382,7 @@ theorem exactSuccessfulContourWord_isFixed
           ⟨n + 1, by omega⟩ = b := by
       unfold radialUpcrossingCount
       rw [dif_neg (by omega : n + 1 ≠ 0)]
-      simp only [Fin.val_mk]
+      dsimp only
       rw [radialListUpcrossingCount_eq_natStepCount]
       rw [exactSuccessfulContourWord_toList_vals]
       have h := contourWord_upcrossingCount
@@ -535,8 +532,8 @@ private theorem contourSourcesPositive_append_singleton (b : ℕ) :
 private theorem contourTransitionProduct_append_singleton
     (n b : ℕ) : ∀ (values : List ℕ) (level : ℕ)
     (hne : values ≠ [])
-    (hpos : ∀ a ∈ values, 0 < a)
-    (hlastLevel : level + values.length - 1 = n),
+    (_hpos : ∀ a ∈ values, 0 < a)
+    (_hlastLevel : level + values.length - 1 = n),
     contourTransitionProduct n level (values ++ [b]) =
       transitionProduct values *
         NegativeBinomial.mass (terminalSuccess n) (values.getLast hne) b
@@ -571,7 +568,7 @@ private theorem contourTransitionProduct_append_singleton
 private theorem contourDecisionProduct_append_singleton
     (n b : ℕ) : ∀ (values : List ℕ) (level : ℕ)
     (hne : values ≠ [])
-    (hlastLevel : level + values.length - 1 = n),
+    (_hlastLevel : level + values.length - 1 = n),
     contourDecisionProduct n level (values ++ [b]) =
       (1 / 2 : ℝ) ^ radialWordLength values *
         terminalSuccess n ^ values.getLast hne *
@@ -757,7 +754,7 @@ theorem successfulContourWord_isFixed
           ⟨n + 1, by omega⟩ = b := by
       unfold radialUpcrossingCount
       rw [dif_neg (by omega : n + 1 ≠ 0)]
-      simp only [Fin.val_mk]
+      dsimp only
       rw [radialListUpcrossingCount_eq_natStepCount]
       rw [successfulContourWord_toList_vals]
       have h := contourWord_upcrossingCount
@@ -772,7 +769,7 @@ theorem successfulContourWord_isFixed
           ⟨n + 1, by omega⟩ = b := by
       unfold radialUpcrossingCount
       rw [dif_neg (by omega : n + 1 ≠ 0)]
-      simp only [Fin.val_mk]
+      dsimp only
       rw [radialListUpcrossingCount_eq_natStepCount]
       rw [successfulContourWord_toList_vals]
       have h := contourWord_upcrossingCount

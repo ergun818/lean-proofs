@@ -427,7 +427,7 @@ def positiveInterfaceBalancedPairPaymentUnionAtRank
 
 theorem simpleRandomWalk_positiveInterfaceBalancedPairPaymentUnionAtRank_le
     (data : FullBetaSourceCorrectAllTilingProductData)
-    (t : DominoTiling) (rank m : ℕ) (hm : 1 < m) :
+    (t : DominoTiling) (rank m : ℕ) (_hm : 1 < m) :
     simpleRandomWalk
         (positiveInterfaceBalancedPairPaymentUnionAtRank data t rank m) ≤
       ∑ band ∈ sourceProductEndpointBandsAtRank m

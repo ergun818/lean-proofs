@@ -33,7 +33,7 @@ theorem geometricSchedule_embeddedTailA11Certificate
   apply embeddedTailA11Certificate_one_fifth hs hcw.1
   intro b hb l hl
   have hw := hcw.2 b hb l hl
-  convert hw using 1 <;> norm_num
+  convert hw using 1; norm_num
 
 /-- Fully checked, cycle-free A.11--A.12 lower bound for the genuine
 fixed-prefix geometric schedule. -/
@@ -74,7 +74,7 @@ theorem geometricSchedule_profileLower_le
       · exact hcw.1
       · intro c hc l hl
         have hw := hcw.2 c hc l hl
-        convert hw using 1 <;> norm_num
+        convert hw using 1; norm_num
       · exact cert
   | succ j =>
       change multiblockProfileLower n (1 / 5 : ℝ) 2 1 10
@@ -85,7 +85,7 @@ theorem geometricSchedule_profileLower_le
       · exact hcw.1
       · intro c hc l hl
         have hw := hcw.2 c hc l hl
-        convert hw using 1 <;> norm_num
+        convert hw using 1; norm_num
       · exact cert
 
 end

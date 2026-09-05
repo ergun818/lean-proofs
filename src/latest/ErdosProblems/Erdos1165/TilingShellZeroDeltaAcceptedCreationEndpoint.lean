@@ -64,7 +64,7 @@ theorem prefixedTilingStoppingAccepted_at_actualEndpointIncrement_staticSupport
           (prefixedTilingInsertionTerminal initial t x r
             (fun j ↦ (qSource j : ℕ)) tail) b.1.1)
     (hsource : ∀ b, tilingShellZeroSourceCoordinate
-      (cap := cap) (m := m) (w := w) t x r
+      (_cap := cap) (m := m) (w := w) t x r
         (tilingExternalDominoBases t x r \ S) upper b (ellSource b))
     (hreplacement : prefixedShellZeroReplacementScreenAtIncrement
       (cap := cap) (m := m) (w := w) initial.1 t x r

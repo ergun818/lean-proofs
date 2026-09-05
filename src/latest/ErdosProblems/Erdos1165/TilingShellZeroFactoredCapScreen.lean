@@ -189,7 +189,7 @@ lemma sum_allSourceVector_eq_product
         (fun c v ↦ if source c v then weight c v else 0)).symm
 
 private lemma exactSourceSubsetVector_unique
-    {Coordinate : Type*} [Fintype Coordinate] [DecidableEq Coordinate]
+    {Coordinate : Type*}
     {State : Coordinate → Type*}
     (source replacement : ∀ c, State c → Prop)
     (hdisjoint : ∀ c v, ¬(source c v ∧ replacement c v))
@@ -198,6 +198,7 @@ private lemma exactSourceSubsetVector_unique
       (c ∉ A → replacement c (ell c)))
     (hB : ∀ c, (c ∈ B → source c (ell c)) ∧
       (c ∉ B → replacement c (ell c))) : A = B := by
+  classical
   ext c
   constructor
   · intro hcA
@@ -388,7 +389,7 @@ structure LiteralShellZeroFactoredCapData
       TilingAwayTotalsScreen t (start cap) (retained cap)
         (distinguished cap) (upper cap)
         (allSourceVector fun b v ↦ tilingShellZeroSourceCoordinate
-          (cap := coordinateCap cap) (m := m) (w := shellWidth48 m)
+          (_cap := coordinateCap cap) (m := m) (w := shellWidth48 m)
           t (start cap) (retained cap) (distinguished cap) (upper cap) b v)
         ((splitTilingCoordinatesEquiv t (start cap) (retained cap)
           (distinguished cap) q).2)
@@ -403,10 +404,10 @@ structure LiteralShellZeroFactoredCapData
         (distinguished cap) (upper cap)
         (exactSourceSubsetVector
           (fun b v ↦ tilingShellZeroSourceCoordinate
-            (cap := coordinateCap cap) (m := m) (w := shellWidth48 m)
+            (_cap := coordinateCap cap) (m := m) (w := shellWidth48 m)
             t (start cap) (retained cap) (distinguished cap) (upper cap) b v)
           (fun b v ↦ tilingShellZeroReplacementCoordinate
-            (cap := coordinateCap cap) (m := m) (w := shellWidth48 m)
+            (_cap := coordinateCap cap) (m := m) (w := shellWidth48 m)
             t (start cap) (retained cap) (distinguished cap) (upper cap) b v)
           (centralReplacementUpperCount shellZeroLocalRatioConstant total))
         ((splitTilingCoordinatesEquiv t (start cap) (retained cap)
@@ -566,7 +567,7 @@ structure LiteralShellZeroStoppedCoordinateSpec
       TilingAwayTotalsScreen t (start cap) (retained cap)
         (distinguished cap) (upper cap)
         (allSourceVector fun b v ↦ tilingShellZeroSourceCoordinate
-          (cap := coordinateCap cap) (m := m) (w := shellWidth48 m)
+          (_cap := coordinateCap cap) (m := m) (w := shellWidth48 m)
           t (start cap) (retained cap) (distinguished cap) (upper cap) b v)
         ((splitTilingCoordinatesEquiv t (start cap) (retained cap)
           (distinguished cap) q).2)
@@ -581,10 +582,10 @@ structure LiteralShellZeroStoppedCoordinateSpec
         (distinguished cap) (upper cap)
         (exactSourceSubsetVector
           (fun b v ↦ tilingShellZeroSourceCoordinate
-            (cap := coordinateCap cap) (m := m) (w := shellWidth48 m)
+            (_cap := coordinateCap cap) (m := m) (w := shellWidth48 m)
             t (start cap) (retained cap) (distinguished cap) (upper cap) b v)
           (fun b v ↦ tilingShellZeroReplacementCoordinate
-            (cap := coordinateCap cap) (m := m) (w := shellWidth48 m)
+            (_cap := coordinateCap cap) (m := m) (w := shellWidth48 m)
             t (start cap) (retained cap) (distinguished cap) (upper cap) b v)
           (centralReplacementUpperCount shellZeroLocalRatioConstant total))
         ((splitTilingCoordinatesEquiv t (start cap) (retained cap)
@@ -725,7 +726,7 @@ theorem LiteralShellZeroFactoredCapData.sourceMass_eq
         data.distinguishedCommonMass cap := by
   classical
   let source := fun b v ↦ tilingShellZeroSourceCoordinate
-    (cap := data.coordinateCap cap) (m := m) (w := shellWidth48 m)
+    (_cap := data.coordinateCap cap) (m := m) (w := shellWidth48 m)
     t (data.start cap) (data.retained cap) (data.distinguished cap)
       (data.upper cap) b v
   rw [prefixedTilingStoppedAcceptedGeometricMass_eq_screenMass_mul_distinguishedBase
@@ -776,11 +777,11 @@ theorem LiteralShellZeroFactoredCapData.replacementMass_eq
         data.distinguishedCommonMass cap := by
   classical
   let source := fun b v ↦ tilingShellZeroSourceCoordinate
-    (cap := data.coordinateCap cap) (m := m) (w := shellWidth48 m)
+    (_cap := data.coordinateCap cap) (m := m) (w := shellWidth48 m)
     t (data.start cap) (data.retained cap) (data.distinguished cap)
       (data.upper cap) b v
   let replacement := fun b v ↦ tilingShellZeroReplacementCoordinate
-    (cap := data.coordinateCap cap) (m := m) (w := shellWidth48 m)
+    (_cap := data.coordinateCap cap) (m := m) (w := shellWidth48 m)
     t (data.start cap) (data.retained cap) (data.distinguished cap)
       (data.upper cap) b v
   rw [prefixedTilingStoppedAcceptedGeometricMass_eq_screenMass_mul_distinguishedBase

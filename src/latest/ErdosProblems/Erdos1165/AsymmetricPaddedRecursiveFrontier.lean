@@ -65,7 +65,7 @@ mutual
         k + depth = p →
         RecursiveProfileGapCode n k center tree u w →
           List (RecursiveFrontierItem n p center)
-    | 0, k, tree, u, w, hlevel, code =>
+    | 0, _k, tree, u, w, hlevel, code =>
         [RecursiveFrontierItem.castLevel hlevel tree u w code]
     | _depth + 1, _k, .leaf, _u, _w, _hlevel, _code => []
     | depth + 1, k, .node forest, u, w, hlevel, code =>
@@ -95,7 +95,7 @@ mutual
   contributes its complete mass here. -/
   def recursiveProfileGapFrontierPrefixMass
       (n : ℕ) (center : Point) :
-      ∀ (depth k : ℕ) (tree : ProfileRefinementTree)
+      ∀ (_depth k : ℕ) (tree : ProfileRefinementTree)
         (u : ProfileCycleMiddlePoint n k center)
         (w : ProfileCycleOuterPoint n k center),
         RecursiveProfileGapCode n k center tree u w → ℝ≥0∞
@@ -109,13 +109,13 @@ mutual
   /-- Forest version of the shallow frontier-prefix mass. -/
   def recursiveProfileForestFrontierPrefixMass
       (n : ℕ) (center : Point) :
-      ∀ (depth k : ℕ) (forest : ProfileRefinementForest)
+      ∀ (_depth k : ℕ) (forest : ProfileRefinementForest)
         (u : ProfileCycleMiddlePoint n k center)
         (w : ProfileCycleOuterPoint n k center),
         RecursiveProfileForestCode n k center forest u w → ℝ≥0∞
     | _depth, k, .nil, u, w, code =>
         recursiveProfileForestCodeMass n k center .nil u w code
-    | depth, k, .cons child tail, u, w, code =>
+    | depth, k, .cons child tail, _u, w, code =>
         stoppedWordMass code.2.2.1.1 *
           recursiveProfileGapFrontierPrefixMass n center depth (k + 1)
             child code.1 code.2.1 code.2.2.2.1 *
@@ -301,7 +301,7 @@ private theorem flatMap_flatten {α β : Type*}
 /-- Canonical root list after descending a prescribed number of edges in a
 gap chain.  The proof argument only rules out descending past the chain. -/
 def profileRefinementTreesAtDepth :
-    ∀ {a : ℕ} (rest : List ℕ) (chain : GapChain (a :: rest))
+    ∀ {a : ℕ} (rest : List ℕ) (_chain : GapChain (a :: rest))
       (depth : ℕ), depth ≤ rest.length → List ProfileRefinementTree
   | a, rest, chain, 0, _ =>
       List.ofFn fun i : Fin a => profileRefinementTrees a rest chain i

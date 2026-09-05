@@ -129,48 +129,28 @@ theorem orientedTilingVTwoBases_subset_fixedExternalDominoBases
         exact orientedTilingVTwoBases_subset_fixedExternalDominoBases_of_start
           t .even window s 0 hvalid hzero hx
     | shifted =>
+        classical
         intro b hb
         exfalso
         have hb' := (mem_orientedTilingVTwoBases_iff
           t .shifted window s 0 b).1 hb
-        simp [tilingVTwoBases, visitedTilingBases, tilingVTwoAt,
-          visitedSites, visitedPrefix, localTime, localTimePrefix] at hb'
+        have hwindow : localTime s 0 b ∈ window :=
+          (Finset.mem_filter.mp hb'.1).2.2
         have hs0 : s 0 = (0, 0) := by
           rw [← hvalid]
           rfl
-        have hs0' : pathPrefix s 0 0 = (0, 0) := hs0
-        rw [hs0'] at hb'
-        have hbase : b = tilingBase t (0, 0) := by
-          exact hb'.1.1
+        have hbzero : b = (0, 0) := by
+          by_contra hne
+          have htime : localTime s 0 b = 0 := by
+            simp [localTime, localTimePrefix, pathPrefix, hs0, Ne.symm hne]
+          exact hzero (htime ▸ hwindow)
         have hbcompat : pointParity b = 1 := hb'.2
-        rcases point_eq_tilingBase_or_partner_base t (0, 0) with h | h
-        · have hbzero : b = (0, 0) := hbase.trans h.symm
-          rw [hbzero] at hbcompat
-          change (0 : ZMod 2) = 1 at hbcompat
-          exact zero_ne_one hbcompat
-        · have hbne : b ≠ (0, 0) := by
-            intro hbzero
-            rw [hbzero] at hbcompat
-            change (0 : ZMod 2) = 1 at hbcompat
-            exact zero_ne_one hbcompat
-          have hpartner : tilingPartner t b = (0, 0) := by
-            rw [hbase]
-            exact h.symm
-          have hineq := hb'.1.2.1
-          have hne' : (0, 0) ≠ b := Ne.symm hbne
-          have hall : ∀ j : Fin 1, pathPrefix s 0 j = (0, 0) := by
-            intro j
-            simpa only [Fin.eq_zero j] using hs0'
-          have hnone : ∀ j : Fin 1, pathPrefix s 0 j ≠ b := by
-            intro j
-            rw [hall j]
-            exact hne'
-          simp [hpartner, hall, hnone] at hineq
-          rw [if_neg hne'] at hineq
-          exact Finset.not_nonempty_empty hineq
+        rw [hbzero] at hbcompat
+        change (0 : ZMod 2) = 1 at hbcompat
+        exact zero_ne_one hbcompat
 
 /-- Generic fixed-window selector package at a creation rank. -/
-noncomputable def orientedTilingVTwoSupportSelectorData
+theorem orientedTilingVTwoSupportSelectorData
     (t : DominoTiling) (o : Orientation) (m k : ℕ)
     (window : Finset ℕ) (hzero : 0 ∉ window) :
     OrientedAllCreationSupportSelectorData t o m k
@@ -189,7 +169,7 @@ noncomputable def orientedTilingVTwoSupportSelectorData
       t o window s n hvalid hzero
 
 /-- Concrete selector for the exact source support `V₂(I₁)`. -/
-noncomputable def orientedShellZeroSourceSupportSelectorData
+theorem orientedShellZeroSourceSupportSelectorData
     (t : DominoTiling) (o : Orientation) (m k : ℕ) :
     OrientedAllCreationSupportSelectorData t o m k
       (orientedShellZeroSourceSupportAt t o m) := by
@@ -200,7 +180,7 @@ noncomputable def orientedShellZeroSourceSupportSelectorData
 
 /-- Concrete selector for the common union support at the raised
 fixed-central replacement rank. -/
-noncomputable def orientedShellZeroReplacementSupportSelectorData
+theorem orientedShellZeroReplacementSupportSelectorData
     (t : DominoTiling) (o : Orientation) (m rank : ℕ) :
     OrientedAllCreationSupportSelectorData t o m rank
       (orientedShellZeroReplacementSupportAt t o m) := by

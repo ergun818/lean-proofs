@@ -134,8 +134,9 @@ private lemma abs_log_natSqrt_sub_log_sqrt_le {Q R : ℕ}
       rw [div_le_iff₀ hm]
       calc
         r ≤ (m : ℝ) + 1 := hrlt.le
-        _ = (1 / (m : ℝ) + 1) * m := by field_simp
-          <;> ring
+        _ = (1 / (m : ℝ) + 1) * m := by
+          field_simp
+          ring
     _ ≤ 1 / (R : ℝ) := by
       exact one_div_le_one_div_of_le (by exact_mod_cast hR) hmR
 
@@ -257,7 +258,7 @@ theorem abs_planarPotentialKernel_sub_log_euclideanRadius_sub_cPotential_le_of_e
       unfold radiusSq
       rcases eq_zero_or_pos d with hd0 | hd
       · rcases eq_zero_or_pos e with he0 | he
-        · simp [R, d, e, hd0, he0] at hR
+        · simp [d, e, hd0, he0] at hR
         · rw [hd0]
           positivity
       · positivity
@@ -282,7 +283,7 @@ theorem abs_planarPotentialKernel_sub_log_euclideanRadius_sub_cPotential_le_of_e
   have hxne : x ≠ 0 := by
     intro hzero
     subst x
-    simp [d, e, R, firstDiagonalOffset, secondDiagonalOffset] at hR
+    simp [firstDiagonalOffset, secondDiagonalOffset] at hR
   have hrpos : 0 < euclideanRadius x := (euclideanRadius_pos_iff x).2 hxne
   calc
     |fourierPotential d e - (2 / Real.pi) * Real.log (diagonalRadius d e) -
@@ -345,8 +346,8 @@ private lemma abs_log_sub_log_le_two_div {r s : ℝ}
         rw [div_le_iff₀ hrpos]
         calc
           s ≤ r + 1 := by linarith
-          _ = (1 / r + 1) * r := by field_simp <;> ring
-      _ ≤ 2 / r := by gcongr <;> norm_num
+          _ = (1 / r + 1) * r := by field_simp; ring
+      _ ≤ 2 / r := by gcongr; norm_num
   · have hslow : r / 2 ≤ s := by linarith
     have hlog : Real.log s ≤ Real.log r := Real.log_le_log hs hsr
     rw [abs_of_nonpos (sub_nonpos.mpr hlog), neg_sub]
@@ -360,7 +361,7 @@ private lemma abs_log_sub_log_le_two_div {r s : ℝ}
         rw [div_le_iff₀ hs]
         calc
           r ≤ s + 1 := by linarith
-          _ = (1 / s + 1) * s := by field_simp <;> ring
+          _ = (1 / s + 1) * s := by field_simp; ring
       _ ≤ 2 / r := by
         rw [div_le_div_iff₀ hs hrpos]
         nlinarith

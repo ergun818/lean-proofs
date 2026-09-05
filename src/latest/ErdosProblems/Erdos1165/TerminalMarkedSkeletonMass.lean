@@ -230,7 +230,7 @@ theorem fairSteps_terminalSkeletonAtom_eq_weight_mul
       TerminalEntrance scale x)
     (exit : Fin (terminalCount scale profileDelta) →
       TerminalExit scale x)
-    (hevent : ∀ hvalid : ValidTerminalSkeleton scale profileDelta x
+    (hevent : ∀ _hvalid : ValidTerminalSkeleton scale profileDelta x
         (rawSupportedTerminalCode data entrance exit),
       stoppedTerminalSkeletonAtom start scale profileDelta x
           (rawSupportedTerminalCode data entrance exit) =
@@ -270,7 +270,7 @@ theorem fairSteps_terminalMarkedAtom_eq_weight_mul
     (exit : Fin (terminalCount scale profileDelta) →
       TerminalExit scale x)
     (visits : Fin (terminalCount scale profileDelta) → ℕ)
-    (hevent : ∀ hvalid : ValidTerminalSkeleton scale profileDelta x
+    (hevent : ∀ _hvalid : ValidTerminalSkeleton scale profileDelta x
         (rawSupportedTerminalCode data entrance exit),
       stoppedMarkedTerminalAtom start scale profileDelta x
           ((rawSupportedTerminalCode data entrance exit).1,
@@ -323,7 +323,7 @@ theorem markedStoppedDataLowerDecomposition_of_terminal_insertion_events
         TerminalEntrance scale x)
       (exit : Fin (terminalCount scale profileDelta) →
         TerminalExit scale x)
-      (hvalid : ValidTerminalSkeleton scale profileDelta x
+      (_hvalid : ValidTerminalSkeleton scale profileDelta x
         (rawSupportedTerminalCode data entrance exit)),
       stoppedTerminalSkeletonAtom start scale profileDelta x
           (rawSupportedTerminalCode data entrance exit) =
@@ -336,7 +336,7 @@ theorem markedStoppedDataLowerDecomposition_of_terminal_insertion_events
       (exit : Fin (terminalCount scale profileDelta) →
         TerminalExit scale x)
       (visits : Fin (terminalCount scale profileDelta) → ℕ)
-      (hvalid : ValidTerminalSkeleton scale profileDelta x
+      (_hvalid : ValidTerminalSkeleton scale profileDelta x
         (rawSupportedTerminalCode data entrance exit)),
       stoppedMarkedTerminalAtom start scale profileDelta x
           ((rawSupportedTerminalCode data entrance exit).1,

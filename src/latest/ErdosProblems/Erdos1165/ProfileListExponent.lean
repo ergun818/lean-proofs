@@ -73,7 +73,7 @@ lemma stirlingLogLower_ofFn_eq_sum_Ico (f : ℕ → ℕ)
           rw [Finset.sum_eq_sum_Ico_succ_bot
             (Nat.lt_add_of_pos_right (Nat.succ_pos k))]
           congr 1
-          simp [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
+          simp [Nat.add_comm, Nat.add_left_comm]
 
 /-- **Exact scale-indexed exponent identity for a finite profile.** -/
 theorem stirlingLogLower_profileList_eq_sum_edgeStirlingExponent

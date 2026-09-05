@@ -260,7 +260,7 @@ private lemma foldl_radialLabelVisit_seekingOuter_of_avoidsOuter
   | nil => rfl
   | cons label tail ih =>
       rw [List.foldl_cons]
-      simp only [radialLabelVisit, Bool.true_eq, if_true,
+      simp only [radialLabelVisit, if_true,
         if_neg (havoid label (by simp))]
       exact ih (fun x hx ↦ havoid x (by simp [hx]))
 
@@ -288,10 +288,10 @@ private lemma foldl_radialLabelVisit_seekingOuter_of_hitsOuter_avoidsInner
   | cons label tail ih =>
       rw [List.foldl_cons]
       by_cases hlabel : (label : ℕ) = k - 1
-      · simp only [radialLabelVisit, Bool.true_eq, if_true, hlabel]
+      · simp only [radialLabelVisit, if_true, hlabel]
         apply foldl_radialLabelVisit_seekingInner_of_avoidsInner
         exact fun x hx ↦ havoid x (by simp [hx])
-      · simp only [radialLabelVisit, Bool.true_eq, if_true,
+      · simp only [radialLabelVisit, if_true,
           if_neg hlabel]
         apply ih
         · rcases hhit with ⟨x, hx, heq⟩
@@ -374,7 +374,6 @@ theorem foldl_radialLabelsAt_eq_visit
           have hlabelEq : label = ⟨k, hk⟩ := Fin.ext heq
           rw [hlabelEq] at hmem
           exact hmem
-
   | true =>
       by_cases hzOuter : z ∈ discBoundary center (scaleRadius n (k - 1))
       · have hzInner : z ∉ discBoundary center (scaleRadius n k) := by
@@ -558,7 +557,7 @@ def radialListUpcrossingCount {n : ℕ} (k : ℕ) :
 /-- The number of inward crossings `(k-1) -> k` in a radial word. -/
 def radialUpcrossingCount {n L : ℕ}
     (word : RadialLabelWord n L) (k : Fin (n + 2)) : ℕ :=
-  if hk : (k : ℕ) = 0 then 0 else
+  if _hk : (k : ℕ) = 0 then 0 else
     radialListUpcrossingCount (k : ℕ) word.toList
 
 @[simp] theorem radialUpcrossingCount_zero {n L : ℕ}
@@ -606,7 +605,7 @@ private theorem radialLabelVisit_adjacent_step
         intro heq
         have hbad := hcurrentOuter heq
         simp at hbad
-      simp only [radialLabelVisit, Bool.true_eq, if_true]
+      simp only [radialLabelVisit, if_true]
       by_cases htarget : (target : ℕ) = k - 1
       · rw [if_pos htarget]
         simp [hcurrent, htarget]
@@ -666,7 +665,7 @@ theorem radialWordCompletedCount_eq_radialUpcrossingCount
     intro heq
     change (radialLabelVisit (k : ℕ) initialState
       (word.level ⟨0, by omega⟩)).seekingOuter = false
-    simp only [radialLabelVisit, initialState, Bool.true_eq, if_true]
+    simp only [radialLabelVisit, initialState, if_true]
     rw [if_pos heq]
   have hfirstInner : (k : ℕ) ≤ (word.level ⟨0, by omega⟩ : ℕ) →
       firstState.seekingOuter = true := by
@@ -686,7 +685,7 @@ theorem radialWordCompletedCount_eq_radialUpcrossingCount
   rw [hfold]
   have hcompleted : firstState.completed = 0 := by
     unfold firstState
-    simp only [radialLabelVisit, initialState, Bool.true_eq, if_true]
+    simp only [radialLabelVisit, initialState, if_true]
     split <;> rfl
   rw [hcompleted, Nat.zero_add]
 
@@ -1158,7 +1157,7 @@ theorem chronologicalRadialLabels_unsplice_firstDifferent
   have hExitNe : exitLabel ≠ source := by
     intro heq
     subst exitLabel
-    simpa using hExit
+    simp at hExit
   have hExitBoundary : trajectoryFrom start omega t ∈
       radialBoundary n center exitLabel := by
     simpa only [if_neg hExitNe] using hExit
@@ -1384,8 +1383,7 @@ private theorem radialChainAtom_exists_firstZero_of_mem
       constructor
       · rw [hpointEq]
         exact endpoint.2
-      · intro r hr
-        intro hzero
+      · intro r hr hzero
         apply hfirst.2 r hr
         rw [otherRadialBoundaries]
         refine Set.mem_iUnion.mpr ⟨⟨0, by omega⟩, ?_⟩
@@ -1533,7 +1531,7 @@ private theorem radialChainAtom_exists_firstZero_and_trace_of_mem
               exact endpoint.2)
             (by
               rw [hpointEq]
-              convert htailTrace using 1 <;> simp only [List.cons_append])
+              convert htailTrace using 1; simp only [List.cons_append])
 
 private theorem mem_radialChainAtom_of_chronologicalTrace
     (n : ℕ) (hn : 2 ≤ n) (center : Point) :
@@ -1699,8 +1697,8 @@ theorem fairSteps_radialChainAtom (n : ℕ) (center : Point) :
         intro endpoint _
         rw [fairSteps_boundaryExitMarkedSteps_inter_post,
           ih target endpoint.1]
-        rfl
-        exact measurableSet_radialChainAtom n center target tail endpoint.1
+        · rfl
+        · exact measurableSet_radialChainAtom n center target tail endpoint.1
       · intro endpoint
         exact (measurableSet_boundaryExitMarkedSteps _ _ _).inter
           ((measurableSet_radialChainAtom n center target tail endpoint.1).preimage

@@ -430,19 +430,19 @@ theorem isTilingBase_tilingBase (t : DominoTiling) (x : Point) :
   rw [tilingBase, if_neg h] at hfix
   cases t with
   | checker d =>
-      fin_cases d <;>
-        simp [unshift, tilingDisplacement, Tilings.directionVector] at hfix
+      fin_cases d
       all_goals
         have hfst := congrArg Prod.fst hfix
         have hsnd := congrArg Prod.snd hfix
+        simp only [unshift, tilingDisplacement, Tilings.directionVector] at hfst hsnd
         omega
   | evenColumns =>
-      simp [unshift, tilingDisplacement] at hfix
       have hfst := congrArg Prod.fst hfix
+      simp only [unshift, tilingDisplacement] at hfst
       omega
   | oddColumns =>
-      simp [unshift, tilingDisplacement] at hfix
       have hfst := congrArg Prod.fst hfix
+      simp only [unshift, tilingDisplacement] at hfst
       omega
 
 theorem not_isTilingBase_tilingPartner_of_isTilingBase

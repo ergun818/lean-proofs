@@ -74,7 +74,7 @@ mutual
         (w : ProfileCycleOuterPoint n k center),
         RecursiveProfileForestCode n k center forest u w → List Direction
     | .nil, _u, _w, code => List.ofFn code.1.2
-    | .cons child tail, u, w, code =>
+    | .cons child tail, _u, w, code =>
         List.ofFn code.2.2.1.1.2 ++
           recursiveProfileGapList n (k + 1) center child
             code.1 code.2.1 code.2.2.2.1 ++
@@ -95,7 +95,7 @@ mutual
           (recursiveProfileGapList n k center tree u w code)) =
           recursiveProfileGapCodeMass n k center tree u w code
     | .leaf, _u, _w, code => by
-        simpa only [recursiveProfileGapList, listStoppedWord_ofFn,
+        simp only [recursiveProfileGapList, listStoppedWord_ofFn,
           recursiveProfileGapCodeMass]
     | .node children, u, w, code =>
         stoppedWordMass_recursiveProfileForestList n k center children u w code
@@ -111,7 +111,7 @@ mutual
           (recursiveProfileForestList n k center forest u w code)) =
           recursiveProfileForestCodeMass n k center forest u w code
     | .nil, _u, _w, code => by
-        simpa only [recursiveProfileForestList, listStoppedWord_ofFn,
+        simp only [recursiveProfileForestList, listStoppedWord_ofFn,
           recursiveProfileForestCodeMass]
     | .cons child tail, u, w, code => by
         simp only [recursiveProfileForestList,
@@ -129,7 +129,7 @@ mutual
   def recursiveProfileGapBoundaryExitWordCode
       (n k : ℕ) (center : Point) (hn : 2 ≤ n) (hk0 : 0 < k) :
       ∀ (tree : ProfileRefinementTree)
-        (hfit : profileRefinementTreeFits n k tree)
+        (_hfit : profileRefinementTreeFits n k tree)
         (u : ProfileCycleMiddlePoint n k center)
         (w : ProfileCycleOuterPoint n k center),
         RecursiveProfileGapCode n k center tree u w →
@@ -145,7 +145,7 @@ mutual
       (n k : ℕ) (center : Point) (hn : 2 ≤ n) (hk0 : 0 < k)
       (hk : k + 1 ≤ n) :
       ∀ (forest : ProfileRefinementForest)
-        (hfit : profileRefinementForestFits n k forest)
+        (_hfit : profileRefinementForestFits n k forest)
         (u : ProfileCycleMiddlePoint n k center)
         (w : ProfileCycleOuterPoint n k center),
         RecursiveProfileForestCode n k center forest u w →
@@ -467,7 +467,7 @@ end
 
 mutual
   /-- Recursive literal tree codes are countable. -/
-  noncomputable def recursiveProfileGapCodeCountable
+  theorem recursiveProfileGapCodeCountable
       (n k : ℕ) (center : Point) :
       ∀ (tree : ProfileRefinementTree)
         (u : ProfileCycleMiddlePoint n k center)
@@ -481,7 +481,7 @@ mutual
         recursiveProfileForestCodeCountable n k center children u w
 
   /-- Recursive literal forest codes are countable. -/
-  noncomputable def recursiveProfileForestCodeCountable
+  theorem recursiveProfileForestCodeCountable
       (n k : ℕ) (center : Point) :
       ∀ (forest : ProfileRefinementForest)
         (u : ProfileCycleMiddlePoint n k center)

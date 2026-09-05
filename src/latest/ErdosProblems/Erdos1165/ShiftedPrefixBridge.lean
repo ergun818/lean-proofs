@@ -317,7 +317,6 @@ theorem fixedFiber_externalTrace {o : Orientation} {i : ℕ} (ω : StepPath) (n 
     externalTraceAt o ω n =
       blockPath (0, 0) (retainedWord r) ++ prefixRemainder ω n := by
   unfold externalTraceAt finiteExternalPath
-  change externalPath o (finitePathList (pathPrefix (trajectory ω) n)) = _
   rw [fixedFiber_prefixPath ω n r q hword]
   unfold prefixRemainder insertedPath
   by_cases hmod : n % 2 = 0
@@ -332,7 +331,6 @@ theorem fixedFiber_deletedTrace {o : Orientation} {i : ℕ} (ω : StepPath) (n :
     (hword : completePrefixBlocks ω n = insertGapVector r q) :
     deletedTraceAt o ω n = lazyPoints o (insertedPath (0, 0) r q) := by
   unfold deletedTraceAt finiteLazyPoints
-  change lazyPoints o (finitePathList (pathPrefix (trajectory ω) n)) = _
   rw [fixedFiber_prefixPath ω n r q hword]
   unfold prefixRemainder
   by_cases hmod : n % 2 = 0
@@ -470,7 +468,7 @@ theorem shifted_fixedFiber_localTime {i : ℕ} (ω : StepPath) (n : ℕ) (hn : 0
         shifted_fixedFiber_lazyTrace ω n hn r q hword]
   rw [lazyLocalTime_insertedPath]
   unfold fixedShiftedPrefixLocalTime
-  simp only [pathPrefix, trajectory_zero, beq_iff_eq]
+  simp only [trajectory_zero]
   omega
 
 theorem shifted_start_compatible (ω : StepPath) :

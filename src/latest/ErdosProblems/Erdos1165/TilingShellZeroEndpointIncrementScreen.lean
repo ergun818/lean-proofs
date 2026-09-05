@@ -67,13 +67,13 @@ theorem prefixedShellZeroEndpointContribution_eq_zero_of_source
           (tilingPartner t b.1.1) ≤
         prefixedTilingFixedBoundaryLocalTime initial x r terminal b.1.1)
     (b : TilingAwayDomino t x r D) (v : Fin (upper b))
-    (hv : tilingShellZeroSourceCoordinate (cap := cap) (m := m) (w := w)
+    (hv : tilingShellZeroSourceCoordinate (_cap := cap) (m := m) (w := w)
       t x r D upper b v) :
     prefixedShellZeroEndpointContribution initial t x r terminal D upper
       m b v = 0 := by
   have hsource : Fintype.card (TilingCoordinatesAt t x r b.1) + (v : ℕ) < m := by
     simp only [tilingShellZeroSourceCoordinate,
-      mem_shellZeroSourceFailureWindow, mem_shellZeroSourceTotalWindow] at hv
+      mem_shellZeroSourceFailureWindow] at hv
     omega
   have hbaseLt : prefixedTilingFixedBoundaryLocalTime initial x r terminal
       b.1.1 + (v : ℕ) < m := by
@@ -96,9 +96,9 @@ def prefixedShellZeroReplacementScreenAtIncrement
     (central delta : ℕ) (ell : TruncatedTotals upper) : Prop :=
   exactSourceSubsetVectorAtIncrement
     (fun b v ↦ tilingShellZeroSourceCoordinate
-      (cap := cap) (m := m) (w := w) t x r D upper b v)
+      (_cap := cap) (m := m) (w := w) t x r D upper b v)
     (fun b v ↦ tilingShellZeroReplacementCoordinate
-      (cap := cap) (m := m) (w := w) t x r D upper b v)
+      (_cap := cap) (m := m) (w := w) t x r D upper b v)
     (prefixedShellZeroEndpointContribution initial t x r terminal D upper m)
     central delta ell
 
@@ -129,9 +129,9 @@ theorem sum_screenMass_prefixedShellZeroReplacementScreenAtIncrement_eq
         (tilingAwayPointMass (cap := cap) t x r D) upper
         (exactSourceSubsetVector
           (fun b v ↦ tilingShellZeroSourceCoordinate
-            (cap := cap) (m := m) (w := w) t x r D upper b v)
+            (_cap := cap) (m := m) (w := w) t x r D upper b v)
           (fun b v ↦ tilingShellZeroReplacementCoordinate
-            (cap := cap) (m := m) (w := w) t x r D upper b v)
+            (_cap := cap) (m := m) (w := w) t x r D upper b v)
           central)
         (Classical.decPred _) := by
   apply sum_screenMass_exactSourceSubsetVectorAtIncrement_eq

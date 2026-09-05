@@ -17,6 +17,10 @@ open Set
 
 namespace Erdos1165.AsymmetricCoarseRecursiveSourceCode
 
+open TerminalSkeletonFactorization renaming
+  shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix →
+    shiftSteps_mem_assembledTerminalWordCylinder
+
 open AnnularBoundaryExcursionKernel AnnularProfileClocks
 open AnnularOffspringKernelRadial
 open AnnularProfileChildWordIdentification AnnularProfileLevelSkeleton
@@ -84,7 +88,7 @@ theorem shift_coarseSuccessfulCanonicalSource_mem_terminalCylinder
       stoppedWordCylinder
         (assembledTerminalWord code.1.skeleton
           (coarseTupleWords code tail.1)) := by
-  apply TerminalSkeletonFactorization.shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix
+  apply shiftSteps_mem_assembledTerminalWordCylinder
   change stepPrefix
       ((coarseAtom code).assemble (Unit.unit, tail.1)).1
         (coarseSuccessfulCanonicalSource code tail) =

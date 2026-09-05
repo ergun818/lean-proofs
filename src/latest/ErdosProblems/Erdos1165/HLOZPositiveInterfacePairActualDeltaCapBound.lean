@@ -179,7 +179,7 @@ theorem positiveInterfaceExternalPairSourceStoppedGeometricMass_eq
       eta.1.1.initial.1 eta.1.1.retainedCount (data.coordinateCap cap) t
       eta.1.1.start eta.1.1.retained eta.1.1.tail.1
       (positiveInterfaceExternalPairSourcePredicate eta cap threshold bound)
-      (Classical.decPred _) D
+      D
       (positiveInterfaceExternalPairSelected eta cap) (Classical.decPred _)
       (data.upper cap)
       (positiveInterfaceExternalPairSourceScreen eta cap threshold bound)

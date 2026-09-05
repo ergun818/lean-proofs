@@ -454,7 +454,6 @@ theorem externalSourceSelectedStoppedGeometricMass_eq
     (sourceData.coordinateCap cap) t z.start z.retained z.tail.1
     (externalAcceptedSourceThetaPredicate sourceData w externalLow
       externalHigh cap)
-    (Classical.decPred _)
     (supportComplementDistinguished t z.start z.retained S)
     (sourceData.selected cap) (Classical.decPred _) (sourceData.upper cap)
     (externalAcceptedSourceThetaAtTotals sourceData w externalLow

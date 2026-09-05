@@ -112,14 +112,14 @@ theorem regular_add_terminal_counts_eq_length {n : ℕ} (hn : 2 ≤ n) :
           · have htarget : (target : ℕ) = n + 1 := by omega
             have hfar : n + 1 ≠ n - 1 := by omega
             have hsourceFar : n ≠ n + 1 := by omega
-            simp [regularSourceStepCount, directedLabelStepCount, hregular,
-              hsourcen, htarget, hfar, hsourceFar]
+            simp [regularSourceStepCount, directedLabelStepCount,
+              hsourcen, htarget, hfar]
             omega
           · have htarget : (target : ℕ) = n - 1 := by omega
             have hfar : n - 1 ≠ n + 1 := by omega
             have hsourceFar : n ≠ n + 1 := by omega
-            simp [regularSourceStepCount, directedLabelStepCount, hregular,
-              hsourcen, htarget, hfar, hsourceFar]
+            simp [regularSourceStepCount, directedLabelStepCount,
+              hsourcen, htarget, hfar]
             omega
         · have hsource : (source : ℕ) = n + 1 := by
             have hlt : (source : ℕ) < n + 2 := source.isLt
@@ -130,8 +130,7 @@ theorem regular_add_terminal_counts_eq_length {n : ℕ} (hn : 2 ≤ n) :
               omega
             · omega
           have hsourceFar : n + 1 ≠ n := by omega
-          simp [regularSourceStepCount, directedLabelStepCount, hregular,
-            hsourcen, hsource, htarget, hsourceFar]
+          simp [regularSourceStepCount, directedLabelStepCount, hsource, htarget]
           omega
 
 /-- On a nearest-neighbour chronological label chain which reaches zero only
@@ -181,8 +180,8 @@ theorem annularIdealReference_eq_countProduct {n : ℕ} (hn : 2 ≤ n) :
             have htargetFin : target = ⟨n + 1, by omega⟩ := Fin.ext htarget
             rw [hsourceFin, htargetFin]
             simp only [annularIdealEdge, regularSourceStepCount,
-              directedLabelStepCount, Fin.val_mk]
-            simp only [show n ≠ 0 by omega, if_neg, Nat.lt_irrefl,
+              directedLabelStepCount]
+            simp only [show n ≠ 0 by omega, Nat.lt_irrefl,
               if_pos, and_self, show ¬(n + 1 = n - 1) by omega]
             rw [show 1 + directedLabelStepCount n (n + 1)
                 (⟨n + 1, by omega⟩ : Fin (n + 2)) tail =
@@ -195,8 +194,8 @@ theorem annularIdealReference_eq_countProduct {n : ℕ} (hn : 2 ≤ n) :
             have htargetFin : target = ⟨n - 1, by omega⟩ := Fin.ext htarget
             rw [hsourceFin, htargetFin]
             simp only [annularIdealEdge, regularSourceStepCount,
-              directedLabelStepCount, Fin.val_mk]
-            simp only [show n ≠ 0 by omega, if_neg, Nat.lt_irrefl,
+              directedLabelStepCount]
+            simp only [show n ≠ 0 by omega, Nat.lt_irrefl,
               show ¬(n - 1 = n + 1) by omega, and_false,
               show n - 1 + 1 = n by omega, if_pos, and_self]
             rw [show 1 + directedLabelStepCount n (n - 1)

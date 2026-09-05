@@ -189,8 +189,7 @@ theorem scanWordFrom_eq_of_first_inner_at_end
           cases state with
           | mk seeking completed =>
               cases seeking <;>
-                simp only [scanWordFrom, List.foldl_cons, List.foldl_nil,
-                  Prod.snd] <;>
+                simp only [scanWordFrom, List.foldl_cons, List.foldl_nil] <;>
                 rw [show Annulus.neighbor start d = next by rfl] <;>
                 simp [visitBoundary, houterEnd, hinnerEnd]
       | cons e tail =>
@@ -1186,7 +1185,7 @@ theorem extracted_complementaryPieces_preword_ne
       apply Fin.ext
       simp [next, prev]
       omega
-    have hseg := hretained.firstInnerSucc prev (by simp [prev, m]; omega)
+    have hseg := hretained.firstInnerSucc prev (by simp [prev]; omega)
     have hout : newPath (replacementWordStop pieces words prev) ∈
         terminalOuterBoundary scale x := by
       have hep := hendpoint prev
@@ -1260,7 +1259,7 @@ theorem extracted_intervalWord_absoluteBoundaryFirstAt
         (extractTimedTerminalSkeleton scale horizon profileDelta x omega).exit j).length =
         w.1 := by
     rw [← herased]
-    simp only [List.length_ofFn, Fintype.card_fin]
+    simp only [List.length_ofFn]
     exact extractedTerminalStoppedWord_length
       scale horizon profileDelta x omega j
   rw [hlen]
@@ -1373,12 +1372,8 @@ theorem excursionProfile_reconstructed_of_boundaryExitWordCodes
     apply Proposition13Measurability.excursionProfile_congr_prefix
     intro q hq
     rw [wordWalk_eq_trajectoryFrom_extendStoppedWord (0, 0) rightFull hq]
-    simpa [newOmega, rightFull, reconstructedTerminalStepPath,
-      PlanarPotential.trajectoryFrom] using
-      (rfl : PlanarPotential.trajectoryFrom (0, 0)
-        (extendStoppedWord (stoppedWordOfList rightFull)) q =
-        PlanarPotential.trajectoryFrom (0, 0)
-          (extendStoppedWord (stoppedWordOfList rightFull)) q)
+    simp [newOmega, rightFull, reconstructedTerminalStepPath,
+      PlanarPotential.trajectoryFrom]
   exact hleftProfile.symm.trans (hprofileWords.trans hrightProfile)
 
 end

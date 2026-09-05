@@ -157,7 +157,7 @@ theorem eventually_profileDecoratedGapKernel_row_le :
         (childKernel : Child → ProfileCycleInnerPoint n k center →
           ProfileCycleMiddlePoint n k center → ℝ≥0∞)
         (childUpper : Child → ℝ≥0∞)
-        (hchild : ∀ child z, ∑ v, childKernel child z v ≤ childUpper child)
+        (_hchild : ∀ child z, ∑ v, childKernel child z v ≤ childUpper child)
         (children : List Child) (u : ProfileCycleMiddlePoint n k center),
         ∑ w, profileDecoratedGapKernelENNReal n k center childKernel
             children u w ≤
@@ -203,8 +203,8 @@ theorem eventually_profileDecoratedGapKernel_row_le_ofReal :
         (childKernel : Child → ProfileCycleInnerPoint n k center →
           ProfileCycleMiddlePoint n k center → ℝ≥0∞)
         (childCost : Child → ℝ)
-        (hchildCost : ∀ child, 0 ≤ childCost child)
-        (hchild : ∀ child z, ∑ v, childKernel child z v ≤
+        (_hchildCost : ∀ child, 0 ≤ childCost child)
+        (_hchild : ∀ child z, ∑ v, childKernel child z v ≤
           ENNReal.ofReal (childCost child))
         (children : List Child) (u : ProfileCycleMiddlePoint n k center),
         ∑ w, profileDecoratedGapKernelENNReal n k center childKernel

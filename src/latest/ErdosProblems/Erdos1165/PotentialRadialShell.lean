@@ -74,7 +74,6 @@ lemma localEnvelope_le_weights (Q ρ k : ℕ) :
     (Real.exp_pos _).le
   have hpi : 0 < Real.pi := Real.pi_pos
   unfold localEnvelope cubeGaussianWeight squareGaussianWeight
-  norm_num only [Nat.cast_add, Nat.cast_one]
   have hfirst :
       Real.exp (-(Q : ℝ) / (2 * (k + 1))) /
           (Real.pi * (k + 1)) *
@@ -167,7 +166,6 @@ lemma radiusGapEnvelope_le_weight (Q Q' k : ℕ) :
     radiusGapEnvelope Q Q' k ≤
       |(Q : ℝ) - (Q' : ℝ)| * squareGaussianWeight (min Q Q') k := by
   unfold radiusGapEnvelope squareGaussianWeight
-  norm_num only [Nat.cast_add, Nat.cast_one]
   have hk : (0 : ℝ) < k + 1 := by positivity
   have hmin : (0 : ℝ) ≤ (min Q Q' : ℕ) := by positivity
   have hexp : Real.exp (-(min Q Q' : ℕ) / (k + 1 : ℝ)) ≤

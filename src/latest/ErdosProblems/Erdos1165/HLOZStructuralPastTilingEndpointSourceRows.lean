@@ -299,7 +299,7 @@ theorem firstStructuralRowPrevious_measure_le
   cases t with
   | checker d =>
       cases row with
-      | inl _ => simpa [firstStructuralRowPrevious]
+      | inl _ => simp [firstStructuralRowPrevious]
       | inr e =>
           simpa [firstStructuralRowPrevious] using
             firstCheckerStructuralPrevious_measure_le d m gaps e hm
@@ -307,7 +307,7 @@ theorem firstStructuralRowPrevious_measure_le
       cases row with
       | mk o cls =>
           cases cls with
-          | canonical => simpa [firstStructuralRowPrevious]
+          | canonical => simp [firstStructuralRowPrevious]
           | opposite =>
               change simpleRandomWalk (sourceTransportPreimage .evenColumns
                 .opposite (firstStructuralPast
@@ -318,7 +318,7 @@ theorem firstStructuralRowPrevious_measure_le
       cases row with
       | mk o cls =>
           cases cls with
-          | canonical => simpa [firstStructuralRowPrevious]
+          | canonical => simp [firstStructuralRowPrevious]
           | opposite =>
               change simpleRandomWalk (sourceTransportPreimage .oddColumns
                 .opposite (firstStructuralPast
@@ -334,7 +334,7 @@ theorem secondStructuralRowPrevious_measure_le
   cases t with
   | checker d =>
       cases row with
-      | inl _ => simpa [secondStructuralRowPrevious]
+      | inl _ => simp [secondStructuralRowPrevious]
       | inr e =>
           simpa [secondStructuralRowPrevious] using
             secondCheckerStructuralPrevious_measure_le d m gaps e hm
@@ -342,7 +342,7 @@ theorem secondStructuralRowPrevious_measure_le
       cases row with
       | mk o cls =>
           cases cls with
-          | canonical => simpa [secondStructuralRowPrevious]
+          | canonical => simp [secondStructuralRowPrevious]
           | opposite =>
               change simpleRandomWalk (sourceTransportPreimage .evenColumns
                 .opposite (secondStructuralPast
@@ -353,7 +353,7 @@ theorem secondStructuralRowPrevious_measure_le
       cases row with
       | mk o cls =>
           cases cls with
-          | canonical => simpa [secondStructuralRowPrevious]
+          | canonical => simp [secondStructuralRowPrevious]
           | opposite =>
               change simpleRandomWalk (sourceTransportPreimage .oddColumns
                 .opposite (secondStructuralPast

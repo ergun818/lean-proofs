@@ -110,7 +110,7 @@ theorem tilingVTwoAt_source_of_prefixedSourceCoordinate
     (htranslate : Fintype.card (TilingCoordinatesAt t x r b.1) ≤
       m - w + 1)
     (hcoord : tilingShellZeroSourceCoordinate
-      (cap := cap) (m := m) (w := w) t x r D upper b (ell b))
+      (_cap := cap) (m := m) (w := w) t x r D upper b (ell b))
     (htotal : tilingDominoTotal t x r (fun j ↦ (q j : ℕ)) b.1 =
       (ell b : ℕ)) :
     let v := prefixedTilingInsertionPrefixList initial.1 t x r
@@ -173,7 +173,7 @@ theorem tilingVTwoAt_replacement_of_prefixedReplacementCoordinate
         (prefixedTilingInsertionTerminal initial t x r
           (fun j ↦ (q j : ℕ)) tail) b.1.1)
     (hcoord : tilingShellZeroReplacementCoordinate
-      (cap := cap) (m := m) (w := w) t x r D upper b (ell b))
+      (_cap := cap) (m := m) (w := w) t x r D upper b (ell b))
     (htotal : tilingDominoTotal t x r (fun j ↦ (q j : ℕ)) b.1 =
       (ell b : ℕ)) :
     let v := prefixedTilingInsertionPrefixList initial.1 t x r

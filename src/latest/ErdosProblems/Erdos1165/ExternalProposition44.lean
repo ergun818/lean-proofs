@@ -451,7 +451,7 @@ lemma hlozCutoffLog44_eq {m : ℕ} (hm : 0 < m) :
       Real.pi ^ (1 / 2 : ℝ) * (m : ℝ) ^ (1 / 2 : ℝ) +
         Real.pi ^ (21 / 16 : ℝ) * (m : ℝ) ^ (5 / 16 : ℝ) := by
   rw [levelCutoffLog_eq_hloz hlozDelta44 hm]
-  congr 1 <;> norm_num [hlozDelta44]
+  congr 1; norm_num [hlozDelta44]
 
 /-- A fixed multiple of a smaller positive power is eventually bounded by a
 larger power.  This helper keeps the HLOZ cutoff comparisons pointwise and
@@ -594,13 +594,13 @@ theorem eventually_hlozOnePointLevel44_le_thickLevel44 :
       D * (m : ℝ) ^ (13 / 16 : ℝ) := by
     have hdiv : (2 * (m : ℝ) ^ (4 / 5 : ℝ)) / D ≤
         (m : ℝ) ^ (13 / 16 : ℝ) := by
-      convert hmMain using 1 <;> ring
+      convert hmMain using 1; ring
     simpa [mul_comm] using (div_le_iff₀ hD).mp hdiv
   have hmError' : 2 * E * (m : ℝ) ^ (5 / 8 : ℝ) ≤
       D * (m : ℝ) ^ (13 / 16 : ℝ) := by
     have hdiv : (2 * E * (m : ℝ) ^ (5 / 8 : ℝ)) / D ≤
         (m : ℝ) ^ (13 / 16 : ℝ) := by
-      convert hmError using 1 <;> ring
+      convert hmError using 1; ring
     simpa [mul_comm] using (div_le_iff₀ hD).mp hdiv
   have hreal : hlozOnePointThresholdReal44 m ≤
       hlozThickThresholdReal44 m := by

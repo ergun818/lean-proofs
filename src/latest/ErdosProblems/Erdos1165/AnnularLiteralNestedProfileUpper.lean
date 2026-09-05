@@ -59,7 +59,7 @@ def NestedEdgeUpperAtENNReal
 child-vector upper estimate. -/
 theorem literalProfileNestedEdgeUpperAt_of_parentRows
     {n depth : ℕ} {center : Point} {epsilon : ℝ}
-    (hepsilon0 : 0 ≤ epsilon)
+    (_hepsilon0 : 0 ≤ epsilon)
     (hparent : ∀ (q : ℕ) (u : ProfileCycleMiddlePoint n (depth + 2) center),
       (literalGapIntegratedMarkedKernel
         (profileOuterBoundary n (depth + 2) center)

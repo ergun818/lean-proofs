@@ -172,7 +172,7 @@ theorem broadSourceZeroDeltaBadStoppedGeometricMass_eq
     eta.1.1.initial.1 eta.1.1.retainedCount (data.coordinateCap cap) t
     eta.1.1.start eta.1.1.retained eta.1.1.tail.1
     (broadSourceZeroDeltaBadPredicate data width externalThreshold cap)
-    (Classical.decPred _) D (broadData.selected cap) (Classical.decPred _)
+    D (broadData.selected cap) (Classical.decPred _)
     (data.upper cap)
     (broadSourceZeroDeltaBadScreen data width externalThreshold cap)
     (Classical.decPred _)

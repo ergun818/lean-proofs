@@ -221,9 +221,9 @@ theorem adjacent_pair_growth_tail (total G : ℕ) {p q C : ℝ}
         Bin(total, UrnScreening.pairParameter p q hp hq hpq).real
           (Set.Ici (growthCut G total)) := by
       apply measureReal_mono
-      intro upper hupper
-      exact growthCut_le_of_ratio hupper.1 hupper.2
-      finiteness
+      · intro upper hupper
+        exact growthCut_le_of_ratio hupper.1 hupper.2
+      · finiteness
     _ ≤ (1 + C / (1 + C)) ^ total / (2 : ℝ) ^ growthCut G total :=
       adjacent_pair_upper_tail_two_pow total (growthCut G total) hp hq hpq hC hpqC
 

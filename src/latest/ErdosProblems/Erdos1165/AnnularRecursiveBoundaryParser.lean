@@ -84,7 +84,7 @@ def boundaryExitWordAsExcursionCode
 levels. -/
 def parseBoundaryGap
     (n : ℕ) (center : Point) (hn : 2 ≤ n) :
-    ∀ (depth k : ℕ) (hk0 : 0 < k) (hdepth : k + depth ≤ n)
+    ∀ (depth k : ℕ) (_hk0 : 0 < k) (_hdepth : k + depth ≤ n)
       (u : ProfileCycleMiddlePoint n k center)
       (w : ProfileCycleOuterPoint n k center)
       (source : BoundaryExitWordCode (profileOuterBoundary n k center)

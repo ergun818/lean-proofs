@@ -62,7 +62,7 @@ private theorem sourceScreenMass_eq
           z.retained data.distinguished)
         (data.upper cap)
         (allSourceVector fun b v ↦ tilingShellZeroSourceCoordinate
-          (cap := data.coordinateCap cap) (m := m) (w := shellWidth48 m)
+          (_cap := data.coordinateCap cap) (m := m) (w := shellWidth48 m)
           t z.start z.retained data.distinguished (data.upper cap) b v)
         (instDecidablePredAllSourceVector _) =
       tilingShellZeroAllSourceProductMass
@@ -70,7 +70,7 @@ private theorem sourceScreenMass_eq
           data.distinguished (data.upper cap) := by
   classical
   let source := fun b v ↦ tilingShellZeroSourceCoordinate
-    (cap := data.coordinateCap cap) (m := m) (w := shellWidth48 m)
+    (_cap := data.coordinateCap cap) (m := m) (w := shellWidth48 m)
     t z.start z.retained data.distinguished (data.upper cap) b v
   rw [@screenMass_eq_product
     (TilingAwayDomino t z.start z.retained data.distinguished)
@@ -127,10 +127,10 @@ private theorem replacementScreenMass_eq
         (data.upper cap)
         (exactSourceSubsetVector
           (fun b v ↦ tilingShellZeroSourceCoordinate
-            (cap := data.coordinateCap cap) (m := m) (w := shellWidth48 m)
+            (_cap := data.coordinateCap cap) (m := m) (w := shellWidth48 m)
             t z.start z.retained data.distinguished (data.upper cap) b v)
           (fun b v ↦ tilingShellZeroReplacementCoordinate
-            (cap := data.coordinateCap cap) (m := m) (w := shellWidth48 m)
+            (_cap := data.coordinateCap cap) (m := m) (w := shellWidth48 m)
             t z.start z.retained data.distinguished (data.upper cap) b v)
           (centralReplacementUpperCount shellZeroLocalRatioConstant total))
         (instDecidablePredExactSourceSubsetVector _ _ _) =
@@ -140,10 +140,10 @@ private theorem replacementScreenMass_eq
             (centralReplacementUpperCount shellZeroLocalRatioConstant total) := by
   classical
   let source := fun b v ↦ tilingShellZeroSourceCoordinate
-    (cap := data.coordinateCap cap) (m := m) (w := shellWidth48 m)
+    (_cap := data.coordinateCap cap) (m := m) (w := shellWidth48 m)
     t z.start z.retained data.distinguished (data.upper cap) b v
   let replacement := fun b v ↦ tilingShellZeroReplacementCoordinate
-    (cap := data.coordinateCap cap) (m := m) (w := shellWidth48 m)
+    (_cap := data.coordinateCap cap) (m := m) (w := shellWidth48 m)
     t z.start z.retained data.distinguished (data.upper cap) b v
   let replacementScreen := exactSourceSubsetVector source replacement
     (centralReplacementUpperCount shellZeroLocalRatioConstant total)
@@ -265,10 +265,10 @@ theorem LiteralShellZeroExternalStoppedCoordinateSpec.coordinate_bound
             (data.replacementPredicate cap) := by
   classical
   let source := fun b v ↦ tilingShellZeroSourceCoordinate
-    (cap := data.coordinateCap cap) (m := m) (w := shellWidth48 m)
+    (_cap := data.coordinateCap cap) (m := m) (w := shellWidth48 m)
     t z.start z.retained data.distinguished (data.upper cap) b v
   let replacement := fun b v ↦ tilingShellZeroReplacementCoordinate
-    (cap := data.coordinateCap cap) (m := m) (w := shellWidth48 m)
+    (_cap := data.coordinateCap cap) (m := m) (w := shellWidth48 m)
     t z.start z.retained data.distinguished (data.upper cap) b v
   let sourceScreen := allSourceVector source
   let replacementScreen := exactSourceSubsetVector source replacement

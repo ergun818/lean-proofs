@@ -22,6 +22,10 @@ open scoped ENNReal
 
 namespace Erdos1165.AsymmetricExtractedReturnCompletion
 
+open TerminalSkeletonFactorization renaming
+  shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix →
+    shiftSteps_mem_assembledTerminalWordCylinder
+
 open AsymmetricSplitCompletionPreservation
 open AsymmetricSplitLevelSplice MarkedBridgeFactorization
 open AlternatingConcatPrefixFree ThickPoint
@@ -276,7 +280,7 @@ theorem xCompatibleBoundaryReturnCompletionAtom_subset_stoppedSuccessfulPointEve
   have htail : shiftSteps start omega ∈
       stoppedWordCylinder (assembledTerminalWord code words) := by
     exact
-      TerminalSkeletonFactorization.shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix
+      shiftSteps_mem_assembledTerminalWordCylinder
         hcylinder
   have hcanonical := hsuccess candidate
   have htrajectory : ∀ q ≤ horizon,

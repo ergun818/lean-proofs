@@ -78,7 +78,7 @@ private theorem dist_eq_one_cases {a b : ℕ} (h : Nat.dist a b = 1) :
 /-- The actual endpoint-summed chronological row dominates
 `annularLowerEdge`, uniformly in the entrance point and the center. -/
 theorem eventually_annularLowerEdge_le_endpoint_sum :
-    ∀ᶠ n : ℕ in atTop, ∀ (hn : 2 ≤ n) (center : Point)
+    ∀ᶠ n : ℕ in atTop, ∀ (_hn : 2 ≤ n) (center : Point)
       (source target : Fin (n + 2)) (start : Point),
       start ∈ radialBoundary n center source →
       annularLowerEdge n source target ≤
@@ -124,7 +124,7 @@ theorem eventually_annularLowerEdge_le_endpoint_sum :
         have htarget : target =
             ⟨(source : ℕ) - 1, by omega⟩ := by
           apply Fin.ext
-          simp only [Fin.val_mk]
+          change (target : ℕ) = (source : ℕ) - 1
           omega
         have hsource : (⟨(source : ℕ), by omega⟩ : Fin (n + 2)) = source :=
           Fin.eta source _
@@ -222,8 +222,7 @@ theorem commonLoss_mul_annularIdealEdge_le_annularLowerEdge
       nlinarith
     · simp [hadjacent]
   · by_cases hsourceTerminal : (source : ℕ) = n
-    · simp only [annularIdealEdge, annularLowerEdge, hsource0,
-        hsourceInternal, hsourceTerminal, ↓reduceIte]
+    · simp only [annularIdealEdge, annularLowerEdge, hsourceTerminal, ↓reduceIte]
       by_cases htargetIn : (target : ℕ) = n + 1
       · simp only [htargetIn, ↓reduceIte]
         simp only [hn0, lt_self_iff_false, ↓reduceIte]
@@ -311,7 +310,6 @@ theorem half_le_commonLoss_pow_profileRadialWordMaxTransitions
             (n : ℝ) ^ 5 ≤ 1 / 2 := by
       rw [div_le_iff₀ (pow_pos hnPos 5)]
       nlinarith
-    push_cast
     rw [show ((profileRadialWordMaxTransitions n : ℕ) : ℝ) *
         (1 / (n : ℝ) ^ 5) =
           ((profileRadialWordMaxTransitions n : ℕ) : ℝ) /
@@ -334,8 +332,7 @@ theorem ofReal_half_mul_idealReference_le_lowerReference
   have hloss0 := annularCommonRowLoss_nonneg (show 1 ≤ n by omega)
   have hloss1 := annularCommonRowLoss_le_one n
   have hlength : word.2.toList.tail.length = (word.1 : ℕ) := by
-    have := word.2.length_toList
-    simpa using congrArg (fun l : List (Fin (n + 2)) ↦ l.tail.length) rfl
+    simp
   have hwordBound : (word.1 : ℕ) ≤ profileRadialWordMaxTransitions n := by
     omega
   have hpowReal := half_le_commonLoss_pow_profileRadialWordMaxTransitions hn

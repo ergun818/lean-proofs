@@ -144,7 +144,7 @@ theorem broadSourceActualDeltaStoppedGeometricMass_eq
     eta.1.1.retainedCount (data.coordinateCap cap) t eta.1.1.start
     eta.1.1.retained eta.1.1.tail.1
     (broadSourceActualDeltaPredicate data width externalThreshold cap delta)
-    (Classical.decPred _) D (broadData.selected cap) (Classical.decPred _)
+    D (broadData.selected cap) (Classical.decPred _)
     (data.upper cap) (sourceActualDeltaScreen data cap delta)
     (Classical.decPred _)
     (broadSourceActualDeltaPredicate_factorization supportData eta hm hk

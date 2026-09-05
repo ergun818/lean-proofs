@@ -156,7 +156,7 @@ theorem tilingInsertGapVector_succ {i : ℕ} (t : DominoTiling) (x : Point)
   simp only [List.ofFn_succ, List.flatten_cons]
   rw [List.append_assoc]
   simp only [Fin.castSucc_zero, rawExternalBase_zero, tilingRetainedTail,
-    rawExternalBase_succ_castSucc, fin_succ_castSucc, hlast,
+    fin_succ_castSucc, hlast,
     rawExternalBase_succ]
 
 /-! ## Stateful uniqueness of insertion coordinates -/
@@ -194,8 +194,7 @@ theorem decodeTilingRunsAux_replicate_cons (t : DominoTiling) (x : Point)
   induction n generalizing a with
   | zero => simp [decodeTilingRunsAux, hb]
   | succ n ih =>
-      simp only [List.replicate_succ, List.cons_append, decodeTilingRunsAux,
-        if_pos rfl]
+      simp only [List.replicate_succ, List.cons_append, decodeTilingRunsAux]
       rw [ih (a + 1)]
       simp only [ite_true]
       congr 3
@@ -284,7 +283,7 @@ theorem deleteTilingBlocks_replicate_append (t : DominoTiling) (x : Point)
   | zero => rfl
   | succ n ih =>
       simp only [List.replicate_succ, List.cons_append, deleteTilingBlocks,
-        if_pos rfl, blockEnd_tilingRemovableBlock]
+        blockEnd_tilingRemovableBlock]
       exact ih
 
 /-- Deleting the reconstructed word recovers its retained word exactly. -/
@@ -414,7 +413,7 @@ theorem tilingLazyBlockTrace_replicate (t : DominoTiling) (x : Point)
   induction n with
   | zero => rfl
   | succ n ih =>
-      simp only [List.replicate_succ, tilingLazyBlockTrace, if_pos rfl,
+      simp only [List.replicate_succ, tilingLazyBlockTrace,
         blockMiddle_tilingRemovableBlock, blockEnd_tilingRemovableBlock,
         List.flatten_cons]
       rw [ih]
@@ -548,8 +547,7 @@ theorem tilingLazyLocalTime_insertedPath {t : DominoTiling} :
         simp only [List.count_cons, List.count_nil, beq_iff_eq]
         omega
       simp [listLocalTime, tilingInsertionLazyLocalTime, rawExternalBase,
-        followBlocks, List.count_flatten, List.sum_replicate, hpair,
-        add_comm]
+        followBlocks, List.count_flatten, List.sum_replicate, hpair]
   | succ i ih =>
       intro x r q y
       rw [tilingLazyPoints_blockPath, tilingInsertGapVector_succ]
@@ -585,9 +583,7 @@ theorem tilingLazyLocalTime_insertedPath {t : DominoTiling} :
         simp only [List.count_cons, List.count_nil, beq_iff_eq]
         omega
       simp [List.count_flatten, List.sum_replicate, hpair,
-        tilingRetainedTail, add_comm]
-      apply Finset.sum_congr rfl
-      intro k _
+        tilingRetainedTail]
       rfl
 
 theorem tilingEndpointIndicators (t : DominoTiling) (z y : Point) :
@@ -800,7 +796,7 @@ theorem tilingStoppedInsertionAtom_eq_cylinder {τ : StepPath → ℕ}
         directionVectorOfList (tilingInsertionPrefixList t x r q tail)} := by
   ext ω
   unfold tilingStoppedInsertionAtom
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq]
   rw [incrementPrefixList_eq_iff_stepPrefix_eq_directionVector]
   constructor
   · exact fun h ↦ h.2

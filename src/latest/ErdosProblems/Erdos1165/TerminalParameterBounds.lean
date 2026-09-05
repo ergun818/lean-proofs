@@ -286,13 +286,13 @@ theorem positiveReturnBeforeBoundary_probability_eq_neighborAverage
       (firstStepBoundaryHitPiece_pairwiseDisjoint R)
       (measurableSet_firstStepBoundaryHitPiece R),
     tsum_fintype, ENNReal.toReal_sum]
-  apply Finset.sum_congr rfl
-  intro d _hd
-  rw [measure_firstStepBoundaryHitPiece, ENNReal.toReal_mul,
-    ENNReal.toReal_div, ENNReal.toReal_one, ENNReal.toReal_ofNat,
-    fairSteps_boundaryHitSteps_toReal,
-    literalBoundaryHitKernel_neighbor R hR d]
-  norm_num
+  · apply Finset.sum_congr rfl
+    intro d _hd
+    rw [measure_firstStepBoundaryHitPiece, ENNReal.toReal_mul,
+      ENNReal.toReal_div, ENNReal.toReal_one, ENNReal.toReal_ofNat,
+      fairSteps_boundaryHitSteps_toReal,
+      literalBoundaryHitKernel_neighbor R hR d]
+  · norm_num
 
 private theorem killedPower_succ_zero_eq_direction_sum
     (R n : ℕ) (hR : 3 ≤ R) :
@@ -515,8 +515,8 @@ theorem axisPoint_mem_discBoundary (r : ℕ) :
     change ¬ThickPoint.latticeDistance 0 (axisPoint (r + 1)) ≤ (r : ℝ)
     unfold ThickPoint.latticeDistance ThickPoint.squaredDistance axisPoint
     simp only [show (0 : Point).1 = 0 by rfl,
-      show (0 : Point).2 = 0 by rfl, Prod.fst, Prod.snd]
-    simp only [sub_self, Int.cast_zero, zero_pow, add_zero, not_le]
+      show (0 : Point).2 = 0 by rfl]
+    simp only [sub_self, Int.cast_zero, not_le]
     change (r : ℝ) < Real.sqrt
       (((((0 : ℤ) - ((r + 1 : ℕ) : ℤ) : ℤ) : ℝ) ^ 2) + (0 : ℝ) ^ 2)
     rw [zero_pow (by norm_num : (2 : ℕ) ≠ 0), add_zero,

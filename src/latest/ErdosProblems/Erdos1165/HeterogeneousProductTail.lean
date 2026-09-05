@@ -93,12 +93,14 @@ def exactPairTotalMass (weight : ∀ c, State c → ℝ)
     if (pairSupport upper lower ell).card = total then
       productPointMass weight ell else 0
 
+omit [DecidableEq Coordinate] [∀ c, Fintype (State c)] in
 lemma productPointMass_nonneg
     (weight : ∀ c, State c → ℝ) (hweight : ∀ c v, 0 ≤ weight c v)
     (ell : ∀ c, State c) :
     0 ≤ productPointMass weight ell := by
   exact Finset.prod_nonneg fun c _ ↦ hweight c (ell c)
 
+omit [Fintype Coordinate] [∀ c, Fintype (State c)] in
 lemma supportWeight_nonneg
     (weight : ∀ c, State c → ℝ) (hweight : ∀ c v, 0 ≤ weight c v)
     (upper lower : ∀ c, State c → Prop)
@@ -112,6 +114,7 @@ lemma supportWeight_nonneg
   · exact le_rfl
   · exact hweight c v
 
+omit [∀ c, Fintype (State c)] in
 lemma prod_supportWeight_eq
     (weight : ∀ c, State c → ℝ)
     (upper lower : ∀ c, State c → Prop)
@@ -267,6 +270,7 @@ lemma exactPairTotalMass_nonneg
     · exact productPointMass_nonneg weight hweight ell
     · exact le_rfl
 
+omit [∀ c, Fintype (State c)] in
 lemma supportWeight_mul_two_pow_upperCount_eq
     (weight : ∀ c, State c → ℝ)
     (upper lower : ∀ c, State c → Prop)
@@ -283,6 +287,7 @@ lemma supportWeight_mul_two_pow_upperCount_eq
   simp_rw [pow_ite, pow_one, pow_zero]
   exact Finset.prod_mul_distrib.symm
 
+omit [Fintype Coordinate] in
 lemma coordinate_moment_le
     (weight : ∀ c, State c → ℝ)
     (upper lower : ∀ c, State c → Prop)

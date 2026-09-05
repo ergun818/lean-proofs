@@ -321,7 +321,7 @@ private theorem realThickShell_sub_inner_bounds
 
 theorem outerBoundary_shifted_potential_oscillation_real
     {R r : ℝ} {boxRadius : ℕ}
-    (hr : 0 ≤ r) (hR : r + 2 ≤ R)
+    (_hr : 0 ≤ r) (hR : r + 2 ≤ R)
     (hRbox : R ≤ boxRadius) {q x : Point}
     (hq : q ∈ ThickPoint.discBoundary 0 R)
     (hx : euclideanRadius x ≤ r) :
@@ -349,7 +349,7 @@ theorem outerBoundary_shifted_potential_oscillation_real
       hwBounds.1 hqBounds.1 hgap)
 
 theorem boundaryReference_potential_oscillation_inner_poles_real
-    {R r : ℝ} (hr : 0 ≤ r) (hR : r + 2 ≤ R)
+    {R r : ℝ} (_hr : 0 ≤ r) (hR : r + 2 ≤ R)
     {q x y : Point} (hq : q ∈ ThickPoint.discBoundary 0 R)
     (hx : euclideanRadius x ≤ r) (hy : euclideanRadius y ≤ r) :
     |planarPotentialKernel (q - y) - planarPotentialKernel (q - x)| ≤
@@ -838,7 +838,7 @@ theorem boundaryExitEndpointSteps_realDisc_eq_absorbedExit
         {exit} n start := by
   let D := realBoundaryInterior R boxRadius
   ext omega
-  simp only [boundaryExitEndpointSteps, mem_iUnion, mem_setOf_eq,
+  simp only [boundaryExitEndpointSteps, mem_iUnion, mem_ofPred_eq,
     absorbedExitAt]
   constructor
   · rintro ⟨N, hfirst, hendpoint⟩
@@ -965,7 +965,7 @@ theorem boundaryExitEndpointSteps_centered_eq_zero_real
       boundaryExitEndpointSteps (ThickPoint.discBoundary 0 R)
         (start - center) (exit - center) := by
   ext omega
-  simp only [boundaryExitEndpointSteps, mem_iUnion, mem_setOf_eq]
+  simp only [boundaryExitEndpointSteps, mem_iUnion, mem_ofPred_eq]
   constructor
   · rintro ⟨N, ⟨hboundary, hbefore⟩, hend⟩
     refine ⟨N, ⟨?_, ?_⟩, ?_⟩
@@ -976,7 +976,7 @@ theorem boundaryExitEndpointSteps_centered_eq_zero_real
       apply hbefore k hk
       apply (mem_discBoundary_translate center R _).mpr
       simpa only [trajectoryFrom_sub_center] using hkBoundary
-    · simpa only [← trajectoryFrom_sub_center, hend]
+    · simp only [← trajectoryFrom_sub_center, hend]
   · rintro ⟨N, ⟨hboundary, hbefore⟩, hend⟩
     refine ⟨N, ⟨?_, ?_⟩, ?_⟩
     · apply (mem_discBoundary_translate center R _).mpr

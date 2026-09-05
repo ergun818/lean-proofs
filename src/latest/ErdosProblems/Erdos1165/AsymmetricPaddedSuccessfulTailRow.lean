@@ -1158,7 +1158,7 @@ theorem successfulPaddedCoarseBridgeSegments_unmarked_prod_eq
   rw [paddedCoarseBridgeSegments_eq_map]
   unfold successfulPaddedCoarseBridges
     paddedSuccessfulUnmarkedKernelProduct
-  simp only [List.map_map, List.map_ofFn, Function.comp_apply,
+  simp only [List.map_ofFn, Function.comp_apply,
     List.prod_ofFn]
   rfl
 
@@ -1211,14 +1211,14 @@ bridge mass bounded by the public radial envelope times its exact unmarked
 kernel product. -/
 theorem eventually_successfulBridgeMass_le_radialTail_mul_kernel :
     ∀ᶠ q : ℕ in Filter.atTop, ∀ k ≤ decorrelationCutoff q,
-      ∀ (hk : k + 1 ≤ q) (hkTwo : 2 ≤ k + 1)
-        (hkp : k + 1 < pairPrefixScale q k)
-        (htail : profileUpperTailStart ≤ pairPrefixScale q k),
+      ∀ (hk : k + 1 ≤ q) (_hkTwo : 2 ≤ k + 1)
+        (_hkp : k + 1 < pairPrefixScale q k)
+        (_htail : profileUpperTailStart ≤ pairPrefixScale q k),
       ∀ {start : ℕ} {x y : Point}
         (code : CoarseSplitCompletionCode start q k hk profileUpperDelta x y
           (profileInnerBoundary q k y)
           (discBoundary (0, 0) (outerScale q)) (0, 0))
-        (reference : CoarseSuccessfulReturnTuple code),
+        (_reference : CoarseSuccessfulReturnTuple code),
         (∑' tail : CoarseSuccessfulReturnTuple code,
             ∏ j, stoppedWordMass (tail.1 j).1.1) ≤
           ENNReal.ofReal (Real.exp 1 *
@@ -1268,7 +1268,9 @@ theorem eventually_successfulBridgeMass_le_radialTail_mul_kernel :
           paddedSuccessfulUnmarkedKernelProduct
             hn hkTwo hdelta code reference := by
     rw [← hprod]
-    convert hpadded using 1 <;> simp only [segments] <;> rfl
+    convert hpadded using 1
+    simp only [segments]
+    rfl
   have hbridge := tsum_successfulBridgeMass_le_radialTail_mul_unmarked
     hn hkTwo hdelta hkp hpq code reference hcontinuation
   calc
@@ -1287,9 +1289,9 @@ successful continuation supplies the harmless reference used by the padded
 parser. -/
 theorem eventually_successfulBridgeMass_le_radialTail_mul_kernel_all :
     ∀ᶠ q : ℕ in Filter.atTop, ∀ k ≤ decorrelationCutoff q,
-      ∀ (hk : k + 1 ≤ q) (hkTwo : 2 ≤ k + 1)
-        (hkp : k + 1 < pairPrefixScale q k)
-        (htail : profileUpperTailStart ≤ pairPrefixScale q k),
+      ∀ (hk : k + 1 ≤ q) (_hkTwo : 2 ≤ k + 1)
+        (_hkp : k + 1 < pairPrefixScale q k)
+        (_htail : profileUpperTailStart ≤ pairPrefixScale q k),
       ∀ {start : ℕ} {x y : Point}
         (code : CoarseSplitCompletionCode start q k hk profileUpperDelta x y
           (profileInnerBoundary q k y)

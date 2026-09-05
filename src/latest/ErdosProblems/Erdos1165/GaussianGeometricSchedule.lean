@@ -223,7 +223,7 @@ lemma geometricRadius_lower {s : ℕ} (hs : 32 ≤ s) :
   have hy : y / 2 ≤ (⌊y⌋₊ : ℕ) := by linarith
   change (s : ℝ) ^ (6 / 5 : ℝ) / 32 ≤
     (⌊(s : ℝ) ^ (6 / 5 : ℝ) / 16⌋₊ : ℕ)
-  convert hy using 1 <;> simp only [y] <;> ring
+  convert hy using 1; simp only [y]; ring
 
 lemma geometricRadius_le {s : ℕ} :
     (geometricRadius s : ℝ) ≤ (s : ℝ) ^ (6 / 5 : ℝ) / 16 := by
@@ -312,7 +312,7 @@ lemma geometricSchedule_radius_eq {s J n : ℕ} :
 
 theorem geometricSchedule_scale {s J n : ℕ}
     (hs : 32 ≤ s)
-    (hterminal : 2 ^ J * s ≤ n)
+    (_hterminal : 2 ^ J * s ≤ n)
     (hupper : n < 2 * (2 ^ J * s))
     (hlarge : (2560 * 4096 : ℝ) ≤ (s : ℝ) ^ (2 / 5 : ℝ)) :
     ∀ b ∈ geometricSchedule s J n,
@@ -370,7 +370,7 @@ theorem geometricSchedule_A12
       · exact hcw.1
       · intro c hc l hl
         have := hcw.2 c hc l hl
-        convert this using 1 <;> norm_num
+        convert this using 1; norm_num
   | succ j =>
       change gaussianCenteredPrefixProduct (completeGeometricBlock s).start *
           Real.exp (-gaussianBlockTotalCost
@@ -381,7 +381,7 @@ theorem geometricSchedule_A12
       · exact hcw.1
       · intro c hc l hl
         have := hcw.2 c hc l hl
-        convert this using 1 <;> norm_num
+        convert this using 1; norm_num
 
 private lemma spectral_reference_identity {x : ℝ} (hx : 0 < x) :
     1280 * x * (2 * x) ^ 2 / (x ^ (6 / 5 : ℝ) / 32) ^ 2 =
@@ -449,7 +449,7 @@ lemma geometricSchedule_spectralCost_le {s J n : ℕ}
 
 /-- Generic length bound for the recursively defined block cost. -/
 lemma gaussianBlockTotalCost_le_length_mul {blocks : List GaussianBlock}
-    {S C : ℝ} (hS : 0 ≤ S) (hC : 0 ≤ C)
+    {S C : ℝ} (_hS : 0 ≤ S) (hC : 0 ≤ C)
     (hspectral : ∀ b ∈ blocks, gaussianBlockSpectralCost b ≤ S)
     (hconnector : ∀ b ∈ blocks,
       gaussianConnectorCost (b.start + b.steps) b.radius ≤ C) :
@@ -476,7 +476,6 @@ lemma gaussianBlockTotalCost_le_length_mul {blocks : List GaussianBlock}
               S + C + ((c :: blocks).length : ℕ) * (S + C) := by
                 linarith
             _ = (((b :: c :: blocks).length : ℕ) : ℝ) * (S + C) := by
-              push_cast
               simp only [List.length_cons, Nat.cast_add, Nat.cast_one]
               ring
 
@@ -755,7 +754,7 @@ lemma geometricDepth_terminal_lower {s n : ℕ}
   exact Nat.pow_log_le_self 2 hdiv0
 
 lemma geometricDepth_terminal_upper {s n : ℕ}
-    (hs : 0 < s) (hsn : s ≤ n) :
+    (hs : 0 < s) (_hsn : s ≤ n) :
     n < 2 * (2 ^ geometricDepth s n * s) := by
   have hdiv := Nat.lt_pow_succ_log_self (by omega : 1 < 2) (n / s)
   have hmul : (n / s + 1) * s ≤ 2 ^ (geometricDepth s n + 1) * s := by

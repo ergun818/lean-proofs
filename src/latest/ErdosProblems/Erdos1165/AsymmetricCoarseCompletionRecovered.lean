@@ -13,6 +13,10 @@ open Set
 
 namespace Erdos1165.AsymmetricCoarseCompletionRecovered
 
+open TerminalSkeletonFactorization renaming
+  shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix →
+    shiftSteps_mem_assembledTerminalWordCylinder
+
 open AnnularBoundaryExcursionKernel AnnularProfileClocks
 open AsymmetricCoarseScanSignature
 open AsymmetricCoarseCompletionSourceGeometry
@@ -44,7 +48,7 @@ theorem coarseSplitCompletionData_eq_of_fields
 /-- The data available from membership in a literal coarse completion atom.
 The last field is the only place where the retained right scanner is used. -/
 def SourceCoarseSplitCompletionMemberCore
-    (start n k : ℕ) (x y : Point) (hk : k + 1 ≤ n)
+    (start n k : ℕ) (x y : Point) (_hk : k + 1 ≤ n)
     (data : CoarseSplitCompletionData start n k) (omega : StepPath) : Prop :=
   ∃ candidate : (j : Fin data.returnCount) →
       CoarseSignatureReturnCode x y (profileInnerBoundary n k y) data j,
@@ -86,7 +90,7 @@ theorem sourceCoarseSplitCompletionMemberCore
   let horizon := assembledTerminalHorizon data.skeleton words
   have htail : shiftSteps start omega ∈
       stoppedWordCylinder (assembledTerminalWord data.skeleton words) :=
-    TerminalSkeletonFactorization.shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix
+    shiftSteps_mem_assembledTerminalWordCylinder
       hcylinder
   have hcanonicalFirst : AbsoluteBoundaryFirstAt
       (discBoundary (0, 0) (outerScale n)) (0, 0)
@@ -120,7 +124,7 @@ theorem sourceCoarseSplitCompletionMemberCore
   have hsourceTail : shiftSteps start source ∈
       stoppedWordCylinder
         (assembledTerminalWord data.skeleton referenceWords) :=
-    TerminalSkeletonFactorization.shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix
+    shiftSteps_mem_assembledTerminalWordCylinder
       hsourceCylinder
   have hsourceTrajectory : ∀ r ≤ referenceHorizon,
       trajectory (shiftSteps start source) r =
@@ -255,7 +259,7 @@ theorem sourceCoarseSplitCompletionData_recovered
     exact returnComplete_of_boundaryExcursionCount_eq hcount h
   have htail : shiftSteps start omega ∈
       stoppedWordCylinder (assembledTerminalWord data.skeleton words) :=
-    TerminalSkeletonFactorization.shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix
+    shiftSteps_mem_assembledTerminalWordCylinder
       hcylinder
   have hpre : stepPrefix start omega = data.pre :=
     stepPrefix_eq_of_mem_assembleAfterPrefix hcylinder

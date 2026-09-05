@@ -32,7 +32,7 @@ confinement preserves the left profile outside the three-coordinate buffer,
 so retaining these scanner values would only shrink the normalization
 denominator without strengthening the buffered conclusion. -/
 def PrefixXProfileScanSignature
-    (n l : ℕ) (x start : Point) (word : List Direction) :
+    (n l : ℕ) (_x _start : Point) (_word : List Direction) :
     PrefixXProfileScanSignatureData n l :=
   fun _ _ ↦ ((0, 0), TerminalBoundaryScan.initialState)
 
@@ -43,7 +43,7 @@ geometry. -/
 abbrev SingleScanSignatureData := Bool → Point × BoundaryScanState
 
 def SingleScanSignature
-    (outer inner : Set Point) (start : Point) (word : List Direction) :
+    (_outer _inner : Set Point) (_start : Point) (_word : List Direction) :
     SingleScanSignatureData :=
   fun _ ↦ ((0, 0), TerminalBoundaryScan.initialState)
 
@@ -52,12 +52,12 @@ prefix signature through separation determines the complete `x` scanner
 transition. -/
 theorem xProfileScanCompatible_of_prefixSignature_eq
     {n : ℕ} {x y start endpoint : Point}
-    (hlevel : separationLevel n x y ≤ n)
-    (hstart : start ∈
+    (_hlevel : separationLevel n x y ≤ n)
+    (_hstart : start ∈
       disc y (scaleRadius n (separationLevel n x y)))
     (left right : BoundaryExitWordCode
       (profileInnerBoundary n (separationLevel n x y) y) start endpoint)
-    (hprefix :
+    (_hprefix :
       PrefixXProfileScanSignature n (separationLevel n x y) x start
           (List.ofFn left.1.2) =
         PrefixXProfileScanSignature n (separationLevel n x y) x start
@@ -69,12 +69,12 @@ theorem xProfileScanCompatible_of_prefixSignature_eq
 that their split index is the geometric separation level. -/
 theorem xProfileScanCompatible_of_prefixSignature_eq_at_separationLevel
     {n splitLevel : ℕ} {x y start endpoint : Point}
-    (hseparation : splitLevel = separationLevel n x y)
-    (hlevel : splitLevel ≤ n)
-    (hstart : start ∈ disc y (scaleRadius n splitLevel))
+    (_hseparation : splitLevel = separationLevel n x y)
+    (_hlevel : splitLevel ≤ n)
+    (_hstart : start ∈ disc y (scaleRadius n splitLevel))
     (left right : BoundaryExitWordCode
       (profileInnerBoundary n splitLevel y) start endpoint)
-    (hprefix : PrefixXProfileScanSignature n splitLevel x start
+    (_hprefix : PrefixXProfileScanSignature n splitLevel x start
         (List.ofFn left.1.2) =
       PrefixXProfileScanSignature n splitLevel x start
         (List.ofFn right.1.2)) :
@@ -87,13 +87,13 @@ both endpoint-matched words are confined to a `y` disc already lying inside
 the separation disc, so their scanner actions agree automatically. -/
 theorem xProfileScanCompatible_of_prefixSignature_eq_of_separation_le
     {n splitLevel : ℕ} {x y start endpoint : Point}
-    (hlevel : separationLevel n x y ≤ n)
-    (hseparation : separationLevel n x y ≤ splitLevel)
-    (hsplit : splitLevel ≤ n)
-    (hstart : start ∈ disc y (scaleRadius n splitLevel))
+    (_hlevel : separationLevel n x y ≤ n)
+    (_hseparation : separationLevel n x y ≤ splitLevel)
+    (_hsplit : splitLevel ≤ n)
+    (_hstart : start ∈ disc y (scaleRadius n splitLevel))
     (left right : BoundaryExitWordCode
       (profileInnerBoundary n splitLevel y) start endpoint)
-    (hprefix : PrefixXProfileScanSignature n splitLevel x start
+    (_hprefix : PrefixXProfileScanSignature n splitLevel x start
         (List.ofFn left.1.2) =
       PrefixXProfileScanSignature n splitLevel x start
         (List.ofFn right.1.2)) :

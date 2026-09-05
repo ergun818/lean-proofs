@@ -17,6 +17,10 @@ open scoped BigOperators ENNReal
 
 namespace Erdos1165.AsymmetricCoarseSuccessfulTailAtoms
 
+open TerminalSkeletonFactorization renaming
+  shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix →
+    shiftSteps_mem_assembledTerminalWordCylinder
+
 open AnnularProfileClocks AsymmetricCoarseCompletionCode
 open AsymmetricCoarseNormalizedCompletionRows
 open AsymmetricCoarseScanSignature
@@ -108,8 +112,8 @@ tuple over its canonical valid coarse code. -/
 theorem stoppedSuccessfulPairEvent_subset_successfulCoarseTailAtoms_of_separation_le
     {start n k : ℕ} {profileDelta : ℝ} {x y : Point}
     (hn : 2 ≤ n) (hk : k + 1 ≤ n)
-    (hseparation : AppendixPair.separationLevel n x y ≤ k)
-    (hlevel : k ≤ n) :
+    (_hseparation : AppendixPair.separationLevel n x y ≤ k)
+    (_hlevel : k ≤ n) :
     stoppedSuccessfulPairEvent start n profileDelta x y ⊆
       ⋃ rooted : SuccessfullyRootedCoarseSplitCompletionCode
           start n k hk profileDelta x y
@@ -144,7 +148,7 @@ theorem stoppedSuccessfulPairEvent_subset_successfulCoarseTailAtoms_of_separatio
   let horizon := assembledTerminalHorizon code.1.skeleton words
   have htailCylinder : shiftSteps start source ∈
       stoppedWordCylinder (assembledTerminalWord code.1.skeleton words) :=
-    TerminalSkeletonFactorization.shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix
+    shiftSteps_mem_assembledTerminalWordCylinder
       hcylinder
   have hfirst : AbsoluteBoundaryFirstAt
       (discBoundary (0, 0) (outerScale n)) (0, 0)
@@ -168,10 +172,6 @@ theorem stoppedSuccessfulPairEvent_subset_successfulCoarseTailAtoms_of_separatio
       (trajectory (assembledTerminalPath code.1.skeleton words)) n horizon
         profileDelta y := by
     refine ⟨hsourceSuccessful.1, ?_⟩
-    change SuccessfulProfile n profileDelta
-      (excursionProfile
-        (trajectory (assembledTerminalPath code.1.skeleton words)) n
-          horizon y)
     rw [← Proposition13Measurability.excursionProfile_congr_prefix
       htrajectory y, hhorizon]
     exact hsourceSuccessful.2

@@ -97,7 +97,7 @@ theorem InteriorPath.trans {D : Finset Point} {L M : ℕ} {x y z : Point}
   induction hxy with
   | nil => simpa using hyz
   | @cons L x w y hx hxw hwy ih =>
-      convert InteriorPath.cons hx hxw (ih hyz) using 1 <;> omega
+      convert InteriorPath.cons hx hxw (ih hyz) using 1; omega
 
 theorem InteriorPath.start_mem_of_end_mem
     {D : Finset Point} {L : ℕ} {x y : Point}
@@ -139,7 +139,8 @@ lemma exists_neighbor_toward_zero {x : Point} (hx : x ≠ 0) :
   rcases x with ⟨a, b⟩
   by_cases ha : 0 < a
   · refine ⟨(a - 1, b), ⟨1, ?_⟩, ?_, ?_⟩
-    · ext <;> simp [neighbor, directionVector] <;> ring
+    · ext <;> simp [neighbor, directionVector]
+      ring
     · apply Nat.cast_injective (R := ℤ)
       simp only [manhattanNorm, Nat.cast_add, Nat.cast_one]
       rw [Int.natAbs_of_nonneg (by omega : 0 ≤ a - 1),
@@ -162,7 +163,8 @@ lemma exists_neighbor_toward_zero {x : Point} (hx : x ≠ 0) :
       subst a
       by_cases hb : 0 < b
       · refine ⟨(0, b - 1), ⟨3, ?_⟩, ?_, ?_⟩
-        · ext <;> simp [neighbor, directionVector] <;> ring
+        · ext <;> simp [neighbor, directionVector]
+          ring
         · apply Nat.cast_injective (R := ℤ)
           simp only [manhattanNorm, Nat.cast_add, Nat.cast_one]
           rw [Int.natAbs_of_nonneg (by omega : 0 ≤ b - 1),
@@ -175,7 +177,7 @@ lemma exists_neighbor_toward_zero {x : Point} (hx : x ≠ 0) :
           · exact hb'
           · exfalso
             apply hx
-            simpa [hb0]
+            simp [hb0]
           · exact (hb hb').elim
         refine ⟨(0, b + 1), ⟨2, ?_⟩, ?_, ?_⟩
         · ext <;> simp [neighbor, directionVector]
@@ -197,7 +199,7 @@ theorem interiorPath_to_zero (R : ℕ) {x : Point} (hxR : x ∈ closedDisc R) :
   | h n ih =>
       by_cases hx0 : x = 0
       · subst x
-        simp at hn
+        change 0 = n at hn
         subst n
         exact InteriorPath.nil (0 : Point)
       · obtain ⟨y, hxy, hnorm, hradius⟩ := exists_neighbor_toward_zero hx0
@@ -206,7 +208,7 @@ theorem interiorPath_to_zero (R : ℕ) {x : Point} (hxR : x ∈ closedDisc R) :
           exact hradius.trans hxR
         have hyn : manhattanNorm y < n := by omega
         have hyPath := ih (manhattanNorm y) hyn hyR rfl
-        convert InteriorPath.cons hxR hxy hyPath using 1 <;> omega
+        convert InteriorPath.cons hxR hxy hyPath using 1; omega
 
 /-- A point in the radius-`R` disc has taxicab norm at most `2R`.  This coarse
 constant is enough to make the universal Harnack loss completely explicit. -/
@@ -769,7 +771,7 @@ noncomputable def evenAnchor (x : Point) : Point :=
 theorem even_evenAnchor (x : Point) :
     Even ((evenAnchor x).1 + (evenAnchor x).2) := by
   by_cases hx : Even (x.1 + x.2)
-  · simpa [evenAnchor, hx] using hx
+  · simp [evenAnchor, hx]
   · simp only [evenAnchor, if_neg hx]
     exact neighbor_even_of_not_even hx 0
 
@@ -781,7 +783,7 @@ theorem abs_planarPotentialKernel_sub_evenAnchor_le {x : Point}
       300 / ((max (firstDiagonalOffset (evenAnchor x))
         (secondDiagonalOffset (evenAnchor x)) - 2 : ℕ) : ℝ) := by
   by_cases hx : Even (x.1 + x.2)
-  · simp [evenAnchor, hx]
+  · simp only [evenAnchor, if_pos hx, sub_self, abs_zero]
     positivity
   · have h := abs_planarPotentialKernel_odd_sub_neighbor_le_radius hx 0
     have hR' : 2 < max (firstDiagonalOffset (x - directionVector 0))

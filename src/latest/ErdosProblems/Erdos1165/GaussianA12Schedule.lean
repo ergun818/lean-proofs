@@ -92,7 +92,7 @@ private lemma rpow_three_div_rpow_two_add {x delta : ℝ} (hx : 0 < x) :
   field_simp
   have hmul : x ^ (1 - 2 * delta) * x ^ (2 * (1 + delta)) = x ^ 3 := by
     rw [← Real.rpow_add hx]
-    convert Real.rpow_natCast x 3 using 1 <;> ring_nf
+    convert Real.rpow_natCast x 3 using 1; ring_nf
   calc
     1280 * x ^ 3 * 32 ^ 2 = 1310720 * x ^ 3 := by ring
     _ = 1310720 *
@@ -117,10 +117,10 @@ lemma lateBlockRadius_lower {n : ℕ} {delta : ℝ}
   have hy : y / 2 ≤ (⌊y⌋₊ : ℕ) := by linarith
   change (n : ℝ) ^ (1 + delta) / 32 ≤
     (⌊(n : ℝ) ^ (1 + delta) / 16⌋₊ : ℕ)
-  convert hy using 1 <;> simp only [y] <;> ring
+  convert hy using 1; simp only [y]; ring
 
 lemma lateBlockRadius_le_power {n : ℕ} {delta : ℝ}
-    (hdelta : 0 ≤ delta) :
+    (_hdelta : 0 ≤ delta) :
     (lateBlockRadius n delta : ℝ) ≤ (n : ℝ) ^ (1 + delta) / 16 := by
   exact Nat.floor_le (by positivity)
 
@@ -246,20 +246,20 @@ theorem lateBlock_exp_cost_le_constrainedGaussianDeviationWeight
     (lateBlockSchedule_consecutive n delta)
     (lateBlockSchedule_end n delta)
   · intro c hc
-    simp only [lateBlockSchedule, List.mem_cons, List.not_mem_nil, or_false] at hc
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hc
     subst c
     simp only [lateBlock_start]
     omega
   · intro c hc
-    simp only [lateBlockSchedule, List.mem_cons, List.not_mem_nil, or_false] at hc
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hc
     subst c
     exact lateBlock_scale hn hdelta hlarge
   · intro c hc l hl
-    simp only [lateBlockSchedule, List.mem_cons, List.not_mem_nil, or_false] at hc
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hc
     subst c
     exact lateBlock_radius_le_center (by omega) hdelta hdeltaOne hl
   · intro c hc l hl
-    simp only [lateBlockSchedule, List.mem_cons, List.not_mem_nil, or_false] at hc
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hc
     subst c
     exact lateBlock_radius_le_envelope (by omega) hdelta hdeltaOne hl
 

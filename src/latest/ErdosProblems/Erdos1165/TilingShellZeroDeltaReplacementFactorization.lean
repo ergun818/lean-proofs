@@ -115,7 +115,7 @@ private theorem replacement_prefix_pos
   have hexists : ∃ b : TilingAwayDomino t eta.1.1.start eta.1.1.retained
       (staticD eta.1.1 eta.1.2), b ∉ A := by
     by_contra hn
-    push_neg at hn
+    push Not at hn
     let hrepresented := sourceStaticSupport_subset_externalDominoBases eta
     let e := supportAwayEquiv t eta.1.1.start eta.1.1.retained eta.1.2
       hrepresented
@@ -223,7 +223,7 @@ theorem replacement_accepted
         eta.1.2 b.1).1 b.2)
   have hsourceCoordinate : ∀ b,
       tilingShellZeroSourceCoordinate
-        (cap := coordinateCap eta.1.1 m cap) (m := m)
+        (_cap := coordinateCap eta.1.1 m cap) (m := m)
         (w := shellWidth48 m) t eta.1.1.start eta.1.1.retained
         (staticD eta.1.1 eta.1.2) (upper eta.1.1 eta.1.2 m)
         b (ellSource b) := by

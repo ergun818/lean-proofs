@@ -40,6 +40,8 @@ open scoped BigOperators ENNReal NNReal ProbabilityTheory
 
 namespace Erdos1165.AnnularProfileMarkedSkeleton
 
+universe u
+
 noncomputable section
 
 open AppendixFirstMoment AppendixA11A12ScaleCertificate
@@ -190,9 +192,9 @@ marked disintegration of its literal atom. -/
 structure FullSkeletonProfileAtom
     (blockStart scale : ℕ) (profileDelta historyLoss : ℝ)
     (x : Point) (m : Profile scale) where
-  Data : Type*
-  Entrance : Type*
-  Exit : Type*
+  Data : Type u
+  Entrance : Type u
+  Exit : Type u
   successful : Set StepPath
   atom : Set StepPath
   loss : ℝ≥0∞

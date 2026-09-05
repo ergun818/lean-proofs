@@ -65,7 +65,6 @@ theorem tsum_one_div_cube_shift_le {M : ℕ} (hM : 0 < M) :
         exact_mod_cast (by omega : M ≤ n + M)
       have hsucc : (n + M + 1 : ℝ) ≤ 2 * (n + M) := by
         have hone : (1 : ℝ) ≤ n + M := by exact_mod_cast (by omega : 1 ≤ n + M)
-        norm_num only [Nat.cast_add, Nat.cast_one]
         linarith
       rw [div_eq_mul_inv]
       field_simp
@@ -247,7 +246,8 @@ theorem tsum_cubeGaussianWeight_le {Q : ℕ} (hQ : 0 < Q) :
             (mul_nonneg (by norm_num) (by positivity))
         have hmain := div_le_div_of_nonneg_right hexp
           (pow_nonneg (by positivity : (0 : ℝ) ≤ n + Q + 1) 3)
-        convert hmain using 1 <;> ring
+        convert hmain using 1
+        ring
       _ ≤ 2 / ((Q + 1 : ℕ) : ℝ) ^ 2 := hc
   have htail' : ∑' n : ℕ, cubeGaussianWeight Q (n + Q) ≤
       2 / (Q : ℝ) ^ 2 := by

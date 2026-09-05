@@ -163,27 +163,31 @@ structure TilingCofinalSharpWindowTailData {index : Type*}
               (factored.start z cap) (factored.retained z cap) b.1)))
         threshold shellGrowth48 j bound ell
   upper_lt_truncation : ∀ z cap, capStart z ≤ cap →
-    ∀ (b : TilingCappedMarginalization.TilingAwayDomino (factored.tiling z cap) (factored.start z cap)
+    ∀ (b : TilingCappedMarginalization.TilingAwayDomino (factored.tiling z cap)
+      (factored.start z cap)
       (factored.retained z cap) (factored.distinguished z cap)) v,
     v ∈ activeUpperFailureWindow m
         (Fintype.card (TilingCoordinatesAt (factored.tiling z cap)
           (factored.start z cap) (factored.retained z cap) b.1)) →
       v < factored.upper z cap b
   lower_lt_truncation : ∀ z cap, capStart z ≤ cap →
-    ∀ (b : TilingCappedMarginalization.TilingAwayDomino (factored.tiling z cap) (factored.start z cap)
+    ∀ (b : TilingCappedMarginalization.TilingAwayDomino (factored.tiling z cap)
+      (factored.start z cap)
       (factored.retained z cap) (factored.distinguished z cap)) v,
     v ∈ activeLowerFailureWindow m
         (Fintype.card (TilingCoordinatesAt (factored.tiling z cap)
           (factored.start z cap) (factored.retained z cap) b.1)) →
       v < factored.upper z cap b
   upper_le_cap : ∀ z cap, capStart z ≤ cap →
-    ∀ (b : TilingCappedMarginalization.TilingAwayDomino (factored.tiling z cap) (factored.start z cap)
+    ∀ (b : TilingCappedMarginalization.TilingAwayDomino (factored.tiling z cap)
+      (factored.start z cap)
       (factored.retained z cap) (factored.distinguished z cap)) v,
     v ∈ activeUpperFailureWindow m
         (Fintype.card (TilingCoordinatesAt (factored.tiling z cap)
           (factored.start z cap) (factored.retained z cap) b.1)) → v ≤ cap
   lower_le_cap : ∀ z cap, capStart z ≤ cap →
-    ∀ (b : TilingCappedMarginalization.TilingAwayDomino (factored.tiling z cap) (factored.start z cap)
+    ∀ (b : TilingCappedMarginalization.TilingAwayDomino (factored.tiling z cap)
+      (factored.start z cap)
       (factored.retained z cap) (factored.distinguished z cap)) v,
     v ∈ activeLowerFailureWindow m
         (Fintype.card (TilingCoordinatesAt (factored.tiling z cap)

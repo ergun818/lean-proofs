@@ -38,7 +38,6 @@ lemma scaleRadius_add_one_le_previous
     unfold regularRadius
     have harg : (n : ℝ) - ((k - 1 : ℕ) : ℝ) =
         ((n : ℝ) - (k : ℝ)) + 1 := by
-      push_cast
       have hkcast : (1 : ℝ) ≤ k := by exact_mod_cast hk0
       rw [Nat.cast_sub (by omega : 1 ≤ k)]
       push_cast

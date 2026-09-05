@@ -86,7 +86,7 @@ mutual
         (w : ProfileCycleOuterPoint n k center),
         RecursiveProfileForestCode n k center forest u w → ℝ≥0∞
     | .nil, _u, _w, code => stoppedWordMass code.1
-    | .cons child tail, u, w, code =>
+    | .cons child tail, _u, w, code =>
         stoppedWordMass code.2.2.1.1 *
           recursiveProfileGapCodeMass n (k + 1) center child
             code.1 code.2.1 code.2.2.2.1 *

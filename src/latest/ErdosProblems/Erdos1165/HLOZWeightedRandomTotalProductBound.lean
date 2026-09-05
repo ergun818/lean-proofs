@@ -225,7 +225,7 @@ lemma rankMultiplicity_mul_thresholdedProductEnvelope_le_sharp
           (2 : ℝ) ^
             thresholdedGrowthCut threshold shellGrowth48 j total) ≤
       sharpRankConstant * sharpInterfaceCost threshold j := by
-  exact _root_.Erdos1165.HLOZSharpProductNumerics.rankMultiplicity_mul_thresholdedProductEnvelope_le_sharp
+  exact HLOZSharpProductNumerics.rankMultiplicity_mul_thresholdedProductEnvelope_le_sharp
       (4 / 3 : ℝ) (by norm_num)
       four_thirds_le_positiveInterfaceRatioConstant threshold j total
 
@@ -262,7 +262,7 @@ theorem rankMultiplicityWeightedRandomTotal_product_bound_sharp
     positivity
   · exact hratio
   · intro total _
-    exact _root_.Erdos1165.HLOZSharpProductNumerics.rankMultiplicity_mul_thresholdedProductEnvelope_le_sharp
+    exact HLOZSharpProductNumerics.rankMultiplicity_mul_thresholdedProductEnvelope_le_sharp
         C hC0 hC threshold j total
 
 end

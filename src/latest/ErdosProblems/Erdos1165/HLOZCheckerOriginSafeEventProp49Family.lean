@@ -50,7 +50,7 @@ distinguished-coordinate event. -/
 noncomputable def completeOriginSafeEventCandidateNear
     {t : DominoTiling} {o : Orientation} {m k : ℕ}
     (eta : SourceSupportedIndex t o m k) (a : GapScale) (low : ℕ)
-    (e : Direction) (event : Set WalkPath)
+    (e : Direction) (_event : Set WalkPath)
     (hm : 1 < m) (hk : 0 < k)
     (hwindow : Prop49WindowArithmeticAt m a)
     (harithmetic : ShellZeroWindowArithmeticAt m)
@@ -63,7 +63,7 @@ noncomputable def completeOriginSafeEventCandidateNear
 theorem measurableSet_completeOriginSafeEventCandidateNear
     {t : DominoTiling} {o : Orientation} {m k : ℕ}
     (eta : SourceSupportedIndex t o m k) (a : GapScale) (low : ℕ)
-    (e : Direction) (event : Set WalkPath) (hevent : MeasurableSet event)
+    (e : Direction) (event : Set WalkPath) (_hevent : MeasurableSet event)
     (hm : 1 < m) (hk : 0 < k)
     (hwindow : Prop49WindowArithmeticAt m a)
     (harithmetic : ShellZeroWindowArithmeticAt m)

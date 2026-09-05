@@ -462,7 +462,7 @@ noncomputable def sourceSplitCompletionAtom
 attribute [irreducible] sourceSplitCompletionAtom
 
 theorem source_mem_intervalWordsStoppedCylinder
-    {start n k : ℕ} {x y : Point} {omega : StepPath}
+    {start n k : ℕ} {_x y : Point} {omega : StepPath}
     (hn : 1 ≤ n) (hk : k + 1 ≤ n)
     (hy : y ∈ candidateBox n)
     (hexit : IsOuterExitTime
@@ -533,7 +533,7 @@ theorem source_mem_pairedSignatureCompletionAt
   have hcylinder : omega ∈ stoppedWordCylinder
       (assembleAfterPrefix (stepPrefix start omega) code
         (intervalWords sigma t.entrance t.exit)) := by
-    exact source_mem_intervalWordsStoppedCylinder (x := x) hn hk hy hexit
+    exact source_mem_intervalWordsStoppedCylinder (_x := x) hn hk hy hexit
   apply mem_pairedSignatureFixedCompletionAtom_of_sourceCylinder
     sourceFirst source
   · intro j

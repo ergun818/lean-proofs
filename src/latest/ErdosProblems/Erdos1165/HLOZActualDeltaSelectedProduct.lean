@@ -192,7 +192,7 @@ theorem actualDeltaSelectedStoppedGeometricMass_eq
       (sourceActualDeltaStoppingTime data cap delta) z.initial.1
       z.retainedCount (data.coordinateCap cap) t z.start z.retained z.tail.1
       (actualDeltaSelectedPredicate data selected cap delta)
-      (Classical.decPred _) D (selected cap) (Classical.decPred _)
+      D (selected cap) (Classical.decPred _)
       (data.upper cap) (sourceActualDeltaScreen data cap delta)
       (Classical.decPred _)
       (actualDeltaSelectedPredicate_factorization data selected cap delta

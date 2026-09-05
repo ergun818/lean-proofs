@@ -296,7 +296,7 @@ that must be paid by the full-gap and upper-transition assemblies. -/
 theorem eventually_simpleRandomWalk_tilingFilteredRandomClockCandidateOverflow_le_sum
     (t : DominoTiling)
     (cutoff : ℕ → ℕ) (bands : ℕ → Finset RandomClockBand)
-    (eligible : ∀ m, RandomClockBand → Set WalkPath)
+    (eligible : ∀ _m, RandomClockBand → Set WalkPath)
     (hbeta : ∀ m band, band ∈ bands m → kappaOne ≤ band.beta)
     (data : ∀ m band,
       AllSixFilteredSourceCorrectBandProductData t m (cutoff m) band

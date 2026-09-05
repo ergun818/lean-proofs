@@ -901,7 +901,8 @@ theorem exactFixedProfileRadialWord_reference_sum_le_ofReal_profile_terminal_mas
 When the terminal window is strictly positive, any chronological contour
 reaching that window forces every preceding profile count to be positive;
 otherwise the fixed-profile word family is empty. -/
-theorem exactFixedProfileRadialWord_reference_sum_le_ofReal_profile_terminal_mass_of_terminalLower_pos
+theorem
+    exactFixedProfileRadialWord_reference_sum_le_ofReal_profile_terminal_mass_of_terminalLower_pos
     {n : ℕ} (hn : 2 ≤ n) {delta : ℝ} (hlower : 0 < terminalLower n delta)
     {m : Profile n} :
     (∑ word : {word : BoundedRadialLabelWord n

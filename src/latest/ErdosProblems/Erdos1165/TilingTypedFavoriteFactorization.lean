@@ -393,7 +393,7 @@ probability estimate. -/
 structure TypedStoppedStageScreeningData
     (t : DominoTiling) (m k : ℕ) (stage next : Set WalkPath)
     (cost : ℝ≥0∞) where
-  accepts : ∀ z : TypedFavoriteTilingTraceCode t, ∀ cap,
+  accepts : ∀ z : TypedFavoriteTilingTraceCode t, ∀ _cap,
     FiniteDominoProductLaw.TruncatedTotals
       (typedPositiveAwayUpper t m z) → Bool
   invariant : ∀ (z : TypedFavoriteTilingTraceCode t) cap q q',

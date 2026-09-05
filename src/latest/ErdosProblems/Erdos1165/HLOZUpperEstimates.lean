@@ -143,9 +143,9 @@ lemma latticeDistance_le_manhattanNorm (x y : Point) :
   let a : ℝ := ((x.1 - y.1 : ℤ) : ℝ)
   let b : ℝ := ((x.2 - y.2 : ℤ) : ℝ)
   have ha : (((x.1 - y.1 : ℤ).natAbs : ℕ) : ℝ) = |a| := by
-    simpa [a] using Int.natCast_natAbs (R := ℝ) (x.1 - y.1)
+    simp [a]
   have hb : (((x.2 - y.2 : ℤ).natAbs : ℕ) : ℝ) = |b| := by
-    simpa [b] using Int.natCast_natAbs (R := ℝ) (x.2 - y.2)
+    simp [b]
   rw [latticeDistance, PotentialKernel.manhattanNorm]
   change Real.sqrt (a ^ 2 + b ^ 2) ≤
     (((x.1 - y.1 : ℤ).natAbs + (x.2 - y.2 : ℤ).natAbs : ℕ) : ℝ)
@@ -190,7 +190,7 @@ lemma upperTailCutoffLog_eq {m : ℕ} (hm : 0 < m) :
       Real.pi ^ (1 / 2 : ℝ) * (m : ℝ) ^ (1 / 2 : ℝ) +
         Real.pi ^ (21 / 16 : ℝ) * (m : ℝ) ^ (5 / 16 : ℝ) := by
   rw [levelCutoffLog_eq_hloz upperTailDelta hm]
-  congr 1 <;> norm_num [upperTailDelta]
+  congr 1; norm_num [upperTailDelta]
 
 lemma eventually_const_mul_nat_rpow_le_half_linear (C a : ℝ) (ha : a < 1) :
     ∀ᶠ m : ℕ in atTop, C * (m : ℝ) ^ a ≤ (m : ℝ) / 2 := by

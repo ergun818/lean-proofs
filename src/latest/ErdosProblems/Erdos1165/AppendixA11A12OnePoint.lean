@@ -157,7 +157,7 @@ lemma gaussianSegmentProduct_eq_exp_from {start n : ℕ}
 
 lemma centeredPrefix_exponent_eq_embedded
     {n : ℕ} {b : GaussianBlock} {bs : List GaussianBlock}
-    (hbstart : 2 ≤ b.start) (hbn : b.start ≤ n)
+    (_hbstart : 2 ≤ b.start) (hbn : b.start ≤ n)
     (p : IndependentGaussianBlockPaths (b :: bs))
     (hconsecutive : ConsecutiveBlocks (b :: bs)) :
     (∑ l ∈ Finset.Ico 2 b.start,
@@ -181,7 +181,7 @@ lemma centeredPrefix_exponent_eq_embedded
 
 lemma shiftedA11Factor_mul_connected_le_tailStirling
     {n : ℕ} {b : GaussianBlock} {bs : List GaussianBlock}
-    (hn : 2 ≤ n) (hbstart : 2 ≤ b.start)
+    (_hn : 2 ≤ n) (hbstart : 2 ≤ b.start)
     (hconsecutive : ConsecutiveBlocks (b :: bs))
     (hend : gaussianBlocksEnd (b :: bs) = n)
     (hcenter : ∀ c ∈ b :: bs, ∀ l, BlockContains c l →
@@ -232,7 +232,7 @@ lemma shiftedA11Factor_mul_connected_le_tailStirling
   rw [hsegment]
   unfold shiftedA11Factor
   rw [← Real.exp_add]
-  convert ha11 using 1 <;> ring_nf
+  convert ha11 using 1; ring_nf
 
 /-- Pointwise A.11 comparison for a member of the injective multiblock
 family, including the exact centered prefix. -/

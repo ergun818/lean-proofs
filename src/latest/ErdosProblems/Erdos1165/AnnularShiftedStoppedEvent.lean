@@ -19,7 +19,7 @@ theorem stoppedSuccessfulPointEvent_eq_shiftSteps_preimage
       shiftSteps start ⁻¹'
         stoppedSuccessfulPointEvent 0 scale delta x := by
   ext omega
-  simp only [stoppedSuccessfulPointEvent, Set.mem_setOf_eq,
+  simp only [stoppedSuccessfulPointEvent, Set.mem_ofPred_eq,
     Set.mem_preimage]
   change (∃ horizon,
       ThickPoint.IsOuterExitTime (trajectory (shiftSteps start omega))

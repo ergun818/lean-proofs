@@ -105,7 +105,6 @@ theorem prefixedTilingStoppedAcceptedGeometricMass_le_delta_sum
     (replacementPredicate : Delta → TilingCappedCoordinates i cap → Prop)
     (D : Finset Point)
     (selected : TilingDistinguishedCoordinates (cap := cap) t x r D → Prop)
-    [DecidablePred selected]
     (upper : TilingAwayDomino t x r D → ℕ)
     (sourceScreen : TruncatedTotals upper → Prop)
     [DecidablePred sourceScreen]
@@ -181,7 +180,6 @@ theorem ofReal_prefixedTilingStoppedAcceptedGeometricMass_le_delta_tsum
     (replacementPredicate : Delta → TilingCappedCoordinates i cap → Prop)
     (D : Finset Point)
     (selected : TilingDistinguishedCoordinates (cap := cap) t x r D → Prop)
-    [DecidablePred selected]
     (upper : TilingAwayDomino t x r D → ℕ)
     (sourceScreen : TruncatedTotals upper → Prop)
     [DecidablePred sourceScreen]
@@ -214,6 +212,7 @@ theorem ofReal_prefixedTilingStoppedAcceptedGeometricMass_le_delta_tsum
         ENNReal.ofReal (prefixedTilingStoppedAcceptedGeometricMass
           (replacementTau delta) initial t x r cap tail
             (replacementPredicate delta)) := by
+  classical
   have hreal := prefixedTilingStoppedAcceptedGeometricMass_le_delta_sum
     sourceTau replacementTau initial t x r tail sourcePredicate
       replacementPredicate D selected upper sourceScreen replacementScreen

@@ -647,13 +647,13 @@ theorem point_mem_profileInnerBoundary_iff_add
       center (scaleRadius n k) (origin + z)).mpr
     have h' := (BoundaryStoppedHarnack.mem_discBoundary_translate
       (center - origin) (scaleRadius n k) z).mp h
-    convert h' using 1 <;> abel
+    convert h' using 1 ; abel
   · intro h
     apply (BoundaryStoppedHarnack.mem_discBoundary_translate
       (center - origin) (scaleRadius n k) z).mpr
     have h' := (BoundaryStoppedHarnack.mem_discBoundary_translate
       center (scaleRadius n k) (origin + z)).mp h
-    convert h' using 1 <;> abel
+    convert h' using 1 ; abel
 
 theorem profileGapOffspringCount_eq_paddedChildCount
     {n l p : ℕ} {center : Point}
@@ -1818,42 +1818,47 @@ theorem split_adjacent_eval
       paddedPreludeSplit (p := l + 2) source.start source.endpoint
           source.bridge = .entered source.start first q parent word_eq ∧
         parent.1 = source.bridge.1 := by
-  unfold paddedPreludeSplit
-  simp only [Nat.add_one_sub_one, Lean.Elab.WF.paramLet, exists_and_right, Subtype.exists, exists_eq_right,
-    List.append_left_eq_self, List.ofFn_eq_nil_iff, Sigma.exists]
-  constructor
-  · refine ⟨?_, ?_⟩
-    · constructor
-      · exact Or.inl (by
-          simpa only [PlanarPotential.trajectoryFrom_zero,
-            profileInnerBoundary] using
-            (mem_discBoundaryFinset.mp source.start.2))
-      · intro r hr
-        omega
-    · apply (Subtype.heq_iff_coe_eq (fun stopped ↦ by
-        simp only [ht0, PlanarPotential.trajectoryFrom_zero])).2
-      simp only [AsymmetricSplitLevelSplice.incrementSliceBoundaryExitWordCode,
-        TerminalVisitSpliceInvariance.stoppedWordOfList]
-      exact listStoppedWord_incrementSlice_extend_zero_to_eq_zero
-        source.bridge.1 _ ht0
-  · refine ⟨?_, ?_⟩
-    · refine ⟨source.bridge.2.1, ?_, source.bridge.2.2⟩
-      simp only [AsymmetricSplitLevelSplice.incrementSliceBoundaryExitWordCode,
-        TerminalVisitSpliceInvariance.stoppedWordOfList]
-      have htail := listStoppedWord_incrementSlice_extend_from_eq_zero
-        source.bridge.1 _ ht0
-      exact congrArg (fun word : StoppedWord ↦
-        boundaryExcursionCount
-          (profileInnerBoundary n (l + 1) center)
-          (profileInnerBoundary n (l + 2) center) source.start.1
-          (extendStoppedWord word) word.1) htail.symm
-    ·
-      apply (Subtype.heq_iff_coe_eq (fun stopped ↦ by
-        have htail := listStoppedWord_incrementSlice_extend_from_eq_zero
-          source.bridge.1 _ ht0
-        simp only [ht0, PlanarPotential.trajectoryFrom_zero])).2
-      exact listStoppedWord_incrementSlice_extend_from_eq_zero
-        source.bridge.1 _ ht0
+  generalize hsplit : paddedPreludeSplit (p := l + 2)
+    source.start source.endpoint source.bridge = split
+  cases split with
+  | direct _first _word_eq =>
+      simp [paddedPreludeSplit, ht0, PlanarPotential.trajectoryFrom_zero,
+        hnotOuter] at hsplit
+  | entered u first q parent word_eq =>
+      have hu : u = source.start := by
+        apply Subtype.ext
+        have hpoint := congrArg
+          (fun parsed : PaddedPreludeSplit n l (l + 2) center
+              source.start source.endpoint source.bridge ↦
+            match parsed with
+            | .direct _ _ => source.endpoint.1
+            | .entered v _ _ _ _ => v.1) hsplit
+        simpa only [paddedPreludeSplit, Lean.Elab.WF.paramLet, ht0,
+          PlanarPotential.trajectoryFrom_zero, dif_neg hnotOuter] using hpoint.symm
+      subst u
+      refine ⟨first, q, parent, word_eq, rfl, ?_⟩
+      have hword := congrArg
+        (fun parsed : PaddedPreludeSplit n l (l + 2) center
+            source.start source.endpoint source.bridge ↦
+          match parsed with
+          | .direct first _ => first.1
+          | .entered _ _ _ parent _ => parent.1) hsplit
+      have hnotOuterAt : PlanarPotential.trajectoryFrom source.start.1
+          (extendStoppedWord source.bridge.1)
+          (paddedPreludeHitTime n l (l + 2) center source.start.1
+            source.endpoint.1 source.bridge) ∉ profileInnerBoundary n l center := by
+        simpa only [ht0, PlanarPotential.trajectoryFrom_zero] using hnotOuter
+      calc
+        parent.1 = AlternatingConcatPrefixFree.listStoppedWord
+            (TerminalSkeletonWords.incrementSlice (extendStoppedWord source.bridge.1)
+              (paddedPreludeHitTime n l (l + 2) center source.start.1
+                source.endpoint.1 source.bridge) source.bridge.1.1) := by
+          simpa only [paddedPreludeSplit, Lean.Elab.WF.paramLet, dif_neg hnotOuterAt,
+            AsymmetricSplitLevelSplice.incrementSliceBoundaryExitWordCode,
+            TerminalVisitSpliceInvariance.stoppedWordOfList,
+            AlternatingConcatPrefixFree.listStoppedWord] using hword.symm
+        _ = source.bridge.1 :=
+          listStoppedWord_incrementSlice_extend_from_eq_zero source.bridge.1 _ ht0
 
 theorem base
     {n l : ℕ} {center : Point}

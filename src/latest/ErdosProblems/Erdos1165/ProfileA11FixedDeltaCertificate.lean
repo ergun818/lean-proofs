@@ -201,7 +201,7 @@ theorem embeddedTailA11Certificate_one_fifth
     calc
       |2 * (l : ℝ) ^ 2 -
           (2 * (l : ℝ) ^ 2 + (independentBlockDeviation p l : ℝ) - 1)| =
-          |1 - (independentBlockDeviation p l : ℝ)| := by congr 1 <;> ring
+          |1 - (independentBlockDeviation p l : ℝ)| := by congr 1; ring
       _ ≤ 1 + |(independentBlockDeviation p l : ℝ)| := by
         simpa only [abs_one] using abs_sub 1 (independentBlockDeviation p l : ℝ)
       _ ≤ 2 * ((l : ℝ) * (l : ℝ) ^ (1 / 5 : ℝ)) := by linarith
@@ -238,7 +238,7 @@ theorem embeddedTailA11Certificate_one_fifth
         (2 * (l : ℝ) ^ 2 + (independentBlockDeviation p l : ℝ))| =
           |(4 * (l : ℝ) + 2) +
             ((independentBlockDeviation p (l + 1) : ℝ) -
-              (independentBlockDeviation p l : ℝ))| := by congr 1 <;> ring
+              (independentBlockDeviation p l : ℝ))| := by congr 1; ring
       _ ≤ |4 * (l : ℝ) + 2| +
           |(independentBlockDeviation p (l + 1) : ℝ) -
             (independentBlockDeviation p l : ℝ)| := abs_add_le _ _
@@ -291,7 +291,7 @@ theorem embeddedTailA11Certificate_one_fifth
       calc
         _ = |(4 * (l : ℝ) + 3) +
             ((independentBlockDeviation p (l + 1) : ℝ) -
-              (independentBlockDeviation p l : ℝ))| := by congr 1 <;> ring
+              (independentBlockDeviation p l : ℝ))| := by congr 1; ring
         _ ≤ |4 * (l : ℝ) + 3| +
             |(independentBlockDeviation p (l + 1) : ℝ) -
               (independentBlockDeviation p l : ℝ)| := abs_add_le _ _

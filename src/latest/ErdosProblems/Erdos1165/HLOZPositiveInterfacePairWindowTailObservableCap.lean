@@ -156,10 +156,7 @@ theorem positiveInterfaceExternalPairSourcePredicate_forward_observableSingleton
   classical
   have hforward := positiveInterfaceExternalPairSourcePredicate_forward_singleton
     eta b cap threshold bound q hq
-  refine ⟨⟨hforward.1, ?_⟩, ?_⟩
-  refine ⟨q, hq.1, ?_⟩
-  rfl
-  exact hforward.2
+  exact ⟨⟨hforward.1, q, hq.1, rfl⟩, hforward.2⟩
 
 /-- Observable singleton selections retain the generic replacement
 acceptance theorem. -/
@@ -259,7 +256,7 @@ theorem positiveInterfaceExternalPairSourceStoppedGeometricMass_le_observableSin
       eta.1.1.initial.1 eta.1.1.retainedCount (data.coordinateCap cap) t
       eta.1.1.start eta.1.1.retained eta.1.1.tail.1
       (positiveInterfaceExternalPairSourcePredicate eta cap threshold bound)
-      (Classical.decPred _) D
+      D
       (singletonPairObservableSelected eta b cap threshold bound)
       (Classical.decPred _) (data.upper cap)
       (singletonPairWindowScreen eta b cap) (Classical.decPred _)

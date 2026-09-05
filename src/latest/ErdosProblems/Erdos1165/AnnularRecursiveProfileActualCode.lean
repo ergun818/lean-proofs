@@ -356,7 +356,7 @@ def recursiveProfileForestCodeOfAssemblyFin
         (profileRefinementForestOfFin q childTree) start outerPoint
   | 0, _childTree, _start, _innerPoint, _returnPoint, _outerPoint,
       assembly, _children => assembly.2.2
-  | q + 1, childTree, start, innerPoint, returnPoint, outerPoint,
+  | q + 1, childTree, _start, innerPoint, returnPoint, outerPoint,
       assembly, children =>
       ⟨innerPoint 0, returnPoint 0, assembly.1 0, children 0,
         recursiveProfileForestCodeOfAssemblyFin n k center q
@@ -487,9 +487,9 @@ theorem actualParsedProfileGap_tree
       rfl
   | cons b rest ih =>
       intro k a hk0 hdepth data i u w hu hw
-      simp only [actualParsedProfileGap, List.rec]
+      simp only [actualParsedProfileGap]
       unfold parsedProfileGapOfBoundaryExcursion
-      simp only [ActualParsedProfileGap.tree, refinementTrees]
+      simp only [refinementTrees]
       rw [profileRefinementForestOfFin_eq_ofList_ofFn]
       congr 3
       funext j

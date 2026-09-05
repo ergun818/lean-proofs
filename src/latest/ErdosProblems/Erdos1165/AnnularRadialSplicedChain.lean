@@ -123,9 +123,9 @@ theorem fairSteps_radialChainFinalAtom
         intro endpoint _
         rw [fairSteps_boundaryExitMarkedSteps_inter_post,
           ih target endpoint.1]
-        rfl
-        exact measurableSet_radialChainFinalAtom n center hfinal
-          target tail endpoint.1
+        · rfl
+        · exact measurableSet_radialChainFinalAtom n center hfinal
+            target tail endpoint.1
       · intro left right hne
         exact (disjoint_boundaryExitMarkedSteps_singletons
           (otherRadialBoundaries n center source) start left.1 right.1
@@ -250,9 +250,9 @@ theorem fairSteps_spatiallySplicedRadialChainAtom
     intro endpoint _
     rw [fairSteps_boundaryExitMarkedSteps_inter_post,
       fairSteps_radialChainFinalAtom n center hfinal]
-    rfl
-    exact measurableSet_radialChainFinalAtom n center hfinal
-      source targets endpoint.1
+    · rfl
+    · exact measurableSet_radialChainFinalAtom n center hfinal
+        source targets endpoint.1
   · intro left right hne
     exact (disjoint_boundaryExitMarkedSteps_singletons
       initialBoundary initialStart left.1 right.1

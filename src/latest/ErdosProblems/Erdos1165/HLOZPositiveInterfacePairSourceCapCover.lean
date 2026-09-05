@@ -99,7 +99,7 @@ theorem exists_positiveInterfaceExternalPairSourceCap_of_raw_growth
     {band : RandomClockBand}
     {threshold : ℕ → ℕ} {shell : ℕ} {s : WalkPath}
     (hm : 1 < m)
-    (hphase : band.vertexPhase = false)
+    (_hphase : band.vertexPhase = false)
     (hthreshold : 0 < band.externalThreshold)
     (hcreation : ThresholdCreation s m band.oldRank n)
     (hnext : thresholdCount s n (m + 1) = 0)

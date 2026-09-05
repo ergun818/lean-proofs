@@ -54,7 +54,6 @@ lemma geometricCutoff_scale_large :
   rw [geometricCutoff_rpow]
   rw [show (2560 * 4096 : ℝ) = (geometricCutoffBase : ℝ) by
     norm_num [geometricCutoffBase]]
-  change (geometricCutoffBase : ℝ) ≤ (geometricCutoffBase : ℝ) ^ 2
   have hbase : (1 : ℝ) ≤ geometricCutoffBase := by
     norm_num [geometricCutoffBase]
   nlinarith [sq_nonneg ((geometricCutoffBase : ℝ) - 1)]

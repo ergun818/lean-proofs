@@ -333,7 +333,7 @@ lemma transitionSegmentProduct_le_exp_sum
     _ = _ := by rw [Real.exp_sum]
 
 lemma sum_two_div_profileBase_le_four
-    (start n : ℕ) (hstart : 2 ≤ start) (hstartn : start ≤ n)
+    (start n : ℕ) (hstart : 2 ≤ start) (_hstartn : start ≤ n)
     (m : ℕ → ℕ)
     (hbase : ∀ l ∈ Finset.Ico start n,
       (l : ℝ) ^ 2 ≤ (m l - 1 : ℕ)) :
@@ -583,7 +583,7 @@ structure ConstrainedProfileUpperCertificate {n : ℕ} (m : Profile n) : Prop wh
 /-- Every member of the exact HLOZ tube has a uniform tail Taylor
 certificate.  No pathwise estimate is assumed. -/
 theorem constrainedProfileUpperCertificate {n : ℕ}
-    (hn : profileUpperTailStart ≤ n) {m : Profile n}
+    (_hn : profileUpperTailStart ≤ n) {m : Profile n}
     (hm : IsConstrainedProfile profileUpperDelta m) :
     ConstrainedProfileUpperCertificate m := by
   have hstartTwo : 2 ≤ profileUpperTailStart := by
@@ -643,7 +643,7 @@ theorem constrainedProfileUpperCertificate {n : ℕ}
     calc
       |2 * (l : ℝ) ^ 2 -
           (2 * (l : ℝ) ^ 2 + (profileIntegerDeviation m l : ℝ) - 1)| =
-          |1 - (profileIntegerDeviation m l : ℝ)| := by congr 1 <;> ring
+          |1 - (profileIntegerDeviation m l : ℝ)| := by congr 1; ring
       _ ≤ 1 + |(profileIntegerDeviation m l : ℝ)| := by
         simpa only [abs_one] using abs_sub 1 (profileIntegerDeviation m l : ℝ)
       _ ≤ 2 * ((l : ℝ) * (l : ℝ) ^ (1 / 5 : ℝ)) := by linarith
@@ -716,7 +716,7 @@ theorem constrainedProfileUpperCertificate {n : ℕ}
         (2 * (l : ℝ) ^ 2 + (profileIntegerDeviation m l : ℝ))| =
           |(4 * (l : ℝ) + 2) +
             ((profileIntegerDeviation m (l + 1) : ℝ) -
-              (profileIntegerDeviation m l : ℝ))| := by congr 1 <;> ring
+              (profileIntegerDeviation m l : ℝ))| := by congr 1; ring
       _ ≤ |4 * (l : ℝ) + 2| +
           |(profileIntegerDeviation m (l + 1) : ℝ) -
             (profileIntegerDeviation m l : ℝ)| := abs_add_le _ _
@@ -755,7 +755,7 @@ theorem constrainedProfileUpperCertificate {n : ℕ}
         12 * ((l : ℝ) * (l : ℝ) ^ (1 / 5 : ℝ)) := by
       calc
         _ = |((profileAtScale m (l + 1) : ℝ) - profileAtScale m l) + 1| := by
-          congr 1 <;> ring
+          congr 1; ring
         _ ≤ |(profileAtScale m (l + 1) : ℝ) - profileAtScale m l| + 1 := by
           simpa only [abs_one] using
             abs_add_le ((profileAtScale m (l + 1) : ℝ) - profileAtScale m l) 1
@@ -796,7 +796,7 @@ current centered integer deviation `x`. -/
 def gaussianFutureTupleWeight (l : ℕ) (x : ℤ) :
     {steps : ℕ} → (Fin steps → ℕ) → ℝ
   | 0, _p => 1
-  | steps + 1, p =>
+  | _steps + 1, p =>
       gaussianStepWeight l
           (((p 0 : ℕ) : ℤ) - profileCenter (l + 1) - x) *
         gaussianFutureTupleWeight (l + 1)
@@ -854,8 +854,8 @@ theorem sum_gaussianFutureTupleWeight_le
       change (∑ p ∈ Fintype.piFinset T,
         gaussianFutureTupleWeight l x p) ≤ _
       rw [hdecomp, Finset.sum_map]
-      simp only [Finset.sum_product, Fin.consEquiv_apply, Fin.cons_zero,
-        Fin.tail_cons, gaussianFutureTupleWeight]
+      simp only [Finset.sum_product,
+        gaussianFutureTupleWeight]
       have hinner : ∀ y ∈ T 0,
           (∑ q ∈ Fintype.piFinset (Fin.tail T),
             gaussianStepWeight l ((y : ℤ) - profileCenter (l + 1) - x) *
@@ -931,7 +931,7 @@ lemma transitionProduct_ofFn_eq_segment (f : ℕ → ℕ)
           rw [ih]
           rfl
 
-lemma profileWeight_eq_transitionSegmentProduct {n : ℕ} (hn : 2 ≤ n)
+lemma profileWeight_eq_transitionSegmentProduct {n : ℕ} (_hn : 2 ≤ n)
     (m : Profile n) :
     profileWeight m = transitionSegmentProduct 2 (n - 2) (profileAtScale m) := by
   unfold profileWeight profileList
@@ -1097,7 +1097,7 @@ lemma gaussianFutureTupleWeight_eq_segment
       rw [hx, hp0]
       congr 1
       apply ih (l + 1) _
-      · simpa [Nat.add_assoc] using hp0
+      · simp
       · intro i
         have hs := hp i.succ
         have hidx : l + 1 + (i.1 + 1) = l + 1 + 1 + i.1 := by omega

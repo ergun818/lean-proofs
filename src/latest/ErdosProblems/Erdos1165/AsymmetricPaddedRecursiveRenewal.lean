@@ -132,7 +132,7 @@ theorem profileRefinementChainPaddedRenewalKernel_le_expHalf_unmarked
             congr 2
             dsimp only [halfRow]
             ring
-  convert hsubstitute using 1 <;>
+  convert hsubstitute using 1 ;
     simp only [trees, tree, hloss]
 
 /-- Multi-segment form of the fixed-genealogy padded row.  The children are
@@ -1056,7 +1056,7 @@ integrating out the common remote endpoint kernel. -/
 theorem eventually_sum_fixedPrefix_paddedRecursiveProfileContinuation_le_radialTail
     {delta : ℝ} :
     ∀ᶠ blockIndex : ℕ in atTop, ∀ (center x y : Point)
-      (hlevel : separationLevel (scaleIndex delta blockIndex) x y ≤
+      (_hlevel : separationLevel (scaleIndex delta blockIndex) x y ≤
         decorrelationCutoff (scaleIndex delta blockIndex))
       (hcutoff : GaussianGeometricCutoff.geometricCutoff ≤
         pairPrefixScale (scaleIndex delta blockIndex)
@@ -1217,7 +1217,7 @@ level-`l` kernels. -/
 theorem eventually_sum_fixedPrefix_paddedPreludeMultiRecursiveProfileContinuation_le_radialTail
     {delta : ℝ} :
     ∀ᶠ blockIndex : ℕ in atTop, ∀ (center x y : Point)
-      (hlevel : separationLevel (scaleIndex delta blockIndex) x y ≤
+      (_hlevel : separationLevel (scaleIndex delta blockIndex) x y ≤
         decorrelationCutoff (scaleIndex delta blockIndex))
       (hcutoff : GaussianGeometricCutoff.geometricCutoff ≤
         pairPrefixScale (scaleIndex delta blockIndex)
@@ -1290,7 +1290,7 @@ theorem eventually_sum_fixedPrefix_paddedPreludeMultiRecursiveProfileContinuatio
           | Sum.inr u =>
                 paddedUnmarkedKernelENNReal q l start
                 center u segment.2).prod := by
-      convert hsum using 1 <;> simp only [q, l, start]
+      convert hsum using 1 ; simp only [q, l, start]
       congr 2
       apply congrArg (fun f => List.map f segments)
       funext segment

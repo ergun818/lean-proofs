@@ -184,7 +184,8 @@ def positiveDiagonalPoint (d e : ℕ) : Point :=
 
 lemma pointOfWeights_centered (n d e : ℕ) :
     pointOfWeights (2 * n) (n + d) (n + e) = positiveDiagonalPoint d e := by
-  ext <;> simp [pointOfWeights, positiveDiagonalPoint] <;> omega
+  ext <;> simp [pointOfWeights, positiveDiagonalPoint]
+  omega
 
 /-- The exact off-diagonal formula in the form consumed by the Gaussian
 estimates in `BinomialGaussian.lean`. -/
@@ -209,25 +210,29 @@ lemma pointOfWeights_signedOffsets {n : ℕ} {a b : ℤ}
     have hb' : (b.natAbs : ℤ) = b := by
       rw [Int.natCast_natAbs, abs_of_nonneg hb0]
     simp only [weightOfSignedOffset, if_pos ha0, if_pos hb0]
-    ext <;> simp [pointOfWeights, ha', hb'] <;> omega
+    ext <;> simp [pointOfWeights, ha', hb']
+    omega
   · have ha' : (a.natAbs : ℤ) = a := by
       rw [Int.natCast_natAbs, abs_of_nonneg ha0]
     have hb' : (b.natAbs : ℤ) = -b := by
       rw [Int.natCast_natAbs, abs_of_nonpos (le_of_not_ge hb0)]
     simp only [weightOfSignedOffset, if_pos ha0, if_neg hb0]
-    ext <;> simp [pointOfWeights, Nat.cast_sub hb, ha', hb'] <;> omega
+    ext <;> simp [pointOfWeights, Nat.cast_sub hb, ha', hb']
+    omega
   · have ha' : (a.natAbs : ℤ) = -a := by
       rw [Int.natCast_natAbs, abs_of_nonpos (le_of_not_ge ha0)]
     have hb' : (b.natAbs : ℤ) = b := by
       rw [Int.natCast_natAbs, abs_of_nonneg hb0]
     simp only [weightOfSignedOffset, if_neg ha0, if_pos hb0]
-    ext <;> simp [pointOfWeights, Nat.cast_sub ha, ha', hb'] <;> omega
+    ext <;> simp [pointOfWeights, Nat.cast_sub ha, ha', hb']
+    omega
   · have ha' : (a.natAbs : ℤ) = -a := by
       rw [Int.natCast_natAbs, abs_of_nonpos (le_of_not_ge ha0)]
     have hb' : (b.natAbs : ℤ) = -b := by
       rw [Int.natCast_natAbs, abs_of_nonpos (le_of_not_ge hb0)]
     simp only [weightOfSignedOffset, if_neg ha0, if_neg hb0]
-    ext <;> simp [pointOfWeights, Nat.cast_sub ha, Nat.cast_sub hb, ha', hb'] <;> omega
+    ext <;> simp [pointOfWeights, Nat.cast_sub ha, Nat.cast_sub hb, ha', hb']
+    omega
 
 lemma symBinomialMass_weightOfSignedOffset {n : ℕ} (a : ℤ)
     (ha : a.natAbs ≤ n) :

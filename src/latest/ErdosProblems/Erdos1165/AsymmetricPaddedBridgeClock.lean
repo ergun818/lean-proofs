@@ -24,7 +24,7 @@ theorem wordWalk_append_left (start : Point) (left right : List Direction)
   simp [wordWalk, wordPosition, List.take_append_of_le_length hq]
 
 theorem wordWalk_append_right (start : Point) (left right : List Direction)
-    {q : ℕ} (hq : q ≤ right.length) :
+    {q : ℕ} (_hq : q ≤ right.length) :
     wordWalk start (left ++ right) (left.length + q) =
       wordWalk (wordEndpoint start left) right q := by
   simp [wordWalk, wordPosition, List.take_add, wordEndpoint]
@@ -153,7 +153,8 @@ def FirstHitExcursionSchedule.castHorizon
     {s : WalkPath} {outer inner : Set Point} {horizon horizon' count j : ℕ}
     (h : horizon = horizon')
     (schedule : FirstHitExcursionSchedule s outer inner horizon count) :
-    (Erdos1165.AsymmetricPaddedBridgeClock.FirstHitExcursionSchedule.castHorizon h schedule).outerTime j =
+    (Erdos1165.AsymmetricPaddedBridgeClock.FirstHitExcursionSchedule.castHorizon
+      h schedule).outerTime j =
       schedule.outerTime j := by
   subst horizon'
   rfl
@@ -162,7 +163,8 @@ def FirstHitExcursionSchedule.castHorizon
     {s : WalkPath} {outer inner : Set Point} {horizon horizon' count j : ℕ}
     (h : horizon = horizon')
     (schedule : FirstHitExcursionSchedule s outer inner horizon count) :
-    (Erdos1165.AsymmetricPaddedBridgeClock.FirstHitExcursionSchedule.castHorizon h schedule).innerTime j =
+    (Erdos1165.AsymmetricPaddedBridgeClock.FirstHitExcursionSchedule.castHorizon
+      h schedule).innerTime j =
       schedule.innerTime j := by
   subst horizon'
   rfl

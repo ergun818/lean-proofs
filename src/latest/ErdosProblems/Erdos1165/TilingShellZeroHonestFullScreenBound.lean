@@ -55,13 +55,13 @@ private theorem pureSourceScreenMass_eq
         (fun a b ↦ Subtype.instDecidableEq a b)
         (tilingAwayPointMass (cap := cap) t x r D) upper
         (allSourceVector fun b v ↦ tilingShellZeroSourceCoordinate
-          (cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v)
+          (_cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v)
         (instDecidablePredAllSourceVector _) =
       tilingShellZeroAllSourceProductMass (cap := cap) (m := m)
         t x r D upper := by
   classical
   let source := fun b v ↦ tilingShellZeroSourceCoordinate
-    (cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v
+    (_cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v
   rw [@screenMass_eq_product (TilingAwayDomino t x r D)
     (instFintypeTilingAwayDomino t x r D)
     (fun a b ↦ Subtype.instDecidableEq a b)
@@ -106,9 +106,9 @@ private theorem pureReplacementScreenMass_eq
         (tilingAwayPointMass (cap := cap) t x r D) upper
         (exactSourceSubsetVector
           (fun b v ↦ tilingShellZeroSourceCoordinate
-            (cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v)
+            (_cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v)
           (fun b v ↦ tilingShellZeroReplacementCoordinate
-            (cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v)
+            (_cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v)
           (centralReplacementUpperCount shellZeroLocalRatioConstant total))
         (instDecidablePredExactSourceSubsetVector _ _ _) =
       tilingShellZeroCentralReplacementProductMass (cap := cap) (m := m)
@@ -116,9 +116,9 @@ private theorem pureReplacementScreenMass_eq
           (centralReplacementUpperCount shellZeroLocalRatioConstant total) := by
   classical
   let source := fun b v ↦ tilingShellZeroSourceCoordinate
-    (cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v
+    (_cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v
   let replacement := fun b v ↦ tilingShellZeroReplacementCoordinate
-    (cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v
+    (_cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v
   let replacementScreen := exactSourceSubsetVector source replacement
     (centralReplacementUpperCount shellZeroLocalRatioConstant total)
   let namedReplacementScreen := @exactSourceSubsetVector
@@ -214,9 +214,9 @@ theorem fullScreen_le_centralReplacement_of_replacement_accepts
     (hreplacement : ∀ ell,
       exactSourceSubsetVector
         (fun b v ↦ tilingShellZeroSourceCoordinate
-          (cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v)
+          (_cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v)
         (fun b v ↦ tilingShellZeroReplacementCoordinate
-          (cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v)
+          (_cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v)
         (centralReplacementUpperCount shellZeroLocalRatioConstant total) ell →
       replacement.baseAccepts ell) :
     @screenMass (TilingAwayDomino t x r D)
@@ -224,7 +224,7 @@ theorem fullScreen_le_centralReplacement_of_replacement_accepts
         (fun a b ↦ Subtype.instDecidableEq a b)
         (tilingAwayPointMass (cap := cap) t x r D) upper
         (source.fullScreen (allSourceVector fun b v ↦
-          tilingShellZeroSourceCoordinate (cap := cap) (m := m)
+          tilingShellZeroSourceCoordinate (_cap := cap) (m := m)
             (w := shellWidth48 m) t x r D upper b v))
         (Classical.decPred _) ≤
       centralReplacementRatio shellZeroLocalRatioConstant total *
@@ -234,21 +234,21 @@ theorem fullScreen_le_centralReplacement_of_replacement_accepts
           (tilingAwayPointMass (cap := cap) t x r D) upper
           (replacement.fullScreen (exactSourceSubsetVector
             (fun b v ↦ tilingShellZeroSourceCoordinate
-              (cap := cap) (m := m) (w := shellWidth48 m)
+              (_cap := cap) (m := m) (w := shellWidth48 m)
                 t x r D upper b v)
             (fun b v ↦ tilingShellZeroReplacementCoordinate
-              (cap := cap) (m := m) (w := shellWidth48 m)
+              (_cap := cap) (m := m) (w := shellWidth48 m)
                 t x r D upper b v)
             (centralReplacementUpperCount shellZeroLocalRatioConstant total)))
           (Classical.decPred _) := by
   classical
   let sourcePure := allSourceVector fun b v ↦ tilingShellZeroSourceCoordinate
-    (cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v
+    (_cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v
   let replacementPure := exactSourceSubsetVector
     (fun b v ↦ tilingShellZeroSourceCoordinate
-      (cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v)
+      (_cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v)
     (fun b v ↦ tilingShellZeroReplacementCoordinate
-      (cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v)
+      (_cap := cap) (m := m) (w := shellWidth48 m) t x r D upper b v)
     (centralReplacementUpperCount shellZeroLocalRatioConstant total)
   have hsource : screenMass (tilingAwayPointMass (cap := cap) t x r D) upper
       (source.fullScreen sourcePure) ≤

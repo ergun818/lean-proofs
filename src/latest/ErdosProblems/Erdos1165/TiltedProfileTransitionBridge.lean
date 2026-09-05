@@ -71,7 +71,7 @@ theorem hasSum_pow_mul_transitionMass
       split_ifs with hb
       · subst b
         simp
-      · simp [hb]
+      · simp
     rw [hfun]
     simpa using (hasSum_ite_eq 0 (1 : ℝ))
   · have haPos : 0 < a := Nat.pos_of_ne_zero ha
@@ -267,7 +267,7 @@ private lemma one_div_one_sub_le {u : ℝ}
 private lemma tiltParameter_succ_bounds
     {steps : ℕ} {r epsilon K : ℝ}
     (hrOne : 1 ≤ r) (hrUpper : r ≤ 1 + 3 * epsilon)
-    (hepsilon0 : 0 ≤ epsilon) (hK0 : 0 ≤ K)
+    (hepsilon0 : 0 ≤ epsilon) (_hK0 : 0 ≤ K)
     (hzOne : 1 ≤ tiltParameter steps r)
     (hzUpper : tiltParameter steps r ≤ 1 + K * epsilon)
     (hcross : 3 * K * epsilon ≤ 1)

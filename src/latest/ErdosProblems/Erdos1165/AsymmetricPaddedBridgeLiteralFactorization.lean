@@ -197,7 +197,7 @@ theorem paddedPreludeSplit_mass
   generalize hsplit : paddedPreludeSplit (p := p) start endpoint bridge = split
   cases split with
   | direct first hword =>
-      simpa only [hword]
+      simp only [hword]
   | entered u first q parent hword =>
       change stoppedWordMass first.1 * stoppedWordMass parent.1 =
         stoppedWordMass bridge.1

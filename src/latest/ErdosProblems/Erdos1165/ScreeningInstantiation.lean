@@ -752,7 +752,7 @@ lemma abs_deviation_natDiv_le_one (i : ℕ) :
   have hhiR : (i : ℝ) < (15 : ℝ) * ((i / 15 : ℕ) + 1) := by
     exact_mod_cast hhi
   rw [abs_le]
-  constructor <;> unfold deviation <;> push_cast at * <;> linarith
+  constructor <;> (unfold deviation; linarith)
 
 private lemma abs_deviation_le_radius_of_mem_span
     {i width k : ℕ} (hlower : i / 15 ≤ k)
@@ -766,7 +766,6 @@ private lemma abs_deviation_le_radius_of_mem_span
   have hrewrite : deviation i k =
       deviation i (i / 15) + ((k : ℝ) - (i / 15 : ℕ)) := by
     unfold deviation
-    push_cast
     ring
   rw [hrewrite]
   calc
@@ -812,7 +811,6 @@ lemma adjacentFailureWindow_deviation_sub_le
     exact_mod_cast (show b ≤ i / 15 + 2 * width by omega)
   rw [abs_le]
   unfold deviation adjacentWindowSeparation
-  push_cast
   constructor <;> linarith
 
 lemma adjacentWindowRadius_nonneg (width : ℕ) :

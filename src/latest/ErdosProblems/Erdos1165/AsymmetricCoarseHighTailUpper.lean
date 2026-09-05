@@ -16,6 +16,10 @@ open scoped BigOperators ENNReal
 
 namespace Erdos1165.AsymmetricCoarseHighTailUpper
 
+open TerminalSkeletonFactorization renaming
+  shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix →
+    shiftSteps_mem_assembledTerminalWordCylinder
+
 open AnnularProfileClocks AnnularProfileLiteralAtoms
 open AppendixFirstMoment AppendixPair AppendixPairMoment
 open AppendixPairCrossingTail GaussianGeometricCutoff
@@ -184,7 +188,7 @@ def stoppedHighTailProfile
 /-- The source-dependent coarse witness does not logically require a
 successful level-one profile; only the centre and the stopped outer exit are
 needed. -/
-def sourceUnrootedCoarseSplitCompletionWitness
+theorem sourceUnrootedCoarseSplitCompletionWitness
     {start n k : ℕ} {profileDelta : ℝ} {x y : Point} {source : StepPath}
     (hn : 2 ≤ n) (hk : k + 1 ≤ n)
     (hy : y ∈ candidateBox n)
@@ -224,7 +228,6 @@ theorem source_mem_sourceUnrootedCoarseRetainedAtom
         (profileDelta := profileDelta) (x := x) (y := y)
         hn hk hy hexit) := by
   unfold coarseRetainedAtom sourceUnrootedCoarseSplitCompletionCode
-    sourceUnrootedCoarseSplitCompletionWitness
   simpa only [sourceCoarseSplitCompletionAtom] using
     (source_mem_coarseSplitCompletionAtomAt
       (x := x) (y := y) (Nat.one_le_of_lt hn) hk hy hexit)
@@ -253,7 +256,7 @@ theorem mem_coarseConstrainedHighTailEvent_of_stoppedHighTailProfile
   let horizon := assembledTerminalHorizon code.1.skeleton words
   have htailCylinder : shiftSteps start source ∈
       stoppedWordCylinder (assembledTerminalWord code.1.skeleton words) :=
-    TerminalSkeletonFactorization.shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix
+    shiftSteps_mem_assembledTerminalWordCylinder
       hcylinder
   have hfirst : AbsoluteBoundaryFirstAt
       (discBoundary (0, 0) (outerScale n)) (0, 0)
@@ -332,7 +335,7 @@ theorem sourceCoarseSplitCompletionAtom_subset_highTail_of_separation_le_two
   let horizon := assembledTerminalHorizon data.skeleton words
   have htail : shiftSteps start omega ∈
       stoppedWordCylinder (assembledTerminalWord data.skeleton words) :=
-    TerminalSkeletonFactorization.shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix
+    shiftSteps_mem_assembledTerminalWordCylinder
       hcylinder
   have hcanonicalFirst : AbsoluteBoundaryFirstAt
       (discBoundary (0, 0) (outerScale n)) (0, 0)
@@ -368,7 +371,7 @@ theorem sourceCoarseSplitCompletionAtom_subset_highTail_of_separation_le_two
   have hsourceTail : shiftSteps start source ∈
       stoppedWordCylinder
         (assembledTerminalWord data.skeleton referenceWords) := by
-    exact TerminalSkeletonFactorization.shiftSteps_mem_assembledTerminalWordCylinder_of_mem_assembleAfterPrefix
+    exact shiftSteps_mem_assembledTerminalWordCylinder
       hsourceCylinder
   have hreferenceFirst : AbsoluteBoundaryFirstAt
       (discBoundary (0, 0) (outerScale n)) (0, 0)

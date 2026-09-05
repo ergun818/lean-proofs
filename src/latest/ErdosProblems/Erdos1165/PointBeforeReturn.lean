@@ -64,7 +64,7 @@ lemma measurableSet_trajectory_eq_filtration (n : ℕ) (x : Point) :
   have heq : {w : StepPath | trajectory w n = x} =
       stepPrefix n ⁻¹' {u | markovBlockDisplacement u = x} := by
     ext w
-    simp only [Set.mem_setOf_eq, Set.mem_preimage]
+    simp only [Set.mem_ofPred_eq, Set.mem_preimage]
     rw [trajectory_eq_markovBlockDisplacement_stepPrefix]
   rw [heq, incrementFiltration_apply]
   exact ⟨_, measurableSet_eq_fun (measurable_of_countable _) measurable_const, rfl⟩
@@ -332,13 +332,13 @@ private lemma firstPair_exists_of_pair_endpoint {x : Point} {w : StepPath} {n : 
   · exact Or.inl ⟨hk.1, hk0, hbefore⟩
   · exact Or.inr ⟨hk.1, hkx, hbefore⟩
 
-lemma endpoint_eq_iUnion_firstPairRenewalPiece {x z : Point} (hx : x ≠ 0)
+lemma endpoint_eq_iUnion_firstPairRenewalPiece {x z : Point} (_hx : x ≠ 0)
     (hz : z = 0 ∨ z = x) {n : ℕ} (hn : 0 < n) :
     {w : StepPath | trajectory w n = z} =
       ⋃ k ∈ Finset.Icc 1 n, firstPairRenewalPiece x n z k := by
   ext w
-  simp only [Set.mem_setOf_eq, Set.mem_iUnion, firstPairRenewalPiece,
-    Set.mem_union, Set.mem_inter_iff, relativeEndpointAt, Set.mem_ofPred_eq]
+  simp only [Set.mem_ofPred_eq, Set.mem_iUnion, firstPairRenewalPiece,
+    Set.mem_union, Set.mem_inter_iff, relativeEndpointAt]
   constructor
   · intro hend
     obtain ⟨k, hk, hkfirst⟩ := firstPair_exists_of_pair_endpoint hn (hend ▸ hz)
@@ -434,7 +434,7 @@ lemma endpointProbability_neg (n : ℕ) (x : Point) :
   have hpre : reverseSteps ⁻¹' {w : StepPath | trajectory w n = x} =
       {w : StepPath | trajectory w n = -x} := by
     ext w
-    simp only [Set.mem_preimage, Set.mem_setOf_eq]
+    simp only [Set.mem_preimage, Set.mem_ofPred_eq]
     rw [congrFun (trajectory_reverseSteps w) n]
     change -trajectory w n = x ↔ trajectory w n = -x
     constructor <;> intro h
@@ -519,7 +519,7 @@ lemma positiveReturnEvent_subset_firstPairEvent (x : Point) :
   · exact Or.inl (Set.mem_iUnion.mpr ⟨k, hk0⟩)
   · exact Or.inr (Set.mem_iUnion.mpr ⟨k, hkx⟩)
 
-theorem fairSteps_firstPairEvent_union {x : Point} (hx : x ≠ 0) :
+theorem fairSteps_firstPairEvent_union {x : Point} (_hx : x ≠ 0) :
     fairSteps (firstPairZeroEvent x ∪ pointBeforePositiveReturn x) = 1 := by
   apply le_antisymm prob_le_one
   rw [← fairSteps_positiveReturnEvent]

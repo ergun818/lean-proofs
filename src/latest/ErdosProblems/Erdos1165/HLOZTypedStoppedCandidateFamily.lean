@@ -54,7 +54,7 @@ the explicit outside-stage atom, including both noncanonical paths and paths
 which have not reached the relevant old-favorite stage.  A `some` history
 records the actual candidate Finset even when it overflows; such an atom is
 assigned the empty candidate family below. -/
-abbrev TypedStoppedCandidateHistory (t : DominoTiling) (budget : ℕ) :=
+abbrev TypedStoppedCandidateHistory (t : DominoTiling) (_budget : ℕ) :=
   Option (TypedFavoriteTilingTraceCode t × Finset Point)
 
 /-- Equality with one concrete random-clock candidate Finset is measurable.
@@ -270,7 +270,7 @@ theorem typedStoppedCandidates_card_le
   | none => simp [typedStoppedCandidates]
   | some h =>
       by_cases hcard : h.2.card ≤ budget
-      · simpa [typedStoppedCandidates, hcard] using hcard
+      · simp [typedStoppedCandidates, hcard]
       · simp [typedStoppedCandidates, hcard]
 
 /-- Each typed retained-trace atom lies on canonical walk support. -/

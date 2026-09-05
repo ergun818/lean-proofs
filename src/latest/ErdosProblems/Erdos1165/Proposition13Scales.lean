@@ -206,7 +206,7 @@ lemma exp_neg_three_scaleCost_div_eight_le_firstMoment_sq_div_pairMomentBound
   have hM : 0 < M := (Real.exp_pos _).trans_le (by simpa [M, q] using hcard)
   have hqfac : (scaleIndex delta n + 1 : ℝ) ≤
       (scaleIndex delta n + 1 : ℝ) ^ (24 : ℕ) := by
-    exact le_self_pow₀ (by push_cast; linarith) (by norm_num)
+    exact le_self_pow₀ (by linarith) (by norm_num)
   have hbase : M * pointUpperBound delta n ≤
       M ^ 2 * Real.exp (-4 * q + C / 4) := by
     unfold pointUpperBound
@@ -435,7 +435,7 @@ lemma regularRadius_zero_ge_one {q : ℕ} (hq : 0 < q) :
   rw [ThickPoint.regularRadius]
   have hqR : (1 : ℝ) ≤ q := by exact_mod_cast hq
   have hexp : (1 : ℝ) ≤ Real.exp ((q : ℝ) - (0 : ℝ)) := by
-    simpa using Real.one_le_exp (by positivity : (0 : ℝ) ≤ (q : ℝ))
+    simp
   have hpow : (1 : ℝ) ≤ (q : ℝ) ^ (9 : ℕ) := by
     exact one_le_pow₀ hqR
   calc
@@ -486,7 +486,6 @@ lemma exp_scale_le_candidateInterval_card {q : ℕ} (hq : 2 ≤ q) :
   have hab : a ≤ b := by
     rw [← Int.cast_le (R := ℝ)]
     dsimp [a, b]
-    push_cast
     linarith [Int.ceil_lt_add_one (2 * r), Int.lt_floor_add_one (3 * r)]
   have hcardZ : ((ThickPoint.candidateInterval q).card : ℤ) = b + 1 - a := by
     unfold ThickPoint.candidateInterval
@@ -804,7 +803,6 @@ lemma eventually_blockPolynomial_le_exp {delta : ℝ} (hdelta : 0 < delta) :
         (Real.rpow_nonneg (by linarith : 0 ≤ Real.log n) _)] at hsmall
     exact hsmall
   have hqSucc_le : (scaleIndex delta n + 1 : ℝ) ≤ Real.log n := by
-    push_cast
     linarith [hqbounds.2]
   have hlogSucc_le : Real.log (scaleIndex delta n + 1 : ℝ) ≤
       Real.log (Real.log n) := by
@@ -813,7 +811,6 @@ lemma eventually_blockPolynomial_le_exp {delta : ℝ} (hdelta : 0 < delta) :
   have hlogq_le : Real.log (scaleIndex delta n : ℝ) ≤
       Real.log (scaleIndex delta n + 1 : ℝ) := by
     apply Real.log_le_log (by positivity)
-    push_cast
     linarith
   have hlogSucc_final : Real.log (scaleIndex delta n + 1 : ℝ) ≤
       (1 / 100 : ℝ) * Real.log n ^ gapExponent delta :=
@@ -855,7 +852,7 @@ lemma eventually_blockLength_le_exp {delta : ℝ} (hdelta : 0 < delta) :
     unfold ThickPoint.outerScale
     have hexp : Real.exp (2 * (scaleIndex delta n : ℝ)) =
         Real.exp (scaleIndex delta n : ℝ) ^ (2 : ℕ) := by
-      convert Real.exp_nat_mul (scaleIndex delta n : ℝ) 2 using 1 <;> norm_num
+      convert Real.exp_nat_mul (scaleIndex delta n : ℝ) 2 using 1; norm_num
     rw [hexp]
     ring
   rw [hrearrange] at hblock
@@ -1024,7 +1021,7 @@ lemma eventually_globalThreshold_le (delta : ℝ) (hdelta : 0 < delta) :
   dsimp [L, A] at hdeficit hthickPow herr ⊢
   linarith
 
-lemma eventually_thickThreshold_pos (delta : ℝ) (hdelta : 0 < delta) :
+lemma eventually_thickThreshold_pos (delta : ℝ) (_hdelta : 0 < delta) :
     ∀ᶠ n : ℕ in atTop,
       0 < ThickPoint.thickThreshold (scaleIndex delta n) (chosenThickDelta delta) := by
   have hAtop : Tendsto (fun n : ℕ ↦

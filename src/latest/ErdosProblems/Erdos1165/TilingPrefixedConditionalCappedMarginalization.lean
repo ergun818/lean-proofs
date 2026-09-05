@@ -40,7 +40,6 @@ theorem prefixedTilingStoppedAcceptedGeometricMass_eq_screenMass_mul_distinguish
     (t : DominoTiling) (x : Point) (r : TilingRetainedWord t x i)
     (tail : List Direction)
     (predicate : TilingCappedCoordinates i cap → Prop)
-    [DecidablePred predicate]
     (D : Finset Point)
     (selected : TilingDistinguishedCoordinates (cap := cap) t x r D → Prop)
     [DecidablePred selected]
@@ -104,10 +103,8 @@ theorem prefixedTilingStoppedAcceptedGeometricMass_conditional_product_of_factor
     (tail : List Direction)
     (basePredicate screenedPredicate :
       TilingCappedCoordinates i cap → Prop)
-    [DecidablePred basePredicate] [DecidablePred screenedPredicate]
     (D : Finset Point)
     (selected : TilingDistinguishedCoordinates (cap := cap) t x r D → Prop)
-    [DecidablePred selected]
     (upper : TilingAwayDomino t x r D → ℕ)
     (baseAccepts screenedAccepts : TruncatedTotals upper → Prop)
     [DecidablePred baseAccepts] [DecidablePred screenedAccepts]
@@ -135,6 +132,7 @@ theorem prefixedTilingStoppedAcceptedGeometricMass_conditional_product_of_factor
           baseAccepts screenedAccepts *
         prefixedTilingStoppedAcceptedGeometricMass tau initial t x r cap tail
           basePredicate := by
+  classical
   let common := ∑ ell : TruncatedTotals upper,
     distinguishedAwayMass
       (tilingAwayPointMass (cap := cap) t x r D) upper

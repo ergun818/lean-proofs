@@ -101,7 +101,7 @@ theorem boundaryExitEndpointSteps_centered_eq_zero
       boundaryExitEndpointSteps (ThickPoint.discBoundary 0 (R : ℝ))
         (start - center) (exit - center) := by
   ext omega
-  simp only [boundaryExitEndpointSteps, mem_iUnion, mem_setOf_eq]
+  simp only [boundaryExitEndpointSteps, mem_iUnion, mem_ofPred_eq]
   constructor
   · rintro ⟨N, ⟨hboundary, hbefore⟩, hend⟩
     refine ⟨N, ⟨?_, ?_⟩, ?_⟩
@@ -116,7 +116,7 @@ theorem boundaryExitEndpointSteps_centered_eq_zero
         center (R : ℝ) _).mpr
       simpa only [BoundaryStoppedHarnack.trajectoryFrom_sub_center] using
         hkBoundary
-    · simpa only [← BoundaryStoppedHarnack.trajectoryFrom_sub_center,
+    · simp only [← BoundaryStoppedHarnack.trajectoryFrom_sub_center,
         hend]
   · rintro ⟨N, ⟨hboundary, hbefore⟩, hend⟩
     refine ⟨N, ⟨?_, ?_⟩, ?_⟩

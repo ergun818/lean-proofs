@@ -49,11 +49,12 @@ def crossingMixture {Crossing : Type*}
   ∑ m ∈ counts, prefixMass m * tailMass m
 
 lemma crossingMixture_nonneg
-    {Crossing : Type*} [DecidableEq Crossing]
+    {Crossing : Type*}
     {counts : Finset Crossing} {prefixMass tailMass : Crossing → ℝ}
     (hprefix : ∀ m ∈ counts, 0 ≤ prefixMass m)
     (htail : ∀ m ∈ counts, 0 ≤ tailMass m) :
     0 ≤ crossingMixture counts prefixMass tailMass := by
+  classical
   unfold crossingMixture
   exact Finset.sum_nonneg fun m hm ↦
     mul_nonneg (hprefix m hm) (htail m hm)
@@ -61,7 +62,7 @@ lemma crossingMixture_nonneg
 /-- Summing the actual prefix weights before using a uniform tail bound.
 This is the elementary mixture step in (A.16). -/
 theorem crossingMixture_le_tailEnvelope
-    {Crossing : Type*} [DecidableEq Crossing]
+    {Crossing : Type*}
     {counts : Finset Crossing} {prefixMass tailMass : Crossing → ℝ}
     {tailEnvelope : ℝ}
     (hprefix : ∀ m ∈ counts, 0 ≤ prefixMass m)
@@ -69,6 +70,7 @@ theorem crossingMixture_le_tailEnvelope
     (hsum : ∑ m ∈ counts, prefixMass m ≤ 1)
     (htail : ∀ m ∈ counts, tailMass m ≤ tailEnvelope) :
     crossingMixture counts prefixMass tailMass ≤ tailEnvelope := by
+  classical
   calc
     crossingMixture counts prefixMass tailMass ≤
         ∑ m ∈ counts, prefixMass m * tailEnvelope := by
@@ -85,7 +87,7 @@ theorem crossingMixture_le_tailEnvelope
 mass at most an explicit comparison coefficient.  This is the form used
 after multiplying the endpoint-integrated A.6 row errors. -/
 theorem crossingMixture_le_coefficient_mul_tailEnvelope
-    {Crossing : Type*} [DecidableEq Crossing]
+    {Crossing : Type*}
     {counts : Finset Crossing} {prefixMass tailMass : Crossing → ℝ}
     {coefficient tailEnvelope : ℝ}
     (hprefix : ∀ m ∈ counts, 0 ≤ prefixMass m)
@@ -94,6 +96,7 @@ theorem crossingMixture_le_coefficient_mul_tailEnvelope
     (htail : ∀ m ∈ counts, tailMass m ≤ tailEnvelope) :
     crossingMixture counts prefixMass tailMass ≤
       coefficient * tailEnvelope := by
+  classical
   calc
     crossingMixture counts prefixMass tailMass ≤
         ∑ m ∈ counts, prefixMass m * tailEnvelope := by
@@ -109,7 +112,7 @@ theorem crossingMixture_le_coefficient_mul_tailEnvelope
 to provide an inclusion/upper comparison rather than an artificial exact
 factorization. -/
 theorem referenceEventMass_le_coefficient_mul_tailEnvelope_of_crossingMixtureUpper
-    {Crossing : Type*} [DecidableEq Crossing] {coordinates : ℕ}
+    {Crossing : Type*} {coordinates : ℕ}
     (referenceMass : Fin coordinates → ℕ → ℝ≥0∞)
     (visitEvent : Set (Fin coordinates → ℕ))
     (counts : Finset Crossing) (prefixMass tailMass : Crossing → ℝ)
@@ -122,13 +125,14 @@ theorem referenceEventMass_le_coefficient_mul_tailEnvelope_of_crossingMixtureUpp
     (htail : ∀ m ∈ counts, tailMass m ≤ tailEnvelope) :
     (referenceEventMass referenceMass visitEvent).toReal ≤
       coefficient * tailEnvelope := by
+  classical
   exact hfactor.trans
     (crossingMixture_le_coefficient_mul_tailEnvelope
       hprefix henvelope hsum htail)
 
 /-- Source-facing version of the preceding mixture calculation. -/
 theorem referenceEventMass_le_of_crossingMixture
-    {Crossing : Type*} [DecidableEq Crossing] {coordinates : ℕ}
+    {Crossing : Type*} {coordinates : ℕ}
     (referenceMass : Fin coordinates → ℕ → ℝ≥0∞)
     (visitEvent : Set (Fin coordinates → ℕ))
     (counts : Finset Crossing) (prefixMass tailMass : Crossing → ℝ)
@@ -141,6 +145,7 @@ theorem referenceEventMass_le_of_crossingMixture
     (hsum : ∑ m ∈ counts, prefixMass m ≤ 1)
     (htail : ∀ m ∈ counts, tailMass m ≤ tailEnvelope) :
     (referenceEventMass referenceMass visitEvent).toReal ≤ tailEnvelope := by
+  classical
   rw [hfactor]
   exact crossingMixture_le_tailEnvelope hprefix henvelope0 hsum htail
 
@@ -659,7 +664,7 @@ theorem tailEnvelope_le_comparison_mul_div
 /-- Complete finite crossing-count form of (A.16)--(A.17), before the
 sublinear comparison loss is absorbed into the far-pair budget. -/
 theorem referenceEventMass_le_comparison_mul_div
-    {Crossing : Type*} [DecidableEq Crossing] {coordinates prefixScale : ℕ}
+    {Crossing : Type*} {coordinates prefixScale : ℕ}
     (referenceMass : Fin coordinates → ℕ → ℝ≥0∞)
     (visitEvent : Set (Fin coordinates → ℕ))
     (counts : Finset Crossing) (prefixMass tailMass : Crossing → ℝ)
@@ -677,6 +682,7 @@ theorem referenceEventMass_le_comparison_mul_div
       prefixProfileLower prefixScale * tailFloor ≤ pointMass) :
     (referenceEventMass referenceMass visitEvent).toReal ≤
       comparison * (pointMass / prefixProfileLower prefixScale) := by
+  classical
   exact (referenceEventMass_le_of_crossingMixture
       referenceMass visitEvent counts prefixMass tailMass hfactor
       hprefixMass htailEnvelope0 hsum htail).trans

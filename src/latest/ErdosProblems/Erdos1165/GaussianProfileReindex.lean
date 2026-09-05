@@ -87,9 +87,9 @@ lemma centeredProfileValue_injective_on_box {l R : ℕ} {x y : ℤ}
 is in the box; a successor additionally records a boxed displacement and the
 remaining path from the new position. -/
 def GaussianBoxPath (R : ℕ) : (steps : ℕ) → ℤ → Type
-  | 0, x => {u : Unit // x ∈ gaussianBox R}
+  | 0, x => {_u : Unit // x ∈ gaussianBox R}
   | steps + 1, x =>
-      {u : Unit // x ∈ gaussianBox R} ×
+      {_u : Unit // x ∈ gaussianBox R} ×
         Σ d : ↥(gaussianBox R), GaussianBoxPath R steps (x + d.1)
 
 noncomputable instance gaussianBoxPathFintype (R : ℕ) :
@@ -303,7 +303,7 @@ lemma embeddedGaussianPathProfile_mem_constrainedProfiles
       omega
     rw [embeddedGaussianPathProfile_prefix hstart p i hiScale]
     unfold InProfileWindow
-    simp only [Nat.cast_ofNat, Nat.cast_pow, Nat.cast_mul, sub_self, abs_zero]
+    simp only [sub_self, abs_zero]
     exact Real.rpow_nonneg (by positivity) _
   · let j : Fin (steps + 1) :=
       ⟨i.1 - (start - 2), by omega⟩
@@ -393,7 +393,6 @@ private lemma sum_gaussianBoxPath_zero_of_mem
   let : Unique (GaussianBoxPath R 0 x) := {
     default := ⟨(), hx⟩
     uniq := fun p ↦ by
-      change p = (⟨(), hx⟩ : {u : Unit // x ∈ gaussianBox R})
       apply Subtype.ext
       cases p.1
       rfl }
@@ -663,11 +662,11 @@ theorem exp_totalError_le_certifiedProfileBlockPartition
           Real.exp
             (-(1280 : ℝ) * (steps : ℝ) * (n : ℝ) ^ 2 / (R : ℝ) ^ 2) := by
       rw [neg_add, Real.exp_add]
-      congr 2 <;> ring
+      congr 2; ring
     _ ≤ Real.exp (-blockErrorSum edgeError start steps) *
           gaussianBoxPartition start steps R 0 := by
       apply mul_le_mul_of_nonneg_left _ (Real.exp_nonneg _)
-      convert hgauss using 1 <;> ring
+      exact hgauss
     _ ≤ certifiedProfileBlockPartition start steps R 0 := hbridge
 
 /-- Assumption-free finite form of the HLOZ Gaussian/profile block lower

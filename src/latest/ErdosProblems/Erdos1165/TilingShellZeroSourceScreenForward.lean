@@ -100,7 +100,7 @@ def sourceScreen
     (z : OrientedTilingTypedExternalWordCode t) (S : Finset Point)
     (ell : TruncatedTotals (upper z S m)) : Prop :=
   allSourceVector (fun b v ↦ tilingShellZeroSourceCoordinate
-    (cap := coordinateCap z m cap) (m := m) (w := shellWidth48 m)
+    (_cap := coordinateCap z m cap) (m := m) (w := shellWidth48 m)
       t z.start z.retained (staticD z S) (upper z S m) b v) ell
 
 /-- Every capped prefixed reconstruction lies strictly below the common
@@ -148,7 +148,7 @@ theorem boundary_dominance_of_source
     {m k low externalLow externalHigh total cap : ℕ}
     (eta : SupportedSourceStaticSupportIndex t o m k (shellWidth48 m) low
       externalLow externalHigh total)
-    (hm : 1 < m) (hk : 0 < k)
+    (_hm : 1 < m) (_hk : 0 < k)
     (q : TilingCappedCoordinates eta.1.1.retainedCount
       (coordinateCap eta.1.1 m cap))
     (hsource : sourcePredicate t o m k low externalLow externalHigh total cap

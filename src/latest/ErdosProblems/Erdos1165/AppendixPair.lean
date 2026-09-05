@@ -687,7 +687,6 @@ lemma regularRadius_zero_le_two_mul_candidateInterval_card
   have hab : a ≤ b := by
     rw [← Int.cast_le (R := ℝ)]
     dsimp [a, b]
-    push_cast
     linarith [Int.ceil_lt_add_one (2 * r), Int.lt_floor_add_one (3 * r)]
   have hcardZ : ((ThickPoint.candidateInterval n).card : ℤ) = b + 1 - a := by
     unfold ThickPoint.candidateInterval
@@ -913,7 +912,7 @@ theorem measureReal_inter_eq_setIntegral_conditionalEventProbability
 count fibres.  Unlike a union bound, this is an equality. -/
 theorem measureReal_inter_eq_sum_countFibers
     (mu : Measure Omega) [IsFiniteMeasure mu]
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (I : Finset ι) (N : Omega → ι)
     {A B : Set Omega}
     (hN : ∀ i ∈ I, MeasurableSet (N ⁻¹' {i}))
@@ -953,7 +952,7 @@ theorem measureReal_inter_eq_sum_countFiber_conditionalIntegrals
     (mu : Measure Omega) [IsFiniteMeasure mu]
     (m : MeasurableSpace Omega) (hm : m ≤ mOmega)
     [SigmaFinite (mu.trim hm)]
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (I : Finset ι) (N : Omega → ι)
     {A B : Set Omega}
     (hA : @MeasurableSet Omega m A) (hB : @MeasurableSet Omega mOmega B)
@@ -962,6 +961,7 @@ theorem measureReal_inter_eq_sum_countFiber_conditionalIntegrals
     mu.real (B ∩ A) =
       ∑ i ∈ I, ∫ omega in A ∩ (N ⁻¹' {i}),
         @conditionalEventProbability Omega mOmega mu m B omega ∂mu := by
+  classical
   let _ : MeasurableSpace Omega := mOmega
   rw [measureReal_inter_eq_sum_countFibers mu I N
     (fun i hi => hm _ (hN i hi)) hcover]

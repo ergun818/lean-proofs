@@ -296,7 +296,7 @@ theorem iUnion_shellZeroSourceTraceAtom (t : DominoTiling)
       shellZeroSourceEvent t m k w low externalLow externalHigh cut := by
   ext s
   simp only [Set.mem_iUnion, shellZeroSourceTraceAtom, Set.mem_inter_iff,
-    Set.mem_setOf_eq]
+    Set.mem_ofPred_eq]
   constructor
   · rintro ⟨eta, hs, _⟩
     exact hs
@@ -313,7 +313,7 @@ theorem iUnion_shellZeroExactSourceTraceAtom (t : DominoTiling)
       shellZeroExactSourceEvent t m k w low externalLow externalHigh r := by
   ext s
   simp only [Set.mem_iUnion, shellZeroExactSourceTraceAtom,
-    Set.mem_inter_iff, Set.mem_setOf_eq]
+    Set.mem_inter_iff, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨eta, hs, _⟩
     exact hs
@@ -369,7 +369,7 @@ theorem exactCentralSourceCount_newCount
     (source replacement : ∀ c, State c → Prop)
     [∀ c, DecidablePred (source c)] [∀ c, DecidablePred (replacement c)]
     {total central : ℕ} {ell : ∀ c, State c}
-    (hdisjoint : ∀ c v, ¬(source c v ∧ replacement c v))
+    (_hdisjoint : ∀ c v, ¬(source c v ∧ replacement c v))
     (h : exactCentralSourceCount source replacement total central ell) :
     (pairSupport source replacement ell).card - upperCount source ell =
       replacementNewCount total central := by
@@ -381,7 +381,7 @@ theorem exactCentralSourceCount_newCount
 /-- The inserted lazy-count window corresponding to HLOZ's `I₁` after
 translation by the retained external count at the base site. -/
 def tilingShellZeroSourceCoordinate
-    {i cap m w : ℕ} (t : DominoTiling) (x : Point)
+    {i _cap m w : ℕ} (t : DominoTiling) (x : Point)
     (r : TilingRetainedWord t x i) (D : Finset Point)
     (upper : TilingAwayDomino t x r D → ℕ)
     (b : TilingAwayDomino t x r D) (v : Fin (upper b)) : Prop :=
@@ -391,7 +391,7 @@ def tilingShellZeroSourceCoordinate
 /-- The artificial inserted lazy-count window corresponding to HLOZ's `I₀`
 after translation by the retained external count at the base site. -/
 def tilingShellZeroReplacementCoordinate
-    {i cap m w : ℕ} (t : DominoTiling) (x : Point)
+    {i _cap m w : ℕ} (t : DominoTiling) (x : Point)
     (r : TilingRetainedWord t x i) (D : Finset Point)
     (upper : TilingAwayDomino t x r D → ℕ)
     (b : TilingAwayDomino t x r D) (v : Fin (upper b)) : Prop :=
@@ -406,9 +406,9 @@ def tilingExactAllSourceCount
     (ell : TruncatedTotals upper) : Prop := by
   classical
   exact exactAllSourceCount
-      (tilingShellZeroSourceCoordinate (cap := cap) (m := m) (w := w)
+      (tilingShellZeroSourceCoordinate (_cap := cap) (m := m) (w := w)
         t x r D upper)
-      (tilingShellZeroReplacementCoordinate (cap := cap) (m := m) (w := w)
+      (tilingShellZeroReplacementCoordinate (_cap := cap) (m := m) (w := w)
         t x r D upper) total ell
 
 /-- Exact-`total` replacement predicate with exactly `central` coordinates
@@ -420,9 +420,9 @@ def tilingExactCentralSourceCount
     (ell : TruncatedTotals upper) : Prop := by
   classical
   exact exactCentralSourceCount
-      (tilingShellZeroSourceCoordinate (cap := cap) (m := m) (w := w)
+      (tilingShellZeroSourceCoordinate (_cap := cap) (m := m) (w := w)
         t x r D upper)
-      (tilingShellZeroReplacementCoordinate (cap := cap) (m := m) (w := w)
+      (tilingShellZeroReplacementCoordinate (_cap := cap) (m := m) (w := w)
         t x r D upper) total central ell
 
 theorem tilingShellZeroCoordinate_disjoint
@@ -431,9 +431,9 @@ theorem tilingShellZeroCoordinate_disjoint
     (upper : TilingAwayDomino t x r D → ℕ)
     (htranslate : ∀ b : TilingAwayDomino t x r D,
       Fintype.card (TilingCoordinatesAt t x r b.1) ≤ m - w + 1) :
-    ∀ b v, ¬(tilingShellZeroSourceCoordinate (cap := cap)
+    ∀ b v, ¬(tilingShellZeroSourceCoordinate (_cap := cap)
         (m := m) (w := w) t x r D upper b v ∧
-      tilingShellZeroReplacementCoordinate (cap := cap)
+      tilingShellZeroReplacementCoordinate (_cap := cap)
         (m := m) (w := w) t x r D upper b v) := by
   intro b v h
   exact Finset.disjoint_left.mp

@@ -50,7 +50,7 @@ theorem tilingShellZeroSourceCoordinate_iff_prefixedVTwo
     (htotal : tilingDominoTotal t x r (fun j ↦ (q j : ℕ)) b.1 =
       (ell b : ℕ)) :
     tilingShellZeroSourceCoordinate
-        (cap := cap) (m := m) (w := w) t x r D upper b (ell b) ↔
+        (_cap := cap) (m := m) (w := w) t x r D upper b (ell b) ↔
       let v := prefixedTilingInsertionPrefixList initial.1 t x r
         (fun j ↦ (q j : ℕ)) tail.1
       let s := trajectory (extendPrefix (directionVectorOfList v))
@@ -106,7 +106,7 @@ theorem tilingShellZeroReplacementCoordinate_iff_prefixedVTwo
     (htotal : tilingDominoTotal t x r (fun j ↦ (q j : ℕ)) b.1 =
       (ell b : ℕ)) :
     tilingShellZeroReplacementCoordinate
-        (cap := cap) (m := m) (w := w) t x r D upper b (ell b) ↔
+        (_cap := cap) (m := m) (w := w) t x r D upper b (ell b) ↔
       let v := prefixedTilingInsertionPrefixList initial.1 t x r
         (fun j ↦ (q j : ℕ)) tail.1
       let s := trajectory (extendPrefix (directionVectorOfList v))

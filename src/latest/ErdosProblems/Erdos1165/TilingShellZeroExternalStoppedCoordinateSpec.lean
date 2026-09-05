@@ -76,7 +76,7 @@ structure LiteralShellZeroExternalStoppedCoordinateSpec
   replacementSelected : ∀ cap,
     TilingDistinguishedCoordinates (cap := coordinateCap cap)
       t z.start z.retained distinguished → Prop
-  upper : ∀ cap, TilingAwayDomino t z.start z.retained distinguished → ℕ
+  upper : ∀ _cap, TilingAwayDomino t z.start z.retained distinguished → ℕ
   upper_pos : ∀ cap b, 0 < upper cap b
   coordinateSupport : ∀ cap, LiteralShellZeroCoordinateSupportData
     (cap := coordinateCap cap) (m := m) (externalLow := externalLow)
@@ -90,7 +90,7 @@ structure LiteralShellZeroExternalStoppedCoordinateSpec
         distinguished q).1) ∧
       TilingAwayTotalsScreen t z.start z.retained distinguished (upper cap)
         (allSourceVector fun b v ↦ tilingShellZeroSourceCoordinate
-          (cap := coordinateCap cap) (m := m) (w := shellWidth48 m)
+          (_cap := coordinateCap cap) (m := m) (w := shellWidth48 m)
           t z.start z.retained distinguished (upper cap) b v)
         ((splitTilingCoordinatesEquiv t z.start z.retained distinguished q).2)
   replacement_factorization : ∀ cap q,
@@ -103,10 +103,10 @@ structure LiteralShellZeroExternalStoppedCoordinateSpec
       TilingAwayTotalsScreen t z.start z.retained distinguished (upper cap)
         (exactSourceSubsetVector
           (fun b v ↦ tilingShellZeroSourceCoordinate
-            (cap := coordinateCap cap) (m := m) (w := shellWidth48 m)
+            (_cap := coordinateCap cap) (m := m) (w := shellWidth48 m)
             t z.start z.retained distinguished (upper cap) b v)
           (fun b v ↦ tilingShellZeroReplacementCoordinate
-            (cap := coordinateCap cap) (m := m) (w := shellWidth48 m)
+            (_cap := coordinateCap cap) (m := m) (w := shellWidth48 m)
             t z.start z.retained distinguished (upper cap) b v)
           (centralReplacementUpperCount shellZeroLocalRatioConstant total))
         ((splitTilingCoordinatesEquiv t z.start z.retained distinguished q).2)

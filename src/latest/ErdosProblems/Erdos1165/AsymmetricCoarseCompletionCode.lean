@@ -272,13 +272,13 @@ theorem iUnion_coarseRetainedAtom_subset_buffered_of_three
     hn hseparation hlevel hthree code hcode
 
 /-- The actual stopped source supplies a valid coarse code. -/
-def sourceCoarseSplitCompletionWitness
+theorem sourceCoarseSplitCompletionWitness
     {start n k : ℕ} {profileDelta : ℝ} {x y : Point} {source : StepPath}
     (hn : 2 ≤ n) (hk : k + 1 ≤ n)
     (hy : y ∈ candidateBox n)
     (hexit : IsOuterExitTime (trajectory (shiftSteps start source)) n
       (stoppedOuterExitHorizon start n source))
-    (hsourceX : source ∈ stoppedSuccessfulPointEvent
+    (_hsourceX : source ∈ stoppedSuccessfulPointEvent
       start n profileDelta x) :
     CoarseSplitCompletionWitness hk (profileDelta := profileDelta) x y
       (profileInnerBoundary n k y)
@@ -293,13 +293,13 @@ def sourceCoarseSplitCompletionWitness
 
 /-- A valid source witness at any retained split no shallower than geometric
 separation. -/
-def sourceCoarseSplitCompletionWitness_of_separation_le
+theorem sourceCoarseSplitCompletionWitness_of_separation_le
     {start n k : ℕ} {profileDelta : ℝ} {x y : Point} {source : StepPath}
     (hn : 2 ≤ n) (hk : k + 1 ≤ n)
     (hy : y ∈ candidateBox n)
     (hexit : IsOuterExitTime (trajectory (shiftSteps start source)) n
       (stoppedOuterExitHorizon start n source))
-    (hsourceX : source ∈ stoppedSuccessfulPointEvent
+    (_hsourceX : source ∈ stoppedSuccessfulPointEvent
       start n profileDelta x) :
     CoarseSplitCompletionWitness hk (profileDelta := profileDelta) x y
       (profileInnerBoundary n k y)
@@ -367,7 +367,7 @@ atom.  This is the source coverage needed before the deeper `y` refinement. -/
 theorem stoppedSuccessfulPairEvent_subset_iUnion_coarseRetainedAtom
     {start n k : ℕ} {profileDelta : ℝ} {x y : Point}
     (hn : 2 ≤ n) (hk : k + 1 ≤ n)
-    (hseparation : k = separationLevel n x y) (hlevel : k ≤ n) :
+    (_hseparation : k = separationLevel n x y) (_hlevel : k ≤ n) :
     stoppedSuccessfulPairEvent start n profileDelta x y ⊆
       ⋃ code : SuccessfullyRootedCoarseSplitCompletionCode
           start n k hk profileDelta x y
@@ -401,7 +401,7 @@ theorem stoppedSuccessfulPairEvent_subset_iUnion_coarseRetainedAtom
 theorem stoppedSuccessfulPairEvent_subset_iUnion_coarseRetainedAtom_of_separation_le
     {start n k : ℕ} {profileDelta : ℝ} {x y : Point}
     (hn : 2 ≤ n) (hk : k + 1 ≤ n)
-    (hseparation : separationLevel n x y ≤ k) (hlevel : k ≤ n) :
+    (_hseparation : separationLevel n x y ≤ k) (_hlevel : k ≤ n) :
     stoppedSuccessfulPairEvent start n profileDelta x y ⊆
       ⋃ code : SuccessfullyRootedCoarseSplitCompletionCode
           start n k hk profileDelta x y

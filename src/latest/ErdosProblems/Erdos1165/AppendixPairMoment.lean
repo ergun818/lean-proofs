@@ -1362,7 +1362,7 @@ factorization/disintegration and the reference-profile integral bound. -/
 theorem stoppedFarPair_le_of_euclideanShell_sequential
     {blockLength scale : ℕ} {profileDelta thickDelta : ℝ}
     {i : ℕ} {x y : Point}
-    {Data Entrance : Type*} [MeasurableSpace Data] [Fintype Entrance] {m : ℕ}
+    {Data Entrance : Type*} [MeasurableSpace Data] [Finite Entrance] {m : ℕ}
     (dataLaw : Measure Data) [IsProbabilityMeasure dataLaw]
     (R rho : ℕ) {lower harnackFactor pointUpper : ℝ}
     (boundaryReference : Point)
@@ -1416,6 +1416,8 @@ theorem stoppedFarPair_le_of_euclideanShell_sequential
             scale profileDelta thickDelta y) ≤
       harnackFactor *
         (pointUpper ^ 2 / prefixProfileLower prefixScale) := by
+  classical
+  let _ : Fintype Entrance := Fintype.ofFinite Entrance
   refine stoppedFarPair_le_of_sequential_conditionStar
     (dataLaw := dataLaw) (ε := euclideanHitError R rho lower)
     (kernel := fun j d ↦ closedDiscHitKernel R (entrancePoint j d))
@@ -1447,7 +1449,7 @@ in the stopped thick-point event do. -/
 theorem stoppedFarPair_le_of_literalBoundary_sequential
     {blockLength scale : ℕ} {profileDelta thickDelta : ℝ}
     {i : ℕ} {x y : Point}
-    {Data Entrance : Type*} [MeasurableSpace Data] [Fintype Entrance] {m : ℕ}
+    {Data Entrance : Type*} [MeasurableSpace Data] [Finite Entrance] {m : ℕ}
     (dataLaw : Measure Data) [IsProbabilityMeasure dataLaw]
     (R rho : ℕ) {lower harnackFactor pointUpper : ℝ}
     (center boundaryReference : Fin m → Data → Point)
@@ -1502,6 +1504,8 @@ theorem stoppedFarPair_le_of_literalBoundary_sequential
             scale profileDelta thickDelta y) ≤
       harnackFactor *
         (pointUpper ^ 2 / prefixProfileLower prefixScale) := by
+  classical
+  let _ : Fintype Entrance := Fintype.ofFinite Entrance
   refine stoppedFarPair_le_of_sequential_conditionStar
     (dataLaw := dataLaw)
     (ε := BoundaryStoppedHarnack.literalBoundaryHitError R rho lower)

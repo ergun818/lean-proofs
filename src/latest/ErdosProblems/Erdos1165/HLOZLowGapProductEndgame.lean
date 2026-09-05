@@ -57,7 +57,7 @@ theorem hasGapDeficitReturnHarnack_of_stoppedProductData
       LazyGoodRandomClockExtraction
         (onTimeLowGapDeficitExceptionalEvent t m) m
         (levelCutoffTime upperTailDelta m) (cap m) (bands t m))
-    (screen : ∀ t m band,
+    (screen : ∀ _t m band,
       BandProductScreen m (levelCutoffTime upperTailDelta m) band)
     (hthreshold : ∀ t, ∀ᶠ m : ℕ in atTop,
       ∀ band ∈ bands t m, hlozOnePointLevel44 m ≤ band.externalThreshold)
@@ -118,7 +118,7 @@ theorem hasGapDeficitReturnHarnack_of_stoppedProductData
       _ ≤ ENNReal.ofReal
           (Real.exp (-(2 * c) * Real.log (m : ℝ) ^ 2)) := by
         dsimp [q]
-        convert habsorbM using 1 <;> ring_nf
+        convert habsorbM using 1; ring_nf
   exact hasGapDeficitReturnHarnack_of_lazy_randomClock_bounds hc cap laws
     bands index templates B hextract overflowCost hoverflow hother hscale
     hprojects hcard hbetaUpper hreturns

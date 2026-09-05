@@ -259,7 +259,7 @@ theorem chronologicalRadialLabels_head?_eq_of_start_mem
     simpa using radialLabelsAt_eq_singleton_of_mem hn center start label hstart
   unfold chronologicalRadialLabels observedRadialLabels
   rw [List.range_succ_eq_map]
-  simp only [List.flatMap_cons, Nat.zero_eq, hzero, List.singleton_append]
+  simp only [List.flatMap_cons, hzero, List.singleton_append]
   exact compressLabels_head?_eq_some label _
 
 private theorem compressLabelsFrom_append_singleton_getLast?

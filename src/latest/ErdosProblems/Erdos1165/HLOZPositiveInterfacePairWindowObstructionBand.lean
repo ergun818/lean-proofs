@@ -17,6 +17,12 @@ open scoped ENNReal
 
 namespace Erdos1165.HLOZPositiveInterfacePairWindowObstructionBand
 
+open HLOZPositiveInterfacePairWindowTail
+  (eventually_twentyFour_shellWidth48_le_geometricDeviation)
+
+open HLOZDominantPositiveInterfaceSupportSelector
+  (orientedDominantPositiveInterfacePairSupportAt_subset_raw)
+
 open ExternalProposition44
 open HLOZConcreteFullBetaProductData
 open HLOZCandidateLocalBroadThetaProduct
@@ -96,7 +102,7 @@ theorem eventually_positiveInterfacePairWindowScaleArithmetic :
   filter_upwards
       [HLOZShellZeroReplacementWindows.eventually_shellZeroWindowArithmeticAt,
         eventually_four_le_shellWidth48,
-        HLOZPositiveInterfacePairWindowTail.eventually_twentyFour_shellWidth48_le_geometricDeviation,
+        eventually_twentyFour_shellWidth48_le_geometricDeviation,
         eventually_geometricDeviation_le_half,
         eventually_theta_low_arithmetic, hbroadLinear,
         hbroadFourFifths, hthetaFourFifths, hthickLinear,
@@ -249,14 +255,12 @@ theorem positiveInterfaceExternalPairCoordinateCount_lt_level
   let n := creationTimeNat m k s
   have hbPairDominant : b.1.1 ∈ PositiveInterfacePairSupportAt t o m
       externalThreshold width shell s n := by
-    change b.1.1 ∈ PositiveInterfacePairSupportAt t o m externalThreshold
-      width shell s n
     dsimp only [n]
     rw [hs.2.2.2]
     exact hbS
   have hbPair : b.1.1 ∈ orientedPositiveInterfacePairSupportAt t o m
       externalThreshold width shell s n :=
-    HLOZDominantPositiveInterfaceSupportSelector.orientedDominantPositiveInterfacePairSupportAt_subset_raw
+    orientedDominantPositiveInterfacePairSupportAt_subset_raw
       t o m externalThreshold width shell s n hbPairDominant
   have hbSupport := orientedPositiveInterfacePairSupportAt_subset t o m
     externalThreshold width shell s n hbPair
@@ -1044,9 +1048,10 @@ theorem eventually_all_bandPositiveInterfacePairPositiveWindow_le_exp
         (Real.exp (-2 * Real.log (m : ℝ) ^ 2)) := by
       rw [mul_assoc]
       gcongr
-      convert hlevel using 1 <;> congr 1 <;> ring_nf
+      convert hlevel using 1 <;> congr 1
+      ring_nf
     _ ≤ ENNReal.ofReal (Real.exp (-Real.log (m : ℝ) ^ 2)) := by
-      convert hfixed using 1 <;> norm_num <;> congr 1 <;> ring
+      convert hfixed using 1 <;> norm_num
 
 /-- Rankwise finite union of the concrete positive-prefix bad-window
 obstructions. -/
@@ -1151,7 +1156,8 @@ theorem
     _ ≤ ENNReal.ofReal
         (Real.exp (-(1 / 2 : ℝ) * Real.log (m : ℝ) ^ 2)) := by
       dsimp only [q]
-      convert habsorbM using 1 <;> norm_num <;> congr 1 <;> ring
+      convert habsorbM using 1
+      norm_num
 
 theorem
     simpleRandomWalk_positiveInterfacePairPositiveWindowObstructionUnionAtRank_series_ne_top
@@ -1168,11 +1174,11 @@ theorem
 obstruction is either a positive-prefix bad window or the structural
 non-dominant endpoint branch. -/
 theorem
-    bandPositiveInterfacePairArithmeticObstruction_subset_zero_union_positiveWindow_union_nonDominant
+    bandArithmeticObstruction_subset_zero_union_positiveWindow_union_nonDominant
     {data : FullBetaSourceCorrectAllTilingProductData}
     {t : DominoTiling} {m : ℕ} {band : RandomClockBand}
     (hm : 1 < m)
-    (hthreshold : 0 < band.externalThreshold)
+    (_hthreshold : 0 < band.externalThreshold)
     (hwidth : 4 ≤ shellWidth48 m) :
     bandPositiveInterfacePairArithmeticObstructionEvent data t m band ⊆
       bandPositiveInterfaceZeroPrefixEvent data t m band ∪
@@ -1235,14 +1241,14 @@ theorem
             window_ratio := hratio
             boundary_lt := hboundary }).elim
       · right
-        push_neg at hboundary
+        push Not at hboundary
         rcases hboundary with ⟨b, hb⟩
         apply bandPositiveInterfacePairBoundaryObstruction_subset_nonDominant
           hm
         exact ⟨⟨hprofile, hunbalanced⟩, o, horientedFailure, shell, hshell,
           eta, cap, hcode, hcap, b, not_lt_of_ge hb⟩
     · left
-      push_neg at hratio
+      push Not at hratio
       rcases hratio with ⟨b, hb⟩
       have hatShell : s ∈
           bandPositiveInterfacePairPositiveWindowRatioObstructionAtShell
@@ -1255,7 +1261,7 @@ theorem
 
 /-- Rankwise form of the concrete arithmetic split. -/
 theorem
-    positiveInterfacePairArithmeticObstructionUnionAtRank_subset_zero_union_positiveWindow_union_nonDominant
+    arithmeticObstructionUnionAtRank_subset_zero_union_positiveWindow_union_nonDominant
     (data : FullBetaSourceCorrectAllTilingProductData)
     (t : DominoTiling) (rank m : ℕ)
     (hm : 1 < m) (hthreshold : 0 < data.externalThreshold m)
@@ -1274,7 +1280,7 @@ theorem
     canonicalEndpointLowGapBand_externalThreshold
       (mem_sourceProductEndpointBands_iff.mp hband).1
   rcases
-      bandPositiveInterfacePairArithmeticObstruction_subset_zero_union_positiveWindow_union_nonDominant
+      bandArithmeticObstruction_subset_zero_union_positiveWindow_union_nonDominant
         (data := data) (t := t) (band := band) hm
           (hbandThreshold.symm ▸ hthreshold) hwidth hs with
     hzero | hwindow | hnonDominant
@@ -1301,7 +1307,7 @@ theorem
         data t rank m hm hthreshold hs with hzero | harithmetic
   · exact Or.inl hzero
   · rcases
-        positiveInterfacePairArithmeticObstructionUnionAtRank_subset_zero_union_positiveWindow_union_nonDominant
+        arithmeticObstructionUnionAtRank_subset_zero_union_positiveWindow_union_nonDominant
           data t rank m hm hthreshold hwidth harithmetic with
       hzero | hwindow | hnondominant
     · exact Or.inl hzero
@@ -1327,13 +1333,15 @@ theorem
             concreteFullBetaProductData t rank m) ≤
         ENNReal.ofReal
           (Real.exp (-(1 / 4000 : ℝ) * Real.log (m : ℝ) ^ 2)) := by
+    have hwindowBound :=
+      eventually_simpleRandomWalk_positiveInterfacePairPositiveWindowObstructionUnionAtRank_le_exp
+        t rank
     filter_upwards
         [concreteFullBetaProductData.threshold_pos,
           eventually_ge_atTop (2 : ℕ), eventually_four_le_shellWidth48,
           eventually_simpleRandomWalk_positiveInterfaceZeroPrefixPaymentUnionAtRank_le_exp
             concreteFullBetaProductData t rank,
-          eventually_simpleRandomWalk_positiveInterfacePairPositiveWindowObstructionUnionAtRank_le_exp
-            t rank,
+          hwindowBound,
           habsorb]
         with m hthreshold hm hwidth hzero hwindow habsorbM
     have hwindowSlow :
@@ -1344,6 +1352,9 @@ theorem
       apply ENNReal.ofReal_le_ofReal
       apply Real.exp_le_exp.mpr
       nlinarith [sq_nonneg (Real.log (m : ℝ))]
+    have hsplit :=
+      positiveInterfaceProfiledUnbalancedPairRemainderUnionAtRank_subset_zero_union_positiveWindow
+        concreteFullBetaProductData t rank m (by omega) hthreshold hwidth
     calc
       simpleRandomWalk
           (positiveInterfaceProfiledUnbalancedPairRemainderUnionAtRank
@@ -1354,10 +1365,7 @@ theorem
           simpleRandomWalk
             (positiveInterfacePairPositiveWindowObstructionUnionAtRank
               concreteFullBetaProductData t rank m) :=
-        (measure_mono
-          (positiveInterfaceProfiledUnbalancedPairRemainderUnionAtRank_subset_zero_union_positiveWindow
-            concreteFullBetaProductData t rank m (by omega) hthreshold
-              hwidth)).trans (measure_union_le _ _)
+        (measure_mono hsplit).trans (measure_union_le _ _)
       _ ≤ ENNReal.ofReal
               (Real.exp (-(1 / 2000 : ℝ) * Real.log (m : ℝ) ^ 2)) +
             ENNReal.ofReal
@@ -1366,7 +1374,6 @@ theorem
       _ = (2 : ℝ≥0∞) * ENNReal.ofReal
             (Real.exp (-(2 * (1 / 4000 : ℝ)) *
               Real.log (m : ℝ) ^ 2)) := by
-        congr 1
         ring_nf
       _ ≤ ENNReal.ofReal
             (Real.exp (-(1 / 4000 : ℝ) * Real.log (m : ℝ) ^ 2)) :=

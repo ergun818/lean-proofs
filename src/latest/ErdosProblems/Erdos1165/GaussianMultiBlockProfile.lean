@@ -122,7 +122,7 @@ theorem embeddedMultiBlockProfile_mem_constrainedProfiles
     hz | ⟨b, hb, hbl, hmem⟩
   · rw [embeddedMultiBlockProfile, hz, centeredProfileValue_zero]
     unfold InProfileWindow
-    simp only [Nat.cast_ofNat, Nat.cast_pow, Nat.cast_mul, sub_self, abs_zero]
+    simp only [sub_self, abs_zero]
     exact Real.rpow_nonneg (by positivity) _
   · exact centeredProfileValue_in_window hmem
       (hcenter b hb (scaleIndex i) hbl)
@@ -254,7 +254,7 @@ theorem embeddedMultiBlockProfile_injective
 
 /-- The logarithm of the Gaussian normalizing denominator agrees with the
 normalizer used in `ProfileA11Assembly`. -/
-lemma log_gaussianStepDenominator {l : ℕ} (hl : 0 < l) :
+lemma log_gaussianStepDenominator {l : ℕ} (_hl : 0 < l) :
     Real.log (2 * Real.sqrt (2 * Real.pi) * (l : ℝ)) =
       Real.log (8 * Real.pi * (l : ℝ) ^ 2) / 2 := by
   let z : ℝ := 2 * Real.sqrt (2 * Real.pi) * (l : ℝ)
@@ -693,7 +693,7 @@ lemma profileIntegerDeviation_embeddedMultiBlockProfile
     (independentBlockDeviation_lower p hcenter l)
 
 lemma gaussianDeviationProduct_embeddedMultiBlockProfile
-    {n : ℕ} {bs : List GaussianBlock} (hn : 2 ≤ n)
+    {n : ℕ} {bs : List GaussianBlock} (_hn : 2 ≤ n)
     (p : IndependentGaussianBlockPaths bs)
     (hcenter : ∀ b ∈ bs, ∀ l, BlockContains b l →
       b.radius ≤ profileCenter l) :

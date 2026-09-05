@@ -139,7 +139,6 @@ theorem acceptedThetaStoppedGeometricMass_eq
     (Code eta).retainedCount ((Fiber eta).coordinateCap cap) t
     (Code eta).start (Code eta).retained (Code eta).tail.1
     (acceptedThetaPredicate eta w externalLow externalHigh cap)
-    (Classical.decPred _)
     (Distinguished eta) ((Fiber eta).selected cap) (Classical.decPred _)
     ((Fiber eta).upper cap)
     (acceptedThetaAtTotals eta w externalLow externalHigh cap)

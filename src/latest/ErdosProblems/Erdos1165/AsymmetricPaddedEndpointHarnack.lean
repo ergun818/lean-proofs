@@ -406,7 +406,7 @@ theorem endpointDistortion_pow_le_expHalf
           (a : ℝ) / (6 * (q : ℝ) ^ 2) := by ring
       _ ≤ (3 * (q : ℝ) ^ 2) / (6 * (q : ℝ) ^ 2) := by
         exact div_le_div_of_nonneg_right haR (by positivity)
-      _ = (1 / 2 : ℝ) := by field_simp <;> norm_num
+      _ = (1 / 2 : ℝ) := by field_simp ; norm_num
   rw [← ENNReal.ofReal_pow hbase0]
   apply ENNReal.ofReal_le_ofReal
   calc

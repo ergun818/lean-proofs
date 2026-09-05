@@ -133,7 +133,6 @@ lemma mass_le_four_mul_mass_succ_below_ceil_mean
     rw [le_div_iff₀ hdenJ]
     rw [div_eq_mul_inv]
     field_simp
-    push_cast
     have haeq : (a : ℝ) = L * ((a : ℝ) / L) := by field_simp
     have hupper : ((j : ℝ) + 1) * (1 + L) <
         ((a : ℝ) / L + 1) * (1 + L) :=
@@ -314,7 +313,7 @@ theorem one_div_thirtyTwo_ceil_two_mean_le_mass_ceil_mean
     calc
       ∑ i ∈ Finset.range K, f i ≤ ∑ _i ∈ Finset.range K, 16 * f b :=
         Finset.sum_le_sum fun i hi ↦ hterm i hi
-      _ = (K : ℝ) * (16 * f b) := by simp [mul_assoc]
+      _ = (K : ℝ) * (16 * f b) := by simp
   have hfb0 : 0 ≤ f b := by
     dsimp only [f, p, b]
     exact mass_nonneg hp0.le hp1 a _
@@ -404,7 +403,6 @@ lemma terminalLower_le_terminalProfileCount_div
   unfold AppendixFirstMoment.profileCenter at hi
   unfold terminalLower terminalProfileCount
   apply (div_le_div_iff_of_pos_right hlog).2
-  norm_num only [Fin.isValue]
   have hentry : m ⟨n - 2, by omega⟩ = m i := rfl
   rw [hentry]
   norm_num only [Nat.cast_mul, Nat.cast_ofNat, Nat.cast_pow] at hi ⊢

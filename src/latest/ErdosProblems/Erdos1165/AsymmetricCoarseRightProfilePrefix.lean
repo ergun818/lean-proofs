@@ -454,8 +454,8 @@ fibers receive an arbitrary harmless default; every inhabited successful
 fiber uses the prefix of one canonical tail. -/
 def retainedYProfilePrefix
     {start n k : ℕ} {hk : k + 1 ≤ n} {profileDelta : ℝ}
-    {x y : Point} (hn : 2 ≤ n) (hkTwo : 2 ≤ k + 1)
-    (hdelta : profileDelta ≤ 1)
+    {x y : Point} (_hn : 2 ≤ n) (hkTwo : 2 ≤ k + 1)
+    (_hdelta : profileDelta ≤ 1)
     (code : CoarseSplitCompletionCode start n k hk profileDelta x y
       (profileInnerBoundary n k y)
       (discBoundary (0, 0) (outerScale n)) (0, 0)) : Profile (k + 1) :=
