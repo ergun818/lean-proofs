@@ -30,6 +30,7 @@ section GenericCoefficient
 
 variable {V A : Type*} [Fintype V] [Fintype A] [DecidableEq V] [DecidableEq A]
 
+omit [DecidableEq A] in
 /-- Re-export of the central coefficient identity in the namespace used by the remaining
 Erdős 842 development. -/
 theorem centralCoeff_eq_signedBalanced (D : IndexedArcs V A)
@@ -51,11 +52,13 @@ noncomputable def balancedSelections (D : IndexedArcs V A) : Finset (Finset A) :
 /-- The sign of an indexed-arc selection in the graph-polynomial expansion. -/
 def selectionSign (S : Finset A) : ℤ := (-1 : ℤ) ^ S.card
 
+omit [Fintype V] [DecidableEq A] in
 @[simp] theorem mem_balancedSelections (D : IndexedArcs V A) (S : Finset A) :
     S ∈ balancedSelections D ↔ D.Balanced S := by
   classical
   simp [balancedSelections]
 
+omit [DecidableEq A] in
 /-- Remove the zero summands from the generic signed-balanced identity. -/
 theorem centralCoeff_eq_sum_balancedSelections (D : IndexedArcs V A)
     (hout : ∀ v, ((Finset.univ : Finset A).filter fun a ↦ D.tail a = v).card = 2) :
@@ -291,33 +294,33 @@ theorem triangleBoundary_nondegenerate
     ext j
     fin_cases j <;> simp_all
   · refine ⟨2, 0, by decide, ?_, ?_, ?_⟩
-    · simp [triangleBoundary, h0, h1, h2]
-    · simp [triangleBoundary, h0, h1, h2]
+    · simp [triangleBoundary, h1, h2]
+    · simp [triangleBoundary, h0, h2]
     · intro r hr0 hr2
       fin_cases r <;> simp_all [triangleBoundary]
   · refine ⟨1, 2, by decide, ?_, ?_, ?_⟩
-    · simp [triangleBoundary, h0, h1, h2]
-    · simp [triangleBoundary, h0, h1, h2]
+    · simp [triangleBoundary, h0, h1]
+    · simp [triangleBoundary, h1, h2]
     · intro r hr2 hr1
       fin_cases r <;> simp_all [triangleBoundary]
   · refine ⟨1, 0, by decide, ?_, ?_, ?_⟩
-    · simp [triangleBoundary, h0, h1, h2]
-    · simp [triangleBoundary, h0, h1, h2]
+    · simp [triangleBoundary, h0, h1]
+    · simp [triangleBoundary, h0, h2]
     · intro r hr1 hr2
       fin_cases r <;> simp_all [triangleBoundary]
   · refine ⟨0, 1, by decide, ?_, ?_, ?_⟩
-    · simp [triangleBoundary, h0, h1, h2]
-    · simp [triangleBoundary, h0, h1, h2]
+    · simp [triangleBoundary, h0, h2]
+    · simp [triangleBoundary, h0, h1]
     · intro r hr0 hr1
       fin_cases r <;> simp_all [triangleBoundary]
   · refine ⟨2, 1, by decide, ?_, ?_, ?_⟩
-    · simp [triangleBoundary, h0, h1, h2]
-    · simp [triangleBoundary, h0, h1, h2]
+    · simp [triangleBoundary, h1, h2]
+    · simp [triangleBoundary, h0, h1]
     · intro r hr1 hr0
       fin_cases r <;> simp_all [triangleBoundary]
   · refine ⟨0, 2, by decide, ?_, ?_, ?_⟩
-    · simp [triangleBoundary, h0, h1, h2]
-    · simp [triangleBoundary, h0, h1, h2]
+    · simp [triangleBoundary, h0, h2]
+    · simp [triangleBoundary, h1, h2]
     · intro r hr2 hr0
       fin_cases r <;> simp_all [triangleBoundary]
   · exfalso
@@ -336,10 +339,7 @@ theorem triangleBoundary_chordIndex_eq_zero
     triangleBoundary S (triangleChordIndex S) = 0 := by
   obtain ⟨p, q, hpq, hp, hq, hrest⟩ := triangleBoundary_nondegenerate S hne hfull
   fin_cases p <;> fin_cases q <;>
-    simp_all [triangleChordIndex] <;>
-    first | exact hrest 0 (by decide) (by decide)
-          | exact hrest 1 (by decide) (by decide)
-          | exact hrest 2 (by decide) (by decide)
+    simp_all [triangleChordIndex]
 
 /-- Complementing the directed sides reverses orientation but keeps the underlying chord. -/
 theorem triangleChordIndex_compl (S : Finset (Fin 3)) :
@@ -385,15 +385,19 @@ variable {D : IndexedArcs V A} (T : DirectedTriangle D)
 /-- The indexed arc set of a directed triangle. -/
 def arcSet : Finset A := Finset.univ.map ⟨T.arc, T.injective_arc⟩
 
+omit [Fintype V] [Fintype A] [DecidableEq V] [DecidableEq A] in
 @[simp] theorem mem_arcSet (a : A) : a ∈ T.arcSet ↔ ∃ j, T.arc j = a := by
   simp [arcSet]
 
+omit [Fintype V] [Fintype A] [DecidableEq V] [DecidableEq A] in
 @[simp] theorem arc_mem_arcSet (j : Fin 3) : T.arc j ∈ T.arcSet := by
   exact T.mem_arcSet (T.arc j) |>.2 ⟨j, rfl⟩
 
+omit [Fintype V] [Fintype A] [DecidableEq V] [DecidableEq A] in
 @[simp] theorem card_arcSet : T.arcSet.card = 3 := by
   simp [arcSet]
 
+omit [Fintype V] [Fintype A] [DecidableEq A] in
 /-- A whole coherently directed triangle is balanced. -/
 theorem arcSet_balanced : D.Balanced T.arcSet := by
   intro v
@@ -430,10 +434,12 @@ theorem arcSet_balanced : D.Balanced T.arcSet := by
 def restriction (S : Finset A) : Finset (Fin 3) :=
   Finset.univ.filter fun j ↦ T.arc j ∈ S
 
+omit [Fintype V] [Fintype A] [DecidableEq V] in
 @[simp] theorem mem_restriction (S : Finset A) (j : Fin 3) :
     j ∈ T.restriction S ↔ T.arc j ∈ S := by
   simp [restriction]
 
+omit [Fintype V] [Fintype A] [DecidableEq V] in
 theorem restriction_eq_empty_iff (S : Finset A) :
     T.restriction S = ∅ ↔ Disjoint S T.arcSet := by
   classical
@@ -454,6 +460,7 @@ theorem restriction_eq_empty_iff (S : Finset A) :
     · intro hj
       simp at hj
 
+omit [Fintype V] [Fintype A] [DecidableEq V] in
 theorem restriction_eq_univ_iff (S : Finset A) :
     T.restriction S = Finset.univ ↔ T.arcSet ⊆ S := by
   classical
@@ -471,17 +478,20 @@ theorem restriction_eq_univ_iff (S : Finset A) :
 /-- Toggle all three indexed occurrences of the triangle. -/
 def toggle (S : Finset A) : Finset A := S ∆ T.arcSet
 
+omit [Fintype V] [Fintype A] [DecidableEq V] in
 @[simp] theorem toggle_toggle (S : Finset A) : T.toggle (T.toggle S) = S := by
   classical
   ext a
-  simp [toggle, Finset.mem_symmDiff]
+  simp [toggle]
 
+omit [Fintype V] [Fintype A] [DecidableEq V] in
 theorem toggle_ne (S : Finset A) : T.toggle S ≠ S := by
   classical
   intro h
   have hm := congrArg (fun U : Finset A ↦ T.arc 0 ∈ U) h
   simp [toggle, Finset.mem_symmDiff] at hm
 
+omit [Fintype V] [Fintype A] [DecidableEq V] in
 /-- On triangle restrictions, toggling the full directed triangle is complementation. -/
 theorem restriction_toggle (S : Finset A) :
     T.restriction (T.toggle S) = Finset.univ \ T.restriction S := by
@@ -489,6 +499,7 @@ theorem restriction_toggle (S : Finset A) :
   ext j
   simp [restriction, toggle, Finset.mem_symmDiff, T.arc_mem_arcSet]
 
+omit [Fintype V] [DecidableEq V] in
 /-- Restricting the global complement is the complement of the triangle restriction. -/
 theorem restriction_compl (S : Finset A) :
     T.restriction (Finset.univ \ S) = Finset.univ \ T.restriction S := by
@@ -496,6 +507,7 @@ theorem restriction_compl (S : Finset A) :
   ext j
   simp [restriction]
 
+omit [Fintype V] [Fintype A] [DecidableEq V] in
 /-- Hence the predicate "empty or full triangle restriction" is invariant under toggling. -/
 theorem restriction_toggle_degenerate_iff (S : Finset A) :
     (T.restriction (T.toggle S) = ∅ ∨ T.restriction (T.toggle S) = Finset.univ) ↔
@@ -528,6 +540,7 @@ theorem restriction_toggle_degenerate_iff (S : Finset A) :
 
 end DirectedTriangle
 
+omit [Fintype V] [Fintype A] in
 /-- Balanced indexed selections are closed under disjoint union. -/
 theorem balanced_union_of_disjoint
     {D : IndexedArcs V A} {S U : Finset A} (hd : Disjoint S U)
@@ -546,6 +559,7 @@ theorem balanced_union_of_disjoint
     Finset.card_union_of_disjoint hdin, Finset.card_union_of_disjoint hdout,
     hS v, hU v]
 
+omit [Fintype V] [Fintype A] in
 /-- Removing a balanced indexed selection from a larger balanced selection preserves balance. -/
 theorem balanced_sdiff_of_subset
     {D : IndexedArcs V A} {S U : Finset A} (hsub : U ⊆ S)
@@ -576,6 +590,7 @@ theorem balanced_sdiff_of_subset
     Finset.card_sdiff_of_subset hin, Finset.card_sdiff_of_subset hout,
     hS v, hU v]
 
+omit [Fintype V] [DecidableEq A] in
 /-- If the total indexed indegree and outdegree agree at every vertex, then the full occurrence
 set is balanced.  This is the small adapter needed for global complementation. -/
 theorem univ_balanced_of_degrees_eq
@@ -587,6 +602,7 @@ theorem univ_balanced_of_degrees_eq
   intro v
   exact hdeg v
 
+omit [Fintype V] [Fintype A] in
 /-- Toggling an empty or full directed-triangle restriction preserves balancedness. -/
 theorem DirectedTriangle.balanced_toggle_of_degenerate
     {D : IndexedArcs V A} (T : DirectedTriangle D) (S : Finset A)
@@ -611,6 +627,7 @@ theorem DirectedTriangle.balanced_toggle_of_degenerate
     rw [htog]
     exact balanced_sdiff_of_subset hsub hS T.arcSet_balanced
 
+omit [Fintype V] [Fintype A] [DecidableEq V] in
 /-- A degenerate full-triangle toggle reverses the subset-expansion sign. -/
 theorem DirectedTriangle.selectionSign_toggle_of_degenerate
     {D : IndexedArcs V A} (T : DirectedTriangle D) (S : Finset A)
@@ -803,7 +820,7 @@ noncomputable def canonicalDegenerateIndices (n : ℕ)
 theorem canonicalDegenerateIndices_toggle (n : ℕ)
     (triangleCoord : Fin (3 * n) ≃ Fin n × Fin 3)
     (S : Finset (CanonicalOccurrence n)) (i : Fin n)
-    (hi : i ∈ canonicalDegenerateIndices n triangleCoord S) :
+    (_hi : i ∈ canonicalDegenerateIndices n triangleCoord S) :
     canonicalDegenerateIndices n triangleCoord
         ((canonicalDirectedTriangle n triangleCoord i).toggle S) =
       canonicalDegenerateIndices n triangleCoord S := by
@@ -1233,7 +1250,7 @@ theorem canonicalSurvivor_has_orientedChord
     rw [hdeg]
     simp
   rw [mem_canonicalDegenerateIndices] at hnone
-  push_neg at hnone
+  push Not at hnone
   exact triangleBoundary_nondegenerate _ hnone.1.ne_empty hnone.2
 
 end CanonicalTriangle
@@ -1248,12 +1265,14 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 def cycleBoundary (pred : Equiv.Perm ι) (S : Finset ι) (v : ι) : ℤ :=
   (if pred v ∈ S then 1 else 0) - if v ∈ S then 1 else 0
 
+omit [Fintype ι] in
 @[simp] theorem cycleBoundary_empty (pred : Equiv.Perm ι) (v : ι) :
     cycleBoundary pred ∅ v = 0 := by simp [cycleBoundary]
 
 @[simp] theorem cycleBoundary_univ (pred : Equiv.Perm ι) (v : ι) :
     cycleBoundary pred Finset.univ v = 0 := by simp [cycleBoundary]
 
+omit [Fintype ι] in
 /-- Equality of cyclic boundaries propagates membership across one predecessor step. -/
 theorem mem_iff_mem_of_cycleBoundary_eq
     (pred : Equiv.Perm ι) {S T : Finset ι}
@@ -1264,6 +1283,7 @@ theorem mem_iff_mem_of_cycleBoundary_eq
   by_cases hvS : v ∈ S <;> by_cases hvT : v ∈ T <;>
     by_cases hpS : pred v ∈ S <;> by_cases hpT : pred v ∈ T <;> simp_all
 
+omit [Fintype ι] in
 /-- Knowing only the support of the cyclic boundary is enough to propagate whether two Boolean
 edge selections agree.  At a supported vertex both selections toggle; away from the support
 neither toggles. -/
@@ -1343,13 +1363,15 @@ theorem eq_or_compl_of_cycleBoundary_eq
     simp only [Finset.mem_sdiff, Finset.mem_univ, true_and]
     tauto
 
+omit [Fintype ι] in
 /-- Consequently a nonzero cyclic boundary has at most one preimage. -/
-theorem unique_of_cycleBoundary_eq_of_nonzero
+theorem unique_of_cycleBoundary_eq_of_nonzero [Finite ι]
     (pred : Equiv.Perm ι)
     (htrans : ∀ u v : ι, ∃ k : ℕ, (pred ^ k) u = v)
     {S T : Finset ι}
     (hS : ∃ v, cycleBoundary pred S v ≠ 0)
     (h : ∀ v, cycleBoundary pred S v = cycleBoundary pred T v) : S = T := by
+  let : Fintype ι := Fintype.ofFinite ι
   rcases eq_or_compl_of_cycleBoundary_eq pred htrans h with hEq | hCompl
   · exact hEq
   · exfalso

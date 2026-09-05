@@ -13,7 +13,7 @@ open scoped BigOperators
 
 namespace Erdos842.Parity
 
-variable {V A : Type*} [Fintype V] [Fintype A] [DecidableEq V] [DecidableEq A]
+variable {V A : Type*}
 
 /-- The six-term cancellation for a cyclically oriented triangle.  This is the
 denominator-free form of equation (5.1) in the mathematical writeup. -/
@@ -37,7 +37,7 @@ theorem signed_two_sum_modEq_two {ι : Type*} (s : Finset ι) (f : ι → ℤ)
     (∑ x ∈ s, f x) ≡ 2 [ZMOD 4] := by
   have hterm : ∀ x ∈ s, f x ≡ (2 : ℤ) [ZMOD 4] := by
     intro x hx
-    rcases hf x hx with h | h <;> rw [h] <;> norm_num
+    rcases hf x hx with h | h <;> norm_num [h]
   have hsum := Int.ModEq.sum hterm
   calc
     (∑ x ∈ s, f x) ≡ ∑ _x ∈ s, (2 : ℤ) [ZMOD 4] := hsum
@@ -57,6 +57,8 @@ structure IndexedArcs (V A : Type*) where
 
 namespace IndexedArcs
 
+variable [Fintype V] [Fintype A] [DecidableEq V] [DecidableEq A]
+
 variable (D : IndexedArcs V A)
 
 /-- The graph polynomial, retaining parallel indexed arcs as separate factors. -/
@@ -69,7 +71,7 @@ noncomputable def choiceExponent (S : Finset A) : V →₀ ℕ :=
     ∑ a ∈ S, Finsupp.single (D.head a) 1
 
 /-- The exponent assigning `2` to every vertex. -/
-noncomputable def centralExponent (D : IndexedArcs V A) : V →₀ ℕ :=
+noncomputable def centralExponent (_D : IndexedArcs V A) : V →₀ ℕ :=
   ∑ v : V, Finsupp.single v 2
 
 /-- Number of selected arcs entering a vertex. -/
@@ -87,6 +89,7 @@ def Balanced (S : Finset A) : Prop :=
 noncomputable instance balancedDecidable : DecidablePred D.Balanced :=
   Classical.decPred _
 
+omit [Fintype V] [Fintype A] [DecidableEq V] [DecidableEq A] in
 private lemma prod_X_eq_monomial_sum_single (s : Finset A) (f : A → V) :
     (∏ a ∈ s, MvPolynomial.X (f a) : MvPolynomial V ℤ) =
       MvPolynomial.monomial (∑ a ∈ s, Finsupp.single (f a) 1) 1 := by
@@ -97,6 +100,7 @@ private lemma prod_X_eq_monomial_sum_single (s : Finset A) (f : A → V) :
       simp only [Finset.prod_insert ha, Finset.sum_insert ha, ih]
       simp [MvPolynomial.X, MvPolynomial.monomial_mul]
 
+omit [Fintype V] [DecidableEq V] in
 /-- Full subset expansion of the indexed graph polynomial. -/
 theorem polynomial_eq_sum_monomial :
     D.polynomial =
@@ -117,6 +121,7 @@ theorem polynomial_eq_sum_monomial :
   rw [MvPolynomial.C_mul_monomial]
   simp
 
+omit [Fintype V] in
 /-- Coefficient form of `polynomial_eq_sum_monomial`, before imposing regularity. -/
 theorem coeff_polynomial (m : V →₀ ℕ) :
     MvPolynomial.coeff m D.polynomial =
@@ -128,10 +133,12 @@ theorem coeff_polynomial (m : V →₀ ℕ) :
   intro S hS
   simp [MvPolynomial.coeff_monomial, eq_comm]
 
+omit [Fintype A] [DecidableEq V] [DecidableEq A] in
 @[simp] theorem centralExponent_apply (v : V) : D.centralExponent v = 2 := by
   classical
   simp [centralExponent]
 
+omit [Fintype V] in
 theorem choiceExponent_apply (S : Finset A) (v : V) :
     D.choiceExponent S v =
       (((Finset.univ : Finset A) \ S).filter fun a ↦ D.tail a = v).card +
@@ -147,6 +154,7 @@ theorem choiceExponent_apply (S : Finset A) (v : V) :
   rw [count_single, count_single]
   rfl
 
+omit [Fintype V] in
 /-- The elementary count splitting all outgoing arcs into selected and unselected ones. -/
 theorem unselectedOut_add_selectedOut (S : Finset A) (v : V) :
     (((Finset.univ : Finset A) \ S).filter fun a ↦ D.tail a = v).card +
@@ -185,6 +193,7 @@ theorem choiceExponent_eq_central_iff
     rw [D.choiceExponent_apply, D.centralExponent_apply, h v]
     exact D.unselectedOut_add_selectedOut S v |>.trans (hout v)
 
+omit [DecidableEq A] in
 /-- Eulerian-subgraph interpretation of the central coefficient for a two-out-regular indexed
 digraph.  This is equation (4.2) in the mathematical writeup. -/
 theorem coeff_central_eq_signed_balanced
@@ -193,11 +202,12 @@ theorem coeff_central_eq_signed_balanced
       ∑ S : Finset A, if D.Balanced S then ((-1 : ℤ) ^ S.card) else 0 := by
   classical
   rw [D.coeff_polynomial]
-  simp only [Finset.powerset_univ, Finset.sum_const_zero, Finset.sum_ite_irrel]
+  simp only [Finset.powerset_univ]
   apply Finset.sum_congr rfl
   intro S hS
   simp only [D.choiceExponent_eq_central_iff hout S]
 
+omit [DecidableEq V] [DecidableEq A] in
 /-- A modulo-four value of `2` immediately makes the central coefficient nonzero. -/
 theorem coeff_central_ne_zero_of_modEq_two
     (h : MvPolynomial.coeff D.centralExponent D.polynomial ≡ 2 [ZMOD 4]) :

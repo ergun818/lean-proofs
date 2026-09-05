@@ -131,7 +131,8 @@ theorem restriction_eq_of_key_eq_of_positive_eq
     S = T := by
   decide +revert
 
-/-- Equivalently, the orientation bit together with the unoriented key determines the restriction. -/
+/-- Equivalently, the orientation bit together with the unoriented key determines
+the restriction. -/
 theorem restriction_eq_of_key_eq_of_orientationBit_eq
     {S T : Finset (Fin 3)}
     (hSne : S ≠ ∅) (hSfull : S ≠ Finset.univ)

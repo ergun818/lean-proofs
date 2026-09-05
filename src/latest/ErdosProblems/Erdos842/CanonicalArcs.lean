@@ -243,7 +243,7 @@ lemma canonicalOccurrenceTail_rotate (n : ℕ)
       canonicalOccurrenceHead n triangleCoord a := by
   cases a with
   | inl i =>
-      simpa [canonicalOccurrenceRotate, canonicalOccurrenceTail, canonicalOccurrenceHead,
+      simp [canonicalOccurrenceRotate, canonicalOccurrenceTail, canonicalOccurrenceHead,
         finCyclicSucc_eq_finRotate]
   | inr tj =>
       change triangleCoord.symm (tj.1, finRotate 3 tj.2) =

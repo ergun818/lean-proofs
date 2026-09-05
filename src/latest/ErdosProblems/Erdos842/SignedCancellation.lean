@@ -57,7 +57,7 @@ theorem sum_eq_sum_fibers {α β : Type*} [DecidableEq β]
 
 /-- Two same-sign unit-weight survivors in every fibre give a contribution
 of `2` or `-2` from that fibre. -/
-theorem fiber_sum_eq_two_or_neg_two {α β : Type*} [DecidableEq α] [DecidableEq β]
+theorem fiber_sum_eq_two_or_neg_two {α β : Type*} [DecidableEq β]
     (survivors : Finset α) (key : α → β) (weight : α → ℤ) (g : β)
     (two : (survivors.filter fun x ↦ key x = g).card = 2)
     (sameUnitSign :
@@ -85,7 +85,7 @@ theorem fiber_sum_eq_two_or_neg_two {α β : Type*} [DecidableEq α] [DecidableE
 
 /-- If an odd finite set of good indices parametrizes two equal-sign unit
 survivors per fibre, their total sum is `2` modulo `4`. -/
-theorem survivor_sum_modEq_two {α β : Type*} [DecidableEq α] [DecidableEq β]
+theorem survivor_sum_modEq_two {α β : Type*} [DecidableEq β]
     (survivors : Finset α) (good : Finset β) (key : α → β) (weight : α → ℤ)
     (mapsTo : ∀ x ∈ survivors, key x ∈ good)
     (two : ∀ g ∈ good, (survivors.filter fun x ↦ key x = g).card = 2)

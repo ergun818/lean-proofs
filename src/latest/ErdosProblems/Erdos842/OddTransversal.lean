@@ -111,7 +111,7 @@ lemma indicator_even_degree (m : ℕ) :
     decide
 
 lemma indicator_good_eq_prod (cross : CrossRel X)
-    [Fintype I] [DecidableEq I] [∀ i, Fintype (X i)]
+    [Fintype I] [DecidableEq I]
     (f : ∀ i, X i) :
     (if Good X cross f then (1 : ZMod 2) else 0) =
       ∏ i : I, (1 + (selectedDegree X cross f i : ZMod 2)) := by
@@ -234,7 +234,7 @@ private lemma moved_eq_support_of_no_degree_one
   exact Finset.eq_of_subset_of_card_le hmoved_support hcard.ge
 
 private lemma bijective_of_no_degree_one
-    [Fintype I] [DecidableEq I] (g : I → I)
+    [Fintype I] (g : I → I)
     (hleaf : ∀ i, (functionGraph g).degree i ≠ 1) :
     Function.Bijective g := by
   classical
@@ -244,7 +244,7 @@ private lemma bijective_of_no_degree_one
     by_cases hy : g y = y
     · exact ⟨y, hy⟩
     · by_contra hpre
-      push_neg at hpre
+      push Not at hpre
       have hadj : ∀ z, (functionGraph g).Adj y z ↔ z = g y := by
         intro z
         rw [functionGraph_adj]
@@ -264,7 +264,7 @@ private lemma bijective_of_no_degree_one
   exact (Fintype.bijective_iff_surjective_and_card g).mpr ⟨hsurj, rfl⟩
 
 private lemma inverse_ne_of_no_degree_one_of_ne_id
-    [Fintype I] [DecidableEq I] (g : I → I)
+    [Fintype I] (g : I → I)
     (hne : g ≠ id)
     (hleaf : ∀ i, (functionGraph g).degree i ≠ 1) :
     Equiv.ofBijective g (bijective_of_no_degree_one g hleaf) ≠
@@ -277,7 +277,7 @@ private lemma inverse_ne_of_no_degree_one_of_ne_id
   intro he
   have hex : ∃ i, g i ≠ i := by
     by_contra hall
-    push_neg at hall
+    push Not at hall
     apply hne
     funext i
     exact hall i
@@ -307,7 +307,7 @@ private lemma inverse_ne_of_no_degree_one_of_ne_id
 
 /-- A nonidentity functional digraph either has a leaf, or is paired without a fixed point by
 reversing all its directed cycles.  Fixed points of the function represent absent arcs. -/
-theorem functionGraph_dichotomy [Fintype I] [DecidableEq I] (g : I → I) :
+theorem functionGraph_dichotomy [Fintype I] (g : I → I) :
     g = id ∨
       (∃ i, (functionGraph g).degree i = 1) ∨
       ∃ e : I ≃ I, (e : I → I) = g ∧ e ≠ e.symm := by
@@ -318,7 +318,7 @@ theorem functionGraph_dichotomy [Fintype I] [DecidableEq I] (g : I → I) :
   · exact Or.inr (Or.inl hleaf)
   · right
     right
-    push_neg at hleaf
+    push Not at hleaf
     let hb := bijective_of_no_degree_one g hleaf
     let e := Equiv.ofBijective g hb
     exact ⟨e, Equiv.coe_ofBijective g hb, inverse_ne_of_no_degree_one_of_ne_id g hid hleaf⟩
@@ -339,7 +339,7 @@ noncomputable def patternWeight [Fintype I] [DecidableEq I] [∀ i, Fintype (X i
     exact ∑ f : ∀ i, X i, if Realizes X cross g f then 1 else 0
 
 private lemma indicator_realizes_eq_prod
-    [Fintype I] [DecidableEq I] [∀ i, Fintype (X i)]
+    [Fintype I] [DecidableEq I]
     (cross : CrossRel X) (g : I → I) (f : ∀ i, X i) :
     (if Realizes X cross g f then (1 : ZMod 2) else 0) =
       ∏ i : I, if i = g i ∨ cross i (g i) (f i) (f (g i)) then 1 else 0 := by
@@ -385,7 +385,8 @@ private lemma sum_one_or_cross
             symm
             convert Finset.sum_erase_add Finset.univ
               (fun j ↦ (if i = j ∨ cross i j (f i) (f j) then (1 : ZMod 2) else 0))
-              (Finset.mem_univ i) using 1 <;> simp
+              (Finset.mem_univ i) using 1
+            simp
     _ = 1 + (selectedDegree X cross f i : ZMod 2) := by rw [herase, add_comm]
 
 /-- Expanding the even-degree indicators gives the sum over functional-digraph patterns. -/
@@ -460,7 +461,7 @@ lemma reversePattern_involutive [Fintype I] :
   · have hre : reversePattern g = g := by rw [reversePattern, dif_neg h]
     exact (congrArg reversePattern hre).trans hre
 
-lemma functionGraph_reversePattern [Fintype I] [DecidableEq I]
+lemma functionGraph_reversePattern [Fintype I]
     (g : I → I) (h : Function.Bijective g) :
     functionGraph (reversePattern g) = functionGraph g := by
   ext i j
@@ -513,7 +514,7 @@ lemma patternWeight_reversePattern [Fintype I] [DecidableEq I]
   rw [if_congr (realizes_reversePattern_iff X cross hsym g h f) rfl rfl]
 
 lemma reversePattern_ne_of_no_degree_one_of_ne_id
-    [Fintype I] [DecidableEq I] (g : I → I)
+    [Fintype I] (g : I → I)
     (hne : g ≠ id)
     (hleaf : ∀ i, (functionGraph g).degree i ≠ 1) :
     reversePattern g ≠ g := by
@@ -609,7 +610,7 @@ def IsLeaf (g : I → I) (p q : I) : Prop :=
     ∀ i, i ≠ g i → (i = p ∨ g i = p) →
       (i = p ∧ g i = q) ∨ (i = q ∧ g i = p)
 
-lemma exists_isLeaf_of_degree_eq_one [Fintype I] [DecidableEq I]
+lemma exists_isLeaf_of_degree_eq_one [Fintype I]
     (g : I → I) {p : I} (hdegree : (functionGraph g).degree p = 1) :
     ∃ q, IsLeaf g p q := by
   classical
@@ -645,7 +646,7 @@ noncomputable def extendAway (p : I) (rest : Away X p) (xp : X p) : ∀ i, X i :
 
 /-- The part of the realization condition supported completely away from `p`. -/
 def RealizesAway (cross : CrossRel X) (g : I → I) (p : I) (rest : Away X p) : Prop :=
-  ∀ i (hi : i ≠ g i) (hip : i ≠ p) (hgp : g i ≠ p),
+  ∀ i (_hi : i ≠ g i) (hip : i ≠ p) (hgp : g i ≠ p),
     cross i (g i) (rest ⟨i, hip⟩) (rest ⟨g i, hgp⟩)
 
 lemma realizes_extendAway_iff
@@ -692,7 +693,7 @@ lemma realizes_extendAway_iff
       · simpa [extendAway, hip, hgp] using haway i hi hip hgp
 
 private lemma even_leaf_fiber
-    [Fintype I] [DecidableEq I] [∀ i, Fintype (X i)]
+    [∀ i, Fintype (X i)]
     (cross : CrossRel X) (hsym : Symmetric X cross)
     (heven : ∀ i j (xi : X i), i ≠ j → Even (crossDegree X cross i j xi))
     (g : I → I) {p q : I} (hleaf : IsLeaf g p q) (rest : Away X p) :
@@ -727,7 +728,7 @@ private lemma even_leaf_fiber
 
 /-- Split a dependent transversal into its value at `p` and its restriction away from `p`. -/
 noncomputable def piEquivSigmaAway (p : I) :
-    (∀ i, X i) ≃ Σ rest : Away X p, X p where
+    (∀ i, X i) ≃ Σ _rest : Away X p, X p where
   toFun f := ⟨fun i ↦ f i, f p⟩
   invFun z := extendAway X p z.1 z.2
   left_inv f := by
@@ -750,7 +751,7 @@ noncomputable def realizerEquivSigmaFiber [Fintype I] [∀ i, Fintype (X i)]
         {xp : X p // Realizes X cross g (extendAway X p rest xp)} := by
   let e := piEquivSigmaAway X p
   let eSub : {f : ∀ i, X i // Realizes X cross g f} ≃
-      {z : Σ rest : Away X p, X p //
+      {z : Σ _rest : Away X p, X p //
         Realizes X cross g (extendAway X p z.1 z.2)} :=
     e.subtypeEquiv fun f ↦ by
       have heq : extendAway X p (e f).1 (e f).2 = f := e.symm_apply_apply f

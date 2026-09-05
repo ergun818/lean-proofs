@@ -50,7 +50,7 @@ abbrev functionGraph (g : I → I) : SimpleGraph I :=
 
 /-- A degree-one vertex of a functional graph supplies exactly the leaf
 witness used by `even_card_realizer_of_leaf`. -/
-theorem exists_isLeaf_of_degree_eq_one [Fintype I] [DecidableEq I]
+theorem exists_isLeaf_of_degree_eq_one [Fintype I]
     (g : I → I) {p : I} (hdegree : (functionGraph g).degree p = 1) :
     ∃ q, IsLeaf g p q := by
   classical
@@ -86,7 +86,7 @@ noncomputable def extendAway (p : I) (rest : Away X p) (xp : X p) : ∀ i, X i :
 
 /-- The part of the realization condition supported completely away from `p`. -/
 def RealizesAway (cross : CrossRel X) (g : I → I) (p : I) (rest : Away X p) : Prop :=
-  ∀ i (hi : i ≠ g i) (hip : i ≠ p) (hgp : g i ≠ p),
+  ∀ i (_hi : i ≠ g i) (hip : i ≠ p) (hgp : g i ≠ p),
     cross i (g i) (rest ⟨i, hip⟩) (rest ⟨g i, hgp⟩)
 
 /-- At a leaf, realizing the whole pattern is exactly the conjunction of the
@@ -141,7 +141,7 @@ theorem realizes_extendAway_iff
 
 /-- The fibre over a fixed assignment away from a leaf has even cardinality. -/
 theorem even_leaf_fiber
-    [Fintype I] [DecidableEq I] [∀ i, Fintype (X i)]
+    [∀ i, Fintype (X i)]
     (cross : CrossRel X) (hsymm : OddTransversal.Symmetric X cross)
     (heven : ∀ i j (xi : X i), i ≠ j → Even (crossDegree X cross i j xi))
     (g : I → I) {p q : I} (hleaf : IsLeaf g p q) (rest : Away X p) :
@@ -169,7 +169,7 @@ theorem even_leaf_fiber
       Realizes X cross g (extendAway X p rest xp)).card)
     rw [hfilter]
     exact heven q p (rest ⟨q, hleaf.1.symm⟩) hleaf.1.symm
-  · haveI : IsEmpty {xp : X p // Realizes X cross g (extendAway X p rest xp)} :=
+  · have : IsEmpty {xp : X p // Realizes X cross g (extendAway X p rest xp)} :=
       ⟨fun xp ↦ haway
         ((realizes_extendAway_iff X cross hsymm g hleaf rest xp.1).mp xp.2).1⟩
     simp
@@ -177,7 +177,7 @@ theorem even_leaf_fiber
 /-- Split a dependent transversal into its value at `p` and its restriction
 away from `p`. -/
 noncomputable def piEquivSigmaAway (p : I) :
-    (∀ i, X i) ≃ Σ rest : Away X p, X p where
+    (∀ i, X i) ≃ Σ _rest : Away X p, X p where
   toFun f := ⟨fun i ↦ f i, f p⟩
   invFun z := extendAway X p z.1 z.2
   left_inv f := by
@@ -196,7 +196,7 @@ noncomputable def piEquivSigmaAway (p : I) :
 /-- Regroup a subtype of a sigma type as a sigma type of subtypes. -/
 noncomputable def subtypeSigmaRealizesEquiv [Fintype I] [∀ i, Fintype (X i)]
     (cross : CrossRel X) (g : I → I) (p : I) :
-    {z : Σ rest : Away X p, X p //
+    {z : Σ _rest : Away X p, X p //
       Realizes X cross g (extendAway X p z.1 z.2)} ≃
       Σ rest : Away X p,
         {xp : X p // Realizes X cross g (extendAway X p rest xp)} where
@@ -214,7 +214,7 @@ noncomputable def realizerEquivSigmaFiber [Fintype I] [∀ i, Fintype (X i)]
         {xp : X p // Realizes X cross g (extendAway X p rest xp)} := by
   let e := piEquivSigmaAway X p
   let eSub : Realizer X cross g ≃
-      {z : Σ rest : Away X p, X p //
+      {z : Σ _rest : Away X p, X p //
         Realizes X cross g (extendAway X p z.1 z.2)} :=
     e.subtypeEquiv fun f ↦ by
       have heq : extendAway X p (e f).1 (e f).2 = f := e.symm_apply_apply f
@@ -253,7 +253,7 @@ theorem patternWeight_eq_cast_card_realizer
     OddTransversal.patternWeight X cross g =
       (Fintype.card (Realizer X cross g) : ZMod 2) := by
   classical
-  letI : Fintype (∀ i, X i) := Pi.instFintype
+  let : Fintype (∀ i, X i) := Pi.instFintype
   unfold OddTransversal.patternWeight Realizer
   rw [Fintype.card_subtype]
   simp

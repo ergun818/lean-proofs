@@ -97,7 +97,7 @@ theorem prefixCount_eq_pred_add_indicator {m : ℕ} (hm : 0 < m)
     · simp only [Finset.mem_filter]
       push Not
       intro _
-      apply Fin.lt_iff_val_lt_val.mpr
+      apply Fin.lt_def.mpr
       rw [hpval]
       have hvne : v.val ≠ 0 := by
         intro h

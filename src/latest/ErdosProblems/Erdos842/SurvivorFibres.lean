@@ -255,7 +255,7 @@ theorem survivor_cycleBoundary_support {n : ℕ} (hn : 0 < n)
       rw [hdeg]
       simp
     rw [mem_canonicalDegenerateIndices] at hi
-    push_neg at hi
+    push Not at hi
     exact ⟨hi.1.ne_empty, hi.2⟩
   have hsum := cycleBoundary_add_triangleBoundary_eq_zero hn triangleCoord hbal i j
   have hsum' :
@@ -352,7 +352,8 @@ theorem alternatingSign_ne_of_boundary_ne {n : ℕ}
     (GoodChords.mem_selectedVertices triangleCoord key _).2 ⟨p, rfl⟩
   have hq : GoodChords.selectedEndpoint triangleCoord key q ∈ used :=
     (GoodChords.mem_selectedVertices triangleCoord key _).2 ⟨q, rfl⟩
-  simp only [ne_eq] at hne
+  rw [CycleBoundary.alternatingBoundary, if_pos hp,
+    CycleBoundary.alternatingBoundary, if_pos hq] at hne
   rw [prefixCount_selectedEndpoint, prefixCount_selectedEndpoint] at hne
   unfold ChordCrossing.alternatingSign
   let rp := (GoodChords.endpointCyclicOrder triangleCoord key p).val
@@ -389,7 +390,7 @@ theorem canonicalChordKey_mem_good {n : ℕ} (hn : 0 < n)
       rw [hdeg]
       simp
     rw [mem_canonicalDegenerateIndices] at hi
-    push_neg at hi
+    push Not at hi
     exact ⟨hi.1.ne_empty, hi.2⟩
   have hcompat : ChordCrossing.CompatibleAlternatingBase
       (GoodChords.endpointCyclicOrder triangleCoord key) false := by
@@ -405,13 +406,11 @@ theorem canonicalChordKey_mem_good {n : ℕ} (hn : 0 < n)
     have hvp : canonicalTriangleVertices n triangleCoord i (key i + 1) = vp := by
       apply triangleCoord.injective
       simp [vp, p, canonicalTriangleVertices,
-        GoodChords.triangleVertices, GoodChords.selectedEndpoint,
-        ChordCrossing.triangleSide]
+        GoodChords.triangleVertices, ChordCrossing.triangleSide]
     have hvq : canonicalTriangleVertices n triangleCoord i (key i + 2) = vq := by
       apply triangleCoord.injective
       simp [vq, q, canonicalTriangleVertices,
-        GoodChords.triangleVertices, GoodChords.selectedEndpoint,
-        ChordCrossing.triangleSide]
+        GoodChords.triangleVertices, ChordCrossing.triangleSide]
     rw [hvp, hcycle,
       CycleBoundary.cycleBoundary_selection
         (by omega : 0 < 3 * n) used base
@@ -458,7 +457,7 @@ theorem alternatingBoundary_selectedEndpoint {n : ℕ}
   let used := GoodChords.selectedVertices triangleCoord key
   have hp : GoodChords.selectedEndpoint triangleCoord key p ∈ used :=
     (GoodChords.mem_selectedVertices triangleCoord key _).2 ⟨p, rfl⟩
-  simp [CycleBoundary.alternatingBoundary, used, hp]
+  rw [CycleBoundary.alternatingBoundary, if_pos hp]
   rw [prefixCount_selectedEndpoint]
   unfold ChordCrossing.alternatingSign
   let r := (GoodChords.endpointCyclicOrder triangleCoord key p).val
@@ -704,7 +703,7 @@ theorem survivor_eq_survivorFor {n : ℕ} (hn : 0 < n)
       rw [hdeg]
       simp
     rw [mem_canonicalDegenerateIndices] at hi
-    push_neg at hi
+    push Not at hi
     exact ⟨hi.1.ne_empty, hi.2⟩
   have hrestr : ∀ i : Fin n,
       (canonicalDirectedTriangle n triangleCoord i).restriction S =

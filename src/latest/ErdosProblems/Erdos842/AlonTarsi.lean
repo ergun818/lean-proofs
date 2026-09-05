@@ -136,11 +136,11 @@ end PolynomialFacts
 section Nullstellensatz
 
 variable {V : Type u} {A : Type v}
-variable [Fintype V] [Fintype A]
+variable [Fintype A]
 
 /-- A nonzero top-degree coefficient with every exponent below three gives a
 three-coloring of the simple support of the edge occurrences. -/
-theorem coloring_of_coeff_ne_zero
+theorem coloring_of_coeff_ne_zero [Finite V]
     (tail head : A → V) (t : V →₀ ℕ)
     (hdegree : t.degree = Fintype.card A)
     (hexponent : ∀ x, t x < 3)
@@ -183,7 +183,7 @@ theorem coloring_of_coeff_ne_zero
 /-- Central-coefficient specialization of `coloring_of_coeff_ne_zero` for a
 two-outgoing-occurrences-per-vertex family. -/
 theorem coloring_of_centralCoeff_ne_zero
-    [DecidableEq V]
+    [Fintype V] [DecidableEq V]
     (tail head : A → V)
     (hcard : Fintype.card A = 2 * Fintype.card V)
     (hcoeff :
@@ -197,7 +197,7 @@ theorem coloring_of_centralCoeff_ne_zero
 
 /-- Any simple graph contained in the occurrence support inherits the
 three-coloring supplied by the nonzero coefficient. -/
-theorem subgraph_colorable_of_coeff_ne_zero
+theorem subgraph_colorable_of_coeff_ne_zero [Finite V]
     (G : SimpleGraph V) (tail head : A → V) (t : V →₀ ℕ)
     (hG : G ≤ occurrenceSupport tail head)
     (hdegree : t.degree = Fintype.card A)
