@@ -18,7 +18,6 @@ open Finset
 
 namespace Erdos550
 
-open Classical
 
 noncomputable def hpLowBadCore
     {V ι : Type*} [Fintype V] [DecidableEq V]
@@ -26,6 +25,7 @@ noncomputable def hpLowBadCore
     (C : ι → Finset V) (dcap : ι → ℝ)
     (ε : ℝ) (Tset : Finset ι)
     (core : Finset V) (thr : ℝ) : Finset V :=
+  open scoped Classical in
   core.filter fun v => (badCount G C dcap ε Tset v : ℝ) ≤ thr
 
 lemma hpLowBadCore_subset
@@ -35,6 +35,7 @@ lemma hpLowBadCore_subset
     (ε : ℝ) (Tset : Finset ι)
     (core : Finset V) (thr : ℝ) :
     hpLowBadCore G C dcap ε Tset core thr ⊆ core :=
+  open scoped Classical in
   Finset.filter_subset _ _
 
 @[simp] lemma mem_hpLowBadCore
@@ -54,7 +55,8 @@ lemma highBad_card_mul_threshold_le
     (C : ι → Finset V) (dcap : ι → ℝ)
     (ε : ℝ) (Tset : Finset ι)
     (base : Finset V) (thr : ℝ) :
-    let high := base.filter fun v =>
+    let high :=
+  open scoped Classical in base.filter fun v =>
       thr < (badCount G C dcap ε Tset v : ℝ)
     (high.card : ℝ) * thr ≤
       ∑ v ∈ base, (badCount G C dcap ε Tset v : ℝ) := by
@@ -80,12 +82,13 @@ lemma hpLowBadCore_complement_card_upper
     (ε : ℝ) (Tset : Finset ι)
     (base core : Finset V) (thr coreLoss badMass : ℝ)
     (hthr : 0 < thr)
-    (hcore : core ⊆ base)
+    (_hcore : core ⊆ base)
     (hcoreLoss : ((base \ core).card : ℝ) ≤ coreLoss)
     (hbadMass :
       (∑ v ∈ base, (badCount G C dcap ε Tset v : ℝ)) ≤ badMass) :
     (((base \ hpLowBadCore G C dcap ε Tset core thr).card : ℕ) : ℝ) ≤
       coreLoss + badMass / thr := by
+  classical
   let low := hpLowBadCore G C dcap ε Tset core thr
   let high := base.filter fun v =>
     thr < (badCount G C dcap ε Tset v : ℝ)
@@ -133,6 +136,7 @@ lemma hpLowBadCore_card_lower
       (∑ v ∈ base, (badCount G C dcap ε Tset v : ℝ)) ≤ badMass) :
     (base.card : ℝ) - coreLoss - badMass / thr ≤
       (hpLowBadCore G C dcap ε Tset core thr).card := by
+  classical
   let low := hpLowBadCore G C dcap ε Tset core thr
   have hcomp :
       ((base \ low).card : ℝ) ≤ coreLoss + badMass / thr := by
@@ -155,11 +159,12 @@ of any fixed vertex. -/
 lemma filtered_degree_after_core_deletion
     {V : Type*} [DecidableEq V]
     (base core : Finset V) (adj : V → Prop) [DecidablePred adj]
-    (hcore : core ⊆ base) (need loss : ℝ)
+    (_hcore : core ⊆ base) (need loss : ℝ)
     (hdegree :
       need + loss ≤ ((base.filter adj).card : ℝ))
     (hloss : ((base \ core).card : ℝ) ≤ loss) :
     need ≤ ((core.filter adj).card : ℝ) := by
+  classical
   have hsub :
       base.filter adj ⊆ core.filter adj ∪ (base \ core) := by
     intro v hv

@@ -19,7 +19,6 @@ open SimpleGraph Finset
 
 namespace Erdos550
 
-open Classical
 
 variable {A : Type} [Fintype A] [DecidableEq A]
 
@@ -37,6 +36,7 @@ theorem tree_tau_fine_single_neighbor_two_attachment_rooted
         (∃ v : A, v ∈ c.supp ∧ v ∉ S) →
           (Nat.card c.supp : ℝ) ≤ τ * Fintype.card A ∧
           (componentSeeds T S c).card ≤ 2) := by
+  classical
   obtain ⟨S₀, hS₀, hsmall₀, _hattach₀⟩ :=
     tree_tau_fine_two_attachment_strong_data T hT τ hτ hn
   let S₁ := S₀ ∪ {root}

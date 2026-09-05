@@ -46,8 +46,10 @@ variable {G : SimpleGraph V} {z : V}
 /-! ## Structural lemmas for `parentT`/`rankT`. -/
 
 theorem parentT_ne (v u : V) (h : parentT G z v = some u) : u ≠ z := by
-  unfold parentT at h; split_ifs at h ; simp_all +decide only [ne_eq] ;
-  exact h ▸ Classical.choose_spec ‹∃ u, u ≠ z ∧ G.Adj v u ∧ G.dist z u < G.dist z v› |>.1
+  unfold parentT at h
+  split_ifs at h with hex
+  · have heq := Option.some.inj h
+    exact heq ▸ (Classical.choose_spec hex).1
 
 theorem parentT_adj (v u : V) (h : parentT G z v = some u) : G.Adj v u := by
   have := Classical.choose_spec ( show ∃ u, u ≠ z ∧ G.Adj v u ∧ G.dist z u < G.dist z v from by
@@ -58,7 +60,7 @@ theorem parentT_adj (v u : V) (h : parentT G z v = some u) : G.Adj v u := by
 theorem parentT_rank (v u : V) (h : parentT G z v = some u) :
     rankT G z u < rankT G z v := by
   unfold parentT at h;
-  split_ifs at h ; simp_all +decide [ rankT ];
+  split_ifs at h ; simp_all +decide only [ne_eq, Option.some.injEq, rankT];
   exact h ▸ Classical.choose_spec ‹∃ u, u ≠ z ∧ G.Adj v u ∧ G.dist z u < G.dist z v› |>.2.2
 
 theorem parentT_root_adj (hG : G.IsTree) (v : V) (hv : v ≠ z)
@@ -83,9 +85,13 @@ theorem parentT_root_adj (hG : G.IsTree) (v : V) (hv : v ≠ z)
     rw [h] at hsome; exact absurd hsome.symm (Option.some_ne_none _)
 
 theorem parentT_nbr_none (w : V) (h : G.Adj z w) : parentT G z w = none := by
-  unfold parentT; simp +decide only [ne_eq, dite_eq_right_iff, reduceCtorEq, imp_false, not_exists, not_and, not_lt] ;
+  unfold parentT; simp +decide only [ne_eq, dite_eq_right_iff, reduceCtorEq, imp_false,
+    not_exists, not_and, not_lt] ;
   intro x hx hx';
-  exact ⟨ Ne.symm hx, SimpleGraph.Adj.reachable h |> SimpleGraph.Reachable.trans <| SimpleGraph.Adj.reachable hx' ⟩
+  rw [SimpleGraph.dist_eq_one_iff_adj.mpr h]
+  exact Nat.one_le_iff_ne_zero.mpr
+    (SimpleGraph.dist_ne_zero_iff_ne_and_reachable.mpr
+      ⟨Ne.symm hx, h.reachable.trans hx'.reachable⟩)
 
 /- In a tree, the toward-`z` neighbour `a` of `v` is unique. -/
 omit [Fintype V] [DecidableEq V] in
@@ -197,8 +203,10 @@ theorem mem_branch_iff_dist {w : V} (hw : G.Adj z w) (v : V) :
 
 theorem rootOf_spec (hG : G.IsTree) (v : V) (hv : v ≠ z) :
     G.Adj z (rootOf G z v) ∧ v ∈ branch G z (rootOf G z v) := by
-  obtain ⟨w, hw⟩ := (Erdos550.exists_unique_root hG v hv).exists;
-  convert! Classical.choose_spec ( Erdos550.exists_unique_root hG v hv |> ExistsUnique.exists ); all_goals unfold rootOf; aesop;
+        obtain ⟨w, hw⟩ := (Erdos550.exists_unique_root hG v hv).exists;
+        convert!
+          Classical.choose_spec (Erdos550.exists_unique_root hG v hv |> ExistsUnique.exists);
+        all_goals unfold rootOf; aesop;
 
 theorem rootOf_unique (hG : G.IsTree) (v : V) (hv : v ≠ z)
     {w : V} (hw : G.Adj z w) (hvw : v ∈ branch G z w) : w = rootOf G z v := by
@@ -254,7 +262,8 @@ theorem card_branch_eq [DecidableRel G.Adj] (hG : G.IsTree) (q : ℕ)
   all_goals try infer_instance;
   · ext v; simp [branch];
     grind +suggestions;
-  · intro w hw w' hw' hww'; simp_all +decide [ Finset.disjoint_left ] ;
+  · intro w hw w' hw' hww'; simp_all +decide only [coe_filter, mem_neighborFinset,
+      Set.mem_ofPred_eq, ne_eq, Finset.disjoint_left] ;
     intro v hv hv';
     have := rootOf_unique hG v (by
     intro h; simp_all +decide [ branch ] ;) hw.1 hv
@@ -268,8 +277,8 @@ Every branch of a neighbour of `z` is nonempty (it contains that neighbour).
 omit [DecidableEq V] in
 theorem branchSize_pos {w : V} (hw : G.Adj z w) :
     0 < branchSize G z w := by
-  refine' Finset.card_pos.mpr ⟨ w, _ ⟩;
-  simp +decide [ branch ];
+  refine Finset.card_pos.mpr ⟨ w, ?_ ⟩;
+  simp +decide only [branch, mem_filter, mem_univ, SimpleGraph.dist_self, true_and];
   rw [ SimpleGraph.dist_comm, SimpleGraph.dist_eq_one_iff_adj.mpr hw ] ; norm_num
 
 /-! ## Count-and-load over an arbitrary finite index type. -/
@@ -286,28 +295,42 @@ theorem count_and_load' (q : ℕ) (hq : 2 ≤ q) (ω : ℝ) (hω : 0 < ω) :
           (∀ i, #{j | I j = i} ≤ c i) ∧
           (∀ i, (∑ j ∈ {j | I j = i}, (s j : ℝ)) ≤ (1 - κ) * n) := by
   by_contra h_contra;
-  obtain ⟨κ, δ0, hκ, hδ0, hCL⟩ : ∃ κ δ0 : ℝ, 0 < κ ∧ 0 < δ0 ∧ ∀ {ι : Type} [Fintype ι] (n : ℕ) (s : Fin (Fintype.card ι) → ℕ) (c : Fin q → ℕ),
-    (∀ j, 0 < s j) → (∀ j, 2 * s j ≤ n) → (∑ j, s j = n - 1) → (∀ i, (c i : ℝ) ≤ (1 + δ0) * n) → ((1 + ω) * n ≤ ∑ i, (c i : ℝ)) →
-    ∃ I : Fin (Fintype.card ι) → Fin q,
-      (∀ i, #{j | I j = i} ≤ c i) ∧ (∀ i, (∑ j ∈ {j | I j = i}, (s j : ℝ)) ≤ (1 - κ) * n) := by
+  obtain ⟨κ, δ0, hκ, hδ0, hCL⟩ : ∃ κ δ0 : ℝ,
+      0 < κ ∧
+        0 < δ0 ∧
+          ∀ {ι : Type} [Fintype ι] (n : ℕ) (s : Fin (Fintype.card ι) → ℕ) (c : Fin q → ℕ),
+            (∀ j, 0 < s j) →
+              (∀ j, 2 * s j ≤ n) →
+                (∑ j, s j = n - 1) →
+                  (∀ i, (c i : ℝ) ≤ (1 + δ0) * n) →
+                    ((1 + ω) * n ≤ ∑ i, (c i : ℝ)) →
+                      ∃ I : Fin (Fintype.card ι) → Fin q,
+                        (∀ i, #{j | I j = i} ≤ c i) ∧
+                          (∀ i, (∑ j ∈ {j | I j = i}, (s j : ℝ)) ≤ (1 - κ) * n) := by
         have := @Erdos550.count_and_load q hq ω hω;
-        exact ⟨ this.choose, this.choose_spec.choose, this.choose_spec.choose_spec.1, this.choose_spec.choose_spec.2.1, fun { ι } _ n s c hs hs' hs'' hs''' hs'''' => this.choose_spec.choose_spec.2.2 n ( Fintype.card ι ) s c hs hs' hs'' hs''' hs'''' ⟩;
-  refine' h_contra ⟨ κ, δ0, hκ, hδ0, fun { ι } [ Fintype ι ] n s c hs hs' hs'' hc hc' => _ ⟩;
-  obtain ⟨I', hI'⟩ := hCL n (fun j => s (Fintype.equivFin ι |>.symm j)) c (fun j => hs (Fintype.equivFin ι |>.symm j)) (fun j => hs' (Fintype.equivFin ι |>.symm j)) (by
+        exact
+            ⟨this.choose, this.choose_spec.choose, this.choose_spec.choose_spec.1,
+              this.choose_spec.choose_spec.2.1, fun {ι} _ n s c hs hs' hs'' hs''' hs'''' =>
+              this.choose_spec.choose_spec.2.2 n (Fintype.card ι) s c hs hs' hs'' hs''' hs''''⟩;
+  refine h_contra ⟨ κ, δ0, hκ, hδ0, fun { ι } [ Fintype ι ] n s c hs hs' hs'' hc hc' => ?_ ⟩;
+  obtain ⟨I', hI'⟩ := hCL n (fun j => s (Fintype.equivFin ι |>.symm j)) c (fun j =>
+      hs (Fintype.equivFin ι |>.symm j)) (fun j => hs' (Fintype.equivFin ι |>.symm j)) (by
   convert! hs'' using 1;
   exact Equiv.sum_comp ( Fintype.equivFin ι |> Equiv.symm ) s) hc hc';
   use fun j => I' (Fintype.equivFin ι j);
-  refine' ⟨ fun i => _, fun i => _ ⟩;
+  refine ⟨ fun i => ?_, fun i => ?_ ⟩;
   · convert! hI'.1 i using 1;
     rw [ Finset.card_filter, Finset.card_filter ];
     conv_rhs => rw [ ← Equiv.sum_comp ( Fintype.equivFin ι ) ] ;
   · convert! hI'.2 i using 1;
-    refine' Finset.sum_bij ( fun j hj => Fintype.equivFin ι j ) _ _ _ _ <;> simp +decide only [mem_filter, mem_univ, true_and, exists_prop];
-    exact fun j hj => ⟨ ( Fintype.equivFin ι ).symm j, by simpa using! hj, by simp +decide ⟩
+    simpa only [Finset.sum_filter, Equiv.symm_apply_apply] using
+      (Equiv.sum_comp (Fintype.equivFin ι)
+        (fun j => if I' j = i then (s ((Fintype.equivFin ι).symm j) : ℝ) else 0))
 
 /-! ## The profile lemma. -/
 
 set_option maxHeartbeats 1000000 in
+-- The profile construction transports allocations, branch counts, and cluster loads together.
 open Classical in
 /-- **Profile lemma** (Lemma `lem:profile` of the paper).
 
@@ -332,21 +355,26 @@ theorem profile_lemma (q : ℕ) (hq : 2 ≤ q) (ω : ℝ) (hω : 0 < ω) :
           (1 - κ) * (Fintype.card VT : ℝ) ≤ (((Gb.neighborFinset v) ∩ W i).card : ℝ)) →
         T ⊑ Gb := by
   obtain ⟨κ, δ0, hκ, hδ0, hCL⟩ := count_and_load' q hq ω hω;
-  refine' ⟨ κ, δ0, hκ, hδ0, fun { VT } _ _ { Vb } _ _ T _ Gb _ x W hT hn hxW hWdisj hcap hdem hmindeg => _ ⟩;
+  refine
+      ⟨κ, δ0, hκ, hδ0, fun {VT} _ _ {Vb} _ _ T _ Gb _ x W hT hn hxW hWdisj hcap hdem hmindeg =>
+        ?_⟩;
   obtain ⟨z, hz⟩ : ∃ z : VT, ∀ w : VT, T.Adj z w → 2 * branchSize T z w ≤ Fintype.card VT := by
     have : Nonempty VT := Fintype.card_pos_iff.mp ( by linarith ) ; exact Erdos550.tree_centroid hT;
-  obtain ⟨I, hI1, hI2⟩ : ∃ I : {w : VT // T.Adj z w} → Fin q, (∀ i, #{j | I j = i} ≤ ((Gb.neighborFinset x) ∩ W i).card) ∧ (∀ i, (∑ j ∈ {j | I j = i}, (branchSize T z j.1 : ℝ)) ≤ (1 - κ) * Fintype.card VT) := by
+  obtain ⟨I, hI1, hI2⟩ : ∃ I : { w : VT // T.Adj z w } → Fin q,
+      (∀ i, #{j | I j = i} ≤ ((Gb.neighborFinset x) ∩ W i).card) ∧
+        (∀ i, (∑ j ∈ {j | I j = i}, (branchSize T z j.1 : ℝ)) ≤ (1 - κ) * Fintype.card VT) := by
     apply hCL;
     · exact fun j => branchSize_pos j.2;
     · exact fun j => hz _ j.2;
     · convert! branchSize_sum_neighbors hT z using 1;
-      refine' Finset.sum_bij ( fun w hw => w ) _ _ _ _ <;> simp +decide;
+      refine Finset.sum_bij ( fun w hw => w ) ?_ ?_ ?_ ?_ <;> simp +decide;
     · exact hcap;
     · convert! hdem using 1;
   -- Define the coloring function `col` and the home function `home`.
   set col : VT → Fin q := fun w => if h : T.Adj z w then I ⟨w, h⟩ else ⟨0, by linarith⟩
   set home : VT → Fin q := fun v => col (rootOf T z v);
-  apply tree_embed_from_allocation T Gb q z x W home (parentT T z) (rankT T z) hxW hWdisj (parentT_ne) (parentT_rank) (parentT_root_adj hT) (parentT_nbr_none) (fun v u h => by
+  apply tree_embed_from_allocation T Gb q z x W home (parentT T z) (rankT T z)
+    hxW hWdisj parentT_ne parentT_rank (parentT_root_adj hT) parentT_nbr_none (fun v u h => by
     have h_root_eq : rootOf T z u = rootOf T z v := by
       apply rootOf_toward hT v u;
       · rintro rfl; simp +decide [ parentT ] at h;
@@ -358,29 +386,46 @@ theorem profile_lemma (q : ℕ) (hq : 2 ≤ q) (ω : ℝ) (hω : 0 < ω) :
     convert! hI1 i using 1;
     convert! card_root_eq hT q col i using 1;
     rw [ Fintype.subtype_card ];
-    refine' Finset.card_bij ( fun j hj => j ) _ _ _ <;> simp +decide only [mem_filter, mem_univ, true_and, Subtype.forall, exists_prop, Subtype.exists,
-    exists_and_right, exists_eq_right, and_imp];
-    · exact fun a ha hi => ⟨ ha, by simpa [ ha ] using! hi ⟩;
-    · exact fun w hw hi => ⟨ hw, by simpa [ hw ] using! hi ⟩) (fun i => by
-    have h_card_branch : Fintype.card {v : VT // v ≠ z ∧ home v = i} = ∑ w ∈ (T.neighborFinset z).filter (fun w => col w = i), branchSize T z w := by
+    refine Finset.card_bij (fun j _ => j.val) ?_ ?_ ?_ <;>
+      simp +contextual [col]) (fun i => by
+    have h_card_branch :
+        Fintype.card { v : VT // v ≠ z ∧ home v = i } =
+          ∑ w ∈ (T.neighborFinset z).filter (fun w => col w = i), branchSize T z w := by
       convert! card_branch_eq hT q col i using 1;
     by_cases hi : W i = ∅;
     · specialize hI1 i; simp_all +decide [ Finset.ext_iff ] ;
       simp_all +decide [ show W i = ∅ from Finset.eq_empty_of_forall_notMem hi ];
       grind;
     · obtain ⟨ v, hv ⟩ := Finset.nonempty_of_ne_empty hi;
-      have h_card_branch_le : (∑ w ∈ (T.neighborFinset z).filter (fun w => col w = i), branchSize T z w : ℝ) ≤ (1 - κ) * Fintype.card VT := by
+      have h_card_branch_le :
+          (∑ w ∈ (T.neighborFinset z).filter (fun w => col w = i), branchSize T z w : ℝ) ≤
+            (1 - κ) * Fintype.card VT := by
         convert! hI2 i using 1;
-        refine' Finset.sum_bij ( fun w hw => ⟨ w, by aesop ⟩ ) _ _ _ _ <;> simp +decide [ col ]; all_goals grind;
-      have h_card_branch_le : (∑ w ∈ (T.neighborFinset z).filter (fun w => col w = i), branchSize T z w : ℝ) ≤ ((Gb.neighborFinset v ∩ W i).card : ℝ) := by
+            refine Finset.sum_bij (fun w hw => ⟨w, by aesop⟩) ?_ ?_ ?_ ?_ <;>
+              simp +decide [col];
+            all_goals grind;
+      have h_card_branch_le :
+          (∑ w ∈ (T.neighborFinset z).filter (fun w => col w = i), branchSize T z w : ℝ) ≤
+            ((Gb.neighborFinset v ∩ W i).card : ℝ) := by
         exact le_trans h_card_branch_le ( hmindeg i v hv );
       norm_cast at *;
-      exact h_card_branch.symm ▸ h_card_branch_le.trans ( Finset.card_mono <| Finset.inter_subset_right )) (fun i v hv => by
-    have h_card : Fintype.card {w : VT // w ≠ z ∧ home w = i} = ∑ w ∈ (T.neighborFinset z).filter (fun w => col w = i), branchSize T z w := by
+      exact
+          h_card_branch.symm ▸
+            h_card_branch_le.trans (Finset.card_mono <| Finset.inter_subset_right))
+      (fun i v hv => by
+    have h_card :
+        Fintype.card { w : VT // w ≠ z ∧ home w = i } =
+          ∑ w ∈ (T.neighborFinset z).filter (fun w => col w = i), branchSize T z w := by
       convert! card_branch_eq hT q col i using 1;
-    have h_card_le : (∑ w ∈ (T.neighborFinset z).filter (fun w => col w = i), branchSize T z w : ℝ) ≤ (1 - κ) * Fintype.card VT := by
+    have h_card_le :
+        (∑ w ∈ (T.neighborFinset z).filter (fun w => col w = i), branchSize T z w : ℝ) ≤
+          (1 - κ) * Fintype.card VT := by
       convert! hI2 i using 1;
-      refine' Finset.sum_bij ( fun w hw => ⟨ w, by aesop ⟩ ) _ _ _ _ <;> simp +decide [ col ]; all_goals grind;
-    exact Nat.sub_le_of_le_add <| by rw [ ← @Nat.cast_le ℝ ] ; push_cast [ h_card ] ; linarith [ hmindeg i v hv ] ;)
+          refine Finset.sum_bij (fun w hw => ⟨w, by aesop⟩) ?_ ?_ ?_ ?_ <;> simp +decide [col];
+          all_goals grind;
+    apply Nat.sub_le_of_le_add
+    rw [← @Nat.cast_le ℝ]
+    push_cast [h_card]
+    linarith [hmindeg i v hv])
 
 end Erdos550

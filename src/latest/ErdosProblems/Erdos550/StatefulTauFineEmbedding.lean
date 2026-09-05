@@ -19,7 +19,6 @@ open Finset SimpleGraph
 
 namespace Erdos550
 
-open Classical
 
 /-- The common conclusion required of either kind of local block extension. -/
 def IsFreshBlockExtension
@@ -27,6 +26,7 @@ def IsFreshBlockExtension
     (G : SimpleGraph V) (parent : A → Option A)
     (block P : Finset A) (f : A → V)
     (Inv : Finset A → (A → V) → Prop) : Prop :=
+  open scoped Classical in
   ∃ g : A → V,
     Set.InjOn g block ∧
     Disjoint (block.image g) (P.image f) ∧
@@ -40,9 +40,9 @@ extensions preserving an arbitrary state invariant, the whole rooted tree is
 embedded and the invariant holds at the final state. -/
 theorem stateful_tauFine_embedding
     {A : Type} {V : Type*} [Fintype A] [DecidableEq A]
-    [Fintype V] [DecidableEq V] [Nonempty V]
+    [Finite V] [DecidableEq V] [Nonempty V]
     (T : SimpleGraph A)
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    (G : SimpleGraph V)
     (Sseed : Finset A)
     (parent : A → Option A) (rank : A → ℕ)
     (hrank : ∀ a b, parent a = some b → rank b < rank a)
@@ -72,6 +72,8 @@ theorem stateful_tauFine_embedding
     ∃ f : A → V, Function.Injective f ∧
       (∀ a b, parent a = some b → G.Adj (f a) (f b)) ∧
       Inv Finset.univ f := by
+  let := Fintype.ofFinite V
+  classical
   apply stateful_sequential_block_embedding G parent rank hrank
     (tauFineBlock T Sseed)
     (mem_tauFineBlock_self T Sseed)
@@ -88,9 +90,9 @@ theorem stateful_tauFine_embedding
 /-- Graph-containment packaging of the stateful τ-fine induction. -/
 theorem stateful_tauFine_graph_embedding
     {A : Type} {V : Type*} [Fintype A] [DecidableEq A]
-    [Fintype V] [DecidableEq V] [Nonempty V]
-    (T : SimpleGraph A) [DecidableRel T.Adj]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    [Finite V] [DecidableEq V] [Nonempty V]
+    (T : SimpleGraph A)
+    (G : SimpleGraph V)
     (Sseed : Finset A)
     (parent : A → Option A) (rank : A → ℕ)
     (hrank : ∀ a b, parent a = some b → rank b < rank a)
@@ -120,6 +122,8 @@ theorem stateful_tauFine_graph_embedding
       IsFreshBlockExtension G parent (tauFineBlock T Sseed a)
         P f Inv) :
     T ⊑ G := by
+  let := Fintype.ofFinite V
+  classical
   obtain ⟨f, hfinj, hparent, _⟩ :=
     stateful_tauFine_embedding T G Sseed parent rank hrank D Inv hzero
       hseedExt hcomponentExt

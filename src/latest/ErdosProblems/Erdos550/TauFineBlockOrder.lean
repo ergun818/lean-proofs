@@ -20,13 +20,13 @@ open SimpleGraph Finset
 
 namespace Erdos550
 
-open Classical
 
 /-- The block containing a tree vertex: a singleton for a seed and the whole
 deleted component for a nonseed. -/
 noncomputable def tauFineBlock
     {A : Type} [Fintype A] [DecidableEq A]
     (T : SimpleGraph A) (S : Finset A) (a : A) : Finset A :=
+  open scoped Classical in
   if ha : a ∈ S then {a}
   else componentNonseedVertices T S (nonseedComponentOf T S a ha).1
 
@@ -34,6 +34,7 @@ lemma mem_tauFineBlock_self
     {A : Type} [Fintype A] [DecidableEq A]
     (T : SimpleGraph A) (S : Finset A) (a : A) :
     a ∈ tauFineBlock T S a := by
+  classical
   by_cases ha : a ∈ S
   · simp [tauFineBlock, ha]
   · rw [tauFineBlock, dif_neg ha]
@@ -44,6 +45,7 @@ lemma tauFineBlock_eq_of_mem
     (T : SimpleGraph A) (S : Finset A) {a b : A}
     (hb : b ∈ tauFineBlock T S a) :
     tauFineBlock T S b = tauFineBlock T S a := by
+  classical
   by_cases ha : a ∈ S
   · have hba : b = a := by
       simpa [tauFineBlock, ha] using! hb
@@ -97,6 +99,7 @@ lemma tauFineBlock_disjoint_of_not_mem
     (hP : IsBlockClosed (tauFineBlock T S) P)
     {a : A} (ha : a ∉ P) :
     Disjoint (tauFineBlock T S a) P := by
+  classical
   rw [Finset.disjoint_left]
   intro x hxa hxP
   have hxsub := hP x hxP
@@ -115,6 +118,7 @@ lemma ready_nonseed_eq_component_root
     (a : A) (haS : a ∉ S) (haP : a ∉ P)
     (hready : ∀ y, parent a = some y → y ∈ P) :
     a = D.root (nonseedComponentOf T S a haS) := by
+  classical
   let c := nonseedComponentOf T S a haS
   have hac :
       a ∈ componentNonseedVertices T S c.1 :=
@@ -138,12 +142,13 @@ lemma tauFineBlock_predecessor
     (D : RootedSeedComponentData T S parent)
     (P : Finset A)
     (hPblock : IsBlockClosed (tauFineBlock T S) P)
-    (hPdown : ∀ x ∈ P, ∀ y, parent x = some y → y ∈ P)
+    (_hPdown : ∀ x ∈ P, ∀ y, parent x = some y → y ∈ P)
     (a : A) (haP : a ∉ P)
     (hready : ∀ y, parent a = some y → y ∈ P)
     (x : A) (hx : x ∈ tauFineBlock T S a)
     (y : A) (hxy : parent x = some y) :
     y ∈ tauFineBlock T S a ∨ y ∈ P := by
+  classical
   by_cases haS : a ∈ S
   · have hxa : x = a := by
       simpa [tauFineBlock, haS] using! hx

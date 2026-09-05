@@ -44,7 +44,7 @@ of `U` — the graph `Gr` contains a copy of `F`.
 This is the single combinatorial engine behind the paper's reservoir
 `H`-freeness claim and the `a`-set–separation and obstruction-blocking lemmas.
 -/
-theorem red_F_from_first_class [DecidableEq V] (Gr : SimpleGraph V)
+theorem red_F_from_first_class (Gr : SimpleGraph V)
     [DecidableRel Gr.Adj] (q : ℕ) (m : Fin (q + 1) → ℕ)
     (S : Finset V) (hS : S.card = m 0)
     (W : Fin q → Finset V)
@@ -54,11 +54,18 @@ theorem red_F_from_first_class [DecidableEq V] (Gr : SimpleGraph V)
         m j.succ ≤ ((W j).filter
           (fun v => (∀ s ∈ S, Gr.Adj v s) ∧ ∀ u ∈ U, Gr.Adj v u)).card) :
     Kmult (q + 1) m ⊑ Gr := by
+  classical
   convert! greedy_multipartite_embedding_ordered Gr ( q + 1 ) m ( Fin.cons S W ) _ _ using 1;
-  · simp +decide only [ne_eq];
-    exact fun i => ⟨ Disjoint.symm ( hdisjSW i ), fun j hij => hdisjW i j hij ⟩;
-  · rintro ( _ | j ) U hU hU' <;> simp_all +decide;
-    refine' le_trans ( hrich ⟨ j, by linarith ⟩ U hU' ) _;
+  · intro i j
+    induction i using Fin.cases <;> induction j using Fin.cases
+    · exact fun h => (h rfl).elim
+    · exact fun _ => hdisjSW _
+    · exact fun _ => (hdisjSW _).symm
+    · exact fun h => hdisjW _ _ (fun e => h (congrArg Fin.succ e))
+  · rintro (_ | j) U hU hU' <;>
+      simp_all +decide only [ne_eq, Fin.zero_eta, not_lt_zero, false_and, exists_const,
+        imp_false, IsEmpty.forall_iff, implies_true, filter_true, Fin.cons_zero, Std.le_refl];
+    refine le_trans ( hrich ⟨ j, by linarith ⟩ U hU' ) ?_;
     exact Finset.card_le_card fun x hx => by aesop;
 
 end Erdos550

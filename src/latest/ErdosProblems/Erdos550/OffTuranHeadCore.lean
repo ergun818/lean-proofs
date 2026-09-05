@@ -21,13 +21,13 @@ open Finset SimpleGraph
 
 namespace Erdos550
 
-open Classical
 
 /-- Vertices of `source` having the density-threshold degree into `target`. -/
 noncomputable def hpPairTypicalCore
     {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (ε d : ℝ) (source target : Finset V) : Finset V :=
+  open scoped Classical in
   source.filter fun v =>
     (d - ε) * (target.card : ℝ) ≤
       ((target.filter fun x => G.Adj v x).card : ℝ)
@@ -37,6 +37,7 @@ lemma hpPairTypicalCore_subset
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (ε d : ℝ) (source target : Finset V) :
     hpPairTypicalCore G ε d source target ⊆ source :=
+  open scoped Classical in
   Finset.filter_subset _ _
 
 lemma mem_hpPairTypicalCore
@@ -47,6 +48,7 @@ lemma mem_hpPairTypicalCore
       v ∈ source ∧
         (d - ε) * (target.card : ℝ) ≤
           ((target.filter fun x => G.Adj v x).card : ℝ) := by
+  classical
   simp [hpPairTypicalCore]
 
 /-- Regularity deletes fewer than an `ε`-fraction when forming the structural
@@ -61,6 +63,7 @@ lemma hpPairTypicalCore_removed_lt
     (hdens : d ≤ (G.edgeDensity source target : ℝ)) :
     (((source \ hpPairTypicalCore G ε d source target).card : ℕ) : ℝ) <
       ε * (source.card : ℝ) := by
+  classical
   let bad := source.filter fun v =>
     (((target.filter fun x => G.Adj v x).card : ℝ) <
       ((G.edgeDensity source target : ℝ) - ε) *
@@ -96,6 +99,7 @@ lemma hpPairTypicalCore_removed_lt
 noncomputable def hpHeadCoreLoss
     {V ι : Type*} [Fintype V]
     (ε thr : ℝ) (Tset : Finset ι) (headBase : Finset V) : ℝ :=
+  open scoped Classical in
   ε * (headBase.card : ℝ) +
     ((Tset.card : ℝ) * ε * (headBase.card : ℝ)) / thr
 
@@ -108,6 +112,7 @@ noncomputable def hpOffTuranHeadCore
     (C : ι → Finset V) (ε d : ℝ)
     (Tset : Finset ι) (thr : ℝ)
     (head other : ι) : Finset V :=
+  open scoped Classical in
   hpLowBadCore G C (hpHeadDensityCap G R C head) ε Tset
     (hpPairTypicalCore G ε d (C head) (C other)) thr
 
@@ -118,6 +123,7 @@ lemma hpOffTuranHeadCore_subset
     (C : ι → Finset V) (ε d : ℝ)
     (Tset : Finset ι) (thr : ℝ) (head other : ι) :
     hpOffTuranHeadCore G R C ε d Tset thr head other ⊆ C head :=
+  open scoped Classical in
   (hpLowBadCore_subset G C (hpHeadDensityCap G R C head) ε Tset
     (hpPairTypicalCore G ε d (C head) (C other)) thr).trans
       (hpPairTypicalCore_subset G ε d (C head) (C other))
@@ -131,6 +137,7 @@ lemma hpOffTuranHeadCore_badCount_le
     {v : V}
     (hv : v ∈ hpOffTuranHeadCore G R C ε d Tset thr head other) :
     (badCount G C (hpHeadDensityCap G R C head) ε Tset v : ℝ) ≤ thr :=
+  open scoped Classical in
   (mem_hpLowBadCore G C (hpHeadDensityCap G R C head) ε Tset
     (hpPairTypicalCore G ε d (C head) (C other)) thr v).mp hv |>.2
 
@@ -143,12 +150,13 @@ lemma hpOffTuranHeadCore_structural
     {v : V}
     (hv : v ∈ hpOffTuranHeadCore G R C ε d Tset thr head other) :
     v ∈ hpPairTypicalCore G ε d (C head) (C other) :=
+  open scoped Classical in
   (mem_hpLowBadCore G C (hpHeadDensityCap G R C head) ε Tset
     (hpPairTypicalCore G ε d (C head) (C other)) thr v).mp hv |>.1
 
 /-- Combined structural and high-bad deletion loss. -/
 lemma hpOffTuranHeadCore_complement_le
-    {V ι : Type*} [Fintype V] [DecidableEq V] [DecidableEq ι]
+    {V ι : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (R : SimpleGraph ι) [DecidableRel R.Adj]
     (C : ι → Finset V)
@@ -162,6 +170,7 @@ lemma hpOffTuranHeadCore_complement_le
     (((C head \ hpOffTuranHeadCore
         G R C ε d Tset thr head other).card : ℕ) : ℝ) ≤
       hpHeadCoreLoss ε thr Tset (C head) := by
+  classical
   apply hpLowBadCore_complement_card_upper
     G C (hpHeadDensityCap G R C head) ε Tset
     (C head) (hpPairTypicalCore G ε d (C head) (C other))
@@ -177,7 +186,7 @@ lemma hpOffTuranHeadCore_complement_le
 
 /-- Cardinality lower bound for a head core. -/
 lemma hpOffTuranHeadCore_card_lower
-    {V ι : Type*} [Fintype V] [DecidableEq V] [DecidableEq ι]
+    {V ι : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (R : SimpleGraph ι) [DecidableRel R.Adj]
     (C : ι → Finset V)
@@ -190,6 +199,7 @@ lemma hpOffTuranHeadCore_card_lower
     (hheadDens : d ≤ (G.edgeDensity (C head) (C other) : ℝ)) :
     (C head).card - hpHeadCoreLoss ε thr Tset (C head) ≤
       (hpOffTuranHeadCore G R C ε d Tset thr head other).card := by
+  classical
   have hsub :=
     hpOffTuranHeadCore_subset G R C ε d Tset thr head other
   have hsplit :=
@@ -208,7 +218,7 @@ lemma hpOffTuranHeadCore_card_lower
 /-- A scalar room inequality turns the cardinality lower bound into the exact
 strict natural inequality required for seed placement. -/
 lemma hpOffTuranHeadCore_seed_room
-    {V ι : Type*} [Fintype V] [DecidableEq V] [DecidableEq ι]
+    {V ι : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (R : SimpleGraph ι) [DecidableRel R.Adj]
     (C : ι → Finset V)
@@ -225,6 +235,7 @@ lemma hpOffTuranHeadCore_seed_room
         (C head).card) :
     seed <
       (hpOffTuranHeadCore G R C ε d Tset thr head other).card := by
+  classical
   have hlower := hpOffTuranHeadCore_card_lower
     G R C hC ε d hε0 hε1 huni Tset thr hthr
     head other hheadUni hheadDens
@@ -236,7 +247,7 @@ lemma hpOffTuranHeadCore_seed_room
 /-- If the combined deletion fits below the complementary `(1-ε)` fraction,
 the head core retains at least an `ε`-fraction of its base cluster. -/
 lemma hpOffTuranHeadCore_epsilon_fraction
-    {V ι : Type*} [Fintype V] [DecidableEq V] [DecidableEq ι]
+    {V ι : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (R : SimpleGraph ι) [DecidableRel R.Adj]
     (C : ι → Finset V)
@@ -252,6 +263,7 @@ lemma hpOffTuranHeadCore_epsilon_fraction
         (1 - ε) * ((C head).card : ℝ)) :
     ε * ((C head).card : ℝ) ≤
       (hpOffTuranHeadCore G R C ε d Tset thr head other).card := by
+  classical
   have hlower := hpOffTuranHeadCore_card_lower
     G R C hC ε d hε0 hε1 huni Tset thr hthr
     head other hheadUni hheadDens
@@ -260,7 +272,7 @@ lemma hpOffTuranHeadCore_epsilon_fraction
 /-- Every vertex of the opposite head core keeps `need` neighbours in this
 head core once the raw regular-pair degree absorbs the combined deletion. -/
 lemma hpOffTuranHeadCore_cross_degree
-    {V ι : Type*} [Fintype V] [DecidableEq V] [DecidableEq ι]
+    {V ι : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (R : SimpleGraph ι) [DecidableRel R.Adj]
     (C : ι → Finset V)
@@ -282,6 +294,7 @@ lemma hpOffTuranHeadCore_cross_degree
       (((hpOffTuranHeadCore
         G R C ε d Tset thr head other).filter fun v =>
           G.Adj v u).card : ℝ) := by
+  classical
   have huStructural :=
     hpOffTuranHeadCore_structural
       G R C ε d Tset thr other head hu

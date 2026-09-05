@@ -48,7 +48,8 @@ lemma unreduced_edges_subset_decoupled {ε₁ δ : ℝ} :
         (fun (xy : α × α) ↦ G.Adj xy.1 xy.2 ∧ ¬ (G.regularityReduced P ε₁ δ).Adj xy.1 xy.2) ⊆
       (P.nonUniforms G ε₁).biUnion (fun (UV : Finset α × Finset α) ↦ UV.1 ×ˢ UV.2)
         ∪ P.parts.biUnion offDiag
-        ∪ (P.sparsePairs G δ).biUnion (fun (UV : Finset α × Finset α) ↦ G.interedges UV.1 UV.2) := by
+        ∪ (P.sparsePairs G δ).biUnion
+          (fun (UV : Finset α × Finset α) ↦ G.interedges UV.1 UV.2) := by
   rintro ⟨x, y⟩
   simp only [mem_filter, regularityReduced_adj, not_and, not_exists,
     not_le, mem_biUnion, mem_union, mem_product, Prod.exists, mem_offDiag, and_imp,
@@ -160,10 +161,10 @@ equipartition) and a reduced graph `R` on `ι` together with the reduced subgrap
 
 Decoupling `d` from `ε` is what allows a large density threshold to coexist with
 a fine uniformity parameter (impossible with Mathlib's fixed `ε/8`, `ε/4`). -/
-lemma exists_regular_clusters_decoupled {W : Type} [Fintype W] [DecidableEq W] [Nonempty W]
+lemma exists_regular_clusters_decoupled {W : Type} [Fintype W] [Nonempty W]
     (G : SimpleGraph W) [DecidableRel G.Adj] (ε d εB : ℝ)
     (hε : 0 < ε) (hd : 0 ≤ d) (hεB : 0 < εB)
-    (hcard : ⌈4/εB⌉₊ ≤ Fintype.card W) :
+    (hcard : ⌈4 / εB⌉₊ ≤ Fintype.card W) :
     ∃ (ι : Type) (_ : DecidableEq ι) (C : ι → Finset W) (R : SimpleGraph ι)
       (G' : SimpleGraph W) (_ : DecidableRel G'.Adj),
       (∀ i, (C i).Nonempty) ∧
@@ -174,26 +175,32 @@ lemma exists_regular_clusters_decoupled {W : Type} [Fintype W] [DecidableEq W] [
       (∀ x y, G'.Adj x y → ∃ i j, R.Adj i j ∧ x ∈ C i ∧ y ∈ C j) ∧
       ((G.edgeFinset.card : ℝ) - (2 * ε + εB / 4 + 2 * d) * (Fintype.card W : ℝ) ^ 2
         ≤ (G'.edgeFinset.card : ℝ)) := by
+  classical
   obtain ⟨ P, hP₁, hP₂, hP₃, hP₄ ⟩ :=
     szemeredi_regularity G hε (le_trans hcard (le_refl _));
   have hparts : 4 / εB ≤ (P.parts.card : ℝ) :=
     le_trans (Nat.le_ceil _) (mod_cast hP₂)
-  refine' ⟨ P.parts, _, fun i => i, _, _, _, _ ⟩ <;> norm_num;
-  all_goals try infer_instance;
-  refine' { Adj := fun i j => i ≠ j ∧ G.IsUniform ε i.val j.val ∧ (d : ℝ) ≤ (G.edgeDensity i.val j.val : ℝ), symm := _, loopless := _ };
-  any_goals exact G.regularityReduced P ε d;
-  all_goals try infer_instance;
-  all_goals norm_num [ Symmetric, Std.Irrefl ];
-  · exact ⟨fun a b h => ⟨Ne.symm h.1, h.2.1.symm, by simpa only [SimpleGraph.edgeDensity_comm] using h.2.2⟩⟩;
-  · exact ⟨ fun i hi => hi.1 rfl ⟩;
-  · refine' ⟨ _, _, _, _, _ ⟩;
-    · exact fun x hx => P.nonempty_of_mem_parts hx;
-    · exact fun x hx y hy hxy => P.disjoint hx hy hxy;
-    · tauto;
-    · grind;
-    · refine' ⟨ _, _ ⟩;
-      · exact fun x y hxy U hU V hV hx hy hUV hUV' hUV'' => ⟨ U, hU, V, ⟨ hUV, hUV', hV, hUV'' ⟩, hx, hy ⟩;
-      · have := regularityReduced_edges_card_decoupled hε hd hεB hP₁ hP₄ hparts;
-        push_cast at * ; nlinarith [ this ]
+  let R : SimpleGraph {U // U ∈ P.parts} :=
+    { Adj := fun i j => i ≠ j ∧ G.IsUniform ε i.val j.val ∧
+        (d : ℝ) ≤ (G.edgeDensity i.val j.val : ℝ)
+      symm := ⟨fun i j h => ⟨Ne.symm h.1, h.2.1.symm, by
+        simpa only [SimpleGraph.edgeDensity_comm] using h.2.2⟩⟩
+      loopless := ⟨fun i h => h.1 rfl⟩ }
+  refine ⟨{U // U ∈ P.parts}, inferInstance, Subtype.val, R,
+    G.regularityReduced P ε d, inferInstance, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · exact fun i => P.nonempty_of_mem_parts i.property
+  · intro i j hij
+    exact P.disjoint i.property j.property (fun h => hij (Subtype.ext h))
+  · exact fun _ _ h => h.2.1
+  · exact fun _ _ h => h.2.2
+  · exact fun _ _ h => h.1
+  · intro x y h
+    obtain ⟨U, hU, V, hV, hx, hy, hUV, huni, hdens⟩ := h.2
+    refine ⟨⟨U, hU⟩, ⟨V, hV⟩, ⟨?_, huni, hdens⟩, hx, hy⟩
+    intro heq
+    exact hUV (congrArg (fun i : {U // U ∈ P.parts} => i.val) heq)
+  · have hret := regularityReduced_edges_card_decoupled hε hd hεB hP₁ hP₄ hparts
+    push_cast at hret
+    nlinarith
 
 end Erdos550

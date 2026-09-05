@@ -19,7 +19,6 @@ open SimpleGraph Finset
 
 namespace Erdos550
 
-open Classical
 
 variable {A : Type} [Fintype A] [DecidableEq A]
 
@@ -28,6 +27,7 @@ noncomputable def componentUpperSeed
     {parent : A → Option A}
     (D : RootedSeedComponentData T S parent)
     (c : NonseedComponent T S) : A :=
+  open scoped Classical in
   (D.root_parent_seed c).choose
 
 lemma componentUpperSeed_mem
@@ -36,6 +36,7 @@ lemma componentUpperSeed_mem
     (D : RootedSeedComponentData T S parent)
     (c : NonseedComponent T S) :
     componentUpperSeed T S D c ∈ S :=
+  open scoped Classical in
   (D.root_parent_seed c).choose_spec.1
 
 lemma componentRoot_parent_upperSeed
@@ -44,6 +45,7 @@ lemma componentRoot_parent_upperSeed
     (D : RootedSeedComponentData T S parent)
     (c : NonseedComponent T S) :
     parent (D.root c) = some (componentUpperSeed T S D c) :=
+  open scoped Classical in
   (D.root_parent_seed c).choose_spec.2
 
 noncomputable def componentLowerSeeds
@@ -51,6 +53,7 @@ noncomputable def componentLowerSeeds
     {parent : A → Option A}
     (D : RootedSeedComponentData T S parent)
     (c : NonseedComponent T S) : Finset A :=
+  open scoped Classical in
   componentSeeds T S c.1 \ {componentUpperSeed T S D c}
 
 lemma componentLowerSeeds_card_le_one
@@ -62,6 +65,7 @@ lemma componentLowerSeeds_card_le_one
       (componentSeeds T S c.1).card ≤ 2)
     (c : NonseedComponent T S) :
     (componentLowerSeeds T S D c).card ≤ 1 := by
+  classical
   have hu :
       componentUpperSeed T S D c ∈ componentSeeds T S c.1 := by
     apply seed_mem_componentSeeds_of_adj T S c.1
@@ -82,12 +86,13 @@ theorem lowerSeed_parent_in_component
     (T : SimpleGraph A) (S : Finset A)
     {parent : A → Option A}
     (D : RootedSeedComponentData T S parent)
-    (hparentAdj : ∀ a b, parent a = some b → T.Adj a b)
+    (_hparentAdj : ∀ a b, parent a = some b → T.Adj a b)
     (hedge : ∀ a b, T.Adj a b →
       parent a = some b ∨ parent b = some a)
     (c : NonseedComponent T S)
     {s : A} (hs : s ∈ componentLowerSeeds T S D c) :
     ∃ v ∈ componentNonseedVertices T S c.1, parent s = some v := by
+  classical
   have hsComp : s ∈ componentSeeds T S c.1 :=
     (Finset.mem_sdiff.mp hs).1
   have hsUpper : s ≠ componentUpperSeed T S D c := by

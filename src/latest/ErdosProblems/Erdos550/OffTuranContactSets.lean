@@ -21,7 +21,6 @@ open Finset SimpleGraph
 
 namespace Erdos550
 
-open Classical
 
 noncomputable def hpHeadContactSet
     {V ι : Type*} [Fintype V] [DecidableEq V]
@@ -29,6 +28,7 @@ noncomputable def hpHeadContactSet
     (R : SimpleGraph ι) [DecidableRel R.Adj]
     (C : ι → Finset V) (headCore : Finset V)
     (ε : ℝ) (head target : ι) : Finset V :=
+  open scoped Classical in
   if 0 < hpTrimmedThreshold
       (hpHeadEndpointWeight G R C head target)
       ε ((C target).card : ℝ) then
@@ -43,6 +43,7 @@ lemma hpHeadContactSet_subset
     (C : ι → Finset V) (headCore : Finset V)
     (ε : ℝ) (head target : ι) :
     hpHeadContactSet G R C headCore ε head target ⊆ C target := by
+  classical
   unfold hpHeadContactSet
   split
   · exact hpRetainedSet_subset G ε
@@ -53,6 +54,7 @@ lemma hpTrimmedThreshold_pos_raw
     (weight ε size : ℝ)
     (hpos : 0 < hpTrimmedThreshold weight ε size) :
     2 * ε * size < weight := by
+  classical
   rw [hpTrimmedThreshold] at hpos
   have : 0 < weight - 2 * ε * size := by
     simpa using! hpos
@@ -68,6 +70,7 @@ lemma hpHeadContactSet_positive_reduced_edge
       (hpHeadEndpointWeight G R C head target)
       ε ((C target).card : ℝ)) :
     R.Adj head target := by
+  classical
   by_contra hR
   have hraw := hpTrimmedThreshold_pos_raw
     (hpHeadEndpointWeight G R C head target)
@@ -97,6 +100,7 @@ lemma hpHeadContactSet_removed_lt
     (((C target \ hpHeadContactSet
       G R C headCore ε head target).card : ℕ) : ℝ) <
         ε * ((C target).card : ℝ) := by
+  classical
   have hR :=
     hpHeadContactSet_positive_reduced_edge
       G R C ε hε0.le head target hpos
@@ -126,13 +130,14 @@ lemma hpHeadContactSet_seed_degree
     (hv : v ∈ hpHeadContactSet
       G R C headCore ε head target) :
     seed < ((headCore.filter fun x => G.Adj x v).card) := by
+  classical
   have hpos :
       0 < hpTrimmedThreshold
         (hpHeadEndpointWeight G R C head target)
         ε ((C target).card : ℝ) := by
     by_contra h
     rw [hpHeadContactSet, if_neg h] at hv
-    simpa using! hv
+    simp at hv
   have hR :=
     hpHeadContactSet_positive_reduced_edge
       G R C ε hε0.le head target hpos

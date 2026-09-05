@@ -17,7 +17,6 @@ open SimpleGraph Finset Finpartition
 
 namespace Erdos550
 
-open Classical
 
 /-- Normalized edge contribution from part `i` to part `j`. -/
 noncomputable def clusterContribution
@@ -25,6 +24,7 @@ noncomputable def clusterContribution
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (P : Finpartition (Finset.univ : Finset V))
     (scale : ℕ) (i j : {C // C ∈ P.parts}) : ℝ :=
+  open scoped Classical in
   (∑ v ∈ i.1, (((j.1.filter fun w => G.Adj v w).card : ℕ) : ℝ)) /
     (scale : ℝ)
 
@@ -34,6 +34,7 @@ noncomputable def clusterNormalizedDegree
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (P : Finpartition (Finset.univ : Finset V))
     (scale : ℕ) (i : {C // C ∈ P.parts}) : ℝ :=
+  open scoped Classical in
   ∑ j, clusterContribution G P scale i j
 
 lemma sum_neighbor_counts_over_parts
@@ -42,6 +43,7 @@ lemma sum_neighbor_counts_over_parts
     (P : Finpartition (Finset.univ : Finset V)) (v : V) :
     ∑ j : {C // C ∈ P.parts},
         (j.1.filter fun w => G.Adj v w).card = G.degree v := by
+  classical
   rw [← Finset.card_biUnion]
   · rw [show Finset.univ.biUnion
           (fun j : {C // C ∈ P.parts} =>
@@ -69,6 +71,7 @@ lemma clusterNormalizedDegree_eq_degree_sum
     (scale : ℕ) (i : {C // C ∈ P.parts}) :
     clusterNormalizedDegree G P scale i =
       (∑ v ∈ i.1, (G.degree v : ℝ)) / (scale : ℝ) := by
+  classical
   simp only [clusterNormalizedDegree, clusterContribution]
   have hsum :
       (∑ j : {C // C ∈ P.parts},
@@ -90,6 +93,7 @@ lemma sum_clusterNormalizedDegree
     (scale : ℕ) :
     ∑ i, clusterNormalizedDegree G P scale i =
       2 * (G.edgeFinset.card : ℝ) / (scale : ℝ) := by
+  classical
   simp_rw [clusterNormalizedDegree_eq_degree_sum]
   rw [← Finset.sum_div, ← Finset.sum_biUnion]
   · rw [show Finset.univ.biUnion
@@ -114,6 +118,7 @@ lemma clusterContribution_nonneg
     (P : Finpartition (Finset.univ : Finset V))
     (scale : ℕ) (i j : {C // C ∈ P.parts}) :
     0 ≤ clusterContribution G P scale i j := by
+  classical
   exact div_nonneg (Finset.sum_nonneg fun _ _ => Nat.cast_nonneg _)
     (Nat.cast_nonneg _)
 
@@ -127,6 +132,7 @@ lemma clusterContribution_le_scale
     (hsize : ∀ i : {C // C ∈ P.parts}, i.1.card ≤ scale)
     (i j : {C // C ∈ P.parts}) :
     clusterContribution G P scale i j ≤ scale := by
+  classical
   have hterm : ∀ v ∈ i.1,
       ((j.1.filter fun w => G.Adj v w).card : ℝ) ≤ scale := by
     intro v hv
@@ -156,6 +162,7 @@ lemma clusterNormalizedDegree_le_card
     (hsize : ∀ i : {C // C ∈ P.parts}, i.1.card ≤ scale)
     (i : {C // C ∈ P.parts}) :
     clusterNormalizedDegree G P scale i ≤ Fintype.card V := by
+  classical
   rw [clusterNormalizedDegree_eq_degree_sum]
   have hdeg : ∀ v ∈ i.1, (G.degree v : ℝ) ≤ Fintype.card V := by
     intro v hv
@@ -176,8 +183,7 @@ lemma clusterNormalizedDegree_le_card
 /-- Maximal-matching coverage transfers a heavy normalized cluster degree to
 the union of the matching endpoints. -/
 lemma matched_clusterContribution_lower
-    {V ι κ : Type*} [Fintype V] [DecidableEq V]
-    [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
+    {ι κ : Type*} [Fintype ι] [DecidableEq ι] [Fintype κ]
     (f : ι → ℝ) (scale : ℝ)
     (hfs : ∀ i, f i ≤ scale) (hscale : 0 ≤ scale)
     (X Y : ι) (cL cR : κ → ι) (U : Finset ι)
@@ -186,6 +192,7 @@ lemma matched_clusterContribution_lower
     (B : ℕ) (hsmall : U.card < B) :
     (∑ i, f i) - (B + 2) * scale ≤
       ∑ i ∈ (Finset.univ.image cL ∪ Finset.univ.image cR), f i :=
+  open scoped Classical in
   matching_endpoint_sum_lower X Y cL cR U hU B hsmall f scale
     hfs hscale
 

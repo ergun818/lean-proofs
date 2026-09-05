@@ -19,11 +19,11 @@ open Finset SimpleGraph Finpartition SzemerediRegularity
 
 namespace Erdos550
 
-open Classical
 
 set_option maxHeartbeats 2000000 in
+-- The supply construction checks the matching and head capacity estimates simultaneously.
 theorem OffTuranReducedDegreeData.exists_direct_heads_matching_supply
-    {W : Type} [Fintype W] (F : SimpleGraph W)
+    {W : Type} [Finite W] (F : SimpleGraph W)
     {A : Type} [Fintype A]
     (q : ℕ) (hq : 2 ≤ q)
     (ε₀ : ℝ) (m₀ : ℕ)
@@ -67,6 +67,8 @@ theorem OffTuranReducedDegreeData.exists_direct_heads_matching_supply
             (offTuranReducedGraph G D.P c.ε c.η)
             (fun i : {C // C ∈ D.P.parts} => i.1)
             Y cL cR k := by
+  let := Fintype.ofFinite W
+  classical
   let ell : ℝ := D.P.parts.card
   let N : ℝ := Fintype.card V
   let B : ℕ := ⌈c.η * ell / 2⌉₊

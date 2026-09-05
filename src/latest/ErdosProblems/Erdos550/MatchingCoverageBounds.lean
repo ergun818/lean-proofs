@@ -22,12 +22,13 @@ namespace Erdos550
 images, then the number of vertices outside those images is at most `|U|+2`. -/
 lemma card_compl_matching_endpoints_le
     {ι κ : Type*} [Fintype ι] [DecidableEq ι]
-    [Fintype κ] [DecidableEq κ]
+    [Fintype κ]
     (X Y : ι) (cL cR : κ → ι) (U : Finset ι)
     (hU : ∀ a, a ∈ U ↔ a ≠ X ∧ a ≠ Y ∧
       a ∉ Finset.univ.image cL ∧ a ∉ Finset.univ.image cR) :
     (Finset.univ \ (Finset.univ.image cL ∪ Finset.univ.image cR)).card
       ≤ U.card + 2 := by
+  classical
   let A := Finset.univ \ (Finset.univ.image cL ∪ Finset.univ.image cR)
   have hsub : A ⊆ U ∪ {X, Y} := by
     intro a ha
@@ -50,13 +51,14 @@ lemma card_compl_matching_endpoints_le
 /-- The paper's `ηℓ+2` conclusion in integral form. -/
 lemma card_compl_matching_endpoints_lt_add_two
     {ι κ : Type*} [Fintype ι] [DecidableEq ι]
-    [Fintype κ] [DecidableEq κ]
+    [Fintype κ]
     (X Y : ι) (cL cR : κ → ι) (U : Finset ι) (B : ℕ)
     (hU : ∀ a, a ∈ U ↔ a ≠ X ∧ a ≠ Y ∧
       a ∉ Finset.univ.image cL ∧ a ∉ Finset.univ.image cR)
     (hsmall : U.card < B) :
     (Finset.univ \ (Finset.univ.image cL ∪ Finset.univ.image cR)).card
       < B + 2 := by
+  classical
   exact lt_of_le_of_lt (card_compl_matching_endpoints_le X Y cL cR U hU) (by omega)
 
 /-- Combining maximal-matching coverage with the existing scalar estimate gives

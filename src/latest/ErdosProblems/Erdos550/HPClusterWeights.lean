@@ -18,13 +18,13 @@ open Finset SimpleGraph
 
 namespace Erdos550
 
-open Classical
 
 noncomputable def hpHeadEndpointWeight
     {V ι : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (R : SimpleGraph ι) [DecidableRel R.Adj]
     (C : ι → Finset V) (head target : ι) : ℝ :=
+  open scoped Classical in
   if R.Adj head target then
     (G.edgeDensity (C head) (C target) : ℝ) * (C target).card
   else 0
@@ -35,6 +35,7 @@ noncomputable def hpHeadMatchingWeight
     (R : SimpleGraph ι) [DecidableRel R.Adj]
     (C : ι → Finset V) (head : ι)
     (cL cR : κ → ι) (k : κ) : ℝ :=
+  open scoped Classical in
   hpHeadEndpointWeight G R C head (cL k) +
     hpHeadEndpointWeight G R C head (cR k)
 
@@ -44,6 +45,7 @@ lemma hpHeadEndpointWeight_nonneg
     (R : SimpleGraph ι) [DecidableRel R.Adj]
     (C : ι → Finset V) (head target : ι) :
     0 ≤ hpHeadEndpointWeight G R C head target := by
+  classical
   rw [hpHeadEndpointWeight]
   split
   · exact mul_nonneg
@@ -57,6 +59,7 @@ lemma hpHeadEndpointWeight_le_card
     (R : SimpleGraph ι) [DecidableRel R.Adj]
     (C : ι → Finset V) (head target : ι) :
     hpHeadEndpointWeight G R C head target ≤ (C target).card := by
+  classical
   rw [hpHeadEndpointWeight]
   split
   · have hd :
@@ -72,6 +75,7 @@ lemma hpHeadMatchingWeight_nonneg
     (C : ι → Finset V) (head : ι)
     (cL cR : κ → ι) (k : κ) :
     0 ≤ hpHeadMatchingWeight G R C head cL cR k := by
+  classical
   exact add_nonneg
     (hpHeadEndpointWeight_nonneg G R C head (cL k))
     (hpHeadEndpointWeight_nonneg G R C head (cR k))
@@ -84,6 +88,7 @@ lemma hpHeadMatchingWeight_le_two_mul
     (cL cR : κ → ι) (s : ℝ)
     (hsize : ∀ i, ((C i).card : ℝ) ≤ s) (k : κ) :
     hpHeadMatchingWeight G R C head cL cR k ≤ 2 * s := by
+  classical
   rw [hpHeadMatchingWeight]
   linarith [hpHeadEndpointWeight_le_card G R C head (cL k),
     hpHeadEndpointWeight_le_card G R C head (cR k),

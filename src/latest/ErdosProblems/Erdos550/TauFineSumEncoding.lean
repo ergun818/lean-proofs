@@ -21,7 +21,6 @@ open SimpleGraph Finset
 
 namespace Erdos550
 
-open Classical
 
 variable {α : Type} [Fintype α] [DecidableEq α]
 
@@ -40,23 +39,30 @@ def ShrubVertex.val {T : SimpleGraph α} {S : Finset α} :
 lemma shrubVertex_val_not_mem
     (T : SimpleGraph α) (S : Finset α) (v : ShrubVertex T S) :
     v.val ∉ S := by
+  classical
       by_contra h_contra;
       obtain ⟨c, hc⟩ : ∃ c : NonseedComponent T S, v.1 = c := by
         grind;
       obtain ⟨ v, hv ⟩ := v;
-      have := componentNonseedVertices_eq_supp T S v; simp_all +decide ;
-      replace this := Set.ext_iff.mp this hv; simp_all +decide [ componentNonseedVertices ] ;
+      have := componentNonseedVertices_eq_supp T S v; simp_all +decide only ;
+      replace this := Set.ext_iff.mp this hv; simp_all +decide only [componentNonseedVertices,
+        ConnectedComponent.mem_supp_iff, coe_filter, mem_univ, true_and, Set.mem_ofPred_eq,
+        and_iff_right_iff_imp] ;
       exact this ( by aesop ) h_contra
 
 lemma shrubVertex_component_eq_of_val_eq
     (T : SimpleGraph α) (S : Finset α) {v w : ShrubVertex T S}
     (h : v.val = w.val) : v.1 = w.1 := by
-      rcases v with ⟨ ⟨ c₁, hc₁ ⟩, v₁ ⟩ ; rcases w with ⟨ ⟨ c₂, hc₂ ⟩, v₂ ⟩ ; simp_all +decide [ ShrubVertex.val ];
+  classical
+      rcases v with ⟨ ⟨ c₁, hc₁ ⟩, v₁ ⟩ ;
+      rcases w with ⟨ ⟨ c₂, hc₂ ⟩, v₂ ⟩ ;
+      simp_all +decide only [ShrubVertex.val];
       unfold nonseedComponents at hc₁ hc₂; aesop;
 
 lemma shrubVertex_val_injective
     (T : SimpleGraph α) (S : Finset α) :
     Function.Injective (@ShrubVertex.val α _ _ T S) := by
+  classical
       intro v w h; have := shrubVertex_component_eq_of_val_eq T S h; cases v; cases w; aesop;
 
 /-- Seed vertices attached by a tree edge to a particular shrub vertex.  Unlike an
@@ -65,6 +71,7 @@ is adjacent to several seeds. -/
 noncomputable def shrubVertexSeeds
     (T : SimpleGraph α) (S : Finset α) (v : ShrubVertex T S) :
     Finset (SeedVertex S) :=
+  open scoped Classical in
   Finset.univ.filter (fun s => T.Adj s.1 v.val)
 
 @[simp] lemma mem_shrubVertexSeeds_iff
@@ -76,31 +83,42 @@ noncomputable def shrubVertexSeeds
 lemma shrubVertexSeeds_card_le_seed_card
     (T : SimpleGraph α) (S : Finset α) (v : ShrubVertex T S) :
     (shrubVertexSeeds T S v).card ≤ S.card := by
-      convert! Finset.card_le_univ ( shrubVertexSeeds T S v ) using 1 ; simp +decide [ Fintype.card_subtype ]
+  classical
+      convert! Finset.card_le_univ (shrubVertexSeeds T S v) using 1;
+          simp +decide only [Fintype.card_subtype, subset_univ, filter_mem_eq_of_subset]
 
 lemma componentSeeds_eq_biUnion_vertexSeeds
     (T : SimpleGraph α) (S : Finset α) (c : NonseedComponent T S) :
+    open scoped Classical in
     componentSeeds T S c.1 =
       (Finset.univ.biUnion (fun v : c.1.supp =>
         (shrubVertexSeeds T S ⟨c, v⟩).image (fun s => s.1))) := by
+  classical
           ext s;
-          simp +decide [ componentSeeds, shrubVertexSeeds ];
+          simp +decide only [componentSeeds, ConnectedComponent.mem_supp_iff, mem_filter,
+            shrubVertexSeeds, univ_eq_attach, mem_biUnion, mem_univ, mem_image, mem_attach,
+            true_and, Subtype.exists, exists_and_left, exists_prop, exists_eq_right_right,
+            exists_and_right];
           grind +locals
 
 lemma shrubVertexSeeds_image_subset_componentSeeds
     (T : SimpleGraph α) (S : Finset α) (v : ShrubVertex T S) :
     (shrubVertexSeeds T S v).image (fun s => s.1) ⊆
       componentSeeds T S v.1.1 := by
+  classical
         intro s hs;
         obtain ⟨ s, hs, rfl ⟩ := Finset.mem_image.mp hs;
-        convert! Set.mem_setOf_eq.mpr _;
+        convert! Set.mem_ofPred_eq.mpr _;
         convert! Finset.mem_filter.mpr _;
         exact ⟨ s.2, v.2, by simpa using! ‹s ∈ shrubVertexSeeds T S v› ⟩
 
 lemma shrubVertexSeeds_card_le_componentSeeds
     (T : SimpleGraph α) (S : Finset α) (v : ShrubVertex T S) :
     (shrubVertexSeeds T S v).card ≤ (componentSeeds T S v.1.1).card := by
-      refine' le_trans _ ( Finset.card_le_card <| shrubVertexSeeds_image_subset_componentSeeds T S v );
+  classical
+      refine
+          le_trans ?_
+            (Finset.card_le_card <| shrubVertexSeeds_image_subset_componentSeeds T S v);
       rw [ Finset.card_image_of_injective _ fun x y hxy => by aesop ]
 
 lemma shrubVertexSeeds_card_le_of_component_bound
@@ -108,6 +126,7 @@ lemma shrubVertexSeeds_card_le_of_component_bound
     (hatt : ∀ c : NonseedComponent T S,
       (componentSeeds T S c.1).card ≤ r) :
     ∀ v : ShrubVertex T S, (shrubVertexSeeds T S v).card ≤ r := by
+  classical
       exact fun v => le_trans ( shrubVertexSeeds_card_le_componentSeeds _ _ _ ) ( hatt _ )
 
 /-- The canonical vertex map from the skeleton/shrub sum to the original tree. -/
@@ -118,16 +137,17 @@ def splitVertex (T : SimpleGraph α) (S : Finset α) :
 
 lemma splitVertex_injective (T : SimpleGraph α) (S : Finset α) :
     Function.Injective (splitVertex T S) := by
-      intro x y hxy;
-      cases x <;> cases y <;> simp_all +decide only [Sum.inr.injEq, reduceCtorEq];
-      · rename_i x y;
-        exact absurd ( shrubVertex_val_not_mem T S y ) ( by simp +decide [ ← hxy, x.2 ] );
-      · rename_i x y;
-        exact absurd hxy ( by exact fun h => by have := shrubVertex_val_not_mem T S x; aesop );
-      · exact Sigma.ext ( by have := shrubVertex_component_eq_of_val_eq T S hxy; aesop ) ( by have := shrubVertex_val_injective T S hxy; aesop )
+  classical
+  intro x y hxy
+  rcases x with x | x <;> rcases y with y | y <;> simp only [splitVertex] at hxy
+  · exact congrArg Sum.inl (Subtype.ext hxy)
+  · exact False.elim ((shrubVertex_val_not_mem T S y) (hxy ▸ x.property))
+  · exact False.elim ((shrubVertex_val_not_mem T S x) (hxy.symm ▸ y.property))
+  · exact congrArg Sum.inr (shrubVertex_val_injective T S hxy)
 
 lemma splitVertex_surjective (T : SimpleGraph α) (S : Finset α) :
     Function.Surjective (splitVertex T S) := by
+  classical
       -- For any vertex $v \in V$, we can split into two cases: $v \in S$ or $v \notin S$.
       intro v
       by_cases hv : v ∈ S;
@@ -137,6 +157,7 @@ lemma splitVertex_surjective (T : SimpleGraph α) (S : Finset α) :
 /-- The exact equivalence between the decomposed sum and the original vertices. -/
 noncomputable def treeSplitEquiv (T : SimpleGraph α) (S : Finset α) :
     SeedVertex S ⊕ ShrubVertex T S ≃ α :=
+  open scoped Classical in
   Equiv.ofBijective (splitVertex T S)
     ⟨splitVertex_injective T S, splitVertex_surjective T S⟩
 
@@ -165,11 +186,14 @@ lemma shrubParent_rank
     {v w : ShrubVertex T S}
     (h : shrubParent T hT S v = some w) :
     shrubRank T hT S w < shrubRank T hT S v := by
-      -- By definition of `shrubParent`, if `shrubParent T hT S v = some w`, then `w` is the parent of `v` in the nonseed component.
+  classical
+      -- By definition of `shrubParent`, if `shrubParent T hT S v = some w`, then `w` is the
+      -- parent of `v` in the nonseed component.
       obtain ⟨c, hc⟩ := v
       obtain ⟨d, hd⟩ := w
-      simp [shrubParent] at h;
-      obtain ⟨ a, ha, h₁, rfl, h₂ ⟩ := h; simp_all +decide [ shrubRank ] ;
+      simp only [shrubParent, Option.map_eq_some_iff, Sigma.mk.injEq, Subtype.exists,
+        ConnectedComponent.mem_supp_iff] at h;
+      obtain ⟨ a, ha, h₁, rfl, h₂ ⟩ := h; simp_all +decide only [heq_eq_eq, shrubRank] ;
       grind +suggestions
 
 lemma shrubParent_adj_original
@@ -177,22 +201,27 @@ lemma shrubParent_adj_original
     {v w : ShrubVertex T S}
     (h : shrubParent T hT S v = some w) :
     T.Adj v.val w.val := by
+  classical
       obtain ⟨c, v⟩ := v
       obtain ⟨c', w⟩ := w
-      simp [shrubParent] at h;
-      obtain ⟨ a, ha, h₁, rfl, h₂ ⟩ := h; simp_all +decide [ ShrubVertex.val ] ;
+      simp only [shrubParent, Option.map_eq_some_iff, Sigma.mk.injEq, Subtype.exists,
+        ConnectedComponent.mem_supp_iff] at h;
+      obtain ⟨ a, ha, h₁, rfl, h₂ ⟩ := h; simp_all +decide only [heq_eq_eq, ShrubVertex.val] ;
       grind +suggestions
 
 lemma shrub_adj_same_component
     (T : SimpleGraph α) (S : Finset α) {v w : ShrubVertex T S}
     (h : T.Adj v.val w.val) : v.1 = w.1 := by
-      cases v ; cases w ; simp_all +decide;
+  classical
+      cases v ; cases w ; simp_all +decide only;
       rename_i c₁ v₁ c₂ v₂;
       obtain ⟨c₁, hc₁⟩ := c₁
       obtain ⟨c₂, hc₂⟩ := c₂;
       have h_connected : (seedDeleted T S).Adj v₁.1 v₂.1 := by
         have h_connected : v₁.1 ∉ S ∧ v₂.1 ∉ S := by
-          exact ⟨ shrubVertex_val_not_mem T S ⟨ ⟨ c₁, hc₁ ⟩, v₁ ⟩, shrubVertex_val_not_mem T S ⟨ ⟨ c₂, hc₂ ⟩, v₂ ⟩ ⟩;
+          exact
+                ⟨shrubVertex_val_not_mem T S ⟨⟨c₁, hc₁⟩, v₁⟩,
+                  shrubVertex_val_not_mem T S ⟨⟨c₂, hc₂⟩, v₂⟩⟩;
         exact ⟨ h, fun hs => by have := v₁.2; aesop ⟩;
       grind +suggestions
 
@@ -200,6 +229,7 @@ lemma shrub_internal_edge_parent
     (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree) (S : Finset α)
     {v w : ShrubVertex T S} (h : T.Adj v.val w.val) :
     shrubParent T hT S v = some w ∨ shrubParent T hT S w = some v := by
+  classical
       cases v ; cases w;
       rename_i c v d w;
       have h_eq : c = d := by
@@ -211,7 +241,10 @@ lemma shrub_internal_edge_parent
       · unfold shrubParent; aesop;
       · convert! h using 1;
         convert! seedDeleted_adj_iff T S v w using 1;
-        exact ⟨ fun h => ⟨ h, shrubVertex_val_not_mem T S ⟨ c, v ⟩, shrubVertex_val_not_mem T S ⟨ c, w ⟩ ⟩, fun h => h.1 ⟩
+        exact
+            ⟨fun h =>
+              ⟨h, shrubVertex_val_not_mem T S ⟨c, v⟩, shrubVertex_val_not_mem T S ⟨c, w⟩⟩,
+              fun h => h.1⟩
 
 /-
 Every edge of the original tree, expressed through the sum equivalence, is
@@ -229,6 +262,7 @@ theorem treeSplit_edge_classification
       a ∈ shrubVertexSeeds T S b ∧
       ((x = Sum.inl a ∧ y = Sum.inr b) ∨
        (x = Sum.inr b ∧ y = Sum.inl a))) := by
+  classical
         rcases x with ( x | x ) <;> rcases y with ( y | y );
         · exact Or.inl ⟨ x, y, rfl, rfl ⟩;
         · exact Or.inr <| Or.inr <| ⟨ x, y, by simpa using! hxy, Or.inl ⟨ rfl, rfl ⟩ ⟩;
@@ -240,16 +274,23 @@ The seed-induced forest admits parent/rank data classifying all seed--seed
 edges.  It is obtained by restricting a rooted structure of the original tree;
 a seed's parent is kept exactly when that parent is also a seed.
 -/
-theorem exists_seed_rooted_structure
-    (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree) (S : Finset α) :
+omit [DecidableEq α] [Fintype α] in
+theorem exists_seed_rooted_structure [Finite α]
+    (T : SimpleGraph α) (hT : T.IsTree) (S : Finset α) :
     ∃ (parent : SeedVertex S → Option (SeedVertex S))
       (rank : SeedVertex S → ℕ),
       (∀ a b, parent a = some b → rank b < rank a) ∧
       (∀ a b, parent a = some b → T.Adj a.1 b.1) ∧
       (∀ a b, T.Adj a.1 b.1 →
         parent a = some b ∨ parent b = some a) := by
+  let := Fintype.ofFinite α
+  classical
           obtain ⟨ parent0, rank0, hparent0, hrank0 ⟩ := IsTree.exists_rooted_edge_structure T hT;
-          refine' ⟨ fun a => Option.bind ( parent0 a ) fun b => if hb : b ∈ S then some ⟨ b, hb ⟩ else none, fun a => rank0 a, _, _, _ ⟩ <;> simp +decide only [Subtype.forall];
+          refine
+                ⟨fun a =>
+                  Option.bind (parent0 a) fun b => if hb : b ∈ S then some ⟨b, hb⟩ else none,
+                  fun a => rank0 a, ?_, ?_, ?_⟩ <;>
+              simp +decide only [Subtype.forall];
           · grind +suggestions;
           · intro a ha b hb h; cases h' : parent0 a <;> aesop;
           · grind
@@ -274,23 +315,27 @@ theorem tauFine_split_maps_embed
     (hShrubAdj : ∀ a b, shrubParent T hT S a = some b → G.Adj (f a) (f b))
     (hAnchor : ∀ a s, s ∈ shrubVertexSeeds T S a → G.Adj (fSk s) (f a)) :
     T ⊑ G := by
-      -- Define the embedding map e : α → V by transporting the glued sum map through treeSplitEquiv.symm.
+  classical
+      -- Define the embedding map e : α → V by transporting the glued sum map through
+      -- treeSplitEquiv.symm.
       set e : α → V := fun x => if hx : x ∈ S then fSk ⟨x, hx⟩ else f ⟨nonseedComponentOf T S x (by
       exact hx), ⟨x, by
         rfl⟩⟩
       generalize_proofs at *;
       have he_adj : ∀ x y : α, T.Adj x y → G.Adj (e x) (e y) := by
         intro x y hxy
-        simp [e];
+        simp only [nonseedComponentOf_val, e];
         split_ifs with hx hy;
-        · cases hparentSk ⟨ x, hx ⟩ ⟨ y, hy ⟩ hxy <;> [ exact hSkAdj _ _ ‹_›; exact SimpleGraph.Adj.symm ( hSkAdj _ _ ‹_› ) ];
+        · cases hparentSk ⟨x, hx⟩ ⟨y, hy⟩ hxy <;> [exact hSkAdj _ _ ‹_›;
+              exact SimpleGraph.Adj.symm (hSkAdj _ _ ‹_›)];
         · convert! hAnchor _ _ _;
-          simp +decide [ shrubVertexSeeds ];
+          simp +decide only [shrubVertexSeeds, univ_eq_attach, mem_filter, mem_attach, true_and];
           exact hxy;
         · convert! hAnchor ⟨ nonseedComponentOf T S x hx, ⟨ x, by
             grind +qlia ⟩ ⟩ ⟨ y, by assumption ⟩ _ |> SimpleGraph.Adj.symm using 1
           generalize_proofs at *;
-          simp +decide [ shrubVertexSeeds ];
+          simp +decide only [shrubVertexSeeds, nonseedComponentOf_val, univ_eq_attach,
+            mem_filter, mem_attach, true_and];
           exact hxy.symm;
         · have h_parent : shrubParent T hT S ⟨nonseedComponentOf T S x hx, ⟨x, by
             grind⟩⟩ = some ⟨nonseedComponentOf T S y ‹_›, ⟨y, by
@@ -300,13 +345,12 @@ theorem tauFine_split_maps_embed
             convert! shrub_internal_edge_parent T hT S _;
             exact hxy
           generalize_proofs at *;
-          cases h_parent <;> [ exact hShrubAdj _ _ ‹_›; exact SimpleGraph.Adj.symm ( hShrubAdj _ _ ‹_› ) ];
+          cases h_parent <;> [exact hShrubAdj _ _ ‹_›;
+              exact SimpleGraph.Adj.symm (hShrubAdj _ _ ‹_›)];
       have he_inj : Function.Injective e := by
         intro x y hxy;
         grind;
-      refine' ⟨ _, _ ⟩;
-      use e;
-      exact he_inj
+      exact ⟨⟨⟨e, fun hab => he_adj _ _ hab⟩, he_inj⟩⟩
 
 
 /-- The component label of a shrub vertex. -/
@@ -316,20 +360,27 @@ def shrubComponent (T : SimpleGraph α) (S : Finset α) :
 
 lemma shrubComponent_surjective (T : SimpleGraph α) (S : Finset α) :
     Function.Surjective (shrubComponent T S) := by
+  classical
       intro c;
       obtain ⟨v, hv⟩ : ∃ v : α, v ∈ c.1.supp := by
-        have := componentNonseedVertices_nonempty T S c; simp_all +decide only [ConnectedComponent.mem_supp_iff];
-        obtain ⟨ v, hv ⟩ := this; use v; simp_all +decide [ componentNonseedVertices ] ;
+        have := componentNonseedVertices_nonempty T S c;
+        simp_all +decide only [ConnectedComponent.mem_supp_iff];
+        obtain ⟨ v, hv ⟩ := this; use v; simp_all +decide only [componentNonseedVertices,
+          ConnectedComponent.mem_supp_iff, mem_filter, mem_univ, true_and] ;
       exact ⟨ ⟨ c, ⟨ v, hv ⟩ ⟩, rfl ⟩
 
 lemma shrubComponent_fiber_card
     (T : SimpleGraph α) (S : Finset α) (c : NonseedComponent T S) :
+    open scoped Classical in
     (Finset.univ.filter (fun v : ShrubVertex T S => shrubComponent T S v = c)).card =
       (componentNonseedVertices T S c.1).card := by
-        refine' Finset.card_bij ( fun v hv => v.val ) _ _ _ <;> simp +decide only [mem_filter, mem_univ, true_and, exists_prop, Sigma.exists, Subtype.exists,
-    ConnectedComponent.mem_supp_iff];
+  classical
+        refine Finset.card_bij ( fun v hv => v.val ) ?_ ?_ ?_ <;> simp +decide only [mem_filter,
+          mem_univ, true_and, exists_prop, Sigma.exists, Subtype.exists,
+          ConnectedComponent.mem_supp_iff];
         · intro a ha
-          simp [componentNonseedVertices];
+          simp only [componentNonseedVertices, ConnectedComponent.mem_supp_iff, mem_filter,
+            mem_univ, true_and];
           exact ⟨ shrubVertex_val_not_mem T S a, by aesop ⟩;
         · grind +locals;
         · intro b hb
@@ -341,9 +392,13 @@ lemma shrubComponent_fiber_card
 The shrub sum has exactly the number of nonseed vertices.
 -/
 lemma shrubVertex_card (T : SimpleGraph α) (S : Finset α) :
+    open scoped Classical in
     Fintype.card (ShrubVertex T S) = Fintype.card α - S.card := by
+  classical
       rw [ ← Fintype.card_congr ( treeSplitEquiv T S ) ];
-      simp +decide [ SeedVertex ]
+      simp +decide only [SeedVertex, Fintype.card_sum, Fintype.card_coe,
+        Fintype.card_sigma, Fintype.card_ofFinset, ConnectedComponent.mem_supp_iff,
+        add_tsub_cancel_left]
 
 omit [Fintype α] [DecidableEq α] in
 @[simp] lemma seedVertex_card (S : Finset α) :
@@ -351,7 +406,9 @@ omit [Fintype α] [DecidableEq α] in
       convert! Fintype.card_coe S using 1
 
 lemma split_type_card (T : SimpleGraph α) (S : Finset α) :
+    open scoped Classical in
     Fintype.card (SeedVertex S ⊕ ShrubVertex T S) = Fintype.card α := by
+  classical
       fapply Fintype.card_congr;
       exact Classical.choice <| show Nonempty ( SeedVertex S ⊕ ShrubVertex T S ≃ α ) from by
         have := @treeSplitEquiv α _ _ T S
@@ -361,9 +418,11 @@ lemma shrubComponent_attachment_card_le
     (T : SimpleGraph α) (S : Finset α) (r : ℕ)
     (hatt : ∀ c : NonseedComponent T S,
       (componentSeeds T S c.1).card ≤ r) :
+    open scoped Classical in
     ∀ c : NonseedComponent T S,
       (Finset.univ.biUnion (fun v : c.1.supp =>
         (shrubVertexSeeds T S ⟨c, v⟩).image (fun s => s.1))).card ≤ r := by
+  classical
           intro c;
           convert! hatt c using 1;
           rw [ componentSeeds_eq_biUnion_vertexSeeds ]
@@ -373,9 +432,11 @@ Exact total shrub mass grouped by component labels.
 -/
 lemma sum_shrubComponent_fiber_card
     (T : SimpleGraph α) (S : Finset α) :
+    open scoped Classical in
     (∑ c : NonseedComponent T S,
       (Finset.univ.filter (fun v : ShrubVertex T S =>
         shrubComponent T S v = c)).card) = Fintype.card α - S.card := by
+  classical
           rw [ ← shrubVertex_card T S, Finset.sum_congr rfl fun c hc => Finset.card_filter _ _ ];
           rw [ Finset.sum_comm ] ; aesop
 
@@ -388,6 +449,7 @@ theorem tree_tau_fine_split_data
     (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree)
     (τ : ℝ) (hτ : 0 < τ)
     (hn : (1 : ℝ) ≤ τ * Fintype.card α) :
+    open scoped Classical in
     ∃ S : Finset α,
       (S.card : ℝ) ≤ 1 / τ ∧
       Fintype.card (ShrubVertex T S) = Fintype.card α - S.card ∧
@@ -409,12 +471,18 @@ theorem tree_tau_fine_split_data
       (∀ a b, shrubParent T hT S a = some b → T.Adj a.val b.val) ∧
       (∀ a b : ShrubVertex T S, T.Adj a.val b.val →
         shrubParent T hT S a = some b ∨ shrubParent T hT S b = some a) := by
+  classical
           obtain ⟨ S, hS₁, hS₂, hS₃, hS₄, hS₅, hS₆ ⟩ := tree_tau_fine_indexed_data T hT τ hτ hn;
-          refine' ⟨ S, hS₁, _, _, _, _, _ ⟩;
+          refine ⟨ S, hS₁, ?_, ?_, ?_, ?_, ?_ ⟩;
           · convert! shrubVertex_card T S using 1;
-          · intro c; specialize hS₂ c; simp_all +decide [ shrubComponent_fiber_card ] ;
+          · intro c
+            rw [shrubComponent_fiber_card]
+            exact hS₂ c
           · exact fun c => shrubComponent_attachment_card_le T S _ hS₃ c;
           · exact exists_seed_rooted_structure T hT S;
-          · exact ⟨ fun a b hab => shrubParent_rank T hT S hab, fun a b hab => shrubParent_adj_original T hT S hab, fun a b hab => shrub_internal_edge_parent T hT S hab ⟩
+          · exact
+                ⟨fun a b hab => shrubParent_rank T hT S hab, fun a b hab =>
+                  shrubParent_adj_original T hT S hab, fun a b hab =>
+                  shrub_internal_edge_parent T hT S hab⟩
 
 end Erdos550

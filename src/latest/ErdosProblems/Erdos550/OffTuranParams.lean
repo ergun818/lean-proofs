@@ -94,6 +94,7 @@ lemma turan_gap_lower (q p : ℕ) (hq : 1 ≤ q) (hp : 4 * q ^ 2 ≤ p) :
       _ = ((q:ℝ)-1)*(p:ℝ)^2 + 2*(q:ℝ)*(q:ℝ)^2 := by field_simp
   rw [hchoose, ge_iff_le, div_le_iff₀ (by positivity : (0:ℝ) < 4*(q:ℝ))]
   have hpp : (0:ℝ) ≤ (p:ℝ) := by positivity
-  nlinarith [ht', hpr, hqr, mul_nonneg hpp (by linarith : (0:ℝ) ≤ (p:ℝ) - 4*(q:ℝ)^2), mul_pos hqpos hqpos]
+  nlinarith [ht', hpr, hqr, mul_nonneg hpp (by linarith : (0 : ℝ) ≤ (p : ℝ) - 4 * (q : ℝ) ^ 2),
+      mul_pos hqpos hqpos]
 
 end Erdos550

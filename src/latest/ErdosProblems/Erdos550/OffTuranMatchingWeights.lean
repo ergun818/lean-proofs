@@ -20,7 +20,6 @@ open Finset SimpleGraph Finpartition
 
 namespace Erdos550
 
-open Classical
 
 lemma regularityReduced_adj_iff_fixed_parts
     {V : Type*} [Fintype V] [DecidableEq V]
@@ -31,6 +30,7 @@ lemma regularityReduced_adj_iff_fixed_parts
     (hx : x ∈ i.1) (hy : y ∈ j.1) :
     (G.regularityReduced P ε d).Adj x y ↔
       G.Adj x y ∧ (offTuranReducedGraph G P ε d).Adj i j := by
+  classical
   constructor
   · rintro ⟨hxy, U, hUP, W, hWP, hxU, hyW, hUW, huni, hdens⟩
     have hUi : U = i.1 :=
@@ -54,6 +54,7 @@ lemma clusterContribution_reduced_eq
       if (offTuranReducedGraph G P ε d).Adj i j then
         clusterContribution G P scale i j
       else 0 := by
+  classical
   by_cases hij : (offTuranReducedGraph G P ε d).Adj i j
   · rw [if_pos hij]
     unfold clusterContribution
@@ -99,6 +100,7 @@ lemma clusterContribution_eq_density_mul
     clusterContribution G P scale i j =
       (G.edgeDensity i.1 j.1 : ℝ) *
         (i.1.card : ℝ) * (j.1.card : ℝ) / scale := by
+  classical
   by_cases hi : i.1 = ∅
   · simp [hi, clusterContribution, SimpleGraph.edgeDensity_def]
   by_cases hj : j.1 = ∅
@@ -106,10 +108,9 @@ lemma clusterContribution_eq_density_mul
   have hcount :
       (∑ v ∈ i.1, (j.1.filter fun w => G.Adj v w).card) =
         (G.interedges i.1 j.1).card := by
-    simp +decide [SimpleGraph.interedges, Rel.interedges,
-      Finset.sum_filter]
+    simp +decide only [interedges, Rel.interedges]
     rw [Finset.card_filter, Finset.sum_product]
-    simp +decide [Finset.sum_ite]
+    simp +decide only [sum_boole, Nat.cast_id]
   unfold clusterContribution
   rw [← Nat.cast_sum, hcount, SimpleGraph.edgeDensity_def]
   push_cast
@@ -137,6 +138,7 @@ lemma clusterContribution_reduced_le_headEndpointWeight
     clusterContribution (G.regularityReduced P ε d) P scale head target ≤
       hpHeadEndpointWeight G (offTuranReducedGraph G P ε d)
         (fun i : {C // C ∈ P.parts} => i.1) head target := by
+  classical
   rw [clusterContribution_reduced_eq]
   by_cases hR : (offTuranReducedGraph G P ε d).Adj head target
   · rw [if_pos hR, hpHeadEndpointWeight, if_pos hR,

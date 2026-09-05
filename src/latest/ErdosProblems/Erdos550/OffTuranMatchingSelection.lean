@@ -19,7 +19,6 @@ open Finset SimpleGraph
 
 namespace Erdos550
 
-open Classical
 
 /-- **Complete finite selection.**  An independence bound at scale `B`,
 together with the cleaned average-degree estimate and the numerical fact that
@@ -27,7 +26,7 @@ together with the cleaned average-degree estimate and the numerical fact that
 a maximum matching away from it. -/
 theorem exists_heavy_head_and_matching_coverage
     {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (R : SimpleGraph ι) [DecidableRel R.Adj]
+    (R : SimpleGraph ι)
     (S : Finset ι) (D : ι → ℝ) (base η N : ℝ) (B : ℕ)
     (hN : 0 < N) (hbase : 0 ≤ base + 80 * η * N)
     (hup : ∀ i ∈ S, D i ≤ N)
@@ -47,6 +46,7 @@ theorem exists_heavy_head_and_matching_coverage
         (∀ a, a ∈ U ↔ a ≠ X ∧ a ≠ Y ∧
           a ∉ Finset.univ.image cL ∧ a ∉ Finset.univ.image cR) ∧
         (Finset.univ \ (Finset.univ.image cL ∪ Finset.univ.image cR)).card < B + 2 := by
+  classical
   have hheavyReal : (B : ℝ) ≤
       ((heavyClusterFamily S D base η N).card : ℝ) :=
     hB.trans (heavyClusterFamily_card_lower S D base η N hN hbase hup havg)

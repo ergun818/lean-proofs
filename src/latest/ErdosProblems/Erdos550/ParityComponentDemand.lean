@@ -18,7 +18,6 @@ open Finset
 
 namespace Erdos550
 
-open Classical
 
 variable {A : Type} [Fintype A] [DecidableEq A]
 
@@ -28,6 +27,7 @@ noncomputable def componentHeadColour
     (D : RootedSeedComponentData T S parent)
     (col : A → Bool)
     (c : NonseedComponent T S) : Bool :=
+  open scoped Classical in
   col (componentUpperSeed T S D c)
 
 noncomputable def componentHeadDemand
@@ -35,6 +35,7 @@ noncomputable def componentHeadDemand
     {parent : A → Option A}
     (D : RootedSeedComponentData T S parent)
     (col : A → Bool) (head : Bool) : ℝ :=
+  open scoped Classical in
   ∑ c ∈ Finset.univ.filter
       (fun c : NonseedComponent T S =>
         componentHeadColour T S D col c = head),
@@ -47,6 +48,7 @@ noncomputable def parityRouteColour
     {parent : A → Option A}
     (D : RootedSeedComponentData T S parent)
     (col : A → Bool) (x : A) : Bool :=
+  open scoped Classical in
   if hx : x ∈ S then col x
   else componentHeadColour T S D col
     (nonseedComponentOf T S x hx)
@@ -60,6 +62,7 @@ lemma parityRouteColour_component
     {x : A} (hx : x ∈ componentNonseedVertices T S c.1) :
     parityRouteColour T S D col x =
       componentHeadColour T S D col c := by
+  classical
   have hxNot : x ∉ S :=
     (mem_componentNonseedVertices_iff T S c.1 x).mp hx |>.1
   rw [parityRouteColour, dif_neg hxNot]
@@ -77,6 +80,7 @@ noncomputable def parityRouteDemand
     {parent : A → Option A}
     (D : RootedSeedComponentData T S parent)
     (col : A → Bool) (head : Bool) : ℝ :=
+  open scoped Classical in
   ((Finset.univ.filter fun x =>
     x ∉ S ∧ parityRouteColour T S D col x = head).card : ℝ)
 
@@ -86,6 +90,7 @@ lemma parityRouteDemand_nonneg
     (D : RootedSeedComponentData T S parent)
     (col : A → Bool) (head : Bool) :
     0 ≤ parityRouteDemand T S D col head := by
+  classical
   exact Nat.cast_nonneg _
 
 lemma parityRouteDemand_pos_of_component
@@ -96,6 +101,7 @@ lemma parityRouteDemand_pos_of_component
     (c : NonseedComponent T S) :
     0 < parityRouteDemand T S D col
       (componentHeadColour T S D col c) := by
+  classical
   let x := D.root c
   have hxNonseed : x ∉ S := by
     exact (mem_componentNonseedVertices_iff T S c.1 x).mp
@@ -120,6 +126,7 @@ lemma route_filter_card_eq_parityRouteDemand
     ((P.filter fun x =>
       x ∉ S ∧ parityRouteColour T S D col x = head).card : ℝ) ≤
         parityRouteDemand T S D col head := by
+  classical
   rw [parityRouteDemand]
   exact_mod_cast Finset.card_le_card
     (show
@@ -139,6 +146,7 @@ lemma parityRouteDemand_false_add_true
     parityRouteDemand T S D col false +
         parityRouteDemand T S D col true =
       (Fintype.card A - S.card : ℕ) := by
+  classical
   let F := Finset.univ.filter fun x =>
     x ∉ S ∧ parityRouteColour T S D col x = false
   let R := Finset.univ.filter fun x =>
@@ -167,6 +175,7 @@ lemma componentHeadDemand_nonneg
     (D : RootedSeedComponentData T S parent)
     (col : A → Bool) (head : Bool) :
     0 ≤ componentHeadDemand T S D col head := by
+  classical
   exact Finset.sum_nonneg fun _ _ => Nat.cast_nonneg _
 
 lemma componentHeadDemand_false_add_true
@@ -177,6 +186,7 @@ lemma componentHeadDemand_false_add_true
     componentHeadDemand T S D col false +
         componentHeadDemand T S D col true =
       (Fintype.card A - S.card : ℕ) := by
+  classical
   let F := Finset.univ.filter
     (fun c : NonseedComponent T S =>
       componentHeadColour T S D col c = false)

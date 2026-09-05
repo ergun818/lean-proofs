@@ -17,7 +17,6 @@ open Finset Finpartition
 
 namespace Erdos550
 
-open Classical
 
 lemma partition_matching_left_right_disjoint
     {V κ : Type*} [Fintype V] [DecidableEq V]
@@ -26,6 +25,7 @@ lemma partition_matching_left_right_disjoint
     (hinj : Function.Injective (Sum.elim cL cR))
     (k : κ) :
     Disjoint (cL k).1 (cR k).1 := by
+  classical
   have hne : cL k ≠ cR k := by
     intro h
     have himpossible :
@@ -42,6 +42,7 @@ lemma partition_matching_edges_disjoint
     (k j : κ) (hkj : k ≠ j) :
     Disjoint ((cL k).1 ∪ (cR k).1)
       ((cL j).1 ∪ (cR j).1) := by
+  classical
   rw [Finset.disjoint_left]
   intro v hvk hvj
   rcases Finset.mem_union.mp hvk with hvkL | hvkR
@@ -78,6 +79,7 @@ lemma partition_head_matching_edge_disjoint
     (haway : ∀ k, cL k ≠ head ∧ cR k ≠ head)
     (k : κ) :
     Disjoint head.1 ((cL k).1 ∪ (cR k).1) := by
+  classical
   rw [Finset.disjoint_left]
   intro v hvHead hvSide
   rcases Finset.mem_union.mp hvSide with hvL | hvR

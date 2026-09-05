@@ -21,7 +21,7 @@ lemma offTuran_raw_average_arith
     (n q δ η r a N e : ℝ)
     (hq : 2 ≤ q) (hδ : 0 < δ) (hη : 0 < η)
     (hηδ : 400 * η ≤ δ)
-    (hn : 0 ≤ n) (hN : 0 ≤ N) (hnN : n ≤ N)
+    (_hn : 0 ≤ n) (hN : 0 ≤ N) (hnN : n ≤ N)
     (ha : 1 ≤ a)
     (hr : (2 - η) * n ≤ 2 * r)
     (hNdef : N = q * (r - 1) + a)

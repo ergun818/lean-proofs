@@ -18,7 +18,6 @@ open SimpleGraph Finset
 
 namespace Erdos550
 
-open Classical
 
 variable {A : Type} [Fintype A] [DecidableEq A]
 
@@ -33,6 +32,7 @@ noncomputable def componentLocalRoot
     (D : RootedSeedComponentData T S parent)
     (c : NonseedComponent T S) :
     RootedComponentVertex T S c :=
+  open scoped Classical in
   ⟨D.root c, D.root_mem c⟩
 
 noncomputable def componentLocalParent
@@ -42,6 +42,7 @@ noncomputable def componentLocalParent
     (c : NonseedComponent T S) :
     RootedComponentVertex T S c →
       Option (RootedComponentVertex T S c) :=
+  open scoped Classical in
   fun x =>
     if h : x.1 = D.root c then none
     else
@@ -64,6 +65,7 @@ lemma componentLocalParent_some_global
     {x y : RootedComponentVertex T S c}
     (hxy : componentLocalParent T S D c x = some y) :
     parent x.1 = some y.1 := by
+  classical
   unfold componentLocalParent at hxy
   split at hxy
   · simp at hxy
@@ -84,6 +86,7 @@ lemma componentLocalParent_eq_some_of_global
     {x y : RootedComponentVertex T S c}
     (hxy : parent x.1 = some y.1) :
     componentLocalParent T S D c x = some y := by
+  classical
   have hxne : x.1 ≠ D.root c := by
     intro hxroot
     obtain ⟨s, hsS, hrootParent⟩ := D.root_parent_seed c
@@ -115,6 +118,7 @@ lemma componentLocalParent_none_unique
     (x : RootedComponentVertex T S c)
     (hx : componentLocalParent T S D c x = none) :
     x = componentLocalRoot T S D c := by
+  classical
   unfold componentLocalParent at hx
   split at hx
   · exact Subtype.ext ‹x.1 = D.root c›
@@ -130,6 +134,7 @@ lemma componentLocalParent_rank
     {x y : RootedComponentVertex T S c}
     (hxy : componentLocalParent T S D c x = some y) :
     rank y.1 < rank x.1 :=
+  open scoped Classical in
   hrank x.1 y.1 (componentLocalParent_some_global T S D c hxy)
 
 lemma componentLocalParent_adj
@@ -141,6 +146,7 @@ lemma componentLocalParent_adj
     {x y : RootedComponentVertex T S c}
     (hxy : componentLocalParent T S D c x = some y) :
     T.Adj x.1 y.1 :=
+  open scoped Classical in
   hparentAdj x.1 y.1
     (componentLocalParent_some_global T S D c hxy)
 
@@ -154,6 +160,7 @@ lemma componentLocalParent_col
     {x y : RootedComponentVertex T S c}
     (hxy : componentLocalParent T S D c x = some y) :
     col x.1 ≠ col y.1 :=
+  open scoped Classical in
   hcol x.1 y.1
     (componentLocalParent_some_global T S D c hxy)
 

@@ -22,13 +22,17 @@ A nonempty pairwise-disjoint family of clusters has at most as many indices
 as the ambient finite vertex type.
 -/
 lemma cluster_index_card_le
-    {V ι : Type*} [Fintype V] [Fintype ι] [DecidableEq V]
+    {V ι : Type*} [Fintype V] [Fintype ι]
     (C : ι → Finset V)
     (hne : ∀ i, (C i).Nonempty)
     (hdisj : ∀ i j, i ≠ j → Disjoint (C i) (C j)) :
     Fintype.card ι ≤ Fintype.card V := by
+  classical
   choose f hf using hne;
-  exact Fintype.card_le_of_injective f fun i j hij => Classical.not_not.1 fun hi => Finset.disjoint_left.1 ( hdisj i j hi ) ( hf i ) ( hij ▸ hf j )
+  apply Fintype.card_le_of_injective f
+  intro i j hij
+  by_contra hi
+  exact Finset.disjoint_left.mp (hdisj i j hi) (hf i) (hij ▸ hf j)
 
 /-
 The union of any selected pairwise-disjoint clusters has cardinality equal
@@ -53,6 +57,9 @@ lemma cluster_union_lower_bound
     (smin : ℕ) (hmin : ∀ i, smin ≤ (C i).card)
     (S : Finset ι) :
     S.card * smin ≤ (S.biUnion C).card := by
-  rw [ card_biUnion_clusters C hdisj S ] ; exact le_trans ( by simp +decide ) ( Finset.sum_le_sum fun i hi => hmin i ) ;
+  rw [card_biUnion_clusters C hdisj S]
+  calc
+    S.card * smin = ∑ _i ∈ S, smin := by simp
+    _ ≤ ∑ i ∈ S, (C i).card := Finset.sum_le_sum fun i _ => hmin i
 
 end Erdos550

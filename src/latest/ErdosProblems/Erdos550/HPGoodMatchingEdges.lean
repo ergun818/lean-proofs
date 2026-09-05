@@ -20,13 +20,13 @@ open Finset SimpleGraph
 
 namespace Erdos550
 
-open Classical
 
 noncomputable def hpEndpointBad
     {V ι : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (C : ι → Finset V) (dcap : ι → ℝ) (ε : ℝ)
     (anchor : V) (i : ι) : Prop :=
+  open scoped Classical in
   (((C i).filter fun x => G.Adj anchor x).card : ℝ) <
     (dcap i - ε) * ((C i).card : ℝ)
 
@@ -36,6 +36,7 @@ noncomputable def hpGoodMatchingEdges
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (C : ι → Finset V) (dcap : ι → ℝ) (ε : ℝ)
     (cL cR : κ → ι) (anchor : V) : Finset κ :=
+  open scoped Classical in
   Finset.univ.filter fun k =>
     ¬hpEndpointBad G C dcap ε anchor (cL k) ∧
       ¬hpEndpointBad G C dcap ε anchor (cR k)
@@ -46,6 +47,7 @@ noncomputable def hpAllocatedGoodMatchingEdges
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (C : ι → Finset V) (dcap : ι → ℝ) (ε : ℝ)
     (K : Finset κ) (cL cR : κ → ι) (anchor : V) : Finset κ :=
+  open scoped Classical in
   K ∩ hpGoodMatchingEdges G C dcap ε cL cR anchor
 
 lemma hpAllocatedGoodMatchingEdges_subset
@@ -55,6 +57,7 @@ lemma hpAllocatedGoodMatchingEdges_subset
     (C : ι → Finset V) (dcap : ι → ℝ) (ε : ℝ)
     (K : Finset κ) (cL cR : κ → ι) (anchor : V) :
     hpAllocatedGoodMatchingEdges G C dcap ε K cL cR anchor ⊆ K :=
+  open scoped Classical in
   Finset.inter_subset_left
 
 lemma mem_hpAllocatedGoodMatchingEdges
@@ -68,6 +71,7 @@ lemma mem_hpAllocatedGoodMatchingEdges
     k ∈ K ∧
       ¬hpEndpointBad G C dcap ε anchor (cL k) ∧
       ¬hpEndpointBad G C dcap ε anchor (cR k) := by
+  classical
   have hk' := Finset.mem_inter.mp hk
   have hgood := Finset.mem_filter.mp hk'.2
   exact ⟨hk'.1, hgood.2.1, hgood.2.2⟩
@@ -82,6 +86,7 @@ lemma hpAllocatedGood_left_degree
       G C dcap ε K cL cR anchor) :
     (dcap (cL k) - ε) * ((C (cL k)).card : ℝ) ≤
       (((C (cL k)).filter fun v => G.Adj anchor v).card : ℝ) := by
+  classical
   exact le_of_not_gt
     (mem_hpAllocatedGoodMatchingEdges
       G C dcap ε K cL cR anchor hk).2.1
@@ -96,6 +101,7 @@ lemma hpAllocatedGood_right_degree
       G C dcap ε K cL cR anchor) :
     (dcap (cR k) - ε) * ((C (cR k)).card : ℝ) ≤
       (((C (cR k)).filter fun v => G.Adj anchor v).card : ℝ) := by
+  classical
   exact le_of_not_gt
     (mem_hpAllocatedGoodMatchingEdges
       G C dcap ε K cL cR anchor hk).2.2
@@ -115,12 +121,13 @@ lemma hpAllocatedGood_left_trimmed_degree
         (dcap (cL k) * ((C (cL k)).card : ℝ))
         ε ((C (cL k)).card : ℝ) ≤
       (((C (cL k)).filter fun v => G.Adj anchor v).card : ℝ) := by
+  classical
   apply hpTrimmedThreshold_typical_degree
   · exact hε0
   · positivity
   · positivity
   · convert! hpAllocatedGood_left_degree
-      G C dcap ε K cL cR anchor hk using 1 <;> ring
+      G C dcap ε K cL cR anchor hk using 1 ; ring
 
 lemma hpAllocatedGood_right_trimmed_degree
     {V ι κ : Type*} [Fintype V] [DecidableEq V]
@@ -135,18 +142,20 @@ lemma hpAllocatedGood_right_trimmed_degree
         (dcap (cR k) * ((C (cR k)).card : ℝ))
         ε ((C (cR k)).card : ℝ) ≤
       (((C (cR k)).filter fun v => G.Adj anchor v).card : ℝ) := by
+  classical
   apply hpTrimmedThreshold_typical_degree
   · exact hε0
   · positivity
   · positivity
   · convert! hpAllocatedGood_right_degree
-      G C dcap ε K cL cR anchor hk using 1 <;> ring
+      G C dcap ε K cL cR anchor hk using 1 ; ring
 
 noncomputable def hpChosenBadEndpoint
     {V ι κ : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (C : ι → Finset V) (dcap : ι → ℝ) (ε : ℝ)
     (cL cR : κ → ι) (anchor : V) (k : κ) : ι :=
+  open scoped Classical in
   if hpEndpointBad G C dcap ε anchor (cL k) then cL k else cR k
 
 lemma hpChosenBadEndpoint_injective
@@ -157,6 +166,7 @@ lemma hpChosenBadEndpoint_injective
     (hinj : Function.Injective (Sum.elim cL cR)) :
     Function.Injective
       (hpChosenBadEndpoint G C dcap ε cL cR anchor) := by
+  classical
   intro k j hkj
   by_cases hk : hpEndpointBad G C dcap ε anchor (cL k)
   · by_cases hj : hpEndpointBad G C dcap ε anchor (cL j)
@@ -191,8 +201,10 @@ lemma hpChosenBadEndpoint_mem_bad
     {k : κ}
     (hk : k ∈
       Finset.univ \ hpGoodMatchingEdges G C dcap ε cL cR anchor) :
+    open scoped Classical in
     hpChosenBadEndpoint G C dcap ε cL cR anchor k ∈
       Tset.filter fun i => hpEndpointBad G C dcap ε anchor i := by
+  classical
   have hkNot :=
     (Finset.mem_sdiff.mp hk).2
   have hbad :
@@ -216,7 +228,7 @@ lemma hpChosenBadEndpoint_mem_bad
 `badCount`. -/
 lemma bad_matching_edges_card_le_badCount
     {V ι κ : Type*} [Fintype V] [DecidableEq V]
-    [Fintype κ] [DecidableEq κ] [DecidableEq ι]
+    [Fintype κ] [DecidableEq κ]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (C : ι → Finset V) (dcap : ι → ℝ) (ε : ℝ)
     (Tset : Finset ι) (cL cR : κ → ι) (anchor : V)
@@ -226,6 +238,7 @@ lemma bad_matching_edges_card_le_badCount
     (Finset.univ \
         hpGoodMatchingEdges G C dcap ε cL cR anchor).card ≤
       badCount G C dcap ε Tset anchor := by
+  classical
   let Bad :=
     Finset.univ \ hpGoodMatchingEdges G C dcap ε cL cR anchor
   let choose :=
@@ -249,7 +262,7 @@ lemma bad_matching_edges_card_le_badCount
 
 lemma hpGoodMatchingEdges_nonempty
     {V ι κ : Type*} [Fintype V] [DecidableEq V]
-    [Fintype κ] [DecidableEq κ] [DecidableEq ι]
+    [Fintype κ] [DecidableEq κ]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (C : ι → Finset V) (dcap : ι → ℝ) (ε : ℝ)
     (Tset : Finset ι) (cL cR : κ → ι) (anchor : V)
@@ -259,6 +272,7 @@ lemma hpGoodMatchingEdges_nonempty
     (hbad :
       badCount G C dcap ε Tset anchor < Fintype.card κ) :
     (hpGoodMatchingEdges G C dcap ε cL cR anchor).Nonempty := by
+  classical
   have hdeleted :=
     bad_matching_edges_card_le_badCount
       G C dcap ε Tset cL cR anchor hinj hleft hright
@@ -280,7 +294,7 @@ lemma hpGoodMatchingEdges_nonempty
 
 lemma allocated_bad_matching_edges_card_le_badCount
     {V ι κ : Type*} [Fintype V] [DecidableEq V]
-    [Fintype κ] [DecidableEq κ] [DecidableEq ι]
+    [Fintype κ] [DecidableEq κ]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (C : ι → Finset V) (dcap : ι → ℝ) (ε : ℝ)
     (Tset : Finset ι) (K : Finset κ)
@@ -291,6 +305,7 @@ lemma allocated_bad_matching_edges_card_le_badCount
     (K \ hpAllocatedGoodMatchingEdges
         G C dcap ε K cL cR anchor).card ≤
       badCount G C dcap ε Tset anchor := by
+  classical
   have hsub :
       K \ hpAllocatedGoodMatchingEdges G C dcap ε K cL cR anchor ⊆
         Finset.univ \
@@ -307,7 +322,7 @@ lemma allocated_bad_matching_edges_card_le_badCount
 
 lemma hpAllocatedGoodMatchingEdges_nonempty
     {V ι κ : Type*} [Fintype V] [DecidableEq V]
-    [Fintype κ] [DecidableEq κ] [DecidableEq ι]
+    [Fintype κ] [DecidableEq κ]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (C : ι → Finset V) (dcap : ι → ℝ) (ε : ℝ)
     (Tset : Finset ι) (K : Finset κ)
@@ -318,6 +333,7 @@ lemma hpAllocatedGoodMatchingEdges_nonempty
     (hbad : badCount G C dcap ε Tset anchor < K.card) :
     (hpAllocatedGoodMatchingEdges
       G C dcap ε K cL cR anchor).Nonempty := by
+  classical
   have hdeleted :=
     allocated_bad_matching_edges_card_le_badCount
       G C dcap ε Tset K cL cR anchor hinj hleft hright
@@ -341,12 +357,13 @@ lemma sum_allocated_good_lower
     (K Good : Finset κ) (weight : κ → ℝ)
     (cap bad : ℝ)
     (hGood : Good ⊆ K)
-    (hweight0 : ∀ k ∈ K, 0 ≤ weight k)
+    (_hweight0 : ∀ k ∈ K, 0 ≤ weight k)
     (hweightCap : ∀ k ∈ K, weight k ≤ cap)
     (hdeleted : ((K \ Good).card : ℝ) ≤ bad)
     (hcap0 : 0 ≤ cap) :
     (∑ k ∈ K, weight k) - bad * cap ≤
       ∑ k ∈ Good, weight k := by
+  classical
   have hout :
       ∑ k ∈ K \ Good, weight k ≤ bad * cap := by
     calc

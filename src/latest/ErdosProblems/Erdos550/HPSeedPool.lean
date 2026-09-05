@@ -19,7 +19,6 @@ open Finset
 
 namespace Erdos550
 
-open Classical
 
 /-- Head-core vertices adjacent to the already embedded parent of `a`.  For a
 root seed (whose parent is `none`) this is the whole head core. -/
@@ -28,6 +27,7 @@ noncomputable def seedCandidatePool
     (G : SimpleGraph V) [DecidableRel G.Adj] (parent : A → Option A)
     (col : A → Bool) (headCore : Bool → Finset V)
     (f : A → V) (a : A) : Finset V :=
+  open scoped Classical in
   (headCore (col a)).filter fun v =>
     ∀ y, parent a = some y → G.Adj v (f y)
 
@@ -37,6 +37,7 @@ lemma seedCandidatePool_subset
     (col : A → Bool) (headCore : Bool → Finset V)
     (f : A → V) (a : A) :
     seedCandidatePool G parent col headCore f a ⊆ headCore (col a) :=
+  open scoped Classical in
   Finset.filter_subset _ _
 
 lemma seedCandidatePool_parent_adj
@@ -46,12 +47,13 @@ lemma seedCandidatePool_parent_adj
     (f : A → V) (a : A) :
     ∀ v ∈ seedCandidatePool G parent col headCore f a,
       ∀ y, parent a = some y → G.Adj v (f y) := by
+  classical
   intro v hv y hay
   exact (Finset.mem_filter.mp hv).2 y hay
 
 /-- The used part of a head-core pool is charged only to processed seeds. -/
 lemma processed_image_inter_headCore_card_le_seed
-    {A V : Type*} [DecidableEq A] [DecidableEq V]
+    {A V : Type*} [DecidableEq V]
     (Sseed P : Finset A) (f : A → V)
     (routeColour : A → Bool)
     (head : Finset V) (matchingRegion : Bool → Finset V)
@@ -60,6 +62,7 @@ lemma processed_image_inter_headCore_card_le_seed
     (hdisj : ∀ b, Disjoint head (matchingRegion b))
     (pool : Finset V) (hpool : pool ⊆ head) :
     (P.image f ∩ pool).card ≤ Sseed.card := by
+  classical
   have hsub :
       P.image f ∩ pool ⊆ (P ∩ Sseed).image f := by
     intro v hv
@@ -81,7 +84,7 @@ lemma processed_image_inter_headCore_card_le_seed
 /-- Separator-size room in the dynamic pool supplies the exact freshness
 inequality used by the singleton extension. -/
 lemma seedCandidatePool_fresh_card
-    {A V : Type*} [DecidableEq A] [DecidableEq V]
+    {A V : Type*} [DecidableEq V]
     (Sseed P : Finset A) (f : A → V)
     (routeColour : A → Bool)
     (head pool : Finset V) (matchingRegion : Bool → Finset V)
@@ -91,6 +94,7 @@ lemma seedCandidatePool_fresh_card
     (hpool : pool ⊆ head)
     (hroom : Sseed.card < pool.card) :
     (P.image f ∩ pool).card < pool.card :=
+  open scoped Classical in
   (processed_image_inter_headCore_card_le_seed
     Sseed P f routeColour head matchingRegion hnonseed hdisj pool hpool).trans_lt hroom
 
@@ -124,6 +128,7 @@ lemma seedCandidatePool_card_gt
     (hready : ∀ y, parent a = some y → y ∈ P) :
     Sseed.card <
       (seedCandidatePool G parent col headCore f a).card := by
+  classical
   cases hpa : parent a with
   | none =>
       simpa [seedCandidatePool, hpa] using! hcore (col a)

@@ -52,9 +52,10 @@ measure is continuous under weak convergence (portmanteau).
 theorem isClopen_cube_cylinder {X : Type*} (S : Finset X) :
     IsClopen {σ : X → Bool | ∀ x ∈ S, σ x = true} := by
   constructor;
-  · rw [ Set.setOf_forall ];
-    refine' isClosed_iInter fun i => _;
-    by_cases hi : i ∈ S <;> simp +decide [ hi ];
+  · rw [ Set.ofPred_forall ];
+    refine isClosed_iInter fun i => ?_;
+    by_cases hi : i ∈ S <;> simp +decide only [hi, forall_const, IsEmpty.forall_iff,
+      Set.ofPred_true, isClosed_univ];
     exact isClosed_eq ( continuous_apply i ) continuous_const;
   · rw [ isOpen_pi_iff ];
     intro f hf; use S, fun x => { true } ; aesop;
@@ -88,7 +89,7 @@ theorem cube_pushforward {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
   rw [Measure.map_apply hfmeas (hcyl S)]
   congr 1
   ext ω
-  simp only [hf, Set.mem_preimage, Set.mem_setOf_eq, Set.mem_iInter, decide_eq_true_eq]
+  simp only [hf, Set.mem_preimage, Set.mem_ofPred_eq, Set.mem_iInter, decide_eq_true_eq]
 
 open Filter Topology in
 /-- **Cube encoding into a common space.** Encoding the events `A x` via an
@@ -103,12 +104,13 @@ theorem cube_pushforward_nat {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
   by_contra h_contra;
   have := @cube_pushforward;
   convert! this μ ( fun x => if h : ∃ y, e y = x then A h.choose else Set.univ ) _;
-  any_goals intro x; by_cases hx : ∃ y, e y = x <;> simp +decide [ hx, hA ];
+  any_goals intro x; by_cases hx : ∃ y, e y = x <;> simp +decide only [hx, ↓reduceDIte, hA,
+    MeasurableSet.univ];
   all_goals try infer_instance;
   constructor <;> intro h;
   · contradiction;
   · obtain ⟨ ρ, hρ₁, hρ₂ ⟩ := h;
-    refine' h_contra ⟨ ρ, hρ₁, fun S => _ ⟩;
+    refine h_contra ⟨ ρ, hρ₁, fun S => ?_ ⟩;
     convert! hρ₂ ( Finset.image e S ) using 1;
     · simp +decide [ Finset.mem_image ];
     · congr! 1;
@@ -122,7 +124,10 @@ theorem exists_weak_limit_subseq {q : ℕ}
     (ρ : ℕ → Fin q → ProbabilityMeasure (ℕ → Bool)) :
     ∃ (ψ : ℕ → ℕ), StrictMono ψ ∧ ∃ L : Fin q → ProbabilityMeasure (ℕ → Bool),
       ∀ i, Tendsto (fun n => ρ (ψ n) i) atTop (𝓝 (L i)) := by
-  obtain ⟨ψ, hψ⟩ : ∃ ψ : ℕ → ℕ, StrictMono ψ ∧ ∃ L : (Fin q → ProbabilityMeasure (ℕ → Bool)), (Filter.Tendsto (fun n => (fun i => ρ (ψ n) i)) Filter.atTop (nhds L)) := by
+  obtain ⟨ψ, hψ⟩ : ∃ ψ : ℕ → ℕ,
+      StrictMono ψ ∧
+        ∃ L : (Fin q → ProbabilityMeasure (ℕ → Bool)),
+          (Filter.Tendsto (fun n => (fun i => ρ (ψ n) i)) Filter.atTop (nhds L)) := by
     have h_compact : IsCompact (Set.univ : Set (Fin q → ProbabilityMeasure (ℕ → Bool))) := by
       exact isCompact_univ;
     have := h_compact.isSeqCompact fun n => Set.mem_univ ( ρ n );
@@ -180,7 +185,7 @@ lemma cdens_eq_inter_toReal (q : ℕ) (L : Fin q → ProbabilityMeasure (ℕ →
   unfold cdens
   congr 2
   ext σ
-  simp only [Set.mem_iInter, Set.mem_setOf_eq, Finset.mem_map,
+  simp only [Set.mem_iInter, Set.mem_ofPred_eq, Finset.mem_map,
     Function.Embedding.coe_subtype]
   constructor
   · rintro h y ⟨z, hz, rfl⟩; exact h z hz

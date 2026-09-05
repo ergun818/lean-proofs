@@ -20,13 +20,13 @@ open Finset SimpleGraph
 
 namespace Erdos550
 
-open Classical
 
 noncomputable def hpHeadDensityCap
     {V ι : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (R : SimpleGraph ι) [DecidableRel R.Adj]
     (C : ι → Finset V) (head target : ι) : ℝ :=
+  open scoped Classical in
   if R.Adj head target then
     (G.edgeDensity (C head) (C target) : ℝ)
   else 0
@@ -38,6 +38,7 @@ lemma hpHeadEndpointWeight_eq_densityCap_mul
     (C : ι → Finset V) (head target : ι) :
     hpHeadEndpointWeight G R C head target =
       hpHeadDensityCap G R C head target * (C target).card := by
+  classical
   by_cases h : R.Adj head target <;>
     simp [hpHeadEndpointWeight, hpHeadDensityCap, h]
 
@@ -55,6 +56,7 @@ lemma head_endpoint_bad_card_le
           (hpHeadDensityCap G R C head target - ε) *
             ((C target).card : ℝ)).card : ℝ) ≤
       ε * ((C head).card : ℝ) := by
+  classical
   by_cases hR : R.Adj head target
   · simpa [hpHeadDensityCap, hR] using!
       (isUniform_few_low_degree G hε0 hε1
@@ -87,7 +89,7 @@ lemma head_endpoint_bad_card_le
 
 /-- Double-counting identity between vertex bad-counts and target bad sets. -/
 lemma sum_badCount_eq_sum_bad_targets
-    {V ι : Type*} [Fintype V] [DecidableEq V] [DecidableEq ι]
+    {V ι : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (C : ι → Finset V) (dcap : ι → ℝ)
     (ε : ℝ) (Tset : Finset ι) (base : Finset V) :
@@ -95,14 +97,15 @@ lemma sum_badCount_eq_sum_bad_targets
       ∑ i ∈ Tset, (((base.filter fun v =>
         (((C i).filter fun x => G.Adj v x).card : ℝ) <
           (dcap i - ε) * ((C i).card : ℝ)).card : ℕ) : ℝ) := by
-  simp +decide [badCount]
+  classical
+  simp +decide only [badCount]
   simp +decide only [Finset.card_filter]
   exact mod_cast Finset.sum_comm
 
 /-- Total bad-count mass in a head cluster is at most one `ε|head|` term per
 tested target cluster. -/
 lemma head_badCount_mass_le
-    {V ι : Type*} [Fintype V] [DecidableEq V] [DecidableEq ι]
+    {V ι : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (R : SimpleGraph ι) [DecidableRel R.Adj]
     (C : ι → Finset V)
@@ -113,6 +116,7 @@ lemma head_badCount_mass_le
     (∑ v ∈ C head,
         (badCount G C (hpHeadDensityCap G R C head) ε Tset v : ℝ)) ≤
       (Tset.card : ℝ) * ε * ((C head).card : ℝ) := by
+  classical
   rw [sum_badCount_eq_sum_bad_targets]
   calc
     _ ≤ ∑ _i ∈ Tset, ε * ((C head).card : ℝ) := by

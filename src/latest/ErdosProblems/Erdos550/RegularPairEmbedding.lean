@@ -49,11 +49,11 @@ If the capacity bound `|α| + ε·|c| ≤ (d-ε)·|c|` holds for both `c ∈ {|s
 then there is an injective `f : α → V` sending every vertex into its side and
 every forest edge to an edge of `G`. -/
 theorem regularPair_forest_embedding
-    {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {ε : ℝ} (hε0 : 0 < ε) (hε1 : ε ≤ 1) {s t : Finset V}
     (hs : s.Nonempty) (ht : t.Nonempty)
     (huni : G.IsUniform ε s t)
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*} [Fintype α]
     (parent : α → Option α) (rank : α → ℕ)
     (hrank : ∀ a b, parent a = some b → rank b < rank a)
     (col : α → Bool)
@@ -65,6 +65,8 @@ theorem regularPair_forest_embedding
     ∃ f : α → V, Function.Injective f ∧
       (∀ a, f a ∈ (if col a then t else s)) ∧
       (∀ a b, parent a = some b → G.Adj (f a) (f b)) := by
+  classical
+  let := Fintype.ofFinite V
   have hd1 : (G.edgeDensity s t : ℝ) ≤ 1 := mod_cast SimpleGraph.edgeDensity_le_one G s t
   have key : ∀ S : Finset α, (∀ a ∈ S, ∀ b, parent a = some b → b ∈ S) →
       ∃ f : α → V, Function.Injective f ∧

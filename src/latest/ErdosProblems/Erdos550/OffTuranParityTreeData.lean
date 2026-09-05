@@ -21,7 +21,6 @@ open Finset SimpleGraph
 
 namespace Erdos550
 
-open Classical
 
 structure OffTuranParityTreeData
     {A : Type} [Fintype A] [DecidableEq A]
@@ -52,10 +51,11 @@ structure OffTuranParityTreeData
 `τ |T| ≥ 1`. -/
 theorem exists_offTuran_parity_tree_data
     {A : Type} [Fintype A] [DecidableEq A]
-    (T : SimpleGraph A) [DecidableRel T.Adj] (hT : T.IsTree)
+    (T : SimpleGraph A) (hT : T.IsTree)
     (τ : ℝ) (hτ : 0 < τ)
     (hτn : (1 : ℝ) ≤ τ * Fintype.card A) :
     Nonempty (OffTuranParityTreeData T τ) := by
+  classical
   obtain ⟨root⟩ : Nonempty A := hT.1.nonempty
   obtain ⟨S₀, hroot₀, hseed₀, _hsingle₀, hcomp₀⟩ :=
     tree_tau_fine_single_neighbor_two_attachment_rooted

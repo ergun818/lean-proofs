@@ -24,7 +24,6 @@ open SimpleGraph Finset
 
 namespace Erdos550
 
-open Classical
 
 variable {A : Type} [Fintype A] [DecidableEq A]
 
@@ -35,6 +34,7 @@ def parityBadComponent
     {parent : A → Option A}
     (D : RootedSeedComponentData T S parent)
     (col : A → Bool) (c : NonseedComponent T S) : Prop :=
+  open scoped Classical in
   ∃ s ∈ componentLowerSeeds T S D c,
     col s ≠ col (componentUpperSeed T S D c)
 
@@ -44,6 +44,7 @@ noncomputable def parityBadComponents
     {parent : A → Option A}
     (D : RootedSeedComponentData T S parent)
     (col : A → Bool) : Finset (NonseedComponent T S) :=
+  open scoped Classical in
   Finset.univ.filter (parityBadComponent T S D col)
 
 @[simp] lemma mem_parityBadComponents_iff
@@ -62,6 +63,7 @@ noncomputable def parityBadLowerSeed
     (D : RootedSeedComponentData T S parent)
   (col : A → Bool)
     (c : {c // c ∈ parityBadComponents T S D col}) : A :=
+  open scoped Classical in
   ((mem_parityBadComponents_iff T S D col c.1).mp c.2).choose
 
 lemma parityBadLowerSeed_mem
@@ -72,6 +74,7 @@ lemma parityBadLowerSeed_mem
     (c : {c // c ∈ parityBadComponents T S D col}) :
     parityBadLowerSeed T S D col c ∈
       componentLowerSeeds T S D c.1 :=
+  open scoped Classical in
   ((mem_parityBadComponents_iff T S D col c.1).mp c.2).choose_spec.1
 
 lemma parityBadLowerSeed_mem_seed
@@ -81,6 +84,7 @@ lemma parityBadLowerSeed_mem_seed
     (col : A → Bool)
     (c : {c // c ∈ parityBadComponents T S D col}) :
     parityBadLowerSeed T S D col c ∈ S := by
+  classical
   exact componentSeeds_subset T S c.1.1
     (Finset.mem_sdiff.mp
       (parityBadLowerSeed_mem T S D col c)).1
@@ -93,6 +97,7 @@ lemma parityBadLowerSeed_ne_upper
     (c : {c // c ∈ parityBadComponents T S D col}) :
     parityBadLowerSeed T S D col c ≠
       componentUpperSeed T S D c.1 := by
+  classical
   simpa using! (Finset.mem_sdiff.mp
     (parityBadLowerSeed_mem T S D col c)).2
 
@@ -104,6 +109,7 @@ lemma parityBadLowerSeed_colour
     (c : {c // c ∈ parityBadComponents T S D col}) :
     col (parityBadLowerSeed T S D col c) ≠
       col (componentUpperSeed T S D c.1) :=
+  open scoped Classical in
   ((mem_parityBadComponents_iff T S D col c.1).mp c.2).choose_spec.2
 
 /-- In a parity-bad component the lower boundary seed has the colour of the
@@ -121,6 +127,7 @@ lemma parityBad_lower_colour_eq_root
     (c : {c // c ∈ parityBadComponents T S D col})
     {s : A} (hs : s ∈ componentLowerSeeds T S D c.1) :
     col s = col (D.root c.1) := by
+  classical
   have hlower :
       (componentLowerSeeds T S D c.1).card ≤ 1 :=
     componentLowerSeeds_card_le_one T S D hparentAdj hattach c.1
@@ -151,6 +158,7 @@ lemma parityGood_lower_colour_eq_upper
     (hc : c ∉ parityBadComponents T S D col)
     {s : A} (hs : s ∈ componentLowerSeeds T S D c) :
     col s = col (componentUpperSeed T S D c) := by
+  classical
   by_contra hne
   exact hc (mem_parityBadComponents_iff T S D col c |>.2
     ⟨s, hs, hne⟩)
@@ -166,6 +174,7 @@ lemma parityBadLowerSeed_injective
       parent a = some b ∨ parent b = some a)
     (col : A → Bool) :
     Function.Injective (parityBadLowerSeed T S D col) := by
+  classical
   intro c d hcd
   obtain ⟨vc, hvc, hcpar⟩ :=
     lowerSeed_parent_in_component T S D hparentAdj hedge c.1
@@ -199,6 +208,7 @@ noncomputable def parityPromotionRoots
     {parent : A → Option A}
     (D : RootedSeedComponentData T S parent)
     (col : A → Bool) : Finset A :=
+  open scoped Classical in
   (parityBadComponents T S D col).image (D.root)
 
 lemma mem_parityPromotionRoots_iff
@@ -208,6 +218,7 @@ lemma mem_parityPromotionRoots_iff
     (col : A → Bool) (p : A) :
     p ∈ parityPromotionRoots T S D col ↔
       ∃ c ∈ parityBadComponents T S D col, D.root c = p := by
+  classical
   simp [parityPromotionRoots]
 
 lemma parityPromotionRoots_disjoint
@@ -216,6 +227,7 @@ lemma parityPromotionRoots_disjoint
     (D : RootedSeedComponentData T S parent)
     (col : A → Bool) :
     Disjoint S (parityPromotionRoots T S D col) := by
+  classical
   rw [Finset.disjoint_left]
   intro p hpS hp
   obtain ⟨c, hc, rfl⟩ :=
@@ -233,6 +245,7 @@ lemma parityPromotionRoots_card_le
       parent a = some b ∨ parent b = some a)
     (col : A → Bool) :
     (parityPromotionRoots T S D col).card ≤ S.card := by
+  classical
   let Bad := {c // c ∈ parityBadComponents T S D col}
   let lower : Bad → {s : A // s ∈ S} := fun c =>
     ⟨parityBadLowerSeed T S D col c,
@@ -266,6 +279,7 @@ lemma parityRefinedSeeds_card_le
       parent a = some b ∨ parent b = some a)
     (col : A → Bool) :
     (S ∪ parityPromotionRoots T S D col).card ≤ 2 * S.card := by
+  classical
   calc
     (S ∪ parityPromotionRoots T S D col).card
         ≤ S.card + (parityPromotionRoots T S D col).card :=

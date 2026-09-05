@@ -72,7 +72,7 @@ theorem restricted_hp_choose_orientation
 /-- Averaging over the matching edges which are good for the current head
 vertex, followed by the saturated/balanced resource choice. -/
 theorem restricted_hp_select_good_edge
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Finite κ]
     (Good : Finset κ) (hGood : Good.Nonempty)
     (l r L R p q : κ → ℝ)
     (a b cap margin τ err rootNeed localNeed : ℝ)
@@ -98,9 +98,11 @@ theorem restricted_hp_select_good_edge
         (if swap then l k + b else l k + a)
         (if swap then r k + a else r k + b)
         (L k) (R k) margin τ := by
+  classical
+  let := Fintype.ofFinite κ
   have hedge : ∃ k ∈ Good, 2 * rootNeed ≤ p k + q k := by
     by_contra h
-    push_neg at h
+    push Not at h
     have hlt :
         (∑ k ∈ Good, (p k + q k)) <
           ∑ _k ∈ Good, (2 * rootNeed) :=
@@ -175,7 +177,7 @@ This statement permits `L k = 0` or `R k = 0`.  On such a one-sided edge the
 saturation alternative of `HPPacked` is automatic, exactly as in the
 restricted Appendix A.2 argument. -/
 theorem restricted_hp_select_joint_surplus
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Finite κ]
     (Good : Finset κ) (hGood : Good.Nonempty)
     (l r L R p q : κ → ℝ)
     (a b cap margin τ err rootNeed localNeed : ℝ)
@@ -201,11 +203,13 @@ theorem restricted_hp_select_joint_surplus
         (if swap then l k + b else l k + a)
         (if swap then r k + a else r k + b)
         (L k) (R k) margin τ := by
+  classical
+  let := Fintype.ofFinite κ
   have hedge :
       ∃ k ∈ Good,
         l k + r k + localNeed + margin ≤ L k + R k := by
     by_contra h
-    push_neg at h
+    push Not at h
     have hlt :
         (∑ k ∈ Good, (L k + R k)) <
           ∑ k ∈ Good, (l k + r k + (localNeed + margin)) :=

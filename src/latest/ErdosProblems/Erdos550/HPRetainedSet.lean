@@ -19,12 +19,12 @@ open Finset SimpleGraph
 
 namespace Erdos550
 
-open Classical
 
 noncomputable def hpRetainedSet
     {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (ε d : ℝ) (endpoint headCore : Finset V) : Finset V :=
+  open scoped Classical in
   endpoint.filter fun v =>
     (d - ε) * (headCore.card : ℝ) ≤
       ((headCore.filter fun x => G.Adj v x).card : ℝ)
@@ -34,6 +34,7 @@ lemma hpRetainedSet_subset
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (ε d : ℝ) (endpoint headCore : Finset V) :
     hpRetainedSet G ε d endpoint headCore ⊆ endpoint :=
+  open scoped Classical in
   Finset.filter_subset _ _
 
 lemma hpRetainedSet_degree
@@ -43,6 +44,7 @@ lemma hpRetainedSet_degree
     {v : V} (hv : v ∈ hpRetainedSet G ε d endpoint headCore) :
     (d - ε) * (headCore.card : ℝ) ≤
       ((headCore.filter fun x => G.Adj v x).card : ℝ) :=
+  open scoped Classical in
   (Finset.mem_filter.mp hv).2
 
 /-- The retained set loses fewer than `ε|endpoint|` vertices.  The disjunction
@@ -61,6 +63,7 @@ lemma hpRetainedSet_removed_lt
     (hendpoint : endpoint.Nonempty) :
     (((endpoint \ hpRetainedSet G ε d endpoint headCore).card : ℕ) : ℝ) <
       ε * (endpoint.card : ℝ) := by
+  classical
   rcases hcase with hsmall | ⟨huni, hdens⟩
   · have hall :
         hpRetainedSet G ε d endpoint headCore = endpoint := by

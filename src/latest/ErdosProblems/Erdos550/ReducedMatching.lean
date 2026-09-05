@@ -65,7 +65,8 @@ lemma support_card {H : SimpleGraph ι} [DecidableRel H.Adj]
   · rw [ Finset.card_image_of_injOn, Finset.card_image_of_injOn ];
     · intro p hp q hq; have := hP.2 p hp q hq; aesop;
     · intro p hp q hq h; have := hP.2 p hp q hq; aesop;
-  · simp_all +decide [ Finset.disjoint_left ];
+  · simp_all +decide only [Finset.disjoint_left, mem_image, Prod.exists, exists_and_right,
+    exists_eq_right, not_exists, forall_exists_index];
     intro a x hx y hy; have := hP.2 ( a, x ) hx ( y, a ) hy; simp_all +decide ;
     simpa using! hP.1 _ hy
 
@@ -80,8 +81,8 @@ lemma maximal_matchingFamily_covers {H : SimpleGraph ι} [DecidableRel H.Adj]
     {a b : ι} (hab : H.Adj a b) :
     a ∈ support M ∨ b ∈ support M := by
   contrapose! hmax;
-  refine' ⟨ Insert.insert ( a, b ) M, _, _ ⟩;
-  · refine' ⟨ _, _ ⟩;
+  refine ⟨ Insert.insert ( a, b ) M, ?_, ?_ ⟩;
+  · refine ⟨ ?_, ?_ ⟩;
     · simp_all +decide [ IsMatchingFamily ];
     · simp_all +decide [ IsMatchingFamily, support ];
       grind;
@@ -90,10 +91,12 @@ lemma maximal_matchingFamily_covers {H : SimpleGraph ι} [DecidableRel H.Adj]
 /-
 Existence of a maximum-cardinality matching family.
 -/
-omit [DecidableEq ι] in
-lemma exists_maximum_matchingFamily (H : SimpleGraph ι) [DecidableRel H.Adj] :
+omit [DecidableEq ι] [Fintype ι] in
+lemma exists_maximum_matchingFamily [Finite ι] (H : SimpleGraph ι) [DecidableRel H.Adj] :
     ∃ M : Finset (ι × ι), IsMatchingFamily H M ∧
       ∀ P, IsMatchingFamily H P → P.card ≤ M.card := by
+  classical
+  let := Fintype.ofFinite ι
   have h_finite : Set.Finite {P : Finset (ι × ι) | IsMatchingFamily H P} := by
     exact Set.toFinite _;
   apply_rules [ Set.exists_max_image ];
@@ -103,25 +106,28 @@ lemma exists_maximum_matchingFamily (H : SimpleGraph ι) [DecidableRel H.Adj] :
 **Maximal-matching lower bound.**  A graph `H` with maximum degree `≤ Δ`
 has a matching family `M` with `e(H) ≤ 2 · Δ · |M|`.
 -/
+omit [DecidableEq ι] in
 lemma matchingFamily_card_lower_bound (H : SimpleGraph ι) [DecidableRel H.Adj]
     (Δ : ℕ) (hΔ : ∀ i, H.degree i ≤ Δ) :
     ∃ M : Finset (ι × ι), IsMatchingFamily H M ∧
       H.edgeFinset.card ≤ 2 * Δ * M.card := by
+  classical
   -- Use `exists_maximum_matchingFamily H` to obtain a maximum matching `M`.
   obtain ⟨M, hM⟩ := exists_maximum_matchingFamily H;
-  refine' ⟨ M, hM.1, _ ⟩;
+  refine ⟨ M, hM.1, ?_ ⟩;
   -- Every edge of `H` is incident to the support of `M`.
   have h_incident : H.edgeFinset ⊆ Finset.biUnion (support M) (fun v => H.incidenceFinset v) := by
     intro e he;
     obtain ⟨a, b, hab⟩ : ∃ a b, e = s(a, b) ∧ H.Adj a b := by
       rcases e with ⟨ a, b ⟩ ; aesop;
-    have := maximal_matchingFamily_covers hM.1 hM.2 hab.2; simp_all +decide only [mem_biUnion, mem_incidenceFinset] ;
+    have := maximal_matchingFamily_covers hM.1 hM.2 hab.2; simp_all +decide only [mem_biUnion,
+      mem_incidenceFinset] ;
     exact this.elim
       (fun h => ⟨a, h, H.mk'_mem_incidenceSet_left_iff.mpr hab.2⟩)
       (fun h => ⟨b, h, H.mk'_mem_incidenceSet_right_iff.mpr hab.2⟩);
-  refine' le_trans ( Finset.card_le_card h_incident ) _;
-  refine' le_trans ( Finset.card_biUnion_le ) _;
-  refine' le_trans ( Finset.sum_le_sum fun v hv => show # ( H.incidenceFinset v ) ≤ Δ from _ ) _;
+  refine le_trans ( Finset.card_le_card h_incident ) ?_;
+  refine le_trans ( Finset.card_biUnion_le ) ?_;
+  refine le_trans ( Finset.sum_le_sum fun v hv => show # ( H.incidenceFinset v ) ≤ Δ from ?_ ) ?_;
   · simpa only [SimpleGraph.card_incidenceFinset_eq_degree] using hΔ v;
   · simp +decide [ mul_comm, mul_left_comm, support_card hM.1 ]
 
@@ -132,6 +138,7 @@ more than `t` edges, presented as `cL cR : κ → ι` with `Sum.elim cL cR` inje
 and each `(cL k, cR k)` an edge of `H`.  This is exactly the regular-matching
 data consumed by the stateful matching embedding.
 -/
+omit [DecidableEq ι] in
 theorem exists_matching_family (H : SimpleGraph ι) [DecidableRel H.Adj]
     (Δ t : ℕ) (hΔ : ∀ i, H.degree i ≤ Δ)
     (he : 2 * Δ * t < H.edgeFinset.card) :
@@ -139,27 +146,36 @@ theorem exists_matching_family (H : SimpleGraph ι) [DecidableRel H.Adj]
       t < Fintype.card κ ∧
       (∀ k, H.Adj (cL k) (cR k)) ∧
       Function.Injective (Sum.elim cL cR) := by
+  classical
   rcases M : matchingFamily_card_lower_bound H Δ hΔ with ⟨ M, hM₁, hM₂ ⟩;
-  obtain ⟨κ, hκ⟩ : ∃ κ : Type, ∃ (inst : Fintype κ) (inst_1 : DecidableEq κ), Fintype.card κ = Finset.card ‹Finset (ι × ι)› ∧ t < Fintype.card κ := by
-    refine' ⟨ Fin ( Finset.card ‹Finset ( ι × ι ) › ), inferInstance, inferInstance, _, _ ⟩ <;> simp +decide;
+  obtain ⟨κ, hκ⟩ : ∃ κ : Type,
+      ∃ (inst : Fintype κ) (inst_1 : DecidableEq κ),
+        Fintype.card κ = Finset.card ‹Finset (ι × ι)› ∧ t < Fintype.card κ := by
+    refine ⟨Fin (Finset.card ‹Finset (ι × ι)›), inferInstance, inferInstance, ?_, ?_⟩ <;>
+        simp +decide;
     nlinarith;
   obtain ⟨inst, inst_1, hκ₁, hκ₂⟩ := hκ
   use κ, inst, inst_1;
-  obtain ⟨cL, cR, hc⟩ : ∃ cL cR : κ → ι, (∀ k, H.Adj (cL k) (cR k)) ∧ (∀ k₁ k₂, cL k₁ = cL k₂ ∨ cL k₁ = cR k₂ ∨ cR k₁ = cL k₂ ∨ cR k₁ = cR k₂ → k₁ = k₂) := by
+  obtain ⟨cL, cR, hc⟩ : ∃ cL cR : κ → ι,
+      (∀ k, H.Adj (cL k) (cR k)) ∧
+        (∀ k₁ k₂, cL k₁ = cL k₂ ∨ cL k₁ = cR k₂ ∨ cR k₁ = cL k₂ ∨ cR k₁ = cR k₂ → k₁ = k₂) := by
     obtain ⟨f, hf⟩ : ∃ f : κ → ι × ι, Function.Injective f ∧ ∀ k, f k ∈ ‹Finset (ι × ι)› := by
       have h_equiv : Nonempty (κ ≃ {x : ι × ι // x ∈ ‹Finset (ι × ι)›}) := by
         exact ⟨ Fintype.equivOfCardEq <| by simp +decide [ hκ₁ ] ⟩;
       exact ⟨ _, Subtype.val_injective.comp h_equiv.some.injective, fun k => h_equiv.some k |>.2 ⟩;
-    exact ⟨ fun k => ( f k ).1, fun k => ( f k ).2, fun k => hM₁.1 _ ( hf.2 k ), fun k₁ k₂ h => hf.1 <| by have := hM₁.2 _ ( hf.2 k₁ ) _ ( hf.2 k₂ ) h; aesop ⟩;
-  refine' ⟨ cL, cR, hκ₂, hc.1, _ ⟩;
-  intro x y; cases x <;> cases y <;> simp +decide only [Sum.elim_inl, Sum.elim_inr, reduceCtorEq, imp_false, Sum.inl.injEq,
-    Sum.inr.injEq] ;
+    exact
+        ⟨fun k => (f k).1, fun k => (f k).2, fun k => hM₁.1 _ (hf.2 k), fun k₁ k₂ h =>
+          hf.1 <| by have := hM₁.2 _ (hf.2 k₁) _ (hf.2 k₂) h; aesop⟩;
+  refine ⟨ cL, cR, hκ₂, hc.1, ?_ ⟩;
+  intro x y;
+  cases x <;> cases y <;> simp +decide only [Sum.elim_inl, Sum.elim_inr, reduceCtorEq,
+    imp_false, Sum.inl.injEq, Sum.inr.injEq] ;
   · exact fun h => hc.2 _ _ ( Or.inl h );
-  · intro h; have := hc.1 ‹_›; have := hc.1 ‹_›; simp_all +decide ;
-    have := hc.2 _ _ ( Or.inr <| Or.inl h ) ; simp_all +decide ;
+  · intro h; have := hc.1 ‹_›; have := hc.1 ‹_›; simp_all +decide only ;
+    have := hc.2 _ _ ( Or.inr <| Or.inl h ) ; simp_all +decide only ;
     exact absurd h ( by have := hc.1 ‹_›; exact this.ne );
-  · intro h; have := hc.1 ‹_›; have := hc.1 ‹_›; simp_all +decide ;
-    have := hc.2 _ _ ( Or.inr <| Or.inr <| Or.inl h ) ; simp_all +decide ;
+  · intro h; have := hc.1 ‹_›; have := hc.1 ‹_›; simp_all +decide only ;
+    have := hc.2 _ _ ( Or.inr <| Or.inr <| Or.inl h ) ; simp_all +decide only ;
     exact absurd ( hc.1 ‹_› ) ( by simp +decide [ h ] );
   · exact fun h => hc.2 _ _ ( Or.inr <| Or.inr <| Or.inr h )
 
@@ -186,6 +202,7 @@ whose clusters are common neighbours of both heads, packaged as the data
 injective — exactly the regular-matching hypotheses `hbinadj`, `hmatchhead`,
 indexing condition consumed by the stateful matching embedding.
 -/
+omit [DecidableEq ι] in
 theorem exists_regular_matching_at_head (R : SimpleGraph ι) [DecidableRel R.Adj]
     (X Y : ι) (hXY : R.Adj X Y) (Δ t : ℕ) (hΔ : ∀ i, R.degree i ≤ Δ)
     (he : 2 * Δ * t < (headCommonSubgraph R X Y).edgeFinset.card) :
@@ -196,14 +213,19 @@ theorem exists_regular_matching_at_head (R : SimpleGraph ι) [DecidableRel R.Adj
       Function.Injective
         (Sum.elim cL (Sum.elim cR (fun b => bif b then Y else X)) :
           κ ⊕ κ ⊕ Bool → ι) := by
+  classical
   have := @Erdos550.exists_matching_family;
   specialize this (headCommonSubgraph R X Y) Δ t (fun i => by
-    exact le_trans ( SimpleGraph.degree_le_of_le ( show headCommonSubgraph R X Y ≤ R from fun a b hab => hab.1 ) ) ( hΔ i )) he
+    exact
+          le_trans
+            (SimpleGraph.degree_le_of_le
+              (show headCommonSubgraph R X Y ≤ R from fun a b hab => hab.1))
+            (hΔ i)) he
   generalize_proofs at *;
   obtain ⟨κ, x, x_1, cL, cR, ht, hadj, hinj⟩ := this
   use κ, x, x_1, cL, cR
-  simp_all +decide only [Sum.elim_injective, Bool.injective_iff, cond_false, cond_true, ne_eq, Bool.forall_bool,
-    Sum.forall, Sum.elim_inl, Sum.elim_inr];
+  simp_all +decide only [Sum.elim_injective, Bool.injective_iff, cond_false, cond_true, ne_eq,
+    Bool.forall_bool, Sum.forall, Sum.elim_inl, Sum.elim_inr];
   constructor
   · trivial
   constructor

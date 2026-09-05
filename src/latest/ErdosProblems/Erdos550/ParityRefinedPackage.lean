@@ -17,12 +17,11 @@ open SimpleGraph Finset
 
 namespace Erdos550
 
-open Classical
 
 variable {A : Type} [Fintype A] [DecidableEq A]
 
 theorem parity_refined_separator_package
-    (T : SimpleGraph A) [DecidableRel T.Adj]
+    (T : SimpleGraph A)
     (S : Finset A)
     {parent : A → Option A} {rank : A → ℕ}
     (D : RootedSeedComponentRankData T S parent rank)
@@ -37,7 +36,8 @@ theorem parity_refined_separator_package
       (componentSeeds T S c.1).card ≤ 2)
     (col : A → Bool)
     (hcol : ∀ a b, parent a = some b → col a ≠ col b) :
-    let S' := S ∪ parityPromotionRoots T S
+    let S' :=
+  open scoped Classical in S ∪ parityPromotionRoots T S
       D.toRootedSeedComponentData col
     S'.card ≤ 2 * S.card ∧
       ∀ c : NonseedComponent T S',
@@ -45,6 +45,7 @@ theorem parity_refined_separator_package
         (componentSeeds T S' c.1).card ≤ 2 ∧
         ∀ a ∈ componentSeeds T S' c.1,
           ∀ b ∈ componentSeeds T S' c.1, col a = col b := by
+  classical
   dsimp only
   constructor
   · exact parityRefinedSeeds_card_le T S

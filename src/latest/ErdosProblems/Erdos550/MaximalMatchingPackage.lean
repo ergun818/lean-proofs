@@ -18,9 +18,10 @@ namespace Erdos550
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
+omit [Fintype ι] in
 /-- Fully indexed maximum matching outside the head pair. -/
-theorem exists_indexed_maximum_matching_away
-    (R : SimpleGraph ι) [DecidableRel R.Adj] (X Y : ι) (B : ℕ)
+theorem exists_indexed_maximum_matching_away [Finite ι]
+    (R : SimpleGraph ι) (X Y : ι) (B : ℕ)
     (hα : ∀ A : Finset ι, B ≤ A.card →
       ∃ a ∈ A, ∃ b ∈ A, R.Adj a b) :
     ∃ (κ : Type) (_ : Fintype κ) (_ : DecidableEq κ)
@@ -31,6 +32,8 @@ theorem exists_indexed_maximum_matching_away
       U.card < B ∧
       (∀ a, a ∈ U ↔ a ≠ X ∧ a ≠ Y ∧
         a ∉ Finset.univ.image cL ∧ a ∉ Finset.univ.image cR) := by
+  classical
+  let := Fintype.ofFinite ι
   obtain ⟨M, hM, _hmax, hsmall⟩ :=
     exists_maximum_matching_away_with_small_unmatched R X Y B hα
   let κ := Fin M.card

@@ -35,14 +35,20 @@ theorem chromaticNumber_Kbip (a b : ℕ) (ha : 1 ≤ a) (hb : 1 ≤ b) :
   have h_colorable : (Kbip a b).Colorable 2 := by
     use fun x => x.elim (fun x => 0) (fun x => 1);
     aesop;
-  refine' le_antisymm ( h_colorable.chromaticNumber_le ) _;
-  refine' le_ciInf fun n => _;
-  by_cases hn : (Kbip a b).Colorable n <;> simp_all +decide only [Set.mem_ofPred_eq, le_iInf_iff, Nat.ofNat_le_cast];
-  rcases n with ( _ | _ | n ) <;> simp_all +decide [ SimpleGraph.Colorable ];
+  refine le_antisymm ( h_colorable.chromaticNumber_le ) ?_;
+  refine le_ciInf fun n => ?_;
+  by_cases hn : (Kbip a b).Colorable n <;> simp_all +decide only [Set.mem_ofPred_eq, le_iInf_iff,
+    Nat.ofNat_le_cast, false_implies];
+  rcases n with ( _ | _ | n ) <;> simp_all +decide only [Colorable, zero_add,
+    le_add_iff_nonneg_left, zero_le, imp_self];
   · obtain ⟨ f ⟩ := hn;
     exact Fin.elim0 ( f ( Sum.inl ⟨ 0, ha ⟩ ) );
   · obtain ⟨ c ⟩ := hn;
-    have := c.valid ( show ( Kbip a b ).Adj ( Sum.inl ⟨ 0, ha ⟩ ) ( Sum.inr ⟨ 0, hb ⟩ ) from by simp +decide [ Kbip ] ) ; simp_all +decide [ Fin.eq_zero ] ;
+    have :=
+        c.valid
+          (show (Kbip a b).Adj (Sum.inl ⟨0, ha⟩) (Sum.inr ⟨0, hb⟩) from by
+            simp +decide [Kbip])
+    simp_all +decide [Fin.eq_zero]
 
 /-! ## Greedy tree embedding into a high-minimum-degree graph -/
 
@@ -70,9 +76,11 @@ theorem rparent_adj {V : Type*} (T : SimpleGraph V) (r v u : V)
 In a tree, every edge is a parent edge in exactly one direction (towards the
 root `r`).
 -/
-theorem rparent_edge {V : Type*} [Fintype V] [DecidableEq V] {T : SimpleGraph V}
+theorem rparent_edge {V : Type*} [Finite V] {T : SimpleGraph V}
     (hT : T.IsTree) (r : V) {a b : V} (hab : T.Adj a b) :
     rparent T r a = some b ∨ rparent T r b = some a := by
+  classical
+  let := Fintype.ofFinite V
   by_contra h_contra;
   simp_all +decide [ rparent ];
   grind +suggestions
@@ -81,9 +89,9 @@ theorem rparent_edge {V : Type*} [Fintype V] [DecidableEq V] {T : SimpleGraph V}
 into any finite host graph `J` whose minimum degree is at least `|V| − 1`.
 Proved by encoding `T` as a rooted forest (parent = the neighbour towards an
 arbitrary fixed root) and applying `rooted_forest_embedding`. -/
-theorem tree_minDeg_embed {V : Type*} [Fintype V] [DecidableEq V]
+theorem tree_minDeg_embed {V : Type*} [Fintype V]
     (T : SimpleGraph V) (hT : T.IsTree)
-    {W : Type*} [Fintype W] [DecidableEq W] (J : SimpleGraph W) [DecidableRel J.Adj]
+    {W : Type*} [Fintype W] (J : SimpleGraph W) [DecidableRel J.Adj]
     (hcard : Fintype.card V ≤ Fintype.card W)
     (hdeg : ∀ w, Fintype.card V - 1 ≤ J.degree w) : T ⊑ J := by
   classical
@@ -150,14 +158,23 @@ theorem exists_high_minDeg_set {W : Type*} [Fintype W] [DecidableEq W]
 The number of vertices of complement-degree `> K`, times `K + 1`, is at most
 twice the number of complement-edges.
 -/
-theorem bad_le_edges {W : Type*} [Fintype W] [DecidableEq W]
+theorem bad_le_edges {W : Type*} [Fintype W]
     (J : SimpleGraph W) [DecidableRel J.Adj] (K : ℕ) :
     (Finset.univ.filter (fun v => K < J.degree v)).card * (K + 1)
       ≤ 2 * J.edgeFinset.card := by
-  have h_sum_degrees : ∑ v ∈ Finset.univ.filter (fun v => K < J.degree v), J.degree v ≤ 2 * J.edgeFinset.card := by
+  classical
+  have h_sum_degrees :
+      ∑ v ∈ Finset.univ.filter (fun v => K < J.degree v), J.degree v ≤ 2 * J.edgeFinset.card := by
     have := SimpleGraph.sum_degrees_eq_twice_card_edges J;
     exact this ▸ Finset.sum_le_sum_of_subset ( Finset.filter_subset _ _ );
-  exact le_trans ( by simpa using! Finset.sum_le_sum fun v ( hv : v ∈ Finset.filter ( fun v => K < J.degree v ) Finset.univ ) => Nat.succ_le_of_lt ( Finset.mem_filter.mp hv |>.2 ) ) h_sum_degrees
+  exact
+      le_trans
+        (by
+          simpa using!
+            Finset.sum_le_sum
+              fun v (hv : v ∈ Finset.filter (fun v => K < J.degree v) Finset.univ) =>
+              Nat.succ_le_of_lt (Finset.mem_filter.mp hv |>.2))
+        h_sum_degrees
 
 /-! ## Lower-bound construction -/
 
@@ -167,7 +184,11 @@ theorem bad_le_edges {W : Type*} [Fintype W] [DecidableEq W]
 theorem Kbip_not_contained_bot {a b : ℕ} (ha : 1 ≤ a) (hb : 1 ≤ b)
     {W : Type*} : ¬ (Kbip a b ⊑ (⊥ : SimpleGraph W)) := by
   rintro ⟨ f, hf ⟩;
-  exact absurd ( f.map_adj ( show ( Kbip a b ).Adj ( Sum.inl ⟨ 0, ha ⟩ ) ( Sum.inr ⟨ 0, hb ⟩ ) from by simp +decide [ Kbip ] ) ) ( by simp +decide [  ] )
+  exact
+      absurd
+        (f.map_adj
+          (show (Kbip a b).Adj (Sum.inl ⟨0, ha⟩) (Sum.inr ⟨0, hb⟩) from by simp +decide [Kbip]))
+        (by simp +decide [])
 
 /-
 A tree `T` on `V` is not contained in any graph on fewer than `|V|` vertices.
@@ -183,18 +204,16 @@ theorem not_ramseyGood_of_lt {V : Type*} [Fintype V]
   -- Take G := (⊤ : SimpleGraph (Fin N)).
   -- Then Gᶜ = ⊥ (compl_top).
   intro hN_mem
-  apply absurd (hN_mem ⊤);
-  simp +decide only [compl_top, emptyGraph_eq_bot, not_or, not_nonempty_iff];
-  constructor;
-  rintro ⟨ f, hf ⟩;
-  exact absurd ( Fintype.card_le_of_injective f hf ) ( by simpa using! hN )
+  rcases hN_mem ⊤ with ⟨f, hf⟩ | hbip
+  · exact (not_le.mpr hN) (by simpa using Fintype.card_le_of_injective f hf)
+  · exact Kbip_not_contained_bot ha hb (by simpa using hbip)
 
 /-! ## The bipartite EFRS asymptotic -/
 
 /-- If the red graph `G` on `Fin N` has so few *blue* (complement) edges that,
 after deleting the vertices of blue-degree `> K`, at least `n + K` vertices
 remain, then `G` contains the `n`-vertex tree `T`. -/
-theorem tree_in_red_of_sparse {V : Type*} [Fintype V] [DecidableEq V]
+theorem tree_in_red_of_sparse {V : Type*} [Fintype V]
     (T : SimpleGraph V) (hT : T.IsTree)
     {N : ℕ} (G : SimpleGraph (Fin N)) [DecidableRel G.Adj] (K : ℕ)
     (hbad : (Finset.univ.filter (fun v => K < (Gᶜ).degree v)).card + Fintype.card V + K ≤ N) :
@@ -214,6 +233,7 @@ theorem tree_in_red_of_sparse {V : Type*} [Fintype V] [DecidableEq V]
   exact hsub.trans ⟨(SimpleGraph.Embedding.induce (↑S : Set (Fin N))).toCopy⟩
 
 set_option maxHeartbeats 800000 in
+-- The bipartite embedding proof combines the degree and cardinality estimates for both sides.
 /-- The witness step: for every tolerance `θ > 0` there is `n₀` so that for every
 `n`-vertex tree `T` with `n ≥ n₀` there is `N` with `n ≤ N ≤ (1+θ)n` such that
 *every* red/blue colouring of `K_N` contains a red `T` or a blue `K_{a,b}`. -/
@@ -306,7 +326,7 @@ theorem efrs_bipartite (a b : ℕ) (ha : 1 ≤ a) (hb : 1 ≤ b) (θ : ℝ) (hθ
   have hmem' : ramsey T (Kbip a b) ∈ RamseyGood T (Kbip a b) := ramsey_mem _ _ hne
   have hlow : n ≤ ramsey T (Kbip a b) := by
     by_contra hlt
-    push_neg at hlt
+    push Not at hlt
     have hlt' : ramsey T (Kbip a b) < Fintype.card V := by rw [hcard]; exact hlt
     exact not_ramseyGood_of_lt T ha hb hlt' hmem'
   rw [abs_le]

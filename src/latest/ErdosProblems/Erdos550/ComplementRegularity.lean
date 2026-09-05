@@ -39,43 +39,73 @@ namespace Erdos550
 For nonempty **disjoint** finite sets `s, t`, the blue and red edge densities
 of the pair `(s,t)` sum to `1`.
 -/
-lemma edgeDensity_compl_add_disjoint {V : Type*} [Fintype V] [DecidableEq V]
+lemma edgeDensity_compl_add_disjoint {V : Type*} [Finite V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {s t : Finset V}
     (hs : s.Nonempty) (ht : t.Nonempty) (hd : Disjoint s t) :
     (G.edgeDensity s t : ℝ) + (Gᶜ.edgeDensity s t : ℝ) = 1 := by
+  classical
+  let := Fintype.ofFinite V
   rw [ SimpleGraph.edgeDensity, SimpleGraph.edgeDensity ];
   unfold Rel.edgeDensity;
   simp +decide only [Rat.cast_div, Rat.cast_natCast, Rat.cast_mul];
-  rw [ ← add_div, div_eq_iff ] <;> norm_cast <;> simp_all +decide [ Finset.disjoint_left ];
+  rw [← add_div, div_eq_iff] <;> norm_cast <;>
+      simp_all +decide only [Finset.disjoint_left, one_mul, mul_eq_zero, card_eq_zero, not_or];
   · rw [ ← Finset.card_union_of_disjoint ];
-    · convert! Finset.card_product s t using 2 ; ext ⟨ x, y ⟩ ; by_cases h : G.Adj x y <;> aesop;
+    · convert! Finset.card_product s t using 2 ;
+      ext ⟨ x, y ⟩ ;
+      by_cases h : G.Adj x y <;> simp_all [
+      Rel.interedges, SimpleGraph.compl_adj] ; aesop;
     · exact Finset.disjoint_filter.mpr ( by aesop );
   · exact ⟨ hs.ne_empty, ht.ne_empty ⟩
 
 /-- The red density of a nonempty disjoint pair is `1 −` the blue density. -/
-lemma edgeDensity_compl_disjoint {V : Type*} [Fintype V] [DecidableEq V]
+lemma edgeDensity_compl_disjoint {V : Type*} [Finite V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {s t : Finset V}
     (hs : s.Nonempty) (ht : t.Nonempty) (hd : Disjoint s t) :
     (Gᶜ.edgeDensity s t : ℝ) = 1 - (G.edgeDensity s t : ℝ) := by
+  classical
+  let := Fintype.ofFinite V
   have := edgeDensity_compl_add_disjoint G hs ht hd
   linarith
 
 /-
 `ε`-uniformity is preserved under complementation on **disjoint** pairs.
 -/
-lemma isUniform_compl {V : Type*} [Fintype V] [DecidableEq V]
+lemma isUniform_compl {V : Type*} [Finite V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {ε : ℝ} {s t : Finset V}
     (hd : Disjoint s t) (h : G.IsUniform ε s t) : Gᶜ.IsUniform ε s t := by
-  intro s' hs' t' ht' hs ht; specialize h hs' ht' hs ht; by_cases hs'0 : s' = ∅ <;> by_cases ht'0 : t' = ∅ <;> simp_all +decide [ SimpleGraph.edgeDensity ] ;
+  classical
+  let := Fintype.ofFinite V
+  intro s' hs' t' ht' hs ht; specialize h hs' ht' hs ht; by_cases hs'0 : s' = ∅ <;>
+        by_cases ht'0 : t' = ∅ <;>
+      simp_all +decide only [empty_subset, edgeDensity, Rel.edgeDensity_empty_right,
+        Rat.cast_zero, zero_sub, abs_neg, card_empty, CharP.cast_eq_zero,
+        Rel.edgeDensity_empty_left] ;
   · contrapose! hs;
-    exact mul_pos ( Nat.cast_pos.mpr ( Finset.card_pos.mpr ( by contrapose! h; aesop ) ) ) ( lt_of_le_of_lt ( abs_nonneg _ ) h );
+    exact
+        mul_pos (Nat.cast_pos.mpr (Finset.card_pos.mpr (by contrapose! h; aesop)))
+          (lt_of_le_of_lt (abs_nonneg _) h);
   · contrapose! hs;
-    refine' mul_pos ( Nat.cast_pos.mpr _ ) ( lt_of_le_of_lt ( abs_nonneg _ ) h );
+    refine mul_pos ( Nat.cast_pos.mpr ?_ ) ( lt_of_le_of_lt ( abs_nonneg _ ) h );
     contrapose! hs; aesop;
-  · by_cases hs0 : s = ∅ <;> by_cases ht0 : t = ∅ <;> simp_all +decide [ Rel.edgeDensity ];
-    exact absurd ht ( not_le_of_gt ( mul_pos ( Nat.cast_pos.mpr ( Finset.card_pos.mpr ( Finset.nonempty_of_ne_empty ht0 ) ) ) ( lt_of_le_of_lt ( abs_nonneg _ ) h ) ) );
-  · have h_edgeDensity_compl : (Rel.edgeDensity Gᶜ.Adj s' t' : ℝ) = 1 - (Rel.edgeDensity G.Adj s' t' : ℝ) ∧ (Rel.edgeDensity Gᶜ.Adj s t : ℝ) = 1 - (Rel.edgeDensity G.Adj s t : ℝ) := by
-      exact ⟨ edgeDensity_compl_disjoint G ( Finset.nonempty_of_ne_empty hs'0 ) ( Finset.nonempty_of_ne_empty ht'0 ) ( Finset.disjoint_of_subset_left hs' ( Finset.disjoint_of_subset_right ht' hd ) ), edgeDensity_compl_disjoint G ( Finset.nonempty_of_ne_empty ( by aesop_cat ) ) ( Finset.nonempty_of_ne_empty ( by aesop_cat ) ) hd ⟩;
+  · by_cases hs0 : s = ∅ <;> by_cases ht0 : t = ∅ <;> simp_all +decide only [disjoint_self,
+    bot_eq_empty, subset_empty, disjoint_empty_left, disjoint_empty_right, Rel.edgeDensity,
+    card_empty, CharP.cast_eq_zero, mul_zero, div_zero, Rat.cast_zero, abs_zero, zero_mul,
+    Std.le_refl, Rat.cast_div, Rat.cast_natCast, Rat.cast_mul];
+    exact
+        absurd ht
+          (not_le_of_gt
+            (mul_pos (Nat.cast_pos.mpr (Finset.card_pos.mpr (Finset.nonempty_of_ne_empty ht0)))
+              (lt_of_le_of_lt (abs_nonneg _) h)));
+  · have h_edgeDensity_compl :
+      (Rel.edgeDensity Gᶜ.Adj s' t' : ℝ) = 1 - (Rel.edgeDensity G.Adj s' t' : ℝ) ∧
+        (Rel.edgeDensity Gᶜ.Adj s t : ℝ) = 1 - (Rel.edgeDensity G.Adj s t : ℝ) := by
+      exact
+            ⟨edgeDensity_compl_disjoint G (Finset.nonempty_of_ne_empty hs'0)
+                (Finset.nonempty_of_ne_empty ht'0)
+                (Finset.disjoint_of_subset_left hs' (Finset.disjoint_of_subset_right ht' hd)),
+              edgeDensity_compl_disjoint G (Finset.nonempty_of_ne_empty (by aesop_cat))
+                (Finset.nonempty_of_ne_empty (by aesop_cat)) hd⟩;
     grind
 
 /-
@@ -85,7 +115,7 @@ graph `F` on `W` and density slack `d > 0`, there are `ε₀ > 0` and a size thr
 `ε₀`-uniform and of **blue** density `≤ 1 − d`, contain a **red** copy of `F`
 (i.e. `F ⊑ Gᶜ`).
 -/
-lemma exists_red_multipartite_of_sparse {W : Type} [Fintype W] (F : SimpleGraph W)
+lemma exists_red_multipartite_of_sparse {W : Type} [Finite W] (F : SimpleGraph W)
     (q : ℕ) (hcol : F.Colorable (q + 1)) (d : ℝ) (hd : 0 < d) :
     ∃ ε₀ : ℝ, 0 < ε₀ ∧ ∃ m₀ : ℕ, ∀ {V : Type} [Fintype V] [DecidableEq V]
       (G : SimpleGraph V) [DecidableRel G.Adj] (P : Fin (q + 1) → Finset V),
@@ -94,6 +124,8 @@ lemma exists_red_multipartite_of_sparse {W : Type} [Fintype W] (F : SimpleGraph 
       (∀ i j, i ≠ j → G.IsUniform ε₀ (P i) (P j)) →
       (∀ i j, i ≠ j → (G.edgeDensity (P i) (P j) : ℝ) ≤ 1 - d) →
       F ⊑ Gᶜ := by
+  classical
+  let := Fintype.ofFinite W
   obtain ⟨ε₀, hε₀⟩ : ∃ ε₀ : ℝ, 0 < ε₀ ∧ ∃ m₀ : ℕ, ∀ {V : Type} [Fintype V] [DecidableEq V]
       (Gr : SimpleGraph V) [DecidableRel Gr.Adj] (P : Fin (q + 1) → Finset V),
       (∀ i, m₀ ≤ (P i).card) →
@@ -103,13 +135,17 @@ lemma exists_red_multipartite_of_sparse {W : Type} [Fintype W] (F : SimpleGraph 
       Kmult (q + 1) (fun _ => Fintype.card W) ⊑ Gr := by
         exact Erdos550.exists_blowup_of_regular q ( Fintype.card W ) d hd;
   obtain ⟨ m₀, hm₀ ⟩ := hε₀.2;
-  refine' ⟨ ε₀, hε₀.1, Max.max m₀ 1, _ ⟩;
+  refine ⟨ ε₀, hε₀.1, Max.max m₀ 1, ?_ ⟩;
   intro V _ _ G _ P hP₁ hP₂ hP₃ hP₄;
-  refine' SimpleGraph.IsContained.trans _ ( hm₀ Gᶜ P _ _ _ _ );
+  refine SimpleGraph.IsContained.trans ?_ ( hm₀ Gᶜ P ?_ ?_ ?_ ?_ );
   · exact colorable_embeds_Kmult F q ( Fintype.card W ) hcol ( by simp +decide );
   · exact fun i => le_trans ( le_max_left _ _ ) ( hP₁ i );
   · exact hP₂;
   · exact fun i j hij => isUniform_compl G ( hP₂ i j hij ) ( hP₃ i j hij );
-  · intro i j hij; specialize hP₄ i j hij; rw [ edgeDensity_compl_disjoint G ( Finset.card_pos.mp ( by linarith [ hP₁ i, le_max_right m₀ 1 ] ) ) ( Finset.card_pos.mp ( by linarith [ hP₁ j, le_max_right m₀ 1 ] ) ) ( hP₂ i j hij ) ] ; linarith;
+  · intro i j hij; specialize hP₄ i j hij;
+      rw [edgeDensity_compl_disjoint G
+          (Finset.card_pos.mp (by linarith [hP₁ i, le_max_right m₀ 1]))
+          (Finset.card_pos.mp (by linarith [hP₁ j, le_max_right m₀ 1])) (hP₂ i j hij)];
+      linarith;
 
 end Erdos550

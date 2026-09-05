@@ -15,7 +15,7 @@ open Finset
 
 namespace Erdos550
 
-lemma theta_counting {ι : Type*} [DecidableEq ι]
+lemma theta_counting {ι : Type*}
     (S 𝒜 : Finset ι) (D : ι → ℝ)
     (hsub : 𝒜 ⊆ S) (Nn base η : ℝ) (hNn : 0 < Nn)
     (hbase : 0 ≤ base + 80 * η * Nn)
@@ -25,6 +25,7 @@ lemma theta_counting {ι : Type*} [DecidableEq ι]
       (base + 100 * η * Nn) * (S.card : ℝ) ≤
         ∑ i ∈ S, D i) :
     (20 * η) * (S.card : ℝ) ≤ (𝒜.card : ℝ) := by
+  classical
   have hsum :
       (∑ i ∈ S, D i) ≤
         (𝒜.card : ℝ) * Nn +

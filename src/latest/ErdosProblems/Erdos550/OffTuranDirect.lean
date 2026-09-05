@@ -17,7 +17,6 @@ open SimpleGraph Finset
 
 namespace Erdos550
 
-open Classical
 
 variable {α : Type} [Fintype α] [DecidableEq α]
 
@@ -37,7 +36,7 @@ be seeds, but the seed-singleton component of the hub has the three centres as
 attachments.  Downstream routing only uses components containing a nonseed
 vertex, so the restriction loses nothing needed by that pipeline. -/
 theorem tree_tau_fine_two_attachment
-    (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree)
+    (T : SimpleGraph α) (hT : T.IsTree)
     (τ : ℝ) (hτ : 0 < τ)
     (hn : (1 : ℝ) ≤ τ * Fintype.card α) :
     ∃ S : Finset α,
@@ -46,6 +45,7 @@ theorem tree_tau_fine_two_attachment
         (∃ v ∈ c.supp, v ∉ S) →
           (Nat.card c.supp : ℝ) ≤ τ * Fintype.card α ∧
           (componentSeeds T S c).card ≤ 2) := by
+  classical
   obtain ⟨S₀, hS₀, hsmall⟩ := tree_tau_fine T hT τ hτ hn
   let B := promotedBranchVertices T S₀
   refine ⟨S₀ ∪ B, ?_, ?_⟩

@@ -20,14 +20,14 @@ open Finset SimpleGraph
 
 namespace Erdos550
 
-open Classical
 
 set_option maxHeartbeats 800000 in
+-- The component extension checks packedness and contact constraints across the whole matching.
 theorem hp_matching_component_extension
     {A : Type} {V κ : Type*}
     [Fintype A] [DecidableEq A]
-    [Fintype V] [DecidableEq V] [Nonempty V]
-    [Fintype κ] [DecidableEq κ]
+    [Finite V] [DecidableEq V] [Nonempty V]
+    [Finite κ]
     (T : SimpleGraph A) (Sseed P : Finset A)
     {parent : A → Option A} {rank : A → ℕ}
     (D : RootedSeedComponentData T Sseed parent)
@@ -109,7 +109,7 @@ theorem hp_matching_component_extension
       cap - matchingSideLoad P f (left k) ≤ ((freeL k).card : ℝ))
     (hfreeRCard : ∀ k ∈ Good,
       cap - matchingSideLoad P f (right k) ≤ ((freeR k).card : ℝ)) :
-    ∃ (k : κ) (swap : Bool)
+    ∃ (k : κ) (_swap : Bool)
       (fC : RootedComponentVertex T Sseed c → V),
       k ∈ Good ∧
       Function.Injective fC ∧
@@ -126,6 +126,9 @@ theorem hp_matching_component_extension
         (glueOnBlock (componentNonseedVertices T Sseed c.1) f
           (liftComponentMap T Sseed c fC))
         left right leftThreshold rightThreshold margin τ := by
+  let := Fintype.ofFinite V
+  let := Fintype.ofFinite κ
+  classical
   let a : ℝ :=
     (componentSideCount T Sseed col c (D.root c) false : ℕ)
   let b : ℝ :=

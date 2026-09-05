@@ -20,17 +20,18 @@ open Finset SimpleGraph Finpartition
 
 namespace Erdos550
 
-open Classical
 
 /-- Summing over the disjoint endpoint images of an indexed matching is the
 same as summing the two endpoint contributions edge by edge. -/
 lemma sum_matching_endpoint_union
-    {ι κ : Type*} [Fintype ι] [DecidableEq ι]
-    [Fintype κ] [DecidableEq κ]
+    {ι κ : Type*} [Finite ι] [DecidableEq ι]
+    [Fintype κ]
     (cL cR : κ → ι) (f : ι → ℝ)
     (hinj : Function.Injective (Sum.elim cL cR)) :
     (∑ i ∈ (Finset.univ.image cL ∪ Finset.univ.image cR), f i) =
       ∑ k, (f (cL k) + f (cR k)) := by
+  let := Fintype.ofFinite ι
+  classical
   have hL : Function.Injective cL := by
     intro k j h
     exact Sum.inl.inj (hinj h)
@@ -59,7 +60,7 @@ lemma sum_matching_endpoint_union
 sum of the genuine whole-edge weights at the head. -/
 lemma cleaned_endpoint_union_le_matchingWeight
     {V κ : Type*} [Fintype V] [DecidableEq V]
-    [Fintype κ] [DecidableEq κ]
+    [Fintype κ]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (P : Finpartition (Finset.univ : Finset V))
     (ε d : ℝ) (scale : ℕ) (hscale : 0 < scale)
@@ -71,6 +72,7 @@ lemma cleaned_endpoint_union_le_matchingWeight
         clusterContribution (G.regularityReduced P ε d) P scale head i) ≤
       ∑ k, hpHeadMatchingWeight G (offTuranReducedGraph G P ε d)
         (fun i : {C // C ∈ P.parts} => i.1) head cL cR k := by
+  classical
   calc
     _ ≤ ∑ i ∈ (Finset.univ.image cL ∪ Finset.univ.image cR),
           hpHeadEndpointWeight G (offTuranReducedGraph G P ε d)
@@ -91,7 +93,7 @@ lemma cleaned_endpoint_union_le_matchingWeight
 when the uncovered-cluster loss is at most `2 η N`. -/
 theorem heavy_head_matchingWeight_lower
     {V κ : Type*} [Fintype V] [DecidableEq V]
-    [Fintype κ] [DecidableEq κ]
+    [Fintype κ]
     {G : SimpleGraph V} [DecidableRel G.Adj]
     {ε d base η : ℝ} {m₀ B : ℕ}
     (D : OffTuranReducedDegreeData G ε d base η m₀)
@@ -113,6 +115,7 @@ theorem heavy_head_matchingWeight_lower
       ∑ k, hpHeadMatchingWeight G
         (offTuranReducedGraph G D.P ε d)
         (fun i : {C // C ∈ D.P.parts} => i.1) X cL cR k := by
+  classical
   let Clean := G.regularityReduced D.P ε d
   let f : {C // C ∈ D.P.parts} → ℝ :=
     fun i => clusterContribution Clean D.P D.scale X i
@@ -127,8 +130,7 @@ theorem heavy_head_matchingWeight_lower
           ((B + 2 : ℕ) : ℝ) * (D.scale : ℝ) ≤
         ∑ i ∈ (Finset.univ.image cL ∪ Finset.univ.image cR),
           clusterContribution Clean D.P D.scale X i := by
-    have h := matched_clusterContribution_lower
-      (V := V) f (D.scale : ℝ)
+    have h := matched_clusterContribution_lower f (D.scale : ℝ)
       (fun i => clusterContribution_le_scale
         Clean D.P D.scale D.scale_pos D.part_size_upper X i)
       (by positivity) X Y cL cR U hU B hsmall

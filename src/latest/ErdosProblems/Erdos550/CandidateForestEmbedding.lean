@@ -33,10 +33,11 @@ For roots it is required directly from `cand`; for a child it is required in the
 neighbourhood of every possible image of its parent.
 -/
 set_option maxHeartbeats 2000000 in
+-- The induction simultaneously maintains injectivity and the candidate conditions along edges.
 theorem candidate_forest_embedding
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*} [Fintype α]
     (parent : α → Option α) (rank : α → ℕ)
     (hrank : ∀ a b, parent a = some b → rank b < rank a)
     (cand : α → Finset V)
@@ -46,23 +47,39 @@ theorem candidate_forest_embedding
     ∃ f : α → V, Function.Injective f ∧
       (∀ a, f a ∈ cand a) ∧
       (∀ a b, parent a = some b → G.Adj (f a) (f b)) := by
+  classical
+  let := Fintype.ofFinite V
   revert cand hroot hchild;
   intro cand hroot hchild
-  have h_ind : ∀ S : Finset α, (∀ a ∈ S, ∀ b, parent a = some b → b ∈ S) → ∃ f : α → V, (∀ a ∈ S, f a ∈ cand a) ∧ (∀ a ∈ S, ∀ b ∈ S, a ≠ b → f a ≠ f b) ∧ (∀ a ∈ S, ∀ b ∈ S, parent a = some b → G.Adj (f a) (f b)) ∧ (Finset.univ \ Finset.image f S).card ≥ (Finset.univ \ S).card := by
+  have h_ind :
+      ∀ S : Finset α,
+        (∀ a ∈ S, ∀ b, parent a = some b → b ∈ S) →
+          ∃ f : α → V,
+            (∀ a ∈ S, f a ∈ cand a) ∧
+              (∀ a ∈ S, ∀ b ∈ S, a ≠ b → f a ≠ f b) ∧
+                (∀ a ∈ S, ∀ b ∈ S, parent a = some b → G.Adj (f a) (f b)) ∧
+                  (Finset.univ \ Finset.image f S).card ≥ (Finset.univ \ S).card := by
     intro S hS;
-    induction' S using Finset.strongInduction with S ih;
+    induction S using Finset.strongInduction
+    rename_i S ih
     by_cases hS_empty : S = ∅;
     · simp only [ne_eq, ge_iff_le];
       by_cases hα : Nonempty α;
       · have h_root : ∃ a : α, parent a = none := by
           by_contra h_no_root;
           have h_seq : ∃ seq : ℕ → α, ∀ n, parent (seq n) = some (seq (n + 1)) := by
-            choose f hf using fun a => Option.ne_none_iff_exists'.mp ( show parent a ≠ none from fun h => h_no_root ⟨ a, h ⟩ );
+            choose f hf using fun a =>
+                Option.ne_none_iff_exists'.mp
+                  (show parent a ≠ none from fun h => h_no_root ⟨a, h⟩);
             exact ⟨ fun n => Nat.recOn n hα.some fun n ih => f ih, fun n => hf _ ⟩;
           obtain ⟨ seq, hseq ⟩ := h_seq;
           have h_seq_inf : StrictAnti (fun n => rank (seq n)) := by
             exact strictAnti_nat_of_succ_lt fun n => hrank _ _ ( hseq n );
-          exact absurd ( Set.infinite_range_of_injective h_seq_inf.injective ) ( Set.not_infinite.mpr <| Set.finite_iff_bddAbove.mpr ⟨ _, Set.forall_mem_range.mpr fun n => h_seq_inf.antitone n.zero_le ⟩ );
+          exact
+              absurd (Set.infinite_range_of_injective h_seq_inf.injective)
+                (Set.not_infinite.mpr <|
+                  Set.finite_iff_bddAbove.mpr
+                    ⟨_, Set.forall_mem_range.mpr fun n => h_seq_inf.antitone n.zero_le⟩);
         let v : V := Classical.choose (Finset.card_pos.mp
           (lt_of_lt_of_le Fintype.card_pos (hroot _ h_root.choose_spec)))
         refine ⟨fun _ => v, ?_⟩
@@ -82,38 +99,63 @@ theorem candidate_forest_embedding
       grind) (by
       grind);
       by_cases ha_root : parent a = none;
-      · -- Since $a$ is a root, we can choose any element from $cand a$ that is not in the image of $f_T$.
+      · -- Since `a` is a root, choose a candidate outside the image of `f_T`.
         obtain ⟨v, hv⟩ : ∃ v ∈ cand a, v ∉ Finset.image f_T T := by
           have h_card : (cand a).card > (Finset.image f_T T).card := by
             have h_card : (Finset.image f_T T).card ≤ (Finset.univ \ {a}).card := by
               exact Finset.card_image_le.trans ( Finset.card_le_card fun x hx => by aesop );
             grind +qlia;
           exact Finset.not_subset.mp fun h => h_card.not_ge <| Finset.card_le_card h;
-        refine' ⟨ fun x => if x = a then v else f_T x, _, _, _, _ ⟩ <;> simp +decide only [ge_iff_le];
+        refine ⟨fun x => if x = a then v else f_T x, ?_, ?_, ?_, ?_⟩ <;>
+            simp +decide only [ge_iff_le];
         · grind;
         · grind +suggestions;
         · grind;
-        · rw [ show ( univ \ image ( fun x => if x = a then v else f_T x ) S ) = ( univ \ image f_T T ) \ { v } from ?_ ]; all_goals grind;
+        · rw [show
+                (univ \ image (fun x => if x = a then v else f_T x) S) =
+                  (univ \ image f_T T) \ { v }
+                from ?_];
+            all_goals grind;
       · obtain ⟨b, hb⟩ : ∃ b, parent a = some b ∧ b ∈ T := by
           obtain ⟨ b, hb ⟩ := Option.ne_none_iff_exists'.mp ha_root;
           grind;
-        -- Let $v$ be a vertex in $cand a$ that is adjacent to $f_T b$ and not in the image of $f_T$.
+        -- Let $v$ be a vertex in $cand a$ that is adjacent to $f_T b$ and not in the image of
+        -- $f_T$.
         obtain ⟨v, hv⟩ : ∃ v ∈ cand a, G.Adj v (f_T b) ∧ v ∉ Finset.image f_T T := by
-          have h_card : (Finset.filter (fun w => G.Adj (f_T b) w) (cand a)).card ≥ Fintype.card α := by
+          have h_card :
+              (Finset.filter (fun w => G.Adj (f_T b) w) (cand a)).card ≥ Fintype.card α := by
             exact hchild a b hb.1 _ ( hf_T.1 b hb.2 );
-          have h_card : (Finset.filter (fun w => G.Adj (f_T b) w) (cand a)).card > (Finset.image f_T T).card := by
-            refine' lt_of_lt_of_le _ h_card;
-            refine' lt_of_le_of_lt ( Finset.card_image_le ) _;
-            exact lt_of_lt_of_le ( Finset.card_lt_card ( Finset.ssubset_iff_subset_ne.mpr ⟨ Finset.sdiff_subset, by aesop ⟩ ) ) ( Finset.card_le_univ _ );
+          have h_card :
+              (Finset.filter (fun w => G.Adj (f_T b) w) (cand a)).card >
+                (Finset.image f_T T).card := by
+            refine lt_of_lt_of_le ?_ h_card;
+            refine lt_of_le_of_lt ( Finset.card_image_le ) ?_;
+            exact
+                lt_of_lt_of_le
+                  (Finset.card_lt_card
+                    (Finset.ssubset_iff_subset_ne.mpr ⟨Finset.sdiff_subset, by aesop⟩))
+                  (Finset.card_le_univ _);
           contrapose! h_card;
-          exact Finset.card_le_card fun x hx => h_card x ( Finset.mem_filter.mp hx |>.1 ) ( by simpa [ SimpleGraph.adj_comm ] using! Finset.mem_filter.mp hx |>.2 );
-        refine' ⟨ fun x => if x = a then v else f_T x, _, _, _, _ ⟩ <;> simp +decide only [ge_iff_le];
+          exact
+              Finset.card_le_card fun x hx =>
+                h_card x (Finset.mem_filter.mp hx |>.1)
+                  (by simpa [SimpleGraph.adj_comm] using! Finset.mem_filter.mp hx |>.2);
+        refine ⟨fun x => if x = a then v else f_T x, ?_, ?_, ?_, ?_⟩ <;>
+            simp +decide only [ge_iff_le];
         · grind;
         · grind;
         · grind;
-        · rw [ show ( univ \ image ( fun x => if x = a then v else f_T x ) S ) = ( univ \ image f_T T ) \ { v } from ?_ ]; all_goals grind;
+        · rw [show
+                (univ \ image (fun x => if x = a then v else f_T x) S) =
+                  (univ \ image f_T T) \ { v }
+                from ?_];
+            all_goals grind;
   obtain ⟨ f, hf₁, hf₂, hf₃, hf₄ ⟩ := h_ind Finset.univ ( by simp +decide );
-  exact ⟨ f, fun a b hab => Classical.not_not.1 fun h => hf₂ a ( Finset.mem_univ a ) b ( Finset.mem_univ b ) h hab, fun a => hf₁ a ( Finset.mem_univ a ), fun a b hab => hf₃ a ( Finset.mem_univ a ) b ( Finset.mem_univ b ) hab ⟩
+  exact
+      ⟨f, fun a b hab =>
+        Classical.not_not.1 fun h => hf₂ a (Finset.mem_univ a) b (Finset.mem_univ b) h hab,
+        fun a => hf₁ a (Finset.mem_univ a), fun a b hab =>
+        hf₃ a (Finset.mem_univ a) b (Finset.mem_univ b) hab⟩
 
 /-
 Candidate-set embedding with an arbitrary finite family of prescribed
@@ -122,9 +164,9 @@ imply adjacency to every vertex in `anchors a`; hence roots, terminal leaves, or
 several distinguished vertices can all be constrained simultaneously.
 -/
 theorem candidate_forest_embedding_anchored
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*} [Fintype α]
     (parent : α → Option α) (rank : α → ℕ)
     (hrank : ∀ a b, parent a = some b → rank b < rank a)
     (cand : α → Finset V) (anchors : α → Finset V)
@@ -136,6 +178,8 @@ theorem candidate_forest_embedding_anchored
       (∀ a, f a ∈ cand a) ∧
       (∀ a b, parent a = some b → G.Adj (f a) (f b)) ∧
       (∀ a z, z ∈ anchors a → G.Adj z (f a)) := by
+  classical
+  let := Fintype.ofFinite V
   convert! candidate_forest_embedding G parent rank hrank cand hroot hchild using 1;
   grind
 
@@ -145,9 +189,9 @@ candidate engine.  The distinguished forest vertices may coincide; if they do,
 the candidate set at that vertex must satisfy both attachment constraints.
 -/
 theorem candidate_forest_embedding_two_attachments
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*} [Fintype α]
     (parent : α → Option α) (rank : α → ℕ)
     (hrank : ∀ a b, parent a = some b → rank b < rank a)
     (cand : α → Finset V)
@@ -161,6 +205,8 @@ theorem candidate_forest_embedding_two_attachments
       (∀ a, f a ∈ cand a) ∧
       (∀ a b, parent a = some b → G.Adj (f a) (f b)) ∧
       G.Adj leftAnchor (f root) ∧ G.Adj (f terminal) rightAnchor := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨f, hf⟩ := candidate_forest_embedding G parent rank hrank cand hroot hchild;
   exact ⟨ f, hf.1, hf.2.1, hf.2.2, hleft _ ( hf.2.1 _ ), hright _ ( hf.2.1 _ ) ⟩
 

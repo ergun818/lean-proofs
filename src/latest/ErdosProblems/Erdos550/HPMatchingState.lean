@@ -18,11 +18,11 @@ open Finset
 
 namespace Erdos550
 
-open Classical
 
 noncomputable def matchingSideLoad
     {A V : Type*} [DecidableEq V]
     (S : Finset A) (f : A → V) (C : Finset V) : ℝ :=
+  open scoped Classical in
   (((S.image f) ∩ C).card : ℝ)
 
 def HPMatchingPacked
@@ -31,6 +31,7 @@ def HPMatchingPacked
     (CLeft CRight : κ → Finset V)
     (leftThreshold rightThreshold : κ → ℝ)
     (margin τ : ℝ) : Prop :=
+  open scoped Classical in
   ∀ k, HPPacked
     (matchingSideLoad S f (CLeft k))
     (matchingSideLoad S f (CRight k))
@@ -44,6 +45,7 @@ lemma hpMatchingPacked_empty
     (margin τ : ℝ) (hτ : 0 ≤ τ) :
     HPMatchingPacked (∅ : Finset A) f CLeft CRight
       leftThreshold rightThreshold margin τ := by
+  classical
   intro k
   right
   simp [matchingSideLoad, hτ]
@@ -64,6 +66,7 @@ lemma hpMatchingPacked_glue_outside
     (hright : ∀ k, Disjoint (B.image g) (CRight k)) :
     HPMatchingPacked (S ∪ B) (glueOnBlock B f g)
       CLeft CRight leftThreshold rightThreshold margin τ := by
+  classical
   intro k
   have hleftZero :
       ((B.image g ∩ CLeft k).card : ℝ) = 0 := by
@@ -82,7 +85,7 @@ lemma hpMatchingPacked_glue_outside
 invariant.  The hypotheses say that the new block misses every other matching
 edge and give its exact two contributions at the selected edge. -/
 lemma hpMatchingPacked_glue_one
-    {A V κ : Type*} [DecidableEq A] [DecidableEq V] [DecidableEq κ]
+    {A V κ : Type*} [DecidableEq A] [DecidableEq V]
     (S B : Finset A) (f g : A → V)
     (CLeft CRight : κ → Finset V)
     (leftThreshold rightThreshold : κ → ℝ)
@@ -101,6 +104,7 @@ lemma hpMatchingPacked_glue_one
       (leftThreshold k₀) (rightThreshold k₀) margin τ) :
     HPMatchingPacked (S ∪ B) (glueOnBlock B f g)
       CLeft CRight leftThreshold rightThreshold margin τ := by
+  classical
   intro k
   by_cases hk : k = k₀
   · subst k

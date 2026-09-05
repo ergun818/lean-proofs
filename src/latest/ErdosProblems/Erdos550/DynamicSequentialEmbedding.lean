@@ -22,16 +22,16 @@ open SimpleGraph Finset
 
 namespace Erdos550
 
-open Classical
 
 /-- A finite parent forest has a not-yet-embedded vertex whose parent is already
 embedded, provided ranks strictly decrease along parent links. -/
 lemma exists_ready_vertex
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*} [Fintype α]
     (parent : α → Option α) (rank : α → ℕ)
     (hrank : ∀ a b, parent a = some b → rank b < rank a)
     (S : Finset α) (hS : S ≠ univ) :
     ∃ a ∉ S, ∀ b, parent a = some b → b ∈ S := by
+  classical
   have hnon : (univ \ S).Nonempty := by
     rw [Finset.nonempty_iff_ne_empty]
     intro h
@@ -50,9 +50,9 @@ lemma exists_ready_vertex
 embedding, it is enough to supply one fresh legal image for every ready vertex.
 The legal set can depend on the partial embedding. -/
 theorem dynamic_sequential_embedding
-    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {V : Type*} [Finite V] [DecidableEq V] [Nonempty V]
+    (G : SimpleGraph V)
+    {α : Type*} [Finite α]
     (parent : α → Option α) (rank : α → ℕ)
     (hrank : ∀ a b, parent a = some b → rank b < rank a)
     (cand : α → Finset V) (anchors : α → Finset V)
@@ -70,6 +70,9 @@ theorem dynamic_sequential_embedding
       (∀ a, f a ∈ cand a) ∧
       (∀ a b, parent a = some b → G.Adj (f a) (f b)) ∧
       (∀ a z, z ∈ anchors a → G.Adj z (f a)) := by
+  classical
+  let := Fintype.ofFinite V
+  let := Fintype.ofFinite α
   let Good : Finset α → Prop := fun S =>
     (∀ a ∈ S, ∀ b, parent a = some b → b ∈ S) ∧
     ∃ f : α → V, Set.InjOn f S ∧
@@ -138,9 +141,9 @@ retired, atypical and rounded-away vertices deleted. Its cardinality only needs
 to exceed the number of vertices previously used on the same route. Disjoint
 route domains make vertices used on other routes irrelevant. -/
 theorem dynamic_routed_anchored_embedding
-    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
-    {α κ : Type*} [Fintype α] [DecidableEq α] [DecidableEq κ]
+    {V : Type*} [Finite V] [Nonempty V]
+    (G : SimpleGraph V)
+    {α κ : Type*} [Finite α] [DecidableEq κ]
     (parent : α → Option α) (rank : α → ℕ)
     (hrank : ∀ a b, parent a = some b → rank b < rank a)
     (route : α → κ)
@@ -162,6 +165,9 @@ theorem dynamic_routed_anchored_embedding
       (∀ a, f a ∈ cand a) ∧
       (∀ a b, parent a = some b → G.Adj (f a) (f b)) ∧
       (∀ a z, z ∈ anchors a → G.Adj z (f a)) := by
+  classical
+  let := Fintype.ofFinite V
+  let := Fintype.ofFinite α
   apply dynamic_sequential_embedding G parent rank hrank cand anchors
   intro S f hclosed hinj hmem hadj hanchor a haS hready
   have hinter : (S.image f ∩ pool S f a).card ≤
@@ -185,7 +191,7 @@ theorem dynamic_routed_anchored_embedding
     hinter.trans_lt (hpool_large S f hmem hinj a haS hready)
   obtain ⟨v, hvpool, hvfresh⟩ : ∃ v ∈ pool S f a, v ∉ S.image f := by
     by_contra h
-    push_neg at h
+    push Not at h
     have hsub : pool S f a ⊆ S.image f := fun v hv => h v hv
     have : S.image f ∩ pool S f a = pool S f a := inter_eq_right.mpr hsub
     rw [this] at hcard
@@ -200,6 +206,7 @@ theorem dynamic_routed_anchored_embedding
 def dynamicExcluded {α V : Type*} [DecidableEq V]
     (retired atypical rounding : Finset α → (α → V) → α → Finset V)
     (S : Finset α) (f : α → V) (a : α) : Finset V :=
+  open scoped Classical in
   retired S f a ∪ atypical S f a ∪ rounding S f a
 
 /-- Vertices satisfying the slice, current-parent, and endpoint-anchor
@@ -209,6 +216,7 @@ noncomputable def dynamicEligiblePool
     (G : SimpleGraph V) (parent : α → Option α)
     (slice : α → Finset V) (anchors : α → Finset V)
     (f : α → V) (a : α) : Finset V :=
+  open scoped Classical in
   ((slice a).filter fun v => ∀ b, parent a = some b → G.Adj v (f b)).filter
     (fun v => ∀ z ∈ anchors a, G.Adj z v)
 
@@ -219,6 +227,7 @@ noncomputable def dynamicLegalPool
     (slice : α → Finset V) (anchors : α → Finset V)
     (retired atypical rounding : Finset α → (α → V) → α → Finset V)
     (S : Finset α) (f : α → V) (a : α) : Finset V :=
+  open scoped Classical in
   dynamicEligiblePool G parent slice anchors f a \
     dynamicExcluded retired atypical rounding S f a
 
@@ -229,6 +238,7 @@ lemma dynamicLegalPool_subset_slice
     (retired atypical rounding : Finset α → (α → V) → α → Finset V)
     (S : Finset α) (f : α → V) (a : α) :
     dynamicLegalPool G parent slice anchors retired atypical rounding S f a ⊆ slice a := by
+  classical
   exact fun _ h => (mem_sdiff.mp h).1 |> mem_filter.mp |>.1 |> mem_filter.mp |>.1
 
 lemma dynamicLegalPool_parent
@@ -239,6 +249,7 @@ lemma dynamicLegalPool_parent
     (S : Finset α) (f : α → V) (a : α) {v : V}
     (hv : v ∈ dynamicLegalPool G parent slice anchors retired atypical rounding S f a) :
     ∀ b, parent a = some b → G.Adj v (f b) := by
+  classical
   exact (mem_filter.mp (mem_filter.mp (mem_sdiff.mp hv).1).1).2
 
 lemma dynamicLegalPool_anchor
@@ -249,6 +260,7 @@ lemma dynamicLegalPool_anchor
     (S : Finset α) (f : α → V) (a : α) {v : V}
     (hv : v ∈ dynamicLegalPool G parent slice anchors retired atypical rounding S f a) :
     ∀ z ∈ anchors a, G.Adj z v := by
+  classical
   exact (mem_filter.mp (mem_sdiff.mp hv).1).2
 
 /-- The three named losses have at most the sum of their separate sizes. -/
@@ -258,6 +270,7 @@ lemma dynamicExcluded_card_le
     (S : Finset α) (f : α → V) (a : α) :
     (dynamicExcluded retired atypical rounding S f a).card ≤
       (retired S f a).card + (atypical S f a).card + (rounding S f a).card := by
+  classical
   unfold dynamicExcluded
   calc
     #(retired S f a ∪ atypical S f a ∪ rounding S f a) ≤
@@ -279,7 +292,9 @@ lemma dynamicLegalPool_card_lower
     (ht : (atypical S f a).card ≤ t)
     (hu : (rounding S f a).card ≤ u) :
     (dynamicEligiblePool G parent slice anchors f a).card ≤
-      (dynamicLegalPool G parent slice anchors retired atypical rounding S f a).card + r + t + u := by
+      (dynamicLegalPool G parent slice anchors retired atypical rounding S f a).card +
+        r + t + u := by
+  classical
   have hsplit : (dynamicEligiblePool G parent slice anchors f a).card ≤
       (dynamicEligiblePool G parent slice anchors f a \
         dynamicExcluded retired atypical rounding S f a).card +
@@ -297,9 +312,9 @@ hypothesis concerns the resulting exact pool and the *current* same-route load.
 Thus a route can ultimately be filled near capacity as long as every sequential
 step retains one legal vertex. -/
 theorem dynamic_matching_shrub_embedding
-    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
-    {α κ : Type*} [Fintype α] [DecidableEq α] [DecidableEq κ]
+    {V : Type*} [Finite V] [DecidableEq V] [Nonempty V]
+    (G : SimpleGraph V)
+    {α κ : Type*} [Finite α] [DecidableEq κ]
     (parent : α → Option α) (rank : α → ℕ)
     (hrank : ∀ a b, parent a = some b → rank b < rank a)
     (route : α → κ)
@@ -317,6 +332,9 @@ theorem dynamic_matching_shrub_embedding
       (∀ a, f a ∈ slice a) ∧
       (∀ a b, parent a = some b → G.Adj (f a) (f b)) ∧
       (∀ a z, z ∈ anchors a → G.Adj z (f a)) := by
+  classical
+  let := Fintype.ofFinite V
+  let := Fintype.ofFinite α
   apply dynamic_routed_anchored_embedding G parent rank hrank route domain hdisj
       slice hslice anchors
       (dynamicLegalPool G parent slice anchors retired atypical rounding)
@@ -332,9 +350,9 @@ theorem dynamic_matching_shrub_embedding
 /-- Graph-containment packaging of the dynamic shrub engine.  Any source graph
 whose edges are classified by the parent forest is embedded in the host. -/
 theorem dynamic_matching_shrub_graph_embedding
-    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
-    {α κ : Type*} [Fintype α] [DecidableEq α] [DecidableEq κ]
+    {V : Type*} [Finite V] [DecidableEq V] [Nonempty V]
+    (G : SimpleGraph V)
+    {α κ : Type*} [Finite α] [DecidableEq κ]
     (T : SimpleGraph α)
     (parent : α → Option α) (rank : α → ℕ)
     (hrank : ∀ a b, parent a = some b → rank b < rank a)
@@ -351,6 +369,9 @@ theorem dynamic_matching_shrub_graph_embedding
         (S.filter (fun x => route x = route a)).card <
           (dynamicLegalPool G parent slice anchors retired atypical rounding S f a).card) :
     T ⊑ G := by
+  classical
+  let := Fintype.ofFinite V
+  let := Fintype.ofFinite α
   obtain ⟨f, hinj, _, hparent, _⟩ :=
     dynamic_matching_shrub_embedding G parent rank hrank route domain hdisj
       slice hslice anchors retired atypical rounding hroom
@@ -364,9 +385,9 @@ theorem dynamic_matching_shrub_graph_embedding
 eligible pool pays separately for retirement, atypicality, and rounding, plus
 one fresh vertex beyond the current route load. -/
 theorem dynamic_matching_shrub_embedding_of_loss_bounds
-    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
-    {α κ : Type*} [Fintype α] [DecidableEq α] [DecidableEq κ]
+    {V : Type*} [Finite V] [DecidableEq V] [Nonempty V]
+    (G : SimpleGraph V)
+    {α κ : Type*} [Finite α] [DecidableEq κ]
     (parent : α → Option α) (rank : α → ℕ)
     (hrank : ∀ a b, parent a = some b → rank b < rank a)
     (route : α → κ)
@@ -389,6 +410,9 @@ theorem dynamic_matching_shrub_embedding_of_loss_bounds
       (∀ a, f a ∈ slice a) ∧
       (∀ a b, parent a = some b → G.Adj (f a) (f b)) ∧
       (∀ a z, z ∈ anchors a → G.Adj z (f a)) := by
+  classical
+  let := Fintype.ofFinite V
+  let := Fintype.ofFinite α
   apply dynamic_matching_shrub_embedding G parent rank hrank route domain hdisj
       slice hslice anchors retired atypical rounding
   intro S f hmem hinj a ha hready

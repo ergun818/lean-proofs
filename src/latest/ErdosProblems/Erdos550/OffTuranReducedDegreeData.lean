@@ -20,7 +20,6 @@ open Finset SimpleGraph Finpartition SzemerediRegularity
 
 namespace Erdos550
 
-open Classical
 
 structure OffTuranReducedDegreeData
     {V : Type*} [Fintype V] [DecidableEq V]
@@ -69,14 +68,14 @@ theorem exists_offTuran_reduced_degree_data
         (base + 150 * η * Fintype.card V) * Fintype.card V ≤
           2 * ((G.regularityReduced P ε d).edgeFinset.card : ℝ)) :
     Nonempty (OffTuranReducedDegreeData G ε d base η m₀) := by
+  classical
   obtain ⟨P, hPeq, hPlo, hPhi, hPuni⟩ :=
     exists_offTuran_regular_partition G ε hε0 hregLarge
   let scale := Fintype.card V / P.parts.card + 1
   have hpartsPos : 0 < P.parts.card := by
     exact (Nat.ceil_pos.mpr (by positivity : 0 < 4 / ε)).trans_le hPlo
   have hscalePos : 0 < scale := by
-    simpa [scale] using!
-      Nat.succ_pos (Fintype.card V / P.parts.card)
+    simp [scale]
   have hellEta :
       (P.parts.card : ℝ) ≤ η * Fintype.card V := by
     have hcast : (P.parts.card : ℝ) ≤
@@ -144,6 +143,7 @@ theorem exists_offTuran_reduced_degree_data_of_raw
       (base + 200 * η * Fintype.card V) * Fintype.card V ≤
         2 * (G.edgeFinset.card : ℝ)) :
     Nonempty (OffTuranReducedDegreeData G ε η base η m₀) := by
+  classical
   apply exists_offTuran_reduced_degree_data
     G ε η base η m₀ hε0 hbase0 hbaseN hη0 hηsmall
     hregLarge hboundEta hboundMin

@@ -18,7 +18,6 @@ open Finset MeasureTheory ProbabilityTheory
 
 namespace Erdos550
 
-open Classical
 
 section Coordinates
 
@@ -26,45 +25,54 @@ variable {κ : Type*} [Fintype κ] [DecidableEq κ]
 
 noncomputable def matchingBernoulliMeasure
     (p : NNReal) (hp : p ≤ 1) : Measure (κ → Bool) :=
-  Measure.pi fun _ => (PMF.bernoulli p hp).toMeasure
+  open scoped Classical in
+  Measure.pi fun _ => bernoulliMeasure true false ⟨p, p.coe_nonneg, by exact_mod_cast hp⟩
 
 noncomputable instance matchingBernoulliMeasure.instIsProbabilityMeasure
     (p : NNReal) (hp : p ≤ 1) :
-    IsProbabilityMeasure (matchingBernoulliMeasure (κ := κ) p hp) := by
+    IsProbabilityMeasure (matchingBernoulliMeasure (κ :=
+  open scoped Classical in κ) p hp) := by
   unfold matchingBernoulliMeasure
   infer_instance
 
 noncomputable def matchingCoordinate
     (w : κ → ℝ) (i : κ) : (κ → Bool) → ℝ :=
+  open scoped Classical in
   fun ω => if ω i then w i else 0
 
 noncomputable def matchingWeightSum
     (w : κ → ℝ) : (κ → Bool) → ℝ :=
+  open scoped Classical in
   fun ω => ∑ i, matchingCoordinate w i ω
 
+omit [DecidableEq κ] in
 lemma matchingWeightSum_eq_sum (w : κ → ℝ) :
     matchingWeightSum w = ∑ i, matchingCoordinate w i := by
+  classical
   funext ω
   simp [matchingWeightSum]
 
+omit [DecidableEq κ] in
 lemma integral_matchingCoordinate
     (p : NNReal) (hp : p ≤ 1) (w : κ → ℝ) (i : κ) :
     ∫ ω, matchingCoordinate w i ω ∂matchingBernoulliMeasure p hp =
       p.toReal * w i := by
+  classical
   let μ : κ → Measure Bool :=
-    fun _ => (PMF.bernoulli p hp).toMeasure
+    fun _ => bernoulliMeasure true false ⟨p, p.coe_nonneg, by exact_mod_cast hp⟩
   have h := integral_comp_eval (μ := μ) (i := i)
     (f := fun b : Bool => if b then w i else 0) (by fun_prop)
-  rw [PMF.integral_eq_sum] at h
-  simpa [matchingBernoulliMeasure, matchingCoordinate, μ,
-    PMF.bernoulli_apply] using! h
+  rw [integral_bernoulliMeasure] at h
+  simpa [matchingBernoulliMeasure, matchingCoordinate, μ] using! h
 
+omit [DecidableEq κ] in
 lemma matchingCoordinate_memLp_two
     (p : NNReal) (hp : p ≤ 1)
     (w : κ → ℝ) (M : ℝ)
     (hw0 : ∀ i, 0 ≤ w i) (hwM : ∀ i, w i ≤ M) (i : κ) :
     MemLp (matchingCoordinate w i) 2
       (matchingBernoulliMeasure p hp) := by
+  classical
   have hM0 : 0 ≤ M := (hw0 i).trans (hwM i)
   apply memLp_of_bounded
     (a := 0) (b := M) (p := 2)
@@ -73,33 +81,38 @@ lemma matchingCoordinate_memLp_two
     split <;> simp_all
   · fun_prop
 
+omit [DecidableEq κ] in
 lemma matchingWeightSum_memLp_two
     (p : NNReal) (hp : p ≤ 1)
     (w : κ → ℝ) (M : ℝ)
     (hw0 : ∀ i, 0 ≤ w i) (hwM : ∀ i, w i ≤ M) :
     MemLp (matchingWeightSum w) 2
       (matchingBernoulliMeasure p hp) := by
+  classical
   rw [matchingWeightSum_eq_sum]
-  apply memLp_finset_sum' Finset.univ
+  apply memLp_finsetSum' Finset.univ
   intro i hi
   exact matchingCoordinate_memLp_two p hp w M hw0 hwM i
 
+omit [DecidableEq κ] in
 lemma integral_matchingWeightSum
     (p : NNReal) (hp : p ≤ 1)
     (w : κ → ℝ) (M : ℝ)
     (hw0 : ∀ i, 0 ≤ w i) (hwM : ∀ i, w i ≤ M) :
     ∫ ω, matchingWeightSum w ω ∂matchingBernoulliMeasure p hp =
       p.toReal * ∑ i, w i := by
+  classical
   change (∫ ω, ∑ i, matchingCoordinate w i ω
       ∂matchingBernoulliMeasure p hp) =
     p.toReal * ∑ i, w i
-  rw [integral_finset_sum]
+  rw [integral_finsetSum]
   · simp_rw [integral_matchingCoordinate p hp w]
     rw [← Finset.mul_sum]
   · intro i hi
     exact (matchingCoordinate_memLp_two p hp w M hw0 hwM i).integrable
       (by norm_num)
 
+omit [DecidableEq κ] in
 lemma variance_matchingWeightSum_le
     (p : NNReal) (hp : p ≤ 1)
     (w : κ → ℝ) (M : ℝ)
@@ -107,8 +120,9 @@ lemma variance_matchingWeightSum_le
     variance (matchingWeightSum w)
         (matchingBernoulliMeasure p hp) ≤
       (Fintype.card κ : ℝ) * (M / 2) ^ 2 := by
+  classical
   let μ : κ → Measure Bool :=
-    fun _ => (PMF.bernoulli p hp).toMeasure
+    fun _ => bernoulliMeasure true false ⟨p, p.coe_nonneg, by exact_mod_cast hp⟩
   have hind :
       iIndepFun (fun i ω => matchingCoordinate w i ω)
         (matchingBernoulliMeasure p hp) := by
@@ -163,6 +177,7 @@ theorem exists_whole_matching_split
       |(∑ i ∈ K, wX i) - p.toReal * ∑ i, wX i| < t ∧
       |(∑ i ∈ Finset.univ \ K, wY i) -
           (1 - p.toReal) * ∑ i, wY i| < t := by
+  classical
   let μ := matchingBernoulliMeasure (κ := κ) p hp
   let X := matchingWeightSum wX
   let Y := matchingWeightSum wY

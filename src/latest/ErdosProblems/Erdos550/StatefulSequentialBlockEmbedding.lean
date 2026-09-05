@@ -19,7 +19,6 @@ open Finset
 
 namespace Erdos550
 
-open Classical
 
 /-- If every proper good partial state can be extended by the full block of a
 ready vertex, then there is a good state on every source vertex. -/
@@ -35,6 +34,7 @@ theorem stateful_block_induction
       ∀ a ∉ S, (∀ b, parent a = some b → b ∈ S) →
         ∃ z', Good (S ∪ block a) z') :
     ∃ z, Good Finset.univ z := by
+  classical
   let P : Finset (Finset A) :=
     Finset.univ.filter fun S => ∃ z, Good S z
   have hP : P.Nonempty := by
@@ -68,8 +68,8 @@ invariant `Inv` for the glued map.  Injectivity, downward closure, block closure
 and parent-edge adjacency are maintained here once and for all. -/
 theorem stateful_sequential_block_embedding
     {A V : Type*} [Fintype A] [DecidableEq A]
-    [Fintype V] [DecidableEq V] [Nonempty V]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    [Finite V] [DecidableEq V] [Nonempty V]
+    (G : SimpleGraph V)
     (parent : A → Option A) (rank : A → ℕ)
     (hrank : ∀ a b, parent a = some b → rank b < rank a)
     (block : A → Finset A)
@@ -101,6 +101,8 @@ theorem stateful_sequential_block_embedding
     ∃ f : A → V, Function.Injective f ∧
       (∀ a b, parent a = some b → G.Adj (f a) (f b)) ∧
       Inv Finset.univ f := by
+  classical
+  let := Fintype.ofFinite V
   let Good : Finset A → (A → V) → Prop := fun S f =>
     IsBlockClosed block S ∧
     (∀ x ∈ S, ∀ y, parent x = some y → y ∈ S) ∧

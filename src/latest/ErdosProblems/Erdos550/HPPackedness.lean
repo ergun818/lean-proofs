@@ -71,7 +71,7 @@ lemma hpPacked_free_discrepancy
     (l r cap τ : ℝ) (hbal : |l - r| ≤ τ) :
     |(cap - l) - (cap - r)| ≤ τ := by
   calc
-    |(cap - l) - (cap - r)| = |-(l - r)| := by congr 1 <;> ring
+    |(cap - l) - (cap - r)| = |-(l - r)| := by congr 1 ; ring
     _ = |l - r| := abs_neg _
     _ ≤ τ := hbal
 
@@ -84,7 +84,7 @@ lemma exists_bin_with_margin
       ≤ ∑ k, supply k) :
     ∃ k, load k + margin ≤ supply k := by
   by_contra h
-  push_neg at h
+  push Not at h
   have hlt : (∑ k, supply k) <
       ∑ k, (load k + margin) :=
     Finset.sum_lt_sum_of_nonempty Finset.univ_nonempty
@@ -112,7 +112,7 @@ lemma one_side_large_of_sum (p q L : ℝ)
     (hsum : 2 * L ≤ p + q) :
     L ≤ p ∨ L ≤ q := by
   by_contra h
-  push_neg at h
+  push Not at h
   linarith
 
 /-- In a balanced but nonsaturated bin, both sides retain a prescribed root
@@ -167,7 +167,7 @@ smaller threshold minus `margin`, and balancedness puts the other load at most
 `τ` above it. -/
 lemma both_free_sides_of_balanced_nonsaturated
     (cap l r L R margin τ need : ℝ)
-    (hLcap : L ≤ cap) (hRcap : R ≤ cap)
+    (hLcap : L ≤ cap) (_ : R ≤ cap)
     (hbal : |l - r| ≤ τ)
     (hnot : ¬ min L R - margin ≤ min l r)
     (hneed : need + τ ≤ margin) :

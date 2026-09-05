@@ -50,22 +50,27 @@ theorem final_reduction {V : Type*} [Fintype V] [DecidableEq V]
       exact Nat.le_of_pred_lt ( lt_of_not_ge h_contra )
     have h_embedding : H ⊑ Gr.induce (B i) ∨ T ⊑ (Gr.induce (B i))ᶜ := by
       exact hRamsey _ h_card_ge_r
-    cases' h_embedding with hH hT
-    exact hHfree i hH
-    have hT_embedding : T ⊑ Grᶜ := by
-      have hT_embedding : T ⊑ (Grᶜ.induce (B i)) := by
-        convert! hT using 1;
-        ext; simp [SimpleGraph.induce]
-      have hT_embedding : T ⊑ Grᶜ := by
-        exact hT_embedding.trans ⟨ ( SimpleGraph.Embedding.induce ( G := Grᶜ ) ( B i ) ).toCopy ⟩
-      exact hT_embedding
-    exact hNoBlueT hT_embedding;
+    rcases h_embedding with hH | hT
+    · exact hHfree i hH
+    · have hT_embedding : T ⊑ Grᶜ := by
+        have hT_embedding : T ⊑ (Grᶜ.induce (B i)) := by
+          convert! hT using 1;
+          ext; simp [SimpleGraph.induce]
+        have hT_embedding : T ⊑ Grᶜ := by
+          exact hT_embedding.trans ⟨ ( SimpleGraph.Embedding.induce ( G := Grᶜ ) ( B i ) ).toCopy ⟩
+        exact hT_embedding
+      exact hNoBlueT hT_embedding;
   -- By counting, we have Fintype.card V = ∑ i, (B i).card + Z.card.
   have hcount : Fintype.card V = ∑ i, (B i).card + Z.card := by
     rw [ ← Finset.card_biUnion ];
     · rw [ ← Finset.card_union_of_disjoint, hcover, Finset.card_univ ];
-      exact Finset.disjoint_left.mpr fun x hx hx' => by obtain ⟨ i, _, hi ⟩ := Finset.mem_biUnion.mp hx; exact Finset.disjoint_left.mp ( hdisjZ i ) hi hx';
+      exact
+          Finset.disjoint_left.mpr fun x hx hx' => by
+            obtain ⟨i, _, hi⟩ := Finset.mem_biUnion.mp hx;
+            exact Finset.disjoint_left.mp (hdisjZ i) hi hx';
     · exact fun i _ j _ hij => hdisjB i j hij;
-  linarith [ Nat.sub_add_cancel ha, show ∑ i, # ( B i ) ≤ q * ( r - 1 ) from le_trans ( Finset.sum_le_sum fun _ _ => hBcard _ ) ( by simp +decide ) ]
+  linarith [Nat.sub_add_cancel ha,
+      show ∑ i, #(B i) ≤ q * (r - 1) from
+        le_trans (Finset.sum_le_sum fun _ _ => hBcard _) (by simp +decide)]
 
 end Erdos550

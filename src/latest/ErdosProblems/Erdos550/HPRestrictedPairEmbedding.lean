@@ -18,12 +18,11 @@ open SimpleGraph Finset
 
 namespace Erdos550
 
-open Classical
 
 /-- Embed one small rooted component with its root prescribed on the left.
 All images lie in the supplied free pools. -/
 theorem hp_restricted_pair_step_left
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {ε d : ℝ} (hε0 : 0 < ε) (hε1 : ε ≤ 1) (hd1 : d ≤ 1)
     {s t freeL freeR rootPool : Finset V}
@@ -37,7 +36,7 @@ theorem hp_restricted_pair_step_left
     (hrootCard : L ≤ rootPool.card)
     (hLsig : ε * (s.card : ℝ) ≤ (L : ℝ))
     (hRsig : ε * (t.card : ℝ) ≤ (L : ℝ))
-    {A : Type*} [Fintype A] [DecidableEq A]
+    {A : Type*} [Fintype A]
     (parent : A → Option A) (rank : A → ℕ)
     (hrank : ∀ a b, parent a = some b → rank b < rank a)
     (root : A) (hroot : parent root = none)
@@ -51,6 +50,8 @@ theorem hp_restricted_pair_step_left
       f root ∈ rootPool ∧
       (∀ a, f a ∈ (if col a then freeR else freeL)) ∧
       (∀ a b, parent a = some b → G.Adj (f a) (f b)) := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨SP, hSPsub, hSPcard⟩ :=
     Finset.exists_subset_card_eq hLfree
   obtain ⟨SQ, hSQsub, hSQcard⟩ :=
@@ -74,7 +75,7 @@ theorem hp_restricted_pair_step_left
 
 /-- Symmetric dynamically-free step with the prescribed root on the right. -/
 theorem hp_restricted_pair_step_right
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {ε d : ℝ} (hε0 : 0 < ε) (hε1 : ε ≤ 1) (hd1 : d ≤ 1)
     {s t freeL freeR rootPool : Finset V}
@@ -88,7 +89,7 @@ theorem hp_restricted_pair_step_right
     (hrootCard : L ≤ rootPool.card)
     (hLsig : ε * (s.card : ℝ) ≤ (L : ℝ))
     (hRsig : ε * (t.card : ℝ) ≤ (L : ℝ))
-    {A : Type*} [Fintype A] [DecidableEq A]
+    {A : Type*} [Fintype A]
     (parent : A → Option A) (rank : A → ℕ)
     (hrank : ∀ a b, parent a = some b → rank b < rank a)
     (root : A) (hroot : parent root = none)
@@ -102,6 +103,8 @@ theorem hp_restricted_pair_step_right
       f root ∈ rootPool ∧
       (∀ a, f a ∈ (if col a then freeR else freeL)) ∧
       (∀ a b, parent a = some b → G.Adj (f a) (f b)) := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨SP, hSPsub, hSPcard⟩ :=
     Finset.exists_subset_card_eq hLfree
   obtain ⟨SQ, hSQsub, hSQcard⟩ :=

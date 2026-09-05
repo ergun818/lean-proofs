@@ -19,11 +19,11 @@ open Finset
 
 namespace Erdos550
 
-open Classical
 
 noncomputable def hpMatchingRegion
     {κ V : Type*} [DecidableEq κ] [DecidableEq V]
     (K : Finset κ) (left right : κ → Finset V) : Finset V :=
+  open scoped Classical in
   K.biUnion fun k => left k ∪ right k
 
 lemma left_subset_hpMatchingRegion
@@ -31,6 +31,7 @@ lemma left_subset_hpMatchingRegion
     (K : Finset κ) (left right : κ → Finset V)
     {k : κ} (hk : k ∈ K) :
     left k ⊆ hpMatchingRegion K left right := by
+  classical
   intro v hv
   exact Finset.mem_biUnion.mpr
     ⟨k, hk, Finset.mem_union_left _ hv⟩
@@ -40,6 +41,7 @@ lemma right_subset_hpMatchingRegion
     (K : Finset κ) (left right : κ → Finset V)
     {k : κ} (hk : k ∈ K) :
     right k ⊆ hpMatchingRegion K left right := by
+  classical
   intro v hv
   exact Finset.mem_biUnion.mpr
     ⟨k, hk, Finset.mem_union_right _ hv⟩
@@ -50,6 +52,7 @@ lemma disjoint_hpMatchingRegion_right
     (head : Finset V)
     (hdisj : ∀ k ∈ K, Disjoint head (left k ∪ right k)) :
     Disjoint head (hpMatchingRegion K left right) := by
+  classical
   rw [Finset.disjoint_left]
   intro v hvHead hvRegion
   obtain ⟨k, hk, hvSide⟩ := Finset.mem_biUnion.mp hvRegion
@@ -63,6 +66,7 @@ lemma hpMatchingRegion_disjoint_of_disjoint_indices
       Disjoint (left k ∪ right k) (left j ∪ right j)) :
     Disjoint (hpMatchingRegion K left right)
       (hpMatchingRegion J left right) := by
+  classical
   rw [Finset.disjoint_left]
   intro v hvK hvJ
   obtain ⟨k, hk, hvk⟩ := Finset.mem_biUnion.mp hvK
@@ -84,6 +88,7 @@ lemma matchingSideLoad_sum_eq_region
         (matchingSideLoad P f (left k) +
           matchingSideLoad P f (right k))) =
       (((P.image f) ∩ hpMatchingRegion K left right).card : ℝ) := by
+  classical
   let I := P.image f
   have hside : ∀ k ∈ K,
       ((I ∩ (left k ∪ right k)).card : ℝ) =
@@ -149,6 +154,7 @@ lemma image_inter_matchingRegion_subset_route
     (b : Bool) :
     P.image f ∩ matchingRegion b ⊆
       (P.filter fun x => x ∉ Sseed ∧ routeColour x = b).image f := by
+  classical
   intro v hv
   obtain ⟨hvImage, hvRegion⟩ := Finset.mem_inter.mp hv
   obtain ⟨x, hxP, rfl⟩ := Finset.mem_image.mp hvImage
@@ -193,6 +199,7 @@ lemma matching_load_sum_le_route_card
         (matchingSideLoad P f (left k) +
           matchingSideLoad P f (right k))) ≤
       ((P.filter fun x => x ∉ Sseed ∧ routeColour x = b).card : ℝ) := by
+  classical
   have himage :=
     image_inter_matchingRegion_subset_route
       Sseed P f col routeColour headCore
@@ -229,6 +236,7 @@ lemma matching_load_sum_le_route_card_on_subset
           matchingSideLoad P f (right k))) ≤
       ((P.filter fun x =>
         x ∉ Sseed ∧ routeColour x = b).card : ℝ) := by
+  classical
   have hsub :
       (∑ k ∈ Good,
           (matchingSideLoad P f (left k) +
@@ -246,7 +254,7 @@ lemma matching_load_sum_le_route_card_on_subset
 /-- Allocated total demand plus one local reserve per available matching edge
 implies the aggregate surplus inequality at every intermediate state. -/
 lemma matching_surplus_of_route_demand
-    {κ : Type*} [DecidableEq κ]
+    {κ : Type*}
     (Good : Finset κ)
     (l r L R : κ → ℝ) (demand reserve : ℝ)
     (hload : (∑ k ∈ Good, (l k + r k)) ≤ demand)
@@ -256,6 +264,7 @@ lemma matching_surplus_of_route_demand
     (∑ k ∈ Good, (l k + r k)) +
         (Good.card : ℝ) * reserve ≤
       ∑ k ∈ Good, (L k + R k) := by
+  classical
   linarith
 
 end Erdos550

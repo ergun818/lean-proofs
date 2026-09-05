@@ -24,19 +24,19 @@ open SimpleGraph Finset
 
 namespace Erdos550
 
-open Classical
 
 /-- A set is a union of complete blocks. -/
 def IsBlockClosed
     {A : Type*} [Fintype A] [DecidableEq A]
     (block : A → Finset A) (S : Finset A) : Prop :=
+  open scoped Classical in
   ∀ a ∈ S, block a ⊆ S
 
 /-- Block-by-block extension of a rooted finite graph embedding. -/
 theorem sequential_block_embedding
     {A V : Type*} [Fintype A] [DecidableEq A]
-    [Fintype V] [DecidableEq V] [Nonempty V]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    [Finite V] [DecidableEq V] [Nonempty V]
+    (G : SimpleGraph V)
     (parent : A → Option A) (rank : A → ℕ)
     (hrank : ∀ a b, parent a = some b → rank b < rank a)
     (block : A → Finset A)
@@ -69,6 +69,8 @@ theorem sequential_block_embedding
       (∀ a, f a ∈ cand a) ∧
       (∀ a b, parent a = some b → G.Adj (f a) (f b)) ∧
       (∀ a z, z ∈ anchors a → G.Adj z (f a)) := by
+  classical
+  let := Fintype.ofFinite V
   let Good : Finset A → (A → V) → Prop := fun S f =>
     IsBlockClosed block S ∧
     (∀ x ∈ S, ∀ y, parent x = some y → y ∈ S) ∧
@@ -180,7 +182,7 @@ theorem sequential_block_embedding
           simpa [f', hxnot] using! hfanchor x hxS z hz
         · simpa [f', hxB] using! hganchor x hxB z hz
     have hS'P : S' ∈ P := by
-      simp [P]
+      simp only [mem_filter, mem_univ, true_and, P]
       exact ⟨f', hGood'⟩
     have hcardlt : S.card < S'.card := by
       have haB : a ∈ B := hself a

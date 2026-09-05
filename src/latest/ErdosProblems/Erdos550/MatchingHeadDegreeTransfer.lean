@@ -38,7 +38,7 @@ lemma sum_on_large_subset_lower
 /-- Application to the endpoint images of the paper's maximal matching. -/
 lemma matching_endpoint_sum_lower
     {ι κ : Type*} [Fintype ι] [DecidableEq ι]
-    [Fintype κ] [DecidableEq κ]
+    [Fintype κ]
     (X Y : ι) (cL cR : κ → ι) (U : Finset ι)
     (hU : ∀ a, a ∈ U ↔ a ≠ X ∧ a ≠ Y ∧
       a ∉ Finset.univ.image cL ∧ a ∉ Finset.univ.image cR)
@@ -47,10 +47,11 @@ lemma matching_endpoint_sum_lower
     (hs0 : 0 ≤ s) :
     (∑ i, f i) - (B + 2) * s ≤
       ∑ i ∈ (Finset.univ.image cL ∪ Finset.univ.image cR), f i := by
+  classical
   convert! sum_on_large_subset_lower
       (Finset.univ.image cL ∪ Finset.univ.image cR) f s hfs hs0 (B + 2)
       (Nat.le_of_lt (card_compl_matching_endpoints_lt_add_two
-        X Y cL cR U B hU hsmall)) using 1 <;> norm_num
+        X Y cL cR U B hU hsmall)) using 1 ; norm_num
 
 /-- If the full normalized head degree is at least `base+80ηN`, maximal-matching
 coverage and the paper's `(ηℓ+2)s ≤ 2ηN` estimate leave at least

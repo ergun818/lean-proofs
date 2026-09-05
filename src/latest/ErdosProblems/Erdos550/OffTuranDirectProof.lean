@@ -37,11 +37,11 @@ original host.
 
 namespace Erdos550
 
-open Classical
 
 open SimpleGraph Finset Finpartition SzemerediRegularity
 
 set_option maxHeartbeats 6000000 in
+-- The direct proof checks the full chain of reduced graph and host embedding estimates.
 /-- **Direct off--Turán embedding theorem.**  Its proof uses the exact reduced
 graph, the red multipartite blow-up lemma, a maximal matching, whole-edge
 allocation, and the stateful parity embedding. -/
@@ -60,6 +60,7 @@ theorem off_turan_embedding_direct
             (turanEdges q (Fintype.card W) : ℝ) +
             δ * (Fintype.card W) ^ 2 ≤ G.edgeFinset.card) →
         T ⊑ G := by
+  classical
   let F := Kmult (q + 1) m
   let d₀ : ℝ := min (δ / 200) (1 / 10000)
   have hd₀0 : 0 < d₀ := by
@@ -378,6 +379,7 @@ theorem near_turan_red_density_direct
         (turanEdges q (Fintype.card W) : ℝ) -
             δ * (Fintype.card W) ^ 2 ≤
           (Gᶜ).edgeFinset.card := by
+  classical
   obtain ⟨n₀, H⟩ :=
     off_turan_embedding_direct q hq m hmono hpos δ hδ
   refine ⟨n₀, ?_⟩
@@ -386,25 +388,20 @@ theorem near_turan_red_density_direct
       (G.edgeFinset.card : ℝ) + (Gᶜ).edgeFinset.card =
         (Fintype.card W).choose 2 := by
     norm_cast
-    rw [← Finset.card_union_of_disjoint]
-    · rw [show G.edgeFinset ∪ Gᶜ.edgeFinset =
-        SimpleGraph.edgeFinset (⊤ : SimpleGraph W) by
-          ext ⟨u, v⟩
-          by_cases h : G.Adj u v <;>
-            simp +decide only [mem_union, mem_edgeFinset, mem_edgeSet, compl_adj, ne_eq, edgeFinset_top,
-    Set.toFinset_compl, mem_compl, Set.mem_toFinset, Sym2.mem_diagSet, Sym2.mk_isDiag_iff]
-          exact h.ne]
-      exact SimpleGraph.card_edgeFinset_top_eq_card_choose_two
-    · simp +decide only [disjoint_edgeFinset]
-      rintro ⟨u, v⟩ huv
-      simp_all +decide [SimpleGraph.compl_adj]
+    have hdisj : Disjoint G.edgeFinset Gᶜ.edgeFinset :=
+      disjoint_edgeFinset.mpr disjoint_compl_right
+    have htop : (G ⊔ Gᶜ).edgeFinset = (⊤ : SimpleGraph W).edgeFinset :=
+      edgeFinset_inj.mpr sup_compl_eq_top
+    rw [← Finset.card_union_of_disjoint hdisj,
+      ← SimpleGraph.edgeFinset_sup, htop]
+    exact SimpleGraph.card_edgeFinset_top_eq_card_choose_two
   by_contra hnot
   have hblue :
       (Fintype.card W).choose 2 -
           (turanEdges q (Fintype.card W) : ℝ) +
           δ * (Fintype.card W) ^ 2 ≤
         G.edgeFinset.card := by
-    push_neg at hnot
+    push Not at hnot
     nlinarith
   exact hTfree (H T hT hn G hcard hFfree hblue)
 

@@ -17,12 +17,12 @@ open Finset
 
 namespace Erdos550
 
-open Classical
 
 /-- Replace `f` by `g` on a newly embedded block. -/
 def glueOnBlock
     {A V : Type*} [DecidableEq A]
     (B : Finset A) (f g : A → V) : A → V :=
+  open scoped Classical in
   fun a => if a ∈ B then g a else f a
 
 lemma image_glueOnBlock_union
@@ -31,6 +31,7 @@ lemma image_glueOnBlock_union
     (hBS : Disjoint B S) :
     (S ∪ B).image (glueOnBlock B f g) =
       S.image f ∪ B.image g := by
+  classical
   ext v
   constructor
   · intro hv
@@ -65,6 +66,7 @@ lemma card_image_glueOnBlock_inter
     (himg : Disjoint (B.image g) (S.image f)) :
     ((S ∪ B).image (glueOnBlock B f g) ∩ P).card =
       (S.image f ∩ P).card + (B.image g ∩ P).card := by
+  classical
   rw [image_glueOnBlock_union S B f g hBS]
   rw [Finset.union_inter_distrib_right]
   apply Finset.card_union_of_disjoint
@@ -73,11 +75,12 @@ lemma card_image_glueOnBlock_inter
 /-- An injective local map contributes exactly the number of block vertices
 whose images lie in a host region. -/
 lemma card_image_inter_eq_card_filter
-    {A V : Type*} [DecidableEq A] [DecidableEq V]
+    {A V : Type*} [DecidableEq V]
     (B : Finset A) (g : A → V) (P : Finset V)
     (hginj : Set.InjOn g B) :
     (B.image g ∩ P).card =
       (B.filter fun a => g a ∈ P).card := by
+  classical
   have himage :
       B.image g ∩ P =
         (B.filter fun a => g a ∈ P).image g := by

@@ -15,7 +15,7 @@ non-uniform count `#(P.nonUniforms G ε)`.  Combined with `Finpartition.IsUnifor
 irregular pairs" hypothesis of `Erdos550.alphaQ_dense_regular_pair`.
 -/
 
-open SimpleGraph Finset Classical
+open SimpleGraph Finset
 
 namespace Erdos550
 
@@ -32,18 +32,26 @@ lemma induce_compl_edges_le_nonUniforms {V : Type*} [Fintype V] [DecidableEq V]
     (𝒜 : Finset {x // x ∈ P.parts}) :
     ((Rg.induce (↑𝒜 : Set {x // x ∈ P.parts}))ᶜ).edgeFinset.card
       ≤ (P.nonUniforms G ε).card := by
-  refine' le_trans _ ( Finset.card_mono _ );
-  rotate_left;
-  exact Finset.image ( fun e : Sym2 { x // x ∈ 𝒜 } => ( ( e.out.1 : { x // x ∈ P.parts } ).val, ( e.out.2 : { x // x ∈ P.parts } ).val ) ) ( ( SimpleGraph.comap ( fun x : { x // x ∈ 𝒜 } => ( x : { x // x ∈ P.parts } ) ) Rg )ᶜ ).edgeFinset;
+  classical
+  let E :=
+      Finset.image
+        (fun e : Sym2 { x // x ∈ 𝒜 } =>
+          ((e.out.1 : { x // x ∈ P.parts }).val, (e.out.2 : { x // x ∈ P.parts }).val))
+        ((SimpleGraph.comap (fun x : { x // x ∈ 𝒜 } => (x : { x // x ∈ P.parts }))
+              Rg)ᶜ).edgeFinset
+  refine le_trans (b := E.card) ?_ (Finset.card_mono ?_)
+  · rw [Finset.card_image_of_injOn]
+    · exact le_rfl
+    · intro e he f hf h
+      simp_all +decide only [ne_eq, Subtype.forall, Subtype.mk.injEq, edgeFinset,
+        SimpleGraph.comap, Set.coe_toFinset, Prod.mk.injEq, SetLike.coe_eq_coe]
+      rw [← Quot.out_eq e, ← Quot.out_eq f]
+      grind
   · intro e he;
     rw [ Finset.mem_image ] at he
     obtain ⟨e', he', rfl⟩ := he;
     cases h : Quot.out e' ; simp_all +decide;
     have := Quot.out_eq e'; aesop;
-  · rw [ Finset.card_image_of_injOn ];
-    · convert! rfl.le;
-    · intro e he f hf h; simp_all +decide [ SimpleGraph.comap, SimpleGraph.edgeFinset ] ;
-      rw [ ← Quot.out_eq e, ← Quot.out_eq f ];
-      grind
+
 
 end Erdos550

@@ -34,24 +34,34 @@ the `t = |α|` vertices and the image of `f' b` has degree `≥ t - 1`, then the
 is a vertex `w` adjacent to `f' b` and distinct from the image of every vertex
 other than `a` (so we may freely re-place `a` at `w`).
 -/
-theorem exists_free_neighbor {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_free_neighbor {V : Type*} [Fintype V]
     (J : SimpleGraph V) [DecidableRel J.Adj]
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*} [Fintype α]
     (f' : α → V) (hinj : Function.Injective f')
     (a b : α) (hab : a ≠ b)
     (hdeg : Fintype.card α - 1 ≤ J.degree (f' b)) :
     ∃ w, J.Adj (f' b) w ∧ ∀ x, x ≠ a → f' x ≠ w := by
-  obtain ⟨w, hw⟩ : ∃ w ∈ J.neighborFinset (f' b), w ∉ Finset.image f' (Finset.univ.erase a) := by
-    have h_card : (J.neighborFinset (f' b)).card > (Finset.image f' (Finset.univ.erase a)).card - 1 := by
-      rw [ Finset.card_image_of_injective _ hinj ] ; simp_all +decide only [card_neighborFinset_eq_degree, mem_univ, card_erase_of_mem, card_univ, gt_iff_lt];
-      rcases n : Fintype.card α with ( _ | _ | n ) <;> simp_all +arith +decide;
-      · exact absurd n ( Nat.ne_of_gt ( Fintype.card_pos_iff.mpr ⟨ a ⟩ ) );
-      · rw [ Fintype.card_eq_one_iff ] at n ; aesop;
-    contrapose! h_card;
-    refine' Nat.le_sub_one_of_lt ( Finset.card_lt_card ( Finset.ssubset_iff_subset_ne.mpr ⟨ h_card, _ ⟩ ) );
-    intro h; have := h ▸ SimpleGraph.notMem_neighborFinset_self J ( f' b ) ; simp_all +decide ;
-    exact hab ( hinj this.symm );
-  exact ⟨ w, by simpa using! hw.1, fun x hx hx' => hw.2 <| hx'.symm ▸ Finset.mem_image_of_mem _ ( Finset.mem_erase_of_ne_of_mem hx ( Finset.mem_univ _ ) ) ⟩
+  classical
+  obtain ⟨w, hw⟩ : ∃ w ∈ J.neighborFinset (f' b),
+      w ∉ Finset.image f' (Finset.univ.erase a) := by
+    have h_card : (J.neighborFinset (f' b)).card >
+        (Finset.image f' (Finset.univ.erase a)).card - 1 := by
+      have htwo : 2 ≤ Fintype.card α := Fintype.one_lt_card_iff.mpr ⟨a, b, hab⟩
+      rw [Finset.card_image_of_injective _ hinj]
+      simp only [card_neighborFinset_eq_degree, card_erase_of_mem (mem_univ a), card_univ]
+      omega
+    contrapose! h_card
+    apply Nat.le_sub_one_of_lt
+    apply Finset.card_lt_card
+    refine Finset.ssubset_iff_subset_ne.mpr ⟨h_card, ?_⟩
+    intro heq
+    have hb : f' b ∈ Finset.image f' (Finset.univ.erase a) :=
+      Finset.mem_image_of_mem _ (Finset.mem_erase.mpr ⟨hab.symm, Finset.mem_univ b⟩)
+    exact J.notMem_neighborFinset_self (f' b) (heq.symm ▸ hb)
+  refine ⟨w, by simpa only [J.mem_neighborFinset] using hw.1, ?_⟩
+  intro x hx hx'
+  exact hw.2 (hx'.symm ▸
+    Finset.mem_image_of_mem _ (Finset.mem_erase_of_ne_of_mem hx (Finset.mem_univ _)))
 
 /-- **Prescribed-root forest embedding (Lemma 5.1).**
 
@@ -59,9 +69,9 @@ A rooted forest is encoded by a `parent` map (roots map to `none`) with an
 acyclicity certificate `rank` (parents have strictly smaller rank).  If a graph
 `J` on `t = |α|` vertices has minimum degree `≥ t - 1`, then any injection `f0`
 of the roots extends to an embedding of the whole forest. -/
-theorem rooted_forest_embedding {V : Type*} [Fintype V] [DecidableEq V]
+theorem rooted_forest_embedding {V : Type*} [Fintype V]
     (J : SimpleGraph V) [DecidableRel J.Adj]
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*} [Fintype α]
     (parent : α → Option α) (rank : α → ℕ)
     (hrank : ∀ a b, parent a = some b → rank b < rank a)
     (hdeg : ∀ v, Fintype.card α - 1 ≤ J.degree v)
@@ -69,6 +79,7 @@ theorem rooted_forest_embedding {V : Type*} [Fintype V] [DecidableEq V]
     ∃ f : α → V, Function.Injective f ∧
       (∀ a, parent a = none → f a = f0 a) ∧
       (∀ a b, parent a = some b → J.Adj (f a) (f b)) := by
+  classical
   -- Strong induction over a downward-closed set `S` of "already-embedded" forest
   -- vertices, removing the maximal-rank vertex at each step.
   have key : ∀ S : Finset α, (∀ a ∈ S, ∀ b, parent a = some b → b ∈ S) →

@@ -20,12 +20,12 @@ open SimpleGraph Finset Finpartition SzemerediRegularity
 
 namespace Erdos550
 
-open Classical
 
 /-- The forbidden complete `(q+1)`-partite red graph has its canonical
 `(q+1)`-colouring. -/
 lemma Kmult_colorable (q : ℕ) (m : Fin (q + 1) → ℕ) :
     (Kmult (q + 1) m).Colorable (q + 1) := by
+  classical
   simpa [Kmult] using!
     completeMultipartiteGraph.colorable
       (fun i : Fin (q + 1) => Fin (m i))
@@ -38,6 +38,7 @@ def offTuranReducedGraph
     (P : Finpartition (Finset.univ : Finset V))
     (ε d : ℝ) : SimpleGraph {C // C ∈ P.parts} where
   Adj C D :=
+  open scoped Classical in
     C ≠ D ∧ G.IsUniform ε C.1 D.1 ∧
       d ≤ (G.edgeDensity C.1 D.1 : ℝ)
   symm := ⟨fun C D h =>
@@ -51,6 +52,7 @@ noncomputable instance offTuranReducedGraph.instDecidableRel
     (P : Finpartition (Finset.univ : Finset V))
     (ε d : ℝ) :
     DecidableRel (offTuranReducedGraph G P ε d).Adj :=
+  open scoped Classical in
   Classical.decRel _
 
 @[simp] lemma offTuranReducedGraph_adj
@@ -75,15 +77,16 @@ theorem exists_offTuran_regular_partition
       ⌈4 / ε⌉₊ ≤ P.parts.card ∧
       P.parts.card ≤ SzemerediRegularity.bound ε ⌈4 / ε⌉₊ ∧
       P.IsUniform G ε := by
+  classical
   obtain ⟨P, heq, hlo, hhi, huni⟩ :=
     szemeredi_regularity G hε hcard
   exact ⟨P, heq, hlo, hhi, huni⟩
 
 /-- Exact `α(Q)` edge form for the reduced graph just defined. -/
 theorem offTuran_reduced_family_has_edge
-    {W : Type} [Fintype W] (F : SimpleGraph W)
-    (q : ℕ) (hcol : F.Colorable (q + 1)) (hq : 1 ≤ q)
-    (d : ℝ) (hd1 : d < 1)
+    {W : Type} [Finite W] (F : SimpleGraph W)
+    (q : ℕ) (_hcol : F.Colorable (q + 1)) (_hq : 1 ≤ q)
+    (d : ℝ) (_hd1 : d < 1)
     (ε₀ : ℝ) (m₀ : ℕ)
     (hcap : ∀ {V : Type} [Fintype V] [DecidableEq V]
       (G : SimpleGraph V) [DecidableRel G.Adj], ¬ (F ⊑ Gᶜ) →
@@ -107,6 +110,8 @@ theorem offTuran_reduced_family_has_edge
     (hsize : ∀ C ∈ A, m₀ ≤ C.1.card) :
     ∃ C ∈ A, ∃ D ∈ A,
       (offTuranReducedGraph G P ε d).Adj C D := by
+  let := Fintype.ofFinite W
+  classical
   obtain ⟨C, hCA, D, hDA, hCD, huni, hdens⟩ :=
     hcap G hF ε hε0 hεcap P hP A hbig hirr hsize
   exact ⟨C, hCA, D, hDA, hCD, huni, hdens⟩
@@ -114,7 +119,7 @@ theorem offTuran_reduced_family_has_edge
 /-- Packaged source of the cap used by
 `offTuran_reduced_family_has_edge`. -/
 theorem exists_offTuran_reduced_family_edge_cap
-    {W : Type} [Fintype W] (F : SimpleGraph W)
+    {W : Type} [Finite W] (F : SimpleGraph W)
     (q : ℕ) (hcol : F.Colorable (q + 1)) (hq : 1 ≤ q)
     (d : ℝ) (hd1 : d < 1) :
     ∃ ε₀ : ℝ, 0 < ε₀ ∧ ∃ m₀ : ℕ,
@@ -129,6 +134,8 @@ theorem exists_offTuran_reduced_family_edge_cap
           (∀ C ∈ A, m₀ ≤ C.1.card) →
           ∃ C ∈ A, ∃ D ∈ A,
             (offTuranReducedGraph G P ε d).Adj C D := by
+  let := Fintype.ofFinite W
+  classical
   obtain ⟨ε₀, hε₀, m₀, hcap⟩ :=
     regularity_dense_regular_pair F q hcol hq d hd1
   exact ⟨ε₀, hε₀, m₀, fun G _ hF ε hε0 hεcap P hP A hbig hirr hsize =>

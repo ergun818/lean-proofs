@@ -39,8 +39,10 @@ variable {G}
 For an edge `z ~ w` of a tree, the two branches `branch z w` and
 `branch w z` partition the vertex set, so their sizes add up to `n`.
 -/
+omit [DecidableEq V] in
 theorem branchSize_add (hG : G.IsTree) {z w : V} (h : G.Adj z w) :
     branchSize G z w + branchSize G w z = Fintype.card V := by
+  classical
   unfold branchSize branch;
   rw [ ← Finset.card_union_of_disjoint, Finset.filter_union_right ];
   · rw [ Finset.filter_true_of_mem ];
@@ -55,19 +57,25 @@ then the branch of `w` towards `u` is contained in the branch of `z` towards
 `w`; moreover `w` itself lies in the latter but not the former, so the inclusion
 is strict.
 -/
+omit [DecidableEq V] in
 theorem branch_ssubset (hG : G.IsTree) {z w u : V} (hzw : G.Adj z w)
     (hwu : G.Adj w u) (huz : u ≠ z) :
     branch G w u ⊂ branch G z w := by
+  classical
   have h_dist_eq : ∀ x : V, x ∈ branch G w u → x ∈ branch G z w := by
-    intro x hx; by_contra h_contra; simp_all +decide [ branch ] ;
+    intro x hx; by_contra h_contra; simp_all +decide only [ne_eq, branch, mem_filter, mem_univ,
+      true_and, not_lt] ;
     have h_dist_eq : G.dist x w = G.dist x z + 1 := by
       grind +suggestions;
     have h_dist_eq : G.dist x u = G.dist x z := by
-      have h_dist_eq : ∀ {v w : V}, G.Adj v w → ∀ x : V, G.dist x v = G.dist x w + 1 ∨ G.dist x w = G.dist x v + 1 := by
+      have h_dist_eq :
+          ∀ {v w : V},
+            G.Adj v w → ∀ x : V, G.dist x v = G.dist x w + 1 ∨ G.dist x w = G.dist x v + 1 := by
         intros v w hvw x; exact (by
         have := hG.dist_eq_dist_add_one_of_adj x hvw; aesop;);
       grind;
-    have h_unique_path : ∀ (p q : G.Walk x w), p.length = G.dist x w → q.length = G.dist x w → p = q := by
+    have h_unique_path :
+        ∀ (p q : G.Walk x w), p.length = G.dist x w → q.length = G.dist x w → p = q := by
       have := hG.existsUnique_path x w;
       obtain ⟨ p, hp₁, hp₂ ⟩ := this;
       intro p q hp hq; have := hp₂ p ( SimpleGraph.Walk.isPath_of_length_eq_dist p hp ) ;
@@ -78,19 +86,29 @@ theorem branch_ssubset (hG : G.IsTree) {z w u : V} (hzw : G.Adj z w)
     obtain ⟨q, hq⟩ : ∃ q : G.Walk x u, q.length = G.dist x u := by
       have := hG.1 x u;
       exact SimpleGraph.Reachable.exists_walk_length_eq_dist this
-    have := h_unique_path ( p.append ( SimpleGraph.Walk.cons hzw SimpleGraph.Walk.nil ) ) ( q.append ( SimpleGraph.Walk.cons hwu.symm SimpleGraph.Walk.nil ) ) ?_ ?_ <;> simp_all +decide [ SimpleGraph.Walk.length_append ];
-    replace this := congr_arg ( fun p => p.getVert ( p.length - 1 ) ) this ; simp_all +decide [ SimpleGraph.Walk.getVert_append ];
-  refine' ⟨ h_dist_eq, _ ⟩;
-  intro h; have := @h w; simp_all +decide [ branch ] ;
+    have :=
+          h_unique_path (p.append (SimpleGraph.Walk.cons hzw SimpleGraph.Walk.nil))
+            (q.append (SimpleGraph.Walk.cons hwu.symm SimpleGraph.Walk.nil)) ?_ ?_ <;>
+        simp_all +decide only [lt_add_iff_pos_right, le_add_iff_nonneg_right,
+          Walk.length_append, Walk.length_cons, Walk.length_nil, zero_add];
+    replace this := congr_arg ( fun p => p.getVert ( p.length - 1 ) ) this ;
+    simp_all +decide [SimpleGraph.Walk.getVert_append];
+  refine ⟨ h_dist_eq, ?_ ⟩;
+  intro h; have := @h w; simp_all +decide only [ne_eq, branch, mem_filter, mem_univ, true_and,
+    SimpleGraph.dist_self, not_lt_zero, and_false, imp_false, not_lt, nonpos_iff_eq_zero,
+    dist_eq_zero_iff_eq_or_not_reachable] ;
   exact this.elim ( fun h => huz ( by simp_all +decide ) ) fun h => h ( hzw.symm.reachable )
 
 /-
 The branches hanging off `z` (one per neighbour) partition `V \ {z}`, so
 their sizes sum to `n - 1`.
 -/
+omit [DecidableEq V] in
 theorem branchSize_sum_neighbors [DecidableRel G.Adj] (hG : G.IsTree) (z : V) :
     ∑ w ∈ G.neighborFinset z, branchSize G z w = Fintype.card V - 1 := by
-  -- By definition of `branch`, we know that every vertex `v ≠ z` is in exactly one of the `branch G z w` sets for `w ∈ G.neighborFinset z`.
+  classical
+  -- By definition of `branch`, we know that every vertex `v ≠ z` is in exactly one of the `branch
+  -- G z w` sets for `w ∈ G.neighborFinset z`.
   have h_disjoint : ∀ v ∈ Finset.univ.erase z, ∃! w ∈ G.neighborFinset z, v ∈ branch G z w := by
     intro v hv
     obtain ⟨p, hp⟩ : ∃ p : G.Walk z v, p.length = G.dist z v := by
@@ -111,7 +129,10 @@ theorem branchSize_sum_neighbors [DecidableRel G.Adj] (hG : G.IsTree) (z : V) :
           exact SimpleGraph.dist_le q;
         rw [SimpleGraph.Walk.length_tail, hp] at h_dist
         simpa only [SimpleGraph.dist_comm] using h_dist
-      refine' Finset.mem_filter.mpr ⟨ Finset.mem_univ _, lt_of_le_of_lt h_dist ( Nat.sub_lt _ _ ) ⟩ <;> simp_all +decide [ SimpleGraph.dist_comm ];
+      refine
+            Finset.mem_filter.mpr
+              ⟨Finset.mem_univ _, lt_of_le_of_lt h_dist (Nat.sub_lt ?_ ?_)⟩ <;>
+          simp_all +decide [SimpleGraph.dist_comm];
       grind +suggestions
     have h_unique : ∀ w' ∈ G.neighborFinset z, v ∈ branch G z w' → w' = w := by
       intro w' hw' hv'
@@ -125,18 +146,29 @@ theorem branchSize_sum_neighbors [DecidableRel G.Adj] (hG : G.IsTree) (z : V) :
         generalize_proofs at *;
         simp_all +decide [ branch ];
         grind +suggestions;
-      have h_unique : ∀ p p' : G.Walk z v, p.length = G.dist z v → p'.length = G.dist z v → p.IsPath → p'.IsPath → p = p' := by
+      have h_unique :
+          ∀ p p' : G.Walk z v,
+            p.length = G.dist z v → p'.length = G.dist z v → p.IsPath → p'.IsPath → p = p' := by
         have := hG.existsUnique_path z v;
         exact fun p p' hp hp' hp'' hp''' => this.unique hp'' hp''';
       grind +suggestions
     use w, by
       exact ⟨ hw.1, h_branch ⟩;
     exact fun y hy => h_unique y hy.1 hy.2;
-  -- By definition of `branchSize`, we know that $\sum_{w \in G.neighborFinset z} \text{branchSize}(G, z, w)$ counts the number of vertices in $V \setminus \{z\}$.
+  -- By definition of `branchSize`, we know that $\sum_{w \in G.neighborFinset z}
+  -- \text{branchSize}(G, z, w)$ counts the number of vertices in $V \setminus \{z\}$.
   have h_card : ∑ w ∈ G.neighborFinset z, (branch G z w).card = ∑ v ∈ Finset.univ.erase z, 1 := by
-    have h_card : ∑ w ∈ G.neighborFinset z, (branch G z w).card = ∑ v ∈ Finset.univ.erase z, ∑ w ∈ G.neighborFinset z, (if v ∈ branch G z w then 1 else 0) := by
+    have h_card :
+        ∑ w ∈ G.neighborFinset z, (branch G z w).card =
+          ∑ v ∈ Finset.univ.erase z,
+            ∑ w ∈ G.neighborFinset z, (if v ∈ branch G z w then 1 else 0) := by
       rw [ Finset.sum_comm, Finset.sum_congr rfl ];
-      intro w hw; rw [ Finset.card_eq_sum_ones ] ; rw [ ← Finset.sum_filter ] ; congr; ext; simp +decide [ branch ] ;
+      intro w hw;
+      rw [ Finset.card_eq_sum_ones ] ;
+      rw [ ← Finset.sum_filter ] ;
+      congr;
+      ext;
+      simp +decide [ branch ] ;
       grind;
     rw [ h_card, Finset.sum_congr rfl ];
     intro v hv; obtain ⟨ w, hw₁, hw₂ ⟩ := h_disjoint v hv; rw [ Finset.sum_eq_single w ] <;> aesop;
@@ -147,20 +179,40 @@ theorem branchSize_sum_neighbors [DecidableRel G.Adj] (hG : G.IsTree) (z : V) :
 `z` such that every branch hanging off `z` has at most `n/2` vertices
 (equivalently `2 · branchSize ≤ n`).
 -/
+omit [DecidableEq V] in
 theorem tree_centroid (hG : G.IsTree) [Nonempty V] :
     ∃ z : V, ∀ w : V, G.Adj z w → 2 * branchSize G z w ≤ Fintype.card V := by
+  classical
   by_contra h_contra;
-  -- By definition of $M$, we know that for every $z$, there exists a neighbor $w$ such that $branchSize G z w > Fintype.card V / 2$.
+  -- By definition of $M$, we know that for every $z$, there exists a neighbor $w$ such that
+  -- $branchSize G z w > Fintype.card V / 2$.
   have hM : ∀ z : V, ∃ w : V, G.Adj z w ∧ branchSize G z w > Fintype.card V / 2 := by
-    exact fun z => by push_neg at h_contra; exact h_contra z |> fun ⟨ w, hw₁, hw₂ ⟩ => ⟨ w, hw₁, by omega ⟩ ;
+    push Not at h_contra
+    intro z
+    obtain ⟨w, hw₁, hw₂⟩ := h_contra z
+    exact ⟨w, hw₁, by omega⟩
   -- Let $z$ be a vertex that minimizes $M(z)$.
-  obtain ⟨z, hz⟩ : ∃ z : V, ∀ w : V, branchSize G w (Classical.choose (hM w)) ≥ branchSize G z (Classical.choose (hM z)) := by
-    simpa using! Finset.exists_min_image Finset.univ ( fun z => branchSize G z ( Classical.choose ( hM z ) ) ) ⟨ Classical.arbitrary V, Finset.mem_univ _ ⟩;
-  -- By definition of $M$, we know that $branchSize G (Classical.choose (hM z)) (Classical.choose (hM (Classical.choose (hM z)))) < branchSize G z (Classical.choose (hM z))$.
-  have h_branchSize_choose_choose_z : branchSize G (Classical.choose (hM z)) (Classical.choose (hM (Classical.choose (hM z)))) < branchSize G z (Classical.choose (hM z)) := by
-    have h_branchSize_choose_choose_z : ∀ u : V, G.Adj (Classical.choose (hM z)) u → u ≠ z → branchSize G (Classical.choose (hM z)) u < branchSize G z (Classical.choose (hM z)) := by
+  obtain ⟨z, hz⟩ : ∃ z : V,
+      ∀ w : V,
+        branchSize G w (Classical.choose (hM w)) ≥ branchSize G z (Classical.choose (hM z)) := by
+    simpa using!
+          Finset.exists_min_image Finset.univ
+            (fun z => branchSize G z (Classical.choose (hM z)))
+            ⟨Classical.arbitrary V, Finset.mem_univ _⟩;
+  -- By definition of $M$, we know that $branchSize G (Classical.choose (hM z)) (Classical.choose
+  -- (hM (Classical.choose (hM z)))) < branchSize G z (Classical.choose (hM z))$.
+  have h_branchSize_choose_choose_z :
+      branchSize G (Classical.choose (hM z)) (Classical.choose (hM (Classical.choose (hM z)))) <
+        branchSize G z (Classical.choose (hM z)) := by
+    have h_branchSize_choose_choose_z :
+        ∀ u : V,
+          G.Adj (Classical.choose (hM z)) u →
+            u ≠ z →
+              branchSize G (Classical.choose (hM z)) u <
+                branchSize G z (Classical.choose (hM z)) := by
       intros u hu huz
-      have h_branchSize_choose_choose_z : branch G (Classical.choose (hM z)) u ⊂ branch G z (Classical.choose (hM z)) := by
+      have h_branchSize_choose_choose_z :
+          branch G (Classical.choose (hM z)) u ⊂ branch G z (Classical.choose (hM z)) := by
         apply branch_ssubset hG (Classical.choose_spec (hM z)).left hu huz;
       exact Finset.card_lt_card h_branchSize_choose_choose_z;
     grind +suggestions;

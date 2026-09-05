@@ -21,7 +21,6 @@ open Finset SimpleGraph Finpartition SzemerediRegularity
 
 namespace Erdos550
 
-open Classical
 
 /-- An indexed matching has at most half as many edges as there are ambient
 cluster indices. -/
@@ -30,6 +29,7 @@ lemma two_mul_matching_card_le
     (cL cR : κ → ι)
     (hinj : Function.Injective (Sum.elim cL cR)) :
     2 * Fintype.card κ ≤ Fintype.card ι := by
+  classical
   have h :=
     Fintype.card_le_of_injective (Sum.elim cL cR) hinj
   simpa [Fintype.card_sum, two_mul] using! h
@@ -41,6 +41,7 @@ lemma matchingTargets_card_le
     [Fintype κ] [DecidableEq κ]
     (cL cR : κ → ι) :
     (offTuranMatchingTargets cL cR).card ≤ Fintype.card ι := by
+  classical
   exact Finset.card_le_univ _
 
 lemma OffTuranReducedDegreeData.parts_pos
@@ -50,6 +51,7 @@ lemma OffTuranReducedDegreeData.parts_pos
     (D : OffTuranReducedDegreeData G ε d base η m₀)
     (hε : 0 < ε) :
     0 < D.P.parts.card := by
+  classical
   have hceil : 0 < ⌈4 / ε⌉₊ := by
     apply Nat.ceil_pos.mpr
     positivity
@@ -64,6 +66,7 @@ lemma OffTuranReducedDegreeData.floor_le_part
     (D : OffTuranReducedDegreeData G ε d base η m₀)
     (i : {C // C ∈ D.P.parts}) :
     Fintype.card V / D.P.parts.card ≤ i.1.card := by
+  classical
   have h := D.equipartition.average_le_card_part i.2
   simpa only [Finset.card_univ] using! h
 
@@ -75,6 +78,7 @@ lemma OffTuranReducedDegreeData.parts_mul_scale_le
     (D : OffTuranReducedDegreeData G ε d base η m₀) :
     D.P.parts.card * D.scale ≤
       Fintype.card V + D.P.parts.card := by
+  classical
   rw [D.scale_eq]
   calc
     D.P.parts.card *
@@ -95,6 +99,7 @@ lemma OffTuranReducedDegreeData.scale_le_two_floor
     (D : OffTuranReducedDegreeData G ε d base η m₀)
     (hfloor : 1 ≤ Fintype.card V / D.P.parts.card) :
     D.scale ≤ 2 * (Fintype.card V / D.P.parts.card) := by
+  classical
   rw [D.scale_eq]
   omega
 
@@ -102,7 +107,6 @@ lemma OffTuranReducedDegreeData.scale_le_two_floor
 rounding loss absorbs one vertex. -/
 lemma offTuran_threshold_le_floor
     {V ι : Type*} [Fintype V] [DecidableEq V]
-    [DecidableEq ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (R : SimpleGraph ι) [DecidableRel R.Adj]
     (C : ι → Finset V) (head target : ι)
@@ -114,6 +118,7 @@ lemma offTuran_threshold_le_floor
     hpTrimmedThreshold
         (hpHeadEndpointWeight G R C head target)
         ε ((C target).card : ℝ) ≤ cap := by
+  classical
   apply hpTrimmedThreshold_le_rounded_cap
   · exact hpHeadEndpointWeight_le_card G R C head target
   · exact hε0
@@ -126,6 +131,7 @@ lemma offTuran_threshold_le_floor
 lemma offTuran_bad_threshold_pos
     (ε ell η : ℝ) (hε : 0 < ε) (hell : 0 < ell) (hη : 0 < η) :
     0 < 8 * ε * ell / η := by
+  classical
   positivity
 
 /-- With `thr = 8 ε ell / η`, the two head-core deletions cost at most
@@ -137,6 +143,7 @@ lemma offTuran_headCoreLoss_le
     (hT : (Tset.card : ℝ) ≤ ell) :
     hpHeadCoreLoss ε (8 * ε * ell / η) Tset head ≤
       (ε + η / 8) * (head.card : ℝ) := by
+  classical
   rw [hpHeadCoreLoss]
   have hhead : (0 : ℝ) ≤ head.card := by positivity
   have hfrac :
@@ -158,6 +165,7 @@ lemma two_ratio_lt_one_of_sum_lt
     (hS : 0 < S) (hxs : S ≤ sx) (hys : S ≤ sy)
     (hab : a + b < S) :
     a / sx + b / sy < 1 := by
+  classical
   have hsx : 0 < sx := hS.trans_le hxs
   have hsy : 0 < sy := hS.trans_le hys
   have hax : a / sx ≤ a / S :=

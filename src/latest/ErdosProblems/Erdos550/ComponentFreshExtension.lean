@@ -18,11 +18,10 @@ open Finset
 
 namespace Erdos550
 
-open Classical
 
 theorem component_fresh_block_extension
     {A : Type} {V : Type*} [Fintype A] [DecidableEq A]
-    [Fintype V] [DecidableEq V] [Nonempty V]
+    [Finite V] [DecidableEq V] [Nonempty V]
     (T : SimpleGraph A)
     (G : SimpleGraph V)
     (Sseed P : Finset A)
@@ -51,6 +50,8 @@ theorem component_fresh_block_extension
           liftComponentMap T Sseed c fC x else f x)) :
     IsFreshBlockExtension G parent (tauFineBlock T Sseed a)
       P f Inv := by
+  let := Fintype.ofFinite V
+  classical
   have haroot :
       a = D.root (nonseedComponentOf T Sseed a haSeed) :=
     ready_nonseed_eq_component_root T Sseed P parent D hPblock
@@ -59,7 +60,7 @@ theorem component_fresh_block_extension
       tauFineBlock T Sseed a =
         componentNonseedVertices T Sseed c.1 := by
     rw [tauFineBlock, dif_neg haSeed]
-    simpa [hc]
+    simp [hc]
   let g := liftComponentMap T Sseed c fC
   refine ⟨g, ?_, ?_, ?_, ?_⟩
   · rw [hblock]

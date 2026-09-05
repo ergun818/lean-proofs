@@ -49,10 +49,14 @@ theorem erdos_550_large (k : ℕ) (hk : 3 ≤ k) (m : Fin k → ℕ)
   have hq : 2 ≤ q := by omega
   set m' : Fin (q + 1) → ℕ := fun j => m (Fin.cast hqk j) with hm'
   have hmono' : Monotone m' := fun i j hij => hmono hij
-  have ec0 : Fin.cast hqk (0 : Fin (q+1)) = (⟨0, by omega⟩ : Fin k) := by ext; simp; try omega
-  have ec1 : Fin.cast hqk (1 : Fin (q+1)) = (⟨1, by omega⟩ : Fin k) := by ext; simp; try omega
-  have el0 : Fin.castLE (by omega : 2 ≤ k) (0 : Fin 2) = (⟨0, by omega⟩ : Fin k) := by ext; simp; try omega
-  have el1 : Fin.castLE (by omega : 2 ≤ k) (1 : Fin 2) = (⟨1, by omega⟩ : Fin k) := by ext; simp; try omega
+  have ec0 : Fin.cast hqk (0 : Fin (q+1)) = (⟨0, by omega⟩ : Fin k) := by
+    ext; simp; try omega
+  have ec1 : Fin.cast hqk (1 : Fin (q+1)) = (⟨1, by omega⟩ : Fin k) := by
+    ext; simp; try omega
+  have el0 : Fin.castLE (by omega : 2 ≤ k) (0 : Fin 2) = (⟨0, by omega⟩ : Fin k) := by
+    ext; simp; try omega
+  have el1 : Fin.castLE (by omega : 2 ≤ k) (1 : Fin 2) = (⟨1, by omega⟩ : Fin k) := by
+    ext; simp; try omega
   have hm'0 : m' 0 = m ⟨0, by omega⟩ := by simp only [hm']; rw [ec0]
   have hm'1 : m' 1 = m ⟨1, by omega⟩ := by simp only [hm']; rw [ec1]
   have hpos' : 1 ≤ m' 0 := by rw [hm'0]; exact hpos

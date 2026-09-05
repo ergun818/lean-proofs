@@ -18,7 +18,6 @@ open SimpleGraph Finset
 
 namespace Erdos550
 
-open Classical
 
 variable {α : Type} [Fintype α] [DecidableEq α]
 
@@ -28,6 +27,7 @@ lemma seedComponent_card_le_of_all_components
     (hcomp : ∀ c : (seedDeleted T S).ConnectedComponent,
       (Nat.card c.supp : ℝ) ≤ B) (v : α) :
     (Nat.card (seedComponent T S v).supp : ℝ) ≤ B := by
+  classical
       exact hcomp _
 
 lemma seedComponent_attachment_bound_of_all_components
@@ -35,6 +35,7 @@ lemma seedComponent_attachment_bound_of_all_components
     (hatt : ∀ c : (seedDeleted T S).ConnectedComponent,
       (componentSeeds T S c).card ≤ r) (v : α) :
     (componentSeeds T S (seedComponent T S v)).card ≤ r := by
+  classical
       exact hatt _
 
 /-
@@ -44,7 +45,7 @@ and every original tree edge has the exact seed/internal/attachment
 classification needed for gluing an embedding.
 -/
 theorem tree_tau_fine_decomposition_data
-    (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree)
+    (T : SimpleGraph α) (hT : T.IsTree)
     (τ : ℝ) (hτ : 0 < τ)
     (hn : (1 : ℝ) ≤ τ * Fintype.card α) :
     ∃ S : Finset α,
@@ -60,8 +61,9 @@ theorem tree_tau_fine_decomposition_data
           a ∈ componentSeeds T S (seedComponent T S b)) ∨
         (a ∉ S ∧ b ∈ S ∧
           b ∈ componentSeeds T S (seedComponent T S a))) := by
+  classical
             obtain ⟨ S, hS₁, hS₂, hS₃ ⟩ := tree_tau_fine_with_attachments T hT τ hτ hn;
-            refine' ⟨ S, hS₁, hS₂, hS₃, _ ⟩;
+            refine ⟨ S, hS₁, hS₂, hS₃, ?_ ⟩;
             intro a b hab; have := tauFine_edge_classification T S hab; aesop;
 
 /-
@@ -69,7 +71,7 @@ Vertex-indexed form of the bundled decomposition, convenient when shrub
 vertices carry their component as `seedComponent T S v`.
 -/
 theorem tree_tau_fine_vertex_data
-    (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree)
+    (T : SimpleGraph α) (hT : T.IsTree)
     (τ : ℝ) (hτ : 0 < τ)
     (hn : (1 : ℝ) ≤ τ * Fintype.card α) :
     ∃ S : Finset α,
@@ -87,6 +89,7 @@ theorem tree_tau_fine_vertex_data
           a ∈ componentSeeds T S (seedComponent T S b)) ∨
         (a ∉ S ∧ b ∈ S ∧
           b ∈ componentSeeds T S (seedComponent T S a))) := by
+  classical
             obtain ⟨ S, hS₁, hS₂, hS₃, hS₄ ⟩ := tree_tau_fine_decomposition_data T hT τ hτ hn;
             exact ⟨ S, hS₁, fun v => hS₂ _, fun v => hS₃ _, hS₄ ⟩
 

@@ -19,7 +19,6 @@ open Finset
 
 namespace Erdos550
 
-open Classical
 
 variable {A : Type} {V : Type*} [Fintype A] [DecidableEq A]
   [Fintype V] [DecidableEq V]
@@ -29,8 +28,9 @@ source-side weight used by the whole-edge allocation theorem. -/
 noncomputable def componentColourLoad
     (T : SimpleGraph A) (S : Finset A)
     (col : ShrubVertex T S → Bool) (side : Bool)
-    (c : NonseedComponent T S) : ℝ :=
-  ((Finset.univ.filter fun v : ShrubVertex T S =>
+    (c : NonseedComponent T S) : ℝ := by
+  classical
+  exact ((Finset.univ.filter fun v : ShrubVertex T S =>
     shrubComponent T S v = c ∧ col v = side).card : ℝ)
 
 lemma componentColourLoad_nonneg
@@ -38,6 +38,7 @@ lemma componentColourLoad_nonneg
     (col : ShrubVertex T S → Bool) (side : Bool)
     (c : NonseedComponent T S) :
     0 ≤ componentColourLoad T S col side c := by
+  classical
   exact Nat.cast_nonneg _
 
 lemma componentColourLoad_false_add_true
@@ -47,6 +48,7 @@ lemma componentColourLoad_false_add_true
     componentColourLoad T S col false c +
         componentColourLoad T S col true c =
       ((componentNonseedVertices T S c.1).card : ℝ) := by
+  classical
   let F := Finset.univ.filter fun v : ShrubVertex T S =>
     shrubComponent T S v = c ∧ col v = false
   let R := Finset.univ.filter fun v : ShrubVertex T S =>
@@ -78,6 +80,7 @@ noncomputable def componentSideCount
     (T : SimpleGraph A) (S : Finset A)
     (col : A → Bool) (c : NonseedComponent T S)
     (root : A) (side : Bool) : ℕ :=
+  open scoped Classical in
   (Finset.univ.filter fun x : RootedComponentVertex T S c =>
     relativeComponentColor col root x.1 = side).card
 
@@ -88,6 +91,7 @@ lemma componentSideCount_false_add_true
     componentSideCount T S col c root false +
         componentSideCount T S col c root true =
       Fintype.card (RootedComponentVertex T S c) := by
+  classical
   let F := Finset.univ.filter fun x : RootedComponentVertex T S c =>
     relativeComponentColor col root x.1 = false
   let R := Finset.univ.filter fun x : RootedComponentVertex T S c =>
@@ -119,6 +123,7 @@ lemma componentSideCount_false_add_true
     _ = Fintype.card (RootedComponentVertex T S c) := by
       rw [hunion, Finset.card_univ]
 
+omit [Fintype V] in
 /-- If the two target sides are disjoint, a colour-respecting injective local
 embedding contributes exactly the corresponding two colour-class sizes. -/
 lemma component_image_side_cards
@@ -138,6 +143,7 @@ lemma component_image_side_cards
         componentSideCount T S col c root false ∧
       ((Finset.univ.image f) ∩ otherSide).card =
         componentSideCount T S col c root true := by
+  classical
   have hrootFilter :
       (Finset.univ.filter fun x : RootedComponentVertex T S c =>
           f x ∈ rootSide) =

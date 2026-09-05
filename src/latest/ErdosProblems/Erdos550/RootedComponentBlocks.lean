@@ -20,7 +20,6 @@ open SimpleGraph Finset
 
 namespace Erdos550
 
-open Classical
 
 variable {A : Type} [Fintype A] [DecidableEq A]
 
@@ -28,6 +27,7 @@ variable {A : Type} [Fintype A] [DecidableEq A]
 noncomputable def rootedComponentTop
     (T : SimpleGraph A) (S : Finset A) (rank : A → ℕ)
     (c : NonseedComponent T S) : A :=
+  open scoped Classical in
   (componentNonseedVertices T S c.1).exists_min_image rank
     (componentNonseedVertices_nonempty T S c) |>.choose
 
@@ -35,6 +35,7 @@ lemma rootedComponentTop_mem
     (T : SimpleGraph A) (S : Finset A) (rank : A → ℕ)
     (c : NonseedComponent T S) :
     rootedComponentTop T S rank c ∈ componentNonseedVertices T S c.1 :=
+  open scoped Classical in
   ((componentNonseedVertices T S c.1).exists_min_image rank
     (componentNonseedVertices_nonempty T S c)).choose_spec.1
 
@@ -43,6 +44,7 @@ lemma rootedComponentTop_min
     (c : NonseedComponent T S) :
     ∀ x ∈ componentNonseedVertices T S c.1,
       rank (rootedComponentTop T S rank c) ≤ rank x :=
+  open scoped Classical in
   ((componentNonseedVertices T S c.1).exists_min_image rank
     (componentNonseedVertices_nonempty T S c)).choose_spec.2
 
@@ -52,13 +54,14 @@ lemma component_subset_shrubF_top
     (T : SimpleGraph A)
     (parent : A → Option A) (rank : A → ℕ)
     (hrank : ∀ a b, parent a = some b → rank b < rank a)
-    (hparentAdj : ∀ a b, parent a = some b → T.Adj a b)
+    (_hparentAdj : ∀ a b, parent a = some b → T.Adj a b)
     (hedge : ∀ a b, T.Adj a b →
       parent a = some b ∨ parent b = some a)
     (S : Finset A) (c : NonseedComponent T S) :
     componentNonseedVertices T S c.1 ⊆
       shrubF parent rank (Finset.univ.sup rank) S
         (rootedComponentTop T S rank c) := by
+  classical
   let v := rootedComponentTop T S rank c
   let M := Finset.univ.sup rank
   have hM : ∀ x, rank x ≤ M :=
@@ -118,7 +121,7 @@ lemma component_subset_shrubF_top
 /-- Prescribed-root orientation, together with the induced rooted structure on
 every deleted component. -/
 theorem exists_rooted_component_block_data
-    (T : SimpleGraph A) [DecidableRel T.Adj] (hT : T.IsTree)
+    (T : SimpleGraph A) (hT : T.IsTree)
     (r₀ : A) (S : Finset A) (hrootS : r₀ ∈ S) :
     ∃ (parent : A → Option A) (rank : A → ℕ),
       parent r₀ = none ∧
@@ -128,6 +131,7 @@ theorem exists_rooted_component_block_data
       (∀ a b, T.Adj a b →
         parent a = some b ∨ parent b = some a) ∧
       Nonempty (RootedSeedComponentRankData T S parent rank) := by
+  classical
   obtain ⟨parent, rank, hroot, hrootUnique, hrank, hparentAdj, hedge⟩ :=
     Erdos550.IsTree.exists_rooted_edge_structure_at T hT r₀
   let top : NonseedComponent T S → A :=

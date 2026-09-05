@@ -19,12 +19,10 @@ open Finset
 
 namespace Erdos550
 
-open Classical
 
 theorem hpMatchingPacked_glue_component
     {A : Type} {V κ : Type*} [Fintype A] [DecidableEq A]
-    [Fintype V] [DecidableEq V] [Nonempty V]
-    [DecidableEq κ]
+    [Finite V] [DecidableEq V] [Nonempty V]
     (T : SimpleGraph A) (Sseed P : Finset A)
     (col : A → Bool)
     (c : NonseedComponent T Sseed)
@@ -75,6 +73,8 @@ theorem hpMatchingPacked_glue_component
       (glueOnBlock (componentNonseedVertices T Sseed c.1) f
         (liftComponentMap T Sseed c fC))
       CLeft CRight leftThreshold rightThreshold margin τ := by
+  let := Fintype.ofFinite V
+  classical
   let B := componentNonseedVertices T Sseed c.1
   let g := liftComponentMap T Sseed c fC
   have himageEq : B.image g = Finset.univ.image fC := by

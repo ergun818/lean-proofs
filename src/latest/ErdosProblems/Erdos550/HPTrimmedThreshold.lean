@@ -82,10 +82,11 @@ lemma sum_hpTrimmedThreshold_lower
         hpTrimmedThreshold_lower (weight k) ε (size k)
 
 lemma sum_hpTrimmedThreshold_lower_on
-    {κ : Type*} [DecidableEq κ]
+    {κ : Type*}
     (K : Finset κ) (weight size : κ → ℝ) (ε : ℝ) :
     (∑ k ∈ K, weight k) - 2 * ε * ∑ k ∈ K, size k ≤
       ∑ k ∈ K, hpTrimmedThreshold (weight k) ε (size k) := by
+  classical
   calc
     (∑ k ∈ K, weight k) - 2 * ε * ∑ k ∈ K, size k =
         ∑ k ∈ K, (weight k - 2 * ε * size k) := by

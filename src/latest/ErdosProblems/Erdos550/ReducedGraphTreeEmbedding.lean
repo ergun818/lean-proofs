@@ -53,26 +53,48 @@ that each `parent` link is an actual edge of `T` (needed to transport a graph
 homomorphism `T → R` to the parent-link homomorphism required by
 `Erdos550.regularClusters_forest_embedding`).
 -/
-lemma IsTree.exists_rooted_edge_structure {α : Type*} [Fintype α] [DecidableEq α]
-    (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree) :
+lemma IsTree.exists_rooted_edge_structure {α : Type*} [Finite α]
+    (T : SimpleGraph α) (hT : T.IsTree) :
     ∃ (parent : α → Option α) (rank : α → ℕ),
       (∀ a b, parent a = some b → rank b < rank a) ∧
       (∀ a b, parent a = some b → T.Adj a b) ∧
       (∀ a b, T.Adj a b → (parent a = some b ∨ parent b = some a)) := by
-  obtain ⟨r, hr⟩ : ∃ r : α, True := by
-    cases isEmpty_or_nonempty α <;> simp_all +decide only [IsEmpty.exists_iff];
-    exact hT.1.nonempty.elim ( fun x => ‹IsEmpty α›.elim x );
-  obtain ⟨par, hpar⟩ : ∃ par : α → α, (∀ a : α, a ≠ r → T.Adj a (par a) ∧ T.dist (par a) r < T.dist a r) ∧ (∀ a : α, a ≠ r → ∀ b : α, T.Adj a b → T.dist b r < T.dist a r → b = par a) := by
-    choose! par hpar using fun a ha => tree_closer_neighbor_exists_unique T hT r a ha;
-    exact ⟨ par, fun a ha => hpar a ha |>.1, fun a ha b hb hb' => hpar a ha |>.2 b ⟨ hb, hb' ⟩ ⟩;
-  refine' ⟨ fun a => if a = r then none else some ( par a ), fun a => T.dist a r, _, _, _ ⟩ <;> simp_all +decide only [Option.ite_none_left_eq_some, Option.some.injEq];
-  intro a b hab;
-  by_cases ha : a = r <;> by_cases hb : b = r <;> simp_all +decide;
-  · grind +suggestions;
-  · grind +suggestions;
-  · by_cases h : T.dist a r < T.dist b r;
-    · exact Or.inr ( hpar.2 b hb a hab.symm h ▸ rfl );
-    · grind +suggestions
+  let := Fintype.ofFinite α
+  classical
+  obtain ⟨r⟩ : Nonempty α := hT.1.nonempty
+  choose! par hspec huniq using fun a (ha : a ≠ r) =>
+    tree_closer_neighbor_exists_unique T hT r a ha
+  refine ⟨fun a => if a = r then none else some (par a),
+    fun a => T.dist a r, ?_, ?_, ?_⟩
+  · intro a b hb
+    by_cases ha : a = r
+    · simp [ha] at hb
+    · simp only [if_neg ha, Option.some.injEq] at hb
+      subst b
+      exact (hspec a ha).2
+  · intro a b hb
+    by_cases ha : a = r
+    · simp [ha] at hb
+    · simp only [if_neg ha, Option.some.injEq] at hb
+      subst b
+      exact (hspec a ha).1
+  · intro a b hab
+    have hne : T.dist a r ≠ T.dist b r := tree_adj_dist_ne T hT hab
+    rcases lt_or_gt_of_ne hne with hlt | hgt
+    · right
+      have hbr : b ≠ r := by
+        rintro rfl
+        simp only [SimpleGraph.dist_self] at hlt
+        exact Nat.not_lt_zero _ hlt
+      have heq := huniq b hbr a ⟨hab.symm, hlt⟩
+      simp [hbr, heq]
+    · left
+      have har : a ≠ r := by
+        rintro rfl
+        simp only [SimpleGraph.dist_self] at hgt
+        exact Nat.not_lt_zero _ hgt
+      have heq := huniq a har b ⟨hab, hgt⟩
+      simp [har, heq]
 
 /-
 **(a) Load-balanced tree→reduced-graph homomorphism ⟹ tree embedding.**
@@ -86,14 +108,14 @@ load `#{a : col a = i}` plus the slack `BB·ε·|C i|` is `< (d−ε)·|C i|`.  
 `T ⊑ G`.
 -/
 theorem tree_embeds_in_reducedGraph
-    {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {ε d : ℝ} (hε0 : 0 < ε) (hε1 : ε ≤ 1) (hd1 : d ≤ 1)
     {ι : Type*} [DecidableEq ι] (C : ι → Finset V) (R : SimpleGraph ι)
     (hne : ∀ i, (C i).Nonempty)
     (hdisj : ∀ i j, i ≠ j → Disjoint (C i) (C j))
     (huni : ∀ i j, R.Adj i j → G.IsUniform ε (C i) (C j))
     (hdens : ∀ i j, R.Adj i j → d ≤ (G.edgeDensity (C i) (C j) : ℝ))
-    {α : Type*} [Fintype α] [DecidableEq α] (T : SimpleGraph α) [DecidableRel T.Adj]
+    {α : Type*} [Fintype α] (T : SimpleGraph α) [DecidableRel T.Adj]
     (hT : T.IsTree)
     (col : α → ι)
     (hcol : ∀ a b, T.Adj a b → R.Adj (col a) (col b))
@@ -102,15 +124,23 @@ theorem tree_embeds_in_reducedGraph
     (hcap : ∀ i, ((univ.filter (fun a => col a = i)).card : ℝ)
               + (BB : ℝ) * (ε * ((C i).card : ℝ)) < (d - ε) * ((C i).card : ℝ)) :
     T ⊑ G := by
+  classical
+  let := Fintype.ofFinite V
   by_contra h_contra;
   have := @Erdos550.regularClusters_forest_embedding;
   obtain ⟨parent, rank, hrank, hpar_edge, hedge⟩ := IsTree.exists_rooted_edge_structure T hT;
-  obtain ⟨ f, hf_inj, hf_side, hf_adj ⟩ := this G hε0 hε1 hd1 C R hne hdisj huni hdens parent rank hrank col ( fun a b hab => hcol a b ( hpar_edge a b hab ) ) BB ( fun a => by
-    refine' le_trans ( Finset.card_le_card _ ) ( hB a );
-    simp +decide [ Finset.subset_iff ];
-    exact fun b hb => ⟨ b, by simpa [ hb ] using! hpar_edge b a hb |> SimpleGraph.Adj.symm, rfl ⟩ ) hcap;
-  refine' h_contra ⟨ ⟨ f, _ ⟩, hf_inj ⟩;
-  intro a b hab; specialize hedge a b hab; cases' hedge with h h <;> [ exact hf_adj a b h; exact SimpleGraph.Adj.symm ( hf_adj b a h ) ] ;
+  obtain ⟨f, hf_inj, hf_side, hf_adj⟩ :=
+    this G hε0 hε1 hd1 C R hne hdisj huni hdens parent rank hrank col
+      (fun a b hab => hcol a b (hpar_edge a b hab)) BB (fun a => by
+        refine le_trans (Finset.card_le_card ?_) (hB a)
+        simp +decide only [subset_iff, mem_image, mem_filter, mem_univ, true_and,
+          forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
+        intro b hb
+        refine ⟨b, ?_, rfl⟩
+        simpa [hb] using! hpar_edge b a hb |> SimpleGraph.Adj.symm) hcap
+  refine h_contra ⟨ ⟨ f, ?_ ⟩, hf_inj ⟩;
+  intro a b hab; specialize hedge a b hab; rcases hedge with h | h <;> [exact hf_adj a b h;
+      exact SimpleGraph.Adj.symm (hf_adj b a h)] ;
 
 /-
 **(b) Sibling-concentration bound.**
@@ -120,12 +150,15 @@ single cluster (`hconc`), then the number of distinct clusters among the
 neighbours of any vertex is `≤ 1`.  Consequently `BB = 1` suffices in
 `tree_embeds_in_reducedGraph`, regardless of how high the degree of `a` is.
 -/
-lemma sibling_concentrated_distinct_le {α : Type*} [Fintype α] [DecidableEq α]
+lemma sibling_concentrated_distinct_le {α : Type*} [Fintype α]
     (T : SimpleGraph α) [DecidableRel T.Adj] {ι : Type*} [DecidableEq ι] (col : α → ι)
     (hconc : ∀ a x y, T.Adj a x → T.Adj a y → col x = col y) :
     ∀ a, ((univ.filter (fun x => T.Adj a x)).image col).card ≤ 1 := by
+  classical
   intro a;
-  exact Finset.card_le_one.mpr fun x hx y hy => by obtain ⟨ u, hu, rfl ⟩ := Finset.mem_image.mp hx; obtain ⟨ v, hv, rfl ⟩ := Finset.mem_image.mp hy; aesop;
+  exact Finset.card_le_one.mpr fun x hx y hy => by
+      obtain ⟨u, hu, rfl⟩ := Finset.mem_image.mp hx;
+      obtain ⟨v, hv, rfl⟩ := Finset.mem_image.mp hy; aesop;
 
 /-
 **(b) Existence of a sibling-concentrated homomorphism into a single edge.**
@@ -137,19 +170,23 @@ is *sibling-concentrated*: all neighbours of any vertex share a single cluster.
 This is the concentration used for high-degree tree vertices, guaranteeing the
 per-vertex slack `BB·ε·|C i|` stays small (`BB = 1`).
 -/
-lemma exists_sibling_concentrated_hom {α : Type*} [Fintype α] [DecidableEq α]
-    (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree)
-    {ι : Type*} [DecidableEq ι] (R : SimpleGraph ι) {i₀ i₁ : ι} (hR : R.Adj i₀ i₁) :
+lemma exists_sibling_concentrated_hom {α : Type*} [Finite α]
+    (T : SimpleGraph α) (hT : T.IsTree)
+    {ι : Type*} (R : SimpleGraph ι) {i₀ i₁ : ι} (hR : R.Adj i₀ i₁) :
     ∃ col : α → ι,
       (∀ a, col a = i₀ ∨ col a = i₁) ∧
       (∀ a b, T.Adj a b → R.Adj (col a) (col b)) ∧
       (∀ a x y, T.Adj a x → T.Adj a y → col x = col y) := by
+  classical
+  let := Fintype.ofFinite α
   have h_colorable : Nonempty (T.Coloring (Fin 2)) := by
     exact ⟨ by exact ( Erdos550.IsTree.colorable_two T hT ).some ⟩;
-  obtain ⟨ c ⟩ := h_colorable; use fun a => if c a = 0 then i₀ else i₁; simp +decide only [Fin.isValue, ite_eq_left_iff, ite_eq_right_iff] ;
-  refine' ⟨ _, _, _ ⟩;
+  obtain ⟨ c ⟩ := h_colorable; use fun a => if c a = 0 then i₀ else i₁; simp +decide only [
+    Fin.isValue, ite_eq_left_iff, ite_eq_right_iff] ;
+  refine ⟨ ?_, ?_, ?_ ⟩;
   · grind;
-  · intro a b hab; have := c.valid hab; split_ifs <;> simp_all +decide ;
+  · intro a b hab; have := c.valid hab; split_ifs <;>
+      simp_all +decide only [Fin.isValue, ne_eq, not_false_eq_true, SimpleGraph.irrefl] ;
     · exact hR.symm;
     · grind;
   · intro a x y hx hy; have := c.valid hx; have := c.valid hy; simp_all +decide [  ] ;

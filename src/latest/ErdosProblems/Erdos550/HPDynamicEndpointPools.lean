@@ -19,29 +19,32 @@ open Finset SimpleGraph
 
 namespace Erdos550
 
-open Classical
 
 noncomputable def hpFreeEndpoint
     {V : Type*} [DecidableEq V]
     (used endpoint retained : Finset V) : Finset V :=
+  open scoped Classical in
   (endpoint ∩ retained) \ used
 
 noncomputable def hpRootPool
     {V : Type*} [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (anchor : V)
     (used endpoint retained : Finset V) : Finset V :=
+  open scoped Classical in
   (hpFreeEndpoint used endpoint retained).filter fun v => G.Adj anchor v
 
 lemma hpFreeEndpoint_subset_endpoint
     {V : Type*} [DecidableEq V]
     (used endpoint retained : Finset V) :
     hpFreeEndpoint used endpoint retained ⊆ endpoint :=
+  open scoped Classical in
   (Finset.sdiff_subset).trans Finset.inter_subset_left
 
 lemma hpFreeEndpoint_subset_retained
     {V : Type*} [DecidableEq V]
     (used endpoint retained : Finset V) :
     hpFreeEndpoint used endpoint retained ⊆ retained :=
+  open scoped Classical in
   (Finset.sdiff_subset).trans Finset.inter_subset_right
 
 lemma hpFreeEndpoint_mono_retained
@@ -50,6 +53,7 @@ lemma hpFreeEndpoint_mono_retained
     (hret : retained ⊆ retained') :
     hpFreeEndpoint used endpoint retained ⊆
       hpFreeEndpoint used endpoint retained' := by
+  classical
   intro v hv
   have hv' := Finset.mem_sdiff.mp hv
   have hvInter := Finset.mem_inter.mp hv'.1
@@ -60,6 +64,7 @@ lemma hpFreeEndpoint_disjoint_used
     {V : Type*} [DecidableEq V]
     (used endpoint retained : Finset V) :
     Disjoint (hpFreeEndpoint used endpoint retained) used := by
+  classical
   rw [Finset.disjoint_left]
   intro v hvFree hvUsed
   exact (Finset.mem_sdiff.mp hvFree).2 hvUsed
@@ -70,6 +75,7 @@ lemma hpRootPool_subset_free
     (used endpoint retained : Finset V) :
     hpRootPool G anchor used endpoint retained ⊆
       hpFreeEndpoint used endpoint retained :=
+  open scoped Classical in
   Finset.filter_subset _ _
 
 lemma hpRootPool_adj
@@ -78,6 +84,7 @@ lemma hpRootPool_adj
     (used endpoint retained : Finset V) :
     ∀ v ∈ hpRootPool G anchor used endpoint retained,
       G.Adj anchor v := by
+  classical
   intro v hv
   exact (Finset.mem_filter.mp hv).2
 
@@ -87,6 +94,7 @@ private lemma endpoint_subset_free_union_losses
     endpoint ⊆
       (hpFreeEndpoint used endpoint retained ∪
         (endpoint \ retained)) ∪ (used ∩ endpoint) := by
+  classical
   intro v hvEndpoint
   by_cases hvRetained : v ∈ retained
   · by_cases hvUsed : v ∈ used
@@ -111,6 +119,7 @@ lemma hpFreeEndpoint_card_lower
     (hcap : cap + retainedLoss ≤ (endpoint.card : ℝ)) :
     cap - ((used ∩ endpoint).card : ℝ) ≤
       (hpFreeEndpoint used endpoint retained).card := by
+  classical
   have hcard :
       endpoint.card ≤
         (hpFreeEndpoint used endpoint retained).card +
@@ -134,6 +143,7 @@ private lemma adjacent_endpoint_subset_root_union_losses
     endpoint.filter (fun v => G.Adj anchor v) ⊆
       (hpRootPool G anchor used endpoint retained ∪
         (endpoint \ retained)) ∪ (used ∩ endpoint) := by
+  classical
   intro v hv
   have hvEndpoint := (Finset.mem_filter.mp hv).1
   have hvAdj := (Finset.mem_filter.mp hv).2
@@ -165,6 +175,7 @@ lemma hpRootPool_card_lower
     threshold - ((used ∩ endpoint).card : ℝ) -
         (typicalityError + retainedLoss) ≤
       (hpRootPool G anchor used endpoint retained).card := by
+  classical
   have hcard :
       (endpoint.filter fun v => G.Adj anchor v).card ≤
         (hpRootPool G anchor used endpoint retained).card +

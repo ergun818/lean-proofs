@@ -19,14 +19,14 @@ open Finset SimpleGraph
 
 namespace Erdos550
 
-open Classical
 
 set_option maxHeartbeats 1000000 in
+-- The dynamic extension maintains the matching state across all component updates.
 theorem hp_matching_dynamic_component_extension
     {A : Type} {V κ : Type*}
     [Fintype A] [DecidableEq A]
-    [Fintype V] [DecidableEq V] [Nonempty V]
-    [Fintype κ] [DecidableEq κ]
+    [Finite V] [DecidableEq V] [Nonempty V]
+    [Finite κ]
     (T : SimpleGraph A) (Sseed P : Finset A)
     {parent : A → Option A} {rank : A → ℕ}
     (D : RootedSeedComponentData T Sseed parent)
@@ -105,7 +105,7 @@ theorem hp_matching_dynamic_component_extension
     (hlocalMargin : (Lnat : ℝ) + τ ≤ margin)
     (hLcap : ∀ k ∈ Good, leftThreshold k ≤ cap)
     (hRcap : ∀ k ∈ Good, rightThreshold k ≤ cap) :
-    ∃ (k : κ) (swap : Bool)
+    ∃ (k : κ) (_swap : Bool)
       (fC : RootedComponentVertex T Sseed c → V),
       k ∈ Good ∧
       Function.Injective fC ∧
@@ -122,6 +122,9 @@ theorem hp_matching_dynamic_component_extension
         (glueOnBlock (componentNonseedVertices T Sseed c.1) f
           (liftComponentMap T Sseed c fC))
         left right leftThreshold rightThreshold margin τ := by
+  let := Fintype.ofFinite V
+  let := Fintype.ofFinite κ
+  classical
   let used := P.image f
   let freeL : κ → Finset V :=
     fun k => hpFreeEndpoint used (left k) (left k)

@@ -19,7 +19,6 @@ open Finset
 
 namespace Erdos550
 
-open Classical
 
 lemma allocated_surplus_after_bad_deletion
     {κ : Type*} [DecidableEq κ]
@@ -27,7 +26,7 @@ lemma allocated_surplus_after_bad_deletion
     (load supply : κ → ℝ)
     (demand reserve edgeCap bad : ℝ)
     (hGood : Good ⊆ K)
-    (hload0 : ∀ k ∈ Good, 0 ≤ load k)
+    (_hload0 : ∀ k ∈ Good, 0 ≤ load k)
     (hsupply0 : ∀ k ∈ K, 0 ≤ supply k)
     (hsupplyCap : ∀ k ∈ K, supply k ≤ edgeCap)
     (hedgeCap0 : 0 ≤ edgeCap)
@@ -39,6 +38,7 @@ lemma allocated_surplus_after_bad_deletion
         ∑ k ∈ K, supply k) :
     (∑ k ∈ Good, load k) + (Good.card : ℝ) * reserve ≤
       ∑ k ∈ Good, supply k := by
+  classical
   have hsupply :=
     sum_allocated_good_lower K Good supply edgeCap bad hGood
       hsupply0 hsupplyCap hdeleted hedgeCap0
@@ -55,7 +55,7 @@ This packages the injective whole-edge deletion argument with
 `allocated_surplus_after_bad_deletion`. -/
 lemma allocated_good_nonempty_and_surplus
     {V ι κ : Type*} [Fintype V] [DecidableEq V]
-    [Fintype κ] [DecidableEq κ] [DecidableEq ι]
+    [Fintype κ] [DecidableEq κ]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (C : ι → Finset V) (dcap : ι → ℝ) (ε : ℝ)
     (Tset : Finset ι) (K : Finset κ)
@@ -83,10 +83,12 @@ lemma allocated_good_nonempty_and_surplus
       demand + bad * edgeCap + (K.card : ℝ) * reserve ≤
         ∑ k ∈ K, supply k) :
     let Good :=
+  open scoped Classical in
       hpAllocatedGoodMatchingEdges G C dcap ε K cL cR anchor
     Good.Nonempty ∧
       (∑ k ∈ Good, load k) + (Good.card : ℝ) * reserve ≤
         ∑ k ∈ Good, supply k := by
+  classical
   let Good :=
     hpAllocatedGoodMatchingEdges G C dcap ε K cL cR anchor
   have hGood : Good ⊆ K :=
@@ -117,7 +119,7 @@ allocated edge.  After deleting the anchor's bad edges, the full route demand
 and one reserve per surviving edge remain. -/
 lemma allocated_good_nonempty_and_static_surplus
     {V ι κ : Type*} [Fintype V] [DecidableEq V]
-    [Fintype κ] [DecidableEq κ] [DecidableEq ι]
+    [Fintype κ] [DecidableEq κ]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (C : ι → Finset V) (dcap : ι → ℝ) (ε : ℝ)
     (Tset : Finset ι) (K : Finset κ)
@@ -139,10 +141,12 @@ lemma allocated_good_nonempty_and_static_surplus
       demand + bad * edgeCap + (K.card : ℝ) * reserve ≤
         ∑ k ∈ K, supply k) :
     let Good :=
+  open scoped Classical in
       hpAllocatedGoodMatchingEdges G C dcap ε K cL cR anchor
     Good.Nonempty ∧
       demand + (Good.card : ℝ) * reserve ≤
         ∑ k ∈ Good, supply k := by
+  classical
   let Good :=
     hpAllocatedGoodMatchingEdges G C dcap ε K cL cR anchor
   have hGood : Good ⊆ K :=

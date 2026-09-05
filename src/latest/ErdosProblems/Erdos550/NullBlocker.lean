@@ -63,7 +63,7 @@ theorem exact_rounding
     obtain ⟨hx₀Z, hφ⟩ := hmono x₀ hx₀E
     have hge : q - 1 ≤ compatCount A ω x₀ := by
       rw [Set.Finite.mem_toFinset] at hx₀Z
-      simp only [Set.mem_setOf_eq] at hx₀Z
+      simp only [Set.mem_ofPred_eq] at hx₀Z
       omega
     have hex : ∃ k, ω k ∉ A k x₀ := ⟨Classical.choose (hN3 e.1 e.2.1 e.2.2), hmiss⟩
     have hφx : Classical.choose hex = i := by

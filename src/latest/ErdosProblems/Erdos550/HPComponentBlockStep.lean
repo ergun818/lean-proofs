@@ -21,7 +21,6 @@ open SimpleGraph Finset
 
 namespace Erdos550
 
-open Classical
 
 variable {A : Type} [Fintype A] [DecidableEq A]
 
@@ -36,7 +35,7 @@ theorem hp_component_block_step
     (c : NonseedComponent T Sseed)
     (hboundary : ∀ a ∈ componentSeeds T Sseed c.1,
       ∀ b ∈ componentSeeds T Sseed c.1, col a = col b)
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {ε d : ℝ} (hε0 : 0 < ε) (hε1 : ε ≤ 1) (hd1 : d ≤ 1)
     {rootSide otherSide freeRoot freeOther rootPool : Finset V}
@@ -69,6 +68,8 @@ theorem hp_component_block_step
       (∀ s ∈ componentSeeds T Sseed c.1,
         ∀ x : RootedComponentVertex T Sseed c,
           parent s = some x.1 → f x ∈ freeRoot) := by
+  let := Fintype.ofFinite V
+  classical
   let localParent := componentLocalParent T Sseed D c
   let localRank : RootedComponentVertex T Sseed c → ℕ :=
     fun x => rank x.1

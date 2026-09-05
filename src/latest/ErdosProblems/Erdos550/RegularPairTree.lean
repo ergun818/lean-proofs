@@ -51,20 +51,29 @@ lemma tree_closer_neighbor_exists_unique {α : Type*} (T : SimpleGraph α)
     have := hT.1 a r;
     obtain ⟨ p, hp ⟩ := this.exists_path_of_dist;
     exact ⟨ p, hp.2, hp.1 ⟩;
-  rcases p with ( _ | ⟨ b, p ⟩ ) <;> simp_all +decide;
-  refine' ⟨ _, ⟨ b, _ ⟩, _ ⟩;
+  rcases p with ( _ | ⟨ b, p ⟩ ) <;> simp_all +decide only [ne_eq, not_true_eq_false,
+    Walk.length_cons, Walk.cons_isPath_iff];
+  refine ⟨ _, ⟨ b, ?_ ⟩, ?_ ⟩;
   · linarith [ show T.dist ‹_› r ≤ p.length from SimpleGraph.dist_le _ ];
   · intro y hy
     obtain ⟨q, hq⟩ : ∃ q : SimpleGraph.Walk T y r, q.length = T.dist y r ∧ q.IsPath := by
       have := hT.1 y r;
       obtain ⟨ q, hq ⟩ := this.exists_walk_length_eq_dist;
       grind +suggestions;
-    have h_unique : SimpleGraph.Walk.IsPath (SimpleGraph.Walk.cons b p) ∧ SimpleGraph.Walk.IsPath (SimpleGraph.Walk.cons hy.1 q) ∧ (SimpleGraph.Walk.cons b p).length = T.dist a r ∧ (SimpleGraph.Walk.cons hy.1 q).length = T.dist a r := by
+    have h_unique :
+        SimpleGraph.Walk.IsPath (SimpleGraph.Walk.cons b p) ∧
+          SimpleGraph.Walk.IsPath (SimpleGraph.Walk.cons hy.1 q) ∧
+            (SimpleGraph.Walk.cons b p).length = T.dist a r ∧
+              (SimpleGraph.Walk.cons hy.1 q).length = T.dist a r := by
       have h_unique : T.dist a r ≤ T.dist y r + 1 := by
         have h_path : T.dist a r ≤ T.dist a y + T.dist y r := by
-          have h_dist : ∀ u v w : α, T.Reachable u v → T.Reachable v w → T.dist u w ≤ T.dist u v + T.dist v w := by
+          have h_dist :
+              ∀ u v w : α,
+                T.Reachable u v → T.Reachable v w → T.dist u w ≤ T.dist u v + T.dist v w := by
             intros u v w hu hv;
-            have h_dist : ∀ u v w : α, T.Reachable u v → T.Reachable v w → T.dist u w ≤ T.dist u v + T.dist v w := by
+            have h_dist :
+                ∀ u v w : α,
+                  T.Reachable u v → T.Reachable v w → T.dist u w ≤ T.dist u v + T.dist v w := by
               intros u v w hu hv
               have h_path : ∃ p : SimpleGraph.Walk T u w, p.length = T.dist u v + T.dist v w := by
                 obtain ⟨ p, hp ⟩ := hu.exists_walk_length_eq_dist
@@ -80,7 +89,7 @@ lemma tree_closer_neighbor_exists_unique {α : Type*} (T : SimpleGraph α)
         have h_dist : T.dist a r ≤ q.length - 1 := by
           have h_dist : ∃ p : SimpleGraph.Walk T a r, p.length ≤ q.length - 1 := by
             obtain ⟨ p, hp ⟩ := SimpleGraph.Walk.mem_support_iff_exists_append.mp hq_support;
-            obtain ⟨ r, hr ⟩ := hp; use r; simp +decide [ hr ] ;
+            obtain ⟨ r, hr ⟩ := hp; use r; simp +decide only [hr, Walk.length_append] ;
             rcases p with ( _ | ⟨ _, _, p ⟩ ) <;> simp_all +decide;
           exact le_trans ( SimpleGraph.dist_le _ ) h_dist.choose_spec;
         omega;
@@ -96,12 +105,13 @@ decreasing `rank : α → ℕ` along parent links, a proper 2-colouring `col : �
 along parent links, and the property that every edge of `T` is a parent link in
 one of its two orientations.  This is exactly the data consumed by
 `regularPair_forest_embedding`. -/
-lemma IsTree.exists_rooted_structure {α : Type*} [Fintype α] [DecidableEq α]
-    (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree) :
+lemma IsTree.exists_rooted_structure {α : Type*} [Finite α]
+    (T : SimpleGraph α) (hT : T.IsTree) :
     ∃ (parent : α → Option α) (rank : α → ℕ) (col : α → Bool),
       (∀ a b, parent a = some b → rank b < rank a) ∧
       (∀ a b, parent a = some b → col a ≠ col b) ∧
       (∀ a b, T.Adj a b → (parent a = some b ∨ parent b = some a)) := by
+  let := Fintype.ofFinite α
   classical
   -- Root the tree (α is nonempty since T is connected).
   obtain ⟨r⟩ : Nonempty α := hT.1.nonempty
@@ -157,17 +167,19 @@ Let `(s, t)` be an `ε`-uniform pair in `G` (`0 < ε ≤ 1`, both sides nonempty
 with density `d = G.edgeDensity s t`.  If `T` is a finite tree with
 `|T| + ε·|c| ≤ (d-ε)·|c|` for both sides `c ∈ {s,t}`, then `T ⊑ G`. -/
 theorem tree_embeds_in_regularPair
-    {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {ε : ℝ} (hε0 : 0 < ε) (hε1 : ε ≤ 1) {s t : Finset V}
     (hs : s.Nonempty) (ht : t.Nonempty)
     (huni : G.IsUniform ε s t)
-    {α : Type*} [Fintype α] [DecidableEq α] (T : SimpleGraph α) [DecidableRel T.Adj]
+    {α : Type*} [Fintype α] (T : SimpleGraph α)
     (hT : T.IsTree)
     (hcapS : (Fintype.card α : ℝ) + ε * (s.card : ℝ)
         ≤ ((G.edgeDensity s t : ℝ) - ε) * (s.card : ℝ))
     (hcapT : (Fintype.card α : ℝ) + ε * (t.card : ℝ)
         ≤ ((G.edgeDensity s t : ℝ) - ε) * (t.card : ℝ)) :
     T ⊑ G := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨parent, rank, col, hrank, hcol, hedge⟩ :=
     Erdos550.IsTree.exists_rooted_structure T hT
   obtain ⟨f, hfinj, hfside, hfadj⟩ :=

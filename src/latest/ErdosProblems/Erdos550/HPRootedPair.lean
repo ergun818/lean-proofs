@@ -30,7 +30,6 @@ open SimpleGraph Finset
 
 namespace Erdos550
 
-open Classical
 
 /-- Vertices of the left side typical toward a prescribed significant right
 reservoir. -/
@@ -38,6 +37,7 @@ noncomputable def hpGoodLeft
     {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (ε : ℝ) (s t SQ : Finset V) : Finset V :=
+  open scoped Classical in
   s.filter fun v =>
     ((G.edgeDensity s t : ℝ) - ε) * (SQ.card : ℝ) ≤
       ((SQ.filter fun w => G.Adj v w).card : ℝ)
@@ -48,6 +48,7 @@ noncomputable def hpGoodRight
     {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (ε : ℝ) (s t SP : Finset V) : Finset V :=
+  open scoped Classical in
   t.filter fun v =>
     ((G.edgeDensity s t : ℝ) - ε) * (SP.card : ℝ) ≤
       ((SP.filter fun w => G.Adj v w).card : ℝ)
@@ -61,6 +62,7 @@ lemma hpGoodLeft_compl_lt
     (huni : G.IsUniform ε s t) :
     (((s \ hpGoodLeft G ε s t SQ).card : ℕ) : ℝ) <
       ε * (s.card : ℝ) := by
+  classical
   have hbad :=
     isUniform_few_low_degree_subset G hε0 hε1 hSQ hs hSQsig huni
   rw [show s \ hpGoodLeft G ε s t SQ =
@@ -84,6 +86,7 @@ lemma hpGoodRight_compl_lt
     (huni : G.IsUniform ε s t) :
     (((t \ hpGoodRight G ε s t SP).card : ℕ) : ℝ) <
       ε * (t.card : ℝ) := by
+  classical
   have hbad :=
     isUniform_few_low_degree_subset G hε0 hε1 hSP ht hSPsig huni.symm
   rw [show t \ hpGoodRight G ε s t SP =
@@ -110,6 +113,7 @@ lemma card_sdiff_ge_of_bad_lt
     (hB : (B.card : ℝ) < bad)
     (hroom : bad + (need : ℝ) ≤ supply) :
     need ≤ (A \ B).card := by
+  classical
   have hsplit : A.card ≤ (A \ B).card + B.card := by
     calc
       A.card = (A \ B).card + (A ∩ B).card := by
@@ -129,6 +133,7 @@ noncomputable def hpRootedCandidates
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (ε : ℝ) (s t SP SQ P' : Finset V)
     (root : A) (col : A → Bool) (a : A) : Finset V :=
+  open scoped Classical in
   if a = root then P' ∩ hpGoodLeft G ε s t SQ
   else if col a then SQ ∩ hpGoodRight G ε s t SP
   else SP ∩ hpGoodLeft G ε s t SQ
@@ -140,7 +145,7 @@ forest with the displayed unique root).  `false` is the left colour and `true`
 the right colour.  The root is embedded in `P'`; every other vertex is embedded
 in `SP ∪ SQ`. -/
 theorem hp_rootedTree_embedding_left
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {ε d : ℝ} (hε0 : 0 < ε) (hε1 : ε ≤ 1)
     (hd1 : d ≤ 1)
@@ -153,7 +158,7 @@ theorem hp_rootedTree_embedding_left
     (hP'card : L ≤ P'.card)
     (hSPsig : ε * (s.card : ℝ) ≤ (L : ℝ))
     (hSQsig : ε * (t.card : ℝ) ≤ (L : ℝ))
-    {A : Type*} [Fintype A] [DecidableEq A]
+    {A : Type*} [Fintype A]
     (parent : A → Option A) (rank : A → ℕ)
     (hrank : ∀ a b, parent a = some b → rank b < rank a)
     (root : A) (hroot : parent root = none)
@@ -168,6 +173,8 @@ theorem hp_rootedTree_embedding_left
       (∀ a, a ≠ root →
         f a ∈ (if col a then SQ else SP)) ∧
       (∀ a b, parent a = some b → G.Adj (f a) (f b)) := by
+  classical
+  let := Fintype.ofFinite V
   let goodL := hpGoodLeft G ε s t SQ
   let goodR := hpGoodRight G ε s t SP
   let cand := hpRootedCandidates G ε s t SP SQ P' root col
@@ -233,16 +240,17 @@ theorem hp_rootedTree_embedding_left
         have hcroot : col root = false := hroot_col
         simp only [hcroot, Bool.false_eq_true, if_false]
         have := hv
-        simp [cand, hpRootedCandidates, goodL] at this
+        simp only [hpRootedCandidates, ↓reduceIte, mem_inter, cand] at this
         exact this.2
       · by_cases hcb : col b
         · simp only [hcb, if_true]
           have := hv
-          simp [cand, hpRootedCandidates, hbr, hcb, goodR] at this
+          simp only [hpRootedCandidates, hbr, ↓reduceIte, hcb, mem_inter, cand] at this
           exact this.2
-        · simp only [hcb, if_false]
+        · simp only [hcb]
           have := hv
-          simp only [Bool.false_eq_true, ↓reduceIte] at this
+          simp only [cand, hpRootedCandidates, if_neg hbr, if_neg hcb,
+            Finset.mem_inter] at this
           exact this.2
     by_cases hca : col a
     · have hcb : col b = false := by
@@ -251,8 +259,9 @@ theorem hp_rootedTree_embedding_left
           ((G.edgeDensity s t : ℝ) - ε) * (L : ℝ) ≤
             ((SQ.filter fun w => G.Adj v w).card : ℝ) := by
         have := hbGood
-        simp only [ge_iff_le] at this
-        exact this.2
+        simp only [hcb, Bool.false_eq_true, if_false, goodL, hpGoodLeft,
+          Finset.mem_filter] at this
+        simpa only [hSQcard] using this.2
       let N := SQ.filter fun w => G.Adj v w
       have hremain :
           Fintype.card A ≤ (N \ (t \ goodR)).card := by
@@ -293,8 +302,8 @@ theorem hp_rootedTree_embedding_left
           ((G.edgeDensity s t : ℝ) - ε) * (L : ℝ) ≤
             ((SP.filter fun w => G.Adj v w).card : ℝ) := by
         have := hbGood
-        simp only [ge_iff_le] at this
-        exact this.2
+        simp only [hcb, if_true, goodR, hpGoodRight, Finset.mem_filter] at this
+        simpa only [hSPcard] using this.2
       let N := SP.filter fun w => G.Adj v w
       have hremain :
           Fintype.card A ≤ (N \ (s \ goodL)).card := by
@@ -348,7 +357,7 @@ theorem hp_rootedTree_embedding_left
 
 /-- Symmetric prescribed-right-root form of Hladký--Piguet Lemma 5.12. -/
 theorem hp_rootedTree_embedding_right
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {ε d : ℝ} (hε0 : 0 < ε) (hε1 : ε ≤ 1)
     (hd1 : d ≤ 1)
@@ -361,7 +370,7 @@ theorem hp_rootedTree_embedding_right
     (hQ'card : L ≤ Q'.card)
     (hSPsig : ε * (s.card : ℝ) ≤ (L : ℝ))
     (hSQsig : ε * (t.card : ℝ) ≤ (L : ℝ))
-    {A : Type*} [Fintype A] [DecidableEq A]
+    {A : Type*} [Fintype A]
     (parent : A → Option A) (rank : A → ℕ)
     (hrank : ∀ a b, parent a = some b → rank b < rank a)
     (root : A) (hroot : parent root = none)
@@ -376,6 +385,8 @@ theorem hp_rootedTree_embedding_right
       (∀ a, a ≠ root →
         f a ∈ (if col a then SQ else SP)) ∧
       (∀ a b, parent a = some b → G.Adj (f a) (f b)) := by
+  classical
+  let := Fintype.ofFinite V
   let col' : A → Bool := fun a => !col a
   have hroot_col' : col' root = false := by
     simp [col', hroot_col]

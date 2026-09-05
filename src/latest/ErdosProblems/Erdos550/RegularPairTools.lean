@@ -39,15 +39,22 @@ number of vertices of degree at least `k`, multiplied by `k`, is at most twice t
 number of edges, i.e. `2·(|V| - 1)`.  (Sum of degrees `= 2·e(T) = 2(|V|-1)`.)
 -/
 lemma tree_high_degree_card_mul_le
-    {V : Type*} [Fintype V] [DecidableEq V] (T : SimpleGraph V) [DecidableRel T.Adj]
+    {V : Type*} [Fintype V] (T : SimpleGraph V) [DecidableRel T.Adj]
     (hT : T.IsTree) (k : ℕ) :
     k * ((univ.filter (fun v => k ≤ T.degree v)).card) ≤ 2 * (Fintype.card V - 1) := by
+  classical
   -- By the properties of the degree sum formula, we have $\sum_{v \in V} \deg(v) = 2 \cdot |E|$.
   have h_sum_deg : ∑ v : V, T.degree v = 2 * T.edgeFinset.card := by
     rw [ SimpleGraph.sum_degrees_eq_twice_card_edges ];
-  have h_sum_deg_filter : ∑ v ∈ Finset.filter (fun v => k ≤ T.degree v) Finset.univ, T.degree v ≥ k * (Finset.filter (fun v => k ≤ T.degree v) Finset.univ).card := by
-    exact le_trans ( by simp +decide [ mul_comm ] ) ( Finset.sum_le_sum fun v hv => Finset.mem_filter.mp hv |>.2 );
-  refine' le_trans h_sum_deg_filter ( le_trans ( Finset.sum_le_sum_of_subset ( Finset.filter_subset _ _ ) ) _ );
+  have h_sum_deg_filter :
+      ∑ v ∈ Finset.filter (fun v => k ≤ T.degree v) Finset.univ, T.degree v ≥
+        k * (Finset.filter (fun v => k ≤ T.degree v) Finset.univ).card := by
+    exact
+          le_trans (by simp +decide [mul_comm])
+            (Finset.sum_le_sum fun v hv => Finset.mem_filter.mp hv |>.2);
+  refine
+      le_trans h_sum_deg_filter
+        (le_trans (Finset.sum_le_sum_of_subset (Finset.filter_subset _ _)) ?_);
   have := hT.card_edgeFinset;
   grind
 
@@ -55,8 +62,10 @@ lemma tree_high_degree_card_mul_le
 **Trees are bipartite.**  Every finite tree is `2`-colourable.
 -/
 lemma IsTree.colorable_two
-    {V : Type*} [Fintype V] [DecidableEq V] (T : SimpleGraph V) [DecidableRel T.Adj]
+    {V : Type*} [Finite V] (T : SimpleGraph V)
     (hT : T.IsTree) : T.Colorable 2 := by
+  classical
+  let := Fintype.ofFinite V
   convert! hT.2.isBipartite
 
 /-
@@ -72,39 +81,58 @@ the other side" lemma: it lets a greedy tree-embedding across a regular pair
 always find fresh neighbours for the next tree vertex.
 -/
 lemma isUniform_few_low_degree
-    {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {ε : ℝ} (hε0 : 0 < ε) (hε1 : ε ≤ 1) {s t : Finset V}
     (hs : s.Nonempty) (ht : t.Nonempty) (huni : G.IsUniform ε s t) :
     ((s.filter (fun a => ((t.filter (fun b => G.Adj a b)).card : ℝ)
         < ((G.edgeDensity s t : ℝ) - ε) * (t.card : ℝ))).card : ℝ) < ε * (s.card : ℝ) := by
+  classical
+  let := Fintype.ofFinite V
   by_contra h_contra;
   -- Let $s'$ be the set of vertices in $s$ with low forward degree in $t$.
-  set s' := s.filter (fun a => (t.filter (G.Adj a)).card < ((G.edgeDensity s t : ℝ) - ε) * t.card) with hs';
-  -- By the uniformity condition, we have $|(G.edgeDensity s' t : ℝ) - (G.edgeDensity s t : ℝ)| < ε$.
+  set s' :=
+      s.filter
+        (fun a => (t.filter (G.Adj a)).card < ((G.edgeDensity s t : ℝ) - ε) * t.card) with
+      hs';
+  -- By the uniformity condition, we have $|(G.edgeDensity s' t : ℝ) - (G.edgeDensity s t : ℝ)| <
+  -- ε$.
   have h_uniform : |(G.edgeDensity s' t : ℝ) - (G.edgeDensity s t : ℝ)| < ε := by
     apply huni;
     · exact Finset.filter_subset _ _;
     · exact Finset.Subset.refl _;
     · exact le_of_not_gt (by simpa only [mul_comm] using h_contra);
     · exact mul_le_of_le_one_right ( Nat.cast_nonneg _ ) hε1;
-  -- By the definition of $s'$, we have $\sum_{a \in s'} \text{deg}(a, t) < \sum_{a \in s'} ((G.edgeDensity s t : ℝ) - ε) * t.card$.
-  have h_sum_deg : ∑ a ∈ s', (t.filter (G.Adj a)).card < ∑ a ∈ s', ((G.edgeDensity s t : ℝ) - ε) * t.card := by
+  -- By the definition of $s'$, we have $\sum_{a \in s'} \text{deg}(a, t) < \sum_{a \in s'}
+  -- ((G.edgeDensity s t : ℝ) - ε) * t.card$.
+  have h_sum_deg :
+      ∑ a ∈ s', (t.filter (G.Adj a)).card < ∑ a ∈ s', ((G.edgeDensity s t : ℝ) - ε) * t.card := by
     rw [ Nat.cast_sum ];
-    refine' Finset.sum_lt_sum _ _;
+    refine Finset.sum_lt_sum ?_ ?_;
     · exact fun x hx => le_of_lt ( Finset.mem_filter.mp hx |>.2 );
-    · exact Exists.elim ( Finset.card_pos.mp ( Nat.cast_pos.mp ( lt_of_lt_of_le ( mul_pos hε0 ( Nat.cast_pos.mpr hs.card_pos ) ) ( le_of_not_gt h_contra ) ) ) ) fun x hx => ⟨ x, hx, Finset.mem_filter.mp hx |>.2 ⟩;
-  -- By the definition of $s'$, we have $\sum_{a \in s'} \text{deg}(a, t) = \text{edgeDensity}(s', t) \cdot |s'| \cdot |t|$.
-  have h_sum_deg_eq : ∑ a ∈ s', (t.filter (G.Adj a)).card = (G.edgeDensity s' t : ℝ) * s'.card * t.card := by
+    · exact
+          Exists.elim
+            (Finset.card_pos.mp
+              (Nat.cast_pos.mp
+                (lt_of_lt_of_le (mul_pos hε0 (Nat.cast_pos.mpr hs.card_pos))
+                  (le_of_not_gt h_contra))))
+            fun x hx => ⟨x, hx, Finset.mem_filter.mp hx |>.2⟩;
+  -- By the definition of $s'$, we have $\sum_{a \in s'} \text{deg}(a, t) = \text{edgeDensity}(s',
+  -- t) \cdot |s'| \cdot |t|$.
+  have h_sum_deg_eq :
+      ∑ a ∈ s', (t.filter (G.Adj a)).card = (G.edgeDensity s' t : ℝ) * s'.card * t.card := by
     by_cases hs0 : s' = ∅
     · simp [hs0, SimpleGraph.edgeDensity, Rel.edgeDensity]
     · have ht0 : t ≠ ∅ := ht.ne_empty
-      simp +decide [SimpleGraph.edgeDensity, Rel.edgeDensity, Rel.interedges,
-        hs0, ht0, mul_assoc]
+      simp +decide only [Nat.cast_sum, edgeDensity, Rel.edgeDensity, Rel.interedges, Rat.cast_div,
+        Rat.cast_natCast, Rat.cast_mul, mul_assoc, isUnit_iff_ne_zero, ne_eq, mul_eq_zero,
+        Nat.cast_eq_zero, card_eq_zero, hs0, ht0, or_self, not_false_eq_true,
+        IsUnit.div_mul_cancel]
       rw_mod_cast [Finset.card_filter]
       rw [Finset.sum_product]
       aesop
   simp_all +decide [ mul_assoc, mul_comm ];
-  nlinarith [ abs_lt.mp h_uniform, show ( 0 : ℝ ) < ε * s.card by exact mul_pos hε0 ( Nat.cast_pos.mpr hs.card_pos ) ]
+  nlinarith [abs_lt.mp h_uniform,
+      show (0 : ℝ) < ε * s.card by exact mul_pos hε0 (Nat.cast_pos.mpr hs.card_pos)]
 
 /-
 **Regular pairs have few low-forward-degree vertices, relative to a large subset.**
@@ -122,25 +150,42 @@ vertices have been placed, the surviving candidate set `t'` is still a
 `(d-ε)`-fraction of `t'`, and the embedding can be extended.
 -/
 lemma isUniform_few_low_degree_subset
-    {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {ε : ℝ} (hε0 : 0 < ε) (_hε1 : ε ≤ 1) {s t t' : Finset V}
     (ht' : t' ⊆ t) (hs : s.Nonempty)
     (ht'card : ε * (t.card : ℝ) ≤ (t'.card : ℝ))
     (huni : G.IsUniform ε s t) :
     ((s.filter (fun a => ((t'.filter (fun b => G.Adj a b)).card : ℝ)
         < ((G.edgeDensity s t : ℝ) - ε) * (t'.card : ℝ))).card : ℝ) < ε * (s.card : ℝ) := by
+  classical
+  let := Fintype.ofFinite V
   by_contra h;
-  obtain ⟨s', hs'⟩ : ∃ s' : Finset V, s' ⊆ s ∧ s'.card ≥ ε * s.card ∧ ∀ a ∈ s', (t'.filter (G.Adj a)).card < (G.edgeDensity s t - ε) * t'.card := by
+  obtain ⟨s', hs'⟩ : ∃ s' : Finset V,
+      s' ⊆ s ∧
+        s'.card ≥ ε * s.card ∧
+          ∀ a ∈ s', (t'.filter (G.Adj a)).card < (G.edgeDensity s t - ε) * t'.card := by
     exact ⟨ _, Finset.filter_subset _ _, le_of_not_gt h, fun a ha => Finset.mem_filter.mp ha |>.2 ⟩;
-  have h_sum : (∑ a ∈ s', (t'.filter (G.Adj a)).card : ℝ) = G.edgeDensity s' t' * s'.card * t'.card := by
-    simp +decide [ SimpleGraph.edgeDensity, Rel.edgeDensity, Rel.interedges ];
-    by_cases hs' : s' = ∅ <;> by_cases ht' : t' = ∅ <;> simp_all +decide [ mul_assoc ];
+  have h_sum :
+      (∑ a ∈ s', (t'.filter (G.Adj a)).card : ℝ) = G.edgeDensity s' t' * s'.card * t'.card := by
+    simp +decide only [edgeDensity, Rel.edgeDensity, Rel.interedges, Rat.cast_div,
+      Rat.cast_natCast, Rat.cast_mul];
+    by_cases hs' : s' = ∅ <;> by_cases ht' : t' = ∅ <;>
+        simp_all +decide only [empty_subset, card_empty, CharP.cast_eq_zero, filter_empty,
+          mul_zero, lt_self_iff_false, filter_false, mul_pos_iff_of_pos_left, Nat.cast_pos,
+          card_pos, not_true_eq_false, gt_iff_lt, not_lt, ge_iff_le, notMem_empty,
+          IsEmpty.forall_iff, implies_true, and_true, true_and, sum_empty, empty_product,
+          zero_mul, div_zero, mul_assoc, isUnit_iff_ne_zero, ne_eq, mul_eq_zero,
+          Nat.cast_eq_zero, card_eq_zero, or_self, not_false_eq_true, IsUnit.div_mul_cancel];
     rw_mod_cast [ Finset.card_filter ];
     rw [ Finset.sum_product ] ; aesop;
-  have h_sum_lt : (∑ a ∈ s', (t'.filter (G.Adj a)).card : ℝ) < (G.edgeDensity s t - ε) * s'.card * t'.card := by
+  have h_sum_lt :
+      (∑ a ∈ s', (t'.filter (G.Adj a)).card : ℝ) < (G.edgeDensity s t - ε) * s'.card * t'.card := by
     convert! Finset.sum_lt_sum_of_nonempty _ fun x hx => hs'.2.2 x hx;
     · simp +decide [ mul_comm, mul_left_comm ];
-    · exact Finset.card_pos.mp ( Nat.cast_pos.mp ( lt_of_lt_of_le ( mul_pos hε0 ( Nat.cast_pos.mpr hs.card_pos ) ) hs'.2.1 ) );
+    · exact
+          Finset.card_pos.mp
+            (Nat.cast_pos.mp
+              (lt_of_lt_of_le (mul_pos hε0 (Nat.cast_pos.mpr hs.card_pos)) hs'.2.1));
   have := huni hs'.1 ht' ( by linarith ) ( by linarith );
   nlinarith [ abs_lt.mp this, show ( 0 : ℝ ) ≤ #s' * #t' by positivity ]
 
@@ -159,7 +204,7 @@ vertex all of whose `t'`-neighbours lie in `U` has fewer than `(d-ε)·|t'|`
 neighbours in `t'`.
 -/
 lemma isUniform_exists_fresh_neighbor
-    {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {ε : ℝ} (hε0 : 0 < ε) (hε1 : ε ≤ 1) {s t t' U : Finset V}
     (ht' : t' ⊆ t) (hs : s.Nonempty)
     (ht'card : ε * (t.card : ℝ) ≤ (t'.card : ℝ))
@@ -167,6 +212,8 @@ lemma isUniform_exists_fresh_neighbor
     (huni : G.IsUniform ε s t) :
     ((s.filter (fun a => ¬ ∃ b ∈ t', G.Adj a b ∧ b ∉ U)).card : ℝ)
       < ε * (s.card : ℝ) := by
+  classical
+  let := Fintype.ofFinite V
   refine lt_of_le_of_lt ?_ (isUniform_few_low_degree_subset G hε0 hε1 ht' hs ht'card huni)
   refine Nat.cast_le.mpr (Finset.card_le_card ?_)
   intro a ha
@@ -174,7 +221,7 @@ lemma isUniform_exists_fresh_neighbor
   obtain ⟨has, hane⟩ := ha
   refine ⟨has, ?_⟩
   -- every `t'`-neighbour of `a` lies in `U`, so `N(a) ∩ t' ⊆ U ∩ t'`
-  push_neg at hane
+  push Not at hane
   have hsub : (t'.filter (fun b => G.Adj a b)) ⊆ (U ∩ t') := by
     intro b hb
     rw [Finset.mem_filter] at hb
@@ -207,7 +254,7 @@ the `≥ (d-ε)·|t|` neighbours of `p` with the good set and removing `U` leave
 nonempty choice.
 -/
 lemma isUniform_good_fresh_neighbor
-    {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {ε : ℝ} (hε0 : 0 < ε) (hε1 : ε ≤ 1) {s t : Finset V}
     (hs : s.Nonempty) (ht : t.Nonempty)
     (huni : G.IsUniform ε s t)
@@ -220,13 +267,19 @@ lemma isUniform_good_fresh_neighbor
     ∃ w ∈ t, G.Adj p w ∧ w ∉ U ∧
       ((G.edgeDensity s t : ℝ) - ε) * (s.card : ℝ)
         ≤ ((s.filter (fun a => G.Adj w a)).card : ℝ) := by
+  classical
+  let := Fintype.ofFinite V
   contrapose! hU;
-  refine' le_trans hpdeg ( le_trans ( Nat.cast_le.mpr <| Finset.card_le_card _ ) _ );
-  exact U ∪ t.filter ( fun w => w ∉ U ∧ ( s.filter ( fun a => G.Adj w a ) ).card < ( G.edgeDensity s t - ε ) * s.card );
+  let B :=
+      U ∪
+        t.filter
+          (fun w =>
+            w ∉ U ∧ (s.filter (fun a => G.Adj w a)).card < (G.edgeDensity s t - ε) * s.card)
+  refine le_trans hpdeg (le_trans (Nat.cast_le.mpr <| Finset.card_le_card (t := B) ?_) ?_)
   · grind;
-  · refine' le_trans ( Nat.cast_le.mpr ( Finset.card_union_le _ _ ) ) _;
+  · refine le_trans ( Nat.cast_le.mpr ( Finset.card_union_le _ _ ) ) ?_;
     simp only [Nat.cast_add, add_le_add_iff_left];
-    refine' le_trans _ ( le_of_lt ( isUniform_few_low_degree G hε0 hε1 ht hs huni.symm ) );
+    refine le_trans ?_ ( le_of_lt ( isUniform_few_low_degree G hε0 hε1 ht hs huni.symm ) );
     rw [ SimpleGraph.edgeDensity_comm ];
     exact_mod_cast Finset.card_mono fun x hx => by aesop;
 
@@ -240,7 +293,7 @@ the *root-placement* step of the single-pair tree embedding: the root has no
 parent, so we only need a fresh image that is good enough to host its children.
 -/
 lemma isUniform_exists_good_unused
-    {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {ε : ℝ} (hε0 : 0 < ε) (hε1 : ε ≤ 1) {s t : Finset V}
     (hs : s.Nonempty) (ht : t.Nonempty)
     (huni : G.IsUniform ε s t)
@@ -249,8 +302,15 @@ lemma isUniform_exists_good_unused
     ∃ w ∈ s, w ∉ U ∧
       ((G.edgeDensity s t : ℝ) - ε) * (t.card : ℝ)
         ≤ ((t.filter (fun b => G.Adj w b)).card : ℝ) := by
+  classical
+  let := Fintype.ofFinite V
   contrapose! hU;
-  have h_card : (s.filter (fun a => ((t.filter (fun b => G.Adj a b)).card : ℝ) < ((G.edgeDensity s t : ℝ) - ε) * (t.card : ℝ))).card ≥ (s \ U).card := by
+  have h_card :
+      (s.filter
+            (fun a =>
+              ((t.filter (fun b => G.Adj a b)).card : ℝ) <
+                ((G.edgeDensity s t : ℝ) - ε) * (t.card : ℝ))).card ≥
+        (s \ U).card := by
     exact Finset.card_le_card fun x hx => by aesop;
   have hbad := isUniform_few_low_degree G hε0 hε1 hs ht huni
   have hcardR : ((s \ U).card : ℝ) ≤
@@ -269,7 +329,7 @@ neighbour `w` is produced in `s`.  (Immediate from the original via `huni.symm`
 and `SimpleGraph.edgeDensity_comm`.)
 -/
 lemma isUniform_good_fresh_neighbor_right
-    {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {ε : ℝ} (hε0 : 0 < ε) (hε1 : ε ≤ 1) {s t : Finset V}
     (hs : s.Nonempty) (ht : t.Nonempty)
     (huni : G.IsUniform ε s t)
@@ -282,6 +342,8 @@ lemma isUniform_good_fresh_neighbor_right
     ∃ w ∈ s, G.Adj p w ∧ w ∉ U ∧
       ((G.edgeDensity s t : ℝ) - ε) * (t.card : ℝ)
         ≤ ((t.filter (fun a => G.Adj w a)).card : ℝ) := by
+  classical
+  let := Fintype.ofFinite V
   have hcomm : (G.edgeDensity t s : ℝ) = (G.edgeDensity s t : ℝ) := by
     rw [SimpleGraph.edgeDensity_comm]
   have := isUniform_good_fresh_neighbor G hε0 hε1 ht hs huni.symm (p := p)
@@ -293,7 +355,7 @@ lemma isUniform_good_fresh_neighbor_right
 swapped: a good, unused vertex is produced in `t` (good on the `s`-side).
 -/
 lemma isUniform_exists_good_unused_right
-    {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {ε : ℝ} (hε0 : 0 < ε) (hε1 : ε ≤ 1) {s t : Finset V}
     (hs : s.Nonempty) (ht : t.Nonempty)
     (huni : G.IsUniform ε s t)
@@ -302,6 +364,8 @@ lemma isUniform_exists_good_unused_right
     ∃ w ∈ t, w ∉ U ∧
       ((G.edgeDensity s t : ℝ) - ε) * (s.card : ℝ)
         ≤ ((s.filter (fun b => G.Adj w b)).card : ℝ) := by
+  classical
+  let := Fintype.ofFinite V
   have hcomm : (G.edgeDensity t s : ℝ) = (G.edgeDensity s t : ℝ) := by
     rw [SimpleGraph.edgeDensity_comm]
   have := isUniform_exists_good_unused G hε0 hε1 ht hs huni.symm (U := U) hU

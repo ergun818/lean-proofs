@@ -33,7 +33,7 @@ namespace Erdos550
 `m₀` such that every cluster family `𝒜` with `|𝒜| ≥ 4q²`, at most `B` irregular
 pairs inside it (`B < |𝒜|²/(4q)`), clusters of size `≥ m₀`, pairwise disjoint and
 pairwise-`ε₀`-uniform, contains an `ε₀`-regular pair of blue density `≥ d`. -/
-lemma alphaQ_dense_regular_pair {W : Type} [Fintype W] (F : SimpleGraph W)
+lemma alphaQ_dense_regular_pair {W : Type} [Finite W] (F : SimpleGraph W)
     (q : ℕ) (hcol : F.Colorable (q + 1)) (hq : 1 ≤ q) (d : ℝ) (hd1 : d < 1) :
     ∃ ε₀ : ℝ, 0 < ε₀ ∧ ∃ m₀ : ℕ, ∀ {V : Type} [Fintype V] [DecidableEq V]
       (G : SimpleGraph V) [DecidableRel G.Adj], ¬ (F ⊑ Gᶜ) →
@@ -46,6 +46,7 @@ lemma alphaQ_dense_regular_pair {W : Type} [Fintype W] (F : SimpleGraph W)
         (∀ i ∈ 𝒜, ∀ j ∈ 𝒜, i ≠ j → Disjoint (C i) (C j)) →
         (∀ i j, Rg.Adj i j → G.IsUniform ε₀ (C i) (C j)) →
         ∃ i ∈ 𝒜, ∃ j ∈ 𝒜, Rg.Adj i j ∧ (d : ℝ) ≤ (G.edgeDensity (C i) (C j) : ℝ) := by
+  let := Fintype.ofFinite W
   classical
   obtain ⟨ε₀, hε₀, m₀, hmain⟩ := exists_dense_regular_pair_in_family F q hcol d hd1
   refine ⟨ε₀, hε₀, m₀, ?_⟩

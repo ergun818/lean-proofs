@@ -32,12 +32,15 @@ of exactly `k` vertices containing `p`, then `p` has a neighbour outside `S`
 (using that `p` is never its own neighbour).
 -/
 lemma exists_fresh_neighbor
-    {W : Type} [Fintype W] [DecidableEq W] (G : SimpleGraph W) [DecidableRel G.Adj]
+    {W : Type} [Fintype W] (G : SimpleGraph W) [DecidableRel G.Adj]
     {p : W} {k : ℕ} {S : Finset W} (hp : p ∈ S) (hScard : S.card = k)
     (hdeg : k ≤ (G.neighborFinset p).card) :
     ∃ w, w ∈ G.neighborFinset p ∧ w ∉ S := by
+  classical
   contrapose! hdeg;
-  exact lt_of_lt_of_le ( Finset.card_lt_card ( Finset.ssubset_iff_subset_ne.mpr ⟨ hdeg, by aesop_cat ⟩ ) ) hScard.le
+  exact
+      lt_of_lt_of_le
+        (Finset.card_lt_card (Finset.ssubset_iff_subset_ne.mpr ⟨hdeg, by aesop_cat⟩)) hScard.le
 
 /-- **Leaf-extension lemma.** Suppose `ℓ` is a vertex of `T` whose only neighbour
 is `u`. Given an injective homomorphism `f` from the induced subgraph on `{ℓ}ᶜ`
@@ -115,7 +118,7 @@ lemma exists_dense_subset
   intro hB hsum
   by_cases h_case : ∀ v ∈ B, d / 2 ≤ ((G.neighborFinset v ∩ B).card : ℝ)
   · exact ⟨B, Finset.Subset.refl _, hB, h_case⟩
-  · push_neg at h_case
+  · push Not at h_case
     obtain ⟨v, hvB, hv⟩ := h_case
     set B' := B.erase v with hB'
     have key : ∀ u ∈ B', (G.neighborFinset u ∩ B).card
@@ -186,14 +189,15 @@ If a finite graph `G` on a nonempty vertex set has minimum degree at least
 `n - 1`, where `n = Fintype.card V`, then it contains a copy of every tree `T`
 on `V`. -/
 theorem tree_embeds_of_minDegree :
-    ∀ (n : ℕ) {V : Type} [Fintype V] (T : SimpleGraph V) [DecidableRel T.Adj],
+    ∀ (n : ℕ) {V : Type} [Fintype V] (T : SimpleGraph V),
       T.IsTree → Fintype.card V = n →
-      ∀ {W : Type} [Fintype W] [DecidableEq W] (G : SimpleGraph W) [DecidableRel G.Adj],
+      ∀ {W : Type} [Fintype W] (G : SimpleGraph W) [DecidableRel G.Adj],
         0 < Fintype.card W → n - 1 ≤ G.minDegree → T ⊑ G := by
+  classical
   intro n
   induction n using Nat.strong_induction_on with
   | _ n ih =>
-  intro V _ T _ hT hV W _ _ G _ hG hmin
+  intro V _ T hT hV W _ G _ hG hmin
   classical
   by_cases hV_le_one : Fintype.card V ≤ 1
   · have hT_empty : T = ⊥ := by
@@ -250,26 +254,33 @@ subgraph of minimum degree `≥ |T| − 1` (`exists_dense_subset`) and then embe
 greedily (`tree_embeds_of_minDegree`).
 -/
 theorem tree_embeds_of_avgDegree
-    {V : Type} [Fintype V] (T : SimpleGraph V) [DecidableRel T.Adj]
+    {V : Type} [Fintype V] (T : SimpleGraph V)
     (hT : T.IsTree)
-    {W : Type} [Fintype W] [DecidableEq W] (G : SimpleGraph W) [DecidableRel G.Adj]
+    {W : Type} [Fintype W] (G : SimpleGraph W) [DecidableRel G.Adj]
     (hW : 0 < Fintype.card W)
     (hdeg : 2 * ((Fintype.card V : ℝ) - 1) * (Fintype.card W : ℝ)
         ≤ 2 * (G.edgeFinset.card : ℝ)) :
     T ⊑ G := by
-  obtain ⟨A, hA⟩ : ∃ A : Finset W, A.Nonempty ∧ A ⊆ Finset.univ ∧ ∀ v ∈ A, ((G.neighborFinset v ∩ A).card : ℝ) ≥ (Fintype.card V - 1 : ℝ) := by
-    have := exists_dense_subset G ( 2 * ( Fintype.card V - 1 ) ) Finset.univ ?_ ?_ <;> norm_num at *;
+  classical
+  obtain ⟨A, hA⟩ : ∃ A : Finset W,
+      A.Nonempty ∧
+        A ⊆ Finset.univ ∧
+          ∀ v ∈ A, ((G.neighborFinset v ∩ A).card : ℝ) ≥ (Fintype.card V - 1 : ℝ) := by
+    have := exists_dense_subset G
+      (2 * (Fintype.card V - 1)) Finset.univ ?_ ?_ <;> norm_num at *
     · exact this;
     · exact Finset.card_pos.mp ( by simpa );
     · convert! hdeg using 1;
       exact mod_cast SimpleGraph.sum_degrees_eq_twice_card_edges G;
   obtain ⟨hA_nonempty, hA_subset, hA_deg⟩ := hA
   have hA_card : Fintype.card V - 1 ≤ (G.induce (↑A : Set W)).minDegree := by
-    have hA_card : ∀ v : { x // x ∈ A }, (Fintype.card V - 1 : ℕ) ≤ (G.induce (↑A : Set W)).degree v := by
-      intro v; specialize hA_deg v v.2; simp_all +decide only [SetLike.coe_sort_coe, tsub_le_iff_right] ;
+    have hA_card :
+        ∀ v : { x // x ∈ A }, (Fintype.card V - 1 : ℕ) ≤ (G.induce (↑A : Set W)).degree v := by
+      intro v; specialize hA_deg v v.2; simp_all +decide only [SetLike.coe_sort_coe,
+        tsub_le_iff_right] ;
       norm_cast at hA_deg;
       convert! hA_deg using 2;
-      refine' Finset.card_bij ( fun x hx => x ) _ _ _ <;> aesop;
+      refine Finset.card_bij ( fun x hx => x ) ?_ ?_ ?_ <;> aesop;
     convert! SimpleGraph.le_minDegree_of_forall_le_degree _ _ hA_card;
     exact ⟨ ⟨ hA_nonempty.choose, hA_nonempty.choose_spec ⟩ ⟩;
   have hA_card : T ⊑ G.induce (↑A : Set W) := by

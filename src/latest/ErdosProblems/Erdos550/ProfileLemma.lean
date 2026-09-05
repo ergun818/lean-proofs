@@ -33,19 +33,25 @@ namespace Erdos550
 `#B`, and `α` numbers at most `#W`, then there is an injection of `α` into `V`
 landing inside `W`, sending every root into `B`.
 -/
-theorem exists_rooted_inj {α : Type*} [Fintype α] [DecidableEq α]
-    {V : Type*} [DecidableEq V]
+theorem exists_rooted_inj {α : Type*} [Fintype α]
+    {V : Type*}
     (W B : Finset V) (hBW : B ⊆ W) (root : α → Prop) [DecidablePred root]
     (hroot : Fintype.card {a // root a} ≤ B.card)
     (hcard : Fintype.card α ≤ W.card) :
     ∃ f : α → V, Function.Injective f ∧ (∀ a, f a ∈ W) ∧ (∀ a, root a → f a ∈ B) := by
+  classical
   obtain ⟨f, hf_inj⟩ : ∃ f : {a : α // root a} → V, Function.Injective f ∧ (∀ a, f a ∈ B) := by
     have := Finset.exists_subset_card_eq hroot;
     obtain ⟨ t, ht₁, ht₂ ⟩ := this;
     have := Finset.equivOfCardEq ht₂;
-    exact ⟨ fun a => this.symm ⟨ a, Finset.mem_univ _ ⟩ |>.1, fun a b h => by simpa [ Subtype.ext_iff ] using! this.symm.injective ( Subtype.ext h ), fun a => ht₁ ( this.symm ⟨ a, Finset.mem_univ _ ⟩ |>.2 ) ⟩;
-  obtain ⟨g, hg_inj⟩ : ∃ g : {a : α // ¬root a} → V, Function.Injective g ∧ (∀ a, g a ∈ W \ Finset.image f Finset.univ) := by
-    have h_card : Finset.card (W \ Finset.image f Finset.univ) ≥ Fintype.card {a : α // ¬root a} := by
+    exact
+        ⟨fun a => this.symm ⟨a, Finset.mem_univ _⟩ |>.1, fun a b h => by
+          simpa [Subtype.ext_iff] using! this.symm.injective (Subtype.ext h), fun a =>
+          ht₁ (this.symm ⟨a, Finset.mem_univ _⟩ |>.2)⟩;
+  obtain ⟨g, hg_inj⟩ : ∃ g : { a : α // ¬root a } → V,
+      Function.Injective g ∧ (∀ a, g a ∈ W \ Finset.image f Finset.univ) := by
+    have h_card :
+        Finset.card (W \ Finset.image f Finset.univ) ≥ Fintype.card {a : α // ¬root a} := by
       rw [ Finset.card_sdiff ];
       rw [ Finset.inter_eq_left.mpr ];
       · rw [ Finset.card_image_of_injective _ hf_inj.1 ];
@@ -56,8 +62,11 @@ theorem exists_rooted_inj {α : Type*} [Fintype α] [DecidableEq α]
     obtain ⟨ t, ht₁, ht₂ ⟩ := this;
     have h_equiv : Nonempty ( {a : α // ¬root a} ≃ t ) := by
       exact ⟨ Fintype.equivOfCardEq <| by simp +decide [ ht₂ ] ⟩;
-    exact ⟨ _, Subtype.val_injective.comp h_equiv.some.injective, fun a => ht₁ <| h_equiv.some a |>.2 ⟩;
-  refine' ⟨ fun a => if ha : root a then f ⟨ a, ha ⟩ else g ⟨ a, ha ⟩, _, _, _ ⟩ <;> simp_all +decide [ Function.Injective ]; all_goals grind
+    exact
+        ⟨_, Subtype.val_injective.comp h_equiv.some.injective, fun a =>
+          ht₁ <| h_equiv.some a |>.2⟩;
+  refine ⟨fun a => if ha : root a then f ⟨a, ha⟩ else g ⟨a, ha⟩, ?_, ?_, ?_⟩ <;>
+      simp_all +decide [Function.Injective]; all_goals grind
 
 /-
 Degree inside an induced subgraph equals the size of the neighbourhood
@@ -66,8 +75,7 @@ intersected with the inducing set.
 theorem induce_degree_eq {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (W : Finset V) (v : V) (hv : v ∈ W) :
     (G.induce (↑W : Set V)).degree ⟨v, hv⟩ = ((G.neighborFinset v) ∩ W).card := by
-  refine' Finset.card_bij _ _ _ _;
-  use fun a ha => a.val;
+  refine Finset.card_bij (fun a _ => a.val) ?_ ?_ ?_
   · aesop;
   · grind;
   · simp +decide only [mem_inter, mem_neighborFinset, SetLike.coe_sort_coe, comap_adj, exists_prop,
@@ -104,27 +112,49 @@ theorem bin_embed
       (∀ a, f a ∈ W i) ∧
       (∀ a, parent a.1 = none → Gb.Adj x (f a)) ∧
       (∀ a b, parent a.1 = some b.1 → Gb.Adj (f a) (f b)) := by
-  obtain ⟨g, hg_inj, hg_mem, hg_root⟩ : ∃ g : {v : VT // v ≠ z ∧ home v = i} → V, Function.Injective g ∧ (∀ a, g a ∈ W i) ∧ (∀ a, parent a.1 = none → g a ∈ Gb.neighborFinset x) := by
-    convert! exists_rooted_inj ( W i ) ( Gb.neighborFinset x ∩ W i ) ( Finset.inter_subset_right ) ( fun a => parent a.1 = none ) _ hWcard using 1;
+  obtain ⟨g, hg_inj, hg_mem, hg_root⟩ : ∃ g : { v : VT // v ≠ z ∧ home v = i } → V,
+      Function.Injective g ∧
+        (∀ a, g a ∈ W i) ∧ (∀ a, parent a.1 = none → g a ∈ Gb.neighborFinset x) := by
+    convert!
+        exists_rooted_inj (W i) (Gb.neighborFinset x ∩ W i) (Finset.inter_subset_right)
+          (fun a => parent a.1 = none) _ hWcard using
+        1;
     · grind;
-    · refine' le_trans _ hroots;
-      refine' Fintype.card_le_of_embedding _;
-      refine' ⟨ fun a => ⟨ a.val, hroot_adj _ ( by aesop ) a.2, a.1.2.2 ⟩, fun a b h => _ ⟩ ; aesop;
+    · refine le_trans ?_ hroots;
+      refine Fintype.card_le_of_embedding ?_;
+      refine ⟨fun a => ⟨a.1.1, hroot_adj a.1.1 a.1.2.1 a.2, a.1.2.2⟩, ?_⟩
+      intro a b hab
+      exact Subtype.ext (Subtype.ext (by simpa only [Subtype.mk.injEq] using hab))
   -- Define the parent function for the subgraph.
-  set parentα : {v : VT // v ≠ z ∧ home v = i} → Option {v : VT // v ≠ z ∧ home v = i} := fun a => match parent a.val with | none => none | some u => if hu : u ≠ z ∧ home u = i then some ⟨u, hu⟩ else none;
+  set parentα : { v : VT // v ≠ z ∧ home v = i } → Option { v : VT // v ≠ z ∧ home v = i } :=
+      fun a =>
+      match parent a.val with
+      | none => none
+      | some u => if hu : u ≠ z ∧ home u = i then some ⟨u, hu⟩ else none;
   -- Define the rank function for the subgraph.
   set rankα : {v : VT // v ≠ z ∧ home v = i} → ℕ := fun a => rank a.val;
   -- Apply the rooted forest embedding lemma to the subgraph.
-  obtain ⟨f, hf_inj, hf_root, hf_edge⟩ : ∃ f : {v : VT // v ≠ z ∧ home v = i} → ↥(W i), Function.Injective f ∧ (∀ a, parentα a = none → f a = ⟨g a, hg_mem a⟩) ∧ (∀ a b, parentα a = some b → Gb.Adj (f a).val (f b).val) := by
-    have hdegJ : ∀ vv : ↥(W i), Fintype.card {v : VT // v ≠ z ∧ home v = i} - 1 ≤ (Gb.induce (W i : Set V)).degree vv := by
+  obtain ⟨f, hf_inj, hf_root, hf_edge⟩ : ∃ f : { v : VT // v ≠ z ∧ home v = i } → ↥(W i),
+      Function.Injective f ∧
+        (∀ a, parentα a = none → f a = ⟨g a, hg_mem a⟩) ∧
+          (∀ a b, parentα a = some b → Gb.Adj (f a).val (f b).val) := by
+    have hdegJ :
+        ∀ vv : ↥(W i),
+          Fintype.card { v : VT // v ≠ z ∧ home v = i } - 1 ≤
+            (Gb.induce (W i : Set V)).degree vv := by
       intro vv;
       convert! hdeg vv vv.2 using 1;
       convert! induce_degree_eq Gb ( W i ) vv vv.2 using 1;
-    have := Erdos550.rooted_forest_embedding ( Gb.induce ( W i : Set V ) ) parentα rankα ( fun a b hab => ?_ ) ( fun vv => hdegJ vv ) ( fun a => ⟨ g a, hg_mem a ⟩ ) ( fun a b hab => ?_ );
-    · exact ⟨ this.choose, this.choose_spec.1, this.choose_spec.2.1, fun a b hab => this.choose_spec.2.2 a b hab ⟩;
+    have :=
+        Erdos550.rooted_forest_embedding (Gb.induce (W i : Set V)) parentα rankα
+          (fun a b hab => ?_) (fun vv => hdegJ vv) (fun a => ⟨g a, hg_mem a⟩)
+          (fun a b hab => ?_);
+    · exact
+          ⟨this.choose, this.choose_spec.1, this.choose_spec.2.1, fun a b hab =>
+            this.choose_spec.2.2 a b hab⟩;
     · grind;
     · lia;
-  refine' ⟨ fun a => f a, _, _, _, _ ⟩;
+  refine ⟨ fun a => f a, ?_, ?_, ?_, ?_ ⟩;
   · exact Subtype.coe_injective.comp hf_inj;
   · exact fun a => f a |>.2;
   · intro a ha; specialize hf_root a; aesop;
@@ -165,29 +195,46 @@ theorem tree_embed_from_allocation
         Fintype.card {w : VT // w ≠ z ∧ home w = i} - 1
           ≤ ((Gb.neighborFinset v) ∩ W i).card) :
     T ⊑ Gb := by
-  obtain ⟨f, hf⟩ : ∃ f : VT → V, Function.Injective f ∧ (∀ a b, T.Adj a b → Gb.Adj (f a) (f b)) := by
-    -- By `bin_embed`, for each `i`, there exists a function `f_i` that embeds the forest component of `T - z` into `Gb` while respecting the allocation `home`.
+  obtain ⟨f, hf⟩ :
+      ∃ f : VT → V, Function.Injective f ∧ (∀ a b, T.Adj a b → Gb.Adj (f a) (f b)) := by
+    -- By `bin_embed`, for each `i`, there exists a function `f_i` that embeds the forest
+    -- component of `T - z` into `Gb` while respecting the allocation `home`.
     have h_bin_embed : ∀ i, ∃ f_i : {v : VT // v ≠ z ∧ home v = i} → V,
-      Function.Injective f_i ∧ (∀ a, f_i a ∈ W i) ∧ (∀ a, parent a.1 = none → Gb.Adj x (f_i a)) ∧ (∀ a b, parent a.1 = some b.1 → Gb.Adj (f_i a) (f_i b)) := by
-        exact fun i => bin_embed T Gb q z x W home parent rank i hparent_ne hparent_rank hroot_adj hhome_parent ( hroots i ) ( hWcard i ) ( hdeg i );
+      Function.Injective f_i ∧
+          (∀ a, f_i a ∈ W i) ∧
+            (∀ a, parent a.1 = none → Gb.Adj x (f_i a)) ∧
+              (∀ a b, parent a.1 = some b.1 → Gb.Adj (f_i a) (f_i b)) := by
+        exact fun i =>
+              bin_embed T Gb q z x W home parent rank i hparent_ne hparent_rank hroot_adj
+                hhome_parent (hroots i) (hWcard i) (hdeg i);
     choose f hf_inj hf_mem hf_root hf_edge using h_bin_embed;
-    refine' ⟨ fun v => if h : v = z then x else f ( home v ) ⟨ v, h, rfl ⟩, _, _ ⟩;
+    refine ⟨ fun v => if h : v = z then x else f ( home v ) ⟨ v, h, rfl ⟩, ?_, ?_ ⟩;
     · intro u v huv;
-      by_cases hu : u = z <;> by_cases hv : v = z <;> simp +decide [ hu, hv ] at huv ⊢;
+      by_cases hu : u = z <;> by_cases hv : v = z <;> simp +decide only [hu, ↓reduceDIte, hv,
+        ne_eq] at huv ⊢;
       · exact False.elim ( hxW ( home v ) ( huv ▸ hf_mem _ _ ) );
       · exact hxW _ ( huv ▸ hf_mem _ _ );
       · by_cases h : home u = home v;
         · grind;
-        · exact False.elim ( Finset.disjoint_left.mp ( hWdisj _ _ h ) ( hf_mem _ _ ) ( huv.symm ▸ hf_mem _ _ ) );
+        · exact
+              False.elim
+                (Finset.disjoint_left.mp (hWdisj _ _ h) (hf_mem _ _) (huv.symm ▸ hf_mem _ _));
     · intro a b hab;
-      by_cases ha : a = z <;> by_cases hb : b = z <;> simp +decide only [ne_eq] at hab ⊢;
+      by_cases ha : a = z <;> by_cases hb : b = z <;> simp only [ha, hb, SimpleGraph.irrefl,
+        ↓reduceDIte, ne_eq] at hab ⊢;
       · exact hf_root _ _ ( hnbr_root _ hab );
-      · exact SimpleGraph.Adj.symm ( hf_root ( home a ) ⟨ a, ha, rfl ⟩ ( hnbr_root a ( by simpa [ SimpleGraph.adj_comm ] using! hab ) ) );
-      · cases' hedge_parent a b hab ha hb with h h;
+      · exact
+            SimpleGraph.Adj.symm
+              (hf_root (home a) ⟨a, ha, rfl⟩
+                (hnbr_root a (by simpa [SimpleGraph.adj_comm] using! hab)));
+      · rcases hedge_parent a b hab ha hb with h | h
         · grind +revert;
-        · convert! hf_edge ( home a ) ⟨ b, hb, by rw [ hhome_parent _ _ h ] ⟩ ⟨ a, ha, rfl ⟩ h |> SimpleGraph.Adj.symm using 1;
+        · convert!
+            hf_edge (home a) ⟨b, hb, by rw [hhome_parent _ _ h]⟩ ⟨a, ha, rfl⟩ h |>
+              SimpleGraph.Adj.symm using
+            1;
           grind;
-  refine' ⟨ ⟨ f, _ ⟩, _ ⟩;
+  refine ⟨ ⟨ f, ?_ ⟩, ?_ ⟩;
   exacts [ fun { a b } hab => hf.2 a b hab, hf.1 ]
 
 end Erdos550

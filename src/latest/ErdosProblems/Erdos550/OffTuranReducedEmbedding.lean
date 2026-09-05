@@ -26,11 +26,11 @@ open Finset SimpleGraph Finpartition
 
 namespace Erdos550
 
-open Classical
 
 noncomputable def offTuranMatchingTargets
     {ι κ : Type*} [Fintype κ] [DecidableEq ι] [DecidableEq κ]
     (cL cR : κ → ι) : Finset ι :=
+  open scoped Classical in
   Finset.univ.image cL ∪ Finset.univ.image cR
 
 noncomputable def offTuranHeadCoreFamily
@@ -39,6 +39,7 @@ noncomputable def offTuranHeadCoreFamily
     (R : SimpleGraph ι) [DecidableRel R.Adj]
     (C : ι → Finset V) (ε d : ℝ)
     (Tset : Finset ι) (thr : ℝ) (X Y : ι) (b : Bool) : Finset V :=
+  open scoped Classical in
   hpOffTuranHeadCore G R C ε d Tset thr
     (offTuranBoolHead X Y b) (offTuranBoolOtherHead X Y b)
 
@@ -49,6 +50,7 @@ noncomputable def offTuranLeftThreshold
     (R : SimpleGraph ι) [DecidableRel R.Adj]
     (C : ι → Finset V) (K₀ : Finset κ) (X Y : ι)
     (ε : ℝ) (cL : κ → ι) (k : κ) : ℝ :=
+  open scoped Classical in
   hpTrimmedThreshold
     (hpHeadEndpointWeight G R C
       (offTuranAssignedHead K₀ X Y k) (cL k))
@@ -61,6 +63,7 @@ noncomputable def offTuranRightThreshold
     (R : SimpleGraph ι) [DecidableRel R.Adj]
     (C : ι → Finset V) (K₀ : Finset κ) (X Y : ι)
     (ε : ℝ) (cR : κ → ι) (k : κ) : ℝ :=
+  open scoped Classical in
   hpTrimmedThreshold
     (hpHeadEndpointWeight G R C
       (offTuranAssignedHead K₀ X Y k) (cR k))
@@ -74,6 +77,7 @@ noncomputable def offTuranLeftContact
     (C : ι → Finset V) (ε d : ℝ)
     (Tset : Finset ι) (thr : ℝ) (K₀ : Finset κ) (X Y : ι)
     (cL : κ → ι) (k : κ) : Finset V :=
+  open scoped Classical in
   hpHeadContactSet G R C
     (offTuranHeadCoreFamily G R C ε d Tset thr X Y
       (offTuranAssignedBool K₀ k))
@@ -87,18 +91,20 @@ noncomputable def offTuranRightContact
     (C : ι → Finset V) (ε d : ℝ)
     (Tset : Finset ι) (thr : ℝ) (K₀ : Finset κ) (X Y : ι)
     (cR : κ → ι) (k : κ) : Finset V :=
+  open scoped Classical in
   hpHeadContactSet G R C
     (offTuranHeadCoreFamily G R C ε d Tset thr X Y
       (offTuranAssignedBool K₀ k))
     ε (offTuranAssignedHead K₀ X Y k) (cR k)
 
 set_option maxHeartbeats 2000000 in
+-- The embedding assembles parity assignments and checks the matching and cluster capacities.
 theorem offTuran_reduced_parity_embedding
     {A : Type} {V κ : Type*}
     [Fintype A] [DecidableEq A]
     [Fintype V] [DecidableEq V] [Nonempty V]
     [Fintype κ] [DecidableEq κ]
-    (T : SimpleGraph A) (hT : T.IsTree)
+    (T : SimpleGraph A) (_hT : T.IsTree)
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {ε d base η : ℝ} {m₀ : ℕ}
     (RD : OffTuranReducedDegreeData G ε d base η m₀)
@@ -188,6 +194,7 @@ theorem offTuran_reduced_parity_embedding
             (fun i : {C // C ∈ RD.P.parts} => i.1)
             (offTuranBoolHead X Y b) cL cR k) :
     T ⊑ G := by
+  classical
   let R := offTuranReducedGraph G RD.P ε d
   let C : {C // C ∈ RD.P.parts} → Finset V := fun i => i.1
   let Tset := offTuranMatchingTargets cL cR

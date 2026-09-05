@@ -26,15 +26,14 @@ open Finset SimpleGraph
 
 namespace Erdos550
 
-open Classical
 
 set_option maxHeartbeats 800000 in
+-- The direct embedding maintains the matching state and verifies the final graph copy.
 theorem hp_direct_tree_embedding
     {A : Type} {V κ : Type*}
     [Fintype A] [DecidableEq A]
-    [Fintype V] [DecidableEq V] [Nonempty V]
-    [DecidableEq κ]
-    (T : SimpleGraph A) [DecidableRel T.Adj]
+    [Finite V] [DecidableEq V] [Nonempty V]
+    (T : SimpleGraph A)
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (Sseed : Finset A)
     (parent : A → Option A) (rank : A → ℕ)
@@ -87,6 +86,8 @@ theorem hp_direct_tree_embedding
               (liftComponentMap T Sseed c fC))
             CLeft CRight leftThreshold rightThreshold margin τ) :
     T ⊑ G := by
+  let := Fintype.ofFinite V
+  classical
   let Inv : Finset A → (A → V) → Prop :=
     HPDirectInvariant Sseed parent col routeColour headCore retained matchingRegion
       CLeft CRight leftThreshold rightThreshold margin τ
@@ -113,7 +114,7 @@ theorem hp_direct_tree_embedding
     let g : A → V := fun x =>
       if x = a then v else Classical.arbitrary V
     have hBP : Disjoint ({a} : Finset A) P := by
-      simp [Finset.disjoint_left, haP]
+      simp [haP]
     have himg : Disjoint (({a} : Finset A).image g) (P.image f) := by
       rw [Finset.disjoint_left]
       intro z hzNew hzOld

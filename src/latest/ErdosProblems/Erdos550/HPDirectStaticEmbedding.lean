@@ -18,15 +18,14 @@ open Finset SimpleGraph
 
 namespace Erdos550
 
-open Classical
 
 set_option maxHeartbeats 800000 in
+-- The static seed construction checks the component extension and final embedding data.
 theorem hp_direct_tree_embedding_static_seed
     {A : Type} {V κ : Type*}
     [Fintype A] [DecidableEq A]
-    [Fintype V] [DecidableEq V] [Nonempty V]
-    [DecidableEq κ]
-    (T : SimpleGraph A) [DecidableRel T.Adj]
+    [Finite V] [DecidableEq V] [Nonempty V]
+    (T : SimpleGraph A)
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (Sseed : Finset A)
     (parent : A → Option A) (rank : A → ℕ)
@@ -79,6 +78,8 @@ theorem hp_direct_tree_embedding_static_seed
               (liftComponentMap T Sseed c fC))
             CLeft CRight leftThreshold rightThreshold margin τ) :
     T ⊑ G := by
+  let := Fintype.ofFinite V
+  classical
   apply hp_direct_tree_embedding T G Sseed parent rank hrank hedge D
     col routeColour headCore retained matchingRegion CLeft CRight
     leftThreshold rightThreshold margin τ hτ

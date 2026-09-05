@@ -17,11 +17,10 @@ open Finset
 
 namespace Erdos550
 
-open Classical
 
 theorem seed_singleton_fresh_extension
-    {A V : Type*} [Fintype A] [DecidableEq A]
-    [Fintype V] [DecidableEq V] [Nonempty V]
+    {A V : Type*} [Finite A] [DecidableEq A]
+    [Finite V] [DecidableEq V] [Nonempty V]
     (G : SimpleGraph V)
     (parent : A → Option A)
     (Inv : Finset A → (A → V) → Prop)
@@ -35,6 +34,9 @@ theorem seed_singleton_fresh_extension
     (hInv : ∀ v ∈ pool, v ∉ P.image f →
       Inv (P ∪ {a}) (fun x => if x = a then v else f x)) :
     IsFreshBlockExtension G parent {a} P f Inv := by
+  let := Fintype.ofFinite A
+  let := Fintype.ofFinite V
+  classical
   have hfresh : (pool \ P.image f).Nonempty := by
     apply Finset.nonempty_iff_ne_empty.mpr
     intro hempty
@@ -43,7 +45,7 @@ theorem seed_singleton_fresh_extension
       by_contra hvnot
       have : v ∈ pool \ P.image f :=
         Finset.mem_sdiff.mpr ⟨hv, hvnot⟩
-      simpa [hempty] using! this
+      simp [hempty] at this
     have hinter : P.image f ∩ pool = pool := by
       ext z
       constructor
@@ -62,7 +64,7 @@ theorem seed_singleton_fresh_extension
   · intro x hx y hy hxy
     have hxa : x = a := Finset.mem_singleton.mp hx
     have hya : y = a := Finset.mem_singleton.mp hy
-    simpa [g, hxa, hya]
+    simp [hxa, hya]
   · rw [Finset.disjoint_left]
     intro z hzNew hzOld
     obtain ⟨x, hx, hxz⟩ := Finset.mem_image.mp hzNew

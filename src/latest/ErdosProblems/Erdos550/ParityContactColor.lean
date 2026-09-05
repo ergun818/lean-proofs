@@ -19,19 +19,21 @@ open SimpleGraph Finset
 
 namespace Erdos550
 
-open Classical
 
 variable {A : Type} [Fintype A] [DecidableEq A]
 
 /-- Rebase a global bipartite colour so that the selected component root has
 local colour `false`. -/
 def relativeComponentColor (col : A → Bool) (root : A) (a : A) : Bool :=
+  open scoped Classical in
   if col a = col root then false else true
 
+omit [Fintype A] [DecidableEq A] in
 @[simp] lemma relativeComponentColor_root (col : A → Bool) (root : A) :
     relativeComponentColor col root root = false := by
   simp [relativeComponentColor]
 
+omit [DecidableEq A] [Fintype A] in
 lemma relativeComponentColor_parent
     (col : A → Bool) (root : A)
     {parent : A → Option A}
@@ -39,10 +41,12 @@ lemma relativeComponentColor_parent
     {a b : A} (hab : parent a = some b) :
     relativeComponentColor col root a ≠
       relativeComponentColor col root b := by
+  classical
   have habc := hcol a b hab
   cases ha : col a <;> cases hb : col b <;>
     cases hr : col root <;> simp_all [relativeComponentColor]
 
+omit [Fintype A] [DecidableEq A] in
 @[simp] lemma relativeComponentColor_eq_false_iff
     (col : A → Bool) (root a : A) :
     relativeComponentColor col root a = false ↔ col a = col root := by
@@ -60,9 +64,10 @@ lemma component_contact_colour_eq_root
       ∀ b ∈ componentSeeds T S c.1, col a = col b)
     {s x : A}
     (hs : s ∈ componentSeeds T S c.1)
-    (hx : x ∈ componentNonseedVertices T S c.1)
+    (_hx : x ∈ componentNonseedVertices T S c.1)
     (hsx : parent s = some x) :
     col x = col (D.root c) := by
+  classical
   have hu :
       componentUpperSeed T S D c ∈ componentSeeds T S c.1 := by
     apply seed_mem_componentSeeds_of_adj T S c.1

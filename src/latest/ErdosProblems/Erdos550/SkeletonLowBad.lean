@@ -33,8 +33,8 @@ noncomputable def badCount {V : Type*} [Fintype V] [DecidableEq V]
   (Tset.filter (fun m => (((C m).filter (fun x => G.Adj v x)).card : ℝ)
       < (dcap m - ε) * ((C m).card : ℝ))).card
 
-open Classical in
 set_option maxHeartbeats 1000000 in
+-- The skeleton proof combines the bad vertex count with the avoiding embedding capacities.
 /-- **Low-`Bad` skeleton embedding.**  Embed the skeleton forest into the head
 clusters so that every image is atypical toward at most `thr` target clusters. -/
 theorem skeleton_lowbad_embedding
@@ -68,28 +68,54 @@ theorem skeleton_lowbad_embedding
       (∀ a, f a ∈ C (cluA a)) ∧
       (∀ a b, parentA a = some b → G.Adj (f a) (f b)) ∧
       (∀ a, (badCount G C dcap ε Tset (f a) : ℝ) ≤ thr) := by
+  classical
   by_contra! h_contra;
   -- Apply the regularClusters_forest_embedding_weighted_avoiding theorem with the given parameters.
-  have := @regularClusters_forest_embedding_weighted_avoiding V _ _ G _ ε hε0 hε1 ι _ C R dcap hdcap1 hne hdisj huni hdens α _ _ parentA rankA hrankA cluA hhomA BB hB (fun i => if i ∈ Hset then (C i).filter (fun v => (badCount G C dcap ε Tset v : ℝ) > thr) else ∅) (by
+  have := @regularClusters_forest_embedding_weighted_avoiding V _ G _ ε hε0 hε1
+    ι _ C R dcap hdcap1 hne hdisj huni hdens α _ _ parentA rankA hrankA cluA hhomA BB hB
+    (fun i => if i ∈ Hset then
+      (C i).filter (fun v => (badCount G C dcap ε Tset v : ℝ) > thr) else ∅) (by
   intro i;
-  by_cases hi : i ∈ Hset <;> simp +decide only [gt_iff_lt];
-  · refine' lt_of_le_of_lt _ ( hcapSk i );
-    have h_markov : (Finset.card (Finset.filter (fun v => (badCount G C dcap ε Tset v : ℝ) > thr) (C i))) * thr ≤ ∑ v ∈ C i, (badCount G C dcap ε Tset v : ℝ) := by
-      have h_markov : ∀ v ∈ Finset.filter (fun v => (badCount G C dcap ε Tset v : ℝ) > thr) (C i), (badCount G C dcap ε Tset v : ℝ) ≥ thr := by
+  by_cases hi : i ∈ Hset <;> simp only [hi, ↓reduceIte, gt_iff_lt];
+  · refine lt_of_le_of_lt ?_ ( hcapSk i );
+    have h_markov :
+        (Finset.card (Finset.filter (fun v => (badCount G C dcap ε Tset v : ℝ) > thr) (C i))) *
+            thr ≤
+          ∑ v ∈ C i, (badCount G C dcap ε Tset v : ℝ) := by
+      have h_markov :
+          ∀ v ∈ Finset.filter (fun v => (badCount G C dcap ε Tset v : ℝ) > thr) (C i),
+            (badCount G C dcap ε Tset v : ℝ) ≥ thr := by
         exact fun v hv => le_of_lt <| Finset.mem_filter.mp hv |>.2;
-      exact le_trans ( by simp +decide [ mul_comm ] ) ( Finset.sum_le_sum h_markov ) |> le_trans <| Finset.sum_le_sum_of_subset_of_nonneg ( Finset.filter_subset _ _ ) fun _ _ _ => Nat.cast_nonneg _;
-    have h_sum_badCount : ∑ v ∈ C i, (badCount G C dcap ε Tset v : ℝ) = ∑ m ∈ Tset, ((C i).filter (fun v => ((C m).filter (fun x => G.Adj v x)).card < (dcap m - ε) * ((C m).card : ℝ))).card := by
+      exact
+          le_trans (by simp +decide [mul_comm]) (Finset.sum_le_sum h_markov) |> le_trans <|
+            Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _) fun _ _ _ =>
+              Nat.cast_nonneg _;
+    have h_sum_badCount :
+        ∑ v ∈ C i, (badCount G C dcap ε Tset v : ℝ) =
+          ∑ m ∈ Tset,
+            ((C i).filter
+                (fun v =>
+                  ((C m).filter (fun x => G.Adj v x)).card <
+                    (dcap m - ε) * ((C m).card : ℝ))).card := by
       simp +decide only [Nat.cast_sum];
-      simp +decide only [card_filter];
+      simp +decide only [badCount, card_filter];
       exact mod_cast Finset.sum_comm;
-    simp_all +decide;
+    simp_all +decide only [ne_eq, gt_iff_lt, Nat.cast_sum, add_le_add_iff_right,
+      add_le_add_iff_left, ge_iff_le];
     rw [ le_div_iff₀ hthr ] ; linarith [ hatyp i hi ];
-  · refine' lt_of_le_of_lt _ ( hcapSk i );
-    simp +decide at hi ⊢;
+  · refine lt_of_le_of_lt ?_ ( hcapSk i );
+    simp +decide only [card_empty, CharP.cast_eq_zero, add_zero, add_le_add_iff_right,
+      le_add_iff_nonneg_right] at hi ⊢;
     by_cases hα : Nonempty α;
-    · exact div_nonneg ( le_trans ( Finset.sum_nonneg fun _ _ => Nat.cast_nonneg _ ) ( hatyp _ ( hcluA_H hα.some ) ) ) hthr.le;
+    · exact
+          div_nonneg
+            (le_trans (Finset.sum_nonneg fun _ _ => Nat.cast_nonneg _)
+              (hatyp _ (hcluA_H hα.some)))
+            hthr.le;
     · simp_all +decide [ Function.Injective ]);
-  obtain ⟨ f, hf₁, hf₂, hf₃, hf₄ ⟩ := this; specialize h_contra f hf₁ hf₂ hf₄; simp_all +decide ;
+  obtain ⟨f, hf₁, hf₂, hf₃, hf₄⟩ := this
+  specialize h_contra f hf₁ hf₂ hf₄
+  simp_all +decide only [ne_eq, ↓reduceIte, gt_iff_lt, mem_filter, true_and, not_lt]
   exact h_contra.choose_spec.not_ge ( hf₃ _ )
 
 end Erdos550

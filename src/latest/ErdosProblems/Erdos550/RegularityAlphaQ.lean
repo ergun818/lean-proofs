@@ -19,12 +19,12 @@ form an `ε`-uniform pair of **blue** density `≥ d` — i.e. an edge of the re
 graph `Q`.
 -/
 
-open SimpleGraph Finset Classical
+open SimpleGraph Finset
 
 namespace Erdos550
 
 /-- **`α(Q) < ηℓ` from a Szemerédi partition.** -/
-theorem regularity_dense_regular_pair {W : Type} [Fintype W] (F : SimpleGraph W)
+theorem regularity_dense_regular_pair {W : Type} [Finite W] (F : SimpleGraph W)
     (q : ℕ) (hcol : F.Colorable (q + 1)) (hq : 1 ≤ q) (d : ℝ) (hd1 : d < 1) :
     ∃ ε₀ : ℝ, 0 < ε₀ ∧ ∃ m₀ : ℕ, ∀ {V : Type} [Fintype V] [DecidableEq V]
       (G : SimpleGraph V) [DecidableRel G.Adj], ¬ (F ⊑ Gᶜ) →
@@ -36,6 +36,7 @@ theorem regularity_dense_regular_pair {W : Type} [Fintype W] (F : SimpleGraph W)
         (∀ U ∈ 𝒜, m₀ ≤ U.val.card) →
         ∃ U ∈ 𝒜, ∃ W' ∈ 𝒜, U ≠ W' ∧ G.IsUniform ε U.val W'.val ∧
           (d : ℝ) ≤ (G.edgeDensity U.val W'.val : ℝ) := by
+  let := Fintype.ofFinite W
   classical
   obtain ⟨ε₀, hε₀, m₀, hcap⟩ := alphaQ_dense_regular_pair F q hcol hq d hd1
   refine ⟨ε₀, hε₀, m₀, ?_⟩

@@ -21,7 +21,6 @@ open SimpleGraph Finset
 
 namespace Erdos550
 
-open Classical
 
 variable {A : Type} [Fintype A] [DecidableEq A]
 
@@ -40,6 +39,7 @@ lemma componentUpperSeed_adj_eq_root
     (hadj : T.Adj
       (componentUpperSeed T S D.toRootedSeedComponentData c) x) :
     x = D.root c := by
+  classical
   let u := componentUpperSeed T S D.toRootedSeedComponentData c
   rcases hedge u x hadj with hux | hxu
   · have hxuRank : rank x < rank u := hrank u x hux
@@ -63,16 +63,17 @@ lemma componentUpperSeed_adj_eq_root
 /-- A promoted root which is adjacent to a refined component belongs to the
 old component containing that refined component. -/
 lemma promotedRoot_mem_oldComponent_of_refined_attachment
-    (T : SimpleGraph A) [DecidableRel T.Adj]
+    (T : SimpleGraph A)
     (S B : Finset A)
     (c : NonseedComponent T (S ∪ B))
     (v : A)
     (hv : v ∈ componentNonseedVertices T (S ∪ B) c.1)
     {p : A}
-    (hpB : p ∈ B)
+    (_hpB : p ∈ B)
     (hpNotS : p ∉ S)
     (hp : p ∈ componentSeeds T (S ∪ B) c.1) :
     p ∈ ((seedDeleted T S).connectedComponentMk v).supp := by
+  classical
   obtain ⟨x, hx, hpx⟩ :=
     component_attachment_witness T (S ∪ B) c hp
   have hvSupp :
@@ -106,6 +107,7 @@ lemma parityPromotionRoot_unique_in_oldComponent
     (hp : p ∈ parityPromotionRoots T S D col)
     (hq : q ∈ parityPromotionRoots T S D col) :
     p = q := by
+  classical
   obtain ⟨cp, hcpBad, hcp⟩ :=
     (mem_parityPromotionRoots_iff T S D col p).mp hp
   obtain ⟨cq, hcqBad, hcq⟩ :=
@@ -144,6 +146,7 @@ lemma parityPromotionRoot_component_bad
     (hpD : p ∈ componentNonseedVertices T S d.1)
     (hp : p ∈ parityPromotionRoots T S D col) :
     d ∈ parityBadComponents T S D col := by
+  classical
   obtain ⟨cp, hcpBad, hcp⟩ :=
     (mem_parityPromotionRoots_iff T S D col p).mp hp
   have hpCp : p ∈ componentNonseedVertices T S cp.1 := by
@@ -160,7 +163,7 @@ lemma parityPromotionRoot_component_bad
 importantly, makes all boundary seeds of every refined component have the same
 global tree colour. -/
 theorem parityRefined_component_boundary
-    (T : SimpleGraph A) [DecidableRel T.Adj]
+    (T : SimpleGraph A)
     (S : Finset A)
     {parent : A → Option A} {rank : A → ℕ}
     (D : RootedSeedComponentRankData T S parent rank)
@@ -185,6 +188,7 @@ theorem parityRefined_component_boundary
           (S ∪ parityPromotionRoots T S
             D.toRootedSeedComponentData col) c.1,
           col a = col b := by
+  classical
   let B := parityPromotionRoots T S D.toRootedSeedComponentData col
   obtain ⟨v, hv⟩ :=
     componentNonseedVertices_nonempty T (S ∪ B) c
@@ -283,7 +287,7 @@ theorem parityRefined_component_boundary
           parityPromotionRoot_unique_in_oldComponent T S
             D.toRootedSeedComponentData col d hsD (D.root_mem d)
             hsB hrB
-        exact Finset.mem_union_left _ (by simpa [hsr])
+        exact Finset.mem_union_left _ (by simp [hsr])
     have hcard :
         (componentSeeds T (S ∪ B) c.1).card ≤ 2 := by
       refine (Finset.card_le_card hsub).trans ?_
@@ -337,7 +341,7 @@ theorem parityRefined_component_boundary
       by_cases hsu :
           s = componentUpperSeed T S
             D.toRootedSeedComponentData d
-      · simpa [hsu]
+      · simp [hsu]
       · exact parityGood_lower_colour_eq_upper T S
           D.toRootedSeedComponentData col d hdBad
           (Finset.mem_sdiff.mpr ⟨hsOld, by simpa using! hsu⟩)

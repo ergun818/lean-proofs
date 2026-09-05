@@ -41,7 +41,7 @@ theorem null_blocker_compactness_normal
           ∀ i : Fin q, ∀ E ∈ C i, ¬ (∀ x ∈ E, x ∉ Z ∧ φ x = i) := by
   by_contra hcon
   classical
-  push_neg at hcon
+  push Not at hcon
   -- Extract a counterexample family indexed by `n`, with slack `≤ 1/(n+1)`.
   choose! V ρ C ε hε0 hεle hEdge hA1 hA2 hA3 hNoValid using
     fun n : ℕ => hcon (1 / (n + 1)) (by positivity)
@@ -205,39 +205,63 @@ theorem null_blocker_compactness
         ∃ (Z : Finset X) (φ : X → Fin q), Z.card ≤ a - 1 ∧
           ∀ i : Fin q, ∀ E ∈ C i, ¬ (∀ x ∈ E, x ∉ Z ∧ φ x = i) := by
   obtain ⟨ ε₀, hε₀ ⟩ := null_blocker_compactness_normal q hq a ha rStar hr;
-  refine' ⟨ ε₀, hε₀.1, fun X _ Ω _ μ _ A hA C ε hε₁ hε₂ hC hN1 hN2 hN3 => _ ⟩;
+  refine ⟨ ε₀, hε₀.1, fun X _ Ω _ μ _ A hA C ε hε₁ hε₂ hC hN1 hN2 hN3 => ?_ ⟩;
   obtain ⟨e, he⟩ : ∃ e : X ↪ ℕ, True := by
-    exact ⟨ Fintype.equivFin X |> Equiv.toEmbedding |> (fun e => e.trans (Fin.valEmbedding)), trivial ⟩;
-  obtain ⟨ρ, hρ⟩ : ∃ ρ : Fin q → ProbabilityMeasure (ℕ → Bool), ∀ i, ∀ S : Finset X, ((ρ i).toMeasure {σ : ℕ → Bool | ∀ x ∈ S, σ (e x) = true}).toReal = (μ i (⋂ x ∈ S, A i x)).toReal := by
-    have h_cube_pushforward : ∀ i, ∃ ρ : Measure (ℕ → Bool), IsProbabilityMeasure ρ ∧ ∀ S : Finset X, ρ {σ : ℕ → Bool | ∀ x ∈ S, σ (e x) = true} = μ i (⋂ x ∈ S, A i x) := by
-      exact fun i => cube_pushforward_nat ( μ i ) e ( A i ) ( hA i );
-    choose ρ hρ₁ hρ₂ using h_cube_pushforward;
-    exact ⟨ fun i => ⟨ ρ i, hρ₁ i ⟩, fun i S => by simp +decide [ hρ₂ i S ] ⟩;
-  obtain ⟨Z, φ, hZ, hφ⟩ := hε₀.2 (Finset.image e Finset.univ) ρ (fun i => {E.image e | E ∈ C i}) ε hε₁ hε₂ (by
+    exact
+          ⟨Fintype.equivFin X |> Equiv.toEmbedding |> (fun e => e.trans (Fin.valEmbedding)),
+            trivial⟩;
+  obtain ⟨ρ, hρ⟩ :
+      ∃ ρ : Fin q → ProbabilityMeasure (ℕ → Bool),
+        ∀ i,
+          ∀ S : Finset X,
+            ((ρ i).toMeasure {σ : ℕ → Bool | ∀ x ∈ S, σ (e x) = true}).toReal =
+              (μ i (⋂ x ∈ S, A i x)).toReal :=
+      by
+      have h_cube_pushforward :
+        ∀ i,
+          ∃ ρ : Measure (ℕ → Bool),
+            IsProbabilityMeasure ρ ∧
+              ∀ S : Finset X,
+                ρ {σ : ℕ → Bool | ∀ x ∈ S, σ (e x) = true} = μ i (⋂ x ∈ S, A i x) :=
+        by exact fun i => cube_pushforward_nat (μ i) e (A i) (hA i);
+      choose ρ hρ₁ hρ₂ using h_cube_pushforward;
+      exact ⟨fun i => ⟨ρ i, hρ₁ i⟩, fun i S => by simp +decide [hρ₂ i S]⟩;
+  obtain ⟨Z, φ, hZ, hφ⟩ := hε₀.2 (Finset.image e Finset.univ) ρ
+    (fun i => {E.image e | E ∈ C i}) ε hε₁ hε₂ (by
   simp +zetaDelta only [Set.mem_ofPred_eq, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂,
     image_nonempty] at *;
-  exact fun i E hE => ⟨ hC i E hE |>.1, by rw [ Finset.card_image_of_injective _ e.injective ] ; exact hC i E hE |>.2, Finset.image_subset_image <| Finset.subset_univ _ ⟩) (by
+  intro i E hE
+  refine ⟨(hC i E hE).1, ?_, Finset.image_subset_image (Finset.subset_univ _)⟩
+  rw [Finset.card_image_of_injective _ e.injective]
+  exact (hC i E hE).2) (by
   simp +decide only [mem_image, mem_univ, true_and, tsub_le_iff_right, forall_exists_index,
     forall_apply_eq_imp_iff];
-  intro x; specialize hN1 x; simp +decide [ dens ] at hN1 ⊢;
+  intro x; specialize hN1 x; simp +decide only [dens, tsub_le_iff_right] at hN1 ⊢;
   convert! hN1 using 1;
-  exact congr_arg₂ _ ( congr_arg₂ _ ( Finset.sum_congr rfl fun i _ => by simpa using! hρ i { x } ) rfl ) rfl) (by
-  intro S hS₁ hS₂
-  obtain ⟨S', hS'⟩ : ∃ S' : Finset X, S = S'.image e := by
-    use Finset.filter (fun x => e x ∈ S) Finset.univ;
-    grind
-  generalize_proofs at *;
-  obtain ⟨ i, hi ⟩ := hN2 S' ( by simpa [ hS', Finset.card_image_of_injective _ e.injective ] using! hS₂ ) ; use i; simp +decide [ *, cdens ] ;) (by
+  exact
+      congr_arg₂ _
+        (congr_arg₂ _ (Finset.sum_congr rfl fun i _ => by simpa [cdens] using! hρ i { x }) rfl)
+        rfl) (by
+            intro S hS₁ hS₂
+            obtain ⟨S', hS'⟩ : ∃ S' : Finset X, S = S'.image e := by
+              use Finset.filter (fun x => e x ∈ S) Finset.univ; grind
+            generalize_proofs at *;
+            obtain ⟨i, hi⟩ :=
+              hN2 S' (by simpa [hS', Finset.card_image_of_injective _ e.injective] using! hS₂);
+            use i; simp +decide [*, cdens]; ) (by
   intro i E hE
   obtain ⟨E', hE', rfl⟩ := hE
   obtain ⟨j, hj₁, hj₂⟩ := hN3 i E' hE';
   unfold cdens; simp +decide [ *, Finset.image ] ;);
-  refine' ⟨ Finset.filter ( fun x => e x ∈ Z ) Finset.univ, fun x => φ ( e x ), _, _ ⟩;
+  refine ⟨ Finset.filter ( fun x => e x ∈ Z ) Finset.univ, fun x => φ ( e x ), ?_, ?_ ⟩;
   · convert! hφ.1 using 1;
-    refine' Finset.card_bij ( fun x hx => e x ) _ _ _ <;> simp +decide [ e.injective.eq_iff ];
-    exact fun x hx => by have := hZ hx; rw [ Finset.mem_image ] at this; obtain ⟨ y, _, rfl ⟩ := this; exact ⟨ y, by simpa using! hx, rfl ⟩ ;
-  · intro i E hE h; specialize hφ; have := hφ.2 i ( Finset.image e E ) ⟨ E, hE, rfl ⟩ ; simp +decide [  ] at this;
-    grind +splitIndPred
+    refine Finset.card_bij ( fun x hx => e x ) ?_ ?_ ?_ <;> simp +decide only [mem_filter,
+      mem_univ, true_and, imp_self, implies_true, e.injective.eq_iff, exists_prop];
+    intro x hx
+    obtain ⟨y, _, rfl⟩ := Finset.mem_image.mp (hZ hx)
+    exact ⟨y, hx, rfl⟩
+  · intro i E hE h; specialize hφ; have := hφ.2 i (Finset.image e E) ⟨E, hE, rfl⟩;
+      simp +decide [] at this; grind +splitIndPred
 
 
 end Erdos550

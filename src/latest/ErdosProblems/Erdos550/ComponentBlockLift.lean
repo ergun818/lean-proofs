@@ -19,7 +19,6 @@ open Finset
 
 namespace Erdos550
 
-open Classical
 
 variable {A : Type} {V : Type*} [Fintype A] [DecidableEq A]
   [Fintype V] [DecidableEq V] [Nonempty V]
@@ -29,10 +28,12 @@ noncomputable def liftComponentMap
     (T : SimpleGraph A) (S : Finset A)
     (c : NonseedComponent T S)
     (f : RootedComponentVertex T S c → V) : A → V :=
+  open scoped Classical in
   fun a =>
     if h : a ∈ componentNonseedVertices T S c.1 then f ⟨a, h⟩
     else Classical.arbitrary V
 
+omit [Fintype V] [DecidableEq V] in
 @[simp] lemma liftComponentMap_mem
     (T : SimpleGraph A) (S : Finset A)
     (c : NonseedComponent T S)
@@ -41,6 +42,7 @@ noncomputable def liftComponentMap
     liftComponentMap T S c f a = f ⟨a, ha⟩ := by
   simp [liftComponentMap, ha]
 
+omit [DecidableEq V] [Fintype V] in
 lemma liftComponentMap_injOn
     (T : SimpleGraph A) (S : Finset A)
     (c : NonseedComponent T S)
@@ -48,6 +50,7 @@ lemma liftComponentMap_injOn
     (hfinj : Function.Injective f) :
     Set.InjOn (liftComponentMap T S c f)
       (componentNonseedVertices T S c.1) := by
+  classical
   intro a ha b hb hab
   have hsub :
       f (⟨a, ha⟩ : RootedComponentVertex T S c) =
@@ -57,6 +60,7 @@ lemma liftComponentMap_injOn
     exact hab
   exact congrArg Subtype.val (hfinj hsub)
 
+omit [Fintype V] in
 lemma image_liftComponentMap
     (T : SimpleGraph A) (S : Finset A)
     (c : NonseedComponent T S)
@@ -64,6 +68,7 @@ lemma image_liftComponentMap
     (componentNonseedVertices T S c.1).image
         (liftComponentMap T S c f) =
       Finset.univ.image f := by
+  classical
   ext v
   constructor
   · intro hv
@@ -76,6 +81,7 @@ lemma image_liftComponentMap
     exact Finset.mem_image.mpr
       ⟨a.1, a.2, by simp [liftComponentMap, a.2]⟩
 
+omit [Fintype V] in
 /-- Exact contribution of the lifted component to an arbitrary host region. -/
 lemma card_image_liftComponentMap_inter
     (T : SimpleGraph A) (S : Finset A)
@@ -87,6 +93,7 @@ lemma card_image_liftComponentMap_inter
         (liftComponentMap T S c f)) ∩ P).card =
       (Finset.univ.filter fun x : RootedComponentVertex T S c =>
         f x ∈ P).card := by
+  classical
   rw [image_liftComponentMap T S c f]
   exact card_image_inter_eq_card_filter Finset.univ f P
     (fun _ _ _ _ h => hfinj h)

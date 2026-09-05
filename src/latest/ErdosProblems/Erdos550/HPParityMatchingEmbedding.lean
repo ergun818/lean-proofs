@@ -23,14 +23,14 @@ open Finset SimpleGraph
 
 namespace Erdos550
 
-open Classical
 
 set_option maxHeartbeats 1500000 in
+-- The parity embedding maintains packedness and every deferred matching contact.
 theorem hp_parity_matching_tree_embedding
     {A : Type} {V κ : Type*}
     [Fintype A] [DecidableEq A]
-    [Fintype V] [DecidableEq V] [Nonempty V]
-    [Fintype κ] [DecidableEq κ]
+    [Finite V] [DecidableEq V] [Nonempty V]
+    [Finite κ] [DecidableEq κ]
     (T : SimpleGraph A)
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (Sseed : Finset A)
@@ -118,6 +118,9 @@ theorem hp_parity_matching_tree_embedding
           ((Good b u).card : ℝ) * ((Lnat : ℝ) + margin) ≤
         ∑ k ∈ Good b u, (leftThreshold k + rightThreshold k)) :
     T ⊑ G := by
+  let := Fintype.ofFinite V
+  let := Fintype.ofFinite κ
+  classical
   let routeColour : A → Bool :=
     parityRouteColour T Sseed D col
   let matchingRegion : Bool → Finset V :=
@@ -255,7 +258,7 @@ theorem hp_parity_matching_tree_embedding
     · intro s hsSeed x hsx
       have hxNonseed :
           x.1 ∈ componentNonseedVertices T Sseed c.1 := by
-        simpa [c] using! x.2
+        simp [c]
       have hxSupp : x.1 ∈ c.1.supp :=
         (mem_componentNonseedVertices_iff T Sseed c.1 x.1).mp
           hxNonseed |>.2

@@ -20,7 +20,7 @@ namespace Erdos550
 /-- If `(s,t)` is `ε`-uniform and `s',t'` occupy at least an `α` fraction
 of the corresponding sides, then the new density differs by at most `ε` and
 the sliced pair is `(2ε/α)`-uniform. -/
-lemma isUniform_slice {V : Type*} [Fintype V] [DecidableEq V]
+lemma isUniform_slice {V : Type*} [Finite V]
     (Gr : SimpleGraph V) [DecidableRel Gr.Adj]
     {ε α : ℝ} {s t : Finset V} (hα : 0 < α) (hεα : ε ≤ α)
     (hst : Gr.IsUniform ε s t) {s' t' : Finset V}
@@ -28,20 +28,37 @@ lemma isUniform_slice {V : Type*} [Fintype V] [DecidableEq V]
     (hsc : α * s.card ≤ s'.card) (htc : α * t.card ≤ t'.card) :
     |(Gr.edgeDensity s' t' : ℝ) - (Gr.edgeDensity s t : ℝ)| ≤ ε ∧
       Gr.IsUniform (2 * ε / α) s' t' := by
-  refine' ⟨ _, fun s'' hs'' t'' ht'' hs''_card ht''_card => _ ⟩;
-  · refine' le_of_lt ( hst hs' ht' _ _ ); all_goals nlinarith;
-  · have h_triangle : |(Gr.edgeDensity s'' t'' : ℝ) - (Gr.edgeDensity s t : ℝ)| < ε ∧ |(Gr.edgeDensity s' t' : ℝ) - (Gr.edgeDensity s t : ℝ)| < ε := by
-      refine' ⟨ hst ( Finset.Subset.trans hs'' hs' ) ( Finset.Subset.trans ht'' ht' ) _ _, hst hs' ht' _ _ ⟩;
+  classical
+  let := Fintype.ofFinite V
+  refine ⟨ ?_, fun s'' hs'' t'' ht'' hs''_card ht''_card => ?_ ⟩;
+  · refine le_of_lt ( hst hs' ht' ?_ ?_ ); all_goals nlinarith;
+  · have h_triangle :
+      |(Gr.edgeDensity s'' t'' : ℝ) - (Gr.edgeDensity s t : ℝ)| < ε ∧
+        |(Gr.edgeDensity s' t' : ℝ) - (Gr.edgeDensity s t : ℝ)| < ε := by
+      refine
+          ⟨hst (Finset.Subset.trans hs'' hs') (Finset.Subset.trans ht'' ht') ?_ ?_,
+            hst hs' ht' ?_ ?_⟩;
       · by_cases hε : ε ≤ 0;
-        · exact le_trans ( mul_nonpos_of_nonneg_of_nonpos ( Nat.cast_nonneg _ ) hε ) ( Nat.cast_nonneg _ );
-        · nlinarith [ show ( 0 : ℝ ) ≤ #s' by positivity, show ( 0 : ℝ ) ≤ #s'' by positivity, mul_div_cancel₀ ( 2 * ε ) hα.ne' ];
+        · exact
+              le_trans (mul_nonpos_of_nonneg_of_nonpos (Nat.cast_nonneg _) hε)
+                (Nat.cast_nonneg _);
+        · nlinarith [show (0 : ℝ) ≤ #s' by positivity, show (0 : ℝ) ≤ #s'' by positivity,
+              mul_div_cancel₀ (2 * ε) hα.ne'];
       · by_cases hε : ε = 0;
         · aesop;
-        · nlinarith [ show 0 < ε by exact lt_of_le_of_ne ( by
-                        contrapose! hst;
-                        norm_num [ SimpleGraph.IsUniform ];
-                        exact ⟨ s, Finset.Subset.refl _, t, Finset.Subset.refl _, by nlinarith, by nlinarith, by linarith [ abs_nonneg ( Gr.edgeDensity s t - Gr.edgeDensity s t : ℝ ) ] ⟩ ) ( Ne.symm hε ), show ( #t' : ℝ ) ≤ #t by exact_mod_cast Finset.card_le_card ht', mul_div_cancel₀ ( 2 * ε ) hα.ne' ];
-      · nlinarith [ show ( s'.card : ℝ ) ≤ s.card by exact_mod_cast Finset.card_le_card hs', show ( t'.card : ℝ ) ≤ t.card by exact_mod_cast Finset.card_le_card ht' ];
+        · have hε_nonneg : 0 ≤ ε := by
+            contrapose! hst
+            norm_num [SimpleGraph.IsUniform]
+            refine ⟨s, Finset.Subset.refl _, t, Finset.Subset.refl _, ?_, ?_, ?_⟩
+            · nlinarith
+            · nlinarith
+            · linarith [abs_nonneg (Gr.edgeDensity s t - Gr.edgeDensity s t : ℝ)]
+          have hε_pos : 0 < ε := lt_of_le_of_ne hε_nonneg (Ne.symm hε)
+          have ht_card : (#t' : ℝ) ≤ #t := by
+            exact_mod_cast Finset.card_le_card ht'
+          nlinarith [hε_pos, ht_card, mul_div_cancel₀ (2 * ε) hα.ne']
+      · nlinarith [show (s'.card : ℝ) ≤ s.card by exact_mod_cast Finset.card_le_card hs',
+            show (t'.card : ℝ) ≤ t.card by exact_mod_cast Finset.card_le_card ht'];
       · nlinarith [ show ( t'.card : ℝ ) ≤ t.card by exact_mod_cast Finset.card_le_card ht' ];
     by_cases hs : s = ∅
     · have hs'0 : s' = ∅ := Finset.subset_empty.mp (hs ▸ hs')
@@ -56,21 +73,31 @@ lemma isUniform_slice {V : Type*} [Fintype V] [DecidableEq V]
         simpa [ht, ht'0, ht''0] using h_triangle.1
       simpa [ht'0, ht''0] using div_pos (mul_pos (by norm_num) hε0) hα
     have h_alpha_le_one : α ≤ 1 := by
-      exact le_of_not_gt fun h => by nlinarith [ show ( s'.card : ℝ ) ≤ s.card from mod_cast Finset.card_le_card hs', show ( t'.card : ℝ ) ≤ t.card from mod_cast Finset.card_le_card ht', show ( s.card : ℝ ) > 0 from mod_cast Finset.card_pos.mpr ( Finset.nonempty_of_ne_empty hs ), show ( t.card : ℝ ) > 0 from mod_cast Finset.card_pos.mpr ( Finset.nonempty_of_ne_empty ht ) ] ;
+      exact
+            le_of_not_gt fun h => by
+              nlinarith [show (s'.card : ℝ) ≤ s.card from mod_cast Finset.card_le_card hs',
+                show (t'.card : ℝ) ≤ t.card from mod_cast Finset.card_le_card ht',
+                show (s.card : ℝ) > 0 from
+                  mod_cast Finset.card_pos.mpr (Finset.nonempty_of_ne_empty hs),
+                show (t.card : ℝ) > 0 from
+                  mod_cast Finset.card_pos.mpr (Finset.nonempty_of_ne_empty ht)];
     rw [lt_div_iff₀ hα]
     cases abs_cases ((Gr.edgeDensity s'' t'' : ℝ) - Gr.edgeDensity s' t') <;>
       nlinarith [abs_lt.mp h_triangle.1, abs_lt.mp h_triangle.2]
 
 set_option maxHeartbeats 1000000 in
+-- The defect estimate combines regularity slicing with the edge count error bounds.
 /-- In an `ε`-uniform pair of density at least `d`, at most an
 `ε`-fraction of the first side has degree below `(d-ε)` into the second. -/
-lemma regular_defect {V : Type*} [Fintype V] [DecidableEq V]
+lemma regular_defect {V : Type*} [Finite V]
     (Gr : SimpleGraph V) [DecidableRel Gr.Adj]
     {ε d : ℝ} (hε1 : ε ≤ 1) {s t : Finset V}
     (hst : Gr.IsUniform ε s t)
     (hd : d ≤ (Gr.edgeDensity s t : ℝ)) :
     ((s.filter (fun v => ((t.filter (fun w => Gr.Adj v w)).card : ℝ)
         < (d - ε) * t.card)).card : ℝ) ≤ ε * s.card := by
+  classical
+  let := Fintype.ofFinite V
   by_contra h_contra
   have h_uniform :
       |(Gr.edgeDensity
@@ -105,12 +132,14 @@ lemma regular_defect {V : Type*} [Fintype V] [DecidableEq V]
       · norm_cast
       · infer_instance
     rw [h_edge_density_B, div_le_iff₀]
-    · refine' le_trans
+    · refine le_trans
         (Finset.sum_le_sum fun x hx =>
-          le_of_lt <| Finset.mem_filter.mp hx |>.2) _
+          le_of_lt <| Finset.mem_filter.mp hx |>.2) ?_
       norm_num [mul_assoc, mul_comm, mul_left_comm]
     · by_cases ht : t = ∅ <;>
-        simp_all +decide [SimpleGraph.edgeDensity]
+        simp_all +decide only [edgeDensity, Rel.edgeDensity_empty_right, Rat.cast_zero,
+          filter_empty, card_empty, CharP.cast_eq_zero, mul_zero, lt_self_iff_false, filter_false,
+          ge_iff_le, not_le, sub_self, abs_zero, sum_const_zero, div_zero]
       · exact h_contra.not_ge
           (mul_nonneg h_uniform.le (Nat.cast_nonneg _))
       · exact mul_pos

@@ -20,13 +20,13 @@ open Finset SimpleGraph Finpartition
 
 namespace Erdos550
 
-open Classical
 
 lemma partition_subfamily_card_sum_le_univ
     {V : Type*} [Fintype V] [DecidableEq V]
     (P : Finpartition (Finset.univ : Finset V))
     (S : Finset {C // C ∈ P.parts}) :
     ∑ i ∈ S, i.1.card ≤ Fintype.card V := by
+  classical
   have hdisj :
       ∀ i j : {C // C ∈ P.parts}, i ≠ j →
         Disjoint i.1 j.1 := by
@@ -47,7 +47,7 @@ lemma partition_subfamily_card_sum_le_univ
 
 lemma matching_endpoint_card_sum_le_univ
     {V κ : Type*} [Fintype V] [DecidableEq V]
-    [Fintype κ] [DecidableEq κ]
+    [Finite κ]
     (P : Finpartition (Finset.univ : Finset V))
     (cL cR : κ → {C // C ∈ P.parts})
     (hinj : Function.Injective (Sum.elim cL cR))
@@ -55,6 +55,8 @@ lemma matching_endpoint_card_sum_le_univ
     (∑ k ∈ K,
       (((cL k).1.card : ℝ) + ((cR k).1.card : ℝ))) ≤
         Fintype.card V := by
+  let := Fintype.ofFinite κ
+  classical
   let S :=
     K.image cL ∪ K.image cR
   have hL : Function.Injective cL := by
@@ -86,7 +88,7 @@ lemma matching_endpoint_card_sum_le_univ
 /-- Endpoint-wise trimming loses at most `2εN` on any allocated family. -/
 lemma allocated_matching_trimmed_supply
     {V ι κ : Type*} [Fintype V] [DecidableEq V]
-    [Fintype κ] [DecidableEq κ]
+    [Finite κ]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (R : SimpleGraph ι) [DecidableRel R.Adj]
     (C : ι → Finset V) (head : ι)
@@ -106,6 +108,8 @@ lemma allocated_matching_trimmed_supply
           hpTrimmedThreshold
             (hpHeadEndpointWeight G R C head (cR k))
             ε ((C (cR k)).card : ℝ)) := by
+  let := Fintype.ofFinite κ
+  classical
   have htrim :
       (∑ k ∈ K, hpHeadMatchingWeight G R C head cL cR k) -
           2 * ε *
@@ -119,19 +123,6 @@ lemma allocated_matching_trimmed_supply
             hpTrimmedThreshold
               (hpHeadEndpointWeight G R C head (cR k))
               ε ((C (cR k)).card : ℝ)) := by
-    change
-      Finset.sum K
-          (fun k => hpHeadMatchingWeight G R C head cL cR k) -
-            2 * ε *
-              Finset.sum K (fun k =>
-                ((C (cL k)).card : ℝ) + ((C (cR k)).card : ℝ)) ≤
-        Finset.sum K (fun k =>
-          hpTrimmedThreshold
-              (hpHeadEndpointWeight G R C head (cL k))
-              ε ((C (cL k)).card : ℝ) +
-            hpTrimmedThreshold
-              (hpHeadEndpointWeight G R C head (cR k))
-              ε ((C (cR k)).card : ℝ))
     calc
       _ = Finset.sum K (fun k =>
           hpHeadMatchingWeight G R C head cL cR k -

@@ -14,10 +14,9 @@ open Finset SimpleGraph Finpartition
 
 namespace Erdos550
 
-open Classical
 
 theorem OffTuranReducedDegreeData.exists_heavy_head_and_matching
-    {W₀ : Type} [Fintype W₀] (F : SimpleGraph W₀)
+    {W₀ : Type} [Finite W₀] (F : SimpleGraph W₀)
     (q : ℕ) (hq : 1 ≤ q) (d ε₀ : ℝ) (m₀ B : ℕ)
     (hcap : ∀ {W : Type} [Fintype W] [DecidableEq W]
       (H : SimpleGraph W) [DecidableRel H.Adj], ¬ (F ⊑ Hᶜ) →
@@ -66,6 +65,8 @@ theorem OffTuranReducedDegreeData.exists_heavy_head_and_matching
           a ∉ Finset.univ.image cL ∧ a ∉ Finset.univ.image cR) ∧
         (Finset.univ \
           (Finset.univ.image cL ∪ Finset.univ.image cR)).card < B + 2 := by
+  let := Fintype.ofFinite W₀
+  classical
   apply exists_offTuran_heavy_head_and_matching
     F q hq d ε₀ m₀ B hcap G hF ε hε0 hεcap D.P D.uniform
     hBbig hBirregular D.part_size_lower

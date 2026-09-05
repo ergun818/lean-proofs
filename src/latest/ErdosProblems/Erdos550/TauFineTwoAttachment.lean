@@ -19,15 +19,16 @@ open SimpleGraph Finset
 
 namespace Erdos550
 
-open Classical
 
 variable {α : Type} [Fintype α] [DecidableEq α]
 
+omit [DecidableEq α] in
 /-- Every other vertex of a finite tree lies in a unique neighbour direction
 from a given vertex. -/
 lemma existsUnique_mem_branch (T : SimpleGraph α) (hT : T.IsTree)
     (v x : α) (hx : x ≠ v) :
     ∃! u, T.Adj v u ∧ x ∈ branch T v u := by
+  classical
   obtain ⟨p, hp⟩ : ∃ p : T.Walk v x, p.length = T.dist v x :=
     SimpleGraph.Reachable.exists_walk_length_eq_dist (hT.1 v x)
   have hpath : p.IsPath := SimpleGraph.Walk.isPath_of_length_eq_dist p hp
@@ -51,7 +52,7 @@ lemma existsUnique_mem_branch (T : SimpleGraph α) (hT : T.IsTree)
       exact SimpleGraph.dist_le (p.tail.copy (by simp [u]) rfl)
     have htail_len : p.tail.length + 1 = p.length := p.length_tail_add_one (by
       intro hn
-      have := SimpleGraph.Walk.nil_iff_length_eq.mp hn
+      have := SimpleGraph.Walk.length_eq_zero_iff.mpr hn
       omega)
     have hlt : T.dist x u < T.dist x v := by
       have hp' : p.length = T.dist x v := by simpa [SimpleGraph.dist_comm] using! hp
@@ -69,17 +70,20 @@ lemma existsUnique_mem_branch (T : SimpleGraph α) (hT : T.IsTree)
 
 /-- Neighbour directions from `v` whose branch contains an original seed. -/
 noncomputable def seedDirections (T : SimpleGraph α) (S₀ : Finset α) (v : α) : Finset α :=
+  open scoped Classical in
   T.neighborFinset v |>.filter fun u => ∃ s ∈ S₀, s ∈ branch T v u
 
 /-- Branch vertices of the subtree spanned by `S₀`, described intrinsically by
 having at least three seed-bearing directions. -/
 noncomputable def promotedBranchVertices
     (T : SimpleGraph α) (S₀ : Finset α) : Finset α :=
+  open scoped Classical in
   Finset.univ.filter fun v => 3 ≤ (seedDirections T S₀ v).card
 
 lemma originalSeedNeighbors_subset_seedDirections
     (T : SimpleGraph α) (S₀ : Finset α) (v : α) :
-    S₀.filter (T.Adj v) ⊆ seedDirections T S₀ v := by
+    open scoped Classical in S₀.filter (T.Adj v) ⊆ seedDirections T S₀ v := by
+  classical
   intro s hs
   simp only [Finset.mem_filter] at hs
   simp only [seedDirections, Finset.mem_filter, SimpleGraph.mem_neighborFinset]
@@ -91,17 +95,19 @@ lemma originalSeedNeighbors_subset_seedDirections
 
 lemma three_original_seed_neighbors_promoted
     (T : SimpleGraph α) (S₀ : Finset α) (v : α)
-    (hthree : 3 ≤ (S₀.filter (T.Adj v)).card) :
+    (hthree : open scoped Classical in 3 ≤ (S₀.filter (T.Adj v)).card) :
     v ∈ promotedBranchVertices T S₀ := by
+  classical
   simp only [promotedBranchVertices, Finset.mem_filter, Finset.mem_univ, true_and]
   exact hthree.trans (Finset.card_le_card
     (originalSeedNeighbors_subset_seedDirections T S₀ v))
 
 lemma enlargedSeed_attachment_bears_originalSeed
-    (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree) (S₀ : Finset α)
+    (T : SimpleGraph α) (hT : T.IsTree) (S₀ : Finset α)
     {s v : α} (hs : s ∈ S₀ ∪ promotedBranchVertices T S₀)
     (hsv : T.Adj s v) :
     ∃ t ∈ S₀, t ∈ branch T v s := by
+  classical
   rcases Finset.mem_union.mp hs with hs₀ | hsB
   · refine ⟨s, hs₀, ?_⟩
     simp only [branch, Finset.mem_filter, Finset.mem_univ, true_and]
@@ -119,10 +125,11 @@ lemma enlargedSeed_attachment_bears_originalSeed
     exact (branch_ssubset hT hsv.symm hsu huv).1 htbranch
 
 lemma enlargedSeed_mem_seedDirections_of_adj
-    (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree) (S₀ : Finset α)
+    (T : SimpleGraph α) (hT : T.IsTree) (S₀ : Finset α)
     {s v : α} (hs : s ∈ S₀ ∪ promotedBranchVertices T S₀)
     (hsv : T.Adj s v) :
     s ∈ seedDirections T S₀ v := by
+  classical
   simp only [seedDirections, Finset.mem_filter, SimpleGraph.mem_neighborFinset]
   refine ⟨hsv.symm, ?_⟩
   exact enlargedSeed_attachment_bears_originalSeed T hT S₀ hs hsv
@@ -132,6 +139,7 @@ lemma enlargedSeedNeighbors_subset_seedDirections
     (v : α) :
     (S₀ ∪ promotedBranchVertices T S₀).filter (T.Adj v) ⊆
       seedDirections T S₀ v := by
+  classical
   intro s hs
   simp only [Finset.mem_filter] at hs
   exact enlargedSeed_mem_seedDirections_of_adj T hT S₀ hs.1 hs.2.symm
@@ -142,6 +150,7 @@ lemma three_enlarged_seed_neighbors_promoted
     (hthree : 3 ≤ ((S₀ ∪ promotedBranchVertices T S₀).filter
       (T.Adj v)).card) :
     v ∈ promotedBranchVertices T S₀ := by
+  classical
   simp only [promotedBranchVertices, Finset.mem_filter, Finset.mem_univ, true_and]
   exact hthree.trans (Finset.card_le_card
     (enlargedSeedNeighbors_subset_seedDirections T hT S₀ v))
@@ -150,6 +159,7 @@ lemma nonpromoted_enlargedSeedNeighbors_card_le_two
     (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree) (S₀ : Finset α)
     {v : α} (hv : v ∉ S₀ ∪ promotedBranchVertices T S₀) :
     ((S₀ ∪ promotedBranchVertices T S₀).filter (T.Adj v)).card ≤ 2 := by
+  classical
   by_contra hnot
   have hthree : 3 ≤ ((S₀ ∪ promotedBranchVertices T S₀).filter
       (T.Adj v)).card := by omega
@@ -157,12 +167,13 @@ lemma nonpromoted_enlargedSeedNeighbors_card_le_two
   exact hv (Finset.mem_union_right S₀ hvB)
 
 lemma componentSeeds_card_le_two_of_common_neighbor
-    (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree) (S₀ : Finset α)
+    (T : SimpleGraph α) (hT : T.IsTree) (S₀ : Finset α)
     (c : (seedDeleted T (S₀ ∪ promotedBranchVertices T S₀)).ConnectedComponent)
     {v : α} (hv : v ∉ S₀ ∪ promotedBranchVertices T S₀)
     (hcommon : ∀ s ∈ componentSeeds
       T (S₀ ∪ promotedBranchVertices T S₀) c, T.Adj v s) :
     (componentSeeds T (S₀ ∪ promotedBranchVertices T S₀) c).card ≤ 2 := by
+  classical
   have hsub : componentSeeds T (S₀ ∪ promotedBranchVertices T S₀) c ⊆
       (S₀ ∪ promotedBranchVertices T S₀).filter (T.Adj v) := by
     intro s hs
@@ -173,12 +184,13 @@ lemma componentSeeds_card_le_two_of_common_neighbor
     (nonpromoted_enlargedSeedNeighbors_card_le_two T hT S₀ hv)
 
 lemma component_attachment_bears_originalSeed
-    (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree) (S₀ : Finset α)
+    (T : SimpleGraph α) (hT : T.IsTree) (S₀ : Finset α)
     (c : (seedDeleted T (S₀ ∪ promotedBranchVertices T S₀)).ConnectedComponent)
     {s v : α} (hs : s ∈ componentSeeds
       T (S₀ ∪ promotedBranchVertices T S₀) c)
     (hsv : T.Adj s v) :
     ∃ t ∈ S₀, t ∈ branch T v s := by
+  classical
   have hs' : s ∈ S₀ ∪ promotedBranchVertices T S₀ :=
     (mem_componentSeeds_iff T _ c s).mp hs |>.1
   exact enlargedSeed_attachment_bears_originalSeed T hT S₀ hs' hsv
@@ -186,7 +198,8 @@ lemma component_attachment_bears_originalSeed
 /-- The edge core spanned by `S₀`: an edge is retained exactly when there is
 an original seed on both sides of it. -/
 noncomputable def seedCore (T : SimpleGraph α) (S₀ : Finset α) : SimpleGraph α where
-  Adj a b := T.Adj a b ∧
+  Adj a b :=
+  open scoped Classical in T.Adj a b ∧
     (∃ s ∈ S₀, s ∈ branch T a b) ∧ (∃ s ∈ S₀, s ∈ branch T b a)
   symm := by
     constructor
@@ -197,31 +210,37 @@ noncomputable def seedCore (T : SimpleGraph α) (S₀ : Finset α) : SimpleGraph
     intro a h
     exact h.1.ne rfl
 
+omit [DecidableEq α] in
 lemma seedCore_le (T : SimpleGraph α) (S₀ : Finset α) : seedCore T S₀ ≤ T := by
+  classical
   intro a b h
   exact h.1
 
 lemma seedCore_neighbor_subset_seedDirections
-    (T : SimpleGraph α) [DecidableRel T.Adj] (S₀ : Finset α) (v : α) :
+    (T : SimpleGraph α) (S₀ : Finset α) (v : α) :
+    open scoped Classical in
     (seedCore T S₀).neighborFinset v ⊆ seedDirections T S₀ v := by
+  classical
   intro u hu
   simp only [SimpleGraph.mem_neighborFinset] at hu
   simp only [seedDirections, Finset.mem_filter, SimpleGraph.mem_neighborFinset]
   exact ⟨hu.1, hu.2.1⟩
 
 lemma seedCore_degree_three_promoted
-    (T : SimpleGraph α) [DecidableRel T.Adj] (S₀ : Finset α)
-    {v : α} (hv : 3 ≤ (seedCore T S₀).degree v) :
+    (T : SimpleGraph α) (S₀ : Finset α)
+    {v : α} (hv : open scoped Classical in 3 ≤ (seedCore T S₀).degree v) :
     v ∈ promotedBranchVertices T S₀ := by
+  classical
   simp only [promotedBranchVertices, Finset.mem_filter, Finset.mem_univ, true_and]
   rw [← SimpleGraph.card_neighborFinset_eq_degree] at hv
   exact hv.trans (Finset.card_le_card
     (seedCore_neighbor_subset_seedDirections T S₀ v))
 
 lemma promoted_degree_seedCore
-    (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree) (S₀ : Finset α)
+    (T : SimpleGraph α) (hT : T.IsTree) (S₀ : Finset α)
     {v : α} (hv : v ∈ promotedBranchVertices T S₀) :
-    3 ≤ (seedCore T S₀).degree v := by
+    open scoped Classical in 3 ≤ (seedCore T S₀).degree v := by
+  classical
   have hthree : 3 ≤ (seedDirections T S₀ v).card := by
     simpa [promotedBranchVertices] using! hv
   have hsub : seedDirections T S₀ v ⊆ (seedCore T S₀).neighborFinset v := by
@@ -230,8 +249,8 @@ lemma promoted_degree_seedCore
     rcases hu with ⟨hvu, s, hsS, hsbr⟩
     have hex : ∃ w ∈ seedDirections T S₀ v, w ≠ u := by
       by_contra hn
-      push_neg at hn
-      have : seedDirections T S₀ v ⊆ {u} := fun w hw => by simpa [hn w hw]
+      push Not at hn
+      have : seedDirections T S₀ v ⊆ {u} := fun w hw => by simp [hn w hw]
       have hc := Finset.card_le_card this
       simp at hc
       omega
@@ -245,6 +264,7 @@ lemma promoted_degree_seedCore
   rw [← SimpleGraph.card_neighborFinset_eq_degree]
   exact hthree.trans (Finset.card_le_card hsub)
 
+omit [DecidableEq α] in
 /-- Degree-sum counting in a forest-shaped graph: if the number of edges is
 strictly smaller than the number of active vertices and all leaves belong to
 `S`, then the vertices of degree at least three are no more numerous than `S`.
@@ -254,6 +274,7 @@ lemma highDegree_card_le_of_edges_lt_active
     (hedges : G.edgeFinset.card < (Finset.univ.filter fun v => 0 < G.degree v).card)
     (hleaf : ∀ v, G.degree v = 1 → v ∈ S) :
     (Finset.univ.filter fun v => 3 ≤ G.degree v).card ≤ S.card := by
+  classical
   let A := Finset.univ.filter fun v => 0 < G.degree v
   let B := Finset.univ.filter fun v => 3 ≤ G.degree v
   let L := Finset.univ.filter fun v => G.degree v = 1
@@ -294,10 +315,12 @@ lemma highDegree_card_le_of_edges_lt_active
   have hBL : B.card ≤ L.card := by omega
   exact hBL.trans (Finset.card_le_card hLsub)
 
+omit [DecidableEq α] in
 lemma acyclic_edges_lt_active
     (G : SimpleGraph α) [DecidableRel G.Adj] (hG : G.IsAcyclic)
     (hne : (Finset.univ.filter fun v => 0 < G.degree v).Nonempty) :
     G.edgeFinset.card < (Finset.univ.filter fun v => 0 < G.degree v).card := by
+  classical
   let P : α → Prop := fun v => 0 < G.degree v
   let : DecidablePred P := fun v => inferInstanceAs (Decidable (0 < G.degree v))
   let GA : SimpleGraph {v // P v} := G.induce {v | P v}
@@ -334,8 +357,9 @@ lemma acyclic_edges_lt_active
 of terminals than it has terminals.  (The sharper `|B| ≤ |S₀| - 2` is not
 needed for the separator budget.) -/
 lemma promotedBranchVertices_card_le
-    (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree) (S₀ : Finset α) :
+    (T : SimpleGraph α) (hT : T.IsTree) (S₀ : Finset α) :
     (promotedBranchVertices T S₀).card ≤ S₀.card := by
+  classical
   by_cases hB : (promotedBranchVertices T S₀).Nonempty
   · have hcore_nonempty : (Finset.univ.filter fun v => 0 < (seedCore T S₀).degree v).Nonempty := by
       obtain ⟨v, hv⟩ := hB
@@ -373,34 +397,40 @@ lemma promotedBranchVertices_card_le
     intro v hv
     simp only [Finset.mem_filter, Finset.mem_univ, true_and]
     exact promoted_degree_seedCore T hT S₀ hv
-  · simpa [Finset.not_nonempty_iff_eq_empty.mp hB]
+  · simp [Finset.not_nonempty_iff_eq_empty.mp hB]
 
+omit [Fintype α] in
 /-- Deleting edges incident with additional promoted seeds only refines the
 nonseed components, so their sizes retain any bound valid for the original
 separator. -/
-lemma promoted_components_small
-    (T : SimpleGraph α) [DecidableRel T.Adj]
+lemma promoted_components_small [Finite α]
+    (T : SimpleGraph α)
     (S₀ : Finset α) (B : Finset α) (K : ℝ)
     (hsmall : ∀ c : (seedDeleted T S₀).ConnectedComponent,
       (Nat.card c.supp : ℝ) ≤ K) :
     ∀ c : (seedDeleted T (S₀ ∪ B)).ConnectedComponent,
       (∃ v ∈ c.supp, v ∉ S₀ ∪ B) → (Nat.card c.supp : ℝ) ≤ K := by
+  let := Fintype.ofFinite α
+  classical
   intro c ⟨v, hv, hvnot⟩
   -- seedDeleted T (S₀ ∪ B) has fewer edges than seedDeleted T S₀
   have adj_implication : ∀ a b, (seedDeleted T (S₀ ∪ B)).Adj a b → (seedDeleted T S₀).Adj a b := by
     intro a b hadj
     rw [seedDeleted_adj_iff] at hadj ⊢
-    exact ⟨hadj.1, fun ha => hadj.2.1 (Finset.mem_union_left B ha), fun hb => hadj.2.2 (Finset.mem_union_left B hb)⟩
-  -- All vertices in c.supp are reachable from v in seedDeleted T (S₀ ∪ B), hence in seedDeleted T S₀
+    exact
+        ⟨hadj.1, fun ha => hadj.2.1 (Finset.mem_union_left B ha), fun hb =>
+          hadj.2.2 (Finset.mem_union_left B hb)⟩
+  -- All vertices in c.supp are reachable from v in seedDeleted T (S₀ ∪ B), hence in seedDeleted T
+  -- S₀
   let c' := (seedDeleted T S₀).connectedComponentMk v
   have hsupp_subset : c.supp ⊆ c'.supp := by
     intro x hx
     -- x is reachable from v in seedDeleted T (S₀ ∪ B) since they're in the same component
     have hreach_S₀B : (seedDeleted T (S₀ ∪ B)).Reachable x v := by
-      simp +decide [SimpleGraph.ConnectedComponent.supp] at hx ⊢
+      simp +decide only [ConnectedComponent.supp, Set.mem_ofPred_eq] at hx ⊢
       -- hx : connectedComponentMk x = c, and v ∈ c.supp means connectedComponentMk v = c
       have hv_eq : (seedDeleted T (S₀ ∪ B)).connectedComponentMk v = c := by
-        simp +decide [SimpleGraph.ConnectedComponent.supp] at hv
+        simp +decide only [ConnectedComponent.supp, Set.mem_ofPred_eq] at hv
         exact hv
       have heq : (seedDeleted T (S₀ ∪ B)).connectedComponentMk x =
                  (seedDeleted T (S₀ ∪ B)).connectedComponentMk v := by rw [hx, hv_eq]
@@ -423,7 +453,7 @@ lemma promoted_components_small
     simp +decide only [ConnectedComponent.mem_supp_iff]
     have heqv : Equivalence (seedDeleted T S₀).Reachable :=
       ⟨SimpleGraph.Reachable.refl, fun h => h.symm, fun h₁ h₂ => h₁.trans h₂⟩
-    show Quot.mk (seedDeleted T S₀).Reachable x = Quot.mk (seedDeleted T S₀).Reachable v
+    change Quot.mk (seedDeleted T S₀).Reachable x = Quot.mk (seedDeleted T S₀).Reachable v
     rw [Quot.eq]
     exact heqv.eqvGen_eq.symm ▸ hreach_S₀
   have hcard : Nat.card c.supp ≤ Nat.card c'.supp := by
@@ -440,6 +470,7 @@ distance from `x` by exactly one. -/
 lemma dist_succ_of_mem_branch (T : SimpleGraph α) (hT : T.IsTree)
     {v u x : α} (hadj : T.Adj v u) (hx : x ∈ branch T v u) :
     T.dist x u + 1 = T.dist x v := by
+  classical
   simp only [branch, Finset.mem_filter, Finset.mem_univ, true_and] at hx
   have huv : T.dist u v = 1 := SimpleGraph.dist_eq_one_iff_adj.mpr hadj.symm
   obtain ⟨p, hp⟩ :=
@@ -450,10 +481,12 @@ lemma dist_succ_of_mem_branch (T : SimpleGraph α) (hT : T.IsTree)
     exact SimpleGraph.dist_le (p.concat hadj.symm)
   omega
 
+omit [DecidableEq α] in
 /-- Distinct neighbour directions at a vertex of a tree are disjoint. -/
 lemma branch_disjoint_of_ne (T : SimpleGraph α) (hT : T.IsTree)
     {v u w x : α} (hu : T.Adj v u) (hw : T.Adj v w) (huw : u ≠ w)
     (hxu : x ∈ branch T v u) (hxw : x ∈ branch T v w) : False := by
+  classical
   have hxv : x ≠ v := by
     intro h
     subst x
@@ -472,6 +505,7 @@ lemma mem_branch_of_through (T : SimpleGraph α) (hT : T.IsTree)
     {m u s t : α} (hadj : T.Adj m u) (hs : s ∈ branch T m u)
     (hdist : T.dist t m = T.dist t s + T.dist s m) :
     t ∈ branch T m u := by
+  classical
   simp only [branch, Finset.mem_filter, Finset.mem_univ, true_and]
   have htri : T.dist t u ≤ T.dist t s + T.dist s u :=
     (hT.1 t s).dist_triangle_left u
@@ -483,6 +517,7 @@ omit [Fintype α] [DecidableEq α] in
 lemma component_supp_disjoint_seeds (T : SimpleGraph α) (S : Finset α)
     (c : (seedDeleted T S).ConnectedComponent)
     (hc : ∃ v ∈ c.supp, v ∉ S) : ∀ x ∈ c.supp, x ∉ S := by
+  classical
   rintro x hx hxS
   obtain ⟨v, hv, hvS⟩ := hc
   have hreach : (seedDeleted T S).Reachable x v := by
@@ -505,7 +540,7 @@ lemma component_supp_disjoint_seeds (T : SimpleGraph α) (S : Finset α)
     have hx0 : p.getVert 0 = x := p.getVert_zero
     rw [hx0] at hadj
     exact ((seedDeleted_adj_iff T S x (p.getVert 1)).mp hadj).2.1 hxS
-  have hxv : x = v := (SimpleGraph.Walk.nil_iff_length_eq.mpr hlen).eq
+  have hxv : x = v := (SimpleGraph.Walk.length_eq_zero_iff.mp hlen).eq
   exact hvS (hxv ▸ hxS)
 
 omit [DecidableEq α] in
@@ -516,6 +551,7 @@ lemma branch_directions_ne_of_dist_add (T : SimpleGraph α) (hT : T.IsTree)
     (hadd : T.dist x y = T.dist x m + T.dist m y)
     (hux : T.Adj m ux ∧ x ∈ branch T m ux)
     (huy : T.Adj m uy ∧ y ∈ branch T m uy) : ux ≠ uy := by
+  classical
   intro heq
   subst uy
   have hxstep := dist_succ_of_mem_branch T hT hux.1 hux.2
@@ -531,14 +567,16 @@ lemma branch_directions_ne_of_dist_add (T : SimpleGraph α) (hT : T.IsTree)
 ## The three-attachment median step
 -/
 
+omit [DecidableEq α] in
 /-- The first neighbour in the direction from one vertex of a nonseed deleted
 component toward another still belongs to that component. -/
 lemma component_direction_neighbor_mem
-    (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree) (S : Finset α)
+    (T : SimpleGraph α) (hT : T.IsTree) (S : Finset α)
     (c : (seedDeleted T S).ConnectedComponent)
     {m x u : α} (hm : m ∈ c.supp) (hx : x ∈ c.supp)
     (hmu : T.Adj m u) (hxu : x ∈ branch T m u) :
     u ∈ c.supp := by
+  classical
   have hreach : (seedDeleted T S).Reachable m x := by
     have hm' : (seedDeleted T S).connectedComponentMk m = c := by
       simpa [SimpleGraph.ConnectedComponent.supp] using! hm
@@ -567,7 +605,7 @@ lemma component_direction_neighbor_mem
     exact (hT.existsUnique_path x m).unique hrpath pT.toPath.property
   have humem_r : u ∈ r.support := by simp [r]
   have humem_pTpath : u ∈ (pT.toPath : T.Walk x m).support := hpathEq ▸ humem_r
-  have humem_pT : u ∈ pT.support := pT.support_toPath_subset humem_pTpath
+  have humem_pT : u ∈ pT.support := pT.support_toPath_subset_support humem_pTpath
   have humem_p : u ∈ p.support := by simpa [pT, f] using! humem_pT
   obtain ⟨a, b, hab⟩ := SimpleGraph.Walk.mem_support_iff_exists_append.mp humem_p
   have hru : (seedDeleted T S).Reachable m u := by
@@ -585,17 +623,21 @@ lemma component_direction_neighbor_mem
   simpa [SimpleGraph.ConnectedComponent.supp] using! hcomp
 
 
+omit [DecidableEq α] [Fintype α] in
 /-- For three marked vertices of a finite tree, there is a vertex minimizing
 the sum of the three distances. -/
-lemma exists_min_three_distances (T : SimpleGraph α) (a b d : α) :
+lemma exists_min_three_distances [Finite α] (T : SimpleGraph α) (a b d : α) :
     ∃ m, ∀ v,
       T.dist m a + T.dist m b + T.dist m d ≤
         T.dist v a + T.dist v b + T.dist v d := by
+  let := Fintype.ofFinite α
+  classical
   let weight : α → ℕ := fun v => T.dist v a + T.dist v b + T.dist v d
   obtain ⟨m, _, hm⟩ := Finset.exists_min_image Finset.univ weight
     (by exact ⟨a, Finset.mem_univ a⟩)
   exact ⟨m, fun v => hm v (Finset.mem_univ v)⟩
 
+omit [DecidableEq α] in
 /-- At a minimizer of the sum of distances to three marked vertices, no branch
 direction contains two of the marked vertices. -/
 lemma min_three_distances_branch_exclusive
@@ -605,6 +647,7 @@ lemma min_three_distances_branch_exclusive
         T.dist v a + T.dist v b + T.dist v d)
     (hmu : T.Adj m u) (ha : a ∈ branch T m u) (hb : b ∈ branch T m u) :
     False := by
+  classical
   have haStep := dist_succ_of_mem_branch T hT hmu ha
   have hbStep := dist_succ_of_mem_branch T hT hmu hb
   have hd : T.dist u d ≤ T.dist m d + 1 := by
@@ -619,13 +662,16 @@ lemma min_three_distances_branch_exclusive
   have hub : T.dist u b = T.dist b u := SimpleGraph.dist_comm
   omega
 
+omit [DecidableEq α] [Fintype α] in
 /-- Every vertex on a deleted-edge walk that starts in a component remains in
 that component. -/
-lemma deleted_walk_support_mem_component
-    (T : SimpleGraph α) [DecidableRel T.Adj] (S : Finset α)
+lemma deleted_walk_support_mem_component [Finite α]
+    (T : SimpleGraph α) (S : Finset α)
     (c : (seedDeleted T S).ConnectedComponent) {x y z : α}
     (hx : x ∈ c.supp) (p : (seedDeleted T S).Walk x y)
     (hz : z ∈ p.support) : z ∈ c.supp := by
+  let := Fintype.ofFinite α
+  classical
   obtain ⟨a, b, hab⟩ := SimpleGraph.Walk.mem_support_iff_exists_append.mp hz
   have hr : (seedDeleted T S).Reachable x z := by
     subst p
@@ -641,15 +687,18 @@ lemma deleted_walk_support_mem_component
     exact heqv.eqvGen_eq.symm ▸ hr.symm
   simpa [SimpleGraph.ConnectedComponent.supp] using! hz'
 
+omit [DecidableEq α] [Fintype α] in
 /-- The unique tree path between two vertices of a nonseed deleted component
 contains no seed. -/
-lemma component_tree_path_avoids_seeds
-    (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree) (S : Finset α)
+lemma component_tree_path_avoids_seeds [Finite α]
+    (T : SimpleGraph α) (hT : T.IsTree) (S : Finset α)
     (c : (seedDeleted T S).ConnectedComponent)
     (hc : ∃ v ∈ c.supp, v ∉ S) {x y : α}
     (hx : x ∈ c.supp) (hy : y ∈ c.supp)
     (p : T.Walk x y) (hp : p.IsPath) :
     ∀ z ∈ p.support, z ∉ S := by
+  let := Fintype.ofFinite α
+  classical
   have hreach : (seedDeleted T S).Reachable x y := by
     have hx' : (seedDeleted T S).connectedComponentMk x = c := by
       simpa [SimpleGraph.ConnectedComponent.supp] using! hx
@@ -671,20 +720,23 @@ lemma component_tree_path_avoids_seeds
   intro z hz hzS
   have hzmapPath : z ∈ ((q.map f).toPath : T.Walk x y).support := hpq ▸ hz
   have hzmap : z ∈ (q.map f).support :=
-    (q.map f).support_toPath_subset hzmapPath
+    (q.map f).support_toPath_subset_support hzmapPath
   have hzq : z ∈ q.support := by simpa [f] using! hzmap
   have hzc := deleted_walk_support_mem_component T S c hx q hzq
   exact component_supp_disjoint_seeds T S c hc z hzc hzS
 
+omit [DecidableEq α] [Fintype α] in
 /-- A boundary edge from a seed into a nonseed deleted component is the first
 edge of the tree geodesic from that seed to every vertex of the component. -/
-lemma boundary_dist_eq_succ
-    (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree) (S : Finset α)
+lemma boundary_dist_eq_succ [Finite α]
+    (T : SimpleGraph α) (hT : T.IsTree) (S : Finset α)
     (c : (seedDeleted T S).ConnectedComponent)
     (hc : ∃ v ∈ c.supp, v ∉ S) {s x m : α}
     (hs : s ∈ S) (hx : x ∈ c.supp) (hm : m ∈ c.supp)
     (hsx : T.Adj s x) :
     T.dist s m = T.dist x m + 1 := by
+  let := Fintype.ofFinite α
+  classical
   obtain ⟨q, hq⟩ :=
     SimpleGraph.Reachable.exists_walk_length_eq_dist (hT.1 x m)
   have hqpath : q.IsPath := SimpleGraph.Walk.isPath_of_length_eq_dist q hq
@@ -701,15 +753,17 @@ lemma boundary_dist_eq_succ
   rw [← hp, heq]
   simp [hq]
 
+omit [DecidableEq α] in
 /-- Viewed from another vertex of its nonseed component, an attachment seed
 lies in the same direction as its adjacent component witness. -/
 lemma attachment_seed_same_direction
-    (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree) (S : Finset α)
+    (T : SimpleGraph α) (hT : T.IsTree) (S : Finset α)
     (c : (seedDeleted T S).ConnectedComponent)
     (hc : ∃ v ∈ c.supp, v ∉ S) {s x m u : α}
     (hs : s ∈ S) (hx : x ∈ c.supp) (hm : m ∈ c.supp)
     (hsx : T.Adj s x) (hmu : T.Adj m u) (hxu : x ∈ branch T m u) :
     s ∈ branch T m u := by
+  classical
   simp only [branch, Finset.mem_filter, Finset.mem_univ, true_and]
   have hxStep := dist_succ_of_mem_branch T hT hmu hxu
   have hsxDist : T.dist s x = 1 := SimpleGraph.dist_eq_one_iff_adj.mpr hsx
@@ -718,15 +772,18 @@ lemma attachment_seed_same_direction
     (hT.1 s x).dist_triangle_left u
   omega
 
+omit [DecidableEq α] [Fintype α] in
 /-- Three vertices in one deleted-edge component admit a minimizer of their
 total distance that remains in that component. -/
-lemma exists_component_min_three_distances
-    (T : SimpleGraph α) [DecidableRel T.Adj] (S : Finset α)
+lemma exists_component_min_three_distances [Finite α]
+    (T : SimpleGraph α) (S : Finset α)
     (c : (seedDeleted T S).ConnectedComponent) {a b d w : α}
     (hw : w ∈ c.supp) :
     ∃ m ∈ c.supp, ∀ v ∈ c.supp,
       T.dist m a + T.dist m b + T.dist m d ≤
         T.dist v a + T.dist v b + T.dist v d := by
+  let := Fintype.ofFinite α
+  classical
   let weight : α → ℕ := fun v => T.dist v a + T.dist v b + T.dist v d
   obtain ⟨m, hm, hmin⟩ := Finset.exists_min_image
     (Finset.univ.filter fun v => v ∈ c.supp) weight
@@ -735,10 +792,11 @@ lemma exists_component_min_three_distances
   intro v hv
   exact hmin v (Finset.mem_filter.mpr ⟨Finset.mem_univ v, hv⟩)
 
+omit [DecidableEq α] in
 /-- At a component-restricted three-point median, no component direction can
 contain two of the marked vertices. -/
 lemma component_min_branch_exclusive
-    (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree) (S : Finset α)
+    (T : SimpleGraph α) (hT : T.IsTree) (S : Finset α)
     (c : (seedDeleted T S).ConnectedComponent) {a b d m u w : α}
     (hm : m ∈ c.supp)
     (hmin : ∀ v ∈ c.supp,
@@ -746,6 +804,7 @@ lemma component_min_branch_exclusive
         T.dist v a + T.dist v b + T.dist v d)
     (hwC : w ∈ c.supp) (hmu : T.Adj m u) (hw : w ∈ branch T m u)
     (ha : a ∈ branch T m u) (hb : b ∈ branch T m u) : False := by
+  classical
   have huC := component_direction_neighbor_mem T hT S c hm hwC hmu hw
   have haStep := dist_succ_of_mem_branch T hT hmu ha
   have hbStep := dist_succ_of_mem_branch T hT hmu hb
@@ -764,11 +823,12 @@ lemma component_min_branch_exclusive
 /-- Every attachment of a nonseed component has an adjacent witness in the
 component, and that witness is outside the enlarged seed set. -/
 lemma componentSeed_exists_adjacent_nonseed
-    (T : SimpleGraph α) [DecidableRel T.Adj] (S : Finset α)
+    (T : SimpleGraph α) (S : Finset α)
     (c : (seedDeleted T S).ConnectedComponent)
     (hc : ∃ v ∈ c.supp, v ∉ S) {s : α}
     (hs : s ∈ componentSeeds T S c) :
     ∃ x ∈ c.supp, x ∉ S ∧ T.Adj s x := by
+  classical
   obtain ⟨hsS, x, hx, hsx⟩ := (mem_componentSeeds_iff T S c s).mp hs
   exact ⟨x, hx, component_supp_disjoint_seeds T S c hc x hx, hsx⟩
 
@@ -776,7 +836,7 @@ lemma componentSeed_exists_adjacent_nonseed
 distinct attachment seeds together with adjacent nonseed witnesses inside the
 component. -/
 lemma component_three_seeds_with_witnesses
-    (T : SimpleGraph α) [DecidableRel T.Adj] (S : Finset α)
+    (T : SimpleGraph α) (S : Finset α)
     (c : (seedDeleted T S).ConnectedComponent)
     (hc : ∃ v ∈ c.supp, v ∉ S)
     (hthree : 3 ≤ (componentSeeds T S c).card) :
@@ -787,6 +847,7 @@ lemma component_three_seeds_with_witnesses
       x₁ ∈ c.supp ∧ x₂ ∈ c.supp ∧ x₃ ∈ c.supp ∧
       x₁ ∉ S ∧ x₂ ∉ S ∧ x₃ ∉ S ∧
       T.Adj s₁ x₁ ∧ T.Adj s₂ x₂ ∧ T.Adj s₃ x₃ := by
+  classical
   obtain ⟨s₁, hs₁, s₂, hs₂, s₃, hs₃, h₁₂, h₁₃, h₂₃⟩ :=
     Finset.two_lt_card.mp (by omega : 2 < (componentSeeds T S c).card)
   obtain ⟨x₁, hx₁, hx₁S, hsx₁⟩ :=
@@ -799,16 +860,18 @@ lemma component_three_seeds_with_witnesses
     h₁₂, h₁₃, h₂₃, hx₁, hx₂, hx₃, hx₁S, hx₂S, hx₃S,
     hsx₁, hsx₂, hsx₃⟩
 
+omit [DecidableEq α] in
 /-- From a point in a nonseed component, an attachment seed and its
 component witness determine one direction; unless the witness is the point
 itself, the witness lies in that direction too. -/
 lemma attachment_direction_witness
-    (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree) (S : Finset α)
+    (T : SimpleGraph α) (hT : T.IsTree) (S : Finset α)
     (c : (seedDeleted T S).ConnectedComponent)
     (hc : ∃ v ∈ c.supp, v ∉ S) {s x m : α}
     (hs : s ∈ S) (hx : x ∈ c.supp) (hm : m ∈ c.supp) (hsx : T.Adj s x) :
     ∃ u, T.Adj m u ∧ s ∈ branch T m u ∧
       ((x = m ∧ u = s) ∨ x ∈ branch T m u) := by
+  classical
   have hsm : s ≠ m := by
     intro h
     subst s
@@ -829,6 +892,7 @@ lemma attachment_direction_witness
     have hwu : w = u := huuniq w ⟨hw.1, hsW⟩
     exact Or.inr (hwu ▸ hw.2)
 
+omit [DecidableEq α] in
 /-- Branches pointing away from a centre are nested inside the first
 neighbour direction from that centre. -/
 lemma branch_chain_trans
@@ -837,6 +901,7 @@ lemma branch_chain_trans
     (hsu : s ∈ branch T m u)
     (hsm : T.dist s m = T.dist x m + 1) (ht : t ∈ branch T x s) :
     t ∈ branch T m u := by
+  classical
   generalize hn : T.dist x m = n
   induction n using Nat.strong_induction_on generalizing m u with
   | h n ih =>
@@ -868,10 +933,11 @@ lemma branch_chain_trans
           ih (T.dist x u) hlt hv.1 hv.2 hsv hs_u rfl
         exact (branch_ssubset hT hmu hv.1 hvne).1 htuv
 
+omit [DecidableEq α] in
 /-- An original seed lying beyond an attachment edge remains in the same
 median direction as that attachment. -/
 lemma original_seed_same_attachment_direction
-    (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree) (S : Finset α)
+    (T : SimpleGraph α) (hT : T.IsTree) (S : Finset α)
     (c : (seedDeleted T S).ConnectedComponent)
     (hc : ∃ v ∈ c.supp, v ∉ S) {t s x m u : α}
     (ht : t ∈ branch T x s) (hs : s ∈ S) (hx : x ∈ c.supp)
@@ -879,15 +945,17 @@ lemma original_seed_same_attachment_direction
     (hsu : s ∈ branch T m u)
     (hxdir : (x = m ∧ u = s) ∨ x ∈ branch T m u) :
     t ∈ branch T m u := by
+  classical
   rcases hxdir with ⟨rfl, rfl⟩ | hxu
   · exact ht
   · exact branch_chain_trans T hT hmu hxu hsx hsu
       (boundary_dist_eq_succ T hT S c hc hs hx hm hsx) ht
 
+omit [DecidableEq α] in
 /-- Distinct attachments selected at a component median determine distinct
 directions from that median. -/
 lemma attachment_directions_ne
-    (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree) (S : Finset α)
+    (T : SimpleGraph α) (hT : T.IsTree) (S : Finset α)
     (c : (seedDeleted T S).ConnectedComponent)
     (hc : ∃ v ∈ c.supp, v ∉ S) {a b d m s₁ s₂ u₁ u₂ : α}
     (hm : m ∈ c.supp) (haC : a ∈ c.supp) (hbC : b ∈ c.supp)
@@ -898,6 +966,7 @@ lemma attachment_directions_ne
     (hu₁ : T.Adj m u₁) (hu₂ : T.Adj m u₂)
     (ha : (a = m ∧ u₁ = s₁) ∨ a ∈ branch T m u₁)
     (hb : (b = m ∧ u₂ = s₂) ∨ b ∈ branch T m u₂) : u₁ ≠ u₂ := by
+  classical
   intro heq
   rcases ha with ⟨ham, hu₁s⟩ | ha
   · rcases hb with ⟨hbm, hu₂s⟩ | hb
@@ -916,10 +985,11 @@ lemma attachment_directions_ne
 each remaining nonseed component has at most two attachments to the enlarged
 seed set. -/
 lemma promoted_components_two_attachments
-    (T : SimpleGraph α) [DecidableRel T.Adj] (hT : T.IsTree) (S₀ : Finset α)
+    (T : SimpleGraph α) (hT : T.IsTree) (S₀ : Finset α)
     (c : (seedDeleted T (S₀ ∪ promotedBranchVertices T S₀)).ConnectedComponent)
     (hc : ∃ v ∈ c.supp, v ∉ S₀ ∪ promotedBranchVertices T S₀) :
     (componentSeeds T (S₀ ∪ promotedBranchVertices T S₀) c).card ≤ 2 := by
+  classical
   let S := S₀ ∪ promotedBranchVertices T S₀
   by_contra hnot
   have hthree : 3 ≤ (componentSeeds T S c).card := by
@@ -980,8 +1050,7 @@ lemma promoted_components_two_attachments
       · exact hu₂D
       · exact hu₃D
     have hc := Finset.card_le_card hsub
-    simp only [ge_iff_le] at hc
-    exact hc
+    simpa [hu₁₂, hu₁₃, hu₂₃] using hc
   have hmB : m ∈ promotedBranchVertices T S₀ := by
     simpa [promotedBranchVertices] using! hcard
   exact component_supp_disjoint_seeds T S c hc m hm

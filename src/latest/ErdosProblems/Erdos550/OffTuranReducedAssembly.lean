@@ -20,12 +20,11 @@ open Finset SimpleGraph Finpartition
 
 namespace Erdos550
 
-open Classical
 
 /-- A regular-pair cap checked at the threshold `B` gives the
 independence bound for every larger cluster family. -/
 theorem offTuran_alphaQ_of_cap
-    {W : Type} [Fintype W] (F : SimpleGraph W)
+    {W : Type} [Finite W] (F : SimpleGraph W)
     (q : ℕ) (hq : 1 ≤ q) (d ε₀ : ℝ) (m₀ B : ℕ)
     (hcap : ∀ {V : Type} [Fintype V] [DecidableEq V]
       (G : SimpleGraph V) [DecidableRel G.Adj], ¬ (F ⊑ Gᶜ) →
@@ -50,6 +49,8 @@ theorem offTuran_alphaQ_of_cap
     ∀ A : Finset {C // C ∈ P.parts}, B ≤ A.card →
       ∃ C ∈ A, ∃ D ∈ A,
         (offTuranReducedGraph G P ε d).Adj C D := by
+  let := Fintype.ofFinite W
+  classical
   intro A hBA
   have hbig : 4 * q ^ 2 ≤ A.card := hBbig.trans hBA
   have hBAreal : (B : ℝ) ≤ (A.card : ℝ) := by exact_mod_cast hBA
@@ -70,7 +71,7 @@ theorem offTuran_alphaQ_of_cap
 degree, and threshold fit produce heavy adjacent heads and a maximum matching
 away from them, together with its exact uncovered-family bound. -/
 theorem exists_offTuran_heavy_head_and_matching
-    {W : Type} [Fintype W] (F : SimpleGraph W)
+    {W : Type} [Finite W] (F : SimpleGraph W)
     (q : ℕ) (hq : 1 ≤ q) (d ε₀ : ℝ) (m₀ B : ℕ)
     (hcap : ∀ {V : Type} [Fintype V] [DecidableEq V]
       (G : SimpleGraph V) [DecidableRel G.Adj], ¬ (F ⊑ Gᶜ) →
@@ -115,6 +116,8 @@ theorem exists_offTuran_heavy_head_and_matching
           a ∉ Finset.univ.image cL ∧ a ∉ Finset.univ.image cR) ∧
         (Finset.univ \
           (Finset.univ.image cL ∪ Finset.univ.image cR)).card < B + 2 := by
+  let := Fintype.ofFinite W
+  classical
   apply exists_heavy_head_and_matching_coverage
     (offTuranReducedGraph G P ε d) S D base η N B
     hN hbase hup havg hBfit

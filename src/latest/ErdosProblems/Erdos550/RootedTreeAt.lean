@@ -18,12 +18,11 @@ open SimpleGraph
 
 namespace Erdos550
 
-open Classical
 
 /-- Parent/rank data for a finite tree rooted at the prescribed vertex `r`. -/
 lemma IsTree.exists_rooted_edge_structure_at
-    {A : Type*} [Fintype A] [DecidableEq A]
-    (T : SimpleGraph A) [DecidableRel T.Adj] (hT : T.IsTree) (r : A) :
+    {A : Type*} [Finite A]
+    (T : SimpleGraph A) (hT : T.IsTree) (r : A) :
     ∃ (parent : A → Option A) (rank : A → ℕ),
       parent r = none ∧
       (∀ a, parent a = none → a = r) ∧
@@ -31,6 +30,8 @@ lemma IsTree.exists_rooted_edge_structure_at
       (∀ a b, parent a = some b → T.Adj a b) ∧
       (∀ a b, T.Adj a b →
         parent a = some b ∨ parent b = some a) := by
+  classical
+  let := Fintype.ofFinite A
   obtain ⟨par, hpar⟩ :
       ∃ par : A → A,
         (∀ a, a ≠ r →
@@ -79,7 +80,7 @@ lemma IsTree.exists_rooted_edge_structure_at
             (fun h => hbr h) (fun h => h (hT.1 b r))
       have hba : r = par b :=
         hpar.2 b hbr r hab.symm hdist
-      show parent b = some r
+      change parent b = some r
       rw [show parent b = some (par b) by simp [parent, hbr], ← hba]
     · by_cases hbr : b = r
       · subst b
@@ -91,7 +92,7 @@ lemma IsTree.exists_rooted_edge_structure_at
               (fun h => har h) (fun h => h (hT.1 a r))
         have hab' : r = par a :=
           hpar.2 a har r hab hdist
-        show parent a = some r
+        change parent a = some r
         rw [show parent a = some (par a) by simp [parent, har], ← hab']
       · rcases lt_trichotomy (T.dist a r) (T.dist b r) with hlt | heq | hgt
         · right

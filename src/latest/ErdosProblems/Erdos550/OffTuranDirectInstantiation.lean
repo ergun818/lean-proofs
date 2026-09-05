@@ -20,18 +20,18 @@ open Finset SimpleGraph Finpartition SzemerediRegularity
 
 namespace Erdos550
 
-open Classical
 
 set_option maxHeartbeats 5000000 in
+-- The instantiation combines the regularity estimates and the large graph parameter bounds.
 theorem offTuran_reduced_parity_embedding_of_large
     {A V κ : Type}
-    [Fintype A] [DecidableEq A]
+    [Fintype A]
     [Fintype V] [DecidableEq V] [Nonempty V]
-    [Fintype κ] [DecidableEq κ]
+    [Fintype κ]
     {q f m₀ : ℕ} {δ εCap : ℝ}
     (c : OffTuranConstants q f m₀ δ εCap)
-    (hq : 2 ≤ q)
-    (T : SimpleGraph A) [DecidableRel T.Adj] (hT : T.IsTree)
+    (_hq : 2 ≤ q)
+    (T : SimpleGraph A) (hT : T.IsTree)
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (D : OffTuranReducedDegreeData G c.ε c.η
       (Fintype.card A) c.η m₀)
@@ -70,6 +70,7 @@ theorem offTuran_reduced_parity_embedding_of_large
           (offTuranReducedGraph G D.P c.ε c.η)
           (fun i : {C // C ∈ D.P.parts} => i.1) Y cL cR k) :
     T ⊑ G := by
+  classical
   let N : ℝ := Fintype.card V
   let n : ℝ := Fintype.card A
   let ell : ℝ := D.P.parts.card
@@ -524,7 +525,7 @@ theorem offTuran_reduced_parity_embedding_of_large
     dsimp [t]
     have hepsEtaSq : 2 * c.ε < c.η ^ 2 := by
       nlinarith [c.eps_square_q_strong,
-        (show (2 : ℝ) ≤ q by exact_mod_cast hq),
+        (show (2 : ℝ) ≤ q by exact_mod_cast _hq),
         sq_pos_of_pos c.eta_pos]
     nlinarith [hvarWeak, mul_pos hNpos hNpos]
   have hsumX :
