@@ -59,7 +59,7 @@ theorem supportCrossingTime_tie {p x : Point} {l m : Point →L[ℝ] ℝ}
     (l + supportCrossingTime l m p x • m) x =
       (l + supportCrossingTime l m p x • m) p := by
   have hden : m x - m p ≠ 0 := ne_of_gt (sub_pos.mpr hforward)
-  simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+  simp only [add_apply, smul_apply,
     smul_eq_mul, supportCrossingTime]
   field_simp [hden]
   ring
@@ -70,7 +70,7 @@ This is the core finite support-adjacency lemma.  It does not use planarity:
 planarity enters only in choosing and ordering the successive sweep
 directions. -/
 theorem exists_first_support_tie (A : Finset Point) {p : Point}
-    (hp : p ∈ A) (l m : Point →L[ℝ] ℝ)
+    (_hp : p ∈ A) (l m : Point →L[ℝ] ℝ)
     (hstrict : ∀ x ∈ A, x ≠ p → l x < l p)
     (hforward : ∃ x ∈ A, m p < m x) :
     ∃ t : ℝ, 0 < t ∧ ∃ q ∈ A, q ≠ p ∧
@@ -97,7 +97,7 @@ theorem exists_first_support_tie (A : Finset Point) {p : Point}
       have hden : 0 < m x - m p := sub_pos.mpr hxforward
       rw [supportCrossingTime] at hmin
       have hmul := (le_div_iff₀ hden).mp hmin
-      simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+      simp only [add_apply, smul_apply,
         smul_eq_mul]
       linarith
     · have hmx : m x ≤ m p := le_of_not_gt hxforward
@@ -105,14 +105,14 @@ theorem exists_first_support_tie (A : Finset Point) {p : Point}
         by_cases hxp : x = p
         · exact (congrArg l hxp).le
         · exact (hstrict x hxA hxp).le
-      simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+      simp only [add_apply, smul_apply,
         smul_eq_mul]
       nlinarith [mul_le_mul_of_nonneg_left hmx ht.le]
 
 /-- If all forward crossing times are distinct, the first crossing leaves
 every point other than its two endpoints strictly below the supporting line. -/
 theorem exists_first_support_tie_strict (A : Finset Point) {p : Point}
-    (hp : p ∈ A) (l m : Point →L[ℝ] ℝ)
+    (_hp : p ∈ A) (l m : Point →L[ℝ] ℝ)
     (hstrict : ∀ x ∈ A, x ≠ p → l x < l p)
     (hforward : ∃ x ∈ A, m p < m x)
     (hinj : Set.InjOn (supportCrossingTime l m p)
@@ -143,7 +143,7 @@ theorem exists_first_support_tie_strict (A : Finset Point) {p : Point}
       have hden : 0 < m x - m p := sub_pos.mpr hxforward
       rw [supportCrossingTime] at hmin
       have hmul := (le_div_iff₀ hden).mp hmin
-      simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+      simp only [add_apply, smul_apply,
         smul_eq_mul]
       linarith
     · have hmx : m x ≤ m p := le_of_not_gt hxforward
@@ -151,7 +151,7 @@ theorem exists_first_support_tie_strict (A : Finset Point) {p : Point}
         by_cases hxp : x = p
         · exact (congrArg l hxp).le
         · exact (hstrict x hxA hxp).le
-      simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+      simp only [add_apply, smul_apply,
         smul_eq_mul]
       nlinarith [mul_le_mul_of_nonneg_left hmx ht.le]
   · intro x hxA hxp hxq
@@ -167,12 +167,12 @@ theorem exists_first_support_tie_strict (A : Finset Point) {p : Point}
       have hden : 0 < m x - m p := sub_pos.mpr hxforward
       rw [supportCrossingTime] at hmin'
       have hmul := (lt_div_iff₀ hden).mp hmin'
-      simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+      simp only [add_apply, smul_apply,
         smul_eq_mul]
       linarith
     · have hmx : m x ≤ m p := le_of_not_gt hxforward
       have hlx : l x < l p := hstrict x hxA hxp
-      simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+      simp only [add_apply, smul_apply,
         smul_eq_mul]
       nlinarith [mul_le_mul_of_nonneg_left hmx ht.le]
 
@@ -191,7 +191,7 @@ theorem exists_strictSupportingEdge_of_first_crossing
     exists_first_support_tie_strict A hp l m hstrict hforward hinj
   have hex : ∃ x ∈ A, x ≠ p ∧ x ≠ q := by
     by_contra h
-    push_neg at h
+    push Not at h
     have hsub : A ⊆ {p, q} := by
       intro x hx
       by_cases hxp : x = p
@@ -347,7 +347,8 @@ theorem orientedHullPerm_sq_apply_ne (A : Finset Point)
       · simp [h x hxp]
     have hc := Finset.card_le_card hsub
     have hpq : p ≠ q := (orientedHullPerm_apply_ne A hthree p).symm
-    simp [hpq] at hc
+    simp only [Finset.univ_eq_attach, Finset.card_attach, Finset.mem_singleton, hpq,
+      not_false_eq_true, Finset.card_insert_of_notMem, Finset.card_singleton, Nat.reduceAdd] at hc
     have : (hullVertices A).card ≤ 2 := by simpa using hc
     omega
   intro hsq

@@ -218,10 +218,10 @@ theorem Case2SecondaryFormula.not_adj_of_fst_lt_neg_one
     simpa [unitDistanceGraph] using hadj
   apply not_unit_case2_secondary_of_fst_lt_neg_one
     (D.edgeFrame.toCanonical t) (D.edgeFrame.toCanonical v) hx
-  rcases D.target_edge_coordinate_cases with hw | hwNext | he
-  · exact Or.inl hw
-  · exact Or.inr (Or.inl hwNext)
-  · exact Or.inr (Or.inr he)
+  · rcases D.target_edge_coordinate_cases with hw | hwNext | he
+    · exact Or.inl hw
+    · exact Or.inr (Or.inl hwNext)
+    · exact Or.inr (Or.inr he)
   · exact hunit
 
 /-- The rigid chart in which a generalized Case-4 split formula retains
@@ -271,7 +271,10 @@ end Erdos957ExceptionalCollisionGeometry
 #print axioms Erdos957ExceptionalCollisionGeometry.not_unit_case2_e_of_fst_gt_five_halves
 #print axioms Erdos957ExceptionalCollisionGeometry.not_unit_case2_secondary_of_fst_lt_neg_one
 #print axioms Erdos957ExceptionalCollisionGeometry.case2_uPrev_not_unit_secondary
-#print axioms Erdos957ExceptionalCollisionGeometry.Case2SecondaryFormula.target_eq_e_of_shallow_cone_of_adj
-#print axioms Erdos957ExceptionalCollisionGeometry.Case2SecondaryFormula.not_adj_of_shallow_cone_and_fst_gt_five_halves
+#print axioms
+  Erdos957ExceptionalCollisionGeometry.Case2SecondaryFormula.target_eq_e_of_shallow_cone_of_adj
+open Erdos957ExceptionalCollisionGeometry in
+#print axioms Case2SecondaryFormula.not_adj_of_shallow_cone_and_fst_gt_five_halves
 #print axioms Erdos957ExceptionalCollisionGeometry.Case2SecondaryFormula.not_adj_of_fst_lt_neg_one
-#print axioms Erdos957ExceptionalCollisionGeometry.Case4SplitRightFormula.not_direct_competitor_of_fst_gt_three_halves
+open Erdos957ExceptionalCollisionGeometry in
+#print axioms Case4SplitRightFormula.not_direct_competitor_of_fst_gt_three_halves

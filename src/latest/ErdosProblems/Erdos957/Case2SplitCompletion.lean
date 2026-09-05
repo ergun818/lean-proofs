@@ -258,8 +258,7 @@ theorem no_two_split_away_first_second
     cases hB : B.formula.side <;>
       cases hQ : Qt.twoExtreme.side <;>
       simp_all [Erdos957Case4NoThree.awayHullVertex,
-        Erdos957Case4NoThree.incidentHullVertex,
-        cyclicSideVertex, pow_succ]
+        Erdos957Case4NoThree.incidentHullVertex, pow_succ]
   obtain ⟨hlow, hbranch⟩ :=
     Erdos957Case4SplitClassification.eq_low_of_incident_partner_split_right_collision
       Q T.target U.target htRole huRole huPartner
@@ -286,8 +285,7 @@ theorem no_two_split_away_first_second
     have htValue := congrArg Subtype.val htAway
     cases hB : B.formula.side <;>
       cases hQ : Qt.twoExtreme.side <;>
-      simp_all [Erdos957Case4NoThree.awayHullVertex,
-        cyclicSideVertex, pow_succ]
+      simp_all [Erdos957Case4NoThree.awayHullVertex, pow_succ]
   have hsBounds := Erdos957Case4NoThree.normalizedFrame_away_prefix_bounds
     F (sourceIndex P W t.1 t.property) Qt.middle Qt.twoExtreme Qt.normalized
       (Erdos957GeometryLocalityBridge.sourceIndex_isFlat W t) 0
@@ -521,7 +519,7 @@ theorem no_two_split_away_first_second
     rw [hnMidY] at hnLower
     nlinarith only [hnLower, hsBounds'.1, hqY]
 
-noncomputable def twoSplitAwayFirstSecondResidual
+theorem twoSplitAwayFirstSecondResidual
     (hA : IsOneSeparated A)
     (Q : CommonCoherentRealizedSourceRows P W F.chart) :
     Erdos957Case2SplitFinalAssembly.TwoSplitAwayFirstSecondResidual Q where
@@ -533,17 +531,17 @@ noncomputable def twoSplitAwayFirstSecondResidual
 
 /-- The completed two-split exclusion supplies the exact two-field
 degree-five residual required by the weighted Case-2 assembly. -/
-noncomputable def case2SecondarySplitDegreeFiveResiduals
+theorem case2SecondarySplitDegreeFiveResiduals
     (hA : IsOneSeparated A)
     (Q : CommonCoherentRealizedSourceRows P W F.chart) :
     Case2SecondarySplitDegreeFiveResiduals (F := F) Q.rows :=
   Erdos957Case2SplitFinalAssembly.case2SecondarySplitDegreeFiveResiduals_of_two_split
     hA Q (twoSplitAwayFirstSecondResidual hA Q)
 
-end Erdos957Case2SplitCompletion
+#print axioms CommonPairedCase4Rows.normalized_currentSecondary_snd_eq_common
+#print axioms CommonPairedCase4Rows.normalized_currentSecondary_fst_mem_interval_of_low
+#print axioms no_two_split_away_first_second
+#print axioms twoSplitAwayFirstSecondResidual
+#print axioms case2SecondarySplitDegreeFiveResiduals
 
-#print axioms Erdos957Case2SplitCompletion.CommonPairedCase4Rows.normalized_currentSecondary_snd_eq_common
-#print axioms Erdos957Case2SplitCompletion.CommonPairedCase4Rows.normalized_currentSecondary_fst_mem_interval_of_low
-#print axioms Erdos957Case2SplitCompletion.no_two_split_away_first_second
-#print axioms Erdos957Case2SplitCompletion.twoSplitAwayFirstSecondResidual
-#print axioms Erdos957Case2SplitCompletion.case2SecondarySplitDegreeFiveResiduals
+end Erdos957Case2SplitCompletion

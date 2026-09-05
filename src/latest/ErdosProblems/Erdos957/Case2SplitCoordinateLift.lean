@@ -29,7 +29,7 @@ lemma third_arc_close_to_source_or_outer
     {sx sy qx qy nx ny : ℝ}
     (hsx : (399 / 400 : ℝ) < sx)
     (hsy : sy < 0) (hshallow : -sy ≤ sx / 10)
-    (hqxLower : -1 ≤ qx) (hqxUpper : qx ≤ 0)
+    (_hqxLower : -1 ≤ qx) (hqxUpper : qx ≤ 0)
     (hqy : qy ≤ -sqrtThree)
     (hsq : (sx - qx) ^ 2 + (sy - qy) ^ 2 = 4)
     (hnorm : nx ^ 2 + ny ^ 2 = 1)
@@ -141,7 +141,6 @@ lemma third_arc_close_to_source_or_outer
         ((1 / 2 : ℝ) - (ny - sy)) * ((1 / 2 : ℝ) + (ny - sy)) :=
       mul_pos (by linarith only [hyHi]) (by linarith only [hyLo])
     nlinarith only [hxProd, hyProd]
-
   · right
     have hnyUpper : ny < -(1 / 2 : ℝ) := lt_of_not_ge hnyHalf
     have hxLo : -(67 / 100 : ℝ) < nx - (sx + qx) / 2 := by

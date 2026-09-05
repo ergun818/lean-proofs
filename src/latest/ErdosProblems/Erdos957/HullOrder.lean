@@ -96,7 +96,7 @@ theorem hullVertex_exists_strict_support (A : Finset Point) {x : Point}
   refine ⟨l, ?_, ?_⟩
   · intro y hy
     by_cases hyx : y = x
-    · simpa [hyx]
+    · simp [hyx]
     · exact (hlt y (subset_convexHull ℝ _ (Finset.mem_erase.mpr ⟨hyx, hy⟩))).le.trans
         hulx.le
   · intro y hy hyx
@@ -158,7 +158,7 @@ theorem convexIndependent_not_collinear_three
     have : p j ∈ convexHull ℝ (p '' ({i, k} : Set ι)) := by
       simpa [Set.image_insert_eq, Set.image_singleton] using hjmem
     have := hjidx.mp this
-    simp [hij, hjk] at this
+    simp [hjk] at this
     exact hij this.symm
   · have hkmem : p k ∈ convexHull ℝ {p j, p i} := by
       rw [convexHull_pair]
@@ -167,7 +167,7 @@ theorem convexIndependent_not_collinear_three
     have : p k ∈ convexHull ℝ (p '' ({j, i} : Set ι)) := by
       simpa [Set.image_insert_eq, Set.image_singleton] using hkmem
     have := hkidx.mp this
-    simp [hjk, hik] at this
+    simp only [mem_insert_iff, mem_singleton_iff] at this
     rcases this with hki | hki
     · exact hjk hki.symm
     · exact hik hki.symm
@@ -283,7 +283,7 @@ theorem complexCross_eq_norm_mul_sin_sub (z w : ℂ) :
   ring
 
 theorem real_lt_pi_of_pos_of_lt_two_pi_of_sin_pos {t : ℝ}
-    (ht0 : 0 < t) (ht2pi : t < 2 * Real.pi) (hsin : 0 < Real.sin t) :
+    (_ht0 : 0 < t) (ht2pi : t < 2 * Real.pi) (hsin : 0 < Real.sin t) :
     t < Real.pi := by
   by_contra htpi
   have hy0 : 0 ≤ t - Real.pi := by linarith
@@ -292,7 +292,7 @@ theorem real_lt_pi_of_pos_of_lt_two_pi_of_sin_pos {t : ℝ}
     Real.sin_nonneg_of_nonneg_of_le_pi hy0 hypi
   have hrewrite : Real.sin t = -Real.sin (t - Real.pi) := by
     calc
-      Real.sin t = Real.sin ((t - Real.pi) + Real.pi) := by congr 1 <;> ring
+      Real.sin t = Real.sin ((t - Real.pi) + Real.pi) := by congr 1; ring
       _ = -Real.sin (t - Real.pi) := Real.sin_add_pi _
   rw [hrewrite] at hsin
   linarith
@@ -435,7 +435,7 @@ theorem complexCross_pos_of_mem_openCCWSector {z w x : ℂ}
 /-- A ray from an interior point of a closed convex set meets its frontier at
 most once. -/
 theorem sameRay_frontier_eq {K : Set Point} (hconv : Convex ℝ K)
-    (hclosed : IsClosed K) {C u v : Point} (hC : C ∈ interior K)
+    (_hclosed : IsClosed K) {C u v : Point} (hC : C ∈ interior K)
     (hu : u ∈ frontier K) (hv : v ∈ frontier K)
     (hray : SameRay ℝ (u - C) (v - C)) : u = v := by
   have hinside : ∀ (w : Point), w ∈ frontier K → ∀ t : ℝ,
@@ -577,7 +577,7 @@ theorem crossFunctional_ne_zero {u : Point} (hu : u ≠ 0) :
   intro hzero
   have h0 := congrArg (fun f : Point →L[ℝ] ℝ ↦ f (EuclideanSpace.single 1 1)) hzero
   have h1 := congrArg (fun f : Point →L[ℝ] ℝ ↦ f (EuclideanSpace.single 0 1)) hzero
-  simp [crossFunctional, crossVec] at h0 h1
+  simp [crossFunctional] at h0 h1
   apply hu
   ext i
   fin_cases i <;> simp [h0, h1]
@@ -631,7 +631,7 @@ theorem support_coefficient_sq_pos {l : Point →L[ℝ] ℝ} (hl : l ≠ 0) :
     0 < l (planeBasisVector 0) ^ 2 + l (planeBasisVector 1) ^ 2 := by
   have hcoeff : l (planeBasisVector 0) ≠ 0 ∨ l (planeBasisVector 1) ≠ 0 := by
     by_contra h
-    push_neg at h
+    push Not at h
     apply hl
     ext x
     rw [continuousLinearMap_apply_eq_coordinates]
@@ -646,7 +646,9 @@ theorem quarterTurn_add_smul_ne_zero {l : Point →L[ℝ] ℝ} (hl : l ≠ 0) (r
   have h0 := congrArg (fun f : Point →L[ℝ] ℝ ↦ f (planeBasisVector 0)) hzero
   have h1 := congrArg (fun f : Point →L[ℝ] ℝ ↦ f (planeBasisVector 1)) hzero
   have hsq := support_coefficient_sq_pos hl
-  simp [quarterTurnFunctional_apply, planeBasisVector_apply] at h0 h1
+  simp only [Fin.isValue, add_apply, quarterTurnFunctional_apply, planeBasisVector_apply,
+    ↓reduceIte, mul_one, zero_ne_one, mul_zero, add_zero, smul_apply, smul_eq_mul, zero_apply,
+    one_ne_zero, zero_add] at h0 h1
   have h0' := congrArg (fun t : ℝ ↦ t * l (planeBasisVector 1)) h0
   have h1' := congrArg (fun t : ℝ ↦ t * l (planeBasisVector 0)) h1
   nlinarith
@@ -671,7 +673,7 @@ theorem collinear_of_crossVec_sub_eq_zero {p q x : Point} (hpq : p ≠ q)
       fin_cases i
       · simp only [smul_eq_mul, PiLp.smul_apply, PiLp.sub_apply]
         exact div_mul_cancel₀ _ hcoord
-      · simp only [smul_eq_mul, PiLp.add_apply, PiLp.smul_apply,
+      · simp only [smul_eq_mul, PiLp.smul_apply,
           PiLp.sub_apply]
         have hc := hcross
         simp only [crossVec] at hc
@@ -684,7 +686,7 @@ theorem collinear_of_crossVec_sub_eq_zero {p q x : Point} (hpq : p ≠ q)
     · refine ⟨(x - p) 1 / (q - p) 1, ?_⟩
       ext i
       fin_cases i
-      · simp only [smul_eq_mul, PiLp.add_apply, PiLp.smul_apply,
+      · simp only [smul_eq_mul, PiLp.smul_apply,
           PiLp.sub_apply]
         have hc := hcross
         simp only [crossVec] at hc
@@ -771,7 +773,7 @@ theorem hullVertex_exists_ccw_strictSupportingEdge
     exact (div_eq_iff hdq.ne').mp rfl
   have hLqp : L (q - p) = 0 := by
     rw [map_sub] at hmq
-    simp only [L, ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+    simp only [L, add_apply, smul_apply,
       smul_eq_mul, map_sub]
     dsimp only [d] at hmq ⊢
     linarith
@@ -794,7 +796,7 @@ theorem hullVertex_exists_ccw_strictSupportingEdge
         (div_le_iff₀ hdx).mp hs
       have hsub : L (x - p) ≤ 0 := by
         rw [map_sub] at hmle
-        simp only [L, ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+        simp only [L, add_apply, smul_apply,
           smul_eq_mul, map_sub]
         dsimp only [d] at hmle ⊢
         linarith
@@ -840,7 +842,7 @@ theorem hullVertex_exists_ccw_strictSupportingEdge
       simpa only [slope, r] using hs
     have hsub : L (x - p) < 0 := by
       rw [map_sub] at hm
-      simp only [L, ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+      simp only [L, add_apply, smul_apply,
         smul_eq_mul, map_sub]
       dsimp only [d] at hm ⊢
       linarith
@@ -1034,7 +1036,7 @@ theorem segment_subset_frontier_of_linear_support
   have hsurj : Function.Surjective l := by
     have hex : ∃ v : Point, l v ≠ 0 := by
       by_contra h
-      push_neg at h
+      push Not at h
       apply hl
       ext v
       simpa using h v

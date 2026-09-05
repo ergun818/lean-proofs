@@ -412,7 +412,7 @@ lemma eq_first_or_second_of_three_common_unit_neighbors {z₁ z₂ z₃ : ℂ}
   · right
     calc
       z₃ = conj z₁ := by simpa using (congrArg conj h₁₃).symm
-      _ = z₂ := by simpa [h₁₂]
+      _ = z₂ := by simp [h₁₂]
 
 /-- Three pairwise distinct common unit neighbours of a unit segment do not exist. -/
 lemma not_three_pairwise_distinct_common_unit_neighbors {z₁ z₂ z₃ : ℂ}

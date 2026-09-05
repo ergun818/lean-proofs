@@ -21,7 +21,7 @@ abbrev Point := Erdos957GeometryCore.Point
 
 /-- The canonical produced rows satisfy both degree-five Case-2/split
 residual fields, with no remaining geometric input. -/
-noncomputable def producedCase2SecondarySplitDegreeFiveResiduals
+theorem producedCase2SecondarySplitDegreeFiveResiduals
     {A : Finset Point} (hA : IsOneSeparated A)
     (R : Erdos957.RadiallySortedCyclicHullOrder A)
     (L : Erdos957TurnSum.HullOrderBridge.LiftedCyclicHullOrder R.order)

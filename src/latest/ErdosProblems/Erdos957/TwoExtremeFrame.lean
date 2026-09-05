@@ -35,7 +35,7 @@ private lemma cCross_eq_norm_mul_sin_sub (z w : ℂ) :
 
 private lemma cCross_neg_of_arg_lt {z w : ℂ}
     (hz : z ≠ 0) (hw : w ≠ 0)
-    (hzim : z.im < 0) (hwim : w.im < 0) (hwz : w.arg < z.arg) :
+    (hzim : z.im < 0) (_hwim : w.im < 0) (hwz : w.arg < z.arg) :
     cCross z w < 0 := by
   rw [cCross_eq_norm_mul_sin_sub]
   have hdiffneg : w.arg - z.arg < 0 := sub_neg.mpr hwz
@@ -49,7 +49,7 @@ private lemma cCross_neg_of_arg_lt {z w : ℂ}
 
 private lemma cCross_pos_of_arg_lt {z w : ℂ}
     (hz : z ≠ 0) (hw : w ≠ 0)
-    (hzim : z.im < 0) (hwim : w.im < 0) (hzw : z.arg < w.arg) :
+    (_hzim : z.im < 0) (hwim : w.im < 0) (hzw : z.arg < w.arg) :
     0 < cCross z w := by
   rw [cCross_eq_norm_mul_sin_sub]
   have hdiffpos : 0 < w.arg - z.arg := sub_pos.mpr hzw
@@ -65,11 +65,11 @@ private lemma arg_outside_of_cross_outer_mul_nonneg
     {z₀ z₂ c : ℂ}
     (hz₀ : z₀ ≠ 0) (hz₂ : z₂ ≠ 0) (hc : c ≠ 0)
     (hz₀im : z₀.im < 0) (hz₂im : z₂.im < 0) (hcim : c.im < 0)
-    (harg₀₂ : z₀.arg < z₂.arg)
+    (_harg₀₂ : z₀.arg < z₂.arg)
     (hcross : 0 ≤ cCross c z₀ * cCross c z₂) :
     c.arg ≤ z₀.arg ∨ z₂.arg ≤ c.arg := by
   by_contra hnot
-  push_neg at hnot
+  push Not at hnot
   have hleft : cCross c z₀ < 0 :=
     cCross_neg_of_arg_lt hc hz₀ hcim hz₀im hnot.1
   have hright : 0 < cCross c z₂ :=
@@ -78,7 +78,7 @@ private lemma arg_outside_of_cross_outer_mul_nonneg
 
 private lemma angle_eq_arg_sub_of_neg_im_of_arg_le
     {z w : ℂ} (hzne : z ≠ 0) (hwne : w ≠ 0)
-    (hzim : z.im < 0) (hwim : w.im < 0) (hwz : w.arg ≤ z.arg) :
+    (hzim : z.im < 0) (_hwim : w.im < 0) (hwz : w.arg ≤ z.arg) :
     InnerProductGeometry.angle z w = z.arg - w.arg := by
   have hdiff : z.arg - w.arg ∈ Set.Ioc (-Real.pi) Real.pi := by
     constructor
@@ -418,7 +418,7 @@ private theorem exists_outer_source_neighbors
     exact hdegree
   have hphaseBij : Function.Bijective phase := by
     apply (Fintype.bijective_iff_injective_and_card phase).mpr
-    exact ⟨hphaseInj, by simpa [hcardN]⟩
+    exact ⟨hphaseInj, by simp [hcardN]⟩
   obtain ⟨q₀, hq₀⟩ := hphaseBij.2 (0 : Fin 3)
   obtain ⟨q₂, hq₂⟩ := hphaseBij.2 (2 : Fin 3)
   have hbin₀ : Erdos957Angle.phaseBin (z q₀) = (0 : Fin 6) := by
@@ -856,7 +856,7 @@ private theorem exists_outer_source_neighbors_aligned
     exact hdegree
   have hphaseBij : Function.Bijective phase := by
     apply (Fintype.bijective_iff_injective_and_card phase).mpr
-    exact ⟨hphaseInj, by simpa [hcardN]⟩
+    exact ⟨hphaseInj, by simp [hcardN]⟩
   obtain ⟨q₀, hq₀⟩ := hphaseBij.2 (0 : Fin 3)
   obtain ⟨q₂, hq₂⟩ := hphaseBij.2 (2 : Fin 3)
   have hbin₀ : Erdos957Angle.phaseBin (z q₀) = (0 : Fin 6) := by
@@ -919,7 +919,7 @@ private lemma aligned_cross_product_eq_ambient_cross_product
   have hcr := C.cross_displacements source source.1 c r
   simp only [C.coord_source, CyclicHullData.pairCross,
     CyclicHullData.pairSub, alignedComplex, Erdos957Cases13.toComplex,
-    cCross, Complex.mul_re, Complex.mul_im, Prod.fst, Prod.snd, sub_zero]
+    cCross, sub_zero]
     at hcq hcr ⊢
   rw [hcq, hcr]
   ring

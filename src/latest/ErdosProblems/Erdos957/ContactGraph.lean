@@ -429,7 +429,7 @@ theorem exists_low_degree_unitNeighbor_outside_adjacent_pair
   have hs₀s₁ne : s₀ ≠ s₁ := by
     intro h
     subst s₁
-    simpa using hs₀s₁
+    simp at hs₀s₁
   let T := (N.erase s₀).erase s₁
   have hs₁erase : s₁ ∈ N.erase s₀ :=
     Finset.mem_erase.mpr ⟨hs₀s₁ne.symm, hs₁N⟩

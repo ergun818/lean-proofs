@@ -46,7 +46,7 @@ theorem unitDistanceGraph_eq_distanceGraph_one (A : Finset Point) :
     refine ⟨?_, hxy⟩
     intro h
     subst y
-    simpa using hxy
+    simp at hxy
   · exact fun hxy ↦ hxy.2
 
 /-- Configurations whose maximum/minimum ratio is at most `101` form a
@@ -109,7 +109,7 @@ theorem normalized_low_hull_product_bound {A : Finset Point} {d₁ dₖ : ℝ}
   have hmaxMult : multiplicity N (dₖ / d₁) = multiplicity A dₖ := by
     simpa [N] using multiplicity_normalizedSet A d₁ hmin.pos dₖ
   have hcard : N.card = A.card := by
-    simpa [N] using normalizedSet_card A d₁ hmin.pos
+    exact normalizedSet_card A d₁ hmin.pos
   simpa [hminMult, hmaxMult, hcard] using hbound
 
 /-- Hopf--Pannwitz bounds the maximum-distance multiplicity by the canonical

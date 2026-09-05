@@ -131,7 +131,7 @@ private lemma three_angles_relative_initial_near_horizontal
     ∀ j : Fin 3, |![0, b1 - b0, b2 - b0] j| ≤ Real.pi / 45 := by
   have hb20 : |b2 - b0| ≤ |b2 - b1| + |b1 - b0| := by
     calc
-      |b2 - b0| = |(b2 - b1) + (b1 - b0)| := by congr 1 <;> ring
+      |b2 - b0| = |(b2 - b1) + (b1 - b0)| := by congr 1; ring
       _ ≤ _ := abs_add_le _ _
   intro j
   fin_cases j <;> simp <;> nlinarith [Real.pi_pos]
@@ -164,18 +164,16 @@ lemma outgoingEdgePairCoord_eq_aligned
   have hedgeCross := Erdos957EdgeFrame.pairCross_edgePairCoord_displacements
     hunit (source.1 : Point) (a : Point) (q : Point)
   apply Prod.ext
-  · simp only [Prod.fst]
+  · simp only []
     change z.1 = pairDot ea eq
     simp only [z, Erdos957EdgeFrame.edgePairCoord_self,
       Erdos957EdgeFrame.edgePairCoord_terminal hunit,
-      Erdos957Cases13.sqDist, hsource, pairDot, ea, eq,
-      CyclicHullData.pairSub] at hz0 hz1 hC0 hC1 hea ⊢
+      Erdos957Cases13.sqDist, hsource, pairDot, ea, eq] at hz0 hz1 hC0 hC1 hea ⊢
     nlinarith
-  · simp only [Prod.snd]
+  · simp only []
     change z.2 = CyclicHullData.pairCross ea eq
     simp only [z, Erdos957EdgeFrame.edgePairCoord_self,
-      Erdos957EdgeFrame.edgePairCoord_terminal hunit,
-      Erdos957Cases13.sqDist, hsource, CyclicHullData.pairSub,
+      Erdos957EdgeFrame.edgePairCoord_terminal hunit, hsource, CyclicHullData.pairSub,
       CyclicHullData.pairCross, ea, eq] at hcross hedgeCross ⊢
     nlinarith
 
@@ -230,7 +228,7 @@ theorem previous_terminal_away_prefix_bounds
     have hs := F.chart.sqDist_coord source pred.1 source.1
     rw [show dist (pred.1 : Point) (source.1 : Point) = 1 by simpa [pred]] at hs
     simp only [Erdos957Cases13.sqDist, F.chart.coord_source,
-      sub_zero, neg_sq, one_pow] at hs
+      sub_zero, one_pow] at hs
     simpa [pred, CyclicHullData.AlignedChartData.leftOrbitReflectedCoord] using hs
   have hleftRadius : F.leftRadius source 0 = 1 := by
     rcases hleftPolar with ⟨hx, hy⟩
@@ -258,7 +256,7 @@ theorem previous_terminal_away_prefix_bounds
     simp only [e, CyclicHullData.AlignedChartData.leftOrbitReflectedCoord,
       pow_one] at hx hy ⊢
     rw [Real.cos_neg, Real.sin_neg]
-    apply Prod.ext <;> simp only [Prod.fst, Prod.snd] <;> linarith
+    apply Prod.ext <;> simp only [] <;> linarith
   have hp0 : p 0 = (0, 0) := by
     simp [p, pairEdgeTransform, pairDot, CyclicHullData.pairCross]
   have hp : ∀ j : Fin 3,
@@ -320,7 +318,7 @@ theorem previous_terminal_away_second_edge_fst_increment_gt
     have hs := F.chart.sqDist_coord source pred.1 source.1
     rw [show dist (pred.1 : Point) (source.1 : Point) = 1 by simpa [pred]] at hs
     simp only [Erdos957Cases13.sqDist, F.chart.coord_source,
-      sub_zero, neg_sq, one_pow] at hs
+      sub_zero, one_pow] at hs
     simpa [pred, CyclicHullData.AlignedChartData.leftOrbitReflectedCoord] using hs
   have hleftRadius : F.leftRadius source 0 = 1 := by
     rcases hleftPolar with ⟨hx, hy⟩
@@ -348,7 +346,7 @@ theorem previous_terminal_away_second_edge_fst_increment_gt
     simp only [e, CyclicHullData.AlignedChartData.leftOrbitReflectedCoord,
       pow_one] at hx hy ⊢
     rw [Real.cos_neg, Real.sin_neg]
-    apply Prod.ext <;> simp only [Prod.fst, Prod.snd] <;> linarith
+    apply Prod.ext <;> simp only [] <;> linarith
   have hp : ∀ j : Fin 3,
       Erdos957Locality.IsPolarEdge (p j.1) (p (j.1 + 1))
         (F.rightRadius source j.castSucc)
@@ -462,7 +460,7 @@ theorem next_reflected_away_prefix_bounds
     simp only [e, succ, CyclicHullData.AlignedChartData.rightOrbitCoord,
       pow_one] at hx hy ⊢
     rw [Real.cos_neg, Real.sin_neg]
-    apply Prod.ext <;> simp only [Prod.fst, Prod.snd] <;> linarith
+    apply Prod.ext <;> simp only [] <;> linarith
   have hp0 : p 0 = (0, 0) := by
     simp [p, pairEdgeTransform, pairDot, CyclicHullData.pairCross]
   have hp : ∀ j : Fin 3,
@@ -545,7 +543,7 @@ theorem next_reflected_away_second_edge_fst_increment_gt
     simp only [e, succ, CyclicHullData.AlignedChartData.rightOrbitCoord,
       pow_one] at hx hy ⊢
     rw [Real.cos_neg, Real.sin_neg]
-    apply Prod.ext <;> simp only [Prod.fst, Prod.snd] <;> linarith
+    apply Prod.ext <;> simp only [] <;> linarith
   have hp : ∀ j : Fin 3,
       Erdos957Locality.IsPolarEdge (p j.1) (p (j.1 + 1))
         (F.leftRadius source j.castSucc)
@@ -612,7 +610,7 @@ theorem previous_terminal_incident_prefix_metric_bounds
     have hs := F.chart.sqDist_coord source (P.next⁻¹ source).1 source.1
     rw [hunit] at hs
     simp only [Erdos957Cases13.sqDist, F.chart.coord_source,
-      sub_zero, neg_sq, one_pow] at hs
+      sub_zero, one_pow] at hs
     simpa [CyclicHullData.AlignedChartData.leftOrbitReflectedCoord] using hs
   have hradius : F.leftRadius source 0 = 1 := by
     rcases F.leftPolar source 0 with ⟨hx, hy⟩
@@ -637,7 +635,7 @@ theorem previous_terminal_incident_prefix_metric_bounds
     norm_num at hx hy
     rw [hradius] at hx hy
     norm_num at hx hy
-    apply Prod.ext <;> simp only [Prod.fst, Prod.snd] <;> linarith
+    apply Prod.ext <;> simp only [] <;> linarith
   have hp0 : p 0 = (0, 0) := by
     simp [p, pairEdgeTransform, pairDot, CyclicHullData.pairCross]
   have hp : ∀ j : Fin 3,
@@ -677,7 +675,7 @@ theorem previous_terminal_incident_prefix_metric_bounds
     convert hbounds.2 using 1 <;>
       simp [p, pairEdgeTransform, pairDot,
         CyclicHullData.pairCross,
-        CyclicHullData.AlignedChartData.leftOrbitReflectedCoord] <;> ring
+        CyclicHullData.AlignedChartData.leftOrbitReflectedCoord]; ring
 
 /-- Longitudinal projection retained for existing callers. -/
 theorem previous_terminal_incident_prefix_bounds
@@ -756,7 +754,7 @@ theorem next_reflected_incident_prefix_metric_bounds
     norm_num at hx hy
     rw [hradius] at hx hy
     norm_num at hx hy
-    apply Prod.ext <;> simp only [Prod.fst, Prod.snd] <;> linarith
+    apply Prod.ext <;> simp only [] <;> linarith
   have hp0 : p 0 = (0, 0) := by
     simp [p, pairEdgeTransform, pairDot, CyclicHullData.pairCross]
   have hp : ∀ j : Fin 3,
@@ -775,11 +773,7 @@ theorem next_reflected_incident_prefix_metric_bounds
     (fun j ↦ F.rightRadius_ge_one source j.castSucc)
     (three_angles_relative_initial_near_horizontal hr1 hr2) k
   constructor
-  · change ((k.1 + 1 : ℕ) : ℝ) * (399 / 400 : ℝ) <
-      -((Erdos957TwoExtremeAligned.reflectedSuccessorUnitEdgeRigidChart
-        P source hunit).toCanonical
-          ((P.next ^ (k.1 + 1)) source).1) 0
-    rw [reflectedSuccessorCoord_neg_fst_eq_rightTransform_fst
+  · rw [reflectedSuccessorCoord_neg_fst_eq_rightTransform_fst
       F.chart source ((P.next ^ (k.1 + 1)) source).1 hunit]
     simpa only [p, CyclicHullData.AlignedChartData.rightOrbitCoord]
       using hbounds.1
@@ -796,7 +790,7 @@ theorem next_reflected_incident_prefix_metric_bounds
     convert hbounds.2 using 1 <;>
       simp [p, pairEdgeTransform, pairDot,
         CyclicHullData.pairCross,
-        CyclicHullData.AlignedChartData.rightOrbitCoord] <;> ring
+        CyclicHullData.AlignedChartData.rightOrbitCoord]; ring
 
 /-- Longitudinal projection retained for existing callers. -/
 theorem next_reflected_incident_prefix_bounds

@@ -62,7 +62,7 @@ def unitDistanceGraph (A : Finset Point) : SimpleGraph (Vertex A) where
     simpa [dist_comm] using hpq
   loopless.irrefl := by
     intro p hp
-    simpa using hp
+    simp at hp
 
 instance (A : Finset Point) : DecidableRel (unitDistanceGraph A).Adj :=
   Classical.decRel _
@@ -225,7 +225,7 @@ theorem prev_ne_self (i : {p // p ∈ P.H}) : P.next⁻¹ i ≠ i := by
   simpa using (congrArg P.next hprev).symm
 
 /-- Ambient convex-hull vertices, lifted to the graph vertex subtype. -/
-def liftedHullVertices (P : CyclicHullData A) : Finset (Vertex A) :=
+def liftedHullVertices (_P : CyclicHullData A) : Finset (Vertex A) :=
   Finset.univ.filter fun p ↦
     (p : Point) ∈ Erdos957.hullVertices A
 
@@ -387,7 +387,7 @@ theorem sqDist_localCoord (i : {p // p ∈ P.H}) (q r : Vertex A) :
     _ = dist (q : Point) (r : Point) ^ 2 := by
       congr 1
       rw [dist_eq_norm, dist_eq_norm, ← map_sub, LinearIsometryEquiv.norm_map]
-      simp [zq, zr]
+      simp
 
 theorem sqDist_upperCoord (i : {p // p ∈ P.H}) (q r : Vertex A) :
     Erdos957Cases13.sqDist (P.upperCoord i q) (P.upperCoord i r) =
@@ -613,9 +613,9 @@ theorem alignedLocalCoord_snd (i : {p // p ∈ P.H}) (q : Vertex A) :
 theorem alignedSuccessor_fst_nonneg (i : {p // p ∈ P.H}) :
     0 ≤ (P.alignedLocalCoord i (P.next i).1).1 := by
   by_cases h : 0 ≤ (P.localCoord i (P.next i).1).1
-  · simpa [alignedLocalCoord, horizontalSign, h]
   · simp [alignedLocalCoord, horizontalSign, h]
-    exact le_of_not_ge h
+  · rw [alignedLocalCoord, horizontalSign, if_neg h, neg_one_mul]
+    exact neg_nonneg.mpr (le_of_not_ge h)
 
 theorem sqDist_alignedLocalCoord (i : {p // p ∈ P.H}) (q r : Vertex A) :
     Erdos957Cases13.sqDist (P.alignedLocalCoord i q)

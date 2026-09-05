@@ -34,10 +34,14 @@ theorem unitDirection_add_congr {a b : ℝ}
     unitDirection (a + c) = unitDirection (b + c) := by
   have hc := congrArg (fun u : Point ↦ u 0) h
   have hs := congrArg (fun u : Point ↦ u 1) h
+  change Real.cos a = Real.cos b at hc
+  change Real.sin a = Real.sin b at hs
   ext j
-  fin_cases j <;>
-    simp only [Fin.mk_one, Fin.isValue, Fin.zero_eta] at hc hs ⊢ <;>
-    rw [hc, hs]
+  fin_cases j
+  · change Real.cos (a + c) = Real.cos (b + c)
+    rw [Real.cos_add, Real.cos_add, hc, hs]
+  · change Real.sin (a + c) = Real.sin (b + c)
+    rw [Real.sin_add, Real.sin_add, hc, hs]
 
 /-- A translated bisector chart sends a represented ambient vector to the
 expected reflected polar angle `θ - α`. -/

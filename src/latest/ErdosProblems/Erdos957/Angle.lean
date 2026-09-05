@@ -252,7 +252,7 @@ theorem phaseBin_bijective_of_card_eq_six (S : Finset ℂ)
   · intro x y hxy
     apply Subtype.ext
     exact phaseBin_injOn_of_unit_oneSeparated S hnorm hsep x.prop y.prop hxy
-  · simpa [hcard]
+  · simp [hcard]
 
 /-- Equivalently, a sharp six-point configuration has a unique point in every angular bin. -/
 theorem existsUnique_mem_phaseBin_of_card_eq_six (S : Finset ℂ)
@@ -407,7 +407,6 @@ lemma exp_mul_I_sub_exp_add_pi_div_three_mul_I (θ : ℝ) :
     _ = Complex.exp ((θ - Real.pi / 3) * Complex.I) := by
       rw [← Complex.exp_add]
       congr 1
-      push_cast
       ring
 
 /-- Consecutive vertices in the indexed equality case satisfy the six hexagonal completion
@@ -433,12 +432,12 @@ theorem regular_hexagon_sub_next_identities (v : Fin 6 → ℂ)
       Complex.exp ((θ + 5 * Real.pi / 3) * Complex.I) := by
     have hp := Complex.exp_mul_I_periodic (θ - Real.pi / 3)
     symm
-    convert hp using 1 <;> ring_nf
+    convert hp using 1; ring_nf
   have hperiod0 : Complex.exp (θ * Complex.I) =
       Complex.exp ((θ + 6 * Real.pi / 3) * Complex.I) := by
     have hp := Complex.exp_mul_I_periodic θ
     symm
-    convert hp using 1 <;> ring_nf
+    convert hp using 1; ring_nf
   constructor
   · rw [hv' 0, hv' 1, hv' 5]
     norm_num
@@ -603,7 +602,7 @@ theorem phaseBin_sub_bijective_of_card_unitNeighbors_eq_six {A : Finset ℂ}
     have hangle_eq := angle_eq_abs_principalPhase_sub_of_phaseBin_eq hxnorm hynorm hxy
     have hangle_lt := abs_principalPhase_sub_lt_of_phaseBin_eq hxy
     linarith
-  · simpa [hcard]
+  · simp [hcard]
 
 /-- Thus every one of the six half-open `π/3` sectors contains a unique unit neighbor in the
 degree-six case. -/

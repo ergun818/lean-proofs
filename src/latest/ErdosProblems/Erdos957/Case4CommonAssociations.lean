@@ -162,7 +162,7 @@ lemma CommonPairedCase4Rows.secondary_association_eq_opposite_of_adj_source
         commonPairHorizontalAssociation_right, horizontalAssociation,
         Erdos957Case24Bridge.Case4.sideSource,
         Erdos957Cases24.Case2.b, Erdos957Cases24.Case2.u,
-        Erdos957Cases24.point] <;> norm_num
+        Erdos957Cases24.point]
   | next =>
       have hb : b = false := by
         simp [b, ActualCase24Rows.case4SourceIsRight, hside]
@@ -179,7 +179,7 @@ lemma CommonPairedCase4Rows.secondary_association_eq_opposite_of_adj_source
       simp [hqActual, leftContact, oppositeCyclicSideAssociation,
         commonPairHorizontalAssociation_left,
         Erdos957Case24Bridge.Case4.sideSource,
-        Erdos957Cases24.Case2.uPrev, Erdos957Cases24.point] <;> norm_num
+        Erdos957Cases24.Case2.uPrev, Erdos957Cases24.point]; norm_num
 
 /-- If the selected secondary is unit-adjacent to the incident endpoint,
 its endpoint-sensitive association is the incident-pair side. -/
@@ -232,7 +232,7 @@ lemma CommonPairedCase4Rows.secondary_association_eq_side_of_adj_partner
       simp [hqActual, leftContact, cyclicSideAssociation,
         commonPairHorizontalAssociation_right, horizontalAssociation,
         Erdos957Case24Bridge.Case4.sideSource,
-        Erdos957Cases24.Case2.u, Erdos957Cases24.point] <;> norm_num
+        Erdos957Cases24.Case2.u, Erdos957Cases24.point]; norm_num
   | next =>
       have hb : b = false := by
         simp [b, ActualCase24Rows.case4SourceIsRight, hside]
@@ -250,11 +250,11 @@ lemma CommonPairedCase4Rows.secondary_association_eq_side_of_adj_partner
         commonPairHorizontalAssociation_left,
         Erdos957Case24Bridge.Case4.sideSource,
         Erdos957Cases24.Case2.b, Erdos957Cases24.Case2.uPrev,
-        Erdos957Cases24.point] <;> norm_num
+        Erdos957Cases24.point]; norm_num
+
+#print axioms eq_uPrev_or_b_of_unit_to_u_v
+#print axioms eq_u_or_leftContact_of_unit_to_uPrev_v
+#print axioms CommonPairedCase4Rows.secondary_association_eq_opposite_of_adj_source
+#print axioms CommonPairedCase4Rows.secondary_association_eq_side_of_adj_partner
 
 end Erdos957Case4CommonAssociations
-
-#print axioms Erdos957Case4CommonAssociations.eq_uPrev_or_b_of_unit_to_u_v
-#print axioms Erdos957Case4CommonAssociations.eq_u_or_leftContact_of_unit_to_uPrev_v
-#print axioms Erdos957Case4CommonAssociations.CommonPairedCase4Rows.secondary_association_eq_opposite_of_adj_source
-#print axioms Erdos957Case4CommonAssociations.CommonPairedCase4Rows.secondary_association_eq_side_of_adj_partner

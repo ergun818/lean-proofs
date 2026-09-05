@@ -217,7 +217,7 @@ lemma middle_ne_secondary_of_unit {middle secondary : Point}
     (h : sqDist middle secondary = 1) : middle ≠ secondary := by
   intro heq
   subst secondary
-  simpa using h
+  simp at h
 
 /-- If the selected secondary common neighbour is strictly higher than the arbitrary middle,
 the coordinate-free degree-six completion crosses the horizontal supporting line. -/
@@ -288,9 +288,11 @@ theorem localTransfer_of_common_neighbor
     recipient_capacity := ?_ }⟩
   · intro p hp
     by_cases hlow : middleDegree ≤ 4
-    · simp [case3Recipients, case3Tokens, hlow] at hp ⊢
-      exact fun h ↦ hp (by simpa [h])
-    · simp [case3Recipients, case3Tokens, hlow] at hp ⊢
+    · simp only [case3Recipients, hlow, ↓reduceIte, Finset.mem_singleton, case3Tokens,
+        ite_eq_right_iff, OfNat.ofNat_ne_zero, imp_false] at hp ⊢
+      exact fun h ↦ hp (by simp [h])
+    · simp only [case3Recipients, hlow, ↓reduceIte, Finset.mem_insert, Finset.mem_singleton,
+        not_or, case3Tokens, ite_eq_right_iff, one_ne_zero, imp_false] at hp ⊢
       exact hp
   · intro p hp
     by_cases hlow : middleDegree ≤ 4
@@ -350,14 +352,12 @@ theorem localTransfer_of_common_neighbor
     by_cases hlow : middleDegree ≤ 4
     · have hpEq : p = middle := by simpa [case3Recipients, hlow] using hp
       subst p
-      simp only [ge_iff_le]
-      rw [← hmiddleDegree]
+      rw [case3Tokens, if_pos hlow, if_pos rfl, ← hmiddleDegree]
       omega
     · have hpEq : p = middle ∨ p = secondary := by
         simpa [case3Recipients, hlow] using hp
       rcases hpEq with rfl | rfl
-      · simp only [ge_iff_le]
-        rw [← hmiddleDegree]
+      · rw [case3Tokens, if_neg hlow, if_pos (Or.inl rfl), ← hmiddleDegree]
         omega
       · simp [case3Tokens, hlow]
         omega

@@ -37,9 +37,9 @@ def Case2AnchoredQuadrupleFits
     (rows : HasRealizedSourceRows P W F.chart) : Prop :=
   ∀ {s t u d : Source P W} {v : Vertex A}
     (S : RealizedArrivalAt (F := F) rows s v)
-    (T : RealizedArrivalAt (F := F) rows t v)
-    (U : RealizedArrivalAt (F := F) rows u v)
-    (D : RealizedArrivalAt (F := F) rows d v),
+    (_T : RealizedArrivalAt (F := F) rows t v)
+    (_U : RealizedArrivalAt (F := F) rows u v)
+    (_D : RealizedArrivalAt (F := F) rows d v),
     S.target.role = .case2Secondary →
     t.1 ∈ Finset.univ.image (fun j : Fin 7 ↦
       (sevenShift P.next j (sourceIndex P W s.1 s.property)).1) →
@@ -658,7 +658,7 @@ theorem contributors_card_le_four
     _ ≤ 4 := by omega
 
 /-- Final weight-aware collision record assembled from the role dispatcher. -/
-noncomputable def weightedCollisionWitnesses
+theorem weightedCollisionWitnesses
     (hA : IsOneSeparated A)
     (Q : CommonCoherentRealizedSourceRows P W F.chart)
     (locality : SourceLocalityCertificates P W F)
@@ -681,7 +681,7 @@ noncomputable def weightedCollisionWitnesses
 /-- Produced-hull specialization.  After the genuine row selector, cyclic
 window, and direct/direct theorem are fixed, the only remaining input is the
 small role-geometric residual record above. -/
-noncomputable def producedWeightedCollisionWitnesses
+theorem producedWeightedCollisionWitnesses
     {A : Finset Point} (hA : IsOneSeparated A)
     (R : Erdos957.RadiallySortedCyclicHullOrder A)
     (L : Erdos957TurnSum.HullOrderBridge.LiftedCyclicHullOrder R.order)

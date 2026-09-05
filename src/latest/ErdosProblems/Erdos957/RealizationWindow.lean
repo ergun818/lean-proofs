@@ -38,7 +38,7 @@ theorem localHullWindowHypothesis
   obtain ⟨hx, hy⟩ := abs_chartCoord_sub_le_two F.chart i hd
   have hsource := F.chart.coord_source i
   rw [hsource] at hx hy
-  simp only [Prod.fst_zero, Prod.snd_zero, sub_zero] at hx hy
+  simp only [sub_zero] at hx hy
   have hrect : Erdos957Locality.InCompetingSourceRectangle
       (F.chart.coord i v) := by
     rw [abs_le] at hx hy

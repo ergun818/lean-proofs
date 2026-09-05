@@ -145,7 +145,7 @@ lemma exists_third_source_neighbor_fst_ge_half
   simp only [Erdos957Cases24.Case2.u,
     Erdos957Cases24.Case2.uPrev, Erdos957Cases24.Case2.v,
     Erdos957Cases24.point_apply_zero, Erdos957Cases24.point_apply_one,
-    one_pow, sub_zero, zero_sub, neg_sq] at hnSq hsideSq hmiddleSq hsideSqGe hmiddleSqGe
+    one_pow, zero_sub, neg_sq] at hnSq hsideSq hmiddleSq hsideSqGe hmiddleSqGe
   have hzNorm : z 0 ^ 2 + z 1 ^ 2 = 1 := by
     nlinarith only [hnSq]
   have hzLower : -(1 / 2 : ℝ) ≤ z 0 := by
@@ -708,8 +708,7 @@ theorem no_two_split_away_first_second_of_common_snd_gt
     cases hB : B.formula.side <;>
       cases hQ : Qt.twoExtreme.side <;>
       simp_all [Erdos957Case4NoThree.awayHullVertex,
-        Erdos957Case4NoThree.incidentHullVertex,
-        cyclicSideVertex, pow_succ]
+        Erdos957Case4NoThree.incidentHullVertex, pow_succ]
   obtain ⟨hlow, hbranch⟩ :=
     Erdos957Case4SplitClassification.eq_low_of_incident_partner_split_right_collision
       Q T.target U.target htRole huRole huPartner

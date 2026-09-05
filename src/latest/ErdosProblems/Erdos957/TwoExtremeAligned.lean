@@ -94,19 +94,13 @@ theorem reflectedSuccessorUnitEdgeRigidChart_toCanonical
   have he := Erdos957EdgeFrame.coordinate_sq_sum_eq_one_of_dist_eq_one hunit
   dsimp [reflectedSuccessorUnitEdgeRigidChart]
   apply Erdos957Cases24.point_ext
-  · simp only [Equiv.trans_apply, swapEndpointEquiv_apply,
-      swapEndpointCoord_apply_zero,
-      Erdos957EdgeFrame.terminalUnitEdgeRigidChart_toCanonical,
+  · simp only [swapEndpointCoord_apply_zero,
       Erdos957EdgeFrame.edgePointCoord_apply_zero,
-      Erdos957EdgeFrame.edgePairCoord, PiLp.sub_apply,
-      Erdos957Cases24.point_apply_zero]
+      Erdos957EdgeFrame.edgePairCoord, PiLp.sub_apply]
     nlinarith
-  · simp only [Equiv.trans_apply, swapEndpointEquiv_apply,
-      swapEndpointCoord_apply_one,
-      Erdos957EdgeFrame.terminalUnitEdgeRigidChart_toCanonical,
+  · simp only [swapEndpointCoord_apply_one,
       Erdos957EdgeFrame.edgePointCoord_apply_one,
-      Erdos957EdgeFrame.edgePairCoord, PiLp.sub_apply,
-      Erdos957Cases24.point_apply_one]
+      Erdos957EdgeFrame.edgePairCoord, PiLp.sub_apply]
     ring
 
 @[simp] theorem reflectedSuccessorUnitEdgeRigidChart_actual_case2_u
@@ -188,14 +182,12 @@ theorem reflectedSuccessorUnitEdgeRigidChart_toCanonical_middle_eq_case2_v
   · simp only [Erdos957Cases24.Case2.u, Erdos957Cases24.Case2.uPrev,
       Erdos957Cases24.point_apply_zero, Erdos957Cases24.point_apply_one]
       at hdistOSq hdistNSq
-    simp only [Erdos957Cases24.Case2.v,
-      Erdos957Cases24.point_apply_zero]
+    simp only []
     nlinarith
   · simp only [Erdos957Cases24.Case2.u, Erdos957Cases24.Case2.uPrev,
       Erdos957Cases24.point_apply_zero, Erdos957Cases24.point_apply_one]
       at hdistOSq hdistNSq
-    simp only [Erdos957Cases24.Case2.v,
-      Erdos957Cases24.point_apply_one]
+    simp only []
     nlinarith [Erdos957Cases24.sqrtThree_pos,
       Erdos957Cases24.sqrtThree_sq]
 
@@ -245,12 +237,11 @@ theorem reflectedSuccessorUnitEdgeRigidChart_strictlyBelowOutside
     · right
       rw [← swapEndpointCoord_involutive z, h]
       apply Erdos957Cases24.point_ext <;>
-        simp [swapEndpointCoord, Erdos957Cases24.Case2.uPrev,
-          Erdos957Cases24.Case2.u]
+        simp [swapEndpointCoord, Erdos957Cases24.Case2.uPrev]
     · left
       rw [← swapEndpointCoord_involutive z, h]
       apply Erdos957Cases24.point_ext <;>
-        simp [swapEndpointCoord, Erdos957Cases24.Case2.uPrev,
+        simp [swapEndpointCoord,
           Erdos957Cases24.Case2.u]
   have hT : (swapEndpointCoord z) 1 < 0 := by
     exact hstrict (swapEndpointCoord z) hswapMem' hswapEndpoints

@@ -130,7 +130,7 @@ lemma right_wrong_proxy_close
     (hspos : 0 < s) (hssq : s ^ 2 = 3)
     (htx : 399 / 400 < tx)
     (hty : ty < 0) (htcone : -ty ≤ tx / 10)
-    (hqxl : -(3 / 2) ≤ qx) (hqxupper : qx ≤ 1 / 2)
+    (_hqxl : -(3 / 2) ≤ qx) (hqxupper : qx ≤ 1 / 2)
     (hqy : qy ≤ -(s / 2))
     (htq : (tx - qx) ^ 2 + (ty - qy) ^ 2 = 1)
     (htr : (tx - rx) ^ 2 + (ty - ry) ^ 2 = 1)
@@ -199,6 +199,7 @@ lemma normalizedCross_relation
       change Dc = _ at haligned
       linarith
 
+open Erdos957Case4SplitClassification.CommonPairedCase4Rows in
 /-- The outer equilateral-proxy direct form has the opposite association
 from a selected Case-4 secondary in either remaining near source slot. -/
 lemma outer_direct_near_two_associations_ne
@@ -293,7 +294,7 @@ lemma outer_direct_near_two_associations_ne
       (Qs.normalized.frame.image A) := by
     dsimp [qc]
     rw [hv]
-    exact Erdos957Case4SplitClassification.CommonPairedCase4Rows.normalized_currentSecondary_mem_residual Qs
+    exact normalized_currentSecondary_mem_residual Qs
   have hqBounds :=
     Erdos957Case4SplitClassification.residual_fst_mem_sharp_interval hqMem
   have huPrev : Erdos957Cases24.Case2.uPrev ∈

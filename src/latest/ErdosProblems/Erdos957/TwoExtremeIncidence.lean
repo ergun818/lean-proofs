@@ -39,13 +39,11 @@ theorem terminalUnitEdgeRigidChart_toCanonical_middle_eq_case2_v
   rw [hnextPrev] at hsupport
   have hFo : F.toCanonical o = Erdos957Cases24.Case2.u := by
     have ho : F.actual Erdos957Cases24.Case2.u = o := by
-      simpa [F] using
-      (Erdos957EdgeFrame.terminalUnitEdgeRigidChart_actual_case2_u p o hunit)
+      exact Erdos957EdgeFrame.terminalUnitEdgeRigidChart_actual_case2_u p o hunit
     rw [← ho, F.toCanonical_actual]
   have hFp : F.toCanonical p = Erdos957Cases24.Case2.uPrev := by
     have hp : F.actual Erdos957Cases24.Case2.uPrev = p := by
-      simpa [F] using
-      (Erdos957EdgeFrame.terminalUnitEdgeRigidChart_actual_case2_uPrev p o hunit)
+      exact Erdos957EdgeFrame.terminalUnitEdgeRigidChart_actual_case2_uPrev p o hunit
     rw [← hp, F.toCanonical_actual]
   have hdistO : dist (F.toCanonical middle) Erdos957Cases24.Case2.u = 1 := by
     rw [← hFo, F.dist_eq]
@@ -70,14 +68,12 @@ theorem terminalUnitEdgeRigidChart_toCanonical_middle_eq_case2_v
   · simp only [Erdos957Cases24.Case2.u, Erdos957Cases24.Case2.uPrev,
       Erdos957Cases24.point_apply_zero, Erdos957Cases24.point_apply_one]
       at hdistOSq hdistPSq
-    simp only [Erdos957Cases24.Case2.v,
-      Erdos957Cases24.point_apply_zero]
+    simp only []
     nlinarith
   · simp only [Erdos957Cases24.Case2.u, Erdos957Cases24.Case2.uPrev,
       Erdos957Cases24.point_apply_zero, Erdos957Cases24.point_apply_one]
       at hdistOSq hdistPSq
-    simp only [Erdos957Cases24.Case2.v,
-      Erdos957Cases24.point_apply_one]
+    simp only []
     have hsqrtPos : 0 < Erdos957Cases24.sqrtThree :=
       Erdos957Cases24.sqrtThree_pos
     have hsqrtSq : Erdos957Cases24.sqrtThree ^ 2 = 3 :=
@@ -412,16 +408,13 @@ theorem actual_case4_displayedFiveAtV_of_middle_degree_six
   have huPrev : Erdos957Cases24.Case2.uPrev ∈ B := by
     apply F.mem_image_iff.mpr
     have hp : F.actual Erdos957Cases24.Case2.uPrev = p := by
-      simpa [F] using
-        (Erdos957EdgeFrame.terminalUnitEdgeRigidChart_actual_case2_uPrev
-          p o hunit)
+      exact Erdos957EdgeFrame.terminalUnitEdgeRigidChart_actual_case2_uPrev p o hunit
     rw [hp]
     exact (P.next⁻¹ source).1.property
   have hu : Erdos957Cases24.Case2.u ∈ B := by
     apply F.mem_image_iff.mpr
     have ho : F.actual Erdos957Cases24.Case2.u = o := by
-      simpa [F] using
-        (Erdos957EdgeFrame.terminalUnitEdgeRigidChart_actual_case2_u p o hunit)
+      exact Erdos957EdgeFrame.terminalUnitEdgeRigidChart_actual_case2_u p o hunit
     rw [ho]
     exact source.1.property
   have hdegreeActual : Erdos957Case24Bridge.unitDegree A (middle : Point) = 6 := by

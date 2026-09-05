@@ -107,7 +107,7 @@ theorem incidentTurn_pos (L : LiftedCyclicHullOrder P) (i : HullIndex A) :
   by_contra h
   have hz : L.lift.turn (previousIndex i) = 0 := le_antisymm (not_lt.mp h) hn
   rw [hz] at hs
-  simpa using hs
+  simp at hs
 
 theorem incidentTurn_lt_pi (L : LiftedCyclicHullOrder P) (i : HullIndex A) :
     incidentTurn L i < Real.pi := by
@@ -116,7 +116,7 @@ theorem incidentTurn_lt_pi (L : LiftedCyclicHullOrder P) (i : HullIndex A) :
   apply lt_of_le_of_ne hle
   intro h
   rw [h] at hs
-  simpa using hs
+  simp at hs
 
 theorem cos_incidentTurn_half_pos (L : LiftedCyclicHullOrder P)
     (i : HullIndex A) : 0 < Real.cos (incidentTurn L i / 2) := by
@@ -136,7 +136,7 @@ theorem two_cos_half_smul_unitDirection_midpoint (α δ : ℝ) :
   have hsin : Real.sin δ =
       2 * Real.sin (δ / 2) * Real.cos (δ / 2) := by
     calc
-      Real.sin δ = Real.sin (2 * (δ / 2)) := by congr 1 <;> ring
+      Real.sin δ = Real.sin (2 * (δ / 2)) := by congr 1; ring
       _ = 2 * Real.sin (δ / 2) * Real.cos (δ / 2) := by
         rw [Real.sin_two_mul]
   ext j
@@ -389,8 +389,9 @@ theorem producedBisectorCoord_source (P : CyclicHullOrder A)
   let a := e.symm i
   have hi : i = e a := (e.apply_symm_apply i).symm
   rw [hi]
-  simp only [producedBisectorCoord, Equiv.symm_apply_apply]
-  simpa [e] using bisectorCoord_source L a
+  change bisectorCoord L (e.symm (e a)) (P.vertex a) = (0, 0)
+  rw [e.symm_apply_apply]
+  exact bisectorCoord_source L a
 
 theorem sqDist_producedBisectorCoord (P : CyclicHullOrder A)
     (L : LiftedCyclicHullOrder P)
@@ -418,7 +419,7 @@ theorem producedBisectorCoord_snd_neg (P : CyclicHullOrder A)
   let a := e.symm i
   have hi : i = e a := (e.apply_symm_apply i).symm
   rw [hi] at hqi ⊢
-  simp only [producedBisectorCoord, Equiv.symm_apply_apply]
+  simp only [producedBisectorCoord]
   have hqraw : (q : Point) ≠ P.vertex a := by
     intro hq
     apply hqi

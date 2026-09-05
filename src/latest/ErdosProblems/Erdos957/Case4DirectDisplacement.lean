@@ -442,7 +442,7 @@ lemma singleton_direct_near_two_associations_ne
     rw [hsAssoc, htAssoc]
     decide
 
-end Erdos957Case4DirectDisplacement
+#print axioms commonFrame_currentSecondary_displacement_at_near_source
+#print axioms singleton_direct_near_two_associations_ne
 
-#print axioms Erdos957Case4DirectDisplacement.commonFrame_currentSecondary_displacement_at_near_source
-#print axioms Erdos957Case4DirectDisplacement.singleton_direct_near_two_associations_ne
+end Erdos957Case4DirectDisplacement

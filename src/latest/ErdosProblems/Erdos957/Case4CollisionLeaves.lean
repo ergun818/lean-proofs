@@ -66,20 +66,23 @@ lemma direct_target_eq_splitLeft_of_split_roles
           have hmiddle' : middleTarget = middle := by
             simpa [RealizedSourceRow.targetAtRole] using hmiddle
           cases role <;>
-            simp [IsDirectTargetRole, RealizedSourceRow.targetAtRole] at hdirect htarget
+            simp only [IsDirectTargetRole, RealizedSourceRow.targetAtRole,
+              Option.some.injEq, reduceCtorEq] at hdirect htarget
           exact htarget.symm.trans hmiddle'
       | orderedHigh farthest hsix recipients middleTarget sideTarget hm hs hne =>
           have hmiddle' : middleTarget = middle := by
             simpa [RealizedSourceRow.targetAtRole] using hmiddle
           cases role <;>
-            simp [IsDirectTargetRole, RealizedSourceRow.targetAtRole] at hdirect htarget
+            simp only [IsDirectTargetRole, RealizedSourceRow.targetAtRole,
+              Option.some.injEq, reduceCtorEq] at hdirect htarget
           exact htarget.symm.trans hmiddle'
       | pairedSplit commonFrame farthest branch rightSource hright middleTarget
           secondaryTarget hsource hm hs hne =>
           have hmiddle' : middleTarget = middle := by
             simpa [RealizedSourceRow.targetAtRole] using hmiddle
           cases role <;>
-            simp [IsDirectTargetRole, RealizedSourceRow.targetAtRole] at hdirect htarget
+            simp only [IsDirectTargetRole, RealizedSourceRow.targetAtRole,
+              Option.some.injEq, reduceCtorEq] at hdirect htarget
           exact htarget.symm.trans hmiddle'
 
 /-- Hull vertices continuing through the incident partner, as opposed to
@@ -149,7 +152,7 @@ lemma commonFrame_away_second_fst_gap_gt_two
             simp [ActualCase24Rows.TwoExtremeCommonPairFrame.frame,
               ActualCase24Rows.case4PairEdgeBase, hside]
         | next hs hunit hframe => simp [hside] at hs
-      simp only [Fin.isValue, gt_iff_lt] at hx hcoord ⊢
+      simp only [Fin.isValue, gt_iff_lt, hside] at hx hcoord ⊢
       rw [hcoord] at hx
       rw [hm]
       simp only [Erdos957Cases24.Case2.v,
@@ -171,7 +174,7 @@ lemma commonFrame_away_second_fst_gap_gt_two
               Erdos957TwoExtremeAligned.swapEndpointCoord_apply_zero,
               ActualCase24Rows.TwoExtremeCommonPairFrame.frame,
               ActualCase24Rows.case4PairEdgeBase, hside]
-      simp only [Fin.isValue, gt_iff_lt] at hx hcoord ⊢
+      simp only [Fin.isValue, gt_iff_lt, hside] at hx hcoord ⊢
       rw [hm]
       simp only [Erdos957Cases24.Case2.v,
         Erdos957Cases24.point_apply_zero]
@@ -208,7 +211,7 @@ lemma commonFrame_away_third_fst_gap_gt_two
             simp [ActualCase24Rows.TwoExtremeCommonPairFrame.frame,
               ActualCase24Rows.case4PairEdgeBase, hside]
         | next hs hunit hframe => simp [hside] at hs
-      simp only [Fin.isValue, gt_iff_lt] at hx hcoord ⊢
+      simp only [Fin.isValue, gt_iff_lt, hside] at hx hcoord ⊢
       rw [hcoord] at hx
       rw [hm]
       simp only [Erdos957Cases24.Case2.v,
@@ -230,7 +233,7 @@ lemma commonFrame_away_third_fst_gap_gt_two
               Erdos957TwoExtremeAligned.swapEndpointCoord_apply_zero,
               ActualCase24Rows.TwoExtremeCommonPairFrame.frame,
               ActualCase24Rows.case4PairEdgeBase, hside]
-      simp only [Fin.isValue, gt_iff_lt] at hx hcoord ⊢
+      simp only [Fin.isValue, gt_iff_lt, hside] at hx hcoord ⊢
       rw [hm]
       simp only [Erdos957Cases24.Case2.v,
         Erdos957Cases24.point_apply_zero]
@@ -251,6 +254,8 @@ lemma commonFrame_incident_third_fst_gap_gt_two
         (incidentContinuationHullVertex P source T.side 2).1) 0| := by
   have hx := Erdos957Case4NoThree.normalizedFrame_incident_third_fst_lt_neg_five_halves
     F source middle T N hi
+  change (N.frame.toCanonical
+    (incidentContinuationHullVertex P source T.side 2).1) 0 < -(5 / 2) at hx
   have hm : E.frame.toCanonical middle = Erdos957Cases24.Case2.v := by
     simpa [ActualCase24Rows.TwoExtremeCommonPairFrame.frame] using
       E.middle_coordinate
@@ -266,10 +271,9 @@ lemma commonFrame_incident_third_fst_gap_gt_two
             rw [hframe]
             simp [incidentContinuationHullVertex,
               ActualCase24Rows.TwoExtremeCommonPairFrame.frame,
-              ActualCase24Rows.case4PairEdgeBase, hside,
-              Erdos957Case4NoThree.incidentHullVertex]
+              ActualCase24Rows.case4PairEdgeBase, hside]
         | next hs hunit hframe => simp [hside] at hs
-      simp only [Fin.isValue, gt_iff_lt] at hx hcoord ⊢
+      simp only [Fin.isValue, gt_iff_lt, hside] at hx hcoord ⊢
       rw [hcoord] at hx
       rw [hm]
       simp only [Erdos957Cases24.Case2.v,
@@ -287,13 +291,12 @@ lemma commonFrame_incident_third_fst_gap_gt_two
         | next hs hunit hframe =>
             rw [hframe]
             simp [incidentContinuationHullVertex,
-              Erdos957Case4NoThree.incidentHullVertex,
               Erdos957TwoExtremeAligned.reflectedSuccessorUnitEdgeRigidChart,
               Equiv.trans_apply, Erdos957TwoExtremeAligned.swapEndpointEquiv_apply,
               Erdos957TwoExtremeAligned.swapEndpointCoord_apply_zero,
               ActualCase24Rows.TwoExtremeCommonPairFrame.frame,
               ActualCase24Rows.case4PairEdgeBase, hside]
-      simp only [Fin.isValue, gt_iff_lt] at hx hcoord ⊢
+      simp only [Fin.isValue, gt_iff_lt, hside] at hx hcoord ⊢
       rw [hm]
       simp only [Erdos957Cases24.Case2.v,
         Erdos957Cases24.point_apply_zero]
@@ -561,7 +564,7 @@ theorem split_right_associations_ne_at_incident_partner
       _ = partnerMiddleTarget.vertex := congrArg LocalTarget.vertex hmiddleTargets
       _ = Qs.middle := hpartnerMiddleVertex
   have hsMem : (sourceIndex P W s.1 s.property).1 ∈ sourceVertices P W := by
-    simpa [sourceIndex] using s.property
+    simp [sourceIndex]
   have hsMiddle : (unitDistanceGraph A).Adj
       (sourceIndex P W s.1 s.property).1 Qs.middle := by
     have hm : (sourceIndex P W s.1 s.property).1 ∈
@@ -578,7 +581,7 @@ theorem split_right_associations_ne_at_incident_partner
     cyclicSideAssociation_injective hassoc
   have hself : ActualCase24Rows.case4SourceIsRight Qt.twoExtreme =
       !(ActualCase24Rows.case4SourceIsRight Qt.twoExtreme) := by
-    simpa [ActualCase24Rows.case4SourceIsRight, hsides] using hside
+    simp [ActualCase24Rows.case4SourceIsRight, hsides] at hside
   cases hb : ActualCase24Rows.case4SourceIsRight Qt.twoExtreme <;>
     simp [hb] at hself
 

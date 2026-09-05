@@ -56,7 +56,7 @@ lemma polar_unit_displacement_bounds
 aligned chart based at the competing source. -/
 lemma edgePairDisplacement_eq_aligned
     (C : P.AlignedChartData) (source : {p // p ∈ P.H})
-    (p o q : Vertex A) (hunit : dist (p : Point) (o : Point) = 1) :
+    (p o q : Vertex A) (_hunit : dist (p : Point) (o : Point) = 1) :
     let e := CyclicHullData.pairSub (C.coord source o) (C.coord source p)
     let x := C.coord source q
     let z := CyclicHullData.pairSub
@@ -410,6 +410,7 @@ lemma current_secondary_association_of_adj_near_source
       simp [hs, ha, cyclicSideAssociation,
         oppositeCyclicSideAssociation] at hne ⊢
 
+open Erdos957Case4CommonAssociations.CommonPairedCase4Rows in
 lemma paired_direct_near_two_associations_ne
     (Q : CommonCoherentRealizedSourceRows P W F.chart)
     {s t : Source P W} {v middle : Vertex A}
@@ -492,7 +493,7 @@ lemma paired_direct_near_two_associations_ne
             have hsAssociation : S.descriptor.association =
                 cyclicSideAssociation Qs.twoExtreme.side := by
               rw [hsDescriptor]
-              exact Erdos957Case4CommonAssociations.CommonPairedCase4Rows.secondary_association_eq_side_of_adj_partner
+              exact secondary_association_eq_side_of_adj_partner
                 Qs hadjPartner
             rw [hsAssociation, htAssociation, hs, ht]
             decide
@@ -514,7 +515,7 @@ lemma paired_direct_near_two_associations_ne
             have hsAssociation : S.descriptor.association =
                 cyclicSideAssociation Qs.twoExtreme.side := by
               rw [hsDescriptor]
-              exact Erdos957Case4CommonAssociations.CommonPairedCase4Rows.secondary_association_eq_side_of_adj_partner
+              exact secondary_association_eq_side_of_adj_partner
                 Qs hadjPartner
             rw [hsAssociation, htAssociation, hs, ht]
             decide
@@ -547,7 +548,7 @@ lemma paired_direct_near_two_associations_ne
             have hsAssociation : S.descriptor.association =
                 oppositeCyclicSideAssociation Qs.twoExtreme.side := by
               rw [hsDescriptor]
-              exact Erdos957Case4CommonAssociations.CommonPairedCase4Rows.secondary_association_eq_opposite_of_adj_source
+              exact secondary_association_eq_opposite_of_adj_source
                 Qs hadjSource
             rw [hsAssociation, htAssociation, hs, ht]
             decide
@@ -591,7 +592,7 @@ lemma paired_direct_near_two_associations_ne
             have hsAssociation : S.descriptor.association =
                 oppositeCyclicSideAssociation Qs.twoExtreme.side := by
               rw [hsDescriptor]
-              exact Erdos957Case4CommonAssociations.CommonPairedCase4Rows.secondary_association_eq_opposite_of_adj_source
+              exact secondary_association_eq_opposite_of_adj_source
                 Qs hadjSource
             rw [hsAssociation, htAssociation, hs, ht]
             decide

@@ -49,7 +49,7 @@ noncomputable abbrev producedFlatFrame {A : Finset Erdos957.Point}
 
 /-- The actual cyclic-window geometry used by locality for the produced
 radial order and bisector frame. -/
-noncomputable def producedCyclicWindowGeometry {A : Finset Erdos957.Point}
+theorem producedCyclicWindowGeometry {A : Finset Erdos957.Point}
     (hA : IsOneSeparated A) (R : RadiallySortedCyclicHullOrder A)
     (L : LiftedCyclicHullOrder R.order)
     (W : DiameterWitnessData (producedHullData R L)) :
@@ -113,7 +113,7 @@ noncomputable def roleCollisionWitnessesOfSideUniqueness
 /-- Package the strictly smaller side-free collision input: among actual
 formula-retaining rows in one seven-window, three pairwise distinct sources
 cannot select the same target. -/
-noncomputable def noThreeRoleCollisionWitnessesOfComponents
+theorem noThreeRoleCollisionWitnessesOfComponents
     {A : Finset Erdos957.Point} (hA : IsOneSeparated A)
     (R : RadiallySortedCyclicHullOrder A)
     (L : LiftedCyclicHullOrder R.order)
@@ -143,7 +143,7 @@ noncomputable def noThreeRoleCollisionWitnessesOfComponents
 window geometry.  Three and four contributing rows are allowed; the local
 geometry gives the sharp source-count bound and proves the capacity estimate
 for actual triples and quadruples. -/
-noncomputable def weightedCollisionWitnessesOfComponents
+theorem weightedCollisionWitnessesOfComponents
     {A : Finset Erdos957.Point} (hA : IsOneSeparated A)
     (R : RadiallySortedCyclicHullOrder A)
     (L : LiftedCyclicHullOrder R.order)

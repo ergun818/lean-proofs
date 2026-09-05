@@ -550,7 +550,7 @@ theorem partner_bisectorSourceMiddle_eq
   by_cases hside : T.side = .previous
   · have hnextPartner : P.next partner = source := by
       dsimp [partner]
-      simpa [cyclicSideVertex, hside]
+      simp [cyclicSideVertex, hside]
     apply Erdos957PartnerMiddleChoice.bisectorSourceMiddle_eq_of_next
       hA O L W partner hp middle
     · rw [hnextPartner]
@@ -564,7 +564,7 @@ theorem partner_bisectorSourceMiddle_eq
       · rfl
     have hprevPartner : P.next⁻¹ partner = source := by
       dsimp [partner]
-      simpa [cyclicSideVertex, hnext]
+      simp [cyclicSideVertex, hnext]
     apply Erdos957PartnerMiddleChoice.bisectorSourceMiddle_eq_of_previous
       hA O L W partner hp middle
     · rw [hprevPartner]
@@ -581,7 +581,7 @@ theorem partner_twoExtreme_side_eq_opposite
     {A : Finset Point} (hA : IsOneSeparated A)
     {P : CyclicHullData A} (W : DiameterWitnessData P)
     (source : {p // p ∈ P.H})
-    (hs : source.1 ∈ sourceVertices P W)
+    (_hs : source.1 ∈ sourceVertices P W)
     (middle : Vertex A)
     (hsourceMiddle : (unitDistanceGraph A).Adj source.1 middle)
     (T : TwoExtremeCyclicWitness P source middle)
@@ -849,7 +849,7 @@ theorem ProducedRowSelection.isCase4Split_of_split
     (ProducedRowSelection.split hfive htwo T N hexists right hright D).row.IsCase4Split := by
   obtain ⟨hr, hs, hm, hq, hne, hrow⟩ := D.row_shape
   refine ⟨D.secondaryTarget, ?_⟩
-  simp [ProducedRowSelection.row, RealizedSourceRow.IsCase4Split,
+  simp [ProducedRowSelection.row,
     RealizedSourceRow.targetAtRole, hrow]
 
 theorem ProducedRowSelection.split_middle_role
@@ -1351,8 +1351,8 @@ theorem produced_partner_split_targets
           (cyclicSideVertex P source T.side) hp).row).roleAssociation
             PairCases.TargetRoleName.case4SplitRight = _
         rw [hpartnerSelection]
-        simp only [Erdos957HullGeometryBridge.cyclicHullDataOfOrder_H,
-    Erdos957HullGeometryBridge.cyclicHullDataOfOrder_next]
+        simp only [ProducedRowSelection.row, hrow, RealizedSourceRow.roleAssociation,
+          hpartnerRightEq]
         exact CommonCase4.selectedEdgeCase4Branch_association_eq_of_keys_eq
           hbase hpartnerMiddle hpartnerExists hexists (!right)
 
@@ -1445,7 +1445,7 @@ noncomputable def producedCommonCoherentRealizedSourceRows
         exact D.secondary_vertex.trans (hactualRecipient right).symm
       · by_cases habsent : cyclicSideVertex P source T.side ∉ sourceVertices P W
         · exact Or.inl habsent
-        · push_neg at habsent
+        · push Not at habsent
           right
           intro hp
           have hsourceMiddle : (unitDistanceGraph A).Adj source.1 middle := by

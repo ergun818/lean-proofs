@@ -226,7 +226,7 @@ lemma no_common_unit_target_second_successor
   · have hvNe : v ≠ (P.next i).1 := by
       intro h
       apply hvNotHull
-      simpa [h] using (P.next i).property
+      simp [h]
     have hsep : 1 ≤ dist (v : Point) ((P.next i).1 : Point) :=
       hA v v.property (P.next i).1 (P.next i).1.property
         (fun h ↦ hvNe (Subtype.ext h))
@@ -281,7 +281,7 @@ lemma no_common_unit_target_second_predecessor
   · have hvNe : v ≠ (P.next⁻¹ i).1 := by
       intro h
       apply hvNotHull
-      simpa [h] using (P.next⁻¹ i).property
+      simp [h]
     have hsep : 1 ≤ dist (v : Point) ((P.next⁻¹ i).1 : Point) :=
       hA v v.property (P.next⁻¹ i).1 (P.next⁻¹ i).1.property
         (fun h ↦ hvNe (Subtype.ext h))

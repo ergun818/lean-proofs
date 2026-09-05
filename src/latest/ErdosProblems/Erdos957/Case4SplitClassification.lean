@@ -743,10 +743,8 @@ lemma CommonPairedCase4Rows.normalized_currentSecondary_mem_residual
     apply Q.currentSecondaryTarget.not_hull
     rw [hv]
     cases hside : Q.twoExtreme.side
-    · simpa [cyclicSideVertex, hside] using
-        (P.next⁻¹ (sourceIndex P W u hu)).property
-    · simpa [cyclicSideVertex, hside] using
-        (P.next (sourceIndex P W u hu)).property
+    · simp [cyclicSideVertex]
+    · simp [cyclicSideVertex]
   · intro h
     have hactual : Q.currentSecondaryTarget.vertex =
         Q.normalized.frame.actual Erdos957Cases24.Case2.u := by
@@ -813,8 +811,11 @@ lemma CommonPairedCase4Rows.current_secondary_association_eq_side_iff
               Erdos957TwoExtremeAligned.swapEndpointEquiv_apply,
               ActualCase24Rows.TwoExtremeCommonPairFrame.frame,
               ActualCase24Rows.case4PairEdgeBase, hside]
-      rw [hcoord]
-      simp only [Fin.isValue, tsub_le_iff_right, zero_add]
+      rw [hcoord, hb]
+      change (if (Q.pairBranch.branch.sourceRecipient false) 0 - (-1) < 0 then
+        ArrivalAssociation.fromPrevious else .fromNext) = .fromNext ↔
+          -(Q.pairBranch.branch.sourceRecipient false) 0 - 1 ≤ 0
+      simp only [ite_eq_right_iff, reduceCtorEq, imp_false, not_lt]
       constructor <;> intro h <;> linarith
 
 private lemma dist_gt_two_of_residual_nonpos_of_right_shallow
@@ -920,7 +921,7 @@ lemma CommonPairedCase4Rows.not_within_two_away_second_of_association_eq_side
     (Erdos957Case4NoThree.awayHullVertex P
       (sourceIndex P W u hu) Q.twoExtreme.side 1).1
   have hqMem :=
-    Erdos957Case4SplitClassification.CommonPairedCase4Rows.normalized_currentSecondary_mem_residual Q
+    CommonPairedCase4Rows.normalized_currentSecondary_mem_residual Q
   have huPrev : Erdos957Cases24.Case2.uPrev ∈
       Q.normalized.frame.image A := by
     apply Q.normalized.frame.mem_image_iff.mpr
@@ -941,7 +942,7 @@ lemma CommonPairedCase4Rows.not_within_two_away_second_of_association_eq_side
     simpa [q, Erdos957Cases24.Case4.v, dist_comm] using
       (Erdos957Case24Bridge.Case4.mem_residualNeighbors.mp hqMem).2.1
   have hqx : q 0 ≤ 0 :=
-    (Erdos957Case4SplitClassification.CommonPairedCase4Rows.current_secondary_association_eq_side_iff Q).mp
+    (CommonPairedCase4Rows.current_secondary_association_eq_side_iff Q).mp
       hassoc
   have hpBounds := Erdos957Case4NoThree.normalizedFrame_away_prefix_bounds
     F (sourceIndex P W u hu) Q.middle Q.twoExtreme Q.normalized hi 1
@@ -987,7 +988,7 @@ lemma CommonPairedCase4Rows.not_within_two_incident_second_of_association_ne_sid
     (Erdos957Case4NoThree.incidentHullVertex P
       (sourceIndex P W u hu) Q.twoExtreme.side 1).1
   have hqMem :=
-    Erdos957Case4SplitClassification.CommonPairedCase4Rows.normalized_currentSecondary_mem_residual Q
+    CommonPairedCase4Rows.normalized_currentSecondary_mem_residual Q
   have huPrev : Erdos957Cases24.Case2.uPrev ∈
       Q.normalized.frame.image A := by
     apply Q.normalized.frame.mem_image_iff.mpr
@@ -1010,7 +1011,7 @@ lemma CommonPairedCase4Rows.not_within_two_incident_second_of_association_ne_sid
   have hqx : 0 < q 0 := by
     by_contra hnot
     apply hassoc
-    apply (Erdos957Case4SplitClassification.CommonPairedCase4Rows.current_secondary_association_eq_side_iff Q).mpr
+    apply (CommonPairedCase4Rows.current_secondary_association_eq_side_iff Q).mpr
     exact le_of_not_gt hnot
   have hpBounds :=
     Erdos957Case4NoThree.normalizedFrame_incident_prefix_metric_bounds
@@ -1057,7 +1058,7 @@ lemma CommonPairedCase4Rows.not_within_two_incident_third_of_association_ne_side
     (Erdos957Case4NoThree.incidentHullVertex P
       (sourceIndex P W u hu) Q.twoExtreme.side 2).1
   have hqMem :=
-    Erdos957Case4SplitClassification.CommonPairedCase4Rows.normalized_currentSecondary_mem_residual Q
+    CommonPairedCase4Rows.normalized_currentSecondary_mem_residual Q
   have huPrev : Erdos957Cases24.Case2.uPrev ∈
       Q.normalized.frame.image A := by
     apply Q.normalized.frame.mem_image_iff.mpr
@@ -1080,7 +1081,7 @@ lemma CommonPairedCase4Rows.not_within_two_incident_third_of_association_ne_side
   have hqx : 0 < q 0 := by
     by_contra hnot
     apply hassoc
-    apply (Erdos957Case4SplitClassification.CommonPairedCase4Rows.current_secondary_association_eq_side_iff Q).mpr
+    apply (CommonPairedCase4Rows.current_secondary_association_eq_side_iff Q).mpr
     exact le_of_not_gt hnot
   have hpBounds :=
     Erdos957Case4NoThree.normalizedFrame_incident_prefix_metric_bounds
@@ -1267,11 +1268,13 @@ lemma opposite_distance_two_middle_fst_gap_gt_two
         (Q.case4_pair s.1 s.property
           ⟨S.target.target, by simpa [hsRole] using S.target.target_at_role⟩).twoExtreme.side 1) :
     2 < |((Q.case4_pair s.1 s.property
-        ⟨S.target.target, by simpa [hsRole] using S.target.target_at_role⟩).normalized.frame.toCanonical
+        ⟨S.target.target, by
+          simpa [hsRole] using S.target.target_at_role⟩).normalized.frame.toCanonical
           (Q.case4_pair t.1 t.property
             ⟨T.target.target, by simpa [htRole] using T.target.target_at_role⟩).middle) 0 -
       ((Q.case4_pair s.1 s.property
-        ⟨S.target.target, by simpa [hsRole] using S.target.target_at_role⟩).normalized.frame.toCanonical
+        ⟨S.target.target, by
+          simpa [hsRole] using S.target.target_at_role⟩).normalized.frame.toCanonical
           (Q.case4_pair u.1 u.property
             ⟨U.target.target, by simpa [huRole] using U.target.target_at_role⟩).middle) 0| := by
   let Qs := Q.case4_pair s.1 s.property
@@ -1301,8 +1304,7 @@ lemma opposite_distance_two_middle_fst_gap_gt_two
           (sourceIndex P W s.1 s.property) Qs.twoExtreme.side 2 := by
         rw [htIndex]
         cases hside : Qs.twoExtreme.side <;>
-          simp [cyclicSideVertex, Erdos957Case4NoThree.incidentHullVertex,
-            hside, pow_succ]
+          simp [cyclicSideVertex, Erdos957Case4NoThree.incidentHullVertex, pow_succ]
   have htUnit : (unitDistanceGraph A).Adj Qt.middle
       (Erdos957Case4NoThree.incidentHullVertex P
         (sourceIndex P W s.1 s.property) Qs.twoExtreme.side 2).1 := by
@@ -1850,8 +1852,8 @@ theorem split_right_associations_ne_at_incident_second
             oppositeCyclicSideAssociation Qt.twoExtreme.side at htAssoc
           intro hEq
           rw [hsAssoc, htAssoc] at hEq
-          simpa [hsSide, htSide, cyclicSideAssociation,
-            oppositeCyclicSideAssociation] using hEq
+          simp [hsSide, htSide, cyclicSideAssociation,
+            oppositeCyclicSideAssociation] at hEq
       | next =>
           have htIndex' : sourceIndex P W s.1 s.property =
               Erdos957Case4NoThree.incidentHullVertex P
@@ -1863,7 +1865,7 @@ theorem split_right_associations_ne_at_incident_second
             cyclicSideAssociation Qt.twoExtreme.side at htAssoc
           intro hEq
           rw [hsAssoc, htAssoc] at hEq
-          simpa [hsSide, htSide, cyclicSideAssociation] using hEq
+          simp [hsSide, htSide, cyclicSideAssociation] at hEq
   | next =>
       have htReverse : sourceIndex P W s.1 s.property =
           ((P.next⁻¹) ^ 2) (sourceIndex P W t.1 t.property) := by
@@ -1881,7 +1883,7 @@ theorem split_right_associations_ne_at_incident_second
             cyclicSideAssociation Qt.twoExtreme.side at htAssoc
           intro hEq
           rw [hsAssoc, htAssoc] at hEq
-          simpa [hsSide, htSide, cyclicSideAssociation] using hEq
+          simp [hsSide, htSide, cyclicSideAssociation] at hEq
       | next =>
           have htIndex' : sourceIndex P W s.1 s.property =
               Erdos957Case4NoThree.awayHullVertex P
@@ -1893,8 +1895,8 @@ theorem split_right_associations_ne_at_incident_second
             oppositeCyclicSideAssociation Qt.twoExtreme.side at htAssoc
           intro hEq
           rw [hsAssoc, htAssoc] at hEq
-          simpa [hsSide, htSide, cyclicSideAssociation,
-            oppositeCyclicSideAssociation] using hEq
+          simp [hsSide, htSide, cyclicSideAssociation,
+            oppositeCyclicSideAssociation] at hEq
 
 /-- Two split-right arrivals whose sources are two hull steps apart on the
 anchor's away prefix also have opposite associations.  Reversing the
@@ -1950,7 +1952,7 @@ theorem split_right_associations_ne_at_away_second
             oppositeCyclicSideAssociation Qt.twoExtreme.side at htAssoc
           intro hEq
           rw [hsAssoc, htAssoc] at hEq
-          simpa [hsSide, htSide, oppositeCyclicSideAssociation] using hEq
+          simp [hsSide, htSide, oppositeCyclicSideAssociation] at hEq
   | next =>
       have htReverse : sourceIndex P W s.1 s.property =
           (P.next ^ 2) (sourceIndex P W t.1 t.property) := by
@@ -1968,7 +1970,7 @@ theorem split_right_associations_ne_at_away_second
             oppositeCyclicSideAssociation Qt.twoExtreme.side at htAssoc
           intro hEq
           rw [hsAssoc, htAssoc] at hEq
-          simpa [hsSide, htSide, oppositeCyclicSideAssociation] using hEq
+          simp [hsSide, htSide, oppositeCyclicSideAssociation] at hEq
       | next =>
           have htIndex' : sourceIndex P W s.1 s.property =
               Erdos957Case4NoThree.incidentHullVertex P
@@ -2033,7 +2035,7 @@ theorem split_right_associations_ne_at_incident_third
             cyclicSideAssociation Qt.twoExtreme.side at htAssoc
           intro hEq
           rw [hsAssoc, htAssoc] at hEq
-          simpa [hsSide, htSide, cyclicSideAssociation] using hEq
+          simp [hsSide, htSide, cyclicSideAssociation] at hEq
   | next =>
       have htReverse : sourceIndex P W s.1 s.property =
           ((P.next⁻¹) ^ 3) (sourceIndex P W t.1 t.property) := by
@@ -2051,7 +2053,7 @@ theorem split_right_associations_ne_at_incident_third
             cyclicSideAssociation Qt.twoExtreme.side at htAssoc
           intro hEq
           rw [hsAssoc, htAssoc] at hEq
-          simpa [hsSide, htSide, cyclicSideAssociation] using hEq
+          simp [hsSide, htSide, cyclicSideAssociation] at hEq
       | next =>
           exfalso
           apply Erdos957Case4SplitDistance.no_split_right_competitor_at_away_third
@@ -2139,7 +2141,7 @@ theorem split_right_same_association_source_eq_in_window
             change T.descriptor.association =
               oppositeCyclicSideAssociation Qt.twoExtreme.side at htAssoc
             rw [hsAssoc, htAssoc] at hassoc
-            simpa [hsSide, htSide, oppositeCyclicSideAssociation] using hassoc
+            simp [hsSide, htSide, oppositeCyclicSideAssociation] at hassoc
       · have hidx : sourceIndex P W t.1 t.property =
             Erdos957Case4NoThree.awayHullVertex P
               (sourceIndex P W s.1 s.property) Qs.twoExtreme.side 1 := by
@@ -2190,7 +2192,7 @@ theorem split_right_same_association_source_eq_in_window
             change T.descriptor.association =
               oppositeCyclicSideAssociation Qt.twoExtreme.side at htAssoc
             rw [hsAssoc, htAssoc] at hassoc
-            simpa [hsSide, htSide, oppositeCyclicSideAssociation] using hassoc
+            simp [hsSide, htSide, oppositeCyclicSideAssociation] at hassoc
         | next =>
             have hreverse : sourceIndex P W s.1 s.property =
                 Erdos957Case4NoThree.incidentHullVertex P
@@ -2592,7 +2594,7 @@ theorem two_split_right_one_direct_same_association_in_window
     rw [htSide, htIncident, huAway]
     cases hside : Qs.twoExtreme.side <;>
       simp [Erdos957Case4NoThree.awayHullVertex,
-        Erdos957Case4NoThree.incidentHullVertex, hside, pow_succ]
+        Erdos957Case4NoThree.incidentHullVertex, pow_succ]
   · exact no_away_second_split_incident_second_direct Q S T U
       hsRole htRole huDirect htAway huIncident
   · apply Erdos957Case4CollisionLeaves.realized_no_direct_competitor_at_incident_partner
@@ -2603,7 +2605,7 @@ theorem two_split_right_one_direct_same_association_in_window
     rw [htSide, htAway, huAway]
     cases hside : Qs.twoExtreme.side <;>
       simp [Erdos957Case4CollisionLeaves.incidentContinuationHullVertex,
-        Erdos957Case4NoThree.awayHullVertex, hside, pow_succ]
+        Erdos957Case4NoThree.awayHullVertex, pow_succ]
 
 /-! ## Weight-aware Case-4 frontier
 
@@ -2648,8 +2650,8 @@ degree at most four. -/
 private lemma two_half_triple_fits_of_degree_le_four
     {rows : HasRealizedSourceRows P W F.chart}
     {s t u : Source P W} {v : Vertex A}
-    (S : RealizedArrivalAt (F := F) rows s v)
-    (T : RealizedArrivalAt (F := F) rows t v)
+    (_S : RealizedArrivalAt (F := F) rows s v)
+    (_T : RealizedArrivalAt (F := F) rows t v)
     (U : RealizedArrivalAt (F := F) rows u v)
     (hsHalf : (rows s.1 s.property).localCase.tokens v = 1)
     (htHalf : (rows t.1 t.property).localCase.tokens v = 1)
@@ -2826,7 +2828,7 @@ private lemma direct_of_not_secondary_or_split
 Case-2 secondary.  The Case-2-anchored sibling theorem handles the omitted
 role symmetrically. -/
 theorem Case4WeightedCollisionResiduals.triple_fits_of_no_case2_secondary
-    (hA : IsOneSeparated A)
+    (_hA : IsOneSeparated A)
     {Q : CommonCoherentRealizedSourceRows P W F.chart}
     (K : Case4WeightedCollisionResiduals Q)
     {s t u : Source P W} {v : Vertex A}

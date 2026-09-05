@@ -40,7 +40,7 @@ theorem anglePairCoord_fst_change (θ ψ : ℝ) (o q : Point) :
     (anglePairCoord ψ o q).1 =
       Real.cos (ψ - θ) * (anglePairCoord θ o q).1 -
         Real.sin (ψ - θ) * (anglePairCoord θ o q).2 := by
-  simp only [anglePairCoord, Prod.fst, Prod.snd]
+  simp only [anglePairCoord]
   rw [Real.cos_sub, Real.sin_sub]
   have hθ : Real.cos θ ^ 2 + Real.sin θ ^ 2 = 1 := by
     nlinarith [Real.sin_sq_add_cos_sq θ]
@@ -58,7 +58,7 @@ theorem abs_anglePairCoord_snd_le_dist (θ : ℝ) (o q : Point) :
     |(anglePairCoord θ o q).2| ≤ dist o q := by
   have hsquare := sqDist_anglePairCoord θ o q o
   rw [anglePairCoord_self] at hsquare
-  simp only [Erdos957Cases13.sqDist, sub_zero, Prod.fst, Prod.snd] at hsquare
+  simp only [Erdos957Cases13.sqDist, sub_zero] at hsquare
   rw [dist_comm q o] at hsquare
   have hdist : 0 ≤ dist o q := dist_nonneg
   have habs : 0 ≤ |(anglePairCoord θ o q).2| := abs_nonneg _

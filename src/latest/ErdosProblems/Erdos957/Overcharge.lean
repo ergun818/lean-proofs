@@ -213,14 +213,14 @@ lemma figure13_equilateral_hull_exclusion {u j d : ℝ × ℝ}
 
 /-- A target cannot simultaneously have exactly one and exactly two extreme neighbours.  These
 are the primitive target-role conditions for a Case 3 primary and a Case 4 primary. -/
-lemma figure14_one_extreme_ne_two_extreme {α : Type*} [DecidableEq α]
+lemma figure14_one_extreme_ne_two_extreme {α : Type*}
     (extremeNeighbors : Finset α) (hone : extremeNeighbors.card = 1)
     (htwo : extremeNeighbors.card = 2) : False := by
   omega
 
 /-- A target cannot simultaneously have exactly one and no extreme neighbours.  This excludes a
 Case 3 primary from being the lower whole-unit target in the left branch of Case 4. -/
-lemma figure14_one_extreme_ne_zero_extreme {α : Type*} [DecidableEq α]
+lemma figure14_one_extreme_ne_zero_extreme {α : Type*}
     (extremeNeighbors : Finset α) (hone : extremeNeighbors.card = 1)
     (hzero : extremeNeighbors.card = 0) : False := by
   omega
@@ -230,7 +230,7 @@ lemma figure14_one_extreme_ne_zero_extreme {α : Type*} [DecidableEq α]
 /-- Six distinct displayed neighbours cannot all belong to a neighbour set of cardinality five.
 This is the exact finite counting kernel of Figure 15: the five already incident edges are indexed
 by five elements of `Fin 6`, and the additional edge `v_i v_j` is the sixth. -/
-lemma figure15_six_neighbors_contradict_degree_five {α : Type*} [DecidableEq α]
+lemma figure15_six_neighbors_contradict_degree_five {α : Type*}
     (neighbors : Finset α) (displayed : Fin 6 → α)
     (hdisplayed : Function.Injective displayed)
     (hmem : ∀ i, displayed i ∈ neighbors) (hdegree : neighbors.card = 5) : False := by
@@ -278,9 +278,10 @@ Here is the complete case-pair map from the proof, in source order.
     of `v_j`, contradicted by `figure15_six_neighbors_contradict_degree_five`.  Figure 16's other
     identification `b=c` receives half plus half.
 
-Thus the checked local kernels account for every arithmetic branch and for the final contradictions
-inside Figures 10, 13, 14, and 15.  A full integration still has to derive their primitive hypotheses
-from a formal cyclic hull, flatness, angular order of unit neighbours, and the four charging rules.
+Thus the checked local kernels account for every arithmetic branch and for the final
+contradictions inside Figures 10, 13, 14, and 15.  A full integration still has to derive their
+primitive hypotheses from a formal cyclic hull, flatness, angular order of unit neighbours, and
+the four charging rules.
 -/
 
 inductive CaseNumber

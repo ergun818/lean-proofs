@@ -74,7 +74,7 @@ theorem exists_case2SecondaryFormula
   | case1 middle hdegree hone middleCoord hmiddleCoord hmiddleNot hunit row =>
       simp [RealizedSourceRow.targetAtRole] at htarget
   | case2 middle hdegree htwo hmiddleNot twoExtreme normalized row =>
-      simp [RealizedSourceRow.targetAtRole] at htarget
+      simp only [RealizedSourceRow.targetAtRole, Option.some.injEq] at htarget
       subst target
       exact ⟨{
         side := twoExtreme.side
@@ -371,7 +371,7 @@ theorem exists_case4WholeFormula
   | case4 middle hdegree htwo twoExtreme normalized row hmiddleVertex =>
       cases row with
       | whole middleTarget hcoord hfour =>
-          simp [RealizedSourceRow.targetAtRole] at htarget
+          simp only [RealizedSourceRow.targetAtRole, Option.some.injEq] at htarget
           subst target
           exact ⟨{
             incidentSide := twoExtreme.side
@@ -465,8 +465,7 @@ theorem exists_case4Primary_associationSide
       | whole middleTarget hcoord hfour =>
           refine ⟨T.side, ?_⟩
           rw [E.association_eq]
-          simp [RealizedSourceRow.roleAssociation,
-            orientedHorizontalAssociation_case2_v]
+          simp [RealizedSourceRow.roleAssociation]
       | orderedLow farthest hfive middleTarget lowTarget hm hl hne =>
           simp [RealizedSourceRow.targetAtRole] at htarget
       | orderedHigh farthest hsix recipients middleTarget sideTarget hm hs hne =>
@@ -560,7 +559,7 @@ theorem exists_case4SplitRightFormula
       | whole middleTarget hm hfour =>
           simp [RealizedSourceRow.targetAtRole] at htarget
       | orderedLow farthest hfive middleTarget lowTarget hm hl hne =>
-          simp [RealizedSourceRow.targetAtRole] at htarget
+          simp only [RealizedSourceRow.targetAtRole, Option.some.injEq] at htarget
           subst target
           exact ⟨.orderedLow T.side normalized.side_unit normalized.frame
             normalized.frame_spec normalized.source_actual
@@ -568,7 +567,7 @@ theorem exists_case4SplitRightFormula
               normalized.frame.toCanonical_actual])
             farthest (by simpa [hv] using hl)⟩
       | orderedHigh farthest hsix recipients middleTarget sideTarget hm hs hne =>
-          simp [RealizedSourceRow.targetAtRole] at htarget
+          simp only [RealizedSourceRow.targetAtRole, Option.some.injEq] at htarget
           subst target
           exact ⟨.orderedHigh T.side normalized.side_unit normalized.frame
             normalized.frame_spec normalized.source_actual
@@ -577,7 +576,7 @@ theorem exists_case4SplitRightFormula
             farthest recipients (by simpa [hv] using hs)⟩
       | pairedSplit commonFrame farthest branch rightSource hright middleTarget
           secondaryTarget hsource hm hs hne =>
-          simp [RealizedSourceRow.targetAtRole] at htarget
+          simp only [RealizedSourceRow.targetAtRole, Option.some.injEq] at htarget
           subst target
           exact ⟨.paired T.side commonFrame farthest branch rightSource
             hright
@@ -971,8 +970,7 @@ theorem nonempty_case4WholeArrivalFormula
               target_edge_coordinate := by simpa [hv] using hcoord }
             association_eq := ?_ }⟩
           rw [E.association_eq]
-          simp [RealizedSourceRow.roleAssociation,
-            orientedHorizontalAssociation_case2_v]
+          simp [RealizedSourceRow.roleAssociation]
       | orderedLow farthest hfive middleTarget lowTarget hm hl hne =>
           simp [RealizedSourceRow.targetAtRole] at htarget
       | orderedHigh farthest hsix recipients middleTarget sideTarget hm hs hne =>

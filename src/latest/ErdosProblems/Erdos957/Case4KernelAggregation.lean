@@ -239,14 +239,14 @@ private lemma direct_ne_case2Secondary
     role ≠ .case2Secondary := by
   intro hr
   subst role
-  simpa [IsDirectTargetRole] using h
+  simp [IsDirectTargetRole] at h
 
 private lemma direct_ne_case4SplitRight
     {role : PairCases.TargetRoleName} (h : IsDirectTargetRole role) :
     role ≠ .case4SplitRight := by
   intro hr
   subst role
-  simpa [IsDirectTargetRole] using h
+  simp [IsDirectTargetRole] at h
 
 /-- Three Boolean arrival associations contain an equal pair.  This tiny
 finite fact is separated from the dependent row data used below. -/
@@ -317,8 +317,8 @@ theorem case4_split_right_no_three
     (locality : SourceLocalityCertificates P W F)
     (case2NoThree : ∀ {s t u : Source P W} {v : Vertex A}
       (Ds : RealizedPositiveTarget (Q.rows s.1 s.property) v)
-      (Dt : RealizedPositiveTarget (Q.rows t.1 t.property) v)
-      (Du : RealizedPositiveTarget (Q.rows u.1 u.property) v),
+      (_Dt : RealizedPositiveTarget (Q.rows t.1 t.property) v)
+      (_Du : RealizedPositiveTarget (Q.rows u.1 u.property) v),
       Ds.role = .case2Secondary →
       t.1 ∈ Finset.univ.image (fun j : Fin 7 ↦
         (sevenShift P.next j (sourceIndex P W s.1 s.property)).1) →
@@ -328,8 +328,8 @@ theorem case4_split_right_no_three
     (K : Case4SplitRightNoThreeResidual Q) :
     ∀ {s t u : Source P W} {v : Vertex A}
       (Ds : RealizedPositiveTarget (Q.rows s.1 s.property) v)
-      (Dt : RealizedPositiveTarget (Q.rows t.1 t.property) v)
-      (Du : RealizedPositiveTarget (Q.rows u.1 u.property) v),
+      (_Dt : RealizedPositiveTarget (Q.rows t.1 t.property) v)
+      (_Du : RealizedPositiveTarget (Q.rows u.1 u.property) v),
       Ds.role = .case4SplitRight →
       t.1 ∈ Finset.univ.image (fun j : Fin 7 ↦
         (sevenShift P.next j (sourceIndex P W s.1 s.property)).1) →
@@ -382,8 +382,8 @@ theorem secondaryRoleCollisionKernels
     (locality : SourceLocalityCertificates P W F)
     (case2NoThree : ∀ {s t u : Source P W} {v : Vertex A}
       (Ds : RealizedPositiveTarget (Q.rows s.1 s.property) v)
-      (Dt : RealizedPositiveTarget (Q.rows t.1 t.property) v)
-      (Du : RealizedPositiveTarget (Q.rows u.1 u.property) v),
+      (_Dt : RealizedPositiveTarget (Q.rows t.1 t.property) v)
+      (_Du : RealizedPositiveTarget (Q.rows u.1 u.property) v),
       Ds.role = .case2Secondary →
       t.1 ∈ Finset.univ.image (fun j : Fin 7 ↦
         (sevenShift P.next j (sourceIndex P W s.1 s.property)).1) →

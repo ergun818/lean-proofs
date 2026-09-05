@@ -759,7 +759,7 @@ lemma recipient_rectangle_of_edge_horizontal_bound
   obtain ⟨hx, hy⟩ := abs_chartCoord_sub_le_two C i hd
   have hsource := C.coord_source i
   rw [hsource] at hy
-  simp only [Prod.fst_zero, Prod.snd_zero, sub_zero] at hy
+  simp only [sub_zero] at hy
   rw [abs_le] at hedgeX hchange hy
   constructor
   · nlinarith
@@ -940,7 +940,7 @@ lemma opposite_coordinate_bounds
         (q.1 - F.leftRadius i 0 * (-Real.cos (F.leftAngle i 0))) ^ 2 +
             (q.2 - F.leftRadius i 0 * Real.sin (F.leftAngle i 0)) ^ 2 ≤
           q.1 ^ 2 + q.2 ^ 2 := by
-      convert hleftDist using 1 <;> ring
+      convert hleftDist using 1; ring
     simpa only [mul_neg, neg_mul, sub_neg_eq_add, neg_sq] using
       (positive_dot_of_sqDist_le hlr htrig' hleftDist')
   have hflat := sourceIndex_isFlat W s
@@ -1080,8 +1080,7 @@ private lemma dist_gt_two_of_coord_fst_gt_two
     (hx : 2 < (C.coord i q).1) : 2 < dist (i.1 : Point) (q : Point) := by
   have hsq := C.sqDist_coord i i.1 q
   rw [C.coord_source] at hsq
-  simp only [Erdos957Cases13.sqDist, Prod.fst_zero, Prod.snd_zero,
-    sub_zero] at hsq
+  simp only [Erdos957Cases13.sqDist] at hsq
   nlinarith [sq_nonneg (C.coord i q).2,
     dist_nonneg (x := (i.1 : Point)) (y := (q : Point))]
 
@@ -1090,8 +1089,7 @@ private lemma dist_gt_two_of_reflected_coord_fst_gt_two
     (hx : 2 < -(C.coord i q).1) : 2 < dist (i.1 : Point) (q : Point) := by
   have hsq := C.sqDist_coord i i.1 q
   rw [C.coord_source] at hsq
-  simp only [Erdos957Cases13.sqDist, Prod.fst_zero, Prod.snd_zero,
-    sub_zero] at hsq
+  simp only [Erdos957Cases13.sqDist] at hsq
   nlinarith [sq_nonneg (C.coord i q).2,
     dist_nonneg (x := (i.1 : Point)) (y := (q : Point))]
 
@@ -1318,7 +1316,7 @@ theorem competing_source_in_window
   have hsRecipient : Erdos957Locality.InRecipientRectangle
       (F.chart.coord i v) := by
     have hrow := (selectedCase P W F.chart hlocal s).target_in_rectangle hs
-    simp only [i, Erdos957GeometryLocalRows.InLocalRectangle,
+    simp only [Erdos957GeometryLocalRows.InLocalRectangle,
       Erdos957GeometryLocalRows.sourceCoordinates,
       Erdos957Cases13.InSourceRectangle] at hrow
     rcases hrow with ⟨hxl, hxu, hyl, hyu⟩

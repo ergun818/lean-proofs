@@ -529,7 +529,7 @@ lemma realizedCase13Row_localCase
     {Q : ActualRow (P := P) (C := F.chart) source}
     (hQ : realizedCase13Row? (F := F) R = some Q) :
     R.localCase = Q.localCase := by
-  cases R <;> simp [realizedCase13Row?] at hQ
+  cases R <;> simp only [realizedCase13Row?, Option.some.injEq, reduceCtorEq] at hQ
   all_goals cases hQ
   all_goals rfl
 
@@ -595,9 +595,9 @@ structure SecondaryRoleCollisionKernels
   case2_secondary_no_three : ∀ {s t u : Source P W} {v : Vertex A}
     (Ds : Erdos957CaseClassification.RealizedPositiveTarget
       (rows s.1 s.property) v)
-    (Dt : Erdos957CaseClassification.RealizedPositiveTarget
+    (_Dt : Erdos957CaseClassification.RealizedPositiveTarget
       (rows t.1 t.property) v)
-    (Du : Erdos957CaseClassification.RealizedPositiveTarget
+    (_Du : Erdos957CaseClassification.RealizedPositiveTarget
       (rows u.1 u.property) v),
     Ds.role = .case2Secondary →
     t.1 ∈ Finset.univ.image (fun j : Fin 7 ↦
@@ -610,9 +610,9 @@ structure SecondaryRoleCollisionKernels
   case4_split_right_no_three : ∀ {s t u : Source P W} {v : Vertex A}
     (Ds : Erdos957CaseClassification.RealizedPositiveTarget
       (rows s.1 s.property) v)
-    (Dt : Erdos957CaseClassification.RealizedPositiveTarget
+    (_Dt : Erdos957CaseClassification.RealizedPositiveTarget
       (rows t.1 t.property) v)
-    (Du : Erdos957CaseClassification.RealizedPositiveTarget
+    (_Du : Erdos957CaseClassification.RealizedPositiveTarget
       (rows u.1 u.property) v),
     Ds.role = .case4SplitRight →
     t.1 ∈ Finset.univ.image (fun j : Fin 7 ↦
@@ -673,7 +673,7 @@ private lemma ne_case4SplitRight_of_not_exceptional
 /-- The two honest exceptional-role uniqueness kernels, together with
 formula-derived direct incidences, assemble the side-free no-three witness
 consumed by production `CollisionGlue`. -/
-noncomputable def noThreeRoleCollisionWitnesses
+theorem noThreeRoleCollisionWitnesses
     (hA : IsOneSeparated A)
     (locality : SourceLocalityCertificates P W F)
     (K : SecondaryRoleCollisionKernels (F := F) rows) :
@@ -927,7 +927,7 @@ private lemma three_associations_have_equal_pair
 /-- The pairwise formula kernels imply the smaller side-free exceptional
 triple interface.  In the third pigeonhole branch, metric locality supplies
 the genuine window from the second competitor to the third. -/
-noncomputable def secondaryRoleCollisionKernels
+theorem secondaryRoleCollisionKernels
     (locality : SourceLocalityCertificates P W F)
     (K : RoleAnchoredSameSideKernels (F := F) rows) :
     SecondaryRoleCollisionKernels (F := F) rows where
@@ -968,7 +968,7 @@ noncomputable def secondaryRoleCollisionKernels
 
 /-- The three exact role leaves fill each of the ten unordered case-pair
 fields without adding a capacity or incoming-sum premise. -/
-def realizedSameSideKernels
+theorem realizedSameSideKernels
     (locality : SourceLocalityCertificates P W F)
     (K : RoleAnchoredSameSideKernels (F := F) rows) :
     RealizedSameSideKernels (F := F) rows where

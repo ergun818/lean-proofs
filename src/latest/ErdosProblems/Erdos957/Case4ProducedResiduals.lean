@@ -38,8 +38,8 @@ def OuterDirectNearKernel
     (S : RealizedArrivalAt (F := F) Q.rows s v)
     (T : RealizedArrivalAt (F := F) Q.rows t v)
     (hsRole : S.target.role = PairCases.TargetRoleName.case4SplitRight)
-    (htDirect : IsDirectTargetRole T.target.role)
-    (O : OuterDirectFormula F.chart (sourceIndex P W t.1 t.property) v
+    (_htDirect : IsDirectTargetRole T.target.role)
+    (_O : OuterDirectFormula F.chart (sourceIndex P W t.1 t.property) v
       T.descriptor.association),
     DirectNearTwo (t := t) Q S hsRole →
       S.descriptor.association ≠ T.descriptor.association
@@ -91,7 +91,7 @@ theorem case4SplitRightResidualKernels
     (outerDirectNearKernel hA Q)
 
 /-- Canonical produced-hull specialization requested by final assembly. -/
-noncomputable def producedCase4SplitRightResidualKernels
+theorem producedCase4SplitRightResidualKernels
     {A : Finset Point} (hA : IsOneSeparated A)
     (R : Erdos957.RadiallySortedCyclicHullOrder A)
     (L : Erdos957TurnSum.HullOrderBridge.LiftedCyclicHullOrder R.order)
@@ -159,7 +159,7 @@ theorem case4WeightedCollisionResiduals
       htWindow huWindow hst hsu htu
 
 /-- Produced, premise-free Case-4 weight-aware residual record. -/
-noncomputable def producedCase4WeightedCollisionResiduals
+theorem producedCase4WeightedCollisionResiduals
     {A : Finset Point} (hA : IsOneSeparated A)
     (R : Erdos957.RadiallySortedCyclicHullOrder A)
     (L : Erdos957TurnSum.HullOrderBridge.LiftedCyclicHullOrder R.order)

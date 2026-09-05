@@ -136,7 +136,7 @@ private theorem positive_equilateral_supported_eq_origin
   have hdotEW :
       e.1 * (v.1 - e.1) + e.2 * (v.2 - e.2) = -d / 2 := by
     have hdnorm : e.1 ^ 2 + e.2 ^ 2 = d := by
-      simp [d, sqDist, origin]
+      simp [d]
     nlinarith [hdotEV, hdnorm]
   have hDsq : D ^ 2 = d - d ^ 2 / 4 := by
     have hid :
@@ -288,7 +288,7 @@ theorem predecessor_equilateral_orientation_positive_across_next_edge
     (sq_of_adj v ms hvms) (sq_of_adj (P.next s).1 v htv)
     hedgeSq htargetSupport hmsSupport hsideLt
   have hvertex : ms = (P.next s).1 := C.coord_injective P s hmsEq
-  exact hmsNotHull (by simpa [hvertex] using (P.next s).property)
+  exact hmsNotHull (by simp [hvertex])
 
 /-- The successor half of the consecutive-edge obstruction.  A non-hull
 equilateral proxy belonging to the second endpoint lies on the closed
@@ -371,10 +371,9 @@ theorem successor_equilateral_orientation_nonpositive_across_next_edge
     hedgeSq htargetSupport hmtSupport hsideCommon
   have hvertex : mt = s.1 := by
     apply C.coord_injective P s
-    change C.coord s mt = C.coord s s.1
     rw [C.coord_source]
     exact hmtEq
-  exact hmtNotHull (by simpa [hvertex] using s.property)
+  exact hmtNotHull (by simp [hvertex])
 
 /-- Consecutive hull sources carrying unit equilateral pictures at a common
 target necessarily carry opposite orientations.  The predecessor's third
@@ -472,7 +471,7 @@ theorem case3_equilateral_orientations_opposite_across_next_edge
       (sq_of_adj (P.next s).1 v htv)
       hedgeSq htargetSupport hmsSupport hsideLt
     have hvertex : ms = (P.next s).1 := C.coord_injective P s hmsEq
-    exact hmsNotHull (by simpa [hvertex] using (P.next s).property)
+    exact hmsNotHull (by simp [hvertex])
   · by_contra hside
     have hsidePos : 0 < Erdos957Case3General.crossFrom
         (C.coord (P.next s) (P.next s).1)
@@ -505,10 +504,9 @@ theorem case3_equilateral_orientations_opposite_across_next_edge
       hedgeSq htargetSupport hmtSupport hsideCommon
     have hvertex : mt = s.1 := by
       apply C.coord_injective P s
-      change C.coord s mt = C.coord s s.1
       rw [C.coord_source]
       exact hmtEq
-    exact hmtNotHull (by simpa [hvertex] using s.property)
+    exact hmtNotHull (by simp [hvertex])
 
 /-- A vertex with exactly one hull unit neighbor determines that neighbor
 uniquely. -/

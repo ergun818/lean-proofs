@@ -122,7 +122,7 @@ theorem hullNext_is_cyclic {A : Finset Point} (P : CyclicHullOrder A)
   · have hrot : (finRotate (hullVertexCount A) ^ kfin.1) ii = jj := by
       rw [← Equiv.Perm.iterate_eq_pow, ← finCycle_eq_finRotate_iterate]
       change ii + (jj - ii) = jj
-      simpa [add_comm] using sub_add_cancel jj ii
+      simp
     have hi : i = e ii := by simp [ii, e]
     have hj : j = e jj := by simp [jj, e]
     rw [hi, hj, hullNext_pow_indexEquiv, hrot]
@@ -195,7 +195,7 @@ theorem hullNext_edge_support {A : Finset Point} (P : CyclicHullOrder A)
 
 /-- A strictly exposing functional chosen at a transported hull index. -/
 noncomputable def hullExposingFunctional {A : Finset Point}
-    (P : CyclicHullOrder A) (i : {p // p ∈ liftedHullVertices A}) :
+    (_P : CyclicHullOrder A) (i : {p // p ∈ liftedHullVertices A}) :
     Point →L[ℝ] ℝ :=
   Classical.choose (hullVertex_exists_strict_support A
     (mem_liftedHullVertices.mp i.property))

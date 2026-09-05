@@ -135,7 +135,7 @@ theorem degree_le_three_of_strict_support {A : Finset Point}
       subst q
       have hd := (Finset.mem_filter.mp hz).2
       change dist (toComplex p) (toComplex p) = 1 at hd
-      simpa using hd
+      simp at hd
     change 0 < q.2 - p.2
     exact hstrict q hqA hqp
   have h := Erdos957Hex.card_unitNeighbors_le_three_of_sub_im_pos hsepHex him
@@ -486,7 +486,7 @@ lemma verticalDown_ne_of_sqDist_origin_eq_one {q : Point}
     verticalDown ≠ q := by
   intro h
   subst q
-  simpa using hqv
+  simp at hqv
 
 lemma case3_common_neighbor_below {t : Point}
     (htU : sqDist origin t = 1) (htV : sqDist verticalDown t = 1) :
@@ -556,9 +556,11 @@ theorem case3_localTransfer_of_common_neighbor
     recipient_capacity := ?_ }⟩
   · intro p hp
     by_cases hlow : middleDegree ≤ 4
-    · simp [case3Recipients, case3Tokens, hlow] at hp ⊢
-      exact fun h ↦ hp (by simpa [h])
-    · simp [case3Recipients, case3Tokens, hlow] at hp ⊢
+    · simp only [case3Recipients, hlow, ↓reduceIte, Finset.mem_singleton, case3Tokens,
+        ite_eq_right_iff, OfNat.ofNat_ne_zero, imp_false] at hp ⊢
+      exact fun h ↦ hp (by simp [h])
+    · simp only [case3Recipients, hlow, ↓reduceIte, Finset.mem_insert, Finset.mem_singleton,
+        not_or, case3Tokens, ite_eq_right_iff, one_ne_zero, imp_false] at hp ⊢
       exact hp
   · intro p hp
     by_cases hlow : middleDegree ≤ 4
@@ -623,13 +625,11 @@ theorem case3_localTransfer_of_common_neighbor
     by_cases hlow : middleDegree ≤ 4
     · have hpEq : p = verticalDown := by simpa [hlow] using hp
       subst p
-      simp [case3Tokens, hlow]
-      rw [← hmiddleDegree]
+      rw [case3Tokens, if_pos hlow, if_pos rfl, ← hmiddleDegree]
       omega
     · simp only [hlow, if_false, Finset.mem_insert, Finset.mem_singleton] at hp
       rcases hp with rfl | rfl
-      · simp [case3Tokens, hlow]
-        rw [← hmiddleDegree]
+      · rw [case3Tokens, if_neg hlow, if_pos (Or.inl rfl), ← hmiddleDegree]
         omega
       · simp [case3Tokens, hlow]
         omega

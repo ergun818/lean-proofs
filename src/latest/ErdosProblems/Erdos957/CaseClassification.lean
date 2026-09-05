@@ -591,8 +591,7 @@ lemma incident_neighbor_fst_bounds
   simp only [pow_one] at dr dl
   constructor
   · exact dr
-  · change (F.chart.coord i (P.next⁻¹ i).1).1 < _
-    linarith
+  · linarith
 
 /-- A selected unit middle point in the open inward cone is distinct from
 both cyclic neighbours of the flat source. -/
@@ -647,7 +646,6 @@ theorem eq_source_or_prev_or_next_of_mem_sevenHullWindow_of_abs_fst_le
     rw [hjw] at hx
     exfalso
     linarith
-
   · have hjw' : (((P.next⁻¹) ^ 2) i).1 = w := by
       simpa [sevenShift, pow_succ] using hjw
     have hx := hl.1
@@ -1132,7 +1130,7 @@ theorem exists_middle_neighbor_in_open_cone_of_coord {A : Finset ComplexPoint}
     exact hdegree
   have hphaseBij : Function.Bijective phase := by
     apply (Fintype.bijective_iff_injective_and_card phase).mpr
-    exact ⟨hphaseInj, by simpa [hcardN]⟩
+    exact ⟨hphaseInj, by simp [hcardN]⟩
   obtain ⟨q₀, hq₀⟩ := hphaseBij.2 (0 : Fin 3)
   obtain ⟨q₁, hq₁⟩ := hphaseBij.2 (1 : Fin 3)
   obtain ⟨q₂, hq₂⟩ := hphaseBij.2 (2 : Fin 3)
@@ -2322,8 +2320,7 @@ theorem terminalUnitEdgeRigidChart_strictlyBelowOutside
     rw [hnext] at hs
     rw [← F.toCanonical_actual z,
       terminalUnitEdgeRigidChart_toCanonical, edgePointCoord_apply_one]
-    simp only [edgePairCoord, Erdos957GeometryCore.cross, PiLp.sub_apply,
-      Prod.snd] at hs ⊢
+    simp only [edgePairCoord, Erdos957GeometryCore.cross, PiLp.sub_apply] at hs ⊢
     nlinarith
   refine lt_of_le_of_ne hyLe ?_
   intro hyZero
@@ -2922,7 +2919,7 @@ theorem case2ActualRow_of_canonicalData
       exact F.toCanonical_actual _
     secondary_edge_coordinate := by
       change F.toCanonical (F.actual s) = _
-      simpa [s, B] using F.toCanonical_actual s
+      simp [s, B]
     distinct := hne
     checked_transfer := hchecked }⟩
 
@@ -3167,6 +3164,7 @@ structure TwoExtremeNormalizedFrame
   strict_support : Erdos957Case24Bridge.StrictlyBelowOutside (frame.image A)
     {Erdos957Cases24.Case2.uPrev, Erdos957Cases24.Case2.u}
 
+open Erdos957TwoExtremeAligned in
 /-- An honest two-extreme witness has a normalized edge frame on either
 cyclic side.  The successor case uses the reflected chart, so both sides
 share the literal Case-2 coordinates `u`, `uPrev`, and `v`. -/
@@ -3215,9 +3213,7 @@ theorem exists_twoExtremeNormalizedFrame
       · exact .previous hside hunit rfl
       · exact Erdos957EdgeFrame.terminalUnitEdgeRigidChart_actual_case2_u
           _ _ hunit
-      · simpa [F, cyclicSideVertex, hside] using
-          (Erdos957EdgeFrame.terminalUnitEdgeRigidChart_actual_case2_uPrev
-            (P.next⁻¹ source).1.1 source.1.1 hunit)
+      · simp [F, cyclicSideVertex, hside]
       · apply F.toCanonical.injective
         rw [F.toCanonical_actual, hmiddleCoord]
       · exact Erdos957TwoExtremeIncidence.terminalUnitEdgeRigidChart_strictlyBelowOutside
@@ -3236,9 +3232,9 @@ theorem exists_twoExtremeNormalizedFrame
       let F := Erdos957TwoExtremeAligned.reflectedSuccessorUnitEdgeRigidChart
         P source hunit
       have hmiddleCoord : F.toCanonical middle = Erdos957Cases24.Case2.v := by
-        exact Erdos957TwoExtremeAligned.reflectedSuccessorUnitEdgeRigidChart_toCanonical_middle_eq_case2_v
+        exact reflectedSuccessorUnitEdgeRigidChart_toCanonical_middle_eq_case2_v
             P source middle hunit hsourceMiddle
-              (by simpa [cyclicSideVertex, hside] using T.side_adjacent.symm)
+            (by simpa [cyclicSideVertex, hside] using T.side_adjacent.symm)
       refine ⟨{
         frame := F
         side_unit := ?_
@@ -3251,9 +3247,7 @@ theorem exists_twoExtremeNormalizedFrame
       · exact .next hside hunit rfl
       · exact Erdos957TwoExtremeAligned.reflectedSuccessorUnitEdgeRigidChart_actual_case2_u
           P source hunit
-      · simpa [F, cyclicSideVertex, hside] using
-          (Erdos957TwoExtremeAligned.reflectedSuccessorUnitEdgeRigidChart_actual_case2_uPrev
-              P source hunit)
+      · simp [F, cyclicSideVertex, hside]
       · apply F.toCanonical.injective
         rw [F.toCanonical_actual, hmiddleCoord]
       · exact Erdos957TwoExtremeAligned.reflectedSuccessorUnitEdgeRigidChart_strictlyBelowOutside
@@ -3338,9 +3332,7 @@ def TwoExtremeCommonPairFrame.frame
           source.1.1 = 1 := by
         simpa [case4PairEdgeBase, hside] using E.edge_unit
       have hactual : E.frame.actual Erdos957Cases24.Case2.u = source.1 := by
-        simpa [TwoExtremeCommonPairFrame.frame, case4PairEdgeBase, hside]
-          using (Erdos957EdgeFrame.terminalUnitEdgeRigidChart_actual_case2_u
-            (P.next⁻¹ source).1.1 source.1.1 hunit)
+        simp [TwoExtremeCommonPairFrame.frame, case4PairEdgeBase, hside]
       rw [← hactual, E.frame.toCanonical_actual]
       simp [case4SourceIsRight, hside,
         Erdos957Case24Bridge.Case4.sideSource]
@@ -3349,9 +3341,7 @@ def TwoExtremeCommonPairFrame.frame
           (P.next source).1.1 = 1 := by
         simpa [case4PairEdgeBase, hside] using E.edge_unit
       have hactual : E.frame.actual Erdos957Cases24.Case2.uPrev = source.1 := by
-        simpa [TwoExtremeCommonPairFrame.frame, case4PairEdgeBase, hside]
-          using (Erdos957EdgeFrame.terminalUnitEdgeRigidChart_actual_case2_uPrev
-            source.1.1 (P.next source).1.1 hunit)
+        simp [TwoExtremeCommonPairFrame.frame, case4PairEdgeBase, hside]
       rw [← hactual, E.frame.toCanonical_actual]
       simp [case4SourceIsRight, hside,
         Erdos957Case24Bridge.Case4.sideSource]
@@ -3371,9 +3361,7 @@ def TwoExtremeCommonPairFrame.frame
         simpa [case4PairEdgeBase, hside] using E.edge_unit
       have hactual : E.frame.actual Erdos957Cases24.Case2.uPrev =
           (P.next⁻¹ source).1 := by
-        simpa [TwoExtremeCommonPairFrame.frame, case4PairEdgeBase, hside]
-          using (Erdos957EdgeFrame.terminalUnitEdgeRigidChart_actual_case2_uPrev
-            (P.next⁻¹ source).1.1 source.1.1 hunit)
+        simp [TwoExtremeCommonPairFrame.frame, case4PairEdgeBase, hside]
       change E.frame.toCanonical (P.next⁻¹ source).1 = _
       rw [← hactual, E.frame.toCanonical_actual]
       simp [case4SourceIsRight, hside,
@@ -3384,9 +3372,7 @@ def TwoExtremeCommonPairFrame.frame
         simpa [case4PairEdgeBase, hside] using E.edge_unit
       have hactual : E.frame.actual Erdos957Cases24.Case2.u =
           (P.next source).1 := by
-        simpa [TwoExtremeCommonPairFrame.frame, case4PairEdgeBase, hside]
-          using (Erdos957EdgeFrame.terminalUnitEdgeRigidChart_actual_case2_u
-            source.1.1 (P.next source).1.1 hunit)
+        simp [TwoExtremeCommonPairFrame.frame, case4PairEdgeBase, hside]
       change E.frame.toCanonical (P.next source).1 = _
       rw [← hactual, E.frame.toCanonical_actual]
       simp [case4SourceIsRight, hside,
@@ -4030,7 +4016,8 @@ theorem RealizedPositiveTarget.adj_source_of_directRole
   cases R with
   | case1 middle hdegree hone middleCoord hmiddleCoord hmiddleNotHull hunit row =>
       cases role <;>
-        simp [IsDirectTargetRole, RealizedSourceRow.targetAtRole] at hdirect hrole
+        simp only [IsDirectTargetRole, RealizedSourceRow.targetAtRole, Option.some.injEq,
+          reduceCtorEq] at hdirect hrole
       · subst target
         exact adj_of_aligned_coordinate_unit row.left.vertex
           (Erdos957Cases13.case1Left middleCoord) row.left_coordinate
@@ -4041,7 +4028,8 @@ theorem RealizedPositiveTarget.adj_source_of_directRole
           (Erdos957Cases13.case1Right_common_unit hunit).1
   | case2 middle hdegree htwo hmiddleNotHull twoExtreme normalized row =>
       cases role <;>
-        simp [IsDirectTargetRole, RealizedSourceRow.targetAtRole] at hdirect hrole
+        simp only [IsDirectTargetRole, RealizedSourceRow.targetAtRole, Option.some.injEq,
+          reduceCtorEq] at hdirect hrole
       subst target
       apply adj_of_rigid_coordinates normalized.frame source.1 row.outer.vertex
         Erdos957Cases24.Case2.u Erdos957Cases24.Case2.b
@@ -4052,13 +4040,15 @@ theorem RealizedPositiveTarget.adj_source_of_directRole
       cases row with
       | low middleTarget hm hu hfour =>
           cases role <;>
-            simp [IsDirectTargetRole, RealizedSourceRow.targetAtRole] at hdirect hrole
+            simp only [IsDirectTargetRole, RealizedSourceRow.targetAtRole, Option.some.injEq,
+              reduceCtorEq] at hdirect hrole
           subst target
           exact adj_of_aligned_coordinate_unit middleTarget.vertex middleCoord
             hm hu
       | high secondaryCoord middleTarget secondaryTarget hm hs hu hsu hmu hne =>
           cases role <;>
-            simp [IsDirectTargetRole, RealizedSourceRow.targetAtRole] at hdirect hrole
+            simp only [IsDirectTargetRole, RealizedSourceRow.targetAtRole, Option.some.injEq,
+              reduceCtorEq] at hdirect hrole
           · subst target
             exact adj_of_aligned_coordinate_unit middleTarget.vertex middleCoord
               hm hu
@@ -4069,7 +4059,8 @@ theorem RealizedPositiveTarget.adj_source_of_directRole
       cases row with
       | whole middleTarget hm hfour =>
           cases role <;>
-            simp [IsDirectTargetRole, RealizedSourceRow.targetAtRole] at hdirect hrole
+            simp only [IsDirectTargetRole, RealizedSourceRow.targetAtRole, Option.some.injEq,
+              reduceCtorEq] at hdirect hrole
           subst target
           apply adj_of_rigid_coordinates normalized.frame source.1
             middleTarget.vertex Erdos957Cases24.Case2.u
@@ -4079,7 +4070,8 @@ theorem RealizedPositiveTarget.adj_source_of_directRole
           · exact Erdos957Cases24.Case2.dist_u_v
       | orderedLow farthest hfive middleTarget lowTarget hm hl hne =>
           cases role <;>
-            simp [IsDirectTargetRole, RealizedSourceRow.targetAtRole] at hdirect hrole
+            simp only [IsDirectTargetRole, RealizedSourceRow.targetAtRole, Option.some.injEq,
+              reduceCtorEq] at hdirect hrole
           subst target
           apply adj_of_rigid_coordinates normalized.frame source.1
             middleTarget.vertex Erdos957Cases24.Case2.u
@@ -4089,7 +4081,8 @@ theorem RealizedPositiveTarget.adj_source_of_directRole
           · exact Erdos957Cases24.Case2.dist_u_v
       | orderedHigh farthest hsix recipients middleTarget sideTarget hm hs hne =>
           cases role <;>
-            simp [IsDirectTargetRole, RealizedSourceRow.targetAtRole] at hdirect hrole
+            simp only [IsDirectTargetRole, RealizedSourceRow.targetAtRole, Option.some.injEq,
+              reduceCtorEq] at hdirect hrole
           subst target
           apply adj_of_rigid_coordinates normalized.frame source.1
             middleTarget.vertex Erdos957Cases24.Case2.u
@@ -4100,7 +4093,8 @@ theorem RealizedPositiveTarget.adj_source_of_directRole
       | pairedSplit commonFrame farthest branch rightSource hrightSource middleTarget
           secondaryTarget hsource hm hs hne =>
           cases role <;>
-            simp [IsDirectTargetRole, RealizedSourceRow.targetAtRole] at hdirect hrole
+            simp only [IsDirectTargetRole, RealizedSourceRow.targetAtRole, Option.some.injEq,
+              reduceCtorEq] at hdirect hrole
           subst target
           apply adj_of_rigid_coordinates commonFrame source.1
             middleTarget.vertex (Erdos957Case24Bridge.Case4.sideSource rightSource)
@@ -4229,7 +4223,7 @@ def commonPairHorizontalAssociation
       ActualCase24Rows.case4SourceIsRight,
       Erdos957Case24Bridge.Case4.sideSource,
       Erdos957Cases24.Case2.v, Erdos957Cases24.Case2.u,
-      Erdos957Cases24.Case2.uPrev, Erdos957Cases24.point] <;>
+      Erdos957Cases24.Case2.uPrev, Erdos957Cases24.point];
     norm_num
 
 /-- The association is computed only from retained geometric data.  In the
@@ -4323,49 +4317,49 @@ def RealizedSourceRow.ArrivalCertificate
               (Erdos957Case24Bridge.unitDegree
                 (normalized.frame.image A) Erdos957Cases24.Case2.wNext)
       | _ => False
-  | .case3 classifiedMiddle _ hone middleCoord row hmiddleVertex =>
+  | .case3 classifiedMiddle _ _hone middleCoord row _hmiddleVertex =>
       match row, role with
-      | .low middle hm _ _, .case3Middle =>
+      | .low middle _hm _ _, .case3Middle =>
           middle = target ∧ C.coord source middle.vertex = middleCoord ∧
             middle.vertex = classifiedMiddle ∧
             (hullUnitNeighbors P classifiedMiddle).card = 1 ∧
             ((middleCoord.1 ≤ 0 ∧ side = .fromPrevious) ∨
               (0 < middleCoord.1 ∧ side = .fromNext))
-      | .high _ middle _ hm _ _ _ _ _, .case3Middle =>
+      | .high _ middle _ _hm _ _ _ _ _, .case3Middle =>
           middle = target ∧ C.coord source middle.vertex = middleCoord ∧
             middle.vertex = classifiedMiddle ∧
             (hullUnitNeighbors P classifiedMiddle).card = 1 ∧
             ((middleCoord.1 ≤ 0 ∧ side = .fromPrevious) ∨
               (0 < middleCoord.1 ∧ side = .fromNext))
-      | .high secondaryCoord _ secondary _ hs _ _ _ _, .case3Secondary =>
+      | .high secondaryCoord _ secondary _ _hs _ _ _ _, .case3Secondary =>
           secondary = target ∧ C.coord source secondary.vertex = secondaryCoord ∧
             ((Erdos957Case3General.crossFrom Erdos957Cases13.origin
                 middleCoord secondaryCoord ≤ 0 ∧ side = .fromPrevious) ∨
               (0 < Erdos957Case3General.crossFrom Erdos957Cases13.origin
                 middleCoord secondaryCoord ∧ side = .fromNext))
       | _, _ => False
-  | .case4 _ _ _ T normalized row hmiddleVertex =>
+  | .case4 _ _ _ T normalized row _hmiddleVertex =>
       match row, role with
-      | .whole middle hm _, .case4Primary =>
+      | .whole middle _hm _, .case4Primary =>
           side = orientedHorizontalAssociation T.side
               (Erdos957Cases24.Case2.v 0) ∧ middle = target ∧
             normalized.frame.toCanonical middle.vertex = Erdos957Cases24.Case2.v
-      | .orderedLow _ _ middle _ hm _ _, .case4SplitLeft =>
+      | .orderedLow _ _ middle _ _hm _ _, .case4SplitLeft =>
           side = orientedHorizontalAssociation T.side
               (Erdos957Cases24.Case2.v 0) ∧ middle = target ∧
             normalized.frame.toCanonical middle.vertex = Erdos957Cases24.Case2.v
-      | .orderedLow D _ _ low _ hl _, .case4SplitRight =>
+      | .orderedLow D _ _ low _ _hl _, .case4SplitRight =>
           side = orientedHorizontalAssociation T.side (D.point 0) ∧ low = target ∧
             normalized.frame.toCanonical low.vertex = D.point
-      | .orderedHigh _ _ _ middle _ hm _ _, .case4SplitLeft =>
+      | .orderedHigh _ _ _ middle _ _hm _ _, .case4SplitLeft =>
           side = orientedHorizontalAssociation T.side
               (Erdos957Cases24.Case2.v 0) ∧ middle = target ∧
             normalized.frame.toCanonical middle.vertex = Erdos957Cases24.Case2.v
-      | .orderedHigh _ _ recipients _ secondary _ hs _, .case4SplitRight =>
+      | .orderedHigh _ _ recipients _ secondary _ _hs _, .case4SplitRight =>
           side = orientedHorizontalAssociation T.side (recipients.right 0) ∧
             secondary = target ∧
             normalized.frame.toCanonical secondary.vertex = recipients.right
-      | .pairedSplit commonFrame _ branch rightSource hright middle _ hs hm _ _,
+      | .pairedSplit commonFrame _ _branch rightSource _hright middle _ _hs _hm _ _,
           .case4SplitLeft =>
           side = horizontalAssociation
               (Erdos957Cases24.Case2.v 0 -
@@ -4373,7 +4367,7 @@ def RealizedSourceRow.ArrivalCertificate
             middle = target ∧
             rightSource = ActualCase24Rows.case4SourceIsRight T ∧
             commonFrame.toCanonical middle.vertex = Erdos957Cases24.Case2.v
-      | .pairedSplit commonFrame _ branch rightSource hright _ secondary hs _ hq _,
+      | .pairedSplit commonFrame _ branch rightSource _hright _ secondary _hs _ _hq _,
           .case4SplitRight =>
           side = commonPairHorizontalAssociation branch rightSource ∧
             secondary = target ∧
@@ -4409,18 +4403,16 @@ theorem RealizedSourceRow.arrivalCertificate_of_targetAtRole
   | case1 middle hdegree hone middleCoord hmiddleCoord hmiddleNotHull hunit row =>
       cases row
       cases hrole : role <;>
-        simp_all [side, RealizedSourceRow.roleAssociation,
-          RealizedSourceRow.ArrivalCertificate,
-          RealizedSourceRow.targetAtRole, hrole] <;>
+        simp_all only [targetAtRole, Option.some.injEq, ArrivalCertificate, roleAssociation,
+          true_and, side, reduceCtorEq] <;>
         subst target <;>
-        first | assumption | simp_all [Erdos957GeometryLocalRows.sourceCoordinates]
-
+        assumption
   | case2 middle hdegree htwo hmiddleNotHull T normalized row =>
       cases row
       cases hrole : role <;>
         simp_all [side, RealizedSourceRow.roleAssociation,
           RealizedSourceRow.ArrivalCertificate,
-          RealizedSourceRow.targetAtRole, hrole] <;>
+          RealizedSourceRow.targetAtRole] <;>
         subst target <;> simp_all
   | case3 middle hdegree hone middleCoord row hmiddleVertex =>
       by_cases hx : middleCoord.1 ≤ 0
@@ -4428,77 +4420,71 @@ theorem RealizedSourceRow.arrivalCertificate_of_targetAtRole
         | low middleTarget hm hu hfour =>
             change middleTarget.vertex = middle at hmiddleVertex
             cases hrole : role <;>
-              simp_all [side, RealizedSourceRow.roleAssociation,
-                RealizedSourceRow.ArrivalCertificate,
-                RealizedSourceRow.targetAtRole, horizontalAssociation, hx, hrole] <;>
-              subst target <;>
-              first
-              | exact (by simpa [← hmiddleVertex] using hm)
-              | simp_all [PairCases.Case3ActualRow.middleTarget]
+              simp_all only [targetAtRole, Option.some.injEq, ArrivalCertificate, roleAssociation,
+                horizontalAssociation, ↓reduceIte, and_self, reduceCtorEq, and_false, or_false,
+                and_true, true_and, side]
+            subst target
+            exact (by simpa [← hmiddleVertex] using hm)
         | high secondaryCoord middleTarget secondaryTarget hm hs hu hsu hmu hne =>
             change middleTarget.vertex = middle at hmiddleVertex
             by_cases hcross : Erdos957Case3General.crossFrom
                 Erdos957Cases13.origin middleCoord secondaryCoord ≤ 0
             · cases hrole : role <;>
-                simp_all [side, RealizedSourceRow.roleAssociation,
-                  RealizedSourceRow.ArrivalCertificate,
-                  RealizedSourceRow.targetAtRole, horizontalAssociation, hx,
-                  hcross, hrole] <;> subst target <;>
+                simp_all only [targetAtRole, Option.some.injEq, ArrivalCertificate,
+                  roleAssociation, horizontalAssociation, ↓reduceIte, and_self, reduceCtorEq,
+                  and_false, or_false, and_true, true_and, side] <;> subst target <;>
                   first
                   | exact (by simpa [← hmiddleVertex] using hm)
-                  | simp_all [PairCases.Case3ActualRow.middleTarget]
+                  | simp_all
             · have hcrossPos : 0 < Erdos957Case3General.crossFrom
                   Erdos957Cases13.origin middleCoord secondaryCoord := lt_of_not_ge hcross
               cases hrole : role <;>
-                simp_all [side, RealizedSourceRow.roleAssociation,
-                  RealizedSourceRow.ArrivalCertificate,
-                  RealizedSourceRow.targetAtRole, horizontalAssociation, hx,
-                  hcross, hrole] <;> subst target <;>
+                simp_all only [targetAtRole, Option.some.injEq, not_le, ArrivalCertificate,
+                  roleAssociation, ite_eq_left_iff, reduceCtorEq, imp_false, not_true_eq_false,
+                  and_false, ite_eq_right_iff, and_self, or_true, and_true, true_and, side,
+                  horizontalAssociation, ↓reduceIte, or_false] <;> subst target <;>
                   first
                   | exact (by simpa [← hmiddleVertex] using hm)
-                  | simp_all [PairCases.Case3ActualRow.middleTarget]
+                  | simp_all
       · have hxPos : 0 < middleCoord.1 := lt_of_not_ge hx
         cases row with
         | low middleTarget hm hu hfour =>
             change middleTarget.vertex = middle at hmiddleVertex
             cases hrole : role <;>
-              simp_all [side, RealizedSourceRow.roleAssociation,
-                RealizedSourceRow.ArrivalCertificate,
-                RealizedSourceRow.targetAtRole, horizontalAssociation, hx, hrole] <;>
-              subst target <;>
-              first
-              | exact (by simpa [← hmiddleVertex] using hm)
-              | simp_all [PairCases.Case3ActualRow.middleTarget]
+              simp_all only [not_le, targetAtRole, Option.some.injEq, ArrivalCertificate,
+                roleAssociation, horizontalAssociation, ite_eq_left_iff, reduceCtorEq, imp_false,
+                not_true_eq_false, and_false, ite_eq_right_iff, and_self, or_true, and_true,
+                true_and, side]
+            subst target
+            exact (by simpa [← hmiddleVertex] using hm)
         | high secondaryCoord middleTarget secondaryTarget hm hs hu hsu hmu hne =>
             change middleTarget.vertex = middle at hmiddleVertex
             by_cases hcross : Erdos957Case3General.crossFrom
                 Erdos957Cases13.origin middleCoord secondaryCoord ≤ 0
             · cases hrole : role <;>
-                simp_all [side, RealizedSourceRow.roleAssociation,
-                  RealizedSourceRow.ArrivalCertificate,
-                  RealizedSourceRow.targetAtRole, horizontalAssociation, hx,
-                  hcross, hrole] <;> subst target <;>
+                simp_all only [not_le, targetAtRole, Option.some.injEq, ArrivalCertificate,
+                  roleAssociation, horizontalAssociation, ite_eq_left_iff, reduceCtorEq,
+                  imp_false, not_true_eq_false, and_false, ite_eq_right_iff, and_self, or_true,
+                  and_true, true_and, side, ↓reduceIte, or_false] <;> subst target <;>
                   first
                   | exact (by simpa [← hmiddleVertex] using hm)
-                  | simp_all [PairCases.Case3ActualRow.middleTarget]
+                  | simp_all
             · have hcrossPos : 0 < Erdos957Case3General.crossFrom
                   Erdos957Cases13.origin middleCoord secondaryCoord := lt_of_not_ge hcross
               cases hrole : role <;>
-                simp_all [side, RealizedSourceRow.roleAssociation,
-                  RealizedSourceRow.ArrivalCertificate,
-                  RealizedSourceRow.targetAtRole, horizontalAssociation, hx,
-                  hcross, hrole] <;> subst target <;>
+                simp_all only [not_le, targetAtRole, Option.some.injEq, ArrivalCertificate,
+                  roleAssociation, horizontalAssociation, ite_eq_left_iff, reduceCtorEq,
+                  imp_false, not_true_eq_false, and_false, ite_eq_right_iff, and_self, or_true,
+                  and_true, true_and, side] <;> subst target <;>
                   first
                   | exact (by simpa [← hmiddleVertex] using hm)
-                  | simp_all [PairCases.Case3ActualRow.middleTarget]
+                  | simp_all
   | case4 middle hdegree htwo T normalized row hmiddleVertex =>
       cases row <;> cases hrole : role <;>
         simp_all [side, RealizedSourceRow.roleAssociation,
           RealizedSourceRow.ArrivalCertificate,
-          RealizedSourceRow.targetAtRole, hrole] <;>
+          RealizedSourceRow.targetAtRole] <;>
         subst target <;> simp_all
-  all_goals subst_vars
-  all_goals simp_all [Erdos957GeometryLocalRows.sourceCoordinates]
 
 theorem RealizedPositiveTarget.arrivalDescriptor
     {A : Finset ComplexPoint} {P : CyclicHullData A}
@@ -4526,7 +4512,7 @@ theorem RealizedSourceRow.token_eq_roleWeight_of_targetAtRole
         simp_all [RealizedSourceRow.localCase, PairCases.Case1ActualRow.localCase,
           RealizedSourceRow.roleWeight, ArrivalWeight.tokens,
           RealizedSourceRow.targetAtRole,
-          Erdos957GeometryLocalRows.LocalCase.tokens, hrole] <;>
+          Erdos957GeometryLocalRows.LocalCase.tokens] <;>
         subst target <;> simp_all [eq_comm]
   | case2 middle hdegree htwo hmiddleNotHull T normalized row =>
       cases row
@@ -4534,24 +4520,22 @@ theorem RealizedSourceRow.token_eq_roleWeight_of_targetAtRole
         simp_all [RealizedSourceRow.localCase, ActualCase24Rows.Case2ActualRow.localCase,
           RealizedSourceRow.roleWeight, ArrivalWeight.tokens,
           RealizedSourceRow.targetAtRole,
-          Erdos957GeometryLocalRows.LocalCase.tokens, hrole] <;>
+          Erdos957GeometryLocalRows.LocalCase.tokens] <;>
         subst target <;> simp_all [eq_comm]
   | case3 middle hdegree hone middleCoord row hmiddleVertex =>
       cases row <;> cases hrole : role <;>
         simp_all [RealizedSourceRow.localCase, PairCases.Case3ActualRow.localCase,
           RealizedSourceRow.roleWeight, ArrivalWeight.tokens,
           RealizedSourceRow.targetAtRole,
-          Erdos957GeometryLocalRows.LocalCase.tokens, hrole] <;>
+          Erdos957GeometryLocalRows.LocalCase.tokens] <;>
         subst target <;> simp_all [eq_comm]
   | case4 middle hdegree htwo T normalized row hmiddleVertex =>
       cases row <;> cases hrole : role <;>
         simp_all [RealizedSourceRow.localCase, ActualCase24Rows.Case4ActualRow.localCase,
           RealizedSourceRow.roleWeight, ArrivalWeight.tokens,
           RealizedSourceRow.targetAtRole,
-          Erdos957GeometryLocalRows.LocalCase.tokens, hrole] <;>
+          Erdos957GeometryLocalRows.LocalCase.tokens] <;>
         subst target <;> simp_all [eq_comm]
-  all_goals subst target
-  all_goals simp_all [eq_comm]
 
 theorem RealizedPositiveTarget.token_eq_roleWeight
     {A : Finset ComplexPoint} {P : CyclicHullData A}

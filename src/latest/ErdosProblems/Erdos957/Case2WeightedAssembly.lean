@@ -38,14 +38,14 @@ private lemma direct_ne_case2Secondary
     role ≠ .case2Secondary := by
   intro hr
   subst role
-  simpa [IsDirectTargetRole] using h
+  simp [IsDirectTargetRole] at h
 
 private lemma direct_ne_case4SplitRight
     {role : PairCases.TargetRoleName} (h : IsDirectTargetRole role) :
     role ≠ .case4SplitRight := by
   intro hr
   subst role
-  simpa [IsDirectTargetRole] using h
+  simp [IsDirectTargetRole] at h
 
 private lemma direct_of_not_exceptional
     {role : PairCases.TargetRoleName}
@@ -434,7 +434,7 @@ theorem case2AnchoredQuadrupleFits_of_pairwise_and_split_residuals
     omega
 
 /-- Produced-hull specialization of the Case-2 same-association triple. -/
-noncomputable def producedCase2AnchoredSameAssociationTriple
+theorem producedCase2AnchoredSameAssociationTriple
     {A : Finset Point} (hA : IsOneSeparated A)
     (R : Erdos957.RadiallySortedCyclicHullOrder A)
     (L : Erdos957TurnSum.HullOrderBridge.LiftedCyclicHullOrder R.order)
@@ -456,7 +456,7 @@ noncomputable def producedCase2AnchoredSameAssociationTriple
 capacity estimate.  Both fields of the degree-five split residual remain
 available to the global weighted record; this constructor consumes only
 its `case2_split_right` projection. -/
-noncomputable def producedCase2AnchoredQuadrupleFits
+theorem producedCase2AnchoredQuadrupleFits
     {A : Finset Point} (hA : IsOneSeparated A)
     (R : Erdos957.RadiallySortedCyclicHullOrder A)
     (L : Erdos957TurnSum.HullOrderBridge.LiftedCyclicHullOrder R.order)
@@ -476,10 +476,6 @@ noncomputable def producedCase2AnchoredQuadrupleFits
       hA R L W)
     ⟨Erdos957GeometryTransfer.producedCyclicWindowGeometry hA R L W⟩
     (produced_direct_direct hA R L W) K4 K2
-
-end Erdos957Case2WeightedAssembly
-
-namespace Erdos957Case2WeightedAssembly
 
 #print axioms case2Secondary_direct_same_association_source_eq
 #print axioms nonCase2_same_association_source_eq

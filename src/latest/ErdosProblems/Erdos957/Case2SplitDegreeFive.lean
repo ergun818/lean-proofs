@@ -166,12 +166,12 @@ private lemma eq_case2_v_of_unit_to_uPrev_w
   rw [Erdos957Cases24.dist_sq_eq_coordinates] at hprevSq hwSq
   apply Erdos957Cases24.point_ext
   · simp only [Erdos957Cases24.Case2.uPrev,
-      Erdos957Cases24.Case2.w, Erdos957Cases24.Case2.v,
+      Erdos957Cases24.Case2.w,
       Erdos957Cases24.point_apply_zero,
       Erdos957Cases24.point_apply_one] at hprevSq hwSq ⊢
     nlinarith [Erdos957Cases24.sqrtThree_sq]
   · simp only [Erdos957Cases24.Case2.uPrev,
-      Erdos957Cases24.Case2.w, Erdos957Cases24.Case2.v,
+      Erdos957Cases24.Case2.w,
       Erdos957Cases24.point_apply_zero,
       Erdos957Cases24.point_apply_one] at hprevSq hwSq ⊢
     nlinarith [Erdos957Cases24.sqrtThree_sq]
@@ -306,6 +306,7 @@ theorem no_case4SplitRight_at_incident_of_case2_degree_five
       (Erdos957Cases24.point 1 (-Erdos957Cases24.sqrtThree))) ^ 2 ≤ 4 at hdistSqLe
     nlinarith only [hsq, hdistSqLe, Erdos957Cases24.sqrtThree_sq]
 
+open Erdos957Case2SecondaryNoThree.Case2SecondaryFormula in
 /-- At degree five, a distinct same-associated Case-4 split source relative
 to a Case-2 secondary anchor can only be the incident endpoint or the first
 source continuing away from the Case-2 edge.  The general metric reduction
@@ -343,7 +344,7 @@ theorem case2Secondary_case4SplitRight_same_association_near_slots
   let Qt := Q.case4_pair t.1 t.property
     ⟨T.target.target, by simpa [htRole] using T.target.target_at_role⟩
   rcases
-      Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.case4SplitRight_competitor_near_slots_of_degree_five
+      case4SplitRight_competitor_near_slots_of_degree_five
         hA B.formula E F hdegree htWindow hst with
     hincident | haway | hawaySecond
   · exact Or.inl hincident

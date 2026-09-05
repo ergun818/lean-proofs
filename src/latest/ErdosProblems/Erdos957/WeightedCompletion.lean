@@ -63,7 +63,7 @@ theorem weightedRoleCollisionResiduals_of_components
 /-- Produced weighted role residuals with the entire Case-4 side
 discharged.  The sole remaining input is the genuine mixed Case-2 split
 degree-five record. -/
-noncomputable def producedWeightedRoleCollisionResiduals_of_case2
+theorem producedWeightedRoleCollisionResiduals_of_case2
     {A : Finset Point} (hA : IsOneSeparated A)
     (R : Erdos957.RadiallySortedCyclicHullOrder A)
     (L : Erdos957TurnSum.HullOrderBridge.LiftedCyclicHullOrder R.order)

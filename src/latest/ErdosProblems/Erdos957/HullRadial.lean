@@ -360,7 +360,7 @@ theorem orientedTurn_pos_of_hullVertex_mem_openCCWSector
     (A : Finset Point) {C a b x : Point}
     (hC : C ∈ interior (convexHull ℝ (A : Set Point)))
     (ha : a ∈ hullVertices A) (hb : b ∈ hullVertices A)
-    (hx : x ∈ hullVertices A) (hab : a ≠ b) (hax : a ≠ x)
+    (hx : x ∈ hullVertices A) (_hab : a ≠ b) (hax : a ≠ x)
     (hbx : b ≠ x) (habCross : 0 < crossVec (a - C) (b - C))
     (hxsector : InOpenCCWSector (pointComplexEquiv (a - C))
       (pointComplexEquiv (b - C)) (pointComplexEquiv (x - C))) :
@@ -426,7 +426,7 @@ theorem orientedTurn_pos_of_hullVertex_mem_openCCWSector
     rwa [orientedTurn_eq_centerCross]
   have htpos : 0 < t := by
     rcases ht.eq_or_lt with rfl | htpos
-    · simp only [zero_mul, add_zero, one_mul] at hturnAffine
+    · simp only [zero_mul, add_zero] at hturnAffine
       rw [hturnP] at hturnAffine
       linarith
     · exact htpos

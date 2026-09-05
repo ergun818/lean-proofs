@@ -92,7 +92,7 @@ lemma sevenShift_indexEquiv
 
 /-- The actual radial hull order, its genuine bisector chart, and convex
 closed-arc signs construct all cyclic-window geometry required by locality. -/
-noncomputable def cyclicWindowGeometry
+theorem cyclicWindowGeometry
     {A : Finset Erdos957.Point} (hA : IsOneSeparated A)
     (R : RadiallySortedCyclicHullOrder A)
     (L : LiftedCyclicHullOrder R.order)
@@ -164,7 +164,7 @@ noncomputable def cyclicWindowGeometry
     · left
       have ht := R.orientedTurn_chord_le_zero_of_mem_closedCCWArc hright
       have hprPoint : R.order.vertex rightIndex = (prv : Erdos957.Point) := by
-        simpa [prv, e] using indexEquivLiftedHull_point R.order rightIndex
+        simp [prv, e]
       have hqPoint : R.order.vertex c = (qv : Erdos957.Point) := by
         calc
           R.order.vertex c = (((e c).1 : Erdos957GeometryCore.Vertex A) :
@@ -194,7 +194,7 @@ noncomputable def cyclicWindowGeometry
     · right
       have ht := R.orientedTurn_chord_le_zero_of_mem_closedCCWArc hleft
       have hplPoint : R.order.vertex leftIndex = (plv : Erdos957.Point) := by
-        simpa [plv, e] using indexEquivLiftedHull_point R.order leftIndex
+        simp [plv, e]
       have hqPoint : R.order.vertex c = (qv : Erdos957.Point) := by
         calc
           R.order.vertex c = (((e c).1 : Erdos957GeometryCore.Vertex A) :

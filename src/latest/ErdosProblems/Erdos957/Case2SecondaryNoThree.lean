@@ -276,7 +276,7 @@ private lemma rigid_aligned_dot_displacements
   have hCpr := C.sqDist_coord i p r
   have hCqr := C.sqDist_coord i q r
   simp only [Erdos957Cases13.sqDist] at hCpq hCpr hCqr
-  simp only [PiLp.sub_apply] at hEpq hEpr hEqr
+  simp only [] at hEpq hEpr hEqr
   nlinarith
 
 /-- One positive-radius polar edge within four degrees has positive
@@ -412,7 +412,7 @@ private lemma no_case2Secondary_fingerprint_after_two_flat_steps
       nlinarith [Erdos957Cases24.sqrtThree_pos,
         Erdos957Cases24.sqrtThree_sq]
   have hd₁ : dist q p₁ ^ 2 ≤ 7 := by
-    rcases hfp with h | h | h <;> rw [h.1] <;> norm_num
+    rcases hfp with h | h | h <;> rw [h.1]; norm_num
   have hdrop : 1 ≤ dist q p₁ ^ 2 - dist q p₂ ^ 2 := by
     rcases hfp with h | h | h <;> rw [h.1, h.2] <;> norm_num
   exact no_target_with_case2_distance_drop_after_two_flat_steps
@@ -446,7 +446,7 @@ private lemma previous_terminal_away_second_increment_gt
     rw [show dist (pred.1 : Point) (source.1 : Point) = 1 by
       simpa [pred] using hunit] at hs
     simp only [Erdos957Cases13.sqDist, F.chart.coord_source,
-      sub_zero, neg_sq, one_pow] at hs
+      sub_zero, one_pow] at hs
     simpa [pred, CyclicHullData.AlignedChartData.leftOrbitReflectedCoord]
       using hs
   have hleftRadius : F.leftRadius source 0 = 1 := by
@@ -476,7 +476,7 @@ private lemma previous_terminal_away_second_increment_gt
       CyclicHullData.AlignedChartData.leftOrbitReflectedCoord,
       pow_one] at hx hy ⊢
     rw [Real.cos_neg, Real.sin_neg]
-    apply Prod.ext <;> simp only [Prod.fst, Prod.snd] <;> linarith
+    apply Prod.ext <;> simp only [] <;> linarith
   have hangle :
       |F.rightAngle source 1 + F.leftAngle source 0| ≤ Real.pi / 45 := by
     have hr1abs : |F.rightAngle source 1| ≤
@@ -484,7 +484,7 @@ private lemma previous_terminal_away_second_increment_gt
           |F.rightAngle source 0| := by
       calc
         _ = |(F.rightAngle source 1 - F.rightAngle source 0) +
-            F.rightAngle source 0| := by congr 1 <;> ring
+            F.rightAngle source 0| := by congr 1; ring
         _ ≤ _ := abs_add_le _ _
     have hsum := abs_add_le (F.rightAngle source 1)
       (F.leftAngle source 0)
@@ -608,7 +608,7 @@ private lemma next_reflected_away_second_increment_gt
     simp only [e, succ, CyclicHullData.AlignedChartData.rightOrbitCoord,
       pow_one] at hx hy ⊢
     rw [Real.cos_neg, Real.sin_neg]
-    apply Prod.ext <;> simp only [Prod.fst, Prod.snd] <;> linarith
+    apply Prod.ext <;> simp only [] <;> linarith
   have hangle :
       |F.leftAngle source 1 + F.rightAngle source 0| ≤ Real.pi / 45 := by
     have hl1abs : |F.leftAngle source 1| ≤
@@ -616,7 +616,7 @@ private lemma next_reflected_away_second_increment_gt
           |F.leftAngle source 0| := by
       calc
         _ = |(F.leftAngle source 1 - F.leftAngle source 0) +
-            F.leftAngle source 0| := by congr 1 <;> ring
+            F.leftAngle source 0| := by congr 1; ring
         _ ≤ _ := abs_add_le _ _
     have hsum := abs_add_le (F.leftAngle source 1)
       (F.rightAngle source 0)
@@ -1217,16 +1217,16 @@ lemma Case2SecondaryFormula.outer_association_of_shallow_position
   have hproxyNeSource : O.proxy ≠ source.1 := by
     intro h
     apply O.proxy_not_hull
-    simpa [h] using source.property
+    simp [h]
   have hproxyNeSide : O.proxy ≠ cyclicSideVertex P source D.side := by
     intro h
     apply O.proxy_not_hull
     rw [h]
     cases hside : D.side with
     | previous =>
-        simpa [cyclicSideVertex, hside] using (P.next⁻¹ source).property
+        simp [cyclicSideVertex]
     | next =>
-        simpa [cyclicSideVertex, hside] using (P.next source).property
+        simp [cyclicSideVertex]
   have hry : r 1 < 0 := by
     dsimp [r]
     exact
@@ -1343,6 +1343,7 @@ lemma Case2SecondaryFormula.outer_association_at_away_second
   · exact hadj
   · exact O
 
+open Erdos957ExceptionalCollisionGeometry.Case2SecondaryFormula in
 /-- The two-extreme direct form at the second away source has the same
 cyclic association.  Choosing its other hull neighbor on the outward side
 would put that neighbor at the third away vertex, which the checked
@@ -1375,7 +1376,7 @@ lemma Case2SecondaryFormula.paired_association_at_away_second
           T.side) x)
       hsideAdjMiddle v htarget.symm
   cases hs : D.side <;> cases htSide : T.side
-  · simpa [hassociation, htSide]
+  · simp [hassociation, htSide]
   · exfalso
     have hvertex : cyclicSideVertex P
         (Erdos957Case4NoThree.awayHullVertex P source D.side 1) T.side =
@@ -1384,7 +1385,7 @@ lemma Case2SecondaryFormula.paired_association_at_away_second
         Erdos957Case4NoThree.awayHullVertex, pow_succ]
     rw [hvertex] at hsideAdj
     exact
-      (Erdos957ExceptionalCollisionGeometry.Case2SecondaryFormula.not_adj_of_shallow_cone_and_fst_gt_five_halves
+      (not_adj_of_shallow_cone_and_fst_gt_five_halves
         D
         (Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.away_cone_div_five
           D F hi 2)
@@ -1399,14 +1400,14 @@ lemma Case2SecondaryFormula.paired_association_at_away_second
         Erdos957Case4NoThree.awayHullVertex, pow_succ]
     rw [hvertex] at hsideAdj
     exact
-      (Erdos957ExceptionalCollisionGeometry.Case2SecondaryFormula.not_adj_of_shallow_cone_and_fst_gt_five_halves
+      (not_adj_of_shallow_cone_and_fst_gt_five_halves
         D
         (Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.away_cone_div_five
           D F hi 2)
         (Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.away_third_fst_gt_five_halves
           D F hi)
         hsideAdj).elim
-  · simpa [hassociation, htSide]
+  · simp [hassociation, htSide]
 
 /-- The singleton direct form at the second away source also has the cyclic
 association.  This proof compares the two retained charts through their
@@ -1855,6 +1856,7 @@ lemma Case2SecondaryFormula.incident_third_fst_lt_neg_one
   norm_num at h ⊢
   linarith
 
+open Erdos957ExceptionalCollisionGeometry.Case2SecondaryFormula in
 lemma Case2SecondaryFormula.not_adj_away_third
     {source : {p // p ∈ P.H}} {v : Vertex A}
     (D : Case2SecondaryFormula (P := P) (source := source) v)
@@ -1862,7 +1864,7 @@ lemma Case2SecondaryFormula.not_adj_away_third
     ¬ (unitDistanceGraph A).Adj
       (Erdos957Case4NoThree.awayHullVertex P source D.side 2).1 v := by
   apply
-    Erdos957ExceptionalCollisionGeometry.Case2SecondaryFormula.not_adj_of_shallow_cone_and_fst_gt_five_halves
+    not_adj_of_shallow_cone_and_fst_gt_five_halves
       D
   · exact Case2SecondaryFormula.away_cone_div_five D F hi 2
   · exact Case2SecondaryFormula.away_third_fst_gt_five_halves D F hi
@@ -2017,7 +2019,6 @@ lemma Case2Case4WholeSameAssociationPlacement.no_collision_of_flat_window
         X.case2.formula F hi
       rw [← hs']
       exact X.case4.formula.source_target_adj
-
     · have hs := congrArg Subtype.val hprev3
       have hs' : source4.1 =
           (Erdos957Case4NoThree.awayHullVertex P source2
@@ -2510,7 +2511,7 @@ theorem Case2SecondaryFormula.competitor_within_two_eq_away_first_second_or_thir
     exact he
   have no_incident (hx : z 0 ≤ -1) : False := by
     rw [heq] at hdistSq
-    simp only [q, Erdos957Cases24.Case2.e,
+    simp only [Erdos957Cases24.Case2.e,
       Erdos957Cases24.point_apply_zero,
       Erdos957Cases24.point_apply_one] at hdistSq
     nlinarith [sq_nonneg (z 0 - 3 / 2),
@@ -2533,7 +2534,6 @@ theorem Case2SecondaryFormula.competitor_within_two_eq_away_first_second_or_thir
           D F hi 2
         norm_num at hx
         linarith
-
       · exfalso
         apply no_incident
         dsimp [z]
@@ -2621,7 +2621,7 @@ theorem Case2SecondaryFormula.case2_competitor_eq_away_first_second_or_third
         Erdos957Case4NoThree.awayHullVertex P
           (sourceIndex P W s.1 s.property) D.side 2 := by
   exact
-    Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.competitor_within_two_eq_away_first_second_or_third
+    Case2SecondaryFormula.competitor_within_two_eq_away_first_second_or_third
       D F he (Case2SecondaryFormula.source_target_dist_le_two E)
       htWindow hst
 
@@ -2649,7 +2649,7 @@ theorem Case2SecondaryFormula.case4SplitRight_competitor_eq_away_first_second_or
         Erdos957Case4NoThree.awayHullVertex P
           (sourceIndex P W s.1 s.property) D.side 2 := by
   exact
-    Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.competitor_within_two_eq_away_first_second_or_third
+    Case2SecondaryFormula.competitor_within_two_eq_away_first_second_or_third
       D F he E.source_target_dist_le_two htWindow hst
 
 /-- Exact four-place reduction for the mixed direct/split residual.  The
@@ -2688,7 +2688,7 @@ theorem Case2SecondaryFormula.direct_case4SplitRight_competitors_away_placements
   have ht := Case2SecondaryFormula.direct_competitor_eq_away_first_or_second
     D F htadj htWindow hst
   have hu :=
-    Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.case4SplitRight_competitor_eq_away_first_second_or_third
+    Case2SecondaryFormula.case4SplitRight_competitor_eq_away_first_second_or_third
       D E F he huWindow hsu
   rcases ht with ht | ht <;> rcases hu with hu | hu | hu
   · exfalso
@@ -2753,7 +2753,7 @@ theorem Case2SecondaryFormula.case2_direct_competitors_away_placements
     Erdos957ExceptionalCollisionGeometry.Case2SecondaryFormula.target_eq_e_of_shallow_cone_of_adj
       D hcone huadj
   have ht :=
-    Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.case2_competitor_eq_away_first_second_or_third
+    Case2SecondaryFormula.case2_competitor_eq_away_first_second_or_third
       D E F he htWindow hst
   rcases hu with hu | hu <;> rcases ht with ht | ht | ht
   · exfalso
@@ -2797,19 +2797,19 @@ lemma Case2SecondaryFormula.no_case2_at_away_first_direct_at_away_second
       cyclicSideVertex P st E.side = su := by
     cases hd : D.side <;> cases heSide : E.side
     · left
-      simpa [ss, st, cyclicSideVertex,
-        Erdos957Case4NoThree.awayHullVertex, hd, heSide, htIndex]
+      simp [ss, st, cyclicSideVertex,
+        Erdos957Case4NoThree.awayHullVertex, hd, htIndex]
     · right
-      simpa [ss, st, su, cyclicSideVertex,
-        Erdos957Case4NoThree.awayHullVertex, hd, heSide, htIndex, huIndex,
+      simp [st, su, cyclicSideVertex,
+        Erdos957Case4NoThree.awayHullVertex, hd, htIndex, huIndex,
         pow_two]
     · right
-      simpa [ss, st, su, cyclicSideVertex,
-        Erdos957Case4NoThree.awayHullVertex, hd, heSide, htIndex, huIndex,
+      simp [st, su, cyclicSideVertex,
+        Erdos957Case4NoThree.awayHullVertex, hd, htIndex, huIndex,
         pow_two]
     · left
-      simpa [ss, st, cyclicSideVertex,
-        Erdos957Case4NoThree.awayHullVertex, hd, heSide, htIndex]
+      simp [ss, st, cyclicSideVertex,
+        Erdos957Case4NoThree.awayHullVertex, hd, htIndex]
   rcases hpartner with hpartner | hpartner
   · have hfp :=
       Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.side_target_sq_distance_cases
@@ -2862,7 +2862,7 @@ theorem Case2SecondaryFormula.case2_direct_competitors_away_placements_three
   · exact Or.inl h
   · exact Or.inr (Or.inl h)
   · exact
-      (Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.no_case2_at_away_first_direct_at_away_second
+      (Case2SecondaryFormula.no_case2_at_away_first_direct_at_away_second
       D E
       (Erdos957ExceptionalCollisionGeometry.Case2SecondaryFormula.target_eq_e_of_shallow_cone_of_adj
         D (by
@@ -2898,7 +2898,7 @@ lemma Case2SecondaryFormula.case2_side_opposite_of_direct_away_zero_case2_away_o
     have hpartner : cyclicSideVertex P
         (sourceIndex P W t.1 t.property) E.side =
         (sourceIndex P W u.1 u.property).1 := by
-      simpa [cyclicSideVertex, Erdos957Case4NoThree.awayHullVertex,
+      simp [cyclicSideVertex, Erdos957Case4NoThree.awayHullVertex,
         hd, heSide, htIndex, huIndex, pow_two]
     rw [hpartner]
     exact huadj
@@ -2910,7 +2910,7 @@ lemma Case2SecondaryFormula.case2_side_opposite_of_direct_away_zero_case2_away_o
     have hpartner : cyclicSideVertex P
         (sourceIndex P W t.1 t.property) E.side =
         (sourceIndex P W u.1 u.property).1 := by
-      simpa [cyclicSideVertex, Erdos957Case4NoThree.awayHullVertex,
+      simp [cyclicSideVertex, Erdos957Case4NoThree.awayHullVertex,
         hd, heSide, htIndex, huIndex, pow_two]
     rw [hpartner]
     exact huadj
@@ -2939,7 +2939,7 @@ lemma Case2SecondaryFormula.case2_side_opposite_of_direct_away_one_case2_away_tw
     have hpartner : cyclicSideVertex P
         (sourceIndex P W t.1 t.property) E.side =
         (sourceIndex P W u.1 u.property).1 := by
-      simpa [cyclicSideVertex, Erdos957Case4NoThree.awayHullVertex,
+      simp [cyclicSideVertex, Erdos957Case4NoThree.awayHullVertex,
         hd, heSide, htIndex, huIndex, pow_succ]
     rw [hpartner]
     exact huadj
@@ -2951,7 +2951,7 @@ lemma Case2SecondaryFormula.case2_side_opposite_of_direct_away_one_case2_away_tw
     have hpartner : cyclicSideVertex P
         (sourceIndex P W t.1 t.property) E.side =
         (sourceIndex P W u.1 u.property).1 := by
-      simpa [cyclicSideVertex, Erdos957Case4NoThree.awayHullVertex,
+      simp [cyclicSideVertex, Erdos957Case4NoThree.awayHullVertex,
         hd, heSide, htIndex, huIndex, pow_succ]
     rw [hpartner]
     exact huadj
@@ -2982,7 +2982,7 @@ lemma no_case2Secondary_case4Primary_same_association_in_window
     apply Subtype.ext
     exact congrArg (fun z : {p // p ∈ P.H} ↦ z.1) h
   exact
-    Erdos957Case2SecondaryNoThree.Case2Case4WholeSameAssociationPlacement.no_collision_of_flat_window
+    Case2Case4WholeSameAssociationPlacement.no_collision_of_flat_window
       X (Erdos957GeometryLocalityBridge.sourceIndex_isFlat W s) hneIndex
 
 /-- Two same-associated Case-2 secondary rows cannot collide when the
@@ -3859,7 +3859,7 @@ lemma no_case2Secondary_at_incident_partner_of_case4SplitRight
     (S : RealizedArrivalAt (F := F) Q.rows s v)
     (T : RealizedArrivalAt (F := F) Q.rows t v)
     (hsRole : S.target.role = PairCases.TargetRoleName.case2Secondary)
-    (htRole : T.target.role = PairCases.TargetRoleName.case4SplitRight)
+    (_htRole : T.target.role = PairCases.TargetRoleName.case4SplitRight)
     (Qt : CommonPairedCase4Rows Q.rows t.1 t.property)
     (hsPartner : sourceIndex P W s.1 s.property =
       cyclicSideVertex P (sourceIndex P W t.1 t.property)
@@ -3941,9 +3941,9 @@ lemma RealizedPositiveTarget.token_eq_one_of_exceptional_secondary
   rcases hrole with hrole | hrole
   · cases R with
     | case1 middle hdegree hone middleCoord hmiddleCoord hmiddleNot hunit row =>
-        simp [hrole, RealizedSourceRow.roleWeight, ArrivalWeight.tokens]
+        simp [RealizedSourceRow.roleWeight, ArrivalWeight.tokens]
     | case2 middle hdegree htwo hmiddleNot T normalized row =>
-        simp [hrole, RealizedSourceRow.roleWeight, ArrivalWeight.tokens]
+        simp [RealizedSourceRow.roleWeight, ArrivalWeight.tokens]
     | case3 middle hdegree hone middleCoord row hmiddleVertex =>
         cases row <;>
           simp [hrole, RealizedSourceRow.roleWeight, ArrivalWeight.tokens]
@@ -3952,9 +3952,9 @@ lemma RealizedPositiveTarget.token_eq_one_of_exceptional_secondary
           simp [hrole, RealizedSourceRow.roleWeight, ArrivalWeight.tokens]
   · cases R with
     | case1 middle hdegree hone middleCoord hmiddleCoord hmiddleNot hunit row =>
-        simp [hrole, RealizedSourceRow.roleWeight, ArrivalWeight.tokens]
+        simp [RealizedSourceRow.roleWeight, ArrivalWeight.tokens]
     | case2 middle hdegree htwo hmiddleNot T normalized row =>
-        simp [hrole, RealizedSourceRow.roleWeight, ArrivalWeight.tokens]
+        simp [RealizedSourceRow.roleWeight, ArrivalWeight.tokens]
     | case3 middle hdegree hone middleCoord row hmiddleVertex =>
         cases row <;>
           simp [hrole, RealizedSourceRow.roleWeight, ArrivalWeight.tokens]
@@ -3976,8 +3976,8 @@ realized arrival always fit the capacity twelve. -/
 lemma mixed_triple_fits_of_degree_le_four
     {rows : HasRealizedSourceRows P W F.chart}
     {s t u : Source P W} {v : Vertex A}
-    (S : RealizedArrivalAt (F := F) rows s v)
-    (T : RealizedArrivalAt (F := F) rows t v)
+    (_S : RealizedArrivalAt (F := F) rows s v)
+    (_T : RealizedArrivalAt (F := F) rows t v)
     (U : RealizedArrivalAt (F := F) rows u v)
     (hsHalf : (rows s.1 s.property).localCase.tokens v = 1)
     (htHalf : (rows t.1 t.property).localCase.tokens v = 1)
@@ -4208,8 +4208,8 @@ theorem case2_secondary_triple_fits_of_degree_five_residuals
     (K : Case2SecondaryDegreeFiveResiduals (F := F) rows) :
     ∀ {s t u : Source P W} {v : Vertex A}
       (S : RealizedArrivalAt (F := F) rows s v)
-      (T : RealizedArrivalAt (F := F) rows t v)
-      (U : RealizedArrivalAt (F := F) rows u v),
+      (_T : RealizedArrivalAt (F := F) rows t v)
+      (_U : RealizedArrivalAt (F := F) rows u v),
       S.target.role = PairCases.TargetRoleName.case2Secondary →
       t.1 ∈ Finset.univ.image (fun j : Fin 7 ↦
         (sevenShift P.next j (sourceIndex P W s.1 s.property)).1) →
@@ -4321,8 +4321,8 @@ theorem case2_secondary_no_three_of_residuals
     (K : Case2SecondaryNoThreeResiduals (F := F) rows) :
     ∀ {s t u : Source P W} {v : Vertex A}
       (Ds : RealizedPositiveTarget (rows s.1 s.property) v)
-      (Dt : RealizedPositiveTarget (rows t.1 t.property) v)
-      (Du : RealizedPositiveTarget (rows u.1 u.property) v),
+      (_Dt : RealizedPositiveTarget (rows t.1 t.property) v)
+      (_Du : RealizedPositiveTarget (rows u.1 u.property) v),
       Ds.role = PairCases.TargetRoleName.case2Secondary →
       t.1 ∈ Finset.univ.image (fun j : Fin 7 ↦
         (sevenShift P.next j (sourceIndex P W s.1 s.property)).1) →
@@ -4421,14 +4421,14 @@ lemma degree_eq_five_of_coherent_case4SplitLeft
             simp [hrow, RealizedSourceRow.targetAtRole] at htarget
         | orderedLow farthest hfive middleTarget lowTarget hm hl hne =>
             exact ⟨lowTarget, by
-              simp [hrow, RealizedSourceRow.targetAtRole]⟩
+              simp [RealizedSourceRow.targetAtRole]⟩
         | orderedHigh farthest hsix recipients middleTarget sideTarget hm hs hne =>
             exact ⟨sideTarget, by
-              simp [hrow, RealizedSourceRow.targetAtRole]⟩
+              simp [RealizedSourceRow.targetAtRole]⟩
         | pairedSplit commonFrame farthest branch right hright middleTarget
             secondaryTarget hsource hm hs hne =>
             exact ⟨secondaryTarget, by
-              simp [hrow, RealizedSourceRow.targetAtRole]⟩
+              simp [RealizedSourceRow.targetAtRole]⟩
   let Qt := Q.case4_pair t.1 t.property hsplit
   have htarget := T.target.target_at_role
   rw [hrole, Qt.current_middle_role] at htarget
@@ -4835,42 +4835,42 @@ theorem Case2SecondarySameSideResiduals.case2_secondary_role_kernel
   exact case2_secondary_same_side_source_unique_of_residuals
     hA K S T hsRole htWindow hassoc
 
-end Erdos957Case2SecondaryNoThree
+#print axioms Case2SecondaryFormula.competitor_above_target_of_shallow_cone
+#print axioms Case2SecondaryFormula.competitor_fst_le_five_halves_of_shallow_cone
+#print axioms Case2SecondaryFormula.not_adj_incident_partner
+#print axioms Case2SecondaryFormula.direct_competitor_fst_gt_two_of_shallow_cone
+#print axioms Case2SecondaryFormula.no_two_direct_competitors_of_shallow_cone
+#print axioms Case2SecondaryFormula.no_two_direct_competitors_of_shallow_cone'
+#print axioms Case2Case4WholeSameAssociationPlacement.no_collision_of_shallow_frame
+#print axioms Case2SecondaryFormula.no_direct_competitor_of_shallow_cone_of_fst_le
+#print axioms Case2SecondaryFormula.direct_competitor_eq_away_first_or_second
+#print axioms Case2Case4WholeSameAssociationPlacement.no_collision_of_flat_window
+#print axioms no_case2Secondary_case4Primary_same_association_in_window
+#print axioms eq_case2_v_or_uNext_of_dist_u_one_dist_wNext_sqrtThree
+#print axioms no_case2Secondary_same_association_at_away_first
+#print axioms no_case2Secondary_same_association_at_incident_first
+#print axioms Case2SecondaryFormula.no_two_direct_competitors_in_window
+#print axioms Case2SecondaryFormula.competitor_within_two_eq_away_first_second_or_third
+#print axioms Case2SecondaryFormula.case2_competitor_eq_away_first_second_or_third
+#print axioms Case2SecondaryFormula.case4SplitRight_competitor_eq_away_first_second_or_third
+#print axioms Case2SecondaryFormula.direct_case4SplitRight_competitors_away_placements
+#print axioms Case2SecondaryFormula.case2_direct_competitors_away_placements
+#print axioms Case2SecondaryFormula.side_target_sq_distance_cases
+#print axioms Case2SecondaryFormula.not_side_adj_target
+#print axioms Case2SecondaryFormula.source_target_sq_eq_three_of_target_eq_e
+#print axioms Case2SecondaryFormula.no_case2_at_away_first_direct_at_away_second
+#print axioms Case2SecondaryFormula.case2_direct_competitors_away_placements_three
+#print axioms Case2SecondaryFormula.case2_side_opposite_of_direct_away_zero_case2_away_one
+#print axioms Case2SecondaryFormula.case2_side_opposite_of_direct_away_one_case2_away_two
+#print axioms case2Secondary_same_association_source_eq
+#print axioms case2_secondary_no_three_of_residuals
+#print axioms case2_secondary_same_side_source_unique_of_residuals
+#print axioms Case2SecondarySameSideResiduals.case2_secondary_role_kernel
+#print axioms Case2SecondaryFormula.target_ne_e_of_degree_five
+#print axioms Case2SecondaryFormula.target_eq_w_or_wNext_of_degree_five
+#print axioms Case2SecondaryFormula.case2_competitor_near_slots_of_degree_five
+#print axioms Case2SecondaryFormula.no_direct_competitor_at_degree_five
+#print axioms case2SecondaryDegreeFiveResiduals_of_split_residuals
+#print axioms case2_secondary_triple_fits_of_degree_five_residuals
 
-#print axioms Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.competitor_above_target_of_shallow_cone
-#print axioms Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.competitor_fst_le_five_halves_of_shallow_cone
-#print axioms Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.not_adj_incident_partner
-#print axioms Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.direct_competitor_fst_gt_two_of_shallow_cone
-#print axioms Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.no_two_direct_competitors_of_shallow_cone
-#print axioms Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.no_two_direct_competitors_of_shallow_cone'
-#print axioms Erdos957Case2SecondaryNoThree.Case2Case4WholeSameAssociationPlacement.no_collision_of_shallow_frame
-#print axioms Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.no_direct_competitor_of_shallow_cone_of_fst_le
-#print axioms Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.direct_competitor_eq_away_first_or_second
-#print axioms Erdos957Case2SecondaryNoThree.Case2Case4WholeSameAssociationPlacement.no_collision_of_flat_window
-#print axioms Erdos957Case2SecondaryNoThree.no_case2Secondary_case4Primary_same_association_in_window
-#print axioms Erdos957Case2SecondaryNoThree.eq_case2_v_or_uNext_of_dist_u_one_dist_wNext_sqrtThree
-#print axioms Erdos957Case2SecondaryNoThree.no_case2Secondary_same_association_at_away_first
-#print axioms Erdos957Case2SecondaryNoThree.no_case2Secondary_same_association_at_incident_first
-#print axioms Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.no_two_direct_competitors_in_window
-#print axioms Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.competitor_within_two_eq_away_first_second_or_third
-#print axioms Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.case2_competitor_eq_away_first_second_or_third
-#print axioms Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.case4SplitRight_competitor_eq_away_first_second_or_third
-#print axioms Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.direct_case4SplitRight_competitors_away_placements
-#print axioms Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.case2_direct_competitors_away_placements
-#print axioms Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.side_target_sq_distance_cases
-#print axioms Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.not_side_adj_target
-#print axioms Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.source_target_sq_eq_three_of_target_eq_e
-#print axioms Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.no_case2_at_away_first_direct_at_away_second
-#print axioms Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.case2_direct_competitors_away_placements_three
-#print axioms Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.case2_side_opposite_of_direct_away_zero_case2_away_one
-#print axioms Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.case2_side_opposite_of_direct_away_one_case2_away_two
-#print axioms Erdos957Case2SecondaryNoThree.case2Secondary_same_association_source_eq
-#print axioms Erdos957Case2SecondaryNoThree.case2_secondary_no_three_of_residuals
-#print axioms Erdos957Case2SecondaryNoThree.case2_secondary_same_side_source_unique_of_residuals
-#print axioms Erdos957Case2SecondaryNoThree.Case2SecondarySameSideResiduals.case2_secondary_role_kernel
-#print axioms Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.target_ne_e_of_degree_five
-#print axioms Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.target_eq_w_or_wNext_of_degree_five
-#print axioms Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.case2_competitor_near_slots_of_degree_five
-#print axioms Erdos957Case2SecondaryNoThree.Case2SecondaryFormula.no_direct_competitor_at_degree_five
-#print axioms Erdos957Case2SecondaryNoThree.case2SecondaryDegreeFiveResiduals_of_split_residuals
-#print axioms Erdos957Case2SecondaryNoThree.case2_secondary_triple_fits_of_degree_five_residuals
+end Erdos957Case2SecondaryNoThree

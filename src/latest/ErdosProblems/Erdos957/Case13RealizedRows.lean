@@ -418,7 +418,7 @@ lemma case3ActualRow_middleTarget_vertex
 secondary incidence is needed. -/
 theorem case3ActualRow_low
     {A : Finset ComplexPoint} {P : CyclicHullData A}
-    (hA : IsOneSeparated A) (F : P.FlatAlignedFrameData)
+    (_hA : IsOneSeparated A) (F : P.FlatAlignedFrameData)
     (source : {p // p ∈ P.H})
     (hflat : P.IsFlat source) (hwindow : LocalHullWindowHypothesis P source)
     (middle : Vertex A)

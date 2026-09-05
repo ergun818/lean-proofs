@@ -136,7 +136,7 @@ theorem case2Secondary_case4SplitRight_associations_ne_at_away_second
     {s t : Source P W} {v : Vertex A}
     (S : RealizedArrivalAt (F := F) Q.rows s v)
     (T : RealizedArrivalAt (F := F) Q.rows t v)
-    (hsRole : S.target.role = PairCases.TargetRoleName.case2Secondary)
+    (_hsRole : S.target.role = PairCases.TargetRoleName.case2Secondary)
     (htRole : T.target.role = PairCases.TargetRoleName.case4SplitRight)
     (B : Case2SecondaryArrivalFormula S.target S.descriptor)
     (Qt : CommonPairedCase4Rows Q.rows t.1 t.property)

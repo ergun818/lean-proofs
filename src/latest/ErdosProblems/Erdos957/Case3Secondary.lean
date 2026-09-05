@@ -86,8 +86,8 @@ private lemma exists_nonlower_middle_neighbor_ne_source
     {A : Finset ComplexPoint} {P : CyclicHullData A}
     (hA : IsOneSeparated A) (C : P.AlignedChartData)
     (source : {p // p ∈ P.H}) (middle : Vertex A)
-    (hsourceMiddle : (unitDistanceGraph A).Adj source.1 middle)
-    (hmiddleCone : InOpenMiddleCone (C.coord source middle))
+    (_hsourceMiddle : (unitDistanceGraph A).Adj source.1 middle)
+    (_hmiddleCone : InOpenMiddleCone (C.coord source middle))
     (hmiddleDegree : (unitDistanceGraph A).degree middle = 5) :
     ∃ t : Vertex A,
       (unitDistanceGraph A).Adj middle t ∧ t ≠ source.1 ∧
@@ -111,7 +111,7 @@ private lemma exists_nonlower_middle_neighbor_ne_source
   obtain ⟨a, haU, b, hbU, hab⟩ := Finset.one_lt_card.mp hUlarge
   have choose_a_or_b : a ≠ source.1 ∨ b ≠ source.1 := by
     by_contra h
-    push_neg at h
+    push Not at h
     exact hab (h.1.trans h.2.symm)
   rcases choose_a_or_b with ha | hb
   · refine ⟨a, ?_, ha, ?_⟩
@@ -302,7 +302,7 @@ private theorem exists_outer_source_neighbors_aligned
     exact hdegree
   have hphaseBij : Function.Bijective phase := by
     apply (Fintype.bijective_iff_injective_and_card phase).mpr
-    exact ⟨hphaseInj, by simpa [hcardN]⟩
+    exact ⟨hphaseInj, by simp [hcardN]⟩
   obtain ⟨q₀, hq₀⟩ := hphaseBij.2 (0 : Fin 3)
   obtain ⟨q₂, hq₂⟩ := hphaseBij.2 (2 : Fin 3)
   have hbin₀ : Erdos957Angle.phaseBin (z q₀) = (0 : Fin 6) := by
@@ -369,7 +369,7 @@ private lemma pairCross_eq_norm_mul_sin_sub (p q : Point) :
 
 private lemma pairCross_pos_of_arg_lt {p q : Point}
     (hp : toComplex p ≠ 0) (hq : toComplex q ≠ 0)
-    (hpim : p.2 < 0) (hqim : q.2 < 0)
+    (_hpim : p.2 < 0) (hqim : q.2 < 0)
     (hpq : (toComplex p).arg < (toComplex q).arg) :
     0 < pairCross p q := by
   rw [pairCross_eq_norm_mul_sin_sub]
@@ -385,7 +385,7 @@ private lemma pairCross_pos_of_arg_lt {p q : Point}
 
 private lemma pairCross_neg_of_arg_lt {p q : Point}
     (hp : toComplex p ≠ 0) (hq : toComplex q ≠ 0)
-    (hpim : p.2 < 0) (hqim : q.2 < 0)
+    (hpim : p.2 < 0) (_hqim : q.2 < 0)
     (hqp : (toComplex q).arg < (toComplex p).arg) :
     pairCross p q < 0 := by
   rw [pairCross_eq_norm_mul_sin_sub]

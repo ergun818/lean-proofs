@@ -94,13 +94,13 @@ theorem exists_pos_smul_add_pos_smul_of_complexCross_pos {u v w : Point}
     dsimp only [a, b, d]
     field_simp [hd0]
     simp only [complexCross_pointComplexEquiv]
-    simp only [Fin.zero_eta, Fin.mk_one, Fin.isValue]
+    simp only [Fin.zero_eta, Fin.isValue]
     ring
   · simp only [PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]
     dsimp only [a, b, d]
     field_simp [hd0]
     simp only [complexCross_pointComplexEquiv]
-    simp only [Fin.zero_eta, Fin.mk_one, Fin.isValue]
+    simp only [Fin.mk_one, Fin.isValue]
     ring
 
 /-- No third hull-vertex ray lies in the open counterclockwise sector from
@@ -181,13 +181,13 @@ theorem strictMono_cyclicSucc_between_local {n : ℕ} (hn : 2 ≤ n)
   · have hsval : (cyclicSucc i).val = i.val + 1 := by
       rw [cyclicSucc_val_local, Nat.mod_eq_of_lt hi]
     have his : i < cyclicSucc i := by
-      rw [Fin.lt_iff_val_lt_val, hsval]
+      rw [Fin.lt_def, hsval]
       exact i.val.lt_succ_self
     have hfis : f i < f (cyclicSucc i) := hf his
     by_cases hij : i < j
     · rw [if_pos (hf hij)]
       refine ⟨hfis, hf ?_⟩
-      rw [Fin.lt_iff_val_lt_val, hsval]
+      rw [Fin.lt_def, hsval]
       have hijval : i.val < j.val := hij
       have hneval : i.val + 1 ≠ j.val := by
         intro h
@@ -203,7 +203,7 @@ theorem strictMono_cyclicSucc_between_local {n : ℕ} (hn : 2 ≤ n)
     have hsval : (cyclicSucc i).val = 0 := by
       rw [cyclicSucc_val_local, hilast, Nat.mod_self]
     have hji' : j < i := by
-      rw [Fin.lt_iff_val_lt_val]
+      rw [Fin.lt_def]
       have hjlt := j.isLt
       have hjne : j.val ≠ i.val := fun h ↦ hji (Fin.ext h)
       omega
@@ -211,7 +211,7 @@ theorem strictMono_cyclicSucc_between_local {n : ℕ} (hn : 2 ≤ n)
     rw [if_neg (not_lt_of_ge hfji.le)]
     apply Or.inr
     apply hf
-    rw [Fin.lt_iff_val_lt_val, hsval]
+    rw [Fin.lt_def, hsval]
     have hjpos : 0 < j.val := by
       by_contra hjzero
       have hjzero' : j.val = 0 := Nat.eq_zero_of_not_pos hjzero
@@ -442,7 +442,7 @@ theorem radialLift_gap_eq_ccwAngleDiff {n : ℕ} (hn : 0 < n)
     rw [hilast, radialLift, closedPhaseLift_at_card,
       closedPhaseLift_of_lt hn _ i.isLt]
     rw [ccwAngleDiff, if_neg hphase', hsval]
-    simp [radialLift, radialPhase, centerAngle, hn]
+    simp [radialPhase, centerAngle, hn]
     ring
 
 theorem complexCross_radial_outgoingEdge_left {n : ℕ}
@@ -767,7 +767,7 @@ the concrete exterior turns are nonnegative and sum to one full turn. -/
 theorem exists_exteriorTurn_spec (A : Finset Point)
     (hthree : 3 ≤ hullVertexCount A) :
     ∃ (P : CyclicHullOrder A)
-      (L : Erdos957TurnSum.HullOrderBridge.LiftedCyclicHullOrder P),
+      (_L : Erdos957TurnSum.HullOrderBridge.LiftedCyclicHullOrder P),
       (∀ i, 0 ≤ Erdos957TurnSum.HullOrderBridge.exteriorTurn P i) ∧
       (∀ i, Erdos957TurnSum.HullOrderBridge.exteriorTurn P i =
         Real.pi - InnerProductGeometry.angle
