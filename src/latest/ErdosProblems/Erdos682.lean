@@ -392,7 +392,7 @@ theorem candidates_pair_eq_empty_of_oppositeParity
   have hcop := (Finset.mem_filter.mp ha).2
   have htwoOne : 2 ∣ 1 := by
     have := Nat.dvd_gcd htwoProd htwoDvd
-    simpa [hcop.gcd_eq_one] using this
+    simp [hcop.gcd_eq_one] at this
   norm_num at htwoOne
 
 /-- A squarefree sieve product has one divisor for every subset of its
@@ -467,7 +467,7 @@ theorem errSum_le_four_pow_sieveCard
       rw [sieveProduct_divisors_card]
       norm_cast
     _ = (2 : ℝ) ^ (r + r) := (pow_add 2 r r).symm
-    _ = (2 : ℝ) ^ (2 * r) := by congr 1 <;> omega
+    _ = (2 : ℝ) ^ (2 * r) := by congr 1; omega
     _ = ((2 : ℝ) ^ 2) ^ r := by rw [pow_mul]
     _ = (4 : ℝ) ^ r := by norm_num
 
@@ -478,7 +478,7 @@ theorem lower_cardinality_bound
     {hadmissible : ∀ p : ℕ, p.Prime → p < z → localNu shifts p < p}
     (hshiftX : ∀ s ∈ shifts, s ≤ X)
     (hlocal : ∀ p : ℕ, localNu shifts p ≤ 2) :
-    let s := boundingSieve shifts hshifts X z hadmissible
+    let _s := boundingSieve shifts hshifts X z hadmissible
     let r := (Erdos387.sievePrimeProduct 1 z).primeFactors.card
     (X : ℝ) * Erdos387.finiteEulerProduct
           (Erdos387.sievePrimeProduct 1 z).primeFactors
@@ -516,7 +516,7 @@ theorem upper_cardinality_bound
     {hadmissible : ∀ p : ℕ, p.Prime → p < z → localNu shifts p < p}
     (hshiftX : ∀ s ∈ shifts, s ≤ X)
     (hlocal : ∀ p : ℕ, localNu shifts p ≤ 2) :
-    let s := boundingSieve shifts hshifts X z hadmissible
+    let _s := boundingSieve shifts hshifts X z hadmissible
     let r := (Erdos387.sievePrimeProduct 1 z).primeFactors.card
     ((candidates shifts X z).card : ℝ) ≤
       (X : ℝ) * Erdos387.finiteEulerProduct
@@ -876,8 +876,8 @@ lemma one_add_two_shiftNu_le_harmonic_mul
       localNu shifts p = 1 ∨ localNu shifts p = 2 := by omega
   rcases hcases with hzero | hone | htwo
   · rw [hzero]
-    simp only [CharP.cast_eq_zero, zero_div, mul_zero, add_zero, sub_zero, mul_one, le_add_iff_nonneg_right,
-    ge_iff_le]
+    simp only [CharP.cast_eq_zero, zero_div, mul_zero, add_zero, sub_zero, mul_one,
+      le_add_iff_nonneg_right, ge_iff_le]
     positivity
   · rw [hone]
     have hpTwoR : (2 : ℝ) ≤ p := by exact_mod_cast hp2
@@ -955,7 +955,7 @@ theorem shiftMomentProduct_le_poly_mul_euler
 into an arbitrary relative Brun-tail bound. -/
 theorem brunSubsetTail_le_eta_mul_euler
     {shifts : Finset ℕ} {z L : ℕ} {eta : ℝ}
-    (heta : 0 ≤ eta)
+    (_heta : 0 ≤ eta)
     (hadmissible : ∀ p : ℕ, p.Prime → p < z → localNu shifts p < p)
     (hlocal : ∀ p : ℕ, localNu shifts p ≤ 2)
     (hpow : (((z + 1 : ℕ) : ℝ) ^ 18) ≤
@@ -1065,7 +1065,7 @@ lemma triangular_multiples_le (K q : ℕ) (hq : 0 < q) :
     rw [← Finset.mul_sum, hsumCast]
     have hcard : (Finset.Ioc 0 n).card = n := by simp
     rw [hcard]
-    simp only [Nat.cast_mul, Nat.cast_ofNat, nsmul_eq_mul]
+    simp only [nsmul_eq_mul]
   simpa only [Nat.cast_mul] using (show
     2 * (∑ b ∈ Finset.Ioc 0 n, ((K : ℝ) - (q * b : ℕ))) ≤
         (K : ℝ) ^ 2 / q by
@@ -1139,13 +1139,13 @@ lemma prod_bumpIndicator_eq
       intro hall
       exact hprod (Finset.prod_primes_dvd d
         (fun p hp ↦ (hprime p hp).prime) hall)
-    push_neg at hnall
+    push Not at hnall
     obtain ⟨p, hpT, hpd⟩ := hnall
     apply Finset.prod_eq_zero hpT
     rw [if_neg hpd]
 
 lemma pairCorrection_coeff_sum_eq_one
-    (P : Finset ℕ) (hprime : ∀ p ∈ P, p.Prime) (hp2 : ∀ p ∈ P, 2 < p) :
+    (P : Finset ℕ) (_hprime : ∀ p ∈ P, p.Prime) (hp2 : ∀ p ∈ P, 2 < p) :
     (∑ T ∈ P.powerset,
         ((∏ p ∈ T, pairCorrectionBump p) /
           ((∏ p ∈ T, p : ℕ) : ℝ)) *
@@ -1310,7 +1310,6 @@ theorem pairCorrection_Icc_four_mul_le_eight_mul
     have hd' := Finset.mem_Icc.mp hd
     have hw : (4 * H : ℝ) ≤ 8 * H - d := by
       have hdR : (d : ℝ) ≤ 4 * H := by exact_mod_cast hd'.2
-      norm_num [Nat.cast_mul] at hdR ⊢
       linarith
     exact mul_le_mul_of_nonneg_right hw (hC d)
   have htwo :
@@ -1331,7 +1330,6 @@ theorem pairCorrection_Icc_four_mul_le_eight_mul
         rw [Finset.mul_sum, Finset.mul_sum]
         apply Finset.sum_congr rfl
         intro d hd
-        push_cast
         ring
       _ ≤ 2 * (∑ d ∈ Finset.Icc 1 (4 * H),
           (8 * H - d : ℝ) * C d) := mul_le_mul_of_nonneg_left hone (by norm_num)
@@ -1409,7 +1407,7 @@ lemma triangularSum_succ (f : ℕ → ℝ) (H : ℕ) :
     ext d
     simp only [Finset.mem_Ioc, Finset.mem_insert, Finset.mem_Ico]
     omega
-  rw [hIoc, Finset.sum_insert (by simp [hH])]
+  rw [hIoc, Finset.sum_insert (by simp)]
   simp
   ring
 
@@ -1455,7 +1453,7 @@ theorem ordered_dist_sum_eq_triangular (f : ℕ → ℝ) (H : ℕ) :
       simp only [if_true]
       ring
 
-lemma sum_pair_diagonal_one { α : Type* } [DecidableEq α]
+lemma sum_pair_diagonal_one {α : Type*} [DecidableEq α]
     (S : Finset α) :
     (∑ s ∈ S, ∑ t ∈ S, if s = t then (1 : ℝ) else 0) = S.card := by
   calc
@@ -1466,7 +1464,7 @@ lemma sum_pair_diagonal_one { α : Type* } [DecidableEq α]
       simp [hs]
     _ = S.card := by simp
 
-lemma sum_pair_diagonal_const { α : Type* } [DecidableEq α]
+lemma sum_pair_diagonal_const {α : Type*} [DecidableEq α]
     (S : Finset α) (B : ℝ) :
     (∑ s ∈ S, ∑ t ∈ S, if s = t then B else 0) =
       (S.card : ℝ) * B := by
@@ -1478,7 +1476,7 @@ lemma sum_pair_diagonal_const { α : Type* } [DecidableEq α]
       simp [hs]
     _ = (S.card : ℝ) * B := by simp
 
-lemma sum_pair_mul { α : Type* } [DecidableEq α]
+lemma sum_pair_mul {α : Type*}
     (S : Finset α) (A : ℝ) (f : α → α → ℝ) :
     (∑ s ∈ S, ∑ t ∈ S, A * f s t) =
       A * ∑ s ∈ S, ∑ t ∈ S, f s t := by
@@ -1487,7 +1485,7 @@ lemma sum_pair_mul { α : Type* } [DecidableEq α]
   intro s hs
   rw [Finset.mul_sum]
 
-lemma sum_pair_if_diag { α : Type* } [DecidableEq α]
+lemma sum_pair_if_diag {α : Type*} [DecidableEq α]
     (S : Finset α) (B A : ℝ) (f : α → α → ℝ) :
     (∑ s ∈ S, ∑ t ∈ S,
         if s = t then B else A * f s t) =
@@ -1511,7 +1509,7 @@ lemma sum_pair_if_diag { α : Type* } [DecidableEq α]
         ∑ s ∈ S, ∑ t ∈ S, if s = t then 0 else f s t := by
       rw [sum_pair_diagonal_const, sum_pair_mul]
 
-lemma sum_pair_affine { α : Type* } [DecidableEq α]
+lemma sum_pair_affine {α : Type*}
     (S : Finset α) (A E : ℝ) (f : α → α → ℝ) :
     (∑ s ∈ S, ∑ t ∈ S, (A * f s t + E)) =
       A * (∑ s ∈ S, ∑ t ∈ S, f s t) +
@@ -1723,13 +1721,13 @@ theorem sum_roughMultiplicity_sq_eq_pairCounts (z H X : ℕ) :
             IsRough z (a - s) ∧ IsRough z (a - t) := by
         ext a
         rw [FullShiftSieve.mem_candidates_iff]
-        simp [and_comm, and_left_comm, and_assoc]
+        simp [and_comm, and_assoc]
       rw [hcandidates, Finset.card_eq_sum_ones, Finset.sum_filter]
 
 /-- Exact full inclusion--exclusion gives the first-moment lower bound for
 the even shift block. -/
 theorem roughMultiplicity_firstMoment_lower {X H z : ℕ}
-    (hH : 0 < H) (hHX : 2 * H ≤ X) :
+    (_hH : 0 < H) (hHX : 2 * H ≤ X) :
     (H : ℝ) * ((X : ℝ) * FullShiftSieve.roughEulerMass z -
         (4 : ℝ) ^
           (Erdos387.sievePrimeProduct 1 z).primeFactors.card) ≤
@@ -1882,7 +1880,7 @@ theorem roughMultiplicity_secondMoment_upper {X H z : ℕ}
 theorem roughMultiplicity_firstMoment_lower_brun
     {X H z L : ℕ} {eta : ℝ}
     (heta : 0 ≤ eta) (hL : Odd L) (hz : 1 ≤ z)
-    (hH : 0 < H) (hHX : 2 * H ≤ X)
+    (_hH : 0 < H) (hHX : 2 * H ≤ X)
     (hpow : (((z + 1 : ℕ) : ℝ) ^ 18) ≤
       eta * (2 : ℝ) ^ (L + 1)) :
     (H : ℝ) * ((X : ℝ) *
@@ -2086,11 +2084,12 @@ theorem roughMultiplicity_secondMoment_upper_brun
       gcongr
 
 lemma lower_sq_le_card_pos_mul_upper
-    {ι : Type*} [DecidableEq ι] (S : Finset ι) (R : ι → ℕ) {L U : ℝ}
+    {ι : Type*} (S : Finset ι) (R : ι → ℕ) {L U : ℝ}
     (hL : 0 ≤ L)
     (hfirst : L ≤ ∑ i ∈ S, (R i : ℝ))
     (hsecond : (∑ i ∈ S, (R i : ℝ) ^ 2) ≤ U) :
     L ^ 2 ≤ ((S.filter fun i ↦ 0 < R i).card : ℝ) * U := by
+  classical
   have hfilter :
       S.filter (fun i ↦ (R i : ℝ) ≠ 0) =
         S.filter fun i ↦ 0 < R i := by
@@ -2128,7 +2127,7 @@ lemma lower_sq_le_card_pos_mul_upper
       mul_le_mul_of_nonneg_left hsecond (Nat.cast_nonneg _)
 
 lemma one_sub_six_mul_le_positiveSupport
-    {ι : Type*} [DecidableEq ι] (S : Finset ι) (R : ι → ℕ)
+    {ι : Type*} (S : Finset ι) (R : ι → ℕ)
     {η avg X : ℝ}
     (hη : 0 < η) (hηsmall : η ≤ 1 / 6)
     (havg : 0 < avg) (hlarge : 1 ≤ η * avg)
@@ -2137,6 +2136,7 @@ lemma one_sub_six_mul_le_positiveSupport
     (hsecond : (∑ i ∈ S, (R i : ℝ) ^ 2) ≤
       (1 + 2 * η) * avg ^ 2 * X + avg * X) :
     (1 - 6 * η) * X ≤ ((S.filter fun i ↦ 0 < R i).card : ℝ) := by
+  classical
   let L : ℝ := (1 - η) * avg * X
   let U : ℝ := (1 + 2 * η) * avg ^ 2 * X + avg * X
   have hL : 0 ≤ L := by
@@ -3100,7 +3100,6 @@ lemma gapStart_injective (F : Finset ℕ) (H : ℕ)
   intro nj hnmem kl hkmem heq
   rcases nj with ⟨n, j⟩
   rcases kl with ⟨k, l⟩
-  simp only [Prod.fst, Prod.snd] at heq
   change (n, j) ∈ F ×ˢ Finset.range H at hnmem
   change (k, l) ∈ F ×ˢ Finset.range H at hkmem
   have hn : n ∈ F ∧ j ∈ Finset.range H := by
@@ -3159,7 +3158,6 @@ lemma mediumGap_start_image_subset_zeroStarts (X H z : ℕ) :
   intro x hx
   obtain ⟨nj, hnj, hxval⟩ := Finset.mem_image.mp hx
   rcases nj with ⟨n, j⟩
-  simp only [Prod.fst, Prod.snd] at hnj hxval
   subst x
   have hn : n ∈ mediumExceptionalGaps X H z ∧ j ∈ Finset.range H := by
     simpa only [Finset.mem_product] using hnj
@@ -3227,7 +3225,6 @@ lemma largeGap_start_image_subset_Ico (X z : ℕ) :
   intro x hx
   obtain ⟨nj, hnj, hxval⟩ := Finset.mem_image.mp hx
   rcases nj with ⟨n, j⟩
-  simp only [Prod.fst, Prod.snd] at hnj hxval
   subst x
   have hn := Finset.mem_product.mp hnj
   have hnData := (Finset.mem_filter.mp hn.1).2
@@ -3277,7 +3274,7 @@ noncomputable def smallExceptionalGaps (X H : ℕ) : Finset ℕ := by
 
 /-- Every interior exceptional gap is short, medium, or long. -/
 lemma interiorExceptionalGaps_subset_three_ranges
-    {X H z : ℕ} (hHz : 2 * H < z) :
+    {X H z : ℕ} (_hHz : 2 * H < z) :
     interiorExceptionalGaps X ⊆
       smallExceptionalGaps X H ∪
         (mediumExceptionalGaps X H z ∪ largeExceptionalGaps X z) := by
@@ -3334,7 +3331,7 @@ theorem interiorExceptionalGaps_card_le
 /-- Parity-sensitive short/medium/long decomposition used with the even
 rough-number shifts. -/
 lemma interiorExceptionalGaps_subset_parity_ranges
-    {X H z : ℕ} (hHz : 4 * H < z) :
+    {X H z : ℕ} (_hHz : 4 * H < z) :
     interiorExceptionalGaps X ⊆
       paritySmallExceptionalGaps X H ∪
         (parityMediumExceptionalGaps X H z ∪ largeExceptionalGaps X z) := by
@@ -3647,7 +3644,7 @@ lemma gapRoughEulerMass_lower {X : ℕ} (hJ : 2 ≤ gapLogIndex X) :
           Real.log ((2 : ℝ) ^ (2 * (q + 1) + 1)) := by
         apply Real.strictMonoOn_log.monotoneOn
           (by
-            show (0 : ℝ) < (J ^ 2 + 2 : ℕ)
+            change (0 : ℝ) < (J ^ 2 + 2 : ℕ)
             exact_mod_cast (show 0 < J ^ 2 + 2 by omega)) hpowposR
         exact_mod_cast hnat
       _ = ((2 * (q + 1) + 1 : ℕ) : ℝ) * Real.log 2 := by
@@ -3770,7 +3767,7 @@ lemma gapBrun_power_bounds {X : ℕ} (hJ : 2 ≤ gapLogIndex X) :
                 2 ^ ((2 * (q + 1) + 1) * 18) := by norm_num
           _ = 2 ^ (2 + (q + 1) + (2 * (q + 1) + 1) * 18) := by
             rw [← Nat.pow_add, ← Nat.pow_add]
-          _ = 2 ^ (37 * q + 57) := by congr 1 <;> omega
+          _ = 2 ^ (37 * q + 57) := by congr 1; omega
       _ ≤ 2 ^ (Lm + 1) := by
         apply pow_le_pow_right₀ (by norm_num : (1 : ℕ) ≤ 2)
         dsimp [Lm]
@@ -3802,7 +3799,7 @@ lemma gapBrun_power_bounds {X : ℕ} (hJ : 2 ≤ gapLogIndex X) :
       gapBrunPlus, J, r, q, z, Lp] using hconvert hnatPlus
 
 lemma gapBrunEndpointError_le_halfPower {X L : ℕ}
-    (hJ : 2 ≤ gapLogIndex X)
+    (_hJ : 2 ≤ gapLogIndex X)
     (hL : L ≤ gapBrunPlus X)
     (hscale : 1002 * (Nat.log 2 (gapLogIndex X) + 1) ^ 2 ≤
       gapLogIndex X) :
@@ -4234,7 +4231,7 @@ theorem exists_eventually_exceptionalDyadicCount_upper_concrete :
 
 /-- The beta-sieve endpoint term is exponentially smaller than the main
 scale after the cofinal substitution. -/
-lemma eventually_gap_beta_endpoint_natural (S : ℕ) (hS : 0 < S) :
+lemma eventually_gap_beta_endpoint_natural (S : ℕ) (_hS : 0 < S) :
     ∀ᶠ X : ℕ in atTop,
       4 * gapIntervalLength X * (gapBetaCutoff S X ^ S) ^ 2 *
           gapLogIndex X * gapFourthIndex X ≤ X := by
@@ -4328,7 +4325,7 @@ theorem exceptionalDyadicCount_isBigO_gapScale :
     by_contra hnot
     have : X = 0 := Nat.eq_zero_of_not_pos hnot
     subst X
-    simp [J, gapLogIndex] at hJ
+    simp [gapLogIndex] at hJ
   have hr2 : r ^ 2 ≤ J := by dsimp [r]; exact Nat.sqrt_le' J
   have hw2 : w ^ 2 ≤ r := by dsimp [w]; exact Nat.sqrt_le' r
   have hwle : w ≤ r := by dsimp [w]; exact Nat.sqrt_le_self r
@@ -4420,8 +4417,7 @@ theorem exceptionalDyadicCount_isBigO_gapScale :
     calc
       (3 * gapSieveTolerance X * (X : ℝ)) / H =
           (3 * (X : ℝ)) * (1 / ((r : ℝ) ^ 2 * w)) := by
-        simp [gapSieveTolerance, gapRootIndex, gapIntervalLength,
-          gapFourthIndex, J, r, w, H]
+        simp [gapSieveTolerance, gapRootIndex, J, r, w, H]
         field_simp
       _ ≤ (3 * (X : ℝ)) * (4 / ((J : ℝ) * w)) := by gcongr
       _ = 12 * G := by dsimp [G]; ring
@@ -4602,7 +4598,7 @@ lemma gapScale_mul_nthPrime_isLittleO (c : ℕ) (hc : 0 < c) :
           have := (div_le_iff₀ hε).mp hcoef
           nlinarith
         nlinarith [show (0 : ℝ) ≤ N by positivity]
-  have hscaleNonneg : 0 ≤ gapScale x := by simp [gapScale]; positivity
+  have hscaleNonneg : 0 ≤ gapScale x := by dsimp only [gapScale]; positivity
   have hNnonneg : (0 : ℝ) ≤ N := by positivity
   change ‖gapScale x‖ ≤ ε * ‖(N : ℝ)‖
   simpa [Real.norm_eq_abs, abs_of_nonneg hscaleNonneg,
@@ -4698,7 +4694,7 @@ noncomputable def exceptionalIndexDyadicGaps (N : ℕ) : Finset ℕ := by
 noncomputable abbrev exceptionalIndexDyadicCount (N : ℕ) : ℕ :=
   (exceptionalIndexDyadicGaps N).card
 
-lemma exists_binary_shell {p q K : ℕ} (hp : 0 < p) (hK : 0 < K)
+lemma exists_binary_shell {p q K : ℕ} (_hp : 0 < p) (hK : 0 < K)
     (hlower : p ≤ q) (hupper : q ≤ 2 ^ K * p) :
     ∃ j < K, 2 ^ j * p ≤ q ∧ q ≤ 2 ^ (j + 1) * p := by
   induction K with
@@ -5172,15 +5168,15 @@ def coverPrimes : Finset ℕ :=
   {2, 3, 5, 7, 11, 13}
 
 lemma coverPrime_prime {p : ℕ} (hp : p ∈ coverPrimes) : Nat.Prime p := by
-  simp [coverPrimes] at hp
+  simp only [coverPrimes, Finset.mem_insert, Finset.mem_singleton] at hp
   rcases hp with rfl | rfl | rfl | rfl | rfl | rfl <;> norm_num
 
 lemma coverPrime_lt_eighteen {p : ℕ} (hp : p ∈ coverPrimes) : p < 18 := by
-  simp [coverPrimes] at hp
+  simp only [coverPrimes, Finset.mem_insert, Finset.mem_singleton] at hp
   rcases hp with rfl | rfl | rfl | rfl | rfl | rfl <;> norm_num
 
 lemma coverPrime_dvd_30030 {p : ℕ} (hp : p ∈ coverPrimes) : p ∣ 30030 := by
-  simp [coverPrimes] at hp
+  simp only [coverPrimes, Finset.mem_insert, Finset.mem_singleton] at hp
   rcases hp with rfl | rfl | rfl | rfl | rfl | rfl <;> norm_num
 
 lemma block_2184_2200_covered (r : ℕ) (hlo : 2184 ≤ r) (hhi : r ≤ 2200) :
