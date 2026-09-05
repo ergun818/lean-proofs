@@ -15,7 +15,8 @@ theorem continuous_standardGaussian_density : Continuous (gaussianPDFReal 0 1) :
   simp_rw [standardGaussian_density]
   fun_prop
 
-theorem standardGaussian_density_le_at_zero (x : ℝ) : gaussianPDFReal 0 1 x ≤ gaussianPDFReal 0 1 0 := by
+theorem standardGaussian_density_le_at_zero (x : ℝ) :
+    gaussianPDFReal 0 1 x ≤ gaussianPDFReal 0 1 0 := by
   rw [standardGaussian_density, standardGaussian_density]
   norm_num
   exact mul_le_of_le_one_right (by positivity)
@@ -28,7 +29,8 @@ theorem standardGaussianInterval_zero : standardGaussianInterval 0 = 0 := by
 
 theorem standardGaussianInterval_hasDerivAt (t : ℝ) :
     HasDerivAt standardGaussianInterval (gaussianPDFReal 0 1 t) t :=
-  intervalIntegral.integral_hasDerivAt_right (continuous_standardGaussian_density.intervalIntegrable _ _)
+  intervalIntegral.integral_hasDerivAt_right
+    (continuous_standardGaussian_density.intervalIntegrable _ _)
     continuous_standardGaussian_density.aestronglyMeasurable.stronglyMeasurableAtFilter
     continuous_standardGaussian_density.continuousAt
 
@@ -40,9 +42,11 @@ theorem standardGaussianInterval_nonneg {t : ℝ} (ht : 0 ≤ t) : 0 ≤ standar
 
 theorem standardGaussianInterval_le {t : ℝ} (ht : 0 ≤ t) :
     standardGaussianInterval t ≤ t * gaussianPDFReal 0 1 0 := by
-  have h := intervalIntegral.integral_mono_on (μ := volume) ht (continuous_standardGaussian_density.intervalIntegrable _ _)
+  have h := intervalIntegral.integral_mono_on (μ := volume) ht
+    (continuous_standardGaussian_density.intervalIntegrable _ _)
     (intervalIntegrable_const) (fun u _ ↦ standardGaussian_density_le_at_zero u)
-  simpa only [standardGaussianInterval, intervalIntegral.integral_const, sub_zero, smul_eq_mul] using h
+  simpa only [standardGaussianInterval, intervalIntegral.integral_const, sub_zero,
+    smul_eq_mul] using h
 
 theorem standardGaussianInterval_eq_measure {t : ℝ} (ht : 0 ≤ t) :
     standardGaussianInterval t = (gaussianReal 0 1).real (Set.Ioo 0 t) := by

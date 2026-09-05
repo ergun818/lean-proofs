@@ -14,7 +14,8 @@ theorem integral_intervalRootCount_Ico_pow_le (n a b p : ℕ) (hab : a < b) (hp 
     (g : ℕ → ℝ) (hg : Monotone g) {B : ℝ}
     (hB : ∀ i ∈ Finset.Ico a b,
       (∫ ε, (intervalRootCount ε n (g i) (g (i + 1)) : ℝ) ^ p ∂sequenceLaw) ≤ B) :
-    (∫ ε, (intervalRootCount ε n (g a) (g b) : ℝ) ^ p ∂sequenceLaw) ≤ ((b - a : ℕ) : ℝ) ^ p * B := by
+    (∫ ε, (intervalRootCount ε n (g a) (g b) : ℝ) ^ p ∂sequenceLaw)
+      ≤ ((b - a : ℕ) : ℝ) ^ p * B := by
   have hcell (i : ℕ) (hi : i ∈ Finset.range (b - a)) :
       (∫ ε, (intervalRootCount ε n (g (a + i)) (g (a + (i + 1))) : ℝ) ^ p ∂sequenceLaw) ≤ B := by
     have hi' : a + i ∈ Finset.Ico a b := by

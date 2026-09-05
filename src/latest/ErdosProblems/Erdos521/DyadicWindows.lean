@@ -31,6 +31,7 @@ theorem dyadicCoefficientWindow_disjoint_same_color (n q : ℕ) {i j : ℕ}
     Disjoint (dyadicCoefficientWindow n i q) (dyadicCoefficientWindow n j q) := by
   rcases lt_or_gt_of_ne hij with h | h
   · exact dyadicCoefficientWindow_disjoint n q i j (by have := same_mod_gap h hmod; omega)
-  · exact (dyadicCoefficientWindow_disjoint n q j i (by have := same_mod_gap h hmod.symm; omega)).symm
+  · exact (dyadicCoefficientWindow_disjoint n q j i
+    (by have := same_mod_gap h hmod.symm; omega)).symm
 
 end Erdos521

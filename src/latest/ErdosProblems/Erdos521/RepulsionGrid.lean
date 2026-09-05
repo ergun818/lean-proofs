@@ -20,7 +20,8 @@ def smallValueDerivativeEvent (n : ℕ) (l u η : ℝ) : Set (ℕ → ℝ) :=
 theorem smallValueDerivative_grid_probability (n j : ℕ) (hn : 1 < n) {C : ℝ}
     (hC : 0 < C) (hj : 12 * (j : ℝ) ≤ C * Real.log n)
     (hinterval : 9 / 10 ≤ endpointCenter C n) :
-    sequenceLaw.real (smallValueDerivativeEvent n (9 / 10) (endpointCenter C n) (repulsionThreshold j)) ≤
+    sequenceLaw.real (smallValueDerivativeEvent n (9 / 10) (endpointCenter C n)
+      (repulsionThreshold j)) ≤
       (repulsionMesh n j + 1 : ℕ) * (1 / 4 : ℝ) ^ (2 * j) := by
   let M := repulsionMesh n j
   let b := endpointCenter C n
@@ -48,7 +49,8 @@ theorem smallValueDerivative_grid_probability (n j : ℕ) (hn : 1 < n) {C : ℝ}
     change |powerSum ε (n + 1) (y i)| ≤ _
     simpa only [polynomial_eval] using hgrid
   have hmono : sequenceLaw.real
-      (smallValueDerivativeEvent n (9 / 10) b (repulsionThreshold j)) ≤ sequenceLaw.real (⋃ i, E i) :=
+      (smallValueDerivativeEvent n (9 / 10) b (repulsionThreshold j))
+        ≤ sequenceLaw.real (⋃ i, E i) :=
     ENNReal.toReal_mono (measure_ne_top sequenceLaw _) (measure_mono_ae hsub)
   have hprob (i : Fin (M + 1)) : sequenceLaw.real (E i) ≤ (1 / 4 : ℝ) ^ (2 * j) := by
     have hj' : 6 * ((2 * j : ℕ) : ℝ) ≤ C * Real.log n := by push_cast; nlinarith

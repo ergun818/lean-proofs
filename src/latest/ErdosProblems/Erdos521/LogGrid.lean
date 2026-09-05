@@ -22,7 +22,8 @@ theorem logGridCoefficient_ratio (a δ : ℝ) (i k : ℕ) :
   push_cast
   ring
 
-theorem logGrid_mono {s a δ : ℝ} (hs : 0 < s) (ha : 0 ≤ a) (hδ : 0 ≤ δ) : Monotone (logGrid s a δ) := by
+theorem logGrid_mono {s a δ : ℝ} (hs : 0 < s) (ha : 0 ≤ a) (hδ : 0 ≤ δ) :
+    Monotone (logGrid s a δ) := by
   intro i j hij
   have hcast : (i : ℝ) ≤ j := by exact_mod_cast hij
   have hcoeff : logGridCoefficient a δ j ≤ logGridCoefficient a δ i := by

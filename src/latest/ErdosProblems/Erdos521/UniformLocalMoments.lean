@@ -39,7 +39,8 @@ theorem eventually_integral_localRootCount_pow_le (p : ℕ) :
   have hgap : 32 * (localMomentCutoff p n : ℝ) ≤ n * (1 - x) :=
     (localMomentCutoff_gap p n hnlog).trans hxgap
   have h := integral_localRootCount_pow_le n p (localMomentCutoff p n) hJ hx hx₁ hgap
-  have hrem := mul_le_mul_of_nonneg_left (localMomentCutoff_remainder p n hn) localTailConstant_pos.le
+  have hrem := mul_le_mul_of_nonneg_left (localMomentCutoff_remainder p n hn)
+    localTailConstant_pos.le
   unfold localMomentBoundConstant
   nlinarith
 
@@ -59,7 +60,8 @@ theorem eventually_bulk_local_moments (p : ℕ) :
     have hdiv := div_pos (mul_pos hC hlog) hn₀
     linarith
   apply hn x hx.1 hx₁
-  have h := (div_le_iff₀ hn₀).mp (show localMomentBulkConstant p * Real.log n / n ≤ 1 - x by linarith)
+  have h := (div_le_iff₀ hn₀).mp
+    (show localMomentBulkConstant p * Real.log n / n ≤ 1 - x by linarith)
   nlinarith
 
 end Erdos521

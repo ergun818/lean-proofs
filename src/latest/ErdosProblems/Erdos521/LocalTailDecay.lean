@@ -72,7 +72,8 @@ theorem localTailBound_le_exp (j : ℕ) :
   have hpow := (half_pow_le_exp j).trans hhalf
   have hquarter := (pow_le_pow_left₀ (by norm_num : (0 : ℝ) ≤ 1 / 4)
     (by norm_num : (1 / 4 : ℝ) ≤ 1 / 2) j).trans hpow
-  have hfloorpow := (quarter_floor_pow_le_exp j).trans (mul_le_mul_of_nonneg_left hfloor (by norm_num))
+  have hfloorpow := (quarter_floor_pow_le_exp j).trans
+    (mul_le_mul_of_nonneg_left hfloor (by norm_num))
   have hweighted := mul_le_mul_of_nonneg_right hpow
     (Real.sqrt_nonneg (Real.pi / (1 / (4 * Real.pi ^ 2))))
   have hsum := mul_le_mul_of_nonneg_left (add_le_add (add_le_add hweighted hvar)

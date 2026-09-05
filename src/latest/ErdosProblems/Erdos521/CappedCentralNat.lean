@@ -19,7 +19,8 @@ theorem measurable_cappedCentralNatSum (j : ℕ) (g : ℕ → ℕ → ℝ) (N : 
     Measurable (fun ε ↦ cappedCentralNatSum ε j g N) := by
   unfold cappedCentralNatSum
   exact Finset.measurable_sum _ (fun k _ ↦
-    (measurable_windowGridSignChanges (dyadicCoefficientWindow (2 ^ j) k (windowWidthScale j)) (g k) (N k)).min
+    (measurable_windowGridSignChanges (dyadicCoefficientWindow (2 ^ j) k (windowWidthScale j))
+      (g k) (N k)).min
       measurable_const)
 
 theorem cappedCentralNatSum_le (ε : ℕ → ℝ) (j : ℕ) (g : ℕ → ℕ → ℝ) (N : ℕ → ℕ) :
@@ -32,7 +33,8 @@ theorem cappedCentralNatSum_le (ε : ℕ → ℝ) (j : ℕ) (g : ℕ → ℕ →
 
 theorem cappedCentralNatSum_cast (ε : ℕ → ℝ) (j : ℕ) (g : ℕ → ℕ → ℝ) (N : ℕ → ℕ) :
     (cappedCentralNatSum ε j g N : ℝ) = cappedCentralSum ε j g N := by
-  simp only [cappedCentralNatSum, cappedCentralSum, cappedWindowStatistic, Nat.cast_sum, Nat.cast_min]
+  simp only [cappedCentralNatSum, cappedCentralSum, cappedWindowStatistic,
+    Nat.cast_sum, Nat.cast_min]
 
 theorem cappedCentralNatSum_pow_integrable (j p : ℕ) (g : ℕ → ℕ → ℝ) (N : ℕ → ℕ) :
     Integrable (fun ε ↦ (cappedCentralNatSum ε j g N : ℝ) ^ p) sequenceLaw :=
@@ -41,7 +43,8 @@ theorem cappedCentralNatSum_pow_integrable (j p : ℕ) (g : ℕ → ℕ → ℝ)
 
 theorem cappedCentralNatSum_real_le {j : ℕ} (hj : 1 ≤ j) (ε : ℕ → ℝ) (g : ℕ → ℕ → ℝ) (N : ℕ → ℕ) :
     (cappedCentralNatSum ε j g N : ℝ) ≤ 2 * (j : ℝ) ^ 2 := by
-  have hT : (windowCapScale j : ℝ) ≤ 2 * (j : ℝ) := by exact_mod_cast windowCapScale_le_twice_index hj
+  have hT : (windowCapScale j : ℝ) ≤ 2 * (j : ℝ) := by
+    exact_mod_cast windowCapScale_le_twice_index hj
   calc
     _ ≤ (j : ℝ) * (windowCapScale j : ℝ) := by exact_mod_cast cappedCentralNatSum_le ε j g N
     _ ≤ (j : ℝ) * (2 * (j : ℝ)) := mul_le_mul_of_nonneg_left hT (Nat.cast_nonneg j)

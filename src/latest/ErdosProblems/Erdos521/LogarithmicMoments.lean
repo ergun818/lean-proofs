@@ -14,7 +14,8 @@ theorem eventually_logarithmic_moments (p : ℕ) (hp : 1 ≤ p) {ℓ : ℝ} (h�
     ∃ B : ℝ, 0 < B ∧ ∀ᶠ n : ℕ in atTop, ∀ s a : ℝ, 0 < s → 0 < a →
       9 / 10 ≤ logGrid s a ℓ 0 →
       logGrid s a ℓ 1 ≤ endpointCenter (localMomentBulkConstant p) n →
-      (∫ ε, (intervalRootCount ε n (logGrid s a ℓ 0) (logGrid s a ℓ 1) : ℝ) ^ p ∂sequenceLaw) ≤ B := by
+      (∫ ε, (intervalRootCount ε n (logGrid s a ℓ 0) (logGrid s a ℓ 1) : ℝ)
+        ^ p ∂sequenceLaw) ≤ B := by
   obtain ⟨N, hN, hwidth⟩ := exists_short_logarithmic_subdivision hℓ
   let δ := ℓ / (N : ℝ)
   have hN₀ : (0 : ℝ) < N := by exact_mod_cast (show 0 < N by omega)
@@ -25,7 +26,8 @@ theorem eventually_logarithmic_moments (p : ℕ) (hp : 1 ≤ p) {ℓ : ℝ} (h�
   intro s a hs ha hlower hupper
   have hg := logGrid_mono hs ha.le hδ.le
   have hcell (i : ℕ) (hi : i ∈ Finset.range N) :
-      (∫ ε, (intervalRootCount ε n (logGrid s a δ i) (logGrid s a δ (i + 1)) : ℝ) ^ p ∂sequenceLaw) ≤
+      (∫ ε, (intervalRootCount ε n (logGrid s a δ i) (logGrid s a δ (i + 1)) : ℝ)
+        ^ p ∂sequenceLaw) ≤
         localMomentBoundConstant p := by
     have hiN : i + 1 ≤ N := by simpa using Finset.mem_range.mp hi
     have hi₁ : logGrid s a δ (i + 1) < 1 :=

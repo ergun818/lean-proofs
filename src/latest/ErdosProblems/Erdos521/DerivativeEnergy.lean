@@ -51,7 +51,8 @@ theorem secondDerivativeEnergy_integrable (n : ℕ) {a b : ℝ}
   change Integrable (fun ε ↦ ∫ u in a..b, ((polynomial ε n).derivative.derivative.eval u) ^ 2)
     sequenceLaw
   have h := (second_derivative_product_integrable n ha hab hb).integral_prod_right
-  simpa only [secondDerivativeEnergy, intervalIntegral.integral_of_le hab, Set.uIoc_of_le hab] using h
+  simpa only [secondDerivativeEnergy, intervalIntegral.integral_of_le hab,
+    Set.uIoc_of_le hab] using h
 
 theorem integral_secondDerivativeEnergy_le (n : ℕ) {a b : ℝ}
     (ha : 0 ≤ a) (hab : a ≤ b) (hb : b < 1) :
@@ -63,7 +64,8 @@ theorem integral_secondDerivativeEnergy_le (n : ℕ) {a b : ℝ}
       ∫ ε, ((polynomial ε n).derivative.derivative.eval u) ^ 2 ∂sequenceLaw) volume a b :=
     intervalIntegrable_iff.mpr hprod.integral_prod_left
   have hbound (u : ℝ) (hu : u ∈ Set.Icc a b) :
-      (∫ ε, ((polynomial ε n).derivative.derivative.eval u) ^ 2 ∂sequenceLaw) ≤ 24 / (1 - b) ^ 5 := by
+      (∫ ε, ((polynomial ε n).derivative.derivative.eval u) ^ 2 ∂sequenceLaw)
+        ≤ 24 / (1 - b) ^ 5 := by
     apply (polynomial_second_derivative_moment_le n (ha.trans hu.1) (hu.2.trans_lt hb)).trans
     exact div_le_div_of_nonneg_left (by norm_num) (by positivity)
       (pow_le_pow_left₀ (by linarith : 0 ≤ 1 - b) (sub_le_sub_left hu.2 1) 5)

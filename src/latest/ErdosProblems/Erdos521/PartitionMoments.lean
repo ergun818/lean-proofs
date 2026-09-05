@@ -37,7 +37,8 @@ theorem integral_intervalRootCount_partition_pow_le (n N p : ℕ) (hN : 1 ≤ N)
       (∫ ε, (intervalRootCount ε n (g i) (g (i + 1)) : ℝ) ^ p ∂sequenceLaw) ≤ B) :
     (∫ ε, (intervalRootCount ε n (g 0) (g N) : ℝ) ^ p ∂sequenceLaw) ≤ (N : ℝ) ^ p * B := by
   have hpoint (ε : ℕ → ℝ) : (intervalRootCount ε n (g 0) (g N) : ℝ) ^ p ≤
-      (N : ℝ) ^ (p - 1) * ∑ i ∈ Finset.range N, (intervalRootCount ε n (g i) (g (i + 1)) : ℝ) ^ p := by
+      (N : ℝ) ^ (p - 1)
+        * ∑ i ∈ Finset.range N, (intervalRootCount ε n (g i) (g (i + 1)) : ℝ) ^ p := by
     apply le_trans (pow_le_pow_left₀ (Nat.cast_nonneg _)
       (show (intervalRootCount ε n (g 0) (g N) : ℝ) ≤
         ∑ i ∈ Finset.range N, (intervalRootCount ε n (g i) (g (i + 1)) : ℝ) by
@@ -47,7 +48,8 @@ theorem integral_intervalRootCount_partition_pow_le (n N p : ℕ) (hN : 1 ≤ N)
   have h := integral_mono (intervalRootCount_pow_integrable n p _ _)
     ((integrable_finsetSum _ (fun i _ ↦ intervalRootCount_pow_integrable n p _ _)).const_mul
       ((N : ℝ) ^ (p - 1))) hpoint
-  rw [integral_const_mul, integral_finsetSum _ (fun i _ ↦ intervalRootCount_pow_integrable n p _ _)] at h
+  rw [integral_const_mul, integral_finsetSum _
+    (fun i _ ↦ intervalRootCount_pow_integrable n p _ _)] at h
   apply h.trans
   calc
     (N : ℝ) ^ (p - 1) * (∑ i ∈ Finset.range N,

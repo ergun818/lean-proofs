@@ -43,7 +43,8 @@ theorem circular_maximum_integral_bound (n : ℕ) (c : ℂ) (R θ : ℝ) :
   apply (integral_maximumSquaredComplexPowerSum_le n _).trans
   apply mul_le_mul_of_nonneg_right
     (geometricVariance_mono_base (norm_nonneg _) (norm_circleMap_le c R θ) (n + 1))
-  have hlog : 0 ≤ Real.log (n + 1) := Real.log_nonneg (by have := Nat.cast_nonneg (α := ℝ) n; linarith)
+  have hlog : 0 ≤ Real.log (n + 1) :=
+    Real.log_nonneg (by have := Nat.cast_nonneg (α := ℝ) n; linarith)
   linarith
 
 theorem integrable_product_of_uniform_norm_bound {α β : Type*}

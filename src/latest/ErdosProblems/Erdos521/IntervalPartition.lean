@@ -41,8 +41,10 @@ theorem intervalRootCount_split (ε : ℕ → ℝ) (n : ℕ) {a b c : ℝ} (hab 
   exact h
 
 theorem intervalRootCount_grid_identity (ε : ℕ → ℝ) (n : ℕ) (g : ℕ → ℝ) (hg : Monotone g) (N : ℕ) :
-    (∑ i ∈ Finset.range N, intervalRootCount ε n (g i) (g (i + 1))) + intervalRootCount ε n (g 0) (g 0) =
-      intervalRootCount ε n (g 0) (g N) + ∑ i ∈ Finset.range N, intervalRootCount ε n (g i) (g i) := by
+    (∑ i ∈ Finset.range N, intervalRootCount ε n (g i) (g (i + 1)))
+      + intervalRootCount ε n (g 0) (g 0) =
+      intervalRootCount ε n (g 0) (g N)
+        + ∑ i ∈ Finset.range N, intervalRootCount ε n (g i) (g i) := by
   induction N with
   | zero => simp
   | succ N ih =>

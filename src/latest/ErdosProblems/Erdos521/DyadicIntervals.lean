@@ -53,8 +53,10 @@ theorem eventually_dyadic_interval_moments (p : ℕ) (hp : 1 ≤ p) :
     ∃ B : ℝ, 0 < B ∧ ∀ᶠ n : ℕ in atTop, ∀ k : ℕ,
       9 / 10 ≤ dyadicPoint k →
       dyadicPoint (k + 1) ≤ endpointCenter (localMomentBulkConstant p) n →
-      (∫ ε, (intervalRootCount ε n (dyadicPoint k) (dyadicPoint (k + 1)) : ℝ) ^ p ∂sequenceLaw) ≤ B := by
-  obtain ⟨B, hB, hb⟩ := eventually_logarithmic_moments p hp (Real.log_pos (by norm_num : (1 : ℝ) < 2))
+      (∫ ε, (intervalRootCount ε n (dyadicPoint k) (dyadicPoint (k + 1)) : ℝ) ^ p ∂sequenceLaw)
+        ≤ B := by
+  obtain ⟨B, hB, hb⟩ := eventually_logarithmic_moments p hp
+    (Real.log_pos (by norm_num : (1 : ℝ) < 2))
   refine ⟨B, hB, ?_⟩
   filter_upwards [hb] with n hn
   intro k hl hu

@@ -22,7 +22,8 @@ theorem inverse_nat_spacing_tendsto_right {ℓ : ℝ} (hℓ : 0 < ℓ) :
 theorem gaussian_grid_refinement_limit {ℓ : ℝ} (hℓ : 0 < ℓ) :
     Tendsto (fun N : ℕ ↦ (N : ℝ) * (gaussianPair (logScaleCorrelation (ℓ / N))).real pairSignFlip)
       atTop (𝓝 (ℓ / (2 * Real.pi))) := by
-  have h := (gaussian_log_sign_probability_slope.comp (inverse_nat_spacing_tendsto_right hℓ)).const_mul ℓ
+  have h :=
+    (gaussian_log_sign_probability_slope.comp (inverse_nat_spacing_tendsto_right hℓ)).const_mul ℓ
   have hconst : ℓ * (1 / (2 * Real.pi)) = ℓ / (2 * Real.pi) := by ring
   rw [hconst] at h
   apply h.congr'

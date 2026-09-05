@@ -42,7 +42,8 @@ theorem fine_grid_error_sum_bound {j : ℕ} (hj : 1 ≤ j) {B : ℝ} (hB : 0 ≤
     _ = 2 * B * (j : ℝ) ^ (-6 : ℝ) + 16 * (j : ℝ) ^ (-14 : ℝ) := by
       rw [fineGrid_length_mul_threshold hj₀, heq]
     _ ≤ 2 * B * (j : ℝ) ^ (-4 : ℝ) + 16 * (j : ℝ) ^ (-4 : ℝ) :=
-      add_le_add (mul_le_mul_of_nonneg_left h₆ (by positivity)) (mul_le_mul_of_nonneg_left h₁₄ (by norm_num))
+      add_le_add (mul_le_mul_of_nonneg_left h₆ (by positivity))
+        (mul_le_mul_of_nonneg_left h₁₄ (by norm_num))
     _ = _ := by ring
 
 theorem eventually_dyadic_inverse_le_four :

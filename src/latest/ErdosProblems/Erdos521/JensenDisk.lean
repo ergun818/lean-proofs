@@ -69,7 +69,8 @@ theorem polynomial_zeros_pow_le (p : Polynomial ℂ) (c : ℂ) {δ B r : ℝ}
       max 1 (Real.sqrt (2 * Real.circleAverage (fun z ↦ ‖p.eval z‖ ^ 2) c (4 * r))) /
         ‖p.eval c‖ := by
     rw [← Real.log_pow] at hJ
-    exact (Real.log_le_log_iff (by positivity) (div_pos (lt_of_lt_of_le zero_lt_one (le_max_left _ _)) hc)).mp hJ
+    exact (Real.log_le_log_iff (by positivity)
+      (div_pos (lt_of_lt_of_le zero_lt_one (le_max_left _ _)) hc)).mp hJ
   have hmul : (2 : ℝ) ^ S.card * ‖p.eval c‖ ≤ Real.sqrt (2 * B) :=
     ((le_div_iff₀ hc).mp hpow).trans hmax
   have hδmul : δ * (2 : ℝ) ^ S.card ≤ Real.sqrt (2 * B) := by

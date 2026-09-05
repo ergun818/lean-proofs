@@ -35,7 +35,8 @@ theorem central_disagreement_ae_cover {j : ℕ} (hj : 9 ≤ j) :
     exact Set.mem_iUnion.mpr ⟨k, Set.mem_iUnion.mpr ⟨hk, Or.inl hne⟩⟩
   apply hneq
   have hpartition := intervalRootCount_Ico_eq_sum_of_nonzero_grid ε (2 ^ j) hconst
-    (Nat.sqrt j) (j - Nat.sqrt j) (central_bin_endpoints_strict hj) dyadicPoint dyadicPoint_mono hzero
+    (Nat.sqrt j) (j - Nat.sqrt j) (central_bin_endpoints_strict hj)
+      dyadicPoint dyadicPoint_mono hzero
   unfold centralRootCount centralCappedCount
   rw [hpartition]
   unfold cappedCentralNatSum

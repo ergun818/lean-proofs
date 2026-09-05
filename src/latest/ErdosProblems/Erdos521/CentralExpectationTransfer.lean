@@ -28,7 +28,8 @@ theorem eventually_central_expectation_error_bounded :
   have hcanc : (j : ℝ) ^ 3 * (j : ℝ) ^ (-3 : ℝ) = 1 := by
     rw [Real.rpow_neg (Nat.cast_nonneg j), Real.rpow_ofNat]
     exact mul_inv_cancel₀ (pow_ne_zero _ hj₀.ne')
-  have hp' : (j : ℝ) ^ 3 * sequenceLaw.real {ε | centralRootCount ε j ≠ centralCappedCount ε j} ≤ C := by
+  have hp' : (j : ℝ) ^ 3 * sequenceLaw.real {ε | centralRootCount ε j ≠ centralCappedCount ε j}
+    ≤ C := by
     calc
       _ ≤ (j : ℝ) ^ 3 * (C * (j : ℝ) ^ (-3 : ℝ)) := mul_le_mul_of_nonneg_left hp (by positivity)
       _ = C := by rw [← mul_assoc, mul_comm ((j : ℝ) ^ 3) C, mul_assoc, hcanc, mul_one]
@@ -60,7 +61,8 @@ theorem central_expectation_error_div_index_tendsto_zero :
 theorem centralCappedCount_mean_div_index_limit :
     Tendsto (fun j : ℕ ↦ (∫ ε, (centralCappedCount ε j : ℝ) ∂sequenceLaw) / j)
       atTop (𝓝 (Real.log 2 / (2 * Real.pi))) := by
-  have h := centralRootCount_mean_div_index_limit.sub central_expectation_error_div_index_tendsto_zero
+  have h := centralRootCount_mean_div_index_limit.sub
+    central_expectation_error_div_index_tendsto_zero
   simp only [sub_zero] at h
   convert h using 1
   funext j

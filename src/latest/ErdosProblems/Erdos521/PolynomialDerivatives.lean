@@ -14,13 +14,15 @@ theorem polynomial_derivative_eval (ε : ℕ → ℝ) (n : ℕ) (x : ℝ) :
     (polynomial ε n).derivative.eval x =
       ∑ k ∈ Finset.range (n + 1), ε k * (k : ℝ) * x ^ (k - 1) := by
   simp only [polynomial, Polynomial.derivative_sum, Polynomial.derivative_C_mul_X_pow,
-    Polynomial.eval_finsetSum, Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X]
+    Polynomial.eval_finsetSum, Polynomial.eval_mul, Polynomial.eval_C,
+    Polynomial.eval_pow, Polynomial.eval_X]
 
 theorem polynomial_second_derivative_eval (ε : ℕ → ℝ) (n : ℕ) (x : ℝ) :
     (polynomial ε n).derivative.derivative.eval x =
       ∑ k ∈ Finset.range (n + 1), ε k * (k : ℝ) * (k - 1 : ℕ) * x ^ (k - 2) := by
   simp only [polynomial, Polynomial.derivative_sum, Polynomial.derivative_C_mul_X_pow,
-    Polynomial.eval_finsetSum, Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X,
+    Polynomial.eval_finsetSum, Polynomial.eval_mul, Polynomial.eval_C,
+    Polynomial.eval_pow, Polynomial.eval_X,
     Nat.sub_sub, show (1 : ℕ) + 1 = 2 by rfl]
 
 theorem polynomial_second_derivative_abs_le (ε : ℕ → ℝ) (hε : ∀ k, |ε k| ≤ 1)

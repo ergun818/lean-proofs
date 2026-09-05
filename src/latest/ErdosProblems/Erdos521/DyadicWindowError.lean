@@ -18,7 +18,8 @@ theorem dyadic_window_normalized_error_probability (n k q : ℕ) (hqk : q ≤ k)
     have h : (2 : ℕ) ^ (k - q) ≤ 2 ^ (k + q) := pow_le_pow_right₀ (by norm_num) (by omega)
     omega
   have hx₁ : x < 1 := hx.2.trans_lt (dyadicPoint_lt_one (k + 1))
-  have h := windowPowerSum_normalized_error hx₀ hx₁ ht hLU (by omega : 2 ^ (k + q) + 1 ≤ n + 1) htail
+  have h := windowPowerSum_normalized_error hx₀ hx₁ ht hLU
+    (by omega : 2 ^ (k + q) + 1 ≤ n + 1) htail
   rw [← dyadicCoefficientWindow_eq_Ico hH] at h
   apply h.trans
   apply div_le_div_of_nonneg_right _ (sq_nonneg t)

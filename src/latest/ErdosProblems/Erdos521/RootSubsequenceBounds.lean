@@ -44,7 +44,8 @@ theorem two_div_log_subsequence_tendsto_zero (u : ℕ → ℕ) (hu : Tendsto u a
 
 theorem reversalLowerStatistic_subsequence_limit (ε : ℕ → ℝ) (u : ℕ → ℕ)
     (hu : Tendsto u atTop atTop)
-    (hinter : Tendsto (fun n : ℕ ↦ (interiorRootCount ε n : ℝ) / Real.log n) atTop (𝓝 (1 / Real.pi)))
+    (hinter : Tendsto (fun n : ℕ ↦ (interiorRootCount ε n : ℝ) / Real.log n)
+      atTop (𝓝 (1 / Real.pi)))
     (hrev : Tendsto (fun j ↦ (interiorRootCount (reversedCoefficients (u j) ε) (u j) : ℝ) /
       Real.log (u j)) atTop (𝓝 (1 / Real.pi))) :
     Tendsto (fun j ↦ reversalLowerStatistic ε (u j)) atTop (𝓝 (2 / Real.pi)) := by

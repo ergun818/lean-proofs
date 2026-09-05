@@ -19,7 +19,8 @@ noncomputable def centralRootCount (ε : ℕ → ℝ) (j : ℕ) : ℕ :=
 noncomputable def centralCappedCount (ε : ℕ → ℝ) (j : ℕ) : ℕ :=
   cappedCentralNatSum ε j (dyadicFineGrid j) (fun _ ↦ fineGridLength j)
 
-theorem centralRootCount_aemeasurable (j : ℕ) : AEMeasurable (fun ε ↦ centralRootCount ε j) sequenceLaw :=
+theorem centralRootCount_aemeasurable (j : ℕ) :
+    AEMeasurable (fun ε ↦ centralRootCount ε j) sequenceLaw :=
   intervalRootCount_aemeasurable _ _ _
 
 theorem centralCappedCount_measurable (j : ℕ) : Measurable (fun ε ↦ centralCappedCount ε j) :=
@@ -32,10 +33,12 @@ theorem centralCappedCount_le (ε : ℕ → ℝ) (j : ℕ) : centralCappedCount 
   cappedCentralNatSum_le _ _ _ _
 
 theorem centralRootCount_pow_integrable (j p : ℕ) :
-    Integrable (fun ε ↦ (centralRootCount ε j : ℝ) ^ p) sequenceLaw := intervalRootCount_pow_integrable _ _ _ _
+    Integrable (fun ε ↦ (centralRootCount ε j : ℝ) ^ p) sequenceLaw :=
+  intervalRootCount_pow_integrable _ _ _ _
 
 theorem centralCappedCount_pow_integrable (j p : ℕ) :
-    Integrable (fun ε ↦ (centralCappedCount ε j : ℝ) ^ p) sequenceLaw := cappedCentralNatSum_pow_integrable _ _ _ _
+    Integrable (fun ε ↦ (centralCappedCount ε j : ℝ) ^ p) sequenceLaw :=
+  cappedCentralNatSum_pow_integrable _ _ _ _
 
 theorem centralRootCount_mean_div_index_limit :
     Tendsto (fun j : ℕ ↦ (∫ ε, (centralRootCount ε j : ℝ) ∂sequenceLaw) / j)

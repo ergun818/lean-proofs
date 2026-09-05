@@ -17,7 +17,8 @@ theorem realRoot_ne_zero (ε : ℕ → ℝ) (n : ℕ) (hε : ε 0 ≠ 0)
 
 theorem rootCount_reversal_bounds (ε : ℕ → ℝ) (n : ℕ) (hε₀ : ε 0 ≠ 0) (hεn : ε n ≠ 0) :
     rootCount ε n ≤ interiorRootCount ε n + interiorRootCount (reversedCoefficients n ε) n ∧
-      interiorRootCount ε n + interiorRootCount (reversedCoefficients n ε) n ≤ rootCount ε n + 2 := by
+      interiorRootCount ε n + interiorRootCount (reversedCoefficients n ε) n
+        ≤ rootCount ε n + 2 := by
   classical
   let A := (realRoots ε n).filter (fun x ↦ x ∈ Set.Icc (-1 : ℝ) 1)
   let B₀ := (realRoots (reversedCoefficients n ε) n).filter (fun x ↦ x ∈ Set.Icc (-1 : ℝ) 1)
@@ -71,7 +72,8 @@ theorem rootCount_reversal_bounds (ε : ℕ → ℝ) (n : ℕ) (hε₀ : ε 0 �
   omega
 
 theorem rootCount_reversal_lower (ε : ℕ → ℝ) (n : ℕ) (hε₀ : ε 0 ≠ 0) (hεn : ε n ≠ 0) :
-    (interiorRootCount ε n : ℝ) + interiorRootCount (reversedCoefficients n ε) n - 2 ≤ rootCount ε n := by
+    (interiorRootCount ε n : ℝ) + interiorRootCount (reversedCoefficients n ε) n - 2
+      ≤ rootCount ε n := by
   have h : (interiorRootCount ε n : ℝ) + interiorRootCount (reversedCoefficients n ε) n ≤
       rootCount ε n + 2 := by exact_mod_cast (rootCount_reversal_bounds ε n hε₀ hεn).2
   linarith

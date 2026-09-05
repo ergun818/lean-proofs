@@ -40,6 +40,7 @@ theorem eventually_bulk_interval_moments (p : ℕ) :
   apply integral_mono (intervalRootCount_pow_integrable n p a b)
     (localRootCount_pow_integrable n p b ((1 - b) / 8))
   intro ε
-  exact pow_le_pow_left₀ (Nat.cast_nonneg _) (Nat.cast_le.mpr (intervalRootCount_le_localRight ε n hwidth)) p
+  exact pow_le_pow_left₀ (Nat.cast_nonneg _)
+    (Nat.cast_le.mpr (intervalRootCount_le_localRight ε n hwidth)) p
 
 end Erdos521

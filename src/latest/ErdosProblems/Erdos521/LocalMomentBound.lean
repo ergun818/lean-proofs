@@ -22,7 +22,8 @@ theorem localRootCount_pow_integrable (n p : ℕ) (x r : ℝ) :
 theorem integral_localRootCount_pow_le (n p J : ℕ) (hJ : 8 ≤ J) {x : ℝ}
     (hx : 9 / 10 ≤ x) (hx₁ : x < 1) (hgap : 32 * (J : ℝ) ≤ n * (1 - x)) :
     (∫ ε, (localRootCount ε n x ((1 - x) / 8) : ℝ) ^ p ∂sequenceLaw) ≤
-      16 ^ p + localMomentSeries p + (n : ℝ) ^ p * localTailConstant * Real.exp (-localTailRate * J) := by
+      16 ^ p + localMomentSeries p
+        + (n : ℝ) ^ p * localTailConstant * Real.exp (-localTailRate * J) := by
   have h := integral_nat_pow_le_tail_sum sequenceLaw
     (localRootCount_aemeasurable n x ((1 - x) / 8)) n J p
     (fun ε ↦ localRootCount_le ε n x ((1 - x) / 8))

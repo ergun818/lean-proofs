@@ -61,7 +61,7 @@ theorem smallBall_of_charFun_bound (μ : Measure ℝ) [IsProbabilityMeasure μ]
   simp only [Pi.add_apply] at hint
   rw [integral_add hge hi, integral_add hg he, integral_const,
     integral_indicator_const _ hE] at hint
-  simp only [one_div, neg_mul, ge_iff_le] at hint
+  simp only [neg_mul] at hint
   have htail : γ.real E ≤ 2 * Real.exp (-(δ * T) ^ 2 / 2) := by
     apply (measureReal_mono (μ := γ)
       (show E ⊆ {u : ℝ | δ * T ≤ |u|} from by

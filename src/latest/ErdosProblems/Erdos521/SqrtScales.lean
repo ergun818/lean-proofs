@@ -39,7 +39,8 @@ theorem nat_sqrt_div_tendsto_zero :
     _ = (n : ℝ) ^ (-(1 / 2 : ℝ)) := by
       rw [Real.sqrt_eq_rpow]
       calc
-        (n : ℝ) ^ (1 / 2 : ℝ) / n = (n : ℝ) ^ (1 / 2 : ℝ) / (n : ℝ) ^ (1 : ℝ) := by rw [Real.rpow_one]
+        (n : ℝ) ^ (1 / 2 : ℝ) / n = (n : ℝ) ^ (1 / 2 : ℝ) / (n : ℝ) ^ (1 : ℝ) := by
+          rw [Real.rpow_one]
         _ = _ := by rw [← Real.rpow_sub hn₀]; norm_num
 
 theorem nat_sqrt_lower_half {n : ℕ} (hn : 4 ≤ n) : Real.sqrt n / 2 ≤ (Nat.sqrt n : ℝ) := by
@@ -58,7 +59,8 @@ theorem eventually_two_pow_neg_sqrt_le (p : ℝ) :
     rw [neg_mul, Real.exp_neg, Real.exp_nat_mul, Real.exp_log (by norm_num : (0 : ℝ) < 2)]
   rw [heq]
   apply Real.exp_le_exp.mpr
-  have h := mul_le_mul_of_nonneg_left (nat_sqrt_lower_half hn₄) (Real.log_nonneg (by norm_num : (1 : ℝ) ≤ 2))
+  have h := mul_le_mul_of_nonneg_left (nat_sqrt_lower_half hn₄)
+    (Real.log_nonneg (by norm_num : (1 : ℝ) ≤ 2))
   rw [Real.sqrt_eq_rpow] at h
   nlinarith
 

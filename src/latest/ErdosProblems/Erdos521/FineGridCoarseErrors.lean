@@ -15,7 +15,8 @@ theorem eventually_fineGrid_root_error_four :
       sequenceLaw.real {ε | intervalRootCount ε (2 ^ j) (dyadicPoint k) (dyadicPoint (k + 1)) ≠
         gridSignChanges ε (2 ^ j) (dyadicFineGrid j k) (fineGridLength j)} ≤
         (3 * fineGridSmallBallConstant + 97) * (j : ℝ) ^ (-4 : ℝ) := by
-  filter_upwards [eventually_fineGrid_root_disagreement, eventually_dyadic_inverse_le_four, eventually_ge_atTop 1]
+  filter_upwards [eventually_fineGrid_root_disagreement, eventually_dyadic_inverse_le_four,
+    eventually_ge_atTop 1]
     with j hj hdegree hj₁
   intro k hk
   have hj₀ : 0 < j := by omega
@@ -26,7 +27,8 @@ theorem eventually_fineGrid_root_error_four :
   rw [heq] at h
   have hp : (j : ℝ) ^ (-6 : ℝ) ≤ (j : ℝ) ^ (-4 : ℝ) :=
     Real.rpow_le_rpow_of_exponent_le (by exact_mod_cast hj₁) (by norm_num)
-  have hK : 0 ≤ 3 * fineGridSmallBallConstant + 96 := by have := fineGridSmallBallConstant_pos; positivity
+  have hK : 0 ≤ 3 * fineGridSmallBallConstant + 96 := by
+    have := fineGridSmallBallConstant_pos; positivity
   have hmul := mul_le_mul_of_nonneg_left hp hK
   nlinarith
 

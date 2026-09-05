@@ -34,7 +34,8 @@ theorem integrable_cappedWindowStatistic (n k q T : ℕ) (g : ℕ → ℝ) (N : 
   exact hLp.integrable le_rfl
 
 noncomputable def cappedCentralSum (ε : ℕ → ℝ) (j : ℕ) (g : ℕ → ℕ → ℝ) (N : ℕ → ℕ) : ℝ :=
-  ∑ k ∈ mainBinSet j, cappedWindowStatistic ε (2 ^ j) k (windowWidthScale j) (windowCapScale j) (g k) (N k)
+  ∑ k ∈ mainBinSet j, cappedWindowStatistic ε (2 ^ j) k (windowWidthScale j)
+    (windowCapScale j) (g k) (N k)
 
 theorem measurable_cappedCentralSum (j : ℕ) (g : ℕ → ℕ → ℝ) (N : ℕ → ℕ) :
     Measurable (fun ε ↦ cappedCentralSum ε j g N) :=
@@ -47,19 +48,24 @@ theorem integrable_cappedCentralSum (j : ℕ) (g : ℕ → ℕ → ℝ) (N : ℕ
 theorem cappedCentralSum_centering (ε : ℕ → ℝ) (j : ℕ) (g : ℕ → ℕ → ℝ) (N : ℕ → ℕ) :
     (∑ k ∈ mainBinSet j,
       (cappedWindowStatistic ε (2 ^ j) k (windowWidthScale j) (windowCapScale j) (g k) (N k) -
-        ∫ ζ, cappedWindowStatistic ζ (2 ^ j) k (windowWidthScale j) (windowCapScale j) (g k) (N k) ∂sequenceLaw)) =
+        ∫ ζ, cappedWindowStatistic ζ (2 ^ j) k (windowWidthScale j)
+          (windowCapScale j) (g k) (N k) ∂sequenceLaw)) =
       cappedCentralSum ε j g N - ∫ ζ, cappedCentralSum ζ j g N ∂sequenceLaw := by
   unfold cappedCentralSum
-  rw [integral_finsetSum _ (fun k _ ↦ integrable_cappedWindowStatistic _ _ _ _ _ _), Finset.sum_sub_distrib]
+  rw [integral_finsetSum _ (fun k _ ↦ integrable_cappedWindowStatistic _ _ _ _ _ _),
+    Finset.sum_sub_distrib]
 
 theorem cappedCentralSum_concentration (j : ℕ) (g : ℕ → ℕ → ℝ) (N : ℕ → ℕ) {t : ℝ} (ht : 0 ≤ t) :
-    sequenceLaw.real {ε | t ≤ |cappedCentralSum ε j g N - ∫ ζ, cappedCentralSum ζ j g N ∂sequenceLaw|} ≤
+    sequenceLaw.real {ε | t ≤
+      |cappedCentralSum ε j g N - ∫ ζ, cappedCentralSum ζ j g N ∂sequenceLaw|} ≤
       2 * Real.exp (-t ^ 2 / (2 * ((2 * windowWidthScale j + 1 : ℕ) : ℝ) ^ 2 *
         ((mainBinSet j).card : ℝ) * ((windowCapScale j : ℝ) / 2) ^ 2)) := by
-  have h := colored_window_grid_concentration (2 ^ j) (windowWidthScale j) (windowCapScale j) g N (mainBinSet j) ht
+  have h := colored_window_grid_concentration (2 ^ j) (windowWidthScale j)
+    (windowCapScale j) g N (mainBinSet j) ht
   change sequenceLaw.real {ε | t ≤ |∑ k ∈ mainBinSet j,
     (cappedWindowStatistic ε (2 ^ j) k (windowWidthScale j) (windowCapScale j) (g k) (N k) -
-      ∫ ζ, cappedWindowStatistic ζ (2 ^ j) k (windowWidthScale j) (windowCapScale j) (g k) (N k) ∂sequenceLaw)|} ≤ _ at h
+      ∫ ζ, cappedWindowStatistic ζ (2 ^ j) k (windowWidthScale j)
+        (windowCapScale j) (g k) (N k) ∂sequenceLaw)|} ≤ _ at h
   simpa only [cappedCentralSum_centering] using h
 
 end Erdos521

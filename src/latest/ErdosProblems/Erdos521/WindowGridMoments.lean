@@ -22,11 +22,13 @@ theorem integral_windowGridSignChanges_pow_le {L U : ℕ} (hLU : L < U)
       ∫ ε, (intervalRootCount ε (U - L - 1) (g 0) (g N) : ℝ) ^ p ∂sequenceLaw := by
   let R := fun ε ↦ (intervalRootCount ε (U - L - 1) (g 0) (g N) : ℝ) ^ p
   have hR : Integrable R sequenceLaw := intervalRootCount_pow_integrable _ _ _ _
-  have hshift : MeasurePreserving (shift (α := ℝ) L) sequenceLaw sequenceLaw := measurePreserving_shift signLaw L
+  have hshift : MeasurePreserving (shift (α := ℝ) L) sequenceLaw sequenceLaw :=
+    measurePreserving_shift signLaw L
   have hRmap : Integrable R (sequenceLaw.map (shift L)) := by rw [hshift.map_eq]; exact hR
   have hcomp : Integrable (R ∘ shift L) sequenceLaw := hRmap.comp_measurable hshift.measurable
   have heq := hshift.hasLaw.integral_comp hR.aestronglyMeasurable
-  change (∫ ε, (windowGridSignChanges ε (Finset.Ico L U) g N : ℝ) ^ p ∂sequenceLaw) ≤ ∫ ε, R ε ∂sequenceLaw
+  change (∫ ε, (windowGridSignChanges ε (Finset.Ico L U) g N : ℝ) ^ p ∂sequenceLaw)
+    ≤ ∫ ε, R ε ∂sequenceLaw
   rw [← heq]
   apply integral_mono_ae (windowGridSignChanges_pow_integrable _ _ _ _) hcomp
   filter_upwards [ae_sequence_signs] with ε hε

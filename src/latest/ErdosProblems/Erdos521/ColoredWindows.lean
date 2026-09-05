@@ -14,7 +14,8 @@ def coloredCoefficientWindow (n q c k : ℕ) : Finset ℕ :=
   if k % (2 * q + 1) = c then dyadicCoefficientWindow n k q else ∅
 
 theorem coloredCoefficientWindow_pairwise_disjoint (n q c : ℕ) :
-    Pairwise (fun i j ↦ Disjoint (coloredCoefficientWindow n q c i) (coloredCoefficientWindow n q c j)) := by
+    Pairwise (fun i j ↦ Disjoint (coloredCoefficientWindow n q c i)
+      (coloredCoefficientWindow n q c j)) := by
   intro i j hij
   by_cases hi : i % (2 * q + 1) = c
   · by_cases hj : j % (2 * q + 1) = c

@@ -14,10 +14,12 @@ open scoped Topology
 
 theorem cappedCentralSum_normalized_probability {j : ℕ} (hj : 9 ≤ j)
     (g : ℕ → ℕ → ℝ) (N : ℕ → ℕ) {η : ℝ} (hη : 0 < η) :
-    sequenceLaw.real {ε | η ≤ |(cappedCentralSum ε j g N - ∫ ζ, cappedCentralSum ζ j g N ∂sequenceLaw) / j|} ≤
+    sequenceLaw.real {ε | η ≤ |(cappedCentralSum ε j g N
+      - ∫ ζ, cappedCentralSum ζ j g N ∂sequenceLaw) / j|} ≤
       2 * Real.exp (-(η ^ 2 / 36) * (j : ℝ) ^ (1 / 4 : ℝ)) := by
   have hj₀ : (0 : ℝ) < j := by exact_mod_cast (show 0 < j by omega)
-  have heq : {ε | η ≤ |(cappedCentralSum ε j g N - ∫ ζ, cappedCentralSum ζ j g N ∂sequenceLaw) / j|} =
+  have heq : {ε | η ≤ |(cappedCentralSum ε j g N
+    - ∫ ζ, cappedCentralSum ζ j g N ∂sequenceLaw) / j|} =
       {ε | η * j ≤ |cappedCentralSum ε j g N - ∫ ζ, cappedCentralSum ζ j g N ∂sequenceLaw|} := by
     ext ε
     simp only [Set.mem_ofPred_eq, abs_div, abs_of_pos hj₀, le_div_iff₀ hj₀]
@@ -32,7 +34,8 @@ theorem ae_cappedCentralSum_centered_div_index_tendsto_zero
       (cappedCentralSum ε j (g j) (N j) - ∫ ζ, cappedCentralSum ζ j (g j) (N j) ∂sequenceLaw) / j)
       atTop (𝓝 0) := by
   apply ae_tendsto_zero_of_deviation_power_bound sequenceLaw
-    (fun j ε ↦ (cappedCentralSum ε j (g j) (N j) - ∫ ζ, cappedCentralSum ζ j (g j) (N j) ∂sequenceLaw) / j)
+    (fun j ε ↦ (cappedCentralSum ε j (g j) (N j)
+      - ∫ ζ, cappedCentralSum ζ j (g j) (N j) ∂sequenceLaw) / j)
     (p := 3) (by norm_num)
   intro η hη
   refine ⟨2, ?_⟩

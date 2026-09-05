@@ -32,7 +32,8 @@ theorem ae_positiveRootCount_dyadic_div_log_limit :
     ae_endpointRootCount_div_log_tendsto_zero hC] with ε hcentral hleft hright hsmall hend
   have hdegree : Tendsto (fun j : ℕ ↦ (2 : ℕ) ^ j) atTop atTop :=
     tendsto_pow_atTop_atTop_of_one_lt (by norm_num)
-  have hs := (hsmall (dyadicPoint 4) (by norm_num [dyadicPoint]) (dyadicPoint_lt_one 4)).comp hdegree
+  have hs := (hsmall (dyadicPoint 4) (by norm_num [dyadicPoint])
+    (dyadicPoint_lt_one 4)).comp hdegree
   have he := hend.comp hdegree
   have hl := tendsto_div_log_two_pow_of_div_index hleft
   have hr := tendsto_div_log_two_pow_of_div_index hright
@@ -43,10 +44,12 @@ theorem ae_positiveRootCount_dyadic_div_log_limit :
   · apply Eventually.of_forall
     intro j
     have hlo : 0 ≤ dyadicPoint (Nat.sqrt j) := by
-      simpa only [dyadicPoint, pow_zero, div_one, sub_self] using dyadicPoint_mono (Nat.zero_le (Nat.sqrt j))
+      simpa only [dyadicPoint, pow_zero, div_one, sub_self] using
+        dyadicPoint_mono (Nat.zero_le (Nat.sqrt j))
     have hcount : (centralRootCount ε j : ℝ) ≤ (intervalRootCount ε (2 ^ j) 0 1 : ℝ) := by
       exact_mod_cast intervalRootCount_mono ε (2 ^ j) hlo (dyadicPoint_lt_one (j - Nat.sqrt j)).le
-    exact div_le_div_of_nonneg_right hcount (Real.log_nonneg (by exact_mod_cast (show 1 ≤ (2 : ℕ) ^ j from Nat.one_le_two_pow)))
+    exact div_le_div_of_nonneg_right hcount
+      (Real.log_nonneg (by exact_mod_cast (show 1 ≤ (2 : ℕ) ^ j from Nat.one_le_two_pow)))
   · filter_upwards [eventually_central_end_le_endpoint (localMomentBulkConstant 4),
       eventually_ge_atTop 25] with j hboundary hj
     have hr₅ : 5 ≤ Nat.sqrt j := Nat.le_sqrt.mpr hj
@@ -59,7 +62,8 @@ theorem ae_positiveRootCount_dyadic_div_log_limit :
         (centralRootCount ε j : ℝ) +
         (intervalRootCount ε (2 ^ j) (dyadicPoint (j - Nat.sqrt j))
           (endpointCenter (localMomentBulkConstant 4) (2 ^ j)) : ℝ) +
-        (intervalRootCount ε (2 ^ j) (endpointCenter (localMomentBulkConstant 4) (2 ^ j)) 1 : ℝ) := by
+        (intervalRootCount ε (2 ^ j) (endpointCenter (localMomentBulkConstant 4) (2 ^ j))
+          1 : ℝ) := by
       exact_mod_cast hcount
     have hlog : 0 ≤ Real.log ((2 ^ j : ℕ) : ℝ) :=
       Real.log_nonneg (by exact_mod_cast (show 1 ≤ (2 : ℕ) ^ j from Nat.one_le_two_pow))

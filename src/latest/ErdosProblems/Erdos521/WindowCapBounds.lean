@@ -23,10 +23,12 @@ theorem index_lt_windowCapScale_pow_eight (j : ℕ) : j < windowCapScale j ^ 8 :
 theorem index_pow_four_le_windowCapScale_pow_thirtytwo (j : ℕ) :
     j ^ 4 ≤ windowCapScale j ^ 32 := by
   calc
-    j ^ 4 ≤ (windowCapScale j ^ 8) ^ 4 := pow_le_pow_left' (index_lt_windowCapScale_pow_eight j).le 4
+    j ^ 4 ≤ (windowCapScale j ^ 8) ^ 4 :=
+      pow_le_pow_left' (index_lt_windowCapScale_pow_eight j).le 4
     _ = _ := by ring
 
-theorem windowCapScale_sq_le {j : ℕ} (hj : 1 ≤ j) : windowCapScale j ^ 2 ≤ 4 * windowWidthScale j := by
+theorem windowCapScale_sq_le {j : ℕ} (hj : 1 ≤ j) :
+    windowCapScale j ^ 2 ≤ 4 * windowWidthScale j := by
   have hq := windowWidthScale_pos hj
   have hsmall := Nat.sqrt_le_self (windowWidthScale j)
   have hsq := Nat.sqrt_le' (windowWidthScale j)
@@ -48,7 +50,8 @@ theorem window_group_cap_parameter_le {j : ℕ} (hj : 1 ≤ j) :
   have hm : ((2 * windowWidthScale j + 1 : ℕ) : ℝ) ≤ 3 * (windowWidthScale j : ℝ) := by
     push_cast
     linarith
-  have hT : (windowCapScale j : ℝ) ^ 2 ≤ 4 * (windowWidthScale j : ℝ) := by exact_mod_cast windowCapScale_sq_le hj
+  have hT : (windowCapScale j : ℝ) ^ 2 ≤ 4 * (windowWidthScale j : ℝ) := by
+    exact_mod_cast windowCapScale_sq_le hj
   calc
     _ ≤ (3 * (windowWidthScale j : ℝ)) ^ 2 * (4 * (windowWidthScale j : ℝ)) :=
       mul_le_mul (pow_le_pow_left₀ (Nat.cast_nonneg _) hm 2) hT (sq_nonneg _) (sq_nonneg _)

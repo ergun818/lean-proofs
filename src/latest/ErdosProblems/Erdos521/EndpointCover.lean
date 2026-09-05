@@ -20,10 +20,11 @@ theorem intervalRootCount_aemeasurable (n : ℕ) (l u : ℝ) :
   intro a b hab
   rw [intervalRootCount, intervalRootCount, realRoots_congr_prefix a b n hab]
 
-theorem card_le_add_sum_of_cover {α ι : Type*} [DecidableEq α]
+theorem card_le_add_sum_of_cover {α ι : Type*}
     (S F₀ : Finset α) (T : Finset ι) (F : ι → Finset α)
     (hcover : ∀ x ∈ S, x ∈ F₀ ∨ ∃ i ∈ T, x ∈ F i) :
     S.card ≤ F₀.card + ∑ i ∈ T, (F i).card := by
+  classical
   have hsub : S ⊆ F₀ ∪ T.biUnion F := by
     intro x hx
     rcases hcover x hx with h | ⟨i, hi, hix⟩
@@ -54,7 +55,8 @@ theorem endpoint_interval_rootCount_le {a C : ℝ} (ha : 0 < a)
     {n : ℕ} (hn : 1 < n) (ε : ℕ → ℝ) (m : ℕ) :
     intervalRootCount ε m (endpointCenter C n) 1 ≤
       localRootCount ε m (endpointCenter a n) (endpointRadius a n) +
-        ∑ t ∈ T, localRootCount ε m (endpointCenter (t : ℝ) n) (endpointRadius ((t : ℝ) / 8) n) := by
+        ∑ t ∈ T, localRootCount ε m (endpointCenter (t : ℝ) n)
+          (endpointRadius ((t : ℝ) / 8) n) := by
   classical
   let q := Real.log n / n
   have hn₀ : (0 : ℝ) < n := by exact_mod_cast (show 0 < n by omega)

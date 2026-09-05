@@ -37,10 +37,13 @@ theorem gridSignChanges_pow_integrable (n p : ℕ) (g : ℕ → ℝ) (N : ℕ) :
     (fun ε ↦ gridSignChanges_le ε n g N)
 
 theorem polynomial_signChange_integrable (n : ℕ) (a b : ℝ) :
-    Integrable (fun ε ↦ (signChange ((polynomial ε n).eval a) ((polynomial ε n).eval b) : ℝ)) sequenceLaw := by
+    Integrable (fun ε ↦ (signChange ((polynomial ε n).eval a) ((polynomial ε n).eval b) : ℝ))
+      sequenceLaw := by
   have hE : MeasurableSet {ε : ℕ → ℝ | (polynomial ε n).eval a * (polynomial ε n).eval b < 0} :=
-    measurableSet_lt ((measurable_polynomial_eval n a).mul (measurable_polynomial_eval n b)) measurable_const
-  have hmeas : Measurable (fun ε ↦ signChange ((polynomial ε n).eval a) ((polynomial ε n).eval b)) :=
+    measurableSet_lt ((measurable_polynomial_eval n a).mul (measurable_polynomial_eval n b))
+      measurable_const
+  have hmeas : Measurable
+    (fun ε ↦ signChange ((polynomial ε n).eval a) ((polynomial ε n).eval b)) :=
     Measurable.ite hE measurable_const measurable_const
   simpa only [pow_one] using bounded_nat_pow_integrable sequenceLaw hmeas.aemeasurable 1 1
     (fun ε ↦ signChange_le_one _ _)
@@ -61,7 +64,8 @@ theorem integral_gridSignChanges (n N : ℕ) (g : ℕ → ℝ) :
       ∑ i ∈ Finset.range N, sequenceLaw.real {ε |
         powerSum ε (n + 1) (g i) * powerSum ε (n + 1) (g (i + 1)) < 0} := by
   simp only [gridSignChanges, Nat.cast_sum]
-  rw [integral_finsetSum (Finset.range N) (fun i _ ↦ polynomial_signChange_integrable n (g i) (g (i + 1)))]
+  rw [integral_finsetSum (Finset.range N)
+    (fun i _ ↦ polynomial_signChange_integrable n (g i) (g (i + 1)))]
   simp only [integral_polynomial_signChange]
 
 end Erdos521

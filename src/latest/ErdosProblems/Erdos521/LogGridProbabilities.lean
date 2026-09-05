@@ -34,7 +34,8 @@ theorem eventually_logGrid_two_root_probability (n : ℕ → ℕ) (s : ℕ → �
       sequenceLaw.real {ε | 2 ≤ intervalRootCount ε (n j)
         (logGrid (s j) a δ i) (logGrid (s j) a δ (i + 1))} ≤
           (normalizedSmallBallConstant + 96) * (Real.exp δ - 1) ^ (4 / 3 : ℝ) + e := by
-    apply eventually_two_interval_roots_probability n _ _ hn (logGrid_point_tendsto s hs a δ (i + 1)) hd _ he
+    apply eventually_two_interval_roots_probability n _ _ hn
+      (logGrid_point_tendsto s hs a δ (i + 1)) hd _ he
     filter_upwards [eventually_logGrid_point_bounds s hs ha δ i,
       eventually_logGrid_point_bounds s hs ha δ (i + 1), hs.eventually_gt_atTop 0,
       (logGrid_tail_tendsto_zero n s hs hN ha δ (i + 1)).eventually

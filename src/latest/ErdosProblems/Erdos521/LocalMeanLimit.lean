@@ -36,7 +36,8 @@ theorem local_logarithmic_mean_limit :
     (Real.exp (ℓ / N) - 1) ^ (4 / 3 : ℝ) + localMomentBoundConstant 8 / ((N : ℝ) ^ (1 / 6 : ℝ)) ^ 7
   have hv : Tendsto v atTop (𝓝 (ℓ / (2 * Real.pi))) := gaussian_grid_refinement_limit hℓ
   have he : Tendsto e atTop (𝓝 0) := by
-    have hK : 0 ≤ normalizedSmallBallConstant + 96 := by have := normalizedSmallBallConstant_pos; linarith
+    have hK : 0 ≤ normalizedSmallBallConstant + 96 := by
+      have := normalizedSmallBallConstant_pos; linarith
     simpa only [e, add_zero] using
       (refinement_probability_error_tendsto_zero hℓ hK).add
         (refinement_moment_error_tendsto_zero (localMomentBoundConstant 8))

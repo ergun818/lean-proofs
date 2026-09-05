@@ -16,14 +16,16 @@ open scoped Topology
 theorem eventually_right_trim_fourth_moment :
     ∃ B : ℝ, 0 < B ∧ ∀ᶠ j : ℕ in atTop,
       (∫ ε, (intervalRootCount ε (2 ^ j) (dyadicPoint (j - Nat.sqrt j))
-        (endpointCenter (localMomentBulkConstant 4) (2 ^ j)) : ℝ) ^ 4 ∂sequenceLaw) ≤ B * (j : ℝ) ^ 2 := by
+        (endpointCenter (localMomentBulkConstant 4) (2 ^ j)) : ℝ) ^ 4 ∂sequenceLaw)
+          ≤ B * (j : ℝ) ^ 2 := by
   obtain ⟨B, hB, hmom⟩ := eventually_relative_interval_moments 4 (by norm_num)
   have hdegree : Tendsto (fun j : ℕ ↦ (2 : ℕ) ^ j) atTop atTop :=
     tendsto_pow_atTop_atTop_of_one_lt (by norm_num)
   let C := localMomentBulkConstant 4
   refine ⟨B, hB, ?_⟩
   filter_upwards [hdegree.eventually hmom, eventually_central_end_le_endpoint C,
-    eventually_endpoint_le_dyadic_last (localMomentBulkConstant_pos 4), eventually_central_end_lower,
+    eventually_endpoint_le_dyadic_last (localMomentBulkConstant_pos 4),
+    eventually_central_end_lower,
     eventually_ge_atTop 9] with j hj hstart hend hlower hj₉
   let b := endpointCenter C (2 ^ j)
   let g := fun i : ℕ ↦ min (dyadicPoint (j - Nat.sqrt j + i)) b
@@ -44,7 +46,8 @@ theorem eventually_right_trim_fourth_moment :
     · exact min_le_right _ _
     · simpa only [g, Nat.add_assoc] using clamped_dyadic_width (j - Nat.sqrt j + i) hb₁.le
   have hr : 1 ≤ Nat.sqrt j := Nat.le_sqrt.mpr (by omega)
-  have h := integral_intervalRootCount_partition_pow_le (2 ^ j) (Nat.sqrt j) 4 hr (by norm_num) g hg hcell
+  have h := integral_intervalRootCount_partition_pow_le (2 ^ j) (Nat.sqrt j) 4 hr
+    (by norm_num) g hg hcell
   rw [hg₀, hgN] at h
   apply h.trans
   have hroot : (Nat.sqrt j : ℝ) ^ 2 ≤ j := by exact_mod_cast Nat.sqrt_le' j

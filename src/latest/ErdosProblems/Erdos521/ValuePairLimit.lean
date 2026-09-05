@@ -33,10 +33,12 @@ theorem polynomial_value_pair_central_limit (d : ℕ → ℕ) (s : ℕ → ℝ)
         |(1 - c / s j) ^ i / Real.sqrt (geometricVariance (1 - c / s j) (d j + 1))| < r := by
     have hI : ∀ᶠ j : ℕ in atTop, 0 ≤ 1 - c / s j ∧ 1 - c / s j ≤ 1 :=
       (eventually_inverse_scale_point_bounds s hs hc).mono (fun _ hj ↦ ⟨hj.1, hj.2.le⟩)
-    exact (normalized_geometric_weights_small d _ hd (inverse_scale_point_tendsto s hs c) hI r hr).mono
+    exact (normalized_geometric_weights_small d _ hd
+      (inverse_scale_point_tendsto s hs c) hI r hr).mono
       (fun _ hj i _ ↦ hj i)
   have hvariance (c : ℝ) : Tendsto (fun j ↦ ∑ i ∈ S j,
-      ((1 - c / s j) ^ i / Real.sqrt (geometricVariance (1 - c / s j) (d j + 1))) ^ 2) atTop (𝓝 1) := by
+      ((1 - c / s j) ^ i / Real.sqrt (geometricVariance (1 - c / s j) (d j + 1))) ^ 2)
+        atTop (𝓝 1) := by
     simp only [S, normalized_geometric_variance_sum]
     exact tendsto_const_nhds
   have h := triangular_pair_sign_central_limit S A B (inverse_scale_correlation_sq_le_one ha hb)

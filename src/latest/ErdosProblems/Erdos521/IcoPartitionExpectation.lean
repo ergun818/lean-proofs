@@ -18,6 +18,7 @@ theorem integral_intervalRootCount_Ico_identity (n a b : ℕ) (hab : a ≤ b)
         ∑ i ∈ Finset.Ico a b, sequenceLaw.real {ε | powerSum ε (n + 1) (g i) = 0} := by
   have h := integral_intervalRootCount_grid_identity n (b - a) (fun i ↦ g (a + i))
     (fun i j hij ↦ hg (Nat.add_le_add_left hij a))
-  simpa only [Finset.sum_Ico_eq_sum_range, Nat.add_zero, Nat.add_sub_of_le hab, Nat.add_assoc] using h
+  simpa only [Finset.sum_Ico_eq_sum_range, Nat.add_zero, Nat.add_sub_of_le hab,
+    Nat.add_assoc] using h
 
 end Erdos521

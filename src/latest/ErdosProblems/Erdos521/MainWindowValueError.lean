@@ -15,7 +15,8 @@ open MeasureTheory Filter
 theorem eventually_mainBin_window_value_error :
     ∀ᶠ j : ℕ in atTop, ∀ k ∈ mainBinSet j, ∀ x ∈ Set.Icc (dyadicPoint k) (dyadicPoint (k + 1)),
       sequenceLaw.real {ε | fineGridThreshold j * Real.sqrt (geometricVariance x (2 ^ j + 1)) ≤
-        |powerSum ε (2 ^ j + 1) x - windowPowerSum ε (dyadicCoefficientWindow (2 ^ j) k (windowWidthScale j)) x|} ≤
+        |powerSum ε (2 ^ j + 1) x - windowPowerSum ε
+          (dyadicCoefficientWindow (2 ^ j) k (windowWidthScale j)) x|} ≤
         8 * (j : ℝ) ^ (-32 : ℝ) := by
   filter_upwards [eventually_mainBin_point_variance, eventually_two_pow_neg_windowWidth_le (-80),
     eventually_ge_atTop 1] with j hj hscale hj₁

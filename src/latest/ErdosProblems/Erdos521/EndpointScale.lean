@@ -115,7 +115,8 @@ theorem endpointCenter_tendsto (a : ℝ) : Tendsto (endpointCenter a) atTop (�
   have h := Real.isLittleO_log_id_atTop.tendsto_div_nhds_zero.comp
     (tendsto_natCast_atTop_atTop (R := ℝ))
   have h' := (tendsto_const_nhds (x := (1 : ℝ))).sub (h.const_mul a)
-  simpa only [endpointCenter, mul_zero, sub_zero, mul_div_assoc, Function.comp_apply, id_eq] using h'
+  simpa only [endpointCenter, mul_zero, sub_zero, mul_div_assoc,
+    Function.comp_apply, id_eq] using h'
 
 theorem eventually_endpointCenter_bounds {a : ℝ} (ha : 0 < a) :
     ∀ᶠ n : ℕ in atTop, 1 / 2 ≤ endpointCenter a n ∧ endpointCenter a n < 1 := by

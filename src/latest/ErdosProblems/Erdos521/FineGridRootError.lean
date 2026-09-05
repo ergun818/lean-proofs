@@ -33,7 +33,8 @@ theorem eventually_fineGrid_root_disagreement :
     have h := Finset.sum_le_sum (fun i (hi : i ∈ Finset.range (fineGridLength j + 1)) ↦
       hzero k hk (dyadicFineGrid j k i)
         (dyadicFineGrid_mem hj₀ k (i := i) (by have := Finset.mem_range.mp hi; omega)))
-    simpa only [Finset.sum_const, Finset.card_range, nsmul_eq_mul, Nat.cast_add, Nat.cast_one] using h
+    simpa only [Finset.sum_const, Finset.card_range, nsmul_eq_mul,
+      Nat.cast_add, Nat.cast_one] using h
   have hcells : (∑ i ∈ Finset.range (fineGridLength j), sequenceLaw.real
       {ε | 2 ≤ intervalRootCount ε (2 ^ j) (dyadicFineGrid j k i) (dyadicFineGrid j k (i + 1))}) ≤
       (fineGridLength j : ℝ) * ((fineGridSmallBallConstant + 96) * fineGridThreshold j) := by
@@ -46,7 +47,8 @@ theorem eventually_fineGrid_root_disagreement :
   simp only [dyadicFineGrid_zero, dyadicFineGrid_end hj₀, abs_nonpos_iff] at h
   have hnonneg : 0 ≤ fineGridSmallBallConstant * fineGridThreshold j :=
     mul_nonneg fineGridSmallBallConstant_pos.le (fineGridThreshold_pos hj₀).le
-  have hMbound := mul_le_mul_of_nonneg_right (show (fineGridLength j : ℝ) + 1 ≤ 2 * fineGridLength j by linarith) hnonneg
+  have hMbound := mul_le_mul_of_nonneg_right
+    (show (fineGridLength j : ℝ) + 1 ≤ 2 * fineGridLength j by linarith) hnonneg
   nlinarith
 
 end Erdos521

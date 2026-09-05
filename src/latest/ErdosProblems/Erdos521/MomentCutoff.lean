@@ -31,7 +31,8 @@ theorem eventually_localMomentCutoff_large (p : ℕ) :
 
 theorem localMomentCutoff_gap (p n : ℕ) (hlog : 1 ≤ Real.log n) :
     32 * (localMomentCutoff p n : ℝ) ≤ 32 * (localMomentSlope p + 1) * Real.log n := by
-  have hceil := Nat.ceil_lt_add_one (mul_nonneg (localMomentSlope_pos p).le (by linarith : 0 ≤ Real.log n))
+  have hceil := Nat.ceil_lt_add_one
+    (mul_nonneg (localMomentSlope_pos p).le (by linarith : 0 ≤ Real.log n))
   change (localMomentCutoff p n : ℝ) < localMomentSlope p * Real.log n + 1 at hceil
   nlinarith
 
@@ -44,7 +45,8 @@ theorem localMomentCutoff_remainder (p n : ℕ) (hn : 1 ≤ n) :
   change localMomentSlope p * Real.log n ≤ (localMomentCutoff p n : ℝ) at hceil
   have hmul := mul_le_mul_of_nonneg_left hceil localTailRate_pos.le
   rw [← mul_assoc, localMomentSlope_mul_rate] at hmul
-  have hexp : Real.exp (-localTailRate * localMomentCutoff p n) ≤ Real.exp (-(p : ℝ) * Real.log n) := by
+  have hexp : Real.exp (-localTailRate * localMomentCutoff p n)
+    ≤ Real.exp (-(p : ℝ) * Real.log n) := by
     apply Real.exp_le_exp.mpr
     nlinarith
   calc

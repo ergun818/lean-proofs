@@ -46,13 +46,15 @@ theorem eventually_mainBin_point_variance :
   have hxtail := (bulk_terminal_tail_le hj hx₀ (hx.2.trans (hu k hk))).trans ht.le
   refine ⟨hxlow, hx.2.trans_lt (dyadicPoint_lt_one (k + 1)), hxtail, ?_⟩
   have hqk : windowWidthScale j ≤ k := (Nat.sqrt_le_self (Nat.sqrt j)).trans (mainBinSet_mem hk).1
-  exact (div_le_div_of_nonneg_right (pow_le_pow_right₀ (by norm_num : (1 : ℝ) ≤ 2) hqk) (by norm_num)).trans
+  exact (div_le_div_of_nonneg_right (pow_le_pow_right₀ (by norm_num : (1 : ℝ) ≤ 2) hqk)
+    (by norm_num)).trans
     (dyadic_bin_variance_lower (2 ^ j) k hx hxtail)
 
 theorem eventually_mainBin_variance_ge (C p : ℝ) :
     ∀ᶠ j : ℕ in atTop, ∀ k ∈ mainBinSet j, ∀ x ∈ Set.Icc (dyadicPoint k) (dyadicPoint (k + 1)),
       C * (j : ℝ) ^ p ≤ geometricVariance x (2 ^ j + 1) := by
-  filter_upwards [eventually_mainBin_point_variance, eventually_const_mul_rpow_le_window_scale (4 * C) p]
+  filter_upwards [eventually_mainBin_point_variance,
+    eventually_const_mul_rpow_le_window_scale (4 * C) p]
     with j hj hgrowth
   intro k hk x hx
   have hV := (hj k hk x hx).2.2.2

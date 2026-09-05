@@ -36,8 +36,10 @@ theorem two_interval_roots_probability_split (n : ℕ) {a b δ : ℝ}
       simpa only [secondDerivativeEnergy, mul_comm] using hbound
   have hE : sequenceLaw.real E ≤
       (∫ ε, secondDerivativeEnergy n a b ε ∂sequenceLaw) / (δ ^ 2 / (b - a) ^ 3) :=
-    measureReal_le_integral_div_of_ae sequenceLaw (secondDerivativeEnergy_integrable n ha hab.le hb.le)
-      (Eventually.of_forall (secondDerivativeEnergy_nonneg n hab.le)) ht (Eventually.of_forall fun _ h ↦ h)
+    measureReal_le_integral_div_of_ae sequenceLaw
+      (secondDerivativeEnergy_integrable n ha hab.le hb.le)
+      (Eventually.of_forall (secondDerivativeEnergy_nonneg n hab.le)) ht
+        (Eventually.of_forall fun _ h ↦ h)
   have hE' : sequenceLaw.real E ≤ 24 * (b - a) ^ 4 / (δ ^ 2 * (1 - b) ^ 5) := by
     apply hE.trans
     calc

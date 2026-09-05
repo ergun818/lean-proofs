@@ -29,7 +29,8 @@ theorem rootCount_signGrid_probability (n N : ℕ) (g : ℕ → ℝ) (hg : Monot
     sequenceLaw.real {ε | intervalRootCount ε n (g 0) (g N) ≠ gridSignChanges ε n g N} ≤
       sequenceLaw.real (smallValueDerivativeEvent n (g 0) (g N) δ) +
         (∑ i ∈ Finset.range (N + 1), sequenceLaw.real {ε | |powerSum ε (n + 1) (g i)| ≤ τ}) +
-        ∑ i ∈ Finset.range N, sequenceLaw.real {ε | 2 ≤ intervalRootCount ε n (g i) (g (i + 1))} := by
+        ∑ i ∈ Finset.range N,
+          sequenceLaw.real {ε | 2 ≤ intervalRootCount ε n (g i) (g (i + 1))} := by
   let R := smallValueDerivativeEvent n (g 0) (g N) δ
   let V := fun i ↦ {ε : ℕ → ℝ | |powerSum ε (n + 1) (g i)| ≤ τ}
   let T := fun i ↦ {ε : ℕ → ℝ | 2 ≤ intervalRootCount ε n (g i) (g (i + 1))}

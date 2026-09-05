@@ -19,7 +19,8 @@ theorem measurable_extendWindow (W : Finset ℕ) : Measurable (extendWindow W) :
   intro k
   by_cases hk : k ∈ W
   · simpa only [extendWindow, dif_pos hk] using (measurable_pi_apply (⟨k, hk⟩ : W))
-  · simpa only [extendWindow, dif_neg hk] using (measurable_const : Measurable (fun _ : W → ℝ ↦ (0 : ℝ)))
+  · simpa only [extendWindow, dif_neg hk] using
+    (measurable_const : Measurable (fun _ : W → ℝ ↦ (0 : ℝ)))
 
 theorem windowPowerSum_extendWindow (ε : ℕ → ℝ) (W : Finset ℕ) (x : ℝ) :
     windowPowerSum (extendWindow W (fun k ↦ ε k)) W x = windowPowerSum ε W x := by
@@ -36,7 +37,8 @@ theorem independent_capped_window_grid {ι : Type*} (W : ι → Finset ℕ)
     (hW : Pairwise (fun i j ↦ Disjoint (W i) (W j))) (g : ι → ℕ → ℝ) (N T : ι → ℕ) :
     iIndepFun (fun i (ε : ℕ → ℝ) ↦ (min (windowGridSignChanges ε (W i) (g i) (N i)) (T i) : ℝ))
       sequenceLaw := by
-  let F := fun i (z : W i → ℝ) ↦ (min (windowGridSignChanges (extendWindow (W i) z) (W i) (g i) (N i)) (T i) : ℝ)
+  let F := fun i (z : W i → ℝ) ↦
+    (min (windowGridSignChanges (extendWindow (W i) z) (W i) (g i) (N i)) (T i) : ℝ)
   have hF (i : ι) : Measurable (F i) := by
     have hm : Measurable (fun z : W i → ℝ ↦
         (windowGridSignChanges (extendWindow (W i) z) (W i) (g i) (N i) : ℝ)) :=
@@ -60,7 +62,8 @@ theorem capped_window_grid_concentration {ι : Type*} (W : ι → Finset ℕ)
       (measurable_windowGridSignChanges (W i) (g i) (N i))).min measurable_const).aemeasurable
   · exact Nat.cast_nonneg T
   · intro i _
-    exact Filter.Eventually.of_forall (fun ε ↦ ⟨le_min (Nat.cast_nonneg _) (Nat.cast_nonneg T), min_le_right _ _⟩)
+    exact Filter.Eventually.of_forall
+      (fun ε ↦ ⟨le_min (Nat.cast_nonneg _) (Nat.cast_nonneg T), min_le_right _ _⟩)
   · exact ht
 
 end Erdos521

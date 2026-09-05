@@ -37,7 +37,8 @@ theorem ae_nat_div_tendsto_zero_of_fourth_moment {Ω : Type*} [MeasurableSpace �
     (hmom : ∃ C : ℝ, ∀ᶠ j : ℕ in atTop, (∫ ω, (X j ω : ℝ) ^ 4 ∂μ) ≤ C * (j : ℝ) ^ 2) :
     ∀ᵐ ω ∂μ, Tendsto (fun j ↦ (X j ω : ℝ) / j) atTop (𝓝 0) := by
   obtain ⟨C, hC⟩ := hmom
-  apply ae_tendsto_zero_of_deviation_power_bound μ (fun j ω ↦ (X j ω : ℝ) / j) (p := 2) (by norm_num)
+  apply ae_tendsto_zero_of_deviation_power_bound μ (fun j ω ↦ (X j ω : ℝ) / j)
+    (p := 2) (by norm_num)
   intro η hη
   refine ⟨C / η ^ 4, ?_⟩
   filter_upwards [hC, eventually_ge_atTop 1] with j hj hj₁

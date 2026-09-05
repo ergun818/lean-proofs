@@ -25,7 +25,8 @@ theorem windowPowerSum_normalized_error {x t : ℝ} (hx : 0 ≤ x) (hx₁ : x < 
   calc
     _ ≤ (4 * ((L : ℝ) * (1 - x) + x ^ (2 * U)) * geometricVariance x N) /
         (t ^ 2 * geometricVariance x N) :=
-      div_le_div_of_nonneg_right (omitted_geometricVariance_normalized hx hx₁ hLU hUN htail) (by positivity)
+      div_le_div_of_nonneg_right (omitted_geometricVariance_normalized hx hx₁ hLU hUN htail)
+        (by positivity)
     _ = _ := by field_simp
 
 end Erdos521

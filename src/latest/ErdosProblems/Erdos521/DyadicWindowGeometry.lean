@@ -9,7 +9,8 @@ import ErdosProblems.Erdos521.DyadicWindows
 
 namespace Erdos521
 
-theorem dyadic_bin_distance {k : ℕ} {x : ℝ} (hx : x ∈ Set.Icc (dyadicPoint k) (dyadicPoint (k + 1))) :
+theorem dyadic_bin_distance {k : ℕ} {x : ℝ}
+    (hx : x ∈ Set.Icc (dyadicPoint k) (dyadicPoint (k + 1))) :
     1 / (2 : ℝ) ^ (k + 1) ≤ 1 - x ∧ 1 - x ≤ 1 / (2 : ℝ) ^ k := by
   obtain ⟨hl, hu⟩ := hx
   unfold dyadicPoint at hl hu

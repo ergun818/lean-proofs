@@ -32,14 +32,16 @@ theorem eventually_binComparisonException_probability :
 
 theorem eventually_central_disagreement_probability :
     ∃ C : ℝ, 0 < C ∧ ∀ᶠ j : ℕ in atTop,
-      sequenceLaw.real {ε | centralRootCount ε j ≠ centralCappedCount ε j} ≤ C * (j : ℝ) ^ (-3 : ℝ) := by
+      sequenceLaw.real {ε | centralRootCount ε j ≠ centralCappedCount ε j}
+        ≤ C * (j : ℝ) ^ (-3 : ℝ) := by
   obtain ⟨C, hC, hlocal⟩ := eventually_binComparisonException_probability
   refine ⟨C, hC, ?_⟩
   filter_upwards [hlocal, eventually_ge_atTop 9] with j hj hj₉
   have hjpos : (0 : ℝ) < j := by exact_mod_cast (show 0 < j by omega)
   have hmono : sequenceLaw.real {ε | centralRootCount ε j ≠ centralCappedCount ε j} ≤
       sequenceLaw.real (⋃ k ∈ mainBinSet j, binComparisonException j k) :=
-    ENNReal.toReal_mono (measure_ne_top sequenceLaw _) (measure_mono_ae (central_disagreement_ae_cover hj₉))
+    ENNReal.toReal_mono (measure_ne_top sequenceLaw _)
+      (measure_mono_ae (central_disagreement_ae_cover hj₉))
   have hsum := Finset.sum_le_sum hj
   have hsum' : (∑ k ∈ mainBinSet j, sequenceLaw.real (binComparisonException j k)) ≤
       ((mainBinSet j).card : ℝ) * (C * (j : ℝ) ^ (-4 : ℝ)) := by
@@ -59,7 +61,8 @@ theorem eventually_central_disagreement_probability :
 theorem ae_eventually_centralRootCount_eq_capped :
     ∀ᵐ ε ∂sequenceLaw, ∀ᶠ j : ℕ in atTop, centralRootCount ε j = centralCappedCount ε j := by
   obtain ⟨C, _, hprob⟩ := eventually_central_disagreement_probability
-  have hs : Summable (fun j ↦ sequenceLaw.real {ε | centralRootCount ε j ≠ centralCappedCount ε j}) := by
+  have hs : Summable
+    (fun j ↦ sequenceLaw.real {ε | centralRootCount ε j ≠ centralCappedCount ε j}) := by
     have hp : Summable (fun j : ℕ ↦ (j : ℝ) ^ (-3 : ℝ)) := Real.summable_nat_rpow.mpr (by norm_num)
     apply (hp.mul_left C).of_norm_bounded_eventually_nat
     filter_upwards [hprob] with j hj

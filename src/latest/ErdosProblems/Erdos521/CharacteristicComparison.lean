@@ -24,7 +24,8 @@ theorem sign_gaussian_charFun_isLittleO :
     simpa only [integral_id_gaussianReal, sub_zero, NNReal.coe_one] using h
   have hg : (fun t : ℝ ↦ charFun (gaussianReal 0 1) t - (1 - (t : ℂ) ^ 2 / 2)) =o[𝓝 0]
       fun t ↦ t ^ 2 := by
-    simpa only [Measure.map_id'] using taylor_charFun_two (P := gaussianReal 0 1) (X := fun x : ℝ ↦ x)
+    simpa only [Measure.map_id'] using
+      taylor_charFun_two (P := gaussianReal 0 1) (X := fun x : ℝ ↦ x)
       measurable_id.aemeasurable (by simp) hγsq
   exact (hs.sub hg).congr_left (fun _ ↦ by ring)
 

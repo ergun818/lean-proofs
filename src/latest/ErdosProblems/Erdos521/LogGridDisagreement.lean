@@ -19,9 +19,11 @@ theorem logGrid_disagreement_probability :
       ∀ a δ : ℝ, 0 < a → 0 < δ → ∀ N : ℕ,
       (∀ᶠ j : ℕ in atTop, logGrid (s j) a δ N ≤ endpointCenter C (n j)) →
       ∀ η : ℝ, 0 < η → ∀ᶠ j : ℕ in atTop,
-        sequenceLaw.real {ε | intervalRootCount ε (n j) (logGrid (s j) a δ 0) (logGrid (s j) a δ N) ≠
+        sequenceLaw.real {ε | intervalRootCount ε (n j) (logGrid (s j) a δ 0)
+          (logGrid (s j) a δ N) ≠
           gridSignChanges ε (n j) (logGrid (s j) a δ) N} ≤
-            (N : ℝ) * ((normalizedSmallBallConstant + 96) * (Real.exp δ - 1) ^ (4 / 3 : ℝ)) + η := by
+            (N : ℝ)
+              * ((normalizedSmallBallConstant + 96) * (Real.exp δ - 1) ^ (4 / 3 : ℝ)) + η := by
   obtain ⟨C, hC, hrep⟩ := simpleRoot_bulk_probability
   refine ⟨C, hC, ?_⟩
   intro n s hn hs hN a δ ha hδ N hbulk η hη

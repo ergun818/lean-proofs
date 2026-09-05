@@ -11,7 +11,8 @@ open Filter
 
 theorem two_pow_windowWidth_tendsto_atTop :
     Tendsto (fun j : ℕ ↦ (2 : ℝ) ^ windowWidthScale j) atTop atTop :=
-  (tendsto_pow_atTop_atTop_of_one_lt (by norm_num : (1 : ℝ) < 2)).comp windowWidthScale_tendsto_atTop
+  (tendsto_pow_atTop_atTop_of_one_lt (by norm_num : (1 : ℝ) < 2)).comp
+    windowWidthScale_tendsto_atTop
 
 theorem eventually_const_mul_rpow_le_window_scale (C p : ℝ) :
     ∀ᶠ j : ℕ in atTop, C * (j : ℝ) ^ p ≤ (2 : ℝ) ^ windowWidthScale j := by

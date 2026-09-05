@@ -29,7 +29,8 @@ theorem logarithmic_mean_limit :
   have hN₀ : (0 : ℝ) < N := by exact_mod_cast (show 0 < N by omega)
   have hδ : 0 < δ := div_pos hℓ hN₀
   have hcell : ∀ i ∈ Finset.range N, Tendsto (fun j ↦ ∫ ε,
-      (intervalRootCount ε (n j) (logGrid (s j) a δ i) (logGrid (s j) a δ (i + 1)) : ℝ) ∂sequenceLaw)
+      (intervalRootCount ε (n j) (logGrid (s j) a δ i) (logGrid (s j) a δ (i + 1)) : ℝ)
+        ∂sequenceLaw)
       atTop (𝓝 (δ / (2 * Real.pi))) := by
     intro i hi
     have hcellbulk : ∀ᶠ j : ℕ in atTop,
@@ -42,7 +43,8 @@ theorem logarithmic_mean_limit :
       (logGridCoefficient_pos ha δ i) hδ hwidth hcellbulk
     simpa only [← logGrid_shift, Nat.add_zero] using h
   have hsum : Tendsto (fun j ↦ ∑ i ∈ Finset.range N, ∫ ε,
-      (intervalRootCount ε (n j) (logGrid (s j) a δ i) (logGrid (s j) a δ (i + 1)) : ℝ) ∂sequenceLaw)
+      (intervalRootCount ε (n j) (logGrid (s j) a δ i) (logGrid (s j) a δ (i + 1)) : ℝ)
+        ∂sequenceLaw)
       atTop (𝓝 (ℓ / (2 * Real.pi))) := by
     have h := tendsto_finsetSum (Finset.range N) hcell
     have heq : (∑ _i ∈ Finset.range N, δ / (2 * Real.pi)) = ℓ / (2 * Real.pi) := by

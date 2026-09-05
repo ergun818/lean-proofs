@@ -15,7 +15,8 @@ theorem eventually_fineGrid_two_roots :
       sequenceLaw.real {ε | 2 ≤ intervalRootCount ε (2 ^ j)
         (dyadicFineGrid j k i) (dyadicFineGrid j k (i + 1))} ≤
         (fineGridSmallBallConstant + 96) * fineGridThreshold j := by
-  filter_upwards [eventually_mainBin_point_variance, eventually_mainBin_fine_error, eventually_ge_atTop 1]
+  filter_upwards [eventually_mainBin_point_variance, eventually_mainBin_fine_error,
+    eventually_ge_atTop 1]
     with j hj herr hj₁
   intro k hk i hi
   have hj₀ : 0 < j := by omega
@@ -34,7 +35,8 @@ theorem eventually_fineGrid_two_roots :
 
 theorem eventually_mainBin_fine_zero_probability :
     ∀ᶠ j : ℕ in atTop, ∀ k ∈ mainBinSet j, ∀ x ∈ Set.Icc (dyadicPoint k) (dyadicPoint (k + 1)),
-      sequenceLaw.real {ε | powerSum ε (2 ^ j + 1) x = 0} ≤ fineGridSmallBallConstant * fineGridThreshold j := by
+      sequenceLaw.real {ε | powerSum ε (2 ^ j + 1) x = 0}
+        ≤ fineGridSmallBallConstant * fineGridThreshold j := by
   filter_upwards [eventually_mainBin_fine_smallBall, eventually_ge_atTop 1] with j hj hj₁
   intro k hk x hx
   apply le_trans _ (hj k hk x hx)

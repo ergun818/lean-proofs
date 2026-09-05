@@ -7,7 +7,8 @@ import ErdosProblems.Erdos521.DyadicIntervals
 
 namespace Erdos521
 
-theorem dyadicPoint_width (k : ℕ) : dyadicPoint (k + 1) - dyadicPoint k = 1 - dyadicPoint (k + 1) := by
+theorem dyadicPoint_width (k : ℕ) :
+    dyadicPoint (k + 1) - dyadicPoint k = 1 - dyadicPoint (k + 1) := by
   unfold dyadicPoint
   rw [pow_succ]
   field_simp

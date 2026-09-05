@@ -38,7 +38,8 @@ theorem normalizedSmallBallError_tendsto_zero (V : ℕ → ℝ) (hV : Tendsto V 
 theorem powerSum_smallBall_normalized_error (n : ℕ) {x t : ℝ}
     (hx : 1 / 2 ≤ x) (hx₁ : x ≤ 1) (ht : 0 < t) :
     sequenceLaw.real {ε | |powerSum ε (n + 1) x| ≤ t * Real.sqrt (geometricVariance x (n + 1))} ≤
-      normalizedSmallBallConstant * t + normalizedSmallBallError (geometricVariance x (n + 1)) t := by
+      normalizedSmallBallConstant * t
+        + normalizedSmallBallError (geometricVariance x (n + 1)) t := by
   have h := powerSum_smallBall_normalized n 0 (by omega) hx hx₁ ht
   dsimp only at h
   have he : -((t * Real.sqrt (geometricVariance x (n + 1))) * (x ^ 0)⁻¹) ^ 2 / 2 =
@@ -67,7 +68,8 @@ theorem polynomial_zero_probability_tendsto_zero (d : ℕ → ℕ) (x : ℕ → 
       dsimp [t]
       field_simp [normalizedSmallBallConstant_pos.ne']
     filter_upwards [hI, hx.eventually (lt_mem_nhds (by norm_num : (1 / 2 : ℝ) < 1)),
-      (normalizedSmallBallError_tendsto_zero _ hV ht).eventually (gt_mem_nhds (by linarith : 0 < η / 2))]
+      (normalizedSmallBallError_tendsto_zero _ hV ht).eventually
+        (gt_mem_nhds (by linarith : 0 < η / 2))]
       with j hj₁ hj₀ hjerr
     have hsub : {ε | powerSum ε (d j + 1) (x j) = 0} ⊆
         {ε | |powerSum ε (d j + 1) (x j)| ≤ t * Real.sqrt (geometricVariance (x j) (d j + 1))} := by

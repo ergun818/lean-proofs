@@ -41,9 +41,11 @@ theorem scaled_geometricVariance_tendsto (N : ℕ → ℕ) (s : ℕ → ℝ)
     {a : ℝ} (ha : 0 < a) :
     Tendsto (fun j ↦ geometricVariance (1 - a / s j) (N j) / s j) atTop (𝓝 (1 / (2 * a))) := by
   have hdiv : Tendsto (fun j ↦ a / s j) atTop (𝓝 0) := by
-    simpa only [div_eq_mul_inv, mul_zero, Function.comp_def] using (tendsto_inv_atTop_zero.comp hs).const_mul a
+    simpa only [div_eq_mul_inv, mul_zero, Function.comp_def] using
+      (tendsto_inv_atTop_zero.comp hs).const_mul a
   have hden : Tendsto (fun j ↦ a * (2 - a / s j)) atTop (𝓝 (2 * a)) := by
-    simpa only [sub_zero, mul_comm a 2] using ((tendsto_const_nhds (x := (2 : ℝ))).sub hdiv).const_mul a
+    simpa only [sub_zero, mul_comm a 2] using
+      ((tendsto_const_nhds (x := (2 : ℝ))).sub hdiv).const_mul a
   have htail : Tendsto (fun j ↦ (1 - a / s j) ^ (2 * N j)) atTop (𝓝 0) := by
     have h := (inverse_scale_power_tendsto_zero N s hs hN ha).pow 2
     simpa only [zero_pow (by norm_num : 2 ≠ 0), ← pow_mul, Nat.mul_comm] using h

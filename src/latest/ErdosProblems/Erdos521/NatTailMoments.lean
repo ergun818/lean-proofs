@@ -70,7 +70,8 @@ theorem nat_pow_le_tail_sum (n m J p : ℕ) (hm : m ≤ n) :
     linarith
   · have hk : m / 2 ∈ Finset.Ico 8 J := Finset.mem_Ico.mpr ⟨by omega, by omega⟩
     have hsingle := Finset.single_le_sum (fun j (_ : j ∈ Finset.Ico 8 J) ↦
-      natTailTerm_nonneg (fun _ : Unit ↦ m) (2 * j) (by positivity : 0 ≤ (2 * ((j : ℝ) + 1)) ^ p) ()) hk
+      natTailTerm_nonneg (fun _ : Unit ↦ m) (2 * j)
+        (by positivity : 0 ≤ (2 * ((j : ℝ) + 1)) ^ p) ()) hk
     have hkm : 2 * (m / 2) ≤ m := by omega
     have hmR : (m : ℝ) ≤ 2 * ((m / 2 : ℕ) + 1) := by
       exact_mod_cast (show m ≤ 2 * (m / 2 + 1) by omega)

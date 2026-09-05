@@ -26,7 +26,8 @@ theorem eventually_central_interval_moments (p : ℕ) (hp : 1 ≤ p) :
   filter_upwards [hdegree.eventually hmom, eventually_mainBin_lower,
     eventually_mainBin_bulk (localMomentBulkConstant p), eventually_ge_atTop 9] with j hj hl hu hj₉
   have hcell (k : ℕ) (hk : k ∈ Finset.Ico (Nat.sqrt j) (j - Nat.sqrt j)) :
-      (∫ ε, (intervalRootCount ε (2 ^ j) (dyadicPoint k) (dyadicPoint (k + 1)) : ℝ) ^ p ∂sequenceLaw) ≤ B :=
+      (∫ ε, (intervalRootCount ε (2 ^ j) (dyadicPoint k) (dyadicPoint (k + 1)) : ℝ)
+        ^ p ∂sequenceLaw) ≤ B :=
     hj k (hl k hk) (hu k hk)
   have h := integral_intervalRootCount_Ico_pow_le (2 ^ j) (Nat.sqrt j) (j - Nat.sqrt j) p
     (central_bin_endpoints_strict hj₉) hp dyadicPoint dyadicPoint_mono hcell

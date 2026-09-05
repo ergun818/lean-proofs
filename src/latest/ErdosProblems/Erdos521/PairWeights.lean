@@ -31,7 +31,8 @@ theorem abs_linear_pair_lt {a b u v r : ℝ} (hr : 0 < r)
   have hcancel : (r / (|u| + |v| + 1)) * (|u| + |v| + 1) = r :=
     div_mul_cancel₀ _ hden.ne'
   calc
-    |a * u + b * v| ≤ |a| * |u| + |b| * |v| := by simpa only [abs_mul] using abs_add_le (a * u) (b * v)
+    |a * u + b * v| ≤ |a| * |u| + |b| * |v| := by
+      simpa only [abs_mul] using abs_add_le (a * u) (b * v)
     _ ≤ (r / (|u| + |v| + 1)) * (|u| + |v|) := by
       have h₁ := mul_le_mul_of_nonneg_right ha.le (abs_nonneg u)
       have h₂ := mul_le_mul_of_nonneg_right hb.le (abs_nonneg v)

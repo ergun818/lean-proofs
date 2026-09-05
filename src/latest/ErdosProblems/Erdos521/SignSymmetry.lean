@@ -28,7 +28,8 @@ def alternateSigns (ε : ℕ → ℝ) (k : ℕ) : ℝ := (-1) ^ k * ε k
 theorem measurable_alternateSigns : Measurable alternateSigns := by
   fun_prop [alternateSigns]
 
-theorem measurePreserving_alternateSigns : MeasurePreserving alternateSigns sequenceLaw sequenceLaw := by
+theorem measurePreserving_alternateSigns :
+    MeasurePreserving alternateSigns sequenceLaw sequenceLaw := by
   refine ⟨measurable_alternateSigns, ?_⟩
   change (Measure.infinitePi (fun _ : ℕ ↦ signLaw)).map (fun ε i ↦ (-1 : ℝ) ^ i * ε i) =
     Measure.infinitePi (fun _ : ℕ ↦ signLaw)

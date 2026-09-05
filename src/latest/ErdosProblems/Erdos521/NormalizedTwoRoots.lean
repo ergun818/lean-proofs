@@ -22,7 +22,8 @@ theorem two_root_energy_normalized_le {a b t V d : ℝ}
   calc
     24 * (b - a) ^ 4 / (t ^ 2 * V * (1 - b) ^ 5) ≤
         (24 * (d * (1 - b)) ^ 4) / (t ^ 2 * (1 - b) ^ 4 / 4) :=
-      div_le_div₀ (by positivity) (mul_le_mul_of_nonneg_left hwidth4 (by norm_num)) (by positivity) hden
+      div_le_div₀ (by positivity) (mul_le_mul_of_nonneg_left hwidth4 (by norm_num))
+        (by positivity) hden
     _ = _ := by field_simp; ring
 
 theorem two_interval_roots_normalized_probability (n L : ℕ) (hL : 2 * L ≤ n + 1)

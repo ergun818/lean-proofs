@@ -56,7 +56,8 @@ theorem triangular_vector_sign_charFun_tendsto (s : ℕ → Finset ℕ) (a : ℕ
   have h := triangular_linearForm_charFun_tendsto s (fun n i ↦ ⟪a n i, t⟫_ℝ)
     (covarianceBilin_self_nonneg (μ := ν) t) hsmall hvariance 1
   simpa only [one_pow, mul_one, Complex.ofReal_zero, zero_mul, zero_sub,
-    Complex.ofReal_exp, Complex.ofReal_div, Complex.ofReal_neg, Complex.ofReal_ofNat, neg_div] using h
+    Complex.ofReal_exp, Complex.ofReal_div, Complex.ofReal_neg, Complex.ofReal_ofNat,
+      neg_div] using h
 
 theorem triangular_vector_sign_law_tendsto (s : ℕ → Finset ℕ) (a : ℕ → ℕ → E)
     (ν : ProbabilityMeasure E) [IsGaussian (ν : Measure E)]

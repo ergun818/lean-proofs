@@ -10,7 +10,8 @@ namespace Erdos521
 open MeasureTheory ProbabilityTheory
 
 theorem gaussianPair_eval_measurePreserving {ρ : ℝ} (hρ : ρ ^ 2 ≤ 1) (i : Fin 2) :
-    MeasurePreserving (fun x : EuclideanSpace ℝ (Fin 2) ↦ x i) (gaussianPair ρ) (gaussianReal 0 1) := by
+    MeasurePreserving (fun x : EuclideanSpace ℝ (Fin 2) ↦ x i)
+      (gaussianPair ρ) (gaussianReal 0 1) := by
   have hdiag : pairCovariance ρ i i = 1 := by fin_cases i <;> rfl
   have h := measurePreserving_eval_multivariateGaussian (μ := (0 : EuclideanSpace ℝ (Fin 2)))
     (i := i) (pairCovariance_posSemidef hρ)

@@ -16,7 +16,8 @@ def windowCapScale (j : ℕ) : ℕ := Nat.sqrt (windowWidthScale j) + 1
 
 theorem windowWidthScale_pow_four_le (j : ℕ) : windowWidthScale j ^ 4 ≤ j := by
   calc
-    windowWidthScale j ^ 4 = (Nat.sqrt (Nat.sqrt j) ^ 2) ^ 2 := by simp [windowWidthScale, ← pow_mul]
+    windowWidthScale j ^ 4 = (Nat.sqrt (Nat.sqrt j) ^ 2) ^ 2 := by
+      simp [windowWidthScale, ← pow_mul]
     _ ≤ Nat.sqrt j ^ 2 := pow_le_pow_left' (Nat.sqrt_le' (Nat.sqrt j)) 2
     _ ≤ j := Nat.sqrt_le' j
 
@@ -62,7 +63,8 @@ theorem eventually_two_pow_neg_windowWidth_le (p : ℝ) :
   filter_upwards [eventually_exp_neg_rpow_le_rpow hc (by norm_num : (0 : ℝ) < 1 / 4) p,
     eventually_ge_atTop 1] with j hj hj₁
   apply le_trans _ hj
-  have heq : ((2 : ℝ) ^ windowWidthScale j)⁻¹ = Real.exp (-(windowWidthScale j : ℝ) * Real.log 2) := by
+  have heq : ((2 : ℝ) ^ windowWidthScale j)⁻¹ =
+    Real.exp (-(windowWidthScale j : ℝ) * Real.log 2) := by
     rw [neg_mul, Real.exp_neg, Real.exp_nat_mul, Real.exp_log (by norm_num : (0 : ℝ) < 2)]
   rw [heq]
   apply Real.exp_le_exp.mpr

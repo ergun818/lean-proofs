@@ -40,7 +40,8 @@ theorem eventually_endpoint_probability_bound {a b d τ p : ℝ}
     (by linarith [hx.1]) hx.2.le).trans
       (Real.rpow_le_rpow_of_exponent_le hn₁ (by linarith : -2 * a + 2 * d ≤ -p))
   have hsmall := mul_le_mul_of_nonneg_left
-    (add_le_add (add_le_add hsqrt' hvar) (mul_le_mul_of_nonneg_left hcutoff (by norm_num : (0 : ℝ) ≤ 2)))
+    (add_le_add (add_le_add hsqrt' hvar)
+      (mul_le_mul_of_nonneg_left hcutoff (by norm_num : (0 : ℝ) ≤ 2)))
     (Real.exp_pos (1 / 2)).le
   apply h.trans
   calc

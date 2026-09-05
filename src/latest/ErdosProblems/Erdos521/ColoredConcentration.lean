@@ -16,15 +16,18 @@ theorem colored_window_grid_concentration (n q T : ℕ) (g : ℕ → ℕ → ℝ
     (S : Finset ℕ) {t : ℝ} (ht : 0 ≤ t) :
     sequenceLaw.real {ε | t ≤ |∑ k ∈ S,
       ((min (windowGridSignChanges ε (dyadicCoefficientWindow n k q) (g k) (N k)) T : ℝ) -
-        ∫ ζ, (min (windowGridSignChanges ζ (dyadicCoefficientWindow n k q) (g k) (N k)) T : ℝ) ∂sequenceLaw)|} ≤
-      2 * Real.exp (-t ^ 2 / (2 * ((2 * q + 1 : ℕ) : ℝ) ^ 2 * (S.card : ℝ) * ((T : ℝ) / 2) ^ 2)) := by
+        ∫ ζ, (min (windowGridSignChanges ζ (dyadicCoefficientWindow n k q) (g k) (N k)) T : ℝ)
+          ∂sequenceLaw)|} ≤
+      2 * Real.exp (-t ^ 2 / (2 * ((2 * q + 1 : ℕ) : ℝ) ^ 2
+        * (S.card : ℝ) * ((T : ℝ) / 2) ^ 2)) := by
   let X := fun k (ε : ℕ → ℝ) ↦
     (min (windowGridSignChanges ε (dyadicCoefficientWindow n k q) (g k) (N k)) T : ℝ)
   let Y := fun c k (ε : ℕ → ℝ) ↦ if k % (2 * q + 1) = c then X k ε else 0
   let B := fun c (ε : ℕ → ℝ) ↦ ∑ k ∈ S, (Y c k ε - ∫ ζ, Y c k ζ ∂sequenceLaw)
   have hX (k : ℕ) : Measurable (X k) :=
     ((measurable_of_countable (fun m : ℕ ↦ (m : ℝ))).comp
-      (measurable_windowGridSignChanges (dyadicCoefficientWindow n k q) (g k) (N k))).min measurable_const
+      (measurable_windowGridSignChanges (dyadicCoefficientWindow n k q) (g k) (N k))).min
+        measurable_const
   have hY (c k : ℕ) : Measurable (Y c k) := by
     by_cases h : k % (2 * q + 1) = c
     · simpa only [Y, if_pos h] using hX k
@@ -40,7 +43,8 @@ theorem colored_window_grid_concentration (n q T : ℕ) (g : ℕ → ℕ → ℝ
     bounded_independent_sum_subGaussian sequenceLaw S
       (independent_colored_window_counts n q c T g N) (fun k ↦ (hY c k).aemeasurable)
       (fun k _ ↦ hbound c k)
-  have h := subGaussian_block_sum_probability sequenceLaw (Finset.range (2 * q + 1)) (fun c _ ↦ hB c) ht
+  have h := subGaussian_block_sum_probability sequenceLaw (Finset.range (2 * q + 1))
+    (fun c _ ↦ hB c) ht
   have heq (ε : ℕ → ℝ) : (∑ c ∈ Finset.range (2 * q + 1), B c ε) =
       ∑ k ∈ S, (X k ε - ∫ ζ, X k ζ ∂sequenceLaw) :=
     centered_residue_sum sequenceLaw (2 * q + 1) (by omega) S X ε

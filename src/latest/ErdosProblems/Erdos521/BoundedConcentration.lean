@@ -41,7 +41,8 @@ theorem bounded_independent_sum_probability {Ω ι : Type*} [MeasurableSpace Ω]
   have hsum := HasSubgaussianMGF.sum_of_iIndepFun hi hsub
   have h := subGaussian_abs_probability μ hsum ht
   simpa only [Finset.sum_const, nsmul_eq_mul, NNReal.coe_mul, NNReal.coe_natCast,
-    NNReal.coe_pow, NNReal.coe_div, NNReal.coe_ofNat, coe_nnnorm, Real.norm_eq_abs, abs_of_nonneg hT,
+    NNReal.coe_pow, NNReal.coe_div, NNReal.coe_ofNat, coe_nnnorm, Real.norm_eq_abs,
+    abs_of_nonneg hT,
     ← mul_assoc] using h
 
 end Erdos521

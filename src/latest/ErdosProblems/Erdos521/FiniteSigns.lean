@@ -15,14 +15,16 @@ theorem uniformBool_eq_bernoulli : (PMF.uniformOfFintype Bool).toMeasure =
     Ber(true, false, ⟨1 / 2, by norm_num⟩) := by
   apply Measure.ext_of_singleton
   intro b
-  rw [(PMF.uniformOfFintype Bool).toMeasure_apply_singleton b (measurableSet_singleton b), PMF.uniformOfFintype_apply,
+  rw [(PMF.uniformOfFintype Bool).toMeasure_apply_singleton b (measurableSet_singleton b),
+    PMF.uniformOfFintype_apply,
     bernoulliMeasure_apply _ (measurableSet_singleton b)]
   cases b <;> norm_num [unitInterval.toNNReal, unitInterval.symm]
   all_goals
     change (2 : ℝ≥0∞)⁻¹ = ((1 / 2 : ℝ≥0) : ℝ≥0∞)
     norm_num
 
-theorem signLaw_map_encodeSign : signLaw.map encodeSign = (PMF.uniformOfFintype Bool).toMeasure := by
+theorem signLaw_map_encodeSign :
+    signLaw.map encodeSign = (PMF.uniformOfFintype Bool).toMeasure := by
   rw [signLaw, map_bernoulliMeasure, uniformBool_eq_bernoulli]
   congr 1 <;> norm_num [encodeSign]
 
@@ -32,15 +34,18 @@ theorem uniformBool_pi (k : ℕ) :
   apply Measure.ext_of_singleton
   intro w
   have hsingle (b : Bool) : (PMF.uniformOfFintype Bool).toMeasure {b} = (2 : ℝ≥0∞)⁻¹ := by
-    rw [(PMF.uniformOfFintype Bool).toMeasure_apply_singleton b (measurableSet_singleton b), PMF.uniformOfFintype_apply]
+    rw [(PMF.uniformOfFintype Bool).toMeasure_apply_singleton b (measurableSet_singleton b),
+      PMF.uniformOfFintype_apply]
     norm_num
   rw [Measure.pi_singleton,
     (PMF.uniformOfFintype (Fin k → Bool)).toMeasure_apply_singleton w (measurableSet_singleton w)]
   simp only [hsingle, PMF.uniformOfFintype_apply, Fintype.card_bool,
-    Fintype.card_fun, Fintype.card_fin, Finset.prod_const, Finset.card_univ, Nat.cast_pow, Nat.cast_ofNat]
+    Fintype.card_fun, Fintype.card_fin, Finset.prod_const, Finset.card_univ,
+    Nat.cast_pow, Nat.cast_ofNat]
   exact ENNReal.inv_pow.symm
 
-noncomputable def selectedSigns {k : ℕ} (ι : Fin k → ℕ) (ε : ℕ → ℝ) (i : Fin k) : Bool := encodeSign (ε (ι i))
+noncomputable def selectedSigns {k : ℕ} (ι : Fin k → ℕ) (ε : ℕ → ℝ) (i : Fin k) : Bool :=
+  encodeSign (ε (ι i))
 
 theorem measurable_selectedSigns {k : ℕ} (ι : Fin k → ℕ) : Measurable (selectedSigns ι) := by
   apply measurable_pi_lambda
@@ -59,7 +64,8 @@ theorem sequenceLaw_map_selectedSigns {k : ℕ} (ι : Fin k → ℕ) (hι : Func
   congr 1
   funext i
   have hcoord : sequenceLaw.map (fun ε ↦ encodeSign (ε (ι i))) = signLaw.map encodeSign := by
-    rw [← sequenceLaw_map_eval (ι i), Measure.map_map measurable_encodeSign (measurable_pi_apply (ι i))]
+    rw [← sequenceLaw_map_eval (ι i),
+      Measure.map_map measurable_encodeSign (measurable_pi_apply (ι i))]
     rfl
   exact hcoord.trans signLaw_map_encodeSign
 

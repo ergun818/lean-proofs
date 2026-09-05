@@ -20,7 +20,8 @@ theorem measurable_weightedIncrement (a : ℕ → ℝ) (i : ℕ) :
 
 noncomputable def weightedFiltration (a : ℕ → ℝ) :
     Filtration ℕ (inferInstance : MeasurableSpace (ℕ → ℝ)) :=
-  Filtration.natural (weightedIncrement a) (fun i ↦ (measurable_weightedIncrement a i).stronglyMeasurable)
+  Filtration.natural (weightedIncrement a)
+    (fun i ↦ (measurable_weightedIncrement a i).stronglyMeasurable)
 
 def weightedPartialSum (a : ℕ → ℝ) (n : ℕ) (ε : ℕ → ℝ) : ℝ :=
   ∑ i ∈ Finset.range (n + 1), weightedIncrement a i ε
@@ -47,7 +48,8 @@ theorem weightedPartialSum_memLp (a : ℕ → ℝ) (n : ℕ) (p : ℝ≥0∞) :
 theorem weightedPartialSum_stronglyAdapted (a : ℕ → ℝ) :
     StronglyAdapted (weightedFiltration a) (weightedPartialSum a) := by
   have hnat : StronglyAdapted (weightedFiltration a) (weightedIncrement a) :=
-    Filtration.stronglyAdapted_natural (fun i ↦ (measurable_weightedIncrement a i).stronglyMeasurable)
+    Filtration.stronglyAdapted_natural
+      (fun i ↦ (measurable_weightedIncrement a i).stronglyMeasurable)
   intro n
   unfold weightedPartialSum
   apply Finset.stronglyMeasurable_fun_sum
@@ -69,7 +71,8 @@ theorem weightedPartialSum_martingale (a : ℕ → ℝ) :
       weightedPartialSum a n :=
     condExp_of_stronglyMeasurable ((weightedFiltration a).le n)
       (weightedPartialSum_stronglyAdapted a n) ((weightedPartialSum_memLp a n 1).integrable le_rfl)
-  have heq : weightedPartialSum a (n + 1) = weightedPartialSum a n + weightedIncrement a (n + 1) := by
+  have heq : weightedPartialSum a (n + 1) = weightedPartialSum a n
+    + weightedIncrement a (n + 1) := by
     funext ε
     exact Finset.sum_range_succ _ _
   rw [heq]

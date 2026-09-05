@@ -52,7 +52,8 @@ theorem repulsion_grid_error_le (n j : ℕ) :
   have hP : (1 : ℝ) ≤ (8 : ℝ) ^ j := one_le_pow₀ (by norm_num)
   have h := grid_error_le hN hP
   have hmesh : (repulsionMesh n j : ℝ) = 8 * (n + 1 : ℝ) ^ 2 * (8 : ℝ) ^ j := by
-    simp only [repulsionMesh, Nat.cast_mul, Nat.cast_pow, Nat.cast_add, Nat.cast_one, Nat.cast_ofNat]
+    simp only [repulsionMesh, Nat.cast_mul, Nat.cast_pow, Nat.cast_add,
+      Nat.cast_one, Nat.cast_ofNat]
   have hpower : ((8 : ℝ) ^ j) ^ 2 = (8 : ℝ) ^ (2 * j) := by rw [← pow_mul, Nat.mul_comm]
   rw [hpower] at h
   rw [hmesh]

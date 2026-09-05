@@ -23,7 +23,8 @@ theorem signWordValue_abs_le_two {q : ℝ} (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1 / 
   | cons b w ih =>
     calc
       |signWordValue q (b :: w)| ≤ |signValue b| + |q * signWordValue q w| := by
-        simpa only [Real.norm_eq_abs, signWordValue] using norm_add_le (signValue b) (q * signWordValue q w)
+        simpa only [Real.norm_eq_abs, signWordValue] using
+          norm_add_le (signValue b) (q * signWordValue q w)
       _ = 1 + q * |signWordValue q w| := by rw [abs_signValue, abs_mul, abs_of_nonneg hq₀]
       _ ≤ 1 + q * 2 := add_le_add le_rfl (mul_le_mul_of_nonneg_left ih hq₀)
       _ ≤ 2 := by linarith
@@ -101,7 +102,8 @@ theorem finiteSignValue_small_interval_card {q z δ : ℝ} (hq₀ : 0 ≤ q) (hq
   intro w hw v hv
   apply List.ofFn_injective
   exact signWordValue_unique_in_small_interval hq₀ hq₁ (by simp)
-    (by simpa only [List.length_ofFn] using hδ) (Finset.mem_filter.mp hw).2 (Finset.mem_filter.mp hv).2
+    (by simpa only [List.length_ofFn] using hδ)
+      (Finset.mem_filter.mp hw).2 (Finset.mem_filter.mp hv).2
 
 theorem finiteSignValue_small_interval_probability {q z δ : ℝ} (hq₀ : 0 ≤ q) (hq₁ : q ≤ 2 / 5)
     (k : ℕ) (hδ : 2 * δ < q ^ k) :
@@ -114,7 +116,8 @@ theorem finiteSignValue_small_interval_probability {q z δ : ℝ} (hq₀ : 0 ≤
   rw [MeasureTheory.measureReal_def, PMF.toMeasure_uniformOfFintype_apply
     (α := Fin k → Bool) (s := {w | |finiteSignValue q w - z| ≤ δ}) (Set.toFinite _).measurableSet,
     ENNReal.toReal_div]
-  simp only [Fintype.card_fun, Fintype.card_bool, Fintype.card_fin, ENNReal.toReal_natCast, Nat.cast_pow,
+  simp only [Fintype.card_fun, Fintype.card_bool, Fintype.card_fin, ENNReal.toReal_natCast,
+    Nat.cast_pow,
     Nat.cast_ofNat]
   exact div_le_div_of_nonneg_right (by exact_mod_cast hcard') (by positivity)
 

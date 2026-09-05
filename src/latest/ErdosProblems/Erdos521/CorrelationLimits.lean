@@ -46,7 +46,8 @@ theorem normalized_geometricCovariance_tendsto (N : ℕ → ℕ) (s : ℕ → �
 theorem normalized_geometric_weight_product_sum (N : ℕ) (x y : ℝ) :
     (∑ i ∈ Finset.range N, (x ^ i / Real.sqrt (geometricVariance x N)) *
       (y ^ i / Real.sqrt (geometricVariance y N))) =
-      geometricCovariance x y N / (Real.sqrt (geometricVariance x N) * Real.sqrt (geometricVariance y N)) := by
+      geometricCovariance x y N / (Real.sqrt (geometricVariance x N)
+        * Real.sqrt (geometricVariance y N)) := by
   simp_rw [div_mul_div_comm, ← mul_pow]
   rw [← Finset.sum_div]
   rfl

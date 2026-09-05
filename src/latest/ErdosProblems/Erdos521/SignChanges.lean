@@ -66,7 +66,8 @@ theorem intervalRootCount_eq_signChange (ε : ℕ → ℝ) (n : ℕ) (hε₀ : �
     have hrb : r ≠ b := by intro h; exact hb (h ▸ hrzero)
     have hrIoo : r ∈ Set.Ioo a b := ⟨lt_of_le_of_ne hrI.1 hra.symm, lt_of_le_of_ne hrI.2 hrb⟩
     apply hsign
-    apply polynomial_unique_simple_root_sign_change (polynomial ε n) hrIoo hrzero (hsimple r hrI hrzero)
+    apply polynomial_unique_simple_root_sign_change (polynomial ε n) hrIoo hrzero
+      (hsimple r hrI hrzero)
     intro x hx hxzero
     exact (Finset.card_le_one.mp hcount) x (Finset.mem_filter.mpr ⟨(hmem x).mpr hxzero, hx⟩) r hr
 

@@ -34,7 +34,8 @@ theorem integral_standardGaussian_posPart :
         (x * Real.exp (-x ^ 2 / 2))) := by
     funext x
     by_cases hx : 0 < x
-    · simp only [Set.indicator_apply, Set.mem_Ioi, hx, if_true, standardGaussian_density, smul_eq_mul,
+    · simp only [Set.indicator_apply, Set.mem_Ioi, hx, if_true,
+      standardGaussian_density, smul_eq_mul,
         posPart_eq_self.mpr hx.le]
       ring
     · have hx₀ : x ≤ 0 := le_of_not_gt hx

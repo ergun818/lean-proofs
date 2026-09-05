@@ -13,7 +13,8 @@ open scoped Topology
 
 theorem eventually_left_trim_fourth_moment :
     ∃ B : ℝ, 0 < B ∧ ∀ᶠ j : ℕ in atTop,
-      (∫ ε, (intervalRootCount ε (2 ^ j) (dyadicPoint 4) (dyadicPoint (Nat.sqrt j)) : ℝ) ^ 4 ∂sequenceLaw) ≤
+      (∫ ε, (intervalRootCount ε (2 ^ j) (dyadicPoint 4) (dyadicPoint (Nat.sqrt j)) : ℝ) ^ 4
+        ∂sequenceLaw) ≤
         B * (j : ℝ) ^ 2 := by
   obtain ⟨B, hB, hmom⟩ := eventually_dyadic_interval_moments 4 (by norm_num)
   have hdegree : Tendsto (fun j : ℕ ↦ (2 : ℕ) ^ j) atTop atTop :=
@@ -27,7 +28,8 @@ theorem eventually_left_trim_fourth_moment :
   have hupper : dyadicPoint (Nat.sqrt j) ≤ endpointCenter (localMomentBulkConstant 4) (2 ^ j) :=
     (dyadicPoint_mono (Nat.le_succ _)).trans (hbulk (Nat.sqrt j) hrS)
   have hcell (k : ℕ) (hk : k ∈ Finset.Ico 4 (Nat.sqrt j)) :
-      (∫ ε, (intervalRootCount ε (2 ^ j) (dyadicPoint k) (dyadicPoint (k + 1)) : ℝ) ^ 4 ∂sequenceLaw) ≤ B := by
+      (∫ ε, (intervalRootCount ε (2 ^ j) (dyadicPoint k) (dyadicPoint (k + 1)) : ℝ)
+        ^ 4 ∂sequenceLaw) ≤ B := by
     obtain ⟨hk₀, hk₁⟩ := Finset.mem_Ico.mp hk
     apply hj k
     · exact (by norm_num [dyadicPoint] : (9 / 10 : ℝ) ≤ dyadicPoint 4).trans (dyadicPoint_mono hk₀)
@@ -36,7 +38,8 @@ theorem eventually_left_trim_fourth_moment :
     dyadicPoint dyadicPoint_mono hcell
   apply h.trans
   have hpow : (((Nat.sqrt j - 4 : ℕ) : ℝ)) ^ 4 ≤ (j : ℝ) ^ 2 := by
-    have hsmall : ((Nat.sqrt j - 4 : ℕ) : ℝ) ≤ Nat.sqrt j := by exact_mod_cast Nat.sub_le (Nat.sqrt j) 4
+    have hsmall : ((Nat.sqrt j - 4 : ℕ) : ℝ) ≤ Nat.sqrt j := by
+      exact_mod_cast Nat.sub_le (Nat.sqrt j) 4
     have hroot : (Nat.sqrt j : ℝ) ^ 2 ≤ j := by exact_mod_cast Nat.sqrt_le' j
     calc
       _ ≤ (Nat.sqrt j : ℝ) ^ 4 := pow_le_pow_left₀ (Nat.cast_nonneg _) hsmall 4
@@ -46,7 +49,8 @@ theorem eventually_left_trim_fourth_moment :
 
 theorem ae_left_trim_div_index_tendsto_zero :
     ∀ᵐ ε ∂sequenceLaw, Tendsto (fun j : ℕ ↦
-      (intervalRootCount ε (2 ^ j) (dyadicPoint 4) (dyadicPoint (Nat.sqrt j)) : ℝ) / j) atTop (𝓝 0) := by
+      (intervalRootCount ε (2 ^ j) (dyadicPoint 4) (dyadicPoint (Nat.sqrt j)) : ℝ) / j)
+        atTop (𝓝 0) := by
   obtain ⟨B, _, hB⟩ := eventually_left_trim_fourth_moment
   exact ae_nat_div_tendsto_zero_of_fourth_moment sequenceLaw
     (fun j ε ↦ intervalRootCount ε (2 ^ j) (dyadicPoint 4) (dyadicPoint (Nat.sqrt j)))

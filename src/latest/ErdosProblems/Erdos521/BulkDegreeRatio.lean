@@ -28,7 +28,9 @@ theorem bulk_degree_ratio_tendsto (n : ℕ → ℕ) (s : ℕ → ℝ) {C : ℝ} 
     (hn : Tendsto n atTop atTop) (hs : Tendsto s atTop atTop)
     (hbulk : ∀ᶠ j : ℕ in atTop, 1 - 1 / s j ≤ endpointCenter C (n j)) :
     Tendsto (fun j ↦ ((n j + 1 : ℕ) : ℝ) / s j) atTop atTop := by
-  have hlog := (Real.tendsto_log_atTop.comp ((tendsto_natCast_atTop_atTop (R := ℝ)).comp hn)).const_mul_atTop hC
+  have hlog :=
+    (Real.tendsto_log_atTop.comp
+      ((tendsto_natCast_atTop_atTop (R := ℝ)).comp hn)).const_mul_atTop hC
   apply tendsto_atTop_mono' atTop _ hlog
   filter_upwards [hbulk, hs.eventually_gt_atTop 0, hn.eventually_ge_atTop 1] with j hj hsj hnj
   exact bulk_degree_ratio_lower hsj (by omega) hj

@@ -87,7 +87,8 @@ theorem interiorRootCount_integrable (n : ℕ) :
     ((measurable_of_countable (fun k : ℕ ↦ (k : ℝ))).comp_aemeasurable
       (interiorRootCount_aemeasurable n)).aestronglyMeasurable
   exact Filter.Eventually.of_forall fun ε ↦ by
-    simpa only [Function.comp_apply, Real.norm_natCast] using (Nat.cast_le.mpr (interiorRootCount_le ε n) :
+    simpa only [Function.comp_apply, Real.norm_natCast] using
+      (Nat.cast_le.mpr (interiorRootCount_le ε n) :
       (interiorRootCount ε n : ℝ) ≤ rootCount ε n)
 
 end Erdos521

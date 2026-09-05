@@ -114,7 +114,8 @@ theorem endpoint_boundary_term_le (a b d τ : ℝ) {n : ℕ} (hn : 1 ≤ n)
   have hn₀ : (0 : ℝ) < n := by exact_mod_cast hnNat
   have hcut := endpointCutoff_pos d hnNat
   have hlog : 0 ≤ 1 + Real.log (2 * (n : ℝ) + 1) := by
-    have h := Real.log_nonneg (show (1 : ℝ) ≤ 2 * n + 1 by have := Nat.cast_nonneg (α := ℝ) n; linarith)
+    have h := Real.log_nonneg
+      (show (1 : ℝ) ≤ 2 * n + 1 by have := Nat.cast_nonneg (α := ℝ) n; linarith)
     linarith
   have hV := geometricVariance_endpoint_upper hn hy
   have hpow := endpointThreshold_pow_lower τ hnNat

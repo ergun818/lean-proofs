@@ -68,7 +68,8 @@ theorem intervalRootCount_eq_sum_signChanges (ε : ℕ → ℝ) (n : ℕ) (hε�
     (hsimple : ∀ x ∈ Set.Icc (g 0) (g N), (polynomial ε n).eval x = 0 →
       (polynomial ε n).derivative.eval x ≠ 0) :
     intervalRootCount ε n (g 0) (g N) =
-      ∑ i ∈ Finset.range N, signChange ((polynomial ε n).eval (g i)) ((polynomial ε n).eval (g (i + 1))) := by
+      ∑ i ∈ Finset.range N, signChange ((polynomial ε n).eval (g i))
+        ((polynomial ε n).eval (g (i + 1))) := by
   rw [intervalRootCount_sum_grid ε n g hg N hgrid]
   apply Finset.sum_congr rfl
   intro i hi

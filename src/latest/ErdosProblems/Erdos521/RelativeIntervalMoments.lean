@@ -33,7 +33,8 @@ theorem eventually_relative_interval_moments (p : ℕ) (hp : 1 ≤ p) :
   obtain ⟨B, hB, hmom⟩ := eventually_logarithmic_moments p hp
     (Real.log_pos (by norm_num : (1 : ℝ) < 2))
   refine ⟨B, hB, ?_⟩
-  filter_upwards [hmom, eventually_endpointCenter_bounds (localMomentBulkConstant_pos p)] with n hn hcenter
+  filter_upwards [hmom, eventually_endpointCenter_bounds (localMomentBulkConstant_pos p)]
+    with n hn hcenter
   intro a b hb hbulk hwidth
   have hb₁ : b < 1 := hbulk.trans_lt hcenter.2
   obtain ⟨hg₀, hg₁⟩ := logarithmic_interval_from_endpoint hb₁
@@ -41,7 +42,8 @@ theorem eventually_relative_interval_moments (p : ℕ) (hp : 1 ≤ p) :
     (by rw [hg₀]; linarith) (by rw [hg₁]; exact hbulk)
   rw [hg₀, hg₁] at h
   apply le_trans _ h
-  apply integral_mono (intervalRootCount_pow_integrable n p a b) (intervalRootCount_pow_integrable n p _ _)
+  apply integral_mono (intervalRootCount_pow_integrable n p a b)
+    (intervalRootCount_pow_integrable n p _ _)
   intro ε
   exact pow_le_pow_left₀ (Nat.cast_nonneg _) (Nat.cast_le.mpr
     (intervalRootCount_mono ε n (by linarith : 2 * b - 1 ≤ a) le_rfl)) p

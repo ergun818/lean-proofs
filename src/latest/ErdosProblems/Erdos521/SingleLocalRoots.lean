@@ -45,7 +45,8 @@ theorem localRootCount_single_large_center_probability (n k : ℕ) (c : ℝ) {r 
     sequenceLaw.real {ε | δ ≤ |powerSum ε (n + 1) c| ∧ k ≤ localRootCount ε n c r} ≤
       2 * (1 + geometricVariance (|c| + 4 * r) (n + 1)) / (δ ^ 2 * (4 : ℝ) ^ k) := by
   let f := fun ε ↦ 1 + circularMeanSquare n (c : ℂ) (4 * r) ε
-  have hf : Integrable f sequenceLaw := (integrable_const 1).add (circularMeanSquare_integrable n _ _)
+  have hf : Integrable f sequenceLaw := (integrable_const 1).add
+    (circularMeanSquare_integrable n _ _)
   have hf₀ : 0 ≤ᵐ[sequenceLaw] f := Eventually.of_forall fun ε ↦ by
     have h := circularMeanSquare_nonneg n (c : ℂ) (4 * r) ε
     dsimp [f]
@@ -57,7 +58,8 @@ theorem localRootCount_single_large_center_probability (n k : ℕ) (c : ℝ) {r 
       dsimp [f]
       rw [integral_add (integrable_const 1) (circularMeanSquare_integrable n _ _)]
       have hbound := integral_circularMeanSquare_le n (c : ℂ) (4 * r)
-      simp only [Complex.norm_real, Real.norm_eq_abs, abs_of_pos (by positivity : 0 < 4 * r)] at hbound
+      simp only [Complex.norm_real, Real.norm_eq_abs,
+        abs_of_pos (by positivity : 0 < 4 * r)] at hbound
       simpa using add_le_add (le_refl (1 : ℝ)) hbound
     apply h.trans
     calc

@@ -70,9 +70,11 @@ theorem polynomial_root_transfer (ε : ℕ → ℝ) (hε : ∀ k, |ε k| ≤ 1) 
   rcases polynomial_signs_around_root ε hε n hδ hρ hI hscale hroot hderiv with hsign | hsign
   · have hleft : q.eval (x - ρ) ≤ 0 := by linarith [hsign.1, hl.2]
     have hright : 0 ≤ q.eval (x + ρ) := by linarith [hsign.2, hr.1]
-    exact intermediate_value_Icc (by linarith : x - ρ ≤ x + ρ) q.continuous.continuousOn ⟨hleft, hright⟩
+    exact intermediate_value_Icc (by linarith : x - ρ ≤ x + ρ)
+      q.continuous.continuousOn ⟨hleft, hright⟩
   · have hleft : 0 ≤ q.eval (x - ρ) := by linarith [hsign.2, hl.1]
     have hright : q.eval (x + ρ) ≤ 0 := by linarith [hsign.1, hr.2]
-    exact intermediate_value_Icc' (by linarith : x - ρ ≤ x + ρ) q.continuous.continuousOn ⟨hright, hleft⟩
+    exact intermediate_value_Icc' (by linarith : x - ρ ≤ x + ρ)
+      q.continuous.continuousOn ⟨hright, hleft⟩
 
 end Erdos521

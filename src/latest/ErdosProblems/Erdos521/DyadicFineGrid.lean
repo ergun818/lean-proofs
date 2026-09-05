@@ -27,15 +27,18 @@ theorem fineGridRelativeWidth_pos {j : ℕ} (hj : 0 < j) : 0 < fineGridRelativeW
   have hj₀ : (0 : ℝ) < j := by exact_mod_cast hj
   exact inv_pos.mpr (pow_pos hj₀ 18)
 
-theorem dyadicFineGrid_zero (j k : ℕ) : dyadicFineGrid j k 0 = dyadicPoint k := affineGrid_zero _ _ _
+theorem dyadicFineGrid_zero (j k : ℕ) : dyadicFineGrid j k 0 = dyadicPoint k :=
+  affineGrid_zero _ _ _
 
 theorem dyadicFineGrid_end {j : ℕ} (hj : 0 < j) (k : ℕ) :
-    dyadicFineGrid j k (fineGridLength j) = dyadicPoint (k + 1) := affineGrid_end _ _ (fineGridLength_pos hj)
+    dyadicFineGrid j k (fineGridLength j) = dyadicPoint (k + 1) :=
+  affineGrid_end _ _ (fineGridLength_pos hj)
 
 theorem dyadicFineGrid_mono (j k : ℕ) : Monotone (dyadicFineGrid j k) :=
   affineGrid_mono (dyadicPoint_mono (Nat.le_succ k)) _
 
-theorem dyadicFineGrid_strictMono {j : ℕ} (hj : 0 < j) (k : ℕ) : StrictMono (dyadicFineGrid j k) := by
+theorem dyadicFineGrid_strictMono {j : ℕ} (hj : 0 < j) (k : ℕ) :
+    StrictMono (dyadicFineGrid j k) := by
   have hwidth : 0 < dyadicPoint (k + 1) - dyadicPoint k := by
     rw [dyadicPoint_width]
     exact sub_pos.mpr (dyadicPoint_lt_one (k + 1))
@@ -53,7 +56,8 @@ theorem dyadicFineGrid_mem {j : ℕ} (hj : 0 < j) (k : ℕ) {i : ℕ} (hi : i �
     dyadicFineGrid j k i ∈ Set.Icc (dyadicPoint k) (dyadicPoint (k + 1)) :=
   affineGrid_mem (dyadicPoint_mono (Nat.le_succ k)) (fineGridLength_pos hj) hi
 
-theorem dyadicFineGrid_relative_width {j : ℕ} (hj : 0 < j) (k : ℕ) {i : ℕ} (hi : i < fineGridLength j) :
+theorem dyadicFineGrid_relative_width {j : ℕ} (hj : 0 < j) (k : ℕ)
+    {i : ℕ} (hi : i < fineGridLength j) :
     dyadicFineGrid j k (i + 1) - dyadicFineGrid j k i ≤
       fineGridRelativeWidth j * (1 - dyadicFineGrid j k (i + 1)) := by
   have h := affineGrid_relative_width (dyadicPoint_mono (Nat.le_succ k)) (dyadicPoint_width k).le
