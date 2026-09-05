@@ -47,6 +47,7 @@ section LargeShifts
 variable {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
 variable {A S : Finset G} {r : ℕ}
 
+omit [Fintype G] in
 lemma bigShifts_step_one (L : Finset (Fin r → G)) (hr : r ≠ 0) :
     ∑ x ∈ L + S.piDiag (Fin r), ∑ l ∈ L, ∑ s ∈ S.piDiag (Fin r),
         (if l + s = x then 1 else 0) = L.card * S.card := by
@@ -189,6 +190,7 @@ noncomputable def sampleDeviation
     (a : Fin k → ZMod N) (x : ZMod N) : ℝ :=
   ∑ i, centeredTranslate A f x (a i)
 
+omit [NeZero N] in
 lemma sum_centeredTranslate_eq_zero
     {A : Finset (ZMod N)} (hA : A.Nonempty) (f : ZMod N → ℝ) (x : ZMod N) :
     ∑ a ∈ A, centeredTranslate A f x a = 0 := by
@@ -199,6 +201,7 @@ lemma sum_centeredTranslate_eq_zero
   field_simp
   ring
 
+omit [NeZero N] in
 /-- For each fixed group point, Marcinkiewicz--Zygmund controls the moment of
 the discrepancy of all samples. -/
 theorem pointwise_sampleDeviation_moment
@@ -242,11 +245,12 @@ theorem global_sampleDeviation_moment
       congr 1
       rw [Finset.sum_comm]
 
+omit [NeZero N] in
 /-- A finite-set translate average of a uniformly bounded function has the
 same bound. -/
 lemma abs_setAverageTranslate_le
     {A : Finset (ZMod N)} (hA : A.Nonempty) (f : ZMod N → ℝ)
-    {M : ℝ} (hM : 0 ≤ M) (hf : ∀ x, |f x| ≤ M) (x : ZMod N) :
+    {M : ℝ} (_ : 0 ≤ M) (hf : ∀ x, |f x| ≤ M) (x : ZMod N) :
     |setAverageTranslate A f x| ≤ M := by
   have hcard : (0 : ℝ) < A.card := by
     exact_mod_cast Finset.card_pos.mpr hA
@@ -265,6 +269,7 @@ lemma abs_setAverageTranslate_le
       rw [Finset.sum_const, nsmul_eq_mul]
       field_simp
 
+omit [NeZero N] in
 /-- Centering costs at most a factor two in the pointwise bound. -/
 lemma abs_centeredTranslate_le
     {A : Finset (ZMod N)} (hA : A.Nonempty) (f : ZMod N → ℝ)
@@ -383,6 +388,7 @@ theorem half_samples_are_good
 
 /-! ## Two good samples give an almost period -/
 
+omit [NeZero N] in
 lemma sampleDeviation_sub_const_identity
     (A : Finset (ZMod N)) (f : ZMod N → ℝ)
     (a : Fin k → ZMod N) (t x : ZMod N) :
@@ -527,6 +533,7 @@ theorem exists_large_almostPeriod_set
       b i, Fintype.mem_piFinset.mp hatA i, ?_⟩
     simp [b]
 
+omit [NeZero N] in
 /-- Algebraic form of the large-shifts cardinality calculation. -/
 lemma card_shiftSet_lower_bound
     {A S : Finset (ZMod N)} {L : Finset (Fin k → ZMod N)}

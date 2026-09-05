@@ -39,7 +39,6 @@ open scoped BigOperators ComplexConjugate ComplexOrder ENNReal Indicator mu NNRe
 namespace CyclicPositiveDefiniteLifting
 
 variable {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
-  [MeasurableSpace G] [DiscreteMeasurableSpace G]
 
 /-- The vector whose Gram matrix expands a weighted difference-convolution
 moment. -/
@@ -60,9 +59,8 @@ lemma sum_momentVector_mul_conj
       simp_rw [momentVector, dddconv_apply_sub, Finset.sum_fiberwise,
         ← univ_product_univ, sum_product]
       simp only [sum_pow', Fintype.sum_mul_sum, map_mul, map_sum, map_prod,
-        Fintype.piFinset_univ, ← Complex.conj_mul', prod_mul_distrib]
-      simp only [mul_sum, @sum_comm _ _ (Fin k → G), mul_comm (conj _),
-        prod_mul_distrib, Pi.conj_apply]
+        Fintype.piFinset_univ, prod_mul_distrib]
+      simp only [mul_sum, @sum_comm _ _ (Fin k → G)]
       congr with x
       congr with y
       congr with z
@@ -78,6 +76,7 @@ lemma sum_momentVector_mul_conj
       simp_rw [dddconv_apply h₁, sum_mul]
       simp only [Pi.conj_apply]
 
+omit [DecidableEq G] in
 /-- Cauchy--Schwarz for the polarized moment-vector identity. -/
 lemma norm_sum_momentVector_mul_conj_le
     (g₁ g₂ h₁ h₂ : G → ℂ) (k : ℕ) :
@@ -208,6 +207,8 @@ lemma shifted_ddconv_moment_le_dddconv_moment
       rw [← sq]
       exact Real.sq_sqrt hR
 
+variable [MeasurableSpace G] [DiscreteMeasurableSpace G]
+
 /-- A pointwise measure majorization and positive-definite factorization imply
 the weighted ordinary-to-difference convolution comparison. -/
 lemma weighted_ddconv_norm_le_two_mul_dddconv_norm
@@ -278,6 +279,7 @@ lemma weighted_ddconv_norm_le_two_mul_dddconv_norm
       (2 : ℝ) = 2 ^ 1 := by norm_num
       _ ≤ 2 ^ p := pow_le_pow_right₀ (by norm_num) (Nat.one_le_iff_ne_zero.mpr hp0))
 
+omit [MeasurableSpace G] [DiscreteMeasurableSpace G] in
 /-- A probability weight supported on differences that keep `I` inside `O`
 pointwise majorizes the normalized indicator of `I`. -/
 lemma probability_majorization
@@ -324,16 +326,18 @@ noncomputable def positiveDefiniteWeight (S T : Finset G) : G → ℝ≥0 :=
 noncomputable def positiveDefiniteRoot (S T : Finset G) : G → ℂ :=
   (↑) ∘ ((↑) ∘ (μ_[ℝ≥0] S ∗ᵈ μ T) : G → ℝ)
 
+omit [MeasurableSpace G] [DiscreteMeasurableSpace G] in
 lemma positiveDefiniteRoot_factor (S T : Finset G) :
     positiveDefiniteRoot S T ○ᵈ positiveDefiniteRoot S T =
       (↑) ∘ positiveDefiniteWeight S T := by
   funext x
   simp only [positiveDefiniteRoot, positiveDefiniteWeight, Function.comp_apply,
-    ← Complex.ofReal_dddconv, ← NNReal.coe_dddconv, ← NNReal.coe_ddconv]
+    ← Complex.ofReal_dddconv, ← NNReal.coe_dddconv]
   exact congrArg (fun z : ℝ≥0 ↦ (z : ℂ))
     (congrFun (dddconv_ddconv_dddconv_comm
       (μ_[ℝ≥0] S) (μ_[ℝ≥0] S) (μ_[ℝ≥0] T) (μ_[ℝ≥0] T)).symm x)
 
+omit [MeasurableSpace G] [DiscreteMeasurableSpace G] in
 lemma positiveDefiniteWeight_sum (S T : Finset G)
     (hS : S.Nonempty) (hT : T.Nonempty) :
     ∑ x, positiveDefiniteWeight S T x = 1 := by
@@ -373,6 +377,7 @@ lemma positiveDefiniteWeight_support_subset_dilate
   change s₁ - s₂ + (t₁ - t₂) ∈ B.dilate (4 * delta)
   simpa only [show (delta + delta) + (delta + delta) = 4 * delta by ring] using hadd
 
+omit [NeZero N] in
 lemma controlled_ratio_le_two
     (I O : Finset (ZMod N)) (m : ℕ) (hm : 0 < m)
     (hregular : (10 * m) * O.card ≤ (10 * m + 1) * I.card) :

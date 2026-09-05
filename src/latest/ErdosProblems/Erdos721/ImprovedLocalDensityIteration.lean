@@ -171,6 +171,7 @@ lemma rankFreeExtractedRadius_pos
   unfold rankFreeExtractedRadius
   positivity
 
+omit [NeZero N] in
 /-- The canonical local-controller parameters fit the complete boosted
 smoothing error budget. -/
 lemma explicit_rankFree_smoothing_error_bound
@@ -263,6 +264,7 @@ noncomputable def reflectedCrootCost
       (CyclicImprovedParameters.improvedExponent epsilon beta : ℝ) ^ 2 /
         (epsilon / 32) ^ 2
 
+omit [NeZero N] in
 lemma reflectedImprovedCrootLowerBound_eq_rpow
     (S A₁ U : Finset (ZMod N)) (K epsilon beta : ℝ) :
     reflectedImprovedCrootLowerBound S A₁ U K epsilon beta =
@@ -281,12 +283,14 @@ noncomputable def reflectedStableEntropy
           Real.log (11 / (10 * alpha)) + Real.log 4) /
         (1 / 2 : ℝ) ^ 2)⌉₊ + 1
 
+omit [NeZero N] in
 lemma reflectedStableEntropy_pos
     (A₁ U : Finset (ZMod N)) (alpha epsilon beta : ℝ) :
     0 < reflectedStableEntropy A₁ U alpha epsilon beta := by
   unfold reflectedStableEntropy
   omega
 
+omit [NeZero N] in
 /-- The reflected Croot--Sisask cardinality lower bound implies the strict
 relative entropy cutoff against the same stable carrier. -/
 lemma reflectedStableEntropy_cutoff_of_lowerBound
@@ -600,7 +604,7 @@ theorem exists_large_boosted_mass
     (hregular :
       10 * (H.dilate (u + zeta)).carrier.card ≤
         11 * (H.dilate (u - zeta)).carrier.card)
-    (hA₁ : A₁.Nonempty) (hA₂ : A₂.Nonempty) (hU : U.Nonempty)
+    (_ : A₁.Nonempty) (hA₂ : A₂.Nonempty) (hU : U.Nonempty)
     (hmass :
       1 - epsilon / 32 ≤
         ∑ x ∈ U, (μ_[ℝ] A₁ ○ᵈ μ_[ℝ] A₂) x) :
@@ -734,6 +738,7 @@ theorem exists_large_boosted_mass_with_reflected_base
         exact neg_le_abs _
       _ = boostedMass X A₁ A₂ U epsilon beta := by ring
 
+omit [NeZero N] in
 /-- Shrinking the right summand can only decrease the real-valued addition
 constant. -/
 lemma addConst_cast_mono_right
@@ -1011,7 +1016,8 @@ theorem exists_local_improved_density_increment_of_stable_boosted_base
     · exact hx
   obtain ⟨D, v, xi, hDradius, hDpos, hBrankD, hDrank,
       hvlow, hvhigh, hxiFormula, hxipos, hxiv, hDregular, hDsub, hinc⟩ :=
-    CyclicImprovedDensityIncrement.exists_regular_boosted_density_increment_of_tested_mass_of_controller_subset
+    open CyclicImprovedDensityIncrement in
+    exists_regular_boosted_density_increment_of_tested_mass_of_controller_subset
       B C A A₁ A₂ U X scale
       (CyclicImprovedParameters.improvedExponent epsilon beta) regularM
       hBradius hBrank hregularM hCpos hBfreqC hbeta0 hdensity
@@ -1116,7 +1122,8 @@ theorem exists_local_improved_density_increment_of_sharp_boosted_base
         gcongr
   obtain ⟨D, v, xi, hDradius, hDpos, hBrankD, hDrank,
       hvlow, hvhigh, hxiFormula, hxipos, hxiv, hDregular, hDsub, hinc⟩ :=
-    CyclicImprovedDensityIncrement.exists_regular_boosted_density_increment_of_tested_mass_of_controller_subset
+    open CyclicImprovedDensityIncrement in
+    exists_regular_boosted_density_increment_of_tested_mass_of_controller_subset
       B C A A₁ A₂ U X scale
       (CyclicImprovedParameters.improvedExponent epsilon beta) regularM
       hBradius hBrank hregularM hCpos hBfreqC hbeta0 hdensity
@@ -1401,7 +1408,8 @@ theorem exists_local_improved_density_increment_rankFree_of_boosted_base
     simpa only [CyclicBohr.Set.frequencies_dilate] using hHfreqC
   obtain ⟨D, v, xi, hDradius, hDpos, hRrankD, hDrank,
       hvlow, hvhigh, hxiFormula, hxipos, hxiv, hDregular, hDsub, hinc⟩ :=
-    CyclicImprovedDensityIncrement.exists_regular_boosted_density_increment_of_tested_mass_of_controller_subset
+    open CyclicImprovedDensityIncrement in
+    exists_regular_boosted_density_increment_of_tested_mass_of_controller_subset
       (H.dilate zeta) C A A₁ A₂ U X scale
       (CyclicImprovedParameters.improvedExponent epsilon beta) regularM
       hRradius hRrank hregularM hCpos hRfreqC hbeta0 hdensity
@@ -1578,7 +1586,8 @@ theorem exists_local_improved_density_increment_rankFree
     simpa only [CyclicBohr.Set.frequencies_dilate] using hHfreqC
   obtain ⟨D, v, xi, hDradius, hDpos, hRrankD, hDrank,
       hvlow, hvhigh, hxiFormula, hxipos, hxiv, hDregular, hDsub, hinc⟩ :=
-    CyclicImprovedDensityIncrement.exists_regular_boosted_density_increment_of_tested_mass_of_controller_subset
+    open CyclicImprovedDensityIncrement in
+    exists_regular_boosted_density_increment_of_tested_mass_of_controller_subset
       (H.dilate zeta) C A A₁ A₂ U X scale
       (CyclicImprovedParameters.improvedExponent epsilon beta) regularM
       hRradius hRrank hregularM hCpos hRfreqC hbeta0 hdensity

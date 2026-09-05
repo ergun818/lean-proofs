@@ -47,7 +47,7 @@ noncomputable def torusCharacter {D : ℕ} (ξ : Fin D → ℤ)
 
 lemma torusCharacter_add {D : ℕ} (ξ : Fin D → ℤ) (x y : Torus D) :
     torusCharacter ξ (x + y) = torusCharacter ξ x * torusCharacter ξ y := by
-  simp [torusCharacter, fourier_one, map_add, AddCircle.toCircle_add]
+  simp [torusCharacter, map_add, AddCircle.toCircle_add]
 
 lemma torusCharacter_neg {D : ℕ} (ξ : Fin D → ℤ) (x : Torus D) :
     torusCharacter ξ (-x) = conj (torusCharacter ξ x) := by
@@ -78,7 +78,7 @@ noncomputable def circleGeomSum (L : ℕ) (x : AddCircle (1 : ℝ)) : ℂ :=
 
 @[simp] lemma fourier_one_nsmul (n : ℕ) (x : AddCircle (1 : ℝ)) :
     fourier 1 (n • x) = fourier 1 x ^ n := by
-  simp [fourier_one, AddCircle.toCircle_nsmul]
+  simp [AddCircle.toCircle_nsmul]
 
 lemma circleGeomSum_eq_geom (L : ℕ) (x : AddCircle (1 : ℝ)) :
     circleGeomSum L x =
@@ -208,7 +208,7 @@ lemma sum_sum_torusCharacter_orbit {D L : ℕ} (ξ : Fin D → ℤ)
       circleGeomSum L (integerDot ξ alpha) := by
     apply Finset.sum_congr rfl
     intro i _hi
-    simp [torusCharacter, circleGeomSum, map_nsmul]
+    simp [torusCharacter, map_nsmul]
   calc
     (∑ i : Fin L, ∑ j : Fin L,
         torusCharacter ξ (i.val • alpha) *
@@ -394,7 +394,7 @@ theorem exists_orbit_difference_mem_box {D H L : ℕ}
   have hlower := orbitCutoffSum_lower (L := L) F hepsilon alpha y hphase
   have hpos : 0 < orbitCutoffSum F L alpha y := by linarith
   by_contra hex
-  push_neg at hex
+  push Not at hex
   have hnonpos : orbitCutoffSum F L alpha y ≤ 0 := by
     rw [orbitCutoffSum]
     apply Finset.sum_nonpos

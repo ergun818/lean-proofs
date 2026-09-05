@@ -284,6 +284,7 @@ theorem exists_regular_refined_bohr_smoothing_of_boosted_sharp
 
 /-! ## The Fourier `L¹` input -/
 
+omit [NeZero N] in
 /-- APAP's complex indicator notation agrees with the local cyclic indicator. -/
 lemma indicatorOne_eq_cyclicIndicator (P : Finset (ZMod N)) :
     (𝟭_[P] : ZMod N → ℂ) = CyclicFourier.indicator P := by

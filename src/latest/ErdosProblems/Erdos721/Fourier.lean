@@ -361,9 +361,11 @@ theorem parseval_norm_sq_real (f : ZMod N → ℂ) :
 def indicator (A : Finset (ZMod N)) (x : ZMod N) : ℂ :=
   if x ∈ A then 1 else 0
 
+omit [NeZero N] in
 @[simp] lemma indicator_apply_mem {A : Finset (ZMod N)} {x : ZMod N} (hx : x ∈ A) :
     indicator A x = 1 := by simp [indicator, hx]
 
+omit [NeZero N] in
 @[simp] lemma indicator_apply_notMem {A : Finset (ZMod N)} {x : ZMod N} (hx : x ∉ A) :
     indicator A x = 0 := by simp [indicator, hx]
 

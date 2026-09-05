@@ -72,8 +72,9 @@ theorem randomisation_finset
 def trigPoly (Δ : Finset (AddChar G ℂ)) (c : AddChar G ℂ → ℂ) (x : G) : ℂ :=
   ∑ ψ ∈ Δ, c ψ * ψ x
 
+omit [Fintype G] in
 /-- Pointwise exponential majorant underlying Rudin's inequality. -/
-lemma exp_re_trigPoly_le_prod
+lemma exp_re_trigPoly_le_prod [Finite G]
     (Δ : Finset (AddChar G ℂ)) (c : AddChar G ℂ → ℂ)
     (hc : ∀ ψ ∈ Δ, ‖c ψ‖ = 1) {t : ℝ} (ht : 0 < t) (x : G) :
     Real.exp (((t : ℂ) * trigPoly Δ c x).re) ≤
@@ -95,7 +96,6 @@ lemma exp_re_trigPoly_le_prod
   have hdiv (ψ : AddChar G ℂ) (hψ : ψ ∈ Δ) :
       ((t : ℂ) * (c ψ * ψ x)) / ‖(t : ℂ) * (c ψ * ψ x)‖ = c ψ * ψ x := by
     rw [hone ψ hψ]
-    push_cast
     field_simp [ht.ne']
   calc
     Real.exp (((t : ℂ) * trigPoly Δ c x).re) =
@@ -146,11 +146,11 @@ theorem rudin_exp_ineq
       exact Real.cosh_le_exp_half_sq t
     _ = Real.exp (t ^ 2 * Δ.card / 2) := by
       rw [Finset.prod_const]
-      simp only [nsmul_eq_mul, ← Real.exp_nat_mul]
+      simp only [← Real.exp_nat_mul]
       congr 1
-      push_cast
       ring
 
+omit [Fintype G] in
 lemma trigPoly_neg (Δ : Finset (AddChar G ℂ)) (c : AddChar G ℂ → ℂ) (x : G) :
     trigPoly Δ (fun ψ ↦ -c ψ) x = -trigPoly Δ c x := by
   unfold trigPoly
@@ -304,7 +304,6 @@ theorem rudin_moment_bound_clean
       have hexp : Real.exp ((p : ℝ) / 2) = Real.exp (1 / 2 : ℝ) ^ p := by
         rw [← Real.exp_nat_mul]
         congr 1
-        push_cast
         ring
       rw [hexp, div_pow, mul_pow, mul_pow]
       ring

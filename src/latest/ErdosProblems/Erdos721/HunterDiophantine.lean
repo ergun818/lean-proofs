@@ -148,8 +148,7 @@ lemma measurableSet_resonanceTupleEvent {D H R : ℕ}
   · exact (continuous_steppedPhaseHom d ξ).measurable
       (centeredBox_compact R epsilon).measurableSet |>.congr
         (by ext θ; simp [resonanceTupleEvent, hξ])
-  · simpa [resonanceTupleEvent, hξ] using (MeasurableSet.empty :
-      MeasurableSet (∅ : Set (Torus D)))
+  · simp [resonanceTupleEvent, hξ]
 
 lemma volume_resonanceTupleEvent_le {D H R : ℕ} {d : ℕ} (hd : 0 < d)
     {epsilon : ℝ} (hepsilon0 : 0 ≤ epsilon)
@@ -298,7 +297,6 @@ lemma exists_codedSubspace_eq_resonanceSubspace {D H R : ℕ}
   let m := Module.finrank ℚ (Submodule.span ℚ S)
   have hmR : m < R := by
     change Module.finrank ℚ (Submodule.span ℚ S) < R at hrank
-    change m < R
     exact hrank
   obtain ⟨f, hfmem, hfspan, _hfind⟩ :=
     Submodule.exists_fun_fin_finrank_span_eq ℚ S

@@ -40,10 +40,12 @@ variable {N : ℕ} [NeZero N]
 def translateFinset (S : Finset (ZMod N)) (z : ZMod N) : Finset (ZMod N) :=
   S.map (Equiv.addRight z).toEmbedding
 
+omit [NeZero N] in
 @[simp] lemma card_translateFinset (S : Finset (ZMod N)) (z : ZMod N) :
     (translateFinset S z).card = S.card := by
   simp [translateFinset]
 
+omit [NeZero N] in
 lemma mem_translateFinset {S : Finset (ZMod N)} {z y : ZMod N} :
     y ∈ translateFinset S z ↔ y - z ∈ S := by
   constructor
@@ -65,6 +67,7 @@ def translationDiscrepancy (S : Finset (ZMod N)) (z : ZMod N) : ℕ :=
 def translationSymmDiff (S : Finset (ZMod N)) (z : ZMod N) : Finset (ZMod N) :=
   (S \ translateFinset S z) ∪ (translateFinset S z \ S)
 
+omit [NeZero N] in
 lemma card_translationSymmDiff (S : Finset (ZMod N)) (z : ZMod N) :
     (translationSymmDiff S z).card = translationDiscrepancy S z := by
   unfold translationSymmDiff translationDiscrepancy
@@ -204,7 +207,7 @@ theorem five_mul_translationDiscrepancy_le_card
 
 /-- Fine version of the translation-discrepancy estimate. -/
 theorem five_mul_m_translationDiscrepancy_le_card
-    (B : Set N) (m : ℕ) {t δ : ℝ} (hm : 0 < m)
+    (B : Set N) (m : ℕ) {t δ : ℝ} (_ : 0 < m)
     (hδ : 0 ≤ δ) (hinner : 0 ≤ t - δ)
     (hregular :
       (10 * m) * (B.dilate (t + δ)).carrier.card ≤
@@ -387,7 +390,7 @@ lemma abs_realConvolution_sub_le
           𝔼 y : ZMod N, |μ ((x - y) - (-z)) - μ (x - y)| := by
             congr 1
             funext y
-            congr 2 <;> abel_nf
+            congr 2; abel_nf
       _ = 𝔼 u : ZMod N, |μ (u - (-z)) - μ u| :=
         expect_sub_left (fun u ↦ |μ (u - (-z)) - μ u|) x
       _ ≤ ε := hμ

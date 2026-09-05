@@ -161,7 +161,7 @@ lemma sum_oneDCoeff_le (m : ℕ) :
 lemma normSq_one_add_add_normSq_one_sub {z : ℂ} (hz : ‖z‖ = 1) :
     Complex.normSq (1 + z) + Complex.normSq (1 - z) = 4 := by
   rw [Complex.normSq_add, Complex.normSq_sub]
-  simp only [Complex.normSq_one, Complex.normSq_eq_norm_sq, hz, one_pow,
+  simp only [Complex.normSq_eq_norm_sq, hz, one_pow,
     one_mul, map_one]
   ring
 
@@ -195,7 +195,7 @@ lemma oneDKernel_le_geometric (m : ℕ) (x : AddCircle (1 : ℝ)) :
   have hb0 : 0 ≤ 4 * (1 - 4 * ‖x‖ ^ 2) := four_mul_one_sub_nonneg x
   have hq : Complex.normSq (1 + fourier 1 x) ≤
       4 * (1 - 4 * ‖x‖ ^ 2) := by
-    convert normSq_one_add_fourier_le x using 1 <;> ring
+    convert normSq_one_add_fourier_le x using 1; ring
   have hpow := pow_le_pow_left₀ hq0 hq m
   have hcentral : (4 : ℝ) ^ m ≤ (2 * m + 1) * centralChoose m := by
     unfold centralChoose
@@ -216,7 +216,7 @@ lemma oneDKernel_le_exp (m : ℕ) (x : AddCircle (1 : ℝ)) :
       Real.exp (-4 * m * ‖x‖ ^ 2) := by
   refine (oneDKernel_le_geometric m x).trans ?_
   have hbase : 1 - 4 * ‖x‖ ^ 2 ≤ Real.exp (-4 * ‖x‖ ^ 2) := by
-    convert Real.add_one_le_exp (-4 * ‖x‖ ^ 2) using 1 <;> ring
+    convert Real.add_one_le_exp (-4 * ‖x‖ ^ 2) using 1; ring
   have hbase0 : 0 ≤ 1 - 4 * ‖x‖ ^ 2 := by
     have := four_mul_one_sub_nonneg x
     nlinarith

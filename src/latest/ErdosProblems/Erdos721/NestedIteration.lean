@@ -309,7 +309,7 @@ lemma Reach.radius_lower_from_root {m i j : ℕ}
         _ ≤ min 1 t.B.radius := ih hprefix' hsum
 
 lemma iterationBudget_cast_lower {beta : ℝ}
-    (hbeta0 : 0 < beta) (hbeta1 : beta ≤ 1) :
+    (_ : 0 < beta) (_ : beta ≤ 1) :
     2 ^ 17 * CyclicQuantitativeBounds.curLog beta ≤
       (iterationBudget beta : ℝ) := by
   unfold iterationBudget
@@ -472,7 +472,7 @@ theorem exists_quantitative_terminal_state
       _ ≤ (u.B.rank : ℝ) + cost := by gcongr
       _ ≤ ((s.B.rank : ℝ) + j * cost) + cost := by
         exact add_le_add_left (by simpa only [cost] using hreach.rank_bound) cost
-      _ = (s.B.rank : ℝ) + (j + 1) * cost := by push_cast; ring
+      _ = (s.B.rank : ℝ) + (j + 1) * cost := by ring
       _ ≤ (s.B.rank : ℝ) +
           (iterationBudget s.beta : ℝ) * cost := by
         have hdiff : 0 ≤

@@ -152,7 +152,7 @@ theorem narrowing_dichotomy
         (D.card : ℝ) * ((2 - epsilon / 2) * alpha) := by
     rw [Finset.sum_add_distrib, hsumS, hsumT] at hsumlt
     simp only [Finset.sum_const, nsmul_eq_mul] at hsumlt
-    convert hsumlt using 1 <;> ring
+    convert hsumlt using 1; ring
   have hcancel :
       2 * ((B.dilate t).carrier.card : ℝ) <
         (D.card : ℝ) * (2 - epsilon / 2) := by

@@ -39,6 +39,7 @@ variable {N : ℕ} [NeZero N]
 
 open CyclicBohr CyclicFourier CyclicSpectralSmoothing
 
+omit [NeZero N] in
 /-- The complex and real finite-set probability weights agree after the
 canonical embedding of the reals into the complexes. -/
 lemma probabilityWeight_eq_ofReal_uniformWeight
@@ -88,7 +89,7 @@ lemma probabilityWeight_convolution_indicator
 lower bound on the corresponding translated slice. -/
 theorem density_increment_of_norm_probabilityWeight_convolution_indicator
     (A S : Finset (ZMod N)) (hS : S.Nonempty) (x : ZMod N)
-    {beta : ℝ} (hbeta : 0 ≤ beta)
+    {beta : ℝ} (_ : 0 ≤ beta)
     (hlarge : beta ≤ ‖convolution (probabilityWeight S) (indicator A) x‖) :
     beta ≤ (CyclicBohr.translatedSlice A S x).card / (S.card : ℝ) := by
   have hden : ‖(((S.card : ℝ) : ℂ))‖ = (S.card : ℝ) := by
@@ -125,7 +126,7 @@ lemma indicator_ddconv_mu_apply_eq_translatedSlice
 therefore gives a genuinely denser translated slice. -/
 theorem exists_translatedSlice_of_dLinfty_increment
     (A S : Finset (ZMod N)) (hS : S.Nonempty) {beta : ℝ}
-    (hbeta : 0 ≤ beta)
+    (_ : 0 ≤ beta)
     (hlarge : beta ≤ ‖𝟭_[(A : Set (ZMod N)), ℝ] ∗ᵈ μ_[ℝ] S‖_[∞]) :
     ∃ x : ZMod N,
       beta ≤ (CyclicBohr.translatedSlice A S x).card / (S.card : ℝ) := by
@@ -136,6 +137,7 @@ theorem exists_translatedSlice_of_dLinfty_increment
   rw [indicator_ddconv_mu_apply_eq_translatedSlice A S hS x] at hx
   rwa [Real.norm_of_nonneg (by positivity)] at hx
 
+omit [NeZero N] in
 /-- The translated slice is contained in the original set. -/
 lemma translatedSlice_subset_left (A S : Finset (ZMod N)) (x : ZMod N) :
     CyclicBohr.translatedSlice A S x ⊆ A := by
@@ -148,11 +150,13 @@ carrier.  This is the set passed to the next density-increment stage. -/
 def normalizedSlice (A S : Finset (ZMod N)) (x : ZMod N) : Finset (ZMod N) :=
   S.filter fun z ↦ x - z ∈ A
 
+omit [NeZero N] in
 lemma normalizedSlice_subset_right (A S : Finset (ZMod N)) (x : ZMod N) :
     normalizedSlice A S x ⊆ S := by
   intro z hz
   exact (Finset.mem_filter.1 hz).1
 
+omit [NeZero N] in
 /-- Reflection in `x` is a bijection between the two descriptions of a
 translated slice. -/
 lemma card_normalizedSlice_eq_card_translatedSlice
@@ -174,6 +178,7 @@ lemma card_normalizedSlice_eq_card_translatedSlice
   intro a _ha b _hb hab
   simpa using hab
 
+omit [NeZero N] in
 /-- Translation and reflection preserve the absence of nonconstant
 three-term arithmetic progressions. -/
 lemma threeAPFree_normalizedSlice
@@ -220,6 +225,7 @@ lemma mu_triple_indicator_neg_apply_zero_eq_sum
   rw [ddconv_right_comm (μ_[ℂ] C ∗ᵈ μ_[ℂ] A₁)]
   simp only [ddconv_assoc]
 
+omit [NeZero N] in
 /-- Complexification commutes with a finite probability weight. -/
 lemma ofReal_comp_mu (A : Finset (ZMod N)) :
     Complex.ofReal ∘ μ_[ℝ] A = μ_[ℂ] A := by
@@ -258,11 +264,12 @@ lemma norm_complex_tested_convolution_sub_eq_abs_real
   rw [← Complex.ofReal_sum, ← Complex.ofReal_sum, ← Complex.ofReal_sub,
     Complex.norm_real, Real.norm_eq_abs]
 
+omit [NeZero N] in
 /-- Summing pointwise complex errors over a finite test set costs at most its
 cardinality times the uniform error. -/
 lemma norm_sum_sub_sum_le_card_mul
     (P : Finset (ZMod N)) (F G : ZMod N → ℂ) {epsilon : ℝ}
-    (hepsilon : 0 ≤ epsilon)
+    (_ : 0 ≤ epsilon)
     (h : ∀ x ∈ P, ‖F x - G x‖ ≤ epsilon) :
     ‖(∑ x ∈ P, F x) - ∑ x ∈ P, G x‖ ≤ P.card * epsilon := by
   rw [← Finset.sum_sub_distrib]
@@ -276,7 +283,7 @@ lemma norm_sum_sub_sum_le_card_mul
 /-- Uniform Bohr smoothing controls its correlation with every finite test
 set. -/
 theorem norm_testSet_sum_smoothing_sub_le
-    (C P : Finset (ZMod N)) (hC : C.Nonempty) (F : ZMod N → ℂ)
+    (C P : Finset (ZMod N)) (_ : C.Nonempty) (F : ZMod N → ℂ)
     {epsilon : ℝ} (hepsilon : 0 ≤ epsilon)
     (hsmooth : ∀ x,
       ‖convolution (probabilityWeight C) F x - F x‖ ≤ epsilon) :

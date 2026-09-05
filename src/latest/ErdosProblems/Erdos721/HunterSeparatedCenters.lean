@@ -38,7 +38,7 @@ def affineCombo {Y S D : ℕ} (a b c : Fin Y × Fin S) :
   toFun x := centerAt x a - 2 • centerAt x b + centerAt x c
   map_zero' := by simp [centerAt]
   map_add' x y := by
-    simp only [centerAt, Pi.add_apply, zsmul_add]
+    simp only [centerAt, Pi.add_apply]
     abel
 
 lemma continuous_affineCombo {Y S D : ℕ} (a b c : Fin Y × Fin S) :
@@ -269,7 +269,7 @@ theorem exists_phaseDistributed_affinelySeparated
         (volume : Measure (CenterFamily Y S D)) := by
       rw [volume_pi]
       exact probabilityMeasurePi
-    simpa using hbad
+    simp at hbad
   obtain ⟨x, hx⟩ := (Set.ne_univ_iff_exists_notMem _).mp hproper
   have hxmiss : x ∉ miss := fun hxm ↦ hx (Or.inl hxm)
   have hxsep : x ∉ sep := fun hxs ↦ hx (Or.inr hxs)

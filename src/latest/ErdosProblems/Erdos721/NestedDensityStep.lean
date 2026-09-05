@@ -511,12 +511,14 @@ lemma State.stepRadiusFloor_le_of_controlled
 noncomputable def relativeDensity (A S : Finset (ZMod N)) : ℝ :=
   (A.card : ℝ) / S.card
 
+omit [NeZero N] in
 lemma relativeDensity_pos (A S : Finset (ZMod N))
     (hA : A.Nonempty) (hS : S.Nonempty) :
     0 < relativeDensity A S := by
   unfold relativeDensity
   positivity
 
+omit [NeZero N] in
 lemma relativeDensity_le_one (A S : Finset (ZMod N)) (hAS : A ⊆ S) :
     relativeDensity A S ≤ 1 := by
   unfold relativeDensity
@@ -528,6 +530,7 @@ lemma relativeDensity_le_one (A S : Finset (ZMod N)) (hAS : A ⊆ S) :
     rw [div_le_one hScard]
     exact_mod_cast Finset.card_le_card hAS
 
+omit [NeZero N] in
 lemma relativeDensity_mul_card (A S : Finset (ZMod N))
     (hS : S.Nonempty) :
     relativeDensity A S * (S.card : ℝ) = A.card := by
@@ -536,6 +539,7 @@ lemma relativeDensity_mul_card (A S : Finset (ZMod N))
     exact_mod_cast Finset.card_ne_zero.mpr hS
   field_simp
 
+omit [NeZero N] in
 /-- Normalized slices are monotone in their carrier. -/
 lemma normalizedSlice_mono (A S T : Finset (ZMod N)) (x : ZMod N)
     (hTS : T ⊆ S) :
@@ -546,13 +550,14 @@ lemma normalizedSlice_mono (A S T : Finset (ZMod N)) (x : ZMod N)
   simp only [Finset.mem_filter] at hy ⊢
   exact ⟨hTS hy.1, hy.2⟩
 
+omit [NeZero N] in
 private lemma nonempty_of_positive_density
     (A S : Finset (ZMod N)) {alpha : ℝ}
-    (halpha : 0 < alpha) (hS : S.Nonempty)
+    (halpha : 0 < alpha) (_ : S.Nonempty)
     (hdense : alpha ≤ (A.card : ℝ) / S.card) : A.Nonempty := by
   by_contra hA
   rw [not_nonempty_iff_eq_empty.mp hA] at hdense
-  simp at hdense
+  simp only [Finset.card_empty, Nat.cast_zero, zero_div] at hdense
   exact (not_lt_of_ge hdense) halpha
 
 /-- A narrowing increment on the inner regular carrier remains a slightly
@@ -821,14 +826,14 @@ theorem exists_increment_or_terminal
     (hKregular :
       (10 * m) * (K.dilate (tk + dk)).carrier.card ≤
         (10 * m + 1) * (K.dilate (tk - dk)).carrier.card)
-    (hHradius : 0 < H.radius) (hHrank : 0 < H.rank)
-    (hu0 : 1 / 2 ≤ u) (hu1 : u ≤ 1)
+    (_ : 0 < H.radius) (_ : 0 < H.rank)
+    (_ : 1 / 2 ≤ u) (_ : u ≤ 1)
     (hzeta : 0 < zeta) (hzetau : zeta < u)
     (hHregular :
       10 * (H.dilate (u + zeta)).carrier.card ≤
         11 * (H.dilate (u - zeta)).carrier.card)
     (hRradius : 0 < R.radius) (hRrank : 0 < R.rank)
-    (hvr0 : 1 / 2 ≤ vr) (hvr1 : vr ≤ 1)
+    (_ : 1 / 2 ≤ vr) (_ : vr ≤ 1)
     (heta : 0 < eta) (hetavr : eta < vr)
     (hRregular :
       10 * (R.dilate (vr + eta)).carrier.card ≤
@@ -852,9 +857,9 @@ theorem exists_increment_or_terminal
           (dk / 4)).carrier)
     (hWeightOuter :
       (H.dilate (u - zeta)).carrier ⊆ (J.dilate (dj / 4)).carrier)
-    (hHsmall :
+    (_ :
       (H.dilate zeta).carrier ⊆ (J.dilate (dj / 4)).carrier)
-    (hHsmallInner :
+    (_ :
       (H.dilate zeta).carrier ⊆
         ((CyclicTwoScaleLifting.doubleBohr hN K).dilate
           (dk / 4)).carrier)
@@ -1104,7 +1109,7 @@ theorem exists_increment_or_terminal
       have hdenseA : (1 + 1 / 1024 : ℝ) * betaOut ≤
           (Anew.card : ℝ) / (Cbohr.dilate vnext).carrier.card := by
         dsimp only [Anew]
-        convert hdense using 1 <;> norm_num
+        convert hdense using 1; norm_num
       have hAnew : Anew.Nonempty := by
         apply nonempty_of_positive_density Anew
           (Cbohr.dilate vnext).carrier

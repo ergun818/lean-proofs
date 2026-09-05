@@ -37,14 +37,15 @@ namespace CyclicLocalDensityStep
 
 variable {N : ℕ} [NeZero N]
 
+omit [NeZero N] in
 /-- A positive auxiliary relative density forces nonemptiness. -/
 private lemma nonempty_of_positive_relative_density
     (A S : Finset (ZMod N)) {alpha : ℝ} (halpha : 0 < alpha)
-    (hS : S.Nonempty) (hdense : alpha ≤ (A.card : ℝ) / S.card) :
+    (_ : S.Nonempty) (hdense : alpha ≤ (A.card : ℝ) / S.card) :
     A.Nonempty := by
   by_contra hA
   rw [not_nonempty_iff_eq_empty.mp hA] at hdense
-  simp at hdense
+  simp only [Finset.card_empty, Nat.cast_zero, zero_div] at hdense
   exact (not_lt_of_ge hdense) halpha
 
 /-- If `A₂` lies in the reflected translate `x - T`, translating the
@@ -224,7 +225,7 @@ theorem exists_positive_density_increment_slice_of_large_norm
     intro z hzU₀ hznotU
     have hznot : z ∉ A₁ - A₂ := by
       intro hz
-      exact hznotU (by simp [U, hzU₀, hz])
+      exact hznotU (by simp [hzU₀, hz])
     have hzzero : (μ_[ℝ] A₁ ○ᵈ μ_[ℝ] A₂) z = 0 := by
       by_contra hz
       have hzsupp : z ∈ Function.support (μ_[ℝ] A₁ ○ᵈ μ_[ℝ] A₂) := hz

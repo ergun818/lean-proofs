@@ -61,8 +61,7 @@ lemma mul_half_pow_lt_one_of_le_pow_two {A : ℝ≥0∞} {a B : ℕ}
   apply (ENNReal.toReal_lt_toReal
     (ENNReal.mul_ne_top hAtop (by simp)) (by simp)).mp
   rw [ENNReal.toReal_mul, ENNReal.toReal_pow]
-  simp only [ENNReal.toReal_one, ENNReal.toReal_div, ENNReal.toReal_ofNat,
-    OfNat.ofNat_ne_zero, not_false_eq_true]
+  simp only [ENNReal.toReal_one, ENNReal.toReal_div, ENNReal.toReal_ofNat]
   have hAreal : A.toReal ≤ (2 : ℝ) ^ a := by
     exact ENNReal.toReal_mono (by simp) hA
   calc
@@ -151,7 +150,7 @@ lemma two_mul_pow_le_pow {D a b : ℕ} (hD : 2 ≤ D)
 grouping estimate remains valid. -/
 lemma one_sub_pow_le_half_pow_of_inv_le
     {p : ℝ≥0∞} {S M B : ℕ} (hp : (M : ℝ≥0∞)⁻¹ ≤ p)
-    (hp1 : p ≤ 1) (hS : S = M * B) (hM : 0 < M) :
+    (_ : p ≤ 1) (hS : S = M * B) (hM : 0 < M) :
     (1 - p) ^ S ≤ (1 / 2 : ℝ≥0∞) ^ B := by
   rw [hS]
   exact (pow_le_pow_left' (tsub_le_tsub_left hp 1) _).trans
@@ -354,7 +353,7 @@ lemma ofReal_two_mul_phaseRadius (t : ℕ) :
     ENNReal.ofReal (2 * phaseRadius (dimension t)) =
       ((50 * dimension t ^ 5 : ℕ) : ℝ≥0∞)⁻¹ := by
   let D := dimension t
-  have hDpos : 0 < D := by simpa [D] using dimension_pos t
+  have hDpos : 0 < D := by simp [D]
   have hdenNat : 0 < 50 * D ^ 5 :=
     Nat.mul_pos (by norm_num) (pow_pos hDpos _)
   have hden : (0 : ℝ) < (50 * D ^ 5 : ℕ) := by exact_mod_cast hdenNat
@@ -557,7 +556,7 @@ lemma separation_term_lt_half (t : ℕ) :
     simpa only [Nat.cast_mul] using hcast
   rw [ofReal_two_mul_separationRadius, show dimension t = D by rfl]
   have hDneENN : (D : ℝ≥0∞) ≠ 0 := by
-    exact_mod_cast (show D ≠ 0 by simpa [D] using dimension_ne_zero t)
+    exact_mod_cast (show D ≠ 0 by simp [D])
   have htop :
       (blockCount D * blockSize D : ℝ≥0∞) ^ 3 *
           (8 * (D : ℝ≥0∞)⁻¹ ^ 4) ^ D ≠ ⊤ := by
@@ -625,7 +624,7 @@ lemma intervalLength_sq_le_two_pow_cube (t : ℕ) :
     intervalLength (dimension t) ^ 2 ≤ 2 ^ (dimension t ^ 3) := by
   let D := dimension t
   let e := D ^ 2 / 200
-  have hD : 0 < D := by simpa [D] using dimension_pos t
+  have hD : 0 < D := by simp [D]
   have he : e + e ≤ D ^ 2 := by
     dsimp only [e]
     have hdiv : D ^ 2 / 200 ≤ D ^ 2 := Nat.div_le_self _ _
@@ -670,7 +669,7 @@ lemma direction_coefficient_le_dimension_sq (t : ℕ) :
   let D := dimension t
   let R := resonanceRank D
   let e := D ^ 2 / 200
-  have hD : 0 < D := by simpa [D] using dimension_pos t
+  have hD : 0 < D := by simp [D]
   have hfreq : 2 * frequencyBound D + 1 ≤ D ^ 22 := by
     simpa [D] using two_frequencyBound_add_one_le t
   have hexp : e + 22 * D * R ≤ D ^ 2 := by
@@ -828,7 +827,6 @@ lemma cutoff_log_bound (t : ℕ) :
     exact_mod_cast hfreqNat
   let A : ℝ := 2 * (2 * frequencyBound D + 1 : ℝ) ^ D
   let B : ℝ := 2 * (D : ℝ) ^ (22 * D)
-  norm_num only [Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat] at hfreq
   have hbasepos : (0 : ℝ) < 2 * (frequencyBound D : ℝ) + 1 := by
     have hf : (0 : ℝ) ≤ frequencyBound D := by
       exact_mod_cast Nat.zero_le (frequencyBound D)
@@ -862,7 +860,6 @@ lemma cutoff_log_bound (t : ℕ) :
       have hcoef : (0 : ℝ) ≤ 22 * (D : ℝ) :=
         mul_nonneg (by norm_num) hDpos.le
       have hmul' := mul_le_mul_of_nonneg_left hlogD hcoef
-      norm_num only [Nat.cast_mul, Nat.cast_ofNat]
       calc
         22 * (D : ℝ) * Real.log (D : ℝ) ≤
             22 * (D : ℝ) * (D : ℝ) := hmul'
@@ -928,7 +925,6 @@ lemma cutoff_decay (t : ℕ) :
         -(4 * frequencyBound (dimension t) *
           phaseRadius (dimension t) ^ 2) := by ring
       _ = -X := congrArg Neg.neg hX
-  norm_num only [Nat.cast_mul, Nat.cast_add, Nat.cast_pow, Nat.cast_ofNat]
   change A * Real.exp ((-4 : ℝ) * frequencyBound (dimension t) *
       phaseRadius (dimension t) ^ 2) ≤ 1
   rw [hneg]

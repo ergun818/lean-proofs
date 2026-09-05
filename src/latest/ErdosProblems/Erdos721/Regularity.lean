@@ -74,12 +74,12 @@ lemma nine_mul_ten_mul_pow_lt_succ_pow (m : ℕ) (hm : 0 < m) :
 
 /-- Fine-grid form of the adjacent-ratio pigeonhole lemma. -/
 lemma exists_controlled_adjacent_ratio_fine
-    (a : ℕ → ℕ) {d m : ℕ} (hd : 0 < d) (hm : 0 < m) (ha0 : 0 < a 0)
+    (a : ℕ → ℕ) {d m : ℕ} (hd : 0 < d) (hm : 0 < m) (_ : 0 < a 0)
     (hend : a (100 * m * d) ≤ 9 ^ d * a 0) :
     ∃ j < 100 * m * d,
       (10 * m) * a (j + 1) ≤ (10 * m + 1) * a j := by
   by_contra h
-  push_neg at h
+  push Not at h
   have hgrowth : ∀ j ≤ 100 * m * d,
       (10 * m + 1) ^ j * a 0 ≤ (10 * m) ^ j * a j := by
     intro j hj
@@ -153,11 +153,11 @@ lemma exists_controlled_adjacent_ratio_fine
 /-- If a positive sequence grows by an endpoint factor at most `9^d` over
 `100d` steps, one adjacent ratio is at most `11/10`. -/
 lemma exists_controlled_adjacent_ratio
-    (a : ℕ → ℕ) {d : ℕ} (hd : 0 < d) (ha0 : 0 < a 0)
+    (a : ℕ → ℕ) {d : ℕ} (hd : 0 < d) (_ : 0 < a 0)
     (hend : a (100 * d) ≤ 9 ^ d * a 0) :
     ∃ j < 100 * d, 10 * a (j + 1) ≤ 11 * a j := by
   by_contra h
-  push_neg at h
+  push Not at h
   have hgrowth : ∀ j ≤ 100 * d,
       11 ^ j * a 0 ≤ 10 ^ j * a j := by
     intro j hj

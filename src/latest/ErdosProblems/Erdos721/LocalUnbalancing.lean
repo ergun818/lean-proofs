@@ -38,6 +38,7 @@ namespace CyclicLocalUnbalancing
 variable {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
   [MeasurableSpace G] [DiscreteMeasurableSpace G]
 
+omit [AddCommGroup G] [DecidableEq G] in
 /-- A pointwise bound on the support of a probability weight bounds every
 nonzero finite weighted `L^p` norm. -/
 lemma wLpNorm_le_of_bound_on_support
@@ -114,7 +115,7 @@ lemma relativeBalance_dddconv_add_error
 /-- Three functions that are pointwise close to one have the required
 three-term inclusion--exclusion combination close to one. -/
 lemma abs_add_sub_sub_one_le_three_mul
-    {a b c e : ℝ} (he : 0 ≤ e)
+    {a b c e : ℝ} (_ : 0 ≤ e)
     (ha : |a - 1| ≤ e) (hb : |b - 1| ≤ e) (hc : |c - 1| ≤ e) :
     |a + b - c - 1| ≤ 3 * e := by
   have hid : a + b - c - 1 = (a - 1) + (b - 1) - (c - 1) := by ring

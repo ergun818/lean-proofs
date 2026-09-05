@@ -46,7 +46,7 @@ lemma baseBohr_dilate_carrier (t : ℝ) :
 noncomputable def regularityParameter (beta : ℝ) : ℕ :=
   ⌈2 ^ 20 * beta⁻¹⌉₊
 
-lemma regularityParameter_cast_lower {beta : ℝ} (hbeta : 0 < beta) :
+lemma regularityParameter_cast_lower {beta : ℝ} (_ : 0 < beta) :
     2 ^ 20 * beta⁻¹ ≤ (regularityParameter beta : ℝ) := by
   unfold regularityParameter
   exact Nat.le_ceil _
@@ -69,7 +69,7 @@ lemma regularityParameter_large {beta : ℝ}
   exact_mod_cast hcast
 
 lemma regularityParameter_error {beta : ℝ}
-    (hbeta0 : 0 < beta) (hbeta1 : beta ≤ 1) :
+    (hbeta0 : 0 < beta) (_ : beta ≤ 1) :
     3 * (1 / ((5 * regularityParameter beta : ℕ) *
         ((1 - 1 / 8192 : ℝ) * beta))) ≤ (1 / 16 : ℝ) / 4 := by
   have hm := regularityParameter_cast_lower hbeta0
@@ -453,7 +453,7 @@ lemma regularityParameter_le_exp {beta : ℝ}
       regularityParameter_cast_upper hbeta0 hbeta1
     _ ≤ Real.exp (21 * L) * Real.exp L :=
       mul_le_mul htwo hinv (inv_pos.mpr hbeta0).le (Real.exp_pos _).le
-    _ = Real.exp (22 * L) := by rw [← Real.exp_add]; congr 1 <;> ring
+    _ = Real.exp (22 * L) := by rw [← Real.exp_add]; congr 1; ring
 
 lemma initial_entropy_succ_le_exp (A : Finset (ZMod N)) (hA : A.Nonempty)
     (hfree : ThreeAPFree (A : Set (ZMod N))) :
@@ -489,7 +489,7 @@ lemma initial_entropy_succ_le_exp (A : Finset (ZMod N)) (hA : A.Nonempty)
         2 ^ 142 * L ^ 6 := hM'
     _ ≤ Real.exp (142 * L) * Real.exp (6 * L) :=
       mul_le_mul htwo hpow (by positivity) (Real.exp_pos _).le
-    _ = Real.exp (148 * L) := by rw [← Real.exp_add]; congr 1 <;> ring
+    _ = Real.exp (148 * L) := by rw [← Real.exp_add]; congr 1; ring
     _ ≤ Real.exp (149 * L) := Real.exp_le_exp.mpr (by nlinarith)
 
 lemma initial_rankCeiling_le_exp (A : Finset (ZMod N)) (hA : A.Nonempty)
@@ -520,7 +520,7 @@ lemma initial_rankCeiling_le_exp (A : Finset (ZMod N)) (hA : A.Nonempty)
         2 ^ 159 * L ^ 7 := hR
     _ ≤ Real.exp (159 * L) * Real.exp (7 * L) :=
       mul_le_mul htwo hpow (by positivity) (Real.exp_pos _).le
-    _ = Real.exp (166 * L) := by rw [← Real.exp_add]; congr 1 <;> ring
+    _ = Real.exp (166 * L) := by rw [← Real.exp_add]; congr 1; ring
     _ ≤ Real.exp (167 * L) := Real.exp_le_exp.mpr (by nlinarith)
 
 lemma beta_eq_exp_one_sub_curLog {beta : ℝ} (hbeta : 0 < beta) :
@@ -569,7 +569,7 @@ lemma initial_uniformRadiusFactor_lower
       (regularityParameter beta : ℝ) ^ 3 ≤
           Real.exp (22 * L) ^ 3 :=
         pow_le_pow_left₀ (by positivity) hm 3
-      _ = Real.exp (66 * L) := by rw [← Real.exp_nat_mul]; congr 1 <;> ring
+      _ = Real.exp (66 * L) := by rw [← Real.exp_nat_mul]; congr 1; ring
   have hM : (s.entropyBudget + 1 : ℝ) ≤ Real.exp (149 * L) := by
     dsimp only [s, beta, L]
     exact initial_entropy_succ_le_exp A hA hfree
@@ -583,7 +583,7 @@ lemma initial_uniformRadiusFactor_lower
           (by simpa only [s, beta, L] using hR) 7
       _ = Real.exp (1169 * L) := by
         rw [← Real.exp_nat_mul]
-        congr 1 <;> ring
+        congr 1; ring
   have hRpow0 : 0 ≤ CyclicNestedIteration.rankCeiling s ^ 7 :=
     pow_nonneg (CyclicNestedIteration.rankCeiling_pos s).le _
   have hden : den ≤ Real.exp (1480 * L) := by
@@ -597,7 +597,7 @@ lemma initial_uniformRadiusFactor_lower
         gcongr
       _ = Real.exp (1480 * L) := by
         rw [← Real.exp_add, ← Real.exp_add, ← Real.exp_add]
-        congr 1 <;> ring
+        congr 1; ring
   have hden0 : 0 < den := by
     dsimp only [den, s]
     have hm0 : (0 : ℝ) < regularityParameter beta := by
@@ -623,7 +623,7 @@ lemma initial_uniformRadiusFactor_lower
     calc
       Real.exp (-2 * L) = Real.exp (-L) * Real.exp (-L) := by
         rw [← Real.exp_add]
-        congr 1 <;> ring
+        congr 1; ring
       _ ≤ (1 / 2 : ℝ) * beta :=
         mul_le_mul hhalf hbetaExp (Real.exp_pos _).le (by norm_num)
       _ ≤ (1 - 1 / 8192 : ℝ) * beta := by
@@ -633,7 +633,7 @@ lemma initial_uniformRadiusFactor_lower
     rw [← Real.exp_sub]
     exact Real.exp_le_exp.mpr (by nlinarith)
   unfold CyclicNestedIteration.uniformRadiusFactor
-  simp only [initialState_beta, initialState_bohr, baseBohr_rank]
+  simp only [initialState_beta]
   change Real.exp (-2048 * L) ≤ num / den
   calc
     Real.exp (-2048 * L) ≤
@@ -702,7 +702,6 @@ lemma radiusCode_succ_le_exp {L r : ℝ}
   have hpi : 4 * Real.pi ≤ (16 : ℝ) := by nlinarith [Real.pi_lt_four]
   have hsum : (radiusCode r + 1 : ℝ) ≤
       32 * Real.exp ((2 ^ 29) * L ^ 2) := by
-    norm_num only [Nat.cast_add, Nat.cast_one] at hcode
     calc
       (radiusCode r : ℝ) + 1 ≤ 4 * Real.pi / r + 2 := by linarith
       _ = (4 * Real.pi) * r⁻¹ + 2 := by rw [div_eq_mul_inv]
@@ -721,13 +720,13 @@ lemma radiusCode_succ_le_exp {L r : ℝ}
       gcongr
     _ = Real.exp ((2 ^ 29 + 5) * L ^ 2) := by
       rw [← Real.exp_add]
-      congr 1 <;> ring
+      congr 1; ring
     _ ≤ Real.exp ((2 ^ 30) * L ^ 2) := by
       apply Real.exp_le_exp.mpr
       nlinarith [sq_nonneg L]
 
 lemma carrier_succ_le_exp {beta C : ℝ}
-    (hbeta0 : 0 < beta) (hbeta1 : beta ≤ 1) (hC0 : 0 ≤ C)
+    (hbeta0 : 0 < beta) (hbeta1 : beta ≤ 1) (_ : 0 ≤ C)
     (hC : C < 2 / (((1 - 1 / 8192 : ℝ) * beta) ^ 2)) :
     C + 1 ≤ Real.exp (8 * CyclicQuantitativeBounds.curLog beta) := by
   let L := CyclicQuantitativeBounds.curLog beta
@@ -769,7 +768,7 @@ lemma carrier_succ_le_exp {beta C : ℝ}
         field_simp [ne_of_gt (Real.exp_pos L)]
         norm_num
         rw [← Real.exp_nat_mul]
-        congr 1 <;> ring
+        congr 1
   have hC' : C + 1 ≤ 9 * Real.exp (2 * L) := by
     have hexp1 : (1 : ℝ) ≤ Real.exp (2 * L) :=
       Real.one_le_exp (by positivity)
@@ -778,9 +777,9 @@ lemma carrier_succ_le_exp {beta C : ℝ}
     convert two_pow_le_exp_nat_mul (k := 4) hL1 using 1 <;> norm_num
   calc
     C + 1 ≤ 9 * Real.exp (2 * L) := hC'
-    _ ≤ 16 * Real.exp (2 * L) := by gcongr <;> norm_num
+    _ ≤ 16 * Real.exp (2 * L) := by gcongr; norm_num
     _ ≤ Real.exp (4 * L) * Real.exp (2 * L) := by gcongr
-    _ = Real.exp (6 * L) := by rw [← Real.exp_add]; congr 1 <;> ring
+    _ = Real.exp (6 * L) := by rw [← Real.exp_add]; congr 1; ring
     _ ≤ Real.exp (8 * L) := Real.exp_le_exp.mpr (by nlinarith)
 
 /-- The quantitative cyclic Roth estimate in logarithmic form. -/

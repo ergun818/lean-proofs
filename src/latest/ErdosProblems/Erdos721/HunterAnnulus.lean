@@ -73,7 +73,7 @@ lemma norm_step_sq_lt {E : Type*} [NormedAddCommGroup E]
     [InnerProductSpace ℝ E] {u v : E} {r q : ℝ}
     (hr : 0 ≤ r) (hq : 0 < q)
     (hu_lower : r ≤ ‖u‖) (hu_upper : ‖u‖ < r + q)
-    (hm_lower : r ≤ ‖u + v‖) (hm_upper : ‖u + v‖ < r + q)
+    (hm_lower : r ≤ ‖u + v‖) (_ : ‖u + v‖ < r + q)
     (hw_lower : r ≤ ‖u + v + v‖)
     (hw_upper : ‖u + v + v‖ < r + q) :
     ‖v‖ ^ 2 < 2 * r * q + q ^ 2 := by

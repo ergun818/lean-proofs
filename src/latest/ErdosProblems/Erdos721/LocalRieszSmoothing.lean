@@ -200,7 +200,7 @@ lemma sum_norm_fourier_rieszFactor_le (r : ZMod N) (w : ℂ)
     _ = 1 + ‖w‖ / 2 + ‖w‖ / 2 := by
       rw [Finset.sum_add_distrib, Finset.sum_add_distrib]
       rw [sum_norm_ite_eq, sum_norm_ite_eq, sum_norm_ite_eq]
-      simp [norm_div, RCLike.norm_conj]
+      simp
     _ ≤ 2 := by linarith
 
 lemma sum_norm_fourier_pointwise_mul_le (f g : ZMod N → ℂ) :
@@ -544,7 +544,7 @@ theorem norm_smoothed_riesz_average_sub_one_le
           ‖CyclicFourier.fourier (complexRieszProduct Delta omega) r‖ := by
     by_cases hq :
         CyclicFourier.fourier (complexRieszProduct Delta omega) r = 0
-    · simp [term, hq, htheta]
+    · simp [term, hq]
     · have hrSpan : r ∈ Delta.addSpan := by
         by_contra hrSpan
         exact hq (fourier_complexRieszProduct_eq_zero_of_not_mem_addSpan
@@ -678,7 +678,7 @@ lemma norm_average_star_sub_mul_complexRieszProduct_le
     _ ≤ (N : ℝ)⁻¹ * ∑ x : ZMod N,
           (‖mu x - nu x‖ * 2 ^ Delta.card) := by
       have hNnorm : ‖(N : ℂ)⁻¹‖ = (N : ℝ)⁻¹ := by
-        simp [norm_inv, abs_of_pos hN]
+        simp [norm_inv]
       rw [hNnorm]
       gcongr with x
       rw [norm_mul, ← map_sub, RCLike.norm_conj]
@@ -718,6 +718,7 @@ lemma fourier_smoothedProbabilityWeight_zero
     average_probabilityWeight hV, average_probabilityWeight hS]
   simp
 
+omit [NeZero N] in
 lemma probabilityWeight_eq_ofReal_uniformWeight
     (S : Finset (ZMod N)) (x : ZMod N) :
     probabilityWeight S x = (CyclicBohr.uniformWeight S x : ℂ) := by
@@ -851,7 +852,7 @@ lemma nsmul_dilate_subset (B : CyclicBohr.Set N) {rho : ℝ}
       ((B.dilate ((k : ℝ) * rho)).carrier : Set (ZMod N))
   | 0 => by
       intro z hz
-      simp only [zero_nsmul, Set.mem_singleton_iff] at hz
+      simp only [zero_nsmul] at hz
       subst z
       have hzero := (B.dilate ((0 : ℝ) * rho)).zero_mem
       change (0 : ZMod N) ∈ (B.dilate ((0 : ℝ) * rho)).carrier at hzero

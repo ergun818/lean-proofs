@@ -310,13 +310,13 @@ theorem cyclic_unbalancing_sifting
     have hleft : 0 < (4⁻¹ : ℝ) * A.dens ^ (2 * q) := by positivity
     by_contra hne
     rw [not_nonempty_iff_eq_empty.mp hne] at hA₁dens
-    simp at hA₁dens
+    simp only [Finset.dens_empty, NNRat.cast_zero] at hA₁dens
     exact (not_lt_of_ge hA₁dens) hleft
   have hA₂ : A₂.Nonempty := by
     have hleft : 0 < (4⁻¹ : ℝ) * A.dens ^ (2 * q) := by positivity
     by_contra hne
     rw [not_nonempty_iff_eq_empty.mp hne] at hA₂dens
-    simp at hA₂dens
+    simp only [Finset.dens_empty, NNRat.cast_zero] at hA₂dens
     exact (not_lt_of_ge hA₂dens) hleft
   have hU : U.Nonempty := by
     by_contra hU
@@ -397,7 +397,7 @@ theorem density_increment_of_large_smoothed_test_sum
       exact wInner_one_le_dLpNorm_mul_dLpNorm _ _
     _ = ‖𝟭_[(A : Set (ZMod N)), ℝ] ∗ᵈ μ_[ℝ] C‖_[∞] / A.dens := by
       rw [dL1Norm_dddconv, dL1Norm_ddconv]
-      · simp [eq_div_iff, hA.dens_ne_zero, hdens, hA, hA₁, hA₂, ← card_smul_mu,
+      · simp [eq_div_iff, hA.dens_ne_zero, hA, hA₁, hA₂, ← card_smul_mu,
           smul_ddconv, dLpNorm_nsmul, -nsmul_eq_mul]
         all_goals simp [← mul_assoc, mul_comm, ddconv_comm, hdens]
       · exact mu_nonneg

@@ -38,6 +38,7 @@ variable {N : ℕ} [NeZero N]
 /-- The real density of a finite subset of the cyclic group. -/
 noncomputable def density (A : Finset (ZMod N)) : ℝ := (A.card : ℝ) / N
 
+omit [NeZero N] in
 lemma density_nonneg (A : Finset (ZMod N)) : 0 ≤ density A := by
   unfold density
   positivity
@@ -82,7 +83,7 @@ noncomputable def alignedPoly (A : Finset (ZMod N)) (Δ : Finset (ZMod N))
       (CyclicFourier.fourier (CyclicFourier.indicator A) r)) *
       CyclicBohr.character r x
 
-lemma average_finset_sum {ι : Type*} [DecidableEq ι]
+lemma average_finset_sum {ι : Type*}
     (s : Finset ι) (F : ι → ZMod N → ℂ) :
     CyclicFourier.average (fun x ↦ ∑ i ∈ s, F i x) =
       ∑ i ∈ s, CyclicFourier.average (F i) := by
@@ -145,7 +146,7 @@ lemma sum_norm_fourier_eq_average_alignedPoly
 /-- Every frequency in a relative large spectrum contributes its threshold
 to the phase-aligned sum. -/
 lemma card_mul_threshold_le_sum_norm_fourier
-    (A : Finset (ZMod N)) {η : ℝ} (hη : 0 ≤ η)
+    (A : Finset (ZMod N)) {η : ℝ} (_ : 0 ≤ η)
     (Δ : Finset (ZMod N)) (hΔ : Δ ⊆ relativeLargeSpectrum A η) :
     (Δ.card : ℝ) * (η * density A) ≤
       ∑ r ∈ Δ, ‖CyclicFourier.fourier (CyclicFourier.indicator A) r‖ := by
@@ -289,7 +290,7 @@ lemma chang_power_inequality
 on the moment parameter. -/
 lemma card_le_of_chang_power
     {d α η K : ℝ} (hd : 0 < d) (hα : 0 < α) (hη : 0 < η)
-    (hK : 0 ≤ K) (p : ℕ) (hp : 0 < p)
+    (_ : 0 ≤ K) (p : ℕ) (hp : 0 < p)
     (hpower : (d * (η * α)) ^ p ≤
       α ^ (p - 1) * (K * Real.sqrt ((p : ℝ) * d)) ^ p)
     (hinv : α⁻¹ ^ 2 ≤ Real.exp (2 * (p : ℝ))) :
@@ -350,7 +351,6 @@ lemma card_le_of_chang_power
         have hexp : Real.exp (2 * (p : ℝ)) = Real.exp 2 ^ p := by
           rw [← Real.exp_nat_mul]
           congr 1
-          push_cast
           ring
         rw [hexp, mul_pow]
         ring
@@ -375,7 +375,7 @@ lemma log_inv_le_changMoment {α : ℝ} :
 
 /-- The selected moment absorbs the density loss in the power inequality. -/
 lemma inv_sq_le_exp_two_mul_changMoment {α : ℝ}
-    (hα : 0 < α) (hαone : α ≤ 1) :
+    (hα : 0 < α) (_ : α ≤ 1) :
     α⁻¹ ^ 2 ≤ Real.exp (2 * (changMoment α : ℝ)) := by
   have hinvpos : 0 < α⁻¹ := inv_pos.mpr hα
   have hinvexp : α⁻¹ ≤ Real.exp (changMoment α : ℝ) := by

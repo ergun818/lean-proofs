@@ -60,7 +60,7 @@ lemma zero_mem_addSpan (Delta : Finset (ZMod N)) :
 /-- If adjoining `r` destroys global dissociativity, then `r` was already
 in the signed span. -/
 lemma mem_addSpan_of_not_addDissociated_insert
-    (Delta : Finset (ZMod N)) {r : ZMod N} (hr : r ∉ Delta)
+    (Delta : Finset (ZMod N)) {r : ZMod N} (_ : r ∉ Delta)
     (hDelta : AddDissociated (Delta : Set (ZMod N)))
     (hfail : ¬ AddDissociated ((insert r Delta : Finset (ZMod N)) :
       Set (ZMod N))) :
@@ -327,6 +327,7 @@ lemma fourier_translated_uniformWeight
     ring]
   rw [CyclicFourier.average_const_mul]
 
+omit [NeZero N] in
 /-- Translating a finite set translates its normalized probability weight.
 The formula is stated in the form used by `fourier_translated_uniformWeight`.
 -/
@@ -405,7 +406,7 @@ lemma norm_fourier_le_expect_norm (f : ZMod N → ℂ) (r : ZMod N) :
       gcongr
       exact norm_sum_le _ _
     _ = (N : ℝ)⁻¹ * ∑ x : ZMod N, ‖f x‖ := by
-      simp only [norm_inv, Complex.norm_natCast, abs_of_pos hN, norm_mul,
+      simp only [norm_inv, Complex.norm_natCast, norm_mul,
         RCLike.norm_conj, CyclicBohr.norm_character, one_mul]
     _ = (∑ x : ZMod N, ‖f x‖) / N := by
       rw [div_eq_mul_inv]
@@ -671,7 +672,7 @@ theorem exists_rankFree_localSpectrum_controller
       have hraw := norm_one_sub_character_le_of_mem_relativeLargeSpectrum
         V hV (by norm_num : (0 : ℝ) < 1 / 3) hr
         (hstableV x (by simpa only [W] using hx))
-      convert hraw using 1 <;> field_simp
+      convert hraw using 1; field_simp
     rcases Finset.mem_union.mp hq with hq | hq
     · exact hbase q hq
     · obtain ⟨r, hr, rfl⟩ := Finset.mem_neg.mp hq
@@ -787,7 +788,7 @@ theorem exists_localSpectrum_controller_of_stableCarrier
       have hraw := norm_one_sub_character_le_of_mem_relativeLargeSpectrum
         V hV (by norm_num : (0 : ℝ) < 1 / 3) hr
         (hstableV x (by simpa only [W] using hx))
-      convert hraw using 1 <;> field_simp
+      convert hraw using 1; field_simp
     rcases Finset.mem_union.mp hq with hq | hq
     · exact hbase q hq
     · obtain ⟨r, hr, rfl⟩ := Finset.mem_neg.mp hq

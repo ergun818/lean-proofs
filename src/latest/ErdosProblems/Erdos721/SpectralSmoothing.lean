@@ -47,10 +47,12 @@ that its normalized average is one. -/
 noncomputable def probabilityWeight (S : Finset (ZMod N)) (x : ZMod N) : ℂ :=
   if x ∈ S then (N : ℂ) / S.card else 0
 
+omit [NeZero N] in
 lemma probabilityWeight_apply_mem {S : Finset (ZMod N)} {x : ZMod N}
     (hx : x ∈ S) : probabilityWeight S x = (N : ℂ) / S.card := by
   simp [probabilityWeight, hx]
 
+omit [NeZero N] in
 lemma probabilityWeight_apply_notMem {S : Finset (ZMod N)} {x : ZMod N}
     (hx : x ∉ S) : probabilityWeight S x = 0 := by
   simp [probabilityWeight, hx]
@@ -110,7 +112,7 @@ lemma norm_fourier_probabilityWeight_le_one {S : Finset (ZMod N)}
           gcongr
           exact norm_sum_le _ _
     _ = (S.card : ℝ)⁻¹ * S.card := by
-      simp [CyclicBohr.norm_character, norm_inv, abs_of_pos hcard]
+      simp [norm_inv]
     _ = 1 := by field_simp
 
 /-- If every point of a probability set nearly annihilates a frequency, its
@@ -144,7 +146,7 @@ lemma norm_fourier_probabilityWeight_sub_one_le
           exact norm_sum_le _ _
     _ ≤ (S.card : ℝ)⁻¹ * ∑ _x ∈ S, delta := by
       have hnormInv : ‖(S.card : ℂ)⁻¹‖ = (S.card : ℝ)⁻¹ := by
-        simp [norm_inv, abs_of_pos hcard]
+        simp [norm_inv]
       rw [hnormInv]
       apply mul_le_mul_of_nonneg_left _ (by positivity)
       apply Finset.sum_le_sum
@@ -161,8 +163,7 @@ lemma norm_fourier_probabilityWeight_sub_one_le
                 (norm_neg (1 - CyclicBohr.character r x))
         _ ≤ delta := hcontrol x hx
     _ = delta := by
-      simp only [Finset.sum_const, nsmul_eq_mul, norm_inv, Complex.norm_natCast,
-        abs_of_pos hcard]
+      simp only [Finset.sum_const, nsmul_eq_mul]
       field_simp
 
 /-! ## Fourier expansions and elementary convolution bounds -/
@@ -171,7 +172,7 @@ lemma norm_fourier_probabilityWeight_sub_one_le
 uniform pointwise bound. -/
 lemma norm_convolution_probabilityWeight_le
     {S : Finset (ZMod N)} (hS : S.Nonempty) (f : ZMod N → ℂ)
-    {M : ℝ} (hM : 0 ≤ M) (hf : ∀ x, ‖f x‖ ≤ M) (x : ZMod N) :
+    {M : ℝ} (_ : 0 ≤ M) (hf : ∀ x, ‖f x‖ ≤ M) (x : ZMod N) :
     ‖CyclicFourier.convolution (probabilityWeight S) f x‖ ≤ M := by
   have hN : (0 : ℝ) < N := by
     exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne N)
@@ -189,7 +190,6 @@ lemma norm_convolution_probabilityWeight_le
             ‖∑ y : ZMod N,
                 (if y ∈ S then (N : ℂ) / S.card else 0) * f (x - y)‖ ≤
               ‖∑ y ∈ S, ((N : ℂ) / S.card) * f (x - y)‖ := by
-                congr 1
                 simp_rw [ite_mul, zero_mul]
                 rw [← Finset.sum_filter]
                 simp only [Finset.filter_mem_eq_inter, Finset.univ_inter]
@@ -204,8 +204,7 @@ lemma norm_convolution_probabilityWeight_le
           rw [norm_mul, norm_div, Complex.norm_natCast, Complex.norm_natCast]
           exact mul_le_mul_of_nonneg_left (hf (x - y)) (by positivity)
     _ = M := by
-      simp only [Finset.sum_const, nsmul_eq_mul, norm_inv, Complex.norm_natCast,
-        abs_of_pos hN]
+      simp only [Finset.sum_const, nsmul_eq_mul, norm_inv, Complex.norm_natCast]
       field_simp
 
 /-- Fourier inversion expresses the error of convolution by a kernel as the
@@ -456,9 +455,9 @@ theorem norm_probabilityWeight_convolution_sub_le_of_fourier_decay
         (add_le_add (norm_add_le _ _) le_rfl)
     _ ≤ epsilon + (delta + 2 * eta ^ k) * L + epsilon := by
       gcongr
-      exact hkernelApprox x
-      exact hsmoothG x
-      exact happrox x
+      · exact hkernelApprox x
+      · exact hsmoothG x
+      · exact happrox x
     _ = 2 * epsilon + (delta + 2 * eta ^ k) * L := by ring
 
 end CyclicSpectralSmoothing

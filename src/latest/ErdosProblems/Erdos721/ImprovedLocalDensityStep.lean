@@ -36,13 +36,14 @@ namespace CyclicImprovedLocalDensityStep
 
 variable {N : ℕ} [NeZero N]
 
+omit [NeZero N] in
 private lemma nonempty_of_positive_relative_density
     (A S : Finset (ZMod N)) {alpha : ℝ} (halpha : 0 < alpha)
-    (hS : S.Nonempty) (hdense : alpha ≤ (A.card : ℝ) / S.card) :
+    (_ : S.Nonempty) (hdense : alpha ≤ (A.card : ℝ) / S.card) :
     A.Nonempty := by
   by_contra hA
   rw [not_nonempty_iff_eq_empty.mp hA] at hdense
-  simp at hdense
+  simp only [Finset.card_empty, Nat.cast_zero, zero_div] at hdense
   exact (not_lt_of_ge hdense) halpha
 
 /-- Improved Bloom--Sisask Proposition 10 in the exact local form consumed
@@ -131,7 +132,7 @@ theorem exists_positive_density_increment_slice_of_large_norm
     intro z hzU₀ hznotU
     have hznot : z ∉ A₁ - A₂ := by
       intro hz
-      exact hznotU (by simp [U, hzU₀, hz])
+      exact hznotU (by simp [hzU₀, hz])
     have hzzero : (μ_[ℝ] A₁ ○ᵈ μ_[ℝ] A₂) z = 0 := by
       by_contra hz
       have hzsupp : z ∈ Function.support (μ_[ℝ] A₁ ○ᵈ μ_[ℝ] A₂) := hz
@@ -289,7 +290,7 @@ theorem exists_positive_density_increment_slice_of_large_norm_rankFree
     intro z hzU₀ hznotU
     have hznot : z ∉ A₁ - A₂ := by
       intro hz
-      exact hznotU (by simp [U, hzU₀, hz])
+      exact hznotU (by simp [hzU₀, hz])
     have hzzero : (μ_[ℝ] A₁ ○ᵈ μ_[ℝ] A₂) z = 0 := by
       by_contra hz
       have hzsupp : z ∈ Function.support (μ_[ℝ] A₁ ○ᵈ μ_[ℝ] A₂) := hz
@@ -457,7 +458,7 @@ theorem exists_positive_density_increment_slice_of_large_norm_stable_reflected
     intro z hzU₀ hznotU
     have hznot : z ∉ A₁ - A₂ := by
       intro hz
-      exact hznotU (by simp [U, hzU₀, hz])
+      exact hznotU (by simp [hzU₀, hz])
     have hzzero : (μ_[ℝ] A₁ ○ᵈ μ_[ℝ] A₂) z = 0 := by
       by_contra hz
       have hzsupp : z ∈ Function.support (μ_[ℝ] A₁ ○ᵈ μ_[ℝ] A₂) := hz
@@ -503,7 +504,8 @@ theorem exists_positive_density_increment_slice_of_large_norm_stable_reflected
       hSbase, hSbaseSub, hTbaseCard, hTbaseSub, hzbase, hXeq, hX,
       hdeltaFormula, hdeltaStable, hCradius, hCpos, hRrankC, hCrank,
       hvlow, hvhigh, hxiFormula, hxi, hxiv, hCregular, hCsmall, hinc⟩ :=
-    CyclicImprovedLocalDensityIteration.exists_local_improved_density_increment_stable_reflected_explicit
+    open CyclicImprovedLocalDensityIteration in
+    exists_local_improved_density_increment_stable_reflected_explicit
       R A A₁ A₂ U x (B.dilate t).carrier.card mNext hRradius hRrank
       hmNext haux0 hauxhalf hbeta0 hbeta1 hdensity hepsilon0 hepsilon1
       heta hetavr hA₂inner hA₂dense' hRregular hA hA₁ hA₂ hU hmass hhigh
@@ -609,7 +611,7 @@ theorem exists_positive_density_increment_slice_of_large_norm_sharp_reflected_qu
     intro z hzU₀ hznotU
     have hznot : z ∉ A₁ - A₂ := by
       intro hz
-      exact hznotU (by simp [U, hzU₀, hz])
+      exact hznotU (by simp [hzU₀, hz])
     have hzzero : (μ_[ℝ] A₁ ○ᵈ μ_[ℝ] A₂) z = 0 := by
       by_contra hz
       have hzsupp : z ∈ Function.support (μ_[ℝ] A₁ ○ᵈ μ_[ℝ] A₂) := hz
@@ -655,7 +657,8 @@ theorem exists_positive_density_increment_slice_of_large_norm_sharp_reflected_qu
       _hSbase, _hSbaseSub, _hTbaseCard, _hTbaseSub, _hzbase, _hXeq,
       _hX, hCradius, hCpos, hRrankC, hCrank, hvlow, hvhigh,
       hxiFormula, hxi, hxiv, hCregular, hCsmall, hinc⟩ :=
-    CyclicImprovedLocalDensityIteration.exists_local_improved_density_increment_sharp_reflected_explicit
+    open CyclicImprovedLocalDensityIteration in
+    exists_local_improved_density_increment_sharp_reflected_explicit
       R A A₁ A₂ U x (B.dilate t).carrier.card mNext hRradius hRrank
       hmNext haux0 hauxhalf hbeta0 hbeta1 hdensity hepsilon0 hepsilon1
       heta hetavr hA₂inner hA₂dense' hRregular hA hA₁ hA₂ hU hmass hhigh

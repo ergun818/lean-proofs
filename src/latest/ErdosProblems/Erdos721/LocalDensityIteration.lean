@@ -58,22 +58,26 @@ noncomputable def positiveSmoothingRho (epsilon : ℝ)
         (positiveSmoothingEta epsilon A₁ U) : ℝ) + 1) *
       (smoothingRatio A₁ U + 1))
 
+omit [NeZero N] in
 lemma smoothingRatio_nonneg (A₁ U : Finset (ZMod N)) :
     0 ≤ smoothingRatio A₁ U := by
   exact mul_nonneg (Real.sqrt_nonneg _) (Real.sqrt_nonneg _)
 
+omit [NeZero N] in
 lemma smoothingEta_pos (A₁ U : Finset (ZMod N)) {epsilon : ℝ}
     (hepsilon : 0 < epsilon) : 0 < smoothingEta epsilon A₁ U := by
   apply Real.sqrt_pos.2
   exact div_pos hepsilon (mul_pos (by norm_num)
     (by linarith [smoothingRatio_nonneg A₁ U]))
 
+omit [NeZero N] in
 lemma positiveSmoothingEta_pos (A₁ U : Finset (ZMod N)) {epsilon : ℝ}
     (hepsilon : 0 < epsilon) : 0 < positiveSmoothingEta epsilon A₁ U := by
   apply Real.sqrt_pos.2
   exact div_pos hepsilon (mul_pos (by norm_num)
     (by linarith [smoothingRatio_nonneg A₁ U]))
 
+omit [NeZero N] in
 lemma positiveSmoothingRho_pos (A₁ U T : Finset (ZMod N)) {epsilon : ℝ}
     (hepsilon : 0 < epsilon) :
     0 < positiveSmoothingRho epsilon A₁ U T := by

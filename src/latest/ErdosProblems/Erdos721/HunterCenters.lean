@@ -33,7 +33,7 @@ abbrev CenterFamily (Y S D : ℕ) := Fin Y → Fin S → Torus D
 
 /-- Product torus volume is a probability measure whenever the coordinate
 torus volume is normalized. -/
-noncomputable def probabilityMeasurePi {ι X : Type*} [Fintype ι]
+theorem probabilityMeasurePi {ι X : Type*} [Fintype ι]
     [MeasureSpace X]
     [IsProbabilityMeasure (volume : Measure X)] :
     IsProbabilityMeasure (Measure.pi fun _ : ι ↦ (volume : Measure X)) :=
@@ -138,10 +138,10 @@ theorem exists_centerFamily_hits {R : Type*} [Fintype R]
         (volume : Measure (CenterFamily Y S D)) := by
       rw [volume_pi]
       exact probabilityMeasurePi
-    simpa using hbad
+    simp at hbad
   obtain ⟨x, hx⟩ := (Set.ne_univ_iff_exists_notMem _).mp hproper
   refine ⟨x, fun r b ↦ ?_⟩
-  simp only [mem_compl_iff, someMissEvent, mem_iUnion, not_exists,
+  simp only [someMissEvent, mem_iUnion, not_exists,
     missEvent] at hx
   simpa using not_forall.mp (hx r b)
 

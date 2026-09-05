@@ -81,7 +81,7 @@ lemma centeredLift_project {D : ℕ} (x : EuclideanSpace ℝ (Fin D))
   change centeredCoord ((x i : ℝ) : AddCircle (1 : ℝ)) = x i
   have hi : x i ∈ Set.Ico (-(1 / 2 : ℝ))
       (-(1 / 2 : ℝ) + 1) := by
-    convert hx i using 1 <;> norm_num
+    convert hx i using 1; norm_num
   exact AddCircle.equivIco_coe_of_mem hi
 
 /-- An integer character of the torus, written additively. -/
@@ -125,9 +125,9 @@ lemma volume_univ (D : ℕ) :
     Finset.prod_const_one]
 
 /-- Local normalized-volume instance used in Haar uniqueness arguments. -/
-noncomputable def probabilityVolume (D : ℕ) :
-    IsProbabilityMeasure (volume : Measure (Torus D)) where
-  measure_univ := volume_univ D
+theorem probabilityVolume (D : ℕ) :
+    IsProbabilityMeasure (volume : Measure (Torus D)) :=
+  ⟨volume_univ D⟩
 
 /-- A continuous surjective additive torus homomorphism preserves normalized
 Haar volume. -/
@@ -174,7 +174,7 @@ lemma centeredBox_compact (D : ℕ) (r : ℝ) :
     IsCompact (centeredBox D r) := by
   exact isCompact_univ_pi fun _ ↦ isCompact_closedBall _ _
 
-lemma volume_centeredBox {D : ℕ} {r : ℝ} (hr0 : 0 ≤ r)
+lemma volume_centeredBox {D : ℕ} {r : ℝ} (_ : 0 ≤ r)
     (hr : 2 * r ≤ 1) :
     volume (centeredBox D r) = ENNReal.ofReal (2 * r) ^ D := by
   rw [centeredBox, volume_pi_pi]

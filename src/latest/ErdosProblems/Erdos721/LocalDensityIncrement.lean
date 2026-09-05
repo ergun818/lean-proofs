@@ -42,7 +42,7 @@ theorem sifting_from_large_reflected_norm
     {alpha epsilon : ℝ}
     (hepsilon0 : 0 < epsilon) (hepsilon1 : epsilon < 1)
     (halpha : 0 < alpha) (hscale0 : 0 < scale)
-    (hA : A.Nonempty) (hS : S.Nonempty) (hT : T.Nonempty)
+    (hA : A.Nonempty) (_ : S.Nonempty) (_ : T.Nonempty)
     (hx : x ∈ S + T) (hqEven : Even q) (hq2 : 2 ≤ q)
     (hAdense : alpha * scale ≤ A.card)
     (hqexp : (epsilon / 16)⁻¹ * Real.log (8 / (epsilon / 32)) ≤ q)

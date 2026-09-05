@@ -39,7 +39,7 @@ open CyclicBohr CyclicDensityIncrement
 
 section WeightedHolder
 
-variable {G : Type*} [Fintype G] [DecidableEq G]
+variable {G : Type*} [Fintype G]
   [MeasurableSpace G] [DiscreteMeasurableSpace G]
 
 /-- A probability average over a nonempty finite set is bounded by every
@@ -49,6 +49,7 @@ lemma abs_mu_average_le_wLpNorm
     (C : Finset G) (hC : C.Nonempty) (f : G → ℝ)
     (p : ℕ) (hp : p ≠ 0) :
     |∑ x, μ_[ℝ] C x * f x| ≤ ‖f‖_[p, μ C] := by
+  classical
   calc
     |∑ x, μ_[ℝ] C x * f x| ≤ ∑ x, μ_[ℝ] C x * |f x| := by
       calc
@@ -70,13 +71,16 @@ lemma abs_mu_average_le_wLpNorm
       · norm_cast
         exact Nat.one_le_iff_ne_zero.mpr hp
 
+omit [Fintype G] in
 /-- Restricting a normalized finite-set weight increases an `L^p` norm by
 at most the `p`-th root of the reciprocal relative density. -/
-lemma wLpNorm_mu_mono_of_subset
+lemma wLpNorm_mu_mono_of_subset [Finite G]
     (C D : Finset G) (hC : C.Nonempty) (hD : D.Nonempty)
     (hCD : C ⊆ D) (f : G → ℝ) (p : ℕ) (hp : p ≠ 0) :
     ‖f‖_[p, μ C] ≤
       (((D.card : ℝ) / C.card) ^ ((p : ℝ)⁻¹) : ℝ) * ‖f‖_[p, μ D] := by
+  classical
+  let := Fintype.ofFinite G
   rw [wLpNorm_eq_sum_norm (by exact_mod_cast hp) (by simp),
     wLpNorm_eq_sum_norm (by exact_mod_cast hp) (by simp)]
   simp only [ENNReal.toReal_natCast, NNReal.smul_def, smul_eq_mul,
@@ -98,8 +102,7 @@ lemma wLpNorm_mu_mono_of_subset
         have hDcard : (D.card : ℝ) ≠ 0 := by exact_mod_cast hD.card_ne_zero
         field_simp
         rfl
-      · simp only [mu_apply, hxC, if_false, mul_zero]
-        by_cases hxD : x ∈ D <;> simp only [rpow_natCast, zero_mul, mul_ite, mul_one, mul_zero, ite_mul]
+      · simp only [mu_apply, if_neg hxC, mul_zero, zero_mul]
         positivity
     _ = ((D.card : ℝ) / C.card) ^ ((p : ℝ)⁻¹) *
         (∑ i, (↑(μ D i) : ℝ) * |f i| ^ (p : ℝ)) ^ ((p : ℝ)⁻¹) := by
@@ -118,6 +121,7 @@ lemma abs_mu_average_le_density_rpow_mul_wLpNorm
     (hdense : gamma * D.card ≤ C.card) :
     |∑ x, μ_[ℝ] C x * f x| ≤
       gamma⁻¹ ^ ((p : ℝ)⁻¹) * ‖f‖_[p, μ D] := by
+  classical
   calc
     _ ≤ ‖f‖_[p, μ C] := abs_mu_average_le_wLpNorm C hC f p hp
     _ ≤ (((D.card : ℝ) / C.card) ^ ((p : ℝ)⁻¹) : ℝ) *
@@ -238,7 +242,7 @@ lemma mu_ddconv_mu_apply_eq_card_translatedSlice
       μ_[ℝ] A y * μ_[ℝ] B (x - y) =
         if y ∈ T then ((A.card : ℝ) * B.card)⁻¹ else 0 := by
     by_cases hyA : y ∈ A <;> by_cases hyB : x - y ∈ B <;>
-      simp [mu_apply, T, CyclicBohr.translatedSlice, hyA, hyB, mul_inv, mul_comm]
+      simp [mu_apply, T, CyclicBohr.translatedSlice, hyA, hyB, mul_comm]
   rw [ddconv_eq_sum_sub']
   simp_rw [hpoint]
   rw [← Finset.sum_filter]

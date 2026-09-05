@@ -94,12 +94,14 @@ lemma improvedExponent_lt_logb_add_one {epsilon beta : ℝ}
     rw [one_lt_div (mul_pos hepsilon hbeta)]
     nlinarith [mul_le_mul hepsilon1.le hbeta1 hbeta.le zero_le_one])).le
 
+omit [NeZero N] in
 lemma improvedRho_pos {epsilon beta : ℝ}
     (X : Finset (ZMod N)) (hepsilon : 0 < epsilon) (hbeta : 0 < beta) :
     0 < improvedRho epsilon beta X := by
   apply div_pos (mul_pos hepsilon hbeta)
   positivity
 
+omit [NeZero N] in
 /-- With the explicit exponent and radius, the full smoothing error is at
 most `epsilon / 64` after conversion from probability normalization to the
 relative density `beta`. -/

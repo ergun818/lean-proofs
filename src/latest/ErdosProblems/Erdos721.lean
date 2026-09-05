@@ -56,7 +56,6 @@ The detailed mathematical reconstruction and Leanization map are in
 namespace Erdos721
 
 open Filter
-open Classical
 open Erdos88.Probability
 open scoped BigOperators Topology
 
@@ -402,6 +401,7 @@ lemma not_forcesW3_of_threeAPFreeBelow_hitsEveryAP {n k : ℕ}
     (hfree : HunterColoring.ThreeAPFreeBelow n red)
     (hhit : HunterColoring.HitsEveryAP n k red) :
     ¬ ForcesW3 n k := by
+  classical
   let color : ℕ → Fin 2 := fun x ↦ if red x then 0 else 1
   intro hforces
   rcases hforces color with hred | hblue
@@ -1302,9 +1302,10 @@ lemma no_blue_AP_of_blueBadCount_eq_zero {n k : ℕ} {W : Finset (Fin n)}
     intro x hx hxin
     rw [apSupport, Finset.mem_image] at hx
     obtain ⟨i, -, rfl⟩ := hx
-    have hc := hcolor i
-    simp [subsetColor] at hc
-    exact hc (apTerm P i).isLt (by simpa [apTerm, P] using hxin)
+    have hc0 : subsetColor n W (apTerm P i).val = 0 :=
+      subsetColor_eq_zero_iff.mpr ⟨(apTerm P i).isLt, hxin⟩
+    have hc1 : subsetColor n W (apTerm P i).val = 1 := hcolor i
+    exact zero_ne_one (hc0.symm.trans hc1)
   have hmem : P ∈ Finset.univ.filter
       (fun Q : APIndex n k ↦ Disjoint (apSupport Q) W) := by
     simp [hdisj]
@@ -1796,7 +1797,7 @@ theorem superlinearPolynomialLowerBound : SuperlinearPolynomialLowerBound := by
   have hhalf : (t : ℝ) ^ 6 / 16 ≤ ((t ^ 6 / 8 : ℕ) : ℝ) := by
     convert half_div_le_natDiv_cast (n := t ^ 6) (k := 8) (by norm_num) (by
       have : 2 ^ 3 ≤ t ^ 3 := Nat.pow_le_pow_left ht2 3
-      nlinarith [Nat.zero_le (t ^ 3)]) using 1 <;> norm_num
+      nlinarith [Nat.zero_le (t ^ 3)]) using 1; norm_num
   have htw : (t : ℝ) ^ 6 / 16 < (W3 k : ℝ) := by
     exact hhalf.trans_lt (by exact_mod_cast hfloorW)
   have hkcast : (k : ℝ) < (2 * (t : ℝ)) ^ 5 := by
@@ -2002,7 +2003,8 @@ predicate follows from the finite torus construction formalized above, and
 the cyclic Bloom--Sisask endpoint is proved in `CyclicRothEndpoint`. -/
 theorem erdos_721 : ((∃ c : ℝ, 0 < c ∧
   ∀ᶠ k : ℕ in Filter.atTop,
-    Real.exp (c * (Real.log k) ^ 2 / Real.log (Real.log k)) ≤ (Erdos721.W3 k : ℝ)) ∧ (∃ C : ℝ, 0 < C ∧
+    Real.exp (c * (Real.log k) ^ 2 / Real.log (Real.log k)) ≤ (Erdos721.W3 k : ℝ)) ∧
+  (∃ C : ℝ, 0 < C ∧
   ∀ᶠ k : ℕ in Filter.atTop,
     (Erdos721.W3 k : ℝ) ≤ Real.exp (C * (Real.log k) ^ 9)) ∧ (∃ γ : ℝ, 0 < γ ∧ γ < 1 ∧
   ∀ᶠ k : ℕ in Filter.atTop,

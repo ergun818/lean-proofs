@@ -132,7 +132,7 @@ theorem exists_large_nonempty_boosted_approximation
   exact ⟨T, by simpa using hTcard, hT, hTapprox⟩
 
 lemma lower_inner_of_mass_on_high_set
-    {G : Type*} [Fintype G] [DecidableEq G]
+    {G : Type*} [Fintype G]
     (f g : G → ℝ) (U : Finset G) (scale : ℕ) {a b c : ℝ}
     (hf : 0 ≤ f) (hg : 0 ≤ g)
     (hb : 0 ≤ 1 + b)
@@ -140,6 +140,7 @@ lemma lower_inner_of_mass_on_high_set
     (hhigh : ∀ x ∈ U, 1 + b ≤ scale • g x)
     (hnumerical : c ≤ (1 + b) * (1 - a)) :
     c ≤ scale • ⟪f, g⟫_[ℝ] := by
+  classical
   calc
     c ≤ (1 + b) * (1 - a) := hnumerical
     _ ≤ (1 + b) * ∑ x ∈ U, f x := by gcongr
@@ -325,10 +326,10 @@ lemma inner_kernel_correlation_self_eq
 lemma scale_smul_dLinfty_mu_ddconv_eq_indicator_div
     (A C : Finset (ZMod N)) (scale : ℕ) {alpha : ℝ}
     (halpha : 0 < alpha) (hdensity : alpha * scale = A.card)
-    (hA : A.Nonempty) (hC : C.Nonempty) :
+    (_ : A.Nonempty) (_ : C.Nonempty) :
     scale • ‖μ_[ℝ] C ∗ᵈ μ_[ℝ] A‖_[∞] =
       ‖𝟭_[(A : Set (ZMod N)), ℝ] ∗ᵈ μ_[ℝ] C‖_[∞] / alpha := by
-  simp [eq_div_iff, halpha.ne', hA, hC, ← card_smul_mu,
+  simp [eq_div_iff, halpha.ne', ← card_smul_mu,
     smul_ddconv, dLpNorm_nsmul, -nsmul_eq_mul]
   all_goals simp [← mul_assoc, mul_comm, ddconv_comm, hdensity]
 
@@ -409,7 +410,7 @@ theorem density_increment_of_large_boosted_inner_relative
         A C scale halpha hdensity hA hC
 
 lemma large_smoothed_inner_of_mass_high_and_error
-    {G : Type*} [Fintype G] [DecidableEq G]
+    {G : Type*} [Fintype G]
     (f g f' : G → ℝ) (U : Finset G) (scale : ℕ)
     {a b error gain : ℝ}
     (hf : 0 ≤ f) (hg : 0 ≤ g) (hb : 0 ≤ 1 + b)
@@ -444,7 +445,7 @@ theorem exists_regular_boosted_density_increment_of_tested_mass_of_controller
     (hbeta : 0 < beta) (hdensity : beta * scale = A.card)
     (hepsilon0 : 0 < epsilon) (hepsilon1 : epsilon < 1)
     (hA : A.Nonempty) (hA₁ : A₁.Nonempty) (hA₂ : A₂.Nonempty)
-    (hU : U.Nonempty) (hX : X.Nonempty)
+    (_ : U.Nonempty) (hX : X.Nonempty)
     (heta : 0 ≤ eta) (hcontrol0 : 0 ≤ control)
     (hcontrol : ∀ r ∈ CyclicChang.relativeLargeSpectrum X eta, ∀ x ∈ B,
       ‖1 - CyclicBohr.character r x‖ ≤ control)
@@ -477,7 +478,8 @@ theorem exists_regular_boosted_density_increment_of_tested_mass_of_controller
   obtain ⟨D, t, delta, hDradius, hDpos, hRrankD, hDrank,
       htlow, hthigh, hdeltaFormula, hdelta, hdeltat, hregular,
       hDsub, hsmooth⟩ :=
-    CyclicImprovedBootstrapping.exists_regular_refined_bohr_smoothing_of_boostedFunction_of_controller
+    open CyclicImprovedBootstrapping in
+    exists_regular_refined_bohr_smoothing_of_boostedFunction_of_controller
       R B hX F k m hRradius hRrank hm hBradius heta hcontrol0 hcontrol
       (by
         simpa only [F] using
@@ -529,7 +531,7 @@ theorem exists_regular_boosted_density_increment_of_tested_mass_of_controller_su
     (hbeta : 0 < beta) (hdensity : beta * scale = A.card)
     (hepsilon0 : 0 < epsilon) (hepsilon1 : epsilon < 1)
     (hA : A.Nonempty) (hA₁ : A₁.Nonempty) (hA₂ : A₂.Nonempty)
-    (hU : U.Nonempty) (hX : X.Nonempty)
+    (_ : U.Nonempty) (hX : X.Nonempty)
     (heta : 0 ≤ eta) (hcontrol0 : 0 ≤ control)
     (hcontrol : ∀ r ∈ CyclicChang.relativeLargeSpectrum X eta, ∀ x ∈ B,
       ‖1 - CyclicBohr.character r x‖ ≤ control)
@@ -562,7 +564,8 @@ theorem exists_regular_boosted_density_increment_of_tested_mass_of_controller_su
   obtain ⟨D, t, delta, hDradius, hDpos, hRrankD, hDrank,
       htlow, hthigh, hdeltaFormula, hdelta, hdeltat, hregular,
       hDsub, hsmooth⟩ :=
-    CyclicImprovedBootstrapping.exists_regular_refined_bohr_smoothing_of_boostedFunction_of_controller_subset
+    open CyclicImprovedBootstrapping in
+    exists_regular_refined_bohr_smoothing_of_boostedFunction_of_controller_subset
       R B hX F k m hRradius hRrank hm hBradius hfreq heta hcontrol0 hcontrol
       (by
         simpa only [F] using
@@ -609,7 +612,7 @@ theorem exists_regular_boosted_density_increment_of_tested_mass
     (hbeta : 0 < beta) (hdensity : beta * scale = A.card)
     (hepsilon0 : 0 < epsilon) (hepsilon1 : epsilon < 1)
     (hA : A.Nonempty) (hA₁ : A₁.Nonempty) (hA₂ : A₂.Nonempty)
-    (hU : U.Nonempty) (hX : X.Nonempty)
+    (_ : U.Nonempty) (hX : X.Nonempty)
     (heta : 0 < eta) (hrho : 0 < rho)
     (hmass :
       1 - epsilon / 16 ≤ ∑ x ∈ U,

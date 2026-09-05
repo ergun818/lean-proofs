@@ -85,9 +85,9 @@ lemma changRankBound_half_le (X : Finset (ZMod N)) (hX : X.Nonempty) :
       exact_mod_cast Nat.one_le_iff_ne_zero.mpr
         (Nat.ne_of_gt (CyclicChang.changMoment_pos alpha))
     have he0 : 1 ≤ Real.exp (1 / 2 : ℝ) := by
-      simpa using Real.exp_le_exp.mpr (by norm_num : (0 : ℝ) ≤ 1 / 2)
+      simp
     have he2 : 1 ≤ Real.exp (2 : ℝ) := by
-      simpa using Real.exp_le_exp.mpr (by norm_num : (0 : ℝ) ≤ 2)
+      simp
     calc
       (1 / 2 : ℝ) ≤ (2 * 1) ^ 2 * 1 * 1 / (1 / 2 : ℝ) ^ 2 := by norm_num
       _ ≤ (2 * Real.exp (1 / 2 : ℝ)) ^ 2 *
@@ -165,6 +165,7 @@ lemma improvedCrootLowerBound_eq_rpow
   congr 2
   ring
 
+omit [NeZero N] in
 lemma improvedCrootCost_nonneg
     (A₂ U : Finset (ZMod N)) {epsilon beta : ℝ}
     (hA₂ : A₂.Nonempty) (hU : U.Nonempty) :
@@ -582,6 +583,7 @@ lemma improvedExponent_fixed_le {beta : ℝ}
       norm_num at hcur hlogle ⊢
       nlinarith).le
 
+omit [NeZero N] in
 /-- If `A₂` has relative density `alpha` in `S`, while `U` has cardinality at
 most `9^rank |S|`, then the logarithmic cardinal ratio in the Croot--Sisask
 cost is bounded by `L(alpha) + rank log 9`. -/
@@ -623,6 +625,7 @@ lemma curLog_min_card_ratio_le
         Real.log_pow]
       ring
 
+omit [NeZero N] in
 /-- Replacing the real logarithmic weight by the integer ceiling costs at
 most a factor two. -/
 lemma intCeil_curLog_min_card_ratio_le
@@ -647,6 +650,7 @@ lemma intCeil_curLog_min_card_ratio_le
     hceil.le.trans (by linarith)
   simpa only [curLog] using hbound
 
+omit [NeZero N] in
 /-- Complete polynomial upper bound for the Croot--Sisask exponent in one
 improved local step.  Here `rank` is the current Bohr rank and `q` is the
 sifting exponent. -/
@@ -840,12 +844,14 @@ lemma rankFreeEntropy_fixed_le
 
 /-! ## Rank-independent reflected entropy -/
 
+omit [NeZero N] in
 lemma reflectedCrootCost_eq_improvedCrootCost
     (A₁ U : Finset (ZMod N)) (epsilon beta : ℝ) :
     CyclicImprovedLocalDensityIteration.reflectedCrootCost
         A₁ U epsilon beta = improvedCrootCost A₁ U epsilon beta := by
   rfl
 
+omit [NeZero N] in
 /-- Real upper bound for the stable-carrier entropy ceiling. -/
 lemma reflectedStableEntropy_cast_le
     (A₁ U : Finset (ZMod N)) {alpha epsilon beta : ℝ}
@@ -918,8 +924,9 @@ lemma sifted_support_card_le_nine_mul_inner
       (add_nonneg (sub_nonneg.mpr hzetau) hzeta)
       (by linarith : (u - zeta) + zeta ≤ u + zeta)
     have hmem := hmono hadd
-    convert hmem using 1 <;>
-      simp only [vadd_eq_add, sub_eq_add_neg] <;> abel
+    convert hmem using 1
+    simp only [vadd_eq_add, sub_eq_add_neg]
+    abel
   have hcardTranslate : (x +ᵥ U).card = U.card :=
     Finset.card_vadd_finset x U
   have hcardOuter : U.card ≤ (H.dilate (u + zeta)).carrier.card := by
@@ -931,6 +938,7 @@ lemma sifted_support_card_le_nine_mul_inner
     omega
   exact_mod_cast hnat
 
+omit [NeZero N] in
 /-- At the fixed error of the iteration, the stable-carrier entropy is a
 degree-six polynomial in the current logarithmic reciprocal density. -/
 lemma reflectedStableEntropy_fixed_le
@@ -1011,6 +1019,7 @@ lemma reflectedStableEntropy_fixed_le
         norm_num at hL6 ⊢
         linarith))
 
+omit [NeZero N] in
 /-- Rank-independent entropy bound with a common logarithmic budget.  This
 form is used in the nested step because the sifting moment is controlled by
 the inner test density, while the Croot--Sisask exponent uses the outer
@@ -1302,7 +1311,7 @@ lemma controlledStableRadiusFloor_le_controller
       calc
         (8192 : ℝ) * entropy ≤ 8192 * (M + 1 : ℝ) := by
           exact mul_le_mul_of_nonneg_left hMcast (by norm_num)
-        _ ≤ 2 ^ 40 * (M + 1 : ℝ) := by gcongr <;> norm_num
+        _ ≤ 2 ^ 40 * (M + 1 : ℝ) := by gcongr; norm_num
         _ ≤ den := by
           dsimp only [den]
           have hr1 : (1 : ℝ) ≤ B.rank := by exact_mod_cast hBrank
@@ -1502,7 +1511,7 @@ lemma controlledSharpRadiusFloor_le_controller
     have hdenSigma : (8192 : ℝ) * entropy ≤ den := by
       calc
         (8192 : ℝ) * entropy ≤ 8192 * (M + 1 : ℝ) := by gcongr
-        _ ≤ 2 ^ 40 * (M + 1 : ℝ) := by gcongr <;> norm_num
+        _ ≤ 2 ^ 40 * (M + 1 : ℝ) := by gcongr; norm_num
         _ ≤ den := by
           dsimp only [den]
           have hr1 : (1 : ℝ) ≤ B.rank := by exact_mod_cast hBrank
@@ -1574,7 +1583,7 @@ lemma controlledSharpRadiusFloor_le_controller
         dsimp only [smallDen]
         push_cast
         field_simp
-        <;> ring
+        ring
   unfold CyclicSharpLocalChangSanders.sharpControllerRadius
   exact le_min hfloorB (le_min hfloorSigma hfloorSecond)
 
@@ -1652,7 +1661,8 @@ theorem exists_positive_density_increment_slice_with_controlled_rank
       hA₁, hU, hA₁S, hA₂T, hUsub, hA₁dense, hCradius,
       hCpos, hRrankC, hCrank, hvlow, hvhigh, hxiFormula, hxi, hxiv,
       hCregular, hCsmall, hslice, hfree, hdense⟩ :=
-    CyclicImprovedLocalDensityStep.exists_positive_density_increment_slice_of_large_norm_sharp_reflected_quantitative
+    open CyclicImprovedLocalDensityStep in
+    exists_positive_density_increment_slice_of_large_norm_sharp_reflected_quantitative
       B R A S T m p mNext (t := t) (delta := delta) (vr := vr)
       (eta := eta) (beta := beta) (epsilon := (1 / 16 : ℝ))
       hm hp hbeta0 hbeta1 (by norm_num) (by norm_num) hRradius hRrank

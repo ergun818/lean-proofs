@@ -36,15 +36,16 @@ open scoped BigOperators ComplexConjugate ENNReal Indicator mu NNReal Pointwise 
 namespace CyclicLocalSifting
 
 variable {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
-  [MeasurableSpace G] [DiscreteMeasurableSpace G]
 
 /-- The reflected translate `x - T`. -/
 def reflectedTranslate (T : Finset G) (x : G) : Finset G := x +ᵥ (-T)
 
+omit [Fintype G] in
 @[simp] lemma card_reflectedTranslate (T : Finset G) (x : G) :
     (reflectedTranslate T x).card = T.card := by
   simp [reflectedTranslate]
 
+omit [Fintype G] in
 lemma reflectedTranslate_nonempty {T : Finset G} (hT : T.Nonempty) (x : G) :
     (reflectedTranslate T x).Nonempty := by
   simpa [reflectedTranslate] using
@@ -112,6 +113,8 @@ lemma positiveDefiniteWeight_moment_eq_average
       intro y _
       ring
 
+variable [MeasurableSpace G] [DiscreteMeasurableSpace G]
+
 /-- Some translated pair realizes at least the positive-definite weighted
 norm.  The chosen translation lies in `S + T`, so the two carrier factors
 intersect, exactly as required by dependent random choice. -/
@@ -127,8 +130,7 @@ theorem exists_reflectedTranslate_wLpNorm_ge
   have hqsum : ∑ x, q x = 1 := by
     simp [q, sum_ddconv, sum_mu ℝ≥0 hS, sum_mu ℝ≥0 hT]
   have hqsupport : Function.support q ⊆ (S + T : Finset G) := by
-    simpa [q, support_mu] using
-      support_ddconv_subset (μ_[ℝ≥0] S) (μ_[ℝ≥0] T)
+    simp [q, support_mu]
   have hqnonempty : (Function.support q).Nonempty := by
     by_contra hne
     have hempty : Function.support q = ∅ := Set.not_nonempty_iff_eq_empty.mp hne
@@ -137,7 +139,7 @@ theorem exists_reflectedTranslate_wLpNorm_ge
       by_contra hx
       have hx' : x ∈ Function.support q := hx
       rw [hempty] at hx'
-      simpa using hx'
+      simp at hx'
     simp [hzero] at hqsum
   by_contra hnot
   push Not at hnot
@@ -183,6 +185,7 @@ theorem exists_reflectedTranslate_wLpNorm_ge
     one_mul, ← havg] at hlt
   exact (lt_irrefl _ hlt)
 
+omit [Fintype G] [MeasurableSpace G] [DiscreteMeasurableSpace G] in
 /-- If `x` is represented as an element of `S + T`, then `S` intersects the
 reflected translate `x - T`. -/
 lemma inter_reflectedTranslate_nonempty
@@ -291,7 +294,7 @@ theorem sifting_total
       ⟪μ_[ℝ] A₁ ○ᵈ μ_[ℝ] A₂, (↑) ∘ test⟫_[ℝ] =
         ∑ x ∈ Uᶜ, (μ_[ℝ] A₁ ○ᵈ μ_[ℝ] A₂) x + delta / 8 := by
     rw [wInner_one_eq_sum]
-    simp only [Function.comp_apply, Real.inner_apply, conj_trivial]
+    simp only [Function.comp_apply, Real.inner_apply]
     calc
       ∑ x, (μ_[ℝ] A₁ ○ᵈ μ_[ℝ] A₂) x * (test x : ℝ) =
           ∑ x, (if x ∈ Uᶜ then (μ_[ℝ] A₁ ○ᵈ μ_[ℝ] A₂) x else 0) +
@@ -467,7 +470,6 @@ theorem sifting_on_reflectedTranslate
             μ S ○ᵈ μ (reflectedTranslate T x)] := by
     rw [← card_smul_mu ℝ A, smul_dddconv, dddconv_smul,
       wLpNorm_nsmul, wLpNorm_nsmul]
-    push_cast
     simp only [star_trivial]
     ring
   refine ⟨A₁, hA₁S, A₂, hA₂T, hmass, ?_, ?_⟩

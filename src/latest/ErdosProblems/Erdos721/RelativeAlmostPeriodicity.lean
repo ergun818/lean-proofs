@@ -240,6 +240,7 @@ theorem exists_local_bohr_smoothing_adaptive
         (addConst_inner_le B A halpha0 hdelta hdeltat hAinner hAdense hregular)
         hA (CyclicBohr.Set.carrier_nonempty _) hP hQ heta hrho)
 
+open CyclicBoostedAlmostPeriodicity in
 /-- Adaptive local smoothing whose averaging carrier has already been put on
 a fine regular scale.  The output `C_t` is therefore ready to carry the next
 normalized slice in the density-increment iteration. -/
@@ -295,7 +296,7 @@ theorem exists_local_regular_bohr_smoothing_adaptive
     positivity
   have hRrank : 0 < (B.dilate delta).rank := by simpa using hBrank
   simpa only [CyclicBohr.Set.rank_dilate] using
-    (CyclicBoostedAlmostPeriodicity.exists_large_set_and_regular_refined_bohr_smoothing_explicit_adaptive
+    (exists_large_set_and_regular_refined_bohr_smoothing_explicit_adaptive
         (B.dilate delta) A (B.dilate delta).carrier P Q rho k m
         hRradius hRrank hm hepsilon0 hepsilon1 hk hK2
         (addConst_inner_le B A halpha0 hdelta.le hdeltat hAinner hAdense hregular)

@@ -77,12 +77,13 @@ private lemma contained_T_bound (hK₂ : 2 ≤ K) (Lc Sc Ac ASc Tc : ℕ)
       linear_combination h₄ + 2 * h₅
     _ = K ^ (512 * m / epsilon ^ 2) * (Ac ^ k * Tc) := by ring
 
+omit [Fintype G] [MeasurableSpace G] [DiscreteMeasurableSpace G] in
 /-- The elementary large-fibre form of the Croot--Sisask double count.  In
 contrast to the diagonal-difference set used by APAP's public interface, the
 set `T` produced here is literally a subset of the supplied shift set `S`.
 Two elements of the same fibre translate one good sample to another. -/
 private theorem exists_large_base_shift_fiber
-    {r : ℕ} (hr : r ≠ 0) (hA : A.Nonempty) (hS : S.Nonempty)
+    {r : ℕ} (_ : r ≠ 0) (hA : A.Nonempty) (hS : S.Nonempty)
     (L : Finset (Fin r → G)) (hL : L.Nonempty) (hLA : L ⊆ A ^^ r) :
     ∃ (y : Fin r → G) (T : Finset G),
       T ⊆ S ∧ T.Nonempty ∧

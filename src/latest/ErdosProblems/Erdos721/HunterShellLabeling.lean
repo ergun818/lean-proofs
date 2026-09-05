@@ -170,7 +170,7 @@ theorem exists_shellLabeling
   have hproper : someLabelMissEvent chosen wanted ≠ Set.univ := by
     intro heq
     rw [heq] at hbad
-    simpa using hbad
+    simp at hbad
   obtain ⟨label, hlabel⟩ := (Set.ne_univ_iff_exists_notMem _).mp hproper
   refine ⟨label, fun r ↦ ?_⟩
   have hr : ¬∀ b, label b (chosen r b) ≠ wanted r b := by

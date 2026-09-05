@@ -225,10 +225,12 @@ def GradedDissociated (mu : ZMod N → ℝ) (eta : ℝ) (k : ℕ)
     (Delta : Finset (ZMod N)) : Prop :=
   WeightedLocallyDissociated mu Delta (gradedParameter eta k Delta)
 
+omit [NeZero N] in
 lemma gradedParameter_empty (eta : ℝ) (k : ℕ) :
     gradedParameter (N := N) eta k ∅ = 0 := by
   simp [gradedParameter]
 
+omit [NeZero N] in
 lemma gradedParameter_eq_half_of_card_eq_succ
     {eta : ℝ} {k : ℕ} {Delta : Finset (ZMod N)}
     (hcard : Delta.card = k + 1) :
@@ -244,7 +246,7 @@ frequencies which cannot be enlarged even after increasing the allowed
 Riesz mass by the next grade. -/
 theorem exists_graded_maximal_dissociated
     (mu : ZMod N → ℝ) (Gamma : Finset (ZMod N))
-    {eta : ℝ} (heta : 0 ≤ eta) (k : ℕ)
+    {eta : ℝ} (_ : 0 ≤ eta) (k : ℕ)
     (hmu_sum : ∑ x : ZMod N, mu x = 1)
     (hEntropy : ∀ E : Finset (ZMod N), E ⊆ Gamma →
       WeightedLocallyDissociated mu E (eta / 2) → E.card ≤ k) :
@@ -343,7 +345,7 @@ lemma weightedMean_rieszProduct_insert
       apply Finset.sum_congr rfl
       intro x hx
       simp only [Complex.mul_re, Complex.mul_im, Complex.ofReal_re, Complex.ofReal_im,
-        zero_mul, mul_zero, add_zero, sub_zero]
+        zero_mul, add_zero, sub_zero]
       ring
     _ = (∑ x : ZMod N,
         omega gamma *
@@ -356,6 +358,7 @@ lemma weightedMean_rieszProduct_insert
             CyclicBohr.character gamma x).re := by
       rw [Finset.mul_sum]
 
+omit [NeZero N] in
 lemma gradedParameter_insert
     {eta : ℝ} {k : ℕ} {Delta : Finset (ZMod N)} {gamma : ZMod N}
     (hgamma : gamma ∉ Delta) :
@@ -399,7 +402,7 @@ theorem exists_large_weightedRieszCorrelation_of_not_insert
       eta / (2 * (k + 1 : ℕ)) <
         ‖weightedRieszCorrelation mu Lambda omega gamma‖ := by
   unfold GradedDissociated WeightedLocallyDissociated at hfail
-  push_neg at hfail
+  push Not at hfail
   obtain ⟨omega, homegaInsert, hbad⟩ := hfail
   have homega : ∀ r ∈ Lambda, ‖omega r‖ ≤ 1 := by
     intro r hr
@@ -442,6 +445,7 @@ noncomputable def smoothedProbabilityMass
     (V S : Finset (ZMod N)) (L : ℕ) : ZMod N → ℝ :=
   μ_[ℝ] V ∗ᵈ^ L ∗ᵈ μ_[ℝ] S
 
+omit [NeZero N] in
 lemma uniformWeight_eq_nat_smul_mu (S : Finset (ZMod N)) :
     CyclicBohr.uniformWeight S = (N : ℝ) • μ_[ℝ] S := by
   funext x
@@ -522,7 +526,7 @@ lemma fourier_mul_character
           CyclicBohr.character a x =
         (starRingEnd ℂ) (CyclicBohr.character (r - a) x) := by
     rw [show CyclicBohr.character r x =
-      CyclicBohr.character ((r - a) + a) x by congr 2 <;> abel,
+      CyclicBohr.character ((r - a) + a) x by congr 2; abel,
       CyclicBohr.character_add_index, map_mul]
     calc
       ((starRingEnd ℂ) (CyclicBohr.character (r - a) x) *
@@ -575,7 +579,7 @@ lemma norm_weightedRieszCorrelation_smoothed_le
       intro s hs
       by_cases hp : CyclicFourier.fourier
           (complexRieszProduct Delta omega) (-gamma - s) = 0
-      · simp [hp, htheta]
+      · simp [hp]
       · have hspan : -gamma - s ∈ Delta.addSpan := by
           by_contra hnot
           exact hp (fourier_complexRieszProduct_eq_zero_of_not_mem_addSpan
@@ -614,7 +618,7 @@ theorem exists_large_narrowCoefficient_of_large_correlation
     (V S Delta : Finset (ZMod N)) (hV : V.Nonempty) (hS : S.Nonempty)
     (L : ℕ) (omega : ZMod N → ℂ)
     (homega : ∀ r ∈ Delta, ‖omega r‖ ≤ 1)
-    (gamma : ZMod N) {a : ℝ} (ha : 0 ≤ a)
+    (gamma : ZMod N) {a : ℝ} (_ : 0 ≤ a)
     (hnumeric : 2 ^ Delta.card * (1 / 2 : ℝ) ^ L ≤ a)
     (hcorr : a <
       ‖weightedRieszCorrelation (smoothedProbabilityMass V S L)
@@ -1015,7 +1019,7 @@ theorem exists_sharp_localSpectrum_controller_of_regularCarrier
     {t delta spectralEta sigma : ℝ}
     (hHradius : 0 < H.radius) (hHrank : 0 < H.rank)
     (hell : 0 < ell)
-    (htlow : 1 / 2 ≤ t) (hthigh : t ≤ 1)
+    (_ : 1 / 2 ≤ t) (_ : t ≤ 1)
     (hdeltaFormula : delta = (400 * (H.rank : ℝ))⁻¹)
     (hdelta : 0 < delta) (hdeltat : delta < t)
     (hregular :
@@ -1087,7 +1091,7 @@ theorem exists_sharp_localSpectrum_controller_of_regularCarrier
     have hraw := mu_dilate_le_mul_smoothedProbabilityMass_of_subset
       H V ha.le hrho.le (by norm_num : (0 : ℝ) ≤ 4 / 3)
       hV hVsub L hcard
-    convert hraw using 1 <;> norm_num
+    convert hraw using 1; norm_num
   let Gamma := CyclicChang.relativeLargeSpectrum X spectralEta
   have hlog4 : (1 : ℝ) ≤ Real.log 4 := by
     rw [Real.le_log_iff_exp_le (by norm_num)]
@@ -1118,7 +1122,7 @@ theorem exists_sharp_localSpectrum_controller_of_regularCarrier
         CyclicLocalChangSanders.norm_one_sub_character_le_of_mem_relativeLargeSpectrum
           V hV (by norm_num : (0 : ℝ) < 1 / 2) hr
           (hstableV x (by simpa only [W] using hx))
-      convert hraw using 1 <;> field_simp
+      convert hraw using 1; field_simp
     rcases Finset.mem_union.mp hq with hq | hq
     · exact hbase q hq
     · obtain ⟨r, hr, rfl⟩ := Finset.mem_neg.mp hq

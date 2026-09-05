@@ -137,7 +137,7 @@ theorem exists_small_correction_of_hits_phaseNet
       simp [u₂], phaseHom_coordinateEmbed]
     change phaseHom A dz = _
     rw [map_sub, hz]
-    simp only [dz, phaseHom_phaseGridCenter, A]
+    simp only [phaseHom_phaseGridCenter, A]
   refine ⟨x, hxcenters, u₁ + u₂, ?_, ?_⟩
   · calc
       ‖u₁ + u₂‖ ≤ ‖u₁‖ + ‖u₂‖ := norm_add_le _ _

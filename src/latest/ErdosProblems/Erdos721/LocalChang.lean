@@ -46,6 +46,7 @@ noncomputable def finsetMean (S : Finset (ZMod N))
     (f : ZMod N → ℝ) : ℝ :=
   (S.card : ℝ)⁻¹ * ∑ x ∈ S, f x
 
+omit [NeZero N] in
 lemma finsetMean_const (S : Finset (ZMod N)) (hS : S.Nonempty) (c : ℝ) :
     finsetMean S (fun _ ↦ c) = c := by
   unfold finsetMean
@@ -53,6 +54,7 @@ lemma finsetMean_const (S : Finset (ZMod N)) (hS : S.Nonempty) (c : ℝ) :
     exact_mod_cast Finset.card_ne_zero.mpr hS
   simp [hcard]
 
+omit [NeZero N] in
 lemma finsetMean_nonneg (S : Finset (ZMod N)) (f : ZMod N → ℝ)
     (hf : ∀ x ∈ S, 0 ≤ f x) :
     0 ≤ finsetMean S f := by
@@ -60,6 +62,7 @@ lemma finsetMean_nonneg (S : Finset (ZMod N)) (f : ZMod N → ℝ)
   exact mul_nonneg (inv_nonneg.mpr (Nat.cast_nonneg _))
     (Finset.sum_nonneg fun x hx ↦ hf x hx)
 
+omit [NeZero N] in
 lemma finsetMean_mono (S : Finset (ZMod N)) (f g : ZMod N → ℝ)
     (hfg : ∀ x ∈ S, f x ≤ g x) :
     finsetMean S f ≤ finsetMean S g := by
@@ -189,6 +192,7 @@ lemma eta_mul_card_le_finsetMean_re_alignedPoly
   rw [hcancel] at hscaled
   exact hscaled
 
+omit [NeZero N] in
 /-- Jensen's inequality for the uniform average on a finite set. -/
 lemma exp_finsetMean_le_finsetMean_exp
     (S : Finset (ZMod N)) (hS : S.Nonempty) (f : ZMod N → ℝ) :
@@ -207,6 +211,7 @@ lemma exp_finsetMean_le_finsetMean_exp
   simpa only [finsetMean, smul_eq_mul, Function.comp_apply,
     ← Finset.mul_sum] using hjensen
 
+omit [NeZero N] in
 /-- Restricting a nonnegative average from `S` to `X` costs the reciprocal
 relative density `|S|/|X|`. -/
 lemma finsetMean_le_card_ratio_mul_finsetMean
@@ -328,7 +333,7 @@ The deliberately explicit constant is more than sufficient for the later
 rank recurrence. -/
 theorem locallyDissociated_card_bound
     (X S : Finset (ZMod N)) (hX : X.Nonempty) (hXS : X ⊆ S)
-    {eta K : ℝ} (heta0 : 0 < eta) (heta1 : eta ≤ 1)
+    {eta K : ℝ} (heta0 : 0 < eta) (_ : eta ≤ 1)
     (Δ : Finset (ZMod N))
     (hΔspec : Δ ⊆ CyclicChang.relativeLargeSpectrum X eta)
     (hΔdiss : LocallyDissociated S Δ K) :
@@ -408,7 +413,6 @@ theorem locallyDissociated_card_bound
         exact Real.cosh_le_exp_half_sq eta
       _ = Real.exp (eta ^ 2 * (Δ.card : ℝ) / 2) := by
         rw [← Real.exp_nat_mul]
-        push_cast
         congr 1
         ring
   have hupper :

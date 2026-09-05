@@ -50,7 +50,7 @@ noncomputable def character (r : ZMod N) : AddChar (ZMod N) ℂ :=
   exact AddChar.map_add_eq_mul _ _ _
 
 @[simp] lemma norm_character (r x : ZMod N) : ‖character r x‖ = 1 := by
-  simpa [character] using AddChar.norm_apply (AddChar.zmodAddEquiv r) x
+  simp [character]
 
 /-- The standard cyclic character pairing is symmetric in its two inputs. -/
 lemma character_comm (r x : ZMod N) : character r x = character x r := by
@@ -264,9 +264,10 @@ lemma carrier_eq_univ_of_two_le_radius (B : Set N) (hB : 2 ≤ B.radius) :
 
 /-- A product of unit-disc complex numbers remains close to one by at most
 the sum of the individual errors. -/
-lemma norm_one_sub_prod_le_sum {ι : Type*} [DecidableEq ι]
+lemma norm_one_sub_prod_le_sum {ι : Type*}
     (s : Finset ι) (f : ι → ℂ) (hf : ∀ i ∈ s, ‖f i‖ ≤ 1) :
     ‖1 - ∏ i ∈ s, f i‖ ≤ ∑ i ∈ s, ‖1 - f i‖ := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp
   | @insert a s ha ih =>
@@ -276,9 +277,10 @@ lemma norm_one_sub_prod_le_sum {ι : Type*} [DecidableEq ι]
 
 /-- The character indexed by a finite sum is the product of the indexed
 characters. -/
-lemma character_sum {ι : Type*} [DecidableEq ι] (s : Finset ι)
+lemma character_sum {ι : Type*} (s : Finset ι)
     (f : ι → ZMod N) (x : ZMod N) :
     character (∑ i ∈ s, f i) x = ∏ i ∈ s, character (f i) x := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp
   | @insert a s ha ih => simp [ha, ih, character_add_index]
