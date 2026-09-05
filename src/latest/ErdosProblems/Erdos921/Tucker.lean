@@ -105,8 +105,8 @@ lemma stateOfList_consistent {N : ℕ} {l : List (Atom N)}
   obtain ⟨i, hi⟩ := List.mem_iff_get.mp ha
   obtain ⟨j, hj⟩ := List.mem_iff_get.mp hb
   have hij : i = j := by
-    let i' : Fin (l.map Prod.fst).length := ⟨i, by simpa using i.isLt⟩
-    let j' : Fin (l.map Prod.fst).length := ⟨j, by simpa using j.isLt⟩
+    let i' : Fin (l.map Prod.fst).length := ⟨i, by simp⟩
+    let j' : Fin (l.map Prod.fst).length := ⟨j, by simp⟩
     have hcoord : (l.get i).1 = (l.get j).1 := by
       rw [hi, hj]
       exact hax.trans hbx.symm
@@ -150,7 +150,7 @@ def negateList {N : ℕ} (l : List (Atom N)) : List (Atom N) := l.map Atom.negat
 lemma stateOfList_negateList {N : ℕ} (l : List (Atom N)) :
     stateOfList (negateList l) = (stateOfList l).negate := by
   ext
-  · simp only [stateOfList, negateList, SignVector.negate_pos, SignVector.negate_neg,
+  · simp only [stateOfList, negateList, SignVector.negate_pos,
       Finset.mem_image, List.mem_toFinset, List.mem_filter, List.mem_map]
     constructor
     · rintro ⟨a, ⟨⟨b, hb, rfl⟩, ha⟩, rfl⟩
@@ -161,7 +161,7 @@ lemma stateOfList_negateList {N : ℕ} (l : List (Atom N)) :
       refine ⟨Atom.negate b, ⟨⟨b, hb, rfl⟩, ?_⟩, rfl⟩
       obtain ⟨i, sb⟩ := b
       cases sb <;> simp_all [Atom.negate]
-  · simp only [stateOfList, negateList, SignVector.negate_pos, SignVector.negate_neg,
+  · simp only [stateOfList, negateList, SignVector.negate_neg,
       Finset.mem_image, List.mem_toFinset, List.mem_filter, List.mem_map]
     constructor
     · rintro ⟨a, ⟨⟨b, hb, rfl⟩, ha⟩, rfl⟩
@@ -459,7 +459,7 @@ lemma prefixLabel_classification
         exact Or.inl hqExtra
   · right
     unfold IsExtra at hqExtra
-    push_neg at hqExtra
+    push Not at hqExtra
     obtain ⟨e, hqe⟩ := hqExtra
     let p := pick e
     have hpq : p ≠ q := by
@@ -612,7 +612,7 @@ lemma prefixState_dropLast_of_le {N : ℕ} (s : SignedSequence N) {j : ℕ}
 
 lemma prefixState_negate {N : ℕ} (s : SignedSequence N) (j : ℕ) :
     prefixState s.negate j = (prefixState s j).negate := by
-  simp only [prefixState, SignedSequence.coe_negate, negateList, List.map_take]
+  simp only [prefixState, SignedSequence.coe_negate, negateList]
   rw [← List.map_take]
   exact stateOfList_negateList (s.1.take j)
 
@@ -825,7 +825,8 @@ lemma redundant_swap_redundant {N : ℕ} {label : SignVector N → Atom N}
     {s : SignedSequence N} (hs : Permissible label s) (q : ℕ)
     (hq : q + 1 < s.1.length)
     (hr : IsRedundant label s ⟨q + 1, by omega⟩) :
-    IsRedundant label (s.swapAdjacent q hq) ⟨q + 1, by simpa using (show q + 1 < s.1.length + 1 by omega)⟩ := by
+    IsRedundant label (s.swapAdjacent q hq)
+      ⟨q + 1, by simpa using (show q + 1 < s.1.length + 1 by omega)⟩ := by
   let p : LabelIndex s := ⟨q + 1, by omega⟩
   let t := s.swapAdjacent q hq
   let p' : LabelIndex t := ⟨q + 1, by simp [t]; omega⟩
@@ -971,11 +972,11 @@ lemma stateOfList_ne_zero_of_mem {N : ℕ} {l : List (Atom N)} {a : Atom N}
   · intro hzero
     have hx : x ∈ (stateOfList l).neg := by
       simp [stateOfList, ha]
-    simpa [hzero, SignVector.zero] using hx
+    simp [hzero, SignVector.zero] at hx
   · intro hzero
     have hx : x ∈ (stateOfList l).pos := by
       simp [stateOfList, ha]
-    simpa [hzero, SignVector.zero] using hx
+    simp [hzero, SignVector.zero] at hx
 
 lemma prefixState_ne_zero_of_pos {N : ℕ} (s : SignedSequence N) (j : ℕ)
     (hj : 0 < j) (hjl : j ≤ s.1.length) :
@@ -1032,7 +1033,7 @@ lemma extra_zero_of_redundant {N : ℕ} {label : SignVector N → Atom N}
 
 lemma extra_zero_negate {N : ℕ} {label : SignVector N → Atom N}
     (hno : NoComplement label) {s : SignedSequence N} (hs : Permissible label s)
-    (hzero : IsExtra label s ⟨0, by simp⟩) :
+    (_hzero : IsExtra label s ⟨0, by simp⟩) :
     IsExtra label s.negate ⟨0, by simp⟩ := by
   rw [isExtra_iff_forall_mem]
   intro b hb hlabel
@@ -1042,7 +1043,6 @@ lemma extra_zero_negate {N : ℕ} {label : SignVector N → Atom N}
   have hc := hno (prefixState_consistent s 0) (prefixState_consistent s j)
     (prefixState_mono s (Nat.zero_le (j : ℕ)))
   apply hc
-  change label (prefixState s 0) = Atom.negate (label (prefixState s j))
   have hj' : label (prefixState s (j : ℕ)) = a := hj
   rw [hj']
   simpa [prefixLabel, prefixState_zero] using hlabel
@@ -1190,7 +1190,7 @@ lemma card_ports_decomposition {N : ℕ} (label : SignVector N → Atom N) :
 
 lemma card_portAt_extra_case {N : ℕ} {label : SignVector N → Atom N}
     (s : PermissibleSequence label) (q : LabelIndex s.1)
-    (hq : IsExtra label s.1 q)
+    (_hq : IsExtra label s.1 q)
     (hextra : ∀ i, IsExtra label s.1 i ↔ i = q)
     (hred : ∀ i, IsRedundant label s.1 i ↔ i = q) :
     Fintype.card (PortAt label s) = if s.1.1 = [] then 1 else 2 := by
@@ -1404,7 +1404,7 @@ lemma extraToLast_lastToExtra {N : ℕ} {label : SignVector N → Atom N}
   change qs.1 = ps.1 at hseq
   have hbase : qs = ps := Subtype.ext hseq
   subst qs
-  apply Subtype.eq
+  apply Subtype.ext
   change (⟨ps, qi⟩ : BoundaryPorts label) = ⟨ps, pi⟩
   congr 1
   apply Subtype.ext
@@ -1521,7 +1521,7 @@ lemma zeroPartner_involutive {N : ℕ} {label : SignVector N → Atom N}
   change qs.1 = ps.1 at hseq
   have hbase : qs = ps := Subtype.ext hseq
   subst qs
-  apply Subtype.eq
+  apply Subtype.ext
   change (⟨ps, qi⟩ : BoundaryPorts label) = ⟨ps, pi⟩
   congr 1
   apply Subtype.ext
@@ -1615,7 +1615,7 @@ lemma interiorPartner_involutive {N : ℕ} {label : SignVector N → Atom N} :
   change (qi.1 : ℕ) = (pi.1 : ℕ) at hindex
   have hbase : qs = ps := Subtype.ext hseq
   subst qs
-  apply Subtype.eq
+  apply Subtype.ext
   change (⟨ps, qi⟩ : BoundaryPorts label) = ⟨ps, pi⟩
   congr 1
   apply Subtype.ext

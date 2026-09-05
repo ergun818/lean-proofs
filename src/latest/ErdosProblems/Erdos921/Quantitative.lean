@@ -21,8 +21,8 @@ lemma cyclicNext_injective {N : ℕ} : Function.Injective (@cyclicNext N) := by
   intro a b hab
   have hv := congrArg Fin.val hab
   by_cases ha : a.val + 1 < N <;> by_cases hb : b.val + 1 < N
-  · simp [cyclicNext, ha, hb] at hv
-    exact Fin.ext hv
+  · simp only [cyclicNext, dif_pos ha, dif_pos hb] at hv
+    exact Fin.ext (Nat.add_right_cancel hv)
   · simp [cyclicNext, ha, hb] at hv
   · simp [cyclicNext, ha, hb] at hv
   · have hae : a.val + 1 = N := by omega
@@ -125,7 +125,7 @@ lemma cycleFrom_succ {N : ℕ} [NeZero N] (hN : 1 < N)
   · simp [cyclicNext, h, Nat.mod_eq_of_lt h]
   · have hle : (s.val + t) % N < N := Nat.mod_lt _ (NeZero.pos N)
     have heq : (s.val + t) % N + 1 = N := by omega
-    simp [cyclicNext, h, heq]
+    simp [cyclicNext, heq]
 
 lemma exists_cycleFrom_eq {N : ℕ} [NeZero N] (s x : Fin N) :
     ∃ t : ℕ, cycleFrom s t = x := by
@@ -190,7 +190,8 @@ lemma pointedStableCode_injective {r d : ℕ} (hr : 0 < r) :
     exact congrArg (fun z ↦ (z.2 : Finset (Fin (2 * r + d)))) hpq
   have hsets : p.1.1 = q.1.1 := by
     apply stable_eq_of_extraPositions_eq_of_mem (by omega) p.1.2.2 q.1.2.2 p.2.2
-    · simpa [hs] using q.2.2
+    · rw [hs]
+      exact q.2.2
     · exact he
   have hvertices : p.1 = q.1 := Subtype.ext hsets
   apply Sigma.ext hvertices

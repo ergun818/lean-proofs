@@ -23,8 +23,8 @@ lemma stableKneser_chromaticNumber {r d : ℕ} (hr : 0 < r) :
     (stableKneser (2 * r + d) r).chromaticNumber =
         ((d + 1 : ℕ) : ℕ∞) + 1 := h
     _ = (((d + 1) + 1 : ℕ) : ℕ∞) := by
-      simpa using (Nat.cast_add (R := ℕ∞) (d + 1) 1).symm
-    _ = ((d + 2 : ℕ) : ℕ∞) := by congr 1 <;> omega
+      simp
+    _ = ((d + 2 : ℕ) : ℕ∞) := rfl
 
 lemma stableKneser_no_short_odd_cycle {r d : ℕ} (hr : 0 < r)
     (hd : 0 < d) :
@@ -156,7 +156,7 @@ lemma lowerParameter_pos_and_card {d n : ℕ} (hd : 2 ≤ d)
     _ ≤ s ^ d := Nat.pow_le_pow_left hscaled d
     _ ≤ n := hsPow
 
-lemma nthRoot_le_self {d n : ℕ} (hd : 0 < d) (hn : 0 < n) :
+lemma nthRoot_le_self {d n : ℕ} (hd : 0 < d) (_hn : 0 < n) :
     Nat.nthRoot d n ≤ n := by
   rw [← Nat.pow_le_pow_iff_left hd.ne']
   exact (Nat.pow_nthRoot_le (.inl hd.ne')).trans
@@ -213,7 +213,6 @@ lemma f_cast_le_rootScale_mul {d n : ℕ} (hd : 2 ≤ d) (hn : 1 ≤ n) :
     apply Real.one_le_rpow
     · exact_mod_cast hn
     · positivity
-  push_cast at hfc
   nlinarith [rootScale_nonneg d n]
 
 lemma rootScale_le_f_cast_mul {d n : ℕ} (hd : 2 ≤ d)
@@ -223,7 +222,7 @@ lemma rootScale_le_f_cast_mul {d n : ℕ} (hd : 2 ≤ d)
   let B := lowerDivisor d * d
   let m := lowerParameter d n / d
   have hdpos : 0 < d := by omega
-  have hBpos : 0 < B := Nat.mul_pos (by simp [B, lowerDivisor]) hdpos
+  have hBpos : 0 < B := Nat.mul_pos (by simp [lowerDivisor]) hdpos
   have hBs : B ≤ s := by
     rw [Nat.le_nthRoot_iff hdpos.ne']
     exact hn
@@ -246,7 +245,6 @@ lemma rootScale_le_f_cast_mul {d n : ℕ} (hd : 2 ≤ d)
   have hsaddR : (s + 1 : ℝ) ≤ (m + 1) * B := by exact_mod_cast hsadd
   have hmleR : (m : ℝ) ≤ f (d + 2) n := by exact_mod_cast hmle
   rw [Nat.cast_add, Nat.cast_one] at hroot'
-  push_cast at hsaddR
   calc
     rootScale d n ≤ (s : ℝ) + 1 := hroot'.le
     _ ≤ ((m : ℝ) + 1) * B := hsaddR

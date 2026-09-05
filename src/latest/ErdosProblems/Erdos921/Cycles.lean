@@ -11,19 +11,19 @@ noncomputable section
 attribute [local instance] Classical.propDecidable
 
 universe u
-variable {V : Type u} [Fintype V] [DecidableEq V]
+variable {V : Type u}
 
 /-- The bounded odd-cycle predicate used in Problem 921. -/
 def HasOddCycleAtMost (G : SimpleGraph V) (L : ℕ) : Prop :=
   ∃ (v : V) (w : G.Walk v v), w.IsCycle ∧ Odd w.length ∧ w.length ≤ L
 
 /-- A simple cycle cannot use more vertices than the ambient finite graph. -/
-lemma cycle_length_le_card {G : SimpleGraph V} {v : V} {w : G.Walk v v}
+lemma cycle_length_le_card [Fintype V] {G : SimpleGraph V} {v : V} {w : G.Walk v v}
     (hw : w.IsCycle) : w.length ≤ Fintype.card V := by
   have h := hw.support_nodup.length_le_card
   simpa [Walk.length_support] using h
 
-lemma length_takeUntil_lt_of_mem_dropUntil {G : SimpleGraph V} {a b w x : V}
+lemma length_takeUntil_lt_of_mem_dropUntil [DecidableEq V] {G : SimpleGraph V} {a b w x : V}
     (p : G.Walk a b) (hp : p.IsPath) (hw : w ∈ p.support)
     (hx : x ∈ (p.dropUntil w hw).support) (xw : x ≠ w) :
     (p.takeUntil w hw).length <
@@ -53,7 +53,7 @@ lemma length_takeUntil_lt_of_mem_dropUntil {G : SimpleGraph V} {a b w x : V}
   change pw.length < (p.takeUntil x (p.support_dropUntil_subset_support hw hx)).length
   omega
 
-lemma length_takeUntil_eq_dist_of_geodesic {G : SimpleGraph V} {root u x : V}
+lemma length_takeUntil_eq_dist_of_geodesic [DecidableEq V] {G : SimpleGraph V} {root u x : V}
     (p : G.Walk root u) (hp : p.length = G.dist root u) (hx : x ∈ p.support) :
     (p.takeUntil x hx).length = G.dist root x :=
   length_eq_dist_of_subwalk hp (p.isSubwalk_takeUntil hx)
@@ -66,6 +66,7 @@ lemma exists_even_detour_of_reachable {G : SimpleGraph V}
     ∃ m < i, ∃ q : G.Walk u v,
       q.IsPath ∧ q.length = 2 * (m + 1) ∧
         ∀ x ∈ q.support, x ≠ u → x ≠ v → G.dist root x < i := by
+  classical
   obtain ⟨p, hp_path, hp_len⟩ := hru.exists_path_of_dist
   obtain ⟨r, hr_path, hr_len⟩ := hrv.exists_path_of_dist
   let common : Finset V := p.support.toFinset ∩ r.support.toFinset
@@ -187,6 +188,7 @@ theorem colorableOn_two_of_no_short_odd_cycle {G : SimpleGraph V}
     {S : Finset V} {R : ℕ} (hrad : KST.RadiusAtMost G S R)
     (hodd : ¬ HasOddCycleAtMost G (2 * R + 1)) :
     KST.ColorableOn G S 2 := by
+  classical
   obtain ⟨z, hz⟩ := hrad
   let color : V → Fin 2 := fun v ↦ ⟨G.dist z v % 2, Nat.mod_lt _ (by omega)⟩
   refine ⟨color, ?_⟩
@@ -217,7 +219,7 @@ theorem colorableOn_two_of_no_short_odd_cycle {G : SimpleGraph V}
     omega
 
 /-- KST's upper bound in the exact odd-cycle language. -/
-theorem colorable_of_no_short_odd_cycle {G : SimpleGraph V} [Nonempty V]
+theorem colorable_of_no_short_odd_cycle [Fintype V] {G : SimpleGraph V} [Nonempty V]
     {a d : ℕ} (ha : 0 < a) (hcard : Fintype.card V ≤ a ^ d)
     (hodd : ¬ HasOddCycleAtMost G (4 * d * a + 1)) :
     G.Colorable (d + 1) := by
@@ -228,13 +230,14 @@ theorem colorable_of_no_short_odd_cycle {G : SimpleGraph V} [Nonempty V]
     apply hodd
     obtain ⟨v, w, hw, hwo, hwlen⟩ := h
     refine ⟨v, w, hw, hwo, ?_⟩
-    convert hwlen using 1 <;> ring
+    convert hwlen using 1
+    ring
   simpa using
     (KST.colorable_of_locallyColorable (a := a) (c := 2) (d := d) ha (by omega) hcard hlocal)
 
 /-- Every finite graph of chromatic number at least four has an odd cycle whose
 length is at most its number of vertices. -/
-theorem hasOddCycleAtMost_card_of_four_le_chromaticNumber {G : SimpleGraph V}
+theorem hasOddCycleAtMost_card_of_four_le_chromaticNumber [Fintype V] {G : SimpleGraph V}
     (hχ : (4 : ℕ∞) ≤ G.chromaticNumber) :
     HasOddCycleAtMost G (Fintype.card V) := by
   have hχcard := hχ.trans G.chromaticNumber_le_card

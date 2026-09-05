@@ -186,7 +186,7 @@ lemma alternation_negate {N : ℕ} {X : SignVector N} (hX : X.Consistent) :
     exact (hasAlternation_alternation X).negate hX
 
 lemma alternation_pos_of_ne_zero {N : ℕ} {X : SignVector N}
-    (hX : X.Consistent) (hne : X ≠ .zero N) : 0 < alternation X := by
+    (_hX : X.Consistent) (hne : X ≠ .zero N) : 0 < alternation X := by
   have hsupp : X.pos.Nonempty ∨ X.neg.Nonempty := by
     by_contra h
     push Not at h
@@ -219,12 +219,12 @@ lemma signSupport_nonempty_of_ne_zero {N : ℕ} {X : SignVector N}
     apply Finset.not_nonempty_iff_eq_empty.mp
     rintro ⟨i, hi⟩
     have : i ∈ signSupport X := mem_signSupport.mpr (Or.inl hi)
-    simpa [hs] using this
+    simp [hs] at this
   have hn : X.neg = ∅ := by
     apply Finset.not_nonempty_iff_eq_empty.mp
     rintro ⟨i, hi⟩
     have : i ∈ signSupport X := mem_signSupport.mpr (Or.inr hi)
-    simpa [hs] using this
+    simp [hs] at this
   apply hne
   ext i <;> simp [SignVector.zero, hp, hn]
 
@@ -319,12 +319,12 @@ lemma ne_zero_of_le_of_ne_zero {N : ℕ} {X Y : SignVector N}
   · constructor
     · intro hi
       have := hXY.1 hi
-      simpa [hY, SignVector.zero] using this
+      simp [hY, SignVector.zero] at this
     · simp [SignVector.zero]
   · constructor
     · intro hi
       have := hXY.2 hi
-      simpa [hY, SignVector.zero] using this
+      simp [hY, SignVector.zero] at this
     · simp [SignVector.zero]
 
 lemma firstSign_eq_of_le_of_alternation_eq {N : ℕ} {X Y : SignVector N}
@@ -579,7 +579,7 @@ lemma signClass_subset_support {N : ℕ} {X : SignVector N} (hX : X.Consistent)
   obtain ⟨hil, hib⟩ := mem_signClass.mp hi
   have himem := hl.2.1 i hil
   cases b
-  · simp only [Bool.false_eq, ↓reduceIte]
+  · simp only [Bool.false_eq]
     exact (signAt_eq_false_iff_of_mem hX himem).mp hib
   · simp only [↓reduceIte]
     exact signAt_eq_true_iff.mp hib

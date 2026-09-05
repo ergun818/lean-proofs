@@ -12,7 +12,7 @@ attribute [local instance] Classical.propDecidable
 
 universe u
 
-variable {V : Type u} [Fintype V] [DecidableEq V]
+variable {V : Type u}
 
 /-- A proper coloring of the vertices in `S`; vertices outside `S` are ignored. -/
 def ColorableOn (G : SimpleGraph V) (S : Finset V) (c : ℕ) : Prop :=
@@ -24,7 +24,7 @@ lemma colorableOn_mono {G : SimpleGraph V} {S T : Finset V} {c : ℕ}
   obtain ⟨color, hcolor⟩ := h
   exact ⟨color, fun _ hv _ hw hadj ↦ hcolor (hST hv) (hST hw) hadj⟩
 
-lemma colorableOn_univ_iff {G : SimpleGraph V} {c : ℕ} :
+lemma colorableOn_univ_iff [Fintype V] {G : SimpleGraph V} {c : ℕ} :
     ColorableOn G Finset.univ c ↔ G.Colorable c := by
   constructor
   · rintro ⟨color, hcolor⟩
@@ -42,7 +42,7 @@ lemma colorableOn_one_iff {G : SimpleGraph V} {S : Finset V} :
   · rintro ⟨color, hcolor⟩ v hv w hw hadj
     exact (hcolor hv hw hadj) (Subsingleton.elim _ _)
   · intro h
-    exact ⟨fun _ ↦ 0, fun _ hv _ hw hadj heq ↦ h hv hw hadj⟩
+    exact ⟨fun _ ↦ 0, fun _ hv _ hw hadj _heq ↦ h hv hw hadj⟩
 
 lemma exists_adj_of_not_colorableOn_one {G : SimpleGraph V} {S : Finset V}
     (h : ¬ColorableOn G S 1) :
@@ -53,13 +53,13 @@ lemma exists_adj_of_not_colorableOn_one {G : SimpleGraph V} {S : Finset V}
 
 /-- Color the union with disjoint palettes.  No separation hypothesis is
 needed because vertices in the two pieces receive colors in different summands. -/
-lemma colorableOn_union {G : SimpleGraph V} {S T : Finset V} {a b : ℕ}
+lemma colorableOn_union [DecidableEq V] {G : SimpleGraph V} {S T : Finset V} {a b : ℕ}
     (hS : ColorableOn G S a) (hT : ColorableOn G T b) :
     ColorableOn G (S ∪ T) (a + b) := by
   obtain ⟨cS, hcS⟩ := hS
   obtain ⟨cT, hcT⟩ := hT
   let color : V → Fin (a + b) := fun v ↦
-    if hv : v ∈ S then Fin.castAdd b (cS v) else Fin.natAdd a (cT v)
+    if v ∈ S then Fin.castAdd b (cS v) else Fin.natAdd a (cT v)
   refine ⟨color, ?_⟩
   intro v hv w hw hadj heq
   simp only [Finset.mem_union] at hv hw
@@ -72,7 +72,7 @@ lemma colorableOn_union {G : SimpleGraph V} {S T : Finset V} {a b : ℕ}
         intro h
         have he := congrArg Fin.val h
         have hvlt := (cS v).isLt
-        simp only [Fin.coe_castAdd, Fin.coe_natAdd] at he
+        simp only [Fin.val_castAdd, Fin.val_natAdd] at he
         omega
     exact this (by simpa [color, hvS, hwS] using heq)
   · have : (Fin.natAdd a (cT v) : Fin (a + b)) ≠ Fin.castAdd b (cS w) :=
@@ -80,7 +80,7 @@ lemma colorableOn_union {G : SimpleGraph V} {S T : Finset V} {a b : ℕ}
         intro h
         have he := congrArg Fin.val h
         have hwlt := (cS w).isLt
-        simp only [Fin.coe_castAdd, Fin.coe_natAdd] at he
+        simp only [Fin.val_castAdd, Fin.val_natAdd] at he
         omega
     exact this (by simpa [color, hvS, hwS] using heq)
   · have hvT : v ∈ T := hv.resolve_left hvS
@@ -89,14 +89,15 @@ lemma colorableOn_union {G : SimpleGraph V} {S T : Finset V} {a b : ℕ}
     have := congrArg Fin.val heq
     exact Fin.eq_of_val_eq (by simpa [color, hvS, hwS] using this)
 
-lemma colorableOn_union_of_le {G : SimpleGraph V} {W S T : Finset V} {a b : ℕ}
+lemma colorableOn_union_of_le [DecidableEq V] {G : SimpleGraph V} {W S T : Finset V} {a b : ℕ}
     (hW : W ⊆ S ∪ T) (hS : ColorableOn G S a) (hT : ColorableOn G T b) :
     ColorableOn G W (a + b) :=
   colorableOn_mono hW (colorableOn_union hS hT)
 
 lemma colorableOn_of_colorable {G : SimpleGraph V} (S : Finset V) {c : ℕ}
     (h : G.Colorable c) : ColorableOn G S c := by
-  exact colorableOn_mono (by simp) (colorableOn_univ_iff.mpr h)
+  obtain ⟨color, hcolor⟩ := h
+  exact ⟨color, fun _ _ _ _ hadj ↦ hcolor hadj⟩
 
 /-- The color class with color `i`. -/
 def colorClass (H : Finset V) {c : ℕ} (color : V → Fin c) (i : Fin c) : Finset V :=
@@ -116,7 +117,7 @@ lemma colorClass_independent {G : SimpleGraph V} {H : Finset V} {c : ℕ}
 
 /-- Delete one color class from a `c`-coloring and compress the remaining
 colors to `Fin (c-1)`. -/
-lemma colorableOn_sdiff_colorClass {G : SimpleGraph V} {H : Finset V} {c : ℕ}
+lemma colorableOn_sdiff_colorClass [DecidableEq V] {G : SimpleGraph V} {H : Finset V} {c : ℕ}
     (hc : 1 < c) {color : V → Fin c}
     (hcolor : ∀ ⦃v⦄, v ∈ H → ∀ ⦃w⦄, w ∈ H → G.Adj v w → color v ≠ color w)
     (i : Fin c) : ColorableOn G (H \ colorClass H color i) (c - 1) := by
@@ -137,7 +138,7 @@ lemma colorableOn_sdiff_colorClass {G : SimpleGraph V} {H : Finset V} {c : ℕ}
   exact hcolor hv.1 hw.1 hadj (congrArg Subtype.val hsub)
 
 /-- Two sets with no cross-edge may reuse the same palette. -/
-lemma colorableOn_union_of_noEdges {G : SimpleGraph V} {S T : Finset V} {c : ℕ}
+lemma colorableOn_union_of_noEdges [DecidableEq V] {G : SimpleGraph V} {S T : Finset V} {c : ℕ}
     (hS : ColorableOn G S c) (hT : ColorableOn G T c)
     (hsep : ∀ ⦃v⦄, v ∈ S → ∀ ⦃w⦄, w ∈ T → ¬G.Adj v w) :
     ColorableOn G (S ∪ T) c := by
@@ -255,7 +256,7 @@ lemma exists_maximal_colorableOn (G : SimpleGraph V) (W : Finset V) {c : ℕ}
   · intro T hTW hT
     exact hmax T (Finset.mem_filter.mpr ⟨Finset.mem_powerset.mpr hTW, hT⟩)
 
-lemma card_sdiff_union_gt {P H B : Finset V}
+lemma card_sdiff_union_gt [DecidableEq V] {P H B : Finset V}
     (hBH : B ⊆ H) (hdisj : Disjoint P H) (hlt : B.card < P.card) :
     H.card < ((H \ B) ∪ P).card := by
   have hsep : Disjoint (H \ B) P :=
@@ -279,8 +280,8 @@ lemma radiusAtMost_of_eDistTo_le {G : SimpleGraph V} {P S : Finset V}
     _ ≤ (R : ℕ∞) + j := add_le_add (hz p hpP) (by simpa [hpv] using hS v hv)
     _ = (R + j : ℕ) := by simp
 
-lemma colorableOn_sdiff_subset_add {G : SimpleGraph V} {W K : Finset V}
-    {q r : ℕ} (hK : K ⊆ W) (hWK : ColorableOn G (W \ K) q)
+lemma colorableOn_sdiff_subset_add [DecidableEq V] {G : SimpleGraph V} {W K : Finset V}
+    {q r : ℕ} (_hK : K ⊆ W) (hWK : ColorableOn G (W \ K) q)
     (hKcol : ColorableOn G K r) : ColorableOn G W (q + r) := by
   apply colorableOn_union_of_le (S := W \ K) (T := K)
   · intro v hv
@@ -292,9 +293,9 @@ lemma colorableOn_sdiff_subset_add {G : SimpleGraph V} {W K : Finset V}
 
 /-- The maximality step in KST: every two consecutive nonzero distance
 layers contain many vertices outside an arbitrary independent set. -/
-lemma boundary_card_ge
+lemma boundary_card_ge [DecidableEq V]
     {G : SimpleGraph V} {W H P I : Finset V} {a c d m j : ℕ}
-    (ha : 0 < a) (hc : 1 < c) (hm : m + 1 ≤ d) (hj0 : 0 < j) (hj : j < 2 * a)
+    (_ha : 0 < a) (_hc : 1 < c) (hm : m + 1 ≤ d) (hj0 : 0 < j) (hj : j < 2 * a)
     (hHW : H ⊆ W) (hHcol : ColorableOn G H c)
     (hHmax : ∀ T : Finset V, T ⊆ W → ColorableOn G T c → T.card ≤ H.card)
     (hPW : P ⊆ W) (hPH : Disjoint P H) (hP : P.Nonempty)
@@ -405,24 +406,24 @@ lemma boundary_card_ge
   exact (not_lt_of_ge (hHmax H' hH'W hH'col)) hcard
 
 /-- Union of the first `a` disjoint pairs of nonzero layers. -/
-def obstructionBands (G : SimpleGraph V) (H P I : Finset V)
+def obstructionBands [DecidableEq V] (G : SimpleGraph V) (H P I : Finset V)
     (hP : P.Nonempty) (a : ℕ) : Finset V :=
   (Finset.range a).biUnion fun t ↦
     ((layer G H P hP (2 * t + 1)) ∪ (layer G H P hP (2 * t + 2))) \ I
 
-lemma obstructionBands_subset {G : SimpleGraph V} {W H P I : Finset V}
+lemma obstructionBands_subset [DecidableEq V] {G : SimpleGraph V} {W H P I : Finset V}
     (hP : P.Nonempty) {a : ℕ} (hHW : H ⊆ W) :
     obstructionBands G H P I hP a ⊆ W \ I := by
   intro v hv
   simp only [obstructionBands, Finset.mem_biUnion] at hv
-  obtain ⟨t, ht, hv⟩ := hv
+  obtain ⟨t, _ht, hv⟩ := hv
   have hvout := Finset.mem_sdiff.mp hv
   refine Finset.mem_sdiff.mpr ⟨?_, hvout.2⟩
   rcases Finset.mem_union.mp hvout.1 with hvL | hvL
   · exact hHW (layer_subset G H P hP (2 * t + 1) hvL)
   · exact hHW (layer_subset G H P hP (2 * t + 2) hvL)
 
-lemma obstructionBands_eDistTo_le {G : SimpleGraph V} {H P I : Finset V}
+lemma obstructionBands_eDistTo_le [DecidableEq V] {G : SimpleGraph V} {H P I : Finset V}
     (hP : P.Nonempty) {a : ℕ} {v : V}
     (hv : v ∈ obstructionBands G H P I hP a) :
     eDistTo G P hP v ≤ (2 * a : ℕ) := by
@@ -436,12 +437,12 @@ lemma obstructionBands_eDistTo_le {G : SimpleGraph V} {H P I : Finset V}
   · rw [(mem_layer.mp hvL).2]
     exact_mod_cast (by omega : 2 * t + 2 ≤ 2 * a)
 
-lemma obstructionBands_pairwiseDisjoint {G : SimpleGraph V} {H P I : Finset V}
+lemma obstructionBands_pairwiseDisjoint [DecidableEq V] {G : SimpleGraph V} {H P I : Finset V}
     (hP : P.Nonempty) {a : ℕ} :
     ((Finset.range a : Finset ℕ) : Set ℕ).PairwiseDisjoint
       (fun t ↦ ((layer G H P hP (2 * t + 1)) ∪
         (layer G H P hP (2 * t + 2))) \ I) := by
-  intro s hs t ht hst
+  intro s _hs t _ht hst
   change Disjoint
     (((layer G H P hP (2 * s + 1)) ∪ (layer G H P hP (2 * s + 2))) \ I)
     (((layer G H P hP (2 * t + 1)) ∪ (layer G H P hP (2 * t + 2))) \ I)
@@ -464,7 +465,7 @@ lemma obstructionBands_pairwiseDisjoint {G : SimpleGraph V} {H P I : Finset V}
       exact_mod_cast (mem_layer.mp hvs2).2.symm.trans (mem_layer.mp hvt2).2
     exact hst (by omega)
 
-lemma card_obstructionBands_ge
+lemma card_obstructionBands_ge [DecidableEq V]
     {G : SimpleGraph V} {W H P I : Finset V} {a c d m : ℕ}
     (ha : 0 < a) (hc : 1 < c) (hm : m + 1 ≤ d)
     (hHW : H ⊆ W) (hHcol : ColorableOn G H c)
@@ -492,7 +493,7 @@ lemma card_obstructionBands_ge
           (layer G H P hP (2 * t + 2))) \ I).card) := rfl
 
 /-- KST's obstruction induction (Lemma 2 in the 1984 paper). -/
-theorem obstruction_induction
+theorem obstruction_induction [DecidableEq V]
     {G : SimpleGraph V} {a c d l : ℕ}
     (ha : 0 < a) (hc : 1 < c) (hl : l ≤ d)
     (hlocal : LocallyColorable G (2 * d * a) c)
@@ -505,7 +506,7 @@ theorem obstruction_induction
       obtain ⟨v, hvW, w, hwW, hvw⟩ := exists_adj_of_not_colorableOn_one hnot1
       have hout : v ∉ I ∨ w ∉ I := by
         by_contra h
-        push_neg at h
+        push Not at h
         exact hI h.1 h.2 hvw.ne hvw
       rcases hout with hvI | hwI
       · refine ⟨{v}, ?_, ?_⟩
@@ -568,14 +569,16 @@ theorem obstruction_induction
           apply radiusAtMost_of_eDistTo_le hP hPrad
           intro v hv
           exact obstructionBands_eDistTo_le hP hv
-        convert hnear using 1 <;> ring
+        convert hnear using 1
+        ring
 
 /-- Integer form of the Kierstead--Szemerédi--Trotter local-coloring theorem. -/
 theorem colorable_of_locallyColorable
-    {G : SimpleGraph V} [Nonempty V] {a c d : ℕ}
+    {G : SimpleGraph V} [Fintype V] [Nonempty V] {a c d : ℕ}
     (ha : 0 < a) (hc : 1 < c) (hcard : Fintype.card V ≤ a ^ d)
     (hlocal : LocallyColorable G (2 * d * a) c) :
     G.Colorable (d * (c - 1) + 1) := by
+  classical
   rw [← colorableOn_univ_iff]
   by_contra hnot
   let v : V := Classical.choice inferInstance
