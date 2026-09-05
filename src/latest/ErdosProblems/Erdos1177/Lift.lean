@@ -105,9 +105,10 @@ theorem liftHG_isTripleSystem :
     ∀ e ∈ (liftHG A κ).edges, ∃ a b c : Node A κ × α,
       a ≠ b ∧ a ≠ c ∧ b ≠ c ∧ e = {a, b, c} := by
   intro e he
-  obtain ⟨σ, τ, x, y, z, hpre, h_edge⟩ := (Set.mem_setOf.mp he);
-  refine' ⟨ ( σ, x ), ( σ, y ), ( τ, z ), _, _, _, h_edge.2 ⟩ <;> simp_all +decide only [ne_eq, Prod.mk.injEq, not_and, true_and] ;
-  · intro h; simp_all +decide ;
+  obtain ⟨σ, τ, x, y, z, hpre, h_edge⟩ := (Set.mem_ofPred.mp he);
+  refine ⟨ ( σ, x ), ( σ, y ), ( τ, z ), ?_, ?_, ?_, h_edge.2 ⟩ <;> simp_all +decide only [ne_eq,
+    Prod.mk.injEq, not_and, true_and] ;
+  · intro h; subst y;
     exact absurd h_edge.1 ( by exact fun h => by have := τ.seq ⟨ σ.pos, hpre.1 ⟩ |>.2; aesop );
   · rintro rfl; exact absurd hpre.1 (lt_irrefl _)
   · rintro rfl; exact absurd hpre.1 ( lt_irrefl _ ) ;
@@ -132,7 +133,8 @@ theorem exists_mono_edge {α : Type u} {A : SimpleGraph α} {θ : Cardinal.{u}}
     (hA : ¬ (SimpleGraph.toHG A).ColorableBy θ) (g : α → θ.out) :
     ∃ x y, A.Adj x y ∧ g x = g y := by
   contrapose! hA;
-  exact ⟨ g, fun e he => by rcases he with ⟨ x, y, hxy, rfl ⟩ ; exact ⟨ x, by simp, y, by simp, hA x y hxy ⟩ ⟩
+  exact ⟨ g, fun e he => by
+    rcases he with ⟨ x, y, hxy, rfl ⟩ ; exact ⟨ x, by simp, y, by simp, hA x y hxy ⟩ ⟩
 
 /-
 **Upper bound** for the lift's chromatic number: a proper `κ`-colouring
@@ -143,7 +145,7 @@ theorem lift_colorableBy {α : Type u} (A : SimpleGraph α) (κ : Cardinal.{u})
     (hA : (SimpleGraph.toHG A).ColorableBy κ) :
     (liftHG A κ).ColorableBy κ := by
   obtain ⟨c, hc⟩ := hA;
-  refine' ⟨ fun ⟨ σ, x ⟩ => c x, _ ⟩;
+  refine ⟨ fun ⟨ σ, x ⟩ => c x, ?_ ⟩;
   intro e he
   obtain ⟨σ, τ, x, y, z, hpre, hseq, rfl⟩ := he;
   have := hc ( τ.seq ⟨ σ.pos, hpre.1 ⟩ : Set α ) ?_ <;> simp_all +decide [ SimpleGraph.toHG ];
@@ -188,7 +190,9 @@ theorem branch_mono (a : Idx κ) :
     c (branchNode A κ c hA a, (branch A κ c hA a).1.1)
       = c (branchNode A κ c hA a, (branch A κ c hA a).1.2) := by
   rw [ branch_eq ];
-  convert! Classical.choose_spec ( Classical.choose_spec ( exists_mono_edge hA ( fun x => c ( branchNode A κ c hA a, x ) ) ) ) |>.2
+  convert! Classical.choose_spec
+    ( Classical.choose_spec ( exists_mono_edge hA ( fun x => c ( branchNode A κ c hA a, x ) ) ) )
+    |>.2
 
 /-
 The edge of `branchNode b` at coordinate `a`, for `a < b`, is exactly the
@@ -207,19 +211,34 @@ theorem lift_not_colorableBy (hA : ¬ (SimpleGraph.toHG A).ColorableBy θ)
     (hθ : θ < κ) :
     ¬ (liftHG A κ).ColorableBy θ := by
   intro hLift;
-  -- Define the "stage colour" `d : Idx κ → θ.out` by `d a := c (branchNode A κ c hA a, (branch A κ c hA a).1.1)`.
+  -- Define the "stage colour" `d : Idx κ → θ.out` by `d a := c (branchNode A κ c hA a, (branch A κ
+  -- c hA a).1.1)`.
   obtain ⟨c, hc⟩ := hLift
   set d : Idx κ → θ.out := fun a => c (branchNode A κ c hA a, (branch A κ c hA a).1.1);
-  -- By `lt_trichotomy a b`, and by symmetry of the roles of `a,b` (since `d a = d b`), assume `a < b` (the case `b < a` is identical with `a,b` swapped; `a = b` is excluded).
+  -- By `lt_trichotomy a b`, and by symmetry of the roles of `a,b` (since `d a = d b`), assume `a <
+  -- b` (the case `b < a` is identical with `a,b` swapped; `a = b` is excluded).
   obtain ⟨a, b, hab, hd⟩ : ∃ a b : Idx κ, a < b ∧ d a = d b := by
     by_contra! h;
     have h_card : Cardinal.mk (Idx κ) ≤ Cardinal.mk (Quotient.out θ) := by
-      exact Cardinal.mk_le_of_injective ( show Function.Injective d from fun a b hab => le_antisymm ( le_of_not_gt fun h' => h _ _ h' hab.symm ) ( le_of_not_gt fun h' => h _ _ h' hab ) );
-    simp_all +decide [ Cardinal.mk_toType ];
+      exact Cardinal.mk_le_of_injective ( show Function.Injective d from fun a b hab =>
+        le_antisymm ( le_of_not_gt fun h' => h _ _ h' hab.symm )
+          ( le_of_not_gt fun h' => h _ _ h' hab ) );
+    simp_all +decide only [ne_eq, mk_toType, card_ord, mk_out];
     exact not_lt_of_ge h_card hθ;
-  obtain ⟨ u, hu, v, hv, huv ⟩ := hc { ( branchNode A κ c hA a, ( branch A κ c hA a ).1.1 ), ( branchNode A κ c hA a, ( branch A κ c hA a ).1.2 ), ( branchNode A κ c hA b, ( branch A κ c hA b ).1.1 ) } ⟨ branchNode A κ c hA a, branchNode A κ c hA b, ( branch A κ c hA a ).1.1, ( branch A κ c hA a ).1.2, ( branch A κ c hA b ).1.1, ⟨ hab, fun q hq => rfl ⟩, by
-    convert! branchNode_seq A κ c hA a b hab, rfl ⟩ ; simp_all +decide [ Set.mem_insert_iff, Set.mem_singleton_iff ];
-  rcases hu with ( rfl | rfl | rfl ) <;> rcases hv with ( rfl | rfl | rfl ) <;> simp_all +decide [ branch_mono ]; all_goals have := branch_mono A κ c hA a; have := branch_mono A κ c hA b; aesop;
+  obtain ⟨ u, hu, v, hv, huv ⟩ := hc
+    { ( branchNode A κ c hA a, ( branch A κ c hA a ).1.1 ),
+      ( branchNode A κ c hA a, ( branch A κ c hA a ).1.2 ),
+      ( branchNode A κ c hA b, ( branch A κ c hA b ).1.1 ) }
+    ⟨ branchNode A κ c hA a, branchNode A κ c hA b,
+      ( branch A κ c hA a ).1.1, ( branch A κ c hA a ).1.2, ( branch A κ c hA b ).1.1,
+      ⟨ hab, fun q hq => rfl ⟩, by convert! branchNode_seq A κ c hA a b hab, rfl ⟩ ;
+  simp_all +decide only [Set.mem_insert_iff, Set.mem_singleton_iff, ne_eq];
+  rcases hu with ( rfl | rfl | rfl ) <;> rcases hv with ( rfl | rfl | rfl ) <;> simp_all +decide [
+    branch_mono ];
+  all_goals
+    have := branch_mono A κ c hA a;
+    have := branch_mono A κ c hA b;
+    aesop;
 
 end LowerBound
 
@@ -232,7 +251,7 @@ assumption, matching the paper's remark that no regularity or cofinality of
 theorem lift_hasChromatic {α : Type u} (A : SimpleGraph α) (κ : Cardinal.{u})
     (hA : (SimpleGraph.toHG A).HasChromatic κ) :
     (liftHG A κ).HasChromatic κ := by
-  refine' ⟨ lift_colorableBy A κ hA.1, fun θ hθ => _ ⟩;
+  refine ⟨ lift_colorableBy A κ hA.1, fun θ hθ => ?_ ⟩;
   apply lift_not_colorableBy A κ;
   · exact hA.2 θ hθ;
   · exact hθ

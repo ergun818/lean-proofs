@@ -19,7 +19,7 @@ obligatoriness passes to sub–triple-systems.  Consequently every headline resu
 depends only on the literature interfaces E1–E5, not on the strengthened
 `ReiherExpansion`. -/
 
-open Cardinal Classical
+open Cardinal
 
 namespace Erdos1177
 
@@ -34,6 +34,7 @@ def FTS.Sub (F G : FTS) : Prop :=
 sub–triple-system and `G` is obligatory, then `F` is obligatory. -/
 theorem obligatory_of_sub {F G : FTS} (h : F.Sub G) (hG : FTS.Obligatory.{u} G) :
     FTS.Obligatory.{u} F := by
+  classical
   obtain ⟨g, hg, hge⟩ := h
   intro W H htri huc
   obtain ⟨f, hf, hfe⟩ := hG H htri huc
@@ -50,11 +51,12 @@ adjacency-preserving vertex map `φ : J → K` induces a sub–triple-system emb
 `J⁺ ↪ K⁺`.
 -/
 /-- An adjacency-preserving map sends `J`-edges to `K`-edges (as `Sym2` values). -/
-theorem sym2map_mem_edgeFinset {VJ VK : Type} [Fintype VJ] [DecidableEq VJ]
-    [Fintype VK] [DecidableEq VK] (J : SimpleGraph VJ) [DecidableRel J.Adj]
+theorem sym2map_mem_edgeFinset {VJ VK : Type} [Fintype VJ]
+    [Fintype VK] (J : SimpleGraph VJ) [DecidableRel J.Adj]
     (K : SimpleGraph VK) [DecidableRel K.Adj]
     (φ : VJ → VK) (hadj : ∀ a b, J.Adj a b → K.Adj (φ a) (φ b))
     (e : Sym2 VJ) (he : e ∈ J.edgeFinset) : Sym2.map φ e ∈ K.edgeFinset := by
+  classical
   rw [SimpleGraph.mem_edgeFinset] at *
   induction e with
   | h a b => rw [SimpleGraph.mem_edgeSet] at *; exact hadj a b he
@@ -65,22 +67,30 @@ theorem graphExpansion_sub_of_embedding {VJ VK : Type} [Fintype VJ] [DecidableEq
     (φ : VJ → VK) (hφ : Function.Injective φ)
     (hadj : ∀ a b, J.Adj a b → K.Adj (φ a) (φ b)) :
     (graphExpansion J).Sub (graphExpansion K) := by
-  refine' ⟨ _, _, _ ⟩;
-  exact fun x => x.elim ( fun x => Sum.inl ( φ x ) ) fun e => Sum.inr ⟨ Sym2.map φ e.1, by
+  classical
+  refine ⟨ ?_, ?_, ?_ ⟩;
+  · exact fun x => x.elim ( fun x => Sum.inl ( φ x ) ) fun e => Sum.inr ⟨ Sym2.map φ e.1, by
     rcases e with ⟨ e, he ⟩ ; simp_all +decide [ SimpleGraph.mem_edgeFinset ] ;
     rcases e with ⟨ a, b ⟩ ; simp_all +decide [ SimpleGraph.mem_edgeSet ] ; ⟩;
-  · intro x y hxy; cases x <;> cases y <;> simp_all +decide [ hφ.eq_iff ] ;
+  · intro x y hxy; cases x <;> cases y <;> simp_all +decide only [Sum.elim_inl, Sum.elim_inr,
+    reduceCtorEq];
     · grind +locals;
     · rename_i x y;
-      rcases x with ⟨ ⟨ a, b ⟩, hx ⟩ ; rcases y with ⟨ ⟨ c, d ⟩, hy ⟩ ; simp_all +decide [ Quot.lift_mk ];
+      rcases x with ⟨ ⟨ a, b ⟩, hx ⟩ ;
+      rcases y with ⟨ ⟨ c, d ⟩, hy ⟩ ;
+      simp_all +decide only [Sym2.map_mk];
       grind;
   · all_goals generalize_proofs at *;
-    intro e he; rcases Finset.mem_image.mp he with ⟨ e', he', rfl ⟩ ; simp_all +decide only [Finset.image_insert, Sum.elim_inl, Finset.image_singleton, Sum.elim_inr] ;
-    refine' Finset.mem_image.mpr ⟨ ⟨ Sym2.map φ ↑e',
-      sym2map_mem_edgeFinset J K φ hadj e'.1 e'.2 ⟩, Finset.mem_attach _ _, _ ⟩
+    intro e he;
+    rcases Finset.mem_image.mp he with ⟨ e', he', rfl ⟩ ;
+    simp_all +decide only [Finset.image_insert, Sum.elim_inl, Finset.image_singleton, Sum.elim_inr]
+      ;
+    refine Finset.mem_image.mpr ⟨ ⟨ Sym2.map φ ↑e',
+      sym2map_mem_edgeFinset J K φ hadj e'.1 e'.2 ⟩, Finset.mem_attach _ _, ?_ ⟩
     generalize_proofs at *;
-    rcases h : Quot.out ( Sym2.map φ e'.1 ) with ⟨ x, y ⟩ ; simp_all +decide [ Sym2.eq_swap ] ;
-    rcases h' : Quot.out ( e'.1 : Sym2 VJ ) with ⟨ a, b ⟩ ; simp_all +decide [ Sym2.eq_swap ] ;
+    rcases h : Quot.out ( Sym2.map φ e'.1 ) with ⟨ x, y ⟩ ; simp_all +decide only [
+      SimpleGraph.mem_edgeFinset, Subtype.forall, Finset.mem_attach];
+    rcases h' : Quot.out ( e'.1 : Sym2 VJ ) with ⟨ a, b ⟩ ; simp_all +decide only;
     have hxy := Quot.out_eq (Sym2.map φ e'.1)
     have hab := Quot.out_eq (e'.1 : Sym2 VJ)
     rw [h] at hxy
@@ -94,12 +104,16 @@ theorem graphExpansion_sub_of_embedding {VJ VK : Type} [Fintype VJ] [DecidableEq
 /-- **A `2`-colourable graph embeds into a complete bipartite graph.**  If `J` is
 `2`-colourable then there is an `n` and an injective adjacency-preserving map
 `J → K_{n,n}`. -/
-theorem colorable_two_embeds_completeBipartite {VJ : Type} [Fintype VJ] [DecidableEq VJ]
-    (J : SimpleGraph VJ) [DecidableRel J.Adj] (hJ : J.Colorable 2) :
+theorem colorable_two_embeds_completeBipartite {VJ : Type} [Finite VJ]
+    (J : SimpleGraph VJ) (hJ : J.Colorable 2) :
     ∃ (n : ℕ) (φ : VJ → (Fin n ⊕ Fin n)), Function.Injective φ ∧
       ∀ a b, J.Adj a b → (completeBipartiteGraph (Fin n) (Fin n)).Adj (φ a) (φ b) := by
+  classical
+  let := Fintype.ofFinite VJ
   obtain ⟨C⟩ := hJ;
-  refine' ⟨ Fintype.card VJ, fun v => if C v = 0 then Sum.inl ( Fintype.equivFin VJ v ) else Sum.inr ( Fintype.equivFin VJ v ), _, _ ⟩;
+  refine ⟨ Fintype.card VJ, fun v =>
+    if C v = 0 then Sum.inl ( Fintype.equivFin VJ v ) else Sum.inr ( Fintype.equivFin VJ v ),
+    ?_, ?_ ⟩;
   · intro v w h; by_cases hv : C v = 0 <;> by_cases hw : C w = 0 <;> simp_all +decide ;
   · intro a b hab; have := C.valid hab; simp_all +decide ;
     grind
@@ -108,6 +122,7 @@ theorem colorable_two_embeds_completeBipartite {VJ : Type} [Fintype VJ] [Decidab
 E4 (Reiher's theorem that `K_{n,n}⁺` is obligatory) implies the strengthened
 `ReiherExpansion` (every bipartite expansion `J⁺` is obligatory). -/
 theorem reiherExpansion_of_E4 (hE4 : E4_Reiher.{u}) : ReiherExpansion.{u} := by
+  classical
   intro VJ _ _ J _ hJ
   obtain ⟨n, φ, hφ, hadj⟩ := colorable_two_embeds_completeBipartite J hJ
   exact obligatory_of_sub

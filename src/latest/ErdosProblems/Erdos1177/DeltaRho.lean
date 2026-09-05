@@ -28,7 +28,7 @@ theorem pow_pow_eq_of_le {μ θ : Cardinal} (hμ : ℵ₀ ≤ μ) (h1 : θ ≠ 0
 
 /-- The defining set of `δ(ρ)` is nonempty for infinite `ρ` (since `ρ < ρ^ρ`). -/
 theorem deltaRho_mem {ρ : Cardinal} (hρ : ℵ₀ ≤ ρ) : ρ ∈ {δ | ρ < ρ ^ δ} := by
-  show ρ < ρ ^ ρ
+  change ρ < ρ ^ ρ
   calc ρ < 2 ^ ρ := Cardinal.cantor ρ
     _ ≤ ρ ^ ρ := Cardinal.power_le_power_right (le_trans (by norm_num) hρ)
 
@@ -39,11 +39,11 @@ theorem succ_le_deltaRho {μ : Cardinal} (hμ : ℵ₀ ≤ μ) :
     Order.succ μ ≤ deltaRho ((2 : Cardinal) ^ μ) := by
   set ρ := (2 : Cardinal) ^ μ with hρdef
   have hρ : ℵ₀ ≤ ρ := le_of_lt (lt_of_le_of_lt hμ (Cardinal.cantor μ))
-  show Order.succ μ ≤ sInf {δ | ρ < ρ ^ δ}
+  change Order.succ μ ≤ sInf {δ | ρ < ρ ^ δ}
   apply le_csInf ⟨ρ, deltaRho_mem hρ⟩
   intro θ hθ
   by_contra h
-  push_neg at h
+  push Not at h
   rw [Order.lt_succ_iff] at h
   have hle : ρ ^ θ ≤ ρ := by
     rcases eq_or_ne θ 0 with rfl | h1

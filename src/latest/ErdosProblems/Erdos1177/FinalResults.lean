@@ -12,7 +12,8 @@ set_option backward.isDefEq.respectTransparency false
 Every headline resolution of arXiv:2606.24882 was assembled above from
 propositions carried as explicit hypotheses.  All of the paper's *internal*
 machinery has been fully proved (`ErdosProblems.Erdos1177.AmalgClosure`,
-`ErdosProblems.Erdos1177.DecompReverse`, `ErdosProblems.Erdos1177.Lift`, `ErdosProblems.Erdos1177.Reservoir`,
+`ErdosProblems.Erdos1177.DecompReverse`, `ErdosProblems.Erdos1177.Lift`,
+  `ErdosProblems.Erdos1177.Reservoir`,
 `ErdosProblems.Erdos1177.NegativeDirection`, `ErdosProblems.Erdos1177.CycleCollapse`,
 `ErdosProblems.Erdos1177.Calibration`, …), and every remaining carried input has been
 reduced to the **five literature theorems E1–E5** stated in

@@ -65,20 +65,35 @@ theorem hasK3nn_embeds (H : Hypergraph W) (n : ℕ) (h : HasK3nn H n) :
     (graphExpansion (completeBipartiteGraph (Fin n) (Fin n))).Embeds H := by
   obtain ⟨ f, hf, hedge ⟩ := h;
   -- Define the embedding `g` by extending `f` to the new vertices.
-  obtain ⟨g, hg⟩ : ∃ g : (Fin n ⊕ Fin n) ⊕ {e : Sym2 (Fin n ⊕ Fin n) // e ∈ (completeBipartiteGraph (Fin n) (Fin n)).edgeFinset} → W, Function.Injective g ∧ ∀ e : Fin n, ∀ f' : Fin n, g (Sum.inl (Sum.inl e)) = f (Sum.inl (Sum.inl e)) ∧ g (Sum.inl (Sum.inr f')) = f (Sum.inl (Sum.inr f')) ∧ g (Sum.inr ⟨s(Sum.inl e, Sum.inr f'), by
-    simp +decide [ completeBipartiteGraph ]⟩) = f (Sum.inr (e, f')) := by
-    refine' ⟨ fun x => Sum.elim ( fun x => Sum.elim ( fun x => f ( Sum.inl ( Sum.inl x ) ) ) ( fun x => f ( Sum.inl ( Sum.inr x ) ) ) x ) ( fun x => f ( Sum.inr ( x.val |> fun x => if h : ∃ i j, x = s(Sum.inl i, Sum.inr j) then ( h.choose, h.choose_spec.choose ) else ( ⟨ 0, Nat.pos_of_ne_zero ( by aesop_cat ) ⟩, ⟨ 0, Nat.pos_of_ne_zero ( by aesop_cat ) ⟩ ) ) ) ) x, _, _ ⟩;
+  obtain ⟨g, hg⟩ : ∃ g : (Fin n ⊕ Fin n) ⊕
+      {e : Sym2 (Fin n ⊕ Fin n) //
+        e ∈ (completeBipartiteGraph (Fin n) (Fin n)).edgeFinset} → W,
+      Function.Injective g ∧ ∀ e : Fin n, ∀ f' : Fin n,
+        g (Sum.inl (Sum.inl e)) = f (Sum.inl (Sum.inl e)) ∧
+        g (Sum.inl (Sum.inr f')) = f (Sum.inl (Sum.inr f')) ∧
+        g (Sum.inr ⟨s(Sum.inl e, Sum.inr f'), by
+          simp +decide [ completeBipartiteGraph ]⟩) = f (Sum.inr (e, f')) := by
+    refine ⟨ fun x => Sum.elim
+      ( fun x => Sum.elim ( fun x => f ( Sum.inl ( Sum.inl x ) ) )
+        ( fun x => f ( Sum.inl ( Sum.inr x ) ) ) x )
+      ( fun x => f ( Sum.inr ( x.val |> fun x =>
+        if h : ∃ i j, x = s(Sum.inl i, Sum.inr j) then ( h.choose, h.choose_spec.choose )
+        else ( ⟨ 0, Nat.pos_of_ne_zero ( by aesop_cat ) ⟩,
+          ⟨ 0, Nat.pos_of_ne_zero ( by aesop_cat ) ⟩ ) ) ) ) x, ?_, ?_ ⟩;
     · intro x y hxy;
       grind +suggestions;
-    · simp +decide [ hf.eq_iff ]
+    · simp +decide
   generalize_proofs at *;
-  refine' ⟨ g, hg.1, _ ⟩;
-  intro e he; simp_all +decide [ graphExpansion ] ;
-  obtain ⟨ a, ha, rfl ⟩ := he; simp +decide [ ← hg.2, Set.image_insert_eq, Set.image_singleton ] ;
-  obtain ⟨ i, j, hi, hj, rfl ⟩ := cb_edge_exists a ( by simpa using! ha ) ; simp +decide [ hg.2 i j ] ;
+  refine ⟨ g, hg.1, ?_ ⟩;
+  intro e he; simp_all +decide only [graphExpansion, Finset.mem_image, Finset.mem_attach, true_and,
+    Subtype.exists, SimpleGraph.mem_edgeFinset] ;
+  obtain ⟨ a, ha, rfl ⟩ := he; simp +decide only [Finset.coe_insert, Finset.coe_singleton] ;
+  obtain ⟨ i, j, hi, hj, rfl ⟩ := cb_edge_exists a ( by simpa using! ha )
   convert! hedge i j using 1;
   rw [ ← hg.2 i j |>.1, ← hg.2 i j |>.2.1 ];
-  have := Quot.out_eq ( s(Sum.inl i, Sum.inr j) : Sym2 (Fin n ⊕ Fin n) ) ; rw [ Sym2.eq_iff ] at this; aesop;
+  have := Quot.out_eq ( s(Sum.inl i, Sum.inr j) : Sym2 (Fin n ⊕ Fin n) ) ;
+  rw [ Sym2.eq_iff ] at this;
+  aesop;
 
 /-! ### Colourability bridge for hypergraphs -/
 
@@ -93,10 +108,8 @@ theorem hgCountColorable_iff (H : Hypergraph W) :
     HGCountColorable H ↔ H.ColorableBy ℵ₀ := by
   constructor;
   · intro h;
-    convert! colorableBy_aleph0_of_countable H _ _;
-    exact ULift ℕ;
-    exact Cardinal.mk_le_aleph0;
-    exact fun x => ⟨ h.choose x ⟩;
+    refine colorableBy_aleph0_of_countable H (T := ULift ℕ)
+      (c := fun x => ⟨h.choose x⟩) Cardinal.mk_le_aleph0 ?_
     intro e he; obtain ⟨ u, hu, v, hv, huv ⟩ := h.choose_spec e he; use u, hu, v, hv; aesop;
   · intro h;
     convert! h using 1;
@@ -104,7 +117,10 @@ theorem hgCountColorable_iff (H : Hypergraph W) :
     · grind;
     · obtain ⟨ f, hf ⟩ := Cardinal.eq.1 ( Cardinal.mk_out ℵ₀ );
       use fun x => ( f ( c x ) ).down;
-      intro e he; obtain ⟨ u, hu, v, hv, huv ⟩ := hc e he; use u, hu, v, hv; simp_all +decide [ Function.LeftInverse, Function.RightInverse ] ;
+      intro e he;
+      obtain ⟨ u, hu, v, hv, huv ⟩ := hc e he;
+      use u, hu, v, hv;
+      simp_all +decide [ Function.LeftInverse, Function.RightInverse ] ;
       grind
 
 /-! ### Delta systems -/
@@ -132,12 +148,13 @@ theorem deltaRoot_extend (H : Hypergraph W) (t : ℕ) (f g : Set W)
   contrapose! hg;
   -- For each edge `e ∈ D`, define a vertex `v e ∈ (e ∩ g) \ f`.
   have hv : ∀ e ∈ D, ∃ v : W, v ∈ (e ∩ g) \ f := by
-    exact fun e he => Set.exists_of_ssubset ( lt_of_le_of_ne ( by aesop_cat ) ( Ne.symm ( hg e ( hDsub he ) ( hDf e he ) ) ) );
+    exact fun e he => Set.exists_of_ssubset
+      ( lt_of_le_of_ne ( by aesop_cat ) ( Ne.symm ( hg e ( hDsub he ) ( hDf e he ) ) ) );
   choose! v hv₁ hv₂ using hv;
-  refine' le_trans hDcard _;
-  refine' ⟨ fun x => ⟨ v x.1 x.2, _ ⟩, fun x y hxy => _ ⟩;
-  grind;
-  grind +extAll
+  refine le_trans hDcard ?_;
+  refine ⟨ fun x => ⟨ v x.1 x.2, ?_ ⟩, fun x y hxy => ?_ ⟩;
+  · grind;
+  · grind +extAll
 
 /-
 **Greedy private-vertex assignment.**  Given cores `a, b` inside a small
@@ -147,6 +164,7 @@ choose an injective family of private vertices `P`, avoiding `Core`, so that eac
 `deltaRoot_extend`; the accumulated used set always has `< 3n²+1` elements.
 -/
 set_option maxHeartbeats 2000000 in
+-- The greedy induction carries the used-vertex set and all pairwise root constraints at each step.
 theorem exists_private_assignment (H : Hypergraph W) (hts : H.IsTripleSystem) (n : ℕ)
     (a b : Fin n → W) (Core : Finset W)
     (hCa : ∀ i, a i ∈ Core) (hCb : ∀ j, b j ∈ Core) (hCard : Core.card ≤ 2 * n)
@@ -154,38 +172,61 @@ theorem exists_private_assignment (H : Hypergraph W) (hts : H.IsTripleSystem) (n
     (hroot : ∀ i j, IsDeltaRoot H (3 * n ^ 2 + 1) ({a i, b j} : Set W)) :
     ∃ P : Fin n × Fin n → W, Function.Injective P ∧ (∀ p, P p ∉ Core) ∧
       ∀ p, ({a p.1, b p.2, P p} : Set W) ∈ H.edges := by
-  rcases n with ( _ | n ) <;> simp_all +decide only [IsEmpty.forall_iff, and_self, and_true, Prod.forall];
+  rcases n with ( _ | n ) <;> simp_all +decide only [IsEmpty.forall_iff, and_self, and_true,
+    Prod.forall];
   · exact ⟨ fun _ => by aesop, by aesop_cat ⟩;
-  · have hkey : ∀ s : Finset (Fin (n + 1) × Fin (n + 1)), ∃ P : Fin (n + 1) × Fin (n + 1) → W, Set.InjOn P s ∧ (∀ p ∈ s, P p ∉ Core) ∧ (∀ p ∈ s, ({a p.1, b p.2, P p} : Set W) ∈ H.edges) := by
+  · have hkey : ∀ s : Finset (Fin (n + 1) × Fin (n + 1)), ∃ P : Fin (n + 1) × Fin (n + 1) → W,
+        Set.InjOn P s ∧ (∀ p ∈ s, P p ∉ Core) ∧
+        (∀ p ∈ s, ({a p.1, b p.2, P p} : Set W) ∈ H.edges) := by
       intro s
-      induction' s using Finset.induction with p s ih;
-      · exact ⟨ fun _ => a 0, by simp +decide [ Set.InjOn ] ⟩;
-      · obtain ⟨ P, hP₁, hP₂, hP₃ ⟩ := ‹_›;
-        -- Let's choose a new vertex $w$ for $p$ that is not in $Core$ and not in the image of $P$ on $s$.
-        obtain ⟨w, hw⟩ : ∃ w : W, w ∉ Core ∧ w ∉ Set.image P s ∧ ({a p.1, b p.2, w} : Set W) ∈ H.edges := by
-          have := deltaRoot_extend H ( 3 * ( n + 1 ) ^ 2 + 1 ) { a p.1, b p.2 } ( Core ∪ P '' s ) ( hroot p.1 p.2 ) ?_ ?_ <;> simp_all +decide only [Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat, Nat.cast_pow, Nat.cast_one,
-    Set.mem_image, SetLike.mem_coe, Prod.exists, not_exists, not_and];
-          · obtain ⟨ e, he₁, he₂, he₃ ⟩ := this; simp_all +decide [ Set.Subset.antisymm_iff, Set.subset_def ] ;
+      induction s using Finset.induction with
+      | empty => exact ⟨ fun _ => a 0, by simp +decide [ Set.InjOn ] ⟩;
+      | insert p s hp ih =>
+        obtain ⟨ P, hP₁, hP₂, hP₃ ⟩ := ih;
+        -- Let's choose a new vertex $w$ for $p$ that is not in $Core$ and not in the image of $P$
+        -- on $s$.
+        obtain ⟨w, hw⟩ : ∃ w : W, w ∉ Core ∧ w ∉ Set.image P s ∧ ({a p.1, b p.2, w} : Set W) ∈
+          H.edges := by
+          have := deltaRoot_extend H ( 3 * ( n + 1 ) ^ 2 + 1 ) { a p.1, b p.2 } ( Core ∪ P '' s ) (
+            hroot p.1 p.2 ) ?_ ?_ <;> simp_all +decide only [ne_eq, Prod.forall, Set.mem_image,
+              SetLike.mem_coe, Prod.exists, not_exists, not_and, Nat.cast_add, Nat.cast_mul,
+              Nat.cast_ofNat, Nat.cast_pow, Nat.cast_one];
+          · obtain ⟨ e, he₁, he₂, he₃ ⟩ := this;
+            simp_all +decide only [Set.subset_def, Set.mem_insert_iff, Set.mem_singleton_iff,
+              forall_eq_or_imp, forall_eq, Set.Subset.antisymm_iff, Set.mem_inter_iff,
+              Set.mem_union, SetLike.mem_coe, Set.mem_image, Prod.exists, and_imp, true_or,
+              and_self, implies_true, and_true] ;
             obtain ⟨w, hw⟩ : ∃ w : W, w ∈ e ∧ w ≠ a p.1 ∧ w ≠ b p.2 := by
               have := hts e he₁; simp_all +decide only [ne_eq] ;
               contrapose! this;
-              rw [ show e = { a p.1, b p.2 } from Set.ext fun x => by by_cases hx : x = a p.1 <;> specialize this x <;> aesop ] ; simp +decide [ Set.ncard_pair, hab ];
-            refine' ⟨ w, _, _, _ ⟩;
+              rw [ show e = { a p.1, b p.2 } from Set.ext fun x => by
+                by_cases hx : x = a p.1 <;> specialize this x <;> aesop ] ;
+              simp +decide [hab];
+            refine ⟨ w, ?_, ?_, ?_ ⟩;
             · grind;
             · grind +ring;
             · convert! he₁ using 1;
-              have := hts e he₁; simp_all +decide [ Set.ncard_eq_toFinset_card' ] ;
+              have := hts e he₁; simp_all +decide only [ne_eq];
               rw [ Set.ncard_eq_three ] at this;
               grind;
-          · refine' lt_of_le_of_lt ( Cardinal.mk_le_mk_of_subset _ ) _;
-            exact ↑Core ∪ P '' ↑s;
+          · refine lt_of_le_of_lt (Cardinal.mk_le_mk_of_subset (t := ↑Core ∪ P '' ↑s) ?_) ?_;
             · exact Set.Subset.rfl;
-            · refine' lt_of_le_of_lt ( Cardinal.mk_le_mk_of_subset _ ) _;
-              exact Set.range ( fun x : Core ⊕ s => x.elim ( fun x => x.val ) fun x => P x.val );
-              · rintro x ( hx | ⟨ y, hy, rfl ⟩ ) <;> [ exact ⟨ Sum.inl ⟨ x, hx ⟩, rfl ⟩ ; exact ⟨ Sum.inr ⟨ y, hy ⟩, rfl ⟩ ];
-              · refine' lt_of_le_of_lt ( Cardinal.mk_range_le ) _;
-                simp +decide [ Cardinal.mk_sum ];
-                norm_cast ; nlinarith [ show s.card ≤ ( n + 1 ) * ( n + 1 ) - 1 from Nat.le_sub_one_of_lt ( lt_of_lt_of_le ( Finset.card_lt_card ( Finset.ssubset_iff_subset_ne.mpr ⟨ Finset.subset_univ _, by aesop_cat ⟩ ) ) ( by simp +decide [ Finset.card_univ ] ) ), Nat.sub_add_cancel ( show 1 ≤ ( n + 1 ) * ( n + 1 ) from Nat.mul_pos ( Nat.succ_pos _ ) ( Nat.succ_pos _ ) ) ];
+            · refine lt_of_le_of_lt (Cardinal.mk_le_mk_of_subset
+                (t := Set.range (fun x : Core ⊕ s =>
+                  x.elim (fun x => x.val) fun x => P x.val)) ?_) ?_;
+              · rintro x ( hx | ⟨ y, hy, rfl ⟩ ) <;>
+                  [ exact ⟨ Sum.inl ⟨ x, hx ⟩, rfl ⟩ ; exact ⟨ Sum.inr ⟨ y, hy ⟩, rfl ⟩ ];
+              · refine lt_of_le_of_lt ( Cardinal.mk_range_le ) ?_;
+                simp +decide only [mk_fintype, Fintype.card_sum, Fintype.card_coe, Nat.cast_add];
+                norm_cast ;
+                nlinarith [ show s.card ≤ ( n + 1 ) * ( n + 1 ) - 1 from
+                  Nat.le_sub_one_of_lt ( lt_of_lt_of_le
+                    ( Finset.card_lt_card ( Finset.ssubset_iff_subset_ne.mpr
+                      ⟨ Finset.subset_univ _, by aesop_cat ⟩ ) )
+                    ( by simp +decide [ Finset.card_univ ] ) ),
+                  Nat.sub_add_cancel ( show 1 ≤ ( n + 1 ) * ( n + 1 ) from
+                    Nat.mul_pos ( Nat.succ_pos _ ) ( Nat.succ_pos _ ) ) ];
+          · exact Set.pair_subset_iff.mpr ⟨Or.inl (hCa p.1), Or.inl (hCb p.2)⟩
         use fun q => if q = p then w else P q;
         simp_all +decide [ Set.InjOn ];
         grind +splitImp;
@@ -261,11 +302,14 @@ with root `f` has fewer than `t` edges.
 theorem rootDS_card_lt (H : Hypergraph W) (t : ℕ) (f : Set W)
     (hf : ¬ IsDeltaRoot H t f) (D : Finset (Set W)) (hD : IsRootDS H f D) :
     D.card < t := by
-  contrapose! hf;
-  use D;
-  simp_all +decide only [SetLike.coe_sort_coe, mk_fintype, Fintype.card_coe, Nat.cast_le, SetLike.mem_coe,
-    ne_eq];
-  exact fun x hx => hD.1 x hx |>.1
+  classical
+  contrapose! hf
+  refine ⟨(D : Set (Set W)), ?_, ?_, ?_, ?_⟩
+  · exact fun e he => (hD.1 e he).1
+  · change (t : Cardinal) ≤ #D
+    simpa only [Cardinal.mk_coe_finset, Nat.cast_le] using hf
+  · exact fun e he => (hD.1 e he).2
+  · exact hD.2
 
 open Classical in
 /-- Inserting an edge that meets every member of a root-`f` delta system exactly
@@ -365,9 +409,9 @@ def DClosed (H : Hypergraph W) (t : ℕ) (X : Set W) : Prop :=
 
 theorem subset_DCloseIter (H : Hypergraph W) (t : ℕ) (X : Set W) (k : ℕ) :
     X ⊆ DCloseIter H t X k := by
-  induction' k with k ih
-  · rfl
-  · exact Set.Subset.trans ih Set.subset_union_left
+  induction k with
+  | zero => rfl
+  | succ k ih => exact Set.Subset.trans ih Set.subset_union_left
 
 theorem DCloseIter_mono_index (H : Hypergraph W) (t : ℕ) (X : Set W) {k l : ℕ}
     (h : k ≤ l) : DCloseIter H t X k ⊆ DCloseIter H t X l := by
@@ -382,26 +426,33 @@ theorem Dcl_mono (H : Hypergraph W) (t : ℕ) {X Y : Set W} (h : X ⊆ Y) :
     Dcl H t X ⊆ Dcl H t Y := by
   apply Set.iUnion_mono;
   intro k;
-  induction' k with k ih;
-  · exact h;
-  · refine' Set.union_subset_union ih _;
-    exact fun v hv => by obtain ⟨ x, hx, y, hy, hxy, hv ⟩ := hv; exact ⟨ x, ih hx, y, ih hy, hxy, hv ⟩ ;
+  induction k with
+  | zero => exact h;
+  | succ k ih =>
+    refine Set.union_subset_union ih ?_;
+    exact fun v hv =>
+      by obtain ⟨ x, hx, y, hy, hxy, hv ⟩ := hv; exact ⟨ x, ih hx, y, ih hy, hxy, hv ⟩ ;
 
 /-
 The delta-closure is delta-closed.
 -/
 theorem DClosed_Dcl (H : Hypergraph W) (t : ℕ) (X : Set W) :
     DClosed H t (Dcl H t X) := by
-  intro x hx y hy hxy v hv; simp_all +decide [ DClosed, Dcl ] ;
-  obtain ⟨ kx, hkx ⟩ := hx; obtain ⟨ ky, hky ⟩ := hy; use Max.max kx ky + 1; simp_all +decide [ DCloseIter ] ;
-  exact Set.mem_union_right _ ⟨ x, DCloseIter_mono_index _ _ _ ( le_max_left _ _ ) hkx, y, DCloseIter_mono_index _ _ _ ( le_max_right _ _ ) hky, hxy, hv ⟩
+  intro x hx y hy hxy v hv; simp_all +decide only [Dcl, Set.mem_iUnion, ne_eq] ;
+  obtain ⟨ kx, hkx ⟩ := hx;
+  obtain ⟨ ky, hky ⟩ := hy;
+  use Max.max kx ky + 1;
+  simp_all +decide only [DCloseIter] ;
+  exact Set.mem_union_right _ ⟨ x, DCloseIter_mono_index _ _ _ ( le_max_left _ _ ) hkx, y,
+    DCloseIter_mono_index _ _ _ ( le_max_right _ _ ) hky, hxy, hv ⟩
 
 /-
 The delta-closure step increases cardinality by at most `ℵ₀`.
 -/
 theorem DCloseStep_card_le (H : Hypergraph W) (hts : H.IsTripleSystem) (t : ℕ)
     (X : Set W) : #(DCloseStep H t X) ≤ #X + ℵ₀ := by
-  -- By definition of `DCloseStep`, we have `DCloseStep H t X = X ∪ {v | ∃ x ∈ X, ∃ y ∈ X, x ≠ y ∧ v ∈ witnessVerts H t {x, y}}`.
+  -- By definition of `DCloseStep`, we have `DCloseStep H t X = X ∪ {v | ∃ x ∈ X, ∃ y ∈ X, x ≠ y ∧ v
+  -- ∈ witnessVerts H t {x, y}}`.
   set A := {v : W | ∃ x ∈ X, ∃ y ∈ X, x ≠ y ∧ v ∈ witnessVerts H t {x, y}} with hA_def
   have hDCloseStep : DCloseStep H t X = X ∪ A := by
     grind +locals
@@ -409,16 +460,23 @@ theorem DCloseStep_card_le (H : Hypergraph W) (hts : H.IsTripleSystem) (t : ℕ)
   -- It suffices to show that $|A| \leq |X|^2 \cdot \aleph_0$.
   suffices hA_card : #(A) ≤ #(X × X) * Cardinal.aleph0 by
     by_cases hX : Infinite X <;> simp_all +decide only [ge_iff_le];
-    · refine' le_trans ( Cardinal.mk_union_le _ _ ) _ ; aesop;
-    · refine' le_trans ( Cardinal.mk_union_le _ _ ) _;
-      refine' add_le_add le_rfl _;
-      exact Cardinal.mk_le_aleph0_iff.mpr ( Set.Finite.countable <| Set.Finite.subset ( Set.Finite.biUnion ( Set.finite_coe_iff.mp hX ) fun x hx => Set.Finite.biUnion ( Set.finite_coe_iff.mp hX ) fun y hy => Set.Finite.subset ( witnessVerts_finite H hts t { x, y } ) fun z => by aesop ) fun x hx => by aesop );
-  -- By definition of $A$, we have $A \subseteq \bigcup_{p : ↥X × ↥X} witnessVerts H t {(p.1 : W), (p.2 : W)}$.
+    · refine le_trans ( Cardinal.mk_union_le _ _ ) ?_ ; aesop;
+    · refine le_trans ( Cardinal.mk_union_le _ _ ) ?_;
+      refine add_le_add le_rfl ?_;
+      exact Cardinal.mk_le_aleph0_iff.mpr ( Set.Finite.countable <| Set.Finite.subset
+        ( Set.Finite.biUnion (Set.finite_coe_iff.mp (not_infinite_iff_finite.mp hX)) fun x hx =>
+          Set.Finite.biUnion (Set.finite_coe_iff.mp (not_infinite_iff_finite.mp hX)) fun y hy =>
+            Set.Finite.subset ( witnessVerts_finite H hts t { x, y } ) fun z => by aesop )
+        fun x hx => by aesop );
+  -- By definition of $A$, we have $A \subseteq \bigcup_{p : ↥X × ↥X} witnessVerts H t {(p.1 : W),
+  -- (p.2 : W)}$.
   have hA_subset : A ⊆ ⋃ p : ↥X × ↥X, witnessVerts H t {(p.1 : W), (p.2 : W)} := by
-    intro v hv; obtain ⟨ x, hx, y, hy, hxy, hv ⟩ := hv; exact Set.mem_iUnion.2 ⟨ ⟨ ⟨ x, hx ⟩, ⟨ y, hy ⟩ ⟩, hv ⟩ ;
-  refine' le_trans ( Cardinal.mk_le_mk_of_subset hA_subset ) _;
-  refine' le_trans ( Cardinal.mk_iUnion_le _ ) _;
-  refine' mul_le_mul_right _ _;
+    intro v hv;
+    obtain ⟨ x, hx, y, hy, hxy, hv ⟩ := hv;
+    exact Set.mem_iUnion.2 ⟨ ⟨ ⟨ x, hx ⟩, ⟨ y, hy ⟩ ⟩, hv ⟩ ;
+  refine le_trans ( Cardinal.mk_le_mk_of_subset hA_subset ) ?_;
+  refine le_trans ( Cardinal.mk_iUnion_le _ ) ?_;
+  refine mul_le_mul_right ?_ _;
   exact ciSup_le' fun p => witnessVerts_card_le H hts t _)
 
 /-
@@ -428,20 +486,22 @@ theorem Dcl_card_le (H : Hypergraph W) (hts : H.IsTripleSystem) (t : ℕ)
     (X : Set W) : #(Dcl H t X) ≤ #X + ℵ₀ := by
   convert! Cardinal.mk_iUnion_le _ |> le_trans <| _;
   rotate_left;
-  exact ULift ℕ;
-  exact fun i => DCloseIter H t X i.down;
-  · refine' le_trans ( mul_le_mul_right ( ciSup_le _ ) _ ) _;
-    exact #X + ℵ₀;
-    · intro x; induction' x.down with k ih <;> simp_all +decide [ DCloseIter ] ;
-      refine' le_trans ( DCloseStep_card_le H hts t _ ) _;
-      convert! add_le_add_right ih ℵ₀ using 1;
-      · rw [ add_comm ];
-      · rw [ add_comm, Cardinal.add_eq_max ];
-        · rw [ Cardinal.add_eq_max ];
-          · grind;
+  · exact ULift ℕ;
+  · exact fun i => DCloseIter H t X i.down;
+  · refine le_trans (mul_le_mul_right (ciSup_le (c := #X + ℵ₀) ?_) _) ?_;
+    · intro x
+      induction x.down with
+      | zero => exact le_add_right le_rfl
+      | succ k ih =>
+        refine le_trans ( DCloseStep_card_le H hts t _ ) ?_;
+        convert! add_le_add_right ih ℵ₀ using 1;
+        · rw [ add_comm ];
+        · rw [ add_comm, Cardinal.add_eq_max ];
+          · rw [ Cardinal.add_eq_max ];
+            · grind;
+            · norm_num;
           · norm_num;
-        · norm_num;
-    · simp +decide [ Cardinal.mk_nat ];
+    · simp +decide;
   · ext; simp [Dcl]
 
 /-
@@ -451,9 +511,12 @@ delta-closed.
 theorem DClosed_biUnion_lt {σ : Type u} [LinearOrder σ] (H : Hypergraph W) (t : ℕ)
     (M : σ → Set W) (hmono : Monotone M) (hcl : ∀ b, DClosed H t (M b)) (a : σ) :
     DClosed H t (⋃ b ∈ {b : σ | b < a}, M b) := by
-  intro x hx y hy hxy;
-  simp_all +decide only [Set.mem_ofPred_eq];
-  obtain ⟨ i, hi, hx ⟩ := hx; obtain ⟨ j, hj, hy ⟩ := hy; use fun z hz => ⟨ Max.max i j, max_lt hi hj, hcl ( Max.max i j ) _ ( hmono ( le_max_left _ _ ) hx ) _ ( hmono ( le_max_right _ _ ) hy ) hxy hz ⟩ ;
+  intro x hx y hy hxy v hv
+  obtain ⟨i, hi, hx⟩ := Set.mem_iUnion₂.mp hx
+  obtain ⟨j, hj, hy⟩ := Set.mem_iUnion₂.mp hy
+  exact Set.mem_iUnion₂.mpr ⟨max i j, max_lt hi hj,
+    hcl (max i j) x (hmono (le_max_left _ _) hx)
+      y (hmono (le_max_right _ _) hy) hxy hv⟩
 
 /-! ### Part B: Claim 2.2 and the colourability ingredients -/
 
@@ -478,7 +541,7 @@ theorem claim22_abstract (H : Hypergraph W) (hts : H.IsTripleSystem) (t : ℕ)
   -- Apply the maximality condition hmax to e.
   have h_e_in_maxDS : e ∈ maxDS H t {x, y} := by
     obtain ⟨hDS, hmax⟩ := maxDS_spec H t {x, y} hnr;
-    refine' hmax e he ( by aesop_cat ) _;
+    refine hmax e he ( by aesop_cat ) ?_;
     intro e' he';
     apply Set.Subset.antisymm;
     · intro w hw;
@@ -502,10 +565,8 @@ theorem colorable_combine {Idx : Type*} (rank : W → Idx) (E₀ : Set (Set W))
     (d : Idx → W → ℕ)
     (hsep : ∀ e ∈ E₀, ∃ a, ∃ u ∈ e, ∃ w ∈ e, rank u = a ∧ rank w = a ∧ d a u ≠ d a w) :
     (⟨E₀⟩ : Hypergraph W).ColorableBy ℵ₀ := by
-  convert! colorableBy_aleph0_of_countable _ _ _ using 1;
-  exact ULift ℕ;
-  exact Cardinal.mk_le_aleph0;
-  exact fun v => ⟨ d ( rank v ) v ⟩;
+  refine colorableBy_aleph0_of_countable (⟨E₀⟩ : Hypergraph W) (T := ULift ℕ)
+    (c := fun v => ⟨d (rank v) v⟩) Cardinal.mk_le_aleph0 ?_
   intro e he; obtain ⟨ a, u, hu, w, hw, hru, hrw, hne ⟩ := hsep e he; use u, hu, w, hw; aesop;
 
 /-
@@ -517,12 +578,13 @@ theorem E'_colorable (H : Hypergraph W) (hts : H.IsTripleSystem) (n : ℕ)
     (hfree : ¬ HasK3nn H n) :
     (⟨{e | e ∈ H.edges ∧ hasRoot H (3 * n ^ 2 + 1) e}⟩ : Hypergraph W).ColorableBy ℵ₀ := by
   obtain ⟨c, hc⟩ := rootsGraph_countColorable H hts n hfree;
-  convert! colorableBy_aleph0_of_countable _ _ _ using 1;
-  exact ULift ℕ;
-  exact Cardinal.mk_le_aleph0;
-  exact fun x => ⟨ c x ⟩;
-  intro e he; obtain ⟨ u, v, huv, huv', huv'' ⟩ := he.2; simp_all +decide only [ne_eq, ULift.up.injEq] ;
-  exact ⟨ u, huv' ( Set.mem_insert _ _ ), v, huv' ( Set.mem_insert_of_mem _ ( Set.mem_singleton _ ) ), hc u v huv ( Or.inl huv'' ) ⟩
+  refine colorableBy_aleph0_of_countable _ (T := ULift ℕ)
+    (c := fun x => ⟨c x⟩) Cardinal.mk_le_aleph0 ?_
+  intro e he;
+  obtain ⟨ u, v, huv, huv', huv'' ⟩ := he.2;
+  simp_all +decide only [ne_eq, ULift.up.injEq] ;
+  exact ⟨ u, huv' ( Set.mem_insert _ _ ), v, huv' ( Set.mem_insert_of_mem _ ( Set.mem_singleton _ )
+    ), hc u v ⟨huv, Or.inl huv''⟩ ⟩
 
 /-- The triple system induced by `H` on a subset `S`, living on the subtype `↑S`. -/
 def Hsub (H : Hypergraph W) (S : Set W) : Hypergraph ↑S :=
@@ -533,7 +595,10 @@ The induced system on `S` is a triple system.
 -/
 theorem Hsub_isTripleSystem (H : Hypergraph W) (hts : H.IsTripleSystem) (S : Set W) :
     (Hsub H S).IsTripleSystem := by
-  intro s hs; specialize hts ( Subtype.val '' s ) ; simp_all +decide [ Set.ncard_image_of_injective, Function.Injective ] ;
+  intro s hs;
+  specialize hts ( Subtype.val '' s ) ;
+  simp_all +decide only [Function.Injective, Subtype.forall, implies_true,
+    Set.ncard_image_of_injective] ;
   exact hts hs
 
 /-
@@ -542,7 +607,7 @@ A `K^{(3)}_{n,n}` in the induced system on `S` lifts to one in `H`.
 theorem Hsub_hasK3nn (H : Hypergraph W) (S : Set W) (n : ℕ)
     (h : HasK3nn (Hsub H S) n) : HasK3nn H n := by
   obtain ⟨ g, hg_inj, hg_edge ⟩ := h;
-  refine' ⟨ fun x => g x, _, _ ⟩;
+  refine ⟨ fun x => g x, ?_, ?_ ⟩;
   · exact Subtype.coe_injective.comp hg_inj;
   · convert! hg_edge using 1;
     simp +decide [ Hsub, Set.image_insert_eq, Set.image_singleton ]
@@ -556,7 +621,8 @@ theorem Hsub_edge_of_subset (H : Hypergraph W) (S : Set W) (e : Set W)
     ∃ s : Set ↑S, Subtype.val '' s = e ∧ s ∈ (Hsub H S).edges := by
   -- Let $s$ be the preimage of $e$ under the inclusion map from $S$ to $W$.
   use {x : S | x.val ∈ e};
-  -- By definition of `Hsub`, we know that `{x | x.val ∈ e}` is an edge in `Hsub H S` if and only if `e` is an edge in `H`.
+  -- By definition of `Hsub`, we know that `{x | x.val ∈ e}` is an edge in `Hsub H S` if and only if
+  -- `e` is an edge in `H`.
   unfold Hsub;
   aesop
 
@@ -595,10 +661,12 @@ A triple system on an at-most-countable vertex type is `ℵ₀`-colourable
 theorem tripleSystem_colorable_of_le_aleph0 (H : Hypergraph W)
     (hts : H.IsTripleSystem) (h : #W ≤ ℵ₀) : H.ColorableBy ℵ₀ := by
   obtain ⟨c, hc⟩ : ∃ c : W → ℕ, ∀ e ∈ H.edges, ∃ u ∈ e, ∃ v ∈ e, c u ≠ c v := by
-    cases' Cardinal.le_mk_iff_exists_set.mp h with S hS;
-    cases' Cardinal.eq.1 hS.symm with f hf;
+    obtain ⟨S, hS⟩ := Cardinal.le_mk_iff_exists_set.mp h
+    obtain ⟨f⟩ := Cardinal.eq.1 hS.symm
     use fun w => (f w).val.down;
-    intro e he; have := hts e he; rw [ Set.ncard_eq_three ] at this; obtain ⟨ a, b, c, hab, hac, hbc, rfl ⟩ := this; use a, by simp +decide, b, by simp +decide; ; simp +decide only [ne_eq, ULift.down_inj] ;
+    intro e he; have := hts e he; rw [ Set.ncard_eq_three ] at this; obtain
+      ⟨ a, b, c, hab, hac, hbc, rfl ⟩ := this; use a,
+      by simp +decide, b, by simp +decide; ; simp +decide only [ne_eq, ULift.down_inj] ;
     exact fun h => hab <| f.injective <| Subtype.ext h;
   exact hgCountColorable_iff H |>.1 ⟨ c, hc ⟩
 
@@ -621,15 +689,16 @@ theorem hasK3nn_from_grid (H : Hypergraph W) (n : ℕ) (X Y : Fin n → W)
 unary predicate `Q` and pairwise related by `R`, from a one-step extension
 property.
 -/
-theorem exists_finset_pairwise {α : Type*} [Fintype α] [DecidableEq α]
+theorem exists_finset_pairwise {α : Type*}
     (Q : α → Prop) (R : α → α → Prop) (n : ℕ)
     (hstep : ∀ D : Finset α, D.card < n → (∀ x ∈ D, Q x) →
       ∃ z, z ∉ D ∧ Q z ∧ ∀ x ∈ D, R x z ∧ R z x) :
     ∃ C : Finset α, C.card = n ∧ (∀ x ∈ C, Q x) ∧
       ∀ x ∈ C, ∀ y ∈ C, x ≠ y → R x y := by
-  induction' n with n ih;
-  · exact ⟨ ∅, rfl, by simp +decide ⟩;
-  · -- Apply the induction hypothesis with hstep modified to use n instead of n+1.
+  classical
+  induction n with
+  | zero => exact ⟨ ∅, rfl, by simp +decide ⟩;
+  | succ n ih => -- Apply the induction hypothesis with hstep modified to use n instead of n+1.
     obtain ⟨C, hC⟩ := ih (fun D hD hQ => hstep D (Nat.lt_succ_of_lt hD) hQ);
     obtain ⟨z, hz⟩ := hstep C (by linarith) hC.2.1;
     use Insert.insert z C;
@@ -644,10 +713,14 @@ theorem sum_agree_le {V : Type*} (t q : ℕ) (P : Fin q → Fin q → V)
     (b : Fin q) :
     ∑ z : Fin q, (Finset.univ.filter (fun a => P a b = P a z)).card ≤ q * (t - 1) := by
   -- By Fubini's theorem, we can interchange the order of summation.
-  have h_fubini : ∑ z : Fin q, (Finset.univ.filter (fun a => P a b = P a z)).card = ∑ a : Fin q, (Finset.univ.filter (fun z => P a b = P a z)).card := by
+  have h_fubini : ∑ z : Fin q, (Finset.univ.filter (fun a => P a b = P a z)).card = ∑ a : Fin q,
+    (Finset.univ.filter (fun z => P a b = P a z)).card := by
     simp +decide only [Finset.card_filter];
     exact Finset.sum_comm;
-  exact h_fubini.symm ▸ le_trans ( Finset.sum_le_sum fun i _ => show Finset.card ( Finset.filter ( fun z => P i b = P i z ) Finset.univ ) ≤ t - 1 from Nat.le_sub_one_of_lt ( by simpa [ eq_comm ] using! hrow i ( P i b ) ) ) ( by simp +decide [ mul_comm ] ) ;
+  exact h_fubini.symm ▸ le_trans ( Finset.sum_le_sum fun i _ =>
+    show Finset.card ( Finset.filter ( fun z => P i b = P i z ) Finset.univ ) ≤ t - 1 from
+      Nat.le_sub_one_of_lt ( by simpa [ eq_comm ] using! hrow i ( P i b ) ) )
+    ( by simp +decide ) ;
 
 open Classical in
 /-- **Column step.**  Given `< n` chosen columns, there is a new column agreeing
@@ -660,17 +733,29 @@ theorem cols_step {V : Type*} (n t q : ℕ) (ht : 1 ≤ t) (hn : 1 ≤ n) (hq : 
     ∃ z, z ∉ D ∧ ∀ x ∈ D,
       (Finset.univ.filter (fun a => P a x = P a z)).card < n * t := by
   -- By `sum_agree_le` and `bad union bound`, we can find such a $z$.
-  have h_bad_card : ∑ x ∈ D, ∑ z : Fin q, (Finset.univ.filter (fun a => P a x = P a z)).card ≤ D.card * q * (t - 1) := by
+  have h_bad_card : ∑ x ∈ D, ∑ z : Fin q, (Finset.univ.filter (fun a => P a x = P a z)).card ≤
+    D.card * q * (t - 1) := by
     convert! Finset.sum_le_sum fun x hx => sum_agree_le t q P hrow x using 1;
     simp +decide [ mul_assoc ];
   -- By `bad union bound`, we can find such a $z$.
-  have h_bad_card : ∑ z : Fin q, ∑ x ∈ D, (Finset.univ.filter (fun a => P a x = P a z)).card < (q - D.card) * n * t := by
+  have h_bad_card : ∑ z : Fin q, ∑ x ∈ D, (Finset.univ.filter (fun a => P a x = P a z)).card <
+    (q - D.card) * n * t := by
     rw [ Finset.sum_comm ];
-    nlinarith [ Nat.sub_add_cancel ( show 1 ≤ t from ht ), Nat.sub_add_cancel ( show D.card ≤ q from le_trans ( Finset.card_le_univ _ ) ( by norm_num ) ), mul_le_mul_right hD.le q, mul_le_mul_right hn q, mul_le_mul_right ht q, mul_le_mul_right hD.le t, mul_le_mul_right hn t, mul_le_mul_right ht t ];
+    nlinarith [ Nat.sub_add_cancel ( show 1 ≤ t from ht ),
+      Nat.sub_add_cancel ( show D.card ≤ q from
+        le_trans ( Finset.card_le_univ _ ) ( by norm_num ) ),
+      mul_le_mul_right hD.le q, mul_le_mul_right hn q, mul_le_mul_right ht q,
+      mul_le_mul_right hD.le t, mul_le_mul_right hn t, mul_le_mul_right ht t ];
   contrapose! h_bad_card;
-  have h_bad_card : ∑ z ∈ Finset.univ \ D, ∑ x ∈ D, (Finset.univ.filter (fun a => P a x = P a z)).card ≥ (q - D.card) * n * t := by
-    have h_bad_card : ∀ z ∈ Finset.univ \ D, ∑ x ∈ D, (Finset.univ.filter (fun a => P a x = P a z)).card ≥ n * t := by
-      exact fun z hz => by obtain ⟨ x, hx, hx' ⟩ := h_bad_card z ( Finset.mem_sdiff.mp hz |>.2 ) ; exact le_trans hx' ( Finset.single_le_sum ( fun x _ => Nat.zero_le ( Finset.card ( Finset.filter ( fun a => P a x = P a z ) Finset.univ ) ) ) hx ) ;
+  have h_bad_card : ∑ z ∈ Finset.univ \ D, ∑ x ∈ D,
+    (Finset.univ.filter (fun a => P a x = P a z)).card ≥ (q - D.card) * n * t := by
+    have h_bad_card : ∀ z ∈ Finset.univ \ D, ∑ x ∈ D,
+      (Finset.univ.filter (fun a => P a x = P a z)).card ≥ n * t := by
+      exact fun z hz => by
+        obtain ⟨ x, hx, hx' ⟩ := h_bad_card z ( Finset.mem_sdiff.mp hz |>.2 ) ;
+        exact le_trans hx' ( Finset.single_le_sum
+          ( fun x _ => Nat.zero_le
+            ( Finset.card ( Finset.filter ( fun a => P a x = P a z ) Finset.univ ) ) ) hx ) ;
     simpa [ mul_assoc, Finset.card_sdiff ] using! Finset.sum_le_sum h_bad_card;
   exact h_bad_card.trans ( Finset.sum_le_sum_of_subset ( Finset.sdiff_subset ) )
 
@@ -684,30 +769,66 @@ theorem rows_step {V : Type*} (n t q : ℕ) (ht : 1 ≤ t) (hn : 1 ≤ n)
     (hpair : ∀ i i' : Fin n, i ≠ i' →
       (Finset.univ.filter (fun a => P a (B i) = P a (B i'))).card < n * t)
     (D : Finset (Fin q)) (hD : D.card < n)
-    (hDQ : ∀ x ∈ D, ∀ k l : Fin n, k ≠ l → P x (B k) ≠ P x (B l)) :
+    (_ : ∀ x ∈ D, ∀ k l : Fin n, k ≠ l → P x (B k) ≠ P x (B l)) :
     ∃ z, z ∉ D ∧ (∀ k l : Fin n, k ≠ l → P z (B k) ≠ P z (B l)) ∧
       ∀ x ∈ D, (∀ k l : Fin n, P x (B k) ≠ P z (B l)) ∧
         (∀ k l : Fin n, P z (B k) ≠ P x (B l)) := by
-  -- Define the "bad" rows: `I := Finset.univ.filter (fun z => ∃ k l : Fin n, k ≠ l ∧ P z (B k) = P z (B l))` (internally non-rainbow), `C := Finset.univ.filter (fun z => ∃ x ∈ D, ∃ k l : Fin n, P x (B k) = P z (B l) ∨ P z (B k) = P x (B l))` (crossing some chosen row)
-  set I := Finset.biUnion (Finset.univ.filter (fun p : Fin n × Fin n => p.1 ≠ p.2)) (fun p => Finset.univ.filter (fun z => P z (B p.1) = P z (B p.2)))
-  set C := Finset.biUnion D (fun x => Finset.biUnion (Finset.univ ×ˢ Finset.univ) (fun p : Fin n × Fin n => Finset.univ.filter (fun z => P z (B p.2) = P x (B p.1)) ∪ Finset.univ.filter (fun z => P z (B p.1) = P x (B p.2))));
+  -- Define the "bad" rows: `I := Finset.univ.filter (fun z => ∃ k l : Fin n, k ≠ l ∧ P z (B k) = P
+  -- z (B l))` (internally non-rainbow), `C := Finset.univ.filter (fun z => ∃ x ∈ D, ∃ k l : Fin n,
+  -- P x (B k) = P z (B l) ∨ P z (B k) = P x (B l))` (crossing some chosen row)
+  set I := Finset.biUnion (Finset.univ.filter (fun p : Fin n × Fin n => p.1 ≠ p.2))
+    (fun p => Finset.univ.filter (fun z => P z (B p.1) = P z (B p.2)))
+  set C := Finset.biUnion D (fun x => Finset.biUnion (Finset.univ ×ˢ Finset.univ)
+    (fun p : Fin n × Fin n => Finset.univ.filter (fun z => P z (B p.2) = P x (B p.1)) ∪
+      Finset.univ.filter (fun z => P z (B p.1) = P x (B p.2))));
   -- Bound `I.card ≤ n ^ 3 * t` and `C.card ≤ 2 * n ^ 3 * t`.
   have hI : I.card ≤ n ^ 3 * t := by
-    refine' le_trans ( Finset.card_biUnion_le ) _;
-    refine' le_trans ( Finset.sum_le_sum fun x hx => Nat.le_of_lt ( hpair _ _ <| Finset.mem_filter.mp hx |>.2 ) ) _;
-    rw [ show ( Finset.univ.filter fun p : Fin n × Fin n => ¬p.1 = p.2 ) = Finset.univ \ Finset.diag ( Finset.univ : Finset ( Fin n ) ) by ext ⟨ i, j ⟩ ; simp +decide [ Finset.mem_sdiff, Finset.mem_diag ] ] ; simp +decide [ Finset.card_sdiff, Finset.card_singleton, Finset.card_univ ] ; ring_nf;
+    refine le_trans ( Finset.card_biUnion_le ) ?_;
+    refine le_trans
+      ( Finset.sum_le_sum fun x hx => Nat.le_of_lt ( hpair _ _ <| Finset.mem_filter.mp hx |>.2 ) )
+      ?_;
+    rw [ show ( Finset.univ.filter fun p : Fin n × Fin n => ¬p.1 = p.2 ) =
+      Finset.univ \ Finset.diag ( Finset.univ : Finset ( Fin n ) ) by
+        ext ⟨ i, j ⟩ ; simp +decide [ Finset.mem_sdiff, Finset.mem_diag ] ] ;
+    simp +decide [ Finset.card_sdiff, Finset.card_univ ] ;
+    ring_nf;
     exact Nat.mul_le_mul_right _ ( by nlinarith only [ Nat.sub_le ( n ^ 2 ) n ] )
   have hC : C.card ≤ 2 * n ^ 3 * t := by
-    refine' le_trans ( Finset.card_biUnion_le ) ( le_trans ( Finset.sum_le_sum fun x hx => Finset.card_biUnion_le ) _ );
-    refine' le_trans ( Finset.sum_le_sum fun x hx => Finset.sum_le_sum fun y hy => Finset.card_union_le _ _ ) _;
-    refine' le_trans ( Finset.sum_le_sum fun x hx => Finset.sum_le_sum fun y hy => add_le_add ( Nat.le_of_lt ( hcol _ _ ) ) ( Nat.le_of_lt ( hcol _ _ ) ) ) _ ; norm_num ; ring_nf ; norm_num;
+    refine le_trans ( Finset.card_biUnion_le )
+      ( le_trans ( Finset.sum_le_sum fun x hx => Finset.card_biUnion_le ) ?_ );
+    refine le_trans
+      ( Finset.sum_le_sum fun x hx => Finset.sum_le_sum fun y hy => Finset.card_union_le _ _ ) ?_;
+    refine le_trans ( Finset.sum_le_sum fun x hx => Finset.sum_le_sum fun y hy =>
+      add_le_add ( Nat.le_of_lt ( hcol _ _ ) ) ( Nat.le_of_lt ( hcol _ _ ) ) ) ?_ ;
+    norm_num ; ring_nf ; norm_num;
     nlinarith [ mul_le_mul_right hn t ];
   -- Then `Bad.card ≤ D.card + I.card + C.card ≤ (n-1) + n^3*t + 2*n^3*t < 3*n^3*t + n ≤ q`.
   have hBad : (D ∪ I ∪ C).card < q := by
     grind +qlia;
-  obtain ⟨ z, hz ⟩ := Finset.exists_of_ssubset ( Finset.ssubset_iff_subset_ne.mpr ⟨ Finset.subset_univ ( D ∪ I ∪ C ), by aesop_cat ⟩ );
-  simp +zetaDelta only [ne_eq] at *;
-  exact ⟨ z, hz.1, hz.2.1, fun x hx => ⟨ fun k l => Ne.symm ( hz.2.2 x hx k l |>.1 ), fun k l => hz.2.2 x hx k l |>.2 ⟩ ⟩
+  obtain ⟨ z, hz ⟩ := Finset.exists_of_ssubset
+    ( Finset.ssubset_iff_subset_ne.mpr ⟨ Finset.subset_univ ( D ∪ I ∪ C ), by aesop_cat ⟩ );
+  have hzD : z ∉ D :=
+    fun h => hz.2 (Finset.mem_union_left _ (Finset.mem_union_left _ h))
+  have hzI : z ∉ I :=
+    fun h => hz.2 (Finset.mem_union_left _ (Finset.mem_union_right _ h))
+  have hzC : z ∉ C := fun h => hz.2 (Finset.mem_union_right _ h)
+  refine ⟨z, hzD, ?_, ?_⟩
+  · intro k l hkl heq
+    exact hzI (Finset.mem_biUnion.mpr ⟨(k, l),
+      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hkl⟩,
+      Finset.mem_filter.mpr ⟨Finset.mem_univ _, heq⟩⟩)
+  · intro x hx
+    constructor
+    · intro k l heq
+      exact hzC (Finset.mem_biUnion.mpr ⟨x, hx,
+        Finset.mem_biUnion.mpr ⟨(k, l),
+          Finset.mem_product.mpr ⟨Finset.mem_univ _, Finset.mem_univ _⟩,
+          Finset.mem_union_left _ (Finset.mem_filter.mpr ⟨Finset.mem_univ _, heq.symm⟩)⟩⟩)
+    · intro k l heq
+      exact hzC (Finset.mem_biUnion.mpr ⟨x, hx,
+        Finset.mem_biUnion.mpr ⟨(k, l),
+          Finset.mem_product.mpr ⟨Finset.mem_univ _, Finset.mem_univ _⟩,
+          Finset.mem_union_right _ (Finset.mem_filter.mpr ⟨Finset.mem_univ _, heq⟩)⟩⟩)
 
 open Classical in
 /-- **Rainbow grid lemma.**  A `q × q` matrix `P` in which every value occurs
@@ -750,7 +871,8 @@ theorem greedy_rainbow {V : Type*} (n t q : ℕ) (ht : 1 ≤ t)
       (fun a => ∀ k l : Fin n, k ≠ l → P a (B k) ≠ P a (B l))
       (fun a a' => ∀ k l : Fin n, P a (B k) ≠ P a' (B l)) n
       (fun D hD hDQ => by
-        obtain ⟨z, hz, hzQ, hzcross⟩ := rows_step n t q ht hn (by nlinarith [hq]) P B hcol hpairB D hD hDQ
+        obtain ⟨z, hz, hzQ, hzcross⟩ := rows_step n t q ht hn (by nlinarith [hq]) P B hcol hpairB D
+          hD hDQ
         exact ⟨z, hz, hzQ, fun x hx => ⟨(hzcross x hx).1, (hzcross x hx).2⟩⟩)
   set A : Fin n → Fin q := ⇑(Crow.orderEmbOfFin hRcard) with hAdef
   have hAinj : Function.Injective A := (Crow.orderEmbOfFin hRcard).injective
@@ -789,7 +911,7 @@ theorem exists_delta_filtration (H : Hypergraph W) (hts : H.IsTripleSystem) (t :
   set Idx := (#W).ord.ToType;
   -- Set `M : Idx → Set W := fun a => Dcl H t (e '' {b | b ≤ a})`.
   obtain ⟨e, he⟩ : ∃ e : Idx ≃ W, True := by
-    refine' ⟨ _, trivial ⟩;
+    refine ⟨ ?_, trivial ⟩;
     exact Classical.choice ( Cardinal.eq.1 <| by simp +decide [ Idx ] )
   set M : Idx → Set W := fun a => Dcl H t (Set.image e {b | b ≤ a});
   -- Show that `M` satisfies the required properties.
@@ -803,7 +925,7 @@ theorem exists_delta_filtration (H : Hypergraph W) (hts : H.IsTripleSystem) (t :
       exact Cardinal.mk_image_le.trans ( by simp +decide [ Set.Iic_def ] )
     have h_card_Iic : Cardinal.mk (Set.Iic a) < #W := by
       have h_card_Iic : Cardinal.mk (Set.Iio a) < #W := by
-        convert! Cardinal.mk_Iio_ord_toType a using 1;
+        simpa [Idx] using Cardinal.mk_Iio_lt a (by simp [Idx])
       have h_card_Iic : Cardinal.mk (Set.Iic a) = Cardinal.mk (Set.Iio a) + 1 := by
         rw [ ← Cardinal.mk_singleton ( a : Idx ), ← Cardinal.mk_union_of_disjoint ];
         · congr with x ; simp +decide [ le_iff_lt_or_eq, eq_comm ];
@@ -814,8 +936,8 @@ theorem exists_delta_filtration (H : Hypergraph W) (hts : H.IsTripleSystem) (t :
     have h_card_M : #(M a) ≤ #(Set.image e {b | b ≤ a}) + ℵ₀ := by
       convert! Dcl_card_le H hts t ( Set.image e { b | b ≤ a } ) using 1
     have h_card_M_lt : #(M a) < #W := by
-      refine' lt_of_le_of_lt h_card_M _;
-      refine' lt_of_le_of_lt ( add_le_add h_card_image le_rfl ) _;
+      refine lt_of_le_of_lt h_card_M ?_;
+      refine lt_of_le_of_lt ( add_le_add h_card_image le_rfl ) ?_;
       convert! Cardinal.add_lt_of_lt _ _ _ using 1;
       · exact le_of_lt hbig;
       · exact h_card_Iic;
@@ -823,7 +945,7 @@ theorem exists_delta_filtration (H : Hypergraph W) (hts : H.IsTripleSystem) (t :
     exact h_card_M_lt
   have hM_cover : ∀ x, x ∈ M (e.symm x) := by
     intro x
-    simp [M, subset_Dcl];
+    simp only [M];
     exact subset_Dcl _ _ _ ⟨ e.symm x, by simp +decide, by simp +decide ⟩;
   -- Define `rank : W → Idx` as the least index such that `x ∈ M a`.
   obtain ⟨rank, hrank⟩ : ∃ rank : W → Idx, ∀ x, x ∈ M (rank x) ∧ ∀ b, b < rank x → x ∉ M b := by
@@ -834,19 +956,22 @@ theorem exists_delta_filtration (H : Hypergraph W) (hts : H.IsTripleSystem) (t :
       have := h_wellFounded.has_min { a | x ∈ M a } ⟨ e.symm x, hM_cover x ⟩;
       exact ⟨ this.choose, this.choose_spec.1, fun b hb hb' => this.choose_spec.2 b hb' hb ⟩;
     exact ⟨ fun x => Classical.choose ( h_least x ), fun x => Classical.choose_spec ( h_least x ) ⟩;
-  refine' ⟨ Idx, inferInstance, inferInstance, rank, _, _ ⟩;
+  refine ⟨ Idx, inferInstance, inferInstance, rank, ?_, ?_ ⟩;
   · intro a
     have h_subset : {v | rank v = a} ⊆ M a := by
       intro v hv; specialize hrank v; aesop;
     exact lt_of_le_of_lt ( Cardinal.mk_le_mk_of_subset h_subset ) ( hM_small a );
   · intros x y z hxz hyz hxy hnr e he hx hy hz;
-    apply claim22_abstract H hts t (⋃ b ∈ {b | b < rank z}, M b) (DClosed_biUnion_lt H t M hM_mono hM_DClosed (rank z)) x y z (by
-    exact Set.mem_iUnion₂.mpr ⟨ rank x, hxz, hrank x |>.1 ⟩) (by
-    exact Set.mem_iUnion₂.mpr ⟨ rank y, hyz, hrank y |>.1 ⟩) (by
-    simp +zetaDelta only [Set.mem_ofPred_eq, Set.mem_iUnion, exists_prop, not_exists, not_and] at *;
-    exact fun x hx => hrank z |>.2 x hx) hxy (by
-    exact fun h => hxz.ne <| h ▸ rfl) (by
-    exact fun h => by have := hrank z; aesop;) e he hx hy hz hnr
+    apply claim22_abstract H hts t (⋃ b ∈ {b | b < rank z}, M b)
+      (DClosed_biUnion_lt H t M hM_mono hM_DClosed (rank z)) x y z
+      (by exact Set.mem_iUnion₂.mpr ⟨ rank x, hxz, hrank x |>.1 ⟩)
+      (by exact Set.mem_iUnion₂.mpr ⟨ rank y, hyz, hrank y |>.1 ⟩)
+      (by
+        simp +zetaDelta only [Set.mem_ofPred_eq, Set.mem_iUnion, exists_prop,
+          not_exists, not_and] at *;
+        exact fun x hx => hrank z |>.2 x hx) hxy
+      (by exact fun h => hxz.ne <| h ▸ rfl)
+      (by exact fun h => by have := hrank z; aesop;) e he hx hy hz hnr
 
 /-
 **A monochromatic column/row of size `t` is a delta-root.**  If `t` distinct
@@ -858,24 +983,37 @@ theorem delta_root_contra (H : Hypergraph W) (t : ℕ) (ht : 0 < t) (u w : W) (h
     (S : Finset W) (hScard : t ≤ S.card) (hSne : ∀ x ∈ S, x ≠ u ∧ x ≠ w)
     (hedge : ∀ x ∈ S, ({x, u, w} : Set W) ∈ H.edges)
     (hnr : ∀ x ∈ S, ¬ hasRoot H t ({x, u, w} : Set W)) : False := by
-  -- By assumption, $D := \{e \mid e \in H.edges \land \{u, w\} \subseteq e\}$ has size at least $t$, so $\{u, w\}$ is a delta-root.
+  -- By assumption, $D := \{e \mid e \in H.edges \land \{u, w\} \subseteq e\}$ has size at least
+  -- $t$, so $\{u, w\}$ is a delta-root.
   have h_delta_root : IsDeltaRoot H t ({u, w} : Set W) := by
-    -- By assumption, $D := \{ {x, u, w} \mid x \in S \}$ has size at least $t$, so $\{u, w\}$ is a delta-root.
+    -- By assumption, $D := \{ {x, u, w} \mid x \in S \}$ has size at least $t$, so $\{u, w\}$ is a
+    -- delta-root.
     use { {x, u, w} | x ∈ S };
-    refine' ⟨ _, _, _, _ ⟩;
+    refine ⟨ ?_, ?_, ?_, ?_ ⟩;
     · exact fun x hx => by obtain ⟨ y, hy, rfl ⟩ := hx; exact hedge y hy;
-    · refine' le_trans _ ( show _ ≤ _ from Cardinal.mk_le_mk_of_subset _ );
+    · refine le_trans ?_ (Cardinal.mk_le_mk_of_subset
+        (s := Set.image (fun x => {x, u, w}) S) ?_);
       rotate_left;
-      exact Set.image ( fun x => { x, u, w } ) S;
       · exact Set.image_subset_iff.mpr fun x hx => ⟨ x, hx, rfl ⟩;
       · rw [ Set.image_eq_range ];
         rw [ Cardinal.mk_range_eq ];
-        · simp +decide [ Cardinal.mk_coe_finset, hScard ];
-        · intro x y; simp +decide only [SetLike.coe_sort_coe] ;
-          intro h; specialize h x; aesop;
+        · simp +decide [hScard];
+        · intro x y h
+          apply Subtype.ext
+          change ({(x : W), u, w} : Set W) = {(y : W), u, w} at h
+          have hx : (x : W) ∈ ({(y : W), u, w} : Set W) := by
+            rw [← h]
+            exact Set.mem_insert _ _
+          rcases hx with hxy | hxu | hxw
+          · exact hxy
+          · exact False.elim ((hSne x x.2).1 hxu)
+          · exact False.elim ((hSne x x.2).2 hxw)
     · aesop_cat;
     · grind;
-  obtain ⟨ x, hx ⟩ := Finset.card_pos.mp ( pos_of_gt ( lt_of_lt_of_le ht hScard ) ) ; specialize hnr x hx; unfold hasRoot at hnr; simp_all +decide ;
+  obtain ⟨ x, hx ⟩ := Finset.card_pos.mp ( pos_of_gt ( lt_of_lt_of_le ht hScard ) ) ;
+  specialize hnr x hx;
+  unfold hasRoot at hnr;
+  simp_all +decide ;
 
 /-
 **Layer adjacency for an `E''`-edge that is not level-flat.**  An `E''`-edge
@@ -892,27 +1030,56 @@ theorem Ess_adj {Idx : Type u} [LinearOrder Idx] (H : Hypergraph W)
     ∃ (i : Idx) (x y : W), x ∈ e ∧ y ∈ e ∧ rank x = i ∧ rank y = i ∧
       (layerGraph H t rank i).Adj x y := by
   obtain ⟨ p, q, r, hpq, hpr, hqr, he ⟩ := Set.ncard_eq_three.mp ( hts e heE );
-  -- By `key`, no vertex is a strict maximum over the other two.
-  have h_no_max : ¬(rank p > rank q ∧ rank p > rank r) ∧ ¬(rank q > rank p ∧ rank q > rank r) ∧ ¬(rank r > rank p ∧ rank r > rank q) := by
-    refine' ⟨ _, _, _ ⟩ <;> intro h <;> simp_all +decide [ hasRoot ];
-    · exact hclaim q r p h.1 h.2 ( by tauto ) ( hnr q r ( by tauto ) ( by simp +decide [ Set.insert_subset_iff ] ) ) _ heE ( by simp +decide ) ( by simp +decide ) ( by simp +decide );
-    · exact hclaim p r q h.1 h.2 ( by tauto ) ( hnr p r ( by tauto ) ( by simp +decide [ Set.insert_subset_iff ] ) ) _ heE ( by simp +decide ) ( by simp +decide ) ( by simp +decide );
-    · exact hclaim p q r h.1 h.2 ( by tauto ) ( hnr p q ( by tauto ) ( by simp +decide [ Set.insert_subset_iff ] ) ) _ heE ( by simp +decide ) ( by simp +decide ) ( by simp +decide );
+  have hpE : p ∈ e := by rw [he]; simp
+  have hqE : q ∈ e := by rw [he]; simp
+  have hrE : r ∈ e := by rw [he]; simp
+  have hnotroot (x y : W) (hxy : x ≠ y) (hx : x ∈ e) (hy : y ∈ e) :
+      ¬ IsDeltaRoot H t ({x, y} : Set W) := by
+    intro hroot
+    apply hnr
+    refine ⟨x, y, hxy, ?_, hroot⟩
+    intro z hz
+    rcases hz with rfl | rfl
+    · exact hx
+    · exact hy
+  have h_no_max : ¬(rank p > rank q ∧ rank p > rank r) ∧
+      ¬(rank q > rank p ∧ rank q > rank r) ∧
+      ¬(rank r > rank p ∧ rank r > rank q) := by
+    refine ⟨?_, ?_, ?_⟩
+    · intro h
+      exact hclaim q r p h.1 h.2 hqr (hnotroot q r hqr hqE hrE) e heE hqE hrE hpE
+    · intro h
+      exact hclaim p r q h.1 h.2 hpr (hnotroot p r hpr hpE hrE) e heE hpE hrE hqE
+    · intro h
+      exact hclaim p q r h.1 h.2 hpq (hnotroot p q hpq hpE hqE) e heE hpE hqE hrE
   -- By `hne`, the ranks are not all equal.
-  obtain ⟨i, hi⟩ : ∃ i : Idx, (rank p = i ∧ rank q = i ∧ rank r ≠ i) ∨ (rank p = i ∧ rank r = i ∧ rank q ≠ i) ∨ (rank q = i ∧ rank r = i ∧ rank p ≠ i) := by
+  obtain ⟨i, hi⟩ : ∃ i : Idx, (rank p = i ∧ rank q = i ∧ rank r ≠ i) ∨ (rank p = i ∧ rank r = i ∧
+    rank q ≠ i) ∨ (rank q = i ∧ rank r = i ∧ rank p ≠ i) := by
     contrapose! hne; simp_all +decide ;
     grind +splitImp;
-  rcases hi with ( ⟨ hp, hq, hr ⟩ | ⟨ hp, hr, hq ⟩ | ⟨ hq, hr, hp ⟩ ) <;> simp_all +decide only [↓existsAndEq, true_and, exists_and_left];
-  · grind +splitImp;
-  · refine' Or.inl ( Or.inl ⟨ q, lt_of_le_of_ne h_no_max hq, _, _ ⟩ );
-    · convert! heE using 1 ; ext ; simp +decide [ *, or_comm, or_left_comm, or_assoc ];
-    · convert! hnr using 1;
-      simp +decide [ Set.insert_comm, Set.pair_comm ];
-  · refine' Or.inr ⟨ Ne.symm hqr, Or.inl ⟨ p, lt_of_le_of_ne h_no_max hp, _, _ ⟩ ⟩;
-    · convert! heE using 1 ; ext ; simp +decide [ *, or_comm, or_left_comm, or_assoc ];
-    · convert! hnr using 1;
-      simp +decide [ Set.Subset.antisymm_iff, Set.subset_def, hasRoot ];
-      grind
+  rcases hi with ⟨hp, hq, hr⟩ | ⟨hp, hr, hq⟩ | ⟨hq, hr, hp⟩
+  · have hri : rank r < i := lt_of_le_of_ne (le_of_not_gt fun h =>
+      h_no_max.2.2 ⟨by simpa only [hp] using h, by simpa only [hq] using h⟩) hr
+    refine ⟨i, p, q, ?_, ?_, hp, hq, ?_⟩
+    · rw [he]; simp
+    · rw [he]; simp
+    · exact ⟨hpq, Or.inl ⟨hp, hq, r, hri, he ▸ heE, he ▸ hnr⟩⟩
+  · have hqi : rank q < i := lt_of_le_of_ne (le_of_not_gt fun h =>
+      h_no_max.2.1 ⟨by simpa only [hp] using h, by simpa only [hr] using h⟩) hq
+    have he' : e = ({p, r, q} : Set W) := by
+      rw [he]; ext z; simp [or_comm]
+    refine ⟨i, p, r, ?_, ?_, hp, hr, ?_⟩
+    · rw [he]; simp
+    · rw [he]; simp
+    · exact ⟨hpr, Or.inl ⟨hp, hr, q, hqi, he' ▸ heE, he' ▸ hnr⟩⟩
+  · have hpi : rank p < i := lt_of_le_of_ne (le_of_not_gt fun h =>
+      h_no_max.1 ⟨by simpa only [hq] using h, by simpa only [hr] using h⟩) hp
+    have he' : e = ({q, r, p} : Set W) := by
+      rw [he]; ext z; simp [or_comm, or_left_comm]
+    refine ⟨i, q, r, ?_, ?_, hq, hr, ?_⟩
+    · rw [he]; simp
+    · rw [he]; simp
+    · exact ⟨hqr, Or.inl ⟨hq, hr, p, hpi, he' ▸ heE, he' ▸ hnr⟩⟩
 
 /-
 Injectivity of the assembled `K^{(3)}_{n,n}` grid: cores have rank `i₀`,
@@ -984,7 +1151,7 @@ theorem hasK3nn_step (H : Hypergraph W) (hts : H.IsTripleSystem) (n : ℕ)
   have hExists : ∃ i₀ : Idx,
       ¬ (SimpleGraph.toHG (layerGraph H (3 * n ^ 2 + 1) rank i₀)).ColorableBy ℵ₀ := by
     by_contra hall
-    push_neg at hall
+    push Not at hall
     have hlayerc : ∀ i : Idx, ∃ c : W → ℕ,
         ∀ x y, (layerGraph H (3 * n ^ 2 + 1) rank i).Adj x y → c x ≠ c y :=
       fun i => (gCountColorable_iff_colorableBy _).2 (hall i)
@@ -1002,7 +1169,7 @@ theorem hasK3nn_step (H : Hypergraph W) (hts : H.IsTripleSystem) (n : ℕ)
       (E'' \ {e | e ∈ E'' ∧ ∃ a, ∀ v ∈ e, rank v = a}) hEstarcol hEsscol
     have hcov : {e | e ∈ E'' ∧ ∃ a, ∀ v ∈ e, rank v = a} ∪
         (E'' \ {e | e ∈ E'' ∧ ∃ a, ∀ v ∈ e, rank v = a}) = E'' := by
-      rw [Set.union_diff_cancel]; intro e he; exact he.1
+      rw [Set.union_sdiff_cancel]; intro e he; exact he.1
     rw [hcov] at hunion
     exact hE''uc hunion
   obtain ⟨i₀, hi₀⟩ := hExists
@@ -1030,7 +1197,7 @@ theorem hasK3nn_step (H : Hypergraph W) (hts : H.IsTripleSystem) (n : ℕ)
       (Finset.univ.filter (fun i => P i j = v)).card < (3 * n ^ 2 + 1) := by
     intro j v
     by_contra hge
-    push_neg at hge
+    push Not at hge
     have hpos : 0 < (Finset.univ.filter (fun i => P i j = v)).card :=
       lt_of_lt_of_le (by positivity) hge
     obtain ⟨i0, hi0⟩ := Finset.card_pos.mp hpos
@@ -1058,7 +1225,7 @@ theorem hasK3nn_step (H : Hypergraph W) (hts : H.IsTripleSystem) (n : ℕ)
       (Finset.univ.filter (fun j => P i j = v)).card < (3 * n ^ 2 + 1) := by
     intro i v
     by_contra hge
-    push_neg at hge
+    push Not at hge
     have hpos : 0 < (Finset.univ.filter (fun j => P i j = v)).card :=
       lt_of_lt_of_le (by positivity) hge
     obtain ⟨j0, hj0⟩ := Finset.card_pos.mp hpos

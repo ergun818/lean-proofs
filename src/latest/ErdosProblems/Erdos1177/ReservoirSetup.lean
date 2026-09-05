@@ -27,8 +27,6 @@ exactly `κ = μ⁺`.  The existence of a `CalibData μ` from `E3` is
 
 open Cardinal Ordinal
 
-set_option maxHeartbeats 4000000
-
 namespace Erdos1177
 
 universe u
@@ -191,7 +189,8 @@ theorem L_isTripleSystem : (D.L).IsTripleSystem := by
       exact X.2.1 _ ( D.phi_mem _ _ _ hX )
     exact absurd h_level (by
     exact ne_of_lt ( h_eq ▸ h_level_phi ));
-  · exact Set.Finite.image _ ( Set.finite_of_ncard_pos ( by rw [ D.edgeBase_ncard ] ; positivity ) );
+  · exact Set.Finite.image _
+      ( Set.finite_of_ncard_pos ( by rw [ D.edgeBase_ncard ] ; positivity ) );
   · exact Set.finite_singleton _
 
 /-
@@ -201,7 +200,9 @@ most one point).
 theorem edgeBase_inter_subsingleton {e₁ e₂ : D.G.edgeSet} (h : e₁ ≠ e₂) :
     (D.edgeBase e₁ ∩ D.edgeBase e₂).Subsingleton := by
   unfold CalibData.edgeBase;
-  rcases e₁ with ⟨ ⟨ x, y ⟩, hxy ⟩ ; rcases e₂ with ⟨ ⟨ u, v ⟩, huv ⟩ ; simp_all +decide [ Set.Subsingleton ];
+  rcases e₁ with ⟨ ⟨ x, y ⟩, hxy ⟩ ;
+  rcases e₂ with ⟨ ⟨ u, v ⟩, huv ⟩ ;
+  simp_all +decide [ Set.Subsingleton ];
   grind
 
 /-- The apex of an active edge lies strictly below the level of its copy. -/
@@ -214,52 +215,77 @@ theorem phi_level_lt {a : Lev (rhoC μ)}
 **`L` is linear** (`lem:calibration-linearity`): any two distinct edges meet
 in at most one vertex.
 -/
+set_option maxHeartbeats 4000000 in
+-- The equal-level case compares copy and apex intersections through dependent reservoir data.
 theorem L_linear : (D.L).Linear := by
   intro t₁ ht₁ t₂ ht₂ hne
   obtain ⟨a₁, X₁, η₁, e₁, hX₁, rfl⟩ := D.mem_edgeSetL.mp ht₁
   obtain ⟨a₂, X₂, η₂, e₂, hX₂, rfl⟩ := D.mem_edgeSetL.mp ht₂;
   by_cases h_cases : a₁ < a₂;
-  · have h_level : ∀ p ∈ (fun s => D.copy a₁ X₁ η₁ s) '' D.edgeBase e₁ ∪ {D.phi a₁ X₁ e₁}, p.1 < a₂ := by
-      simp +zetaDelta only [Set.union_singleton, Set.mem_insert_iff, Set.mem_image, forall_eq_or_imp,
+  · have h_level : ∀ p ∈ (fun s => D.copy a₁ X₁ η₁ s) '' D.edgeBase e₁ ∪ {D.phi a₁ X₁ e₁}, p.1 < a₂
+      := by
+      simp +zetaDelta only [Set.union_singleton, Set.mem_insert_iff, Set.mem_image,
+        forall_eq_or_imp,
     forall_exists_index, and_imp, forall_apply_eq_imp_iff₂] at *;
-      exact ⟨ lt_trans ( D.phi_level_lt hX₁ ) h_cases, fun x hx => lt_of_le_of_lt ( by simp +decide [ D.copy_lev ] ) h_cases ⟩;
-    intro p hp q hq; have := h_level p hp.1; have := h_level q hq.1; simp_all +decide [ D.copy_lev ] ;
+      exact ⟨ lt_trans ( D.phi_level_lt hX₁ ) h_cases,
+        fun x hx => lt_of_le_of_lt ( by simp +decide [ D.copy_lev ] ) h_cases ⟩;
+    intro p hp q hq;
+    have := h_level p hp.1;
+    have := h_level q hq.1;
+    simp_all +decide [ D.copy_lev ] ;
     grind +suggestions;
   · by_cases h_cases : a₂ < a₁;
-    · have h_inter : ∀ p ∈ (fun s => D.copy a₂ X₂ η₂ s) '' D.edgeBase e₂ ∪ {D.phi a₂ X₂ e₂}, p.1 < a₁ := by
-        simp only [Set.union_singleton, Set.mem_insert_iff, Set.mem_image, forall_eq_or_imp, forall_exists_index,
+    · have h_inter : ∀ p ∈ (fun s => D.copy a₂ X₂ η₂ s) '' D.edgeBase e₂ ∪ {D.phi a₂ X₂ e₂}, p.1 <
+        a₁ := by
+        simp only [Set.union_singleton, Set.mem_insert_iff, Set.mem_image, forall_eq_or_imp,
+          forall_exists_index,
     and_imp, forall_apply_eq_imp_iff₂];
-        exact ⟨ lt_of_lt_of_le ( D.phi_level_lt hX₂ ) h_cases.le, fun _ _ => h_cases ⟩;
-      intro p hp q hq; have := h_inter p hp.2; have := h_inter q hq.2; simp_all +decide [ D.copy_lev ] ;
-      rcases hp.1 with ( rfl | ⟨ x, hx, rfl ⟩ ) <;> rcases hq.1 with ( rfl | ⟨ y, hy, rfl ⟩ ) <;> simp_all +decide [ D.copy_lev ];
+        exact ⟨lt_of_lt_of_le (D.phi_level_lt hX₂) h_cases.le,
+          fun x _ => by rw [D.copy_lev]; exact h_cases⟩
+      intro p hp q hq;
+      have := h_inter p hp.2;
+      have := h_inter q hq.2;
+      simp_all +decide only [Set.union_singleton, ne_eq, not_lt, Set.mem_insert_iff, Set.mem_image,
+        forall_eq_or_imp, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, D.copy_lev,
+        implies_true, and_true, Set.mem_inter_iff] ;
+      rcases hp.1 with ( rfl | ⟨ x, hx, rfl ⟩ ) <;> rcases hq.1 with ( rfl | ⟨ y, hy, rfl ⟩ ) <;>
+        simp_all +decide [ D.copy_lev ];
     · cases lt_or_eq_of_le ( le_of_not_gt h_cases ) <;> simp_all +decide only [Set.union_singleton];
       by_cases h_cases : X₁.val = X₂.val ∧ η₁ = η₂;
-      · have h_base_inter : (D.copy a₁ X₁ η₁ '' D.edgeBase e₁ ∩ D.copy a₁ X₁ η₁ '' D.edgeBase e₂).Subsingleton := by
+      · have h_base_inter : (D.copy a₁ X₁ η₁ '' D.edgeBase e₁ ∩ D.copy a₁ X₁ η₁ '' D.edgeBase
+          e₂).Subsingleton := by
           have h_base_inter : (D.edgeBase e₁ ∩ D.edgeBase e₂).Subsingleton := by
             apply D.edgeBase_inter_subsingleton;
             lia;
-          have h_base_inter : (D.copy a₁ X₁ η₁ '' (D.edgeBase e₁ ∩ D.edgeBase e₂)).Subsingleton := by
+          have h_base_inter :
+              (D.copy a₁ X₁ η₁ '' (D.edgeBase e₁ ∩ D.edgeBase e₂)).Subsingleton := by
             exact Set.Subsingleton.image h_base_inter _;
           convert! h_base_inter using 1;
           rw [ Set.image_inter ];
-          exact fun x y hxy => by have := D.copy_inj a₁; have := @this ( X₁, η₁, x ) ( X₁, η₁, y ) ; aesop;
+          exact fun x y hxy =>
+            by have := D.copy_inj a₁; have := @this ( X₁, η₁, x ) ( X₁, η₁, y ) ; aesop;
         have h_apex_inter : ¬(D.phi a₁ X₁ e₁ = D.phi a₂ X₂ e₂) := by
           have := D.phi_inj a₁ X₁; simp_all +decide [ Set.InjOn ] ;
           specialize this _ e₁.2 hX₁ _ e₂.2 hX₂ ; aesop;
-        have h_apex_not_in_base : D.phi a₁ X₁ e₁ ∉ D.copy a₁ X₁ η₁ '' D.edgeBase e₂ ∧ D.phi a₂ X₂ e₂ ∉ D.copy a₁ X₁ η₁ '' D.edgeBase e₁ := by
-          constructor <;> intro h <;> obtain ⟨ s, hs, hs' ⟩ := h <;> have := D.copy_lev a₁ X₁ η₁ s <;> simp_all +decide;
+        have h_apex_not_in_base : D.phi a₁ X₁ e₁ ∉ D.copy a₁ X₁ η₁ '' D.edgeBase e₂ ∧ D.phi a₂ X₂ e₂
+          ∉ D.copy a₁ X₁ η₁ '' D.edgeBase e₁ := by
+          constructor <;> intro h <;> obtain ⟨ s, hs, hs' ⟩ := h <;> have := D.copy_lev a₁ X₁ η₁ s
+            <;> simp_all +decide only [ne_eq, lt_self_iff_false, not_false_eq_true];
           · have := D.phi_level_lt ( show ( X₁.val ( D.lbl e₁ ) ).Nonempty from by aesop ) ; aesop;
           · exact absurd this ( ne_of_lt ( by simpa [ * ] using! phi_level_lt D hX₂ ) );
         intro x hx y hy; simp_all +decide [ Set.Subsingleton ] ;
         grind;
-      · have h_disjoint : Disjoint ((fun s => D.copy a₁ X₁ η₁ s) '' D.edgeBase e₁) ((fun s => D.copy a₂ X₂ η₂ s) '' D.edgeBase e₂) := by
+      · have h_disjoint : Disjoint ((fun s => D.copy a₁ X₁ η₁ s) '' D.edgeBase e₁)
+          ((fun s => D.copy a₂ X₂ η₂ s) '' D.edgeBase e₂) := by
           have := D.copy_inj a₁;
           simp_all +decide [ Set.disjoint_left, Function.Injective ];
           grind;
-        have h_disjoint : D.phi a₁ X₁ e₁ ∉ (fun s => D.copy a₂ X₂ η₂ s) '' D.edgeBase e₂ ∧ D.phi a₂ X₂ e₂ ∉ (fun s => D.copy a₁ X₁ η₁ s) '' D.edgeBase e₁ := by
-          constructor <;> intro h <;> obtain ⟨ s, hs, hs' ⟩ := h <;> have := D.copy_lev a₂ X₂ η₂ s <;> simp_all +decide;
+        have h_disjoint : D.phi a₁ X₁ e₁ ∉ (fun s => D.copy a₂ X₂ η₂ s) '' D.edgeBase e₂ ∧ D.phi a₂
+          X₂ e₂ ∉ (fun s => D.copy a₁ X₁ η₁ s) '' D.edgeBase e₁ := by
+          constructor <;> intro h <;> obtain ⟨ s, hs, hs' ⟩ := h <;> have := D.copy_lev a₂ X₂ η₂ s
+            <;> simp_all +decide only [ne_eq, lt_self_iff_false, not_false_eq_true, not_and];
           · have := D.phi_level_lt hX₁; aesop;
-          · have := D.copy_lev a₁ X₁ η₁ s; simp_all +decide ;
+          · have := D.copy_lev a₁ X₁ η₁ s; simp_all +decide only ;
             exact absurd this ( ne_of_lt ( D.phi_level_lt hX₂ ) );
         simp_all +decide [ Set.Subsingleton ];
         simp_all +decide [ Set.disjoint_left ]
@@ -277,14 +303,19 @@ theorem L_colorable : (D.L).ColorableBy (Order.succ μ) := by
     intro t ht
     obtain ⟨a, X, η, e, hX, rfl⟩ := D.mem_edgeSetL.mp ht;
     obtain ⟨ s, hs ⟩ := Set.nonempty_of_ncard_ne_zero ( by rw [ D.edgeBase_ncard e ] ; norm_num );
-    refine' ⟨ _, Or.inl ⟨ s, hs, rfl ⟩, _, Or.inr rfl, _ ⟩ ; simp +decide only [ne_eq];
-    convert! X.2.2.2.2 ( D.lbl e ) _ ( D.phi_mem a X e hX ) using 1;
-    rw [ D.copy_lev ] ; aesop;
-  refine' ⟨ _, _ ⟩;
-  exact fun v => Classical.choice ( Cardinal.mk_out ( Order.succ μ ) |> fun h => Cardinal.lift_mk_eq'.mp <| by
-    change Cardinal.lift #(Set.Iio (Order.succ μ).ord) = _
-    simp [Cardinal.mk_Iio_ordinal] ) ( c v );
-  intro e he; specialize hc_proper e he; aesop;
+    refine ⟨D.copy a X η s, Or.inl ⟨s, hs, rfl⟩,
+      D.phi a X e, Or.inr (Set.mem_singleton _), ?_⟩
+    intro hcolor
+    have hq := congrArg Subtype.val hcolor
+    change D.q (lrank (D.copy a X η s).1) = D.q (lrank (D.phi a X e).1) at hq
+    rw [D.copy_lev] at hq
+    exact X.2.2.2.2 (D.lbl e) _ (D.phi_mem a X e hX) hq.symm
+  refine ⟨ ?_, ?_ ⟩;
+  · exact fun v => Classical.choice ( Cardinal.mk_out ( Order.succ μ ) |>
+    fun h => Cardinal.lift_mk_eq'.mp <| by
+      change Cardinal.lift #(Set.Iio (Order.succ μ).ord) = _
+      simp [Cardinal.mk_Iio_ordinal] ) ( c v );
+  · intro e he; specialize hc_proper e he; aesop;
 
 end CalibData
 

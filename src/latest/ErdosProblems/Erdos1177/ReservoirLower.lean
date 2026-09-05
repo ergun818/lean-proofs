@@ -15,8 +15,6 @@ with fewer than `κ = μ⁺` colours is proper.
 
 open Cardinal Ordinal
 
-set_option maxHeartbeats 4000000
-
 namespace Erdos1177
 
 universe u
@@ -57,12 +55,13 @@ For a fixed large colour `a`, at most one value `ξ` can satisfy
 -/
 theorem exceptional_subsingleton {θ : Cardinal.{u}} (c : Vtx (rhoC μ) → θ.out)
     (a : θ.out) (hlarge : rhoC μ ≤ #({v | c v = a})) :
-    {ξ : Ordinal.{u} | #(↥(({v | c v = a} : Set (Vtx (rhoC μ))) \ {v | D.q (lrank v.1) = ξ})) < rhoC μ}.Subsingleton := by
+    {ξ : Ordinal.{u} | #(↥(({v | c v = a} : Set (Vtx (rhoC μ))) \ {v | D.q (lrank v.1) = ξ})) < rhoC
+      μ}.Subsingleton := by
   intro ξ hξ ζ hζ;
   contrapose! hlarge;
-  refine' lt_of_le_of_lt _ ( Cardinal.add_lt_of_lt _ hξ hζ );
-  · refine' le_trans _ ( Cardinal.mk_union_le _ _ );
-    refine' Cardinal.mk_le_mk_of_subset _;
+  refine lt_of_le_of_lt ?_ ( Cardinal.add_lt_of_lt ?_ hξ hζ );
+  · refine le_trans ?_ ( Cardinal.mk_union_le _ _ );
+    refine Cardinal.mk_le_mk_of_subset ?_;
     grind;
   · exact le_trans D.hμ ( le_of_lt ( Cardinal.cantor μ ) )
 
@@ -75,11 +74,13 @@ theorem exists_xi {θ : Cardinal.{u}} (hθ : θ < Order.succ μ) (c : Vtx (rhoC 
       ∀ a : θ.out, rhoC μ ≤ #({v | c v = a}) →
         rhoC μ ≤ #(↥(({v | c v = a} : Set (Vtx (rhoC μ))) \ {v | D.q (lrank v.1) = ξ})) := by
   by_contra! h;
-  -- For each `lv : T`, set `ξ lv := Ordinal.typein (·<·) lv`, which satisfies `ξ lv < (Order.succ μ).ord` by `Ordinal.typein_lt_self`.
+  -- For each `lv : T`, set `ξ lv := Ordinal.typein (·<·) lv`, which satisfies `ξ lv < (Order.succ
+  -- μ).ord` by `Ordinal.typein_lt_self`.
   set T := (Order.succ μ).ord.ToType
   have hT : #T = Order.succ μ := by
     rw [Cardinal.mk_toType, Cardinal.card_ord]
-  choose! F hF₁ hF₂ using fun lv : T => h ( Ordinal.typein ( α := T ) ( · < · ) lv ) ( Ordinal.typein_lt_self lv );
+  choose! F hF₁ hF₂ using fun lv : T => h ( Ordinal.typein ( α := T ) ( · < · ) lv )
+    ( Ordinal.typein_lt_self lv );
   -- Claim `F : T → θ.out` is injective.
   have hF_inj : Function.Injective F := by
     intro lv lv' hF;
@@ -97,28 +98,32 @@ level `lv` with `q(rk lv) = ξ` lying strictly above every vertex of `Y`
 theorem exists_level_above (Y : Set (Vtx (rhoC μ))) (hY : #Y ≤ rhoC μ)
     (ξ : Ordinal.{u}) (hξ : ξ < (Order.succ μ).ord) :
     ∃ lv : Lev (rhoC μ), D.q (lrank lv) = ξ ∧ ∀ v ∈ Y, v.1 < lv := by
-  -- Consider the function `f : ↥Y → Ordinal`, `f v := lrank v.val.1 = Ordinal.typein (·<·) v.val.1`.
+  -- Consider the function `f : ↥Y → Ordinal`, `f v := lrank v.val.1 = Ordinal.typein (·<·)
+  -- v.val.1`.
   set f : Y → Ordinal := fun v => lrank v.val.1;
-  -- By `Ordinal.iSup_lt_ord_lift`, `s := ⨆ v : ↥Y, f v < R`.
+  -- By `Ordinal.iSup_lt_of_lt_cof`, `s := ⨆ v : ↥Y, f v < R`.
   have hs : ⨆ v : Y, f v < Rord (rhoC μ) := by
-    apply Ordinal.iSup_lt_ord_lift;
+    apply Ordinal.iSup_lt_of_lt_cof;
     · have hcof : (Rord (rhoC μ)).cof = Order.succ (rhoC μ) := by
-        exact Cardinal.IsRegular.cof_eq ( Cardinal.isRegular_succ ( by exact le_trans D.hμ ( le_of_lt ( Cardinal.cantor μ ) ) ) );
+        exact Cardinal.IsRegular.cof_ord
+          ( Cardinal.isRegular_succ ( by exact le_trans D.hμ ( le_of_lt ( Cardinal.cantor μ ) ) ) );
       exact hcof.symm ▸ lt_of_le_of_lt ( by simpa ) ( Order.lt_succ ( rhoC μ ) );
     · exact fun v => Ordinal.typein_lt_self _;
   obtain ⟨α, hα⟩ : ∃ α : Ordinal, ⨆ v : Y, f v < α ∧ α < Rord (rhoC μ) ∧ D.q α = ξ := by
     obtain ⟨α, hα⟩ : ∃ α : Ordinal, ⨆ v : Y, f v < α ∧ α < Rord (rhoC μ) ∧ D.q α = ξ := by
       have := D.hq2 ξ hξ (Order.succ (⨆ v : Y, f v)) (by
-      refine' lt_of_le_of_ne _ _;
+      refine lt_of_le_of_ne ?_ ?_;
       · exact Order.succ_le_of_lt hs;
       · intro h;
         have := D.hμ;
-        have := Cardinal.isRegular_succ ( show ℵ₀ ≤ rhoC μ from le_trans this ( le_of_lt ( Cardinal.cantor μ ) ) );
-        have := this.2; simp_all +decide [ Rord ] ;
+        have := Cardinal.isRegular_succ ( show ℵ₀ ≤ rhoC μ from le_trans this ( le_of_lt (
+          Cardinal.cantor μ ) ) );
+        have := this.2; simp_all +decide only [Rord, Order.succ_eq_add_one, Order.succ_le_iff] ;
         rw [ ← h ] at this;
         rw [ Ordinal.cof_add_one ] at this ; norm_num at this;
         exact absurd this ( ne_of_gt ( Cardinal.power_pos _ ( by norm_num ) ) ))
-      exact ⟨ this.choose, lt_of_lt_of_le ( Order.lt_succ _ ) this.choose_spec.1, this.choose_spec.2.1, this.choose_spec.2.2 ⟩;
+      exact ⟨ this.choose, lt_of_lt_of_le ( Order.lt_succ _ ) this.choose_spec.1,
+        this.choose_spec.2.1, this.choose_spec.2.2 ⟩;
     use α;
   obtain ⟨lv, hlv⟩ : ∃ lv : Lev (rhoC μ), lrank lv = α := by
     have h_enum : ∀ α : Ordinal, α < Rord (rhoC μ) → ∃ lv : Lev (rhoC μ), lrank lv = α := by
@@ -131,9 +136,12 @@ theorem exists_level_above (Y : Set (Vtx (rhoC μ))) (hY : #Y ≤ rhoC μ)
         exact ⟨ Ordinal.enum ( · < · ) ⟨ α, h_enum ⟩, by simp +decide [ lrank ] ⟩;
       exact h_enum α hα;
     exact h_enum α hα.2.1;
-  refine' ⟨ lv, _, _ ⟩ <;> simp_all +decide only [Prod.forall];
+  refine ⟨ lv, ?_, ?_ ⟩ <;> simp_all +decide only [Prod.forall];
   intro a b hab;
-  exact Ordinal.typein_lt_typein ( · < · ) |>.1 ( hlv.symm ▸ lt_of_le_of_lt ( Ordinal.le_iSup ( fun v : Y => lrank v.val.1 ) ⟨ ( a, b ), hab ⟩ ) hα.1 )
+  apply (Ordinal.typein_lt_typein (· < ·)).mp
+  change lrank a < lrank lv
+  rw [hlv]
+  exact lt_of_le_of_lt (Ordinal.le_iSup (fun v : Y => lrank v.val.1) ⟨(a, b), hab⟩) hα.1
 
 /-
 Among the `Λ = 2^ρ` installed copies at a level, fewer than `ρ` meet a fixed
@@ -145,11 +153,15 @@ theorem exists_disjoint_copy (Bad : Set (Vtx (rhoC μ))) (hBad : #Bad < rhoC μ)
     ∃ η : Fib (rhoC μ), ∀ s : D.S, D.copy lv X η s ∉ Bad := by
   contrapose! hBad; have := D.copy_inj lv; simp_all +decide only [ge_iff_le] ;
   choose f hf using hBad;
-  refine' le_trans _ ( Cardinal.mk_le_mk_of_subset <| show Set.range ( fun η : Fib ( rhoC μ ) => D.copy lv X η ( f η ) ) ⊆ Bad from Set.range_subset_iff.mpr hf );
+  refine le_trans ?_ ( Cardinal.mk_le_mk_of_subset <|
+    show Set.range ( fun η : Fib ( rhoC μ ) => D.copy lv X η ( f η ) ) ⊆ Bad from
+      Set.range_subset_iff.mpr hf );
   rw [ Cardinal.mk_range_eq ];
   · rw [ Cardinal.mk_out ];
     exact le_of_lt ( Cardinal.cantor _ );
-  · intro η η' h; specialize this _ X.2 _ _ _ X.2 _ _ h; aesop;
+  · intro η η' h
+    exact congrArg (fun p => p.2.1) (D.copy_inj lv (a₁ := (X, η, f η))
+      (a₂ := (X, η', f η')) h)
 
 /-- **Reservoir capture** (`lem:reservoir-capture`).  Given a colouring `c` of
 `L_κ` with `θ < κ` colours, there is an admissible reservoir `X` at some level
@@ -264,7 +276,7 @@ theorem reservoir_capture {θ : Cardinal.{u}} (hθ : θ < Order.succ μ)
     have hnotsmall : ¬ (#({w | c w = p}) < rhoC μ) := hη s
     have hlarge : rhoC μ ≤ #({v | c v = p}) := not_lt.mp hnotsmall
     have hdifflarge : rhoC μ ≤ #(diff p) := hξlarge p hlarge
-    show (X (bigLabel p)).Nonempty
+    change (X (bigLabel p)).Nonempty
     rw [hXbig p, ← Set.nonempty_coe_sort]
     exact Cardinal.mk_ne_zero_iff.mp (by rw [(hZ1 p hdifflarge).2]; exact ne_of_gt hpos)
   · intro s
@@ -272,7 +284,7 @@ theorem reservoir_capture {θ : Cardinal.{u}} (hθ : θ < Order.succ μ)
     have hnotsmall : ¬ (#({w | c w = p}) < rhoC μ) := hη s
     have hlarge : rhoC μ ≤ #({v | c v = p}) := not_lt.mp hnotsmall
     have hdifflarge : rhoC μ ≤ #(diff p) := hξlarge p hlarge
-    show X (bigLabel p) ⊆ {v | c v = p}
+    change X (bigLabel p) ⊆ {v | c v = p}
     rw [hXbig p]
     exact fun v hv => ((hZ1 p hdifflarge).1 hv).1
 

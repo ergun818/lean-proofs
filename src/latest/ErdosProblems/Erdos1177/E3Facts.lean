@@ -34,7 +34,7 @@ theorem lt_pow_deltaRho (hρ : ℵ₀ ≤ ρ) : ρ < ρ ^ (deltaRho ρ) := by
 theorem deltaRho_pow_le {θ : Cardinal} (hθ : θ < deltaRho ρ) :
     ρ ^ θ ≤ ρ := by
   by_contra h
-  push_neg at h
+  push Not at h
   have : deltaRho ρ ≤ θ := csInf_le (OrderBot.bddBelow _) h
   exact absurd hθ (not_lt.mpr this)
 
@@ -45,12 +45,12 @@ theorem aleph0_le_deltaRho (hρ : ℵ₀ ≤ ρ) : ℵ₀ ≤ deltaRho ρ := by
   refine le_csInf ⟨ρ, deltaRho_mem hρ⟩ ?_
   intro d hd
   by_contra h
-  push_neg at h
+  push Not at h
   exact absurd (Cardinal.pow_le hρ h) (not_le.mpr hd)
 
 /-- König: `δ(ρ) ≤ (ρ.ord).cof`. -/
 theorem deltaRho_le_cof (hρ : ℵ₀ ≤ ρ) : deltaRho ρ ≤ (ρ.ord).cof := by
-  have : (ρ.ord).cof ∈ {δ | ρ < ρ ^ δ} := Cardinal.lt_power_cof hρ
+  have : (ρ.ord).cof ∈ {δ | ρ < ρ ^ δ} := Cardinal.lt_power_cof_ord hρ
   exact csInf_le (OrderBot.bddBelow _) this
 
 /-- `δ(ρ) ≤ ρ`. -/
@@ -63,11 +63,11 @@ theorem deltaRho_regular (hρ : ℵ₀ ≤ ρ) : (deltaRho ρ).ord.cof = deltaRh
   have hwo : IsWellOrder δ.ord.ToType (· < ·) := inferInstance
   refine le_antisymm (Ordinal.cof_ord_le δ) ?_
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   have hδinf : ℵ₀ ≤ δ := aleph0_le_deltaRho hρ
   have hIioLt : ∀ s : δ.ord.ToType, #(Set.Iio s) < δ := by
     intro s
-    exact Cardinal.mk_Iio_toType_ord_lt s
+    simpa using Cardinal.mk_Iio_lt s
   have hIicLt : ∀ s : δ.ord.ToType, #(Set.Iic s) < δ := by
     intro s
     have hu : (Set.Iic s : Set δ.ord.ToType) = (Set.Iio s ∪ {s} : Set δ.ord.ToType) := by

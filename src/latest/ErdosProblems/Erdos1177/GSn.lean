@@ -126,8 +126,12 @@ theorem edge_lt_of_index_le {u v : Fin (L n) → Pt κ}
     {a b : ℕ} (ha : a < L n) (hb : b < L n) (hab : a ≤ b + n) :
     u ⟨a, ha⟩ < v ⟨b, hb⟩ := by
   obtain ⟨t, ht⟩ : ∃ t : ℕ, t ≤ n * n ∧ a ≤ n + t ∧ t ≤ b := by
-    exact ⟨ Min.min ( a - n ) b, le_trans ( min_le_left _ _ ) ( Nat.sub_le_of_le_add <| by linarith [ show L n = n * n + n + 1 from rfl ] ), by omega, min_le_right _ _ ⟩;
-  exact lt_of_le_of_lt ( hu.monotone ( by exact Nat.le_trans ( Nat.le_refl _ ) ht.2.1 ) ) ( lt_of_lt_of_le ( h.1 t ht.1 ) ( hv.monotone ( by exact Nat.le_trans ht.2.2 ( Nat.le_refl _ ) ) ) )
+    exact ⟨ Min.min ( a - n ) b, le_trans ( min_le_left _ _ )
+      ( Nat.sub_le_of_le_add <| by linarith [ show L n = n * n + n + 1 from rfl ] ),
+      by omega, min_le_right _ _ ⟩;
+  exact lt_of_le_of_lt ( hu.monotone ( by exact Nat.le_trans ( Nat.le_refl _ ) ht.2.1 ) )
+    ( lt_of_lt_of_le ( h.1 t ht.1 )
+      ( hv.monotone ( by exact Nat.le_trans ht.2.2 ( Nat.le_refl _ ) ) ) )
 
 /-
 If `IsEdge u v` and `a ≥ b + n + 1` (with `a, b` valid indices), then
@@ -139,7 +143,8 @@ theorem edge_gt_of_index_ge {u v : Fin (L n) → Pt κ}
     (hu : StrictMono u) (h : IsEdge u v)
     {a b : ℕ} (ha : a < L n) (hb : b < L n) (hab : b + n + 1 ≤ a) :
     v ⟨b, hb⟩ < u ⟨a, ha⟩ := by
-  exact lt_of_lt_of_le ( h.2 b ( by unfold L at *; omega ) ) ( hu.monotone ( by exact Nat.le_trans ( by simp +arith +decide ) hab ) )
+  exact lt_of_lt_of_le ( h.2 b ( by unfold L at *; omega ) )
+    ( hu.monotone ( by exact Nat.le_trans ( by simp +arith +decide ) hab ) )
 
 /-- An oriented edge dominates in the `0`-coordinate: `IsEdge u v ⟹ u₀ < v₀`. -/
 theorem isEdge_fst_lt {u v : Fin (L n) → Pt κ}

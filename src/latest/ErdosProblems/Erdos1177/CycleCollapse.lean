@@ -76,7 +76,8 @@ common node are nested by position.)
 theorem Node.wpre_of_comparable {ρ a b : Node A κ} (hρa : Node.wpre ρ a)
     (hcomp : Node.comparable a b) (hpos : ρ.pos ≤ b.pos) :
     Node.wpre ρ b := by
-  rcases hρa with ( rfl | hρa ) <;> rcases hcomp with ( rfl | hcomp | hcomp ) <;> simp_all +decide [ Node.wpre ];
+  rcases hρa with ( rfl | hρa ) <;> rcases hcomp with ( rfl | hcomp | hcomp ) <;>
+    simp_all +decide only [Std.le_refl, wpre, true_or, or_true];
   · exact absurd hpos ( not_le_of_gt hcomp.1 );
   · exact Or.inr ( Node.pre.trans hρa hcomp );
   · cases lt_or_eq_of_le hpos <;> simp_all +decide [ pre ];
@@ -142,10 +143,14 @@ theorem rising_base {F : FTS} {f : F.V → Node A κ × α}
   -- From `hpre`, we have `(f u).1 = σ'` and `(f w).1 = τ'`.
   have h_eq : (f u).1 = σ' ∧ (f w).1 = τ' := by
     have h_eq : (f u).1 ∈ ({σ', τ'} : Set (Node A κ)) ∧ (f w).1 ∈ ({σ', τ'} : Set (Node A κ)) := by
-      exact ⟨ by simpa using! liftEdge_fst_mem ( hset ▸ Set.mem_image_of_mem f hu ), by simpa using! liftEdge_fst_mem ( hset ▸ Set.mem_image_of_mem f hw ) ⟩;
-    cases h_eq.1 <;> cases h_eq.2 <;> simp_all +decide [ Node.pre ];
+      exact ⟨ by simpa using! liftEdge_fst_mem ( hset ▸ Set.mem_image_of_mem f hu ),
+        by simpa using! liftEdge_fst_mem ( hset ▸ Set.mem_image_of_mem f hw ) ⟩;
+    cases h_eq.1 <;> cases h_eq.2 <;> simp_all +decide only [Node.pre, lt_self_iff_false,
+      IsEmpty.exists_iff, Set.mem_insert_iff, Set.mem_singleton_iff, true_or, or_true, and_self,
+      and_true];
     exact absurd hpre.choose ( not_lt_of_gt hpre'.1 );
-  have := ( τ'.seq ⟨ σ'.pos, hpre'.1 ⟩ ) |>.2; simp_all +decide only [ne_eq, Set.mem_image, SetLike.mem_coe] ;
+  have := ( τ'.seq ⟨ σ'.pos, hpre'.1 ⟩ ) |>.2;
+  simp_all +decide only [ne_eq] ;
   exact ⟨ a, b, this.ne, by aesop ⟩
 
 /-- Sym2-level version of `seqAt_eq_of_comparable`. -/
@@ -183,9 +188,10 @@ theorem seqAt_const_along {m : ℕ} (g : ZMod m → Node A κ)
     (hpre : ∀ j : ℕ, j ≤ n → Node.pre A κ σ (g (start + (j : ZMod m)))) :
     ((g (start + (n : ZMod m))).seq ⟨σ.pos, (hpre n le_rfl).1⟩ : Sym2 α)
       = ((g (start + ((0 : ℕ) : ZMod m))).seq ⟨σ.pos, (hpre 0 (Nat.zero_le n)).1⟩ : Sym2 α) := by
-  induction' n with n ih;
-  · rfl;
-  · convert! ih ( fun j hj => hpre j ( Nat.le_succ_of_le hj ) ) using 1;
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+    convert! ih ( fun j hj => hpre j ( Nat.le_succ_of_le hj ) ) using 1;
     convert! Node.seqAt_Sym2_eq_of_comparable _ _ _ using 1;
     convert! hcomp ( start + n ) |> fun h => h.symm using 1 ; push_cast ; ring_nf;
     simp +decide [ add_comm, Node.comparable ];
@@ -205,14 +211,17 @@ theorem exists_first_return {m : ℕ} [NeZero m] (P : ZMod m → Prop)
   have ht_lt : t % m < m := by
     exact Nat.mod_lt _ ( NeZero.pos m );
   have h_exists_n0 : ∃ n0, 1 ≤ n0 ∧ n0 ≤ m - 1 ∧ P (start + (n0 : ZMod m)) := by
-    refine' ⟨ t % m, Nat.pos_of_ne_zero _, Nat.le_sub_one_of_lt ht_lt, _ ⟩;
+    refine ⟨ t % m, Nat.pos_of_ne_zero ?_, Nat.le_sub_one_of_lt ht_lt, ?_ ⟩;
     · contrapose! hstart; simp_all ;
       rw [ ← Nat.dvd_iff_mod_eq_zero ] at hstart; obtain ⟨ k, hk ⟩ := hstart; simp_all ;
     · simpa [ ZMod.natCast_mod ] using! ht;
-  obtain ⟨n0, hn0⟩ : ∃ n0, n0 ∈ {n | 1 ≤ n ∧ n ≤ m - 1 ∧ P (start + (n : ZMod m))} ∧ ∀ n ∈ {n | 1 ≤ n ∧ n ≤ m - 1 ∧ P (start + (n : ZMod m))}, n0 ≤ n := by
+  obtain ⟨n0, hn0⟩ : ∃ n0, n0 ∈ {n | 1 ≤ n ∧ n ≤ m - 1 ∧ P (start + (n : ZMod m))} ∧ ∀ n ∈ {n | 1 ≤
+    n ∧ n ≤ m - 1 ∧ P (start + (n : ZMod m))}, n0 ≤ n := by
     apply_rules [ Set.exists_min_image ];
     exact Set.finite_iff_bddAbove.mpr ⟨ m - 1, fun n hn => hn.2.1 ⟩;
-  exact ⟨ n0, hn0.1.1, hn0.1.2.1, hn0.1.2.2, fun j hj hj' => not_lt_of_ge ( hn0.2 j ⟨ Nat.pos_of_ne_zero fun h => by aesop, Nat.le_trans ( Nat.le_of_lt hj ) hn0.1.2.1, hj' ⟩ ) hj ⟩
+  exact ⟨ n0, hn0.1.1, hn0.1.2.1, hn0.1.2.2, fun j hj hj' =>
+    not_lt_of_ge ( hn0.2 j ⟨ Nat.pos_of_ne_zero fun h => by aesop,
+      Nat.le_trans ( Nat.le_of_lt hj ) hn0.1.2.1, hj' ⟩ ) hj ⟩
 
 /-
 **Base adjacency.**  If two distinct vertices `u, w` of an edge `e` of `F`
@@ -231,11 +240,14 @@ theorem base_adj {F : FTS} {f : F.V → Node A κ × α} (hf : Function.Injectiv
     exact hset ▸ Set.mem_image_of_mem _ hu
   have hfw : f w ∈ ({(σ, x), (σ, y), (τ, z)} : Set (Node A κ × α)) := by
     grind;
-  by_cases h : ( f u ).1 = τ <;> simp_all +decide [ Function.Injective.eq_iff hf ];
+  by_cases h : ( f u ).1 = τ <;> simp_all +decide only [ne_eq, Set.mem_insert_iff,
+    Set.mem_singleton_iff];
   · grind +suggestions;
-  · rcases hfu with ( hfu | hfu | hfu ) <;> rcases hfw with ( hfw | hfw | hfw ) <;> simp_all +decide;
+  · rcases hfu with ( hfu | hfu | hfu ) <;> rcases hfw with ( hfw | hfw | hfw ) <;>
+    simp_all +decide only [SimpleGraph.irrefl, not_true_eq_false];
     · exact False.elim ( huw ( hf ( hfu.trans hfw.symm ) ) );
-    · replace hseq := congr_arg ( fun s => s ∈ SimpleGraph.edgeSet A ) hseq ; simp_all +decide [ SimpleGraph.mem_edgeSet ];
+    · replace hseq := congr_arg ( fun s => s ∈ SimpleGraph.edgeSet A ) hseq ; simp_all +decide
+        [ SimpleGraph.mem_edgeSet ];
     · convert! SimpleGraph.Adj.symm ( show A.Adj x y from ?_ ) using 1;
       convert! ( τ.seq ⟨ σ.pos, hpre.1 ⟩ ).2 using 1;
       simp +decide [ hseq, SimpleGraph.mem_edgeSet ];
@@ -267,7 +279,7 @@ theorem cycle_collapse {F : FTS} (hlin : F.Linear) (f : F.V → Node A κ × α)
   -- Step 3: rising index
   obtain ⟨k, hk, hk1⟩ : ∃ k, (f (c.v k)).1 = σ ∧ (f (c.v (k+1))).1 ≠ σ := by
     by_contra hall2
-    push_neg at hall2
+    push Not at hall2
     exact hne (zmod_cyclic_induction (P := fun s => (f (c.v s)).1 = σ) j0 rfl
       (fun s hs => hall2 s hs) t)
   have hkpre : Node.pre A κ σ (f (c.v (k+1))).1 :=
@@ -295,7 +307,8 @@ theorem cycle_collapse {F : FTS} (hlin : F.Linear) (f : F.V → Node A κ × α)
   obtain ⟨x1, y1, hxy1, hval1, hmx1, hmy1⟩ :=
     rising_base (c.e k).1 (hfe _ (c.e k).2) (c.mem_left k) (c.mem_right k) (hk.symm ▸ hkpre)
   obtain ⟨x2, y2, hxy2, hval2, hmx2, hmy2⟩ :=
-    rising_base (c.e kf).1 (hfe _ (c.e kf).2) (c.mem_right kf) (c.mem_left kf) (hνkf1.symm ▸ hνkf_pre)
+    rising_base (c.e kf).1 (hfe _ (c.e kf).2) (c.mem_right kf) (c.mem_left kf) (hνkf1.symm ▸
+      hνkf_pre)
   -- rewrite the memberships and base-pair values to base node σ
   simp only [hk] at hval1 hmx1 hmy1
   simp only [hνkf1] at hval2 hmx2 hmy2
@@ -425,7 +438,7 @@ theorem lift_bergeCycle_graphCycle {F : FTS} (hlin : F.Linear) (f : F.V → Node
     have hnode : (f (c.v i)).1 = (f (c.v j)).1 := by
       convert! cycle_collapse hlin f hf hfe c i j using 1;
     have := hf ( Prod.ext hnode hij ) ; simp_all +decide [ c.vinj.eq_iff ] ;
-  refine' ⟨ _, hv_inj, _ ⟩;
+  refine ⟨fun i => (f (c.v i)).2, hv_inj, ?_⟩;
   intro i
   have h_edge : (f '' (↑(c.e i).1 : Set F.V)) ∈ (liftHG A κ).edges := by
     exact hfe _ ( c.e i |>.2 )

@@ -55,7 +55,13 @@ theorem e5_HK_loose7_of_loose7Free_finitelyColorable
   intro W H A htri hlin hcount hsub huc;
   apply Classical.byContradiction
   intro h_no_embedding;
-  exact huc ( Classical.choose ( h_contra ⟨ A ⟩ ( isTripleSystem_of_edges_subset H htri A hsub ) ( linear_of_edges_subset H hlin A hsub ) h_no_embedding ) ) ( Classical.choose_spec ( h_contra ⟨ A ⟩ ( isTripleSystem_of_edges_subset H htri A hsub ) ( linear_of_edges_subset H hlin A hsub ) h_no_embedding ) |>.1 ) ( Classical.choose_spec ( h_contra ⟨ A ⟩ ( isTripleSystem_of_edges_subset H htri A hsub ) ( linear_of_edges_subset H hlin A hsub ) h_no_embedding ) |>.2 )
+  exact huc ( Classical.choose ( h_contra ⟨ A ⟩
+    ( isTripleSystem_of_edges_subset H htri A hsub )
+    ( linear_of_edges_subset H hlin A hsub ) h_no_embedding ) )
+    ( Classical.choose_spec ( h_contra ⟨ A ⟩ ( isTripleSystem_of_edges_subset H htri A hsub )
+      ( linear_of_edges_subset H hlin A hsub ) h_no_embedding ) |>.1 )
+    ( Classical.choose_spec ( h_contra ⟨ A ⟩ ( isTripleSystem_of_edges_subset H htri A hsub )
+      ( linear_of_edges_subset H hlin A hsub ) h_no_embedding ) |>.2 )
 
 /-
 Hence a uniform Hajnal--Komjáth finite-colour bound implies E5.
@@ -75,7 +81,8 @@ theorem countableEmbeddingPrinciple_of_loose7Free_finitelyColorable
     (h : Loose7FreeFinitelyColorable.{u}) :
     E5CountableEmbeddingPrinciple.{u} := by
   intro W H A htri hlin hAcount hAsub hunbounded; contrapose! hunbounded;
-  convert! h ⟨ A ⟩ ( isTripleSystem_of_edges_subset H htri A hAsub ) ( linear_of_edges_subset H hlin A hAsub ) hunbounded
+  convert! h ⟨ A ⟩ ( isTripleSystem_of_edges_subset H htri A hAsub ) ( linear_of_edges_subset H hlin
+    A hAsub ) hunbounded
 
 /-
 The uniform bound yields the countable-core principle as well.
@@ -83,7 +90,8 @@ The uniform bound yields the countable-core principle as well.
 theorem countableEmbeddingPrinciple_of_uniformFiniteBound
     (h : Loose7FreeUniformFiniteBound.{u}) :
     E5CountableEmbeddingPrinciple.{u} := by
-  exact countableEmbeddingPrinciple_of_loose7Free_finitelyColorable ( loose7Free_finitelyColorable_of_uniformFiniteBound h )
+  exact countableEmbeddingPrinciple_of_loose7Free_finitelyColorable (
+    loose7Free_finitelyColorable_of_uniformFiniteBound h )
 
 /-- A host-specific finite bound is sufficient: if every loose-seven-free
 linear triple system in the universe is `k`-colourable, then every linear host

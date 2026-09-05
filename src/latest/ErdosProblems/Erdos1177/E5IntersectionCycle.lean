@@ -33,11 +33,14 @@ are distinct and have a common vertex.
 -/
 theorem edgeIntersectionGraph_adj_iff (H : Hypergraph W) (e f : H.edges) :
     (edgeIntersectionGraph H).Adj e f ↔ e ≠ f ∧ (e.1 ∩ f.1).Nonempty := by
-  constructor;
-  · intro h;
-    cases h.2 <;> simp_all +decide only [ne_eq];
-    rwa [ Set.inter_comm ];
-  · simp +contextual [ edgeIntersectionGraph ]
+  constructor
+  · intro h
+    refine ⟨h.1, ?_⟩
+    rcases h.2 with h | h
+    · exact h
+    · simpa only [Set.inter_comm] using h
+  · rintro ⟨hne, h⟩
+    exact ⟨hne, Or.inl h⟩
 
 /-- Data for a chordless seven-cycle in the edge-intersection graph. -/
 structure InducedEdgeIntersectionSevenCycle (H : Hypergraph W) where
@@ -67,7 +70,9 @@ The chosen join vertex belongs to the edge on its left.
 theorem InducedEdgeIntersectionSevenCycle.core_mem_left
     {H : Hypergraph W} (c : InducedEdgeIntersectionSevenCycle H) (i : Fin 7) :
     c.core (i + 1) ∈ (c.edge i).1 := by
-  convert! Classical.choose_spec ( ( edgeIntersectionGraph_adj_iff H ( c.edge i ) ( c.edge ( i + 1 ) ) ).mp ( by simpa using! c.consecutive i ) |>.2 ) |>.1 using 1;
+  convert! Classical.choose_spec
+    ( ( edgeIntersectionGraph_adj_iff H ( c.edge i ) ( c.edge ( i + 1 ) ) ).mp
+      ( by simpa using! c.consecutive i ) |>.2 ) |>.1 using 1;
   fin_cases i <;> rfl
 
 /-
@@ -77,24 +82,32 @@ two points, while inducedness rules out a point lying on nonconsecutive cycle
 edges.
 -/
 set_option maxHeartbeats 800000 in
+-- The proof checks the possible positions of two coinciding core vertices in the seven-cycle.
 theorem InducedEdgeIntersectionSevenCycle.core_injective
     (H : Hypergraph W)
     (c : InducedEdgeIntersectionSevenCycle H) :
     Function.Injective c.core := by
   intro i j hij
   by_contra h_neq;
-  -- By the properties of the core vertices and the induced cycle, we have that $c.core i \in (c.edge (i - 1)).1$ and $c.core i \in (c.edge i).1$.
+  -- By the properties of the core vertices and the induced cycle, we have that $c.core i \in
+  -- (c.edge (i - 1)).1$ and $c.core i \in (c.edge i).1$.
   have h_core_i : c.core i ∈ (c.edge (i - 1)).1 ∧ c.core i ∈ (c.edge i).1 := by
-    exact ⟨ Classical.choose_spec ( ( edgeIntersectionGraph_adj_iff H ( c.edge ( i - 1 ) ) ( c.edge i ) ).mp ( by simpa using! c.consecutive ( i - 1 ) ) |>.2 ) |>.1, c.core_mem_right i ⟩
+    exact ⟨ Classical.choose_spec
+      ( ( edgeIntersectionGraph_adj_iff H ( c.edge ( i - 1 ) ) ( c.edge i ) ).mp
+        ( by simpa using! c.consecutive ( i - 1 ) ) |>.2 ) |>.1, c.core_mem_right i ⟩
   have h_core_j : c.core j ∈ (c.edge (j - 1)).1 ∧ c.core j ∈ (c.edge j).1 := by
     exact ⟨ by simpa using! c.core_mem_left ( j - 1 ), by simpa using! c.core_mem_right j ⟩;
-  have := c.induced ( i - 1 ) j; simp_all +decide [ Fin.ext_iff ] ;
-  have := c.induced i ( j - 1 ) ; simp_all +decide [ edgeIntersectionGraph ] ;
-  by_cases hi : c.edge ( i - 1 ) = c.edge j <;> by_cases hj : c.edge i = c.edge ( j - 1 ) <;> simp_all +decide [ Set.Nonempty ];
+  have := c.induced ( i - 1 ) j; simp_all +decide only [Fin.ext_iff, Fin.isValue, sub_add_cancel] ;
+  have := c.induced i ( j - 1 ) ; simp_all +decide only [Fin.isValue, edgeIntersectionGraph,
+    SimpleGraph.fromRel_adj, ne_eq, and_imp, sub_add_cancel] ;
+  by_cases hi : c.edge ( i - 1 ) = c.edge j <;> by_cases hj : c.edge i = c.edge ( j - 1 ) <;>
+    simp_all +decide only [Fin.isValue, and_self, not_true_eq_false, Set.Nonempty, Set.inter_self,
+      or_self, forall_exists_index, IsEmpty.forall_iff, true_and, not_false_eq_true,
+      Set.mem_inter_iff, forall_const, and_true];
   · have := c.injective hi; have := c.injective hj; fin_cases i <;> fin_cases j <;> trivial;
   · fin_cases i <;> fin_cases j <;> simp +decide at h_neq this ⊢;
     all_goals have := c.injective hi; simp_all +decide ;
-  · have := c.injective hj; simp_all +decide [ Fin.ext_iff ] ;
+  · have := c.injective hj; simp_all +decide only [Fin.isValue, Fin.ext_iff] ;
     fin_cases j <;> simp_all +decide;
   · fin_cases i <;> fin_cases j <;> simp +decide at h_neq hi hj this ⊢;
     all_goals simp_all +decide
@@ -114,18 +127,24 @@ theorem InducedEdgeIntersectionSevenCycle.core_mem_iff
     · have h_adj : (edgeIntersectionGraph H).Adj (c.edge i) (c.edge j) := by
         have h_adj : (c.edge i).1 ∩ (c.edge j).1 ≠ ∅ := by
           exact Set.Nonempty.ne_empty ⟨ c.core j, hj, c.core_mem_right j ⟩;
-        simp_all +decide [ Set.ext_iff, edgeIntersectionGraph ];
-        exact ⟨ by intro h; have := c.injective h; aesop, Or.inl ⟨ _, h_adj.choose_spec.1, h_adj.choose_spec.2 ⟩ ⟩;
-      have := c.induced i j h_adj; simp_all +decide [ Fin.ext_iff ] ;
+        simp_all +decide only [Fin.isValue, not_or, ne_eq, Set.ext_iff, Set.mem_inter_iff,
+          Set.mem_empty_iff_false, iff_false, not_and, not_forall, not_not,
+          edgeIntersectionGraph, SimpleGraph.fromRel_adj];
+        exact ⟨ by intro h; have := c.injective h; aesop,
+          Or.inl ⟨ _, h_adj.choose_spec.1, h_adj.choose_spec.2 ⟩ ⟩;
+      have := c.induced i j h_adj; simp_all +decide only [Fin.ext_iff, Fin.isValue, not_or,
+        false_or, or_false, not_false_eq_true, and_true] ;
       have h_adj : (edgeIntersectionGraph H).Adj (c.edge i) (c.edge (j - 1)) := by
         have h_adj : c.core j ∈ (c.edge i).1 ∧ c.core j ∈ (c.edge (j - 1)).1 := by
           exact ⟨ hj, by simpa using! c.core_mem_left ( j - 1 ) ⟩;
         exact ⟨ by
           intro h; have := c.injective h; fin_cases i <;> fin_cases j <;> trivial;, by
           exact Or.inl ⟨ c.core j, h_adj.1, h_adj.2 ⟩ ⟩;
-      fin_cases i <;> fin_cases j <;> simp +decide at this h_adj ⊢;
+      fin_cases i <;> fin_cases j <;> simp +decide only [Fin.zero_eta, Fin.isValue,
+        Fin.reduceFinMk, Fin.reduceSub, Fin.mk_one, zero_sub, sub_self] at this h_adj ⊢;
       all_goals have := c.induced _ _ h_adj; simp_all +decide;
-  · rintro ( rfl | rfl ) <;> simp +decide [ InducedEdgeIntersectionSevenCycle.core_mem_right, InducedEdgeIntersectionSevenCycle.core_mem_left ]
+  · rintro ( rfl | rfl ) <;> simp +decide [ InducedEdgeIntersectionSevenCycle.core_mem_right,
+      InducedEdgeIntersectionSevenCycle.core_mem_left ]
 
 /-
 Two distinct edges of an induced edge-intersection cycle can meet only in
@@ -136,25 +155,22 @@ theorem InducedEdgeIntersectionSevenCycle.inter_subset_core
     (c : InducedEdgeIntersectionSevenCycle H)
     {i j : Fin 7} (hij : i ≠ j) :
     (c.edge i).1 ∩ (c.edge j).1 ⊆ Set.range c.core := by
-  intro x hx; by_cases h_cases : j = i + 1 ∨ i = j + 1 <;> simp_all +decide only [Set.mem_range];
-  · cases' h_cases with h_cases h_cases;
-    · use i + 1;
-      apply hlin;
-      exact c.edge i |>.2;
-      exact c.edge ( i + 1 ) |>.2;
-      · exact fun h => by have := c.injective ( Subtype.ext h ) ; fin_cases i <;> trivial;
-      · exact ⟨ c.core_mem_left i, c.core_mem_right ( i + 1 ) ⟩;
-      · aesop;
-    · have h_core_eq : x = c.core (j + 1) := by
-        apply hlin;
-        exact c.edge i |>.2;
-        exact c.edge j |>.2;
-        · exact fun h => hij <| c.injective <| Subtype.ext h;
-        · exact ⟨ hx.1, hx.2 ⟩;
-        · simp +decide [ *, InducedEdgeIntersectionSevenCycle.core_mem_left, InducedEdgeIntersectionSevenCycle.core_mem_right ];
-      exact ⟨ _, h_core_eq.symm ⟩;
-  · have := c.induced i j; simp_all +decide [ edgeIntersectionGraph ] ;
-    exact False.elim ( this ( by intro h; have := c.injective h; fin_cases i <;> fin_cases j <;> trivial ) |>.1 ⟨ x, hx ⟩ )
+  intro x hx
+  by_cases h_cases : j = i + 1 ∨ i = j + 1
+  · rcases h_cases with rfl | h_cases
+    · refine ⟨i + 1, ?_⟩
+      exact hlin _ (c.edge i).2 _ (c.edge (i + 1)).2
+        (fun h => hij (c.injective (Subtype.ext h)))
+        ⟨c.core_mem_left i, c.core_mem_right (i + 1)⟩ hx
+    · subst i
+      refine ⟨j + 1, ?_⟩
+      exact hlin _ (c.edge (j + 1)).2 _ (c.edge j).2
+        (fun h => hij (c.injective (Subtype.ext h)))
+        ⟨c.core_mem_right (j + 1), c.core_mem_left j⟩ hx
+  · have hadj : (edgeIntersectionGraph H).Adj (c.edge i) (c.edge j) :=
+      (edgeIntersectionGraph_adj_iff H _ _).mpr
+        ⟨fun h => hij (c.injective h), ⟨x, hx⟩⟩
+    exact False.elim (h_cases (c.induced i j hadj))
 
 /-- An induced seven-cycle in the edge-intersection graph determines a clean
 seven-edge loose cycle. -/
@@ -230,6 +246,7 @@ theorem e5_HK_loose7_of_induced_edgeIntersection_cycle
       H.UncountablyChromatic → Nonempty (InducedEdgeIntersectionSevenCycle H)) :
     E5_HK_loose7.{u} := by
   intro W H htri hlin huc;
-  exact looseCycle7_embeds_of_induced_edgeIntersection_cycle H htri hlin ( Classical.choice ( hcycle H htri hlin huc ) )
+  exact looseCycle7_embeds_of_induced_edgeIntersection_cycle H htri hlin ( Classical.choice ( hcycle
+    H htri hlin huc ) )
 
 end Erdos1177

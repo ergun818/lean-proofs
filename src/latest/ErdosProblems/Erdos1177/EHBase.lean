@@ -61,16 +61,17 @@ theorem gCountColorable_iff_colorableBy (G : SimpleGraph V) :
     GCountColorable G ↔ (SimpleGraph.toHG G).ColorableBy ℵ₀ := by
   constructor;
   · rintro ⟨ c, hc ⟩;
-    refine' ⟨ _, _ ⟩;
-    convert! ( nonempty_equiv_of_countable ( α := ℕ ) ( β := Quotient.out ℵ₀ ) ).some ∘ c;
-    convert! Cardinal.mk_le_aleph0_iff.mp _;
-    convert! Cardinal.mk_out ℵ₀ |> le_of_eq;
-    exact Cardinal.infinite_iff.2 ( by simp +decide );
-    intro e he; obtain ⟨ x, y, hxy, rfl ⟩ := he; specialize hc x y hxy; aesop;
+    refine ⟨ ?_, ?_ ⟩;
+    · convert! ( nonempty_equiv_of_countable ( α := ℕ ) ( β := Quotient.out ℵ₀ ) ).some ∘ c;
+      · convert! Cardinal.mk_le_aleph0_iff.mp _;
+        convert! Cardinal.mk_out ℵ₀ |> le_of_eq;
+      · exact Cardinal.infinite_iff.2 ( by simp +decide );
+    · intro e he; obtain ⟨ x, y, hxy, rfl ⟩ := he; specialize hc x y hxy; aesop;
   · rintro ⟨ c, hc ⟩;
     obtain ⟨ f, hf ⟩ := Cardinal.eq.1 ( Cardinal.mk_out ℵ₀ );
     use fun x => ( f ( c x ) ).down;
-    intro x y hxy; have := hc _ ( by exact ⟨ x, y, hxy, rfl ⟩ ) ; simp_all +decide [ Function.LeftInverse, Function.RightInverse ] ;
+    intro x y hxy; have := hc _ ( by exact ⟨ x, y, hxy, rfl ⟩ ) ; simp_all +decide
+      [ Function.LeftInverse, Function.RightInverse ] ;
     grind
 
 /-- `G` contains `K_{n, ℵ₁}`: `n` distinct vertices with a common neighbourhood of
@@ -123,56 +124,80 @@ The set of vertices with `≥ n` neighbours in `X` has cardinality at most
 theorem closeStep_card_le (G : SimpleGraph V) (n : ℕ) (hfree : ¬ HasKnAleph1 G n)
     (X : Set V) : #(closeStep G n X) ≤ #X + ℵ₀ := by
   -- Every vertex in the closure step has at least `n` neighbours in `X`.
-  have h_closure_step : {x | (n : Cardinal) ≤ #(nbhdIn G x X)} ⊆ ⋃ (a : {a : Fin n → V // Function.Injective a ∧ ∀ i, a i ∈ X}), {v | (∀ i, v ≠ a.1 i) ∧ ∀ i, G.Adj (a.1 i) v} := by
-    intro x hx; simp_all +decide only [ne_eq, Set.mem_iUnion, Set.mem_ofPred_eq, Subtype.exists, exists_and_left, exists_prop] ;
+  have h_closure_step : {x | (n : Cardinal) ≤ #(nbhdIn G x X)} ⊆ ⋃ (a : {a : Fin n → V //
+    Function.Injective a ∧ ∀ i, a i ∈ X}), {v | (∀ i, v ≠ a.1 i) ∧ ∀ i, G.Adj (a.1 i) v} := by
+    intro x hx;
+    simp_all +decide only [ne_eq, Set.mem_iUnion, Set.mem_ofPred_eq, Subtype.exists,
+      exists_and_left, exists_prop] ;
     -- Since $x$ has at least $n$ neighbors in $X$, we can choose $n$ distinct neighbors from $X$.
     obtain ⟨a, ha⟩ : ∃ a : Fin n → V, Function.Injective a ∧ ∀ i, a i ∈ X ∧ G.Adj x (a i) := by
       obtain ⟨ s, hs ⟩ := Cardinal.le_mk_iff_exists_subset.mp hx;
       have := Cardinal.eq.1 hs.2;
       obtain ⟨ e ⟩ := this;
-      exact ⟨ fun i => e.symm ⟨ i ⟩ |>.1, fun i j hij => by simpa [ Fin.ext_iff ] using! e.symm.injective ( Subtype.ext hij ), fun i => ⟨ hs.1 ( e.symm ⟨ i ⟩ |>.2 ) |>.1, hs.1 ( e.symm ⟨ i ⟩ |>.2 ) |>.2 ⟩ ⟩;
-    exact ⟨ a, fun i => by intro hi; have := ha.2 i; simp_all +decide [ SimpleGraph.adj_comm ], ⟨ ha.1, fun i => ha.2 i |>.1 ⟩, fun i => ha.2 i |>.2.symm ⟩;
+      exact ⟨ fun i => e.symm ⟨ i ⟩ |>.1,
+        fun i j hij => by simpa [ Fin.ext_iff ] using! e.symm.injective ( Subtype.ext hij ),
+        fun i => ⟨ hs.1 ( e.symm ⟨ i ⟩ |>.2 ) |>.1, hs.1 ( e.symm ⟨ i ⟩ |>.2 ) |>.2 ⟩ ⟩;
+    exact ⟨ a, fun i => by
+      intro hi; have := ha.2 i; simp_all +decide,
+      ⟨ ha.1, fun i => ha.2 i |>.1 ⟩, fun i => ha.2 i |>.2.symm ⟩;
   -- The index set has cardinality at most `#X + ℵ₀`.
-  have h_index_card : #( {a : Fin n → V // Function.Injective a ∧ ∀ i, a i ∈ X} ) ≤ #(X : Set V) + ℵ₀ := by
-    have h_index_card : #( {a : Fin n → V // Function.Injective a ∧ ∀ i, a i ∈ X} ) ≤ #(Fin n → X) := by
+  have h_index_card : #( {a : Fin n → V // Function.Injective a ∧ ∀ i, a i ∈ X} ) ≤ #(X : Set V) +
+    ℵ₀ := by
+    have h_index_card : #( {a : Fin n → V // Function.Injective a ∧ ∀ i, a i ∈ X} ) ≤ #(Fin n → X)
+      := by
       fapply Cardinal.mk_le_of_injective;
-      exacts [ fun a => fun i => ⟨ a.val i, a.property.2 i ⟩, fun a b h => Subtype.ext <| funext fun i => by simpa using! congr_fun h i ];
-    by_cases hX : Infinite X <;> simp_all +decide only [ge_iff_le];
-    · refine' le_trans h_index_card _;
-      rcases n with ( _ | n ) <;> simp_all +decide [ Cardinal.power_nat_eq ];
-      exact le_add_of_nonneg_of_le ( zero_le ) ( by simp +decide );
-    · exact le_trans h_index_card ( le_add_of_nonneg_of_le ( by positivity ) ( by exact le_of_lt ( Cardinal.lt_aleph0_of_finite _ ) ) );
+      exacts [ fun a => fun i => ⟨ a.val i, a.property.2 i ⟩,
+        fun a b h => Subtype.ext <| funext fun i => by simpa using! congr_fun h i ];
+    by_cases hX : Infinite X
+    · have : Infinite X := hX
+      refine le_trans h_index_card ?_
+      cases n with
+      | zero =>
+        simpa using (le_trans Cardinal.one_le_aleph0
+          (le_add_left le_rfl : ℵ₀ ≤ #X + ℵ₀))
+      | succ n =>
+        calc
+          #(Fin (n + 1) → X) = #X ^ (n + 1 : ℕ) := by
+            rw [Cardinal.mk_arrow, Cardinal.lift_uzero, Cardinal.lift_mk_fin,
+              Cardinal.power_natCast]
+          _ = #X := Cardinal.power_nat_eq (Cardinal.aleph0_le_mk X) (Nat.succ_pos n)
+          _ ≤ #X + ℵ₀ := le_self_add
+    · have : Finite X := not_infinite_iff_finite.mp hX
+      exact le_trans h_index_card ( le_add_of_nonneg_of_le ( by positivity )
+        ( by exact le_of_lt ( Cardinal.lt_aleph0_of_finite _ ) ) );
   -- Each common-neighbourhood set has cardinality at most `ℵ₀`.
-  have h_common_nbhd_card : ∀ a : {a : Fin n → V // Function.Injective a ∧ ∀ i, a i ∈ X}, #( {v | (∀ i, v ≠ a.1 i) ∧ ∀ i, G.Adj (a.1 i) v} : Set V ) ≤ ℵ₀ := by
+  have h_common_nbhd_card : ∀ a : {a : Fin n → V // Function.Injective a ∧ ∀ i, a i ∈ X}, #( {v | (∀
+    i, v ≠ a.1 i) ∧ ∀ i, G.Adj (a.1 i) v} : Set V ) ≤ ℵ₀ := by
     exact fun a => commonNbhd_le_aleph0 G n hfree a.1 a.2.1;
   -- Therefore, the cardinality of the closure step is at most `#X + ℵ₀`.
-  have h_closure_step_card : #( {x | (n : Cardinal) ≤ #(nbhdIn G x X)} : Set V ) ≤ (#(X : Set V) + ℵ₀) * ℵ₀ := by
-    refine' le_trans ( Cardinal.mk_le_mk_of_subset h_closure_step ) _;
-    refine' le_trans ( Cardinal.mk_iUnion_le _ ) _;
+  have h_closure_step_card : #( {x | (n : Cardinal) ≤ #(nbhdIn G x X)} : Set V ) ≤ (#(X : Set V) +
+    ℵ₀) * ℵ₀ := by
+    refine le_trans ( Cardinal.mk_le_mk_of_subset h_closure_step ) ?_;
+    refine le_trans ( Cardinal.mk_iUnion_le _ ) ?_;
     gcongr;
     exact ciSup_le' fun a => h_common_nbhd_card a;
-  convert! Cardinal.mk_union_le _ _ |> le_trans <| add_le_add_left h_closure_step_card _ using 1;
-  any_goals exact X;
-  · grind +locals;
-  · simp +decide only [self_le_add_left, mul_aleph0_eq];
-    rw [ ← add_assoc, Cardinal.add_eq_max ];
-    · rw [ Cardinal.add_eq_max ];
-      · simp +decide [ max_assoc ];
-      · exact le_max_left _ _;
-    · norm_num
+  change #((X ∪ {x | (n : Cardinal) ≤ #(nbhdIn G x X)}) : Set V) ≤ #X + ℵ₀
+  calc
+    _ ≤ #X + #({x | (n : Cardinal) ≤ #(nbhdIn G x X)} : Set V) :=
+      Cardinal.mk_union_le _ _
+    _ ≤ #X + ((#X + ℵ₀) * ℵ₀) := add_le_add le_rfl h_closure_step_card
+    _ = #X + (#X + ℵ₀) := by rw [Cardinal.mul_aleph0_eq (le_add_left le_rfl)]
+    _ = #X + ℵ₀ := by
+      rw [add_comm #X (#X + ℵ₀), Cardinal.add_eq_left (le_add_left le_rfl) le_self_add]
 
 /-! ### Basic closure properties -/
 
 theorem subset_closeIter (G : SimpleGraph V) (n : ℕ) (X : Set V) (k : ℕ) :
     X ⊆ closeIter G n X k := by
-  induction' k with k ih;
-  · rfl;
-  · exact Set.Subset.trans ih ( Set.subset_union_left )
+  induction k with
+  | zero => rfl
+  | succ k ih => exact Set.Subset.trans ih Set.subset_union_left
 
 theorem closeIter_mono_index (G : SimpleGraph V) (n : ℕ) (X : Set V) {k l : ℕ}
     (h : k ≤ l) : closeIter G n X k ⊆ closeIter G n X l := by
-  induction h <;> simp_all +decide only [Nat.succ_eq_add_one];
-  exact Set.Subset.trans ‹_› ( Set.subset_union_left )
+  induction h with
+  | refl => exact Set.Subset.rfl
+  | step h ih => exact ih.trans Set.subset_union_left
 
 theorem subset_cl (G : SimpleGraph V) (n : ℕ) (X : Set V) : X ⊆ cl G n X := by
   exact Set.subset_iUnion_of_subset 0 ( by rfl )
@@ -183,31 +208,37 @@ theorem subset_cl (G : SimpleGraph V) (n : ℕ) (X : Set V) : X ⊆ cl G n X := 
 theorem cl_mono (G : SimpleGraph V) (n : ℕ) {X Y : Set V} (h : X ⊆ Y) :
     cl G n X ⊆ cl G n Y := by
   refine Set.iUnion_subset fun k => ?_;
-  refine' Set.Subset.trans _ ( Set.subset_iUnion _ ( k + 1 ) );
-  induction' k with k ih;
-  · exact Set.Subset.trans h ( Set.subset_union_left );
-  · refine' Set.union_subset_union ih _;
-    exact fun x hx => le_trans hx.out ( Cardinal.mk_le_mk_of_subset <| by exact fun y hy => by exact ⟨ ih hy.1, hy.2 ⟩ )
+  refine Set.Subset.trans ?_ ( Set.subset_iUnion _ ( k + 1 ) );
+  induction k with
+  | zero => exact Set.Subset.trans h Set.subset_union_left
+  | succ k ih =>
+    refine Set.union_subset_union ih ?_;
+    exact fun x hx => le_trans hx.out
+      ( Cardinal.mk_le_mk_of_subset <| by exact fun y hy => by exact ⟨ ih hy.1, hy.2 ⟩ )
 
 /-
 The closure is `n`-closed.
 -/
-theorem nclosed_cl (G : SimpleGraph V) (n : ℕ) (hn : 1 ≤ n) (X : Set V) :
+theorem nclosed_cl (G : SimpleGraph V) (n : ℕ) (_ : 1 ≤ n) (X : Set V) :
     NClosed G n (cl G n X) := by
   intro x hx;
   contrapose! hx;
   obtain ⟨ s, hs ⟩ := Cardinal.le_mk_iff_exists_subset.mp hx;
-  -- Since $s$ is a subset of $nbhdIn G x (cl G n X)$ and $s$ has cardinality $n$, there exists some $k$ such that $s \subseteq closeIter G n X k$.
+  -- Since $s$ is a subset of $nbhdIn G x (cl G n X)$ and $s$ has cardinality $n$, there exists some
+  -- $k$ such that $s \subseteq closeIter G n X k$.
   obtain ⟨ k, hk ⟩ : ∃ k, s ⊆ closeIter G n X k := by
     have h_finite : ∀ y ∈ s, ∃ k, y ∈ closeIter G n X k := by
       exact fun y hy => Set.mem_iUnion.mp ( hs.1 hy |>.1 );
     choose! k hk using h_finite;
     have h_finite : Set.Finite s := by
-      exact Set.finite_coe_iff.mp ( Cardinal.lt_aleph0_iff_finite.mp ( hs.2.symm ▸ Cardinal.nat_lt_aleph0 n ) );
-    exact ⟨ h_finite.toFinset.sup k, fun y hy => closeIter_mono_index G n X ( Finset.le_sup ( f := k ) ( h_finite.mem_toFinset.mpr hy ) ) ( hk y hy ) ⟩;
-  -- Since $s$ is a subset of $closeIter G n X k$ and $s$ has cardinality $n$, we have $n \leq #(nbhdIn G x (closeIter G n X k))$.
+      exact Set.finite_coe_iff.mp ( Cardinal.lt_aleph0_iff_finite.mp ( hs.2.symm ▸
+        Cardinal.natCast_lt_aleph0 (n := n) ) );
+    exact ⟨ h_finite.toFinset.sup k, fun y hy => closeIter_mono_index G n X
+      ( Finset.le_sup ( f := k ) ( h_finite.mem_toFinset.mpr hy ) ) ( hk y hy ) ⟩;
+  -- Since $s$ is a subset of $closeIter G n X k$ and $s$ has cardinality $n$, we have $n \leq
+  -- #(nbhdIn G x (closeIter G n X k))$.
   have h_card : n ≤ #(nbhdIn G x (closeIter G n X k)) := by
-    refine' hs.2 ▸ Cardinal.mk_le_mk_of_subset _;
+    refine hs.2 ▸ Cardinal.mk_le_mk_of_subset ?_;
     exact fun y hy => ⟨ hk hy, hs.1 hy |>.2 ⟩;
   exact Set.mem_iUnion.mpr ⟨ k + 1, by exact Set.mem_union_right _ h_card ⟩
 
@@ -219,9 +250,10 @@ theorem cl_card_le (G : SimpleGraph V) (n : ℕ) (hfree : ¬ HasKnAleph1 G n)
   -- By induction on $k$, we show that $|closeIter G n X k| \leq |X| + \aleph_0$ for all $k$.
   have h_ind : ∀ k, #(closeIter G n X k) ≤ #X + ℵ₀ := by
     intro k;
-    induction' k with k ih;
-    · exact le_add_right le_rfl;
-    · convert! le_trans ( closeStep_card_le G n hfree _ ) _ using 1;
+    induction k with
+    | zero => exact le_add_right le_rfl
+    | succ k ih =>
+      convert! le_trans ( closeStep_card_le G n hfree _ ) _ using 1;
       convert! add_le_add_right ih ℵ₀ using 1;
       · rw [ add_comm ];
       · rw [ add_comm, Cardinal.add_eq_max ];
@@ -229,11 +261,11 @@ theorem cl_card_le (G : SimpleGraph V) (n : ℕ) (hfree : ¬ HasKnAleph1 G n)
         · norm_num;
   convert! Cardinal.mk_iUnion_le _ |> le_trans <| ?_;
   rotate_left;
-  exact ULift ℕ;
-  use fun k => closeIter G n X k.down;
+  · exact ULift ℕ;
+  · exact fun k => closeIter G n X k.down;
   · simp +decide only [mk_eq_aleph0, iSup_ulift];
-    refine' le_trans ( mul_le_mul_right ( ciSup_le h_ind ) _ ) _;
-    simp +decide [ Cardinal.aleph0_le_add_iff ];
+    refine le_trans ( mul_le_mul_right ( ciSup_le h_ind ) _ ) ?_;
+    simp +decide;
   · ext; simp [cl]
 
 /-
@@ -245,24 +277,34 @@ theorem nclosed_biUnion_lt {σ : Type u} [LinearOrder σ] (G : SimpleGraph V) (n
     (a : σ) : NClosed G n (⋃ b ∈ {b : σ | b < a}, M b) := by
   intro x hx;
   by_contra h_contra;
-  obtain ⟨s, hs⟩ : ∃ s : Finset V, s.card = n ∧ ∀ y ∈ s, y ∈ nbhdIn G x (⋃ b ∈ {b | b < a}, M b) := by
+  obtain ⟨s, hs⟩ : ∃ s : Finset V,
+      s.card = n ∧ ∀ y ∈ s, y ∈ nbhdIn G x (⋃ b ∈ {b | b < a}, M b) := by
     obtain ⟨ s, hs ⟩ := Cardinal.le_mk_iff_exists_subset.mp ( le_of_not_gt h_contra );
-    cases' Set.Finite.exists_finset_coe ( show Set.Finite s from Set.finite_coe_iff.mp ( Cardinal.lt_aleph0_iff_finite.mp ( by rw [ hs.2 ] ; exact Cardinal.nat_lt_aleph0 _ ) ) ) ; aesop;
+    obtain ⟨t, ht⟩ := Set.Finite.exists_finset_coe ( show Set.Finite s from Set.finite_coe_iff.mp
+      ( Cardinal.lt_aleph0_iff_finite.mp ( by
+        rw [ hs.2 ] ; exact Cardinal.natCast_lt_aleph0 (n := _) ) ) ) ;
+    aesop;
   -- For each `y ∈ s`, there exists `b < a` such that `y ∈ M b`.
   obtain ⟨b, hb⟩ : ∃ b < a, ∀ y ∈ s, y ∈ M b := by
     have h_exists_b : ∀ y ∈ s, ∃ b < a, y ∈ M b := by
       intro y hy; specialize hs; have := hs.2 y hy; unfold nbhdIn at this; aesop;
     choose! b hb₁ hb₂ using h_exists_b;
     use Finset.max' (Finset.image (fun y => b y.1 y.2) (Finset.attach s)) (by
-    exact ⟨ _, Finset.mem_image_of_mem _ ( Finset.mem_attach _ ⟨ Classical.choose ( Finset.card_pos.mp ( by linarith ) ), Classical.choose_spec ( Finset.card_pos.mp ( by linarith ) ) ⟩ ) ⟩)
+      exact ⟨ _, Finset.mem_image_of_mem _ ( Finset.mem_attach _
+        ⟨ Classical.choose ( Finset.card_pos.mp ( by linarith ) ),
+          Classical.choose_spec ( Finset.card_pos.mp ( by linarith ) ) ⟩ ) ⟩)
     generalize_proofs at *;
-    refine' ⟨ _, _ ⟩;
-    · simp +decide only [Finset.max'_lt_iff, Finset.mem_image, Finset.mem_attach, true_and, Subtype.exists,
-    forall_exists_index];
-      exact fun y hy => hb₁ y hy;
-    · intro y hy; exact hmono ( Finset.le_max' _ _ <| Finset.mem_image_of_mem _ <| Finset.mem_attach _ ⟨ y, hy ⟩ ) <| hb₂ _ _;
+    refine ⟨ ?_, ?_ ⟩;
+    · rw [Finset.max'_lt_iff]
+      intro j hj
+      obtain ⟨y, _, rfl⟩ := Finset.mem_image.mp hj
+      exact hb₁ y.1 y.2
+    · intro y hy;
+      exact hmono ( Finset.le_max' _ _ <| Finset.mem_image_of_mem _ <| Finset.mem_attach _ ⟨ y, hy ⟩
+        ) <| hb₂ _ _;
   have h_card : #(nbhdIn G x (M b)) ≥ n := by
-    refine' le_trans _ ( Cardinal.mk_le_mk_of_subset <| show ( s : Set V ) ⊆ nbhdIn G x ( M b ) from _ );
+    refine le_trans ?_ (Cardinal.mk_le_mk_of_subset <|
+      show (s : Set V) ⊆ nbhdIn G x (M b) from ?_);
     · simp +decide [ hs.1 ];
     · exact fun y hy => ⟨ hb.2 y hy, hs.2 y hy |>.2 ⟩;
   exact not_lt_of_ge h_card ( hcl b x ( by aesop ) )
@@ -276,34 +318,46 @@ smaller rank, and each rank level is countably colourable.  Then `G` is countabl
 colourable.
 -/
 theorem countColorable_of_rank {σ : Type u} [LinearOrder σ] [WellFoundedLT σ]
-    (G : SimpleGraph V) (n : ℕ) (hn : 1 ≤ n) (rank : V → σ)
+    (G : SimpleGraph V) (n : ℕ) (_ : 1 ≤ n) (rank : V → σ)
     (hback : ∀ x, #({y | G.Adj x y ∧ rank y < rank x}) < (n : Cardinal))
     (hlevel : ∀ a : σ, ∃ g : V → ℕ,
       ∀ x y, rank x = a → rank y = a → G.Adj x y → g x ≠ g y) :
     GCountColorable G := by
   choose g hg using hlevel;
-  obtain ⟨c₂, hc₂⟩ : ∃ c₂ : V → Fin (2 * n + 1), ∀ a b, G.Adj a b → rank a ≠ rank b → c₂ a ≠ c₂ b := by
-    have h_colorable : ∀ x : V, ∃ finset : Finset V, {y | G.Adj x y ∧ rank y < rank x} = (finset : Set V) ∧ finset.card ≤ n := by
+  obtain ⟨c₂, hc₂⟩ : ∃ c₂ : V → Fin (2 * n + 1),
+      ∀ a b, G.Adj a b → rank a ≠ rank b → c₂ a ≠ c₂ b := by
+    have h_colorable : ∀ x : V, ∃ finset : Finset V, {y | G.Adj x y ∧ rank y < rank x} = (finset :
+      Set V) ∧ finset.card ≤ n := by
       intro x
       obtain ⟨s, hs⟩ : ∃ s : Finset V, {y | G.Adj x y ∧ rank y < rank x} = (s : Set V) := by
         have h_finite : Set.Finite {y | G.Adj x y ∧ rank y < rank x} := by
-          exact Set.finite_coe_iff.mp ( Cardinal.lt_aleph0_iff_finite.mp ( lt_of_lt_of_le ( hback x ) ( Cardinal.nat_lt_aleph0 _ |> le_of_lt ) ) );
-        exact ⟨ h_finite.toFinset, by simpa ⟩;
+          exact Set.finite_coe_iff.mp ( Cardinal.lt_aleph0_iff_finite.mp ( lt_of_lt_of_le ( hback x
+            ) ( Cardinal.natCast_lt_aleph0 (n := _) |> le_of_lt ) ) );
+        exact ⟨ h_finite.toFinset, by simp ⟩;
       specialize hback x; rw [ hs ] at hback; simp_all +decide [ Cardinal.mk_fintype ] ;
       linarith;
     choose finset hfinset using h_colorable;
-    convert! colorable_of_out ( SimpleGraph.mk ( fun x y => G.Adj x y ∧ rank x ≠ rank y ) ( by
-      exact ⟨fun x y h => ⟨ h.1.symm, Ne.symm h.2 ⟩⟩ ) ( by
-      exact ⟨ fun x hx => hx.1.ne rfl ⟩ ) ) n finset ( fun x => ( hfinset x ).2 ) ( fun x y hxy => by
-      cases lt_or_gt_of_ne hxy.2 <;> simp_all +decide [ Set.ext_iff ];
-      · exact Or.inr ( hfinset y |>.1 x |>.1 ⟨ hxy.1.symm, by tauto ⟩ );
-      · exact Or.inl ( hfinset x |>.1 y |>.1 ⟨ hxy.1, by assumption ⟩ ) ) using 1;
+    convert! colorable_of_out ( SimpleGraph.mk ( fun x y => G.Adj x y ∧ rank x ≠ rank y )
+      ( by exact ⟨fun x y h => ⟨ h.1.symm, Ne.symm h.2 ⟩⟩ )
+      ( by exact ⟨ fun x hx => hx.1.ne rfl ⟩ ) ) n finset ( fun x => ( hfinset x ).2 )
+      ( fun x y hxy => by
+        cases lt_or_gt_of_ne hxy.2 <;> simp_all +decide only [SetLike.coe_sort_coe, mk_fintype,
+          Fintype.card_coe, Nat.cast_lt, ne_eq, Set.ext_iff, Set.mem_ofPred_eq, SetLike.mem_coe];
+        · exact Or.inr ( hfinset y |>.1 x |>.1 ⟨ hxy.1.symm, by tauto ⟩ );
+        · exact Or.inl ( hfinset x |>.1 y |>.1 ⟨ hxy.1, by assumption ⟩ ) ) using 1;
     · grind +splitImp;
-    · exact Classical.decRel _;
   use fun x => (2 * n + 1) * g (rank x) x + c₂ x |> Nat.cast;
-  intro x y hxy; by_cases h : rank x = rank y <;> simp_all +decide only [Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat, Nat.cast_id, Nat.cast_one, ne_eq] ;
-  · exact fun h' => hg ( rank y ) x y ( by aesop ) ( by aesop ) hxy ( by nlinarith [ Fin.is_lt ( c₂ x ), Fin.is_lt ( c₂ y ) ] );
-  · exact fun h' => hc₂ x y hxy h <| by nlinarith [ show g ( rank x ) x = g ( rank y ) y from by nlinarith [ Fin.is_lt ( c₂ x ), Fin.is_lt ( c₂ y ) ] ] ;
+  intro x y hxy;
+  by_cases h : rank x = rank y <;> simp_all +decide only [Nat.cast_add, Nat.cast_mul,
+    Nat.cast_ofNat, Nat.cast_id, Nat.cast_one, ne_eq] ;
+  · exact fun h' => hg ( rank y ) x y ( by aesop ) ( by aesop ) hxy
+      ( by nlinarith [ Fin.is_lt ( c₂ x ), Fin.is_lt ( c₂ y ) ] );
+  · intro h'
+    apply hc₂ x y hxy h
+    apply Fin.ext
+    have hmod := congrArg (fun z : ℕ => z % (2 * n + 1)) h'
+    simpa only [Nat.mul_add_mod, Nat.mod_eq_of_lt (c₂ x).isLt,
+      Nat.mod_eq_of_lt (c₂ y).isLt] using hmod
 
 /-! ### Induced subgraphs preserve `K_{n,ℵ₁}`-freeness -/
 
@@ -314,10 +368,11 @@ passes to induced subgraphs.
 theorem hasKnAleph1_of_induce (G : SimpleGraph V) (n : ℕ) (M : Set V)
     (h : HasKnAleph1 (G.induce M) n) : HasKnAleph1 G n := by
   obtain ⟨ a, B, ha, hB, hB', hB'' ⟩ := h;
-  refine' ⟨ fun i => a i, Subtype.val '' B, _, _, _, _ ⟩;
+  refine ⟨ fun i => a i, Subtype.val '' B, ?_, ?_, ?_, ?_ ⟩;
   · exact Subtype.coe_injective.comp ha;
-  · rw [ Cardinal.mk_image_eq ] ; aesop;
-    exact Subtype.coe_injective;
+  · rw [ Cardinal.mk_image_eq ]
+    · aesop
+    · exact Subtype.coe_injective
   · grind;
   · aesop
 
@@ -331,11 +386,14 @@ theorem gCountColorable_of_le_aleph0 (G : SimpleGraph V) (h : #V ≤ ℵ₀) :
   have h_countable : Infinite V → Nonempty (V ↪ ℕ) := by
     exact fun _ => Cardinal.lift_mk_le'.mp ( by simpa using! h );
   by_cases hV : Infinite V;
-  · obtain ⟨ c ⟩ := h_countable hV; exact ⟨ c, fun x y hxy => by simpa using! c.injective.ne hxy.ne ⟩ ;
-  · simp_all +decide [ Infinite ];
+  · obtain ⟨ c ⟩ := h_countable hV; exact
+      ⟨ c, fun x y hxy => by simpa using! c.injective.ne hxy.ne ⟩ ;
+  · simp_all +decide only [IsEmpty.forall_iff, not_infinite_iff_finite];
     obtain ⟨c, hc⟩ : ∃ c : V → Fin (Nat.card V), Function.Injective c := by
       have := Fintype.ofFinite V;
-      exact ⟨ fun x => Fintype.equivFinOfCardEq ( by simp +decide [ Nat.card_eq_fintype_card ] ) x, by simp +decide [ Function.Injective ] ⟩;
+      exact ⟨ fun x => Fintype.equivFinOfCardEq
+        ( by simp +decide [ Nat.card_eq_fintype_card ] ) x,
+        by simp +decide [ Function.Injective ] ⟩;
     exact ⟨ fun x => c x, fun x y hxy => by simpa [ Fin.ext_iff ] using! hc.ne hxy.ne ⟩
 
 /-- **The core reduction.**  If `G` is `K_{n,ℵ₁}`-free (`n ≥ 1`), its vertex type
@@ -371,7 +429,7 @@ theorem countColorable_of_smaller (G : SimpleGraph V) (n : ℕ) (hn : 1 ≤ n)
       rcases lt_or_eq_of_le hx' with h | h
       · exact Or.inr h
       · exact Or.inl h
-    have h3 : #(Set.Iio a) < #V := Cardinal.mk_Iio_ord_toType a
+    have h3 : #(Set.Iio a) < #V := by simpa [Idx] using Cardinal.mk_Iio_lt a (by simp [Idx])
     have haleph : ℵ₀ ≤ #V := le_of_lt hbig
     have h4 : #(Set.Iio a) + 1 < #V :=
       Cardinal.add_lt_of_lt haleph h3 (lt_of_lt_of_le Cardinal.one_lt_aleph0 haleph)
@@ -450,14 +508,18 @@ def HasKmm (G : SimpleGraph V) (m : ℕ) : Prop :=
 contains `K_{m,m}` for every `m`. -/
 theorem eh_hasKmm (G : SimpleGraph V)
     (h : ¬ (SimpleGraph.toHG G).ColorableBy ℵ₀) (m : ℕ) : HasKmm G m := by
-  obtain ⟨a, B, ha, hB, hB', hB''⟩ : ∃ (a : Fin m → V) (B : Set V), Function.Injective a ∧ ℵ₁ ≤ #B ∧ (∀ i, a i ∉ B) ∧ (∀ i, ∀ b ∈ B, G.Adj (a i) b) := by
+  obtain ⟨a, B, ha, hB, hB', hB''⟩ : ∃ (a : Fin m → V) (B : Set V), Function.Injective a ∧ ℵ₁ ≤ #B ∧
+    (∀ i, a i ∉ B) ∧ (∀ i, ∀ b ∈ B, G.Adj (a i) b) := by
     convert! eh_hasKnAleph1 G h m;
   obtain ⟨b, hb⟩ : ∃ b : Fin m → V, Function.Injective b ∧ ∀ i, b i ∈ B := by
     have hB_inf : Infinite B := by
       contrapose! hB;
       exact lt_of_le_of_lt ( Cardinal.mk_le_aleph0 ) ( Cardinal.aleph0_lt_aleph_one );
     have := hB_inf.natEmbedding;
-    exact ⟨ fun i => this i, fun i j hij => by simpa [ Fin.ext_iff ] using! this.injective ( Subtype.ext hij ), fun i => this i |>.2 ⟩;
-  exact ⟨ a, b, ha, hb.1, fun i j => by intro H; have := hB' i; have := hb.2 j; aesop, fun i j => hB'' i _ ( hb.2 j ) ⟩
+    exact ⟨ fun i => this i,
+      fun i j hij => by simpa [ Fin.ext_iff ] using! this.injective ( Subtype.ext hij ),
+      fun i => this i |>.2 ⟩;
+  exact ⟨ a, b, ha, hb.1, fun i j => by intro H; have := hB' i; have := hb.2 j; aesop,
+    fun i j => hB'' i _ ( hb.2 j ) ⟩
 
 end Erdos1177

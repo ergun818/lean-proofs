@@ -25,7 +25,6 @@ open Cardinal
 
 namespace Erdos1177
 
-open Classical
 
 universe u
 
@@ -36,6 +35,7 @@ def ReconOK (F : FTS) : Prop :=
   (∀ ed : {e : Finset F.V // e ∈ F.edges}, ∃ w ∈ ed.1, IsBridgeInc F w ed) ∧
   (∀ c : BergeCycle F, Even c.m)
 
+open Classical in
 /-- The sub-triple-system on a set `S` of edges of `F`: vertices are those
 incident to some edge of `S`. -/
 noncomputable def FTS.restrict (F : FTS) (S : Finset {e : Finset F.V // e ∈ F.edges}) : FTS where
@@ -63,6 +63,7 @@ theorem FTS.mem_restrict_edges {F : FTS} {S : Finset {e : Finset F.V // e ∈ F.
     {s : Finset (F.restrict S).V} :
     s ∈ (F.restrict S).edges ↔
       ∃ e ∈ S, s = Finset.subtype (fun v => ∃ e' ∈ S, v ∈ e'.1) e.1 := by
+  classical
   simp [FTS.restrict, Finset.mem_image, Finset.mem_attach];
   grind
 
@@ -71,6 +72,7 @@ The number of edges of `F.restrict S` is `S.card`.
 -/
 theorem FTS.restrict_edges_card {F : FTS} (S : Finset {e : Finset F.V // e ∈ F.edges}) :
     (F.restrict S).edges.card = S.card := by
+  classical
   rw [ FTS.restrict, Finset.card_image_of_injOn ];
   · exact Finset.card_attach;
   · intro e₁ he₁ e₂ he₂ h_eq; simp_all +decide [ Finset.ext_iff ] ;
@@ -81,12 +83,13 @@ Restriction is linear when `F` is.
 -/
 theorem FTS.restrict_linear {F : FTS} (S : Finset {e : Finset F.V // e ∈ F.edges})
     (hlin : F.Linear) : (F.restrict S).Linear := by
+  classical
   intro s₁ hs₁ s₂ hs₂ hne;
   convert! hlin _ _ _ _ _;
   rotate_left;
-  exact s₁.map ( Function.Embedding.subtype fun v => ∃ e' ∈ S, v ∈ e'.1 );
+  · exact s₁.map ( Function.Embedding.subtype fun v => ∃ e' ∈ S, v ∈ e'.1 );
   rotate_left;
-  exact s₂.map ( Function.Embedding.subtype fun v => ∃ e' ∈ S, v ∈ e'.1 );
+  · exact s₂.map ( Function.Embedding.subtype fun v => ∃ e' ∈ S, v ∈ e'.1 );
   · obtain ⟨ e, he, rfl ⟩ := FTS.mem_restrict_edges.mp hs₂;
     grind +suggestions;
   · exact fun h => hne <| Finset.map_injective ( Function.Embedding.subtype _ ) h;
@@ -94,7 +97,9 @@ theorem FTS.restrict_linear {F : FTS} (S : Finset {e : Finset F.V // e ∈ F.edg
     rw [ Finset.card_map ];
   · obtain ⟨ e₁, he₁, rfl ⟩ := FTS.mem_restrict_edges.mp hs₁;
     convert! e₁.2 using 1;
-    ext; simp only [Finset.subtype_map, Subtype.exists, exists_and_right, Finset.mem_filter, and_iff_left_iff_imp];
+    ext;
+    simp only [Finset.subtype_map, Subtype.exists, exists_and_right, Finset.mem_filter,
+      and_iff_left_iff_imp];
     exact fun h => ⟨ e₁.1, ⟨ e₁.2, he₁ ⟩, h ⟩
 
 /-
@@ -103,6 +108,7 @@ construction).
 -/
 theorem FTS.restrict_no_isolated {F : FTS} (S : Finset {e : Finset F.V // e ∈ F.edges})
     (v : (F.restrict S).V) : ¬ (F.restrict S).Isolated v := by
+  classical
   have h_isolated : ¬(F.restrict S).Isolated v := by
     -- v.2 : ∃ e ∈ S, v.1 ∈ e.1; take s := Finset.subtype (fun v => ∃ e' ∈ S, v ∈ e'.1) e.1.
     obtain ⟨e, heS, hev⟩ := v.2
@@ -116,7 +122,7 @@ theorem FTS.restrict_no_isolated {F : FTS} (S : Finset {e : Finset F.V // e ∈ 
     -- unfold FTS.Isolated and use hs,hv_s
     -- FTS.Isolated G v := ∀ e ∈ G.edges, v ∉ e
     unfold FTS.Isolated
-    push_neg
+    push Not
     exact ⟨s, hs, hv_s⟩;
   grind
 
@@ -127,9 +133,11 @@ of `S`).
 theorem FTS.restrict_edge_map_mem {F : FTS} {S : Finset {e : Finset F.V // e ∈ F.edges}}
     {d : Finset (F.restrict S).V} (hd : d ∈ (F.restrict S).edges) :
     d.map (Function.Embedding.subtype (fun v => ∃ e' ∈ S, v ∈ e'.1)) ∈ F.edges := by
+  classical
   obtain ⟨ e, heS, rfl ⟩ := FTS.mem_restrict_edges.mp hd;
   grind +suggestions
 
+open Classical in
 /-- Transport a Berge cycle of a restriction up to `F` (same length). -/
 noncomputable def BergeCycle.ofRestrict {F : FTS}
     {S : Finset {e : Finset F.V // e ∈ F.edges}} (c : BergeCycle (F.restrict S)) :
@@ -163,15 +171,20 @@ theorem FTS.restrict_bridge {F : FTS} (S : Finset {e : Finset F.V // e ∈ F.edg
     (hbr : ∀ ed : {e : Finset F.V // e ∈ F.edges}, ∃ w ∈ ed.1, IsBridgeInc F w ed)
     (ed : {e : Finset (F.restrict S).V // e ∈ (F.restrict S).edges}) :
     ∃ w ∈ ed.1, IsBridgeInc (F.restrict S) w ed := by
+  classical
   obtain ⟨ e, heS, he ⟩ := FTS.mem_restrict_edges.mp ed.2;
   obtain ⟨ w, hw₁, hw₂ ⟩ := hbr e;
-  refine' ⟨ ⟨ w, ⟨ e, heS, hw₁ ⟩ ⟩, _, _ ⟩ <;> simp_all +decide [ IsBridgeInc ];
+  refine ⟨ ⟨ w, ⟨ e, heS, hw₁ ⟩ ⟩, ?_, ?_ ⟩ <;> simp_all +decide only [IsBridgeInc, and_self_left,
+    Subtype.forall, true_and];
   · exact Finset.mem_subtype.mpr ( by aesop );
-  · refine' ⟨ Finset.mem_subtype.mpr ( by aesop ), _ ⟩;
+  · refine ⟨ Finset.mem_subtype.mpr ( by aesop ), ?_ ⟩;
     rintro ⟨ c, i, hi, h ⟩;
-    refine' hw₂ ⟨ BergeCycle.ofRestrict c, i, _, _ ⟩ <;> simp_all +decide [ BergeCycle.ofRestrict ];
+    refine hw₂ ⟨ BergeCycle.ofRestrict c, i, ?_, ?_ ⟩ <;>
+      simp_all +decide only [BergeCycle.ofRestrict, Function.Embedding.subtype_apply,
+        Finset.subtype_map, Subtype.exists, exists_and_right];
     · ext; aesop;
-    · exact Or.imp ( fun h => by simpa using! congr_arg Subtype.val h ) ( fun h => by simpa using! congr_arg Subtype.val h ) h
+    · exact Or.imp ( fun h => by simpa using! congr_arg Subtype.val h )
+        ( fun h => by simpa using! congr_arg Subtype.val h ) h
 
 /-- The restriction of a `ReconOK`-input system is `ReconOK`. -/
 theorem FTS.restrict_reconOK {F : FTS} (S : Finset {e : Finset F.V // e ∈ F.edges})

@@ -85,18 +85,24 @@ theorem grow (hreg : κ.IsRegular) (hθ : θ < κ) (c : (ℕ → Pt κ) → θ.o
       (∀ i, q ≤ i → i < q + r → B < w' i) ∧
       StrictMonoOn w' (Set.Iio (q + r)) ∧
       EHG.stab hreg hθ c (L n - (q + r)) (q + r) w' = star := by
-  induction' r with r ih;
-  · exact ⟨ w, B, le_rfl, fun i hi => rfl, fun i hi => hwB i hi, fun i hi₁ hi₂ => by linarith, hmono, hstar ⟩;
-  · obtain ⟨ w', B', hB', hw', hB'', hB''', hB'''' ⟩ := ih ( by linarith );
-    obtain ⟨ z, hz₁, hz₂, hz₃ ⟩ := EHG.exists_next_star hreg hθ c ( L n - ( q + r ) - 1 ) ( q + r ) w' B';
-    refine' ⟨ Function.update w' ( q + r ) z, z, _, _, _, _, _ ⟩;
+  induction r with
+  | zero =>
+    exact ⟨ w, B, le_rfl, fun i hi => rfl, fun i hi => hwB i hi,
+      fun i hi₁ hi₂ => by linarith, hmono, hstar ⟩;
+  | succ r ih =>
+    obtain ⟨ w', B', hB', hw', hB'', hB''', hB'''' ⟩ := ih ( by linarith );
+    obtain ⟨ z, hz₁, hz₂, hz₃ ⟩ := EHG.exists_next_star hreg hθ c ( L n - ( q + r ) - 1 ) ( q + r )
+      w' B';
+    refine ⟨ Function.update w' ( q + r ) z, z, ?_, ?_, ?_, ?_, ?_ ⟩;
     · exact le_trans hB' hz₁.le;
     · grind;
-    · intro i hi; by_cases hi' : i = q + r <;> simp_all +decide [ Function.update_apply ] ;
+    · intro i hi; by_cases hi' : i = q + r <;> simp_all +decide only [add_lt_add_iff_left,
+      lt_add_iff_pos_right, Function.update_self, Std.le_refl, ne_eq, not_false_eq_true,
+      Function.update_of_ne];
       exact le_trans ( hB'' i ( by omega ) ) ( le_of_lt hz₁ );
     · grind +revert;
-    · refine' ⟨ _, _ ⟩;
-      · intro i hi j hj hij; simp_all +decide [ Function.update_apply ] ;
+    · refine ⟨ ?_, ?_ ⟩;
+      · intro i hi j hj hij; simp_all +decide only [Set.mem_Iio, Function.update_apply] ;
         split_ifs <;> try linarith;
         · exact lt_of_le_of_lt ( hB'' i ( by omega ) ) hz₁;
         · exact hB'''' |>.1 ( show i < q + r from by omega ) ( show j < q + r from by omega ) hij;
@@ -128,24 +134,36 @@ theorem mid (hreg : κ.IsRegular) (hθ : θ < κ) (c : (ℕ → Pt κ) → θ.ou
       EHG.stab hreg hθ c (L n - (t0 + s)) (t0 + s) wv' = star ∧
       (∀ t, t0 ≤ t → t < t0 + s → wu' (n + t) < wv' t) ∧
       (∀ t, t0 ≤ t → t + 1 < t0 + s → wv' t < wu' (n + t + 1)) := by
-  induction' s with s ih generalizing t0 wu wv B;
-  · exact ⟨ wu, wv, B, le_rfl, fun i hi => rfl, fun i hi => rfl, hwuB, hwvB, hmonou, hmonov, hstaru, hstarv, by intros; linarith, by intros; linarith ⟩;
-  · obtain ⟨ wu', wv', B', hB', hwu', hwv', hwuB', hwvB', hmonou', hmonov', hstaru', hstarv', hlow', hhigh' ⟩ := ih wu wv t0 B ( by linarith ) hstaru hstarv hwuB hwvB hmonou hmonov;
-    obtain ⟨ zu, hzu₁, hzu₂, hzu₃ ⟩ := EHG.exists_next_star hreg hθ c ( L n - ( n + t0 + s ) - 1 ) ( n + t0 + s ) wu' B';
-    obtain ⟨ zv, hzv₁, hzv₂, hzv₃ ⟩ := EHG.exists_next_star hreg hθ c ( L n - ( t0 + s ) - 1 ) ( t0 + s ) wv' zu;
-    refine' ⟨ Function.update wu' ( n + t0 + s ) zu, Function.update wv' ( t0 + s ) zv, zv, _, _, _, _, _ ⟩;
+  induction s generalizing t0 wu wv B with
+  | zero =>
+    exact ⟨ wu, wv, B, le_rfl, fun i hi => rfl, fun i hi => rfl,
+      hwuB, hwvB, hmonou, hmonov, hstaru, hstarv, by intros; linarith, by intros; linarith ⟩;
+  | succ s ih =>
+    obtain ⟨ wu', wv', B', hB', hwu', hwv', hwuB', hwvB', hmonou', hmonov',
+      hstaru', hstarv', hlow', hhigh' ⟩ :=
+      ih wu wv t0 B ( by linarith ) hstaru hstarv hwuB hwvB hmonou hmonov;
+    obtain ⟨ zu, hzu₁, hzu₂, hzu₃ ⟩ := EHG.exists_next_star hreg hθ c ( L n - ( n + t0 + s ) - 1 ) (
+      n + t0 + s ) wu' B';
+    obtain ⟨ zv, hzv₁, hzv₂, hzv₃ ⟩ := EHG.exists_next_star hreg hθ c ( L n - ( t0 + s ) - 1 ) ( t0
+      + s ) wv' zu;
+    refine ⟨ Function.update wu' ( n + t0 + s ) zu, Function.update wv' ( t0 + s ) zv,
+      zv, ?_, ?_, ?_,
+      ?_, ?_ ⟩;
     · exact le_trans hB' ( le_trans hzu₁.le hzv₁.le );
     · grind +qlia;
     · grind;
     · grind +splitImp;
-    · refine' ⟨ _, _, _, _, _ ⟩;
+    · refine ⟨ ?_, ?_, ?_, ?_, ?_ ⟩;
       · grind;
       · intro i hi j hj hij;
-        by_cases hi' : i = n + t0 + s <;> by_cases hj' : j = n + t0 + s <;> simp +decide [ *, Function.update_apply ] at hij ⊢;
+        by_cases hi' : i = n + t0 + s <;> by_cases hj' : j = n + t0 + s <;>
+          simp +decide only [lt_self_iff_false, hi', hj', Function.update_self, ne_eq,
+            not_false_eq_true, Function.update_of_ne] at hij ⊢;
         · linarith [ Set.mem_Iio.mp hi, Set.mem_Iio.mp hj ];
         · exact lt_of_le_of_lt ( hwuB' i hij ) hzu₁;
-        · exact hmonou' ( show i < n + t0 + s from lt_of_le_of_ne ( Nat.le_of_lt_succ hi ) hi' ) ( show j < n + t0 + s from lt_of_le_of_ne ( Nat.le_of_lt_succ hj ) hj' ) hij;
-      · intro i hi j hj hij; simp_all +decide [ Function.update_apply ] ;
+        · exact hmonou' ( show i < n + t0 + s from lt_of_le_of_ne ( Nat.le_of_lt_succ hi ) hi' ) (
+            show j < n + t0 + s from lt_of_le_of_ne ( Nat.le_of_lt_succ hj ) hj' ) hij;
+      · intro i hi j hj hij; simp_all +decide only [Set.mem_Iio, Function.update_apply] ;
         split_ifs <;> try linarith;
         · exact lt_of_le_of_lt ( hwvB' i ( by omega ) ) ( lt_of_lt_of_le hzu₁ ( le_of_lt hzv₁ ) );
         · exact hmonov' ( show i < t0 + s from by omega ) ( show j < t0 + s from by omega ) hij;
@@ -216,11 +234,11 @@ theorem extract_gsn (hreg : κ.IsRegular) (hθ : θ < κ)
   · -- IsEdge
     refine ⟨?_, ?_⟩
     · intro t ht
-      show wu2 (n + t) < wv3 t
+      change wu2 (n + t) < wv3 t
       rw [hwv3agree t (by omega)]
       exact hlow t (Nat.zero_le _) (by omega)
     · intro t ht
-      show wv3 t < wu2 (n + t + 1)
+      change wv3 t < wu2 (n + t + 1)
       rw [hwv3agree t (by omega)]
       exact hhigh t (Nat.zero_le _) (by omega)
 

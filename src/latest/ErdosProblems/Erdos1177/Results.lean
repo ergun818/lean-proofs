@@ -76,9 +76,12 @@ theorem obligatory_disjUnion {F G : FTS} (ihF : FTS.Obligatory.{u} F)
   have hS : Set.Finite (Set.range fF) := by
     exact Set.toFinite _
   generalize_proofs at *; (
-  obtain ⟨g0, hg0, hg0e⟩ : ∃ g0 : G.V → W, Function.Injective g0 ∧ ∀ e ∈ G.edges, g0 '' (e : Set G.V) ∈ {e | e ∈ H.edges ∧ e ⊆ (Set.range fF)ᶜ} := by
-    obtain ⟨g0, hg0, hg0e⟩ : ∃ g0 : G.V → W, Function.Injective g0 ∧ ∀ e ∈ G.edges, g0 '' (e : Set G.V) ∈ {e | e ∈ H.edges ∧ e ⊆ (Set.range fF)ᶜ} := by
-      have hHR : (⟨{e | e ∈ H.edges ∧ e ⊆ (Set.range fF)ᶜ}⟩ : Hypergraph W).UncountablyChromatic := by
+  obtain ⟨g0, hg0, hg0e⟩ : ∃ g0 : G.V → W, Function.Injective g0 ∧ ∀ e ∈ G.edges, g0 '' (e : Set
+    G.V) ∈ {e | e ∈ H.edges ∧ e ⊆ (Set.range fF)ᶜ} := by
+    obtain ⟨g0, hg0, hg0e⟩ : ∃ g0 : G.V → W, Function.Injective g0 ∧ ∀ e ∈ G.edges, g0 '' (e : Set
+      G.V) ∈ {e | e ∈ H.edges ∧ e ⊆ (Set.range fF)ᶜ} := by
+      have hHR :
+          (⟨{e | e ∈ H.edges ∧ e ⊆ (Set.range fF)ᶜ}⟩ : Hypergraph W).UncountablyChromatic := by
         exact restrict_uc htri huc hS
       convert! ihG _ _ hHR using 1
       generalize_proofs at *; (
@@ -86,48 +89,63 @@ theorem obligatory_disjUnion {F G : FTS} (ihF : FTS.Obligatory.{u} F)
     generalize_proofs at *; (
     use g0)
   generalize_proofs at *; (
-  obtain ⟨g, hg, hg'⟩ : ∃ g : G.V → W, Function.Injective g ∧ (∀ e ∈ G.edges, g '' (e : Set G.V) ∈ H.edges) ∧ ∀ x, g x ∉ Set.range fF := by
+  obtain ⟨g, hg, hg'⟩ : ∃ g : G.V → W, Function.Injective g ∧ (∀ e ∈ G.edges, g '' (e : Set G.V) ∈
+    H.edges) ∧ ∀ x, g x ∉ Set.range fF := by
     obtain ⟨Bad, hBad⟩ : ∃ Bad : Finset G.V, ∀ x, g0 x ∈ Set.range fF ↔ x ∈ Bad := by
       have hBad : Set.Finite {x : G.V | g0 x ∈ Set.range fF} := by
         exact Set.Finite.preimage ( fun x => by aesop ) hS
       generalize_proofs at *; (
       exact ⟨ hBad.toFinset, fun x => by simp ⟩)
     generalize_proofs at *; (
-    obtain ⟨emb, hemb, hemb'⟩ : ∃ emb : Bad → W, Function.Injective emb ∧ ∀ x, emb x ∉ Set.range g0 ∧ emb x ∉ Set.range fF := by
+    obtain ⟨emb, hemb, hemb'⟩ : ∃ emb : Bad → W, Function.Injective emb ∧ ∀ x, emb x ∉ Set.range g0
+      ∧ emb x ∉ Set.range fF := by
       have h_inf : Set.Infinite (Set.univ \ (Set.range g0 ∪ Set.range fF)) := by
         have h_infinite : Infinite W := by
           apply Hypergraph.UncountablyChromatic.infinite htri huc
         generalize_proofs at *; (
-        exact Set.infinite_univ.diff ( Set.Finite.union ( Set.toFinite ( Set.range g0 ) ) hS ))
+        exact Set.infinite_univ.sdiff ( Set.Finite.union ( Set.toFinite ( Set.range g0 ) ) hS ))
       generalize_proofs at *; (
       have := h_inf.natEmbedding
       generalize_proofs at *; (
       use fun x => this (Fintype.equivFin Bad x).val
       generalize_proofs at *; (
-      exact ⟨ fun x y hxy => by simpa [ Fin.ext_iff ] using! Fintype.equivFin Bad |>.injective <| Fin.ext <| by simpa using! this.injective <| Subtype.ext hxy, fun x => ⟨ fun hx => this ( Fintype.equivFin Bad x ).val |>.2.2 <| Or.inl hx, fun hx => this ( Fintype.equivFin Bad x ).val |>.2.2 <| Or.inr hx ⟩ ⟩)))
+      exact ⟨ fun x y hxy => by
+        simpa [ Fin.ext_iff ] using! Fintype.equivFin Bad |>.injective <| Fin.ext <| by
+          simpa using! this.injective <| Subtype.ext hxy,
+        fun x => ⟨ fun hx => this ( Fintype.equivFin Bad x ).val |>.2.2 <| Or.inl hx,
+          fun hx => this ( Fintype.equivFin Bad x ).val |>.2.2 <| Or.inr hx ⟩ ⟩)))
     generalize_proofs at *; (
     use fun x => if hx : x ∈ Bad then emb ⟨x, hx⟩ else g0 x
     generalize_proofs at *; (
-    refine' ⟨ _, _, _ ⟩;
-    · intro x y hxy; by_cases hx : x ∈ Bad <;> by_cases hy : y ∈ Bad <;> simp_all +decide [ Function.Injective.eq_iff hg0, Function.Injective.eq_iff hemb ] ;
+    refine ⟨ ?_, ?_, ?_ ⟩;
+    · intro x y hxy;
+      by_cases hx : x ∈ Bad <;> by_cases hy : y ∈ Bad <;> simp_all +decide only [Set.mem_ofPred_eq,
+        Set.image_subset_iff, Set.preimage_compl, Set.mem_range, not_exists, Subtype.forall,
+        ↓reduceDIte, Function.Injective.eq_iff hemb, Subtype.mk.injEq,
+        Function.Injective.eq_iff hg0, not_false_eq_true] ;
       exact False.elim ( hemb' x hx |>.1 y hxy.symm );
     · intro e he
-      have h_image : (fun x => if hx : x ∈ Bad then emb ⟨x, hx⟩ else g0 x) '' (e : Set G.V) = g0 '' (e : Set G.V) := by
-        ext x
-        simp only [Set.mem_image, SetLike.mem_coe];
-        constructor <;> rintro ⟨ y, hy, rfl ⟩ <;> use y <;> simp_all +decide ;
-        · exact fun h => hg0e e he |>.2 hy <| by obtain ⟨ x, hx ⟩ := hBad y |>.2 h; aesop;
-        · exact fun h => False.elim <| hg0e e he |>.2 hy <| by aesop;
+      have h_image : (fun x => if hx : x ∈ Bad then emb ⟨x, hx⟩ else g0 x) '' (e : Set G.V) = g0 ''
+        (e : Set G.V) := by
+        apply Set.image_congr
+        intro y hy
+        have hnot : y ∉ Bad := by
+          intro hyBad
+          exact (hg0e e he).2 (Set.mem_image_of_mem g0 hy) ((hBad y).mpr hyBad)
+        exact dif_neg hnot
       generalize_proofs at *; (
       exact h_image.symm ▸ hg0e e he |>.1);
     · grind)))
   generalize_proofs at *; (
-  refine' ⟨ Sum.elim fF g, _, _ ⟩ <;> simp_all +decide [ Function.Injective ];
-  · rintro ( a | a ) ( b | b ) <;> simp +decide [ * ];
+  refine ⟨ Sum.elim fF g, ?_, ?_ ⟩ <;> simp_all +decide only [Function.Injective,
+    Set.mem_ofPred_eq, Set.image_subset_iff, Set.preimage_compl, Set.mem_range, not_exists];
+  · rintro ( a | a ) ( b | b ) <;> simp +decide only [Sum.elim_inl, Sum.elim_inr, reduceCtorEq,
+    imp_false];
     · exact fun h => congr_arg Sum.inl ( hfF h );
+    · exact hg'.2 b a
     · exact Ne.symm ( hg'.2 a b );
     · exact fun h => congr_arg Sum.inr ( hg h );
-  · simp +decide [ FTS.disjUnion ];
+  · simp +decide only [FTS.disjUnion, Finset.mem_union, Finset.mem_image];
     rintro e ( ⟨ a, ha, rfl ⟩ | ⟨ a, ha, rfl ⟩ ) <;> simp +decide [ *, Set.image_image ])))
 
 /-! ### The paper's remaining inputs, carried as explicit hypotheses

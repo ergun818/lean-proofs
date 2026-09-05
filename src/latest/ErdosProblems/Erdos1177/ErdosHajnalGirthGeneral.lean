@@ -180,7 +180,7 @@ theorem noShortOddCycle_one (hk : 3 ≤ k) :
   simp_all only [not_exists, not_and, not_forall]
   rintro x hx_inj
   by_contra h_contra
-  push_neg at h_contra
+  push Not at h_contra
   exact triangleFree hk _ _ _ (h_contra 0) (h_contra 1)
     ((h_contra 2).symm)
 

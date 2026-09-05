@@ -80,9 +80,9 @@ weak chromatic number.
 -/
 theorem e5_HK_loose7_of_countable_embedding_principle
     (hp : E5CountableEmbeddingPrinciple.{u}) : E5_HK_loose7.{u} := by
-  intro H hH Hlin Huc;
-  intro huc
-  obtain ⟨A, hA⟩ := exists_exactly_countably_chromatic_subhypergraph_avoid hH Hlin huc (hS := Set.countable_empty) (hB := Set.countable_empty);
+  intro H hH Hlin Huc huc
+  obtain ⟨A, hA⟩ := exists_exactly_countably_chromatic_subhypergraph_avoid hH Hlin huc (hS :=
+    Set.countable_empty) (hB := Set.countable_empty);
   have := hp hH A Hlin Huc hA.1 hA.2.1 hA.2.2.2.2; exact FTS.embeds_of_edges_subset _ _ hA.2.1 this;
 
 /-- A clean-cycle version of the countable-core principle. -/
@@ -101,9 +101,13 @@ theorem e5_HK_loose7_of_countable_cleanCycle_principle
   intro H htri hlin huc;
   have := @exists_exactly_countably_chromatic_subhypergraph_avoid H htri hlin;
   intro huc
-  obtain ⟨A, hA_countable, hA_subset, hA_avoid, hA_colorable⟩ := this huc (Set.countable_empty) (Set.countable_empty);
+  obtain ⟨A, hA_countable, hA_subset, hA_avoid, hA_colorable⟩ := this huc (Set.countable_empty)
+    (Set.countable_empty);
   obtain ⟨c, hc⟩ := hp htri A hlin ‹_› hA_countable hA_subset (fun k hk => hA_colorable.right k hk);
-  convert! looseCycle7_embeds_of_cleanEdgeCycle htri hlin ( CleanLoose7EdgeCycle.ofEdgesSubset htri A hA_subset ⟨ c, hc, by assumption, by assumption, by assumption, by assumption, by assumption, by assumption ⟩ ) using 1
+  convert! looseCycle7_embeds_of_cleanEdgeCycle htri hlin
+    ( CleanLoose7EdgeCycle.ofEdgesSubset htri A hA_subset
+      ⟨ c, hc, by assumption, by assumption, by assumption,
+        by assumption, by assumption, by assumption ⟩ ) using 1
 
 /-- An edge-intersection-graph version of the countable-core principle. -/
 def E5CountableIntersectionCyclePrinciple : Prop :=
@@ -141,10 +145,13 @@ theorem exists_countable_core_with_loose7_avoid
       (∀ k : ℕ, 0 < k →
         ¬ ∃ c : W → Fin k, (⟨A⟩ : Hypergraph W).ProperColoring c) ∧
       looseCycle7.Embeds (⟨A⟩ : Hypergraph W) := by
-  -- Apply the theorem `exists_exactly_countably_chromatic_subhypergraph_avoid` to obtain a countable subset `A` of `H.edges` that avoids `S` and `B` and is exactly countably chromatic.
-  obtain ⟨A, hA_countable, hA_subset, hA_avoid, hA_colorable, hA_unbounded⟩ := Erdos1177.exists_exactly_countably_chromatic_subhypergraph_avoid (H := H) htri huc hS hB;
-  refine' ⟨ A, hA_countable, hA_subset, hA_avoid, hA_colorable, hA_unbounded, _ ⟩;
-  convert! hp ⟨ A ⟩ A ( isTripleSystem_of_edges_subset H htri A hA_subset ) ( linear_of_edges_subset H hlin A hA_subset ) hA_countable ( Set.Subset.refl _ ) hA_unbounded using 1
+  -- Apply the theorem `exists_exactly_countably_chromatic_subhypergraph_avoid` to obtain a
+  -- countable subset `A` of `H.edges` that avoids `S` and `B` and is exactly countably chromatic.
+  obtain ⟨A, hA_countable, hA_subset, hA_avoid, hA_colorable, hA_unbounded⟩ :=
+    Erdos1177.exists_exactly_countably_chromatic_subhypergraph_avoid (H := H) htri huc hS hB;
+  refine ⟨ A, hA_countable, hA_subset, hA_avoid, hA_colorable, hA_unbounded, ?_ ⟩;
+  convert! hp ⟨ A ⟩ A ( isTripleSystem_of_edges_subset H htri A hA_subset ) ( linear_of_edges_subset
+    H hlin A hA_subset ) hA_countable ( Set.Subset.refl _ ) hA_unbounded using 1
 
 /-
 Under the countable principle, an uncountably chromatic linear host has
@@ -165,11 +172,12 @@ theorem exists_disjoint_countable_cores_with_loose7
       (∀ ⦃r s⦄, r ≠ s →
         Disjoint (⋃ e ∈ A r, e) (⋃ e ∈ A s, e)) := by
   obtain ⟨A, hA⟩ := exists_disjoint_linear_exactly_countably_chromatic_family H htri hlin huc hS;
-  refine' ⟨ A, _, hA.2 ⟩;
+  refine ⟨ A, ?_, hA.2 ⟩;
   intro r
-  obtain ⟨hA_countable, hA_subset, hA_avoid, hA_triple, hA_linear, hA_colorable, hA_unbounded⟩ := hA.left r
-  exact ⟨hA_countable, hA_subset, hA_avoid, hA_colorable, hA_unbounded, hp _ _ hA_triple hA_linear hA_countable (by
-  exact Set.Subset.rfl) (by
-  exact hA_unbounded)⟩
+  obtain ⟨hA_countable, hA_subset, hA_avoid, hA_triple, hA_linear, hA_colorable, hA_unbounded⟩ :=
+    hA.left r
+  exact ⟨hA_countable, hA_subset, hA_avoid, hA_colorable, hA_unbounded,
+    hp _ _ hA_triple hA_linear hA_countable
+      (by exact Set.Subset.rfl) (by exact hA_unbounded)⟩
 
 end Erdos1177

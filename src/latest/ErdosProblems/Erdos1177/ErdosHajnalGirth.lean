@@ -77,7 +77,7 @@ theorem card_le (hκ : ℵ₀ ≤ κ) : Cardinal.mk (Vtx κ) ≤ κ := by
   have h_card : #(Fin 3 → Pt κ) = κ ^ (3 : ℕ) := by
     simp +decide [ Cardinal.mk_toType, Cardinal.card_ord ];
     norm_cast;
-  refine' le_trans ( Cardinal.mk_subtype_le _ ) _;
+  refine le_trans ( Cardinal.mk_subtype_le _ ) ?_;
   rw [ h_card, Cardinal.power_nat_eq ];
   · exact hκ;
   · norm_num
@@ -110,8 +110,9 @@ theorem noShortOddCycle_one : NoShortOddCycle (graph κ) 1 := by
   interval_cases m ; simp_all +decide only [not_exists, not_and, not_forall];
   intro x hx_inj
   by_contra h_contra
-  push_neg at h_contra;
-  convert! triangleFree _ _ _ ( h_contra 0 ) ( h_contra 1 ) ( h_contra 2 |> SimpleGraph.Adj.symm ) using 1
+  push Not at h_contra;
+  convert! triangleFree _ _ _ ( h_contra 0 ) ( h_contra 1 ) ( h_contra 2 |> SimpleGraph.Adj.symm )
+    using 1
 
 /-! ### The chromatic lower bound
 
@@ -153,15 +154,15 @@ theorem cofinal_Ioi (hκ : ℵ₀ ≤ κ) (y : Pt κ) : Cofinal {z | y < z} := b
 -/
 theorem exists_ub (hreg : κ.IsRegular) {θ : Cardinal.{u}} (hθ : θ < κ)
     (b : θ.out → Pt κ) : ∃ B : Pt κ, ∀ v, b v < B := by
-      obtain ⟨c, hc⟩ : ∃ c : Ordinal, c < κ.ord ∧ ∀ v : Cardinal.ord κ |> Ordinal.ToType, (∃ w : (Quotient.out θ), b w = v) → v < c := by
-        use Ordinal.lsub (fun w : (Quotient.out θ) => (b w).toOrd);
-        refine' ⟨ _, _ ⟩;
-        · convert! Ordinal.lsub_lt_ord_lift _ _;
-          · simp +decide only [mk_out, Cardinal.lift_id];
-            exact hθ.trans_le hreg.cof_eq.ge;
+      obtain ⟨c, hc⟩ : ∃ c : Ordinal, c < κ.ord ∧ ∀ v : Cardinal.ord κ |> Ordinal.ToType, (∃ w :
+        (Quotient.out θ), b w = v) → v < c := by
+        use ⨆ w : θ.out, (b w).toOrd + 1;
+        refine ⟨ ?_, ?_ ⟩;
+        · apply Ordinal.iSup_add_one_lt_of_lt_cof
+          · simpa only [mk_out] using hθ.trans_le hreg.cof_ord.ge
           · grind +suggestions;
         · rintro v ⟨ w, rfl ⟩;
-          exact Ordinal.lt_lsub ( fun w => ToType.toOrd ( b w ) ) w;
+          exact Ordinal.lt_iSup_add_one (fun w => ToType.toOrd (b w)) w;
       have h_enum : ∃ w : Ordinal.ToType κ.ord, w.toOrd = c := by
         obtain ⟨w, hw⟩ : ∃ w : Ordinal.ToType κ.ord, w.toOrd = c := by
           have h_enum : ∀ x : Ordinal, x < κ.ord → ∃ w : Ordinal.ToType κ.ord, w.toOrd = x := by
@@ -169,15 +170,22 @@ theorem exists_ub (hreg : κ.IsRegular) {θ : Cardinal.{u}} (hθ : θ < κ)
             obtain ⟨w, hw⟩ : ∃ w : Ordinal.ToType κ.ord, w.toOrd = x := by
               have h_enum : ∀ x : Ordinal, x < κ.ord → ∃ w : Ordinal.ToType κ.ord, w.toOrd = x := by
                 intro x hx
-                have h_enum : x < Ordinal.type (· < · : Ordinal.ToType κ.ord → Ordinal.ToType κ.ord → Prop) := by
+                have h_enum : x < Ordinal.type (· < · : Ordinal.ToType κ.ord → Ordinal.ToType κ.ord
+                  → Prop) := by
                   convert! hx using 1;
                   convert! Ordinal.type_toType κ.ord using 1
-                obtain ⟨ w, hw ⟩ := typein_surj ( fun x1 x2 : Ordinal.ToType κ.ord => x1 < x2 ) h_enum; use w; aesop;
+                obtain ⟨ w, hw ⟩ := typein_surj ( fun x1 x2 : Ordinal.ToType κ.ord => x1 < x2 )
+                  h_enum; use w; aesop;
               exact h_enum x hx;
             use w
           exact h_enum c hc.1;
         use w;
-      cases' h_enum with w hw; use w; intro v; specialize hc; have := hc.2 ( b v ) ⟨ v, rfl ⟩ ; aesop;
+      obtain ⟨w, hw⟩ := h_enum
+      use w;
+      intro v;
+      specialize hc;
+      have := hc.2 ( b v ) ⟨ v, rfl ⟩ ;
+      aesop;
 
 /-
 **The pigeonhole step.**  If `S` is cofinal and `f : Pt κ → θ.out` with
@@ -188,8 +196,15 @@ of the `θ`-many bounds (`exists_ub`) then bounds `S`, contradicting cofinality.
 theorem cofinal_fiber (hreg : κ.IsRegular) {θ : Cardinal.{u}} (hθ : θ < κ)
     {S : Set (Pt κ)} (hS : Cofinal S) (f : Pt κ → θ.out) :
     ∃ v : θ.out, Cofinal {y | y ∈ S ∧ f y = v} := by
-      contrapose! hS; simp_all +decide [ Cofinal ] ;
-      choose b hb using hS; have := exists_ub hreg hθ b; obtain ⟨ B, hB ⟩ := this; use B; intros x hx; specialize hb ( f x ) x hx rfl; exact le_trans hb ( le_of_lt ( hB _ ) ) ;
+      contrapose! hS; simp_all +decide only [Cofinal, Set.mem_ofPred_eq, not_forall, not_exists,
+        not_and, not_lt, and_imp] ;
+      choose b hb using hS;
+      have := exists_ub hreg hθ b;
+      obtain ⟨ B, hB ⟩ := this;
+      use B;
+      intros x hx;
+      specialize hb ( f x ) x hx rfl;
+      exact le_trans hb ( le_of_lt ( hB _ ) ) ;
 
 /-- The vertex given by three strictly increasing points `a < b < c`. -/
 def mk3 (a b c : Pt κ) (h1 : a < b) (h2 : b < c) : Vtx κ :=
@@ -229,21 +244,31 @@ theorem not_colorableBy_regular (hreg : κ.IsRegular) {θ : Cardinal.{u}} (hθ :
   have hadj : ∀ a b, (graph κ).Adj a b → c a ≠ c b := by
     grind +suggestions;
   -- Define the function F1
-  set F1 : Pt κ → Pt κ → (Pt κ → θ.out) := fun x y z => if h : x < y ∧ y < z then c (mk3 x y z h.1 h.2) else c (mk3 v0 v1 v2 hv0 hv1);
-  -- Apply `cofinal_fiber` to get a colour `g x y` and a proof `hg x y : Cofinal {z | z ∈ {z | y < z} ∧ F1 x y z = g x y}`.
-  obtain ⟨g, hg⟩ : ∃ g : Pt κ → Pt κ → θ.out, ∀ x y, x < y → Cofinal {z | z ∈ {z | y < z} ∧ F1 x y z = g x y} := by
-    have h_cofinal_fiber : ∀ x y, x < y → ∃ v : θ.out, Cofinal {z | z ∈ {z | y < z} ∧ F1 x y z = v} := by
+  set F1 : Pt κ → Pt κ → (Pt κ → θ.out) := fun x y z => if h : x < y ∧ y < z then c
+    (mk3 x y z h.1 h.2) else c (mk3 v0 v1 v2 hv0 hv1);
+  -- Apply `cofinal_fiber` to get a colour `g x y` and a proof `hg x y : Cofinal {z | z ∈ {z | y <
+  -- z} ∧ F1 x y z = g x y}`.
+  obtain ⟨g, hg⟩ : ∃ g : Pt κ → Pt κ → θ.out, ∀ x y, x < y → Cofinal {z | z ∈ {z | y < z} ∧ F1 x y z
+    = g x y} := by
+    have h_cofinal_fiber : ∀ x y, x < y → ∃ v : θ.out, Cofinal {z | z ∈ {z | y < z} ∧ F1 x y z = v}
+      := by
       intros x y hxy
       apply cofinal_fiber hreg hθ (cofinal_Ioi hreg.1 y) (F1 x y);
-    exact ⟨ fun x y => if h : x < y then Classical.choose ( h_cofinal_fiber x y h ) else c ( mk3 v0 v1 v2 hv0 hv1 ), fun x y hxy => by simpa [ hxy ] using Classical.choose_spec ( h_cofinal_fiber x y hxy ) ⟩;
+    exact ⟨ fun x y => if h : x < y then Classical.choose ( h_cofinal_fiber x y h )
+      else c ( mk3 v0 v1 v2 hv0 hv1 ),
+      fun x y hxy => by simpa [ hxy ] using Classical.choose_spec ( h_cofinal_fiber x y hxy ) ⟩;
   -- Define the function F2
-  set F2 : Pt κ → (Pt κ → θ.out) := fun x y => if h : x < y then g x y else c (mk3 v0 v1 v2 hv0 hv1);
-  -- Apply `cofinal_fiber` to get a colour `hcol x` and a proof `hcol x : Cofinal {y | y ∈ {y | x < y} ∧ F2 x y = hcol x}`.
-  obtain ⟨hcol, hhcol⟩ : ∃ hcol : Pt κ → θ.out, ∀ x, Cofinal {y | y ∈ {y | x < y} ∧ F2 x y = hcol x} := by
+  set F2 : Pt κ → (Pt κ → θ.out) := fun x y => if h : x < y then g x y else c
+    (mk3 v0 v1 v2 hv0 hv1);
+  -- Apply `cofinal_fiber` to get a colour `hcol x` and a proof `hcol x : Cofinal {y | y ∈ {y | x <
+  -- y} ∧ F2 x y = hcol x}`.
+  obtain ⟨hcol, hhcol⟩ : ∃ hcol : Pt κ → θ.out, ∀ x, Cofinal {y | y ∈ {y | x < y} ∧ F2 x y = hcol x}
+    := by
     have h_cofinal_fiber : ∀ x : Pt κ, ∃ v : θ.out, Cofinal {y | y ∈ {y | x < y} ∧ F2 x y = v} := by
       intro x
       apply cofinal_fiber hreg hθ (cofinal_Ioi hreg.1 x) (F2 x);
-    exact ⟨ fun x => Classical.choose ( h_cofinal_fiber x ), fun x => Classical.choose_spec ( h_cofinal_fiber x ) ⟩;
+    exact ⟨ fun x => Classical.choose ( h_cofinal_fiber x ),
+      fun x => Classical.choose_spec ( h_cofinal_fiber x ) ⟩;
   -- Apply `cofinal_fiber` to get a colour `star` and a proof `star : Cofinal {x | hcol x = star}`.
   obtain ⟨star, hstar⟩ : ∃ star : θ.out, Cofinal {x | hcol x = star} := by
     have := cofinal_fiber hreg hθ ( cofinal_univ hreg.1 ) hcol; aesop;
@@ -263,7 +288,9 @@ If `μ ≤ κ` then `Pt μ` order-embeds into `Pt κ` as an initial segment
 theorem exists_pt_orderEmbedding {μ : Cardinal.{u}} (hμκ : μ ≤ κ) :
     Nonempty (Pt μ ↪o Pt κ) := by
       convert! Nonempty.intro ?_;
-      convert! OrderEmbedding.ofStrictMono ( fun x => Ordinal.enum ( fun x1 x2 : κ.ord.ToType => x1 < x2 ) ⟨ Ordinal.typein ( fun x1 x2 : μ.ord.ToType => x1 < x2 ) x, ?_ ⟩ ) fun x y hxy => ?_;
+      convert! OrderEmbedding.ofStrictMono
+        ( fun x => Ordinal.enum ( fun x1 x2 : κ.ord.ToType => x1 < x2 )
+          ⟨ Ordinal.typein ( fun x1 x2 : μ.ord.ToType => x1 < x2 ) x, ?_ ⟩ ) fun x y hxy => ?_;
       all_goals norm_num [ typein_lt_type ];
       all_goals norm_num [ typein_lt_type, enum_lt_enum ];
       · exact lt_of_lt_of_le ( Ordinal.typein_lt_self x ) ( Cardinal.ord_le_ord.mpr hμκ );
@@ -286,10 +313,12 @@ theorem colorableBy_of_le {μ : Cardinal.{u}} (hμκ : μ ≤ κ) {θ : Cardinal
       obtain ⟨c, hc⟩ := h
       have hadjκ : ∀ a b, (graph κ).Adj a b → c a ≠ c b := by
         grind +suggestions;
-      refine' ⟨ fun a => c ⟨ fun i => e ( a.1 i ), _ ⟩, _ ⟩;
-      exact e.strictMono.comp a.2;
-      convert! toHG_proper_iff ( graph μ ) _ |>.2 _;
-      intro x y hxy; specialize hadjκ ⟨ fun i => e ( x.1 i ), e.strictMono.comp x.2 ⟩ ⟨ fun i => e ( y.1 i ), e.strictMono.comp y.2 ⟩ ; simp_all +decide [ graph, Adjr, IsEdge ] ;
+      refine ⟨ fun a => c ⟨ fun i => e ( a.1 i ), ?_ ⟩, ?_ ⟩;
+      · exact e.strictMono.comp a.2;
+      · convert! toHG_proper_iff ( graph μ ) _ |>.2 _;
+        intro x y hxy; specialize hadjκ ⟨ fun i => e ( x.1 i ), e.strictMono.comp x.2 ⟩
+          ⟨fun i => e (y.1 i), e.strictMono.comp y.2⟩
+        simp_all +decide [graph, Adjr, IsEdge]
 
 /-- **The chromatic lower bound (no regularity assumption).**  For `ℵ₀ < κ` the
 Erdős–Rado graph on `Pt κ` is not `θ`-colourable for any `θ < κ`.  Reduce to the

@@ -38,7 +38,7 @@ theorem small_union {ι : Type u} {V : Type u} (ρ μ : Cardinal.{u})
   convert! Cardinal.mk_iUnion_le ( fun i => X i ) |> lt_of_le_of_lt <| ?_;
   convert! Cardinal.mul_lt_of_lt hρ _ _;
   · exact lt_of_le_of_lt hI ( lt_of_lt_of_le hμ ( Ordinal.cof_ord_le _ ) );
-  · convert! Ordinal.iSup_lt _ _;
+  · convert! Cardinal.iSup_lt_of_lt_cof_ord _ _;
     · exact lt_of_le_of_lt hI hμ;
     · assumption
 
@@ -46,7 +46,7 @@ theorem small_union {ι : Type u} {V : Type u} (ρ μ : Cardinal.{u})
 `cf(2^μ) > μ` for infinite `μ` (König's theorem). -/
 theorem cf_two_pow (μ : Cardinal.{u}) (hμ : ℵ₀ ≤ μ) :
     μ < ((2:Cardinal.{u}) ^ μ).ord.cof :=
-  Cardinal.lt_cof_power hμ one_lt_two
+  Cardinal.lt_cof_ord_power hμ one_lt_two
 
 /-- **Cardinal facts**, part (ii): `μ⁺ ≤ 2^μ`. -/
 theorem succ_le_two_pow (μ : Cardinal.{u}) :
@@ -77,8 +77,8 @@ theorem successors_cofinal (κ : Cardinal.{u}) (hκ : ℵ₀ < κ)
     (hlim : ∀ ν : Cardinal.{u}, κ ≠ Order.succ ν) (α : Ordinal.{u}) (hα : α < κ.ord) :
     ∃ ν : Cardinal.{u}, ℵ₀ ≤ ν ∧ Order.succ ν < κ ∧ α < (Order.succ ν).ord := by
   obtain ⟨ν, hν⟩ : ∃ ν : Cardinal, Cardinal.aleph0 ≤ ν ∧ ν < κ ∧ α < (Order.succ ν).ord := by
-    refine' ⟨ Max.max ℵ₀ α.card, _, _, _ ⟩ <;> simp_all +decide [ Cardinal.lt_ord ];
-  refine' ⟨ ν, hν.1, lt_of_le_of_ne _ _, hν.2.2 ⟩;
+    refine ⟨ Max.max ℵ₀ α.card, ?_, ?_, ?_ ⟩ <;> simp_all +decide [ Cardinal.lt_ord ];
+  refine ⟨ ν, hν.1, lt_of_le_of_ne ?_ ?_, hν.2.2 ⟩;
   · exact Order.succ_le_of_lt hν.2.1;
   · exact Ne.symm ( hlim ν )
 
@@ -95,16 +95,15 @@ theorem cofinal_fibres (κ ρ : Cardinal.{u}) (hκ : ℵ₀ ≤ κ) (hρ : κ �
       (∀ α, α < (Order.succ ρ).ord → q α < κ.ord) ∧
       (∀ ξ, ξ < κ.ord → ∀ β, β < (Order.succ ρ).ord →
         ∃ α, β ≤ α ∧ α < (Order.succ ρ).ord ∧ q α = ξ) := by
-  refine' ⟨ fun α => α % κ.ord, _, _ ⟩;
-  · intro α hα;
-    by_cases h : κ.ord = 0;
-    · simp_all +decide [ Cardinal.ord_eq_zero ];
-      exact absurd hκ ( ne_of_gt ( Cardinal.aleph0_pos ) );
-    · exact Ordinal.mod_lt _ h;
+  refine ⟨ fun α => α % κ.ord, ?_, ?_ ⟩;
+  · intro α _;
+    apply Ordinal.mod_lt
+    intro h
+    exact (ne_of_gt (Cardinal.aleph0_pos.trans_le hκ)) (Cardinal.ord_eq_zero.mp h)
   · intro ξ hξ β hβ;
-    refine' ⟨ κ.ord * β + ξ, _, _, _ ⟩;
-    · refine' le_trans _ le_self_add;
-      refine' le_mul_of_one_le_left' _;
+    refine ⟨ κ.ord * β + ξ, ?_, ?_, ?_ ⟩;
+    · refine le_trans ?_ le_self_add;
+      refine le_mul_of_one_le_left' ?_;
       contrapose! hκ; aesop;
     · -- Since $β < (Order.succ ρ).ord$, we have $β.card ≤ ρ$.
       have hβ_card : β.card ≤ ρ := by
@@ -114,14 +113,14 @@ theorem cofinal_fibres (κ ρ : Cardinal.{u}) (hκ : ℵ₀ ≤ κ) (hρ : κ �
         grind +suggestions;
       -- Since $κ.ord * β + ξ$ is an ordinal, we have $(κ.ord * β + ξ).card ≤ κ * β.card + ξ.card$.
       have h_card : (κ.ord * β + ξ).card ≤ κ * β.card + ξ.card := by
-        refine' le_trans ( Ordinal.card_add _ _ |> le_of_eq ) _;
+        refine le_trans ( Ordinal.card_add _ _ |> le_of_eq ) ?_;
         rw [ Ordinal.card_mul ];
         rw [ Cardinal.card_ord ];
       -- Since $κ * β.card + ξ.card ≤ ρ$, we have $(κ.ord * β + ξ).card ≤ ρ$.
       have h_card_le_ρ : (κ.ord * β + ξ).card ≤ ρ := by
         refine le_trans h_card ?_;
-        refine' le_trans ( add_le_add ( mul_le_mul_left hρ _ ) hξ_card.le ) _;
-        refine' le_trans ( add_le_add ( mul_le_mul_right hβ_card _ ) hρ ) _;
+        refine le_trans ( add_le_add ( mul_le_mul_left hρ _ ) hξ_card.le ) ?_;
+        refine le_trans ( add_le_add ( mul_le_mul_right hβ_card _ ) hρ ) ?_;
         rw [ Cardinal.mul_eq_self ];
         · rw [ Cardinal.add_eq_self ];
           exact le_trans hκ hρ;

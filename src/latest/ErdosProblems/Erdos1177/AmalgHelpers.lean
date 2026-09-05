@@ -30,7 +30,7 @@ theorem colorableBy_aleph0_of_countable {W : Type u} (H : Hypergraph W) {T : Typ
     (hT : #T ≤ ℵ₀) {c : W → T} (hc : H.ProperColoring c) : H.ColorableBy ℵ₀ := by
   obtain ⟨ f, hf ⟩ := Cardinal.mk_le_aleph0_iff.mp hT;
   obtain ⟨ g, hg ⟩ := Cardinal.eq.1 ( Cardinal.mk_out ℵ₀ );
-  refine' ⟨ fun w => hg ⟨ f ( c w ) ⟩, _ ⟩;
+  refine ⟨ fun w => hg ⟨ f ( c w ) ⟩, ?_ ⟩;
   intro e he; obtain ⟨ u, hu, v, hv, huv ⟩ := hc e he; use u, hu, v, hv; simp +decide [ * ] ;
   grind +qlia
 
@@ -38,11 +38,10 @@ theorem colorableBy_aleph0_of_countable {W : Type u} (H : Hypergraph W) {T : Typ
 Any type of cardinality `≤ ℵ₀` embeds into `(ℵ₀).out`; a `Countable` product
 of finite by `(ℵ₀).out` is countable.
 -/
-theorem countable_prod_out {I : Type} [Fintype I] : #(I × (ℵ₀ : Cardinal.{u}).out) ≤ ℵ₀ := by
-  convert! Cardinal.mk_le_aleph0;
-  convert! instCountableProd;
-  · infer_instance;
-  · convert! Cardinal.mk_le_aleph0_iff.mp ( le_of_eq ( Cardinal.mk_out ℵ₀ ) )
+theorem countable_prod_out {I : Type} [Finite I] : #(I × (ℵ₀ : Cardinal.{u}).out) ≤ ℵ₀ := by
+  have : Countable (ℵ₀ : Cardinal.{u}).out :=
+    Cardinal.mk_le_aleph0_iff.mp (Cardinal.mk_out ℵ₀).le
+  exact Cardinal.mk_le_aleph0
 
 /-
 If `F` is obligatory and does not embed into the restriction of a triple
@@ -62,7 +61,7 @@ If the vertex set is partitioned into finitely many parts, each inducing an
 `ℵ₀`-colourable restriction, then the whole host is `ℵ₀`-colourable.
 -/
 theorem colorableBy_of_finite_parts {W : Type u} (H : Hypergraph W) {I : Type}
-    [Fintype I] [Nonempty I] (part : W → I)
+    [Finite I] [Nonempty I] (part : W → I)
     (hcol : ∀ i : I, (H.restrict (part ⁻¹' {i})).ColorableBy ℵ₀) :
     H.ColorableBy ℵ₀ := by
   choose f hf using hcol
@@ -93,7 +92,7 @@ theorem colorableBy_of_finite_parts {W : Type u} (H : Hypergraph W) {I : Type}
     have huv : part u ≠ part v := by
       intro huv
       apply hvpart
-      simpa [huv]
+      simp [huv]
     refine ⟨u, hu, v, hv, ?_⟩
     intro huv'
     exact huv (congrArg Prod.fst huv')
@@ -108,7 +107,7 @@ theorem exists_low_degree_vertex {B : Type u} (D : SimpleGraph B) (d : ℕ)
     ∃ v₀ ∈ s, (s.filter (fun w => D.Adj v₀ w)).card ≤ 2 * d := by
   classical
   by_contra h_contra
-  push_neg at h_contra
+  push Not at h_contra
   have h_sum_ge : (2 * d + 1) * s.card ≤ ∑ v ∈ s, (s.filter (fun w => D.Adj v w)).card := by
     calc (2 * d + 1) * s.card = ∑ _v ∈ s, (2 * d + 1) := by
             rw [Finset.sum_const, smul_eq_mul, mul_comm]
@@ -163,7 +162,7 @@ out-degrees `≤ d`, then any finite vertex set admits a proper `(2d+1)`-colouri
 (restricted to that set). -/
 theorem finite_degenerate_coloring {B : Type u} (D : SimpleGraph B) (d : ℕ)
     (out : B → Finset B) (hout : ∀ v, (out v).card ≤ d)
-    (hcov : ∀ v w, D.Adj v w → w ∈ out v ∨ v ∈ out w) [DecidableRel D.Adj]
+    (hcov : ∀ v w, D.Adj v w → w ∈ out v ∨ v ∈ out w)
     (s : Finset B) :
     ∃ c : B → Fin (2 * d + 1), ∀ a ∈ s, ∀ b ∈ s, D.Adj a b → c a ≠ c b := by
   classical
@@ -184,7 +183,7 @@ theorem finite_degenerate_coloring {B : Type u} (D : SimpleGraph B) (d : ℕ)
       have hBadcard : Bad.card ≤ 2 * d := le_trans (Finset.card_image_le) hdeg
       obtain ⟨col, hcolBad⟩ : ∃ col : Fin (2 * d + 1), col ∉ Bad := by
         by_contra hcon
-        push_neg at hcon
+        push Not at hcon
         have hsub : (Finset.univ : Finset (Fin (2 * d + 1))) ⊆ Bad := fun x _ => hcon x
         have := Finset.card_le_card hsub
         rw [Finset.card_univ, Fintype.card_fin] at this
@@ -212,7 +211,7 @@ theorem finite_degenerate_coloring {B : Type u} (D : SimpleGraph B) (d : ℕ)
 all out-degrees `≤ d`, then `D` is `(2d+1)`-colourable. -/
 theorem colorable_of_out {B : Type u} (D : SimpleGraph B) (d : ℕ)
     (out : B → Finset B) (hout : ∀ v, (out v).card ≤ d)
-    (hcov : ∀ v w, D.Adj v w → w ∈ out v ∨ v ∈ out w) [DecidableRel D.Adj] :
+    (hcov : ∀ v w, D.Adj v w → w ∈ out v ∨ v ∈ out w) :
     ∃ c : B → Fin (2 * d + 1), ∀ a b, D.Adj a b → c a ≠ c b := by
   have : NeZero (2 * d + 1) := ⟨by omega⟩
   exact colorable_of_forall_finite D (2 * d + 1)

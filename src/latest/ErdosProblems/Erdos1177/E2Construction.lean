@@ -95,10 +95,10 @@ bound transfer from the core graph unchanged.
 theorem E2_of_core (h : E2Core.{u}) : E2_EH_oddgirth.{u} := by
   intro κ hκ s;
   obtain ⟨ W, G, hW, hG, hgirth ⟩ := h κ hκ s;
-  refine' ⟨ W ⊕ κ.out, paddedGraph G κ, _, _, _ ⟩;
+  refine ⟨ W ⊕ κ.out, paddedGraph G κ, ?_, ?_, ?_ ⟩;
   · simp +decide [ Cardinal.mk_sum, Cardinal.mk_out ];
     grind +suggestions;
-  · refine' ⟨ _, _ ⟩;
+  · refine ⟨ ?_, ?_ ⟩;
     · convert! colorableBy_of_mk_eq ( paddedGraph G κ ) _;
       simp +decide only [mk_sum, lift_id, mk_out];
       rw [ Cardinal.add_eq_right ];
@@ -108,16 +108,25 @@ theorem E2_of_core (h : E2Core.{u}) : E2_EH_oddgirth.{u} := by
       obtain ⟨c, hc⟩ := hcolorable
       have hcolorable_G : (SimpleGraph.toHG G).ColorableBy θ := by
         use fun w => c (Sum.inl w);
-        intro e he; obtain ⟨ x, y, hxy, rfl ⟩ := he; specialize hc ( { Sum.inl x, Sum.inl y } : Set ( W ⊕ Quotient.out κ ) ) ; simp_all +decide only [Set.mem_insert_iff, Set.mem_singleton_iff, ne_eq, exists_eq_or_imp, ↓existsAndEq,
+        intro e he;
+        obtain ⟨ x, y, hxy, rfl ⟩ := he;
+        specialize hc ( { Sum.inl x, Sum.inl y } : Set ( W ⊕ Quotient.out κ ) ) ;
+        simp_all +decide only [Set.mem_insert_iff, Set.mem_singleton_iff, ne_eq, exists_eq_or_imp,
+          ↓existsAndEq,
     true_and, not_true_eq_false, false_or, or_false] ;
-        exact hc <| Or.inl ⟨ x, Or.inl ⟨ y, by simpa [ paddedGraph ] using! hxy, by simp +decide [ Set.pair_comm ] ⟩ ⟩
+        exact hc ⟨Sum.inl x, Sum.inl y, hxy, rfl⟩
       exact hG θ hθ hcolorable_G;
   · intro m hm₁ hm₂ hm₃ ⟨ v, hv₁, hv₂ ⟩;
-    -- Since $v$ is injective and $v i$ and $v (i + 1)$ are adjacent in the padded graph, they must both be in $W$.
+    -- Since $v$ is injective and $v i$ and $v (i + 1)$ are adjacent in the padded graph, they must
+    -- both be in $W$.
     have hvW : ∀ i : ZMod m, ∃ w : W, v i = Sum.inl w := by
-      intro i; specialize hv₂ i; rcases v_i : v i with ( _ | _ ) <;> simp_all +decide [ paddedGraph ] ;
+      intro i;
+      specialize hv₂ i;
+      rcases v_i : v i with ( _ | _ ) <;> simp_all +decide [ paddedGraph ] ;
     choose w hw using hvW;
-    exact hgirth m hm₁ hm₂ hm₃ ⟨ w, fun i j hij => by have := hv₁ ( by aesop : v i = v j ) ; aesop, fun i => by have := hv₂ i; aesop ⟩
+    exact hgirth m hm₁ hm₂ hm₃
+      ⟨ w, fun i j hij => by have := hv₁ ( by aesop : v i = v j ) ; aesop,
+        fun i => by have := hv₂ i; aesop ⟩
 
 /-! ### Progress towards `E2Core`: the chromatic lower bound via the complete graph
 

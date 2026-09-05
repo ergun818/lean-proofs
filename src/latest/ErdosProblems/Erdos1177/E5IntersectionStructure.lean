@@ -40,7 +40,8 @@ theorem existsUnique_common_vertex (H : Hypergraph W) (hlin : H.Linear)
     (hmeet : (e ∩ f).Nonempty) :
     ∃! x, x ∈ e ∩ f := by
   obtain ⟨ x, hx ⟩ := hmeet;
-  exact ⟨ x, hx, fun y hy => by have := linear_intersection_subsingleton H hlin he hf hef; exact this hy hx ⟩
+  exact ⟨ x, hx, fun y hy => by
+    have := linear_intersection_subsingleton H hlin he hf hef; exact this hy hx ⟩
 
 /-
 Every edge meeting a fixed triple belongs to one of the three stars
@@ -68,11 +69,16 @@ theorem card_pairwiseDisjoint_edges_meeting_le_three
   have h_card : ∀ f ∈ D, (e ∩ f).Nonempty → ∃ x, x ∈ e ∧ x ∈ f := by
     exact fun f hf h => by obtain ⟨ x, hx ⟩ := h; exact ⟨ x, hx.1, hx.2 ⟩ ;
   choose! x hx₁ hx₂ using h_card;
-  have h_inj : Function.Injective (fun f : { f : Set W // f ∈ D } => ⟨x f.1 f.2 (hDmeet f.1 f.2), hx₁ f.1 f.2 (hDmeet f.1 f.2)⟩ : { f : Set W // f ∈ D } → { w : W // w ∈ e }) := by
+  have h_inj : Function.Injective
+      (fun f : { f : Set W // f ∈ D } =>
+        ⟨x f.1 f.2 (hDmeet f.1 f.2), hx₁ f.1 f.2 (hDmeet f.1 f.2)⟩ :
+        { f : Set W // f ∈ D } → { w : W // w ∈ e }) := by
     intro f g hfg; simp_all +decide [ Set.disjoint_left ] ;
     grind +splitImp;
   have h_card : (Set.ncard e) ≥ D.card := by
-    have h_card : (Set.ncard (Set.image (fun f : { f : Set W // f ∈ D } => x f.1 f.2 (hDmeet f.1 f.2)) Set.univ)) ≤ (Set.ncard e) := by
+    have h_card : (Set.ncard (Set.image
+        (fun f : { f : Set W // f ∈ D } => x f.1 f.2 (hDmeet f.1 f.2)) Set.univ)) ≤
+        (Set.ncard e) := by
       apply Set.ncard_le_ncard;
       · exact Set.image_subset_iff.mpr fun f _ => hx₁ _ _ _;
       · exact Set.finite_of_ncard_pos ( by rw [ htri e he ] ; norm_num );
@@ -112,9 +118,11 @@ theorem edgeIntersectionGraph_no_four_claw
     (hadj : ∀ i, (edgeIntersectionGraph H).Adj center (leaf i))
     (hnadj : ∀ ⦃i j⦄, i ≠ j →
       ¬ (edgeIntersectionGraph H).Adj (leaf i) (leaf j)) : False := by
-  apply no_four_pairwise_disjoint_edges_meeting H htri center.val center.property (fun i => (leaf i).val) (fun i => ?_) (fun i j hij => ?_);
+  apply no_four_pairwise_disjoint_edges_meeting H htri center.val center.property
+    (fun i => (leaf i).val) (fun i => ?_) (fun i j hij => ?_);
   · exact ( edgeIntersectionGraph_adj_iff H center ( leaf i ) ).mp ( hadj i ) |>.2;
-  · simp_all +decide [ Set.disjoint_iff_inter_eq_empty, edgeIntersectionGraph_adj_iff ];
+  · simp_all +decide only [edgeIntersectionGraph_adj_iff, ne_eq, not_and,
+    Set.disjoint_iff_inter_eq_empty];
     exact Set.not_nonempty_iff_eq_empty.mp ( hnadj hij ( hleaf.ne hij ) )
 
 /-
@@ -136,7 +144,8 @@ theorem edgeIntersectionGraph_neighbour_star_cover
     (hadj : (edgeIntersectionGraph H).Adj center leaf) :
     ∃ x ∈ center.1, x ∈ leaf.1 := by
   obtain ⟨ x, hx ⟩ := hadj;
-  exact hx.elim ( fun h => h.imp fun x hx => ⟨ hx.1, hx.2 ⟩ ) fun h => h.imp fun x hx => ⟨ hx.2, hx.1 ⟩
+  exact hx.elim ( fun h => h.imp fun x hx => ⟨ hx.1, hx.2 ⟩ ) fun h => h.imp fun x hx =>
+    ⟨ hx.2, hx.1 ⟩
 
 /-
 Every independent finite subset of the neighbourhood of one vertex in the
@@ -149,17 +158,22 @@ theorem edgeIntersectionGraph_independent_neighbour_card_le_three
     (hind : ∀ ⦃f g⦄, f ∈ D → g ∈ D → f ≠ g →
       ¬ (edgeIntersectionGraph H).Adj f g) :
     D.card ≤ 3 := by
-  convert! card_pairwiseDisjoint_edges_meeting_le_three H htri center.1 center.2 ( D.image Subtype.val ) ?_ using 1;
-  all_goals try exact Classical.decEq _;
-  · simp +decide only [Finset.mem_image, Subtype.exists, exists_and_right, exists_eq_right, ne_eq,
-    forall_exists_index];
-    contrapose! hind;
-    obtain ⟨ f, g, hf, hf', hg, hg', hfg, h ⟩ := hind.1;
-    exact ⟨ _, _, hf', hg', by aesop, by rw [ edgeIntersectionGraph_adj_iff ] ; exact ⟨ by aesop, by rw [ Set.not_disjoint_iff ] at h; tauto ⟩ ⟩;
-  · intro f hf
-    simp only [Finset.mem_image] at hf
-    obtain ⟨g, hg, rfl⟩ := hf
-    exact ((edgeIntersectionGraph_adj_iff H center g).mp (hadj g hg)).2
+  classical
+  have hcard : (D.image Subtype.val).card ≤ 3 := by
+    apply card_pairwiseDisjoint_edges_meeting_le_three H htri center.1 center.2
+    · intro f hf
+      obtain ⟨g, hg, rfl⟩ := Finset.mem_image.mp hf
+      exact ((edgeIntersectionGraph_adj_iff H center g).mp (hadj g hg)).2
+    · intro f g hf hg hne
+      obtain ⟨f', hf', hf_eq⟩ := Finset.mem_image.mp hf
+      obtain ⟨g', hg', hg_eq⟩ := Finset.mem_image.mp hg
+      subst f g
+      apply Set.disjoint_left.mpr
+      intro x hxf hxg
+      exact hind hf' hg' (fun h => hne (congrArg Subtype.val h))
+        (edgeIntersectionGraph_adj_of_common_vertex H
+          (fun h => hne (congrArg Subtype.val h)) hxf hxg)
+  simpa only [Finset.card_image_of_injective D Subtype.val_injective] using hcard
 
 /-
 Consequently, the neighbourhood of an edge in a triple system has

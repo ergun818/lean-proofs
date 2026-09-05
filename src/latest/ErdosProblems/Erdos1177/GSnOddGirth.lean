@@ -110,19 +110,41 @@ Total increment in terms of the descent count: `∑ incr = -n·m + (2n+1)·D`.
 -/
 theorem sum_incr_eq [NeZero m] :
     ∑ e : ZMod m, incr A e = -(n : ℤ) * m + (2 * n + 1) * descCount A := by
-  unfold incr;
-  simp +decide only [neg_mul];
-  rw [ Nat.cast_sub ( show _ ≤ _ from le_trans ( Finset.card_le_univ _ ) ( by norm_num ) ) ] ; ring
+  classical
+  have hcount : ((Finset.univ.filter
+      (fun j : ZMod m => IsEdge (A j).1 (A (j + 1)).1)).card : ℤ) + descCount A = m := by
+    exact_mod_cast (show (Finset.univ.filter
+        (fun j : ZMod m => IsEdge (A j).1 (A (j + 1)).1)).card + descCount A = m from by
+      simpa only [descCount, Finset.card_univ, ZMod.card] using
+        Finset.card_filter_add_card_filter_not (s := Finset.univ)
+          (fun j : ZMod m => IsEdge (A j).1 (A (j + 1)).1))
+  simp only [incr, Finset.sum_ite, Finset.sum_const, nsmul_eq_mul]
+  change ((Finset.univ.filter
+      (fun j : ZMod m => IsEdge (A j).1 (A (j + 1)).1)).card : ℤ) * -(n : ℤ) +
+      (descCount A : ℤ) * (n + 1) = -(n : ℤ) * m + (2 * n + 1) * descCount A
+  rw [← hcount]
+  ring
 
 /-
 Total of positive increments: `∑ max(incr,0) = (n+1)·D`.
 -/
 theorem sum_max_incr_eq [NeZero m] :
     ∑ e : ZMod m, max (incr A e) 0 = (n + 1 : ℤ) * descCount A := by
-  convert! Finset.sum_congr rfl fun x hx => show max ( if IsEdge ( A x ).1 ( A ( x + 1 ) ).1 then - ( n : ℤ ) else ( n + 1 : ℤ ) ) 0 = if IsEdge ( A x ).1 ( A ( x + 1 ) ).1 then 0 else ( n + 1 : ℤ ) from ?_ using 1;
-  all_goals norm_num [ Finset.sum_ite ];
-  convert! mul_comm _ _ using 2;
-  split_ifs <;> norm_num ; linarith
+  classical
+  calc
+    (∑ e : ZMod m, max (incr A e) 0) =
+        ∑ e : ZMod m, if IsEdge (A e).1 (A (e + 1)).1 then 0 else (n + 1 : ℤ) := by
+      apply Finset.sum_congr rfl
+      intro e _
+      by_cases h : IsEdge (A e).1 (A (e + 1)).1
+      · simp only [incr, if_pos h]
+        exact max_eq_right (by omega)
+      · simp only [incr, if_neg h]
+        exact max_eq_left (by omega)
+    _ = (n + 1 : ℤ) * descCount A := by
+      simp only [Finset.sum_ite, Finset.sum_const, nsmul_eq_mul, mul_zero, zero_add]
+      change (descCount A : ℤ) * (n + 1) = (n + 1 : ℤ) * descCount A
+      exact mul_comm _ _
 
 /-- **Core contradiction, in terms of the descent count.**  If the descents are a
 "minority" in the sense `(2n+1)·D ≤ n·m`, and `m ≤ 2n+1`, a cycle is impossible. -/
@@ -160,23 +182,28 @@ The descent count of the reversed cycle is `m - D` (the ascent count of `A`).
 theorem descCount_reverse [NeZero m]
     (hAadj : ∀ j : ZMod m, (graph n κ).Adj (A j) (A (j + 1))) :
     descCount (reverseCycle A) = m - descCount A := by
-  refine' eq_tsub_of_add_eq _;
-  convert! Finset.card_add_card_compl ( Finset.filter ( fun j => ¬ IsEdge ( A ( -j ) ).1 ( A ( -j - 1 ) ).1 ) Finset.univ ) using 1;
-  congr! 1;
-  all_goals try exact Classical.decPred _;
-  · unfold descCount reverseCycle
-    have hneg (j : ZMod m) : -(j + 1) = -j - 1 := by ring
-    congr 1
-    ext j
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-    rw [hneg j]
-  · refine' Finset.card_bij ( fun j _ => -j - 1 ) _ _ _ <;> simp +decide only [mem_compl, mem_filter, mem_univ, true_and, not_not, exists_prop, neg_sub,
-    sub_neg_eq_add, add_sub_cancel_left];
-    · intro a ha; specialize hAadj a; simp_all +decide [ add_comm, graph ] ;
-      exact hAadj.resolve_left ha;
-    · intro b hb;
-      use -b - 1;
-      have := not_isEdge_both ( A ( -b - 1 ) |>.2 ) ( A ( -b ) |>.2 ) ; simp_all +decide [ sub_eq_add_neg, add_assoc ];
+  refine eq_tsub_of_add_eq ?_;
+  convert! Finset.card_add_card_compl
+    ( Finset.filter ( fun j => ¬ IsEdge ( A ( -j ) ).1 ( A ( -j - 1 ) ).1 ) Finset.univ ) using 1;
+  all_goals try exact Classical.decPred _
+  · congr! 1
+    · unfold descCount reverseCycle
+      have hneg (j : ZMod m) : -(j + 1) = -j - 1 := by ring
+      congr 1
+      ext j
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+      rw [hneg j]
+    · refine Finset.card_bij ( fun j _ => -j - 1 ) ?_ ?_ ?_ <;>
+        simp +decide only [mem_compl, mem_filter, mem_univ, true_and, not_not, exists_prop, neg_sub,
+      sub_neg_eq_add, add_sub_cancel_left];
+      · intro a ha; specialize hAadj a; simp_all +decide only [graph, add_comm] ;
+        exact hAadj.resolve_left ha;
+      · intro a _ b _ hab
+        linear_combination -hab
+      · intro b hb;
+        use -b - 1;
+        have := not_isEdge_both ( A ( -b - 1 ) |>.2 ) ( A ( -b ) |>.2 ) ;
+        simp_all +decide [ sub_eq_add_neg, add_assoc ];
   · cases m <;> aesop
 
 end Cycle

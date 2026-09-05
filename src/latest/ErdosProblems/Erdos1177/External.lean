@@ -205,7 +205,7 @@ noncomputable def looseCycle7 : FTS where
     rw [Finset.card_insert_of_notMem, Finset.card_insert_of_notMem, Finset.card_singleton]
     · simp
     · simp only [Finset.mem_insert, Finset.mem_singleton]
-      push_neg
+      push Not
       exact ⟨fun h => hne i (Sum.inl_injective h), fun h => Sum.inl_ne_inr h⟩
 
 /-- **E5**.  The loose `7`-cycle `C_7^{(3)}` is linearly obligatory: it occurs in

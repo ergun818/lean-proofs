@@ -23,7 +23,6 @@ open Cardinal
 
 namespace Erdos1177
 
-open Classical
 
 universe u
 
@@ -35,6 +34,7 @@ theorem FTS.Iso.refl (F : FTS) : FTS.Iso F F :=
 
 /-- Symmetry of `FTS.Iso`. -/
 theorem FTS.Iso.symm {F G : FTS} (h : FTS.Iso F G) : FTS.Iso G F := by
+  classical
   obtain ⟨φ, hφ⟩ := h
   refine ⟨φ.symm, ?_⟩
   intro e
@@ -56,6 +56,7 @@ theorem decomp_step (F : FTS) (h : ReconOK F) :
     (∃ (F₁ F₂ : FTS) (x : F₁.V) (y : F₂.V),
         F₁.edges.card < F.edges.card ∧ F₂.edges.card < F.edges.card ∧
         ReconOK F₁ ∧ ReconOK F₂ ∧ FTS.Iso F (F₁.amalgamate F₂ x y)) := by
+  classical
   obtain ⟨hlin, hno_iso, hbr, hev⟩ := h
   by_cases hA : ∃ (ed : {e : Finset F.V // e ∈ F.edges}) (w : F.V),
       IsBridgeInc F w ed ∧ ∃ f : {e : Finset F.V // e ∈ F.edges}, f ≠ ed ∧ w ∈ f.1
@@ -64,7 +65,7 @@ theorem decomp_step (F : FTS) (h : ReconOK F) :
     exact Or.inr (Or.inr
       (decomp_amalg ⟨hlin, hno_iso, hbr, hev⟩ ed w hbrid f hfne hwf))
   · -- Expansion case: every edge has a private vertex.
-    push_neg at hA
+    push Not at hA
     refine Or.inl (exists_expansion_of_private hlin ?_ hev)
     intro ed
     obtain ⟨w, hw_mem, hw_bridge⟩ := hbr ed
@@ -78,6 +79,7 @@ theorem decomp_step (F : FTS) (h : ReconOK F) :
 /-- **Reverse direction, no-isolated-vertices case.**  A `ReconOK` finite triple
 system is in the class `B`. -/
 theorem bclass_of_reconOK (F : FTS) (h : ReconOK F) : Bclass F := by
+  classical
   -- strong induction on the number of edges
   generalize hn : F.edges.card = n
   induction n using Nat.strong_induction_on generalizing F with
@@ -101,7 +103,8 @@ theorem bclass_of_reconOK (F : FTS) (h : ReconOK F) : Bclass F := by
 `F.reduce` has no isolated vertices.
 -/
 theorem FTS.reduce_no_isolated (F : FTS) (v : F.reduce.V) : ¬ F.reduce.Isolated v := by
-  simp +decide [ FTS.reduce ];
+  classical
+  simp +decide only [reduce];
   cases v;
   unfold FTS.Isolated at *; aesop;
 
@@ -111,6 +114,7 @@ The reduction of a `ReconOK`-input system is `ReconOK`.
 theorem reconOK_reduce (F : FTS) (hlin : F.Linear)
     (hbr : ∀ ed : {e : Finset F.V // e ∈ F.edges}, ∃ w ∈ ed.1, IsBridgeInc F w ed)
     (hev : ∀ c : BergeCycle F, Even c.m) : ReconOK F.reduce := by
+  classical
   obtain ⟨hlinR, hbrR, hevR⟩ := (FTS.intrinsic_reduce_iff F).mp ⟨hlin, hbr, hev⟩;
   exact ⟨ hlinR, FTS.reduce_no_isolated F, hbrR, hevR ⟩
 
@@ -118,24 +122,33 @@ theorem reconOK_reduce (F : FTS) (hlin : F.Linear)
 Adjoining (or having) isolated vertices does not affect membership in `B`.
 -/
 theorem bclass_of_bclass_reduce (F : FTS) (h : Bclass F.reduce) : Bclass F := by
+  classical
   -- Let $E$ be the edgeless FTS consisting of the isolated vertices of $F$.
   set E : FTS := ⟨{x : F.V // F.Isolated x}, ∅, by
     aesop⟩
   generalize_proofs at *;
   -- Let φ be the bijection between F.V and (F.reduce.V ⊕ E.V).
-  obtain ⟨φ, hφ⟩ : ∃ φ : F.V ≃ F.reduce.V ⊕ E.V, ∀ x, φ x = if hx : ¬ F.Isolated x then Sum.inl ⟨x, hx⟩ else Sum.inr ⟨x, by
-    exact Classical.not_not.mp hx⟩ := by
-    refine' ⟨ _, _ ⟩;
-    refine' Equiv.ofBijective ( fun x => if hx : ¬ F.Isolated x then Sum.inl ⟨ x, hx ⟩ else Sum.inr ⟨ x, by simpa using! hx ⟩ ) ⟨ fun x y hxy => _, fun x => _ ⟩;
-    all_goals norm_num at *;
-    · grind;
-    · rcases x with ( ⟨ x, hx ⟩ | ⟨ x, hx ⟩ ) <;> [ exact ⟨ x, by aesop ⟩ ; exact ⟨ x, by aesop ⟩ ]
+  obtain ⟨φ, hφ⟩ : ∃ φ : F.V ≃ F.reduce.V ⊕ E.V,
+      ∀ x, φ x = if hx : ¬ F.Isolated x then Sum.inl ⟨x, hx⟩
+        else Sum.inr ⟨x, by exact Classical.not_not.mp hx⟩ := by
+    refine ⟨?_, ?_⟩
+    · refine Equiv.ofBijective
+        (fun x => if hx : ¬ F.Isolated x then Sum.inl ⟨x, hx⟩
+          else Sum.inr ⟨x, by simpa using! hx⟩) ⟨fun x y hxy => ?_, fun x => ?_⟩
+      all_goals norm_num at *
+      · grind
+      · rcases x with (⟨x, hx⟩ | ⟨x, hx⟩) <;> exact ⟨x, by aesop⟩
+    · intro x
+      rfl
   generalize_proofs at *;
-  -- By definition of $φ$, we know that $e ∈ F.edges ↔ e.map φ.toEmbedding ∈ (F.reduce.disjUnion E).edges$.
-  have h_iso : ∀ e : Finset F.V, e ∈ F.edges ↔ e.map φ.toEmbedding ∈ (F.reduce.disjUnion E).edges := by
+  -- By definition of $φ$, we know that $e ∈ F.edges ↔ e.map φ.toEmbedding ∈ (F.reduce.disjUnion
+  -- E).edges$.
+  have h_iso : ∀ e : Finset F.V,
+      e ∈ F.edges ↔ e.map φ.toEmbedding ∈ (F.reduce.disjUnion E).edges := by
     intro e;
     constructor <;> intro he;
-    · have h_map : e.map φ.toEmbedding = (Finset.subtype (fun x => ¬ F.Isolated x) e).map Function.Embedding.inl := by
+    · have h_map : e.map φ.toEmbedding = (Finset.subtype (fun x => ¬ F.Isolated x) e).map
+        Function.Embedding.inl := by
         ext z
         constructor
         · intro hz
@@ -147,23 +160,36 @@ theorem bclass_of_bclass_reduce (F : FTS) (h : Bclass F.reduce) : Bclass F := by
           obtain ⟨⟨v, hnv⟩, hv, rfl⟩ := Finset.mem_map.mp hz
           exact Finset.mem_map.mpr ⟨v, Finset.mem_subtype.mp hv,
             by simp [hφ, hnv]; rfl⟩
-      simp [h_map, FTS.disjUnion];
+      simp only [FTS.disjUnion, h_map, Finset.mem_union, Finset.mem_image, Finset.map_inj,
+        exists_eq_right];
       exact Or.inl <| FTS.subtype_edge_mem he;
-    · unfold FTS.disjUnion at he; simp_all +decide [ Finset.mem_union, Finset.mem_image ] ;
-      obtain ⟨ a, ha, he ⟩ | ⟨ a, ha, he ⟩ := he <;> simp_all +decide [ Finset.ext_iff ];
-      · convert! FTS.reduce_edge_map_mem ha using 1;
-        ext x; simp [he];
-        grind;
-      · aesop;
+    · rcases Finset.mem_union.mp he with he | he
+      · obtain ⟨a, ha, he⟩ := Finset.mem_image.mp he
+        have h_map : (a.map (Function.Embedding.subtype (fun x => ¬ F.Isolated x))).map
+            φ.toEmbedding = a.map Function.Embedding.inl := by
+          rw [Finset.map_map]
+          apply congrArg (fun f : F.reduce.V ↪ (F.reduce.V ⊕ E.V) => a.map f)
+          apply Function.Embedding.ext
+          intro v
+          change φ v.1 = Sum.inl v
+          simp only [hφ, dif_pos v.2]
+        have h_eq : a.map (Function.Embedding.subtype (fun x => ¬ F.Isolated x)) = e :=
+          Finset.map_injective φ.toEmbedding (h_map.trans he)
+        exact h_eq ▸ FTS.reduce_edge_map_mem ha
+      · obtain ⟨a, ha, _⟩ := Finset.mem_image.mp he
+        exact False.elim (Finset.notMem_empty a ha)
   apply Bclass.iso (by
-  use φ.symm;
-  intro e; specialize h_iso ( Finset.map φ.symm.toEmbedding e ) ; simp_all +decide [ Finset.map_map ] ;) (Bclass.union h (Bclass.edgeless E rfl))
+    use φ.symm;
+    intro e;
+    specialize h_iso ( Finset.map φ.symm.toEmbedding e ) ;
+    simp_all +decide [ Finset.map_map ] ;) (Bclass.union h (Bclass.edgeless E rfl))
 
 /-! ### The finite bridge decomposition -/
 
 /-- **Reverse direction of `prop:finite-decomposition`.**  If `F` is linear,
 bridge-incident, and has only even Berge cycles, then `F ∈ B`. -/
 theorem intrinsic_bclass (F : FTS) (h : F.IntrinsicObligatory) : Bclass F := by
+  classical
   apply bclass_of_bclass_reduce
   exact bclass_of_reconOK F.reduce (reconOK_reduce F h.1 h.2.1 h.2.2)
 

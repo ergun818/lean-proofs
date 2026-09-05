@@ -51,11 +51,11 @@ theorem Vtx_card (μ : Cardinal.{u}) (hμ : ℵ₀ ≤ μ) :
     le_trans hρ (le_of_lt (Cardinal.cantor _))
   have h3 : Order.succ ((2 : Cardinal.{u}) ^ μ) ≠ 0 :=
     (lt_of_le_of_lt zero_le (Order.lt_succ _)).ne'
-  show #((Rord (rhoC μ)).ToType × ((2 : Cardinal.{u}) ^ (rhoC μ)).out) = _
+  change #((Rord (rhoC μ)).ToType × ((2 : Cardinal.{u}) ^ (rhoC μ)).out) = _
   rw [Cardinal.mk_prod, Cardinal.mk_out]
-  show Cardinal.lift.{u,u} (#(((Order.succ (rhoC μ)).ord).ToType)) * _ = _
+  change Cardinal.lift.{u,u} (#(((Order.succ (rhoC μ)).ord).ToType)) * _ = _
   rw [mk_ord_toType, Cardinal.lift_id, Cardinal.lift_id]
-  show Order.succ ((2 : Cardinal.{u}) ^ μ) * (2 : Cardinal.{u}) ^ ((2 : Cardinal.{u}) ^ μ) = _
+  change Order.succ ((2 : Cardinal.{u}) ^ μ) * (2 : Cardinal.{u}) ^ ((2 : Cardinal.{u}) ^ μ) = _
   rw [Cardinal.mul_eq_right h2 h1 h3]
 
 /-- **The §6 successor calibration, with the cardinality bound**
@@ -80,42 +80,44 @@ cardinality `≤ 2^κ`.
 theorem lift_card_le {α : Type u} (A : SimpleGraph α) (κ : Cardinal.{u})
     (hκ : ℵ₀ ≤ κ) (hα : #α ≤ κ) :
     #(Node A κ × α) ≤ (2 : Cardinal.{u}) ^ κ := by
-  -- Since `Node A κ` is a structure with fields `pos : Idx κ` and `seq : {q : Idx κ // q < pos} → A.edgeSet`.
+  -- Since `Node A κ` is a structure with fields `pos : Idx κ` and `seq : {q : Idx κ // q < pos} →
+  -- A.edgeSet`.
   -- We can bound `#(Node A κ)` by considering the cardinality of the product of these fields.
   have h_node_card : #(Node A κ) ≤ κ * κ ^ κ := by
     have h_node_card : #(Node A κ) ≤ κ * κ ^ κ := by
       have h_card_seq : ∀ pos : Idx κ, #( {q : Idx κ // q < pos} → A.edgeSet ) ≤ κ ^ κ := by
         intro pos
-        have h_seq_card : #({q : Idx κ // q < pos} → A.edgeSet) ≤ κ ^ #( {q : Idx κ // q < pos} ) := by
-          refine' le_trans ( Cardinal.mk_le_of_injective _ ) _;
-          exact ( { q : Idx κ // q < pos } → α × α );
-          exact fun f q => f q |>.1.out;
+        have h_seq_card : #({q : Idx κ // q < pos} → A.edgeSet) ≤
+            κ ^ #( {q : Idx κ // q < pos} ) := by
+          refine le_trans (Cardinal.mk_le_of_injective
+            (f := fun (f : {q : Idx κ // q < pos} → A.edgeSet) q => (f q).1.out) ?_) ?_;
           · intro f g hfg;
-            ext q; replace hfg := congr_fun hfg q; simp_all +decide [ funext_iff, Quot.out ] ;
+            ext q; replace hfg := congr_fun hfg q; simp_all +decide only [Quot.out];
             grind +suggestions;
           · simp +decide only [mk_pi, mk_prod, Cardinal.lift_id, prod_const];
-            exact Cardinal.power_le_power_right ( by simpa using! mul_le_mul' hα hα |> le_trans <| by simp +decide [ Cardinal.mul_eq_self hκ ] );
-        refine' le_trans h_seq_card ( Cardinal.power_le_power_left _ _ );
+            exact Cardinal.power_le_power_right ( by
+              simpa using! mul_le_mul' hα hα |> le_trans <| by
+                simp +decide [ Cardinal.mul_eq_self hκ ] );
+        refine le_trans h_seq_card ( Cardinal.power_le_power_left ?_ ?_ );
         · exact ne_of_gt ( lt_of_lt_of_le ( Cardinal.aleph0_pos ) hκ );
-        · refine' le_trans ( Cardinal.mk_le_mk_of_subset _ ) _;
-          exact Set.univ;
+        · refine le_trans ( Cardinal.mk_le_mk_of_subset (t := Set.univ) ?_ ) ?_;
           · exact Set.subset_univ _;
           · simp +decide [ Cardinal.mk_univ ]
-      have h_card_node : #(Node A κ) ≤ Cardinal.mk (Σ pos : Idx κ, {q : Idx κ // q < pos} → A.edgeSet) := by
-        refine' ⟨ fun x => ⟨ x.pos, x.seq ⟩, fun x y hxy => _ ⟩ ; cases x ; cases y ; aesop;
-      refine' le_trans h_card_node _;
+      have h_card_node : #(Node A κ) ≤ Cardinal.mk (Σ pos : Idx κ, {q : Idx κ // q < pos} →
+        A.edgeSet) := by
+        refine ⟨ fun x => ⟨ x.pos, x.seq ⟩, fun x y hxy => ?_ ⟩ ; cases x ; cases y ; aesop;
+      refine le_trans h_card_node ?_;
       convert! Cardinal.sum_le_sum _ _ h_card_seq using 1;
       · convert! Cardinal.mk_sigma _;
-      · simp +decide [ Cardinal.mk_ord_toType ];
+      · simp +decide;
     exact h_node_card;
-  refine' le_trans ( Cardinal.mk_prod _ _ |> le_of_eq ) _;
-  refine' le_trans ( mul_le_mul' ( Cardinal.lift_le.mpr h_node_card ) ( Cardinal.lift_le.mpr hα ) ) _;
+  refine le_trans ( Cardinal.mk_prod _ _ |> le_of_eq ) ?_;
+  refine le_trans ( mul_le_mul' ( Cardinal.lift_le.mpr h_node_card ) ( Cardinal.lift_le.mpr hα ) )
+    ?_;
   simp +decide only [Cardinal.lift_id];
-  rw [ mul_right_comm, Cardinal.mul_eq_max ];
-  · simp +decide [ Cardinal.mul_eq_self hκ ];
-    exact le_of_lt ( Cardinal.cantor _ );
-  · exact le_trans hκ ( le_mul_of_one_le_right' ( Cardinal.one_le_iff_ne_zero.mpr ( ne_of_gt ( lt_of_lt_of_le ( Cardinal.aleph0_pos ) hκ ) ) ) );
-  · exact le_trans hκ ( le_of_lt ( Cardinal.cantor _ ) )
+  rw [Cardinal.power_self_eq hκ, mul_right_comm, Cardinal.mul_eq_self hκ,
+    Cardinal.mul_eq_right (hκ.trans (Cardinal.cantor κ).le) (Cardinal.cantor κ).le
+      (Cardinal.aleph0_pos.trans_le hκ).ne']
 
 /-- **Cardinality of the lift vertex set at `ℵ₁`.**  For any graph `A` with
 `|V(A)| ≤ ℵ₁`, the lift `Lift(A, ℵ₁)` lives on a vertex set of cardinality
@@ -150,31 +152,27 @@ theorem negativeCore_bounded_aleph1 (h3 : E3_EGH_P.{u}) (hE2 : E2_EH_oddgirth.{u
   by_cases hLin : F.reduce.Linear;
   · have hni : ¬ F.reduce.IntrinsicObligatory := by
       contrapose! hnb; exact (finiteDecomposition_holds F).mpr hnb;
-    by_cases hBr : ∀ ed : {e : Finset F.reduce.V // e ∈ F.reduce.edges}, ∃ w ∈ ed.1, IsBridgeInc F.reduce w ed;
+    by_cases hBr : ∀ ed : {e : Finset F.reduce.V // e ∈ F.reduce.edges}, ∃ w ∈ ed.1, IsBridgeInc
+      F.reduce w ed;
     · obtain ⟨c, hc_odd, hc_cycle⟩ : ∃ c : BergeCycle F.reduce, Odd c.m := by
         contrapose! hni;
         exact ⟨ hLin, fun ed => hBr ed, fun c => by simpa using! hni c ⟩;
-      obtain ⟨V, A, hcard, hAchr, hAgirth⟩ := hE2 (Order.succ (ℵ₀ : Cardinal)) (Order.lt_succ _) (2 * hc_odd + 1);
+      obtain ⟨V, A, hcard, hAchr, hAgirth⟩ := hE2 (Order.succ (ℵ₀ : Cardinal)) (Order.lt_succ _) (2
+        * hc_odd + 1);
       have h_lift_omits : ¬ F.reduce.Embeds (liftHG A (Order.succ ℵ₀)) := by
-        apply lift_omits_of_bergeCycle;
-        exact hLin;
-        convert! hAgirth ( 2 * hc_odd + 1 ) _ _ _ using 1;
-        any_goals tauto;
-        · rw [ hc_cycle ];
-        · rcases hc_odd with ( _ | _ | hc_odd ) <;> simp_all +arith +decide only [mul_zero, zero_add, Nat.not_ofNat_le_one];
-          exact absurd hc_cycle ( by linarith [ c.hm ] );
-        · grobner;
+        apply lift_omits_of_bergeCycle hLin c
+        exact hAgirth c.m ⟨hc_odd, hc_cycle⟩ (by have := c.hm; omega) (by omega)
       grind +suggestions;
     · have hno_bridgeSelector : ¬ Nonempty (BridgeSelector F.reduce) := by
-        exact no_bridgeSelector_of ( by push_neg at hBr; exact hBr );
-      refine' ⟨ Node ( ⊤ : SimpleGraph ( Order.succ ℵ₀ ).out ) ( Order.succ ℵ₀ ) × ( Order.succ ℵ₀ ).out, liftHG ( ⊤ : SimpleGraph ( Order.succ ℵ₀ ).out ) ( Order.succ ℵ₀ ), _, _, _, _ ⟩;
+        exact no_bridgeSelector_of ( by push Not at hBr; exact hBr );
+      refine ⟨ Node ( ⊤ : SimpleGraph ( Order.succ ℵ₀ ).out ) ( Order.succ ℵ₀ ) × ( Order.succ ℵ₀
+        ).out, liftHG ( ⊤ : SimpleGraph ( Order.succ ℵ₀ ).out ) ( Order.succ ℵ₀ ), ?_, ?_, ?_, ?_ ⟩;
       · exact Erdos1177.liftHG_tripleSystem _ _;
-      · convert! Erdos1177.lift_hasChromatic ( ⊤ : SimpleGraph ( Order.succ ℵ₀ ).out ) ( Order.succ ℵ₀ ) ( Erdos1177.completeGraph_hasChromatic ( Order.succ ℵ₀ ) ) using 1;
+      · convert! Erdos1177.lift_hasChromatic ( ⊤ : SimpleGraph ( Order.succ ℵ₀ ).out ) ( Order.succ
+          ℵ₀ ) ( Erdos1177.completeGraph_hasChromatic ( Order.succ ℵ₀ ) ) using 1;
       · intro h;
         apply hno_bridgeSelector;
-        apply bridgeSelector_of_embeds_lift;
-        exact hLin;
-        exact F.reduce_embeds_of_embeds h;
+        exact bridgeSelector_of_embeds_lift hLin (F.reduce_embeds_of_embeds h)
       · convert! lift_card_le_aleph1 _ _;
         simp +decide [ Cardinal.mk_out ];
   · obtain ⟨W, H, htri, hHlin, hchr, hcard⟩ := successor_linear_bounded h3 ℵ₀ le_rfl

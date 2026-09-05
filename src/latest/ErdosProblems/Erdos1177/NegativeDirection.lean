@@ -30,7 +30,7 @@ colours, and the identity is a proper `lam`-colouring.
 theorem completeGraph_hasChromatic (lam : Cardinal.{u}) :
     (SimpleGraph.toHG (⊤ : SimpleGraph lam.out)).HasChromatic lam := by
   constructor;
-  · refine' ⟨ id, _ ⟩;
+  · refine ⟨ id, ?_ ⟩;
     intro e he; simp_all +decide only [id_eq, ne_eq] ;
     rcases he with ⟨ x, y, hxy, rfl ⟩ ; exact ⟨ x, by simp +decide, y, by simp +decide, hxy ⟩ ;
   · intro θ hθ hcolorable
@@ -59,7 +59,13 @@ theorem nonlinear_not_embeds_linear {F : FTS} (hF : ¬ F.Linear)
   contrapose! hF; rcases hF with ⟨ f, hf, hfe ⟩ ;
   intro e₁ he₁ e₂ he₂ hne;
   have := hH ( f '' ↑e₁ ) ( hfe e₁ he₁ ) ( f '' ↑e₂ ) ( hfe e₂ he₂ ) ?_;
-  · exact Finset.card_le_one.mpr fun x hx y hy => hf <| this ( Set.mem_inter ( Set.mem_image_of_mem _ <| Finset.mem_coe.mpr <| Finset.mem_inter.mp hx |>.1 ) ( Set.mem_image_of_mem _ <| Finset.mem_coe.mpr <| Finset.mem_inter.mp hx |>.2 ) ) ( Set.mem_inter ( Set.mem_image_of_mem _ <| Finset.mem_coe.mpr <| Finset.mem_inter.mp hy |>.1 ) ( Set.mem_image_of_mem _ <| Finset.mem_coe.mpr <| Finset.mem_inter.mp hy |>.2 ) );
+  · exact Finset.card_le_one.mpr fun x hx y hy => hf <| this
+      ( Set.mem_inter
+        ( Set.mem_image_of_mem _ <| Finset.mem_coe.mpr <| Finset.mem_inter.mp hx |>.1 )
+        ( Set.mem_image_of_mem _ <| Finset.mem_coe.mpr <| Finset.mem_inter.mp hx |>.2 ) )
+      ( Set.mem_inter
+        ( Set.mem_image_of_mem _ <| Finset.mem_coe.mpr <| Finset.mem_inter.mp hy |>.1 )
+        ( Set.mem_image_of_mem _ <| Finset.mem_coe.mpr <| Finset.mem_inter.mp hy |>.2 ) );
   · exact fun h => hne <| Finset.coe_injective <| Set.image_injective.mpr hf h
 
 /-- **§6 output** (`cor:all-linear`), carried as an explicit hypothesis: for every
@@ -98,7 +104,7 @@ theorem negativeCore_of (hlin6 : AllLinearExists.{u}) (hE2 : E2_EH_oddgirth.{u})
         ∃ w ∈ ed.1, IsBridgeInc F.reduce w ed
     · -- case (iii): linear, all bridges, so some Berge cycle is odd
       have hEx : ∃ c : BergeCycle F.reduce, ¬ Even c.m := by
-        by_contra he; push_neg at he; exact hni ⟨hLin, hBr, he⟩
+        by_contra he; push Not at he; exact hni ⟨hLin, hBr, he⟩
       obtain ⟨c, hcOdd⟩ := hEx
       have hodd : Odd c.m := (Nat.even_or_odd c.m).resolve_left hcOdd
       have hm3 : 3 ≤ c.m := by
@@ -110,7 +116,7 @@ theorem negativeCore_of (hlin6 : AllLinearExists.{u}) (hE2 : E2_EH_oddgirth.{u})
       exact lift_omits_of_bergeCycle hLin c
         (hAgirth c.m hodd hm3 (by omega)) (F.reduce_embeds_of_embeds hemb)
     · -- case (ii): linear, some edge has no bridge incidence
-      push_neg at hBr
+      push Not at hBr
       have hns : ¬ Nonempty (BridgeSelector F.reduce) := no_bridgeSelector_of hBr
       refine ⟨Node (⊤ : SimpleGraph lam.out) lam × lam.out, liftHG (⊤) lam,
         liftHG_tripleSystem _ _,

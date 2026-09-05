@@ -41,7 +41,10 @@ A disjoint union of triple systems is a triple system.
 theorem Hypergraph.sigma_isTripleSystem {J : Type u} {W : J → Type u}
     (H : ∀ j, Hypergraph (W j)) (h : ∀ j, (H j).IsTripleSystem) :
     (Hypergraph.sigma H).IsTripleSystem := by
-  intro e he; obtain ⟨j, t, ht, rfl⟩ := he; specialize h j t ht; simp_all +decide [ Set.ncard_image_of_injective, Function.Injective ] ;
+  intro e he;
+  obtain ⟨j, t, ht, rfl⟩ := he;
+  specialize h j t ht;
+  simp_all +decide [ Set.ncard_image_of_injective, Function.Injective ] ;
 
 /-
 A disjoint union of linear systems is linear.
@@ -52,9 +55,13 @@ theorem Hypergraph.sigma_linear {J : Type u} {W : J → Type u}
   intro e₁ he₁ e₂ he₂ hne;
   obtain ⟨ j₁, t₁, ht₁, rfl ⟩ := he₁
   obtain ⟨ j₂, t₂, ht₂, rfl ⟩ := he₂;
-  by_cases h : j₁ = j₂ <;> simp_all +decide [ Set.Subsingleton ];
+  by_cases h : j₁ = j₂ <;> simp_all +decide only [ne_eq, Set.Subsingleton, Set.mem_inter_iff,
+    Set.mem_image, and_imp, forall_exists_index, forall_apply_eq_imp_iff₂, Sigma.mk.injEq,
+    true_and, heq_eq_eq, forall_const];
   · subst h;
-    intro a ha x hx hax b hb y hy hay; have := h j₁ t₁ ht₁ t₂ ht₂; simp_all +decide [ Set.Subsingleton ] ;
+    intro a ha x hx hax b hb y hy hay;
+    have := h j₁ t₁ ht₁ t₂ ht₂;
+    simp_all +decide only [heq_eq_eq, ne_eq, Set.Subsingleton, Set.mem_inter_iff, and_imp] ;
     exact this ( by aesop ) ha hx hb hy;
   · aesop
 
@@ -71,8 +78,10 @@ theorem Hypergraph.sigma_hasChromatic {J : Type u} {W : J → Type u}
     (Hypergraph.sigma H).HasChromatic κ := by
   constructor;
   · obtain ⟨c, hc⟩ : ∃ c : (Σ j, W j) → κ.out, (Hypergraph.sigma H).ProperColoring c := by
-      obtain ⟨c, hc⟩ : ∃ c : (Σ j, W j) → κ.out, ∀ j, ∀ e ∈ (H j).edges, ∃ u ∈ e, ∃ v ∈ e, c ⟨j, u⟩ ≠ c ⟨j, v⟩ := by
-        have h_coloring : ∀ j, ∃ c : W j → κ.out, ∀ e ∈ (H j).edges, ∃ u ∈ e, ∃ v ∈ e, c u ≠ c v := by
+      obtain ⟨c, hc⟩ : ∃ c : (Σ j, W j) → κ.out, ∀ j, ∀ e ∈ (H j).edges, ∃ u ∈ e, ∃ v ∈ e, c ⟨j, u⟩
+        ≠ c ⟨j, v⟩ := by
+        have h_coloring : ∀ j, ∃ c : W j → κ.out,
+            ∀ e ∈ (H j).edges, ∃ u ∈ e, ∃ v ∈ e, c u ≠ c v := by
           intro j
           obtain ⟨c, hc⟩ := (hchr j).left
           have h_colorable : (H j).ColorableBy κ := by
@@ -89,8 +98,10 @@ theorem Hypergraph.sigma_hasChromatic {J : Type u} {W : J → Type u}
     have hcolorable_j : (H j).ColorableBy θ := by
       obtain ⟨ c, hc ⟩ := hcolorable;
       use fun w => c ⟨j, w⟩;
-      intro e he; specialize hc ( Sigma.mk j '' e ) ; simp_all +decide only [ne_eq] ;
-      exact hc ⟨ j, e, he, by aesop ⟩
+      intro e he
+      obtain ⟨_, ⟨x, hx, rfl⟩, _, ⟨y, hy, rfl⟩, hxy⟩ :=
+        hc (Sigma.mk j '' e) ⟨j, e, he, rfl⟩
+      exact ⟨x, hx, y, hy, hxy⟩
     exact (hchr j).right θ hj hcolorable_j
 
 /-! ### The two cases -/
@@ -113,12 +124,12 @@ theorem allLinearExists_of_E3 (h3 : E3_EGH_P.{u}) : AllLinearExists.{u} := by
     obtain ⟨ν, rfl⟩ := hsucc
     have hν : ℵ₀ ≤ ν := by
       by_contra h
-      push_neg at h
+      push Not at h
       exact absurd (Order.succ_le_of_lt h) (not_le.mpr hκ)
     obtain ⟨W, H, htri, hlin, hchr⟩ := successor_linear h3 ν hν
     exact ⟨W, H, htri, hlin, hchr⟩
   · -- limit case
-    push_neg at hsucc
+    push Not at hsucc
     -- choose, for each level `α < κ.ord`, an uncountable successor `ν_α⁺ < κ`
     -- with `α < (ν_α⁺).ord`
     have hpick : ∀ a : κ.ord.ToType,

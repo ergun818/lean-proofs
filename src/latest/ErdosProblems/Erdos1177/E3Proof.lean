@@ -33,7 +33,7 @@ every type `ρ` times.  We fix such a realization `typeOf`, and set
 higher endpoint.
 -/
 
-open Cardinal Ordinal Classical
+open Cardinal Ordinal
 
 namespace Erdos1177
 namespace E3
@@ -62,9 +62,11 @@ def Types (ξ : Lv ρ) : Type u := {t : Vx ρ → Option ρ.out // IsTypeAt ρ �
 /-! ### Basic cardinalities -/
 
 theorem mk_Lv : #(Lv ρ) = deltaRho ρ := by
+  classical
   rw [Lv, Cardinal.mk_toType, Cardinal.card_ord]
 
 theorem mk_level (ξ : Lv ρ) : #({x : Vx ρ // lvl ρ x = ξ}) = ρ := by
+  classical
   have e : {x : Vx ρ // lvl ρ x = ξ} ≃ ρ.out := by
     refine ⟨fun x => x.1.2, fun r => ⟨(ξ, r), rfl⟩, ?_, ?_⟩
     · rintro ⟨⟨a, b⟩, h⟩; simp only [lvl] at h; subst h; rfl
@@ -72,6 +74,7 @@ theorem mk_level (ξ : Lv ρ) : #({x : Vx ρ // lvl ρ x = ξ}) = ρ := by
   rw [Cardinal.mk_congr e, Cardinal.mk_out]
 
 theorem mk_Vx (hρ : ℵ₀ ≤ ρ) : #(Vx ρ) = ρ := by
+  classical
   rw [Vx, Cardinal.mk_prod, Cardinal.mk_out, Cardinal.lift_id, Cardinal.lift_id, mk_Lv]
   exact Cardinal.mul_eq_right hρ (deltaRho_le hρ)
     ((lt_of_lt_of_le Cardinal.aleph0_pos (aleph0_le_deltaRho hρ)).ne')
@@ -84,18 +87,19 @@ theorem mk_below_le (hρ : ℵ₀ ≤ ρ) (ξ : Lv ρ) :
 is at most `ρ`. -/
 theorem mk_small_subsets_le (hρ : ℵ₀ ≤ ρ) {α : Type u} (hα : #α ≤ ρ) :
     #({S : Set α | #S < deltaRho ρ}) ≤ ρ := by
+  classical
   have hwo : IsWellOrder (deltaRho ρ).ord.ToType (· < ·) := inferInstance
   set δ := deltaRho ρ with hδ
   set f : δ.ord.ToType → Set (Set α) :=
     fun o => {S : Set α | #S ≤ ((Ordinal.typein (r := (· < ·)) ).toRelEmbedding o).card} with hf
   have hcover : {S : Set α | #S < δ} ⊆ ⋃ (o : δ.ord.ToType), f o := by
     intro S hS
-    simp only [Set.mem_setOf_eq] at hS
+    simp only [Set.mem_ofPred_eq] at hS
     rw [Set.mem_iUnion]
     have hlt' : (#S).ord < Ordinal.type (α := δ.ord.ToType) (· < ·) := by
       rw [Ordinal.type_toType]; exact (Cardinal.ord_lt_ord).mpr hS
     refine ⟨Ordinal.enum (· < ·) ⟨(#S).ord, hlt'⟩, ?_⟩
-    rw [hf]; simp only [Set.mem_setOf_eq]
+    rw [hf]; simp only [Set.mem_ofPred_eq]
     rw [Ordinal.typein_enum, Cardinal.card_ord]
   have hterm : ∀ o : δ.ord.ToType, #(f o) ≤ ρ := by
     intro o
@@ -140,9 +144,9 @@ theorem types_card_le (hρ : ℵ₀ ≤ ρ) (ξ : Lv ρ) : #(Types ρ ξ) ≤ ρ
     apply Subtype.ext
     funext w
     by_cases h : (t.1 w).isSome
-    · simp only [Set.mem_setOf_eq, h, dif_pos]
+    · simp only [Set.mem_ofPred_eq, h, dif_pos]
       exact Option.some_get h
-    · simp only [Set.mem_setOf_eq, h]
+    · simp only [Set.mem_ofPred_eq, h]
       exact (Option.not_isSome_iff_eq_none.mp h).symm
   calc #(Types ρ ξ) ≤ #(Σ S : Idx, (↥S.1 → ρ.out)) := Cardinal.mk_le_of_surjective hsurj
     _ = Cardinal.sum (fun S : Idx => #(↥S.1 → ρ.out)) := Cardinal.mk_sigma _
@@ -163,12 +167,14 @@ theorem types_nonempty (hρ : ℵ₀ ≤ ρ) (ξ : Lv ρ) : Nonempty (Types ρ �
     refine ⟨?_, ?_⟩
     · intro w h; simp at h
     · have : ({w | (Option.none : Option ρ.out).isSome}) = (∅ : Set (Vx ρ)) := by
+        classical
         ext w; simp
       rw [this]
       simpa using! lt_of_lt_of_le Cardinal.aleph0_pos (aleph0_le_deltaRho hρ)⟩⟩
 
 /-- Nonemptiness of `ρ.out` for infinite `ρ`. -/
 theorem out_nonempty (hρ : ℵ₀ ≤ ρ) : Nonempty ρ.out := by
+  classical
   rw [← Cardinal.mk_ne_zero_iff, Cardinal.mk_out]
   exact (lt_of_lt_of_le Cardinal.aleph0_pos hρ).ne'
 
@@ -176,6 +182,7 @@ theorem out_nonempty (hρ : ℵ₀ ≤ ρ) : Nonempty ρ.out := by
 
 theorem fiber_partition {B : Type u} (hB1 : Nonempty B) (hB : #B ≤ ρ) (hρ : ℵ₀ ≤ ρ) :
     ∃ s : ρ.out → B, ∀ b : B, #({a : ρ.out // s a = b}) = ρ := by
+  classical
   have hBne : #B ≠ 0 := by rw [Cardinal.mk_ne_zero_iff]; exact hB1
   have hmul : #(B × ρ.out) = ρ := by
     rw [Cardinal.mk_prod, Cardinal.mk_out, Cardinal.lift_id, Cardinal.lift_id]
@@ -213,12 +220,14 @@ theorem typeOf_supp (hρ : ℵ₀ ≤ ρ) (v w : Vx ρ) (h : (typeOf ρ hρ v w)
 
 theorem not_both_some (hρ : ℵ₀ ≤ ρ) (u w : Vx ρ) :
     ¬ ((typeOf ρ hρ u w).isSome ∧ (typeOf ρ hρ w u).isSome) := by
+  classical
   rintro ⟨h1, h2⟩
   exact absurd (typeOf_supp ρ hρ u w h1) (not_lt.mpr (le_of_lt (typeOf_supp ρ hρ w u h2)))
 
 /-- Realization: every type at level `ξ` is realized by exactly `ρ` vertices. -/
 theorem realize (hρ : ℵ₀ ≤ ρ) (ξ : Lv ρ) (t : Types ρ ξ) :
     #({x : Vx ρ // lvl ρ x = ξ ∧ ∀ w, typeOf ρ hρ x w = t.1 w}) = ρ := by
+  classical
   refine Eq.trans (Cardinal.mk_congr ?_) (chosenSurj_fiber ρ hρ ξ t)
   refine ⟨fun x => ⟨x.1.2, ?_⟩, fun r => ⟨(ξ, r.1), rfl, ?_⟩, ?_, ?_⟩
   · obtain ⟨⟨a, b⟩, hlv, hfun⟩ := x
@@ -226,7 +235,7 @@ theorem realize (hρ : ℵ₀ ≤ ρ) (ξ : Lv ρ) (t : Types ρ ξ) :
     apply Subtype.ext; funext w; exact hfun w
   · obtain ⟨b, hb⟩ := r
     intro w
-    show typeOf ρ hρ (ξ, b) w = t.1 w
+    change typeOf ρ hρ (ξ, b) w = t.1 w
     have h1 : typeOf ρ hρ (ξ, b) = (chosenSurj ρ hρ ξ b).1 := rfl
     rw [h1, hb]
   · rintro ⟨⟨a, b⟩, hlv, hfun⟩
@@ -239,10 +248,12 @@ theorem realize (hρ : ℵ₀ ≤ ρ) (ξ : Lv ρ) (t : Types ρ ξ) :
 def Grel (hρ : ℵ₀ ≤ ρ) (u w : Vx ρ) : Prop :=
   (typeOf ρ hρ u w).isSome ∨ (typeOf ρ hρ w u).isSome
 
-theorem Grel_symm (hρ : ℵ₀ ≤ ρ) : Symmetric (Grel ρ hρ) := by
+theorem Grel_symm (hρ : ℵ₀ ≤ ρ) : ∀ ⦃u w⦄, Grel ρ hρ u w → Grel ρ hρ w u := by
+  classical
   intro u w h; exact h.symm
 
 theorem Grel_irrefl (hρ : ℵ₀ ≤ ρ) : ∀ v, ¬ Grel ρ hρ v v := by
+  classical
   intro v h
   rcases h with h | h <;> exact (lt_irrefl _ (typeOf_supp ρ hρ v v h))
 
@@ -257,6 +268,7 @@ def labPair (hρ : ℵ₀ ≤ ρ) (u w : Vx ρ) : ρ.out :=
 
 theorem labPair_symm (hρ : ℵ₀ ≤ ρ) (u w : Vx ρ) :
     labPair ρ hρ u w = labPair ρ hρ w u := by
+  classical
   have hnb := not_both_some ρ hρ u w
   unfold labPair
   cases hu : typeOf ρ hρ u w <;> cases hw : typeOf ρ hρ w u <;>
@@ -268,10 +280,12 @@ def edgeLabel (hρ : ℵ₀ ≤ ρ) : (G ρ hρ).edgeSet → ρ.out :=
 
 theorem edgeLabel_eq (hρ : ℵ₀ ≤ ρ) (x y : Vx ρ) (h : (G ρ hρ).Adj x y) :
     edgeLabel ρ hρ ⟨s(x, y), h⟩ = labPair ρ hρ x y := by
+  classical
   simp [edgeLabel, Sym2.lift_mk]
 
 theorem labPair_of_some (hρ : ℵ₀ ≤ ρ) (x y : Vx ρ) (l : ρ.out)
     (h : typeOf ρ hρ x y = some l) : labPair ρ hρ x y = l := by
+  classical
   simp [labPair, h]
 
 /-! ### Cardinal helpers used in the main proof -/
@@ -279,6 +293,7 @@ theorem labPair_of_some (hρ : ℵ₀ ≤ ρ) (x y : Vx ρ) (l : ρ.out)
 /-- A subset of `Lv ρ` of cardinality `< δ(ρ)` has a strict upper bound. -/
 theorem exists_ub_Lv (hρ : ℵ₀ ≤ ρ) (S : Set (Lv ρ)) (hS : #S < deltaRho ρ) :
     ∃ ξ : Lv ρ, ∀ b ∈ S, b < ξ := by
+  classical
   have hcof : (Ordinal.type (α := Lv ρ) (· < ·)).cof = deltaRho ρ := by
     rw [show (Ordinal.type (α := Lv ρ) (· < ·)) = (deltaRho ρ).ord from Ordinal.type_toType _]
     exact deltaRho_regular hρ
@@ -292,7 +307,8 @@ theorem exists_ub_Lv (hρ : ℵ₀ ≤ ρ) (S : Set (Lv ρ)) (hS : #S < deltaRho
 /-- Union of `< cf(ρ)` sets each of cardinality `< ρ` has cardinality `< ρ`. -/
 theorem small_union_lt_rho {ι α : Type u} (hρ : ℵ₀ ≤ ρ) (hι : #ι < (ρ.ord).cof)
     (t : ι → Set α) (ht : ∀ i, #(t i) < ρ) : #(⋃ i, t i) < ρ := by
-  have hsup : ⨆ i, #(t i) < ρ := Ordinal.iSup_lt hι ht
+  classical
+  have hsup : ⨆ i, #(t i) < ρ := Cardinal.iSup_lt_of_lt_cof_ord hι ht
   have hιρ : #ι < ρ := lt_of_lt_of_le hι (Ordinal.cof_ord_le ρ)
   calc #(⋃ i, t i) ≤ Cardinal.sum (fun i => #(t i)) := Cardinal.mk_iUnion_le_sum_mk
     _ ≤ #ι * ⨆ i, #(t i) := Cardinal.sum_le_mk_mul_iSup _
@@ -306,12 +322,12 @@ theorem propertyP (hρ : ℵ₀ ≤ ρ) :
   classical
   intro θ hθ c
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   choose q hq using hcon
   have hLvne : Nonempty (Lv ρ) := by
     have hpos : (0:Cardinal) < deltaRho ρ :=
       lt_of_lt_of_le Cardinal.aleph0_pos (aleph0_le_deltaRho hρ)
-    exact Ordinal.toType_nonempty_iff_ne_zero.mpr (fun hh => hpos.ne' (Cardinal.ord_eq_zero.mp hh))
+    exact Ordinal.nonempty_toType_iff.mpr (fun hh => hpos.ne' (Cardinal.ord_eq_zero.mp hh))
   have hρne : Nonempty ρ.out := out_nonempty ρ hρ
   set full : θ.out → Lv ρ → Prop :=
     fun a ξ => ρ ≤ #{x : Vx ρ // lvl ρ x = ξ ∧ c x = a} with hfulldef
@@ -327,7 +343,7 @@ theorem propertyP (hρ : ℵ₀ ≤ ρ) :
         lt_of_lt_of_le Cardinal.aleph0_pos (aleph0_le_deltaRho hρ)
       exact (lt_of_lt_of_le h0 ha).ne'
     obtain ⟨⟨ξ, hξ⟩⟩ := hFne
-    simp only [Set.mem_setOf_eq] at hξ
+    simp only [Set.mem_ofPred_eq] at hξ
     rw [hfulldef] at hξ
     have hxne : Nonempty {x : Vx ρ // lvl ρ x = ξ ∧ c x = a} := by
       rw [← Cardinal.mk_ne_zero_iff]
@@ -365,7 +381,7 @@ theorem propertyP (hρ : ℵ₀ ≤ ρ) :
     have hP2 : #({ξ : Lv ρ | ∃ a, isM a ∧ full a ξ}) < deltaRho ρ := by
       have hEq : {ξ : Lv ρ | ∃ a, isM a ∧ full a ξ}
           = ⋃ (a : {a : θ.out // isM a}), {ξ | full a.1 ξ} := by
-        ext ξ; simp only [Set.mem_setOf_eq, Set.mem_iUnion]
+        ext ξ; simp only [Set.mem_ofPred_eq, Set.mem_iUnion]
         constructor
         · rintro ⟨a, hM, hf⟩; exact ⟨⟨a, hM⟩, hf⟩
         · rintro ⟨⟨a, hM⟩, hf⟩; exact ⟨a, hM, hf⟩
@@ -407,7 +423,7 @@ theorem propertyP (hρ : ℵ₀ ≤ ρ) :
       exact hnfull
   have hexists : ∃ x, (lvl ρ x = ξstar ∧ ∀ w, typeOf ρ hρ x w = t w) ∧ ¬ isM (c x) := by
     by_contra hall
-    push_neg at hall
+    push Not at hall
     have hsub : {x : Vx ρ | lvl ρ x = ξstar ∧ ∀ w, typeOf ρ hρ x w = t w} ⊆
         {x : Vx ρ | (lvl ρ x = ξstar ∧ ∀ w, typeOf ρ hρ x w = t w) ∧ isM (c x)} :=
       fun x hx => ⟨hx, hall x hx⟩
@@ -424,7 +440,7 @@ theorem propertyP (hρ : ℵ₀ ≤ ρ) :
     rw [hbeta, if_pos ⟨by rw [h1]; exact hxnM, by rw [h1]⟩, h1]
   have htypeof : typeOf ρ hρ x (yy (c x)) = some (q (c x)) := by rw [hxtype, htval]
   have hadj : (G ρ hρ).Adj x (yy (c x)) := by
-    show Grel ρ hρ x (yy (c x)); left; rw [htypeof]; rfl
+    change Grel ρ hρ x (yy (c x)); left; rw [htypeof]; rfl
   have hlabel : edgeLabel ρ hρ ⟨s(x, yy (c x)), hadj⟩ = q (c x) := by
     rw [edgeLabel_eq]; exact labPair_of_some ρ hρ x (yy (c x)) (q (c x)) htypeof
   exact hq (c x) x (yy (c x)) hadj hlabel rfl hyya'.1
@@ -436,6 +452,7 @@ end E3
 /-- **E3** (`thm:EGH-P`) discharged: property `P` at `δ(ρ)` for a graph on `ρ`
 vertices with a labelling by `ρ` labels. -/
 theorem e3_EGH_P : E3_EGH_P.{u} := by
+  classical
   intro ρ hρ
   refine ⟨E3.Vx ρ, E3.G ρ hρ, ρ.out, ?_, Cardinal.mk_out ρ, E3.edgeLabel ρ hρ, ?_⟩
   · exact E3.mk_Vx ρ hρ

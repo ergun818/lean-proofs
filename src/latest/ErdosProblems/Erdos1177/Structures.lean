@@ -107,7 +107,7 @@ noncomputable def graphExpansion {VJ : Type} [Fintype VJ] [DecidableEq VJ]
     rw [Finset.card_insert_of_notMem, Finset.card_insert_of_notMem, Finset.card_singleton]
     · simp only [Finset.mem_singleton]; exact fun h => Sum.inl_ne_inr h
     · simp only [Finset.mem_insert, Finset.mem_singleton]
-      push_neg
+      push Not
       exact ⟨fun h => hne (Sum.inl_injective h), fun h => Sum.inl_ne_inr h⟩
 
 /-- Isomorphism of finite triple systems: a vertex bijection preserving edges. -/
@@ -142,8 +142,11 @@ theorem obligatory_iso {F G : FTS} (h : FTS.Iso F G) (ih : FTS.Obligatory.{u} F)
   obtain ⟨ φ, hφ ⟩ := h;
   obtain ⟨ f, hf, hfe ⟩ := ih H htri huc;
   use fun x => f ( φ.symm x );
-  refine' ⟨ hf.comp φ.symm.injective, _ ⟩;
-  intro e he; specialize hφ ( Finset.map φ.symm.toEmbedding e ) ; simp_all +decide [ Finset.map_map ] ;
+  refine ⟨ hf.comp φ.symm.injective, ?_ ⟩;
+  intro e he;
+  specialize hφ ( Finset.map φ.symm.toEmbedding e ) ;
+  simp_all +decide only [Finset.map_map, Function.Embedding.mk_trans_mk, Equiv.self_comp_symm,
+    Function.Embedding.mk_id, Finset.map_refl, iff_true] ;
   convert! hfe _ hφ using 1 ; ext ; aesop
 
 end Erdos1177

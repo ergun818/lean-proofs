@@ -40,7 +40,8 @@ theorem edgeStar_pairwise_adjacent (H : Hypergraph W) (x : W)
     {e f : H.edges} (he : e ∈ edgeStar H x) (hf : f ∈ edgeStar H x)
     (hef : e ≠ f) :
     (edgeIntersectionGraph H).Adj e f := by
-  exact Erdos1177.edgeIntersectionGraph_adj_of_common_vertex H hef ( by simpa using! he ) ( by simpa using! hf )
+  exact Erdos1177.edgeIntersectionGraph_adj_of_common_vertex H hef ( by simpa using! he )
+    ( by simpa using! hf )
 
 /-
 Two distinct edges of a linear host have a unique contact vertex.
@@ -74,7 +75,8 @@ theorem eq_contactVertex_of_mem (H : Hypergraph W) (hlin : H.Linear)
     {e f : H.edges} (hadj : (edgeIntersectionGraph H).Adj e f)
     {x : W} (hxe : x ∈ e.1) (hxf : x ∈ f.1) :
     x = contactVertex H hlin hadj := by
-  exact ExistsUnique.unique ( unique_contact_vertex H hlin hadj ) ⟨ hxe, hxf ⟩ ( contactVertex_mem H hlin hadj )
+  exact ExistsUnique.unique ( unique_contact_vertex H hlin hadj ) ⟨ hxe, hxf ⟩ ( contactVertex_mem H
+    hlin hadj )
 
 /-
 Neighbours of a fixed edge are covered by the stars through its vertices.
@@ -84,7 +86,8 @@ theorem neighbourhood_subset_iUnion_edgeStar (H : Hypergraph W)
     {f | (edgeIntersectionGraph H).Adj center f} ⊆
       ⋃ x ∈ center.1, edgeStar H x := by
   intro f hf; simp_all +decide only [Set.mem_iUnion, exists_prop] ;
-  exact Exists.elim ( edgeIntersectionGraph_neighbour_star_cover H center f hf ) fun x hx => ⟨ x, hx.1, by unfold edgeStar; aesop ⟩
+  exact Exists.elim ( edgeIntersectionGraph_neighbour_star_cover H center f hf ) fun x hx =>
+    ⟨ x, hx.1, by unfold edgeStar; aesop ⟩
 
 /-
 In a linear host a neighbour belongs to exactly one star through the centre
@@ -110,7 +113,8 @@ theorem neighbours_adjacent_of_contact_eq
     (edgeIntersectionGraph H).Adj e f := by
   by_contra h_contra;
   obtain ⟨x, hx⟩ : ∃ x, x ∈ e.1 ∧ x ∈ f.1 := by
-    exact ⟨ contactVertex H hlin he, contactVertex_mem H hlin he |>.2, hcontact.symm ▸ contactVertex_mem H hlin hf |>.2 ⟩;
+    exact ⟨ contactVertex H hlin he, contactVertex_mem H hlin he |>.2, hcontact.symm ▸
+      contactVertex_mem H hlin hf |>.2 ⟩;
   exact h_contra ( edgeIntersectionGraph_adj_of_common_vertex H hef hx.1 hx.2 )
 
 /-
@@ -125,7 +129,9 @@ theorem contactVertex_injective_on_independent_neighbours
       ¬ (edgeIntersectionGraph H).Adj (leaf i) (leaf j)) :
     Function.Injective (fun i => contactVertex H hlin (hadj i)) := by
   intro i j hij;
-  exact Classical.not_not.1 fun hi => hind hi <| by simpa [ hij ] using! neighbours_adjacent_of_contact_eq H hlin center ( hadj i ) ( hadj j ) ( hleaf.ne hi ) hij;
+  exact Classical.not_not.1 fun hi => hind hi <| by
+    simpa [ hij ] using! neighbours_adjacent_of_contact_eq H hlin center
+      ( hadj i ) ( hadj j ) ( hleaf.ne hi ) hij;
 
 /-
 Distinct stars through a fixed centre edge are disjoint after restricting
@@ -137,7 +143,9 @@ theorem neighbour_not_mem_two_center_stars
     {x y : W} (hxc : x ∈ center.1) (hyc : y ∈ center.1) (hxy : x ≠ y)
     (hxl : leaf ∈ edgeStar H x) :
     leaf ∉ edgeStar H y := by
-  contrapose! hxy; have := unique_contact_vertex H hlin hadj; simp_all +decide [ mem_edgeStar_iff ] ;
+  contrapose! hxy;
+  have := unique_contact_vertex H hlin hadj;
+  simp_all +decide only [mem_edgeStar_iff] ;
   exact this.unique ⟨ hxc, hxl ⟩ ⟨ hyc, hxy ⟩
 
 /-
@@ -154,7 +162,8 @@ theorem independent_neighbours_inject_into_center
     ∃ contact : ι → {x // x ∈ center.1}, Function.Injective contact := by
   have h_inj : Function.Injective (fun i => contactVertex H hlin (hadj i)) :=
     contactVertex_injective_on_independent_neighbours H hlin center hleaf hadj hind
-  exact ⟨ fun i => ⟨ _, contactVertex_mem H hlin ( hadj i ) |>.1 ⟩, fun i j hij => h_inj <| Subtype.ext_iff.mp hij ⟩
+  exact ⟨ fun i => ⟨ _, contactVertex_mem H hlin ( hadj i ) |>.1 ⟩,
+    fun i j hij => h_inj <| Subtype.ext_iff.mp hij ⟩
 
 /-
 A centre edge in a triple system can be written as three distinct points,
@@ -172,16 +181,17 @@ theorem neighbourhood_three_clique_cover
         (edgeIntersectionGraph H).Adj e f) ∧
       (∀ {e f}, e ∈ edgeStar H c → f ∈ edgeStar H c → e ≠ f →
         (edgeIntersectionGraph H).Adj e f) := by
-  -- By definition of $IsTripleSystem$, there exist three distinct elements $a$, $b$, and $c$ such that $center.1 = \{a, b, c\}$.
-  obtain ⟨a, b, c, h_distinct, h_eq⟩ : ∃ a b c : W, a ≠ b ∧ a ≠ c ∧ b ≠ c ∧ center.1 = {a, b, c} := by
-    have := htri center.val center.prop; simp_all +decide [ Set.ncard_eq_three ] ;
-  use a, b, c;
-  simp_all +decide only [ne_eq, Subtype.forall, Subtype.mk.injEq];
-  refine' ⟨ _, _, _, _ ⟩;
-  · intro e he hadj; have := edgeIntersectionGraph_neighbour_star_cover H center ⟨ e, he ⟩ hadj; aesop;
-  · exact fun e he f hf hea hfa hef => edgeIntersectionGraph_adj_of_common_vertex H ( by aesop ) hea hfa;
-  · exact fun e he f hf he' hf' hef => edgeIntersectionGraph_adj_of_common_vertex H ( by aesop ) ( by aesop ) ( by aesop );
-  · exact fun e he f hf he' hf' hef => edgeIntersectionGraph_adj_of_common_vertex H ( by aesop ) ( by aesop ) ( by aesop )
+  obtain ⟨a, b, c, hab, hac, hbc, heq⟩ := Set.ncard_eq_three.mp (htri center.1 center.2)
+  refine ⟨a, b, c, hab, hac, hbc, heq, ?_, edgeStar_pairwise_adjacent H a,
+    edgeStar_pairwise_adjacent H b, edgeStar_pairwise_adjacent H c⟩
+  intro leaf hadj
+  obtain ⟨x, hxc, hxl⟩ := edgeIntersectionGraph_neighbour_star_cover H center leaf hadj
+  rw [heq] at hxc
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hxc
+  rcases hxc with rfl | rfl | rfl
+  · exact Or.inl (Or.inl hxl)
+  · exact Or.inl (Or.inr hxl)
+  · exact Or.inr hxl
 
 
 /-- The neighbours of `center` meeting it at `x`. -/
@@ -196,8 +206,13 @@ theorem neighbourhood_eq_iUnion_neighbourStar (H : Hypergraph W)
     {leaf | (edgeIntersectionGraph H).Adj center leaf} =
       ⋃ x ∈ center.1, neighbourStar H center x := by
   ext leaf
-  simp only [Set.mem_ofPred_eq, Set.mem_iUnion, exists_prop];
-  exact fun h => by obtain ⟨ x, hx ⟩ := edgeIntersectionGraph_neighbour_star_cover H center leaf h; exact ⟨ x, hx.1, hx.2 ⟩ ;
+  constructor
+  · intro h
+    obtain ⟨x, hxc, hxl⟩ := edgeIntersectionGraph_neighbour_star_cover H center leaf h
+    exact Set.mem_iUnion₂.mpr ⟨x, hxc, h, hxl⟩
+  · intro h
+    obtain ⟨x, _, hx⟩ := Set.mem_iUnion₂.mp h
+    exact hx.1
 
 /-
 Contact stars indexed by distinct centre vertices are disjoint in a linear
@@ -207,7 +222,8 @@ theorem disjoint_neighbourStar (H : Hypergraph W) (hlin : H.Linear)
     (center : H.edges) {x y : W} (hxc : x ∈ center.1) (hyc : y ∈ center.1)
     (hxy : x ≠ y) :
     Disjoint (neighbourStar H center x) (neighbourStar H center y) := by
-  exact Set.disjoint_left.mpr fun leaf hleafx hleafy => Erdos1177.neighbour_not_mem_two_center_stars H hlin center leaf ( hleafx.1 ) hxc hyc hxy hleafx.2 hleafy.2
+  exact Set.disjoint_left.mpr fun leaf hleafx hleafy => Erdos1177.neighbour_not_mem_two_center_stars
+    H hlin center leaf ( hleafx.1 ) hxc hyc hxy hleafx.2 hleafy.2
 
 /-
 Every contact star is a clique in the edge-intersection graph.
@@ -246,14 +262,18 @@ theorem neighbourhood_disjoint_three_cliques
       (∀ {e f}, e ∈ neighbourStar H center c →
         f ∈ neighbourStar H center c → e ≠ f →
         (edgeIntersectionGraph H).Adj e f) := by
-  obtain ⟨a, b, c, ha, hb, hc, h⟩ : ∃ a b c : W, a ≠ b ∧ a ≠ c ∧ b ≠ c ∧ (center : Set W) = {a, b, c} := by
-    exact Set.ncard_eq_three.mp ( htri center center.2 ) |> fun ⟨ a, b, c, hab, hbc, hac ⟩ => ⟨ a, b, c, by aesop ⟩;
-  refine' ⟨ a, b, c, ha, hb, hc, h, _, _, _, _ ⟩;
+  obtain ⟨a, b, c, ha, hb, hc, h⟩ : ∃ a b c : W, a ≠ b ∧ a ≠ c ∧ b ≠ c ∧ (center : Set W) = {a, b,
+    c} := by
+    exact Set.ncard_eq_three.mp ( htri center center.2 ) |> fun ⟨ a, b, c, hab, hbc, hac ⟩ =>
+      ⟨ a, b, c, by aesop ⟩;
+  refine ⟨ a, b, c, ha, hb, hc, h, ?_, ?_, ?_, ?_ ⟩;
   · ext leaf; simp [neighbourStar];
     by_cases h : ( edgeIntersectionGraph H ).Adj center leaf <;> simp +decide [ h, edgeStar ];
     have := edgeIntersectionGraph_neighbour_star_cover H center leaf h; aesop;
-  · exact disjoint_neighbourStar H hlin center ( h.symm ▸ by simp +decide ) ( h.symm ▸ by simp +decide ) ha;
-  · exact disjoint_neighbourStar H hlin center ( by simp +decide [ h ] ) ( by simp +decide [ h ] ) hb;
+  · exact disjoint_neighbourStar H hlin center ( h.symm ▸ by simp +decide )
+      ( h.symm ▸ by simp +decide ) ha;
+  · exact disjoint_neighbourStar H hlin center ( by simp +decide [ h ] ) ( by simp +decide [ h ] )
+      hb;
   · grind +suggestions
 
 end Erdos1177

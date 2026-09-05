@@ -48,27 +48,41 @@ triple system `K` is not linear, then `twoTriplesSharingPair` embeds into it.
 theorem twoTriples_embeds_of_not_linear {W : Type u} (K : Hypergraph W)
     (htri : K.IsTripleSystem) (hnl : ¬ K.Linear) :
     twoTriplesSharingPair.Embeds K := by
-  contrapose! hnl; simp_all +decide [ Hypergraph.Linear ] ;
-  contrapose! hnl; simp_all +decide [ twoTriplesSharingPair, FTS.Embeds ] ;
+  contrapose! hnl; simp_all +decide only [Hypergraph.Linear, ne_eq] ;
+  contrapose! hnl; simp_all +decide only [ne_eq, FTS.Embeds, twoTriplesSharingPair, Fin.isValue,
+    Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, Finset.coe_insert,
+    Finset.coe_singleton, forall_eq] ;
   obtain ⟨e₁, he₁, e₂, he₂, hne, hcap⟩ := hnl
   obtain ⟨a, b, hab⟩ : ∃ a b : W, a ≠ b ∧ a ∈ e₁ ∧ b ∈ e₁ ∧ a ∈ e₂ ∧ b ∈ e₂ := by
     obtain ⟨ a, ha, b, hb, hab ⟩ := hcap; use a, b; aesop;
   obtain ⟨c, hc⟩ : ∃ c : W, c ∈ e₁ ∧ c ∉ ({a, b} : Set W) := by
-    have := htri e₁ he₁; rw [ Set.ncard_eq_three ] at this; obtain ⟨ x, y, z, h ⟩ := this; simp_all +decide [ Set.Subset.antisymm_iff, Set.subset_def ] ;
+    have := htri e₁ he₁;
+    rw [ Set.ncard_eq_three ] at this;
+    obtain ⟨ x, y, z, h ⟩ := this;
+    simp_all +decide [ Set.Subset.antisymm_iff, Set.subset_def ] ;
     grind +ring
   obtain ⟨d, hd⟩ : ∃ d : W, d ∈ e₂ ∧ d ∉ ({a, b} : Set W) := by
     have := htri e₂ he₂; simp_all +decide only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or] ;
-    exact Exists.imp ( by aesop ) ( Set.exists_of_ssubset ( lt_of_le_of_ne ( Set.insert_subset hab.2.2.2.1 ( Set.singleton_subset_iff.mpr hab.2.2.2.2 ) ) ( Ne.symm <| by aesop ) ) )
+    exact Exists.imp ( by aesop )
+      ( Set.exists_of_ssubset ( lt_of_le_of_ne
+        ( Set.insert_subset hab.2.2.2.1 ( Set.singleton_subset_iff.mpr hab.2.2.2.2 ) )
+        ( Ne.symm <| by aesop ) ) )
   use ![a, b, c, d];
   have h_card : e₁.ncard = 3 ∧ e₂.ncard = 3 := by
     exact ⟨ htri e₁ he₁, htri e₂ he₂ ⟩
   have h_eq : e₁ = {a, b, c} ∧ e₂ = {a, b, d} := by
-    have h_eq : ∀ {s : Set W}, s.ncard = 3 → ∀ {x y z : W}, x ∈ s → y ∈ s → z ∈ s → x ≠ y → x ≠ z → y ≠ z → s = {x, y, z} := by
-      intros s hs x y z hx hy hz hxy hxz hyz; rw [ Set.ncard_eq_three ] at hs; obtain ⟨ u, v, w, hu, hv, hw, h ⟩ := hs; simp_all +decide [ Set.Subset.antisymm_iff, Set.subset_def ] ;
+    have h_eq : ∀ {s : Set W}, s.ncard = 3 → ∀ {x y z : W}, x ∈ s → y ∈ s → z ∈ s → x ≠ y → x ≠ z →
+      y ≠ z → s = {x, y, z} := by
+      intros s hs x y z hx hy hz hxy hxz hyz;
+      rw [ Set.ncard_eq_three ] at hs;
+      obtain ⟨ u, v, w, hu, hv, hw, h ⟩ := hs;
+      simp_all +decide [ Set.Subset.antisymm_iff, Set.subset_def ] ;
       grind +qlia;
     grind
-  simp_all +decide [ Set.ncard_eq_toFinset_card' ];
-  simp_all +decide [ Set.Subset.antisymm_iff, Set.subset_def, Function.Injective, Fin.forall_fin_succ ];
+  simp_all +decide only [ne_eq, Set.mem_insert_iff, Set.mem_singleton_iff, true_or, or_true,
+    and_self, and_true, not_or, true_and, Fin.isValue];
+  simp_all +decide [ Set.Subset.antisymm_iff, Set.subset_def, Function.Injective,
+    Fin.forall_fin_succ ];
   simp_all +decide [ Set.image_insert_eq, Set.image_singleton ];
   grind +ring
 
@@ -165,8 +179,8 @@ theorem obstruction_trichotomy (F : FTS) :
     · by_cases hB : ∀ ed : {e : Finset F.reduce.V // e ∈ F.reduce.edges},
           ∃ w ∈ ed.1, IsBridgeInc F.reduce w ed
       · refine Or.inr (Or.inr ⟨hL, hB, ?_⟩)
-        by_contra hc; push_neg at hc; exact h ⟨hL, hB, hc⟩
-      · push_neg at hB; exact Or.inr (Or.inl ⟨hL, hB⟩)
+        by_contra hc; push Not at hc; exact h ⟨hL, hB, hc⟩
+      · push Not at hB; exact Or.inr (Or.inl ⟨hL, hB⟩)
     · exact Or.inl hL
   · rintro (h | ⟨hL, ed, hed⟩ | ⟨hL, _, c, hc⟩) ⟨hLin, hBr, hEv⟩
     · exact h hLin
@@ -192,8 +206,11 @@ theorem stronglyTripartite_iso {F G : FTS} (h : FTS.Iso F G)
     (hF : F.StronglyTripartite) : G.StronglyTripartite := by
   rcases h with ⟨ φ, hφ ⟩;
   obtain ⟨ colF, hcolF ⟩ := hF;
-  refine' ⟨ fun w => colF ( φ.symm w ), fun e he => _ ⟩;
-  intro i; specialize hcolF ( Finset.map φ.symm.toEmbedding e ) ; simp_all +decide [ Finset.filter_map ] ;
+  refine ⟨ fun w => colF ( φ.symm w ), fun e he => ?_ ⟩;
+  intro i;
+  specialize hcolF ( Finset.map φ.symm.toEmbedding e ) ;
+  simp_all +decide only [Finset.filter_map, Function.Embedding.coeFn_mk, Function.comp_apply,
+    Finset.card_map] ;
   convert! hcolF _ i using 1;
   convert! he using 1 ; ext ; aesop
 
@@ -205,12 +222,19 @@ three classes.
 theorem stronglyTripartite_expansion {VJ : Type} [Fintype VJ] [DecidableEq VJ]
     (J : SimpleGraph VJ) [DecidableRel J.Adj] (hJ : J.Colorable 2) :
     (graphExpansion J).StronglyTripartite := by
-  obtain ⟨ f, hf ⟩ := hJ;
-  refine' ⟨ _, _ ⟩;
-  exact fun x => x.elim ( fun x => Fin.castSucc ( f x ) ) fun x => 2;
-  intro e he i; rcases expansion_edge_cases J he with ⟨ a, rfl ⟩ ; simp +decide only [Fin.isValue] ;
-  have := Quot.out_eq ( a : Sym2 VJ ) ; ( rcases h' : Quot.out ( a : Sym2 VJ ) with ⟨ x, y ⟩ ; simp_all +decide [ Sym2.eq_swap ] ; );
-  grind +suggestions
+  obtain ⟨f, hf⟩ := hJ
+  refine ⟨fun x => x.elim (fun x => Fin.castSucc (f x)) (fun _ => 2), ?_⟩
+  intro e he i
+  obtain ⟨a, rfl⟩ := expansion_edge_cases J he
+  have hmem : a.1 ∈ J.edgeSet := SimpleGraph.mem_edgeFinset.mp a.2
+  rw [← Quot.out_eq a.1] at hmem
+  have hadj : J.Adj (Quot.out a.1).1 (Quot.out a.1).2 := hmem
+  have hne := hadj.ne
+  have hcolors := hf hadj
+  generalize hfx : f (Quot.out a.1).1 = fx
+  generalize hfy : f (Quot.out a.1).2 = fy
+  fin_cases fx <;> fin_cases fy <;> fin_cases i <;>
+    simp_all [Finset.filter_insert, Finset.filter_singleton]
 
 /-
 Strong tripartiteness is preserved under disjoint union.
@@ -221,9 +245,11 @@ theorem stronglyTripartite_disjUnion {F G : FTS}
   -- Obtain colorings for F and G from hF and hG.
   obtain ⟨colF, hcolF⟩ := hF
   obtain ⟨colG, hcolG⟩ := hG;
-  refine' ⟨ fun v => v.elim ( fun v => colF v ) fun v => colG v, _ ⟩;
-  intro e he i; unfold FTS.disjUnion at he; simp_all +decide [ Finset.filter_map ] ;
-  rcases he with ( ⟨ a, ha, rfl ⟩ | ⟨ a, ha, rfl ⟩ ) <;> simp_all +decide [ Finset.filter_map ];
+  refine ⟨ fun v => v.elim ( fun v => colF v ) fun v => colG v, ?_ ⟩;
+  intro e he i; unfold FTS.disjUnion at he; simp_all +decide only [Finset.mem_union,
+    Finset.mem_image];
+  rcases he with ( ⟨ a, ha, rfl ⟩ | ⟨ a, ha, rfl ⟩ ) <;> simp_all +decide only [Finset.filter_map,
+    Function.comp_apply, Finset.card_map];
   · convert! hcolF a ha i using 1;
   · convert! hcolG a ha i using 1
 
@@ -235,15 +261,27 @@ corresponding classes.
 theorem stronglyTripartite_amalgamate {F G : FTS} (x : F.V) (y : G.V)
     (hF : F.StronglyTripartite) (hG : G.StronglyTripartite) :
     (F.amalgamate G x y).StronglyTripartite := by
-  -- Choose a permutation `π : Equiv.Perm (Fin 3)` with `π (colG y) = colF x`.
+  classical
   obtain ⟨π, hπ⟩ : ∃ π : Equiv.Perm (Fin 3), π (hG.choose y) = hF.choose x := by
-    exact ⟨ Equiv.swap ( hG.choose y ) ( hF.choose x ), by simp +decide ⟩;
-  refine' ⟨ fun v => v.elim ( fun a => hF.choose a ) fun b => π ( hG.choose b.1 ), _ ⟩ ; simp +decide only [ne_eq];
-  rintro e ( ⟨ a, ha, rfl ⟩ | ⟨ a, ha, rfl ⟩ ) i <;> simp_all +decide [ Finset.filter_map ];
-  · convert! hF.choose_spec a ha i using 1;
-  · convert! hG.choose_spec a ha ( π.symm i ) using 1;
-    congr! 1;
-    grind
+    exact ⟨Equiv.swap (hG.choose y) (hF.choose x), by simp⟩
+  let col : (F.amalgamate G x y).V → Fin 3 :=
+    Sum.elim hF.choose (fun b => π (hG.choose b.1))
+  have hcolG (b : G.V) : col (amalgEmbG F G x y b) = π (hG.choose b) := by
+    change Sum.elim hF.choose (fun b : {b : G.V // b ≠ y} => π (hG.choose b.1))
+      (if h : b = y then Sum.inl x else Sum.inr ⟨b, h⟩) = π (hG.choose b)
+    by_cases hb : b = y
+    · subst b
+      simpa only [dite_true, Sum.elim_inl] using hπ.symm
+    · simp only [dif_neg hb, Sum.elim_inr]
+  refine ⟨col, ?_⟩
+  intro e he i
+  rcases amalgamate_edge_cases he with ⟨a, ha, rfl⟩ | ⟨a, ha, rfl⟩
+  · rw [Finset.filter_map, Finset.card_map]
+    change (a.filter (fun b => hF.choose b = i)).card = 1
+    exact hF.choose_spec a ha i
+  · rw [Finset.filter_map, Finset.card_map]
+    simp only [Function.comp_def, hcolG, ← π.eq_symm_apply]
+    exact hG.choose_spec a ha (π.symm i)
 
 /-- **Every member of `B` is strongly tripartite.**  (`cor:compatibility`(1),
 induction on the construction of `B`.) -/
@@ -282,19 +320,31 @@ cycle (the `n`-cycle running through its core vertices).
 theorem cycleExpansion_oddBergeCycle (n : ℕ) (hn : 3 ≤ n) (hodd : Odd n) :
     ∃ c : BergeCycle (graphExpansion (SimpleGraph.cycleGraph n)), ¬ Even c.m := by
   obtain ⟨ k, rfl ⟩ : ∃ k, n = k + 3 := ⟨ n - 3, by omega ⟩;
-  refine' ⟨ _, _ ⟩;
-  use k + 3, by omega;
-  exact fun i => Sum.inl i;
-  use fun i => ⟨ _, Finset.mem_image_of_mem _ ( Finset.mem_attach _ ⟨ s(i, i + 1), by
-    simp +decide [ SimpleGraph.cycleGraph, SimpleGraph.mem_edgeSet ] ⟩ ) ⟩
+  refine ⟨⟨k + 3, by omega, fun i => Sum.inl i,
+    fun i => ⟨_, Finset.mem_image_of_mem _ (Finset.mem_attach _ ⟨s(i, i + 1), by
+      simp +decide [SimpleGraph.cycleGraph, SimpleGraph.mem_edgeSet]⟩)⟩,
+    ?_, ?_, ?_, ?_⟩, ?_⟩
   all_goals generalize_proofs at *;
   · exact Sum.inl_injective;
-  · intro i j hij; simp_all +decide [ Finset.ext_iff, Set.ext_iff ] ;
+  · intro i j hij; simp_all +decide only [le_add_iff_nonneg_left, zero_le, Subtype.mk.injEq,
+    Finset.ext_iff, Finset.mem_insert, Finset.mem_singleton, Sum.forall, Sum.inl.injEq,
+    reduceCtorEq, or_false, Sum.inr.injEq, false_or, eq_iff_eq_cancel_left, Sym2.eq, Sym2.rel_iff',
+    Prod.mk.injEq, add_left_inj, and_self, Prod.swap_prod_mk] ;
     cases hij.2 <;> simp_all +decide [ add_assoc ];
-  · intro i; have := Quot.out_eq ( s(i, i + 1) : Sym2 ( ZMod ( k + 3 ) ) ) ; simp_all +decide [ Sym2.eq_swap ] ;
-    have := Quot.out_eq ( s(i, i + 1) : Sym2 ( ZMod ( k + 3 ) ) ) ; rw [ Sym2.eq_iff ] at this; aesop;
-  · intro i; have := Quot.out_eq ( s(i, i + 1) : Sym2 ( ZMod ( k + 3 ) ) ) ; simp_all +decide [ Sym2.eq_swap ] ;
-    have := Quot.out_eq ( s(i, i + 1) : Sym2 ( ZMod ( k + 3 ) ) ) ; rcases h' : Quot.out ( s(i, i + 1) : Sym2 ( ZMod ( k + 3 ) ) ) with ⟨ x, y ⟩ ; simp_all +decide [ Sym2.eq_swap ] ;
+  · intro i;
+    have := Quot.out_eq ( s(i, i + 1) : Sym2 ( ZMod ( k + 3 ) ) ) ;
+    simp_all +decide only [le_add_iff_nonneg_left, zero_le, Quot.out_eq, Finset.mem_insert,
+      Finset.mem_singleton, reduceCtorEq, or_false] ;
+    have := Quot.out_eq ( s(i, i + 1) : Sym2 ( ZMod ( k + 3 ) ) ) ;
+    rw [ Sym2.eq_iff ] at this;
+    aesop;
+  · intro i;
+    have := Quot.out_eq ( s(i, i + 1) : Sym2 ( ZMod ( k + 3 ) ) ) ;
+    simp_all +decide only [le_add_iff_nonneg_left, zero_le, Quot.out_eq, Finset.mem_insert,
+      Finset.mem_singleton, reduceCtorEq, or_false] ;
+    have := Quot.out_eq ( s(i, i + 1) : Sym2 ( ZMod ( k + 3 ) ) ) ;
+    rcases h' : Quot.out ( s(i, i + 1) : Sym2 ( ZMod ( k + 3 ) ) ) with ⟨ x, y ⟩ ;
+    simp_all +decide only [Sym2.eq, Sym2.rel_iff', Prod.mk.injEq, Prod.swap_prod_mk] ;
     lia;
   · exact hodd.elim fun m hm => by simp +decide [ hm ] ;
 
@@ -342,13 +392,18 @@ def FTS.Forest (F : FTS) : Prop :=
 A forest is linear: any two distinct edges meet in at most one vertex.
 -/
 theorem forest_linear {F : FTS} (h : F.Forest) : F.Linear := by
-  obtain ⟨ rank, hrank₁, hrank₂ ⟩ := h; intro e₁ he₁ e₂ he₂ hne; have := hrank₁; simp_all +decide only [ge_iff_le] ;
+  obtain ⟨ rank, hrank₁, hrank₂ ⟩ := h;
+  intro e₁ he₁ e₂ he₂ hne;
+  have := hrank₁;
+  simp_all +decide only [ge_iff_le] ;
   -- Without loss of generality, assume `rank ⟨e₁, he₁⟩ < rank ⟨e₂, he₂⟩`.
   wlog hlt : rank ⟨e₁, he₁⟩ < rank ⟨e₂, he₂⟩ generalizing e₁ e₂;
   · grind +suggestions;
-  · refine' le_trans _ ( hrank₂ e₂ he₂ );
-    refine' Finset.card_le_card _;
-    simp +decide [ Finset.subset_iff, lowerRankUnion ];
+  · refine le_trans ?_ ( hrank₂ ⟨e₂, he₂⟩ );
+    refine Finset.card_le_card ?_;
+    simp +decide only [lowerRankUnion, Finset.univ_eq_attach, Finset.subset_iff, Finset.mem_inter,
+      Finset.mem_sup, Finset.mem_filter, Finset.mem_attach, true_and, Subtype.exists,
+      exists_and_right, and_imp];
     exact fun x hx₁ hx₂ => ⟨ hx₂, e₁, ⟨ he₁, hlt ⟩, hx₁ ⟩
 
 /-
@@ -360,20 +415,32 @@ theorem forest_no_bergeCycle {F : FTS} (h : F.Forest) (c : BergeCycle F) : False
   -- Choose `a : ZMod c.m` maximizing `fun i => rank (c.e i)`.
   obtain ⟨a, ha⟩ : ∃ a : ZMod c.m, ∀ i : ZMod c.m, rank (c.e i) ≤ rank (c.e a) := by
     have := Fact.mk ( show 1 < c.m from by linarith [ c.hm ] );
-    simpa using! Finset.exists_max_image Finset.univ ( fun i => rank ( c.e i ) ) ⟨ 0, Finset.mem_univ 0 ⟩;
+    simpa using! Finset.exists_max_image Finset.univ ( fun i => rank ( c.e i ) )
+      ⟨ 0, Finset.mem_univ 0 ⟩;
   -- Consider the two neighbours `a - 1` and `a + 1`.
   have h_neighbours : rank (c.e (a - 1)) < rank (c.e a) ∧ rank (c.e (a + 1)) < rank (c.e a) := by
     have h_neighbours : c.e (a - 1) ≠ c.e a ∧ c.e (a + 1) ≠ c.e a := by
-      have := Fact.mk ( show 1 < c.m from by linarith [ c.hm ] ) ; simp +decide [ sub_eq_iff_eq_add, add_eq_zero_iff_eq_neg, c.einj.eq_iff ] ;
-    exact ⟨ lt_of_le_of_ne ( ha _ ) ( hrank₁.ne h_neighbours.1 ), lt_of_le_of_ne ( ha _ ) ( hrank₁.ne h_neighbours.2 ) ⟩;
-  -- Therefore `c.e (a-1)` and `c.e (a+1)` lie in `Finset.univ.filter (fun ed' => rank ed' < rank ed)`, so their underlying edge sets are `⊆ lowerRankUnion F rank ed`.
-  have h_subset : (c.e (a - 1)).1 ⊆ lowerRankUnion F rank (c.e a) ∧ (c.e (a + 1)).1 ⊆ lowerRankUnion F rank (c.e a) := by
-    exact ⟨ Finset.subset_iff.mpr fun x hx => Finset.mem_sup.mpr ⟨ _, Finset.mem_filter.mpr ⟨ Finset.mem_univ _, h_neighbours.1 ⟩, hx ⟩, Finset.subset_iff.mpr fun x hx => Finset.mem_sup.mpr ⟨ _, Finset.mem_filter.mpr ⟨ Finset.mem_univ _, h_neighbours.2 ⟩, hx ⟩ ⟩;
+      have := Fact.mk ( show 1 < c.m from by linarith [ c.hm ] ) ; simp +decide
+        [c.einj.eq_iff] ;
+    exact ⟨ lt_of_le_of_ne ( ha _ ) ( hrank₁.ne h_neighbours.1 ), lt_of_le_of_ne ( ha _ ) (
+      hrank₁.ne h_neighbours.2 ) ⟩;
+  -- Therefore `c.e (a-1)` and `c.e (a+1)` lie in `Finset.univ.filter (fun ed' => rank ed' < rank
+  -- ed)`, so their underlying edge sets are `⊆ lowerRankUnion F rank ed`.
+  have h_subset : (c.e (a - 1)).1 ⊆ lowerRankUnion F rank (c.e a) ∧ (c.e (a + 1)).1 ⊆ lowerRankUnion
+    F rank (c.e a) := by
+    exact ⟨ Finset.subset_iff.mpr fun x hx =>
+      Finset.mem_sup.mpr
+        ⟨ _, Finset.mem_filter.mpr ⟨ Finset.mem_univ _, h_neighbours.1 ⟩, hx ⟩,
+      Finset.subset_iff.mpr fun x hx =>
+        Finset.mem_sup.mpr
+          ⟨ _, Finset.mem_filter.mpr ⟨ Finset.mem_univ _, h_neighbours.2 ⟩, hx ⟩ ⟩;
   have h_card : 2 ≤ ( ( c.e a ).1 ∩ lowerRankUnion F rank ( c.e a ) ).card := by
-    refine' Finset.one_lt_card.mpr ⟨ c.v a, _, c.v ( a + 1 ), _, _ ⟩ <;> simp_all +decide only [Finset.mem_inter, ne_eq];
+    refine Finset.one_lt_card.mpr ⟨ c.v a, ?_, c.v ( a + 1 ), ?_, ?_ ⟩ <;> simp_all +decide only
+      [Finset.mem_inter, ne_eq];
     · exact ⟨ c.mem_left a, h_subset.1 ( by simpa using! c.mem_right ( a - 1 ) ) ⟩;
     · exact ⟨ c.mem_right a, h_subset.2 ( c.mem_left _ ) ⟩;
-    · have := Fact.mk ( show 1 < c.m from by linarith [ c.hm ] ) ; exact c.vinj.ne ( by simp +decide [ ZMod.natCast_eq_natCast_iff' ] ) ;
+    · have := Fact.mk ( show 1 < c.m from by linarith [ c.hm ] ) ; exact c.vinj.ne
+        ( by simp +decide  ) ;
   linarith [ hrank₂ ( c.e a ) ]
 
 /-- A forest satisfies the intrinsic obligatoriness condition: it is linear,

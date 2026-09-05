@@ -19,8 +19,6 @@ the apex maps (using `|X_i| = ρ ≥ |E(S)|`).
 
 open Cardinal Ordinal
 
-set_option maxHeartbeats 4000000
-
 namespace Erdos1177
 
 universe u
@@ -36,7 +34,8 @@ theorem mk_Vtx (ρ : Cardinal.{u}) (hρ : ℵ₀ ≤ ρ) : #(Vtx ρ) = (2 : Card
   rw [ Cardinal.mul_eq_max ];
   · simp +zetaDelta only [card_ord, right_eq_sup, Order.succ_le_iff] at *;
     exact Cardinal.cantor _;
-  · exact le_trans hρ ( le_trans ( le_of_lt ( Order.lt_succ ρ ) ) ( by simp +decide [ Cardinal.card_ord ] ) );
+  · exact le_trans hρ
+      ( le_trans ( le_of_lt ( Order.lt_succ ρ ) ) ( by simp +decide [ Cardinal.card_ord ] ) );
   · exact le_trans hρ ( Cardinal.cantor ρ |> le_of_lt )
 
 /-
@@ -46,22 +45,25 @@ admissible reservoirs at any level.
 theorem stage_capacity {ρ : Cardinal.{u}} (hρ : ℵ₀ ≤ ρ) {Ilab : Type u}
     (hI : #Ilab ≤ ρ) (q : Ordinal.{u} → Ordinal.{u}) (a : Lev ρ) :
     #{X : Ilab → Set (Vtx ρ) // IsReservoir q a X} ≤ (2 : Cardinal.{u}) ^ ρ := by
-  refine' le_trans ( Cardinal.mk_le_mk_of_subset _ ) _;
-  exact { X : Ilab → Set ( Vtx ρ ) | ∀ i, X i ⊆ Vbelow a ∧ ( X i = ∅ ∨ # ( X i ) ≤ ρ ) };
+  refine le_trans (Cardinal.mk_le_mk_of_subset
+    (t := {X : Ilab → Set (Vtx ρ) | ∀ i, X i ⊆ Vbelow a ∧ (X i = ∅ ∨ #(X i) ≤ ρ)}) ?_) ?_;
   · exact fun X hX i => ⟨ hX.1 i, Or.imp id ( fun h => h.le ) ( hX.2.1 i ) ⟩;
-  · -- The cardinality of the set of functions from Ilab to the set of subsets of Vtx ρ with cardinality at most ρ is at most (2^ρ)^#Ilab.
-    have h_card : #(Ilab → {t : Set (Vtx ρ) | t ⊆ Vbelow a ∧ (t = ∅ ∨ #t ≤ ρ)}) ≤ (2 ^ ρ) ^ #Ilab := by
+  · -- Functions from Ilab to subsets of Vtx ρ of cardinality at most ρ number at most (2^ρ)^#Ilab.
+    have h_card : #(Ilab → {t : Set (Vtx ρ) | t ⊆ Vbelow a ∧ (t = ∅ ∨ #t ≤ ρ)}) ≤
+        (2 ^ ρ) ^ #Ilab := by
       have h_card_pi : Cardinal.mk {t : Set (Vtx ρ) | t ⊆ Vbelow a ∧ (t = ∅ ∨ #t ≤ ρ)} ≤ 2 ^ ρ := by
-        refine' le_trans ( Cardinal.mk_le_mk_of_subset _ ) _;
-        exact { t : Set ( Vtx ρ ) | #t ≤ ρ };
+        refine le_trans
+          (Cardinal.mk_le_mk_of_subset (t := {t : Set (Vtx ρ) | #t ≤ ρ}) ?_) ?_;
         · aesop;
         · convert! Cardinal.mk_bounded_set_le ( Vtx ρ ) ρ using 1;
           rw [ mk_Vtx ρ hρ ];
-          rw [ max_eq_left ( by exact le_trans ( by exact Cardinal.aleph0_le_continuum ) ( Cardinal.power_le_power_left two_ne_zero hρ ) ), Erdos1177.pow_two_pow_self ρ hρ ];
+          have hpow : ℵ₀ ≤ (2 : Cardinal) ^ ρ := hρ.trans (Cardinal.cantor ρ).le
+          rw [max_eq_left hpow, Erdos1177.pow_two_pow_self ρ hρ]
       exact le_trans ( by simp +decide ) ( Cardinal.power_le_power_right h_card_pi );
     convert! h_card.trans _ using 1;
     · fapply Cardinal.mk_congr;
-      exact ⟨ fun X => fun i => ⟨ X.val i, X.property i ⟩, fun X => ⟨ fun i => X i, fun i => X i |>.2 ⟩, fun X => rfl, fun X => rfl ⟩;
+      exact ⟨ fun X => fun i => ⟨ X.val i, X.property i ⟩,
+        fun X => ⟨ fun i => X i, fun i => X i |>.2 ⟩, fun X => rfl, fun X => rfl ⟩;
     · convert! Cardinal.power_le_power_left _ hI using 1;
       · rw [ Erdos1177.pow_two_pow_self ρ hρ ];
       · exact ne_of_gt ( Cardinal.power_pos _ ( by norm_num ) )
@@ -71,9 +73,9 @@ theorem stage_capacity {ρ : Cardinal.{u}} (hρ : ℵ₀ ≤ ρ) {Ilab : Type u}
 -/
 theorem mk_edgeSet_le {S : Type u} (G : SimpleGraph S) {ρ : Cardinal.{u}}
     (hρ : ℵ₀ ≤ ρ) (hS : #S ≤ ρ) : #G.edgeSet ≤ ρ := by
-  refine' le_trans _ ( show ρ * ρ ≤ ρ from _ );
-  · refine' le_trans ( Cardinal.mk_subtype_le _ ) _;
-    refine' le_trans _ ( mul_le_mul hS hS ( by positivity ) ( by positivity ) );
+  refine le_trans ?_ ( show ρ * ρ ≤ ρ from ?_ );
+  · refine le_trans ( Cardinal.mk_subtype_le _ ) ?_;
+    refine le_trans ?_ ( mul_le_mul hS hS ( by positivity ) ( by positivity ) );
     convert! Cardinal.mk_le_of_surjective ( Sym2.mk_surjective ) using 1;
   · rw [ Cardinal.mul_eq_self ] ; aesop
 
@@ -89,18 +91,19 @@ theorem exists_copy {ρ : Cardinal.{u}} (hρ : ℵ₀ ≤ ρ) {Ilab : Type u} (h
       Function.Injective
         (fun p : ({X : Ilab → Set (Vtx ρ) // IsReservoir q a X} × Fib ρ × S) =>
           f p.1 p.2.1 p.2.2) := by
-  obtain ⟨e, he⟩ : ∃ e : ({X : Ilab → Set (Vtx ρ) // IsReservoir q a X} × Fib ρ × S) ↪ Fib ρ, True := by
-    refine' ⟨ _, trivial ⟩;
-    refine' ( Cardinal.lift_mk_le'.mp _ ) |> Classical.choice;
+  obtain ⟨e, he⟩ : ∃ e : ({X : Ilab → Set (Vtx ρ) // IsReservoir q a X} × Fib ρ × S) ↪ Fib ρ, True
+    := by
+    refine ⟨ ?_, trivial ⟩;
+    refine ( Cardinal.lift_mk_le'.mp ?_ ) |> Classical.choice;
     simp +zetaDelta only [mk_prod, Cardinal.lift_id, mk_out] at *;
-    refine' le_trans ( mul_le_mul' ( stage_capacity hρ hI q a ) ( mul_le_mul' le_rfl hS ) ) _;
+    refine le_trans ( mul_le_mul' ( stage_capacity hρ hI q a ) ( mul_le_mul' le_rfl hS ) ) ?_;
     rw [ ← mul_assoc, Cardinal.mul_eq_self ];
     · rw [ Cardinal.mul_eq_left ];
       · exact le_trans hρ ( le_of_lt ( Cardinal.cantor _ ) );
       · exact le_of_lt ( Cardinal.cantor ρ );
       · exact ne_of_gt ( lt_of_lt_of_le ( Cardinal.aleph0_pos ) hρ );
     · exact le_trans hρ ( le_of_lt ( Cardinal.cantor _ ) );
-  refine' ⟨ fun X η s => ⟨ a, e ⟨ X, η, s ⟩ ⟩, _, _ ⟩ <;> simp +decide [ Function.Injective ]
+  refine ⟨ fun X η s => ⟨ a, e ⟨ X, η, s ⟩ ⟩, ?_, ?_ ⟩ <;> simp +decide [ Function.Injective ]
 
 /-
 **Apex allocation** (`lem:calibration-construction`, the maps `φ_B`):
@@ -114,7 +117,8 @@ theorem exists_phi {ρ : Cardinal.{u}} (hρ : ℵ₀ ≤ ρ) {S : Type u} {Ilab 
     ∃ φ : G.edgeSet → Vtx ρ,
       (∀ e, (X.val (lbl e)).Nonempty → φ e ∈ X.val (lbl e)) ∧
       Set.InjOn φ {e | (X.val (lbl e)).Nonempty} := by
-  have h_card_le : ∀ i : Ilab, ∃ (f : {e : G.edgeSet // lbl e = i} → Vtx ρ), (∀ (ee : {e : G.edgeSet // lbl e = i}), (X.val i).Nonempty → f ee ∈ X.val i) ∧ Function.Injective f := by
+  have h_card_le : ∀ i : Ilab, ∃ (f : {e : G.edgeSet // lbl e = i} → Vtx ρ), (∀ (ee : {e : G.edgeSet
+    // lbl e = i}), (X.val i).Nonempty → f ee ∈ X.val i) ∧ Function.Injective f := by
     intro i
     by_cases hX : (X.val i).Nonempty;
     · obtain ⟨f, hf⟩ : ∃ f : {e : G.edgeSet // lbl e = i} ↪ ↥(X.val i), True := by
@@ -125,16 +129,18 @@ theorem exists_phi {ρ : Cardinal.{u}} (hρ : ℵ₀ ≤ ρ) {S : Type u} {Ilab 
         exact ⟨ Classical.choice <| Cardinal.lift_mk_le'.mp <| by aesop, trivial ⟩;
       exact ⟨ fun ee => f ee, fun ee _ => f ee |>.2, Subtype.val_injective.comp f.injective ⟩;
     · have h_card_le : #{e : G.edgeSet // lbl e = i} ≤ Cardinal.mk (Vtx ρ) := by
-        refine' le_trans _ ( le_trans hE _ );
+        refine le_trans ?_ ( le_trans hE ?_ );
         · exact Cardinal.mk_subtype_le _;
         · rw [ Erdos1177.mk_Vtx ρ hρ ];
           exact le_of_lt ( Cardinal.cantor _ );
       have := Cardinal.le_mk_iff_exists_set.mp h_card_le;
       obtain ⟨ p, hp ⟩ := this;
       have := Cardinal.eq.1 hp.symm;
-      exact ⟨ fun x => this.some x |>.1, by tauto, fun x y hxy => by simpa [ Subtype.ext_iff ] using! this.some.injective <| Subtype.ext hxy ⟩;
+      exact ⟨ fun x => this.some x |>.1, by tauto,
+        fun x y hxy => by simpa [ Subtype.ext_iff ] using! this.some.injective <| Subtype.ext hxy ⟩;
   choose f hf₁ hf₂ using h_card_le;
-  refine' ⟨ fun e => f ( lbl e ) ⟨ e, rfl ⟩, _, _ ⟩ <;> simp_all +decide [ Set.InjOn ];
+  refine ⟨ fun e => f ( lbl e ) ⟨ e, rfl ⟩, ?_, ?_ ⟩ <;> simp_all +decide only [Subtype.forall,
+    implies_true, Set.InjOn, Set.mem_ofPred_eq, Subtype.mk.injEq];
   intro e₁ he₁ he₁' e₂ he₂ he₂' h; have := X.2.2.2.1; simp_all +decide [ Set.disjoint_left ] ;
   grind
 

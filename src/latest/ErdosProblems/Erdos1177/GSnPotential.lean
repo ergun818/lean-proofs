@@ -90,12 +90,15 @@ A window sum is at most the total of the positive increments.
 theorem backSum_le_posSum (m : ℕ) [NeZero m] (c : ZMod m → ℤ) (j : ZMod m)
     {r : ℕ} (hr : r ≤ m) :
     backSum m c j r ≤ ∑ e : ZMod m, max (c e) 0 := by
-  refine' le_trans ( Finset.sum_le_sum fun x hx => show c ( j - 1 - x ) ≤ max ( c ( j - 1 - x ) ) 0 from le_max_left _ _ ) _;
-  -- By definition of summation, we can rewrite the right-hand side as a sum over all elements in the range.
+  refine le_trans ( Finset.sum_le_sum fun x hx =>
+    show c ( j - 1 - x ) ≤ max ( c ( j - 1 - x ) ) 0 from le_max_left _ _ ) ?_;
+  -- By definition of summation, we can rewrite the right-hand side as a sum over all elements in
+  -- the range.
   have h_sum_range : ∑ x ∈ Finset.range m, max (c (j - 1 - x)) 0 = ∑ e : ZMod m, max (c e) 0 := by
     convert! sum_range_zmod m ( fun e => max ( c ( j - 1 - e ) ) 0 ) using 1;
     rw [ ← Equiv.sum_comp ( Equiv.subLeft ( j - 1 ) ) ] ; aesop;
-  exact h_sum_range ▸ Finset.sum_le_sum_of_subset_of_nonneg ( Finset.range_mono hr ) fun _ _ _ => le_max_right _ _
+  exact h_sum_range ▸ Finset.sum_le_sum_of_subset_of_nonneg ( Finset.range_mono hr ) fun _ _ _ =>
+    le_max_right _ _
 
 /-- **The potential never exceeds the total of the positive increments.** -/
 theorem pot_le_posSum (m : ℕ) (hm : 0 < m) [NeZero m] (c : ZMod m → ℤ) (j : ZMod m) :
@@ -114,12 +117,16 @@ theorem pot_step (m : ℕ) (hm : 0 < m) [NeZero m] (c : ZMod m → ℤ)
   have h_sup_le : ∀ r ∈ Finset.range m, backSum m c j r + c j ≤ pot m hm c (j + 1) := by
     intros r hr
     by_cases hr_lt : r + 1 < m;
-    · convert! Finset.le_sup' ( fun r => backSum m c ( j + 1 ) r ) ( Finset.mem_range.mpr hr_lt ) using 1 ; rw [ backSum_shift ] ; ring;
+    · convert! Finset.le_sup' ( fun r => backSum m c ( j + 1 ) r ) ( Finset.mem_range.mpr hr_lt )
+        using 1 ; rw [ backSum_shift ] ; ring;
     · have h_eq : backSum m c (j + 1) (r + 1) = ∑ e : ZMod m, c e := by
         rw [ show r + 1 = m by linarith [ Finset.mem_range.mp hr ] ] ; exact backSum_full m c j;
       linarith [ backSum_shift m c j r, pot_nonneg m hm c ( j + 1 ) ];
-  obtain ⟨ r, hr ⟩ := Finset.exists_max_image ( Finset.range m ) ( fun r => backSum m c j r ) ⟨ _, Finset.mem_range.mpr hm ⟩;
-  linarith [ hr.2 r hr.1, h_sup_le r hr.1, show pot m hm c j = backSum m c j r from le_antisymm ( Finset.sup'_le _ _ fun x hx => hr.2 x hx ) ( Finset.le_sup' ( fun r => backSum m c j r ) hr.1 ) ]
+  obtain ⟨ r, hr ⟩ := Finset.exists_max_image ( Finset.range m ) ( fun r => backSum m c j r )
+    ⟨ _, Finset.mem_range.mpr hm ⟩;
+  linarith [ hr.2 r hr.1, h_sup_le r hr.1, show pot m hm c j = backSum m c j r from
+    le_antisymm ( Finset.sup'_le _ _ fun x hx => hr.2 x hx )
+      ( Finset.le_sup' ( fun r => backSum m c j r ) hr.1 ) ]
 
 end GSn
 end Erdos1177

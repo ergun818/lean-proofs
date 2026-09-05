@@ -18,7 +18,6 @@ open Cardinal
 
 namespace Erdos1177
 
-open Classical
 
 universe u
 
@@ -27,6 +26,7 @@ variable {F : FTS} (S : Finset {e : Finset F.V // e ∈ F.edges})
 /-- The vertex predicate "incident to an edge of `S`". -/
 abbrev IncS (v : F.V) : Prop := ∃ e ∈ S, v ∈ e.1
 
+open Classical in
 /-- The separation equivalence classifying each vertex by the side it lies on. -/
 noncomputable def sepEquiv
     (hcov : ∀ v : F.V, IncS S v ∨ (∃ e ∈ Sᶜ, v ∈ e.1))
@@ -44,11 +44,13 @@ noncomputable def sepEquiv
 
 @[simp] theorem sepEquiv_inl {hcov hsep} {v : F.V} (hv : IncS S v) :
     sepEquiv S hcov hsep v = Sum.inl ⟨v, hv⟩ := by
+  classical
   simp only [sepEquiv, Equiv.coe_fn_mk]; rw [dif_pos hv]
 
 theorem sepEquiv_inr {hcov hsep} {v : F.V} (hv : ¬ IncS S v)
     (hv' : ∃ e ∈ Sᶜ, v ∈ e.1) :
     sepEquiv S hcov hsep v = Sum.inr ⟨v, hv'⟩ := by
+  classical
   simp only [sepEquiv, Equiv.coe_fn_mk]; rw [dif_neg hv]
 
 /-
@@ -58,11 +60,16 @@ left.
 theorem sepEquiv_map_left {hcov hsep} {e : Finset F.V} (he : ∀ v ∈ e, IncS S v) :
     e.map (sepEquiv S hcov hsep).toEmbedding =
       (Finset.subtype (fun v => IncS S v) e).map Function.Embedding.inl := by
-  ext x;
-  constructor <;> intro hx;
-  · obtain ⟨ v, hv, rfl ⟩ := Finset.mem_map.mp hx; specialize he v hv; aesop;
-  · rw [ Finset.mem_map ] at hx; obtain ⟨ v, hv, rfl ⟩ := hx; simp_all +decide only [Finset.mem_map_equiv] ;
-    convert! hv using 1
+  classical
+  ext x
+  constructor
+  · intro hx
+    obtain ⟨v, hv, rfl⟩ := Finset.mem_map.mp hx
+    exact Finset.mem_map.mpr ⟨⟨v, he v hv⟩, Finset.mem_subtype.mpr hv,
+      (sepEquiv_inl S (he v hv)).symm⟩
+  · intro hx
+    obtain ⟨v, hv, rfl⟩ := Finset.mem_map.mp hx
+    exact Finset.mem_map.mpr ⟨v.1, Finset.mem_subtype.mp hv, sepEquiv_inl S v.2⟩
 
 /-
 A `Sᶜ`-edge is sent by `sepEquiv` to the corresponding restricted edge on the
@@ -72,12 +79,17 @@ theorem sepEquiv_map_right {hcov hsep} {e : Finset F.V} (he : ∀ v ∈ e, ¬ In
     (he' : ∀ v ∈ e, ∃ e' ∈ Sᶜ, v ∈ e'.1) :
     e.map (sepEquiv S hcov hsep).toEmbedding =
       (Finset.subtype (fun v => ∃ e' ∈ Sᶜ, v ∈ e'.1) e).map Function.Embedding.inr := by
-  ext x;
-  constructor <;> intro hx;
-  · rw [ Finset.mem_map ] at hx; obtain ⟨ v, hv, rfl ⟩ := hx; specialize he v hv; specialize he' v hv; simp_all +decide only [Function.Embedding.coeFn_mk, Finset.mem_map, Finset.mem_subtype, Subtype.exists,
-    Finset.mem_compl, exists_and_right, exists_and_left] ;
-    exact ⟨ v, hv, he', rfl ⟩;
-  · aesop
+  classical
+  ext x
+  constructor
+  · intro hx
+    obtain ⟨v, hv, rfl⟩ := Finset.mem_map.mp hx
+    exact Finset.mem_map.mpr ⟨⟨v, he' v hv⟩, Finset.mem_subtype.mpr hv,
+      (sepEquiv_inr S (he v hv) (he' v hv)).symm⟩
+  · intro hx
+    obtain ⟨v, hv, rfl⟩ := Finset.mem_map.mp hx
+    have hve := Finset.mem_subtype.mp hv
+    exact Finset.mem_map.mpr ⟨v.1, hve, sepEquiv_inr S (he v.1 hve) v.2⟩
 
 /-
 **Disjoint-union reconstruction.**  If the edges split into two parts `S` and
@@ -88,22 +100,25 @@ theorem recon_disjUnion
     (hcov : ∀ v : F.V, IncS S v ∨ (∃ e ∈ Sᶜ, v ∈ e.1))
     (hsep : ∀ v : F.V, IncS S v → (∃ e ∈ Sᶜ, v ∈ e.1) → False) :
     FTS.Iso F (FTS.disjUnion (F.restrict S) (F.restrict Sᶜ)) := by
-  refine' ⟨ _, _ ⟩;
-  convert! ( sepEquiv S hcov hsep ) using 1;
+  classical
+  refine ⟨sepEquiv S hcov hsep, ?_⟩
   intro e;
   constructor <;> intro he;
-  · by_cases h : ⟨ e, he ⟩ ∈ S <;> simp_all +decide only [eq_mpr_eq_cast, cast_eq];
-    · refine' Or.inl ⟨ _, FTS.mem_restrict_edges.mpr ⟨ ⟨ e, he ⟩, h, rfl ⟩, _ ⟩;
-      convert! sepEquiv_map_left S ( fun v hv => ⟨ _, h, hv ⟩ ) |> Eq.symm using 1;
-    · refine Or.inr ⟨ Finset.subtype ( fun v => ∃ e' ∈ Sᶜ, v ∈ e'.1 ) e, ?_, ?_ ⟩;
-      · exact FTS.mem_restrict_edges.mpr ⟨ ⟨ e, he ⟩, Finset.mem_compl.mpr h, rfl ⟩;
-      · convert! sepEquiv_map_right S ( fun v hv => ?_ ) ( fun v hv => ?_ ) |> Eq.symm;
-        · exact fun hv' => hsep v hv' ⟨ _, Finset.mem_compl.mpr h, hv ⟩;
-        · exact Or.resolve_left ( hcov v ) fun ⟨ e', he', hv' ⟩ => hsep v ⟨ e', he', hv' ⟩ ⟨ ⟨ e, he ⟩, by aesop ⟩;
-  · cases' Finset.mem_union.mp he with he he;
+  · simp only [FTS.disjUnion, Finset.mem_union, Finset.mem_image]
+    by_cases h : ⟨e, he⟩ ∈ S
+    · exact Or.inl ⟨Finset.subtype (IncS S) e,
+        FTS.mem_restrict_edges.mpr ⟨⟨e, he⟩, h, rfl⟩,
+        (sepEquiv_map_left S (fun v hv => ⟨⟨e, he⟩, h, hv⟩)).symm⟩
+    · have hT : ⟨e, he⟩ ∈ Sᶜ := Finset.mem_compl.mpr h
+      exact Or.inr ⟨Finset.subtype (fun v => ∃ e' ∈ Sᶜ, v ∈ e'.1) e,
+        FTS.mem_restrict_edges.mpr ⟨⟨e, he⟩, hT, rfl⟩,
+        (sepEquiv_map_right S (fun v hv hS => hsep v hS ⟨⟨e, he⟩, hT, hv⟩)
+          (fun v hv => ⟨⟨e, he⟩, hT, hv⟩)).symm⟩
+  · rcases Finset.mem_union.mp he with he | he
     · obtain ⟨ d, hd, hd' ⟩ := Finset.mem_image.mp he;
       obtain ⟨ e₀, he₀, rfl ⟩ := FTS.mem_restrict_edges.mp hd;
-      have h_eq : e₀.1.map (sepEquiv S hcov hsep).toEmbedding = e.map (sepEquiv S hcov hsep).toEmbedding := by
+      have h_eq : e₀.1.map (sepEquiv S hcov hsep).toEmbedding = e.map (sepEquiv S hcov
+        hsep).toEmbedding := by
         convert! hd' using 1;
         convert! sepEquiv_map_left S ( fun v hv => ⟨ e₀, he₀, hv ⟩ ) using 1;
       have := Finset.map_injective ( sepEquiv S hcov hsep ).toEmbedding h_eq; aesop;
@@ -120,6 +135,7 @@ theorem recon_disjUnion
 
 variable (g : F.V)
 
+open Classical in
 /-- The amalgamation equivalence: classify each vertex by side, sending the glue
 vertex `g` to the left copy. -/
 noncomputable def amalgEquiv
@@ -146,12 +162,14 @@ noncomputable def amalgEquiv
 
 @[simp] theorem amalgEquiv_inl {hcov hsep hgS hgT} {v : F.V} (hv : IncS S v) :
     amalgEquiv S g hcov hsep hgS hgT v = Sum.inl ⟨v, hv⟩ := by
+  classical
   simp only [amalgEquiv, Equiv.coe_fn_mk]; rw [dif_pos hv]
 
 theorem amalgEquiv_inr {hcov hsep hgS hgT} {v : F.V} (hv : ¬ IncS S v)
     (hv' : ∃ e ∈ Sᶜ, v ∈ e.1) (hne : v ≠ g) :
     amalgEquiv S g hcov hsep hgS hgT v = Sum.inr ⟨⟨v, hv'⟩, by
       intro heq; exact hne (congrArg Subtype.val heq)⟩ := by
+  classical
   simp only [amalgEquiv, Equiv.coe_fn_mk]; rw [dif_neg hv]
 
 /-
@@ -160,76 +178,51 @@ An `S`-edge maps to a left restricted edge under `amalgEquiv`.
 theorem amalgEquiv_map_left {hcov hsep hgS hgT} {e : Finset F.V} (he : ∀ v ∈ e, IncS S v) :
     e.map (amalgEquiv S g hcov hsep hgS hgT).toEmbedding =
       (Finset.subtype (fun v => IncS S v) e).map Function.Embedding.inl := by
-  ext x;
-  constructor;
-  · rcases x with ( x | ⟨ ⟨ x, hx ⟩, hx' ⟩ ) <;> simp +decide only [ne_eq, Finset.mem_map_equiv, Finset.mem_map, Finset.mem_subtype, Subtype.exists,
-    exists_and_right, exists_and_left];
-    · intro hx;
-      use x.val;
-      simp +zetaDelta only [Subtype.coe_eta, exists_prop] at *;
-      exact ⟨ by simpa [ amalgEquiv ] using! hx, he _ hx, rfl ⟩;
-    · exact fun h => False.elim <| hx' <| Subtype.ext <| hsep x ( he x h ) hx;
-  · simp only [ne_eq, Finset.mem_map, Finset.mem_subtype, Subtype.exists, exists_and_right, exists_and_left,
-    Finset.mem_map_equiv, forall_exists_index, and_imp, forall_and_index];
-    rintro v hv _ _ _ _ rfl; exact hv;
+  classical
+  ext x
+  constructor
+  · intro hx
+    obtain ⟨v, hv, rfl⟩ := Finset.mem_map.mp hx
+    exact Finset.mem_map.mpr ⟨⟨v, he v hv⟩, Finset.mem_subtype.mpr hv,
+      (amalgEquiv_inl S g (he v hv)).symm⟩
+  · intro hx
+    obtain ⟨v, hv, rfl⟩ := Finset.mem_map.mp hx
+    exact Finset.mem_map.mpr ⟨v.1, Finset.mem_subtype.mp hv, amalgEquiv_inl S g v.2⟩
 
 /-
 A `Sᶜ`-edge maps to a right restricted edge under `amalgEquiv`, via the
 amalgamation embedding `amalgEmbG`.
 -/
-set_option maxHeartbeats 1000000 in
 theorem amalgEquiv_map_amalg {hcov hsep hgS hgT} {e : Finset F.V}
     (he' : ∀ v ∈ e, ∃ e' ∈ Sᶜ, v ∈ e'.1) :
     e.map (amalgEquiv S g hcov hsep hgS hgT).toEmbedding =
       (Finset.subtype (fun v => ∃ e' ∈ Sᶜ, v ∈ e'.1) e).map
         (amalgEmbG (F.restrict S) (F.restrict Sᶜ) ⟨g, hgS⟩ ⟨g, hgT⟩) := by
-  convert! Set.ext _;
-  rotate_left;
-  exact ( F.restrict S ).V ⊕ { b : ( F.restrict Sᶜ ).V // b ≠ ⟨ g, hgT ⟩ };
-  exact { x | ∃ v ∈ e, amalgEquiv S g hcov hsep hgS hgT v = x };
-  exact { x | ∃ v ∈ e, ∃ ( hv : ∃ e' ∈ Sᶜ, v ∈ e'.1 ), amalgEmbG ( F.restrict S ) ( F.restrict Sᶜ ) ⟨ g, hgS ⟩ ⟨ g, hgT ⟩ ⟨ v, hv ⟩ = x };
-  · intro x; constructor <;> intro hx; rcases hx with ⟨ v, hv, rfl ⟩ ; by_cases hv' : v = g <;> simp +decide only [ne_eq, Finset.mem_compl, Subtype.exists, exists_and_right, Set.mem_ofPred_eq] ;
-    · use v; aesop;
-    · use v, hv, by
-        exact Exists.elim ( he' v hv ) fun x hx => ⟨ x.1, ⟨ x.2, by aesop ⟩, hx.2 ⟩
-      generalize_proofs at *;
-      rw [ amalgEquiv_inr ];
-      grind;
-      · exact fun h => hv' <| hsep v h <| he' v hv;
-      · assumption;
-      · assumption;
-    · obtain ⟨ v, hv, hv', rfl ⟩ := hx;
-      use v;
-      by_cases hv'' : IncS S v <;> simp +decide only [ne_eq];
-      · specialize hsep v hv'' hv'; aesop;
-      · have hvg : v ≠ g := by
-          intro h
-          subst v
-          exact hv'' hgS
-        rw [amalgEquiv_inr S g hv'' hv' hvg]
-        simp [hv]
-        exact fun h => hvg (congrArg Subtype.val h)
-  · simp +decide only [ne_eq, Finset.mem_compl, Subtype.exists, exists_and_right];
-    congr! 3;
-    · grind;
-    · constructor;
-      · rintro ⟨ v, hv, hv' ⟩;
-        use v.val;
-        simp +zetaDelta only [Subtype.coe_eta, exists_prop] at *;
-        exact ⟨ Finset.mem_subtype.mp hv, he' _ ( Finset.mem_subtype.mp hv ), hv' ⟩;
-      · rintro ⟨ v, hv, hv', hv'' ⟩;
-        use ⟨ v, he' v hv ⟩;
-        exact ⟨ Finset.mem_subtype.mpr hv, hv'' ⟩;
-    · congr! 2;
-      · grind;
-      · constructor;
-        · rintro ⟨ v, hv, hv' ⟩;
-          use v.val;
-          simp +zetaDelta only [Subtype.coe_eta, exists_prop] at *;
-          exact ⟨ Finset.mem_subtype.mp hv, he' _ ( Finset.mem_subtype.mp hv ), hv' ⟩;
-        · rintro ⟨ v, hv, hv', hv'' ⟩;
-          use ⟨ v, by aesop ⟩;
-          exact ⟨ Finset.mem_subtype.mpr hv, hv'' ⟩
+  classical
+  have hmap (v : F.V) (hv : v ∈ e) :
+      amalgEquiv S g hcov hsep hgS hgT v =
+        amalgEmbG (F.restrict S) (F.restrict Sᶜ) ⟨g, hgS⟩ ⟨g, hgT⟩ ⟨v, he' v hv⟩ := by
+    by_cases hvS : IncS S v
+    · have hvg := hsep v hvS (he' v hv)
+      subst v
+      rw [amalgEquiv_inl S g hgS]
+      simp only [amalgEmbG, Function.Embedding.coeFn_mk, dite_true]
+    · have hvg : v ≠ g := by
+        intro h
+        subst v
+        exact hvS hgS
+      have hne : (⟨v, he' v hv⟩ : (F.restrict Sᶜ).V) ≠ ⟨g, hgT⟩ :=
+        fun h => hvg (congrArg Subtype.val h)
+      rw [amalgEquiv_inr S g hvS (he' v hv) hvg]
+      simp only [amalgEmbG, Function.Embedding.coeFn_mk, dif_neg hne]
+  ext x
+  constructor
+  · intro hx
+    obtain ⟨v, hv, rfl⟩ := Finset.mem_map.mp hx
+    exact Finset.mem_map.mpr ⟨⟨v, he' v hv⟩, Finset.mem_subtype.mpr hv, (hmap v hv).symm⟩
+  · intro hx
+    obtain ⟨v, hv, rfl⟩ := Finset.mem_map.mp hx
+    exact Finset.mem_map.mpr ⟨v.1, Finset.mem_subtype.mp hv, hmap v.1 (Finset.mem_subtype.mp hv)⟩
 
 /-
 **Amalgamation reconstruction.**  If the edges split into two parts `S` and
@@ -241,30 +234,38 @@ theorem recon_amalg
     (hsep : ∀ v : F.V, IncS S v → (∃ e ∈ Sᶜ, v ∈ e.1) → v = g)
     (hgS : IncS S g) (hgT : ∃ e ∈ Sᶜ, g ∈ e.1) :
     FTS.Iso F (FTS.amalgamate (F.restrict S) (F.restrict Sᶜ) ⟨g, hgS⟩ ⟨g, hgT⟩) := by
-  refine' ⟨ _, _ ⟩;
-  exact ( amalgEquiv S g hcov hsep hgS hgT );
+  classical
+  refine ⟨amalgEquiv S g hcov hsep hgS hgT, ?_⟩
   intro e;
   constructor;
   · intro he
     by_cases h : ⟨ e, he ⟩ ∈ S;
-    · refine' Finset.mem_union_left _ ( Finset.mem_image.mpr ⟨ _, _, _ ⟩ );
-      exact Finset.subtype ( fun v => IncS S v ) e;
+    · refine Finset.mem_union_left _
+        (Finset.mem_image.mpr ⟨Finset.subtype (IncS S) e, ?_, ?_⟩)
       · exact FTS.mem_restrict_edges.mpr ⟨ ⟨ e, he ⟩, h, rfl ⟩;
-      · convert! amalgEquiv_map_left S g ( fun v hv => ⟨ _, h, hv ⟩ ) |> Eq.symm using 1;
-    · refine' Finset.mem_union_right _ ( Finset.mem_image.mpr ⟨ Finset.subtype ( fun v => ∃ e' ∈ Sᶜ, v ∈ e'.1 ) e, _, _ ⟩ );
+      · exact (amalgEquiv_map_left S g (fun v hv => ⟨⟨e, he⟩, h, hv⟩)).symm
+    · refine Finset.mem_union_right _
+        ( Finset.mem_image.mpr ⟨ Finset.subtype ( fun v => ∃ e' ∈ Sᶜ, v ∈ e'.1 ) e, ?_, ?_ ⟩ );
       · exact FTS.mem_restrict_edges.mpr ⟨ ⟨ e, he ⟩, Finset.mem_compl.mpr h, rfl ⟩;
-      · convert! amalgEquiv_map_amalg S g ( fun v hv => ⟨ ⟨ e, he ⟩, Finset.mem_compl.mpr h, hv ⟩ ) |> Eq.symm using 1;
-  · simp +decide [ FTS.amalgamate ];
-    rintro ( ⟨ a, ha, ha' ⟩ | ⟨ a, ha, ha' ⟩ );
-    · obtain ⟨ e₀, he₀, rfl ⟩ := FTS.mem_restrict_edges.mp ha;
-      have h_eq : e.map (amalgEquiv S g hcov hsep hgS hgT).toEmbedding = e₀.1.map (amalgEquiv S g hcov hsep hgS hgT).toEmbedding := by
+      · exact (amalgEquiv_map_amalg S g
+          (fun v hv => ⟨⟨e, he⟩, Finset.mem_compl.mpr h, hv⟩)).symm
+  · intro he
+    rcases Finset.mem_union.mp he with he | he
+    · obtain ⟨a, ha, ha'⟩ := Finset.mem_image.mp he
+      obtain ⟨e₀, he₀, rfl⟩ := FTS.mem_restrict_edges.mp ha
+      have h_eq : e = e₀.1 := by
+        apply Finset.map_injective (amalgEquiv S g hcov hsep hgS hgT).toEmbedding
         exact ha'.symm.trans
           (amalgEquiv_map_left S g (fun v hv => ⟨e₀, he₀, hv⟩)).symm
-      have := Finset.map_injective ( amalgEquiv S g hcov hsep hgS hgT ).toEmbedding h_eq; aesop;
-    · obtain ⟨ e₀, he₀, rfl ⟩ := FTS.mem_restrict_edges.mp ha;
-      convert! e₀.2 using 1;
-      apply Finset.map_injective (amalgEquiv S g hcov hsep hgS hgT).toEmbedding;
-      convert! ha'.symm using 1;
-      convert! amalgEquiv_map_amalg S g ( fun v hv => ⟨ e₀, he₀, hv ⟩ ) using 1
+      rw [h_eq]
+      exact e₀.2
+    · obtain ⟨a, ha, ha'⟩ := Finset.mem_image.mp he
+      obtain ⟨e₀, he₀, rfl⟩ := FTS.mem_restrict_edges.mp ha
+      have h_eq : e = e₀.1 := by
+        apply Finset.map_injective (amalgEquiv S g hcov hsep hgS hgT).toEmbedding
+        exact ha'.symm.trans
+          (amalgEquiv_map_amalg S g (fun v hv => ⟨e₀, he₀, hv⟩)).symm
+      rw [h_eq]
+      exact e₀.2
 
 end Erdos1177

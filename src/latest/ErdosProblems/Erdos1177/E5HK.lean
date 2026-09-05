@@ -43,8 +43,15 @@ loose seven-cycle into `M₃`.
 theorem looseCycle7_sub_hkMn3 : looseCycle7.Sub (hkMn 3) := by
   unfold FTS.Sub;
   by_contra h;
-  push_neg at h;
-  exact absurd ( h ( fun x => if x = Sum.inl 0 then ( 0, 0, 0 ) else if x = Sum.inl 1 then ( 1, 0, 0 ) else if x = Sum.inl 2 then ( 2, 1, 0 ) else if x = Sum.inl 3 then ( 0, 1, 1 ) else if x = Sum.inl 4 then ( 1, 1, 1 ) else if x = Sum.inl 5 then ( 2, 2, 1 ) else if x = Sum.inl 6 then ( 1, 0, 1 ) else if x = Sum.inr 0 then ( 2, 0, 0 ) else if x = Sum.inr 1 then ( 0, 0, 1 ) else if x = Sum.inr 2 then ( 1, 1, 0 ) else if x = Sum.inr 3 then ( 2, 1, 1 ) else if x = Sum.inr 4 then ( 0, 1, 2 ) else if x = Sum.inr 5 then ( 0, 0, 2 ) else ( 2, 0, 1 ) ) ( by decide ) ) ( by decide )
+  push Not at h;
+  exact absurd ( h ( fun x =>
+    if x = Sum.inl 0 then ( 0, 0, 0 ) else if x = Sum.inl 1 then ( 1, 0, 0 )
+    else if x = Sum.inl 2 then ( 2, 1, 0 ) else if x = Sum.inl 3 then ( 0, 1, 1 )
+    else if x = Sum.inl 4 then ( 1, 1, 1 ) else if x = Sum.inl 5 then ( 2, 2, 1 )
+    else if x = Sum.inl 6 then ( 1, 0, 1 ) else if x = Sum.inr 0 then ( 2, 0, 0 )
+    else if x = Sum.inr 1 then ( 0, 0, 1 ) else if x = Sum.inr 2 then ( 1, 1, 0 )
+    else if x = Sum.inr 3 then ( 2, 1, 1 ) else if x = Sum.inr 4 then ( 0, 1, 2 )
+    else if x = Sum.inr 5 then ( 0, 0, 2 ) else ( 2, 0, 1 ) ) ( by decide ) ) ( by decide )
 
 /-- A six-point realization of a fixed `3 × 3` array of lower vertices. -/
 def HKRealizes (H : Hypergraph W) (Z : Fin 3 → Fin 3 → W)
@@ -68,12 +75,13 @@ theorem hkMn3_embeds_of_realizations (H : Hypergraph W)
     (hdisjXY : ∀ a b i j, a ≠ b → X a i ≠ Y b j) :
     (hkMn 3).Embeds H := by
   simp +decide [ HKRealizes ] at hreal;
-  refine' ⟨ fun x => _, _, _ ⟩;
-  exact if x.1 = 0 then X x.2.1 x.2.2 else if x.1 = 1 then Y x.2.1 x.2.2 else Z x.2.1 x.2.2;
+  refine ⟨fun x => if x.1 = 0 then X x.2.1 x.2.2 else
+    if x.1 = 1 then Y x.2.1 x.2.2 else Z x.2.1 x.2.2, ?_, ?_⟩
   · intro x y hxy;
     rcases x with ⟨ x₁, x₂, x₃ ⟩ ; rcases y with ⟨ y₁, y₂, y₃ ⟩ ; simp +decide at hxy ⊢;
     grind;
-  · simp +decide [ hkMn ];
+  · simp +decide only [hkMn, Fin.isValue, Prod.mk.eta, Finset.mem_image, Finset.mem_univ, true_and,
+    Prod.exists, forall_exists_index];
     rintro e a b c rfl; simp +decide [ *, Set.image_insert_eq, Set.image_singleton ] ;
 
 /-- The six-point support of one realization. -/
@@ -83,7 +91,8 @@ noncomputable def hkRealizationSupport (X Y : Fin 3 → W) : Finset W := by
 
 lemma hkRealizationSupport_card_le (X Y : Fin 3 → W) :
     (hkRealizationSupport X Y).card ≤ 6 := by
-  convert! Finset.card_union_le ( Finset.image X Finset.univ ) ( Finset.image Y Finset.univ ) |> le_trans <| add_le_add ( Finset.card_image_le ) ( Finset.card_image_le ) using 1
+  convert! Finset.card_union_le ( Finset.image X Finset.univ ) ( Finset.image Y Finset.univ ) |>
+    le_trans <| add_le_add ( Finset.card_image_le ) ( Finset.card_image_le ) using 1
 
 lemma mem_hkRealizationSupport_left (X Y : Fin 3 → W) (i : Fin 3) :
     X i ∈ hkRealizationSupport X Y := by
@@ -91,15 +100,23 @@ lemma mem_hkRealizationSupport_left (X Y : Fin 3 → W) (i : Fin 3) :
 
 lemma mem_hkRealizationSupport_right (X Y : Fin 3 → W) (i : Fin 3) :
     Y i ∈ hkRealizationSupport X Y := by
-  convert! Finset.mem_union.mpr ( Or.inr <| Finset.mem_image.mpr ⟨ i, Finset.mem_univ _, rfl ⟩ ) using 1
+  convert! Finset.mem_union.mpr ( Or.inr <| Finset.mem_image.mpr ⟨ i, Finset.mem_univ _, rfl ⟩ )
+    using 1
 
 lemma hk_support_disjoint_cross
     (X Y X' Y' : Fin 3 → W)
     (hd : Disjoint (hkRealizationSupport X Y) (hkRealizationSupport X' Y')) :
     (∀ i j, X i ≠ X' j) ∧ (∀ i j, Y i ≠ Y' j) ∧
       (∀ i j, X i ≠ Y' j) ∧ (∀ i j, X' i ≠ Y j) := by
-  simp_all +decide only [ne_eq];
-  exact ⟨ fun i j => fun h => hd ( Or.inl ⟨ i, rfl ⟩ ) |>.1 j h.symm, fun i j => fun h => hd ( Or.inr ⟨ i, rfl ⟩ ) |>.2 j h.symm, fun i j => fun h => hd ( Or.inl ⟨ i, rfl ⟩ ) |>.2 j h.symm ⟩
+  have hd' := Finset.disjoint_left.mp hd
+  exact ⟨fun i j hij => hd' (mem_hkRealizationSupport_left X Y i)
+      (hij.symm ▸ mem_hkRealizationSupport_left X' Y' j),
+    fun i j hij => hd' (mem_hkRealizationSupport_right X Y i)
+      (hij.symm ▸ mem_hkRealizationSupport_right X' Y' j),
+    fun i j hij => hd' (mem_hkRealizationSupport_left X Y i)
+      (hij.symm ▸ mem_hkRealizationSupport_right X' Y' j),
+    fun i j hij => hd' (mem_hkRealizationSupport_right X Y j)
+      (hij ▸ mem_hkRealizationSupport_left X' Y' i)⟩
 
 lemma hk_support_disjoint_of_avoids
     (X Y X' Y' : Fin 3 → W)
@@ -117,7 +134,8 @@ lemma hk_avoid_support (H : Hypergraph W)
     (X0 Y0 : Fin 3 → W) :
     ∃ X1 Y1 : Fin 3 → W, HKRealizes H Z X1 Y1 ∧
       Disjoint (hkRealizationSupport X0 Y0) (hkRealizationSupport X1 Y1) := by
-  obtain ⟨ X1, Y1, h1, h2, h3 ⟩ := havoid ( hkRealizationSupport X0 Y0 ) ( by exact le_trans ( hkRealizationSupport_card_le X0 Y0 ) ( by decide ) );
+  obtain ⟨ X1, Y1, h1, h2, h3 ⟩ := havoid ( hkRealizationSupport X0 Y0 )
+    ( by exact le_trans ( hkRealizationSupport_card_le X0 Y0 ) ( by decide ) );
   exact ⟨ X1, Y1, h1, hk_support_disjoint_of_avoids X0 Y0 X1 Y1 h2 h3 ⟩
 
 lemma hk_avoid_two_supports (H : Hypergraph W)
@@ -166,7 +184,8 @@ lemma hk_select_three (H : Hypergraph W)
       Disjoint (hkRealizationSupport X0 Y0) (hkRealizationSupport X2 Y2) ∧
       Disjoint (hkRealizationSupport X1 Y1) (hkRealizationSupport X2 Y2) := by
   obtain ⟨X0, Y0, hR0⟩ : ∃ X0 Y0 : Fin 3 → W, HKRealizes H Z X0 Y0 := by
-    exact Exists.elim ( havoid ∅ ( by simp +decide ) ) fun X hX => Exists.elim hX fun Y hY => ⟨ X, Y, hY.1 ⟩;
+    exact Exists.elim ( havoid ∅ ( by simp +decide ) ) fun X hX => Exists.elim hX fun Y hY =>
+      ⟨ X, Y, hY.1 ⟩;
   obtain ⟨ X1, Y1, hR1, h01 ⟩ := hk_avoid_support H Z havoid X0 Y0;
   obtain ⟨ X2, Y2, hR2, h02, h12 ⟩ := hk_avoid_two_supports H Z havoid X0 Y0 X1 Y1;
   exact ⟨ X0, Y0, X1, Y1, X2, Y2, hR0, hR1, hR2, h01, h02, h12 ⟩
@@ -182,9 +201,16 @@ lemma hk_three_disjoint_realizations (H : Hypergraph W)
         Disjoint (hkRealizationSupport (X a) (Y a))
           (hkRealizationSupport (X b) (Y b)) := by
   obtain ⟨ X0, Y0, X1, Y1, X2, Y2, hR0, hR1, hR2, d01, d02, d12 ⟩ := hk_select_three H Z havoid;
-  refine' ⟨ fun a => if a = 0 then X0 else if a = 1 then X1 else X2, fun a => if a = 0 then Y0 else if a = 1 then Y1 else Y2, _, _ ⟩ <;> simp +decide only [Fin.isValue, ne_eq];
-  · exact ⟨ hR0, hR1, hR2 ⟩;
-  · exact ⟨ ⟨ d01, d02 ⟩, ⟨ d01.symm, d12 ⟩, d02.symm, d12.symm ⟩
+  refine ⟨ fun a => if a = 0 then X0 else if a = 1 then X1 else X2,
+    fun a => if a = 0 then Y0 else if a = 1 then Y1 else Y2, ?_, ?_ ⟩ <;>
+    simp +decide only [Fin.isValue, ne_eq];
+  · intro a
+    fin_cases a <;> simp_all
+  · have d10 := d01.symm
+    have d20 := d02.symm
+    have d21 := d12.symm
+    intro a b hab
+    fin_cases a <;> fin_cases b <;> simp_all
 
 /-
 Greedy finite blocking lemma: if every set of at most eighteen forbidden
@@ -198,22 +224,14 @@ theorem hkMn3_embeds_of_avoidance (H : Hypergraph W)
       ∃ X Y : Fin 3 → W, HKRealizes H Z X Y ∧
         (∀ i, X i ∉ S) ∧ (∀ i, Y i ∉ S)) :
     (hkMn 3).Embeds H := by
-  convert! hkMn3_embeds_of_realizations H Z hZ _ _ _ _ _ _ using 1;
-  exact fun a i => ( hk_three_disjoint_realizations H Z havoid |> Classical.choose ) a i;
-  exact fun a i => ( hk_three_disjoint_realizations H Z havoid |> Classical.choose_spec |> Classical.choose ) a i;
-  · exact Classical.choose_spec ( hk_three_disjoint_realizations H Z havoid ) |> Classical.choose_spec |> And.left;
-  · intro a b i j hab;
-    have := Classical.choose_spec ( hk_three_disjoint_realizations H Z havoid ) |> Classical.choose_spec;
-    exact hk_support_disjoint_cross _ _ _ _ ( this.2 a b hab ) |>.1 i j;
-  · intro a b i j hab;
-    have := Classical.choose_spec ( hk_three_disjoint_realizations H Z havoid ) |> Classical.choose_spec;
-    have := hk_support_disjoint_cross _ _ _ _ ( this.2 a b hab );
-    grind;
+  obtain ⟨X, Y, hreal, hdisj⟩ := hk_three_disjoint_realizations H Z havoid
+  apply hkMn3_embeds_of_realizations H Z hZ X Y hreal
   · intro a b i j hab
-    generalize_proofs at *;
-    rename_i h₁ h₂;
-    have := Classical.choose_spec h₂ |>.2 a b hab; simp_all +decide only [ne_eq] ;
-    exact fun h => this ( Or.inl ⟨ i, rfl ⟩ ) |>.2 j h.symm
+    exact (hk_support_disjoint_cross _ _ _ _ (hdisj a b hab)).1 i j
+  · intro a b i j hab
+    exact (hk_support_disjoint_cross _ _ _ _ (hdisj a b hab)).2.1 i j
+  · intro a b i j hab
+    exact (hk_support_disjoint_cross _ _ _ _ (hdisj a b hab)).2.2.1 i j
 
 /-- A finite set blocks realizations over `Z` if every realization meets it. -/
 def HKBlocks (H : Hypergraph W) (Z : Fin 3 → Fin 3 → W) (S : Finset W) : Prop :=
@@ -245,37 +263,48 @@ def HKcl (H : Hypergraph W) (X : Set W) : Set W := ⋃ k, HKCloseIter H X k
 
 lemma subset_HKCloseIter (H : Hypergraph W) (X : Set W) (k : ℕ) :
     X ⊆ HKCloseIter H X k := by
-  induction' k with k ih <;> simp_all +decide [ Set.subset_def, HKCloseIter ];
-  exact fun x hx => Set.mem_union_left _ ( Set.mem_union_left _ ( ih x hx ) )
+  induction k with
+  | zero => exact Set.Subset.rfl
+  | succ k ih =>
+    exact fun x hx => Set.mem_union_left _ (Set.mem_union_left _ (ih hx))
 
 lemma HKCloseIter_mono_index (H : Hypergraph W) (X : Set W) {k l : ℕ}
     (h : k ≤ l) : HKCloseIter H X k ⊆ HKCloseIter H X l := by
-  refine' Nat.le_induction _ _ l h <;> intro l _ <;> simp_all +decide [ Set.subset_def, HKCloseIter ];
-  exact fun h x hx => Set.mem_union_left _ ( Set.mem_union_left _ ( h x hx ) )
+  induction h with
+  | refl => exact Set.Subset.rfl
+  | step h ih => exact fun v hv => Or.inl (Or.inl (ih hv))
 
 lemma subset_HKcl (H : Hypergraph W) (X : Set W) : X ⊆ HKcl H X := by
-  exact Set.subset_iUnion ( fun k => HKCloseIter H X k ) 0 |> Set.Subset.trans ( subset_HKCloseIter H X 0 )
+  exact Set.subset_iUnion ( fun k => HKCloseIter H X k ) 0 |> Set.Subset.trans
+    ( subset_HKCloseIter H X 0 )
 
 lemma HKcl_mono (H : Hypergraph W) {X Y : Set W} (h : X ⊆ Y) :
     HKcl H X ⊆ HKcl H Y := by
-  -- By induction on $k$, we can show that $HKCloseIter H X k \subseteq HKCloseIter H Y k$ for all $k$.
+  -- By induction on $k$, we can show that $HKCloseIter H X k \subseteq HKCloseIter H Y k$ for all
+  -- $k$.
   have h_ind : ∀ k, HKCloseIter H X k ⊆ HKCloseIter H Y k := by
     intro k;
-    induction' k with k ih;
-    · exact h;
-    · refine' Set.union_subset_union ( Set.union_subset_union _ _ ) _;
+    induction k with
+    | zero => exact h;
+    | succ k ih =>
+      refine Set.union_subset_union ( Set.union_subset_union ?_ ?_ ) ?_;
       · exact ih;
-      · exact fun v hv => by obtain ⟨ x, hx, y, hy, hxy, hv ⟩ := hv; exact ⟨ x, ih hx, y, ih hy, hxy, hv ⟩ ;
-      · exact fun v hv => by obtain ⟨ Z, hZ₁, hZ₂ ⟩ := hv; exact ⟨ Z, fun i j => ih ( hZ₁ i j ), hZ₂ ⟩ ;
+      · exact fun v hv =>
+          by obtain ⟨ x, hx, y, hy, hxy, hv ⟩ := hv; exact ⟨ x, ih hx, y, ih hy, hxy, hv ⟩ ;
+      · exact fun v hv =>
+          by obtain ⟨ Z, hZ₁, hZ₂ ⟩ := hv; exact ⟨ Z, fun i j => ih ( hZ₁ i j ), hZ₂ ⟩ ;
   exact Set.iUnion_mono h_ind
 
 lemma HKcl_pairClosed (H : Hypergraph W) (X : Set W) :
     DClosed H 2 (HKcl H X) := by
   intro x hx; simp_all +decide only [ne_eq] ;
-  intro y hy hxy; simp_all +decide [ Set.subset_def, HKcl ] ;
-  obtain ⟨ kx, hkx ⟩ := hx; obtain ⟨ ky, hky ⟩ := hy; use fun z hz => ⟨ kx + ky + 1, ?_ ⟩ ; simp_all +decide [ Set.subset_def, HKCloseIter ] ;
-  refine' Set.mem_union_left _ ( Set.mem_union_right _ _ );
-  exact ⟨ x, HKCloseIter_mono_index H X ( by linarith ) hkx, y, HKCloseIter_mono_index H X ( by linarith ) hky, hxy, hz ⟩
+  intro y hy hxy; simp_all +decide only [HKcl, Set.mem_iUnion, Set.subset_def] ;
+  obtain ⟨ kx, hkx ⟩ := hx; obtain ⟨ ky, hky ⟩ := hy
+  use fun z hz => ⟨ kx + ky + 1, ?_ ⟩
+  simp_all +decide only [HKCloseIter]
+  refine Set.mem_union_left _ ( Set.mem_union_right _ ?_ );
+  exact ⟨ x, HKCloseIter_mono_index H X ( by linarith ) hkx,
+    y, HKCloseIter_mono_index H X ( by linarith ) hky, hxy, hz ⟩
 
 lemma HKcl_blockerClosed (H : Hypergraph W) (X : Set W)
     (Z : Fin 3 → Fin 3 → W) (hZ : ∀ i j, Z i j ∈ HKcl H X) :
@@ -284,61 +313,80 @@ lemma HKcl_blockerClosed (H : Hypergraph W) (X : Set W)
   obtain ⟨ v, hv ⟩ := Set.not_subset.mp h_false;
   obtain ⟨ k, hk ⟩ : ∃ k, ∀ i j, Z i j ∈ HKCloseIter H X k := by
     choose k hk using fun i j => Set.mem_iUnion.mp ( hZ i j );
-    exact ⟨ Finset.univ.sup ( fun p : Fin 3 × Fin 3 => k p.1 p.2 ), fun i j => HKCloseIter_mono_index H X ( Finset.le_sup ( f := fun p : Fin 3 × Fin 3 => k p.1 p.2 ) ( Finset.mem_univ ( i, j ) ) ) ( hk i j ) ⟩;
-  refine' hv.2 ( Set.mem_iUnion.2 ⟨ k + 1, Set.mem_union_right _ _ ⟩ );
+    exact ⟨ Finset.univ.sup ( fun p : Fin 3 × Fin 3 => k p.1 p.2 ),
+      fun i j => HKCloseIter_mono_index H X
+        ( Finset.le_sup ( f := fun p : Fin 3 × Fin 3 => k p.1 p.2 )
+          ( Finset.mem_univ ( i, j ) ) ) ( hk i j ) ⟩;
+  refine hv.2 ( Set.mem_iUnion.2 ⟨ k + 1, Set.mem_union_right _ ?_ ⟩ );
   exact ⟨ Z, hk, hv.1 ⟩
 
 lemma HKCloseStep_card_le (H : Hypergraph W) (htri : H.IsTripleSystem)
     (X : Set W) : #(HKCloseStep H X) ≤ #X + ℵ₀ := by
-  have h_card_le : #(DCloseStep H 2 X) ≤ #X + ℵ₀ := by
-    convert! DCloseStep_card_le H htri 2 X using 1;
-  have h_card_le : #(⋃ (Z : Fin 3 → Fin 3 → X), (hkBlocker H (fun i j => Z i j) : Set W)) ≤ #(Fin 3 → Fin 3 → X) * 18 := by
-    refine' le_trans ( Cardinal.mk_iUnion_le _ ) _;
-    gcongr;
-    refine' ciSup_le' _;
-    intro Z; exact (by
-    by_cases h : ∃ S : Finset W, HKBlocks H ( fun i j => ( Z i j : W ) ) S <;> simp_all +decide only [SetLike.coe_sort_coe, mk_fintype, Fintype.card_coe, Nat.cast_le_ofNat];
-    exact h.choose_spec.1);
-  by_cases hX : Infinite X <;> simp_all +decide only [ge_iff_le];
-  · refine' le_trans ( Cardinal.mk_union_le _ _ ) _;
-    refine' le_trans ( add_le_add ‹_› _ ) _;
-    exact ( #X ^ 3 ) ^ 3 * 18;
-    · refine' le_trans _ h_card_le;
-      refine' Cardinal.mk_le_mk_of_subset _;
-      intro v hv; obtain ⟨ Z, hZ₁, hZ₂ ⟩ := hv; exact Set.mem_iUnion.2 ⟨ fun i j => ⟨ Z i j, hZ₁ i j ⟩, hZ₂ ⟩ ;
-    · simp +decide [ Cardinal.add_eq_max, Cardinal.mul_eq_max, Cardinal.power_nat_eq ];
-      exact le_trans ( mul_le_mul_right ( Cardinal.nat_lt_aleph0 18 |> le_of_lt ) _ ) ( by simp +decide [ Cardinal.mul_eq_max ] );
-  · convert! Cardinal.mk_union_le _ _ |> le_trans <| add_le_add ‹#↑(DCloseStep H 2 X) ≤ #↑X + ℵ₀› h_card_le using 1;
-    · congr with x ; simp +decide [ HKCloseStep ];
-      constructor <;> intro h;
-      · rcases h with ( h | ⟨ Z, hZ₁, hZ₂ ⟩ );
-        · exact Or.inl h;
-        · exact Or.inr ⟨ fun i j => ⟨ Z i j, hZ₁ i j ⟩, by simpa [ Subtype.ext_iff ] using! hZ₂ ⟩;
-      · exact h.imp id fun ⟨ Z, hZ ⟩ => ⟨ _, fun i j => Z i j |>.2, hZ ⟩;
-    · have := Fintype.ofFinite X; simp +decide [ Cardinal.mk_fintype ] ;
-      rw [ Cardinal.add_eq_left ];
-      · norm_num;
-      · exact_mod_cast Cardinal.nat_lt_aleph0 _ |> le_of_lt
+  classical
+  let κ := #X + ℵ₀
+  have hκ : ℵ₀ ≤ κ := le_add_left le_rfl
+  have hD : #(DCloseStep H 2 X) ≤ κ := DCloseStep_card_le H htri 2 X
+  have hblocker (Z : Fin 3 → Fin 3 → X) :
+      (hkBlocker H (fun i j => (Z i j : W))).card ≤ 18 := by
+    by_cases h : ∃ S : Finset W, HKBlocks H (fun i j => (Z i j : W)) S
+    · exact (hkBlocker_spec H _ h).1
+    · simp only [hkBlocker, dif_neg h, Finset.card_empty]
+      omega
+  have hfamily : #(⋃ Z : Fin 3 → Fin 3 → X,
+      (hkBlocker H (fun i j => (Z i j : W)) : Set W)) ≤ #(Fin 3 → Fin 3 → X) * 18 := by
+    refine (Cardinal.mk_iUnion_le _).trans (mul_le_mul' le_rfl (ciSup_le' ?_))
+    intro Z
+    change #(hkBlocker H (fun i j => (Z i j : W))) ≤ (18 : Cardinal)
+    rw [Cardinal.mk_coe_finset]
+    exact_mod_cast hblocker Z
+  have hindex : #(Fin 3 → Fin 3 → X) ≤ κ := by
+    calc
+      #(Fin 3 → Fin 3 → X) = (#X ^ (3 : ℕ)) ^ (3 : ℕ) := by
+        rw [Cardinal.mk_arrow, Cardinal.lift_uzero, Cardinal.lift_mk_fin,
+          Cardinal.power_natCast, Cardinal.mk_arrow, Cardinal.lift_uzero,
+          Cardinal.lift_mk_fin, Cardinal.power_natCast]
+      _ ≤ (κ ^ (3 : ℕ)) ^ (3 : ℕ) := by
+        gcongr
+        exact le_self_add
+      _ = κ := by rw [Cardinal.power_nat_eq hκ (by decide),
+        Cardinal.power_nat_eq hκ (by decide)]
+  have hB : #({v | ∃ Z : Fin 3 → Fin 3 → W,
+      (∀ i j, Z i j ∈ X) ∧ v ∈ hkBlocker H Z} : Set W) ≤ κ := by
+    calc
+      _ ≤ #(⋃ Z : Fin 3 → Fin 3 → X,
+          (hkBlocker H (fun i j => (Z i j : W)) : Set W)) := by
+        apply Cardinal.mk_le_mk_of_subset
+        rintro v ⟨Z, hZ, hv⟩
+        exact Set.mem_iUnion.mpr ⟨fun i j => ⟨Z i j, hZ i j⟩, hv⟩
+      _ ≤ #(Fin 3 → Fin 3 → X) * 18 := hfamily
+      _ ≤ κ * κ := mul_le_mul' hindex ((Cardinal.natCast_lt_aleph0 (n := 18)).le.trans hκ)
+      _ = κ := Cardinal.mul_eq_self hκ
+  calc
+    #(HKCloseStep H X) ≤ #(DCloseStep H 2 X) +
+        #({v | ∃ Z : Fin 3 → Fin 3 → W,
+          (∀ i j, Z i j ∈ X) ∧ v ∈ hkBlocker H Z} : Set W) := Cardinal.mk_union_le _ _
+    _ ≤ κ + κ := add_le_add hD hB
+    _ = κ := Cardinal.add_eq_self hκ
 
 lemma HKcl_card_le (H : Hypergraph W) (htri : H.IsTripleSystem) (X : Set W) :
     #(HKcl H X) ≤ #X + ℵ₀ := by
   convert! Cardinal.mk_iUnion_le _ |> le_trans <| _;
   rotate_left;
-  exact ULift ℕ
-  exact fun i => HKCloseIter H X i.down
-  generalize_proofs at *;
-  · refine' le_trans ( mul_le_mul_right ( ciSup_le _ ) _ ) _;
-    exact #X + ℵ₀;
+  · exact ULift ℕ
+  · exact fun i => HKCloseIter H X i.down
+  · generalize_proofs at *;
+    refine le_trans (mul_le_mul_right (ciSup_le (c := #X + ℵ₀) ?_) _) ?_;
     · intro x;
-      induction' x.down with k ih;
-      · exact le_add_right ( by rfl );
-      · convert! le_trans ( HKCloseStep_card_le H htri ( HKCloseIter H X k ) ) _ using 1;
+      induction x.down with
+      | zero => exact le_add_right ( by rfl );
+      | succ k ih =>
+        convert! le_trans ( HKCloseStep_card_le H htri ( HKCloseIter H X k ) ) _ using 1;
         convert! add_le_add_right ih ℵ₀ using 1;
         · rw [ add_comm ];
         · rw [ add_comm, Cardinal.add_eq_max ];
           · rw [ Cardinal.add_eq_right ]; all_goals exact le_max_left _ _;
           · norm_num;
-    · simp +decide [ Cardinal.mk_nat ];
+    · simp +decide;
   · ext; simp [HKcl]
 
 /-- The exact closed-filtration interface used in the proof of HK Theorem 1.
@@ -361,22 +409,18 @@ structure HKFiltration (H : Hypergraph W) where
 
 lemma Hsub_linear_of_linear (H : Hypergraph W) (hlin : H.Linear) (S : Set W) :
     (Hsub H S).Linear := by
-  -- Let $e'$ and $f'$ be edges in the induced hypergraph $Hsub H S$ that share two vertices.
-  intro e' f' h_inter
-  simp_all +decide only [ne_eq];
-  intro g' hne;
-  contrapose! hlin;
-  refine' ⟨ _, f', _, g', _, _ ⟩;
-  · exact fun h => hne <| Set.ext fun x => by simpa using! Set.ext_iff.mp h x;
-  · obtain ⟨ x, hx, y, hy, hxy ⟩ := hlin; use x, by aesop, y, by aesop;
-    exact fun h => hxy <| Subtype.ext h
+  intro e he f hf hef x hx y hy
+  apply Subtype.ext
+  exact hlin _ he _ hf (fun h => hef (Subtype.val_injective.image_injective h))
+    ⟨⟨x, hx.1, rfl⟩, ⟨x, hx.2, rfl⟩⟩
+    ⟨⟨y, hy.1, rfl⟩, ⟨y, hy.2, rfl⟩⟩
 
 lemma hkMn_embeds_of_Hsub (H : Hypergraph W) (S : Set W)
     (h : (hkMn 3).Embeds (Hsub H S)) : (hkMn 3).Embeds H := by
   obtain ⟨ f, hf₁, hf₂ ⟩ := h;
-  refine' ⟨ fun x => f x, _, _ ⟩;
+  refine ⟨ fun x => f x, ?_, ?_ ⟩;
   · exact Subtype.coe_injective.comp hf₁;
-  · intro e he; specialize hf₂ e he; simp_all +decide [ Set.ext_iff, Hsub ] ;
+  · intro e he; specialize hf₂ e he; simp_all +decide only [Hsub, Set.mem_ofPred_eq] ;
     convert! hf₂ using 1;
     ext; simp [Set.mem_image]
 
@@ -467,7 +511,7 @@ theorem exists_hk_filtration (H : Hypergraph W)
     have himg : #(e '' {b | b ≤ a}) ≤ Cardinal.mk (Set.Iic a) :=
       Cardinal.mk_image_le.trans (by simp [Set.Iic_def])
     have hiio : Cardinal.mk (Set.Iio a) < #W := by
-      convert! Cardinal.mk_Iio_ord_toType a using 1
+      simpa [Idx] using Cardinal.mk_Iio_lt a (by simp [Idx])
     have hiic : Cardinal.mk (Set.Iic a) < #W := by
       have heq : Cardinal.mk (Set.Iic a) = Cardinal.mk (Set.Iio a) + 1 := by
         rw [← Cardinal.mk_singleton (a : Idx), ← Cardinal.mk_union_of_disjoint]
@@ -475,7 +519,7 @@ theorem exists_hk_filtration (H : Hypergraph W)
         · exact Set.disjoint_singleton_right.mpr (lt_irrefl a)
       rw [heq]
       exact Cardinal.add_lt_of_lt (le_of_lt hbig) hiio
-        (lt_of_le_of_lt (Cardinal.nat_lt_aleph0 1 |>.le) hbig)
+        (lt_of_le_of_lt (Cardinal.natCast_lt_aleph0 (n := 1) |>.le) hbig)
     refine lt_of_le_of_lt (HKcl_card_le H htri _) ?_
     refine lt_of_le_of_lt (add_le_add himg le_rfl) ?_
     exact Cardinal.add_lt_of_lt (le_of_lt hbig) hiic hbig
@@ -602,7 +646,7 @@ lemma hk_edge_flat_or_link (H : Hypergraph W) (htri : H.IsTripleSystem)
       by
         convert! he using 1
         ext v
-        simp [hedge, or_comm, or_left_comm, or_assoc]⟩⟩
+        simp [hedge, or_comm, or_left_comm]⟩⟩
 
 lemma exists_uncountable_hkLinkGraph (H : Hypergraph W)
     (htri : H.IsTripleSystem) (huc : H.UncountablyChromatic)
@@ -610,7 +654,7 @@ lemma exists_uncountable_hkLinkGraph (H : Hypergraph W)
     ∃ a : F.Idx, ¬ (SimpleGraph.toHG (hkLinkGraph H F a)).ColorableBy ℵ₀ := by
   let := F.linearOrder
   by_contra hall
-  push_neg at hall
+  push Not at hall
   choose dlevel hdlevel using F.levelColorable
   have hflat :
       (⟨{e | e ∈ H.edges ∧ ∃ a, ∀ v ∈ e, F.rank v = a}⟩ : Hypergraph W).ColorableBy ℵ₀ := by
@@ -636,14 +680,14 @@ lemma exists_uncountable_hkLinkGraph (H : Hypergraph W)
     hflat hnonflat
   have hcov : {e | e ∈ H.edges ∧ ∃ a, ∀ v ∈ e, F.rank v = a} ∪
       (H.edges \ {e | e ∈ H.edges ∧ ∃ a, ∀ v ∈ e, F.rank v = a}) = H.edges := by
-    rw [Set.union_diff_cancel]
+    rw [Set.union_sdiff_cancel]
     intro e he
     exact he.1
   rw [hcov] at hu
   exact huc hu
 
 lemma hk_link_private_unique_row (H : Hypergraph W) (htri : H.IsTripleSystem)
-    (hlin : H.Linear) {a b₁ b₂ z : W} (hab₁ : a ≠ b₁) (hab₂ : a ≠ b₂)
+    (hlin : H.Linear) {a b₁ b₂ z : W} (hab₁ : a ≠ b₁) (_ : a ≠ b₂)
     (hb : b₁ ≠ b₂)
     (he₁ : ({a,b₁,z} : Set W) ∈ H.edges)
     (he₂ : ({a,b₂,z} : Set W) ∈ H.edges) : False := by
@@ -666,7 +710,7 @@ lemma hk_link_private_unique_row (H : Hypergraph W) (htri : H.IsTripleSystem)
     · exact hb h
     · have hc := htri _ he₁
       rw [h] at hc
-      have : ({a, z, z} : Set W) = {a, z} := by ext; simp [or_comm]
+      have : ({a, z, z} : Set W) = {a, z} := by ext; simp
       rw [this] at hc
       rw [Set.ncard_pair haz] at hc
       omega
@@ -788,7 +832,7 @@ theorem hk_unblocked_grid_of_filtration (H : Hypergraph W)
   refine ⟨Z, hZ, ?_⟩
   intro S hScard
   by_contra hno
-  push_neg at hno
+  push Not at hno
   have hblocks : HKBlocks H Z S := by
     refine ⟨hScard, ?_⟩
     intro X Y hreal

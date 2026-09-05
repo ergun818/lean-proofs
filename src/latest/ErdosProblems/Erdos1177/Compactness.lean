@@ -26,12 +26,12 @@ theorem colorable_of_forall_finite {V : Type*} (G : SimpleGraph V) (k : ℕ) [Ne
     ∃ c : V → Fin k, ∀ a b, G.Adj a b → c a ≠ c b := by
   classical
   by_contra h_contra
-  push_neg at h_contra
+  push Not at h_contra
   set T : V × V → Set (V → Fin k) := fun p => {c | G.Adj p.1 p.2 → c p.1 ≠ c p.2} with hT_def
   have hT_closed : ∀ p : V × V, IsClosed (T p) := by
     intro p
     by_cases h_adj : G.Adj p.1 p.2
-    · simp_all +decide
+    · simp only [T, h_adj, true_implies]
       exact isClosed_compl_iff.mpr (isOpen_discrete {x : Fin k × Fin k | x.1 = x.2}
         |> IsOpen.preimage (show Continuous fun c : V → Fin k => (c p.1, c p.2) from
           Continuous.prodMk (continuous_apply _) (continuous_apply _)))
@@ -41,7 +41,8 @@ theorem colorable_of_forall_finite {V : Type*} (G : SimpleGraph V) (k : ℕ) [Ne
     simp only [Set.mem_inter_iff, Set.mem_univ, true_and, Set.mem_iInter, Set.mem_empty_iff_false,
       iff_false, not_forall]
     obtain ⟨a, b, hab, hcab⟩ := h_contra c
-    exact ⟨(a, b), by simp only [hT_def, Set.mem_setOf_eq, not_forall]; exact ⟨hab, not_not.mpr hcab⟩⟩
+    exact
+      ⟨(a, b), by simp only [hT_def, Set.mem_ofPred_eq, not_forall]; exact ⟨hab, not_not.mpr hcab⟩⟩
   obtain ⟨s, hs⟩ := isCompact_univ.elim_finite_subfamily_closed T hT_closed h_empty
   -- The finite set of vertices appearing in the pairs of `s`.
   set s' : Finset V := s.image Prod.fst ∪ s.image Prod.snd with hs'_def
