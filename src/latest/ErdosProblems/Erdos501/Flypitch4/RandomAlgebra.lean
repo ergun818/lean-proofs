@@ -45,7 +45,8 @@ namespace RandomAlgebra
 /-! ### The fair coin -/
 
 /-- The fair-coin measure on `Bool`. -/
-noncomputable def fairCoin : Measure Bool := (2 : ℝ≥0∞)⁻¹ • (Measure.dirac true + Measure.dirac false)
+noncomputable def fairCoin : Measure Bool := (2 : ℝ≥0∞)⁻¹ • (Measure.dirac true + Measure.dirac
+    false)
 
 lemma fairCoin_apply (s : Set Bool) :
     fairCoin s = 2⁻¹ * (s.indicator 1 true + s.indicator 1 false) := by
@@ -201,8 +202,8 @@ theorem iInf_biimp_χ_eq_bot {ν₁ ν₂ : ι} (hne : ν₁ ≠ ν₂) :
   rw [MeasureAlgebra.iInf_mk, ← MeasureAlgebra.meas_eq_zero_iff, MeasureAlgebra.meas_mk]
   apply measure_mono_null _ (μ_random_iInter_agree hne)
   intro x hx
-  simp only [mem_iInter, mem_inter_iff, mem_union, mem_compl_iff, bit, mem_setOf_eq] at hx
-  simp only [mem_iInter, agree, mem_setOf_eq]
+  simp only [mem_iInter, mem_inter_iff, mem_union, mem_compl_iff, bit, mem_ofPred_eq] at hx
+  simp only [mem_iInter, agree, mem_ofPred_eq]
   intro N n _
   have := hx n
   cases h₁ : x ν₁ n <;> cases h₂ : x ν₂ n <;> simp_all

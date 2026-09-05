@@ -154,11 +154,11 @@ theorem homogeneous_reading {A : Type} (hA : #A = Order.succ 𝔠) {d : A → ι
     exact (h1.union h2).mono fun a ha => ha
   let J₁ : Set A := J₀ \ bad
   have hJ₁ : #J₁ = Order.succ 𝔠 := by
-    apply le_antisymm ((Cardinal.mk_le_mk_of_subset Set.diff_subset).trans hJ₀.le)
+    apply le_antisymm ((Cardinal.mk_le_mk_of_subset Set.sdiff_subset).trans hJ₀.le)
     by_contra hlt
     rw [not_le, Order.lt_succ_iff] at hlt
     have h1 : #J₀ ≤ #J₁ + #bad :=
-      (Cardinal.mk_le_mk_of_subset (Set.subset_diff_union J₀ bad)).trans (Cardinal.mk_union_le _ _)
+      (Cardinal.mk_le_mk_of_subset (Set.subset_sdiff_union J₀ bad)).trans (Cardinal.mk_union_le _ _)
     have h2 : #bad ≤ 𝔠 :=
       (Cardinal.mk_le_aleph0_iff.mpr hbad.to_subtype).trans aleph0_le_continuum
     have h3 : #J₀ ≤ 𝔠 :=
@@ -176,8 +176,8 @@ theorem homogeneous_reading {A : Type} (hA : #A = Order.succ 𝔠) {d : A → ι
       have hER : Disjoint (E a) R := Set.disjoint_iff_inter_eq_empty.mpr
         (Set.not_nonempty_iff_eq_empty.mp fun h => hnotbad (Or.inr h))
       have hinf : (S a \ R).Infinite :=
-        (hE_inf a).mono (Set.subset_diff.mpr ⟨hE_sub a, hER⟩)
-      have hcnt : (S a \ R).Countable := (hS a).mono Set.diff_subset
+        (hE_inf a).mono (Set.subset_sdiff.mpr ⟨hE_sub a, hER⟩)
+      have hcnt : (S a \ R).Countable := (hS a).mono Set.sdiff_subset
       have : Countable ↥(S a \ R) := hcnt.to_subtype
       have : Infinite ↥(S a \ R) := hinf.to_subtype
       obtain ⟨D⟩ : Nonempty (Denumerable ↥(S a \ R)) :=
@@ -213,7 +213,7 @@ theorem homogeneous_reading {A : Type} (hA : #A = Order.succ 𝔠) {d : A → ι
       G a (R.domRestrict x, fun n => x (π a n)) = F₀ a ((S₀ a).domRestrict x) := by
     intro a ha x
     obtain ⟨-, hπrange, -⟩ := hπ a ha
-    show F₀ a (glue a (R.domRestrict x, fun n => x (π a n))) = F₀ a ((S₀ a).domRestrict x)
+    change F₀ a (glue a (R.domRestrict x, fun n => x (π a n))) = F₀ a ((S₀ a).domRestrict x)
     congr 1
     funext s
     by_cases h : (s : ι) ∈ R
@@ -222,7 +222,7 @@ theorem homogeneous_reading {A : Type} (hA : #A = Order.succ 𝔠) {d : A → ι
       have hs : (s : ι) ∈ Set.range (π a) := by
         rw [hπrange]
         exact ⟨hS₀_sub a s.2, h⟩
-      show x (π a (Function.invFun (π a) s)) = x s
+      change x (π a (Function.invFun (π a) s)) = x s
       rw [Function.invFun_eq hs]
   have hread : ∀ a ∈ J₁,
       ∀ H : {G : (R → (ℕ → Bool)) × (ℕ → (ℕ → Bool)) → (ℕ → Bool) // Measurable G},
@@ -247,7 +247,7 @@ theorem homogeneous_reading {A : Type} (hA : #A = Order.succ 𝔠) {d : A → ι
   -- (9) conclusion
   refine ⟨J, R, π, F, hF, ?_, hR, hR₀R, ?_, ?_, ?_, ?_, ?_⟩
   · exact le_antisymm
-      ((Cardinal.mk_le_mk_of_subset (hJJ₁.trans Set.diff_subset)).trans hJ₀.le) hJcard
+      ((Cardinal.mk_le_mk_of_subset (hJJ₁.trans Set.sdiff_subset)).trans hJ₀.le) hJcard
   · exact fun a ha => (hπ a (hJJ₁ ha)).1
   · exact fun a ha => (hπ a (hJJ₁ ha)).2.2
   · intro a ha n hn

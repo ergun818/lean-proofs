@@ -61,7 +61,7 @@ theorem model_existence (T : SentTheory L) :
     · -- nonemptiness: term_model' T = Quotient (closed_term L) (term_setoid T) is nonempty
       -- We get a constant from has_enough_constants: use bd_const c as a witness
       rw [show M.carrier = M'.carrier from Lhom.reduct_coe M']
-      show Nonempty (term_model' (completion_of_henkinization hT))
+      change Nonempty (term_model' (completion_of_henkinization hT))
       obtain ⟨C, _⟩ := completion_of_henkinization_is_henkin hT
       exact ⟨@Quotient.mk'' _ (term_setoid _) (bd_const (C bd_falsum))⟩
     · -- T satisfaction

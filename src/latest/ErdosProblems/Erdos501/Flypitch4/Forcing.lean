@@ -32,8 +32,9 @@ variable {𝔹 : Type u} [NontrivialCompleteBooleanAlgebra 𝔹]
 lemma AE_of_check_larger_than_check'' {x y : PSet.{u}} (f : bSet 𝔹) {Γ : 𝔹}
     (H_nonzero : ⊥ < Γ)
     (H : Γ ≤ is_surj_onto (check x) (check y) f)
-    (H_nonempty : ∃ z, z ∈ y) :
-    ∀ i : y.Type, ∃ j : x.Type, ⊥ < is_func f ⊓ pair (check (x.Func j)) (check (y.Func i)) ∈ᴮ f := by
+    (_H_nonempty : ∃ z, z ∈ y) :
+    ∀ i : y.Type, ∃ j : x.Type, ⊥ < is_func f ⊓ pair (check (x.Func j)) (check (y.Func i)) ∈ᴮ f :=
+        by
   intro i
   -- is_surj_onto = is_func' ⊓ is_surj
   have H_func' : Γ ≤ is_func' (check x) (check y) f := le_trans H inf_le_left
@@ -109,15 +110,15 @@ variable
   (f : bSet 𝔹) (g : η₂.Type → η₁.Type)
   (H : ∀ β : η₂.Type, (⊥ : 𝔹) < is_func f ⊓ pair (check (η₁.Func (g β))) (check (η₂.Func β)) ∈ᴮ f)
 
-include H_infinite H_lt H_inj₂ f H in
+include H_inj₂ f H in
 -- src/forcing.lean:71-100
 lemma not_CCC_of_uncountable_fiber
-    (H_ex : ∃ ξ : η₁.Type, Cardinal.aleph0 < #↥(g⁻¹' {ξ})) : ¬ CCC 𝔹 := by
+    (H_ex : ∃ ξ : η₁.Type, Cardinal.aleph0 < #↥(g ⁻¹' {ξ})) : ¬ CCC 𝔹 := by
   obtain ⟨ξ, H_ξ⟩ := H_ex
-  let 𝓐 : (g⁻¹' {ξ}) → 𝔹 :=
+  let 𝓐 : (g ⁻¹' {ξ}) → 𝔹 :=
     fun β => is_func f ⊓ pair (check (η₁.Func (g β.val))) (check (η₂.Func β.val)) ∈ᴮ f
   have 𝓐_nontriv : ∀ β, ⊥ < 𝓐 β := fun β => H β.val
-  have 𝓐_anti : ∀ β₁ β₂ : (g⁻¹' {ξ}), β₁ ≠ β₂ → 𝓐 β₁ ⊓ 𝓐 β₂ ≤ ⊥ := by
+  have 𝓐_anti : ∀ β₁ β₂ : (g ⁻¹' {ξ}), β₁ ≠ β₂ → 𝓐 β₁ ⊓ 𝓐 β₂ ≤ ⊥ := by
     intro β₁ β₂ h_sep
     apply poset_yoneda; intro Γ a
     simp only [le_inf_iff] at a
@@ -267,7 +268,8 @@ lemma mem_neg_principal_open_of_not_mem {ν n S} :
   intro H
   -- (principal_open ν n)ᶜ in 𝔹 = RegularOpens has val = perp of (principal_open ν n).val
   -- Since principal_open is clopen, perp = complement
-  -- (principal_open ν n)ᶜ in 𝔹 has val = perp of (principal_open ν n).val (by RegularOpens.compl_val)
+  -- (principal_open ν n)ᶜ in 𝔹 has val = perp of (principal_open ν n).val (by
+  -- RegularOpens.compl_val)
   -- and perp = compl since principal_open is clopen
   have hval : ((principal_open ν n)ᶜ : 𝔹).val = (principal_open ν n).valᶜ := by
     have h1 : ((principal_open ν n)ᶜ : 𝔹).val = (principal_open ν n).valᵖ :=
@@ -275,8 +277,9 @@ lemma mem_neg_principal_open_of_not_mem {ν n S} :
     rw [h1, perp_eq_compl_of_clopen is_clopen_principal_open]
   rw [hval]
   -- Goal: S ∈ (principal_open ν n).valᶜ  i.e. S ∉ (principal_open ν n).val
-  -- (principal_open ν n).val = CantorSpace.principalOpen (cast eq₁ (ν,n)) = {S | cast eq₁ (ν,n) ∈ S}
-  simp only [Set.mem_compl_iff, principal_open, CantorSpace.principalOpen, Set.mem_setOf_eq]
+  -- (principal_open ν n).val = CantorSpace.principalOpen (cast eq₁ (ν,n)) = {S | cast eq₁ (ν,n) ∈
+  -- S}
+  simp only [Set.mem_compl_iff, principal_open, CantorSpace.principalOpen, Set.mem_ofPred_eq]
   exact H
 
 -- src/forcing.lean:211-214: structure 𝒞
@@ -297,14 +300,15 @@ private noncomputable def ι : 𝒞 → 𝔹 :=
       have cast_mem_iff : ∀ {T1 T2 : Type} (h : T1 = T2) (T : Set T2) (x : T1),
           x ∈ cast (congr_arg Set h).symm T ↔ cast h x ∈ T := by
         intro T1 T2 h; subst h; intro T x; simp
-      -- The set equals principalOpenFinset (cast eq₃ p.ins) ∩ coPrincipalOpenFinset (cast eq₃ p.out)
+      -- The set equals principalOpenFinset (cast eq₃ p.ins) ∩ coPrincipalOpenFinset (cast eq₃
+      -- p.out)
       have hset : {S : Set (PSet.pSet_aleph2.Type × ℕ) |
                     p.ins.toSet ⊆ cast eq₂.symm S ∧ p.out.toSet ⊆ cast eq₂.symm Sᶜ} =
                   CantorSpace.principalOpenFinset (cast eq₃ p.ins) ∩
                   CantorSpace.coPrincipalOpenFinset (cast eq₃ p.out) := by
         ext S
-        simp only [Set.mem_setOf_eq, Set.mem_inter_iff, CantorSpace.mem_principalOpenFinset_iff,
-          CantorSpace.coPrincipalOpenFinset, Set.mem_setOf_eq]
+        simp only [Set.mem_ofPred_eq, Set.mem_inter_iff,
+          CantorSpace.coPrincipalOpenFinset, Set.mem_ofPred_eq]
         -- LHS: ∀ x ∈ p.ins.toSet, cast eq₁ x ∈ S  and  ∀ x ∈ p.out.toSet, cast eq₁ x ∉ S
         -- RHS: (cast eq₃ p.ins).toSet ⊆ S  and  (cast eq₃ p.out).toSet ⊆ Sᶜ
         -- Key: use cast_mem_iff directly to relate membership
@@ -377,7 +381,7 @@ lemma prop_decidable_cast_lemma {α β : Type w₁} (H : α = β) {a b : α} {a'
 lemma 𝒞_dense_basis : ∀ T ∈ @standardBasis (PSet.pSet_aleph2.Type × ℕ), ∀ _h : T ≠ ∅,
     ∃ p : 𝒞, (ι p).val ⊆ T := by
   intro T hT _h
-  simp only [standardBasis, Set.mem_union, Set.mem_setOf_eq, Set.mem_singleton_iff] at hT
+  simp only [standardBasis, Set.mem_union, Set.mem_ofPred_eq, Set.mem_singleton_iff] at hT
   rcases hT with ⟨p_ins, p_out, hTeq, hDisj⟩ | hTe
   · -- T = p_ins.inf principalOpen ∩ p_out.inf coPrincipalOpen
     -- Helpers for casting
@@ -392,10 +396,13 @@ lemma 𝒞_dense_basis : ∀ T ∈ @standardBasis (PSet.pSet_aleph2.Type × ℕ)
     -- (1) a ∈ cast eq₃.symm F' ↔ cast eq₁ a ∈ F' (for F' : Finset B, a : A)
     have cast_finset_symm : ∀ (F' : Finset (PSet.pSet_aleph2.Type × ℕ))
         (a : (check (PSet.pSet_aleph2) : bSet 𝔹).type × ℕ),
-        a ∈ (cast eq₃.symm F' : Finset ((check (PSet.pSet_aleph2) : bSet 𝔹).type × ℕ)) ↔ cast eq₁ a ∈ F' := by
+        a ∈ (cast eq₃.symm F' : Finset ((check (PSet.pSet_aleph2) : bSet 𝔹).type × ℕ)) ↔ cast eq₁ a
+            ∈ F' := by
       intro F' a
-      -- cast eq₃.symm F' = cast (congr_arg Finset eq₁.symm) F' (since eq₃.symm = congr_arg Finset eq₁.symm)
-      -- Then by key_finset_mem with h = eq₁.symm: a ∈ cast (congr_arg Finset eq₁.symm) F' ↔ cast eq₁ a ∈ F'
+      -- cast eq₃.symm F' = cast (congr_arg Finset eq₁.symm) F' (since eq₃.symm = congr_arg Finset
+      -- eq₁.symm)
+      -- Then by key_finset_mem with h = eq₁.symm: a ∈ cast (congr_arg Finset eq₁.symm) F' ↔ cast
+      -- eq₁ a ∈ F'
       have heq : eq₃.symm = congr_arg Finset eq₁.symm := rfl
       rw [heq, key_finset_mem eq₁.symm F' a]
     -- (2) a ∈ cast eq₂.symm S ↔ cast eq₁ a ∈ S (for S : Set B, a : A)
@@ -420,10 +427,10 @@ lemma 𝒞_dense_basis : ∀ T ∈ @standardBasis (PSet.pSet_aleph2.Type × ℕ)
     -- T = principalOpenFinset p_ins ∩ coPrincipalOpenFinset p_out
     rw [hTeq, ← principalOpenFinset_eq_inter, ← coPrincipalOpenFinset_eq_inter]
     intro S hS
-    simp only [ι, Set.mem_setOf_eq] at hS
+    simp only [ι, Set.mem_ofPred_eq] at hS
     obtain ⟨hS_ins, hS_out⟩ := hS
-    simp only [Set.mem_inter_iff, mem_principalOpenFinset_iff, coPrincipalOpenFinset,
-      Set.mem_setOf_eq]
+    simp only [Set.mem_inter_iff, coPrincipalOpenFinset,
+      Set.mem_ofPred_eq]
     -- Helper: cast eq₁ (cast eq₁.symm z) = z for z : B
     have cast_eq₁_symm_eq : ∀ (z : PSet.pSet_aleph2.Type × ℕ),
         cast eq₁ (cast eq₁.symm z) = z := by
@@ -465,7 +472,7 @@ lemma 𝒞_dense {b : 𝔹} (H : ⊥ < b) : ∃ p : 𝒞, ι p ≤ b := by
 -- src/forcing.lean:286-288
 lemma to_set_inter {α : Type*} {p₁ p₂ : Finset α} :
     (p₁ ∩ p₂).toSet = p₁.toSet ∩ p₂.toSet := by
-  ext; simp [Finset.mem_coe, Finset.mem_inter]
+  ext; simp
 
 -- src/forcing.lean:292-299
 lemma not_mem_of_inter_empty_left {α : Type*} {p₁ p₂ : Finset α}
@@ -492,7 +499,7 @@ lemma 𝒞_nonzero (p : 𝒞) : ⊥ ≠ ι p := by
   -- But S := cast eq₂ p.ins.toSet ∈ (ι p).val
   let S : 𝒳 := cast eq₂ p.ins.toSet
   have hS_mem : S ∈ (ι p).val := by
-    simp only [ι, Set.mem_setOf_eq]
+    simp only [ι, Set.mem_ofPred_eq]
     constructor
     · -- p.ins.toSet ⊆ cast eq₂.symm S = p.ins.toSet
       intro x hx
@@ -557,8 +564,7 @@ lemma 𝒞_disjoint_row (p : 𝒞) : ∃ n : ℕ, ∀ ξ : PSet.pSet_aleph2.Type
 
 -- src/forcing.lean:352-353
 lemma 𝒞_anti {p₁ p₂ : 𝒞} : p₁.ins ⊆ p₂.ins → p₁.out ⊆ p₂.out → ι p₂ ≤ ι p₁ := by
-  intro H₁ H₂
-  intro S hS
+  intro H₁ H₂ S hS
   obtain ⟨hS₁, hS₂⟩ := hS
   exact ⟨fun x hx => hS₁ (H₁ hx), fun x hx => hS₂ (H₂ hx)⟩
 
@@ -699,7 +705,7 @@ lemma inj {ν₁ ν₂} (H_neq : ν₁ ≠ ν₂) : mk ν₁ =ᴮ mk ν₂ ≤ (
     constructor
     · -- ι p' ≤ principal_open ν₁ n
       intro S hS
-      simp only [ι, Set.mem_setOf_eq] at hS
+      simp only [ι, Set.mem_ofPred_eq] at hS
       have hins : (ν₁, n) ∈ (p' : 𝒞).ins.toSet :=
         Finset.mem_coe.mpr (Finset.mem_insert_self _ _)
       have hmem := hS.1 hins
@@ -737,13 +743,13 @@ local notation "𝔠" => (bv_powerset ℵ₀ : bSet 𝔹)
 lemma uncountable_fiber_of_regular' (κ₁ κ₂ : Cardinal) (H_inf : Cardinal.aleph0 ≤ κ₁)
     (H_lt : κ₁ < κ₂) (H : κ₂.ord.cof = κ₂) (α : Type u) (H_α : #α = κ₁)
     (β : Type u) (H_β : #β = κ₂) (g : β → α) :
-    ∃ (ξ : α), Cardinal.aleph0 < #↥(g⁻¹' {ξ}) := by
+    ∃ (ξ : α), Cardinal.aleph0 < #↥(g ⁻¹' {ξ}) := by
   -- Use Cardinal.infinite_pigeonhole: if ℵ₀ ≤ #β and #α < (#β).ord.cof, then some fiber has #β
   have h₁ : Cardinal.aleph0 ≤ #β := H_β ▸ le_of_lt (lt_of_le_of_lt H_inf H_lt)
   have h₂ : #α < (#β).ord.cof := by
     rw [H_α, H_β, H]; exact H_lt
   obtain ⟨ξ, Hξ⟩ := Cardinal.infinite_pigeonhole g h₁ h₂
-  -- Hξ : #(g⁻¹'{ξ}) = #β, and ℵ₀ ≤ #β = κ₂ > κ₁ ≥ ℵ₀
+  -- Hξ : #(g ⁻¹'{ξ}) = #β, and ℵ₀ ≤ #β = κ₂ > κ₁ ≥ ℵ₀
   refine ⟨ξ, ?_⟩
   rw [Hξ, H_β]
   exact lt_of_le_of_lt H_inf H_lt
@@ -758,7 +764,7 @@ lemma uncountable_fiber_of_regular (κ₁ κ₂ : Cardinal) (H_inf : Cardinal.al
 
 -- src/forcing.lean:468-487
 lemma cardinal_inequality_of_regular (κ₁ κ₂ : Cardinal)
-    (H_reg₁ : Cardinal.IsRegular κ₁) (H_reg₂ : Cardinal.IsRegular κ₂)
+    (_H_reg₁ : Cardinal.IsRegular κ₁) (H_reg₂ : Cardinal.IsRegular κ₂)
     (H_inf : Cardinal.aleph0 ≤ κ₁) (H_lt : κ₁ < κ₂) {Γ : 𝔹} :
     Γ ≤ (larger_than (check (PSet.card_ex κ₁)) (check (PSet.card_ex κ₂)))ᶜ := by
   -- Prove by contradiction: if Γ ≤ larger_than κ₁ κ₂, derive ¬CCC 𝔹, contradicting 𝔹_CCC
@@ -779,18 +785,15 @@ lemma cardinal_inequality_of_regular (κ₁ κ₂ : Cardinal)
   -- Extract g : κ₂.Type → κ₁.Type from Hf
   obtain ⟨g, g_spec⟩ := Classical.axiomOfChoice Hf
   -- Use not_CCC_of_uncountable_fiber with the extracted g
-  have H_inf₁ : Cardinal.aleph0 ≤ #((PSet.card_ex κ₁).Type) := by simp [H_inf]
-  have H_lt₁ : #((PSet.card_ex κ₁).Type) < #((PSet.card_ex κ₂).Type) := by
-    rw [@PSet.mk_type_mk_eq'' κ₁ H_inf, @PSet.mk_type_mk_eq'' κ₂ (le_of_lt (H_inf.trans_lt H_lt))]
-    exact H_lt
-  have H_inj₂₁ : ∀ i j, i ≠ j → ¬ PSet.Equiv ((PSet.card_ex κ₂).Func i) ((PSet.card_ex κ₂).Func j) :=
+  have H_inj₂₁ : ∀ i j, i ≠ j → ¬ PSet.Equiv ((PSet.card_ex κ₂).Func i) ((PSet.card_ex κ₂).Func j)
+      :=
     fun i j h => PSet.ordinalMk_inj _ _ _ h
-  have H_ex : ∃ ξ : (PSet.card_ex κ₁).Type, Cardinal.aleph0 < #↥(g⁻¹' {ξ}) := by
+  have H_ex : ∃ ξ : (PSet.card_ex κ₁).Type, Cardinal.aleph0 < #↥(g ⁻¹' {ξ}) := by
     apply uncountable_fiber_of_regular' κ₁ κ₂ H_inf H_lt H_reg₂.cof_ord
     · exact @PSet.mk_type_mk_eq'' κ₁ H_inf
     · exact @PSet.mk_type_mk_eq'' κ₂ (le_of_lt (H_inf.trans_lt H_lt))
   exact absurd 𝔹_CCC (not_CCC_of_uncountable_fiber (PSet.card_ex κ₁) (PSet.card_ex κ₂)
-    H_inf₁ H_lt₁ H_inj₂₁ f g g_spec H_ex)
+    H_inj₂₁ f g g_spec H_ex)
 
 -- src/forcing.lean:489-504
 lemma aleph0_lt_aleph1_bSet : (⊤ : 𝔹) ≤
@@ -810,14 +813,11 @@ lemma aleph0_lt_aleph1_bSet : (⊤ : 𝔹) ≤
   have H_omega_card : #(PSet.omega.Type) = Cardinal.aleph0 := PSet.mk_omega_eq_mk_omega
   have H_aleph1_card : #((PSet.card_ex (Cardinal.aleph 1)).Type) = Cardinal.aleph 1 :=
     @PSet.mk_type_mk_eq'' (Cardinal.aleph 1) (Cardinal.aleph0_le_aleph 1)
-  have H_inf₁ : Cardinal.aleph0 ≤ #(PSet.omega.Type) := H_omega_card.symm ▸ le_refl _
-  have H_lt₁ : #(PSet.omega.Type) < #((PSet.card_ex (Cardinal.aleph 1)).Type) := by
-    rw [H_omega_card, H_aleph1_card]; exact Cardinal.aleph0_lt_aleph_one
   have H_inj₂₁ : ∀ i j, i ≠ j →
       ¬ PSet.Equiv ((PSet.card_ex (Cardinal.aleph 1)).Func i)
                    ((PSet.card_ex (Cardinal.aleph 1)).Func j) :=
     fun i j h => PSet.ordinalMk_inj _ _ _ h
-  have H_ex : ∃ ξ : PSet.omega.Type, Cardinal.aleph0 < #↥(g⁻¹' {ξ}) :=
+  have H_ex : ∃ ξ : PSet.omega.Type, Cardinal.aleph0 < #↥(g ⁻¹' {ξ}) :=
     uncountable_fiber_of_regular' (Cardinal.aleph 0) (Cardinal.aleph 1)
       (Cardinal.aleph0_le_aleph 0)
       (by rw [Cardinal.aleph_lt_aleph]; exact zero_lt_one)
@@ -825,7 +825,7 @@ lemma aleph0_lt_aleph1_bSet : (⊤ : 𝔹) ≤
       PSet.omega.Type (H_omega_card.trans Cardinal.aleph_zero.symm)
       (PSet.card_ex (Cardinal.aleph 1)).Type H_aleph1_card g
   exact not_CCC_of_uncountable_fiber PSet.omega (PSet.card_ex (Cardinal.aleph 1))
-    H_inf₁ H_lt₁ H_inj₂₁ f g g_spec H_ex
+    H_inj₂₁ f g g_spec H_ex
 
 -- src/forcing.lean:507-509
 lemma aleph1_lt_aleph2_bSet : (⊤ : 𝔹) ≤
@@ -865,6 +865,7 @@ noncomputable def neg_CH_func : bSet 𝔹 :=
 
 -- src/forcing.lean:534-546
 set_option maxHeartbeats 400000 in
+-- The injection proof expands the Boolean-valued totality and injectivity conditions.
 theorem aleph2_le_powerset_omega :
     ⊤ ≤ is_func' (check PSet.pSet_aleph2) 𝔠 neg_CH_func ⊓ is_inj neg_CH_func := by
   apply le_inf
@@ -890,13 +891,17 @@ theorem aleph2_le_powerset_omega :
       · -- mk ν ∈ 𝔠
         exact le_trans le_top cohen_real.definite'
       · -- pair w₁ (mk ν) ∈ neg_CH_func
-        -- w₁ =ᴮ (check pSet_aleph2).func ν; pair (check.func ν) (mk ν) ∈ neg_CH_func by functionMk_self
-        -- Use bv_rw' with H := w₁ =ᴮ check.func ν (the current goal), ϕ := fun z => pair z (mk ν) ∈ neg_CH_func
-        have h_func_mem : (⊤ : 𝔹) ≤ pair ((check PSet.pSet_aleph2).func ν) (cohen_real.mk ν) ∈ᴮ neg_CH_func := by
+        -- w₁ =ᴮ (check pSet_aleph2).func ν; pair (check.func ν) (mk ν) ∈ neg_CH_func by
+        -- functionMk_self
+        -- Use bv_rw' with H := w₁ =ᴮ check.func ν (the current goal), ϕ := fun z => pair z (mk ν) ∈
+        -- neg_CH_func
+        have h_func_mem : (⊤ : 𝔹) ≤ pair ((check PSet.pSet_aleph2).func ν) (cohen_real.mk ν) ∈ᴮ
+            neg_CH_func := by
           have := @functionMk_self 𝔹 _ (check PSet.pSet_aleph2) (fun x => cohen_real.mk x)
             cohen_real.mk_ext ν
           rwa [check_bval_top] at this
-        -- Γ = w₁ =ᴮ check.func ν, use bv_rw' to get pair w₁ (mk ν) ∈ neg_CH_func from pair (check.func ν) (mk ν) ∈ neg_CH_func
+        -- Γ = w₁ =ᴮ check.func ν, use bv_rw' to get pair w₁ (mk ν) ∈ neg_CH_func from pair
+        -- (check.func ν) (mk ν) ∈ neg_CH_func
         exact bv_rw' (H := le_refl _) (ϕ := fun z => pair z (cohen_real.mk ν) ∈ᴮ neg_CH_func)
           (h_congr := B_ext_pair_mem_left) (H_new := le_trans le_top h_func_mem)
   · -- is_inj neg_CH_func

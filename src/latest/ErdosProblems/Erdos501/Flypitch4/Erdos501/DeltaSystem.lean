@@ -339,7 +339,7 @@ theorem delta_system_countable (hS : ∀ a, (S a).Countable) (hA : #A = Order.su
     have hdisj : DisjOutside S
         (⋃ w : (Cardinal.aleph 1 : Cardinal.{0}).ord.ToType, chain S maxFam w) univ := by
       intro a _ b _ _
-      rw [Set.diff_eq_empty.mpr (h a)]
+      rw [Set.sdiff_eq_empty.mpr (h a)]
       exact disjoint_bot_left
     have := hsmall' _ hXc univ hdisj
     rw [Cardinal.mk_univ, hA] at this

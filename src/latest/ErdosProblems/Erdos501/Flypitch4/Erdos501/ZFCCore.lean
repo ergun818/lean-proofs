@@ -81,7 +81,7 @@ theorem measure_Q_pos [SigmaFinite μ] {E : Set (S × S)} (hE : MeasurableSet E)
   have hfm := measurable_measure_diff_section μ hE hC
   have hQm : MeasurableSet (Q μ E C) := measurableSet_Q μ hE hC
   -- `C \ Q(C)` has infinite measure; take `D ⊆ C \ Q(C)` with `K < μ D < ∞`
-  have hCQ : μ (C \ Q μ E C) = ∞ := by rw [measure_diff_null hQ0, hCinf]
+  have hCQ : μ (C \ Q μ E C) = ∞ := by rw [measure_sdiff_null hQ0, hCinf]
   obtain ⟨D, hDm, hDsub, hKD, hDfin⟩ :=
     Measure.exists_subset_measure_lt_top (hC.diff hQm) (by rw [hCQ]; exact hK.lt_top)
   have hfD : ∀ t ∈ D, μ (C \ Prod.mk t ⁻¹' E) ≠ ∞ := fun t ht h => (hDsub ht).2 ⟨(hDsub ht).1, h⟩
@@ -91,7 +91,7 @@ theorem measure_Q_pos [SigmaFinite μ] {E : Set (S × S)} (hE : MeasurableSet E)
   have hDk_mono : Monotone Dk := fun k l hkl t ht => ⟨ht.1, ht.2.trans (by exact_mod_cast hkl)⟩
   have hDkU : (⋃ k, Dk k) = D := by
     ext t
-    simp only [mem_iUnion, mem_setOf_eq, Dk]
+    simp only [mem_iUnion, mem_ofPred_eq, Dk]
     constructor
     · rintro ⟨k, ht, -⟩; exact ht
     · intro ht
@@ -120,12 +120,13 @@ theorem measure_Q_pos [SigmaFinite μ] {E : Set (S × S)} (hE : MeasurableSet E)
       intro t ht
       have h1 : Prod.mk t ⁻¹' W = C' ∩ Prod.mk t ⁻¹' E := by ext s; simp [W]
       calc M = μ C' := rfl
-        _ ≤ μ (C' ∩ Prod.mk t ⁻¹' E) + μ (C' \ Prod.mk t ⁻¹' E) := measure_le_inter_add_diff _ _ _
+        _ ≤ μ (C' ∩ Prod.mk t ⁻¹' E) + μ (C' \ Prod.mk t ⁻¹' E) := measure_le_inter_add_sdiff _ _ _
         _ ≤ μ (Prod.mk t ⁻¹' W) + k := by
           rw [h1]
-          exact add_le_add_right ((measure_mono (diff_subset_diff_left hC'sub)).trans ht.2) _
+          exact add_le_add_right ((measure_mono (sdiff_subset_sdiff_left hC'sub)).trans ht.2) _
     have hgm : Measurable fun t => μ (Prod.mk t ⁻¹' W) := measurable_measure_prodMk_left hWm
-    have hup : ∀ s, (μ.restrict (Dk k)) ((fun t => (t, s)) ⁻¹' W) ≤ C'.indicator (fun _ => K) s := by
+    have hup : ∀ s, (μ.restrict (Dk k)) ((fun t => (t, s)) ⁻¹' W) ≤ C'.indicator (fun _ => K) s :=
+        by
       intro s
       by_cases hs : s ∈ C'
       · rw [indicator_of_mem hs]
@@ -163,12 +164,12 @@ theorem measure_diff_eq_top_of_mem_Q {E : Set (S × S)} {C : Set S} {t : S} (ht 
     {F : Set S} (hF : μ F ≠ ∞) {N : Set S} (hN : μ N = 0) :
     μ (C \ (Prod.mk t ⁻¹' E ∪ F ∪ N)) = ∞ := by
   have h1 : C \ (Prod.mk t ⁻¹' E ∪ F ∪ N) = ((C \ Prod.mk t ⁻¹' E) \ F) \ N := by
-    ext s; simp only [mem_diff, mem_union, not_or]; tauto
-  rw [h1, measure_diff_null hN]
+    ext s; simp only [mem_sdiff, mem_union, not_or]; tauto
+  rw [h1, measure_sdiff_null hN]
   apply top_le_iff.mp
   calc (∞ : ℝ≥0∞) = μ (C \ Prod.mk t ⁻¹' E) - μ F := by
         rw [ht.2]; exact (ENNReal.sub_eq_top_iff.mpr ⟨rfl, hF⟩).symm
-    _ ≤ μ ((C \ Prod.mk t ⁻¹' E) \ F) := le_measure_diff
+    _ ≤ μ ((C \ Prod.mk t ⁻¹' E) \ F) := le_measure_sdiff
 
 /-! ### (F2) Definition 3.1: the certificate interface -/
 
@@ -225,7 +226,7 @@ theorem exists_infinite_independent_of_certificate {A : ℝ → Set ℝ} {Ω : T
   let μ : Measure (ℤ × Ω) := (Measure.count : Measure ℤ).prod cert.ν
   have hμ : ∀ s : Set (ℤ × Ω), MeasurableSet s → μ s = ∑' m : ℤ, cert.ν (Prod.mk m ⁻¹' s) := by
     intro s hs
-    show (Measure.count.prod cert.ν) s = _
+    change (Measure.count.prod cert.ν) s = _
     rw [Measure.prod_apply hs, lintegral_count]
   -- the test points and envelopes on `S`
   let xx : ℤ × Ω → ℝ := fun t => cert.x t.1 t.2
@@ -304,7 +305,7 @@ theorem exists_infinite_independent_of_certificate {A : ℝ → Set ℝ} {Ω : T
     | succ k ih =>
       refine (show (Cs (n + k + 1)).1 ⊆ (Cs (n + k)).1 from ?_).trans ih
       rw [hCs_succ]
-      exact diff_subset
+      exact sdiff_subset
   have hnotin : ∀ i j, i < j → ts j ∉ removed (ts i) := by
     intro i j hij
     obtain ⟨k, rfl⟩ : ∃ k, j = (i + 1) + k := ⟨j - (i + 1), by omega⟩
@@ -323,7 +324,8 @@ theorem exists_infinite_independent_of_certificate {A : ℝ → Set ℝ} {Ω : T
   refine ⟨range fun n => xx (ts n), infinite_range_of_injective hinj, ?_⟩
   rintro _ ⟨i, rfl⟩ _ ⟨j, rfl⟩ hij hmem
   have hij' : i ≠ j := fun h => hij (by rw [h])
-  -- `xx (ts i) ∈ A (xx (ts j)) ⊆ UU (ts j)` since `(ts j).2 ∈ Z`; contradiction with `(ts i, ts j) ∉ E`
+  -- `xx (ts i) ∈ A (xx (ts j)) ⊆ UU (ts j)` since `(ts j).2 ∈ Z`; contradiction with `(ts i, ts j)
+  -- ∉ E`
   have hU : xx (ts i) ∈ UU (ts j) := cert.subset_U _ _ (hpickZ (Cs j)) hmem
   rcases lt_or_gt_of_ne hij' with hlt | hlt
   · exact hnotin i j hlt (Or.inl (Or.inl hU))
@@ -331,7 +333,8 @@ theorem exists_infinite_independent_of_certificate {A : ℝ → Set ℝ} {Ω : T
 
 /-! ### The logical decomposition (1.1) of the paper, in the ground model -/
 
-/-- **(1.1), first line, in the ground model**: if every bounded family of outer measure `< 1` admits a
+/-- **(1.1), first line, in the ground model**: if every bounded family of outer measure `< 1`
+admits a
 certificate, then Erdős #501 (first question) holds — the DeepMind proposition `erdos501_deepmind`.
 (Unit (F6) produces the certificates *inside the forcing extension*; the transfer of this line into
 the extension is unit (F7) of the audit.) -/

@@ -65,7 +65,7 @@ theorem pos_measure_Q {E : Set (S × S)} (hE : MeasurableSet E) {K : ℝ≥0∞}
   -- `C \ Q` still has infinite measure.
   ------------------------------------------------------------------
   have hCQ : μ (C \ Q) = ∞ := by
-    have h1 : μ (C \ Q) ≤ μ C := measure_mono diff_subset
+    have h1 : μ (C \ Q) ≤ μ C := measure_mono sdiff_subset
     have h2 : μ C ≤ μ (C \ Q) + μ Q := by
       have hsub : C ⊆ (C \ Q) ∪ Q := by
         intro t ht; by_cases h : t ∈ Q
@@ -90,7 +90,7 @@ theorem pos_measure_Q {E : Set (S × S)} (hE : MeasurableSet E) {K : ℝ≥0∞}
       rw [← hdir.measure_iUnion, hunion]
     rw [hCQ] at hsup
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     exact hK (top_le_iff.mp (hsup ▸ iSup_le hcon))
   set D : Set S := (C \ Q) ∩ spanningSets μ j with hD_def
   have hD_meas : MeasurableSet D := (hC.diff hQ_meas).inter (measurableSet_spanningSets μ j)
@@ -150,7 +150,7 @@ theorem pos_measure_Q {E : Set (S × S)} (hE : MeasurableSet E) {K : ℝ≥0∞}
         · rw [indicator_of_mem ht]
           congr 1
           ext s
-          simp only [hG_def, mem_preimage, mem_inter_iff, mem_prod, mem_setOf_eq]
+          simp only [hG_def, mem_preimage, mem_inter_iff, mem_prod, mem_ofPred_eq]
           constructor
           · rintro ⟨hEs, _, hCns⟩; exact ⟨hEs, hCns⟩
           · rintro ⟨hEs, hCns⟩; exact ⟨hEs, ht, hCns⟩
@@ -171,7 +171,7 @@ theorem pos_measure_Q {E : Set (S × S)} (hE : MeasurableSet E) {K : ℝ≥0∞}
         · rw [indicator_of_mem hs]
           congr 1
           ext t
-          simp only [hG_def, mem_preimage, mem_inter_iff, mem_prod, mem_setOf_eq]
+          simp only [hG_def, mem_preimage, mem_inter_iff, mem_prod, mem_ofPred_eq]
           constructor
           · rintro ⟨hEt, htDk, _⟩; exact ⟨hEt, htDk⟩
           · rintro ⟨hEt, htDk⟩; exact ⟨hEt, htDk, hs⟩
@@ -188,7 +188,7 @@ theorem pos_measure_Q {E : Set (S × S)} (hE : MeasurableSet E) {K : ℝ≥0∞}
       have hpt : ∀ t ∈ Dk k, (M n - (k : ℝ≥0∞)) ≤ μ ({s | (t, s) ∈ E} ∩ Cn n) := by
         intro t ht
         have hpart : μ (Cn n ∩ {s | (t, s) ∈ E}) + μ (Cn n \ {s | (t, s) ∈ E}) = M n :=
-          measure_inter_add_diff _ (measurableSet_row hE t)
+          measure_inter_add_sdiff _ (measurableSet_row hE t)
         have hle_k : μ (Cn n \ {s | (t, s) ∈ E}) ≤ (k : ℝ≥0∞) := by
           refine le_trans (measure_mono ?_) ht.2
           intro s hs; exact ⟨hs.1.1, hs.2⟩
@@ -224,7 +224,7 @@ theorem pos_measure_Q {E : Set (S × S)} (hE : MeasurableSet E) {K : ℝ≥0∞}
     intro n
     by_cases hcase : M n ≤ (k : ℝ≥0∞)
     · exact le_trans hcase (by rw [hB_def]; exact le_add_self)
-    · push_neg at hcase
+    · push Not at hcase
       have hkleM : (k : ℝ≥0∞) ≤ M n := le_of_lt hcase
       have hp_fin : M n - (k : ℝ≥0∞) ≠ ∞ := ne_top_of_le_ne_top (hCn_fin n) tsub_le_self
       have hMeq : M n = (M n - (k : ℝ≥0∞)) + (k : ℝ≥0∞) := (tsub_add_cancel_of_le hkleM).symm
@@ -254,6 +254,7 @@ theorem pos_measure_Q {E : Set (S × S)} (hE : MeasurableSet E) {K : ℝ≥0∞}
   rw [hsupM, hCμ] at hle
   exact hB_fin (top_le_iff.mp hle)
 
+omit [SigmaFinite μ] in
 /-- **Lemma 2.2** (preservation step).  Assume the column bound and that `x`
 has null fibers.  If `t ∈ Q(C)` (so `μ (C \ E_t) = ∞`), then removing the
 row `E_t`, the column `E^t = {s | (s,t) ∈ E}`, and the fiber `{s | x s = x t}`
@@ -277,7 +278,7 @@ theorem infinite_measure_preservation {E : Set (S × S)} (hE : MeasurableSet E)
   refine ⟨hC'_meas, ?_⟩
   have hCrow : μ (C \ row) = ∞ := by
     have hEq : C \ row = {s | s ∈ C ∧ (t, s) ∉ E} := by
-      ext s; simp only [hrow_def, mem_diff, mem_setOf_eq]
+      ext s; simp only [hrow_def, mem_sdiff, mem_ofPred_eq]
     rw [hEq, htQ]
   have hsub : C \ row ⊆ C' ∪ W := by
     intro s hs

@@ -90,7 +90,8 @@ def plusC : bSet 𝔹 := opC (· + ·)
 def timesC : bSet 𝔹 := opC (· * ·)
 
 /-- The order, as a set of pairs `(x, y)` with `x < y`. -/
-def ltC : bSet 𝔹 := ⟨{p : ℝ × ℝ // p.1 < p.2}, fun p => pair (rname p.1.1) (rname p.1.2), fun _ => ⊤⟩
+def ltC : bSet 𝔹 := ⟨{p : ℝ × ℝ // p.1 < p.2}, fun p => pair (rname p.1.1) (rname p.1.2), fun _ =>
+    ⊤⟩
 
 /-- Zero. -/
 def zeroC : bSet 𝔹 := rname 0
@@ -285,7 +286,8 @@ theorem assoc_opC {op : ℝ → ℝ → ℝ} (hassoc : ∀ a b c : ℝ, op (op a
   refine app2_opC_elim (((h₇.trans h₆).trans h₅).trans hxyu) fun a b Γ₈ h₈ hxa hyb hu => ?_
   refine app2_opC_elim ((h₈.trans (h₇.trans h₆)).trans huzv) fun u' c Γ₉ h₉ hu' hzc hv => ?_
   refine app2_opC_elim ((h₉.trans (h₈.trans h₇)).trans hyzw) fun b' c' Γ₁₀ h₁₀ hyb' hzc' hw => ?_
-  refine app2_opC_elim ((h₁₀.trans h₉).trans (h₈.trans hxww')) fun a' w'' Γ₁₁ h₁₁ hxa' hww'' hw' => ?_
+  refine app2_opC_elim ((h₁₀.trans h₉).trans (h₈.trans hxww')) fun a' w'' Γ₁₁ h₁₁ hxa' hww'' hw' =>
+      ?_
   have H₉ : Γ₁₁ ≤ Γ₉ := h₁₁.trans h₁₀
   have H₈ : Γ₁₁ ≤ Γ₈ := H₉.trans h₉
   rcases eq_rname_trans (H₈.trans hu) (H₉.trans hu') with hb | rfl

@@ -11,7 +11,8 @@ set_option relaxedAutoImplicit true
 /-!
 # Internal complete ordered fields (unit (F8), part 1)
 
-Let `F = (R, plus, times, ltR, zero, one)` be six names in `bSet β` and `Γ ≤ F.COF` (`F` is a complete
+Let `F = (R, plus, times, ltR, zero, one)` be six names in `bSet β` and `Γ ≤ F.COF` (`F` is a
+complete
 ordered field on `Γ`, `Sem.completeOrderedField`).  This file develops, at the level of Boolean
 values, the elementary theory of `F` needed to build the internal isomorphism `F ≅ Rdot`:
 
@@ -71,7 +72,8 @@ end BV
 /-- `x ≡[Γ] y` is `Γ ≤ x =ᴮ y`. -/
 notation:50 x " ≡[" Γ "] " y => bSet.bv_eq' Γ x y
 
-instance bv_eq'_trans {Γ : β} : @Trans (bSet β) (bSet β) (bSet β) (bv_eq' Γ) (bv_eq' Γ) (bv_eq' Γ) :=
+instance bv_eq'_trans {Γ : β} : @Trans (bSet β) (bSet β) (bSet β) (bv_eq' Γ) (bv_eq' Γ) (bv_eq' Γ)
+    :=
   ⟨fun h1 h2 => bv_trans h1 h2⟩
 
 /-! ### The data of an internal ordered field -/
@@ -357,7 +359,8 @@ lemma add_left_cancel {x y z : bSet β} (hx : Γ ≤ x ∈ᴮ F.R) (hy : Γ ≤ 
     (hz : Γ ≤ z ∈ᴮ F.R) (h : F.add z x ≡[Γ] F.add z y) : x ≡[Γ] y := by
   have hnz := neg_mem H hz
   calc x ≡[Γ] F.add F.zero x := bv_symm (zero_add H hx)
-    _ ≡[Γ] F.add (F.add (F.neg z) z) x := add_congr_left H (cof_zero_mem H) hx (bv_symm (neg_add H hz))
+    _ ≡[Γ] F.add (F.add (F.neg z) z) x := add_congr_left H (cof_zero_mem H) hx (bv_symm (neg_add H
+        hz))
     _ ≡[Γ] F.add (F.neg z) (F.add z x) := add_assoc H hnz hz hx
     _ ≡[Γ] F.add (F.neg z) (F.add z y) := add_congr_right H hnz (add_mem H hz hx) h
     _ ≡[Γ] F.add (F.add (F.neg z) z) y := bv_symm (add_assoc H hnz hz hy)
@@ -399,20 +402,23 @@ lemma neg_add_rev {x y : bSet β} (hx : Γ ≤ x ∈ᴮ F.R) (hy : Γ ≤ y ∈�
     _ ≡[Γ] F.add y (F.add F.zero (F.neg y)) :=
         add_congr_right H hy (add_mem H (add_mem H hx hnx) hny)
           (add_congr_left H (add_mem H hx hnx) hny (add_neg H hx))
-    _ ≡[Γ] F.add y (F.neg y) := add_congr_right H hy (add_mem H (cof_zero_mem H) hny) (zero_add H hny)
+    _ ≡[Γ] F.add y (F.neg y) := add_congr_right H hy (add_mem H (cof_zero_mem H) hny) (zero_add H
+        hny)
     _ ≡[Γ] F.zero := add_neg H hy
 
 /-- `(x + y) + (-y) = x`. -/
 lemma add_neg_cancel_right {x y : bSet β} (hx : Γ ≤ x ∈ᴮ F.R) (hy : Γ ≤ y ∈ᴮ F.R) :
     F.add (F.add x y) (F.neg y) ≡[Γ] x :=
-  calc F.add (F.add x y) (F.neg y) ≡[Γ] F.add x (F.add y (F.neg y)) := add_assoc H hx hy (neg_mem H hy)
+  calc F.add (F.add x y) (F.neg y) ≡[Γ] F.add x (F.add y (F.neg y)) :=
+        add_assoc H hx hy (neg_mem H hy)
     _ ≡[Γ] F.add x F.zero := add_congr_right H hx (add_mem H hy (neg_mem H hy)) (add_neg H hy)
     _ ≡[Γ] x := add_zero H hx
 
 /-- `(x + (-y)) + y = x`. -/
 lemma add_neg_cancel_right' {x y : bSet β} (hx : Γ ≤ x ∈ᴮ F.R) (hy : Γ ≤ y ∈ᴮ F.R) :
     F.add (F.add x (F.neg y)) y ≡[Γ] x :=
-  calc F.add (F.add x (F.neg y)) y ≡[Γ] F.add x (F.add (F.neg y) y) := add_assoc H hx (neg_mem H hy) hy
+  calc F.add (F.add x (F.neg y)) y ≡[Γ] F.add x (F.add (F.neg y) y) :=
+        add_assoc H hx (neg_mem H hy) hy
     _ ≡[Γ] F.add x F.zero := add_congr_right H hx (add_mem H (neg_mem H hy) hy) (neg_add H hy)
     _ ≡[Γ] x := add_zero H hx
 
@@ -565,23 +571,23 @@ lemma neg_neg_of_pos {x : bSet β} (hx : Γ ≤ x ∈ᴮ F.R) (h : Γ ≤ F.lt F
 lemma lt_of_lt_of_le {x y z : bSet β} (hx : Γ ≤ x ∈ᴮ F.R) (hy : Γ ≤ y ∈ᴮ F.R) (hz : Γ ≤ z ∈ᴮ F.R)
     (h1 : Γ ≤ F.lt x y) (h2 : Γ ≤ F.le y z) : Γ ≤ F.lt x z :=
   le_elim h2
-    (fun Γ' h' hlt => lt_trans (cof_mono H h') (h'.trans hx) (h'.trans hy) (h'.trans hz)
+    (fun _Γ' h' hlt => lt_trans (cof_mono H h') (h'.trans hx) (h'.trans hy) (h'.trans hz)
       (h'.trans h1) hlt)
-    fun Γ' h' heq => lt_congr bv_refl heq (h'.trans h1)
+    fun _Γ' h' heq => lt_congr bv_refl heq (h'.trans h1)
 
 lemma lt_of_le_of_lt {x y z : bSet β} (hx : Γ ≤ x ∈ᴮ F.R) (hy : Γ ≤ y ∈ᴮ F.R) (hz : Γ ≤ z ∈ᴮ F.R)
     (h1 : Γ ≤ F.le x y) (h2 : Γ ≤ F.lt y z) : Γ ≤ F.lt x z :=
   le_elim h1
-    (fun Γ' h' hlt => lt_trans (cof_mono H h') (h'.trans hx) (h'.trans hy) (h'.trans hz)
+    (fun _Γ' h' hlt => lt_trans (cof_mono H h') (h'.trans hx) (h'.trans hy) (h'.trans hz)
       hlt (h'.trans h2))
-    fun Γ' h' heq => lt_congr (bv_symm heq) bv_refl (h'.trans h2)
+    fun _Γ' h' heq => lt_congr (bv_symm heq) bv_refl (h'.trans h2)
 
 lemma le_trans' {x y z : bSet β} (hx : Γ ≤ x ∈ᴮ F.R) (hy : Γ ≤ y ∈ᴮ F.R) (hz : Γ ≤ z ∈ᴮ F.R)
     (h1 : Γ ≤ F.le x y) (h2 : Γ ≤ F.le y z) : Γ ≤ F.le x z :=
   le_elim h1
-    (fun Γ' h' hlt => le_of_lt (lt_of_lt_of_le (cof_mono H h') (h'.trans hx) (h'.trans hy)
+    (fun _Γ' h' hlt => le_of_lt (lt_of_lt_of_le (cof_mono H h') (h'.trans hx) (h'.trans hy)
       (h'.trans hz) hlt (h'.trans h2)))
-    fun Γ' h' heq => le_congr (bv_symm heq) bv_refl (h'.trans h2)
+    fun _Γ' h' heq => le_congr (bv_symm heq) bv_refl (h'.trans h2)
 
 lemma le_of_not_lt {x y : bSet β} (hx : Γ ≤ x ∈ᴮ F.R) (hy : Γ ≤ y ∈ᴮ F.R)
     (h : Γ ≤ (F.lt y x)ᶜ) : Γ ≤ F.le x y := by
@@ -604,9 +610,9 @@ lemma le_of_lt_or_le {x y : bSet β} (hx : Γ ≤ x ∈ᴮ F.R) (hy : Γ ≤ y �
 lemma add_le_add_right {x y z : bSet β} (hx : Γ ≤ x ∈ᴮ F.R) (hy : Γ ≤ y ∈ᴮ F.R)
     (hz : Γ ≤ z ∈ᴮ F.R) (h : Γ ≤ F.le x y) : Γ ≤ F.le (F.add x z) (F.add y z) :=
   le_elim h
-    (fun Γ' h' hlt => le_of_lt (add_lt_add_right (cof_mono H h') (h'.trans hx) (h'.trans hy)
+    (fun _Γ' h' hlt => le_of_lt (add_lt_add_right (cof_mono H h') (h'.trans hx) (h'.trans hy)
       (h'.trans hz) hlt))
-    fun Γ' h' heq => le_of_eq (add_congr_left (cof_mono H h') (h'.trans hx) (h'.trans hz) heq)
+    fun _Γ' h' heq => le_of_eq (add_congr_left (cof_mono H h') (h'.trans hx) (h'.trans hz) heq)
 
 lemma add_le_add_left {x y z : bSet β} (hx : Γ ≤ x ∈ᴮ F.R) (hy : Γ ≤ y ∈ᴮ F.R)
     (hz : Γ ≤ z ∈ᴮ F.R) (h : Γ ≤ F.le x y) : Γ ≤ F.le (F.add z x) (F.add z y) :=
@@ -736,13 +742,16 @@ lemma zero_lt_one : Γ ≤ F.lt F.zero F.one := by
       calc F.add (F.mul (F.neg F.one) (F.neg F.one)) (F.neg F.one)
           ≡[Γ''] F.add (F.mul (F.neg F.one) (F.neg F.one)) (F.mul (F.neg F.one) F.one) :=
             add_congr_right H'' (mul_mem H'' hn1 hn1) hn1 (bv_symm (mul_one H'' hn1))
-        _ ≡[Γ''] F.mul (F.neg F.one) (F.add (F.neg F.one) F.one) := bv_symm (mul_add H'' hn1 hn1 h1'')
-        _ ≡[Γ''] F.mul (F.neg F.one) F.zero := mul_congr H'' hn1 (add_mem H'' hn1 h1'') bv_refl (neg_add H'' h1'')
+        _ ≡[Γ''] F.mul (F.neg F.one) (F.add (F.neg F.one) F.one) := bv_symm (mul_add H'' hn1 hn1
+            h1'')
+        _ ≡[Γ''] F.mul (F.neg F.one) F.zero := mul_congr H'' hn1 (add_mem H'' hn1 h1'') bv_refl
+            (neg_add H'' h1'')
         _ ≡[Γ''] F.zero := mul_zero H'' hn1
     have e2 : F.neg F.one ≡[Γ''] F.neg (F.mul (F.neg F.one) (F.neg F.one)) :=
       neg_unique H'' (mul_mem H'' hn1 hn1) hn1 e1
     calc F.mul (F.neg F.one) (F.neg F.one)
-        ≡[Γ''] F.neg (F.neg (F.mul (F.neg F.one) (F.neg F.one))) := bv_symm (neg_neg H'' (mul_mem H'' hn1 hn1))
+        ≡[Γ''] F.neg (F.neg (F.mul (F.neg F.one) (F.neg F.one))) := bv_symm (neg_neg H'' (mul_mem
+            H'' hn1 hn1))
       _ ≡[Γ''] F.neg (F.neg F.one) := neg_congr H'' (neg_mem H'' (mul_mem H'' hn1 hn1)) (bv_symm e2)
       _ ≡[Γ''] F.one := neg_neg H'' h1''
   have hpos : Γ'' ≤ F.lt F.zero F.one := lt_congr bv_refl hsq (mul_pos H'' hn1 hn1 hneg hneg)
@@ -856,7 +865,7 @@ def seqName (f : ℕ → bSet β) : bSet β := ⟨ℕ, f, fun _ => ⊤⟩
 
 lemma mem_seqName (f : ℕ → bSet β) (x : bSet β) : (x ∈ᴮ seqName f) = ⨆ n, x =ᴮ f n := by
   rw [mem_unfold]
-  show (⨆ i : ℕ, ⊤ ⊓ x =ᴮ f i) = _
+  change (⨆ i : ℕ, ⊤ ⊓ x =ᴮ f i) = _
   simp only [top_inf_eq]
 
 lemma seqName_mem (f : ℕ → bSet β) (n : ℕ) : Γ ≤ f n ∈ᴮ seqName f := by
@@ -881,7 +890,7 @@ lemma mulN_add {x : bSet β} (hx : Γ ≤ x ∈ᴮ F.R) (a : ℕ) :
     ∀ b, F.mulN (a + b) x ≡[Γ] F.add (F.mulN a x) (F.mulN b x)
   | 0 => bv_symm (add_zero H (mulN_mem H hx a))
   | b + 1 => by
-      show F.add (F.mulN (a + b) x) x ≡[Γ] F.add (F.mulN a x) (F.add (F.mulN b x) x)
+      change F.add (F.mulN (a + b) x) x ≡[Γ] F.add (F.mulN a x) (F.add (F.mulN b x) x)
       calc F.add (F.mulN (a + b) x) x ≡[Γ] F.add (F.add (F.mulN a x) (F.mulN b x)) x :=
             add_congr_left H (mulN_mem H hx _) hx (mulN_add hx a b)
         _ ≡[Γ] F.add (F.mulN a x) (F.add (F.mulN b x) x) :=
@@ -891,10 +900,12 @@ lemma mulN_add_apply {x y : bSet β} (hx : Γ ≤ x ∈ᴮ F.R) (hy : Γ ≤ y �
     ∀ n, F.mulN n (F.add x y) ≡[Γ] F.add (F.mulN n x) (F.mulN n y)
   | 0 => bv_symm (add_zero H (cof_zero_mem H))
   | n + 1 => by
-      show F.add (F.mulN n (F.add x y)) (F.add x y) ≡[Γ] F.add (F.add (F.mulN n x) x) (F.add (F.mulN n y) y)
+      change F.add (F.mulN n (F.add x y)) (F.add x y) ≡[Γ] F.add (F.add (F.mulN n x) x) (F.add
+          (F.mulN n y) y)
       calc F.add (F.mulN n (F.add x y)) (F.add x y)
           ≡[Γ] F.add (F.add (F.mulN n x) (F.mulN n y)) (F.add x y) :=
-            add_congr_left H (mulN_mem H (add_mem H hx hy) n) (add_mem H hx hy) (mulN_add_apply hx hy n)
+            add_congr_left H (mulN_mem H (add_mem H hx hy) n) (add_mem H hx hy) (mulN_add_apply hx
+                hy n)
         _ ≡[Γ] F.add (F.add (F.mulN n x) x) (F.add (F.mulN n y) y) :=
             add_add_add_comm H (mulN_mem H hx n) (mulN_mem H hy n) hx hy
 
@@ -902,7 +913,7 @@ lemma mulN_double {y : bSet β} (hy : Γ ≤ y ∈ᴮ F.R) :
     ∀ n, F.mulN (2 * n) y ≡[Γ] F.mulN n (F.add y y)
   | 0 => bv_refl
   | n + 1 => by
-      show F.add (F.add (F.mulN (2 * n) y) y) y ≡[Γ] F.add (F.mulN n (F.add y y)) (F.add y y)
+      change F.add (F.add (F.mulN (2 * n) y) y) y ≡[Γ] F.add (F.mulN n (F.add y y)) (F.add y y)
       calc F.add (F.add (F.mulN (2 * n) y) y) y ≡[Γ] F.add (F.mulN (2 * n) y) (F.add y y) :=
             add_assoc H (mulN_mem H hy _) hy hy
         _ ≡[Γ] F.add (F.mulN n (F.add y y)) (F.add y y) :=
@@ -943,10 +954,10 @@ lemma mulN_le_mulN_right {x y : bSet β} (hx : Γ ≤ x ∈ᴮ F.R) (hy : Γ ≤
   | 0 => le_refl' _
   | n + 1 =>
       le_elim (mulN_le_mulN_right hx hy h n)
-        (fun Γ' h' hlt => le_of_lt (add_lt_add_of_lt_of_le (cof_mono H h')
+        (fun _Γ' h' hlt => le_of_lt (add_lt_add_of_lt_of_le (cof_mono H h')
           (h'.trans (mulN_mem H hx n)) (h'.trans (mulN_mem H hy n)) (h'.trans hx) (h'.trans hy)
           hlt (h'.trans h)))
-        fun Γ' h' heq =>
+        fun _Γ' h' heq =>
           add_le_add_left (cof_mono H h') (h'.trans hx) (h'.trans hy) (h'.trans (mulN_mem H hy n))
             (h'.trans h) |> le_congr (add_congr_left (cof_mono H h') (h'.trans (mulN_mem H hy n))
               (h'.trans hx) (bv_symm heq)) bv_refl
@@ -966,9 +977,11 @@ lemma mulN_pow_hR : ∀ k, F.mulN (2 ^ k) (F.hR k) ≡[Γ] F.one
   | 0 => zero_add H (cof_one_mem H)
   | k + 1 => by
       rw [pow_succ']
-      calc F.mulN (2 * 2 ^ k) (F.hR (k + 1)) ≡[Γ] F.mulN (2 ^ k) (F.add (F.hR (k+1)) (F.hR (k+1))) :=
+      calc F.mulN (2 * 2 ^ k) (F.hR (k + 1)) ≡[Γ] F.mulN (2 ^ k) (F.add (F.hR (k+1)) (F.hR (k+1)))
+          :=
             mulN_double H (hR_mem H (k+1)) _
-        _ ≡[Γ] F.mulN (2 ^ k) (F.hR k) := mulN_congr H (add_mem H (hR_mem H _) (hR_mem H _)) (hR_succ_add H k) _
+        _ ≡[Γ] F.mulN (2 ^ k) (F.hR k) := mulN_congr H (add_mem H (hR_mem H _) (hR_mem H _))
+            (hR_succ_add H k) _
         _ ≡[Γ] F.one := mulN_pow_hR k
 
 /-! dyadics -/
@@ -1000,7 +1013,8 @@ lemma dyR'_congr {a b a' b' : ℕ} (k : ℕ) (h : a + b' = a' + b) :
   have hA' := mulN_mem H hh a'; have hB' := mulN_mem H hh b'
   have e : F.add (F.mulN a (F.hR k)) (F.mulN b' (F.hR k)) ≡[Γ]
       F.add (F.mulN a' (F.hR k)) (F.mulN b (F.hR k)) :=
-    bv_trans (bv_symm (mulN_add H hh a b')) (bv_trans (by rw [h]; exact bv_refl) (mulN_add H hh a' b))
+    bv_trans (bv_symm (mulN_add H hh a b')) (bv_trans (by rw [h]; exact bv_refl) (mulN_add H hh a'
+        b))
   calc F.dyR' a b k ≡[Γ] F.add (F.dyR' a b k) F.zero := bv_symm (add_zero H (dyR'_mem H a b k))
     _ ≡[Γ] F.add (F.dyR' a b k) (F.add (F.mulN b' (F.hR k)) (F.neg (F.mulN b' (F.hR k)))) :=
         add_congr_right H (dyR'_mem H a b k) (cof_zero_mem H) (bv_symm (add_neg H hB'))
@@ -1106,7 +1120,8 @@ lemma dyR_one (k : ℕ) : F.dyR 1 k ≡[Γ] F.hR k := by
   rw [dyR_def, show ((1 : ℤ)).toNat = 1 from rfl, show ((-1 : ℤ)).toNat = 0 from rfl]
   simp only [dyR', mulN_zero]
   refine bv_trans (add_congr_right H (mulN_mem H (hR_mem H k) 1) (neg_mem H (cof_zero_mem H))
-    (neg_zero H)) (bv_trans (add_zero H (mulN_mem H (hR_mem H k) 1)) (mulN_one_apply H (hR_mem H k)))
+    (neg_zero H)) (bv_trans (add_zero H (mulN_mem H (hR_mem H k) 1)) (mulN_one_apply H (hR_mem H
+        k)))
 
 lemma dyR_one_zero : F.dyR 1 0 ≡[Γ] F.one := dyR_one H 0
 
@@ -1256,12 +1271,14 @@ lemma exists_floor {r : bSet β} (hr : Γ ≤ r ∈ᴮ F.R) (k : ℕ) :
   have hhp := hR_pos H k
   refine BV.iSup_elim (arch H hh hhp hr) fun n Γ' h' hn => ?_
   have H' := cof_mono H h'
-  refine BV.iSup_elim (arch_neg H' (h'.trans hh) (h'.trans hhp) (h'.trans hr)) fun n' Γ'' h'' hn' => ?_
+  refine BV.iSup_elim (arch_neg H' (h'.trans hh) (h'.trans hhp) (h'.trans hr)) fun n' Γ'' h'' hn' =>
+      ?_
   have H'' := cof_mono H' h''
   have hr'' := (h''.trans h').trans hr
   have h1 : Γ'' ≤ F.le (F.dyR (-(n' : ℤ)) k) r := by
     refine le_of_lt (lt_congr ?_ bv_refl hn')
-    exact bv_symm (bv_trans (dyR_neg H'' n' k) (neg_congr H'' (dyR_mem H'' n' k) (dyR_natCast H'' n' k)))
+    exact bv_symm (bv_trans (dyR_neg H'' n' k) (neg_congr H'' (dyR_mem H'' n' k) (dyR_natCast H'' n'
+        k)))
   have h2 : Γ'' ≤ F.lt r (F.dyR (-(n' : ℤ) + (n + n' : ℕ) + 1) k) := by
     have e : (-(n' : ℤ) + ((n + n' : ℕ) : ℤ) + 1) = (n : ℤ) + 1 := by push_cast; omega
     rw [e]
@@ -1292,9 +1309,11 @@ theorem dense {r r' : bSet β} (hr : Γ ≤ r ∈ᴮ F.R) (hr' : Γ ≤ r' ∈�
       (h''.trans hk)
   have e2 : F.add r (F.add r' (F.neg r)) ≡[Γ''] r' :=
     calc F.add r (F.add r' (F.neg r)) ≡[Γ''] F.add r (F.add (F.neg r) r') :=
-          add_congr_right H'' hr'' (add_mem H'' hr''' (neg_mem H'' hr'')) (add_comm H'' hr''' (neg_mem H'' hr''))
+          add_congr_right H'' hr'' (add_mem H'' hr''' (neg_mem H'' hr'')) (add_comm H'' hr'''
+              (neg_mem H'' hr''))
       _ ≡[Γ''] F.add (F.add r (F.neg r)) r' := bv_symm (add_assoc H'' hr'' (neg_mem H'' hr'') hr''')
-      _ ≡[Γ''] F.add F.zero r' := add_congr_left H'' (add_mem H'' hr'' (neg_mem H'' hr'')) hr''' (add_neg H'' hr'')
+      _ ≡[Γ''] F.add F.zero r' := add_congr_left H'' (add_mem H'' hr'' (neg_mem H'' hr'')) hr'''
+          (add_neg H'' hr'')
       _ ≡[Γ''] r' := zero_add H'' hr'''
   exact lt_congr (bv_symm e1) e2 h2
 

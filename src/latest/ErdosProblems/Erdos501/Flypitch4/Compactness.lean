@@ -30,13 +30,13 @@ def list_except {α : Type u} [DecidableEq α] (xs : List α) (x : α) (T : Set 
     (∀ y ∈ xs, y ≠ x → y ∈ ys) :=
   ⟨xs.filter (fun y => decide (y ≠ x)),
     ⟨fun _ hy => by
-        simp only [Set.mem_setOf, List.mem_filter] at hy
+        simp only [Set.mem_ofPred, List.mem_filter] at hy
         exact h _ hy.1 (of_decide_eq_true hy.2),
      fun _ hy => by
-        simp only [Set.mem_setOf, List.mem_filter] at hy
+        simp only [List.mem_filter] at hy
         exact of_decide_eq_true hy.2⟩,
     fun _ hy hxy => by
-      simp only [Set.mem_setOf, List.mem_filter]
+      simp only [List.mem_filter]
       exact ⟨hy, decide_eq_true hxy⟩⟩
 
 /-! ## image_lift -/
@@ -56,7 +56,7 @@ noncomputable def image_lift_list {α : Type u} {β : Type v} {f : α → β} {S
   refine ⟨ex.choose, fun _ hy => ex.choose_spec.1 hy, ?_⟩
   have hmap : ex.choose.map f = xs := ex.choose_spec.2
   ext b
-  simp only [Set.mem_image, Set.mem_setOf_eq]
+  simp only [Set.mem_image, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨a, ha, rfl⟩
     have : f a ∈ (ex.choose.map f) := List.mem_map_of_mem ha
@@ -82,7 +82,7 @@ lemma proof_compactness {ψ : formula L} {T : Set (formula L)} :
     rename_i _ A₀ _ _
     refine ⟨Γ \ {A₀}, impI' (weakening' ?_ H), ?_⟩
     · simp only [Finset.coe_sdiff, Finset.coe_singleton]
-      exact Set.subset_insert_diff_singleton A₀ ↑Γ
+      exact Set.subset_insert_sdiff_singleton A₀ ↑Γ
     · intro x hx
       rw [Finset.mem_coe, Finset.mem_sdiff, Finset.mem_singleton] at hx
       rcases K (Finset.mem_coe.mpr hx.1) with rfl | h
@@ -101,7 +101,7 @@ lemma proof_compactness {ψ : formula L} {T : Set (formula L)} :
     rename_i _ A₀ _
     refine ⟨Γ \ {∼A₀}, falsumE' (weakening' ?_ H), ?_⟩
     · simp only [Finset.coe_sdiff, Finset.coe_singleton]
-      exact Set.subset_insert_diff_singleton (∼A₀) ↑Γ
+      exact Set.subset_insert_sdiff_singleton (∼A₀) ↑Γ
     · intro x hx
       rw [Finset.mem_coe, Finset.mem_sdiff, Finset.mem_singleton] at hx
       rcases K (Finset.mem_coe.mpr hx.1) with rfl | h
@@ -141,8 +141,9 @@ lemma theory_proof_compactness {T : SentTheory L} {ψ : sentence L} (hψ : T ⊢
   exact ⟨Γ', H, K'⟩
 
 lemma theory_proof_compactness_iff {T : SentTheory L} {ψ : sentence L} :
-    (T ⊢ₛ' ψ) ↔ ∃ Γ : Finset (sentence L), (SentTheory.sprovable (↑Γ) ψ) ∧ (↑Γ : SentTheory L) ⊆ T :=
-  ⟨theory_proof_compactness, fun ⟨Γ, H, K⟩ => weakening' (Set.image_mono K) H⟩
+    (T ⊢ₛ' ψ) ↔ ∃ Γ : Finset (sentence L), (SentTheory.sprovable (↑Γ) ψ) ∧ (↑Γ : SentTheory L) ⊆ T
+        :=
+  ⟨theory_proof_compactness, fun ⟨_Γ, H, K⟩ => weakening' (Set.image_mono K) H⟩
 
 /-! ## sprf_by_cases -/
 

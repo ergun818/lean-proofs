@@ -65,9 +65,9 @@ lemma countable_chain_condition_of_nonempty
   let s' : Set (Set α) := s \ {∅}
   have hs' : ∀ ⦃o : Set α⦄, o ∈ s' → o ≠ ∅ := fun o ho h2o => ho.2 (by rw [mem_singleton_iff, h2o])
   have open_s' : ∀ ⦃o : Set α⦄, o ∈ s' → IsOpen o := fun o ho => open_s ho.1
-  have h2s' : s'.PairwiseDisjoint id := hs.subset diff_subset
+  have h2s' : s'.PairwiseDisjoint id := hs.subset sdiff_subset
   have hcountable : s'.Countable := h s' hs' open_s' h2s'
-  exact (hcountable.insert ∅).mono (by rw [insert_diff_singleton]; exact subset_insert _ _)
+  exact (hcountable.insert ∅).mono (by rw [insert_sdiff_singleton]; exact subset_insert _ _)
 
 /-- In a separable space, the CCC holds. -/
 lemma countable_chain_condition_of_separable_space [SeparableSpace α] :
@@ -171,7 +171,7 @@ private lemma exists_uncountable_fiber_nat {ι : Type v} (f : ι → ℕ)
     (hι : ¬ (Set.univ : Set ι).Countable) :
     ∃ n : ℕ, ¬ (f ⁻¹' {n}).Countable := by
   by_contra hne
-  push_neg at hne
+  push Not at hne
   -- ι = ⋃ n, f ⁻¹' {n}
   have huniv : (Set.univ : Set ι) = ⋃ n : ℕ, f ⁻¹' {n} := by
     ext x; simp
@@ -205,11 +205,11 @@ private theorem delta_system_size_n {α : Type u} {ι : Type v}
       obtain ⟨x, hx⟩ := hcase
       let t₀ : Set ι := {i | x ∈ A i}
       let A' : t₀ → Set α := fun i => A i.1 \ {x}
-      have hA'_fin : ∀ i : t₀, (A' i).Finite := fun i => (hA_fin i.1).diff
+      have hA'_fin : ∀ i : t₀, (A' i).Finite := fun i => (hA_fin i.1).sdiff
       have hA'_card : ∀ i : t₀, Set.ncard (A' i) = n := by
         intro i
         have hxA : x ∈ A i.1 := i.2
-        have h := Set.ncard_diff_singleton_add_one hxA (hA_fin i.1)
+        have h := Set.ncard_sdiff_singleton_add_one hxA (hA_fin i.1)
         have h2 : Set.ncard (A i.1) = n + 1 := hA_card i.1
         change Set.ncard (A i.1 \ {x}) = n
         omega
@@ -247,7 +247,7 @@ private theorem delta_system_size_n {α : Type u} {ι : Type v}
         · have : y ∈ A' ⟨a, ha₀⟩ ∩ A' ⟨b, hb₀⟩ := by rw [h_intersect]; exact hyr
           exact ⟨this.1.1, this.2.1⟩
     · -- Case 2: every x ∈ α appears in countably many A i.
-      push_neg at hcase
+      push Not at hcase
       -- Key fact: for any countable s : Set α, only countably many i have A i ∩ s ≠ ∅.
       have key : ∀ s : Set α, s.Countable →
           {i : ι | (A i ∩ s).Nonempty}.Countable := by
@@ -282,7 +282,7 @@ private theorem delta_system_size_n {α : Type u} {ι : Type v}
         -- Find i₀ ∉ {i | (A i ∩ B).Nonempty}.
         have hex : ∃ i : ι, ¬ (A i ∩ B).Nonempty := by
           by_contra hne
-          push_neg at hne
+          push Not at hne
           apply hι
           have huniv : (Set.univ : Set ι) ⊆ {i | (A i ∩ B).Nonempty} := fun i _ => hne i
           exact hbad_cnt.mono huniv
@@ -365,7 +365,7 @@ theorem delta_system_lemma_aleph1
     have hab' : a ≠ b := by
       intro h; apply hxy
       apply Subtype.ext
-      show (↑a : ι) = ↑b
+      change (↑a : ι) = ↑b
       rw [h]
     exact hroot hat' hbt' hab'
 
@@ -428,6 +428,7 @@ private lemma isOpen_restrict_image_piOpenBasis
     rw [hpi, Set.image_empty]
     exact isOpen_empty
 
+omit [(x : α) → TopologicalSpace (β x)] in
 /-- Disjoint pi-basis elements whose supports form a Δ-system with root `R`
 have disjoint restrictions to `R`. -/
 private lemma disjoint_restrict_image_of_delta
@@ -482,7 +483,7 @@ theorem countable_chain_condition_pi
   by_contra h3Cne
   have h3C : ℵ₀ < #C := by
     by_contra hle
-    push_neg at hle
+    push Not at hle
     exact h3Cne (Cardinal.le_aleph0_iff_set_countable.mp hle)
   -- For each S ∈ C, choose its support data via the basis description.
   have hCdata : ∀ S : C, ∃ (U : ∀ x, Set (β x)) (F : Finset α),
@@ -498,7 +499,7 @@ theorem countable_chain_condition_pi
     -- Any two distinct elements x, y ∈ C' give A x ∩ A y = R, and A x is finite.
     have : ∃ x y : C', x ≠ y := by
       by_contra hne
-      push_neg at hne
+      push Not at hne
       have hsub : Subsingleton C' := ⟨fun x y => hne x y⟩
       have hone : #C' ≤ 1 := Cardinal.mk_le_one_iff_set_subsingleton.mpr (by
         intro x hx y hy
@@ -555,7 +556,7 @@ theorem countable_chain_condition_pi
       -- and S.1 is determined by S.1.1 (S.1 ∈ C is the set, no extra data).
       have hcompl : (C'ne)ᶜ ⊆ {S : C' | S.1.1 = ∅} := by
         intro S hS
-        simp only [Set.mem_compl_iff, ne_eq, not_not] at hS
+        simp only [Set.mem_compl_iff] at hS
         change S.1.1 = ∅
         by_contra hne
         exact hS hne
@@ -580,9 +581,10 @@ theorem countable_chain_condition_pi
       -- ℵ₀ < #C' ≤ #C'ne + 1, and one cannot get a finite bump above ℵ₀.
       have h1 : ℵ₀ < #C'ne + #((C'ne)ᶜ : Set C') := lt_of_lt_of_le hC'_card hcard_le
       by_contra hle
-      push_neg at hle
+      push Not at hle
       have : #C'ne + #((C'ne)ᶜ : Set C') ≤ ℵ₀ := by
-        have h_cmpl : #((C'ne)ᶜ : Set C') ≤ ℵ₀ := le_trans hcompl_card (by exact_mod_cast (one_le_aleph0))
+        have h_cmpl : #((C'ne)ᶜ : Set C') ≤ ℵ₀ := le_trans hcompl_card (by exact_mod_cast
+            (one_le_aleph0))
         exact Cardinal.add_le_aleph0.mpr ⟨hle, h_cmpl⟩
       exact absurd h1 (not_lt.mpr this)
     -- Now define the injection from C'ne to D.

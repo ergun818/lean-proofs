@@ -281,7 +281,7 @@ noncomputable instance decidable_eq_𝔹 : DecidableEq 𝔹 :=
   | ⟨_, _, B⟩ => B
 
 -- src/bvm.lean:218
-@[simp] def mk_type_func_bval : ∀ x : bSet 𝔹, mk x.type x.func x.bval = x :=
+@[simp] theorem mk_type_func_bval : ∀ x : bSet 𝔹, mk x.type x.func x.bval = x :=
   fun x => by cases x; rfl
 
 -- src/bvm.lean:221
@@ -304,7 +304,7 @@ instance has_empty_bSet : EmptyCollection (bSet 𝔹) := ⟨empty⟩
 /-- Two Boolean-valued pre-sets are extensionally equivalent if every
 element of the first family is extensionally equivalent to
   some element of the second family and vice-versa. -/
-def bv_eq : ∀ (x y : bSet 𝔹), 𝔹
+def bv_eq : ∀ (_x _y : bSet 𝔹), 𝔹
   | ⟨α, A, B⟩, ⟨α', A', B'⟩ =>
     (⨅ a : α, B a ⟹ ⨆ a', B' a' ⊓ bv_eq (A a) (A' a')) ⊓
     (⨅ a' : α', B' a' ⟹ ⨆ a, B a ⊓ bv_eq (A a) (A' a'))
@@ -337,7 +337,7 @@ def bv_eq' (Γ : 𝔹) : bSet 𝔹 → bSet 𝔹 → Prop := fun x y => Γ ≤ x
 /-- `x ∈ y` as Boolean-valued pre-sets if `x` is extensionally equivalent to a member
   of the family `y`. -/
 def mem : bSet 𝔹 → bSet 𝔹 → 𝔹
-  | a, ⟨α', A', B'⟩ => ⨆ a', B' a' ⊓ a =ᴮ A' a'
+  | a, ⟨_α', A', B'⟩ => ⨆ a', B' a' ⊓ a =ᴮ A' a'
 
 -- src/bvm.lean:281
 @[reducible] def empty'' : bSet 𝔹 :=
@@ -350,7 +350,7 @@ scoped infixl:80 " ∈ᴮ " => mem
 
 -- src/bvm.lean:286
 lemma mem_unfold {u v : bSet 𝔹} : u ∈ᴮ v = ⨆ (i : v.type), v.bval i ⊓ u =ᴮ v.func i := by
-  cases v; simp [mem, bv_eq]
+  cases v; simp [mem]
 
 -- src/bvm.lean:295
 theorem mem_mk {α : Type u} (A : α → bSet 𝔹) (B : α → 𝔹) (a : α) :
@@ -419,7 +419,7 @@ instance insert_bSet : Insert (bSet 𝔹) (bSet 𝔹) :=
   rw [mem_insert1]
 
 -- src/bvm.lean:354
-private def bv_eq_symm_aux : ∀ (x y : bSet 𝔹), x =ᴮ y = y =ᴮ x
+private theorem bv_eq_symm_aux : ∀ (x y : bSet 𝔹), x =ᴮ y = y =ᴮ x
   | ⟨α, A, B⟩, ⟨α', A', B'⟩ => by
     have : ∀ a a', A' a' =ᴮ A a = A a =ᴮ A' a' := fun a a' => (bv_eq_symm_aux (A a) (A' a')).symm
     simp only [bv_eq, this, inf_comm]
@@ -533,7 +533,7 @@ theorem bv_eq_trans {x y z : bSet 𝔹} : (x =ᴮ y ⊓ y =ᴮ z) ≤ x =ᴮ z :
     -- Then for each a'', use trans_fwd i a' a'' to get A i =ᴮ A'' a''
     suffices h : A i ∈ᴮ mk α' A' B' ⊓ mk α' A' B' =ᴮ mk α'' A'' B'' ≤ A i ∈ᴮ mk α'' A'' B'' by
       exact le_trans (le_inf mem_y yz_eq_avail) h
-    simp only [mem, bv_eq, func]
+    simp only [mem, bv_eq]
     rw [iSup_inf_eq]
     apply iSup_le; intro a'
     -- Goal: B' a' ⊓ A i =ᴮ A' a' ⊓ ((⨅ ⟹ ⨆) ⊓ (⨅ ⟹ ⨆)) ≤ ⨆ a'', B'' a'' ⊓ A i =ᴮ A'' a''
@@ -569,7 +569,8 @@ theorem bv_eq_trans {x y z : bSet 𝔹} : (x =ᴮ y ⊓ y =ᴮ z) ≤ x =ᴮ z :
     apply le_iInf; intro i''
     rw [← deduction]
     -- Goal: (x=y ⊓ y=z) ⊓ B'' i'' ≤ ⨆ a, B a ⊓ A a =ᴮ A'' i''
-    -- Step 1: extract yz_eq ⊓ B'' i'' to get A'' i'' ∈ mk α' A' B' (= ⨆ a', B' a' ⊓ A'' i'' =ᴮ A' a')
+    -- Step 1: extract yz_eq ⊓ B'' i'' to get A'' i'' ∈ mk α' A' B' (= ⨆ a', B' a' ⊓ A'' i'' =ᴮ A'
+    -- a')
     -- The second component of y=z: ⨅ a'', B'' a'' ⟹ ⨆ a', B' a' ⊓ A' a' =ᴮ A'' a''
     -- So B'' i'' ⊓ yz_eq ≤ ⨆ a', B' a' ⊓ A' a' =ᴮ A'' i''
     -- Step 2: for each a', use xy_eq to chain A'' i'' ≈ A' a' ≈ A a to get A'' i'' ≈ A a
@@ -581,7 +582,7 @@ theorem bv_eq_trans {x y z : bSet 𝔹} : (x =ᴮ y ⊓ y =ᴮ z) ≤ x =ᴮ z :
         ≤ ⨆ a', B' a' ⊓ A' a' =ᴮ A'' i'' := by
       -- From second component of y=z: ⨅ a'', B'' a'' ⟹ ⨆ a', B' a' ⊓ A' a' =ᴮ A'' a''
       -- specialized at i'', plus B'' i''
-      simp only [bv_eq, func]
+      simp only [bv_eq]
       calc (((⨅ a, B a ⟹ ⨆ a', B' a' ⊓ A a =ᴮ A' a') ⊓
              (⨅ a', B' a' ⟹ ⨆ a, B a ⊓ A a =ᴮ A' a')) ⊓
             ((⨅ a', B' a' ⟹ ⨆ a'', B'' a'' ⊓ A' a' =ᴮ A'' a'') ⊓
@@ -605,7 +606,7 @@ theorem bv_eq_trans {x y z : bSet 𝔹} : (x =ᴮ y ⊓ y =ᴮ z) ≤ x =ᴮ z :
           apply iSup_le; intro a'
           -- Goal: B' a' ⊓ A' a' =ᴮ A'' i'' ⊓ xy_eq ≤ ⨆ a, B a ⊓ A a =ᴮ A'' i''
           -- From xy_eq, second component: B' a' ⟹ ⨆ a, B a ⊓ A a =ᴮ A' a'
-          simp only [bv_eq, func]
+          simp only [bv_eq]
           -- Extract ⨆ a, B a ⊓ A a =ᴮ A' a' using B' a' and xy_eq's second component
           have xy_step2 : B' a' ⊓ A' a' =ᴮ A'' i'' ⊓
               ((⨅ a, B a ⟹ ⨆ a', B' a' ⊓ A a =ᴮ A' a') ⊓
@@ -983,7 +984,8 @@ lemma mem_congr {Γ : 𝔹} {x₁ x₂ y₁ y₂ : bSet 𝔹}
 
 -- src/bvm.lean:727
 lemma bv_cc_mk_iff {Γ : 𝔹} {x y : bSet 𝔹} :
-    Γ ≤ x =ᴮ y ↔ (@Quotient.mk (bSet 𝔹) (b_setoid Γ) x) = (@Quotient.mk (bSet 𝔹) (b_setoid Γ) y) := by
+    Γ ≤ x =ᴮ y ↔ (@Quotient.mk (bSet 𝔹) (b_setoid Γ) x) = (@Quotient.mk (bSet 𝔹) (b_setoid Γ) y) :=
+        by
   constructor
   · intro h; exact Quotient.sound h
   · intro h; exact Quotient.exact h
@@ -1071,8 +1073,8 @@ lemma bot_of_mem_empty {x : bSet 𝔹} {Γ : 𝔹} (H : Γ ≤ x ∈ᴮ ∅) : �
 @[simp] lemma subst_congr_insert1_left {u w v : bSet 𝔹} :
     u =ᴮ w ≤ bSet.insert1 u v =ᴮ bSet.insert1 w v := by
   cases v with | mk α A B =>
-  simp only [bSet.insert1, bSet.insert, bv_eq, mem, iInf_option, iSup_option,
-    top_inf_eq, inf_top_eq]
+  simp only [bSet.insert1, bSet.insert, bv_eq, iInf_option, iSup_option,
+    top_inf_eq]
   apply le_inf
   · -- Forward
     apply le_inf
@@ -1181,7 +1183,7 @@ lemma eq_of_eq_singleton {x y : bSet 𝔹} {c : 𝔹} (h : c ≤ (bSet.insert1 x
     -- x ∈ {x} = ⊤, so ⊤ ⟹ x ∈ {y} = x ∈ {y}
     have hmem : x ∈ᴮ bSet.insert1 x ∅ = ⊤ := by
       rw [show bSet.insert1 x ∅ = insert x ∅ from rfl, mem_insert1]
-      simp [bv_eq_refl, mem_unfold, exists_over_empty]
+      simp [bv_eq_refl, mem_unfold]
     unfold imp
     rw [hmem, compl_top, bot_sup_eq]
   rw [mem_eq] at h2
@@ -1198,7 +1200,7 @@ lemma singleton_unfold {x : bSet 𝔹} : (insert x (∅ : bSet 𝔹)) = bSet.ins
 -- src/bvm.lean:879
 @[simp] lemma singleton_type {x : bSet 𝔹} :
     (type (bSet.insert1 x ∅)) = Option PEmpty := by
-  simp only [bSet.insert1, bSet.insert, bSet.type, empty, bSet.mk.injEq]
+  simp only [bSet.insert1, bSet.insert, bSet.type]
   rfl
 
 -- src/bvm.lean:881
@@ -1235,7 +1237,7 @@ def mixture {ι : Type u} (a : ι → 𝔹) (u : ι → bSet 𝔹) : bSet 𝔹 :
   fun x => Bool.rec a₁ a₂ x.down
 
 -- src/bvm.lean:908
-def two_term_mixture (a₁ a₂ : 𝔹) (h_anti : a₁ ⊓ a₂ = ⊥) (u₁ u₂ : bSet 𝔹) : bSet 𝔹 :=
+def two_term_mixture (a₁ a₂ : 𝔹) (_h_anti : a₁ ⊓ a₂ = ⊥) (u₁ u₂ : bSet 𝔹) : bSet 𝔹 :=
   @mixture 𝔹 _ (ULift Bool) (bool_map a₁ a₂) (bool_map u₁ u₂)
 
 -- src/bvm.lean:921
@@ -1267,7 +1269,7 @@ lemma two_term_mixture_h_star (a₁ a₂ : 𝔹) (h_anti : a₁ ⊓ a₂ = ⊥) 
       (bool_map u₁ u₂) i =ᴮ (bool_map u₁ u₂) j := by
   intro ⟨bi⟩ ⟨bj⟩
   cases bi <;> cases bj <;> simp [bool_map, bv_eq_refl]
-  all_goals simp [bool_map, h_anti, inf_comm]
+  all_goals simp [h_anti, inf_comm]
 
 -- src/bvm.lean:937 — Mixing Lemma
 lemma mixing_lemma' {ι : Type u} (a : ι → 𝔹) (τ : ι → bSet 𝔹)
@@ -1279,7 +1281,7 @@ lemma mixing_lemma' {ι : Type u} (a : ι → 𝔹) (τ : ι → bSet 𝔹)
     apply le_iInf; intro ⟨i_z_fst, i_z_snd⟩
     rw [← deduction]
     -- bval (mixture a τ) ⟨j, i_z_snd⟩ = ⨆ k, a k ⊓ (τ j).func i_z_snd ∈ᴮ τ k
-    simp only [bval_mixture, mixture, func, bval]
+    simp only [mixture, func, bval]
     rw [inf_iSup_eq]
     apply iSup_le; intro j
     -- a i ⊓ a j ⊓ (τ j).func i_z_snd ∈ᴮ τ j ≤ (τ i_z_fst).func i_z_snd ∈ᴮ τ i
@@ -1306,7 +1308,7 @@ lemma mixing_lemma' {ι : Type u} (a : ι → 𝔹) (τ : ι → bSet 𝔹)
     -- and bval ⟨i, i_z⟩ ⊓ eq ≤ func ⟨i, i_z⟩ ∈ mixture...
     apply le_trans _ (mem_mk' (mixture a τ) ⟨i, i_z⟩)
     -- goal: a i ⊓ (τ i).bval i_z ≤ (mixture a τ).bval ⟨i, i_z⟩
-    simp only [bval_mixture, mixture, func]
+    simp only [mixture, func]
     -- bval ⟨i, i_z⟩ = ⨆ j, a j ⊓ (τ i).func i_z ∈ᴮ τ j
     apply le_iSup_of_le i
     -- a i ⊓ (τ i).bval i_z ≤ a i ⊓ (τ i).func i_z ∈ᴮ τ i
@@ -1342,7 +1344,7 @@ noncomputable def B_small_witness : bSet 𝔹 :=
   ⟨ϕ '' Set.univ, fun b => (fiber_lift b).val, fun _ => ⊤⟩
 
 -- src/bvm.lean:995
-@[simp] lemma B_small_witness_spec : ∀ b, ϕ ((@B_small_witness _ _ ϕ).func b) = b.val :=
+lemma B_small_witness_spec : ∀ b, ϕ ((@B_small_witness _ _ ϕ).func b) = b.val :=
   fun b => (fiber_lift b).2
 
 -- src/bvm.lean:998
@@ -1356,7 +1358,7 @@ lemma B_small_witness_supr :
     -- ϕ x ≤ ϕ (B_small_witness.func b): note B_small_witness_spec b : ϕ (func b) = b.val = ϕ x
     have h := @B_small_witness_spec _ _ ϕ b
     -- h : ϕ (B_small_witness.func b) = b.val = ϕ x
-    simp only [b, Subtype.coe_mk] at h
+    simp only [b] at h
     exact h.symm.le
   · apply iSup_le; intro b
     apply le_iSup_of_le (fiber_lift b).val
@@ -1393,7 +1395,7 @@ local infix:50 " ≺ " => r
 lemma down_set_mono_supr {a b : type B_small_witness} (h : r a b)
     {s : type (@B_small_witness _ _ ϕ) → 𝔹} :
     (⨆ i ∈ down_set r a, s i) ≤ (⨆ i ∈ down_set r b, s i) :=
-  biSup_mono (fun i H => down_set_trans r h H)
+  biSup_mono (fun _i H => down_set_trans r h H)
 
 -- src/bvm.lean:1036
 lemma down_set'_mono_supr {a b : type B_small_witness} (h : r a b)
@@ -1468,7 +1470,9 @@ lemma witness_antichain_antichain :
   fun _i _j h => witness_antichain_index r h
 
 -- src/bvm.lean:1082
-lemma witness_antichain_property : ∀ b : type (@B_small_witness _ _ ϕ), witness_antichain r b ≤ b.val := by
+omit [IsWellOrder B_small_witness.type r] in
+lemma witness_antichain_property : ∀ b : type (@B_small_witness _ _ ϕ), witness_antichain r b ≤
+    b.val := by
   intro b; unfold witness_antichain; exact sdiff_le
 
 -- src/bvm.lean:1085
@@ -1503,7 +1507,8 @@ end smallness
 /-! ### maximum principle and AE_convert -/
 
 -- src/bvm.lean:1107
-lemma maximum_principle (ϕ : bSet 𝔹 → 𝔹) (h_congr : B_ext ϕ) : ∃ u, (⨆ (x : bSet 𝔹), ϕ x) = ϕ u := by
+lemma maximum_principle (ϕ : bSet 𝔹 → 𝔹) (h_congr : B_ext ϕ) : ∃ u, (⨆ (x : bSet 𝔹), ϕ x) = ϕ u :=
+    by
   -- Get a well-order r on type B_small_witness
   obtain ⟨r, hr⟩ : ∃ r : (@B_small_witness 𝔹 _ ϕ).type → (@B_small_witness 𝔹 _ ϕ).type → Prop,
       IsWellOrder ((@B_small_witness 𝔹 _ ϕ).type) r :=
@@ -1661,7 +1666,7 @@ lemma core_aux_lemma (ϕ : bSet 𝔹 → 𝔹) (h_congr : ∀ x y, x =ᴮ y ⊓ 
   have h_U_eq_v : U =ᴮ v = v =ᴮ U := bv_eq_symm
   have h_U_eq_w : U =ᴮ w = w =ᴮ U := bv_eq_symm
   have h_phi_U : ϕ U = ⊤ := by
-    apply top_unique; rw [← sup_compl_eq_top]; apply sup_le
+    apply top_unique; rw [← sup_compl_eq_top (x := b)]; apply sup_le
     · exact (le_inf (hm1.trans (le_of_eq h_U_eq_v)) le_rfl).trans (h_congr v U)
     · exact (le_inf (hm2.trans (le_of_eq h_U_eq_w)) (H_w_eq ▸ le_top)).trans (h_congr w U)
   refine ⟨U, h_phi_U, ?_⟩
@@ -1749,7 +1754,7 @@ def core.mk_ϕ (u : bSet 𝔹) : bSet 𝔹 → (u.type → 𝔹) :=
 
 -- src/bvm.lean:1285
 lemma core.mk_ϕ_inj (u : bSet 𝔹) (x y : bSet 𝔹)
-    (h₁ : x ∈ᴮ u = ⊤) (h₂ : y ∈ᴮ u = ⊤) (H : core.mk_ϕ u x = core.mk_ϕ u y) :
+    (h₁ : x ∈ᴮ u = ⊤) (_h₂ : y ∈ᴮ u = ⊤) (H : core.mk_ϕ u x = core.mk_ϕ u y) :
     x =ᴮ y = ⊤ := by
   -- H : ∀ a, u.bval a ⊓ x =ᴮ u.func a = u.bval a ⊓ y =ᴮ u.func a
   have H' := congr_fun H  -- H' : ∀ a, core.mk_ϕ u x a = core.mk_ϕ u y a
@@ -1889,7 +1894,7 @@ lemma core.mk (u : bSet 𝔹) : ∃ α : Type u, ∃ S : α → bSet 𝔹, core 
           (@Quotient.out _ (core.S''_setoid u) ⟦y_q⟧) := by
         -- goal unfolds to: core.S'' u (Quotient.out i) =ᴮ core.S'' u (Quotient.out ⟦y_q⟧) = ⊤
         -- i.e., core.mk_aux u i =ᴮ y'' = ⊤, which is hiy''
-        show core.bv_eq_top (core.S'' u _) (core.S'' u _)
+        change core.bv_eq_top (core.S'' u _) (core.S'' u _)
         simp only [core.bv_eq_top, core.S'', core.mk_aux] at hiy'' ⊢
         exact hiy''
       have heq : ⟦(@Quotient.out _ (core.S''_setoid u) i)⟧ =
@@ -1905,7 +1910,7 @@ lemma core.mk (u : bSet 𝔹) : ∃ α : Type u, ∃ S : α → bSet 𝔹, core 
 
 -- src/bvm.lean:1376
 /-- Given a subset C of α, and an α-indexed core S, return the bSet whose underlying type is C -/
-def bSet_of_core_set {u : bSet 𝔹} {α : Type u} {S : α → bSet 𝔹} (h : core u S)
+def bSet_of_core_set {u : bSet 𝔹} {α : Type u} {S : α → bSet 𝔹} (_h : core u S)
     (C : Set α) : bSet 𝔹 :=
   ⟨C, fun x => S x, fun _ => ⊤⟩
 
@@ -1928,14 +1933,15 @@ lemma of_core_mem {u : bSet 𝔹} {α : Type u} {S : α → bSet 𝔹} {h : core
 
 -- src/bvm.lean:1392
 /-- Given a core S for u, pull back the ordering -/
-def subset' {u : bSet 𝔹} {α : Type u} {S : α → bSet 𝔹} (h : core u S) : α → α → Prop :=
+def subset' {u : bSet 𝔹} {α : Type u} {S : α → bSet 𝔹} (_h : core u S) : α → α → Prop :=
   fun a₁ a₂ => S a₁ ⊆ᴮ S a₂ = ⊤
 
 -- src/bvm.lean:1397
-def subset'_partial_order {u : bSet 𝔹} {α : Type u} {S : α → bSet 𝔹} (h : core u S) :
+@[instance_reducible] def subset'_partial_order {u : bSet 𝔹} {α : Type u} {S : α → bSet 𝔹} (h : core
+    u S) :
     PartialOrder α where
   le := subset' h
-  le_refl := by intro a; simp [subset', bv_eq_refl]
+  le_refl := by intro a; simp [subset']
   le_trans := by
     intro a b c
     simp only [subset']
@@ -1970,7 +1976,7 @@ lemma subset'_unfold {u : bSet 𝔹} {α : Type u} {S : α → bSet 𝔹} {h : c
 -- src/bvm.lean:1435
 lemma exists_mem_of_nonempty (u : bSet 𝔹) {Γ : 𝔹} (H : Γ ≤ (u =ᴮ ∅)ᶜ) : Γ ≤ ⨆ x, x ∈ᴮ u := by
   apply le_trans H
-  simp [eq_empty]
+  simp only [eq_empty, type, bval, compl_compl, iSup_le_iff]
   intro x
   apply bv_use (u.func x)
   apply mem_mk'
@@ -2114,7 +2120,7 @@ lemma check_unfold {x : PSet.{u}} :
   -- check (PSet.mk PEmpty f) = bSet.mk PEmpty (fun i => check (f i)) (fun _ => ⊤)
   -- (∅ : bSet 𝔹) = bSet.mk PEmpty PEmpty.elim PEmpty.elim
   -- Both have the same type (PEmpty) and all functions on PEmpty are equal
-  show bSet.mk PEmpty (fun i => check (PEmpty.elim i)) (fun _ => ⊤) =
+  change bSet.mk PEmpty (fun i => check (PEmpty.elim i)) (fun _ => ⊤) =
        bSet.mk PEmpty PEmpty.elim PEmpty.elim
   congr 1 <;> funext i <;> exact i.elim
 
@@ -2241,10 +2247,12 @@ lemma check_eq_reflect {x y : PSet} {Γ : 𝔹} (H_lt : ⊥ < Γ)
   -- LHS: check (PSet.insert a b)
   -- = check (PSet.mk (Option β) (fun o => Option.rec (PSet.mk α A) B o))
   -- = bSet.mk (Option β) (fun o => check (Option.rec (PSet.mk α A) B o)) (fun _ => ⊤)
-  -- = bSet.mk (Option β) (fun o => Option.rec (check (PSet.mk α A)) (fun i => check (B i)) o) (fun _ => ⊤)
+  -- = bSet.mk (Option β) (fun o => Option.rec (check (PSet.mk α A)) (fun i => check (B i)) o) (fun
+  -- _ => ⊤)
   -- RHS: bSet.insert1 (check (PSet.mk α A)) (check (PSet.mk β B))
   -- = bSet.insert (check (PSet.mk α A)) ⊤ (bSet.mk β (fun i => check (B i)) (fun _ => ⊤))
-  -- = bSet.mk (Option β) (fun o => Option.rec (check (PSet.mk α A)) (fun i => check (B i)) o) (fun _ => ⊤)
+  -- = bSet.mk (Option β) (fun o => Option.rec (check (PSet.mk α A)) (fun i => check (B i)) o) (fun
+  -- _ => ⊤)
   simp only [PSet.insert, bSet.insert1, bSet.insert, check, PSet.mk_type, PSet.mk_func]
   congr 1
   · funext o; cases o <;> rfl
@@ -2363,7 +2371,7 @@ lemma check_not_subset {x y : PSet} (H : ¬ x ⊆ y) {Γ} :
   -- PSet.Subset x y = ∀ a, ∃ b, Equiv (x.Func a) (y.Func b)
   have H' : ∃ a : x.Type, x.Func a ∉ y := by
     by_contra h
-    push_neg at h
+    push Not at h
     exact H (fun a => h a)
   obtain ⟨a, h_notmem⟩ := H'
   -- check (x.Func a) ∈ᴮ check y = ⊥
@@ -2449,27 +2457,27 @@ noncomputable def collect.func
     (h_congr_right : ∀ x y z, x =ᴮ y ⊓ ϕ z x ≤ ϕ z y)
     (u : bSet 𝔹) : u.type → bSet 𝔹 :=
   Classical.choose (Classical.axiomOfChoice
-    (AE_convert u.func u.bval ϕ (by intro z; intro xv yv; exact h_congr_right xv yv z)))
+    (AE_convert u.func u.bval ϕ (by intro z xv yv; exact h_congr_right xv yv z)))
 
 /-- The collect bSet -/
 noncomputable def collect
     (ϕ : bSet 𝔹 → bSet 𝔹 → 𝔹)
     (h_congr_right : ∀ x y z, x =ᴮ y ⊓ ϕ z x ≤ ϕ z y)
-    (h_congr_left : ∀ x y z, x =ᴮ y ⊓ ϕ x z ≤ ϕ y z)
+    (_h_congr_left : ∀ x y z, x =ᴮ y ⊓ ϕ x z ≤ ϕ y z)
     (u : bSet 𝔹) : bSet 𝔹 :=
   ⟨u.type, collect.func ϕ h_congr_right u, u.bval⟩
 
 lemma collect.func_spec
     (ϕ : bSet 𝔹 → bSet 𝔹 → 𝔹)
     (h_congr_right : ∀ x y z, x =ᴮ y ⊓ ϕ z x ≤ ϕ z y)
-    (h_congr_left : ∀ x y z, x =ᴮ y ⊓ ϕ x z ≤ ϕ y z)
+    (_h_congr_left : ∀ x y z, x =ᴮ y ⊓ ϕ x z ≤ ϕ y z)
     (u : bSet 𝔹) (Γ : 𝔹)
     (H : Γ ≤ ⨅ (j : u.type), u.bval j ⟹ ⨆ (z : bSet 𝔹), ϕ (u.func j) z) :
     Γ ≤ ⨅ (x : u.type), u.bval x ⟹ ϕ (u.func x) (collect.func ϕ h_congr_right u x) := by
   apply le_iInf; intro i
   rw [← deduction]
   have hspec := Classical.choose_spec (Classical.axiomOfChoice
-    (AE_convert u.func u.bval ϕ (by intro z; intro xv yv; exact h_congr_right xv yv z)))
+    (AE_convert u.func u.bval ϕ (by intro z xv yv; exact h_congr_right xv yv z)))
   specialize hspec i
   have hΓ_imp : Γ ≤ u.bval i ⟹ ϕ (u.func i) _ := le_trans H hspec
   rwa [← deduction] at hΓ_imp
@@ -2540,8 +2548,10 @@ lemma collect_spec₂
       (le_inf (inf_le_left.trans (collect.func_spec ϕ h_congr_right h_congr_left u Γ H_AE |>.trans
         (iInf_le _ i))) inf_le_right)
     -- hϕi : Γ ⊓ u.bval i ≤ ϕ (u.func i) (collect.func ϕ h_congr_right u i)
-    -- From context: w =ᴮ collect.func ϕ ... u i, so ϕ (u.func i) (collect.func ...) → ϕ (u.func i) w
-    -- via h_congr_right: collect.func ... u i =ᴮ w ⊓ ϕ (u.func i) (collect.func ...) ≤ ϕ (u.func i) w
+    -- From context: w =ᴮ collect.func ϕ ... u i, so ϕ (u.func i) (collect.func ...) → ϕ (u.func i)
+    -- w
+    -- via h_congr_right: collect.func ... u i =ᴮ w ⊓ ϕ (u.func i) (collect.func ...) ≤ ϕ (u.func i)
+    -- w
     have hbval : Γ ⊓ (u.bval i ⊓ w =ᴮ collect.func ϕ h_congr_right u i) ≤
         ϕ (u.func i) (collect.func ϕ h_congr_right u i) :=
       (inf_le_inf_left _ inf_le_left).trans hϕi
@@ -2631,7 +2641,8 @@ lemma bv_union_spec' (u : bSet 𝔹) {Γ : 𝔹} : Γ ≤ ⨅ (x : bSet 𝔹),
     le_trans (le_inf (le_top.trans (hspec.trans inf_le_left)) le_rfl) bv_imp_elim
   have h_bwd_raw : (⨆ i, u.bval i ⊓ x ∈ᴮ u.func i) ≤ x ∈ᴮ bv_union u :=
     le_trans (le_inf (le_top.trans (hspec.trans inf_le_right)) le_rfl) bv_imp_elim
-  rw [@bounded_exists _ _ u (fun z => x ∈ᴮ z) (h_congr := fun a b => subst_congr_mem_right)] at h_fwd_raw h_bwd_raw
+  rw [@bounded_exists _ _ u (fun z => x ∈ᴮ z)
+    (h_congr := fun _ _ => subst_congr_mem_right)] at h_fwd_raw h_bwd_raw
   apply le_inf
   · exact le_top.trans (le_of_eq (imp_top_iff_le.mpr h_fwd_raw).symm)
   · exact le_top.trans (le_of_eq (imp_top_iff_le.mpr h_bwd_raw).symm)
@@ -2667,7 +2678,8 @@ lemma bv_union_congr {x y : bSet 𝔹} {Γ : 𝔹} (H_eq : Γ ≤ x =ᴮ y) :
   have aux : ∀ (a b : bSet 𝔹) (H : Γ ≤ a =ᴮ b) (z w : bSet 𝔹),
       Γ ⊓ (w ∈ᴮ a ⊓ z ∈ᴮ w) ≤ w ∈ᴮ b ⊓ z ∈ᴮ w := fun a b H z w =>
     le_inf
-      (le_trans (le_inf (inf_le_left.trans H) (inf_le_right.trans inf_le_left)) subst_congr_mem_right)
+      (le_trans (le_inf (inf_le_left.trans H) (inf_le_right.trans inf_le_left))
+          subst_congr_mem_right)
       (inf_le_right.trans inf_le_right)
   apply mem_ext
   · apply le_iInf; intro z
@@ -2895,7 +2907,7 @@ lemma check_set_of_indicator_subset {x : PSet} {χ : (check x).type → 𝔹} {�
 
 -- src/bvm.lean:2122
 lemma mem_set_of_indicator_iff {x : bSet 𝔹} {χ : x.type → 𝔹} {z : bSet 𝔹} {Γ : 𝔹}
-    (H_χ : ∀ i, χ i ≤ x.bval i) :
+    (_H_χ : ∀ i, χ i ≤ x.bval i) :
     Γ ≤ z ∈ᴮ set_of_indicator χ ↔ Γ ≤ ⨆ (i : x.type), z =ᴮ x.func i ⊓ χ i := by
   -- z ∈ᴮ set_of_indicator χ = ⨆ i, χ i ⊓ z =ᴮ x.func i = ⨆ i, z =ᴮ x.func i ⊓ χ i
   rw [mem_unfold]
@@ -2940,7 +2952,7 @@ lemma check_mem_set_of_indicator_iff {x : PSet}
     intro H Γ
     -- Unfold membership in set_of_indicator
     rw [mem_unfold] at H
-    simp only [set_of_indicator_bval, set_of_indicator_func, check_func, check_cast] at H
+    simp only [set_of_indicator_bval, set_of_indicator_func] at H
     -- H : Γ ≤ ⨆ j : α, χ j ⊓ check (A i) =ᴮ check (A j)
     apply le_trans H
     apply iSup_le; intro j
@@ -2957,7 +2969,7 @@ lemma check_mem_set_of_indicator_iff {x : PSet}
   · -- Backward: indicator implies membership
     intro H Γ
     rw [mem_unfold]
-    simp only [set_of_indicator_bval, set_of_indicator_func, check_func, check_cast]
+    simp only [set_of_indicator_bval, set_of_indicator_func]
     apply bv_use i
     exact le_inf H bv_refl
 
@@ -2998,7 +3010,8 @@ lemma pointwise_bounded_of_check_subset_check {x : PSet} {p₁ p₂ : (check x).
   simp only [check_func] at hmem
   -- hmem : p₁ i ≤ ⨆ j, p₂ j ⊓ check (x.Func (check_cast i)) =ᴮ check (x.Func (check_cast j))
   -- Bound this iSup by p₂ i
-  calc p₁ i ≤ ⨆ j, p₂ j ⊓ check (x.Func (check_cast i)) =ᴮ (check (x.Func (check_cast j)) : bSet 𝔹) := hmem
+  calc p₁ i ≤ ⨆ j, p₂ j ⊓ check (x.Func (check_cast i)) =ᴮ (check (x.Func (check_cast j)) : bSet 𝔹)
+      := hmem
     _ ≤ p₂ i := by
         apply iSup_le; intro j
         classical
@@ -3062,7 +3075,6 @@ lemma contains_empty_check_omega : (⊤ : 𝔹) ≤ contains_empty (check ω') :
   have h : (∅ : bSet 𝔹) = (check ω').func ⟨0⟩ := by
     simp only [check_omega_func]
     -- PSet.ofNat 0 = ∅, so check (PSet.ofNat 0) = check ∅ = ∅
-    norm_cast
     simp [show PSet.ofNat 0 = ∅ from rfl, check_empty_eq_empty]
   rw [h, top_le_iff]
   exact check_mem_top
@@ -3131,7 +3143,7 @@ lemma zero_eq_empty {Γ : 𝔹} : Γ ≤ (0 : bSet 𝔹) =ᴮ ∅ := by
 
 -- Helper: PSet-level membership gives check-level membership
 private lemma of_nat_mem_of_nat_succ (n : ℕ) : (of_nat n : bSet 𝔹) ∈ᴮ of_nat (n + 1) = ⊤ := by
-  show check (PSet.ofNat n) ∈ᴮ check (PSet.ofNat (n + 1)) = (⊤ : 𝔹)
+  change check (PSet.ofNat n) ∈ᴮ check (PSet.ofNat (n + 1)) = (⊤ : 𝔹)
   have hmem := @PSet.ofNat_mem_of_lt n (n + 1) (Nat.lt_succ_self n)
   rcases hmem with ⟨i, hi⟩
   apply top_unique
@@ -3353,7 +3365,8 @@ lemma forall_forall_reindex (ϕ : bSet 𝔹 → bSet 𝔹 → 𝔹)
     rw [← deduction]
     calc (a =ᴮ b ⊓ (w₂ ∈ᴮ C ⟹ ϕ a w₂)) ⊓ w₂ ∈ᴮ C
         ≤ a =ᴮ b ⊓ ((w₂ ∈ᴮ C ⟹ ϕ a w₂) ⊓ w₂ ∈ᴮ C) :=
-          le_inf (inf_le_left.trans inf_le_left) (le_inf (inf_le_left.trans inf_le_right) inf_le_right)
+          le_inf (inf_le_left.trans inf_le_left) (le_inf (inf_le_left.trans inf_le_right)
+              inf_le_right)
       _ ≤ a =ᴮ b ⊓ ϕ a w₂ := inf_le_inf_left _ bv_imp_elim
       _ ≤ ϕ b w₂ := h₂ w₂ a b
   rw [@bounded_forall _ _ C (fun w₁ => ⨅ w₂, w₂ ∈ᴮ C ⟹ ϕ w₁ w₂) (h_congr := h_cong_outer)]
@@ -3385,7 +3398,7 @@ lemma subset'_inductive (X : bSet 𝔹)
     rw [show C'.bval ⟨i₁, H₁⟩ = ⊤ from rfl, top_imp]
     apply le_iInf; intro ⟨i₂, H₂⟩
     rw [show C'.bval ⟨i₂, H₂⟩ = ⊤ from rfl, top_imp]
-    show (⊤ : 𝔹) ≤ S i₁ ⊆ᴮ S i₂ ⊔ S i₂ ⊆ᴮ S i₁
+    change (⊤ : 𝔹) ≤ S i₁ ⊆ᴮ S i₂ ⊔ S i₂ ⊆ᴮ S i₁
     -- From C_chain: either i₁ = i₂, or subset' h_core i₁ i₂ or subset' h_core i₂ i₁
     by_cases heq : i₁ = i₂
     · -- i₁ = i₂: S i₁ ⊆ S i₁ = ⊤ (reflexivity)
@@ -3440,7 +3453,7 @@ lemma subset'_inductive (X : bSet 𝔹)
   refine ⟨w, fun x_w' H_x_w' => ?_⟩
   -- Need: subset' h_core x_w' w, i.e., S x_w' ⊆ S w = ⊤
   -- Under hPO, the goal is x_w' ≤ w (i.e., subset' h_core x_w' w)
-  show subset' h_core x_w' w
+  change subset' h_core x_w' w
   rw [subset'_unfold]
   apply top_unique
   -- S x_w' ⊆ bv_union C' (from H_internal_ub_spec)
@@ -3485,7 +3498,7 @@ theorem bSet_zorns_lemma (X : bSet 𝔹) (H_nonempty : (X =ᴮ ∅)ᶜ = ⊤)
       two_term_mixture_subset_top (S a) (S c) p pᶜ h_anti h_partition hp_def
     -- claim_4: c ≤ z (i.e., S c ⊆ S z = ⊤)
     have claim_4 : c ≤ z := by
-      show subset' h_core c z
+      change subset' h_core c z
       rw [subset'_unfold]
       apply top_unique
       calc (⊤ : 𝔹) ≤ S c ⊆ᴮ v ⊓ v =ᴮ S z :=
@@ -3684,7 +3697,7 @@ lemma dom_check : ∀ {x : PSet.{u}}, dom (check x : bSet 𝔹) = x := by
   | mk α A ih => simp [dom, check, ih]
 
 lemma dom_left_inv_check : Function.LeftInverse dom (check : PSet.{u} → bSet 𝔹) :=
-  fun x => dom_check
+  fun _x => dom_check
 
 lemma check_injective : Function.Injective (check : PSet.{u} → bSet 𝔹) :=
   Function.LeftInverse.injective dom_left_inv_check

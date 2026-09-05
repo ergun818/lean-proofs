@@ -90,7 +90,7 @@ theorem prof_imp_free {A : ℝ → Set ℝ} (cert : Certificate A) : Free A := b
         = ⋃ m : ℤ, ((fun q : ℝ × (ℤ × Ω) => q.2.1) ⁻¹' {m})
             ∩ ((fun q : ℝ × (ℤ × Ω) => (q.1, q.2.2)) ⁻¹' {p : ℝ × Ω | p.1 ∈ Vf m p.2}) := by
       ext q
-      simp only [VS, mem_setOf_eq, mem_iUnion, mem_inter_iff, mem_preimage, mem_singleton_iff]
+      simp only [VS, mem_ofPred_eq, mem_iUnion, mem_inter_iff, mem_preimage, mem_singleton_iff]
       constructor
       · intro h; exact ⟨q.2.1, rfl, h⟩
       · rintro ⟨m, hm, h⟩; rw [hm]; exact h
@@ -165,7 +165,7 @@ theorem prof_imp_free {A : ℝ → Set ℝ} (cert : Certificate A) : Free A := b
     have hQmeas : MeasurableSet Q := measurableSet_Q (μ := μ) hE hCmeas
     obtain ⟨m, hm⟩ : ∃ m : ℤ, 0 < ν (Prod.mk m ⁻¹' Q) := by
       by_contra hcon
-      push_neg at hcon
+      push Not at hcon
       have hall : ∀ m, ν (Prod.mk m ⁻¹' Q) = 0 := fun m => le_antisymm (hcon m) bot_le
       have hz : μ Q = 0 := by
         rw [hμ_def, Measure.prod_apply hQmeas, lintegral_count]
@@ -204,7 +204,7 @@ theorem prof_imp_free {A : ℝ → Set ℝ} (cert : Certificate A) : Free A := b
     apply antitone_nat_of_succ_le
     intro n
     rw [(hspec n).2.2]
-    exact diff_subset
+    exact sdiff_subset
   -- Pairwise independence.
   have hpair : ∀ i j, i < j → y j ∉ A (y i) ∧ y i ∉ A (y j) ∧ y i ≠ y j := by
     intro i j hij
@@ -212,7 +212,7 @@ theorem prof_imp_free {A : ℝ → Set ℝ} (cert : Certificate A) : Free A := b
     rw [(hspec i).2.2] at hji
     have hnot : tpt j ∉ ({s | (tpt i, s) ∈ E} ∪ {s | (s, tpt i) ∈ E} ∪ {s | xS s = xS (tpt i)}) :=
       hji.2
-    simp only [mem_union, not_or, mem_setOf_eq] at hnot
+    simp only [mem_union, not_or, mem_ofPred_eq] at hnot
     obtain ⟨⟨hrow, hcol⟩, hfib⟩ := hnot
     have hyi_not : y i ∉ VS (tpt j) := fun hmem => hrow ((hEmem (tpt i) (tpt j)).mpr hmem)
     have hyj_not : y j ∉ VS (tpt i) := fun hmem => hcol ((hEmem (tpt j) (tpt i)).mpr hmem)

@@ -68,10 +68,6 @@ lemma cardinal_inequality_of_regular_of_CCC (κ₁ κ₂ : Cardinal)
   rcases AE_of_check_larger_than_check H_nonzero H_larger
     (PSet.exists_mem_of_regular H_reg₂) with ⟨f, Hf⟩
   obtain ⟨g, g_spec⟩ := Classical.axiomOfChoice Hf
-  have H_inf₁ : Cardinal.aleph0 ≤ #((PSet.card_ex κ₁).Type) := by simp [H_inf]
-  have H_lt₁ : #((PSet.card_ex κ₁).Type) < #((PSet.card_ex κ₂).Type) := by
-    rw [@PSet.mk_type_mk_eq'' κ₁ H_inf, @PSet.mk_type_mk_eq'' κ₂ (le_of_lt (H_inf.trans_lt H_lt))]
-    exact H_lt
   have H_inj₂₁ : ∀ i j, i ≠ j →
       ¬ PSet.Equiv ((PSet.card_ex κ₂).Func i) ((PSet.card_ex κ₂).Func j) :=
     fun i j h => PSet.ordinalMk_inj _ _ _ h
@@ -80,7 +76,7 @@ lemma cardinal_inequality_of_regular_of_CCC (κ₁ κ₂ : Cardinal)
     · exact @PSet.mk_type_mk_eq'' κ₁ H_inf
     · exact @PSet.mk_type_mk_eq'' κ₂ (le_of_lt (H_inf.trans_lt H_lt))
   exact absurd H_ccc (not_CCC_of_uncountable_fiber (PSet.card_ex κ₁) (PSet.card_ex κ₂)
-    H_inf₁ H_lt₁ H_inj₂₁ f g g_spec H_ex)
+    H_inj₂₁ f g g_spec H_ex)
 
 include H_ccc in
 lemma aleph0_lt_aleph1_bSet_of_CCC : (⊤ : 𝔹) ≤
@@ -96,9 +92,6 @@ lemma aleph0_lt_aleph1_bSet_of_CCC : (⊤ : 𝔹) ≤
   have H_omega_card : #(PSet.omega.Type) = Cardinal.aleph0 := PSet.mk_omega_eq_mk_omega
   have H_aleph1_card : #((PSet.card_ex (Cardinal.aleph 1)).Type) = Cardinal.aleph 1 :=
     @PSet.mk_type_mk_eq'' (Cardinal.aleph 1) (Cardinal.aleph0_le_aleph 1)
-  have H_inf₁ : Cardinal.aleph0 ≤ #(PSet.omega.Type) := H_omega_card.symm ▸ le_refl _
-  have H_lt₁ : #(PSet.omega.Type) < #((PSet.card_ex (Cardinal.aleph 1)).Type) := by
-    rw [H_omega_card, H_aleph1_card]; exact Cardinal.aleph0_lt_aleph_one
   have H_inj₂₁ : ∀ i j, i ≠ j →
       ¬ PSet.Equiv ((PSet.card_ex (Cardinal.aleph 1)).Func i)
                    ((PSet.card_ex (Cardinal.aleph 1)).Func j) :=
@@ -111,7 +104,7 @@ lemma aleph0_lt_aleph1_bSet_of_CCC : (⊤ : 𝔹) ≤
       PSet.omega.Type (H_omega_card.trans Cardinal.aleph_zero.symm)
       (PSet.card_ex (Cardinal.aleph 1)).Type H_aleph1_card g
   exact not_CCC_of_uncountable_fiber PSet.omega (PSet.card_ex (Cardinal.aleph 1))
-    H_inf₁ H_lt₁ H_inj₂₁ f g g_spec H_ex
+    H_inj₂₁ f g g_spec H_ex
 
 include H_ccc in
 lemma aleph1_lt_aleph2_bSet_of_CCC : (⊤ : 𝔹) ≤
@@ -216,6 +209,7 @@ noncomputable def neg_CH_func : bSet 𝔹 :=
   @functionMk _ _ (check PSet.pSet_aleph2) (fun x => mk χ x) (mk_ext χ)
 
 set_option maxHeartbeats 400000 in
+-- The injection proof expands Boolean-valued function conditions and independence bounds.
 /-- The function `ν ↦ mk χ ν` is (forced to be) an injection `ℵ₂ ↪ 𝒫(ω)`. -/
 theorem aleph2_le_powerset_omega (H_indep : IndepBits χ) :
     ⊤ ≤ is_func' (check PSet.pSet_aleph2) (bv_powerset omega) (neg_CH_func χ) ⊓

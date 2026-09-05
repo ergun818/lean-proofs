@@ -248,7 +248,8 @@ theorem isFun_Aname : ⊤ ≤ Sem.isFun (Rc : bSet 𝔹c) (bv_powerset Rc) Aname
   refine le_iInf fun x => ?_
   rw [bv_imp_iff]; intro Γ₁ _ hx
   refine mem_Rc_elim hx fun r Γ₂ h₂ hxr => ?_
-  refine le_iSup_of_le (Aset r) (le_inf (Aset_mem_powerset r) (le_inf (le_app_Aname hxr bv_refl) ?_))
+  refine le_iSup_of_le (Aset r) (le_inf (Aset_mem_powerset r) (le_inf (le_app_Aname hxr bv_refl)
+      ?_))
   refine le_iInf fun y' => ?_
   rw [bv_imp_iff]; intro Γ₃ h₃ hy'
   refine app_Aname_elim hy' fun r' Γ₄ h₄ hxr' hy'r' => ?_
@@ -265,7 +266,8 @@ theorem bounded_Aset (r : ℝ) : ⊤ ≤ Sem.bounded (Rc : bSet 𝔹c) ltC (Aset
   rw [bv_imp_iff]; intro Γ₁ _ hy
   refine mem_Aset_elim hy fun s Γ₂ _ hs _ hys => ?_
   have h1 := abs_le.1 hs
-  exact le_inf (le_lt_ltC bv_refl hys (by linarith [h1.1])) (le_lt_ltC hys bv_refl (by linarith [h1.2]))
+  exact le_inf (le_lt_ltC bv_refl hys (by linarith [h1.1]))
+    (le_lt_ltC hys bv_refl (by linarith [h1.2]))
 
 
 /-! ### Small facts about `ω`, `of_nat` and `Sem.succ` -/
@@ -289,15 +291,15 @@ lemma bot_or_eq_of_of_nat_eq {Γ : 𝔹c} {n m : ℕ} (h : Γ ≤ (of_nat n : bS
   · left; rwa [of_nat_inj' hnm] at h
 
 lemma of_nat_zero_eq' : (of_nat 0 : bSet 𝔹c) = bSet.empty := by
-  show check (PSet.ofNat 0) = bSet.empty
+  change check (PSet.ofNat 0) = bSet.empty
   rw [show PSet.ofNat 0 = ∅ from rfl]
   exact check_empty_eq_empty
 
 lemma mem_of_nat_succ' (z : bSet 𝔹c) (n : ℕ) :
     (z ∈ᴮ of_nat (n + 1)) = (z ∈ᴮ of_nat n ⊔ z =ᴮ of_nat n) := by
-  show z ∈ᴮ check (PSet.insert (PSet.ofNat n) (PSet.ofNat n)) = _
+  change z ∈ᴮ check (PSet.insert (PSet.ofNat n) (PSet.ofNat n)) = _
   rw [check_insert]
-  show z ∈ᴮ insert (check (PSet.ofNat n)) (check (PSet.ofNat n)) = _
+  change z ∈ᴮ insert (check (PSet.ofNat n)) (check (PSet.ofNat n)) = _
   rw [mem_insert1, sup_comm]
 
 lemma succ_of_nat' {Γ : 𝔹c} (n : ℕ) : Γ ≤ Sem.succ (of_nat n : bSet 𝔹c) (of_nat (n + 1)) := by
@@ -468,7 +470,8 @@ lemma app_seqName_elim {Γ b : 𝔹c} {f : ℕ → ℝ} {x y : bSet 𝔹c} (h : 
   refine bv_cases_right fun n => ?_
   exact H n _ inf_le_left (inf_le_right.trans inf_le_left) (inf_le_right.trans inf_le_right)
 
-theorem isFun_endName (e : ℕ → I) (sgn : ℝ) : ⊤ ≤ Sem.isFun omega (Rc : bSet 𝔹c) (endName e sgn) := by
+theorem isFun_endName (e : ℕ → I) (sgn : ℝ) : ⊤ ≤ Sem.isFun omega (Rc : bSet 𝔹c) (endName e sgn) :=
+    by
   rw [Sem.isFun]
   refine le_iInf fun x => ?_
   rw [bv_imp_iff]; intro Γ₁ _ hx
@@ -494,7 +497,8 @@ theorem isFun_seqName (f : ℕ → ℝ) : ⊤ ≤ Sem.isFun omega (Rc : bSet �
   refine le_iInf fun x => ?_
   rw [bv_imp_iff]; intro Γ₁ _ hx
   refine mem_omega_elim hx fun n Γ₂ _ hxn => ?_
-  refine le_iSup_of_le (rname (f n)) (le_inf (rname_mem_Rc _) (le_inf (le_app_seqName hxn bv_refl) ?_))
+  refine le_iSup_of_le (rname (f n)) (le_inf (rname_mem_Rc _) (le_inf (le_app_seqName hxn bv_refl)
+      ?_))
   refine le_iInf fun y' => ?_
   rw [bv_imp_iff]; intro Γ₃ h₃ hy'
   refine app_seqName_elim hy' fun m Γ₄ h₄ hxm hy'm => ?_
@@ -630,7 +634,8 @@ theorem outerMeasureLtOne_Aset_piece (r : ℝ) (i₀ : I) :
     gen i₀ r ≤ Sem.outerMeasureLtOne (Rc : bSet 𝔹c) plusC ltC zeroC oneC (Aset r) := by
   obtain ⟨e, he⟩ := exists_enum_pred i₀
   rw [Sem.outerMeasureLtOne]
-  refine le_iSup_of_le (endName e (-1)) (le_iSup_of_le (endName e 1) (le_iSup_of_le (seqName Ssum) ?_))
+  refine le_iSup_of_le (endName e (-1)) (le_iSup_of_le (endName e 1) (le_iSup_of_le (seqName Ssum)
+      ?_))
   refine le_inf (le_top.trans (isFun_endName e (-1))) (le_inf (le_top.trans (isFun_endName e 1))
     (le_inf (le_top.trans (isFun_seqName Ssum)) (le_inf (le_top.trans (nondegenerate_endName e))
     (le_inf (covers_endName he) (le_inf (le_top.trans app_seqName_zero)
@@ -719,7 +724,8 @@ theorem no_descent {α : Type*} [LinearOrder α] [WellFoundedLT α] (w : ℕ →
   exact not_strictAnti_of_wellFoundedLT (fun n => w (k n)) (strictAnti_nat_of_succ_lt hsucc_lt)
 
 noncomputable def leastEv (i : I) (r : ℝ) : 𝔹c := gen i r ⊓ ⨅ j : I, gen j r ⟹ bp (toT i ≤ toT j)
-lemma leastEv_gen {Γ : 𝔹c} {i : I} {r : ℝ} (h : Γ ≤ leastEv i r) : Γ ≤ gen i r := h.trans inf_le_left
+lemma leastEv_gen {Γ : 𝔹c} {i : I} {r : ℝ} (h : Γ ≤ leastEv i r) : Γ ≤ gen i r := h.trans
+    inf_le_left
 lemma exists_least_of_gen {Γ : 𝔹c} {r : ℝ} {i₀ : I} (hΓ : ⊥ < Γ) (hg : Γ ≤ gen i₀ r) :
     ∃ (i : I) (Γ' : 𝔹c), ⊥ < Γ' ∧ Γ' ≤ Γ ∧ Γ' ≤ leastEv i r := by
   classical
@@ -889,7 +895,8 @@ theorem erdos501_eq_bot : (Sem.erdos501 : 𝔹c) = ⊥ := by
   rw [Sem.erdos501]
   have h1 : (⨅ R : bSet 𝔹c, ⨅ plus : bSet 𝔹c, ⨅ times : bSet 𝔹c, ⨅ ltR : bSet 𝔹c,
       ⨅ zero : bSet 𝔹c, ⨅ one : bSet 𝔹c,
-        Sem.completeOrderedField R plus times ltR zero one ⟹ Sem.erdosProperty R plus ltR zero one) ≤
+        Sem.completeOrderedField R plus times ltR zero one ⟹ Sem.erdosProperty R plus ltR zero one)
+            ≤
       Sem.completeOrderedField Rc plusC timesC ltC zeroC oneC ⟹
         Sem.erdosProperty Rc plusC ltC zeroC oneC :=
     (iInf_le _ Rc).trans ((iInf_le _ plusC).trans ((iInf_le _ timesC).trans ((iInf_le _ ltC).trans
@@ -901,7 +908,7 @@ theorem erdos501_eq_bot : (Sem.erdos501 : 𝔹c) = ⊥ := by
 /-- **The negation of `Erdos501_f` is forced in the collapse model.** -/
 theorem neg_erdos501_forced_collapse :
     (⊤ : 𝔹c) ⊩[V 𝔹c] (bd_not Erdos501_f : sentence L_ZFC) := by
-  show (⊤ : 𝔹c) ≤ ⟦bd_not Erdos501_f⟧[V 𝔹c]
+  change (⊤ : 𝔹c) ≤ ⟦bd_not Erdos501_f⟧[V 𝔹c]
   have hnot : ⟦bd_not Erdos501_f⟧[V 𝔹c] = (⟦Erdos501_f⟧[V 𝔹c])ᶜ :=
     boolean_realize_bounded_formula_not
   rw [hnot, realize_Erdos501_f, erdos501_eq_bot, compl_bot]

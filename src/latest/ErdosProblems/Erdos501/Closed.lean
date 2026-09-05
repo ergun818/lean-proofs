@@ -488,13 +488,13 @@ theorem exists_mem_measure_compat_eq_top [SigmaFinite μ] {F : α → Set α}
   set g : α → ℝ≥0∞ := fun t => ∑ σ ∈ 𝒥.powerset, μ (τ ⁻¹' {σ} ∩ Y') * (K σ).indicator 1 t
     with hg
   have hgmeas : Measurable g := by
-    show Measurable fun t => ∑ σ ∈ 𝒥.powerset, μ (τ ⁻¹' {σ} ∩ Y') * (K σ).indicator 1 t
+    change Measurable fun t => ∑ σ ∈ 𝒥.powerset, μ (τ ⁻¹' {σ} ∩ Y') * (K σ).indicator 1 t
     exact Finset.measurable_sum _ fun σ _ =>
       (measurable_one.indicator (hKmeas σ)).const_mul (μ (τ ⁻¹' {σ} ∩ Y'))
   have hgint : ∫⁻ t, g t ∂μ ≤ μ Y' * N := by
     calc ∫⁻ t, g t ∂μ
         = ∑ σ ∈ 𝒥.powerset, μ (τ ⁻¹' {σ} ∩ Y') * μ (K σ) := by
-          show ∫⁻ t, ∑ σ ∈ 𝒥.powerset, μ (τ ⁻¹' {σ} ∩ Y') * (K σ).indicator 1 t ∂μ = _
+          change ∫⁻ t, ∑ σ ∈ 𝒥.powerset, μ (τ ⁻¹' {σ} ∩ Y') * (K σ).indicator 1 t ∂μ = _
           rw [lintegral_finsetSum _ fun σ _ =>
             (measurable_one.indicator (hKmeas σ)).const_mul (μ (τ ⁻¹' {σ} ∩ Y'))]
           refine Finset.sum_congr rfl fun σ _ => ?_
@@ -524,7 +524,7 @@ theorem exists_mem_measure_compat_eq_top [SigmaFinite μ] {F : α → Set α}
   have htE' : ¬ η ≤ g t := htE
   have htg : g t < η := not_le.1 htE'
   have hnotR : ∑ σ ∈ 𝒥.powerset with ¬ Disjoint (st t) σ, μ (τ ⁻¹' {σ} ∩ Y') ≤ g t := by
-    show _ ≤ ∑ σ ∈ 𝒥.powerset, μ (τ ⁻¹' {σ} ∩ Y') * (K σ).indicator 1 t
+    change _ ≤ ∑ σ ∈ 𝒥.powerset, μ (τ ⁻¹' {σ} ∩ Y') * (K σ).indicator 1 t
     calc ∑ σ ∈ 𝒥.powerset with ¬ Disjoint (st t) σ, μ (τ ⁻¹' {σ} ∩ Y')
         = ∑ σ ∈ 𝒥.powerset with ¬ Disjoint (st t) σ,
             μ (τ ⁻¹' {σ} ∩ Y') * (K σ).indicator 1 t := by

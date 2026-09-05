@@ -8,7 +8,9 @@ Lean 4 port: Ian Klatzco, Claude
 /- Lean 4 port of src/to_mathlib.lean -/
 
 import Mathlib.Data.Set.Countable
-import Mathlib.SetTheory.Cardinal.Cofinality
+import Mathlib.Order.Cofinal
+import Mathlib.SetTheory.Cardinal.Arithmetic
+import Mathlib.SetTheory.Ordinal.FixedPoint
 import Mathlib.SetTheory.Cardinal.Order
 import Mathlib.Order.CompleteBooleanAlgebra
 import Mathlib.Topology.Bases
@@ -66,7 +68,7 @@ universe u v w w'
 /-- Dependent-length vector: a list of exactly `n` elements of type `α`. -/
 inductive DVec (α : Type u) : ℕ → Type u
   | nil  : DVec α 0
-  | cons : ∀ {n} (x : α) (xs : DVec α n), DVec α (n + 1)
+  | cons : ∀ {n} (_x : α) (_xs : DVec α n), DVec α (n + 1)
 
 /-- Finite type with `n` elements, used with `DVec`. -/
 inductive DFin : ℕ → Type
@@ -79,7 +81,7 @@ namespace DVec
 
 variable {α : Type u} {β : Type v} {γ : Type w} {n : ℕ}
 
-@[simp] protected theorem zero_eq : ∀ (xs : DVec α 0), xs = DVec.nil
+protected theorem zero_eq : ∀ (xs : DVec α 0), xs = DVec.nil
   | DVec.nil => rfl
 
 @[simp] protected def concat : ∀ {n : ℕ}, DVec α n → α → DVec α (n + 1)
@@ -118,7 +120,7 @@ protected theorem mem_of_pmem : ∀ {n : ℕ} {x : α} {xs : DVec α n}, DVec.pm
   | _, _, DVec.nil, hx => hx.elim
   | _, x, DVec.cons x' xs, hx => by
     -- x ∈ DVec.cons x' xs = DVec.mem x (DVec.cons x' xs) = x = x' ∨ DVec.mem x xs
-    show DVec.mem x (DVec.cons x' xs)
+    change DVec.mem x (DVec.cons x' xs)
     exact hx.casesOn (fun h => Or.inl h) (fun h => Or.inr (DVec.mem_of_pmem h))
 
 @[simp] protected def map (f : α → β) : ∀ {n : ℕ}, DVec α n → DVec β n
@@ -178,7 +180,7 @@ protected theorem map_inj {f : α → β} (hf : ∀ {x x'}, f x = f x' → x = x
     DVec.nth (DVec.map f xs) m h = f (DVec.nth xs m h)
   | _, DVec.nil, m, h => absurd h (Nat.not_lt_zero m)
   | _, DVec.cons _ _, 0, _ => rfl
-  | _, DVec.cons _ xs, m + 1, h => DVec.map_nth f xs m _
+  | _, DVec.cons _ xs, m + 1, _h => DVec.map_nth f xs m _
 
 protected theorem concat_nth : ∀ {n : ℕ} (xs : DVec α n) (x : α) (m : ℕ) (h' : m < n + 1)
     (h : m < n), DVec.nth (DVec.concat xs x) m h' = DVec.nth xs m h
@@ -193,7 +195,7 @@ protected theorem concat_nth : ∀ {n : ℕ} (xs : DVec α n) (x : α) (m : ℕ)
   | _, DVec.nil, _, _ => rfl
   | _, DVec.cons _ xs, x', h => by simp [DVec.concat, DVec.nth, DVec.concat_nth_last xs x']
 
-@[simp] protected theorem concat_nth_last' : ∀ {n : ℕ} (xs : DVec α n) (x : α) (h : n < n + 1),
+@[simp] protected theorem concat_nth_last' : ∀ {n : ℕ} (xs : DVec α n) (x : α) (_h : n < n + 1),
     DVec.last (DVec.concat xs x) = x := DVec.concat_nth_last
 
 @[simp] protected def append : ∀ {n m : ℕ}, DVec α n → DVec α m → DVec α (m + n)
@@ -201,9 +203,9 @@ protected theorem concat_nth : ∀ {n : ℕ} (xs : DVec α n) (x : α) (m : ℕ)
   | _, _, DVec.cons x' xs, xs' => DVec.cons x' (DVec.append xs xs')
 
 @[simp] protected def insert : ∀ {n : ℕ}, α → ℕ → DVec α n → DVec α (n + 1)
-  | n, x, 0, xs => DVec.cons x xs
+  | _n, x, 0, xs => DVec.cons x xs
   | 0, x, _, _ => DVec.cons x DVec.nil
-  | n + 1, x, k + 1, DVec.cons y ys => DVec.cons y (DVec.insert x k ys)
+  | _n + 1, x, k + 1, DVec.cons y ys => DVec.cons y (DVec.insert x k ys)
 
 @[simp] protected theorem insert_at_zero : ∀ {n : ℕ} (x : α) (xs : DVec α n),
     DVec.insert x 0 xs = DVec.cons x xs := by
@@ -229,7 +231,7 @@ protected theorem insert_cons {n k} {x y : α} {v : DVec α n} :
   | 0, 0, _, _ => DVec.nil
   | 0, _ + 1, _, _ => DVec.nil
   | n + 1, 0, h, _ => absurd h (Nat.not_succ_le_zero n)
-  | n + 1, m + 1, h, DVec.cons x xs =>
+  | n + 1, _m + 1, h, DVec.cons x xs =>
     DVec.cons x (DVec.trunc n (Nat.lt_succ_iff.mp (Nat.lt_of_succ_le h)) xs)
 
 @[simp] protected theorem trunc_n_n {n : ℕ} {h : n ≤ n} {v : DVec α n} :
@@ -258,7 +260,7 @@ protected theorem insert_cons {n k} {x y : α} {v : DVec α n} :
       | succ l =>
         cases v with
         | cons _ vs =>
-          show DVec.nth (DVec.trunc n _ vs) l _ = DVec.nth vs l _
+          change DVec.nth (DVec.trunc n _ vs) l _ = DVec.nth vs l _
           apply ih
 
 protected theorem nth_irrel1 {n k : ℕ} {h : k < n + 1} {h' : k < n + 1 + 1}
@@ -268,7 +270,7 @@ protected theorem nth_irrel1 {n k : ℕ} {h : k < n + 1} {h' : k < n + 1 + 1}
   cases k with
   | zero => rfl
   | succ k =>
-    show DVec.nth (DVec.trunc n _ v) k _ = DVec.nth v k _
+    change DVec.nth (DVec.trunc n _ v) k _ = DVec.nth v k _
     rw [DVec.trunc_nth]
 
 protected def cast {n m} (p : n = m) (v : DVec α n) : DVec α m := p ▸ v
@@ -299,13 +301,13 @@ protected theorem cast_hrfl {n m} {p : n = m} {v : DVec α n} : HEq (DVec.cast p
 
 @[simp] protected def remove_mth : ∀ {n : ℕ}, ℕ → DVec α (n + 1) → DVec α n
   | 0, _, _ => DVec.nil
-  | n, 0, DVec.cons _ ys => ys
+  | _n, 0, DVec.cons _ ys => ys
   | n + 1, k + 1, DVec.cons y ys => DVec.cons y (DVec.remove_mth k ys)
 
 @[simp] protected def replace : ∀ {n : ℕ}, α → ℕ → DVec α n → DVec α n
   | _, x, 0, DVec.cons _ ys => DVec.cons x ys
   | 0, _, _, ys => ys
-  | n + 1, x, k + 1, DVec.cons y ys => DVec.cons y (DVec.replace x k ys)
+  | _n + 1, x, k + 1, DVec.cons y ys => DVec.cons y (DVec.replace x k ys)
 
 protected theorem insert_nth_lt {n k l : ℕ} (x : α) (xs : DVec α n) (h : l < n)
     (h' : l < n + 1) (h2 : l < k) :
@@ -352,8 +354,8 @@ protected theorem insert_nth_gt' {n k l : ℕ} (x : α) (xs : DVec α n)
         | succ l =>
           simp only [DVec.insert, DVec.nth, add_tsub_cancel_right]
           have := ih (k := k) (l := l + 1) (by omega) (Nat.lt_of_succ_lt_succ h') (by omega)
-          simp at this ⊢
-          convert this using 2 <;> omega
+          simp only [add_tsub_cancel_right] at this ⊢
+          convert this using 2
 
 @[simp] protected theorem insert_nth_gt_simp {n k l : ℕ} (x : α) (xs : DVec α n)
     (h' : l < n + 1) (h2 : k < l) :
@@ -428,7 +430,7 @@ instance setoidInst {α : Type u} [Setoid α] {n : ℕ} : Setoid (DVec α n) :=
 noncomputable def quotient_lift {α : Type u} {β : Sort v} {R : Setoid α} :
     ∀ {n} (f : DVec α n → β)
     (_h : ∀ {xs xs' : DVec α n}, xs ≈ xs' → f xs = f xs')
-    (qs : DVec (Quotient R) n), β
+    (_qs : DVec (Quotient R) n), β
   | 0, f, _, DVec.nil => f DVec.nil
   | n + 1, f, h, DVec.cons q qs =>
     Quotient.lift
@@ -498,6 +500,7 @@ open TopologicalSpace Set Filter
 variable {α : Type u} {β : Type v}
 variable [t : TopologicalSpace α] [TopologicalSpace β]
 
+omit t in
 theorem subbasis_subset_basis {s : Set (Set α)} :
     s \ {∅} ⊆ (fun f => ⋂₀ f) '' {f : Set (Set α) | f.Finite ∧ f ⊆ s ∧ ⋂₀ f ≠ ∅} := by
   intro o ho
@@ -565,7 +568,7 @@ theorem mk_union_le_impl {α : Type u} {S T : Set α} : #(S ∪ T : Set α) ≤ 
 
 theorem exists_mem_compl_of_mk_lt_mk {α} (P : Set α) (H_lt : #P < #α) : ∃ x : α, x ∈ Pᶜ := by
   by_contra h
-  push_neg at h
+  push Not at h
   have ha : ∀ x, x ∈ P := fun x => by_contra (fun hx => h x hx)
   have : #α ≤ #P := Cardinal.mk_le_of_injective (f := fun x => (⟨x, ha x⟩ : P))
     (fun x y hxy => Subtype.mk.inj hxy)
@@ -639,11 +642,11 @@ theorem exists_of_toSet_subset_image {α : Type u} {β : Type v} {f : α → β}
     have h_hd : hd ∈ f '' t := h (by simp [List.toSet])
     obtain ⟨x, hx, rfl⟩ := h_hd
     have h_tl : ∀ y ∈ tl.toSet, y ∈ f '' t := fun y hy => h (by
-      simp only [List.toSet, Set.mem_setOf_eq, List.mem_cons]
+      simp only [List.toSet, Set.mem_ofPred_eq, List.mem_cons]
       exact Or.inr (hy))
     obtain ⟨xs, hxs, hxs'⟩ := ih (fun y hy => h_tl y hy)
     exact ⟨x :: xs, fun y hy => by
-      simp [List.toSet] at hy
+      simp only [List.toSet, mem_cons, Set.mem_ofPred_eq] at hy
       cases hy with
       | inl h => exact h ▸ hx
       | inr h => exact hxs h,
@@ -720,24 +723,26 @@ theorem dif_mem_pi {π : α → Type*} (i : Set α) (s : ∀ a, Set (π a)) [Dec
   · rw [dif_pos hxy]; subst hxy; exact h hy
   · rw [dif_neg hxy]; exact hf y hy
 
-theorem image_pi_pos {π : α → Type*} (i : Set α) (s : ∀ a, Set (π a)) [DecidableEq α]
+theorem image_pi_pos {π : α → Type*} (i : Set α) (s : ∀ a, Set (π a))
     (hp : (Set.pi i s).Nonempty) (x : α) (hx : x ∈ i) :
     (fun (f : ∀ a, π a) => f x) '' Set.pi i s = s x := by
+  classical
   apply Set.Subset.antisymm
   · rintro _ ⟨f, hf, rfl⟩; exact hf x hx
   · intro z hz
     obtain ⟨f, hf⟩ := hp
     exact ⟨Set.change f z, Set.dif_mem_pi i s f hf z (fun _ => hz),
-           by simp [Set.change, dif_pos rfl]⟩
+           by simp [Set.change]⟩
 
-theorem image_pi_neg {π : α → Type*} (i : Set α) (s : ∀ a, Set (π a)) [DecidableEq α]
+theorem image_pi_neg {π : α → Type*} (i : Set α) (s : ∀ a, Set (π a))
     (hp : (Set.pi i s).Nonempty) (x : α) (hx : x ∉ i) :
     (fun (f : ∀ a, π a) => f x) '' Set.pi i s = Set.univ := by
+  classical
   rw [Set.eq_univ_iff_forall]
   intro z
   obtain ⟨f, hf⟩ := hp
   exact ⟨Set.change f z, Set.dif_mem_pi i s f hf z (fun hxi => absurd hxi hx),
-         by simp [Set.change, dif_pos rfl]⟩
+         by simp [Set.change]⟩
 
 end Set
 
@@ -765,9 +770,9 @@ def arity'_constant {α β : Type u} : ∀ {n : ℕ}, β → Arity' α β n
   | 0, b => b
   | _ + 1, b => fun _ => arity'_constant b
 
-@[simp] def of_dvector_map {α β : Type u} : ∀ {l} (f : DVec α l → β), Arity' α β l
+@[simp] def of_dvector_map {α β : Type u} : ∀ {l} (_f : DVec α l → β), Arity' α β l
   | 0, f => f DVec.nil
-  | l + 1, f => fun x => of_dvector_map (fun xs => f (DVec.cons x xs))
+  | _l + 1, f => fun x => of_dvector_map (fun xs => f (DVec.cons x xs))
 
 @[simp] def arity'_app {α β : Type u} : ∀ {l}, Arity' α β l → DVec α l → β
   | _, b, DVec.nil => b
@@ -776,18 +781,18 @@ def arity'_constant {α β : Type u} : ∀ {n : ℕ}, β → Arity' α β n
 @[simp] theorem arity'_app_zero {α β : Type u} (f : Arity' α β 0) (xs : DVec α 0) :
     arity'_app f xs = f := by cases xs; rfl
 
-def arity'_postcompose {α β γ : Type u} (g : β → γ) : ∀ {n} (f : Arity' α β n), Arity' α γ n
+def arity'_postcompose {α β γ : Type u} (g : β → γ) : ∀ {n} (_f : Arity' α β n), Arity' α γ n
   | 0, b => g b
-  | n + 1, f => fun x => arity'_postcompose g (f x)
+  | _n + 1, f => fun x => arity'_postcompose g (f x)
 
 def arity'_postcompose2 {α β γ δ : Type u} (h : β → γ → δ) :
-    ∀ {n} (f : Arity' α β n) (g : Arity' α γ n), Arity' α δ n
+    ∀ {n} (_f : Arity' α β n) (_g : Arity' α γ n), Arity' α δ n
   | 0, b, c => h b c
-  | n + 1, f, g => fun x => arity'_postcompose2 h (f x) (g x)
+  | _n + 1, f, g => fun x => arity'_postcompose2 h (f x) (g x)
 
-def arity'_precompose {α β γ : Type u} : ∀ {n} (g : Arity' β γ n) (f : α → β), Arity' α γ n
+def arity'_precompose {α β γ : Type u} : ∀ {n} (_g : Arity' β γ n) (_f : α → β), Arity' α γ n
   | 0, c, _ => c
-  | n + 1, g, f => fun x => arity'_precompose (g (f x)) f
+  | _n + 1, g, f => fun x => arity'_precompose (g (f x)) f
 
 inductive arity'_respect_setoid {α β : Type u} [R : Setoid α] : ∀ {n}, Arity' α β n → Type u
   | r_zero (b : β) : @arity'_respect_setoid _ _ _ 0 b
@@ -809,12 +814,12 @@ def for_all {α : Type u} (P : α → Prop) : Prop := ∀ x, P x
 @[simp] def arity'_map2 {α β : Type u} (q : (α → β) → β) (f : β → β → β) :
     ∀ {n}, Arity' α β n → Arity' α β n → β
   | 0, x, y => f x y
-  | n + 1, x, y => q (fun z => arity'_map2 q f (x z) (y z))
+  | _n + 1, x, y => q (fun z => arity'_map2 q f (x z) (y z))
 
 @[simp] theorem arity'_map2_refl {α : Type} {f : Prop → Prop → Prop} (r : ∀ A, f A A) :
     ∀ {n} (x : Arity' α Prop n), arity'_map2 for_all f x x
   | 0, x => r x
-  | n + 1, x => fun y => arity'_map2_refl r (x y)
+  | _n + 1, x => fun y => arity'_map2_refl r (x y)
 
 def arity'_imp {α : Type} {n : ℕ} (f₁ f₂ : Arity' α Prop n) : Prop :=
   arity'_map2 for_all (fun P Q => P → Q) f₁ f₂
@@ -894,10 +899,10 @@ theorem bot_lt_resolve_left {𝔹} [Lattice 𝔹] [OrderBot 𝔹] {a b : 𝔹} (
     ⊥ < b := by
   by_contra H
   rw [bot_lt_iff_not_le_bot] at H H_lt'
-  push_neg at H
+  push Not at H
   exact H_lt' (le_trans inf_le_right H)
 
-theorem bot_lt_resolve_right {𝔹} [Lattice 𝔹] [OrderBot 𝔹] {a b : 𝔹} (H_lt : ⊥ < b)
+theorem bot_lt_resolve_right {𝔹} [Lattice 𝔹] [OrderBot 𝔹] {a b : 𝔹} (_H_lt : ⊥ < b)
     (H_lt' : ⊥ < a ⊓ b) : ⊥ < a := by
   rw [inf_comm] at H_lt'; exact bot_lt_resolve_left H_lt'
 
@@ -1015,7 +1020,7 @@ theorem supr_max_of_bounded {α β : Type*} [CompleteLattice β] {A : α → β}
     {h : b = ⨆ (a : α), A a} {h_lt : c < b} {h_bounded : ∀ a : α, A a ≠ b → A a ≤ c} :
     ∃ x : α, A x = b := by
   by_contra h'
-  push_neg at h'
+  push Not at h'
   have : b ≤ c := by rw [h]; exact iSup_le (fun a => h_bounded a (h' a))
   exact absurd (lt_of_lt_of_le h_lt this) (lt_irrefl c)
 
@@ -1023,7 +1028,7 @@ theorem supr_max_of_bounded' {α β : Type*} [CompleteLattice β] {A : α → β
     {h : b ≤ ⨆ (a : α), A a} {h_lt : c < b} {h_bounded : ∀ a : α, ¬b ≤ A a → A a ≤ c} :
     ∃ x : α, b ≤ A x := by
   by_contra h'
-  push_neg at h'
+  push Not at h'
   have : b ≤ c := le_trans h (iSup_le (fun a => h_bounded a (h' a)))
   exact absurd (lt_of_lt_of_le h_lt this) (lt_irrefl c)
 
@@ -1201,7 +1206,7 @@ theorem nonzero_wit {β : Type*} [CompleteLattice β] {ι : Type*} {s : ι → �
     (⊥ < ⨆ i, s i) → ∃ j, ⊥ < s j := by
   intro H
   by_contra h
-  push_neg at h
+  push Not at h
   simp only [bot_lt_iff_ne_bot, ne_eq, not_not] at h
   have key : ⨆ i, s i = ⊥ :=
     le_antisymm (iSup_le (fun j => (h j).le)) bot_le
@@ -1210,7 +1215,7 @@ theorem nonzero_wit {β : Type*} [CompleteLattice β] {ι : Type*} {s : ι → �
 theorem nonzero_inf_of_nonzero_le_supr {α : Type*} [CompleteDistribLattice α] {ι : Type*}
     {s : ι → α} {Γ : α} (H_nonzero : ⊥ < Γ) (H : Γ ≤ ⨆ i, s i) : ∃ i, ⊥ < Γ ⊓ s i := by
   by_contra H'
-  push_neg at H'
+  push Not at H'
   simp only [bot_lt_iff_not_le_bot, not_not] at H'
   have H_absorb : Γ ⊓ ⨆ (i : ι), s i = Γ :=
     le_antisymm inf_le_left (le_inf le_rfl H)
@@ -1261,7 +1266,7 @@ theorem bv_by_contra {𝔹} [BooleanAlgebra 𝔹] {Γ b : 𝔹} (H : Γ ≤ imp 
 -/
 
 -- with_h_asms helper definition
-def with_h_asms {𝔹} [Lattice 𝔹] (Γ : 𝔹) : ∀ (_ : List 𝔹) (g : 𝔹), Prop
+def with_h_asms {𝔹} [Lattice 𝔹] (Γ : 𝔹) : ∀ (_ : List 𝔹) (_g : 𝔹), Prop
   | [], x => Γ ≤ x
   | x :: xs, y => Γ ≤ x → with_h_asms Γ xs y
 

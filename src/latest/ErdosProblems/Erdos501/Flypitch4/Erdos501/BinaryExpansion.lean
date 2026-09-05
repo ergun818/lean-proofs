@@ -24,7 +24,8 @@ set_option relaxedAutoImplicit true
 Proof: `binExp f = (f 0)/2 + binExp (shift f)/2`, and the first coordinate and the shift are
 independent under the coin measure with the shift measure preserving (`map_zero_shift`); hence the
 distribution function `F t = cantorMeasure {f | binExp f ≤ t}` satisfies
-`F t = ½ F(2t − 1) + ½ F(2t)`, which forces `F(k/2ⁿ) = k/2ⁿ` (`F_dyadic`) and then `F t = t` on `[0, 1)`
+`F t = ½ F(2t − 1) + ½ F(2t)`, which forces `F(k/2ⁿ) = k/2ⁿ` (`F_dyadic`) and then `F t = t` on `[0,
+1)`
 by monotonicity (`F_eq`); finally two finite measures with the same distribution function agree
 (`Measure.ext_of_Iic`).
 -/
@@ -73,7 +74,8 @@ lemma measurable_binExp : Measurable binExp := by
     exact (measurable_of_countable (fun b : Bool => cond b ((1 / 2 : ℝ) ^ n) 0)).comp
       (measurable_pi_apply n)
   refine measurable_of_tendsto_metrizable hS (tendsto_pi_nhds.mpr fun f => ?_)
-  exact ((summable_cantor_function f (by norm_num) (by norm_num)).hasSum.tendsto_sum_nat).const_mul _
+  exact ((summable_cantor_function f (by norm_num) (by norm_num)).hasSum.tendsto_sum_nat).const_mul
+      _
 
 lemma measurable_shift : Measurable shift :=
   measurable_pi_lambda _ fun n => measurable_pi_apply (n + 1)
@@ -152,7 +154,7 @@ lemma F_rec (t : ℝ) : F t = 2⁻¹ * F (2 * t - 1) + 2⁻¹ * F (2 * t) := by
   set B : Set (Bool × (ℕ → Bool)) := {p | (cond p.1 1 0) / 2 + binExp p.2 / 2 ≤ t} with hBdef
   have hset : {f | binExp f ≤ t} = (fun f => (f 0, shift f)) ⁻¹' B := by
     ext f
-    simp only [mem_setOf_eq, mem_preimage, B]
+    simp only [mem_ofPred_eq, mem_preimage, B]
     rw [binExp_succ f]
   have hB : MeasurableSet B :=
     measurableSet_le ((((measurable_of_countable fun b : Bool => (cond b (1 : ℝ) 0)).comp
@@ -166,11 +168,11 @@ lemma F_rec (t : ℝ) : F t = 2⁻¹ * F (2 * t - 1) + 2⁻¹ * F (2 * t) := by
   congr 2
   · congr 1
     ext g
-    simp only [mem_preimage, mem_setOf_eq, B, Bool.cond_true]
+    simp only [mem_preimage, mem_ofPred_eq, B, Bool.cond_true]
     constructor <;> intro h <;> linarith
   · congr 1
     ext g
-    simp only [mem_preimage, mem_setOf_eq, B, Bool.cond_false]
+    simp only [mem_preimage, mem_ofPred_eq, B, Bool.cond_false]
     constructor <;> intro h <;> linarith
 
 lemma F_zero : F 0 = 0 := by
@@ -273,8 +275,9 @@ lemma F_eq {t : ℝ} (h0 : 0 ≤ t) (h1 : t < 1) : F t = ENNReal.ofReal t := by
 `binExp` is Lebesgue measure on `[0, 1)`. -/
 theorem map_binExp : cantorMeasure.map binExp = volume.restrict (Ico (0 : ℝ) 1) := by
   refine Measure.ext_of_Iic _ _ fun t => ?_
-  rw [Measure.map_apply measurable_binExp measurableSet_Iic, Measure.restrict_apply measurableSet_Iic]
-  show F t = volume (Iic t ∩ Ico (0 : ℝ) 1)
+  rw [Measure.map_apply measurable_binExp measurableSet_Iic, Measure.restrict_apply
+      measurableSet_Iic]
+  change F t = volume (Iic t ∩ Ico (0 : ℝ) 1)
   rcases lt_or_ge t 0 with h | h
   · rw [F_neg h, show Iic t ∩ Ico (0 : ℝ) 1 = ∅ from
       Set.eq_empty_of_forall_notMem fun x hx => by

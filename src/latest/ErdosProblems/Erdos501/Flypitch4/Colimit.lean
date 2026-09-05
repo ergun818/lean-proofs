@@ -19,7 +19,7 @@ Only declarations needed by `src/henkin.lean` are ported. The following are drop
 - `trans` (the colimit lemma) — 0 uses outside colimit.lean; `Trans` in Lean 4 is a typeclass
 
 ### Quotient API choices
-- `colimit` is `@[reducible]` so that `Quotient.lift`, `Quotient.sound`, etc. can unify with it
+- `Carrier` is `@[reducible]` so that `Quotient.lift`, `Quotient.sound`, etc. can unify with it
 - Lean 3 `quotient.mk`   → Lean 4 `Quotient.mk (coproduct_setoid F)`
 - Lean 3 `quotient.lift` → Lean 4 `Quotient.lift`
 - Lean 3 `quotient.eq`   → Lean 4 `Quotient.exact` / `Quotient.sound`
@@ -106,12 +106,12 @@ def coproduct_setoid {D : directed_type} (F : directed_diagram D) :
     Setoid (coproduct_of_directed_diagram F) :=
   ⟨germ_relation F, germ_equivalence F⟩
 
-@[reducible] def colimit {D : directed_type.{u}} (F : directed_diagram.{u, v} D) :
+@[reducible] def Carrier {D : directed_type.{u}} (F : directed_diagram.{u, v} D) :
     Type (max u v) :=
   Quotient (coproduct_setoid F)
 
 def canonical_map {D : directed_type} {F : directed_diagram D} (i : D.carrier) :
-    F.obj i → colimit F :=
+    F.obj i → Carrier F :=
   fun x => Quotient.mk (coproduct_setoid F) ⟨i, x⟩
 
 lemma canonical_map_inj_of_transition_maps_inj {D : directed_type} {F : directed_diagram D}
@@ -134,7 +134,7 @@ structure cocone {D : directed_type} (F : directed_diagram D) where
 
 /- The colimit is itself a cocone over its diagram -/
 def cocone_of_colimit {D : directed_type} (F : directed_diagram D) : cocone F where
-  vertex := colimit F
+  vertex := Carrier F
   map := canonical_map
   h_compat := by
     intro i j H
@@ -143,7 +143,7 @@ def cocone_of_colimit {D : directed_type} (F : directed_diagram D) : cocone F wh
     apply Quotient.sound
     -- Need: (coproduct_setoid F).r ⟨i, x⟩ ⟨j, F.mor H x⟩
     -- i.e., germ_relation F ⟨i, x⟩ ⟨j, F.mor H x⟩
-    show germ_relation F ⟨i, x⟩ ⟨j, F.mor H x⟩
+    change germ_relation F ⟨i, x⟩ ⟨j, F.mor H x⟩
     have h_refl_j := D.h_reflexive j
     refine ⟨j, F.mor H x, H, h_refl_j, rfl, ?_⟩
     -- F.mor h_refl_j (F.mor H x) = F.mor H x
@@ -153,13 +153,13 @@ def cocone_of_colimit {D : directed_type} (F : directed_diagram D) : cocone F wh
 
 /- Given a cocone V over a diagram D, return the canonical map colim D → V -/
 def universal_map {D : directed_type} {F : directed_diagram D} {V : cocone F} :
-    colimit F → V.vertex :=
+    Carrier F → V.vertex :=
   Quotient.lift (fun p => V.map p.1 p.2) (by
     intro ⟨i, x⟩ ⟨j, y⟩ h
     -- h : (coproduct_setoid F).r ⟨i, x⟩ ⟨j, y⟩, i.e., germ_relation F ⟨i, x⟩ ⟨j, y⟩
     change germ_relation F ⟨i, x⟩ ⟨j, y⟩ at h
     obtain ⟨k, _z, f1, f2, H1, H2⟩ := h
-    show V.map i x = V.map j y
+    change V.map i x = V.map j y
     have e1 : V.map i x = V.map k (F.mor f1 x) := congr_fun (V.h_compat f1) x
     have e2 : V.map j y = V.map k (F.mor f2 y) := congr_fun (V.h_compat f2) y
     rw [e1, e2, H1, H2])
@@ -170,17 +170,17 @@ def universal_map {D : directed_type} {F : directed_diagram D} {V : cocone F} :
 
 lemma universal_map_inj_of_components_inj {D : directed_type} {F : directed_diagram D}
     {V : cocone F} (h_inj : ∀ i : D.carrier, Function.Injective (V.map i)) :
-    Function.Injective (universal_map (V := V) : colimit F → V.vertex) := by
+    Function.Injective (universal_map (V := V) : Carrier F → V.vertex) := by
   intro a b h
   induction a using Quotient.inductionOn with | _ p => ?_
   induction b using Quotient.inductionOn with | _ q => ?_
   obtain ⟨i, x⟩ := p; obtain ⟨j, y⟩ := q
   -- h : universal_map ⟦⟨i,x⟩⟧ = universal_map ⟦⟨j,y⟩⟧
   -- i.e. V.map i x = V.map j y
-  simp only [universal_map, Quotient.lift_mk] at h
+  simp only [universal_map] at h
   -- h : V.map i x = V.map j y
   apply Quotient.sound
-  show germ_relation F ⟨i, x⟩ ⟨j, y⟩
+  change germ_relation F ⟨i, x⟩ ⟨j, y⟩
   obtain ⟨k, Hik, Hjk⟩ := D.h_directed i j
   refine ⟨k, F.mor Hik x, Hik, Hjk, rfl, ?_⟩
   -- Goal: F.mor Hjk y = F.mor Hik x
@@ -192,7 +192,7 @@ lemma universal_map_inj_of_components_inj {D : directed_type} {F : directed_diag
 
 /- Given a germ-equivalence class from the colimit, return a representative from the coproduct
    and a proof that this is a lift -/
-noncomputable def germ_rep {D : directed_type} {F : directed_diagram D} (a : colimit F) :
+noncomputable def germ_rep {D : directed_type} {F : directed_diagram D} (a : Carrier F) :
     Σ' x : coproduct_of_directed_diagram F,
       Quotient.mk (coproduct_setoid F) x = a :=
   Classical.psigma_of_exists (Quotient.exists_rep a)
@@ -204,9 +204,9 @@ noncomputable def germ_rep {D : directed_type} {F : directed_diagram D} (a : col
   congr 1
 
 /- Assuming canonical maps into the colimit are injective, ⟨i,x⟩ and ⟨j,y⟩ in the same fiber
-   over a z : colimit F are related by any transition map i → j. -/
+   over a z : Carrier F are related by any transition map i → j. -/
 @[simp] lemma eq_mor_of_same_fiber {D : directed_type} {F : directed_diagram D}
-    (a b : coproduct_of_directed_diagram F) {z : colimit F}
+    (a b : coproduct_of_directed_diagram F) {z : Carrier F}
     (Ha : Quotient.mk (coproduct_setoid F) a = z)
     (Hb : Quotient.mk (coproduct_setoid F) b = z)
     (H_inj : ∀ i : D.carrier, Function.Injective (@canonical_map D F i))
@@ -226,7 +226,7 @@ noncomputable def germ_rep {D : directed_type} {F : directed_diagram D} (a : col
 
 @[simp] lemma eq_mor_of_same_fiber' {D : directed_type} {F : directed_diagram D}
     (a_fst b_fst : D.carrier) (a_snd : F.obj a_fst) (b_snd : F.obj b_fst)
-    {z : colimit F}
+    {z : Carrier F}
     (Ha : Quotient.mk (coproduct_setoid F) (⟨a_fst, a_snd⟩ : coproduct_of_directed_diagram F) = z)
     (Hb : Quotient.mk (coproduct_setoid F) (⟨b_fst, b_snd⟩ : coproduct_of_directed_diagram F) = z)
     (H_inj : ∀ i : D.carrier, Function.Injective (@canonical_map D F i))

@@ -90,11 +90,12 @@ lemma realName_definite {Γ : randomAlgebra ι} : Γ ≤ realName f hf ⊆ᴮ om
 /-- **Equality of names of reals**: `‖realName f = realName g‖ = [{x | f x = g x}]`. -/
 theorem bv_eq_realName :
     (realName f hf =ᴮ realName g hg) =
-      MeasureAlgebra.mk (RandomAlgebra.μ_random ι) {x | f x = g x} (measurableSet_eq_fun hf hg) := by
+      MeasureAlgebra.mk (RandomAlgebra.μ_random ι) {x | f x = g x} (measurableSet_eq_fun hf hg) :=
+          by
   rw [realName, realName, bv_eq_mkReal]
   apply MeasureAlgebra.mk_congr
   ext x
-  simp only [mem_setOf_eq, Function.comp]
+  simp only [mem_ofPred_eq, Function.comp]
   exact code_injective.eq_iff
 
 /-- A pointwise-true relation between readings has Boolean value `⊤`. -/
@@ -134,7 +135,8 @@ noncomputable def ltDot : bSet (randomAlgebra ι) :=
 
 @[simp] lemma ltDot_type : (ltDot : bSet (randomAlgebra ι)).type = (MeasReal ι × MeasReal ι) := rfl
 @[simp] lemma ltDot_func (p : (ltDot : bSet (randomAlgebra ι)).type) :
-    (ltDot : bSet (randomAlgebra ι)).func p = pair (realName p.1.1 p.1.2) (realName p.2.1 p.2.2) := rfl
+    (ltDot : bSet (randomAlgebra ι)).func p = pair (realName p.1.1 p.1.2) (realName p.2.1 p.2.2) :=
+        rfl
 @[simp] lemma ltDot_bval (p : (ltDot : bSet (randomAlgebra ι)).type) :
     (ltDot : bSet (randomAlgebra ι)).bval p =
       MeasureAlgebra.mk (RandomAlgebra.μ_random ι) {x | p.1.1 x < p.2.1 x}
@@ -173,7 +175,8 @@ noncomputable def opDot (op : ℝ → ℝ → ℝ) (hop : Measurable (Function.u
 
 variable {op : ℝ → ℝ → ℝ} (hop : Measurable (Function.uncurry op))
 
-@[simp] lemma opDot_type : (opDot op hop : bSet (randomAlgebra ι)).type = (MeasReal ι × MeasReal ι) :=
+@[simp] lemma opDot_type : (opDot op hop : bSet (randomAlgebra ι)).type = (MeasReal ι × MeasReal ι)
+    :=
   rfl
 @[simp] lemma opDot_func (p : (opDot op hop : bSet (randomAlgebra ι)).type) :
     (opDot op hop : bSet (randomAlgebra ι)).func p =
@@ -245,7 +248,7 @@ theorem app2_opDot_realName (z : bSet (randomAlgebra ι)) :
           rw [MeasureAlgebra.mk_inf]
           apply mk_mono
           rintro x ⟨h1, h2⟩
-          simp only [mem_setOf_eq] at h1 h2 ⊢
+          simp only [mem_ofPred_eq] at h1 h2 ⊢
           rw [h1, h2]
       _ ≤ _ := bv_eq_trans
   · refine le_iSup_of_le (⟨f, hf⟩, ⟨g, hg⟩) ?_
@@ -280,7 +283,7 @@ theorem lt_ltDot_realName :
     rw [bv_eq_realName, bv_eq_realName, MeasureAlgebra.mk_inf, MeasureAlgebra.mk_inf]
     apply mk_mono
     rintro x ⟨⟨h1, h2⟩, h3⟩
-    simp only [mem_setOf_eq] at h1 h2 h3 ⊢
+    simp only [mem_ofPred_eq] at h1 h2 h3 ⊢
     rw [h1, h2]; exact h3
   · refine le_iSup_of_le (⟨f, hf⟩, ⟨g, hg⟩) ?_
     simp only [bv_eq_refl, top_inf_eq, le_refl]
@@ -292,7 +295,7 @@ theorem le_ltDot_realName :
   rw [Sem.le, lt_ltDot_realName, bv_eq_realName, MeasureAlgebra.mk_sup]
   apply MeasureAlgebra.mk_congr
   ext x
-  simp only [mem_union, mem_setOf_eq, le_iff_lt_or_eq]
+  simp only [mem_union, mem_ofPred_eq, le_iff_lt_or_eq]
 
 
 /-! ### Introduction and elimination rules, in the style of natural deduction on Boolean values -/
@@ -448,7 +451,7 @@ theorem isOp2_opDot : ⊤ ≤ Sem.isOp2 (Rdot : bSet (randomAlgebra ι)) (opDot 
     have e2 := eq_realName_trans hyg' ((h₆.trans h₅).trans hyg)
     refine eq_realName_of_eq hz'' ?_
     refine mk_le_of_forall₂ e1 e2 fun w h1 h2 => ?_
-    simp only [mem_setOf_eq] at h1 h2 ⊢
+    simp only [mem_ofPred_eq] at h1 h2 ⊢
     rw [h1, h2]
 
 /-- Two names equal to the same canonical name are equal. -/
@@ -492,7 +495,7 @@ theorem assoc_opDot (hassoc : ∀ a b c : ℝ, op (op a b) c = op a (op b c)) :
   have e := le_inf e1 (le_inf e2 (le_inf e3 (le_inf e4 e5)))
   simp only [MeasureAlgebra.mk_inf] at e
   refine mk_le_of_forall e fun w hw => ?_
-  simp only [mem_inter_iff, mem_setOf_eq] at hw ⊢
+  simp only [mem_inter_iff, mem_ofPred_eq] at hw ⊢
   obtain ⟨he1, he2, he3, he4, he5⟩ := hw
   rw [← he1, hassoc, he4, he3, he2, ← he5]
 
@@ -560,7 +563,7 @@ theorem mulInv_timesDot :
   rw [oneDot, bv_eq_realName]
   rw [MeasureAlgebra.mk_compl] at hne
   refine mk_le_of_forall hne fun w hw => ?_
-  simp only [mem_compl_iff, mem_setOf_eq] at hw ⊢
+  simp only [mem_compl_iff, mem_ofPred_eq] at hw ⊢
   exact (mul_inv_cancel₀ hw).symm
 
 /-- Distributivity in `Rdot`. -/
@@ -605,7 +608,7 @@ theorem distrib_Rdot :
   have e := le_inf e1 (le_inf e2 (le_inf e3 (le_inf e4 (le_inf e5 (le_inf e6 e7)))))
   simp only [MeasureAlgebra.mk_inf] at e
   refine mk_le_of_forall e fun w hw => ?_
-  simp only [mem_inter_iff, mem_setOf_eq] at hw ⊢
+  simp only [mem_inter_iff, mem_ofPred_eq] at hw ⊢
   obtain ⟨he1, he2, he3, he4, he5, he6, he7⟩ := hw
   rw [← he1, ← he6, ← he7, ← he2, ← he3, ← he4, ← he5, mul_add]
 
@@ -623,7 +626,7 @@ theorem irrefl_ltDot : ⊤ ≤ Sem.irrefl (Rdot : bSet (randomAlgebra ι)) ltDot
   rw [MeasureAlgebra.bot_def]
   apply mk_mono
   rintro w ⟨h1, h2⟩
-  simp only [mem_setOf_eq] at h1 h2
+  simp only [mem_ofPred_eq] at h1 h2
   exact absurd (h1 ▸ h2) (lt_irrefl _)
 
 /-- Transitivity of `ltDot` on `Rdot`. -/
@@ -642,7 +645,7 @@ theorem trans_ltDot : ⊤ ≤ Sem.trans (Rdot : bSet (randomAlgebra ι)) ltDot :
   have e := eq_realName_trans (h₇.trans hyg) hyg'
   refine le_lt_ltDot ((h₇.trans hxf)) hzh ?_
   refine mk_le_of_forall₃ (h₇.trans hfg) e hgh fun w h1 h2 h3 => ?_
-  simp only [mem_setOf_eq] at h1 h2 h3 ⊢
+  simp only [mem_ofPred_eq] at h1 h2 h3 ⊢
   exact lt_trans h1 (h2 ▸ h3)
 
 /-- Totality of `ltDot` on `Rdot`. -/
@@ -664,7 +667,7 @@ theorem total_ltDot : ⊤ ≤ Sem.total (Rdot : bSet (randomAlgebra ι)) ltDot :
         (measurableSet_lt g.2 f.2)) := by
     rw [MeasureAlgebra.mk_sup, MeasureAlgebra.mk_sup]
     refine le_mk_of_forall fun w => ?_
-    simp only [mem_union, mem_setOf_eq]
+    simp only [mem_union, mem_ofPred_eq]
     rcases lt_trichotomy (f.1 w) (g.1 w) with h | h | h
     · exact Or.inl h
     · exact Or.inr (Or.inl h)
@@ -676,7 +679,8 @@ theorem total_ltDot : ⊤ ≤ Sem.total (Rdot : bSet (randomAlgebra ι)) ltDot :
     · refine le_sup_of_le_left ?_
       exact bv_eq_of_eq_realName (eq_realName_of_eq ((h₆.trans h₅).trans hxf') heq)
         ((h₆.trans h₅).trans hyg)
-    · exact le_sup_of_le_right (le_lt_ltDot ((h₆.trans h₅).trans hyg) ((h₆.trans h₅).trans hxf') hgt)
+    · exact le_sup_of_le_right (le_lt_ltDot ((h₆.trans h₅).trans hyg) ((h₆.trans h₅).trans hxf')
+        hgt)
 
 /-- Compatibility of `ltDot` with `plusDot`. -/
 theorem addCompat_Rdot : ⊤ ≤ Sem.addCompat (Rdot : bSet (randomAlgebra ι)) plusDot ltDot := by
@@ -692,8 +696,10 @@ theorem addCompat_Rdot : ⊤ ≤ Sem.addCompat (Rdot : bSet (randomAlgebra ι)) 
   rw [bv_imp_iff]; intro Γ₅ h₅ hxzu
   rw [bv_imp_iff]; intro Γ₆ h₆ hyzv
   refine lt_ltDot_elim ((h₆.trans h₅).trans hxy) fun f g Γ₇ h₇ hxf hyg hfg => ?_
-  refine app2_opDot_elim measurable_uncurry_add ((h₇.trans h₆).trans hxzu) fun f' h Γ₈ h₈ hxf' hzh hu => ?_
-  refine app2_opDot_elim measurable_uncurry_add ((h₈.trans h₇).trans hyzv) fun g' h' Γ₉ h₉ hyg' hzh' hv => ?_
+  refine app2_opDot_elim measurable_uncurry_add ((h₇.trans h₆).trans hxzu) fun f' h Γ₈ h₈ hxf' hzh
+      hu => ?_
+  refine app2_opDot_elim measurable_uncurry_add ((h₈.trans h₇).trans hyzv) fun g' h' Γ₉ h₉ hyg' hzh'
+      hv => ?_
   have H₇ : Γ₉ ≤ Γ₇ := h₉.trans h₈
   have e1 := eq_realName_trans (H₇.trans hxf) (h₉.trans hxf')
   have e2 := eq_realName_trans (H₇.trans hyg) hyg'
@@ -702,7 +708,7 @@ theorem addCompat_Rdot : ⊤ ≤ Sem.addCompat (Rdot : bSet (randomAlgebra ι)) 
   have e := le_inf (H₇.trans hfg) (le_inf e1 (le_inf e2 e3))
   simp only [MeasureAlgebra.mk_inf] at e
   refine mk_le_of_forall e fun w hw => ?_
-  simp only [mem_inter_iff, mem_setOf_eq] at hw ⊢
+  simp only [mem_inter_iff, mem_ofPred_eq] at hw ⊢
   obtain ⟨h0, he1, he2, he3⟩ := hw
   rw [← he1, ← he2, ← he3]
   exact add_lt_add_left h0 _
@@ -720,7 +726,8 @@ theorem mulPos_Rdot : ⊤ ≤ Sem.mulPos (Rdot : bSet (randomAlgebra ι)) timesD
   rw [bv_imp_iff]; intro Γ₅ h₅ hxyu
   refine lt_ltDot_elim ((h₅.trans h₄).trans h0x) fun z f Γ₆ h₆ hz hxf hzf => ?_
   refine lt_ltDot_elim ((h₆.trans h₅).trans h0y) fun z' g Γ₇ h₇ hz' hyg hz'g => ?_
-  refine app2_opDot_elim measurable_uncurry_mul ((h₇.trans h₆).trans hxyu) fun f' g' Γ₈ h₈ hxf' hyg' hu => ?_
+  refine app2_opDot_elim measurable_uncurry_mul ((h₇.trans h₆).trans hxyu) fun f' g' Γ₈ h₈ hxf' hyg'
+      hu => ?_
   have H₆ : Γ₈ ≤ Γ₆ := h₈.trans h₇
   -- the readings of `zeroDot` are `0`
   have hz0 : Γ₈ ≤ MeasureAlgebra.mk (RandomAlgebra.μ_random ι) {w | z.1 w = 0}
@@ -735,11 +742,12 @@ theorem mulPos_Rdot : ⊤ ≤ Sem.mulPos (Rdot : bSet (randomAlgebra ι)) timesD
     exact eq_realName_trans this (by rw [bv_eq_refl]; exact le_top)
   have e1 := eq_realName_trans (H₆.trans hxf) hxf'
   have e2 := eq_realName_trans (h₈.trans hyg) hyg'
-  refine le_lt_ltDot (f := fun _ => (0 : ℝ)) (hf := measurable_const) (by rw [zeroDot, bv_eq_refl]; exact le_top) hu ?_
+  refine le_lt_ltDot (f := fun _ => (0 : ℝ)) (hf := measurable_const) (by
+    rw [zeroDot, bv_eq_refl]; exact le_top) hu ?_
   have e := le_inf (H₆.trans hzf) (le_inf (h₈.trans hz'g) (le_inf hz0 (le_inf hz'0 (le_inf e1 e2))))
   simp only [MeasureAlgebra.mk_inf] at e
   refine mk_le_of_forall e fun w hw => ?_
-  simp only [mem_inter_iff, mem_setOf_eq] at hw ⊢
+  simp only [mem_inter_iff, mem_ofPred_eq] at hw ⊢
   obtain ⟨h1, h2, h3, h4, he1, he2⟩ := hw
   rw [← he1, ← he2]
   exact mul_pos (h3 ▸ h1) (h4 ▸ h2)
@@ -825,7 +833,7 @@ lemma measurableSet_boundedEvent {A : ℕ → Set (RandomAlgebra.Ω ι)}
     MeasurableSet {x : RandomAlgebra.Ω ι | ∃ M : ℚ, ∀ n, x ∈ A n → q n ≤ M} := by
   have : {x : RandomAlgebra.Ω ι | ∃ M : ℚ, ∀ n, x ∈ A n → q n ≤ M} =
       ⋃ M : ℚ, ⋂ n, ((A n)ᶜ ∪ {_x | q n ≤ M}) := by
-    ext x; simp only [mem_setOf_eq, mem_iUnion, mem_iInter, mem_union, mem_compl_iff]
+    ext x; simp only [mem_ofPred_eq, mem_iUnion, mem_iInter, mem_union, mem_compl_iff]
     simp only [imp_iff_not_or]
   rw [this]
   exact MeasurableSet.iUnion fun M => MeasurableSet.iInter fun n =>
@@ -952,7 +960,7 @@ theorem complete_Rdot : ⊤ ≤ Sem.complete (Rdot : bSet (randomAlgebra ι)) lt
     rw [MeasureAlgebra.mk_inf]
     apply mk_mono
     rintro w ⟨hw1, hw2⟩
-    simp only [mem_setOf_eq] at hw1 hw2 ⊢
+    simp only [mem_ofPred_eq] at hw1 hw2 ⊢
     exact lt_of_lt_of_le hw2 hw1
   -- every element of `S` is a real: `s ∈ S → ∃ f, s = realName f ∧ realName f ∈ S`
   have memS : ∀ (s : bSet (randomAlgebra ι)) (Γ : randomAlgebra ι) (b : randomAlgebra ι),
@@ -997,7 +1005,7 @@ theorem complete_Rdot : ⊤ ≤ Sem.complete (Rdot : bSet (randomAlgebra ι)) lt
         refine mk_eq_top_of_forall _ fun w => ?_
         obtain ⟨r, hr⟩ := exists_rat_lt (f.1 w)
         refine mem_iUnion.mpr ⟨ratEnum.symm r, ?_⟩
-        simp only [mem_setOf_eq, q, Equiv.apply_symm_apply]; exact hr
+        simp only [mem_ofPred_eq, q, Equiv.apply_symm_apply]; exact hr
       calc Γ' = Γ' ⊓ ⨆ n, MeasureAlgebra.mk (RandomAlgebra.μ_random ι) {w | q n < f.1 w}
             (measurableSet_lt measurable_const f.2) := by rw [htop, inf_top_eq]
         _ ≤ _ := bv_cases_right fun n => le_iSup_of_le n (K1 f Γ' hfS n)
@@ -1008,7 +1016,7 @@ theorem complete_Rdot : ⊤ ≤ Sem.complete (Rdot : bSet (randomAlgebra ι)) lt
         fun k Γ' _ _ hub => ?_
       have h5 := le_mk_iInter_of_forall (K2 k Γ' hub)
       refine mk_le_of_forall h5 fun x hx => ?_
-      simp only [mem_iInter, mem_union, mem_compl_iff, mem_setOf_eq] at hx ⊢
+      simp only [mem_iInter, mem_union, mem_compl_iff, mem_ofPred_eq] at hx ⊢
       obtain ⟨M, hM⟩ := exists_rat_gt (k.1 x)
       refine ⟨M, fun n hn => ?_⟩
       rcases hx n with h | h
@@ -1030,7 +1038,7 @@ theorem complete_Rdot : ⊤ ≤ Sem.complete (Rdot : bSet (randomAlgebra ι)) lt
     rw [le_ltDot_realName]
     have h4 := le_mk_iInter_of_forall (K1 f Γ'' hfS)
     refine mk_le_of_forall₂ ((h''.trans h').trans hgood) h4 fun x hx1 hx2 => ?_
-    simp only [mem_iInter, mem_union, mem_compl_iff, mem_setOf_eq] at hx2 ⊢
+    simp only [mem_iInter, mem_union, mem_compl_iff, mem_ofPred_eq] at hx2 ⊢
     refine le_cutReal hx1.1 (goodEvent_bdd hx1) fun n hn => ?_
     rcases hx2 n with h | h
     · exact absurd hn h
@@ -1044,7 +1052,7 @@ theorem complete_Rdot : ⊤ ≤ Sem.complete (Rdot : bSet (randomAlgebra ι)) lt
     rw [le_ltDot_realName]
     have h5 := le_mk_iInter_of_forall (K2 k Γ₆ hub')
     refine mk_le_of_forall₂ ((h₆.trans (h''.trans h')).trans hgood) h5 fun x hx1 hx2 => ?_
-    simp only [mem_iInter, mem_union, mem_compl_iff, mem_setOf_eq] at hx2 ⊢
+    simp only [mem_iInter, mem_union, mem_compl_iff, mem_ofPred_eq] at hx2 ⊢
     refine cutReal_le hx1.1 fun n hn => ?_
     rcases hx2 n with h | h
     · exact absurd hn h

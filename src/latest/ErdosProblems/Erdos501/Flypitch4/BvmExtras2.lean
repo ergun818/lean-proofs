@@ -335,7 +335,8 @@ lemma Ord.lt_of_ne_and_le {x y : bSet 𝔹} {Γ : 𝔹} (H₁ : Γ ≤ Ord x) (H
     apply B_ext_inf B_ext_mem_left
     apply B_ext_iInf; intro z'
     simp only [← imp_bot]
-    exact B_ext_imp (h₁ := B_ext_const) (h₂ := B_ext_imp (h₁ := B_ext_mem_right) (h₂ := B_ext_const))
+    exact B_ext_imp (h₁ := B_ext_const) (h₂ := B_ext_imp (h₁ := B_ext_mem_right) (h₂ :=
+        B_ext_const))
   obtain ⟨u, Hu⟩ := exists_convert H_reg H_Bext
   -- Hu : Γ ≤ u ∈ compl y x ⊓ ⨅ z', z' ∈ compl y x ⟹ (z' ∈ u)ᶜ
   have Hu_mem : Γ ≤ u ∈ᴮ compl y x := Hu.trans inf_le_left
@@ -775,7 +776,8 @@ lemma strong_eps_hom_iff {x y f : bSet 𝔹} {Γ : 𝔹} :
     apply le_iInf; intro w₁; rw [← deduction]
     apply le_iInf; intro w₂; rw [← deduction, ← deduction, ← deduction]
     -- ctx6 = Γ ⊓ z₁∈x ⊓ z₂∈x ⊓ w₁∈y ⊓ w₂∈y ⊓ pair z₁ w₁ ∈ f ⊓ pair z₂ w₂ ∈ f ≤ z₁∈z₂ ⇔ w₁∈w₂
-    -- Note: the context is left-associated: ((((((Γ ⊓ z₁∈x) ⊓ z₂∈x) ⊓ w₁∈y) ⊓ w₂∈y) ⊓ pr₁∈f) ⊓ pr₂∈f)
+    -- Note: the context is left-associated: ((((((Γ ⊓ z₁∈x) ⊓ z₂∈x) ⊓ w₁∈y) ⊓ w₂∈y) ⊓ pr₁∈f) ⊓
+    -- pr₂∈f)
     rw [bv_biimp_iff]
     intro Γ'' H_Γ''
     apply H
@@ -799,9 +801,9 @@ lemma strong_eps_hom_iff {x y f : bSet 𝔹} {Γ : 𝔹} :
 
 -- src/bvm_extras2.lean:365
 lemma strong_eps_hom_unfold {x y f : bSet 𝔹} {Γ : 𝔹} (H : Γ ≤ strong_eps_hom x y f) :
-    ∀ z₁ (Hz₁_mem : Γ ≤ z₁ ∈ᴮ x) (z₂) (Hz₂_mem : Γ ≤ z₂ ∈ᴮ x)
-      (w₁) (Hw₁_mem : Γ ≤ w₁ ∈ᴮ y) (w₂) (Hw₂_mem : Γ ≤ w₂ ∈ᴮ y)
-      (Hpr₁_mem : Γ ≤ pair z₁ w₁ ∈ᴮ f) (Hpr₂_mem : Γ ≤ pair z₂ w₂ ∈ᴮ f),
+    ∀ z₁ (_Hz₁_mem : Γ ≤ z₁ ∈ᴮ x) (z₂) (_Hz₂_mem : Γ ≤ z₂ ∈ᴮ x)
+      (w₁) (_Hw₁_mem : Γ ≤ w₁ ∈ᴮ y) (w₂) (_Hw₂_mem : Γ ≤ w₂ ∈ᴮ y)
+      (_Hpr₁_mem : Γ ≤ pair z₁ w₁ ∈ᴮ f) (_Hpr₂_mem : Γ ≤ pair z₂ w₂ ∈ᴮ f),
       Γ ≤ z₁ ∈ᴮ z₂ ↔ Γ ≤ w₁ ∈ᴮ w₂ :=
     fun z₁ Hz₁ z₂ Hz₂ w₁ Hw₁ w₂ Hw₂ Hpr₁ Hpr₂ => by
   -- strong_eps_hom x y f = ⨅ z₁, z₁∈x ⟹ ⨅ z₂, z₂∈x ⟹ ⨅ w₁, w₁∈y ⟹ ⨅ w₂, w₂∈y ⟹
@@ -1219,7 +1221,8 @@ lemma Ord_succ {η : bSet 𝔹} {Γ : 𝔹} (H_Ord : Γ ≤ Ord η) : Γ ≤ Ord
     -- ctx = Γ ⊓ y ∈ succ η ⊓ z ∈ succ η
     have hy_mem : Γ ⊓ y ∈ᴮ succ η ⊓ z ∈ᴮ succ η ≤ y ∈ᴮ succ η := inf_le_left.trans inf_le_right
     have hz_mem : Γ ⊓ y ∈ᴮ succ η ⊓ z ∈ᴮ succ η ≤ z ∈ᴮ succ η := inf_le_right
-    have htri_y := le_trans (le_inf (inf_le_left.trans (inf_le_left.trans (htri.trans (iInf_le _ y)))) hy_mem) bv_imp_elim
+    have htri_y := le_trans (le_inf (inf_le_left.trans (inf_le_left.trans (htri.trans (iInf_le _
+        y)))) hy_mem) bv_imp_elim
     exact le_trans (le_inf (htri_y.trans (iInf_le _ z)) hz_mem) bv_imp_elim
   · -- epsilon_well_founded: directly from regularity
     rw [epsilon_well_founded]

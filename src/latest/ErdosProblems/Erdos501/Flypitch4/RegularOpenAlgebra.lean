@@ -45,7 +45,7 @@ lemma dense'_iff_mathlib {S : Set α} : Dense' S ↔ Dense S :=
 lemma closure_univ_of_dense {S : Set α} (H_dense : Dense' S) : closure S = Set.univ :=
   (dense'_iff_mathlib.mp H_dense).closure_eq
 
-lemma closure_rel_dense_of_open {S₀ S : Set α} (H_open : IsOpen S₀)
+lemma closure_rel_dense_of_open {S₀ S : Set α} (_H_open : IsOpen S₀)
     (H_rel_dense : RelDense S₀ S) : closure S ∩ S₀ = S₀ := by
   ext x; constructor
   · exact fun ⟨_, H₂⟩ => H₂
@@ -400,7 +400,7 @@ private lemma le_sup_inf' (x y z : RegularOpens α) :
 private lemma sSup_ub' (s : Set (RegularOpens α)) (a : RegularOpens α) (ha : a ∈ s) :
     a.val ⊆ (⋃₀ Set.image (·.val) s)ᵖᵖ :=
   (subset_p_p_of_open (isOpen_of_isRegularOpen a.property)).trans
-    (p_p_mono (fun x hx => ⟨a.val, ⟨a, ha, rfl⟩, hx⟩))
+    (p_p_mono (fun _x hx => ⟨a.val, ⟨a, ha, rfl⟩, hx⟩))
 
 -- Auxiliary: sSup is least upper bound
 private lemma sSup_lub' (s : Set (RegularOpens α)) (a : RegularOpens α)
@@ -438,6 +438,7 @@ Build everything in one `where` block to avoid coherence issues.
 -/
 
 set_option maxHeartbeats 800000 in
+-- Constructing the complete Boolean algebra fields expands regular-open operations.
 /-- Regular opens form a complete Boolean algebra.
 Port of: `regular_open_algebra` (src/regular_open_algebra.lean:507-647). -/
 noncomputable instance instCompleteBooleanAlgebra : CompleteBooleanAlgebra (RegularOpens α) where
@@ -465,11 +466,11 @@ noncomputable instance instCompleteBooleanAlgebra : CompleteBooleanAlgebra (Regu
   -- Boolean algebra axioms
   inf_compl_le_bot a := by
     -- a ⊓ aᶜ ≤ ⊥ means a.val ∩ (Flypitch.perp a.val) ⊆ ∅
-    show a.val ∩ Flypitch.perp a.val ⊆ ∅
+    change a.val ∩ Flypitch.perp a.val ⊆ ∅
     exact val_inter_perp_empty' a ▸ le_refl _
   top_le_sup_compl a := by
     -- ⊤ ≤ a ⊔ aᶜ means Set.univ ⊆ (a.val ∪ (Flypitch.perp a.val))ᵖᵖ
-    show Set.univ ⊆ (a.val ∪ Flypitch.perp a.val)ᵖᵖ
+    change Set.univ ⊆ (a.val ∪ Flypitch.perp a.val)ᵖᵖ
     exact union_perp_pp_eq_univ' a ▸ le_refl _
   le_top _ := Set.subset_univ _
   bot_le _ := Set.empty_subset _
@@ -545,7 +546,7 @@ lemma sSup_eq_top_of_dense_Union {ι : Type u} {rO : ι → RegularOpens α}
     (H_dense : Dense' (⋃₀ (Set.image (·.val) (Set.range rO)))) :
     (⨆ i, rO i : RegularOpens α) = ⊤ := by
   apply ext; rw [top_val]
-  show (sSup (Set.range rO)).val = Set.univ
+  change (sSup (Set.range rO)).val = Set.univ
   rw [sSup_val, p_p_eq_univ_of_dense H_dense]
 
 /-- If the union is rel-dense in S, then (⨆ rO) ⊓ S = S. Port of src:664. -/
@@ -554,7 +555,7 @@ lemma sSup_eq_top_of_dense_Union_rel {ι : Type u} {rO : ι → RegularOpens α}
     (H_dense : RelDense S.val (⋃₀ (Set.image (·.val) (Set.range rO)))) :
     (⨆ i, rO i : RegularOpens α) ⊓ S = S := by
   apply ext; rw [inf_val]
-  show ((sSup (Set.range rO)).val ∩ S.val) = S.val
+  change ((sSup (Set.range rO)).val ∩ S.val) = S.val
   rw [sSup_val, Set.inter_comm]
   exact p_p_eq_univ_of_rel_dense_of_open (isOpen_of_isRegularOpen S.property) H_dense
 
@@ -591,7 +592,8 @@ lemma CCC_regular_opens (h : countable_chain_condition α) : CCC (RegularOpens �
     exact absurd (hbot this) (by simp [bot_val])
   -- Step 5: Apply CCC for α and convert cardinal bound
   have hcnt := h _ hopen hpwd
-  calc Cardinal.mk ι = Cardinal.mk (Set.range (Subtype.val ∘ O)) := (Cardinal.mk_range_eq _ hValInj).symm
+  calc Cardinal.mk ι = Cardinal.mk (Set.range (Subtype.val ∘ O)) := (Cardinal.mk_range_eq _
+      hValInj).symm
     _ ≤ Cardinal.aleph0 := hcnt.le_aleph0
 
 /-! ### bot_lt and fst lemmas -/
@@ -615,11 +617,11 @@ lemma bot_lt_iff [Nonempty α] {o : RegularOpens α} : ⊥ < o ↔ ∃ x, x ∈ 
 /-- ↑(⨆ i, f i) = (⋃ i, (f i).val)ᵖᵖ. Port of src:699. -/
 lemma fst_iSup {ι : Type*} {f : ι → RegularOpens α} :
     (⨆ i, f i : RegularOpens α).val = (⋃ i, (f i).val)ᵖᵖ := by
-  show (sSup (Set.range f)).val = _
+  change (sSup (Set.range f)).val = _
   rw [fst_sSup]
   congr 1
   ext x
-  simp [Set.mem_iUnion, Set.mem_sUnion, Set.mem_image, Set.mem_range]
+  simp [Set.mem_range]
 
 /-- ↑(sInf f) = (⋂₀ (val '' f))ᵖᵖ. Port of src:702. -/
 @[simp] lemma fst_sInf {f : Set (RegularOpens α)} :
@@ -628,11 +630,11 @@ lemma fst_iSup {ι : Type*} {f : ι → RegularOpens α} :
 /-- ↑(⨅ i, f i) = (⋂ i, (f i).val)ᵖᵖ. Port of src:713. -/
 lemma fst_iInf {ι : Type*} {f : ι → RegularOpens α} :
     (⨅ i, f i : RegularOpens α).val = (⋂ i, (f i).val)ᵖᵖ := by
-  show (sInf (Set.range f)).val = _
+  change (sInf (Set.range f)).val = _
   rw [fst_sInf]
   congr 1
   ext x
-  simp [Set.mem_iInter, Set.mem_sInter, Set.mem_image, Set.mem_range]
+  simp [Set.mem_range]
 
 end RegularOpens
 

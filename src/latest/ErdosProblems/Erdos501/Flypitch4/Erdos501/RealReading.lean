@@ -130,7 +130,7 @@ lemma decode_code (r : ℝ) : decode (code r) = r := by
   have h1 : ∃ n, code r ∈ {c : ℕ → Bool | c n = true} := by
     obtain ⟨s, hs⟩ := exists_rat_lt r
     refine ⟨ratEnum.symm s, ?_⟩
-    simp only [mem_setOf_eq, code_apply_eq_true_iff, Equiv.apply_symm_apply]; exact hs
+    simp only [mem_ofPred_eq, code_apply_eq_true_iff, Equiv.apply_symm_apply]; exact hs
   have h2 : ∃ M : ℝ, ∀ n, code r ∈ {c : ℕ → Bool | c n = true} → q n ≤ M :=
     ⟨r, fun n hn => ((code_apply_eq_true_iff r n).mp hn).le⟩
   apply le_antisymm
@@ -157,7 +157,7 @@ theorem realName_of_mem_Rdot {Γ : randomAlgebra ι} {y : bSet (randomAlgebra ι
   have h3 : Γ' ≤ mkReal G hG =ᴮ realName (decode ∘ G) (measurable_decode.comp hG) := by
     rw [realName, bv_eq_mkReal]
     refine mk_le_of_forall h2 fun w hw => ?_
-    simp only [mem_setOf_eq, Function.comp] at hw ⊢
+    simp only [mem_ofPred_eq, Function.comp] at hw ⊢
     rw [hw, decode_code]
   exact (le_inf h1 h3).trans bv_eq_trans
 
@@ -271,7 +271,7 @@ theorem B_ext_realize {n : ℕ} (v : DVec (V β) n) (f : bounded_formula L_ZFC (
   cases k with
   | zero => exact le_rfl
   | succ k =>
-    show a =ᴮ a' ≤ (DVec.nth v k _ =ᴮ DVec.nth v k _)
+    change a =ᴮ a' ≤ (DVec.nth v k _ =ᴮ DVec.nth v k _)
     rw [bv_eq_refl]; exact le_top
 
 /-- The body of `Sem.outerMeasureLtOne`, with the three witnesses as arguments. -/
@@ -317,11 +317,13 @@ lemma OuterMeasureLtOneF_eq (R plus lt zero one S : Tm) :
 
 /-- The context `[S, one, zero, lt, plus, R]` (innermost first). -/
 def omCtx (R plus ltR zero one S : bSet β) : DVec (V β) 6 :=
-  DVec.cons S (DVec.cons one (DVec.cons zero (DVec.cons ltR (DVec.cons plus (DVec.cons R DVec.nil)))))
+  DVec.cons S (DVec.cons one (DVec.cons zero (DVec.cons ltR (DVec.cons plus (DVec.cons R
+      DVec.nil)))))
 
 lemma realize_omBody₁ (R plus ltR zero one S a : bSet β) :
     boolean_realize_bounded_formula (DVec.cons a (omCtx R plus ltR zero one S))
-      ((exF fun b => exF fun s => omBodyF (varT 0) (varT 1) (varT 2) (varT 3) (varT 4) (varT 5) 6 b s) 7)
+      ((exF fun b => exF fun s => omBodyF (varT 0) (varT 1) (varT 2) (varT 3) (varT 4) (varT 5) 6 b
+          s) 7)
       DVec.nil =
     ⨆ b : bSet β, ⨆ s : bSet β, Sem.omBody R plus ltR zero one S a b s := by
   simp only [omCtx, omBodyF, exF, allF, allIn, exIn, andF, orF, impF, iffF, memF, eqF, varT,
@@ -414,7 +416,8 @@ lemma measurableSet_openSet (a b : ℕ → MeasReal ι) {g : RandomAlgebra.Ω ι
       ⋃ n, {x | (a n).1 x < g x} ∩ {x | g x < (b n).1 x} := by
     ext x; simp
   rw [this]
-  exact MeasurableSet.iUnion fun n => (measurableSet_lt (a n).2 hg).inter (measurableSet_lt hg (b n).2)
+  exact MeasurableSet.iUnion fun n => (measurableSet_lt (a n).2 hg).inter (measurableSet_lt hg (b
+      n).2)
 
 /-- The name of the open set `⋃ₙ (aₙ(ĝ), bₙ(ĝ))` of the extension, for sequences of readings
 `a b : ℕ → MeasReal ι`: its elements are the canonical names of all reals, `realName g` belonging
@@ -445,7 +448,7 @@ theorem mem_openName_realName {g : RandomAlgebra.Ω ι → ℝ} (hg : Measurable
     rw [bv_eq_realName, MeasureAlgebra.mk_inf]
     apply mk_mono
     rintro x ⟨⟨n, h1, h2⟩, h3⟩
-    simp only [mem_setOf_eq] at h3
+    simp only [mem_ofPred_eq] at h3
     exact ⟨n, h3 ▸ h1, h3 ▸ h2⟩
   · refine le_iSup_of_le ⟨g, hg⟩ ?_
     simp only [bv_eq_refl, inf_top_eq, le_refl]
@@ -459,15 +462,15 @@ theorem openName_subset_Rdot {Γ : randomAlgebra ι} : Γ ≤ openName a b ⊆�
 /-! ### Small facts about `of_nat` and `Sem.succ`, and congruence of `Sem.lt` -/
 
 lemma of_nat_zero_eq : (of_nat 0 : bSet (randomAlgebra ι)) = bSet.empty := by
-  show check (PSet.ofNat 0) = bSet.empty
+  change check (PSet.ofNat 0) = bSet.empty
   rw [show PSet.ofNat 0 = ∅ from rfl]
   exact check_empty_eq_empty
 
 lemma mem_of_nat_succ (z : bSet (randomAlgebra ι)) (n : ℕ) :
     (z ∈ᴮ of_nat (n + 1)) = (z ∈ᴮ of_nat n ⊔ z =ᴮ of_nat n) := by
-  show z ∈ᴮ check (PSet.insert (PSet.ofNat n) (PSet.ofNat n)) = _
+  change z ∈ᴮ check (PSet.insert (PSet.ofNat n) (PSet.ofNat n)) = _
   rw [check_insert]
-  show z ∈ᴮ insert (check (PSet.ofNat n)) (check (PSet.ofNat n)) = _
+  change z ∈ᴮ insert (check (PSet.ofNat n)) (check (PSet.ofNat n)) = _
   rw [mem_insert1, sup_comm]
 
 /-- `of_nat (n+1)` is the successor of `of_nat n` in the sense of `Sem.succ`. -/
@@ -592,7 +595,7 @@ lemma coverEvent_congr {a' b' : ℕ → Y → ℝ} {y : Y} (ha : ∀ n, a n y = 
   have h1 : ∀ N, partialSum a b N y = partialSum a' b' N y := fun N => by
     simp only [partialSum, ha, hb]
   have h2 : sumBound a b y = sumBound a' b' y := by simp only [sumBound, h1]
-  simp only [coverEvent, mem_setOf_eq, ha, hb, h1, h2]
+  simp only [coverEvent, mem_ofPred_eq, ha, hb, h1, h2]
 
 end cover
 
@@ -667,11 +670,13 @@ theorem outerMeasureLtOne_reading {S : bSet (randomAlgebra ι)} (hS : Γ ≤ S �
           (realName (a n).1 (a n).2)
           (realName (fun x => (s (n + 1)).1 x + (a n).1 x) ((s (n + 1)).2.add (a n).2)) :=
         le_app2_opDot measurable_add (le_top.trans (le_of_eq (bv_eq_refl _).symm))
-          (le_top.trans (le_of_eq (bv_eq_refl _).symm)) (le_top.trans (le_of_eq (bv_eq_refl _).symm))
+          (le_top.trans (le_of_eq (bv_eq_refl _).symm)) (le_top.trans (le_of_eq (bv_eq_refl
+              _).symm))
       have hp2 : Γ ≤ Sem.app2 plusDot (realName (s n).1 (s n).2) (realName (b n).1 (b n).2)
           (realName (fun x => (s n).1 x + (b n).1 x) ((s n).2.add (b n).2)) :=
         le_app2_opDot measurable_add (le_top.trans (le_of_eq (bv_eq_refl _).symm))
-          (le_top.trans (le_of_eq (bv_eq_refl _).symm)) (le_top.trans (le_of_eq (bv_eq_refl _).symm))
+          (le_top.trans (le_of_eq (bv_eq_refl _).symm)) (le_top.trans (le_of_eq (bv_eq_refl
+              _).symm))
       have h4 := bv_mp (bv_mp (bv_mp (bv_mp (bv_mp (bv_mp h3 (ha n)) (hb n)) (hs n))
         (hs (n + 1))) hp1) hp2
       rw [bv_eq_realName] at h4
@@ -683,7 +688,7 @@ theorem outerMeasureLtOne_reading {S : bSet (randomAlgebra ι)} (hS : Γ ≤ S �
       have h1 := le_inf hs0' (le_mk_iInter hrec)
       rw [MeasureAlgebra.mk_inf] at h1
       refine mk_le_of_forall h1 fun x hx => ?_
-      simp only [mem_inter_iff, mem_iInter, mem_setOf_eq] at hx ⊢
+      simp only [mem_inter_iff, mem_iInter, mem_ofPred_eq] at hx ⊢
       obtain ⟨h0, hr⟩ := hx
       intro N
       induction N with
@@ -726,20 +731,20 @@ theorem outerMeasureLtOne_reading {S : bSet (randomAlgebra ι)} (hS : Γ ≤ S �
       have h := le_inf (h'.trans hsum) (le_inf hk1 (le_mk_iInter hkn))
       simp only [MeasureAlgebra.mk_inf] at h
       refine mk_le_of_forall h fun x hx => ?_
-      simp only [mem_inter_iff, mem_iInter, mem_setOf_eq] at hx ⊢
+      simp only [mem_inter_iff, mem_iInter, mem_ofPred_eq] at hx ⊢
       obtain ⟨hsumx, hk1x, hknx⟩ := hx
       have hb : BddAbove (range fun N => partialSum (seqFun a) (seqFun b) N x) := by
         refine ⟨k x, ?_⟩
         rintro _ ⟨N, rfl⟩
-        show partialSum (seqFun a) (seqFun b) N x ≤ k x
+        change partialSum (seqFun a) (seqFun b) N x ≤ k x
         rw [← hsumx N]; exact hknx N
       refine ⟨hb, lt_of_le_of_lt (ciSup_le fun N => ?_) hk1x⟩
-      show partialSum (seqFun a) (seqFun b) N x ≤ k x
+      change partialSum (seqFun a) (seqFun b) N x ≤ k x
       rw [← hsumx N]; exact hknx N
     have h := le_inf (le_mk_iInter hlt) hbdd
     rw [MeasureAlgebra.mk_inf] at h
     refine mk_le_of_forall h fun x hx => ?_
-    simp only [mem_inter_iff, mem_iInter, mem_setOf_eq] at hx
+    simp only [mem_inter_iff, mem_iInter, mem_ofPred_eq] at hx
     obtain ⟨hltx, hbx, hsx⟩ := hx
     exact ⟨hltx, hsx, fun N => le_ciSup hbx N⟩
   · -- `S ⊆ openName a b`

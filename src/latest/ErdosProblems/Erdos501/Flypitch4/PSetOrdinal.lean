@@ -192,7 +192,7 @@ lemma option_succ_type_forall {x : PSet} {P : Option (succ_ord x).Type → Prop}
   cases x; rfl
 
 -- The type of ordinalMk for a limit ordinal is η.ToType
-@[simp] lemma ordinalMk_limit_type {η : Ordinal} (H_limit : Order.IsSuccLimit η) :
+@[simp] lemma ordinalMk_limit_type {η : Ordinal} (_H_limit : Order.IsSuccLimit η) :
     (ordinalMk η).Type = η.ToType :=
   ordinalMk_type
 
@@ -245,7 +245,7 @@ lemma subset_of_all_mem {x y : PSet} (H : ∀ z, z ∈ y → z ∈ x) : y ⊆ x 
   PSet.subset_iff.mpr (fun _ hz => H _ hz)
 
 lemma all_mem_of_subset {x y : PSet} (H : y ⊆ x) : ∀ z, z ∈ y → z ∈ x :=
-  fun z hz => PSet.mem_of_subset H hz
+  fun _z hz => PSet.mem_of_subset H hz
 
 lemma subset_iff_all_mem {x y : PSet} : y ⊆ x ↔ ∀ z, z ∈ y → z ∈ x :=
   PSet.subset_iff
@@ -265,7 +265,7 @@ lemma empty_empty : (∅ : ZFSet) = ZFSet.mk (∅ : PSet) := rfl
 
 lemma exists_mem_of_nonempty {x : PSet.{u}} (H : ¬ Equiv x (∅ : PSet.{u})) : ∃ y, y ∈ x := by
   by_contra h
-  push_neg at h
+  push Not at h
   exact H (PSet.Mem.ext (fun w => ⟨fun hw => absurd hw (h w),
     fun hw => absurd hw (PSet.notMem_empty w)⟩))
 
@@ -284,7 +284,7 @@ lemma is_epsilon_well_founded (x : PSet.{u}) :
   intro u _Hu Hu_ne_empty
   classical
   by_contra h
-  push_neg at h
+  push Not at h
   -- h : ∀ y ∈ u, ∃ z ∈ u, z ∈ y
   have Hu_ne : ZFSet.mk u ≠ ∅ := not_empty_of_not_equiv_empty Hu_ne_empty
   obtain ⟨y, Hy₁, Hy₂⟩ := ZFSet.regularity (ZFSet.mk u) Hu_ne
@@ -364,7 +364,7 @@ lemma transitive_Union (x : PSet) (H : ∀ y ∈ x, is_transitive y) : is_transi
 
 lemma equiv_mk_of_mem_mk {η : Ordinal} :
     ∀ x, x ∈ ordinalMk η → ∃ ρ < η, Equiv x (ordinalMk ρ) :=
-  fun x hx => mem_ordinalMk_iff.mp hx
+  fun _x hx => mem_ordinalMk_iff.mp hx
 
 lemma Ord_limit : ∀ (o : Ordinal), Order.IsSuccLimit o →
     (∀ (o' : Ordinal), o' < o → Ord (ordinalMk o')) → Ord (ordinalMk o) := by
@@ -424,7 +424,7 @@ lemma ordinalMk_succ_equiv {η : Ordinal} :
     -- ordinalMk_succ_equiv : Equiv (ordinalMk (succ η)) (succ_ord (ordinalMk η))
     -- Ord_succ_ord _ ih : Ord (succ_ord (ordinalMk η))
     -- Apply Ord_equiv in reverse: Equiv y x → Ord y → Ord x
-    rw [Ordinal.add_one_eq_succ]
+    rw [← Order.succ_eq_add_one]
     exact Ord_equiv ordinalMk_succ_equiv.symm (Ord_succ_ord _ ih)
   | limit η H_limit ih => exact Ord_limit η H_limit ih
 
@@ -479,7 +479,7 @@ lemma mk_mem_succ {η : Ordinal.{u}} : ordinalMk η ∈ ordinalMk (Order.succ η
   mk_mem_mk_of_lt (Order.lt_succ η)
 
 lemma subset_Union {x y : PSet.{u}} (H : y ∈ x) : y ⊆ ⋃₀ x :=
-  subset_of_all_mem fun z Hz => PSet.mem_sUnion.mpr ⟨y, H, Hz⟩
+  subset_of_all_mem fun _z Hz => PSet.mem_sUnion.mpr ⟨y, H, Hz⟩
 
 -- card_ex: cardinal → PSet via ordinal
 def card_ex : Cardinal.{u} → PSet.{u} := fun κ => ordinalMk (Cardinal.ord κ)
@@ -577,7 +577,7 @@ lemma eq_iff_mk_eq {η₁ η₂ : Ordinal} :
 open Cardinal in
 /-- The cardinality of `(ordinalMk (κ.ord)).Type` equals `κ`, for infinite `κ`.
     Port of `mk_type_mk_eq` (src/pSet_ordinal.lean:620). -/
-lemma mk_type_mk_eq (κ : Cardinal) (H_inf : ℵ₀ ≤ κ) :
+lemma mk_type_mk_eq (κ : Cardinal) (_H_inf : ℵ₀ ≤ κ) :
     Cardinal.mk (ordinalMk (Cardinal.ord κ)).Type = κ := by
   simp only [ordinalMk_type]
   exact Cardinal.mk_ord_toType κ
@@ -611,7 +611,7 @@ open Cardinal in
 /-- The cardinality of `(ordinalMk η).Type` is `η.card`.
     Port of `ordinal.mk_card` (src/pSet_ordinal.lean:645). -/
 lemma ordinalMk_card {η : Ordinal} : Cardinal.mk (ordinalMk η).Type = η.card := by
-  simp [ordinalMk_type, Cardinal.mk_toType]
+  simp [Cardinal.mk_toType]
 
 open Cardinal in
 lemma zero_aleph : ℵ₀ = Cardinal.aleph 0 := by simp
@@ -626,7 +626,7 @@ open Cardinal in
     Cardinal.mk (PSet.omega).Type = ℵ₀ := by
   simp only [PSet.omega]
   rw [show (⟨ULift ℕ, fun n => PSet.ofNat n.down⟩ : PSet).Type = ULift ℕ from rfl]
-  simp [Cardinal.mk_uLift, Cardinal.mk_nat]
+  simp
 
 /-! ### Ordinal arithmetic helpers (src lines 668-697) -/
 
@@ -715,7 +715,7 @@ lemma false_of_subset_ofNat_ge {k₁ k₂ : ℕ} (H : k₁ < k₂) :
 
 lemma le_of_subset_ofNat {k₁ k₂ : ℕ} (H : PSet.ofNat k₁ ⊆ PSet.ofNat k₂) : k₁ ≤ k₂ := by
   by_contra h
-  push_neg at h
+  push Not at h
   exact false_of_subset_ofNat_ge h H
 
 lemma ofNat_of_mem_ofNat {y : PSet.{u}} {k : ℕ}
@@ -766,7 +766,7 @@ lemma ofNat_mem_of_lt {k₁ k₂ : ℕ} (H_lt : k₁ < k₂) :
 
 lemma lt_of_ofNat_mem {k₁ k₂ : ℕ} (H_mem : PSet.ofNat k₁ ∈ PSet.ofNat k₂) : k₁ < k₂ := by
   by_contra h
-  push_neg at h
+  push Not at h
   have h_sub := subset_of_le h
   have h_mem := all_mem_of_subset h_sub _ H_mem
   exact PSet.mem_irrefl _ h_mem
@@ -877,7 +877,7 @@ lemma pSet_prod_sound {x y : PSet.{u}} :
       pSet_pair_sound.symm
     rw [h_pair, ZFSet.mk_mem_iff, PSet.mem_def]
     refine ⟨⟨i, j⟩, ?_⟩
-    show PSet.Equiv (pSet_pair a.out b.out) (pSet_pair (x.Func i) (y.Func j))
+    change PSet.Equiv (pSet_pair a.out b.out) (pSet_pair (x.Func i) (y.Func j))
     apply ZFSet.exact
     show ZFSet.mk (pSet_pair a.out b.out) = ZFSet.mk (pSet_pair (x.Func i) (y.Func j))
     rw [pSet_pair_sound, pSet_pair_sound, ZFSet.pair_inj]
@@ -1023,7 +1023,7 @@ namespace function_mk
 /-- Build a pSet function graph from a family `ψ : x.Type → PSet`.
     Port of `pSet.function.mk` (src/pSet_ordinal.lean:1080). -/
 def mk {x : PSet.{u}} (ψ : x.Type → PSet.{u})
-    (H_ext : ∀ i j, Equiv (x.Func i) (x.Func j) → Equiv (ψ i) (ψ j)) : PSet.{u} :=
+    (_H_ext : ∀ i j, Equiv (x.Func i) (x.Func j) → Equiv (ψ i) (ψ j)) : PSet.{u} :=
   ⟨x.Type, fun i => pSet_pair (x.Func i) (ψ i)⟩
 
 lemma mk_mem {x : PSet.{u}} {ψ : x.Type → PSet.{u}}
@@ -1043,13 +1043,13 @@ lemma mk_is_func {x y : PSet.{u}} (ψ : x.Type → PSet.{u})
     obtain ⟨j, hj⟩ := mem_unfold.mp (H_im i)
     refine ⟨⟨i, j⟩, ?_⟩
     apply PSet.Equiv.trans hi
-    show PSet.Equiv (pSet_pair (x.Func i) (ψ i)) (pSet_pair (x.Func i) (y.Func j))
+    change PSet.Equiv (pSet_pair (x.Func i) (ψ i)) (pSet_pair (x.Func i) (y.Func j))
     exact equiv_iff_eq_pSet_pair.mp ⟨PSet.Equiv.refl _, hj⟩
   · intro z hz
     obtain ⟨i, hi⟩ := mem_unfold.mp hz
     refine ⟨ψ i, ?_, ?_⟩
     · rw [mem_unfold]; refine ⟨i, ?_⟩
-      show PSet.Equiv (pSet_pair z (ψ i)) (pSet_pair (x.Func i) (ψ i))
+      change PSet.Equiv (pSet_pair z (ψ i)) (pSet_pair (x.Func i) (ψ i))
       exact equiv_iff_eq_pSet_pair.mp ⟨hi, PSet.Equiv.refl _⟩
     · intro v hv
       rw [mem_unfold] at hv
@@ -1085,8 +1085,7 @@ def P_ext : (PSet → Prop) → Prop := fun χ => ∀ x y, Equiv x y → χ x �
   fun _ _ H_eq H_mem => (PSet.Mem.congr_right H_eq).mp H_mem
 
 @[simp] lemma P_ext_neg {χ : PSet → Prop} (H : P_ext χ) : P_ext (fun z => ¬ χ z) := by
-  intro x y H_eq H'
-  intro Hy
+  intro x y H_eq H' Hy
   exact H' (H y x H_eq.symm Hy)
 
 @[simp] lemma P_ext_injects_into_left {y : PSet.{u}} : P_ext (fun x => injects_into x y) := by
@@ -1148,18 +1147,22 @@ lemma pSet_pair_mem_congr_right {p q r s : PSet.{u}} (H : Equiv q r) :
     pSet_pair p q ∈ s ↔ pSet_pair p r ∈ s := by
   rw [mem_iff, mem_iff, pSet_pair_sound, pSet_pair_sound]
   constructor
-  · intro h; rwa [show ZFSet.pair (ZFSet.mk p) (ZFSet.mk q) = ZFSet.pair (ZFSet.mk p) (ZFSet.mk r) from
+  · intro h; rwa [show ZFSet.pair (ZFSet.mk p) (ZFSet.mk q) = ZFSet.pair (ZFSet.mk p) (ZFSet.mk r)
+      from
       by rw [ZFSet.pair_inj]; exact ⟨rfl, ZFSet.sound H⟩] at h
-  · intro h; rwa [show ZFSet.pair (ZFSet.mk p) (ZFSet.mk r) = ZFSet.pair (ZFSet.mk p) (ZFSet.mk q) from
+  · intro h; rwa [show ZFSet.pair (ZFSet.mk p) (ZFSet.mk r) = ZFSet.pair (ZFSet.mk p) (ZFSet.mk q)
+      from
       by rw [ZFSet.pair_inj]; exact ⟨rfl, ZFSet.sound H.symm⟩] at h
 
 lemma pSet_pair_mem_congr_left {p q r s : PSet.{u}} (H : Equiv q r) :
     pSet_pair q p ∈ s ↔ pSet_pair r p ∈ s := by
   rw [mem_iff, mem_iff, pSet_pair_sound, pSet_pair_sound]
   constructor
-  · intro h; rwa [show ZFSet.pair (ZFSet.mk q) (ZFSet.mk p) = ZFSet.pair (ZFSet.mk r) (ZFSet.mk p) from
+  · intro h; rwa [show ZFSet.pair (ZFSet.mk q) (ZFSet.mk p) = ZFSet.pair (ZFSet.mk r) (ZFSet.mk p)
+      from
       by rw [ZFSet.pair_inj]; exact ⟨ZFSet.sound H, rfl⟩] at h
-  · intro h; rwa [show ZFSet.pair (ZFSet.mk r) (ZFSet.mk p) = ZFSet.pair (ZFSet.mk q) (ZFSet.mk p) from
+  · intro h; rwa [show ZFSet.pair (ZFSet.mk r) (ZFSet.mk p) = ZFSet.pair (ZFSet.mk q) (ZFSet.mk p)
+      from
       by rw [ZFSet.pair_inj]; exact ⟨ZFSet.sound H.symm, rfl⟩] at h
 
 @[simp] lemma P_ext_pair_mem_right {b c : PSet} : P_ext (fun w => pSet_pair b w ∈ c) :=
@@ -1197,7 +1200,7 @@ lemma f2ip_F_ext (x : PSet.{u}) :
     ∀ i j, Equiv ((fx2 x).Func i) ((fx2 x).Func j) → Equiv (f2ip_F x i) (f2ip_F x j) := by
   intro χ₁ χ₂ H_eqv
   -- f2ip_F x χ = PSet.sep (preimage0 x χ) x
-  show Equiv (PSet.sep (preimage0 x χ₁) x) (PSet.sep (preimage0 x χ₂) x)
+  change Equiv (PSet.sep (preimage0 x χ₁) x) (PSet.sep (preimage0 x χ₂) x)
   apply (sep_equiv_iff (f2ip_P_ext (χ := χ₁)) (f2ip_P_ext (χ := χ₂))).mpr
   intro z
   constructor
@@ -1235,7 +1238,7 @@ lemma mem_f2ip_iff {x a b : PSet.{u}} :
     rw [mem_unfold] at H₁ ⊢
     obtain ⟨χ, Hχ⟩ := H₁
     refine ⟨χ, ?_⟩
-    show PSet.Equiv (pSet_pair a b) (pSet_pair ((fx2 x).Func χ) (f2ip_F x χ))
+    change PSet.Equiv (pSet_pair a b) (pSet_pair ((fx2 x).Func χ) (f2ip_F x χ))
     apply equiv_iff_eq_pSet_pair.mp
     refine ⟨Hχ, PSet.Equiv.trans H₃ ?_⟩
     apply (sep_equiv_iff P_ext_pair_mem_left f2ip_P_ext).mpr

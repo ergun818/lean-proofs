@@ -14,7 +14,8 @@ set_option relaxedAutoImplicit true
 # Random forcing over the random algebra: the units (F4) and (F5)
 
 This file starts the proof that `𝔠⁺` random reals force `Erdos501_f` (`Main.lean`,
-`erdos501_of_random`) by formalizing the random-forcing facts of the paper *"Erdős Problem 501 after adding ω₂ random reals"* (rev10) in
+`erdos501_of_random`) by formalizing the random-forcing facts of the paper *"Erdős Problem 501 after
+adding ω₂ random reals"* (rev10) in
 the form that matches the measure-algebra Boolean-valued model `V (randomAlgebra ι)` of Flypitch.
 The paper's formalization plan has the units
 
@@ -253,7 +254,7 @@ theorem exists_mkReal_restrict_bv_eq (xdot : bSet (randomAlgebra ι)) (hx : ⊤ 
     · simp only [ext, h, dite_false]; exact measurable_const
   have hcomp : (F ∘ ext) ∘ S.domRestrict = F := by
     funext x
-    show F (ext (S.domRestrict x)) = F x
+    change F (ext (S.domRestrict x)) = F x
     apply hdep
     intro i hi
     simp [ext, hi]
@@ -278,7 +279,8 @@ theorem map_eval : (RandomAlgebra.μ_random ι).map (fun x => x α) = RandomAlge
   exact Measure.infinitePi_map_eval _ α
 
 /-- **(F5)** The coordinates of the generic point are mutually independent. -/
-theorem iIndepFun_eval : iIndepFun (fun (i : ι) (x : RandomAlgebra.Ω ι) => x i) (RandomAlgebra.μ_random ι) := by
+theorem iIndepFun_eval : iIndepFun (fun (i : ι) (x : RandomAlgebra.Ω ι) => x i)
+    (RandomAlgebra.μ_random ι) := by
   unfold RandomAlgebra.μ_random
   exact iIndepFun_infinitePi (X := fun (_ : ι) => (id : (ℕ → Bool) → (ℕ → Bool)))
     (fun _ => measurable_id)
@@ -302,7 +304,8 @@ theorem indepFun_restrict_restrict {T P : Set ι} (hTP : Disjoint T P) :
   have h := iIndepFun_eval (ι := ι)
   rw [iIndepFun_iff_iIndep] at h
   have h2 := indep_iSup_of_disjoint (h_indep := h)
-    (h_le := fun i => (measurable_pi_apply i : Measurable fun x : RandomAlgebra.Ω ι => x i).comap_le)
+    (h_le := fun i => (measurable_pi_apply i : Measurable fun x : RandomAlgebra.Ω ι => x
+        i).comap_le)
     (S := T) (T := P) hTP
   rw [IndepFun_iff_Indep]
   convert h2 using 1
@@ -316,7 +319,8 @@ theorem indepFun_restrict_eval (hα : α ∉ T) :
   have h := iIndepFun_eval (ι := ι)
   rw [iIndepFun_iff_iIndep] at h
   have h2 := indep_iSup_of_disjoint (h_indep := h)
-    (h_le := fun i => (measurable_pi_apply i : Measurable fun x : RandomAlgebra.Ω ι => x i).comap_le)
+    (h_le := fun i => (measurable_pi_apply i : Measurable fun x : RandomAlgebra.Ω ι => x
+        i).comap_le)
     (S := T) (T := {α}) (disjoint_singleton_right.mpr hα)
   rw [IndepFun_iff_Indep]
   convert h2 using 1
@@ -362,7 +366,8 @@ theorem map_comp_injective {π : ℕ → ι} (hπ : Function.Injective π) :
 /-- **(F5)** For a petal `π : ℕ → ι` avoiding `T`, the `T`-restriction and the petal are
 independent. -/
 theorem indepFun_restrict_comp {T : Set ι} {π : ℕ → ι} (hπT : ∀ n, π n ∉ T) :
-    IndepFun (T.domRestrict (π := fun _ => ℕ → Bool)) (fun x : RandomAlgebra.Ω ι => fun n => x (π n))
+    IndepFun (T.domRestrict (π := fun _ => ℕ → Bool)) (fun x : RandomAlgebra.Ω ι => fun n => x (π
+        n))
       (RandomAlgebra.μ_random ι) := by
   have h := indepFun_restrict_restrict (T := T) (P := Set.range π)
     (Set.disjoint_left.mpr fun t ht ⟨n, hn⟩ => hπT n (by rw [hn]; exact ht))
@@ -525,7 +530,8 @@ theorem bot_lt_inf_mk_of_fiber_pos (hα : α ∉ T)
     (hQpos : 0 < Measure.infinitePi (fun _ : T => RandomAlgebra.cantorMeasure) Q)
     (hfib : ∀ᵐ t ∂(Measure.infinitePi (fun _ : T => RandomAlgebra.cantorMeasure)),
       t ∈ Q → ε ≤ RandomAlgebra.cantorMeasure (Prod.mk t ⁻¹' B)) :
-    ⊥ < MeasureAlgebra.mk (RandomAlgebra.μ_random ι) {x | T.domRestrict x ∈ Q} (T.measurable_restrict hQ) ⊓
+    ⊥ < MeasureAlgebra.mk (RandomAlgebra.μ_random ι) {x | T.domRestrict x ∈ Q}
+        (T.measurable_restrict hQ) ⊓
       MeasureAlgebra.mk (RandomAlgebra.μ_random ι) {x | (T.domRestrict x, x α) ∈ B}
         ((T.measurable_restrict.prodMk (measurable_pi_apply α)) hB) := by
   rw [MeasureAlgebra.mk_inf, MeasureAlgebra.bot_lt_iff_meas_pos, MeasureAlgebra.meas_mk]
@@ -541,11 +547,14 @@ theorem bot_lt_inf_mk_of_fiber_pos_comp {π : ℕ → ι} (hπ : Function.Inject
     (hQpos : 0 < Measure.infinitePi (fun _ : T => RandomAlgebra.cantorMeasure) Q)
     (hfib : ∀ᵐ t ∂(Measure.infinitePi (fun _ : T => RandomAlgebra.cantorMeasure)),
       t ∈ Q → ε ≤ Measure.infinitePi (fun _ : ℕ => RandomAlgebra.cantorMeasure) (Prod.mk t ⁻¹' B)) :
-    ⊥ < MeasureAlgebra.mk (RandomAlgebra.μ_random ι) {x | T.domRestrict x ∈ Q} (T.measurable_restrict hQ) ⊓
+    ⊥ < MeasureAlgebra.mk (RandomAlgebra.μ_random ι) {x | T.domRestrict x ∈ Q}
+        (T.measurable_restrict hQ) ⊓
       MeasureAlgebra.mk (RandomAlgebra.μ_random ι) {x | (T.domRestrict x, fun n => x (π n)) ∈ B}
-        ((T.measurable_restrict.prodMk (measurable_pi_lambda _ fun n => measurable_pi_apply (π n))) hB) := by
+        ((T.measurable_restrict.prodMk (measurable_pi_lambda _ fun n => measurable_pi_apply (π n)))
+            hB) := by
   rw [MeasureAlgebra.mk_inf, MeasureAlgebra.bot_lt_iff_meas_pos, MeasureAlgebra.meas_mk]
-  exact measure_pos_of_fiber_pos_of_map T (measurable_pi_lambda _ fun n => measurable_pi_apply (π n))
+  exact measure_pos_of_fiber_pos_of_map T (measurable_pi_lambda _ fun n => measurable_pi_apply (π
+      n))
     (map_restrict_prod_comp hπ hπT) hQ hB hε hQpos hfib
 
 /-- **(F6)** In an uncountable index set there is always a coordinate outside a given countable
@@ -607,7 +616,8 @@ theorem exists_fresh_petal_of_fiber_pos {A : Type} {J : Set A} (hJ : ¬ J.Counta
       ⊥ < MeasureAlgebra.mk (RandomAlgebra.μ_random ι) {x | T.domRestrict x ∈ Q}
           (T.measurable_restrict hQ) ⊓
         MeasureAlgebra.mk (RandomAlgebra.μ_random ι) {x | (T.domRestrict x, fun n => x (π a n)) ∈ B}
-          ((T.measurable_restrict.prodMk (measurable_pi_lambda _ fun n => measurable_pi_apply (π a n)))
+          ((T.measurable_restrict.prodMk (measurable_pi_lambda _ fun n => measurable_pi_apply (π a
+              n)))
             hB) := by
   -- only countably many petals meet the countable set `T`
   have hbad : {a | ∃ n, π a n ∈ T}.Countable := by

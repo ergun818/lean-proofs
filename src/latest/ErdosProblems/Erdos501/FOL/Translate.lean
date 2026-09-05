@@ -10,7 +10,8 @@ This file translates:
 
 * `trT`, `tr` — Mathlib terms/formulas over `L` (variables by de Bruijn *level*, `Fin.snoc`-style
   contexts) into Flypitch bounded terms/formulas over `L_ZFC` (variables by de Bruijn *index*,
-  `DVec.cons`-style contexts, index `0` innermost): level `ℓ` at depth `n` becomes index `n - 1 - ℓ`;
+  `DVec.cons`-style contexts, index `0` innermost): level `ℓ` at depth `n` becomes index `n - 1 -
+  ℓ`;
 * `toM S` — a Flypitch structure `S : Fol.Structure L_ZFC` as an `L`-structure on `S.carrier`;
 * `realize_tr` — realization commutes with the translation:
   `φ.Realize xs ↔ realize_bounded_formula (dvecOfCtx xs) (tr φ)`.

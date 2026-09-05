@@ -138,7 +138,7 @@ theorem mem_borelName_mkReal {G : RandomAlgebra.Ω ι → (ℕ → Bool)} (hG : 
       MeasureAlgebra.ae_le_set_iff_ae_imp]
     refine Filter.Eventually.of_forall fun x hx => ?_
     obtain ⟨hxB, hxeq⟩ := hx
-    show (T.domRestrict x, G x) ∈ B
+    change (T.domRestrict x, G x) ∈ B
     rw [hxeq]
     exact hxB
   · refine le_iSup_of_le ⟨G, hG⟩ ?_
@@ -251,7 +251,8 @@ theorem mem_borelNameP_profileName (hB' : MeasurableSet B') (π : ℕ → ι) :
     (profileName π ∈ᴮ borelNameP T hB') =
       MeasureAlgebra.mk (RandomAlgebra.μ_random ι) {x | (T.domRestrict x, fun n => x (π n)) ∈ B'}
         (hB'.preimage
-          (T.measurable_restrict.prodMk (measurable_pi_lambda _ fun n => measurable_pi_apply (π n)))) := by
+          (T.measurable_restrict.prodMk (measurable_pi_lambda _ fun n => measurable_pi_apply (π
+              n)))) := by
   unfold profileName borelNameP
   rw [mem_borelName_mkReal]
   apply MeasureAlgebra.mk_congr
@@ -347,7 +348,8 @@ theorem fullness (hB' : MeasurableSet B') {A : Type} {J : Set A} (hJ : ¬ J.Coun
   let B'' : Set (((T ∪ S : Set ι) → (ℕ → Bool)) × (ℕ → (ℕ → Bool))) := {p | (resT p.1, p.2) ∈ B'}
   have hB'' : MeasurableSet B'' := hB'.preimage ((hresT.comp measurable_fst).prodMk measurable_snd)
   -- (i) the trace `Q` has positive measure
-  have hQpos : 0 < Measure.infinitePi (fun _ : (T ∪ S : Set ι) => RandomAlgebra.cantorMeasure) Q := by
+  have hQpos : 0 < Measure.infinitePi (fun _ : (T ∪ S : Set ι) => RandomAlgebra.cantorMeasure) Q :=
+      by
     rw [← hAq_eq, MeasureAlgebra.bot_lt_iff_meas_pos, MeasureAlgebra.meas_mk, hAqQ,
       μ_random_restrict_preimage _ hQ] at hq
     exact hq

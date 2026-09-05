@@ -107,14 +107,14 @@ lemma nonempty_iff_exists_mem {x : PSet.{u}} : non_empty x ↔ ∃ y, y ∈ x :=
 
 -- src/aleph_one.lean:73
 lemma nonempty_compl_of_ne {x y : PSet.{u}} (H_ne : ¬ Equiv x y) :
-    (non_empty $ pSet_compl x y) ∨ (non_empty $ pSet_compl y x) := by
+    (non_empty <| pSet_compl x y) ∨ (non_empty <| pSet_compl y x) := by
   simp only [non_empty, nonempty_iff_exists_mem, mem_pSet_compl_iff]
   rw [equiv_unfold', not_and_or] at H_ne
   rcases H_ne with H_ne | H_ne
-  · push_neg at H_ne
+  · push Not at H_ne
     obtain ⟨z, Hz₁, Hz₂⟩ := H_ne
     exact Or.inl ⟨z, Hz₁, Hz₂⟩
-  · push_neg at H_ne
+  · push Not at H_ne
     obtain ⟨z, Hz₁, Hz₂⟩ := H_ne
     exact Or.inr ⟨z, Hz₁, Hz₂⟩
 
@@ -204,7 +204,7 @@ lemma Ord.le_or_le {x y : PSet.{u}} (H₁ : Ord x) (H₂ : Ord y) : x ⊆ y ∨ 
   have hw : Equiv w x ∨ Equiv w y := by
     classical
     by_contra H_contra
-    push_neg at H_contra
+    push Not at H_contra
     obtain ⟨H_ne₁, H_ne₂⟩ := H_contra
     -- w ∈ x and w ∈ y
     have Hwx : w ∈ x := Ord.lt_of_ne_and_le w_Ord H₁ H_ne₁ (pSet_binary_inter_subset.1)
@@ -342,7 +342,7 @@ lemma mem_mem_rel_iff {x y z : bSet 𝔹} {Γ} :
   -- mem_rel x = subset.mk (fun pr : (prod x x).type => x.func pr.1 ∈ x.func pr.2)
   unfold mem_rel
   rw [mem_subset.mk_iff]
-  simp only [prod_func, prod_bval]
+  simp only [prod_func]
   constructor
   · -- MP: Γ ≤ ⨆ (i,j), pair y z =ᴮ pair(xi,xj) ⊓ (xi∈xj ⊓ (bi⊓bj)) → each conclusion
     intro H
@@ -399,7 +399,7 @@ lemma mem_mem_rel_iff {x y z : bSet 𝔹} {Γ} :
     rw [inf_comm]
     apply bv_cases_right; intro ⟨i, j⟩
     apply le_iSup_of_le (i, j)
-    simp only [prod_func, prod_bval]
+    simp only [prod_bval]
     -- After bv_cases_right intro ⟨i, j⟩ and rw [inf_comm], context is:
     -- y∈z ⊓ ((bi⊓y=xi) ⊓ (bj⊓z=xj)) ≤ pair y z =ᴮ pair(xi,xj) ⊓ (xi∈xj ⊓ (bi⊓bj))
     -- Extract parts:
@@ -473,16 +473,17 @@ lemma B_congr_prod_map_self_left_aux {y f x x' : bSet 𝔹} {Γ : 𝔹} (H_eq : 
   apply le_iInf; intro z; rw [← deduction]
   -- ctx: Γ ⊓ z ∈ prod_map_self x y f
   -- unfold both sides
-  show Γ ⊓ z ∈ᴮ prod_map_self x y f ≤ z ∈ᴮ prod_map_self x' y f
+  change Γ ⊓ z ∈ᴮ prod_map_self x y f ≤ z ∈ᴮ prod_map_self x' y f
   -- Extract from iSup in prod_map_self x y f
   have Hmem_iff : Γ ⊓ z ∈ᴮ prod_map_self x y f ≤ z ∈ᴮ prod_map_self x y f := inf_le_right
   rw [show prod_map_self x y f = subset.mk (fun pr : (prod (prod x x) (prod y y)).type =>
-    pair (x.func pr.1.1) (y.func pr.2.1) ∈ᴮ f ⊓ pair (x.func pr.1.2) (y.func pr.2.2) ∈ᴮ f) from rfl] at Hmem_iff
+    pair (x.func pr.1.1) (y.func pr.2.1) ∈ᴮ f ⊓ pair (x.func pr.1.2) (y.func pr.2.2) ∈ᴮ f) from rfl]
+        at Hmem_iff
   rw [mem_subset.mk_iff₂] at Hmem_iff
   apply le_trans (le_inf Hmem_iff le_rfl)
   apply bv_cases_left; intro pr
   obtain ⟨⟨i₁, i₂⟩, j₁, j₂⟩ := pr
-  simp only [prod_func, prod_bval]
+  simp only []
   -- ctx: ((x.bval i₁ ⊓ x.bval i₂) ⊓ (y.bval j₁ ⊓ y.bval j₂)) ⊓
   --       (z=ᴮpair(pair xi₁ xi₂)(pair yj₁ yj₂) ⊓ (χ₁⊓χ₂)) ⊓ (Γ ⊓ z∈...)
   -- Need: ctx ≤ z ∈ prod_map_self x' y f
@@ -491,7 +492,8 @@ lemma B_congr_prod_map_self_left_aux {y f x x' : bSet 𝔹} {Γ : 𝔹} (H_eq : 
   -- xi₁ ∈ x' (via bv_rw'' Heq (xi₁∈x)): for the new index i₁', use mem_unfold + bv_cases_left
   -- To avoid index extraction, we stay in the iSup form and use bv_use
   rw [show prod_map_self x' y f = subset.mk (fun pr' : (prod (prod x' x') (prod y y)).type =>
-    pair (x'.func pr'.1.1) (y.func pr'.2.1) ∈ᴮ f ⊓ pair (x'.func pr'.1.2) (y.func pr'.2.2) ∈ᴮ f) from rfl,
+    pair (x'.func pr'.1.1) (y.func pr'.2.1) ∈ᴮ f ⊓ pair (x'.func pr'.1.2) (y.func pr'.2.2) ∈ᴮ f)
+        from rfl,
     mem_subset.mk_iff₂]
   -- Goal: ctx ≤ ⨆ pr', bval'(pr') ⊓ (z=ᴮfunc'(pr') ⊓ χ'(pr'))
   -- Ctx structure: ((xb1⊓xb2)⊓(yb1⊓yb2)) ⊓ (zeq ⊓ (χ1⊓χ2)) ⊓ (Γ ⊓ z∈...)
@@ -501,7 +503,8 @@ lemma B_congr_prod_map_self_left_aux {y f x x' : bSet 𝔹} {Γ : 𝔹} (H_eq : 
     · rw [← mem_unfold]
       -- prove ctx ≤ x.func i₁ ∈ᴮ x'
       exact mem_congr bv_refl (inf_le_right.trans (inf_le_left.trans H_eq))
-        ((inf_le_left.trans (inf_le_left.trans (inf_le_left.trans inf_le_left))).trans (mem_mk' x i₁))
+        ((inf_le_left.trans (inf_le_left.trans (inf_le_left.trans inf_le_left))).trans (mem_mk' x
+            i₁))
     · exact le_rfl
   apply bv_cases_left; intro i₁'
   -- ctx1 = (x'.bval i₁' ⊓ xi₁=x'.func i₁') ⊓ ctx
@@ -511,7 +514,8 @@ lemma B_congr_prod_map_self_left_aux {y f x x' : bSet 𝔹} {Γ : 𝔹} (H_eq : 
     · rw [← mem_unfold]
       -- prove ctx1 ≤ x.func i₂ ∈ᴮ x'
       exact mem_congr bv_refl (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans H_eq)))
-        ((inf_le_right.trans (inf_le_left.trans (inf_le_left.trans (inf_le_left.trans inf_le_right)))).trans
+        ((inf_le_right.trans (inf_le_left.trans (inf_le_left.trans (inf_le_left.trans
+            inf_le_right)))).trans
           (mem_mk' x i₂))
     · exact le_rfl
   apply bv_cases_left; intro i₂'
@@ -521,7 +525,7 @@ lemma B_congr_prod_map_self_left_aux {y f x x' : bSet 𝔹} {Γ : 𝔹} (H_eq : 
   --   ((x'.bval i₁' ⊓ x.func i₁ =ᴮ x'.func i₁') ⊓
   --    (((xb1⊓xb2)⊓(yb1⊓yb2)) ⊓ (zeq ⊓ (χ1⊓χ2)) ⊓ (Γ ⊓ z∈...)))
   apply bv_use ((i₁', i₂'), j₁, j₂)
-  simp only [prod_func, prod_bval]
+  simp only []
   -- Extractions from ctx2 (after simp):
   --   x'.bval i₁' : ir.il.il
   --   xi₁=x'.func i₁' : ir.il.ir
@@ -539,28 +543,34 @@ lemma B_congr_prod_map_self_left_aux {y f x x' : bSet 𝔹} {Γ : 𝔹} (H_eq : 
     apply le_inf (le_inf ?_ ?_) (le_inf ?_ ?_)
     · exact inf_le_right.trans (inf_le_left.trans inf_le_left)
     · exact inf_le_left.trans inf_le_left
-    · exact inf_le_right.trans (inf_le_right.trans (inf_le_left.trans (inf_le_left.trans (inf_le_right.trans inf_le_left))))
-    · exact inf_le_right.trans (inf_le_right.trans (inf_le_left.trans (inf_le_left.trans (inf_le_right.trans inf_le_right))))
+    · exact inf_le_right.trans (inf_le_right.trans (inf_le_left.trans (inf_le_left.trans
+        (inf_le_right.trans inf_le_left))))
+    · exact inf_le_right.trans (inf_le_right.trans (inf_le_left.trans (inf_le_left.trans
+        (inf_le_right.trans inf_le_right))))
   · apply le_inf
     · -- z =ᴮ pair(pair x'.func(i₁') x'.func(i₂'))(pair yj₁ yj₂)
       -- First prove z =ᴮ pair(pair xi₁ xi₂)(pair yj₁ yj₂), then rewrite xi₁ → x'.func i₁'
       apply bv_trans
       · -- zeq: ctx2 ≤ z =ᴮ pair(pair xi₁ xi₂)(pair yj₁ yj₂)
-        exact inf_le_right.trans (inf_le_right.trans (inf_le_left.trans (inf_le_right.trans inf_le_left)))
+        exact inf_le_right.trans (inf_le_right.trans (inf_le_left.trans (inf_le_right.trans
+            inf_le_left)))
       · apply pair_eq_pair_iff.mpr; constructor
         · apply pair_eq_pair_iff.mpr
           -- Hi₁'eq: ir.il.ir, Hi₂'eq: il.ir
-          exact ⟨inf_le_right.trans (inf_le_left.trans inf_le_right), inf_le_left.trans inf_le_right⟩
+          exact ⟨inf_le_right.trans (inf_le_left.trans inf_le_right), inf_le_left.trans
+              inf_le_right⟩
         · apply pair_eq_pair_iff.mpr; exact ⟨bv_refl, bv_refl⟩
     · apply le_inf
       · -- pair x'.func(i₁') yj₁ ∈ f
         exact bv_rw' (ϕ := fun v => pair v (y.func j₁) ∈ᴮ f) (h_congr := B_ext_pair_mem_left)
           (H := bv_symm (inf_le_right.trans (inf_le_left.trans inf_le_right)))
-          (H_new := inf_le_right.trans (inf_le_right.trans (inf_le_left.trans (inf_le_right.trans (inf_le_right.trans inf_le_left)))))
+          (H_new := inf_le_right.trans (inf_le_right.trans (inf_le_left.trans (inf_le_right.trans
+              (inf_le_right.trans inf_le_left)))))
       · -- pair x'.func(i₂') yj₂ ∈ f
         exact bv_rw' (ϕ := fun v => pair v (y.func j₂) ∈ᴮ f) (h_congr := B_ext_pair_mem_left)
           (H := bv_symm (inf_le_left.trans inf_le_right))
-          (H_new := inf_le_right.trans (inf_le_right.trans (inf_le_left.trans (inf_le_right.trans (inf_le_right.trans inf_le_right)))))
+          (H_new := inf_le_right.trans (inf_le_right.trans (inf_le_left.trans (inf_le_right.trans
+              (inf_le_right.trans inf_le_right)))))
 
 -- src/aleph_one.lean:329
 @[simp] lemma B_congr_prod_map_self_left {y f : bSet 𝔹} :
@@ -572,6 +582,7 @@ lemma B_congr_prod_map_self_left_aux {y f x x' : bSet 𝔹} {Γ : 𝔹} (H_eq : 
 
 -- src/aleph_one.lean:336
 set_option maxHeartbeats 400000 in
+-- This proof expands membership in nested Boolean-valued products.
 lemma mem_prod_map_self_iff {x y f a₁ a₂ b₁ b₂ : bSet 𝔹} {Γ : 𝔹} :
     Γ ≤ pair (pair a₁ a₂) (pair b₁ b₂) ∈ᴮ prod_map_self x y f ↔
     Γ ≤ a₁ ∈ᴮ x ∧ Γ ≤ a₂ ∈ᴮ x ∧ Γ ≤ b₁ ∈ᴮ y ∧ Γ ≤ b₂ ∈ᴮ y ∧
@@ -580,7 +591,8 @@ lemma mem_prod_map_self_iff {x y f a₁ a₂ b₁ b₂ : bSet 𝔹} {Γ : 𝔹} 
   · -- forward: prove each of the 6 conclusions from H
     intro H
     rw [show prod_map_self x y f = subset.mk (fun pr : (prod (prod x x) (prod y y)).type =>
-      pair (x.func pr.1.1) (y.func pr.2.1) ∈ᴮ f ⊓ pair (x.func pr.1.2) (y.func pr.2.2) ∈ᴮ f) from rfl] at H
+      pair (x.func pr.1.1) (y.func pr.2.1) ∈ᴮ f ⊓ pair (x.func pr.1.2) (y.func pr.2.2) ∈ᴮ f) from
+          rfl] at H
     rw [mem_subset.mk_iff₂] at H
     -- H : Γ ≤ ⨆ pr, bval pr ⊓ (pair_eq pr ⊓ χ pr)
     -- For pr = ((i₁,i₂),(j₁,j₂)):
@@ -600,7 +612,8 @@ lemma mem_prod_map_self_iff {x y f a₁ a₂ b₁ b₂ : bSet 𝔹} {Γ : 𝔹} 
     -- body after simp for pr = ((i₁,i₂),(j₁,j₂)):
     -- bval ⊓ (peq ⊓ (χ₁ ⊓ χ₂)) where
     --   bval = (x.bval i₁ ⊓ x.bval i₂) ⊓ (y.bval j₁ ⊓ y.bval j₂)  [inf_le_left]
-    --   peq  = pair(pair a₁ a₂)(pair b₁ b₂) =ᴮ pair(pair xi₁ xi₂)(pair yj₁ yj₂)  [inf_le_right.trans inf_le_left]
+    -- peq  = pair(pair a₁ a₂)(pair b₁ b₂) =ᴮ pair(pair xi₁ xi₂)(pair yj₁ yj₂)  [inf_le_right.trans
+    -- inf_le_left]
     --   χ₁   = pair xi₁ yj₁ ∈ f  [inf_le_right.trans inf_le_right.trans inf_le_left]
     --   χ₂   = pair xi₂ yj₂ ∈ f  [inf_le_right.trans inf_le_right.trans inf_le_right]
     -- All are proved using this tactic:
@@ -628,50 +641,48 @@ lemma mem_prod_map_self_iff {x y f a₁ a₂ b₁ b₂ : bSet 𝔹} {Γ : 𝔹} 
     -- After simp, body = ((xb1⊓xb2)⊓(yb1⊓yb2)) ⊓ (peq ⊓ (χ1⊓χ2))
     -- Use apply-based approach: each step creates a concrete goal, avoiding bidirectional inference
     -- Helper for peq extraction (used repeatedly):
-    -- After simp: body ≤ peq ≡ body ≤ pair(pair a₁ a₂)(pair b₁ b₂)=ᴮpair(pair xi₁ xi₂)(pair yj₁ yj₂)
+    -- After simp: body ≤ peq ≡ body ≤ pair(pair a₁ a₂)(pair b₁ b₂)=ᴮpair(pair xi₁ xi₂)(pair yj₁
+    -- yj₂)
     -- via inf_le_right.trans inf_le_left.
     · -- a₁ ∈ x
-      apply H.trans; apply iSup_le; rintro ⟨⟨i₁, i₂⟩, j₁, j₂⟩; simp only [prod_func, prod_bval]
+      apply H.trans; apply iSup_le; rintro ⟨⟨i₁, i₂⟩, j₁, j₂⟩; simp only []
       apply bv_rw' (ϕ := fun v => v ∈ᴮ x) (h_congr := B_ext_mem_left)
         (H_new := (inf_le_left.trans (inf_le_left.trans inf_le_left)).trans (mem_mk' x i₁))
-      apply eq_of_eq_pair_left'; apply eq_of_eq_pair_left'
-      exact inf_le_right.trans inf_le_left
+      exact eq_of_eq_pair_left' (eq_of_eq_pair_left' (inf_le_right.trans inf_le_left))
     · -- a₂ ∈ x
-      apply H.trans; apply iSup_le; rintro ⟨⟨i₁, i₂⟩, j₁, j₂⟩; simp only [prod_func, prod_bval]
+      apply H.trans; apply iSup_le; rintro ⟨⟨i₁, i₂⟩, j₁, j₂⟩; simp only []
       apply bv_rw' (ϕ := fun v => v ∈ᴮ x) (h_congr := B_ext_mem_left)
         (H_new := (inf_le_left.trans (inf_le_left.trans inf_le_right)).trans (mem_mk' x i₂))
-      apply eq_of_eq_pair_right'; apply eq_of_eq_pair_left'
-      exact inf_le_right.trans inf_le_left
+      exact eq_of_eq_pair_right' (eq_of_eq_pair_left' (inf_le_right.trans inf_le_left))
     · -- b₁ ∈ y
-      apply H.trans; apply iSup_le; rintro ⟨⟨i₁, i₂⟩, j₁, j₂⟩; simp only [prod_func, prod_bval]
+      apply H.trans; apply iSup_le; rintro ⟨⟨i₁, i₂⟩, j₁, j₂⟩; simp only []
       apply bv_rw' (ϕ := fun v => v ∈ᴮ y) (h_congr := B_ext_mem_left)
         (H_new := (inf_le_left.trans (inf_le_right.trans inf_le_left)).trans (mem_mk' y j₁))
-      apply eq_of_eq_pair_left'; apply eq_of_eq_pair_right'
-      exact inf_le_right.trans inf_le_left
+      exact eq_of_eq_pair_left' (eq_of_eq_pair_right' (inf_le_right.trans inf_le_left))
     · -- b₂ ∈ y
-      apply H.trans; apply iSup_le; rintro ⟨⟨i₁, i₂⟩, j₁, j₂⟩; simp only [prod_func, prod_bval]
+      apply H.trans; apply iSup_le; rintro ⟨⟨i₁, i₂⟩, j₁, j₂⟩; simp only []
       apply bv_rw' (ϕ := fun v => v ∈ᴮ y) (h_congr := B_ext_mem_left)
         (H_new := (inf_le_left.trans (inf_le_right.trans inf_le_right)).trans (mem_mk' y j₂))
-      apply eq_of_eq_pair_right'; apply eq_of_eq_pair_right'
-      exact inf_le_right.trans inf_le_left
+      exact eq_of_eq_pair_right' (eq_of_eq_pair_right' (inf_le_right.trans inf_le_left))
     · -- pair a₁ b₁ ∈ f: use bv_rw' to rewrite pair a₁ b₁ to pair xi₁ yj₁ (which ∈ f)
-      apply H.trans; apply iSup_le; rintro ⟨⟨i₁, i₂⟩, j₁, j₂⟩; simp only [prod_func, prod_bval]
+      apply H.trans; apply iSup_le; rintro ⟨⟨i₁, i₂⟩, j₁, j₂⟩; simp only []
       apply bv_rw' (ϕ := fun v => v ∈ᴮ f) (h_congr := B_ext_mem_left)
         (H_new := inf_le_right.trans (inf_le_right.trans inf_le_left))
       apply pair_congr
-      · apply eq_of_eq_pair_left'; apply eq_of_eq_pair_left'; exact inf_le_right.trans inf_le_left
-      · apply eq_of_eq_pair_left'; apply eq_of_eq_pair_right'; exact inf_le_right.trans inf_le_left
+      · exact eq_of_eq_pair_left' (eq_of_eq_pair_left' (inf_le_right.trans inf_le_left))
+      · exact eq_of_eq_pair_left' (eq_of_eq_pair_right' (inf_le_right.trans inf_le_left))
     · -- pair a₂ b₂ ∈ f: same but using χ₂
-      apply H.trans; apply iSup_le; rintro ⟨⟨i₁, i₂⟩, j₁, j₂⟩; simp only [prod_func, prod_bval]
+      apply H.trans; apply iSup_le; rintro ⟨⟨i₁, i₂⟩, j₁, j₂⟩; simp only []
       apply bv_rw' (ϕ := fun v => v ∈ᴮ f) (h_congr := B_ext_mem_left)
         (H_new := inf_le_right.trans (inf_le_right.trans inf_le_right))
       apply pair_congr
-      · apply eq_of_eq_pair_right'; apply eq_of_eq_pair_left'; exact inf_le_right.trans inf_le_left
-      · apply eq_of_eq_pair_right'; apply eq_of_eq_pair_right'; exact inf_le_right.trans inf_le_left
+      · exact eq_of_eq_pair_right' (eq_of_eq_pair_left' (inf_le_right.trans inf_le_left))
+      · exact eq_of_eq_pair_right' (eq_of_eq_pair_right' (inf_le_right.trans inf_le_left))
   · -- backward: construct the witness index from the 6 hypotheses
     intro ⟨Ha₁, Ha₂, Hb₁, Hb₂, Hpair₁, Hpair₂⟩
     rw [show prod_map_self x y f = subset.mk (fun pr : (prod (prod x x) (prod y y)).type =>
-      pair (x.func pr.1.1) (y.func pr.2.1) ∈ᴮ f ⊓ pair (x.func pr.1.2) (y.func pr.2.2) ∈ᴮ f) from rfl]
+      pair (x.func pr.1.1) (y.func pr.2.1) ∈ᴮ f ⊓ pair (x.func pr.1.2) (y.func pr.2.2) ∈ᴮ f) from
+          rfl]
     rw [mem_subset.mk_iff₂]
     -- Need: Γ ≤ ⨆ pr, bval pr ⊓ (pair_eq pr ⊓ χ pr)
     -- Extract witnesses via mem_unfold and sequential bv_cases_left
@@ -679,19 +690,23 @@ lemma mem_prod_map_self_iff {x y f a₁ a₂ b₁ b₂ : bSet 𝔹} {Γ : 𝔹} 
     -- LHS0 = (((Ha₁ ⊓ Ha₂) ⊓ Hb₁) ⊓ Hb₂) ⊓ Γ
     apply le_trans (le_inf (le_inf (le_inf (le_inf Ha₁ Ha₂) Hb₁) Hb₂) le_rfl)
     -- Extract i₁ from Ha₁: inf_le_left^3 then inf_le_left
-    apply le_trans (le_inf (inf_le_left.trans (inf_le_left.trans (inf_le_left.trans inf_le_left))) le_rfl)
+    apply le_trans (le_inf (inf_le_left.trans (inf_le_left.trans (inf_le_left.trans inf_le_left)))
+        le_rfl)
     apply bv_cases_left; intro i₁
     -- ctx1 = (x.bval i₁ ⊓ a₁=xi₁) ⊓ LHS0
     -- Extract i₂ from Ha₂ in LHS0: inf_le_right then inf_le_left^3 then inf_le_right
-    apply le_trans (le_inf (inf_le_right.trans (inf_le_left.trans (inf_le_left.trans (inf_le_left.trans inf_le_right)))) le_rfl)
+    apply le_trans (le_inf (inf_le_right.trans (inf_le_left.trans (inf_le_left.trans
+        (inf_le_left.trans inf_le_right)))) le_rfl)
     apply bv_cases_left; intro i₂
     -- ctx2 = (x.bval i₂ ⊓ a₂=xi₂) ⊓ ctx1
     -- Extract j₁ from Hb₁ in LHS0: inf_le_right^2 then inf_le_left^2 then inf_le_right
-    apply le_trans (le_inf (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans (inf_le_left.trans inf_le_right)))) le_rfl)
+    apply le_trans (le_inf (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans
+        (inf_le_left.trans inf_le_right)))) le_rfl)
     apply bv_cases_left; intro j₁
     -- ctx3 = (y.bval j₁ ⊓ b₁=yj₁) ⊓ ctx2
     -- Extract j₂ from Hb₂ in LHS0: inf_le_right^3 then inf_le_left then inf_le_right
-    apply le_trans (le_inf (inf_le_right.trans (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans inf_le_right)))) le_rfl)
+    apply le_trans (le_inf (inf_le_right.trans (inf_le_right.trans (inf_le_right.trans
+        (inf_le_left.trans inf_le_right)))) le_rfl)
     apply bv_cases_left; intro j₂
     -- ctx4 = (y.bval j₂ ⊓ b₂=yj₂) ⊓ ctx3
     -- ctx4 components (left-to-right nesting):
@@ -701,27 +716,33 @@ lemma mem_prod_map_self_iff {x y f a₁ a₂ b₁ b₂ : bSet 𝔹} {Γ : 𝔹} 
     --   b₁=yj₁:   inf_le_right.trans (inf_le_left.trans inf_le_right)
     --   x.bval i₂: inf_le_right.trans (inf_le_right.trans (inf_le_left.trans inf_le_left))
     --   a₂=xi₂:   inf_le_right.trans (inf_le_right.trans (inf_le_left.trans inf_le_right))
-    --   x.bval i₁: inf_le_right.trans (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans inf_le_left)))
-    --   a₁=xi₁:   inf_le_right.trans (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans inf_le_right)))
-    --   Γ:         inf_le_right.trans (inf_le_right.trans (inf_le_right.trans (inf_le_right.trans inf_le_right)))
+    -- x.bval i₁: inf_le_right.trans (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans
+    -- inf_le_left)))
+    -- a₁=xi₁:   inf_le_right.trans (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans
+    -- inf_le_right)))
+    -- Γ:         inf_le_right.trans (inf_le_right.trans (inf_le_right.trans (inf_le_right.trans
+    -- inf_le_right)))
     apply bv_use ((i₁, i₂), j₁, j₂)
-    simp only [prod_func, prod_bval]
+    simp only []
     apply le_inf
     · -- bval: (x.bval i₁ ⊓ x.bval i₂) ⊓ (y.bval j₁ ⊓ y.bval j₂)
       exact le_inf (le_inf
-        (inf_le_right.trans (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans inf_le_left))))
+        (inf_le_right.trans (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans
+            inf_le_left))))
         (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans inf_le_left))))
         (le_inf
           (inf_le_right.trans (inf_le_left.trans inf_le_left))
           (inf_le_left.trans inf_le_left))
     · apply le_inf
       · -- pair equality: pair(pair a₁ a₂)(pair b₁ b₂) =ᴮ pair(pair xi₁ xi₂)(pair yj₁ yj₂)
-        -- ctx4 component accesses: a₁=xi₁ at (.3.left.right), a₂=xi₂ at (.3.right), b₁=yj₁ at (.2.right), b₂=yj₂ at (.1.right)
+        -- ctx4 component accesses: a₁=xi₁ at (.3.left.right), a₂=xi₂ at (.3.right), b₁=yj₁ at
+        -- (.2.right), b₂=yj₂ at (.1.right)
         -- But mem_unfold gives: a₁ =ᴮ x.func i₁, not x.func i₁ =ᴮ a₁
         -- So we use them directly (no bv_symm needed):
         apply pair_eq_pair_iff.mpr; constructor
         · apply pair_eq_pair_iff.mpr; exact ⟨
-            inf_le_right.trans (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans inf_le_right))),
+            inf_le_right.trans (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans
+                inf_le_right))),
             inf_le_right.trans (inf_le_right.trans (inf_le_left.trans inf_le_right))⟩
         · apply pair_eq_pair_iff.mpr; exact ⟨
             inf_le_right.trans (inf_le_left.trans inf_le_right),
@@ -736,7 +757,8 @@ lemma mem_prod_map_self_iff {x y f a₁ a₂ b₁ b₂ : bSet 𝔹} {Γ : 𝔹} 
                     (inf_le_right.trans inf_le_right)))).trans Hpair₁
           · -- pair a₁ b₁ =ᴮ pair xi₁ yj₁ via pair_congr and equalities from ctx4
             apply pair_eq_pair_iff.mpr
-            exact ⟨inf_le_right.trans (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans inf_le_right))),
+            exact ⟨inf_le_right.trans (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans
+                inf_le_right))),
                    inf_le_right.trans (inf_le_left.trans inf_le_right)⟩
         · -- pair(xi₂)(yj₂) ∈ f
           apply mem_congr _ bv_refl
@@ -764,7 +786,7 @@ lemma eq_pair_of_mem_induced_epsilon_rel {η x f pr : bSet 𝔹} {Γ}
 
 -- src/aleph_one.lean:391
 lemma mem_induced_epsilon_rel_iff {η x f a b : bSet 𝔹} {Γ}
-    (H_func : Γ ≤ is_function η x f) :
+    (_H_func : Γ ≤ is_function η x f) :
     Γ ≤ pair a b ∈ᴮ (induced_epsilon_rel η x f) ↔
     (Γ ≤ a ∈ᴮ x) ∧ (Γ ≤ b ∈ᴮ x) ∧
     (Γ ≤ ⨆ a', a' ∈ᴮ η ⊓ ⨆ b', b' ∈ᴮ η ⊓
@@ -772,7 +794,7 @@ lemma mem_induced_epsilon_rel_iff {η x f a b : bSet 𝔹} {Γ}
   -- induced_epsilon_rel η x f = image (mem_rel η) (prod x x) (prod_map_self η x f)
   -- mem_image_iff: pair a b ∈ image S Y F ↔ pair a b ∈ Y ∧ ∃ z, z ∈ S ∧ pair z (pair a b) ∈ F
   -- unfold induced_epsilon_rel to allow mem_image_iff
-  show Γ ≤ pair a b ∈ᴮ image (mem_rel η) (prod x x) (prod_map_self η x f) ↔ _
+  change Γ ≤ pair a b ∈ᴮ image (mem_rel η) (prod x x) (prod_map_self η x f) ↔ _
   constructor
   · -- Forward: from pair a b ∈ image (mem_rel η) (prod x x) (prod_map_self η x f)
     intro H
@@ -818,7 +840,8 @@ lemma mem_induced_epsilon_rel_iff {η x f a b : bSet 𝔹} {Γ}
     -- Extract a', b' witnesses
     apply le_trans (le_inf H_sup le_rfl)
     apply bv_cases_left; intro a'
-    -- goal: (a'∈η ⊓ ⨆ b', b'∈η ⊓ ...) ⊓ Γ ≤ ⨆ z, z∈mem_rel η ⊓ pair z (pair a b) ∈ prod_map_self η x f
+    -- goal: (a'∈η ⊓ ⨆ b', b'∈η ⊓ ...) ⊓ Γ ≤ ⨆ z, z∈mem_rel η ⊓ pair z (pair a b) ∈ prod_map_self η
+    -- x f
     -- extract ⨆ b' from left: inf_le_left.trans inf_le_right
     apply le_trans (le_inf (inf_le_left.trans inf_le_right) le_rfl)
     apply bv_cases_left; intro b'
@@ -923,6 +946,7 @@ lemma induced_epsilon_rel_sub_image_right {η x f a b : bSet 𝔹} {Γ}
 
 -- src/aleph_one.lean:471
 set_option maxHeartbeats 800000 in
+-- The image comparison transports membership through both induced epsilon relations.
 lemma image_eq_of_eq_induced_epsilon_rel_aux
     {η ρ f g : bSet 𝔹} {Γ}
     (Hη_inj : Γ ≤ is_injective_function η omega f)
@@ -968,27 +992,32 @@ lemma image_eq_of_eq_induced_epsilon_rel_aux
     have Hfunc2 : (z' ∈ᴮ w') ⊓
         ((w' ∈ᴮ η ⊓ (z' ∈ᴮ w' ⊔ w' ∈ᴮ z')) ⊓
          ((z' ∈ᴮ η ⊓ pair z' z ∈ᴮ f) ⊓ (Γ ⊓ z ∈ᴮ image η omega f))) ≤ is_function η omega f :=
-      inf_le_right.trans (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans (bv_and_left Hη_inj))))
+      inf_le_right.trans (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans (bv_and_left
+          Hη_inj))))
     -- Goal: ctx3 ≤ z ∈ image ρ omega g
     -- Use sub_image_left for ρ: pair z (f_η(w')) ∈ ind_eps_ρ → z ∈ image ρ omega g
     apply induced_epsilon_rel_sub_image_left
     · -- H_func for ρ: ctx3 ≤ is_function ρ omega g
       -- ctx3.ir.ir.ir.il = Γ → bv_and_left Hρ_inj
-      exact inf_le_right.trans (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans (bv_and_left Hρ_inj))))
+      exact inf_le_right.trans (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans
+          (bv_and_left Hρ_inj))))
     · -- pair z (f_η(w')) ∈ ind_eps_ρ (via rewrite ind_eps_η → ind_eps_ρ using H_eq)
       exact bv_rw' (ϕ := fun r => pair z (function_eval Hfunc2 w' Hw'_mem_η) ∈ᴮ r)
         (h_congr := B_ext_mem_right)
-        (bv_symm (inf_le_right.trans (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans H_eq)))))
+        (bv_symm (inf_le_right.trans (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans
+            H_eq)))))
         (H_new := by
           rw [mem_induced_epsilon_rel_iff Hfunc2]
           -- z∈omega: ctx3.ir.ir.ir.Hz_omega (3 rights, then Hz_omega which has LHS Γ⊓z∈image)
           refine ⟨inf_le_right.trans (inf_le_right.trans (inf_le_right.trans Hz_omega)),
                  function_eval_mem_codomain, ?_⟩
           -- z'∈η: ctx3.ir.ir.il.il
-          apply bv_use z'; refine le_inf (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans inf_le_left))) ?_
+          apply bv_use z'; refine le_inf (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans
+              inf_le_left))) ?_
           apply bv_use w'; refine le_inf Hw'_mem_η ?_
           -- pair z' z ∈ f: ctx3.ir.ir.il.ir
-          exact le_inf (le_inf (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans inf_le_right))) function_eval_pair_mem)
+          exact le_inf (le_inf (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans
+              inf_le_right))) function_eval_pair_mem)
                        inf_le_left)
   · -- Case w' ∈ z': ctx3' = (w' ∈ z') ⊓ ctx2
     have Hz'_mem_η' : (w' ∈ᴮ z') ⊓
@@ -1002,15 +1031,18 @@ lemma image_eq_of_eq_induced_epsilon_rel_aux
     have Hfunc2' : (w' ∈ᴮ z') ⊓
         ((w' ∈ᴮ η ⊓ (z' ∈ᴮ w' ⊔ w' ∈ᴮ z')) ⊓
          ((z' ∈ᴮ η ⊓ pair z' z ∈ᴮ f) ⊓ (Γ ⊓ z ∈ᴮ image η omega f))) ≤ is_function η omega f :=
-      inf_le_right.trans (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans (bv_and_left Hη_inj))))
+      inf_le_right.trans (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans (bv_and_left
+          Hη_inj))))
     -- Goal: ctx3' ≤ z ∈ image ρ omega g
     apply induced_epsilon_rel_sub_image_right
     · -- H_func for ρ: ctx3'.ir.ir.ir.il.bv_and_left_Hρ_inj
-      exact inf_le_right.trans (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans (bv_and_left Hρ_inj))))
+      exact inf_le_right.trans (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans
+          (bv_and_left Hρ_inj))))
     · -- pair (f_η(w')) z ∈ ind_eps_ρ (via rewrite using H_eq)
       exact bv_rw' (ϕ := fun r => pair (function_eval Hfunc2' w' Hw'_mem_η') z ∈ᴮ r)
         (h_congr := B_ext_mem_right)
-        (bv_symm (inf_le_right.trans (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans H_eq)))))
+        (bv_symm (inf_le_right.trans (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans
+            H_eq)))))
         (H_new := by
           rw [mem_induced_epsilon_rel_iff Hfunc2']
           refine ⟨function_eval_mem_codomain,
@@ -1018,7 +1050,8 @@ lemma image_eq_of_eq_induced_epsilon_rel_aux
           apply bv_use w'; apply le_inf Hw'_mem_η'
           apply bv_use z'; apply le_inf Hz'_mem_η'
           -- pair z'z∈f: ctx3'.ir.ir.il.ir; w'∈z': il
-          exact le_inf (le_inf function_eval_pair_mem (inf_le_right.trans (inf_le_right.trans (inf_le_left.trans inf_le_right))))
+          exact le_inf (le_inf function_eval_pair_mem (inf_le_right.trans (inf_le_right.trans
+              (inf_le_left.trans inf_le_right))))
                        inf_le_left)
 
 -- src/aleph_one.lean:503
@@ -1145,7 +1178,8 @@ lemma eq_of_eq_induced_epsilon_rel
   · -- is_surj η ρ h
     -- h = comp(f_factor, g_inv_rw)
     -- f_factor is surjective onto image(η) (surj_image)
-    -- g_inv_rw is surjective onto ρ (injective_function_inverse_is_injective_function's surjectivity)
+    -- g_inv_rw is surjective onto ρ (injective_function_inverse_is_injective_function's
+    -- surjectivity)
     apply is_func'_comp_surj
       (is_func'_of_is_injective_function Hf_factor)
       (is_func'_of_is_injective_function Hg_inv_rw)
@@ -1234,8 +1268,10 @@ private lemma B_ext_a1_ψ {𝔹 : Type u} [NontrivialCompleteBooleanAlgebra 𝔹
   apply B_ext_iSup; intro f
   apply B_ext_inf B_ext_is_injective_function_left
   -- B_ext (fun x => image (mem_rel x) (prod omega omega) (prod_map_self x omega f) =ᴮ v)
-  -- = B_ext_term with ϕ = (fun w => w =ᴮ v) and t = (fun x => image(mem_rel x)(prod ω ω)(pm(x,ω,f)))
-  apply B_ext_term (ϕ := fun w => w =ᴮ v) (t := fun x => image (mem_rel x) (prod omega omega) (prod_map_self x omega f)) B_ext_bv_eq_left
+  -- = B_ext_term with ϕ = (fun w => w =ᴮ v) and t = (fun x => image(mem_rel x)(prod ω
+  -- ω)(pm(x,ω,f)))
+  apply B_ext_term (ϕ := fun w => w =ᴮ v) (t := fun x => image (mem_rel x) (prod omega omega)
+      (prod_map_self x omega f)) B_ext_bv_eq_left
   -- B_congr (fun x => image (mem_rel x) (prod omega omega) (prod_map_self x omega f))
   intro x₁ x₂ Γ Hxy
   -- Step 1: image(mem_rel x₁)(prod ω ω)(pm(x₁)) =ᴮ image(mem_rel x₂)(prod ω ω)(pm(x₁))
@@ -1251,7 +1287,7 @@ private lemma B_ext_a1_ψ {𝔹 : Type u} [NontrivialCompleteBooleanAlgebra 𝔹
 -- src/aleph_one.lean:620
 -- a1_func χ: the ordinal x such that a1_ψ (a1'.func χ) x holds
 noncomputable def a1_func (χ : (a1' (𝔹 := 𝔹)).type) : bSet 𝔹 :=
-  (AE_convert' (a1_ψ (𝔹 := 𝔹)) (fun v => B_ext_a1_ψ) a1' ((a1' (𝔹 := 𝔹)).func χ)).choose
+  (AE_convert' (a1_ψ (𝔹 := 𝔹)) (fun _v => B_ext_a1_ψ) a1' ((a1' (𝔹 := 𝔹)).func χ)).choose
 
 -- Convert a1'_AE to the form needed by AE_convert'
 private lemma a1'_AE_psi {𝔹 : Type u} [NontrivialCompleteBooleanAlgebra 𝔹] {Γ : 𝔹} :
@@ -1278,7 +1314,7 @@ lemma a1_func_spec {𝔹 : Type u} [NontrivialCompleteBooleanAlgebra 𝔹]
     {χ : (a1' (𝔹 := 𝔹)).type} {Γ : 𝔹}
     (H_mem : Γ ≤ (a1' (𝔹 := 𝔹)).func χ ∈ᴮ (a1' (𝔹 := 𝔹))) :
     Γ ≤ a1_ψ ((a1' (𝔹 := 𝔹)).func χ) (a1_func χ) :=
-  (AE_convert' (a1_ψ (𝔹 := 𝔹)) (fun v => B_ext_a1_ψ) a1' ((a1' (𝔹 := 𝔹)).func χ)).choose_spec
+  (AE_convert' (a1_ψ (𝔹 := 𝔹)) (fun _v => B_ext_a1_ψ) a1' ((a1' (𝔹 := 𝔹)).func χ)).choose_spec
     a1'_AE_psi H_mem
 
 -- src/aleph_one.lean:630
@@ -1310,7 +1346,7 @@ lemma mem_a1_iff₀ {z : bSet 𝔹} {Γ : 𝔹} :
 
 -- src/aleph_one.lean:646
 lemma Ord_of_mem_a1 {Γ : 𝔹} {η : bSet 𝔹} (H_mem : Γ ≤ η ∈ᴮ a1) : Γ ≤ Ord η := by
-  rw [mem_a1_iff₀] at H_mem; apply le_trans H_mem; apply sup_le; apply sup_le
+  rw [mem_a1_iff₀] at H_mem; refine H_mem.trans (sup_le (sup_le ?_ ?_) ?_)
   · exact le_trans (le_inf (bv_symm le_rfl) (le_trans le_top (le_top.trans Ord_zero)))
       (B_ext_Ord _ _)
   · exact le_trans (le_inf (bv_symm le_rfl) (le_trans le_top (le_top.trans Ord_one)))
@@ -1409,8 +1445,7 @@ lemma not_one_of_induced_rel_nonempty {η f : bSet 𝔹} {Γ : 𝔹}
   -- b' ∈ η: il.il (2 steps)
   -- η = 1: ir.ir.ir.ir (4 steps)
   -- a' ∈ b': il.ir.ir (3 steps)
-  apply bot_of_mem_self'
-  apply mem_congr
+  refine bot_of_mem_self' (x := 0) (mem_congr (x₁ := a') (x₂ := b') ?_ ?_ ?_)
   · -- ctx ≤ 0 =ᴮ 0 for the "element" (a' =ᴮ 0)
     exact eq_zero_of_mem_one (mem_congr bv_refl
       (inf_le_right.trans (inf_le_right.trans (inf_le_right.trans inf_le_right)))
@@ -1460,7 +1495,8 @@ lemma mem_a1_of_injects_into_omega_aux {Γ : 𝔹} {η : bSet 𝔹}
   -- Step 3: Show R ∈ a1'
   -- Need: (i) R ∈ bv_powerset (prod omega omega), (ii) ϕ' R holds
   -- (i) induced_epsilon_rel ⊆ prod omega omega (subset.mk_subset)
-  -- (ii) ϕ'(R) = ∃ η', Ord η' ∧ ∃ g, inj_fun η' ω g ∧ image(mem_rel η')(prod ω ω)(pm η' ω g) =ᴮ R ∧ R ≠ ∅
+  -- (ii) ϕ'(R) = ∃ η', Ord η' ∧ ∃ g, inj_fun η' ω g ∧ image(mem_rel η')(prod ω ω)(pm η' ω g) =ᴮ R ∧
+  -- R ≠ ∅
   have HR_mem_a1' : Γ ≤ R ∈ᴮ (a1' : bSet 𝔹) := by
     -- a1' = comprehend ϕ' (bv_powerset (prod ω ω))
     -- use mem_comprehend_iff₂ with ϕ' being the big predicate
@@ -1554,13 +1590,16 @@ lemma mem_a1_of_injects_into_omega_aux {Γ : 𝔹} {η : bSet 𝔹}
       ((a1' (𝔹 := 𝔹)).bval χ ⊓ R =ᴮ (a1' (𝔹 := 𝔹)).func χ ⊓ Γ) ≤
       ((a1' (𝔹 := 𝔹)).func χ =ᴮ ∅)ᶜ := inf_le_right.trans H_afc_nonempty
   -- H_ord, Hf, H_not_one from Γ
-  have H_ord2 := inf_le_right.trans (inf_le_right.trans H_ord) (a := (is_injective_function (a1_func χ) omega g ⊓
+  have H_ord2 := inf_le_right.trans (inf_le_right.trans H_ord) (a := (is_injective_function (a1_func
+      χ) omega g ⊓
       image (mem_rel (a1_func χ)) (prod omega omega) (prod_map_self (a1_func χ) omega g) =ᴮ
       (a1' (𝔹 := 𝔹)).func χ) ⊓ ((a1' (𝔹 := 𝔹)).bval χ ⊓ R =ᴮ (a1' (𝔹 := 𝔹)).func χ ⊓ Γ))
-  have Hf2 := inf_le_right.trans (inf_le_right.trans Hf) (a := (is_injective_function (a1_func χ) omega g ⊓
+  have Hf2 := inf_le_right.trans (inf_le_right.trans Hf) (a := (is_injective_function (a1_func χ)
+      omega g ⊓
       image (mem_rel (a1_func χ)) (prod omega omega) (prod_map_self (a1_func χ) omega g) =ᴮ
       (a1' (𝔹 := 𝔹)).func χ) ⊓ ((a1' (𝔹 := 𝔹)).bval χ ⊓ R =ᴮ (a1' (𝔹 := 𝔹)).func χ ⊓ Γ))
-  have H_not_one2 := inf_le_right.trans (inf_le_right.trans H_not_one) (a := (is_injective_function (a1_func χ) omega g ⊓
+  have H_not_one2 := inf_le_right.trans (inf_le_right.trans H_not_one) (a := (is_injective_function
+      (a1_func χ) omega g ⊓
       image (mem_rel (a1_func χ)) (prod omega omega) (prod_map_self (a1_func χ) omega g) =ᴮ
       (a1' (𝔹 := 𝔹)).func χ) ⊓ ((a1' (𝔹 := 𝔹)).bval χ ⊓ R =ᴮ (a1' (𝔹 := 𝔹)).func χ ⊓ Γ))
   have H_ind_eq : (is_injective_function (a1_func χ) omega g ⊓
@@ -1595,7 +1634,7 @@ lemma mem_a1_iff {Γ : 𝔹} {η : bSet 𝔹} (H_ord : Γ ≤ Ord η) :
     intro H_mem
     rw [mem_a1_iff₀] at H_mem
     -- Case split: η = 0, η = 1, or η ∈ a1_aux
-    apply le_trans H_mem; apply sup_le; apply sup_le
+    refine H_mem.trans (sup_le (sup_le ?_ ?_) ?_)
     · -- Case η = 0: 0 injects into ω
       exact le_trans (le_inf (bv_symm le_rfl) (le_trans le_top
         (injection_into_of_injects_into (injects_into_of_subset of_nat_subset_omega))))
@@ -1731,7 +1770,8 @@ lemma a1_not_le_omega {Γ : 𝔹} : Γ ≤ (injects_into a1 omega)ᶜ := by
   apply bot_of_mem_self'
   -- Goal: Γ ⊓ injects_into a1 omega ≤ a1 ∈ a1
   apply (mem_a1_iff (inf_le_left.trans a1_Ord)).mpr
-  -- Goal: Γ ⊓ injects_into a1 omega ≤ ⨆ f, is_injective_function a1 omega f = injection_into a1 omega
+  -- Goal: Γ ⊓ injects_into a1 omega ≤ ⨆ f, is_injective_function a1 omega f = injection_into a1
+  -- omega
   exact injects_into_iff_injection_into.mp inf_le_right
 
 -- src/aleph_one.lean:834
@@ -1747,7 +1787,8 @@ lemma a1_spec {Γ : 𝔹} : Γ ≤ aleph_one_Ord_spec a1 := by
   have H_not_mem_a1 : Γ ⊓ Ord y ⊓ (injects_into y bSet.omega)ᶜ ≤ (y ∈ᴮ a1)ᶜ := by
     apply (le_compl_iff_disjoint_right.mpr (disjoint_iff_inf_le.mpr _))
     apply bv_absurd (injects_into y bSet.omega)
-    · exact injects_into_of_injection_into ((mem_a1_iff (inf_le_left.trans H_Ord_y)).mp inf_le_right)
+    · exact injects_into_of_injection_into ((mem_a1_iff (inf_le_left.trans H_Ord_y)).mp
+        inf_le_right)
     · exact inf_le_left.trans H_no_inj_y
   -- Now prove a1 ⊆ y by trichotomy
   rw [Ord.le_iff_lt_or_eq a1_Ord H_Ord_y]
@@ -1770,6 +1811,7 @@ lemma a1_spec {Γ : 𝔹} : Γ ≤ aleph_one_Ord_spec a1 := by
 
 -- src/aleph_one.lean:862
 set_option maxHeartbeats 800000 in
+-- The injection construction unfolds the ordinal bound and Boolean-valued function predicates.
 lemma a1_le_of_omega_lt {Γ : 𝔹} : Γ ≤ le_of_omega_lt a1 := by
   unfold le_of_omega_lt
   apply le_iInf; intro z; rw [← deduction, ← deduction]
@@ -1807,7 +1849,8 @@ lemma a1_le_of_omega_lt {Γ : 𝔹} : Γ ≤ le_of_omega_lt a1 := by
     apply (le_compl_iff_disjoint_right.mpr (disjoint_iff_inf_le.mpr _))
     -- Goal: ctx ⊓ z ∈ a1 ≤ ⊥
     apply bv_absurd (injects_into z bSet.omega)
-    · exact injects_into_of_injection_into ((mem_a1_iff (inf_le_left.trans H_Ord_z)).mp inf_le_right)
+    · exact injects_into_of_injection_into ((mem_a1_iff (inf_le_left.trans H_Ord_z)).mp
+        inf_le_right)
     · exact inf_le_left.trans H_no_inj
   -- Step 3: by trichotomy a1_Ord vs Ord z, derive a1 ⊆ z
   have H_sub : Γ ⊓ Ord z ⊓ (larger_than bSet.omega z)ᶜ ≤ a1 ⊆ᴮ z := by

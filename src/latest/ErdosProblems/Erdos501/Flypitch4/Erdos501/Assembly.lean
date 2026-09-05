@@ -15,14 +15,16 @@ set_option relaxedAutoImplicit true
 From the recursion of `Recursion.lean` (candidates `cand j k = (m, a) ∈ ℤ × D` and measurable
 selectors `sel j` at each stage `j`), we build the name
 
-  `Xname = {testPoint (cand j k).1 (d (cand j k).2) | j k}`, with `‖(j, k)-th element ∈ X‖ = [sel j = k]`,
+  `Xname = {testPoint (cand j k).1 (d (cand j k).2) | j k}`, with `‖(j, k)-th element ∈ X‖ = [sel j
+  = k]`,
 
 and prove that it is (forced to be) an infinite subset of `Rdot` which is independent for `A`:
 
 * infinite (`infinite_Xname`), through the name `fname` of the injection `j ↦ x_j`;
 * independent (`independent_Xname`): on the piece where `(m, a)` is chosen at stage `i` and
   `(m', a')` at stage `j ≠ i`, the recursion guarantees `xx (t_i) ∉ envSet E (ĝ↾R) t_j`, and the
-  homogeneous envelope of `A(testPoint m' (d a'))` is exactly `envSet E (ĝ↾R) t_j` on the cover event
+  homogeneous envelope of `A(testPoint m' (d a'))` is exactly `envSet E (ĝ↾R) t_j` on the cover
+  event
   (P3), so `x_i ∉ A(x_j)` by (P4).
 
 The main theorem `exists_infinite_independent_name` packages this as
@@ -82,7 +84,8 @@ noncomputable def selVal (j k : ℕ) : randomAlgebra ι :=
     (measurableSet_selEvent hE hJ hπ hdisj hR j k)
 
 variable (d) in
-/-- **The name of the independent set** `X = {x_j | j}`, `x_j` the test point chosen at stage `j`. -/
+/-- **The name of the independent set** `X = {x_j | j}`, `x_j` the test point chosen at stage `j`.
+-/
 noncomputable def Xname : bSet (randomAlgebra ι) :=
   ⟨ℕ × ℕ, fun jk => tp hE hJ hπ hdisj hR d jk.1 jk.2, fun jk => selVal hE hJ hπ hdisj hR jk.1 jk.2⟩
 
@@ -99,7 +102,8 @@ noncomputable def fname : bSet (randomAlgebra ι) :=
     (Xname hE hJ hπ hdisj hR d).bval jk = selVal hE hJ hπ hdisj hR jk.1 jk.2 := rfl
 @[simp] lemma fname_type : (fname hE hJ hπ hdisj hR d).type = (ℕ × ℕ) := rfl
 @[simp] lemma fname_func (jk : (fname hE hJ hπ hdisj hR d).type) :
-    (fname hE hJ hπ hdisj hR d).func jk = pair (of_nat jk.1) (tp hE hJ hπ hdisj hR d jk.1 jk.2) := rfl
+    (fname hE hJ hπ hdisj hR d).func jk = pair (of_nat jk.1) (tp hE hJ hπ hdisj hR d jk.1 jk.2) :=
+        rfl
 @[simp] lemma fname_bval (jk : (fname hE hJ hπ hdisj hR d).type) :
     (fname hE hJ hπ hdisj hR d).bval jk = selVal hE hJ hπ hdisj hR jk.1 jk.2 := rfl
 
@@ -120,7 +124,8 @@ def good (x : RandomAlgebra.Ω ι) : Prop :=
   ∀ j, μS ((stage hE hJ hπ hdisj hR j).C x) = ∞ ∧
     tj hE hJ hπ hdisj hR j x ∈ QX E (stage hE hJ hπ hdisj hR j).C x
 
-lemma ae_good' : ∀ᵐ x ∂(RandomAlgebra.μ_random ι), good hE hJ hπ hdisj hR x := ae_good hE hJ hπ hdisj hR
+lemma ae_good' : ∀ᵐ x ∂(RandomAlgebra.μ_random ι), good hE hJ hπ hdisj hR x := ae_good hE hJ hπ
+    hdisj hR
 
 /-- For good `x` and `i ≠ j`, `xx (t_i x) ∉ envSet E (x↾R) (t_j x)`. -/
 lemma xx_tj_not_mem_envSet {x : RandomAlgebra.Ω ι} (hx : good hE hJ hπ hdisj hR x) {i j : ℕ}
@@ -173,7 +178,7 @@ lemma selVal_inf_selVal {j k k' : ℕ} (hkk' : k ≠ k') :
   rw [MeasureAlgebra.mk_inf, MeasureAlgebra.bot_def]
   refine MeasureAlgebra.mk_congr ?_
   ext x
-  simp only [selEvent, mem_inter_iff, mem_setOf_eq, mem_empty_iff_false, iff_false, not_and]
+  simp only [selEvent, mem_inter_iff, mem_ofPred_eq, mem_empty_iff_false, iff_false, not_and]
   intro h1 h2
   exact hkk' (h1.symm.trans h2)
 
@@ -226,7 +231,7 @@ lemma selVal_inf_eq_tp_le_bot {j k j' k' : ℕ} (hjj' : j ≠ j') :
     MeasureAlgebra.mk_le_mk, MeasureAlgebra.ae_le_set_iff_ae_imp]
   filter_upwards [ae_good' hE hJ hπ hdisj hR] with x hx
   rintro ⟨⟨h1, h2⟩, h3⟩
-  simp only [selEvent, mem_setOf_eq] at h1 h2 h3
+  simp only [selEvent, mem_ofPred_eq] at h1 h2 h3
   rw [reading_tp hE hJ hπ hdisj hR hπ0 h1, reading_tp hE hJ hπ hdisj hR hπ0 h2] at h3
   exact absurd h3 (xx_tj_ne hE hJ hπ hdisj hR hx hjj')
 
@@ -363,12 +368,14 @@ theorem independent_Xname {Γ : randomAlgebra ι} {A : bSet (randomAlgebra ι)}
     have hcov : Γ₆ ⊓ x ∈ᴮ Ay ≤ MeasureAlgebra.mk (RandomAlgebra.μ_random ι)
         (coverEvent
           (seqFun (envA E hE (π (cand hE hJ hπ hdisj hR j' k').2) (cand hE hJ hπ hdisj hR j' k').1))
-          (seqFun (envB E hE (π (cand hE hJ hπ hdisj hR j' k').2) (cand hE hJ hπ hdisj hR j' k').1)))
+          (seqFun (envB E hE (π (cand hE hJ hπ hdisj hR j' k').2) (cand hE hJ hπ hdisj hR j'
+              k').1)))
         (measurableSet_coverEvent (measurable_seqFun _) (measurable_seqFun _)) :=
       inf_le_left.trans (hΓ.trans (hP3 _ (cand_mem_J hE hJ hπ hdisj hR j' k') _))
     unfold tp testPoint at hmem
     rw [mem_openName_realName] at hmem
-    have hfin := le_inf (le_inf (le_inf (inf_le_left.trans hsel) (inf_le_left.trans hsel')) hcov) hmem
+    have hfin := le_inf (le_inf (le_inf (inf_le_left.trans hsel) (inf_le_left.trans hsel')) hcov)
+        hmem
     refine hfin.trans ?_
     unfold selVal
     rw [MeasureAlgebra.mk_inf, MeasureAlgebra.mk_inf, MeasureAlgebra.mk_inf, MeasureAlgebra.bot_def,
@@ -376,7 +383,7 @@ theorem independent_Xname {Γ : randomAlgebra ι} {A : bSet (randomAlgebra ι)}
     filter_upwards [ae_good' hE hJ hπ hdisj hR] with x hx
     rintro ⟨⟨⟨h1, h2⟩, h3⟩, h4⟩
     exfalso
-    simp only [selEvent, mem_setOf_eq] at h1 h2 h4
+    simp only [selEvent, mem_ofPred_eq] at h1 h2 h4
     obtain ⟨n, h4a, h4b⟩ := h4
     apply xx_tj_not_mem_envSet hE hJ hπ hdisj hR hx hj
     rw [tj_eq hE hJ hπ hdisj hR j' x, h2, ← reading_tp hE hJ hπ hdisj hR hπ0 h1]

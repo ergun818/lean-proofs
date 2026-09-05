@@ -2,7 +2,8 @@
 Copyright (c) 2026 The Flypitch Project. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 
-The transport of the Erdős property from `Rdot` to an arbitrary internal complete ordered field along
+The transport of the Erdős property from `Rdot` to an arbitrary internal complete ordered field
+along
 the internal isomorphism `psi` (unit (F8), part 3, `PLAN.md` §6), and the universal sentence.
 -/
 import ErdosProblems.Erdos501.Flypitch4.Erdos501.InternalIso
@@ -14,17 +15,22 @@ set_option relaxedAutoImplicit true
 # Transport of the Erdős property along `psi` (unit (F8), part 3)
 
 Let `F` be an internal complete ordered field on `Γ` and `A : F.R → 𝒫 F.R` a function name all of
-whose values have internal outer measure `< 1`.  Its transport `Atr F A = {(psi r, psi[A(r)]) | r ∈ F.R}`
+whose values have internal outer measure `< 1`.  Its transport `Atr F A = {(psi r, psi[A(r)]) | r ∈
+F.R}`
 is a function name `Rdot → 𝒫 Rdot` (`Atr_isFun`) whose values have outer measure `< 1` in `Rdot`
 (`Atr_values`): the covering sequences `a b s : ω → F.R` of `A(r)` are read through `psi`
-(`rd F`), and the eight clauses of `Sem.outerMeasureLtOne` for `Rdot` are established from the ground
-readings by the introduction rule `outerMeasureLtOne_of_readings` (the converse of the reading theorem
-of `RealReading.lean`).  Theorem 3.2 in `V^{randomAlgebra ι}` (`exists_infinite_independent_of_omlt1`,
+(`rd F`), and the eight clauses of `Sem.outerMeasureLtOne` for `Rdot` are established from the
+ground
+readings by the introduction rule `outerMeasureLtOne_of_readings` (the converse of the reading
+theorem
+of `RealReading.lean`).  Theorem 3.2 in `V^{randomAlgebra ι}`
+(`exists_infinite_independent_of_omlt1`,
 `Assembly.lean`) then gives an infinite independent `X' ⊆ Rdot` for `Atr F A`, and its pull-back
 `Xpb F X' = {r ∈ F.R | psi r ∈ X'}` is infinite (`infinite_Xpb`) and independent for `A`
 (`independent_Xpb`).  Hence
 
-* `erdosProperty_of_COF : 𝔠⁺ ≤ #ι → Γ ≤ F.COF → Γ ≤ Sem.erdosProperty F.R F.plus F.ltR F.zero F.one`,
+* `erdosProperty_of_COF : 𝔠⁺ ≤ #ι → Γ ≤ F.COF → Γ ≤ Sem.erdosProperty F.R F.plus F.ltR F.zero
+F.one`,
 
 for **every** internal complete ordered field, and therefore, by `forced_Erdos501_f_iff`,
 
@@ -81,11 +87,13 @@ lemma appN_unique (hf : Γ ≤ Sem.isFun D C f) (hn : Γ ≤ n ∈ᴮ D) {y : bS
 lemma appN_mem (hf : Γ ≤ Sem.isFun D C f) (hn : Γ ≤ n ∈ᴮ D) : Γ ≤ appN f n ∈ᴮ C := by
   refine BV.iSup_elim (isFun_elim hf hn) fun y Γ' h' hy => ?_
   have h1 : Γ' ≤ appN f n =ᴮ y :=
-    BV.mp ((bv_and_right (bv_and_right hy)).trans (iInf_le _ (appN f n))) (h'.trans (app_appN hf hn))
+    BV.mp ((bv_and_right (bv_and_right hy)).trans (iInf_le _ (appN f n))) (h'.trans (app_appN hf
+        hn))
   exact mem_congr (bv_symm h1) bv_refl (bv_and_left hy)
 
 /-- Successors are unique. -/
-lemma succ_unique {n m m' : bSet (randomAlgebra ι)} (h : Γ ≤ Sem.succ n m) (h' : Γ ≤ Sem.succ n m') :
+lemma succ_unique {n m m' : bSet (randomAlgebra ι)} (h : Γ ≤ Sem.succ n m) (h' : Γ ≤ Sem.succ n m')
+    :
     Γ ≤ m =ᴮ m' := by
   refine le_trans ?_ (bSet_axiom_of_extensionality m m')
   refine le_iInf fun z => ?_
@@ -130,7 +138,7 @@ variable {Γ : randomAlgebra ι} (a : ℕ → MeasReal ι)
 lemma mem_rSeq (z : bSet (randomAlgebra ι)) :
     (z ∈ᴮ rSeq a) = ⨆ n : ℕ, z =ᴮ pair (of_nat n) (realName (a n).1 (a n).2) := by
   rw [mem_unfold]
-  show (⨆ n : ℕ, ⊤ ⊓ z =ᴮ pair (of_nat n) (realName (a n).1 (a n).2)) = _
+  change (⨆ n : ℕ, ⊤ ⊓ z =ᴮ pair (of_nat n) (realName (a n).1 (a n).2)) = _
   simp only [top_inf_eq]
 
 lemma app_rSeq (k : ℕ) : Γ ≤ Sem.app (rSeq a) (of_nat k) (realName (a k).1 (a k).2) := by
@@ -232,7 +240,7 @@ theorem outerMeasureLtOne_of_readings (a b s : ℕ → MeasReal ι) (ρ : MeasRe
       (le_inf ((h₂.trans h₁)) (mem_congr hyg bv_refl (h₂.trans hy))).trans (hcov g)
     have e : {w | ∃ n, (a n).1 w < g.1 w ∧ g.1 w < (b n).1 w} =
         ⋃ n, {w | (a n).1 w < g.1 w} ∩ {w | g.1 w < (b n).1 w} := by
-      ext w; simp only [mem_setOf_eq, mem_iUnion, mem_inter_iff]
+      ext w; simp only [mem_ofPred_eq, mem_iUnion, mem_inter_iff]
     have h4 : Γ₂ ≤ ⨆ n : ℕ, MeasureAlgebra.mk (RandomAlgebra.μ_random ι)
         ({w | (a n).1 w < g.1 w} ∩ {w | g.1 w < (b n).1 w})
         ((measurableSet_lt (a n).2 g.2).inter (measurableSet_lt g.2 (b n).2)) := by
@@ -303,7 +311,8 @@ theorem outerMeasureLtOne_of_readings (a b s : ℕ → MeasReal ι) (ρ : MeasRe
     rw [app2_opDot_realName] at ht₁ ht₂
     have e : Γ₁₃ ≤ realName (fun w => (s (k + 1)).1 w + (a k).1 w)
         (measurable_add.comp ((s (k+1)).2.prodMk (a k).2)) =ᴮ
-        realName (fun w => (s k).1 w + (b k).1 w) (measurable_add.comp ((s k).2.prodMk (b k).2)) := by
+        realName (fun w => (s k).1 w + (b k).1 w) (measurable_add.comp ((s k).2.prodMk (b k).2)) :=
+            by
       rw [bv_eq_realName]
       exact (hΓ₉.trans (hΓ₃.trans (h₃.trans (h₂.trans ‹Γ₁ ≤ Γ›)))).trans (hps k)
     exact bv_trans ht₁ (bv_trans e (bv_symm ht₂))
@@ -340,7 +349,8 @@ lemma covers_congr {ltR S S' a b : bSet (randomAlgebra ι)} (h : Γ ≤ S =ᴮ S
   rw [bv_imp_iff]; intro Γ' h' hy
   exact BV.mp ((h'.trans hc).trans (iInf_le _ y)) (mem_congr bv_refl (bv_symm (h'.trans h)) hy)
 
-lemma outerMeasureLtOne_congr {R plus ltR zero one S S' : bSet (randomAlgebra ι)} (hSS : Γ ≤ S =ᴮ S')
+lemma outerMeasureLtOne_congr {R plus ltR zero one S S' : bSet (randomAlgebra ι)} (hSS : Γ ≤ S =ᴮ
+    S')
     (hom : Γ ≤ Sem.outerMeasureLtOne R plus ltR zero one S) :
     Γ ≤ Sem.outerMeasureLtOne R plus ltR zero one S' := by
   rw [Sem.outerMeasureLtOne] at hom ⊢
@@ -503,7 +513,8 @@ theorem Atr_isFun (hA1 : Γ ≤ Sem.isFun F.R (bv_powerset F.R) A) :
     have e2 : Γ₆ ≤ F.R.func i =ᴮ F.R.func j := by
       rw [rdName, rdName, bv_eq_realName] at e1
       exact (le_inf le_rfl e1).trans (eq_of_rd_eq H₆ hiR hjR)
-    exact bv_trans hy'j (imgSet_congr ((h₆.trans h₅).trans ((h₄.trans h₃).trans (h₂.trans (h₁.trans hA1)))) hjR (bv_symm e2))
+    exact bv_trans hy'j (imgSet_congr ((h₆.trans h₅).trans ((h₄.trans h₃).trans (h₂.trans (h₁.trans
+        hA1)))) hjR (bv_symm e2))
 
 /-! #### The readings of the covering sequences -/
 
@@ -540,8 +551,8 @@ lemma readings_zero {s : bSet (randomAlgebra ι)} (hs : Γ ≤ Sem.isFun bSet.om
   have := le_inf h1 h2
   rw [MeasureAlgebra.mk_inf] at this
   refine mk_le_of_forall this fun w hw => ?_
-  simp only [mem_inter_iff, mem_setOf_eq] at hw ⊢
-  show rd F (appN s (of_nat 0)) w = 0
+  simp only [mem_inter_iff, mem_ofPred_eq] at hw ⊢
+  change rd F (appN s (of_nat 0)) w = 0
   rw [← hw.1, hw.2]
 
 lemma readings_ps {a b s : bSet (randomAlgebra ι)} (ha : Γ ≤ Sem.isFun bSet.omega F.R a)
@@ -573,8 +584,8 @@ lemma readings_ps {a b s : bSet (randomAlgebra ι)} (ha : Γ ≤ Sem.isFun bSet.
   have := le_inf r1 (le_inf r2 r3)
   simp only [MeasureAlgebra.mk_inf] at this
   refine mk_le_of_forall this fun w hw => ?_
-  simp only [mem_inter_iff, mem_setOf_eq] at hw ⊢
-  show rd F (appN s (of_nat (k + 1))) w + rd F (appN a (of_nat k)) w =
+  simp only [mem_inter_iff, mem_ofPred_eq] at hw ⊢
+  change rd F (appN s (of_nat (k + 1))) w + rd F (appN a (of_nat k)) w =
     rd F (appN s (of_nat k)) w + rd F (appN b (of_nat k)) w
   rw [← hw.1, ← hw.2.1, hw.2.2]
 
@@ -587,7 +598,7 @@ lemma readings_lt_one {ρ' : bSet (randomAlgebra ι)} (hρ' : Γ ≤ ρ' ∈ᴮ 
   have := le_inf h1 h2
   rw [MeasureAlgebra.mk_inf] at this
   refine mk_le_of_forall this fun w hw => ?_
-  simp only [mem_inter_iff, mem_setOf_eq] at hw ⊢
+  simp only [mem_inter_iff, mem_ofPred_eq] at hw ⊢
   rw [← hw.2]; exact hw.1
 
 lemma readings_le {s ρ' : bSet (randomAlgebra ι)} (hs : Γ ≤ Sem.isFun bSet.omega F.R s)
@@ -624,7 +635,8 @@ lemma readings_cov {r a b : bSet (randomAlgebra ι)}
   have hΓ₅ : Γ₅ ≤ Γ := (((h₅.trans h₄).trans h₃).trans h₂).trans hΓ₁
   have H₅ := Fld.cof_mono hF hΓ₅
   have hk₅ : Γ₅ ≤ n =ᴮ of_nat k := (h₅.trans h₄).trans hk
-  have hjR : Γ₅ ≤ F.R.func j ∈ᴮ F.R := (((h₅.trans h₄).trans h₃).trans h₂).trans (hj.trans (func_mem_R j))
+  have hjR : Γ₅ ≤ F.R.func j ∈ᴮ F.R := (((h₅.trans h₄).trans h₃).trans h₂).trans (hj.trans
+      (func_mem_R j))
   have hu' : Γ₅ ≤ u =ᴮ appN a (of_nat k) :=
     appN_unique (hΓ₅.trans ha) of_nat_mem_omega (app_congr_arg hk₅ (bv_and_left huv))
   have hv' : Γ₅ ≤ v =ᴮ appN b (of_nat k) :=
@@ -643,11 +655,11 @@ lemma readings_cov {r a b : bSet (randomAlgebra ι)}
   have := le_inf m1 (le_inf m2 m3)
   simp only [MeasureAlgebra.mk_inf] at this
   refine mk_le_of_forall this fun w hw => ?_
-  simp only [mem_inter_iff, mem_setOf_eq] at hw ⊢
+  simp only [mem_inter_iff, mem_ofPred_eq] at hw ⊢
   refine ⟨k, ?_, ?_⟩
-  · show rd F (appN a (of_nat k)) w < g.1 w
+  · change rd F (appN a (of_nat k)) w < g.1 w
     rw [← hw.2.2]; exact hw.1
-  · show g.1 w < rd F (appN b (of_nat k)) w
+  · change g.1 w < rd F (appN b (of_nat k)) w
     rw [← hw.2.2]; exact hw.2.1
 
 /-- **The values of `Atr F A` have outer measure `< 1`.** -/
@@ -664,7 +676,8 @@ theorem omlt1_imgSet {r : bSet (randomAlgebra ι)}
   have hs := bv_and_left (bv_and_right (bv_and_right h))
   have hnd := bv_and_left (bv_and_right (bv_and_right (bv_and_right h)))
   have hcov := bv_and_left (bv_and_right (bv_and_right (bv_and_right (bv_and_right h))))
-  have h0 := bv_and_left (bv_and_right (bv_and_right (bv_and_right (bv_and_right (bv_and_right h)))))
+  have h0 := bv_and_left (bv_and_right (bv_and_right (bv_and_right (bv_and_right (bv_and_right
+      h)))))
   have hps := bv_and_left (bv_and_right (bv_and_right (bv_and_right (bv_and_right (bv_and_right
     (bv_and_right h))))))
   have hsb := bv_and_right (bv_and_right (bv_and_right (bv_and_right (bv_and_right (bv_and_right
@@ -807,7 +820,8 @@ theorem infinite_Xpb (hX' : Γ ≤ X' ⊆ᴮ Rdot) (hinf : Γ ≤ Sem.infinite X
       rw [bv_imp_iff]; intro Γ₈ h₈ hy''
       refine app_fpb_elim hy'' fun k' j Γ₉ h₉ hj happ' hnk' huj => ?_
       have hΓ₇ : Γ₉ ≤ Γ₇ := h₉.trans h₈
-      refine of_nat_eq_elim ((hΓ₇.trans (((h₇.trans h₆).trans h₅).trans h₄)).trans hk) hnk' fun e => ?_
+      refine of_nat_eq_elim ((hΓ₇.trans (((h₇.trans h₆).trans h₅).trans h₄)).trans hk) hnk' fun e =>
+          ?_
       subst e
       have H₉ := Fld.cof_mono H₇ hΓ₇
       have hjR : Γ₉ ≤ F.R.func j ∈ᴮ F.R := hj.trans (func_mem_R j)
@@ -837,7 +851,8 @@ theorem infinite_Xpb (hX' : Γ ≤ X' ⊆ᴮ Rdot) (hinf : Γ ≤ Sem.infinite X
     have happ'' : Γ₇ ≤ Sem.app f' (of_nat k') (rdName F (F.R.func i)) :=
       app_congr_val (bv_symm e') happ'
     have hinj₇ := ((((((h₇.trans h₆).trans h₅).trans h₄).trans h₃).trans h₂)).trans hinj
-    have h1 := BV.mp (BV.mp (((BV.mp ((BV.mp (hinj₇.trans (iInf_le _ (of_nat k))) of_nat_mem_omega).trans
+    have h1 := BV.mp (BV.mp (((BV.mp ((BV.mp (hinj₇.trans (iInf_le _ (of_nat k)))
+        of_nat_mem_omega).trans
       (iInf_le _ (of_nat k'))) of_nat_mem_omega).trans (iInf_le _ (rdName F (F.R.func i)))))
       (h₇.trans happ)) happ''
     exact bv_trans (h₇.trans hnk) (bv_trans h1 (bv_symm hmk'))
@@ -859,7 +874,8 @@ theorem independent_Xpb (hA1 : Γ ≤ Sem.isFun F.R (bv_powerset F.R) A)
   refine BV.compl_of_inf_le_bot ?_
   have hΓ₇ : Γ₆ ⊓ x ∈ᴮ Ay ≤ Γ := inf_le_left.trans hΓ₆
   have H₇ := Fld.cof_mono hF hΓ₇
-  have hiR : Γ₆ ⊓ x ∈ᴮ Ay ≤ F.R.func i ∈ᴮ F.R := (inf_le_left.trans (h₆.trans hi)).trans (func_mem_R i)
+  have hiR : Γ₆ ⊓ x ∈ᴮ Ay ≤ F.R.func i ∈ᴮ F.R := (inf_le_left.trans (h₆.trans hi)).trans (func_mem_R
+      i)
   have hjR : Γ₆ ⊓ x ∈ᴮ Ay ≤ F.R.func j ∈ᴮ F.R := (inf_le_left.trans hj).trans (func_mem_R j)
   have hAy' : Γ₆ ⊓ x ∈ᴮ Ay ≤ Ay =ᴮ Aval A (F.R.func j) :=
     Aval_unique (hΓ₇.trans hA1) hjR

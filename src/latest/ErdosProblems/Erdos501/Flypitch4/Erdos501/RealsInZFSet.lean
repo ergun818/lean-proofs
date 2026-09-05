@@ -383,7 +383,7 @@ theorem botSet_real : (botSet : Set ℝ) = ∅ :=
 contained in an interval `Ioc a b` of almost the same length. -/
 theorem exists_Ioc_of_length_lt {t : Set ℝ} {c : ℝ≥0∞} (h : StieltjesFunction.id.length t < c) :
     ∃ a b : ℝ, a ≤ b ∧ t ⊆ Ioc a b ∧ ENNReal.ofReal (b - a) < c := by
-  rw [StieltjesFunction.length_eq, botSet_real, diff_empty] at h
+  rw [StieltjesFunction.length_eq, botSet_real, sdiff_empty] at h
   simp only [iInf_lt_iff, StieltjesFunction.id_apply, id] at h
   obtain ⟨a, b, hab, hlt⟩ := h
   rcases le_or_gt a b with hle | hlt'
@@ -485,7 +485,7 @@ theorem outerMeasureLtOne_setZ {s : Set ℝ} (hs : volume s < 1) :
     exact ⟨natZ k, natZ_mem_omega k, cutZ (a k), cutZ (b k), app_seqZ_iff.2 rfl,
       app_seqZ_iff.2 rfl, lt_ltZ_iff.2 hk1, lt_ltZ_iff.2 hk2⟩
   · -- s 0 = 0
-    show app (seqZ p) (natZ 0) zeroZ
+    change app (seqZ p) (natZ 0) zeroZ
     exact app_seqZ_iff.2 (by simp [hp, zeroZ])
   · -- the partial sums recursion
     intro n hn m hnm u v w w' t t' hu hv hw hw' ht ht'
@@ -522,7 +522,7 @@ theorem infinite_of_infinite_Z {X : ZFSet.{0}} (hX : X ⊆ Rz) (h : infinite X) 
     have h3 : app f (natZ m) (fval f (natZ n)) := h1 ▸ app_fval hf (natZ_mem_omega m)
     exact natZ_injective (hinj _ (natZ_mem_omega n) _ (natZ_mem_omega m) _ h2 h3)
   · intro n
-    show cutZ (g n) ∈ X
+    change cutZ (g n) ∈ X
     rw [← hg]
     exact fval_mem hf (natZ_mem_omega n)
 

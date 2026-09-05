@@ -46,7 +46,7 @@ lemma subst_realize2 {S : Type u} (v : ℕ → S) (x x' : S) (n₁ n₂ k : ℕ)
     Fol.subst_realize (Fol.subst_realize v x' (n₁ + n₂)) x n₁ k =
     Fol.subst_realize (Fol.subst_realize v x n₁) x' (n₁ + n₂ + 1) k := by
   simp only [subst_realize]
-  split_ifs with h1 h2 h3 h4 h5 h6 h7 h8 <;> simp_all [subst_realize] <;> omega
+  split_ifs with h1 h2 h3 h4 h5 h6 h7 h8 <;> simp_all <;> omega
 
 lemma subst_realize2_0 {S : Type u} (v : ℕ → S) (x x' : S) (n k : ℕ) :
     Fol.subst_realize (Fol.subst_realize v x' n) x 0 k =
@@ -79,7 +79,7 @@ lemma subst_fin_realize_eq {S : Type u} {n} {v₁ : DVec S n} {v₂ : ℕ → S}
   | zero => simp [DVec.nth, subst_realize]
   | succ k =>
     have h : 0 < k + 1 := Nat.succ_pos _
-    simp only [DVec.nth, subst_realize, Nat.lt_irrefl, if_false, h, if_true, Nat.add_sub_cancel]
+    simp only [DVec.nth, subst_realize, h, if_true, Nat.add_sub_cancel]
     exact hv k (Nat.lt_of_succ_lt_succ hk)
 
 /-! ## Language -/
@@ -97,9 +97,9 @@ variable (L : Language.{u})
 /-- `preterm L l` is a partially applied term. If applied to `l` terms, it becomes a term (l=0).
     We use de Bruijn variables. -/
 inductive preterm : ℕ → Type u
-  | var : ∀ (k : ℕ), preterm 0
-  | func : ∀ {l : ℕ} (f : L.functions l), preterm l
-  | app : ∀ {l : ℕ} (t : preterm (l + 1)) (s : preterm 0), preterm l
+  | var : ∀ (_k : ℕ), preterm 0
+  | func : ∀ {l : ℕ} (_f : L.functions l), preterm l
+  | app : ∀ {l : ℕ} (_t : preterm (l + 1)) (_s : preterm 0), preterm l
 
 @[reducible] def term := preterm L 0
 
@@ -122,7 +122,7 @@ lemma apps_eq_app {l} (t : preterm L (l + 1)) (s : term L) (ts : DVec (term L) l
 
 namespace preterm
 
-@[simp] def change_arity' : ∀ {l l'} (_ : l = l') (t : preterm L l), preterm L l'
+@[simp] def change_arity' : ∀ {l l'} (_ : l = l') (_t : preterm L l), preterm L l'
   | _, _, h, var k => by subst h; exact var k
   | _, _, h, func f => func (by subst h; exact f)
   | _, _, h, app t₁ t₂ => app (change_arity' (by omega) t₁) t₂
@@ -175,7 +175,7 @@ def term_of_function {l} (f : L.functions l) : Arity' (term L) (term L) l :=
 def term.rec {C : term L → Sort v}
     (hvar : ∀ (k : ℕ), C (&k))
     (hfunc : ∀ {l} (f : L.functions l) (ts : DVec (term L) l)
-      (ih_ts : ∀ t, DVec.pmem t ts → C t), C (apps (preterm.func f) ts)) :
+      (_ih_ts : ∀ t, DVec.pmem t ts → C t), C (apps (preterm.func f) ts)) :
     ∀ (t : term L), C t :=
   let rec go : ∀ {l} (t : preterm L l) (ts : DVec (term L) l)
       (ih_ts : ∀ s, DVec.pmem s ts → C s), C (apps t ts)
@@ -189,9 +189,9 @@ def term.rec {C : term L → Sort v}
   fun t => go t DVec.nil (fun s hs => hs.elim)
 
 def term.elim' {C : Type v}
-    (hvar : ∀ (k : ℕ), C)
-    (hfunc : ∀ {{l}} (f : L.functions l) (ts : DVec (term L) l) (ih_ts : DVec C l), C) :
-    ∀ {l} (t : preterm L l) (ts : DVec (term L) l) (ih_ts : DVec C l), C
+    (hvar : ∀ (_k : ℕ), C)
+    (hfunc : ∀ {{l}} (_f : L.functions l) (_ts : DVec (term L) l) (_ih_ts : DVec C l), C) :
+    ∀ {l} (_t : preterm L l) (_ts : DVec (term L) l) (_ih_ts : DVec C l), C
   | _, preterm.var k, _, _ => hvar k
   | _, preterm.func f, ts, ih_ts => hfunc f ts ih_ts
   | _, preterm.app t s, ts, ih_ts =>
@@ -199,14 +199,14 @@ def term.elim' {C : Type v}
         (DVec.cons (term.elim' hvar hfunc s DVec.nil DVec.nil) ih_ts)
 
 def term.elim {C : Type v}
-    (hvar : ∀ (k : ℕ), C)
-    (hfunc : ∀ {{l}} (f : L.functions l) (ts : DVec (term L) l) (ih_ts : DVec C l), C) :
-    ∀ (t : term L), C :=
+    (hvar : ∀ (_k : ℕ), C)
+    (hfunc : ∀ {{l}} (_f : L.functions l) (_ts : DVec (term L) l) (_ih_ts : DVec C l), C) :
+    ∀ (_t : term L), C :=
   fun t => term.elim' hvar hfunc t DVec.nil DVec.nil
 
 lemma term.elim'_apps {C : Type v}
-    (hvar : ∀ (k : ℕ), C)
-    (hfunc : ∀ {{l}} (f : L.functions l) (ts : DVec (term L) l) (ih_ts : DVec C l), C)
+    (hvar : ∀ (_k : ℕ), C)
+    (hfunc : ∀ {{l}} (_f : L.functions l) (_ts : DVec (term L) l) (_ih_ts : DVec C l), C)
     {l} (t : preterm L l) (ts : DVec (term L) l) :
     @term.elim' L C hvar hfunc 0 (apps t ts) DVec.nil DVec.nil =
     @term.elim' L C hvar hfunc l t ts (ts.map (term.elim hvar hfunc)) := by
@@ -217,8 +217,8 @@ lemma term.elim'_apps {C : Type v}
     exact ih (preterm.app t x)
 
 lemma term.elim_apps {C : Type v}
-    (hvar : ∀ (k : ℕ), C)
-    (hfunc : ∀ {{l}} (f : L.functions l) (ts : DVec (term L) l) (ih_ts : DVec C l), C)
+    (hvar : ∀ (_k : ℕ), C)
+    (hfunc : ∀ {{l}} (_f : L.functions l) (_ts : DVec (term L) l) (_ih_ts : DVec C l), C)
     {l} (f : L.functions l) (ts : DVec (term L) l) :
     @term.elim L C hvar hfunc (apps (preterm.func f) ts) =
     hfunc f ts (ts.map (@term.elim L C hvar hfunc)) := by
@@ -251,7 +251,6 @@ lemma injective_lift_term_at : ∀ {l} {n m : ℕ},
       have hk := preterm.var.inj h
       split_ifs at hk with h₁ h₂
       all_goals (try exact congrArg preterm.var (by omega))
-      all_goals (try exact congrArg preterm.var hk)
   | _, _, _, preterm.var _, preterm.func _, h => by simp [lift_term_at] at h
   | _, _, _, preterm.var _, preterm.app _ _, h => by simp [lift_term_at] at h
   | _, _, _, preterm.func _, preterm.var _, h => by simp [lift_term_at] at h
@@ -277,7 +276,7 @@ lemma lift_term_at2_small : ∀ {l} (t : preterm L l) (n n') {m m'}, m' ≤ m �
     lift_term_at (lift_term_at t n m) n' m' = lift_term_at (lift_term_at t n' m') n (m + n')
   | _, preterm.var k, n, n', m, m', H => by
       simp only [lift_term_at]
-      split_ifs <;> simp_all [lift_term_at] <;> omega
+      split_ifs <;> simp_all <;> omega
   | _, preterm.func _, _, _, _, _, _ => rfl
   | _, preterm.app t₁ t₂, n, n', m, m', H => by
       simp only [lift_term_at, lift_term_at2_small t₁ n n' H, lift_term_at2_small t₂ n n' H]
@@ -286,7 +285,7 @@ lemma lift_term_at2_medium : ∀ {l} (t : preterm L l) {n} (n') {m m'}, m ≤ m'
     lift_term_at (lift_term_at t n m) n' m' = lift_term_at t (n + n') m
   | _, preterm.var k, n, n', m, m', H₁, H₂ => by
       simp only [lift_term_at]
-      split_ifs <;> simp_all [lift_term_at] <;> omega
+      split_ifs <;> simp_all <;> omega
   | _, preterm.func _, _, _, _, _, _, _ => rfl
   | _, preterm.app t₁ t₂, n, n', m, m', H₁, H₂ => by
       simp only [lift_term_at, lift_term_at2_medium t₁ n' H₁ H₂, lift_term_at2_medium t₂ n' H₁ H₂]
@@ -372,7 +371,7 @@ lemma lift_at_subst_term_large : ∀ {l} (t : preterm L l) (s : term L) {n₁} (
           (rw [← lift_term2_medium s n₂ (by omega)]) |
           (congr 1; omega) |
           -- Goal: &(k+n₂-1) = &(k-1) ↑' n₂ # m; know m ≤ n₁ < k so m ≤ k-1
-          (simp only [lift_term_at]; split_ifs with hm <;> (first | (congr 1; omega) | omega))
+          (simp only [lift_term_at]; split_ifs with hm <;> (congr 1; omega))
   | _, preterm.func _, _, _, _, _, _ => rfl
   | _, preterm.app t₁ t₂, s, n₁, n₂, m, h => by
       simp [lift_at_subst_term_large t₁ s n₂ h, lift_at_subst_term_large t₂ s n₂ h]
@@ -390,7 +389,7 @@ lemma lift_at_subst_term_medium : ∀ {l} (t : preterm L l) (s : term L) {n₁ n
     n₂ ≤ m + n₁ → subst_term (lift_term_at t (n₁ + 1) m) s n₂ = lift_term_at t n₁ m
   | _, preterm.var k, s, n₁, n₂, m, h₁, h₂ => by
       simp only [lift_term_at, subst_term, subst_realize]
-      split_ifs <;> simp_all [subst_realize] <;> omega
+      split_ifs <;> simp_all <;> omega
   | _, preterm.func _, _, _, _, _, _, _ => rfl
   | _, preterm.app t₁ t₂, s, n₁, n₂, m, h₁, h₂ => by
       simp [lift_at_subst_term_medium t₁ s h₁ h₂, lift_at_subst_term_medium t₂ s h₁ h₂]
@@ -437,7 +436,8 @@ lemma lift_at_subst_term_small : ∀ {l} (t : preterm L l) (s : term L) (n₁ n�
           have h2 : m + n₂ ≤ k - 1 := by omega
           have hk1 : 1 ≤ k := by omega
           -- lhs: lift var k at (m+n₂+1) gives var (k+n₁); subst at n₂: n₂ < k+n₁, gives &(k+n₁-1)
-          -- rhs: subst var k at n₂: n₂ < k, gives &(k-1); lift &(k-1) at (m+n₂): m+n₂ ≤ k-1, gives &(k-1+n₁)
+          -- rhs: subst var k at n₂: n₂ < k, gives &(k-1); lift &(k-1) at (m+n₂): m+n₂ ≤ k-1, gives
+          -- &(k-1+n₁)
           -- need k+n₁-1 = k-1+n₁
           have hknlt : ¬(k < n₂) := Nat.lt_asymm hk
           have hkn1lt : ¬(k + n₁ < n₂) := by omega
@@ -484,7 +484,8 @@ lemma subst_term2 : ∀ {l} (t : preterm L l) (s₁ s₂ : term L) (n₁ n₂ : 
               subst_term_var_lt s₂ hk1lt, subst_term_var_gt (subst_term s₁ s₂ n₂) hk]
         · -- k = n₁+n₂+1:
           -- LHS: subst_term (var (n₁+n₂)) s₂ (n₁+n₂) = lift_term_at s₂ (n₁+n₂) 0
-          -- RHS: subst_term (lift_term_at s₂ (n₁+n₂+1) 0) (s₁[s₂//n₂]) n₁ = lift_term_at s₂ (n₁+n₂) 0
+          -- RHS: subst_term (lift_term_at s₂ (n₁+n₂+1) 0) (s₁[s₂//n₂]) n₁ = lift_term_at s₂ (n₁+n₂)
+          -- 0
           subst hk'
           rw [subst_term_var_gt s₁ hk, show n₁ + n₂ + 1 - 1 = n₁ + n₂ from by omega,
               subst_term_var_eq s₂ (n₁ + n₂)]
@@ -519,14 +520,15 @@ lemma lift_subst_term_cancel : ∀ {l} (t : preterm L l) (n : ℕ),
     subst_term (lift_term_at t 1 (n + 1)) (&0) n = t
   | _, preterm.var k, n => by
       simp only [lift_term_at, subst_term, subst_realize]
-      split_ifs with h1 h2 h3 <;> simp_all [subst_realize, lift_term_at] <;> omega
+      split_ifs with h1 h2 h3 <;> simp_all <;> omega
   | _, preterm.func _, _ => rfl
   | _, preterm.app t₁ t₂, n => by
       simp [lift_subst_term_cancel t₁ n, lift_subst_term_cancel t₂ n]
 
 /-! ## preformula and formula -/
 
-/-- `preformula L l` is a partially applied formula. If applied to `l` terms, it becomes a formula (l=0). -/
+/-- `preformula L l` is a partially applied formula. If applied to `l` terms, it becomes a formula
+(l=0). -/
 inductive preformula : ℕ → Type u
   | falsum : preformula 0
   | equal (t₁ t₂ : term L) : preformula 0
@@ -577,8 +579,8 @@ def formula_of_relation {l} (R : L.relations l) :
     (hfalsum : C ⊥')
     (hequal : ∀ (t₁ t₂ : term L), C (t₁ ≃ t₂))
     (hrel : ∀ {{l}} (R : L.relations l) (ts : DVec (term L) l), C (apps_rel (preformula.rel R) ts))
-    (himp : ∀ {{f₁ f₂ : formula L}} (ih₁ : C f₁) (ih₂ : C f₂), C (f₁ ⟹ f₂))
-    (hall : ∀ {{f : formula L}} (ih : C f), C (∀' f)) :
+    (himp : ∀ {{f₁ f₂ : formula L}} (_ih₁ : C f₁) (_ih₂ : C f₂), C (f₁ ⟹ f₂))
+    (hall : ∀ {{f : formula L}} (_ih : C f), C (∀'f)) :
     ∀ {l} (f : @preformula L l) (ts : DVec (term L) l), C (apps_rel f ts)
   | _, preformula.falsum, ts => by cases ts; exact hfalsum
   | _, preformula.equal t₁ t₂, ts => by cases ts; exact hequal t₁ t₂
@@ -596,8 +598,8 @@ def formula_of_relation {l} (R : L.relations l) :
     (hfalsum : C ⊥')
     (hequal : ∀ (t₁ t₂ : term L), C (t₁ ≃ t₂))
     (hrel : ∀ {{l}} (R : L.relations l) (ts : DVec (term L) l), C (apps_rel (preformula.rel R) ts))
-    (himp : ∀ {{f₁ f₂ : formula L}} (ih₁ : C f₁) (ih₂ : C f₂), C (f₁ ⟹ f₂))
-    (hall : ∀ {{f : formula L}} (ih : C f), C (∀' f)) :
+    (himp : ∀ {{f₁ f₂ : formula L}} (_ih₁ : C f₁) (_ih₂ : C f₂), C (f₁ ⟹ f₂))
+    (hall : ∀ {{f : formula L}} (_ih : C f), C (∀'f)) :
     ∀ f, C f :=
   fun f =>
     have h := @formula.rec' L C hfalsum hequal hrel himp hall 0 f DVec.nil
@@ -607,8 +609,8 @@ lemma formula.rec'_apps_rel {C : formula L → Sort v}
     (hfalsum : C ⊥')
     (hequal : ∀ (t₁ t₂ : term L), C (t₁ ≃ t₂))
     (hrel : ∀ {{l}} (R : L.relations l) (ts : DVec (term L) l), C (apps_rel (preformula.rel R) ts))
-    (himp : ∀ {{f₁ f₂ : formula L}} (ih₁ : C f₁) (ih₂ : C f₂), C (f₁ ⟹ f₂))
-    (hall : ∀ {{f : formula L}} (ih : C f), C (∀' f))
+    (himp : ∀ {{f₁ f₂ : formula L}} (_ih₁ : C f₁) (_ih₂ : C f₂), C (f₁ ⟹ f₂))
+    (hall : ∀ {{f : formula L}} (_ih : C f), C (∀'f))
     {l} (f : @preformula L l) (ts : DVec (term L) l) :
     @formula.rec' L C hfalsum hequal hrel himp hall 0 (apps_rel f ts) DVec.nil =
     @formula.rec' L C hfalsum hequal hrel himp hall l f ts := by
@@ -620,14 +622,15 @@ lemma formula.rec_apps_rel {C : formula L → Sort v}
     (hfalsum : C ⊥')
     (hequal : ∀ (t₁ t₂ : term L), C (t₁ ≃ t₂))
     (hrel : ∀ {{l}} (R : L.relations l) (ts : DVec (term L) l), C (apps_rel (preformula.rel R) ts))
-    (himp : ∀ {{f₁ f₂ : formula L}} (ih₁ : C f₁) (ih₂ : C f₂), C (f₁ ⟹ f₂))
-    (hall : ∀ {{f : formula L}} (ih : C f), C (∀' f))
+    (himp : ∀ {{f₁ f₂ : formula L}} (_ih₁ : C f₁) (_ih₂ : C f₂), C (f₁ ⟹ f₂))
+    (hall : ∀ {{f : formula L}} (_ih : C f), C (∀'f))
     {l} (R : L.relations l) (ts : DVec (term L) l) :
     @formula.rec L C hfalsum hequal hrel himp hall (apps_rel (preformula.rel R) ts) = hrel R ts :=
   -- formula.rec f = apps_rel_zero f [] ▸ formula.rec' ... 0 f []
   -- This is definitionally equal to: (apps_rel_zero ...).symm ▸ formula.rec'_apps_rel ▸ hrel R ts
   show (apps_rel_zero (apps_rel (preformula.rel R) ts) DVec.nil ▸
-    @formula.rec' L C hfalsum hequal hrel himp hall 0 (apps_rel (preformula.rel R) ts) DVec.nil) = hrel R ts by
+    @formula.rec' L C hfalsum hequal hrel himp hall 0 (apps_rel (preformula.rel R) ts) DVec.nil) =
+        hrel R ts by
   rw [formula.rec'_apps_rel]
   rfl
 
@@ -638,7 +641,8 @@ lemma formula.rec_apps_rel {C : formula L → Sort v}
   | _, preformula.equal t₁ t₂, n, m => preformula.equal (lift_term_at t₁ n m) (lift_term_at t₂ n m)
   | _, preformula.rel R, _, _ => preformula.rel R
   | _, preformula.apprel f t, n, m => preformula.apprel (lift_formula_at f n m) (lift_term_at t n m)
-  | _, preformula.imp f₁ f₂, n, m => preformula.imp (lift_formula_at f₁ n m) (lift_formula_at f₂ n m)
+  | _, preformula.imp f₁ f₂, n, m => preformula.imp (lift_formula_at f₁ n m) (lift_formula_at f₂ n
+      m)
   | _, preformula.all f, n, m => preformula.all (lift_formula_at f n (m + 1))
 
 notation:90 f " ↑f' " n " # " m => Fol.lift_formula_at f n m
@@ -715,7 +719,8 @@ lemma lift_formula_at2_small : ∀ {l} (f : @preformula L l) (n n') {m m'}, m' �
       exact congrArg₂ preformula.apprel (lift_formula_at2_small f n n' H) rfl
   | _, preformula.imp f₁ f₂, n, n', m, m', H => by
       simp only [lift_formula_at]
-      exact congrArg₂ preformula.imp (lift_formula_at2_small f₁ n n' H) (lift_formula_at2_small f₂ n n' H)
+      exact congrArg₂ preformula.imp (lift_formula_at2_small f₁ n n' H) (lift_formula_at2_small f₂ n
+          n' H)
   | _, preformula.all f, n, n', m, m', H => by
       simp only [lift_formula_at]
       have := lift_formula_at2_small f n n' (Nat.add_le_add_right H 1)
@@ -872,7 +877,7 @@ lemma lift_at_subst_formula_small : ∀ {l} (f : @preformula L l) (s : term L) (
   | _, preformula.all f, s, n₁, n₂, m => by
       simp only [lift_formula_at, subst_formula]
       have := lift_at_subst_formula_small f s n₁ (n₂ + 1) m
-      simp only [Nat.add_assoc, Nat.add_comm 1] at this
+      simp only [Nat.add_assoc] at this
       exact congrArg preformula.all this
 
 lemma lift_at_subst_formula_small0 {l} (f : @preformula L l) (s : term L) (n₁ m : ℕ) :
@@ -894,8 +899,7 @@ lemma subst_formula2 : ∀ {l} (f : @preformula L l) (s₁ s₂ : term L) (n₁ 
   | _, preformula.all f, s₁, s₂, n₁, n₂ => by
       simp only [subst_formula]
       have h := subst_formula2 f s₁ s₂ (n₁ + 1) n₂
-      simp only [show n₁ + 1 + n₂ = n₁ + n₂ + 1 from by omega,
-                 show n₁ + 1 + n₂ + 1 = n₁ + n₂ + 1 + 1 from by omega] at h
+      simp only [show n₁ + 1 + n₂ = n₁ + n₂ + 1 from by omega] at h
       exact congrArg preformula.all h
 
 lemma subst_formula2_zero {l} (f : @preformula L l) (s₁ s₂ : term L) (n : ℕ) :
@@ -939,7 +943,8 @@ lemma lift_subst_formula_cancel : ∀ {l} (f : @preformula L l) (n : ℕ),
   | _, preformula.imp f₁ f₂ => count_quantifiers f₁ + count_quantifiers f₂
   | _, preformula.all f => count_quantifiers f + 1
 
-@[simp] def count_quantifiers_succ {l} (f : @preformula L (l + 1)) : count_quantifiers f = 0 := by
+@[simp] theorem count_quantifiers_succ {l} (f : @preformula L (l + 1)) : count_quantifiers f = 0 :=
+    by
   cases f <;> rfl
 
 @[simp] lemma count_quantifiers_subst : ∀ {l} (f : @preformula L l) (s : term L) (n : ℕ),
@@ -966,9 +971,9 @@ inductive prf : Set (formula L) → formula L → Type u
                     (h₁ : prf Γ (A ⟹ B)) (h₂ : prf Γ A) : prf Γ B
   | falsumE {Γ : Set (formula L)} {A}
                     (h : prf (insert (∼A) Γ) ⊥') : prf Γ A
-  | allI    {Γ A}   (h : prf (lift_formula1 '' Γ) A) : prf Γ (∀' A)
+  | allI    {Γ A}   (h : prf (lift_formula1 '' Γ) A) : prf Γ (∀'A)
   | allE₂   {Γ}     (A) (t : term L)
-                    (h : prf Γ (∀' A)) : prf Γ (A [t // 0]f)
+                    (h : prf Γ (∀'A)) : prf Γ (A [t // 0]f)
   | ref     (Γ)     (t : term L) : prf Γ (t ≃ t)
   | subst₂  {Γ}     (s t : term L) (f : formula L)
                     (h₁ : prf Γ (s ≃ t)) (h₂ : prf Γ (f [s // 0]f)) : prf Γ (f [t // 0]f)
@@ -981,7 +986,7 @@ scoped infix:51 " ⊢' " => Fol.provable
 
 /-! ## Derived proof rules (src/fol.lean lines 832-1103) -/
 
-def allE {Γ} (A : formula L) (t : term L) {B} (H₁ : Γ ⊢ ∀' A) (H₂ : A [t // 0]f = B) : Γ ⊢ B := by
+def allE {Γ} (A : formula L) (t : term L) {B} (H₁ : Γ ⊢ ∀'A) (H₂ : A [t // 0]f = B) : Γ ⊢ B := by
   subst H₂; exact prf.allE₂ A t H₁
 
 def prf_subst {Γ} {s t : term L} (f₁ : formula L) {f₂} (H₁ : Γ ⊢ s ≃ t)
@@ -994,7 +999,8 @@ def axm1 {Γ : Set (formula L)} {A : formula L} : insert A Γ ⊢ A :=
 def axm2 {Γ : Set (formula L)} {A B : formula L} : insert A (insert B Γ) ⊢ B :=
   prf.axm (Set.mem_insert_of_mem A (Set.mem_insert B Γ))
 
-noncomputable def weakening {Γ Δ : Set (formula L)} {f : formula L} (H₁ : Γ ⊆ Δ) (H₂ : Γ ⊢ f) : Δ ⊢ f := by
+noncomputable def weakening {Γ Δ : Set (formula L)} {f : formula L} (H₁ : Γ ⊆ Δ) (H₂ : Γ ⊢ f) : Δ ⊢
+    f := by
   induction H₂ generalizing Δ with
   | axm h => exact prf.axm (H₁ h)
   | impI _ ih => exact prf.impI (ih (Set.insert_subset_insert H₁))
@@ -1029,15 +1035,18 @@ noncomputable def prf_lift {Γ : Set (formula L)} {f : formula L} (n m : ℕ) (H
     intro f'
     exact (lift_formula_at2_small f' n 1 (Nat.zero_le m)).symm
   | allE₂ A t _ ih =>
-    have key : lift_formula_at (A [t // 0]f) n m = (lift_formula_at A n (m + 1)) [lift_term_at t n m // 0]f :=
+    have key : lift_formula_at (A [t // 0]f) n m = (lift_formula_at A n (m + 1)) [lift_term_at t n m
+        // 0]f :=
       (lift_at_subst_formula_small0 A t n m).symm
     rw [key]
     exact prf.allE₂ _ _ (ih m)
   | ref => exact prf.ref _ _
   | subst₂ s t f _ _ ih₁ ih₂ =>
-    have key1 : lift_formula_at (f [t // 0]f) n m = (lift_formula_at f n (m + 1)) [lift_term_at t n m // 0]f :=
+    have key1 : lift_formula_at (f [t // 0]f) n m = (lift_formula_at f n (m + 1)) [lift_term_at t n
+        m // 0]f :=
       (lift_at_subst_formula_small0 f t n m).symm
-    have key2 : lift_formula_at (f [s // 0]f) n m = (lift_formula_at f n (m + 1)) [lift_term_at s n m // 0]f :=
+    have key2 : lift_formula_at (f [s // 0]f) n m = (lift_formula_at f n (m + 1)) [lift_term_at s n
+        m // 0]f :=
       (lift_at_subst_formula_small0 f s n m).symm
     rw [key1]
     apply prf.subst₂
@@ -1046,7 +1055,8 @@ noncomputable def prf_lift {Γ : Set (formula L)} {f : formula L} (n m : ℕ) (H
       rw [key2] at h
       exact h
 
-noncomputable def prf_substitution {Γ : Set (formula L)} {f : formula L} (t : term L) (n : ℕ) (H : Γ ⊢ f) :
+noncomputable def prf_substitution {Γ : Set (formula L)} {f : formula L} (t : term L) (n : ℕ) (H : Γ
+    ⊢ f) :
     (fun x => subst_formula x t n) '' Γ ⊢ subst_formula f t n := by
   induction H generalizing n with
   | axm h => exact prf.axm (Set.mem_image_of_mem _ h)
@@ -1073,15 +1083,18 @@ noncomputable def prf_substitution {Γ : Set (formula L)} {f : formula L} (t : t
     -- goal: (subst Γ) ⊢ subst_formula (A[s//0]) t n
     -- = (subst Γ) ⊢ (subst_formula A t (n+1)) [subst_term s t n // 0]
     -- which follows from allE₂ applied to ih n : (subst Γ) ⊢ ∀'(subst_formula A t (n+1))
-    have key : subst_formula (subst_formula A s 0) t n = subst_formula (subst_formula A t (n + 1)) (subst_term s t n) 0 :=
+    have key : subst_formula (subst_formula A s 0) t n = subst_formula (subst_formula A t (n + 1))
+        (subst_term s t n) 0 :=
       subst_formula2_zero A s t n
     rw [key]
     exact prf.allE₂ _ _ (ih n)
   | ref => exact prf.ref _ _
   | subst₂ s u f _ _ ih₁ ih₂ =>
-    have key1 : subst_formula (subst_formula f u 0) t n = subst_formula (subst_formula f t (n + 1)) (subst_term u t n) 0 :=
+    have key1 : subst_formula (subst_formula f u 0) t n = subst_formula (subst_formula f t (n + 1))
+        (subst_term u t n) 0 :=
       subst_formula2_zero f u t n
-    have key2 : subst_formula (subst_formula f s 0) t n = subst_formula (subst_formula f t (n + 1)) (subst_term s t n) 0 :=
+    have key2 : subst_formula (subst_formula f s 0) t n = subst_formula (subst_formula f t (n + 1))
+        (subst_term s t n) 0 :=
       subst_formula2_zero f s t n
     rw [key1]
     apply prf.subst₂
@@ -1095,27 +1108,30 @@ noncomputable def reflect_prf_lift1 {Γ : Set (formula L)} {f : formula L}
   have h2 := prf_substitution (&0) 0 h
   simp only [Set.image_image, lift_formula1_subst] at h2
   convert h2 using 1
-  simp [Set.image_congr', lift_formula1_subst]
+  simp
 
-noncomputable def weakening1 {Γ : Set (formula L)} {f₁ f₂ : formula L} (H : Γ ⊢ f₂) : insert f₁ Γ ⊢ f₂ :=
+noncomputable def weakening1 {Γ : Set (formula L)} {f₁ f₂ : formula L} (H : Γ ⊢ f₂) : insert f₁ Γ ⊢
+    f₂ :=
   weakening (Set.subset_insert f₁ Γ) H
 
 noncomputable def weakening2 {Γ : Set (formula L)} {f₁ f₂ f₃ : formula L} (H : insert f₁ Γ ⊢ f₂) :
     insert f₁ (insert f₃ Γ) ⊢ f₂ :=
   weakening (Set.insert_subset_insert (Set.subset_insert _ Γ)) H
 
-noncomputable def deduction {Γ : Set (formula L)} {A B : formula L} (H : Γ ⊢ A ⟹ B) : insert A Γ ⊢ B :=
+noncomputable def deduction {Γ : Set (formula L)} {A B : formula L} (H : Γ ⊢ A ⟹ B) : insert A Γ ⊢ B
+    :=
   prf.impE A (weakening1 H) axm1
 
 noncomputable def exfalso {Γ : Set (formula L)} {A : formula L} (H : Γ ⊢ ⊥') : Γ ⊢ A :=
   prf.falsumE (weakening1 H)
 
-noncomputable def exfalso' {Γ : Set (formula L)} {A : formula L} (H : Γ ⊢' ⊥') : Γ ⊢' A :=
+theorem exfalso' {Γ : Set (formula L)} {A : formula L} (H : Γ ⊢' ⊥') : Γ ⊢' A :=
   H.map exfalso
 
 noncomputable def notI {Γ : Set (formula L)} {A : formula L} (H : Γ ⊢ A ⟹ ⊥') : Γ ⊢ ∼A := H
 
-noncomputable def andI {Γ : Set (formula L)} {f₁ f₂ : formula L} (H₁ : Γ ⊢ f₁) (H₂ : Γ ⊢ f₂) : Γ ⊢ f₁ ⊓' f₂ := by
+noncomputable def andI {Γ : Set (formula L)} {f₁ f₂ : formula L} (H₁ : Γ ⊢ f₁) (H₂ : Γ ⊢ f₂) : Γ ⊢
+    f₁ ⊓' f₂ := by
   apply prf.impI
   apply prf.impE f₂
   · apply prf.impE f₁
@@ -1123,7 +1139,8 @@ noncomputable def andI {Γ : Set (formula L)} {f₁ f₂ : formula L} (H₁ : Γ
     · exact weakening1 H₁
   · exact weakening1 H₂
 
-noncomputable def andE1 {Γ : Set (formula L)} {f₁ : formula L} (f₂ : formula L) (H : Γ ⊢ f₁ ⊓' f₂) : Γ ⊢ f₁ := by
+noncomputable def andE1 {Γ : Set (formula L)} {f₁ : formula L} (f₂ : formula L) (H : Γ ⊢ f₁ ⊓' f₂) :
+    Γ ⊢ f₁ := by
   apply prf.falsumE
   apply prf.impE _ (weakening1 H)
   apply prf.impI
@@ -1132,7 +1149,8 @@ noncomputable def andE1 {Γ : Set (formula L)} {f₁ : formula L} (f₂ : formul
   · exact axm2
   · exact axm1
 
-noncomputable def andE2 {Γ : Set (formula L)} (f₁ : formula L) {f₂ : formula L} (H : Γ ⊢ f₁ ⊓' f₂) : Γ ⊢ f₂ := by
+noncomputable def andE2 {Γ : Set (formula L)} (f₁ : formula L) {f₂ : formula L} (H : Γ ⊢ f₁ ⊓' f₂) :
+    Γ ⊢ f₂ := by
   apply prf.falsumE
   apply prf.impE _ (weakening1 H)
   apply prf.impI
@@ -1161,18 +1179,21 @@ noncomputable def biimpI {Γ : Set (formula L)} {f₁ f₂ : formula L}
     (H₁ : insert f₁ Γ ⊢ f₂) (H₂ : insert f₂ Γ ⊢ f₁) : Γ ⊢ f₁ ⇔ f₂ :=
   andI (prf.impI H₁) (prf.impI H₂)
 
-noncomputable def biimpE1 {Γ : Set (formula L)} {f₁ f₂ : formula L} (H : Γ ⊢ f₁ ⇔ f₂) : insert f₁ Γ ⊢ f₂ :=
+noncomputable def biimpE1 {Γ : Set (formula L)} {f₁ f₂ : formula L} (H : Γ ⊢ f₁ ⇔ f₂) : insert f₁ Γ
+    ⊢ f₂ :=
   deduction (andE1 _ H)
 
-noncomputable def biimpE2 {Γ : Set (formula L)} {f₁ f₂ : formula L} (H : Γ ⊢ f₁ ⇔ f₂) : insert f₂ Γ ⊢ f₁ :=
+noncomputable def biimpE2 {Γ : Set (formula L)} {f₁ f₂ : formula L} (H : Γ ⊢ f₁ ⇔ f₂) : insert f₂ Γ
+    ⊢ f₁ :=
   deduction (andE2 _ H)
 
-noncomputable def exI {Γ : Set (formula L)} {f : formula L} (t : term L) (H : Γ ⊢ f [t // 0]f) : Γ ⊢ ∃' f := by
+noncomputable def exI {Γ : Set (formula L)} {f : formula L} (t : term L) (H : Γ ⊢ f [t // 0]f) : Γ ⊢
+    ∃'f := by
   apply prf.impI
   apply prf.impE (f [t // 0]f) _ (weakening1 H)
   exact prf.allE₂ (∼f) t axm1
 
-noncomputable def exE {Γ : Set (formula L)} {f₁ f₂ : formula L} (H₁ : Γ ⊢ ∃' f₁)
+noncomputable def exE {Γ : Set (formula L)} {f₁ f₂ : formula L} (H₁ : Γ ⊢ ∃'f₁)
     (H₂ : insert f₁ (lift_formula1 '' Γ) ⊢ lift_formula1 f₂) : Γ ⊢ f₂ := by
   apply prf.falsumE
   apply prf.impE _ (weakening1 H₁)
@@ -1182,7 +1203,8 @@ noncomputable def exE {Γ : Set (formula L)} {f₁ f₂ : formula L} (H₁ : Γ 
   apply prf.impE _ axm2
   exact weakening2 H₂
 
-noncomputable def ex_not_of_not_all {Γ : Set (formula L)} {f : formula L} (H : Γ ⊢ ∼(∀' f)) : Γ ⊢ ∃' (∼f) := by
+noncomputable def ex_not_of_not_all {Γ : Set (formula L)} {f : formula L} (H : Γ ⊢ ∼(∀'f)) : Γ ⊢
+    ∃'(∼f) := by
   apply prf.falsumE
   apply prf.impE _ (weakening1 H)
   apply prf.allI
@@ -1198,25 +1220,28 @@ noncomputable def not_and_self {Γ : Set (formula L)} {f : formula L} (H : Γ �
 
 noncomputable def prf_symm {Γ : Set (formula L)} {s t : term L} (H : Γ ⊢ s ≃ t) : Γ ⊢ t ≃ s := by
   apply prf_subst (&0 ≃ lift_term s 1) H
-  · simp only [subst_formula, subst_term_var_eq, lift_term_def, lift_term_at_zero, lift_term1_subst_term]; exact prf.ref _ _
-  · simp [subst_formula_equal, lift_term1_subst_term, subst_term_var0]
+  · simp only [subst_formula, subst_term_var_eq, lift_term_def, lift_term_at_zero,
+      lift_term1_subst_term]; exact prf.ref _ _
+  · simp [lift_term1_subst_term]
 
 noncomputable def prf_trans {Γ : Set (formula L)} {t₁ t₂ t₃ : term L}
     (H : Γ ⊢ t₁ ≃ t₂) (H' : Γ ⊢ t₂ ≃ t₃) : Γ ⊢ t₁ ≃ t₃ := by
   apply prf_subst (lift_term t₁ 1 ≃ &0) H'
-  · simp only [subst_formula, lift_term1_subst_term, subst_term_var_eq, lift_term_def, lift_term_at_zero]; exact H
-  · simp [subst_formula_equal, lift_term1_subst_term, subst_term_var0]
+  · simp only [subst_formula, lift_term1_subst_term, subst_term_var_eq, lift_term_def,
+      lift_term_at_zero]; exact H
+  · simp [lift_term1_subst_term]
 
 noncomputable def prf_congr {Γ : Set (formula L)} {t₁ t₂ : term L} (s : term L)
     (H : Γ ⊢ t₁ ≃ t₂) : Γ ⊢ subst_term s t₁ 0 ≃ subst_term s t₂ 0 := by
   apply prf_subst (lift_term (subst_term s t₁ 0) 1 ≃ s) H
   · simp only [subst_formula, lift_term1_subst_term]; exact prf.ref _ _
-  · simp [subst_formula_equal, lift_term1_subst_term]
+  · simp [lift_term1_subst_term]
 
 noncomputable def app_congr {Γ : Set (formula L)} {t₁ t₂ : term L} (s : preterm L 1)
     (H : Γ ⊢ t₁ ≃ t₂) : Γ ⊢ preterm.app s t₁ ≃ preterm.app s t₂ := by
   have h := prf_congr (preterm.app (lift_term s 1) (&0)) H
-  simp at h
+  simp only [Nat.reduceAdd, subst_term_app, lift_term1_subst_term, subst_term_var_eq,
+    lift_term_def, lift_term_at_zero] at h
   exact h
 
 noncomputable def apprel_congr {Γ : Set (formula L)} {t₁ t₂ : term L} (f : @preformula L 1)
@@ -1242,13 +1267,15 @@ noncomputable def biimp_trans {Γ : Set (formula L)} {f₁ f₂ f₃ : formula L
 def equal_preterms (T : Set (formula L)) {l} (t₁ t₂ : preterm L l) : Type u :=
   ∀ (ts : DVec (term L) l), T ⊢ apps t₁ ts ≃ apps t₂ ts
 
-noncomputable def equal_preterms_app {T : Set (formula L)} {l} {t t' : preterm L (l + 1)} {s s' : term L}
+noncomputable def equal_preterms_app {T : Set (formula L)} {l} {t t' : preterm L (l + 1)} {s s' :
+    term L}
     (Ht : equal_preterms T t t') (Hs : T ⊢ s ≃ s') :
     equal_preterms T (preterm.app t s) (preterm.app t' s') := by
   intro xs
   apply prf_trans (Ht (DVec.cons s xs))
   have h := prf_congr (apps (lift_term t' 1) (DVec.cons (&0) (xs.map lift_term1))) Hs
-  simp [DVec.map_congr (fun t => lift_term1_subst_term t s')] at h
+  simp only [apps, lift_term1, subst_term_apps, subst_term_app, lift_term1_subst_term,
+    subst_term_var_eq, lift_term_def, lift_term_at_zero, DVec.map_map, DVec.map_id] at h
   exact h
 
 @[refl] noncomputable def equal_preterms_refl (T : Set (formula L)) {l} (t : preterm L l) :
@@ -1258,7 +1285,8 @@ noncomputable def equal_preterms_app {T : Set (formula L)} {l} {t t' : preterm L
 def equiv_preformulae (T : Set (formula L)) {l} (f₁ f₂ : @preformula L l) : Type u :=
   ∀ (ts : DVec (term L) l), T ⊢ apps_rel f₁ ts ⇔ apps_rel f₂ ts
 
-noncomputable def equiv_preformulae_apprel {T : Set (formula L)} {l} {f f' : @preformula L (l + 1)} {s s' : term L}
+noncomputable def equiv_preformulae_apprel {T : Set (formula L)} {l} {f f' : @preformula L (l + 1)}
+    {s s' : term L}
     (Ht : equiv_preformulae T f f') (Hs : T ⊢ s ≃ s') :
     equiv_preformulae T (preformula.apprel f s) (preformula.apprel f' s') := by
   intro xs
@@ -1266,13 +1294,12 @@ noncomputable def equiv_preformulae_apprel {T : Set (formula L)} {l} {f f' : @pr
   apply prf_subst (apps_rel (lift_formula f' 1) (DVec.cons (lift_term1 s) (xs.map lift_term1)) ⇔
                   apps_rel (lift_formula f' 1) (DVec.cons (&0) (xs.map lift_term1))) Hs
   · -- H₂: T ⊢ f₁ [s // 0]f. After simp, becomes biimp_refl.
-    simp only [subst_formula_biimp, subst_formula_apps_rel, DVec.map,
-               lift_subst_formula_cancel, DVec.map_map, Function.comp,
+    simp only [subst_formula_biimp, subst_formula_apps_rel, DVec.map, DVec.map_map,
                lift_term1_subst_term, subst_term_var0]
     exact biimp_refl T _
   · -- H₃: f₁ [s' // 0]f = goal. After simp, becomes the target equation.
     simp only [subst_formula_biimp, subst_formula_apps_rel, DVec.map,
-               DVec.map_map, Function.comp,
+               DVec.map_map,
                lift_term1_subst_term, subst_term_var0]
     simp only [DVec.map_id, apps_rel, lift_formula1_subst]
 
@@ -1280,43 +1307,44 @@ noncomputable def equiv_preformulae_apprel {T : Set (formula L)} {l} {f f' : @pr
     equiv_preformulae T f f :=
   fun xs => biimp_refl T (apps_rel f xs)
 
-def impI' {Γ : Set (formula L)} {A B : formula L} (h : insert A Γ ⊢' B) : Γ ⊢' (A ⟹ B) :=
+theorem impI' {Γ : Set (formula L)} {A B : formula L} (h : insert A Γ ⊢' B) : Γ ⊢' (A ⟹ B) :=
   h.map prf.impI
 
-def impE' {Γ : Set (formula L)} (A : formula L) {B : formula L}
+theorem impE' {Γ : Set (formula L)} (A : formula L) {B : formula L}
     (h₁ : Γ ⊢' A ⟹ B) (h₂ : Γ ⊢' A) : Γ ⊢' B :=
   h₁.map2 (prf.impE _) h₂
 
-def falsumE' {Γ : Set (formula L)} {A : formula L} (h : insert (∼A) Γ ⊢' ⊥') : Γ ⊢' A :=
+theorem falsumE' {Γ : Set (formula L)} {A : formula L} (h : insert (∼A) Γ ⊢' ⊥') : Γ ⊢' A :=
   h.map prf.falsumE
 
-def allI' {Γ : Set (formula L)} {A : formula L} (h : lift_formula1 '' Γ ⊢' A) : Γ ⊢' ∀' A :=
+theorem allI' {Γ : Set (formula L)} {A : formula L} (h : lift_formula1 '' Γ ⊢' A) : Γ ⊢' ∀'A :=
   h.map prf.allI
 
-def allE' {Γ : Set (formula L)} (A : formula L) (t : term L) {B : formula L}
-    (H₁ : Γ ⊢' ∀' A) (H₂ : A [t // 0]f = B) : Γ ⊢' B :=
+theorem allE' {Γ : Set (formula L)} (A : formula L) (t : term L) {B : formula L}
+    (H₁ : Γ ⊢' ∀'A) (H₂ : A [t // 0]f = B) : Γ ⊢' B :=
   H₁.map (fun x => allE _ _ x H₂)
 
-def allE₂' {Γ : Set (formula L)} {A : formula L} {t : term L} (h : Γ ⊢' ∀' A) : Γ ⊢' A [t // 0]f :=
+theorem allE₂' {Γ : Set (formula L)} {A : formula L} {t : term L} (h : Γ ⊢' ∀'A) : Γ ⊢' A [t // 0]f
+    :=
   h.map (fun x => allE _ _ x rfl)
 
-def ref' (Γ : Set (formula L)) (t : term L) : Γ ⊢' (t ≃ t) := ⟨prf.ref Γ t⟩
+theorem ref' (Γ : Set (formula L)) (t : term L) : Γ ⊢' (t ≃ t) := ⟨prf.ref Γ t⟩
 
-def subst' {Γ : Set (formula L)} {s t : term L} (f₁ : formula L) {f₂ : formula L}
+theorem subst' {Γ : Set (formula L)} {s t : term L} (f₁ : formula L) {f₂ : formula L}
     (H₁ : Γ ⊢' s ≃ t) (H₂ : Γ ⊢' f₁ [s // 0]f) (H₃ : f₁ [t // 0]f = f₂) : Γ ⊢' f₂ :=
   H₁.map2 (fun x y => prf_subst _ x y H₃) H₂
 
-def subst₂' {Γ : Set (formula L)} (s t : term L) (f : formula L)
+theorem subst₂' {Γ : Set (formula L)} (s t : term L) (f : formula L)
     (h₁ : Γ ⊢' s ≃ t) (h₂ : Γ ⊢' f [s // 0]f) : Γ ⊢' f [t // 0]f :=
   h₁.map2 (prf.subst₂ _ _ _) h₂
 
-def weakening' {Γ Δ : Set (formula L)} {f : formula L} (H₁ : Γ ⊆ Δ) (H₂ : Γ ⊢' f) : Δ ⊢' f :=
+theorem weakening' {Γ Δ : Set (formula L)} {f : formula L} (H₁ : Γ ⊆ Δ) (H₂ : Γ ⊢' f) : Δ ⊢' f :=
   H₂.map (weakening H₁)
 
-def weakening1' {Γ : Set (formula L)} {f₁ f₂ : formula L} (H : Γ ⊢' f₂) : insert f₁ Γ ⊢' f₂ :=
+theorem weakening1' {Γ : Set (formula L)} {f₁ f₂ : formula L} (H : Γ ⊢' f₂) : insert f₁ Γ ⊢' f₂ :=
   H.map weakening1
 
-def weakening2' {Γ : Set (formula L)} {f₁ f₂ f₃ : formula L} (H : insert f₁ Γ ⊢' f₂) :
+theorem weakening2' {Γ : Set (formula L)} {f₁ f₂ f₃ : formula L} (H : insert f₁ Γ ⊢' f₂) :
     insert f₁ (insert f₃ Γ) ⊢' f₂ :=
   H.map weakening2
 
@@ -1324,7 +1352,7 @@ lemma apprel_congr' {Γ : Set (formula L)} {t₁ t₂ : term L} (f : @preformula
     (H : Γ ⊢ t₁ ≃ t₂) : Γ ⊢' preformula.apprel f t₁ ↔ Γ ⊢' preformula.apprel f t₂ :=
   ⟨Nonempty.map (apprel_congr f H), Nonempty.map (apprel_congr f (prf_symm H))⟩
 
-lemma prf_all_iff {Γ : Set (formula L)} {f : formula L} : Γ ⊢' ∀' f ↔ lift_formula1 '' Γ ⊢' f := by
+lemma prf_all_iff {Γ : Set (formula L)} {f : formula L} : Γ ⊢' ∀'f ↔ lift_formula1 '' Γ ⊢' f := by
   constructor
   · intro H
     rw [← lift_subst_formula_cancel f 0]
@@ -1368,7 +1396,7 @@ instance : CoeSort (Structure L) (Type u) where
 /-! ## realize_term — realization of terms in a structure -/
 
 @[simp] def realize_term {S : Structure L} (v : ℕ → S) :
-    ∀ {l} (t : preterm L l) (xs : DVec S l), S.carrier
+    ∀ {l} (_t : preterm L l) (_xs : DVec S l), S.carrier
   | _, preterm.var k, _ => v k
   | _, preterm.func f, xs => S.fun_map f xs
   | _, preterm.app t₁ t₂, xs => realize_term v t₁ (DVec.cons (realize_term v t₂ DVec.nil) xs)
@@ -1409,7 +1437,7 @@ lemma realize_term_subst_lift {S : Structure L} (v : ℕ → S) (x : S) (m : ℕ
         simp only [if_pos h, subst_realize_gt _ _ hmk1, Nat.add_sub_cancel]
       · -- lift gives k, subst_realize gives v k (since k < m)
         have hkm : k < m := Nat.lt_of_not_le h
-        simp only [if_neg h, realize_term, subst_realize_lt _ _ hkm]
+        simp only [if_neg h, subst_realize_lt _ _ hkm]
   | _, preterm.func _, _ => rfl
   | _, preterm.app t₁ t₂, xs => by
       simp only [realize_term, lift_term_at]
@@ -1420,7 +1448,7 @@ lemma realize_term_subst_lift {S : Structure L} (v : ℕ → S) (x : S) (m : ℕ
 
 @[simp] def realize_formula {S : Structure L} :
     ∀ {l}, (ℕ → S) → @preformula L l → DVec S l → Prop
-  | _, v, preformula.falsum, _ => False
+  | _, _v, preformula.falsum, _ => False
   | _, v, preformula.equal t₁ t₂, _ =>
       realize_term v t₁ DVec.nil = realize_term v t₂ DVec.nil
   | _, _, preformula.rel R, xs => S.rel_map R xs
@@ -1432,7 +1460,7 @@ lemma realize_term_subst_lift {S : Structure L} (v : ℕ → S) (x : S) (m : ℕ
       ∀ x : S, realize_formula (subst_realize v x 0) f DVec.nil
 
 lemma realize_formula_congr {S : Structure L} :
-    ∀ {l} {v v' : ℕ → S} (h : ∀ n, v n = v' n) (f : @preformula L l) (xs : DVec S l),
+    ∀ {l} {v v' : ℕ → S} (_h : ∀ n, v n = v' n) (f : @preformula L l) (xs : DVec S l),
     realize_formula v f xs ↔ realize_formula v' f xs
   | _, _, _, _, preformula.falsum, _ => Iff.rfl
   | _, _, _, h, preformula.equal t₁ t₂, _ => by
@@ -1468,21 +1496,25 @@ lemma realize_formula_subst {S : Structure L} :
       simp only [realize_formula, subst_formula]
       apply forall_congr'
       intro x
-      -- goal: realize_formula (subst_realize (subst_realize v ...) x 0) f [] ↔ realize_formula v (f[s//n+1]) []
+      -- goal: realize_formula (subst_realize (subst_realize v ...) x 0) f [] ↔ realize_formula v
+      -- (f[s//n+1]) []
       -- use: IH at n+1, then congr on valuation
       rw [← realize_formula_subst (subst_realize v x 0) (n + 1) f s DVec.nil]
       apply realize_formula_congr
       intro k
       -- Use subst_realize2_0 to swap the two substitutions:
       -- subst_realize (subst_realize v (realize_term v (lift_term s n) []) n) x 0 k
-      -- = subst_realize (subst_realize v x 0) (realize_term v (lift_term s n) []) (n+1) k (by subst_realize2_0)
-      -- And realize_term v (lift_term s n) [] = realize_term (subst_realize v x 0) (lift_term_at s 1 0 ↑ n) []
+      -- = subst_realize (subst_realize v x 0) (realize_term v (lift_term s n) []) (n+1) k (by
+      -- subst_realize2_0)
+      -- And realize_term v (lift_term s n) [] = realize_term (subst_realize v x 0) (lift_term_at s
+      -- 1 0 ↑ n) []
       --   since s ↑ n+1 applied then subst at 0 cancels the lift-at-0.
       -- Port from src/fol.lean:1178-1181:
       -- rw [subst_realize2_0, ←realize_term_subst_lift v x 0, lift_term_def, lift_term2]
       rw [subst_realize2_0]
       congr 1
-      -- Goal: realize_term v (lift_term s n) [] = realize_term (subst_realize v x 0) (lift_term s (n+1)) []
+      -- Goal: realize_term v (lift_term s n) [] = realize_term (subst_realize v x 0) (lift_term s
+      -- (n+1)) []
       rw [← realize_term_subst_lift v x 0 (lift_term s n) DVec.nil]
       simp only [lift_term_def]
       rw [← lift_term2 s n 1]
@@ -1515,7 +1547,8 @@ lemma realize_formula_subst_lift {S : Structure L} :
       apply propext
       apply forall_congr'
       intro x'
-      rw [propext (realize_formula_congr (fun k => subst_realize2_0 v x' x m k) (lift_formula_at f 1 (m + 1)) DVec.nil)]
+      rw [propext (realize_formula_congr (fun k => subst_realize2_0 v x' x m k) (lift_formula_at f 1
+          (m + 1)) DVec.nil)]
       exact Iff.of_eq (realize_formula_subst_lift (subst_realize v x' 0) x (m + 1) f DVec.nil)
 
 /-! ## Semantic notions — satisfaction and models -/
@@ -1538,29 +1571,29 @@ scoped infix:51 " ⊨ " => Fol.satisfied
 def all_satisfied (T T' : Set (formula L)) : Prop :=
   ∀ {{f}}, f ∈ T' → T ⊨ f
 
-def satisfied_in_trans {S : Structure L} {T : Set (formula L)} {f : formula L}
+theorem satisfied_in_trans {S : Structure L} {T : Set (formula L)} {f : formula L}
     (H' : all_satisfied_in S T) (H : T ⊨ f) : S ⊨ₛ f :=
-  fun v => H S v (fun f' hf' => H' hf' v)
+  fun v => H S v (fun _f' hf' => H' hf' v)
 
-def all_satisfied_in_trans {S : Structure L} {T T' : Set (formula L)}
+theorem all_satisfied_in_trans {S : Structure L} {T T' : Set (formula L)}
     (H' : all_satisfied_in S T) (H : all_satisfied T T') : all_satisfied_in S T' :=
-  fun f hf => satisfied_in_trans H' (H hf)
+  fun _f hf => satisfied_in_trans H' (H hf)
 
-def satisfied_of_mem {T : Set (formula L)} {f : formula L} (hf : f ∈ T) : T ⊨ f :=
-  fun S v h => h f hf
+theorem satisfied_of_mem {T : Set (formula L)} {f : formula L} (hf : f ∈ T) : T ⊨ f :=
+  fun _S _v h => h f hf
 
-def all_satisfied_of_subset {T T' : Set (formula L)} (h : T' ⊆ T) : all_satisfied T T' :=
-  fun f hf => satisfied_of_mem (h hf)
+theorem all_satisfied_of_subset {T T' : Set (formula L)} (h : T' ⊆ T) : all_satisfied T T' :=
+  fun _f hf => satisfied_of_mem (h hf)
 
-def satisfied_trans {T₁ T₂ : Set (formula L)} {f : formula L}
+theorem satisfied_trans {T₁ T₂ : Set (formula L)} {f : formula L}
     (H' : all_satisfied T₁ T₂) (H : T₂ ⊨ f) : T₁ ⊨ f :=
-  fun S v h => H S v (fun f' hf' => H' hf' S v h)
+  fun S v h => H S v (fun _f' hf' => H' hf' S v h)
 
-def all_satisfied_trans {T₁ T₂ T₃ : Set (formula L)}
+theorem all_satisfied_trans {T₁ T₂ T₃ : Set (formula L)}
     (H' : all_satisfied T₁ T₂) (H : all_satisfied T₂ T₃) : all_satisfied T₁ T₃ :=
-  fun f hf => satisfied_trans H' (H hf)
+  fun _f hf => satisfied_trans H' (H hf)
 
-def satisfied_weakening {T T' : Set (formula L)} (H : T ⊆ T') {f : formula L}
+theorem satisfied_weakening {T T' : Set (formula L)} (H : T ⊆ T') {f : formula L}
     (HT : T ⊨ f) : T' ⊨ f :=
   fun S v h => HT S v (fun f' hf' => h f' (H hf'))
 
@@ -1614,9 +1647,9 @@ variable (L)
 /-- A bounded preterm: `bounded_preterm L n l` is a partially applied term with at most `n`
     free de Bruijn variables (indexed by `Fin n`) needing `l` more arguments. -/
 inductive bounded_preterm (L : Language.{u}) (n : ℕ) : ℕ → Type u
-  | bd_var : ∀ (k : Fin n), bounded_preterm L n 0
-  | bd_func : ∀ {l : ℕ} (f : L.functions l), bounded_preterm L n l
-  | bd_app : ∀ {l : ℕ} (t : bounded_preterm L n (l + 1)) (s : bounded_preterm L n 0),
+  | bd_var : ∀ (_k : Fin n), bounded_preterm L n 0
+  | bd_func : ∀ {l : ℕ} (_f : L.functions l), bounded_preterm L n l
+  | bd_app : ∀ {l : ℕ} (_t : bounded_preterm L n (l + 1)) (_s : bounded_preterm L n 0),
       bounded_preterm L n l
 
 export bounded_preterm (bd_var bd_func bd_app)
@@ -1640,7 +1673,7 @@ def bd_const {n} (c : L.constants) : bounded_term L n := bd_func c
 @[simp] def bd_apps' {n} : ∀ {l m : ℕ}, bounded_preterm L n (l + m) →
     DVec (bounded_term L n) m → bounded_preterm L n l
   | _, 0, t, DVec.nil => t
-  | l, m + 1, t, DVec.cons x xs => bd_apps' (bd_app t x) xs
+  | _l, _m + 1, t, DVec.cons x xs => bd_apps' (bd_app t x) xs
 
 /-- Apply a bounded preterm of level `l` to `l` bounded terms to get a bounded term. -/
 @[simp] def bd_apps {n} : ∀ {l}, bounded_preterm L n l → DVec (bounded_term L n) l →
@@ -1703,7 +1736,7 @@ namespace bounded_preterm
 
 @[simp] lemma cast_rfl {n} {h : n ≤ n} : ∀ {l} (t : bounded_preterm L n l), t.cast h = t := by
   intros l t; induction t with
-  | bd_var k => simp [bounded_preterm.cast, Fin.ext_iff]
+  | bd_var k => simp [bounded_preterm.cast]
   | bd_func => rfl
   | bd_app _ _ iht ihs => simp [bounded_preterm.cast, iht, ihs]
 
@@ -1762,7 +1795,7 @@ end closed_preterm
 def bounded_term.rec {n} {C : bounded_term L n → Sort v}
     (hvar : ∀ (k : Fin n), C (bd_var k))
     (hfunc : ∀ {l} (f : L.functions l) (ts : DVec (bounded_term L n) l)
-      (ih_ts : ∀ t, DVec.pmem t ts → C t), C (bd_apps (bd_func f) ts)) :
+      (_ih_ts : ∀ t, DVec.pmem t ts → C t), C (bd_apps (bd_func f) ts)) :
     ∀ (t : bounded_term L n), C t :=
   let rec go : ∀ {l} (t : bounded_preterm L n l) (ts : DVec (bounded_term L n) l)
       (ih_ts : ∀ s, DVec.pmem s ts → C s), C (bd_apps t ts)
@@ -1779,14 +1812,14 @@ def bounded_term.rec {n} {C : bounded_term L n → Sort v}
 def bounded_term.rec1 {n} {C : bounded_term L (n + 1) → Sort v}
     (hvar : ∀ (k : Fin (n + 1)), C (bd_var k))
     (hfunc : ∀ {l} (f : L.functions l) (ts : DVec (bounded_term L (n + 1)) l)
-      (ih_ts : ∀ t, DVec.pmem t ts → C t), C (bd_apps (bd_func f) ts)) :
+      (_ih_ts : ∀ t, DVec.pmem t ts → C t), C (bd_apps (bd_func f) ts)) :
     ∀ (t : bounded_term L (n + 1)), C t :=
   bounded_term.rec hvar hfunc
 
 /-! ### Lift and substitution — irrel lemmas -/
 
 lemma lift_bounded_term_irrel {n : ℕ} : ∀ {l} (t : bounded_preterm L n l) (n') {m : ℕ}
-    (h : n ≤ m), (t.fst ↑' n' # m) = t.fst
+    (_h : n ≤ m), (t.fst ↑' n' # m) = t.fst
   | _, bd_var k, n', m, h =>
       have h' : ¬(m ≤ k.1) := Nat.not_le.mpr (Nat.lt_of_lt_of_le k.2 h)
       by simp [h']
@@ -1795,7 +1828,7 @@ lemma lift_bounded_term_irrel {n : ℕ} : ∀ {l} (t : bounded_preterm L n l) (n
       simp [lift_bounded_term_irrel t n' h, lift_bounded_term_irrel s n' h]
 
 lemma subst_bounded_term_irrel {n : ℕ} : ∀ {l} (t : bounded_preterm L n l) {n'} (s : term L)
-    (h : n ≤ n'), subst_term t.fst s n' = t.fst
+    (_h : n ≤ n'), subst_term t.fst s n' = t.fst
   | _, bd_var k, n', s, h => by simp [Nat.lt_of_lt_of_le k.2 h]
   | _, bd_func _, _, _, _ => rfl
   | _, bd_app t₁ t₂, n', s, h => by simp [subst_bounded_term_irrel t₁ s h,
@@ -1803,9 +1836,10 @@ lemma subst_bounded_term_irrel {n : ℕ} : ∀ {l} (t : bounded_preterm L n l) {
 
 /-! ### realize_bounded_term -/
 
-/-- Realize a bounded preterm given a valuation vector `v : DVec S n` and extra args `xs : DVec S l`. -/
+/-- Realize a bounded preterm given a valuation vector `v : DVec S n` and extra args `xs : DVec S
+l`. -/
 @[simp] def realize_bounded_term {S : Structure L} {n} (v : DVec S n) :
-    ∀ {l} (t : bounded_preterm L n l) (xs : DVec S l), S.carrier
+    ∀ {l} (_t : bounded_preterm L n l) (_xs : DVec S l), S.carrier
   | _, bd_var k, _ => v.nth k.1 k.2
   | _, bd_func f, xs => S.fun_map f xs
   | _, bd_app t₁ t₂, xs =>
@@ -1865,14 +1899,13 @@ lemma realize_bounded_term_irrel {S : Structure L} {n} {v₁ : DVec S n}
     (t : bounded_term L n) (t' : closed_term L) (ht : t.fst = t'.fst) :
     realize_bounded_term v₁ t DVec.nil = realize_closed_term S t' :=
   realize_bounded_term_irrel'
-    (fun m hm hm' => absurd hm' (Nat.not_lt_zero m)) t t' ht DVec.nil
+    (fun m _hm hm' => absurd hm' (Nat.not_lt_zero m)) t t' ht DVec.nil
 
 @[simp] lemma realize_bounded_term_cast_eq_irrel {S : Structure L} {n m l} {h : n = m}
     {v : DVec S m} {t : bounded_preterm L n l} (xs : DVec S l) :
     realize_bounded_term v (t.cast_eq h) xs = realize_bounded_term (v.cast h.symm) t xs := by
   subst h
-  simp only [bounded_preterm.cast_eq, Nat.le_refl, bounded_preterm.cast_rfl, DVec.cast, eq_mpr_eq_cast,
-             cast_eq]
+  simp only [bounded_preterm.cast_eq, bounded_preterm.cast_rfl, DVec.cast]
 
 @[simp] lemma realize_bounded_term_dvector_cast_irrel {S : Structure L} {n m l} {h : n = m}
     {v : DVec S n} {t : bounded_preterm L n l} {xs : DVec S l} :
@@ -1883,7 +1916,7 @@ lemma realize_bounded_term_irrel {S : Structure L} {n} {v₁ : DVec S n}
 /-! ### lift_bounded_term_at — lifting bounded terms -/
 
 /-- Lift a bounded term by inserting `n'` new variables at position `m`. -/
-@[simp] def lift_bounded_term_at {n} : ∀ {l} (t : bounded_preterm L n l) (n' m : ℕ),
+@[simp] def lift_bounded_term_at {n} : ∀ {l} (_t : bounded_preterm L n l) (n' _m : ℕ),
     bounded_preterm L (n + n') l
   | _, bd_var k, n', m =>
       if m ≤ k.1 then bd_var ⟨k.1 + n', by omega⟩
@@ -1905,16 +1938,17 @@ infixl:100 " ↑ᵇ " => Fol.lift_bounded_term
     (lift_bounded_term_at t n' m).fst = t.fst ↑' n' # m
   | _, bd_var k, n', m => by
       simp only [lift_bounded_term_at, bounded_preterm.fst, lift_term_at]
-      split_ifs with h <;> simp [h]
+      split_ifs with h <;> simp
   | _, bd_func _, _, _ => rfl
   | _, bd_app t₁ t₂, n', m => by
       simp [lift_bounded_term_fst t₁ n' m, lift_bounded_term_fst t₂ n' m]
 
 /-! ### subst_bounded_term — substitution in bounded terms -/
 
-/-- Substitute the variable at position `n` (within the bound `n + n' + 1`) with a bounded term `s`. -/
-def subst_bounded_term {n n'} : ∀ {l} (t : bounded_preterm L (n + n' + 1) l)
-    (s : bounded_term L n'), bounded_preterm L (n + n') l
+/-- Substitute the variable at position `n` (within the bound `n + n' + 1`) with a bounded term `s`.
+-/
+def subst_bounded_term {n n'} : ∀ {l} (_t : bounded_preterm L (n + n' + 1) l)
+    (_s : bounded_term L n'), bounded_preterm L (n + n') l
   | _, bd_var k, s =>
       if h : k.1 < n then bd_var ⟨k.1, Nat.lt_of_lt_of_le h (Nat.le_add_right n n')⟩
       else if h' : n < k.1 then
@@ -1939,12 +1973,13 @@ notation:0 t "[" s " /// " n "]" => @subst_bounded_term _ n _ _ t s
     (h : k.1 = n) : (subst_bounded_term (bd_var k) s).fst = s.fst ↑' n # 0 := by
   have h₂ : ¬(k.1 < n) := by omega
   have h₃ : ¬(n < k.1) := by omega
-  simp only [subst_bounded_term, h₂, h₃, dite_false, if_false, bounded_preterm.cast_fst,
+  simp only [subst_bounded_term, h₂, h₃, dite_false, bounded_preterm.cast_fst,
              lift_bounded_term_fst]
 
 @[simp] lemma subst_bounded_term_bd_app {n n' l} (t₁ : bounded_preterm L (n + n' + 1) (l + 1))
     (t₂ : bounded_term L (n + n' + 1)) (s : bounded_term L n') :
-    subst_bounded_term (bd_app t₁ t₂) s = bd_app (subst_bounded_term t₁ s) (subst_bounded_term t₂ s) := rfl
+    subst_bounded_term (bd_app t₁ t₂) s = bd_app (subst_bounded_term t₁ s) (subst_bounded_term t₂ s)
+        := rfl
 
 @[simp] lemma subst_bounded_term_fst {n n'} : ∀ {l} (t : bounded_preterm L (n + n' + 1) l)
     (s : bounded_term L n'), (subst_bounded_term t s).fst = subst_term t.fst s.fst n
@@ -1952,11 +1987,10 @@ notation:0 t "[" s " /// " n "]" => @subst_bounded_term _ n _ _ t s
       rcases Nat.lt_trichotomy k.1 n with h | h | h
       · simp [h, subst_bounded_term]
       · simp only [subst_bounded_term, show ¬(k.1 < n) from by omega,
-              show ¬(n < k.1) from by omega, dite_false, if_false,
+              show ¬(n < k.1) from by omega, dite_false,
               bounded_preterm.cast_fst, lift_bounded_term_fst]
-        simp [subst_term, subst_realize, h]
-      · simp [subst_bounded_term, h, Nat.not_lt.mpr (Nat.le_of_lt h), subst_term, subst_realize,
-              Nat.lt_asymm h]
+        simp [h]
+      · simp [subst_bounded_term, h, Nat.not_lt.mpr (Nat.le_of_lt h)]
   | _, bd_func f, _ => rfl
   | _, bd_app t₁ t₂, s => by
       simp [subst_bounded_term_fst t₁ s, subst_bounded_term_fst t₂ s]
@@ -1980,16 +2014,16 @@ def substmax_bounded_term {n l} (t : bounded_preterm L (n + 1) l) (s : closed_te
     substmax_bounded_term (bd_app t₁ t₂) s =
     bd_app (substmax_bounded_term t₁ s) (substmax_bounded_term t₂ s) := rfl
 
-def substmax_eq_subst0_term {l} (t : bounded_preterm L 1 l) (s : closed_term L) :
+theorem substmax_eq_subst0_term {l} (t : bounded_preterm L 1 l) (s : closed_term L) :
     subst0_bounded_term t s = substmax_bounded_term t s := by
   apply bounded_preterm.eq; simp [substmax_bounded_term]
 
-def substmax_var_lt {n} (k : Fin (n + 1)) (s : closed_term L) (h : k.1 < n) :
+theorem substmax_var_lt {n} (k : Fin (n + 1)) (s : closed_term L) (h : k.1 < n) :
     substmax_bounded_term (bd_var k : bounded_preterm L (n + 1) 0) s =
     bd_var ⟨k.1, h⟩ := by
   apply bounded_preterm.eq; simp [substmax_bounded_term, h]
 
-def substmax_var_eq {n} (k : Fin (n + 1)) (s : closed_term L) (h : k.1 = n) :
+theorem substmax_var_eq {n} (k : Fin (n + 1)) (s : closed_term L) (h : k.1 = n) :
     substmax_bounded_term (bd_var k : bounded_preterm L (n + 1) 0) s = s.cast0 n := by
   apply bounded_preterm.eq
   simp only [substmax_bounded_term, closed_preterm.cast0, bounded_preterm.cast_fst]
@@ -2014,7 +2048,8 @@ def bounded_term_of_function {l n} (f : L.functions l) :
 @[simp] lemma realize_closed_term_bd_apps {S : Structure L}
     {l} (t : closed_preterm L l) (ts : DVec (closed_term L) l) :
     realize_closed_term S (bd_apps t ts) =
-    realize_bounded_term DVec.nil t (ts.map (fun t' => realize_bounded_term DVec.nil t' DVec.nil)) := by
+    realize_bounded_term DVec.nil t (ts.map (fun t' => realize_bounded_term DVec.nil t' DVec.nil))
+        := by
   induction ts with
   | nil => rfl
   | cons x xs ih => exact ih (bd_app t x)
@@ -2057,15 +2092,16 @@ variable (L)
 
 /-- A bounded pre-formula: `bounded_preformula L n l` is a partially applied formula
     with at most `n` free de Bruijn variables (< n), needing `l` more term arguments.
-    `bounded_formula L n = bounded_preformula L n 0`, and `sentence L = bounded_preformula L 0 0`. -/
+    `bounded_formula L n = bounded_preformula L n 0`, and `sentence L = bounded_preformula L 0 0`.
+-/
 inductive bounded_preformula (L : Language.{u}) : ℕ → ℕ → Type u
   | bd_falsum : ∀ {n}, bounded_preformula L n 0
-  | bd_equal : ∀ {n} (t₁ t₂ : bounded_term L n), bounded_preformula L n 0
-  | bd_rel : ∀ {n l : ℕ} (R : L.relations l), bounded_preformula L n l
-  | bd_apprel : ∀ {n l} (f : bounded_preformula L n (l + 1)) (t : bounded_term L n),
+  | bd_equal : ∀ {n} (_t₁ _t₂ : bounded_term L n), bounded_preformula L n 0
+  | bd_rel : ∀ {n l : ℕ} (_R : L.relations l), bounded_preformula L n l
+  | bd_apprel : ∀ {n l} (_f : bounded_preformula L n (l + 1)) (_t : bounded_term L n),
       bounded_preformula L n l
-  | bd_imp : ∀ {n} (f₁ f₂ : bounded_preformula L n 0), bounded_preformula L n 0
-  | bd_all : ∀ {n} (f : bounded_preformula L (n + 1) 0), bounded_preformula L n 0
+  | bd_imp : ∀ {n} (_f₁ _f₂ : bounded_preformula L n 0), bounded_preformula L n 0
+  | bd_all : ∀ {n} (_f : bounded_preformula L (n + 1) 0), bounded_preformula L n 0
 
 export bounded_preformula (bd_falsum bd_equal bd_rel bd_apprel bd_imp bd_all)
 
@@ -2080,7 +2116,7 @@ instance nonempty_bounded_formula (n : ℕ) : Nonempty (bounded_formula L n) :=
 
 /-! ### bounded_preformula notations -/
 
--- Note: ≃ and ⟹ and ∀' are already declared for preformula/preterm above (scoped).
+-- Note: ≃ and ⟹ and ∀'are already declared for preformula/preterm above (scoped).
 -- We overload them here for bounded_preformula. Since these are scoped notations,
 -- we extend existing ones in the Fol namespace.
 
@@ -2114,8 +2150,8 @@ scoped prefix:110 "∃ᵇ" => Fol.bd_ex
 
 /-! ### bd_apps_rel -/
 
-@[simp] def bd_apps_rel {n} : ∀ {l} (f : bounded_preformula L n l)
-    (ts : DVec (bounded_term L n) l), bounded_formula L n
+@[simp] def bd_apps_rel {n} : ∀ {l} (_f : bounded_preformula L n l)
+    (_ts : DVec (bounded_term L n) l), bounded_formula L n
   | _, f, DVec.nil => f
   | _, f, DVec.cons t ts => bd_apps_rel (bd_apprel f t) ts
 
@@ -2284,7 +2320,7 @@ end presentence
 /-! ### Irrel lemmas for bounded formulas -/
 
 lemma lift_bounded_formula_irrel : ∀ {n l} (f : bounded_preformula L n l) (n') {m : ℕ}
-    (h : n ≤ m), lift_formula_at f.fst n' m = f.fst
+    (_h : n ≤ m), lift_formula_at f.fst n' m = f.fst
   | _, _, bd_falsum, _, _, _ => rfl
   | _, _, bd_equal t₁ t₂, n', m, h => by
       simp [bounded_preformula.fst, lift_bounded_term_irrel t₁ n' h,
@@ -2304,7 +2340,7 @@ lemma lift_sentence_irrel (f : sentence L) : lift_formula f.fst 1 = f.fst :=
   lift_bounded_formula_irrel f 1 (Nat.le_refl 0)
 
 @[simp] lemma subst_bounded_formula_irrel : ∀ {n l} (f : bounded_preformula L n l) {n'} (s : term L)
-    (h : n ≤ n'), subst_formula f.fst s n' = f.fst
+    (_h : n ≤ n'), subst_formula f.fst s n' = f.fst
   | _, _, bd_falsum, _, _, _ => rfl
   | _, _, bd_equal t₁ t₂, n', s, h => by
       simp [bounded_preformula.fst, subst_bounded_term_irrel t₁ s h,
@@ -2327,8 +2363,8 @@ lemma subst_sentence_irrel (f : sentence L) (n : ℕ) (s : term L) :
 /-! ### realize_bounded_formula -/
 
 @[simp] def realize_bounded_formula {S : Structure L} :
-    ∀ {n l} (v : DVec S n) (f : bounded_preformula L n l) (xs : DVec S l), Prop
-  | _, _, v, bd_falsum, _ => False
+    ∀ {n l} (_v : DVec S n) (_f : bounded_preformula L n l) (_xs : DVec S l), Prop
+  | _, _, _v, bd_falsum, _ => False
   | _, _, v, bd_equal t₁ t₂, _ =>
       realize_bounded_term v t₁ DVec.nil = realize_bounded_term v t₂ DVec.nil
   | _, _, _, bd_rel R, xs => S.rel_map R xs
@@ -2347,9 +2383,9 @@ scoped infix:51 " ⊨ₘ " => Fol.realize_sentence
 /-! ### realize_bounded_formula lemmas -/
 
 -- Helper for realize_bounded_formula_iff: structural recursion over f
-private def realize_bounded_formula_iff_aux {S : Structure L} :
+private theorem realize_bounded_formula_iff_aux {S : Structure L} :
     ∀ {n l} (f : bounded_preformula L n l) (v₁ : DVec S n) (v₂ : ℕ → S)
-    (hv : ∀ k (hk : k < n), v₁.nth k hk = v₂ k) (xs : DVec S l),
+    (_hv : ∀ k (hk : k < n), v₁.nth k hk = v₂ k) (xs : DVec S l),
     realize_bounded_formula v₁ f xs ↔ realize_formula v₂ f.fst xs
   | _, _, bd_falsum, _, _, _, _ => Iff.rfl
   | _, _, bd_equal t₁ t₂, v₁, v₂, hv, _ => by
@@ -2374,11 +2410,11 @@ private def realize_bounded_formula_iff_aux {S : Structure L} :
         | zero => simp [DVec.nth, subst_realize]
         | succ k =>
           have hk' : k < n := Nat.lt_of_succ_lt_succ hk
-          simp only [DVec.nth, subst_realize, Nat.zero_lt_succ, ↓reduceIte, Nat.succ_ne_zero,
-                     if_false, Nat.add_sub_cancel]
+          simp only [DVec.nth, subst_realize, Nat.zero_lt_succ, ↓reduceIte, Nat.add_sub_cancel]
           exact hv k hk'
       -- f : bounded_preformula L (n+1) 0; DVec.cons x v₁ : DVec S (n+1)
-      -- goal: realize_bounded_formula (DVec.cons x v₁) f x✝ ↔ realize_formula (subst_realize v₂ x 0) f.fst DVec.nil
+      -- goal: realize_bounded_formula (DVec.cons x v₁) f x✝ ↔ realize_formula (subst_realize v₂ x
+      -- 0) f.fst DVec.nil
       -- x✝ : DVec S 0, so x✝ = DVec.nil
       simp only [DVec.zero_eq]
       exact realize_bounded_formula_iff_aux f (DVec.cons x v₁) (subst_realize v₂ x 0) hv' DVec.nil
@@ -2460,9 +2496,9 @@ lemma realize_bounded_formula_irrel {S : Structure L} {n} {v₁ : DVec S n}
     realize_bounded_formula v₁ f xs ↔ realize_sentence S f' := by
   cases xs
   apply realize_bounded_formula_irrel'
-  intro m hm hm'
-  exact absurd hm' (Nat.not_lt_zero m)
-  exact hf
+  · intro m hm hm'
+    exact absurd hm' (Nat.not_lt_zero m)
+  · exact hf
 
 @[simp] lemma realize_bounded_formula_cast_eq_irrel {S : Structure L} {n m l} {h : n = m}
     {v : DVec S m} {f : bounded_preformula L n l} {xs : DVec S l} :
@@ -2483,10 +2519,10 @@ def bounded_preformula.rec1 {C : ∀ n l, bounded_preformula L (n + 1) l → Sor
     (H1 : ∀ {n} (t₁ t₂ : bounded_term L (n + 1)), C n 0 (bd_equal t₁ t₂))
     (H2 : ∀ {n l : ℕ} (R : L.relations l), C n l (bd_rel R))
     (H3 : ∀ {n l : ℕ} (f : bounded_preformula L (n + 1) (l + 1)) (t : bounded_term L (n + 1))
-          (ih : C n (l + 1) f), C n l (bd_apprel f t))
-    (H4 : ∀ {n} (f₁ f₂ : bounded_formula L (n + 1)) (ih₁ : C n 0 f₁) (ih₂ : C n 0 f₂),
+          (_ih : C n (l + 1) f), C n l (bd_apprel f t))
+    (H4 : ∀ {n} (f₁ f₂ : bounded_formula L (n + 1)) (_ih₁ : C n 0 f₁) (_ih₂ : C n 0 f₂),
           C n 0 (bd_imp f₁ f₂))
-    (H5 : ∀ {n} (f : bounded_formula L (n + 2)) (ih : C (n + 1) 0 f),
+    (H5 : ∀ {n} (f : bounded_formula L (n + 2)) (_ih : C (n + 1) 0 f),
           C n 0 (bd_all f)) :
     ∀ {{n l : ℕ}} (f : bounded_preformula L (n + 1) l), C n l f :=
   -- Port from src/fol.lean:1984-2004: define C' with n=0 case = PUnit, then use full rec
@@ -2510,9 +2546,9 @@ def bounded_formula.rec1 {C : ∀ n, bounded_formula L (n + 1) → Sort v}
     (hequal : ∀ {n} (t₁ t₂ : bounded_term L (n + 1)), C n (bd_equal t₁ t₂))
     (hrel : ∀ {n l : ℕ} (R : L.relations l) (ts : DVec (bounded_term L (n + 1)) l),
             C n (bd_apps_rel (bd_rel R) ts))
-    (himp : ∀ {n} {f₁ f₂ : bounded_formula L (n + 1)} (ih₁ : C n f₁) (ih₂ : C n f₂),
+    (himp : ∀ {n} {f₁ f₂ : bounded_formula L (n + 1)} (_ih₁ : C n f₁) (_ih₂ : C n f₂),
             C n (bd_imp f₁ f₂))
-    (hall : ∀ {n} {f : bounded_formula L (n + 2)} (ih : C (n + 1) f), C n (bd_all f))
+    (hall : ∀ {n} {f : bounded_formula L (n + 2)} (_ih : C (n + 1) f), C n (bd_all f))
     {{n : ℕ}} (f : bounded_formula L (n + 1)) : C n f :=
   -- Use a helper that handles partially-applied formulas via dvec accumulator
   let rec go : ∀ {n' l} (f' : bounded_preformula L (n' + 1) l)
@@ -2535,9 +2571,9 @@ def bounded_formula.rec {C : ∀ n, bounded_formula L n → Sort v}
     (hequal : ∀ {n} (t₁ t₂ : bounded_term L n), C n (bd_equal t₁ t₂))
     (hrel : ∀ {n l : ℕ} (R : L.relations l) (ts : DVec (bounded_term L n) l),
             C n (bd_apps_rel (bd_rel R) ts))
-    (himp : ∀ {n} {f₁ f₂ : bounded_formula L n} (ih₁ : C n f₁) (ih₂ : C n f₂),
+    (himp : ∀ {n} {f₁ f₂ : bounded_formula L n} (_ih₁ : C n f₁) (_ih₂ : C n f₂),
             C n (bd_imp f₁ f₂))
-    (hall : ∀ {n} {f : bounded_formula L (n + 1)} (ih : C (n + 1) f), C n (bd_all f)) :
+    (hall : ∀ {n} {f : bounded_formula L (n + 1)} (_ih : C (n + 1) f), C n (bd_all f)) :
     ∀ {{n : ℕ}} (f : bounded_formula L n), C n f :=
   let rec go : ∀ {n l} (f : bounded_preformula L n l)
                (ts : DVec (bounded_term L n) l), C n (bd_apps_rel f ts)
@@ -2556,10 +2592,11 @@ def bounded_formula.rec {C : ∀ n, bounded_formula L n → Sort v}
 /-! ### substmax_bounded_formula — substitute the max (last) variable -/
 
 /-- Substitute variable at position `n` in a formula with bound `n+1`. -/
-@[simp] def subst_bounded_formula : ∀ {n n' n'' l} (f : bounded_preformula L n'' l)
-    (s : bounded_term L n') (h : n + n' + 1 = n''), bounded_preformula L (n + n') l
+@[simp] def subst_bounded_formula : ∀ {n n' n'' l} (_f : bounded_preformula L n'' l)
+    (_s : bounded_term L n') (_h : n + n' + 1 = n''), bounded_preformula L (n + n') l
   | _, _, _, _, bd_falsum, _, _ => bd_falsum
-  | _, _, _, _, bd_equal t₁ t₂, s, rfl => bd_equal (subst_bounded_term t₁ s) (subst_bounded_term t₂ s)
+  | _, _, _, _, bd_equal t₁ t₂, s, rfl => bd_equal (subst_bounded_term t₁ s) (subst_bounded_term t₂
+      s)
   | _, _, _, _, bd_rel R, _, _ => bd_rel R
   | _, _, _, _, bd_apprel f t, s, rfl =>
       bd_apprel (subst_bounded_formula f s rfl) (subst_bounded_term t s)
@@ -2620,7 +2657,7 @@ def subst0_bounded_formula {n l} (f : bounded_preformula L (n + 1) l)
   simp only [subst0_bounded_formula, bounded_preformula.cast_eq_fst]
   rw [subst_bounded_formula_fst f s (by omega : 0 + n + 1 = n + 1)]
 
-def substmax_eq_subst0_formula {l} (f : bounded_preformula L 1 l) (t : closed_term L) :
+theorem substmax_eq_subst0_formula {l} (f : bounded_preformula L 1 l) (t : closed_term L) :
     subst0_bounded_formula f t = substmax_bounded_formula f t := by
   apply bounded_preformula.eq; simp
 
@@ -2695,7 +2732,7 @@ def substmax_eq_subst0_formula {l} (f : bounded_preformula L 1 l) (t : closed_te
     realize_bounded_formula v (bd_biimp f g) DVec.nil ↔
     (realize_bounded_formula v f DVec.nil ↔ realize_bounded_formula v g DVec.nil) := by
   intros n v f g
-  simp [bd_biimp, realize_bounded_formula_and, realize_bounded_formula_imp]
+  simp [bd_biimp, realize_bounded_formula_and]
   tauto
 
 @[simp] lemma realize_sentence_biimp {S : Structure L} {f₁ f₂ : sentence L} :
@@ -2753,7 +2790,7 @@ lemma realize_sentence_iff {S : Structure L} (v : ℕ → S) (f : sentence L) :
 
 /-! ### lift_bounded_formula_at — lift bounded formulas -/
 
-@[simp] def lift_bounded_formula_at : ∀ {n l} (f : bounded_preformula L n l) (n' m : ℕ),
+@[simp] def lift_bounded_formula_at : ∀ {n l} (_f : bounded_preformula L n l) (n' _m : ℕ),
     bounded_preformula L (n + n') l
   | _, _, bd_falsum, _, _ => bd_falsum
   | _, _, bd_equal t₁ t₂, n', m => bd_equal (t₁ ↑ᵇ' n' # m) (t₂ ↑ᵇ' n' # m)
@@ -2939,7 +2976,7 @@ def SentTheory.is_consistent (T : SentTheory L) : Prop := ¬(T.fst ⊢' ⊥')
 def Th (S : Structure L) : SentTheory L := { f : sentence L | S ⊨ₘ f }
 
 lemma realize_sentence_Th (S : Structure L) : all_realize_sentence S (Th S) :=
-  fun f hf => hf
+  fun _f hf => hf
 
 lemma SentTheory.is_consistent_Th (S : Structure L) (HS : Nonempty S) :
     (Th S).is_consistent := by
@@ -2975,10 +3012,10 @@ def T_empty (L : Language.{u}) : SentTheory L := ∅
 
 /-! ## Section bd_alls (src/fol.lean lines 2706-2757) -/
 
-/-- Apply ∀' n times to an unbounded formula -/
-@[simp] def alls : ∀ (n : ℕ), formula L → formula L
+/-- Apply ∀'n times to an unbounded formula -/
+@[simp] def alls : ∀ (_n : ℕ), formula L → formula L
   | 0,     f => f
-  | n + 1, f => ∀' (alls n f)
+  | n + 1, f => ∀'(alls n f)
 
 /-- Apply bd_all k times, reducing the bound index from n+k to n -/
 @[simp] def bd_alls' : ∀ (k n : ℕ), bounded_formula L (n + k) → bounded_formula L n
@@ -3034,13 +3071,13 @@ def T_empty (L : Language.{u}) : SentTheory L := ∅
 @[simp] lemma alls_0 (ψ : formula L) : alls 0 ψ = ψ := rfl
 
 @[simp] lemma alls_all_commute (f : formula L) {k : ℕ} :
-    alls k (∀' f) = ∀' (alls k f) := by
+    alls k (∀'f) = ∀'(alls k f) := by
   induction k with
   | zero => rfl
   | succ k ih =>
     simp only [alls]
     rw [ih]
 
-@[simp] lemma alls_succ_k (f : formula L) {k : ℕ} : alls (k + 1) f = ∀' (alls k f) := rfl
+@[simp] lemma alls_succ_k (f : formula L) {k : ℕ} : alls (k + 1) f = ∀'(alls k f) := rfl
 
 end Fol

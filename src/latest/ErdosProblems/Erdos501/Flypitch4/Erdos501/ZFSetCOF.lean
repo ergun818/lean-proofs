@@ -147,7 +147,7 @@ theorem val_inv_of_ne (x : Carrier F) (h : x.1 ≠ F.zero) :
   -- at reducible transparency; unfold by `show` instead)
   have e : inv' x = ⟨Classical.choose (F.mulInv' x.1 x.2 h),
       (Classical.choose_spec (F.mulInv' x.1 x.2 h)).1⟩ := dif_neg h
-  show (inv' x).1 = _
+  change (inv' x).1 = _
   rw [e]
 
 theorem mul_inv_cancel' (x : Carrier F) (hx : x ≠ 0) : x * x⁻¹ = 1 := by
@@ -160,7 +160,7 @@ theorem mul_inv_cancel' (x : Carrier F) (hx : x ≠ 0) : x * x⁻¹ = 1 := by
   exact (eq_mul_of_app2 x x⁻¹ h2).symm
 
 theorem inv_zero' : (0 : Carrier F)⁻¹ = 0 := by
-  show inv' 0 = 0
+  change inv' 0 = 0
   rw [inv']
   exact dif_pos rfl
 
@@ -374,21 +374,23 @@ theorem exists_isLUB (s : Set (Carrier F)) (hb : BddAbove s) (hn : s.Nonempty) :
     · exact Or.inl h
     · exact Or.inr (Subtype.ext h)
 
-open scoped Classical
-
+open Classical in
 noncomputable instance : SupSet (Carrier F) :=
   ⟨fun s => if h : BddAbove s ∧ s.Nonempty then Classical.choose (exists_isLUB s h.1 h.2) else 0⟩
 
 theorem isLUB_sSup' (s : Set (Carrier F)) (hb : BddAbove s) (hn : s.Nonempty) :
     IsLUB s (sSup s) := by
+  classical
   have : sSup s = Classical.choose (exists_isLUB s hb hn) := by
-    show (if h : BddAbove s ∧ s.Nonempty then Classical.choose (exists_isLUB s h.1 h.2) else 0) = _
+    change (if h : BddAbove s ∧ s.Nonempty then Classical.choose (exists_isLUB s h.1 h.2) else 0) =
+        _
     rw [dif_pos ⟨hb, hn⟩]
   rw [this]
   exact Classical.choose_spec (exists_isLUB s hb hn)
 
 theorem sSup_of_not (s : Set (Carrier F)) (h : ¬ (BddAbove s ∧ s.Nonempty)) : sSup s = 0 := by
-  show (if h : BddAbove s ∧ s.Nonempty then Classical.choose (exists_isLUB s h.1 h.2) else 0) = _
+  classical
+  change (if h : BddAbove s ∧ s.Nonempty then Classical.choose (exists_isLUB s h.1 h.2) else 0) = _
   rw [dif_neg h]
 
 theorem not_bddAbove_univ : ¬ BddAbove (Set.univ : Set (Carrier F)) := by
@@ -403,7 +405,7 @@ noncomputable instance instConditionallyCompleteLinearOrderCarrier :
     csSup_of_not_bddAbove := fun s hs => by
       rw [sSup_of_not s (fun h => hs h.1), sSup_of_not ∅ (fun h => h.2.ne_empty rfl)]
     csInf_of_not_bddBelow := fun s hs => by
-      show sSup (lowerBounds s) = sSup (lowerBounds ∅)
+      change sSup (lowerBounds s) = sSup (lowerBounds ∅)
       have h1 : lowerBounds s = ∅ := by
         rw [Set.eq_empty_iff_forall_notMem]
         intro b hb

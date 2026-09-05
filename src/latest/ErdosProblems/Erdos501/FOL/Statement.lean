@@ -211,12 +211,23 @@ def collectionAxiom (n : ℕ) (ψ : L.BoundedFormula Empty (n + 2)) : L.Sentence
   BoundedFormula.alls (n := n + 1) <|
     BoundedFormula.imp
       -- ∀ x ∈ u, ∃ y, ψ                                    (levels: p, u, x, y)
-      (BoundedFormula.all (BoundedFormula.imp (Relations.boundedFormula₂ (Rel.mem : L.Relations 2) (Term.var (Sum.inr ⟨n + 1, by omega⟩)) (Term.var (Sum.inr ⟨n, by omega⟩))) (BoundedFormula.ex (ψ.liftAt 1 n))))
+      (BoundedFormula.all (BoundedFormula.imp (Relations.boundedFormula₂ (Rel.mem : L.Relations 2)
+          (Term.var (Sum.inr ⟨n + 1, by omega⟩)) (Term.var (Sum.inr ⟨n, by omega⟩)))
+          (BoundedFormula.ex (ψ.liftAt 1 n))))
       (BoundedFormula.ex
         -- ∀ x ∈ u, ∃ y ∈ v, ψ                              (levels: p, u, v, x, y)
-        ((BoundedFormula.all (BoundedFormula.imp (Relations.boundedFormula₂ (Rel.mem : L.Relations 2) (Term.var (Sum.inr ⟨n + 2, by omega⟩)) (Term.var (Sum.inr ⟨n, by omega⟩))) (BoundedFormula.ex ((Relations.boundedFormula₂ (Rel.mem : L.Relations 2) (Term.var (Sum.inr ⟨n + 3, by omega⟩)) (Term.var (Sum.inr ⟨n + 1, by omega⟩))) ⊓ (ψ.liftAt 2 n))))) ⊓
+        ((BoundedFormula.all (BoundedFormula.imp (Relations.boundedFormula₂ (Rel.mem : L.Relations
+            2) (Term.var (Sum.inr ⟨n + 2, by omega⟩)) (Term.var (Sum.inr ⟨n, by omega⟩)))
+            (BoundedFormula.ex ((Relations.boundedFormula₂ (Rel.mem : L.Relations 2) (Term.var
+            (Sum.inr ⟨n + 3, by omega⟩)) (Term.var (Sum.inr ⟨n + 1, by omega⟩))) ⊓ (ψ.liftAt 2
+            n))))) ⊓
          -- ∀ y ∈ v, ∃ x ∈ u, ∃ y', y' = y ∧ ψ              (levels: p, u, v, y, x, y')
-         (BoundedFormula.all (BoundedFormula.imp (Relations.boundedFormula₂ (Rel.mem : L.Relations 2) (Term.var (Sum.inr ⟨n + 2, by omega⟩)) (Term.var (Sum.inr ⟨n + 1, by omega⟩))) (BoundedFormula.ex ((Relations.boundedFormula₂ (Rel.mem : L.Relations 2) (Term.var (Sum.inr ⟨n + 3, by omega⟩)) (Term.var (Sum.inr ⟨n, by omega⟩))) ⊓ (BoundedFormula.ex ((Term.bdEqual (Term.var (Sum.inr ⟨n + 4, by omega⟩)) (Term.var (Sum.inr ⟨n + 2, by omega⟩))) ⊓ (ψ.liftAt 3 n)))))))))
+         (BoundedFormula.all (BoundedFormula.imp (Relations.boundedFormula₂ (Rel.mem : L.Relations
+             2) (Term.var (Sum.inr ⟨n + 2, by omega⟩)) (Term.var (Sum.inr ⟨n + 1, by omega⟩)))
+             (BoundedFormula.ex ((Relations.boundedFormula₂ (Rel.mem : L.Relations 2) (Term.var
+             (Sum.inr ⟨n + 3, by omega⟩)) (Term.var (Sum.inr ⟨n, by omega⟩))) ⊓ (BoundedFormula.ex
+             ((Term.bdEqual (Term.var (Sum.inr ⟨n + 4, by omega⟩)) (Term.var (Sum.inr ⟨n + 2, by
+             omega⟩))) ⊓ (ψ.liftAt 3 n)))))))))
 
 /-- **The theory `ZFC`**: extensionality, empty set, ordered pairs, union, power
 set, infinity, regularity, Zorn's lemma, and the strong collection scheme.  This
@@ -291,8 +302,10 @@ def completeOrderedFieldF (R plus times lt zero one : Tm) : Fm :=
     -- `+` is associative: x + y = u → u + z = v → y + z = w → x + w = w' → v = w'
     allIn R fun x => allIn R fun y => allIn R fun z =>
       allF fun u => allF fun v => allF fun w => allF fun w' =>
-        impF (app2F plus (varT x) (varT y) (varT u)) <| impF (app2F plus (varT u) (varT z) (varT v)) <|
-        impF (app2F plus (varT y) (varT z) (varT w)) <| impF (app2F plus (varT x) (varT w) (varT w')) <|
+        impF (app2F plus (varT x) (varT y) (varT u)) <| impF (app2F plus (varT u) (varT z) (varT v))
+            <|
+        impF (app2F plus (varT y) (varT z) (varT w)) <| impF (app2F plus (varT x) (varT w) (varT
+            w')) <|
         eqF (varT v) (varT w'),
     -- `+` is commutative
     allIn R fun x => allIn R fun y => allF fun u =>
@@ -304,8 +317,10 @@ def completeOrderedFieldF (R plus times lt zero one : Tm) : Fm :=
     -- `·` is associative
     allIn R fun x => allIn R fun y => allIn R fun z =>
       allF fun u => allF fun v => allF fun w => allF fun w' =>
-        impF (app2F times (varT x) (varT y) (varT u)) <| impF (app2F times (varT u) (varT z) (varT v)) <|
-        impF (app2F times (varT y) (varT z) (varT w)) <| impF (app2F times (varT x) (varT w) (varT w')) <|
+        impF (app2F times (varT x) (varT y) (varT u)) <| impF (app2F times (varT u) (varT z) (varT
+            v)) <|
+        impF (app2F times (varT y) (varT z) (varT w)) <| impF (app2F times (varT x) (varT w) (varT
+            w')) <|
         eqF (varT v) (varT w'),
     -- `·` is commutative
     allIn R fun x => allIn R fun y => allF fun u =>
@@ -313,20 +328,24 @@ def completeOrderedFieldF (R plus times lt zero one : Tm) : Fm :=
     -- x · 1 = x
     allIn R fun x => app2F times (varT x) one (varT x),
     -- multiplicative inverses of nonzero elements
-    allIn R fun x => impF (notF (eqF (varT x) zero)) (exIn R fun y => app2F times (varT x) (varT y) one),
+    allIn R fun x => impF (notF (eqF (varT x) zero)) (exIn R fun y => app2F times (varT x) (varT y)
+        one),
     -- 0 ≠ 1
     notF (eqF zero one),
     -- distributivity: y + z = u → x · u = v → x · y = w → x · z = t → w + t = t' → v = t'
     allIn R fun x => allIn R fun y => allIn R fun z =>
       allF fun u => allF fun v => allF fun w => allF fun t => allF fun t' =>
-        impF (app2F plus (varT y) (varT z) (varT u)) <| impF (app2F times (varT x) (varT u) (varT v)) <|
-        impF (app2F times (varT x) (varT y) (varT w)) <| impF (app2F times (varT x) (varT z) (varT t)) <|
+        impF (app2F plus (varT y) (varT z) (varT u)) <| impF (app2F times (varT x) (varT u) (varT
+            v)) <|
+        impF (app2F times (varT x) (varT y) (varT w)) <| impF (app2F times (varT x) (varT z) (varT
+            t)) <|
         impF (app2F plus (varT w) (varT t) (varT t')) <| eqF (varT v) (varT t'),
     -- `<` is irreflexive
     allIn R fun x => notF (ltF lt (varT x) (varT x)),
     -- `<` is transitive
     allIn R fun x => allIn R fun y => allIn R fun z =>
-      impF (ltF lt (varT x) (varT y)) <| impF (ltF lt (varT y) (varT z)) <| ltF lt (varT x) (varT z),
+      impF (ltF lt (varT x) (varT y)) <| impF (ltF lt (varT y) (varT z)) <| ltF lt (varT x) (varT
+          z),
     -- `<` is total
     allIn R fun x => allIn R fun y =>
       orF (ltF lt (varT x) (varT y)) (orF (eqF (varT x) (varT y)) (ltF lt (varT y) (varT x))),
@@ -379,11 +398,13 @@ def outerMeasureLtOneF (R plus lt zero one S : Tm) : Fm :=
       allF fun u => allF fun v => allF fun w => allF fun w' => allF fun t => allF fun t' =>
         impF (appF (varT a) (varT n) (varT u)) <| impF (appF (varT b) (varT n) (varT v)) <|
         impF (appF (varT s) (varT n) (varT w)) <| impF (appF (varT s) (varT m) (varT w')) <|
-        impF (app2F plus (varT w') (varT u) (varT t)) <| impF (app2F plus (varT w) (varT v) (varT t')) <|
+        impF (app2F plus (varT w') (varT u) (varT t)) <| impF (app2F plus (varT w) (varT v) (varT
+            t')) <|
         eqF (varT t) (varT t'),
     -- the partial sums are bounded by some r < 1
     exIn R fun r => andF (ltF lt (varT r) one)
-      (allIn omT fun n => allF fun w => impF (appF (varT s) (varT n) (varT w)) (leF lt (varT w) (varT r)))
+      (allIn omT fun n => allF fun w => impF (appF (varT s) (varT n) (varT w)) (leF lt (varT w)
+          (varT r)))
   ]
 
 /-- `X` is infinite: `ω` injects into `X`.  This renders `X.Infinite`. -/
@@ -414,8 +435,10 @@ ordered field `(R, +, ·, <, 0, 1)`, every family `⟨A_x : x ∈ R⟩` of bound
 of `R` of outer measure `< 1` has an infinite independent set. -/
 def Erdos501 : L.Sentence :=
   toSentence <|
-    allF fun R => allF fun plus => allF fun times => allF fun lt => allF fun zeroR => allF fun oneR =>
-      impF (completeOrderedFieldF (varT R) (varT plus) (varT times) (varT lt) (varT zeroR) (varT oneR))
+    allF fun R => allF fun plus => allF fun times => allF fun lt => allF fun zeroR => allF fun oneR
+        =>
+      impF (completeOrderedFieldF (varT R) (varT plus) (varT times) (varT lt) (varT zeroR) (varT
+          oneR))
         (erdosPropertyF (varT R) (varT plus) (varT lt) (varT zeroR) (varT oneR))
 
 /-! ### The standard interpretation in Mathlib's `ZFSet` -/

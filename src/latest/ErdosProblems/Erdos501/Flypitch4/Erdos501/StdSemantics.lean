@@ -19,7 +19,8 @@ DeepMind's proposition `erdos501_deepmind` (the right-hand side of `erdos_501` i
 `formal-conjectures`).  It contains
 
 * `erdos501_deepmind : Prop`, the DeepMind proposition verbatim;
-* `stdStructure : Structure L_ZFC`, Mathlib's `ZFSet` with `∅`, Kuratowski pairs, `ω`, the power set,
+* `stdStructure : Structure L_ZFC`, Mathlib's `ZFSet` with `∅`, Kuratowski pairs, `ω`, the power
+set,
   the union and `∈`;
 * the two-valued predicates `StdSem.*` on `ZFSet` mirroring the blocks of `Sentence.lean` (exactly
   as `Sem.*` of `Semantics.lean` does for Boolean values), and the computation
@@ -248,7 +249,8 @@ def covers (ltR S a b : ZFSet.{0}) : Prop :=
 /-- The partial sums recursion: `s (n+1) + aₙ = s n + bₙ`. -/
 def partialSums (plus a b s : ZFSet.{0}) : Prop :=
   ∀ n : ZFSet.{0}, n ∈ ZFSet.omega → ∀ m : ZFSet.{0}, succ n m →
-    ∀ u : ZFSet.{0}, ∀ v : ZFSet.{0}, ∀ w : ZFSet.{0}, ∀ w' : ZFSet.{0}, ∀ t : ZFSet.{0}, ∀ t' : ZFSet.{0},
+    ∀ u : ZFSet.{0}, ∀ v : ZFSet.{0}, ∀ w : ZFSet.{0}, ∀ w' : ZFSet.{0}, ∀ t : ZFSet.{0}, ∀ t' :
+        ZFSet.{0},
       app a n u → (app b n v → (app s n w → (app s m w' →
         (app2 plus w' u t → (app2 plus w v t' → t = t')))))
 
@@ -287,9 +289,11 @@ def erdosProperty (R plus ltR zero one : ZFSet.{0}) : Prop :=
         (bounded R ltR Ax ∧ outerMeasureLtOne R plus ltR zero one Ax)) →
       ∃ X : ZFSet.{0}, X ∈ ZFSet.powerset R ∧ (infinite X ∧ independent A X))
 
-/-- The meaning of `Erdos501_f` in the standard structure, as an explicit proposition on `ZFSet.{0}`. -/
+/-- The meaning of `Erdos501_f` in the standard structure, as an explicit proposition on
+`ZFSet.{0}`. -/
 def erdos501 : Prop :=
-  ∀ R : ZFSet.{0}, ∀ plus : ZFSet.{0}, ∀ times : ZFSet.{0}, ∀ ltR : ZFSet.{0}, ∀ zero : ZFSet.{0}, ∀ one : ZFSet.{0},
+  ∀ R : ZFSet.{0}, ∀ plus : ZFSet.{0}, ∀ times : ZFSet.{0}, ∀ ltR : ZFSet.{0}, ∀ zero : ZFSet.{0}, ∀
+      one : ZFSet.{0},
     completeOrderedField R plus times ltR zero one → erdosProperty R plus ltR zero one
 
 end StdSem
@@ -304,7 +308,8 @@ theorem realize_Erdos501_f_std : (stdStructure ⊨ₘ Erdos501_f) ↔ StdSem.erd
     eqF, varT, powT, pairT, omT, empT, ltF, leF, appF, app2F, isFunF, isOp2F, succF, andsF,
     CompleteOrderedFieldF, ErdosPropertyF, BoundedF, OuterMeasureLtOneF, InfiniteF, IndependentF,
     realize_sentence, realize_bounded_formula,
-    realize_bounded_formula_and, realize_bounded_formula_or', realize_bounded_formula_not, realize_bounded_formula_ex,
+    realize_bounded_formula_and, realize_bounded_formula_or', realize_bounded_formula_not,
+        realize_bounded_formula_ex,
     realize_bounded_formula_biimp, std_realize_bounded_formula_mem',
     std_realize_bounded_term_pair', std_realize_bounded_term_Powerset',
     std_realize_bounded_term_omega', std_realize_bounded_term_emptyset',

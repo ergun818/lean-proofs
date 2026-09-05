@@ -297,7 +297,8 @@ field `(R, +, ·, <, 0, 1)`, every family `⟨A_x : x ∈ R⟩` of bounded subse
 measure `< 1` has an infinite independent set. -/
 def Erdos501_f : sentence L_ZFC :=
   toSentence <|
-    allF fun R => allF fun plus => allF fun times => allF fun lt => allF fun zeroR => allF fun oneR =>
+    allF fun R => allF fun plus => allF fun times => allF fun lt => allF fun zeroR => allF fun oneR
+        =>
       CompleteOrderedFieldF (varT R) (varT plus) (varT times) (varT lt) (varT zeroR) (varT oneR) ⟶
       ErdosPropertyF (varT R) (varT plus) (varT lt) (varT zeroR) (varT oneR)
 
@@ -305,7 +306,8 @@ def Erdos501_f : sentence L_ZFC :=
 field `(R, +, ·, <, 0, 1)` with the Erdős property.
 
 `ZFC` proves that any two complete ordered fields are isomorphic and that the Erdős property is
-invariant under isomorphism (as is the existence of one, `ℝ`), so `ZFC ⊢ Erdos501_ex_f ↔ Erdos501_f`;
+invariant under isomorphism (as is the existence of one, `ℝ`), so `ZFC ⊢ Erdos501_ex_f ↔
+Erdos501_f`;
 the two sentences are equally faithful renderings of DeepMind's `erdos_501`.  The existential form
 is the one established directly by the forcing argument (`Main.lean`: `erdos501_ex_forced`), the
 universal form `Erdos501_f` follows from it by the `ZFC`-theorem `Erdos501_ex_f → Erdos501_f`

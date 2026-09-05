@@ -100,7 +100,7 @@ lemma can_extend (T : SentTheory L) (ψ : sentence L) (h : T.is_consistent) :
 /-! ## Theory_over: the poset of consistent extensions of T -/
 
 /-- Theory_over T hT: the subtype of SentTheory L consisting of consistent theories ⊇ T -/
-def Theory_over (T : SentTheory L) (hT : T.is_consistent) : Type u :=
+def Theory_over (T : SentTheory L) (_hT : T.is_consistent) : Type u :=
   { T' : SentTheory L // T ⊆ T' ∧ T'.is_consistent }
 
 /-- T itself is a Theory_over T hT -/
@@ -125,7 +125,7 @@ private lemma TO_trans {T : SentTheory L} {hT : T.is_consistent}
     {a b c : Theory_over T hT}
     (hab : Theory_over_subset a b) (hbc : Theory_over_subset b c) :
     Theory_over_subset a c :=
-  fun x hx => hbc (hab hx)
+  fun _x hx => hbc (hab hx)
 
 -- Helper: move from one theory's fst to another's via subset
 private lemma TO_fst_subset {T : SentTheory L} {hT : T.is_consistent}
@@ -235,7 +235,7 @@ lemma can_use_zorn {T : SentTheory L} {hT : T.is_consistent} :
     (∀ (a b c : Theory_over T hT),
       Theory_over_subset a b → Theory_over_subset b c → Theory_over_subset a c) :=
   ⟨fun c h_chain => ⟨(limit_theory c h_chain).fst, (limit_theory c h_chain).snd⟩,
-   fun _a _b _c hab hbc => fun x hx => hbc (hab hx)⟩
+   fun _a _b _c hab hbc => fun _x hx => hbc (hab hx)⟩
 
 /-! ## maximal_extension -/
 

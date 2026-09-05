@@ -62,7 +62,7 @@ noncomputable def μS : Measure SS := (Measure.count : Measure ℤ).prod νP
 instance : SigmaFinite μS := by unfold μS; infer_instance
 
 lemma μS_apply {s : Set SS} (hs : MeasurableSet s) : μS s = ∑' m : ℤ, νP (Prod.mk m ⁻¹' s) := by
-  show (Measure.count.prod νP) s = _
+  change (Measure.count.prod νP) s = _
   rw [Measure.prod_apply hs, lintegral_count]
 
 /-- The test map `xx (m, z) = m + binExp (z 0)`. -/
@@ -82,7 +82,7 @@ theorem μS_preimage_xx {B : Set ℝ} (hB : MeasurableSet B) : μS (xx ⁻¹' B)
     intro m
     have : Prod.mk m ⁻¹' (xx ⁻¹' B) = (fun z : Prof => (m : ℝ) + binExp (z 0)) ⁻¹' B := rfl
     rw [this, ← Measure.map_apply (measurable_test m) hB]
-    show (νP.map (fun z : Prof => (m : ℝ) + binExp (z 0))) B = _
+    change (νP.map (fun z : Prof => (m : ℝ) + binExp (z 0))) B = _
     rw [νP, map_profileTest_binExp m, Measure.restrict_apply hB]
   simp_rw [h1]
   exact tsum_volume_inter_Ico B hB
@@ -154,7 +154,7 @@ lemma measurableSet_envGraph (hE : Measurable E) :
         ({q | (q.1.1, q.1.2.2) ∈ coverEvent (aE E m) (bE E m)} ∩
           ⋃ n, {q | aE E m n (q.1.1, q.1.2.2) < q.2} ∩ {q | q.2 < bE E m n (q.1.1, q.1.2.2)})) := by
     ext ⟨⟨t, m, z⟩, r⟩
-    simp only [mem_setOf_eq, mem_envSet_iff, mem_iUnion, mem_inter_iff]
+    simp only [mem_ofPred_eq, mem_envSet_iff, mem_iUnion, mem_inter_iff]
     constructor
     · rintro ⟨h1, n, h2, h3⟩; exact ⟨m, rfl, h1, n, h2, h3⟩
     · rintro ⟨m', rfl, h1, n, h2, h3⟩; exact ⟨h1, n, h2, h3⟩
@@ -186,7 +186,8 @@ lemma measurableSet_ErelX (hE : Measurable E) (x : RandomAlgebra.Ω ι) :
 
 lemma measurableSet_ErelX_graph (hE : Measurable E) :
     MeasurableSet {p : RandomAlgebra.Ω ι × (SS × SS) | p.2 ∈ ErelX E p.1} :=
-  (measurableSet_Erel hE).preimage ((R.measurable_restrict.comp measurable_fst).prodMk measurable_snd)
+  (measurableSet_Erel hE).preimage ((R.measurable_restrict.comp measurable_fst).prodMk
+      measurable_snd)
 
 lemma ErelX_congr {x y : RandomAlgebra.Ω ι} (h : EqOn x y R) : ErelX E x = ErelX E y := by
   have : R.domRestrict x = R.domRestrict y := by funext i; exact h i.2
@@ -224,7 +225,7 @@ lemma measurableSet_QX_graph (hE : Measurable E)
         μS (Prod.mk p ⁻¹' {q : (RandomAlgebra.Ω ι × SS) × SS |
           q.2 ∈ C q.1.1 ∧ (q.1.2, q.2) ∉ ErelX E q.1.1})) ⁻¹' {∞} := by
     ext ⟨x, s⟩
-    simp only [QX, Q, mem_setOf_eq, mem_inter_iff, mem_preimage, mem_singleton_iff]
+    simp only [QX, Q, mem_ofPred_eq, mem_inter_iff, mem_preimage, mem_singleton_iff]
     have : Prod.mk (x, s) ⁻¹' {q : (RandomAlgebra.Ω ι × SS) × SS |
         q.2 ∈ C q.1.1 ∧ (q.1.2, q.2) ∉ ErelX E q.1.1} = C x \ Prod.mk s ⁻¹' ErelX E x := by
       ext s'; simp
@@ -284,7 +285,7 @@ lemma eqOn_extT_restrict (x : RandomAlgebra.Ω ι) : EqOn (extT T (T.domRestrict
 lemma mem_sectionSet_iff (hRT : R ⊆ T)
     (hinv : ∀ x y : RandomAlgebra.Ω ι, EqOn x y T → C x = C y) (x : RandomAlgebra.Ω ι) (m : ℤ)
     (z : Prof) : (T.domRestrict x, z) ∈ sectionSet E C T m ↔ (m, z) ∈ QX E C x := by
-  simp only [sectionSet, mem_setOf_eq]
+  simp only [sectionSet, mem_ofPred_eq]
   rw [QX_congr ((eqOn_extT_restrict x).mono hRT) (hinv _ _ (eqOn_extT_restrict x))]
 
 lemma preimage_sectionSet (hRT : R ⊆ T)
@@ -356,13 +357,13 @@ theorem exists_stage_selection (hE : Measurable E)
     obtain ⟨m, hm⟩ := exists_section_pos hE hC x hinf
     have hpos : ∃ i, x ∈ posEvent T (sectionSet E C T (intEnum i)) := by
       refine ⟨intEnum.symm m, ?_⟩
-      simp only [posEvent, mem_setOf_eq, Equiv.apply_symm_apply,
+      simp only [posEvent, mem_ofPred_eq, Equiv.apply_symm_apply,
         preimage_sectionSet hRT hinv x m]
       exact hm
     have hmem := mem_firstIndex hpos
     have hpet := hx (mIdx x) hmem
     simp only [Nat.unpair_pair]
-    rw [petalEvent, mem_setOf_eq, mem_sectionSet_iff hRT hinv] at hpet
+    rw [petalEvent, mem_ofPred_eq, mem_sectionSet_iff hRT hinv] at hpet
     exact hpet
 
 
@@ -384,7 +385,7 @@ variable (R) in
 /-- The initial stage: `C = univ`, `T = R`. -/
 def stage0 (hR : R.Countable) : Stage R where
   C := fun _ => univ
-  hC := by simp only [mem_univ, setOf_true]; exact MeasurableSet.univ
+  hC := by simp only [mem_univ, ofPred_true]; exact MeasurableSet.univ
   T := R
   hT := hR
   hRT := le_rfl
@@ -392,7 +393,8 @@ def stage0 (hR : R.Countable) : Stage R where
 
 variable {D : Type} {J : Set D} {π : D → ℕ → ι}
 
-/-- The point chosen from a candidate list and a selector: `((cand (sel x)).1, ĝ ∘ π (cand (sel x)).2)`. -/
+/-- The point chosen from a candidate list and a selector: `((cand (sel x)).1, ĝ ∘ π (cand (sel
+x)).2)`. -/
 def tpt (π : D → ℕ → ι) (cand : ℕ → ℤ × D) (sel : RandomAlgebra.Ω ι → ℕ) (x : RandomAlgebra.Ω ι) :
     SS :=
   ((cand (sel x)).1, fun n => x (π (cand (sel x)).2 n))
@@ -402,7 +404,7 @@ lemma measurable_tpt (cand : ℕ → ℤ × D) {sel : RandomAlgebra.Ω ι → �
   have hG : Measurable fun q : ℕ × RandomAlgebra.Ω ι =>
       (((cand q.1).1, fun n => q.2 (π (cand q.1).2 n)) : SS) := by
     refine measurable_from_prod_countable_right fun k => ?_
-    show Measurable fun y : RandomAlgebra.Ω ι => (((cand k).1, fun n => y (π (cand k).2 n)) : SS)
+    change Measurable fun y : RandomAlgebra.Ω ι => (((cand k).1, fun n => y (π (cand k).2 n)) : SS)
     exact measurable_const.prodMk (measurable_pi_lambda _ fun n => measurable_pi_apply _)
   exact hG.comp (hsel.prodMk measurable_id)
 
@@ -440,7 +442,8 @@ include hE hJ hπ hdisj in
 lemma choiceOf_spec (st : Stage R) :
     (∀ k, ((choiceOf hE hJ hπ hdisj st).1 k).2 ∈ J) ∧
     Measurable (choiceOf hE hJ hπ hdisj st).2 ∧
-    (∀ x y : RandomAlgebra.Ω ι, EqOn x y (st.T ∪ ⋃ k, range (π ((choiceOf hE hJ hπ hdisj st).1 k).2)) →
+    (∀ x y : RandomAlgebra.Ω ι, EqOn x y (st.T ∪ ⋃ k, range (π ((choiceOf hE hJ hπ hdisj st).1
+        k).2)) →
       (choiceOf hE hJ hπ hdisj st).2 x = (choiceOf hE hJ hπ hdisj st).2 y) ∧
     ∀ᵐ x ∂(RandomAlgebra.μ_random ι), μS (st.C x) = ∞ →
       tpt π (choiceOf hE hJ hπ hdisj st).1 (choiceOf hE hJ hπ hdisj st).2 x ∈ QX E st.C x :=
@@ -497,7 +500,7 @@ lemma stage_C_anti (i k : ℕ) (x : RandomAlgebra.Ω ι) :
   | zero => exact le_rfl
   | succ k ih =>
     rw [← Nat.add_assoc, stage_succ_C]
-    exact diff_subset.trans ih
+    exact sdiff_subset.trans ih
 
 /-- **The recursion is good almost everywhere**: for a.e. `x`, at every stage `μS (C_j x) = ∞`
 and the chosen point lies in the good set `Q(C_j x)`. -/

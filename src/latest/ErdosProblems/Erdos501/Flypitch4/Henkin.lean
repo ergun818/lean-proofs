@@ -59,8 +59,8 @@ def diagram_relations (F : directed_diagram_language.{u}) (n : ℕ) : directed_d
 
 /-- The colimit language -/
 def colimit_language (F : directed_diagram_language.{u}) : Language.{u} :=
-  ⟨fun n => colimit (diagram_functions F n),
-   fun n => colimit (diagram_relations F n)⟩
+  ⟨fun n => Carrier (diagram_functions F n),
+   fun n => Carrier (diagram_relations F n)⟩
 
 /-- Canonical map from stage i into the colimit language -/
 def canonical_map_language {F : directed_diagram_language.{u}} (i : ℕ) :
@@ -83,10 +83,10 @@ def cocone_of_colimit_language (F : directed_diagram_language.{u}) :
     intro i j H
     apply Lhom.Lhom_funext
     · funext n; funext f
-      simp only [canonical_map_language, Lhom.comp, Function.comp]
+      simp only [canonical_map_language, Function.comp]
       exact congr_fun ((cocone_of_colimit (diagram_functions F n)).h_compat H) f
     · funext n; funext R
-      simp only [canonical_map_language, Lhom.comp, Function.comp]
+      simp only [canonical_map_language, Function.comp]
       exact congr_fun ((cocone_of_colimit (diagram_relations F n)).h_compat H) R
 
 /-!
@@ -133,11 +133,11 @@ def henkin_theory_step {L : Language.{u}} (T : SentTheory L) :
 private lemma henkin_witness_tautology {L : Language.{u}} (T : SentTheory L)
     (f : bounded_formula L 1) :
     T ⊢ₛ' bd_ex (bd_imp (bd_ex f).cast1 f) := by
-  show T.fst ⊢' (bd_ex (bd_imp (bd_ex f).cast1 f)).fst
+  change T.fst ⊢' (bd_ex (bd_imp (bd_ex f).cast1 f)).fst
   refine ⟨?_⟩
   -- Goal: T.fst ⊢ (bd_ex (bd_imp (bd_ex f).cast1 f)).fst
   -- = ∃' ((∃' f.fst) ⟹ f.fst)  (since cast1.fst = .fst)
-  show T.fst ⊢ ∃' ((bd_ex f).cast1.fst ⟹ f.fst)
+  change T.fst ⊢ ∃' ((bd_ex f).cast1.fst ⟹ f.fst)
   apply prf.falsumE
   apply prf.impE (∃' f.fst)
   · -- Goal: insert ¬∃' ... ⊢ (∃' f.fst) ⟹ ⊥'
@@ -210,8 +210,7 @@ lemma is_consistent_henkin_theory_step {L : Language.{u}} {T : SentTheory L}
     apply bounded_preformula.eq
     -- compare via .fst
     simp only [wit_property, subst0_bounded_formula_fst, Lhom.on_bounded_formula,
-               bounded_preformula.fst_bd_imp, bounded_preformula.fst_bd_ex,
-               bounded_preformula.cast1_fst, subst_formula]
+               bounded_preformula.fst_bd_imp, bounded_preformula.fst_bd_ex, subst_formula]
     -- Now the goal is:
     -- ∃' (incl.on_formula f.fst) ⟹ (incl.on_formula f.fst)[c/0] =
     -- subst (incl.on_formula (∃' f.fst)) c 0 ⟹ (incl.on_formula f.fst)[c/0]
@@ -252,7 +251,7 @@ lemma is_consistent_henkin_theory_step {L : Language.{u}} {T : SentTheory L}
 lemma obvious {L : Language.{u}} (i : ℕ) :
     henkin_language_functions (@henkin_language_chain_objects L i) 0 =
     (@henkin_language_chain_objects L (i + 1)).constants := by
-  simp only [Language.constants, henkin_language_chain_objects, henkin_language_step]
+  simp only [Language.constants]
 
 /-- Transition maps of the Henkin language chain -/
 def henkin_language_chain_maps (L : Language.{u}) :
@@ -275,7 +274,7 @@ private lemma hcm_self (L : Language.{u}) (k : ℕ) (H : k ≤ k) :
   cases k with
   | zero => exact hcm_zero_zero L H
   | succ n =>
-      simp only [henkin_language_chain_maps, dif_pos rfl]
+      simp only [henkin_language_chain_maps]
       rfl
 
 -- Private helper: the non-equal successor case gives a composition
@@ -326,7 +325,7 @@ lemma henkin_language_chain_maps_functorial (L : Language.{u}) :
       · have hxn : x ≤ n := Nat.lt_succ_iff.mp (Nat.lt_of_le_of_ne f3 hx)
         rw [hcm_succ_ne L x n f3 hx, hcm_succ_ne L y n f2 hy,
             ih hyn hxn]
-        apply Lhom.Lhom_funext <;> (funext n; simp [Lhom.comp, Function.comp_assoc])
+        apply Lhom.Lhom_funext <;> (funext n; simp [Function.comp_assoc])
 
 /-- The Henkin language chain as a directed diagram of languages -/
 def henkin_language_chain {L : Language.{u}} : directed_diagram_language.{u} where
@@ -508,27 +507,27 @@ def cocone_of_bounded_formula'_L_infty {L : Language.{u}} :
 /-! ## Comparison maps (universal maps from colimits to L_∞) -/
 
 def term_comparison {L : Language.{u}} (l) :
-    colimit (@henkin_term_chain L l) → preterm (L_infty L) l :=
+    Carrier (@henkin_term_chain L l) → preterm (L_infty L) l :=
   universal_map (V := cocone_of_term_L_infty l)
 
 def formula_comparison {L : Language.{u}} (l) :
-    colimit (@henkin_formula_chain L l) → @preformula (L_infty L) l :=
+    Carrier (@henkin_formula_chain L l) → @preformula (L_infty L) l :=
   universal_map (V := cocone_of_formula_L_infty l)
 
 def bounded_term_comparison {L : Language.{u}} (n l) :
-    colimit (@henkin_bounded_term_chain L n l) → bounded_preterm (L_infty L) n l :=
+    Carrier (@henkin_bounded_term_chain L n l) → bounded_preterm (L_infty L) n l :=
   universal_map (V := cocone_of_bounded_term_L_infty n l)
 
 @[reducible] def bounded_term'_comparison {L : Language.{u}} :
-    colimit (@henkin_bounded_term_chain' L) → bounded_term (L_infty L) 1 :=
+    Carrier (@henkin_bounded_term_chain' L) → bounded_term (L_infty L) 1 :=
   @bounded_term_comparison L 1 0
 
 def bounded_formula_comparison {L : Language.{u}} (n l) :
-    colimit (@henkin_bounded_formula_chain L n l) → bounded_preformula (L_infty L) n l :=
+    Carrier (@henkin_bounded_formula_chain L n l) → bounded_preformula (L_infty L) n l :=
   universal_map (V := cocone_of_bounded_formula_L_infty n l)
 
 @[reducible] def bounded_formula'_comparison {L : Language.{u}} :
-    colimit (@henkin_bounded_formula_chain' L) → bounded_formula (L_infty L) 1 :=
+    Carrier (@henkin_bounded_formula_chain' L) → bounded_formula (L_infty L) 1 :=
   @bounded_formula_comparison L 1 0
 
 /-! ## Bijectivity of comparison maps (src/henkin.lean:508-655) -/
@@ -538,7 +537,7 @@ def bounded_formula_comparison {L : Language.{u}} (n l) :
 /-- Auxiliary: surjectivity of term_comparison -/
 private lemma term_comparison_surj {L : Language.{u}} :
     ∀ {l} (t : preterm (L_infty L) l),
-    ∃ x : colimit (@henkin_term_chain L l), term_comparison l x = t := by
+    ∃ x : Carrier (@henkin_term_chain L l), term_comparison l x = t := by
   intro l t
   induction t with
   | var k =>
@@ -546,8 +545,7 @@ private lemma term_comparison_surj {L : Language.{u}} :
   | func ff =>
       obtain ⟨⟨i, x⟩, Hx⟩ := germ_rep ff
       exact ⟨canonical_map i (preterm.func x), by
-        simp only [term_comparison, universal_map_property, cocone_of_term_L_infty,
-                   Lhom.on_term]
+        simp only [term_comparison, cocone_of_term_L_infty]
         simp only [henkin_language_canonical_map, canonical_map_language]
         rw [← Hx]; rfl⟩
   | app t s iht ihs =>
@@ -564,18 +562,19 @@ private lemma term_comparison_surj {L : Language.{u}} :
       have keys : term_comparison 0 (canonical_map (i + j) (push_to_sum_l xs i)) = s := by
         rw [← same_fiber_as_push_to_l]; exact Hqs'
       refine ⟨canonical_map (i + j) (preterm.app (push_to_sum_r xt j) (push_to_sum_l xs i)), ?_⟩
-      simp only [term_comparison, universal_map_property, cocone_of_term_L_infty, Lhom.on_term]
+      simp only [term_comparison, cocone_of_term_L_infty]
       exact congrArg₂ preterm.app keyt keys
 
 lemma term_comparison_bijective {L : Language.{u}} (l) :
     Function.Bijective (@term_comparison L l) :=
-  ⟨universal_map_inj_of_components_inj (fun m => Lhom.on_term_inj (henkin_language_canonical_map_inj m)),
+  ⟨universal_map_inj_of_components_inj (fun m => Lhom.on_term_inj (henkin_language_canonical_map_inj
+      m)),
    term_comparison_surj⟩
 
 /-- Auxiliary: surjectivity of formula_comparison -/
 private lemma formula_comparison_surj {L : Language.{u}} :
     ∀ {l} (f : @preformula (L_infty L) l),
-    ∃ x : colimit (@henkin_formula_chain L l), formula_comparison l x = f := by
+    ∃ x : Carrier (@henkin_formula_chain L l), formula_comparison l x = f := by
   intro l f
   induction f with
   | falsum =>
@@ -593,13 +592,14 @@ private lemma formula_comparison_surj {L : Language.{u}} :
         rw [← same_fiber_as_push_to_r]; exact Hbt₁
       have key₂ : term_comparison 0 (canonical_map (i + j) (push_to_sum_l xt₂ i)) = t₂ := by
         rw [← same_fiber_as_push_to_l]; exact Hbt₂
-      refine ⟨canonical_map (i + j) (preformula.equal (push_to_sum_r xt₁ j) (push_to_sum_l xt₂ i)), ?_⟩
-      simp only [formula_comparison, universal_map_property, cocone_of_formula_L_infty, Lhom.on_formula]
+      refine ⟨canonical_map (i + j) (preformula.equal (push_to_sum_r xt₁ j) (push_to_sum_l xt₂ i)),
+          ?_⟩
+      simp only [formula_comparison, cocone_of_formula_L_infty]
       exact congrArg₂ preformula.equal key₁ key₂
   | rel R =>
       obtain ⟨⟨i, x⟩, Hx⟩ := germ_rep R
       exact ⟨canonical_map i (preformula.rel x), by
-        simp only [formula_comparison, universal_map_property, cocone_of_formula_L_infty, Lhom.on_formula]
+        simp only [formula_comparison, cocone_of_formula_L_infty]
         simp only [henkin_language_canonical_map, canonical_map_language]
         rw [← Hx]; rfl⟩
   | apprel f t ihf =>
@@ -615,8 +615,9 @@ private lemma formula_comparison_surj {L : Language.{u}} :
         rw [← same_fiber_as_push_to_r]; exact Hbf
       have keyt : term_comparison 0 (canonical_map (i + j) (push_to_sum_l xt i)) = t := by
         rw [← same_fiber_as_push_to_l]; exact Hbt
-      refine ⟨canonical_map (i + j) (preformula.apprel (push_to_sum_r xf j) (push_to_sum_l xt i)), ?_⟩
-      simp only [formula_comparison, universal_map_property, cocone_of_formula_L_infty, Lhom.on_formula]
+      refine ⟨canonical_map (i + j) (preformula.apprel (push_to_sum_r xf j) (push_to_sum_l xt i)),
+          ?_⟩
+      simp only [formula_comparison, cocone_of_formula_L_infty]
       exact congrArg₂ preformula.apprel keyf keyt
   | imp f₁ f₂ ihf₁ ihf₂ =>
       obtain ⟨qf₁, Hqf₁⟩ := ihf₁
@@ -631,8 +632,9 @@ private lemma formula_comparison_surj {L : Language.{u}} :
         rw [← same_fiber_as_push_to_r]; exact Hbf₁
       have keyf₂ : formula_comparison _ (canonical_map (i + j) (push_to_sum_l xf₂ i)) = f₂ := by
         rw [← same_fiber_as_push_to_l]; exact Hbf₂
-      refine ⟨canonical_map (i + j) (preformula.imp (push_to_sum_r xf₁ j) (push_to_sum_l xf₂ i)), ?_⟩
-      simp only [formula_comparison, universal_map_property, cocone_of_formula_L_infty, Lhom.on_formula]
+      refine ⟨canonical_map (i + j) (preformula.imp (push_to_sum_r xf₁ j) (push_to_sum_l xf₂ i)),
+          ?_⟩
+      simp only [formula_comparison, cocone_of_formula_L_infty]
       exact congrArg₂ preformula.imp keyf₁ keyf₂
   | all f ihf =>
       obtain ⟨qf, Hqf⟩ := ihf
@@ -640,18 +642,19 @@ private lemma formula_comparison_surj {L : Language.{u}} :
       have Hbf : formula_comparison _ (canonical_map i xf) = f := by
         have : canonical_map i xf = qf := Hif.symm ▸ rfl; rw [this]; exact Hqf
       refine ⟨canonical_map i (preformula.all xf), ?_⟩
-      simp only [formula_comparison, universal_map_property, cocone_of_formula_L_infty, Lhom.on_formula]
+      simp only [formula_comparison, cocone_of_formula_L_infty]
       exact congrArg preformula.all Hbf
 
 lemma formula_comparison_bijective {L : Language.{u}} (l) :
     Function.Bijective (@formula_comparison L l) :=
-  ⟨universal_map_inj_of_components_inj (fun m => Lhom.on_formula_inj (henkin_language_canonical_map_inj m)),
+  ⟨universal_map_inj_of_components_inj (fun m => Lhom.on_formula_inj
+      (henkin_language_canonical_map_inj m)),
    formula_comparison_surj⟩
 
 /-- Auxiliary: surjectivity of bounded_term_comparison by structural induction -/
 private lemma bounded_term_comparison_surj {L : Language.{u}} :
     ∀ {n l} (t : bounded_preterm (L_infty L) n l),
-    ∃ x : colimit (@henkin_bounded_term_chain L n l),
+    ∃ x : Carrier (@henkin_bounded_term_chain L n l),
       bounded_term_comparison n l x = t := by
   intro n l t
   induction t with
@@ -661,8 +664,7 @@ private lemma bounded_term_comparison_surj {L : Language.{u}} :
       obtain ⟨⟨i, x⟩, Hx⟩ := germ_rep ff
       exact ⟨canonical_map i (bd_func x), by
         apply bounded_preterm.eq
-        simp only [bounded_term_comparison, universal_map_property, cocone_of_bounded_term_L_infty,
-                   Lhom.on_bounded_term, bounded_preterm.fst]
+        simp only [bounded_term_comparison, cocone_of_bounded_term_L_infty, bounded_preterm.fst]
         simp only [henkin_language_canonical_map, canonical_map_language]
         rw [← Hx]; rfl⟩
   | bd_app t s iht ihs =>
@@ -690,13 +692,14 @@ private lemma bounded_term_comparison_surj {L : Language.{u}} :
 
 @[simp] lemma bounded_term_comparison_bijective {L : Language.{u}} (n l) :
     Function.Bijective (@bounded_term_comparison L n l) :=
-  ⟨universal_map_inj_of_components_inj (fun m => Lhom.on_bounded_term_inj (henkin_language_canonical_map_inj m)),
+  ⟨universal_map_inj_of_components_inj (fun m => Lhom.on_bounded_term_inj
+      (henkin_language_canonical_map_inj m)),
    bounded_term_comparison_surj⟩
 
 /-- Auxiliary: surjectivity of bounded_formula_comparison by structural induction -/
 private lemma bounded_formula_comparison_surj {L : Language.{u}} :
     ∀ {n l} (f : bounded_preformula (L_infty L) n l),
-    ∃ x : colimit (@henkin_bounded_formula_chain L n l),
+    ∃ x : Carrier (@henkin_bounded_formula_chain L n l),
       bounded_formula_comparison n l x = f := by
   intro n l f
   induction f with
@@ -717,9 +720,11 @@ private lemma bounded_formula_comparison_surj {L : Language.{u}} :
       refine ⟨canonical_map (i + j) (bd_equal (push_to_sum_r xt₁ j) (push_to_sum_l xt₂ i)), ?_⟩
       -- bounded_formula_comparison (canonical_map (i+j) (bd_equal ...)) = bd_equal t₁ t₂
       -- Use the fact that bounded_term_comparison respects same-fiber
-      have key₁ : bounded_term_comparison _ 0 (canonical_map (i + j) (push_to_sum_r xt₁ j)) = t₁ := by
+      have key₁ : bounded_term_comparison _ 0 (canonical_map (i + j) (push_to_sum_r xt₁ j)) = t₁ :=
+          by
         rw [← same_fiber_as_push_to_r]; exact Hbt₁
-      have key₂ : bounded_term_comparison _ 0 (canonical_map (i + j) (push_to_sum_l xt₂ i)) = t₂ := by
+      have key₂ : bounded_term_comparison _ 0 (canonical_map (i + j) (push_to_sum_l xt₂ i)) = t₂ :=
+          by
         rw [← same_fiber_as_push_to_l]; exact Hbt₂
       have key₁' : Lhom.on_bounded_term (henkin_language_canonical_map (i + j))
           (push_to_sum_r xt₁ j) = t₁ := key₁
@@ -730,8 +735,8 @@ private lemma bounded_formula_comparison_surj {L : Language.{u}} :
       obtain ⟨⟨i, x⟩, Hx⟩ := germ_rep R
       exact ⟨canonical_map i (bd_rel x), by
         apply bounded_preformula.eq
-        simp only [bounded_formula_comparison, universal_map_property, cocone_of_bounded_formula_L_infty,
-                   Lhom.on_bounded_formula, bounded_preformula.fst, bd_rel]
+        simp only [bounded_formula_comparison, cocone_of_bounded_formula_L_infty,
+            bounded_preformula.fst]
         simp only [henkin_language_canonical_map, canonical_map_language]
         rw [← Hx]
         rfl⟩
@@ -747,7 +752,8 @@ private lemma bounded_formula_comparison_surj {L : Language.{u}} :
       have Hbt : bounded_term_comparison _ 0 (canonical_map j xt) = t := by
         have : canonical_map j xt = qt := Hjt.symm ▸ rfl
         rw [this]; exact Hqt
-      have keyf : bounded_formula_comparison _ _ (canonical_map (i + j) (push_to_sum_r xf j)) = f := by
+      have keyf : bounded_formula_comparison _ _ (canonical_map (i + j) (push_to_sum_r xf j)) = f :=
+          by
         rw [← same_fiber_as_push_to_r]; exact Hbf
       have keyt : bounded_term_comparison _ 0 (canonical_map (i + j) (push_to_sum_l xt i)) = t := by
         rw [← same_fiber_as_push_to_l]; exact Hbt
@@ -766,9 +772,11 @@ private lemma bounded_formula_comparison_surj {L : Language.{u}} :
         have : canonical_map i xf₁ = qf₁ := Hif₁.symm ▸ rfl; rw [this]; exact Hqf₁
       have Hbf₂ : bounded_formula_comparison _ _ (canonical_map j xf₂) = f₂ := by
         have : canonical_map j xf₂ = qf₂ := Hjf₂.symm ▸ rfl; rw [this]; exact Hqf₂
-      have keyf₁ : bounded_formula_comparison _ _ (canonical_map (i + j) (push_to_sum_r xf₁ j)) = f₁ := by
+      have keyf₁ : bounded_formula_comparison _ _ (canonical_map (i + j) (push_to_sum_r xf₁ j)) = f₁
+          := by
         rw [← same_fiber_as_push_to_r]; exact Hbf₁
-      have keyf₂ : bounded_formula_comparison _ _ (canonical_map (i + j) (push_to_sum_l xf₂ i)) = f₂ := by
+      have keyf₂ : bounded_formula_comparison _ _ (canonical_map (i + j) (push_to_sum_l xf₂ i)) = f₂
+          := by
         rw [← same_fiber_as_push_to_l]; exact Hbf₂
       refine ⟨canonical_map (i + j) (bd_imp (push_to_sum_r xf₁ j) (push_to_sum_l xf₂ i)), ?_⟩
       have keyf₁' : Lhom.on_bounded_formula (henkin_language_canonical_map (i + j))
@@ -787,7 +795,8 @@ private lemma bounded_formula_comparison_surj {L : Language.{u}} :
 
 @[simp] lemma bounded_formula_comparison_bijective {L : Language.{u}} (n l) :
     Function.Bijective (@bounded_formula_comparison L n l) :=
-  ⟨universal_map_inj_of_components_inj (fun m => Lhom.on_bounded_formula_inj (henkin_language_canonical_map_inj m)),
+  ⟨universal_map_inj_of_components_inj (fun m => Lhom.on_bounded_formula_inj
+      (henkin_language_canonical_map_inj m)),
    bounded_formula_comparison_surj⟩
 
 @[simp] lemma bounded_formula'_comparison_bijective {L : Language.{u}} :
@@ -795,7 +804,7 @@ private lemma bounded_formula_comparison_surj {L : Language.{u}} :
   bounded_formula_comparison_bijective 1 0
 
 noncomputable def equiv_bounded_formula_comparison {L : Language.{u}} :
-    Equiv (colimit (@henkin_bounded_formula_chain' L)) (bounded_formula (L_infty L) 1) :=
+    Equiv (Carrier (@henkin_bounded_formula_chain' L)) (bounded_formula (L_infty L) 1) :=
   Equiv.ofBijective bounded_formula'_comparison bounded_formula'_comparison_bijective
 
 /-! ## Henkin theory chain (src/henkin.lean:661-734) -/
@@ -816,7 +825,7 @@ lemma is_consistent_henkin_theory_chain {L : Language.{u}} {T : SentTheory L}
 
 /-- A theory has enough constants if every bounded formula has a Henkin witness -/
 def has_enough_constants {L : Language.{u}} (T : SentTheory L) : Prop :=
-  ∃ (C : ∀ (f : bounded_formula L 1), L.constants),
+  ∃ (C : ∀ (_f : bounded_formula L 1), L.constants),
     ∀ (f : bounded_formula L 1),
       T.fst ⊢' (wit_property f (C f)).fst
 
@@ -880,27 +889,31 @@ lemma iota_inclusion_of_le {L : Language.{u}} {T : SentTheory L} :
       obtain ⟨g, hgT, hgψ⟩ := hψn
       -- push g from stage n to stage n+1 in the theory chain
       have hg_step := henkin_theory_chain_inclusion_step hgT
-      -- The witness in ι (n+1) is on_sentence (hcm (n+1)) (on_bf (hcm n (n+1)) g)
-      -- By cocone compat: on_sentence (canonical_map n) = on_sentence (canonical_map (n+1)) ∘ on_bf (hcm n (n+1))
+      -- The witness in ι (n + 1) is on_sentence (hcm (n + 1)) (on_bf (hcm n (n + 1)) g)
+      -- By cocone compat: on_sentence (canonical_map n) = on_sentence (canonical_map (n + 1)) ∘
+      -- on_bf (hcm n (n + 1))
       refine ⟨Lhom.on_bounded_formula (henkin_language_chain_maps L n (n + 1) (Nat.le_succ n)) g,
               hg_step, ?_⟩
-      -- on_sentence (canonical_map (n+1)) (on_bf (hcm n (n+1)) g)
-      -- = on_bf ((canonical_map (n+1)).comp (hcm n (n+1))) g
+      -- on_sentence (canonical_map (n + 1)) (on_bf (hcm n (n + 1)) g)
+      -- = on_bf ((canonical_map (n + 1)).comp (hcm n (n + 1))) g
       -- = on_bf (canonical_map n) g   [by cocone compat]
       -- = ψ
       have hc : henkin_language_canonical_map n =
-          (henkin_language_canonical_map (n + 1)).comp (henkin_language_chain_maps L n (n + 1) (Nat.le_succ n)) :=
+          (henkin_language_canonical_map (n + 1)).comp (henkin_language_chain_maps L n (n + 1)
+              (Nat.le_succ n)) :=
         (@cocone_of_L_infty L).h_compat (Nat.le_succ n)
-      -- The goal is: (canonical_map (n+1)).on_sentence ((hcm n (n+1)).on_bounded_formula g) = ψ
-      -- comp_on_bounded_formula: ((f.comp g).on_bounded_formula x) = f.on_bounded_formula (g.on_bounded_formula x)
-      -- so lhs = ((canonical_map (n+1)).comp (hcm n (n+1))).on_bounded_formula g = (canonical_map n).on_bounded_formula g = ψ
+      -- The goal is: (canonical_map (n + 1)).on_sentence ((hcm n (n + 1)).on_bounded_formula g) = ψ
+      -- comp_on_bounded_formula: ((f.comp g).on_bounded_formula x) = f.on_bounded_formula
+      -- (g.on_bounded_formula x)
+      -- so lhs = ((canonical_map (n + 1)).comp (hcm n (n + 1))).on_bounded_formula g =
+      -- (canonical_map n).on_bounded_formula g = ψ
       have key : (henkin_language_canonical_map (n + 1)).on_bounded_formula
           ((henkin_language_chain_maps L n (n + 1) (Nat.le_succ n)).on_bounded_formula g) =
           (henkin_language_canonical_map n).on_bounded_formula g := by
         -- comp_on_bounded_formula: (f.comp g).on_bf x = f.on_bf (g.on_bf x)
-        -- hc: canonical_map n = (canonical_map (n+1)).comp (hcm n (n+1))
-        -- so (canonical_map n).on_bf g = ((canonical_map (n+1)).comp (hcm n (n+1))).on_bf g
-        --    = (canonical_map (n+1)).on_bf ((hcm n (n+1)).on_bf g)
+        -- hc: canonical_map n = (canonical_map (n + 1)).comp (hcm n (n + 1))
+        -- so (canonical_map n).on_bf g = ((canonical_map (n + 1)).comp (hcm n (n + 1))).on_bf g
+        --    = (canonical_map (n + 1)).on_bf ((hcm n (n + 1)).on_bf g)
         calc (henkin_language_canonical_map (n + 1)).on_bounded_formula
                  ((henkin_language_chain_maps L n (n + 1) (Nat.le_succ n)).on_bounded_formula g)
             = ((henkin_language_canonical_map (n + 1)).comp
@@ -937,7 +950,7 @@ lemma henkin_language_over_injective {L : Language.{u}} {T : SentTheory L}
 noncomputable def wit_infty {L : Language.{u}} {T : SentTheory L} {hT : T.is_consistent}
     (f : bounded_formula (@henkin_language L T hT) 1) :
     Σ c : (@henkin_language L T hT).constants,
-      Σ (f' : Σ' (x : colimit (@henkin_bounded_formula_chain' L)),
+      Σ (f' : Σ' (x : Carrier (@henkin_bounded_formula_chain' L)),
           bounded_formula'_comparison x = f),
         Σ' (f'' : coproduct_of_directed_diagram (@henkin_bounded_formula_chain' L)),
           ⟦f''⟧ = f'.fst ∧
@@ -969,14 +982,15 @@ private lemma on_bounded_formula_subst0 {L L' : Language.{u}} (ϕ : L →ᴸ L')
     wit_property (henkin_language_inclusion.on_bounded_formula f'') (wit' f'')
   -- wp_step ∈ henkin_theory_chain T (i+1) = henkin_theory_step (henkin_theory_chain T i)
   have hwp_step : wp_step ∈ henkin_theory_chain T (i + 1) := by
-    simp only [henkin_theory_chain, henkin_theory_step, Set.mem_image, Set.mem_univ]
+    simp only [henkin_theory_chain, henkin_theory_step]
     right
     exact ⟨f'', Set.mem_univ _, rfl⟩
   -- (hcm (i+1)).on_bounded_formula wp_step ∈ ι (i+1)
   have hwp_iota : (henkin_language_canonical_map (i + 1)).on_bounded_formula wp_step ∈
       @ι L T (i + 1) := in_iota_of_in_step i wp_step hwp_step
   -- Key: (hcm i).on_bounded_formula f'' = f
-  -- This uses bounded_formula'_comparison ⟦⟨i, f''⟩⟧ = (cocone_of_bounded_formula'_L_infty).map i f''
+  -- This uses bounded_formula'_comparison ⟦⟨i, f''⟩⟧ = (cocone_of_bounded_formula'_L_infty).map i
+  -- f''
   -- = (hcm i).on_bounded_formula f''
   have hf_eq : (henkin_language_canonical_map i).on_bounded_formula f'' = f := by
     have : (henkin_language_canonical_map i).on_bounded_formula f'' =
@@ -984,7 +998,7 @@ private lemma on_bounded_formula_subst0 {L L' : Language.{u}} (ϕ : L →ᴸ L')
       simp only [bounded_formula'_comparison, bounded_formula_comparison,
                  universal_map_property, cocone_of_bounded_formula_L_infty]
     simp only [canonical_map] at this
-    rw [this, show (Quotient.mk _ ⟨i, f''⟩ : colimit _) = f' from Heq, Hf']
+    rw [this, show (Quotient.mk _ ⟨i, f''⟩ : Carrier _) = f' from Heq, Hf']
   -- Key: (hcm (i+1)).on_bf (inclusion.on_bf f'') = f
   -- via cocone_of_bounded_formula'_L_infty.h_compat at i ≤ i+1:
   -- (hcm i).on_bf = (hcm (i+1)).on_bf ∘ incl.on_bf
@@ -995,7 +1009,7 @@ private lemma on_bounded_formula_subst0 {L L' : Language.{u}} (ϕ : L →ᴸ L')
     -- hcompat : (hcm i).on_bf = (hcm (i+1)).on_bf ∘ (chain_maps i (i+1)).on_bf
     have hc_bf := congr_fun hcompat f''
     simp only [Function.comp, henkin_bounded_formula_chain', henkin_bounded_formula_chain,
-               cocone_of_bounded_formula'_L_infty, cocone_of_bounded_formula_L_infty] at hc_bf
+               cocone_of_bounded_formula'_L_infty] at hc_bf
     -- hc_bf : (hcm i).on_bf f'' = (hcm (i+1)).on_bf ((chain_maps i (i+1)).on_bf f'')
     rw [← henkin_language_inclusion_chain_map] at hc_bf
     -- hc_bf : (hcm i).on_bf f'' = (hcm (i+1)).on_bf (incl.on_bf f'')
@@ -1042,7 +1056,7 @@ lemma iota_union_rw {L : Language.{u}} (T : SentTheory L) (hT : T.is_consistent)
       obtain ⟨S, hS, hψS⟩ := hψ
       obtain ⟨To, hTo, hSTo⟩ := hS
       -- hTo : To ∈ henkin_theory_schain T hT
-      simp only [henkin_theory_schain, Set.mem_setOf_eq] at hTo
+      simp only [henkin_theory_schain] at hTo
       obtain ⟨k, hk⟩ := hTo
       -- hk : ι k = To.val, hSTo : To.val = S
       simp only [henkinization, T_infty, Set.mem_iUnion]
@@ -1056,18 +1070,18 @@ lemma iota_union_rw {L : Language.{u}} (T : SentTheory L) (hT : T.is_consistent)
     | succ n =>
       apply Set.mem_union_right
       refine ⟨@ι L T (n + 1), ?_, hk⟩
-      -- Need: ι (n+1) ∈ Subtype.val '' henkin_theory_schain T hT
-      -- i.e., ∃ To ∈ henkin_theory_schain T hT, To.val = ι (n+1)
+      -- Need: ι (n + 1) ∈ Subtype.val '' henkin_theory_schain T hT
+      -- i.e., ∃ To ∈ henkin_theory_schain T hT, To.val = ι (n + 1)
       let To : Theory_over (@ι L T 0) (is_consistent_iota hT 0) :=
         ⟨@ι L T (n + 1), iota_inclusion_of_le (Nat.zero_le _), is_consistent_iota hT _⟩
       refine ⟨To, ?_, rfl⟩
-      simp only [henkin_theory_schain, Set.mem_setOf_eq]
+      simp only [henkin_theory_schain]
       exact ⟨n + 1, rfl⟩
 
 lemma chain_henkin_theory_chain {L : Language.{u}} (T : SentTheory L) (hT : T.is_consistent) :
     IsChain Theory_over_subset (henkin_theory_schain T hT) := by
   intro T₁ hT₁ T₂ hT₂ hne
-  simp only [henkin_theory_schain, Set.mem_setOf_eq] at hT₁ hT₂
+  simp only [henkin_theory_schain, Set.mem_ofPred_eq] at hT₁ hT₂
   obtain ⟨i, hi⟩ := hT₁; obtain ⟨j, hj⟩ := hT₂
   by_cases h : i ≤ j
   · left
@@ -1112,7 +1126,7 @@ lemma completion_of_henkinization_consistent {L : Language.{u}} {T : SentTheory 
   (completion_of_henkinization_core hT).fst.property.right
 
 /-- The completed theory is complete -/
-def completion_of_henkinization_complete {L : Language.{u}} {T : SentTheory L}
+theorem completion_of_henkinization_complete {L : Language.{u}} {T : SentTheory L}
     (hT : T.is_consistent) : (completion_of_henkinization hT).is_complete :=
   (completion_of_henkinization_core hT).snd
 
@@ -1185,7 +1199,7 @@ lemma find_counterexample_of_henkin {L : Language.{u}} {T : SentTheory L}
   -- Result: T.fst ⊢' (bd_not (subst0_bf f c)).fst = (subst0_bf f c).fst ⟹ ⊥'
   -- which equals T.fst ⊢ₛ' bd_not (subst0_bf f (bd_const (C (bd_not f))))
   simp only [SentTheory.sprovable, SentTheory.fst]
-  simp only [wit_property, bounded_preformula.fst, bd_imp, bd_not] at hwit
+  simp only [bounded_preformula.fst, bd_not] at hwit
   -- hwit : T.fst ⊢' (bd_ex (bd_not f)).fst ⟹ (subst0_bounded_formula (bd_not f) c).fst
   -- (subst0_bounded_formula (bd_not f) c).fst = (bd_not (subst0_bounded_formula f c)).fst
   -- Goal: T.fst ⊢' (bd_not (subst0_bounded_formula f (bd_const (C (bd_not f))))).fst
@@ -1248,7 +1262,7 @@ private lemma term_model_fun'_congr {L : Language.{u}} {T : SentTheory L}
   intro xs xs' hxs
   simp only [term_model_fun']
   apply Quotient.sound
-  show term_rel T _ _
+  change term_rel T _ _
   exact bd_apps_congr_equal_preterms (equal_preterms_refl T.fst t.fst) hxs
 
 /-- The function interpretation in the term model, using quotient_lift -/
@@ -1321,10 +1335,12 @@ private lemma realize_closed_preterm_term_model {L : Language.{u}} {T : SentTheo
   induction t with
   | bd_var k => exact absurd k.2 (Nat.not_lt_zero k.1)
   | bd_func f =>
-    -- realize_bounded_term [] (bd_func f) (ts.map term_mk) = (term_model).fun_map f (ts.map term_mk)
+    -- realize_bounded_term [] (bd_func f) (ts.map term_mk) = (term_model).fun_map f (ts.map
+    -- term_mk)
     --   = term_model_fun T (bd_func f) (ts.map term_mk)
-    --   = term_model_fun' T (bd_func f) ts (by quotient_beta) = ⟦bd_apps (bd_func f) ts⟧ = term_mk ...
-    show term_model_fun T (bd_func f) (ts.map (term_mk T)) = term_mk T (bd_apps (bd_func f) ts)
+    -- = term_model_fun' T (bd_func f) ts (by quotient_beta) = ⟦bd_apps (bd_func f) ts⟧ = term_mk
+    -- ...
+    change term_model_fun T (bd_func f) (ts.map (term_mk T)) = term_mk T (bd_apps (bd_func f) ts)
     simp only [term_model_fun]
     rw [show (ts.map (term_mk T)) = DVec.map Quotient.mk'' ts from rfl]
     rw [DVec.quotient_beta]
@@ -1357,7 +1373,7 @@ private lemma realize_closed_preterm_term_model {L : Language.{u}} {T : SentTheo
 
 /-- Substitution commutes with realization for preterms. -/
 private lemma realize_subst_preterm {L : Language.{u}} {S : Structure L} {n l}
-    (t : bounded_preterm L (n+1) l) (xs : DVec S l) (s : closed_term L) (v : DVec S n) :
+    (t : bounded_preterm L (n + 1) l) (xs : DVec S l) (s : closed_term L) (v : DVec S n) :
     realize_bounded_term v (substmax_bounded_term t s) xs =
     realize_bounded_term (v.concat (realize_closed_term S s)) t xs := by
   induction t with
@@ -1380,14 +1396,14 @@ private lemma realize_subst_preterm {L : Language.{u}} {S : Structure L} {n l}
 
 /-- Substitution commutes with realization for terms. -/
 private lemma realize_subst_term {L : Language.{u}} {S : Structure L} {n}
-    (v : DVec S n) (s : closed_term L) (t : bounded_term L (n+1)) :
+    (v : DVec S n) (s : closed_term L) (t : bounded_term L (n + 1)) :
     realize_bounded_term v (substmax_bounded_term t s) DVec.nil =
     realize_bounded_term (v.concat (realize_closed_term S s)) t DVec.nil :=
   realize_subst_preterm t DVec.nil s v
 
 /-- Substitution commutes with realization for formulas. -/
 private lemma realize_subst_formula {L : Language.{u}} (S : Structure L) {n}
-    (f : bounded_formula L (n+1)) (t : closed_term L) (v : DVec S n) :
+    (f : bounded_formula L (n + 1)) (t : closed_term L) (v : DVec S n) :
     realize_bounded_formula v (substmax_bounded_formula f t) DVec.nil ↔
     realize_bounded_formula (v.concat (realize_closed_term S t)) f DVec.nil := by
   set y := realize_closed_term S t with hy_def
@@ -1412,10 +1428,12 @@ private lemma realize_subst_formula {L : Language.{u}} (S : Structure L) {n}
   -- realize_formula_subst gives:
   --   realize_formula (subst_realize φ (realize_term φ (lift_term t.fst n) []) n) f.fst []
   --     ↔ realize_formula φ (subst_formula f.fst t.fst n) []
-  -- We need: realize_formula (subst_realize φ y n) f.fst [] ↔ realize_formula φ (subst_formula ...) []
+  -- We need: realize_formula (subst_realize φ y n) f.fst [] ↔ realize_formula φ (subst_formula ...)
+  -- []
   have hreal_t : realize_term φ (lift_term t.fst n) DVec.nil = y := by
     rw [hy_def]
-    rw [show realize_closed_term S t = realize_bounded_term (DVec.nil : DVec S 0) t DVec.nil from rfl]
+    rw [show realize_closed_term S t = realize_bounded_term (DVec.nil : DVec S 0) t DVec.nil from
+        rfl]
     -- realize_term φ (lift_term t.fst n) [] = realize_term φ t.fst []
     --   (since closed terms ignore the valuation, lifting is irrelevant)
     -- = realize_bounded_term [] t []
@@ -1437,7 +1455,7 @@ private lemma realize_subst_formula0 {L : Language.{u}} (S : Structure L)
       substmax_eq_subst0_formula f t]
   -- realize_sentence S g = realize_bounded_formula DVec.nil g DVec.nil
   -- and (DVec.nil).concat (realize_closed_term S t) = DVec.cons (...) DVec.nil
-  show realize_bounded_formula (DVec.nil : DVec S 0) (substmax_bounded_formula f t) DVec.nil ↔ _
+  change realize_bounded_formula (DVec.nil : DVec S 0) (substmax_bounded_formula f t) DVec.nil ↔ _
   rw [realize_subst_formula S f t DVec.nil]
   -- (DVec.nil).concat y = DVec.cons y DVec.nil
   rfl
@@ -1465,7 +1483,7 @@ private lemma nonempty_term_model {L : Language.{u}} {T : SentTheory L}
 
     Implemented via direct structural pattern matching on `f` to avoid issues
     with `induction` on a non-variable index `n = 0`. -/
-private noncomputable def term_model_ssatisfied_iff_struct
+private theorem term_model_ssatisfied_iff_struct
     {L : Language.{u}} {T : SentTheory L}
     (hcomp : T.is_complete) (henk : has_enough_constants T)
     (n : ℕ)
@@ -1501,7 +1519,7 @@ private noncomputable def term_model_ssatisfied_iff_struct
         intro x
         exact realize_closed_term_term_model hcomp henk x
       rw [h_eq]
-      show _ ↔ term_model_rel T (bd_rel R) (ts.map (term_mk T))
+      change _ ↔ term_model_rel T (bd_rel R) (ts.map (term_mk T))
       simp only [term_model_rel]
       rw [show (ts.map (term_mk T)) = DVec.map Quotient.mk'' ts from rfl]
       rw [DVec.quotient_beta]

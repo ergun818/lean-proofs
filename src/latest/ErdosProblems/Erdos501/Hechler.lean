@@ -71,7 +71,7 @@ theorem hechler_of_CH (hCH : (ℵ₁ : Cardinal.{u}) = 𝔠) :
     intro x
     have hc : (A x).Countable :=
       ((hIio (e x)).preimage e.injective).mono (fun y hy => hy.1)
-    show volume (A x) < 1
+    change volume (A x) < 1
     rw [hc.measure_zero volume]
     exact zero_lt_one
   · -- no infinite independent set

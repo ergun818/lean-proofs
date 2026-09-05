@@ -28,10 +28,12 @@ combines
 * the two-valued unfolding `realize_Erdos501_f_std : (stdStructure ⊨ₘ Erdos501_f) ↔ StdSem.erdos501`
   (`StdSemantics.lean`);
 * `RealsInZFSet.erdos501_deepmind_of_std`: `ℝ` is coded as a complete ordered field
-  `(Rz, plusZ, timesZ, ltZ, zeroZ, oneZ)` inside `ZFSet`, and the Erdős property for it is DeepMind's
+  `(Rz, plusZ, timesZ, ltZ, zeroZ, oneZ)` inside `ZFSet`, and the Erdős property for it is
+  DeepMind's
   proposition (with the covering lemma `exists_cover_of_volume_lt_one` for the outer-measure
   hypothesis);
-* `ZFSetCOF.erdos501_std_of_deepmind`: every complete ordered field inside `ZFSet` is order-isomorphic
+* `ZFSetCOF.erdos501_std_of_deepmind`: every complete ordered field inside `ZFSet` is
+order-isomorphic
   to `ℝ` (Mathlib's uniqueness theorem for conditionally complete linear ordered fields, applied to
   the instances built on `ZFSetCOF.COF.Carrier`), and the Erdős property transports along the
   isomorphism.

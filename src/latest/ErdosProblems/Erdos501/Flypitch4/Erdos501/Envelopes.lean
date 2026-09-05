@@ -163,7 +163,8 @@ noncomputable def decodeFam (c : ℕ → Bool) : ℤ → ℕ → ℝ × ℝ := f
   (decode (decodeP c (famEnum.symm (m, n, 0))), decode (decodeP c (famEnum.symm (m, n, 1))))
 
 lemma measurable_encodeFam : Measurable encodeFam :=
-  measurable_codeP.comp (measurable_pi_lambda _ fun _ => measurable_code.comp (measurable_famPick _))
+  measurable_codeP.comp (measurable_pi_lambda _ fun _ => measurable_code.comp (measurable_famPick
+      _))
 
 lemma measurable_decodeFam : Measurable decodeFam := by
   refine measurable_pi_lambda _ fun m => measurable_pi_lambda _ fun n => Measurable.prodMk ?_ ?_
@@ -273,8 +274,10 @@ theorem exists_homogeneous_envelopes {Γ : randomAlgebra ι} {A : bSet (randomAl
     hπ0, hπR, hdisj, fun a ha m => ?_⟩
   -- (4) for `a ∈ J`, the endpoint sequences agree a.e. with the homogeneous reading
   have hae : ∀ᵐ x ∂(RandomAlgebra.μ_random ι), ∀ m n,
-      (as a m n).1 x = (envA (fun p => decodeFam (F p)) (measurable_decodeFam.comp hF) (π a) m n).1 x ∧
-      (bs a m n).1 x = (envB (fun p => decodeFam (F p)) (measurable_decodeFam.comp hF) (π a) m n).1 x := by
+      (as a m n).1 x = (envA (fun p => decodeFam (F p)) (measurable_decodeFam.comp hF) (π a) m n).1
+          x ∧
+      (bs a m n).1 x = (envB (fun p => decodeFam (F p)) (measurable_decodeFam.comp hF) (π a) m n).1
+          x := by
     have h := hread a ha
     rw [bv_eq_mkReal] at h
     have h' := ae_of_mk_eq_top (top_le_iff.mp h)
@@ -284,8 +287,10 @@ theorem exists_homogeneous_envelopes {Γ : randomAlgebra ι} {A : bSet (randomAl
     rw [← hx', decodeFam_encodeFam]
     exact ⟨rfl, rfl⟩
   have hae' : ∀ᵐ x ∂(RandomAlgebra.μ_random ι), ∀ n,
-      (as a m n).1 x = (envA (fun p => decodeFam (F p)) (measurable_decodeFam.comp hF) (π a) m n).1 x ∧
-      (bs a m n).1 x = (envB (fun p => decodeFam (F p)) (measurable_decodeFam.comp hF) (π a) m n).1 x := by
+      (as a m n).1 x = (envA (fun p => decodeFam (F p)) (measurable_decodeFam.comp hF) (π a) m n).1
+          x ∧
+      (bs a m n).1 x = (envB (fun p => decodeFam (F p)) (measurable_decodeFam.comp hF) (π a) m n).1
+          x := by
     filter_upwards [hae] with x hx
     exact hx m
   refine ⟨?_, ?_⟩

@@ -17,7 +17,8 @@ stage a profile in `Ż ∩ B` for a Borel set `B` of profiles of positive measur
 the ground model, this becomes: given a Borel `B' ⊆ 2^T × 2^P` read from the countable support
 `T`, and the pairwise disjoint petals `π a` (`a ∈ J`, `J` uncountable), choose *measurably*, for
 almost every generic point `x` with `ν(B'_{x↾T}) > 0`, an index `a = sel x ∈ J` with
-`(x↾T, x ∘ π a) ∈ B'`, the choice taking only countably many values (`exists_selection_of_fullness`).
+`(x↾T, x ∘ π a) ∈ B'`, the choice taking only countably many values
+(`exists_selection_of_fullness`).
 
 Ingredients: the fullness lemma (`fullness`: `‖ν(Ḃ) > ε‖ ≤ ⨆ a ∈ J, ‖ż_a ∈ Ḃ‖`), the fact that
 every supremum in the measure algebra is a countable supremum (`exists_countable_iSup_eq`, from
@@ -42,7 +43,7 @@ theorem exists_countable_iSup_eq {ι : Type*} [Nonempty ι] (s : ι → MeasureA
   have hmem : ∀ t : MSet X, t ∈ essFamily S → ∃ i, s i = mk μ t.1 t.2 := by
     intro t ht
     have := essFamily_subset S ht
-    simp only [reps, hS, mem_setOf_eq, mem_range] at this
+    simp only [reps, hS, mem_ofPred_eq, mem_range] at this
     obtain ⟨i, hi⟩ := this
     exact ⟨i, hi⟩
   choose idx hidx using hmem
@@ -51,7 +52,7 @@ theorem exists_countable_iSup_eq {ι : Type*} [Nonempty ι] (s : ι → MeasureA
     refine Set.Countable.union ?_ (countable_singleton _)
     have : {i | ∃ (t : MSet X) (ht : t ∈ essFamily S), idx t ht = i} =
         range (fun t : essFamily S => idx t.1 t.2) := by
-      ext i; simp only [mem_setOf_eq, mem_range, Subtype.exists]
+      ext i; simp only [mem_ofPred_eq, mem_range, Subtype.exists]
     rw [this]
     have : Countable (essFamily S) := (essFamily_countable S).to_subtype
     exact countable_range _
@@ -149,7 +150,8 @@ def posEvent (B' : Set ((T → (ℕ → Bool)) × (ℕ → (ℕ → Bool)))) : S
     (Prod.mk (T.domRestrict x) ⁻¹' B')}
 
 lemma measurableSet_posEvent (hB' : MeasurableSet B') : MeasurableSet (posEvent T B') :=
-  measurableSet_lt measurable_const ((measurable_measure_prodMk_left hB').comp T.measurable_restrict)
+  measurableSet_lt measurable_const ((measurable_measure_prodMk_left hB').comp
+      T.measurable_restrict)
 
 /-- **Fullness with countably many petals**: for uncountably many pairwise disjoint petals
 `π a` (`a ∈ J`) and a Borel `B'` read from a countable `T`, there is a *sequence* `a k ∈ J` with
@@ -189,7 +191,7 @@ theorem exists_seq_of_fullness (hB' : MeasurableSet B') {A : Type} {J : Set A}
       Measure.infinitePi (fun _ : ℕ => RandomAlgebra.cantorMeasure)
         (Prod.mk (T.domRestrict x) ⁻¹' B')} := by
     ext x
-    simp only [posEvent, mem_setOf_eq, mem_iUnion]
+    simp only [posEvent, mem_ofPred_eq, mem_iUnion]
     constructor
     · intro h
       exact ENNReal.exists_inv_nat_lt (ne_of_gt h)
@@ -232,14 +234,14 @@ lemma petalEvent_congr {π : ℕ → ι} {x y : RandomAlgebra.Ω ι} (h : EqOn x
     funext i; exact h (Or.inl i.2)
   have h2 : (fun n => x (π n)) = fun n => y (π n) := by
     funext n; exact h (Or.inr ⟨n, rfl⟩)
-  simp only [petalEvent, mem_setOf_eq, h1, h2]
+  simp only [petalEvent, mem_ofPred_eq, h1, h2]
 
 /-- The positivity event only depends on the coordinates in `T`. -/
 lemma posEvent_congr {x y : RandomAlgebra.Ω ι} (h : EqOn x y T) :
     x ∈ posEvent T B' ↔ y ∈ posEvent T B' := by
   have h1 : T.domRestrict x = T.domRestrict y := by
     funext i; exact h i.2
-  simp only [posEvent, mem_setOf_eq, h1]
+  simp only [posEvent, mem_ofPred_eq, h1]
 
 /-- **Measurable selection from fullness.**  There are a sequence `a k ∈ J` of petal indices and
 a measurable selector `sel : Ω ι → ℕ` (depending only on the coordinates in `T` and in the petals

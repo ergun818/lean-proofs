@@ -214,7 +214,8 @@ noncomputable instance instBooleanAlgebra : BooleanAlgebra (MeasureAlgebra μ) w
     | h s hs => induction b using MeasureAlgebra.ind with
       | h t ht => induction c using MeasureAlgebra.ind with
         | h u hu =>
-          show MeasureAlgebra.le' (MeasureAlgebra.inf' (MeasureAlgebra.sup' (mk μ s hs) (mk μ t ht))
+          change MeasureAlgebra.le' (MeasureAlgebra.inf' (MeasureAlgebra.sup' (mk μ s hs) (mk μ t
+              ht))
             (MeasureAlgebra.sup' (mk μ s hs) (mk μ u hu)))
             (MeasureAlgebra.sup' (mk μ s hs) (MeasureAlgebra.inf' (mk μ t ht) (mk μ u hu)))
           rw [sup'_mk_mk, sup'_mk_mk, inf'_mk_mk, inf'_mk_mk, sup'_mk_mk, le'_mk_mk,
@@ -225,14 +226,15 @@ noncomputable instance instBooleanAlgebra : BooleanAlgebra (MeasureAlgebra μ) w
   inf_compl_le_bot a := by
     induction a using MeasureAlgebra.ind with
     | h s hs =>
-      show MeasureAlgebra.le' (MeasureAlgebra.inf' (mk μ s hs) (MeasureAlgebra.compl' (mk μ s hs)))
+      change MeasureAlgebra.le' (MeasureAlgebra.inf' (mk μ s hs) (MeasureAlgebra.compl' (mk μ s
+          hs)))
         (mk μ ∅ MeasurableSet.empty)
       rw [compl'_mk, inf'_mk_mk, le'_mk_mk, ae_le_set_iff_ae_imp]
       exact Eventually.of_forall fun x hx => (hx.2 hx.1).elim
   top_le_sup_compl a := by
     induction a using MeasureAlgebra.ind with
     | h s hs =>
-      show MeasureAlgebra.le' (mk μ univ MeasurableSet.univ)
+      change MeasureAlgebra.le' (mk μ univ MeasurableSet.univ)
         (MeasureAlgebra.sup' (mk μ s hs) (MeasureAlgebra.compl' (mk μ s hs)))
       rw [compl'_mk, sup'_mk_mk, le'_mk_mk, ae_le_set_iff_ae_imp]
       exact Eventually.of_forall fun x _ => by
@@ -308,7 +310,7 @@ theorem CCC_measureAlgebra [IsFiniteMeasure μ] : CCC (MeasureAlgebra μ) := by
     Measure.countable_meas_pos_of_disjoint_iUnion₀ (fun i => (hs i).nullMeasurableSet) h_ae_disj
   have h_univ : {i : ι | 0 < μ (s i)} = univ := by
     ext i
-    simp only [mem_setOf_eq, mem_univ, iff_true]
+    simp only [mem_ofPred_eq, mem_univ, iff_true]
     have h := h_pos i
     rwa [← hs_eq i, bot_lt_iff_meas_pos, meas_mk] at h
   rw [Cardinal.mk_le_aleph0_iff, ← Set.countable_univ_iff, ← h_univ]
@@ -345,7 +347,7 @@ lemma sUnion'_ae_le {T : Set (MSet X)} (hT : T.Countable) {u : Set X}
     (h : ∀ t ∈ T, t.1 ≤ᵐ[μ] u) : sUnion' T ≤ᵐ[μ] u := by
   rw [ae_le_set]
   have : sUnion' T \ u = ⋃ t ∈ T, (t.1 \ u) := by
-    simp only [sUnion', iUnion_diff]
+    simp only [sUnion', iUnion_sdiff]
   rw [this, measure_biUnion_null_iff hT]
   intro t ht
   exact ae_le_set.mp (h t ht)
@@ -398,7 +400,7 @@ theorem exists_countable_essUnion (S : Set (MeasureAlgebra μ)) :
   have hpos : 0 < μ (s.1 \ sUnion' U) := pos_iff_ne_zero.mpr hpos
   have hU'𝒞 : insert s U ∈ 𝒞 := ⟨insert_subset hs hU_sub, hU_count.insert s⟩
   have h_eq : μ (sUnion' (insert s U)) = μ (sUnion' U) + μ (s.1 \ sUnion' U) := by
-    rw [sUnion'_insert, union_comm, ← union_diff_self,
+    rw [sUnion'_insert, union_comm, ← union_sdiff_self,
       measure_union disjoint_sdiff_right (s.2.diff hU_meas)]
   have h_lt : μ (sUnion' U) < μ (sUnion' (insert s U)) := by
     rw [h_eq]
@@ -469,7 +471,7 @@ theorem iSup_mk {ι : Sort*} [Countable ι] (s : ι → Set X) (hs : ∀ i, Meas
     induction b using MeasureAlgebra.ind with
     | h u hu =>
       apply mk_le_mk.mpr
-      rw [ae_le_set, iUnion_diff, measure_iUnion_null_iff]
+      rw [ae_le_set, iUnion_sdiff, measure_iUnion_null_iff]
       intro i
       exact ae_le_set.mp (mk_le_mk.mp (hb (mem_range_self i)))
 
@@ -484,7 +486,7 @@ theorem iInf_mk {ι : Sort*} [Countable ι] (s : ι → Set X) (hs : ∀ i, Meas
     induction b using MeasureAlgebra.ind with
     | h u hu =>
       apply mk_le_mk.mpr
-      rw [ae_le_set, diff_iInter, measure_iUnion_null_iff]
+      rw [ae_le_set, sdiff_iInter, measure_iUnion_null_iff]
       intro i
       exact ae_le_set.mp (mk_le_mk.mp (hb (mem_range_self i)))
 
