@@ -43,7 +43,8 @@ theorem step_from_root (E : H.State) (F F' : Finset ↥P.shrubs) (hFF : F' ⊆ F
     · exact Finset.mem_union_right _ (H.reserved_mono hFF hw)
   have hRcluster : R ⊆ H.clusters (H.head S) :=
     hR.trans ((H.secondary_sub S).trans (H.reservoir_sub _))
-  have heq : (H.clusters (H.head S)).card = (H.clusters j).card := by rw [H.cluster_card, H.cluster_card]
+  have heq : (H.clusters (H.head S)).card = (H.clusters j).card := by
+    rw [H.cluster_card, H.cluster_card]
   have hAsize : H.η * ((H.clusters (H.head S)).card : ℝ) ≤ (H.free E F (H.head S)).card := by
     simpa only [H.cluster_card] using H.free_size E F hEF hcap (H.head S)
   have hBsize : H.η * ((H.clusters (H.head S)).card : ℝ) ≤ (H.free E F j).card := by

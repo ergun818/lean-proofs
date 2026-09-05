@@ -41,8 +41,10 @@ theorem exists_initial : ∃ E : ShrubState P G C head seed,
     Finset.mem_image, Finset.mem_univ, true_and]
   constructor <;> rintro ⟨x, hx⟩ <;> exact ⟨x, hx⟩
 
+omit [DecidableEq V] in
 theorem isContained_of_all_placed (E : ShrubState P G C head seed)
     (hfull : E.placed = Finset.univ) : T ⊑ G := by
+  classical
   have hdomain : P.shrubDomain E.placed = Finset.univ := by
     rw [hfull, P.shrubDomain_univ]
   refine ⟨{

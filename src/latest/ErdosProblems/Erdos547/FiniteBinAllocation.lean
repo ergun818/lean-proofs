@@ -30,7 +30,7 @@ theorem exists_bin_assignment (S : Finset F) (p : F → I → ℝ) (u : F → J 
       _ = ∑ z : I × J, p x z.1 * (u x z.2) ^ 2 := by
         apply Finset.sum_congr rfl
         intro z _
-        simp [a, apply_ite, mul_ite]
+        simp [a, apply_ite]
       _ = ∑ j, ∑ i, p x i * (u x j) ^ 2 := by
         rw [Fintype.sum_prod_type, Finset.sum_comm]
       _ = _ := by simp only [← Finset.sum_mul, hmass, one_mul]

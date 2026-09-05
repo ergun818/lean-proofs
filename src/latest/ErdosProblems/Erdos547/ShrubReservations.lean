@@ -10,7 +10,7 @@ namespace Erdos547
 open Finset SimpleGraph
 open scoped BigOperators
 
-theorem card_reserved_in_cluster_le {A V I : Type*} [DecidableEq A]
+theorem card_reserved_in_cluster_le {A V I : Type*}
     [DecidableEq V] [DecidableEq I] (F : Finset A)
     (C : I → Finset V) (head : A → I) (R : A → Finset V) (w : A → ℕ)
     (hC : ∀ i j, i ≠ j → Disjoint (C i) (C j))

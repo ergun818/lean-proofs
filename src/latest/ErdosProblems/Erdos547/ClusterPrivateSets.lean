@@ -17,7 +17,8 @@ theorem sum_filter_coe {F M : Type*} [AddCommMonoid M] (S : Finset F)
     ← Finset.sum_filter]
 
 open scoped Classical in
-theorem exists_clusterwise_private_sets {F V I C : Type*} [Fintype F] [DecidableEq C] [DecidableEq I]
+theorem exists_clusterwise_private_sets {F V I C : Type*}
+    [Fintype F] [DecidableEq C] [DecidableEq I]
     (cluster : I → Finset V) (head : F → I) (col : F → C)
     (w : F → ℕ) (candidates : F → Finset V) (D : I → C → ℝ)
     (hcluster : ∀ i j, i ≠ j → Disjoint (cluster i) (cluster j))

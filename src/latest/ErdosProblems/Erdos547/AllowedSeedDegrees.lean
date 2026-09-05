@@ -9,11 +9,12 @@ namespace Erdos547
 
 open Finset SimpleGraph
 
-theorem degreeIn_of_not_exceptional_partner {V I : Type*} [DecidableEq V]
+theorem degreeIn_of_not_exceptional_partner {V I : Type*}
     (G : SimpleGraph V) [DecidableRel G.Adj] (ε : ℝ) (X : Finset V) (J : Finset I)
     (C B : I → Finset V) (v : V) (i : I) (hi : i ∈ J)
     (hgood : i ∉ nonTypicalPartners G ε X J C B v) :
     ((G.edgeDensity X (C i) : ℝ) - ε) * (B i).card ≤ (degreeIn G (B i) v : ℝ) := by
+  classical
   apply le_of_not_gt
   intro hh
   exact hgood (Finset.mem_filter.mpr ⟨hi, hh⟩)
@@ -29,6 +30,7 @@ noncomputable def seedExceptions (G : SimpleGraph V) [DecidableRel G.Adj]
     (seed : ↥P.seeds → V) (z : ↥P.seeds) : Finset I :=
   nonTypicalPartners G ε (X (col z.val)) (J (col z.val)) C B (seed z)
 
+omit [DecidableEq V] in
 theorem allowed_attachment_degrees (G : SimpleGraph V) [DecidableRel G.Adj]
     (ε θ : ℝ) (X : Fin 2 → Finset V) (J : Fin 2 → Finset I) (C B Q : I → Finset V)
     (seed : ↥P.seeds → V) (anchors : Finset I) (w : Fin 2 → I → ℝ)
@@ -40,6 +42,7 @@ theorem allowed_attachment_degrees (G : SimpleGraph V) [DecidableRel G.Adj]
       (degreeIn G (B i) (seed z) : ℝ) ∧
     ((G.edgeDensity (X (P.shrubColour S)) (C i) : ℝ) - ε) * (Q i).card ≤
       (degreeIn G (Q i) (seed z) : ℝ) := by
+  classical
   have hp := P.allowedHeads_properties anchors (P.seedExceptions G ε X J C B seed)
     (P.seedExceptions G ε X J C Q seed) w θ S i hi
   have hc := P.attachmentSeeds_colour S z hz
@@ -53,13 +56,16 @@ theorem allowed_attachment_degrees (G : SimpleGraph V) [DecidableRel G.Adj]
   rw [hc] at hB hQ
   exact ⟨hB, hQ⟩
 
+omit [DecidableEq I] [DecidableEq V] in
 theorem seedExceptions_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
     (ε δ : ℝ) (hδ : 0 ≤ δ) (X : Fin 2 → Finset V) (J : Fin 2 → Finset I)
     (C B : I → Finset V) (seed : ↥P.seeds → V)
     (htypical : ∀ z, ((P.seedExceptions G ε X J C B seed z).card : ℝ) ≤ δ * (J (col z.val)).card)
-    (z : ↥P.seeds) : ((P.seedExceptions G ε X J C B seed z).card : ℝ) ≤ δ * Fintype.card I :=
-  (htypical z).trans (mul_le_mul_of_nonneg_left
-    (by exact_mod_cast Finset.card_le_univ (J (col z.val))) hδ)
+    (z : ↥P.seeds) : ((P.seedExceptions G ε X J C B seed z).card : ℝ) ≤ δ * Fintype.card I := by
+  classical
+  exact
+    (htypical z).trans (mul_le_mul_of_nonneg_left
+      (by exact_mod_cast Finset.card_le_univ (J (col z.val))) hδ)
 
 end FineTreePartition
 end Erdos547

@@ -22,16 +22,22 @@ def attachTwoPathsOldCopy (T : SimpleGraph U) (parent : L → U) : T.Copy (attac
   ⟨{ toFun := fun u ↦ Sum.inl (Sum.inl u), map_rel' := fun h ↦ h },
     Sum.inl_injective.comp Sum.inl_injective⟩
 
-theorem attachTwoPaths_isTree [Fintype U] [Fintype L] (T : SimpleGraph U)
-    [DecidableRel T.Adj] (parent : L → U) (hT : T.IsTree) : (attachTwoPaths T parent).IsTree := by
+theorem attachTwoPaths_isTree [Finite U] [Finite L] (T : SimpleGraph U)
+    (parent : L → U) (hT : T.IsTree) : (attachTwoPaths T parent).IsTree := by
   classical
+  let := Fintype.ofFinite L
+  let := Fintype.ofFinite U
   exact attachLeaves_isTree _ _ (attachLeaves_isTree T parent hT)
 
-theorem attachTwoPaths_dist [Fintype U] [Fintype L] (T : SimpleGraph U)
-    [DecidableRel T.Adj] (parent : L → U) (hT : T.IsTree) (u v : U) :
-    (attachTwoPaths T parent).dist (Sum.inl (Sum.inl u)) (Sum.inl (Sum.inl v)) = T.dist u v :=
-  tree_copy_dist_eq hT (attachTwoPaths_isTree T parent hT).isAcyclic
-    (attachTwoPathsOldCopy T parent) u v
+theorem attachTwoPaths_dist [Finite U] [Finite L] (T : SimpleGraph U)
+    (parent : L → U) (hT : T.IsTree) (u v : U) :
+    (attachTwoPaths T parent).dist (Sum.inl (Sum.inl u)) (Sum.inl (Sum.inl v)) = T.dist u v := by
+  classical
+  let := Fintype.ofFinite L
+  let := Fintype.ofFinite U
+  exact
+    tree_copy_dist_eq hT (attachTwoPaths_isTree T parent hT).isAcyclic
+      (attachTwoPathsOldCopy T parent) u v
 
 def attachTwoPathsColour {T : SimpleGraph U} (parent : L → U) (col : T.Coloring (Fin 2)) :
     (attachTwoPaths T parent).Coloring (Fin 2) :=

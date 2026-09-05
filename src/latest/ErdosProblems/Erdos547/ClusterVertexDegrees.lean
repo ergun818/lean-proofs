@@ -11,9 +11,10 @@ namespace Erdos547
 open Finset SimpleGraph
 open scoped BigOperators
 
-theorem sum_coe_indicator_eq_card_filter {A : Type*} [DecidableEq A]
+theorem sum_coe_indicator_eq_card_filter {A : Type*}
     (S : Finset A) (Q : A → Prop) [DecidablePred Q] :
     (∑ x : ↥S, if Q x.val then (1 : ℝ) else 0) = ((S.filter Q).card : ℝ) := by
+  classical
   rw [Finset.sum_coe_sort S (fun x ↦ if Q x then (1 : ℝ) else 0)]
   simp only [Finset.card_eq_sum_ones, Nat.cast_sum, Finset.sum_filter, apply_ite,
     Nat.cast_one, Nat.cast_zero]
@@ -21,13 +22,15 @@ theorem sum_coe_indicator_eq_card_filter {A : Type*} [DecidableEq A]
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable (G : SimpleGraph V) [DecidableRel G.Adj] {ε : ℝ}
 
-theorem degreeIn_le_density_with_exceptions (hε : 0 ≤ ε) (X Y : Finset V) (v : V) :
+omit [DecidableEq V] [Fintype V] in
+theorem degreeIn_le_density_with_exceptions [Finite V] (hε : 0 ≤ ε) (X Y : Finset V) (v : V) :
     (degreeIn G Y v : ℝ) ≤ (Y.card : ℝ) *
       ((G.edgeDensity X Y : ℝ) + ε + (if ¬ G.IsUniform ε X Y then 1 else 0) +
         (if G.IsUniform ε X Y ∧
           ((G.edgeDensity X Y : ℝ) + ε) * Y.card < (degreeIn G Y v : ℝ)
           then 1 else 0)) := by
   classical
+  let := Fintype.ofFinite V
   have hd : 0 ≤ (G.edgeDensity X Y : ℝ) := by exact_mod_cast G.edgeDensity_nonneg X Y
   have hcard : (degreeIn G Y v : ℝ) ≤ Y.card := by exact_mod_cast degreeIn_le_card G Y v
   have hprod := mul_nonneg (Nat.cast_nonneg Y.card : (0 : ℝ) ≤ Y.card) (add_nonneg hd hε)

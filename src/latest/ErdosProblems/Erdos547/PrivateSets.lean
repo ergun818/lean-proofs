@@ -44,11 +44,13 @@ theorem weighted_hall_of_two_class_bounds [DecidableEq C] (col : F → C) (w : F
         Finset.biUnion_empty, Finset.card_empty, le_refl]
 
 open scoped Classical in
-theorem exists_disjoint_private_sets (w : F → ℕ) (candidates : F → Finset V)
+omit [Fintype F] in
+theorem exists_disjoint_private_sets [Finite F] (w : F → ℕ) (candidates : F → Finset V)
     (hHall : ∀ J : Finset F, (∑ x ∈ J, w x) ≤ (J.biUnion candidates).card) :
     ∃ R : F → Finset V, (∀ x, R x ⊆ candidates x) ∧
       (∀ x, (R x).card = w x) ∧ Pairwise (fun x y ↦ Disjoint (R x) (R y)) := by
   classical
+  let := Fintype.ofFinite F
   let L := Σ x : F, Fin (w x)
   let parent : L → F := Sigma.fst
   have hweight (x : F) : parentWeight parent x = w x := by

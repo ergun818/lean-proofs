@@ -58,8 +58,10 @@ theorem neighbour_closed_of_two_degrees {P H : Finset U} (hPH : P ⊆ H) {u : U}
   rw [← he] at hh
   exact (Finset.mem_filter.mp hh).1
 
+omit [DecidableRel T.Adj] in
 theorem forest_path_endpoints_not_adjacent (hT : T.IsAcyclic) {a b : U}
     (p : T.Walk a b) (hp : p.IsPath) (hl : 2 ≤ p.length) : ¬ T.Adj a b := by
+  classical
   intro hab
   have he := (hT.subsingleton_path a b).elim ⟨p, hp⟩ (SimpleGraph.Path.singleton hab)
   have hh := congrArg (fun q : T.Path a b ↦ q.val.length) he

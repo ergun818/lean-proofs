@@ -24,12 +24,13 @@ theorem connected_subset_of_meets_rooted_piece {S B : Set U} {r : U}
   exact hS.closed_off_root u.val hu (fun he ↦ hr (he ▸ u.property)) v.val huv
 
 open scoped Classical in
-theorem exists_bounded_forest_piece [Fintype U] (hT : T.IsAcyclic) (q : ℕ)
+theorem exists_bounded_forest_piece [Finite U] (hT : T.IsAcyclic) (q : ℕ)
     (hq : 1 ≤ q) (B : Finset U) (hB : (T.induce (B : Set U)).Connected)
     (hsize : q ≤ B.card) :
     ∃ S : Finset U, ∃ r, q ≤ S.card ∧ S.card ≤ 2 * q - 1 ∧
       IsRootedPiece T (S : Set U) r := by
   classical
+  let := Fintype.ofFinite U
   obtain ⟨b⟩ := hB.nonempty
   let C := T.connectedComponentMk b.val
   have hBC (u : (B : Set U)) : u.val ∈ C.supp := by

@@ -35,7 +35,8 @@ theorem postponed_same_head_count (E : H.State) (F : Finset ↥P.shrubs)
         exact hfailed A (Finset.mem_filter.mp hA).1
   have hsplit : B.card = ∑ c : Fin 2, (B.filter (fun A ↦ P.shrubColour A = c)).card :=
     Finset.card_eq_sum_card_fiberwise (fun _ _ ↦ Finset.mem_univ _)
-  have hsplitR : (B.card : ℝ) = ∑ c : Fin 2, ((B.filter (fun A ↦ P.shrubColour A = c)).card : ℝ) := by
+  have hsplitR :
+      (B.card : ℝ) = ∑ c : Fin 2, ((B.filter (fun A ↦ P.shrubColour A = c)).card : ℝ) := by
     exact_mod_cast hsplit
   rw [hsplitR]
   calc

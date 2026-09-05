@@ -25,6 +25,7 @@ def ReservoirBound (E : H.State) (B : Finset ↥P.shrubs) : Prop :=
   ∀ i, (H.reservoir i ∩ E.occupied).card ≤
     P.seeds.card + H.secondaryCount E.placed + H.primaryCount E.placed B i
 
+omit [DecidableEq V] in
 theorem secondaryCount_le_seeds (hT : T.IsTree) (E : Finset ↥P.shrubs) :
     H.secondaryCount E ≤ P.seeds.card := by
   classical
@@ -34,6 +35,7 @@ theorem secondaryCount_le_seeds (hT : T.IsTree) (E : Finset ↥P.shrubs) :
     Finset.card_le_card (Finset.filter_subset_filter _ (Finset.subset_univ E))
   omega
 
+omit [DecidableEq V] in
 theorem primaryCount_le_postponed (E B : Finset ↥P.shrubs) (i : I) :
     H.primaryCount E B i ≤ (B.filter (fun S ↦ H.head S = i)).card := by
   classical

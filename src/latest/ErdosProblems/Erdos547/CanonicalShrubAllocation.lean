@@ -15,7 +15,8 @@ variable {U I : Type*} [Fintype U] [DecidableEq U] [Fintype I] [Nonempty I] [Dec
   {col : T.Coloring (Fin 2)}
 
 open scoped Classical in
-theorem exists_relative_shrub_heads (P : FineTreePartition T r ℓ col)
+omit [Fintype I] in
+theorem exists_relative_shrub_heads [Finite I] (P : FineTreePartition T r ℓ col)
     (allowed : ↥P.shrubs → Finset I) (w : Fin 2 → I → ℝ) (A θ : Fin 2 → ℝ)
     (err : ℝ) (capacity margin : Fin 2 → Fin 2 → ℝ)
     (hw : ∀ c i, 0 ≤ w c i) (hA : ∀ c, 0 < A c) (herr : 0 ≤ err)
@@ -28,10 +29,13 @@ theorem exists_relative_shrub_heads (P : FineTreePartition T r ℓ col)
     (herror : ∀ c j, err ≤ θ c * margin c j) :
     ∃ head : ↥P.shrubs → I, (∀ S, head S ∈ allowed S) ∧ ∀ c i,
       (∑ S ∈ (Finset.univ : Finset ↥P.shrubs).filter
-        (fun S ↦ P.shrubColour S = c ∧ head S = i), ((P.nearPart S).card : ℝ)) ≤ capacity c 0 * w c i ∧
+        (fun S ↦ P.shrubColour S = c ∧ head S = i), ((P.nearPart S).card : ℝ)) ≤
+          capacity c 0 * w c i ∧
       (∑ S ∈ (Finset.univ : Finset ↥P.shrubs).filter
-        (fun S ↦ P.shrubColour S = c ∧ head S = i), ((P.farPart S).card : ℝ)) ≤ capacity c 1 * w c i := by
+        (fun S ↦ P.shrubColour S = c ∧ head S = i), ((P.farPart S).card : ℝ)) ≤
+          capacity c 1 * w c i := by
   classical
+  let := Fintype.ofFinite I
   have h10 : (1 : Fin 2) ≠ 0 := by decide
   let u : ↥P.shrubs → Fin 2 → ℝ := fun S j ↦
     if j = 0 then (P.nearPart S).card else (P.farPart S).card

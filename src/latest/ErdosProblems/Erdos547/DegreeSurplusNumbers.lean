@@ -6,7 +6,7 @@ import ErdosProblems.Erdos547.SetupMargins
 
 namespace Erdos547
 
-theorem coating_scale_bound (a s η : ℝ) (ha : 0 ≤ a) (hs : 0 ≤ s) (hη : 0 ≤ η)
+theorem coating_scale_bound (a s η : ℝ) (ha : 0 ≤ a) (hs : 0 ≤ s) (_hη : 0 ≤ η)
     (hsbound : s ≤ a / 1000) (hηbound : η ≤ a / 10000) (hηone : η ≤ 1 / 10) :
     (1 + 10 * s) * (1 + 10 * η) ≤ 1 + a / 4 := by
   have hh := mul_le_mul_of_nonneg_left (show 10 * η ≤ 1 by linarith only [hηone])

@@ -13,16 +13,21 @@ open scoped BigOperators
 variable {U I : Type*} [Fintype U] [DecidableEq U]
 variable (T : SimpleGraph U) [DecidableRel T.Adj]
 
-theorem degreeIn_biUnion_of_disjoint (J : Finset I) (C : I → Finset U)
+omit [Fintype U] in
+theorem degreeIn_biUnion_of_disjoint [Finite U] (J : Finset I) (C : I → Finset U)
     (hdis : ∀ i ∈ J, ∀ j ∈ J, i ≠ j → Disjoint (C i) (C j)) (v : U) :
     degreeIn T (J.biUnion C) v = ∑ i ∈ J, degreeIn T (C i) v := by
+  classical
+  let := Fintype.ofFinite U
   unfold degreeIn
   rw [Finset.filter_biUnion, Finset.card_biUnion]
   exact fun i hi j hj hij ↦ (hdis i hi j hj hij).mono
     (Finset.filter_subset _ _) (Finset.filter_subset _ _)
 
+omit [DecidableEq U] in
 theorem degree_eq_degreeIn_of_neighbours {S : Finset U} (v : U)
     (hS : ∀ u, T.Adj v u → u ∈ S) : T.degree v = degreeIn T S v := by
+  classical
   rw [← degreeIn_univ]
   unfold degreeIn
   congr 1

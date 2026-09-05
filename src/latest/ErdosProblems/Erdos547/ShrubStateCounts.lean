@@ -22,8 +22,10 @@ noncomputable def nearUsed (i : I) : ℕ :=
 noncomputable def farUsed (i : I) : ℕ :=
   ∑ S ∈ E.placed, if E.tail S = i then (P.farPart S).card else 0
 
+omit [DecidableEq I] in
 theorem occupied_eq_union_images : E.occupied = Finset.univ.image seed ∪
     Finset.univ.biUnion (fun S : ↥E.placed ↦ E.shrubImage S.val S.property) := by
+  classical
   ext v
   rw [E.mem_occupied_iff]
   simp only [Finset.mem_union, Finset.mem_image, Finset.mem_univ, true_and,

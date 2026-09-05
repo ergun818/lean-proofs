@@ -51,9 +51,11 @@ theorem exists_neighbour_of_degree_pos (w : EdgeWeights G) (c : V) (h : 0 < w.de
   linarith
 
 open scoped Classical in
-theorem degreeOn_le_card_neighbours (w : EdgeWeights G) (c : V) (U : Finset V) :
+omit [Fintype V] in
+theorem degreeOn_le_card_neighbours [Finite V] (w : EdgeWeights G) (c : V) (U : Finset V) :
     w.degreeOn U c ≤ ((U.filter (G.Adj c)).card : ℝ) := by
   classical
+  let := Fintype.ofFinite V
   calc
     _ = ∑ u ∈ U.filter (G.Adj c), w.weight c u := by
       symm

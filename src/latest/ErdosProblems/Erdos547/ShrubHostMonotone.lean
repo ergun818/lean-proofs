@@ -46,17 +46,21 @@ theorem free_mono_after_release (E E' : H.State) (F : Finset ↥P.shrubs)
     (H.reservoir j) E.occupied E'.occupied (H.reserved F) (H.reserved (F.erase S))
     hdis hused (H.reserved_release F S)
 
+omit [DecidableEq V] in
 theorem farLoad_le_after_insert (E E' : H.State) (S : ↥P.shrubs) (hS : S ∉ E.placed) (j : I)
     (hplaced : E'.placed = insert S E.placed) (htail : E'.tail = Function.update E.tail S j)
     (a : Fin 2 × I) (i : I) : E.farLoad a i ≤ E'.farLoad a i := by
+  classical
   unfold ShrubState.farLoad
   rw [hplaced, htail]
   exact routedLoad_le_after_insert E.placed (ShrubState.shrubGroup P H.head) E.tail
     (fun S ↦ (P.farPart S).card) S hS j a i
 
+omit [DecidableEq V] in
 theorem targets_shrink (E E' : H.State)
     (hload : ∀ a i, E.farLoad a i ≤ E'.farLoad a i)
     (S : ↥P.shrubs) (j : I) (hj : H.IsTarget E' S j) : H.IsTarget E S j := by
+  classical
   refine ⟨hj.1, ?_⟩
   have hh : (E.farLoad (ShrubState.shrubGroup P H.head S) j : ℝ) ≤
       (E'.farLoad (ShrubState.shrubGroup P H.head S) j : ℝ) := by exact_mod_cast hload _ _

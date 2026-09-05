@@ -11,11 +11,13 @@ open Finset SimpleGraph
 variable {U : Type*} [Fintype U] (T : SimpleGraph U) [DecidableRel T.Adj]
 
 open scoped Classical in
-theorem exists_hull_seed_extension (hT : T.IsTree) (W : Finset U) (hW : W.Nonempty) :
+omit [Fintype U] in
+theorem exists_hull_seed_extension [Finite U] (hT : T.IsTree) (W : Finset U) (hW : W.Nonempty) :
     ∃ S H : Finset U, W ⊆ S ∧ S ⊆ H ∧ S.card ≤ 2 * W.card ∧
       (T.induce (H : Set U)).Connected ∧
       ∀ u ∈ H, u ∉ S → degreeIn T H u = 2 := by
   classical
+  let := Fintype.ofFinite U
   obtain ⟨H, hWH, hH, hmin⟩ := exists_minimal_connected_hull T hT.connected W
   rcases subsingleton_or_nontrivial ↥(H : Set U) with hsingle | hnontrivial
   · let := hsingle

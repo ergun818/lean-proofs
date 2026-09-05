@@ -15,6 +15,7 @@ variable {U V I : Type*} [Fintype U] [Fintype I]
   {T : SimpleGraph U} [DecidableRel T.Adj] {r : U} {ℓ : ℕ}
   {col : T.Coloring (Fin 2)} (P : FineTreePartition T r ℓ col)
 
+omit [DecidableEq V] in
 theorem exists_host_setup_of_skew_heads (G : SimpleGraph V) [DecidableRel G.Adj]
     (K : SimpleGraph I) (C Q : I → Finset V) (head : ↥P.shrubs → I)
     (seed : (T.induce (P.seeds : Set U)).Copy G)
@@ -46,7 +47,8 @@ theorem exists_host_setup_of_skew_heads (G : SimpleGraph V) [DecidableRel G.Adj]
   classical
   have hMreal : 0 < (M : ℝ) := by exact_mod_cast hM
   have hnear' (c : Fin 2) (i : I) : (∑ S ∈ (Finset.univ : Finset ↥P.shrubs).filter
-      (fun S ↦ P.shrubColour S = c ∧ head S = i), ((P.nearPart S).card : ℝ)) ≤ M * (σ c).outLoad i := by
+      (fun S ↦ P.shrubColour S = c ∧ head S = i), ((P.nearPart S).card : ℝ)) ≤
+        M * (σ c).outLoad i := by
     apply (hnear c i).trans
     have hh := mul_le_mul_of_nonneg_right (show 1 - s ≤ 1 by linarith only [hs])
       (mul_nonneg hMreal.le ((σ c).outLoad_nonneg i))

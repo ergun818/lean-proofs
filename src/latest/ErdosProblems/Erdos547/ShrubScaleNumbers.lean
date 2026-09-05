@@ -13,7 +13,7 @@ theorem shrub_cluster_scale (ρ n B m ℓ : ℝ) (hρ : 0 ≤ ρ)
   nlinarith only [hh, hℓ]
 
 theorem shrub_variance_margin (ρ n B m ℓ z err : ℝ)
-    (hρ : 0 ≤ ρ) (hB : 0 ≤ B) (hm : 0 < m) (hℓ : 0 ≤ ℓ) (hz : 0 ≤ z)
+    (hρ : 0 ≤ ρ) (hB : 0 ≤ B) (hm : 0 < m) (_hℓ : 0 ≤ ℓ) (hz : 0 ≤ z)
     (hn : n ≤ 8 * B * m) (hℓbound : ℓ ≤ 16 * ρ * B * m)
     (hzbound : z ≤ 2 * n) (hsmall : 256 * ρ * B ^ 2 < err ^ 2) :
     ℓ * z < (err * m) ^ 2 := by

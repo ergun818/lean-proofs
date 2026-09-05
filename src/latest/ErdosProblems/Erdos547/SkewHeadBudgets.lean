@@ -67,7 +67,8 @@ theorem group_demand_of_skew_heads (σ : ∀ c, DPRS.SkewMatching K (γ c))
     ShrubState.shrubGroup, Prod.mk.injEq]
   have hh := hfar c i
   rw [Finset.sum_filter] at hh
-  convert hh using 1 <;> ring
+  convert hh using 1
+  ring
 
 end Erdos547.FineTreePartition
 

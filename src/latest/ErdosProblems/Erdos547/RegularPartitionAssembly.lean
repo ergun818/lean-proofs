@@ -38,7 +38,8 @@ theorem regular_partition_of_uniform {V : Type*} [Fintype V] [DecidableEq V]
   have hdrop' : ((P.parts.card - J.card : ℕ) : ℝ) ≤ δ * P.parts.card := by
     rwa [Finset.card_sdiff_of_subset hJ] at hdrop
   have hgarbage0 := discarded_vertices_bound δ hδ.le (Fintype.card V) m P.parts.card J.card
-    (Finset.univ \ Finset.univ.biUnion C).card hmn hnm (Finset.card_le_card hJ) hcount' hdrop' hsmall
+    (Finset.univ \ Finset.univ.biUnion C).card hmn hnm
+    (Finset.card_le_card hJ) hcount' hdrop' hsmall
   have hgarbage : ((Finset.univ \ Finset.univ.biUnion C).card : ℝ) ≤ ε * Fintype.card V :=
     hgarbage0.trans (by
       have hh := mul_le_mul_of_nonneg_right hδε (Nat.cast_nonneg (Fintype.card V))

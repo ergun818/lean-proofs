@@ -62,11 +62,11 @@ theorem process_heads (hT : T.IsTree) (J : Finset I) (E : H.State) (F : Finset �
         · have hSF := hLF hSL
           have hSB' : S ∉ B' := fun h ↦ (Finset.mem_sdiff.mp (hB' h)).2 hSL
           simp only [Finset.mem_union, Finset.mem_sdiff, hSL, hSF, hSB',
-            not_false_eq_true, not_true_eq_false, and_false, false_and, and_true, true_and,
+            not_false_eq_true, not_true_eq_false, and_false, and_true, true_and,
             or_false]
         · have hSB : S ∉ O.postponed := fun h ↦ hSL (O.postponed_sub h)
           simp only [Finset.mem_union, Finset.mem_sdiff, hSL, hSB, not_false_eq_true,
-            false_and, and_true, false_or]
+            and_true, false_or]
       refine ⟨E', O.postponed ∪ B', hBsub, ?_, hcap', hbound', ?_⟩
       · rw [hplaced', O.placed_eq, Finset.union_assoc, hsplit]
       · intro j

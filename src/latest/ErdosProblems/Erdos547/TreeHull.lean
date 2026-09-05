@@ -35,10 +35,11 @@ theorem connected_induce_erase_of_degreeIn_eq_one [DecidableEq U] [DecidableRel 
   exact hc.map f hsurj
 
 open scoped Classical in
-theorem exists_minimal_connected_hull [Fintype U] (hT : T.Connected) (W : Finset U) :
+theorem exists_minimal_connected_hull [Finite U] (hT : T.Connected) (W : Finset U) :
     ∃ H : Finset U, W ⊆ H ∧ (T.induce (H : Set U)).Connected ∧
       ∀ K : Finset U, W ⊆ K → (T.induce (K : Set U)).Connected → H.card ≤ K.card := by
   classical
+  let := Fintype.ofFinite U
   let candidates := (Finset.univ : Finset (Finset U)).filter
     fun H ↦ W ⊆ H ∧ (T.induce (H : Set U)).Connected
   have hfull : (T.induce (↑(Finset.univ : Finset U) : Set U)).Connected := by
@@ -51,12 +52,13 @@ theorem exists_minimal_connected_hull [Fintype U] (hT : T.Connected) (W : Finset
   intro K hWK hK
   exact hmin K (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hWK, hK⟩)
 
-theorem minimal_connected_hull_degree [Fintype U] [DecidableRel T.Adj]
+theorem minimal_connected_hull_degree [Finite U] [DecidableRel T.Adj]
     {W H : Finset U} (hW : W.Nonempty) (hWH : W ⊆ H)
     (hH : (T.induce (H : Set U)).Connected)
     (hmin : ∀ K : Finset U, W ⊆ K → (T.induce (K : Set U)).Connected → H.card ≤ K.card)
     {v : U} (hv : v ∈ H) (hvW : v ∉ W) : 2 ≤ degreeIn T H v := by
   classical
+  let := Fintype.ofFinite U
   obtain ⟨w, hw⟩ := hW
   let z : (H : Set U) := ⟨v, hv⟩
   let y : (H : Set U) := ⟨w, hWH hw⟩

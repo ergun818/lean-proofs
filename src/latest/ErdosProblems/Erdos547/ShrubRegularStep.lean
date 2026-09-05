@@ -17,7 +17,8 @@ variable {U V I : Type*} [Fintype U] [Fintype I]
   {G : SimpleGraph V} [DecidableRel G.Adj] {C : I → Finset V}
   {head : ↥P.shrubs → I} {seed : (T.induce (P.seeds : Set U)).Copy G}
 
-theorem exists_regular_insert (E : ShrubState P G C head seed)
+omit [Fintype I] in
+theorem exists_regular_insert [Finite I] (E : ShrubState P G C head seed)
     (S : ↥P.shrubs) (hS : S ∉ E.placed) (j : I)
     (D : ShrubRootData T P.seeds S.val)
     (Q : I → Finset V) (hQ : ∀ i, Q i ⊆ C i)
@@ -49,6 +50,7 @@ theorem exists_regular_insert (E : ShrubState P G C head seed)
       ∀ i, (Q i ∩ E'.occupied).card ≤ (Q i ∩ E.occupied).card +
         (if head S = i ∧ p then 1 else 0) + (if D.second.isSome then 1 else 0) := by
   classical
+  let := Fintype.ofFinite I
   let allQ := Finset.univ.biUnion Q
   have hAall : Disjoint A allQ := by
     apply Finset.disjoint_left.mpr

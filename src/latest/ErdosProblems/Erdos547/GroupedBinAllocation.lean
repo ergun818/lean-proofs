@@ -12,7 +12,7 @@ open scoped BigOperators
 
 open scoped Classical in
 theorem exists_grouped_relative_assignment {F I J K : Type*}
-    [Fintype F] [Fintype I] [Nonempty I] [Fintype J] [DecidableEq K] [DecidableEq I]
+    [Fintype F] [Finite I] [Nonempty I] [Fintype J] [DecidableEq K] [DecidableEq I]
     (group : F → K) (allowed : F → Finset I) (w : K → I → ℝ) (u : F → J → ℝ)
     (A θ : K → ℝ) (L err : ℝ) (capacity margin : K → J → ℝ)
     (hw : ∀ c i, 0 ≤ w c i) (hA : ∀ c, 0 < A c) (herr : 0 ≤ err)
@@ -29,6 +29,7 @@ theorem exists_grouped_relative_assignment {F I J K : Type*}
       ∀ c i j, (∑ x ∈ (Finset.univ : Finset F).filter
         (fun x ↦ group x = c ∧ f x = i), u x j) ≤ capacity c j * w c i := by
   classical
+  let := Fintype.ofFinite I
   let fiber (c : K) := (Finset.univ : Finset F).filter (fun x ↦ group x = c)
   obtain ⟨i₀⟩ := ‹Nonempty I›
   have hex (c : K) : ∃ f : F → I, (∀ x, group x = c → f x ∈ allowed x) ∧

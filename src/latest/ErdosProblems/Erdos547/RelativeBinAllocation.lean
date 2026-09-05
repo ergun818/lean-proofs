@@ -12,7 +12,8 @@ open scoped BigOperators
 variable {F I J : Type*} [Fintype F] [Fintype I] [Nonempty I] [Fintype J] [DecidableEq I]
 
 open scoped Classical in
-theorem exists_relative_bin_assignment (allowed : F → Finset I)
+omit [Fintype I] in
+theorem exists_relative_bin_assignment [Finite I] (allowed : F → Finset I)
     (w : I → ℝ) (u : F → J → ℝ) (A L C θ : ℝ) (capacity margin : J → ℝ)
     (hw : ∀ i, 0 ≤ w i) (hA : 0 < A) (hC : 0 ≤ C)
     (hallowed : ∀ x, A ≤ ∑ i ∈ allowed x, w i)
@@ -26,6 +27,7 @@ theorem exists_relative_bin_assignment (allowed : F → Finset I)
       ∀ i j, (∑ x ∈ (Finset.univ : Finset F).filter (fun x ↦ f x = i), u x j) ≤
         capacity j * w i := by
   classical
+  let := Fintype.ofFinite I
   obtain ⟨f, hf, hload⟩ := exists_weighted_bin_assignment allowed w u A L C
     hw hA hC hallowed hu hsmall
   refine ⟨f, hf, ?_⟩

@@ -9,7 +9,7 @@ namespace Erdos547
 open Finset SimpleGraph
 open scoped BigOperators
 
-theorem postponed_private_mass_le {V F : Type*} [DecidableEq V]
+theorem postponed_private_mass_le {V F : Type*}
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (X Y B : Finset V) (ε threshold : ℝ) (hreg : G.IsUniform ε X Y)
     (hB : B ⊆ Y) (hBsize : (Y.card : ℝ) * ε ≤ B.card)

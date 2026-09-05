@@ -12,7 +12,7 @@ open scoped BigOperators
 
 variable {U : Type*} (T : SimpleGraph U) [DecidableRel T.Adj]
 
-theorem sum_degreeIn_hull_seeds [DecidableEq U] {S H : Finset U}
+theorem sum_degreeIn_hull_seeds {S H : Finset U}
     (hH : (T.induce (H : Set U)).IsTree) (hSH : S ⊆ H)
     (hdeg : ∀ u ∈ H, u ∉ S → degreeIn T H u = 2) :
     (∑ u ∈ S, degreeIn T H u) + 2 = 2 * S.card := by

@@ -19,22 +19,30 @@ def reducedDensity (X Y : Finset V) : ℝ :=
   if X ≠ Y ∧ G.IsUniform ε X Y ∧ d ≤ (G.edgeDensity X Y : ℝ)
     then (G.edgeDensity X Y : ℝ) else 0
 
-theorem reducedDensity_nonneg (X Y : Finset V) : 0 ≤ reducedDensity G ε d X Y := by
+omit [Fintype V] in
+theorem reducedDensity_nonneg [Finite V] (X Y : Finset V) : 0 ≤ reducedDensity G ε d X Y := by
+  classical
+  let := Fintype.ofFinite V
   unfold reducedDensity
   split_ifs
   · exact_mod_cast G.edgeDensity_nonneg X Y
   · exact le_rfl
 
-theorem reducedDensity_le_one (X Y : Finset V) : reducedDensity G ε d X Y ≤ 1 := by
+omit [Fintype V] in
+theorem reducedDensity_le_one [Finite V] (X Y : Finset V) : reducedDensity G ε d X Y ≤ 1 := by
+  classical
+  let := Fintype.ofFinite V
   unfold reducedDensity
   split_ifs
   · exact_mod_cast G.edgeDensity_le_one X Y
   · norm_num
 
-theorem density_le_reducedDensity (hd : 0 ≤ d) (X Y : Finset V) :
+omit [Fintype V] in
+theorem density_le_reducedDensity [Finite V] (hd : 0 ≤ d) (X Y : Finset V) :
     (G.edgeDensity X Y : ℝ) ≤ reducedDensity G ε d X Y + d +
       (if X = Y then 1 else 0) + (if X ≠ Y ∧ ¬ G.IsUniform ε X Y then 1 else 0) := by
   classical
+  let := Fintype.ofFinite V
   have hlow := reducedDensity_nonneg G ε d X Y
   have hone : (G.edgeDensity X Y : ℝ) ≤ 1 := by exact_mod_cast G.edgeDensity_le_one X Y
   by_cases heq : X = Y

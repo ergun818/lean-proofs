@@ -11,6 +11,7 @@ open Finset SimpleGraph
 
 variable {U V I : Type*} [Fintype U] [DecidableEq V]
 
+omit [DecidableEq V] in
 theorem exists_typical_seed_forest_copy
     (F : SimpleGraph U) (G : SimpleGraph V) [DecidableRel G.Adj]
     (hF : F.IsAcyclic) (col : U → Fin 2) (hcol : Function.Surjective col)

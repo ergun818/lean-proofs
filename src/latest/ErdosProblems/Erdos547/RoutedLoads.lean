@@ -15,9 +15,11 @@ def routedLoad (E : Finset F) (group : F → A) (route : F → I) (w : F → ℕ
     (a : A) (i : I) : ℕ :=
   ∑ x ∈ E, if group x = a ∧ route x = i then w x else 0
 
+omit [DecidableEq F] in
 theorem routedLoad_sum_targets [Fintype I] (E : Finset F)
     (group : F → A) (route : F → I) (w : F → ℕ) (a : A) :
     (∑ i, routedLoad E group route w a i) = ∑ x ∈ E, if group x = a then w x else 0 := by
+  classical
   unfold routedLoad
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
@@ -27,9 +29,11 @@ theorem routedLoad_sum_targets [Fintype I] (E : Finset F)
     simp
   · simp only [h, false_and, if_false, Finset.sum_const_zero]
 
+omit [DecidableEq F] in
 theorem routedLoad_sum_groups [Fintype A] (E : Finset F)
     (group : F → A) (route : F → I) (w : F → ℕ) (i : I) :
     (∑ a, routedLoad E group route w a i) = ∑ x ∈ E, if route x = i then w x else 0 := by
+  classical
   unfold routedLoad
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
@@ -53,16 +57,21 @@ theorem routedLoad_insert (E : Finset F) (group : F → A) (route : F → I)
     rw [Function.update_of_ne hyx]
   rw [he, Nat.add_comm]
 
+omit [DecidableEq F] in
 theorem routedLoad_le_group_demand [Fintype F] [Fintype I]
     (E : Finset F) (group : F → A) (route : F → I) (w : F → ℕ) (a : A) :
     (∑ i, routedLoad E group route w a i) ≤ ∑ x, if group x = a then w x else 0 := by
+  classical
   rw [routedLoad_sum_targets]
   exact Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _)
     (fun _ _ _ ↦ Nat.zero_le _)
 
+omit [DecidableEq F] in
 theorem routedLoad_mono (E F' : Finset F) (hEF : E ⊆ F')
     (group : F → A) (route : F → I) (w : F → ℕ) (a : A) (i : I) :
-    routedLoad E group route w a i ≤ routedLoad F' group route w a i :=
-  Finset.sum_le_sum_of_subset_of_nonneg hEF (fun _ _ _ ↦ Nat.zero_le _)
+    routedLoad E group route w a i ≤ routedLoad F' group route w a i := by
+  classical
+  exact
+    Finset.sum_le_sum_of_subset_of_nonneg hEF (fun _ _ _ ↦ Nat.zero_le _)
 
 end Erdos547

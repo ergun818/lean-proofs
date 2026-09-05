@@ -82,10 +82,12 @@ theorem attachLeaves_degree_inr [Fintype U] [Fintype L] (T : SimpleGraph U)
   change (∑ u : U, if parent l = u then 1 else 0) + (∑ _ : L, if False then 1 else 0) = 1
   simp
 
-theorem attachLeaves_isTree [Fintype U] [Fintype L] (T : SimpleGraph U)
-    [DecidableRel T.Adj] (parent : L → U) (hT : T.IsTree) :
+theorem attachLeaves_isTree [Finite U] [Finite L] (T : SimpleGraph U)
+    (parent : L → U) (hT : T.IsTree) :
     (attachLeaves T parent).IsTree := by
   classical
+  let := Fintype.ofFinite L
+  let := Fintype.ofFinite U
   let G := attachLeaves T parent
   have hfibres : (∑ u : U, ((Finset.univ : Finset L).filter (fun l ↦ parent l = u)).card) =
       Fintype.card L := by

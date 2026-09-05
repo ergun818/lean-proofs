@@ -29,9 +29,10 @@ def coatedTreeOldCopy (T : SimpleGraph U) (r : U) (m : ℕ) : T.Copy (coatedTree
   (attachTwoPathsOldCopy _ (coatingParent r m)).comp
     (attachLeavesOldCopy T (fun _ : Unit ↦ r))
 
-theorem coatedTree_isTree [Fintype U] (T : SimpleGraph U) [DecidableRel T.Adj]
+theorem coatedTree_isTree [Finite U] (T : SimpleGraph U)
     (hT : T.IsTree) (r : U) (m : ℕ) : (coatedTree T r m).IsTree := by
   classical
+  let := Fintype.ofFinite U
   exact attachTwoPaths_isTree _ _ (attachLeaves_isTree T (fun _ : Unit ↦ r) hT)
 
 theorem card_coatedVertex [Fintype U] (m : ℕ) :
@@ -47,10 +48,14 @@ def coatedTreeColour {T : SimpleGraph U} (col : T.Coloring (Fin 2)) (r : U) (m :
 @[simp] theorem coatedTreeColour_old {T : SimpleGraph U} (col : T.Coloring (Fin 2))
     (r : U) (m : ℕ) (u : U) : coatedTreeColour col r m (coatedTreeOldCopy T r m u) = col u := rfl
 
-theorem coatedTree_dist [Fintype U] (T : SimpleGraph U) [DecidableRel T.Adj]
+theorem coatedTree_dist [Finite U] (T : SimpleGraph U)
     (hT : T.IsTree) (r : U) (m : ℕ) (u v : U) :
-    (coatedTree T r m).dist (coatedTreeOldCopy T r m u) (coatedTreeOldCopy T r m v) = T.dist u v :=
-  tree_copy_dist_eq hT (coatedTree_isTree T hT r m).isAcyclic (coatedTreeOldCopy T r m) u v
+    (coatedTree T r m).dist (coatedTreeOldCopy T r m u)
+      (coatedTreeOldCopy T r m v) = T.dist u v := by
+  classical
+  let := Fintype.ofFinite U
+  exact
+    tree_copy_dist_eq hT (coatedTree_isTree T hT r m).isAcyclic (coatedTreeOldCopy T r m) u v
 
 end Erdos547
 

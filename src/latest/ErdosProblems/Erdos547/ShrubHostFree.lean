@@ -69,16 +69,22 @@ def IsTarget (E : H.State) (S : ↥P.shrubs) (j : I) : Prop :=
     (E.farLoad (ShrubState.shrubGroup P H.head S) j : ℝ) <
       (1 - H.slack / 2) * H.capacity (ShrubState.shrubGroup P H.head S) j
 
-theorem exists_target (E : H.State) (S : ↥P.shrubs) : ∃ j, H.IsTarget E S j :=
-  E.exists_target (ShrubState.shrubGroup P H.head S) H.capacity H.slack H.targetFloor
-    H.slack_pos H.slack_le_one H.targetFloor_pos.le (H.group_positive S)
-    (H.group_demand _) (H.group_target_margin S)
+omit [DecidableEq V] in
+theorem exists_target (E : H.State) (S : ↥P.shrubs) : ∃ j, H.IsTarget E S j := by
+  classical
+  exact
+    E.exists_target (ShrubState.shrubGroup P H.head S) H.capacity H.slack H.targetFloor
+      H.slack_pos H.slack_le_one H.targetFloor_pos.le (H.group_positive S)
+      (H.group_demand _) (H.group_target_margin S)
 
+omit [DecidableEq V] in
 theorem target_regular (E : H.State) (S : ↥P.shrubs) (j : I) (hj : H.IsTarget E S j) :
     G.IsUniform H.ε (H.clusters (H.head S)) (H.clusters j) ∧
     Disjoint (H.clusters (H.head S)) (H.clusters j) ∧
-    H.d ≤ (G.edgeDensity (H.clusters (H.head S)) (H.clusters j) : ℝ) :=
-  H.capacity_regular _ j (H.targetFloor_pos.trans_le hj.1)
+    H.d ≤ (G.edgeDensity (H.clusters (H.head S)) (H.clusters j) : ℝ) := by
+  classical
+  exact
+    H.capacity_regular _ j (H.targetFloor_pos.trans_le hj.1)
 
 theorem target_free_room (E : H.State) (F : Finset ↥P.shrubs)
     (hEF : Disjoint E.placed F) (hcap : ∀ a i, (E.farLoad a i : ℝ) ≤ H.capacity a i)

@@ -43,8 +43,9 @@ theorem reservoir_count_after_union {V : Type*} [DecidableEq V]
   rw [Finset.inter_union_distrib_left]
   exact (Finset.card_union_le _ _).trans (Nat.add_le_add hused hfresh)
 
-theorem card_postponed_le_near_mass {F : Type*} [DecidableEq F]
+theorem card_postponed_le_near_mass {F : Type*}
     (B : Finset F) (w : F → ℕ) (hw : ∀ x ∈ B, 1 ≤ w x) : B.card ≤ ∑ x ∈ B, w x := by
+  classical
   calc
     B.card = ∑ _x ∈ B, 1 := by simp
     _ ≤ ∑ x ∈ B, w x := Finset.sum_le_sum hw

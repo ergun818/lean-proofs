@@ -12,7 +12,8 @@ open scoped BigOperators
 variable {F I J : Type*} [Fintype F] [Fintype I] [Nonempty I] [Fintype J] [DecidableEq I]
 
 open scoped Classical in
-theorem exists_weighted_bin_assignment (allowed : F → Finset I)
+omit [Fintype I] in
+theorem exists_weighted_bin_assignment [Finite I] (allowed : F → Finset I)
     (w : I → ℝ) (u : F → J → ℝ) (A L C : ℝ)
     (hw : ∀ i, 0 ≤ w i) (hA : 0 < A) (hC : 0 ≤ C)
     (hallowed : ∀ x, A ≤ ∑ i ∈ allowed x, w i)
@@ -22,6 +23,7 @@ theorem exists_weighted_bin_assignment (allowed : F → Finset I)
       ∀ i j, (∑ x ∈ (Finset.univ : Finset F).filter (fun x ↦ f x = i), u x j) <
         w i / A * (∑ x, u x j) + C := by
   classical
+  let := Fintype.ofFinite I
   let p : F → I → ℝ := fun x i ↦ if i ∈ allowed x
     then w i / (∑ l ∈ allowed x, w l) else 0
   have hden (x : F) : 0 < ∑ i ∈ allowed x, w i := hA.trans_le (hallowed x)

@@ -10,7 +10,7 @@ namespace Erdos547
 open Finset SimpleGraph
 
 open scoped Classical in
-theorem exists_short_path_closed_extension {U : Type*} [Fintype U] (T : SimpleGraph U)
+theorem exists_short_path_closed_extension {U : Type*} [Finite U] (T : SimpleGraph U)
     [DecidableRel T.Adj] (hT : T.IsAcyclic) (col : T.Coloring (Fin 2))
     (S H : Finset U) (hSH : S ⊆ H)
     (hdeg : ∀ u ∈ H, u ∉ S → degreeIn T H u = 2)
@@ -22,6 +22,7 @@ theorem exists_short_path_closed_extension {U : Type*} [Fintype U] (T : SimpleGr
         (∀ u ∈ p.support, u ∈ H) → (∀ u ∈ p.support, u ∈ Z → u = a ∨ u = b) →
         6 ≤ p.length := by
   classical
+  let := Fintype.ofFinite U
   obtain ⟨Z, hSZ, hZH, hcount, hZclosed, hnobridge⟩ :=
     exists_short_bridge_closed_extension T hT col S H hSH hclosed
   have hZdeg : ∀ u ∈ H, u ∉ Z → degreeIn T H u = 2 :=

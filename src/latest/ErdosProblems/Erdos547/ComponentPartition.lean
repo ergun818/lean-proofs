@@ -9,13 +9,14 @@ namespace Erdos547
 open Finset SimpleGraph
 
 open scoped Classical in
-theorem exists_component_partition {U : Type*} [Fintype U] [DecidableEq U] (T : SimpleGraph U)
+theorem exists_component_partition {U : Type*} [Finite U] [DecidableEq U] (T : SimpleGraph U)
     (A : Finset U) :
     ∃ F : Finset (Finset U), F.biUnion id = A ∧
       (∀ B ∈ F, ∀ C ∈ F, B ≠ C → Disjoint B C) ∧
       ∀ B ∈ F, B ⊆ A ∧ (T.induce (B : Set U)).Connected ∧
         ∀ u ∈ B, ∀ v ∈ A, T.Adj u v → v ∈ B := by
   classical
+  let := Fintype.ofFinite U
   let piece (C : (T.induce (A : Set U)).ConnectedComponent) : Finset U :=
     (inducedComponentSet T (A : Set U) C).toFinset
   have hsub (C : (T.induce (A : Set U)).ConnectedComponent) : piece C ⊆ A :=

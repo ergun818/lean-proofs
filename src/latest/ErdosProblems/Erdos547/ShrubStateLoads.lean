@@ -23,9 +23,12 @@ noncomputable def shrubGroup (P : FineTreePartition T r ℓ col) (head : ↥P.sh
 noncomputable def farLoad (E : ShrubState P G C head seed) (a : Fin 2 × I) (i : I) : ℕ :=
   routedLoad E.placed (shrubGroup P head) E.tail (fun S ↦ (P.farPart S).card) a i
 
+omit [DecidableEq V] in
 theorem sum_farLoad (E : ShrubState P G C head seed) (i : I) :
-    (∑ a, E.farLoad a i) = E.farUsed i :=
-  routedLoad_sum_groups E.placed (shrubGroup P head) E.tail (fun S ↦ (P.farPart S).card) i
+    (∑ a, E.farLoad a i) = E.farUsed i := by
+  classical
+  exact
+    routedLoad_sum_groups E.placed (shrubGroup P head) E.tail (fun S ↦ (P.farPart S).card) i
 
 theorem available_from_capacities (E : ShrubState P G C head seed)
     (hC : ∀ i j, i ≠ j → Disjoint (C i) (C j))
@@ -49,6 +52,7 @@ theorem available_from_capacities (E : ShrubState P G C head seed)
     exact_mod_cast hh
   exact E.available_from_loads hC F hEF R hR hRsize i Q m m₀ q hm hQ hmain hseed hload
 
+omit [DecidableEq V] in
 theorem exists_target (E : ShrubState P G C head seed) (a : Fin 2 × I)
     (capacity : (Fin 2 × I) → I → ℝ) (s L : ℝ)
     (hs : 0 < s) (hsone : s ≤ 1) (hL : 0 ≤ L)
@@ -56,11 +60,14 @@ theorem exists_target (E : ShrubState P G C head seed) (a : Fin 2 × I)
     (hdemand : (∑ S, if shrubGroup P head S = a then ((P.farPart S).card : ℝ) else 0) ≤
       (1 - s) * ∑ i, capacity a i)
     (hsmall : L * Fintype.card I ≤ s / 4 * ∑ i, capacity a i) :
-    ∃ i, L ≤ capacity a i ∧ (E.farLoad a i : ℝ) < (1 - s / 2) * capacity a i :=
-  exists_routed_target E.placed (shrubGroup P head) E.tail (fun S ↦ (P.farPart S).card)
-    a (capacity a) s L hs hsone hL hpositive hdemand hsmall
+    ∃ i, L ≤ capacity a i ∧ (E.farLoad a i : ℝ) < (1 - s / 2) * capacity a i := by
+  classical
+  exact
+    exists_routed_target E.placed (shrubGroup P head) E.tail (fun S ↦ (P.farPart S).card)
+      a (capacity a) s L hs hsone hL hpositive hdemand hsmall
 
-theorem capacities_after_insert (E E' : ShrubState P G C head seed)
+omit [DecidableEq V] [Fintype I] in
+theorem capacities_after_insert [Finite I] (E E' : ShrubState P G C head seed)
     (S : ↥P.shrubs) (hS : S ∉ E.placed) (j : I)
     (hplaced : E'.placed = insert S E.placed) (htail : E'.tail = Function.update E.tail S j)
     (capacity : (Fin 2 × I) → I → ℝ) (s : ℝ)
@@ -70,6 +77,8 @@ theorem capacities_after_insert (E E' : ShrubState P G C head seed)
       (1 - s / 2) * capacity (shrubGroup P head S) j)
     (hsmall : ((P.farPart S).card : ℝ) ≤ s / 4 * capacity (shrubGroup P head S) j) :
     ∀ a i, (E'.farLoad a i : ℝ) ≤ capacity a i := by
+  classical
+  let := Fintype.ofFinite I
   intro a i
   unfold farLoad
   rw [hplaced, htail]

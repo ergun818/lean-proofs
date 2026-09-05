@@ -39,7 +39,9 @@ theorem exists_embedding_order_threshold {a : ℝ} (k : EmbeddingConstants a)
   have hres : 0 ≤ 2 / k.beta := div_nonneg (by norm_num) k.beta_pos.le
   have hsprod := mul_nonneg (show 0 ≤ 8 * B by positivity) hseed
   have hrprod := mul_nonneg (show 0 ≤ 8 * B by positivity) hres
-  have hage : 8 / a ≤ (n : ℝ) := by dsimp only [bound] at hbound; nlinarith only [hbound, hsprod, hrprod]
+  have hage : 8 / a ≤ (n : ℝ) := by
+    dsimp only [bound] at hbound
+    nlinarith only [hbound, hsprod, hrprod]
   constructor
   · have hh := (div_le_iff₀ ha).mp hage
     nlinarith only [hh]

@@ -65,7 +65,8 @@ theorem isContained_of_reduced_degrees (hT : T.IsTree) (R : EquitableRegularPart
     · exact (hcc rfl).elim
   have hγ (c : Fin 2) : 0 < P.partRatio c :=
     div_pos (by exact_mod_cast hfar c) (by exact_mod_cast hnear c)
-  have htotal (c : Fin 2) : (σ c).total = scale * ((P.nearVertices c).card + (P.farVertices c).card) := by
+  have htotal (c : Fin 2) :
+      (σ c).total = scale * ((P.nearVertices c).card + (P.farVertices c).card) := by
     fin_cases c
     · exact hσ₀
     · exact hσ₁
@@ -78,7 +79,8 @@ theorem isContained_of_reduced_degrees (hT : T.IsTree) (R : EquitableRegularPart
     (hfitW c i).trans (R.reduced_weight_le_density d (anchor c) i)
   have hjoint (i : ↥R.clusters) : (σ 0).outLoad i + (σ 1).outLoad i ≤
       max (G.edgeDensity (anchor 0).val i.val : ℝ) (G.edgeDensity (anchor 1).val i.val : ℝ) :=
-    (hp.joint i).trans (max_le_max (R.reduced_weight_le_density d a i) (R.reduced_weight_le_density d b i))
+    (hp.joint i).trans
+      (max_le_max (R.reduced_weight_le_density d a i) (R.reduced_weight_le_density d b i))
   obtain ⟨Q, buffer, hQB⟩ := R.exists_cluster_reservoirs q (by omega)
   let B := fun i : ↥R.clusters ↦ i.val \ (Q i ∪ buffer i)
   have hB (i : ↥R.clusters) : B i ⊆ i.val := Finset.sdiff_subset
@@ -101,7 +103,8 @@ theorem isContained_of_reduced_degrees (hT : T.IsTree) (R : EquitableRegularPart
   have hsupport (c : Fin 2) (i : ↥R.clusters) (hi : θ ≤ (σ c).outLoad i) : i ∈ J c :=
     ((R.reducedGraph d).mem_neighborFinset _ _).mpr
       ((hfitW c).adj_of_outLoad_pos i (hθ.trans_le hi))
-  obtain ⟨H⟩ := P.exists_setup_from_typical_seed G (R.reducedGraph d) Subtype.val B Q anchor J seed D
+  obtain ⟨H⟩ := P.exists_setup_from_typical_seed G (R.reducedGraph d)
+    Subtype.val B Q anchor J seed D
     P.partRatio σ ε δ d η s L θ err A R.clusterSize M q
     hε hδ.le hη hs hsone hL hθ herr hA hM hγ hde hmargin hprivate hεm hseed hseedq hbuffer
     hvolume (fun i ↦ R.equal_size i.val i.property) R.index_disjoint hsmall hℓtarget

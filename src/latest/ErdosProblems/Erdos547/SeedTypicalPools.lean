@@ -23,12 +23,14 @@ def manyNonTypicalVertices (ε δ : ℝ) (X : Finset V) (J : Finset I)
     (C B : I → Finset V) : Finset V :=
   X.filter (fun v ↦ δ * J.card < ((nonTypicalPartners G ε X J C B v).card : ℝ))
 
+omit [DecidableEq V] in
 theorem card_manyNonTypicalVertices_le (ε δ : ℝ) (X : Finset V) (J : Finset I)
     (C B : I → Finset V) (hδ : 0 < δ) (hεδ : ε ≤ δ ^ 2)
     (hreg : ∀ i ∈ J, G.IsUniform ε X (C i))
     (hB : ∀ i ∈ J, B i ⊆ C i)
     (hsize : ∀ i ∈ J, ((C i).card : ℝ) * ε ≤ (B i).card) :
     ((manyNonTypicalVertices G ε δ X J C B).card : ℝ) ≤ δ * X.card := by
+  classical
   exact card_many_nonTypical_le G X J C B ε δ hδ hεδ hreg hB hsize
 
 theorem exists_seed_typical_pool {ε δ : ℝ} (hδ : 0 < δ) (hεδ : ε ≤ δ ^ 2)

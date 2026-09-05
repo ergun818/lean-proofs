@@ -14,7 +14,9 @@ open Finset SimpleGraph
 variable {U : Type*} [Fintype U] (T : SimpleGraph U) [DecidableRel T.Adj]
 
 open scoped Classical in
-theorem exists_short_bridge_closed_extension (hT : T.IsAcyclic) (col : T.Coloring (Fin 2))
+omit [Fintype U] in
+theorem exists_short_bridge_closed_extension [Finite U]
+    (hT : T.IsAcyclic) (col : T.Coloring (Fin 2))
     (S H : Finset U) (hSH : S ⊆ H)
     (hclosed : ∀ u ∈ S, col u = 1 → ∀ v ∈ H, T.Adj u v → v ∈ S) :
     ∃ Z : Finset U, S ⊆ Z ∧ Z ⊆ H ∧ Z.card ≤ 5 * S.card ∧
@@ -23,6 +25,7 @@ theorem exists_short_bridge_closed_extension (hT : T.IsAcyclic) (col : T.Colorin
         3 ≤ P.card → P.card ≤ 6 → (Z ∩ P).card = 2 → degreeMass T (Z ∩ P) = 0 →
         (∀ u ∈ P, col u = 1 → ∀ v ∈ H, T.Adj u v → v ∈ Z ∪ P) → False := by
   classical
+  let := Fintype.ofFinite U
   let candidates := (Finset.univ : Finset (Finset U)).filter (fun Z ↦
     S ⊆ Z ∧ Z ⊆ H ∧ shortBridgePotential T Z ≤ 5 * S.card ∧
       ∀ u ∈ Z, col u = 1 → ∀ v ∈ H, T.Adj u v → v ∈ Z)

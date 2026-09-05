@@ -15,7 +15,8 @@ variable {U I : Type*} [Fintype U] [DecidableEq U] [Fintype I] [Nonempty I] [Dec
   {col : T.Coloring (Fin 2)}
 
 open scoped Classical in
-theorem exists_shrub_allocation (P : FineTreePartition T r ℓ col) (c : Fin 2)
+omit [Fintype I] in
+theorem exists_shrub_allocation [Finite I] (P : FineTreePartition T r ℓ col) (c : Fin 2)
     (allowed : ↥(P.shrubsOfColour c) → Finset I) (w : I → ℝ) (A C : ℝ)
     (hw : ∀ i, 0 ≤ w i) (hA : 0 < A) (hC : 0 ≤ C)
     (hallowed : ∀ S, A ≤ ∑ i ∈ allowed S, w i)
@@ -29,6 +30,7 @@ theorem exists_shrub_allocation (P : FineTreePartition T r ℓ col) (c : Fin 2)
           ((S.val.filter (fun v ↦ col v = c)).card : ℝ)) <
             w i / A * (P.farVertices c).card + C := by
   classical
+  let := Fintype.ofFinite I
   have h10 : (1 : Fin 2) ≠ 0 := by decide
   let u : ↥(P.shrubsOfColour c) → Fin 2 → ℝ := fun S j ↦
     if j = 0 then ((S.val.filter (fun v ↦ col v ≠ c)).card : ℝ)

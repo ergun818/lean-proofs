@@ -17,6 +17,7 @@ variable {U V I : Type*} [Fintype U] [Fintype I]
   {T : SimpleGraph U} [DecidableRel T.Adj] {r : U} {ℓ : ℕ}
   {col : T.Coloring (Fin 2)} (P : FineTreePartition T r ℓ col)
 
+omit [DecidableEq V] in
 theorem exists_setup_from_typical_seed (G : SimpleGraph V) [DecidableRel G.Adj]
     (K : SimpleGraph I) (C B Q : I → Finset V) (anchor : Fin 2 → I) (J : Fin 2 → Finset I)
     (seed : (T.induce (P.seeds : Set U)).Copy G)
@@ -96,7 +97,8 @@ theorem exists_setup_from_typical_seed (G : SimpleGraph V) [DecidableRel G.Adj]
     · exact herrorNear
     · exact herrorFar c
   obtain ⟨head, hhead, hheadload⟩ := P.exists_relative_shrub_heads allowed w A (fun _ ↦ θ) err
-    coeff margin (fun c i ↦ (σ c).outLoad_nonneg i) hA herr hallowed hweight hvariance hcoeff hmar hmn hmf he
+    coeff margin (fun c i ↦ (σ c).outLoad_nonneg i)
+    hA herr hallowed hweight hvariance hcoeff hmar hmn hmf he
   have hnear (c : Fin 2) (i : I) : (∑ S ∈ (Finset.univ : Finset ↥P.shrubs).filter
       (fun S ↦ P.shrubColour S = c ∧ head S = i), ((P.nearPart S).card : ℝ)) ≤
         (1 - s) * M * (σ c).outLoad i := by

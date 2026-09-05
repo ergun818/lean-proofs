@@ -9,9 +9,10 @@ namespace Erdos547
 open Finset
 open scoped BigOperators
 
-theorem card_coe_filter_univ {U : Type*} [DecidableEq U]
+theorem card_coe_filter_univ {U : Type*}
     (S : Finset U) (p : U → Prop) [DecidablePred p] :
     ((Finset.univ : Finset ↥S).filter (fun v ↦ p v.val)).card = (S.filter p).card := by
+  classical
   rw [← Finset.attach_eq_univ, Finset.filter_attach, Finset.card_map, Finset.card_attach]
 
 theorem card_cluster_image_le_two_parts {A V I : Type*} [Fintype A]

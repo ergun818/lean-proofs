@@ -15,6 +15,7 @@ variable {U V I : Type*} [Fintype U] [Fintype I]
   {col : T.Coloring (Fin 2)} {P : FineTreePartition T r ℓ col}
   {G : SimpleGraph V} [DecidableRel G.Adj]
 
+omit [DecidableEq V] in
 theorem isContained (H : ShrubHostSetup P G I) (hT : T.IsTree) : T ⊑ G := by
   classical
   obtain ⟨E, hplaced, hcap, hbound, hreserved⟩ := H.exists_initial_state

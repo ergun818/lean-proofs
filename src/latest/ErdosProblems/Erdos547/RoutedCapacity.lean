@@ -12,6 +12,7 @@ open scoped BigOperators
 variable {F A I : Type*} [Fintype F] [Fintype I]
   [DecidableEq F] [DecidableEq A] [DecidableEq I]
 
+omit [DecidableEq F] in
 theorem exists_routed_target (E : Finset F) (group : F → A) (route : F → I)
     (w : F → ℕ) (a : A) (capacity : I → ℝ) (s L : ℝ)
     (hs : 0 < s) (hsone : s ≤ 1) (hL : 0 ≤ L)
@@ -20,6 +21,7 @@ theorem exists_routed_target (E : Finset F) (group : F → A) (route : F → I)
     (hsmall : L * Fintype.card I ≤ s / 4 * ∑ i, capacity i) :
     ∃ i, L ≤ capacity i ∧
       (routedLoad E group route w a i : ℝ) < (1 - s / 2) * capacity i := by
+  classical
   have hh := routedLoad_le_group_demand E group route w a
   have hcast : (∑ i, (routedLoad E group route w a i : ℝ)) ≤
       ∑ x, if group x = a then (w x : ℝ) else 0 := by
@@ -27,7 +29,9 @@ theorem exists_routed_target (E : Finset F) (group : F → A) (route : F → I)
   exact exists_target_capacity capacity (fun i ↦ (routedLoad E group route w a i : ℝ))
     (fun i ↦ Nat.cast_nonneg _) s L hs hsone hL hpositive (hcast.trans hdemand) hsmall
 
-theorem routed_capacity_preserved (E : Finset F) (group : F → A) (route : F → I)
+omit [Fintype F] [Fintype I] in
+theorem routed_capacity_preserved [Finite I] [Finite F]
+    (E : Finset F) (group : F → A) (route : F → I)
     (w : F → ℕ) (capacity : A → I → ℝ) (x : F) (hx : x ∉ E) (j : I) (s : ℝ)
     (hcap : ∀ a i, (routedLoad E group route w a i : ℝ) ≤ capacity a i)
     (hpositive : 0 < capacity (group x) j) (hs : 0 < s)
@@ -36,6 +40,9 @@ theorem routed_capacity_preserved (E : Finset F) (group : F → A) (route : F �
     (hsmall : (w x : ℝ) ≤ s / 4 * capacity (group x) j) :
     ∀ a i, (routedLoad (insert x E) group (Function.update route x j) w a i : ℝ) ≤
       capacity a i := by
+  classical
+  let := Fintype.ofFinite F
+  let := Fintype.ofFinite I
   intro a i
   rw [routedLoad_insert E group route w x hx j a i, Nat.cast_add]
   by_cases h : group x = a ∧ j = i
@@ -45,10 +52,15 @@ theorem routed_capacity_preserved (E : Finset F) (group : F → A) (route : F �
   · rw [if_neg h, Nat.cast_zero, add_zero]
     exact hcap a i
 
-theorem routedLoad_le_after_insert (E : Finset F) (group : F → A) (route : F → I)
+omit [Fintype F] [Fintype I] in
+theorem routedLoad_le_after_insert [Finite I] [Finite F]
+    (E : Finset F) (group : F → A) (route : F → I)
     (w : F → ℕ) (x : F) (hx : x ∉ E) (j : I) (a : A) (i : I) :
     routedLoad E group route w a i ≤
       routedLoad (insert x E) group (Function.update route x j) w a i := by
+  classical
+  let := Fintype.ofFinite F
+  let := Fintype.ofFinite I
   rw [routedLoad_insert E group route w x hx j a i]
   exact Nat.le_add_right _ _
 

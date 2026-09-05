@@ -125,7 +125,8 @@ theorem process_same_head (hT : T.IsTree) (i : I) (L : Finset ↥P.shrubs)
           postponed_sub := O.postponed_sub.trans (Finset.subset_insert _ _)
           placed_eq := ?_
           occupied_mono := hmono₁.trans O.occupied_mono
-          load_mono := fun a k ↦ (H.farLoad_le_after_insert E E₁ S hSnot j hplaced₁ htail₁ a k).trans
+          load_mono := fun a k ↦
+            (H.farLoad_le_after_insert E E₁ S hSnot j hplaced₁ htail₁ a k).trans
             (O.load_mono a k)
           reserved := by simpa only [hremain] using O.reserved
           capacity := O.capacity

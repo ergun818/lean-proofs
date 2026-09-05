@@ -9,10 +9,11 @@ namespace Erdos547
 
 open Finset SimpleGraph
 
-theorem reducedDensity_le_density {V : Type*} [Fintype V] [DecidableEq V]
+theorem reducedDensity_le_density {V : Type*} [Finite V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (ε d : ℝ) (X Y : Finset V) :
     reducedDensity G ε d X Y ≤ (G.edgeDensity X Y : ℝ) := by
   classical
+  let := Fintype.ofFinite V
   unfold reducedDensity
   split_ifs
   · exact le_rfl

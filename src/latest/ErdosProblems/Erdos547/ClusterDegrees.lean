@@ -12,15 +12,22 @@ open scoped BigOperators
 variable {V I : Type*} [Fintype V] [DecidableEq V]
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
-theorem degreeIn_biUnion_le (J : Finset I) (C : I → Finset V) (v : V) :
+omit [Fintype V] in
+theorem degreeIn_biUnion_le [Finite V] (J : Finset I) (C : I → Finset V) (v : V) :
     degreeIn G (J.biUnion C) v ≤ ∑ i ∈ J, degreeIn G (C i) v := by
+  classical
+  let := Fintype.ofFinite V
   unfold degreeIn
   rw [Finset.filter_biUnion]
   exact Finset.card_biUnion_le
 
-theorem sum_degreeIn_eq_density_mul {X Y : Finset V} (hX : X.Nonempty) (hY : Y.Nonempty) :
+omit [DecidableEq V] [Fintype V] in
+theorem sum_degreeIn_eq_density_mul [Finite V] {X Y : Finset V}
+    (hX : X.Nonempty) (hY : Y.Nonempty) :
     (∑ v ∈ X, (degreeIn G Y v : ℝ)) =
       (G.edgeDensity X Y : ℝ) * ((X.card : ℝ) * Y.card) := by
+  classical
+  let := Fintype.ofFinite V
   have hp : (X.card : ℝ) * Y.card ≠ 0 := ne_of_gt
     (mul_pos (by exact_mod_cast hX.card_pos) (by exact_mod_cast hY.card_pos))
   exact ((eq_div_iff hp).mp (edgeDensity_eq_sum_degreeIn_div G X Y)).symm
