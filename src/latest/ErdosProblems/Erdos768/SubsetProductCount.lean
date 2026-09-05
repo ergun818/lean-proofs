@@ -20,7 +20,7 @@ the elementary fiber-count identity
 `#{s ∈ ∏ S_j : P(f∘s)} = ∏_j |S_j| · ∑_ω (∏_j μ_j(ω_j)) · [P ω]`.
 -/
 
-open scoped Classical BigOperators
+open scoped BigOperators
 open Finset
 
 namespace Erdos768
@@ -33,6 +33,7 @@ Fourier coefficient of the pushforward of uniform-on-`S_j` is at most `ρ`
 `2^m/|G| ≥ Λ₀`, then the number of tuples `s ∈ ∏_j S_j` for which no nonempty
 subset of `{f_j(s_j)}` sums to `0` is at most `C₁·|G|/2^m·∏_j|S_j|`.
 -/
+open scoped Classical in
 theorem subset_product_count :
     ∃ (Λ₀ C₁ : ℝ), 0 < Λ₀ ∧ 0 < C₁ ∧
       ∀ (G : Type) [AddCommGroup G] [Fintype G] (m : ℕ)
@@ -47,45 +48,74 @@ theorem subset_product_count :
               ∑ j ∈ J, f j (s j) ≠ 0)).card : ℝ)
           ≤ C₁ * (Fintype.card G : ℝ) / (2 : ℝ) ^ m * ∏ j, ((S j).card : ℝ) := by
   obtain ⟨ Λ₀, C₁, hΛ₀, hC₁, h ⟩ := subset_product_hits_identity;
-  refine' ⟨ Λ₀, C₁, hΛ₀, hC₁, fun G _ _ m S f ρ hSne hFourier hmρ hΛ => _ ⟩;
-  convert! mul_le_mul_of_nonneg_right ( h G m ( fun j => PMF.map ( f j ) ( PMF.uniformOfFinset ( S j ) ( hSne j ) ) ) ρ _ hmρ hΛ ) ( show 0 ≤ ( ∏ j : Fin m, ( S j |> Finset.card : ℝ ) ) by exact Finset.prod_nonneg fun _ _ => Nat.cast_nonneg _ ) using 1;
-  · -- By definition of $μ$, we know that $(μ j (ω j)).toReal = ((S j).filter (fun q => f j q = ω j)).card / (S j).card$.
-    have hμ : ∀ j ω, ((PMF.map (f j) (PMF.uniformOfFinset (S j) (hSne j)) ω).toReal) = ((S j).filter (fun q => f j q = ω)).card / (S j).card := by
+  refine ⟨ Λ₀, C₁, hΛ₀, hC₁, fun G _ _ m S f ρ hSne hFourier hmρ hΛ => ?_ ⟩;
+  convert! mul_le_mul_of_nonneg_right ( h G m ( fun j => PMF.map ( f j ) ( PMF.uniformOfFinset ( S j
+      ) ( hSne j ) ) ) ρ _ hmρ hΛ ) ( show 0 ≤ ( ∏ j : Fin m, ( S j |> Finset.card : ℝ ) ) by
+    exact Finset.prod_nonneg fun _ _ => Nat.cast_nonneg _ ) using 1;
+  · -- By definition of $μ$, we know that $(μ j (ω j)).toReal = ((S j).filter (fun q => f j q = ω
+  -- j)).card / (S j).card$.
+    have hμ : ∀ j ω, ((PMF.map (f j) (PMF.uniformOfFinset (S j) (hSne j)) ω).toReal) = ((S j).filter
+        (fun q => f j q = ω)).card / (S j).card := by
       intro j ω;
       rw [ PMF.map_apply ];
       rw [ tsum_eq_sum ];
       any_goals exact S j;
-      · simp +decide [ Finset.sum_ite, PMF.uniformOfFinset_apply ];
-        simp +decide [ eq_comm, Finset.filter_inter ];
-        ring;
-      · simp +contextual [ PMF.uniformOfFinset_apply ];
+      · simp +decide only [PMF.uniformOfFinset_apply, sum_ite, sum_ite_mem, sum_const,
+          nsmul_eq_mul];
+        simp +decide only [filter_inter, inter_self, eq_comm]
+        ring_nf
+        norm_num [ENNReal.toReal_mul, ENNReal.toReal_inv]
+      · simp +contextual only [PMF.uniformOfFinset_apply, ↓reduceIte, ite_self, implies_true];
     simp +decide only [hμ, mul_comm];
     simp +decide only [ne_eq, prod_div_distrib, mul_ite, mul_one, mul_zero];
-    rw [ Finset.sum_congr rfl fun x hx => by rw [ mul_div_cancel₀ _ <| Finset.prod_ne_zero_iff.mpr fun _ _ => Nat.cast_ne_zero.mpr <| ne_of_gt <| Finset.card_pos.mpr <| hSne _ ] ] ; norm_cast;
-    rw [ show ( Finset.filter ( fun s : Fin m → ℕ => ∀ J : Finset ( Fin m ), J.Nonempty → ¬∑ j ∈ J, f j ( s j ) = 0 ) ( Fintype.piFinset S ) ) = Finset.biUnion ( Finset.filter ( fun ω : Fin m → G => ∀ J : Finset ( Fin m ), J.Nonempty → ¬∑ j ∈ J, ω j = 0 ) ( Finset.univ : Finset ( Fin m → G ) ) ) ( fun ω => Finset.filter ( fun s : Fin m → ℕ => ∀ j, f j ( s j ) = ω j ) ( Fintype.piFinset S ) ) from ?_, Finset.card_biUnion ];
-    · refine' Finset.sum_congr rfl fun x hx => _;
+    have hprod : (∏ j : Fin m, ((S j).card : ℝ)) ≠ 0 :=
+      Finset.prod_ne_zero_iff.mpr fun j _ => Nat.cast_ne_zero.mpr (hSne j).card_pos.ne'
+    simp only [Finset.mul_sum, mul_ite, mul_zero, mul_div_cancel₀ _ hprod]
+    norm_cast
+    rw [← Finset.sum_filter]
+    rw [ show ( Finset.filter ( fun s : Fin m → ℕ => ∀ J : Finset ( Fin m ), J.Nonempty → ¬∑ j ∈
+        J, f j ( s j ) = 0 ) ( Fintype.piFinset S ) ) = Finset.biUnion ( Finset.filter ( fun ω :
+        Fin m → G => ∀ J : Finset ( Fin m ), J.Nonempty → ¬∑ j ∈ J, ω j = 0 ) ( Finset.univ :
+        Finset ( Fin m → G ) ) ) ( fun ω => Finset.filter ( fun s : Fin m → ℕ => ∀ j, f j ( s j )
+        = ω j ) ( Fintype.piFinset S ) ) from ?_, Finset.card_biUnion ];
+    · refine Finset.sum_congr rfl fun x hx => ?_;
       rw [ ← Fintype.card_piFinset ];
-      congr with s ; simp +decide;
+      congr with s ; simp +decide only [mem_filter, Fintype.mem_piFinset];
       exact ⟨ fun h j => ⟨ h.1 j, h.2 j ⟩, fun h => ⟨ fun j => h j |>.1, fun j => h j |>.2 ⟩ ⟩;
     · intros ω hω ω' hω' hωω';
-      simp +decide [ Finset.disjoint_left ];
+      simp +decide only [disjoint_left, mem_filter, Fintype.mem_piFinset, not_and, not_forall,
+          and_imp];
       grind +splitIndPred;
-    · ext; simp [Finset.mem_biUnion];
-      exact ⟨ fun h => ⟨ _, h.2, h.1, fun j => rfl ⟩, by rintro ⟨ a, ha₁, ha₂, ha₃ ⟩ ; exact ⟨ ha₂, fun J hJ => by simpa only [ ha₃ ] using! ha₁ J hJ ⟩ ⟩;
+    · ext; simp only [mem_filter, Fintype.mem_piFinset, mem_biUnion, mem_univ, true_and];
+      exact ⟨ fun h => ⟨ _, h.2, h.1, fun j => rfl ⟩, by
+        rintro ⟨ a, ha₁, ha₂, ha₃ ⟩ ; exact ⟨ ha₂, fun J hJ => by
+          simpa only [ ha₃ ] using! ha₁ J hJ ⟩ ⟩;
   · intro j χ hχ;
     -- By definition of $μ$, we know that
-    have hμ : ∑ g : G, (PMF.map (f j) (PMF.uniformOfFinset (S j) (hSne j)) g).toReal * χ g = (∑ q ∈ S j, χ (f j q)) / (S j).card := by
+    have hμ : ∑ g : G, (PMF.map (f j) (PMF.uniformOfFinset (S j) (hSne j)) g).toReal * χ g = (∑ q ∈
+        S j, χ (f j q)) / (S j).card := by
       simp +decide only [PMF.map_apply, PMF.uniformOfFinset_apply];
       rw [ ← Finset.sum_subset ( Finset.subset_univ ( Finset.image ( f j ) ( S j ) ) ) ];
-      · rw [ Finset.sum_image' ];
+      · rw [Finset.sum_image' (fun q => χ (f j q) / (S j).card), Finset.sum_div]
         intro i hi; rw [ tsum_eq_sum ];
         any_goals exact S j;
-        · simp +decide [ Finset.sum_ite, div_eq_mul_inv, mul_comm, mul_left_comm ];
-          rw [ Finset.sum_congr rfl fun x hx => by rw [ show f j x = f j i from Finset.mem_filter.mp hx |>.2 ] ] ; simp +decide [ mul_assoc, mul_comm ];
-          simp +decide [ eq_comm, Finset.filter_inter ];
+        · simp +decide only [sum_ite, sum_ite_mem, sum_const, nsmul_eq_mul, mul_comm,
+            div_eq_mul_inv]
+          rw [ Finset.sum_congr rfl fun x hx => by
+            rw [show f j x = f j i from Finset.mem_filter.mp hx |>.2]]
+          simp +decide only [sum_const, nsmul_eq_mul, mul_comm, mul_assoc]
+          simp +decide only [filter_inter, inter_self, eq_comm]
+          norm_num [ENNReal.toReal_mul, ENNReal.toReal_inv]
+          ring
         · grind;
-      · intro x hx hx'; rw [ tsum_eq_single ( Classical.choose ( hSne j ) ) ] <;> simp +contextual [ Classical.choose_spec ( hSne j ) ] ;
-        · exact Or.inl ( by rw [ if_neg ( by intro h; exact hx' <| h.symm ▸ Finset.mem_image_of_mem _ ( Classical.choose_spec ( hSne j ) ) ) ] ; norm_num );
+      · intro x hx hx'
+        rw [tsum_eq_single (Classical.choose (hSne j))] <;> simp +contextual only [
+          Classical.choose_spec (hSne j), ↓reduceIte, mul_eq_zero, Complex.ofReal_eq_zero, ne_eq,
+          ite_eq_right_iff, ENNReal.inv_eq_zero, ENNReal.natCast_ne_top, imp_false] ;
+        · exact Or.inl ( by
+            rw [ if_neg ( by
+              intro h; exact hx' <| h.symm ▸ Finset.mem_image_of_mem _ ( Classical.choose_spec (
+                hSne j ) ) ) ] ; norm_num );
         · exact fun y hy₁ hy₂ hy₃ => hx' <| hy₂ ▸ Finset.mem_image_of_mem _ hy₃;
     rw [ hμ, norm_div ];
     rw [ div_le_iff₀ ] <;> norm_cast <;> norm_num [ hSne j ];
@@ -97,6 +127,8 @@ arbitrary finite index type `ι` in place of `Fin m`.  Obtained from the `Fin m`
 version by transporting along an equivalence `ι ≃ Fin (Fintype.card ι)`.
 -/
 set_option maxHeartbeats 1000000 in
+-- Transporting the filtered tuple count across an equivalence uses the existing budget.
+open scoped Classical in
 theorem subset_product_count_fintype :
     ∃ (Λ₀ C₁ : ℝ), 0 < Λ₀ ∧ 0 < C₁ ∧
       ∀ (G : Type) [AddCommGroup G] [Fintype G]
@@ -112,18 +144,32 @@ theorem subset_product_count_fintype :
               ∑ j ∈ J, f j (s j) ≠ 0)).card : ℝ)
           ≤ C₁ * (Fintype.card G : ℝ) / (2 : ℝ) ^ (Fintype.card ι) * ∏ j, ((S j).card : ℝ) := by
   obtain ⟨ Λ₀, C₁, hΛ₀, hC₁, h ⟩ := subset_product_count;
-  refine' ⟨ Λ₀, C₁, hΛ₀, hC₁, _ ⟩;
+  refine ⟨ Λ₀, C₁, hΛ₀, hC₁, ?_ ⟩;
   intro G _ _ ι _ _ S f ρ hSne hFourier hmρ hΛ;
-  specialize h G ( Fintype.card ι ) ( fun k => S ( Fintype.equivFin ι |>.symm k ) ) ( fun k => f ( Fintype.equivFin ι |>.symm k ) ) ρ;
+  specialize h G ( Fintype.card ι ) ( fun k => S ( Fintype.equivFin ι |>.symm k ) ) ( fun k => f (
+      Fintype.equivFin ι |>.symm k ) ) ρ;
   convert! h ( fun j => hSne _ ) ( fun j χ hχ => hFourier _ _ hχ ) hmρ hΛ using 1;
-  · refine' congr_arg _ ( Finset.card_bij ( fun s hs => fun k => s ( Fintype.equivFin ι |>.symm k ) ) _ _ _ ) <;> simp +decide only [ne_eq, mem_filter, Fintype.mem_piFinset, and_imp, exists_prop];
-    · intro a ha₁ ha₂; refine' ⟨ fun j => ha₁ _, fun J hJ => _ ⟩ ; contrapose! ha₂; simp_all +decide ;
+  · refine congr_arg _ ( Finset.card_bij ( fun s hs => fun k => s ( Fintype.equivFin ι |>.symm k
+      ) ) ?_ ?_ ?_ ) <;> simp +decide only [ne_eq, mem_filter, Fintype.mem_piFinset, and_imp,
+      exists_prop];
+    · intro a ha₁ ha₂
+      refine ⟨fun j => ha₁ ((Fintype.equivFin ι).symm j), fun J hJ => ?_⟩
+      contrapose! ha₂
+      simp_all +decide only [implies_true, ne_eq, not_false_eq_true, forall_const];
       use Finset.image ( fun x => ( Fintype.equivFin ι ).symm x ) J; aesop;
-    · exact fun a₁ ha₁ ha₂ a₂ ha₃ ha₄ h => funext fun x => by simpa using! congr_fun h ( Fintype.equivFin ι x ) ;
-    · intro b hb hb'; use fun j => b ( Fintype.equivFin ι j ) ; simp +decide ;
-      refine' ⟨ _, _ ⟩;
+    · exact fun a₁ ha₁ ha₂ a₂ ha₃ ha₄ h => funext fun x => by
+        simpa using! congr_fun h ( Fintype.equivFin ι x ) ;
+    · intro b hb hb'; use fun j => b ( Fintype.equivFin ι j ) ; simp +decide only [
+        Equiv.apply_symm_apply, and_true] ;
+      refine ⟨ ?_, ?_ ⟩;
       · exact fun a => by simpa using! hb ( Fintype.equivFin ι a ) ;
-      · intro J hJ; specialize hb' ( Finset.image ( Fintype.equivFin ι ) J ) ; simp_all +decide [ Finset.Nonempty ] ;
+      · intro J hJ
+        specialize hb' (Finset.image (Fintype.equivFin ι) J)
+        simp_all +decide only [
+          Finset.Nonempty, ne_eq, not_false_eq_true, implies_true, forall_exists_index,
+          forall_const, mem_image, ↓existsAndEq, and_true, EmbeddingLike.apply_eq_iff_eq,
+          Set.injOn_of_eq_iff_eq, sum_image, Equiv.symm_apply_apply, nonempty_subtype,
+          forall_mem_const] ;
   · rw [ ← Equiv.prod_comp ( Fintype.equivFin ι ) ] ; aesop
 
 end Erdos768

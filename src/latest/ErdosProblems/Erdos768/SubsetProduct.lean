@@ -22,7 +22,7 @@ one) with `∑_{j∈J} ω_j = 0`.  Character orthogonality gives
 The mean is `Λ + O(1)` and the variance is `O(Λ + 1)`; Chebyshev finishes.
 -/
 
-open scoped Classical BigOperators
+open scoped BigOperators
 open Finset
 
 namespace Erdos768
@@ -37,8 +37,9 @@ noncomputable def fourierCoeff {m : ℕ} (μ : Fin m → PMF G) (χ : AddChar G 
 
 /-- `Z₀(ω)`: number of subsets (including the empty subset) of the coordinates
 whose sum is `0`. -/
-noncomputable def Z0 {m : ℕ} (ω : Fin m → G) : ℕ :=
-  ((Finset.univ : Finset (Fin m)).powerset.filter (fun J => ∑ j ∈ J, ω j = 0)).card
+noncomputable def Z0 {m : ℕ} (ω : Fin m → G) : ℕ := by
+  classical
+  exact ((Finset.univ : Finset (Fin m)).powerset.filter (fun J => ∑ j ∈ J, ω j = 0)).card
 
 /-- The weight `P(ω) = ∏_j μ_j(ω_j)`. -/
 noncomputable def wgt {m : ℕ} (μ : Fin m → PMF G) (ω : Fin m → G) : ℝ :=
@@ -66,6 +67,7 @@ The weights are nonnegative.
 -/
 omit [AddCommGroup G] [Fintype G] in
 lemma wgt_nonneg {m : ℕ} (μ : Fin m → PMF G) (ω : Fin m → G) : 0 ≤ wgt μ ω := by
+  classical
   exact Finset.prod_nonneg fun _ _ => ENNReal.toReal_nonneg
 
 /-
@@ -73,6 +75,7 @@ The weights sum to `1`.
 -/
 omit [AddCommGroup G] in
 lemma sum_wgt {m : ℕ} (μ : Fin m → PMF G) : ∑ ω : (Fin m → G), wgt μ ω = 1 := by
+  classical
   -- By definition of $PMF$, we know that $\sum_{g \in G} \mu_j(g) = 1$ for each $j$.
   have h_pmf_sum : ∀ j, ∑ g : G, (μ j g).toReal = 1 := by
     intro j;
@@ -83,7 +86,7 @@ lemma sum_wgt {m : ℕ} (μ : Fin m → PMF G) : ∑ ω : (Fin m → G), wgt μ 
   convert! Finset.prod_congr rfl fun j _ => h_pmf_sum j using 1;
   any_goals rw [ Finset.prod_const_one ];
   rw [ Finset.prod_sum ];
-  convert! rfl;
+  focus convert! rfl;
   refine Finset.sum_bij
     (fun ω _ => fun j => ω j (Finset.mem_univ j)) ?_ ?_ ?_ ?_
   · intro ω hω
@@ -104,6 +107,7 @@ The principal character has Fourier coefficient `1`.
 -/
 lemma fourierCoeff_one {m : ℕ} (μ : Fin m → PMF G) (j : Fin m) :
     fourierCoeff μ (1 : AddChar G ℂ) j = 1 := by
+  classical
   -- By definition of PMF, we know that the sum of the probabilities over all elements in G is 1.
   have h_sum : ∑ g : G, (μ j g).toReal = 1 := by
     convert! PMF.tsum_coe ( μ j );
@@ -111,7 +115,7 @@ lemma fourierCoeff_one {m : ℕ} (μ : Fin m → PMF G) (j : Fin m) :
     rw [ ENNReal.toReal_sum ];
     exact fun x _ => PMF.apply_ne_top _ _;
   -- By definition of `fourierCoeff`, we have:
-  simp [fourierCoeff];
+  simp only [fourierCoeff, AddChar.one_apply, mul_one];
   exact_mod_cast h_sum
 
 /-
@@ -119,7 +123,8 @@ Every Fourier coefficient has norm at most `1`.
 -/
 lemma norm_fourierCoeff_le_one {m : ℕ} (μ : Fin m → PMF G) (χ : AddChar G ℂ) (j : Fin m) :
     ‖fourierCoeff μ χ j‖ ≤ 1 := by
-  refine' le_trans ( norm_sum_le _ _ ) _;
+  classical
+  refine le_trans ( norm_sum_le _ _ ) ?_;
   simp +zetaDelta only [Complex.norm_mul, Complex.norm_real, Real.norm_eq_abs, ENNReal.abs_toReal,
     AddChar.norm_apply, mul_one] at *;
   convert! ENNReal.toReal_mono _ ( show ∑' x, ( μ j x : ENNReal ) ≤ 1 from _ ) using 1;
@@ -135,19 +140,29 @@ Character orthogonality applied to `Z₀`:
 lemma card_mul_Z0 {m : ℕ} (ω : Fin m → G) :
     (Fintype.card G : ℂ) * (Z0 ω : ℂ)
       = ∑ χ : AddChar G ℂ, ∏ j, (1 + χ (ω j)) := by
-  -- By character orthogonality, we have $\sum_{\chi \in \hat{G}} \chi(a) = |G| \cdot \mathbf{1}_{a=0}$.
-  have h_char_ortho (a : G) : ∑ χ : AddChar G ℂ, χ a = (Fintype.card G : ℂ) * if a = 0 then 1 else 0 := by
+  classical
+  -- By character orthogonality, we have $\sum_{\chi \in \hat{G}} \chi(a) = |G| \cdot
+  -- \mathbf{1}_{a=0}$.
+  have h_char_ortho (a : G) : ∑ χ : AddChar G ℂ, χ a = (Fintype.card G : ℂ) * if a = 0 then 1 else 0
+      := by
     split_ifs with ha <;> simp_all +decide [ AddChar.sum_apply_eq_ite ]
   generalize_proofs at *; (
-  -- By character orthogonality, we have $\sum_{\chi \in \hat{G}} \prod_{j \in J} \chi(\omega_j) = |G| \cdot \mathbf{1}_{\sum_{j \in J} \omega_j = 0}$.
-  have h_char_ortho_prod (J : Finset (Fin m)) : ∑ χ : AddChar G ℂ, ∏ j ∈ J, χ (ω j) = (Fintype.card G : ℂ) * if ∑ j ∈ J, ω j = 0 then 1 else 0 := by
+  -- By character orthogonality, we have $\sum_{\chi \in \hat{G}} \prod_{j \in J} \chi(\omega_j) =
+  -- |G| \cdot \mathbf{1}_{\sum_{j \in J} \omega_j = 0}$.
+  have h_char_ortho_prod (J : Finset (Fin m)) : ∑ χ : AddChar G ℂ, ∏ j ∈ J, χ (ω j) = (Fintype.card
+      G : ℂ) * if ∑ j ∈ J, ω j = 0 then 1 else 0 := by
     convert! h_char_ortho ( ∑ j ∈ J, ω j ) using 1
     generalize_proofs at *; (
-    refine' Finset.sum_congr rfl fun χ _ => _ ; induction J using Finset.induction <;> simp_all +decide [ Finset.prod_insert, Finset.sum_insert ] ;
+    refine Finset.sum_congr rfl fun χ _ => ?_ ; induction J using Finset.induction <;> simp_all
+        +decide only [
+        mul_ite, mul_one, mul_zero, mem_univ, prod_empty, sum_empty, AddChar.map_zero_eq_one,
+        not_false_eq_true, prod_insert, sum_insert] ;
     exact (AddChar.map_add_eq_mul _ _ _).symm)
   generalize_proofs at *; (
-  -- By character orthogonality, we have $\sum_{\chi \in \hat{G}} \prod_{j \in J} \chi(\omega_j) = |G| \cdot \mathbf{1}_{\sum_{j \in J} \omega_j = 0}$, so we can rewrite the sum.
-  have h_sum_char_ortho : ∑ χ : AddChar G ℂ, ∏ j, (1 + χ (ω j)) = ∑ χ : AddChar G ℂ, ∑ J ∈ Finset.powerset (Finset.univ : Finset (Fin m)), ∏ j ∈ J, χ (ω j) := by
+  -- By character orthogonality, we have $\sum_{\chi \in \hat{G}} \prod_{j \in J} \chi(\omega_j) =
+  -- |G| \cdot \mathbf{1}_{\sum_{j \in J} \omega_j = 0}$, so we can rewrite the sum.
+  have h_sum_char_ortho : ∑ χ : AddChar G ℂ, ∏ j, (1 + χ (ω j)) = ∑ χ : AddChar G ℂ, ∑ J ∈
+      Finset.powerset (Finset.univ : Finset (Fin m)), ∏ j ∈ J, χ (ω j) := by
     simp +decide [ add_comm ( 1 : ℂ ), Finset.prod_add ]
   generalize_proofs at *; (
   rw [ h_sum_char_ortho, Finset.sum_comm ];
@@ -161,24 +176,30 @@ lemma cardsq_mul_Z0sq {m : ℕ} (ω : Fin m → G) :
     (Fintype.card G : ℂ) ^ 2 * (Z0 ω : ℂ) ^ 2
       = ∑ χ : AddChar G ℂ, ∑ ψ : AddChar G ℂ,
           ∏ j, (1 + χ (ω j) + ψ (ω j) + (χ * ψ) (ω j)) := by
+  classical
   -- Apply the result from card_mul_Z0 to rewrite the left-hand side.
-  have h_lhs : (Fintype.card G : ℂ) ^ 2 * (Z0 ω : ℂ) ^ 2 = (∑ χ : AddChar G ℂ, ∏ j, (1 + χ (ω j))) * (∑ ψ : AddChar G ℂ, ∏ j, (1 + ψ (ω j))) := by
+  have h_lhs : (Fintype.card G : ℂ) ^ 2 * (Z0 ω : ℂ) ^ 2 = (∑ χ : AddChar G ℂ, ∏ j, (1 + χ (ω j))) *
+      (∑ ψ : AddChar G ℂ, ∏ j, (1 + ψ (ω j))) := by
     grind +suggestions;
   convert! h_lhs using 1;
   simp +decide only [mul_sum, sum_mul];
-  exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by rw [ ← Finset.prod_mul_distrib ] ; congr ; ext ; rw [ AddChar.mul_apply ] ; ring;
+  exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by
+    rw [ ← Finset.prod_mul_distrib ] ; congr ; ext ; rw [ AddChar.mul_apply ] ; ring;
 
 /-
 First moment identity: `|G|·E[Z₀] = M₁`.
 -/
 lemma identity1 {m : ℕ} (μ : Fin m → PMF G) :
     (Fintype.card G : ℂ) * (meanZ μ : ℂ) = M1 μ := by
+  classical
   unfold meanZ M1;
   -- By definition of $wgt$, we can rewrite the left-hand side as a sum over all characters.
-  have h_sum_char : ∑ ω : (Fin m → G), (∏ j, (μ j (ω j)).toReal) * (∑ χ : AddChar G ℂ, ∏ j, (1 + χ (ω j))) = ∑ χ : AddChar G ℂ, ∏ j, (∑ g : G, (μ j g).toReal * (1 + χ g)) := by
+  have h_sum_char : ∑ ω : (Fin m → G), (∏ j, (μ j (ω j)).toReal) * (∑ χ : AddChar G ℂ, ∏ j, (1 + χ (
+      ω j))) = ∑ χ : AddChar G ℂ, ∏ j, (∑ g : G, (μ j g).toReal * (1 + χ g)) := by
     simp +decide only [Finset.mul_sum _ _ _, prod_sum];
-    refine' Finset.sum_comm.trans ( Finset.sum_congr rfl fun _ _ => _ );
-    refine' Finset.sum_bij ( fun x _ => fun i _ => x i ) _ _ _ _ <;> simp +decide only [univ_pi_univ, mem_univ, exists_const, forall_const];
+    refine Finset.sum_comm.trans ( Finset.sum_congr rfl fun _ _ => ?_ );
+    refine Finset.sum_bij ( fun x _ => fun i _ => x i ) ?_ ?_ ?_ ?_ <;> simp +decide only
+        [univ_pi_univ, mem_univ, exists_const, forall_const];
     · simp +decide [ funext_iff ];
     · exact fun b => ⟨ fun i => b i ( Finset.mem_univ i ), rfl ⟩;
     · intro a
@@ -187,7 +208,7 @@ lemma identity1 {m : ℕ} (μ : Fin m → PMF G) :
   convert! h_sum_char using 1;
   · push_cast [ ← mul_assoc, ← card_mul_Z0 ];
     simp +decide [ mul_comm, mul_left_comm, Finset.mul_sum _ _ _, wgt ];
-  · simp +decide [ mul_add, Finset.sum_add_distrib, fourierCoeff ];
+  · simp +decide only [fourierCoeff, mul_add, mul_one, sum_add_distrib];
     convert! rfl;
     convert! PMF.tsum_coe ( μ ‹_› );
     rw [ tsum_fintype ] ; norm_cast;
@@ -200,11 +221,16 @@ Second moment identity: `|G|²·E[Z₀²] = M₂`.
 -/
 lemma identity2 {m : ℕ} (μ : Fin m → PMF G) :
     (Fintype.card G : ℂ) ^ 2 * (secmomZ μ : ℂ) = M2 μ := by
-  have h_sum : ∑ ω : (Fin m → G), (∏ j, (μ j (ω j)).toReal) * (∑ χ : AddChar G ℂ, ∑ ψ : AddChar G ℂ, ∏ j, (1 + χ (ω j) + ψ (ω j) + (χ * ψ) (ω j))) = ∑ χ : AddChar G ℂ, ∑ ψ : AddChar G ℂ, (∏ j, (∑ g, ((μ j g).toReal : ℂ) * (1 + χ g + ψ g + (χ * ψ) g))) := by
+  classical
+  have h_sum : ∑ ω : (Fin m → G), (∏ j, (μ j (ω j)).toReal) * (∑ χ : AddChar G ℂ, ∑ ψ : AddChar G ℂ,
+      ∏ j, (1 + χ (ω j) + ψ (ω j) + (χ * ψ) (ω j))) = ∑ χ : AddChar G ℂ, ∑ ψ : AddChar G ℂ, (∏ j, (∑
+      g, ((μ j g).toReal : ℂ) * (1 + χ g + ψ g + (χ * ψ) g))) := by
     simp +decide only [Finset.mul_sum _ _ _];
     simp +decide only [prod_sum];
-    refine' Finset.sum_comm.trans ( Finset.sum_congr rfl fun _ _ => Finset.sum_comm.trans ( Finset.sum_congr rfl fun _ _ => _ ) );
-    refine' Finset.sum_bij ( fun x _ => fun i _ => x i ) _ _ _ _ <;> simp +decide only [univ_pi_univ, mem_univ, exists_const, forall_const];
+    refine Finset.sum_comm.trans ( Finset.sum_congr rfl fun _ _ => Finset.sum_comm.trans (
+        Finset.sum_congr rfl fun _ _ => ?_ ) );
+    refine Finset.sum_bij ( fun x _ => fun i _ => x i ) ?_ ?_ ?_ ?_ <;> simp +decide only
+        [univ_pi_univ, mem_univ, exists_const, forall_const];
     · simp +decide [ funext_iff ];
     · exact fun b => ⟨ fun i => b i ( Finset.mem_univ i ), rfl ⟩;
     · intro a
@@ -220,7 +246,8 @@ lemma identity2 {m : ℕ} (μ : Fin m → PMF G) :
     rw [← cardsq_mul_Z0sq ω]
     simp [wgt]
     ring
-  · refine' Finset.sum_congr rfl fun χ _ => Finset.sum_congr rfl fun ψ _ => Finset.prod_congr rfl fun j _ => _;
+  · refine Finset.sum_congr rfl fun χ _ => Finset.sum_congr rfl fun ψ _ => Finset.prod_congr rfl
+      fun j _ => ?_;
     have hμreal : ∑ g : G, (μ j g).toReal = 1 := by
       convert! PMF.tsum_coe (μ j)
       rw [tsum_fintype]
@@ -234,6 +261,7 @@ lemma identity2 {m : ℕ} (μ : Fin m → PMF G) :
 /-
 `M₁ - 2^m` is the sum over nonprincipal characters.
 -/
+open scoped Classical in
 lemma M1_sub {m : ℕ} (μ : Fin m → PMF G) :
     M1 μ - (2 : ℂ) ^ m
       = ∑ χ ∈ (Finset.univ.erase (1 : AddChar G ℂ)), ∏ j, (1 + fourierCoeff μ χ j) := by
@@ -248,6 +276,7 @@ lemma M2_sub_M1sq {m : ℕ} (μ : Fin m → PMF G) :
       = ∑ χ : AddChar G ℂ, ∑ ψ : AddChar G ℂ,
           ((∏ j, (1 + fourierCoeff μ χ j + fourierCoeff μ ψ j + fourierCoeff μ (χ * ψ) j))
             - (∏ j, ((1 + fourierCoeff μ χ j) * (1 + fourierCoeff μ ψ j)))) := by
+  classical
   simp +decide [ M1, M2, pow_two, Finset.sum_sub_distrib ];
   simp +decide only [Finset.sum_mul _ _ _, mul_sum, prod_mul_distrib]
 
@@ -258,67 +287,87 @@ lemma meanZ_ge {m : ℕ} (μ : Fin m → PMF G) (ρ : ℝ)
     (hchar : ∀ j : Fin m, ∀ χ : AddChar G ℂ, χ ≠ 1 → ‖fourierCoeff μ χ j‖ ≤ ρ)
     (hmρ : (m : ℝ) * ρ ≤ 1) :
     (2 : ℝ) ^ m / (Fintype.card G : ℝ) - Real.exp 1 ≤ meanZ μ := by
+  classical
   -- Using the inequality |(meanZ μ) * card - 2^m| ≤ card * exp 1 and the fact that card ≥ 1, we get
   have h_ineq : |(meanZ μ) * (Fintype.card G : ℝ) - 2 ^ m| ≤ (Fintype.card G : ℝ) * Real.exp 1 := by
-    have h_ineq : ‖(meanZ μ) * (Fintype.card G : ℂ) - 2 ^ m‖ ≤ (Fintype.card G : ℝ) * Real.exp 1 := by
-      have h_sum_bound : ∀ χ : AddChar G ℂ, χ ≠ 1 → ‖∏ j, (1 + fourierCoeff μ χ j)‖ ≤ Real.exp 1 := by
+    have h_ineq : ‖(meanZ μ) * (Fintype.card G : ℂ) - 2 ^ m‖ ≤ (Fintype.card G : ℝ) * Real.exp 1 :=
+        by
+      have h_sum_bound : ∀ χ : AddChar G ℂ, χ ≠ 1 → ‖∏ j, (1 + fourierCoeff μ χ j)‖ ≤ Real.exp 1 :=
+          by
         intro χ hχ
         have h_prod_bound : ∀ j, ‖1 + fourierCoeff μ χ j‖ ≤ 1 + ρ := by
           exact fun j => le_trans ( norm_add_le _ _ ) ( by simpa using! hchar j χ hχ );
         rcases m with ( _ | m ) <;> norm_num at *;
-        refine' le_trans ( Finset.prod_le_prod ( fun _ _ => norm_nonneg _ ) fun _ _ => h_prod_bound _ ) _;
+        refine le_trans ( Finset.prod_le_prod ( fun _ _ => norm_nonneg _ ) fun _ _ =>
+            h_prod_bound _ ) ?_;
         norm_num [ ← Real.exp_nat_mul ];
-        exact le_trans ( pow_le_pow_left₀ ( by linarith [ show 0 ≤ ρ by exact le_trans ( norm_nonneg _ ) ( hchar 0 χ hχ ) ] ) ( show 1 + ρ ≤ Real.exp ( ρ ) by linarith [ Real.add_one_le_exp ρ ] ) _ ) ( by rw [ ← Real.exp_nat_mul ] ; norm_num; nlinarith [ show 0 ≤ ρ by exact le_trans ( norm_nonneg _ ) ( hchar 0 χ hχ ) ] );
-      have h_sum_bound : ‖(meanZ μ : ℂ) * (Fintype.card G : ℂ) - 2 ^ m‖ ≤ ∑ χ ∈ (Finset.univ.erase (1 : AddChar G ℂ)), ‖∏ j, (1 + fourierCoeff μ χ j)‖ := by
-        have h_sum_bound : (meanZ μ : ℂ) * (Fintype.card G : ℂ) - 2 ^ m = ∑ χ ∈ (Finset.univ.erase (1 : AddChar G ℂ)), ∏ j, (1 + fourierCoeff μ χ j) := by
+        exact le_trans ( pow_le_pow_left₀ ( by
+          linarith [ show 0 ≤ ρ by
+            exact le_trans ( norm_nonneg _ ) ( hchar 0 χ hχ ) ] ) ( show 1 + ρ ≤ Real.exp ( ρ ) by
+          linarith [ Real.add_one_le_exp ρ ] ) _ ) ( by
+          rw [ ← Real.exp_nat_mul ] ; norm_num; nlinarith [ show 0 ≤ ρ by
+            exact le_trans ( norm_nonneg _ ) ( hchar 0 χ hχ ) ] );
+      have h_sum_bound : ‖(meanZ μ : ℂ) * (Fintype.card G : ℂ) - 2 ^ m‖ ≤ ∑ χ ∈ (Finset.univ.erase (
+          1 : AddChar G ℂ)), ‖∏ j, (1 + fourierCoeff μ χ j)‖ := by
+        have h_sum_bound : (meanZ μ : ℂ) * (Fintype.card G : ℂ) - 2 ^ m = ∑ χ ∈ (Finset.univ.erase (
+            1 : AddChar G ℂ)), ∏ j, (1 + fourierCoeff μ χ j) := by
           grind +suggestions;
         exact h_sum_bound ▸ norm_sum_le _ _;
-      refine le_trans h_sum_bound <| le_trans ( Finset.sum_le_sum fun x hx => ‹∀ χ : AddChar G ℂ, χ ≠ 1 → ‖∏ j, ( 1 + fourierCoeff μ χ j )‖ ≤ Real.exp 1› x <| Finset.ne_of_mem_erase hx ) ?_ ; norm_num [ AddChar.card_eq ];
+      refine le_trans h_sum_bound <| le_trans ( Finset.sum_le_sum fun x hx => ‹∀ χ : AddChar G ℂ,
+          χ ≠ 1 → ‖∏ j, ( 1 + fourierCoeff μ χ j )‖ ≤ Real.exp 1› x <| Finset.ne_of_mem_erase hx )
+          ?_ ; norm_num [ AddChar.card_eq ];
       exact mul_le_mul_of_nonneg_right ( mod_cast Nat.pred_le _ ) ( Real.exp_nonneg _ );
     norm_cast at *;
-  rw [ div_sub', div_le_iff₀ ] <;> nlinarith [ abs_le.mp h_ineq, show ( Fintype.card G : ℝ ) ≥ 1 from mod_cast Fintype.card_pos ]
+  rw [ div_sub', div_le_iff₀ ] <;> nlinarith [ abs_le.mp h_ineq, show ( Fintype.card G : ℝ ) ≥ 1
+      from mod_cast Fintype.card_pos ]
 
 /-- Elementary: `(1 + t)^k ≤ exp (k·t)` for `t ≥ 0`. -/
 lemma one_add_pow_le_exp {t : ℝ} (ht : 0 ≤ t) (k : ℕ) :
     (1 + t) ^ k ≤ Real.exp ((k : ℝ) * t) := by
+  classical
   rw [Real.exp_nat_mul]
   exact pow_le_pow_left₀ (by linarith) (by linarith [Real.add_one_le_exp t]) k
 
 /-- Elementary: a product of complex numbers of norm at most `B` has norm at most `B^{card}`. -/
 lemma norm_prod_le_pow {ι : Type*} [Fintype ι] (f : ι → ℂ) (B : ℝ)
     (hB : ∀ i, ‖f i‖ ≤ B) : ‖∏ i, f i‖ ≤ B ^ (Fintype.card ι) := by
+  classical
   refine le_trans (norm_prod_le _ _) ?_
   refine le_trans (Finset.prod_le_prod (fun _ _ => norm_nonneg _) (fun i _ => hB i)) ?_
   rw [Finset.prod_const, Finset.card_univ]
 
 /-- `(1+ρ)^m ≤ e`. -/
-lemma pow_bound_e {m : ℕ} {ρ : ℝ} (hρ : 0 ≤ ρ) (hmρ : (m:ℝ)*ρ ≤ 1) :
+lemma pow_bound_e {m : ℕ} {ρ : ℝ} (hρ : 0 ≤ ρ) (hmρ : (m : ℝ) * ρ ≤ 1) :
     (1 + ρ)^m ≤ Real.exp 1 :=
   le_trans (one_add_pow_le_exp hρ m) (Real.exp_le_exp.mpr hmρ)
 
 /-- `((1+ρ)(1+ρ))^m ≤ e²`. -/
-lemma pow_bound_e2 {m : ℕ} {ρ : ℝ} (hρ : 0 ≤ ρ) (hmρ : (m:ℝ)*ρ ≤ 1) :
+lemma pow_bound_e2 {m : ℕ} {ρ : ℝ} (hρ : 0 ≤ ρ) (hmρ : (m : ℝ) * ρ ≤ 1) :
     ((1+ρ)*(1+ρ))^m ≤ Real.exp 2 := by
+  classical
   rw [mul_pow]
   calc (1+ρ)^m * (1+ρ)^m ≤ Real.exp 1 * Real.exp 1 :=
         mul_le_mul (pow_bound_e hρ hmρ) (pow_bound_e hρ hmρ) (by positivity) (Real.exp_nonneg _)
     _ = Real.exp 2 := by rw [← Real.exp_add]; norm_num
 
 /-- `(2(1+ρ))^m ≤ 2^m·e`. -/
-lemma pow_bound_2e {m : ℕ} {ρ : ℝ} (hρ : 0 ≤ ρ) (hmρ : (m:ℝ)*ρ ≤ 1) :
+lemma pow_bound_2e {m : ℕ} {ρ : ℝ} (hρ : 0 ≤ ρ) (hmρ : (m : ℝ) * ρ ≤ 1) :
     (2*(1+ρ))^m ≤ 2^m * Real.exp 1 := by
+  classical
   rw [mul_pow]; gcongr; exact pow_bound_e hρ hmρ
 
 /-- `(1+3ρ)^m ≤ e³`. -/
-lemma pow_bound_e3 {m : ℕ} {ρ : ℝ} (hρ : 0 ≤ ρ) (hmρ : (m:ℝ)*ρ ≤ 1) :
+lemma pow_bound_e3 {m : ℕ} {ρ : ℝ} (hρ : 0 ≤ ρ) (hmρ : (m : ℝ) * ρ ≤ 1) :
     (1 + 3*ρ)^m ≤ Real.exp 3 := by
+  classical
   refine le_trans (one_add_pow_le_exp (by linarith) m) (Real.exp_le_exp.mpr ?_)
-  have : (m:ℝ) * (3*ρ) = 3 * ((m:ℝ)*ρ) := by ring
+  have : (m:ℝ) * (3*ρ) = 3 * ((m : ℝ) * ρ) := by ring
   rw [this]; linarith
 
 /-
 Norm bound on the per-pair difference term.
 -/
+open scoped Classical in
 lemma norm_Dterm_le {m : ℕ} (μ : Fin m → PMF G) (ρ : ℝ)
     (hchar : ∀ j : Fin m, ∀ χ : AddChar G ℂ, χ ≠ 1 → ‖fourierCoeff μ χ j‖ ≤ ρ)
     (hmρ : (m : ℝ) * ρ ≤ 1) (χ ψ : AddChar G ℂ) :
@@ -326,33 +375,41 @@ lemma norm_Dterm_le {m : ℕ} (μ : Fin m → PMF G) (ρ : ℝ)
         - (∏ j, ((1 + fourierCoeff μ χ j) * (1 + fourierCoeff μ ψ j)))‖
       ≤ (if χ * ψ = 1 then (2 : ℝ) ^ m * Real.exp 1 + Real.exp 2 else Real.exp 3 + Real.exp 2) := by
   by_cases hχ : χ = 1 <;> by_cases hψ : ψ = 1;
-  · simp_all +decide [ fourierCoeff_one ];
+  · simp_all +decide only [ne_eq, fourierCoeff_one, mul_one, prod_const, card_univ,
+      Fintype.card_fin, ↓reduceIte];
     norm_num;
     positivity;
-  · simp_all +decide [ add_mul, mul_add ];
-    simp_all +decide [ ← add_assoc, fourierCoeff_one ];
+  · simp_all +decide only [ne_eq, one_mul, mul_add, mul_one, add_mul, ↓reduceIte];
+    simp_all +decide only [fourierCoeff_one, one_mul, ← add_assoc, sub_self, norm_zero];
     positivity;
-  · simp_all +decide [ Finset.prod_mul_distrib ];
-    simp_all +decide [ fourierCoeff_one ];
-    rw [ show ( ∏ x : Fin m, ( 1 + fourierCoeff μ χ x + 1 + fourierCoeff μ χ x ) ) = ( ∏ x : Fin m, ( 1 + fourierCoeff μ χ x ) ) * ( 2 : ℂ ) ^ m by
-          rw [ Finset.prod_congr rfl fun _ _ => show ( 1 + fourierCoeff μ χ _ + 1 + fourierCoeff μ χ _ ) = ( 1 + fourierCoeff μ χ _ ) * 2 by ring, Finset.prod_mul_distrib, Finset.prod_const, Finset.card_fin ] ] ; ring_nf ;
+  · simp_all +decide only [ne_eq, mul_one, prod_mul_distrib, ↓reduceIte];
+    simp_all +decide only [fourierCoeff_one, prod_const, card_univ, Fintype.card_fin];
+    rw [ show ( ∏ x : Fin m, ( 1 + fourierCoeff μ χ x + 1 + fourierCoeff μ χ x ) ) = ( ∏ x : Fin m,
+        ( 1 + fourierCoeff μ χ x ) ) * ( 2 : ℂ ) ^ m by
+          rw [ Finset.prod_congr rfl fun _ _ => show ( 1 + fourierCoeff μ χ _ + 1 + fourierCoeff μ χ
+              _ ) = ( 1 + fourierCoeff μ χ _ ) * 2 by
+            ring, Finset.prod_mul_distrib, Finset.prod_const, Finset.card_fin ] ] ; ring_nf ;
     norm_num ; positivity;
   · by_cases hm : m = 0;
     · subst hm; norm_num; split_ifs <;> positivity;
-    · refine' le_trans ( norm_sub_le _ _ ) _;
+    · refine le_trans ( norm_sub_le _ _ ) ?_;
       split_ifs;
-      · refine' add_le_add _ _;
-        · refine' le_trans ( norm_prod_le_pow _ _ _ ) _;
-          exact 2 * ( 1 + ρ );
+      · refine add_le_add ?_ ?_;
+        · refine le_trans ( norm_prod_le_pow _ ?_ ?_ ) ?_;
+          · exact 2 * ( 1 + ρ );
           · intro j; rw [ ‹χ * ψ = 1› ] ; norm_num [ fourierCoeff_one ] ;
             have := hchar j χ hχ; have := hchar j ψ hψ; norm_num at *;
-            exact le_trans ( norm_add_le _ _ ) ( by linarith [ norm_add_le ( 1 + fourierCoeff μ χ j ) ( fourierCoeff μ ψ j ), norm_add_le ( 1 : ℂ ) ( fourierCoeff μ χ j ), norm_add_le ( 1 : ℂ ) ( fourierCoeff μ ψ j ), show ‖ ( 1 : ℂ )‖ = 1 by norm_num ] );
+            exact le_trans ( norm_add_le _ _ ) ( by
+              linarith [ norm_add_le ( 1 + fourierCoeff μ χ j ) ( fourierCoeff μ ψ j ), norm_add_le
+                ( 1 : ℂ ) ( fourierCoeff μ χ j ), norm_add_le ( 1 : ℂ ) ( fourierCoeff μ ψ j ), show
+                ‖ ( 1 : ℂ )‖ = 1 by
+                norm_num ] );
           · convert! pow_bound_2e _ _ using 1;
             · norm_num;
             · exact le_trans ( norm_nonneg _ ) ( hchar ⟨ 0, Nat.pos_of_ne_zero hm ⟩ χ hχ );
             · aesop;
-        · refine' le_trans ( norm_prod_le_pow _ _ _ ) _;
-          exact ( 1 + ρ ) * ( 1 + ρ );
+        · refine le_trans ( norm_prod_le_pow _ ?_ ?_ ) ?_;
+          · exact ( 1 + ρ ) * ( 1 + ρ );
           · intro i; rw [ norm_mul ] ; gcongr;
             · exact add_nonneg zero_le_one ( le_trans ( norm_nonneg _ ) ( hchar i χ hχ ) );
             · exact le_trans ( norm_add_le _ _ ) ( by norm_num; linarith [ hchar i χ hχ ] );
@@ -360,18 +417,19 @@ lemma norm_Dterm_le {m : ℕ} (μ : Fin m → PMF G) (ρ : ℝ)
           · convert! pow_bound_e2 _ _ using 1;
             · exact le_trans ( norm_nonneg _ ) ( hchar ⟨ 0, Nat.pos_of_ne_zero hm ⟩ χ hχ );
             · simpa using! hmρ;
-      · refine' add_le_add _ _;
-        · refine' le_trans ( norm_prod_le_pow _ _ _ ) _;
-          exact 1 + 3 * ρ;
+      · refine add_le_add ?_ ?_;
+        · refine le_trans ( norm_prod_le_pow _ ?_ ?_ ) ?_;
+          · exact 1 + 3 * ρ;
           · intro i;
-            refine' le_trans ( norm_add_le _ _ ) _;
-            refine' le_trans ( add_le_add ( norm_add_le _ _ ) le_rfl ) _;
-            refine' le_trans ( add_le_add_three ( norm_add_le _ _ ) ( hchar i ψ hψ ) ( hchar i ( χ * ψ ) ‹_› ) ) _ ; norm_num ; linarith [ hchar i χ hχ ];
+            refine le_trans ( norm_add_le _ _ ) ?_;
+            refine le_trans ( add_le_add ( norm_add_le _ _ ) le_rfl ) ?_;
+            refine le_trans ( add_le_add_three ( norm_add_le _ _ ) ( hchar i ψ hψ ) ( hchar i ( χ
+                * ψ ) ‹_› ) ) ?_ ; norm_num ; linarith [ hchar i χ hχ ];
           · convert! pow_bound_e3 _ _ using 1;
             · exact le_trans ( norm_nonneg _ ) ( hchar ⟨ 0, Nat.pos_of_ne_zero hm ⟩ χ hχ );
             · aesop;
-        · refine' le_trans ( norm_prod_le_pow _ _ _ ) _;
-          exact ( 1 + ρ ) * ( 1 + ρ );
+        · refine le_trans ( norm_prod_le_pow _ ?_ ?_ ) ?_;
+          · exact ( 1 + ρ ) * ( 1 + ρ );
           · intro i; rw [ norm_mul ] ; gcongr;
             · exact add_nonneg zero_le_one ( le_trans ( norm_nonneg _ ) ( hchar i χ hχ ) );
             · exact le_trans ( norm_add_le _ _ ) ( by norm_num; linarith [ hchar i χ hχ ] );
@@ -380,6 +438,7 @@ lemma norm_Dterm_le {m : ℕ} (μ : Fin m → PMF G) (ρ : ℝ)
             · exact le_trans ( norm_nonneg _ ) ( hchar ⟨ 0, Nat.pos_of_ne_zero hm ⟩ χ hχ );
             · simpa using! hmρ
 
+open scoped Classical in
 /-- The character-pair sum `∑_{χ,ψ} (A if χψ=1 else B) ≤ A·|G| + B·|G|²`. -/
 lemma sum_ite_pairs_le (A B : ℝ) (hB : 0 ≤ B) :
     ∑ χ : AddChar G ℂ, ∑ ψ : AddChar G ℂ, (if χ * ψ = 1 then A else B)
@@ -413,18 +472,30 @@ lemma varZ_le {m : ℕ} (μ : Fin m → PMF G) (ρ : ℝ)
     (hmρ : (m : ℝ) * ρ ≤ 1) :
     secmomZ μ - (meanZ μ) ^ 2
       ≤ Real.exp 1 * ((2 : ℝ) ^ m / (Fintype.card G : ℝ)) + (Real.exp 3 + 2 * Real.exp 2) := by
+  classical
   -- In Steps 1-2, we develop the variance bound n^2 V ≤ |M2 - M1^2|.
   have h_var_le : (Fintype.card G : ℝ) ^ 2 * (secmomZ μ - (meanZ μ) ^ 2) ≤ ‖M2 μ - (M1 μ) ^ 2‖ := by
     convert! Complex.re_le_norm _ using 1;
-    convert! congr_arg Complex.re ( congrArg₂ ( · - · ) ( identity2 μ ) ( congr_arg ( · ^ 2 ) ( identity1 μ ) ) ) using 1 ; norm_cast ; norm_num ; ring_nf!;
+    convert! congr_arg Complex.re ( congrArg₂ ( · - · ) ( identity2 μ ) ( congr_arg ( · ^ 2 ) (
+        identity1 μ ) ) ) using 1 ; norm_cast ; norm_num ; ring_nf!;
   -- In Steps 3-4, we bound the norm by a sum.
-  have h_norm_le_sum : ‖M2 μ - (M1 μ) ^ 2‖ ≤ (2^m * Real.exp 1 + Real.exp 2) * (Fintype.card G) + (Real.exp 3 + Real.exp 2) * (Fintype.card G) ^ 2 := by
-    convert! sum_ite_pairs_le ( 2^m * Real.exp 1 + Real.exp 2 ) ( Real.exp 3 + Real.exp 2 ) ( by positivity ) |> le_trans ( ?_ ) using 1;
+  have h_norm_le_sum : ‖M2 μ - (M1 μ) ^ 2‖ ≤ (2^m * Real.exp 1 + Real.exp 2) * (Fintype.card G) + (
+      Real.exp 3 + Real.exp 2) * (Fintype.card G) ^ 2 := by
+    convert! sum_ite_pairs_le ( 2^m * Real.exp 1 + Real.exp 2 ) ( Real.exp 3 + Real.exp 2 ) ( by
+      positivity ) |> le_trans ( ?_ ) using 1;
     rw [ M2_sub_M1sq ];
-    refine' le_trans ( norm_sum_le _ _ ) ( Finset.sum_le_sum fun χ _ => le_trans ( norm_sum_le _ _ ) ( Finset.sum_le_sum fun ψ _ => _ ) );
+    refine le_trans (norm_sum_le _ _ ) ( Finset.sum_le_sum fun χ _ => le_trans ( norm_sum_le _ _
+        ) ( Finset.sum_le_sum fun ψ _ => ?_ ) );
     convert! norm_Dterm_le μ ρ hchar hmρ χ ψ using 1;
   rw [ mul_div, mul_comm ];
-  rw [ div_add', le_div_iff₀ ] <;> nlinarith [ show ( Fintype.card G : ℝ ) ≥ 1 by exact_mod_cast Fintype.card_pos_iff.mpr ⟨ 0 ⟩, Real.exp_pos 1, Real.exp_pos 2, Real.exp_pos 3, mul_le_mul_of_nonneg_left ( show ( Fintype.card G : ℝ ) ≥ 1 by exact_mod_cast Fintype.card_pos_iff.mpr ⟨ 0 ⟩ ) ( Real.exp_nonneg 1 ), mul_le_mul_of_nonneg_left ( show ( Fintype.card G : ℝ ) ≥ 1 by exact_mod_cast Fintype.card_pos_iff.mpr ⟨ 0 ⟩ ) ( Real.exp_nonneg 2 ), mul_le_mul_of_nonneg_left ( show ( Fintype.card G : ℝ ) ≥ 1 by exact_mod_cast Fintype.card_pos_iff.mpr ⟨ 0 ⟩ ) ( Real.exp_nonneg 3 ) ]
+  rw [ div_add', le_div_iff₀ ] <;> nlinarith [ show ( Fintype.card G : ℝ ) ≥ 1 by
+    exact_mod_cast Fintype.card_pos_iff.mpr ⟨ 0 ⟩, Real.exp_pos 1, Real.exp_pos 2, Real.exp_pos 3,
+      mul_le_mul_of_nonneg_left ( show ( Fintype.card G : ℝ ) ≥ 1 by
+    exact_mod_cast Fintype.card_pos_iff.mpr ⟨ 0 ⟩ ) ( Real.exp_nonneg 1 ), mul_le_mul_of_nonneg_left
+      ( show ( Fintype.card G : ℝ ) ≥ 1 by
+    exact_mod_cast Fintype.card_pos_iff.mpr ⟨ 0 ⟩ ) ( Real.exp_nonneg 2 ), mul_le_mul_of_nonneg_left
+      ( show ( Fintype.card G : ℝ ) ≥ 1 by
+    exact_mod_cast Fintype.card_pos_iff.mpr ⟨ 0 ⟩ ) ( Real.exp_nonneg 3 ) ]
 
 /-
 `Z₀(ω) = 1` exactly when no nonempty subset of coordinates sums to `0`.
@@ -432,12 +503,13 @@ lemma varZ_le {m : ℕ} (μ : Fin m → PMF G) (ρ : ℝ)
 omit [Fintype G] in
 lemma Z0_eq_one_iff {m : ℕ} (ω : Fin m → G) :
     Z0 ω = 1 ↔ ∀ J : Finset (Fin m), J.Nonempty → ∑ j ∈ J, ω j ≠ 0 := by
+  classical
   constructor;
   · intro h J hJ hsum;
     contrapose! h;
-    refine' ne_of_gt ( Finset.one_lt_card.mpr ⟨ ∅, _, J, _, _ ⟩ ) <;> aesop;
+    refine ne_of_gt ( Finset.one_lt_card.mpr ⟨ ∅, ?_, J, ?_, ?_ ⟩ ) <;> aesop;
   · intro h;
-    refine' Finset.card_eq_one.mpr ⟨ ∅, _ ⟩;
+    refine Finset.card_eq_one.mpr ⟨ ∅, ?_ ⟩;
     grind
 
 /-
@@ -447,11 +519,13 @@ Chebyshev core: the weighted probability that `Z₀ = 1` is at most
 lemma cheb_core {m : ℕ} (μ : Fin m → PMF G) (hM : meanZ μ ≠ 1) :
     ∑ ω : (Fin m → G), wgt μ ω * (if Z0 ω = 1 then (1 : ℝ) else 0)
       ≤ (secmomZ μ - (meanZ μ) ^ 2) / (meanZ μ - 1) ^ 2 := by
+  classical
   rw [ le_div_iff₀ ( sq_pos_of_ne_zero ( sub_ne_zero_of_ne hM ) ) ];
   -- By definition of variance, we know that
   have h_var : ∑ ω, wgt μ ω * ((Z0 ω : ℝ) - meanZ μ) ^ 2 = secmomZ μ - (meanZ μ) ^ 2 := by
     unfold secmomZ meanZ;
-    simp +decide only [sub_sq, mul_comm, mul_assoc, mul_add, mul_sub, sum_add_distrib, sum_sub_distrib];
+    simp +decide only [sub_sq, mul_comm, mul_assoc, mul_add, mul_sub, sum_add_distrib,
+        sum_sub_distrib];
     simp +decide [ ← mul_assoc, ← Finset.sum_mul _ _ _, sum_wgt ] ; ring;
   rw [ ← h_var, Finset.sum_mul _ _ _ ];
   refine Finset.sum_le_sum fun ω _ => ?_;
@@ -465,6 +539,7 @@ lemma final_arith (Λ mean secmom K e : ℝ)
     (hvar : secmom - mean ^ 2 ≤ e * Λ + K)
     (hbig : 2 * (e + 1) ≤ Λ) (hK : 0 ≤ K) (he : 0 ≤ e) :
     (secmom - mean ^ 2) / (mean - 1) ^ 2 ≤ (4 * e + 4 * K) / Λ := by
+  classical
   have hΛpos : 0 < Λ := by linarith
   have hm1 : Λ / 2 ≤ mean - 1 := by nlinarith
   have hdpos : 0 < (Λ / 2) ^ 2 := by positivity
@@ -480,6 +555,7 @@ lemma final_arith (Λ mean secmom K e : ℝ)
 The packaged statement of Lemma 3.1, matching
 `Erdos768.subset_product_hits_identity`.
 -/
+open scoped Classical in
 theorem subset_product_core :
     ∃ (Λ₀ C₁ : ℝ), 0 < Λ₀ ∧ 0 < C₁ ∧
       ∀ (G : Type) [AddCommGroup G] [Fintype G] (m : ℕ)
@@ -493,14 +569,17 @@ theorem subset_product_core :
               (if ∀ J : Finset (Fin m), J.Nonempty → ∑ j ∈ J, ω j ≠ 0 then (1 : ℝ)
                else 0))
           ≤ C₁ * (Fintype.card G : ℝ) / (2 : ℝ) ^ m := by
-  refine' ⟨ 2 * (Real.exp 1 + 1), 4 * Real.exp 1 + 4 * ( Real.exp 3 + 2 * Real.exp 2 ), by positivity, by positivity, _ ⟩;
+  refine ⟨ 2 * (Real.exp 1 + 1), 4 * Real.exp 1 + 4 * ( Real.exp 3 + 2 * Real.exp 2 ), by
+    positivity, by
+    positivity, ?_ ⟩;
   intros G _ _ m μ ρ h_char h_mρ h_bound
   set n := (Fintype.card G : ℝ)
   set Λ := (2 : ℝ) ^ m / n
   set e := Real.exp 1
   set K := Real.exp 3 + 2 * Real.exp 2;
   -- Apply the Chebyshev bound and final_arith lemma.
-  have h_cheb : (∑ ω : (Fin m → G), (∏ j, ((μ j) (ω j)).toReal) * (if Z0 ω = 1 then (1 : ℝ) else 0)) ≤ (secmomZ μ - (meanZ μ) ^ 2) / (meanZ μ - 1) ^ 2 := by
+  have h_cheb : (∑ ω : (Fin m → G), (∏ j, ((μ j) (ω j)).toReal) * (if Z0 ω = 1 then (1 : ℝ) else 0))
+      ≤ (secmomZ μ - (meanZ μ) ^ 2) / (meanZ μ - 1) ^ 2 := by
     convert! cheb_core μ _ using 1;
     have := meanZ_ge μ ρ h_char h_mρ;
     linarith [ Real.add_one_le_exp 1 ];

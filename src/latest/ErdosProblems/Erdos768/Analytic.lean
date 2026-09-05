@@ -22,11 +22,12 @@ Mathlib in this quantitative form); they are recorded as the analytic hypotheses
 of the paper.
 -/
 
-open scoped Classical BigOperators
+open scoped BigOperators
 open Finset Filter
 
 namespace Erdos768
 
+open scoped Classical in
 /-- **Theorem 2.6 (multiplicative large sieve, Bombieri–Davenport form).**
 For complex numbers `a_n` and `N, Q ≥ 1`,
 `∑_{q ≤ Q} (q/φ(q)) ∑*_{χ mod q} |∑_{n ≤ N} a_n χ(n)|² ≪ (N + Q²) ∑_{n ≤ N} |a_n|²`,
@@ -54,6 +55,7 @@ theorem primes_in_log_interval
       atTop (nhds 1) :=
   primes_in_log_interval_proof u δ hu hδ
 
+open scoped Classical in
 /-- **Lemma 3.1 (subset products hit the identity).**  Let `G` be a finite
 abelian group and `X_1,…,X_m` independent `G`-valued random variables (with laws
 `μ_j`).  If every nonprincipal Fourier coefficient is at most `ρ` and `mρ ≤ 1`,

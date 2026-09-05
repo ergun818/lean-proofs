@@ -19,7 +19,7 @@ The main theorem (see `ErdosProblems.Erdos768.Main`) is
 `lim_{x→∞} log(x / A(x)) / (√(log x) · log log x) = 1 / (2√(log 2))`.
 -/
 
-open scoped Classical BigOperators
+open scoped BigOperators
 
 namespace Erdos768
 
@@ -34,8 +34,9 @@ def Acal : Set ℕ := {n | SylowDivisor n}
 
 /-- `A(x) = #{ n ≤ x : n ∈ 𝒜 }`, the counting function of the Sylow divisor
 condition on the interval `[1, x]`. -/
-noncomputable def Acount (x : ℝ) : ℕ :=
-  ((Finset.Icc 1 ⌊x⌋₊).filter SylowDivisor).card
+noncomputable def Acount (x : ℝ) : ℕ := by
+  classical
+  exact ((Finset.Icc 1 ⌊x⌋₊).filter SylowDivisor).card
 
 /-- The constant `c₀ = 1 / (2√(log 2))` appearing in the answer to Problem 768. -/
 noncomputable def c₀ : ℝ := 1 / (2 * Real.sqrt (Real.log 2))
