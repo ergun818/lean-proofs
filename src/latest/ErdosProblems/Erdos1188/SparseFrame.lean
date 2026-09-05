@@ -22,8 +22,6 @@ universe u v
 
 variable {m : ℕ} (S : Fin m → Type u) (T : Type v)
 variable [(i : Fin m) → Zero (S i)]
-variable [(i : Fin m) → DecidableEq (S i)]
-variable [DecidableEq T]
 
 /-- Members are either ordinary members of the base frame or one member for
 an arbitrary value of the closing coordinate. -/

@@ -150,7 +150,7 @@ noncomputable def primeDefaultAssignment (m : ℕ) :
 noncomputable abbrev PrimeSparsePool (m : ℕ) (i : Fin m) :=
   SparseSupportPool (fun j : Fin m => nthPrime j.val)
     sparseSeed sparseHeight
-    (fun j hj => (sparseHeight_lt hj).le)
+    (fun _ hj => (sparseHeight_lt hj).le)
     (primeDefaultAssignment m) i
 
 /-- Its canonical support embedding. -/
@@ -158,7 +158,7 @@ noncomputable def primeSparsePoolSupport (m : ℕ) (i : Fin m) :
     PrimeSparsePool m i ↪ Finset (Fin i.val) :=
   sparsePoolSupport (fun j : Fin m => nthPrime j.val)
     sparseSeed sparseHeight
-    (fun j hj => (sparseHeight_lt hj).le)
+    (fun _ hj => (sparseHeight_lt hj).le)
     (primeDefaultAssignment m) i
 
 /-- Exact late pool cardinality and its useful capacity bound. -/

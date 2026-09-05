@@ -39,7 +39,7 @@ theorem linearLogPrimeCutoff_lowerFrameIndex_le (x : ℕ) (hx : x ≠ 0) :
   let R := Nat.log 2 m + 1
   have hDpos : 0 < D := by simp [D]
   have hmL : m ≤ L := by
-    simp only [m, lowerFrameIndex, L, l, ll, D]
+    simp only [m, lowerFrameIndex, L]
     exact Nat.div_le_self _ _
   have hRl : R ≤ l := by
     have hm : m ≤ L + 1 := le_trans hmL (Nat.le_succ L)

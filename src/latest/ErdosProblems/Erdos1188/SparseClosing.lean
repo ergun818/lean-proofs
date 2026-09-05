@@ -25,7 +25,7 @@ def closingCodeSupport {m h : ℕ} (hle : h ≤ m) :
 /-- Closing code supports are injective when both sides of the cross-pair split
 are nonempty. -/
 theorem closingCodeSupport_injective {m h : ℕ}
-    (hhpos : 0 < h) (hhlt : h < m) :
+    (_hhpos : 0 < h) (hhlt : h < m) :
     Function.Injective (closingCodeSupport (Nat.le_of_lt hhlt)) := by
   intro a b hab
   have hle := Nat.le_of_lt hhlt
@@ -38,7 +38,7 @@ theorem closingCodeSupport_injective {m h : ℕ}
       | none => rfl
       | some b =>
           cases b with
-          | inl j => simpa [closingCodeSupport] using hab
+          | inl j => simp [closingCodeSupport] at hab
           | inr c =>
               exfalso
               have hc := congrArg (fun s : Finset (Fin m) => s.card) hab
@@ -48,7 +48,7 @@ theorem closingCodeSupport_injective {m h : ℕ}
       cases a with
       | inl i =>
           cases b with
-          | none => simpa [closingCodeSupport] using hab
+          | none => simp [closingCodeSupport] at hab
           | some b =>
               cases b with
               | inl j =>
@@ -152,7 +152,7 @@ theorem sparseClosingFixed_injective {m h P : ℕ} [NeZero P]
 
 /-- The reserved closing residue protecting base coordinate `i`. -/
 noncomputable def sparseClosingEscape {m h P : ℕ} [NeZero P]
-    (hsize : m + 1 ≤ P) (hcap : P - (m + 1) ≤ h * (m - h))
+    (hsize : m + 1 ≤ P) (_hcap : P - (m + 1) ≤ h * (m - h))
     (i : Fin m) : ZMod P :=
   ZMod.finEquiv P
     ((splitClosingFin hsize).symm

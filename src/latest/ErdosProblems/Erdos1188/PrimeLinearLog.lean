@@ -106,7 +106,7 @@ theorem nthPrime_le_binary_log (i : ℕ) :
   have hi : i < Nat.primeCounting N := by simp [s] at hpi ⊢; omega
   rw [Nat.primeCounting] at hi
   exact Nat.le_of_lt_succ
-    ((Nat.lt_nth_iff_count_lt Nat.infinite_setOf_prime).mp hi)
+    ((Nat.lt_nth_iff_count_lt Nat.infinite_setOfPred_prime).mp hi)
 
 /-- A common upper scale for all of the first `m` indexed primes. -/
 def binaryPrimeScale (m : ℕ) : ℕ :=
@@ -152,7 +152,7 @@ theorem explicit_linearLog_cutoff_lower (m : ℕ) (hm : 6 ≤ m) :
   have hk4 : 4 ≤ k := le_trans ht4 ht_le_k
   have hpowm : 2 ^ m = 2 * 2 ^ (m - 1) := by
     calc
-      2 ^ m = 2 ^ ((m - 1) + 1) := by congr 1 <;> omega
+      2 ^ m = 2 ^ ((m - 1) + 1) := by congr 1; omega
       _ = 2 ^ (m - 1) * 2 := by rw [pow_succ]
       _ = 2 * 2 ^ (m - 1) := Nat.mul_comm _ _
   have h2k : 2 * k ≤ 2 ^ m - 1 := by

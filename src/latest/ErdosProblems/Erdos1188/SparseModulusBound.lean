@@ -217,7 +217,7 @@ theorem primeSparseAssigned_mem_pool {m : ℕ}
         (PrimeSparsePool m) (primeSparsePoolSupport m) R i a ∈
       sparsePooledSupports (fun j : Fin m => nthPrime j.val)
         sparseSeed sparseHeight
-        (fun j hj => (sparseHeight_lt hj).le)
+        (fun _ hj => (sparseHeight_lt hj).le)
         (primeDefaultAssignment m) i := by
   let A := assignmentForSparseRanges (fun j : Fin m => nthPrime j.val)
     (PrimeSparsePool m) (primeSparsePoolSupport m) R

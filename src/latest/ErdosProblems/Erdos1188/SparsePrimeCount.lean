@@ -32,9 +32,8 @@ theorem two_pow_sparsePrimeExponent_le_profile_count (m : ℕ) :
     2 ^ sparsePrimeExponent m =
         ∏ i : Fin m with sparseSeed ≤ i.val, 2 ^ k i := by
       rw [sparsePrimeExponent]
-      convert (Finset.prod_pow_eq_pow_sum
-        (Finset.univ.filter fun i : Fin m => sparseSeed ≤ i.val) k 2).symm using 1 <;>
-        simp [k]
+      exact (Finset.prod_pow_eq_pow_sum
+        (Finset.univ.filter fun i : Fin m => sparseSeed ≤ i.val) k 2).symm
     _ = ∏ i : Fin m, if sparseSeed ≤ i.val then 2 ^ k i else 1 := by
       rw [Finset.prod_filter]
     _ ≤ ∏ i : Fin m,
@@ -48,7 +47,7 @@ theorem two_pow_sparsePrimeExponent_le_profile_count (m : ℕ) :
           dsimp [k]
           omega
         · simpa [k] using primeSparsePool_late_capacity i hi
-      · simpa [k, primeSparsePool_early_card i hi] using Nat.choose_self (k i)
+      · simp [k, primeSparsePool_early_card i hi]
 
 /-- Data needed by the closing coordinate are available at every late
 dimension. -/

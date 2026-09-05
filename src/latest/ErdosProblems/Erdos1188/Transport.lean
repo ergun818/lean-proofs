@@ -15,7 +15,7 @@ namespace Erdos1188
 
 universe u v
 
-variable {M : Type u} [Fintype M] [DecidableEq M]
+variable {M : Type u} [Fintype M]
 variable {X : Type v}
 
 /-- A finite indexed cover with private witnesses, represented as congruence

@@ -68,7 +68,7 @@ theorem explicit_double_exponential_lower (m : ℕ) (hm : 6 ≤ m) :
   have hk4 : 4 ≤ k := le_trans ht4 ht_le_k
   have hpowm : 2 ^ m = 2 * 2 ^ (m - 1) := by
     calc
-      2 ^ m = 2 ^ ((m - 1) + 1) := by congr 1 <;> omega
+      2 ^ m = 2 ^ ((m - 1) + 1) := by congr 1; omega
       _ = 2 ^ (m - 1) * 2 := by rw [pow_succ]
       _ = 2 * 2 ^ (m - 1) := Nat.mul_comm _ _
   have h2k : 2 * k ≤ 2 ^ m - 1 := by

@@ -163,17 +163,14 @@ theorem sparseFrameMember_iff_support
             subst j
             simpa [sparseSupportPoint, frameSupportValues] using h ⟨k, hk⟩
       · intro h k
-        have hkmap : some k.val ∈
-            (frameSupport q fixed b).map Function.Embedding.some :=
-          Finset.mem_map.mpr ⟨k, k.property, rfl⟩
-        have hh := h ⟨some k.val, by simpa [sparseFrameSupport] using hkmap⟩
+        have hh := h ⟨some k.val, by simp [sparseFrameSupport]⟩
         simpa [sparseSupportPoint, frameSupportValues] using hh
   | inr a =>
       change (x.2 = a ∧ ∀ j ∈ closingFixed a, x.1 j = 0) ↔ _
       constructor
       · rintro ⟨htop, hzero⟩ j
         have hjmem : j.val ∈ insert none ((closingFixed a).map Function.Embedding.some) := by
-          simpa [sparseFrameSupport] using j.property
+          simp [sparseFrameSupport]
         rcases Finset.mem_insert.mp hjmem with hjnone | hjsome
         · have hj : j.val = none := hjnone
           cases j with

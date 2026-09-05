@@ -32,8 +32,7 @@ abbrev ProperEarlierSubsets (i : Fin n) :=
 
 theorem card_properEarlierSubsets (i : Fin n) :
     Fintype.card (ProperEarlierSubsets i) = 2 ^ i.val - 1 := by
-  simpa [ProperEarlierSubsets, card_earlierSubsets] using
-    (Set.card_ne_eq (α := Finset (Fin i.val)) (Finset.univ : Finset (Fin i.val)))
+  simp [ProperEarlierSubsets]
 
 /-- Embed the first `i` finite indices as precisely the coordinates earlier
 than `i : Fin n`. -/

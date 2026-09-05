@@ -44,7 +44,7 @@ theorem two_pow_mul_le_descFactorial (m P : ℕ) (hm : 2 ≤ m)
   have ht : t ≤ P - 1 := by simp only [t]; omega
   have hpowm : 2 ^ m = 2 * 2 ^ (m - 1) := by
     calc
-      2 ^ m = 2 ^ ((m - 1) + 1) := by congr 1 <;> omega
+      2 ^ m = 2 ^ ((m - 1) + 1) := by congr 1; omega
       _ = 2 ^ (m - 1) * 2 := by rw [pow_succ]
       _ = 2 * 2 ^ (m - 1) := Nat.mul_comm _ _
   have hb : 2 ^ (m - 1) ≤ b := by

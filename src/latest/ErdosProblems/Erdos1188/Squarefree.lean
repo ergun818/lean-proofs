@@ -12,7 +12,7 @@ open scoped BigOperators
 
 universe u
 
-variable {ι : Type u} [Fintype ι] [DecidableEq ι]
+variable {ι : Type u} [Fintype ι]
 
 def natResidueFin (r d : ℕ) (hd : d ≠ 0) : Fin d :=
   ⟨r % d, Nat.mod_lt r (Nat.pos_of_ne_zero hd)⟩
@@ -60,6 +60,7 @@ theorem crtFinEquiv_apply (q : ι → ℕ)
 /-- Product of a selected subfamily of pairwise-coprime moduli. -/
 def subsetModulus (q : ι → ℕ) (J : Finset ι) : ℕ := ∏ j : ↥J, q j
 
+omit [Fintype ι] in
 theorem subsetModulus_pos (q : ι → ℕ) (hq : ∀ i, 0 < q i) (J : Finset ι) :
     0 < subsetModulus q J := by
   apply Finset.prod_pos
@@ -92,6 +93,7 @@ noncomputable def subsetCrtClass (q : ι → ℕ)
     (J : Finset ι) (v : (j : ↥J) → ZMod (q j)) : CongruenceClass :=
   (subsetModulus q J, subsetCrtResidue q hq hcop J v)
 
+omit [Fintype ι] in
 theorem subsetModulus_eq_prod (q : ι → ℕ) (J : Finset ι) :
     subsetModulus q J = ∏ j ∈ J, q j := by
   unfold subsetModulus
@@ -103,6 +105,7 @@ theorem subsetModulus_dvd_full (q : ι → ℕ) (J : Finset ι) :
   rw [subsetModulus_eq_prod]
   exact Finset.prod_dvd_prod_of_subset J Finset.univ q (Finset.subset_univ J)
 
+omit [Fintype ι] in
 /-- A nonempty CRT support with factors at least two gives a valid canonical
 congruence class. -/
 theorem subsetCrtClass_valid (q : ι → ℕ)

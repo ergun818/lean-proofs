@@ -207,7 +207,7 @@ theorem recoverSparseRange_assignment
           obtain ⟨k, hk, rfl⟩ := hj
           refine ⟨k, rfl, ?_⟩
           rcases Finset.mem_insert.mp hk with hki | hkfixed
-          · simpa [hki, c]
+          · simp [hki, c]
           · exact (assignedFixed_fixesEarlier q A c k hkfixed).le
     · simp only [J, c, sparseFrameSupport, frameSupport, assignedFixed]
       have hnot : some i ∉

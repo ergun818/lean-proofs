@@ -22,7 +22,7 @@ abbrev nthPrime (i : ℕ) : ℕ := Nat.nth Nat.Prime i
   Nat.prime_nth_prime i
 
 theorem nthPrime_strictMono : StrictMono nthPrime :=
-  Nat.nth_strictMono Nat.infinite_setOf_prime
+  Nat.nth_strictMono Nat.infinite_setOfPred_prime
 
 /-- Bertrand's postulate bounds each next prime by twice its predecessor. -/
 theorem nthPrime_succ_le_two_mul (i : ℕ) :
@@ -30,7 +30,7 @@ theorem nthPrime_succ_le_two_mul (i : ℕ) :
   have hnonzero : nthPrime i ≠ 0 := (nthPrime_prime i).ne_zero
   obtain ⟨p, hp, hip, hp2⟩ := Nat.bertrand (nthPrime i) hnonzero
   have hleP : nthPrime (i + 1) ≤ p :=
-    (Nat.isLeast_nth_of_infinite Nat.infinite_setOf_prime (i + 1)).2 <| by
+    (Nat.isLeast_nth_of_infinite Nat.infinite_setOfPred_prime (i + 1)).2 <| by
       refine ⟨hp, ?_⟩
       intro k hk
       have hki : k ≤ i := Nat.le_of_lt_succ (by simpa using hk)
@@ -59,7 +59,7 @@ theorem nthPrime_le_two_pow_pred {i : ℕ} (hi : 5 ≤ i) :
           calc
             2 * 2 ^ (i - 1) = 2 ^ (i - 1) * 2 := Nat.mul_comm _ _
             _ = 2 ^ ((i - 1) + 1) := (pow_succ 2 (i - 1)).symm
-            _ = 2 ^ i := by congr 1 <;> omega
+            _ = 2 ^ i := by congr 1; omega
 
 /-- Every indexed prime has enough earlier subsets for its nonzero residues. -/
 theorem nthPrime_sub_one_le_two_pow (i : ℕ) :
@@ -100,7 +100,7 @@ theorem extendedPrimeFactors_prime (m P : ℕ) (hP : Nat.Prime P) :
   intro i
   refine Fin.lastCases ?_ (fun j => ?_) i
   · simpa [extendedPrimeFactors] using hP
-  · simpa [extendedPrimeFactors] using nthPrime_prime j.val
+  · simp [extendedPrimeFactors]
 
 theorem extendedPrimeFactors_injective (m P : ℕ)
     (hbase : ∀ i : Fin m, nthPrime i.val < P) :
@@ -161,7 +161,7 @@ theorem exists_large_prime_frame_count (m : ℕ) (hm : 6 ≤ m) :
         calc
           2 * 2 ^ (m - 2) = 2 ^ (m - 2) * 2 := Nat.mul_comm _ _
           _ = 2 ^ ((m - 2) + 1) := (pow_succ 2 (m - 2)).symm
-          _ = 2 ^ (m - 1) := by congr 1 <;> omega
+          _ = 2 ^ (m - 1) := by congr 1; omega
   let q := extendedPrimeFactors m P
   have hbase : ∀ i : Fin m, nthPrime i.val < P := fun i =>
     lt_of_le_of_lt (basePrimes_le_quarterCapacity hm i) hPt
@@ -200,7 +200,7 @@ theorem exists_large_prime_frame_descFactorial_count (m : ℕ) (hm : 6 ≤ m) :
         calc
           2 * 2 ^ (m - 2) = 2 ^ (m - 2) * 2 := Nat.mul_comm _ _
           _ = 2 ^ ((m - 2) + 1) := (pow_succ 2 (m - 2)).symm
-          _ = 2 ^ (m - 1) := by congr 1 <;> omega
+          _ = 2 ^ (m - 1) := by congr 1; omega
   let q := extendedPrimeFactors m P
   have hbase : ∀ i : Fin m, nthPrime i.val < P := fun i =>
     lt_of_le_of_lt (basePrimes_le_quarterCapacity hm i) hPt

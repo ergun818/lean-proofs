@@ -249,7 +249,9 @@ theorem arithmeticFrame_modulus_injective
   intro a b hab
   apply hsupport
   apply coprime_subsetProduct_injective q hq hcop
-  cases a <;> cases b <;>
+  cases a <;> cases b
+  · rfl
+  all_goals
     simpa [arithmeticFrameClass, fullFrameSupport, subsetCrtClass,
       subsetModulus_eq_prod] using hab
 

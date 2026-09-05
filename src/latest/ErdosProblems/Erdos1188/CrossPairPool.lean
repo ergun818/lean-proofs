@@ -35,7 +35,7 @@ theorem crossPair_low_ne_high {i h : ℕ} (hle : h ≤ i)
         simpa [Nat.add_sub_of_le hle] using hv⟩ := by
   intro heq
   have hv := congrArg Fin.val heq
-  simp only [Fin.val_mk] at hv
+  simp only at hv
   have hu := c.1.isLt
   omega
 
@@ -47,38 +47,34 @@ theorem crossPairSupport_injective {i h : ℕ} (hle : h ≤ i) :
   let ahigh : Fin i := ⟨h + a.2.val, by
     have hv := Nat.add_lt_add_left a.2.isLt h
     simpa [Nat.add_sub_of_le hle] using hv⟩
-  let blow : Fin i := ⟨b.1.val, lt_of_lt_of_le b.1.isLt hle⟩
-  let bhigh : Fin i := ⟨h + b.2.val, by
-    have hv := Nat.add_lt_add_left b.2.isLt h
-    simpa [Nat.add_sub_of_le hle] using hv⟩
   have halow : alow ∈ crossPairSupport hle b := by
     rw [← hab]
     simp [crossPairSupport, alow]
   simp only [crossPairSupport, Finset.mem_insert, Finset.mem_singleton,
-    alow, blow, bhigh] at halow
+    alow] at halow
   have hlow : a.1 = b.1 := by
     rcases halow with hablow | hahigh
     · apply Fin.ext
       have hv := congrArg Fin.val hablow
       simpa using hv
     · have hv := congrArg Fin.val hahigh
-      simp only [Fin.val_mk] at hv
+      simp only at hv
       have ha := a.1.isLt
       omega
   have hahigh : ahigh ∈ crossPairSupport hle b := by
     rw [← hab]
     simp [crossPairSupport, ahigh]
   simp only [crossPairSupport, Finset.mem_insert, Finset.mem_singleton,
-    ahigh, blow, bhigh] at hahigh
+    ahigh] at hahigh
   have hhigh : a.2 = b.2 := by
     rcases hahigh with hbad | hgood
     · have hv := congrArg Fin.val hbad
-      simp only [Fin.val_mk] at hv
+      simp only at hv
       have hb := b.1.isLt
       omega
     · apply Fin.ext
       have hv := congrArg Fin.val hgood
-      simp only [Fin.val_mk] at hv
+      simp only at hv
       omega
   exact Prod.ext hlow hhigh
 
@@ -147,7 +143,7 @@ theorem card_sparseSupportPool_of_early
   rw [Fintype.card_coe]
   simp only [sparsePooledSupports, dif_neg hi]
   rw [assignmentRange, Finset.card_image_of_injective _ (A₀ i).injective]
-  simp [card_nonzeroResidue]
+  simp
 
 end Pools
 

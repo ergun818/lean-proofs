@@ -199,7 +199,7 @@ theorem recoverEmbeddedRange_assignment
           rcases Finset.mem_insert.mp htopJ with heq | hmem
           · exact heq.symm
           · have hlt := assignedFixed_fixesEarlier q A c top hmem
-            exact le_antisymm (htop c.index) (le_of_not_gt (fun h => (not_lt_of_ge (htop c.index)) hlt))
+            exact (not_lt_of_ge (htop c.index) hlt).elim
         cases c with
         | mk ci cv hcv =>
             simp only at hindex
@@ -360,7 +360,8 @@ theorem exists_assignment_with_topRange
     rw [card_nonzeroResidue, Fintype.card_coe, R.property]
   let e : NonzeroResidue (q top) ≃ ↥R.val := Classical.choice (Fintype.card_eq.mp hcard)
   let etop : NonzeroResidue (q top) ↪ Finset (Fin top.val) :=
-    e.toEmbedding |>.trans (Function.Embedding.subtype fun s : ProperEarlierSubsets top => s ∈ R.val) |>.trans
+    e.toEmbedding |>.trans
+      (Function.Embedding.subtype fun s : ProperEarlierSubsets top => s ∈ R.val) |>.trans
       (Function.Embedding.subtype fun s : Finset (Fin top.val) => s ≠ Finset.univ)
   let A : FrameAssignment q := fun i =>
     if h : i = top then h ▸ etop else base i

@@ -132,7 +132,7 @@ theorem sparseCoarseDenominator_log_ratio_tendsto_zero (D : ℕ) (hD : 0 < D) :
       Real.log (A : ℝ) / Real.log (x : ℝ) +
         4 * (Real.log ((Nat.log 2 (x + 1) + 1 : ℕ) : ℝ) /
           Real.log (x : ℝ))) atTop (𝓝 0) := by
-    convert hc.add (hR.const_mul 4) using 1 <;> norm_num
+    convert hc.add (hR.const_mul 4) using 1; norm_num
   apply hsum.congr'
   filter_upwards [Ici_mem_atTop 2] with x hx
   let R : ℕ := Nat.log 2 (x + 1) + 1
@@ -175,7 +175,7 @@ theorem sparseAllCutoffQuotient_tendsto_atTop (D : ℕ) (hD : 0 < D) :
   have hsmall : D * (Q * R ^ 2) ^ 2 ≤ x := by
     calc
       D * (Q * R ^ 2) ^ 2 = D * Q ^ 2 * R ^ 4 := by ring
-      _ ≤ D * (Q + 1) ^ 2 * R ^ 4 := by gcongr <;> omega
+      _ ≤ D * (Q + 1) ^ 2 * R ^ 4 := by gcongr; omega
       _ = C * R ^ 4 := by simp [C]
       _ ≤ x := hxnat
   have hsq : (Q * R ^ 2) ^ 2 ≤ x / D := by
@@ -212,7 +212,7 @@ theorem sparseCoarseExponent_tendsto_atTop (D : ℕ) (hD : 0 < D) :
     change Q * (2048 * D * R ^ 4) ≤ x
     calc
       Q * (2048 * D * R ^ 4) ≤ (Q + 1) * (2048 * D * R ^ 4) := by
-        gcongr <;> omega
+        gcongr; omega
       _ = C * R ^ 4 := by simp [C]; ring
       _ ≤ x := hxnat
   rw [Nat.le_div_iff_mul_le]
@@ -239,7 +239,7 @@ theorem sparseCoarseExponent_log_ratio_tendsto_one (D : ℕ) (hD : 0 < D) :
   have hlower : Tendsto (fun x : ℕ =>
       1 - (Real.log 2 + Real.log (N x : ℝ)) / Real.log (x : ℝ))
       atTop (𝓝 1) := by
-    convert tendsto_const_nhds.sub herror using 1 <;> norm_num
+    convert tendsto_const_nhds.sub herror using 1; norm_num
   apply hlower.squeeze' tendsto_const_nhds
   · have hEtop := sparseCoarseExponent_tendsto_atTop D hD
     filter_upwards [hEtop.eventually_ge_atTop 1, Ici_mem_atTop 2] with x hE hx
@@ -312,7 +312,7 @@ theorem sparsePowerLower_loglog_ratio_tendsto_one (D : ℕ) (hD : 0 < D) :
   have hsum : Tendsto (fun x : ℕ =>
       Real.log (E x : ℝ) / Real.log (x : ℝ) +
         Real.log (Real.log 2) / Real.log (x : ℝ)) atTop (𝓝 1) := by
-    convert hEratio.add hc using 1 <;> norm_num [E]
+    convert hEratio.add hc using 1; norm_num [E]
   apply hsum.congr'
   have hEtop := sparseCoarseExponent_tendsto_atTop D hD
   filter_upwards [hEtop.eventually_ge_atTop 1, Ici_mem_atTop 2] with x hE hx
@@ -347,7 +347,7 @@ theorem log_add_nat_ratio_tendsto_one (c : ℝ) :
   have hone : Tendsto (fun x : ℕ =>
       1 + (Real.log ((x : ℝ) + c) - Real.log (x : ℝ)) /
         Real.log (x : ℝ)) atTop (𝓝 1) := by
-    convert tendsto_const_nhds.add hzero using 1 <;> norm_num
+    convert tendsto_const_nhds.add hzero using 1; norm_num
   apply hone.congr'
   filter_upwards [Ici_mem_atTop 2] with x hx
   have hxlog : Real.log (x : ℝ) ≠ 0 :=
@@ -391,7 +391,7 @@ theorem elementaryUpper_loglog_ratio_tendsto_one :
       Real.log ((x : ℝ) + 1) / Real.log (x : ℝ) +
         Real.log (Real.log ((x : ℝ) + 2)) / Real.log (x : ℝ))
       atTop (𝓝 1) := by
-    convert hfirst.add hsecond using 1 <;> norm_num
+    convert hfirst.add hsecond using 1; norm_num
   apply hsum.congr'
   filter_upwards [Ici_mem_atTop 2] with x hx
   have hbase : (0 : ℝ) < (x : ℝ) + 2 := by positivity

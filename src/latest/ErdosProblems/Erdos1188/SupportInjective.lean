@@ -11,7 +11,7 @@ namespace Erdos1188
 open scoped BigOperators
 
 universe u
-variable {ι : Type u} [DecidableEq ι]
+variable {ι : Type u}
 
 /-- Products of subsets of pairwise-coprime integers greater than one uniquely
 determine their support. -/
@@ -20,6 +20,7 @@ theorem coprime_subsetProduct_injective
     (hq : ∀ i, 2 ≤ q i)
     (hcop : Pairwise (Function.onFun Nat.Coprime q)) :
     Function.Injective (fun J : Finset ι => ∏ j ∈ J, q j) := by
+  classical
   intro A B hprod
   apply Finset.ext
   intro i

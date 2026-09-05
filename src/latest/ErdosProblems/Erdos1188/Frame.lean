@@ -22,7 +22,6 @@ universe u
 
 variable {n : ℕ} (S : Fin n → Type u)
 variable [(i : Fin n) → Zero (S i)]
-variable [(i : Fin n) → DecidableEq (S i)]
 
 /-- An index for one of the non-axis hyperplanes of a frame. -/
 structure FrameChoice where
@@ -37,6 +36,7 @@ def frameChoiceEquiv : FrameChoice S ≃ Σ i : Fin n, {a : S i // a ≠ 0} wher
   left_inv _ := rfl
   right_inv _ := rfl
 
+variable [(i : Fin n) → DecidableEq (S i)] in
 noncomputable instance [(i : Fin n) → Fintype (S i)] : Fintype (FrameChoice S) :=
   Fintype.ofEquiv (Σ i : Fin n, {a : S i // a ≠ 0}) (frameChoiceEquiv S).symm
 
@@ -75,7 +75,7 @@ theorem frame_covers (fixed : FrameChoice S → Finset (Fin n))
       intro i
       by_contra hi
       have himem : i ∈ support := by simp [support, hi]
-      simpa [hempty] using himem
+      simp [hempty] at himem
     let i : Fin n := support.min' hs
     have hi_mem : i ∈ support := Finset.min'_mem support hs
     have hi : x i ≠ 0 := (Finset.mem_filter.mp hi_mem).2

@@ -19,7 +19,6 @@ universe u
 variable {m : ℕ} (q : Fin m → ℕ) (P : ℕ)
 variable (Pool : Fin m → Type u)
 variable [(i : Fin m) → Fintype (Pool i)]
-variable [(i : Fin m) → DecidableEq (Pool i)]
 
 /-- At coordinate `i`, choose exactly one pool support per nonzero residue. -/
 abbrev SparseRangeChoice (i : Fin m) [NeZero (q i)] :=
@@ -43,6 +42,7 @@ noncomputable def assignmentForSparseRanges
     (Function.Embedding.subtype fun s : Pool i => s ∈ (R i).val) |>.trans
     (poolSupport i)
 
+omit [(i : Fin m) → Fintype (Pool i)] in
 /-- The assignment range is exactly the image of the chosen pool range. -/
 @[simp] theorem assignmentForSparseRanges_range
     [(i : Fin m) → NeZero (q i)]
@@ -82,6 +82,7 @@ theorem optionalEmbeddedAssignmentRange_eq_image
   simp [optionalEmbeddedAssignmentRange, assignmentRange, Finset.image_image,
     Function.comp_def]
 
+omit [(i : Fin m) → Fintype (Pool i)] in
 /-- Distinct range profiles produce distinct unordered sparse systems.  The
 proof uses only modulus supports: at each coordinate the supports having that
 coordinate as their greatest base coordinate recover its complete range. -/
@@ -126,6 +127,7 @@ theorem card_sparseRangeProfile
   intro i _
   exact Fintype.card_finset_len (α := Pool i) (q i - 1)
 
+omit [(i : Fin m) → Fintype (Pool i)] in
 /-- Every sparse range system whose moduli are bounded by `X` is counted by
 `coveringCount X`. -/
 theorem sparseSystemForRanges_mem_counted
