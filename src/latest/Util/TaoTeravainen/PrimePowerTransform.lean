@@ -28,7 +28,7 @@ def extendPrimePowerEventResidue {W p : ℕ} (hcop : Nat.Coprime W p)
 
 /-- Characterization of the prime-power CRT residue. -/
 theorem modEq_extendPrimePowerEventResidue_iff
-    {W p a v k n : ℕ} (hp : 0 < p) (ha : 0 < a)
+    {W p a v k n : ℕ} (hp : 0 < p) (_ha : 0 < a)
     (hcop : Nat.Coprime W p) :
     n ≡ extendPrimePowerEventResidue hcop a v k [MOD W * p ^ a] ↔
       n ≡ v [MOD W] ∧ p ^ a ∣ n + k := by
@@ -99,7 +99,7 @@ theorem modEq_smallPrimePowerEventResidue_iff
   have ha' : 0 < a - 1 := by omega
   have hpow : p ^ a = p * p ^ (a - 1) := by
     calc
-      p ^ a = p ^ ((a - 1) + 1) := by congr 1 <;> omega
+      p ^ a = p ^ ((a - 1) + 1) := by congr 1; omega
       _ = p ^ (a - 1) * p := by rw [pow_succ]
       _ = p * p ^ (a - 1) := by ring
   have hmod : (p * W₀) * p ^ (a - 1) = p * M := by
@@ -181,8 +181,9 @@ theorem indicator_smallPrimePower_fromYWeight
       (W' := (p * W₀) * p ^ (a - 1))
       (v := 0) (v' := vpow) (n := n) (y := y)
       (P := fun m => p ^ a ∣ m + p * s) hres
-    by_cases hpow : p ^ a ∣ n + p * s <;>
-      simp [hpow] at hraw ⊢ <;> exact hraw
+    by_cases hpow : p ^ a ∣ n + p * s
+    · simpa only [if_pos hpow] using hraw
+    · simpa only [if_neg hpow] using hraw
   have hlift :
       Erdos248.fromYWeight R ((p * W₀) * p ^ (a - 1)) vpow y n =
         preSievedSquareDivisorWeight H
@@ -245,12 +246,12 @@ theorem modEq_twoSmallPrimePowerEventResidue_iff
         (p * q) * ((W₀ * p ^ (a - 1)) * q ^ (b - 1)) := by ring
   have hpowp : p ^ a = p * p ^ (a - 1) := by
     calc
-      p ^ a = p ^ ((a - 1) + 1) := by congr 1 <;> omega
+      p ^ a = p ^ ((a - 1) + 1) := by congr 1; omega
       _ = p ^ (a - 1) * p := by rw [pow_succ]
       _ = p * p ^ (a - 1) := by ring
   have hpowq : q ^ b = q * q ^ (b - 1) := by
     calc
-      q ^ b = q ^ ((b - 1) + 1) := by congr 1 <;> omega
+      q ^ b = q ^ ((b - 1) + 1) := by congr 1; omega
       _ = q ^ (b - 1) * q := by rw [pow_succ]
       _ = q * q ^ (b - 1) := by ring
   have hpcond : ∀ u : ℕ,
@@ -401,7 +402,7 @@ prime divide none of the exact shift distances; the usual strict-distance
 hypothesis is merely a convenient sufficient condition. -/
 theorem not_prime_dvd_tupleProduct_of_event_of_not_dvd_dist
     {H : Finset ℕ} {R W p n k : ℕ} {d : H → ℕ}
-    (hp : p.Prime) (hd : IsMaynardDivisorTuple H R W d)
+    (hp : p.Prime) (_hd : IsMaynardDivisorTuple H R W d)
     (hdn : divisorTupleCondition H n d) (hpn : p ∣ n + k)
     (hnodiv : ∀ h : H, ¬ p ∣ Nat.dist k h.1) :
     ¬p ∣ divisorTupleProduct H d := by
@@ -539,8 +540,9 @@ theorem indicator_separatedPrimePower_fromYWeight_of_not_dvd_dist
       (H := H) (R := R) (W := W * p) (W' := W * p ^ a)
       (v := v₁) (v' := vpow) (n := n) (y := z)
       (P := fun m => p ^ a ∣ m + k) hres
-    by_cases hpow : p ^ a ∣ n + k <;>
-      simp [hpow] at hraw ⊢ <;> exact hraw
+    by_cases hpow : p ^ a ∣ n + k
+    · simpa only [if_pos hpow] using hraw
+    · simpa only [if_neg hpow] using hraw
   have hmod : (W * p) * p ^ (a - 1) = W * p ^ a := by
     have hpow : p * p ^ (a - 1) = p ^ a := by
       conv_rhs => rw [show a = (a - 1) + 1 by omega, pow_succ]
@@ -619,8 +621,9 @@ theorem indicator_separatedPrimePower_fromYWeight
       (H := H) (R := R) (W := W * p) (W' := W * p ^ a)
       (v := v₁) (v' := vpow) (n := n) (y := z)
       (P := fun m => p ^ a ∣ m + k) hres
-    by_cases hpow : p ^ a ∣ n + k <;>
-      simp [hpow] at hraw ⊢ <;> exact hraw
+    by_cases hpow : p ^ a ∣ n + k
+    · simpa only [if_pos hpow] using hraw
+    · simpa only [if_neg hpow] using hraw
   have hmod : (W * p) * p ^ (a - 1) = W * p ^ a := by
     have hpow : p * p ^ (a - 1) = p ^ a := by
       conv_rhs => rw [show a = (a - 1) + 1 by omega, pow_succ]
@@ -697,8 +700,9 @@ theorem indicator_coordinatePrimePower_fromYWeight
       (H := H) (R := R) (W := W * p) (W' := W * p ^ a)
       (v := v₁) (v' := vpow) (n := n) (y := z)
       (P := fun q => p ^ a ∣ q + m.1) hres
-    by_cases hpow : p ^ a ∣ n + m.1 <;>
-      simp [hpow] at hraw ⊢ <;> exact hraw
+    by_cases hpow : p ^ a ∣ n + m.1
+    · simpa only [if_pos hpow] using hraw
+    · simpa only [if_neg hpow] using hraw
   have hmod : (W * p) * p ^ (a - 1) = W * p ^ a := by
     have hpow : p * p ^ (a - 1) = p ^ a := by
       conv_rhs => rw [show a = (a - 1) + 1 by omega, pow_succ]
@@ -788,8 +792,9 @@ theorem indicator_coordinatePrimePower_at_shift_fromYWeight
       (H := H) (R := R) (W := W * p) (W' := W * p ^ a)
       (v := v₁) (v' := vpow) (n := n) (y := z)
       (P := fun t => p ^ a ∣ t + k) hres
-    by_cases hpow : p ^ a ∣ n + k <;>
-      simp [hpow] at hraw ⊢ <;> exact hraw
+    by_cases hpow : p ^ a ∣ n + k
+    · simpa only [if_pos hpow] using hraw
+    · simpa only [if_neg hpow] using hraw
   have hmod : (W * p) * p ^ (a - 1) = W * p ^ a := by
     have hpow : p * p ^ (a - 1) = p ^ a := by
       conv_rhs => rw [show a = (a - 1) + 1 by omega, pow_succ]
@@ -840,14 +845,14 @@ theorem dvd_add_iff_of_dvd_dist {p n k h : ℕ}
     · intro hph
       have hsub : p ∣ (n + h) - (h - k) :=
         Nat.dvd_sub hph hpdist
-      convert hsub using 1 <;> omega
+      convert hsub using 1; omega
   · have hhk : h ≤ k := le_of_not_ge hkh
     rw [Nat.dist_comm k h, Nat.dist_eq_sub_of_le hhk] at hpdist
     constructor
     · intro hpk
       have hsub : p ∣ (n + k) - (k - h) :=
         Nat.dvd_sub hpk hpdist
-      convert hsub using 1 <;> omega
+      convert hsub using 1; omega
     · intro hph
       have hadd : p ∣ (n + h) + (k - h) :=
         dvd_add hph hpdist

@@ -41,7 +41,7 @@ theorem baseTruncatedPrimePowerCount_le_truncated
 /-- A single factorization coordinate is bounded by its truncated
 proper-power contribution plus one fixed allowance for the base prime. -/
 theorem factorization_le_threehundredthree_mul_one_add_baseTruncated
-    {J n p : ℕ} (hJ : 1 < J) (hn0 : n ≠ 0)
+    {J n p : ℕ} (_hJ : 1 < J) (hn0 : n ≠ 0)
     (hsize : n < J ^ 101) (hpmem : p ∈ n.factorization.support) :
     n.factorization p ≤
       303 * (1 + baseTruncatedPrimePowerCount J n p) := by
@@ -164,7 +164,7 @@ theorem Omega_le_omega_add_truncatedProperPrimePowerCount
         apply Finset.sum_le_sum
         intro pa hpa
         by_cases hdiv : pa.1 ^ pa.2 ∣ n
-        · simp [hdiv]
+        · simp only [if_pos hdiv, Finset.sum_ite_eq]
           split_ifs <;> omega
         · simp [hdiv]
       _ = truncatedProperPrimePowerCount J n := rfl

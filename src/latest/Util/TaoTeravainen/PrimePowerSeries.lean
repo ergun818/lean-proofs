@@ -37,7 +37,7 @@ theorem cube_le_sixteen_mul_two_pow_sub_one {n : ℕ} (hn : 2 ≤ n) :
         calc
           16 * 2 ^ (r - 1) * 2 = 16 * (2 ^ (r - 1) * 2) := by ring
           _ = 16 * 2 ^ ((r - 1) + 1) := by rw [pow_succ]
-          _ = 16 * 2 ^ r := by congr 2 <;> omega
+          _ = 16 * 2 ^ r := by congr 2; omega
       calc
         (4 + (m + 1)) ^ 3 = (r + 1) ^ 3 := by dsimp [r]; ring
         _ ≤ 2 * r ^ 3 := hstep
@@ -45,7 +45,7 @@ theorem cube_le_sixteen_mul_two_pow_sub_one {n : ℕ} (hn : 2 ≤ n) :
           gcongr
           simpa [r] using ih (by omega) (by omega)
         _ = 16 * 2 ^ r := by rw [mul_comm, hpow]
-        _ = 16 * 2 ^ (4 + (m + 1) - 1) := by congr 2 <;> dsimp [r] <;> omega
+        _ = 16 * 2 ^ (4 + (m + 1) - 1) := by congr 2
   · interval_cases n <;> norm_num at hn ⊢
 
 /-- The exponent weight occurring in a same-base prime-power pair is
@@ -324,7 +324,7 @@ theorem sum_Icc_pair_inv_pow_max_sub_one_le_sixtyfour
     apply Finset.sum_congr rfl
     intro b hb
     by_cases hab : a ≤ b
-    · simp [hab, max_eq_right hab]
+    · simp [hab]
     · have hba : b < a := by omega
       simp [hab, hba, max_eq_left hba.le]
   rw [hsplit]
@@ -381,7 +381,7 @@ theorem sum_Icc_pair_inv_pow_max_le_onehundredtwentyeight_div_sq
     apply Finset.sum_congr rfl
     intro b hb
     by_cases hab : a ≤ b
-    · simp [hab, max_eq_right hab]
+    · simp [hab]
     · have hba : b < a := by omega
       simp [hab, hba, max_eq_left hba.le]
   rw [hsplit]

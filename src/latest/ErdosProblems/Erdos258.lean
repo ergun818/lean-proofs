@@ -266,8 +266,8 @@ lemma clearing_denominators_is_int (a : ℕ → ℕ) (ha : ∀ n, 0 < a (n + 1))
   obtain ⟨m₁, hm₁⟩ := h1
   obtain ⟨m₂, hm₂⟩ := h2
   use m₁ - m₂
-  simp_all +decide [mul_sub]
-  simp +decide [← hm₂, mul_assoc, Finset.mul_sum _ _ _]
+  rw [Int.cast_sub, ← hm₁, ← hm₂, hr, ← Finset.mul_sum]
+  ring
 
 /-! ### Tail bound -/
 

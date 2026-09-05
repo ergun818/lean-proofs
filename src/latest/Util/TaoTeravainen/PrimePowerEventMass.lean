@@ -546,9 +546,7 @@ theorem nonTinyDistinctPrimePowerPairEventMass_le_productCoordinateEnergy
     hA hreg
     (by
       dsimp [W]
-      simpa [mul_assoc] using
-        (dvd_mul_right (Erdos248.preSieveModulus K)
-          (p ^ a * q ^ b)))
+      simp [mul_assoc])
     (by
       dsimp [W]
       exact mul_pos
@@ -1081,12 +1079,7 @@ theorem smallDistinctPrimePowerPairEventMass_le_productCoordinateEnergy
       rw [hmass]
       have hraw := Erdos248.fromYWeightMass_le_productCoordinateEnergy
         hA hreg
-        (by
-          show Erdos248.preSieveModulus K ∣
-            Erdos248.preSieveModulus K * p ^ (a - 1) * q ^ (b - 1)
-          simpa [mul_assoc] using
-            (dvd_mul_right (Erdos248.preSieveModulus K)
-              (p ^ (a - 1) * q ^ (b - 1))))
+        (by simp [W, mul_assoc])
         (by
           dsimp [W]
           exact mul_pos
@@ -1221,12 +1214,7 @@ theorem smallDistinctPrimePowerPairEventMass_le_sharp
         (K := K) (k := (p * q) * s) (p := p) (a := a) (q := q) (b := b)
         (W := W * p ^ (a - 1) * q ^ (b - 1)) (v := vpow)
         (y := Erdos248.sieveY K) hpoint
-        (by
-          show Erdos248.preSieveModulus K ∣
-            Erdos248.preSieveModulus K * p ^ (a - 1) * q ^ (b - 1)
-          simpa [W, mul_assoc] using
-            (dvd_mul_right (Erdos248.preSieveModulus K)
-              (p ^ (a - 1) * q ^ (b - 1))))
+        (by simp [W, mul_assoc])
         (by
           dsimp [W]
           exact mul_pos
@@ -1356,9 +1344,7 @@ theorem smallNonTinyDistinctPrimePowerPairEventMass_le_productCoordinateEnergy
       hA hreg
       (by
         dsimp [Wp, W]
-        simpa [mul_assoc] using
-          (dvd_mul_right (Erdos248.preSieveModulus K)
-            (p ^ (a - 1) * q ^ b)))
+        simp [mul_assoc])
       (by
         dsimp [Wp, W]
         exact mul_pos
@@ -1523,9 +1509,7 @@ theorem smallSeparatedDistinctPrimePowerPairEventMass_le_productCoordinateEnergy
       hA hreg
       (by
         dsimp [Wp, W]
-        simpa [mul_assoc] using
-          (dvd_mul_right (Erdos248.preSieveModulus K)
-            (p ^ (a - 1) * q ^ b)))
+        simp [mul_assoc])
       (by
         dsimp [Wp, W]
         exact mul_pos

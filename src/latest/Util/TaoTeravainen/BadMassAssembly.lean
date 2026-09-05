@@ -21,7 +21,7 @@ local instance badMassAssemblyDecidable (P : Prop) : Decidable P :=
 
 /-- Exact decomposition of Ω into ω plus factorization excess at a positive
 integer. -/
-theorem Omega_eq_omega_add_factorizationExcess {n : ℕ} (hn : n ≠ 0) :
+theorem Omega_eq_omega_add_factorizationExcess {n : ℕ} (_hn : n ≠ 0) :
     Ω n = ω n + factorizationExcess n := by
   rw [← factorization_sum_eq_Omega,
     factorization_sum_eq_support_card_add_excess]

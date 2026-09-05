@@ -213,26 +213,23 @@ theorem sum_tailSamePrimePowerDensity_le_shiftReciprocal
     intro pa hpa
     by_cases hsmall : pa.1 ≤ Erdos248.tinyCutoff K
     · by_cases hdvd : pa.1 ∣ k
-      · simp only [one_div, mul_ite, mul_zero]
+      · simp only [hsmall, hdvd, true_and, not_lt_of_ge hsmall, ↓reduceIte,
+          mul_zero, add_zero]
         apply Finset.sum_congr rfl
         intro qb hqb
         by_cases heq : pa.1 = qb.1
         · have hqsmall : qb.1 ≤ Erdos248.tinyCutoff K := heq ▸ hsmall
           have hqdvd : qb.1 ∣ k := heq ▸ hdvd
-          simp [heq, hqsmall, hqdvd, div_eq_mul_inv]
+          simp [heq, hqsmall, hqdvd]
         · simp [heq]
-      · simp [smallActivePrimePowerIndices, nonTinyPrimePowerIndices,
-          hsmall, hdvd, not_lt_of_ge hsmall, Finset.mul_sum,
-          div_eq_mul_inv]
+      · simp [hsmall, hdvd, not_lt_of_ge hsmall]
     · have hlarge : Erdos248.tinyCutoff K < pa.1 := by omega
-      simp only [one_div, mul_ite, mul_zero]
+      simp only [hsmall, hlarge, false_and, ↓reduceIte, zero_add, Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro qb hqb
       by_cases heq : pa.1 = qb.1
       · have hqlarge : Erdos248.tinyCutoff K < qb.1 := heq ▸ hlarge
-        have hqnotSmall : ¬ qb.1 ≤ Erdos248.tinyCutoff K := by omega
-        simp [heq, hsmall, hlarge, hqlarge, hqnotSmall,
-          div_eq_mul_inv]
+        simp [heq, hqlarge, div_eq_mul_inv]
       · simp [heq]
   rw [hdecomp]
   exact add_le_add hsmall hlarge'
@@ -377,7 +374,6 @@ theorem sharp_pair_scale_le_five_sieveMass
     _ = (5 / 4 : ℝ) * ((1 : ℝ) / u) * ((1 : ℝ) / v) *
           ((Erdos248.intervalStart K : ℝ) / Erdos248.preSieveModulus K *
             Erdos248.productCoordinateEnergy K) := by
-      push_cast
       field_simp
     _ ≤ (5 / 4 : ℝ) * ((1 : ℝ) / u) * ((1 : ℝ) / v) *
           (4 * Erdos248.sieveMass K) := by
@@ -424,7 +420,6 @@ theorem sharp_single_scale_le_five_sieveMass
     _ = (5 / 4 : ℝ) * ((1 : ℝ) / u) *
           ((Erdos248.intervalStart K : ℝ) / Erdos248.preSieveModulus K *
             Erdos248.productCoordinateEnergy K) := by
-      push_cast
       field_simp
     _ ≤ (5 / 4 : ℝ) * ((1 : ℝ) / u) *
           (4 * Erdos248.sieveMass K) := by
@@ -542,9 +537,8 @@ theorem distinctPrimePowerPairEventMass_le_tailDensity
       · have hrel :
             96 ^ K * primePowerDensity K k pa * primePowerDensity K k qb ≤
               tailPrimePowerDensity K k pa * tailPrimePowerDensity K k qb := by
-          simp [primePowerDensity, tailPrimePowerDensity, hpsmall, hpdiv,
-            hqsmall, one_div, mul_assoc, mul_comm, mul_left_comm]
-          rw [div_eq_mul_inv]
+          simp only [primePowerDensity, tailPrimePowerDensity, if_pos hpsmall,
+            if_pos hpdiv, if_neg hqsmall, div_eq_mul_inv]
           ring_nf
           exact le_rfl
         have hscale := coarse_pair_scale_le_tail hA hreg
@@ -565,9 +559,8 @@ theorem distinctPrimePowerPairEventMass_le_tailDensity
       · have hrel :
             96 ^ K * primePowerDensity K k pa * primePowerDensity K k qb ≤
               tailPrimePowerDensity K k pa * tailPrimePowerDensity K k qb := by
-          simp [primePowerDensity, tailPrimePowerDensity, hpsmall, hqsmall,
-            hqdiv, one_div, mul_assoc, mul_comm, mul_left_comm]
-          rw [div_eq_mul_inv]
+          simp only [primePowerDensity, tailPrimePowerDensity, if_neg hpsmall,
+            if_pos hqsmall, if_pos hqdiv, div_eq_mul_inv]
           ring_nf
           exact le_rfl
         have hscale := coarse_pair_scale_le_tail hA hreg
@@ -588,8 +581,8 @@ theorem distinctPrimePowerPairEventMass_le_tailDensity
       have hrel :
           96 ^ K * primePowerDensity K k pa * primePowerDensity K k qb ≤
             tailPrimePowerDensity K k pa * tailPrimePowerDensity K k qb := by
-        simp [primePowerDensity, tailPrimePowerDensity, hpsmall, hqsmall,
-          one_div]
+        simp only [primePowerDensity, tailPrimePowerDensity, if_neg hpsmall,
+          if_neg hqsmall, div_eq_mul_inv, one_mul]
         have hx : 0 ≤ ((pa.1 : ℝ) ^ pa.2)⁻¹ *
             (((qb.1 : ℝ) ^ qb.2)⁻¹) := by positivity
         calc
@@ -663,8 +656,6 @@ theorem samePrimePowerPairEventMass_le_tailDensity
         _ ≤ 2048 * Erdos248.sieveMass K *
               tailSamePrimePowerDensity K k pa qb +
             256 * primePowerErrorScale K := by
-          have hqsmall : qb.1 ≤ Erdos248.tinyCutoff K := hpq ▸ hpsmall
-          have hqdiv : qb.1 ∣ k := hpq ▸ hpdiv
           let x := Erdos248.sieveMass K *
               ((1 : ℝ) / pa.1 ^ (max pa.2 qb.2 - 1))
           have hx : 0 ≤ x := by
@@ -672,8 +663,8 @@ theorem samePrimePowerPairEventMass_le_tailDensity
             exact mul_nonneg hS0 (by positivity)
           have hscale : 5 * x + primePowerErrorScale K ≤
               2048 * x + 256 * primePowerErrorScale K := by nlinarith
-          simpa [tailSamePrimePowerDensity, hpq, hpsmall, hpdiv, hqsmall,
-            hqdiv, x, one_div, mul_assoc] using hscale
+          simpa [tailSamePrimePowerDensity, hpq.symm, hpsmall, hpdiv,
+            x, one_div, mul_assoc] using hscale
     · rw [show qb.1 = pa.1 by exact hpq.symm,
           primePowerPairEventMass_same_eq_max,
           smallPrimePowerEventMass_eq_zero_of_not_dvd hp hmax hpsmall hpdiv]
@@ -685,13 +676,8 @@ theorem samePrimePowerPairEventMass_le_tailDensity
   · have hrel :
         96 ^ K * samePrimePowerDensity K k pa qb ≤
           tailSamePrimePowerDensity K k pa qb := by
-      have hqnotSmall : ¬ qb.1 ≤ Erdos248.tinyCutoff K := by
-        rw [← hpq]
-        exact hpsmall
-      simp only [ge_iff_le]
-      rw [div_eq_mul_inv]
-      ring_nf
-      exact le_rfl
+      simp [samePrimePowerDensity, tailSamePrimePowerDensity, hpq.symm, hpsmall,
+        div_eq_mul_inv]
     have hscale := coarse_single_scale_le_tail hA hreg
       (samePrimePowerDensity_nonneg K k pa qb) hrel hmain
     calc

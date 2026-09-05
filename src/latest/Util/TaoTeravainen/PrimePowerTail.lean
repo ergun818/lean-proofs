@@ -136,7 +136,6 @@ theorem pair_event_scale_identity (K u v : ℕ) (C : ℝ)
     exact_mod_cast (Nat.ne_of_gt (Erdos248.preSieveModulus_pos K))
   have huR : (u : ℝ) ≠ 0 := by exact_mod_cast (Nat.ne_of_gt hu)
   have hvR : (v : ℝ) ≠ 0 := by exact_mod_cast (Nat.ne_of_gt hv)
-  push_cast
   field_simp
 
 /-- Algebraic normalization of a same-base transformed mass bound. -/
@@ -152,7 +151,6 @@ theorem single_event_scale_identity (K u : ℕ) (C : ℝ)
   have hW : (Erdos248.preSieveModulus K : ℝ) ≠ 0 := by
     exact_mod_cast (Nat.ne_of_gt (Erdos248.preSieveModulus_pos K))
   have huR : (u : ℝ) ≠ 0 := by exact_mod_cast (Nat.ne_of_gt hu)
-  push_cast
   field_simp
 
 theorem primePowerDensity_nonneg (K k : ℕ) (pa : ℕ × ℕ) :
@@ -238,7 +236,6 @@ theorem distinctPrimePowerPairEventMass_le_density
                 primePowerErrorScale K := hnorm
             _ ≤ 256 * primePowerMainScale K * primePowerDensity K k pa *
                   primePowerDensity K k qb + 256 * primePowerErrorScale K := by
-              simp only [one_div]
               have hm := primePowerMainScale_nonneg K
               have he := primePowerErrorScale_nonneg K
               have hd1 : 0 ≤ (1 : ℝ) / pa.1 ^ (pa.2 - 1) := by positivity
@@ -253,7 +250,8 @@ theorem distinctPrimePowerPairEventMass_le_density
               have hx' : 0 ≤ x := by simpa [x] using hx
               have hscale : x + primePowerErrorScale K ≤
                   256 * x + 256 * primePowerErrorScale K := by nlinarith
-              simpa [x, one_div, mul_assoc] using hscale
+              simpa [x, primePowerDensity, hpsmall, hpdiv, hqsmall, hqdiv,
+                one_div, mul_assoc] using hscale
         · rw [primePowerPairEventMass_comm K k pa.1 pa.2 qb.1 qb.2,
             smallPrimePowerPairEventMass_eq_zero_of_not_dvd hq hb hqsmall hqdiv]
           exact scaled_pair_density_nonneg K k pa qb
@@ -280,15 +278,15 @@ theorem distinctPrimePowerPairEventMass_le_density
                     qb.1 ^ qb.2) *
                 (16 * primePowerEnergyBracket K) +
                 primePowerErrorScale K * 16 := by
-              convert hraw using 1 <;>
-                unfold primePowerEnergyBracket primePowerErrorScale <;> ring
+              convert hraw using 1
+              unfold primePowerEnergyBracket primePowerErrorScale
+              ring
           _ = 16 * primePowerMainScale K *
                 ((1 : ℝ) / pa.1 ^ (pa.2 - 1)) *
                 ((1 : ℝ) / qb.1 ^ qb.2) +
               16 * primePowerErrorScale K := hnorm
           _ ≤ 256 * primePowerMainScale K * primePowerDensity K k pa *
                 primePowerDensity K k qb + 256 * primePowerErrorScale K := by
-            simp only [one_div]
             have hm := primePowerMainScale_nonneg K
             have he := primePowerErrorScale_nonneg K
             have hd1 : 0 ≤ (1 : ℝ) / pa.1 ^ (pa.2 - 1) := by positivity
@@ -303,7 +301,8 @@ theorem distinctPrimePowerPairEventMass_le_density
             have hx' : 0 ≤ x := by simpa [x] using hx
             have hscale : 16 * x + 16 * primePowerErrorScale K ≤
                 256 * x + 256 * primePowerErrorScale K := by nlinarith
-            simpa [x, one_div, mul_assoc] using hscale
+            simpa [x, primePowerDensity, hpsmall, hpdiv, hqsmall,
+              one_div, mul_assoc] using hscale
     · rw [smallPrimePowerPairEventMass_eq_zero_of_not_dvd hp ha hpsmall hpdiv]
       exact scaled_pair_density_nonneg K k pa qb
   · have hplarge : Erdos248.tinyCutoff K < pa.1 := by omega
@@ -332,15 +331,15 @@ theorem distinctPrimePowerPairEventMass_le_density
                     pa.1 ^ pa.2) *
                 (16 * primePowerEnergyBracket K) +
                 primePowerErrorScale K * 16 := by
-              convert hraw using 1 <;>
-                unfold primePowerEnergyBracket primePowerErrorScale <;> ring
+              convert hraw using 1
+              unfold primePowerEnergyBracket primePowerErrorScale
+              ring
           _ = 16 * primePowerMainScale K *
                 ((1 : ℝ) / qb.1 ^ (qb.2 - 1)) *
                 ((1 : ℝ) / pa.1 ^ pa.2) +
               16 * primePowerErrorScale K := hnorm
           _ ≤ 256 * primePowerMainScale K * primePowerDensity K k pa *
                 primePowerDensity K k qb + 256 * primePowerErrorScale K := by
-            simp only [one_div]
             have hm := primePowerMainScale_nonneg K
             have he := primePowerErrorScale_nonneg K
             have hd1 : 0 ≤ (1 : ℝ) / pa.1 ^ pa.2 := by positivity
@@ -355,7 +354,8 @@ theorem distinctPrimePowerPairEventMass_le_density
             have hx' : 0 ≤ x := by simpa [x] using hx
             have hscale : 16 * x + 16 * primePowerErrorScale K ≤
                 256 * x + 256 * primePowerErrorScale K := by nlinarith
-            simpa [x, one_div, mul_assoc, mul_comm, mul_left_comm] using hscale
+            simpa [x, primePowerDensity, hpsmall, hqsmall, hqdiv,
+              one_div, mul_assoc, mul_comm, mul_left_comm] using hscale
       · rw [primePowerPairEventMass_comm K k pa.1 pa.2 qb.1 qb.2,
           smallPrimePowerPairEventMass_eq_zero_of_not_dvd hq hb hqsmall hqdiv]
         exact scaled_pair_density_nonneg K k pa qb
@@ -381,8 +381,9 @@ theorem distinctPrimePowerPairEventMass_le_density
                 ((Erdos248.preSieveModulus K * pa.1 ^ pa.2) * qb.1 ^ qb.2) *
               (256 * primePowerEnergyBracket K) +
               primePowerErrorScale K * 256 := by
-            convert hraw using 1 <;>
-              unfold primePowerEnergyBracket primePowerErrorScale <;> ring
+            convert hraw using 1
+            unfold primePowerEnergyBracket primePowerErrorScale
+            ring
         _ = 256 * primePowerMainScale K * ((1 : ℝ) / pa.1 ^ pa.2) *
               ((1 : ℝ) / qb.1 ^ qb.2) +
             256 * primePowerErrorScale K := hnorm
@@ -450,9 +451,6 @@ theorem samePrimePowerPairEventMass_le_density
             primePowerErrorScale K := hnorm
         _ ≤ 16 * primePowerMainScale K * samePrimePowerDensity K k pa qb +
               16 * primePowerErrorScale K := by
-          have hqsmall : qb.1 ≤ Erdos248.tinyCutoff K := hpq ▸ hpsmall
-          have hqdiv : qb.1 ∣ k := hpq ▸ hpdiv
-          simp only [one_div, ge_iff_le]
           let x := primePowerMainScale K *
             ((1 : ℝ) / pa.1 ^ (max pa.2 qb.2 - 1))
           have hx : 0 ≤ x := by
@@ -461,7 +459,8 @@ theorem samePrimePowerPairEventMass_le_density
           have he := primePowerErrorScale_nonneg K
           have hscale : x + primePowerErrorScale K ≤
               16 * x + 16 * primePowerErrorScale K := by nlinarith
-          simpa [x, one_div, mul_assoc, hpq.symm] using hscale
+          simpa [x, samePrimePowerDensity, hpq.symm, hpsmall, hpdiv,
+            one_div, mul_assoc] using hscale
     · rw [smallPrimePowerEventMass_eq_zero_of_not_dvd hp hmax hpsmall hpdiv]
       exact scaled_same_density_nonneg K k pa qb
   · have hplarge : Erdos248.tinyCutoff K < pa.1 := by omega
@@ -483,8 +482,9 @@ theorem samePrimePowerPairEventMass_le_density
           (Erdos248.intervalStart K : ℝ) /
               (Erdos248.preSieveModulus K * pa.1 ^ (max pa.2 qb.2)) *
             (16 * primePowerEnergyBracket K) + primePowerErrorScale K * 16 := by
-          convert hraw using 1 <;>
-            unfold primePowerEnergyBracket primePowerErrorScale <;> ring
+          convert hraw using 1
+          unfold primePowerEnergyBracket primePowerErrorScale
+          ring
       _ = 16 * primePowerMainScale K *
             ((1 : ℝ) / pa.1 ^ (max pa.2 qb.2)) +
           16 * primePowerErrorScale K := hnorm
@@ -493,6 +493,6 @@ theorem samePrimePowerPairEventMass_le_density
         have hqnotSmall : ¬ qb.1 ≤ Erdos248.tinyCutoff K := by
           rw [← hpq]
           exact hpsmall
-        simp [samePrimePowerDensity, hpq, hpsmall, hqnotSmall]
+        simp [samePrimePowerDensity, hpq, hqnotSmall]
 
 end TaoTeravainen

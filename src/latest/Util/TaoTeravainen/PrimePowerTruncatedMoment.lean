@@ -269,8 +269,7 @@ theorem truncatedPrimePowerSecondMoment_le_shiftReciprocal
   have herrorSum :
       (∑ pa ∈ I, ∑ qb ∈ I, 256 * E) =
         256 * E * (I.card : ℝ) ^ 2 := by
-    simp
-    push_cast
+    simp only [Finset.sum_const, nsmul_eq_mul]
     ring
   have hcard : I.card ≤ J ^ 2 := by
     have hsubset : I ⊆ (Finset.Icc 2 J).product (Finset.Icc 2 J) := by
