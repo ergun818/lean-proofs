@@ -65,7 +65,8 @@ post_update pkg do
       ("BoundedGaps", "boundedgaps-linter-v4.33.0.patch"),
       ("AINTLIB", "aintlib-v4.33.0.patch"),
       ("AINTLIB", "hasseweil-linter-v4.33.0.patch"),
-      ("leancert", "leancert-linter-v4.33.0.patch")] do
+      ("leancert", "leancert-linter-v4.33.0.patch"),
+      ("Waring", "waring-linter-v4.33.0.patch")] do
     let dependency := pkg.dir / ".lake" / "packages" / name
     let patch := pkg.dir / "patches" / patchName
     if !(← dependency.pathExists) then
