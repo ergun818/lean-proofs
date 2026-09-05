@@ -550,6 +550,15 @@ diff --git a/BoundedGaps/BoundedGaps/Maynard/SimplexMoments.lean b/BoundedGaps/B
      iff_false]
    intro ht
    have hsum : 0 ≤ ∑ i, t i := Finset.sum_nonneg fun i hi => ht.1 i
+@@ -454,7 +454,7 @@
+     simp only [Fin.prod_univ_succ, Fin.sum_univ_succ]
+     field_simp
+     push_cast
+-    ring
++    ring_nf
+ 
+ theorem maynardSimplex_monomial_integral (k : ℕ) (a : Fin k → ℕ) (b : ℕ) :
+     (∫ t in maynardSimplex k,
 diff --git a/BoundedGaps/BoundedGaps/Proof/LiminfBridge.lean b/BoundedGaps/BoundedGaps/Proof/LiminfBridge.lean
 --- a/BoundedGaps/BoundedGaps/Proof/LiminfBridge.lean
 +++ b/BoundedGaps/BoundedGaps/Proof/LiminfBridge.lean
