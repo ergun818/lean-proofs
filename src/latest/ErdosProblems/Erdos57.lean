@@ -232,7 +232,7 @@ lemma trimWalkBetween_isPath {V : Type*} {G : SimpleGraph V}
   exact (walkAfterLastIn_isPath hp S hu).take _
 
 lemma trimWalkBetween_start_mem {V : Type*} {G : SimpleGraph V}
-    {u v : V} (p : G.Walk u v) (S T : V → Prop) (hu : S u) (hv : T v) :
+    {u v : V} (p : G.Walk u v) (S T : V → Prop) (hu : S u) (_hv : T v) :
     S (p.getVert (walkLastPositionIn p S hu)) :=
   walkLastPositionIn_vertex_mem p S hu
 
@@ -464,7 +464,7 @@ noncomputable def appendWalkListResult {I V : Type*} {G : SimpleGraph V}
         length_eq := by simp [w, q', q.length_eq]
         tail_support_eq := by
           simp [w, q', SimpleGraph.Walk.support_append,
-            q.tail_support_eq, List.append_assoc]
+            q.tail_support_eq]
         support_subset := by
           intro x hx
           simp only [w, SimpleGraph.Walk.support_append, List.mem_append] at hx
@@ -562,7 +562,7 @@ lemma list_map_next_of_injective {X Y : Type*} [DecidableEq X] [DecidableEq Y]
   calc
     (l.map f).next (f l[i]) _ =
         (l.map f).next ((l.map f)[i]'hiMap) (List.get_mem ..) := by
-      congr 2 <;> simp
+      (congr 2; simp)
     _ = (l.map f)[(i + 1) % (l.map f).length]'hmodMap :=
       List.next_getElem (l.map f) (hn.map hf) i (by simpa)
     _ = f (l[(i + 1) % l.length]'hmod) := by simp
@@ -750,10 +750,11 @@ lemma list_getLast_tail_eq_getLast {X : Type*} {l : List X}
 
 /-- A set of cardinality at most two which contains two distinct points has
 no third point. -/
-lemma finset_mem_eq_of_card_le_two {X : Type*} [DecidableEq X]
+lemma finset_mem_eq_of_card_le_two {X : Type*}
     (s : Finset X) {a b x : X} (hcard : s.card ≤ 2)
     (ha : a ∈ s) (hb : b ∈ s) (hab : a ≠ b) (hx : x ∈ s) :
     x = a ∨ x = b := by
+  classical
   by_contra h
   push Not at h
   have hsub : ({a, b, x} : Finset X) ⊆ s := by
@@ -764,7 +765,7 @@ lemma finset_mem_eq_of_card_le_two {X : Type*} [DecidableEq X]
     · exact hb
     · exact hx
   have hthree : ({a, b, x} : Finset X).card = 3 := by
-    simp [hab, h.1, h.2, Ne.symm h.1, Ne.symm h.2]
+    simp [hab, Ne.symm h.1, Ne.symm h.2]
   have := Finset.card_le_card hsub
   rw [hthree] at this
   omega
@@ -826,7 +827,7 @@ lemma list_mem_of_two_cycle {X : Type*} [DecidableEq X]
 exhaust a noduplicated cyclic list. -/
 lemma list_mem_of_three_cycle {X : Type*} [DecidableEq X]
     (l : List X) (hn : l.Nodup) {a b c : X}
-    (ha : a ∈ l) (hab : a ≠ b) (hbc : b ≠ c) (hca : c ≠ a)
+    (ha : a ∈ l) (hab : a ≠ b) (_hbc : b ≠ c) (hca : c ≠ a)
     (hAB : l.next a ha = b)
     (hBC : l.next b (hAB ▸ List.next_mem l a ha) = c)
     (hCA : l.next c (hBC ▸ List.next_mem l b (hAB ▸ List.next_mem l a ha)) = a) :
@@ -1009,14 +1010,15 @@ theorem exists_finite_induce_not_colorable {V : Type*} (G : SimpleGraph V)
 /-- A finite collection contains an inclusion-maximal subcollection whose members are good and
 have pairwise disjoint finite supports.  This is the finite maximal-packing step used in the
 Liu--Montgomery construction. -/
-theorem exists_maximal_good_pairwiseDisjoint {α β : Type*} [Fintype α]
-    [DecidableEq α] [DecidableEq β] (Good : α → Prop) (support : α → Finset β) :
+theorem exists_maximal_good_pairwiseDisjoint {α β : Type*} [Finite α]
+    (Good : α → Prop) (support : α → Finset β) :
     ∃ A : Finset α,
       (∀ a ∈ A, Good a) ∧
       (↑A : Set α).Pairwise (fun a b => Disjoint (support a) (support b)) ∧
       ∀ a, Good a →
         (∀ b ∈ A, a ≠ b → Disjoint (support a) (support b)) → a ∈ A := by
   classical
+  let : Fintype α := Fintype.ofFinite α
   let candidates : Finset α := Finset.univ.filter Good
   let families : Finset (Finset α) := candidates.powerset.filter fun A =>
     (↑A : Set α).Pairwise (fun a b => Disjoint (support a) (support b))
@@ -1150,7 +1152,7 @@ theorem IsFlexiblePiece.mapEmbedding {V W : Type*} [Fintype V] [Fintype W]
     · simpa only [pmap, SimpleGraph.Walk.length_map] using hplen
     · intro x hx
       have hsupp : pmap.support = p.support.map e := by
-        simpa [pmap, ph] using (SimpleGraph.Walk.support_map (f := ph) p)
+        simp [pmap, ph]
       rw [hsupp] at hx
       obtain ⟨x', hx', rfl⟩ := List.mem_map.mp hx
       exact Finset.mem_map.mpr ⟨x', hpsupport x' hx', rfl⟩
@@ -1212,7 +1214,7 @@ theorem IsFlexiblePiece.mapCopy {V W : Type*} [Fintype V] [Fintype W]
     · simpa only [pmap, SimpleGraph.Walk.length_map] using hplen
     · intro x hx
       have hsupp : pmap.support = p.support.map e := by
-        simpa [pmap, ph] using (SimpleGraph.Walk.support_map (f := ph) p)
+        simp [pmap, ph]
       rw [hsupp] at hx
       obtain ⟨x', hx', rfl⟩ := List.mem_map.mp hx
       exact Finset.mem_map.mpr ⟨x', hpsupport x' hx', rfl⟩
@@ -1391,7 +1393,7 @@ lemma exists_completePath_avoiding {t m : ℕ} {a b : Fin t}
   have hsNonempty : support ≠ [] := by simp [support]
   let q := SimpleGraph.Walk.ofSupport support hsNonempty hsChain
   let p : (SimpleGraph.completeGraph (Fin t)).Walk a b :=
-    q.copy (by simp [q, support]) (by simp [q, support])
+    q.copy (by simp [support]) (by simp [support])
   have hpSupport : p.support = support := by
     calc
       p.support = q.support := by
@@ -1412,8 +1414,7 @@ lemma exists_completePath_avoiding {t m : ℕ} {a b : Fin t}
     simp [support, hllen, Nat.sub_add_cancel hm]
   · intro x hx
     have hx' : x ∈ support := by simpa [hpSupport] using hx
-    simp only [support, List.mem_cons, List.mem_append,
-      List.mem_singleton] at hx'
+    simp only [support, List.mem_cons, List.mem_append] at hx'
     simp only [List.mem_nil_iff, or_false] at hx'
     rcases hx' with rfl | hx'
     · exact Or.inl rfl
@@ -1640,14 +1641,14 @@ theorem subdivisionClique_isFlexible (R t : ℕ) (ht : 6 * R + 6 ≤ t) :
     · have hodd : Odd n := Nat.not_even_iff_odd.mp (by
         intro heven
         have := hparity.mp heven
-        simpa using this)
+        simp at this)
       obtain ⟨q, hq, hlen⟩ :=
         exists_subdivisionPath_core_edge a f hodd hnlow hupper
       exact ⟨q, hq, hlen, by simp⟩
     · have hodd : Odd n := Nat.not_even_iff_odd.mp (by
         intro heven
         have := hparity.mp heven
-        simpa using this)
+        simp at this)
       obtain ⟨q, hq, hlen⟩ :=
         exists_subdivisionPath_edge_core e b hodd hnlow hupper
       exact ⟨q, hq, hlen, by simp⟩
@@ -1886,7 +1887,7 @@ def FlexiblePieceExtraction.{u} (R d : ℕ) : Prop :=
 theorem packedRemainder_colorable.{u} {V : Type u} [Fintype V]
     {G : SimpleGraph V} {R d : ℕ} (hextract : FlexiblePieceExtraction.{u} R d)
     {A : Finset (PackedSubgraph V)}
-    (hgood : ∀ P ∈ A, IsFlexiblePiece G R P)
+    (_hgood : ∀ P ∈ A, IsFlexiblePiece G R P)
     (hmax : ∀ P, IsFlexiblePiece G R P →
       (∀ Q ∈ A, P ≠ Q → Disjoint P.2 Q.2) → P ∈ A) :
     (G \ packedUnion A).Colorable d := by
@@ -1942,10 +1943,11 @@ theorem packedUnion_not_colorable_two.{u} {V : Type u} [Fintype V]
 /-! ### Finite step-two interval sums -/
 
 /-- Distribute a prescribed total among finitely many natural capacities. -/
-theorem exists_bounded_sum {ι : Type*} [DecidableEq ι]
+theorem exists_bounded_sum {ι : Type*}
     (s : Finset ι) (cap : ι → ℕ) {D : ℕ}
     (hD : D ≤ ∑ i ∈ s, cap i) :
     ∃ x : ι → ℕ, (∀ i ∈ s, x i ≤ cap i) ∧ ∑ i ∈ s, x i = D := by
+  classical
   induction s using Finset.induction generalizing D with
   | empty =>
       have hDz : D = 0 := by simpa using hD
@@ -1989,12 +1991,13 @@ theorem exists_bounded_sum {ι : Type*} [DecidableEq ι]
 /-- Sums of finite step-two intervals contain every step-two value between
 their endpoint sums.  The witness `j i` records how many increments are used
 in coordinate `i`. -/
-theorem exists_stepTwo_sum {ι : Type*} [DecidableEq ι]
+theorem exists_stepTwo_sum {ι : Type*}
     (s : Finset ι) (lo cap : ι → ℕ) {D : ℕ}
     (hD : D ≤ ∑ i ∈ s, cap i) :
     ∃ x j : ι → ℕ,
       (∀ i ∈ s, j i ≤ cap i ∧ x i = lo i + 2 * j i) ∧
       ∑ i ∈ s, x i = (∑ i ∈ s, lo i) + 2 * D := by
+  classical
   obtain ⟨j, hj, hjsum⟩ := exists_bounded_sum s cap hD
   let x : ι → ℕ := fun i => lo i + 2 * j i
   refine ⟨x, j, ?_, ?_⟩
@@ -2086,7 +2089,7 @@ lemma stepTwo_mem_parity_interval {a T r j : ℕ}
   · omega
 
 /-- Coordinatewise parity intervals add without gaps (at step two). -/
-theorem exists_parity_interval_sum {ι : Type*} [DecidableEq ι]
+theorem exists_parity_interval_sum {ι : Type*}
     (s : Finset ι) (a r : ι → ℕ) {T N : ℕ}
     (ha : ∀ i ∈ s, 0 < a i) (hT : 3 ≤ T)
     (hr : ∀ i ∈ s, r i < 2)
@@ -2096,6 +2099,7 @@ theorem exists_parity_interval_sum {ι : Type*} [DecidableEq ι]
     ∃ x : ι → ℕ,
       (∀ i ∈ s, a i ≤ x i ∧ x i ≤ a i * T ∧ x i % 2 = r i) ∧
       ∑ i ∈ s, x i = N := by
+  classical
   let lo : ι → ℕ := fun i => parityStart (a i) (r i)
   let cap : ι → ℕ := fun i => parityCapacity (a i) T (r i)
   let D := (N - ∑ i ∈ s, lo i) / 2
@@ -2134,7 +2138,7 @@ theorem exists_parity_interval_sum {ι : Type*} [DecidableEq ι]
 /-- Add a fixed path length to a family of flexible parity intervals.  Once
 the sum of upper endpoints covers `Q` times the lower endpoint, every total
 of the prescribed parity in that multiplicative interval is represented. -/
-theorem exists_parity_lengths_for_total {ι : Type*} [DecidableEq ι]
+theorem exists_parity_lengths_for_total {ι : Type*}
     (s : Finset ι) (a r : ι → ℕ) (L₀ Q : ℕ) {T : ℕ}
     (ha : ∀ i ∈ s, 0 < a i) (hT : 3 ≤ T)
     (hr : ∀ i ∈ s, r i < 2)
@@ -2149,6 +2153,7 @@ theorem exists_parity_lengths_for_total {ι : Type*} [DecidableEq ι]
     ∃ x : ι → ℕ,
       (∀ i ∈ s, a i ≤ x i ∧ x i ≤ a i * T ∧ x i % 2 = r i) ∧
       L₀ + ∑ i ∈ s, x i = N := by
+  classical
   let M := N - L₀
   have hMlow : (∑ i ∈ s, parityStart (a i) (r i)) ≤ M := by
     dsimp [M]
@@ -2168,13 +2173,14 @@ theorem exists_parity_lengths_for_total {ι : Type*} [DecidableEq ι]
 /-- A one-third share of the total base weight suffices for a multiplicative
 interval.  The deliberately generous factor `6*Q+3` absorbs both parity
 rounding and the fixed complementary paths. -/
-theorem parity_interval_cover_of_weight {ι : Type*} [DecidableEq ι]
+theorem parity_interval_cover_of_weight {ι : Type*}
     (s : Finset ι) (a r : ι → ℕ) (L₀ Q : ℕ)
     (ha : ∀ i ∈ s, 0 < a i)
     (hweight :
       L₀ + (∑ i ∈ s, (a i + 1)) ≤ 3 * ∑ i ∈ s, (a i + 1)) :
     Q * (L₀ + ∑ i ∈ s, parityStart (a i) (r i)) ≤
       L₀ + ∑ i ∈ s, parityEnd (a i * (6 * Q + 3)) (r i) := by
+  classical
   let A := ∑ i ∈ s, a i
   let W := ∑ i ∈ s, (a i + 1)
   have hcard : s.card ≤ A := by
@@ -2474,7 +2480,10 @@ lemma FlexiblePathData.residue_cast_eq_color_val_add {V : Type*} [Fintype V]
       ((D.color u).val : ZMod 2) + ((D.color v).val : ZMod 2) := by
   rcases fin_two_eq_zero_or_one (D.color u) with hu | hu <;>
     rcases fin_two_eq_zero_or_one (D.color v) with hv | hv <;>
-    simp [FlexiblePathData.residue, hu, hv] <;> decide
+    simp only [FlexiblePathData.residue, hu, Fin.isValue, hv, ↓reduceIte, Nat.cast_zero,
+      Fin.coe_ofNat_eq_mod, Nat.zero_mod, add_zero, zero_ne_one, Nat.cast_one, Nat.mod_succ,
+      zero_add, one_ne_zero]
+  decide
 
 /-- In a bipartite graph, the parity of a walk is the sum of the endpoint
 color bits.  The `ZMod 2` formulation is convenient for cyclic splicing. -/
@@ -2489,17 +2498,17 @@ lemma coloring_walk_length_cast_eq_color_val_add {V : Type*} {G : SimpleGraph V}
     rcases fin_two_eq_zero_or_one (color v) with hv | hv
   · have hpEven : Even p.length := by
       apply heven.mpr
-      simp [boolColor, SimpleGraph.recolorOfEquiv, finTwoEquiv, hu, hv]
+      simp [boolColor, finTwoEquiv, hu, hv]
     have hmod := Nat.even_iff.mp hpEven
     calc
       (p.length : ZMod 2) = ((p.length % 2 : ℕ) : ZMod 2) :=
         (ZMod.natCast_mod _ 2).symm
       _ = ((color u).val : ZMod 2) + ((color v).val : ZMod 2) := by
-        simp [hmod, hu, hv] <;> decide
+        simp [hmod, hu, hv]
   · have hpNotEven : ¬Even p.length := by
       intro hp
       have := heven.mp hp
-      simpa [boolColor, SimpleGraph.recolorOfEquiv, finTwoEquiv, hu, hv] using this
+      simp [boolColor, finTwoEquiv, hu, hv] at this
     have hmod : p.length % 2 = 1 :=
       (Nat.mod_two_eq_zero_or_one p.length).resolve_left
         (fun hzero => hpNotEven (Nat.even_iff.mpr hzero))
@@ -2507,11 +2516,11 @@ lemma coloring_walk_length_cast_eq_color_val_add {V : Type*} {G : SimpleGraph V}
       (p.length : ZMod 2) = ((p.length % 2 : ℕ) : ZMod 2) :=
         (ZMod.natCast_mod _ 2).symm
       _ = ((color u).val : ZMod 2) + ((color v).val : ZMod 2) := by
-        simp [hmod, hu, hv] <;> decide
+        simp [hmod, hu, hv]
   · have hpNotEven : ¬Even p.length := by
       intro hp
       have := heven.mp hp
-      simpa [boolColor, SimpleGraph.recolorOfEquiv, finTwoEquiv, hu, hv] using this
+      simp [boolColor, finTwoEquiv, hu, hv] at this
     have hmod : p.length % 2 = 1 :=
       (Nat.mod_two_eq_zero_or_one p.length).resolve_left
         (fun hzero => hpNotEven (Nat.even_iff.mpr hzero))
@@ -2523,7 +2532,7 @@ lemma coloring_walk_length_cast_eq_color_val_add {V : Type*} {G : SimpleGraph V}
         decide
   · have hpEven : Even p.length := by
       apply heven.mpr
-      simp [boolColor, SimpleGraph.recolorOfEquiv, finTwoEquiv, hu, hv]
+      simp [boolColor, finTwoEquiv, hu, hv]
     have hmod := Nat.even_iff.mp hpEven
     calc
       (p.length : ZMod 2) = ((p.length % 2 : ℕ) : ZMod 2) :=
@@ -2613,7 +2622,7 @@ lemma exists_piece_adj_of_packedUnion_adj {V : Type*}
     ∃ P ∈ A, P.2.Adj u v := by
   classical
   induction A using Finset.induction with
-  | empty => simpa [packedUnion] using h
+  | empty => simp [packedUnion] at h
   | @insert P A hPA ih =>
       rw [packedUnion, Finset.sup_insert, SimpleGraph.sup_adj] at h
       rcases h with hP | hA
@@ -2806,10 +2815,10 @@ lemma mem_incidenceWalk_support_iff {V : Type*} [Fintype V]
   classical
   unfold incidenceWalk
   split <;> rename_i hzero
-  · simp [SimpleGraph.Walk.support_append]
+  · simp
     tauto
   · have hzero' : ¬(0 : Fin 2) = (D P).color v := fun h => hzero h.symm
-    simp [hzero, hzero']
+    simp [hzero]
 
 /-- The canonical auxiliary path between two pieces meeting at `v`. -/
 noncomputable def pieceChord {V : Type*} [Fintype V]
@@ -2929,11 +2938,12 @@ lemma auxPiecesInWalk_dropUntil_subset {V : Type*} [Fintype V]
 
 /-- A vertex whose first occurrence is no later than that of the endpoint
 belongs to the corresponding initial segment of a walk. -/
-lemma mem_takeUntil_support_of_idxOf_le {V : Type*} [Fintype V]
+lemma mem_takeUntil_support_of_idxOf_le {V : Type*}
     {G : SimpleGraph V} {x y z w : V} (p : G.Walk x y)
     (hz : z ∈ p.support) (hw : w ∈ p.support)
     (hindex : p.support.idxOf w ≤ p.support.idxOf z) :
     w ∈ (p.takeUntil z hz).support := by
+  classical
   rw [p.takeUntil_eq_take hz]
   simp only [SimpleGraph.Walk.support_copy, SimpleGraph.Walk.support_take]
   rw [List.mem_take_iff_idxOf_lt hw]
@@ -2941,11 +2951,12 @@ lemma mem_takeUntil_support_of_idxOf_le {V : Type*} [Fintype V]
 
 /-- Dually, a vertex whose first occurrence is no earlier than the split
 vertex belongs to the corresponding final segment. -/
-lemma mem_dropUntil_support_of_idxOf_le {V : Type*} [Fintype V]
+lemma mem_dropUntil_support_of_idxOf_le {V : Type*}
     {G : SimpleGraph V} {x y z w : V} (p : G.Walk x y)
     (hz : z ∈ p.support) (hw : w ∈ p.support)
     (hindex : p.support.idxOf z ≤ p.support.idxOf w) :
     w ∈ (p.dropUntil z hz).support := by
+  classical
   rw [p.dropUntil_eq_drop hz]
   simp only [SimpleGraph.Walk.support_copy,
     SimpleGraph.Walk.drop_support_eq_support_drop_min]
@@ -2976,7 +2987,7 @@ lemma unique_piece_with_piece_free_takeUntil {V : Type*} [Fintype V]
     {D : (P : ↥A) → FlexiblePathData T P.1}
     {pnode : FamilyAuxVertex V A}
     (cr : (familyAuxGraph D).Walk pnode pnode) (P Q R : ↥A)
-    (hpnode : pnode = .inr (.inl P))
+    (_hpnode : pnode = .inr (.inl P))
     (hQP : Q ≠ P) (hRP : R ≠ P)
     (hQ : Q ∈ auxPiecesInWalk cr) (hR : R ∈ auxPiecesInWalk cr)
     (hQonly : ∀ X ∈ auxPiecesInWalk
@@ -3014,7 +3025,7 @@ lemma unique_piece_with_piece_free_dropUntil {V : Type*} [Fintype V]
     {D : (P : ↥A) → FlexiblePathData T P.1}
     {pnode : FamilyAuxVertex V A}
     (cr : (familyAuxGraph D).Walk pnode pnode) (P Q R : ↥A)
-    (hpnode : pnode = .inr (.inl P))
+    (_hpnode : pnode = .inr (.inl P))
     (hQP : Q ≠ P) (hRP : R ≠ P)
     (hQ : Q ∈ auxPiecesInWalk cr) (hR : R ∈ auxPiecesInWalk cr)
     (hQonly : ∀ X ∈ auxPiecesInWalk
@@ -3049,7 +3060,7 @@ lemma unique_piece_with_piece_free_dropUntil {V : Type*} [Fintype V]
 lemma odd_of_odd_add_split {a b k : ℕ} (hodd : Odd (a + b)) :
     Odd (a + k) ∨ Odd (b + k) := by
   by_contra h
-  push_neg at h
+  push Not at h
   have hea : Even (a + k) := Nat.not_odd_iff_even.mp h.1
   have heb : Even (b + k) := Nat.not_odd_iff_even.mp h.2
   obtain ⟨u, hu⟩ := hea
@@ -3213,7 +3224,6 @@ theorem shared_vertex_consecutive_on_minimal_odd_cycle {V : Type*} [Fintype V]
       (Finset.card_le_card (hc'new.trans hnewFront)).trans_lt
         (Finset.card_lt_card hfrontProper)
     exact (Nat.not_lt_of_ge (hminimal z' c' hc' hc'odd)) hcard
-
   · have hoddWalk : Odd (chord.append back).length := by
       simpa [add_comm] using hoddNew
     obtain ⟨z', c', hc', hc'odd, hsupp⟩ :=
@@ -3232,7 +3242,7 @@ lemma two_piece_color_relation_on_minimal_cycle {V : Type*} [Fintype V]
     {A : Finset (PackedSubgraph V)} {T : ℕ}
     {D : (P : ↥A) → FlexiblePathData T P.1}
     {z : FamilyAuxVertex V A} (c : (familyAuxGraph D).Walk z z)
-    (hc : c.IsCycle) (hcodd : Odd c.length)
+    (_hc : c.IsCycle) (_hcodd : Odd c.length)
     (hminimal : ∀ z' (c' : (familyAuxGraph D).Walk z' z'),
       c'.IsCycle → Odd c'.length →
         (auxPiecesInWalk c).card ≤ (auxPiecesInWalk c').card)
@@ -3262,7 +3272,10 @@ lemma two_piece_color_relation_on_minimal_cycle {V : Type*} [Fintype V]
           rcases fin_two_eq_zero_or_one ((D Q.1).color a) with hQa | hQa <;>
           rcases fin_two_eq_zero_or_one ((D P.1).color v) with hPv | hPv <;>
           rcases fin_two_eq_zero_or_one ((D Q.1).color v) with hQv | hQv <;>
-          simp_all <;> decide
+          simp_all only [Sum.forall, Subtype.forall, Prod.forall, ne_eq, Fin.isValue,
+            not_true_eq_false, one_ne_zero, iff_false, not_false_eq_true, Fin.coe_ofNat_eq_mod,
+            Nat.zero_mod, Nat.cast_zero, add_zero, Nat.mod_succ, Nat.cast_one, zero_add, iff_true,
+            zero_ne_one, add_eq_left, add_eq_right] <;> decide
   have hwodd : Odd w.length := ZMod.natCast_eq_one_iff_odd.mp hwcast
   obtain ⟨z', c', hc', hc'odd, hsupp⟩ :=
     exists_odd_cycle_support_subset w hwodd
@@ -3348,9 +3361,9 @@ lemma familyAux_edge_bit_identity {V : Type*} [Fintype V]
           | inr Pw =>
               rcases Pw with ⟨P, w⟩
               have h := hxy
-              simp [familyAuxGraph, familyAuxAdj] at h
+              simp only [familyAuxGraph, familyAuxAdj, Fin.isValue] at h
               rcases h with ⟨rfl, hv, h0⟩
-              simp [familyAuxSideBit, familyAuxZeroIncidence, familyAuxRoot, h0]
+              simp [familyAuxSideBit, familyAuxZeroIncidence]
   | inr p =>
       cases p with
       | inl P =>
@@ -3365,25 +3378,27 @@ lemma familyAux_edge_bit_identity {V : Type*} [Fintype V]
               | inr Qw =>
                   rcases Qw with ⟨Q, w⟩
                   have h := hxy
-                  simp [familyAuxGraph, familyAuxAdj] at h
+                  simp only [familyAuxGraph, familyAuxAdj, Fin.isValue] at h
                   rcases h with ⟨rfl, hw, h0⟩
-                  simp [familyAuxSideBit, familyAuxZeroIncidence, familyAuxRoot, h0]
+                  simp only [familyAuxSideBit, familyAuxZeroIncidence, familyAuxRoot, h0,
+                    ↓reduceIte]
                   decide
       | inr Pv =>
           rcases Pv with ⟨P, v⟩
           cases y with
           | inl w =>
               have h := hxy
-              simp [familyAuxGraph, familyAuxAdj] at h
+              simp only [familyAuxGraph, familyAuxAdj, Fin.isValue] at h
               rcases h with ⟨rfl, hv, h0⟩
-              simp [familyAuxSideBit, familyAuxZeroIncidence, familyAuxRoot, h0]
+              simp [familyAuxSideBit, familyAuxZeroIncidence]
           | inr q =>
               cases q with
               | inl Q =>
                   have h := hxy
-                  simp [familyAuxGraph, familyAuxAdj] at h
+                  simp only [familyAuxGraph, familyAuxAdj, Fin.isValue] at h
                   rcases h with ⟨rfl, hv, h0⟩
-                  simp [familyAuxSideBit, familyAuxZeroIncidence, familyAuxRoot, h0]
+                  simp only [familyAuxSideBit, familyAuxZeroIncidence, familyAuxRoot, h0,
+                    ↓reduceIte]
                   decide
               | inr Qw => simp [familyAuxGraph, familyAuxAdj] at hxy
 
@@ -3399,7 +3414,8 @@ def familyAuxZeroSum {V : Type*} [Fintype V]
 lemma familyAuxSideBit_add_self {V : Type*}
     {A : Finset (PackedSubgraph V)} (x : FamilyAuxVertex V A) :
     familyAuxSideBit x + familyAuxSideBit x = 0 := by
-  cases x <;> simp [familyAuxSideBit] <;> decide
+  cases x <;> simp only [familyAuxSideBit, add_zero]
+  decide
 
 /-- Summing the edge-bit identity along a walk telescopes all internal
 coarse-side bits. -/
@@ -3504,7 +3520,7 @@ lemma exists_root_of_piece_adj {V : Type*} [Fintype V]
   | inl v =>
       refine ⟨v, rfl, ?_⟩
       have h' := h
-      simp [familyAuxGraph, familyAuxAdj] at h'
+      simp only [familyAuxGraph, familyAuxAdj, Fin.isValue] at h'
       exact h'.1
   | inr q =>
       cases q with
@@ -3513,7 +3529,7 @@ lemma exists_root_of_piece_adj {V : Type*} [Fintype V]
           rcases Qv with ⟨Q, v⟩
           refine ⟨v, rfl, ?_⟩
           have h' := h
-          simp [familyAuxGraph, familyAuxAdj] at h'
+          simp only [familyAuxGraph, familyAuxAdj, Fin.isValue] at h'
           rcases h' with ⟨rfl, hv, _⟩
           exact hv
 
@@ -3535,11 +3551,11 @@ lemma familyAuxRoot_eq_of_adj {V : Type*} [Fintype V]
           | inl P => simp [familyAuxRoot] at hy
           | inr Pv =>
               rcases Pv with ⟨P, b⟩
-              simp [familyAuxRoot] at hx hy
+              simp only [familyAuxRoot, Option.some.injEq] at hx hy
               subst u
               subst v
               have h' := hxy
-              simp [familyAuxGraph, familyAuxAdj] at h'
+              simp only [familyAuxGraph, familyAuxAdj, Fin.isValue] at h'
               exact h'.1
   | inr p =>
       cases p with
@@ -3548,11 +3564,11 @@ lemma familyAuxRoot_eq_of_adj {V : Type*} [Fintype V]
           rcases Pa with ⟨P, a⟩
           cases y with
           | inl b =>
-              simp [familyAuxRoot] at hx hy
+              simp only [familyAuxRoot, Option.some.injEq] at hx hy
               subst u
               subst v
               have h' := hxy
-              simp [familyAuxGraph, familyAuxAdj] at h'
+              simp only [familyAuxGraph, familyAuxAdj, Fin.isValue] at h'
               exact h'.1.symm
           | inr q =>
               cases q with
@@ -3862,7 +3878,7 @@ lemma auxPieceOrder_toFinset {V : Type*} [Fintype V]
     (hc : c.IsCycle) : (auxPieceOrder c).toFinset = auxPiecesInWalk c := by
   classical
   ext P
-  simpa [mem_auxPieceOrder_iff hc]
+  simp [mem_auxPieceOrder_iff hc]
 
 /-- The ordered piece list, with membership in the cycle recorded in the
 type.  This avoids repeatedly transporting membership proofs when recursing
@@ -4075,7 +4091,7 @@ lemma even_length_of_at_most_one_auxPiece {V : Type*} [Fintype V]
         intro Q hxQ
         apply honly Q
         rw [SimpleGraph.Walk.support_cons]
-        simpa [hxQ]
+        simp [hxQ]
       have hy : ∀ Q : ↥A, y = .inr (.inl Q) → Q = P := by
         intro Q hyQ
         apply honlyP Q
@@ -4124,7 +4140,7 @@ lemma piece_free_auxPath_length_mod_two {V : Type*} [Fintype V]
       | inl a =>
           have hPx' := hPx
           simp [familyAuxGraph, familyAuxAdj] at hPx'
-          simp [familyAuxRoot] at hroot
+          simp only [familyAuxRoot, Option.some.injEq] at hroot
           subst a
           rcases fin_two_eq_zero_or_one ((D Q).color v) with hQ0 | hQ1
           · rw [Nat.even_iff] at heven
@@ -4147,17 +4163,17 @@ lemma piece_free_auxPath_length_mod_two {V : Type*} [Fintype V]
           | inr Ra =>
               rcases Ra with ⟨R, a⟩
               have hPx' := hPx
-              simp [familyAuxGraph, familyAuxAdj] at hPx'
+              simp only [familyAuxGraph, familyAuxAdj, Fin.isValue] at hPx'
               rcases hPx' with ⟨hPR, ha, hP0⟩
               subst R
-              simp [familyAuxRoot] at hroot
+              simp only [familyAuxRoot, Option.some.injEq] at hroot
               subst a
               rcases fin_two_eq_zero_or_one ((D Q).color v) with hQ0 | hQ1
               · rw [Nat.even_iff] at heven
                 have htailNe : tail.length % 2 ≠ 0 := by
                   intro hzero
                   have hfalse := heven.mp hzero
-                  simpa [familyAuxSinglePieceSide, hQ0] using hfalse
+                  simp [familyAuxSinglePieceSide, hQ0] at hfalse
                 rcases Nat.mod_two_eq_zero_or_one tail.length with htail0 | htail1
                 · exact (htailNe htail0).elim
                 · simp [hP0, hQ0]
@@ -4212,8 +4228,7 @@ lemma even_length_of_no_auxPiece {V : Type*} [Fintype V]
       have hx : ∀ P : ↥A, x ≠ .inr (.inl P) := by
         intro P h
         apply hno P
-        simpa [h] using (show x ∈ (hxy.toWalk.append p).support from
-          (hxy.toWalk.append p).start_mem_support)
+        simp [h]
       have hy : ∀ P : ↥A, y ≠ .inr (.inl P) := by
         intro P h
         apply hnoP P
@@ -4263,9 +4278,10 @@ lemma two_le_card_auxPiecesInWalk_of_odd {V : Type*} [Fintype V]
     (even_length_of_at_most_one_auxPiece P c honly).2 rfl
   exact (Nat.not_even_iff_odd.mpr hcodd) heven
 
-lemma list_isRotated_filterMap {X Y : Type*} [DecidableEq X]
+lemma list_isRotated_filterMap {X Y : Type*}
     {l l' : List X} (h : l ~r l') (f : X → Option Y) :
     l.filterMap f ~r l'.filterMap f := by
+  classical
   obtain ⟨n, rfl⟩ := h
   let k := n % l.length
   rw [List.rotate_eq_drop_append_take_mod]
@@ -4283,10 +4299,11 @@ lemma list_isRotated_filterMap {X Y : Type*} [DecidableEq X]
 /-- A rotation of a duplicate-free nonempty list is determined by its last
 element. -/
 lemma list_eq_of_isRotated_of_nodup_of_getLast_eq
-    {X : Type*} [DecidableEq X] {l l' : List X}
+    {X : Type*} {l l' : List X}
     (hrot : l ~r l') (hn : l.Nodup)
     (hl : l ≠ []) (hl' : l' ≠ [])
     (hlast : l.getLast hl = l'.getLast hl') : l = l' := by
+  classical
   obtain ⟨n, rfl⟩ := hrot
   have hlen : 0 < l.length := List.length_pos_of_ne_nil hl
   have hrotNe : l.rotate n ≠ [] := by
@@ -4315,22 +4332,24 @@ lemma list_eq_of_isRotated_of_nodup_of_getLast_eq
     omega
   rw [← List.rotate_mod, hnmod, List.rotate_zero]
 
-lemma support_tail_getLast_of_not_nil {X : Type*} [Fintype X]
+lemma support_tail_getLast_of_not_nil {X : Type*}
     {H : SimpleGraph X} {x : X} (w : H.Walk x x) (hw : ¬w.Nil) :
     w.support.tail.getLast (List.ne_nil_of_mem (w.end_mem_tail_support hw)) = x := by
+  classical
   cases w with
   | nil => exact (hw (by simp)).elim
-  | @cons _ y _ h p => simpa using p.getLast_support
+  | @cons _ y _ h p => simp
 
 /-- Rotating a simple cycle first at `u` and then at `v` gives the same
 oriented cycle as rotating it directly at `v`. -/
-lemma rotate_rotate_eq_of_isCycle {X : Type*} [Fintype X]
+lemma rotate_rotate_eq_of_isCycle {X : Type*}
     {H : SimpleGraph X} {x u v : X} (c : H.Walk x x) (hc : c.IsCycle)
     (hu : u ∈ c.support) (hv : v ∈ c.support) :
     let cu := c.rotate u hu
     let hvu : v ∈ cu.support :=
       (SimpleGraph.Walk.mem_support_rotate_iff c u hu).2 hv
     cu.rotate v hvu = c.rotate v hv := by
+  classical
   dsimp only
   let cu := c.rotate u hu
   have hvu : v ∈ cu.support :=
@@ -4527,7 +4546,6 @@ lemma auxPiecePredecessor_ne_successor_of_three_le_card
     auxPieceOrderSubtype_next_eq_successor c hc P
   have hQPnext : l.next Q (hPQnext ▸ List.next_mem l P hPmem) = P := by
     rw [auxPieceOrderSubtype_next_eq_successor]
-    change auxPieceSuccessor c hc Q = P
     change auxPieceSuccessor c hc (auxPieceSuccessor c hc P) = P
     rw [← hpredsucc]
     exact auxPieceSuccessor_predecessor c hc P
@@ -4568,7 +4586,7 @@ lemma auxPieceOrder_eq_append_start {V : Type*} [Fintype V]
       (.inr (.inl P) : FamilyAuxVertex V A) := by
     cases c with
     | nil => exact (hc.not_nil (by simp)).elim
-    | @cons _ v _ hv p => simpa using p.getLast_support
+    | @cons _ v _ hv p => simp
   let l := c.support.tail.dropLast.filterMap familyAuxPiece?
   refine ⟨l, ?_⟩
   unfold auxPieceOrder
@@ -4601,7 +4619,7 @@ lemma auxPieceOrder_eq_append_end {V : Type*} [Fintype V]
       (.inr (.inl Q) : FamilyAuxVertex V A) := by
     cases p with
     | nil => exact (hnodes rfl).elim
-    | @cons _ v _ hv q => simpa using q.getLast_support
+    | @cons _ v _ hv q => simp
   let l := p.support.tail.dropLast.filterMap familyAuxPiece?
   refine ⟨l, ?_⟩
   unfold auxPieceOrder
@@ -5408,7 +5426,10 @@ lemma sum_piece_residue_eq_sum_successor_bits {V : Type*} [Fintype V]
         ((D P.1).color (auxPieceLeft c hc hcodd P)) with hL | hL <;>
       rcases fin_two_eq_zero_or_one
         ((D P.1).color (auxPieceRight c hc hcodd P)) with hR | hR <;>
-      simp [leftBit, rightBit, FlexiblePathData.residue, hL, hR] <;> decide
+      simp only [FlexiblePathData.residue, hL, Fin.isValue, hR, ↓reduceIte, Nat.cast_zero,
+        Fin.coe_ofNat_eq_mod, Nat.zero_mod, add_zero, leftBit, rightBit, zero_ne_one, Nat.cast_one,
+        Nat.mod_succ, zero_add, one_ne_zero]
+    decide
   have hsuccEquiv_apply (P : ↥(auxPiecesInWalk c)) :
       succEquiv P = auxPieceSuccessor c hc P := rfl
   have hleft :
@@ -5658,7 +5679,7 @@ theorem auxPieceOverlapGraph_colorable_three {V : Type*} [Fintype V]
     _ < 3 := by omega
 
 /-- Weighted pigeonhole principle for three colours. -/
-lemma exists_fin_three_large_weight_fiber {I : Type*} [DecidableEq I]
+lemma exists_fin_three_large_weight_fiber {I : Type*}
     (s : Finset I) (color : I → Fin 3) (weight : I → ℕ) :
     ∃ i : Fin 3,
       (∑ x ∈ s, weight x) ≤
@@ -6076,7 +6097,7 @@ lemma auxPieceGroup_tail_ne_nil {V : Type*} [Fintype V]
           pre.flatten ++ P :: Q :: (q.tail ++ qs.flatten)
         rw [← auxPieceGroups_flatten c hc S hS]
         rw [hgroups, hg_eq, ← hqcons]
-        simp [List.append_assoc]
+        simp
       have hnext : R.next P hPR = Q := by
         have hn : (pre.flatten ++ P :: Q :: (q.tail ++ qs.flatten)).Nodup := by
           simpa only [← hflat] using hRnd
@@ -6101,7 +6122,7 @@ lemma auxPieceGroup_tail_ne_nil {V : Type*} [Fintype V]
             list_next_eq_of_eq hflat P hPR (by simp)
           _ = (pre.flatten ++ [P]).head (by simp) :=
             list_next_of_append_singleton pre.flatten P hn
-          _ = R.head hRne := by simpa only [hflat]
+          _ = R.head hRne := by simp only [hflat]
       have hheadS : R.head hRne ∈ S :=
         auxRotatedPieceOrder_head_mem c hc S hS
       have hsucc : auxPieceSuccessor c hc P = R.head hRne :=
@@ -6180,7 +6201,7 @@ lemma auxPieceGroup_next_mem_selected {V : Type*} [Fintype V]
             list_next_eq_of_eq hflat L hLR (by simp)
           _ = ((pre.flatten ++ g.dropLast) ++ [L]).head (by simp) :=
             list_next_of_append_singleton (pre.flatten ++ g.dropLast) L hn
-          _ = R.head hRne := by simpa only [hflat]
+          _ = R.head hRne := by simp only [hflat]
       exact hnext.symm ▸ auxRotatedPieceOrder_head_mem c hc S hS
 
 /-- A cyclic successor which is still unselected remains in the same
@@ -6558,7 +6579,7 @@ theorem auxSelectedGroupSuccessor_injective {V : Type*} [Fintype V]
         simpa [higP, hjgQ] using
           (hgsPair.rel_get_of_lt (a := ⟨i, hi⟩) (b := ⟨j, hj⟩) hij)
       exact (List.disjoint_left.mp hd (List.getLast_mem hgPne))
-        (by simpa [LP, LQ, hlast] using List.getLast_mem hgQne)
+        (by simp [LP, LQ, hlast])
     · have hd : List.Disjoint gQ gP := by
         simpa [higP, hjgQ] using
           (hgsPair.rel_get_of_lt (a := ⟨j, hj⟩) (b := ⟨i, hi⟩) hji)
@@ -6654,7 +6675,7 @@ lemma auxPieceGroups_next_head_eq_selectedNext
           _ = ((pre.flatten ++ g.dropLast) ++ [L]).head (by simp) :=
             list_next_of_append_singleton (pre.flatten ++ g.dropLast) L (by
               simpa only [← hflat] using hOn)
-          _ = O.head hOne := by simpa only [hflat]
+          _ = O.head hOne := by simp only [hflat]
       have hnextGroup : gs.next g hg = gs.head hgsne := by
         have hshape : gs = pre ++ [g] := by simpa using hgs
         calc
@@ -6663,7 +6684,7 @@ lemma auxPieceGroups_next_head_eq_selectedNext
           _ = (pre ++ [g]).head (by simp) :=
             list_next_of_append_singleton pre g (by
               simpa only [← hshape] using hgsnd)
-          _ = gs.head hgsne := by simpa only [hshape]
+          _ = gs.head hgsne := by simp only [hshape]
       have hheadFlatten :
           (gs.head hgsne).head
               (auxPieceGroup_ne_nil c hc S hS (List.head_mem hgsne)) =
@@ -6801,7 +6822,7 @@ noncomputable def auxSelectedUnderlying {V : Type*} [Fintype V]
     {D : (P : ↥A) → FlexiblePathData T P.1}
     {z : FamilyAuxVertex V A} {c : (familyAuxGraph D).Walk z z}
     (S : Finset ↥(auxPiecesInWalk c)) : Finset ↥A :=
-  S.map ⟨fun P => P.1, fun P Q h => Subtype.ext h⟩
+  S.map ⟨fun P => P.1, fun _P _Q h => Subtype.ext h⟩
 
 @[simp] lemma mem_auxSelectedUnderlying_iff {V : Type*} [Fintype V]
     {A : Finset (PackedSubgraph V)} {T : ℕ}
@@ -6889,7 +6910,7 @@ theorem familyAuxComplement_colorable_two {V : Type*} [Fintype V]
     {A : Finset (PackedSubgraph V)} {T : ℕ}
     {D : (P : ↥A) → FlexiblePathData T P.1}
     {z : FamilyAuxVertex V A} (c : (familyAuxGraph D).Walk z z)
-    (hc : c.IsCycle) (hcodd : Odd c.length)
+    (_hc : c.IsCycle) (_hcodd : Odd c.length)
     (hminimal : ∀ z' (c' : (familyAuxGraph D).Walk z' z'),
       c'.IsCycle → Odd c'.length →
         (auxPiecesInWalk c).card ≤ (auxPiecesInWalk c').card)
@@ -7619,7 +7640,7 @@ lemma auxSelectedPieceGroup_tail_overlap_head_eq_first
     exact hsuccA.trans (auxPieceSuccessor_predecessor c hc P.1).symm
   have hQneP : Q ≠ P.1 := by
     intro h
-    have hQS : Q ∈ S := by simpa [h] using P.2
+    have hQS : Q ∈ S := by simp [h]
     exact (auxPieceGroup_tail_not_mem c hc S hS
       (auxSelectedPieceGroup_mem c hc S hS P) Q hQtail) hQS
   have hneighbors := auxPiecePredecessor_ne_successor_of_three_le_card
@@ -7686,14 +7707,13 @@ lemma auxSelectedPieceGroup_tail_overlap_next_eq_last
       c hc hcodd S hS hpair N).symm
   have hQneN : Q ≠ N.1 := by
     intro h
-    have hQS : Q ∈ S := by simpa [h] using N.2
+    have hQS : Q ∈ S := by simp [h]
     exact (auxPieceGroup_tail_not_mem c hc S hS
       (auxSelectedPieceGroup_mem c hc S hS P) Q hQtail) hQS
   have hneighbors := auxPiecePredecessor_ne_successor_of_three_le_card
     c hc hcodd hcard N.1
   have hcases := overlapping_piece_eq_predecessor_or_successor
     c hc hcodd hminimal N.1 Q hneighbors hQneN _ hvQ (by
-      change v ∈ N.1.1.1.1
       exact hvNext)
   have hQneB : Q ≠ B := by
     intro h
@@ -8491,7 +8511,7 @@ lemma auxTrimmedConnector_selected_carrier_eq_start_or_next
     auxPieceGroup_tail_not_mem c hc S hS hgP R hRtail
   have hRneQ : R ≠ Q.1 := by
     intro h
-    exact hRnot (by simpa [h] using Q.2)
+    exact hRnot (by simp [h])
   have hneighbors := auxPiecePredecessor_ne_successor_of_three_le_card
     c hc hcodd hcard Q.1
   have hcases := overlapping_piece_eq_predecessor_or_successor
@@ -8501,7 +8521,7 @@ lemma auxTrimmedConnector_selected_carrier_eq_start_or_next
       rw [hprev]
       exact auxPieceSuccessor_predecessor c hc Q.1
     have hnext := auxPieceGroup_selected_successor_eq_selectedNext
-      c hc hcodd S hS hpair P hRtail (by simpa [hsuccR] using Q.2)
+      c hc hcodd S hS hpair P hRtail (by simp [hsuccR])
     right
     apply Subtype.ext
     exact hsuccR.symm.trans hnext
@@ -9303,7 +9323,7 @@ theorem auxVariableLeft_ne_right {V : Type*} [Fintype V]
       c hc hcodd hT S hS hpair P _ hrightTrim
     have hXneP : X ≠ P.1 := by
       intro h
-      have hXS : X ∈ S := by simpa [h] using P.2
+      have hXS : X ∈ S := by simp [h]
       exact (auxPieceGroup_tail_not_mem c hc S hS hgPmem X hXmem) hXS
     have hrightP := auxVariableRight_mem c hc hcodd hT S hS hpair P
     have hXcases := overlapping_piece_eq_predecessor_or_successor
@@ -9325,7 +9345,7 @@ theorem auxVariableLeft_ne_right {V : Type*} [Fintype V]
       c hc hcodd hT S hS hpair Qs _ hleftTrim
     have hYneP : Y ≠ P.1 := by
       intro h
-      have hYS : Y ∈ S := by simpa [h] using P.2
+      have hYS : Y ∈ S := by simp [h]
       exact (auxPieceGroup_tail_not_mem c hc S hS hgQmem Y hYmem) hYS
     have hleftP := auxVariableLeft_mem c hc hcodd hT S hS hpair P
     have hYcases := overlapping_piece_eq_predecessor_or_successor
@@ -9376,11 +9396,11 @@ theorem auxVariableLeft_ne_right {V : Type*} [Fintype V]
     have hQcases := hexhaust Qs.1 (mem_auxPieceOrderSubtype_iff c hc Qs.1)
     have hQneA : Qs.1 ≠ Ap := by
       intro h
-      have hAS : Ap ∈ S := by simpa [← h] using Qs.2
+      have hAS : Ap ∈ S := by simp [← h]
       exact (auxPieceGroup_tail_not_mem c hc S hS hgQmem Ap hAmem) hAS
     have hQneB : Qs.1 ≠ B := by
       intro h
-      have hBS : B ∈ S := by simpa [← h] using Qs.2
+      have hBS : B ∈ S := by simp [← h]
       exact (auxPieceGroup_tail_not_mem c hc S hS hgPmem B hBmem) hBS
     rcases hQcases with hQA | hQP | hQB
     · exact (hQneA hQA).elim
@@ -9504,7 +9524,7 @@ noncomputable def auxTrimmedConnectorInGraph
         (auxSelectedGroupSuccessor c hc S hS P)) :=
   let w := (auxTrimmedConnector c hc hcodd hT S hS hpair P).mapLe
     ((auxComplementGraph_le_packedUnion c S).trans hunion)
-  w.copy (by simp [w, auxVariableRight]) (by
+  w.copy (by simp [auxVariableRight]) (by
     simpa [w] using
       auxTrimmedConnector_end_eq_nextVariableLeft
         c hc hcodd hT S hS hpair P)
@@ -10629,8 +10649,8 @@ theorem auxSingleton_realize_cycle
   let vp : G.Walk L R := vp₀.mapLe (hpiece P.1.1)
   let cp : G.Walk R L :=
     (conn.mapLe ((auxComplementGraph_le_packedUnion c S).trans hunion)).copy
-      (by simp [R, conn, auxSingletonRight])
-      (by simp [L, conn, auxSingletonLeft])
+      (by simp [R, auxSingletonRight])
+      (by simp [L, auxSingletonLeft])
   have hvpPath : vp.IsPath := by simpa [vp] using hvpPath₀
   have hcpPath : cp.IsPath := by
     simpa [cp, conn] using
