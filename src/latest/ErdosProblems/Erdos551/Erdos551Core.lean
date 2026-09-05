@@ -24,7 +24,7 @@ of Keevash, Long, and Skokan: once `n` is sufficiently large, the exact
 value is `(k - 1) * (n - 1) + 1` simultaneously for every `k ≥ n`.
 -/
 
-open scoped BigOperators Classical SimpleGraph NNReal
+open scoped BigOperators SimpleGraph NNReal
 open Filter Asymptotics
 open Topology
 
@@ -51,16 +51,16 @@ theorem cycleCliqueRamseyProperty_exists (k n : ℕ) :
       ((SimpleGraph.not_cliqueFree_iff_top_isContained k).mp hclique)
 
 /-- The least order with the cycle--clique Ramsey property. -/
-noncomputable def cycleCliqueRamseyNumber (k n : ℕ) : ℕ :=
+noncomputable def cycleCliqueRamseyNumber (k n : ℕ) : ℕ := open scoped Classical in
   Nat.find (cycleCliqueRamseyProperty_exists k n)
 
 theorem cycleCliqueRamseyNumber_spec (k n : ℕ) :
-    CycleCliqueRamseyProperty k n (cycleCliqueRamseyNumber k n) :=
+    CycleCliqueRamseyProperty k n (cycleCliqueRamseyNumber k n) := open scoped Classical in
   Nat.find_spec (cycleCliqueRamseyProperty_exists k n)
 
 theorem cycleCliqueRamseyNumber_le_of_property {k n N : ℕ}
     (hN : CycleCliqueRamseyProperty k n N) :
-    cycleCliqueRamseyNumber k n ≤ N :=
+    cycleCliqueRamseyNumber k n ≤ N := open scoped Classical in
   Nat.find_min' (cycleCliqueRamseyProperty_exists k n) hN
 
 theorem cycleCliqueRamseyProperty_mono_vertices {k n N M : ℕ} (hNM : N ≤ M) :
@@ -84,7 +84,7 @@ theorem cycleCliqueRamseyProperty_of_card {k n N : ℕ} {α : Type*} [Fintype α
 
 theorem not_cycleCliqueRamseyProperty_of_lt {k n N : ℕ}
     (hN : N < cycleCliqueRamseyNumber k n) :
-    ¬ CycleCliqueRamseyProperty k n N :=
+    ¬ CycleCliqueRamseyProperty k n N := open scoped Classical in
   Nat.find_min (cycleCliqueRamseyProperty_exists k n) hN
 
 /-! ## The universal lower bound -/
@@ -179,6 +179,7 @@ theorem cycleCliqueRamsey_lower_bound (k n : ℕ) (hk : 1 ≤ k) (hn : 1 ≤ n) 
 
 /-! ## The inductive deletion step used by KLS -/
 
+open scoped Classical in
 /-- In a counterexample for parameter `n`, the non-neighbourhood of any
 vertex is too small to support the already-proved parameter `n - 1`. -/
 theorem compl_degree_lt_of_previous_property {k n N M : ℕ} (hn : 2 ≤ n)
@@ -221,6 +222,7 @@ theorem compl_degree_lt_of_previous_property {k n N M : ℕ} (hn : 2 ≤ n)
     have hn' : (n - 1) + 1 = n := by omega
     exact hindep _ (hn' ▸ ht'')
 
+open scoped Classical in
 /-- The elementary induction at the start of the KLS proof: a minimal
 counterexample has minimum degree at least `k - 1`. -/
 theorem counterexample_minDegree {k n : ℕ} (hn : 2 ≤ n)
@@ -292,11 +294,13 @@ theorem IndepSetFree.card_le_chromaticNumber_toNat_mul_pred
 graph contains an edge.  This is the basic source of a parity-breaking edge
 inside a sufficiently large robust reservoir. -/
 theorem exists_adj_in_finset_of_indepSetFree
-    {V : Type*} [Fintype V] {G : SimpleGraph V} {n : ℕ}
+    {V : Type*} [Finite V] {G : SimpleGraph V} {n : ℕ}
     (hfree : G.IndepSetFree n) {U : Finset V} (hU : n ≤ U.card) :
     ∃ x ∈ U, ∃ y ∈ U, G.Adj x y := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   by_contra hnot
-  push_neg at hnot
+  push Not at hnot
   have hUind : G.IsIndepSet (U : Set V) := by
     rw [SimpleGraph.isIndepSet_iff]
     intro x hx y hy _hxy
@@ -364,7 +368,7 @@ def DiagonalUpperAt (k : ℕ) : Prop :=
 
 /-- The only non-elementary input needed after the deletion induction: no
 extremal-order counterexample with the forced minimum degree exists. -/
-def DenseCounterexampleExcludedAt (k : ℕ) : Prop :=
+def DenseCounterexampleExcludedAt (k : ℕ) : Prop := open scoped Classical in
   ∀ n : ℕ, 3 ≤ n → n ≤ k →
     ∀ G : SimpleGraph (Fin ((k - 1) * (n - 1) + 1)),
       k - 1 ≤ G.minDegree →
@@ -376,6 +380,7 @@ The low-degree branch is discharged by `counterexample_minDegree`; the only
 remaining branch is exactly `DenseCounterexampleExcludedAt`. -/
 theorem diagonalUpperAt_of_denseCounterexampleExcluded {k : ℕ} (hk : 1 ≤ k)
     (hExclude : DenseCounterexampleExcludedAt k) : DiagonalUpperAt k := by
+  classical
   unfold DiagonalUpperAt
   intro n
   induction n using Nat.strong_induction_on with
@@ -451,6 +456,7 @@ Erdős--Gallai-style path input used by KLS. -/
 theorem exists_isPath_length_ge_minDegree {V : Type*} [Fintype V] [Nonempty V]
     (G : SimpleGraph V) [DecidableRel G.Adj] :
     ∃ u v : V, ∃ p : G.Walk u v, p.IsPath ∧ G.minDegree ≤ p.length := by
+  classical
   obtain ⟨u, v, p, hp, hmax⟩ := exists_maximal_isPath G
   refine ⟨u, v, p, hp, ?_⟩
   have hsubset : G.neighborFinset u ⊆ p.support.toFinset.erase u := by
@@ -489,6 +495,7 @@ theorem exists_maximal_isPath_from {V : Type*} (G : SimpleGraph V) (x : V)
   have h := hn ⟨v', p', hp', Eq.refl p'.length⟩
   lia
 
+open scoped Classical in
 /-- Pósa endpoint rotation in the precise form needed by the short-dense
 subgraph lemma.  If `u` is a neighbor of the terminal vertex of a simple
 path, reverse the suffix after `u`; this preserves the starting vertex,
@@ -509,33 +516,34 @@ theorem exists_rotated_isPath_from_of_adj_endpoint_mem_support
       let s := huv.toWalk.append r'.reverse
       let q := a.append s
       refine ⟨_, q, ?_, ?_, ?_⟩
-      have hp' : (a.append (Walk.cons huw r')).IsPath := by simpa [hpr] using hp
-      have hdis0 := hp'.disjoint_support_of_append (q := Walk.cons huw r') (by simp)
-      have hdis : a.support.Disjoint r'.support := by simpa using hdis0
-      have hr' : r'.IsPath := (Walk.cons_isPath_iff huw r').mp hr |>.1
-      have hdisrev : a.support.Disjoint r'.support.reverse := by
-        rw [List.disjoint_left] at hdis ⊢
-        intro z hza hz
-        exact hdis hza (by simpa using hz)
-      unfold q s
-      rw [Walk.isPath_def, Walk.support_append]
-      simp only [Walk.support_append, Walk.support_reverse]
-      simp only [Walk.support_cons, Walk.support_nil, List.tail_reverse, List.cons_append, List.nil_append,
-    List.tail_cons]
-      have hrev : r'.support.reverse = v :: r'.support.dropLast.reverse := by
-        rw [← r'.dropLast_support_concat]
-        simp
-      have hsuf : (v :: r'.support.dropLast.reverse).Nodup := by
-        rw [← hrev]
-        exact List.nodup_reverse.mpr hr'.support_nodup
-      have hdis2 : a.support.Disjoint (v :: r'.support.dropLast.reverse) := by
-        rw [← hrev]
-        exact hdisrev
-      exact List.Nodup.append ha.support_nodup hsuf hdis2
+      · have hp' : (a.append (Walk.cons huw r')).IsPath := by simpa [hpr] using hp
+        have hdis0 := hp'.disjoint_support_of_append (q := Walk.cons huw r') (by simp)
+        have hdis : a.support.Disjoint r'.support := by simpa using hdis0
+        have hr' : r'.IsPath := (Walk.cons_isPath_iff huw r').mp hr |>.1
+        have hdisrev : a.support.Disjoint r'.support.reverse := by
+          rw [List.disjoint_left] at hdis ⊢
+          intro z hza hz
+          exact hdis hza (by simpa using hz)
+        unfold q s
+        rw [Walk.isPath_def, Walk.support_append]
+        simp only [Walk.support_append, Walk.support_reverse]
+        simp only [Walk.support_cons, Walk.support_nil, List.tail_reverse, List.cons_append,
+          List.nil_append, List.tail_cons]
+        have hrev : r'.support.reverse = v :: r'.support.dropLast.reverse := by
+          rw [← r'.dropLast_support_concat]
+          simp
+        have hsuf : (v :: r'.support.dropLast.reverse).Nodup := by
+          rw [← hrev]
+          exact List.nodup_reverse.mpr hr'.support_nodup
+        have hdis2 : a.support.Disjoint (v :: r'.support.dropLast.reverse) := by
+          rw [← hrev]
+          exact hdisrev
+        exact List.Nodup.append ha.support_nodup hsuf hdis2
       · simp [q, s, hpr]
       · ext z
         simp [q, s, hpr, Walk.support_append, Walk.support_reverse]
 
+open scoped Classical in
 /-- Indexed Pósa rotation.  This version identifies the new endpoint as the
 successor of position `i`; unlike the membership-only formulation above, it
 is directly iterable over the terminal neighborhood and will supply a
@@ -560,7 +568,7 @@ theorem exists_rotated_isPath_from_at_index
       exact hp
     have hdropNotNil : ¬ (p.drop i).Nil := by
       intro hnil
-      have : (p.drop i).length = 0 := Walk.nil_iff_length_eq.mp hnil
+      have : (p.drop i).length = 0 := Walk.length_eq_zero_iff.mpr hnil
       simp at this
       omega
     have hdis0 := hpSplit.disjoint_support_of_append (q := p.drop i) hdropNotNil
@@ -588,7 +596,7 @@ theorem exists_rotated_isPath_from_at_index
       rw [← hrev]
       exact hdisrev
     exact List.Nodup.append (hp.take i).support_nodup hsuf hdis2
-  · simp [q, s, a, r', Nat.min_eq_left hi.le, Nat.min_eq_left hi1]
+  · simp [q, s, a, r', Nat.min_eq_left hi.le]
     omega
   · have hrev : r'.support.reverse = v :: r'.support.dropLast.reverse := by
       rw [← r'.dropLast_support_concat]
@@ -605,6 +613,7 @@ theorem exists_rotated_isPath_from_at_index
     simp only [List.mem_toFinset, hsupport, List.mem_append, List.mem_reverse]
     rw [← List.mem_append, hsplit]
 
+open scoped Classical in
 /-- Every indexed rotated endpoint of a path that is longest from its
 starting vertex has all of its neighbors inside the original support.
 Otherwise the rotated path could be extended by one edge, contradicting
@@ -629,6 +638,7 @@ theorem neighborFinset_subset_support_of_maximal_rotated_endpoint
   have hle := hmax z (q.concat hz) hqext
   simp [hqlen] at hle
 
+open scoped Classical in
 /-- Every neighbor of the endpoint of a longest path occurs strictly before
 the final support position.  This is the indexing fact that makes the Pósa
 successor map defined on the whole terminal neighborhood. -/
@@ -658,6 +668,7 @@ theorem idxOf_terminal_neighbor_lt_length_of_maximal_path
       _ = v := p.getVert_length
   exact huAdj.ne huv.symm
 
+open scoped Classical in
 /-- The successor of every terminal neighbor of a longest path is itself
 closed inside the path support.  These successors are the vertices whose
 degree sum gives the quadratic edge mass in the eventual short-dense
@@ -685,7 +696,7 @@ theorem neighborFinset_subset_support_of_maximal_terminal_successor
 /-- The set of Pósa successors of the terminal neighbors of a path. -/
 noncomputable def terminalSuccessorFinset
     {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
-    {x v : V} (p : G.Walk x v) : Finset V :=
+    {x v : V} (p : G.Walk x v) : Finset V := open scoped Classical in
   (G.neighborFinset v).image fun u => p.getVert (p.support.idxOf u + 1)
 
 /-- On a longest path from a fixed start, the Pósa successor map is
@@ -735,22 +746,24 @@ theorem card_terminalSuccessorFinset_eq_degree_of_maximal_path
     exact (List.idxOf_inj hu').mp hidx
   unfold terminalSuccessorFinset
   rw [Finset.card_image_of_injOn hinj]
-  simpa using (SimpleGraph.card_neighborFinset_eq_degree (G := G) v)
+  simp
 
+open scoped Classical in
 /-- Every Pósa successor of a terminal neighbor is a vertex of the original
 longest path.  This is the set-containment half of the short dense piece
 counting argument. -/
 theorem terminalSuccessorFinset_subset_support_of_maximal_path
     {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
-    {x v : V} {p : G.Walk x v} (hp : p.IsPath)
-    (hmax : ∀ (v' : V) (p' : G.Walk x v'), p'.IsPath → p'.length ≤ p.length) :
+    {x v : V} {p : G.Walk x v} (_hp : p.IsPath)
+    (_hmax : ∀ (v' : V) (p' : G.Walk x v'), p'.IsPath → p'.length ≤ p.length) :
     terminalSuccessorFinset G p ⊆ p.support.toFinset := by
   classical
   intro z hz
   rw [terminalSuccessorFinset, Finset.mem_image] at hz
   obtain ⟨u, _hu, rfl⟩ := hz
-  simpa using p.getVert_mem_support (p.support.idxOf u + 1)
+  simp
 
+open scoped Classical in
 /-- Every Pósa successor is closed inside the original path support: all of
 its ambient neighbors lie on that path.  The rotation lemma above proves this
 pointwise; this finite-set wrapper is the form used in the degree sum. -/
@@ -770,6 +783,7 @@ at least its minimum degree. -/
 theorem exists_isPath_from_length_ge_minDegree {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (x : V) :
     ∃ v : V, ∃ p : G.Walk x v, p.IsPath ∧ G.minDegree ≤ p.length := by
+  classical
   obtain ⟨v, p, hp, hmax⟩ := exists_maximal_isPath_from G x
   refine ⟨v, p, hp, ?_⟩
   have hsubset : G.neighborFinset v ⊆ p.support.toFinset.erase v := by
@@ -835,6 +849,7 @@ theorem cycleGraph_isContained_of_two_mul_degree_ge_card
     {k : ℕ} (hk : 3 ≤ k) (hcard : Fintype.card V = k)
     (hdegree : ∀ v : V, k ≤ 2 * G.degree v) :
     cycleGraph k ⊑ G := by
+  classical
   have hham : G.IsHamiltonian := by
     apply SimpleGraph.dirac_theorem (G := G)
     · omega
@@ -849,10 +864,12 @@ theorem cycleGraph_isContained_of_two_mul_degree_ge_card
 applies after stability produces a `k`-vertex subset with large induced
 minimum degree. -/
 theorem cycleGraph_isContained_of_induced_two_mul_degree_ge_card
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {S : Finset V} {k : ℕ} (hk : 3 ≤ k) (hcard : S.card = k)
     (hdegree : ∀ v : S, k ≤ 2 * (G.induce (S : Set V)).degree v) :
     cycleGraph k ⊑ G := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let H : SimpleGraph S := G.induce (S : Set V)
   have hH : cycleGraph k ⊑ H := by
     apply cycleGraph_isContained_of_two_mul_degree_ge_card H hk
@@ -908,24 +925,28 @@ def CompleteStablePartition {V : Type*} (G : SimpleGraph V) (k : ℕ) : Prop :=
 noncomputable def MultiSeedLeftoverFinset
     {V ι : Type*} [Fintype V] [Fintype ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
-    (U : ι → Finset V) (L : Finset V) : Finset V :=
+    (U : ι → Finset V) (L : Finset V) : Finset V := open scoped Classical in
   L.filter fun x =>
     ∃ i j : ι, i ≠ j ∧
       (∃ a ∈ U i, G.Adj x a) ∧
       ∃ b ∈ U j, G.Adj x b
 
+open scoped Classical in
 theorem sub_le_card_sdiff_of_le_card_of_card_le
-    {V : Type*} [Fintype V] {A X : Finset V} {τ E : ℕ}
+    {V : Type*} [Finite V] {A X : Finset V} {τ E : ℕ}
     (hA : τ ≤ A.card) (hX : X.card ≤ E) :
     τ - E ≤ (A \ X).card := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [Finset.card_sdiff]
   have hinter : (X ∩ A).card ≤ X.card :=
     Finset.card_le_card Finset.inter_subset_left
   omega
 
+open scoped Classical in
 theorem completeStablePartition_of_seed_blocks_and_leftover_assignment
-    {V ι : Type*} [Fintype V] [Fintype ι]
-    (G : SimpleGraph V) [DecidableRel G.Adj] {k : ℕ}
+    {V ι : Type*} [Finite V] [Finite ι]
+    (G : SimpleGraph V) {k : ℕ}
     (B : ι → Finset V) (L : Finset V) (assign : V → ι)
     (hBne : ∀ i, (B i).Nonempty)
     (hBdisj : ∀ i j, i ≠ j → Disjoint (B i) (B j))
@@ -939,6 +960,8 @@ theorem completeStablePartition_of_seed_blocks_and_leftover_assignment
       (B i ∪ L.filter fun v => assign v = i).card ≤ k - 1) :
     CompleteStablePartition G k := by
   classical
+  let : Fintype V := Fintype.ofFinite V
+  let : Fintype ι := Fintype.ofFinite ι
   let C : ι → Finset V := fun i => B i ∪ L.filter fun v => assign v = i
   let F : Finset (Finset V) := (Finset.univ : Finset ι).image C
   refine ⟨F, ?_, ?_, ?_, ?_, ?_⟩
@@ -950,7 +973,7 @@ theorem completeStablePartition_of_seed_blocks_and_leftover_assignment
     rcases Finset.mem_image.mp hD with ⟨j, _hj, rfl⟩
     rw [Finset.disjoint_left]
     intro v hvi hvj
-    simp only [C, Finset.mem_union, Finset.mem_filter, Finset.mem_univ, true_and] at hvi hvj
+    simp only [C, Finset.mem_union, Finset.mem_filter] at hvi hvj
     rcases hvi with hvi | ⟨hvL, hvi⟩ <;>
       rcases hvj with hvj | ⟨hvL', hvj⟩
     · by_cases hij : i = j
@@ -969,7 +992,7 @@ theorem completeStablePartition_of_seed_blocks_and_leftover_assignment
       intro h
       apply hAD
       rw [h]
-    simp only [C, Finset.mem_union, Finset.mem_filter, Finset.mem_univ, true_and] at ha hb
+    simp only [C, Finset.mem_union, Finset.mem_filter] at ha hb
     rcases ha with ha | ⟨haL, hai⟩ <;>
       rcases hb with hb | ⟨hbL, hbj⟩
     · exact hBanti i j hij a ha b hb hab
@@ -1039,8 +1062,8 @@ theorem exists_compatible_assignment_of_leftover_separation
 -/
 
 theorem exists_compatible_assignment_of_leftover_separation_early
-    {V ι : Type*} [Fintype V] [Fintype ι] [Nonempty ι]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V ι : Type*} [Finite V] [Finite ι] [Nonempty ι]
+    (G : SimpleGraph V)
     (B : ι → Finset V) (L : Finset V)
     (hseparate : ∀ i j : ι, i ≠ j → ∀ u v : L,
       (G.induce (L : Set V)).Reachable u v →
@@ -1051,6 +1074,8 @@ theorem exists_compatible_assignment_of_leftover_separation_early
         ∀ b ∈ B j, ¬ G.Adj v.1 b) ∧
       ∀ u v : L, G.Adj u.1 v.1 → assign u = assign v := by
   classical
+  let : Fintype V := Fintype.ofFinite V
+  let : Fintype ι := Fintype.ofFinite ι
   let H : SimpleGraph L := G.induce (L : Set V)
   have hcomponent : ∀ c : H.ConnectedComponent,
       ∃ i : ι, ∀ v : L, v ∈ c.supp → ∀ j : ι, j ≠ i →
@@ -1085,6 +1110,7 @@ theorem exists_compatible_assignment_of_leftover_separation_early
       SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj hHadj
     simp [assign, hcomp]
 
+open scoped Classical in
 /-- If all neighbors of a vertex lie in a finite set and its degree is at
 least one below the set order, then it is adjacent to every other vertex of
 the set.  This small saturation lemma is the last local ingredient in the
@@ -1156,12 +1182,13 @@ vertices preserves enough degree for Dirac whenever the original defect is
 at most `k/2`.  This is the precise cleanup step used at the end of the KLS
 stability lemma. -/
 theorem cycleGraph_isContained_of_dense_induced_set
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {S : Finset V} {k d : ℕ} (hk : 3 ≤ k) (hkS : k ≤ S.card)
     (hd : 2 * d ≤ k)
     (hdegree : ∀ v : S, S.card - d ≤ (G.induce (S : Set V)).degree v) :
     cycleGraph k ⊑ G := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨T, hTS, hTcard⟩ := Finset.exists_subset_card_eq hkS
   apply cycleGraph_isContained_of_induced_two_mul_degree_ge_card G hk hTcard
   intro v
@@ -1181,12 +1208,13 @@ theorem cycleGraph_isContained_of_dense_induced_set
 vertex loses at most `|S|-k` neighbors when trimming to `k` vertices.  If the
 remaining guaranteed degree is still at least `k/2`, Dirac gives `Cₖ`. -/
 theorem cycleGraph_isContained_of_trimmed_minDegree
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {S : Finset V} {k δ : ℕ} (hk : 3 ≤ k) (hkS : k ≤ S.card)
     (hmin : δ ≤ (G.induce (S : Set V)).minDegree)
     (htrim : k ≤ 2 * (δ - (S.card - k))) :
     cycleGraph k ⊑ G := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨T, hTS, hTcard⟩ := Finset.exists_subset_card_eq hkS
   apply cycleGraph_isContained_of_induced_two_mul_degree_ge_card G hk hTcard
   intro v
@@ -1236,11 +1264,13 @@ theorem cycleGraph_isContained_of_trimmed_minDegree_univ
 between `k` and `k+d` whose induced minimum degree is at least `k` already
 contains `Cₖ`, provided the surplus `d` is at most `k/2`. -/
 theorem cycleGraph_isContained_of_near_k_minDegree
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {S : Finset V} {k d : ℕ} (hk : 3 ≤ k) (hkS : k ≤ S.card)
     (hSk : S.card ≤ k + d) (hd : 2 * d ≤ k)
     (hmin : k ≤ (G.induce (S : Set V)).minDegree) :
     cycleGraph k ⊑ G := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   apply cycleGraph_isContained_of_dense_induced_set G hk hkS hd
   intro v
   have hkdeg : k ≤ (G.induce (S : Set V)).degree v :=
@@ -2608,7 +2638,7 @@ Turán extremal graph and its exact edge count; this is the single inequality
 needed by the KLS dense-extraction estimates. -/
 theorem cliqueFree_twice_mul_card_edgeFinset_le
     {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
-    {r : ℕ} (hr : 0 < r) (hfree : G.CliqueFree (r + 1)) :
+    {r : ℕ} (_hr : 0 < r) (hfree : G.CliqueFree (r + 1)) :
     2 * r * G.edgeFinset.card ≤ (r - 1) * (Fintype.card V) ^ 2 := by
   have hle : G.edgeFinset.card ≤
       (SimpleGraph.turanGraph (Fintype.card V) r).edgeFinset.card := by
@@ -2618,6 +2648,7 @@ theorem cliqueFree_twice_mul_card_edgeFinset_le
     (SimpleGraph.mul_card_edgeFinset_turanGraph_le
       (n := Fintype.card V) (r := r))
 
+open scoped Classical in
 /-- A graph and its complement partition all unordered pairs of distinct
 vertices. -/
 theorem card_edgeFinset_add_card_edgeFinset_compl
@@ -2646,6 +2677,7 @@ theorem edge_lower_bound_of_indepSetFree
     {n : ℕ} (hn : 2 ≤ n) (hfree : G.IndepSetFree n) :
     (n - 1) * Fintype.card V * (Fintype.card V - 1) ≤
       2 * (n - 1) * G.edgeFinset.card + (n - 2) * (Fintype.card V) ^ 2 := by
+  classical
   have hcompl : Gᶜ.CliqueFree ((n - 1) + 1) := by
     simpa only [Nat.sub_add_cancel (by omega : 1 ≤ n),
       SimpleGraph.cliqueFree_compl] using hfree
@@ -2671,9 +2703,11 @@ theorem edge_lower_bound_of_indepSetFree
 
 /-- Independence-set-freeness is inherited by induced subgraphs. -/
 theorem IndepSetFree.induce
-    {V : Type*} [Fintype V] {G : SimpleGraph V} {n : ℕ}
+    {V : Type*} [Finite V] {G : SimpleGraph V} {n : ℕ}
     (hfree : G.IndepSetFree n) (S : Finset V) :
     (G.induce (S : Set V)).IndepSetFree n := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   exact SimpleGraph.IndepSetFree.comap
     (SimpleGraph.Embedding.induce (G := G) (S : Set V)) hfree
 
@@ -2735,10 +2769,12 @@ theorem avg_degree_ge_of_indepSetFree
 induced subset.  This is the numerical engine behind repeatedly extracting
 dense pieces from a putative Ramsey counterexample. -/
 theorem avg_degree_induce_ge_of_indepSetFree
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {S : Finset V} {n d : ℕ} (hn : 2 ≤ n) (hfree : G.IndepSetFree n)
     (hsize : (n - 1) * (d + 1) ≤ S.card) :
     d * S.card ≤ 2 * (G.induce (S : Set V)).edgeFinset.card := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have h := avg_degree_ge_of_indepSetFree (G.induce (S : Set V)) (d := d) hn
     (Erdos551.IndepSetFree.induce hfree S)
   simpa using h (by simpa using hsize)
@@ -2747,15 +2783,16 @@ theorem avg_degree_induce_ge_of_indepSetFree
 minimum-degree core.  This packages Turán plus the already formalized
 low-degree deletion lemma in the exact form consumed by dense extraction. -/
 theorem exists_induced_minDegree_core_of_indepSetFree
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {S : Finset V} {n d : ℕ} (hn : 2 ≤ n) (hd : 0 < d)
     (hfree : G.IndepSetFree n)
     (hsize : (n - 1) * (d + 1) ≤ S.card) :
-    ∃ H : SimpleGraph S, ∃ _ : DecidableRel H.Adj, ∃ hne : H.support.Nonempty,
+    ∃ H : SimpleGraph S, ∃ _ : DecidableRel H.Adj, ∃ _hne : H.support.Nonempty,
       H ≤ G.induce (S : Set V) ∧
       H.edgeFinset.card = (H.induce H.support).edgeFinset.card ∧
       d ≤ 2 * (H.induce H.support).minDegree := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let J : SimpleGraph S := G.induce (S : Set V)
   have hdense : d * Fintype.card S ≤ 2 * J.edgeFinset.card := by
     simpa [J] using avg_degree_induce_ge_of_indepSetFree G hn hfree hsize
@@ -2828,16 +2865,18 @@ def PairwiseAnticomplete_late {V : Type*} (G : SimpleGraph V)
     (F : Finset (Finset V)) : Prop :=
   ∀ A ∈ F, ∀ B ∈ F, A ≠ B → ∀ a ∈ A, ∀ b ∈ B, ¬ G.Adj a b
 
+open scoped Classical in
 /-- A walk whose support lies in a union of pairwise anticomplete finite
 blocks is contained in one block.  This is the localization step that turns
 a path in a parity-layer union back into a path in one actual BFS layer. -/
 theorem exists_member_containing_walk_support_of_pairwiseAnticomplete
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {F : Finset (Finset V)} (hanti : PairwiseAnticomplete G F)
     {a b : V} (p : G.Walk a b)
     (hsupp : ∀ z ∈ p.support, z ∈ F.biUnion id) :
     ∃ A ∈ F, ∀ z ∈ p.support, z ∈ A := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   induction p with
   | @nil a =>
       have ha : a ∈ F.biUnion id := hsupp a (by simp)
@@ -2865,6 +2904,7 @@ theorem exists_member_containing_walk_support_of_pairwiseAnticomplete
       · exact haA
       · exact hqB z hz
 
+open scoped Classical in
 /-- A connected component of an induced graph contained in a union of
 pairwise-disjoint anticomplete blocks lies in one block.  Choose a block for
 one root vertex; every other component vertex is joined to that root by a
@@ -2872,13 +2912,14 @@ walk in the induced graph, and walk localization forces the entire mapped
 walk into a single block.  Disjointness identifies that block with the root
 block. -/
 theorem exists_member_containing_induced_component_of_pairwiseAnticomplete
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {F : Finset (Finset V)} (hdisj : DisjointFinsetFamily F)
     (hanti : PairwiseAnticomplete G F)
     {S : Finset V} (hS : S ⊆ F.biUnion id)
     (c : (G.induce (S : Set V)).ConnectedComponent) :
     ∃ A ∈ F, ∀ z : c, z.1.1 ∈ A := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let H : SimpleGraph S := G.induce (S : Set V)
   let e : H ↪g G := SimpleGraph.Embedding.induce (G := G) (S : Set V)
   let : Nonempty c := c.nonempty_supp.to_subtype
@@ -2914,7 +2955,7 @@ from each), and blocks of size at most `k-1` therefore cover at most
 `(k-1)(n-1)` vertices. -/
 theorem card_le_mul_pred_of_anticomplete_partition
     {V : Type*} [Fintype V] [Nonempty V]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    (G : SimpleGraph V)
     {F : Finset (Finset V)} {k n : ℕ}
     (hfree : G.IndepSetFree n)
     (hnonempty : ∀ A ∈ F, A.Nonempty)
@@ -2969,15 +3010,18 @@ theorem card_le_mul_pred_of_anticomplete_partition
     _ ≤ (n - 1) * (k - 1) := Nat.mul_le_mul_right _ hFle
     _ = (k - 1) * (n - 1) := Nat.mul_comm _ _
 
+open scoped Classical in
 /-- The union of internally independent, pairwise anticomplete finite pieces
 is independent.  This is the counting bridge used for the parity-unbroken
 remainders after deleting their small matching endpoint covers. -/
 theorem isIndepSet_biUnion_of_pairwiseAnticomplete
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {F : Finset (Finset V)}
     (hInd : ∀ A ∈ F, G.IsIndepSet (A : Set V))
     (hanti : PairwiseAnticomplete G F) :
     G.IsIndepSet ((F.biUnion id : Finset V) : Set V) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [SimpleGraph.isIndepSet_iff]
   intro a ha b hb hab
   rcases Finset.mem_biUnion.mp ha with ⟨A, hA, haA⟩
@@ -2993,13 +3037,15 @@ theorem isIndepSet_biUnion_of_pairwiseAnticomplete
 independent pieces, not just their number.  Disjointness identifies the
 biUnion cardinality with the sum of the individual cardinalities. -/
 theorem sum_card_lt_of_disjoint_pairwiseAnticomplete_indep
-    {V : Type*} [Fintype V]
+    {V : Type*} [Finite V]
     (G : SimpleGraph V) {F : Finset (Finset V)} {n : ℕ}
     (hfree : G.IndepSetFree n)
     (hdisj : DisjointFinsetFamily F)
     (hanti : PairwiseAnticomplete G F)
     (hInd : ∀ A ∈ F, G.IsIndepSet (A : Set V)) :
     ∑ A ∈ F, A.card < n := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hpair : (F : Set (Finset V)).PairwiseDisjoint id := by
     intro A hA B hB hAB
     exact hdisj A (by simpa using hA) B (by simpa using hB) hAB
@@ -3016,8 +3062,8 @@ graph has fewer than `n` nonempty pairwise-disjoint anticomplete blocks.
 Cleanup uses this before the exceptional vertices have been assigned back to
 blocks, so the family need not yet cover the ambient graph. -/
 theorem card_lt_of_nonempty_disjoint_pairwiseAnticomplete
-    {V : Type*} [Fintype V] [Nonempty V]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] [Nonempty V]
+    (G : SimpleGraph V)
     {F : Finset (Finset V)} {n : ℕ}
     (hfree : G.IndepSetFree n)
     (hnonempty : ∀ A ∈ F, A.Nonempty)
@@ -3025,6 +3071,7 @@ theorem card_lt_of_nonempty_disjoint_pairwiseAnticomplete
     (hanti : PairwiseAnticomplete G F) :
     F.card < n := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let pick : Finset V → V := fun A =>
     if hA : A ∈ F then (hnonempty A hA).choose else Classical.choice inferInstance
   have hpick_mem : ∀ A ∈ F, pick A ∈ A := by
@@ -3059,7 +3106,7 @@ graph.  This is the final numerical contradiction after KLS stability and
 cleanup have absorbed the leftover vertices. -/
 theorem false_of_anticomplete_partition_at_extremal_order
     {k n : ℕ}
-    (G : SimpleGraph (Fin ((k - 1) * (n - 1) + 1))) [DecidableRel G.Adj]
+    (G : SimpleGraph (Fin ((k - 1) * (n - 1) + 1)))
     [Nonempty (Fin ((k - 1) * (n - 1) + 1))]
     {F : Finset (Finset (Fin ((k - 1) * (n - 1) + 1)))}
     (hfree : G.IndepSetFree n)
@@ -3068,6 +3115,7 @@ theorem false_of_anticomplete_partition_at_extremal_order
     (hanti : PairwiseAnticomplete G F)
     (hcover : ∀ v : Fin ((k - 1) * (n - 1) + 1), ∃ A ∈ F, v ∈ A)
     (hcard : ∀ A ∈ F, A.card ≤ k - 1) : False := by
+  classical
   have hle := card_le_mul_pred_of_anticomplete_partition G hfree hnonempty hdisj
     hanti hcover hcard
   simp only [Fintype.card_fin] at hle
@@ -3082,13 +3130,14 @@ def CompleteStablePartition_late {V : Type*} (G : SimpleGraph V) (k : ℕ) : Pro
     (∀ v : V, ∃ A ∈ F, v ∈ A) ∧
     (∀ A ∈ F, A.card ≤ k - 1)
 
+open scoped Classical in
 /-- An assignment of every vertex to a nonempty bounded block gives a
 complete stable partition as soon as every ambient edge stays inside one
 assignment fibre.  This is the abstract endpoint for the bounded-exception
 absorption step: the hard work only has to construct the assignment. -/
 theorem completeStablePartition_of_assignment
-    {V ι : Type*} [Fintype V] [Fintype ι]
-    (G : SimpleGraph V) [DecidableRel G.Adj] {k : ℕ}
+    {V ι : Type*} [Fintype V] [Finite ι]
+    (G : SimpleGraph V) {k : ℕ}
     (assign : V → ι)
     (hne : ∀ i : ι, ∃ v : V, assign v = i)
     (hedge : ∀ a b : V, G.Adj a b → assign a = assign b)
@@ -3096,6 +3145,7 @@ theorem completeStablePartition_of_assignment
       ((Finset.univ : Finset V).filter fun v => assign v = i).card ≤ k - 1) :
     CompleteStablePartition G k := by
   classical
+  let : Fintype ι := Fintype.ofFinite ι
   let B : ι → Finset V :=
     fun i => (Finset.univ : Finset V).filter fun v => assign v = i
   let F : Finset (Finset V) := (Finset.univ : Finset ι).image B
@@ -3134,14 +3184,15 @@ theorem completeStablePartition_of_assignment
     rcases Finset.mem_image.mp hA with ⟨i, _hi, rfl⟩
     exact hcard i
 
+open scoped Classical in
 /-- Absorption endpoint with explicit seed blocks and a leftover assignment.
 The seed blocks are already pairwise anticomplete; every leftover vertex is
 assigned to one seed, has no neighbours in any other seed, and leftover edges
 stay inside one assigned fibre.  If the enlarged blocks respect the capacity
 bound, they form the required complete stable partition. -/
 theorem completeStablePartition_of_seed_blocks_and_leftover_assignment_late
-    {V ι : Type*} [Fintype V] [Fintype ι]
-    (G : SimpleGraph V) [DecidableRel G.Adj] {k : ℕ}
+    {V ι : Type*} [Finite V] [Finite ι]
+    (G : SimpleGraph V) {k : ℕ}
     (B : ι → Finset V) (L : Finset V) (assign : V → ι)
     (hBne : ∀ i, (B i).Nonempty)
     (hBdisj : ∀ i j, i ≠ j → Disjoint (B i) (B j))
@@ -3155,6 +3206,8 @@ theorem completeStablePartition_of_seed_blocks_and_leftover_assignment_late
       (B i ∪ L.filter fun v => assign v = i).card ≤ k - 1) :
     CompleteStablePartition G k := by
   classical
+  let : Fintype V := Fintype.ofFinite V
+  let : Fintype ι := Fintype.ofFinite ι
   let C : ι → Finset V := fun i => B i ∪ L.filter fun v => assign v = i
   let F : Finset (Finset V) := (Finset.univ : Finset ι).image C
   refine ⟨F, ?_, ?_, ?_, ?_, ?_⟩
@@ -3166,7 +3219,7 @@ theorem completeStablePartition_of_seed_blocks_and_leftover_assignment_late
     rcases Finset.mem_image.mp hD with ⟨j, _hj, rfl⟩
     rw [Finset.disjoint_left]
     intro v hvi hvj
-    simp only [C, Finset.mem_union, Finset.mem_filter, Finset.mem_univ, true_and] at hvi hvj
+    simp only [C, Finset.mem_union, Finset.mem_filter] at hvi hvj
     rcases hvi with hvi | ⟨hvL, hvi⟩ <;>
       rcases hvj with hvj | ⟨hvL', hvj⟩
     · by_cases hij : i = j
@@ -3185,7 +3238,7 @@ theorem completeStablePartition_of_seed_blocks_and_leftover_assignment_late
       intro h
       apply hAD
       rw [h]
-    simp only [C, Finset.mem_union, Finset.mem_filter, Finset.mem_univ, true_and] at ha hb
+    simp only [C, Finset.mem_union, Finset.mem_filter] at ha hb
     rcases ha with ha | ⟨haL, hai⟩ <;>
       rcases hb with hb | ⟨hbL, hbj⟩
     · exact hBanti i j hij a ha b hb hab
@@ -3216,8 +3269,8 @@ seed block plus the entire leftover set is stronger than the individual
 fibre capacities, but it is exactly the estimate produced by a uniform small
 exceptional set. -/
 theorem completeStablePartition_of_seed_blocks_and_leftover_assignment_of_global_slack
-    {V ι : Type*} [Fintype V] [Fintype ι]
-    (G : SimpleGraph V) [DecidableRel G.Adj] {k : ℕ}
+    {V ι : Type*} [Finite V] [Finite ι]
+    (G : SimpleGraph V) {k : ℕ}
     (B : ι → Finset V) (L : Finset V) (assign : V → ι)
     (hBne : ∀ i, (B i).Nonempty)
     (hBdisj : ∀ i j, i ≠ j → Disjoint (B i) (B j))
@@ -3229,6 +3282,9 @@ theorem completeStablePartition_of_seed_blocks_and_leftover_assignment_of_global
     (hLedge : ∀ u ∈ L, ∀ v ∈ L, G.Adj u v → assign u = assign v)
     (hslack : ∀ i : ι, (B i).card + L.card ≤ k - 1) :
     CompleteStablePartition G k := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
+  let : Fintype ι := Fintype.ofFinite ι
   apply completeStablePartition_of_seed_blocks_and_leftover_assignment
     G B L assign hBne hBdisj hBL hBanti hcover hcompat hLedge
   intro i
@@ -3247,8 +3303,8 @@ edges and both are compatible with all other seed blocks, their union is a
 valid leftover assignment.  This is the exact gluing step needed after the
 multi-seed deletion is handled by a separate absorption argument. -/
 theorem completeStablePartition_of_seed_blocks_and_two_leftover_assignments_of_global_slack
-    {V ι : Type*} [Fintype V] [Fintype ι] [Nonempty ι]
-    (G : SimpleGraph V) [DecidableRel G.Adj] {k : ℕ}
+    {V ι : Type*} [Finite V] [Finite ι] [Nonempty ι]
+    (G : SimpleGraph V) {k : ℕ}
     (B : ι → Finset V) (E L : Finset V)
     (assignE : E → ι) (assignL : L → ι)
     (hBne : ∀ i, (B i).Nonempty)
@@ -3268,6 +3324,8 @@ theorem completeStablePartition_of_seed_blocks_and_two_leftover_assignments_of_g
     (hslack : ∀ i : ι, (B i).card + E.card + L.card ≤ k - 1) :
     CompleteStablePartition G k := by
   classical
+  let : Fintype V := Fintype.ofFinite V
+  let : Fintype ι := Fintype.ofFinite ι
   let W : Finset V := E ∪ L
   let assign : V → ι := fun v =>
     if hvE : v ∈ E then assignE ⟨v, hvE⟩
@@ -3339,8 +3397,8 @@ chosen automatically from the no-cross-reachable hypothesis; the only
 remaining explicit data are the assignments for the exceptional vertices
 and their compatibility with that chosen good assignment. -/
 theorem completeStablePartition_of_seed_blocks_exceptional_and_separated_leftover_of_global_slack
-    {V ι : Type*} [Fintype V] [Fintype ι] [Nonempty ι]
-    (G : SimpleGraph V) [DecidableRel G.Adj] {k : ℕ}
+    {V ι : Type*} [Finite V] [Finite ι] [Nonempty ι]
+    (G : SimpleGraph V) {k : ℕ}
     (B : ι → Finset V) (E L : Finset V)
     (assignE : E → ι)
     (hBne : ∀ i, (B i).Nonempty)
@@ -3364,6 +3422,9 @@ theorem completeStablePartition_of_seed_blocks_exceptional_and_separated_leftove
       ∀ e : E, ∀ v : L, G.Adj e.1 v.1 → assignE e = assignL v)
     (hslack : ∀ i : ι, (B i).card + E.card + L.card ≤ k - 1) :
     CompleteStablePartition G k := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
+  let : Fintype ι := Fintype.ofFinite ι
   obtain ⟨assignL, hLcompat, hLedge⟩ :=
     exists_compatible_assignment_of_leftover_separation_early G B L hseparate
   apply completeStablePartition_of_seed_blocks_and_two_leftover_assignments_of_global_slack
@@ -3377,9 +3438,9 @@ exceptional set is already anticomplete to every trimmed seed and to the
 surviving separated remainder, assign all exceptional vertices one arbitrary
 seed label; internal exceptional edges are then harmless and cross edges are
 absent by hypothesis. -/
-theorem completeStablePartition_of_seed_blocks_anticomplete_exceptional_and_separated_leftover_of_global_slack
-    {V ι : Type*} [Fintype V] [Fintype ι] [Nonempty ι]
-    (G : SimpleGraph V) [DecidableRel G.Adj] {k : ℕ}
+theorem completeStablePartition_of_seeds_anticomplete_exceptional_and_separated_leftover
+    {V ι : Type*} [Finite V] [Finite ι] [Nonempty ι]
+    (G : SimpleGraph V) {k : ℕ}
     (B : ι → Finset V) (E L : Finset V)
     (hBne : ∀ i, (B i).Nonempty)
     (hBdisj : ∀ i j, i ≠ j → Disjoint (B i) (B j))
@@ -3396,6 +3457,9 @@ theorem completeStablePartition_of_seed_blocks_anticomplete_exceptional_and_sepa
     (hELanti : ∀ e ∈ E, ∀ v ∈ L, ¬ G.Adj e v)
     (hslack : ∀ i : ι, (B i).card + E.card + L.card ≤ k - 1) :
     CompleteStablePartition G k := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
+  let : Fintype ι := Fintype.ofFinite ι
   let i₀ : ι := Classical.choice inferInstance
   let assignE : E → ι := fun _ => i₀
   apply completeStablePartition_of_seed_blocks_exceptional_and_separated_leftover_of_global_slack
@@ -3414,8 +3478,8 @@ anticomplete to all the other seeds: adjacency inside the leftover cannot
 cross two component labels, so the component labels supply the compatible
 vertex assignment required by the preceding theorem. -/
 theorem completeStablePartition_of_seed_blocks_and_leftover_components_of_global_slack
-    {V ι : Type*} [Fintype V] [Fintype ι] [Nonempty ι]
-    (G : SimpleGraph V) [DecidableRel G.Adj] {k : ℕ}
+    {V ι : Type*} [Finite V] [Finite ι] [Nonempty ι]
+    (G : SimpleGraph V) {k : ℕ}
     (B : ι → Finset V) (L : Finset V)
     (hBne : ∀ i, (B i).Nonempty)
     (hBdisj : ∀ i j, i ≠ j → Disjoint (B i) (B j))
@@ -3428,6 +3492,8 @@ theorem completeStablePartition_of_seed_blocks_and_leftover_components_of_global
     (hslack : ∀ i : ι, (B i).card + L.card ≤ k - 1) :
     CompleteStablePartition G k := by
   classical
+  let : Fintype V := Fintype.ofFinite V
+  let : Fintype ι := Fintype.ofFinite ι
   let H : SimpleGraph L := G.induce (L : Set V)
   let label : H.ConnectedComponent → ι := fun c =>
     Classical.choose (hcomponent c)
@@ -3459,8 +3525,8 @@ have one endpoint adjacent to one seed and another endpoint adjacent to a
 different seed, then every leftover component has a compatible seed label.
 Components with no seed neighbour may be assigned an arbitrary label. -/
 theorem exists_compatible_seed_for_leftover_components_of_no_cross_reachable
-    {V ι : Type*} [Fintype V] [Fintype ι] [Nonempty ι]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V ι : Type*} [Finite V] [Finite ι] [Nonempty ι]
+    (G : SimpleGraph V)
     (B : ι → Finset V) (L : Finset V)
     (hseparate : ∀ i j : ι, i ≠ j → ∀ u v : L,
       (G.induce (L : Set V)).Reachable u v →
@@ -3469,6 +3535,9 @@ theorem exists_compatible_seed_for_leftover_components_of_no_cross_reachable
     ∀ c : (G.induce (L : Set V)).ConnectedComponent,
       ∃ i : ι, ∀ v : L, v ∈ c.supp → ∀ j : ι, j ≠ i →
         ∀ b ∈ B j, ¬ G.Adj v.1 b := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
+  let : Fintype ι := Fintype.ofFinite ι
   intro c
   by_cases hattach : ∃ i : ι, ∃ u : L, u ∈ c.supp ∧
       ∃ a ∈ B i, G.Adj u.1 a
@@ -3489,8 +3558,8 @@ compatible with every other seed block and constant on leftover edges.  This
 is the interface used when a later absorption step supplies assignments for
 an additional exceptional set and the two assignments are glued together. -/
 theorem exists_compatible_assignment_of_leftover_separation
-    {V ι : Type*} [Fintype V] [Fintype ι] [Nonempty ι]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V ι : Type*} [Finite V] [Finite ι] [Nonempty ι]
+    (G : SimpleGraph V)
     (B : ι → Finset V) (L : Finset V)
     (hseparate : ∀ i j : ι, i ≠ j → ∀ u v : L,
       (G.induce (L : Set V)).Reachable u v →
@@ -3501,6 +3570,8 @@ theorem exists_compatible_assignment_of_leftover_separation
         ∀ b ∈ B j, ¬ G.Adj v.1 b) ∧
       ∀ u v : L, G.Adj u.1 v.1 → assign u = assign v := by
   classical
+  let : Fintype V := Fintype.ofFinite V
+  let : Fintype ι := Fintype.ofFinite ι
   let H : SimpleGraph L := G.induce (L : Set V)
   have hcomponent :=
     exists_compatible_seed_for_leftover_components_of_no_cross_reachable
@@ -3528,8 +3599,8 @@ leftover maps through the canonical induced embedding to reachability in the
 larger leftover, while the smaller block witnesses are also witnesses for
 the original blocks. -/
 theorem leftover_separation_mono
-    {V ι : Type*} [Fintype V] [Fintype ι]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V ι : Type*} [Finite V] [Finite ι]
+    (G : SimpleGraph V)
     (B B' : ι → Finset V) (L S : Finset V)
     (hSL : S ⊆ L) (hBB' : ∀ i, B' i ⊆ B i)
     (hseparate : ∀ i j : ι, i ≠ j → ∀ u v : L,
@@ -3540,6 +3611,9 @@ theorem leftover_separation_mono
       (G.induce (S : Set V)).Reachable u v →
       (∃ a ∈ B' i, G.Adj u.1 a) →
       (∃ b ∈ B' j, G.Adj v.1 b) → False := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
+  let : Fintype ι := Fintype.ofFinite ι
   let H : SimpleGraph S := G.induce (S : Set V)
   let K : SimpleGraph L := G.induce (L : Set V)
   have hSLset : (S : Set V) ⊆ (L : Set V) := by
@@ -3558,8 +3632,8 @@ theorem leftover_separation_mono
 the path-separation condition used in KLS cleanup; the preceding bridge
 chooses component labels and the global-slack endpoint absorbs them. -/
 theorem completeStablePartition_of_seed_blocks_and_leftover_separation_of_global_slack
-    {V ι : Type*} [Fintype V] [Fintype ι] [Nonempty ι]
-    (G : SimpleGraph V) [DecidableRel G.Adj] {k : ℕ}
+    {V ι : Type*} [Finite V] [Finite ι] [Nonempty ι]
+    (G : SimpleGraph V) {k : ℕ}
     (B : ι → Finset V) (L : Finset V)
     (hBne : ∀ i, (B i).Nonempty)
     (hBdisj : ∀ i j, i ≠ j → Disjoint (B i) (B j))
@@ -3572,6 +3646,9 @@ theorem completeStablePartition_of_seed_blocks_and_leftover_separation_of_global
       (∃ b ∈ B j, G.Adj v.1 b) → False)
     (hslack : ∀ i : ι, (B i).card + L.card ≤ k - 1) :
     CompleteStablePartition G k := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
+  let : Fintype ι := Fintype.ofFinite ι
   apply completeStablePartition_of_seed_blocks_and_leftover_components_of_global_slack
     G B L hBne hBdisj hBL hBanti hcover
   · exact exists_compatible_seed_for_leftover_components_of_no_cross_reachable
@@ -3582,10 +3659,11 @@ theorem completeStablePartition_of_seed_blocks_and_leftover_separation_of_global
 soon as every component has order at most `k-1`.  This turns the last
 structural target into a concrete component-size statement. -/
 theorem completeStablePartition_of_component_card_le
-    {V : Type*} [Fintype V] (G : SimpleGraph V) {k : ℕ}
+    {V : Type*} [Finite V] (G : SimpleGraph V) {k : ℕ}
     (hcomp : ∀ c : G.ConnectedComponent, c.supp.ncard ≤ k - 1) :
     CompleteStablePartition G k := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let f : G.ConnectedComponent ↪ Finset V :=
     { toFun := fun c => c.supp.toFinset
       inj' := by
@@ -3632,12 +3710,12 @@ theorem completeStablePartition_of_component_card_le
     have hcd : c = d := by
       rw [← hca, ← hdb]
       exact SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj hab
-    simpa [hcd]
+    simp [hcd]
   · intro v
     let c := G.connectedComponentMk v
     refine ⟨c.supp.toFinset, ?_, ?_⟩
     · exact Finset.mem_map.mpr ⟨c, Finset.mem_univ _, rfl⟩
-    · simpa [c] using (SimpleGraph.ConnectedComponent.connectedComponentMk_mem (G := G) (v := v))
+    · simp [c]
   · intro A hA
     rcases Finset.mem_map.mp hA with ⟨c, _hc, rfl⟩
     change c.supp.toFinset.card ≤ k - 1
@@ -3651,7 +3729,7 @@ fact used when a leftover decomposition has already reduced every component
 to bounded order. -/
 theorem card_connectedComponent_lt_of_indepSetFree
     {V : Type*} [Fintype V] [Nonempty V]
-    (G : SimpleGraph V) [DecidableRel G.Adj] {n : ℕ}
+    (G : SimpleGraph V) {n : ℕ}
     (hfree : G.IndepSetFree n) :
     Fintype.card G.ConnectedComponent < n := by
   classical
@@ -3681,8 +3759,9 @@ theorem card_connectedComponent_lt_of_indepSetFree
       exact c.mem_supp_of_adj_mem_supp (hpick c) hadj
     subst d
     exact hab rfl
-  rw [← hRcard]
-  exact Erdos551.IndepSetFree.card_lt hfree hRind
+  have hcard := Erdos551.IndepSetFree.card_lt hfree hRind
+  rw [hRcard] at hcard
+  simpa only [Fintype.card_eq_nat_card] using hcard
 
 /-- If every component of an induced leftover graph has at most two
 vertices, then the whole leftover has at most `2(n-1)` vertices.  The proof
@@ -3690,13 +3769,14 @@ reuses the already checked complete-component partition and the final
 anticomplete partition count, so no separate component-sum bookkeeping is
 needed here. -/
 theorem card_le_two_mul_pred_of_indepSetFree_of_components_card_le_two
-    {V : Type*} [Fintype V]
-    (G : SimpleGraph V) [DecidableRel G.Adj] {L : Finset V} {n : ℕ}
+    {V : Type*} [Finite V]
+    (G : SimpleGraph V) {L : Finset V} {n : ℕ}
     (hfree : G.IndepSetFree n)
     (hsmall : ∀ c : (G.induce (L : Set V)).ConnectedComponent,
       c.supp.ncard ≤ 2) :
     L.card ≤ 2 * (n - 1) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   by_cases hL : L.Nonempty
   · let H : SimpleGraph L := G.induce (L : Set V)
     let : Nonempty L := hL.to_subtype
@@ -3715,14 +3795,15 @@ component of the smaller induced graph maps injectively into the ambient
 component containing one chosen root; reachability maps through the induced
 embedding, so every mapped vertex stays in that one ambient component. -/
 theorem component_card_le_of_induce_subset
-    {V : Type*} [Fintype V]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V]
+    (G : SimpleGraph V)
     {S L : Finset V} {m : ℕ} (hSL : S ⊆ L)
     (hbound : ∀ c : (G.induce (L : Set V)).ConnectedComponent,
       c.supp.ncard ≤ m) :
     ∀ c : (G.induce (S : Set V)).ConnectedComponent,
       c.supp.ncard ≤ m := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let K : SimpleGraph S := G.induce (S : Set V)
   let H : SimpleGraph L := G.induce (L : Set V)
   have hSLset : (S : Set V) ⊆ (L : Set V) := by
@@ -3770,6 +3851,7 @@ theorem component_card_le_of_induce_subset
     _ = d.supp.ncard := hdCard
     _ ≤ m := hbound d
 
+open scoped Classical in
 /-- Removing the leftover-side multi-seed vertices preserves a previously
 proved two-vertex component bound.  This is the concrete monotonicity bridge
 consumed by the multi-seed deletion/separation wrapper. -/
@@ -3828,6 +3910,7 @@ theorem component_card_lt_or_three_mul_sub_two_lt_two_mul_card
     exact hcopyC.trans
       (SimpleGraph.Embedding.induce (G := G) c.supp).isContained
 
+open scoped Classical in
 /-- Once cleanup supplies a complete stable partition, the dense
 counterexample branch is impossible by the preceding counting theorem. -/
 theorem denseCounterexampleExcludedAt_of_completeStablePartitions
@@ -3845,6 +3928,7 @@ theorem denseCounterexampleExcludedAt_of_completeStablePartitions
   exact false_of_anticomplete_partition_at_extremal_order G hfree hnonempty hdisj
     hanti hcover hcard
 
+open scoped Classical in
 /-- A particularly concrete sufficient stability target: if every connected
 component of every dense counterexample has at most `k-1` vertices, then the
 component partition itself closes the induction. -/
@@ -3861,6 +3945,7 @@ theorem denseCounterexampleExcludedAt_of_components_small
   exact completeStablePartition_of_component_card_le G
     (hsmall n hn hnk G hmin hfree hcycle)
 
+open scoped Classical in
 /-- Eventual complete stability is now literally equivalent to the remaining
 graph-theoretic work: the fixed-`k` induction and exact Ramsey equality are
 already discharged above. -/
@@ -3876,19 +3961,21 @@ theorem erdos551_eventually_of_eventually_completeStablePartitions
   filter_upwards [hstable] with k hk
   exact denseCounterexampleExcludedAt_of_completeStablePartitions hk
 
+open scoped Classical in
 /-- Generic greedy decomposition.  If every remaining set of size at least
 `m` contains a nonempty object satisfying `P`, then one can peel disjoint
 `P`-objects until fewer than `m` vertices remain.  KLS applies this with
 `P` equal to “is a hub”; keeping the finite induction explicit makes the
 later quantitative bookkeeping independent of any maximal-choice argument. -/
 theorem exists_disjoint_family_covering_up_to
-    {V : Type*} [Fintype V] (P : Finset V → Prop) (m : ℕ)
+    {V : Type*} [Finite V] (P : Finset V → Prop) (m : ℕ)
     (hextract : ∀ S : Finset V, m ≤ S.card →
       ∃ H : Finset V, H ⊆ S ∧ H.Nonempty ∧ P H) :
     ∀ S : Finset V, ∃ F : Finset (Finset V),
       (∀ H ∈ F, P H) ∧ DisjointFinsetFamily F ∧
       F.biUnion id ⊆ S ∧ (S \ F.biUnion id).card < m := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   intro S
   refine Finset.strongInductionOn S ?_
   intro S ih
@@ -3930,10 +4017,11 @@ theorem exists_disjoint_family_covering_up_to
     · have hremEq : S \ (insert H F).biUnion id = R \ F.biUnion id := by
         rw [hnewunion]
         ext x
-        simp [R, and_left_comm, and_assoc]
+        simp [R, and_assoc]
       rw [hremEq]
       exact hrem
 
+open scoped Classical in
 /-- Greedy decomposition with separators.  An extraction step returns a core
 H and a deleted envelope D containing it; the core is anticomplete to the
 remaining set after D is deleted.  Iterating this operation records
@@ -3942,7 +4030,7 @@ unprocessed remainder becomes smaller than the cutoff.  This is the exact
 finite recursion used by the BFS anticomplete-layer decomposition, where D
 is the slow ball together with its neighbourhood. -/
 theorem exists_separated_extraction_family_covering_up_to
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     (P : Finset V → Finset V → Prop) (m : ℕ)
     (hextract : ∀ S : Finset V, m ≤ S.card →
       ∃ H D : Finset V, H ⊆ D ∧ D ⊆ S ∧ H.Nonempty ∧ P H D ∧
@@ -3955,6 +4043,7 @@ theorem exists_separated_extraction_family_covering_up_to
       F.biUnion (fun q => q.2) ⊆ S ∧
       (S \ F.biUnion (fun q => q.2)).card < m := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   intro S
   refine Finset.strongInductionOn S ?_
   intro S ih
@@ -4015,7 +4104,7 @@ theorem exists_separated_extraction_family_covering_up_to
             R \ F.biUnion (fun q => q.2) := by
         rw [hnewunion]
         ext x
-        simp [R, and_left_comm, and_assoc]
+        simp [R, and_assoc]
       rw [hremEq]
       exact hrem
 
@@ -4114,7 +4203,7 @@ theorem exists_slow_index_le_log_two
     (hbound : ∀ i : ℕ, a i ≤ N) :
     ∃ j : ℕ, j ≤ Nat.log 2 N ∧ a (j + 1) ≤ 2 * a j := by
   by_contra hno
-  push_neg at hno
+  push Not at hno
   have hgrow : ∀ i < Nat.log 2 N + 1, 2 * a i ≤ a (i + 1) := by
     intro i hi
     have hstrict : 2 * a i < a (i + 1) := hno i (by omega)
@@ -4161,7 +4250,7 @@ theorem exists_slow_index_le_log
     (hbound : ∀ i : ℕ, a i ≤ N) :
     ∃ j : ℕ, j ≤ Nat.log b N ∧ a (j + 1) ≤ b * a j := by
   by_contra hno
-  push_neg at hno
+  push Not at hno
   have hgrow : ∀ i < Nat.log b N + 1, b * a i ≤ a (i + 1) := by
     intro i hi
     have hstrict : b * a i < a (i + 1) := hno i (by omega)
@@ -4218,6 +4307,7 @@ theorem exists_slow_bfsBall_index_le_log
   exact exists_slow_index_le_log
     (fun i => (bfsBall G root i).ncard) b (Fintype.card V) hb ha0 hbound
 
+open scoped Classical in
 /-- A finite BFS ball is the disjoint union of its distance layers through
 the displayed radius. -/
 theorem bfsBall_toFinset_eq_biUnion_bfsLayers
@@ -4238,11 +4328,12 @@ theorem bfsBall_toFinset_eq_biUnion_bfsLayers
 
 /-- Cardinal form of the disjoint BFS-layer decomposition. -/
 theorem ncard_bfsBall_eq_sum_ncard_bfsLayer
-    {V : Type*} [Fintype V] (G : SimpleGraph V) (root : V) (j : ℕ) :
+    {V : Type*} [Finite V] (G : SimpleGraph V) (root : V) (j : ℕ) :
     (bfsBall G root j).ncard =
       ∑ i ∈ Finset.range (j + 1),
         (Erdos752.bfsLayer G root i).ncard := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   rw [Set.ncard_eq_toFinset_card',
     bfsBall_toFinset_eq_biUnion_bfsLayers]
   rw [Finset.card_biUnion]
@@ -4259,6 +4350,7 @@ theorem ncard_bfsBall_eq_sum_ncard_bfsLayer
     exact Set.disjoint_left.mp (Erdos752.bfsLayer_disjoint hil)
       (Set.mem_toFinset.mp hvi) (Set.mem_toFinset.mp hvl)
 
+open scoped Classical in
 /-- Summing all degrees in the BFS ball through level `j` of a connected
 bipartite graph counts each earlier slice twice and the last slice once. -/
 theorem sum_degrees_bfsBall_eq
@@ -4299,10 +4391,12 @@ theorem bfsPair_support_subset_bfsBall
 most `j+1` times the size of the ball containing all of them.  This coarse
 form is sufficient once the growth base is chosen polynomially. -/
 theorem sum_ncard_bfsPair_support_le_mul_ncard_bfsBall
-    {V : Type*} [Fintype V] (G : SimpleGraph V) (root : V) (j : ℕ) :
+    {V : Type*} [Finite V] (G : SimpleGraph V) (root : V) (j : ℕ) :
     (∑ i ∈ Finset.range (j + 1),
         (Erdos752.bfsPair G root i).support.ncard) ≤
       (j + 1) * (bfsBall G root (j + 1)).ncard := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   calc
     (∑ i ∈ Finset.range (j + 1),
         (Erdos752.bfsPair G root i).support.ncard) ≤
@@ -4317,6 +4411,7 @@ theorem sum_ncard_bfsPair_support_le_mul_ncard_bfsBall
     _ = (j + 1) * (bfsBall G root (j + 1)).ncard := by
       simp
 
+open scoped Classical in
 /-- A pointwise lower degree bound gives the corresponding lower bound on
 the total degree in an accumulated BFS ball. -/
 theorem mul_ncard_bfsBall_le_sum_degrees
@@ -4341,6 +4436,7 @@ theorem mul_ncard_bfsBall_le_sum_degrees
           intro v hv
           exact hmin v
 
+open scoped Classical in
 /-- At a slow-growth radius, sufficiently large minimum degree forces one
 of the preceding consecutive BFS slices to be dense on its actual support.
 The strict degree margin ensures that the selected slice has an edge. -/
@@ -4413,6 +4509,7 @@ theorem exists_dense_bfsPair_at_slow_radius
     ?_, hidense.le⟩
   exact Finset.card_pos.mp (by omega)
 
+open scoped Classical in
 /-- Logarithmic stopping-time package for the preceding density lemma.  The
 minimum-degree margin is stated using the worst allowed radius, so callers
 need not retain the chosen slow index. -/
@@ -4470,7 +4567,7 @@ family are pairwise anticomplete because their indices differ by at least
 two. -/
 noncomputable def parityBfsLayerFamily
     {V : Type*} [Fintype V] (G : SimpleGraph V) (root : V)
-    (j parity : ℕ) : Finset (Finset V) :=
+    (j parity : ℕ) : Finset (Finset V) := open scoped Classical in
   ((Finset.range (j + 1)).filter fun i => i % 2 = parity).image
     fun i => (Erdos752.bfsLayer G root i).toFinset
 
@@ -4502,7 +4599,7 @@ theorem pairwiseAnticomplete_parityBfsLayerFamily
 /-- The vertices covered by one parity family of BFS layers. -/
 noncomputable def parityBfsLayerUnion
     {V : Type*} [Fintype V] (G : SimpleGraph V) (root : V)
-    (j parity : ℕ) : Finset V :=
+    (j parity : ℕ) : Finset V := open scoped Classical in
   (parityBfsLayerFamily G root j parity).biUnion id
 
 /-- Membership in one BFS parity union is exactly the expected bounded
@@ -4537,6 +4634,7 @@ theorem mem_parityBfsLayerUnion_iff
     · apply Set.mem_toFinset.mpr
       exact (Erdos752.mem_bfsLayer).2 rfl
 
+open scoped Classical in
 /-- Every vertex in the BFS ball through j lies in exactly one distance
 layer and hence in one of the two parity unions.  This is the covering half
 of the first-slow-layer decomposition. -/
@@ -4610,6 +4708,7 @@ theorem exists_large_parityBfsLayerUnion
       omega
     simpa using hone
 
+open scoped Classical in
 /-- A parity BFS union through radius j is contained in the corresponding
 ball.  Together with the preceding coverage lemma this says the selected
 anticomplete layers are genuinely localized near the root. -/
@@ -4631,6 +4730,7 @@ theorem parityBfsLayerUnion_subset_bfsBall_toFinset
   simp only [Finset.mem_range] at hirange
   omega
 
+open scoped Classical in
 /-- Monotonicity of finite BFS balls with respect to the radius. -/
 theorem bfsBall_toFinset_mono
     {V : Type*} [Fintype V] (G : SimpleGraph V) (root : V)
@@ -4657,6 +4757,7 @@ theorem not_adj_of_mem_bfsBall_of_not_mem_succ
     omega
   rcases hab.diff_dist_adj (u := root) with h | h | h <;> omega
 
+open scoped Classical in
 /-- Local first-slow-layer package.  At a radius at most log₂|V| there is a
 parity family of pairwise anticomplete BFS layers, localized in that ball,
 covering at least half of it; the next ball is at most twice as large.  This
@@ -4676,6 +4777,7 @@ theorem exists_slow_large_anticomplete_bfs_parity_family
     pairwiseAnticomplete_parityBfsLayerFamily G root j parity,
     parityBfsLayerUnion_subset_bfsBall_toFinset G root j parity, hlarge⟩
 
+open scoped Classical in
 /-- One separated BFS extraction step.  The retained core is the large
 parity union, the deleted envelope is the next ball, and the core is
 anticomplete to every vertex left outside that envelope.  This packages the
@@ -4723,18 +4825,20 @@ theorem exists_slow_bfs_separated_core
       exact hbD ((Set.mem_toFinset (s := bfsBall G root (j + 1))).mpr hbBall)
     exact not_adj_of_mem_bfsBall_of_not_mem_succ G haBall hbBall
 
+open scoped Classical in
 /-- Induced-set version of one BFS separator step.  Running the preceding
 construction on the graph induced by S and forgetting the subtype produces
 an ambient core H and envelope D with H contained in D contained in S,
 while H is anticomplete to the remaining vertices S minus D.  This is the
 actual extraction hypothesis needed by the separator-aware greedy recursion. -/
 theorem exists_separated_bfs_core_in_finset
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {S : Finset V} (hS : S.Nonempty) :
     ∃ H D : Finset V, H ⊆ D ∧ D ⊆ S ∧ H.Nonempty ∧
       D.card ≤ 4 * H.card ∧
       ∀ a ∈ H, ∀ b ∈ S \ D, ¬ G.Adj a b := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let J : SimpleGraph S := G.induce (S : Set V)
   let : Nonempty S := hS.to_subtype
   let : DecidableEq S := Classical.decEq S
@@ -4779,7 +4883,7 @@ envelope are exactly the images of a parity-layer union and its next slow
 ball in the induced graph on S. -/
 def IsInducedBfsParityCore
     {V : Type*} [Fintype V] (G : SimpleGraph V)
-    [DecidableRel G.Adj] (H D : Finset V) : Prop :=
+    [DecidableRel G.Adj] (H D : Finset V) : Prop := open scoped Classical in
   ∃ S : Finset V, ∃ root : S, ∃ j : ℕ, ∃ parity : Fin 2,
     j ≤ Nat.log 2 (Fintype.card S) ∧
     H = (parityBfsLayerUnion (G.induce (S : Set V)) root j parity).map
@@ -4794,7 +4898,7 @@ connected component.  This witness records that connected graph before both
 subtype inclusions are forgotten. -/
 def IsComponentBfsParityCore
     {V : Type*} [Fintype V] (G : SimpleGraph V)
-    [DecidableRel G.Adj] (H D : Finset V) : Prop :=
+    [DecidableRel G.Adj] (H D : Finset V) : Prop := open scoped Classical in
   ∃ S : Finset V,
     ∃ c : (G.induce (S : Set V)).ConnectedComponent,
     ∃ root : c, ∃ j : ℕ, ∃ parity : Fin 2,
@@ -4808,6 +4912,7 @@ def IsComponentBfsParityCore
           intro x y hxy
           exact Subtype.ext (Subtype.ext hxy)⟩
 
+open scoped Classical in
 /-- The induced separator step with its BFS provenance retained.  This is
 the version needed when a later path in the selected core must be localized
 back to one actual layer and closed through the two root paths. -/
@@ -4862,6 +4967,7 @@ theorem exists_separated_bfs_core_in_finset_with_witness
   apply hnot
   exact hab
 
+open scoped Classical in
 /-- Corrected induced separator step for the second BFS pass.  It first
 chooses one connected component of the remaining induced graph and only then
 runs the slow-ball extraction.  Hence the recorded provenance has a genuinely
@@ -4932,13 +5038,14 @@ theorem exists_separated_component_bfs_core_in_finset_with_witness
   · apply hbC
     exact (c.mem_supp_congr_adj habJ).mp a'.property
 
+open scoped Classical in
 /-- Iterating the first-slow-ball extraction over the whole finite vertex
 set gives a global anticomplete BFS decomposition.  The deleted envelopes
 are disjoint and cover every vertex, and the local factor-four charge
 therefore survives summation.  This is the quantitative bookkeeping bridge
 between the local BFS lemma and the later density/DRC argument. -/
 theorem exists_global_separated_bfs_core_family
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj] :
+    {V : Type*} [Fintype V] (G : SimpleGraph V) :
     ∃ F : Finset (Finset V × Finset V),
       (∀ q ∈ F, q.1 ⊆ q.2 ∧ q.1.Nonempty ∧
         q.2.card ≤ 4 * q.1.card) ∧
@@ -4964,7 +5071,7 @@ theorem exists_global_separated_bfs_core_family
     have hvrem : v ∈ Finset.univ \ F.biUnion (fun q => q.2) := by
       exact Finset.mem_sdiff.mpr ⟨Finset.mem_univ _, hv⟩
     rw [hremEmpty] at hvrem
-    simpa using hvrem
+    simp at hvrem
   have henvPD : (F : Set (Finset V × Finset V)).PairwiseDisjoint
       (fun q => q.2) := by
     intro q hq r hr hqr
@@ -4981,6 +5088,7 @@ theorem exists_global_separated_bfs_core_family
     _ ≤ ∑ q ∈ F, 4 * q.1.card := hsum
     _ = 4 * ∑ q ∈ F, q.1.card := by rw [Finset.mul_sum]
 
+open scoped Classical in
 /-- Provenance-preserving global BFS separator decomposition.  This is the
 same factor-four recursion as the preceding theorem, but each retained core
 remembers the induced remaining graph, root, slow radius, and parity union
@@ -5016,7 +5124,7 @@ theorem exists_global_separated_bfs_core_family_with_witness
     have hvrem : v ∈ Finset.univ \ F.biUnion (fun q => q.2) := by
       exact Finset.mem_sdiff.mpr ⟨Finset.mem_univ _, hv⟩
     rw [hremEmpty] at hvrem
-    simpa using hvrem
+    simp at hvrem
   have henvPD : (F : Set (Finset V × Finset V)).PairwiseDisjoint
       (fun q => q.2) := by
     intro q hq r hr hqr
@@ -5033,6 +5141,7 @@ theorem exists_global_separated_bfs_core_family_with_witness
     _ ≤ ∑ q ∈ F, 4 * q.1.card := hsum
     _ = 4 * ∑ q ∈ F, q.1.card := by rw [Finset.mul_sum]
 
+open scoped Classical in
 /-- Global separator recursion using the corrected connected-component BFS
 step.  Each retained core now has provenance in a connected graph, so every
 later path in a selected core can use the checked connected map-back lemma. -/
@@ -5067,7 +5176,7 @@ theorem exists_global_separated_component_bfs_core_family_with_witness
     have hvrem : v ∈ Finset.univ \ F.biUnion (fun q => q.2) := by
       exact Finset.mem_sdiff.mpr ⟨Finset.mem_univ _, hv⟩
     rw [hremEmpty] at hvrem
-    simpa using hvrem
+    simp at hvrem
   have henvPD : (F : Set (Finset V × Finset V)).PairwiseDisjoint
       (fun q => q.2) := by
     intro q hq r hr hqr
@@ -5084,6 +5193,7 @@ theorem exists_global_separated_component_bfs_core_family_with_witness
     _ ≤ ∑ q ∈ F, 4 * q.1.card := hsum
     _ = 4 * ∑ q ∈ F, q.1.card := by rw [Finset.mul_sum]
 
+open scoped Classical in
 /-- Relative form of the connected-component BFS separator recursion.  The
 global theorem above starts from all vertices; KLS immediately runs the
 same recursion a second time inside the union of the first retained cores.
@@ -5122,7 +5232,7 @@ theorem exists_separated_component_bfs_core_family_in_finset_with_witness
     have hvrem : v ∈ S \ F.biUnion (fun q => q.2) :=
       Finset.mem_sdiff.mpr ⟨hv, hvU⟩
     rw [hremEmpty] at hvrem
-    simpa using hvrem
+    simp at hvrem
   have henvPD : (F : Set (Finset V × Finset V)).PairwiseDisjoint
       (fun q => q.2) := by
     intro q hq r hr hqr
@@ -5144,6 +5254,7 @@ theorem exists_separated_component_bfs_core_family_in_finset_with_witness
       _ ≤ ∑ q ∈ F, 4 * q.1.card := hsum
       _ = 4 * ∑ q ∈ F, q.1.card := by rw [Finset.mul_sum]
 
+open scoped Classical in
 /-- At the Ramsey extremal order, the global BFS decomposition contains a
 core on the linear `k/4` scale.  The proof is the clean counting point of
 the fixed-base simplification: one representative from each anticomplete
@@ -5152,7 +5263,7 @@ core is independent, so there are at most `n-1` cores; if every core had
 `(k-1)(n-1)` vertices, missing the final plus one. -/
 theorem exists_large_global_bfs_core_at_extremal_order
     {V : Type*} [Fintype V] [Nonempty V]
-    (G : SimpleGraph V) [DecidableRel G.Adj] {k n : ℕ}
+    (G : SimpleGraph V) {k n : ℕ}
     (hfree : G.IndepSetFree n)
     (horder : Fintype.card V = (k - 1) * (n - 1) + 1) :
     ∃ F : Finset (Finset V × Finset V), ∃ q ∈ F,
@@ -5199,7 +5310,7 @@ theorem exists_large_global_bfs_core_at_extremal_order
     rw [← hrepscard]
     exact Erdos551.IndepSetFree.card_lt hfree hrepsind
   by_contra hno
-  push_neg at hno
+  push Not at hno
   have hsmall : ∀ r ∈ F, 4 * r.1.card ≤ k - 1 := by
     intro r hr
     have hrsmall := hno F r hr hcore hdisj hanti hunion
@@ -5228,7 +5339,7 @@ theorem exists_large_global_bfs_core_at_extremal_order
 as a finset of ambient unordered pairs avoids repeated subtype transports
 when a BFS decomposition is used to sum induced edge counts. -/
 noncomputable def inducedEdgeFinsetOn {V : Type*} [Fintype V] (G : SimpleGraph V)
-    [DecidableRel G.Adj] (S : Finset V) : Finset (Sym2 V) :=
+    [DecidableRel G.Adj] (S : Finset V) : Finset (Sym2 V) := open scoped Classical in
   G.edgeFinset ∩ S.sym2
 
 /-- The ambient degree sum inside a finite set is twice the number of
@@ -5263,9 +5374,10 @@ the same one used by `SimpleGraph.map_edgeFinset_induce`, so it is the clean
 transport interface back to ordinary induced-graph edge counts. -/
 noncomputable def inducedEdgeFinsetOnSet {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (S : Set V) [Finite S] :
-    Finset (Sym2 V) :=
+    Finset (Sym2 V) := open scoped Classical in
   G.edgeFinset ∩ S.toFinset.sym2
 
+open scoped Classical in
 /-- Ambient inside edges and subtype-induced edges have equal cardinality. -/
 theorem card_inducedEdgeFinsetOnSet_eq_card_induce
     {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -5315,13 +5427,14 @@ theorem avg_degree_induce_set_ge_of_indepSetFree
     _ ≤ 2 * (G.induce S).edgeFinset.card := havg
     _ = 2 * (inducedEdgeFinsetOnSet G S).card := by rw [hedge]
 
+open scoped Classical in
 /-- In a disjoint anticomplete family, every edge induced by the union lies
 in one unique member.  This is the exact finite edge-partition fact needed
 to average Turán density over the BFS pieces. -/
 theorem inducedEdgeFinsetOn_biUnion_eq_biUnion
     {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {F : Finset (Finset V)}
-    (hdisj : DisjointFinsetFamily F) (hanti : PairwiseAnticomplete G F) :
+    (_hdisj : DisjointFinsetFamily F) (hanti : PairwiseAnticomplete G F) :
     inducedEdgeFinsetOn G (F.biUnion id) =
       F.biUnion (fun A => inducedEdgeFinsetOn G A) := by
   classical
@@ -5354,6 +5467,7 @@ theorem inducedEdgeFinsetOn_biUnion_eq_biUnion
         simpa [inducedEdgeFinsetOn, Finset.mk_mem_sym2_iff] using
           And.intro heA'.1 ⟨haU', hbU'⟩
 
+open scoped Classical in
 /-- Consequently induced edge counts add exactly across a disjoint
 anticomplete partition.  The equality is stated with ambient inside-edge
 finsets on the right so it can be combined directly with a weighted
@@ -5382,6 +5496,7 @@ theorem card_inducedEdgeFinsetOn_biUnion_eq_sum
   rw [inducedEdgeFinsetOn_biUnion_eq_biUnion G hdisj hanti,
     Finset.card_biUnion hpair]
 
+open scoped Classical in
 /-- Weighted averaging across an anticomplete BFS family: if the union has
 average degree at least `d`, then one member already has average degree at
 least `d`.  The proof uses the exact edge partition above, not a lossy union
@@ -5402,7 +5517,7 @@ theorem exists_dense_member_of_anticomplete_family
     Finset.card_biUnion hpair
   have hedge := card_inducedEdgeFinsetOn_biUnion_eq_sum G hdisj hanti
   by_contra hno
-  push_neg at hno
+  push Not at hno
   have hstrict : ∑ A ∈ F, 2 * (inducedEdgeFinsetOn G A).card <
       ∑ A ∈ F, d * A.card := by
     apply Finset.sum_lt_sum_of_nonempty hF
@@ -5416,6 +5531,7 @@ theorem exists_dense_member_of_anticomplete_family
     simpa [Finset.mul_sum] using hstrict
   omega
 
+open scoped Classical in
 /-- Turán density survives the anticomplete BFS partition in one member.
 If the covered union is large enough compared with the forbidden
 independent-set size, the induced graph on the union has average degree
@@ -5452,6 +5568,7 @@ theorem exists_dense_member_of_indepSetFree_anticomplete_family
       _ = 2 * (inducedEdgeFinsetOn G (F.biUnion id)).card := by rw [hinside]
   exact exists_dense_member_of_anticomplete_family G hF hdisj hanti hdense
 
+open scoped Classical in
 /-- Exact edge additivity in the pair-indexed form produced by the global
 BFS separator recursion.  The first coordinate is the retained core and the
 second is its disjoint envelope; disjoint envelopes make the cores disjoint,
@@ -5517,15 +5634,17 @@ theorem card_inducedEdgeFinsetOn_core_biUnion_eq_sum
           (hcore r (by simpa using hr) her'.2.1)
   rw [hedgeUnion, Finset.card_biUnion hedgePair]
 
+open scoped Classical in
 /-- The same pair-indexed decomposition has exact core-cardinality
 additivity. -/
 theorem card_core_biUnion_eq_sum
-    {V : Type*} [Fintype V]
+    {V : Type*} [Finite V]
     {F : Finset (Finset V × Finset V)}
     (hcore : ∀ q ∈ F, q.1 ⊆ q.2)
     (hdisj : ∀ q ∈ F, ∀ r ∈ F, q ≠ r → Disjoint q.2 r.2) :
     (F.biUnion fun q => q.1).card = ∑ q ∈ F, q.1.card := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   have hpair : (F : Set (Finset V × Finset V)).PairwiseDisjoint
       (fun q => q.1) := by
     intro q hq r hr hqr
@@ -5533,6 +5652,7 @@ theorem card_core_biUnion_eq_sum
       (hcore q (by simpa using hq)) (hcore r (by simpa using hr))
   exact Finset.card_biUnion hpair
 
+open scoped Classical in
 /-- Weighted averaging in the pair-indexed BFS output. -/
 theorem exists_dense_core_of_pair_family
     {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -5548,7 +5668,7 @@ theorem exists_dense_core_of_pair_family
   have hcard := card_core_biUnion_eq_sum hcore hdisj
   have hedge := card_inducedEdgeFinsetOn_core_biUnion_eq_sum G hcore hdisj hanti
   by_contra hno
-  push_neg at hno
+  push Not at hno
   have hstrict : ∑ q ∈ F, 2 * (inducedEdgeFinsetOn G q.1).card <
       ∑ q ∈ F, d * q.1.card := by
     apply Finset.sum_lt_sum_of_nonempty hF
@@ -5718,6 +5838,7 @@ theorem exists_dense_global_component_bfs_core_with_witness_of_indepSetFree
     (fun r hr => (hcore r hr).1) hdisj hanti (by simpa [W] using hdenseW)
   exact ⟨q.1, q.2, (hcore q hq).2.1, hqdense, (hcore q hq).2.2.2⟩
 
+open scoped Classical in
 /-- Two-pass KLS density extraction with both separator families retained.
 The first connected BFS recursion covers the ambient graph by envelopes and
 retains a core union of at least one quarter of the vertices.  Running the
@@ -5772,7 +5893,8 @@ theorem exists_dense_second_component_bfs_core_of_indepSetFree
   have hF₁ : F₁.Nonempty := by
     by_contra hnot
     rw [Finset.not_nonempty_iff_eq_empty] at hnot
-    simp [W₁, hnot] at hW₁size
+    simp only [hnot, Finset.biUnion_empty, Finset.card_empty, nonpos_iff_eq_zero,
+      mul_eq_zero, Nat.add_eq_zero_iff, one_ne_zero, and_false, or_false, W₁] at hW₁size
     have hnpos : 0 < n - 1 := by omega
     have hdpos : 0 < d + 1 := by omega
     have : 0 < (n - 1) * (d + 1) := Nat.mul_pos hnpos hdpos
@@ -5801,6 +5923,7 @@ theorem exists_dense_second_component_bfs_core_of_indepSetFree
   exact ⟨F₀, F₁, q, hq, hcore₀, hdisj₀, hanti₀,
     hcore₁, hdisj₁, hanti₁, hqdense⟩
 
+open scoped Classical in
 /-- Extremal-order specialization of the two-pass extractor.  Taking
  d = floor((k-1)/16)-1 makes d+1 exactly the displayed quotient, and the
  factor-sixteen charge is absorbed by the extremal order
@@ -5934,6 +6057,7 @@ theorem exists_bipartite_subgraph_twice_degree
   rw [Erdos182.PRSEntry.degreeNumber_eq_degree] at hcut
   exact hcut
 
+open scoped Classical in
 /-- From minimum degree `4d`, a maximum cut, one connected component, and
 the formalized BFS-layer lemma produce a nonempty two-layer bipartite slice
 of average degree at least `d`.  The witnesses retain the embeddings back to
@@ -5984,6 +6108,7 @@ theorem dense_induced_of_subgraph_support
     (hdense : d * H.support.ncard ≤ 2 * H.edgeFinset.card) :
     d * Fintype.card H.support ≤
       2 * (G.induce H.support).edgeFinset.card := by
+  classical
   have hsub : H.edgeFinset ⊆ G.edgeFinset ∩ H.support.toFinset.sym2 := by
     intro e he
     rw [Finset.mem_inter]
@@ -6349,6 +6474,7 @@ theorem RobustPairSet.mono_threshold
   intro a ha b hb
   exact hθ.trans (h a ha b hb)
 
+open scoped Classical in
 /-- Deleting a finite forbidden set from both sides of a robust pair loses
 at most the cardinality of that set from every common-neighbour threshold. -/
 theorem RobustPairSet.sdiff
@@ -6374,6 +6500,7 @@ theorem RobustPairSet.sdiff
     sub_le_card_sdiff_of_le_card_of_card_le (h a haU b hbU) le_rfl
   exact hret.trans (Finset.card_le_card hCF)
 
+open scoped Classical in
 /-- Deleting a forbidden set only from the target preserves the whole core
 and loses at most the number of deleted vertices from every pair threshold.
 This asymmetric form is needed when an alternating reservoir has already
@@ -6587,7 +6714,7 @@ does not retain the whole dense support in which DRC originally found the
 core.  This is the form that can be greedily peeled at the KLS hub scale. -/
 def IsCompactLocalRobustHub
     {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
-    (θ τ M : ℕ) (H : Finset V) : Prop :=
+    (θ τ M : ℕ) (H : Finset V) : Prop := open scoped Classical in
   ∃ U D : Finset V, U.card = τ ∧ H = U ∪ D ∧ H.card < M ∧
     RobustPairSet G U D θ
 
@@ -6729,6 +6856,7 @@ theorem IsCompactLocalRobustHub.isLocalRobustHub
     {θ τ M : ℕ} {H : Finset V}
     (h : IsCompactLocalRobustHub G θ τ M H) :
     IsLocalRobustHub G θ τ H := by
+  classical
   rcases h with ⟨U, D, hUcard, rfl, _hcard, hrob⟩
   refine ⟨U, hUcard.ge, Finset.subset_union_left, ?_⟩
   exact hrob.mono_right Finset.subset_union_right
@@ -6795,6 +6923,7 @@ theorem exists_compactLocalRobustHub_of_isLocalRobustHub
   have hcard : H.card ≤ U.card + D.card := Finset.card_union_le U D
   omega
 
+open scoped Classical in
 /-- Greedy compact-hub peeling.  The dense extraction is allowed to find a
 larger temporary support `R`, but only the sampled core--target union is
 deleted.  A uniform bound `R.card ≤ Dmax` is enough to discharge the same
@@ -6866,7 +6995,7 @@ theorem eventually_quartic_mul_exp_neg_lt_half :
       (fun x : ℝ ↦ (82944 * Real.exp (1 / 2) : ℝ) *
         (x ^ 4 * Real.exp (-(1 / (4 * 64 ^ 5)) * x)))
       atTop (𝓝 0) := by
-    convert ht.const_mul (82944 * Real.exp (1 / 2) : ℝ) using 1 <;>
+    convert ht.const_mul (82944 * Real.exp (1 / 2) : ℝ) using 1 ;
       simp
   exact ht'.eventually (Iio_mem_nhds (by norm_num : (0 : ℝ) < 1 / 2))
 
@@ -7069,7 +7198,7 @@ theorem eventually_shifted_quartic_mul_exp_neg_lt_half :
       (fun x : ℝ ↦ (82944 * Real.exp (19 / 2) : ℝ) *
         (x ^ 4 * Real.exp (-(1 / (4 * 64 ^ 5)) * x)))
       atTop (𝓝 0) := by
-    convert ht.const_mul (82944 * Real.exp (19 / 2) : ℝ) using 1 <;>
+    convert ht.const_mul (82944 * Real.exp (19 / 2) : ℝ) using 1 ;
       simp
   exact ht'.eventually (Iio_mem_nhds (by norm_num : (0 : ℝ) < 1 / 2))
 
@@ -7111,7 +7240,7 @@ theorem eventually_octavic_mul_exp_neg_lt_half :
       (fun x : ℝ ↦ (21233664 * Real.exp (19 / 2) : ℝ) *
         (x ^ 8 * Real.exp (-(1 / (4 * 64 ^ 5)) * x)))
       atTop (𝓝 0) := by
-    convert ht.const_mul (21233664 * Real.exp (19 / 2) : ℝ) using 1 <;>
+    convert ht.const_mul (21233664 * Real.exp (19 / 2) : ℝ) using 1 ;
       simp
   exact ht'.eventually (Iio_mem_nhds (by norm_num : (0 : ℝ) < 1 / 2))
 
@@ -7147,7 +7276,7 @@ theorem eventually_octavic_mul_exp_neg_lt_half_of_denominator
       (fun x : ℝ ↦ (21233664 * Real.exp (19 / 2) : ℝ) *
         (x ^ 8 * Real.exp (-(1 / (2 * C : ℝ)) * x)))
       atTop (𝓝 0) := by
-    convert ht.const_mul (21233664 * Real.exp (19 / 2) : ℝ) using 1 <;>
+    convert ht.const_mul (21233664 * Real.exp (19 / 2) : ℝ) using 1 ;
       simp
   exact ht'.eventually (Iio_mem_nhds (by norm_num : (0 : ℝ) < 1 / 2))
 
@@ -7409,7 +7538,7 @@ theorem thin_alternating_sampling_inequality_of_octavic_decay
         rw [div_lt_iff₀ hdenpos]
         have hhalf := mul_lt_mul_of_pos_left hden
           (by norm_num : (0 : ℝ) < 1 / 2)
-        convert hhalf using 1 <;> ring
+        convert hhalf using 1 ; ring
   change
     ((((9 * s) * (9 * s) : ℕ) : ℝ≥0) *
           ((1 - sigma / 2) ^ theta / (1 / 2 : ℝ≥0) ^ 6) +
@@ -7418,7 +7547,7 @@ theorem thin_alternating_sampling_inequality_of_octavic_decay
 
 /-- Pointwise thin-target estimate with an arbitrary fixed DRC denominator.
 The proof keeps the exact natural-number floors used by the compact-hub
-sampler; only the exponential rate changes from `1/(4*64^5)` to `1/(2*C)`.-/
+sampler; only the exponential rate changes from `1/(4*64^5)` to `1/(2*C)`. -/
 theorem thin_alternating_sampling_inequality_of_octavic_decay_of_denominator
     {C k : ℕ} (hC : 0 < C) (hs : 1 ≤ Nat.sqrt k)
     (hrbig : 19 * C ≤ Nat.sqrt (Nat.sqrt (Nat.sqrt k)))
@@ -7659,7 +7788,7 @@ theorem thin_alternating_sampling_inequality_of_octavic_decay_of_denominator
         rw [div_lt_iff₀ hdenpos]
         have hhalf := mul_lt_mul_of_pos_left hden
           (by norm_num : (0 : ℝ) < 1 / 2)
-        convert hhalf using 1 <;> ring
+        convert hhalf using 1 ; ring
   change
     ((((9 * s) * (9 * s) : ℕ) : ℝ≥0) *
           ((1 - sigma / 2) ^ theta / (1 / 2 : ℝ≥0) ^ 6) +
@@ -8099,7 +8228,7 @@ theorem eventually_compact_alternating_sampling_inequality_of_denominator
       (fun x : ℝ ↦ (82944 * Real.exp (19 / 2) : ℝ) *
         (x ^ 4 * Real.exp (-(1 / (2 * (C : ℝ))) * x)))
       atTop (𝓝 0) := by
-    convert ht.const_mul (82944 * Real.exp (19 / 2) : ℝ) using 1 <;>
+    convert ht.const_mul (82944 * Real.exp (19 / 2) : ℝ) using 1 ;
       simp
   have hdecayR : ∀ᶠ x : ℝ in atTop,
       (82944 * Real.exp (19 / 2) : ℝ) *
@@ -8131,6 +8260,7 @@ theorem isLocalRobustHub_of_drcAdmissiblePiece
   exact exists_local_robustPairSet_of_induced_drc G hSne ht hτpos hη hρ
     hdensity hθ hτ hsmall
 
+open scoped Classical in
 /-- Greedy localized hub decomposition.  If every remaining set above the
 cutoff m satisfies the explicit DRC inequalities, repeated local DRC
 extraction yields pairwise-disjoint hub regions and leaves fewer than m
@@ -8156,6 +8286,7 @@ theorem exists_disjoint_localRobustHub_family_of_drcAdmissible_extraction
   obtain ⟨u, hu⟩ := Finset.card_pos.mp (hτpos.trans_le hUcard)
   exact ⟨u, hUS hu⟩
 
+open scoped Classical in
 /-- Independence-driven greedy hub decomposition.  If the three remaining
 DRC parameter estimates hold uniformly for sets above the cutoff m, then
 Turán's theorem supplies the density estimate automatically and the graph
@@ -8202,13 +8333,14 @@ theorem exists_disjoint_localRobustHub_family_of_indepSetFree
 than the robustness threshold.  This is the one-step greedy choice used in
 all later hub routings. -/
 theorem exists_fresh_commonNeighbor_of_pair
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {T F : Finset V} {a b : V} {θ : ℕ}
     (hpair : θ ≤
       (Erdos163.FiniteDefect.commonNeighbors G ![a, b] T).card)
     (hF : F.card < θ) :
     ∃ z : V, z ∈ T ∧ z ∉ F ∧ G.Adj a z ∧ G.Adj z b := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   have hlt : F.card <
       (Erdos163.FiniteDefect.commonNeighbors G ![a, b] T).card :=
     hF.trans_le hpair
@@ -8224,13 +8356,15 @@ theorem exists_fresh_commonNeighbor_of_pair
 middle vertex visible is more useful than immediately hiding it in a walk:
 the next greedy step only has to add that one vertex to its forbidden set. -/
 theorem exists_fresh_twoEdgeWalk_of_pair
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {T F : Finset V} {a b : V} {θ : ℕ}
     (hpair : θ ≤
       (Erdos163.FiniteDefect.commonNeighbors G ![a, b] T).card)
     (hF : F.card < θ) :
     ∃ z : V, ∃ p : G.Walk a b,
       z ∈ T ∧ z ∉ F ∧ G.Adj a z ∧ G.Adj z b ∧ p.length = 2 := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨z, hzT, hzF, haz, hzb⟩ :=
     exists_fresh_commonNeighbor_of_pair G hpair hF
   refine ⟨z, Walk.cons haz (Walk.cons hzb Walk.nil), hzT, hzF, haz, hzb, ?_⟩
@@ -8241,7 +8375,7 @@ distinct fresh middle vertices.  The only budget is the transparent one:
 the initially forbidden set plus the number of requested routes is at most
 the common-neighborhood threshold. -/
 theorem exists_fresh_middle_vertices_fin
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {T F : Finset V} {θ q : ℕ} (a b : Fin q → V)
     (hpair : ∀ i : Fin q, θ ≤
       (Erdos163.FiniteDefect.commonNeighbors G ![a i, b i] T).card)
@@ -8249,6 +8383,7 @@ theorem exists_fresh_middle_vertices_fin
     ∃ z : Fin q → V, Function.Injective z ∧
       ∀ i : Fin q, z i ∈ T ∧ z i ∉ F ∧ G.Adj (a i) (z i) ∧ G.Adj (z i) (b i) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   induction q generalizing F with
   | zero =>
       refine ⟨Fin.elim0, ?_, ?_⟩
@@ -8298,13 +8433,14 @@ displayed core `A`; the distinct vertices `b i` form `B`; and `b i` joins
 than merely a contained cycle, is what later reservoir cutting needs. -/
 def IsCyclicAlternatingScaffold
     {V : Type*} [Fintype V] (G : SimpleGraph V)
-    (q : ℕ) (A B : Finset V) : Prop :=
+    (q : ℕ) (A B : Finset V) : Prop := open scoped Classical in
   ∃ hq : 0 < q, ∃ a b : Fin q → V,
     A = Finset.univ.image a ∧ B = Finset.univ.image b ∧
       Function.Injective a ∧ Function.Injective b ∧ Disjoint A B ∧
       (∀ i, G.Adj (a i) (b i)) ∧
       ∀ i, G.Adj (b i) (a (finCyclicSucc hq i))
 
+open scoped Classical in
 /-- Data carried by an alternating scaffold.  Keeping one canonical choice
 of this data lets later anchor selection and reservoir routing refer to the
 same indexed alternating cycle, rather than making unrelated existential
@@ -8462,7 +8598,7 @@ theorem IsCyclicAlternatingScaffold.rotate
       rcases Finset.mem_image.mp hx with ⟨j, _hj, rfl⟩
       have he : e (e.symm j) = j := e.apply_symm_apply j
       exact Finset.mem_image.mpr
-        ⟨e.symm j, Finset.mem_univ _, by simpa [a'] using congrArg a he⟩
+        ⟨e.symm j, Finset.mem_univ _, by simp [a']⟩
     · intro hx
       rcases Finset.mem_image.mp hx with ⟨i, _hi, rfl⟩
       exact Finset.mem_image.mpr ⟨e i, Finset.mem_univ _, rfl⟩
@@ -8474,7 +8610,7 @@ theorem IsCyclicAlternatingScaffold.rotate
       rcases Finset.mem_image.mp hx with ⟨j, _hj, rfl⟩
       have he : e (e.symm j) = j := e.apply_symm_apply j
       exact Finset.mem_image.mpr
-        ⟨e.symm j, Finset.mem_univ _, by simpa [b'] using congrArg b he⟩
+        ⟨e.symm j, Finset.mem_univ _, by simp [b']⟩
     · intro hx
       rcases Finset.mem_image.mp hx with ⟨i, _hi, rfl⟩
       exact Finset.mem_image.mpr ⟨e i, Finset.mem_univ _, rfl⟩
@@ -8496,6 +8632,7 @@ theorem IsCyclicAlternatingScaffold.rotate
     rw [hsucc]
     exact hba (e i)
 
+open scoped Classical in
 /-- Expose rotated scaffold data with a prescribed core vertex at index zero.
 The stronger indexed conclusion is what the full cut-and-rejoin route uses. -/
 theorem exists_cyclicAlternatingScaffold_data_starting_at
@@ -8526,7 +8663,7 @@ theorem exists_cyclicAlternatingScaffold_data_starting_at
       rcases Finset.mem_image.mp hv with ⟨j, _hj, rfl⟩
       have he : e (e.symm j) = j := e.apply_symm_apply j
       exact Finset.mem_image.mpr
-        ⟨e.symm j, Finset.mem_univ _, by simpa [a] using congrArg a₀ he⟩
+        ⟨e.symm j, Finset.mem_univ _, by simp [a]⟩
     · intro hv
       rcases Finset.mem_image.mp hv with ⟨i, _hi, rfl⟩
       exact Finset.mem_image.mpr ⟨e i, Finset.mem_univ _, rfl⟩
@@ -8538,7 +8675,7 @@ theorem exists_cyclicAlternatingScaffold_data_starting_at
       rcases Finset.mem_image.mp hv with ⟨j, _hj, rfl⟩
       have he : e (e.symm j) = j := e.apply_symm_apply j
       exact Finset.mem_image.mpr
-        ⟨e.symm j, Finset.mem_univ _, by simpa [b] using congrArg b₀ he⟩
+        ⟨e.symm j, Finset.mem_univ _, by simp [b]⟩
     · intro hv
       rcases Finset.mem_image.mp hv with ⟨i, _hi, rfl⟩
       exact Finset.mem_image.mpr ⟨e i, Finset.mem_univ _, rfl⟩
@@ -8573,7 +8710,7 @@ sampled connector set `D`.  Pairwise disjointness is explicit, and every
 pair in `A` retains `θ` common neighbours in `D`. -/
 def IsCompactAlternatingHub
     {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
-    (θ τ M : ℕ) (H : Finset V) : Prop :=
+    (θ τ M : ℕ) (H : Finset V) : Prop := open scoped Classical in
   ∃ A B D : Finset V,
     A.card = τ ∧ B.card = τ ∧ Disjoint A B ∧ Disjoint (A ∪ B) D ∧
       H = (A ∪ B) ∪ D ∧ H.card < M ∧
@@ -8648,6 +8785,7 @@ theorem exists_compactAlternatingHub_of_isLocalRobustHub
     hHcard, hscaffold, hrobD⟩
   simpa [F₀] using hHD
 
+open scoped Classical in
 /-- Greedy peeling for compact alternating hubs.  Dense extraction may use a
 larger temporary support, but the deleted object is only its exact core,
 alternating side, and sampled connector set. -/
@@ -8687,7 +8825,7 @@ The endpoint pair and its robust target set may both depend on the request;
 one uniform cardinal budget still produces globally distinct middle
 vertices avoiding the initial forbidden set. -/
 theorem exists_fresh_middle_vertices_fin_varying
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {F : Finset V} {θ q : ℕ} (T : Fin q → Finset V) (a b : Fin q → V)
     (hpair : ∀ i : Fin q, θ ≤
       (Erdos163.FiniteDefect.commonNeighbors G ![a i, b i] (T i)).card)
@@ -8696,6 +8834,7 @@ theorem exists_fresh_middle_vertices_fin_varying
       ∀ i : Fin q, z i ∈ T i ∧ z i ∉ F ∧
         G.Adj (a i) (z i) ∧ G.Adj (z i) (b i) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   induction q generalizing F with
   | zero =>
       exact ⟨Fin.elim0, fun i => i.elim0, fun i => i.elim0⟩
@@ -8799,7 +8938,8 @@ theorem exists_pairwise_disjoint_twoEdge_paths_varying_robust
   · intro i j hij v hvi hvj
     have hijPairs := hpairs i j hij
     have hzij : z i ≠ z j := fun h => hij (hzinj h)
-    simp [p] at hvi hvj
+    simp only [Walk.support_cons, Walk.support_nil, List.mem_cons, List.not_mem_nil,
+      or_false, p] at hvi hvj
     rcases hvi with (rfl | rfl | rfl) <;>
       rcases hvj with (h | h | h)
     · exact hijPairs.1 h
@@ -8816,7 +8956,7 @@ theorem exists_pairwise_disjoint_twoEdge_paths_varying_robust
 injective and avoid the initial forbidden set, so these length-two routes
 are internally vertex-disjoint whenever the endpoint pairs are disjoint. -/
 theorem exists_fresh_twoEdgeWalks_fin
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {T F : Finset V} {θ q : ℕ} (a b : Fin q → V)
     (hpair : ∀ i : Fin q, θ ≤
       (Erdos163.FiniteDefect.commonNeighbors G ![a i, b i] T).card)
@@ -8826,6 +8966,8 @@ theorem exists_fresh_twoEdgeWalks_fin
       (∀ i : Fin q, z i ∈ T ∧ z i ∉ F ∧
         G.Adj (a i) (z i) ∧ G.Adj (z i) (b i)) ∧
       ∀ i : Fin q, (p i).length = 2 := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨z, hzinj, hz⟩ := exists_fresh_middle_vertices_fin G a b hpair hbudget
   let p : ∀ i : Fin q, G.Walk (a i) (b i) := fun i =>
     Walk.cons (hz i).2.2.1 (Walk.cons (hz i).2.2.2 Walk.nil)
@@ -8838,7 +8980,7 @@ form one simple alternating path.  The support description is deliberately
 kept in the statement: later hub routing uses it to prove that a second
 route can avoid every vertex already spent by the first one. -/
 theorem exists_alternating_path_fin
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {q : ℕ} (a : Fin (q + 1) → V) (z : Fin q → V)
     (ha : Function.Injective a) (hz : Function.Injective z)
     (haz : ∀ i : Fin (q + 1), ∀ j : Fin q, a i ≠ z j)
@@ -8848,6 +8990,8 @@ theorem exists_alternating_path_fin
       p.IsPath ∧ p.length = 2 * q ∧
       ∀ v ∈ p.support,
         (∃ i : Fin (q + 1), a i = v) ∨ (∃ j : Fin q, z j = v) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   induction q with
   | zero =>
       refine ⟨.nil, SimpleGraph.Walk.IsPath.nil, by simp, ?_⟩
@@ -8924,12 +9068,13 @@ theorem exists_alternating_path_fin
         · exact Or.inr ⟨Fin.last q, rfl⟩
         · exact Or.inl ⟨Fin.last (q + 1), rfl⟩
 
+open scoped Classical in
 /-- Every proper prefix of an alternating scaffold is a simple path of the
 corresponding even length.  This is the indexed primitive used when the
 cyclic reservoir is cut into disjoint linear pieces. -/
 theorem exists_prefix_path_of_cyclicAlternatingScaffold
     {V : Type*} [Fintype V]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    (G : SimpleGraph V)
     {q r : ℕ} {A B : Finset V}
     (hscaffold : IsCyclicAlternatingScaffold G q A B)
     (hr : r < q) :
@@ -9000,8 +9145,8 @@ theorem exists_prefix_path_of_cyclicAlternatingScaffold
 precise consecutive index range occupied by the path, which permits two or
 more reservoir intervals to be proved disjoint by arithmetic alone. -/
 theorem exists_segment_path_of_cyclicAlternatingScaffold_data
-    {V : Type*} [Fintype V]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V]
+    (G : SimpleGraph V)
     {q s r : ℕ} (hq : 0 < q) (a b : Fin q → V)
     (ha : Function.Injective a) (hb : Function.Injective b)
     (habdisj : ∀ i j : Fin q, a i ≠ b j)
@@ -9015,6 +9160,8 @@ theorem exists_segment_path_of_cyclicAlternatingScaffold_data
         ∀ v ∈ p.support,
           (∃ i : Fin (r + 1), a (ea i) = v) ∨
             ∃ j : Fin r, b (eb j) = v := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let ea : Fin (r + 1) → Fin q := fun i => ⟨s + i.val, by omega⟩
   let eb : Fin r → Fin q := fun i => ⟨s + i.val, by omega⟩
   have hea : Function.Injective ea := by
@@ -9052,6 +9199,7 @@ theorem exists_segment_path_of_cyclicAlternatingScaffold_data
     (fun i => a (ea i)) (fun i => b (eb i))
     (ha.comp hea) (hb.comp heb) hcross hadj
 
+open scoped Classical in
 /-- Two fresh connector vertices splice arbitrary core endpoints onto a
 chosen scaffold segment.  The long part of the route is paid for by the
 alternating cycle; the robust target is charged only two vertices. -/
@@ -9153,8 +9301,7 @@ theorem exists_path_via_scaffold_segment
     dsimp [p3, p2, p1]
     rw [SimpleGraph.Walk.support_concat,
       SimpleGraph.Walk.support_concat]
-    simp only [List.mem_cons, List.mem_append, List.mem_singleton,
-      List.not_mem_nil, or_false]
+    simp only [List.mem_cons, List.mem_append, List.not_mem_nil, or_false]
     intro h
     rcases h with h | (h | h) | h
     · exact hxz0Ne h
@@ -9167,8 +9314,7 @@ theorem exists_path_via_scaffold_segment
     dsimp [q, p3, p2, p1] at hw
     rw [SimpleGraph.Walk.support_concat,
       SimpleGraph.Walk.support_concat] at hw
-    simp only [List.mem_cons, List.mem_append, List.mem_singleton,
-      List.not_mem_nil, or_false] at hw
+    simp only [List.mem_cons, List.mem_append, List.not_mem_nil, or_false] at hw
     rcases hw with rfl | rfl | (hw | rfl) | rfl
     · exact Or.inl (Finset.mem_union_left _ hxA)
     · exact Or.inr hz0D
@@ -9179,8 +9325,7 @@ theorem exists_path_via_scaffold_segment
     dsimp [q, p3, p2, p1] at hw
     rw [SimpleGraph.Walk.support_concat,
       SimpleGraph.Walk.support_concat] at hw
-    simp only [List.mem_cons, List.mem_append, List.mem_singleton,
-      List.not_mem_nil, or_false] at hw
+    simp only [List.mem_cons, List.mem_append, List.not_mem_nil, or_false] at hw
     rcases hw with rfl | rfl | (hw | rfl) | rfl
     · exact Or.inl rfl
     · exact Or.inr (Or.inr (Or.inr hz0D))
@@ -9188,6 +9333,7 @@ theorem exists_path_via_scaffold_segment
     · exact Or.inr (Or.inr (Or.inr hz1D))
     · exact Or.inr (Or.inl rfl)
 
+open scoped Classical in
 /-- Indexed one-segment splice.  The caller specifies a nonwrapping scaffold
 interval and proves that neither prescribed endpoint index occurs in it. -/
 theorem exists_route_via_scaffold_segment_avoiding_indices
@@ -9271,6 +9417,7 @@ theorem exists_route_via_scaffold_segment_avoiding_indices
     · exact (Finset.disjoint_left.mp hmajorD)
         (Finset.mem_union_right A (hbB iy)) hy
 
+open scoped Classical in
 /-- Three disjoint candidate intervals let a scaffold route avoid two
 prescribed core endpoints.  The chosen interval uses `r + 1` core vertices;
 if `3 * (r + 1) ≤ q`, two endpoints can spoil at most two of the first three
@@ -9565,6 +9712,7 @@ theorem exists_even_path_between_of_robustPairSet
   · simpa [p'] using hp
   · simpa [p', SimpleGraph.Walk.length_copy] using hplen
 
+open scoped Classical in
 /-- Avoiding version of the prescribed even route.  A previously used finite
 set is charged directly to the common-neighbour budget, while every new
 reservoir vertex is chosen outside it.  This is the basic disjointness
@@ -9691,7 +9839,7 @@ theorem exists_pairwise_disjoint_even_paths_varying_robust
     {V ι : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] :
     ∀ {q s θ : ℕ} (hub : Fin q → ι) (U T : ι → Finset V)
-      (hrob : ∀ i : ι, RobustPairSet G (U i) (T i) θ)
+      (_hrob : ∀ i : ι, RobustPairSet G (U i) (T i) θ)
       (a b : Fin q → V) (F : Finset V),
       (∀ i, a i ∈ U (hub i)) → (∀ i, b i ∈ U (hub i)) →
       (∀ i, a i ∉ F) → (∀ i, b i ∉ F) →
@@ -9708,6 +9856,7 @@ theorem exists_pairwise_disjoint_even_paths_varying_robust
         (∀ i, ∀ v ∈ (p i).support,
           v ∈ U (hub i) ∨ v ∈ T (hub i)) ∧
         ∀ i j, i ≠ j → (p i).support.Disjoint (p j).support := by
+  classical
   intro q
   induction q with
   | zero =>
@@ -9881,7 +10030,7 @@ theorem exists_pairwise_disjoint_even_paths_lengths_robust
     (G : SimpleGraph V) [DecidableRel G.Adj] :
     ∀ {q θ : ℕ} (r : Fin q → ℕ) (hub : Fin q → ι)
       (U T : ι → Finset V)
-      (hrob : ∀ i : ι, RobustPairSet G (U i) (T i) θ)
+      (_hrob : ∀ i : ι, RobustPairSet G (U i) (T i) θ)
       (a b : Fin q → V) (F : Finset V),
       (∀ i, a i ∈ U (hub i)) → (∀ i, b i ∈ U (hub i)) →
       (∀ i, a i ∉ F) → (∀ i, b i ∉ F) →
@@ -9898,6 +10047,7 @@ theorem exists_pairwise_disjoint_even_paths_lengths_robust
         (∀ i, ∀ v ∈ (p i).support,
           v ∈ U (hub i) ∨ v ∈ T (hub i)) ∧
         ∀ i j, i ≠ j → (p i).support.Disjoint (p j).support := by
+  classical
   intro q
   induction q with
   | zero =>
@@ -10191,13 +10341,14 @@ theorem exists_pairwise_disjoint_even_paths_lengths_fintype_robust
       exact e.symm.injective h
     simpa [p] using hqdisj (e.symm i) (e.symm j) hij'
 
+open scoped Classical in
 /-- Route requests independently inside each robust hub.  The required
 capacity is charged only by the number of requests in the same fiber of
 `hub`; disjoint routing regions make paths belonging to different hubs
 automatically disjoint.  This is the resource accounting needed for a
 doubled-tree traversal with repeated auxiliary vertices. -/
 theorem exists_pairwise_disjoint_even_paths_grouped_robust
-    {V ι J : Type*} [Fintype V] [Fintype ι] [Fintype J]
+    {V ι J : Type*} [Fintype V] [Finite ι] [Fintype J]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {s θ : ℕ} (hub : J → ι) (U T : ι → Finset V)
     (hrob : ∀ i : ι, RobustPairSet G (U i) (T i) θ)
@@ -10223,6 +10374,7 @@ theorem exists_pairwise_disjoint_even_paths_grouped_robust
         v ∈ U (hub i) ∨ v ∈ T (hub i)) ∧
       ∀ i j, i ≠ j → (p i).support.Disjoint (p j).support := by
   classical
+  let : Fintype ι := Fintype.ofFinite ι
   have hex : ∀ i : ι,
       ∃ p : ∀ x : {j : J // hub j = i}, G.Walk (a x.1) (b x.1),
         (∀ x, (p x).IsPath) ∧
@@ -10297,11 +10449,12 @@ theorem exists_pairwise_disjoint_even_paths_grouped_robust
       · exact Finset.mem_union.mpr hli
       · exact Finset.mem_union.mpr hlj
 
+open scoped Classical in
 /-- Per-hub form of the variable-length greedy routing theorem.  Every fiber
 is routed with its own exact support sum, and disjoint hub regions supply the
 cross-fiber disjointness. -/
 theorem exists_pairwise_disjoint_even_paths_lengths_grouped_robust
-    {V ι J : Type*} [Fintype V] [Fintype ι] [Fintype J]
+    {V ι J : Type*} [Fintype V] [Finite ι] [Fintype J]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {θ : ℕ} (r : J → ℕ) (hub : J → ι) (U T : ι → Finset V)
     (hrob : ∀ i : ι, RobustPairSet G (U i) (T i) θ)
@@ -10328,6 +10481,7 @@ theorem exists_pairwise_disjoint_even_paths_lengths_grouped_robust
         v ∈ U (hub i) ∨ v ∈ T (hub i)) ∧
       ∀ i j, i ≠ j → (p i).support.Disjoint (p j).support := by
   classical
+  let : Fintype ι := Fintype.ofFinite ι
   have hex : ∀ i : ι,
       ∃ p : ∀ x : {j : J // hub j = i}, G.Walk (a x.1) (b x.1),
         (∀ x, (p x).IsPath) ∧
@@ -10509,7 +10663,7 @@ theorem exists_adj_avoiding_finset_of_card_lt_minDegree
     hF.trans G.minDegree_lt_card
   have haex : ∃ a : V, a ∉ F := by
     by_contra hno
-    push_neg at hno
+    push Not at hno
     have hsub : (Finset.univ : Finset V) ⊆ F := by
       intro a _ha
       exact hno a
@@ -10519,7 +10673,7 @@ theorem exists_adj_avoiding_finset_of_card_lt_minDegree
   have hdeg : G.minDegree ≤ G.degree a := G.minDegree_le_degree a
   have hbex : ∃ b ∈ G.neighborFinset a, b ∉ F := by
     by_contra hno
-    push_neg at hno
+    push Not at hno
     have hsub : G.neighborFinset a ⊆ F := by
       intro b hb
       exact hno b hb
@@ -10598,12 +10752,11 @@ theorem exists_three_disjointAdjPairFamily_of_five_le_minDegree
       simp only [M, Finset.mem_insert, Finset.mem_singleton] at he hf
       rcases he with rfl | rfl | rfl <;>
         rcases hf with rfl | rfl | rfl
-      all_goals simp_all [p₀, p₁, p₂, ha₀b₀, ha₀a₁, ha₀b₁, hb₀a₁,
-        hb₀b₁, ha₀a₂, ha₀b₂, hb₀a₂, hb₀b₂, ha₁a₂, ha₁b₂, hb₁a₂, hb₁b₂]
+      all_goals simp_all [p₀, p₁, p₂]
   · have hp₁₀ : p₁ ≠ p₀ := hp₀₁.symm
     have hp₂₀ : p₂ ≠ p₀ := hp₀₂.symm
     have hp₂₁ : p₂ ≠ p₁ := hp₁₂.symm
-    simp [M, hp₀₁, hp₀₂, hp₁₂, hp₁₀, hp₂₀, hp₂₁]
+    simp [M, hp₀₁, hp₀₂, hp₁₂]
 
 /-- A finite set carries three pairwise vertex-disjoint internal edges. -/
 def HasThreeDisjointAdjPairFamily {V : Type*} (G : SimpleGraph V)
@@ -10642,12 +10795,14 @@ theorem not_hasThreeDisjointAdjPairFamily_of_subset
 The image pair family has the same cardinality, adjacency is preserved by
 the homomorphism, and endpoint disjointness is preserved by injectivity. -/
 theorem HasThreeDisjointAdjPairFamily.map_injective_hom
-    {V W : Type*} [Fintype V] [Fintype W]
+    {V W : Type*} [Finite V] [Finite W]
     {G : SimpleGraph V} {H : SimpleGraph W}
     (e : G →g H) (he : Function.Injective e)
     {S : Finset V} (hS : HasThreeDisjointAdjPairFamily G S) :
     HasThreeDisjointAdjPairFamily H (S.map ⟨e, he⟩) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
+  let : Fintype W := Fintype.ofFinite W
   obtain ⟨M, hM, hMcard, hMS⟩ := hS
   let f : (V × V) ↪ (W × W) :=
     { toFun := fun p => (e p.1, e p.2)
@@ -10686,11 +10841,12 @@ ambient graph.  Build three disjoint edges in the induced graph, then map
 them through the canonical induced embedding; its image vertex set is the
 original finite core. -/
 theorem hasThreeDisjointAdjPairFamily_of_induce_minDegree
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V) [DecidableRel G.Adj]
     (S : Finset V) (hS : S.Nonempty)
     (hδ : 5 ≤ (G.induce (S : Set V)).minDegree) :
     HasThreeDisjointAdjPairFamily G S := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let H : SimpleGraph S := G.induce (S : Set V)
   let : Nonempty S := hS.to_subtype
   obtain ⟨M, hM, hMcard⟩ :=
@@ -10722,10 +10878,11 @@ finite set with four spare vertices beyond the forbidden independent-set
 size.  Remove the endpoints of two greedily chosen edges; the remaining set
 still has at least n vertices, so it contains the third edge. -/
 theorem hasThreeDisjointAdjPairFamily_of_indepSetFree_of_add_four_le_card
-    {V : Type*} [Fintype V] {G : SimpleGraph V} {S : Finset V} {n : ℕ}
+    {V : Type*} [Finite V] {G : SimpleGraph V} {S : Finset V} {n : ℕ}
     (hfree : G.IndepSetFree n) (hcard : n + 4 ≤ S.card) :
     HasThreeDisjointAdjPairFamily G S := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨a₀, ha₀, b₀, hb₀, hab₀⟩ :=
     exists_adj_in_finset_of_indepSetFree hfree (U := S) (by omega)
   let S₁ : Finset V := (S.erase a₀).erase b₀
@@ -10819,14 +10976,11 @@ theorem hasThreeDisjointAdjPairFamily_of_indepSetFree_of_add_four_le_card
       simp only [M, Finset.mem_insert, Finset.mem_singleton] at he hf
       rcases he with rfl | rfl | rfl <;>
         rcases hf with rfl | rfl | rfl
-      all_goals simp_all [p₀, p₁, p₂, hab₀.ne, hab₁.ne, hab₂.ne,
-        ha₁a₀, ha₁b₀, hb₁a₀, hb₁b₀, ha₂a₀, ha₂b₀, hb₂a₀, hb₂b₀,
-        ha₂a₁, ha₂b₁, hb₂a₁, hb₂b₁, ha₁a₂, ha₁b₂, hb₁a₂, hb₁b₂,
-        ha₀a₁, ha₀b₁, hb₀a₁, hb₀b₁, ha₀a₂, ha₀b₂, hb₀a₂, hb₀b₂]
+      all_goals simp_all [p₀, p₁, p₂]
   · have hp₁₀ : p₁ ≠ p₀ := hp₀₁.symm
     have hp₂₀ : p₂ ≠ p₀ := hp₀₂.symm
     have hp₂₁ : p₂ ≠ p₁ := hp₁₂.symm
-    simp [M, hp₀₁, hp₀₂, hp₁₂, hp₁₀, hp₂₀, hp₂₁]
+    simp [M, hp₀₁, hp₀₂, hp₁₂]
   · intro e he
     simp only [M, Finset.mem_insert, Finset.mem_singleton] at he
     rcases he with rfl | rfl | rfl
@@ -10838,10 +10992,12 @@ theorem hasThreeDisjointAdjPairFamily_of_indepSetFree_of_add_four_le_card
 every core without three disjoint internal edges has fewer than n + 4
 vertices. -/
 theorem card_lt_add_four_of_not_hasThreeDisjointAdjPairFamily
-    {V : Type*} [Fintype V] {G : SimpleGraph V} {S : Finset V} {n : ℕ}
+    {V : Type*} [Finite V] {G : SimpleGraph V} {S : Finset V} {n : ℕ}
     (hfree : G.IndepSetFree n)
     (hnot : ¬ HasThreeDisjointAdjPairFamily G S) :
     S.card < n + 4 := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   by_contra h
   apply hnot
   exact hasThreeDisjointAdjPairFamily_of_indepSetFree_of_add_four_le_card
@@ -10852,11 +11008,12 @@ avoiding the forbidden set.  Pick one forbidden endpoint from every edge
 that hits the set; disjointness makes that choice injective, contradicting
 the cardinal inequality. -/
 theorem exists_adjPair_avoiding_of_disjointAdjPairFamily
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     (M : Finset (V × V)) (F : Finset V)
     (hM : DisjointAdjPairFamily G M) (hcard : F.card < M.card) :
     ∃ e ∈ M, e.1 ∉ F ∧ e.2 ∉ F ∧ G.Adj e.1 e.2 := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   by_contra hno
   have hhit : ∀ e ∈ M, e.1 ∈ F ∨ e.2 ∈ F := by
     intro e he
@@ -10907,13 +11064,14 @@ The explicit endpoint-membership clause keeps the selector local to the
 core, while the final maximality clause is the only property needed for the
 parity-unbroken independent-remainder argument. -/
 theorem exists_maximal_disjointAdjPairFamily_in_finset
-    {V : Type*} [Fintype V] (G : SimpleGraph V) (S : Finset V) :
+    {V : Type*} [Finite V] (G : SimpleGraph V) (S : Finset V) :
     ∃ M : Finset (V × V),
       DisjointAdjPairFamily G M ∧
       (∀ e ∈ M, e.1 ∈ S ∧ e.2 ∈ S) ∧
       ∀ N : Finset (V × V), DisjointAdjPairFamily G N →
         (∀ e ∈ N, e.1 ∈ S ∧ e.2 ∈ S) → N.card ≤ M.card := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let C : Finset (Finset (V × V)) :=
     Finset.univ.filter fun M =>
       DisjointAdjPairFamily G M ∧
@@ -10939,11 +11097,12 @@ theorem exists_maximal_disjointAdjPairFamily_in_finset
   rw [← hMt] at hle
   exact hle
 
+open scoped Classical in
 /-- The vertices left uncovered by a maximum local disjoint-edge family are
 independent.  Otherwise one uncovered edge could be inserted, increasing
 the matching cardinality and contradicting maximality. -/
 theorem isIndepSet_sdiff_endpointCover_of_maximal_disjointAdjPairFamily
-    {V : Type*} [Fintype V] (G : SimpleGraph V) (S : Finset V)
+    {V : Type*} [Finite V] (G : SimpleGraph V) (S : Finset V)
     (M : Finset (V × V))
     (hM : DisjointAdjPairFamily G M)
     (hMS : ∀ e ∈ M, e.1 ∈ S ∧ e.2 ∈ S)
@@ -10952,6 +11111,7 @@ theorem isIndepSet_sdiff_endpointCover_of_maximal_disjointAdjPairFamily
     let F : Finset V := M.biUnion fun e => {e.1, e.2}
     G.IsIndepSet ((S \ F : Finset V) : Set V) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let F : Finset V := M.biUnion fun e => {e.1, e.2}
   rw [SimpleGraph.isIndepSet_iff]
   intro x hx y hy _hxy hxy
@@ -11005,16 +11165,18 @@ theorem isIndepSet_sdiff_endpointCover_of_maximal_disjointAdjPairFamily
   rw [hcardN] at hle
   omega
 
+open scoped Classical in
 /-- If a finite core is not parity broken at scale `m`, fewer than `2m`
 vertices cover every internal edge.  Choose a maximum disjoint adjacent-pair
 family in the core.  Its cardinality is below `m`, its endpoints have the
 claimed size, and maximality makes the uncovered remainder independent. -/
 theorem exists_small_endpointCover_with_indep_sdiff_of_not_hasInternalMatchingAtLeast
-    {V : Type*} [Fintype V] (G : SimpleGraph V) (S : Finset V) (m : ℕ)
+    {V : Type*} [Finite V] (G : SimpleGraph V) (S : Finset V) (m : ℕ)
     (hnot : ¬ HasInternalMatchingAtLeast G S m) :
     ∃ F : Finset V, F ⊆ S ∧ F.card < 2 * m ∧
       G.IsIndepSet ((S \ F : Finset V) : Set V) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨M, hM, hMS, hmax⟩ :=
     exists_maximal_disjointAdjPairFamily_in_finset G S
   have hMlt : M.card < m := by
@@ -11043,10 +11205,12 @@ theorem exists_small_endpointCover_with_indep_sdiff_of_not_hasInternalMatchingAt
 `m`: after deleting at most `2m-1` vertices, the retained independent set
 has the corresponding cardinality lower bound. -/
 theorem exists_large_indep_sdiff_of_not_hasInternalMatchingAtLeast
-    {V : Type*} [Fintype V] (G : SimpleGraph V) (S : Finset V) (m : ℕ)
+    {V : Type*} [Finite V] (G : SimpleGraph V) (S : Finset V) (m : ℕ)
     (hnot : ¬ HasInternalMatchingAtLeast G S m) :
     ∃ I : Finset V, I ⊆ S ∧ G.IsIndepSet (I : Set V) ∧
       S.card - (2 * m - 1) ≤ I.card := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨F, hFS, hFcard, hInd⟩ :=
     exists_small_endpointCover_with_indep_sdiff_of_not_hasInternalMatchingAtLeast
       G S m hnot
@@ -11059,7 +11223,7 @@ family, delete the small endpoint cover in every core.  The retained pieces
 remain disjoint and their union is independent, so the sum of all retained
 lower bounds is smaller than the forbidden independent-set order. -/
 theorem sum_card_sub_two_mul_sub_one_lt_of_disjoint_pairwiseAnticomplete_not_internalMatching
-    {V : Type*} [Fintype V]
+    {V : Type*} [Finite V]
     (G : SimpleGraph V) {F : Finset (Finset V)} {n m : ℕ}
     (hfree : G.IndepSetFree n)
     (hdisj : DisjointFinsetFamily F)
@@ -11067,6 +11231,7 @@ theorem sum_card_sub_two_mul_sub_one_lt_of_disjoint_pairwiseAnticomplete_not_int
     (hnot : ∀ S ∈ F, ¬ HasInternalMatchingAtLeast G S m) :
     ∑ S ∈ F, (S.card - (2 * m - 1)) < n := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let I : Finset V → Finset V := fun S =>
     if hS : S ∈ F then
       Classical.choose
@@ -11110,7 +11275,7 @@ theorem sum_card_sub_two_mul_sub_one_lt_of_disjoint_pairwiseAnticomplete_not_int
 
 /-- Uniform-order consequence of the scalable parity-unbroken count. -/
 theorem mul_card_sub_two_mul_sub_one_lt_of_disjoint_pairwiseAnticomplete_not_internalMatching
-    {V : Type*} [Fintype V]
+    {V : Type*} [Finite V]
     (G : SimpleGraph V) {F : Finset (Finset V)} {n m tau : ℕ}
     (hfree : G.IndepSetFree n)
     (hdisj : DisjointFinsetFamily F)
@@ -11118,6 +11283,8 @@ theorem mul_card_sub_two_mul_sub_one_lt_of_disjoint_pairwiseAnticomplete_not_int
     (hnot : ∀ S ∈ F, ¬ HasInternalMatchingAtLeast G S m)
     (hcard : ∀ S ∈ F, tau ≤ S.card) :
     (tau - (2 * m - 1)) * F.card < n := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hsum :=
     sum_card_sub_two_mul_sub_one_lt_of_disjoint_pairwiseAnticomplete_not_internalMatching
       G hfree hdisj hanti hnot
@@ -11157,12 +11324,13 @@ theorem crossEdgeGraph_adj {V : Type*} {G : SimpleGraph V}
       G.Adj x y ∧ ((x ∈ A ∧ y ∈ B) ∨ (x ∈ B ∧ y ∈ A)) :=
   Iff.rfl
 
+open scoped Classical in
 /-- Finite cross-matching dichotomy.  Between two vertex sets there is
 either a vertex-disjoint family of at least `m` crossing edges, or fewer
 than `2m` vertices meet every crossing edge.  This is the exact local
 maximal-matching cleanup used in the KLS interaction graph. -/
 theorem exists_crossMatching_or_small_cross_vertexCover
-    {V : Type*} [Fintype V]
+    {V : Type*} [Finite V]
     (G : SimpleGraph V) (A B : Finset V) (m : ℕ) :
     (∃ M : Finset (V × V),
       DisjointAdjPairFamily G M ∧ m ≤ M.card ∧
@@ -11171,6 +11339,7 @@ theorem exists_crossMatching_or_small_cross_vertexCover
     ∃ X : Finset V, X.card < 2 * m ∧
       ∀ a ∈ A \ X, ∀ b ∈ B \ X, ¬ G.Adj a b := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let K : SimpleGraph V := CrossEdgeGraph G A B
   obtain ⟨M, hM, hMS, hmax⟩ :=
     exists_maximal_disjointAdjPairFamily_in_finset K (A ∪ B)
@@ -11266,12 +11435,13 @@ theorem hasCrossMatchingAtLeast_comm
 first endpoints form a set of the same cardinality as the matching and each
 has a neighbour in the second reservoir. -/
 theorem exists_left_endpointFinset_of_hasCrossMatchingAtLeast
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {A B : Finset V} {m : ℕ} (hAB : Disjoint A B)
     (hcross : HasCrossMatchingAtLeast G A B m) :
     ∃ P : Finset V, P ⊆ A ∧ m ≤ P.card ∧
       ∀ x ∈ P, ∃ y ∈ B, G.Adj x y := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨M, hM, hm, hMcross⟩ := hcross
   let pick : V × V → V := fun e => if e.1 ∈ A then e.1 else e.2
   let mate : V × V → V := fun e => if e.1 ∈ A then e.2 else e.1
@@ -11334,11 +11504,12 @@ theorem hasCrossMatchingAtLeast_of_largeCrossMatchingGraph_adj
   · exact h
   · exact hasCrossMatchingAtLeast_comm.mpr h
 
+open scoped Classical in
 /-- If vertices in one core cannot attach to two different other cores,
 then the matchings represented by different auxiliary neighbours consume
 disjoint endpoint sets.  Hence `m * degree` is bounded by the core order. -/
 theorem mul_degree_largeCrossMatchingGraph_le_card_of_no_repeated_attachment
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Finite V] [Fintype ι]
     (G : SimpleGraph V) (A W : ι → Finset V) (m : ℕ)
     (hWA : ∀ i, W i ⊆ A i)
     (hdisj : ∀ i j : ι, i ≠ j → Disjoint (A i) (A j))
@@ -11348,6 +11519,7 @@ theorem mul_degree_largeCrossMatchingGraph_le_card_of_no_repeated_attachment
     (i : ι) :
     m * (LargeCrossMatchingGraph G W m).degree i ≤ (A i).card := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let H : SimpleGraph ι := LargeCrossMatchingGraph G W m
   have hcross (j : H.neighborSet i) :
       HasCrossMatchingAtLeast G (W i) (W j.1) m := by
@@ -11402,12 +11574,13 @@ theorem mul_degree_largeCrossMatchingGraph_le_card_of_no_repeated_attachment
 edge avoiding that set.  The matching may store either orientation, so the
 conclusion reorients the surviving edge from `A` to `B`. -/
 theorem exists_oriented_cross_edge_avoiding_of_hasCrossMatchingAtLeast
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {A B F : Finset V} {m : ℕ}
     (hcross : HasCrossMatchingAtLeast G A B m)
     (hF : F.card < m) :
     ∃ a ∈ A, ∃ b ∈ B, a ∉ F ∧ b ∉ F ∧ G.Adj a b := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨M, hM, hm, hMcross⟩ := hcross
   have hFcard : F.card < M.card := hF.trans_le hm
   obtain ⟨e, heM, he1F, he2F, heAdj⟩ :=
@@ -11421,7 +11594,7 @@ representatives whose two attachments at every internal displayed set are
 different.  Two matching edges suffice locally: after the incoming endpoint
 has been fixed, the next representative avoids that single vertex. -/
 theorem exists_distinct_oriented_cross_edge_chain
-    {V : Type*} [Fintype V] (G : SimpleGraph V) :
+    {V : Type*} [Finite V] (G : SimpleGraph V) :
     ∀ {m : ℕ} (U : Fin (m + 1) → Finset V),
       (∀ i : Fin m,
         HasCrossMatchingAtLeast G (U i.castSucc) (U i.succ) 2) →
@@ -11429,6 +11602,8 @@ theorem exists_distinct_oriented_cross_edge_chain
         (∀ i : Fin m,
           p i ∈ U i.castSucc ∧ q i ∈ U i.succ ∧ G.Adj (p i) (q i)) ∧
         ∀ i j : Fin m, j.val = i.val + 1 → q i ≠ p j := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   intro m
   induction m with
   | zero =>
@@ -11504,7 +11679,7 @@ choosing the handles leaves all of their endpoints pairwise distinct.  This
 is the endpoint-selection input for a doubled-tree traversal, where a hub may
 occur many times. -/
 theorem exists_globally_disjoint_oriented_cross_edge_chain
-    {V : Type*} [Fintype V] (G : SimpleGraph V) :
+    {V : Type*} [Finite V] (G : SimpleGraph V) :
     ∀ {m R : ℕ} (U : Fin (m + 1) → Finset V),
       2 * m < R →
       (∀ i : Fin m,
@@ -11514,6 +11689,8 @@ theorem exists_globally_disjoint_oriented_cross_edge_chain
           p i ∈ U i.castSucc ∧ q i ∈ U i.succ ∧ G.Adj (p i) (q i)) ∧
         ∀ i j : Fin m, i ≠ j →
           p i ≠ p j ∧ p i ≠ q j ∧ q i ≠ p j ∧ q i ≠ q j := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   intro m
   induction m with
   | zero =>
@@ -11601,7 +11778,7 @@ theorem exists_globally_disjoint_oriented_cross_edge_chain
 auxiliary walk supplies the ordered hub sequence; every traversed auxiliary
 edge is replaced by a fresh oriented ambient cross-edge. -/
 theorem exists_globally_disjoint_cross_edges_along_walk
-    {V ι : Type*} [Fintype V] (G : SimpleGraph V)
+    {V ι : Type*} [Finite V] (G : SimpleGraph V)
     (H : SimpleGraph ι) (U : ι → Finset V)
     {u v : ι} (w : H.Walk u v) {R : ℕ}
     (hbudget : 2 * w.length < R)
@@ -11614,6 +11791,8 @@ theorem exists_globally_disjoint_cross_edges_along_walk
         G.Adj (p i) (q i)) ∧
       ∀ i j : Fin w.length, i ≠ j →
         p i ≠ p j ∧ p i ≠ q j ∧ q i ≠ p j ∧ q i ≠ q j := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let W : Fin (w.length + 1) → Finset V := fun i => U (w.getVert i.val)
   have hstep : ∀ i : Fin w.length,
       HasCrossMatchingAtLeast G (W i.castSucc) (W i.succ) R := by
@@ -11631,7 +11810,7 @@ system.  The predecessor permutation turns each traversed edge's target into
 the incoming attachment of the next visit.  Global endpoint disjointness is
 retained even when the closed walk visits the same hub many times. -/
 theorem exists_globally_disjoint_cyclic_cross_edges_along_closed_walk
-    {V ι : Type*} [Fintype V] (G : SimpleGraph V)
+    {V ι : Type*} [Finite V] (G : SimpleGraph V)
     (H : SimpleGraph ι) (U : ι → Finset V)
     {u : ι} (w : H.Walk u u) {R : ℕ}
     (hlen : 2 ≤ w.length) (hbudget : 2 * w.length < R)
@@ -11648,6 +11827,7 @@ theorem exists_globally_disjoint_cyclic_cross_edges_along_closed_walk
       ∀ i j : Fin w.length, i.val + 1 = w.length → j.val = 0 →
         G.Adj (b i) (a j) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨p, q, hpq, hpqDisj⟩ :=
     exists_globally_disjoint_cross_edges_along_walk
       G H U w hbudget hlarge
@@ -11744,7 +11924,7 @@ with two distinct attachments in every displayed set.  First choose the
 nonclosing edges along a line, avoiding the previous incoming attachment;
 the closing matching then avoids the two still exposed endpoints. -/
 theorem exists_distinct_oriented_cyclic_cross_edges
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {m : ℕ} (hm : 2 ≤ m) (U : Fin (m + 1) → Finset V)
     (hstep : ∀ i : Fin m,
       HasCrossMatchingAtLeast G (U i.castSucc) (U i.succ) 3)
@@ -11755,6 +11935,7 @@ theorem exists_distinct_oriented_cyclic_cross_edges
       (∀ i : Fin m, G.Adj (b i.castSucc) (a i.succ)) ∧
       G.Adj (b (Fin.last m)) (a 0) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   have hstepTwo : ∀ i : Fin m,
       HasCrossMatchingAtLeast G (U i.castSucc) (U i.succ) 2 := by
     intro i
@@ -11841,7 +12022,7 @@ attachments at every index.  Unlike the ordinary interaction graph, no
 repeated-attachment deletion is needed: the local matchings choose the
 attachments coherently. -/
 theorem exists_distinct_cyclic_cross_edges_of_cycleGraph_isContained_largeCrossMatchingGraph
-    {V ι : Type*} [Fintype V] {m : ℕ} (hm : 2 ≤ m)
+    {V ι : Type*} [Finite V] {m : ℕ} (hm : 2 ≤ m)
     (G : SimpleGraph V) (U : ι → Finset V)
     (hcopy : cycleGraph (m + 1) ⊑ LargeCrossMatchingGraph G U 3) :
     ∃ f : Fin (m + 1) → ι, Function.Injective f ∧
@@ -11851,6 +12032,7 @@ theorem exists_distinct_cyclic_cross_edges_of_cycleGraph_isContained_largeCrossM
         (∀ i : Fin m, G.Adj (b i.castSucc) (a i.succ)) ∧
         G.Adj (b (Fin.last m)) (a 0) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   rcases hcopy with ⟨c⟩
   let f : Fin (m + 1) → ι := fun i => c.toHom i
   have hfinj : Function.Injective f := c.injective
@@ -11882,27 +12064,31 @@ theorem exists_distinct_cyclic_cross_edges_of_cycleGraph_isContained_largeCrossM
       (fun i => U (f i)) hstep' hclose'
   exact ⟨f, hfinj, a, b, ha, hb, hab, hcross, hlast⟩
 
+open scoped Classical in
 /-- The small side of the cross-matching dichotomy, exposed under the
 negation of `HasCrossMatchingAtLeast`.  Deleting fewer than `2m` endpoints
 makes the two displayed cores anticomplete. -/
 theorem exists_small_cross_vertexCover_of_not_hasCrossMatchingAtLeast
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     (A B : Finset V) (m : ℕ)
     (hsmall : ¬ HasCrossMatchingAtLeast G A B m) :
     ∃ X : Finset V, X.card < 2 * m ∧
       ∀ a ∈ A \ X, ∀ b ∈ B \ X, ¬ G.Adj a b := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rcases exists_crossMatching_or_small_cross_vertexCover G A B m with
     hlarge | hcover
   · exact (hsmall hlarge).elim
   · exact hcover
 
+open scoped Classical in
 /-- Simultaneous cleanup of every ordered hub pair that is not a
 large-cross-matching edge.  The deliberately simple square bound is enough
 for later parameter arithmetic; its key structural conclusion is that every
 surviving cross-edge must lie inside one component of the large-matching
 auxiliary graph. -/
 theorem exists_global_exceptional_set_of_not_hasCrossMatchingAtLeast
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Finite V] [Fintype ι]
     (G : SimpleGraph V) (U : ι → Finset V) (m : ℕ) :
     ∃ X : Finset V,
       X.card ≤ 2 * m * Fintype.card ι * Fintype.card ι ∧
@@ -11910,6 +12096,7 @@ theorem exists_global_exceptional_set_of_not_hasCrossMatchingAtLeast
         ¬ HasCrossMatchingAtLeast G (U i) (U j) m →
         ∀ a ∈ U i \ X, ∀ b ∈ U j \ X, ¬ G.Adj a b := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let cover : ι × ι → Finset V := fun q =>
     if hq : q.1 ≠ q.2 ∧
         ¬ HasCrossMatchingAtLeast G (U q.1) (U q.2) m then
@@ -11954,11 +12141,12 @@ theorem exists_global_exceptional_set_of_not_hasCrossMatchingAtLeast
     exact hlocal a (Finset.mem_sdiff.mpr ⟨ha'.1, haCover⟩)
       b (Finset.mem_sdiff.mpr ⟨hb'.1, hbCover⟩)
 
+open scoped Classical in
 /-- Component form of the preceding cleanup.  After the same bounded
 deletion, unions of trimmed cores belonging to distinct connected components
 of the large-matching graph are anticomplete in the ambient graph. -/
 theorem exists_exceptional_set_separating_largeCrossMatching_components
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Finite V] [Fintype ι]
     (G : SimpleGraph V) (U : ι → Finset V) (m : ℕ) :
     let H : SimpleGraph ι := LargeCrossMatchingGraph G U m
     ∃ X : Finset V,
@@ -11967,6 +12155,7 @@ theorem exists_exceptional_set_separating_largeCrossMatching_components
         ∀ i ∈ c.supp, ∀ j ∈ d.supp,
           ∀ a ∈ U i \ X, ∀ b ∈ U j \ X, ¬ G.Adj a b := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let H : SimpleGraph ι := LargeCrossMatchingGraph G U m
   obtain ⟨X, hXcard, hclean⟩ :=
     exists_global_exceptional_set_of_not_hasCrossMatchingAtLeast G U m
@@ -11991,16 +12180,18 @@ theorem exists_exceptional_set_separating_largeCrossMatching_components
     exact SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj hAdj
   exact hclean i j hij hsmall
 
+open scoped Classical in
 /-- A parity-unbroken finite core has a four-vertex cover of all its internal
 edges.  Choose a maximum disjoint-edge family; if it had three members it
 would itself be a parity witness, while maximality makes the complement of
 its at most four endpoints independent. -/
 theorem exists_four_vertexCover_with_indep_sdiff_of_not_hasThreeDisjointAdjPairFamily
-    {V : Type*} [Fintype V] (G : SimpleGraph V) (S : Finset V)
+    {V : Type*} [Finite V] (G : SimpleGraph V) (S : Finset V)
     (hnot : ¬ HasThreeDisjointAdjPairFamily G S) :
     ∃ F : Finset V, F ⊆ S ∧ F.card ≤ 4 ∧
       G.IsIndepSet ((S \ F : Finset V) : Set V) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨M, hM, hMS, hmax⟩ :=
     exists_maximal_disjointAdjPairFamily_in_finset G S
   let F : Finset V := M.biUnion fun e => {e.1, e.2}
@@ -12030,10 +12221,12 @@ theorem exists_four_vertexCover_with_indep_sdiff_of_not_hasThreeDisjointAdjPairF
 vertices, an independent subset retaining at least |S| - 4 vertices remains
 inside the original core. -/
 theorem exists_large_indep_sdiff_of_not_hasThreeDisjointAdjPairFamily
-    {V : Type*} [Fintype V] (G : SimpleGraph V) (S : Finset V)
+    {V : Type*} [Finite V] (G : SimpleGraph V) (S : Finset V)
     (hnot : ¬ HasThreeDisjointAdjPairFamily G S) :
     ∃ I : Finset V, I ⊆ S ∧ G.IsIndepSet (I : Set V) ∧
       S.card - 4 ≤ I.card := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨F, hFS, hFcard, hInd⟩ :=
     exists_four_vertexCover_with_indep_sdiff_of_not_hasThreeDisjointAdjPairFamily
       G S hnot
@@ -12045,7 +12238,7 @@ parity-unbroken anticomplete region remove at most four matching endpoints;
 the retained pieces are still disjoint and their union is independent, so
 the sum of the retained lower bounds is smaller than n. -/
 theorem sum_card_sub_four_lt_of_disjoint_pairwiseAnticomplete_not_hasThree
-    {V : Type*} [Fintype V]
+    {V : Type*} [Finite V]
     (G : SimpleGraph V) {F : Finset (Finset V)} {n : ℕ}
     (hfree : G.IndepSetFree n)
     (hdisj : DisjointFinsetFamily F)
@@ -12053,6 +12246,7 @@ theorem sum_card_sub_four_lt_of_disjoint_pairwiseAnticomplete_not_hasThree
     (hnot : ∀ S ∈ F, ¬ HasThreeDisjointAdjPairFamily G S) :
     ∑ S ∈ F, (S.card - 4) < n := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let I : Finset V → Finset V := fun S =>
     if hS : S ∈ F then
       Classical.choose
@@ -12097,7 +12291,7 @@ theorem sum_card_sub_four_lt_of_disjoint_pairwiseAnticomplete_not_hasThree
 preceding independent-remnant count bounds the number of such cores by
 (tau - 4) times the family cardinality. -/
 theorem mul_card_sub_four_lt_of_disjoint_pairwiseAnticomplete_not_hasThree
-    {V : Type*} [Fintype V]
+    {V : Type*} [Finite V]
     (G : SimpleGraph V) {F : Finset (Finset V)} {n τ : ℕ}
     (hfree : G.IndepSetFree n)
     (hdisj : DisjointFinsetFamily F)
@@ -12105,6 +12299,8 @@ theorem mul_card_sub_four_lt_of_disjoint_pairwiseAnticomplete_not_hasThree
     (hnot : ∀ S ∈ F, ¬ HasThreeDisjointAdjPairFamily G S)
     (hcard : ∀ S ∈ F, τ ≤ S.card) :
     (τ - 4) * F.card < n := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hsum :=
     sum_card_sub_four_lt_of_disjoint_pairwiseAnticomplete_not_hasThree
       G hfree hdisj hanti hnot
@@ -12240,6 +12436,7 @@ theorem exists_path_between_of_robustPairSet_and_parity_edge_avoiding
     ∃ p : G.Walk a b, p.IsPath ∧ p.length = ℓ ∧
       (∀ v ∈ p.support, v ∉ F) ∧
       ∀ v ∈ p.support, v ∈ U ∨ v ∈ T := by
+  classical
   have hrob' : RobustPairSet G (U \ F) (T \ F) (θ - F.card) := hrob.sdiff
   have hU' : ℓ ≤ (U \ F).card := by
     have hbase : ℓ ≤ U.card - F.card := by omega
@@ -12264,6 +12461,7 @@ theorem exists_path_between_of_robustPairSet_and_parity_edge_avoiding
     · exact Or.inl (Finset.mem_sdiff.mp hv).1
     · exact Or.inr (Finset.mem_sdiff.mp hv).1
 
+open scoped Classical in
 /-- One parity-breaking edge inside a robust reservoir converts two
 parity-correct two-edge routes into a five-edge simple path.  This is the
 local form of the KLS parity-correction move. -/
@@ -12311,10 +12509,8 @@ theorem exists_fiveEdgePath_of_robustPairSet_and_edge
   let p : G.Walk a b := Walk.cons haz₀ <|
     Walk.cons hz₀x <| Walk.cons hxy <| Walk.cons hyz₁ <| Walk.cons hz₁b Walk.nil
   refine ⟨p, ?_, ?_⟩
-  · simp [p, Walk.cons_isPath_iff, hax, hay, hab, hxyne, hxb, hyb,
-      hz₀a, hz₀a.symm, hz₀b, hz₀b.symm, hz₀xne, hz₀xne.symm,
-      hz₀y, hz₀y.symm, hz₁a, hz₁a.symm, hz₁bne, hz₁bne.symm,
-      hz₁x, hz₁x.symm, hz₁y, hz₁y.symm, hz₀z₁, hz₀z₁.symm]
+  · simp [p, Walk.cons_isPath_iff, hax, hay, hab, hxyne, hxb, hyb, hz₀a.symm, hz₀b, hz₀xne,
+    hz₀y, hz₁a.symm, hz₁bne, hz₁x.symm, hz₁y.symm, hz₀z₁]
   · simp [p]
 
 /-- A robust reservoir containing at least `n+2` vertices automatically has
@@ -12352,11 +12548,13 @@ theorem exists_fiveEdgePath_of_large_robustPairSet
 endpoints produces a genuine simple cycle.  This is the elementary cycle
 assembly step behind the later absorption argument. -/
 theorem cycleGraph_isContained_of_path_and_fresh_commonNeighbor
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {k : ℕ} (hk : 3 ≤ k) {a b z : V} {p : G.Walk a b}
     (hp : p.IsPath) (hlen : p.length + 2 = k)
     (haz : G.Adj a z) (hzb : G.Adj z b) (hz : z ∉ p.support) :
     cycleGraph k ⊑ G := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let c : G.Walk a a := Walk.cons haz (Walk.cons hzb p.reverse)
   have htail : c.tail.IsPath := by
     simp [c, Walk.cons_isPath_iff, hp.reverse, Walk.support_reverse, hz]
@@ -12373,7 +12571,7 @@ theorem cycleGraph_isContained_of_path_and_fresh_commonNeighbor
 opposite endpoints form an ordinary cycle of the sum of their lengths.  This
 is the reusable assembly primitive for BFS detours and later hub handles. -/
 theorem cycleGraph_isContained_of_two_disjoint_paths
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {k : ℕ} (hk : 3 ≤ k) {a b : V}
     {p : G.Walk a b} {q : G.Walk b a}
     (hp : p.IsPath) (hq : q.IsPath)
@@ -12381,6 +12579,8 @@ theorem cycleGraph_isContained_of_two_disjoint_paths
     (hlong : 1 < p.length ∨ 1 < q.length)
     (hlen : p.length + q.length = k) :
     cycleGraph k ⊑ G := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let c : G.Walk a a := p.append q
   have hcycle : c.IsCycle := by
     exact hp.isCycle_append hq hdisj hlong
@@ -12397,13 +12597,15 @@ and the detour length add to `k`, only that prefix is needed: it and the
 detour are the two sides of an ordinary `k`-cycle.  Keeping the prefix index
 explicit avoids any interval-cycle weakening at the exact-length handoff. -/
 theorem cycleGraph_isContained_of_path_prefix_and_return_detour
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {k t : ℕ} (hk : 3 ≤ k) {a b : V} {p : G.Walk a b}
     (hp : p.IsPath) (ht : t ≤ p.length)
     {q : G.Walk (p.getVert t) a} (hq : q.IsPath)
     (hdisj : (p.take t).support.tail.Disjoint q.support.tail)
     (hlen : t + q.length = k) :
     cycleGraph k ⊑ G := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have htake : (p.take t).IsPath := hp.take t
   have htakelen : (p.take t).length = t := by
     simp [Walk.take_length, Nat.min_eq_left ht]
@@ -12421,11 +12623,13 @@ the exact support condition produced by two nested BFS trees: the common
 endpoint is allowed, while every other tree vertex avoids the retained
 middle layer. -/
 theorem isPath_append_of_support_disjoint_tail
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {a b c : V} {p : G.Walk a b} {q : G.Walk b c}
     (hp : p.IsPath) (hq : q.IsPath)
     (hdisj : p.support.Disjoint q.support.tail) :
     (p.append q).IsPath := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [Walk.isPath_def, Walk.support_append, List.nodup_append]
   refine ⟨hp.support_nodup, hq.support_nodup.tail, ?_⟩
   intro x hx y hy hxy
@@ -12438,7 +12642,7 @@ of the sum of their lengths.  The two disjointness hypotheses are stated at
 the support-tail level needed by the append and cycle constructors, so later
 BFS map-back lemmas can discharge them without rebuilding cycle bookkeeping. -/
 theorem cycleGraph_isContained_of_three_path_splice
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {k : ℕ} (hk : 3 ≤ k) {a b c : V}
     {p : G.Walk a b} {q : G.Walk b c} {r : G.Walk c a}
     (hp : p.IsPath) (hq : q.IsPath) (hr : r.IsPath)
@@ -12446,6 +12650,8 @@ theorem cycleGraph_isContained_of_three_path_splice
     (hps : p.support.tail.Disjoint (q.append r).support.tail)
     (hlen : p.length + q.length + r.length = k) :
     cycleGraph k ⊑ G := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hreturn : (q.append r).IsPath :=
     isPath_append_of_support_disjoint_tail G hq hr hqr
   apply cycleGraph_isContained_of_two_disjoint_paths G hk hp hreturn hps
@@ -12463,11 +12669,13 @@ cross-edge meets the second path; its tail omits that vertex, so the result
 is still a path.  This is the inductive assembly move for cyclic systems of
 hubs. -/
 theorem isPath_append_cross_of_disjoint_support
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {a b c d : V} {p : G.Walk a b} {q : G.Walk c d}
     (hp : p.IsPath) (hq : q.IsPath) (hdisj : p.support.Disjoint q.support)
     (hbc : G.Adj b c) :
     ((p.concat hbc).append q).IsPath := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hc_not_p : c ∉ p.support := by
     intro hc
     exact hdisj hc q.start_mem_support
@@ -12490,7 +12698,7 @@ theorem isPath_append_cross_of_disjoint_support
 the generic two-hub handle splice: one path is used as the first side, and
 the second path together with the two handle edges is the return side. -/
 theorem cycleGraph_isContained_of_two_cross_edges_and_disjoint_paths
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {k : ℕ} (hk : 3 ≤ k)
     {a b c d : V} {p : G.Walk a b} {q : G.Walk c d}
     (hp : p.IsPath) (hq : q.IsPath) (hab : a ≠ b)
@@ -12498,6 +12706,8 @@ theorem cycleGraph_isContained_of_two_cross_edges_and_disjoint_paths
     (hbc : G.Adj b c) (hda : G.Adj d a)
     (hlen : p.length + q.length + 2 = k) :
     cycleGraph k ⊑ G := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have ha_not_q : a ∉ q.support := by
     intro ha
     exact hdisj p.start_mem_support ha
@@ -12542,7 +12752,7 @@ cross-edges form a prescribed ordinary cycle.  This is the first
 multi-hub handle lemma: two of the paths are first spliced into one path,
 then the already-proved two-handle closing lemma finishes the cycle. -/
 theorem cycleGraph_isContained_of_three_cross_edges_and_disjoint_paths
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {k : ℕ} (hk : 3 ≤ k)
     {a₁ b₁ a₂ b₂ a₃ b₃ : V}
     {p : G.Walk a₁ b₁} {q : G.Walk a₂ b₂} {r : G.Walk a₃ b₃}
@@ -12553,6 +12763,8 @@ theorem cycleGraph_isContained_of_three_cross_edges_and_disjoint_paths
     (h₁₂ : G.Adj b₁ a₂) (h₂₃ : G.Adj b₂ a₃) (h₃₁ : G.Adj b₃ a₁)
     (hlen : p.length + q.length + r.length + 3 = k) :
     cycleGraph k ⊑ G := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let s : G.Walk a₂ b₃ := (q.concat h₂₃).append r
   have hs : s.IsPath := by
     exact isPath_append_cross_of_disjoint_support G hq hr hqr h₂₃
@@ -12577,7 +12789,7 @@ between each consecutive pair, concatenates to one simple path.  The support
 certificate records that no new vertices appear outside the original path
 supports, which is the induction invariant needed for cyclic hub systems. -/
 theorem exists_chain_path_fin
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {m : ℕ}
     (a b : Fin (m + 1) → V)
     (p : ∀ i : Fin (m + 1), G.Walk (a i) (b i))
@@ -12590,6 +12802,8 @@ theorem exists_chain_path_fin
       q.IsPath ∧
       q.length = (∑ i : Fin (m + 1), (p i).length) + m ∧
       ∀ v ∈ q.support, ∃ i : Fin (m + 1), v ∈ (p i).support := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   induction m with
   | zero =>
       refine ⟨p 0, hp 0, ?_, ?_⟩
@@ -12662,6 +12876,7 @@ theorem exists_chain_path_fin
         · exact ⟨Fin.last (m + 1), r.start_mem_support⟩
         · exact ⟨Fin.last (m + 1), List.mem_of_mem_tail hvr⟩
 
+open scoped Classical in
 /-- Three fresh robust connectors join two disjoint scaffold segments into
 one simple prescribed-endpoint path.  This is the cut-and-rejoin primitive
 used after deleting two endpoints from an alternating cycle. -/
@@ -12780,14 +12995,10 @@ theorem exists_path_joining_two_disjoint_major_paths
     fin_cases i <;> fin_cases j
     all_goals first
       | exact (hij rfl).elim
-      | simp [route, start, finish, W,
-          List.disjoint_cons_left, List.disjoint_cons_right,
-          hpdisj, hpdisj.symm, hx₀, hx₁, hy₀, hy₁,
-          hz₀p₀, hz₀p₁, hz₁p₀, hz₁p₁, hz₂p₀, hz₂p₁,
-          hxy, hxy.symm, hz₀x, hz₀x.symm, hz₀y, hz₀y.symm,
-          hz₁x, hz₁x.symm, hz₁y, hz₁y.symm,
-          hz₂x, hz₂x.symm, hz₂yNe, hz₂yNe.symm,
-          hz₀₁, hz₀₁.symm, hz₀₂, hz₀₂.symm, hz₁₂, hz₁₂.symm]
+      | simp [route, start, finish, W, hpdisj, hpdisj.symm, hx₀, hx₁, hy₀, hy₁, hz₀p₀, hz₀p₁,
+        hz₁p₀, hz₁p₁, hz₂p₀, hz₂p₁, hxy, hxy.symm, hz₀x, hz₀x.symm, hz₀y, hz₀y.symm, hz₁x,
+        hz₁x.symm, hz₁y, hz₁y.symm, hz₂x, hz₂x.symm, hz₂yNe, hz₂yNe.symm, hz₀₁, hz₀₁.symm,
+        hz₀₂, hz₀₂.symm, hz₁₂, hz₁₂.symm]
   have hcross : ∀ i : Fin 6,
       G.Adj (finish i.castSucc) (start i.succ) := by
     intro i
@@ -12852,6 +13063,7 @@ theorem exists_path_joining_two_disjoint_major_paths
     · right; left
       simpa [route, start, finish, W] using hi
 
+open scoped Classical in
 /-- Five fresh robust connectors join four pairwise-disjoint major paths
 into one prescribed-endpoint path.  This fixed four-arc splice is the local
 operation obtained after deleting four attachment vertices from an
@@ -12970,33 +13182,25 @@ theorem exists_path_joining_four_disjoint_major_paths
       (route i).support.Disjoint (route j).support := by
     intro i j hij
     fin_cases i
-    · fin_cases j <;> simp [route, start, finish, W, hij,
-        hx₀, hx₁, hx₂, hx₃, hxy, hxy.symm, hzX] at hij ⊢
-    · fin_cases j <;> simp [route, start, finish, W, hij, hzX, hzY,
-        (hzX 0).symm, (hzY 0).symm, hzPath, hzNe] at hij ⊢
-    · fin_cases j <;> simp [route, start, finish, W, hij,
-        hx₀, hy₀, hp₀₁, hp₀₂, hp₀₃, hzPath] at hij ⊢
-    · fin_cases j <;> simp [route, start, finish, W, hij, hzX, hzY,
-        (hzX 1).symm, (hzY 1).symm, hzPath, hzNe] at hij ⊢
-    · fin_cases j <;> simp [route, start, finish, W, hij,
-        hx₁, hy₁, hp₀₁, hp₀₁.symm,
-        hp₁₂, hp₁₃, hzPath] at hij ⊢
-    · fin_cases j <;> simp [route, start, finish, W, hij, hzX, hzY,
-        (hzX 2).symm, (hzY 2).symm, hzPath, hzNe] at hij ⊢
-    · fin_cases j <;> simp [route, start, finish, W, hij,
-        hx₂, hy₂, hp₀₂, hp₀₂.symm,
-        hp₁₂, hp₁₂.symm, hp₂₃, hzPath] at hij ⊢
-    · fin_cases j <;> simp [route, start, finish, W, hij, hzX, hzY,
-        (hzX 3).symm, (hzY 3).symm, hzPath, hzNe] at hij ⊢
-    · fin_cases j <;> simp [route, start, finish, W, hij,
-        hx₃, hy₃, hp₀₃, hp₀₃.symm,
-        hp₁₃, hp₁₃.symm, hp₂₃, hp₂₃.symm, hzPath] at hij ⊢
-    · fin_cases j <;> simp [route, start, finish, W, hij, hzX, hzY,
-        (hzX 4).symm, (hzY 4).symm, hzPath, hzNe] at hij ⊢
-    · fin_cases j <;> simp [route, start, finish, W, hij,
-        hy₀, hy₁, hy₂, hy₃, hxy, hxy.symm,
-        hzY, (hzY 0).symm, (hzY 1).symm, (hzY 2).symm,
-        (hzY 3).symm, (hzY 4).symm] at hij ⊢
+    · fin_cases j <;> simp [route, start, finish, W, hx₀, hx₁, hx₂, hx₃, hxy.symm, hzX] at hij ⊢
+    · fin_cases j <;> simp [route, start, finish, W, (hzX 0).symm, (hzY 0).symm, hzPath,
+      hzNe] at hij ⊢
+    · fin_cases j <;> simp [route, start, finish, W, hx₀, hy₀, hp₀₁, hp₀₂, hp₀₃, hzPath] at hij ⊢
+    · fin_cases j <;> simp [route, start, finish, W, (hzX 1).symm, (hzY 1).symm, hzPath,
+      hzNe] at hij ⊢
+    · fin_cases j <;>
+        simp [route, start, finish, W, hx₁, hy₁, hp₀₁.symm, hp₁₂, hp₁₃, hzPath] at hij ⊢
+    · fin_cases j <;> simp [route, start, finish, W, (hzX 2).symm, (hzY 2).symm, hzPath,
+      hzNe] at hij ⊢
+    · fin_cases j <;> simp [route, start, finish, W, hx₂, hy₂, hp₀₂.symm, hp₁₂.symm, hp₂₃,
+      hzPath] at hij ⊢
+    · fin_cases j <;> simp [route, start, finish, W, (hzX 3).symm, (hzY 3).symm, hzPath,
+      hzNe] at hij ⊢
+    · fin_cases j <;> simp [route, start, finish, W, hx₃, hy₃, hp₀₃.symm, hp₁₃.symm,
+      hp₂₃.symm, hzPath] at hij ⊢
+    · fin_cases j <;> simp [route, start, finish, W, (hzX 4).symm, (hzY 4).symm, hzPath,
+      hzNe] at hij ⊢
+    · fin_cases j <;> simp [route, start, finish, W, hy₀, hy₁, hy₂, hy₃, hxy, hzY] at hij ⊢
   have hcross : ∀ i : Fin 10,
       G.Adj (finish i.castSucc) (start i.succ) := by
     intro i
@@ -13084,6 +13288,7 @@ theorem exists_path_joining_four_disjoint_major_paths
     · right; left
       simpa [route, start, finish, W] using hi
 
+open scoped Classical in
 /-- Four scaffold arcs form one long strand while a fifth fresh connector
 forms a disjoint two-edge strand between the other attachment pair.  The
 long splice is run after deleting the short strand's endpoints from the core
@@ -13148,7 +13353,7 @@ theorem exists_disjoint_long_four_arc_and_twoEdge_paths
     exact hzMajor (h ▸ Finset.mem_union_left B hvA)
   let q : G.Walk u v := Walk.cons huz (Walk.cons hzv Walk.nil)
   have hq : q.IsPath := by
-    simp [q, Walk.cons_isPath_iff, huv, hzu, hzu.symm, hzvNe]
+    simp [q, Walk.cons_isPath_iff, huv, hzu.symm, hzvNe]
   have hqlen : q.length = 2 := by simp [q]
   let E : Finset V := {u, v}
   let Z : Finset V := {z}
@@ -13471,7 +13676,7 @@ theorem exists_four_disjoint_intervals_avoiding_sorted_cuts
   have hrawPos : ∀ t : I, 0 < rawStart t := by
     rintro ⟨i, j⟩
     have hb : 0 < base i := by
-      fin_cases i <;> simp [base] <;> omega
+      fin_cases i <;> simp [base]
     exact hb.trans_le (hrawWithin ⟨i, j⟩).1
   have hrawAvoid : ∀ t : I,
       (rawStart t + rawLen t < d₀ ∨ d₀ < rawStart t) ∧
@@ -13518,7 +13723,7 @@ theorem exists_four_disjoint_intervals_avoiding_sorted_cuts
       | zero =>
           have hc : cap i = 0 := (hgroupZero i).mp hgi
           have hu : used i = 0 := Nat.eq_zero_of_le_zero (hc ▸ husedLe i)
-          simp [hgi, hu]
+          simp [hu]
       | succ n =>
           rw [Fin.sum_univ_succ]
           simp
@@ -13589,7 +13794,7 @@ theorem exists_four_disjoint_intervals_avoiding_cuts
     have hi := havoid i
     rcases haCuts with rfl | rfl | rfl <;>
       rcases hbCuts with rfl | rfl | rfl <;>
-      rcases hcCuts with rfl | rfl | rfl <;> first | omega | aesop
+      rcases hcCuts with rfl | rfl | rfl <;> omega
   by_cases h₀₁ : d₀ < d₁
   · by_cases h₀₂ : d₀ < d₂
     · by_cases h₁₂ : d₁ < d₂
@@ -13609,6 +13814,7 @@ theorem exists_four_disjoint_intervals_avoiding_cuts
     · exact finish hd₂pos (by omega) h₁₀ hd₀q
         (Or.inr (Or.inr rfl)) (Or.inr (Or.inl rfl)) (Or.inl rfl)
 
+open scoped Classical in
 /-- Two disjoint strands through one cyclic alternating scaffold.  Four
 attachment vertices cut the scaffold into at most four linear gaps.  The
 preceding interval allocator chooses four nonempty subsegments of total
@@ -13918,6 +14124,7 @@ theorem exists_disjoint_long_and_short_routes_via_cyclicAlternatingScaffold
         apply hbvShort
         simpa [short', hzEq] using hz
 
+open scoped Classical in
 /-- Deleting two prescribed core endpoints cuts the alternating cycle into
 at most two scaffold arcs.  Any total of at most `q - 4` internal scaffold
 steps can be split between those arcs; three robust connectors (only two in
@@ -14196,6 +14403,7 @@ theorem exists_long_route_via_cyclicAlternatingScaffold
         rw [hplen, hp₀len, hp₁len]
         omega) hploc hbi0p hbdp
 
+open scoped Classical in
 /-- Sharp endpoint-to-endpoint specialization of the cut-and-rejoin route:
 using all `q - 4` available internal scaffold steps gives length `2*q - 2`. -/
 theorem exists_full_route_via_cyclicAlternatingScaffold
@@ -14247,6 +14455,7 @@ theorem exists_short_even_route_of_robustPairSet
       exact even_two
     · omega
 
+open scoped Classical in
 /-- Mixed local routing over pairwise-disjoint hubs.  Marked visits use the
 full alternating-scaffold route and therefore carry an arbitrary weight up
 to `q - 4`; unmarked visits use the zero-or-two-edge robust route and do not
@@ -14346,6 +14555,7 @@ theorem getVert_append_reverse_eq_doubledPathPosition
     simp [doubledPathPosition, hwlen]
     omega
 
+open scoped Classical in
 /-- Route family for the doubled traversal of a simple auxiliary path of
 length `d+1`.  The two endpoint hubs occur once and use one long route;
 every internal hub occurs twice and uses the disjoint long/short scaffold
@@ -14472,19 +14682,15 @@ theorem exists_doubled_path_alternatingScaffold_routes
   have hroutePath : ∀ i, (route i).IsPath := by
     intro i
     refine Fin.addCases (fun j => ?_) (fun j => ?_) i
-    ·
-      simpa [route, fwd] using hforwardPath j
-    ·
-      simpa [route, back] using hbackwardPath j
+    · simpa [route, fwd] using hforwardPath j
+    · simpa [route, back] using hbackwardPath j
   have hrouteLoc : ∀ i, ∀ z ∈ (route i).support,
       z ∈ (A (w.getVert (pos i).val) ∪ B (w.getVert (pos i).val)) ∨
         z ∈ D (w.getVert (pos i).val) := by
     intro i
     refine Fin.addCases (fun j => ?_) (fun j => ?_) i
-    ·
-      simpa [route, fwd, hposFwd] using hforwardLoc j
-    ·
-      intro z hz
+    · simpa [route, fwd, hposFwd] using hforwardLoc j
+    · intro z hz
       rcases hbackwardLoc j z (by simpa [route, back] using hz) with h | h
       · exact Or.inl (Finset.mem_union_left _ (by
           simpa [pos, back, doubledPathPosition] using h))
@@ -14715,6 +14921,7 @@ theorem exists_doubled_path_alternatingScaffold_routes
         Finset.mem_union_left _ (Finset.mem_union_right _ hzB)
       exact Finset.disjoint_left.mp (hregions _ _ hhubNe) hzi' hzj'
 
+open scoped Classical in
 /-- Odd-parity version of the doubled-path route family.  The first endpoint
 hub is visited only once, so a three-edge matching in that core supplies an
 internal edge avoiding the two attachments.  Replacing the ordinary
@@ -14947,7 +15154,7 @@ ordinary cycle whose length is the sum of all internal path lengths plus one
 edge for every hub-to-hub handle.  This is the generic finite cyclic-handle
 assembly lemma used by the stability argument. -/
 theorem cycleGraph_isContained_of_cyclic_cross_edges_and_disjoint_paths_fin
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {m k : ℕ} (hk : 3 ≤ k)
     (a b : Fin (m + 1) → V)
     (p : ∀ i : Fin (m + 1), G.Walk (a i) (b i))
@@ -14960,6 +15167,8 @@ theorem cycleGraph_isContained_of_cyclic_cross_edges_and_disjoint_paths_fin
     (hlong : 1 < (∑ i : Fin (m + 1), (p i).length) + m)
     (hlen : (∑ i : Fin (m + 1), (p i).length) + m + 1 = k) :
     cycleGraph k ⊑ G := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨q, hq, hqlen, _hqsupp⟩ :=
     exists_chain_path_fin G a b p hp hdisj hcross
   let r : G.Walk (b (Fin.last m)) (a 0) :=
@@ -14987,7 +15196,7 @@ closing handles are stated only through index values, avoiding coercion
 problems when the number of visits is presented as the length of an
 auxiliary walk rather than syntactically as `m + 1`. -/
 theorem cycleGraph_isContained_of_cyclic_cross_edges_and_disjoint_paths_val
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {q k : ℕ} (hq : 0 < q) (hk : 3 ≤ k)
     (a b : Fin q → V)
     (p : ∀ i : Fin q, G.Walk (a i) (b i))
@@ -15000,6 +15209,8 @@ theorem cycleGraph_isContained_of_cyclic_cross_edges_and_disjoint_paths_val
     (hlong : 1 < (∑ i : Fin q, (p i).length) + (q - 1))
     (hlen : (∑ i : Fin q, (p i).length) + q = k) :
     cycleGraph k ⊑ G := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   cases q with
   | zero => omega
   | succ m =>
@@ -15014,6 +15225,7 @@ theorem cycleGraph_isContained_of_cyclic_cross_edges_and_disjoint_paths_val
       · simpa using hlong
       · omega
 
+open scoped Classical in
 /-- A simple auxiliary path whose edges carry large cross matchings lifts,
 through cyclic alternating hubs, to an ambient cycle of any compatible
 length.  The auxiliary path is traversed forward and backward.  Its endpoint
@@ -15120,6 +15332,7 @@ theorem cycleGraph_isContained_of_largeCrossMatching_path_alternatingScaffolds
   · rw [hrouteSum, hweightSum]
     omega
 
+open scoped Classical in
 /-- Odd-parity companion to
 `cycleGraph_isContained_of_largeCrossMatching_path_alternatingScaffolds`.
 The first endpoint hub is used only once by the doubled traversal.  A
@@ -15266,7 +15479,7 @@ theorem SimpleGraph.IsTree.exists_closed_walk_length_twice_card_sub_one
         Fintype.card_eq_one_iff.mpr ⟨r, fun x => hsub.elim x r⟩
       simp [hcard]
     · intro v
-      simpa [hsub.elim v r]
+      simp [hsub.elim v r]
   · intro α _ hnontriv ih K hK
     obtain ⟨v, hvdeg⟩ := hK.exists_vert_degree_one_of_nontrivial
     obtain ⟨u, hvu, _huniq⟩ :=
@@ -15342,7 +15555,7 @@ theorem SimpleGraph.IsTree.exists_closed_walk_length_twice_card_sub_one_fresh_ro
         Fintype.card_eq_one_iff.mpr ⟨r, fun x => Subsingleton.elim x r⟩
       simp [hcard]
     · intro v
-      simpa [Subsingleton.elim v r]
+      simp [Subsingleton.elim v r]
     · intro j
       exact j.elim0
   · let : Nontrivial V := hnontriv
@@ -15470,6 +15683,7 @@ theorem SimpleGraph.Connected.exists_closed_walk_length_twice_card_sub_one_at
     ∃ w : H.Walk r r,
       w.length = 2 * (Fintype.card V - 1) ∧
       ∀ v : V, v ∈ w.support := by
+  classical
   obtain ⟨r₀, w₀, hwlen, hwcov⟩ :=
     Erdos551.SimpleGraph.Connected.exists_closed_walk_length_twice_card_sub_one
       H hH
@@ -15533,6 +15747,7 @@ theorem SimpleGraph.IsTree.exists_closed_walk_length_twice_sub_one_of_le_card
       let e : K' ↪g K := SimpleGraph.Embedding.induce S
       exact ⟨e r, w.map e.toHom, by simpa using hwlen⟩
 
+open scoped Classical in
 /-- Exact-order leaf-pruning with a fresh base vertex.  The recursive tour is
 rooted at a leaf of the retained subtree, and mapping the tour back through
 the induced embeddings preserves the fact that the root has no indexed
@@ -15630,6 +15845,7 @@ theorem SimpleGraph.Connected.exists_closed_walk_length_twice_sub_one_of_le_card
       T hT ht htV
   exact ⟨r, w.mapLe hTH, by simpa using hwlen⟩
 
+open scoped Classical in
 /-- Connected exact-order wrapper for the fresh-root pruned tree tour. -/
 theorem SimpleGraph.Connected.exists_closed_walk_length_twice_sub_one_fresh_root_of_le_card
     {V : Type u} [Fintype V] (H : SimpleGraph V) (hH : H.Connected)
@@ -15651,12 +15867,13 @@ theorem SimpleGraph.Connected.exists_closed_walk_length_twice_sub_one_fresh_root
   let j' : Fin (w.length - 1) := Fin.cast hlen j
   simpa [w', j'] using hwfresh j'
 
+open scoped Classical in
 /-- Put the same residual weight on one chosen visit of each member of a
 finite set covered by a visit map.  The chosen visits are distinct, so every
 fiber receives total residual at most `c`, while the global residual is
 exactly `|S|c`. -/
 theorem exists_visit_weights_of_covers_finset
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (m c : ℕ) (f : Fin m → ι) (S : Finset ι)
     (hsurj : ∀ i ∈ S, ∃ j : Fin m, f j = i) :
     ∃ r : Fin m → ℕ,
@@ -15664,6 +15881,7 @@ theorem exists_visit_weights_of_covers_finset
       (∀ j, r j ≤ c) ∧
       ∀ i, (∑ j : {j : Fin m // f j = i}, r j.1) ≤ c := by
   classical
+  let : Fintype ι := Fintype.ofFinite ι
   choose pick hpick using fun i : S => hsurj i.1 i.2
   have hpick_inj : Function.Injective pick := by
     intro a b hab
@@ -15676,8 +15894,7 @@ theorem exists_visit_weights_of_covers_finset
       rw [show selected = Finset.univ.image pick by rfl]
       rw [Finset.card_image_of_injective _ hpick_inj]
       simp
-    simpa [r, hselcard] using
-      (Finset.sum_const_nat (s := selected) (m := c))
+    simp [r, hselcard]
   · intro j
     by_cases hj : j ∈ selected <;> simp [r, hj]
   · intro i
@@ -15707,12 +15924,13 @@ theorem exists_visit_weights_of_covers_finset
         Nat.mul_le_mul_right c hinter
       _ = c := one_mul c
 
+open scoped Classical in
 /-- Exact balanced residual allocation.  One visit is selected for each
 covered value; quotient weight is put on every selected visit, and one extra
 unit is put on a subset whose size is the remainder.  Hence the total weight
 is exactly `z`, while every fiber receives at most `z / |S| + 1`. -/
 theorem exists_exact_balanced_visit_weights_of_covers_finset
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (m z : ℕ) (f : Fin m → ι) (S : Finset ι) (hS : S.Nonempty)
     (hsurj : ∀ i ∈ S, ∃ j : Fin m, f j = i) :
     ∃ r : Fin m → ℕ,
@@ -15721,6 +15939,7 @@ theorem exists_exact_balanced_visit_weights_of_covers_finset
       ∀ i, (∑ j : {j : Fin m // f j = i}, r j.1) ≤
         z / S.card + 1 := by
   classical
+  let : Fintype ι := Fintype.ofFinite ι
   choose pick hpick using fun i : S => hsurj i.1 i.2
   have hpick_inj : Function.Injective pick := by
     intro a b hab
@@ -15797,6 +16016,7 @@ theorem exists_exact_balanced_visit_weights_of_covers_finset
       _ ≤ 1 * (q + 1) := Nat.mul_le_mul_right (q + 1) hinter
       _ = z / S.card + 1 := by simp [q]
 
+open scoped Classical in
 /-- Exact balanced residual allocation on all visits of a spanning closed
 walk.  Every vertex has a visit among the cyclic indices `Fin w.length`, so
 the preceding finite-set construction applies with `S = univ`. -/
@@ -15845,14 +16065,15 @@ theorem sum_three_plus_twice_visit_weight_le
   have hm := Nat.mul_le_mul_left 2 h
   omega
 
+open scoped Classical in
 /-- Balanced residual allocation on the nonroot support of a fresh-root
 closed walk.  One visit of each of the other `t-1` support vertices receives
 weight `c`; repeated visits receive no extra weight. -/
 theorem exists_balanced_visit_weights_of_closed_walk_fresh_root
-    {ι : Type*} [Fintype ι] (H : SimpleGraph ι) {u : ι}
+    {ι : Type*} [Finite ι] (H : SimpleGraph ι) {u : ι}
     (w : H.Walk u u) {t c : ℕ}
     (hsupp : w.support.toFinset.card = t)
-    (hwfresh : ∀ j : Fin (w.length - 1),
+    (_hwfresh : ∀ j : Fin (w.length - 1),
       w.getVert (j.val + 1) ≠ u) :
     ∃ r : Fin (w.length - 1) → ℕ,
       (∑ j, r j) = (t - 1) * c ∧
@@ -15860,9 +16081,10 @@ theorem exists_balanced_visit_weights_of_closed_walk_fresh_root
       ∀ i, (∑ j : {j : Fin (w.length - 1) //
         w.getVert (j.val + 1) = i}, r j.1) ≤ c := by
   classical
+  let : Fintype ι := Fintype.ofFinite ι
   let S : Finset ι := w.support.toFinset.erase u
   have hu : u ∈ w.support.toFinset := by
-    simpa using w.start_mem_support
+    simp
   have hScard : S.card = t - 1 := by
     simp [S, Finset.card_erase_of_mem hu, hsupp]
   have hcover : ∀ i ∈ S, ∃ j : Fin (w.length - 1),
@@ -16083,11 +16305,12 @@ theorem finHeadTail_getVert_closed_walk
     exact finHeadTail_succ hq u
       (fun x : Fin (w.length - 1) => w.getVert (x.val + 1)) x
 
+open scoped Classical in
 /-- Variable all-even lift for a closed large-cross-matching walk.  Every
 visit receives its own even robust route and the grouped router charges each
 hub only for the visits actually made there. -/
 theorem cycleGraph_isContained_of_closed_largeCrossMatching_walk_all_even_lengths
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Fintype V] [Finite ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (H : SimpleGraph ι) (U T : ι → Finset V)
     {θ R k : ℕ} {u : ι} (w : H.Walk u u)
@@ -16108,6 +16331,7 @@ theorem cycleGraph_isContained_of_closed_largeCrossMatching_walk_all_even_length
     (hlen : (∑ j : Fin w.length, 2 * (r j + 1)) + w.length = k) :
     cycleGraph k ⊑ G := by
   classical
+  let : Fintype ι := Fintype.ofFinite ι
   obtain ⟨a, b, ha, hb, hab, hpairs, hcross, hclose⟩ :=
     exists_globally_disjoint_cyclic_cross_edges_along_closed_walk
       G H U w hwlen hmatchBudget hlarge
@@ -16502,12 +16726,13 @@ theorem cycleGraph_isContained_of_cyclic_repeated_robust_routes_residual
   · rw [hsum]
     exact hlen
 
+open scoped Classical in
 /-- Per-hub-capacity version of the exact arbitrary-parity repeated-hub
 splice.  Requests after the distinguished one are grouped by their hub, so
 each reservoir is charged only for its own visits.  Paths in different hub
 regions are automatically disjoint. -/
 theorem cycleGraph_isContained_of_cyclic_grouped_robust_routes_residual
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Fintype V] [Finite ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {m ℓ s θ k : ℕ} (hk : 3 ≤ k)
     (hub : Fin (m + 1) → ι) (U T : ι → Finset V)
@@ -16537,6 +16762,7 @@ theorem cycleGraph_isContained_of_cyclic_grouped_robust_routes_residual
     (hlen : ℓ + m * (2 * (s + 1)) + (m + 1) = k) :
     cycleGraph k ⊑ G := by
   classical
+  let : Fintype ι := Fintype.ofFinite ι
   let aR : Fin m → V := fun i => a i.succ
   let bR : Fin m → V := fun i => b i.succ
   let hubR : Fin m → ι := fun i => hub i.succ
@@ -16711,10 +16937,11 @@ theorem cycleGraph_isContained_of_cyclic_grouped_robust_routes_residual
   · rw [hsum]
     exact hlen
 
+open scoped Classical in
 /-- Per-hub-capacity exact splice with an individually assigned even length
 for every route after the distinguished parity-breaking route. -/
 theorem cycleGraph_isContained_of_cyclic_grouped_robust_routes_lengths_residual
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Fintype V] [Finite ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {m ℓ θ k : ℕ} (r : Fin m → ℕ) (hk : 3 ≤ k)
     (hub : Fin (m + 1) → ι) (U T : ι → Finset V)
@@ -16746,6 +16973,7 @@ theorem cycleGraph_isContained_of_cyclic_grouped_robust_routes_lengths_residual
     (hlen : ℓ + (∑ j : Fin m, 2 * (r j + 1)) + (m + 1) = k) :
     cycleGraph k ⊑ G := by
   classical
+  let : Fintype ι := Fintype.ofFinite ι
   let aR : Fin m → V := fun i => a i.succ
   let bR : Fin m → V := fun i => b i.succ
   let hubR : Fin m → ι := fun i => hub i.succ
@@ -17038,9 +17266,10 @@ theorem cycleGraph_isContained_of_cyclic_repeated_robust_routes_residual_val
       · simpa using hRestθ
       · simpa using hlen
 
+open scoped Classical in
 /-- Value-indexed wrapper for the per-hub-capacity arbitrary-parity splice. -/
 theorem cycleGraph_isContained_of_cyclic_grouped_robust_routes_residual_val
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Fintype V] [Finite ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {q ℓ s θ k : ℕ} (hq : 0 < q) (hk : 3 ≤ k)
     (hub : Fin q → ι) (tail : Fin (q - 1) → Fin q)
@@ -17074,6 +17303,8 @@ theorem cycleGraph_isContained_of_cyclic_grouped_robust_routes_residual_val
           (2 * (s + 1) + 1) ≤ θ)
     (hlen : ℓ + (q - 1) * (2 * (s + 1)) + q = k) :
     cycleGraph k ⊑ G := by
+  classical
+  let : Fintype ι := Fintype.ofFinite ι
   cases q with
   | zero => omega
   | succ m =>
@@ -17115,11 +17346,12 @@ theorem cycleGraph_isContained_of_cyclic_grouped_robust_routes_residual_val
         exact hRestθ i
       · simpa using hlen
 
+open scoped Classical in
 /-- Value-indexed wrapper for the per-hub, variable-length arbitrary-parity
 splice.  The explicit tail embedding identifies the noninitial visits with
 the successors after the cardinal is exposed as a successor. -/
 theorem cycleGraph_isContained_of_cyclic_grouped_robust_routes_lengths_residual_val
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Fintype V] [Finite ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {q ℓ θ k : ℕ} (hq : 0 < q) (hk : 3 ≤ k)
     (r : Fin (q - 1) → ℕ)
@@ -17157,6 +17389,8 @@ theorem cycleGraph_isContained_of_cyclic_grouped_robust_routes_lengths_residual_
           (2 * (r y.1 + 1) + 1)) ≤ θ)
     (hlen : ℓ + (∑ j : Fin (q - 1), 2 * (r j + 1)) + q = k) :
     cycleGraph k ⊑ G := by
+  classical
+  let : Fintype ι := Fintype.ofFinite ι
   cases q with
   | zero => omega
   | succ m =>
@@ -17313,11 +17547,12 @@ theorem cycleGraph_isContained_of_closed_largeCrossMatching_walk_residual
   · exact hRestθ
   · exact hlen
 
+open scoped Classical in
 /-- Source-facing all-parity lift with the robust-routing budget charged only
 at the hubs actually visited by the closed auxiliary walk.  The subtype in
 `hRestU` and `hRestθ` counts the noninitial visits to each hub. -/
 theorem cycleGraph_isContained_of_closed_largeCrossMatching_walk_grouped_residual
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Fintype V] [Finite ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (H : SimpleGraph ι) (U T : ι → Finset V)
     {ℓ s θ R k : ℕ} {u : ι} (w : H.Walk u u)
@@ -17345,6 +17580,8 @@ theorem cycleGraph_isContained_of_closed_largeCrossMatching_walk_grouped_residua
           (2 * (s + 1) + 1) ≤ θ)
     (hlen : ℓ + (w.length - 1) * (2 * (s + 1)) + w.length = k) :
     cycleGraph k ⊑ G := by
+  classical
+  let : Fintype ι := Fintype.ofFinite ι
   obtain ⟨a, b, ha, hb, hab, hpairs, hcross, hclose⟩ :=
     exists_globally_disjoint_cyclic_cross_edges_along_closed_walk
       G H U w hwlen hmatchBudget hlarge
@@ -17362,10 +17599,11 @@ theorem cycleGraph_isContained_of_closed_largeCrossMatching_walk_grouped_residua
     simpa [tail] using hRestθ i
   · exact hlen
 
+open scoped Classical in
 /-- Source-facing closed-walk lift with an individually assigned even length
 for each noninitial visit and exact per-hub sum accounting. -/
 theorem cycleGraph_isContained_of_closed_largeCrossMatching_walk_lengths_residual
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Fintype V] [Finite ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (H : SimpleGraph ι) (U T : ι → Finset V)
     {ℓ θ R k : ℕ} {u : ι} (w : H.Walk u u)
@@ -17397,6 +17635,8 @@ theorem cycleGraph_isContained_of_closed_largeCrossMatching_walk_lengths_residua
     (hlen : ℓ + (∑ j : Fin (w.length - 1), 2 * (r j + 1)) +
       w.length = k) :
     cycleGraph k ⊑ G := by
+  classical
+  let : Fintype ι := Fintype.ofFinite ι
   obtain ⟨a, b, ha, hb, hab, hpairs, hcross, hclose⟩ :=
     exists_globally_disjoint_cyclic_cross_edges_along_closed_walk
       G H U w hwlen hmatchBudget hlarge
@@ -17414,13 +17654,14 @@ theorem cycleGraph_isContained_of_closed_largeCrossMatching_walk_lengths_residua
     simpa [tail] using hRestθ i
   · exact hlen
 
+open scoped Classical in
 /-- Fresh-root specialization of the variable-length closed-walk lift.  If
 the base hub never occurs among the indexed noninitial visits, the first
 route has no later attachment in its own region.  Thus three internal
 matching edges suffice for parity, and the first robust reservoir is charged
 only for the route itself. -/
 theorem cycleGraph_isContained_of_closed_largeCrossMatching_walk_fresh_root_lengths_residual
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Fintype V] [Finite ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (H : SimpleGraph ι) (U T : ι → Finset V)
     {ℓ θ R k : ℕ} {u : ι} (w : H.Walk u u)
@@ -17450,6 +17691,8 @@ theorem cycleGraph_isContained_of_closed_largeCrossMatching_walk_fresh_root_leng
     (hlen : ℓ + (∑ j : Fin (w.length - 1), 2 * (r j + 1)) +
       w.length = k) :
     cycleGraph k ⊑ G := by
+  classical
+  let : Fintype ι := Fintype.ofFinite ι
   let : IsEmpty {j : Fin (w.length - 1) //
       w.getVert (j.val + 1) = u} :=
     ⟨fun j => (hwfresh j.1 j.2).elim⟩
@@ -17505,6 +17748,7 @@ theorem exists_balanced_route_decomposition {t k : ℕ}
       omega
     simpa [d] using hgoal
 
+open scoped Classical in
 /-- Balanced exact-order component lift.  A fresh-root pruned tree tour uses
 exactly `t` auxiliary hubs.  One visit of each nonroot hub absorbs residual
 `c`, while all repeated visits use the minimum even route.  Consequently the
@@ -17643,6 +17887,7 @@ theorem cycleGraph_isContained_of_connected_largeCrossMatching_balanced_of_card_
     rw [hroute, hwlen]
     exact hlen
 
+open scoped Classical in
 /-- Even-length balanced exact-order component lift.  Because every robust
 route is even, no internal parity-breaking matching is needed.  The initial
 route absorbs the quotient/remainder residue and the fresh-root tour makes
@@ -17907,6 +18152,7 @@ theorem cycleGraph_isContained_of_connected_largeCrossMatching_balanced_even_of_
     rw [hroute, hwlen]
     exact hlen
 
+open scoped Classical in
 /-- Interval form of the parity-free balanced lift for even target lengths.
 The quotient/remainder first route is itself even because the tour and all
 tail routes have even total length. -/
@@ -17983,6 +18229,7 @@ theorem cycleGraph_isContained_of_connected_largeCrossMatching_balanced_even_ran
     exact hscale.trans hRouteθ
   · exact hlen
 
+open scoped Classical in
 /-- Interval form of the balanced component lift.  Quotient/remainder
 allocation removes the exact product-form hypothesis: every target at least
 `6(t-1)+3` is covered by the displayed `t + k/t` local budgets. -/
@@ -18040,6 +18287,7 @@ theorem cycleGraph_isContained_of_connected_largeCrossMatching_balanced_range_of
     exact hscale.trans hRouteθ
   · exact hlen
 
+open scoped Classical in
 /-- Square-root scale of the balanced component lift.  A component with more
 than `sqrt k` hubs creates `C_k` once cross matchings have size `4 sqrt k`
 and every robust core has the corresponding linear local capacities. -/
@@ -18101,6 +18349,7 @@ theorem cycleGraph_isContained_of_connected_largeCrossMatching_sqrt_scale
   · simp only [Nat.add_sub_cancel]
     omega
 
+open scoped Classical in
 /-- Square-root scale for even target lengths, with no internal
 parity-breaking hypothesis on the robust cores. -/
 theorem cycleGraph_isContained_of_connected_largeCrossMatching_sqrt_scale_even
@@ -18160,6 +18409,7 @@ theorem cycleGraph_isContained_of_connected_largeCrossMatching_sqrt_scale_even
   · simp only [Nat.add_sub_cancel]
     omega
 
+open scoped Classical in
 /-- Contrapositive square-root component bound for even target lengths. -/
 theorem card_lt_succ_sqrt_of_cycleFree_connected_largeCrossMatching_even
     {V ι : Type*} [Fintype V] [Fintype ι]
@@ -18183,6 +18433,7 @@ theorem card_lt_succ_sqrt_of_cycleFree_connected_largeCrossMatching_even
     G H U T hconn hkEven hsqrt (by omega) hmatchBudget hlarge hrob
       hregions hU hθ
 
+open scoped Classical in
 /-- Contrapositive square-root component bound. -/
 theorem card_lt_succ_sqrt_of_cycleFree_connected_largeCrossMatching
     {V ι : Type*} [Fintype V] [Fintype ι]
@@ -18207,11 +18458,12 @@ theorem card_lt_succ_sqrt_of_cycleFree_connected_largeCrossMatching
     G H U T hconn hsqrt (by omega) hmatchBudget hlarge hrob hregions
       hparity hU hθ
 
+open scoped Classical in
 /-- Every large-cross-matching component has fewer than `sqrt k + 1` labels
 in a `C_k`-free graph when `k` is even; unlike the all-parity version, no
 internal matching assumption is needed. -/
 theorem ncard_connectedComponent_lt_succ_sqrt_of_cycleFree_largeCrossMatchingGraph_even
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Fintype V] [Finite ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (U T : ι → Finset V) {θ R k : ℕ} (hkEven : Even k)
     (hsqrt : 7 ≤ Nat.sqrt k)
@@ -18224,6 +18476,8 @@ theorem ncard_connectedComponent_lt_succ_sqrt_of_cycleFree_largeCrossMatchingGra
     (hcycle : ¬ cycleGraph k ⊑ G)
     (c : (LargeCrossMatchingGraph G U R).ConnectedComponent) :
     c.supp.ncard < Nat.sqrt k + 1 := by
+  classical
+  let : Fintype ι := Fintype.ofFinite ι
   let H : SimpleGraph ι := LargeCrossMatchingGraph G U R
   let K : SimpleGraph c := c.toSimpleGraph
   let Uc : c → Finset V := fun i => U i.1
@@ -18265,7 +18519,7 @@ theorem exists_odd_closed_walk_of_not_isBipartite
     ∃ u : V, ∃ w : H.Walk u u, Odd w.length := by
   change ¬ H.Colorable 2 at hH
   rw [SimpleGraph.two_colorable_iff_forall_loop_even] at hH
-  push_neg at hH
+  push Not at hH
   obtain ⟨u, w, hw⟩ := hH
   exact ⟨u, w, Nat.not_even_iff_odd.mp hw⟩
 
@@ -18306,16 +18560,18 @@ theorem exists_short_odd_closed_walk_of_connected_not_isBipartite
     simp [w]
     omega
 
+open scoped Classical in
 /-- Support-sensitive form of the short odd-loop construction.  One of the
 two simple root paths has enough distinct vertices to pay for half the loop
 length.  This stronger estimate is what makes two-edge support extensions
 preserve the final strict `2 |V|` bound. -/
 theorem exists_short_supported_odd_closed_walk_of_connected_not_isBipartite
-    {V : Type*} [Fintype V] (H : SimpleGraph V)
+    {V : Type*} [Finite V] (H : SimpleGraph V)
     (hconn : H.Connected) (hH : ¬ H.IsBipartite) :
     ∃ u : V, ∃ w : H.Walk u u,
       Odd w.length ∧ w.length < 2 * w.support.toFinset.card := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let : Nonempty V := hconn.nonempty
   let r : V := Classical.choice hconn.nonempty
   let p : ∀ v : V, H.Walk r v := fun v => (hconn r v).some.bypass
@@ -18373,7 +18629,7 @@ theorem exists_adj_mem_not_mem_of_connected
   have hnotall : ¬ ∀ x : V, x ∈ S := by
     intro hall
     exact hproper (Finset.eq_univ_iff_forall.mpr hall)
-  push_neg at hnotall
+  push Not at hnotall
   obtain ⟨x, hx⟩ := hnotall
   let q : H.Walk s x := (hconn s x).some
   have hex : ∃ n : ℕ, q.getVert n ∉ S := by
@@ -18395,6 +18651,7 @@ theorem exists_adj_mem_not_mem_of_connected
   have heq : m - 1 + 1 = m := Nat.sub_add_cancel (by omega)
   simpa only [heq] using hadj
 
+open scoped Classical in
 /-- A finite connected graph of maximum degree at most two has a spanning
 simple path.  A maximal path cannot have an outside neighbour at an endpoint,
 while an outside neighbour at an internal vertex would give that vertex its
@@ -18462,6 +18719,7 @@ theorem exists_spanning_isPath_of_connected_degree_le_two
       have hyUpper := hdeg y
       omega
 
+open scoped Classical in
 /-- Every feasible initial length occurs as a simple path in a finite
 connected graph of maximum degree at most two.  Take a spanning path and
 truncate it at the requested number of edges. -/
@@ -18555,6 +18813,7 @@ theorem sqrt_sixteenth_path_ladder_estimates {k : ℕ}
     omega
   exact ⟨hd, by omega, by nlinarith, hbase, hevenCap, hoddCap⟩
 
+open scoped Classical in
 /-- A cycle-free ambient graph bounds the order of a connected
 maximum-degree-two interaction graph as soon as the even doubled-path ladder
 fits at one requested length.  If the component were larger, truncate a
@@ -18589,6 +18848,7 @@ theorem card_le_add_one_of_cycleFree_connected_degree_le_two_alternatingScaffold
     G H w hwlen hwpath A B D hscaffold hrob hmajorD hq htheta hregions
       hlarge hmatchBudget hk hbase hparity hcapacity
 
+open scoped Classical in
 /-- Odd-length companion to the preceding component bound.  Every possible
 initial vertex has a three-edge internal matching, so whichever endpoint the
 truncated spanning path chooses supplies the unique five-edge parity route. -/
@@ -18623,6 +18883,7 @@ theorem card_le_add_one_of_cycleFree_connected_degree_le_two_alternatingScaffold
     G H w hwlen hwpath A B D hscaffold hrob hmajorD hq htheta hregions
       hlarge (hmatch (w.getVert 0)) hmatchBudget hk hbase hparity hcapacity
 
+open scoped Classical in
 /-- Concrete square-root component bound supplied by the two path ladders.
 For every target parity, a connected maximum-degree-two interaction graph of
 matched alternating hubs has order at most `floor(sqrt k / 16)`. -/
@@ -18701,6 +18962,7 @@ theorem card_le_sqrt_div_sixteen_of_cycleFree_connected_degree_le_two_alternatin
     rw [hd] at hbound
     simpa [L, s] using hbound
 
+open scoped Classical in
 /-- In a connected graph of maximum degree at most two, the support of any
 cycle is all of the vertex set.  Otherwise an edge crossing from the cycle
 support to its complement would give a cycle vertex three distinct
@@ -18739,6 +19001,7 @@ theorem cycle_support_eq_univ_of_connected_degree_le_two
   have hyUpper := hdeg y
   omega
 
+open scoped Classical in
 /-- A spanning copy of a cycle in a graph of maximum degree at most two is
 induced, hence is a graph isomorphism.  The proof upgrades the vertex
 injection to a bijection and uses equality of the two-element neighbour sets
@@ -18752,7 +19015,7 @@ theorem exists_cycleGraph_iso_of_spanning_copy_degree_le_two
   have hfSurj : Function.Surjective f := by
     apply f.injective.surjective_of_finite
     apply Fintype.equivOfCardEq
-    simpa [hcard]
+    simp [hcard]
   let e : Fin n ≃ V := Equiv.ofBijective f ⟨f.injective, hfSurj⟩
   refine ⟨{ __ := e, map_rel_iff' := ?_ }⟩
   intro x y
@@ -18784,6 +19047,7 @@ theorem exists_cycleGraph_iso_of_spanning_copy_degree_le_two
     simpa [hzy] using z.2
   · exact f.toHom.map_rel
 
+open scoped Classical in
 /-- A cycle whose support is the whole finite vertex set has length equal to
 the order of the graph. -/
 theorem cycle_length_eq_card_of_support_eq_univ
@@ -18829,6 +19093,7 @@ theorem cycle_length_eq_card_of_support_eq_univ
     _ = p.support.toFinset.card := by rw [hdropEq]
     _ = Fintype.card V := by simp [hsupp]
 
+open scoped Classical in
 /-- A connected finite non-bipartite graph of maximum degree at most two is
 an odd cycle.  The conclusion is given as an odd Hamiltonian closed walk,
 which is the precise form consumed by the balanced robust-hub router. -/
@@ -18840,7 +19105,7 @@ theorem exists_odd_hamiltonian_cycle_of_connected_degree_le_two_not_bipartite
       p.IsCycle ∧ Odd p.length ∧ p.length = Fintype.card V := by
   have hnotacyc : ¬ H.IsAcyclic := fun hacyc => hnotbip hacyc.isBipartite
   unfold SimpleGraph.IsAcyclic at hnotacyc
-  push_neg at hnotacyc
+  push Not at hnotacyc
   obtain ⟨u, p, hp⟩ := hnotacyc
   have hsupp : p.support.toFinset = Finset.univ :=
     cycle_support_eq_univ_of_connected_degree_le_two H hconn hdeg p hp
@@ -18862,6 +19127,7 @@ theorem exists_odd_hamiltonian_cycle_of_connected_degree_le_two_not_bipartite
     simpa using c.colorable
   exact ⟨u, p, hp, hodd, hlen⟩
 
+open scoped Classical in
 /-- Insert one new support vertex into a closed walk using an out-and-back
 detour across a cut edge.  The length rises by exactly two and the support by
 exactly one. -/
@@ -18883,6 +19149,7 @@ theorem exists_closed_walk_add_one_support_of_connected
   · ext x
     simp [w, Walk.mem_support_rotate_iff]
 
+open scoped Classical in
 /-- Iterating the one-vertex detour extends any closed walk to a spanning
 closed walk.  The exact cost is two edges per previously absent vertex. -/
 theorem exists_spanning_closed_walk_with_exact_extension_length
@@ -18940,6 +19207,7 @@ theorem length_walk_induce
       simp only [Walk.induce_cons, Walk.length_cons]
       exact congrArg Nat.succ (ih _)
 
+open scoped Classical in
 /-- In a connected graph, an odd closed walk can be enlarged by two-edge
 detours until its support has any prescribed feasible cardinality.  Each
 detour preserves odd parity and raises the support cardinality by one. -/
@@ -18975,6 +19243,7 @@ theorem exists_odd_closed_walk_with_exact_support_card_of_connected
       have hwMissing : t - w.support.toFinset.card = m := by omega
       exact ih w hwOdd hwCardLe hwMissing
 
+open scoped Classical in
 /-- Exact-size normalization of a small odd witness.  The enlarged walk
 spans its support, so the induced graph on that support is connected; its odd
 induced walk also rules out a two-colouring. -/
@@ -19019,6 +19288,7 @@ theorem exists_bounded_odd_spanning_closed_walk_of_connected_not_isBipartite
     ∃ u : V, ∃ w : H.Walk u u,
       Odd w.length ∧ w.length < 2 * Fintype.card V ∧
         ∀ v : V, v ∈ w.support := by
+  classical
   obtain ⟨u, p, hpOdd, hpLen⟩ :=
     exists_short_supported_odd_closed_walk_of_connected_not_isBipartite
       H hconn hH
@@ -19036,15 +19306,18 @@ theorem exists_bounded_odd_spanning_closed_walk_of_connected_not_isBipartite
 augmented by a doubled spanning-tree tour so that its support contains every
 vertex while its parity remains odd. -/
 theorem exists_odd_spanning_closed_walk_of_connected_not_isBipartite
-    {V : Type*} [Fintype V] (H : SimpleGraph V)
+    {V : Type*} [Finite V] (H : SimpleGraph V)
     (hconn : H.Connected) (hH : ¬ H.IsBipartite) :
     ∃ u : V, ∃ w : H.Walk u u,
       Odd w.length ∧ ∀ v : V, v ∈ w.support := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨u, w, hwOdd, _hwLen, hwSupp⟩ :=
     exists_bounded_odd_spanning_closed_walk_of_connected_not_isBipartite
       H hconn hH
   exact ⟨u, w, hwOdd, hwSupp⟩
 
+open scoped Classical in
 /-- Quantitative odd interaction-component lift.  A connected non-bipartite
 auxiliary graph supplies a spanning odd closed walk of length less than twice
 its order.  Exact balanced visit weights then distribute the remaining even
@@ -19157,6 +19430,7 @@ theorem cycleGraph_isContained_of_connected_nonbipartite_largeCrossMatching
     rw [hsum, hrsum, hdouble]
     omega
 
+open scoped Classical in
 /-- Optimized odd interaction lift when the auxiliary obstruction is already
 a Hamiltonian odd cycle.  Its spanning loop has length exactly the auxiliary
 order, halving the linear routing charge from the general connected
@@ -19165,7 +19439,7 @@ theorem cycleGraph_isContained_of_odd_hamiltonian_largeCrossMatching
     {V ι : Type*} [Fintype V] [Fintype ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (H : SimpleGraph ι) (U T : ι → Finset V)
-    {u : ι} (w : H.Walk u u) { θ R k : ℕ}
+    {u : ι} (w : H.Walk u u) {θ R k : ℕ}
     (hwOdd : Odd w.length) (hspan : ∀ v : ι, v ∈ w.support)
     (hwcard : w.length = Fintype.card ι)
     (hkOdd : Odd k) (hfit : 3 * Fintype.card ι ≤ k)
@@ -19316,6 +19590,7 @@ theorem medium_hamiltonian_costs
   have hquot := div_le_two_mul_sqrt_sub_two_of_medium hs hmLow
   constructor <;> omega
 
+open scoped Classical in
 /-- Square-root specialization of the odd non-bipartite interaction lift.
 The rational scale `2 * (sqrt k / 3)` lies close to the minimizer of
 `6t + 3k/t`; from `sqrt k ≥ 30` both local costs fit inside the existing
@@ -19413,6 +19688,7 @@ theorem cycleGraph_isContained_of_connected_nonbipartite_largeCrossMatching_sqrt
   · rw [htcard]
     omega
 
+open scoped Classical in
 /-- Short-odd-witness form of the square-root lift.  If a connected
 interaction graph is large enough and already contains an odd closed walk
 on at most `2 * (sqrt k / 3)` vertices, the exact-size normalization enlarges
@@ -19459,7 +19735,7 @@ theorem cycleGraph_isContained_of_connected_largeCrossMatching_short_odd_walk_sq
   · simpa [J] using hSnotbip
   · exact hkOdd
   · exact hsqrt
-  · simpa [hScard]
+  · simp [hScard]
   · exact hmatchBudget
   · exact hJlarge
   · intro i
@@ -19469,6 +19745,7 @@ theorem cycleGraph_isContained_of_connected_largeCrossMatching_short_odd_walk_sq
     exact hU i.1
   · exact hθ
 
+open scoped Classical in
 /-- Local bipartiteness forced by `C_k`-freeness in an odd target.  In a
 large interaction component, every closed walk supported on at most
 `2 * (sqrt k / 3)` labels has even length; an odd one would normalize to the
@@ -19499,6 +19776,7 @@ theorem even_length_of_small_support_closed_walk_of_cycleFree_largeCrossMatching
       (Nat.not_even_iff_odd.mp hpNotEven) hpCard hmatchBudget hlarge hrob
       hregions hU hθ
 
+open scoped Classical in
 /-- Induced-subgraph form of local bipartiteness.  Every interaction vertex
 set of cardinality at most `2 * (sqrt k / 3)` induces a bipartite graph in
 the odd `C_k`-free branch.  Any odd induced loop would map back to a small
@@ -19539,12 +19817,13 @@ theorem induce_isBipartite_of_small_card_of_cycleFree_largeCrossMatching_sqrt_sc
         hU hθ hcycle wm hwCard
   simpa only [wm, Walk.length_map] using heven
 
+open scoped Classical in
 /-- Connected-component form of the odd-target local-bipartiteness
 alternative.  A large component of the auxiliary large-cross-matching graph
 has no non-bipartite induced subgraph on at most the optimal square-root
 scale. -/
 theorem induce_isBipartite_of_small_card_of_cycleFree_largeCrossMatching_component
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Fintype V] [Finite ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (U T : ι → Finset V) {θ R k : ℕ} (hkOdd : Odd k)
     (hsqrt : 30 ≤ Nat.sqrt k)
@@ -19559,6 +19838,8 @@ theorem induce_isBipartite_of_small_card_of_cycleFree_largeCrossMatching_compone
     (hcard : 2 * (Nat.sqrt k / 3) ≤ c.supp.ncard)
     (S : Finset c) (hS : S.card ≤ 2 * (Nat.sqrt k / 3)) :
     (c.toSimpleGraph.induce (S : Set c)).IsBipartite := by
+  classical
+  let : Fintype ι := Fintype.ofFinite ι
   let K : SimpleGraph c := c.toSimpleGraph
   let Uc : c → Finset V := fun i => U i.1
   let Tc : c → Finset V := fun i => T i.1
@@ -19599,14 +19880,15 @@ theorem induce_isBipartite_of_small_card_of_cycleFree_largeCrossMatching_compone
   · exact hcycle
   · exact hS
 
+open scoped Classical in
 /-- Component-local bipartiteness when the auxiliary large-matching graph is
 built from pruned subsets `W i ⊆ U i`, while robust routing remains available
 in the original cores `U i`.  Cross-matching certificates enlarge from `W`
 to `U`. -/
 theorem induce_isBipartite_of_small_card_of_cycleFree_largeCrossMatching_component_mono
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Fintype V] [Finite ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
-    (U W T : ι → Finset V) { θ R k : ℕ} (hkOdd : Odd k)
+    (U W T : ι → Finset V) {θ R k : ℕ} (hkOdd : Odd k)
     (hsqrt : 30 ≤ Nat.sqrt k) (hWU : ∀ i, W i ⊆ U i)
     (hmatchBudget : 4 * Nat.sqrt k < R)
     (hrob : ∀ i, RobustPairSet G (U i) (T i) θ)
@@ -19619,6 +19901,8 @@ theorem induce_isBipartite_of_small_card_of_cycleFree_largeCrossMatching_compone
     (hcard : 2 * (Nat.sqrt k / 3) ≤ c.supp.ncard)
     (S : Finset c) (hS : S.card ≤ 2 * (Nat.sqrt k / 3)) :
     (c.toSimpleGraph.induce (S : Set c)).IsBipartite := by
+  classical
+  let : Fintype ι := Fintype.ofFinite ι
   let K : SimpleGraph c := c.toSimpleGraph
   let Uc : c → Finset V := fun i => U i.1
   let Tc : c → Finset V := fun i => T i.1
@@ -19661,6 +19945,7 @@ theorem induce_isBipartite_of_small_card_of_cycleFree_largeCrossMatching_compone
   · exact hcycle
   · exact hS
 
+open scoped Classical in
 /-- A medium-sized connected component of a pruned large-cross-matching graph
 is bipartite once the pruning has forced maximum degree two.  Indeed, a
 connected non-bipartite graph of maximum degree two is an odd Hamiltonian
@@ -19744,11 +20029,12 @@ theorem isBipartite_of_medium_largeCrossMatching_component_degree_le_two
     exact hcost.1.trans (hU i.1)
   · exact hcost.2.trans hθ
 
+open scoped Classical in
 /-- Every connected component of the auxiliary graph whose edges represent
 `R` disjoint cross handles has fewer than `sqrt k + 1` hub labels in a
 `C_k`-free ambient graph. -/
 theorem ncard_connectedComponent_lt_succ_sqrt_of_cycleFree_largeCrossMatchingGraph
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Fintype V] [Finite ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (U T : ι → Finset V) {θ R k : ℕ}
     (hsqrt : 7 ≤ Nat.sqrt k)
@@ -19762,6 +20048,8 @@ theorem ncard_connectedComponent_lt_succ_sqrt_of_cycleFree_largeCrossMatchingGra
     (hcycle : ¬ cycleGraph k ⊑ G)
     (c : (LargeCrossMatchingGraph G U R).ConnectedComponent) :
     c.supp.ncard < Nat.sqrt k + 1 := by
+  classical
+  let : Fintype ι := Fintype.ofFinite ι
   let H : SimpleGraph ι := LargeCrossMatchingGraph G U R
   let K : SimpleGraph c := c.toSimpleGraph
   let Uc : c → Finset V := fun i => U i.1
@@ -19796,11 +20084,12 @@ theorem ncard_connectedComponent_lt_succ_sqrt_of_cycleFree_largeCrossMatchingGra
       _ = c.supp.ncard := Set.fintypeCard_eq_ncard c.supp
   simpa [hcCard] using hKcard
 
+open scoped Classical in
 /-- The square-root component bound persists after pruning the interaction
 reservoirs from `U i` to arbitrary subsets `W i`.  Internal three-edge
 matchings in the original robust cores supply the sole parity correction. -/
 theorem ncard_component_lt_succ_sqrt_pruned_of_hasThree
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Fintype V] [Finite ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (U W T : ι → Finset V) {θ R k : ℕ}
     (hsqrt : 7 ≤ Nat.sqrt k) (hWU : ∀ i, W i ⊆ U i)
@@ -19814,6 +20103,8 @@ theorem ncard_component_lt_succ_sqrt_pruned_of_hasThree
     (hcycle : ¬ cycleGraph k ⊑ G)
     (c : (LargeCrossMatchingGraph G W R).ConnectedComponent) :
     c.supp.ncard < Nat.sqrt k + 1 := by
+  classical
+  let : Fintype ι := Fintype.ofFinite ι
   let H : SimpleGraph ι := LargeCrossMatchingGraph G W R
   let K : SimpleGraph c := c.toSimpleGraph
   let Uc : c → Finset V := fun i => U i.1
@@ -20031,7 +20322,7 @@ cyclic order, so the finite cyclic-path assembler gives the prescribed total
 length.  This is the exact abstraction needed when a diameter-two remainder
 piece supplies a short path between two stable seeds. -/
 theorem cycleGraph_isContained_of_two_path_handles_and_disjoint_paths
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {k : ℕ} (hk : 3 ≤ k)
     {a b u v c d y z : V}
     {p : G.Walk a b} {h : G.Walk u v} {q : G.Walk c d} {s : G.Walk y z}
@@ -20046,6 +20337,8 @@ theorem cycleGraph_isContained_of_two_path_handles_and_disjoint_paths
     (hdy : G.Adj d y) (hza : G.Adj z a)
     (hlen : p.length + h.length + q.length + s.length + 4 = k) :
     cycleGraph k ⊑ G := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let W : Fin 4 → (Σ x y : V, G.Walk x y) :=
     ![⟨a, b, p⟩, ⟨u, v, h⟩, ⟨c, d, q⟩, ⟨y, z, s⟩]
   let A : Fin 4 → V := fun i => (W i).1
@@ -20086,7 +20379,7 @@ as singleton paths in the generic finite cyclic-path assembler; this keeps
 the four-edge contribution explicit for the later absorption/separation
 argument. -/
 theorem cycleGraph_isContained_of_two_twoEdge_handles_and_disjoint_paths
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {k : ℕ} (hk : 3 ≤ k)
     {a b c d x y : V} {p : G.Walk a b} {q : G.Walk c d}
     (hp : p.IsPath) (hq : q.IsPath)
@@ -20097,6 +20390,8 @@ theorem cycleGraph_isContained_of_two_twoEdge_handles_and_disjoint_paths
     (hdy : G.Adj d y) (hya : G.Adj y a)
     (hlen : p.length + q.length + 4 = k) :
     cycleGraph k ⊑ G := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   refine cycleGraph_isContained_of_two_path_handles_and_disjoint_paths
     (h := (Walk.nil : G.Walk x x)) (s := (Walk.nil : G.Walk y y))
     G hk hp (by simp) hq (by simp)
@@ -20108,6 +20403,7 @@ theorem cycleGraph_isContained_of_two_twoEdge_handles_and_disjoint_paths
   · simpa only [Walk.support_nil, List.disjoint_singleton] using hyq
   · simpa only [Walk.length_nil, Nat.add_zero] using hlen
 
+open scoped Classical in
 /-- Cyclic even-route system for finitely many disjoint robust hubs.  Each
 hub supplies one prescribed even internal path, disjoint routing regions make
 all supports disjoint, and the generic cyclic-handle assembler closes the
@@ -20138,8 +20434,7 @@ theorem cycleGraph_isContained_of_cyclic_disjoint_robustPairSets_even_fin
         (by simp) (by simp) (hab i) (by simpa using hU i) (by simpa using hθ i)
   have hdisj : ∀ i j : Fin (m + 1), i ≠ j →
       (p i).support.Disjoint (p j).support := by
-    intro i j hij
-    intro v hvi hvj
+    intro i j hij v hvi hvj
     have hvi' : v ∈ U i ∪ T i := by
       rcases hploc i v hvi with hv | hv
       · exact Finset.mem_union_left _ hv
@@ -20173,6 +20468,7 @@ theorem cycleGraph_isContained_of_cyclic_disjoint_robustPairSets_even_fin
       exact hplen i]
     exact hlen
 
+open scoped Classical in
 /-- Cyclic assembly from disjoint alternating scaffolds.  One routed pair is
 used in each hub.  The three-interval lemma makes every route avoid its two
 fixed cross-edge endpoints, and disjoint displayed hub regions make the
@@ -20229,6 +20525,7 @@ theorem cycleGraph_isContained_of_cyclic_disjoint_alternatingScaffolds_even_fin
       exact hplen i]
     exact hlen
 
+open scoped Classical in
 /-- Full-capacity cyclic assembly from disjoint alternating scaffolds.  The
 cut-and-rejoin route uses any prescribed `r i ≤ q - 4`, so the internal
 route in hub `i` has length `2 * r i + 6`. -/
@@ -20284,6 +20581,7 @@ theorem cycleGraph_isContained_of_cyclic_disjoint_alternatingScaffolds_long_fin
       exact hplen i]
     exact hlen
 
+open scoped Classical in
 /-- A matching-backed first alternating scaffold changes the parity of the
 usual full-capacity cyclic assembly at the cost of one scaffold slot.  The
 first hub uses the five-edge parity-breaking route, while every successor
@@ -20378,18 +20676,21 @@ theorem cycleGraph_isContained_of_cyclic_disjoint_alternatingScaffolds_matched_o
   · rw [hsum]
     exact hlen
 
+open scoped Classical in
 /-- Support-location certificates from two routed hub paths turn disjoint
 regions into disjoint path supports.  Naming this tiny bridge keeps the
 three-hub and later cyclic-handle arguments focused on their combinatorial
 shape rather than repeating union membership bookkeeping. -/
 theorem walk_support_disjoint_of_location_of_disjoint_regions
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {U₁ T₁ U₂ T₂ : Finset V} {a b c d : V}
     {p : G.Walk a b} {q : G.Walk c d}
     (hregions : Disjoint (U₁ ∪ T₁) (U₂ ∪ T₂))
     (hploc : ∀ v ∈ p.support, v ∈ U₁ ∨ v ∈ T₁)
     (hqloc : ∀ v ∈ q.support, v ∈ U₂ ∨ v ∈ T₂) :
     p.support.Disjoint q.support := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   intro v hvp hvq
   have hv₁ : v ∈ U₁ ∪ T₁ := by
     rcases hploc v hvp with hv | hv
@@ -20401,6 +20702,7 @@ theorem walk_support_disjoint_of_location_of_disjoint_regions
     · exact Finset.mem_union_right _ hv
   exact Finset.disjoint_left.mp hregions hv₁ hv₂
 
+open scoped Classical in
 /-- One parity-broken hub followed by any finite cyclic list of even robust
 routes realizes every admissible total length.  This is the finite-hub
 version of the three-hub all-length splice: the distinguished first hub
@@ -20467,6 +20769,7 @@ theorem cycleGraph_isContained_of_cyclic_disjoint_robustPairSets_all_lengths_fin
   · rw [hsum]
     exact hlen
 
+open scoped Classical in
 /-- A matching-backed robust hub supplies the parity-breaking edge needed
 by the preceding cyclic splice without any Ramsey-sized lower bound on its
 core.  Three vertex-disjoint internal edges guarantee that one avoids the
@@ -20549,6 +20852,7 @@ theorem cycleGraph_isContained_of_cyclic_disjoint_robustPairSets_matched_fin
   · rw [hsum]
     exact hlen
 
+open scoped Classical in
 /-- A cycle in the large-cross-matching auxiliary graph lifts directly to
 an exact ambient cycle.  The matching-backed cyclic selector above already
 guarantees distinct incoming and outgoing attachments, while this theorem
@@ -20590,6 +20894,7 @@ theorem cycleGraph_isContained_of_largeCrossMatchingGraph_cycle_matched
     exact hθ (f j.succ) j
   · exact hlen
 
+open scoped Classical in
 /-- Uniform-route exclusion for the large-cross-matching interaction graph.
 Every auxiliary cycle whose routing-length interval contains `k` would lift
 to `Cₖ`, so a `Cₖ`-free graph contains no such auxiliary cycle. -/
@@ -20637,6 +20942,7 @@ theorem not_cycleGraph_isContained_largeCrossMatchingGraph_of_matched_uniform_ro
     dsimp [ℓ]
     omega
 
+open scoped Classical in
 /-- Three pairwise-disjoint robust regions whose interaction graph contains
 a triangle realize every admissible even-route total.  It is the concrete
 three-hub corollary of the generic cyclic handle lemma, and is the first
@@ -20682,6 +20988,7 @@ theorem cycleGraph_isContained_of_three_disjoint_robustPairSets_even
     hp hq hw hab₁ hpq hpw hqw h₁₂ h₂₃ h₃₁
   omega
 
+open scoped Classical in
 /-- All-length three-hub splice.  The first robust region uses the
 independent-set parity correction to route an arbitrary length `ℓ`, while
 the other two regions contribute even routes.  Three cyclic cross-edges then
@@ -20727,6 +21034,7 @@ theorem cycleGraph_isContained_of_three_disjoint_robustPairSets_all_lengths
     hp hq hw hab₁ hpq hpw hqw h₁₂ h₂₃ h₃₁
   omega
 
+open scoped Classical in
 /-- Exact three-hub cleanup with the second and third routes fixed at length
 two.  A separated cyclic triangle of robust regions therefore forces `C_k`
 as soon as the first hub routes through `k - 7`. -/
@@ -20802,6 +21110,7 @@ theorem repeated_attachment_of_not_hasSeparatedTriangleHandles
   exact hnot ⟨a₁, b₁, a₂, b₂, a₃, b₃, ha₁, hb₁, ha₂, hb₂, ha₃, hb₃,
     h₁, h₂, h₃, h₁₂, h₂₃, h₃₁⟩
 
+open scoped Classical in
 /-- Contrapositive triangle obstruction for cleanup.  A `C_k`-free graph
 with the displayed robust capacities has no separated cyclic three-handle
 configuration among three disjoint hubs. -/
@@ -20829,6 +21138,7 @@ theorem not_hasSeparatedTriangleHandles_of_cycleFree_three_robustPairSets
     ha₁ hb₁ ha₂ hb₂ ha₃ hb₃ hab₁ hab₂ hab₃ h₁₂ h₂₃ h₃₁
     hU₁ hθ₁ hU₂ hθ₂ hU₃ hθ₃
 
+open scoped Classical in
 /-- Family form of the separated-triangle obstruction.  In a disjoint
 robust-hub family with the uniform cleanup-scale capacities, every three
 distinct cores avoid separated cyclic handles. -/
@@ -20863,6 +21173,7 @@ theorem not_hasSeparatedTriangleHandles_of_cycleFree_short_second_hub_family
     omega
   · exact hcycle
 
+open scoped Classical in
 /-- Repeated-attachment form of the family triangle obstruction.  Any three
 cyclic cross-edges among distinct robust hubs in a `C_k`-free graph must use
 the same endpoint twice in at least one of the three hubs. -/
@@ -20890,6 +21201,7 @@ theorem repeated_attachment_of_three_cross_edges_in_cycleFree_short_second_hub_f
       G U T θ hk hrob hfree hUn hUk hθ hregions hcycle i j ℓ hij hiℓ hjℓ)
     ha₁ hb₁ ha₂ hb₂ ha₃ hb₃ h₁₂ h₂₃ h₃₁
 
+open scoped Classical in
 /-- Two disjoint robust regions joined by two cross-edges give every even
 cycle length allowed by the two visible route budgets.  The support-location
 certificate from the avoiding route theorem turns disjoint regions into
@@ -20926,6 +21238,7 @@ theorem cycleGraph_isContained_of_two_disjoint_robustPairSets_even
     hdisj hbc hda
   omega
 
+open scoped Classical in
 /-- If one of two disjoint robust regions is large enough for the
 independent-set parity correction, then the same two-handle splice realizes
 all admissible lengths, not only the even ones.  This is the local
@@ -20964,6 +21277,7 @@ theorem cycleGraph_isContained_of_two_disjoint_robustPairSets_all_lengths
     hdisj hbc hda
   omega
 
+open scoped Classical in
 /-- All-length two-hub splice with two length-two external handles.  The first
 robust region supplies the parity-corrected route, the second supplies an even
 route, and the two explicitly outside middle vertices contribute four handle
@@ -21031,6 +21345,7 @@ theorem cycleGraph_isContained_of_two_robustPairSets_all_lengths_twoEdge_handles
     G hk hp hq hpq hxp hxq hyp hyq hxy hbx hxc hdy hya
   omega
 
+open scoped Classical in
 /-- All-length two-hub splice with arbitrary disjoint outside path handles.
 The two handle paths lie completely outside both robust routing regions, so
 their supports are automatically disjoint from the internal hub routes; the
@@ -21107,6 +21422,7 @@ theorem cycleGraph_isContained_of_two_robustPairSets_all_lengths_path_handles
       hbu hvc hdy hza
   omega
 
+open scoped Classical in
 /-- Exact bounded-remainder specialization of the path-handle splice.  If
 both outside handles have length at most two, then a `k-6` all-length route
 budget in the first robust seed and one two-edge route in the second suffice
@@ -21147,11 +21463,13 @@ theorem cycleGraph_isContained_of_two_robustPairSets_all_lengths_short_path_hand
   · dsimp [ℓ]
     omega
 
+open scoped Classical in
 /-- Ck-free cleanup form of the bounded path-handle obstruction.  Two
 vertex-disjoint outside paths of length at most two cannot connect the same
 two robust seeds with distinct attachments at both seeds; otherwise the
 preceding exact splice produces `Cₖ`. -/
-theorem repeated_attachment_or_intersecting_handles_of_cycleFree_two_robustPairSets_short_path_handles
+theorem
+    repeated_attachment_or_intersecting_handles_of_cycleFree_two_robustPairSets_short_path_handles
     {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {U₁ T₁ U₂ T₂ : Finset V} {θ₁ θ₂ n k : ℕ} (hk : 15 ≤ k)
     (hrob₁ : RobustPairSet G U₁ T₁ θ₁) (hrob₂ : RobustPairSet G U₂ T₂ θ₂)
@@ -21183,6 +21501,7 @@ theorem repeated_attachment_or_intersecting_handles_of_cycleFree_two_robustPairS
         hU₁ hθ₁ hU₂ hθ₂
   · exact Or.inr (Or.inr hhandles)
 
+open scoped Classical in
 /-- Finite-family cleanup consequence.  A family of pairwise-disjoint short
 outside handles between two fixed robust seeds has at most one member once
 its left and right attachment maps are injective.  For two distinct handles,
@@ -21251,7 +21570,7 @@ theorem exists_common_left_or_right_of_pairwise_left_eq_or_right_eq
   let i₀ : ι := Classical.choice inferInstance
   by_cases hleft : ∀ i : ι, left i = left i₀
   · exact Or.inl ⟨left i₀, hleft⟩
-  · push_neg at hleft
+  · push Not at hleft
     obtain ⟨j, hj⟩ := hleft
     have hrightji₀ : right j = right i₀ := by
       rcases hpair j i₀ with h | h
@@ -21266,12 +21585,13 @@ theorem exists_common_left_or_right_of_pairwise_left_eq_or_right_eq
       · exact hrightji.symm.trans hrightji₀
     · exact hrighti
 
+open scoped Classical in
 /-- Concentration form of the Ck-free short-handle cleanup.  For a nonempty
 pairwise-disjoint family of short outside paths joining two fixed robust
 seeds, all left attachments coincide or all right attachments coincide.
 Thus one seed vertex covers every surviving handle between this seed pair. -/
 theorem exists_common_attachment_of_cycleFree_short_path_handles_between_robustPairSets
-    {V ι : Type*} [Fintype V] [Fintype ι] [Nonempty ι]
+    {V ι : Type*} [Fintype V] [Finite ι] [Nonempty ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {U₁ T₁ U₂ T₂ : Finset V} {θ₁ θ₂ n k : ℕ} (hk : 15 ≤ k)
     (hrob₁ : RobustPairSet G U₁ T₁ θ₁) (hrob₂ : RobustPairSet G U₂ T₂ θ₂)
@@ -21291,6 +21611,8 @@ theorem exists_common_attachment_of_cycleFree_short_path_handles_between_robustP
     (hcycle : ¬ cycleGraph k ⊑ G) :
     (∃ a : V, ∀ i : ι, left i = a) ∨
       ∃ b : V, ∀ i : ι, right i = b := by
+  classical
+  let : Fintype ι := Fintype.ofFinite ι
   apply exists_common_left_or_right_of_pairwise_left_eq_or_right_eq left right
   intro i j
   by_cases hij : i = j
@@ -21319,6 +21641,7 @@ theorem exists_common_attachment_of_cycleFree_short_path_handles_between_robustP
       apply (hdisj i j hij) hwi
       simpa [Walk.support_reverse] using hwj)).elim
 
+open scoped Classical in
 /-- Global short-handle cleanup.  For a pairwise-disjoint family of short
 outside paths indexed by an arbitrary finite type, choose one common
 attachment for every ordered pair of robust seeds.  The resulting exceptional
@@ -21326,7 +21649,7 @@ set has at most `|ι|²` vertices and meets one endpoint of every handle.  This
 is the finite global form of KLS's separation deletion before leftover
 components are assigned back to stable blocks. -/
 theorem exists_global_exceptional_set_meeting_short_path_handles_of_cycleFree_robust_family
-    {V ι κ : Type*} [Fintype V] [Nonempty V] [Fintype ι] [Fintype κ]
+    {V ι κ : Type*} [Fintype V] [Nonempty V] [Fintype ι] [Finite κ]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (U T : ι → Finset V) (θ : ι → ℕ) {n k : ℕ} (hk : 15 ≤ k)
     (hrob : ∀ i, RobustPairSet G (U i) (T i) (θ i))
@@ -21351,6 +21674,7 @@ theorem exists_global_exceptional_set_meeting_short_path_handles_of_cycleFree_ro
     ∃ X : Finset V, X.card ≤ (Fintype.card ι) ^ 2 ∧
       ∀ a : κ, left a ∈ X ∨ right a ∈ X := by
   classical
+  let : Fintype κ := Fintype.ofFinite κ
   have hpair : ∀ i j : ι, i ≠ j → ∃ x : V,
       (∀ a : κ, src a = i → dst a = j → left a = x) ∨
         (∀ a : κ, src a = i → dst a = j → right a = x) := by
@@ -21419,13 +21743,14 @@ theorem exists_global_exceptional_set_meeting_short_path_handles_of_cycleFree_ro
       rw [hrightAll a rfl rfl]
       exact hmem
 
+open scoped Classical in
 /-- Trimmed short-handle cleanup.  After deleting the exceptional set from
 the preceding theorem, no listed short outside handle can keep both of its
 seed attachments.  This is the form used by the leftover-component
 separation argument: a surviving component joining two trimmed seeds would
 itself provide one of the forbidden handles. -/
-theorem exists_global_exceptional_set_forbidding_surviving_short_path_handles_of_cycleFree_robust_family
-    {V ι κ : Type*} [Fintype V] [Nonempty V] [Fintype ι] [Fintype κ]
+theorem exists_exceptional_set_forbidding_surviving_short_handles_of_cycleFree_robust_family
+    {V ι κ : Type*} [Fintype V] [Nonempty V] [Fintype ι] [Finite κ]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (U T : ι → Finset V) (θ : ι → ℕ) {n k : ℕ} (hk : 15 ≤ k)
     (hrob : ∀ i, RobustPairSet G (U i) (T i) (θ i))
@@ -21449,6 +21774,8 @@ theorem exists_global_exceptional_set_forbidding_surviving_short_path_handles_of
     (hcycle : ¬ cycleGraph k ⊑ G) :
     ∃ X : Finset V, X.card ≤ (Fintype.card ι) ^ 2 ∧
       ∀ a : κ, left a ∉ X → right a ∉ X → False := by
+  classical
+  let : Fintype κ := Fintype.ofFinite κ
   obtain ⟨X, hXcard, hXmeet⟩ :=
     exists_global_exceptional_set_meeting_short_path_handles_of_cycleFree_robust_family
       G U T θ hk hrob hfree hUn hUk hθ hregions src dst left right u v h
@@ -21459,6 +21786,7 @@ theorem exists_global_exceptional_set_forbidding_surviving_short_path_handles_of
   · exact hleftout hleftmem
   · exact hrightout hrightmem
 
+open scoped Classical in
 /-- Separation interface for the short-handle cleanup.  Suppose a finite
 handle family contains a witness for every reachable leftover connection
 whose endpoints see two distinct robust cores.  The preceding exceptional
@@ -21466,7 +21794,7 @@ set then separates the trimmed cores: no leftover component can still see
 two of them.  This is precisely the hypothesis expected by the
 componentwise absorption theorem. -/
 theorem exists_exceptional_set_separating_leftover_of_short_path_handle_cover
-    {V ι κ : Type*} [Fintype V] [Nonempty V] [Fintype ι] [Fintype κ]
+    {V ι κ : Type*} [Fintype V] [Nonempty V] [Fintype ι] [Finite κ]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (U T : ι → Finset V) (θ : ι → ℕ) (L : Finset V)
     {n k : ℕ} (hk : 15 ≤ k)
@@ -21499,8 +21827,10 @@ theorem exists_exceptional_set_separating_leftover_of_short_path_handle_cover
         (G.induce (L : Set V)).Reachable x y →
         (∃ a ∈ U i \ X, G.Adj x.1 a) →
         (∃ b ∈ U j \ X, G.Adj y.1 b) → False := by
+  classical
+  let : Fintype κ := Fintype.ofFinite κ
   obtain ⟨X, hXcard, hXsurvive⟩ :=
-    exists_global_exceptional_set_forbidding_surviving_short_path_handles_of_cycleFree_robust_family
+    exists_exceptional_set_forbidding_surviving_short_handles_of_cycleFree_robust_family
       G U T θ hk hrob hfree hUn hUk hθ hregions src dst left right u v h
       hsrcne hleft hright hpath hlen houtside hleftAdj hrightAdj hdisj hcycle
   refine ⟨X, hXcard, ?_⟩
@@ -21643,6 +21973,7 @@ def CanonicalCrossSeedLabelsInComponents
       (a.src = b.src ∧ a.dst = b.dst) ∨
         (a.src = b.dst ∧ a.dst = b.src)
 
+open scoped Classical in
 /-- Component-indexed short-handle cleanup.  If every leftover component has
 diameter at most two and its cross-seed attachment pattern is canonical, then
 the finite type of components carrying such a pattern supplies the handle
@@ -21770,7 +22101,7 @@ The proof chooses a simple path inside the component and counts its
 duplicate-free support.  This is the concrete diameter hypothesis needed by
 the component-indexed short-handle selector above. -/
 theorem exists_path_length_le_two_in_small_induced_component
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     (L : Finset V)
     (hsmall : ∀ c : (G.induce (L : Set V)).ConnectedComponent,
       c.supp.ncard ≤ 3) :
@@ -21779,6 +22110,7 @@ theorem exists_path_length_le_two_in_small_induced_component
         ∃ p : (G.induce (L : Set V)).Walk x y,
           p.IsPath ∧ p.length ≤ 2 := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   intro c x y hx hy
   obtain ⟨p, hp⟩ := (c.reachable_of_mem_supp hx hy).exists_isPath
   refine ⟨p, hp, ?_⟩
@@ -21796,6 +22128,7 @@ theorem exists_path_length_le_two_in_small_induced_component
   rw [List.toFinset_card_of_nodup hp.support_nodup, p.length_support] at hcard
   omega
 
+open scoped Classical in
 /-- Small-component specialization of the component-indexed cleanup.  The
 separate diameter hypothesis disappears: cardinality at most three supplies
 all short paths needed by the selector. -/
@@ -21827,6 +22160,7 @@ theorem exists_exceptional_set_separating_leftover_of_unique_small_components
   · exact hunique
   · exact hcycle
 
+open scoped Classical in
 /-- One-vertex attachment cleanup.  An outside vertex cannot see two
 different vertices of a large robust core in a `Cₖ`-free graph: route a
 `k-2` path between the two core vertices and close it through the outside
@@ -21859,6 +22193,7 @@ theorem unique_attachment_in_large_robustPairSet_of_cycleFree
     · exact hxoutside (Finset.mem_union_left _ hxU)
     · exact hxoutside (Finset.mem_union_right _ hxT)
 
+open scoped Classical in
 /-- Degree form of one-core attachment uniqueness.  An outside vertex has at
 most one neighbour in a large robust core, since two such neighbours would
 close the routed `k-2` path from the preceding lemma. -/
@@ -21883,6 +22218,7 @@ theorem degreeIn_le_one_of_outside_large_robustPairSet_of_cycleFree
   · exact (Finset.mem_filter.mp hb).2
   · exact hcycle
 
+open scoped Classical in
 /-- Summed degree budget for vertices outside a family of disjoint robust
 regions.  Each core contributes at most one neighbour by the preceding
 one-core obstruction, so the whole selected-core union contributes at most
@@ -21923,6 +22259,7 @@ theorem degreeIn_biUnion_le_card_of_outside_large_robustPairSet_family_of_cycleF
       Finset.card_biUnion_le_card_mul _ _ _ hPcard
     _ = Fintype.card ι := by simp
 
+open scoped Classical in
 /-- A leftover-side multi-seed vertex contributes two genuinely distinct
 neighbours to the selected-core union.  Distinct seed labels together with
 disjoint routing regions rule out the two displayed attachments being the
@@ -21965,6 +22302,7 @@ theorem two_le_degreeIn_biUnion_of_mem_multiSeedLeftoverFinset
     _ ≤ S.card := Finset.card_le_card hpair
     _ = (((Finset.univ : Finset ι).biUnion U).filter fun y => G.Adj x y).card := rfl
 
+open scoped Classical in
 /-- Degree sandwich for a multi-seed leftover vertex outside every robust
 region: it sees at least two selected-core vertices by definition, but at
 most one per core by the one-core cycle obstruction.  This is the exact
@@ -21992,6 +22330,7 @@ theorem degreeIn_biUnion_bounds_of_mem_multiSeedLeftoverFinset_of_cycleFree
     degreeIn_biUnion_le_card_of_outside_large_robustPairSet_family_of_cycleFree
       G U T θ hk hrob hfree hUn hUk hθ hxoutside hcycle⟩
 
+open scoped Classical in
 /-- A short outside path between two attachment vertices closes against an
 all-length route in one large robust core.  The robust route has the
 complementary length `k - (q.length + 2)`, while the two displayed attachment
@@ -22038,6 +22377,7 @@ theorem cycleGraph_isContained_of_large_robustPairSet_and_short_outside_handle
   dsimp [ℓ]
   omega
 
+open scoped Classical in
 /-- Componentwise same-seed attachment uniqueness.  If two vertices in one
 diameter-two leftover component see the same large robust core, they must see
 the same core vertex; otherwise their short component path is the outside
@@ -22081,13 +22421,14 @@ theorem equal_attachments_to_same_large_robustPairSet_on_short_component_of_cycl
   · change G.Adj y.1 b
     exact hyb
 
+open scoped Classical in
 /-- Label canonicality plus the one-core short-handle obstruction yields full
 canonicality of cross-seed attachment data.  Once two cross attachments in a
 component use the same ordered seed pair, their left attachments coincide by
 routing in the first core and their right attachments coincide by routing in
 the second core. -/
 theorem uniqueCrossSeedAttachmentsInComponents_of_unique_labels
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Fintype V] [Finite ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (U T : ι → Finset V) (L : Finset V) {θ n k : ℕ} (hk : 9 ≤ k)
     (hrob : ∀ i, RobustPairSet G (U i) (T i) θ)
@@ -22103,6 +22444,8 @@ theorem uniqueCrossSeedAttachmentsInComponents_of_unique_labels
     (hlabels : UniqueCrossSeedLabelsInComponents G U L)
     (hcycle : ¬ cycleGraph k ⊑ G) :
     UniqueCrossSeedAttachmentsInComponents G U L := by
+  classical
+  let : Fintype ι := Fintype.ofFinite ι
   intro c a b
   obtain ⟨hsrc, hdst⟩ := hlabels c a b
   have hleft : a.left = b.left := by
@@ -22123,11 +22466,12 @@ theorem uniqueCrossSeedAttachmentsInComponents_of_unique_labels
     · exact hcycle
   exact ⟨hsrc, hdst, hleft, hright⟩
 
+open scoped Classical in
 /-- Orientation-insensitive version of the preceding upgrade.  In the swapped
 case, the left attachment of one witness is compared with the right
 attachment of the other inside the same robust core, and conversely. -/
 theorem canonicalCrossSeedAttachmentsInComponents_of_canonical_labels
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Fintype V] [Finite ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (U T : ι → Finset V) (L : Finset V) {θ n k : ℕ} (hk : 9 ≤ k)
     (hrob : ∀ i, RobustPairSet G (U i) (T i) θ)
@@ -22143,6 +22487,8 @@ theorem canonicalCrossSeedAttachmentsInComponents_of_canonical_labels
     (hlabels : CanonicalCrossSeedLabelsInComponents G U L)
     (hcycle : ¬ cycleGraph k ⊑ G) :
     CanonicalCrossSeedAttachmentsInComponents G U L := by
+  classical
+  let : Fintype ι := Fintype.ofFinite ι
   intro c a b
   rcases hlabels c a b with hsame | hswap
   · have hleft : a.left = b.left := by
@@ -22180,6 +22526,7 @@ theorem canonicalCrossSeedAttachmentsInComponents_of_canonical_labels
       · exact hcycle
     exact Or.inr ⟨hswap.1, hswap.2, hleft, hright⟩
 
+open scoped Classical in
 /-- Orientation-insensitive component-indexed cleanup.  One arbitrary
 orientation is chosen for each bad component.  Canonicality says every later
 cross attachment agrees with that choice directly or after reversal, and in
@@ -22310,6 +22657,7 @@ theorem exists_exceptional_set_separating_leftover_of_canonical_short_components
         rw [hswap.2.2.2] at hrightX
         simpa [d] using hrightX)
 
+open scoped Classical in
 /-- Correct orientation-insensitive small-component separation theorem.  A
 component may present its one unordered seed pair in either order; robust
 one-core routing upgrades that label information to canonical attachment
@@ -22357,11 +22705,12 @@ theorem exists_exceptional_set_separating_leftover_of_canonical_labels_small_com
 two.  Hence any other distinct ordered pair in the set agrees with the first
 pair directly or after swapping. -/
 theorem eq_or_swap_of_mem_finset_card_le_two
-    {α : Type*} [DecidableEq α] (S : Finset α)
+    {α : Type*} (S : Finset α)
     (hS : S.card ≤ 2) {a b c d : α}
     (hab : a ≠ b) (hcd : c ≠ d)
     (ha : a ∈ S) (hb : b ∈ S) (hc : c ∈ S) (hd : d ∈ S) :
     (a = c ∧ b = d) ∨ (a = d ∧ b = c) := by
+  classical
   have hpair : ({a, b} : Finset α) ⊆ S := by
     intro x hx
     simp only [Finset.mem_insert, Finset.mem_singleton] at hx
@@ -22386,7 +22735,7 @@ theorem eq_or_swap_of_mem_finset_card_le_two
 noncomputable def ComponentSeedLabelFinset
     {V ι : Type*} [Fintype V] [Fintype ι]
     (G : SimpleGraph V) (U : ι → Finset V) (L : Finset V)
-    (c : (G.induce (L : Set V)).ConnectedComponent) : Finset ι :=
+    (c : (G.induce (L : Set V)).ConnectedComponent) : Finset ι := open scoped Classical in
   Finset.univ.filter fun i =>
     ∃ x : L, x ∈ c.supp ∧ ∃ a ∈ U i, G.Adj x.1 a
 
@@ -22414,6 +22763,7 @@ theorem canonicalCrossSeedLabelsInComponents_of_componentSeedLabelFinset_card_le
   · simp only [ComponentSeedLabelFinset, Finset.mem_filter, Finset.mem_univ, true_and]
     exact ⟨b.y, b.y_mem, b.right, b.right_mem, b.right_adj⟩
 
+open scoped Classical in
 /-- Fully concrete two-label small-component cleanup.  The only remaining
 structural hypotheses are that leftover components have at most three
 vertices and see at most two robust seed labels; all canonicality and handle
@@ -22463,12 +22813,13 @@ hub-core pruning statement to outside vertices. -/
 noncomputable def MultiSeedLeftoverFinset_late
     {V ι : Type*} [Fintype V] [Fintype ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
-    (U : ι → Finset V) (L : Finset V) : Finset V :=
+    (U : ι → Finset V) (L : Finset V) : Finset V := open scoped Classical in
   L.filter fun x =>
     ∃ i j : ι, i ≠ j ∧
       (∃ a ∈ U i, G.Adj x a) ∧
       ∃ b ∈ U j, G.Adj x b
 
+open scoped Classical in
 /-- After deleting the actual leftover-side repeated attachments, every
 surviving leftover vertex sees at most one seed label.  This is the precise
 input required by the component label-counting lemma below. -/
@@ -22494,6 +22845,7 @@ theorem multiSeedLeftoverFinset_subset
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (U : ι → Finset V) (L : Finset V) :
     MultiSeedLeftoverFinset G U L ⊆ L := by
+  classical
   intro x hx
   exact (Finset.mem_filter.mp hx).1
 
@@ -22504,7 +22856,7 @@ can run from the exceptional side back into the surviving leftover. -/
 noncomputable def LeftoverNeighborClosure
     {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
-    (L E : Finset V) : Finset V :=
+    (L E : Finset V) : Finset V := open scoped Classical in
   E ∪ L.filter fun v => ∃ e ∈ E, G.Adj e v
 
 /-- The neighbor closure stays inside the original leftover whenever the
@@ -22520,6 +22872,7 @@ theorem leftoverNeighborClosure_subset
   · exact hEL hvE
   · exact hvL
 
+open scoped Classical in
 /-- By construction, an exceptional vertex has no edge to a leftover vertex
 outside the one-step neighbor closure.  This is the cross-edge vanishing
 input for the constant exceptional assignment in the two-stage absorption
@@ -22613,6 +22966,7 @@ theorem card_leftoverNeighborClosure_le_two_mul_of_components_card_le_two
         (Finset.card_biUnion_le_card_mul E N 1 hNcard) _
     _ = 2 * E.card := by ring
 
+open scoped Classical in
 /-- For two-vertex leftover components, the one-step neighbor closure is a
 union of whole leftover components and is therefore anticomplete to its
 complement.  If a newly added neighbour had another edge out of the closure,
@@ -22656,10 +23010,11 @@ exceptional assignment needs. -/
 noncomputable def CoreNeighborFinset
     {V ι : Type*} [Fintype V] [Fintype ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
-    (U : ι → Finset V) (E : Finset V) : Finset V :=
+    (U : ι → Finset V) (E : Finset V) : Finset V := open scoped Classical in
   E.biUnion fun e =>
     ((Finset.univ : Finset ι).biUnion U).filter fun a => G.Adj e a
 
+open scoped Classical in
 /-- Once all exceptional core neighbours are deleted, no exceptional vertex
 is adjacent to a surviving vertex of any selected core. -/
 theorem no_edge_from_exceptional_to_sdiff_coreNeighborFinset
@@ -22677,6 +23032,7 @@ theorem no_edge_from_exceptional_to_sdiff_coreNeighborFinset
   refine ⟨?_, hea⟩
   exact Finset.mem_biUnion.mpr ⟨i, Finset.mem_univ _, (Finset.mem_sdiff.mp ha).1⟩
 
+open scoped Classical in
 /-- A uniform degree bound into the selected-core union gives the same
 uniform charge for the exceptional core-neighbour deletion. -/
 theorem card_coreNeighborFinset_le_mul_of_degree_bound
@@ -22692,6 +23048,7 @@ theorem card_coreNeighborFinset_le_mul_of_degree_bound
   intro e he
   simpa [degreeIn] using hdeg e he
 
+open scoped Classical in
 /-- In the cycle-free robust setting, every exceptional vertex outside all
 routing regions has at most one selected-core neighbour per seed.  Hence the
 core-neighbour deletion costs at most `|E|·|seeds|`. -/
@@ -22766,6 +23123,7 @@ theorem card_componentSeedLabelFinset_le_component_card_of_atMostOneSeedLabelPer
     _ ≤ Fintype.card c := hcard
     _ = c.supp.ncard := hcCard
 
+open scoped Classical in
 /-- Two-vertex remainder specialization.  Once repeated-attachment deletion
 ensures one seed label per leftover vertex, every component of order at most
 two sees at most two labels, so the fully concrete cleanup theorem applies. -/
@@ -22799,6 +23157,7 @@ theorem exists_exceptional_set_separating_leftover_of_two_vertex_components
       G U L hone c).trans (hsmall c)
   · exact hcycle
 
+open scoped Classical in
 /-- Correct two-vertex cleanup after deleting the actual leftover-side
 multi-seed vertices.  The hypothesis on component order is imposed only on
 the surviving leftover, and the one-label condition is supplied
@@ -22854,6 +23213,7 @@ theorem card_multiSeedLeftoverFinset_le_two_mul_pred_of_two_vertex_components
     _ ≤ 2 * (n - 1) :=
       card_le_two_mul_pred_of_indepSetFree_of_components_card_le_two G hfree hsmall
 
+open scoped Classical in
 /-- Quantitative two-vertex cleanup in the form needed by absorption.  The
 original remainder has at most two vertices per component; consequently the
 multi-seed exceptional part costs at most `2(n-1)`, and after deleting it a
@@ -22914,6 +23274,7 @@ theorem card_multiSeed_leftoverNeighborClosure_le_four_mul_pred
     _ ≤ 2 * (2 * (n - 1)) := Nat.mul_le_mul_left 2 hmulti
     _ = 4 * (n - 1) := by ring
 
+open scoped Classical in
 /-- The core-neighbour deletion of the closed multi-seed exceptional set has
 the explicit charge `4(n-1)|ι|`.  Every closure vertex remains in the
 leftover, hence outside all robust routing regions; the one-core degree
@@ -22961,13 +23322,16 @@ theorem card_coreNeighborFinset_of_multiSeed_closure_le_four_mul_pred_mul_seed_c
       Nat.mul_le_mul_right _ hEcard
     _ = 4 * (n - 1) * Fintype.card ι := by rfl
 
+open scoped Classical in
 /-- Deleting two finite exceptional sets cannot empty a set whose order is
 strictly larger than the sum of their cardinalities.  This elementary
 survival lemma is the arithmetic form used for twice-trimmed robust cores. -/
 theorem nonempty_sdiff_sdiff_of_card_add_lt
-    {V : Type*} [Fintype V]
+    {V : Type*} [Finite V]
     (U X Y : Finset V) (hcharge : X.card + Y.card < U.card) :
     ((U \ X) \ Y).Nonempty := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hretX : U.card - X.card ≤ (U \ X).card :=
     sub_le_card_sdiff_of_le_card_of_card_le le_rfl le_rfl
   have hretY : (U.card - X.card) - Y.card ≤ ((U \ X) \ Y).card :=
@@ -22976,6 +23340,7 @@ theorem nonempty_sdiff_sdiff_of_card_add_lt
   have hpos : 0 < (U.card - X.card) - Y.card := by omega
   exact hpos.trans_le hretY
 
+open scoped Classical in
 /-- Numerical survival of every selected core after the square separator and
 the closed multi-seed core-neighbour deletion.  The displayed budget is the
 only input: `|ι|² + 4(n-1)|ι|` must fit below the core order. -/
@@ -23015,6 +23380,7 @@ theorem selected_core_survives_multiSeed_cleanup
       _ < (U i).card := hbudget i
   exact hcharge
 
+open scoped Classical in
 /-- Full two-vertex cleanup endpoint.  Starting from the canonical
 multi-seed deletion, close it under leftover neighbours, delete every
 selected-core neighbour of that closure, and use separation monotonicity for
@@ -23061,7 +23427,7 @@ theorem completeStablePartition_of_two_vertex_multiSeed_cleanup
     simpa [E₀] using (multiSeedLeftoverFinset_subset G U L)
   have hELsub : E ⊆ L := by
     simpa [E] using (leftoverNeighborClosure_subset G hE₀L)
-  apply completeStablePartition_of_seed_blocks_anticomplete_exceptional_and_separated_leftover_of_global_slack
+  apply completeStablePartition_of_seeds_anticomplete_exceptional_and_separated_leftover
     G B E L' hBne
   · intro i j hij
     rw [Finset.disjoint_left]
@@ -23116,6 +23482,7 @@ theorem completeStablePartition_of_two_vertex_multiSeed_cleanup
     exact hanti e (by simpa [E] using he) v (by simpa [L', E] using hv)
   · exact hslack
 
+open scoped Classical in
 /-- Small-component separation with only label canonicality as an input.
 The one-core short-handle obstruction first upgrades labels to full
 attachment canonicality; the component-indexed cleanup then deletes at most
@@ -23158,6 +23525,7 @@ theorem exists_exceptional_set_separating_leftover_of_unique_labels_small_compon
   · exact hunique
   · exact hcycle
 
+open scoped Classical in
 /-- Exact cleanup specialization of the two length-two-handle splice.  One
 large robust seed routes through `k-6`, the second contributes a two-edge
 route, and two distinct outside connectors therefore force `Cₖ`. -/
@@ -23189,6 +23557,7 @@ theorem cycleGraph_isContained_of_two_robustPairSets_all_lengths_short_second_tw
   · simpa using hθ₂
   · omega
 
+open scoped Classical in
 /-- Contrapositive short-handle obstruction.  In a `Cₖ`-free graph, two
 outside length-two connectors between the same robust regions cannot have
 distinct middle vertices and distinct attachments at both ends.  Hence one
@@ -23223,6 +23592,7 @@ theorem repeated_attachment_or_same_middle_of_cycleFree_two_robustPairSets_twoEd
     G hk hrob₁ hrob₂ hfree hU₁n hregions ha hb hc hd hab hcd
       hx₁ hx₂ hy₁ hy₂ hxy hbx hxc hdy hya hU₁ hθ₁ hU₂ hθ₂
 
+open scoped Classical in
 /-- Exact-length two-hub cleanup with the second route fixed at length two.
 Once one robust region can route every length through k-4 and a second
 region supplies one two-edge return route, two handles already force Ck. -/
@@ -23250,6 +23620,7 @@ theorem cycleGraph_isContained_of_two_robustPairSets_all_lengths_short_second
   · simpa using hθ₂
   · omega
 
+open scoped Classical in
 /-- Source-faithful two-hub splice with an explicit parity-breaking edge in
 the first hub.  This is the version used for subcritical hubs: the edge is
 chosen from a matching away from the four handle endpoints, and no hub-size
@@ -23423,9 +23794,11 @@ theorem exists_cyclic_attachments_of_oriented_edges_along_closed_walk
 /-- Requiring a cross matching of size one is exactly the ordinary
 hub-interaction relation. -/
 theorem largeCrossMatchingGraph_one_eq_hubInteractionGraph
-    {V ι : Type*} [Fintype V]
+    {V ι : Type*} [Finite V]
     (G : SimpleGraph V) (U : ι → Finset V) :
     LargeCrossMatchingGraph G U 1 = HubInteractionGraph G U := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   ext i j
   constructor
   · intro hij
@@ -23462,11 +23835,12 @@ theorem largeCrossMatchingGraph_one_eq_hubInteractionGraph
       subst q
       exact Or.inl ⟨ha, hb⟩
 
+open scoped Classical in
 /-- If remaining vertices cannot attach to two different cores, distinct
 ordinary interaction neighbours consume distinct vertices of the original
 core. -/
 theorem degree_hubInteractionGraph_le_card_of_no_repeated_attachment
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Finite V] [Fintype ι]
     (G : SimpleGraph V) (A W : ι → Finset V)
     (hWA : ∀ i, W i ⊆ A i)
     (hdisj : ∀ i j : ι, i ≠ j → Disjoint (A i) (A j))
@@ -23475,6 +23849,8 @@ theorem degree_hubInteractionGraph_le_card_of_no_repeated_attachment
         G.Adj x y → G.Adj x z → False)
     (i : ι) :
     (HubInteractionGraph G W).degree i ≤ (A i).card := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hbudget :=
     mul_degree_largeCrossMatchingGraph_le_card_of_no_repeated_attachment
       G A W 1 hWA hdisj hnorep i
@@ -23536,6 +23912,7 @@ theorem exists_cyclic_cross_edges_of_cycleGraph_isContained_hubInteractionGraph
     simpa [a, b] using hcross i
   · simpa [a, b] using hclose
 
+open scoped Classical in
 /-- On a cyclic list of at least three distinct hubs, the no-repeated-
 attachment condition forces the incoming and outgoing attachment vertices in
 every hub to differ.  The predecessor and successor hubs are distinct because
@@ -23645,6 +24022,7 @@ theorem distinct_attachments_of_no_repeated_attachment_on_cyclic_cross_edges
       (b (prv i)) hprevMem (a (nxt i)) hnextMem
       (hprev i).symm hsecond
 
+open scoped Classical in
 /-- A cycle in the pruned hub interaction graph lifts all the way back to an
 exact ambient cycle.  The first hub absorbs the target parity and every other
 hub contributes the shortest even route.  Thus a cycle on m+1 auxiliary
@@ -23699,6 +24077,7 @@ theorem cycleGraph_isContained_of_pruned_hubInteraction_cycle
     simpa using hθeven (f i.succ)
   · simpa [Fin.sum_const, Nat.mul_comm, Nat.mul_left_comm, Nat.mul_assoc] using hlen
 
+open scoped Classical in
 /-- Matching-backed version of the pruned interaction-cycle lift.  It has the
 same cross-edge extraction and repeated-attachment distinctness bookkeeping
 as the large-core lift above, but uses three disjoint internal edges in the
@@ -23754,6 +24133,7 @@ theorem cycleGraph_isContained_of_pruned_hubInteraction_cycle_matched
     exact hθ (f j.succ) j
   · exact hlen
 
+open scoped Classical in
 /-- Uniform-even-route exclusion for a matched pruned interaction cycle.
 If every non-distinguished hub contributes the same even length
 2 * (s + 1), then the distinguished matched hub can absorb any residual
@@ -23810,6 +24190,7 @@ theorem not_cycleGraph_isContained_pruned_hubInteraction_of_matched_uniform_rout
     have hbase : 2 * (s + 1) * m + m + 1 ≤ k := by omega
     omega
 
+open scoped Classical in
 /-- Independent-set-free large-core version of the uniform-route exclusion.
 Four spare core vertices are enough to greedily build the three disjoint
 internal edges consumed by the matched theorem above. -/
@@ -23842,6 +24223,7 @@ theorem not_cycleGraph_isContained_pruned_hubInteraction_of_large_core_uniform_r
           hfree (hUn i))
       hL hLθ hsU hsθ hnorep hcycle
 
+open scoped Classical in
 /-- Quantitative short-cycle exclusion for the pruned interaction graph.  If
 an auxiliary cycle on m+1 hubs is short enough that its m short even routes
 leave at least five edges for the parity-broken hub, the preceding lifting
@@ -23890,6 +24272,7 @@ theorem not_cycleGraph_isContained_pruned_hubInteraction_of_cycleFree
   dsimp [ℓ]
   omega
 
+open scoped Classical in
 /-- After deleting every vertex that still sees two different other hub
 cores, a remaining interaction triangle would have two distinct attachment
 vertices in each of its three hubs, hence would give separated handles. -/
@@ -23939,10 +24322,11 @@ theorem not_hasHubInteractionTriangle_of_no_repeated_attachment
       ha₁'.1, hb₁'.1, ha₂'.1, hb₂'.1, ha₃'.1, hb₃'.1,
       ha₁b₁, ha₂b₂, ha₃b₃, h₁₂, h₂₃, h₃₁⟩
 
+open scoped Classical in
 /-- Cycle-free robust hubs have no interaction triangle after the repeated
 attachment vertices are deleted.  This is the first stability output in a
 form that can be combined with a quantitative bound on the deleted set. -/
-theorem not_hasHubInteractionTriangle_of_cycleFree_short_second_hub_family_after_no_repeated_attachment
+theorem not_hasHubInteractionTriangle_after_no_repeated_attachment
     {V ι : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (U T : ι → Finset V) (θ : ι → ℕ) {n k : ℕ} (hk : 12 ≤ k)
@@ -23973,7 +24357,7 @@ an automatic fact. -/
 noncomputable def RepeatedAttachmentFinset
     {V ι : Type*} [Fintype V] [Fintype ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
-    (U : ι → Finset V) : Finset V :=
+    (U : ι → Finset V) : Finset V := open scoped Classical in
   Finset.univ.filter fun a =>
     ∃ i j ℓ : ι, i ≠ j ∧ i ≠ ℓ ∧ j ≠ ℓ ∧ a ∈ U i ∧
       ∃ b ∈ U j, G.Adj a b ∧ ∃ c ∈ U ℓ, G.Adj a c
@@ -24015,6 +24399,7 @@ theorem no_repeated_attachment_outside_RepeatedAttachmentFinset
   simp only [RepeatedAttachmentFinset, Finset.mem_filter, Finset.mem_univ, true_and]
   exact ⟨i, j, ℓ, hij, hiℓ, hjℓ, ha, b, hb, hab, c, hc, hac⟩
 
+open scoped Classical in
 /-- Outside the repeated-attachment set, distinct ordinary interaction
 neighbours consume distinct vertices of the displayed core.  Thus ordinary
 interaction degree is bounded by the original core cardinality. -/
@@ -24213,13 +24598,15 @@ theorem selectedCrossEndpointFinset_subset_global
 maximality is the convenient finite form: inserting one further compatible
 record would strictly increase its size. -/
 theorem exists_maximal_selectedCrossEdgeSystem
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Finite V] [Finite ι]
     (G : SimpleGraph V) (I : ι → Finset V) :
     ∃ M : Finset (SelectedCrossEdge V ι),
       IsSelectedCrossEdgeSystem G I M ∧
       ∀ N : Finset (SelectedCrossEdge V ι),
         IsSelectedCrossEdgeSystem G I N → N.card ≤ M.card := by
   classical
+  let : Fintype V := Fintype.ofFinite V
+  let : Fintype ι := Fintype.ofFinite ι
   let C : Finset (Finset (SelectedCrossEdge V ι)) :=
     Finset.univ.filter fun M => IsSelectedCrossEdgeSystem G I M
   have hCne : C.Nonempty := by
@@ -24260,6 +24647,7 @@ theorem exists_selectedCrossEdge_of_graph_adj
     · exact ⟨e, he, Or.inr hdir⟩
     · exact ⟨e, he, Or.inl hrev⟩
 
+open scoped Classical in
 /-- A valid selected system has exactly one record for every edge of its
 auxiliary graph.  Thus auxiliary edge density can be counted directly in
 the selected records, without losing a factor to orientations. -/
@@ -24420,7 +24808,7 @@ incoming and outgoing attachments.  The return is allowed to repeat an
 attachment at a hub.  Exactly `p.length - 1` visits retain the selected
 freshness certificate. -/
 theorem exists_cyclic_attachments_with_selected_path_interior
-    {V ι : Type*} [Fintype ι]
+    {V ι : Type*} [Finite ι]
     (G : SimpleGraph V) (I : ι → Finset V)
     (M : Finset (SelectedCrossEdge V ι))
     (hM : IsSelectedCrossEdgeSystem G I M)
@@ -24440,6 +24828,7 @@ theorem exists_cyclic_attachments_with_selected_path_interior
         S.card = p.length - 1 ∧
         ∀ i ∈ S, a i ≠ b i := by
   classical
+  let : Fintype ι := Fintype.ofFinite ι
   let H : SimpleGraph ι := HubInteractionGraph G I
   let e : SelectedCrossEdgeGraph M →g H :=
     { toFun := id
@@ -24470,7 +24859,7 @@ theorem exists_cyclic_attachments_with_selected_path_interior
   have hclosedCycle : closed.IsCycle := by
     exact hpH.isCycle_append hr hdisjH (Or.inl (by rw [hpHlen]; omega))
   have hclosedLen : closed.length = p.length + r.length := by
-    simpa only [closed, Walk.length_append, hpHlen]
+    simp only [closed, Walk.length_append, hpHlen]
   have hclosedThree : 3 ≤ closed.length := by
     rw [hclosedLen]
     omega
@@ -24550,7 +24939,7 @@ theorem exists_cyclic_attachments_with_selected_path_interior
     (Finset.univ : Finset (Fin (p.length - 1))).image interior
   have hScard : S.card = p.length - 1 := by
     rw [Finset.card_image_of_injective _ hinteriorInj]
-    simp [S]
+    simp
   have hab : ∀ i ∈ S, a i ≠ b i := by
     intro i hi
     rcases Finset.mem_image.mp hi with ⟨j, _hj, rfl⟩
@@ -24766,17 +25155,19 @@ theorem selectedCrossEdge_right_mem_endpointFinset
   refine ⟨e, Finset.mem_filter.mpr ⟨he, Or.inr rfl⟩, ?_⟩
   simp [hne]
 
+open scoped Classical in
 /-- At one class, the globally selected endpoint charge is no larger than
 the ordinary degree of the selected auxiliary graph.  Pair uniqueness makes
 the map from an incident record to its opposite class injective. -/
 theorem card_selectedCrossEndpointFinset_le_degree
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Finite V] [Fintype ι]
     (G : SimpleGraph V) (I : ι → Finset V)
     (M : Finset (SelectedCrossEdge V ι))
     (hM : IsSelectedCrossEdgeSystem G I M) (i : ι) :
     (selectedCrossEndpointFinset M i).card ≤
       (SelectedCrossEdgeGraph M).degree i := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let E : Finset (SelectedCrossEdge V ι) :=
     M.filter fun e => e.1.1 = i ∨ e.1.2 = i
   let other : SelectedCrossEdge V ι → ι := fun e =>
@@ -24844,11 +25235,12 @@ theorem card_selectedCrossEndpointFinset_le_degree
     _ = (SelectedCrossEdgeGraph M).degree i :=
       (SelectedCrossEdgeGraph M).card_neighborFinset_eq_degree i
 
+open scoped Classical in
 /-- Any endpoint of a selected record that lies in class `i` is charged to
 the endpoint finset of that class.  Pairwise disjointness identifies which
 of the two stored class labels is `i`. -/
 theorem mem_selectedCrossEndpointFinset_of_mem_class_of_eq_endpoint
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Finite V] [Finite ι]
     (G : SimpleGraph V) (I : ι → Finset V)
     (M : Finset (SelectedCrossEdge V ι))
     (hM : IsSelectedCrossEdgeSystem G I M)
@@ -24858,6 +25250,8 @@ theorem mem_selectedCrossEndpointFinset_of_mem_class_of_eq_endpoint
     (hx : x = e.2.1 ∨ x = e.2.2) :
     x ∈ selectedCrossEndpointFinset M i := by
   classical
+  let : Fintype V := Fintype.ofFinite V
+  let : Fintype ι := Fintype.ofFinite ι
   have hvalid := hM.1 e he
   rcases hx with hleft | hright
   · by_cases hi : i = e.1.1
@@ -24872,13 +25266,14 @@ theorem mem_selectedCrossEndpointFinset_of_mem_class_of_eq_endpoint
     · exact (Finset.disjoint_left.mp (hdisj i e.1.2 hi)) hxI
         (hright ▸ hvalid.2.2.1) |>.elim
 
+open scoped Classical in
 /-- Maximality has the exact source consequence: if two class labels are
 nonadjacent in the selected auxiliary graph, then their vertices remaining
 after the selected endpoint charge are anticomplete in the ambient graph.
 Otherwise the uncovered ambient edge could be inserted without reusing an
 endpoint or an unordered class pair. -/
 theorem anticomplete_sdiff_selectedCrossEndpointFinset_of_maximal
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Finite V] [Finite ι]
     (G : SimpleGraph V) (I : ι → Finset V)
     (M : Finset (SelectedCrossEdge V ι))
     (hM : IsSelectedCrossEdgeSystem G I M)
@@ -24890,6 +25285,8 @@ theorem anticomplete_sdiff_selectedCrossEndpointFinset_of_maximal
     ∀ a ∈ I i \ selectedCrossEndpointFinset M i,
       ∀ b ∈ I j \ selectedCrossEndpointFinset M j, ¬ G.Adj a b := by
   classical
+  let : Fintype V := Fintype.ofFinite V
+  let : Fintype ι := Fintype.ofFinite ι
   intro a ha b hb hab
   let e : SelectedCrossEdge V ι := ((i, j), (a, b))
   have heNot : e ∉ M := by
@@ -24982,13 +25379,14 @@ theorem anticomplete_sdiff_selectedCrossEndpointFinset_of_maximal
   rw [hNcard] at hcard
   omega
 
+open scoped Classical in
 /-- Sparse selected-H1 cleanup for the large-cross-matching H3 graph.
 Selected endpoints pay two vertices per H1 edge.  Every H1 edge that is not
 an H3 edge has a cross-edge vertex cover of fewer than `2R` vertices.  Thus
 one deletion of at most `(2R+2)|E(H1)|` vertices makes different H3
 components anticomplete, with no quadratic all-pairs charge. -/
 theorem exists_sparse_selected_exceptional_set_separating_largeCrossMatching_components
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Finite V] [Finite ι]
     (G : SimpleGraph V) (I : ι → Finset V)
     (M : Finset (SelectedCrossEdge V ι))
     (hM : IsSelectedCrossEdgeSystem G I M)
@@ -25005,6 +25403,8 @@ theorem exists_sparse_selected_exceptional_set_separating_largeCrossMatching_com
         ∀ i ∈ c.supp, ∀ j ∈ d.supp,
           ∀ a ∈ I i \ X, ∀ b ∈ I j \ X, ¬ G.Adj a b := by
   classical
+  let : Fintype V := Fintype.ofFinite V
+  let : Fintype ι := Fintype.ofFinite ι
   let E := selectedCrossGlobalEndpointFinset M
   let U : ι → Finset V := fun i => I i \ E
   let H₁ : SimpleGraph ι := SelectedCrossEdgeGraph M
@@ -25131,7 +25531,7 @@ theorem exists_indepSet_card_mul_succ_ge_of_degree_le
     · exact Finset.mem_biUnion.mpr ⟨v, hvS, by simp⟩
     · have hex : ∃ i ∈ S, H.Adj i v := by
         by_contra hno
-        push_neg at hno
+        push Not at hno
         have hind : H.IsIndepSet ((insert v S : Finset ι) : Set ι) := by
           rw [SimpleGraph.isIndepSet_iff]
           intro a ha b hb hab
@@ -25277,8 +25677,8 @@ the interaction graph on disjoint independent classes has no path of length
 indices.  Its classes are pairwise anticomplete in the ambient graph, so
 their disjoint union is an ambient independent set. -/
 theorem mul_fintypeCard_lt_eight_mul_pathThreshold_mul_of_no_long_hubInteraction_path
-    {V ι : Type*} [Fintype V] [Fintype ι] [Nonempty ι]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V ι : Type*} [Finite V] [Fintype ι] [Nonempty ι]
+    (G : SimpleGraph V)
     (I : ι → Finset V) {n σ D : ℕ}
     (hσ : 0 < σ) (hD : 0 < D)
     (hfree : G.IndepSetFree n)
@@ -25289,6 +25689,7 @@ theorem mul_fintypeCard_lt_eight_mul_pathThreshold_mul_of_no_long_hubInteraction
       p.IsPath ∧ D ≤ p.length) :
     σ * Fintype.card ι < 8 * D * n := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let H : SimpleGraph ι := HubInteractionGraph G I
   obtain ⟨S, hSind, _hSdegree, hScard⟩ :=
     exists_indepSet_eight_mul_pathThreshold_mul_card_ge_of_no_long_path
@@ -25360,8 +25761,8 @@ charges fewer than `4D` endpoints to such a class, and maximality makes the
 uncovered class remainders pairwise anticomplete.  Their union is therefore
 one ambient independent set. -/
 theorem sub_four_mul_pathThreshold_mul_fintypeCard_lt_of_maximal_selected_no_long_path
-    {V ι : Type*} [Fintype V] [Fintype ι] [Nonempty ι]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V ι : Type*} [Finite V] [Fintype ι] [Nonempty ι]
+    (G : SimpleGraph V)
     (I : ι → Finset V) (M : Finset (SelectedCrossEdge V ι))
     {n σ D : ℕ} (hD : 0 < D)
     (hfree : G.IndepSetFree n)
@@ -25375,6 +25776,7 @@ theorem sub_four_mul_pathThreshold_mul_fintypeCard_lt_of_maximal_selected_no_lon
       p.IsPath ∧ D ≤ p.length) :
     (σ - 4 * D) * Fintype.card ι < 8 * D * n := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let H : SimpleGraph ι := SelectedCrossEdgeGraph M
   obtain ⟨S, hSind, hSdegree, hScard⟩ :=
     exists_indepSet_eight_mul_pathThreshold_mul_card_ge_of_no_long_path
@@ -25436,8 +25838,8 @@ global selected-endpoint transversal estimate applies on the whole union;
 the factor-four charge for the separated cores turns its factor `8` into
 `32`. -/
 theorem exists_localized_selected_path_or_sub_four_mul_card_lt
-    {V ι : Type*} [Fintype V] [Fintype ι] [Nonempty ι]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V ι : Type*} [Finite V] [Fintype ι] [Nonempty ι]
+    (G : SimpleGraph V)
     (I : ι → Finset V) (C : Finset (Finset ι))
     {n σ D : ℕ} (hD : 0 < D)
     (hfree : G.IndepSetFree n)
@@ -25453,6 +25855,7 @@ theorem exists_localized_selected_path_or_sub_four_mul_card_lt
       p.IsPath ∧ D ≤ p.length ∧ ∀ z ∈ p.support, z ∈ A) ∨
       (σ - 4 * D) * Fintype.card ι < 32 * D * n := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let L : Finset ι := C.biUnion id
   have hLne : L.Nonempty := by
     obtain ⟨A, hA⟩ := hCne
@@ -25532,8 +25935,8 @@ back from the covered subtype to the original label type, and the returned
 path lives in that valid global system.  This is the information needed to
 retain fresh attachments after the later ordinary BFS closure. -/
 theorem exists_localized_selected_system_path_or_sub_four_mul_card_lt
-    {V ι : Type*} [Fintype V] [Fintype ι] [Nonempty ι]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V ι : Type*} [Finite V] [Fintype ι] [Nonempty ι]
+    (G : SimpleGraph V)
     (I : ι → Finset V) (C : Finset (Finset ι))
     {n σ D : ℕ} (hD : 0 < D)
     (hfree : G.IndepSetFree n)
@@ -25552,6 +25955,7 @@ theorem exists_localized_selected_system_path_or_sub_four_mul_card_lt
           p.IsPath ∧ D ≤ p.length ∧ ∀ z ∈ p.support, z ∈ A) ∨
       (σ - 4 * D) * Fintype.card ι < 32 * D * n := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let L : Finset ι := C.biUnion id
   have hLne : L.Nonempty := by
     obtain ⟨A, hA⟩ := hCne
@@ -25650,8 +26054,8 @@ either the auxiliary interaction graph contains a simple path of length at
 least `D`, or the number of disjoint independent classes satisfies the
 quantitative transversal bound. -/
 theorem exists_long_hubInteraction_path_or_mul_fintypeCard_lt
-    {V ι : Type*} [Fintype V] [Fintype ι] [Nonempty ι]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V ι : Type*} [Finite V] [Fintype ι] [Nonempty ι]
+    (G : SimpleGraph V)
     (I : ι → Finset V) {n σ D : ℕ}
     (hσ : 0 < σ) (hD : 0 < D)
     (hfree : G.IndepSetFree n)
@@ -25661,6 +26065,8 @@ theorem exists_long_hubInteraction_path_or_mul_fintypeCard_lt
     (∃ u v : ι, ∃ p : (HubInteractionGraph G I).Walk u v,
       p.IsPath ∧ D ≤ p.length) ∨
       σ * Fintype.card ι < 8 * D * n := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   by_cases hpath : ∃ u v : ι,
       ∃ p : (HubInteractionGraph G I).Walk u v,
         p.IsPath ∧ D ≤ p.length
@@ -25669,14 +26075,15 @@ theorem exists_long_hubInteraction_path_or_mul_fintypeCard_lt
       (mul_fintypeCard_lt_eight_mul_pathThreshold_mul_of_no_long_hubInteraction_path
         G I hσ hD hfree hIcard hIind hdisj hpath)
 
+open scoped Classical in
 /-- Bounded ordinary interaction sharply counts parity-unbroken cores.  A
 maximum independent set of core indices has no cross-edges; deleting four
 vertices inside every parity-unbroken core then gives one ambient independent
 set.  Combining this with the preceding domination bound yields the stated
 global estimate. -/
 theorem mul_card_lt_of_unbroken_hubInteraction
-    {V ι : Type*} [Fintype V] [Fintype ι]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V ι : Type*} [Finite V] [Fintype ι]
+    (G : SimpleGraph V)
     (U B : ι → Finset V) {n σ Δ : ℕ}
     (hσ : 0 < σ)
     (hfree : G.IndepSetFree n)
@@ -25687,6 +26094,7 @@ theorem mul_card_lt_of_unbroken_hubInteraction
     (hdeg : ∀ i, (HubInteractionGraph G B).degree i ≤ Δ) :
     (σ - 4) * Fintype.card ι < n * (Δ + 1) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let H : SimpleGraph ι := HubInteractionGraph G B
   obtain ⟨S, hSind, hcardS⟩ :=
     exists_indepSet_card_mul_succ_ge_of_degree_le H hdeg
@@ -25749,8 +26157,8 @@ theorem mul_card_lt_of_unbroken_hubInteraction
 interaction degree bound is discharged from the core size bound, leaving a
 statement that applies directly to a selected subtype of unbroken cores. -/
 theorem mul_card_lt_of_unbroken_no_repeated_attachment
-    {V ι : Type*} [Fintype V] [Fintype ι]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V ι : Type*} [Finite V] [Fintype ι]
+    (G : SimpleGraph V)
     (U B : ι → Finset V) {n σ Δ : ℕ}
     (hσ : 0 < σ)
     (hfree : G.IndepSetFree n)
@@ -25763,12 +26171,15 @@ theorem mul_card_lt_of_unbroken_no_repeated_attachment
       ∀ x ∈ B i, ∀ y ∈ U j, ∀ z ∈ U ℓ,
         G.Adj x y → G.Adj x z → False) :
     (σ - 4) * Fintype.card ι < n * (Δ + 1) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   apply mul_card_lt_of_unbroken_hubInteraction
     G U B hσ hfree hBU hBcard hdisj hunbroken
   intro i
   exact (degree_hubInteractionGraph_le_card_of_no_repeated_attachment
     G U B hBU hdisj hnorep i).trans (hUcard i)
 
+open scoped Classical in
 /-- For the exact `9 * sqrt k` core family, the preceding count can be
 applied directly to the subtype of parity-unbroken cores.  The retained part
 of each such core is obtained by deleting the canonical repeated-attachment
@@ -25822,6 +26233,7 @@ theorem card_unbroken_exact_cores_bound_after_RepeatedAttachmentFinset
     · exact hxy
     · exact hxz
 
+open scoped Classical in
 /-- Unconditional form of the preceding estimate.  Either the subtype of
 parity-unbroken exact cores already satisfies the global count, or one of
 those cores loses all but fewer than `σ` vertices to repeated attachments.
@@ -25850,12 +26262,13 @@ theorem unbroken_exact_cores_count_or_heavy_repeated_attachment
     push Not at hretain
     exact hretain
 
+open scoped Classical in
 /-- Disjoint equal-sized pieces cannot all be heavily consumed by one
 exceptional set.  If fewer than `σ` vertices of a `q`-set survive outside
 `X`, then at least `q - σ + 1` of its vertices lie in `X`; summing these
 pairwise disjoint intersections gives the global charge. -/
 theorem mul_card_heavy_sdiff_lt_le_card
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Finite V] [Fintype ι]
     (U : ι → Finset V) (X : Finset V) {q σ : ℕ}
     (hUcard : ∀ i, (U i).card = q) (hσq : σ ≤ q)
     (hdisj : ∀ i j : ι, i ≠ j → Disjoint (U i) (U j)) :
@@ -25863,6 +26276,7 @@ theorem mul_card_heavy_sdiff_lt_le_card
         ((Finset.univ : Finset ι).filter
           (fun i => (U i \ X).card < σ)).card ≤ X.card := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let H : Finset ι := (Finset.univ : Finset ι).filter
     (fun i => (U i \ X).card < σ)
   let P : ι → Finset V := fun i => U i ∩ X
@@ -25871,7 +26285,7 @@ theorem mul_card_heavy_sdiff_lt_le_card
     have hlt : (U i \ X).card < σ :=
       (Finset.mem_filter.mp hi).2
     have hdecomp : (U i \ X).card + (P i).card = q := by
-      simpa [P, hUcard i] using Finset.card_sdiff_add_card_inter (U i) X
+      simp [P, hUcard i]
     omega
   have hpair : (H : Set ι).PairwiseDisjoint P := by
     intro i _hi j _hj hij
@@ -25893,6 +26307,7 @@ theorem mul_card_heavy_sdiff_lt_le_card
     _ = (H.biUnion P).card := (Finset.card_biUnion hpair).symm
     _ ≤ X.card := Finset.card_le_card hsubset
 
+open scoped Classical in
 /-- Two successive predicate splits on a finite type.  If fewer than `n`
 members of the complement of `P` satisfy `Q`, then every index is accounted
 for by a `P`-index, at most `n-1` light complement indices, or a heavy
@@ -25920,6 +26335,7 @@ theorem fintypeCard_le_subtype_add_pred_of_complement_light
     omega
   omega
 
+open scoped Classical in
 /-- At the exact `9 * sqrt k` core scale, deleting the canonical repeated
 attachments makes the large-cross-matching graph have maximum degree at most
 two.  Indeed, three distinct auxiliary neighbours would consume three
@@ -25960,11 +26376,12 @@ theorem degree_largeCrossMatchingGraph_after_RepeatedAttachmentFinset_le_two
   have h9 : 9 * Nat.sqrt k < 3 * R := by omega
   exact (not_lt_of_ge (hbudget.trans (hcard i))) (h9.trans_le h3R)
 
+open scoped Classical in
 /-- Canonical connected-component form of the square-root path-ladder
 bound.  Repeated-attachment pruning supplies maximum degree two, and every
 large-cross-matching edge in the pruned graph enlarges to a matching between
 the original alternating cores. -/
-theorem ncard_component_le_sqrt_div_sixteen_after_RepeatedAttachmentFinset_of_matched_alternatingScaffolds
+theorem ncard_component_le_sqrt_div_sixteen_after_matched_scaffold_attachments
     {V ι : Type*} [Fintype V] [Fintype ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (A B D : ι → Finset V) {theta R k : ℕ}
@@ -26050,6 +26467,7 @@ theorem ncard_component_le_sqrt_div_sixteen_after_RepeatedAttachmentFinset_of_ma
       _ = c.supp.ncard := Set.fintypeCard_eq_ncard c.supp
   simpa [hcCard] using hbound
 
+open scoped Classical in
 /-- Stable-block output for the parity-broken subfamily.  Prune repeated
 attachments inside that subfamily and delete the standard small-cross-
 matching covers.  Distinct auxiliary components are then anticomplete, and
@@ -26094,7 +26512,7 @@ theorem exists_exceptional_set_separating_small_matched_alternatingScaffold_comp
   refine ⟨X, hX, hsep, ?_⟩
   intro c
   have hcomponent : c.supp.ncard ≤ Nat.sqrt k / 16 := by
-    apply ncard_component_le_sqrt_div_sixteen_after_RepeatedAttachmentFinset_of_matched_alternatingScaffolds
+    apply ncard_component_le_sqrt_div_sixteen_after_matched_scaffold_attachments
       G AJ BJ DJ hsqrt
     · intro i
       exact hscaffold i.1
@@ -26152,6 +26570,7 @@ theorem exists_exceptional_set_separating_small_matched_alternatingScaffold_comp
     omega
   exact hblock'.trans htarget
 
+open scoped Classical in
 /-- Turn componentwise large-cross-matching separation into an ordinary
 finite block family.  Nonempty trimmed label sets ensure that every
 auxiliary component contributes a nonempty block; disjointness of the label
@@ -26159,7 +26578,7 @@ sets makes the component unions disjoint, and the component separation
 hypothesis makes them anticomplete.  The last equality records exactly which
 ambient vertices the blocks cover. -/
 theorem exists_anticomplete_small_largeCrossMatching_component_block_family
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Finite V] [Fintype ι]
     (G : SimpleGraph V) (U : ι → Finset V) (R : ℕ) (X : Finset V) {k : ℕ}
     (hUdisj : ∀ i j, i ≠ j → Disjoint (U i) (U j))
     (hUne : ∀ i, (U i \ X).Nonempty)
@@ -26184,6 +26603,7 @@ theorem exists_anticomplete_small_largeCrossMatching_component_block_family
       F.biUnion id =
         (Finset.univ : Finset ι).biUnion fun i => U i \ X := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let H : SimpleGraph ι := LargeCrossMatchingGraph G U R
   let block : H.ConnectedComponent → Finset V :=
     fun c => c.supp.toFinset.biUnion fun i => U i \ X
@@ -26243,6 +26663,7 @@ theorem exists_anticomplete_small_largeCrossMatching_component_block_family
       exact (hmem c v).2
         ⟨i, SimpleGraph.ConnectedComponent.connectedComponentMk_mem, hvi⟩
 
+open scoped Classical in
 /-- Exact-core specialization of the medium pruned-component theorem.  At
 the canonical `9 * sqrt k` scale, repeated-attachment deletion supplies the
 maximum-degree-two hypothesis automatically. -/
@@ -26288,6 +26709,7 @@ theorem isBipartite_of_medium_component_after_RepeatedAttachmentFinset
   · exact hcardLow
   · exact hcardHigh
 
+open scoped Classical in
 /-- Every repeated-attachment vertex lies in one of the displayed hub
 cores. -/
 theorem RepeatedAttachmentFinset_subset_biUnion
@@ -26303,6 +26725,7 @@ theorem RepeatedAttachmentFinset_subset_biUnion
   rcases ha with ⟨i, j, ℓ, _hij, _hiℓ, _hjℓ, hai, _⟩
   exact Finset.mem_biUnion.mpr ⟨i, Finset.mem_univ _, hai⟩
 
+open scoped Classical in
 /-- A uniform local estimate for repeated attachments gives a global one by
 summing over the hub cores.  The pieces need not be proved disjoint for this
 upper bound; overlap can only make the union smaller. -/
@@ -26333,10 +26756,11 @@ theorem card_RepeatedAttachmentFinset_le_mul_of_local
       Finset.card_biUnion_le_card_mul _ _ _ hPcard
     _ = Fintype.card ι * σ := by simp
 
+open scoped Classical in
 /-- Canonical trimmed-triangle exclusion: after deleting exactly the
 repeated-attachment vertices, the interaction graph of a cycle-free robust
 hub family has no triangle. -/
-theorem not_hasHubInteractionTriangle_of_cycleFree_short_second_hub_family_after_RepeatedAttachmentFinset
+theorem not_hasHubInteractionTriangle_after_repeated_attachments
     {V ι : Type*} [Fintype V] [Fintype ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (U T : ι → Finset V) (θ : ι → ℕ) {n k : ℕ} (hk : 12 ≤ k)
@@ -26352,11 +26776,12 @@ theorem not_hasHubInteractionTriangle_of_cycleFree_short_second_hub_family_after
       (HubInteractionGraph G
         (fun i => U i \ RepeatedAttachmentFinset G U)) := by
   apply
-    not_hasHubInteractionTriangle_of_cycleFree_short_second_hub_family_after_no_repeated_attachment
+    not_hasHubInteractionTriangle_after_no_repeated_attachment
       G U T θ hk hrob hfree hUn hUk hθ hregions hcycle
         (RepeatedAttachmentFinset G U)
   exact no_repeated_attachment_outside_RepeatedAttachmentFinset G U
 
+open scoped Classical in
 /-- If k is at least three times the number of hubs (up to the fixed routing
 overhead), every cycle in the pruned interaction graph would be short enough
 for the cyclic-handle lift.  Hence the whole pruned interaction graph is
@@ -26404,6 +26829,7 @@ theorem cliqueFree_three_of_not_hasHubInteractionTriangle
     {ι : Type*} (H : SimpleGraph ι)
     (htri : ¬ HasHubInteractionTriangle H) :
     H.CliqueFree 3 := by
+  classical
   intro S hS
   obtain ⟨i, j, ℓ, hij, hiℓ, hjℓ, _hcard⟩ :=
     SimpleGraph.is3Clique_iff.mp hS
@@ -26424,11 +26850,12 @@ theorem four_mul_card_edgeFinset_le_sq_of_not_hasHubInteractionTriangle
     cliqueFree_twice_mul_card_edgeFinset_le H (r := 2) (by omega) hfree
   simpa using hbound
 
+open scoped Classical in
 /-- Quantitative form of canonical trimmed-triangle exclusion.  After
 deleting repeated attachment vertices from a cycle-free robust family, its
 remaining interaction graph satisfies the sharp triangle-free quadratic edge
 bound. -/
-theorem four_mul_card_edgeFinset_le_sq_of_cycleFree_short_second_hub_family_after_RepeatedAttachmentFinset
+theorem four_mul_card_edgeFinset_le_sq_after_repeated_attachments
     {V ι : Type*} [Fintype V] [Fintype ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (U T : ι → Finset V) (θ : ι → ℕ) {n k : ℕ} (hk : 12 ≤ k)
@@ -26449,7 +26876,7 @@ theorem four_mul_card_edgeFinset_le_sq_of_cycleFree_short_second_hub_family_afte
       (fun i => U i \ RepeatedAttachmentFinset G U)
   apply four_mul_card_edgeFinset_le_sq_of_not_hasHubInteractionTriangle H
   exact
-    not_hasHubInteractionTriangle_of_cycleFree_short_second_hub_family_after_RepeatedAttachmentFinset
+    not_hasHubInteractionTriangle_after_repeated_attachments
       G U T θ hk hrob hfree hUn hUk hθ hregions hcycle
 
 /-- Independent sets of the hub interaction graph lift to independent sets
@@ -26457,12 +26884,14 @@ of the original graph by choosing one representative from each disjoint
 nonempty core.  Thus the original independent-set obstruction is inherited
 by the auxiliary graph. -/
 theorem hubInteractionGraph_indepSetFree_of_indepSetFree
-    {V ι : Type*} [Fintype V] [Fintype ι]
-    (G : SimpleGraph V) [DecidableRel G.Adj] (U : ι → Finset V) {n : ℕ}
+    {V ι : Type*} [Finite V] [Finite ι]
+    (G : SimpleGraph V) (U : ι → Finset V) {n : ℕ}
     (hfree : G.IndepSetFree n) (hne : ∀ i, (U i).Nonempty)
     (hdisj : ∀ i j, i ≠ j → Disjoint (U i) (U j)) :
     (HubInteractionGraph G U).IndepSetFree n := by
   classical
+  let : Fintype V := Fintype.ofFinite V
+  let : Fintype ι := Fintype.ofFinite ι
   intro S hS
   let pick : ι → V := fun i => (hne i).choose
   have hpick : ∀ i, pick i ∈ U i := by
@@ -26500,10 +26929,11 @@ count bounds an independent-set-free graph by its chromatic number times
 n-1.  Applied to the hub interaction graph, this supplies the first cyclic
 handle system once sufficiently many hubs have been extracted. -/
 theorem exists_cycle_of_indepSetFree_of_two_mul_pred_lt_card
-    {ι : Type*} [Fintype ι] (H : SimpleGraph ι) [DecidableRel H.Adj]
+    {ι : Type*} [Fintype ι] (H : SimpleGraph ι)
     {n : ℕ} (hfree : H.IndepSetFree n)
     (hcard : 2 * (n - 1) < Fintype.card ι) :
     ∃ v : ι, ∃ c : H.Walk v v, c.IsCycle := by
+  classical
   by_contra hno
   have hacyc : H.IsAcyclic := by
     intro v c hc
@@ -26517,12 +26947,13 @@ theorem exists_cycle_of_indepSetFree_of_two_mul_pred_lt_card
     Nat.mul_le_mul_right _ hχ
   omega
 
+open scoped Classical in
 /-- Grouping a disjoint cover of vertices by connected components of its hub
 interaction graph produces a complete stable partition as soon as every
 grouped component has order at most k-1.  Vertices in distinct interaction
 components cannot be adjacent, by the definition of the auxiliary graph. -/
 theorem completeStablePartition_of_hubInteraction_components
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Finite V] [Fintype ι]
     (G : SimpleGraph V) (B : ι → Finset V) {k : ℕ}
     (hBne : ∀ i, (B i).Nonempty)
     (hBdisj : ∀ i j, i ≠ j → Disjoint (B i) (B j))
@@ -26531,6 +26962,7 @@ theorem completeStablePartition_of_hubInteraction_components
       ((c.supp.toFinset).biUnion B).card ≤ k - 1) :
     CompleteStablePartition G k := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let H : SimpleGraph ι := HubInteractionGraph G B
   let block : H.ConnectedComponent → Finset V :=
     fun c => c.supp.toFinset.biUnion B
@@ -26599,6 +27031,7 @@ theorem completeStablePartition_of_hubInteraction_components
     rcases Finset.mem_image.mp hA with ⟨c, _hc, rfl⟩
     exact hcard c
 
+open scoped Classical in
 /-- In a cycle-free graph, two disjoint robust regions with the displayed
 route capacity have sparse interaction: two vertex-disjoint cross-edges
 would be exactly the two handles consumed by the all-length splice above. -/
@@ -26626,6 +27059,7 @@ theorem atMostOneCrossEdge_of_cycleFree_two_robustPairSets
     hrob₁ hrob₂ hfree hU₁n hregions ha' ha hb hb' haa'.symm hbb'
     hab ha'b'.symm hℓ hℓU hℓθ hU₂ hθ₂ hlen
 
+open scoped Classical in
 /-- Exact-length cleanup consequence of the short-second-hub splice.  In a
 `C_k`-free graph, once one robust region routes through `k - 4` and a
 disjoint second region supplies a two-edge return route, every two cross
@@ -26653,6 +27087,7 @@ theorem atMostOneCrossEdge_of_cycleFree_two_robustPairSets_all_lengths_short_sec
     hrob₁ hrob₂ hfree hU₁n hregions ha' ha hb hb' haa'.symm hbb'
     hab ha'b'.symm hU₁ hθ₁ hU₂ hθ₂
 
+open scoped Classical in
 /-- Source-faithful sparse interaction from a parity-breaking matching.
 Three disjoint internal edges suffice for this local two-handle statement:
 after two cross-edge endpoints in the first hub are fixed, one matching edge
@@ -26740,11 +27175,12 @@ the two sets are anticomplete.  This is the cleanup form used after the
 short-second-hub interaction lemma: it converts sparse interaction into a
 bounded exceptional set rather than merely an edge-count estimate. -/
 theorem exists_small_cross_vertex_cover_of_atMostOneCrossEdge
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     (A B : Finset V) (hcross : AtMostOneCrossEdge G A B) :
     ∃ F : Finset V, F.card ≤ 2 ∧
       ∀ a ∈ A, ∀ b ∈ B, a ∉ F → b ∉ F → ¬ G.Adj a b := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   by_cases hne : (CrossPairFinset G A B).Nonempty
   · obtain ⟨e, he⟩ := hne
     rcases e with ⟨a₀, b₀⟩
@@ -26762,6 +27198,7 @@ theorem exists_small_cross_vertex_cover_of_atMostOneCrossEdge
     refine ⟨(a, b), ?_⟩
     simpa [CrossPairFinset] using ⟨⟨ha, hb⟩, hab⟩
 
+open scoped Classical in
 /-- A finite family with pairwise-intersecting cross-edges becomes genuinely
 pairwise anticomplete after deleting a quadratic-size exceptional set.  For
 each ordered pair of distinct blocks choose the preceding two-vertex cover,
@@ -26769,12 +27206,13 @@ then delete the union of all chosen covers.  This is the finite bookkeeping
 form of KLS cleanup: every later absorption argument may charge at most two
 vertices per ordered hub pair. -/
 theorem exists_global_exceptional_set_of_pairwise_atMostOneCrossEdge
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     (F : Finset (Finset V))
     (hcross : ∀ A ∈ F, ∀ B ∈ F, A ≠ B → AtMostOneCrossEdge G A B) :
     ∃ X : Finset V, X.card ≤ 2 * F.card * F.card ∧
       PairwiseAnticomplete G (F.image fun A => A \ X) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let cover : Finset V × Finset V → Finset V := fun q =>
     if hq : q.1 ∈ F ∧ q.2 ∈ F ∧ q.1 ≠ q.2 then
       Classical.choose
@@ -26797,7 +27235,7 @@ theorem exists_global_exceptional_set_of_pairwise_atMostOneCrossEdge
   · calc
       X.card ≤ (F.product F).card * 2 := hXcard
       _ = 2 * F.card * F.card := by
-        simp [Nat.mul_assoc, Nat.mul_comm, Nat.mul_left_comm]
+        simp [Nat.mul_assoc, Nat.mul_comm]
   · intro A' hA' B' hB' hAB' a ha b hb hab
     rcases Finset.mem_image.mp hA' with ⟨A, hAF, rfl⟩
     rcases Finset.mem_image.mp hB' with ⟨B, hBF, rfl⟩
@@ -26830,10 +27268,11 @@ only needs to pay for these pairs; noninteracting pairs already are
 anticomplete and contribute no exceptional vertices. -/
 noncomputable def InteractingBlockPairFinset
     {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
-    (F : Finset (Finset V)) : Finset (Finset V × Finset V) :=
+    (F : Finset (Finset V)) : Finset (Finset V × Finset V) := open scoped Classical in
   (F.product F).filter fun q =>
     q.1 ≠ q.2 ∧ (CrossPairFinset G q.1 q.2).Nonempty
 
+open scoped Classical in
 /-- Refined global cleanup: charge two exceptional vertices only for each
 ordered pair of distinct blocks with at least one cross-edge.  The proof is
 the same two-vertex-cover construction as above, but the biunion is indexed
@@ -26909,22 +27348,24 @@ subtype `F` itself, so Mathlib's dart/edge handshaking formula applies
 directly. -/
 noncomputable def HubInteractionDartFinsetOnFamily
     {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
-    (F : Finset (Finset V)) : Finset (F × F) :=
+    (F : Finset (Finset V)) : Finset (F × F) := open scoped Classical in
   let H : SimpleGraph F := HubInteractionGraph G (fun A : F => (A : Finset V))
   Finset.univ.filter fun q => H.Adj q.1 q.2
 
+open scoped Classical in
 /-- Edge-count form of global cleanup.  One two-vertex cover is chosen for
 each directed edge (dart) of the hub interaction graph.  Since the number of
 darts is twice the number of undirected edges, deleting at most four vertices
 per interaction edge makes all trimmed blocks pairwise anticomplete. -/
 theorem exists_global_exceptional_set_of_pairwise_atMostOneCrossEdge_edge_count
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     (F : Finset (Finset V))
     (hcross : ∀ A ∈ F, ∀ B ∈ F, A ≠ B → AtMostOneCrossEdge G A B) :
     let H : SimpleGraph F := HubInteractionGraph G (fun A : F => (A : Finset V))
     ∃ X : Finset V, X.card ≤ 4 * H.edgeFinset.card ∧
       PairwiseAnticomplete G (F.image fun A => A \ X) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let H : SimpleGraph F := HubInteractionGraph G (fun A : F => (A : Finset V))
   let cover : F × F → Finset V := fun q =>
     if hq : H.Adj q.1 q.2 then
@@ -26998,12 +27439,13 @@ theorem exists_global_exceptional_set_of_pairwise_atMostOneCrossEdge_edge_count
           (hcross A hAF B hBF hAB))).2
     exact hlocal a ha'.1 b hb'.1 haNotCover hbNotCover hab
 
+open scoped Classical in
 /-- Indexed form of edge-count cleanup.  This avoids passing through the
 image finset of cores, so the auxiliary graph in the conclusion is exactly
 the indexed interaction graph used by the stability estimates. -/
 theorem exists_global_exceptional_set_of_pairwise_atMostOneCrossEdge_indexed_edge_count
-    {V ι : Type*} [Fintype V] [Fintype ι]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V ι : Type*} [Finite V] [Fintype ι]
+    (G : SimpleGraph V)
     (U : ι → Finset V)
     (hcross : ∀ i j : ι, i ≠ j → AtMostOneCrossEdge G (U i) (U j)) :
     let H : SimpleGraph ι := HubInteractionGraph G U
@@ -27011,6 +27453,7 @@ theorem exists_global_exceptional_set_of_pairwise_atMostOneCrossEdge_indexed_edg
       PairwiseAnticomplete G
         ((Finset.univ : Finset ι).image fun i => U i \ X) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let H : SimpleGraph ι := HubInteractionGraph G U
   let cover : ι × ι → Finset V := fun q =>
     if hq : H.Adj q.1 q.2 then
@@ -27070,12 +27513,13 @@ theorem exists_global_exceptional_set_of_pairwise_atMostOneCrossEdge_indexed_edg
           (U i) (U j) (hcross i j hij))).2
     exact hlocal a ha'.1 b hb'.1 haNotCover hbNotCover hab
 
+open scoped Classical in
 /-- After first deleting repeated attachments, the remaining robust cores
 still have pairwise sparse cross-interaction.  The indexed cleanup and the
 triangle-free Mantel bound therefore make them pairwise anticomplete after a
 second exceptional deletion of size at most the square of the number of
 hubs. -/
-theorem exists_quadratic_exceptional_set_after_RepeatedAttachmentFinset_of_cycleFree_short_second_hub_family
+theorem exists_quadratic_exceptional_set_after_repeated_attachments
     {V ι : Type*} [Fintype V] [Fintype ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (U T : ι → Finset V) (θ : ι → ℕ) {n k : ℕ} (hk : 12 ≤ k)
@@ -27120,7 +27564,7 @@ theorem exists_quadratic_exceptional_set_after_RepeatedAttachmentFinset_of_cycle
       (fun i => U i \ RepeatedAttachmentFinset G U)).edgeFinset.card ≤
         (Fintype.card ι) ^ 2
     exact
-      four_mul_card_edgeFinset_le_sq_of_cycleFree_short_second_hub_family_after_RepeatedAttachmentFinset
+      four_mul_card_edgeFinset_le_sq_after_repeated_attachments
         G U T θ hk hrob hfree hUn hUk hθ hregions hcycle
   exact hX.trans hMantel
 
@@ -27169,15 +27613,14 @@ theorem card_edgeFinset_le_card_of_isAcyclic
     have hcd : c = d := by
       rw [← hca, ← hdb]
       exact SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj hab
-    simpa [hcd]
+    simp [hcd]
   have hcover : F.biUnion id = Finset.univ := by
     ext v
     simp only [Finset.mem_biUnion, id_eq, Finset.mem_univ, iff_true]
     let c := G.connectedComponentMk v
     refine ⟨c.supp.toFinset, ?_, ?_⟩
     · exact Finset.mem_map.mpr ⟨c, Finset.mem_univ _, rfl⟩
-    · simpa [c] using
-        (SimpleGraph.ConnectedComponent.connectedComponentMk_mem (G := G) (v := v))
+    · simp [c]
   have hinside : ∀ A ∈ F, (inducedEdgeFinsetOn G A).card ≤ A.card := by
     intro A hA
     rcases Finset.mem_map.mp hA with ⟨c, _hc, rfl⟩
@@ -27242,11 +27685,12 @@ theorem card_edgeFinset_le_card_of_isAcyclic
       rw [hcover]
       simp
 
+open scoped Classical in
 /-- Under the global short-cycle budget, canonical repeated-attachment
 pruning makes the interaction graph acyclic.  The indexed edge cleanup
 therefore costs at most four vertices per hub, replacing the earlier
 quadratic Mantel charge by a linear one. -/
-theorem exists_linear_exceptional_set_after_RepeatedAttachmentFinset_of_cycleFree_short_second_hub_family
+theorem exists_linear_exceptional_set_after_repeated_attachments
     {V ι : Type*} [Fintype V] [Fintype ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (U T : ι → Finset V) (θ : ι → ℕ) {n k : ℕ} (hk : 12 ≤ k)
@@ -27297,26 +27741,31 @@ theorem exists_linear_exceptional_set_after_RepeatedAttachmentFinset_of_cycleFre
     Nat.mul_le_mul_left 4 hedge
   exact hX.trans hlin
 
+open scoped Classical in
 /-- Deleting a set of order at most E from a set of order at least tau
 leaves at least tau - E vertices.  This elementary estimate is kept named
 because the cleanup exceptional set is global, while every robust core must
 retain its own local reservoir after that one deletion. -/
 theorem sub_le_card_sdiff_of_le_card_of_card_le_late
-    {V : Type*} [Fintype V] {A X : Finset V} {τ E : ℕ}
+    {V : Type*} [Finite V] {A X : Finset V} {τ E : ℕ}
     (hA : τ ≤ A.card) (hX : X.card ≤ E) :
     τ - E ≤ (A \ X).card := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [Finset.card_sdiff]
   have hinter : (X ∩ A).card ≤ X.card :=
     Finset.card_le_card Finset.inter_subset_left
   omega
 
+open scoped Classical in
 /-- Deleting the same exceptional set from every member of a disjoint
 family preserves disjointness. -/
 theorem disjointFinsetFamily_image_sdiff
-    {V : Type*} [Fintype V] (F : Finset (Finset V)) (X : Finset V)
+    {V : Type*} [Finite V] (F : Finset (Finset V)) (X : Finset V)
     (hdisj : DisjointFinsetFamily F) :
     DisjointFinsetFamily (F.image fun A => A \ X) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   intro A hA B hB hAB
   rcases Finset.mem_image.mp hA with ⟨A₀, hA₀, rfl⟩
   rcases Finset.mem_image.mp hB with ⟨B₀, hB₀, rfl⟩
@@ -27326,18 +27775,21 @@ theorem disjointFinsetFamily_image_sdiff
     exact hAB rfl
   exact (hdisj A₀ hA₀ B₀ hB₀ hA₀B₀).mono Finset.sdiff_subset Finset.sdiff_subset
 
+open scoped Classical in
 /-- Parity-unbroken counting survives a common cleanup deletion.  Each
 trimmed core remains parity-unbroken by subset monotonicity, and the existing
 image-sdiff lemma supplies the disjointness required by the global
 independent-remnant bound. -/
 theorem sum_card_sub_four_lt_of_trimmed_unbroken_anticomplete_family
-    {V : Type*} [Fintype V]
+    {V : Type*} [Finite V]
     (G : SimpleGraph V) {F : Finset (Finset V)} (X : Finset V) {n : ℕ}
     (hfree : G.IndepSetFree n)
     (hdisj : DisjointFinsetFamily F)
     (hanti : PairwiseAnticomplete G (F.image fun A => A \ X))
     (hnot : ∀ A ∈ F, ¬ HasThreeDisjointAdjPairFamily G A) :
     ∑ B ∈ F.image (fun A => A \ X), (B.card - 4) < n := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   apply sum_card_sub_four_lt_of_disjoint_pairwiseAnticomplete_not_hasThree
     G hfree (disjointFinsetFamily_image_sdiff F X hdisj) hanti
   intro B hB
@@ -27345,11 +27797,12 @@ theorem sum_card_sub_four_lt_of_trimmed_unbroken_anticomplete_family
   exact not_hasThreeDisjointAdjPairFamily_of_subset Finset.sdiff_subset
     (hnot A hA)
 
+open scoped Classical in
 /-- Cardinal form of the trimmed parity-unbroken count.  A uniform retained
 core lower bound converts the summed independent remnants into a direct
 bound on the number of trimmed cores. -/
 theorem mul_card_sub_four_lt_of_trimmed_unbroken_anticomplete_family
-    {V : Type*} [Fintype V]
+    {V : Type*} [Finite V]
     (G : SimpleGraph V) {F : Finset (Finset V)} (X : Finset V) {n τ : ℕ}
     (hfree : G.IndepSetFree n)
     (hdisj : DisjointFinsetFamily F)
@@ -27357,6 +27810,8 @@ theorem mul_card_sub_four_lt_of_trimmed_unbroken_anticomplete_family
     (hnot : ∀ A ∈ F, ¬ HasThreeDisjointAdjPairFamily G A)
     (hcard : ∀ B ∈ F.image (fun A => A \ X), τ ≤ B.card) :
     (τ - 4) * (F.image fun A => A \ X).card < n := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   apply mul_card_sub_four_lt_of_disjoint_pairwiseAnticomplete_not_hasThree
     G hfree (disjointFinsetFamily_image_sdiff F X hdisj) hanti
   · intro B hB
@@ -27365,15 +27820,17 @@ theorem mul_card_sub_four_lt_of_trimmed_unbroken_anticomplete_family
       (hnot A hA)
   · exact hcard
 
+open scoped Classical in
 /-- If every trimmed block is still nonempty, common deletion cannot merge
 two originally disjoint blocks.  Hence the image family has exactly the same
 number of blocks as the original family. -/
 theorem card_image_sdiff_eq_of_nonempty_of_disjointFinsetFamily
-    {V : Type*} [Fintype V] (F : Finset (Finset V)) (X : Finset V)
+    {V : Type*} [Finite V] (F : Finset (Finset V)) (X : Finset V)
     (hdisj : DisjointFinsetFamily F)
     (hne : ∀ A ∈ F, (A \ X).Nonempty) :
     (F.image fun A => A \ X).card = F.card := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   apply Finset.card_image_of_injOn
   intro A hA B hB hEq
   by_contra hAB
@@ -27386,18 +27843,21 @@ theorem card_image_sdiff_eq_of_nonempty_of_disjointFinsetFamily
   have hvB : v ∈ B := (Finset.mem_sdiff.mp hvBX).1
   exact (Finset.disjoint_left.mp (hdisj A hA B hB hAB)) hvA hvB
 
+open scoped Classical in
 /-- Counting surviving trimmed blocks: if a common exceptional deletion
 leaves every block nonempty and makes the trimmed family anticomplete, then
 the original family already has fewer than `n` members. -/
 theorem card_lt_of_nonempty_sdiff_pairwiseAnticomplete
-    {V : Type*} [Fintype V] [Nonempty V]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] [Nonempty V]
+    (G : SimpleGraph V)
     {F : Finset (Finset V)} {X : Finset V} {n : ℕ}
     (hfree : G.IndepSetFree n)
     (hdisj : DisjointFinsetFamily F)
     (hne : ∀ A ∈ F, (A \ X).Nonempty)
     (hanti : PairwiseAnticomplete G (F.image fun A => A \ X)) :
     F.card < n := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have htrimne : ∀ A ∈ F.image (fun A => A \ X), A.Nonempty := by
     intro A hA
     rcases Finset.mem_image.mp hA with ⟨B, hB, rfl⟩
@@ -27407,10 +27867,11 @@ theorem card_lt_of_nonempty_sdiff_pairwiseAnticomplete
   rw [card_image_sdiff_eq_of_nonempty_of_disjointFinsetFamily F X hdisj hne] at hlt
   exact hlt
 
+open scoped Classical in
 /-- Survival/count handoff after repeated-attachment pruning.  If the
 canonical first deletion plus the triangle-free quadratic second deletion is
 smaller than the robust-core size, every twice-trimmed core survives. -/
-theorem exists_surviving_anticomplete_cores_after_RepeatedAttachmentFinset_of_cycleFree_short_second_hub_family
+theorem exists_surviving_anticomplete_cores_after_repeated_attachments
     {V ι : Type*} [Fintype V] [Nonempty V] [Fintype ι]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (U T : ι → Finset V) (θ : ι → ℕ) {τ n k : ℕ} (hk : 12 ≤ k)
@@ -27435,7 +27896,7 @@ theorem exists_surviving_anticomplete_cores_after_RepeatedAttachmentFinset_of_cy
           fun i => (U i \ R) \ X).card < n := by
   let R : Finset V := RepeatedAttachmentFinset G U
   obtain ⟨X, hX, hanti⟩ :=
-    exists_quadratic_exceptional_set_after_RepeatedAttachmentFinset_of_cycleFree_short_second_hub_family
+    exists_quadratic_exceptional_set_after_repeated_attachments
       G U T θ hk hrob hfree hUn hUk hθ hregions hcycle
   have hne : ∀ i : ι, ((U i \ R) \ X).Nonempty := by
     intro i
@@ -27476,6 +27937,7 @@ theorem exists_surviving_anticomplete_cores_after_RepeatedAttachmentFinset_of_cy
   refine ⟨X, hX, hanti, hne, ?_⟩
   exact hlt
 
+open scoped Classical in
 /-- Exact family-level cleanup for disjoint robust hubs in a `C_k`-free
 graph.  Every core can serve as the long first hub, while every distinct
 core can serve as the fixed two-edge return hub.  Hence the preceding
@@ -27516,6 +27978,7 @@ theorem exists_global_exceptional_set_of_cycleFree_short_second_hub_family
     · exact hcycle
   exact exists_global_exceptional_set_of_pairwise_atMostOneCrossEdge G F hcross
 
+open scoped Classical in
 /-- Edge-count refinement of robust-hub family cleanup.  The exact
 short-second-hub splice again supplies pairwise-intersecting interactions;
 using the interaction-graph version of the cover lemma charges the resulting
@@ -27557,6 +28020,7 @@ theorem exists_global_exceptional_set_of_cycleFree_short_second_hub_family_edge_
   exact exists_global_exceptional_set_of_pairwise_atMostOneCrossEdge_edge_count
     G F hcross
 
+open scoped Classical in
 /-- Select the robust core stored in every greedily peeled local-hub region
 and run the exact family cleanup on those selected cores.  Because each core
 lies in its own peeled region, the routing regions remain pairwise disjoint;
@@ -27609,6 +28073,7 @@ theorem exists_exceptional_anticomplete_cores_of_cycleFree_localRobustHub_family
     exact hdisj i i.2 j j.2 hval
   · exact hcycle
 
+open scoped Classical in
 /-- Edge-count version of the selected local-hub cleanup.  This is the
 sharper handoff used once the stability argument bounds the auxiliary hub
 interaction graph: the selected cores become anticomplete after deleting at
@@ -27661,11 +28126,12 @@ theorem exists_exceptional_anticomplete_cores_edge_count_of_cycleFree_localRobus
     exact hdisj i i.2 j j.2 hval
   · exact hcycle
 
+open scoped Classical in
 /-- Survival/count consequence of the edge-count cleanup.  The implication
 is recorded with the selected interaction graph itself, so later stability
 lemmas may discharge the sparse-edge inequality after seeing the actual
 family of cores. -/
-theorem exists_exceptional_anticomplete_cores_edge_count_with_card_lt_of_cycleFree_localRobustHub_family
+theorem exists_small_exceptional_anticomplete_cores_edge_count_of_cycleFree_localRobustHub_family
     {V : Type*} [Fintype V] [Nonempty V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {F : Finset (Finset V)} {θ τ n k : ℕ} (hk : 9 ≤ k)
@@ -27715,12 +28181,13 @@ theorem exists_exceptional_anticomplete_cores_edge_count_with_card_lt_of_cycleFr
     exact (hdisj i i.2 j j.2 hval).mono (hU i).2.1 (hU j).2.1
   exact card_lt_of_nonempty_sdiff_pairwiseAnticomplete G hfree hCdisj hne hanti
 
+open scoped Classical in
 /-- If the selected hub interaction graph is acyclic, the preceding
 edge-count cleanup costs at most four vertices per selected core.  This is
 the form used after the three-hub obstruction has ruled out cyclic
 interaction patterns: the only remaining numerical input is that this
 linear charge is smaller than the robust-core size. -/
-theorem exists_exceptional_anticomplete_cores_acyclic_interaction_with_card_lt_of_cycleFree_localRobustHub_family
+theorem exists_exceptional_anticomplete_cores_acyclic_of_cycleFree_localRobustHub_family
     {V : Type*} [Fintype V] [Nonempty V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {F : Finset (Finset V)} {θ τ n k : ℕ} (hk : 9 ≤ k)
@@ -27738,7 +28205,7 @@ theorem exists_exceptional_anticomplete_cores_acyclic_interaction_with_card_lt_o
         PairwiseAnticomplete G (C.image fun A => A \ X) ∧
         (H.IsAcyclic → 4 * C.card < τ → C.card < n) := by
   obtain ⟨U, hU, hcleanup⟩ :=
-    exists_exceptional_anticomplete_cores_edge_count_with_card_lt_of_cycleFree_localRobustHub_family
+    exists_small_exceptional_anticomplete_cores_edge_count_of_cycleFree_localRobustHub_family
       G hk hhub hdisj hfree hτn hτk hθ hcycle
   refine ⟨U, hU, ?_⟩
   let C : Finset (Finset V) := Finset.univ.image U
@@ -27757,6 +28224,7 @@ theorem exists_exceptional_anticomplete_cores_acyclic_interaction_with_card_lt_o
       _ = 4 * C.card := by rw [Fintype.card_coe]
   exact hcharge.trans_lt hsmall
 
+open scoped Classical in
 /-- Quantitative version of the selected-core cleanup: besides making the
 trimmed cores anticomplete, record the uniform lower bound that survives the
 global exceptional deletion.  This is the precise handoff from hub cleanup
@@ -27787,6 +28255,7 @@ theorem exists_exceptional_anticomplete_large_cores_of_cycleFree_localRobustHub_
   intro i
   exact sub_le_card_sdiff_of_le_card_of_card_le (hU i).1 hX
 
+open scoped Classical in
 /-- Bootstrap the cleanup count.  If the quadratic exceptional charge based
 on the number of peeled regions is smaller than the uniform core size `τ`,
 then every selected core survives the deletion.  The surviving anticomplete
@@ -27843,6 +28312,7 @@ theorem exists_exceptional_anticomplete_cores_with_card_lt_of_cycleFree_localRob
   refine ⟨X, hX, hanti, ?_⟩
   exact card_lt_of_nonempty_sdiff_pairwiseAnticomplete G hfree hCdisj hne hanti
 
+open scoped Classical in
 /-- A path whose endpoints lie in a robust pair set can be closed to the
 prescribed cycle length whenever the pair reservoir is larger than the path
 support.  This is the first direct bridge from the DRC output to `Cₖ`. -/
@@ -27868,6 +28338,7 @@ theorem cycleGraph_isContained_of_robust_path_length_pred
     {a b : V} (ha : a ∈ U) (hb : b ∈ U) {p : G.Walk a b}
     (hp : p.IsPath) (hlen : p.length = k - 2) :
     cycleGraph k ⊑ G := by
+  classical
   apply cycleGraph_isContained_of_robust_path G hk hrob ha hb hp
   · omega
   · rw [List.toFinset_card_of_nodup hp.support_nodup, p.length_support, hlen]
@@ -27957,7 +28428,7 @@ a finite vertex set rather than a new ambient graph; run DRC on its induced
 graph, then transport the resulting cycle through the canonical induced
 embedding. -/
 theorem cycleGraph_isContained_of_induced_drc
-    {V : Type*} [Fintype V]
+    {V : Type*} [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {S : Finset V} (hS : S.Nonempty)
     {θ t τ n k : ℕ} (hk : 7 ≤ k) (ht : 0 < t) (hτpos : 0 < τ)
     {η ρ : ℝ} (hη : 0 < η) (hρ : 0 < ρ)
@@ -27970,6 +28441,7 @@ theorem cycleGraph_isContained_of_induced_drc
     (hfree : G.IndepSetFree n) :
     cycleGraph k ⊑ G := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let H : SimpleGraph S := G.induce (S : Set V)
   let : Nonempty S := hS.to_subtype
   have hcopy : cycleGraph k ⊑ H := by
@@ -28060,6 +28532,7 @@ theorem induced_edgeFinset_card_lt_mul_of_robustPairSet_of_cycleFree
     · exact hqlen
   simpa [H] using card_edgeFinset_lt_mul_card_of_no_long_path H (k - 2) hno
 
+open scoped Classical in
 /-- If no `D`-long path starts at `x`, a maximal path from `x` is short and
 its terminal neighbourhood is completely trapped inside its support. -/
 theorem exists_short_path_trapping_terminal_neighbors {V : Type*} [Fintype V]
@@ -28084,6 +28557,7 @@ theorem exists_short_path_trapping_terminal_neighbors {V : Type*} [Fintype V]
       simp at hle
     simpa using hwmem
 
+open scoped Classical in
 /-- The successors of the terminal neighbors of a longest path force a
 quadratic amount of edge mass inside the path support.  Each successor has
 all of its neighbors on the path, the successor map is injective, and there
@@ -28135,6 +28609,7 @@ theorem minDegree_sq_le_twice_card_inducedEdgeFinsetOn_of_maximal_path
     _ = 2 * (inducedEdgeFinsetOn G S).card := hhandshake
     _ = 2 * (inducedEdgeFinsetOn G p.support.toFinset).card := by rfl
 
+open scoped Classical in
 /-- The same successor set gives the complementary size estimate: the
 support of a longest path contains at least minimum-degree-many vertices.
 Together with the upper length bound this keeps every later DRC parameter
@@ -28386,6 +28861,7 @@ theorem dist_mod_two_ne_of_adj_toSubgraph_of_shortest_path
     rw [hx, hy]
     exact hparity.symm
 
+open scoped Classical in
 /-- Bypassing the union of two shortest root paths to vertices in the same
 BFS layer preserves even length.  The union is bipartite under root-distance
 parity: every one of its edges lies on one of the two geodesics.  Transferring
@@ -28393,7 +28869,7 @@ the bypassed path to that union and applying the two-coloring parity theorem
 then gives the required parity without making any assumption about which
 common vertices the bypass operation removes. -/
 theorem even_length_bypass_reverse_append_of_shortest_paths
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {root a b : V} {i : ℕ}
     {pa : G.Walk root a} {pb : G.Walk root b}
     (hpa : pa.length = G.dist root a)
@@ -28401,6 +28877,7 @@ theorem even_length_bypass_reverse_append_of_shortest_paths
     (ha : G.dist root a = i) (hb : G.dist root b = i) :
     Even ((pa.reverse.append pb).bypass.length) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let r : G.Walk a b := pa.reverse.append pb
   let q : G.Walk a b := r.bypass
   let K : SimpleGraph V := r.toSubgraph.spanningCoe
@@ -28440,12 +28917,13 @@ metric lemma: it packages the chosen shortest path together with the exact
 support-avoidance fact used when a nested BFS tree is spliced to a long path
 in the terminal layer. -/
 theorem exists_shortest_path_to_bfsLayer_avoiding_layer
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {root a : V} {i : ℕ}
     (hroota : G.Reachable root a) (ha : G.dist root a = i) :
     ∃ q : G.Walk root a, q.IsPath ∧ q.length = i ∧
       ∀ z ∈ q.support, z = a ∨ z ∉ Erdos752.bfsLayer G root i := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨q, hq, hqLen⟩ := hroota.exists_path_of_dist
   refine ⟨q, hq, hqLen.trans ha, ?_⟩
   intro z hz
@@ -28460,6 +28938,7 @@ theorem exists_shortest_path_to_bfsLayer_avoiding_layer
     rw [hqLen, ha] at hlt
     omega
 
+open scoped Classical in
 /-- Every vertex on a shortest root path lies in the BFS ball whose radius
 bounds the path length.  This is the finite-set membership form needed after
 a separator step: the recorded envelope is the next BFS ball, so all
@@ -28481,13 +28960,14 @@ theorem shortest_path_support_subset_bfsBall_toFinset
         G hshort hz hza
     omega
 
+open scoped Classical in
 /-- A mapped BFS ball contained in a union of pairwise-disjoint
 anticomplete blocks lies in one block.  Every ball vertex has a shortest
 path to the root that stays in the ball, so walk localization identifies its
 block with the root block.  This is the exact first-pass/second-pass
 provenance bridge used by the KLS nested splice. -/
 theorem exists_member_containing_mapped_bfsBall_of_pairwiseAnticomplete
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {F : Finset (Finset V)} (hdisj : DisjointFinsetFamily F)
     (hanti : PairwiseAnticomplete G F)
     {S D : Finset V}
@@ -28502,6 +28982,7 @@ theorem exists_member_containing_mapped_bfsBall_of_pairwiseAnticomplete
       z ∈ (bfsBall c.toSimpleGraph root (j + 1)).toFinset →
         z.1.1 ∈ A := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let K : SimpleGraph c := c.toSimpleGraph
   let e : K ↪g G :=
     { toFun := fun x => x.1.1
@@ -28548,6 +29029,7 @@ theorem exists_member_containing_mapped_bfsBall_of_pairwiseAnticomplete
   subst B
   exact hqB _ q.end_mem_support
 
+open scoped Classical in
 /-- The subgraph induced by a metric ball in a connected graph is still
 connected.  A shortest root path to a ball vertex never leaves the ball,
 so it supplies a walk in the induced graph. -/
@@ -28573,6 +29055,7 @@ theorem induce_bfsBall_connected_of_connected
   let q := p.induce (B : Set V) hpB
   simpa [B, q] using q.reachable
 
+open scoped Classical in
 /-- Root distances are unchanged after inducing a connected graph on one of
 its BFS balls.  The forward inequality maps an induced shortest path back to
 the original graph; the reverse inequality lifts an original shortest path,
@@ -28630,10 +29113,13 @@ graph.  We prove the two inequalities by mapping shortest paths in both
 directions; this local form avoids any dependence on a separate extended-
 distance API when comparing two induced copies of the same BFS ball. -/
 theorem dist_eq_of_iso_of_connected
-    {V W : Type*} [Fintype V] [Fintype W]
+    {V W : Type*} [Finite V] [Finite W]
     {G : SimpleGraph V} {H : SimpleGraph W}
     (e : G ≃g H) (hconn : G.Connected) (x y : V) :
     G.dist x y = H.dist (e x) (e y) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
+  let : Fintype W := Fintype.ofFinite W
   obtain ⟨p, _hp, hpLen⟩ := hconn.exists_path_of_dist x y
   let q : H.Walk (e x) (e y) := p.map e.toHom
   have hHG : H.dist (e x) (e y) ≤ G.dist x y := by
@@ -28696,12 +29182,13 @@ theorem exists_bfsLayer_containing_connected_embedding_of_parityBfsLayerUnion
     _ = i := hstart
 -/
 
+open scoped Classical in
 /-- The ambient graph induced by the finite image of a component BFS ball is
 isomorphic to the component graph induced by the ball itself.  The finite-map
 equality gives the inverse on vertices; both adjacency relations reduce to
 the same ambient adjacency after forgetting subtypes. -/
 theorem exists_iso_induce_mapped_bfsBall
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {S D : Finset V}
     {c : (G.induce (S : Set V)).ConnectedComponent}
     {root : c} {j : ℕ}
@@ -28714,6 +29201,7 @@ theorem exists_iso_induce_mapped_bfsBall
           (((bfsBall c.toSimpleGraph root (j + 1)).toFinset : Finset c) : Set c),
       ∀ y : D, (e y).1.1 = y.1 := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let B : Finset c := (bfsBall c.toSimpleGraph root (j + 1)).toFinset
   have hpre : ∀ y : D, ∃ x : B, x.1.1 = y.1 := by
     intro y
@@ -28733,7 +29221,7 @@ theorem exists_iso_induce_mapped_bfsBall
   let down : B → D := fun x =>
     ⟨x.1.1, by
       rw [hDeq]
-      exact Finset.mem_map.mpr ⟨x.1, by simpa [B] using x.2, rfl⟩⟩
+      exact Finset.mem_map.mpr ⟨x.1, by simp [B], rfl⟩⟩
   have hdownval : ∀ x : B, (down x).1 = x.1.1 := by
     intro x
     rfl
@@ -28766,14 +29254,16 @@ only layer vertices, while the reversed shortest path contributes no layer
 vertex after its first endpoint.  This is the inner-tree disjointness half
 of the exact nested-BFS splice. -/
 theorem path_prefix_tail_disjoint_reverse_shortest_path_tail_of_bfsLayer
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {root a b : V} {i t : ℕ} {p : G.Walk a b}
-    (hp : p.IsPath) (ht : t ≤ p.length)
+    (_hp : p.IsPath) (_ht : t ≤ p.length)
     (hplayer : ∀ z ∈ p.support, G.dist root z = i)
     {q : G.Walk root (p.getVert t)} (hq : q.IsPath)
     (hqavoid : ∀ z ∈ q.support,
       z = p.getVert t ∨ z ∉ Erdos752.bfsLayer G root i) :
     (p.take t).support.tail.Disjoint q.reverse.support.tail := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [List.disjoint_left]
   intro z hzp hzq
   have hzp' : z ∈ p.support := by
@@ -28786,7 +29276,7 @@ theorem path_prefix_tail_disjoint_reverse_shortest_path_tail_of_bfsLayer
     simpa [Walk.support_reverse] using hzqRev
   have hend_not_tail : p.getVert t ∉ q.reverse.support.tail := by
     have hnodup := hq.reverse.support_nodup
-    rw [q.reverse.support_eq_cons] at hnodup
+    rw [← q.reverse.cons_tail_support] at hnodup
     exact (List.nodup_cons.mp hnodup).1
   rcases hqavoid z hzq' with hzend | hzoutside
   · exact hend_not_tail (hzend ▸ hzq)
@@ -28798,7 +29288,7 @@ are its two endpoints, provided the far endpoint is not on the first path.
 The near endpoint is automatically absent from the return tail because the
 return path is simple. -/
 theorem support_disjoint_tail_of_layer_path_and_avoiding_return
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {layerRoot start a : V} {i : ℕ} {x : V}
     {q : G.Walk x start} {r : G.Walk start a}
     (hr : r.IsPath)
@@ -28807,12 +29297,14 @@ theorem support_disjoint_tail_of_layer_path_and_avoiding_return
       z = start ∨ z = a ∨ z ∉ Erdos752.bfsLayer G layerRoot i)
     (haq : a ∉ q.support) :
     q.support.Disjoint r.support.tail := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [List.disjoint_left]
   intro z hzq hzr
   have hzr' : z ∈ r.support := List.mem_of_mem_tail hzr
   have hroot_not_tail : start ∉ r.support.tail := by
     have hnodup := hr.support_nodup
-    rw [r.support_eq_cons] at hnodup
+    rw [← r.cons_tail_support] at hnodup
     exact (List.nodup_cons.mp hnodup).1
   rcases hravoid z hzr' with hzroot | hza | hzoutside
   · exact hroot_not_tail (hzroot ▸ hzr)
@@ -28823,13 +29315,14 @@ theorem support_disjoint_tail_of_layer_path_and_avoiding_return
 than the argument needs: two shortest root paths suffice, so this version
 also applies inside one component of an induced remaining graph. -/
 theorem exists_short_path_between_bfsLayer_vertices_avoiding_layer_of_reachable
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {root a b : V} {i : ℕ}
     (hroota : G.Reachable root a) (hrootb : G.Reachable root b)
-    (ha : G.dist root a = i) (hb : G.dist root b = i) (hab : a ≠ b) :
+    (ha : G.dist root a = i) (hb : G.dist root b = i) (_hab : a ≠ b) :
     ∃ q : G.Walk a b, q.IsPath ∧ q.length ≤ 2 * i ∧
       ∀ z ∈ q.support, z = a ∨ z = b ∨ z ∉ Erdos752.bfsLayer G root i := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨pa, _hpa, hpaLen⟩ := hroota.exists_path_of_dist
   obtain ⟨pb, _hpb, hpbLen⟩ := hrootb.exists_path_of_dist
   let r : G.Walk a b := pa.reverse.append pb
@@ -28874,13 +29367,14 @@ two shortest root paths used above has even length because its edges are
 properly two-colored by root-distance parity.  Thus a path selected inside
 one BFS layer closes to a cycle of the same parity as that path. -/
 theorem exists_even_short_path_between_bfsLayer_vertices_avoiding_layer_of_reachable
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {root a b : V} {i : ℕ}
     (hroota : G.Reachable root a) (hrootb : G.Reachable root b)
-    (ha : G.dist root a = i) (hb : G.dist root b = i) (hab : a ≠ b) :
+    (ha : G.dist root a = i) (hb : G.dist root b = i) (_hab : a ≠ b) :
     ∃ q : G.Walk a b, q.IsPath ∧ Even q.length ∧ q.length ≤ 2 * i ∧
       ∀ z ∈ q.support, z = a ∨ z = b ∨ z ∉ Erdos752.bfsLayer G root i := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨pa, _hpa, hpaLen⟩ := hroota.exists_path_of_dist
   obtain ⟨pb, _hpb, hpbLen⟩ := hrootb.exists_path_of_dist
   let r : G.Walk a b := pa.reverse.append pb
@@ -28932,7 +29426,7 @@ walk (rather than only the abstract copied cycle) is essential for the
 selected-edge lift: the long layer path and the short root detour can then
 be routed by different local hub mechanisms. -/
 theorem exists_even_short_return_path_disjoint_of_path_in_bfsLayer_of_reachable
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {root a b : V} {i : ℕ} {p : G.Walk a b}
     (hroota : G.Reachable root a) (hrootb : G.Reachable root b)
     (ha : G.dist root a = i) (hb : G.dist root b = i) (hab : a ≠ b)
@@ -28943,16 +29437,17 @@ theorem exists_even_short_return_path_disjoint_of_path_in_bfsLayer_of_reachable
       ∀ z ∈ q.support,
         z = b ∨ z = a ∨ z ∉ Erdos752.bfsLayer G root i := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨r, hr, hreven, hrbound, hravoid⟩ :=
     exists_even_short_path_between_bfsLayer_vertices_avoiding_layer_of_reachable
       G hroota hrootb ha hb hab
   have ha_not_tail : a ∉ p.support.tail := by
     have hnodup := hp.support_nodup
-    rw [p.support_eq_cons] at hnodup
+    rw [← p.cons_tail_support] at hnodup
     exact (List.nodup_cons.mp hnodup).1
   have hb_not_tail : b ∉ r.reverse.support.tail := by
     have hnodup := hr.reverse.support_nodup
-    rw [r.reverse.support_eq_cons] at hnodup
+    rw [← r.reverse.cons_tail_support] at hnodup
     exact (List.nodup_cons.mp hnodup).1
   have hdisj : p.support.tail.Disjoint r.reverse.support.tail := by
     rw [List.disjoint_left]
@@ -28985,12 +29480,13 @@ append one in reverse to the other, and bypass repetitions.  The preceding
 metric lemma proves that only the displayed endpoints can remain in the
 original layer. -/
 theorem exists_short_path_between_bfsLayer_vertices_avoiding_layer
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     (hconn : G.Connected) {root a b : V} {i : ℕ}
-    (ha : G.dist root a = i) (hb : G.dist root b = i) (hab : a ≠ b) :
+    (ha : G.dist root a = i) (hb : G.dist root b = i) (_hab : a ≠ b) :
     ∃ q : G.Walk a b, q.IsPath ∧ q.length ≤ 2 * i ∧
       ∀ z ∈ q.support, z = a ∨ z = b ∨ z ∉ Erdos752.bfsLayer G root i := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨pa, _hpa, hpaLen⟩ := hconn.exists_path_of_dist root a
   obtain ⟨pb, _hpb, hpbLen⟩ := hconn.exists_path_of_dist root b
   let r : G.Walk a b := pa.reverse.append pb
@@ -29032,8 +29528,7 @@ theorem exists_short_path_between_bfsLayer_vertices_avoiding_layer
 
 /-- Component-local cycle closure from one BFS layer. -/
 theorem exists_cycle_in_interval_of_path_in_bfsLayer_of_reachable
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
-    [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {root a b : V} {i : ℕ} {p : G.Walk a b}
     (hroota : G.Reachable root a) (hrootb : G.Reachable root b)
     (ha : G.dist root a = i) (hb : G.dist root b = i) (hab : a ≠ b)
@@ -29042,16 +29537,17 @@ theorem exists_cycle_in_interval_of_path_in_bfsLayer_of_reachable
     ∃ ℓ : ℕ, cycleGraph ℓ ⊑ G ∧
       p.length + 1 ≤ ℓ ∧ ℓ ≤ p.length + 2 * i := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨q, hq, hqbound, hqavoid⟩ :=
     exists_short_path_between_bfsLayer_vertices_avoiding_layer_of_reachable
       G hroota hrootb ha hb hab
   have ha_not_tail : a ∉ p.support.tail := by
     have hnodup := hp.support_nodup
-    rw [p.support_eq_cons] at hnodup
+    rw [← p.cons_tail_support] at hnodup
     exact (List.nodup_cons.mp hnodup).1
   have hb_not_tail : b ∉ q.reverse.support.tail := by
     have hnodup := hq.reverse.support_nodup
-    rw [q.reverse.support_eq_cons] at hnodup
+    rw [← q.reverse.cons_tail_support] at hnodup
     exact (List.nodup_cons.mp hnodup).1
   have hdisj : p.support.tail.Disjoint q.reverse.support.tail := by
     rw [List.disjoint_left]
@@ -29091,8 +29587,7 @@ root-side detour is even, so the resulting cycle has exactly the parity of
 the path chosen in the terminal layer, in addition to the usual interval
 bounds. -/
 theorem exists_same_parity_cycle_in_interval_of_path_in_bfsLayer_of_reachable
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
-    [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {root a b : V} {i : ℕ} {p : G.Walk a b}
     (hroota : G.Reachable root a) (hrootb : G.Reachable root b)
     (ha : G.dist root a = i) (hb : G.dist root b = i) (hab : a ≠ b)
@@ -29102,16 +29597,17 @@ theorem exists_same_parity_cycle_in_interval_of_path_in_bfsLayer_of_reachable
       p.length + 1 ≤ ℓ ∧ ℓ ≤ p.length + 2 * i ∧
       ℓ % 2 = p.length % 2 := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨q, hq, hqeven, hqbound, hqavoid⟩ :=
     exists_even_short_path_between_bfsLayer_vertices_avoiding_layer_of_reachable
       G hroota hrootb ha hb hab
   have ha_not_tail : a ∉ p.support.tail := by
     have hnodup := hp.support_nodup
-    rw [p.support_eq_cons] at hnodup
+    rw [← p.cons_tail_support] at hnodup
     exact (List.nodup_cons.mp hnodup).1
   have hb_not_tail : b ∉ q.reverse.support.tail := by
     have hnodup := hq.reverse.support_nodup
-    rw [q.reverse.support_eq_cons] at hnodup
+    rw [← q.reverse.cons_tail_support] at hnodup
     exact (List.nodup_cons.mp hnodup).1
   have hdisj : p.support.tail.Disjoint q.reverse.support.tail := by
     rw [List.disjoint_left]
@@ -29156,8 +29652,8 @@ the checked interval-cycle form consumed by the two-level KLS detour: the
 main path stays in the layer, while the detour has no internal layer vertex,
 so the two supports meet only at their endpoints. -/
 theorem exists_cycle_in_interval_of_path_in_bfsLayer
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
-    [DecidableRel G.Adj] (hconn : G.Connected)
+    {V : Type*} [Finite V] (G : SimpleGraph V)
+    (hconn : G.Connected)
     {root a b : V} {i : ℕ} {p : G.Walk a b}
     (ha : G.dist root a = i) (hb : G.dist root b = i) (hab : a ≠ b)
     (hp : p.IsPath) (hplayer : ∀ z ∈ p.support, z ∈ Erdos752.bfsLayer G root i)
@@ -29165,16 +29661,17 @@ theorem exists_cycle_in_interval_of_path_in_bfsLayer
     ∃ ℓ : ℕ, cycleGraph ℓ ⊑ G ∧
       p.length + 1 ≤ ℓ ∧ ℓ ≤ p.length + 2 * i := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨q, hq, hqbound, hqavoid⟩ :=
     exists_short_path_between_bfsLayer_vertices_avoiding_layer
       G hconn ha hb hab
   have ha_not_tail : a ∉ p.support.tail := by
     have hnodup := hp.support_nodup
-    rw [p.support_eq_cons] at hnodup
+    rw [← p.cons_tail_support] at hnodup
     exact (List.nodup_cons.mp hnodup).1
   have hb_not_tail : b ∉ q.reverse.support.tail := by
     have hnodup := hq.reverse.support_nodup
-    rw [q.reverse.support_eq_cons] at hnodup
+    rw [← q.reverse.cons_tail_support] at hnodup
     exact (List.nodup_cons.mp hnodup).1
   have hdisj : p.support.tail.Disjoint q.reverse.support.tail := by
     rw [List.disjoint_left]
@@ -29245,13 +29742,14 @@ in one concrete layer.  Connect a chosen vertex to every other vertex,
 map the path, and use walk localization twice to identify the common
 distance layer. -/
 theorem exists_bfsLayer_containing_connected_embedding_of_parityBfsLayerUnion
-    {V W : Type*} [Fintype V] [Fintype W]
+    {V W : Type*} [Fintype V] [Finite W]
     (G : SimpleGraph V) (H : SimpleGraph W) (hHconn : H.Connected)
     (e : H ↪g G) {root : V} {j parity : ℕ}
     (hsupp : ∀ z : W, e z ∈ parityBfsLayerUnion G root j parity) :
     ∃ i : ℕ, i ≤ j ∧ i % 2 = parity ∧
       ∀ z : W, G.dist root (e z) = i := by
   classical
+  let : Fintype W := Fintype.ofFinite W
   let : Nonempty W := hHconn.nonempty
   let z₀ : W := Classical.choice inferInstance
   let q₀ : G.Walk (e z₀) (e z₀) := Walk.nil
@@ -29342,6 +29840,7 @@ theorem exists_bfsLayer_containing_induced_parity_component
     G.dist root z.1.1 = G.dist root z₀.1.1 := hsame z z₀
     _ = i := hi _ q₀.start_mem_support
 
+open scoped Classical in
 /-- Exact two-level BFS closure.  The outer parity component lies in one
 outer distance layer, while the displayed long path lies in one inner
 distance layer.  A shortest inner-root path to a chosen prefix endpoint and
@@ -29355,7 +29854,7 @@ single-level interval lemma below, it does not lose the target cycle length
 inside a short interval. -/
 theorem cycleGraph_isContained_of_long_path_in_nested_parityBfsLayerUnion
     {V : Type*} [Fintype V] (G : SimpleGraph V)
-    [DecidableRel G.Adj] (hconn : G.Connected)
+    (hconn : G.Connected)
     {root₀ : V} {j₀ : ℕ} {parity₀ : Fin 2}
     (c :
       (G.induce ((parityBfsLayerUnion G root₀ j₀ parity₀ : Finset V) : Set V)).ConnectedComponent)
@@ -29493,11 +29992,11 @@ theorem cycleGraph_isContained_of_long_path_in_nested_parityBfsLayerUnion
         exact hcLayer u
       have ha_not_Ptail : a.1.1 ∉ P.support.tail := by
         have hnodup := hP.support_nodup
-        rw [P.support_eq_cons] at hnodup
+        rw [← P.cons_tail_support] at hnodup
         exact (List.nodup_cons.mp hnodup).1
       have hroot_not_rtail : root₁.1.1 ∉ r.support.tail := by
         have hnodup := hr.support_nodup
-        rw [r.support_eq_cons] at hnodup
+        rw [← r.cons_tail_support] at hnodup
         exact (List.nodup_cons.mp hnodup).1
       have hzRsupp : z ∈ r.support := List.mem_of_mem_tail hzR
       rcases hravoid z hzRsupp with hzroot | hza | hzoutside
@@ -29520,9 +30019,9 @@ layer.  It is enough to retain an embedding into the outer connected graph
 and a proof that every embedded inner vertex has one common outer distance.
 The inner parity localization and exact three-path splice are unchanged. -/
 theorem cycleGraph_isContained_of_long_path_in_nested_layer_subgraph
-    {W C : Type*} [Fintype W] [Fintype C]
-    (J : SimpleGraph W) [DecidableRel J.Adj] (hJconn : J.Connected)
-    (K : SimpleGraph C) [DecidableRel K.Adj] (hKconn : K.Connected)
+    {W C : Type*} [Finite W] [Fintype C]
+    (J : SimpleGraph W) (hJconn : J.Connected)
+    (K : SimpleGraph C) (hKconn : K.Connected)
     (f : K ↪g J)
     {root₀ : W} {i₀ j₀ : ℕ} (hi₀j : i₀ ≤ j₀)
     (houter : ∀ z : C, J.dist root₀ (f z) = i₀)
@@ -29534,6 +30033,7 @@ theorem cycleGraph_isContained_of_long_path_in_nested_layer_subgraph
     (hroom : 2 * j₀ + j₁ + 1 ≤ k) (hkpath : k ≤ p.length) :
     cycleGraph k ⊑ J := by
   classical
+  let : Fintype W := Fintype.ofFinite W
   obtain ⟨i₁, hi₁j, _hi₁par, hpLayer⟩ :=
     exists_bfsLayer_containing_walk_support_of_parityBfsLayerUnion
       K p hsupp
@@ -29641,11 +30141,11 @@ theorem cycleGraph_isContained_of_long_path_in_nested_layer_subgraph
         exact houter u
       have ha_not_Ptail : f a ∉ P.support.tail := by
         have hnodup := hP.support_nodup
-        rw [P.support_eq_cons] at hnodup
+        rw [← P.cons_tail_support] at hnodup
         exact (List.nodup_cons.mp hnodup).1
       have hroot_not_rtail : f root₁ ∉ r.support.tail := by
         have hnodup := hr.support_nodup
-        rw [r.support_eq_cons] at hnodup
+        rw [← r.cons_tail_support] at hnodup
         exact (List.nodup_cons.mp hnodup).1
       have hzRsupp : z ∈ r.support := List.mem_of_mem_tail hzR
       rcases hravoid z hzRsupp with hzroot | hza | hzoutside
@@ -29661,15 +30161,16 @@ theorem cycleGraph_isContained_of_long_path_in_nested_layer_subgraph
   dsimp [t]
   omega
 
+open scoped Classical in
 /-- Separator-compatible exact nested-BFS closure.  The second separator
 pass only certifies that its retained path and its next BFS ball lie in the
 first-pass core; vertices farther out in the second connected component may
 have been discarded.  Those two support hypotheses are exactly what the
 three-path proof uses, so they still suffice for an exact target cycle. -/
 theorem cycleGraph_isContained_of_long_path_with_bfsBall_in_outer_layer
-    {W C : Type*} [Fintype W] [Fintype C]
-    (J : SimpleGraph W) [DecidableRel J.Adj] (hJconn : J.Connected)
-    (K : SimpleGraph C) [DecidableRel K.Adj] (hKconn : K.Connected)
+    {W C : Type*} [Finite W] [Fintype C]
+    (J : SimpleGraph W) (hJconn : J.Connected)
+    (K : SimpleGraph C) (hKconn : K.Connected)
     (f : K ↪g J)
     {root₀ : W} {i₀ j₀ : ℕ} (hi₀j : i₀ ≤ j₀)
     {root₁ : C} {j₁ : ℕ} {parity₁ : Fin 2}
@@ -29684,6 +30185,7 @@ theorem cycleGraph_isContained_of_long_path_with_bfsBall_in_outer_layer
     (hroom : 2 * j₀ + j₁ + 1 ≤ k) (hkpath : k ≤ p.length) :
     cycleGraph k ⊑ J := by
   classical
+  let : Fintype W := Fintype.ofFinite W
   obtain ⟨i₁, hi₁j, _hi₁par, hpLayer⟩ :=
     exists_bfsLayer_containing_walk_support_of_parityBfsLayerUnion
       K p hsupp
@@ -29804,11 +30306,11 @@ theorem cycleGraph_isContained_of_long_path_with_bfsBall_in_outer_layer
         exact hpathOuter u huP
       have ha_not_Ptail : f a ∉ P.support.tail := by
         have hnodup := hP.support_nodup
-        rw [P.support_eq_cons] at hnodup
+        rw [← P.cons_tail_support] at hnodup
         exact (List.nodup_cons.mp hnodup).1
       have hroot_not_rtail : f root₁ ∉ r.support.tail := by
         have hnodup := hr.support_nodup
-        rw [r.support_eq_cons] at hnodup
+        rw [← r.cons_tail_support] at hnodup
         exact (List.nodup_cons.mp hnodup).1
       have hzRsupp : z ∈ r.support := List.mem_of_mem_tail hzR
       rcases hravoid z hzRsupp with hzroot | hza | hzoutside
@@ -29996,6 +30498,7 @@ theorem cycleGraph_isContained_of_long_path_in_nested_component_bfs_cores
     SimpleGraph.Embedding.induce (G := G) (S₀ : Set V)
   exact hJ.trans (eJ.isContained.trans eG.isContained)
 
+open scoped Classical in
 /-- Family form of the preceding two-pass closure.  The first separator
 family is stored as core-envelope pairs.  Its core projection remains
 pairwise disjoint and anticomplete, so the mapped second BFS ball lies in one
@@ -30059,6 +30562,7 @@ theorem cycleGraph_isContained_of_long_path_in_second_component_bfs_core_family
   exact cycleGraph_isContained_of_long_path_in_nested_component_bfs_cores
     G (hcore₀ r hr).2 hcore₁' hH₁D₁ hD₁A hk hp hroom hkpath
 
+open scoped Classical in
 /-- In a cycle-free graph the selected second-pass component core has no
 path of the target length.  This is the exact long-path exclusion needed by
 the Pósa short-dense alternative: any such path would trigger the preceding
@@ -30083,6 +30587,7 @@ theorem not_hasPathFromAtLeast_in_second_component_bfs_core_family_of_cycleFree
     (cycleGraph_isContained_of_long_path_in_second_component_bfs_core_family
       G hcore₀ hdisj₀ hanti₀ hcore₁ hH₁D₁ hD₁W₀ hk hp hroom hkpath)
 
+open scoped Classical in
 /-- The cycle-free selected second-pass core therefore contains, from every
 chosen start, a bounded support carrying the Pósa quadratic edge mass.  This
 is the local dense object passed to the already formalized DRC extractor. -/
@@ -30122,9 +30627,9 @@ theorem exists_minDegree_core_with_short_dense_support_of_dense_no_long_path
     (hdense : d * Fintype.card W ≤ 2 * K.edgeFinset.card)
     (hno : ¬ ∃ u v : W, ∃ p : K.Walk u v, p.IsPath ∧ k ≤ p.length) :
     ∃ H : SimpleGraph W, ∃ _ : DecidableRel H.Adj,
-      ∃ hne : H.support.Nonempty,
+      ∃ _hne : H.support.Nonempty,
         H ≤ K ∧ d ≤ 2 * (H.induce H.support).minDegree ∧
-        ∀ x : H.support,
+        ∀ _x : H.support,
           ∃ S : Finset H.support, S.Nonempty ∧
             (H.induce H.support).minDegree ≤ S.card ∧ S.card ≤ k ∧
             (H.induce H.support).minDegree *
@@ -30162,6 +30667,7 @@ theorem exists_minDegree_core_with_short_dense_support_of_dense_no_long_path
     simpa [C] using
       exists_short_dense_support_with_size_bounds_of_no_long_path C x k hnoC
 
+open scoped Classical in
 /-- Applied to one selected second-pass core, the previous dense path-free
 lemma supplies the exact minimum-degree/Pósa object used before DRC.  The
 absence of every k-long path is not an extra hypothesis: the checked
@@ -30183,10 +30689,10 @@ theorem exists_minDegree_core_with_short_dense_support_of_second_component_bfs_c
     (hroom : 3 * Nat.log 2 (Fintype.card V) + 1 ≤ k)
     (hcycle : ¬ cycleGraph k ⊑ G) :
     ∃ H : SimpleGraph H₁, ∃ _ : DecidableRel H.Adj,
-      ∃ hne : H.support.Nonempty,
+      ∃ _hne : H.support.Nonempty,
         H ≤ G.induce (H₁ : Set V) ∧
         d ≤ 2 * (H.induce H.support).minDegree ∧
-        ∀ x : H.support,
+        ∀ _x : H.support,
           ∃ S : Finset H.support, S.Nonempty ∧
             (H.induce H.support).minDegree ≤ S.card ∧ S.card ≤ k ∧
             (H.induce H.support).minDegree *
@@ -30209,28 +30715,30 @@ theorem exists_minDegree_core_with_short_dense_support_of_second_component_bfs_c
     exists_minDegree_core_with_short_dense_support_of_dense_no_long_path
       J hd hJdense hno
 
+open scoped Classical in
 /-- Large-set form of the complete two-pass dense-to-Pósa package.  It keeps
 the density parameter d explicit, so the theorem can be applied inside every
 remaining induced set during greedy hub peeling, not only at the original
 extremal order. -/
 theorem exists_short_dense_minDegree_core_of_large_indepSetFree_cycleFree
     {V : Type*} [Fintype V] [Nonempty V]
-    (G : SimpleGraph V) [DecidableRel G.Adj] {n d k : ℕ}
+    (G : SimpleGraph V) {n d k : ℕ}
     (hn : 2 ≤ n) (hd : 0 < d) (hfree : G.IndepSetFree n)
     (hsize : 16 * ((n - 1) * (d + 1)) ≤ Fintype.card V)
     (hk : 3 ≤ k)
     (hroom : 3 * Nat.log 2 (Fintype.card V) + 1 ≤ k)
     (hcycle : ¬ cycleGraph k ⊑ G) :
     ∃ H₁ : Finset V, ∃ H : SimpleGraph H₁,
-      ∃ _ : DecidableRel H.Adj, ∃ hne : H.support.Nonempty,
+      ∃ _ : DecidableRel H.Adj, ∃ _hne : H.support.Nonempty,
         H ≤ G.induce (H₁ : Set V) ∧
         d ≤ 2 * (H.induce H.support).minDegree ∧
-        ∀ x : H.support,
+        ∀ _x : H.support,
           ∃ S : Finset H.support, S.Nonempty ∧
             (H.induce H.support).minDegree ≤ S.card ∧ S.card ≤ k ∧
             (H.induce H.support).minDegree *
                 (H.induce H.support).minDegree ≤
               2 * (inducedEdgeFinsetOn (H.induce H.support) S).card := by
+  classical
   obtain ⟨F₀, F₁, q, hq, hcore₀, hdisj₀, hanti₀,
       hcore₁, _hdisj₁, _hanti₁, hqdense⟩ :=
     exists_dense_second_component_bfs_core_of_indepSetFree
@@ -30465,6 +30973,7 @@ theorem sqrt_sixteenth_internal_selected_capacity
     _ ≤ (9 * s - 4) * (d - 1) := Nat.mul_le_mul_left _ hDle
     _ = (9 * Nat.sqrt k - 4) * (d - 1) := by simp [s]
 
+open scoped Classical in
 /-- At the diagonal extremal order, a C_k-free independent-set-free graph
 therefore contains a path-free minimum-degree core on the explicit k/16
 scale, and every start in that core has a k-bounded Pósa support with
@@ -30472,21 +30981,22 @@ quadratic edge mass.  The first/second separator families are existentially
 hidden after they have discharged the exact path exclusion. -/
 theorem exists_short_dense_minDegree_core_at_extremal_order_of_cycleFree
     {V : Type*} [Fintype V] [Nonempty V]
-    (G : SimpleGraph V) [DecidableRel G.Adj] {k n : ℕ}
+    (G : SimpleGraph V) {k n : ℕ}
     (hk : 64 ≤ k) (hn : 2 ≤ n) (hnk : n ≤ k)
     (hfree : G.IndepSetFree n)
     (horder : Fintype.card V = (k - 1) * (n - 1) + 1)
     (hcycle : ¬ cycleGraph k ⊑ G) :
     ∃ H₁ : Finset V, ∃ H : SimpleGraph H₁,
-      ∃ _ : DecidableRel H.Adj, ∃ hne : H.support.Nonempty,
+      ∃ _ : DecidableRel H.Adj, ∃ _hne : H.support.Nonempty,
         H ≤ G.induce (H₁ : Set V) ∧
         ((k - 1) / 16 - 1) ≤ 2 * (H.induce H.support).minDegree ∧
-        ∀ x : H.support,
+        ∀ _x : H.support,
           ∃ S : Finset H.support, S.Nonempty ∧
             (H.induce H.support).minDegree ≤ S.card ∧ S.card ≤ k ∧
             (H.induce H.support).minDegree *
                 (H.induce H.support).minDegree ≤
               2 * (inducedEdgeFinsetOn (H.induce H.support) S).card := by
+  classical
   obtain ⟨F₀, F₁, q, hq, hcore₀, hdisj₀, hanti₀,
       hcore₁, _hdisj₁, _hanti₁, hqdense⟩ :=
     exists_dense_second_component_bfs_core_at_extremal_order
@@ -30562,6 +31072,7 @@ theorem exists_localRobustHub_at_extremal_order_of_cycleFree
   · simpa using hsmall S.card hS.card_pos hSle
 -/
 
+open scoped Classical in
 /-- Map-back form of the exact nested-BFS closure.  Dense extraction records
 the inner parity core as an ambient finite image, whereas its long path is
 found in the graph induced by that image.  Lift each image vertex back to
@@ -30569,7 +31080,7 @@ the recorded connected component, apply the exact two-level theorem there,
 and keep the resulting cycle in the outer ambient graph. -/
 theorem cycleGraph_isContained_of_long_path_in_mapped_nested_parityBfsLayerUnion
     {W : Type*} [Fintype W] (J : SimpleGraph W)
-    [DecidableRel J.Adj] (hconn : J.Connected)
+    (hconn : J.Connected)
     {root₀ : W} {j₀ : ℕ} {parity₀ : Fin 2}
     (c :
       (J.induce ((parityBfsLayerUnion J root₀ j₀ parity₀ : Finset W) : Set W)).ConnectedComponent)
@@ -30652,7 +31163,7 @@ radius rather than by the unknown localized layer.  This is the reusable
 single-BFS interval output for both the small-dense and interaction stages. -/
 theorem exists_cycle_in_interval_of_path_in_parityBfsLayerUnion
     {V : Type*} [Fintype V] (G : SimpleGraph V)
-    [DecidableRel G.Adj] (hconn : G.Connected)
+    (hconn : G.Connected)
     {root : V} {j parity : ℕ} {a b : V} {p : G.Walk a b}
     (hp : p.IsPath)
     (hsupp : ∀ z ∈ p.support,
@@ -30661,6 +31172,7 @@ theorem exists_cycle_in_interval_of_path_in_parityBfsLayerUnion
     ∃ i : ℕ, i ≤ j ∧ i % 2 = parity ∧
       ∃ ℓ : ℕ, cycleGraph ℓ ⊑ G ∧
         p.length + 1 ≤ ℓ ∧ ℓ ≤ p.length + 2 * j := by
+  classical
   obtain ⟨i, hij, hpar, hplayer⟩ :=
     exists_bfsLayer_containing_walk_support_of_parityBfsLayerUnion
       G p hsupp
@@ -30680,7 +31192,7 @@ puts the path in one actual BFS layer; connectedness supplies the two root
 reachability witnesses, and the even root detour preserves the path parity. -/
 theorem exists_same_parity_cycle_in_interval_of_path_in_parityBfsLayerUnion
     {V : Type*} [Fintype V] (G : SimpleGraph V)
-    [DecidableRel G.Adj] (hconn : G.Connected)
+    (hconn : G.Connected)
     {root : V} {j parity : ℕ} {a b : V} {p : G.Walk a b}
     (hp : p.IsPath)
     (hsupp : ∀ z ∈ p.support,
@@ -30690,6 +31202,7 @@ theorem exists_same_parity_cycle_in_interval_of_path_in_parityBfsLayerUnion
       ∃ ℓ : ℕ, cycleGraph ℓ ⊑ G ∧
         p.length + 1 ≤ ℓ ∧ ℓ ≤ p.length + 2 * j ∧
         ℓ % 2 = p.length % 2 := by
+  classical
   obtain ⟨i, hij, hpar, hplayer⟩ :=
     exists_bfsLayer_containing_walk_support_of_parityBfsLayerUnion
       G p hsupp
@@ -30711,7 +31224,6 @@ vertices outside the root component, and therefore supplies exactly the
 two reachability facts needed by the preceding component-local detour. -/
 theorem exists_cycle_in_interval_of_path_in_parityBfsLayerUnion_of_positive_distance
     {V : Type*} [Fintype V] (G : SimpleGraph V)
-    [DecidableRel G.Adj]
     {root : V} {j parity : ℕ} {a b : V} {p : G.Walk a b}
     (hp : p.IsPath)
     (hsupp : ∀ z ∈ p.support,
@@ -30721,6 +31233,7 @@ theorem exists_cycle_in_interval_of_path_in_parityBfsLayerUnion_of_positive_dist
     ∃ i : ℕ, 0 < i ∧ i ≤ j ∧ i % 2 = parity ∧
       ∃ ℓ : ℕ, cycleGraph ℓ ⊑ G ∧
         p.length + 1 ≤ ℓ ∧ ℓ ≤ p.length + 2 * j := by
+  classical
   obtain ⟨i, hij, hpar, hplayer⟩ :=
     exists_bfsLayer_containing_walk_support_of_parityBfsLayerUnion
       G p hsupp
@@ -30749,7 +31262,7 @@ graph that supplied its BFS parity provenance.  Under the positive-distance
 branch, the preceding component-local closure gives an ambient cycle with
 the same interval bounds as the path in the core. -/
 theorem exists_cycle_in_interval_of_path_in_mapped_parityBfsLayerUnion_of_positive_distance
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {S H : Finset V} {root : S} {j : ℕ} {parity : Fin 2}
     (hHeq : H = (parityBfsLayerUnion (G.induce (S : Set V)) root j parity).map
       ⟨Subtype.val, Subtype.val_injective⟩)
@@ -30761,6 +31274,7 @@ theorem exists_cycle_in_interval_of_path_in_mapped_parityBfsLayerUnion_of_positi
     ∃ ℓ : ℕ, cycleGraph ℓ ⊑ G ∧
       p.length + 1 ≤ ℓ ∧ ℓ ≤ p.length + 2 * j := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let J : SimpleGraph S := G.induce (S : Set V)
   have hHS : (H : Set V) ⊆ (S : Set V) := by
     intro v hv
@@ -30807,7 +31321,7 @@ theorem exists_cycle_in_interval_of_path_in_mapped_parityBfsLayerUnion_of_positi
 is connected, no positivity side condition is needed: the connected parity
 detour handles the root layer and all later layers uniformly. -/
 theorem exists_cycle_in_interval_of_path_in_mapped_parityBfsLayerUnion_of_connected
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {S H : Finset V} {root : S} {j : ℕ} {parity : Fin 2}
     (hconn : (G.induce (S : Set V)).Connected)
     (hHeq : H = (parityBfsLayerUnion (G.induce (S : Set V)) root j parity).map
@@ -30817,6 +31331,7 @@ theorem exists_cycle_in_interval_of_path_in_mapped_parityBfsLayerUnion_of_connec
     ∃ ℓ : ℕ, cycleGraph ℓ ⊑ G ∧
       p.length + 1 ≤ ℓ ∧ ℓ ≤ p.length + 2 * j := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let J : SimpleGraph S := G.induce (S : Set V)
   have hHS : (H : Set V) ⊆ (S : Set V) := by
     intro v hv
@@ -30857,12 +31372,13 @@ theorem exists_cycle_in_interval_of_path_in_mapped_parityBfsLayerUnion_of_connec
   · simpa [q] using hlow
   · simpa [q] using hupp
 
+open scoped Classical in
 /-- Path map-back for the corrected component witness.  The finite-map
 equality supplies a canonical lift of every core vertex into the connected
 component; mapping a core path through that lift lets the connected parity
 detour close it, and the component embedding returns the cycle to G. -/
 theorem exists_cycle_in_interval_of_path_in_component_mapped_parityBfsLayerUnion
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {S H : Finset V}
     {c : (G.induce (S : Set V)).ConnectedComponent}
     {root : c} {j : ℕ} {parity : Fin 2}
@@ -30875,6 +31391,7 @@ theorem exists_cycle_in_interval_of_path_in_component_mapped_parityBfsLayerUnion
     ∃ ℓ : ℕ, cycleGraph ℓ ⊑ G ∧
       p.length + 1 ≤ ℓ ∧ ℓ ≤ p.length + 2 * j := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let K : SimpleGraph c := c.toSimpleGraph
   have hpre : ∀ y : H, ∃ x : c, x.1.1 = y.1 := by
     intro y
@@ -30953,12 +31470,13 @@ theorem exists_cycle_in_interval_of_path_in_component_mapped_parityBfsLayerUnion
   · simpa [q] using hlow
   · simpa [q] using hupp
 
+open scoped Classical in
 /-- Same-parity map-back for the corrected connected-component witness.
 The lift into the component is injective, hence preserves both path length
 and simplicity; after the connected parity-union closure, the resulting
 cycle maps back to the ambient graph without changing its order. -/
 theorem exists_same_parity_cycle_in_interval_of_path_in_component_mapped_parityBfsLayerUnion
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {S H : Finset V}
     {c : (G.induce (S : Set V)).ConnectedComponent}
     {root : c} {j : ℕ} {parity : Fin 2}
@@ -30972,6 +31490,7 @@ theorem exists_same_parity_cycle_in_interval_of_path_in_component_mapped_parityB
       p.length + 1 ≤ ℓ ∧ ℓ ≤ p.length + 2 * j ∧
       ℓ % 2 = p.length % 2 := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let K : SimpleGraph c := c.toSimpleGraph
   have hpre : ∀ y : H, ∃ x : c, x.1.1 = y.1 := by
     intro y
@@ -31051,13 +31570,14 @@ theorem exists_same_parity_cycle_in_interval_of_path_in_component_mapped_parityB
   · simpa [q] using hupp
   · simpa [q] using hparity
 
+open scoped Classical in
 /-- Decomposition-preserving component map-back.  Instead of returning only
 the copied cycle, retain the even root-side return path in the ambient
 graph, together with its support disjointness from the original core path.
 This is the component-BFS interface consumed by the hybrid selected-edge
 lift. -/
 theorem exists_even_short_return_path_in_component_mapped_parityBfsLayerUnion
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V] (G : SimpleGraph V)
     {S H : Finset V}
     {c : (G.induce (S : Set V)).ConnectedComponent}
     {root : c} {j : ℕ} {parity : Fin 2}
@@ -31072,6 +31592,7 @@ theorem exists_even_short_return_path_in_component_mapped_parityBfsLayerUnion
       (p.map (SimpleGraph.Embedding.induce (G := G) (H : Set V)).toHom).support.tail.Disjoint
         r.support.tail := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let K : SimpleGraph c := c.toSimpleGraph
   have hpre : ∀ y : H, ∃ x : c, x.1.1 = y.1 := by
     intro y
@@ -31224,6 +31745,7 @@ theorem exists_same_parity_cycle_in_interval_of_path_in_component_bfs_core_with_
     ∃ j ℓ : ℕ, j ≤ Nat.log 2 (Fintype.card V) ∧
       cycleGraph ℓ ⊑ G ∧ p.length + 1 ≤ ℓ ∧
       ℓ ≤ p.length + 2 * j ∧ ℓ % 2 = p.length % 2 := by
+  classical
   rcases hcore with ⟨S, c, root, j, parity, hj, hHeq, _hDeq⟩
   have hcV : Fintype.card c ≤ Fintype.card V :=
     Fintype.card_le_of_injective (fun x : c => x.1.1) (by
@@ -31249,6 +31771,7 @@ theorem exists_even_short_return_path_in_component_bfs_core_with_radius_bound
         (p.map (SimpleGraph.Embedding.induce
           (G := G) (H : Set V)).toHom).support.tail.Disjoint
             r.support.tail := by
+  classical
   rcases hcore with ⟨S, c, root, j, parity, hj, hHeq, _hDeq⟩
   have hcV : Fintype.card c ≤ Fintype.card V :=
     Fintype.card_le_of_injective (fun x : c => x.1.1) (by
@@ -31268,8 +31791,8 @@ prescribed parity, closes inside that core to an ordinary interaction cycle
 of the same parity.  In the complementary branch the global factor-`32`
 transversal count holds. -/
 theorem exists_same_parity_hubInteraction_cycle_or_selected_transversal_count
-    {V ι : Type*} [Fintype V] [Fintype ι] [Nonempty ι]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V ι : Type*} [Finite V] [Fintype ι] [Nonempty ι]
+    (G : SimpleGraph V)
     (I : ι → Finset V) {n σ D parity : ℕ}
     (hD : 2 ≤ D)
     (hfree : G.IndepSetFree n)
@@ -31282,6 +31805,7 @@ theorem exists_same_parity_hubInteraction_cycle_or_selected_transversal_count
       (σ - 4 * (D + 1)) * Fintype.card ι <
         32 * (D + 1) * n := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let K : SimpleGraph ι := HubInteractionGraph G I
   obtain ⟨F, hcore, henvDisj, hanti, hunion, hcharge⟩ :=
     exists_global_separated_component_bfs_core_family_with_witness K
@@ -31395,8 +31919,8 @@ selected prefix is returned together with the even, internally disjoint
 ordinary BFS return path, rather than being collapsed to an abstract
 interaction cycle. -/
 theorem exists_selected_path_with_even_return_or_transversal_count
-    {V ι : Type*} [Fintype V] [Fintype ι] [Nonempty ι]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V ι : Type*} [Finite V] [Fintype ι] [Nonempty ι]
+    (G : SimpleGraph V)
     (I : ι → Finset V) {n σ D parity : ℕ}
     (hD : 2 ≤ D)
     (hfree : G.IndepSetFree n)
@@ -31415,6 +31939,7 @@ theorem exists_selected_path_with_even_return_or_transversal_count
       (σ - 4 * (D + 1)) * Fintype.card ι <
         32 * (D + 1) * n := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let K : SimpleGraph ι := HubInteractionGraph G I
   obtain ⟨F, hcore, henvDisj, hanti, hunion, hcharge⟩ :=
     exists_global_separated_component_bfs_core_family_with_witness K
@@ -31544,6 +32069,7 @@ theorem exists_cycle_in_interval_of_path_in_component_bfs_core_with_radius_bound
     ∃ j ℓ : ℕ, j ≤ Nat.log 2 (Fintype.card V) ∧
       cycleGraph ℓ ⊑ G ∧ p.length + 1 ≤ ℓ ∧
       ℓ ≤ p.length + 2 * j := by
+  classical
   rcases hcore with ⟨S, c, root, j, parity, hj, hHeq, _hDeq⟩
   have hcV : Fintype.card c ≤ Fintype.card V :=
     Fintype.card_le_of_injective (fun x : c => x.1.1) (by
@@ -32385,7 +32911,7 @@ threshold is large enough. -/
 theorem three_le_inv_succ_sqrt_mul_density_four_mul_card
     {k δ m : ℕ} (hk : 64 ≤ k)
     (hδ : (k - 1) / 16 - 1 ≤ 2 * δ)
-    (hδm : δ ≤ m) (hmk : m ≤ k)
+    (hδm : δ ≤ m) (_hmk : m ≤ k)
     (hsqrt : 3 * 64 ^ 5 + 1 ≤ Nat.sqrt k) :
     (3 : ℝ) ≤
       ((1 : ℝ) / (Nat.sqrt k + 1)) *
@@ -33048,6 +33574,7 @@ theorem exists_localRobustHub_in_finset_of_large_indepSetFree_cycleFree
         hθ' hτ' hsmall'
   exact ⟨R, hRsub, hRcard, hhub⟩
 
+open scoped Classical in
 /-- Greedy two-pass KLS hub decomposition in the ambient graph.  Repeatedly
 apply the preceding remaining-set extractor until fewer than the explicit
 factor-sixteen cutoff vertices remain; the extracted local-hub regions are
@@ -33087,6 +33614,7 @@ theorem exists_disjoint_localRobustHub_family_of_two_pass_cycleFree
     exact ⟨u, hUR hu⟩
   exact ⟨R, hRS, hRne, hhub⟩
 
+open scoped Classical in
 /-- Bounded-region version of the greedy two-pass hub family.  The Pósa
 support from which every hub is mapped has at most k vertices, so the
 greedy family can retain this capacity invariant for the later stability
@@ -33126,6 +33654,7 @@ theorem exists_disjoint_bounded_localRobustHub_family_of_two_pass_cycleFree
     exact ⟨u, hUR hu⟩
   exact ⟨R, hRS, hRne, hhub, hRcard⟩
 
+open scoped Classical in
 /-- First fully instantiated two-pass DRC decomposition.  With exponent six,
 eta = 1/(floor(sqrt k)+1), threshold three, and reservoir lower bound one,
 the preceding fixed-ratio estimates discharge all numerical hypotheses once
@@ -33161,6 +33690,7 @@ theorem exists_disjoint_threshold_three_localRobustHub_family_of_two_pass_cycleF
   · intro m hm1 hmk
     exact two_mul_inv_succ_sqrt_pow_six_lt_inv_sq (by omega) hm1 hmk
 
+open scoped Classical in
 /-- Linear-reservoir refinement of the instantiated threshold-three family.
 The same exponent-six calculation gives every selected robust core at least
 floor(k/(2·64^13)) vertices, while retaining the identical explicit
@@ -33203,6 +33733,7 @@ theorem exists_disjoint_threshold_three_linear_localRobustHub_family_of_two_pass
   · intro m hm1 hmk
     exact two_mul_inv_succ_sqrt_pow_six_lt_inv_sq (by omega) hm1 hmk
 
+open scoped Classical in
 /-- Square-root-threshold, linear-reservoir two-pass DRC decomposition.  This
 is the quantitative hub family closest to the KLS routing scale: every hub
 has at least floor(k/(2·64^13)) core vertices and pairwise common-neighbour
@@ -33243,6 +33774,7 @@ theorem exists_disjoint_sqrt_threshold_linear_localRobustHub_family_of_two_pass_
   · intro m hm1 hmk
     exact two_mul_inv_succ_sqrt_pow_six_lt_inv_sq (by omega) hm1 hmk
 
+open scoped Classical in
 /-- Routing-scale two-pass DRC decomposition.  Increasing the DRC exponent
 to ten and taking `eta` at fourth-root scale simultaneously gives threshold
 `8 sqrt k` and an exact-core lower bound `9 sqrt k`, precisely the capacities
@@ -33284,12 +33816,14 @@ theorem exists_disjoint_bounded_eight_sqrt_nine_sqrt_localRobustHub_family_of_tw
     exact two_mul_inv_succ_sqrt_sqrt_pow_ten_lt_inv_sq
       (by omega) hm1 hmk
 
+open scoped Classical in
 /-- Strengthened routing-scale two-pass DRC decomposition.  Before target
 compression, exponent ten produces a `k^(3/4)`-scale common-neighbour
 reservoir, while the robust core still has exact usable order at least
 `9 * sqrt k`.  This is the quantitative input needed for Bernoulli
 compression to a region of square-root order. -/
-theorem exists_disjoint_bounded_three_quarter_nine_sqrt_localRobustHub_family_of_two_pass_cycleFree
+theorem
+    exists_disjoint_bounded_three_quarter_nine_sqrt_localRobustHub_family_of_two_pass_cycleFree
     {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {k n : ℕ} (hk : 64 ≤ k) (hn : 2 ≤ n)
@@ -33323,6 +33857,7 @@ theorem exists_disjoint_bounded_three_quarter_nine_sqrt_localRobustHub_family_of
     exact two_mul_inv_succ_sqrt_sqrt_pow_ten_lt_inv_sq
       (by omega) hm1 hmk
 
+open scoped Classical in
 /-- Compact form of the strengthened two-pass DRC decomposition.  The dense
 Pósa support used to find a hub may contain up to `k` vertices, but Bernoulli
 compression means that the region actually removed by the greedy algorithm
@@ -33386,6 +33921,7 @@ theorem exists_disjoint_compact_seven_nine_sqrt_localRobustHub_family_of_two_pas
         (by omega) hm1 hmk
   · simpa [τ, K, Θ, sigma] using hsample
 
+open scoped Classical in
 /-- The compact seven-route hub family exists uniformly for every sufficiently
 large target length `k` satisfying the graph-theoretic hypotheses. -/
 theorem eventually_exists_disjoint_compact_seven_nine_sqrt_localRobustHub_family
@@ -33411,6 +33947,7 @@ theorem eventually_exists_disjoint_compact_seven_nine_sqrt_localRobustHub_family
     exists_disjoint_compact_seven_nine_sqrt_localRobustHub_family_of_two_pass_cycleFree
       G hk hn hfree hroom hcycle hsqrt hsample
 
+open scoped Classical in
 /-- Alternating-reservoir refinement of the compact two-pass decomposition.
 Before sampling connectors we reserve an alternating cycle with
 `9 * sqrt k` vertices on each side.  The retained connector set has pair
@@ -33477,6 +34014,7 @@ theorem exists_disjoint_compact_alternating_nine_sqrt_hub_family_of_two_pass_cyc
         (by omega) hm1 hmk
   · simpa [τ, K, Θ, sigma] using hsample
 
+open scoped Classical in
 /-- Flexible-divisor compact alternating-hub decomposition.  Replacing the
 fixed divisor `16` by any `B ≥ 16` shrinks the greedy uncovered cutoff to the
 `16 / B` scale.  The price is only in the fixed DRC ratio `R = 4B`; the
@@ -33599,6 +34137,7 @@ theorem eventually_divisor_compact_alternating_hub_numerics
         Nat.mul_le_mul_left _ hfourth
   · simpa [C, R] using hsample
 
+open scoped Classical in
 /-- Bundled structural output of the flexible compact decomposition.  It
 selects the exact alternating core, its cycle side, and its connector set
 inside every greedy region, preserves the equality with that region, and
@@ -33685,6 +34224,7 @@ theorem exists_divisor_compact_alternating_core_family_of_cycleFree
     omega
   exact ⟨F, A, Bside, D, hdata, hregions, hcover, hleft, hcount⟩
 
+open scoped Classical in
 /-- For every fixed finite graph, the structured alternating-hub family is
 available uniformly for all sufficiently large requested cycle lengths. -/
 theorem eventually_exists_disjoint_compact_alternating_nine_sqrt_hub_family
@@ -33724,6 +34264,7 @@ theorem eventually_exists_disjoint_compact_alternating_nine_sqrt_hub_family
     exists_disjoint_compact_alternating_nine_sqrt_hub_family_of_two_pass_cycleFree
       G hk hn hfree hroom hcycle hsqrt hreserve hsample
 
+open scoped Classical in
 /-- Thin alternating-reservoir refinement.  The alternating scaffold still
 has `9 * sqrt k` vertices on each side, but the connector set now has size
 `O(k^(3/8)) = o(sqrt k)`.  This is the quantitative form needed when the
@@ -33799,6 +34340,7 @@ theorem exists_disjoint_thin_compact_alternating_nine_sqrt_hub_family_of_two_pas
         (by omega) hm1 hmk
   · simpa [τ, K, Θ, r, sigma] using hsample
 
+open scoped Classical in
 /-- The thin alternating-hub decomposition is available uniformly at all
 sufficiently large target lengths. -/
 theorem eventually_exists_disjoint_thin_compact_alternating_nine_sqrt_hub_family
@@ -33840,10 +34382,12 @@ theorem eventually_exists_disjoint_thin_compact_alternating_nine_sqrt_hub_family
     exists_disjoint_thin_compact_alternating_nine_sqrt_hub_family_of_two_pass_cycleFree
       G hk hn hfree hroom hcycle hsqrt hreserve hsample
 
+open scoped Classical in
 /-- Flexible-divisor thin alternating-hub decomposition.  It combines the
 small greedy remainder of the divisor-parameterized extraction with the
 `o(sqrt k)` connector set of the thin sampler. -/
-theorem exists_disjoint_thin_compact_alternating_nine_sqrt_hub_family_of_divisor_two_pass_cycleFree
+theorem
+    exists_disjoint_thin_compact_alternating_nine_sqrt_hub_family_of_divisor_two_pass_cycleFree
     {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {B k n : ℕ} (hB : 16 ≤ B) (hk : 4 * B ≤ k) (hn : 2 ≤ n)
@@ -33967,6 +34511,7 @@ theorem eventually_divisor_thin_compact_alternating_hub_numerics
         Nat.mul_le_mul_left _ hfourth
   · simpa [C, R] using hsample
 
+open scoped Classical in
 /-- Bundled structural and counting output of the flexible thin compact-hub
 decomposition. -/
 theorem exists_divisor_thin_compact_alternating_core_family_of_cycleFree
@@ -34062,6 +34607,7 @@ theorem exists_divisor_thin_compact_alternating_core_family_of_cycleFree
     omega
   exact ⟨F, A, Bside, D, hdata, hregions, hcover, hleft, hcount⟩
 
+open scoped Classical in
 /-- Fixed-divisor quantitative hub decomposition.  Choosing any B ≥ 16 and
 d = floor((k-1)/B)-1 yields a 1/(4B) density ratio, square-root pair
 threshold, linear reservoir, and leftover cutoff on the 16/B scale.  This is
@@ -34114,10 +34660,11 @@ theorem exists_disjoint_divisor_sqrt_threshold_linear_localRobustHub_family_of_t
   · intro m hm1 hmk
     exact two_mul_inv_succ_sqrt_pow_six_lt_inv_sq (by omega) hm1 hmk
 
+open scoped Classical in
 /-- Bounded fixed-divisor quantitative hub decomposition.  This is the same
 square-root/linear DRC family as above, while retaining the inherited
 Pósa-support bound H.card ≤ k for every greedy region. -/
-theorem exists_disjoint_bounded_divisor_sqrt_threshold_linear_localRobustHub_family_of_two_pass_cycleFree
+theorem exists_bounded_divisor_sqrt_threshold_hub_family_of_two_pass_cycleFree
     {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {B k n : ℕ} (hB : 16 ≤ B) (hk : 4 * B ≤ k) (hn : 2 ≤ n)
@@ -34164,6 +34711,7 @@ theorem exists_disjoint_bounded_divisor_sqrt_threshold_linear_localRobustHub_fam
   · intro m hm1 hmk
     exact two_mul_inv_succ_sqrt_pow_six_lt_inv_sq (by omega) hm1 hmk
 
+open scoped Classical in
 /-- Eighth-root-scale fixed-divisor hub decomposition.  Compared with the
 square-root family, the DRC moment is raised to twenty and the sampling
 parameter is `1/(⌊k^(1/8)⌋+1)`.  The selected robust core consequently has
@@ -34267,6 +34815,7 @@ theorem isCompactAlternatingHub_of_isLocalRobustHub_bounded
   · simpa [F₀] using hdecomp
   · omega
 
+open scoped Classical in
 /-- Structural alternating-hub form of the eighth-root decomposition.  Each
 region has an exact core and alternating side of order `τ`, a disjoint
 remaining target robust at threshold `Θ-2τ`, and total order at most `k`. -/
@@ -34402,6 +34951,7 @@ theorem eventually_divisor_eighthRoot_alternatingHub_numerics
     by simpa [R, a, r, q, s] using hpositive,
     by simpa [R, a, r, q, s] using hreserve⟩
 
+open scoped Classical in
 /-- Eventual structural extraction at every fixed divisor. -/
 theorem eventually_exists_divisor_eighthRoot_alternatingHub_family
     (B : ℕ) (hB : 16 ≤ B) :
@@ -34457,6 +35007,7 @@ theorem mul_card_le_card_of_disjoint_localRobustHub_family
       Finset.card_le_card (Finset.subset_univ _)
     _ = Fintype.card V := by simp
 
+open scoped Classical in
 /-- Coverage-to-count conversion for a bounded greedy family.  If fewer
 than `m` ambient vertices lie outside the union and every displayed region
 has at most `M` vertices, then the ambient order is strictly below
@@ -34510,6 +35061,7 @@ theorem card_family_le_of_nonempty_disjoint
       Finset.card_le_card (Finset.subset_univ _)
     _ = Fintype.card V := by simp
 
+open scoped Classical in
 /-- Choose the robust core inside every member of a disjoint local-hub
 family.  Using the hub region itself as the target set keeps the regions
 pairwise disjoint, because each selected core is a subset of its region. -/
@@ -34543,6 +35095,7 @@ theorem exists_core_data_of_disjoint_localRobustHub_family
   rw [hiUnion, hjUnion]
   exact hdisj i i.2 j j.2 hijv
 
+open scoped Classical in
 /-- Normalize every selected DRC core to the common size `τ`.  The local
 hub predicate only gives a core of size at least `τ`; taking an exact-size
 subset preserves the all-pairs common-neighbour certificate and is essential
@@ -34590,6 +35143,7 @@ theorem exists_exact_core_data_of_disjoint_localRobustHub_family
     rw [hiUnion, hjUnion]
     exact hdisj i i.2 j j.2 hijv
 
+open scoped Classical in
 /-- Core-selection interface for the parity-broken branch.  If every local
 hub guarantees n+4 selected vertices, independent-set-freeness turns each
 chosen robust core into a matching-backed core while preserving the same
@@ -34614,6 +35168,7 @@ theorem exists_matched_core_data_of_disjoint_localRobustHub_family
   apply hasThreeDisjointAdjPairFamily_of_indepSetFree_of_add_four_le_card hfree
   exact hτn.trans (hU i).1
 
+open scoped Classical in
 /-- Family-level matched interaction exclusion.  Select matching-backed
 robust cores from the disjoint local hubs, prune the canonical repeated
 attachments, and apply the uniform-route interval obstruction to the
@@ -34658,6 +35213,7 @@ theorem exists_matched_core_data_with_no_uniform_pruned_interaction_cycle
   · exact no_repeated_attachment_outside_RepeatedAttachmentFinset G U
   · exact hcycle
 
+open scoped Classical in
 /-- Even-route lift for a pruned hub-interaction cycle.  Unlike the earlier
 long-first-hub wrapper, this version never uses an n-sized parity-breaking
 hub: every auxiliary vertex contributes one explicitly budgeted even robust
@@ -34708,6 +35264,7 @@ theorem cycleGraph_isContained_of_pruned_hubInteraction_cycle_even_routes
     exact hθr (f i) i
   · exact hlen
 
+open scoped Classical in
 /-- Length-two specialization of the even-route lift.  A pruned auxiliary
 cycle on q hubs contributes two internal edges and one cross edge per hub,
 so when k = 3q it is forbidden in a C_k-free graph as soon as every hub has
@@ -34743,7 +35300,7 @@ theorem not_cycleGraph_isContained_pruned_hubInteraction_of_three_mul
     simpa using hU i
   · intro i j
     simpa using hθ i
-  · simp [Fin.sum_const, hkq, hmq, m]
+  · simp [hkq, hmq, m]
     omega
 
 /-- Every k at least twelve has a near-third decomposition k = 3q + 2r
@@ -34820,13 +35377,14 @@ theorem exists_fin_weights_sum_eq_le {q z R : ℕ} (hq : 0 < q)
 the indexing form needed when only the internal vertices of a selected
 prefix receive long alternating-scaffold routes. -/
 theorem exists_finset_weights_sum_eq_le
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*} [Finite α]
     (S : Finset α) {z R : ℕ} (hz : z ≤ R * S.card) :
     ∃ weight : α → ℕ,
       (∑ i ∈ S, weight i) = z ∧
       (∀ i ∈ S, weight i ≤ R) ∧
       ∀ i ∉ S, weight i = 0 := by
   classical
+  let : Fintype α := Fintype.ofFinite α
   by_cases hS : S.Nonempty
   · have hcardpos : 0 < Fintype.card S := by
       simpa using hS.card_pos
@@ -34866,7 +35424,7 @@ an unmarked hub coincide.  Thus the even residual can be allocated across
 the marked alternating scaffolds before the routes are chosen. -/
 theorem cycleGraph_isContained_of_mixed_alternatingScaffold_cycle
     {V ι : Type*} [Fintype V] [DecidableEq V]
-    {m k q theta : ℕ} (hm : 2 ≤ m) (hk : 3 ≤ k)
+    {m k q theta : ℕ} (_hm : 2 ≤ m) (hk : 3 ≤ k)
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (A B D : ι → Finset V)
     (hscaffold : ∀ i, IsCyclicAlternatingScaffold G q (A i) (B i))
@@ -34924,7 +35482,7 @@ theorem cycleGraph_isContained_of_mixed_alternatingScaffold_cycle
     exists_mixed_alternatingScaffold_routes_fin
       G A B D hscaffold hrob (by
         intro i
-        convert hmajorD i using 1 <;> ext x <;> simp) hAcard hq htheta (by
+        convert hmajorD i using 1 ; ext x ; simp) hAcard hq htheta (by
           intro i j hij
           convert hregions i j hij using 1 <;> ext x <;> simp)
         f hfinj (fun i => i ∈ S) a b ha hb hab weight hweightle
@@ -34982,6 +35540,7 @@ theorem cycleGraph_isContained_of_mixed_alternatingScaffold_cycle
     dsimp [base] at hkform
     omega
 
+open scoped Classical in
 /-- Hybrid full-capacity lift.  A long path from a valid selected-edge
 system is closed by an arbitrary internally disjoint path in the ordinary
 hub-interaction graph.  Internal selected-path hubs supply all adjustable
@@ -34989,7 +35548,7 @@ length, while the two junction hubs and every BFS-return hub use only a
 zero-or-two-edge robust route.  Consequently repeated-attachment pruning is
 unnecessary. -/
 theorem cycleGraph_isContained_of_selected_path_and_hubInteraction_return
-    {V ι : Type*} [Fintype V] [Fintype ι]
+    {V ι : Type*} [Fintype V] [Finite ι]
     {k q theta : ℕ} (hk : 3 ≤ k)
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (A B D I : ι → Finset V)
@@ -35016,6 +35575,7 @@ theorem cycleGraph_isContained_of_selected_path_and_hubInteraction_return
         (q - 4) * (p.length - 1)) :
     cycleGraph k ⊑ G := by
   classical
+  let : Fintype ι := Fintype.ofFinite ι
   obtain ⟨m, f, a, b, S, hmlen, hfinj, haI, hbI,
       hcross, hclose, hScard, hab⟩ :=
     exists_cyclic_attachments_with_selected_path_interior
@@ -35093,6 +35653,7 @@ theorem cycleGraph_isContained_of_selected_path_and_hubInteraction_return
   · simpa [T, shortCost] using hparExact
   · simpa [T, shortCost] using hcapExact
 
+open scoped Classical in
 /-- A same-parity auxiliary cycle lifts through disjoint alternating
 scaffolds whenever its residual length fits the one-route scaffold capacity.
 Every hub pays a base route of length four, every auxiliary edge pays one,
@@ -35162,6 +35723,7 @@ theorem cycleGraph_isContained_of_pruned_alternatingScaffold_cycle_even_capacity
   rw [hsumform, hrsum]
   omega
 
+open scoped Classical in
 /-- Full-capacity same-parity lift for a pruned hub-interaction cycle.  Each
 hub pays six internal route edges and one auxiliary cross edge, while every
 additional pair of target edges consumes one of its `q - 4` scaffold steps. -/
@@ -35225,6 +35787,7 @@ theorem cycleGraph_isContained_of_pruned_alternatingScaffold_cycle_long_capacity
   rw [hsumform, hrsum]
   omega
 
+open scoped Classical in
 /-- Full-capacity lift of a globally selected auxiliary cycle.  The selected
 system itself supplies pairwise fresh incoming and outgoing ambient handles,
 so unlike the pruned ordinary-interaction theorem no repeated-attachment
@@ -35290,11 +35853,12 @@ theorem cycleGraph_isContained_of_selectedCrossEdgeGraph_alternatingScaffold_cyc
   rw [hsumform, hrsum]
   omega
 
+open scoped Classical in
 /-- Opposite-parity full-capacity lift of a selected auxiliary cycle.  A
 matching edge in the first scaffold replaces its ordinary six-edge internal
 route by a five-edge route; all remaining hubs retain their full `q - 4`
 adjustable capacity. -/
-theorem cycleGraph_isContained_of_selectedCrossEdgeGraph_alternatingScaffold_cycle_matched_odd_capacity
+theorem cycleGraph_isContained_of_selected_matched_scaffold_cycle_odd_capacity
     {V ι : Type*} [Fintype V] {m k q theta : ℕ}
     (hm : 2 ≤ m) (hk : 3 ≤ k)
     (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -35360,11 +35924,13 @@ theorem cycleGraph_isContained_of_selectedCrossEdgeGraph_alternatingScaffold_cyc
   dsimp [base] at hkz
   omega
 
+open scoped Classical in
 /-- All-parity full-capacity selected-cycle lift for thin alternating hubs.
 The single capacity hypothesis reserves the first hub for parity correction;
 an even target may also use it, while an odd target invokes the preceding
 five-edge first-hub assembly. -/
-theorem cycleGraph_isContained_of_selectedCrossEdgeGraph_alternatingScaffold_cycle_matched_capacity
+theorem
+    cycleGraph_isContained_of_selectedCrossEdgeGraph_alternatingScaffold_cycle_matched_capacity
     {V ι : Type*} [Fintype V] {m k q theta : ℕ}
     (hm : 2 ≤ m) (hk : 3 ≤ k)
     (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -35403,10 +35969,11 @@ theorem cycleGraph_isContained_of_selectedCrossEdgeGraph_alternatingScaffold_cyc
       rw [hshift]
       omega
     exact
-      cycleGraph_isContained_of_selectedCrossEdgeGraph_alternatingScaffold_cycle_matched_odd_capacity
+      cycleGraph_isContained_of_selected_matched_scaffold_cycle_odd_capacity
         hm hk G A B D I M hscaffold hrob hmajorD hq htheta hregions
           hIA hM hmatch hcopy (by omega) hpar hcap
 
+open scoped Classical in
 /-- All-parity lift for a cycle in a globally selected auxiliary graph.
 Freshness of selected handles gives distinct attachments at every hub, and
 one matching-backed hub supplies the parity correction.  This is the exact
@@ -35453,6 +36020,7 @@ theorem cycleGraph_isContained_of_selectedCrossEdgeGraph_cycle_matched
     exact hθ (f j.succ) j
   · exact hlen
 
+open scoped Classical in
 /-- Every parity-unbroken alternating core is counted directly, without
 repeated-attachment pruning.  The independent remainder in each core feeds
 the provenance-preserving selected-path dichotomy; its long branch is
@@ -35553,6 +36121,7 @@ theorem unbroken_alternatingScaffold_selected_count_of_hybrid_lift
     rw [hcard, Nat.mul_zero]
     positivity
 
+open scoped Classical in
 /-- Parity-unbroken alternating cores satisfy a selected-transversal count
 unless one core is heavily consumed by repeated attachments.  On the
 retained branch, delete at most four internal-matching endpoints from every
@@ -35570,7 +36139,7 @@ theorem unbroken_alternatingScaffold_selected_count_or_heavy_repeated_attachment
       IsCyclicAlternatingScaffold G (9 * Nat.sqrt k) (A i) (B i))
     (hrob : ∀ i, RobustPairSet G (A i) (D i) theta)
     (hmajorD : ∀ i, Disjoint (A i ∪ B i) (D i))
-    (hAcard : ∀ i, (A i).card = 9 * Nat.sqrt k)
+    (_hAcard : ∀ i, (A i).card = 9 * Nat.sqrt k)
     (htheta : 3 ≤ theta)
     (hregions : ∀ i j, i ≠ j →
       Disjoint ((A i ∪ B i) ∪ D i) ((A j ∪ B j) ∪ D j))
@@ -35706,6 +36275,7 @@ theorem unbroken_alternatingScaffold_selected_count_or_heavy_repeated_attachment
     have : 0 < 32 * (pathThreshold + 1) * n := by positivity
     exact this
 
+open scoped Classical in
 /-- Retained form of the preceding dichotomy.  When every displayed core is
 parity-unbroken and at least `σ` vertices of each core survive the canonical
 repeated-attachment deletion, the heavy branch is impossible, so the
@@ -35772,6 +36342,7 @@ theorem unbroken_alternatingScaffold_selected_count_of_full_retention
     exact (not_lt_of_ge ((hretain i.1).trans
       (Finset.card_le_card hsurvSub))) hi
 
+open scoped Classical in
 /-- Quantitative light/heavy decomposition of the parity-unbroken cores.
 The light subtype consists of cores retaining at least `σ` vertices after
 the repeated-attachment deletion for the *whole* unbroken family.  Its
@@ -35883,6 +36454,7 @@ theorem unbroken_alternatingScaffold_light_count_and_heavy_charge
   · exact mul_card_heavy_sdiff_lt_le_card AJ R
       (fun i => hAcard i.1) hσA hAJdisj
 
+open scoped Classical in
 /-- Diagonal-scale specialization of the light/heavy unbroken-core split.
 Take path threshold `floor(sqrt k / 16)` and retain threshold `8 * sqrt k`.
 The preceding square-root/log lemmas discharge all fitting hypotheses from
@@ -35928,6 +36500,7 @@ theorem unbroken_alternatingScaffold_diagonal_light_count_and_heavy_charge
     exact sqrt_sixteenth_long_capacity hsqrt hlow
   · exact hcycle
 
+open scoped Classical in
 /-- Direct diagonal count of all parity-unbroken cores.  The hybrid lift
 removes the light/heavy repeated-attachment split: every unbroken core
 contributes its full independent remainder to the selected-path count. -/
@@ -35976,6 +36549,7 @@ theorem unbroken_alternatingScaffold_diagonal_count_of_hybrid_lift
         sqrt_sixteenth_internal_selected_capacity hsqrt hdlo
   · exact hcycle
 
+open scoped Classical in
 /-- In particular, fewer than `n` compact cores are parity-unbroken; no
 heavy repeated-attachment alternative remains. -/
 theorem unbroken_alternatingScaffold_diagonal_card_lt_of_hybrid_lift
@@ -36018,6 +36592,7 @@ theorem unbroken_alternatingScaffold_diagonal_card_lt_of_hybrid_lift
   simpa [s, c] using
     hlower.trans_lt ((hcount.trans_le hupper).trans hsep)
 
+open scoped Classical in
 /-- All but at most `n-1` compact cores are parity-broken. -/
 theorem alternatingScaffold_diagonal_broken_accounting_of_hybrid_lift
     {V ι : Type*} [Fintype V] [Fintype ι]
@@ -36045,6 +36620,7 @@ theorem alternatingScaffold_diagonal_broken_accounting_of_hybrid_lift
     (fun i : ι => HasThreeDisjointAdjPairFamily G (A i))
   omega
 
+open scoped Classical in
 /-- Clean cardinal consequence of the diagonal light estimate: fewer than
 `n` parity-unbroken cores can retain `8 * sqrt k` vertices.  The heavy-core
 charge is preserved verbatim. -/
@@ -36174,6 +36750,7 @@ theorem alternatingScaffold_diagonal_broken_light_heavy_accounting
     simpa [J, AJ, R, H, hcoef] using hcharge
 -/
 
+open scoped Classical in
 /-- Select the explicit scaffold data from every compact alternating hub.
 After canonical repeated-attachment pruning, the preceding capacity lift
 forbids every auxiliary cycle whose displayed arithmetic data fit. -/
@@ -36247,6 +36824,7 @@ theorem exists_compactAlternatingHub_core_data_with_no_even_capacity_cycle
       (no_repeated_attachment_outside_RepeatedAttachmentFinset G A)
       hbase hpar hcap
 
+open scoped Classical in
 /-- Full-capacity compact-hub wrapper.  After selecting the alternating
 scaffold data and pruning repeated attachments, an auxiliary cycle is
 impossible whenever its exact residual fits the aggregate `tau - 4`
@@ -36315,6 +36893,7 @@ theorem exists_compactAlternatingHub_core_data_with_no_long_capacity_cycle
       (no_repeated_attachment_outside_RepeatedAttachmentFinset G A)
       hbase hpar hcap
 
+open scoped Classical in
 /-- Constant-capacity hubs exclude an entire interval of auxiliary cycle
 lengths, not merely the single near-third length.  If `3q ≤ k ≤ 7q` and the
 parities agree, distribute the residual `(k - 3q)/2` over the `q` hubs,
@@ -36376,6 +36955,7 @@ theorem not_cycleGraph_isContained_pruned_hubInteraction_of_distributed_two
     rw [hsumform, hsumcast, hmq]
     omega
 
+open scoped Classical in
 /-- Interval-form even-route exclusion.  If k = 3q + 2r, an auxiliary
 q-cycle uses length two in q-1 hubs and length 2(r+1) in one distinguished
 hub.  Thus any pruned q-cycle contradicts C_k-freeness whenever the robust
@@ -36427,7 +37007,7 @@ theorem not_cycleGraph_isContained_pruned_hubInteraction_of_three_mul_add_two_mu
   · intro i j
     by_cases hj : j = 0
     · subst j
-      simp [route]
+      simp only [↓reduceIte, route]
       exact hU i
     · simp [route, hj]
       have := hU i
@@ -36444,6 +37024,7 @@ theorem not_cycleGraph_isContained_pruned_hubInteraction_of_three_mul_add_two_mu
     dsimp [m]
     omega
 
+open scoped Classical in
 /-- Predicate form of the forbidden interaction-cycle interval.  If q is at
 most k/3 and has the parity of k, the correction r = (k-3q)/2 is integral;
 the preceding theorem then excludes q whenever the uniform hub budgets cover
@@ -36476,6 +37057,7 @@ theorem not_cycleGraph_isContained_pruned_hubInteraction_of_fitting_even_correct
     hq hkqr G U T θ X hrob hregions
       (by simpa [r] using hU) (by simpa [r] using hθ) hnorep hcycle
 
+open scoped Classical in
 /-- Window form of the interaction-cycle exclusion.  Every same-parity q in
 the interval 3q ≤ k ≤ 3q + 2R has correction at most R, so uniform core and
 threshold budgets at scale R exclude all such auxiliary cycles at once. -/
@@ -36508,6 +37090,7 @@ theorem not_cycleGraph_isContained_pruned_hubInteraction_of_near_third_window
   · exact hnorep
   · exact hcycle
 
+open scoped Classical in
 /-- Local-hub-family form of the forbidden near-third window.  Choose one
 robust core in each disjoint greedy region, prune the canonical repeated
 attachments, and apply the uniform even-route exclusion to the resulting
@@ -36543,6 +37126,7 @@ theorem exists_core_data_with_no_near_third_pruned_interaction_cycle
   · exact no_repeated_attachment_outside_RepeatedAttachmentFinset G U
   · exact hcycle
 
+open scoped Classical in
 /-- Every large target length forbids one near-third cycle length in the
 pruned interaction graph, using only four vertices and threshold seven per
 hub.  The near-third decomposition puts the residual even correction r ≤ 2
@@ -36650,11 +37234,12 @@ theorem exists_local_robustPairSet_of_no_long_path
       ht hτpos hη (hθ S hS hSle) (hτ S hS hSle) (hsmall S hS hSle)
   exact ⟨S, U, hS, hSle, hUcard, hUS, hrob⟩
 
+open scoped Classical in
 /-- Select one robust core from each peeled local-hub region and run the
 canonical repeated-attachment plus forest cleanup.  The explicit bound on the
 number of peeled regions discharges the new global acyclicity hypothesis, so
 the resulting second exceptional set has linear rather than quadratic size. -/
-theorem exists_linear_exceptional_anticomplete_cores_after_RepeatedAttachmentFinset_of_cycleFree_localRobustHub_family
+theorem exists_linear_exceptional_anticomplete_cores_after_hub_repeated_attachments
     {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {F : Finset (Finset V)} {θ τ n k : ℕ} (hk : 12 ≤ k)
@@ -36680,7 +37265,7 @@ theorem exists_linear_exceptional_anticomplete_cores_after_RepeatedAttachmentFin
     exact Classical.choose_spec (hhub i.1 i.2)
   refine ⟨U, hU, ?_⟩
   obtain ⟨X, hX, hanti⟩ :=
-    exists_linear_exceptional_set_after_RepeatedAttachmentFinset_of_cycleFree_short_second_hub_family
+    exists_linear_exceptional_set_after_repeated_attachments
       G U (fun i : F => (i : Finset V)) (fun _ : F => θ) hk
       (by simpa using hlarge)
       (fun i => (hU i).2.2) hfree
@@ -36703,11 +37288,13 @@ theorem exists_linear_exceptional_anticomplete_cores_after_RepeatedAttachmentFin
   refine ⟨X, ?_, hanti⟩
   simpa using hX
 
+open scoped Classical in
 /-- Survival/count form of the selected linear cleanup.  Once the canonical
 first deletion and the four-per-hub second deletion fit below one robust
 core, every twice-trimmed selected core remains nonempty; their anticomplete
 family then has fewer than n members. -/
-theorem exists_linear_exceptional_anticomplete_cores_with_card_lt_of_cycleFree_localRobustHub_family
+theorem
+    exists_linear_exceptional_anticomplete_cores_with_card_lt_of_cycleFree_localRobustHub_family
     {V : Type*} [Fintype V] [Nonempty V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {F : Finset (Finset V)} {θ τ n k : ℕ} (hk : 12 ≤ k)
@@ -36727,7 +37314,7 @@ theorem exists_linear_exceptional_anticomplete_cores_with_card_lt_of_cycleFree_l
         (R.card + 4 * F.card < τ →
           ((Finset.univ : Finset F).image fun i => (U i \ R) \ X).card < n) := by
   obtain ⟨U, hU, hcleanup⟩ :=
-    exists_linear_exceptional_anticomplete_cores_after_RepeatedAttachmentFinset_of_cycleFree_localRobustHub_family
+    exists_linear_exceptional_anticomplete_cores_after_hub_repeated_attachments
       G hk hlarge hhub hdisj hfree hτn hτk hθ hcycle
   refine ⟨U, hU, ?_⟩
   let R : Finset V := RepeatedAttachmentFinset G U

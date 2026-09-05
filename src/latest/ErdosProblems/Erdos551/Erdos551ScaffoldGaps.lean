@@ -1,11 +1,11 @@
 import ErdosProblems.Erdos551.Erdos551Core
 
-open scoped BigOperators Classical SimpleGraph NNReal
+open scoped BigOperators SimpleGraph NNReal
 open Filter Asymptotics Topology
 
 namespace Erdos551
 
-open Fintype SimpleGraph
+open Fintype _root_.Erdos551.SimpleGraph
 
 def orderedGapStart {q : ℕ} (C : Finset (Fin q)) :
     Fin (C.card + 1) → ℕ :=
@@ -38,7 +38,7 @@ theorem orderedGapStart_le_end {q : ℕ} (C : Finset (Fin q))
       · let next : Fin C.card := ⟨j.val + 1, hj⟩
         have hmono := (C.orderEmbOfFin rfl).strictMono (show j < next by
           apply Fin.mk_lt_mk.mpr
-          simp [next])
+          simp)
         simpa [orderedGapStart, orderedGapEnd, hj] using hmono
       · have hdlt : (C.orderEmbOfFin rfl j).val < q :=
           (C.orderEmbOfFin rfl j).isLt
@@ -76,7 +76,8 @@ theorem le_sum_orderedGapCapacity {q : ℕ} (C : Finset (Fin q)) :
         orderedGapCapacity C j + 1 := by
     dsimp [orderedGapCapacity]
     omega
-  have hsum := Finset.sum_le_sum fun j (_hj : j ∈ (Finset.univ : Finset (Fin (C.card + 1)))) => hsub j
+  have hsum := Finset.sum_le_sum
+    fun j (_hj : j ∈ (Finset.univ : Finset (Fin (C.card + 1)))) => hsub j
   rw [sum_orderedGap_vertexCounts] at hsum
   simp only [Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ,
     Fintype.card_fin, nsmul_eq_mul, mul_one] at hsum
@@ -210,13 +211,14 @@ theorem orderedGapEnd_le_start_of_lt {q : ℕ} (C : Finset (Fin q))
   rw [hend, hstart]
   omega
 
+open scoped Classical in
 /-- An ordered cut set decomposes a linear alternating scaffold into a
 family of disjoint positive segments.  Their total internal step budget is
 any prescribed value between the number of nonzero gaps and the total gap
 capacity. -/
 theorem exists_disjoint_scaffold_gap_paths
-    {V : Type*} [Fintype V]
-    (G : _root_.SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Finite V]
+    (G : _root_.SimpleGraph V)
     {q R : ℕ} {A B : Finset V} (hq : 0 < q)
     (a b : Fin q → V) (ha : Function.Injective a)
     (hb : Function.Injective b) (haA : ∀ i, a i ∈ A)
@@ -237,6 +239,7 @@ theorem exists_disjoint_scaffold_gap_paths
         ∀ i d, d ∈ C →
           a d ∉ (p i).support ∧ b d ∉ (p i).support := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let cap : Fin (C.card + 1) → ℕ := orderedGapCapacity C
   have hRcap : R ≤ ∑ j, cap j :=
     hR.trans (le_sum_orderedGapCapacity C)
