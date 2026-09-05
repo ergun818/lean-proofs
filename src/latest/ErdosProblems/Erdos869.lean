@@ -533,7 +533,8 @@ lemma patternNone_probability_four_le_exp (f : PatternFamily 4) :
       Real.exp (-(f.count : ℝ) / 256) := by
   rw [patternNone_probability_four]
   have hbase : (255 / 256 : ℝ) ≤ Real.exp (-(1 / 256 : ℝ)) := by
-    convert Real.one_sub_le_exp_neg (1 / 256 : ℝ) using 1 <;> norm_num
+    convert Real.one_sub_le_exp_neg (1 / 256 : ℝ) using 1
+    norm_num
   calc
     (255 / 256 : ℝ) ^ f.count ≤
         (Real.exp (-(1 / 256 : ℝ))) ^ f.count :=
@@ -571,7 +572,7 @@ lemma sixteen_le_exp_three : (16 : ℝ) ≤ Real.exp 3 := by
       (16 : ℝ) < (27 / 10 : ℝ) ^ (3 : ℕ) := by norm_num
       _ < Real.exp 1 ^ (3 : ℕ) := by gcongr
   have hexp : Real.exp 3 = Real.exp 1 ^ (3 : ℕ) := by
-    simpa using Real.exp_nat_mul (1 : ℝ) 3
+    simp
   rw [hexp]
   exact hp.le
 
@@ -583,7 +584,7 @@ lemma hundred_le_exp_five : (100 : ℝ) ≤ Real.exp 5 := by
       (100 : ℝ) < (27 / 10 : ℝ) ^ (5 : ℕ) := by norm_num
       _ < Real.exp 1 ^ (5 : ℕ) := by gcongr
   have hexp : Real.exp 5 = Real.exp 1 ^ (5 : ℕ) := by
-    simpa using Real.exp_nat_mul (1 : ℝ) 5
+    simp
   rw [hexp]
   exact hp.le
 
@@ -1099,13 +1100,13 @@ lemma nextLabel_reflected_leftHole {ω : ColorSample} {s : StageState} {k y : �
     4 * scale k - y < 3 * scale k)), if_pos href]
   simp only [hsub]
   cases hopt : scheduled s k with
-  | none => simp [hopt, hlabel]
+  | none => simp [hlabel]
   | some p =>
       have hp1 := (hs.left_label _ (scheduled_colors hs hopt).1)
       have hp2 := (hs.right_label _ (scheduled_colors hs hopt).2)
       have hy1 : y ≠ p.1 := by intro h; rw [h, hp1] at hlabel; contradiction
       have hy2 : y ≠ p.2 := by intro h; rw [h, hp2] at hlabel; contradiction
-      simp [hopt, hy1, hy2, hlabel]
+      simp [hy1, hy2, hlabel]
 
 lemma nextLabel_reflected_rightHole {ω : ColorSample} {s : StageState} {k y : ℕ}
     (hs : GoodState k s) (hy0 : 0 < y) (hy : y < scale k)
@@ -1124,13 +1125,13 @@ lemma nextLabel_reflected_rightHole {ω : ColorSample} {s : StageState} {k y : �
     4 * scale k - y < 3 * scale k)), if_pos href]
   simp only [hsub]
   cases hopt : scheduled s k with
-  | none => simp [hopt, hlabel]
+  | none => simp [hlabel]
   | some p =>
       have hp1 := (hs.left_label _ (scheduled_colors hs hopt).1)
       have hp2 := (hs.right_label _ (scheduled_colors hs hopt).2)
       have hy1 : y ≠ p.1 := by intro h; rw [h, hp1] at hlabel; contradiction
       have hy2 : y ≠ p.2 := by intro h; rw [h, hp2] at hlabel; contradiction
-      simp [hopt, hy1, hy2, hlabel]
+      simp [hy1, hy2, hlabel]
 
 lemma nextLabel_trap_left {ω : ColorSample} {s : StageState} {k : ℕ} {p : Trap}
     (hs : GoodState k s) (hp : scheduled s k = some p) :
@@ -1497,7 +1498,7 @@ theorem scheduler_fair {ω : ColorSample} {k₀ : ℕ} {p : Trap}
     (hactive : ∃ K, ∀ k, K ≤ k → active (build ω k) k) :
     ∃ k, ScheduledAt ω k p := by
   by_contra hnever
-  push_neg at hnever
+  push Not at hnever
   obtain ⟨K, hK⟩ := hactive
   let L := max k₀ K
   let pool : Finset Trap :=
@@ -2230,8 +2231,7 @@ theorem erdos_869_of_recursiveCertificate (c : RecursiveCertificate) :
       ∃ D ⊆ A₁ ∪ A₂, IsBasis2 D ∧
         ∀ d ∈ D, ¬ IsBasis2 (D \ {d}) := by
   intro h
-  ·
-    apply c.toCounterexampleCertificate.refutes_problem
+  · apply c.toCounterexampleCertificate.refutes_problem
     simpa only [IsMinimalBasis2] using h
 
 end RecursiveCertificate
@@ -2424,8 +2424,7 @@ lemma directPatterns_produce (N n : ℕ) (c : Fin 2) (f : PatternFamily 4)
     intro h
     have := congrArg Prod.fst h
     have he := congrArg Prod.snd (f.endpoint_injective this)
-    have he' : (0 : Fin 4) = 2 := by simpa using he
-    exact (by decide : (0 : Fin 4) ≠ 2) he'
+    simp at he
   have : 1 < (balancedRepr (realizedReservoir N c ω) n).card :=
     Finset.one_lt_card.2 ⟨_, hp₀, _, hp₁, hne⟩
   omega
@@ -2507,8 +2506,7 @@ lemma reflectedPatterns_produce (N n : ℕ) (c : Fin 2) (f : PatternFamily 4)
     intro h
     have := congrArg Prod.fst h
     have he := congrArg Prod.snd (f.endpoint_injective this)
-    have he' : (1 : Fin 4) = 3 := by simpa using he
-    exact (by decide : (1 : Fin 4) ≠ 3) he'
+    simp at he
   have : 1 < (balancedRepr (realizedReservoir N c ω) n).card :=
     Finset.one_lt_card.2 ⟨_, hp₀, _, hp₁, hne⟩
   omega
@@ -2555,10 +2553,10 @@ theorem exists_direct_family_on_grid_rows
       · intro x hx0 hx1
         constructor
         · apply mem_directReservoir_of_mem_P
-          simp only [P, Set.mem_setOf_eq]
+          simp only [P, Set.mem_ofPred_eq]
           omega
         · apply mem_directReservoir_of_mem_R
-          simp only [R, Set.mem_setOf_eq]
+          simp only [R, Set.mem_ofPred_eq]
           omega
       · intro x hx0 hx1
         omega
@@ -2569,10 +2567,10 @@ theorem exists_direct_family_on_grid_rows
         · intro x hx0 hx1
           constructor
           · apply mem_directReservoir_of_mem_Q
-            simp only [Q, Set.mem_setOf_eq]
+            simp only [Q, Set.mem_ofPred_eq]
             omega
           · apply mem_directReservoir_of_mem_R
-            simp only [R, Set.mem_setOf_eq]
+            simp only [R, Set.mem_ofPred_eq]
             omega
         · intro x hx0 hx1
           omega
@@ -2590,10 +2588,10 @@ theorem exists_direct_family_on_grid_rows
             have hxn : x ≤ n := by omega
             constructor
             · apply mem_directReservoir_of_mem_Q
-              simp only [Q, Set.mem_setOf_eq]
+              simp only [Q, Set.mem_ofPred_eq]
               omega
             · apply mem_directReservoir_of_mem_R
-              simp only [R, Set.mem_setOf_eq]
+              simp only [R, Set.mem_ofPred_eq]
               omega
           · intro x hx0 hx1
             omega
@@ -2604,10 +2602,10 @@ theorem exists_direct_family_on_grid_rows
             · intro x hx0 hx1
               constructor
               · apply mem_directReservoir_of_mem_R
-                simp only [R, Set.mem_setOf_eq]
+                simp only [R, Set.mem_ofPred_eq]
                 omega
               · apply mem_directReservoir_of_mem_R
-                simp only [R, Set.mem_setOf_eq]
+                simp only [R, Set.mem_ofPred_eq]
                 omega
             · intro x hx0 hx1
               omega
@@ -2624,10 +2622,10 @@ theorem exists_direct_family_on_grid_rows
               have hxn : x ≤ n := by omega
               constructor
               · apply mem_directReservoir_of_mem_R
-                simp only [R, Set.mem_setOf_eq]
+                simp only [R, Set.mem_ofPred_eq]
                 omega
               · apply mem_directReservoir_of_mem_R
-                simp only [R, Set.mem_setOf_eq]
+                simp only [R, Set.mem_ofPred_eq]
                 omega
             · intro x hx0 hx1
               omega
@@ -2642,10 +2640,10 @@ theorem exists_direct_family_on_grid_rows
           have hsum : x + (n - x) = n := Nat.add_sub_of_le hxn
           constructor
           · apply mem_directReservoir_of_mem_R
-            simp only [R, Set.mem_setOf_eq]
+            simp only [R, Set.mem_ofPred_eq]
             omega
           · apply mem_directReservoir_of_mem_S
-            simp only [S, Set.mem_setOf_eq]
+            simp only [S, Set.mem_ofPred_eq]
             omega
         · intro x hx0 hx1
           omega
@@ -2662,10 +2660,10 @@ theorem exists_direct_family_on_grid_rows
           have hxn : x ≤ n := by omega
           constructor
           · apply mem_directReservoir_of_mem_R
-            simp only [R, Set.mem_setOf_eq]
+            simp only [R, Set.mem_ofPred_eq]
             omega
           · apply mem_directReservoir_of_mem_S
-            simp only [S, Set.mem_setOf_eq]
+            simp only [S, Set.mem_ofPred_eq]
             omega
         · intro x hx0 hx1
           omega
@@ -2679,10 +2677,10 @@ theorem exists_direct_family_on_grid_rows
           have hsum : x + (n - x) = n := Nat.add_sub_of_le hxn
           constructor
           · apply mem_directReservoir_of_mem_S
-            simp only [S, Set.mem_setOf_eq]
+            simp only [S, Set.mem_ofPred_eq]
             omega
           · apply mem_directReservoir_of_mem_S
-            simp only [S, Set.mem_setOf_eq]
+            simp only [S, Set.mem_ofPred_eq]
             omega
         · intro x hx0 hx1
           omega
@@ -2699,10 +2697,10 @@ theorem exists_direct_family_on_grid_rows
           have hxn : x ≤ n := by omega
           constructor
           · apply mem_directReservoir_of_mem_S
-            simp only [S, Set.mem_setOf_eq]
+            simp only [S, Set.mem_ofPred_eq]
             omega
           · apply mem_directReservoir_of_mem_S
-            simp only [S, Set.mem_setOf_eq]
+            simp only [S, Set.mem_ofPred_eq]
             omega
         · intro x hx0 hx1
           omega
@@ -2747,18 +2745,24 @@ lemma smallReflectedFamily_produces_above
   rcases hb₀ with ⟨hy₀, hx₀, hord₀, hrat₀⟩
   rcases hb₂ with ⟨hy₁, hx₁, hord₁, hrat₁⟩
   refine ⟨hy₀, ?_, hy₁, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · convert hx₀ using 1 <;> ring
-  · convert hx₁ using 1 <;> ring
-  · convert hord₀ using 1 <;> ring
+  · convert hx₀ using 1
+    ring
+  · convert hx₁ using 1
+    ring
+  · convert hord₀ using 1
+    ring
   · rw [show L + d * (4 * i.1 + 1) = (L + d * (4 * i.1)) + d by ring]
     have hy : L + d * (4 * i.1) ≤ 4 * N := by omega
     omega
-  · convert hrat₀ using 1 <;> ring
-  · convert hord₁ using 1 <;> ring
+  · convert hrat₀ using 1
+    ring
+  · convert hord₁ using 1
+    ring
   · rw [show L + d * (4 * i.1 + 3) = (L + d * (4 * i.1 + 2)) + d by ring]
     have hy : L + d * (4 * i.1 + 2) ≤ 4 * N := by omega
     omega
-  · convert hrat₁ using 1 <;> ring
+  · convert hrat₁ using 1
+    ring
 
 lemma smallReflectedFamily_produces_below
     (N n M d L : ℕ) (c : Fin 2) (hd0 : 0 < d) (hd : d < 2 * M)
@@ -2788,18 +2792,24 @@ lemma smallReflectedFamily_produces_below
   rcases hb₀ with ⟨hx₀, hy₀, hord₀, hrat₀⟩
   rcases hb₂ with ⟨hx₁, hy₁, hord₁, hrat₁⟩
   refine ⟨?_, hx₀, ?_, hx₁, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · convert hy₀ using 1 <;> ring
-  · convert hy₁ using 1 <;> ring
-  · convert hord₀ using 1 <;> ring_nf
+  · convert hy₀ using 1
+    ring
+  · convert hy₁ using 1
+    ring
+  · convert hord₀ using 1
+    ring_nf
   · rw [show L + d * (4 * i.1 + 1) = (L + d * (4 * i.1)) + d by ring]
     have hy : L + d * (4 * i.1) + d ≤ 4 * N := by omega
     omega
-  · convert hrat₀ using 1 <;> ring_nf
-  · convert hord₁ using 1 <;> ring_nf
+  · convert hrat₀ using 1
+    ring_nf
+  · convert hord₁ using 1
+    ring_nf
   · rw [show L + d * (4 * i.1 + 3) = (L + d * (4 * i.1 + 2)) + d by ring]
     have hy : L + d * (4 * i.1 + 2) + d ≤ 4 * N := by omega
     omega
-  · convert hrat₁ using 1 <;> ring_nf
+  · convert hrat₁ using 1
+    ring_nf
 
 lemma largeReflectedFamily_produces_above
     (N n M d L : ℕ) (c : Fin 2) (hd : 2 * M ≤ d)
@@ -2826,13 +2836,16 @@ lemma largeReflectedFamily_produces_above
   rcases hb₀ with ⟨hy₀, hx₀, hord₀, hrat₀⟩
   rcases hb₁ with ⟨hy₁, hx₁, hord₁, hrat₁⟩
   refine ⟨hy₀, hx₀, hy₁, ?_, hord₀, ?_, hrat₀, ?_, ?_, ?_⟩
-  · convert hx₁ using 1 <;> ring
+  · convert hx₁ using 1
+    ring
   · have hy : L + 2 * i.1 ≤ 4 * N := by omega
     omega
-  · convert hord₁ using 1 <;> ring
+  · convert hord₁ using 1
+    ring
   · have hy : L + 2 * i.1 + 1 ≤ 4 * N := by omega
     omega
-  · convert hrat₁ using 1 <;> ring
+  · convert hrat₁ using 1
+    ring
 
 lemma largeReflectedFamily_produces_below
     (N n M d L : ℕ) (c : Fin 2) (hd : 2 * M ≤ d)
@@ -2859,13 +2872,16 @@ lemma largeReflectedFamily_produces_below
   rcases hb₀ with ⟨hx₀, hy₀, hord₀, hrat₀⟩
   rcases hb₁ with ⟨hx₁, hy₁, hord₁, hrat₁⟩
   refine ⟨hy₀, hx₀, ?_, hx₁, hord₀, ?_, hrat₀, ?_, ?_, ?_⟩
-  · convert hy₁ using 1 <;> ring
+  · convert hy₁ using 1
+    ring
   · have hy : L + 2 * i.1 + d ≤ 4 * N := by omega
     omega
-  · convert hord₁ using 1 <;> ring_nf
+  · convert hord₁ using 1
+    ring_nf
   · have hy : L + 2 * i.1 + d + 1 ≤ 4 * N := by omega
     omega
-  · convert hrat₁ using 1 <;> ring_nf
+  · convert hrat₁ using 1
+    ring_nf
 
 lemma direct_of_Q {N x : ℕ} (h : x ∈ Q N) : x ∈ directReservoir N :=
   Or.inl (Or.inl (Or.inr h))
@@ -2899,10 +2915,10 @@ theorem exists_reflected_family_on_grid_gaps
         apply smallReflectedFamily_produces_below N n M d (135 * u) c hd0 hd hsum
         intro z hz0 hz1
         have hzQ : z ∈ Q N := by
-          simp only [Q, Set.mem_setOf_eq]
+          simp only [Q, Set.mem_ofPred_eq]
           omega
         have hydJ : z + d ∈ J N := by
-          simp only [J, Set.mem_setOf_eq]
+          simp only [J, Set.mem_ofPred_eq]
           omega
         refine ⟨direct_of_Q hzQ, hydJ, ?_, ?_⟩ <;> omega
       · have hd' : 2 * M ≤ d := by omega
@@ -2910,10 +2926,10 @@ theorem exists_reflected_family_on_grid_gaps
         apply largeReflectedFamily_produces_below N n M d (135 * u) c hd' hsum
         intro z hz0 hz1
         have hzQ : z ∈ Q N := by
-          simp only [Q, Set.mem_setOf_eq]
+          simp only [Q, Set.mem_ofPred_eq]
           omega
         have hydJ : z + d ∈ J N := by
-          simp only [J, Set.mem_setOf_eq]
+          simp only [J, Set.mem_ofPred_eq]
           omega
         refine ⟨direct_of_Q hzQ, hydJ, ?_, ?_⟩ <;> omega
     · have habove : 4 * N < n := by omega
@@ -2927,10 +2943,10 @@ theorem exists_reflected_family_on_grid_gaps
         apply smallReflectedFamily_produces_above N n M d L c hd0 hd hsum
         intro z hz0 hz1
         have hzJ : z ∈ J N := by
-          simp only [J, Set.mem_setOf_eq]
+          simp only [J, Set.mem_ofPred_eq]
           omega
         have hzdQ : z + d ∈ Q N := by
-          simp only [Q, Set.mem_setOf_eq]
+          simp only [Q, Set.mem_ofPred_eq]
           omega
         refine ⟨hzJ, direct_of_Q hzdQ, ?_, ?_⟩ <;> omega
       · have hd' : 2 * M ≤ d := by omega
@@ -2938,10 +2954,10 @@ theorem exists_reflected_family_on_grid_gaps
         apply largeReflectedFamily_produces_above N n M d L c hd' hsum
         intro z hz0 hz1
         have hzJ : z ∈ J N := by
-          simp only [J, Set.mem_setOf_eq]
+          simp only [J, Set.mem_ofPred_eq]
           omega
         have hzdQ : z + d ∈ Q N := by
-          simp only [Q, Set.mem_setOf_eq]
+          simp only [Q, Set.mem_ofPred_eq]
           omega
         refine ⟨hzJ, direct_of_Q hzdQ, ?_, ?_⟩ <;> omega
   · have habove : 4 * N < n := by omega
@@ -2953,29 +2969,29 @@ theorem exists_reflected_family_on_grid_gaps
       · refine ⟨smallReflectedFamily false M d (123 * u) c hd0, rfl, ?_⟩
         apply smallReflectedFamily_produces_above N n M d (123 * u) c hd0 hd hsum
         intro z hz0 hz1
-        have hzJ : z ∈ J N := by simp only [J, Set.mem_setOf_eq]; omega
-        have hzdR : z + d ∈ R N := by simp only [R, Set.mem_setOf_eq]; omega
+        have hzJ : z ∈ J N := by simp only [J, Set.mem_ofPred_eq]; omega
+        have hzdR : z + d ∈ R N := by simp only [R, Set.mem_ofPred_eq]; omega
         refine ⟨hzJ, direct_of_R hzdR, ?_, ?_⟩ <;> omega
       · have hd' : 2 * M ≤ d := by omega
         refine ⟨largeReflectedFamily false M d (123 * u) c hd', rfl, ?_⟩
         apply largeReflectedFamily_produces_above N n M d (123 * u) c hd' hsum
         intro z hz0 hz1
-        have hzJ : z ∈ J N := by simp only [J, Set.mem_setOf_eq]; omega
-        have hzdR : z + d ∈ R N := by simp only [R, Set.mem_setOf_eq]; omega
+        have hzJ : z ∈ J N := by simp only [J, Set.mem_ofPred_eq]; omega
+        have hzdR : z + d ∈ R N := by simp only [R, Set.mem_ofPred_eq]; omega
         refine ⟨hzJ, direct_of_R hzdR, ?_, ?_⟩ <;> omega
     · by_cases hd : d < 2 * M
       · refine ⟨smallReflectedFamily false M d (138 * u) c hd0, rfl, ?_⟩
         apply smallReflectedFamily_produces_above N n M d (138 * u) c hd0 hd hsum
         intro z hz0 hz1
-        have hzJ : z ∈ J N := by simp only [J, Set.mem_setOf_eq]; omega
-        have hzdS : z + d ∈ S N := by simp only [S, Set.mem_setOf_eq]; omega
+        have hzJ : z ∈ J N := by simp only [J, Set.mem_ofPred_eq]; omega
+        have hzdS : z + d ∈ S N := by simp only [S, Set.mem_ofPred_eq]; omega
         refine ⟨hzJ, direct_of_S hzdS, ?_, ?_⟩ <;> omega
       · have hd' : 2 * M ≤ d := by omega
         refine ⟨largeReflectedFamily false M d (138 * u) c hd', rfl, ?_⟩
         apply largeReflectedFamily_produces_above N n M d (138 * u) c hd' hsum
         intro z hz0 hz1
-        have hzJ : z ∈ J N := by simp only [J, Set.mem_setOf_eq]; omega
-        have hzdS : z + d ∈ S N := by simp only [S, Set.mem_setOf_eq]; omega
+        have hzJ : z ∈ J N := by simp only [J, Set.mem_ofPred_eq]; omega
+        have hzdS : z + d ∈ S N := by simp only [S, Set.mem_ofPred_eq]; omega
         refine ⟨hzJ, direct_of_S hzdS, ?_, ?_⟩ <;> omega
 
 /-! Integrated from /tmp/ReflectedRowsFinished.lean -/
@@ -3371,7 +3387,7 @@ lemma eligible_card_ge_of_Ico_represented (B : Finset ℕ)
     (card_ge_of_Ico_represented B hlen hrep)
 
 lemma exists_buildLeft_repr_of_coverage {ω : ColorSample} {k n : ℕ}
-    (hk : 3 ≤ k) (hnlo : 2 * scale k ≤ n) (hnhi : n < 3 * scale k)
+    (hk : 3 ≤ k) (_hnlo : 2 * scale k ≤ n) (hnhi : n < 3 * scale k)
     (hcard : 2 ≤ (balancedRepr (realizedReservoir (scale k) 0 ω) n).card) :
     ∃ b ∈ (FourBuild.build ω (k + 1)).left,
       ∃ c ∈ (FourBuild.build ω (k + 1)).left, b + c = n := by
@@ -3387,7 +3403,7 @@ lemma exists_buildLeft_repr_of_coverage {ω : ColorSample} {k n : ℕ}
     p.2, FourBuild.finalLeft_mem_build_of_le hcfinal hcscale, hp'.2.2.2.1⟩
 
 lemma exists_buildRight_repr_of_coverage {ω : ColorSample} {k n : ℕ}
-    (hk : 3 ≤ k) (hnlo : 2 * scale k ≤ n) (hnhi : n < 3 * scale k)
+    (hk : 3 ≤ k) (_hnlo : 2 * scale k ≤ n) (hnhi : n < 3 * scale k)
     (hcard : 2 ≤ (balancedRepr (realizedReservoir (scale k) 1 ω) n).card) :
     ∃ b ∈ (FourBuild.build ω (k + 1)).right,
       ∃ c ∈ (FourBuild.build ω (k + 1)).right, b + c = n := by
