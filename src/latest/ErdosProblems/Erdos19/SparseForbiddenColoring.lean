@@ -28,7 +28,7 @@ theorem card_filter_injective_preimage_le {A B : Type*} [Fintype A]
 /-- Sparse forbidden colors can be repaired in a separate palette of size
 greater than `r * s + f`, provided `|V(H)| * f^s < s!`. -/
 theorem exists_edgeColoring_avoiding_sparse {V E A B : Type*}
-    [DecidableEq V] [Fintype E] [DecidableEq E]
+    [Finite E]
     [Finite A] [Fintype B]
     (H : FiniteHypergraph V E) (r f s : ℕ) (hbound : H.IsBounded r)
     (c : H.conflictGraph.Coloring A) (F : E → Finset (A ⊕ B))
@@ -37,6 +37,7 @@ theorem exists_edgeColoring_avoiding_sparse {V E A B : Type*}
     (hreserve : r * s + f < Fintype.card B) :
     ∃ d : H.conflictGraph.Coloring (A ⊕ B), ∀ e, d e ∉ F e := by
   classical
+  let := Fintype.ofFinite E
   let := Fintype.ofFinite A
   let I := ↥H.vertexSet
   let T : I → Finset E := fun v ↦ univ.filter fun e ↦ v.val ∈ H.support e
@@ -112,7 +113,7 @@ theorem exists_edgeColoring_avoiding_sparse {V E A B : Type*}
 /-- The disjoint palettes may be embedded into any sufficiently large target
 palette. All forbidden sets are interpreted in that target palette. -/
 theorem exists_edgeColoring_avoiding_sparse_palette {V E P : Type*}
-    [DecidableEq V] [Fintype E] [DecidableEq E] [Fintype P]
+    [Finite E] [Fintype P]
     (H : FiniteHypergraph V E) (r f s q : ℕ) (hbound : H.IsBounded r)
     (c : H.EdgeColoring q) (F : E → Finset P) (hF : ∀ e, (F e).card ≤ f)
     (hsmall : H.vertexSet.card * f ^ s < s.factorial)

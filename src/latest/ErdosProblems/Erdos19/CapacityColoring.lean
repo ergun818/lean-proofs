@@ -25,6 +25,7 @@ theorem matching_sum_inter_card_le (K : FiniteHypergraph V E) (S : Finset E)
   obtain ⟨e, _, he⟩ := mem_biUnion.mp hx
   exact (mem_inter.mp he).2
 
+omit [DecidableEq V] [DecidableEq E] in
 theorem coloring_fiber_isMatching (K : FiniteHypergraph V E)
     (c : K.conflictGraph.Coloring A) (a : A) :
     K.IsMatching (univ.filter fun e ↦ c e = a) := by
@@ -44,6 +45,7 @@ def coloringOfSupportExtension (H K : FiniteHypergraph V E)
     intro hdisjoint
     exact hef.2 (hdisjoint.mono (hsub e) (hsub f)))
 
+omit [DecidableEq E] in
 /-- If each augmented edge consumes at least as many pool vertices as it
 covers buffer vertices, each color covers at most the pool size in the buffer. -/
 theorem coloring_covered_buffer_le_pool (H K : FiniteHypergraph V E)
@@ -57,6 +59,7 @@ theorem coloring_covered_buffer_le_pool (H K : FiniteHypergraph V E)
       sum_le_sum fun e _ ↦ hdemand e
     _ ≤ P.card := matching_sum_inter_card_le K _ (coloring_fiber_isMatching K c a) P
 
+omit [DecidableEq E] in
 /-- The capacity constraint gives an explicit lower bound on the buffer
 vertices left uncovered in every color. -/
 theorem coloring_uncovered_buffer_ge (H K : FiniteHypergraph V E)

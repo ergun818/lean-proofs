@@ -71,8 +71,9 @@ def edgeColoringOfFiniteModel [DecidableEq X] (H : SetHypergraph X) {P : Type*}
       ⟨x, (H.finiteModel_mem_support e x).mpr hxe,
         (H.finiteModel_mem_support f x).mpr hxf⟩
 
-theorem edgeColorable_of_finiteModel [DecidableEq X] (H : SetHypergraph X) (q : ℕ)
+theorem edgeColorable_of_finiteModel (H : SetHypergraph X) (q : ℕ)
     (hc : Nonempty (H.finiteModel.EdgeColoring q)) : H.EdgeColorable q := by
+  classical
   obtain ⟨c⟩ := hc
   exact ⟨H.edgeColoringOfFiniteModel c⟩
 
