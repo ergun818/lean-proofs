@@ -86,7 +86,7 @@ theorem exists_fin_zeroDimensional_coloring
           have hcA' : c x = (cA ⟨x, hxA⟩).castSucc := by simp [c, hxA]
           have hlast : c x = Fin.last (n + 1) := hx
           exact Fin.castSucc_ne_last _ (hcA'.symm.trans hlast)
-        have hxAB : x ∈ A ∪ B := by simpa [hcover]
+        have hxAB : x ∈ A ∪ B := by simp [hcover]
         exact hxAB.resolve_left hxA
       · let D : Set A := {a | cA a = j}
         have hD : HasSmallInductiveDimensionLE D 0 := hcA j

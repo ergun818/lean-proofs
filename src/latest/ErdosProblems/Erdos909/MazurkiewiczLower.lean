@@ -33,14 +33,14 @@ noncomputable section
 
 /-- Mazurkiewicz avoidance inside the compact double cone. -/
 theorem doubleCone_hasMazurkiewiczBetween (n : ℕ) :
-    HasMazurkiewiczBetween (DoubleCone n) n
+    HasMazurkiewiczBetween (doubleCone n) n
       (lowerEndpoint n) (upperEndpoint n) := by
   intro M hM hloM hhiM hends
   classical
   let I := Fin n → Bool
   let k := Fintype.card I
   let sign : Fin k → I := (Fintype.equivFin I).symm
-  let U : Fin k → Set (DoubleCone n) := fun i ↦ goodOpenPatch (sign i)
+  let U : Fin k → Set (doubleCone n) := fun i ↦ goodOpenPatch (sign i)
   have hUopen (i : Fin k) : IsOpen (U i) := isOpen_goodOpenPatch (sign i)
   have hUcover : M ⊆ ⋃ i, U i := by
     intro x hxM
@@ -51,7 +51,7 @@ theorem doubleCone_hasMazurkiewiczBetween (n : ℕ) :
     exact mem_iUnion.mpr ⟨i, by simpa [U, sign, i] using hxs⟩
   obtain ⟨V, hVopen, hVcover, hVsub, hVmult⟩ :=
     exists_open_refinement_natCard_le M hM U hUopen hUcover
-  let G : Set (DoubleCone n) := ⋃ j, V j
+  let G : Set (doubleCone n) := ⋃ j, V j
   have hGopen : IsOpen G := isOpen_iUnion hVopen
   have hloG : lowerEndpoint n ∉ G := by
     intro h
@@ -62,7 +62,7 @@ theorem doubleCone_hasMazurkiewiczBetween (n : ℕ) :
     obtain ⟨j, hj⟩ := mem_iUnion.mp h
     exact (goodOpenPatch_subset_nonendpoints (sign j.2) (hVsub j hj)).2 rfl
   by_contra havoid
-  have hno : ¬ ∃ K : Set (DoubleCone n),
+  have hno : ¬ ∃ K : Set (doubleCone n),
       IsCompact K ∧ IsConnected K ∧ K ⊆ Gᶜ ∧
         lowerEndpoint n ∈ K ∧ upperEndpoint n ∈ K := by
     rintro ⟨K, hKc, hKconn, hKG, hloK, hhiK⟩
@@ -122,7 +122,7 @@ theorem coneAmbient_hasMazurkiewiczBetween (n : ℕ) :
     HasMazurkiewiczBetween (ConeAmbient n) n
       (lowerEndpoint n : ConeAmbient n) (upperEndpoint n : ConeAmbient n) := by
   intro M hM hloM hhiM hends
-  let N : Set (DoubleCone n) := Subtype.val ⁻¹' M
+  let N : Set (doubleCone n) := Subtype.val ⁻¹' M
   let f : N → M := fun x ↦ ⟨x.1.1, x.2⟩
   have hf : IsEmbedding f := by
     exact (IsEmbedding.subtypeVal.comp IsEmbedding.subtypeVal).codRestrict _

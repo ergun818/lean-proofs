@@ -324,7 +324,7 @@ private lemma finRotate_symm_val_of_pos' {m : ℕ} (hm : 0 < m) (d : Fin m) (hd 
   apply Equiv.injective (finRotate m); rw [Equiv.apply_symm_apply]; ext
   cases m with
   | zero => omega
-  | succ q => rw [finRotate_succ_apply, Fin.val_add]; cases q with
+  | succ q => rw [finRotate_apply, Fin.val_add]; cases q with
     | zero => omega
     | succ q' =>
       rw [Fin.val_one, show d.val - 1 + 1 = d.val from by omega, Nat.mod_eq_of_lt d.isLt]
@@ -335,7 +335,7 @@ private lemma finRotate_symm_val_of_zero' {m : ℕ} (hm : 1 < m) :
   apply Equiv.injective (finRotate m); rw [Equiv.apply_symm_apply]; ext
   cases m with
   | zero => omega
-  | succ q => rw [finRotate_succ_apply, Fin.val_add]; cases q with
+  | succ q => rw [finRotate_apply, Fin.val_add]; cases q with
     | zero => omega
     | succ q' =>
       rw [Fin.val_one, show (q' + 1 + 1 - 1 : ℕ) + 1 = q' + 2 from by omega]
@@ -454,7 +454,7 @@ theorem faceAdj_shared_vertices (S : KuhnSimplex n p) (hv : S.isValid)
         ⟨k.val, (by omega : k.val < n)⟩).trans S.perm).symm c =
       (Equiv.swap ⟨k.val - 1, (by omega : k.val - 1 < n)⟩
         ⟨k.val, (by omega : k.val < n)⟩) (S.perm.symm c) := by
-      simp [Equiv.symm_trans_apply, Equiv.symm_swap]
+      simp [Equiv.symm_swap]
     rw [key]
     set d := S.perm.symm c
     set km1 : Fin n := ⟨k.val - 1, by omega⟩

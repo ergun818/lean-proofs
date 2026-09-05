@@ -245,4 +245,4 @@ theorem brouwerFixedPoint {V : Type*}
   obtain ⟨y, hy⟩ := @fixedPointUnitCube k g
   use (toContinuousMap e.symm) y
   let e' := EquivLike.toEquiv e
-  exact (e'.apply_eq_iff_eq_symm_apply).1 hy
+  exact (e'.eq_symm_apply).2 hy

@@ -140,7 +140,6 @@ theorem exists_andersonKeisler_witness
     exists_set_meeting_indexed_continua_avoiding
       (n + 1) hm avoid O.binary.obstruction
       hAvoidCountable hdiag hleft hright
-
   have hMeet : MeetsEveryNondegenerateContinuum K := by
     intro C hC
     exact hKmeet C hC
@@ -162,7 +161,6 @@ theorem exists_andersonKeisler_witness
     smallInductiveDimension_le_iff.2 (O.unary.forces K hKunary')
   have hKdim : smallInductiveDimension K = n :=
     le_antisymm hKupper hKlower
-
   have hSqSubtype : HasSmallInductiveDimensionLT
       (K ×ˢ K : Set (LetterSpace (n + 1) × LetterSpace (n + 1))) (n + 1) :=
     O.binary.forces _ hKbinary
@@ -171,7 +169,6 @@ theorem exists_andersonKeisler_witness
       (prodSubtypeHomeomorph K).isInducing hSqSubtype
   have hSqUpper : smallInductiveDimension (K × K) ≤ n :=
     smallInductiveDimension_le_iff.2 hSqUpperLT
-
   have hKnonempty : Nonempty K := by
     have hFallback := hKmeet (fallbackContinuum (n + 1))
       (fallbackContinuum_isNondegenerateContinuum (n + 1) hm)

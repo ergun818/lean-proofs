@@ -111,7 +111,7 @@ private lemma signedDistance_continuous {X : Type*} [PseudoMetricSpace X]
   (Metric.continuous_infDist_pt Vᶜ).sub (Metric.continuous_infDist_pt Uᶜ)
 
 private lemma signedDistance_neg_of_mem_left {X : Type*} [MetricSpace X]
-    {U V : Set X} (hU : IsOpen U) (hV : IsOpen V) (hUV : Disjoint U V)
+    {U V : Set X} (hU : IsOpen U) (_hV : IsOpen V) (hUV : Disjoint U V)
     (hUc : Uᶜ.Nonempty) {x : X} (hx : x ∈ U) :
     Metric.infDist x Vᶜ - Metric.infDist x Uᶜ < 0 := by
   have hxVc : x ∈ Vᶜ := by
@@ -122,7 +122,7 @@ private lemma signedDistance_neg_of_mem_left {X : Type*} [MetricSpace X]
   linarith
 
 private lemma signedDistance_pos_of_mem_right {X : Type*} [MetricSpace X]
-    {U V : Set X} (hU : IsOpen U) (hV : IsOpen V) (hUV : Disjoint U V)
+    {U V : Set X} (_hU : IsOpen U) (hV : IsOpen V) (hUV : Disjoint U V)
     (hVc : Vᶜ.Nonempty) {x : X} (hx : x ∈ V) :
     0 < Metric.infDist x Vᶜ - Metric.infDist x Uᶜ := by
   have hxUc : x ∈ Uᶜ := by

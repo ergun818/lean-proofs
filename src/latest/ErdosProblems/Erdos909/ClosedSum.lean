@@ -54,6 +54,7 @@ private theorem exists_initialStage
     exists_open_supersets_disjoint_closure hA hB hAB
   exact ⟨⟨U, V, hU, hV, hAU, hBV, hUV⟩⟩
 
+omit [PseudoMetricSpace X] in
 private theorem disjoint_four_unions
     {A₀ A₁ B₀ B₁ : Set X}
     (h₀₀ : Disjoint A₀ B₀) (h₀₁ : Disjoint A₀ B₁)
@@ -380,7 +381,7 @@ theorem exists_open_mem_subset_frontier_disjoint
     intro y hyN hyfr
     have hyD : (⟨y, hyN⟩ : N) ∈ D := hyfr.1
     have : (⟨y, hyN⟩ : N) ∈ C := hDC hyD
-    simpa [hCeq] using this
+    simp [hCeq] at this
 
 /-- Adjoining a zero-dimensional subspace raises small inductive dimension by
 at most one.  No closedness assumption is needed. -/

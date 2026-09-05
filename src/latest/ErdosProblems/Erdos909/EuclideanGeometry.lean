@@ -161,6 +161,7 @@ section AffineGeneralPosition
 variable {V P : Type*} [AddCommGroup V] [Module ℝ V]
   [AddTorsor V P] [FiniteDimensional ℝ V]
 
+omit [FiniteDimensional ℝ V] in
 /-- A nonempty affine intersection whose intersection of directions has
 finrank one is literally an affine line through any chosen intersection
 point. -/
@@ -380,7 +381,6 @@ theorem exists_affineSphere_image_eq_image_relativeSphere
     rw [EuclideanGeometry.orthogonalProjection_eq_orthogonalProjection_iff_vsub_mem]
     rw [show H.direction = (ℝ ∙ ((c : P) -ᵥ o))ᗮ by
       simp only [H, AffineSubspace.direction_mk']]
-    change (c : P) -ᵥ o ∈ ((ℝ ∙ ((c : P) -ᵥ o))ᗮ)ᗮ
     exact ((ℝ ∙ ((c : P) -ᵥ o)).le_orthogonal_orthogonal)
       (Submodule.mem_span_singleton_self ((c : P) -ᵥ o))
   refine ⟨H, s, by simp only [H, AffineSubspace.direction_mk'], ?_⟩

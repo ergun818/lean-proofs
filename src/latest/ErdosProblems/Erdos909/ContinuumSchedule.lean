@@ -93,7 +93,7 @@ lemma fallbackContinuum_isNondegenerateContinuum (m : ℕ) (hm : 0 < m) :
   have hne : e ≠ 0 := by
     intro h
     have hi := congrArg (fun z : ContinuumAmbient m ↦ z i) h
-    simpa [e, i] using hi
+    simp [e, i] at hi
   refine ⟨isCompact_closedBall _ _,
     ⟨⟨0, hzero⟩, (convex_closedBall (0 : ContinuumAmbient m) 1).isPreconnected⟩, ?_⟩
   intro hs

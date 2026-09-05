@@ -320,7 +320,8 @@ theorem binaryWordCoefficientEquiv_apply_natAdd (m : ℕ)
     (x y : Fin m → ℝ) (i : Fin m) :
     binaryWordCoefficientEquiv m (euclideanOfFun m x, euclideanOfFun m y)
       (Fin.natAdd m i) = y i := by
-  simp [binaryWordCoefficientEquiv, euclideanOfFun]
+  suffices h : finSumFinEquiv.symm (i.addNat m) = (Sum.inr i : Fin m ⊕ Fin m) by
+    simp [binaryWordCoefficientEquiv, euclideanOfFun, h]
   have hindex : i.addNat m = Fin.natAdd m i := by
     apply Fin.ext
     simp [Nat.add_comm]

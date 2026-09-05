@@ -71,7 +71,7 @@ theorem exists_disjoint_clopen_refinement
       let D : ℕ → Set X := disjointed F
       have hDclopen (k : ℕ) : IsClopen (D k) := by
         rw [show D k = F k \ ⋃ j ∈ Finset.Iio k, F j by
-          simp [D, disjointed_apply, Finset.sup_eq_biUnion]]
+          simp [D, disjointed_apply]]
         exact (hFclopen k).diff
           (isClopen_biUnion_finset fun j _ ↦ hFclopen j)
       have hDdisj : Pairwise (Disjoint on D) := by
@@ -97,7 +97,7 @@ theorem exists_disjoint_clopen_refinement
           · exact hxk.elim
         · intro x hx
           obtain ⟨k, hxk⟩ := mem_iUnion.mp hx
-          exact mem_iUnion.mpr ⟨a k, mem_iUnion.mpr ⟨k, by simp [C, hxk]⟩⟩
+          exact mem_iUnion.mpr ⟨a k, mem_iUnion.mpr ⟨k, by simp [hxk]⟩⟩
       have hCdisj : Pairwise (Disjoint on C) := by
         intro i j hij
         change Disjoint (C i) (C j)
@@ -199,7 +199,7 @@ theorem exists_ambient_disjoint_open_refinement
         have hzeroAk : Metric.infDist (y : Z) (A k) = 0 :=
           Metric.infDist_zero_of_mem hyAk
         exact (not_lt_of_ge Metric.infDist_nonneg) (by simpa [hzeroAk] using hineq)
-      · simpa [W, hi] using hyW
+      · simp [W, hi] at hyW
     · intro hyi
       have hi : (C i).Nonempty := ⟨y, hyi⟩
       have hyAi : (y : Z) ∈ A i := ⟨y, hyi, rfl⟩
@@ -229,10 +229,10 @@ theorem exists_ambient_disjoint_open_refinement
     intro x hxi hxj
     have hi : (C i).Nonempty := by
       by_contra hi
-      simpa [W, hi] using hxi
+      simp [W, hi] at hxi
     have hj : (C j).Nonempty := by
       by_contra hj
-      simpa [W, hj] using hxj
+      simp [W, hj] at hxj
     have hxi' : x ∈
         ⋂ k : {k : ι // k ≠ i ∧ (C k).Nonempty},
           {x | Metric.infDist x (A i) < Metric.infDist x (A k)} := by

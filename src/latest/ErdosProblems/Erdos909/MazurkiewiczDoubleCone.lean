@@ -35,7 +35,7 @@ noncomputable section
 cover is constructed explicitly from the cubical coordinates away from the
 two collapsed faces. -/
 def HasGoodFaceCover (n : ℕ) : Prop :=
-  ∃ k, ∃ U : Fin k → Set (DoubleCone n),
+  ∃ k, ∃ U : Fin k → Set (doubleCone n),
     (∀ a, IsOpen (U a)) ∧
     ({lowerEndpoint n, upperEndpoint n}ᶜ ⊆ ⋃ a, U a) ∧
     (∀ a, lowerEndpoint n ∉ U a ∧ upperEndpoint n ∉ U a) ∧
@@ -49,14 +49,14 @@ theorem hasGoodFaceCover (n : ℕ) : HasGoodFaceCover n :=
 theorem lowerEndpoint_ne_upperEndpoint (n : ℕ) :
     lowerEndpoint n ≠ upperEndpoint n := by
   intro h
-  have h' := congrArg (fun p : DoubleCone n ↦ p.1.1) h
+  have h' := congrArg (fun p : doubleCone n ↦ p.1.1) h
   norm_num [lowerEndpoint, upperEndpoint] at h'
 
 /-- The cover-multiplicity proof of Mazurkiewicz avoidance, separated from
 the elementary construction of the good cubical cover. -/
 theorem hasMazurkiewiczBetween_of_hasGoodFaceCover
     (n : ℕ) (hgood : HasGoodFaceCover n) :
-    ContinuumLower.HasMazurkiewiczBetween (DoubleCone n) n
+    ContinuumLower.HasMazurkiewiczBetween (doubleCone n) n
       (lowerEndpoint n) (upperEndpoint n) := by
   intro M hM hloM hhiM hlohi
   rcases hgood with ⟨k, U, hUopen, hUcover, hUend, hUfaces⟩
@@ -81,10 +81,9 @@ theorem hasMazurkiewiczBetween_of_hasGoodFaceCover
     intro h
     obtain ⟨j, hj⟩ := mem_iUnion.mp h
     exact (hUend j.2).2 (hVU j hj)
-
   by_contra hcontra
   push Not at hcontra
-  have hno : ¬ ∃ K : Set (DoubleCone n),
+  have hno : ¬ ∃ K : Set (doubleCone n),
       IsCompact K ∧ IsConnected K ∧ K ⊆ (⋃ j, V j)ᶜ ∧
         lowerEndpoint n ∈ K ∧ upperEndpoint n ∈ K := by
     rintro ⟨K, hKcompact, hKconnected, hKG, hloK, hhiK⟩
@@ -97,7 +96,6 @@ theorem hasMazurkiewiczBetween_of_hasGoodFaceCover
       intro x hxK hxM
       exact hKG hxK (hMV hxM)
     exact hcontra K hKnondeg hKM
-
   obtain ⟨S, P, Q, hSclosed, hPopen, hQopen, hPQ, hSc,
       hloP, hhiQ, hSV⟩ :=
     exists_closed_separator_decomposition_subset_iUnion_of_no_continuum
@@ -105,7 +103,6 @@ theorem hasMazurkiewiczBetween_of_hasGoodFaceCover
   obtain ⟨C, hSC, hCclosed, hCV⟩ :=
     exists_subset_iUnion_closed_subset hSclosed hVopen
       (fun _ _ ↦ Set.toFinite _) hSV
-
   let C' : Fin n × Fin k → Set (Cube (n + 1)) :=
     fun j ↦ quotientMap ⁻¹' C j
   have hC'closed (j : Fin n × Fin k) : IsClosed (C' j) :=
@@ -126,7 +123,6 @@ theorem hasMazurkiewiczBetween_of_hasGoodFaceCover
     constructor
     · exact ⟨x, hVU j (hCV j hxC), hxl⟩
     · exact ⟨y, hVU j (hCV j hyC), hyu⟩
-
   obtain ⟨x, hxlarge⟩ :=
     finite_closed_cover_separator_multiplicity
       C' hC'closed L hLsep hLC hC'faces
@@ -145,7 +141,7 @@ theorem hasMazurkiewiczBetween_of_hasGoodFaceCover
 /-- The form used by the square-specialized Anderson--Keisler assembly. -/
 theorem assembly_hasMazurkiewiczBetween_of_hasGoodFaceCover
     (n : ℕ) (hgood : HasGoodFaceCover n) :
-    AndersonKeislerAssembly.HasMazurkiewiczBetween (DoubleCone n) n
+    AndersonKeislerAssembly.HasMazurkiewiczBetween (doubleCone n) n
       (lowerEndpoint n) (upperEndpoint n) := by
   intro M hM hlo hhi
   exact hasMazurkiewiczBetween_of_hasGoodFaceCover n hgood M hM hlo hhi
@@ -153,14 +149,14 @@ theorem assembly_hasMazurkiewiczBetween_of_hasGoodFaceCover
 
 /-- Mazurkiewicz's prescribed-endpoint theorem for the cubical double cone. -/
 theorem hasMazurkiewiczBetween (n : ℕ) :
-    ContinuumLower.HasMazurkiewiczBetween (DoubleCone n) n
+    ContinuumLower.HasMazurkiewiczBetween (doubleCone n) n
       (lowerEndpoint n) (upperEndpoint n) :=
   hasMazurkiewiczBetween_of_hasGoodFaceCover n (hasGoodFaceCover n)
 
 /-- The same theorem in the interface expected by the Anderson--Keisler
 selector assembly. -/
 theorem assembly_hasMazurkiewiczBetween (n : ℕ) :
-    AndersonKeislerAssembly.HasMazurkiewiczBetween (DoubleCone n) n
+    AndersonKeislerAssembly.HasMazurkiewiczBetween (doubleCone n) n
       (lowerEndpoint n) (upperEndpoint n) :=
   assembly_hasMazurkiewiczBetween_of_hasGoodFaceCover n (hasGoodFaceCover n)
 
@@ -192,7 +188,7 @@ def euclideanConeAmbientHomeomorph (n : ℕ) :
 /-- The canonical embedding of the double cone into the Euclidean letter
 space used by the transfinite construction. -/
 def doubleConeEmbedding (n : ℕ) :
-    DoubleCone n → EuclideanObstruction.LetterSpace (n + 1) :=
+    doubleCone n → EuclideanObstruction.LetterSpace (n + 1) :=
   (euclideanConeAmbientHomeomorph n).symm ∘ Subtype.val
 
 theorem doubleConeEmbedding_isEmbedding (n : ℕ) :
@@ -209,7 +205,7 @@ theorem euclidean_assembly_hasMazurkiewiczBetween (n : ℕ) :
       (doubleConeEmbedding n (upperEndpoint n)) := by
   intro M hM hloM hhiM
   let f := doubleConeEmbedding n
-  let N : Set (DoubleCone n) := f ⁻¹' M
+  let N : Set (doubleCone n) := f ⁻¹' M
   have hf : IsEmbedding f := doubleConeEmbedding_isEmbedding n
   have hN : HasSmallInductiveDimensionLT N n := by
     exact ContinuumLower.inducing_hasSmallInductiveDimensionLT

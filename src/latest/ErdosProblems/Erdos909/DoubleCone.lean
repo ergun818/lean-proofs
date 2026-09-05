@@ -39,17 +39,17 @@ theorem continuous_quotientRaw {n : ℕ} : Continuous (@quotientRaw n) := by
 /-- The compact cubical double cone.  Defining it as the range of the
 explicit quotient keeps the quotient property definitional; the geometric
 inequality description is recorded below. -/
-def DoubleCone (n : ℕ) : Set (ConeAmbient n) := Set.range (@quotientRaw n)
+def doubleCone (n : ℕ) : Set (ConeAmbient n) := Set.range (@quotientRaw n)
 
-theorem isCompact_doubleCone (n : ℕ) : IsCompact (DoubleCone n) := by
-  rw [DoubleCone]
+theorem isCompact_doubleCone (n : ℕ) : IsCompact (doubleCone n) := by
+  rw [doubleCone]
   exact isCompact_range continuous_quotientRaw
 
-instance (n : ℕ) : CompactSpace (DoubleCone n) :=
+instance (n : ℕ) : CompactSpace (doubleCone n) :=
   isCompact_iff_compactSpace.mp (isCompact_doubleCone n)
 
 /-- The quotient map, with its range as codomain. -/
-def quotientMap {n : ℕ} (x : Cube (n + 1)) : DoubleCone n :=
+def quotientMap {n : ℕ} (x : Cube (n + 1)) : doubleCone n :=
   ⟨quotientRaw x, ⟨x, rfl⟩⟩
 
 theorem continuous_quotientMap {n : ℕ} : Continuous (@quotientMap n) :=
@@ -66,12 +66,12 @@ private def upperCubePoint (n : ℕ) : Cube (n + 1) :=
   ⟨1, by constructor <;> simp⟩
 
 /-- The lower vertex of the double cone. -/
-def lowerEndpoint (n : ℕ) : DoubleCone n :=
+def lowerEndpoint (n : ℕ) : doubleCone n :=
   ⟨(-1, 0), lowerCubePoint n, by
     ext <;> simp [quotientRaw, lowerCubePoint, coneScale]⟩
 
 /-- The upper vertex of the double cone. -/
-def upperEndpoint (n : ℕ) : DoubleCone n :=
+def upperEndpoint (n : ℕ) : doubleCone n :=
   ⟨(1, 0), upperCubePoint n, by
     ext <;> norm_num [quotientRaw, upperCubePoint, coneScale]⟩
 
@@ -98,14 +98,14 @@ theorem quotientMap_eq_upperEndpoint_of_mem_upperFace {n : ℕ}
 theorem mem_lowerFace_of_quotientMap_eq_lowerEndpoint {n : ℕ}
     {x : Cube (n + 1)} (hx : quotientMap x = lowerEndpoint n) :
     x ∈ lowerFace (0 : Fin (n + 1)) := by
-  have h := congrArg (fun p : DoubleCone n ↦ p.1.1) hx
+  have h := congrArg (fun p : doubleCone n ↦ p.1.1) hx
   simp [quotientMap, quotientRaw, lowerEndpoint, lowerFace] at h ⊢
   linarith
 
 theorem mem_upperFace_of_quotientMap_eq_upperEndpoint {n : ℕ}
     {x : Cube (n + 1)} (hx : quotientMap x = upperEndpoint n) :
     x ∈ upperFace (0 : Fin (n + 1)) := by
-  have h := congrArg (fun p : DoubleCone n ↦ p.1.1) hx
+  have h := congrArg (fun p : doubleCone n ↦ p.1.1) hx
   simp [quotientMap, quotientRaw, upperEndpoint, upperFace] at h ⊢
   linarith
 
@@ -116,7 +116,7 @@ abbrev CubeWithoutEndFaces (n : ℕ) :=
 
 /-- The double cone with its two vertices deleted. -/
 abbrev DoubleConeWithoutEndpoints (n : ℕ) :=
-  {p : DoubleCone n // p ≠ lowerEndpoint n ∧ p ≠ upperEndpoint n}
+  {p : doubleCone n // p ≠ lowerEndpoint n ∧ p ≠ upperEndpoint n}
 
 def interiorQuotientMap {n : ℕ} (x : CubeWithoutEndFaces n) :
     DoubleConeWithoutEndpoints n :=
@@ -130,7 +130,7 @@ theorem continuous_interiorQuotientMap {n : ℕ} :
     apply Continuous.subtype_mk
     exact continuous_quotientMap.comp continuous_subtype_val
 
-private theorem first_mem_Icc {n : ℕ} (p : DoubleCone n) :
+private theorem first_mem_Icc {n : ℕ} (p : doubleCone n) :
     p.1.1 ∈ Set.Icc (-1 : ℝ) 1 := by
   rcases p.2 with ⟨x, hx⟩
   rw [← hx]
@@ -142,7 +142,7 @@ private theorem first_mem_Icc {n : ℕ} (p : DoubleCone n) :
   · simp only [quotientRaw]
     linarith
 
-private theorem eq_lowerEndpoint_of_first_eq {n : ℕ} (p : DoubleCone n)
+private theorem eq_lowerEndpoint_of_first_eq {n : ℕ} (p : doubleCone n)
     (hp : p.1.1 = -1) : p = lowerEndpoint n := by
   rcases p.2 with ⟨x, hx⟩
   have hx0 : x.1 (0 : Fin (n + 1)) = 0 := by
@@ -156,7 +156,7 @@ private theorem eq_lowerEndpoint_of_first_eq {n : ℕ} (p : DoubleCone n)
   · funext i
     norm_num [quotientRaw, lowerEndpoint, coneScale, hx0]
 
-private theorem eq_upperEndpoint_of_first_eq {n : ℕ} (p : DoubleCone n)
+private theorem eq_upperEndpoint_of_first_eq {n : ℕ} (p : doubleCone n)
     (hp : p.1.1 = 1) : p = upperEndpoint n := by
   rcases p.2 with ⟨x, hx⟩
   have hx0 : x.1 (0 : Fin (n + 1)) = 1 := by
@@ -190,12 +190,12 @@ private theorem inverseRaw_eq_of_quotientMap_eq {n : ℕ}
     (hx : quotientMap x = p.1) : inverseRaw p = x.1 := by
   funext j
   refine Fin.cases ?_ (fun i ↦ ?_) j
-  · have h := congrArg (fun z : DoubleCone n ↦ z.1.1) hx
-    simp only [quotientMap, quotientRaw, inverseRaw, Fin.cases_zero]
+  · have h := congrArg (fun z : doubleCone n ↦ z.1.1) hx
+    simp only [inverseRaw, Fin.cases_zero]
     simp only [quotientMap, quotientRaw] at h
     linarith
-  · have hs := congrArg (fun z : DoubleCone n ↦ z.1.1) hx
-    have hz := congrArg (fun z : DoubleCone n ↦ z.1.2 i) hx
+  · have hs := congrArg (fun z : doubleCone n ↦ z.1.1) hx
+    have hz := congrArg (fun z : doubleCone n ↦ z.1.2 i) hx
     have hscale : coneScale p.1.1.1 ≠ 0 := ne_of_gt (coneScale_pos p)
     simp only [quotientMap, quotientRaw] at hs hz
     simp only [inverseRaw, Fin.cases_succ]
@@ -289,7 +289,7 @@ theorem isOpen_coordinatePatch {n : ℕ} (sign : Fin n → Bool) :
   · simp only [hi, if_true]
     exact isOpen_lt ((continuous_apply i.succ).comp (@continuous_inverseRaw n)) continuous_const
   · have hi' : sign i = false := Bool.eq_false_of_not_eq_true hi
-    simp only [hi', Bool.false_eq, if_false]
+    simp only [hi', Bool.false_eq]
     exact isOpen_lt continuous_const
       ((continuous_apply i.succ).comp (@continuous_inverseRaw n))
 
@@ -326,21 +326,21 @@ theorem coordinatePatch_preimage_avoids_tail_face {n : ℕ}
     simp only [hi, if_true, hinv] at hlt
     have heq : x.1.1 i.succ = 1 := hface
     linarith
-  · simp only [hi, if_false]
+  · simp only [hi]
     intro hface
     have hgt := hx i
-    simp only [hi, if_false, hinv] at hgt
+    simp only [hi, hinv] at hgt
     simp at hgt
     have heq : x.1.1 i.succ = 0 := hface
     linarith
 
 private theorem isOpen_nonendpoints (n : ℕ) :
-    IsOpen {p : DoubleCone n | p ≠ lowerEndpoint n ∧ p ≠ upperEndpoint n} :=
+    IsOpen {p : doubleCone n | p ≠ lowerEndpoint n ∧ p ≠ upperEndpoint n} :=
   isOpen_ne.inter isOpen_ne
 
 /-- The ambient-open version of `coordinatePatch`. -/
-def goodOpenPatch {n : ℕ} (sign : Fin n → Bool) : Set (DoubleCone n) :=
-  ((↑) : DoubleConeWithoutEndpoints n → DoubleCone n) '' coordinatePatch sign
+def goodOpenPatch {n : ℕ} (sign : Fin n → Bool) : Set (doubleCone n) :=
+  ((↑) : DoubleConeWithoutEndpoints n → doubleCone n) '' coordinatePatch sign
 
 theorem isOpen_goodOpenPatch {n : ℕ} (sign : Fin n → Bool) :
     IsOpen (goodOpenPatch sign) := by
@@ -349,20 +349,20 @@ theorem isOpen_goodOpenPatch {n : ℕ} (sign : Fin n → Bool) :
 
 theorem goodOpenPatch_subset_nonendpoints {n : ℕ} (sign : Fin n → Bool) :
     goodOpenPatch sign ⊆
-      {p : DoubleCone n | p ≠ lowerEndpoint n ∧ p ≠ upperEndpoint n} := by
+      {p : doubleCone n | p ≠ lowerEndpoint n ∧ p ≠ upperEndpoint n} := by
   rintro _ ⟨p, -, rfl⟩
   exact p.2
 
 /-- Every non-vertex point belongs to one of the finite family of ambient
 open patches. -/
-theorem nonendpoint_mem_goodOpenPatch_some {n : ℕ} {p : DoubleCone n}
+theorem nonendpoint_mem_goodOpenPatch_some {n : ℕ} {p : doubleCone n}
     (hp : p ≠ lowerEndpoint n ∧ p ≠ upperEndpoint n) :
     ∃ sign : Fin n → Bool, p ∈ goodOpenPatch sign := by
   obtain ⟨sign, hsign⟩ := mem_coordinatePatch_some (⟨p, hp⟩ : DoubleConeWithoutEndpoints n)
   exact ⟨sign, ⟨⟨p, hp⟩, hsign, rfl⟩⟩
 
 theorem nonendpoints_subset_iUnion_goodOpenPatch {n : ℕ} :
-    {p : DoubleCone n | p ≠ lowerEndpoint n ∧ p ≠ upperEndpoint n} ⊆
+    {p : doubleCone n | p ≠ lowerEndpoint n ∧ p ≠ upperEndpoint n} ⊆
       ⋃ sign : Fin n → Bool, goodOpenPatch sign := by
   intro p hp
   obtain ⟨sign, hsign⟩ := nonendpoint_mem_goodOpenPatch_some hp
@@ -421,14 +421,14 @@ theorem goodOpenPatch_preimage_not_meets_both_faces {n : ℕ}
       simp only [hs, if_true] at hav
       exact hav hxhiFace
     · have hav := coordinatePatch_preimage_avoids_tail_face sign i xlo' hplo'
-      simp only [hs, if_false] at hav
+      simp only [hs] at hav
       exact hav hxloFace
 
 /-- The finite good-cover package used by the Mazurkiewicz argument.  Each
 member is ambient-open, the family covers the complement of the two
 vertices, and no pullback member meets both faces in any coordinate. -/
 theorem exists_good_open_cover (n : ℕ) :
-    ∃ k : ℕ, ∃ U : Fin k → Set (DoubleCone n),
+    ∃ k : ℕ, ∃ U : Fin k → Set (doubleCone n),
       (∀ a, IsOpen (U a)) ∧
       ({lowerEndpoint n, upperEndpoint n}ᶜ ⊆ ⋃ a, U a) ∧
       (∀ a, lowerEndpoint n ∉ U a ∧ upperEndpoint n ∉ U a) ∧
@@ -458,13 +458,13 @@ theorem exists_good_open_cover (n : ℕ) :
 
 /-- A separator of the two vertices, with the lower vertex on the `U` side
 and the upper vertex on the `V` side. -/
-def SeparatesEndpoints {n : ℕ} (L : Set (DoubleCone n)) : Prop :=
-  ∃ U V : Set (DoubleCone n), IsOpen U ∧ IsOpen V ∧ Disjoint U V ∧
+def SeparatesEndpoints {n : ℕ} (L : Set (doubleCone n)) : Prop :=
+  ∃ U V : Set (doubleCone n), IsOpen U ∧ IsOpen V ∧ Disjoint U V ∧
     U ∪ V = Lᶜ ∧ lowerEndpoint n ∈ U ∧ upperEndpoint n ∈ V
 
 /-- Pullback of an endpoint separator is a separator of the two cube faces
 normal to coordinate zero. -/
-theorem separatesFaces_preimage_quotientMap {n : ℕ} {L : Set (DoubleCone n)}
+theorem separatesFaces_preimage_quotientMap {n : ℕ} {L : Set (doubleCone n)}
     (hL : SeparatesEndpoints L) :
     SeparatesFaces (0 : Fin (n + 1)) (quotientMap ⁻¹' L) := by
   rcases hL with ⟨U, V, hU, hV, hUV, hcover, hlo, hhi⟩
@@ -482,7 +482,7 @@ theorem separatesFaces_preimage_quotientMap {n : ℕ} {L : Set (DoubleCone n)}
 /-- A direct interface for the closed/open separator decomposition produced
 by `MazurkiewiczComponents`. -/
 theorem separatesFaces_preimage_of_decomposition {n : ℕ}
-    {S P Q : Set (DoubleCone n)} (_hS : IsClosed S)
+    {S P Q : Set (doubleCone n)} (_hS : IsClosed S)
     (hP : IsOpen P) (hQ : IsOpen Q) (hPQ : Disjoint P Q)
     (hcover : Sᶜ = P ∪ Q) (hlo : lowerEndpoint n ∈ P)
     (hhi : upperEndpoint n ∈ Q) :
