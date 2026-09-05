@@ -453,9 +453,10 @@ private def Conclusion (edge : Nat → Prop) : Prop := d8ConclusionBody(edge)
 private theorem semantic (edge : Nat → Prop) : Conclusion edge := by
   exact d8BridgedSpecialized(edge)
 
-private theorem homogeneous_of_card_le_two {V : Type*} [DecidableEq V]
+private theorem homogeneous_of_card_le_two {V : Type*}
     (G : SimpleGraph V) (S : Finset V) (hcard : S.card ≤ 2) :
     IsHomogeneousFinset G S := by
+  classical
   by_cases h : ∃ u ∈ S, ∃ v ∈ S, u ≠ v ∧ G.Adj u v
   · obtain ⟨u, hu, v, hv, huv, hadj⟩ := h
     have hpair : ({u, v} : Finset V) ⊆ S := by
@@ -565,7 +566,7 @@ private theorem conjunction_of_mem {ps : List Prop} (h : conjunction ps)
           · exact hq
           · exact ih hrest (by simpa only [List.mem_cons] using hp)
 
-private theorem pair_mem_unorderedPairs_of_mem_ne {α : Type*} [DecidableEq α]
+private theorem pair_mem_unorderedPairs_of_mem_ne {α : Type*}
     {u v : α} {xs : List α} (hu : u ∈ xs) (hv : v ∈ xs) (hne : u ≠ v) :
     (u, v) ∈ unorderedPairs xs ∨ (v, u) ∈ unorderedPairs xs := by
   induction xs with
@@ -813,11 +814,12 @@ theorem cochromaticColorable_comap_equiv {V W : Type*}
 The existing colours are embedded into `Fin (k + 1)` and the new block receives
 the last colour. -/
 theorem cochromaticColorable_add_homogeneous_block
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*}
     (G : SimpleGraph V) (S : Finset V) (k : ℕ)
     (hrest : CochromaticColorable (G.induce {v | v ∉ S}) k)
     (hS : IsHomogeneousFinset G S) :
     CochromaticColorable G (k + 1) := by
+  classical
   obtain ⟨d, hd⟩ := hrest
   let c : V → Fin (k + 1) := fun v ↦
     if h : v ∈ S then Fin.last k else (d ⟨v, h⟩).castSucc
@@ -867,8 +869,7 @@ theorem colorable_four_of_homogeneous_four
   have hTcard : Fintype.card T = 8 := by
     dsimp [T]
     rw [Fintype.card_subtype_compl]
-    simpa only [Fintype.card_fin, Fintype.card_coe, hcard] using
-      (show 12 - 4 = 8 by decide)
+    simp only [Fintype.card_fin, Fintype.card_coe, hcard]
   let e : Fin 8 ≃ T := Fintype.equivOfCardEq (by simpa using hTcard.symm)
   let R : SimpleGraph T := G.induce {v | v ∉ S}
   have hR : CochromaticColorable R 3 :=
@@ -891,7 +892,7 @@ noncomputable local instance graphAdjDecidableFin12
 
 /-- A permutation which is obtained by extending a permutation of the subtype `S`
 fixes every point outside `S`. -/
-theorem exists_perm_sort_within {α : Type*} [Fintype α] [DecidableEq α]
+theorem exists_perm_sort_within {α : Type*}
     (S A B : Finset α) (hAS : A ⊆ S) (hBS : B ⊆ S) (hcard : A.card = B.card) :
     ∃ σ : Equiv.Perm α,
       (∀ x, σ x ∈ S ↔ x ∈ S) ∧
@@ -1052,7 +1053,7 @@ theorem card_initialAfterZero {n d : ℕ} (hd : d < n) :
       simp only [initialAfterZero, Finset.mem_filter, Finset.mem_univ, true_and] at hx
       refine ⟨x.val - 1, Finset.mem_range.mpr (by omega), ?_⟩
       apply Fin.ext
-      simp only [Fin.val_mk]
+      change x.val - 1 + 1 = x.val
       omega
   simpa only [Finset.card_range] using hcard.symm
 
@@ -1079,7 +1080,7 @@ theorem card_intervalFrom {n start len : ℕ} (h : start + len ≤ n) :
       simp only [intervalFrom, Finset.mem_filter, Finset.mem_univ, true_and] at hx
       refine ⟨x.val - start, Finset.mem_range.mpr (by omega), ?_⟩
       apply Fin.ext
-      simp only [Fin.val_mk]
+      change start + (x.val - start) = x.val
       omega
   simpa only [Finset.card_range] using hcard.symm
 
@@ -1124,7 +1125,7 @@ theorem neighborFinset_subset_erase_self {α : Type*} [Fintype α] [DecidableEq 
   exact Finset.mem_erase.mpr ⟨G.ne_of_adj hadj |>.symm, Finset.mem_univ _⟩
 
 /-- Degree of a vertex with only neighbors in `S` counted. -/
-def degreeWithin {α : Type*} [Fintype α] [DecidableEq α]
+def degreeWithin {α : Type*}
     (G : SimpleGraph α) [DecidableRel G.Adj] (S : Finset α) (v : α) : ℕ :=
   (S.filter fun x ↦ G.Adj v x).card
 
@@ -1138,7 +1139,7 @@ def TriangleFreeOnFinset {α : Type*} (G : SimpleGraph α) (S : Finset α) : Pro
 triangle-free graph has at most `2*k+1` vertices, some vertex has degree at
 most `k`.  The proof takes an edge `a-b`; the two neighborhoods are disjoint. -/
 theorem exists_degreeWithin_le_of_triangleFree
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*}
     (G : SimpleGraph α) [DecidableRel G.Adj]
     (S : Finset α) (hne : S.Nonempty) (k : ℕ)
     (hcard : S.card ≤ 2 * k + 1) (htri : TriangleFreeOnFinset G S) :
@@ -1169,7 +1170,7 @@ theorem exists_degreeWithin_le_of_triangleFree
 
 /-- Relabelling a cell setwise preserves its internal degree multiset. -/
 theorem degreeWithin_comap_perm
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*}
     (G : SimpleGraph α) [DecidableRel G.Adj]
     (S : Finset α) (σ : Equiv.Perm α)
     (hσS : ∀ x, σ x ∈ S ↔ x ∈ S) (p : α) :
@@ -1220,13 +1221,12 @@ theorem triangleFreeOnFinset_of_no_homogeneous_four_at
     simp only [T, Finset.mem_insert, Finset.mem_singleton] at hu hv
     rcases hu with rfl | rfl | rfl | rfl <;>
       rcases hv with rfl | rfl | rfl | rfl <;>
-      simp_all only [SimpleGraph.irrefl, not_false_eq_true,
+      simp_all only [not_false_eq_true,
         SimpleGraph.adj_comm, ne_eq, not_true_eq_false]
 
 /-- Relabel a graph so that the neighbors of vertex zero have precisely the labels
 `1,...,degree(0)`.  The permutation fixes vertex zero. -/
-theorem exists_root_neighbor_normalization (G : SimpleGraph (Fin 12))
-    [DecidableRel G.Adj] :
+theorem exists_root_neighbor_normalization (G : SimpleGraph (Fin 12)) :
     ∃ σ : Equiv.Perm (Fin 12),
       σ 0 = 0 ∧
       ∀ x : Fin 12,
@@ -1258,7 +1258,7 @@ adjacent vertices in the prescribed target subblock `T`.  The relabelling fixes
 the complement of `S` and preserves `S` setwise.  This can be applied repeatedly
 to the nested cells in the certificate hierarchy. -/
 theorem exists_comap_sort_adjacency_within
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*}
     (G : SimpleGraph α) [DecidableRel G.Adj]
     (p : α) (S T : Finset α) (hpS : p ∉ S) (hTS : T ⊆ S)
     (hcard : T.card = (S.filter fun x ↦ G.Adj p x).card) :
@@ -1279,7 +1279,7 @@ theorem exists_comap_sort_adjacency_within
 /-- A later cell sort preserves every earlier pivot row which was constant on
 that cell. -/
 theorem exists_comap_sort_adjacency_within_preserving
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*}
     (G : SimpleGraph α) [DecidableRel G.Adj]
     (p q : α) (S T : Finset α) (hpS : p ∉ S) (hqS : q ∉ S)
     (hTS : T ⊆ S)
@@ -1567,13 +1567,13 @@ theorem isHomogeneousFinset_compl_iff_normalization {V : Type*}
   · exact IsHomogeneousFinset.compl_normalization
 
 theorem HasNoHomogeneousFour.compl_normalization {V : Type*}
-    [DecidableEq V] {G : SimpleGraph V} (h : HasNoHomogeneousFour G) :
+    {G : SimpleGraph V} (h : HasNoHomogeneousFour G) :
     HasNoHomogeneousFour Gᶜ := by
   intro S hcard hhom
   exact h S hcard ((isHomogeneousFinset_compl_iff_normalization G S).mp hhom)
 
 theorem IsHomogeneousFinset.map_comap_normalization
-    {V W : Type*} [DecidableEq V] [DecidableEq W]
+    {V W : Type*}
     {G : SimpleGraph W} (e : V ≃ W) {S : Finset V}
     (h : IsHomogeneousFinset (G.comap e) S) :
     IsHomogeneousFinset G (S.map e.toEmbedding) := by
@@ -1594,7 +1594,7 @@ theorem IsHomogeneousFinset.map_comap_normalization
     simpa only [SimpleGraph.comap_adj] using hnadj
 
 theorem HasNoHomogeneousFour.comap_equiv_normalization
-    {V W : Type*} [DecidableEq V] [DecidableEq W]
+    {V W : Type*}
     {G : SimpleGraph W} (e : V ≃ W)
     (h : HasNoHomogeneousFour G) :
     HasNoHomogeneousFour (G.comap e) := by
@@ -1604,7 +1604,7 @@ theorem HasNoHomogeneousFour.comap_equiv_normalization
   · exact hhom.map_comap_normalization e
 
 theorem exists_pivot_internal_normalization
-    (H : SimpleGraph (Fin 12)) [DecidableRel H.Adj]
+    (H : SimpleGraph (Fin 12))
     (d k : ℕ) (hdpos : 1 ≤ d) (hdle : d ≤ 11)
     (hdk : d ≤ 2 * k + 1) (hroot : RootRow H d)
     (hno : HasNoHomogeneousFour H) :
@@ -1702,7 +1702,7 @@ theorem exists_pivot_internal_normalization
       (cochromaticColorable_comap_equiv_normalization H σ q)
 
 theorem exists_row_one_outside_normalization
-    (H : SimpleGraph (Fin 12)) [DecidableRel H.Adj]
+    (H : SimpleGraph (Fin 12))
     (d r : ℕ) (hdpos : 1 ≤ d) (hdle : d ≤ 11)
     (hroot : RootRow H d) (hinside : RowOneInside H d r)
     (hno : HasNoHomogeneousFour H) :
@@ -1751,7 +1751,7 @@ theorem exists_row_one_outside_normalization
     intro x hxI
     have hxC : x ∉ C := by
       intro hxC
-      simp only [I, C, D12Normalization.intervalFrom,
+      simp only [C, D12Normalization.intervalFrom,
         Finset.mem_filter, Finset.mem_univ, true_and] at hxI hxC
       omega
     change H.Adj (τ 1) (τ x) ↔
@@ -1763,7 +1763,7 @@ theorem exists_row_one_outside_normalization
     fun q ↦ cochromaticColorable_comap_equiv_normalization H τ q⟩
 
 theorem exists_row_two_residual_normalization
-    (H : SimpleGraph (Fin 12)) [DecidableRel H.Adj]
+    (H : SimpleGraph (Fin 12))
     (d r : ℕ) (hd : d ≤ 11) (hrpos : 1 ≤ r) (hrd : r + 1 ≤ d)
     (hroot : RootRow H d) (hinside : RowOneInside H d r)
     (hno : HasNoHomogeneousFour H) :
@@ -2011,7 +2011,7 @@ private theorem conjunction_of_mem {ps : List Prop} (h : conjunction ps)
           · exact hq
           · exact ih hrest (by simpa only [List.mem_cons] using hp)
 
-private theorem pair_mem_unorderedPairs_of_mem_ne {α : Type*} [DecidableEq α]
+private theorem pair_mem_unorderedPairs_of_mem_ne {α : Type*}
     {u v : α} {xs : List α} (hu : u ∈ xs) (hv : v ∈ xs) (hne : u ≠ v) :
     (u, v) ∈ unorderedPairs xs ∨ (v, u) ∈ unorderedPairs xs := by
   induction xs with
@@ -2151,73 +2151,96 @@ def graphEdge (G : SimpleGraph (Fin 12)) (n : Nat) : Prop :=
 private theorem graphEdge_edgeIndex12_row0 (G : SimpleGraph (Fin 12)) (j : Fin 12)
     (hij : (0 : Fin 12) ≠ j) :
     graphEdge G (edgeIndex12 0 j.val) ↔ G.Adj 0 j := by
-  fin_cases j <;> simp_all [graphEdge, edgeIndex12]
+  fin_cases j <;> first
+    | exact (hij rfl).elim
+    | exact Iff.rfl
 
 private theorem graphEdge_edgeIndex12_row1 (G : SimpleGraph (Fin 12)) (j : Fin 12)
     (hij : (1 : Fin 12) ≠ j) :
     graphEdge G (edgeIndex12 1 j.val) ↔ G.Adj 1 j := by
-  fin_cases j <;> simp_all [graphEdge, edgeIndex12]
-  all_goals exact G.adj_comm _ _
+  fin_cases j <;> first
+    | exact (hij rfl).elim
+    | exact Iff.rfl
+    | exact G.adj_comm _ _
 
 private theorem graphEdge_edgeIndex12_row2 (G : SimpleGraph (Fin 12)) (j : Fin 12)
     (hij : (2 : Fin 12) ≠ j) :
     graphEdge G (edgeIndex12 2 j.val) ↔ G.Adj 2 j := by
-  fin_cases j <;> simp_all [graphEdge, edgeIndex12]
-  all_goals exact G.adj_comm _ _
+  fin_cases j <;> first
+    | exact (hij rfl).elim
+    | exact Iff.rfl
+    | exact G.adj_comm _ _
 
 private theorem graphEdge_edgeIndex12_row3 (G : SimpleGraph (Fin 12)) (j : Fin 12)
     (hij : (3 : Fin 12) ≠ j) :
     graphEdge G (edgeIndex12 3 j.val) ↔ G.Adj 3 j := by
-  fin_cases j <;> simp_all [graphEdge, edgeIndex12]
-  all_goals exact G.adj_comm _ _
+  fin_cases j <;> first
+    | exact (hij rfl).elim
+    | exact Iff.rfl
+    | exact G.adj_comm _ _
 
 private theorem graphEdge_edgeIndex12_row4 (G : SimpleGraph (Fin 12)) (j : Fin 12)
     (hij : (4 : Fin 12) ≠ j) :
     graphEdge G (edgeIndex12 4 j.val) ↔ G.Adj 4 j := by
-  fin_cases j <;> simp_all only [Fin.isValue, Fin.mk_one, Fin.reduceFinMk, Fin.zero_eta]
-  all_goals exact G.adj_comm _ _
+  fin_cases j <;> first
+    | exact (hij rfl).elim
+    | exact Iff.rfl
+    | exact G.adj_comm _ _
 
 private theorem graphEdge_edgeIndex12_row5 (G : SimpleGraph (Fin 12)) (j : Fin 12)
     (hij : (5 : Fin 12) ≠ j) :
     graphEdge G (edgeIndex12 5 j.val) ↔ G.Adj 5 j := by
-  fin_cases j <;> simp_all only [Fin.isValue, Fin.mk_one, Fin.reduceFinMk, Fin.zero_eta]
-  all_goals exact G.adj_comm _ _
+  fin_cases j <;> first
+    | exact (hij rfl).elim
+    | exact Iff.rfl
+    | exact G.adj_comm _ _
 
 private theorem graphEdge_edgeIndex12_row6 (G : SimpleGraph (Fin 12)) (j : Fin 12)
     (hij : (6 : Fin 12) ≠ j) :
     graphEdge G (edgeIndex12 6 j.val) ↔ G.Adj 6 j := by
-  fin_cases j <;> simp_all only [Fin.isValue, Fin.mk_one, Fin.reduceFinMk, Fin.zero_eta]
-  all_goals exact G.adj_comm _ _
+  fin_cases j <;> first
+    | exact (hij rfl).elim
+    | exact Iff.rfl
+    | exact G.adj_comm _ _
 
 private theorem graphEdge_edgeIndex12_row7 (G : SimpleGraph (Fin 12)) (j : Fin 12)
     (hij : (7 : Fin 12) ≠ j) :
     graphEdge G (edgeIndex12 7 j.val) ↔ G.Adj 7 j := by
-  fin_cases j <;> simp_all only [Fin.isValue, Fin.mk_one, Fin.reduceFinMk, Fin.zero_eta]
-  all_goals exact G.adj_comm _ _
+  fin_cases j <;> first
+    | exact (hij rfl).elim
+    | exact Iff.rfl
+    | exact G.adj_comm _ _
 
 private theorem graphEdge_edgeIndex12_row8 (G : SimpleGraph (Fin 12)) (j : Fin 12)
     (hij : (8 : Fin 12) ≠ j) :
     graphEdge G (edgeIndex12 8 j.val) ↔ G.Adj 8 j := by
-  fin_cases j <;> simp_all only [Fin.isValue, Fin.mk_one, Fin.reduceFinMk, Fin.zero_eta]
-  all_goals exact G.adj_comm _ _
+  fin_cases j <;> first
+    | exact (hij rfl).elim
+    | exact Iff.rfl
+    | exact G.adj_comm _ _
 
 private theorem graphEdge_edgeIndex12_row9 (G : SimpleGraph (Fin 12)) (j : Fin 12)
     (hij : (9 : Fin 12) ≠ j) :
     graphEdge G (edgeIndex12 9 j.val) ↔ G.Adj 9 j := by
-  fin_cases j <;> simp_all only [Fin.isValue, Fin.mk_one, Fin.reduceFinMk, Fin.zero_eta]
-  all_goals exact G.adj_comm _ _
+  fin_cases j <;> first
+    | exact (hij rfl).elim
+    | exact Iff.rfl
+    | exact G.adj_comm _ _
 
 private theorem graphEdge_edgeIndex12_row10 (G : SimpleGraph (Fin 12)) (j : Fin 12)
     (hij : (10 : Fin 12) ≠ j) :
     graphEdge G (edgeIndex12 10 j.val) ↔ G.Adj 10 j := by
-  fin_cases j <;> simp_all only [Fin.isValue, Fin.mk_one, Fin.reduceFinMk, Fin.zero_eta]
-  all_goals exact G.adj_comm _ _
+  fin_cases j <;> first
+    | exact (hij rfl).elim
+    | exact Iff.rfl
+    | exact G.adj_comm _ _
 
 private theorem graphEdge_edgeIndex12_row11 (G : SimpleGraph (Fin 12)) (j : Fin 12)
     (hij : (11 : Fin 12) ≠ j) :
     graphEdge G (edgeIndex12 11 j.val) ↔ G.Adj 11 j := by
-  fin_cases j <;> simp_all only [Fin.isValue, Fin.mk_one, Fin.reduceFinMk, Fin.zero_eta]
-  all_goals exact G.adj_comm _ _
+  fin_cases j <;> first
+    | exact (hij rfl).elim
+    | exact G.adj_comm _ _
 
 theorem graphEdge_edgeIndex12 (G : SimpleGraph (Fin 12)) (i j : Fin 12)
     (hij : i ≠ j) :
@@ -2300,15 +2323,15 @@ private theorem homogeneousTriple_to_finset (G : SimpleGraph (Fin 12))
   have hab' : a ≠ b := by
     intro e
     subst b
-    simpa using hn
+    simp at hn
   have hac' : a ≠ c := by
     intro e
     subst c
-    simpa using hn
+    simp at hn
   have hbc' : b ≠ c := by
     intro e
     subst c
-    simpa using hn
+    simp at hn
   rw [semantic_homogeneous_three] at hh
   rcases hh with ⟨hab, hac, hbc⟩ | ⟨hab, hac, hbc⟩
   · apply homogeneous_of_pairConjunction_pos
@@ -2335,12 +2358,12 @@ private theorem homogeneousFour_to_finset (G : SimpleGraph (Fin 12))
   have hb12 : b < 12 := hb b (by simp)
   have hc12 : c < 12 := hb c (by simp)
   have hd12 : d < 12 := hb d (by simp)
-  have hab' : a ≠ b := by intro e; subst b; simpa using hn
-  have hac' : a ≠ c := by intro e; subst c; simpa using hn
-  have had' : a ≠ d := by intro e; subst d; simpa using hn
-  have hbc' : b ≠ c := by intro e; subst c; simpa using hn
-  have hbd' : b ≠ d := by intro e; subst d; simpa using hn
-  have hcd' : c ≠ d := by intro e; subst d; simpa using hn
+  have hab' : a ≠ b := by intro e; subst b; simp at hn
+  have hac' : a ≠ c := by intro e; subst c; simp at hn
+  have had' : a ≠ d := by intro e; subst d; simp at hn
+  have hbc' : b ≠ c := by intro e; subst c; simp at hn
+  have hbd' : b ≠ d := by intro e; subst d; simp at hn
+  have hcd' : c ≠ d := by intro e; subst d; simp at hn
   rw [semantic_homogeneous_four] at hh
   rcases hh with ⟨hab, hac, had, hbc, hbd, hcd⟩ |
       ⟨hab, hac, had, hbc, hbd, hcd⟩

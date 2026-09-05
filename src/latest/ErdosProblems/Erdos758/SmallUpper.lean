@@ -72,7 +72,7 @@ theorem uniformBound_of_ramsey {n r k : ℕ}
   · apply colorable_of_card_eq (m := n - r)
     · change Fintype.card {v : Fin n // ¬v ∈ S} = n - r
       rw [Fintype.card_subtype_compl]
-      simpa only [Fintype.card_fin, Fintype.card_coe, hScard]
+      simp only [Fintype.card_fin, Fintype.card_coe, hScard]
     · exact hsmall
   · exact hS
 

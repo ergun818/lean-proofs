@@ -9,7 +9,8 @@ lrat_proof d9_raw
 def d9_ids : String := include_str "../reduced/d9.ids"
 
 def d9_units : List (Nat × Bool) :=
-  [(1, true), (2, true), (3, true), (4, true), (5, true), (6, true), (7, true), (8, true), (9, true), (10, false), (11, false)]
+  [(1, true), (2, true), (3, true), (4, true), (5, true), (6, true), (7, true), (8, true),
+    (9, true), (10, false), (11, false)]
 
 private theorem d9_sem_0_219 (edge : Nat → Prop) :
     d12CaseRange(d9_ids, d9_units, edge, 0, 219) := by

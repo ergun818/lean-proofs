@@ -9,7 +9,9 @@ lrat_proof d6_r0_s3_raw
 def d6_r0_s3_ids : String := include_str "../reduced/d6_r0_s3.ids"
 
 def d6_r0_s3_units : List (Nat × Bool) :=
-  [(1, true), (2, true), (3, true), (4, true), (5, true), (6, true), (7, false), (8, false), (9, false), (10, false), (11, false), (12, false), (13, false), (14, false), (15, false), (16, false), (17, true), (18, true), (19, true), (20, false), (21, false)]
+  [(1, true), (2, true), (3, true), (4, true), (5, true), (6, true), (7, false), (8, false),
+    (9, false), (10, false), (11, false), (12, false), (13, false), (14, false),
+    (15, false), (16, false), (17, true), (18, true), (19, true), (20, false), (21, false)]
 
 private theorem d6_r0_s3_sem_0_329 (edge : Nat → Prop) :
     d12CaseRange(d6_r0_s3_ids, d6_r0_s3_units, edge, 0, 329) := by

@@ -91,7 +91,19 @@ def write_lean_index(manifest) -> None:
 
     def lean_list(items, render, chunk_size=64):
         chunks = [items[i:i + chunk_size] for i in range(0, len(items), chunk_size)]
-        rendered = ["[" + ", ".join(render(item) for item in chunk) + "]" for chunk in chunks]
+        rendered = []
+        for chunk in chunks:
+            lines = []
+            line = "["
+            for index, item in enumerate(chunk):
+                entry = render(item)
+                separator = ", " if index else ""
+                if index and len(line) + len(separator) + len(entry) > 90:
+                    lines.append(line + ",")
+                    line = "    " + entry
+                else:
+                    line += separator + entry
+            rendered.append("\n".join([*lines, line + "]"]))
         return (" ++\n    ").join(rendered) if rendered else "[]"
 
     for case in manifest["cases"]:
