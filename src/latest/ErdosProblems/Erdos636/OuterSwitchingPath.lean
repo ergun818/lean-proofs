@@ -47,7 +47,7 @@ literal finite parameters; the main theorem only has to verify their
 coarse numerical inequalities.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 open scoped BigOperators
 
 namespace Erdos636
@@ -72,40 +72,54 @@ def permutationPrefix (I : Finset V)
     signedSlicePositiveSupport I r 0 (by omega) (Finset.equivFin I).symm sigma
   else I
 
+omit [DecidableEq V] [Fintype V] in
 lemma permutationPrefix_eq_of_le (I : Finset V)
     (sigma : Equiv.Perm (Fin I.card)) {r : ℕ} (hr : r ≤ I.card) :
     permutationPrefix I sigma r =
       signedSlicePositiveSupport I r 0 (by omega) (Finset.equivFin I).symm sigma := by
+  classical
   simp [permutationPrefix, hr]
 
-lemma permutationPrefix_subset (I : Finset V)
+omit [DecidableEq V] [Fintype V] in
+lemma permutationPrefix_subset [Finite V] (I : Finset V)
     (sigma : Equiv.Perm (Fin I.card)) (r : ℕ) :
     permutationPrefix I sigma r ⊆ I := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   by_cases hr : r ≤ I.card
   · rw [permutationPrefix_eq_of_le I sigma hr]
     exact signedSlicePositiveSupport_subset I r 0 (by omega)
       (Finset.equivFin I).symm sigma
   · simp [permutationPrefix, hr]
 
-@[simp] lemma card_permutationPrefix_of_le (I : Finset V)
+omit [DecidableEq V] [Fintype V] in
+@[simp] lemma card_permutationPrefix_of_le [Finite V] (I : Finset V)
     (sigma : Equiv.Perm (Fin I.card)) {r : ℕ} (hr : r ≤ I.card) :
     (permutationPrefix I sigma r).card = r := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [permutationPrefix_eq_of_le I sigma hr]
   exact card_signedSlicePositiveSupport I r 0 (by omega)
     (Finset.equivFin I).symm sigma
 
-@[simp] lemma permutationPrefix_zero (I : Finset V)
+omit [DecidableEq V] [Fintype V] in
+@[simp] lemma permutationPrefix_zero [Finite V] (I : Finset V)
     (sigma : Equiv.Perm (Fin I.card)) :
     permutationPrefix I sigma 0 = ∅ := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   apply Finset.card_eq_zero.mp
   exact card_permutationPrefix_of_le I sigma (Nat.zero_le _)
 
-@[simp] lemma permutationPrefix_card (I : Finset V)
+omit [DecidableEq V] [Fintype V] in
+@[simp] lemma permutationPrefix_card [Finite V] (I : Finset V)
     (sigma : Equiv.Perm (Fin I.card)) :
     permutationPrefix I sigma I.card = I := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hcard := card_permutationPrefix_of_le I sigma (le_rfl : I.card ≤ I.card)
   exact Finset.eq_of_subset_of_card_le (permutationPrefix_subset I sigma I.card)
-    (by simpa [hcard])
+    (by simp [hcard])
 
 /-- Two permutations of the structural endpoint sets determine a literal
 fixed-cardinality switching path. -/
@@ -434,7 +448,6 @@ lemma CrowdedPath.center_last_sub_zero {G : SimpleGraph V}
   have hlast := S.degree_Wplus (Q.anchor nW) (Q.anchor_mem nW le_rfl)
   simp only [CrowdedPath.center, Q.W_zero, Q.W_last]
   rw [hzero, hlast]
-  push_cast
   ring
 
 /-- The structural discrepancy remains a rise after adding the anchor term,
@@ -528,8 +541,8 @@ theorem CrowdedPath.exists_markedSeparatedSubset
     {G : SimpleGraph V} {scale nW ell K m : ℕ}
     {alpha aDisc aDiv b sigma R theta : ℝ}
     {S : StructuralWitness G scale nW ell K alpha aDisc aDiv b}
-    {mu window nZ : ℕ} (Q : CrowdedPath S mu window)
-    (idx : Fin (m + 1) → ℕ)
+    {mu window _nZ : ℕ} (_Q : CrowdedPath S mu window)
+    (_idx : Fin (m + 1) → ℕ)
     (x r : ℕ → ℝ) (marked : Finset ℕ)
     (hsigma : 0 < sigma) (hR : 0 < R) (htheta : 0 < theta)
     (hr : ∀ u ∈ Finset.Icc 1 m, 0 ≤ r u)

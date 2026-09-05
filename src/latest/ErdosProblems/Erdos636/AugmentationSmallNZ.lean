@@ -34,7 +34,7 @@ independently of the asymptotic choice of constants: unlike the long-path
 endpoint it works also for `nZ = 1`, where the fixed state is empty.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 open scoped BigOperators
 
 namespace Erdos636
@@ -75,11 +75,12 @@ def innerDegreeBad (G : SimpleGraph V) (D1 : Finset V) (nD : Nat)
 def innerLinearFailure (nD K : Nat) (deviation : Real) : Real :=
   2 * Real.exp (-deviation ^ 2 / (2 * nD * (4 * K) ^ 2))
 
+omit [Fintype V] in
 /-- One candidate's inner deletion degree has the claimed common explicit
 bounded-difference tail.  This is the degree-risk input used by the
 one-state endpoint; it is proved here rather than retained as a probability
 hypothesis. -/
-theorem uniformProbability_innerDegreeBad_le
+theorem uniformProbability_innerDegreeBad_le [Finite V]
     (G : SimpleGraph V) (D1 x : Finset V) (nD K : Nat)
     (deviation : Real)
     (hnD : 0 < nD) (hhalf : D1.card = 2 * nD)
@@ -87,6 +88,7 @@ theorem uniformProbability_innerDegreeBad_le
     uniformProbability (innerDegreeBad G D1 nD deviation x) ≤
       innerLinearFailure nD K deviation := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   have hfeasible : nD ≤ Fintype.card D1 := by simp [hhalf]; omega
   let : Nonempty D1 := by
     have : 0 < D1.card := by omega
@@ -140,6 +142,7 @@ def boolSliceAsHalf (D1 : Finset V) (nD : Nat) (omega : BoolSlice D1 nD) :
   ⟨SlicePersistence.sampleFinset nD omega,
     SlicePersistence.card_sampleFinset nD omega⟩
 
+omit [Fintype V] in
 @[simp] lemma halfDeletion_boolSliceAsHalf
     (D1 : Finset V) (nD : Nat) (omega : BoolSlice D1 nD) :
     AugmentationGraphFullIdentity.halfDeletion D1 nD
@@ -231,7 +234,7 @@ theorem oneStateValue_mem_smallNZWindow
     (branch : Bool) (D1 : Finset V) (nD nZ : Nat)
     (state : Finset (Finset V)) (x : Finset V)
     (outerCenter outerRadius innerDeviation : Real)
-    (hnZ : 1 ≤ nZ) (hhalf : D1.card = 2 * nD) (hD1 : D1 ⊆ S.U0)
+    (hnZ : 1 ≤ nZ) (_hhalf : D1.card = 2 * nD) (hD1 : D1 ⊆ S.U0)
     (hstate : state ⊆ S.matching) (hstateCard : state.card = nZ - 1)
     (hx : x ∈ S.matching) (hxstate : x ∉ state)
     (hxOuter : AugmentationGraphPartial.DegreeGood
@@ -298,15 +301,11 @@ theorem oneStateValue_mem_smallNZWindow
             degreeInto G D x := by
     have hid' := congrArg (fun z : Int => (z : Real)) hid
     push_cast at hid'
-    simp only [oneStateValue, AugmentationGraphFull.exposedBase,
-      AugmentationGraphFullIdentity.literalState,
+    simp only [AugmentationGraphFullIdentity.literalState,
       AugmentationGraphFullIdentity.deletionBase,
       AugmentationGraphFullIdentity.literalPathNat,
       Z] at hid'
     simp only [oneStateValue, AugmentationGraphFull.exposedBase,
-      AugmentationGraphFullIdentity.literalState,
-      AugmentationGraphFullIdentity.deletionBase,
-      AugmentationGraphFullIdentity.literalPathNat,
       Z]
     linarith
   let r : Real := (nD : Real) / D1.card
@@ -379,7 +378,7 @@ theorem uniformProbability_oneStateValue_collision_le
     (hstate : state ⊆ S.matching)
     (hx : x ∈ S.matching) (hy : y ∈ S.matching)
     (hxstate : x ∉ state) (hystate : y ∉ state)
-    (hxy : x ≠ y)
+    (_hxy : x ≠ y)
     (hxOuter : AugmentationGraphPartial.DegreeGood
       G D1 x outerCenter outerRadius)
     (hyOuter : AugmentationGraphPartial.DegreeGood
@@ -525,6 +524,7 @@ theorem uniformProbability_oneStateValue_collision_le
           (fun u => (a u : Real)) omega = target) ≤ _
     simpa only [Fintype.card_coe] using hanti)
 
+open Classical in
 /-- The generic finite one-state probability/Turan endpoint.
 
 All probabilistic assumptions are per-pair or per-candidate estimates.  The
@@ -565,7 +565,7 @@ theorem one_third_le_layerProbability_innerWindowGood_oneState
     (hbadDegree : badDegree < C.card)
     (hpiece : piece * (C.card + 2 * edgeBudget) ≤
       (C.card - badDegree) ^ 2)
-    (hpiecePos : 0 < piece)
+    (_hpiecePos : 0 < piece)
     (hL : L ≤ piece) :
     (1 / 3 : Real) ≤ NestedUniform.layerProbability D1 nD
       (fun D => AugmentationGraphFull.innerWindowGood
@@ -727,6 +727,7 @@ theorem one_third_le_layerProbability_innerWindowGood_oneState
         G W U0 M (nS + 1) L (center D) radius D)
   exact hgood.trans (htransport.trans_eq hdecode)
 
+open Classical in
 /-- **Bounded-`nZ` graph endpoint.**
 
 This is the consumable small-augmentation branch.  A `PartialGood` outer
@@ -997,14 +998,10 @@ theorem oneStateValue_mem_generalSmallNZWindow
           degreeInto G W x + d0 - degreeInto G D x := by
     have hid' := congrArg (fun z : Int => (z : Real)) hid
     push_cast at hid'
-    simp only [oneStateValue, AugmentationGraphFull.exposedBase,
-      AugmentationGraphFullIdentity.literalState,
+    simp only [AugmentationGraphFullIdentity.literalState,
       AugmentationGraphFullIdentity.deletionBase,
       AugmentationGraphFullIdentity.literalPathNat, Z] at hid'
-    simp only [oneStateValue, AugmentationGraphFull.exposedBase,
-      AugmentationGraphFullIdentity.literalState,
-      AugmentationGraphFullIdentity.deletionBase,
-      AugmentationGraphFullIdentity.literalPathNat, Z]
+    simp only [oneStateValue, AugmentationGraphFull.exposedBase, Z]
     linarith
   let r : Real := (nD : Real) / D1.card
   have hr : 0 ≤ r := by positivity
@@ -1087,7 +1084,7 @@ theorem uniformProbability_oneStateValue_collision_le_general
     (haway : ∀ z ∈ M, Disjoint z (W ∪ U0))
     (hstate : state ⊆ M)
     (hx : x ∈ M) (hy : y ∈ M)
-    (hxstate : x ∉ state) (hystate : y ∉ state) (hxy : x ≠ y)
+    (hxstate : x ∉ state) (hystate : y ∉ state) (_hxy : x ≠ y)
     (hxOuter : AugmentationGraphPartial.DegreeGood
       G D1 x outerCenter outerRadius)
     (hyOuter : AugmentationGraphPartial.DegreeGood
@@ -1222,6 +1219,7 @@ theorem uniformProbability_oneStateValue_collision_le_general
           (fun u => (a u : Real)) omega = target) ≤ _
     simpa only [Fintype.card_coe] using hanti)
 
+open Classical in
 /-- **General bounded-`nZ` graph endpoint.**
 
 This is the version used at each time of a crowded switching path.  It is
@@ -1417,6 +1415,7 @@ def fixedStateSmallNZCenter (G : SimpleGraph V) (W U0 : Finset V)
         (fun _ : Unit => state) ()) : Real) +
     wCenter + d0 - (1 / 2 : Real) * outerCenter
 
+open Classical in
 /-- Fixed-state, arbitrary-time bounded-`nZ` endpoint.
 
 Unlike the existential-state form, this theorem quantifies `state` before

@@ -14,7 +14,7 @@ exposure bounds and supplies one branch-order threshold after which every
 rounded scalar required by the full exposure is valid.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 
 namespace Erdos636
 namespace AugmentationInnerScales
@@ -126,7 +126,7 @@ theorem exists_innerExposureFinalBounds
   have houtputLower : outputCoeff / 2 * nD ≤
       (exposureOutput outputCoeff nD : ℝ) := by
     dsimp only [exposureOutput]
-    convert half_le_natFloor houtputArgLarge using 1 <;> ring
+    convert half_le_natFloor houtputArgLarge using 1 ; ring
   have hrounded' := hrounded nD hNrounded nZ hnZUpper
   have hroundedFinal :
       degreeBadBudget badDegreeCoeff nD <

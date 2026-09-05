@@ -29,7 +29,7 @@ output and the deterministic structural endpoint.  The persistence tests
 are only the polynomial family of pairs of sets of size at most `K`.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 
 namespace Erdos636.StructuralIntegration
 
@@ -114,7 +114,7 @@ lemma fixedStructural_constants
 exponential budget used for all structural persistence estimates. -/
 lemma fixedStructural_firstExposure_exp_le
     {cS theta : ℝ} {n ell : ℕ}
-    (hcS : 0 < cS) (htheta : 0 < theta) (hn : 0 < n)
+    (hcS : 0 < cS) (_htheta : 0 < theta) (hn : 0 < n)
     (hellPos : 0 < ell)
     (hellUpper : (ell : ℝ) ≤ 2 * cS * n) :
     Real.exp (-(cS * theta * n) ^ 2 / (8 * (2 * ell : ℕ))) ≤
@@ -143,7 +143,7 @@ lemma fixedStructural_firstExposure_exp_le
 budget. -/
 lemma fixedStructural_halfExposure_exp_le
     {cS theta : ℝ} {n ell : ℕ}
-    (hcS : 0 < cS) (htheta : 0 < theta) (hn : 0 < n)
+    (hcS : 0 < cS) (_htheta : 0 < theta) (hn : 0 < n)
     (hellPos : 0 < ell)
     (hellUpper : (ell : ℝ) ≤ 2 * cS * n) :
     Real.exp (-((cS * theta * n / 4) ^ 2 / (8 * ell))) ≤
@@ -160,7 +160,6 @@ lemma fixedStructural_halfExposure_exp_le
   have htarget : (theta ^ 2 / 512) * ell ≤
       (cS * theta * n / 4) ^ 2 / (8 * ell) := by
     rw [le_div_iff₀ (show (0 : ℝ) < 8 * ell by positivity)]
-    push_cast
     nlinarith
   calc
     -((cS * theta * (n : ℝ) / 4) ^ 2 / (8 * ell)) ≤
@@ -262,6 +261,7 @@ theorem supportCardPersists_of_no_intersectionFailure
   simpa only [StructuralRandom.sliceFinset, SlicePersistence.sampleFinset]
     using h
 
+omit [DecidableEq V] in
 /-- Support-cardinality persistence implies incidence-mass persistence,
 with any smaller local threshold. -/
 theorem supportPersists_of_supportCardPersists
@@ -272,6 +272,7 @@ theorem supportPersists_of_supportCardPersists
     (hlocal : localThreshold ≤ supportThreshold) :
     StructuralEndpoint.SupportPersists G U0 K
       globalThreshold localThreshold := by
+  classical
   intro X Y hX hY hglobal
   have hsupport := hcard X Y hX hY hglobal
   exact hlocal.trans (hsupport.trans (by
@@ -320,7 +321,7 @@ theorem halfSupportPersists_failure_probability_lt_half
           ⟨hX, hY, hglobal⟩
         rw [card_supportWithin, hcard]
         have hs := hfull p.1 p.2 hX hY hglobal
-        convert hs using 1 <;> push_cast <;> ring) hbudget
+        convert hs using 1 ; push_cast ; ring) hbudget
   let Bad : HalfSample.Slice U1 ell → Prop := fun omega ↦
     ¬ StructuralEndpoint.SupportPersists G
       (StructuralEndpoint.halfSubset omega) K
@@ -359,6 +360,7 @@ theorem halfSupportPersists_failure_probability_lt_half
     exact hmono.trans_lt hfamily
   simpa only [Bad] using hresult
 
+omit [DecidableEq V] in
 /-- Avoiding all tests in `supportPersistenceTests` is exactly the
 `K`-bounded persistence input consumed by `StructuralEndpoint`. -/
 theorem supportPersists_of_noFailure
@@ -368,12 +370,14 @@ theorem supportPersists_of_noFailure
       ¬ supportPersistenceFailure G U0 localThreshold p) :
     StructuralEndpoint.SupportPersists G U0 K
       globalThreshold localThreshold := by
+  classical
   intro X Y hX hY hglobal
   have hp : (X, Y) ∈ supportPersistenceTests G K globalThreshold := by
     exact mem_supportPersistenceTests.mpr ⟨hX, hY, hglobal⟩
   have hnot := hnofail (X, Y) hp
   simpa only [supportPersistenceFailure, not_lt] using hnot
 
+omit [DecidableEq V] in
 /-- Conversely, persistence rules out every member of the finite test
 family.  This direction is useful when transferring events across the
 Boolean-slice/finset-slice equivalence. -/
@@ -384,10 +388,12 @@ theorem noFailure_of_supportPersists
       globalThreshold localThreshold) :
     ∀ p ∈ supportPersistenceTests G K globalThreshold,
       ¬ supportPersistenceFailure G U0 localThreshold p := by
+  classical
   intro p hp
   rcases mem_supportPersistenceTests.mp hp with ⟨hX, hY, hglobal⟩
   exact not_lt_of_ge (hpersists p.1 p.2 hX hY hglobal)
 
+omit [DecidableEq V] in
 /-- Failure of `SupportPersists` is contained in the union of its explicit
 finite tests.  This implication is the direction needed for a union-bound
 estimate on a second half exposure. -/
@@ -398,11 +404,13 @@ theorem not_supportPersists_imp_exists_failure
       globalThreshold localThreshold) :
     ∃ p ∈ supportPersistenceTests G K globalThreshold,
       supportPersistenceFailure G U0 localThreshold p := by
+  classical
   by_contra hnone
   push Not at hnone
   exact hbad (supportPersists_of_noFailure G U0 K globalThreshold
     localThreshold hnone)
 
+omit [Fintype V] in
 /-- An exact-size sorting reservoir can be carved out of the retained
 vertices after removing the first-exposure slice. -/
 theorem exists_subset_card_eq_disjoint
@@ -416,6 +424,7 @@ theorem exists_subset_card_eq_disjoint
   exact Finset.disjoint_left.mpr fun _ hxW hxU ↦
     (Finset.mem_sdiff.mp (hWsub hxW)).2 hxU
 
+omit [DecidableEq V] [Fintype V] in
 /-- Restricting a natural-valued degree-fibre bound to a subset gives the
 integer-valued fibre bound expected by degree sorting. -/
 theorem intDegreeFiber_le_of_subset
@@ -427,6 +436,7 @@ theorem intDegreeFiber_le_of_subset
     ∀ z : ℤ,
       (W.filter fun x ↦
         ((Erdos88.neighborsIn G x U1).card : ℤ) = z).card ≤ Q := by
+  classical
   intro z
   by_cases hz : 0 ≤ z
   · let q : ℕ := z.toNat
@@ -451,7 +461,7 @@ theorem intDegreeFiber_le_of_subset
         have : False := by omega
         exact this.elim
       · intro hx
-        simpa using hx
+        simp at hx
     rw [hempty]
     exact Nat.zero_le _
 

@@ -36,7 +36,7 @@ the balanced-augmentation endpoint.  The equivalence below proves that no
 independence or asymptotic approximation is hidden in this change of model.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 open scoped BigOperators
 
 namespace Erdos636
@@ -121,21 +121,30 @@ def sampleFinset (D₁ : Finset V) (nD : ℕ)
     (omega : AugmentationFull.Sample D₁ nD) : Finset V :=
   Augmentation.mapSubtypeFinset D₁ omega.1
 
-@[simp] lemma sampleFinset_mem_layer (D₁ : Finset V) (nD : ℕ)
+omit [DecidableEq V] [Fintype V] in
+@[simp] lemma sampleFinset_mem_layer [Finite V] (D₁ : Finset V) (nD : ℕ)
     (omega : AugmentationFull.Sample D₁ nD) :
     sampleFinset D₁ nD omega ∈ NestedUniform.layer D₁ nD := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [NestedUniform.mem_layer]
   exact ⟨Augmentation.mapSubtypeFinset_subset D₁ omega.1,
     (Augmentation.card_mapSubtypeFinset D₁ omega.1).trans omega.2⟩
 
-lemma sampleFinset_subset (D₁ : Finset V) (nD : ℕ)
+omit [DecidableEq V] [Fintype V] in
+lemma sampleFinset_subset [Finite V] (D₁ : Finset V) (nD : ℕ)
     (omega : AugmentationFull.Sample D₁ nD) :
     sampleFinset D₁ nD omega ⊆ D₁ := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   exact (NestedUniform.mem_layer.mp (sampleFinset_mem_layer D₁ nD omega)).1
 
-@[simp] lemma card_sampleFinset (D₁ : Finset V) (nD : ℕ)
+omit [DecidableEq V] [Fintype V] in
+@[simp] lemma card_sampleFinset [Finite V] (D₁ : Finset V) (nD : ℕ)
     (omega : AugmentationFull.Sample D₁ nD) :
     (sampleFinset D₁ nD omega).card = nD := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   exact (NestedUniform.mem_layer.mp (sampleFinset_mem_layer D₁ nD omega)).2
 
 /-- The concrete inner-success event needed by the nested-uniform argument. -/
@@ -188,6 +197,7 @@ lemma innerWindowGood_recenter
     _ = |oldCenter - newCenter| + oldRadius := by ring
     _ ≤ newRadius := hcenter
 
+open Classical in
 /-- Probability-level recentering on one uniform layer.  Only deletion sets
 in the sampled layer need satisfy the centre-error estimate. -/
 theorem layerProbability_innerWindowGood_recenter
@@ -216,6 +226,7 @@ theorem layerProbability_innerWindowGood_recenter
 /-- The vertex union of a family of matching cells. -/
 def cellUnion (Z : Finset (Finset V)) : Finset V := Z.biUnion id
 
+omit [Fintype V] in
 lemma cellUnion_disjoint_right_of_away
     {Z M : Finset (Finset V)} {B : Finset V}
     (hZM : Z ⊆ M) (haway : ∀ x ∈ M, Disjoint x B) :
@@ -224,6 +235,7 @@ lemma cellUnion_disjoint_right_of_away
   intro x hx
   exact haway x (hZM hx)
 
+omit [Fintype V] in
 lemma cellUnion_disjoint_cell_of_pairwise
     {Z M : Finset (Finset V)} {x : Finset V}
     (hpair : (M : Set (Finset V)).PairwiseDisjoint id)
@@ -278,12 +290,15 @@ def degreeDeviationBad (G : SimpleGraph V) (D₁ : Finset V) (nD : ℕ)
       (AugmentationGraphFullIdentity.halfDeletion D₁ nD omega) x : ℝ) -
     (degreeInto G D₁ x : ℝ) / 2|
 
-theorem uniformProbability_degreeDeviationBad_le
+omit [DecidableEq V] [Fintype V] in
+theorem uniformProbability_degreeDeviationBad_le [Finite V]
     (G : SimpleGraph V) (D₁ x : Finset V) (nD K : ℕ) (T : ℝ)
     (hhalf : D₁.card = 2 * nD) (hnD : 0 < nD)
     (hK : 0 < K) (hT : 0 ≤ T) (hxK : x.card ≤ K) :
     uniformProbability (degreeDeviationBad G D₁ nD T x) ≤
       2 * Real.exp (-T ^ 2 / (2 * nD * (4 * K) ^ 2)) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hcard : Fintype.card D₁ = 2 * nD := by simpa using hhalf
   have htail :=
     AugmentationGraphFullProbability.halfSlice_sum_two_sided_probability
@@ -497,6 +512,7 @@ noncomputable def canonicalGraphExposureData
       endpointIdentity).value i x omega =
       (exposedValue G W U₀ (sampleFinset D₁ nD omega) state i x : ℤ) := rfl
 
+omit [Fintype V] in
 @[simp] lemma cellUnion_insert (x : Finset V) (Z : Finset (Finset V)) :
     cellUnion (insert x Z) = x ∪ cellUnion Z := by
   simp [cellUnion]
@@ -516,7 +532,7 @@ lemma exposedValue_mem_augmentationEdgeValues
   refine ⟨insert x (state i), ?_, ?_, ?_⟩
   · exact Finset.insert_subset hxM hstate
   · simp [hxstate, hcard]
-  · simp only [exposedValue, exposedBase, cellUnion_insert]
+  · simp only [exposedValue, exposedBase]
     congr 1
     ext v
     simp only [cellUnion, Finset.mem_union, Finset.mem_biUnion,
@@ -526,7 +542,7 @@ lemma exposedValue_mem_augmentationEdgeValues
 /-- Disjoint injective value families at several switching states all count
 inside one and the same canonical augmentation image. -/
 theorem sum_card_le_augmentationEdgeValues
-    {J : Type v} [DecidableEq J]
+    {J : Type v}
     (G : SimpleGraph V) (W U₀ D : Finset V)
     (M : Finset (Finset V)) (nS : ℕ)
     (state : J → Finset (Finset V))
@@ -581,7 +597,7 @@ theorem sum_card_le_augmentationEdgeValues
 /-- Window form of `sum_card_le_augmentationEdgeValues`, matching the output
 of `AugmentationFull.exists_injective_separated_windows`. -/
 theorem sum_card_le_augmentationEdgeValues_of_windows
-    {J : Type v} [DecidableEq J]
+    {J : Type v}
     (G : SimpleGraph V) (W U₀ D : Finset V)
     (M : Finset (Finset V)) (nS : ℕ)
     (state : J → Finset (Finset V))
@@ -602,6 +618,7 @@ theorem sum_card_le_augmentationEdgeValues_of_windows
       2 * R < |center j - center k|) :
     ∑ j ∈ I, (Y j).card ≤
       (Augmentation.augmentationEdgeValues G W U₀ D M (nS + 1)).card := by
+  classical
   have hdisj := Augmentation.edgeValues_pairwiseDisjoint_of_real_windows
     G I (fun j ↦ exposedBase W U₀ D state j) Y center R hwindow hsep
   apply sum_card_le_augmentationEdgeValues
@@ -691,17 +708,19 @@ theorem switchingPiece_spec
 
 /-! ## Retaining good switching indices -/
 
+open Classical in
 /-- Pulling a bad predicate back along an injective path cannot increase its
 count.  This is the exact finite bookkeeping behind deleting the exceptional
 times in Claim 4.9. -/
 lemma card_filter_bad_comp_le_eventCount
-    {Omega : Type*} [Fintype Omega]
+    {Omega : Type*} [Finite Omega]
     (omega : Omega) (tau r : ℕ) (idx : Fin r → ℕ)
     (hidx : Function.Injective idx) (hidxLe : ∀ j, idx j ≤ tau)
     (bad : ℕ → Omega → Prop) :
     ((Finset.univ : Finset (Fin r)).filter fun j ↦ bad (idx j) omega).card ≤
       CollisionCounting.eventCount (Finset.range (tau + 1)) bad omega := by
   classical
+  let : Fintype Omega := Fintype.ofFinite Omega
   let B : Finset (Fin r) :=
     (Finset.univ : Finset (Fin r)).filter fun j ↦ bad (idx j) omega
   have hcard : (B.image idx).card = B.card :=
@@ -710,14 +729,15 @@ lemma card_filter_bad_comp_le_eventCount
   apply Finset.card_le_card
   intro i hi
   obtain ⟨j, hjB, rfl⟩ := Finset.mem_image.mp hi
-  simp only [CollisionCounting.eventCount, Finset.mem_filter]
+  simp only [Finset.mem_filter]
   exact ⟨Finset.mem_range.mpr (Nat.lt_succ_of_le (hidxLe j)),
     (Finset.mem_filter.mp hjB).2⟩
 
+open Classical in
 /-- After deleting times bad for either of two reasons, at least
 `r - (b₀+b₁)` switching indices remain. -/
 lemma sub_add_le_card_filter_two_good
-    {Omega : Type*} [Fintype Omega]
+    {Omega : Type*} [Finite Omega]
     (omega : Omega) (tau r b₀ b₁ : ℕ) (idx : Fin r → ℕ)
     (hidx : Function.Injective idx) (hidxLe : ∀ j, idx j ≤ tau)
     (bad₀ bad₁ : ℕ → Omega → Prop)
@@ -729,6 +749,7 @@ lemma sub_add_le_card_filter_two_good
       ((Finset.univ : Finset (Fin r)).filter fun j ↦
         ¬ bad₀ (idx j) omega ∧ ¬ bad₁ (idx j) omega).card := by
   classical
+  let : Fintype Omega := Fintype.ofFinite Omega
   let B₀ : Finset (Fin r) :=
     (Finset.univ : Finset (Fin r)).filter fun j ↦ bad₀ (idx j) omega
   let B₁ : Finset (Fin r) :=
@@ -773,6 +794,7 @@ lemma sub_add_le_card_filter_two_good
 
 /-! ## A full event creates a large canonical augmentation image -/
 
+open Classical in
 /-- Deterministic graph endpoint of the full exposure.
 
 All inequalities in the statement are finite.  `badGeom`, `badCollision`,
@@ -984,7 +1006,7 @@ theorem canonicalFullExposureEvent_implies_innerWindowGood
     (badGeom badCollision badDegree edgeBudget piece L : ℕ)
     (hD₁U₀ : D₁ ⊆ U₀) (hWU₀ : Disjoint W U₀)
     (hsourceM : source ⊆ M) (hcandidatesM : candidates ⊆ M)
-    (hpair : (M : Set (Finset V)).PairwiseDisjoint id)
+    (_hpair : (M : Set (Finset V)).PairwiseDisjoint id)
     (hawayM : ∀ x ∈ M, Disjoint x (W ∪ U₀))
     (hstateSource : ∀ i ≤ tau, state i ⊆ source)
     (hstateCard : ∀ i ≤ tau, (state i).card = nS)
@@ -1117,9 +1139,10 @@ theorem canonicalFullExposureEvent_implies_innerWindowGood
   · exact hpiece
   · exact hL
 
+omit [DecidableEq V] [Fintype V] in
 /-- Exact transport of any deletion-set event from the Fourier half-slice to
 the uniform finset layer. -/
-theorem uniformProbability_sampleFinset_eq_layerProbability
+theorem uniformProbability_sampleFinset_eq_layerProbability [Finite V]
     (D₁ : Finset V) (nD : ℕ)
     (hhalf : 2 * nD = D₁.card)
     (event : Finset V → Prop) [DecidablePred event] :
@@ -1127,6 +1150,8 @@ theorem uniformProbability_sampleFinset_eq_layerProbability
         (fun omega : AugmentationFull.Sample D₁ nD ↦
           event (sampleFinset D₁ nD omega)) =
       NestedUniform.layerProbability D₁ nD event := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let : Nonempty (AugmentationFull.Sample D₁ nD) :=
     HalfSample.sliceNonempty (by simpa using hhalf.symm)
   let : Nonempty
@@ -1185,6 +1210,7 @@ def graphDegreeRisk (degreeThreshold : ℝ) (nD K : ℕ) : ℝ :=
   2 * Real.exp
     (-degreeThreshold ^ 2 / (2 * nD * (4 * K) ^ 2))
 
+open Classical in
 /-- **Concrete graph full-exposure theorem (Kwan--Sudakov Claim 4.9).**
 
 This is the graph-facing finite theorem: it has no abstract exposure datum,
@@ -1564,6 +1590,7 @@ theorem one_third_le_uniformProbability_fullExposureEvent
   norm_num at hsub ⊢
   exact hsub.trans hmono
 
+open Classical in
 /-- Graph-valued form of the preceding theorem.  A pointwise deterministic
 proof that the full-exposure event creates `L` distinct canonical
 augmentation values transports the `1/3` probability bound to the actual
@@ -1606,6 +1633,7 @@ theorem one_third_le_layerProbability_innerGood_of_fullExposure
     D₁ nD hhalf.symm (innerGood G W U₀ M nZ L)] at htransport
   exact hfull.trans htransport
 
+open Classical in
 /-- Final two-stage probability composition.  This is the exact finite
 `(3/4) * (1/3) = 1/4` step: the marginal law of the inner deletion set is
 uniform on the `nD`-layer of `U₀`. -/
@@ -1625,6 +1653,7 @@ theorem one_fourth_le_layerProbability_innerGood_of_outer_inner
     U₀ nD outerGood (innerGood G W U₀ M nZ L)
       hfeasible houter hinner
 
+open Classical in
 /-- Window-preserving version of the exact nested `3/4 * 1/3 = 1/4`
 composition.  The centre may depend on the final deletion set; this is the
 form used by the shared-deletion/marked-packing layer. -/

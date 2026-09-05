@@ -32,7 +32,7 @@ window and the possible loss of all high-endpoint internal edges cost at
 most `2 * nS * degreeWindow` and `(K * nS)^2`, respectively.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 
 namespace Erdos636
 namespace AugmentationExposureStepBounds
@@ -49,6 +49,7 @@ open AugmentationExposureCrowd
 local instance cellDecidableEq : DecidableEq (Finset V) :=
   AugmentationGraphPartial.cellLinearOrder.toDecidableEq
 
+omit [Fintype V] in
 private lemma card_cellUnion_eq_mul_of_uniform
     (M : Finset (Finset V)) (k : ℕ)
     (hpair : (M : Set (Finset V)).PairwiseDisjoint id)
@@ -94,6 +95,7 @@ theorem graphSelectedStepMean_le_of_scalar
             (graphSelectedStepLow G D1 source rawCandidates degreeCenter
               degreeRadius nS gap badBudget selected j)) / 2| ≤
         meanRadius * Real.sqrt nD := by
+  classical
   intro j hj
   let i : Fin nS := Fin.rev ⟨j, hj⟩
   let R := AugmentationGraphFull.cellUnion

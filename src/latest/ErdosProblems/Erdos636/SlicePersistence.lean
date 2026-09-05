@@ -42,7 +42,7 @@ open scoped BigOperators
 namespace Erdos636
 namespace SlicePersistence
 
-open Classical Finset SimpleGraph
+open Finset SimpleGraph
 open Erdos88
 open Erdos88.Concentration
 open Erdos88.Fourier
@@ -83,6 +83,7 @@ lemma uniformExpectation_eq_fintypeExpect {A : Type u}
   unfold uniformExpectation
   rw [Fintype.expect_eq_sum_div_card]
 
+open Classical in
 /-- Event probability is the expectation of its indicator. -/
 lemma uniformProbability_eq_indicatorExpectation {A : Type u}
     [Fintype A] [Nonempty A] (P : A → Prop) :
@@ -119,7 +120,7 @@ def oneBucket (V : Type u) [Fintype V] [DecidableEq V] :
 /-- A one-bucket signed slice with no negative coordinates is exactly a
 Boolean slice.  Keeping this equivalence explicit permits concentration and
 Fourier anti-concentration to be used on the same sample space. -/
-def boolSliceEquivOneBucketSigned (ell : ℕ) (hell : ell ≤ Fintype.card V) :
+def boolSliceEquivOneBucketSigned (ell : ℕ) (_hell : ell ≤ Fintype.card V) :
     BoolSlice V ell ≃
       BooleanSlices.ProductSignedSlicePoint (oneBucket V)
         (fun _ ↦ ell) (fun _ ↦ 0) where
@@ -130,7 +131,7 @@ def boolSliceEquivOneBucketSigned (ell : ℕ) (hell : ell ≤ Fintype.card V) :
       · rw [oneBucket_fiber]
         exact Finset.subset_univ _
       · exact Finset.empty_subset _
-      · show Disjoint (sampleFinset ell omega) ∅
+      · change Disjoint (sampleFinset ell omega) ∅
         exact Finset.disjoint_empty_right (sampleFinset ell omega)
       ⟩
   invFun S :=
@@ -298,7 +299,7 @@ theorem signedSlice_intersection_two_sided_probability
   have hsum : ∑ k : Fin 1, ((fun _ : Fin 1 ↦ ell) k + (fun _ ↦ 0) k) = ell := by
     simp
   rw [hsum] at htail
-  convert htail using 1 <;> ring_nf
+  convert htail using 1 ; ring_nf
 
 /-! ## The same tail on `Fourier.BoolSlice` -/
 

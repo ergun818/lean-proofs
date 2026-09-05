@@ -13,7 +13,7 @@ the survivors into low and high blocks, and records a one-cell-at-a-time
 path between those blocks.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 open scoped BigOperators
 
 namespace Erdos636
@@ -72,6 +72,7 @@ lemma orientedSubtypePair_injective {A : Type*} [LinearOrder A]
   · apply Subtype.ext
     exact congrArg Prod.snd hef
 
+open Classical in
 /-- The unordered equal-value graph has no more edges than the increasing
 ordered-pair collision representation. -/
 lemma valueCollisionGraph_edgeFinset_card_le_collisionEdges
@@ -102,10 +103,11 @@ lemma valueCollisionGraph_edgeFinset_card_le_collisionEdges
   · exact (orientedSubtypePair_injective C).injOn
 
 lemma collisionEdges_mono
-    {A B Ω : Type*} [LinearOrder A] [DecidableEq B] [Fintype Ω] [Nonempty Ω]
+    {A B Ω : Type*} [LinearOrder A] [DecidableEq B] [Finite Ω] [Nonempty Ω]
     {C D : Finset A} (hCD : C ⊆ D) (f : A → Ω → B) (omega : Ω) :
     CollisionCounting.collisionEdges C f omega ⊆
       CollisionCounting.collisionEdges D f omega := by
+  let : Fintype Ω := Fintype.ofFinite Ω
   intro e he
   rw [CollisionCounting.mem_collisionEdges] at he ⊢
   exact ⟨hCD he.1, hCD he.2.1, he.2.2⟩
@@ -175,10 +177,8 @@ lemma EnumeratedBlocks.state_subset {A : Type*} [DecidableEq A]
   intro x hx
   obtain ⟨j, _hj, rfl⟩ := Finset.mem_image.mp hx
   by_cases h : j.val < i.val
-  · simpa [EnumeratedBlocks.value, h] using
-      (Finset.mem_union_right low (B.highEquiv j).2)
-  · simpa [EnumeratedBlocks.value, h] using
-      (Finset.mem_union_left high (B.lowEquiv j).2)
+  · simp [EnumeratedBlocks.value, h]
+  · simp [EnumeratedBlocks.value, h]
 
 @[simp] lemma EnumeratedBlocks.state_zero {A : Type*} [DecidableEq A]
     {low high : Finset A} {n : ℕ} (B : EnumeratedBlocks low high n) :
@@ -186,7 +186,7 @@ lemma EnumeratedBlocks.state_subset {A : Type*} [DecidableEq A]
   apply Finset.eq_of_subset_of_card_le
   · intro x hx
     obtain ⟨j, _hj, rfl⟩ := Finset.mem_image.mp hx
-    simpa [EnumeratedBlocks.value] using (B.lowEquiv j).2
+    simp [EnumeratedBlocks.value]
   · rw [B.card_state, B.low_card]
 
 @[simp] lemma EnumeratedBlocks.state_last {A : Type*} [DecidableEq A]
@@ -195,7 +195,7 @@ lemma EnumeratedBlocks.state_subset {A : Type*} [DecidableEq A]
   apply Finset.eq_of_subset_of_card_le
   · intro x hx
     obtain ⟨j, _hj, rfl⟩ := Finset.mem_image.mp hx
-    simpa [EnumeratedBlocks.value] using (B.highEquiv j).2
+    simp [EnumeratedBlocks.value]
   · rw [B.card_state, B.high_card]
 
 lemma EnumeratedBlocks.value_succ {A : Type*} [DecidableEq A]
@@ -263,14 +263,17 @@ lemma EnumeratedBlocks.state_succ {A : Type*} [DecidableEq A]
 
 /-! ## Collision thinning, sorting, and path selection -/
 
+open Classical in
 /-- Delete the cells marked bad by a deterministic predicate. -/
 def goodPart {A : Type*} [DecidableEq A] (S : Finset A) (bad : A → Prop) :
     Finset A := S.filter fun x ↦ ¬bad x
 
 lemma goodPart_subset {A : Type*} [DecidableEq A]
-    (S : Finset A) (bad : A → Prop) : goodPart S bad ⊆ S :=
-  Finset.filter_subset _ _
+    (S : Finset A) (bad : A → Prop) : goodPart S bad ⊆ S := by
+  classical
+  exact Finset.filter_subset _ _
 
+open Classical in
 /-- The complete deterministic output needed to define the canonical full
 exposure.  The source and candidate families are disjoint; `selected` is a
 collision-free degree subfamily of the good source cells; `blocks` gives the
@@ -296,7 +299,7 @@ variable {A : Type*} [DecidableEq A]
   {degree : A → ℤ} {n gap badBudget : ℕ}
 
 def goodCandidates
-    (D : SelectedSwitchingData source candidates bad degree n gap badBudget) :
+    (_D : SelectedSwitchingData source candidates bad degree n gap badBudget) :
     Finset A := goodPart candidates bad
 
 def low (D : SelectedSwitchingData source candidates bad degree n gap badBudget) :
@@ -369,6 +372,7 @@ noncomputable abbrev GraphSelectedSwitchingData
     (fun x ↦ ¬AugmentationGraphPartial.DegreeGood G D₁ x center radius)
     (fun x ↦ (degreeInto G D₁ x : ℤ)) n gap badBudget
 
+open Classical in
 /-- Explicit finite selection theorem.  The only numerical premise is the
 exact Turán threshold after deleting the bad source cells. -/
 theorem exists_selectedSwitchingData
@@ -437,6 +441,7 @@ theorem exists_selectedSwitchingData
     gap_lt := hgap
     blocks := B }⟩
 
+open Classical in
 /-- A convenient form of the selection theorem in which the numerical
 Turán check is made at any certified lower bound for the number of good
 source cells. -/
@@ -498,6 +503,7 @@ theorem exists_selectedSwitchingData_of_goodPart_card_lower
 
 /-! ## Graph-facing wrapper -/
 
+omit [DecidableEq V] in
 /-- A `PartialGood` outcome canonically supplies the collision-thinned,
 degree-sorted one-cell switching path.  All real thresholds are converted
 to explicit natural budgets; the final displayed inequality is the only

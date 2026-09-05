@@ -16,7 +16,7 @@ candidate-degree, and switching summands are bounded here using the literal
 floor denominators.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 
 namespace Erdos636
 namespace AugmentationInnerScales

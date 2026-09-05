@@ -44,7 +44,7 @@ open scoped BigOperators
 namespace Erdos636
 namespace AugmentationPartial
 
-open Classical Finset
+open Finset
 open Erdos88.Concentration
 open Erdos88.Fourier
 
@@ -159,6 +159,7 @@ open Erdos88.BooleanSlices
 
 variable {alpha : Type u} [Fintype alpha] [DecidableEq alpha] [Nonempty alpha]
 
+omit [DecidableEq alpha] in
 /-- Exact first moment of an incidence sum on a uniform fixed-cardinality
 subset.  In the outer exposure `s = 2 n_D`; this identifies the centre used
 by `productLinear_two_sided_probability` without an asymptotic argument. -/
@@ -170,6 +171,7 @@ theorem expectation_incidenceSum_booleanSlicePoint
         (fun S : BooleanSlicePoint (Finset.univ : Finset alpha) s ↦
           ∑ i ∈ S.1, a i) =
       (s : ℝ) / Fintype.card alpha * ∑ i, a i := by
+  classical
   let : Nonempty (BooleanSlicePoint (Finset.univ : Finset alpha) s) :=
     SliceMoments.nonempty_booleanSlicePoint Finset.univ s (by simpa using hs)
   have h := SliceMoments.expectation_sum_booleanSlicePoint
@@ -184,6 +186,8 @@ end ExactMean
 
 variable {Omega : Type u} [Fintype Omega] [Nonempty Omega]
 
+omit [Nonempty Omega] in
+open Classical in
 /-- The expectation of an event indicator is its normalized counting
 probability. -/
 lemma uniformExpectation_indicator (P : Omega → Prop) :
@@ -195,6 +199,7 @@ lemma uniformExpectation_indicator (P : Omega → Prop) :
   rw [Finset.sum_ite]
   simp
 
+omit [Nonempty Omega] in
 /-- Positive normalized counting probability produces an actual outcome. -/
 lemma exists_of_uniformProbability_pos (P : Omega → Prop)
     (hP : 0 < uniformProbability P) : ∃ omega, P omega := by
@@ -344,6 +349,7 @@ lemma exists_avoiding_four_events
 
 variable {J : Type v} [LinearOrder J]
 
+open Classical in
 /-- A finite abstract form of the partial exposure claim.
 
 `S₀` and `X₀` are the two disjoint matching subfamilies.  The event
@@ -357,7 +363,7 @@ for all pairs in `X₀`, the two Markov bounds for bad degree cells, and the
 Markov bound for collision edges. -/
 theorem exists_partialExposure_of_probability_bounds
     {K : Type w} [DecidableEq K]
-    (S₀ X₀ : Finset J) (hdisjoint : Disjoint S₀ X₀)
+    (S₀ X₀ : Finset J) (_hdisjoint : Disjoint S₀ X₀)
     (diverse : J → J → Omega → Prop)
     (degreeGood : J → Omega → Prop)
     (value : J → Omega → K)
@@ -470,6 +476,7 @@ theorem exists_partialExposure_of_probability_bounds
   · simpa [CollisionCounting.eventCount] using (not_le.mp h₂)
   · exact not_le.mp h₃
 
+open Classical in
 /-- Probability form of `exists_partialExposure_of_probability_bounds`.
 
 The conclusion is deliberately quantitative: if the displayed four-term
@@ -666,6 +673,7 @@ theorem slice_collision_probability_le_of_l1_equal_sum
       (fun x ↦ (d x : ℝ)) omega = 0) ≤ _
   exact hanti
 
+open Classical in
 /-- **Balanced partial exposure from integer incidence vectors.**
 
 This is the consumable Claim 4.8 interface.  The sample `omega` is a
@@ -728,6 +736,7 @@ theorem one_sub_incidence_budget_le_partialExposure_probability
     a i j B s c theta hc₀ hc₁ htheta hB hI hbounded
       (hequal i hi j hj hij) (hl₁ i hi j hj hij) hsel hunsel
 
+open Classical in
 /-- **The threshold-parameterized `2 n_D` partial-exposure theorem.**
 
 The three thresholds are independent.  In the graph application one may take
@@ -799,6 +808,7 @@ theorem three_fourths_le_incidence_partialExposure_probability_two_nD_of_thresho
     simpa only [budget, pCollision] using hprob
   linarith
 
+open Classical in
 /-- **The `2 n_D` / square-root-threshold form of partial exposure.**
 
 An element of `BoolSlice I (2 * nD)` is literally a selected set `D₁` of

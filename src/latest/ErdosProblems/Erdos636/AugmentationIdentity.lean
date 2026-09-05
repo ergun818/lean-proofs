@@ -196,7 +196,7 @@ theorem card_interedges_union_left_of_disjoint
   rw [hEq, Finset.card_union_of_disjoint]
   exact G.interedges_disjoint_left hST U
 
-omit [DecidableRel G.Adj] in
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- The multiset degree of a matching cell into two disjoint vertex cells is
 additive.  This uses the exact `degreeInto` convention of `Structural.lean`:
 neighbours are summed with multiplicity over the vertices of `x`. -/
@@ -218,39 +218,50 @@ theorem degreeInto_union_of_disjoint
     (Erdos88.mem_neighborsIn.mp hwS).1)
     (Erdos88.mem_neighborsIn.mp hwT).1
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Natural subtraction form of degree additivity. -/
-theorem degreeInto_union_sub_left_of_disjoint
+theorem degreeInto_union_sub_left_of_disjoint [Finite V]
     {S T x : Finset V} (hST : Disjoint S T) :
     degreeInto G (S ∪ T) x - degreeInto G S x = degreeInto G T x := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [degreeInto_union_of_disjoint G hST]
   omega
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Deleting `D` from `U₀` subtracts exactly the degree into `D`. -/
-theorem degreeInto_sdiff_of_subset
+theorem degreeInto_sdiff_of_subset [Finite V]
     {U₀ D x : Finset V} (hDU : D ⊆ U₀) :
     degreeInto G (U₀ \ D) x = degreeInto G U₀ x - degreeInto G D x := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hdisj : Disjoint (U₀ \ D) D := Finset.sdiff_disjoint
   have hunion : (U₀ \ D) ∪ D = U₀ := Finset.sdiff_union_of_subset hDU
   have hadd := degreeInto_union_of_disjoint G hdisj (x := x)
   rw [hunion] at hadd
   omega
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Signed form of deletion, convenient when a switch increment is viewed in
 `ℤ`. -/
-theorem degreeInto_sdiff_int_of_subset
+theorem degreeInto_sdiff_int_of_subset [Finite V]
     {U₀ D x : Finset V} (hDU : D ⊆ U₀) :
     (degreeInto G (U₀ \ D) x : ℤ) =
       degreeInto G U₀ x - degreeInto G D x := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hdisj : Disjoint (U₀ \ D) D := Finset.sdiff_disjoint
   have hunion : (U₀ \ D) ∪ D = U₀ := Finset.sdiff_union_of_subset hDU
   have hadd := degreeInto_union_of_disjoint G hdisj (x := x)
   rw [hunion] at hadd
   omega
 
+omit [DecidableEq V] [Fintype V] in
 /-- The incidence-sum definition of `degreeInto` is exactly the cardinality
 of Mathlib's oriented crossing-edge finset. -/
 theorem degreeInto_eq_card_interedges (U x : Finset V) :
     degreeInto G U x = (G.interedges x U).card := by
+  classical
   induction x using Finset.induction_on with
   | empty => simp [degreeInto]
   | @insert v x hv ih =>
@@ -271,10 +282,13 @@ theorem degreeInto_eq_card_interedges (U x : Finset V) :
         hsingle]
       simpa [degreeInto] using ih
 
+omit [DecidableEq V] [Fintype V] in
 /-- The structural `crossEdges` count agrees with the standard oriented
 crossing-edge count. -/
-theorem crossEdges_eq_card_interedges (A B : Finset V) :
+theorem crossEdges_eq_card_interedges [Finite V] (A B : Finset V) :
     crossEdges G A B = (G.interedges A B).card := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   exact degreeInto_eq_card_interedges G B A
 
 /-- Exact six-term edge count for three pairwise disjoint vertex cells. -/
@@ -322,11 +336,12 @@ theorem inducedEdges_union_sub_of_disjoint
   rw [inducedEdges_union_of_disjoint G hBZ]
   omega
 
-omit [DecidableEq V] in
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- A graph induced on `S` has at most `|S|²` edges.  The deliberately coarse
 square bound is the convenient form for uniform matching cells. -/
 theorem inducedEdges_le_card_sq (S : Finset V) :
     inducedEdges G S ≤ S.card ^ 2 := by
+  classical
   rw [inducedEdges_eq_card_edgeFinset_induce]
   calc
     (G.induce (S : Set V)).edgeFinset.card ≤
@@ -335,6 +350,7 @@ theorem inducedEdges_le_card_sq (S : Finset V) :
     _ = S.card.choose 2 := by simp
     _ ≤ S.card ^ 2 := Nat.choose_le_pow S.card 2
 
+omit [DecidableEq V] in
 /-- If `X` is one `K`-bounded matching cell and `R` is the union of at most
 `nS - 1` such cells, then the internal-plus-crossing contribution of adding
 `X` to `R` is at most `K² nS`. -/
@@ -342,6 +358,7 @@ theorem matchingCellIncrement_le
     {R X : Finset V} {K nS : ℕ}
     (hnS : 1 ≤ nS) (hR : R.card ≤ K * (nS - 1)) (hX : X.card ≤ K) :
     inducedEdges G X + (G.interedges R X).card ≤ K ^ 2 * nS := by
+  classical
   have hedge : inducedEdges G X ≤ X.card ^ 2 := inducedEdges_le_card_sq G X
   have hcross : (G.interedges R X).card ≤ R.card * X.card :=
     G.card_interedges_le_mul R X
@@ -352,6 +369,7 @@ theorem matchingCellIncrement_le
     _ = K ^ 2 * ((nS - 1) + 1) := by ring
     _ = K ^ 2 * nS := by rw [Nat.sub_add_cancel hnS]
 
+omit [DecidableRel G.Adj] in
 /-- Coarse bound for the internal part of a one-cell switch.  The common
 union is `R`; `X` and `Y` are respectively the incoming and outgoing cells.
 This is the finite `K² nS` estimate used to absorb the last term of (8.2). -/
@@ -362,6 +380,7 @@ theorem abs_internal_switch_contribution_le
     (hRX : Disjoint R X) (hRY : Disjoint R Y) :
     |(inducedEdges G (R ∪ X) : ℤ) - inducedEdges G (R ∪ Y)| ≤
       (K ^ 2 * nS : ℕ) := by
+  classical
   let a : ℕ := inducedEdges G X + (G.interedges R X).card
   let b : ℕ := inducedEdges G Y + (G.interedges R Y).card
   let M : ℕ := K ^ 2 * nS

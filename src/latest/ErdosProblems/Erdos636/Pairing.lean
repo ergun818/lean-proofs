@@ -57,9 +57,11 @@ noncomputable instance coefficientGraph.instDecidableRel
     (S : Finset I) (a : I → ℤ) : DecidableRel (coefficientGraph S a).Adj :=
   Classical.decRel _
 
+omit [DecidableEq I] [Fintype I] in
 @[simp] lemma coefficientGraph_adj {S : Finset I} {a : I → ℤ} {i j : I} :
-    (coefficientGraph S a).Adj i j ↔ i ∈ S ∧ j ∈ S ∧ a i ≠ a j :=
-  Iff.rfl
+    (coefficientGraph S a).Adj i j ↔ i ∈ S ∧ j ∈ S ∧ a i ≠ a j := by
+  classical
+  exact Iff.rfl
 
 /-- A finite set of pairwise vertex-disjoint edges. -/
 def EdgeMatching (G : SimpleGraph I) [DecidableRel G.Adj]
@@ -67,6 +69,7 @@ def EdgeMatching (G : SimpleGraph I) [DecidableRel G.Adj]
   M ⊆ G.edgeFinset ∧
     (M : Set (Sym2 I)).Pairwise fun e f ↦ Disjoint (e : Set I) (f : Set I)
 
+omit [DecidableEq I] in
 /-- A maximum-cardinality matching is inclusion-maximal. -/
 private lemma exists_maximal_edgeMatching
     (G : SimpleGraph I) [DecidableRel G.Adj] :
@@ -188,6 +191,7 @@ private lemma exists_matching_anchor
       exfalso
       exact hU ⟨i, hiS, by simpa [C] using hiC⟩
 
+omit [DecidableEq I] in
 /-- A centered bounded integer population with variance at least `eta * |S|`
 has a disjoint unequal-coefficient matching of linear size.  The centering
 hypothesis permits any explicitly supplied population mean `mu`; avoiding a

@@ -136,7 +136,7 @@ lemma half_div_le_natFloor_div {x L : ℝ} (hL : 0 < L)
 then retaining one item per stride `L` keeps a `theta/(4L)`-fraction. -/
 lemma strideSurvivor_lower
     {theta : ℝ} {base survivors kept L : ℕ}
-    (htheta : 0 ≤ theta) (hL : 0 < L)
+    (_htheta : 0 ≤ theta) (hL : 0 < L)
     (hsurvivors : theta * base ≤ 2 * survivors)
     (hlarge : 2 * L ≤ survivors)
     (hkept : ⌊(survivors : ℝ) / L⌋₊ ≤ kept) :
@@ -162,7 +162,7 @@ lemma strideSurvivor_lower
 the stride-survivor lemma. -/
 lemma sqrt_le_strideSurvivor
     {theta c : ℝ} {nD base survivors kept L : ℕ}
-    (htheta : 0 ≤ theta) (hc : 0 ≤ c) (hL : 0 < L)
+    (htheta : 0 ≤ theta) (_hc : 0 ≤ c) (hL : 0 < L)
     (hbase : c * Real.sqrt nD ≤ (base : ℝ))
     (hsurvivors : theta * base ≤ 2 * survivors)
     (hlarge : 2 * L ≤ survivors)
@@ -188,7 +188,7 @@ lemma sqrt_nat_le_nat {n : ℕ} (hn : 1 ≤ n) :
 literal natural threshold.  The coefficient is allowed to be any fixed
 nonnegative real number. -/
 theorem exists_polynomial_mul_exp_neg_lt
-    (A b : ℝ) (p : ℕ) (hA : 0 ≤ A) (hb : 0 < b) (epsilon : ℝ)
+    (A b : ℝ) (p : ℕ) (_hA : 0 ≤ A) (hb : 0 < b) (epsilon : ℝ)
     (hepsilon : 0 < epsilon) :
     ∃ N : ℕ, ∀ n ≥ N,
       A * (n : ℝ) ^ p * Real.exp (-b * n) < epsilon := by
@@ -521,7 +521,7 @@ theorem exists_structuralPruningBudget
       (structuralDegreeBudget QD n : ℝ) + 1 := by
     have hceil : QD * Real.sqrt n ≤
         (structuralDegreeBudget QD n : ℝ) := Nat.le_ceil _
-    exact hceil.trans (by push_cast; linarith)
+    exact hceil.trans (by linarith)
   have hcollisionMulNat :
       collisionLoss * (structuralDegreeBudget QD n + 1) ≤
         2 * structuralEdgeBudget QE n := by
@@ -678,7 +678,7 @@ structure FixedAmbientBounds (cR cGap : ℝ) (n m ell : ℕ) : Prop where
 /-- Pointwise capacity and slice balance for the fixed ambient scale. -/
 lemma fixedAmbient_capacity_balance
     {cR : ℝ} {n m ell : ℕ}
-    (hcR : 0 < cR) (hcR1 : cR ≤ 1)
+    (hcR : 0 < cR) (_hcR1 : cR ≤ 1)
     (hmLower : cR * n ≤ (m : ℝ)) (hmUpper : m ≤ n)
     (hellLower : structuralDensity cR * n ≤ (ell : ℝ))
     (hellUpper : (ell : ℝ) ≤ 2 * structuralDensity cR * n) :
@@ -786,9 +786,6 @@ theorem exists_fixedAmbientBounds
       cR * cGap / 1600 * n * Real.sqrt n ≤
         (1 / 8 : ℝ) * structuralSwitchingSize cR n *
           (structuralGapSize cGap n + 1) := by
-    change cR * cGap / 1600 * n * Real.sqrt n ≤
-      (1 / 8 : ℝ) * (structuralSwitchingSize cR n : ℝ) *
-        ((structuralGapSize cGap n : ℝ) + 1)
     have hnWnonneg : (0 : ℝ) ≤ structuralSwitchingSize cR n := by positivity
     have hgapnonneg : 0 ≤ cGap * Real.sqrt n := by positivity
     calc
@@ -974,7 +971,6 @@ theorem exists_partialExposureBudget
       2 * Real.exp (-b * nD) := by
     simp only [balancedLinearFailure]
     congr 2
-    congr 1
     dsimp [b]
     field_simp
     ring
@@ -982,7 +978,6 @@ theorem exists_partialExposureBudget
       2 * Real.exp (-(Q ^ 2 / (64 * (K : ℝ) ^ 2))) := by
     simp only [balancedLinearFailure]
     congr 2
-    congr 1
     rw [show (Q * Real.sqrt nD) ^ 2 = Q ^ 2 * nD by
       rw [mul_pow, hsqrtDSq]]
     field_simp

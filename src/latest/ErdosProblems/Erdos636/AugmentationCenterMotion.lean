@@ -27,7 +27,7 @@ Keeping these deterministic statements here avoids an import cycle between
 the crowd schedule and the graph-specific exposure estimates.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 open scoped BigOperators
 
 namespace Erdos636
@@ -41,10 +41,13 @@ variable {V : Type u} [Fintype V] [DecidableEq V]
 
 /-! ## The raw path exchanges one vertex -/
 
-lemma permutationPrefix_mono (I : Finset V)
+omit [DecidableEq V] [Fintype V] in
+lemma permutationPrefix_mono [Finite V] (I : Finset V)
     (sigma : Equiv.Perm (Fin I.card)) {r s : ℕ}
     (hrs : r ≤ s) (hs : s ≤ I.card) :
     permutationPrefix I sigma r ⊆ permutationPrefix I sigma s := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [permutationPrefix_eq_of_le I sigma (hrs.trans hs),
     permutationPrefix_eq_of_le I sigma hs]
   intro x hx
@@ -147,8 +150,10 @@ lemma RawPath.succ_sdiff_card_le_one
 
 /-! ## Weighted-score motion -/
 
+omit [DecidableEq V] in
 lemma inducedEdges_eq_zero_of_card_le_one (G : SimpleGraph V)
     (A : Finset V) (hA : A.card ≤ 1) : Erdos88.inducedEdges G A = 0 := by
+  classical
   have hedge : Erdos88.inducedEdges G A ≤ A.card.choose 2 := by
     rw [Erdos88.inducedEdges_eq_card_edgeFinset_induce]
     simpa using (G.induce (A : Set V)).card_edgeFinset_le_card_choose_two
@@ -161,6 +166,7 @@ lemma inducedEdges_le_add_card_of_sdiff_card_le_one
     (hST : (S \ T).card ≤ 1) :
     (Erdos88.inducedEdges G S : ℝ) ≤
       Erdos88.inducedEdges G T + S.card := by
+  classical
   let C := S ∩ T
   let D := S \ T
   have hCD : Disjoint C D := by
@@ -204,10 +210,12 @@ lemma abs_inducedEdges_sub_le_of_sdiff_card_le_one
   rw [abs_le]
   constructor <;> linarith
 
-lemma crossEdges_le_add_card_of_sdiff_card_le_one
+omit [Fintype V] in
+lemma crossEdges_le_add_card_of_sdiff_card_le_one [Finite V]
     (G : SimpleGraph V) (U S T : Finset V)
     (hST : (S \ T).card ≤ 1) :
     (crossEdges G U S : ℝ) ≤ crossEdges G U T + U.card := by
+  let : Fintype V := Fintype.ofFinite V
   let C := S ∩ T
   let D := S \ T
   have hCD : Disjoint C D := by
@@ -238,10 +246,12 @@ lemma crossEdges_le_add_card_of_sdiff_card_le_one
   rw [crossEdges, ← hUnion, degreeInto_union_of_disjoint G hCD]
   exact_mod_cast (Nat.add_le_add hC hD).trans (by omega)
 
-lemma abs_crossEdges_sub_le_of_sdiff_card_le_one
+omit [Fintype V] in
+lemma abs_crossEdges_sub_le_of_sdiff_card_le_one [Finite V]
     (G : SimpleGraph V) (U S T : Finset V)
     (hST : (S \ T).card ≤ 1) (hTS : (T \ S).card ≤ 1) :
     |(crossEdges G U S : ℝ) - crossEdges G U T| ≤ U.card := by
+  let : Fintype V := Fintype.ofFinite V
   have hforward := crossEdges_le_add_card_of_sdiff_card_le_one G U S T hST
   have hback := crossEdges_le_add_card_of_sdiff_card_le_one G U T S hTS
   rw [abs_le]
@@ -323,7 +333,6 @@ lemma CrowdedPath.abs_center_succ_sub_le
             ((degreeInto G (Q.W (i + 1)) (Q.anchor (i + 1)) : ℝ) -
               degreeInto G (Q.W i) (Q.anchor i))| := by
       simp only [CrowdedPath.center]
-      push_cast
       ring_nf
     _ ≤ |weightedScore G alpha S.U0 (Q.W (i + 1)) -
           weightedScore G alpha S.U0 (Q.W i)| +

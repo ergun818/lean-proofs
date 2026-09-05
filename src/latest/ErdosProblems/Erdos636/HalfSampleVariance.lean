@@ -9,7 +9,6 @@ open scoped BigOperators
 namespace Erdos636
 namespace HalfSampleVariance
 
-open Classical
 open Erdos88.Concentration
 
 universe u
@@ -68,12 +67,13 @@ private lemma sum_indicator_pair {I : Type u} [Fintype I] [DecidableEq I]
         nsmul_eq_mul, mul_one]
       exact_mod_cast card_filter_slice_subset ({i, j} : Finset I) hpair
 
-private lemma sum_sliceSum_sq_exact {I : Type u} [Fintype I] [DecidableEq I]
+private lemma sum_sliceSum_sq_exact {I : Type u} [Fintype I]
     {s : ℕ} (hs : 2 ≤ s) (a : I → ℝ) (hsum : ∑ i, a i = 0) :
     (∑ S : HalfSample.Slice I s, (HalfSample.sliceSum a S) ^ 2) =
       (((Fintype.card I - 1).choose (s - 1) : ℝ) -
         ((Fintype.card I - 2).choose (s - 2) : ℝ)) *
           ∑ i, (a i) ^ 2 := by
+  classical
   have hpair (i j : I) : ({i, j} : Finset I).card ≤ s := by
     rcases Finset.card_pair_eq_one_or_two (a := i) (b := j) with h | h <;> omega
   have hcount (i j : I) :
@@ -192,7 +192,7 @@ private lemma sum_sliceSum_sq_exact {I : Type u} [Fintype I] [DecidableEq I]
 
 /-- `L²` form of the centred half-slice estimate. -/
 private theorem uniformExpectation_sliceSum_sq_le_of_sum_sq
-    {I : Type u} [Fintype I] [DecidableEq I] {s : ℕ}
+    {I : Type u} [Fintype I] {s : ℕ}
     (hcard : Fintype.card I = 2 * s) (hs : 2 ≤ s)
     (a : I → ℝ) (K : ℝ) (hsum : ∑ i, a i = 0)
     (hsquares : (∑ i, (a i) ^ 2) ≤ (2 * s : ℝ) * K ^ 2) :
@@ -237,7 +237,7 @@ private theorem uniformExpectation_sliceSum_sq_le_of_sum_sq
     _ = (s : ℝ) * K^2 := by ring
 
 private theorem uniformExpectation_add_sliceSum_sq_le_of_sum_sq
-    {I : Type u} [Fintype I] [DecidableEq I] {s : ℕ}
+    {I : Type u} [Fintype I] {s : ℕ}
     (hcard : Fintype.card I = 2 * s) (hs : 2 ≤ s)
     (a : I → ℝ) (K : ℝ) (hsum : ∑ i, a i = 0)
     (hsquares : (∑ i, (a i) ^ 2) ≤ (2 * s : ℝ) * K ^ 2)
@@ -309,7 +309,7 @@ private theorem uniformExpectation_add_sliceSum_sq_le_of_sum_sq
 /-- A centred coefficient sum on a uniform half-slice has second moment at
 most `s K²` when every coefficient has absolute value at most `K`. -/
 theorem uniformExpectation_sliceSum_sq_le {I : Type u} [Fintype I]
-    [DecidableEq I] {s : ℕ} (hcard : Fintype.card I = 2 * s)
+    {s : ℕ} (hcard : Fintype.card I = 2 * s)
     (hs : 0 < s) (a : I → ℝ) (K : ℝ) (hK : 0 ≤ K)
     (ha : ∀ i, |a i| ≤ K) (hsum : ∑ i, a i = 0) :
     uniformExpectation (fun S : HalfSample.Slice I s ↦
@@ -386,7 +386,7 @@ theorem uniformExpectation_sliceSum_sq_le {I : Type u} [Fintype I]
 offset is at most `R √s`, the second moment of the affine statistic is at
 most `(K² + R²)s`. -/
 theorem uniformExpectation_add_sliceSum_sq_le
-    {I : Type u} [Fintype I] [DecidableEq I]
+    {I : Type u} [Fintype I]
     {s : ℕ} (hcard : Fintype.card I = 2 * s) (hs : 0 < s)
     (a : I → ℝ) (K : ℝ) (hK : 0 ≤ K)
     (ha : ∀ i, |a i| ≤ K) (hsum : ∑ i, a i = 0)
@@ -457,7 +457,7 @@ theorem uniformExpectation_add_sliceSum_sq_le
 deterministic hypothesis is imposed on the actual mean: a half-slice has
 mean one half of the full coefficient sum. -/
 theorem uniformExpectation_add_sliceSum_sq_le_of_mean
-    {I : Type u} [Fintype I] [DecidableEq I]
+    {I : Type u} [Fintype I]
     {s : ℕ} (hcard : Fintype.card I = 2 * s) (hs : 2 ≤ s)
     (a : I → ℝ) (K : ℝ) (hK : 0 ≤ K)
     (ha : ∀ i, |a i| ≤ K)
@@ -537,7 +537,7 @@ theorem uniformExpectation_add_sliceSum_sq_le_of_mean
 /-- Positive-size version of `uniformExpectation_add_sliceSum_sq_le_of_mean`.
 The exceptional one-point half-slice is handled directly. -/
 theorem uniformExpectation_add_sliceSum_sq_le_of_mean_pos
-    {I : Type u} [Fintype I] [DecidableEq I]
+    {I : Type u} [Fintype I]
     {s : ℕ} (hcard : Fintype.card I = 2 * s) (hs : 0 < s)
     (a : I → ℝ) (K : ℝ) (hK : 0 ≤ K)
     (ha : ∀ i, |a i| ≤ K)

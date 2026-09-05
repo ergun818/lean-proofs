@@ -41,7 +41,7 @@ one state before the intermediate reservoir is exposed and recentres its
 one-state window at the same deletion-only centre.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 
 namespace Erdos636
 namespace AugmentationExposureAssembly
@@ -112,6 +112,8 @@ structure PartialExposureCertificate
         s0 * pDegree / tX +
         s0.choose 2 * pCollision / tCollision ≤ 1 / 4
 
+omit [DecidableEq V] in
+open Classical in
 /-- A partial certificate supplies the exact outer `3/4` estimate. -/
 theorem PartialExposureCertificate.three_fourths_le_layerProbability
     {G : SimpleGraph V} {U0 : Finset V} {M : Finset (Finset V)}
@@ -123,6 +125,7 @@ theorem PartialExposureCertificate.three_fourths_le_layerProbability
         (partialDiversityThreshold nD theta divDev)
         (partialDegreeCenter U0 nD d0)
         degreeDev tS tX tCollision) := by
+  classical
   unfold partialDiversityThreshold partialDegreeCenter
   convert
     AugmentationGraphPartial.three_fourths_le_layerProbability_partialGood_thresholds
@@ -150,6 +153,7 @@ noncomputable def graphSelectedState
       G D1 x degreeCenter degreeRadius)
     (fun x ↦ (degreeInto G D1 x : ℤ)) nS gap badBudget selected i
 
+omit [DecidableEq V] in
 lemma graphSelectedState_subset_source
     (G : SimpleGraph V) (D1 : Finset V)
     (source candidates : Finset (Finset V))
@@ -159,6 +163,7 @@ lemma graphSelectedState_subset_source
     (i : Fin (nS + 1)) :
     graphSelectedState G D1 source candidates degreeCenter degreeRadius
       nS gap badBudget selected i ⊆ source := by
+  classical
   exact @AugmentationGraphFullState.SelectedSwitchingData.state_subset_source
     (Finset V) AugmentationGraphPartial.cellLinearOrder.toDecidableEq
     source candidates
@@ -166,6 +171,7 @@ lemma graphSelectedState_subset_source
       G D1 x degreeCenter degreeRadius)
     (fun x ↦ (degreeInto G D1 x : ℤ)) nS gap badBudget selected i
 
+omit [DecidableEq V] in
 @[simp] lemma card_graphSelectedState
     (G : SimpleGraph V) (D1 : Finset V)
     (source candidates : Finset (Finset V))
@@ -175,6 +181,7 @@ lemma graphSelectedState_subset_source
     (i : Fin (nS + 1)) :
     (graphSelectedState G D1 source candidates degreeCenter degreeRadius
       nS gap badBudget selected i).card = nS := by
+  classical
   exact @AugmentationGraphFullState.SelectedSwitchingData.card_state
     (Finset V) AugmentationGraphPartial.cellLinearOrder.toDecidableEq
     source candidates
@@ -182,6 +189,7 @@ lemma graphSelectedState_subset_source
       G D1 x degreeCenter degreeRadius)
     (fun x ↦ (degreeInto G D1 x : ℤ)) nS gap badBudget selected i
 
+omit [DecidableEq V] in
 lemma graphSelectedState_disjoint_candidates
     (G : SimpleGraph V) (D1 : Finset V)
     (source candidates : Finset (Finset V))
@@ -192,6 +200,7 @@ lemma graphSelectedState_disjoint_candidates
     Disjoint
       (graphSelectedState G D1 source candidates degreeCenter degreeRadius
         nS gap badBudget selected i) candidates := by
+  classical
   exact @AugmentationGraphFullState.SelectedSwitchingData.state_disjoint_candidates
     (Finset V) AugmentationGraphPartial.cellLinearOrder.toDecidableEq
     source candidates
@@ -199,18 +208,20 @@ lemma graphSelectedState_disjoint_candidates
       G D1 x degreeCenter degreeRadius)
     (fun x ↦ (degreeInto G D1 x : ℤ)) nS gap badBudget selected i
 
+open Classical in
 /-- The candidate family after deleting the cells that missed the outer
 degree window, with the exact cell-order decidability of the selected data. -/
 noncomputable def graphSelectedGoodCandidates
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
     (degreeCenter degreeRadius : ℝ) (nS gap badBudget : ℕ)
-    (selected : AugmentationGraphFullState.GraphSelectedSwitchingData
+    (_selected : AugmentationGraphFullState.GraphSelectedSwitchingData
       source rawCandidates G D1 degreeCenter degreeRadius nS gap badBudget) :
     Finset (Finset V) :=
   rawCandidates.filter fun x ↦
     AugmentationGraphPartial.DegreeGood G D1 x degreeCenter degreeRadius
 
+omit [DecidableEq V] in
 lemma graphSelectedGoodCandidates_subset
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -219,8 +230,10 @@ lemma graphSelectedGoodCandidates_subset
       source rawCandidates G D1 degreeCenter degreeRadius nS gap badBudget) :
     graphSelectedGoodCandidates G D1 source rawCandidates degreeCenter
       degreeRadius nS gap badBudget selected ⊆ rawCandidates := by
+  classical
   exact Finset.filter_subset _ _
 
+omit [DecidableEq V] in
 lemma graphSelectedGoodCandidates_good
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -231,6 +244,7 @@ lemma graphSelectedGoodCandidates_good
     (hx : x ∈ graphSelectedGoodCandidates G D1 source rawCandidates
       degreeCenter degreeRadius nS gap badBudget selected) :
     AugmentationGraphPartial.DegreeGood G D1 x degreeCenter degreeRadius := by
+  classical
   simpa [graphSelectedGoodCandidates,
     AugmentationGraphFullState.SelectedSwitchingData.goodCandidates,
     AugmentationGraphFullState.goodPart] using (Finset.mem_filter.mp hx).2
@@ -334,6 +348,7 @@ noncomputable def graphSelectedStepHigh
       nS gap badBudget selected (Fin.rev ⟨i, hi⟩)
   else ∅
 
+omit [DecidableEq V] in
 @[simp] lemma graphSelectedReverseState_apply_fin
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -345,6 +360,7 @@ noncomputable def graphSelectedStepHigh
       degreeRadius nS gap badBudget selected i =
       graphSelectedState G D1 source rawCandidates degreeCenter degreeRadius
         nS gap badBudget selected i.rev := by
+  classical
   simp [graphSelectedReverseState, i.isLt]
 
 /--
@@ -484,6 +500,7 @@ structure LargeExposureCertificate
             (AugmentationGraphFull.graphSwitchVariance K meanRadius nD) / Q)) /
           kappa ≤ 1 / 6
 
+open Classical in
 /-- A literal large-exposure certificate gives the conditional `1/3` bound. -/
 theorem LargeExposureCertificate.one_third_le_layerProbability
     {G : SimpleGraph V} {W U0 D1 : Finset V}
@@ -575,6 +592,7 @@ theorem LargeExposureCertificate.one_third_le_layerProbability
 
 /-! ## Nested large-state assembly -/
 
+open Classical in
 /--
 Large-state, one-time exposure assembly.  The switching data are selected
 inside every successful intermediate reservoir.  The only supplied bridge
@@ -646,6 +664,7 @@ theorem one_fourth_le_layerProbability_innerWindowGood_large
 
 /-! ## Nested bounded-state assembly -/
 
+open Classical in
 /--
 Bounded-state, one-time exposure assembly.  A single state is selected from
 `M` before the intermediate `2 nD`-set is exposed.  The fixed-state theorem

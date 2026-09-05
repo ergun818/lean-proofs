@@ -41,7 +41,7 @@ open scoped BigOperators
 
 namespace Erdos636.StructuralRandom
 
-open Classical Finset SimpleGraph
+open Finset SimpleGraph
 open Erdos88.Concentration
 open Erdos636.CollisionCounting
 
@@ -62,18 +62,23 @@ def collisionGraph (I0 : Finset I) {A : Type*} [DecidableEq A]
     (symm := ⟨by rintro i j ⟨hij, hX⟩; exact ⟨hij.symm, hX.symm⟩⟩)
     (loopless := ⟨by intro i hi; exact hi.1 rfl⟩)
 
+omit [Fintype Omega] [LinearOrder I] [Nonempty Omega] in
 @[simp] lemma collisionGraph_adj (I0 : Finset I) {A : Type*} [DecidableEq A]
     (X : I → Omega → A) (omega : Omega) (i j : {i // i ∈ I0}) :
     (collisionGraph I0 X omega).Adj i j ↔
       i ≠ j ∧ X i omega = X j omega := Iff.rfl
 
+omit [Fintype Omega] in
+open Classical in
+omit [Nonempty Omega] in
 /-- Increasingly oriented collision pairs count the same edges as the
 ordinary `SimpleGraph.edgeFinset`. -/
-lemma card_edgeFinset_collisionGraph_eq {A : Type*} [DecidableEq A]
+lemma card_edgeFinset_collisionGraph_eq [Finite Omega] {A : Type*} [DecidableEq A]
     (I0 : Finset I) (X : I → Omega → A) (omega : Omega) :
     (collisionGraph I0 X omega).edgeFinset.card =
       (collisionEdges I0 X omega).card := by
   classical
+  let : Fintype Omega := Fintype.ofFinite Omega
   let H := collisionGraph I0 X omega
   symm
   apply Finset.card_bij
@@ -111,12 +116,15 @@ lemma card_edgeFinset_collisionGraph_eq {A : Type*} [DecidableEq A]
             ⟨j.2, i.2, fun h ↦ hij.1 (Subtype.ext h.symm), hji, hij.2.symm⟩, ?_⟩
           exact Sym2.eq_swap
 
+open Classical in
 /-- The retained vertices after pruning all collision degrees above `D`. -/
 def lowCollisionSubtype (I0 : Finset I) {A : Type*} [DecidableEq A]
     (X : I → Omega → A) (omega : Omega) (D : ℕ) :
     Finset {i // i ∈ I0} :=
   Finset.univ.filter fun i ↦ (collisionGraph I0 X omega).degree i ≤ D
 
+omit [Fintype Omega] [LinearOrder I] [Nonempty Omega] in
+open Classical in
 @[simp] lemma mem_lowCollisionSubtype {I0 : Finset I}
     {A : Type*} [DecidableEq A] {X : I → Omega → A} {omega : Omega}
     {D : ℕ} {i : {i // i ∈ I0}} :
@@ -124,15 +132,17 @@ def lowCollisionSubtype (I0 : Finset I) {A : Type*} [DecidableEq A]
       (collisionGraph I0 X omega).degree i ≤ D := by
   simp [lowCollisionSubtype]
 
+omit [Fintype Omega] [Nonempty Omega] in
 /-- The degree-sum identity shows that pruning above `D` loses at most
 `2E/(D+1)` vertices when there are at most `E` collision edges. -/
-theorem card_le_lowCollisionSubtype_add_of_edges
+theorem card_le_lowCollisionSubtype_add_of_edges [Finite Omega]
     {A : Type*} [DecidableEq A]
     (I0 : Finset I) (X : I → Omega → A) (omega : Omega) (D E : ℕ)
     (hedges : (collisionEdges I0 X omega).card ≤ E) :
     I0.card ≤ (lowCollisionSubtype I0 X omega D).card +
       (2 * E) / (D + 1) := by
   classical
+  let : Fintype Omega := Fintype.ofFinite Omega
   let H := collisionGraph I0 X omega
   let good : Finset {i // i ∈ I0} := Finset.univ.filter fun i ↦ H.degree i ≤ D
   let bad : Finset {i // i ∈ I0} := Finset.univ.filter fun i ↦ D < H.degree i
@@ -170,6 +180,8 @@ theorem card_le_lowCollisionSubtype_add_of_edges
   change I0.card ≤ good.card + (2 * E) / (D + 1)
   omega
 
+omit [Fintype Omega] [Nonempty Omega] in
+open Classical in
 /-- A collision-degree bound gives the corresponding bound on every value
 fibre inside the retained set.  The extra one is the chosen vertex itself. -/
 theorem card_filter_value_le_degree_add_one
@@ -331,6 +343,7 @@ theorem exists_noFailure_and_collisionEdges_le
     omega
   exact ⟨omega, hnofail, hedge⟩
 
+open Classical in
 /-- Claim-4.7 selection followed by deterministic degree pruning.  The
 retained subtype is explicit, every one of its collision degrees is at most
 `degreeBudget`, and the exact loss is at most `2 * edgeBudget /
@@ -411,9 +424,10 @@ theorem two_signed_classes_variance_density
       _ = (A + B) * m - (A - B) ^ 2 := by ring
   rw [show A + B - (A - B) ^ 2 / m =
       ((A + B) * m - (A - B) ^ 2) / m by
-        field_simp [ne_of_gt hm] <;> ring]
+        field_simp [ne_of_gt hm] ]
   exact (le_div_iff₀ hm).2 hscaled
 
+omit [DecidableEq J] in
 /-- Finite-population form of `two_signed_classes_variance_density`.
 The two moment equalities are exactly what one gets from a population with
 `A` entries equal to `1`, `B` entries equal to `-1`, and all remaining
@@ -431,6 +445,7 @@ theorem signed_class_centered_sum_and_variance
     (∑ u, ((a u : ℝ) - (A - B) / Fintype.card J)) = 0 ∧
       eps * theta * (Fintype.card J : ℝ) ≤
         ∑ u, ((a u : ℝ) - (A - B) / Fintype.card J) ^ 2 := by
+  classical
   let m : ℝ := Fintype.card J
   let mu : ℝ := (A - B) / m
   have hm : 0 < m := by simpa [m] using hJ
@@ -471,6 +486,7 @@ def sliceFinset (s : ℕ) (omega : BoolSlice V s) : Finset V :=
 @[simp] lemma card_sliceFinset (s : ℕ) (omega : BoolSlice V s) :
     (sliceFinset s omega).card = s := omega.2
 
+open Classical in
 /-- The integer adjacency indicator used for graph degree slices. -/
 def adjacencyCoefficient (G : SimpleGraph V) (x u : V) : ℤ :=
   if G.Adj x u then 1 else 0
@@ -482,6 +498,7 @@ lemma sliceLinear_adjacencyCoefficient_eq (G : SimpleGraph V) (x : V)
     AntiConcentration.sliceLinear s
         (fun u ↦ (adjacencyCoefficient G x u : ℝ)) omega =
       (Erdos88.neighborsIn G x (sliceFinset s omega)).card := by
+  classical
   rw [AntiConcentration.sliceLinear, Erdos88.neighborsIn,
     Finset.card_filter]
   rw [Nat.cast_sum]
@@ -506,26 +523,30 @@ lemma sliceLinear_adjacencyCoefficient_eq (G : SimpleGraph V) (x : V)
         cases h : omega.1 u
         · rfl
         · exact (huNot (by
-            simpa [sliceFinset, boolFunEquivFinset, h])).elim
+            simp [sliceFinset, boolFunEquivFinset, h])).elim
       simp [homega]
     _ = ∑ u, (adjacencyCoefficient G x u : ℝ) *
           if omega.1 u then 1 else 0 := by simp
 
+open Classical in
 /-- Coordinates contributing `+1` to the difference of two adjacency
 indicators. -/
 def positiveAdjacencyDiff (G : SimpleGraph V) (x y : V) : Finset V :=
   Finset.univ.filter fun u ↦ G.Adj x u ∧ ¬ G.Adj y u
 
+open Classical in
 /-- Coordinates contributing `-1` to the difference of two adjacency
 indicators. -/
 def negativeAdjacencyDiff (G : SimpleGraph V) (x y : V) : Finset V :=
   Finset.univ.filter fun u ↦ ¬ G.Adj x u ∧ G.Adj y u
 
+omit [DecidableEq V] in
 lemma adjacencyDiff_sum (G : SimpleGraph V) (x y : V) :
     (∑ u, ((adjacencyCoefficient G x u -
         adjacencyCoefficient G y u : ℤ) : ℝ)) =
       (positiveAdjacencyDiff G x y).card -
         (negativeAdjacencyDiff G x y).card := by
+  classical
   rw [show (∑ u, ((adjacencyCoefficient G x u -
       adjacencyCoefficient G y u : ℤ) : ℝ)) =
       ∑ u, ((if G.Adj x u ∧ ¬ G.Adj y u then 1 else 0) -
@@ -537,8 +558,11 @@ lemma adjacencyDiff_sum (G : SimpleGraph V) (x y : V) :
   rw [Finset.sum_sub_distrib]
   simp [positiveAdjacencyDiff, negativeAdjacencyDiff]
 
+omit [DecidableEq V] [Fintype V] in
+open Classical in
 lemma incidence_singleton (G : SimpleGraph V) (x u : V) :
     Erdos636.incidence G {x} u = if G.Adj x u then 1 else 0 := by
+  classical
   rw [Erdos636.incidence, show
     ({x} : Finset V).filter (fun v ↦ G.Adj v u) =
         if G.Adj x u then {x} else (∅ : Finset V) by
@@ -556,12 +580,14 @@ lemma incidence_singleton (G : SimpleGraph V) (x u : V) :
         exact h hv]
   split <;> simp
 
+omit [DecidableEq V] in
 /-- The squared adjacency-difference coefficients count exactly the
 singleton support difference. -/
 lemma adjacencyDiff_sq_sum (G : SimpleGraph V) (x y : V) :
     (∑ u, ((adjacencyCoefficient G x u -
         adjacencyCoefficient G y u : ℤ) : ℝ) ^ 2) =
       Erdos636.supportDiffCard G Finset.univ {x} {y} := by
+  classical
   rw [Erdos636.supportDiffCard, Erdos636.supportDiff]
   simp only [Finset.card_filter, incidence_singleton, Nat.cast_sum]
   push_cast
@@ -570,10 +596,12 @@ lemma adjacencyDiff_sq_sum (G : SimpleGraph V) (x y : V) :
   by_cases hx : G.Adj x u <;> by_cases hy : G.Adj y u <;>
     simp [adjacencyCoefficient, hx, hy]
 
+omit [DecidableEq V] in
 lemma card_pos_add_neg_eq_support (G : SimpleGraph V) (x y : V) :
     ((positiveAdjacencyDiff G x y).card : ℝ) +
         (negativeAdjacencyDiff G x y).card =
       Erdos636.supportDiffCard G Finset.univ {x} {y} := by
+  classical
   rw [Erdos636.supportDiffCard, Erdos636.supportDiff]
   simp only [Finset.card_filter, incidence_singleton]
   simp only [positiveAdjacencyDiff, negativeAdjacencyDiff,
@@ -590,6 +618,7 @@ lemma positiveAdjacencyDiff_card_le_complement
     (G : SimpleGraph V) (x y : V) :
     (positiveAdjacencyDiff G x y).card ≤
       (Finset.univ \ Erdos88.neighborsIn G y Finset.univ).card := by
+  classical
   apply Finset.card_le_card
   intro u hu
   rw [Finset.mem_sdiff, Erdos88.mem_neighborsIn]
@@ -600,18 +629,21 @@ lemma negativeAdjacencyDiff_card_le_complement
     (G : SimpleGraph V) (x y : V) :
     (negativeAdjacencyDiff G x y).card ≤
       (Finset.univ \ Erdos88.neighborsIn G x Finset.univ).card := by
+  classical
   apply Finset.card_le_card
   intro u hu
   rw [Finset.mem_sdiff, Erdos88.mem_neighborsIn]
   exact ⟨Finset.mem_univ u, fun h ↦
     (Finset.mem_filter.mp hu).2.1 h.2⟩
 
+omit [DecidableEq V] in
 lemma positiveAdjacencyDiff_card_le_one_sub
     (G : SimpleGraph V) (x y : V) (eps : ℝ)
     (hy : eps * Fintype.card V ≤
       (Erdos88.neighborsIn G y Finset.univ).card) :
     ((positiveAdjacencyDiff G x y).card : ℝ) ≤
       (1 - eps) * Fintype.card V := by
+  classical
   have hsub := positiveAdjacencyDiff_card_le_complement G x y
   have hcardEq :
       (Finset.univ \ Erdos88.neighborsIn G y Finset.univ).card =
@@ -633,12 +665,14 @@ lemma positiveAdjacencyDiff_card_le_one_sub
         exact Finset.card_le_univ _
   nlinarith
 
+omit [DecidableEq V] in
 lemma negativeAdjacencyDiff_card_le_one_sub
     (G : SimpleGraph V) (x y : V) (eps : ℝ)
     (hx : eps * Fintype.card V ≤
       (Erdos88.neighborsIn G x Finset.univ).card) :
     ((negativeAdjacencyDiff G x y).card : ℝ) ≤
       (1 - eps) * Fintype.card V := by
+  classical
   have hsub := negativeAdjacencyDiff_card_le_complement G x y
   have hcardEq :
       (Finset.univ \ Erdos88.neighborsIn G x Finset.univ).card =
@@ -660,6 +694,7 @@ lemma negativeAdjacencyDiff_card_le_one_sub
         exact Finset.card_le_univ _
   nlinarith
 
+omit [DecidableEq V] in
 /-- Graph-facing centered-variance bridge.  A support lower bound and
 nonexceptional endpoint degrees imply the exact hypotheses required by
 balanced-slice anti-concentration, with variance density `eps * theta`. -/
@@ -680,6 +715,7 @@ theorem adjacencyDiff_centered_sum_and_variance
       eps * theta * (Fintype.card V : ℝ) ≤
         ∑ u, (((adjacencyCoefficient G x u -
           adjacencyCoefficient G y u : ℤ) : ℝ) - mu) ^ 2 := by
+  classical
   dsimp only
   apply signed_class_centered_sum_and_variance
     (fun u ↦ adjacencyCoefficient G x u - adjacencyCoefficient G y u)
@@ -707,6 +743,7 @@ variable [LinearOrder V] [Nonempty V]
 def richCore (G : SimpleGraph V) (eps : ℝ) : Finset V :=
   Finset.univ \ Erdos636.strictExceptionalVertices G Finset.univ eps
 
+omit [LinearOrder V] [Nonempty V] in
 @[simp] lemma mem_richCore {G : SimpleGraph V} {eps : ℝ} {x : V} :
     x ∈ richCore G eps ↔
       eps * Fintype.card V ≤
@@ -724,9 +761,11 @@ def lowSupportNeighbors (G : SimpleGraph V) (I0 : Finset V)
     (Erdos636.supportDiffCard G Finset.univ {x} {y} : ℝ) <
       theta * Fintype.card V
 
+omit [DecidableEq V] [LinearOrder V] [Nonempty V] in
 lemma singleton_subset_commonNeighbors (G : SimpleGraph V) (x : V) :
     Erdos88.neighborsIn G x Finset.univ ⊆
       Erdos88.commonNeighborFinset G {x} := by
+  classical
   intro u hu
   rw [Erdos88.mem_neighborsIn] at hu
   rw [Erdos88.mem_commonNeighborFinset]
@@ -735,15 +774,18 @@ lemma singleton_subset_commonNeighbors (G : SimpleGraph V) (x : V) :
   subst v
   exact hu.2
 
+omit [DecidableEq V] [LinearOrder V] [Nonempty V] in
 lemma supportDiffCard_mono_univ (G : SimpleGraph V)
     (A x y : Finset V) :
     Erdos636.supportDiffCard G A x y ≤
       Erdos636.supportDiffCard G Finset.univ x y := by
+  classical
   apply Finset.card_le_card
   intro u hu
   rw [Erdos636.mem_supportDiff] at hu ⊢
   exact ⟨Finset.mem_univ u, hu.2⟩
 
+omit [LinearOrder V] in
 /-- For a rich-core vertex, set diversity bounds all other core vertices
 whose singleton neighbourhood support is below `theta |V|`. -/
 theorem card_lowSupportNeighbors_le
@@ -829,6 +871,7 @@ def richExceptionalPairs (G : SimpleGraph V) (eps theta : ℝ) :
     ((lowSupportNeighbors G (richCore G eps) x theta).filter
       fun y ↦ x < y).image fun y ↦ (x, y)
 
+omit [Nonempty V] in
 lemma richExceptionalPairs_subset_possibleEdges
     (G : SimpleGraph V) (eps theta : ℝ) :
     richExceptionalPairs G eps theta ⊆ possibleEdges (richCore G eps) := by
@@ -839,6 +882,7 @@ lemma richExceptionalPairs_subset_possibleEdges
   simp only [possibleEdges, Finset.mem_filter, Finset.mem_offDiag]
   exact ⟨⟨hx, (Finset.mem_filter.mp hy).1, ne_of_lt hxy⟩, hxy⟩
 
+omit [Nonempty V] in
 lemma not_mem_richExceptionalPairs_support_ge
     (G : SimpleGraph V) (eps theta : ℝ)
     {x y : V} (hx : x ∈ richCore G eps) (hy : y ∈ richCore G eps)
@@ -886,6 +930,7 @@ theorem card_richExceptionalPairs_le
           hdeltaeps hrich htheta x hx)
     _ = (richCore G eps).card * b := by simp
 
+omit [LinearOrder V] [Nonempty V] in
 /-- Richness leaves all but at most the explicit fifth-power exceptional
 bound in the rich core. -/
 theorem card_le_richCore_add
@@ -911,6 +956,7 @@ end RichGraphPairs
 
 end GraphVariance
 
+open Classical in
 /-- Fixed-slice specialization of the random selection/pruning theorem.
 The coefficient population `a i` is the degree-incidence vector attached to
 vertex `i`.  For every nonexceptional pair, a centered variance lower bound
@@ -1007,6 +1053,7 @@ section GraphFixedSlice
 
 variable {V : Type u} [Fintype V] [DecidableEq V] [LinearOrder V]
 
+open Classical in
 /-- Graph-facing random-slice selection.  The coefficients are literal
 adjacency indicators, so the selected linear statistic is the vertex degree
 into `U1 = sliceFinset s omega`.  Off the explicitly paid exceptional pairs,

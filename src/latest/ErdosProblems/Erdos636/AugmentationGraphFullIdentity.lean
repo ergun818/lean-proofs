@@ -35,7 +35,7 @@ incidence statistic.  Thus later probability arguments do not need to
 assume an abstract endpoint or collision identity.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 open scoped BigOperators
 
 namespace Erdos636
@@ -47,6 +47,7 @@ noncomputable section
 
 variable {V : Type u} [Fintype V] [DecidableEq V]
 
+omit [DecidableEq V] [Fintype V] in
 /-- Cross-incidences can be counted from either endpoint class. -/
 lemma degreeInto_comm (G : SimpleGraph V) (A B : Finset V) :
     degreeInto G A B = degreeInto G B A := by
@@ -67,39 +68,49 @@ def reservoirIncidence (G : SimpleGraph V) (D₁ x : Finset V)
     (u : D₁) : ℤ :=
   incidence G x u.1
 
+omit [DecidableEq V] [Fintype V] in
 /-- The identity-layer coefficient is definitionally the coefficient used
 by the graph partial exposure. -/
 @[simp] lemma reservoirIncidence_eq_partialIncidence
     (G : SimpleGraph V) (D₁ x : Finset V) (u : D₁) :
     reservoirIncidence G D₁ x u =
-      AugmentationGraphPartial.incidenceVector G D₁ x u :=
-  rfl
+      AugmentationGraphPartial.incidenceVector G D₁ x u := by
+  classical
+  exact rfl
 
+omit [DecidableEq V] [Fintype V] in
 /-- Full-reservoir coefficient sum, imported from the graph partial
 exposure without any change of convention. -/
-lemma sum_reservoirIncidence_eq_degreeInto
+lemma sum_reservoirIncidence_eq_degreeInto [Finite V]
     (G : SimpleGraph V) (D₁ x : Finset V) :
     ∑ u : D₁, reservoirIncidence G D₁ x u = degreeInto G D₁ x := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   simpa using
     AugmentationGraphPartial.sum_incidenceVector_eq_degreeInto G D₁ x
 
+omit [DecidableEq V] [Fintype V] in
 /-- A cell incidence coordinate is bounded by the size of the cell. -/
 lemma abs_reservoirIncidence_le_of_card_le
     (G : SimpleGraph V) (D₁ x : Finset V) (K : ℕ)
     (hxK : x.card ≤ K) (u : D₁) :
     |reservoirIncidence G D₁ x u| ≤ (K : ℤ) := by
+  classical
   change |(incidence G x u.1 : ℤ)| ≤ (K : ℤ)
   rw [abs_of_nonneg (by simp)]
   exact_mod_cast (incidence_le_card G x u.1).trans hxK
 
+omit [DecidableEq V] [Fintype V] in
 /-- Difference coefficients of two `K`-bounded cells are still bounded by
 `K`, rather than by the coarser `2K`, because both incidences lie in
 `[0,K]`. -/
-lemma abs_reservoirIncidence_sub_le_of_card_le
+lemma abs_reservoirIncidence_sub_le_of_card_le [Finite V]
     (G : SimpleGraph V) (D₁ X Y : Finset V) (K : ℕ)
     (hXK : X.card ≤ K) (hYK : Y.card ≤ K) (u : D₁) :
     |reservoirIncidence G D₁ Y u - reservoirIncidence G D₁ X u| ≤
       (K : ℤ) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hX0 : (0 : ℤ) ≤ reservoirIncidence G D₁ X u := by
     simp [reservoirIncidence]
   have hY0 : (0 : ℤ) ≤ reservoirIncidence G D₁ Y u := by
@@ -118,39 +129,48 @@ def halfDeletion (D₁ : Finset V) (nD : ℕ)
     (omega : HalfSample.Slice D₁ nD) : Finset V :=
   omega.1.map (Function.Embedding.subtype fun v : V ↦ v ∈ D₁)
 
+omit [DecidableEq V] [Fintype V] in
 /-- The half-deletion decoder agrees definitionally with the decoder used
 by the graph partial exposure. -/
 @[simp] lemma halfDeletion_eq_partialMap (D₁ : Finset V) (nD : ℕ)
     (omega : HalfSample.Slice D₁ nD) :
     halfDeletion D₁ nD omega =
-      AugmentationGraphPartial.mapSubtypeFinset D₁ omega.1 :=
-  rfl
+      AugmentationGraphPartial.mapSubtypeFinset D₁ omega.1 := by
+  classical
+  exact rfl
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma card_halfDeletion (D₁ : Finset V) (nD : ℕ)
     (omega : HalfSample.Slice D₁ nD) :
     (halfDeletion D₁ nD omega).card = nD := by
+  classical
   rw [halfDeletion, Finset.card_map]
   exact omega.2
 
+omit [DecidableEq V] [Fintype V] in
 lemma halfDeletion_subset (D₁ : Finset V) (nD : ℕ)
     (omega : HalfSample.Slice D₁ nD) :
-    halfDeletion D₁ nD omega ⊆ D₁ :=
-  by
-    intro v hv
-    obtain ⟨u, _hu, rfl⟩ := Finset.mem_map.mp hv
-    exact u.2
+    halfDeletion D₁ nD omega ⊆ D₁ := by
+  classical
+  intro v hv
+  obtain ⟨u, _hu, rfl⟩ := Finset.mem_map.mp hv
+  exact u.2
 
-lemma halfDeletion_subset_of_subset {D₁ U₀ : Finset V}
+omit [DecidableEq V] [Fintype V] in
+lemma halfDeletion_subset_of_subset [Finite V] {D₁ U₀ : Finset V}
     (hD₁U₀ : D₁ ⊆ U₀) (nD : ℕ)
     (omega : HalfSample.Slice D₁ nD) :
-    halfDeletion D₁ nD omega ⊆ U₀ :=
-  (halfDeletion_subset D₁ nD omega).trans hD₁U₀
+    halfDeletion D₁ nD omega ⊆ U₀ := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
+  exact (halfDeletion_subset D₁ nD omega).trans hD₁U₀
 
 /-! ## Incidence statistics on a half-slice -/
 
+omit [DecidableEq V] [Fintype V] in
 /-- A sum of one matching-cell incidence vector over the decoded deletion
 set is exactly the graph degree sum into that deletion set. -/
-lemma halfSliceSum_incidenceVector_eq_degreeInto_halfDeletion
+lemma halfSliceSum_incidenceVector_eq_degreeInto_halfDeletion [Finite V]
     (G : SimpleGraph V) (D₁ x : Finset V) (nD : ℕ)
     (omega : HalfSample.Slice D₁ nD) :
     HalfSample.sliceSum
@@ -158,6 +178,7 @@ lemma halfSliceSum_incidenceVector_eq_degreeInto_halfDeletion
           (reservoirIncidence G D₁ x u : ℝ)) omega =
       degreeInto G (halfDeletion D₁ nD omega) x := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   simp only [HalfSample.sliceSum, reservoirIncidence]
   norm_cast
   rw [degreeInto_comm G (halfDeletion D₁ nD omega) x]
@@ -175,21 +196,27 @@ def replacementCoeff (G : SimpleGraph V) (D₁ X Y : Finset V)
   ((reservoirIncidence G D₁ Y u -
       reservoirIncidence G D₁ X u : ℤ) : ℝ)
 
+omit [DecidableEq V] [Fintype V] in
 /-- Uniform coordinate bound used by the increment second-moment estimate. -/
-lemma abs_replacementCoeff_le_of_card_le
+lemma abs_replacementCoeff_le_of_card_le [Finite V]
     (G : SimpleGraph V) (D₁ X Y : Finset V) (K : ℕ)
     (hXK : X.card ≤ K) (hYK : Y.card ≤ K) (u : D₁) :
     |replacementCoeff G D₁ X Y u| ≤ (K : ℝ) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [replacementCoeff, ← Int.cast_abs]
   exact_mod_cast
     abs_reservoirIncidence_sub_le_of_card_le G D₁ X Y K hXK hYK u
 
+omit [DecidableEq V] [Fintype V] in
 /-- The total replacement coefficient is the full-reservoir degree
 difference. -/
-lemma sum_replacementCoeff_eq_degreeInto_sub
+lemma sum_replacementCoeff_eq_degreeInto_sub [Finite V]
     (G : SimpleGraph V) (D₁ X Y : Finset V) :
     ∑ u, replacementCoeff G D₁ X Y u =
       (degreeInto G D₁ Y : ℝ) - degreeInto G D₁ X := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   calc
     ∑ u, replacementCoeff G D₁ X Y u =
         (∑ u, (reservoirIncidence G D₁ Y u : ℝ)) -
@@ -204,19 +231,25 @@ lemma sum_replacementCoeff_eq_degreeInto_sub
         exact_mod_cast sum_reservoirIncidence_eq_degreeInto G D₁ X
       rw [hY, hX]
 
+omit [DecidableEq V] [Fintype V] in
 /-- Equal full-reservoir degrees center the replacement coefficient. -/
-lemma sum_replacementCoeff_eq_zero_of_degree_eq
+lemma sum_replacementCoeff_eq_zero_of_degree_eq [Finite V]
     (G : SimpleGraph V) (D₁ X Y : Finset V)
     (hdegree : degreeInto G D₁ X = degreeInto G D₁ Y) :
     ∑ u, replacementCoeff G D₁ X Y u = 0 := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [sum_replacementCoeff_eq_degreeInto_sub, hdegree, sub_self]
 
+omit [DecidableEq V] [Fintype V] in
 /-- Its `l1` mass is exactly the diversity quantity retained by
 `AugmentationGraphPartial.PartialGood`. -/
-lemma sum_abs_replacementCoeff_eq_incidenceDiffMass
+lemma sum_abs_replacementCoeff_eq_incidenceDiffMass [Finite V]
     (G : SimpleGraph V) (D₁ X Y : Finset V) :
     ∑ u, |replacementCoeff G D₁ X Y u| =
       incidenceDiffMass G D₁ X Y := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   calc
     ∑ u, |replacementCoeff G D₁ X Y u| =
         incidenceDiffMass G D₁ Y X := by
@@ -227,15 +260,17 @@ lemma sum_abs_replacementCoeff_eq_incidenceDiffMass
     _ = incidenceDiffMass G D₁ X Y := by
       exact_mod_cast incidenceDiffMass_comm G D₁ Y X
 
+omit [DecidableEq V] [Fintype V] in
 /-- The half-slice linear statistic for `replacementCoeff X Y` is exactly
 `deg_D(Y) - deg_D(X)`. -/
-lemma sliceSum_replacementCoeff
+lemma sliceSum_replacementCoeff [Finite V]
     (G : SimpleGraph V) (D₁ X Y : Finset V) (nD : ℕ)
     (omega : HalfSample.Slice D₁ nD) :
     HalfSample.sliceSum (replacementCoeff G D₁ X Y) omega =
       (degreeInto G (halfDeletion D₁ nD omega) Y : ℝ) -
         degreeInto G (halfDeletion D₁ nD omega) X := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   calc
     HalfSample.sliceSum (replacementCoeff G D₁ X Y) omega =
         HalfSample.sliceSum
@@ -272,24 +307,31 @@ def literalPath (G : SimpleGraph V) (W U₀ D Z : Finset V) : ℝ :=
       (Erdos88.inducedEdges G ((W ∪ (U₀ \ D)) ∪ Z) : ℝ) :=
   rfl
 
+omit [DecidableEq V] [Fintype V] in
+open Classical in
 /-- Oriented crossing-edge cardinality in the degree-sum convention used by
 the incidence vectors. -/
-lemma card_interedges_eq_degreeInto (G : SimpleGraph V)
+lemma card_interedges_eq_degreeInto [Finite V] (G : SimpleGraph V)
     (A B : Finset V) :
     (G.interedges A B).card = degreeInto G A B := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [degreeInto_comm G A B,
     degreeInto_eq_card_interedges G B A]
 
+omit [Fintype V] in
 private lemma disjoint_sdiff_left {A B D : Finset V}
     (hAB : Disjoint A B) : Disjoint (A \ D) B := by
   exact hAB.mono_left Finset.sdiff_subset
 
+omit [Fintype V] in
 private lemma disjoint_sdiff_right {A B D : Finset V}
     (hAB : Disjoint A B) : Disjoint A (B \ D) := by
   exact hAB.mono_right Finset.sdiff_subset
 
 /-! ## Endpoint identity -/
 
+open Classical in
 /-- The deterministic part of the change from endpoint `Z₀` to endpoint
 `Z₁`, before the random deletion statistic is added. -/
 def endpointOffsetInt (G : SimpleGraph V)
@@ -309,6 +351,7 @@ theorem literalEndpoint_difference_int
         literalPathNat G W U₀ D Z₀ =
       endpointOffsetInt G W U₀ Z₀ Z₁ +
         ((degreeInto G D Z₀ : ℤ) - degreeInto G D Z₁) := by
+  classical
   have hWU' : Disjoint W (U₀ \ D) := disjoint_sdiff_right hWU
   have hUZ₀' : Disjoint (U₀ \ D) Z₀ := disjoint_sdiff_left hUZ₀
   have hUZ₁' : Disjoint (U₀ \ D) Z₁ := disjoint_sdiff_left hUZ₁
@@ -347,6 +390,7 @@ theorem literalEndpoint_affine
 
 /-! ## One-cell switching increment -/
 
+open Classical in
 /-- Deterministic part of the switch which inserts `X` and removes `Y`,
 leaving the common state `R` fixed. -/
 def switchOffsetInt (G : SimpleGraph V)
@@ -370,6 +414,7 @@ theorem literalSwitch_difference_int
         literalPathNat G W U₀ D (R ∪ Y) =
       switchOffsetInt G W U₀ R X Y +
         ((degreeInto G D Y : ℤ) - degreeInto G D X) := by
+  classical
   have hWU' : Disjoint W (U₀ \ D) := disjoint_sdiff_right hWU
   have hUR' : Disjoint (U₀ \ D) R := disjoint_sdiff_left hUR
   have hUX' : Disjoint (U₀ \ D) X := disjoint_sdiff_left hUX
@@ -475,6 +520,7 @@ theorem uniformExpectation_literalSwitch_sq_le
 
 /-! ## Candidate extensions and collisions -/
 
+open Classical in
 /-- The deterministic contribution of adjoining candidate `x` to state
 `Z`, before subtracting its incidences into the deletion set. -/
 def candidateOffsetInt (G : SimpleGraph V)
@@ -494,6 +540,7 @@ theorem literalCandidateExtension_sub_base_int
     (Erdos88.inducedEdges G (literalState W U₀ D Z ∪ x) : ℤ) -
         literalPathNat G W U₀ D Z =
       candidateOffsetInt G W U₀ Z x - degreeInto G D x := by
+  classical
   have hWU' : Disjoint W (U₀ \ D) := disjoint_sdiff_right hWU
   have hUZ' : Disjoint (U₀ \ D) Z := disjoint_sdiff_left hUZ
   have hUx' : Disjoint (U₀ \ D) x := disjoint_sdiff_left hUx

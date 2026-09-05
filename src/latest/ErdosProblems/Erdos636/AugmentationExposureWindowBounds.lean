@@ -28,7 +28,7 @@ contains both the edges induced inside the final candidate cell and its
 edges into the other selected cells.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 
 namespace Erdos636
 namespace AugmentationExposureWindowBounds
@@ -41,6 +41,7 @@ variable {V : Type u} [Fintype V] [DecidableEq V]
 
 open AugmentationExposureAssembly
 
+omit [Fintype V] in
 private lemma degreeInto_cellUnion_eq_sum
     (G : SimpleGraph V) (U : Finset V) (M : Finset (Finset V))
     (hpair : (M : Set (Finset V)).PairwiseDisjoint id) :
@@ -76,6 +77,7 @@ private lemma selectedReverseState_subset_crowd
   exact (graphSelectedState_subset_source G D1 source rawCandidates
     degreeCenter degreeRadius nS gap badBudget selected i.rev).trans hsource
 
+omit [DecidableEq V] in
 private lemma card_selectedReverseState
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -85,6 +87,7 @@ private lemma card_selectedReverseState
     (j : ℕ) (hj : j ≤ nS) :
     (graphSelectedReverseState G D1 source rawCandidates degreeCenter
       degreeRadius nS gap badBudget selected j).card = nS := by
+  classical
   have hjlt : j < nS + 1 := by omega
   let i : Fin (nS + 1) := ⟨j, hjlt⟩
   rw [show graphSelectedReverseState G D1 source rawCandidates degreeCenter
@@ -96,6 +99,7 @@ private lemma card_selectedReverseState
   exact card_graphSelectedState G D1 source rawCandidates degreeCenter
     degreeRadius nS gap badBudget selected i.rev
 
+omit [DecidableEq V] in
 private lemma selectedReverseState_disjoint_goodCandidates
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -108,6 +112,7 @@ private lemma selectedReverseState_disjoint_goodCandidates
         degreeRadius nS gap badBudget selected j)
       (graphSelectedGoodCandidates G D1 source rawCandidates degreeCenter
         degreeRadius nS gap badBudget selected) := by
+  classical
   have hjlt : j < nS + 1 := by omega
   let i : Fin (nS + 1) := ⟨j, hjlt⟩
   rw [show graphSelectedReverseState G D1 source rawCandidates degreeCenter
@@ -121,6 +126,7 @@ private lemma selectedReverseState_disjoint_goodCandidates
       (graphSelectedGoodCandidates_subset G D1 source rawCandidates
         degreeCenter degreeRadius nS gap badBudget selected)
 
+omit [DecidableEq V] in
 private lemma selectedReverseState_degreeGood
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -131,6 +137,7 @@ private lemma selectedReverseState_degreeGood
     (hx : x ∈ graphSelectedReverseState G D1 source rawCandidates
       degreeCenter degreeRadius nS gap badBudget selected j) :
     AugmentationGraphPartial.DegreeGood G D1 x degreeCenter degreeRadius := by
+  classical
   have hjlt : j < nS + 1 := by omega
   let i : Fin (nS + 1) := ⟨j, hjlt⟩
   have hx' : x ∈ graphSelectedState G D1 source rawCandidates degreeCenter
@@ -159,9 +166,10 @@ private lemma selectedReverseState_degreeGood
   exact hxPair.2
 
 private lemma abs_sum_sub_card_mul_le
-    {A : Type*} [DecidableEq A] (M : Finset A) (f : A → ℝ) (c r : ℝ)
+    {A : Type*} (M : Finset A) (f : A → ℝ) (c r : ℝ)
     (h : ∀ x ∈ M, |f x - c| ≤ r) :
     |(∑ x ∈ M, f x) - M.card * c| ≤ M.card * r := by
+  classical
   have heq : (∑ x ∈ M, f x) - M.card * c =
       ∑ x ∈ M, (f x - c) := by
     rw [Finset.sum_sub_distrib]
@@ -210,6 +218,7 @@ theorem literal_window_of_crowdedPath
           (AugmentationGraphFullIdentity.halfDeletion D1 nD omega)
           (graphSelectedReverseState G D1 source rawCandidates degreeCenter
             degreeRadius nS gap badBudget selected) j| ≤ R := by
+  classical
   intro omega j hj x hx _hxDegree
   let state := graphSelectedReverseState G D1 source rawCandidates degreeCenter
     degreeRadius nS gap badBudget selected j
@@ -603,9 +612,8 @@ theorem centered_global_window_of_crowdedPath
     AugmentationGraphFullIdentity.literalCandidateExtension_sub_base_int
       G W S.U0 D ∅ Z hDU (path.disjoint_W_U0 time)
         (by simp) (by simp) hWZ hUZ (by simp)
-  simp only [AugmentationGraphFullIdentity.candidateOffsetInt,
-    Erdos88.inducedEdges_empty, SimpleGraph.interedges_empty_left,
-    Finset.card_empty, Nat.cast_zero, zero_add] at hid
+  simp only [AugmentationGraphFullIdentity.candidateOffsetInt, SimpleGraph.interedges_empty_left,
+    Finset.card_empty, Nat.cast_zero] at hid
   rw [AugmentationGraphFullIdentity.card_interedges_eq_degreeInto, hUeq] at hid
   have hidReal := congrArg (fun z : ℤ ↦ (z : ℝ)) hid
   push_cast at hidReal

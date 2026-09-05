@@ -34,7 +34,7 @@ output, and risk estimates are entirely scalar.  The conversion theorem below
 recovers the literal graph-valued record.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 
 namespace Erdos636
 namespace AugmentationExposureScalar
@@ -54,14 +54,17 @@ variable {V : Type u} [Fintype V] [DecidableEq V]
 `family.card - badBudget` elements.  This spelling is tailored to a good/bad
 predicate partition. -/
 lemma card_sub_le_card_filter_of_bad_card_le
-    {A : Type*} [DecidableEq A] (family : Finset A) (good : A → Prop)
+    {A : Type*} (family : Finset A) (good : A → Prop)
     [DecidablePred good] (badBudget : Nat)
     (hbad : (family.filter fun x => ¬good x).card ≤ badBudget) :
     family.card - badBudget ≤ (family.filter good).card := by
+  classical
   have hpartition := Finset.card_filter_add_card_filter_not
     (s := family) good
   omega
 
+omit [DecidableEq V] in
+open Classical in
 /-- The `X0` witness in `PartialGood` has at least `s0 - badBudget`
 degree-good cells as soon as its displayed real bad-cell estimate is bounded
 by `badBudget + 1`. -/
@@ -78,6 +81,7 @@ theorem exists_candidate_good_family_card_lower_of_partialGood
         (rawCandidates.filter fun x =>
           AugmentationGraphPartial.DegreeGood G D1 x degreeCenter
             degreeRadius).card := by
+  classical
   obtain ⟨_S0, X0, _hS0M, hX0M, _hS0card, hX0card, _hdisjoint,
     _hdiverse, _hbadS, hbadX, _hcollision⟩ := hgood
   have hbadReal :
@@ -100,6 +104,8 @@ theorem exists_candidate_good_family_card_lower_of_partialGood
     (fun x => AugmentationGraphPartial.DegreeGood G D1 x degreeCenter
       degreeRadius) badBudget hbadNat
 
+omit [DecidableEq V] in
+open Classical in
 /-- A direct bad-candidate-cardinality form for selected switching data. -/
 lemma graphSelectedGoodCandidates_card_lower_of_bad_card_le
     (G : SimpleGraph V) (D1 : Finset V)
@@ -114,6 +120,7 @@ lemma graphSelectedGoodCandidates_card_lower_of_bad_card_le
     s0 - badBudget ≤
       (graphSelectedGoodCandidates G D1 source rawCandidates degreeCenter
         degreeRadius nS gap badBudget selected).card := by
+  classical
   unfold graphSelectedGoodCandidates
   rw [← hrawCard]
   exact card_sub_le_card_filter_of_bad_card_le rawCandidates
@@ -176,10 +183,12 @@ lemma candidate_survivors_and_piece_bound_of_bounds
       _ <= (actual - badDegree) ^ 2 := by
         exact Nat.pow_le_pow_left (Nat.sub_le_sub_right hlower badDegree) 2
 
+omit [DecidableEq V] [Fintype V] in
 lemma graphCollisionRisk_nonneg
     {c theta : Real} {K : Nat} (D1 : Finset V)
     (hc : 0 < c) (htheta : 0 < theta) (hK : 0 < K) :
     0 <= AugmentationGraphFull.graphCollisionRisk c theta K D1 := by
+  classical
   unfold AugmentationGraphFull.graphCollisionRisk
   apply div_nonneg
   · exact (AntiConcentration.variancePointMassConstant_pos hc
@@ -192,10 +201,11 @@ lemma graphDegreeRisk_nonneg
   unfold AugmentationGraphFull.graphDegreeRisk
   positivity
 
+omit [DecidableEq V] [Fintype V] in
 /-- Both candidate-dependent terms in the full-exposure risk budget are
 monotone in the candidate cardinality.  The geometric risk is independent of
 the candidate family, so it is carried through unchanged. -/
-lemma risk_budget_mono_candidate_card_with_geometricRisk
+lemma risk_budget_mono_candidate_card_with_geometricRisk [Finite V]
     {actual upper nS K nD badGeom badCollision badDegree : Nat}
     {c theta degreeThreshold meanRadius E qScale kappa geometricRisk : Real}
     (D1 : Finset V) (hactual : actual <= upper)
@@ -227,6 +237,8 @@ lemma risk_budget_mono_candidate_card_with_geometricRisk
               (AugmentationGraphFull.graphSwitchVariance K meanRadius nD) /
                 qScale)) /
             kappa <= 1 / 6 := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hcollisionRisk := graphCollisionRisk_nonneg D1 hc htheta hK
   have hdegreeRisk := graphDegreeRisk_nonneg degreeThreshold nD K
   have hchoose : actual.choose 2 <= upper.choose 2 :=
@@ -252,10 +264,11 @@ lemma risk_budget_mono_candidate_card_with_geometricRisk
   norm_num at hcollisionTerm hdegreeTerm hscalar ⊢
   linarith [hcollisionTerm, hdegreeTerm]
 
+omit [DecidableEq V] [Fintype V] in
 /-- Corrected graph-facing risk monotonicity: the geometric term is the
 bounded-difference risk for the union of `nS` cells, each of size at most
 `K`. -/
-lemma risk_budget_mono_candidate_card
+lemma risk_budget_mono_candidate_card [Finite V]
     {actual upper nS K nD badGeom badCollision badDegree : Nat}
     {c theta geometricThreshold degreeThreshold meanRadius E qScale
       kappa : Real}
@@ -294,11 +307,14 @@ lemma risk_budget_mono_candidate_card
               (AugmentationGraphFull.graphSwitchVariance K meanRadius nD) /
                 qScale)) /
             kappa <= 1 / 6 := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   exact risk_budget_mono_candidate_card_with_geometricRisk D1 hactual hc
     htheta hK hE hscalar
 
+omit [DecidableEq V] [Fintype V] in
 /-- Compatibility form for the former zero geometric-risk interface. -/
-lemma risk_budget_mono_candidate_card_zero_geom
+lemma risk_budget_mono_candidate_card_zero_geom [Finite V]
     {actual upper nS K nD badGeom badCollision badDegree : Nat}
     {c theta degreeThreshold meanRadius E qScale kappa : Real}
     (D1 : Finset V) (hactual : actual <= upper)
@@ -330,6 +346,8 @@ lemma risk_budget_mono_candidate_card_zero_geom
               (AugmentationGraphFull.graphSwitchVariance K meanRadius nD) /
                 qScale)) /
             kappa <= 1 / 6 := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   exact risk_budget_mono_candidate_card_with_geometricRisk D1 hactual hc
     htheta hK hE hscalar
 

@@ -26,10 +26,9 @@ This elementary fact identifies the cardinality of a finite image with the
 largest cardinality of a family distinguished by the map.
 -/
 
-open Classical
-
 namespace Erdos636
 
+open Classical in
 /-- A map on a finite set has a subset containing exactly one representative
 of every fiber.  In particular, its restriction to that subset is injective
 and has exactly the same image as the original finite set. -/
@@ -69,6 +68,7 @@ theorem exists_subset_injOn_image_eq {α β : Type*} (s : Finset α)
         ⟨representative y', hrep, (representative_spec y').2⟩
   exact ⟨t, ht_subset, ht_injOn, ht_image⟩
 
+open Classical in
 /-- The cardinality of a finite image is attained by a subset on which the
 map is injective. -/
 theorem exists_subset_injOn_card_eq_card_image {α β : Type*} (s : Finset α)

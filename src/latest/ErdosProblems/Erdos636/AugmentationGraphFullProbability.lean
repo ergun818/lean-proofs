@@ -29,7 +29,6 @@ explicit numerical risk budget `<= 1 / 6`; neither the endpoint event nor
 the union of failures is left as an assumed probability bound.
 -/
 
-open Classical
 open scoped BigOperators
 
 namespace Erdos636
@@ -85,13 +84,14 @@ lemma graphPartialSliceSum_boolSliceEquivFinsetLen
 finset-valued uniform half-slice.  The centre is written as half of the
 total coefficient sum, rather than as an abstract expectation. -/
 theorem halfSlice_sum_two_sided_probability
-    {I : Type u} [Fintype I] [DecidableEq I]
+    {I : Type u} [Fintype I]
     {s : ℕ} (hcard : Fintype.card I = 2 * s) (hs : 0 < s)
     (a : I → ℝ) (B t : ℝ) (hB : 0 < B) (ht : 0 ≤ t)
     (hbounded : ∀ i, |a i| ≤ B) :
     uniformProbability (fun omega : HalfSample.Slice I s ↦
         t ≤ |HalfSample.sliceSum a omega - (∑ i, a i) / 2|) ≤
       2 * Real.exp (-t ^ 2 / (2 * s * (4 * B) ^ 2)) := by
+  classical
   let : Nonempty (HalfSample.Slice I s) := HalfSample.sliceNonempty hcard
   let E : Erdos88.Fourier.BoolSlice I s ≃ HalfSample.Slice I s :=
     Erdos88.Fourier.boolSliceEquivFinsetLen I s
@@ -130,7 +130,7 @@ theorem halfSlice_sum_two_sided_probability
 /-- The integer `l1`/small-total anti-concentration estimate, transported
 from Boolean functions to finset-valued slice points. -/
 theorem halfSlice_point_probability_le_of_integer_l1_small_sum
-    {I : Type u} [Fintype I] [DecidableEq I]
+    {I : Type u} [Fintype I]
     (a : I → ℤ) (mu c theta : ℝ) (B s : ℕ)
     (hs : s ≤ Fintype.card I)
     (hc0 : 0 < c) (hc1 : c ≤ 1 / 2)
@@ -146,6 +146,7 @@ theorem halfSlice_point_probability_le_of_integer_l1_small_sum
         HalfSample.sliceSum (fun i ↦ (a i : ℝ)) omega = x) ≤
       AntiConcentration.variancePointMassConstant c (theta ^ 2 / 4) B /
         Real.sqrt (Fintype.card I : ℝ) := by
+  classical
   let : Nonempty (HalfSample.Slice I s) := by
     obtain ⟨S, _hS, hScard⟩ :=
       Finset.exists_subset_card_eq
@@ -184,6 +185,7 @@ theorem one_half_le_endpointProbability
     (1 : ℝ) / 2 <= uniformProbability
       (fun omega : AugmentationFull.Sample D s =>
         lam <= P.path omega tau - P.path omega 0) := by
+  classical
   let : Nonempty (AugmentationFull.Sample D s) :=
     HalfSample.sliceNonempty hcard
   have hhalf : (1 : ℝ) / 2 <=
@@ -218,7 +220,7 @@ def failureEvent
 per-increment second-moment estimate bound the probability of the complete
 failure disjunction by the displayed sum of four risks. -/
 theorem uniformProbability_failureEvent_le_itemRisk
-    {D : Type u} [Fintype D] [DecidableEq D]
+    {D : Type u} [Fintype D]
     {X : Type v} [LinearOrder X] [DecidableEq X]
     {s tau : ℕ}
     (hcard : Fintype.card D = 2 * s)
@@ -247,6 +249,7 @@ theorem uniformProbability_failureEvent_le_itemRisk
             (P.candidates.card.choose 2 * pCollision / E) / tCollision +
         P.candidates.card * pDegree / tDegree +
         (tau * (Real.sqrt v / Q)) / kappa := by
+  classical
   let : Nonempty (AugmentationFull.Sample D s) :=
     HalfSample.sliceNonempty hcard
   let geomFail : AugmentationFull.Sample D s -> Prop := fun omega =>
@@ -365,7 +368,7 @@ most `1 / 6`; hence their simultaneous complement together with the
 endpoint event, namely `FullExposureEvent`, has probability at least
 `1 / 3`. -/
 theorem one_third_le_uniformProbability_fullExposureEvent_of_itemBounds
-    {D : Type u} [Fintype D] [DecidableEq D]
+    {D : Type u} [Fintype D]
     {X : Type v} [LinearOrder X] [DecidableEq X]
     {s tau : ℕ}
     (hcard : Fintype.card D = 2 * s)
@@ -397,6 +400,7 @@ theorem one_third_le_uniformProbability_fullExposureEvent_of_itemBounds
     (1 : ℝ) / 3 <= uniformProbability
       (AugmentationFull.FullExposureEvent P lam E (Q * Real.sqrt v) kappa
         tGeom tCollision tDegree) := by
+  classical
   let : Nonempty (AugmentationFull.Sample D s) :=
     HalfSample.sliceNonempty hcard
   let endpoint : AugmentationFull.Sample D s -> Prop := fun omega =>

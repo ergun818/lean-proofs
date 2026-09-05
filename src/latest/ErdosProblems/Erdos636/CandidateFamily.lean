@@ -29,7 +29,7 @@ target number of good `K`-sets.  Consequently all later finite losses
 directly for `target`.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 
 namespace Erdos636
 
@@ -47,27 +47,35 @@ def goodCandidateFamily (G : SimpleGraph V) (epsilon : ℝ) (K : ℕ)
     epsilon ^ K * Fintype.card V ≤
       (Erdos88.commonNeighborFinset G X).card
 
+omit [DecidableEq V] in
 lemma goodCandidateFamily_subset_powersetCard
     (G : SimpleGraph V) (epsilon : ℝ) (K : ℕ) (A : Finset V) :
-    goodCandidateFamily G epsilon K A ⊆ A.powersetCard K :=
-  Finset.filter_subset _ _
+    goodCandidateFamily G epsilon K A ⊆ A.powersetCard K := by
+  classical
+  exact Finset.filter_subset _ _
 
+omit [DecidableEq V] in
 lemma goodCandidateFamily_subset {G : SimpleGraph V} {epsilon : ℝ}
     {K : ℕ} {A X : Finset V} (hX : X ∈ goodCandidateFamily G epsilon K A) :
     X ⊆ A := by
+  classical
   exact (Finset.mem_powersetCard.mp
     (goodCandidateFamily_subset_powersetCard G epsilon K A hX)).1
 
+omit [DecidableEq V] in
 lemma goodCandidateFamily_card_eq {G : SimpleGraph V} {epsilon : ℝ}
     {K : ℕ} {A X : Finset V} (hX : X ∈ goodCandidateFamily G epsilon K A) :
     X.card = K := by
+  classical
   exact (Finset.mem_powersetCard.mp
     (goodCandidateFamily_subset_powersetCard G epsilon K A hX)).2
 
+omit [DecidableEq V] in
 lemma goodCandidateFamily_common {G : SimpleGraph V} {epsilon : ℝ}
     {K : ℕ} {A X : Finset V} (hX : X ∈ goodCandidateFamily G epsilon K A) :
     epsilon ^ K * Fintype.card V ≤
       (Erdos88.commonNeighborFinset G X).card := by
+  classical
   exact (Finset.mem_filter.mp hX).2
 
 /-! ## Canonical enumeration of a finite set -/
@@ -77,20 +85,27 @@ needed: `Finset.equivFin` supplies an arbitrary, but fixed, equivalence. -/
 def tupleOfFinset (K : ℕ) (X : Finset V) (hX : X.card = K) : Fin K → V :=
   fun i ↦ ((X.equivFin).symm (Fin.cast hX.symm i)).1
 
+omit [DecidableEq V] [Fintype V] in
 lemma tupleOfFinset_mem (K : ℕ) (X : Finset V) (hX : X.card = K)
-    (i : Fin K) : tupleOfFinset K X hX i ∈ X :=
-  ((X.equivFin).symm (Fin.cast hX.symm i)).2
+    (i : Fin K) : tupleOfFinset K X hX i ∈ X := by
+  classical
+  exact ((X.equivFin).symm (Fin.cast hX.symm i)).2
 
+omit [DecidableEq V] [Fintype V] in
 lemma exists_tupleOfFinset_eq (K : ℕ) (X : Finset V)
     (hX : X.card = K) {v : V} (hv : v ∈ X) :
     ∃ i : Fin K, tupleOfFinset K X hX i = v := by
+  classical
   let j : Fin X.card := X.equivFin ⟨v, hv⟩
   refine ⟨Fin.cast hX j, ?_⟩
   simp [tupleOfFinset, j]
 
-lemma tupleOfFinset_injective_on_sets (K : ℕ) {X Y : Finset V}
+omit [DecidableEq V] [Fintype V] in
+lemma tupleOfFinset_injective_on_sets [Finite V] (K : ℕ) {X Y : Finset V}
     (hX : X.card = K) (hY : Y.card = K)
     (h : tupleOfFinset K X hX = tupleOfFinset K Y hY) : X = Y := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   ext v
   constructor
   · intro hv
@@ -102,10 +117,12 @@ lemma tupleOfFinset_injective_on_sets (K : ℕ) {X Y : Finset V}
     rw [← hi, ← h]
     exact tupleOfFinset_mem K X hX i
 
+omit [DecidableEq V] in
 lemma commonNeighbors_tupleOfFinset (G : SimpleGraph V) (K : ℕ)
     (X : Finset V) (hX : X.card = K) :
     commonNeighbors G (tupleOfFinset K X hX) =
       Erdos88.commonNeighborFinset G X := by
+  classical
   ext w
   simp only [mem_commonNeighbors, Erdos88.mem_commonNeighborFinset]
   constructor

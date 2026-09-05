@@ -18,7 +18,7 @@ in the probability budget is the already-defined variance point-mass
 constant; there are no graph-valued callbacks in this module.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 
 namespace Erdos636
 namespace AugmentationInnerScales
@@ -163,21 +163,20 @@ lemma graphDegreeRisk_candidateDegreeThreshold
     Real.sq_sqrt (by positivity)
   simp only [AugmentationGraphFull.graphDegreeRisk, candidateDegreeThreshold]
   congr 2
-  congr 1
   rw [show (qDegree * Real.sqrt nD) ^ 2 =
       qDegree ^ 2 * (Real.sqrt nD) ^ 2 by ring, hsqrtSq]
   field_simp
   ring
 
 lemma sqrt_graphSwitchVariance
-    {K nD : ℕ} {meanRadius : ℝ} (hnD : 0 < nD) :
+    {K nD : ℕ} {meanRadius : ℝ} (_hnD : 0 < nD) :
     Real.sqrt (AugmentationGraphFull.graphSwitchVariance K meanRadius nD) =
       Real.sqrt ((K : ℝ) ^ 2 + meanRadius ^ 2) * Real.sqrt nD := by
   rw [AugmentationGraphFull.graphSwitchVariance]
   exact Real.sqrt_mul (by positivity) _
 
 /-- The literal four-term failure sum for the chosen inner scales. -/
-def exposureRisk (K nD nZ nS : ℕ)
+def exposureRisk (K nD _nZ nS : ℕ)
     (a₀ cBalance innerTheta qGeom badGeomCoeff qDegree meanRadius
       energyCoeff qScale kappaCoeff badCollisionCoeff badDegreeCoeff : ℝ) : ℝ :=
   (nS + 1 : ℕ) *
@@ -336,7 +335,7 @@ theorem InnerExposureFinalBounds.toCrowdLargeNumericBounds
     diversity_scale := H.diversity_scale
     small_degree_window := by
       push_cast
-      convert H.small_degree_window using 1 <;> ring
+      convert H.small_degree_window using 1 ; ring
     geometricThreshold_nonneg := H.geometry.geometricThreshold_nonneg
     degreeThreshold_nonneg := H.degreeThreshold_nonneg
     meanRadius_nonneg := H.meanRadius_nonneg
@@ -380,7 +379,7 @@ lemma innerExposureFinalBounds_of_rounding
     (P : AugmentationScales.PartialExposureFinalBounds K n nD nZ nS ambient
       a₀ theta Qpartial Cpartial LH c₀ deltaUpper gapCoeff)
     (hnD : 0 < nD) (hnS : nS + 1 = nZ)
-    (hnZLower : deltaLower * Real.sqrt nD ≤ (nZ : ℝ))
+    (_hnZLower : deltaLower * Real.sqrt nD ≤ (nZ : ℝ))
     (hnZUpper : (nZ : ℝ) ≤ deltaUpper * Real.sqrt nD)
     (hdegreeWindow : (degreeWindow : ℝ) ≤
       windowCoeff * Real.sqrt nD)
@@ -389,9 +388,9 @@ lemma innerExposureFinalBounds_of_rounding
     (hstepsLower : mCoeff / 2 * Real.sqrt nD ≤
       (exposureSteps mCoeff nD : ℝ))
     (hstepsOne : 1 ≤ mCoeff / 2 * Real.sqrt nD)
-    (hpieceLower : pieceCoeff / 2 * Real.sqrt nD ≤
+    (_hpieceLower : pieceCoeff / 2 * Real.sqrt nD ≤
       (exposurePiece pieceCoeff nD : ℝ))
-    (houtputLower : outputCoeff / 2 * nD ≤
+    (_houtputLower : outputCoeff / 2 * nD ≤
       (exposureOutput outputCoeff nD : ℝ))
     (hrounded :
       degreeBadBudget badDegreeCoeff nD <

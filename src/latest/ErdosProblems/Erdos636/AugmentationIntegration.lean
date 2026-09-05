@@ -55,7 +55,7 @@ The final graph theorem is assembled below these deterministic facts from
 the concrete partial- and full-exposure endpoints.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 open scoped BigOperators
 
 namespace Erdos636
@@ -621,26 +621,29 @@ theorem sum_abs_sub_le_two_sum_abs (e : ℕ → ℝ) (m : ℕ) :
 
 /-! ## Marked-time bookkeeping -/
 
+open Classical in
 /-- The successful switching times for one fixed outcome. -/
-def markedTimes {J Omega : Type*} [DecidableEq J]
+def markedTimes {J Omega : Type*}
     (I : Finset J) (good : J → Omega → Prop) (omega : Omega) : Finset J :=
   I.filter fun j ↦ good j omega
 
-@[simp] lemma card_markedTimes {J Omega : Type*} [DecidableEq J]
+@[simp] lemma card_markedTimes {J Omega : Type*}
     (I : Finset J) (good : J → Omega → Prop) (omega : Omega) :
     (markedTimes I good omega).card =
       CollisionCounting.eventCount I good omega :=
   rfl
 
-lemma markedTimes_subset {J Omega : Type*} [DecidableEq J]
+lemma markedTimes_subset {J Omega : Type*}
     (I : Finset J) (good : J → Omega → Prop) (omega : Omega) :
-    markedTimes I good omega ⊆ I :=
-  Finset.filter_subset _ _
+    markedTimes I good omega ⊆ I := by
+  classical
+  exact Finset.filter_subset _ _
 
-@[simp] lemma mem_markedTimes {J Omega : Type*} [DecidableEq J]
+@[simp] lemma mem_markedTimes {J Omega : Type*}
     {I : Finset J} {good : J → Omega → Prop} {omega : Omega} {j : J} :
-    j ∈ markedTimes I good omega ↔ j ∈ I ∧ good j omega :=
-  Finset.mem_filter
+    j ∈ markedTimes I good omega ↔ j ∈ I ∧ good j omega := by
+  classical
+  exact Finset.mem_filter
 
 /-- Reindexing a nonempty marked set by its increasing enumeration cannot
 increase the sum of a nonnegative function relative to a containing source
@@ -674,12 +677,13 @@ lemma sum_range_markedReindex_le_sum_range
 /-- Monotonicity of uniform-layer probability when the implication only
 needs to hold on the sampled layer. -/
 lemma layerProbability_mono_on_layer
-    {A : Type*} [DecidableEq A]
+    {A : Type*}
     (U : Finset A) (d : ℕ) (P Q : Finset A → Prop)
     [DecidablePred P] [DecidablePred Q]
     (hPQ : ∀ D ∈ NestedUniform.layer U d, P D → Q D) :
     NestedUniform.layerProbability U d P ≤
       NestedUniform.layerProbability U d Q := by
+  classical
   unfold NestedUniform.layerProbability
   apply div_le_div_of_nonneg_right
   · exact_mod_cast Finset.card_le_card (by
@@ -699,6 +703,7 @@ def WindowGood {J DState : Type*} (spectrum : Finset ℕ)
     piece ⊆ spectrum ∧ L ≤ (piece.card : ℝ) ∧
       ∀ e ∈ piece, |(e : ℝ) - center j D| ≤ radius
 
+open Classical in
 /-- Total absolute deviation of the deletion-dependent window centres from
 the deterministic outer centre path. -/
 def centerL1Error {V : Type*} [Fintype V]
@@ -708,6 +713,7 @@ def centerL1Error {V : Type*} [Fintype V]
   ∑ i ∈ Finset.range (sourceLast + 1),
     |center i (Augmentation.boolSliceDeletion U d omega) - idealCenter i|
 
+open Classical in
 lemma centerL1Error_nonneg {V : Type*} [Fintype V]
     (U : Finset V) (d sourceLast : ℕ)
     (center : ℕ → Finset V → ℝ) (idealCenter : ℕ → ℝ)
@@ -715,6 +721,7 @@ lemma centerL1Error_nonneg {V : Type*} [Fintype V]
     0 ≤ centerL1Error U d sourceLast center idealCenter omega := by
   exact Finset.sum_nonneg fun _ _ ↦ abs_nonneg _
 
+open Classical in
 /-- A per-time first-moment estimate sums to the exact global error budget
 used by the common-deletion selector. -/
 lemma uniformExpectation_centerL1Error_le
@@ -739,6 +746,7 @@ lemma uniformExpectation_centerL1Error_le
   exact (Finset.sum_le_sum fun i hi ↦
     hmoment i (by simpa using Finset.mem_range.mp hi)).trans hsum
 
+open Classical in
 /-- Error in one *increment* of the deletion-dependent centre relative to
 the deterministic outer path.  This is the quantity used in the paper:
 for an adjacent one-vertex switch its slice coefficients are uniformly
@@ -752,6 +760,7 @@ def rawCenterIncrementError {V : Type*} [Fintype V]
         center (i - 1) (Augmentation.boolSliceDeletion U d omega)) -
       (idealCenter i - idealCenter (i - 1))|
 
+open Classical in
 /-- Total perturbation charged along all adjacent raw outer switches. -/
 def rawCenterVariationError {V : Type*} [Fintype V]
     (U : Finset V) (d sourceLast : ℕ)
@@ -760,6 +769,7 @@ def rawCenterVariationError {V : Type*} [Fintype V]
   ∑ i ∈ Finset.Icc 1 sourceLast,
     rawCenterIncrementError U d center idealCenter omega i
 
+open Classical in
 lemma rawCenterVariationError_nonneg {V : Type*} [Fintype V]
     (U : Finset V) (d sourceLast : ℕ)
     (center : ℕ → Finset V → ℝ) (idealCenter : ℕ → ℝ)
@@ -767,6 +777,7 @@ lemma rawCenterVariationError_nonneg {V : Type*} [Fintype V]
     0 ≤ rawCenterVariationError U d sourceLast center idealCenter omega := by
   exact Finset.sum_nonneg fun _ _ ↦ abs_nonneg _
 
+open Classical in
 /-- Per-switch first moments sum to the global raw-variation budget. -/
 lemma uniformExpectation_rawCenterVariationError_le
     {V : Type*} [Fintype V]
@@ -789,6 +800,7 @@ lemma uniformExpectation_rawCenterVariationError_le
 
 /-! ## Concrete partial exposure on a structural crowd -/
 
+open Classical in
 /-- The graph-specific partial-exposure theorem, specialized to the crowd
 at one time of a structural switching path.  All incidence, uniformity, and
 equal-reservoir-degree assumptions are inherited from the structural
@@ -856,6 +868,7 @@ theorem three_fourths_le_layerProbability_partialGood_crowd_thresholds
   · exact htCollision
   · exact hbudget
 
+open Classical in
 /-- Scheduled-path form of the same statement.  This is the direct target
 of `OuterSwitchingPath.exists_scheduledCrowdedPath`; no separately supplied
 abstract crowd schedule occurs in its hypotheses. -/
@@ -960,6 +973,7 @@ theorem partialExposureCertificate_of_crowd
   · intro x hx y hy hxy
     exact hnormalizedDiversity.trans (Q.crowd_diverse hi hx hy hxy)
 
+open Classical in
 /-- Bounded-`nZ` conditional window theorem specialized to one structural
 crowd.  All family, degree, and disjointness hypotheses of the general
 one-state theorem are discharged from `Q`; only the explicit finite
@@ -1027,6 +1041,7 @@ theorem one_third_le_layerProbability_innerWindowGood_smallNZ_crowd
   have h := Q.crowd_degree_window hi hx
   exact_mod_cast h
 
+open Classical in
 /-- Composable bounded-`nZ` endpoint at one crowded-path time.  In contrast
 to the existential-state convenience theorem above, `state` is fixed before
 the intermediate reservoir `D₁` is sampled.  Consequently the displayed
@@ -1153,6 +1168,7 @@ lemma windowGood_of_innerWindowGood_crowd
       (fun x hx ↦ Q.crowd_uniform hi hx)
       (fun x hx ↦ Q.crowd_away_W_union_U0 hi hx))
 
+open Classical in
 /-- Probability-level form of `windowGood_of_innerWindowGood_crowd`.
 This is the final lossless transport used after the concrete two-stage
 graph exposure proves its `1/4` witnessed-window estimate. -/
@@ -1245,6 +1261,7 @@ lemma augmentationOrder_crowd_eq_selectedAssemblyOrder
       (OuterAssembly.deletionSize c₀ n) S.k) S.k]
   omega
 
+open Classical in
 /-- Window-probability transport all the way to the selected rounded order
 consumed by `PointwiseWindows`. -/
 theorem one_fourth_le_layerProbability_selectedWindowGood_of_innerWindowGood_crowd
@@ -1282,6 +1299,7 @@ theorem one_fourth_le_layerProbability_selectedWindowGood_of_innerWindowGood_cro
 
 /-! ## Selecting actual window witnesses for one shared deletion -/
 
+open Classical in
 /-- Output of the common-deletion averaging step, with all existential
 window witnesses chosen simultaneously after the one deletion is fixed. -/
 structure SharedWindowSelection {V J : Type*} [Fintype V]
@@ -1302,6 +1320,7 @@ structure SharedWindowSelection {V J : Type*} [Fintype V]
     |(e : ℝ) - center j (Augmentation.boolSliceDeletion U d deletion)| ≤
       radius
 
+open Classical in
 lemma SharedWindowSelection.marked_nonempty
     {V J : Type*} [Fintype V]
     {U : Finset V} {d : ℕ} {I : Finset J}
@@ -1318,6 +1337,7 @@ lemma SharedWindowSelection.marked_nonempty
     hpositive.trans_le T.marked_large
   exact_mod_cast hmarkedReal
 
+open Classical in
 /-- On the full switching-time interval, the common-deletion selector
 retains at least one eighth of the `nW` transitions (indeed it retains one
 eighth of the `nW + 1` states). -/
@@ -1338,6 +1358,7 @@ lemma SharedWindowSelection.one_eighth_mul_le_marked_of_range
     _ = (1 / 8 : ℝ) * (Finset.range (nW + 1)).card := by simp
     _ ≤ (T.marked.card : ℝ) := T.marked_large
 
+open Classical in
 /-- The selector's global `L¹` error bound remains valid after restricting
 to, and increasingly enumerating, the marked successful times. -/
 lemma SharedWindowSelection.sum_marked_centerError_le
@@ -1375,6 +1396,7 @@ lemma SharedWindowSelection.sum_marked_centerError_le
     _ = error T.deletion := (herror_def T.deletion).symm
     _ ≤ 8 * B := T.error_le
 
+open Classical in
 /-- Consecutive perturbations along the marked enumeration cost at most
 `16 B`.  This is the bridge from the common-outcome first-moment bound to
 the error term in the second switching/marked-packing step. -/
@@ -1419,6 +1441,7 @@ lemma SharedWindowSelection.sum_marked_centerError_variation_le
       exact T.sum_marked_centerError_le idealCenter herror_def
     _ = 16 * B := by ring
 
+open Classical in
 /-- Deterministic handoff from the one-deletion selection to the exact
 `PointwiseWindows` object.  The centre in this theorem is the *actual*
 deletion-dependent centre.  Consequently an `L¹` perturbation estimate can
@@ -1482,12 +1505,13 @@ theorem SharedWindowSelection.nonempty_pointwiseWindows_of_markedPacking
     index_large := hindex.trans hWcard
     piece_large := hWpiece }⟩
 
+open Classical in
 /-- The common-outcome theorem with its existential window witnesses
 retained.  Every hypothesis is a finite probability or expectation fact;
 the graph-facing theorem below discharges them using the partial and full
 exposure estimates. -/
 theorem exists_sharedWindowSelection
-    {V J : Type*} [Fintype V] [DecidableEq V] [DecidableEq J]
+    {V J : Type*} [Fintype V] [DecidableEq V]
     (U : Finset V) (d : ℕ) (I : Finset J)
     (spectrum : Finset ℕ)
     (center : J → Finset V → ℝ) (radius L : ℝ)
@@ -1537,6 +1561,7 @@ theorem exists_sharedWindowSelection
   · intro j hj e he
     exact (hpiece j (Finset.mem_filter.mp hj).2).2.2 e he
 
+open Classical in
 /-- Concrete graph-facing shared-deletion composition.  A witnessed
 `1/4` augmentation-window probability at every state of one crowded path
 is converted to one common deletion and simultaneous fixed-order window
@@ -1594,6 +1619,7 @@ theorem exists_sharedWindowSelection_of_crowd_innerWindowGood
   · exact herror_nonneg
   · exact herror_mean
 
+open Classical in
 /-- Correct first-switching form of the shared selector.  The ordinal
 `j ≤ m` is sent to a separated original switching time `time j`; hence the
 error expectation is summed over only `m + 1` states, not over all `nW + 1`
@@ -1654,6 +1680,7 @@ theorem exists_sharedWindowSelection_of_crowd_subsequence_innerWindowGood
   · exact herror_nonneg
   · exact herror_mean
 
+open Classical in
 /-- End-to-end finite integration on a fixed crowded path.  The only
 probabilistic input is the concrete graph window probability that the
 large- and bounded-`nZ` exposure theorems supply; the common deletion,
@@ -1712,6 +1739,7 @@ theorem nonempty_pointwiseWindows_of_crowd_innerWindowGood
       (hpackingError T.deletion T.error_le) hradius hseparate
       hpieceScale hindex
 
+open Classical in
 /-- End-to-end finite integration on a first separated switching
 subsequence.  This is the finite theorem used by the eventual assembly. -/
 theorem nonempty_pointwiseWindows_of_crowd_subsequence_innerWindowGood
@@ -1769,6 +1797,7 @@ theorem nonempty_pointwiseWindows_of_crowd_subsequence_innerWindowGood
       (hpackingError T.deletion T.error_le) hradius hseparate
       hpieceScale hindex
 
+open Classical in
 /-- Finite first-switching endpoint with the valid raw-increment error
 charge specialized internally.  The caller supplies the separated ideal
 gaps and the concrete expectation bound; the ordinal error function,
@@ -1867,6 +1896,7 @@ theorem nonempty_pointwiseWindows_of_crowd_subsequence_rawIncrementError
 
 /-! ## Canonical centres on a scheduled crowded path -/
 
+open Classical in
 /--
 All first-switching bookkeeping after the construction of a scheduled
 crowd.  The theorem chooses the separated subsequence, proves the valid
@@ -1962,8 +1992,8 @@ theorem nonempty_pointwiseWindows_of_scheduled_canonical
     have hj' : sigma ≤
         A.crowded.center nZ (idx ⟨u, by omega⟩) -
           A.crowded.center nZ (idx ⟨u - 1, by omega⟩) := by
-      convert hj using 1 <;> congr 2 <;> apply congrArg idx <;>
-        apply Fin.ext <;> simp [j] <;> omega
+      convert hj using 1; congr 2; apply congrArg idx;
+        apply Fin.ext; simp [j]; omega
     rw [htime_apply hum, htime_apply (by omega)]
     have hcenter (t : ℕ) : idealCenter t =
         A.crowded.center nZ t + (nZ : ℝ) * alpha * S.d0 := by
@@ -2016,6 +2046,7 @@ theorem nonempty_pointwiseWindows_of_scheduled_canonical
   · exact hpieceScale
   · exact hindex
 
+open Classical in
 /--
 The outer-concentration and crowd-schedule stages, composed with
 `nonempty_pointwiseWindows_of_scheduled_canonical`.  The supplied
@@ -2127,6 +2158,7 @@ theorem nonempty_pointwiseWindows_of_outerBounds_canonical
         simpa [AugmentationScales.spread] using hmotion) hpackingBudget hR
       hradius hseparate hpieceScale hindex
 
+open Classical in
 /--
 The six-field asymptotic numerical package specialized to the canonical
 outer switching construction.  This is the last deterministic wrapper
@@ -2179,28 +2211,29 @@ theorem nonempty_pointwiseWindows_of_finalNumericBounds
       (AugmentationScales.finalIndexCoeff K eta RCoeff sigmaCoeff)
       (AugmentationScales.finalPieceCoeff K a₂ delta₀ c₀)
       (Augmentation.fixedOrderEdgeValues G) ell) := by
-  apply nonempty_pointwiseWindows_of_outerBounds_canonical F.outer.outer
+  apply nonempty_pointwiseWindows_of_outerBounds_canonical
+    (sigma := AugmentationScales.finalSigma sigmaCoeff n)
+    (R := AugmentationScales.finalSeparation RCoeff n) F.outer.outer
     outerCenter radius L hk hkpos hkle hKpos hnWpos hnDpos hnWupper
     hmatching F.outer.outer.rounding.stride_pos hfeasible hU0 hnW hnD hnZ hf
     halpha hwindowProbability
-  · change 0 < sigmaCoeff * n
-    have hnpos : (0 : ℝ) < n := by
+  · have hnpos : (0 : ℝ) < n := by
       exact_mod_cast (lt_of_lt_of_le Nat.zero_lt_one
         F.outer.outer.rounding.order_pos)
-    positivity
+    exact mul_pos hsigmaCoeff hnpos
   · exact F.outer.endpoint_loss
   · exact F.outer.motion_boundary
   · exact F.outer.packing_budget
-  · change 0 < RCoeff * n
-    have hnpos : (0 : ℝ) < n := by
+  · have hnpos : (0 : ℝ) < n := by
       exact_mod_cast (lt_of_lt_of_le Nat.zero_lt_one
         F.outer.outer.rounding.order_pos)
-    positivity
+    exact mul_pos hRCoeff hnpos
   · exact hradius
   · exact F.outer.radius_separation
   · exact F.piece_scale
   · exact F.outer.index_scale
 
+open Classical in
 /--
 The eventual scalar packages specialized to one time of a scheduled crowded
 path.  This theorem contains the entire partial-to-full exposure invocation;
@@ -2284,7 +2317,8 @@ theorem one_fourth_le_layerProbability_innerWindowGood_of_finalBounds
     · exact hbudget
   have N := IF.toCrowdLargeNumericBounds
     (S := S) (path := path) (time := time)
-  exact AugmentationExposureCrowdFinal.one_fourth_le_layerProbability_innerWindowGood_large_of_numeric
+  exact
+    AugmentationExposureCrowdFinal.one_fourth_le_layerProbability_innerWindowGood_large_of_numeric
     S path time htime nD nS nZ
       (AsymptoticThresholds.partialMatchingSize a₀ nD)
       (AugmentationScales.partialSelectionGap gapCoeff nD)

@@ -36,7 +36,7 @@ neighbourhoods, corrected richness and a Turán argument produce a large
 subfamily whose pairwise incidence-difference mass is large.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 
 namespace Erdos636
 
@@ -61,14 +61,18 @@ exponential size. -/
 def boundedVertexSets (K : ℕ) : Finset (Finset V) :=
   Finset.univ.powerset.filter fun X ↦ X.card ≤ K
 
+omit [DecidableEq V] in
 @[simp] lemma mem_boundedVertexSets {K : ℕ} {X : Finset V} :
     X ∈ boundedVertexSets (V := V) K ↔ X.card ≤ K := by
+  classical
   simp [boundedVertexSets]
 
+omit [DecidableEq V] in
 /-- Coarse polynomial count for the bounded sets used as persistence tests. -/
 lemma card_boundedVertexSets_le (K : ℕ) [Nonempty V] :
     (boundedVertexSets (V := V) K).card ≤
       (K + 1) * Fintype.card V ^ K := by
+  classical
   let layers : Finset (Finset V) :=
     (Finset.range (K + 1)).biUnion fun q ↦ Finset.univ.powersetCard q
   have heq : boundedVertexSets (V := V) K = layers := by
@@ -105,13 +109,17 @@ simultaneous first-exposure lemma. -/
 def boundedSetPairs (K : ℕ) : Finset (Finset V × Finset V) :=
   boundedVertexSets (V := V) K ×ˢ boundedVertexSets (V := V) K
 
+omit [DecidableEq V] in
 @[simp] lemma mem_boundedSetPairs {K : ℕ} {p : Finset V × Finset V} :
     p ∈ boundedSetPairs (V := V) K ↔ p.1.card ≤ K ∧ p.2.card ≤ K := by
+  classical
   simp [boundedSetPairs]
 
+omit [DecidableEq V] in
 lemma card_boundedSetPairs_le (K : ℕ) [Nonempty V] :
     (boundedSetPairs (V := V) K).card ≤
       ((K + 1) * Fintype.card V ^ K) ^ 2 := by
+  classical
   rw [boundedSetPairs, Finset.card_product, pow_two]
   exact Nat.mul_le_mul (card_boundedVertexSets_le K)
     (card_boundedVertexSets_le K)
@@ -123,18 +131,22 @@ def supportPersistenceTests (G : SimpleGraph V) (K : ℕ) (t : ℝ) :
   (boundedSetPairs (V := V) K).filter fun p ↦
     t ≤ supportDiffCard G Finset.univ p.1 p.2
 
+omit [DecidableEq V] in
 lemma card_supportPersistenceTests_le (G : SimpleGraph V) (K : ℕ)
     (t : ℝ) [Nonempty V] :
     (supportPersistenceTests G K t).card ≤
       ((K + 1) * Fintype.card V ^ K) ^ 2 := by
+  classical
   exact (Finset.card_le_card (Finset.filter_subset _ _)).trans
     (card_boundedSetPairs_le K)
 
+omit [DecidableEq V] in
 @[simp] lemma mem_supportPersistenceTests {G : SimpleGraph V} {K : ℕ}
     {t : ℝ} {p : Finset V × Finset V} :
     p ∈ supportPersistenceTests G K t ↔
       p.1.card ≤ K ∧ p.2.card ≤ K ∧
         t ≤ supportDiffCard G Finset.univ p.1 p.2 := by
+  classical
   simp [supportPersistenceTests, and_assoc]
 
 /-- Rounded thresholds for the common-neighbourhood induction.  The ceiling
@@ -215,13 +227,16 @@ theorem card_badOrderedTuples_ksCommonThreshold_le
 def degreeInto (G : SimpleGraph V) (U x : Finset V) : ℕ :=
   ∑ v ∈ x, (Erdos88.neighborsIn G v U).card
 
+omit [Fintype V] in
 lemma degreeInto_sdiff_add (G : SimpleGraph V) (U : Finset V)
     {C X : Finset V} (hCX : C ⊆ X) :
     degreeInto G U (X \ C) + degreeInto G U C = degreeInto G U X := by
   exact Finset.sum_sdiff hCX
 
+omit [DecidableEq V] [Fintype V] in
 lemma degreeInto_le_card_mul_card (G : SimpleGraph V) (U X : Finset V) :
     degreeInto G U X ≤ X.card * U.card := by
+  classical
   calc
     degreeInto G U X ≤ ∑ _x ∈ X, U.card := by
       apply Finset.sum_le_sum
@@ -244,42 +259,47 @@ def weightedScore (G : SimpleGraph V) (α : ℝ) (U W : Finset V) : ℝ :=
 def liftInducedFinset {U : Finset V} (S : Finset U) : Finset V :=
   S.image Subtype.val
 
+omit [Fintype V] in
 @[simp] lemma mem_liftInducedFinset {U : Finset V} {S : Finset U} {v : V} :
     v ∈ liftInducedFinset S ↔ ∃ u ∈ S, (u : V) = v := by
   simp [liftInducedFinset]
 
+omit [Fintype V] in
 @[simp] lemma card_liftInducedFinset {U : Finset V} (S : Finset U) :
     (liftInducedFinset S).card = S.card := by
   exact Finset.card_image_of_injective S Subtype.val_injective
 
+omit [Fintype V] in
 lemma liftInducedFinset_union {U : Finset V} (S T : Finset U) :
     liftInducedFinset (S ∪ T) = liftInducedFinset S ∪ liftInducedFinset T := by
   exact Finset.image_union S T
 
+omit [Fintype V] in
 lemma disjoint_liftInducedFinset {U : Finset V} {S T : Finset U} :
     Disjoint (liftInducedFinset S) (liftInducedFinset T) ↔ Disjoint S T := by
   simpa only [liftInducedFinset] using
     (Finset.disjoint_image (s := S) (t := T) Subtype.val_injective)
 
-lemma degreeInto_liftInducedFinset {G : SimpleGraph V} {U : Finset V}
+omit [Fintype V] in
+lemma degreeInto_liftInducedFinset [Finite V] {G : SimpleGraph V} {U : Finset V}
     (A X : Finset U) :
     degreeInto G (liftInducedFinset A) (liftInducedFinset X) =
       degreeInto (G.induce (U : Set V)) A X := by
+  let : Fintype V := Fintype.ofFinite V
   simp only [degreeInto, liftInducedFinset]
   rw [Finset.sum_image (s := X) (g := Subtype.val)
     Subtype.val_injective.injOn]
   apply Finset.sum_congr rfl
   intro x _hx
-  change
-    (Erdos88.neighborsIn G x.1 (A.image Subtype.val)).card =
-      (Erdos88.neighborsIn (G.induce (U : Set V)) x A).card
   exact (Erdos88.card_neighborsIn_induce (G := G) x A).symm
 
-lemma crossEdges_liftInducedFinset {G : SimpleGraph V} {U : Finset V}
+omit [Fintype V] in
+lemma crossEdges_liftInducedFinset [Finite V] {G : SimpleGraph V} {U : Finset V}
     (A B : Finset U) :
     crossEdges G (liftInducedFinset A) (liftInducedFinset B) =
-      crossEdges (G.induce (U : Set V)) A B :=
-  degreeInto_liftInducedFinset B A
+      crossEdges (G.induce (U : Set V)) A B := by
+  let : Fintype V := Fintype.ofFinite V
+  exact degreeInto_liftInducedFinset B A
 
 /-- The vertex equivalence underlying the twice-induced/ambient-induced
 graph isomorphism. -/
@@ -325,26 +345,32 @@ lemma weightedScore_liftInducedFinset {G : SimpleGraph V} {U : Finset V}
   simp [weightedScore, inducedEdges_liftInducedFinset,
     crossEdges_liftInducedFinset]
 
+omit [Fintype V] in
 lemma incidence_liftInducedFinset {G : SimpleGraph V} {U : Finset V}
     (X : Finset U) (u : U) :
     incidence G (liftInducedFinset X) u.1 =
       incidence (G.induce (U : Set V)) X u := by
+  classical
   simp only [incidence, liftInducedFinset]
   rw [Finset.filter_image]
   rw [Finset.card_image_of_injective _ Subtype.val_injective]
   congr 1
 
-lemma incidenceDiffTerm_liftInducedFinset {G : SimpleGraph V} {U : Finset V}
+omit [Fintype V] in
+lemma incidenceDiffTerm_liftInducedFinset [Finite V] {G : SimpleGraph V} {U : Finset V}
     (X Y : Finset U) (u : U) :
     incidenceDiffTerm G (liftInducedFinset X) (liftInducedFinset Y) u.1 =
       incidenceDiffTerm (G.induce (U : Set V)) X Y u := by
+  let : Fintype V := Fintype.ofFinite V
   simp [incidenceDiffTerm, incidence_liftInducedFinset]
 
-lemma incidenceDiffMass_liftInducedFinset {G : SimpleGraph V} {U : Finset V}
+omit [Fintype V] in
+lemma incidenceDiffMass_liftInducedFinset [Finite V] {G : SimpleGraph V} {U : Finset V}
     (A X Y : Finset U) :
     incidenceDiffMass G (liftInducedFinset A)
         (liftInducedFinset X) (liftInducedFinset Y) =
       incidenceDiffMass (G.induce (U : Set V)) A X Y := by
+  let : Fintype V := Fintype.ofFinite V
   simp only [incidenceDiffMass, liftInducedFinset]
   rw [Finset.sum_image (s := A) (g := Subtype.val)
     Subtype.val_injective.injOn]
@@ -397,14 +423,17 @@ def liftInducedFamily {U : Finset V} (M : Finset (Finset U)) :
     Finset (Finset V) :=
   M.image liftInducedFinset
 
+omit [Fintype V] in
 lemma liftInducedFinset_injective {U : Finset V} :
     Function.Injective (liftInducedFinset (V := V) (U := U)) := by
   intro S T h
   exact (Finset.image_inj Subtype.val_injective).mp h
 
-@[simp] lemma card_liftInducedFamily {U : Finset V}
+omit [Fintype V] in
+@[simp] lemma card_liftInducedFamily [Finite V] {U : Finset V}
     (M : Finset (Finset U)) :
     (liftInducedFamily M).card = M.card := by
+  let : Fintype V := Fintype.ofFinite V
   exact Finset.card_image_of_injective M liftInducedFinset_injective
 
 /-- A structural witness inside an induced graph lifts without any loss to
@@ -516,25 +545,32 @@ lemma StructuralWitness.disjoint_A_base {G : SimpleGraph V}
   obtain ⟨x, hxM, hvx⟩ := Finset.mem_biUnion.mp hvA
   exact Finset.disjoint_left.mp (S.matching_away x hxM) hvx hvbase
 
+omit [DecidableEq V] [Fintype V] in
 /-- The symmetry of multiset-incidence difference. -/
 lemma incidenceDiffTerm_comm (G : SimpleGraph V) (x y : Finset V) (u : V) :
     incidenceDiffTerm G x y u = incidenceDiffTerm G y x u := by
+  classical
   rw [incidenceDiffTerm, incidenceDiffTerm]
   have hneg :
       (incidence G y u : ℤ) - incidence G x u =
         -((incidence G x u : ℤ) - incidence G y u) := by ring
   rw [hneg, Int.natAbs_neg]
 
-lemma incidenceDiffMass_comm (G : SimpleGraph V) (A x y : Finset V) :
+omit [DecidableEq V] [Fintype V] in
+lemma incidenceDiffMass_comm [Finite V] (G : SimpleGraph V) (A x y : Finset V) :
     incidenceDiffMass G A x y = incidenceDiffMass G A y x := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   simp only [incidenceDiffMass]
   apply Finset.sum_congr rfl
   intro u _hu
   exact incidenceDiffTerm_comm G x y u
 
+omit [DecidableEq V] [Fintype V] in
 /-- Symmetry of the paper's incidence-difference support. -/
 lemma supportDiffCard_comm (G : SimpleGraph V) (A x y : Finset V) :
     supportDiffCard G A x y = supportDiffCard G A y x := by
+  classical
   rw [supportDiffCard, supportDiffCard]
   congr 1
   ext u
@@ -554,9 +590,11 @@ lemma supportDiffCard_eq_card_inter_univ
       (A ∩ supportDiff G Finset.univ x y).card := by
   rw [supportDiffCard, supportDiff_eq_inter_univ]
 
+omit [DecidableEq V] [Fintype V] in
 lemma incidenceDiffMass_mono (G : SimpleGraph V) {A B x y : Finset V}
     (hAB : A ⊆ B) :
     incidenceDiffMass G A x y ≤ incidenceDiffMass G B x y := by
+  classical
   exact Finset.sum_le_sum_of_subset hAB
 
 /-- The graph of pairs whose incidence-difference mass is too small. -/
@@ -571,11 +609,13 @@ def lowDiversityGraph (G : SimpleGraph V) (U : Finset V) (t : ℝ)
         exact h.2⟩)
     (loopless := ⟨by intro x h; exact h.1 rfl⟩)
 
+omit [DecidableEq V] in
 @[simp] lemma lowDiversityGraph_adj {G : SimpleGraph V} {U : Finset V}
     {t : ℝ} {P : Finset (Finset V)} {x y : {x // x ∈ P}} :
     (lowDiversityGraph G U t P).Adj x y ↔
-      x ≠ y ∧ (incidenceDiffMass G U x y : ℝ) < t :=
-  by simp [lowDiversityGraph]
+      x ≠ y ∧ (incidenceDiffMass G U x y : ℝ) < t := by
+  classical
+  simp [lowDiversityGraph]
 
 /-- A corrected-richness bound whose threshold is half that of the strict
 Kwan--Sudakov predicate.  Halving resolves the strict/non-strict endpoint. -/

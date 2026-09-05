@@ -35,7 +35,7 @@ same outer deletion can be averaged over, fixed once, and then used at all
 times of the switching path.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 open scoped BigOperators
 
 namespace Erdos636
@@ -56,12 +56,16 @@ variable {V : Type u} [Fintype V] [DecidableEq V]
 def mapSubtypeFinset (U₀ : Finset V) (D : Finset U₀) : Finset V :=
   D.map (Function.Embedding.subtype fun v : V ↦ v ∈ U₀)
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma card_mapSubtypeFinset (U₀ : Finset V) (D : Finset U₀) :
     (mapSubtypeFinset U₀ D).card = D.card := by
+  classical
   exact Finset.card_map _
 
+omit [DecidableEq V] [Fintype V] in
 lemma mapSubtypeFinset_subset (U₀ : Finset V) (D : Finset U₀) :
     mapSubtypeFinset U₀ D ⊆ U₀ := by
+  classical
   intro v hv
   obtain ⟨u, _hu, rfl⟩ := Finset.mem_map.mp hv
   exact u.2
@@ -71,16 +75,20 @@ def sampleFinset (U₀ : Finset V) (s : ℕ) (omega : BoolSlice U₀ s) :
     Finset V :=
   mapSubtypeFinset U₀ (SlicePersistence.sampleFinset s omega)
 
-@[simp] lemma card_sampleFinset (U₀ : Finset V) (s : ℕ)
+omit [Fintype V] in
+@[simp] lemma card_sampleFinset [Finite V] (U₀ : Finset V) (s : ℕ)
     (omega : BoolSlice U₀ s) :
     (sampleFinset U₀ s omega).card = s := by
+  let : Fintype V := Fintype.ofFinite V
   rw [sampleFinset, card_mapSubtypeFinset,
     SlicePersistence.card_sampleFinset]
 
-lemma sampleFinset_subset (U₀ : Finset V) (s : ℕ)
+omit [Fintype V] in
+lemma sampleFinset_subset [Finite V] (U₀ : Finset V) (s : ℕ)
     (omega : BoolSlice U₀ s) :
-    sampleFinset U₀ s omega ⊆ U₀ :=
-  mapSubtypeFinset_subset U₀ _
+    sampleFinset U₀ s omega ⊆ U₀ := by
+  let : Fintype V := Fintype.ofFinite V
+  exact mapSubtypeFinset_subset U₀ _
 
 /-- Fourier slices on the reservoir subtype and finset-valued layer points
 are exactly equivalent. -/
@@ -130,9 +138,11 @@ def booleanSlicePointEquivLayer (U₀ : Finset V) (s : ℕ) :
       sampleFinset U₀ s omega :=
   rfl
 
+omit [Fintype V] in
+open Classical in
 /-- The normalized Boolean-slice probability is the normalized finset-layer
 probability after decoding. -/
-lemma uniformProbability_sampleFinset_eq_layerProbability
+lemma uniformProbability_sampleFinset_eq_layerProbability [Finite V]
     (U₀ : Finset V) (s : ℕ)
     [Nonempty (BoolSlice U₀ s)]
     [Nonempty (Erdos88.BooleanSlices.BooleanSlicePoint U₀ s)]
@@ -141,6 +151,7 @@ lemma uniformProbability_sampleFinset_eq_layerProbability
         (fun omega : BoolSlice U₀ s ↦ event (sampleFinset U₀ s omega)) =
       NestedUniform.layerProbability U₀ s event := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let : Nonempty {D // D ∈ NestedUniform.layer U₀ s} :=
     ⟨booleanSlicePointEquivLayer U₀ s
       (Classical.choice (inferInstance : Nonempty
@@ -166,6 +177,7 @@ def DegreeGood (G : SimpleGraph V) (D₁ x : Finset V)
 
 /-- A fixed classical order on the finite type of vertex cells.  It is used
 only to orient each unordered collision pair once. -/
+@[instance_reducible]
 noncomputable def cellLinearOrder : LinearOrder (Finset V) :=
   LinearOrder.lift' (Fintype.equivFin (Finset V))
     (Fintype.equivFin (Finset V)).injective
@@ -176,6 +188,7 @@ noncomputable def cellCollisionEdges (S₀ : Finset (Finset V))
   letI : LinearOrder (Finset V) := cellLinearOrder
   exact CollisionCounting.collisionEdges S₀ (fun x (_ : Unit) ↦ value x) ()
 
+open Classical in
 /-- The complete graph-facing good event for the outer exposure.
 
 The witnesses `S₀` and `X₀` are included in the event so downstream code
@@ -201,6 +214,7 @@ def PartialGoodAt {T : Type v} (G : SimpleGraph V)
     (_time : T) (D₁ : Finset V) : Prop :=
   PartialGood G M s₀ diversityThreshold center radius tS tX tCollision D₁
 
+omit [DecidableEq V] in
 @[simp] lemma partialGoodAt_iff {T : Type v} (G : SimpleGraph V)
     (M : Finset (Finset V)) (s₀ : ℕ)
     (diversityThreshold center radius tS tX tCollision : ℝ)
@@ -208,18 +222,20 @@ def PartialGoodAt {T : Type v} (G : SimpleGraph V)
     PartialGoodAt G M s₀ diversityThreshold center radius tS tX tCollision
         time D₁ ↔
       PartialGood G M s₀ diversityThreshold center radius tS tX tCollision
-        D₁ :=
-  Iff.rfl
+        D₁ := by
+  classical
+  exact Iff.rfl
 
 /-! ## Deterministic family selection and extraction -/
 
 /-- Split off two disjoint subfamilies of the same prescribed size. -/
 lemma exists_two_disjoint_subsets_card_eq
-    {A : Type*} [DecidableEq A] (M : Finset A) (s₀ : ℕ)
+    {A : Type*} (M : Finset A) (s₀ : ℕ)
     (hcard : 2 * s₀ ≤ M.card) :
     ∃ S₀ X₀ : Finset A,
       S₀ ⊆ M ∧ X₀ ⊆ M ∧ S₀.card = s₀ ∧ X₀.card = s₀ ∧
         Disjoint S₀ X₀ := by
+  classical
   obtain ⟨S₀, hS₀M, hS₀card⟩ :=
     Finset.exists_subset_card_eq (show s₀ ≤ M.card by omega)
   have hremain : s₀ ≤ (M \ S₀).card := by
@@ -233,16 +249,20 @@ lemma exists_two_disjoint_subsets_card_eq
   intro x hxS hxX
   exact (Finset.mem_sdiff.mp (hX₀remain hxX)).2 hxS
 
+open Classical in
 /-- The cells surviving the degree window inside a finite family. -/
 def goodCells (G : SimpleGraph V) (D₁ : Finset V)
     (center radius : ℝ) (X : Finset (Finset V)) : Finset (Finset V) :=
   X.filter fun x ↦ DegreeGood G D₁ x center radius
 
+omit [DecidableEq V] [Fintype V] in
+open Classical in
 lemma card_sub_lt_add_card_goodCells
     (G : SimpleGraph V) (D₁ : Finset V) (center radius t : ℝ)
     (X : Finset (Finset V))
     (hbad : ((X.filter fun x ↦ ¬ DegreeGood G D₁ x center radius).card : ℝ) < t) :
     (X.card : ℝ) < t + (goodCells G D₁ center radius X).card := by
+  classical
   have hsplit : X.card =
       (X.filter fun x ↦ ¬ DegreeGood G D₁ x center radius).card +
         (goodCells G D₁ center radius X).card := by
@@ -265,11 +285,13 @@ def incidenceVector (G : SimpleGraph V) (U₀ x : Finset V)
     (u : U₀) : ℤ :=
   incidence G x u.1
 
+omit [DecidableEq V] [Fintype V] in
 /-- Summing the incidence vector over the reservoir gives the structural
 degree sum. -/
 lemma sum_incidenceVector_eq_degreeInto
     (G : SimpleGraph V) (U₀ x : Finset V) :
     ∑ u : U₀, incidenceVector G U₀ x u = degreeInto G U₀ x := by
+  classical
   simp only [incidenceVector, incidence, degreeInto,
     Erdos88.neighborsIn, Finset.card_filter]
   push_cast
@@ -280,6 +302,7 @@ lemma sum_incidenceVector_eq_degreeInto
   simpa using Finset.sum_attach U₀
     (fun u ↦ if G.Adj v u then (1 : ℕ) else 0)
 
+omit [DecidableEq V] [Fintype V] in
 /-- The real `l1` distance between two incidence vectors is precisely the
 restricted incidence-difference mass. -/
 lemma sum_abs_incidenceVector_sub_eq_incidenceDiffMass
@@ -287,6 +310,7 @@ lemma sum_abs_incidenceVector_sub_eq_incidenceDiffMass
     (∑ u : U₀,
         |(((incidenceVector G U₀ x u - incidenceVector G U₀ y u : ℤ) : ℝ))|) =
       incidenceDiffMass G U₀ x y := by
+  classical
   rw [incidenceDiffMass]
   push_cast
   rw [Finset.sum_subtype U₀ (fun _ ↦ Iff.rfl)]
@@ -294,22 +318,27 @@ lemma sum_abs_incidenceVector_sub_eq_incidenceDiffMass
   intro u hu
   simp [incidenceVector, incidenceDiffTerm]
 
+omit [DecidableEq V] [Fintype V] in
 /-- Every coordinate of a `k`-vertex cell's incidence vector lies in
 `[0,k]`. -/
 lemma abs_incidenceVector_le_of_card_le
     (G : SimpleGraph V) (U₀ x : Finset V) (K : ℕ)
     (hxK : x.card ≤ K) (u : U₀) :
     |incidenceVector G U₀ x u| ≤ (K : ℤ) := by
+  classical
   change |(incidence G x u.1 : ℤ)| ≤ (K : ℤ)
   rw [abs_of_nonneg (by positivity)]
   exact_mod_cast (incidence_le_card G x u.1).trans hxK
 
+omit [DecidableEq V] [Fintype V] in
 /-- The difference of two `[0,K]` incidence coordinates has absolute value
 at most `K`. -/
-lemma abs_incidenceVector_sub_le_of_card_le
+lemma abs_incidenceVector_sub_le_of_card_le [Finite V]
     (G : SimpleGraph V) (U₀ x y : Finset V) (K : ℕ)
     (hxK : x.card ≤ K) (hyK : y.card ≤ K) (u : U₀) :
     |incidenceVector G U₀ x u - incidenceVector G U₀ y u| ≤ (K : ℤ) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hx0 : (0 : ℤ) ≤ incidenceVector G U₀ x u := by
     simp [incidenceVector]
   have hy0 : (0 : ℤ) ≤ incidenceVector G U₀ y u := by
@@ -351,6 +380,7 @@ lemma incidenceSum_eq_sliceSum {I : Type*} [Fintype I] [DecidableEq I]
         simp
       · simp
 
+omit [Fintype V] in
 lemma sliceSum_incidenceVector_eq_degreeInto_sampleFinset
     (G : SimpleGraph V) (U₀ x : Finset V) (s : ℕ)
     (omega : BoolSlice U₀ s) :
@@ -366,14 +396,17 @@ lemma sliceSum_incidenceVector_eq_degreeInto_sampleFinset
   rw [Finset.sum_map]
   rfl
 
-lemma incidenceSum_incidenceVector_eq_degreeInto_sampleFinset
+omit [Fintype V] in
+lemma incidenceSum_incidenceVector_eq_degreeInto_sampleFinset [Finite V]
     (G : SimpleGraph V) (U₀ x : Finset V) (s : ℕ)
     (omega : BoolSlice U₀ s) :
     AugmentationPartial.incidenceSum s (incidenceVector G U₀ x) omega =
       degreeInto G (sampleFinset U₀ s omega) x := by
+  let : Fintype V := Fintype.ofFinite V
   rw [incidenceSum_eq_sliceSum,
     sliceSum_incidenceVector_eq_degreeInto_sampleFinset]
 
+omit [Fintype V] in
 lemma sliceSum_abs_incidenceVector_sub_eq_incidenceDiffMass_sampleFinset
     (G : SimpleGraph V) (U₀ x y : Finset V) (s : ℕ)
     (omega : BoolSlice U₀ s) :
@@ -527,6 +560,8 @@ test on the outer `2 n_D`-slice. -/
 def outerLinearFailure (nD K : ℕ) (t : ℝ) : ℝ :=
   2 * Real.exp (-t ^ 2 / (2 * (2 * nD) * (4 * K) ^ 2))
 
+omit [DecidableEq V] in
+open Classical in
 /-- **Graph-specific balanced partial exposure (Kwan--Sudakov Claim 4.8).**
 
 The hypotheses are exactly finite graph data.  In particular, the two
@@ -813,6 +848,7 @@ theorem three_fourths_le_layerProbability_partialGood_thresholds
   rw [uniformProbability_sampleFinset_eq_layerProbability] at hdecoded
   simpa [diversityThreshold, center] using hdecoded
 
+open Classical in
 /-- Structural-witness specialization.  All graph-theoretic incidence,
 uniformity, and equal-degree hypotheses are discharged by the witness; the
 remaining premises are explicit sampling-balance and numerical estimates. -/
@@ -870,6 +906,7 @@ theorem three_fourths_le_layerProbability_partialGood_structuralWitness_threshol
   · exact htCollision
   · exact hbudget
 
+open Classical in
 /-- Compatibility form with all three exceptional-count thresholds equal to
 `sqrt nD`.  Quantitative applications should prefer the threshold-parameterized
 theorem above. -/

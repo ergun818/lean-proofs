@@ -20,9 +20,10 @@ section AbstractCounting
 
 variable {V : Type u} [Fintype V] [DecidableEq V]
 
-private lemma card_filter_eq_sum_indicator {α : Type*} [DecidableEq α]
+private lemma card_filter_eq_sum_indicator {α : Type*}
     (s : Finset α) (p : α → Prop) [DecidablePred p] :
     (s.filter p).card = ∑ x ∈ s, if p x then 1 else 0 := by
+  classical
   rw [Finset.card_eq_sum_ones, Finset.sum_filter]
 
 /-- The ordered `q`-tuples which fail a level-dependent predicate. -/
@@ -31,6 +32,7 @@ noncomputable def badOrderedTuples (Good : ∀ q : ℕ, (Fin q → V) → Prop) 
   classical
   exact Finset.univ.filter fun x ↦ ¬ Good q x
 
+omit [DecidableEq V] in
 @[simp] lemma mem_badOrderedTuples
     {Good : ∀ q : ℕ, (Fin q → V) → Prop} {q : ℕ} {x : Fin q → V} :
     x ∈ badOrderedTuples Good q ↔ ¬ Good q x := by
@@ -43,12 +45,14 @@ noncomputable def badExtensions
   classical
   exact Finset.univ.filter fun v ↦ ¬ Good (q + 1) (Fin.cons v x)
 
+omit [DecidableEq V] in
 @[simp] lemma mem_badExtensions
     {Good : ∀ q : ℕ, (Fin q → V) → Prop} {q : ℕ} {x : Fin q → V} {v : V} :
     v ∈ badExtensions Good x ↔ ¬ Good (q + 1) (Fin.cons v x) := by
   classical
   simp [badExtensions]
 
+omit [DecidableEq V] in
 /-- Splitting an ordered tuple into its first coordinate and its tail turns
 the number of bad tuples at the next level into the corresponding iterated
 sum. -/
@@ -76,6 +80,7 @@ lemma card_badOrderedTuples_succ_eq_sum
         (card_filter_eq_sum_indicator Finset.univ
           (fun v : V ↦ ¬ Good (q + 1) (Fin.cons v x))).symm
 
+omit [DecidableEq V] in
 /-- One step of the ordered-tuple induction. Bad prefixes have at most all
 `|V|` possible extensions, while good prefixes have at most `r` bad
 extensions by hypothesis. -/
@@ -114,6 +119,7 @@ lemma card_badOrderedTuples_succ_le
         Fintype.card_fin, Nat.nsmul_eq_mul]
       ring
 
+omit [DecidableEq V] in
 /-- Abstract common-neighbourhood counting lemma.
 
 Assume the empty tuple is good and, at every level below `k`, every good
@@ -128,6 +134,7 @@ theorem card_badOrderedTuples_le
       (badExtensions Good x).card ≤ r) :
     (badOrderedTuples Good k).card ≤
       k * (Fintype.card V) ^ (k - 1) * r := by
+  classical
   induction k using Nat.case_strong_induction_on with
   | hz => omega
   | hi k ih =>
@@ -181,22 +188,28 @@ noncomputable def commonNeighbors (G : SimpleGraph V) {q : ℕ}
   classical
   exact Finset.univ.filter fun w ↦ ∀ i, G.Adj (x i) w
 
+omit [DecidableEq V] in
 @[simp] lemma mem_commonNeighbors {G : SimpleGraph V} {q : ℕ}
     {x : Fin q → V} {w : V} :
     w ∈ commonNeighbors G x ↔ ∀ i, G.Adj (x i) w := by
+  classical
   simp [commonNeighbors]
 
+omit [DecidableEq V] in
 @[simp] lemma commonNeighbors_zero (G : SimpleGraph V) (x : Fin 0 → V) :
     commonNeighbors G x = Finset.univ := by
+  classical
   ext w
   simp [commonNeighbors]
 
+omit [DecidableEq V] in
 /-- Adding a first coordinate intersects the old common neighbourhood with
 the neighbourhood of that coordinate. -/
 lemma commonNeighbors_cons (G : SimpleGraph V) {q : ℕ} (v : V)
     (x : Fin q → V) :
     commonNeighbors G (Fin.cons v x) =
       Erdos88.neighborsIn G v (commonNeighbors G x) := by
+  classical
   ext w
   simp only [mem_commonNeighbors, Erdos88.mem_neighborsIn]
   constructor
@@ -213,6 +226,7 @@ def HasLargeCommonNeighborhood (G : SimpleGraph V) (threshold : ℕ → ℕ)
     (q : ℕ) (x : Fin q → V) : Prop :=
   threshold q ≤ (commonNeighbors G x).card
 
+omit [DecidableEq V] in
 /-- Graph-facing form of the ordered common-neighbourhood count.
 
 The hypothesis `hext` is precisely the portion of corrected richness used

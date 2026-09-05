@@ -36,8 +36,6 @@ main theorem at the end exposes every loss: the number of colours, the
 sunflower factorial/power loss, and the conflict-degree factor `b + 1`.
 -/
 
-open Classical
-
 namespace Erdos636
 
 universe u v w
@@ -48,6 +46,7 @@ variable {α : Type u} [DecidableEq α]
 
 /-! ## A quantitative finite fibre -/
 
+omit [DecidableEq α] in
 /-- Some fibre of a map to a nonempty finite type contains at least the
 average number of elements, with division cleared from the statement. -/
 theorem exists_fiber_card_mul_ge
@@ -55,6 +54,7 @@ theorem exists_fiber_card_mul_ge
     (𝒜 : Finset α) (color : α → β) :
     ∃ q : β,
       𝒜.card ≤ (𝒜.filter fun A => color A = q).card * Fintype.card β := by
+  classical
   obtain ⟨q, _hq, hmax⟩ :=
     Finset.exists_max_image (Finset.univ : Finset β)
       (fun q => (𝒜.filter fun A => color A = q).card)
@@ -88,7 +88,7 @@ def boundedTripleColor {γ : Type*} (B : ℕ)
 /-- Pigeonhole three bounded natural-valued statistics simultaneously.
 This is the exact finite version of the `(Kn+1)^3` degree-triple loss. -/
 theorem exists_bounded_triple_fiber_card_mul_ge
-    {γ : Type*} [DecidableEq γ] (𝒜 : Finset γ)
+    {γ : Type*} (𝒜 : Finset γ)
     (d₁ d₂ d₃ : γ → ℕ) (B : ℕ)
     (hbounded : ∀ A ∈ 𝒜, d₁ A ≤ B ∧ d₂ A ≤ B ∧ d₃ A ≤ B) :
     ∃ q₁ q₂ q₃ : ℕ,
@@ -96,6 +96,7 @@ theorem exists_bounded_triple_fiber_card_mul_ge
       𝒜.card ≤
         (𝒜.filter fun A => d₁ A = q₁ ∧ d₂ A = q₂ ∧ d₃ A = q₃).card *
           (B + 1) ^ 3 := by
+  classical
   let color := boundedTripleColor B d₁ d₂ d₃
   obtain ⟨q, hq⟩ := exists_fiber_card_mul_ge 𝒜 color
   refine ⟨q.1.val, q.2.1.val, q.2.2.val, Nat.le_of_lt_succ q.1.isLt,
@@ -288,7 +289,7 @@ theorem IsSunflower.finsetScore_sub_eq_sdiff_sub
 colour loss, so the chosen monochromatic fibre still exceeds the elementary
 sunflower threshold. -/
 theorem exists_monochromatic_sunflower_petals
-    {β : Type v} [Fintype β] [DecidableEq β] [Nonempty β]
+    {β : Type v} [Fintype β] [Nonempty β]
     (𝒜 : Finset (Finset α)) (color : Finset α → β)
     (k r : ℕ) (hr : 2 ≤ r)
     (huniform : ∀ A ∈ 𝒜, A.card = k)
@@ -303,6 +304,7 @@ theorem exists_monochromatic_sunflower_petals
       (petalFamily ℬ C).card = r ∧
       (petalFamily ℬ C : Set (Finset α)).PairwiseDisjoint id ∧
       ∀ P ∈ petalFamily ℬ C, P.card = k' := by
+  classical
   obtain ⟨q, hfiber⟩ := exists_fiber_card_mul_ge 𝒜 color
   let 𝒜q := 𝒜.filter fun A => color A = q
   have hsunLarge : k.factorial * (r - 1) ^ k < 𝒜q.card := by
@@ -337,13 +339,17 @@ def conflictGraph (P : Finset α) (Conflict : α → α → Prop)
     (symm := ⟨fun x y h => hsymm.symm x.1 y.1 h⟩)
     (loopless := ⟨fun x h => hirr.irrefl x.1 h⟩)
 
+omit [DecidableEq α] in
 @[simp] theorem conflictGraph_adj
     {P : Finset α} {Conflict : α → α → Prop}
     {hsymm : Std.Symm Conflict} {hirr : Std.Irrefl Conflict}
     {x y : {x // x ∈ P}} :
-    (conflictGraph P Conflict hsymm hirr).Adj x y ↔ Conflict x.1 y.1 :=
-  Iff.rfl
+    (conflictGraph P Conflict hsymm hirr).Adj x y ↔ Conflict x.1 y.1 := by
+  classical
+  exact Iff.rfl
 
+omit [DecidableEq α] in
+open Classical in
 /-- If every member of a finite family conflicts with at most `b` other
 members, Turán thinning retains a `1/(b+1)` fraction with no conflicting
 pair.  Pairwise disjointness of the input is retained verbatim. -/
@@ -355,6 +361,7 @@ theorem exists_pairwise_compatible_subfamily
       M ⊆ P ∧
       (∀ x ∈ M, ∀ y ∈ M, x ≠ y → ¬ Conflict x y) ∧
       P.card ≤ M.card * (b + 1) := by
+  classical
   let H := conflictGraph P Conflict hsymm hirr
   let : DecidableRel H.Adj := Classical.decRel H.Adj
   have hHdegree : ∀ x : {x // x ∈ P}, H.degree x ≤ b := by
@@ -393,12 +400,13 @@ theorem exists_pairwise_compatible_subfamily
     _ ≤ S.card * (H.maxDegree + 1) := hScard
     _ ≤ S.card * (b + 1) := by gcongr
 
+open Classical in
 /-- Complete finite thinning pipeline.  The condition `hdegree` is stated
 for every possible output of the fibre/sunflower stage, which makes the
 theorem independent of how the application proves its low-diversity degree
 bound. -/
 theorem exists_monochromatic_sunflower_turan_thinning
-    {β : Type v} [Fintype β] [DecidableEq β] [Nonempty β]
+    {β : Type v} [Fintype β] [Nonempty β]
     (𝒜 : Finset (Finset α)) (color : Finset α → β)
     (Conflict : Finset α → Finset α → Prop)
     (hsymm : Std.Symm Conflict) (hirr : Std.Irrefl Conflict)
@@ -423,6 +431,7 @@ theorem exists_monochromatic_sunflower_turan_thinning
       (∀ x ∈ M, x.card = k') ∧
       (∀ x ∈ M, ∀ y ∈ M, x ≠ y → ¬ Conflict x y) ∧
       r ≤ M.card * (b + 1) := by
+  classical
   obtain ⟨q, ℬ, C, k', hℬsub, hℬcard, hsun, hmono,
     hk'pos, hk'le, hPcard, hPdisj, hPuniform⟩ :=
     exists_monochromatic_sunflower_petals 𝒜 color k r hr huniform hlarge
@@ -442,6 +451,7 @@ theorem exists_monochromatic_sunflower_turan_thinning
   · rw [← hPcard]
     exact hMcard
 
+open Classical in
 /-- Degree-triple specialization of the complete pipeline.  This is the
 form consumed by the structural argument: `d₁`, `d₂`, and `d₃` are the
 degree sums into its three fixed base sets.  The output matching consists of

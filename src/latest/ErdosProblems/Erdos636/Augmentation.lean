@@ -43,7 +43,7 @@ The name `balanced` refers to the two-sided error window around each centre.
 In the paper that window is furnished by balanced fixed-size sampling.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 open scoped BigOperators
 
 namespace Erdos636
@@ -56,9 +56,11 @@ noncomputable section
 variable {V : Type u} [Fintype V] [DecidableEq V]
 variable {ι : Type v} [DecidableEq ι]
 
+omit [DecidableEq V] in
 /-- Induced edge count is monotone under inclusion of vertex sets. -/
 lemma inducedEdges_mono (G : SimpleGraph V) {S T : Finset V} (hST : S ⊆ T) :
     Erdos88.inducedEdges G S ≤ Erdos88.inducedEdges G T := by
+  classical
   rw [Erdos88.inducedEdges_eq_card_filter,
     Erdos88.inducedEdges_eq_card_filter]
   apply Finset.card_le_card
@@ -102,9 +104,11 @@ def fixedOrderEdgeValues (G : SimpleGraph V) (q : ℕ) : Finset ℕ :=
   (Finset.univ.filter fun S : Finset V ↦ S.card = q).image
     (Erdos88.inducedEdges G)
 
+omit [DecidableEq V] in
 @[simp] lemma mem_fixedOrderEdgeValues {G : SimpleGraph V} {q m : ℕ} :
     m ∈ fixedOrderEdgeValues G q ↔
       ∃ S : Finset V, S.card = q ∧ Erdos88.inducedEdges G S = m := by
+  classical
   simp [fixedOrderEdgeValues]
 
 /-- If every augmented set has order `q`, all of its edge values belong to
@@ -151,6 +155,7 @@ lemma ne_of_mem_separated_windows {m n : ℕ} {c d : ℤ} {R : ℕ}
     exact_mod_cast hupper'
   exact (not_lt_of_ge hupper) hsep
 
+omit [DecidableEq ι] in
 /-- Balanced windows around pairwise separated centres give pairwise
 disjoint edge-value sets. -/
 lemma edgeValues_pairwiseDisjoint_of_windows
@@ -162,6 +167,7 @@ lemma edgeValues_pairwiseDisjoint_of_windows
     (hsep : ∀ i ∈ J, ∀ j ∈ J, i ≠ j →
       (2 * R : ℕ) < |center i - center j|) :
     (J : Set ι).PairwiseDisjoint fun i ↦ edgeValues G (U i) (X i) := by
+  classical
   intro i hi j hj hij
   change Disjoint (edgeValues G (U i) (X i)) (edgeValues G (U j) (X j))
   rw [Finset.disjoint_left]
@@ -169,6 +175,7 @@ lemma edgeValues_pairwiseDisjoint_of_windows
   exact ne_of_mem_separated_windows
     (hwindow i hi m hmi) (hwindow j hj m hmj) (hsep i hi j hj hij) rfl
 
+omit [DecidableEq ι] in
 /-- Real-centred version of separated balanced windows.  This is convenient
 when the centres come from the real-valued switching path. -/
 lemma edgeValues_pairwiseDisjoint_of_real_windows
@@ -180,6 +187,7 @@ lemma edgeValues_pairwiseDisjoint_of_real_windows
     (hsep : ∀ i ∈ J, ∀ j ∈ J, i ≠ j →
       2 * R < |center i - center j|) :
     (J : Set ι).PairwiseDisjoint fun i ↦ edgeValues G (U i) (X i) := by
+  classical
   intro i hi j hj hij
   change Disjoint (edgeValues G (U i) (X i)) (edgeValues G (U j) (X j))
   rw [Finset.disjoint_left]
@@ -200,6 +208,7 @@ lemma edgeValues_pairwiseDisjoint_of_real_windows
       _ = 2 * R := by ring
   exact ((not_lt_of_ge hupper) (hsep i hi j hj hij)).elim
 
+omit [DecidableEq ι] in
 /-- Real-window version of the deterministic augmentation sum. -/
 theorem sum_card_extensions_le_fixedOrderEdgeValues_real_windows
     (G : SimpleGraph V) (J : Finset ι)
@@ -214,6 +223,7 @@ theorem sum_card_extensions_le_fixedOrderEdgeValues_real_windows
     (hsep : ∀ i ∈ J, ∀ j ∈ J, i ≠ j →
       2 * R < |center i - center j|) :
     ∑ i ∈ J, (X i).card ≤ (fixedOrderEdgeValues G q).card := by
+  classical
   let E : ι → Finset ℕ := fun i ↦ edgeValues G (U i) (X i)
   have hdisj : (J : Set ι).PairwiseDisjoint E :=
     edgeValues_pairwiseDisjoint_of_real_windows
@@ -231,6 +241,7 @@ theorem sum_card_extensions_le_fixedOrderEdgeValues_real_windows
     _ = (J.biUnion E).card := (Finset.card_biUnion hdisj).symm
     _ ≤ (fixedOrderEdgeValues G q).card := Finset.card_le_card hsub
 
+omit [DecidableEq ι] in
 /-- **Deterministic balanced augmentation theorem.**
 
 For every retained base `i`, suppose the augmented edge-count map is
@@ -256,6 +267,7 @@ theorem sum_card_extensions_le_fixedOrderEdgeValues
     (hsep : ∀ i ∈ J, ∀ j ∈ J, i ≠ j →
       (2 * R : ℕ) < |center i - center j|) :
     ∑ i ∈ J, (X i).card ≤ (fixedOrderEdgeValues G q).card := by
+  classical
   let E : ι → Finset ℕ := fun i ↦ edgeValues G (U i) (X i)
   have hdisj : (J : Set ι).PairwiseDisjoint E := by
     exact edgeValues_pairwiseDisjoint_of_windows G J U X center R hwindow hsep
@@ -272,6 +284,7 @@ theorem sum_card_extensions_le_fixedOrderEdgeValues
     _ = (J.biUnion E).card := (Finset.card_biUnion hdisj).symm
     _ ≤ (fixedOrderEdgeValues G q).card := Finset.card_le_card hsub
 
+omit [DecidableEq ι] in
 /-- Uniform-cardinality form of balanced augmentation.  If each retained
 base has at least `r` extensions, the spectrum contains at least
 `|J| * r` distinct edge counts. -/
@@ -289,6 +302,7 @@ theorem card_mul_le_fixedOrderEdgeValues
     (hsep : ∀ i ∈ J, ∀ j ∈ J, i ≠ j →
       (2 * R : ℕ) < |center i - center j|) :
     J.card * r ≤ (fixedOrderEdgeValues G q).card := by
+  classical
   calc
     J.card * r = ∑ _i ∈ J, r := by simp
     _ ≤ ∑ i ∈ J, (X i).card :=
@@ -297,6 +311,7 @@ theorem card_mul_le_fixedOrderEdgeValues
       sum_card_extensions_le_fixedOrderEdgeValues
         G J U X q R center horder hinj hwindow hsep
 
+omit [DecidableEq ι] in
 /-- Asymptotic-scale form of deterministic balanced augmentation.  If the
 number of retained bases is at least `a * nZ` and every base has at least
 `b * sqrt nD` distinct extensions, their separated windows contain at least
@@ -318,6 +333,7 @@ theorem mul_mul_sqrt_le_fixedOrderEdgeValues
       (2 * R : ℕ) < |center i - center j|) :
     (a * b) * nZ * Real.sqrt nD ≤
       (fixedOrderEdgeValues G q).card := by
+  classical
   have hscale : 0 ≤ b * Real.sqrt nD :=
     mul_nonneg hb (Real.sqrt_nonneg _)
   have hsum :
@@ -338,6 +354,7 @@ theorem mul_mul_sqrt_le_fixedOrderEdgeValues
     _ ≤ ∑ i ∈ J, ((X i).card : ℝ) := hsum
     _ ≤ ((fixedOrderEdgeValues G q).card : ℝ) := hspectrum
 
+omit [DecidableEq ι] in
 /-- **Graph-increment form of deterministic balanced augmentation.**
 
 This is the form closest to the output of the full-exposure argument.  Each
@@ -366,6 +383,7 @@ theorem card_mul_le_fixedOrderEdgeValues_of_increments
         |((Erdos88.inducedEdges G (U i) : ℤ) + incrementCenter i) -
           ((Erdos88.inducedEdges G (U j) : ℤ) + incrementCenter j)|) :
     J.card * r ≤ (fixedOrderEdgeValues G q).card := by
+  classical
   let center : ι → ℤ := fun i ↦
     (Erdos88.inducedEdges G (U i) : ℤ) + incrementCenter i
   have hedgeInj : ∀ i ∈ J, Set.InjOn
@@ -391,6 +409,7 @@ theorem card_mul_le_fixedOrderEdgeValues_of_increments
   intro i hi j hj hij
   exact hsep i hi j hj hij
 
+omit [DecidableEq ι] in
 /-- Quantitative real-scale version of the graph-increment theorem.  This
 is the exact deterministic conclusion used by the balanced augmentation
 package: linearly many switching states in `nZ`, each with square-root many
@@ -416,6 +435,7 @@ theorem mul_mul_sqrt_le_fixedOrderEdgeValues_of_increments
           ((Erdos88.inducedEdges G (U j) : ℤ) + incrementCenter j)|) :
     (a * b) * nZ * Real.sqrt nD ≤
       (fixedOrderEdgeValues G q).card := by
+  classical
   let center : ι → ℤ := fun i ↦
     (Erdos88.inducedEdges G (U i) : ℤ) + incrementCenter i
   have hedgeInj : ∀ i ∈ J, Set.InjOn
@@ -524,11 +544,12 @@ def valueCollisionGraph {A : Type*} (X : Finset A) {B : Type*}
     (valueCollisionGraph X f).Adj x y ↔ x ≠ y ∧ f x = f y := by
   simp [valueCollisionGraph]
 
+open Classical in
 /-- Total collision edges can be thinned to an injective subfamily with the
 exact Caro--Wei/Turán cardinal inequality.  This is the deterministic step
 used after the first-moment collision estimates in both exposures. -/
 theorem exists_injective_subfamily_card_sq_le
-    {A : Type*} [DecidableEq A] (X : Finset A)
+    {A : Type*} (X : Finset A)
     {B : Type*} (f : A → B) :
     ∃ Y : Finset A, Y ⊆ X ∧ Set.InjOn f (Y : Set A) ∧
       X.card ^ 2 ≤ Y.card *
@@ -561,14 +582,16 @@ theorem exists_injective_subfamily_card_sq_le
   refine ⟨Y, hYsub, hYinj, ?_⟩
   simpa [H, hYcard] using hbound
 
+open Classical in
 /-- A supplied numerical upper bound on the number of collision edges gives
 the corresponding clean injective-subfamily estimate. -/
 theorem exists_injective_subfamily_card_sq_le_of_edges_le
-    {A : Type*} [DecidableEq A] (X : Finset A)
+    {A : Type*} (X : Finset A)
     {B : Type*} (f : A → B) (E : ℕ)
     (hedges : (valueCollisionGraph X f).edgeFinset.card ≤ E) :
     ∃ Y : Finset A, Y ⊆ X ∧ Set.InjOn f (Y : Set A) ∧
       X.card ^ 2 ≤ Y.card * (X.card + 2 * E) := by
+  classical
   obtain ⟨Y, hYX, hYinj, hY⟩ := exists_injective_subfamily_card_sq_le X f
   refine ⟨Y, hYX, hYinj, hY.trans ?_⟩
   exact Nat.mul_le_mul_left Y.card (Nat.add_le_add_left
@@ -704,6 +727,7 @@ def augmentationEdgeValues (G : SimpleGraph V) (W U0 D : Finset V)
 def augmentationOrder (W U0 : Finset V) (nD nZ k : ℕ) : ℕ :=
   W.card + (U0.card - nD) + nZ * k
 
+omit [Fintype V] in
 /-- All augmentations in the canonical family have the same order.
 
 The hypotheses are precisely the finite matching hypotheses supplied by a
@@ -908,14 +932,18 @@ vertex type. -/
 def mapSubtypeFinset (U : Finset V) (S : Finset U) : Finset V :=
   S.map (Function.Embedding.subtype fun v : V ↦ v ∈ U)
 
+omit [DecidableEq V] [Fintype V] in
 lemma mapSubtypeFinset_subset (U : Finset V) (S : Finset U) :
     mapSubtypeFinset U S ⊆ U := by
+  classical
   intro v hv
   obtain ⟨u, _hu, rfl⟩ := Finset.mem_map.mp hv
   exact u.2
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma card_mapSubtypeFinset (U : Finset V) (S : Finset U) :
     (mapSubtypeFinset U S).card = S.card := by
+  classical
   exact Finset.card_map _
 
 /-- Finsets of the subtype `↑U` are equivalent to finsets of ambient
@@ -1217,6 +1245,7 @@ theorem exists_shared_outcome_one_eighth_good_and_error_le_eight
   · norm_num at herror ⊢
     linarith
 
+open Classical in
 /-- Canonical uniform-layer specialization of the shared-outcome lemma.
 
 The hypotheses are stated using `NestedUniform.layerProbability`, while
@@ -1251,14 +1280,16 @@ theorem exists_shared_deletion_one_eighth_good_and_error_le_eight
   · exact herror_nonneg
   · exact herror_mean
 
+open Classical in
 /-- The marked indices selected by an event-count are literally the
 corresponding filtered finset.  This small bridge keeps the common-outcome
 choice theorem compatible with the marked-packing API. -/
 @[simp] theorem card_filter_eq_eventCount
-    {Omega J : Type*} [Fintype Omega] [Nonempty Omega]
+    {Omega J : Type*} [Finite Omega] [Nonempty Omega]
     (I : Finset J) (good : J → Omega → Prop) (omega : Omega) :
     (I.filter fun j ↦ good j omega).card =
       CollisionCounting.eventCount I good omega := by
+  let : Fintype Omega := Fintype.ofFinite Omega
   rfl
 
 /-- Total variation of a finite real sequence is at most twice its
@@ -1324,6 +1355,7 @@ theorem sum_abs_sub_previous_le_two_sum_abs
 
 /-! ## Graph-facing output of the full-exposure abstraction -/
 
+open Classical in
 /-- Feed the separated-window witness produced by
 `AugmentationFull.exists_injective_separated_windows` into the genuine
 fixed-order graph spectrum.

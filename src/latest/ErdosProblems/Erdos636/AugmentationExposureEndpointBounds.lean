@@ -31,7 +31,7 @@ loss into `W` is at most `2 * nS * degreeWindow`, and the contribution into
 `U0` cancels because every selected cell has the same `U0`-degree.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 open scoped BigOperators
 
 namespace Erdos636
@@ -70,6 +70,7 @@ noncomputable def graphSelectedHighFamily
     Finset (Finset V) :=
   selected.split.high
 
+omit [DecidableEq V] in
 @[simp] lemma card_graphSelectedLowFamily
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -78,8 +79,10 @@ noncomputable def graphSelectedHighFamily
       source rawCandidates G D1 degreeCenter degreeRadius nS gap badBudget) :
     (graphSelectedLowFamily G D1 source rawCandidates degreeCenter
       degreeRadius nS gap badBudget selected).card = nS := by
+  classical
   exact selected.split.low_card
 
+omit [DecidableEq V] in
 @[simp] lemma card_graphSelectedHighFamily
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -88,8 +91,10 @@ noncomputable def graphSelectedHighFamily
       source rawCandidates G D1 degreeCenter degreeRadius nS gap badBudget) :
     (graphSelectedHighFamily G D1 source rawCandidates degreeCenter
       degreeRadius nS gap badBudget selected).card = nS := by
+  classical
   exact selected.split.high_card
 
+omit [DecidableEq V] in
 lemma graphSelectedLowFamily_subset_source
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -98,10 +103,12 @@ lemma graphSelectedLowFamily_subset_source
       source rawCandidates G D1 degreeCenter degreeRadius nS gap badBudget) :
     graphSelectedLowFamily G D1 source rawCandidates degreeCenter
         degreeRadius nS gap badBudget selected ⊆ source := by
+  classical
   exact selected.split.low_subset.trans
     (selected.selected_subset_good.trans
       (AugmentationGraphFullState.goodPart_subset _ _))
 
+omit [DecidableEq V] in
 lemma graphSelectedHighFamily_subset_source
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -110,10 +117,12 @@ lemma graphSelectedHighFamily_subset_source
       source rawCandidates G D1 degreeCenter degreeRadius nS gap badBudget) :
     graphSelectedHighFamily G D1 source rawCandidates degreeCenter
         degreeRadius nS gap badBudget selected ⊆ source := by
+  classical
   exact selected.split.high_subset.trans
     (selected.selected_subset_good.trans
       (AugmentationGraphFullState.goodPart_subset _ _))
 
+omit [DecidableEq V] in
 @[simp] lemma graphSelectedReverseState_zero
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -124,6 +133,7 @@ lemma graphSelectedHighFamily_subset_source
         degreeRadius nS gap badBudget selected 0 =
       graphSelectedHighFamily G D1 source rawCandidates degreeCenter
         degreeRadius nS gap badBudget selected := by
+  classical
   unfold graphSelectedReverseState graphSelectedState graphSelectedHighFamily
   simp only [Nat.zero_lt_succ, dite_true]
   rw [show (Fin.rev (⟨0, Nat.zero_lt_succ nS⟩ : Fin (nS + 1))) =
@@ -132,6 +142,7 @@ lemma graphSelectedHighFamily_subset_source
     simp [Fin.rev]]
   exact selected.state_last
 
+omit [DecidableEq V] in
 @[simp] lemma graphSelectedReverseState_last
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -142,6 +153,7 @@ lemma graphSelectedHighFamily_subset_source
         degreeRadius nS gap badBudget selected nS =
       graphSelectedLowFamily G D1 source rawCandidates degreeCenter
         degreeRadius nS gap badBudget selected := by
+  classical
   unfold graphSelectedReverseState graphSelectedState graphSelectedLowFamily
   simp only [Nat.lt_add_one_iff, le_refl, dite_true]
   rw [show (Fin.rev (⟨nS, Nat.lt_add_one nS⟩ : Fin (nS + 1))) = 0 by
@@ -151,6 +163,7 @@ lemma graphSelectedHighFamily_subset_source
 
 /-! ## Additivity and coarse family bounds -/
 
+omit [Fintype V] in
 /-- `degreeInto` is additive over the vertex union of pairwise-disjoint
 cells. -/
 lemma degreeInto_cellUnion_eq_sum
@@ -161,6 +174,7 @@ lemma degreeInto_cellUnion_eq_sum
   unfold AugmentationGraphFull.cellUnion degreeInto
   exact Finset.sum_biUnion hpair
 
+omit [Fintype V] in
 /-- A union of `n` cells, each of size at most `K`, has at most `K*n`
 vertices.  Pairwise disjointness is not needed for this upper bound. -/
 lemma card_cellUnion_le_mul
@@ -241,7 +255,7 @@ lemma selected_degreeInto_gap
         (((∑ y ∈ high, (degreeInto G D1 y : ℤ)) -
           ∑ x ∈ low, (degreeInto G D1 x : ℤ) : ℤ) : ℝ) := by
     exact_mod_cast hsum
-  simp only [Int.cast_mul, Int.cast_natCast, Int.cast_sub, Int.cast_sum] at hsumReal
+  simp only [Int.cast_natCast, Int.cast_sub, Int.cast_sum] at hsumReal
   rw [hlowCard] at hsumReal
   rw [hhighSum, hlowSum]
   norm_cast at hsumReal ⊢

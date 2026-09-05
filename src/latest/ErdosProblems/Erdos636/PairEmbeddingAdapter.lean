@@ -48,20 +48,30 @@ abbrev MatchingIndex (M : Finset (Sym2 I)) := {e : Sym2 I // e ∈ M}
 def matchingEndpoint (e : Sym2 I) (b : Bool) : I :=
   if b then e.out.2 else e.out.1
 
+omit [DecidableEq I] [Fintype I] in
 @[simp] lemma matchingEndpoint_false (e : Sym2 I) :
-    matchingEndpoint e false = e.out.1 := rfl
+    matchingEndpoint e false = e.out.1 := by
+  classical
+  exact rfl
 
+omit [DecidableEq I] [Fintype I] in
 @[simp] lemma matchingEndpoint_true (e : Sym2 I) :
-    matchingEndpoint e true = e.out.2 := rfl
+    matchingEndpoint e true = e.out.2 := by
+  classical
+  exact rfl
 
+omit [DecidableEq I] [Fintype I] in
 lemma matchingEndpoint_mem (e : Sym2 I) (b : Bool) :
     matchingEndpoint e b ∈ (e : Set I) := by
+  classical
   cases b
   · exact Sym2.out_fst_mem e
   · exact Sym2.out_snd_mem e
 
+omit [DecidableEq I] [Fintype I] in
 private lemma out_fst_ne_out_snd_of_not_isDiag (e : Sym2 I)
     (he : ¬ e.IsDiag) : e.out.1 ≠ e.out.2 := by
+  classical
   intro hout
   apply he
   have hrepr : s(e.out.1, e.out.2) = e := by
@@ -93,6 +103,7 @@ noncomputable def pairEmbeddingOfDisjointPairs
       out_fst_ne_out_snd_of_not_isDiag e (hnondiag e heM)
     cases b <;> cases c <;> simp_all
 
+omit [Fintype I] in
 @[simp] lemma pairEmbeddingOfDisjointPairs_apply
     (M : Finset (Sym2 I))
     (hpair : (M : Set (Sym2 I)).Pairwise fun e f ↦
@@ -102,8 +113,10 @@ noncomputable def pairEmbeddingOfDisjointPairs
     pairEmbeddingOfDisjointPairs M hpair hnondiag (k, b) =
       matchingEndpoint k.1 b := rfl
 
+omit [DecidableEq I] [Fintype I] in
 @[simp] lemma card_matchingIndex (M : Finset (Sym2 I)) :
     Fintype.card (MatchingIndex M) = M.card := by
+  classical
   exact Fintype.card_coe M
 
 /-- Specialization of `pairEmbeddingOfDisjointPairs` to an `EdgeMatching`.
@@ -112,7 +125,7 @@ noncomputable def pairEmbeddingOfEdgeMatching
     (G : SimpleGraph I) [DecidableRel G.Adj]
     (M : Finset (Sym2 I)) (hM : Pairing.EdgeMatching G M) :
     PairEmbedding (MatchingIndex M) I :=
-  pairEmbeddingOfDisjointPairs M hM.2 fun e he ↦
+  pairEmbeddingOfDisjointPairs M hM.2 fun _e he ↦
     G.not_isDiag_of_mem_edgeFinset (hM.1 he)
 
 @[simp] lemma pairEmbeddingOfEdgeMatching_apply

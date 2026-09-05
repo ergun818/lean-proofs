@@ -30,7 +30,7 @@ the dependent finite choice which selects the structural value `k` and the
 successful one-copy/two-copy branch separately for every outer parameter.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 
 namespace Erdos636.KwanSudakov
 

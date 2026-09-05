@@ -37,7 +37,7 @@ open scoped BigOperators
 namespace Erdos636
 namespace NestedUniform
 
-open Classical Finset
+open Finset
 
 variable {α : Type*}
 
@@ -69,6 +69,7 @@ def nestedSamples (U : Finset α) (d : ℕ) : Finset (NestedSample α) :=
       D₁ ⊆ U ∧ D₁.card = 2 * d ∧ D ⊆ D₁ ∧ D.card = d := by
   simp [nestedSamples, and_assoc]
 
+open Classical in
 /-- Every `d`-set in the target layer has the same number of admissible
 `2d`-set extensions. -/
 theorem card_outer_fiber {U D : Finset α} {d : ℕ}
@@ -89,6 +90,7 @@ theorem sum_nested_eq_choose_nsmul_sum {M : Type*} [AddCommMonoid M]
     (U : Finset α) (d : ℕ) (f : Finset α → M) :
     (∑ D₁ ∈ layer U (2 * d), ∑ D ∈ layer D₁ d, f D) =
       (U.card - d).choose d • ∑ D ∈ layer U d, f D := by
+  classical
   have hinner (D₁ : Finset α) (hD₁ : D₁ ∈ layer U (2 * d)) :
       layer D₁ d = (layer U d).filter fun D ↦ D ⊆ D₁ := by
     ext D

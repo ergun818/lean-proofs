@@ -33,7 +33,7 @@ exceptional-vertex conclusion needed here and is independent of how a later
 assembly obtains the numerical bound.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 
 namespace Erdos636
 
@@ -43,6 +43,7 @@ noncomputable section
 
 variable {V : Type u} [Fintype V] [DecidableEq V]
 
+open Classical in
 /-- The multiplicity with which `u` occurs in the union of the neighbourhoods
 of vertices in `x`. -/
 def incidence (G : SimpleGraph V) (x : Finset V) (u : V) : ℕ :=
@@ -51,11 +52,14 @@ def incidence (G : SimpleGraph V) (x : Finset V) (u : V) : ℕ :=
 omit [Fintype V] [DecidableEq V] in
 lemma incidence_le_card (G : SimpleGraph V) (x : Finset V) (u : V) :
     incidence G x u ≤ x.card := by
+  classical
   exact Finset.card_le_card (Finset.filter_subset _ _)
 
+omit [DecidableEq V] in
 lemma incidence_eq_card_of_mem_commonNeighbor {G : SimpleGraph V}
     {x : Finset V} {u : V} (hu : u ∈ Erdos88.commonNeighborFinset G x) :
     incidence G x u = x.card := by
+  classical
   rw [Erdos88.mem_commonNeighborFinset] at hu
   simp only [incidence, Finset.card_filter_eq_iff]
   exact hu
@@ -103,11 +107,13 @@ lemma incidenceDiffMass_eq_sum_supportDiff (G : SimpleGraph V)
     exact huSupport (mem_supportDiff.mpr ⟨huA, hne⟩)
   simp [incidenceDiffTerm, heq]
 
+omit [DecidableEq V] [Fintype V] in
 /-- Every nonzero integer incidence difference contributes at least one unit
 to the `ℓ¹` mass. -/
 lemma supportDiffCard_le_incidenceDiffMass (G : SimpleGraph V)
     (A x y : Finset V) :
     supportDiffCard G A x y ≤ incidenceDiffMass G A x y := by
+  classical
   rw [supportDiffCard, incidenceDiffMass_eq_sum_supportDiff]
   calc
     (supportDiff G A x y).card =
@@ -119,11 +125,13 @@ lemma supportDiffCard_le_incidenceDiffMass (G : SimpleGraph V)
         Int.natAbs_sub_ne_zero_iff]
       exact_mod_cast (mem_supportDiff.mp hu).2
 
+omit [DecidableEq V] [Fintype V] in
 /-- On vertex sets of order at most `K`, every incidence difference is at
 most `K`; hence `ℓ¹` mass is at most `K` times support size. -/
 lemma incidenceDiffMass_le_mul_supportDiffCard (G : SimpleGraph V)
     (A x y : Finset V) (K : ℕ) (hx : x.card ≤ K) (hy : y.card ≤ K) :
     incidenceDiffMass G A x y ≤ K * supportDiffCard G A x y := by
+  classical
   rw [incidenceDiffMass_eq_sum_supportDiff, supportDiffCard]
   calc
     ∑ u ∈ supportDiff G A x y, incidenceDiffTerm G x y u ≤
@@ -136,12 +144,14 @@ lemma incidenceDiffMass_le_mul_supportDiffCard (G : SimpleGraph V)
     _ = K * (supportDiff G A x y).card := by
       simp [Nat.mul_comm]
 
+omit [DecidableEq V] in
 lemma one_le_incidenceDiffTerm_of_missing {G : SimpleGraph V}
     {W x y : Finset V} {u v : V}
     (huW : u ∈ W) (hWx : W ⊆ Erdos88.commonNeighborFinset G x)
     (hcard : x.card = y.card) (hvy : v ∈ y)
     (huv : u ∉ Erdos88.neighborsIn G v W) :
     1 ≤ incidenceDiffTerm G x y u := by
+  classical
   have hix : incidence G x u = x.card :=
     incidence_eq_card_of_mem_commonNeighbor (hWx huW)
   have huv' : ¬ G.Adj v u := by

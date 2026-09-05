@@ -36,7 +36,7 @@ all losses from common-neighbourhood counting, sunflower extraction, and
 Turán thinning remain explicit in its hypotheses.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 open scoped BigOperators
 
 namespace Erdos636.StructuralEndpoint
@@ -49,12 +49,12 @@ noncomputable section
 
 variable {V : Type u} [Fintype V] [DecidableEq V]
 
+omit [DecidableEq V] [Fintype V] in
 /-- Cross-incidences can be summed from either endpoint class. -/
 lemma degreeInto_comm (G : SimpleGraph V) (A B : Finset V) :
     degreeInto G A B = degreeInto G B A := by
   classical
-  simp only [degreeInto, Erdos88.neighborsIn, Finset.card_filter,
-    Finset.sum_filter]
+  simp only [degreeInto, Erdos88.neighborsIn, Finset.card_filter]
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
   intro b hb
@@ -62,11 +62,14 @@ lemma degreeInto_comm (G : SimpleGraph V) (A B : Finset V) :
   intro a ha
   simp only [G.adj_comm a b]
 
+omit [DecidableEq V] [Fintype V] in
 /-- The graph-facing degree sum is the sorted sum of singleton degrees. -/
-lemma crossEdges_eq_sum_degreeInto_singleton
+lemma crossEdges_eq_sum_degreeInto_singleton [Finite V]
     (G : SimpleGraph V) (U W : Finset V) :
     (crossEdges G U W : ℤ) =
       ∑ w ∈ W, ((Erdos88.neighborsIn G w U).card : ℤ) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [crossEdges, degreeInto_comm]
   simp [degreeInto]
 
@@ -75,14 +78,18 @@ def halfSubset {U1 : Finset V} {ell : ℕ}
     (omega : HalfSample.Slice U1 ell) : Finset V :=
   liftInducedFinset omega.1
 
-@[simp] lemma card_halfSubset {U1 : Finset V} {ell : ℕ}
+omit [Fintype V] in
+@[simp] lemma card_halfSubset [Finite V] {U1 : Finset V} {ell : ℕ}
     (omega : HalfSample.Slice U1 ell) :
     (halfSubset omega).card = ell := by
+  let : Fintype V := Fintype.ofFinite V
   simp [halfSubset, omega.2]
 
-lemma halfSubset_subset {U1 : Finset V} {ell : ℕ}
+omit [Fintype V] in
+lemma halfSubset_subset [Finite V] {U1 : Finset V} {ell : ℕ}
     (omega : HalfSample.Slice U1 ell) :
     halfSubset omega ⊆ U1 := by
+  let : Fintype V := Fintype.ofFinite V
   intro v hv
   obtain ⟨u, _hu, rfl⟩ := mem_liftInducedFinset.mp hv
   exact u.2
@@ -97,6 +104,7 @@ def SupportPersists (G : SimpleGraph V) (U0 : Finset V) (K : ℕ)
       globalThreshold ≤ supportDiffCard G Finset.univ X Y →
       localThreshold ≤ incidenceDiffMass G U0 X Y
 
+omit [Fintype V] in
 /-- The cross-edge difference over a lifted half-slice is an affine
 half-sample sum. -/
 lemma crossEdges_sub_eq_sliceSum
@@ -118,6 +126,7 @@ lemma crossEdges_sub_eq_sliceSum
       Subtype.val_injective.injOn]
   norm_cast
 
+omit [DecidableEq V] [Fintype V] in
 /-- The total coefficient sum in the half-sample identity is the
 full-reservoir cross-edge difference. -/
 lemma crossEdges_sub_eq_sum_subtype
@@ -126,6 +135,7 @@ lemma crossEdges_sub_eq_sum_subtype
       ∑ u : U1,
         (((Erdos88.neighborsIn G (u : V) low).card : ℝ) -
           (Erdos88.neighborsIn G (u : V) high).card) := by
+  classical
   rw [crossEdges, crossEdges, degreeInto, degreeInto]
   change
     (↑(∑ u ∈ U1, (Erdos88.neighborsIn G u low).card) : ℝ) -
@@ -144,6 +154,7 @@ lemma crossEdges_sub_eq_sum_subtype
     (fun u ↦ ((Erdos88.neighborsIn G (u : V) low).card : ℝ))
     (fun u ↦ ((Erdos88.neighborsIn G (u : V) high).card : ℝ))).symm
 
+omit [Fintype V] in
 /-- A strict `< 1/2` failure estimate intersects the half-symmetry event. -/
 theorem exists_halfSubset_ge_half_total_and_not_bad
     {U1 : Finset V} {ell : ℕ}
@@ -156,7 +167,7 @@ theorem exists_halfSubset_ge_half_total_and_not_bad
   have hgood :=
     HalfSample.one_half_le_sliceProbability_ge_half_total hcard a
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   have hmono :
       HalfSample.sliceProbability hcard (fun omega ↦
           (∑ u, a u) / 2 ≤ HalfSample.sliceSum a omega) ≤

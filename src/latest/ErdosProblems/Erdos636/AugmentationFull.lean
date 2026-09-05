@@ -47,7 +47,6 @@ graph application those bounds come from the incidence-difference
 coefficients furnished by the partial exposure.
 -/
 
-open Classical
 open scoped BigOperators
 
 namespace Erdos636
@@ -157,6 +156,7 @@ lemma uniformExpectation_mono {Ω : Type*} [Fintype Ω] [Nonempty Ω]
   apply div_le_div_of_nonneg_right _ hcard
   exact Finset.sum_le_sum fun ω _hω ↦ hfg ω
 
+open Classical in
 /-- The expectation of a Boolean indicator is normalized counting
 probability. -/
 lemma uniformExpectation_indicator {Ω : Type*} [Fintype Ω] [Nonempty Ω]
@@ -296,7 +296,7 @@ lemma largeIncrementSum_le_tailBudget
 
 /-- Tail expectation for the total switching budget. -/
 lemma uniformExpectation_tailBudget_le
-    {D : Type u} [Fintype D] [DecidableEq D]
+    {D : Type u} [Fintype D]
     {X : Type v} {s τ : ℕ} (hcard : Fintype.card D = 2 * s)
     (P : PartialExposureData D X s τ) {v Q : ℝ}
     (hv : 0 < v) (hQ : 0 < Q)
@@ -304,6 +304,7 @@ lemma uniformExpectation_tailBudget_le
       uniformExpectation (fun ω : Sample D s ↦ (increment P ω i) ^ 2) ≤ v) :
     uniformExpectation (tailBudget P (Q * Real.sqrt v)) ≤
       τ * (Real.sqrt v / Q) := by
+  classical
   let : Nonempty (Sample D s) := HalfSample.sliceNonempty hcard
   change uniformExpectation (fun ω : Sample D s ↦
     ∑ i ∈ Finset.range τ,
@@ -355,7 +356,7 @@ subsequence.  Parts (i), (ii), and (iii) are represented by the first three
 event-count inequalities, part (iv) by `hrise`, and part (v) by the tail
 budget.  All constants and all failure thresholds occur explicitly. -/
 theorem exists_fullExposure_switching
-    {D : Type u} [Fintype D] [DecidableEq D]
+    {D : Type u} [Fintype D]
     {X : Type v} [LinearOrder X] [DecidableEq X]
     {s τ m : ℕ} (hcard : Fintype.card D = 2 * s)
     (P : PartialExposureData D X s τ)
@@ -397,6 +398,7 @@ theorem exists_fullExposure_switching
       StrictMono idx ∧ idx 0 = 0 ∧ idx (Fin.last m) = τ ∧
       ∀ j : Fin m,
         sigma ≤ P.path ω (idx j.succ) - P.path ω (idx j.castSucc) := by
+  classical
   let : Nonempty (Sample D s) := HalfSample.sliceNonempty hcard
   let geomFail : Sample D s → Prop := fun ω ↦
     tGeom ≤ CollisionCounting.eventCount (Finset.range (τ + 1))
@@ -583,10 +585,11 @@ def valueCollisionGraph {A B : Type*} (C : Finset A) (f : A → B) :
     (valueCollisionGraph C f).Adj x y ↔ x ≠ y ∧ f x = f y := by
   simp [valueCollisionGraph]
 
+open Classical in
 /-- Turán thinning of a collision graph.  The output family is a subset of
 `C` on which `f` is injective, with the exact total-edge lower bound. -/
 theorem exists_injective_subfamily_card_sq_le
-    {A : Type*} [DecidableEq A] (C : Finset A)
+    {A : Type*} (C : Finset A)
     {B : Type*} (f : A → B) :
     ∃ Y : Finset A, Y ⊆ C ∧ Set.InjOn f (Y : Set A) ∧
       C.card ^ 2 ≤ Y.card *
@@ -614,14 +617,16 @@ theorem exists_injective_subfamily_card_sq_le
   refine ⟨Y, hYsub, hYinj, ?_⟩
   simpa [H, hYcard] using hbound
 
+open Classical in
 /-- A numerical collision-edge budget gives the corresponding clean
 injective-family estimate. -/
 theorem exists_injective_subfamily_card_sq_le_of_edges_le
-    {A : Type*} [DecidableEq A] (C : Finset A)
+    {A : Type*} (C : Finset A)
     {B : Type*} (f : A → B) (edgeBudget : ℕ)
     (hedges : (valueCollisionGraph C f).edgeFinset.card ≤ edgeBudget) :
     ∃ Y : Finset A, Y ⊆ C ∧ Set.InjOn f (Y : Set A) ∧
       C.card ^ 2 ≤ Y.card * (C.card + 2 * edgeBudget) := by
+  classical
   obtain ⟨Y, hYC, hYinj, hY⟩ :=
     exists_injective_subfamily_card_sq_le C f
   refine ⟨Y, hYC, hYinj, hY.trans ?_⟩
@@ -659,12 +664,14 @@ lemma sigma_le_abs_sub_of_chain
   · exact hforward hij
   · simpa [abs_sub_comm] using hforward hji
 
+open Classical in
 /-- Good candidates in the selected exposure. -/
 def goodCandidates {D : Type u} [Fintype D] {X : Type v}
     [DecidableEq X] {s τ : ℕ} (P : PartialExposureData D X s τ)
     (ω : Sample D s) : Finset X :=
   P.candidates.filter fun x ↦ ¬ P.degreeBad x ω
 
+open Classical in
 /-- Convert the collision-good event produced by
 `exists_fullExposure_switching` into the natural-number edge budget used by
 Turán thinning.  The comparison hypothesis is the deterministic relabeling
@@ -703,6 +710,7 @@ lemma valueCollisionGraph_card_le_of_not_collisionBad
     exact_mod_cast hltReal
   omega
 
+open Classical in
 /-- **Separated-window output of the full exposure.**
 
 At each retained good switching time, Turán removes all remaining

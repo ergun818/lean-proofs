@@ -90,7 +90,7 @@ lemma smallStepCoeff_pos {K : ℕ} {eta : ℝ} (heta : 0 < eta) :
 
 /-- A reusable strict power-gap estimate. -/
 theorem exists_mul_rpow_lt_mul_rpow
-    {A B p q : ℝ} (hA : 0 ≤ A) (hB : 0 < B) (hpq : p < q) :
+    {A B p q : ℝ} (_hA : 0 ≤ A) (hB : 0 < B) (hpq : p < q) :
     ∃ N : ℕ, ∀ n ≥ N,
       A * (n : ℝ) ^ p < B * (n : ℝ) ^ q := by
   let gap : ℝ := q - p
@@ -133,7 +133,7 @@ This is the sublinear-exponent form needed for the simultaneous outer
 concentration bound. -/
 theorem exists_rpow_mul_exp_neg_rpow_lt
     {A b p q epsilon : ℝ}
-    (hA : 0 ≤ A) (hb : 0 < b) (hq : 0 < q) (hepsilon : 0 < epsilon) :
+    (_hA : 0 ≤ A) (hb : 0 < b) (hq : 0 < q) (hepsilon : 0 < epsilon) :
     ∃ N : ℕ, ∀ n ≥ N,
       A * (n : ℝ) ^ p * Real.exp (-b * (n : ℝ) ^ q) < epsilon := by
   have htReal : Tendsto
@@ -466,7 +466,7 @@ theorem exists_outerConcentrationBudget
 and the sole exponent-gap inequality `n^(11/16) = o(n^(3/4))`. -/
 lemma schedule_count_of_rounding
     {K n : ℕ} {eta b : ℝ}
-    (heta : 0 < eta) (hb : 0 < b) (H : RoundingBounds K n eta)
+    (heta : 0 < eta) (_hb : 0 < b) (H : RoundingBounds K n eta)
     (hgap :
       ((2 / smallStepCoeff K eta + 1) *
           (10 / smallStepCoeff K eta + 1)) *
@@ -647,7 +647,7 @@ theorem exists_crowdScheduleCount
 the `n^(3/2)` marked-packing budget. -/
 lemma boundary_budget_of_rounding
     {K n nW : ℕ} {eta cW epsilon : ℝ}
-    (hcW : 0 ≤ cW) (hepsilon : 0 < epsilon)
+    (hcW : 0 ≤ cW) (_hepsilon : 0 < epsilon)
     (H : RoundingBounds K n eta)
     (hnW : (nW : ℝ) ≤ cW * n)
     (hgap :
@@ -838,7 +838,7 @@ lemma branchBounds_of_rounding
     dsimp [nD]
     exact RoundedParameters.branchScale_pos hfpos
   have hf_le_nD : f ≤ nD := by
-    cases branch <;> simp [nD] <;> omega
+    cases branch <;> simp [nD] ; omega
   have hf_sqrt_le : Real.sqrt f ≤ Real.sqrt nD := by
     exact Real.sqrt_le_sqrt (by exact_mod_cast hf_le_nD)
   have hnD_le_two_f : nD ≤ 2 * f := by
@@ -1176,10 +1176,10 @@ lemma outerFinalBounds_of_outerBounds
     {K n nW nD nZ dMinus dPlus : ℕ}
     {eta cW matchingCoeff boundaryCoeff c c₀ δZ aDisc lambdaCoeff
       sigmaCoeff RCoeff radiusCoeff weightedStep radius : ℝ}
-    (hK : 0 < K) (heta : 0 < eta)
-    (hcW : 0 ≤ cW) (hboundaryCoeff : 0 ≤ boundaryCoeff)
+    (hK : 0 < K) (_heta : 0 < eta)
+    (hcW : 0 ≤ cW) (_hboundaryCoeff : 0 ≤ boundaryCoeff)
     (hc : 0 ≤ c) (hc₀ : 0 ≤ c₀) (hδZ : 0 ≤ δZ)
-    (hsigmaCoeff : 0 < sigmaCoeff) (hRCoeff : 0 < RCoeff)
+    (hsigmaCoeff : 0 < sigmaCoeff) (_hRCoeff : 0 < RCoeff)
     (hradiusCoeff : 0 ≤ radiusCoeff)
     (hendpointCoeff :
       lambdaCoeff + δZ * K * cW * Real.sqrt (2 * c₀) ≤ aDisc)
@@ -1676,7 +1676,6 @@ theorem exists_partialExposureRiskBounds
       2 * Real.exp (-b * nD) := by
     simp only [AugmentationGraphPartial.outerLinearFailure]
     congr 2
-    congr 1
     dsimp [b]
     field_simp
     ring
@@ -1685,7 +1684,6 @@ theorem exists_partialExposureRiskBounds
       2 * Real.exp (-(Q ^ 2 / (64 * (K : ℝ) ^ 2))) := by
     simp only [AugmentationGraphPartial.outerLinearFailure]
     congr 2
-    congr 1
     rw [show (Q * Real.sqrt nD) ^ 2 = Q ^ 2 * nD by
       rw [mul_pow, hsqrtDSq]]
     field_simp
@@ -1758,7 +1756,6 @@ theorem exists_partialExposureRiskBounds
     have hreal : (s₀ : ℝ) < 2 * ((s₀ / 2 : ℕ) + 1) := by
       exact_mod_cast hnat
     dsimp only [partialBadBudget, s₀]
-    push_cast
     linarith
   have htCollisionBudget : partialCollisionThreshold LH nD ≤
       (partialSelectionEdgeBudget LH nD : ℝ) + 1 := by
@@ -1830,7 +1827,6 @@ lemma partialExposure_selectionTuran
       (s₀ - bad : ℕ) := by
     have hsLower : a₀ / 8 * Real.sqrt nD ≤ (s₀ : ℝ) := by
       simpa only [s₀] using H.matching_lower
-    push_cast at hsurvivorCast ⊢
     nlinarith
   have hsurvivorUpper : ((s₀ - bad : ℕ) : ℝ) ≤
       a₀ / 4 * Real.sqrt nD := by
@@ -2114,7 +2110,6 @@ lemma graphDegreeRisk_geometricThreshold
   have hsqrtSq : (Real.sqrt nD) ^ 2 = (nD : ℝ) := Real.sq_sqrt hnDreal
   simp only [AugmentationGraphFull.graphDegreeRisk, geometricThreshold]
   congr 2
-  congr 1
   push_cast
   rw [show (qGeom * ((K : ℝ) * nS) * Real.sqrt nD) ^ 2 =
       qGeom ^ 2 * ((K : ℝ) * nS) ^ 2 * (Real.sqrt nD) ^ 2 by ring,

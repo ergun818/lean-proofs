@@ -47,7 +47,7 @@ that assertion has one precise target and no part of the deterministic
 outer assembly has to be repeated.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 open scoped BigOperators
 
 namespace Erdos636.OuterSwitching
@@ -66,20 +66,26 @@ variable {V : Type u} [Fintype V] [DecidableEq V]
 def finsetOrdering (W : Finset V) (n : ℕ) (hW : W.card = n) : Fin n → V :=
   fun i ↦ ((Finset.equivFin W).symm (Fin.cast hW.symm i)).1
 
+omit [DecidableEq V] [Fintype V] in
 lemma finsetOrdering_mem (W : Finset V) (n : ℕ) (hW : W.card = n)
-    (i : Fin n) : finsetOrdering W n hW i ∈ W :=
-  ((Finset.equivFin W).symm (Fin.cast hW.symm i)).2
+    (i : Fin n) : finsetOrdering W n hW i ∈ W := by
+  classical
+  exact ((Finset.equivFin W).symm (Fin.cast hW.symm i)).2
 
+omit [DecidableEq V] [Fintype V] in
 lemma finsetOrdering_injective (W : Finset V) (n : ℕ) (hW : W.card = n) :
     Function.Injective (finsetOrdering W n hW) := by
+  classical
   intro i j hij
-  apply Fin.cast_injective
+  apply Fin.cast_injective hW.symm
   apply (Finset.equivFin W).symm.injective
   exact Subtype.ext hij
 
+omit [DecidableEq V] [Fintype V] in
 lemma finsetOrdering_surjective_on (W : Finset V) (n : ℕ)
     (hW : W.card = n) :
     ∀ v ∈ W, ∃ i : Fin n, finsetOrdering W n hW i = v := by
+  classical
   intro v hv
   let x : W := ⟨v, hv⟩
   let j : Fin W.card := Finset.equivFin W x
@@ -121,6 +127,7 @@ def SwitchingOrderings.state {Wminus Wplus : Finset V} {nW : ℕ}
   ((Finset.univ.filter fun j : Fin nW ↦ i ≤ j).image O.minus) ∪
     ((Finset.univ.filter fun j : Fin nW ↦ j < i).image O.plus)
 
+omit [Fintype V] in
 lemma SwitchingOrderings.state_zero {Wminus Wplus : Finset V} {nW : ℕ}
     (O : SwitchingOrderings Wminus Wplus nW) : O.state 0 = Wminus := by
   ext v
@@ -135,6 +142,7 @@ lemma SwitchingOrderings.state_zero {Wminus Wplus : Finset V} {nW : ℕ}
     apply Finset.mem_union_left
     exact Finset.mem_image.mpr ⟨i, by simp, rfl⟩
 
+omit [Fintype V] in
 lemma SwitchingOrderings.state_last {Wminus Wplus : Finset V} {nW : ℕ}
     (O : SwitchingOrderings Wminus Wplus nW) : O.state nW = Wplus := by
   ext v
@@ -152,6 +160,7 @@ lemma SwitchingOrderings.state_last {Wminus Wplus : Finset V} {nW : ℕ}
     apply Finset.mem_union_right
     exact Finset.mem_image.mpr ⟨i, by simp, rfl⟩
 
+omit [Fintype V] in
 lemma SwitchingOrderings.state_subset_union
     {Wminus Wplus : Finset V} {nW : ℕ}
     (O : SwitchingOrderings Wminus Wplus nW) (i : ℕ) :
@@ -163,6 +172,7 @@ lemma SwitchingOrderings.state_subset_union
   · obtain ⟨j, _hj, rfl⟩ := Finset.mem_image.mp hv
     exact Finset.mem_union_right _ (O.plus_mem j)
 
+omit [Fintype V] in
 lemma SwitchingOrderings.state_card
     {Wminus Wplus : Finset V} {nW : ℕ}
     (O : SwitchingOrderings Wminus Wplus nW)
@@ -195,12 +205,14 @@ lemma SwitchingOrderings.state_card
   rw [← Finset.card_union_of_disjoint hAB, hUnion]
   simp
 
-lemma SwitchingOrderings.disjoint_state_of_disjoint_union
+omit [Fintype V] in
+lemma SwitchingOrderings.disjoint_state_of_disjoint_union [Finite V]
     {Wminus Wplus U : Finset V} {nW : ℕ}
     (O : SwitchingOrderings Wminus Wplus nW)
     (h : Disjoint (Wminus ∪ Wplus) U) (i : ℕ) :
-    Disjoint (O.state i) U :=
-  Finset.disjoint_of_subset_left (O.state_subset_union i) h
+    Disjoint (O.state i) U := by
+  let : Fintype V := Fintype.ofFinite V
+  exact Finset.disjoint_of_subset_left (O.state_subset_union i) h
 
 /-- A structural witness always supplies the two ordered switching cells. -/
 def orderingsOfStructuralWitness {G : SimpleGraph V}
@@ -703,7 +715,7 @@ the exact rounded order used by `OuterAssembly`, including the dependence of
 theorem nonempty_roundedAssemblyInput_of_pointwiseWindows
     {n K : ℕ} {cW c c₀ delta₀ deltaZ b d : ℝ}
     {spectra : ℕ → Finset ℕ}
-    (B : Bounds c c₀ delta₀ deltaZ K n) (hK : 0 < K)
+    (B : Bounds c c₀ delta₀ deltaZ K n) (_hK : 0 < K)
     (hb : 0 ≤ b) (hd : 0 ≤ d)
     (hpoint : ∀ ell ∈ outerParameterInterval c n,
       Nonempty (PointwiseWindows n K cW c₀ delta₀ b d spectra ell)) :

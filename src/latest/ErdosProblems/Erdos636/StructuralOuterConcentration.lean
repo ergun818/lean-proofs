@@ -37,7 +37,7 @@ state.  Consequently the Lipschitz constant is `2 * K`, independent of the
 number of vertices.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 open scoped BigOperators
 
 namespace Erdos636
@@ -59,7 +59,7 @@ variable {V : Type u} [Fintype V] [DecidableEq V]
 /-- The two permutation lengths, written as a dependent `Fin 2` tuple. -/
 abbrev sideCard {G : SimpleGraph V} {scale nW ell K : ℕ}
     {alpha aDisc aDiv b : ℝ}
-    (S : StructuralWitness G scale nW ell K alpha aDisc aDiv b) :
+    (_S : StructuralWitness G scale nW ell K alpha aDisc aDiv b) :
     Fin 2 → ℕ := fun _ ↦ nW
 
 /-- A shared pair of uniform permutations of the two switching cells. -/
@@ -84,13 +84,13 @@ def sampledOrderings {G : SimpleGraph V} {scale nW ell K : ℕ}
     intro i j hij
     apply Fin.rev_injective
     apply (sigma 0).injective
-    apply Fin.cast_injective
+    apply Fin.cast_injective S.card_Wminus.symm
     apply (Finset.equivFin S.Wminus).symm.injective
     exact Subtype.ext hij
   plus_injective := by
     intro i j hij
     apply (sigma 1).injective
-    apply Fin.cast_injective
+    apply Fin.cast_injective S.card_Wplus.symm
     apply (Finset.equivFin S.Wplus).symm.injective
     exact Subtype.ext hij
   minus_mem i := ((Finset.equivFin S.Wminus).symm _).2
@@ -123,7 +123,7 @@ prefix. -/
 def sampledMinusPrefix {G : SimpleGraph V} {scale nW ell K : ℕ}
     {alpha aDisc aDiv b : ℝ}
     (S : StructuralWitness G scale nW ell K alpha aDisc aDiv b)
-    (sigma : OrderingSampler S) (i : ℕ) (hi : i ≤ nW) : Finset V :=
+    (sigma : OrderingSampler S) (i : ℕ) (_hi : i ≤ nW) : Finset V :=
   cellPrefix S.Wminus nW S.card_Wminus (sigma 0) (nW - i)
     (Nat.sub_le nW i)
 
@@ -210,6 +210,7 @@ lemma sampledOrderings_state_eq_prefix_union {G : SimpleGraph V}
 
 /-! ## Degree perturbation under a two-vertex exchange -/
 
+omit [Fintype V] in
 lemma degreeInto_le_add_card_mul_sdiff (G : SimpleGraph V)
     (U T x : Finset V) :
     degreeInto G U x ≤ degreeInto G T x + x.card * (U \ T).card := by
@@ -237,12 +238,14 @@ lemma degreeInto_le_add_card_mul_sdiff (G : SimpleGraph V)
       simp only [Finset.sum_add_distrib]
       simp
 
+omit [Fintype V] in
 /-- If each directional set difference has at most `c` vertices, changing
 the target set changes the multiset degree by at most `c * |x|`. -/
-lemma abs_degreeInto_sub_le_of_sdiff_card_le (G : SimpleGraph V)
+lemma abs_degreeInto_sub_le_of_sdiff_card_le [Finite V] (G : SimpleGraph V)
     (U T x : Finset V) (c : ℕ)
     (hUT : (U \ T).card ≤ c) (hTU : (T \ U).card ≤ c) :
     |(degreeInto G U x : ℝ) - degreeInto G T x| ≤ c * x.card := by
+  let : Fintype V := Fintype.ofFinite V
   have hforward := degreeInto_le_add_card_mul_sdiff G U T x
   have hback := degreeInto_le_add_card_mul_sdiff G T U x
   have hmulForward : x.card * (U \ T).card ≤ x.card * c :=
@@ -262,6 +265,7 @@ lemma abs_degreeInto_sub_le_of_sdiff_card_le (G : SimpleGraph V)
   rw [abs_le]
   constructor <;> linarith
 
+omit [Fintype V] in
 lemma map_swap_sdiff_subset_pair (U : Finset V) (p q : V) :
     U.map (Equiv.swap p q).toEmbedding \ U ⊆ {p, q} := by
   intro v hv
@@ -270,11 +274,11 @@ lemma map_swap_sdiff_subset_pair (U : Finset V) (p q : V) :
   by_cases hwp : w = p
   · subst w
     simp only [Finset.mem_insert, Finset.mem_singleton] at hwv ⊢
-    exact Or.inr hwv.symm
+    exact Or.inr (by simpa using hwv.symm)
   by_cases hwq : w = q
   · subst w
     simp only [Finset.mem_insert, Finset.mem_singleton] at hwv ⊢
-    exact Or.inl hwv.symm
+    exact Or.inl (by simpa using hwv.symm)
   have hfix : Equiv.swap p q w = w := Equiv.swap_apply_of_ne_of_ne hwp hwq
   apply (hvU ?_).elim
   rw [← hwv]
@@ -282,6 +286,7 @@ lemma map_swap_sdiff_subset_pair (U : Finset V) (p q : V) :
   rw [hfix]
   exact hwU
 
+omit [Fintype V] in
 lemma sdiff_map_swap_subset_pair (U : Finset V) (p q : V) :
     U \ U.map (Equiv.swap p q).toEmbedding ⊆ {p, q} := by
   intro v hv
@@ -294,33 +299,40 @@ lemma sdiff_map_swap_subset_pair (U : Finset V) (p q : V) :
   apply (hvMap ?_).elim
   exact Finset.mem_map.mpr ⟨v, hvU, hfix⟩
 
-lemma map_swap_sdiff_card_le_two (U : Finset V) (p q : V) :
+omit [Fintype V] in
+lemma map_swap_sdiff_card_le_two [Finite V] (U : Finset V) (p q : V) :
     (U.map (Equiv.swap p q).toEmbedding \ U).card ≤ 2 := by
+  let : Fintype V := Fintype.ofFinite V
   calc
     _ ≤ ({p, q} : Finset V).card :=
       Finset.card_le_card (map_swap_sdiff_subset_pair U p q)
     _ ≤ ({q} : Finset V).card + 1 := Finset.card_insert_le p {q}
     _ = 2 := by simp
 
-lemma sdiff_map_swap_card_le_two (U : Finset V) (p q : V) :
+omit [Fintype V] in
+lemma sdiff_map_swap_card_le_two [Finite V] (U : Finset V) (p q : V) :
     (U \ U.map (Equiv.swap p q).toEmbedding).card ≤ 2 := by
+  let : Fintype V := Fintype.ofFinite V
   calc
     _ ≤ ({p, q} : Finset V).card :=
       Finset.card_le_card (sdiff_map_swap_subset_pair U p q)
     _ ≤ ({q} : Finset V).card + 1 := Finset.card_insert_le p {q}
     _ = 2 := by simp
 
+omit [Fintype V] in
 /-- A transposition of two ambient vertices changes the degree of an
 `x`-cell by at most `2|x|`. -/
-lemma abs_degreeInto_map_swap_sub_le (G : SimpleGraph V)
+lemma abs_degreeInto_map_swap_sub_le [Finite V] (G : SimpleGraph V)
     (U x : Finset V) (p q : V) :
     |(degreeInto G (U.map (Equiv.swap p q).toEmbedding) x : ℝ) -
         degreeInto G U x| ≤ 2 * x.card := by
+  let : Fintype V := Fintype.ofFinite V
   exact abs_degreeInto_sub_le_of_sdiff_card_le G
     (U.map (Equiv.swap p q).toEmbedding) U x 2
       (map_swap_sdiff_card_le_two U p q)
       (sdiff_map_swap_card_le_two U p q)
 
+omit [Fintype V] in
 lemma map_swap_eq_self_of_not_mem (U : Finset V) (p q : V)
     (hp : p ∉ U) (hq : q ∉ U) :
     U.map (Equiv.swap p q).toEmbedding = U := by
@@ -370,7 +382,7 @@ lemma minusVertex_injective {G : SimpleGraph V} {scale nW ell K : ℕ}
     (S : StructuralWitness G scale nW ell K alpha aDisc aDiv b) :
     Function.Injective (minusVertex S) := by
   intro p q hpq
-  apply Fin.cast_injective
+  apply Fin.cast_injective S.card_Wminus.symm
   apply (Finset.equivFin S.Wminus).symm.injective
   exact Subtype.ext hpq
 
@@ -379,7 +391,7 @@ lemma plusVertex_injective {G : SimpleGraph V} {scale nW ell K : ℕ}
     (S : StructuralWitness G scale nW ell K alpha aDisc aDiv b) :
     Function.Injective (plusVertex S) := by
   intro p q hpq
-  apply Fin.cast_injective
+  apply Fin.cast_injective S.card_Wplus.symm
   apply (Finset.equivFin S.Wplus).symm.injective
   exact Subtype.ext hpq
 
@@ -482,8 +494,9 @@ lemma sampledOrderings_state_left_swap {G : SimpleGraph V}
 
 /-! ## Exact hypergeometric centers -/
 
+omit [DecidableEq V] [Fintype V] in
 /-- Exact mean of the multiset degree into a permutation prefix. -/
-lemma uniformExpectation_degreeInto_prefix
+lemma uniformExpectation_degreeInto_prefix [Finite V]
     (G : SimpleGraph V) (W x : Finset V) (r d : ℕ)
     (hr : r ≤ W.card) (hW : W.Nonempty)
     (hd : degreeInto G W x = d) :
@@ -493,6 +506,8 @@ lemma uniformExpectation_degreeInto_prefix
             (signedSlicePositiveSupport W r 0 (by simpa using hr)
               (Finset.equivFin W).symm sigma) x : ℝ)) =
       (r : ℝ) / W.card * d := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let E := signedSliceZeroEquiv W r
   have hdecode := uniformExpectation_signedSliceDecode W r 0
     (by simpa using hr) (Finset.equivFin W).symm
@@ -535,8 +550,9 @@ lemma uniformExpectation_degreeInto_prefix
     _ = (r : ℝ) / W.card * degreeInto G W x := hslice'
     _ = (r : ℝ) / W.card * d := by rw [hd]
 
+omit [Fintype V] in
 /-- Cardinality-transported version of the exact prefix mean. -/
-lemma uniformExpectation_degreeInto_cellPrefix
+lemma uniformExpectation_degreeInto_cellPrefix [Finite V]
     (G : SimpleGraph V) (W x : Finset V) (n r d : ℕ)
     (hWcard : W.card = n) (hr : r ≤ n) (hW : W.Nonempty)
     (hd : degreeInto G W x = d) :
@@ -544,6 +560,7 @@ lemma uniformExpectation_degreeInto_cellPrefix
         (fun sigma : Equiv.Perm (Fin n) ↦
           (degreeInto G (cellPrefix W n hWcard sigma r hr) x : ℝ)) =
       (r : ℝ) / n * d := by
+  let : Fintype V := Fintype.ofFinite V
   subst n
   have hmean := uniformExpectation_degreeInto_prefix G W x r d hr hW hd
   convert hmean using 1

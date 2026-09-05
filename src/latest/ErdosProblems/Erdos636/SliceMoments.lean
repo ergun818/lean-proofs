@@ -33,7 +33,6 @@ open scoped BigOperators
 namespace Erdos636
 namespace SliceMoments
 
-open Classical
 open Erdos88
 open Erdos88.BooleanSlices
 
@@ -43,14 +42,16 @@ section OneBucket
 
 variable {V : Type u} [Fintype V] [DecidableEq V]
 
+omit [DecidableEq V] [Fintype V] in
 /-- The subtype of fixed-cardinality subsets is inhabited precisely in the
 range in which it is used as a finite uniform probability space. -/
 lemma nonempty_booleanSlicePoint (I : Finset V) (ell : ℕ)
     (hell : ell ≤ I.card) : Nonempty (BooleanSlicePoint I ell) := by
+  classical
   obtain ⟨S, hS⟩ := booleanSlice_nonempty_iff.mpr hell
   exact ⟨⟨S, hS⟩⟩
 
-omit [Fintype V] in
+omit [DecidableEq V] [Fintype V] in
 /-- Double-counting form of the first moment on a fixed-cardinality layer.
 Every coordinate of `I` belongs to exactly
 `choose (|I| - 1) (ell - 1)` members of `I.powersetCard ell`. -/
@@ -85,12 +86,14 @@ lemma sum_sum_powersetCard (I : Finset V) (ell : ℕ) (a : V → ℝ)
     _ = (I.card - 1).choose (ell - 1) * ∑ i ∈ I, a i := by
       rw [Finset.mul_sum]
 
+omit [DecidableEq V] [Fintype V] in
 /-- Exact mean of a linear statistic on a uniform `ell`-subset of `I`. -/
-theorem expectation_sum_booleanSlicePoint (I : Finset V) (ell : ℕ)
+theorem expectation_sum_booleanSlicePoint [Finite V] (I : Finset V) (ell : ℕ)
     (a : V → ℝ) (hell : ell ≤ I.card) (hI : I.Nonempty) :
     (𝔼 S : BooleanSlicePoint I ell, ∑ i ∈ S.1, a i) =
       (ell : ℝ) / I.card * ∑ i ∈ I, a i := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   by_cases hellZero : ell = 0
   · subst ell
     simp only [Nat.cast_zero, zero_div, zero_mul]
@@ -132,13 +135,15 @@ theorem expectation_sum_booleanSlicePoint (I : Finset V) (ell : ℕ)
       rw [hchooseReal]
     _ = (∑ i ∈ I, a i) * (I.card.choose ell : ℝ) * ell := by ring
 
+omit [Fintype V] in
 /-- A single coordinate of a uniform fixed-cardinality subset has inclusion
 probability `ell / |I|`. -/
-theorem expectation_indicator_booleanSlicePoint (I : Finset V) (ell : ℕ)
+theorem expectation_indicator_booleanSlicePoint [Finite V] (I : Finset V) (ell : ℕ)
     (i : V) (hell : ell ≤ I.card) (hI : I.Nonempty) :
     (𝔼 S : BooleanSlicePoint I ell, if i ∈ S.1 then (1 : ℝ) else 0) =
       if i ∈ I then (ell : ℝ) / I.card else 0 := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   by_cases hi : i ∈ I
   · have h := expectation_sum_booleanSlicePoint I ell
         (fun j ↦ if j = i then (1 : ℝ) else 0) hell hI
@@ -148,12 +153,15 @@ theorem expectation_indicator_booleanSlicePoint (I : Finset V) (ell : ℕ)
       exact hi ((mem_booleanSlice.mp S.2).1 hiS)
     simp [hnever, hi]
 
+omit [DecidableEq V] [Fintype V] in
 /-- Expected size of the part of a uniform slice satisfying a predicate. -/
-theorem expectation_card_filter_booleanSlicePoint (I : Finset V) (ell : ℕ)
+theorem expectation_card_filter_booleanSlicePoint [Finite V] (I : Finset V) (ell : ℕ)
     (p : V → Prop) [DecidablePred p]
     (hell : ell ≤ I.card) (hI : I.Nonempty) :
     (𝔼 S : BooleanSlicePoint I ell, ((S.1.filter p).card : ℝ)) =
       (ell : ℝ) / I.card * ((I.filter p).card : ℝ) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have h := expectation_sum_booleanSlicePoint I ell
     (fun i ↦ if p i then (1 : ℝ) else 0) hell hI
   calc
@@ -174,10 +182,11 @@ section TwoBuckets
 
 variable {V : Type u} [Fintype V] [DecidableEq V]
 
+omit [DecidableEq V] [Fintype V] in
 /-- Exact bilinear first moment for two independently sampled uniform
 slices.  No disjointness assumption on the buckets is needed for the
 identity; applications generally use disjoint buckets. -/
-theorem expectation_sum_two_booleanSlicePoints
+theorem expectation_sum_two_booleanSlicePoints [Finite V]
     (I J : Finset V) (r s : ℕ) (a : V → V → ℝ)
     (hr : r ≤ I.card) (hs : s ≤ J.card)
     (hI : I.Nonempty) (hJ : J.Nonempty) :
@@ -187,6 +196,7 @@ theorem expectation_sum_two_booleanSlicePoints
       ((r : ℝ) / I.card) * ((s : ℝ) / J.card) *
         ∑ x ∈ I, ∑ y ∈ J, a x y := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   have hinner (S : BooleanSlicePoint I r) :
       (𝔼 T : BooleanSlicePoint J s,
           ∑ x ∈ S.1, ∑ y ∈ T.1, a x y) =
@@ -226,6 +236,7 @@ theorem expectation_sum_two_booleanSlicePoints
         ∑ x ∈ I, ∑ y ∈ J, a x y := by ring
 
 omit [Fintype V] [DecidableEq V] in
+open Classical in
 /-- An oriented graph crossing count is a double sum of adjacency
 indicators.  This is valid even when the two vertex sets overlap. -/
 lemma card_interedges_eq_sum_indicator (G : SimpleGraph V) (S T : Finset V) :
@@ -242,26 +253,30 @@ lemma card_interedges_eq_sum_indicator (G : SimpleGraph V) (S T : Finset V) :
       Finset.sum_product' S T
         (fun x y ↦ if G.Adj x y then (1 : ℝ) else 0)
 
+omit [DecidableEq V] [Fintype V] in
 /-- Degree-into-a-slice specialization of the one-bucket first moment. -/
-theorem expectation_card_neighborsIn (G : SimpleGraph V) (v : V)
+theorem expectation_card_neighborsIn [Finite V] (G : SimpleGraph V) (v : V)
     (I : Finset V) (ell : ℕ) (hell : ell ≤ I.card) (hI : I.Nonempty) :
     (𝔼 S : BooleanSlicePoint I ell,
         ((Erdos88.neighborsIn G v S.1).card : ℝ)) =
       (ell : ℝ) / I.card * ((Erdos88.neighborsIn G v I).card : ℝ) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   simpa only [Erdos88.neighborsIn] using
     expectation_card_filter_booleanSlicePoint I ell (fun w ↦ G.Adj v w) hell hI
 
+omit [DecidableEq V] [Fintype V] in
 /-- The expected total degree of a fixed vertex set into a uniform slice.
 This is the exact finite identity used when a Kwan--Sudakov matching edge
 is tested against the random augmentation set. -/
-theorem expectation_sum_card_neighborsIn (G : SimpleGraph V) (X I : Finset V)
+theorem expectation_sum_card_neighborsIn [Finite V] (G : SimpleGraph V) (X I : Finset V)
     (ell : ℕ) (hell : ell ≤ I.card) (hI : I.Nonempty) :
     (𝔼 S : BooleanSlicePoint I ell,
         ∑ v ∈ X, ((Erdos88.neighborsIn G v S.1).card : ℝ)) =
       (ell : ℝ) / I.card *
         ∑ v ∈ X, ((Erdos88.neighborsIn G v I).card : ℝ) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let a : V → ℝ := fun w ↦
     ∑ v ∈ X, if G.Adj v w then (1 : ℝ) else 0
   have hrewrite (S : Finset V) :
@@ -291,9 +306,11 @@ theorem expectation_sum_card_neighborsIn (G : SimpleGraph V) (X I : Finset V)
         ∑ v ∈ X, ((Erdos88.neighborsIn G v I).card : ℝ) := by
       rw [hrewrite I]
 
+omit [DecidableEq V] [Fintype V] in
+open Classical in
 /-- Exact expected number of oriented crossing edges between two independent
 uniform fixed-cardinality subsets. -/
-theorem expectation_card_interedges (G : SimpleGraph V)
+theorem expectation_card_interedges [Finite V] (G : SimpleGraph V)
     (I J : Finset V) (r s : ℕ)
     (hr : r ≤ I.card) (hs : s ≤ J.card)
     (hI : I.Nonempty) (hJ : J.Nonempty) :
@@ -303,6 +320,7 @@ theorem expectation_card_interedges (G : SimpleGraph V)
       ((r : ℝ) / I.card) * ((s : ℝ) / J.card) *
         (G.interedges I J).card := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   simpa only [card_interedges_eq_sum_indicator] using
     expectation_sum_two_booleanSlicePoints I J r s
       (fun x y ↦ if G.Adj x y then (1 : ℝ) else 0)

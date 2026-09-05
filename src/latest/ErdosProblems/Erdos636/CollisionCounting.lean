@@ -33,25 +33,29 @@ open scoped BigOperators
 namespace Erdos636
 namespace CollisionCounting
 
-open Classical Finset
+open Finset
 open Erdos88.Concentration
 
 variable {Omega : Type*} [Fintype Omega] [Nonempty Omega]
 
+open Classical in
 /-- The number of events in a finite family which occur at `omega`. -/
 noncomputable def eventCount {iota : Type*} (I : Finset iota)
     (bad : iota → Omega → Prop) (omega : Omega) : Nat :=
   (I.filter fun i ↦ bad i omega).card
 
+omit [Fintype Omega] [Nonempty Omega] in
 @[simp] lemma eventCount_empty {iota : Type*} (bad : iota → Omega → Prop)
     (omega : Omega) : eventCount ∅ bad omega = 0 := by
   simp [eventCount]
 
+omit [Fintype Omega] [Nonempty Omega] in
 lemma eventCount_nonneg {iota : Type*} (I : Finset iota)
     (bad : iota → Omega → Prop) (omega : Omega) :
     0 ≤ (eventCount I bad omega : Real) := by
   positivity
 
+omit [Nonempty Omega] in
 /-- The normalized expected number of occurring events is the sum of their
 individual normalized probabilities. -/
 lemma uniformExpectation_eventCount {iota : Type*} (I : Finset iota)
@@ -73,6 +77,7 @@ lemma uniformExpectation_eventCount {iota : Type*} (I : Finset iota)
     _ = ∑ i ∈ I, ((Finset.univ.filter (bad i)).card : Real) := by
       simp
 
+omit [Nonempty Omega] in
 /-- First-moment bound for a finite family of events. -/
 lemma uniformExpectation_eventCount_le {iota : Type*} (I : Finset iota)
     (bad : iota → Omega → Prop) (p : Real)
@@ -183,12 +188,14 @@ def collisionEdges (I : Finset iota) (X : iota → Omega → kappa)
     (omega : Omega) : Finset (iota × iota) :=
   (possibleEdges I).filter fun ij ↦ X ij.1 omega = X ij.2 omega
 
+omit [Fintype Omega] [Nonempty Omega] in
 @[simp] lemma mem_collisionEdges {I : Finset iota}
     {X : iota → Omega → kappa} {omega : Omega} {i j : iota} :
     (i, j) ∈ collisionEdges I X omega ↔
       i ∈ I ∧ j ∈ I ∧ i ≠ j ∧ i < j ∧ X i omega = X j omega := by
   simp [collisionEdges, possibleEdges, and_assoc]
 
+omit [Fintype Omega] [Nonempty Omega] in
 lemma card_collisionEdges_eq_eventCount (I : Finset iota)
     (X : iota → Omega → kappa) (omega : Omega) :
     (collisionEdges I X omega).card =
@@ -196,6 +203,7 @@ lemma card_collisionEdges_eq_eventCount (I : Finset iota)
         (fun ij omega ↦ X ij.1 omega = X ij.2 omega) omega := by
   simp [collisionEdges, eventCount]
 
+omit [Nonempty Omega] in
 /-- Expected-edge bound for the collision graph. -/
 lemma uniformExpectation_card_collisionEdges_le (I : Finset iota)
     (X : iota → Omega → kappa) (p : Real)

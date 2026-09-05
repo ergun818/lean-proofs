@@ -39,7 +39,7 @@ coefficient bound: an absolute selected-time centre estimate with constant
 coefficients would be false for a state containing linearly many vertices.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 open scoped BigOperators
 
 namespace Erdos636
@@ -85,6 +85,7 @@ def rawSwitchError (G : SimpleGraph V) (U₀ W₀ W₁ D : Finset V)
     (d : ℝ) / U₀.card *
       ((degreeInto G W₁ U₀ : ℝ) - degreeInto G W₀ U₀)
 
+omit [Fintype V] in
 /-- Removing and inserting at most one vertex makes every crossing
 coefficient at most one in absolute value. -/
 lemma abs_crossingIncrementCoeff_le_one_of_exchange
@@ -122,20 +123,24 @@ lemma abs_crossingIncrementCoeff_le_one_of_exchange
   rw [crossingIncrementCoeff, abs_le]
   constructor <;> dsimp only [N₀, N₁] at hcard₀' hcard₁' ⊢ <;> linarith
 
+omit [DecidableEq V] [Fintype V] in
 /-- The coefficient sum over a set is exactly the corresponding change in
 the graph-theoretic incidence count. -/
 lemma sum_crossingIncrementCoeff (G : SimpleGraph V) (W₀ W₁ D : Finset V) :
     (∑ u ∈ D, crossingIncrementCoeff G W₀ W₁ u) =
       (degreeInto G W₁ D : ℝ) - degreeInto G W₀ D := by
+  classical
   simp only [crossingIncrementCoeff, degreeInto, Nat.cast_sum,
     Finset.sum_sub_distrib]
 
+omit [Fintype V] in
 /-- Crossing the undeleted reservoir is crossing the full reservoir minus
 crossing the deletion. -/
-lemma crossEdges_sdiff_eq_sub (G : SimpleGraph V)
+lemma crossEdges_sdiff_eq_sub [Finite V] (G : SimpleGraph V)
     (U₀ D W : Finset V) (hDU : D ⊆ U₀) :
     (crossEdges G (U₀ \ D) W : ℝ) =
       crossEdges G U₀ W - crossEdges G D W := by
+  let : Fintype V := Fintype.ofFinite V
   have hnat := degreeInto_sdiff_add G W hDU
   simp only [crossEdges] at hnat ⊢
   have hreal : (degreeInto G W (U₀ \ D) : ℝ) + degreeInto G W D =
@@ -152,6 +157,7 @@ lemma canonicalAugmentationCenter_eq
       (Erdos88.inducedEdges G (U₀ \ D) : ℝ) +
       Erdos88.inducedEdges G W + crossEdges G U₀ W - crossEdges G D W +
       nZ * (wCenter + d₀ - outerCenter / 2) := by
+  classical
   have hdisj : Disjoint W (U₀ \ D) := hWU.mono_right Finset.sdiff_subset
   have hedge := inducedEdges_union_of_disjoint G hdisj
   have hinter : (G.interedges W (U₀ \ D)).card =
@@ -262,12 +268,13 @@ private lemma sum_indicator_pair {I : Type*} [Fintype I] [DecidableEq I]
 
 /-- Exact unnormalised second moment for a coefficient population of sum
 zero on a general fixed-cardinality slice. -/
-private lemma sum_sliceSum_sq_exact {I : Type*} [Fintype I] [DecidableEq I]
+private lemma sum_sliceSum_sq_exact {I : Type*} [Fintype I]
     {s : ℕ} (hs : 2 ≤ s) (a : I → ℝ) (hsum : ∑ i, a i = 0) :
     (∑ S : HalfSample.Slice I s, (HalfSample.sliceSum a S) ^ 2) =
       (((Fintype.card I - 1).choose (s - 1) : ℝ) -
         ((Fintype.card I - 2).choose (s - 2) : ℝ)) *
           ∑ i, (a i) ^ 2 := by
+  classical
   have hpair (i j : I) : ({i, j} : Finset I).card ≤ s := by
     rcases Finset.card_pair_eq_one_or_two (a := i) (b := j) with h | h <;> omega
   have hcount (i j : I) :
@@ -385,8 +392,9 @@ private lemma sum_sliceSum_sq_exact {I : Type*} [Fintype I] [DecidableEq I]
       ring
 
 /-- The fixed-cardinality slice exists throughout its natural range. -/
-private lemma nonempty_slice {I : Type*} [Fintype I] [DecidableEq I]
+private lemma nonempty_slice {I : Type*} [Fintype I]
     {s : ℕ} (hs : s ≤ Fintype.card I) : Nonempty (HalfSample.Slice I s) := by
+  classical
   have hs' : s ≤ (Finset.univ : Finset I).card := by simpa using hs
   obtain ⟨S, _hS, hcard⟩ := Finset.exists_subset_card_eq hs'
   exact ⟨⟨S, hcard⟩⟩
@@ -394,12 +402,13 @@ private lemma nonempty_slice {I : Type*} [Fintype I] [DecidableEq I]
 /-- A zero-sum coefficient population bounded by `K` has fixed-slice second
 moment at most `s K²`.  This is valid for every sampling density. -/
 theorem uniformExpectation_sliceSum_sq_le
-    {I : Type*} [Fintype I] [DecidableEq I] {s : ℕ}
+    {I : Type*} [Fintype I] {s : ℕ}
     (hs : s ≤ Fintype.card I) (a : I → ℝ) (K : ℝ) (hK : 0 ≤ K)
     (ha : ∀ i, |a i| ≤ K) (hsum : ∑ i, a i = 0) :
     letI : Nonempty (HalfSample.Slice I s) := nonempty_slice hs
     uniformExpectation (fun S : HalfSample.Slice I s ↦
       (HalfSample.sliceSum a S) ^ 2) ≤ (s : ℝ) * K ^ 2 := by
+  classical
   let : Nonempty (HalfSample.Slice I s) := nonempty_slice hs
   by_cases hs0 : s = 0
   · subst s
@@ -604,13 +613,16 @@ theorem uniformExpectation_centered_sliceSum_abs_le
 
 /-! ## One raw switch and its summed variation -/
 
+omit [DecidableEq V] [Fintype V] in
 /-- Exact coefficient representation of the raw switch error. -/
-lemma rawSwitchError_eq_sum_coeff
+lemma rawSwitchError_eq_sum_coeff [Finite V]
     (G : SimpleGraph V) (U₀ W₀ W₁ D : Finset V) (d : ℕ) :
     rawSwitchError G U₀ W₀ W₁ D d =
       (∑ u ∈ D, crossingIncrementCoeff G W₀ W₁ u) -
         (d : ℝ) / U₀.card *
           ∑ u ∈ U₀, crossingIncrementCoeff G W₀ W₁ u := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [sum_crossingIncrementCoeff, sum_crossingIncrementCoeff]
   rfl
 

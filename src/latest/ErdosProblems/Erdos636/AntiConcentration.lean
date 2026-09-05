@@ -67,7 +67,7 @@ lemma charFun_uniformLaw (Ω : Type*) [Fintype Ω] [Nonempty Ω]
   · rw [PMF.integral_eq_sum]
     simp only [PMF.uniformOfFintype_apply, ENNReal.toReal_inv, ENNReal.toReal_natCast,
       finCharFun, finExpectation]
-    simp only [smul_eq_mul, div_eq_mul_inv]
+    simp only [div_eq_mul_inv]
     rw [mul_comm (∑ ω, Complex.exp (((t * X ω : ℝ) : ℂ) * Complex.I))]
     rw [Finset.mul_sum]
     apply Finset.sum_congr rfl
@@ -135,7 +135,7 @@ lemma intervalIntegral_exp_neg_mul_sq_le {b L : ℝ} (hb : 0 < b)
 /-- Bounded gaps on disjoint pairs force Gaussian decay of the slice
 characteristic function on a low-frequency interval. -/
 lemma norm_sliceCharFun_le_gaussian_of_pairs
-    {K : Type v} {I : Type u} [Fintype K] [DecidableEq K]
+    {K : Type v} {I : Type u} [Fintype K]
     [Fintype I] [DecidableEq I]
     (p : PairEmbedding K I) (s : ℕ) [Nonempty (BoolSlice I s)]
     (a : I → ℝ) (c B t : ℝ)
@@ -149,6 +149,7 @@ lemma norm_sliceCharFun_le_gaussian_of_pairs
     ‖sliceCharFun s a t‖ ≤
       Real.exp 1 * Real.exp (-(c ^ 3 / 256) * Fintype.card K *
         (|t| / (2 * Real.pi)) ^ 2) := by
+  classical
   let delta : ℝ := |t| / (2 * Real.pi)
   let q : K → ℝ := fun k ↦
     t * (a (p (k, false)) - a (p (k, true))) / (2 * Real.pi)
@@ -178,7 +179,7 @@ lemma norm_sliceCharFun_le_gaussian_of_pairs
         mul_le_mul ht (hdiffUpper k) (abs_nonneg _) (by positivity)
       have hmul' :
           |t| * |a (p (k, false)) - a (p (k, true))| ≤ 1 / 4 := by
-        convert hmul using 1 <;> field_simp [ne_of_gt hB0]
+        convert hmul using 1 ; field_simp [ne_of_gt hB0]
       nlinarith [Real.pi_gt_three]
     · dsimp only [q]
       push_cast
@@ -193,7 +194,7 @@ lemma norm_sliceCharFun_le_gaussian_of_pairs
 /-- Esseen's inequality turns the Gaussian characteristic-function estimate
 into an explicit fixed-slice point-mass bound. -/
 lemma slice_point_probability_le_of_pairs
-    {K : Type v} {I : Type u} [Fintype K] [DecidableEq K]
+    {K : Type v} {I : Type u} [Fintype K]
     [Fintype I] [DecidableEq I]
     (p : PairEmbedding K I) (s : ℕ) [Nonempty (BoolSlice I s)]
     (a : I → ℝ) (c B : ℝ)
@@ -208,6 +209,7 @@ lemma slice_point_probability_le_of_pairs
       16 * B * Real.exp 1 *
         Real.sqrt (Real.pi /
           ((c ^ 3 / 256) * Fintype.card K / (4 * Real.pi ^ 2))) := by
+  classical
   let rate : ℝ := (c ^ 3 / 256) * Fintype.card K / (4 * Real.pi ^ 2)
   have hB0 : 0 < B := lt_of_lt_of_le zero_lt_one hB
   have heps : 0 < 8 * B := mul_pos (by norm_num) hB0
@@ -228,7 +230,7 @@ lemma slice_point_probability_le_of_pairs
     have ht' : |t| ≤ 1 / (4 * B) := by
       calc
         |t| ≤ 2 / (8 * B) := (abs_le).2 htIcc
-        _ = 1 / (4 * B) := by field_simp [ne_of_gt hB0] <;> ring
+        _ = 1 / (4 * B) := by field_simp [ne_of_gt hB0] ; ring
     change ‖charFun (uniformLaw (BoolSlice I s) (sliceLinear s a)) t‖ ≤
         Real.exp 1 * Real.exp (-rate * t ^ 2)
     rw [charFun_uniformLaw_sliceLinear]
@@ -290,7 +292,7 @@ lemma variancePointMassConstant_pos {c eta : ℝ} {B : ℕ}
 population mean.  This is the deterministic nondegeneracy step used before
 the integer matching argument. -/
 lemma centered_variance_ge_of_l1_of_small_sum
-    {I : Type u} [Fintype I] [DecidableEq I]
+    {I : Type u} [Fintype I]
     (a : I → ℝ) (mu theta : ℝ)
     (htheta : 0 ≤ theta) (hI : 0 < Fintype.card I)
     (hmean : (Fintype.card I : ℝ) * mu = ∑ i, a i)
@@ -315,7 +317,7 @@ lemma centered_variance_ge_of_l1_of_small_sum
         apply Finset.sum_le_sum
         intro i hi
         calc
-          |a i| = |mu + (a i - mu)| := by congr 1 <;> ring
+          |a i| = |mu + (a i - mu)| := by congr 1 ; ring
           _ ≤ |mu| + |a i - mu| := abs_add_le _ _
       _ = (Fintype.card I : ℝ) * |mu| + ∑ i, |a i - mu| := by
         simp [Finset.sum_add_distrib]
@@ -432,7 +434,6 @@ theorem slice_point_probability_le_of_integer_variance
           (Real.pi / ((c ^ 3 / 256) / (4 * Real.pi ^ 2))) *
             (1 / (M.card : ℝ)) := by
         field_simp [ne_of_gt hA, ne_of_gt hMposReal, ne_of_gt Real.pi_pos]
-        <;> ring
       _ ≤ (Real.pi / ((c ^ 3 / 256) / (4 * Real.pi ^ 2))) *
             ((8 * (B : ℝ) ^ 2) /
               (eta * (Fintype.card I : ℝ))) := hmul
@@ -441,7 +442,6 @@ theorem slice_point_probability_le_of_integer_variance
             (Fintype.card I : ℝ) := by
         field_simp [ne_of_gt hA, ne_of_gt heta, ne_of_gt hNpos,
           ne_of_gt Real.pi_pos]
-        <;> ring
   calc
     finProbability (BoolSlice I s)
         (fun omega ↦ sliceLinear s (fun i ↦ (a i : ℝ)) omega = x) ≤

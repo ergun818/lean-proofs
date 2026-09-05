@@ -27,7 +27,7 @@ from the already-green probability assembly so intermediate proof work here
 cannot invalidate that import boundary.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 
 namespace Erdos636
 namespace AugmentationExposureCrowd
@@ -43,6 +43,7 @@ open AugmentationExposureAssembly
 local instance cellDecidableEq : DecidableEq (Finset V) :=
   AugmentationGraphPartial.cellLinearOrder.toDecidableEq
 
+omit [DecidableEq V] in
 lemma graphSelectedState_succ
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -57,6 +58,7 @@ lemma graphSelectedState_succ
           degreeRadius nS gap badBudget selected i)
         (graphSelectedRestFamily G D1 source rawCandidates degreeCenter
           degreeRadius nS gap badBudget selected i) := by
+  classical
   have h :=
     (@AugmentationGraphFullState.SelectedSwitchingData.state_succ
       (Finset V) AugmentationGraphPartial.cellLinearOrder.toDecidableEq
@@ -66,8 +68,9 @@ lemma graphSelectedState_succ
       (fun x ↦ (degreeInto G D1 x : ℤ)) nS gap badBudget selected i)
   unfold graphSelectedState graphSelectedHighCell graphSelectedRestFamily
     graphSelectedLowCell
-  convert h using 1 <;> ext x <;> simp [graphSelectedState]
+  convert h using 1 ; ext x ; simp [graphSelectedState]
 
+omit [DecidableEq V] in
 lemma graphSelectedLowCell_mem_castSucc_state
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -79,6 +82,7 @@ lemma graphSelectedLowCell_mem_castSucc_state
         nS gap badBudget selected i ∈
       graphSelectedState G D1 source rawCandidates degreeCenter degreeRadius
         nS gap badBudget selected i.castSucc := by
+  classical
   let B := @AugmentationGraphFullState.SelectedSwitchingData.blocks
     (Finset V) AugmentationGraphPartial.cellLinearOrder.toDecidableEq
     source rawCandidates
@@ -97,6 +101,7 @@ lemma graphSelectedLowCell_mem_castSucc_state
   refine ⟨i, Finset.mem_univ _, ?_⟩
   simp [AugmentationGraphFullState.EnumeratedBlocks.value]
 
+omit [DecidableEq V] in
 lemma graphSelectedCastSucc_eq_insert_low_rest
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -111,13 +116,14 @@ lemma graphSelectedCastSucc_eq_insert_low_rest
           degreeRadius nS gap badBudget selected i)
         (graphSelectedRestFamily G D1 source rawCandidates degreeCenter
           degreeRadius nS gap badBudget selected i) := by
+  classical
   symm
   unfold graphSelectedRestFamily
   convert Finset.insert_erase
     (graphSelectedLowCell_mem_castSucc_state G D1 source rawCandidates
-      degreeCenter degreeRadius nS gap badBudget selected i) using 1 <;>
-    ext x <;> simp
+      degreeCenter degreeRadius nS gap badBudget selected i) using 1
 
+omit [DecidableEq V] in
 lemma graphSelectedReverseState_succ
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -132,6 +138,7 @@ lemma graphSelectedReverseState_succ
           degreeRadius nS gap badBudget selected i)
         (graphSelectedRestFamily G D1 source rawCandidates degreeCenter
           degreeRadius nS gap badBudget selected (Fin.rev ⟨i, hi⟩)) := by
+  classical
   unfold graphSelectedReverseState graphSelectedStepLow
   simp only [hi, Nat.lt_add_one_iff, ↓reduceDIte]
   have hi1 : i + 1 < nS + 1 := by omega
@@ -149,6 +156,7 @@ lemma graphSelectedReverseState_succ
     rawCandidates degreeCenter degreeRadius nS gap badBudget selected
       (Fin.rev ⟨i, hi⟩)
 
+omit [DecidableEq V] in
 lemma graphSelectedReverseState_current
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -163,6 +171,7 @@ lemma graphSelectedReverseState_current
           degreeRadius nS gap badBudget selected i)
         (graphSelectedRestFamily G D1 source rawCandidates degreeCenter
           degreeRadius nS gap badBudget selected (Fin.rev ⟨i, hi⟩)) := by
+  classical
   unfold graphSelectedReverseState graphSelectedStepHigh
   have hi' : i < nS + 1 := by omega
   simp only [hi, hi', ↓reduceDIte]
@@ -214,6 +223,7 @@ lemma graphSelectedReverseState_step_current
   simp only [hi, ↓reduceDIte]
   simp [AugmentationGraphFull.cellUnion, Finset.union_comm]
 
+omit [DecidableEq V] in
 lemma graphSelectedRestFamily_subset_source
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -223,11 +233,13 @@ lemma graphSelectedRestFamily_subset_source
     (i : Fin nS) :
     graphSelectedRestFamily G D1 source rawCandidates degreeCenter
         degreeRadius nS gap badBudget selected i ⊆ source := by
+  classical
   intro x hx
   apply graphSelectedState_subset_source G D1 source rawCandidates
     degreeCenter degreeRadius nS gap badBudget selected i.castSucc
   exact Finset.mem_of_mem_erase hx
 
+omit [DecidableEq V] in
 lemma graphSelectedLowCell_mem_source
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -237,11 +249,13 @@ lemma graphSelectedLowCell_mem_source
     (i : Fin nS) :
     graphSelectedLowCell G D1 source rawCandidates degreeCenter degreeRadius
       nS gap badBudget selected i ∈ source := by
+  classical
   exact graphSelectedState_subset_source G D1 source rawCandidates
     degreeCenter degreeRadius nS gap badBudget selected i.castSucc
       (graphSelectedLowCell_mem_castSucc_state G D1 source rawCandidates
         degreeCenter degreeRadius nS gap badBudget selected i)
 
+omit [DecidableEq V] in
 lemma graphSelectedHighCell_mem_source
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -251,12 +265,14 @@ lemma graphSelectedHighCell_mem_source
     (i : Fin nS) :
     graphSelectedHighCell G D1 source rawCandidates degreeCenter degreeRadius
       nS gap badBudget selected i ∈ source := by
+  classical
   apply graphSelectedState_subset_source G D1 source rawCandidates
     degreeCenter degreeRadius nS gap badBudget selected i.succ
   rw [graphSelectedState_succ G D1 source rawCandidates degreeCenter
     degreeRadius nS gap badBudget selected i]
   simp
 
+omit [DecidableEq V] in
 lemma graphSelectedState_degreeGood
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -267,6 +283,7 @@ lemma graphSelectedState_degreeGood
     (hx : x ∈ graphSelectedState G D1 source rawCandidates degreeCenter
       degreeRadius nS gap badBudget selected i) :
     AugmentationGraphPartial.DegreeGood G D1 x degreeCenter degreeRadius := by
+  classical
   have hxSelected :=
     @AugmentationGraphFullState.SelectedSwitchingData.state_subset_selected
       (Finset V) AugmentationGraphPartial.cellLinearOrder.toDecidableEq
@@ -287,6 +304,7 @@ lemma graphSelectedState_degreeGood
     simpa [AugmentationGraphFullState.goodPart] using hxGood
   exact hxPair.2
 
+omit [DecidableEq V] in
 lemma graphSelectedLowCell_degreeGood
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -297,11 +315,13 @@ lemma graphSelectedLowCell_degreeGood
     AugmentationGraphPartial.DegreeGood G D1
       (graphSelectedLowCell G D1 source rawCandidates degreeCenter degreeRadius
         nS gap badBudget selected i) degreeCenter degreeRadius := by
+  classical
   exact graphSelectedState_degreeGood G D1 source rawCandidates degreeCenter
     degreeRadius nS gap badBudget selected i.castSucc
       (graphSelectedLowCell_mem_castSucc_state G D1 source rawCandidates
         degreeCenter degreeRadius nS gap badBudget selected i)
 
+omit [DecidableEq V] in
 lemma graphSelectedHighCell_degreeGood
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -312,12 +332,14 @@ lemma graphSelectedHighCell_degreeGood
     AugmentationGraphPartial.DegreeGood G D1
       (graphSelectedHighCell G D1 source rawCandidates degreeCenter degreeRadius
         nS gap badBudget selected i) degreeCenter degreeRadius := by
+  classical
   apply graphSelectedState_degreeGood G D1 source rawCandidates degreeCenter
     degreeRadius nS gap badBudget selected i.succ
   rw [graphSelectedState_succ G D1 source rawCandidates degreeCenter
     degreeRadius nS gap badBudget selected i]
   simp
 
+omit [DecidableEq V] in
 lemma graphSelectedLowCell_not_mem_rest
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -329,8 +351,10 @@ lemma graphSelectedLowCell_not_mem_rest
       nS gap badBudget selected i ∉
       graphSelectedRestFamily G D1 source rawCandidates degreeCenter
         degreeRadius nS gap badBudget selected i := by
+  classical
   simp [graphSelectedRestFamily]
 
+omit [DecidableEq V] in
 lemma card_graphSelectedRestFamily
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -340,6 +364,7 @@ lemma card_graphSelectedRestFamily
     (i : Fin nS) :
     (graphSelectedRestFamily G D1 source rawCandidates degreeCenter
       degreeRadius nS gap badBudget selected i).card + 1 = nS := by
+  classical
   unfold graphSelectedRestFamily
   rw [Finset.card_erase_of_mem
     (graphSelectedLowCell_mem_castSucc_state G D1 source rawCandidates
@@ -349,6 +374,7 @@ lemma card_graphSelectedRestFamily
   have hnS : 0 < nS := Nat.zero_lt_of_lt i.isLt
   omega
 
+omit [DecidableEq V] in
 lemma graphSelectedHighCell_not_mem_rest
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -360,6 +386,7 @@ lemma graphSelectedHighCell_not_mem_rest
       nS gap badBudget selected i ∉
       graphSelectedRestFamily G D1 source rawCandidates degreeCenter
         degreeRadius nS gap badBudget selected i := by
+  classical
   intro hmem
   have hinsert : insert
       (graphSelectedHighCell G D1 source rawCandidates degreeCenter
@@ -706,6 +733,7 @@ noncomputable def largeExposureCertificate_of_crowdedPath
 
 /-! ## Diversity-preserving deterministic selection -/
 
+omit [DecidableEq V] in
 /--
 The graph-state selector with the candidate-diversity witness retained.
 `PartialGood` already contains this fact for its `X₀`; the basic selector
@@ -733,6 +761,7 @@ theorem exists_selectedSwitchingData_of_partialGood_with_diversity
       Nonempty (AugmentationGraphFullState.GraphSelectedSwitchingData
         source rawCandidates G D1 degreeCenter degreeRadius nS gap
           badBudget) := by
+  classical
   let : LinearOrder (Finset V) := AugmentationGraphPartial.cellLinearOrder
   obtain ⟨S0, X0, hS0M, hX0M, hS0card, hX0card, hdisjoint,
     hdiverse, hbadS, hbadX, hcoll⟩ := hgood
@@ -817,6 +846,7 @@ theorem exists_selectedSwitchingData_of_partialGood_with_diversity
   refine ⟨S0, X0, hS0M, hX0M, hX0card, hdiverse, ?_⟩
   simpa [bad, degree] using hselected
 
+omit [DecidableEq V] in
 lemma graphSelectedGoodCandidates_card_lower
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -827,6 +857,7 @@ lemma graphSelectedGoodCandidates_card_lower
     s0 - badBudget ≤
       (graphSelectedGoodCandidates G D1 source rawCandidates degreeCenter
         degreeRadius nS gap badBudget selected).card := by
+  classical
   have hbad := selected.bad_candidates_card_le
   have hpartition := Finset.card_filter_add_card_filter_not
     (s := rawCandidates)
@@ -844,6 +875,7 @@ lemma graphSelectedGoodCandidates_card_lower
     simp
   omega
 
+omit [DecidableEq V] in
 lemma graphSelectedGoodCandidates_card_upper
     (G : SimpleGraph V) (D1 : Finset V)
     (source rawCandidates : Finset (Finset V))
@@ -853,10 +885,12 @@ lemma graphSelectedGoodCandidates_card_upper
     (hrawCard : rawCandidates.card = s0) :
     (graphSelectedGoodCandidates G D1 source rawCandidates degreeCenter
       degreeRadius nS gap badBudget selected).card ≤ s0 := by
+  classical
   rw [← hrawCard]
   exact Finset.card_le_card (graphSelectedGoodCandidates_subset G D1 source
     rawCandidates degreeCenter degreeRadius nS gap badBudget selected)
 
+omit [DecidableEq V] in
 /-- The filtered candidate family used by the full exposure inherits every
 pairwise diversity estimate carried by the raw `PartialGood` witness. -/
 lemma graphSelectedGoodCandidates_diverse_of_raw
@@ -873,6 +907,7 @@ lemma graphSelectedGoodCandidates_diverse_of_raw
       ∀ y ∈ graphSelectedGoodCandidates G D1 source rawCandidates degreeCenter
         degreeRadius nS gap badBudget selected, x ≠ y →
       diversityThreshold ≤ incidenceDiffMass G D1 x y := by
+  classical
   intro x hx y hy hxy
   exact hdiverse x
     (graphSelectedGoodCandidates_subset G D1 source rawCandidates degreeCenter
@@ -882,6 +917,7 @@ lemma graphSelectedGoodCandidates_diverse_of_raw
 
 /-! ## Direct one-time crowded-path wrapper -/
 
+open Classical in
 /--
 The large-state exposure at one time of a crowded outer path.  This theorem
 performs the partial-exposure choice, retains the diverse candidate witness,

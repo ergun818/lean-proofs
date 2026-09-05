@@ -132,7 +132,7 @@ theorem caroWei (G : SimpleGraph V) [DecidableRel G.Adj] :
           exact x.property hxS
         have hI_indep : G.IsIndepSet (I : Set V) := by
           intro x hx y hy hxy
-          simp [I] at hx hy
+          simp only [coe_insert, Set.mem_insert_iff, SetLike.mem_coe, I] at hx hy
           rcases hx with rfl | hxI0
           · rcases hy with rfl | hyI0
             · exact (hxy rfl).elim
@@ -195,9 +195,10 @@ theorem card_sq_le_indepNum_mul_card_add_twice_edges
         (fun v : V => Real.sqrt (G.degree v + 1))
       simp_all +decide only [Nat.cast_add, Nat.cast_one, one_div, ge_iff_le,
         Real.sq_sqrt (add_nonneg (Nat.cast_nonneg _) zero_le_one)]
-      simp_all +decide
-        [ne_of_gt (Real.sqrt_pos.mpr
-          (add_pos_of_nonneg_of_pos (Nat.cast_nonneg _) zero_lt_one))]
+      simp_all +decide only [ne_eq,
+        ne_of_gt (Real.sqrt_pos.mpr
+          (add_pos_of_nonneg_of_pos (Nat.cast_nonneg _) zero_lt_one)), not_false_eq_true,
+        inv_mul_cancel₀, sum_const, card_univ, nsmul_eq_mul, mul_one, inv_pow]
       have hsqrt (v : V) :
           Real.sqrt ((G.degree v : ℝ) + 1) ^ 2 = (G.degree v : ℝ) + 1 :=
         Real.sq_sqrt (by positivity)

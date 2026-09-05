@@ -17,7 +17,7 @@ orderings, proves equality of every in-range state, and records the elementary
 degree-motion estimates consumed by `CrowdScheduleBridge`.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 
 namespace Erdos636
 namespace OuterConcentrationPathBridge
@@ -87,7 +87,7 @@ noncomputable def plusPermutationOfOrderings
       (minusPermutationOfOrderings O j)).1 =
         O.minus (Fin.rev (Fin.cast S.card_Wminus j)) := by
   simp only [minusPermutationOfOrderings, Equiv.trans_apply, finCongr_apply,
-    finRevPermutation, Equiv.ofBijective_apply, orderingEquiv]
+    finRevPermutation, orderingEquiv]
   exact congrArg Subtype.val
     ((Finset.equivFin S.Wminus).symm_apply_apply
       ((orderingEquiv S.Wminus O.minus O.minus_mem O.minus_injective
@@ -103,7 +103,7 @@ noncomputable def plusPermutationOfOrderings
       (plusPermutationOfOrderings O j)).1 =
         O.plus (Fin.cast S.card_Wplus j) := by
   simp only [plusPermutationOfOrderings, Equiv.trans_apply, finCongr_apply,
-    orderingEquiv, Equiv.ofBijective_apply]
+    orderingEquiv]
   exact congrArg Subtype.val
     ((Finset.equivFin S.Wplus).symm_apply_apply
       ((orderingEquiv S.Wplus O.plus O.plus_mem O.plus_injective
@@ -156,7 +156,7 @@ lemma rawPathOfUniformDegreeControlledOrderings_W_eq_state
             ((rawPathOfUniformDegreeControlledOrderings Q).minusPermutation
               r')).1
           symm
-          simp [P, O, rawPathOfUniformDegreeControlledOrderings, j, r']
+          simp [O, rawPathOfUniformDegreeControlledOrderings, j, r']
       · rw [S.card_Wminus]
         exact Nat.sub_le _ _
     · right
@@ -176,7 +176,7 @@ lemma rawPathOfUniformDegreeControlledOrderings_W_eq_state
             ((rawPathOfUniformDegreeControlledOrderings Q).plusPermutation
               r')).1
           symm
-          simp [P, O, rawPathOfUniformDegreeControlledOrderings, j, r']
+          simp [O, rawPathOfUniformDegreeControlledOrderings, j, r']
       · rw [S.card_Wplus]
         exact hi
   · rintro (hv | hv)
@@ -220,7 +220,7 @@ lemma rawPathOfUniformDegreeControlledOrderings_W_eq_state
         change ((Finset.equivFin S.Wplus).symm
             ((rawPathOfUniformDegreeControlledOrderings Q).plusPermutation
               r')).1 = O.plus j
-        simp [P, O, rawPathOfUniformDegreeControlledOrderings, r, r']
+        simp [O, rawPathOfUniformDegreeControlledOrderings, r, r']
       · rw [S.card_Wplus]
         exact hi
 
@@ -284,6 +284,7 @@ lemma rawPathOfUniformDegreeControlledOrderings_degree_spread
 
 /-! ## One-step and accumulated degree motion -/
 
+omit [Fintype V] in
 lemma SwitchingOrderings.state_succ_sdiff_subset_pair
     {Wminus Wplus : Finset V} {nW : ℕ}
     (O : SwitchingOrderings Wminus Wplus nW)
@@ -316,6 +317,7 @@ lemma SwitchingOrderings.state_succ_sdiff_subset_pair
       subst j
       simp
 
+omit [Fintype V] in
 lemma SwitchingOrderings.state_sdiff_succ_subset_pair
     {Wminus Wplus : Finset V} {nW : ℕ}
     (O : SwitchingOrderings Wminus Wplus nW)
@@ -348,11 +350,13 @@ lemma SwitchingOrderings.state_sdiff_succ_subset_pair
     rw [Finset.mem_filter] at hj ⊢
     exact ⟨Finset.mem_univ _, by omega⟩
 
-lemma SwitchingOrderings.state_succ_sdiff_card_le_two
+omit [Fintype V] in
+lemma SwitchingOrderings.state_succ_sdiff_card_le_two [Finite V]
     {Wminus Wplus : Finset V} {nW : ℕ}
     (O : SwitchingOrderings Wminus Wplus nW)
     (i : ℕ) (hi : i < nW) :
     (O.state (i + 1) \ O.state i).card ≤ 2 := by
+  let : Fintype V := Fintype.ofFinite V
   calc
     _ ≤ ({O.minus ⟨i, hi⟩, O.plus ⟨i, hi⟩} : Finset V).card :=
       Finset.card_le_card (state_succ_sdiff_subset_pair O i hi)
@@ -360,11 +364,13 @@ lemma SwitchingOrderings.state_succ_sdiff_card_le_two
       Finset.card_insert_le _ _
     _ = 2 := by simp
 
-lemma SwitchingOrderings.state_sdiff_succ_card_le_two
+omit [Fintype V] in
+lemma SwitchingOrderings.state_sdiff_succ_card_le_two [Finite V]
     {Wminus Wplus : Finset V} {nW : ℕ}
     (O : SwitchingOrderings Wminus Wplus nW)
     (i : ℕ) (hi : i < nW) :
     (O.state i \ O.state (i + 1)).card ≤ 2 := by
+  let : Fintype V := Fintype.ofFinite V
   calc
     _ ≤ ({O.minus ⟨i, hi⟩, O.plus ⟨i, hi⟩} : Finset V).card :=
       Finset.card_le_card (state_sdiff_succ_subset_pair O i hi)
@@ -372,12 +378,14 @@ lemma SwitchingOrderings.state_sdiff_succ_card_le_two
       Finset.card_insert_le _ _
     _ = 2 := by simp
 
-lemma SwitchingOrderings.degreeInto_state_succ_natDist_le
+omit [Fintype V] in
+lemma SwitchingOrderings.degreeInto_state_succ_natDist_le [Finite V]
     {Wminus Wplus : Finset V} {nW : ℕ}
     (G : SimpleGraph V) (O : SwitchingOrderings Wminus Wplus nW)
     (i : ℕ) (hi : i < nW) (x : Finset V) :
     Nat.dist (degreeInto G (O.state (i + 1)) x)
       (degreeInto G (O.state i) x) ≤ 2 * x.card := by
+  let : Fintype V := Fintype.ofFinite V
   have hforward := StructuralOuterConcentration.degreeInto_le_add_card_mul_sdiff
     G (O.state (i + 1)) (O.state i) x
   have hback := StructuralOuterConcentration.degreeInto_le_add_card_mul_sdiff
@@ -419,7 +427,7 @@ lemma natDist_le_step_mul_timeDist
         have hlt : a + d < bound := by omega
         calc
           Nat.dist (f (a + (d + 1))) (f a) =
-              Nat.dist (f ((a + d) + 1)) (f a) := by congr 2 <;> omega
+              Nat.dist (f ((a + d) + 1)) (f a) := by congr 2
           _ ≤ Nat.dist (f ((a + d) + 1)) (f (a + d)) +
                 Nat.dist (f (a + d)) (f a) :=
             Nat.dist.triangle_inequality _ _ _
@@ -514,7 +522,7 @@ lemma degreeIntervalBase_le_and_lt_add
     {alpha aDisc aDiv b error : ℝ}
     {S : StructuralWitness G scale nW ell K alpha aDisc aDiv b}
     (Q : UniformDegreeControlledOrderings S error)
-    (herror : 0 ≤ error) (hspan : 2 * error + 2 ≤ (span : ℝ))
+    (_herror : 0 ≤ error) (hspan : 2 * error + 2 ≤ (span : ℝ))
     (i : ℕ) (hi : i ≤ nW) (x : Finset V) (hx : x ∈ S.matching) :
     degreeIntervalBase Q i ≤
         degreeInto G ((rawPathOfUniformDegreeControlledOrderings Q).W i) x ∧
@@ -541,7 +549,6 @@ lemma degreeIntervalBase_le_and_lt_add
     linarith [hc.2]
   have hupperReal : (d : ℝ) < ((Nat.floor a : ℕ) : ℝ) + span := by
     exact lt_of_le_of_lt hda (by
-      push_cast
       linarith)
   have hupper : d < Nat.floor a + span := by
     exact_mod_cast hupperReal
@@ -555,14 +562,12 @@ lemma natDist_le_of_abs_natCast_sub_le
   rcases le_total m n with hmn | hnm
   · have hreal : (n : ℝ) ≤ m + spread := by
       rw [abs_of_nonpos (sub_nonpos.mpr (by exact_mod_cast hmn))] at h
-      push_cast at h ⊢
       linarith
     have hnat : n ≤ m + spread := by exact_mod_cast hreal
     rw [Nat.dist_eq_sub_of_le hmn]
     omega
   · have hreal : (m : ℝ) ≤ n + spread := by
       rw [abs_of_nonneg (sub_nonneg.mpr (by exact_mod_cast hnm))] at h
-      push_cast at h ⊢
       linarith
     have hnat : m ≤ n + spread := by exact_mod_cast hreal
     rw [Nat.dist_eq_sub_of_le_right hnm]
@@ -575,7 +580,7 @@ lemma matchingDegreeTrajectory_sameTime_le_ceil_two_mul_error
     {alpha aDisc aDiv b error : ℝ}
     {S : StructuralWitness G scale nW ell K alpha aDisc aDiv b}
     (Q : UniformDegreeControlledOrderings S error)
-    (herror : 0 ≤ error) (i : ℕ) (hi : i ≤ nW) (x y : Particle S) :
+    (_herror : 0 ≤ error) (i : ℕ) (hi : i ≤ nW) (x y : Particle S) :
     Nat.dist
         (matchingDegreeTrajectory
           (rawPathOfUniformDegreeControlledOrderings Q) i x)

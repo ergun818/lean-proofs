@@ -49,6 +49,7 @@ lemma isSunflower_empty_of_pairwiseDisjoint {𝒜 : Finset (Finset α)}
   intro A hA B hB hne
   exact Finset.disjoint_iff_inter_eq_empty.mp (h𝒜 hA hB hne)
 
+omit [DecidableEq α] in
 /-- A maximum-cardinality pairwise-disjoint subfamily. -/
 private lemma exists_max_disjointSubfamily (𝒜 : Finset (Finset α)) :
     ∃ ℳ : Finset (Finset α),
@@ -131,7 +132,7 @@ theorem exists_sunflower_of_factorial_mul_pow_lt_card
       have hsub : 𝒜 ⊆ {∅} := by
         intro A hA
         have hzero : A.card = 0 := hunif A hA
-        simpa [Finset.card_eq_zero.mp hzero]
+        simp [Finset.card_eq_zero.mp hzero]
       have hle : 𝒜.card ≤ 1 := by
         simpa using Finset.card_le_card hsub
       simp at hcard

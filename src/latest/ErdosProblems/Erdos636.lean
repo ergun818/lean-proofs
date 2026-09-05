@@ -51,7 +51,7 @@ Primary source: M. Kwan and B. Sudakov, *Proof of a conjecture on induced
 subgraphs of Ramsey graphs*, Theorem 1.1, arXiv:1712.05656.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 open MeasureTheory ProbabilityTheory
 
 namespace Erdos636
@@ -105,7 +105,7 @@ noncomputable def profileSlice {n : ℕ} (G : SimpleGraph (Fin n)) (k : ℕ) :
   constructor
   · intro hp
     rcases Finset.mem_image.mp hp with ⟨m, hm, rfl⟩
-    simp only [Prod.fst, Prod.snd, true_and]
+    simp only [true_and]
     exact hm
   · rintro ⟨hp, hm⟩
     apply Finset.mem_image.mpr
@@ -244,7 +244,7 @@ lemma abs_sum_or_centeredMass_ge {ι : Type*} (s : Finset ι) (a : ι → ℝ)
           apply Finset.sum_le_sum
           intro i hi
           calc
-            |a i| = |μ + (a i - μ)| := by congr 1 <;> ring
+            |a i| = |μ + (a i - μ)| := by congr 1; ring
             _ ≤ |μ| + |a i - μ| := abs_add_le _ _
         _ = (s.card : ℝ) * |μ| + ∑ i ∈ s, |a i - μ| := by
           simp [Finset.sum_add_distrib]
@@ -304,7 +304,7 @@ lemma charFun_uniformLaw (Ω : Type*) [Fintype Ω] [Nonempty Ω]
   · rw [PMF.integral_eq_sum]
     simp only [PMF.uniformOfFintype_apply, ENNReal.toReal_inv, ENNReal.toReal_natCast,
       Erdos88.Fourier.finCharFun, Erdos88.Fourier.finExpectation]
-    simp only [smul_eq_mul, div_eq_mul_inv]
+    simp only [div_eq_mul_inv]
     rw [mul_comm (∑ ω, Complex.exp (((t * X ω : ℝ) : ℂ) * Complex.I))]
     rw [Finset.mul_sum]
     apply Finset.sum_congr rfl
@@ -315,6 +315,7 @@ lemma charFun_uniformLaw (Ω : Type*) [Fintype Ω] [Nonempty Ω]
   · fun_prop
   · fun_prop
 
+open Classical in
 lemma uniformLaw_real_apply (Ω : Type*) [Fintype Ω] [Nonempty Ω]
     (X : Ω → ℝ) (s : Set ℝ) (hs : MeasurableSet s) :
     (uniformLaw Ω X).real s =
@@ -365,7 +366,7 @@ whose differences lie in `[1,B]` force Gaussian decay of the characteristic
 function.  This is the analytic core used in the three local-limit
 applications of Kwan--Sudakov. -/
 lemma norm_sliceCharFun_le_gaussian_of_pairs
-    {K I : Type*} [Fintype K] [DecidableEq K]
+    {K I : Type*} [Fintype K]
     [Fintype I] [DecidableEq I]
     (p : Erdos88.Fourier.PairEmbedding K I) (s : ℕ)
     [Nonempty (Erdos88.Fourier.BoolSlice I s)]
@@ -380,6 +381,7 @@ lemma norm_sliceCharFun_le_gaussian_of_pairs
     ‖Erdos88.Fourier.sliceCharFun s a t‖ ≤
       Real.exp 1 * Real.exp (-(c ^ 3 / 256) * Fintype.card K *
         (|t| / (2 * Real.pi)) ^ 2) := by
+  classical
   let delta : ℝ := |t| / (2 * Real.pi)
   let q : K → ℝ := fun k ↦
     t * (a (p (k, false)) - a (p (k, true))) / (2 * Real.pi)
@@ -410,7 +412,7 @@ lemma norm_sliceCharFun_le_gaussian_of_pairs
           (by positivity)
       have hmul' :
           |t| * |a (p (k, false)) - a (p (k, true))| ≤ 1 / 4 := by
-        convert hmul using 1 <;> field_simp [ne_of_gt hB0]
+        convert hmul using 1; field_simp [ne_of_gt hB0]
       nlinarith [Real.pi_gt_three]
     · dsimp only [q]
       push_cast
@@ -427,7 +429,7 @@ fully checked point-mass bound.  The displayed rate is positive and linear
 in the number of separated pairs, hence the right-hand side is
 `O(1 / sqrt |K|)` for fixed `c,B`. -/
 lemma slice_point_probability_le_of_pairs
-    {K I : Type*} [Fintype K] [DecidableEq K]
+    {K I : Type*} [Fintype K]
     [Fintype I] [DecidableEq I]
     (p : Erdos88.Fourier.PairEmbedding K I) (s : ℕ)
     [Nonempty (Erdos88.Fourier.BoolSlice I s)]
@@ -444,6 +446,7 @@ lemma slice_point_probability_le_of_pairs
       16 * B * Real.exp 1 *
         Real.sqrt (Real.pi /
           ((c ^ 3 / 256) * Fintype.card K / (4 * Real.pi ^ 2))) := by
+  classical
   let rate : ℝ := (c ^ 3 / 256) * Fintype.card K / (4 * Real.pi ^ 2)
   have hB0 : 0 < B := lt_of_lt_of_le zero_lt_one hB
   have heps : 0 < 8 * B := mul_pos (by norm_num) hB0
@@ -465,7 +468,7 @@ lemma slice_point_probability_le_of_pairs
     have ht' : |t| ≤ 1 / (4 * B) := by
       calc
         |t| ≤ 2 / (8 * B) := (abs_le).2 htIcc
-        _ = 1 / (4 * B) := by field_simp [ne_of_gt hB0] <;> ring
+        _ = 1 / (4 * B) := by field_simp [ne_of_gt hB0]; ring
     change ‖charFun
       (uniformLaw (Erdos88.Fourier.BoolSlice I s) (sliceLinear s a)) t‖ ≤
         Real.exp 1 * Real.exp (-rate * t ^ 2)
@@ -559,7 +562,7 @@ lemma one_le_card_image_mul_of_finProbability_le
 
 /-- Support-size form of the checked slice anti-concentration theorem. -/
 lemma one_le_card_sliceLinear_image_mul_gaussian
-    {K I : Type*} [Fintype K] [DecidableEq K]
+    {K I : Type*} [Fintype K]
     [Fintype I] [DecidableEq I]
     (p : Erdos88.Fourier.PairEmbedding K I) (s : ℕ)
     [Nonempty (Erdos88.Fourier.BoolSlice I s)]
@@ -576,6 +579,7 @@ lemma one_le_card_sliceLinear_image_mul_gaussian
         (16 * B * Real.exp 1 *
           Real.sqrt (Real.pi /
             ((c ^ 3 / 256) * Fintype.card K / (4 * Real.pi ^ 2)))) := by
+  classical
   apply one_le_card_image_mul_of_finProbability_le
   intro x
   exact slice_point_probability_le_of_pairs p s a c B hc0 hc1 hsel hunsel

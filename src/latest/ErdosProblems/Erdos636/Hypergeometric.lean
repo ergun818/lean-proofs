@@ -21,7 +21,7 @@ open scoped BigOperators
 namespace Erdos636
 namespace Hypergeometric
 
-open Classical Finset
+open Finset
 open Erdos88
 open Erdos88.BooleanSlices
 open Erdos88.FiniteSliceConcentration

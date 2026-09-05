@@ -30,7 +30,7 @@ proved internally from `PartialGood`, the crowded path, and the selected
 high-to-low path.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 
 namespace Erdos636
 namespace AugmentationExposureCrowdFinal
@@ -127,6 +127,7 @@ structure CrowdLargeNumericBounds
               qScale)) /
           kappa ≤ 1 / 6
 
+open Classical in
 /-- The complete per-time large-state conclusion.  No quantified graph
 callback remains: the only assumptions beyond the structural and partial
 exposure certificates are the scalar fields of `CrowdLargeNumericBounds`. -/

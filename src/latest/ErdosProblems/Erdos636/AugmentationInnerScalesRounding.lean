@@ -8,7 +8,7 @@ This temporary companion module isolates the four floor estimates used in
 the final inner-exposure assembly.
 -/
 
-open Classical SimpleGraph Filter
+open SimpleGraph Filter
 
 namespace Erdos636
 namespace AugmentationInnerScalesRoundingScratch
@@ -40,14 +40,14 @@ explicit square-root and linear floors all hold after one threshold. -/
 theorem exists_innerRoundedPackingBounds
     {a₀ mCoeff energyCoeff badGeomCoeff badCollisionCoeff badDegreeCoeff
       pieceCoeff outputCoeff a₂ deltaUpper : ℝ}
-    (ha₀ : 0 < a₀) (hmCoeff : 0 < mCoeff)
+    (ha₀ : 0 < a₀) (_hmCoeff : 0 < mCoeff)
     (henergyCoeff : 0 < energyCoeff)
     (hbadGeomCoeff : 0 < badGeomCoeff)
     (hbadCollisionCoeff : 0 < badCollisionCoeff)
     (hbadDegreeCoeff : 0 < badDegreeCoeff)
     (hpieceCoeff : 0 < pieceCoeff)
     (houtputCoeff : 0 < outputCoeff)
-    (ha₂ : 0 ≤ a₂) (hdeltaUpper : 0 ≤ deltaUpper)
+    (ha₂ : 0 ≤ a₂) (_hdeltaUpper : 0 ≤ deltaUpper)
     (hsurvivor : badDegreeCoeff < a₀ / 16)
     (hpiece :
       pieceCoeff * (a₀ / 4 + 2 * energyCoeff) ≤
