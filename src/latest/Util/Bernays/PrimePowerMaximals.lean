@@ -14,7 +14,8 @@ theorem inertMaximal_eq_principal {d b : ℤ} (hD : b ^ 2 + 4 * d < 0)
     ∀ P : InvertibleIdeal (QuadraticAlgebra ℤ d b),
       (P : Ideal (QuadraticAlgebra ℤ d b)).IsMaximal →
       (P : Ideal (QuadraticAlgebra ℤ d b)).cardQuot = p ^ 2 →
-      P = InvertibleIdeal.principal (p : QuadraticAlgebra ℤ d b) (quadratic_natCast_ne_zero hp.pos) := by
+      P = InvertibleIdeal.principal (p : QuadraticAlgebra ℤ d b) (quadratic_natCast_ne_zero
+        hp.pos) := by
   let := quadraticOrderIsDomain hD
   let : Fact p.Prime := ⟨hp⟩
   intro P hP hnorm
@@ -24,13 +25,16 @@ theorem inertMaximal_eq_principal {d b : ℤ} (hD : b ^ 2 + 4 * d < 0)
   have hpd : ¬ (p : ℤ) ∣ b ^ 2 + 4 * d := by
     intro h
     have hdvd : p ∣ discriminantLevel (b ^ 2 + 4 * d) :=
-      (show p ∣ (b ^ 2 + 4 * d).natAbs by simpa using Int.natAbs_dvd_natAbs.mpr h).trans (dvd_mul_left _ _)
+      (show p ∣ (b ^ 2 + 4 * d).natAbs by simpa using Int.natAbs_dvd_natAbs.mpr h).trans
+        (dvd_mul_left _ _)
     exact (hp.coprime_iff_not_dvd.mp hc) hdvd
   have hpmem : ((p : ℤ) : QuadraticAlgebra ℤ d b) ∈ (P : Ideal (QuadraticAlgebra ℤ d b)) := by
     simpa only [Int.cast_natCast] using hP.isPrime.mem_of_pow_mem 2 hmem
-  rcases quadraticMaximal_split_or_inert d b p (P : Ideal (QuadraticAlgebra ℤ d b)) hP hpmem hpd with
+  rcases quadraticMaximal_split_or_inert d b p (P : Ideal (QuadraticAlgebra ℤ d b)) hP hpmem hpd
+    with
     hprincipal | ⟨r, hr, _⟩
-  · exact InvertibleIdeal.ext (by simpa only [InvertibleIdeal.coe_principal, Int.cast_natCast] using hprincipal)
+  · exact InvertibleIdeal.ext (by simpa only [InvertibleIdeal.coe_principal,
+    Int.cast_natCast] using hprincipal)
   · exact False.elim (((discriminantCharacter_root_iff hD.ne hc).mp ⟨r, hr⟩) hχ)
 
 theorem SplitPrime.ideal_ne_conjugate {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) (s : SplitPrime d b) :
@@ -51,7 +55,8 @@ theorem goodMaximal_of_primePower_norm {d b : ℤ} (hD : b ^ 2 + 4 * d < 0)
       IsCoprime (P : Ideal (QuadraticAlgebra ℤ d b)) (quadraticBadIdeal d b) →
       (P : Ideal (QuadraticAlgebra ℤ d b)).cardQuot ∣ p ^ e →
       ((discriminantCharacter (b ^ 2 + 4 * d) hD.ne p = -1 ∧
-        P = InvertibleIdeal.principal (p : QuadraticAlgebra ℤ d b) (quadratic_natCast_ne_zero hp.pos)) ∨
+        P = InvertibleIdeal.principal (p : QuadraticAlgebra ℤ d b) (quadratic_natCast_ne_zero
+          hp.pos)) ∨
         ∃ s : SplitPrime d b, s.1 = p ∧ ∃ ε : Bool, P = s.ideal hD ε) := by
   let := quadraticOrderIsDomain hD
   intro P hP hPF hdiv

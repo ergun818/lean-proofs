@@ -81,6 +81,7 @@ theorem genusLocal_sharp_norm_cancellation {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) 
   apply sharp_cancellation_of_smooth (genusLocalAF hD ψ) (goodLocalConstant_pos hD).le
   · simpa only [genusLocalAF_sum_norm] using goodLocalValues_card_limit hD
   · intro Ψ hΨ hsupp hplus
-    exact spatial_smooth_cancellation_atTop (genusLocal_spatial_smooth_cancellation hD ψ hψ Ψ hΨ hsupp hplus)
+    exact spatial_smooth_cancellation_atTop (genusLocal_spatial_smooth_cancellation hD ψ hψ Ψ hΨ
+      hsupp hplus)
 
 end Bernays

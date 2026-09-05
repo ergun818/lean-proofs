@@ -13,7 +13,8 @@ theorem natCard_classSieveBall_le_sum_divisible {d b : ℤ} (hD : b ^ 2 + 4 * d 
     ∀ (C : ClassGroup (QuadraticAlgebra ℤ d b)) (N M : ℕ)
       (S T : Finset (SplitPrime d b)),
       (∀ I : ClassSieveBall C N M S, ∃ s ∈ T, ∃ ε : Bool,
-        (I.1.1 : Ideal (QuadraticAlgebra ℤ d b)) ≤ (s.ideal hD ε : Ideal (QuadraticAlgebra ℤ d b))) →
+        (I.1.1 : Ideal (QuadraticAlgebra ℤ d b)) ≤ (s.ideal hD ε : Ideal (QuadraticAlgebra ℤ d
+          b))) →
       Nat.card (ClassSieveBall C N M S) ≤
         ∑ s ∈ T, ∑ ε : Bool,
           Nat.card (DivisibleIdealClassBall (QuadraticAlgebra ℤ d b) C N (s.ideal hD ε)) := by
@@ -49,7 +50,8 @@ theorem classSieve_upper_of_cover {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
         Nat.card (IdealClassBall (QuadraticAlgebra ℤ d b) C N) ≤ B * N) →
       ∀ (C : ClassGroup (QuadraticAlgebra ℤ d b)) (N M : ℕ) (S T : Finset (SplitPrime d b)),
       (∀ I : ClassSieveBall C N M S, ∃ s ∈ T, ∃ ε : Bool,
-        (I.1.1 : Ideal (QuadraticAlgebra ℤ d b)) ≤ (s.ideal hD ε : Ideal (QuadraticAlgebra ℤ d b))) →
+        (I.1.1 : Ideal (QuadraticAlgebra ℤ d b)) ≤ (s.ideal hD ε : Ideal (QuadraticAlgebra ℤ d
+          b))) →
       (Nat.card (ClassSieveBall C N M S) : ℝ) ≤
         2 * (B : ℝ) * N * ∑ s ∈ T, (s.1 : ℝ)⁻¹ := by
   let := quadraticOrderIsDomain hD

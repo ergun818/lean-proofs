@@ -6,7 +6,7 @@ import Util.Bernays.CountingReparametrization
 -/
 
 open Set Filter Topology
-open scoped Classical ContDiff
+open scoped ContDiff
 
 namespace Bernays
 

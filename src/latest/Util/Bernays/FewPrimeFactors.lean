@@ -8,13 +8,14 @@ than merely an `o(x)` density estimate.
 -/
 
 open Filter Topology Real
-open scoped Classical
 
 namespace Bernays
 
-noncomputable def fewPrimeFactorValues (S E : ℕ → Prop) (k N : ℕ) : Finset ℕ :=
-  (localValues S N).filter fun n => (n.primeFactors.filter E).card ≤ k
+noncomputable def fewPrimeFactorValues (S E : ℕ → Prop) (k N : ℕ) : Finset ℕ := by
+  classical
+  exact (localValues S N).filter fun n => (n.primeFactors.filter E).card ≤ k
 
+open scoped Classical in
 theorem packetCount_dvd_le_primeFactors (P : Finset ℕ) (E : ℕ → Prop)
     (hP : ∀ p ∈ P, p.Prime ∧ E p) {n : ℕ} (hn : 0 < n) :
     packetCount P (fun p n => p ∣ n) n ≤ (n.primeFactors.filter E).card := by
@@ -30,6 +31,7 @@ theorem fewPrimeFactorValues_card_le_packet (S E : ℕ → Prop) (k N : ℕ)
     (P : Finset ℕ) (hP : ∀ p ∈ P, p.Prime ∧ E p) :
     (fewPrimeFactorValues S E k N).card ≤
       eventCount (localValues S N) (fun n => packetCount P (fun p n => p ∣ n) n ≤ k) := by
+  classical
   apply Finset.card_le_card
   intro n hn
   obtain ⟨hnA, hnk⟩ := Finset.mem_filter.mp hn
@@ -43,7 +45,8 @@ theorem eventually_fewPrimeFactorValues_le {q : ℕ} [NeZero q]
     (hE : ∀ R : ℝ, ∃ P : Finset ℕ,
       (∀ p ∈ P, p.Prime ∧ χ p ≠ -1 ∧ E p) ∧ R < ∑ p ∈ P, (p : ℝ)⁻¹)
     (k : ℕ) {ε : ℝ} (hε : 0 < ε) :
-    ∀ᶠ N in atTop, ((fewPrimeFactorValues (fun p : ℕ => χ p = -1) E k N).card : ℝ) ≤ ε * scale N := by
+    ∀ᶠ N in atTop,
+      ((fewPrimeFactorValues (fun p : ℕ => χ p = -1) E k N).card : ℝ) ≤ ε * scale N := by
   let C := characterLocalConstant χ / sqrt π
   have hC : 0 < C := div_pos (characterLocalConstant_pos χ hχ) (sqrt_pos.mpr pi_pos)
   obtain ⟨P, hP, hmass⟩ := hE (max (2 * (k : ℝ)) (8 * C / ε))

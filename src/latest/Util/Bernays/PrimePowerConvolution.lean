@@ -5,8 +5,6 @@ import Mathlib.Data.Complex.Basic
 # Local convolution identities for a square-root Euler factor
 -/
 
-open scoped Classical
-
 namespace Bernays
 
 theorem arithmetic_mul_primePower (f g : ArithmeticFunction ℂ) {p : ℕ} (hp : p.Prime) (e : ℕ) :

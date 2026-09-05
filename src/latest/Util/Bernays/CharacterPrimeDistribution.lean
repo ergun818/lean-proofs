@@ -9,7 +9,6 @@ statement is assumed in this module.
 -/
 
 open Filter Topology
-open scoped Classical
 
 namespace Bernays
 

@@ -10,7 +10,6 @@ Dirichlet L-function, and the convergent inert and ramified corrections.
 -/
 
 open Filter Topology Real
-open scoped Classical
 
 namespace Bernays
 

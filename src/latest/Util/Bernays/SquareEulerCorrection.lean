@@ -11,7 +11,6 @@ neighborhood of `1`, using the convergent `p^(-3/2)` majorant.
 -/
 
 open Filter Topology Real
-open scoped Classical
 
 namespace Bernays
 
@@ -43,8 +42,9 @@ theorem squarePrimePower_bounds (p : Nat.Primes) (s : ℝ) :
       _ = 1 / ((p : ℕ) : ℝ) := by rw [rpow_neg_one, one_div]
       _ ≤ 1 / 2 := one_div_le_one_div_of_le (by norm_num) hp₂
 
-noncomputable def squareLogTerm (S : ℕ → Prop) (p : Nat.Primes) (s : ℝ) : ℝ :=
-  if S p then -log (1 - ((p : ℕ) : ℝ) ^ (-(2 * max (3 / 4) s))) else 0
+noncomputable def squareLogTerm (S : ℕ → Prop) (p : Nat.Primes) (s : ℝ) : ℝ := by
+  classical
+  exact if S p then -log (1 - ((p : ℕ) : ℝ) ^ (-(2 * max (3 / 4) s))) else 0
 
 theorem squareLogTerm_norm_le (S : ℕ → Prop) (p : Nat.Primes) (s : ℝ) :
     ‖squareLogTerm S p s‖ ≤ 2 * ((p : ℕ) : ℝ) ^ (-(3 / 2 : ℝ)) := by
@@ -90,6 +90,7 @@ theorem continuous_squareCorrection (S : ℕ → Prop) : Continuous (squareCorre
   continuous_exp.comp (continuous_tsum (continuous_squareLogTerm S)
     squareLogMajorant_summable (squareLogTerm_norm_le S))
 
+open scoped Classical in
 theorem squareCorrection_hasProd (S : ℕ → Prop) {s : ℝ} (hs : 3 / 4 ≤ s) :
     HasProd (fun p : Nat.Primes =>
       if S p then (1 - ((((p : ℕ) : ℝ) ^ s)⁻¹) ^ 2)⁻¹ else 1)

@@ -28,7 +28,8 @@ theorem halfPlane_square_scaled_norm_tendsto {f F : ℂ → ℂ}
     have hc : Continuous (fun δ : ℝ => ((1 + δ : ℝ) : ℂ) + t * Complex.I) := by fun_prop
     simpa only [add_zero, Complex.ofReal_one] using
       (hc.continuousAt (x := 0)).tendsto.mono_left (nhdsWithin_le_nhds (s := Ioi 0))
-  have hcont := ((hF _ (by norm_num : (1 / 2 : ℝ) < (1 + t * Complex.I).re)).continuousAt.tendsto.comp hz).norm.sqrt
+  have hcont := ((hF _ (by norm_num : (1 / 2 : ℝ) < (1 + t *
+    Complex.I).re)).continuousAt.tendsto.comp hz).norm.sqrt
   have hsqrt : Tendsto (fun δ : ℝ => Real.sqrt δ) (𝓝[>] 0) (𝓝 0) := by
     simpa only [Real.sqrt_zero] using (Real.continuous_sqrt.continuousAt (x := 0)).tendsto.mono_left
       (nhdsWithin_le_nhds (s := Ioi 0))
@@ -56,7 +57,8 @@ theorem halfPlane_square_scaled_deriv_integral_tendsto {f F : ℂ → ℂ}
       (by simpa using hδ : 1 < 1 + δ)).norm.const_mul _).aestronglyMeasurable
   have hbound : ∀ᶠ δ : ℝ in 𝓝[>] 0, ∀ᵐ t : ℝ ∂volume.restrict (Icc (-T) T),
       ‖Real.sqrt δ * ‖deriv f ((1 + δ : ℝ) + t * Complex.I)‖‖ ≤ K := by
-    filter_upwards [self_mem_nhdsWithin, (eventually_le_nhds (by norm_num : (0 : ℝ) < 1)).filter_mono
+    filter_upwards [self_mem_nhdsWithin, (eventually_le_nhds (by norm_num : (0 : ℝ) <
+      1)).filter_mono
       nhdsWithin_le_nhds] with δ hδ hδ₁
     filter_upwards [ae_restrict_mem measurableSet_Icc] with t ht
     rw [Real.norm_of_nonneg (mul_nonneg (Real.sqrt_nonneg _) (norm_nonneg _))]
@@ -83,7 +85,8 @@ theorem halfPlane_square_scaled_norm_integral_tendsto {f F : ℂ → ℂ}
       (by simpa using hδ : 1 < 1 + δ)).norm.const_mul _).aestronglyMeasurable
   have hbound : ∀ᶠ δ : ℝ in 𝓝[>] 0, ∀ᵐ t : ℝ ∂volume.restrict (Icc (-T) T),
       ‖Real.sqrt δ * ‖f ((1 + δ : ℝ) + t * Complex.I)‖‖ ≤ K := by
-    filter_upwards [self_mem_nhdsWithin, (eventually_le_nhds (by norm_num : (0 : ℝ) < 1)).filter_mono
+    filter_upwards [self_mem_nhdsWithin, (eventually_le_nhds (by norm_num : (0 : ℝ) <
+      1)).filter_mono
       nhdsWithin_le_nhds] with δ hδ hδ₁
     filter_upwards [ae_restrict_mem measurableSet_Icc] with t ht
     rw [Real.norm_of_nonneg (mul_nonneg (Real.sqrt_nonneg _) (norm_nonneg _))]

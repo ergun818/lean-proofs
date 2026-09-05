@@ -18,7 +18,8 @@ def ClassSieveBall {d b : ℤ} [IsDomain (QuadraticAlgebra ℤ d b)]
     (C : ClassGroup (QuadraticAlgebra ℤ d b)) (N M : ℕ) (S : Finset (SplitPrime d b)) :=
   RestrictedIdealClassBall (QuadraticAlgebra ℤ d b) C N (ClassSievePredicate M S)
 
-noncomputable def classSieveMultiplier {R : Type*} [CommRing R] [IsDomain R] (I : InvertibleIdeal R) (M : ℕ) : ℕ :=
+noncomputable def classSieveMultiplier {R : Type*} [CommRing R] [IsDomain R]
+    (I : InvertibleIdeal R) (M : ℕ) : ℕ :=
   M * (I : Ideal R).cardQuot
 
 def classSieveScale (d b : ℤ) (μ : ℕ) : ℕ :=
@@ -49,7 +50,8 @@ theorem classSieve_lower {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
         (c : QuadraticAlgebra ℤ d b).im.natAbs < L →
         (∏ s ∈ S, (s.1 - 1) ^ 2) * L ^ 2 ≤ Nat.card (QuadraticAlgebra ℤ d b)ˣ *
           Nat.card (ClassSieveBall I.idealClass⁻¹
-            (classSieveScale d b (classSieveMultiplier I M) * (splitSieveModulus S) ^ 2 * L ^ 2) M S) := by
+            (classSieveScale d b (classSieveMultiplier I M) *
+              (splitSieveModulus S) ^ 2 * L ^ 2) M S) := by
   let := quadraticOrderIsDomain hD
   intro I M hM c hc S hS L hrL hiL
   let O := QuadraticAlgebra ℤ d b
@@ -94,7 +96,8 @@ theorem classSieve_lower {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     exact (ZMod.natCast_eq_zero_iff μ s.1).not.mpr (hS s hs)
   have hcard : Nat.card X = (∏ s ∈ S, (s.1 - 1) ^ 2) * L ^ 2 := by
     rw [show X = (AffineAllowedResiduePairs S (c : O) (μ : ℤ) × Fin L × Fin L) from rfl,
-      Nat.card_prod, Nat.card_prod, Nat.card_fin, natCard_affineAllowedResiduePairs S (c : O) (μ : ℤ) hμmod]
+      Nat.card_prod, Nat.card_prod, Nat.card_fin,
+      natCard_affineAllowedResiduePairs S (c : O) (μ : ℤ) hμmod]
     ring
   rw [hcard] at hcount
   exact hcount

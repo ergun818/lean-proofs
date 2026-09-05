@@ -6,7 +6,6 @@ import Util.Bernays.DilatedCountBound
 -/
 
 open Filter Topology
-open scoped Classical
 
 namespace Bernays
 
@@ -23,6 +22,7 @@ theorem classSliceValues_card_le_goodLocal {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) 
     ∀ (C : ClassGroup (QuadraticAlgebra ℤ d b)) (m : ℕ),
       m ∈ Nat.factoredNumbers (discriminantLevel (b ^ 2 + 4 * d)).primeFactors →
       ∀ N : ℕ, (classSliceValues hD C m N).card ≤ (goodLocalValues d b hD.ne N).card := by
+  classical
   let := quadraticOrderIsDomain hD
   intro C m hm N
   apply Finset.card_le_card
@@ -60,6 +60,7 @@ theorem exists_classSlice_dilation_bound {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     (by rw [classSliceValues_zero, Finset.card_empty, Nat.cast_zero])
     hB.le _ (Nat.pos_of_ne_zero hm.1) N
   intro k
-  exact ((Nat.cast_le (α := ℝ)).mpr (classSliceValues_card_le_goodLocal hD C m hm k)).trans (hcount k)
+  exact ((Nat.cast_le (α := ℝ)).mpr (classSliceValues_card_le_goodLocal hD C m hm k)).trans
+    (hcount k)
 
 end Bernays

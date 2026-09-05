@@ -6,8 +6,6 @@ import Mathlib.Tactic
 # Unique separation of a positive integer into its finite-prime and coprime parts
 -/
 
-open scoped Classical
-
 namespace Bernays
 
 def smoothPart (P : Finset ℕ) (n : ℕ) : ℕ := (n.primeFactorsList.filter (· ∈ P)).prod

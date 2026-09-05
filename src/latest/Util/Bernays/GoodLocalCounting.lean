@@ -6,7 +6,6 @@ import Util.Bernays.GenusNorms
 -/
 
 open Filter Topology Real
-open scoped Classical
 
 namespace Bernays
 
@@ -30,7 +29,8 @@ noncomputable def goodLocalConstant (d b : ℤ) (hD : b ^ 2 + 4 * d ≠ 0) : ℝ
   exact (characterLocalConstant (discriminantCharacter (b ^ 2 + 4 * d) hD) / sqrt π) *
     avoidFactor (discriminantLevel (b ^ 2 + 4 * d)).primeFactors
 
-theorem goodLocalConstant_pos {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) : 0 < goodLocalConstant d b hD.ne := by
+theorem goodLocalConstant_pos {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
+    0 < goodLocalConstant d b hD.ne := by
   let : NeZero (discriminantLevel (b ^ 2 + 4 * d)) := ⟨(discriminantLevel_pos hD.ne).ne'⟩
   exact mul_pos
     (div_pos (characterLocalConstant_pos _ (discriminantCharacter_ne_one hD)) (sqrt_pos.mpr pi_pos))

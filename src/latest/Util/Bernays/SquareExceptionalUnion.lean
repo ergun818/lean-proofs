@@ -5,7 +5,6 @@ import Util.Bernays.PrimeFactorConcentration
 -/
 
 open Filter Topology
-open scoped Classical
 
 namespace Bernays
 
@@ -21,7 +20,9 @@ theorem finiteUnion_card_div_tendsto_zero {α ι : Type*} [DecidableEq α] [Fint
   apply div_le_div_of_nonneg_right _ (hs N)
   exact_mod_cast Finset.card_biUnion_le
 
-noncomputable def squareExceptionalValues {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) (k N : ℕ) : Finset ℕ := by
+noncomputable def squareExceptionalValues {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) (k N : ℕ) :
+    Finset ℕ := by
+  classical
   letI := quadraticOrderIsDomain hD
   letI := quadraticOrderClassGroupFintype hD
   let G := ClassGroup (QuadraticAlgebra ℤ d b)
@@ -65,10 +66,13 @@ theorem missing_same_genus_mem_exceptional {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) 
     ∀ (I : InvertibleIdeal (QuadraticAlgebra ℤ d b)),
       IsCoprime (I : Ideal (QuadraticAlgebra ℤ d b)) (quadraticBadIdeal d b) →
       ∀ C : ClassGroup (QuadraticAlgebra ℤ d b),
-      (QuotientGroup.mk' (classSquareSubgroup : Subgroup (ClassGroup (QuadraticAlgebra ℤ d b)))) I.idealClass =
-        (QuotientGroup.mk' (classSquareSubgroup : Subgroup (ClassGroup (QuadraticAlgebra ℤ d b)))) C →
+      (QuotientGroup.mk' (classSquareSubgroup : Subgroup (ClassGroup (QuadraticAlgebra ℤ d b))))
+        I.idealClass =
+        (QuotientGroup.mk' (classSquareSubgroup : Subgroup (ClassGroup (QuadraticAlgebra ℤ d b))))
+          C →
       (∀ J : InvertibleIdeal (QuadraticAlgebra ℤ d b),
-        (J : Ideal (QuadraticAlgebra ℤ d b)).cardQuot = (I : Ideal (QuadraticAlgebra ℤ d b)).cardQuot →
+        (J : Ideal (QuadraticAlgebra ℤ d b)).cardQuot = (I : Ideal (QuadraticAlgebra ℤ d
+          b)).cardQuot →
         J.idealClass ≠ C) →
       ∀ N : ℕ, (I : Ideal (QuadraticAlgebra ℤ d b)).cardQuot ∈
         localValues (fun p : ℕ => discriminantCharacter (b ^ 2 + 4 * d) hD.ne p = -1) N →

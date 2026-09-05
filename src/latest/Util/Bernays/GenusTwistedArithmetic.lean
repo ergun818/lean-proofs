@@ -6,8 +6,6 @@ import Util.Bernays.PrimePowerConvolution
 # Genus twists of the local norm indicator and ideal coefficients
 -/
 
-open scoped Classical
-
 namespace Bernays
 
 noncomputable def genusLocalAF {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :

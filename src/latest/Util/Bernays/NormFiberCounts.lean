@@ -6,8 +6,6 @@ import Mathlib.Data.Set.Card
 # Counting norm fibers and bounded ideal sets
 -/
 
-open scoped Classical
-
 namespace Bernays
 
 theorem natCard_bounded_eq_sum_fibers {X : Type*} (f : X → ℕ)

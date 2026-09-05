@@ -6,10 +6,9 @@ import Mathlib.NumberTheory.LSeries.Convolution
 # Analytic continuation of the square of a nontrivial genus series
 -/
 
-open scoped Classical
-
 namespace Bernays
 
+open scoped Classical in
 theorem genusLocalAF_apply {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     letI := quadraticOrderIsDomain hD
     ∀ ψ : AddChar (Additive (GenusGroup (QuadraticAlgebra ℤ d b))) ℂ,
@@ -28,6 +27,7 @@ theorem genusLocalAF_apply {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     rw [localParity]
     split_ifs <;> simp_all
 
+open scoped Classical in
 theorem genusLocalAF_norm {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     letI := quadraticOrderIsDomain hD
     ∀ ψ : AddChar (Additive (GenusGroup (QuadraticAlgebra ℤ d b))) ℂ,

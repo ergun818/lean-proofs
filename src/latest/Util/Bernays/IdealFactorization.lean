@@ -15,6 +15,7 @@ namespace Bernays.InvertibleIdeal
 
 variable {R : Type*} [CommRing R] [IsDomain R] [Ring.HasFiniteQuotients R]
 
+omit [IsDomain R] [Ring.HasFiniteQuotients R] in
 theorem coprime_of_le {I J F : Ideal R} (hIJ : I ≤ J) (hI : IsCoprime I F) : IsCoprime J F := by
   apply Ideal.isCoprime_iff_sup_eq.mpr
   apply top_unique
@@ -84,7 +85,7 @@ theorem exists_maximal_factor_class_not_mem (F : Ideal R)
     have hprod : l.prod.idealClass ∈ H := by
       clear hl hmaxl
       induction l with
-      | nil => simpa using H.one_mem
+      | nil => simp
       | cons P l ih =>
         simp only [List.prod_cons, idealClass_mul]
         exact H.mul_mem (hnone P (by simp)) (ih (by

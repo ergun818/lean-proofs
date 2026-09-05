@@ -102,7 +102,8 @@ theorem logarithmicRecurrence_error {a : ℕ → ℝ} {K : ℕ → ℝ}
       intro m hm
       rw [abs_mul, abs_of_nonneg (ha m)]
       exact mul_le_mul_of_nonneg_left
-        (kernel_quotient_error hε hK N (lt_of_lt_of_le Nat.zero_lt_one (Finset.mem_Icc.mp hm).1)) (ha m)
+        (kernel_quotient_error hε hK N (lt_of_lt_of_le Nat.zero_lt_one (Finset.mem_Icc.mp hm).1))
+          (ha m)
     _ = ε * N * reciprocalSum a N + (C + |κ|) * ordinarySum a N := by
       rw [reciprocalSum_eq_sum_Icc, ordinarySum, Finset.mul_sum, Finset.mul_sum,
         ← Finset.sum_add_distrib]

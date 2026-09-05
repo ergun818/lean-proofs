@@ -36,7 +36,8 @@ theorem exists_principal_generator_norm {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
 theorem exists_classBall_embedding_normBall {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     letI := quadraticOrderIsDomain hD
     ∀ C : ClassGroup (QuadraticAlgebra ℤ d b), ∃ m : ℕ, 0 < m ∧
-      ∀ N : ℕ, Nonempty (IdealClassBall (QuadraticAlgebra ℤ d b) C N ↪ QuadraticNormBall d b (m * N)) := by
+      ∀ N : ℕ, Nonempty (IdealClassBall (QuadraticAlgebra ℤ d b) C N ↪ QuadraticNormBall d b (m *
+        N)) := by
   let := quadraticOrderIsDomain hD
   intro C
   obtain ⟨J, hJ⟩ := InvertibleIdeal.idealClass_surjective C⁻¹
@@ -86,7 +87,8 @@ theorem exists_natCard_idealClassBall_le {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
   intro N hN
   let := finite_quadraticNormBall hD (m * N)
   obtain ⟨e⟩ := hm N
-  have hcard := (Nat.card_le_card_of_injective e e.injective).trans (natCard_quadraticNormBall_le hD (m * N))
+  have hcard := (Nat.card_le_card_of_injective e e.injective).trans (natCard_quadraticNormBall_le
+    hD (m * N))
   exact hcard.trans (by nlinarith)
 
 theorem exists_uniform_natCard_idealClassBall_le {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :

@@ -4,10 +4,9 @@ import Util.Bernays.FiniteVariance
 # Exact finite inclusion-exclusion for avoided events
 -/
 
-open scoped Classical
-
 namespace Bernays
 
+open scoped Classical in
 theorem indicator_all_eq_prod {ι : Type*} (P : Finset ι) (E : ι → Prop) :
     (if ∀ p ∈ P, E p then (1 : ℝ) else 0) = ∏ p ∈ P, if E p then 1 else 0 := by
   classical
@@ -16,11 +15,12 @@ theorem indicator_all_eq_prod {ι : Type*} (P : Finset ι) (E : ι → Prop) :
     symm
     exact Finset.prod_eq_one (fun p hp => if_pos (h p hp))
   · rw [if_neg h]
-    push_neg at h
+    push Not at h
     obtain ⟨p, hp, hE⟩ := h
     symm
     exact Finset.prod_eq_zero hp (if_neg hE)
 
+open scoped Classical in
 theorem indicator_all_not_eq_prod {ι : Type*} (P : Finset ι) (E : ι → Prop) :
     (if ∀ p ∈ P, ¬E p then (1 : ℝ) else 0) = ∏ p ∈ P, (1 - if E p then 1 else 0) := by
   calc
@@ -31,12 +31,14 @@ theorem indicator_all_not_eq_prod {ι : Type*} (P : Finset ι) (E : ι → Prop)
     _ = _ := by
       apply Finset.prod_congr rfl
       intro p hp
-      by_cases h : E p <;> simp only [h, not_true_eq_false, not_false_eq_true, if_true, if_false] <;> ring
+      by_cases h : E p <;> simp only [h, not_true_eq_false, not_false_eq_true, if_true,
+        if_false] <;> ring
 
-theorem eventCount_avoid_eq_sum_powerset {α ι : Type*} [DecidableEq ι]
+theorem eventCount_avoid_eq_sum_powerset {α ι : Type*}
     (A : Finset α) (P : Finset ι) (E : ι → α → Prop) :
     (eventCount A (fun x => ∀ p ∈ P, ¬E p x) : ℝ) =
       ∑ T ∈ P.powerset, (-1 : ℝ) ^ T.card * eventCount A (fun x => ∀ p ∈ T, E p x) := by
+  classical
   rw [← sum_event_indicator A (fun x => ∀ p ∈ P, ¬E p x)]
   simp_rw [indicator_all_not_eq_prod, Finset.prod_sub]
   simp only [Finset.prod_const_one, mul_one]

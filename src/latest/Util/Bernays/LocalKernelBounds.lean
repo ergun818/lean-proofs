@@ -8,13 +8,14 @@ asymptotic for the full kernel is reduced to the first-prime-power term.
 -/
 
 open Filter Topology Real
-open scoped Classical
 
 namespace Bernays
 
-noncomputable def localAllowedPrimeLog (S : ℕ → Prop) (N : ℕ) : ℝ :=
-  ∑ p ∈ (N + 1).primesBelow, if S p then 0 else log p
+noncomputable def localAllowedPrimeLog (S : ℕ → Prop) (N : ℕ) : ℝ := by
+  classical
+  exact ∑ p ∈ (N + 1).primesBelow, if S p then 0 else log p
 
+open scoped Classical in
 theorem localLogCoeff_one (S : ℕ → Prop) (p : ℕ) :
     localLogCoeff S p 1 = if S p then 0 else log p := by
   simp [localLogCoeff]
@@ -25,6 +26,7 @@ theorem localLogCoeff_le_two_log (S : ℕ → Prop) (p k : ℕ) :
   unfold localLogCoeff
   split_ifs <;> linarith
 
+open scoped Classical in
 theorem localLogCoeff_sum_bounds (S : ℕ → Prop) {p : ℕ} (hp : p.Prime)
     {K : ℕ} (hK : 1 ≤ K) :
     (if S p then 0 else log p) ≤ ∑ k ∈ Finset.Icc 1 K, localLogCoeff S p k ∧
@@ -52,6 +54,7 @@ theorem localLogMass_prime_bounds (S : ℕ → Prop) (N : ℕ) :
     localAllowedPrimeLog S N ≤ localLogMass S N ∧
       localLogMass S N ≤ localAllowedPrimeLog S N +
         2 * (Chebyshev.psi (N : ℝ) - Chebyshev.theta (N : ℝ)) := by
+  classical
   have hpoint (p : ℕ) (hp : p ∈ (N + 1).primesBelow) :=
     localLogCoeff_sum_bounds S (Nat.prime_of_mem_primesBelow hp)
       (Nat.le_log_of_pow_le (Nat.prime_of_mem_primesBelow hp).one_lt

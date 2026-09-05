@@ -8,19 +8,20 @@ L-function give the positive constant needed by the Tauberian theorem.
 -/
 
 open Filter Topology Real
-open scoped Classical
 
 namespace Bernays
 
 theorem tendsto_real_one_add_zero :
     Tendsto (fun t : ℝ => 1 + t) (𝓝[Set.Ioi 0] 0) (𝓝 1) := by
   simpa only [add_zero] using
-    ((show Continuous (fun t : ℝ => (1 : ℝ) + t) by fun_prop).tendsto 0).mono_left nhdsWithin_le_nhds
+    ((show Continuous (fun t : ℝ => (1 : ℝ) + t) by fun_prop).tendsto 0).mono_left
+      nhdsWithin_le_nhds
 
 theorem tendsto_complex_one_add_zero :
     Tendsto (fun t : ℝ => (1 : ℂ) + (t : ℂ)) (𝓝[Set.Ioi 0] 0) (𝓝 1) := by
   simpa only [Complex.ofReal_zero, add_zero] using
-    ((show Continuous (fun t : ℝ => (1 : ℂ) + (t : ℂ)) by fun_prop).tendsto 0).mono_left nhdsWithin_le_nhds
+    ((show Continuous (fun t : ℝ => (1 : ℂ) + (t : ℂ)) by fun_prop).tendsto 0).mono_left
+      nhdsWithin_le_nhds
 
 theorem tendsto_zeta_norm_residue :
     Tendsto (fun t : ℝ => t * ‖riemannZeta ((1 : ℂ) + (t : ℂ))‖)
@@ -74,7 +75,8 @@ theorem localParity_dirichlet_halfPole {N : ℕ} [NeZero N]
   have hG : Tendsto (fun t : ℝ => G (1 + t)) (𝓝[Set.Ioi 0] 0) (𝓝 (G 1)) :=
     (continuous_squareCorrection S).continuousAt.tendsto.comp tendsto_real_one_add_zero
   have hR : Tendsto (fun t : ℝ => R (1 + t)) (𝓝[Set.Ioi 0] 0) (𝓝 (R 1)) :=
-    (continuous_ramifiedCorrection (ramifiedPrimes N)).continuousAt.tendsto.comp tendsto_real_one_add_zero
+    (continuous_ramifiedCorrection (ramifiedPrimes N)).continuousAt.tendsto.comp
+      tendsto_real_one_add_zero
   have hm := ((tendsto_zeta_norm_residue.mul hL).mul hG).mul hR
   simp only [one_mul] at hm
   have hsq : Tendsto (fun t : ℝ => t * (F (1 + t)) ^ 2) (𝓝[Set.Ioi 0] 0)

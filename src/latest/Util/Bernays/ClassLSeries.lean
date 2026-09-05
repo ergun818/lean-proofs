@@ -7,7 +7,6 @@ import Util.Bernays.SummatoryMellin
 -/
 
 open Filter Topology Asymptotics
-open scoped Classical
 
 namespace Bernays
 
@@ -84,7 +83,8 @@ theorem weightedIdealNormCoeff_summable {d b : ℤ} (hD : b ^ 2 + 4 * d < 0)
       =O[atTop] fun N : ℕ => (N : ℝ) ^ (1 : ℝ) := by
     apply IsBigO.of_bound (∑ C, ‖w C‖ * B)
     exact Filter.Eventually.of_forall (fun N => by
-      rw [Real.rpow_one, Real.norm_eq_abs, abs_of_nonneg (Finset.sum_nonneg (fun _ _ => norm_nonneg _)),
+      rw [Real.rpow_one, Real.norm_eq_abs, abs_of_nonneg (Finset.sum_nonneg (fun _ _ =>
+        norm_nonneg _)),
         Real.norm_eq_abs, abs_of_nonneg (Nat.cast_nonneg N)]
       exact hsum N)
   exact LSeriesSummable_of_sum_norm_bigO hO zero_le_one hs
@@ -102,7 +102,8 @@ theorem classCharacterLSeries_continuation {d b : ℤ} (hD : b ^ 2 + 4 * d < 0)
   let a := weightedIdealNormCoeff hD F (fun C => ψ (Additive.ofMul C))
   have hO : (fun N : ℕ => ∑ n ∈ Finset.Icc 1 N, a n)
       =O[atTop] fun N : ℕ => (N : ℝ) ^ (1 / 2 : ℝ) := by
-    simpa only [a, weightedIdealNormCoeff_cumsum] using idealClassCharacterCount_bigO hD F hF₀ hF₁ ψ hψ
+    simpa only [a, weightedIdealNormCoeff_cumsum] using idealClassCharacterCount_bigO hD F hF₀ hF₁
+      ψ hψ
   refine ⟨summatoryLSeries a, ?_, ?_⟩
   · intro s hs
     exact summatoryLSeries_differentiableAt (by norm_num) hO hs

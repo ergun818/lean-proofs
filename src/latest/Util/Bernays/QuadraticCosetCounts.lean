@@ -5,8 +5,6 @@ import Util.Bernays.QuadraticNormBalls
 # A square-root error for quadratic-ideal coset counts
 -/
 
-open scoped Classical
-
 namespace Bernays
 
 noncomputable def quadraticIdealLatticeEquiv {d b : ℤ} (hD : b ^ 2 + 4 * d < 0)

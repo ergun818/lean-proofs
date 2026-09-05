@@ -6,12 +6,12 @@ import Util.Bernays.FiniteVariance
 -/
 
 open Filter Topology Real
-open scoped Classical
 
 namespace Bernays
 
-noncomputable def localValues (S : ℕ → Prop) (N : ℕ) : Finset ℕ :=
-  (Finset.Icc 1 N).filter (ParityAdmissible S)
+noncomputable def localValues (S : ℕ → Prop) (N : ℕ) : Finset ℕ := by
+  classical
+  exact (Finset.Icc 1 N).filter (ParityAdmissible S)
 
 theorem localValues_card (S : ℕ → Prop) (N : ℕ) : (localValues S N).card = localCount S N := rfl
 

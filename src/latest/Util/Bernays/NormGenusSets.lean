@@ -4,13 +4,12 @@ import Util.Bernays.GoodClassAsymptotic
 # The finite genus sets of ideals of a prescribed norm
 -/
 
-open scoped Classical
-
 namespace Bernays
 
 noncomputable def normGenusSet {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) (m : ℕ) :
     letI := quadraticOrderIsDomain hD
     Finset (GenusGroup (QuadraticAlgebra ℤ d b)) := by
+  classical
   letI := quadraticOrderIsDomain hD
   letI := quadraticOrderClassGroupFintype hD
   letI : Fintype (GenusGroup (QuadraticAlgebra ℤ d b)) := Fintype.ofFinite _
@@ -43,14 +42,17 @@ theorem normGenusSet_one {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
 
 noncomputable def remainderGenusSet {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     letI := quadraticOrderIsDomain hD
-    ClassGroup (QuadraticAlgebra ℤ d b) → ℕ → Finset (GenusGroup (QuadraticAlgebra ℤ d b)) :=
-  letI := quadraticOrderIsDomain hD
-  fun C m => (normGenusSet hD m).image (fun g => genusMap C * g⁻¹)
+    ClassGroup (QuadraticAlgebra ℤ d b) → ℕ → Finset (GenusGroup (QuadraticAlgebra ℤ d b)) := by
+  classical
+  exact
+    letI := quadraticOrderIsDomain hD
+    fun C m => (normGenusSet hD m).image (fun g => genusMap C * g⁻¹)
 
 theorem remainderGenusSet_card {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     letI := quadraticOrderIsDomain hD
     ∀ C : ClassGroup (QuadraticAlgebra ℤ d b), ∀ m : ℕ,
       (remainderGenusSet hD C m).card = (normGenusSet hD m).card := by
+  classical
   let := quadraticOrderIsDomain hD
   intro C m
   apply Finset.card_image_of_injective
@@ -63,6 +65,7 @@ theorem mem_remainderGenusSet {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
       g ∈ remainderGenusSet hD C m ↔ ∃ J : InvertibleIdeal (QuadraticAlgebra ℤ d b),
         (J : Ideal (QuadraticAlgebra ℤ d b)).cardQuot = m ∧
           genusMap (C * J.idealClass⁻¹) = g := by
+  classical
   let := quadraticOrderIsDomain hD
   intro C m g
   rw [remainderGenusSet, Finset.mem_image]

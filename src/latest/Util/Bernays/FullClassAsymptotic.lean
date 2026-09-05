@@ -6,7 +6,6 @@ import Util.Bernays.SmoothCountingSeries
 -/
 
 open Filter Topology
-open scoped Classical
 
 namespace Bernays
 

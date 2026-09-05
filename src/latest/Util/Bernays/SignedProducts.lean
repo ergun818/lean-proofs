@@ -23,7 +23,7 @@ theorem classSquare_mem {G : Type*} [CommGroup G] (x : G) :
 
 section SubsetProductStabilizer
 
-variable {G : Type*} [CommGroup G] [Fintype G] [DecidableEq G]
+variable {G : Type*} [CommGroup G] [DecidableEq G]
 
 /-- Left multiplication of a finite subset of a commutative group. -/
 def leftMulFinset (a : G) (S : Finset G) : Finset G :=
@@ -94,7 +94,7 @@ def finsetMulStabilizer (S : Finset G) : Subgroup G where
     change leftMulFinset a⁻¹ S = S
     apply leftMulFinset_injective a
     rw [← leftMulFinset_mul]
-    simpa [ha]
+    simp [ha]
 
 @[simp] theorem mem_finsetMulStabilizer_iff {S : Finset G} {a : G} :
     a ∈ finsetMulStabilizer S ↔ leftMulFinset a S = S := Iff.rfl
@@ -126,7 +126,7 @@ theorem mem_subsetProductsList_ofFn_iff {k : ℕ}
         z = ∏ i, if sigma i then x i else 1 := by
   induction k generalizing z with
   | zero =>
-      simp [subsetProductsList]
+      simp
   | succ k ih =>
       rw [List.ofFn_succ, subsetProductsList_cons, Finset.mem_union]
       constructor
@@ -161,7 +161,7 @@ theorem mem_subsetProductsList_ofFn_iff {k : ℕ}
           rw [leftMulFinset, Finset.mem_image]
           refine ⟨∏ i : Fin k, if sigma i.succ then x i.succ else 1, ?_, ?_⟩
           · exact htail
-          · simp [h0]
+          · simp
 
 /-- A multiplier stabilizing the old subset-product set continues to
 stabilize it after one more coordinate is adjoined. -/
@@ -206,16 +206,19 @@ noncomputable def countOutsideSubgroup (H : Subgroup G) (l : List G) : ℕ := by
   classical
   exact (l.filter fun a => decide (a ∉ H)).length
 
+omit [DecidableEq G] in
 @[simp] theorem countOutsideSubgroup_nil (H : Subgroup G) :
     countOutsideSubgroup H ([] : List G) = 0 := by
   simp [countOutsideSubgroup]
 
+omit [DecidableEq G] in
 theorem countOutsideSubgroup_cons_of_mem (H : Subgroup G)
     (a : G) (l : List G) (ha : a ∈ H) :
     countOutsideSubgroup H (a :: l) = countOutsideSubgroup H l := by
   classical
   simp [countOutsideSubgroup, ha]
 
+omit [DecidableEq G] in
 theorem countOutsideSubgroup_cons_of_not_mem (H : Subgroup G)
     (a : G) (l : List G) (ha : a ∉ H) :
     countOutsideSubgroup H (a :: l) = countOutsideSubgroup H l + 1 := by
@@ -256,6 +259,7 @@ theorem length_filter_not_mem_subgroup_lt_card_subsetProductsList
 /-- If the reachable subset products do not fill the group, then all but at
 most `|G|-1` coordinates lie in one proper stabilizer subgroup. -/
 theorem exists_proper_stabilizer_with_few_outside
+    [Fintype G]
     (l : List G) (hproper : subsetProductsList l ≠ Finset.univ) :
     ∃ H : Subgroup G, H ≠ ⊤ ∧
       countOutsideSubgroup H l < Fintype.card G := by
@@ -303,7 +307,7 @@ theorem signedProduct_mul_selectedSquareProduct {k : ℕ}
   rw [signedProduct, selectedSquareProduct, ← Finset.prod_mul_distrib]
   apply Finset.prod_congr rfl
   intro i hi
-  cases h : sigma i <;> simp [h, pow_two]
+  cases h : sigma i <;> simp [pow_two]
 
 theorem signedProduct_eq_iff_selectedSquareProduct_eq {k : ℕ}
     (sigma : Fin k → Bool) (x : Fin k → G) (c : G) :
@@ -346,7 +350,7 @@ def classSquareElement (x : G) :
 condition, forces all but fewer than `|G²|` coordinate squares into one
 proper subgroup of `G²`. -/
 theorem exists_proper_squareSubgroup_with_few_coordinates_of_no_signedProduct
-    [Fintype G] [DecidableEq G] {k : ℕ}
+    [Finite G] {k : ℕ}
     (x : Fin k → G) (c : G)
     (hclass :
       (QuotientGroup.mk' (classSquareSubgroup : Subgroup G)) (∏ i, x i) =
@@ -377,7 +381,7 @@ theorem exists_proper_squareSubgroup_with_few_coordinates_of_no_signedProduct
               (classSquareSubgroup : Subgroup G)) : G) := by
           apply Finset.prod_congr rfl
           intro i hi
-          cases h : sigma i <;> simp [h]
+          cases h : sigma i <;> simp
         _ = (∏ i, x i) / c := by
           simpa [target] using hsigmaVal.symm
     exact hmiss sigma

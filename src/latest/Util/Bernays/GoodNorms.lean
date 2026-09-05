@@ -62,7 +62,8 @@ theorem exists_ideal_primePower_norm {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     have hpd : ¬(p : ℤ) ∣ b ^ 2 + 4 * d := by
       intro h
       have hdvd : p ∣ discriminantLevel (b ^ 2 + 4 * d) :=
-        (show p ∣ (b ^ 2 + 4 * d).natAbs by simpa using Int.natAbs_dvd_natAbs.mpr h).trans (dvd_mul_left _ _)
+        (show p ∣ (b ^ 2 + 4 * d).natAbs by simpa using Int.natAbs_dvd_natAbs.mpr h).trans
+          (dvd_mul_left _ _)
       exact hp.not_dvd_one (hpcop.gcd_eq_one ▸ Nat.dvd_gcd (dvd_refl p) hdvd)
     let s : SplitPrime d b := ⟨p, hp, hpd, r, hr⟩
     refine ⟨s.ideal hD false ^ e, ?_⟩
@@ -85,7 +86,8 @@ theorem exists_ideal_norm_of_local {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
   · intro _ _ _
     exact ⟨1, Submodule.cardQuot_top _ _⟩
   · intro m n hm hn hmn ih₁ ih₂ _ hc hl
-    obtain ⟨hl₁, hl₂⟩ := (parityAdmissible_mul_iff _ (zero_lt_one.trans hm) (zero_lt_one.trans hn) hmn).mp hl
+    obtain ⟨hl₁, hl₂⟩ := (parityAdmissible_mul_iff _ (zero_lt_one.trans hm) (zero_lt_one.trans hn)
+      hmn).mp hl
     obtain ⟨I, hI⟩ := ih₁ (zero_lt_one.trans hm) (hc.of_dvd_left (dvd_mul_right _ _)) hl₁
     obtain ⟨J, hJ⟩ := ih₂ (zero_lt_one.trans hn) (hc.of_dvd_left (dvd_mul_left _ _)) hl₂
     exact ⟨I * J, (InvertibleIdeal.cardQuot_mul I J).trans (by rw [hI, hJ])⟩

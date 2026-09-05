@@ -6,8 +6,6 @@ import Util.Bernays.SquareSupportArithmetic
 # Arithmetic functions for good norms and their genus twists
 -/
 
-open scoped Classical
-
 namespace Bernays
 
 noncomputable def coprimeAF (M : ℕ) : ArithmeticFunction ℂ :=
@@ -20,7 +18,7 @@ theorem coprimeAF_isMultiplicative (M : ℕ) : (coprimeAF M).IsMultiplicative :=
   · intro m n hm hn _
     change (if 0 < m * n ∧ (m * n).Coprime M then (1 : ℂ) else 0) =
       (if 0 < m ∧ m.Coprime M then 1 else 0) * (if 0 < n ∧ n.Coprime M then 1 else 0)
-    simp only [Nat.pos_iff_ne_zero, mul_ne_zero hm hn, hm, hn, true_and, Nat.coprime_mul_iff_left]
+    simp only [Nat.pos_iff_ne_zero, Nat.coprime_mul_iff_left]
     split_ifs <;> simp_all
 
 theorem coprimeAF_primePower (M : ℕ) {p : ℕ} (hp : p.Prime) {e : ℕ} (he : 0 < e) :
@@ -71,7 +69,8 @@ theorem genusWeightAF_isMultiplicative {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     exact ψ.map_zero_eq_one
   · intro m n hm hn _
     rw [genusWeightAF_apply hD ψ _ (mul_ne_zero hm hn), genusWeightAF_apply hD ψ m hm,
-      genusWeightAF_apply hD ψ n hn, genusValue_mul hD (Nat.pos_of_ne_zero hm) (Nat.pos_of_ne_zero hn),
+      genusWeightAF_apply hD ψ n hn, genusValue_mul hD (Nat.pos_of_ne_zero hm) (Nat.pos_of_ne_zero
+        hn),
       ofMul_mul, AddChar.map_add_eq_mul]
 
 theorem genusWeightAF_primePower {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :

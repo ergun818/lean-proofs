@@ -17,7 +17,8 @@ theorem halfPlane_differentiableOn {F : ℂ → ℂ} {c : ℝ}
 theorem halfPlane_deriv_continuousOn {F : ℂ → ℂ} {c : ℝ}
     (hF : ∀ z : ℂ, c < z.re → DifferentiableAt ℂ F z) :
     ContinuousOn (deriv F) {z : ℂ | c < z.re} :=
-  ((halfPlane_differentiableOn hF).deriv (isOpen_lt continuous_const Complex.continuous_re)).continuousOn
+  ((halfPlane_differentiableOn hF).deriv (isOpen_lt continuous_const
+    Complex.continuous_re)).continuousOn
 
 theorem halfPlane_closedBall {δ t : ℝ} (hδ : 0 < δ) :
     closedBall ((1 + δ : ℝ) + t * Complex.I) (δ / 2) ⊆ {z : ℂ | 1 < z.re} := by
@@ -42,7 +43,7 @@ theorem halfPlane_closedBall_rectangle {δ t T : ℝ} (hδ : 0 < δ) (hδ₁ : �
     (z - ((1 + δ : ℝ) + t * Complex.I))).trans hnorm)
   simp only [Complex.sub_re, Complex.sub_im, Complex.add_re, Complex.add_im, Complex.ofReal_re,
     Complex.ofReal_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
-    mul_zero, zero_mul, mul_one, sub_zero, add_zero, zero_add] at hr hi
+    mul_zero, mul_one, sub_zero, add_zero, zero_add] at hr hi
   have ht' := abs_le.mp ht
   exact ⟨⟨by linarith, by linarith⟩, ⟨by linarith, by linarith⟩⟩
 
@@ -88,7 +89,7 @@ theorem halfPlane_square_uniform_bounds {f F : ℂ → ℂ}
   have hmul := mul_le_mul_of_nonneg_right hsqrt (norm_nonneg (deriv f z))
   have hL : 1 ≤ L := le_max_left 1 B
   have hnonneg := Real.sqrt_nonneg (max 0 A)
-  constructor <;> change _ ≤ Real.sqrt (max 0 A) + 2 * (L + 1) + 1
+  constructor
   · linarith
   · change Real.sqrt (δ / 2) * ‖deriv f z‖ ≤ L + 1 at hder
     change Real.sqrt δ * ‖deriv f z‖ ≤ _

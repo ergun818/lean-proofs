@@ -7,7 +7,6 @@ import Util.Bernays.RamifiedEulerCorrection
 -/
 
 open Filter Topology Real
-open scoped Classical
 
 namespace Bernays
 

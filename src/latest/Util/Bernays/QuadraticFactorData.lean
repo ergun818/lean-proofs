@@ -92,7 +92,8 @@ theorem goodMaximal_inverseClass_sameNorm {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
       (P : Ideal (QuadraticAlgebra ℤ d b)).IsMaximal →
       IsCoprime (P : Ideal (QuadraticAlgebra ℤ d b)) (quadraticBadIdeal d b) →
       ∃ Q : InvertibleIdeal (QuadraticAlgebra ℤ d b), Q.idealClass = P.idealClass⁻¹ ∧
-        (Q : Ideal (QuadraticAlgebra ℤ d b)).cardQuot = (P : Ideal (QuadraticAlgebra ℤ d b)).cardQuot := by
+        (Q : Ideal (QuadraticAlgebra ℤ d b)).cardQuot = (P : Ideal (QuadraticAlgebra ℤ d
+          b)).cardQuot := by
   let := quadraticOrderIsDomain hD
   intro P hP hPF
   obtain ⟨q, hq, hc, h | ⟨s, hs, ε, rfl⟩⟩ := goodMaximal_prime_description hD P hP hPF

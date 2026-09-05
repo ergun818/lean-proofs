@@ -6,7 +6,6 @@ import Mathlib.NumberTheory.Harmonic.Bounds
 -/
 
 open Set Filter Topology MeasureTheory
-open scoped Classical
 
 namespace Bernays
 

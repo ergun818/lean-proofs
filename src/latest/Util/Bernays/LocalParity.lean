@@ -11,7 +11,6 @@ does not restrict the discriminant or the quadratic form.
 -/
 
 open Filter Topology Real
-open scoped Classical
 
 namespace Bernays
 
@@ -91,6 +90,7 @@ theorem localParity_mul (S : ℕ → Prop) {m n : ℕ} (hmn : m.Coprime n) :
   · have hm₀ : m = 0 := Nat.eq_zero_of_not_pos hm
     simp [hm₀]
 
+open scoped Classical in
 theorem localParity_prime_pow (S : ℕ → Prop) {p k : ℕ} (hp : p.Prime) :
     localParity S (p ^ k) = if S p ∧ Odd k then 0 else 1 := by
   classical

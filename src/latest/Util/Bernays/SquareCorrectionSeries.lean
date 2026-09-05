@@ -8,12 +8,12 @@ import Mathlib.NumberTheory.LSeries.Deriv
 -/
 
 open Filter Topology Asymptotics
-open scoped Classical
 
 namespace Bernays
 
 theorem squareSupportAF_norm_cumsum_le (S : ℕ → Prop) (N : ℕ) :
     (∑ n ∈ Finset.Icc 1 N, ‖squareSupportAF S n‖) ≤ Real.sqrt (N : ℝ) + 1 := by
+  classical
   let P : ℕ → Prop := fun n => 0 < n ∧ ParityAdmissible (fun _ => True) n ∧ PrimeSupported S n
   let T := (Finset.Icc 1 N).filter P
   have hsum : (∑ n ∈ Finset.Icc 1 N, ‖squareSupportAF S n‖) = (T.card : ℝ) := by
@@ -22,7 +22,7 @@ theorem squareSupportAF_norm_cumsum_le (S : ℕ → Prop) (N : ℕ) :
       change ‖if P n then (1 : ℂ) else 0‖ = _
       split_ifs <;> simp
     simp_rw [hnorm]
-    convert Finset.sum_boole (R := ℝ) P (Finset.Icc 1 N) using 1 <;> congr
+    convert Finset.sum_boole (R := ℝ) P (Finset.Icc 1 N) using 1
   have hsquare (n : ℕ) (hn : n ∈ T) : Nat.sqrt n ^ 2 = n := by
     have hp := (Finset.mem_filter.mp hn).2
     exact (Nat.exists_mul_self' n).mp (parity_all_primes_isSquare hp.1 hp.2.1)

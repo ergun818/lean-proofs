@@ -112,6 +112,6 @@ theorem affineBoxPoint_sub_base {d b : ℤ} (c : QuadraticAlgebra ℤ d b) (μ Q
     affineBoxPoint c μ Q L r i j - c =
       (μ : QuadraticAlgebra ℤ d b) *
         ⟨(r.1.val + Q * (L + i.val) : ℕ), (r.2.val + Q * j.val : ℕ)⟩ := by
-  ext <;> simp [affineBoxPoint, sub_eq_add_neg] <;> ring
+  ext <;> simp [affineBoxPoint, sub_eq_add_neg]
 
 end Bernays

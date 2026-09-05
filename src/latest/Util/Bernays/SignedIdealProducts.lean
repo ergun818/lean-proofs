@@ -56,10 +56,12 @@ theorem exists_squareSubgroup_of_missing_ideal_class {d b : ℤ} (hD : b ^ 2 + 4
       ∀ C : ClassGroup (QuadraticAlgebra ℤ d b),
       (QuotientGroup.mk' (classSquareSubgroup : Subgroup (ClassGroup (QuadraticAlgebra ℤ d b))))
           (∏ i, (P i).idealClass) =
-        (QuotientGroup.mk' (classSquareSubgroup : Subgroup (ClassGroup (QuadraticAlgebra ℤ d b)))) C →
+        (QuotientGroup.mk' (classSquareSubgroup : Subgroup (ClassGroup (QuadraticAlgebra ℤ d b))))
+          C →
       (∀ J : InvertibleIdeal (QuadraticAlgebra ℤ d b),
         (J : Ideal (QuadraticAlgebra ℤ d b)).cardQuot =
-          ((∏ i, P i : InvertibleIdeal (QuadraticAlgebra ℤ d b)) : Ideal (QuadraticAlgebra ℤ d b)).cardQuot →
+          ((∏ i, P i : InvertibleIdeal (QuadraticAlgebra ℤ d b)) : Ideal (QuadraticAlgebra ℤ d
+            b)).cardQuot →
         J.idealClass ≠ C) →
       ∃ H : Subgroup (classSquareSubgroup : Subgroup (ClassGroup (QuadraticAlgebra ℤ d b))), H ≠ ⊤ ∧
         countOutsideSubgroup H (List.ofFn fun i => classSquareElement (P i).idealClass) <

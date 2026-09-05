@@ -4,8 +4,6 @@ import Util.Bernays.LogKernelCutoffs
 # The small-index contribution to the logarithmic kernel
 -/
 
-open scoped Classical
-
 namespace Bernays
 
 theorem logarithmicKernel_le_of_le_sqrt {x y : ℝ} (hx : 1 ≤ x) (hy : 0 < y)
@@ -17,7 +15,8 @@ theorem logarithmicKernel_le_of_le_sqrt {x y : ℝ} (hx : 1 ≤ x) (hy : 0 < y)
   rw [Real.log_sqrt hx₀.le] at hlog
   rw [Real.log_div hy.ne' hx₀.ne']
   have hπ : 0 < 2 * Real.pi := by positivity
-  have hmul := mul_le_mul_of_nonneg_left (show Real.log y - Real.log x ≤ -(Real.log x / 2) by linarith)
+  have hmul := mul_le_mul_of_nonneg_left (show Real.log y - Real.log x ≤ -(Real.log x / 2) by
+    linarith)
     (inv_nonneg.mpr hπ.le)
   have hlt : (1 / (2 * Real.pi)) * (Real.log y - Real.log x) ≤ -(Real.log x / (4 * Real.pi)) := by
     calc

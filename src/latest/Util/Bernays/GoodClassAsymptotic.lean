@@ -7,7 +7,6 @@ import Util.Bernays.GoodClassCounts
 -/
 
 open Filter Topology
-open scoped Classical
 
 namespace Bernays
 
@@ -68,8 +67,6 @@ theorem goodClassValues_card_limit {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
   rw [sub_zero] at h
   apply h.congr'
   filter_upwards [] with N
-  change ((genusValues hD (genusMap C) N).card : ℝ) / scale N -
-    (((genusValues hD (genusMap C) N).card : ℝ) - (goodClassValues hD C N).card) / scale N = _
   ring
 
 end Bernays

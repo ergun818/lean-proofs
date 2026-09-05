@@ -20,7 +20,8 @@ theorem vertical_hasDerivAt {f : ℂ → ℂ} {σ t : ℝ}
     HasDerivAt (fun t : ℝ => f ((σ : ℂ) + t * Complex.I))
       (deriv f ((σ : ℂ) + t * Complex.I) * Complex.I) t := by
   have hin : HasDerivAt (fun z : ℂ => (σ : ℂ) + z * Complex.I) Complex.I (t : ℂ) := by
-    simpa only [one_mul, id_eq] using ((hasDerivAt_id (t : ℂ)).mul_const Complex.I).const_add (σ : ℂ)
+    simpa only [one_mul, id_eq] using ((hasDerivAt_id (t : ℂ)).mul_const Complex.I).const_add (σ :
+      ℂ)
   exact (hf.hasDerivAt.comp (t : ℂ) hin).comp_ofReal
 
 theorem verticalProduct_hasDerivAt {f : ℂ → ℂ} {ψ : ℝ → ℂ} {σ t : ℝ}
@@ -62,7 +63,8 @@ theorem verticalProduct_integrable {f : ℂ → ℂ} {ψ : ℝ → ℂ} {σ : �
     Integrable (verticalProduct f ψ σ) ∧ Integrable (deriv (verticalProduct f ψ σ)) := by
   have hs : HasCompactSupport (verticalProduct f ψ σ) := hsupp.mul_left
   have hc : Continuous (verticalProduct f ψ σ) :=
-    (halfPlane_vertical_continuous (halfPlane_differentiableOn hf).continuousOn hσ).mul hψ.continuous
+    (halfPlane_vertical_continuous (halfPlane_differentiableOn hf).continuousOn hσ).mul
+      hψ.continuous
   exact ⟨hc.integrable_of_hasCompactSupport hs,
     (verticalProduct_deriv_continuous hf hσ hψ).integrable_of_hasCompactSupport hs.deriv⟩
 
@@ -78,7 +80,7 @@ theorem fourier_deriv_norm_bound {g : ℝ → ℂ} (hg : Integrable g)
     (hgd : Differentiable ℝ g) (hg' : Integrable (deriv g)) (u : ℝ) :
     (2 * Real.pi * |u|) * ‖𝓕 g u‖ ≤ ∫ t : ℝ, ‖deriv g t‖ := by
   have heq := congrArg (fun k : ℝ → ℂ => ‖k u‖) (Real.fourier_deriv hg hgd hg')
-  simp only [Pi.smul_apply, norm_smul, norm_mul, Complex.norm_I, mul_one,
+  simp only [norm_smul, norm_mul, Complex.norm_I, mul_one,
     Complex.norm_ofNat, Complex.norm_real, Real.norm_eq_abs, abs_of_pos Real.pi_pos] at heq
   exact heq ▸ fourier_norm_le_integral_norm (deriv g) u
 

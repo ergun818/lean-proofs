@@ -38,7 +38,8 @@ theorem natCard_le_units_mul_of_associate_fibers {R X Y : Type*}
   calc
     Nat.card X = ∑ y : Y, Nat.card {x : X // f x = y} := by
       rw [← Nat.card_congr (Equiv.sigmaFiberEquiv f), Nat.card_sigma]
-    _ ≤ ∑ _y : Y, Nat.card Rˣ := Finset.sum_le_sum fun y _ => natCard_associate_fiber_le z hz f hassoc y
+    _ ≤ ∑ _y : Y, Nat.card Rˣ := Finset.sum_le_sum fun y _ => natCard_associate_fiber_le z hz f
+      hassoc y
     _ = Nat.card Rˣ * Nat.card Y := by simp [Nat.card_eq_fintype_card, Nat.mul_comm]
 
 theorem natCard_associate_fiber_eq {R X Y : Type*} [CommMonoidWithZero R]

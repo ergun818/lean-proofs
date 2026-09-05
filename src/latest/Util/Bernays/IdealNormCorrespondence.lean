@@ -75,7 +75,8 @@ theorem formIdeal_product_principal_norm {f : BinQuadForm}
     nlinarith [hnorm]
   have hnonneg := Bernays.quadraticNorm_nonneg (f.order_discr.trans_lt hf.2) z
   have hcast := congrArg (fun n : ℕ => (n : ℤ)) hnat
-  simpa only [Nat.cast_mul, Int.natCast_natAbs, abs_of_pos hf.1, abs_of_nonneg hnonneg] using hcast.symm
+  simpa only [Nat.cast_mul, Int.natCast_natAbs, abs_of_pos hf.1, abs_of_nonneg hnonneg] using
+    hcast.symm
 
 theorem represented_pos_iff_idealClass_norm {f : BinQuadForm} (hf : f.PosDef)
     (hp : f.Primitive) {n : ℕ} (hn : 0 < n) :

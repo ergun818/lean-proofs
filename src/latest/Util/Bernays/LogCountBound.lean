@@ -10,7 +10,7 @@ open Filter Topology
 namespace Bernays
 
 theorem exists_logCountBound {A : ℕ → ℝ} (hA₀ : ∀ N : ℕ, 0 ≤ A N)
-    (hA₁ : ∀ N : ℕ, A N ≤ N) {B : ℝ} (hB : 0 ≤ B)
+    (hA₁ : ∀ N : ℕ, A N ≤ N) {B : ℝ} (_hB : 0 ≤ B)
     (hAB : ∀ᶠ N : ℕ in atTop, A N ≤ B * scale N) :
     ∃ C : ℝ, 0 < C ∧ ∀ N : ℕ,
       A N ≤ C * N / (1 + Real.sqrt (Real.log (N : ℝ))) := by

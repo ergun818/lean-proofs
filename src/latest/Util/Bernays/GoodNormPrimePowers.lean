@@ -19,7 +19,8 @@ theorem exists_splitPrime_of_coprime_not_inert {d b : ℤ} (hD : b ^ 2 + 4 * d <
   have hpd : ¬ (p : ℤ) ∣ b ^ 2 + 4 * d := by
     intro h
     have hdvd : p ∣ discriminantLevel (b ^ 2 + 4 * d) :=
-      (show p ∣ (b ^ 2 + 4 * d).natAbs by simpa using Int.natAbs_dvd_natAbs.mpr h).trans (dvd_mul_left _ _)
+      (show p ∣ (b ^ 2 + 4 * d).natAbs by simpa using Int.natAbs_dvd_natAbs.mpr h).trans
+        (dvd_mul_left _ _)
     exact (hp.coprime_iff_not_dvd.mp hc) hdvd
   exact ⟨⟨p, hp, hpd, r, hr⟩, rfl⟩
 

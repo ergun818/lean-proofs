@@ -34,7 +34,7 @@ theorem exists_logarithmic_fourier_test {Ψ : ℝ → ℂ} (hΨ : ContDiff ℝ �
   rw [hid, Real.exp_log hy]
 
 theorem smoothedSeries_eq_spatial_twist {a : ℕ → ℂ} {Ψ : ℝ → ℂ}
-    (hplus : tsupport Ψ ⊆ Ioi 0) (g : SchwartzMap ℝ ℂ)
+    (_hplus : tsupport Ψ ⊆ Ioi 0) (g : SchwartzMap ℝ ℂ)
     (hg : ∀ y : ℝ, 0 < y → 𝓕 (g : ℝ → ℂ) (1 / (2 * Real.pi) * Real.log y) = (y : ℂ) * Ψ y)
     (δ : ℝ) :
     smoothedSeries a g δ =

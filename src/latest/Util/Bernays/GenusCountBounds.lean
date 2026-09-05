@@ -7,12 +7,12 @@ import Util.Bernays.LogCountBound
 -/
 
 open Filter Topology
-open scoped Classical
 
 namespace Bernays
 
 theorem goodLocalValues_card_le {d b : ℤ} (hD : b ^ 2 + 4 * d ≠ 0) (N : ℕ) :
     (goodLocalValues d b hD N).card ≤ N := by
+  classical
   have hsub : goodLocalValues d b hD N ⊆ Finset.Icc 1 N :=
     (Finset.filter_subset _ _).trans (Finset.filter_subset _ _)
   simpa using Finset.card_le_card hsub
@@ -31,6 +31,7 @@ theorem genusLocalAF_sum {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     ∀ ψ : AddChar (Additive (GenusGroup (QuadraticAlgebra ℤ d b))) ℂ,
     ∀ N : ℕ, (∑ n ∈ Finset.Icc 1 N, genusLocalAF hD ψ n) =
       ∑ n ∈ goodLocalValues d b hD.ne N, ψ (Additive.ofMul (genusValue hD n)) := by
+  classical
   let := quadraticOrderIsDomain hD
   intro ψ N
   rw [goodLocalValues, localValues, Finset.filter_filter, Finset.sum_filter]
@@ -44,6 +45,7 @@ theorem genusLocalAF_sum_norm {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     ∀ ψ : AddChar (Additive (GenusGroup (QuadraticAlgebra ℤ d b))) ℂ,
     ∀ N : ℕ, (∑ n ∈ Finset.Icc 1 N, ‖genusLocalAF hD ψ n‖) =
       ((goodLocalValues d b hD.ne N).card : ℝ) := by
+  classical
   let := quadraticOrderIsDomain hD
   intro ψ N
   have hcard : ((goodLocalValues d b hD.ne N).card : ℝ) =

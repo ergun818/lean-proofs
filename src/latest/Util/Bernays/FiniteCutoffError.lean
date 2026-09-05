@@ -7,8 +7,6 @@ import Mathlib.Tactic
 # A finite sharp-cutoff error bound for complex coefficients
 -/
 
-open scoped Classical
-
 namespace Bernays
 
 theorem sum_subset_eq_indicator {α E : Type*} [DecidableEq α] [AddCommMonoid E]
@@ -31,7 +29,8 @@ theorem norm_sub_mul_real_le {z : ℂ} {r : ℝ} (hr₀ : 0 ≤ r) (hr₁ : r �
   rw [hid]
   exact norm_mul_real_le (by linarith) (by linarith)
 
-theorem finite_cutoff_error {α : Type*} [DecidableEq α] (A B S : Finset α) (hAB : A ⊆ B) (hSB : S ⊆ B)
+theorem finite_cutoff_error {α : Type*} [DecidableEq α] (A B S : Finset α) (hAB : A ⊆ B) (hSB : S
+  ⊆ B)
     (a : α → ℂ) (r : α → ℝ)
     (hr : ∀ x ∈ B, 0 ≤ r x ∧ r x ≤ 1)
     (hone : ∀ x ∈ A, x ∉ S → r x = 1) :

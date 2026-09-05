@@ -5,8 +5,6 @@ import Mathlib.Data.ZMod.QuotientGroup
 # Exact local and simultaneous sieve densities at split primes
 -/
 
-open scoped Classical
-
 namespace Bernays
 
 def affineScalarEquiv {K : Type*} [Field K] (c μ : K) (hμ : μ ≠ 0) : K ≃ K where

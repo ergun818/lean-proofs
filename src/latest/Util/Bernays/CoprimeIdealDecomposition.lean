@@ -98,8 +98,10 @@ theorem InvertibleIdeal.coprime_norm_product_add_scalar {R : Type*} [CommRing R]
   apply le_antisymm
   · exact sup_le Ideal.mul_le_left ((Ideal.span_singleton_le_iff_mem _).mpr hmI)
   · calc
-      (I : Ideal R) = (I : Ideal R) * ((J : Ideal R) + Ideal.span {((I : Ideal R).cardQuot : R)}) := by
-        change (I : Ideal R) = (I : Ideal R) * ((J : Ideal R) ⊔ Ideal.span {((I : Ideal R).cardQuot : R)})
+      (I : Ideal R) = (I : Ideal R) * ((J : Ideal R) + Ideal.span {((I : Ideal R).cardQuot : R)})
+        := by
+        change (I : Ideal R) = (I : Ideal R) * ((J : Ideal R) ⊔ Ideal.span {((I : Ideal
+          R).cardQuot : R)})
         rw [hJ, Ideal.mul_top]
       _ = (I : Ideal R) * (J : Ideal R) +
           (I : Ideal R) * Ideal.span {((I : Ideal R).cardQuot : R)} := mul_add _ _ _

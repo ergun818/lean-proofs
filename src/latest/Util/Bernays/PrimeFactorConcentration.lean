@@ -5,11 +5,9 @@ import Util.Bernays.SquareClassExceptional
 # From missing ideal classes to few rational prime factors
 -/
 
-open scoped Classical
-
 namespace Bernays
 
-theorem countOutsideSubgroup_ofFn {G : Type*} [CommGroup G] [Fintype G] [DecidableEq G]
+theorem countOutsideSubgroup_ofFn {G : Type*} [CommGroup G]
     (H : Subgroup G) {k : ℕ} (x : Fin k → G) :
     countOutsideSubgroup H (List.ofFn x) = Nat.card {i : Fin k // x i ∉ H} := by
   classical
@@ -21,7 +19,7 @@ theorem countOutsideSubgroup_ofFn {G : Type*} [CommGroup G] [Fintype G] [Decidab
       by_cases ha : a ∈ H <;> simp [countOutsideSubgroup, ha] at * <;> omega
   rw [hlist, List.map_ofFn, Fin.sum_ofFn, Nat.card_eq_fintype_card, Fintype.card_subtype]
   convert Finset.sum_boole (R := ℕ) (fun i => x i ∉ H) Finset.univ using 1 <;>
-    simp only [Function.comp_def, Nat.cast_id] <;> congr
+    simp only [Function.comp_def, Nat.cast_id]
 
 theorem goodMaximal_unique_prime_divisor {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     letI := quadraticOrderIsDomain hD
@@ -65,7 +63,8 @@ theorem goodMaximal_squareClass_outside_of_bad_dvd {d b : ℤ} (hD : b ^ 2 + 4 *
       IsCoprime (P : Ideal (QuadraticAlgebra ℤ d b)) (quadraticBadIdeal d b) →
       ∀ H : Subgroup (classSquareSubgroup : Subgroup (ClassGroup (QuadraticAlgebra ℤ d b))),
       ∀ s : SplitPrime d b, classSquareElement (s.idealClass hD) ∉ H →
-      s.1 ∣ (P : Ideal (QuadraticAlgebra ℤ d b)).cardQuot → classSquareElement P.idealClass ∉ H := by
+      s.1 ∣ (P : Ideal (QuadraticAlgebra ℤ d b)).cardQuot →
+        classSquareElement P.idealClass ∉ H := by
   let := quadraticOrderIsDomain hD
   intro P hP hPF H s hs hdvd
   obtain ⟨q, hq, _, h | ⟨t, ht, ε, rfl⟩⟩ := goodMaximal_prime_description hD P hP hPF
@@ -77,6 +76,7 @@ theorem goodMaximal_squareClass_outside_of_bad_dvd {d b : ℤ} (hD : b ^ 2 + 4 *
     subst t
     exact fun h => hs ((s.oriented_squareClass_mem_iff hD H ε).mp h)
 
+open scoped Classical in
 theorem badPrimeFactors_card_le_outside_coordinates {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     letI := quadraticOrderIsDomain hD
     ∀ {k : ℕ} (P : Fin k → InvertibleIdeal (QuadraticAlgebra ℤ d b)),
@@ -84,26 +84,32 @@ theorem badPrimeFactors_card_le_outside_coordinates {d b : ℤ} (hD : b ^ 2 + 4 
         IsCoprime (P i : Ideal (QuadraticAlgebra ℤ d b)) (quadraticBadIdeal d b)) →
       ∀ H : Subgroup (classSquareSubgroup : Subgroup (ClassGroup (QuadraticAlgebra ℤ d b))),
         ((((∏ i, P i : InvertibleIdeal (QuadraticAlgebra ℤ d b)) :
-          Ideal (QuadraticAlgebra ℤ d b)).cardQuot).primeFactors.filter (squareBadPrime hD H)).card ≤
+          Ideal (QuadraticAlgebra ℤ d b)).cardQuot).primeFactors.filter
+            (squareBadPrime hD H)).card ≤
           countOutsideSubgroup H (List.ofFn fun i => classSquareElement (P i).idealClass) := by
   classical
   let := quadraticOrderIsDomain hD
   let := quadraticOrderClassGroupFintype hD
-  let : Fintype (classSquareSubgroup : Subgroup (ClassGroup (QuadraticAlgebra ℤ d b))) := Fintype.ofFinite _
+  let : Fintype (classSquareSubgroup : Subgroup (ClassGroup (QuadraticAlgebra ℤ d b))) :=
+    Fintype.ofFinite _
   intro k P hP H
-  let n := ((∏ i, P i : InvertibleIdeal (QuadraticAlgebra ℤ d b)) : Ideal (QuadraticAlgebra ℤ d b)).cardQuot
+  let n := ((∏ i, P i : InvertibleIdeal (QuadraticAlgebra ℤ d b)) :
+    Ideal (QuadraticAlgebra ℤ d b)).cardQuot
   let A := n.primeFactors.filter (squareBadPrime hD H)
   let X := {p // p ∈ A}
   let Y := {i : Fin k // classSquareElement (P i).idealClass ∉ H}
   have hex (p : X) : ∃ i : Y, p.1 ∣ (P i.1 : Ideal (QuadraticAlgebra ℤ d b)).cardQuot := by
     obtain ⟨hpN, hpBad⟩ := Finset.mem_filter.mp p.2
     obtain ⟨hp, hpn, _⟩ := Nat.mem_primeFactors.mp hpN
-    change p.1 ∣ ((∏ i, P i : InvertibleIdeal (QuadraticAlgebra ℤ d b)) : Ideal (QuadraticAlgebra ℤ d b)).cardQuot at hpn
+    change p.1 ∣
+      ((∏ i, P i : InvertibleIdeal (QuadraticAlgebra ℤ d b)) :
+        Ideal (QuadraticAlgebra ℤ d b)).cardQuot at hpn
     rw [InvertibleIdeal.cardQuot_prod] at hpn
     obtain ⟨i, _, hi⟩ := (hp.prime.dvd_finsetProd_iff
       (fun i => (P i : Ideal (QuadraticAlgebra ℤ d b)).cardQuot)).mp hpn
     obtain ⟨s, hs, hsb⟩ := hpBad
-    refine ⟨⟨i, goodMaximal_squareClass_outside_of_bad_dvd hD (P i) (hP i).1 (hP i).2 H s hsb ?_⟩, hi⟩
+    refine ⟨⟨i, goodMaximal_squareClass_outside_of_bad_dvd hD (P i) (hP i).1 (hP i).2 H s hsb ?_⟩,
+      hi⟩
     simpa only [hs] using hi
   let f : X → Y := fun p => (hex p).choose
   have hf : Function.Injective f := by

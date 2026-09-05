@@ -31,7 +31,8 @@ theorem isCoprime_principal_iff_isUnit_quotient {R : Type*} [CommRing R]
     apply Ideal.isCoprime_iff_sup_eq.mpr
     apply (Ideal.eq_top_iff_one _).mpr
     change (1 : R) ∈ Ideal.span {x} + F
-    have hx : x * r ∈ Ideal.span {x} := (Ideal.span {x}).mul_mem_right r (Ideal.mem_span_singleton_self x)
+    have hx : x * r ∈ Ideal.span {x} := (Ideal.span {x}).mul_mem_right r
+      (Ideal.mem_span_singleton_self x)
     have hsub := (Ideal.span {x} + F).sub_mem
       ((show Ideal.span {x} ≤ Ideal.span {x} + F from le_sup_left) hx)
       ((show F ≤ Ideal.span {x} + F from le_sup_right) hmem)

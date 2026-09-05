@@ -5,7 +5,6 @@ import Util.Bernays.LocalParity
 -/
 
 open Filter Topology Real
-open scoped Classical
 
 namespace Bernays
 
@@ -24,8 +23,10 @@ theorem tsum_even_geometric {r : ℝ} (hr₀ : 0 ≤ r) (hr₁ : r < 1) :
     simp only [ho]
     exact summable_zero
   have hsum := tsum_even_add_odd (f := fun k : ℕ => if Even k then r ^ k else 0) heS hoS
-  simpa only [he, ho, tsum_zero, add_zero, tsum_geometric_of_lt_one (sq_nonneg r) hr₂] using hsum.symm
+  simpa only [he, ho, tsum_zero, add_zero, tsum_geometric_of_lt_one (sq_nonneg r) hr₂] using
+    hsum.symm
 
+open scoped Classical in
 theorem localDirichletTerm_prime_pow (S : ℕ → Prop) {p : ℕ} (hp : p.Prime)
     (s : ℝ) (k : ℕ) :
     localDirichletTerm S s (p ^ k) =
@@ -34,6 +35,7 @@ theorem localDirichletTerm_prime_pow (S : ℕ → Prop) {p : ℕ} (hp : p.Prime)
     ← rpow_natCast_mul (Nat.cast_nonneg p), mul_comm (k : ℝ) s,
     rpow_mul_natCast (Nat.cast_nonneg p), div_eq_mul_inv, inv_pow]
 
+open scoped Classical in
 theorem localDirichletTerm_eulerFactor (S : ℕ → Prop) {p : ℕ} (hp : p.Prime)
     {s : ℝ} (hs : 0 < s) :
     (∑' k : ℕ, localDirichletTerm S s (p ^ k)) =
@@ -56,6 +58,7 @@ theorem localDirichletTerm_eulerFactor (S : ℕ → Prop) {p : ℕ} (hp : p.Prim
   · simp only [hS, false_and, if_false, one_mul]
     exact tsum_geometric_of_lt_one hr₀ hr₁
 
+open scoped Classical in
 theorem localParity_explicitEulerProduct (S : ℕ → Prop) {s : ℝ} (hs : 1 < s) :
     HasProd (fun p : Nat.Primes =>
         if S p then (1 - ((((p : ℕ) : ℝ) ^ s)⁻¹) ^ 2)⁻¹

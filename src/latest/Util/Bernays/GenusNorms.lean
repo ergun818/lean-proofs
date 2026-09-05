@@ -100,7 +100,8 @@ theorem genusValue_goodIdeal_norm {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
   induction l with
   | nil => simp [Submodule.cardQuot_top, genusValue_one]
   | cons P l ih =>
-    rw [List.prod_cons, InvertibleIdeal.cardQuot_mul, genusValue_mul hD P.cardQuot_pos l.prod.cardQuot_pos,
+    rw [List.prod_cons, InvertibleIdeal.cardQuot_mul, genusValue_mul hD P.cardQuot_pos
+      l.prod.cardQuot_pos,
       InvertibleIdeal.idealClass_mul, map_mul]
     have hhead := hP P List.mem_cons_self
     rw [genusValue_goodMaximal_norm hD P hhead.1 hhead.2,

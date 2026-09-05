@@ -27,8 +27,8 @@ theorem formIdeal_isUnit {f : BinQuadForm} (hf : f.PosDef) (hprim : f.Primitive)
 
 def formIdealLinearMap (f : BinQuadForm) : (Fin 2 → ℤ) →ₗ[ℤ] f.formIdeal where
   toFun x := ⟨⟨f.a * x 0, x 1⟩, dvd_mul_right _ _⟩
-  map_add' x y := by apply Subtype.ext; ext <;> simp <;> ring
-  map_smul' r x := by apply Subtype.ext; ext <;> simp <;> ring
+  map_add' x y := by apply Subtype.ext; ext <;> simp; ring
+  map_smul' r x := by apply Subtype.ext; ext <;> simp; ring
 
 @[simp] theorem formIdealLinearMap_re (f : BinQuadForm) (x : Fin 2 → ℤ) :
     ((f.formIdealLinearMap x : f.formIdeal) : f.Order).re = f.a * x 0 := rfl

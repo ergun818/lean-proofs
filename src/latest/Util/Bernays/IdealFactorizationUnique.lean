@@ -32,7 +32,8 @@ theorem maximal_factors_perm {l r : List (InvertibleIdeal R)} (hprod : l.prod = 
     | nil => exact List.Perm.nil
     | cons Q r =>
       have hle : (⊤ : Ideal R) ≤ (Q : Ideal R) := by
-        change ((([] : List (InvertibleIdeal R)).prod : InvertibleIdeal R) : Ideal R) ≤ (Q : Ideal R)
+        change ((([] : List (InvertibleIdeal R)).prod : InvertibleIdeal R) : Ideal R) ≤ (Q : Ideal
+          R)
         rw [hprod]
         exact Ideal.mul_le_left
       exact False.elim ((hr Q List.mem_cons_self).ne_top (top_unique hle))

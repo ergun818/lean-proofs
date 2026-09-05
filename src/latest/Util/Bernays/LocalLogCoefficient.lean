@@ -8,7 +8,6 @@ Erdős 1081 to any set of obstruction primes.
 -/
 
 open Filter Topology Real
-open scoped Classical
 
 namespace Bernays
 
@@ -16,11 +15,13 @@ namespace Bernays
 `log l` at every positive exponent of an allowed prime, while at an
 obstruction prime it is `2 log l` at positive even exponents and zero at odd
 exponents. -/
-noncomputable def localLogCoeff (S : ℕ → Prop) (l k : ℕ) : ℝ :=
-  if k = 0 then 0
-  else if S l then
-    if Even k then 2 * Real.log l else 0
-  else Real.log l
+noncomputable def localLogCoeff (S : ℕ → Prop) (l k : ℕ) : ℝ := by
+  classical
+  exact
+    if k = 0 then 0
+    else if S l then
+      if Even k then 2 * Real.log l else 0
+    else Real.log l
 
 theorem localLogCoeff_nonneg
     (S : ℕ → Prop) (k : ℕ) {l : ℕ} (_hl : l.Prime) :
@@ -132,6 +133,5 @@ theorem localParity_prime_pow_log_convolution
 noncomputable def localLogMass (S : ℕ → Prop) (Q : ℕ) : ℝ :=
   ∑ l ∈ (Q + 1).primesBelow,
     ∑ k ∈ Finset.Icc 1 (Nat.log l Q), localLogCoeff S l k
-
 
 end Bernays

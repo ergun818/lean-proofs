@@ -4,8 +4,6 @@ import Util.Bernays.SplitPrimePowerIdeals
 # Exact enumeration of ideals with a good inert-prime-power norm
 -/
 
-open scoped Classical
-
 namespace Bernays
 
 theorem list_prod_single_value {M : Type*} [Monoid M] (P : M) (l : List M)
@@ -24,7 +22,8 @@ theorem exists_inert_principal_power {d b : ℤ} (hD : b ^ 2 + 4 * d < 0)
       IsCoprime (I : Ideal (QuadraticAlgebra ℤ d b)) (quadraticBadIdeal d b) →
       (I : Ideal (QuadraticAlgebra ℤ d b)).cardQuot = p ^ e →
       ∃ k : ℕ, e = 2 * k ∧ I =
-        InvertibleIdeal.principal (p : QuadraticAlgebra ℤ d b) (quadratic_natCast_ne_zero hp.pos) ^ k := by
+        InvertibleIdeal.principal (p : QuadraticAlgebra ℤ d b) (quadratic_natCast_ne_zero hp.pos)
+          ^ k := by
   let := quadraticOrderIsDomain hD
   intro I hIF hnorm
   obtain ⟨l, hl, hmax⟩ := goodQuadraticIdeal_factorization hD I hIF

@@ -4,8 +4,6 @@ import Util.Bernays.IdealFactorizationUnique
 # Products supported on two distinct maximal ideals
 -/
 
-open scoped Classical
-
 namespace Bernays
 
 theorem list_prod_two_values {M : Type*} [CommMonoid M] [DecidableEq M]
@@ -31,7 +29,8 @@ theorem InvertibleIdeal.two_maximal_powers_injective {R : Type*} [CommRing R] [I
   have hprod : (List.replicate i P ++ List.replicate j Q).prod =
       (List.replicate k P ++ List.replicate l Q).prod := by
     simpa only [List.prod_append, List.prod_replicate] using heq
-  have hmax (a b : ℕ) : ∀ T ∈ List.replicate a P ++ List.replicate b Q, (T : Ideal R).IsMaximal := by
+  have hmax (a b : ℕ) : ∀ T ∈ List.replicate a P ++ List.replicate b Q,
+    (T : Ideal R).IsMaximal := by
     intro T hT
     rcases List.mem_append.mp hT with hT | hT
     · have ht : T = P := (List.mem_replicate.mp hT).2

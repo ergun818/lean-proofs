@@ -12,7 +12,8 @@ theorem goodMaximal_norm_coprime {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     ∀ P : InvertibleIdeal (QuadraticAlgebra ℤ d b),
       (P : Ideal (QuadraticAlgebra ℤ d b)).IsMaximal →
       IsCoprime (P : Ideal (QuadraticAlgebra ℤ d b)) (quadraticBadIdeal d b) →
-      (P : Ideal (QuadraticAlgebra ℤ d b)).cardQuot.Coprime (discriminantLevel (b ^ 2 + 4 * d)) := by
+      (P : Ideal (QuadraticAlgebra ℤ d b)).cardQuot.Coprime (discriminantLevel (b ^ 2 + 4 * d))
+        := by
   let := quadraticOrderIsDomain hD
   intro P hP hPF
   obtain ⟨q, _, hc, h | ⟨s, hs, ε, rfl⟩⟩ := goodMaximal_prime_description hD P hP hPF
@@ -25,7 +26,8 @@ theorem goodIdeal_norm_coprime {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     letI := quadraticOrderIsDomain hD
     ∀ I : InvertibleIdeal (QuadraticAlgebra ℤ d b),
       IsCoprime (I : Ideal (QuadraticAlgebra ℤ d b)) (quadraticBadIdeal d b) →
-      (I : Ideal (QuadraticAlgebra ℤ d b)).cardQuot.Coprime (discriminantLevel (b ^ 2 + 4 * d)) := by
+      (I : Ideal (QuadraticAlgebra ℤ d b)).cardQuot.Coprime (discriminantLevel (b ^ 2 + 4 * d))
+        := by
   let := quadraticOrderIsDomain hD
   intro I hIF
   obtain ⟨l, hl, hP⟩ := goodQuadraticIdeal_factorization hD I hIF
@@ -35,7 +37,8 @@ theorem goodIdeal_norm_coprime {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
   | nil => simp [Submodule.cardQuot_top]
   | cons P l ih =>
     rw [List.prod_cons, InvertibleIdeal.cardQuot_mul]
-    exact (goodMaximal_norm_coprime hD P (hP P List.mem_cons_self).1 (hP P List.mem_cons_self).2).mul_left
+    exact (goodMaximal_norm_coprime hD P (hP P List.mem_cons_self).1 (hP P
+      List.mem_cons_self).2).mul_left
       (ih (fun Q hQ => hP Q (List.mem_cons_of_mem P hQ)))
 
 theorem goodIdealNormFiber_card_zero {d b : ℤ} (hD : b ^ 2 + 4 * d < 0)

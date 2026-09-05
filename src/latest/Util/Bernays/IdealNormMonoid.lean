@@ -23,6 +23,7 @@ theorem cardQuot_list_prod (l : List (InvertibleIdeal R)) :
       (l.map fun I : InvertibleIdeal R => (I : Ideal R).cardQuot).prod :=
   map_list_prod (normHom (R := R)) l
 
+omit [Ring.HasFiniteQuotients R] in
 theorem idealClass_list_prod (l : List (InvertibleIdeal R)) :
     l.prod.idealClass = (l.map idealClass).prod := map_list_prod classHom l
 
@@ -30,6 +31,7 @@ theorem cardQuot_prod {ι : Type*} (s : Finset ι) (I : ι → InvertibleIdeal R
     ((∏ i ∈ s, I i : InvertibleIdeal R) : Ideal R).cardQuot = ∏ i ∈ s, (I i : Ideal R).cardQuot :=
   map_prod (normHom (R := R)) _ _
 
+omit [Ring.HasFiniteQuotients R] in
 theorem idealClass_prod {ι : Type*} (s : Finset ι) (I : ι → InvertibleIdeal R) :
     (∏ i ∈ s, I i).idealClass = ∏ i ∈ s, (I i).idealClass := map_prod classHom _ _
 

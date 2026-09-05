@@ -22,8 +22,7 @@ instance : Coe (InvertibleIdeal S) (Ideal S) := ⟨Subtype.val⟩
 
 @[ext] theorem ext {I J : InvertibleIdeal S} (h : (I : Ideal S) = J) : I = J := Subtype.ext h
 
-instance : One (InvertibleIdeal S) := ⟨⟨⊤, by simpa using
-  (isUnit_one : IsUnit (1 : FractionalIdeal S⁰ (FractionRing S)))⟩⟩
+instance : One (InvertibleIdeal S) := ⟨⟨⊤, by simp⟩⟩
 
 instance : Mul (InvertibleIdeal S) := ⟨fun I J => ⟨(I : Ideal S) * J, by
   rw [FractionalIdeal.coeIdeal_mul]
@@ -67,7 +66,8 @@ noncomputable def idealClass (I : InvertibleIdeal S) : ClassGroup S :=
 @[simp] theorem idealClass_mul (I J : InvertibleIdeal S) :
     idealClass (I * J) = idealClass I * idealClass J := by simp [idealClass]
 
-theorem idealClass_surjective : Function.Surjective (idealClass : InvertibleIdeal S → ClassGroup S) := by
+theorem idealClass_surjective : Function.Surjective (idealClass : InvertibleIdeal S → ClassGroup
+  S) := by
   intro C
   refine ClassGroup.induction (FractionRing S) ?_ C
   intro U

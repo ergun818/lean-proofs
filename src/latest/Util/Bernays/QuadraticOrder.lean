@@ -40,7 +40,7 @@ theorem quadraticNorm_eq_zero_iff {d b : ℤ} (hD : b ^ 2 + 4 * d < 0)
   · rintro rfl
     exact QuadraticAlgebra.norm_zero
 
-def quadraticOrderNoZeroDivisors {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
+theorem quadraticOrderNoZeroDivisors {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     NoZeroDivisors (QuadraticAlgebra ℤ d b) where
   eq_zero_or_eq_zero_of_mul_eq_zero := by
     intro x y hxy
@@ -49,7 +49,7 @@ def quadraticOrderNoZeroDivisors {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     exact (mul_eq_zero.mp h).imp (quadraticNorm_eq_zero_iff hD x).mp
       (quadraticNorm_eq_zero_iff hD y).mp
 
-def quadraticOrderIsDomain {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
+theorem quadraticOrderIsDomain {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     IsDomain (QuadraticAlgebra ℤ d b) := by
   let := quadraticOrderNoZeroDivisors hD
   exact NoZeroDivisors.to_isDomain _
@@ -59,6 +59,7 @@ theorem algebraNorm_quadraticOrder (d b : ℤ) (z : QuadraticAlgebra ℤ d b) :
   rw [Algebra.norm_apply]
   exact QuadraticAlgebra.det_toLinearMap_eq_norm z
 
+@[instance_reducible]
 noncomputable def quadraticOrderClassGroupFintype {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     letI := quadraticOrderIsDomain hD
     Fintype (ClassGroup (QuadraticAlgebra ℤ d b)) := by
@@ -74,7 +75,7 @@ def quadraticOrderShift (d b k : ℤ) :
   left_inv z := by ext <;> simp
   right_inv z := by ext <;> simp
   map_mul' x y := by ext <;> simp <;> ring
-  map_add' x y := by ext <;> simp <;> ring
+  map_add' x y := by ext <;> simp; ring
 
 theorem quadraticOrderShift_norm (d b k : ℤ)
     (z : QuadraticAlgebra ℤ (d - b * k - k ^ 2) (b + 2 * k)) :

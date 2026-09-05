@@ -48,7 +48,8 @@ theorem genusLocalLSeries_continuation_nonzero {d b : ℤ} (hD : b ^ 2 + 4 * d <
     exact one_ne_zero
   obtain ⟨x, hx, hxne⟩ := LSeries_exists_ne_zero_of_coeff_one ha
     (genusLocalAF_summable hD ψ 2 (by norm_num))
-  refine ⟨F, hF, heq, x, by simpa only [Complex.ofReal_re] using (by linarith : (1 / 2 : ℝ) < x), ?_⟩
+  refine ⟨F, hF, heq, x, by simpa only [Complex.ofReal_re] using (by linarith : (1 / 2 : ℝ) < x),
+    ?_⟩
   rw [heq x (by simpa only [Complex.ofReal_re] using hx)]
   exact pow_ne_zero _ hxne
 

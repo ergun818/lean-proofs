@@ -6,8 +6,6 @@ import Util.Bernays.GenusNorms
 # The genus-character weight is constant on an ideal norm fiber
 -/
 
-open scoped Classical
-
 namespace Bernays
 
 def idealNormClassFiberEquiv {R : Type*} [CommRing R] [IsDomain R]

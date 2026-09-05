@@ -10,20 +10,21 @@ size unlikely to contain only a bounded number of events.
 -/
 
 open Filter Topology
-open scoped Classical
 
 namespace Bernays
 
-noncomputable def eventCount {α : Type*} (A : Finset α) (E : α → Prop) : ℕ :=
-  (A.filter E).card
+noncomputable def eventCount {α : Type*} (A : Finset α) (E : α → Prop) : ℕ := by
+  classical
+  exact (A.filter E).card
 
 theorem sum_event_indicator {α : Type*} (A : Finset α) (E : α → Prop) [DecidablePred E] :
     (∑ x ∈ A, if E x then (1 : ℝ) else 0) = (eventCount A E : ℝ) := by
   rw [Finset.sum_boole, eventCount]
   congr
 
-noncomputable def packetCount {α ι : Type*} (P : Finset ι) (E : ι → α → Prop) (x : α) : ℝ :=
-  ∑ p ∈ P, if E p x then 1 else 0
+noncomputable def packetCount {α ι : Type*} (P : Finset ι) (E : ι → α → Prop) (x : α) : ℝ := by
+  classical
+  exact ∑ p ∈ P, if E p x then 1 else 0
 
 theorem packetCount_eq_eventCount {α ι : Type*} (P : Finset ι) (E : ι → α → Prop) (x : α) :
     packetCount P E x = (eventCount P (fun p => E p x) : ℝ) := by
@@ -34,6 +35,7 @@ noncomputable def packetVariance {α ι : Type*} (A : Finset α) (P : Finset ι)
     (E : ι → α → Prop) (u : ι → ℝ) : ℝ :=
   ∑ x ∈ A, (packetCount P E x - ∑ p ∈ P, u p) ^ 2
 
+open scoped Classical in
 theorem centered_event_sum {α : Type*} (A : Finset α) (E F : α → Prop) (u v : ℝ) :
     (∑ x ∈ A, ((if E x then 1 else 0) - u) * ((if F x then 1 else 0) - v)) =
       (eventCount A (fun x => E x ∧ F x) : ℝ) - v * eventCount A E -
@@ -61,6 +63,7 @@ theorem packetVariance_eq {α ι : Type*} (A : Finset α) (P : Finset ι)
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl (fun q _ => centered_event_sum A (E p) (E q) (u p) (u q))
 
+open scoped Classical in
 theorem packetVariance_limit {α ι : Type*} (A : ℕ → Finset α) (P : Finset ι)
     (E : ι → α → Prop) (u : ι → ℝ) (s : ℕ → ℝ) (C : ℝ)
     (hA : Tendsto (fun N => (A N).card / s N) atTop (𝓝 C))
@@ -85,7 +88,7 @@ theorem packetVariance_limit {α ι : Type*} (A : ℕ → Finset α) (P : Finset
       · subst q; simp only [if_true]; ring
       · simp only [if_neg hpq]; ring
     rw [heq] at h
-    convert h using 1 <;> ext N <;> ring
+    convert h using 1; ext N; ring
   have h := tendsto_finsetSum P (fun p hp => tendsto_finsetSum P (fun q hq => hpair p hp q hq))
   have heq : (∑ p ∈ P, ∑ q ∈ P, if p = q then C * (u p - (u p) ^ 2) else 0) =
       C * ∑ p ∈ P, (u p - (u p) ^ 2) := by
@@ -116,10 +119,11 @@ theorem fewPacketCount_mul_sq_le_variance {α ι : Type*} (A : Finset α) (P : F
     _ ≤ packetVariance A P E u :=
       Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _) (fun _ _ _ => sq_nonneg _)
 
+open scoped Classical in
 theorem eventually_fewPacketCount_le {α ι : Type*} (A : ℕ → Finset α) (P : Finset ι)
     (E : ι → α → Prop) (u : ι → ℝ) (s : ℕ → ℝ) {C k : ℝ}
     (hC : 0 < C) (hs : ∀ᶠ N in atTop, 0 < s N)
-    (hM : 0 < ∑ p ∈ P, u p) (hk : 2 * k ≤ ∑ p ∈ P, u p) (hk₀ : 0 ≤ k)
+    (hM : 0 < ∑ p ∈ P, u p) (hk : 2 * k ≤ ∑ p ∈ P, u p) (_hk₀ : 0 ≤ k)
     (hA : Tendsto (fun N => (A N).card / s N) atTop (𝓝 C))
     (h₁ : ∀ p ∈ P, Tendsto (fun N => (eventCount (A N) (E p) : ℝ) / s N)
       atTop (𝓝 (C * u p)))

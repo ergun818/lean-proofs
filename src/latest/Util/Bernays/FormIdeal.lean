@@ -106,10 +106,10 @@ theorem formIdeal_mul_conjugate {f : BinQuadForm} (hf : f.Primitive) :
     have hab : ((f.a * f.b : ℤ) : f.Order) ∈ f.formIdeal * f.conjugateFormIdeal := by
       have h := (f.formIdeal * f.conjugateFormIdeal).add_mem
         (Ideal.mul_mem_mul haI hwJ) (Ideal.mul_mem_mul hwI haJ)
-      convert h using 1 <;> ext <;> simp [ω, ω'] <;> ring
+      convert h using 1; ext <;> simp [ω, ω']
     have hac : ((f.a * f.c : ℤ) : f.Order) ∈ f.formIdeal * f.conjugateFormIdeal := by
       have h := Ideal.mul_mem_mul hwI hwJ
-      convert h using 1 <;> ext <;> simp [ω, ω'] <;> ring
+      convert h using 1; ext <;> simp [ω, ω']
     obtain ⟨r, s, t, hst⟩ := primitive_bezout hf
     have h := (f.formIdeal * f.conjugateFormIdeal).add_mem
       ((f.formIdeal * f.conjugateFormIdeal).add_mem

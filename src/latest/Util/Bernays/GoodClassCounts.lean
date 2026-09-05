@@ -6,30 +6,35 @@ import Util.Bernays.SquareExceptionalUnion
 -/
 
 open Filter Topology
-open scoped Classical
 
 namespace Bernays
 
 noncomputable def goodClassValues {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     letI := quadraticOrderIsDomain hD
-    ClassGroup (QuadraticAlgebra ℤ d b) → ℕ → Finset ℕ :=
-  letI := quadraticOrderIsDomain hD
-  fun C N => (Finset.Icc 1 N).filter fun n =>
-    n.Coprime (discriminantLevel (b ^ 2 + 4 * d)) ∧
-      ∃ I : InvertibleIdeal (QuadraticAlgebra ℤ d b),
-        (I : Ideal (QuadraticAlgebra ℤ d b)).cardQuot = n ∧ I.idealClass = C
+    ClassGroup (QuadraticAlgebra ℤ d b) → ℕ → Finset ℕ := by
+  classical
+  exact
+    letI := quadraticOrderIsDomain hD
+    fun C N => (Finset.Icc 1 N).filter fun n =>
+      n.Coprime (discriminantLevel (b ^ 2 + 4 * d)) ∧
+        ∃ I : InvertibleIdeal (QuadraticAlgebra ℤ d b),
+          (I : Ideal (QuadraticAlgebra ℤ d b)).cardQuot = n ∧ I.idealClass = C
 
 noncomputable def genusValues {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     letI := quadraticOrderIsDomain hD
-    GenusGroup (QuadraticAlgebra ℤ d b) → ℕ → Finset ℕ :=
-  letI := quadraticOrderIsDomain hD
-  fun g N => (localValues (fun p : ℕ => discriminantCharacter (b ^ 2 + 4 * d) hD.ne p = -1) N).filter
-    fun n => n.Coprime (discriminantLevel (b ^ 2 + 4 * d)) ∧ genusValue hD n = g
+    GenusGroup (QuadraticAlgebra ℤ d b) → ℕ → Finset ℕ := by
+  classical
+  exact
+    letI := quadraticOrderIsDomain hD
+    fun g N => (localValues (fun p : ℕ => discriminantCharacter (b ^ 2 + 4 * d) hD.ne p = -1)
+      N).filter
+      fun n => n.Coprime (discriminantLevel (b ^ 2 + 4 * d)) ∧ genusValue hD n = g
 
 theorem goodClassValues_subset_genusValues {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     letI := quadraticOrderIsDomain hD
     ∀ C : ClassGroup (QuadraticAlgebra ℤ d b), ∀ N : ℕ,
       goodClassValues hD C N ⊆ genusValues hD (genusMap C) N := by
+  classical
   let := quadraticOrderIsDomain hD
   intro C N n hn
   obtain ⟨hnN, hnc, I, hIn, hIc⟩ := Finset.mem_filter.mp hn
@@ -45,6 +50,7 @@ theorem genusValues_sdiff_class_subset_exceptional {d b : ℤ} (hD : b ^ 2 + 4 *
     ∀ C : ClassGroup (QuadraticAlgebra ℤ d b), ∀ N : ℕ,
       genusValues hD (genusMap C) N \ goodClassValues hD C N ⊆ squareExceptionalValues hD
         (Nat.card (classSquareSubgroup : Subgroup (ClassGroup (QuadraticAlgebra ℤ d b)))) N := by
+  classical
   let := quadraticOrderIsDomain hD
   intro C N n hn
   obtain ⟨hng, hnot⟩ := Finset.mem_sdiff.mp hn
@@ -57,11 +63,14 @@ theorem genusValues_sdiff_class_subset_exceptional {d b : ℤ} (hD : b ^ 2 + 4 *
     rw [← genusValue_goodIdeal_norm hD I hIF, hIn]
     exact hngen
   have hmiss (J : InvertibleIdeal (QuadraticAlgebra ℤ d b))
-      (hJn : (J : Ideal (QuadraticAlgebra ℤ d b)).cardQuot = (I : Ideal (QuadraticAlgebra ℤ d b)).cardQuot) :
+      (hJn : (J : Ideal (QuadraticAlgebra ℤ d b)).cardQuot =
+        (I : Ideal (QuadraticAlgebra ℤ d b)).cardQuot) :
       J.idealClass ≠ C := by
     intro hJc
-    exact hnot (Finset.mem_filter.mpr ⟨(Finset.mem_filter.mp hnlocal).1, hnc, J, hJn.trans hIn, hJc⟩)
-  simpa only [hIn] using missing_same_genus_mem_exceptional hD I hIF C hIC hmiss N (hIn.symm ▸ hnlocal)
+    exact hnot (Finset.mem_filter.mpr ⟨(Finset.mem_filter.mp hnlocal).1, hnc, J, hJn.trans hIn,
+      hJc⟩)
+  simpa only [hIn] using
+    missing_same_genus_mem_exceptional hD I hIF C hIC hmiss N (hIn.symm ▸ hnlocal)
 
 theorem goodClass_genus_count_error_limit {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     letI := quadraticOrderIsDomain hD

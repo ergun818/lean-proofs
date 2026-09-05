@@ -4,8 +4,6 @@ import Util.Bernays.GoodIdealGeneratorBall
 # Decomposing coprime generators into lattice cosets
 -/
 
-open scoped Classical
-
 namespace Bernays
 
 theorem coprimeQuadraticBall_eq_sum_cosets {d b : ℤ} (hD : b ^ 2 + 4 * d < 0)

@@ -6,7 +6,6 @@ import Mathlib.NumberTheory.DirichletCharacter.Basic
 -/
 
 open Filter Topology Real
-open scoped Classical
 
 namespace Bernays
 

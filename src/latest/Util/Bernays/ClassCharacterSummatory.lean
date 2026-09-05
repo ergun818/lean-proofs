@@ -6,7 +6,6 @@ import Mathlib.Analysis.Fourier.FiniteAbelian.PontryaginDuality
 -/
 
 open Filter Topology Asymptotics
-open scoped Classical
 
 namespace Bernays
 
@@ -47,7 +46,8 @@ theorem weightedIdealClassCount_error {d b : ℤ} (hD : b ^ 2 + 4 * d < 0)
   let := quadraticOrderClassGroupFintype hD
   intro w hw
   choose K hKpos hK using idealClassArea_error hD F hF₀ hF₁
-  refine ⟨∑ C, ‖w C‖ * K C, Finset.sum_nonneg (fun C _ => mul_nonneg (norm_nonneg _) (hKpos C).le), ?_⟩
+  refine ⟨∑ C, ‖w C‖ * K C, Finset.sum_nonneg (fun C _ => mul_nonneg (norm_nonneg _) (hKpos
+    C).le), ?_⟩
   intro N
   have h := weighted_common_term_error w
     (fun C => (Nat.card (RestrictedIdealClassBall (QuadraticAlgebra ℤ d b) C N

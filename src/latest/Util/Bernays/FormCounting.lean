@@ -6,12 +6,13 @@ import Util.Bernays.CanonicalFormClass
 -/
 
 open Filter Topology
-open scoped Classical
 
 namespace BinQuadForm
 
 theorem B_nat_eq_positiveValues_add_one (f : BinQuadForm) (N : ℕ) :
-    f.B (N : ℝ) = (Bernays.positiveValues (fun n => ∃ u v : ℤ, f.eval u v = (n : ℤ)) N).card + 1 := by
+    f.B (N : ℝ) =
+      (Bernays.positiveValues (fun n => ∃ u v : ℤ, f.eval u v = (n : ℤ)) N).card + 1 := by
+  classical
   rw [f.B_eq_card_filter (Nat.cast_nonneg N), Nat.floor_natCast]
   have hset : (Finset.range (N + 1)).filter (fun n : ℕ => ∃ u v : ℤ, f.eval u v = (n : ℤ)) =
       insert 0 (Bernays.positiveValues (fun n => ∃ u v : ℤ, f.eval u v = (n : ℤ)) N) := by

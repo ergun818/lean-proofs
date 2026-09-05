@@ -39,8 +39,6 @@ theorem smoothed_LSeries_eq_fourier (a : ℕ → ℂ)
   rw [first_fourier hs hψ (Real.exp_pos _) (by simpa using hδ)]
   apply integral_congr_ae
   filter_upwards [] with t
-  change LSeries a ((1 + δ : ℝ) + t * Complex.I) * ψ t *
-    (Real.exp (1 / δ) : ℂ) ^ ((t : ℂ) * Complex.I) = _
   rw [Complex.cpow_def_of_ne_zero (Complex.ofReal_ne_zero.mpr (Real.exp_ne_zero _)),
     ← Complex.ofReal_log (Real.exp_pos _).le, Real.log_exp]
   dsimp only [verticalProduct]

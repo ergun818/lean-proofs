@@ -5,8 +5,6 @@ import Mathlib.Data.Nat.Factorization.Basic
 # The arithmetic function supported on inert-prime squares
 -/
 
-open scoped Classical
-
 namespace Bernays
 
 noncomputable def localParityAF (S : ℕ → Prop) : ArithmeticFunction ℂ :=
@@ -43,6 +41,7 @@ noncomputable def squareSupportAF (S : ℕ → Prop) : ArithmeticFunction ℂ :=
 theorem squareSupportAF_isMultiplicative (S : ℕ → Prop) : (squareSupportAF S).IsMultiplicative :=
   (localParityAF_isMultiplicative _).pmul (primeSupportAF_isMultiplicative S)
 
+open scoped Classical in
 theorem squareSupportAF_eq (S : ℕ → Prop) (n : ℕ) :
     squareSupportAF S n =
       if 0 < n ∧ ParityAdmissible (fun _ => True) n ∧ PrimeSupported S n then 1 else 0 := by
@@ -59,12 +58,13 @@ theorem squareSupportAF_nonzero_isSquare (S : ℕ → Prop) {n : ℕ} (hn : squa
   · exact parity_all_primes_isSquare h.1 h.2.1
   · exact False.elim (hn rfl)
 
+open scoped Classical in
 theorem squareSupportAF_primePower (S : ℕ → Prop) {p : ℕ} (hp : p.Prime) {e : ℕ} (he : 0 < e) :
     squareSupportAF S (p ^ e) = if S p ∧ Even e then 1 else 0 := by
   rw [squareSupportAF, ArithmeticFunction.pmul_apply, primeSupportAF_primePower S hp he]
   change (localParity (fun _ => True) (p ^ e) : ℂ) * (if S p then 1 else 0) = _
   rw [localParity_prime_pow _ hp]
   by_cases hS : S p <;> by_cases hE : Even e <;>
-    simp [hS, hE, Nat.not_odd_iff_even, ← Nat.not_even_iff_odd]
+    simp [hS, hE, ← Nat.not_even_iff_odd]
 
 end Bernays

@@ -12,7 +12,6 @@ by a specified quadratic form requires the separate form-class argument.
 -/
 
 open Filter Topology Real Asymptotics
-open scoped Classical
 
 namespace Bernays
 
@@ -27,7 +26,8 @@ theorem localParity_ordinarySum_limit {q : ℕ} [NeZero q]
         (tendsto_natCast_atTop_atTop (R := ℝ))
   have hC := (characterLocalConstant_pos χ hχ).le
   have h := ordinarySum_asymptotic_of_recurrence (localParity_nonneg _) (localParity_le_one _)
-    (localParity_logarithmic_convolution _) (by positivity : 0 ≤ 2 * characterLocalConstant χ / sqrt π)
+    (localParity_logarithmic_convolution _) (by positivity : 0 ≤ 2 * characterLocalConstant χ /
+      sqrt π)
     (localLogMass_div_tendsto_half χ hχ₂ hχ) hH
   have heq : (1 / 2 : ℝ) * (2 * characterLocalConstant χ / sqrt π) =
       characterLocalConstant χ / sqrt π := by ring
@@ -51,11 +51,13 @@ theorem localParity_ordinarySum_isEquivalent {q : ℕ} [NeZero q]
     simp only [div_eq_mul_inv, mul_inv_rev, inv_inv]
     ring
 
-noncomputable def localCount (S : ℕ → Prop) (N : ℕ) : ℕ :=
-  ((Finset.Icc 1 N).filter fun n => ParityAdmissible S n).card
+noncomputable def localCount (S : ℕ → Prop) (N : ℕ) : ℕ := by
+  classical
+  exact ((Finset.Icc 1 N).filter fun n => ParityAdmissible S n).card
 
 theorem localCount_eq_ordinarySum (S : ℕ → Prop) (N : ℕ) :
     (localCount S N : ℝ) = ordinarySum (localParity S) N := by
+  classical
   rw [localCount, ordinarySum, ← Finset.sum_boole]
   apply Finset.sum_congr rfl
   intro n hn

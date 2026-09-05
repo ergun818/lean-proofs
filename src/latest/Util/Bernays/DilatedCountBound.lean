@@ -15,7 +15,7 @@ theorem sqrt_log_mul_bound {m k x : ℝ} (hm : 1 ≤ m) (hk : 1 ≤ k)
   rw [Real.log_mul (mul_pos (by norm_num) hm₀).ne' hk₀.ne',
     Real.log_mul (by norm_num) hm₀.ne'] at hlog
   have hlogtwo : Real.log 2 ≤ 1 := by
-    convert Real.log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 2) using 1 <;> norm_num
+    convert Real.log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 2) using 1; norm_num
   have hlogm := Real.log_le_self hm₀.le
   have hlogk := Real.log_nonneg hk
   have hsm := Real.sq_sqrt hm₀.le

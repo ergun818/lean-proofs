@@ -6,7 +6,6 @@ import Util.Bernays.FiniteAvoidance
 -/
 
 open Filter Topology Real
-open scoped Classical
 
 namespace Bernays
 

@@ -4,8 +4,6 @@ import Util.Bernays.ResidueCosetCounts
 # The area term for generators in coprime residue classes
 -/
 
-open scoped Classical
-
 namespace Bernays
 
 theorem coprimeQuadraticBall_error {d b : ℤ} (hD : b ^ 2 + 4 * d < 0)
@@ -17,6 +15,7 @@ theorem coprimeQuadraticBall_error {d b : ℤ} (hD : b ^ 2 + 4 * d < 0)
           (4 * Real.pi / (((F * I).cardQuot : ℝ) *
             ZLattice.covolume (quadraticIdealLattice d b ⊤)))) * T| ≤
       K * (Real.sqrt (T : ℝ) + 1) := by
+  classical
   let := quadraticOrderIsDomain hD
   let O := QuadraticAlgebra ℤ d b
   let : Finite (O ⧸ F) := Ring.HasFiniteQuotients.finiteQuotient hF

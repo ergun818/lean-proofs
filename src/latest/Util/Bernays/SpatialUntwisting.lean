@@ -7,7 +7,7 @@ import Util.Bernays.LogarithmicTestFunctions
 -/
 
 open Set Filter Topology
-open scoped Classical ContDiff
+open scoped ContDiff
 
 namespace Bernays
 
@@ -28,7 +28,8 @@ theorem spatial_untwist_error_le {a : ℕ → ℂ} {Ψ : ℝ → ℂ}
   let R := Real.exp (-1) * (Real.exp (δ * L) - 1) * Q
   have hx : 0 < x := Real.exp_pos _
   have hx₁ : 1 ≤ x := (Real.one_lt_exp_iff.mpr (by positivity : 0 < 1 / δ)).le
-  have hε : 0 ≤ Real.exp (δ * L) - 1 := sub_nonneg.mpr (Real.one_le_exp_iff.mpr (mul_nonneg hδ.le hL))
+  have hε : 0 ≤ Real.exp (δ * L) - 1 := sub_nonneg.mpr (Real.one_le_exp_iff.mpr (mul_nonneg hδ.le
+    hL))
   have hR : 0 ≤ R := by dsimp only [R]; positivity
   have hbΨ : ∀ y : ℝ, Ψ y ≠ 0 → y ≤ b := fun y hy => (hsupp y hy).1
   have hsum (c : ℕ → ℂ) : (∑' n : ℕ, c n * Ψ ((n : ℝ) / x)) =
@@ -54,7 +55,7 @@ theorem spatial_untwist_error_le {a : ℕ → ℂ} {Ψ : ℝ → ℂ}
       have hmul := mul_le_mul htwist (hΨ ((n : ℝ) / x)) (norm_nonneg _)
         (mul_nonneg (mul_nonneg (norm_nonneg _) (Real.exp_pos _).le) hε)
       dsimp only [R]
-      convert hmul using 1 <;> ring
+      convert hmul using 1; ring
   have hAN (k : ℕ) : cumsum (fun n => ‖a n‖) k ≤ k := by
     have h := Finset.sum_le_sum (s := Finset.range k) (fun n _ => ha n)
     simpa only [cumsum, Finset.sum_const, Finset.card_range, nsmul_eq_mul, mul_one] using h

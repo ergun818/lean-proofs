@@ -10,6 +10,7 @@ namespace Bernays.InvertibleIdeal
 
 variable {R : Type*} [CommRing R] [IsDomain R] [Ring.HasFiniteQuotients R]
 
+omit [Ring.HasFiniteQuotients R] in
 theorem mul_left_cancel_ideal (I : InvertibleIdeal R) {J K : Ideal R}
     (h : (I : Ideal R) * J = (I : Ideal R) * K) : J = K := by
   apply FractionalIdeal.coeIdeal_injective (K := FractionRing R)
@@ -58,7 +59,6 @@ theorem exists_generator_mod_mul (I : InvertibleIdeal R) (F : Ideal R) (hF : F �
       change a - e (r • e.symm 1) = 0
       rw [← IsScalarTower.algebraMap_smul A r (e.symm 1), map_smul, e.apply_symm_apply,
         smul_eq_mul, mul_one]
-      change a - algebraMap R A r = 0
       rw [← hr]
       simp [A, Ideal.Quotient.algebraMap_eq]
     have hvker : v ∈ LinearMap.ker (TensorProduct.mk R A M 1) := LinearMap.mem_ker.mpr hvzero
@@ -107,6 +107,7 @@ theorem exists_coprime_representative (C : ClassGroup R) (F : Ideal R) (hF : F �
   obtain ⟨I, hI, hc⟩ := exists_coprime_inverse J F hF
   exact ⟨I, by simpa only [hJ, inv_inv] using hI, hc⟩
 
+omit [Ring.HasFiniteQuotients R] in
 theorem generator_mod_of_sub_mem (I : InvertibleIdeal R) (F : Ideal R) (c : (I : Ideal R))
     (hc : (I : Ideal R) = Ideal.span ({(c : R)} : Set R) + F * (I : Ideal R))
     {x : R} (hx : x - (c : R) ∈ F * (I : Ideal R)) :
@@ -127,9 +128,11 @@ theorem generator_mod_of_sub_mem (I : InvertibleIdeal R) (F : Ideal R) (c : (I :
         have h₂ : x - (c : R) ∈ Ideal.span ({x} : Set R) + F * (I : Ideal R) :=
           (show F * (I : Ideal R) ≤ Ideal.span ({x} : Set R) + F * (I : Ideal R)
             from le_sup_right) hx
-        simpa only [sub_sub_cancel] using (Ideal.span ({x} : Set R) + F * (I : Ideal R)).sub_mem h₁ h₂
+        simpa only [sub_sub_cancel] using (Ideal.span ({x} : Set R) + F * (I : Ideal R)).sub_mem
+          h₁ h₂
   · exact sup_le ((Ideal.span_singleton_le_iff_mem _).mpr hxI) Ideal.mul_le_right
 
+omit [Ring.HasFiniteQuotients R] in
 theorem factor_coprime_of_generator_mod (I J : InvertibleIdeal R) (F : Ideal R)
     {x : R} (hx : x ≠ 0) (hIJ : I * J = principal x hx)
     (hgen : (I : Ideal R) = Ideal.span ({x} : Set R) + F * (I : Ideal R)) :

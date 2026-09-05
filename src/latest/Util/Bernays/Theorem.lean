@@ -24,7 +24,6 @@ theorem B_isEquivalent {f : BinQuadForm} (hf : f.PosDef) (hp : f.Primitive) :
   rw [div_self hC] at h
   apply h.congr'
   filter_upwards [] with N
-  change ((f.B (N : ℝ) : ℝ) / Bernays.scale N) / C = _
   rw [div_div, mul_comm (Bernays.scale N) C]
   simp only [Bernays.scale, mul_div_assoc, Pi.div_apply]
 

@@ -76,14 +76,16 @@ theorem halfPlane_square_fourier_decay {f F : ℂ → ℂ} {ψ : ℝ → ℂ}
     (hψ : ContDiff ℝ 1 ψ) (hsupp : HasCompactSupport ψ) :
     Tendsto (fun δ : ℝ => ‖𝓕 (verticalProduct f ψ (1 + δ)) (-1 / (2 * Real.pi * δ))‖ / Real.sqrt δ)
       (𝓝[>] 0) (𝓝 0) := by
-  apply squeeze_zero' (Eventually.of_forall (fun δ => div_nonneg (norm_nonneg _) (Real.sqrt_nonneg _))) _
+  apply squeeze_zero' (Eventually.of_forall (fun δ => div_nonneg (norm_nonneg _) (Real.sqrt_nonneg
+    _))) _
     (halfPlane_square_verticalProduct_integral_tendsto hf hF heq hne hψ hsupp)
   filter_upwards [self_mem_nhdsWithin] with δ hδ
   change 0 < δ at hδ
   have hσ : 1 < 1 + δ := by linarith
   obtain ⟨hg, hg'⟩ := verticalProduct_integrable hf hσ hψ hsupp
   have hgd : Differentiable ℝ (verticalProduct f ψ (1 + δ)) := fun t =>
-    (verticalProduct_hasDerivAt (hf _ (by simpa using hσ)) ((hψ.differentiable (by norm_num)) t)).differentiableAt
+    (verticalProduct_hasDerivAt (hf _ (by simpa using hσ)) ((hψ.differentiable (by norm_num))
+      t)).differentiableAt
   have hbound := fourier_deriv_norm_bound hg hgd hg' (-1 / (2 * Real.pi * δ))
   have hfactor : 2 * Real.pi * |(-1 : ℝ) / (2 * Real.pi * δ)| = 1 / δ := by
     rw [abs_div, abs_neg, abs_one, abs_of_pos (by positivity)]

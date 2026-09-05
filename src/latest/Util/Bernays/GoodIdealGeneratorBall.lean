@@ -14,7 +14,8 @@ def CoprimeQuadraticBall {d b : ℤ} (I F : Ideal (QuadraticAlgebra ℤ d b)) (T
 theorem exists_good_factor_iff {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     letI := quadraticOrderIsDomain hD
     ∀ (I : InvertibleIdeal (QuadraticAlgebra ℤ d b))
-      (F : Ideal (QuadraticAlgebra ℤ d b)), F ≠ ⊤ → IsCoprime (I : Ideal (QuadraticAlgebra ℤ d b)) F →
+      (F : Ideal (QuadraticAlgebra ℤ d b)), F ≠ ⊤ → IsCoprime (I : Ideal (QuadraticAlgebra ℤ d b))
+        F →
     ∀ z : QuadraticAlgebra ℤ d b, ∀ N : ℕ,
       (∃ hz : z ≠ 0, ∃ J : InvertibleIdeal (QuadraticAlgebra ℤ d b),
         I * J = InvertibleIdeal.principal z hz ∧
@@ -57,7 +58,8 @@ theorem exists_good_factor_iff {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
 theorem coprimeQuadraticBall_card {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     letI := quadraticOrderIsDomain hD
     ∀ (I : InvertibleIdeal (QuadraticAlgebra ℤ d b))
-      (F : Ideal (QuadraticAlgebra ℤ d b)), F ≠ ⊤ → IsCoprime (I : Ideal (QuadraticAlgebra ℤ d b)) F →
+      (F : Ideal (QuadraticAlgebra ℤ d b)), F ≠ ⊤ → IsCoprime (I : Ideal (QuadraticAlgebra ℤ d b))
+        F →
     ∀ N : ℕ,
       Nat.card (CoprimeQuadraticBall (I : Ideal (QuadraticAlgebra ℤ d b)) F
         ((I : Ideal (QuadraticAlgebra ℤ d b)).cardQuot * N)) =

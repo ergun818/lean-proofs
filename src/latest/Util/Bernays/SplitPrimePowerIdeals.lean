@@ -6,12 +6,11 @@ import Util.Bernays.GoodIdealNormFibers
 # Exact enumeration of ideals with a good split-prime-power norm
 -/
 
-open scoped Classical
-
 namespace Bernays
 
 theorem InvertibleIdeal.cardQuot_dvd_listProd_of_mem {R : Type*} [CommRing R] [IsDomain R]
-    [Ring.HasFiniteQuotients R] {P : InvertibleIdeal R} {l : List (InvertibleIdeal R)} (hP : P ∈ l) :
+    [Ring.HasFiniteQuotients R] {P : InvertibleIdeal R} {l : List (InvertibleIdeal R)}
+    (hP : P ∈ l) :
     (P : Ideal R).cardQuot ∣ ((l.prod : InvertibleIdeal R) : Ideal R).cardQuot := by
   obtain ⟨K, hK⟩ := List.dvd_prod hP
   exact ⟨(K : Ideal R).cardQuot, hK ▸ InvertibleIdeal.cardQuot_mul P K⟩
@@ -23,6 +22,7 @@ theorem SplitPrime.exists_powers_of_norm_primePower {d b : ℤ} (hD : b ^ 2 + 4 
       IsCoprime (I : Ideal (QuadraticAlgebra ℤ d b)) (quadraticBadIdeal d b) →
       (I : Ideal (QuadraticAlgebra ℤ d b)).cardQuot = s.1 ^ e →
       ∃ i : ℕ, i ≤ e ∧ I = s.ideal hD false ^ i * s.ideal hD true ^ (e - i) := by
+  classical
   let := quadraticOrderIsDomain hD
   intro I hIF hnorm
   obtain ⟨l, hl, hmax⟩ := goodQuadraticIdeal_factorization hD I hIF
@@ -62,12 +62,14 @@ noncomputable def SplitPrime.normPowerEquiv {d b : ℤ} (hD : b ^ 2 + 4 * d < 0)
   letI := quadraticOrderIsDomain hD
   let O := QuadraticAlgebra ℤ d b
   have hnorm (i : Fin (e + 1)) :
-      ((s.ideal hD false ^ i.1 * s.ideal hD true ^ (e - i.1) : InvertibleIdeal O) : Ideal O).cardQuot =
-        s.1 ^ e := by
+      ((s.ideal hD false ^ i.1 * s.ideal hD true ^ (e - i.1) : InvertibleIdeal O) :
+        Ideal O).cardQuot = s.1 ^ e := by
     change InvertibleIdeal.normHom (s.ideal hD false ^ i.1 * s.ideal hD true ^ (e - i.1)) = _
     rw [map_mul, map_pow, map_pow]
-    change (s.ideal hD false : Ideal O).cardQuot ^ i.1 * (s.ideal hD true : Ideal O).cardQuot ^ (e - i.1) = _
-    rw [s.ideal_cardQuot hD false, s.ideal_cardQuot hD true, ← pow_add, Nat.add_sub_of_le (by omega)]
+    change (s.ideal hD false : Ideal O).cardQuot ^ i.1 *
+      (s.ideal hD true : Ideal O).cardQuot ^ (e - i.1) = _
+    rw [s.ideal_cardQuot hD false, s.ideal_cardQuot hD true, ← pow_add,
+      Nat.add_sub_of_le (by omega)]
   let f : Fin (e + 1) → GoodIdealNormFiber (quadraticBadIdeal d b) (s.1 ^ e) := fun i =>
     ⟨s.ideal hD false ^ i.1 * s.ideal hD true ^ (e - i.1), hnorm i,
       InvertibleIdeal.coprime_scalar_of_cardQuot_coprime _ _ (by rw [hnorm i]; exact hc.pow_left e)⟩

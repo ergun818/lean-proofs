@@ -9,7 +9,7 @@ gives the square-root error needed for the ideal-class Dirichlet series.
 -/
 
 open MeasureTheory Metric Set
-open scoped ENNReal Pointwise Classical
+open scoped ENNReal Pointwise
 
 namespace Bernays
 
@@ -21,6 +21,7 @@ theorem fundamental_cell_ball_bounds {E : Type*} [NormedAddCommGroup E]
     (hS : ∀ l : L, l ∈ S ↔ ‖a + (l : E)‖ ≤ R) :
     μ (closedBall 0 (R - B)) ≤ (S.card : ℝ≥0∞) * μ F ∧
       (S.card : ℝ≥0∞) * μ F ≤ μ (closedBall 0 (R + B)) := by
+  classical
   have hFa := hF.vadd_of_comm a
   have hcell (l : L) : μ (l +ᵥ (a +ᵥ F)) = μ F := by
     rw [measure_vadd, measure_vadd]

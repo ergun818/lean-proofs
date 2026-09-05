@@ -5,8 +5,6 @@ import Mathlib.Topology.Algebra.InfiniteSum.Basic
 # The exact smooth-part decomposition as a series
 -/
 
-open scoped Classical
-
 namespace Bernays
 
 theorem coprimeSliceValues_eq_empty_of_lt (R : ℕ → Prop) {M m N : ℕ} (hNm : N < m) :

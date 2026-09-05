@@ -9,7 +9,6 @@ has no denominators. Its covolume need not be explicitly evaluated.
 -/
 
 open MeasureTheory Module Submodule Metric Set
-open scoped Classical
 
 namespace Bernays
 

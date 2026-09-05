@@ -9,8 +9,6 @@ We use modulus `4|D|`, so the bad primes include `2` and every divisor of
 the discriminant. On odd coprime natural numbers the value is the Jacobi symbol.
 -/
 
-open scoped Classical
-
 namespace Bernays
 
 def discriminantLevel (D : ℤ) : ℕ := 4 * D.natAbs
@@ -36,7 +34,8 @@ theorem odd_val_of_isUnit_discriminant {D : ℤ} (hD : D ≠ 0) {a : ZMod (discr
 
 noncomputable def discriminantCharacter (D : ℤ) (hD : D ≠ 0) :
     DirichletCharacter ℂ (discriminantLevel D) where
-  toFun a := if IsUnit a then (jacobiSym D a.val : ℂ) else 0
+  toFun a := open scoped Classical in
+    if IsUnit a then (jacobiSym D a.val : ℂ) else 0
   map_nonunit' a ha := by simp [ha]
   map_one' := by
     simp only [isUnit_one, if_true]
@@ -57,14 +56,17 @@ noncomputable def discriminantCharacter (D : ℤ) (hD : D ≠ 0) :
 theorem discriminantCharacter_apply_of_coprime (D : ℤ) (hD : D ≠ 0)
     {n : ℕ} (hn : n.Coprime (discriminantLevel D)) :
     discriminantCharacter D hD n = (jacobiSym D n : ℂ) := by
+  classical
   have hu := (ZMod.isUnit_iff_coprime n (discriminantLevel D)).mpr hn
   change (if IsUnit (n : ZMod (discriminantLevel D)) then
     (jacobiSym D (n : ZMod (discriminantLevel D)).val : ℂ) else 0) = _
   rw [if_pos hu, ZMod.val_natCast]
-  exact congrArg (Int.cast : ℤ → ℂ) (jacobiSym.mod_right D (odd_of_coprime_discriminantLevel hn)).symm
+  exact congrArg (Int.cast : ℤ → ℂ) (jacobiSym.mod_right D (odd_of_coprime_discriminantLevel
+    hn)).symm
 
 theorem discriminantCharacter_sq (D : ℤ) (hD : D ≠ 0) :
     discriminantCharacter D hD ^ 2 = 1 := by
+  classical
   apply MulChar.isQuadratic_iff_sq_eq_one.mp
   intro a
   change (if IsUnit a then (jacobiSym D a.val : ℂ) else 0) = 0 ∨

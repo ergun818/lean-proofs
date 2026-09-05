@@ -7,7 +7,6 @@ import Mathlib.Analysis.Normed.Group.Tannery
 -/
 
 open Filter Topology
-open scoped Classical
 
 namespace Bernays
 

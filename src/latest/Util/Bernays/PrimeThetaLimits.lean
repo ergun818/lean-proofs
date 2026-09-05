@@ -6,7 +6,6 @@ import Util.Bernays.LogWeightRemoval
 -/
 
 open Filter Topology Real
-open scoped Classical
 
 namespace Bernays
 
@@ -89,7 +88,8 @@ noncomputable def realCharacterTheta {q : ℕ} (χ : DirichletCharacter ℂ q) (
   ∑ p ∈ (N + 1).primesBelow, (χ p).re * log p
 
 theorem characterTheta_error_le {q : ℕ} (χ : DirichletCharacter ℂ q) (N : ℕ) :
-    |ordinarySum (fun n => (χ n).re * ArithmeticFunction.vonMangoldt n) N - realCharacterTheta χ N| ≤
+    |ordinarySum (fun n => (χ n).re * ArithmeticFunction.vonMangoldt n) N - realCharacterTheta χ
+      N| ≤
       Chebyshev.psi (N : ℝ) - Chebyshev.theta (N : ℝ) := by
   have heq : ordinarySum (fun n => (χ n).re * ArithmeticFunction.vonMangoldt n) N -
       realCharacterTheta χ N = ∑ n ∈ Finset.Icc 1 N,

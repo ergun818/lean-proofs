@@ -6,8 +6,6 @@ import Util.Bernays.GenusTwistedArithmetic
 The square correction is supported exactly on squares of inert-prime products.
 -/
 
-open scoped Classical
-
 namespace Bernays
 
 theorem squareSupportAF_primePower_of_not {S : ℕ → Prop} {p : ℕ} (hp : p.Prime)

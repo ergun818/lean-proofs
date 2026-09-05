@@ -5,17 +5,19 @@ import Util.Bernays.NormGenusSets
 -/
 
 open Filter Topology
-open scoped Classical
 
 namespace Bernays
 
 noncomputable def genusSliceValues {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     letI := quadraticOrderIsDomain hD
-    ClassGroup (QuadraticAlgebra ℤ d b) → ℕ → ℕ → Finset ℕ :=
-  letI := quadraticOrderIsDomain hD
-  fun C m N => (goodLocalValues d b hD.ne N).filter fun n =>
-    genusValue hD n ∈ remainderGenusSet hD C m
+    ClassGroup (QuadraticAlgebra ℤ d b) → ℕ → ℕ → Finset ℕ := by
+  classical
+  exact
+    letI := quadraticOrderIsDomain hD
+    fun C m N => (goodLocalValues d b hD.ne N).filter fun n =>
+      genusValue hD n ∈ remainderGenusSet hD C m
 
+open scoped Classical in
 theorem genusValues_eq_goodLocal_filter {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     letI := quadraticOrderIsDomain hD
     ∀ (g : GenusGroup (QuadraticAlgebra ℤ d b)) (N : ℕ),
@@ -30,6 +32,7 @@ theorem genusSliceValues_card {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     ∀ (C : ClassGroup (QuadraticAlgebra ℤ d b)) (m N : ℕ),
       (genusSliceValues hD C m N).card =
         ∑ g ∈ remainderGenusSet hD C m, (genusValues hD g N).card := by
+  classical
   let := quadraticOrderIsDomain hD
   intro C m N
   simp_rw [genusValues_eq_goodLocal_filter]

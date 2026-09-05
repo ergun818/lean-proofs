@@ -7,24 +7,26 @@ import Util.Bernays.CoprimeIdealDecomposition
 -/
 
 open Filter Topology
-open scoped Classical
 
 namespace Bernays
 
 noncomputable def classSliceValues {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     letI := quadraticOrderIsDomain hD
-    ClassGroup (QuadraticAlgebra ℤ d b) → ℕ → ℕ → Finset ℕ :=
-  letI := quadraticOrderIsDomain hD
-  fun C m N => (Finset.Icc 1 N).filter fun n =>
-    n.Coprime (discriminantLevel (b ^ 2 + 4 * d)) ∧
-      ∃ I : InvertibleIdeal (QuadraticAlgebra ℤ d b),
-        (I : Ideal (QuadraticAlgebra ℤ d b)).cardQuot = m * n ∧ I.idealClass = C
+    ClassGroup (QuadraticAlgebra ℤ d b) → ℕ → ℕ → Finset ℕ := by
+  classical
+  exact
+    letI := quadraticOrderIsDomain hD
+    fun C m N => (Finset.Icc 1 N).filter fun n =>
+      n.Coprime (discriminantLevel (b ^ 2 + 4 * d)) ∧
+        ∃ I : InvertibleIdeal (QuadraticAlgebra ℤ d b),
+          (I : Ideal (QuadraticAlgebra ℤ d b)).cardQuot = m * n ∧ I.idealClass = C
 
 theorem classSliceValues_subset_genusSliceValues {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
     letI := quadraticOrderIsDomain hD
     ∀ (C : ClassGroup (QuadraticAlgebra ℤ d b)) (m : ℕ),
       m ∈ Nat.factoredNumbers (discriminantLevel (b ^ 2 + 4 * d)).primeFactors →
       ∀ N : ℕ, classSliceValues hD C m N ⊆ genusSliceValues hD C m N := by
+  classical
   let := quadraticOrderIsDomain hD
   intro C m hm N n hn
   obtain ⟨hnN, hnc, I, hIn, hIC⟩ := Finset.mem_filter.mp hn
@@ -48,6 +50,7 @@ theorem genusSlice_sdiff_classSlice_subset_exceptional {d b : ℤ} (hD : b ^ 2 +
     ∀ (C : ClassGroup (QuadraticAlgebra ℤ d b)) (m N : ℕ),
       genusSliceValues hD C m N \ classSliceValues hD C m N ⊆ squareExceptionalValues hD
         (Nat.card (classSquareSubgroup : Subgroup (ClassGroup (QuadraticAlgebra ℤ d b)))) N := by
+  classical
   let := quadraticOrderIsDomain hD
   intro C m N n hn
   obtain ⟨hng, hnot⟩ := Finset.mem_sdiff.mp hn
@@ -88,7 +91,8 @@ theorem classSlice_genus_count_error_limit {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) 
   let k := Nat.card (classSquareSubgroup : Subgroup (ClassGroup (QuadraticAlgebra ℤ d b)))
   have heq (N : ℕ) : ((genusSliceValues hD C m N).card : ℝ) - (classSliceValues hD C m N).card =
       ((genusSliceValues hD C m N \ classSliceValues hD C m N).card : ℝ) := by
-    have h := Finset.card_sdiff_add_card_eq_card (classSliceValues_subset_genusSliceValues hD C m hm N)
+    have h := Finset.card_sdiff_add_card_eq_card
+      (classSliceValues_subset_genusSliceValues hD C m hm N)
     have h' : ((genusSliceValues hD C m N \ classSliceValues hD C m N).card : ℝ) +
         (classSliceValues hD C m N).card = (genusSliceValues hD C m N).card := by exact_mod_cast h
     linarith
@@ -113,8 +117,6 @@ theorem classSliceValues_card_limit {d b : ℤ} (hD : b ^ 2 + 4 * d < 0) :
   rw [sub_zero] at h
   apply h.congr'
   filter_upwards [] with N
-  change ((genusSliceValues hD C m N).card : ℝ) / scale N -
-    (((genusSliceValues hD C m N).card : ℝ) - (classSliceValues hD C m N).card) / scale N = _
   ring
 
 end Bernays

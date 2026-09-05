@@ -6,7 +6,6 @@ import Mathlib.Algebra.Module.ZLattice.Covolume
 -/
 
 open MeasureTheory Metric Set Module
-open scoped Classical
 
 namespace Bernays
 

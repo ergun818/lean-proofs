@@ -5,7 +5,6 @@ import Util.Bernays.LocalCountingAsymptotic
 -/
 
 open Filter Topology Asymptotics Real
-open scoped Classical
 
 namespace Bernays
 
@@ -21,11 +20,13 @@ theorem parityAdmissible_mul_of_unobstructed (S : ℕ → Prop) {m n : ℕ}
 theorem localParity_mul_of_unobstructed (S : ℕ → Prop) {m : ℕ} (hm : 0 < m)
     (hS : ∀ p : ℕ, p.Prime → S p → ¬p ∣ m) (n : ℕ) :
     localParity S (m * n) = localParity S n := by
+  classical
   by_cases hn : 0 < n
   · simp only [localParity, hn, Nat.mul_pos hm hn, true_and,
       parityAdmissible_mul_of_unobstructed S hm hn hS]
   · simp [Nat.eq_zero_of_not_pos hn]
 
+open scoped Classical in
 theorem localCount_divisible (S : ℕ → Prop) {m : ℕ} (hm : 0 < m)
     (hS : ∀ p : ℕ, p.Prime → S p → ¬p ∣ m) (N : ℕ) :
     (((Finset.Icc 1 N).filter fun n => ParityAdmissible S n).filter fun n => m ∣ n).card =
@@ -94,7 +95,8 @@ theorem localCount_dilation_limit {q : ℕ} [NeZero q]
     have ht := (isEquivalent_iff_tendsto_one (show ∀ᶠ x : ℝ in atTop,
         C * x / sqrt (log x) ≠ 0 by
       filter_upwards [eventually_gt_atTop (1 : ℝ)] with x hx
-      exact div_ne_zero (mul_ne_zero hC (zero_lt_one.trans hx).ne') (sqrt_pos.mpr (log_pos hx)).ne')).mp heq
+      exact div_ne_zero (mul_ne_zero hC (zero_lt_one.trans hx).ne') (sqrt_pos.mpr (log_pos
+        hx)).ne')).mp heq
     have h := ht.mul_const C
     rw [one_mul] at h
     apply h.congr'

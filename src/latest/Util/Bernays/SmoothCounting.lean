@@ -5,18 +5,18 @@ import Mathlib.Data.Finset.Sigma
 # Exact counting by the unique discriminant-prime part
 -/
 
-open scoped Classical
-
 namespace Bernays
 
-noncomputable def positiveValues (R : ℕ → Prop) (N : ℕ) : Finset ℕ :=
-  (Finset.Icc 1 N).filter R
+noncomputable def positiveValues (R : ℕ → Prop) (N : ℕ) : Finset ℕ := by
+  classical
+  exact (Finset.Icc 1 N).filter R
 
 noncomputable def smoothValues (P : Finset ℕ) (N : ℕ) : Finset ℕ :=
   (Finset.Icc 1 N).filter fun m => m ∈ Nat.factoredNumbers P
 
-noncomputable def coprimeSliceValues (R : ℕ → Prop) (M m N : ℕ) : Finset ℕ :=
-  (Finset.Icc 1 N).filter fun k => k.Coprime M ∧ R (m * k)
+noncomputable def coprimeSliceValues (R : ℕ → Prop) (M m N : ℕ) : Finset ℕ := by
+  classical
+  exact (Finset.Icc 1 N).filter fun k => k.Coprime M ∧ R (m * k)
 
 theorem coprime_avoids_primeFactors {k M : ℕ} (hk : k.Coprime M) :
     ∀ p ∈ M.primeFactors, p.Prime → ¬ p ∣ k := by
@@ -26,6 +26,7 @@ theorem coprime_avoids_primeFactors {k M : ℕ} (hk : k.Coprime M) :
 theorem positiveValues_card_smooth_sum (R : ℕ → Prop) {M : ℕ} (hM : M ≠ 0) (N : ℕ) :
     (positiveValues R N).card = ∑ m ∈ smoothValues M.primeFactors N,
       (coprimeSliceValues R M m (N / m)).card := by
+  classical
   rw [← Finset.card_sigma]
   symm
   apply Finset.card_bij (fun a _ => a.1 * a.2)
