@@ -20,6 +20,7 @@ universe u
 variable {V : Type u} [Fintype V] [DecidableEq V]
 variable {G : SimpleGraph V} [DecidableRel G.Adj]
 
+omit [DecidableRel G.Adj] in
 /-- Three distinct components of the complement of one vertex canonically
 produce a `ThreeWayCut`.  The third side also absorbs every component other
 than the first two. -/
@@ -177,6 +178,7 @@ structure BlockCountCertificate (G : SimpleGraph V) [DecidableRel G.Adj]
       (G.induce ((blocks i : Finset V) : Set V)).edgeFinset.card) =
         G.edgeFinset.card
 
+omit [DecidableEq V] in
 /-- Summing `(2,3)`-sparsity over a block decomposition with `k` blocks gives
 the sharp global estimate `e + k + 2 ≤ 2v`. -/
 theorem BlockCountCertificate.edge_card_add_k_add_two_le
@@ -199,12 +201,14 @@ theorem BlockCountCertificate.edge_card_add_k_add_two_le
   have hvertices := D.vertex_sum_add_one
   omega
 
+omit [DecidableEq V] in
 /-- In particular, three or more blocks already give the `2v-5` estimate
 needed in the false-twin deletion argument. -/
 theorem BlockCountCertificate.edge_card_add_five_le
     {k : ℕ} (D : BlockCountCertificate G k) (hthree : 3 ≤ k)
     (hsparse : Is23Sparse G) :
     G.edgeFinset.card + 5 ≤ 2 * Fintype.card V := by
+  classical
   have h := D.edge_card_add_k_add_two_le hsparse
   omega
 
@@ -219,12 +223,14 @@ def HasRootedTwoTerminalPath (G : SimpleGraph V) (r a b : V) : Prop :=
 
 namespace HasRootedTwoTerminalPath
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 theorem symm {r a b : V} (h : HasRootedTwoTerminalPath G r a b) :
     HasRootedTwoTerminalPath G r b a := by
   rcases h with h | h
   · exact Or.inr h
   · exact Or.inl h
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- The root and both terminals occur on the displayed path. -/
 theorem exists_path_support {r a b : V}
     (h : HasRootedTwoTerminalPath G r a b) :
@@ -240,6 +246,7 @@ end HasRootedTwoTerminalPath
 
 /-! ## Path splicing at a cut vertex -/
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Two simple paths whose supports meet only at their common endpoint splice
 to a simple path.  This is the walk-level operation used along a block chain. -/
 theorem Walk.IsPath.append_of_support_inter_eq_endpoint
@@ -256,9 +263,10 @@ theorem Walk.IsPath.append_of_support_inter_eq_endpoint
   have hxr : x = r := hinter x hxq hxp'
   subst x
   have hpN := hp.support_nodup
-  rw [p.support_eq_cons] at hpN
+  rw [← p.cons_tail_support] at hpN
   exact (List.nodup_cons.mp hpN).1 hyp
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- The splice contains every vertex that occurred on either constituent
 path. -/
 theorem Walk.mem_support_append_of_mem_left
@@ -266,6 +274,7 @@ theorem Walk.mem_support_append_of_mem_left
     (hx : x ∈ q.support) : x ∈ (q.append p).support := by
   exact q.support_subset_support_append_left p hx
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 theorem Walk.mem_support_append_of_mem_right
     {c r t x : V} (q : G.Walk c r) (p : G.Walk r t)
     (hx : x ∈ p.support) : x ∈ (q.append p).support := by

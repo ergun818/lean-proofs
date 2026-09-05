@@ -43,72 +43,92 @@ noncomputable def remainder (c : V)
     (K : (deleteVertex G c).ConnectedComponent) : Finset V :=
   Finset.univ \ sideFinset G c K
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 @[simp] theorem coe_sideFinset (c : V)
     (K : (deleteVertex G c).ConnectedComponent) :
     (sideFinset G c K : Set V) = side c K := by
   classical
   simp [sideFinset]
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem mem_piece_iff {c v : V}
     {K : (deleteVertex G c).ConnectedComponent} :
     v ∈ piece G c K ↔ v = c ∨ v ∈ side c K := by
   classical
   simp [piece, sideFinset]
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem mem_remainder_iff {c v : V}
     {K : (deleteVertex G c).ConnectedComponent} :
     v ∈ remainder G c K ↔ v ∉ side c K := by
   classical
   simp [remainder, sideFinset]
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem coe_piece (c : V)
     (K : (deleteVertex G c).ConnectedComponent) :
     (piece G c K : Set V) = verts c K := by
+  classical
   ext v
   simp [verts]
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem coe_remainder (c : V)
     (K : (deleteVertex G c).ConnectedComponent) :
     (remainder G c K : Set V) = (side c K)ᶜ := by
+  classical
   ext v
   simp
 
+omit [DecidableRel G.Adj] in
 theorem cut_mem_piece (c : V) (K : (deleteVertex G c).ConnectedComponent) :
-    c ∈ piece G c K := by simp
+    c ∈ piece G c K := by
+  classical
+  simp
 
+omit [DecidableRel G.Adj] in
 theorem cut_mem_remainder (c : V) (K : (deleteVertex G c).ConnectedComponent) :
     c ∈ remainder G c K := by
+  classical
   simp [ComponentEndBlock.cut_not_mem_side (G := G)]
 
+omit [DecidableRel G.Adj] in
 theorem piece_inter_remainder (c : V)
     (K : (deleteVertex G c).ConnectedComponent) :
     piece G c K ∩ remainder G c K = {c} := by
+  classical
   ext v
   by_cases hvc : v = c
   · subst v
     simp [ComponentEndBlock.cut_not_mem_side (G := G)]
   · simp [hvc]
 
+omit [DecidableRel G.Adj] in
 theorem piece_union_remainder (c : V)
     (K : (deleteVertex G c).ConnectedComponent) :
     piece G c K ∪ remainder G c K = Finset.univ := by
+  classical
   ext v
   by_cases hv : v ∈ side c K <;> simp [hv]
 
+omit [DecidableRel G.Adj] in
 /-- The two cut pieces count the cut vertex twice and every other vertex once. -/
 theorem card_piece_add_card_remainder (c : V)
     (K : (deleteVertex G c).ConnectedComponent) :
     (piece G c K).card + (remainder G c K).card = Fintype.card V + 1 := by
+  classical
   have hunion := Finset.card_union_add_card_inter (piece G c K) (remainder G c K)
   rw [piece_union_remainder, piece_inter_remainder] at hunion
   simp only [Finset.card_univ, Finset.card_singleton] at hunion
   omega
 
+omit [DecidableRel G.Adj] in
 /-- Every ambient edge lies in at least one of the two cut pieces. -/
 theorem edge_mem_piece_or_remainder {c u v : V}
     (K : (deleteVertex G c).ConnectedComponent) (huv : G.Adj u v) :
     ({u, v} : Finset V) ⊆ piece G c K ∨
       ({u, v} : Finset V) ⊆ remainder G c K := by
+  classical
   by_cases hu : u ∈ side c K
   · left
     have hv : v ∈ verts c K :=
@@ -202,20 +222,24 @@ theorem card_edges_piece_add_card_edges_remainder (c : V)
   rw [G.filter_edgeFinset_toFinset_subset] at hAcard hBcard
   omega
 
+omit [DecidableRel G.Adj] in
 /-- The complementary cut piece is proper because the chosen component side
 is nonempty. -/
 theorem remainder_ne_univ (c : V)
     (K : (deleteVertex G c).ConnectedComponent) :
     remainder G c K ≠ Finset.univ := by
+  classical
   obtain ⟨v, hv⟩ := ComponentEndBlock.side_nonempty (G := G) c K
   intro h
   have : v ∈ remainder G c K := by rw [h]; simp
   exact ((mem_remainder_iff (G := G)).mp this) hv
 
+omit [DecidableRel G.Adj] in
 /-- At a genuine cut vertex, every individual component piece is proper. -/
 theorem piece_ne_univ {c : V} (hc : IsCutVertex G c)
     (K : (deleteVertex G c).ConnectedComponent) :
     piece G c K ≠ Finset.univ := by
+  classical
   obtain ⟨u, v, huv⟩ := (isCutVertex_iff_exists_not_reachable G c).mp hc
   have huvcomp :
       (deleteVertex G c).connectedComponentMk u ≠
@@ -247,16 +271,18 @@ theorem piece_ne_univ {c : V} (hc : IsCutVertex G c)
           Subtype.coe_eta] using huK
       exact hucomp.symm
 
+omit [DecidableRel G.Adj] in
 /-- The selected component piece is connected. -/
 theorem piece_connected (hG : G.Connected) (c : V)
     (K : (deleteVertex G c).ConnectedComponent) :
     (G.induce (piece G c K : Set V)).Connected := by
+  classical
   rw [coe_piece]
   exact ComponentEndBlock.verts_connected hG K
 
 /-- Density splits across a cut vertex: if `m + 2 ≥ 2n`, then one of the two
 proper induced pieces satisfies the same inequality. -/
-theorem cut_dense_piece (hG : G.Connected) {c : V} (hc : IsCutVertex G c)
+theorem cut_dense_piece (_hG : G.Connected) {c : V} (hc : IsCutVertex G c)
     (K : (deleteVertex G c).ConnectedComponent)
     (hdense : 2 * Fintype.card V ≤ G.edgeFinset.card + 2) :
     (piece G c K ≠ Finset.univ) ∧

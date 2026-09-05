@@ -80,7 +80,6 @@ noncomputable def ahtTerminalComponentLocal_of_deleted
         · have hqsep : q' ∉ aSet ∪ bSet := by simp [hqA, hqB]
           have hqpart := hcomponent.2.2.2 w' hw'part q' hqsep hdel
           exact Or.inl (by
-            change q ∈ ahtDeletedFinsetVal part
             exact val_mem_ahtDeletedFinsetVal.mpr hqpart)
   center_neighbor_eq_terminal := by
     intro w hw hWCenter
@@ -156,6 +155,7 @@ noncomputable def zTerminalLocal
           (hwy ▸ S.y_mem_Y) hwZ)
       · exact Subtype.ext hz)
 
+omit [DecidableRel G.Adj] [Fintype V] in
 @[simp] theorem yTerminalLocal_part
     (hcy : G.Adj center y.1)
     (hcenterNeighbors : ∀ ⦃q : V⦄, G.Adj center q →
@@ -163,6 +163,7 @@ noncomputable def zTerminalLocal
     (S.yTerminalLocal hcy hcenterNeighbors).part =
       ahtDeletedFinsetVal S.yPart := rfl
 
+omit [DecidableRel G.Adj] [Fintype V] in
 @[simp] theorem zTerminalLocal_part
     (hcz : G.Adj center z.1)
     (hcenterNeighbors : ∀ ⦃q : V⦄, G.Adj center q →
@@ -303,7 +304,7 @@ theorem xThreeFragment_not_needsFreshPin_zero
       have hqX : q ∈ ahtDeletedFinsetVal S.xPart := by
         simpa [F, AHTThreeFragment.insideNeighborFinset] using hq'.2
       rcases hcenterNeighbors hqAdj with h | h | h
-      · simpa [h]
+      · simp [h]
       · have : y ∈ S.xPart := by
           apply val_mem_ahtDeletedFinsetVal.mp
           simpa [h] using hqX
@@ -323,7 +324,7 @@ theorem xThreeFragment_not_needsFreshPin_zero
           val_mem_ahtDeletedFinsetVal.mpr S.x_mem_X⟩
   intro hneeds
   rw [AHTThreeFragment.NeedsFreshPin, hinside] at hneeds
-  simpa using hneeds
+  simp at hneeds
 
 /-! ## A tagged realization of the concrete replacement graph -/
 
@@ -353,6 +354,7 @@ instance : Decidable (Refined S) := by
   unfold Refined
   infer_instance
 
+omit [DecidableRel G.Adj] [Fintype V] in
 private theorem a_attachment_ne_of_card_three
     (hA : S.aSet.card = 3) :
     S.xA ≠ S.yA ∧ S.xA ≠ S.zA ∧ S.yA ≠ S.zA := by
@@ -451,7 +453,7 @@ other case the first two external tags are used. -/
 noncomputable def freshCode
     (hcx : G.Adj center x.1)
     (i : (Fragment S hcx).FreshPin) : CodeVertex (V := V) :=
-  if h : Refined S then
+  if _h : Refined S then
     if i.1 = (1 : Fin 3) then .inl S.yA.1 else .inl S.zA.1
   else
     if i.1 = (1 : Fin 3) then .inr 0 else .inr 1

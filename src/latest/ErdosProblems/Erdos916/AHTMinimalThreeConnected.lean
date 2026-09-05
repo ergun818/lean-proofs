@@ -36,12 +36,16 @@ variable {G : SimpleGraph V} [DecidableRel G.Adj]
 
 namespace AHTMinimalThreeConnected
 
+omit [DecidableEq V] [Fintype V] in
 private theorem eraseEdge_le_local (G : SimpleGraph V) (a b : V) :
     eraseEdge G a b ≤ G := by
   exact SimpleGraph.deleteEdges_le _
 
-private theorem not_eraseEdge_adj_endpoints {a b : V} :
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+private theorem not_eraseEdge_adj_endpoints [Finite V] {a b : V} :
     ¬(eraseEdge G a b).Adj a b := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   simp
 
 /-! ## The three internally disjoint endpoint paths -/
@@ -68,12 +72,15 @@ def splitTarget {a b : V} (i : Fin 3) : SplitEndpoints a b := .inr (.inr i)
 def splitOld {a b : V} (v : {v : V // v ≠ a ∧ v ≠ b}) :
     SplitEndpoints a b := .inr (.inl v)
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem splitEndpointsCollapse_source (a b : V) (i : Fin 3) :
     splitEndpointsCollapse a b (splitSource i) = a := rfl
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem splitEndpointsCollapse_target (a b : V) (i : Fin 3) :
     splitEndpointsCollapse a b (splitTarget i) = b := rfl
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem splitEndpointsCollapse_old {a b : V}
     (v : {v : V // v ≠ a ∧ v ≠ b}) :
     splitEndpointsCollapse a b (splitOld v) = v.1 := rfl
@@ -84,15 +91,18 @@ private def splitLift {a b : V} (i j : Fin 3) (v : V) :
   else if hvb : v = b then splitTarget j
   else splitOld ⟨v, hva, hvb⟩
 
+omit [Fintype V] in
 @[simp] private theorem splitLift_at_left {a b : V} (i j : Fin 3) :
     splitLift i j a = (splitSource i : SplitEndpoints a b) := by
   simp [splitLift]
 
+omit [Fintype V] in
 @[simp] private theorem splitLift_at_right {a b : V} (hab : a ≠ b)
     (i j : Fin 3) :
     splitLift i j b = (splitTarget j : SplitEndpoints a b) := by
   simp [splitLift, hab.symm]
 
+omit [Fintype V] in
 @[simp] private theorem collapse_splitLift {a b : V} (i j : Fin 3) (v : V) :
     splitEndpointsCollapse a b (splitLift i j v) = v := by
   simp only [splitLift]
@@ -102,8 +112,10 @@ private def splitLift {a b : V} (i j : Fin 3) (v : V) :
     · rename_i h; simp [h]
     · rfl
 
-private theorem splitLift_injective {a b : V} (i j : Fin 3) :
+omit [Fintype V] in
+private theorem splitLift_injective [Finite V] {a b : V} (i j : Fin 3) :
     Function.Injective (splitLift (a := a) (b := b) i j) := by
+  let : Fintype V := Fintype.ofFinite V
   intro x y h
   have := congrArg (splitEndpointsCollapse a b) h
   simpa using this
@@ -122,10 +134,12 @@ def splitSources (a b : V) : Set (SplitEndpoints a b) := Set.range splitSource
 
 def splitTargets (a b : V) : Set (SplitEndpoints a b) := Set.range splitTarget
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem mem_splitSources {a b : V} {z : SplitEndpoints a b} :
     z ∈ splitSources a b ↔ ∃ i, z = splitSource i := by
   simp [splitSources, eq_comm]
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem mem_splitTargets {a b : V} {z : SplitEndpoints a b} :
     z ∈ splitTargets a b ↔ ∃ i, z = splitTarget i := by
   simp [splitTargets, eq_comm]
@@ -134,7 +148,7 @@ def splitTargets (a b : V) : Set (SplitEndpoints a b) := Set.range splitTarget
 the first substantive step of AHT Lemma 4.5. -/
 private theorem splitEndpoints_separator_three_le_type0
     {V : Type} [Fintype V] [DecidableEq V]
-    {H : SimpleGraph V} [DecidableRel H.Adj]
+    {H : SimpleGraph V}
     {a b : V} (hab : a ≠ b) (hthree : IsThreeConnected H)
     (S : Set (SplitEndpoints a b))
     (hS : Erdos599.Countable.Separates (splitEndpointsGraph H a b)
@@ -145,7 +159,7 @@ private theorem splitEndpoints_separator_three_le_type0
   have hSlt : S.ncard < 3 := Nat.lt_of_not_ge hnot
   have hi : ∃ i : Fin 3, splitSource i ∉ S := by
     by_contra hall
-    push_neg at hall
+    push Not at hall
     have hsub : Set.range (splitSource (a := a) (b := b)) ⊆ S := by
       rintro _ ⟨i, rfl⟩
       exact hall i
@@ -157,7 +171,7 @@ private theorem splitEndpoints_separator_three_le_type0
       exact Sum.inl.inj hij
   have hj : ∃ j : Fin 3, splitTarget j ∉ S := by
     by_contra hall
-    push_neg at hall
+    push Not at hall
     have hsub : Set.range (splitTarget (a := a) (b := b)) ⊆ S := by
       rintro _ ⟨j, rfl⟩
       exact hall j
@@ -252,10 +266,11 @@ endpoints.  Collapsing the copies gives the standard three internally
 disjoint `a`--`b` paths used at the start of AHT Lemma 4.5. -/
 theorem exists_three_splitEndpoint_paths_type0
     {V : Type} [Fintype V] [DecidableEq V]
-    {H : SimpleGraph V} [DecidableRel H.Adj]
+    {H : SimpleGraph V}
     {a b : V} (hab : a ≠ b) (hthree : IsThreeConnected H) :
     Nonempty (Erdos718.ABLinkage (splitEndpointsGraph H a b)
       (splitSources a b) (splitTargets a b) 3) := by
+  classical
   apply Erdos718.exists_abLinkage_of_forall_separator_ncard_ge
   intro S hS
   exact splitEndpoints_separator_three_le_type0 hab hthree S hS
@@ -266,11 +281,13 @@ private def splitSourceFinset (a b : V) : Finset (SplitEndpoints a b) :=
 private def splitTargetFinset (a b : V) : Finset (SplitEndpoints a b) :=
   Finset.univ.image splitTarget
 
+omit [Fintype V] in
 @[simp] private theorem mem_splitSourceFinset {a b : V}
     {z : SplitEndpoints a b} :
     z ∈ splitSourceFinset a b ↔ ∃ i : Fin 3, z = splitSource i := by
   simp [splitSourceFinset, eq_comm]
 
+omit [Fintype V] in
 @[simp] private theorem mem_splitTargetFinset {a b : V}
     {z : SplitEndpoints a b} :
     z ∈ splitTargetFinset a b ↔ ∃ i : Fin 3, z = splitTarget i := by
@@ -280,8 +297,8 @@ private def splitTargetFinset (a b : V) : Finset (SplitEndpoints a b) :=
 first target copy.  Its support is still contained in the original linkage
 path, and no other split copy of either endpoint remains. -/
 private theorem ABLinkage.exists_clean_splitEndpoint_path
-    {V : Type} [Fintype V] [DecidableEq V]
-    {H : SimpleGraph V} [DecidableRel H.Adj]
+    {V : Type} [Finite V]
+    {H : SimpleGraph V}
     {a b : V}
     (L : Erdos718.ABLinkage (splitEndpointsGraph H a b)
       (splitSources a b) (splitTargets a b) 3)
@@ -293,6 +310,7 @@ private theorem ABLinkage.exists_clean_splitEndpoint_path
         (∀ z, z ∈ p.support → z ∈ splitSources a b → z = splitSource si) ∧
         (∀ z, z ∈ p.support → z ∈ splitTargets a b → z = splitTarget ti) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨li, hli⟩ := (mem_splitSources.mp (L.left_mem i))
   obtain ⟨ri, hri⟩ := (mem_splitTargets.mp (L.right_mem i))
   let T := splitTargetFinset a b
@@ -348,6 +366,7 @@ private def splitEndpointsCollapseHom (H : SimpleGraph V) (a b : V) :
   toFun := splitEndpointsCollapse a b
   map_rel' := by intro x y hxy; exact hxy
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- The collapse map is injective on a clean split path. -/
 private theorem collapse_injOn_clean_splitPath
     {a b : V} (hab : a ≠ b) {si ti : Fin 3}
@@ -384,6 +403,7 @@ private theorem collapse_injOn_clean_splitPath
             htarget _ hy (by exact ⟨j, rfl⟩)
           exact hxi.trans hyj.symm
 
+omit [DecidableEq V] [Fintype V] in
 private theorem splitEndpoints_eq_of_collapse_eq_of_ne
     {a b : V} {x y : SplitEndpoints a b}
     (hxa : splitEndpointsCollapse a b x ≠ a)
@@ -414,7 +434,7 @@ pairwise interior disjointness downstairs, since only the split copies of
 `a` and `b` are identified. -/
 theorem exists_threeEndpointPaths
     {V : Type} [Fintype V] [DecidableEq V]
-    {H : SimpleGraph V} [DecidableRel H.Adj]
+    {H : SimpleGraph V}
     {a b : V} (hab : a ≠ b) (hthree : IsThreeConnected H) :
     Nonempty (ThreeEndpointPaths H a b) := by
   classical
@@ -478,10 +498,11 @@ structure ThreeFanToEndpoint (H : SimpleGraph V) (a b : V) where
 
 theorem exists_threeFanToEndpoint
     {V : Type} [Fintype V] [DecidableEq V]
-    {H : SimpleGraph V} [DecidableRel H.Adj]
+    {H : SimpleGraph V}
     {a b : V} (hab : a ≠ b) (hnadj : ¬H.Adj a b)
     (hthree : IsThreeConnected H) :
     Nonempty (ThreeFanToEndpoint H a b) := by
+  classical
   obtain ⟨P⟩ := exists_threeEndpointPaths hab hthree
   have hnonNil : ∀ i, ¬(P.path i).Nil := fun i ↦
     (P.path i).not_nil_of_ne hab
@@ -536,7 +557,7 @@ cycle, or the Watkins--Mesner `K_{3,2}` source together with the three fan
 arms yields a cycle through `b` and two fan starts. -/
 private theorem cycleAlternative_of_threeFanToEndpoint_type0
     {V : Type} [Fintype V] [DecidableEq V]
-    {H : SimpleGraph V} [DecidableRel H.Adj]
+    {H : SimpleGraph V}
     {a b : V} (hab : a ≠ b) (hthree : IsThreeConnected H)
     (F : ThreeFanToEndpoint H a b) :
     let K := H.induce fun w : V ↦ w ≠ a
@@ -547,6 +568,7 @@ private theorem cycleAlternative_of_threeFanToEndpoint_type0
       HasCycleThroughThree K b' (n 0) (n 1) ∨
       HasCycleThroughThree K b' (n 0) (n 2) ∨
       HasCycleThroughThree K b' (n 1) (n 2) := by
+  classical
   let K := H.induce fun w : V ↦ w ≠ a
   let n : Fin 3 → {w : V // w ≠ a} := fun i ↦
     ⟨F.neighbor i, (F.adj_neighbor i).ne.symm⟩
@@ -674,12 +696,14 @@ private theorem hasWheelCenteredAt_map_iso
     (e.injective.ne hx₀x₁) (e.injective.ne hx₀x₂)
     (e.injective.ne hx₁x₂)
 
+omit [DecidableRel G.Adj] in
 /-- Separation-three-connectivity implies the deletion-of-two-vertices
 formulation.  This local converse to
 `isThreeConnected_of_vertexThreeConnected` is used only to transport the
 Menger input across a finite relabelling. -/
 private theorem vertexThreeConnected_local
     (hthree : IsThreeConnected G) : VertexThreeConnected G := by
+  classical
   refine ⟨hthree.four_le_card, ?_, ?_⟩
   · have hpre₀ :=
       hthree.induce_compl_preconnected (∅ : Finset V) (by simp)
@@ -725,6 +749,7 @@ private theorem vertexThreeConnected_local
       preconnected := hpre
       nonempty := ⟨⟨q, hqx, hqy⟩⟩ }
 
+omit [DecidableEq V] in
 /-- The deletion-of-two-vertices definition is invariant under a graph
 isomorphism. -/
 private theorem vertexThreeConnected_map_iso
@@ -773,7 +798,7 @@ displayed vertices are distinct neighbours of the deleted vertex, the
 mapped cycle is the required wheel rim. -/
 private theorem hasWheelCenteredAt_of_induce_cycle_type0
     {V : Type} [Fintype V] [DecidableEq V]
-    {H G : SimpleGraph V} [DecidableRel H.Adj] [DecidableRel G.Adj]
+    {H G : SimpleGraph V} [DecidableRel G.Adj]
     {a : V} {x₀ x₁ x₂ : {w : V // w ≠ a}}
     (hHG : H ≤ G)
     (hcycle : HasCycleThroughThree (H.induce fun w : V ↦ w ≠ a) x₀ x₁ x₂)
@@ -782,6 +807,7 @@ private theorem hasWheelCenteredAt_of_induce_cycle_type0
     (hx₀x₁ : x₀.1 ≠ x₁.1) (hx₀x₂ : x₀.1 ≠ x₂.1)
     (hx₁x₂ : x₁.1 ≠ x₂.1) :
     HasWheelCenteredAt G a := by
+  classical
   obtain ⟨r, C, hC, hx₀C, hx₁C, hx₂C⟩ := hcycle
   let inc : (H.induce fun w : V ↦ w ≠ a) →g H :=
     (SimpleGraph.Embedding.induce (G := H) (s := fun w : V ↦ w ≠ a)).toHom

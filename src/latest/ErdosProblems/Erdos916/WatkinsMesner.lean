@@ -34,20 +34,24 @@ def ReachableOff (G : SimpleGraph V) (x a b : V) : Prop :=
 
 namespace ReachableOff
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 theorem refl {x a : V} (ha : a ≠ x) : ReachableOff G x a a := by
   exact ⟨ha, ha, SimpleGraph.Reachable.refl _⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 theorem symm {x a b : V} (h : ReachableOff G x a b) :
     ReachableOff G x b a := by
   obtain ⟨ha, hb, hab⟩ := h
   exact ⟨hb, ha, hab.symm⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 theorem trans {x a b c : V} (hab : ReachableOff G x a b)
     (hbc : ReachableOff G x b c) : ReachableOff G x a c := by
   obtain ⟨ha, hb, hab⟩ := hab
   obtain ⟨_hb, hc, hbc⟩ := hbc
   exact ⟨ha, hc, hab.trans hbc⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 theorem of_adj_right {x a b : V} (ha : a ≠ x) (hb : b ≠ x)
     (hab : G.Adj a b) : ReachableOff G x a b := by
   exact ⟨ha, hb, (show (deleteVertex G x).Adj
@@ -55,6 +59,7 @@ theorem of_adj_right {x a b : V} (ha : a ≠ x) (hb : b ≠ x)
 
 end ReachableOff
 
+omit [DecidableRel G.Adj] in
 /-- A cut vertex separating `a`, `b`, and `c` pairwise gives the exact
 three-way cut certificate needed by `ThreeWayCut.edge_card_add_five_le`.
 
@@ -146,6 +151,7 @@ theorem exists_threeWayCut_of_pairwise_not_reachableOff
     simp only [R, Finset.mem_filter, Finset.mem_univ, true_and] at hvR
     exact hvR.2.2 (huM.2.trans (ReachableOff.of_adj_right huM.1 hvR.1 huv))
 
+omit [DecidableRel G.Adj] in
 /-- The certificate-only form of
 `exists_threeWayCut_of_pairwise_not_reachableOff`. -/
 theorem threeWayCut_of_pairwise_not_reachableOff
@@ -155,10 +161,12 @@ theorem threeWayCut_of_pairwise_not_reachableOff
     (hac : ¬ReachableOff G x a c)
     (hbc : ¬ReachableOff G x b c) :
     Nonempty (ThreeWayCut G) := by
+  classical
   obtain ⟨T, -⟩ := exists_threeWayCut_of_pairwise_not_reachableOff
     hax hbx hcx hab hac hbc
   exact ⟨T⟩
 
+omit [DecidableEq V] in
 /-- Direct density form of the separated-three-components case. -/
 theorem edge_card_add_five_le_of_pairwise_not_reachableOff
     {x a b c : V}
@@ -168,6 +176,7 @@ theorem edge_card_add_five_le_of_pairwise_not_reachableOff
     (hbc : ¬ReachableOff G x b c)
     (hsparse : Is23Sparse G) :
     G.edgeFinset.card + 5 ≤ 2 * Fintype.card V := by
+  classical
   obtain ⟨T⟩ := threeWayCut_of_pairwise_not_reachableOff
     hax hbx hcx hab hac hbc
   exact T.edge_card_add_five_le hsparse

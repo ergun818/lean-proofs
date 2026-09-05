@@ -264,6 +264,8 @@ namespace K23Reduction
 
 variable {G : SimpleGraph V} [DecidableRel G.Adj]
 
+omit [DecidableEq V]
+
 /-- A vertex in the two-element part. -/
 abbrev a (R : K23Reduction G) (i : Fin 2) : V := R.copy (.inl i)
 
@@ -333,14 +335,14 @@ theorem not_adj_a_a (R : K23Reduction G) (i j : Fin 2) :
     ¬G.Adj (R.a i) (R.a j) := by
   intro h
   have h' := R.copy.map_adj_iff.mp h
-  simpa using h'
+  simp at h'
 
 /-- No two vertices in the three-element part are adjacent. -/
 theorem not_adj_b_b (R : K23Reduction G) (i j : Fin 3) :
     ¬G.Adj (R.b i) (R.b j) := by
   intro h
   have h' := R.copy.map_adj_iff.mp h
-  simpa using h'
+  simp at h'
 
 /-- The sum of the degrees of the four deleted vertices is twelve. -/
 theorem sum_degree_deletedFour (R : K23Reduction G) :

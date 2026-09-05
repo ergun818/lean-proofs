@@ -76,7 +76,7 @@ private theorem exists_samePart_pair_avoiding
 graph isomorphic to `K₃,₃`, after excluding two attachment vertices there
 remain two degree-three false twins in one bipartition class. -/
 theorem exists_falseTwins_avoiding_two_of_k33_iso
-    {W : Type u} [Fintype W] [DecidableEq W]
+    {W : Type u} [Fintype W]
     (H : SimpleGraph W) [DecidableRel H.Adj]
     (e : completeBipartiteGraph (Fin 3) (Fin 3) ≃g H)
     (a b : W) :
@@ -110,7 +110,7 @@ theorem exists_falseTwins_avoiding_two_of_k33_iso
     let f : (completeBipartiteGraph (Fin 3) (Fin 3)).neighborSet (.inl i) ≃
         Fin 3 :=
       { toFun := fun
-          | ⟨.inl k, hk⟩ => False.elim (by simpa using hk)
+          | ⟨.inl k, hk⟩ => False.elim (by simp at hk)
           | ⟨.inr k, _⟩ => k
         invFun := fun k ↦ ⟨.inr k, by simp⟩
         left_inv := by
@@ -127,7 +127,7 @@ theorem exists_falseTwins_avoiding_two_of_k33_iso
         Fin 3 :=
       { toFun := fun
           | ⟨.inl k, _⟩ => k
-          | ⟨.inr k, hk⟩ => False.elim (by simpa using hk)
+          | ⟨.inr k, hk⟩ => False.elim (by simp at hk)
         invFun := fun k ↦ ⟨.inl k, by simp⟩
         left_inv := by
           rintro ⟨k | k, hk⟩
@@ -152,20 +152,24 @@ namespace EndPieceLift
 
 variable {c x₀ : V} (K : (deleteVertex G c).ConnectedComponent)
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private theorem mem_side_of_mem_verts_ne_cut {v : V}
     (hv : v ∈ ComponentEndBlock.verts c K) (hvc : v ≠ c) :
     v ∈ ComponentEndBlock.side c K := by
   simpa [ComponentEndBlock.verts, hvc] using hv
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- False twins on the component side of an induced end piece lift to the
 ambient graph. -/
-theorem falseTwins_lift
+theorem falseTwins_lift [Finite V]
     {u v : {w : V // w ∈ ComponentEndBlock.verts c K}}
     (hu : u.1 ∈ ComponentEndBlock.side c K)
     (hv : v.1 ∈ ComponentEndBlock.side c K)
     (htwin : AreFalseTwins
       (G.induce (ComponentEndBlock.verts c K)) u v) :
     AreFalseTwins G u.1 v.1 := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   refine ⟨fun huv ↦ htwin.1 (Subtype.ext huv), ?_⟩
   ext w
   constructor
@@ -180,6 +184,7 @@ theorem falseTwins_lift
     have hi : (G.induce (ComponentEndBlock.verts c K)).Adj v ⟨w, hw⟩ := hvw
     exact (htwin.adj_iff ⟨w, hw⟩).mpr hi
 
+omit [DecidableEq V] in
 /-- A false-twin pair avoiding the cut vertex lifts from a component end
 piece and avoids the original exceptional vertex. -/
 theorem falseTwinsAway_lift
@@ -188,6 +193,7 @@ theorem falseTwinsAway_lift
       (G.induce (ComponentEndBlock.verts c K))
         ⟨c, by simp [ComponentEndBlock.verts]⟩) :
     HasFalseTwinsAway G x₀ := by
+  classical
   obtain ⟨u, v, htwin, hdegu, huc, hvc⟩ := hpair
   have hune : u.1 ≠ c := by
     intro h
@@ -219,10 +225,13 @@ end EndPieceLift
 
 namespace ComponentLift
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- False twins in a connected component lift to the ambient graph. -/
-theorem falseTwins_lift (C : G.ConnectedComponent) {u v : C}
+theorem falseTwins_lift [Finite V] (C : G.ConnectedComponent) {u v : C}
     (htwin : AreFalseTwins C.toSimpleGraph u v) :
     AreFalseTwins G u.1 v.1 := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   refine ⟨fun huv ↦ htwin.1 (Subtype.ext huv), ?_⟩
   ext w
   constructor
@@ -296,7 +305,7 @@ theorem vertexTwoConnected_of_minimal_pointed_counterexample
         exact heq
       have hvside : v.1 ∈ ComponentEndBlock.side c K := by
         have hvverts : v.1 ∈ ComponentEndBlock.verts c K := by
-          simpa [S] using v.2
+          simp [S]
         simpa [ComponentEndBlock.verts, hvne] using hvverts
       have hvx₀ : v.1 ≠ x₀ := by
         rcases havoidSide with rfl | hx₀side

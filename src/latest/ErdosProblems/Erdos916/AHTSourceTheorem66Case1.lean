@@ -26,7 +26,7 @@ principle.
 
 namespace Erdos916
 
-open SimpleGraph
+open _root_.Erdos916.SimpleGraph
 
 universe u
 
@@ -66,14 +66,17 @@ theorem ahtDoublePinReplacement_degree_old_nonpin
     ahtDoublePinReplacement_neighborFinset_old_nonpin hp,
     Finset.card_map, H.card_neighborFinset_eq_degree]
 
+omit [DecidableEq V] [DecidableRel H.Adj] [Fintype V] in
 /-- False twins among old replacement vertices are simultaneously pins or
 simultaneously non-pins: adjacency to either newly adjoined vertex detects
 exactly the pins. -/
-theorem ahtDoublePinReplacement_isDoublePin_iff_of_old_falseTwins
+theorem ahtDoublePinReplacement_isDoublePin_iff_of_old_falseTwins [Finite V]
     {p q : V}
     (hpq : AreFalseTwins (ahtDoublePinReplacement H a b c)
       (.inl p) (.inl q)) :
     IsDoublePin a b c p ↔ IsDoublePin a b c q := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have h := hpq.adj_iff (.inr (0 : Fin 2))
   simpa only [ahtDoublePinReplacement.adj_old_new_iff] using h
 
@@ -124,6 +127,7 @@ theorem ahtDoublePinReplacement_twoPairs_classification
   exact ⟨p, q, hpq,
     ahtDoublePinReplacement_old_twinPair_classification hpq⟩
 
+omit [Fintype V] in
 /-- Two distinct members of the three-pin set have a unique remaining pin,
 recorded here in the set form used by the gate argument. -/
 theorem exists_third_doublePin
@@ -228,6 +232,7 @@ theorem no_twinPair_inside_of_complement_pair_of_no_twoDisjointPairs
 
 /-! ## The exceptional boundary pair -/
 
+omit [DecidableEq V] in
 /-- A degree-one vertex with a displayed neighbour has exactly that
 singleton neighbourhood. -/
 theorem neighborFinset_eq_singleton_of_degree_eq_one_of_adj
@@ -359,7 +364,7 @@ def replacementFragment : Finset (F.PreparedVertex ⊕ Fin 2) :=
 
 @[simp] theorem card_replacementFragment :
     F.replacementFragment.card = F.verts.card := by
-  simp [replacementFragment, fragmentEmbedding, Fintype.card_coe]
+  simp [replacementFragment, fragmentEmbedding]
 
 @[simp] theorem mem_replacementFragment_iff
     {z : F.PreparedVertex ⊕ Fin 2} :

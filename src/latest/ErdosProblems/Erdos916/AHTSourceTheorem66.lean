@@ -1167,6 +1167,7 @@ def swapLastTargets (F : AHTMixedTripleFan G deleted root a b c) :
     · exact Or.inr (Or.inr h)
     · exact Or.inr (Or.inl h)
 
+omit [DecidableEq V] [Fintype V] in
 /-- The normalized fan endpoints are one of the three unordered pairs in
 the target triple.  Keeping both orientations explicit makes the later
 `Walk.copy`/`Walk.reverse` normalization definitional. -/
@@ -1232,6 +1233,7 @@ def reverse (F : AHTMixedPairFan G deleted root a b) :
     · exact Or.inr h
     · exact Or.inl h
 
+omit [DecidableEq V] [Fintype V] in
 theorem endpoints (F : AHTMixedPairFan G deleted root a b) :
     (F.start = a ∧ F.finish = b) ∨
       (F.start = b ∧ F.finish = a) := by
@@ -1409,6 +1411,7 @@ theorem exists_ahtMixedTripleFan
 
 namespace WatkinsMesnerSplitter
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Support-aware version of the elementary edge-boundary crossing lemma,
 placed before the mixed-fan consumers that use it. -/
 theorem _root_.SimpleGraph.Walk.exists_boundary_edge_on_support
@@ -1416,6 +1419,7 @@ theorem _root_.SimpleGraph.Walk.exists_boundary_edge_on_support
     (ha : a ∈ C) (hb : b ∉ C) :
     ∃ u ∈ C, ∃ v ∉ C,
       u ∈ p.support ∧ v ∈ p.support ∧ G.Adj u v := by
+  classical
   induction p with
   | nil => exact False.elim (hb ha)
   | @cons a c b hac p ih =>
@@ -1424,8 +1428,9 @@ theorem _root_.SimpleGraph.Walk.exists_boundary_edge_on_support
         exact ⟨u, huC, v, hvC, by simp [hup], by simp [hvp], huv⟩
       · exact ⟨a, ha, c, hc, by simp, by simp, hac⟩
 
+omit [Fintype V] in
 /-- The second fan stays in `X` except for its two target endpoints. -/
-theorem mixedSecondFan_support_location
+theorem mixedSecondFan_support_location [Finite V]
     {center : V} {x y z : {v : V // v ≠ center}}
     (S : WatkinsMesnerSplitter (deleteVertex G center) x y z)
     {xPrime : V} (hxPrime : xPrime ∈ ahtDeletedFinsetVal S.xPart)
@@ -1433,6 +1438,7 @@ theorem mixedSecondFan_support_location
     ∀ w, w ∈ F.path.support →
       w ∈ ahtDeletedFinsetVal S.xPart ∨
         w = center ∨ w = S.xA.1 := by
+  let : Fintype V := Fintype.ofFinite V
   have hXsep := disjoint_ahtDeletedFinsetVal S.X_component.2.1
   rw [ahtDeletedFinsetVal_union] at hXsep
   have hxPrimeCenter : xPrime ≠ center := by
@@ -1560,12 +1566,13 @@ theorem exists_firstFan
       (fun h ↦ hneA.2.1 (Subtype.ext h))
       (fun h ↦ hneA.2.2 (Subtype.ext h))
 
+omit [Fintype V] in
 /-- Every internal vertex of the first fan remains in `D'`.  The only
 possible exits from the residual component are through `A`, the singleton
 `x_B`, or `center`; target-minimality excludes `A`, the fan deletion
 excludes `x_B`, and the prescribed centre neighbourhood excludes `center`.
 -/
-theorem firstFan_support_location
+theorem firstFan_support_location [Finite V]
     {center : V} {x y z : {v : V // v ≠ center}}
     {S : WatkinsMesnerSplitter (deleteVertex G center) x y z}
     (R : S.MixedResidualComponent)
@@ -1576,6 +1583,7 @@ theorem firstFan_support_location
       q = x.1 ∨ q = y.1 ∨ q = z.1) :
     ∀ w, w ∈ F.path.support →
       w ∈ R.carrier ∨ w ∈ ahtDeletedFinsetVal S.aSet := by
+  let : Fintype V := Fintype.ofFinite V
   have hAval : ahtDeletedFinsetVal S.aSet =
       {S.xA.1, S.yA.1, S.zA.1} := by simp [S.A_eq]
   obtain ⟨hxByB, hxBzB⟩ := S.b_attachments_eq_of_card_one hBcard
@@ -1780,16 +1788,14 @@ theorem false_of_firstFan_yA_zA
   have hq : q.IsPath := by
     have h1 : hzA.symm.toWalk.IsPath := Walk.IsPath.of_adj hzA.symm
     have h2 := h1.concat (by
-      simp [SimpleGraph.Adj.support_toWalk, S.zA.2, S.zA.2.symm,
-        z.2, z.2.symm]) hcz.symm
+      simp [S.zA.2.symm, z.2.symm]) hcz.symm
     have h3 := h2.concat (by
-      simp [Walk.support_concat, SimpleGraph.Adj.support_toWalk,
-        hzAy, hzAy.symm, hyz, y.2]) hcy
+      simp [Walk.support_concat, hzAy.symm, hyz, y.2]) hcy
     have hyAzA : S.yA.1 ≠ S.zA.1 := by
       intro h
       exact hneA.2.2 (Subtype.ext h)
     have h4 := h3.concat (by
-      simp [Walk.support_concat, SimpleGraph.Adj.support_toWalk,
+      simp [Walk.support_concat,
         hyAzA, hyAz, S.yA.2, hyAy]) hyA
     exact h4
   have hdisj : p.support.tail.Disjoint q.support.tail := by
@@ -1865,9 +1871,9 @@ theorem false_of_firstFan_yA_zA
       have hx'R : x'.1 ≠ R.xBPrime :=
         (xBPrime_ne_xPart S R
           (val_mem_ahtDeletedFinsetVal.mpr hx'X)).symm
-      simp [N, hyz, hyz.symm, hx'Y, hx'Y.symm, hx'Z, hx'Z.symm,
-        hx'R, hx'R.symm, xBPrime_ne_y S R,
-        (xBPrime_ne_y S R).symm, xBPrime_ne_z S R,
+      simp [N, hyz, hx'Y.symm, hx'Z.symm,
+        hx'R,
+        (xBPrime_ne_y S R).symm,
         (xBPrime_ne_z S R).symm]
     rw [← hNcard]
     apply Finset.card_le_card
@@ -2059,9 +2065,9 @@ theorem false_of_firstFan_xA_yA_and_secondFan
     have hxR : xPrime ≠ R.xBPrime :=
       (xBPrime_ne_xPart S R hxPrime).symm
     have hNcard : N.card = 4 := by
-      simp [N, hyz, hyz.symm, hxY, hxY.symm, hxZ, hxZ.symm,
-        hxR, hxR.symm, xBPrime_ne_y S R,
-        (xBPrime_ne_y S R).symm, xBPrime_ne_z S R,
+      simp [N, hyz, hxY.symm, hxZ.symm,
+        hxR,
+        (xBPrime_ne_y S R).symm,
         (xBPrime_ne_z S R).symm]
     rw [← hNcard]
     apply Finset.card_le_card
@@ -2140,6 +2146,7 @@ end WatkinsMesnerSplitter.MixedResidualComponent
 
 namespace WatkinsMesnerSplitter
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Support-aware version of the elementary edge-boundary crossing lemma.
 Both ends of the crossing edge are retained on the original walk. -/
 theorem _root_.SimpleGraph.Walk.exists_boundary_edge_on_support_duplicate
@@ -2147,6 +2154,7 @@ theorem _root_.SimpleGraph.Walk.exists_boundary_edge_on_support_duplicate
     (ha : a ∈ C) (hb : b ∉ C) :
     ∃ u ∈ C, ∃ v ∉ C,
       u ∈ p.support ∧ v ∈ p.support ∧ G.Adj u v := by
+  classical
   induction p with
   | nil => exact False.elim (hb ha)
   | @cons a c b hac p ih =>
@@ -2235,11 +2243,12 @@ theorem MixedResidualComponent.false_of_mixedResidualComponent
   · exact R.false_of_firstFan_yA_zA_unordered F halmost hcy hcz
       hcenterNeighbors hAcard hBcard hy hz (Or.inr hZY)
 
+omit [Fintype V] in
 /-- The second fan stays in `X` except for its two target endpoints.  If an
 internal subpath first leaves `X`, component maximality puts the exit in
 `A ∪ B ∪ {center}`; the unique-attachment fields then identify it as
 `x_A`, `x_B`, or `center`, contradicting target-minimality/deletion. -/
-theorem mixedSecondFan_support_location_duplicate
+theorem mixedSecondFan_support_location_duplicate [Finite V]
     {center : V} {x y z : {v : V // v ≠ center}}
     (S : WatkinsMesnerSplitter (deleteVertex G center) x y z)
     {xPrime : V} (hxPrime : xPrime ∈ ahtDeletedFinsetVal S.xPart)
@@ -2247,6 +2256,7 @@ theorem mixedSecondFan_support_location_duplicate
     ∀ w, w ∈ F.path.support →
       w ∈ ahtDeletedFinsetVal S.xPart ∨
         w = center ∨ w = S.xA.1 := by
+  let : Fintype V := Fintype.ofFinite V
   have hXsep := disjoint_ahtDeletedFinsetVal S.X_component.2.1
   rw [ahtDeletedFinsetVal_union] at hXsep
   have hxPrimeCenter : xPrime ≠ center := by
@@ -2903,7 +2913,7 @@ theorem finalLeftVerts_disjoint_swapSides
         (ahtDeletedFinsetVal D) ∅ (by simp) hempty
         (ahtDeletedFinsetVal_nonempty.mpr hD.1)
         ⟨center, by simp [center_not_mem_ahtDeletedFinsetVal D]⟩
-      simpa using hthreeEmpty
+      simp at hthreeEmpty
     · exact Finset.disjoint_left.mp S.ambientLeftCarrier_disjoint_right
         hqCarrier (by simpa [swapSides] using hqB)
   · rcases Finset.mem_union.mp hqRight with hqCarrier' | hqB

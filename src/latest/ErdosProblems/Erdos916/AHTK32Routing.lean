@@ -25,6 +25,7 @@ variable {G : SimpleGraph V} [DecidableRel G.Adj]
 
 namespace AHTK32Routing
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Two paths meeting only in their common end concatenate to a path. -/
 private theorem Walk.IsPath.append_of_inter_eq_endpoint
     {a b c : V} {p : G.Walk a b} {q : G.Walk b c}
@@ -39,9 +40,10 @@ private theorem Walk.IsPath.append_of_inter_eq_endpoint
   subst y
   have hxb : x = b := hinter x hxp (List.mem_of_mem_tail hyq)
   subst x
-  rw [q.support_eq_cons] at hqN
+  rw [← q.cons_tail_support] at hqN
   exact (List.nodup_cons.mp hqN).1 hyq
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Two paths with the same distinct ends, meeting nowhere else, form a
 simple cycle when the first path has a displayed internal vertex. -/
 private theorem Walk.IsPath.isCycle_append_reverse_of_meet_only_ends
@@ -78,10 +80,11 @@ private theorem Walk.IsPath.isCycle_append_reverse_of_meet_only_ends
     · have hwst : w = s ∨ w = t := by simpa [hsupp] using hw
       exact hwst.elim hws hwt
     · subst t
-      have hpnil : p = .nil := Walk.isPath_iff_eq_nil.mp hp
+      have hpnil : p = .nil := (Walk.isPath_iff_nil.mp hp).eq_nil
       subst p
       exact hws (by simpa using hw)
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- **Clean two-fan splice.**
 
 `left` and `right` are the two arms from distinct vertices `e,f` of a
@@ -93,13 +96,13 @@ vertices on `inside` lies on that cycle together with `b`.
 In the AHT application, `inside` is the path supplied by the elementary
 six-half-route argument in a `WatkinsMesnerK32Source`; `u,v` are two of its
 three terminals. -/
-theorem hasCycleThroughThree_of_cleanTwoFan
+theorem hasCycleThroughThree_of_cleanTwoFan [Finite V]
     {e f b u v : V}
     (left : G.Walk e b) (right : G.Walk f b)
     (inside : G.Walk e f)
     (hleft : left.IsPath) (hright : right.IsPath)
     (hinside : inside.IsPath)
-    (hef : e ≠ f) (hbe : b ≠ e) (hbf : b ≠ f)
+    (_hef : e ≠ f) (hbe : b ≠ e) (hbf : b ≠ f)
     (harms : ∀ w, w ∈ left.support → w ∈ right.support → w = b)
     (hleft_inside : ∀ w, w ∈ left.support →
       w ∈ inside.support → w = e)
@@ -107,6 +110,8 @@ theorem hasCycleThroughThree_of_cleanTwoFan
       w ∈ inside.support → w = f)
     (hu : u ∈ inside.support) (hv : v ∈ inside.support) :
     HasCycleThroughThree G b u v := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let outside : G.Walk e f := left.append right.reverse
   have houtside : outside.IsPath := by
     apply Walk.IsPath.append_of_inter_eq_endpoint hleft hright.reverse
@@ -144,6 +149,7 @@ def K32Support {x y z : V} (T : WatkinsMesnerK32Source G x y z) : Set V :=
   {w | w ∈ T.xRoute.support ∨ w ∈ T.yRoute.support ∨
     w ∈ T.zRoute.support}
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 @[simp] theorem mem_K32Support {x y z w : V}
     (T : WatkinsMesnerK32Source G x y z) :
     w ∈ K32Support T ↔
@@ -169,8 +175,9 @@ structure CleanThreeFan {x y z : V}
   arm_meets_support_only_start : ∀ i w, w ∈ (arm i).support →
     w ∈ K32Support T → w = endpoint i
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Stop three raw arms at their first vertices in the theta. -/
-theorem exists_cleanThreeFan_of_rawArms
+theorem exists_cleanThreeFan_of_rawArms [Finite V]
     {x y z b : V} (T : WatkinsMesnerK32Source G x y z)
     (terminal : Fin 3 → V)
     (terminal_mem : ∀ i, terminal i ∈ K32Support T)
@@ -180,6 +187,8 @@ theorem exists_cleanThreeFan_of_rawArms
       ∀ w, w ∈ (raw i).support → w ∈ (raw j).support → w = b)
     (hb : b ∉ K32Support T) :
     Nonempty (CleanThreeFan T b) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let X : Finset V := Finset.univ.filter fun w ↦ w ∈ K32Support T
   have hbX : b ∉ X := by
     intro hbmem
@@ -231,27 +240,33 @@ theorem exists_cleanThreeFan_of_rawArms
   apply hqfirst i w hwq
   simpa [X] using hwX
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Two different routes of the theta form a cycle.  A named internal
 vertex of the first route witnesses the nondegeneracy required by
 `Walk.IsCycle`. -/
-private theorem cycle_of_two_k32_routes
+private theorem cycle_of_two_k32_routes [Finite V]
     {A B p : V} {P Q : G.Walk A B}
     (hP : P.IsPath) (hQ : Q.IsPath)
     (hp : p ∈ P.support) (hpA : p ≠ A) (hpB : p ≠ B)
     (hmeet : ∀ w, w ∈ P.support → w ∈ Q.support →
       w = A ∨ w = B) :
     (P.append Q.reverse).IsCycle := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   exact Walk.IsPath.isCycle_append_reverse_of_meet_only_ends
     hP hQ hp hpA hpB hmeet
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- If the fan end `b` is already in the theta, two of the three terminal
 routes themselves give the required cycle. -/
-theorem cycleThroughTwoTerminals_of_mem_K32Support
+theorem cycleThroughTwoTerminals_of_mem_K32Support [Finite V]
     {x y z b : V} (T : WatkinsMesnerK32Source G x y z)
     (hb : b ∈ K32Support T) :
     HasCycleThroughThree G b x y ∨
       HasCycleThroughThree G b x z ∨
       HasCycleThroughThree G b y z := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rcases hb with hbX | hbY | hbZ
   · left
     let C : G.Walk T.branchA T.branchA :=
@@ -298,6 +313,7 @@ private structure ToRightBranch {A B t : V} (P : G.Walk A B) (e : V) where
   left_mem_imp_start : A ∈ path.support → A = e
   right_mem_before_imp_end : B ∈ before.support → B = e
 
+omit [DecidableRel G.Adj] [Fintype V] in
 private theorem exists_toRightBranch
     {A B t e : V} (P : G.Walk A B) (hP : P.IsPath)
     (ht : t ∈ P.support)
@@ -373,6 +389,7 @@ private structure ToLeftBranch {A B t : V} (P : G.Walk A B) (e : V) where
   support_subset : ∀ w, w ∈ path.support → w ∈ P.support
   right_mem_imp_start : B ∈ path.support → B = e
 
+omit [DecidableRel G.Adj] [Fintype V] in
 private theorem exists_toLeftBranch
     {A B t e : V} (P : G.Walk A B) (hP : P.IsPath)
     (ht : t ∈ P.support)
@@ -386,7 +403,7 @@ private theorem exists_toLeftBranch
   let q : G.Walk e A := q0.reverse
   have hdecomp : q0.append after = P := by
     rw [← Walk.append_assoc]
-    simp only [q0, pref, middle, after, suff, Walk.take_spec]
+    simp only [pref, middle, after, suff, Walk.take_spec]
   have hwhole : (q0.append after).IsPath := by
     rw [hdecomp]
     exact hP
@@ -431,8 +448,9 @@ structure PairInsidePath
   support_subset : ∀ w, w ∈ path.support →
     w ∈ P.support ∨ w ∈ Q.support
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Different routes, with both selected vertices on their `A`-halves. -/
-private theorem exists_pairInsidePath_of_leftHalves
+private theorem exists_pairInsidePath_of_leftHalves [Finite V]
     {A B p q e f : V} (P Q : G.Walk A B)
     (hP : P.IsPath) (hQ : Q.IsPath)
     (hp : p ∈ P.support) (hq : q ∈ Q.support)
@@ -442,6 +460,8 @@ private theorem exists_pairInsidePath_of_leftHalves
     (hmeet : ∀ w, w ∈ P.support → w ∈ Q.support →
       w = A ∨ w = B) :
     Nonempty (PairInsidePath (p := p) (q := q) (e := e) (f := f) P Q) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨EP⟩ := exists_toRightBranch P hP hp he
   obtain ⟨FQ⟩ := exists_toRightBranch Q hQ hq hf
   let inside : G.Walk e f := EP.path.append FQ.path.reverse
@@ -477,8 +497,9 @@ private theorem exists_pairInsidePath_of_leftHalves
       (fun h ↦ Or.inl (EP.support_subset w h))
       (fun h ↦ Or.inr (FQ.support_subset w h))
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Different routes, with both selected vertices on their `B`-halves. -/
-private theorem exists_pairInsidePath_of_rightHalves
+private theorem exists_pairInsidePath_of_rightHalves [Finite V]
     {A B p q e f : V} (P Q : G.Walk A B)
     (hP : P.IsPath) (hQ : Q.IsPath)
     (hp : p ∈ P.support) (hq : q ∈ Q.support)
@@ -488,6 +509,8 @@ private theorem exists_pairInsidePath_of_rightHalves
     (hmeet : ∀ w, w ∈ P.support → w ∈ Q.support →
       w = A ∨ w = B) :
     Nonempty (PairInsidePath (p := p) (q := q) (e := e) (f := f) P Q) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨EP⟩ := exists_toLeftBranch P hP hp he
   obtain ⟨FQ⟩ := exists_toLeftBranch Q hQ hq hf
   let inside : G.Walk e f := EP.path.append FQ.path.reverse
@@ -525,6 +548,7 @@ private theorem exists_pairInsidePath_of_rightHalves
 
 /-! ## Two selected vertices on the same theta route -/
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Along one walk, either of two support vertices occurs no later than the
 other.  This is the small order fact needed in the same-route subcase. -/
 private theorem mem_takeUntil_or_mem_takeUntil
@@ -536,10 +560,11 @@ private theorem mem_takeUntil_or_mem_takeUntil
     List.mem_take_iff_idxOf_lt hf, List.mem_take_iff_idxOf_lt he]
   omega
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Same route, both selected vertices on its `A`-half.  The complementary
 arc goes from the later selected vertex to `B`, backwards along a second
 route to `A`, and then to the earlier selected vertex. -/
-theorem exists_pairInsidePath_sameRoute_leftHalf
+theorem exists_pairInsidePath_sameRoute_leftHalf [Finite V]
     {A B p q e f : V} (P Q : G.Walk A B)
     (hP : P.IsPath) (hQ : Q.IsPath)
     (hp : p ∈ P.support) (hq : q ∈ Q.support)
@@ -549,6 +574,8 @@ theorem exists_pairInsidePath_sameRoute_leftHalf
     (hmeet : ∀ w, w ∈ P.support → w ∈ Q.support →
       w = A ∨ w = B) :
     Nonempty (PairInsidePath (p := p) (q := q) (e := e) (f := f) P Q) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have build (e f : V)
       (he : e ∈ (P.takeUntil p hp).support)
       (hf : f ∈ (P.takeUntil p hp).support)
@@ -567,7 +594,7 @@ theorem exists_pairInsidePath_sameRoute_leftHalf
           EP.before.takeUntil e EP.before.end_mem_support = EP.before := by
         have hdrop := EP.before_isPath.dropUntil EP.before.end_mem_support
         have hnil : EP.before.dropUntil e EP.before.end_mem_support =
-            (.nil : G.Walk e e) := Walk.isPath_iff_eq_nil.mp hdrop
+            (.nil : G.Walk e e) := (Walk.isPath_iff_nil.mp hdrop).eq_nil
         have hspec := EP.before.take_spec EP.before.end_mem_support
         simpa only [hnil, Walk.append_nil] using hspec
       have hfCut : f ∈
@@ -580,7 +607,7 @@ theorem exists_pairInsidePath_sameRoute_leftHalf
       intro heA
       subst e
       have hnil : EP.before = (.nil : G.Walk A A) :=
-        Walk.isPath_iff_eq_nil.mp EP.before_isPath
+        (Walk.isPath_iff_nil.mp EP.before_isPath).eq_nil
       have hfA : f = A := by
         simpa only [hnil, Walk.support_nil, List.mem_singleton] using hfEPBefore
       exact hef hfA.symm
@@ -657,6 +684,7 @@ theorem exists_pairInsidePath_sameRoute_leftHalf
         apply R.support_subset w
         simpa only [Walk.support_reverse, List.mem_reverse] using hw }⟩
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- On a simple path, cutting at the final vertex changes nothing. -/
 private theorem Walk.IsPath.takeUntil_end_eq
     {A B : V} {P : G.Walk A B} (hP : P.IsPath) :
@@ -664,17 +692,20 @@ private theorem Walk.IsPath.takeUntil_end_eq
   have hdrop : (P.dropUntil B P.end_mem_support).IsPath :=
     hP.dropUntil P.end_mem_support
   have hnil : P.dropUntil B P.end_mem_support = (.nil : G.Walk B B) :=
-    Walk.isPath_iff_eq_nil.mp hdrop
+    (Walk.isPath_iff_nil.mp hdrop).eq_nil
   have hspec := P.take_spec P.end_mem_support
   simpa only [hnil, Walk.append_nil] using hspec
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Reversing the suffix after `t` gives exactly the prefix ending at `t`
 of the reversed simple path. -/
-private theorem reverse_dropUntil_eq_takeUntil_reverse
+private theorem reverse_dropUntil_eq_takeUntil_reverse [Finite V]
     {A B t : V} (P : G.Walk A B) (hP : P.IsPath)
     (ht : t ∈ P.support) :
     (P.dropUntil t ht).reverse =
       P.reverse.takeUntil t (by simpa using ht) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let L : G.Walk A t := P.takeUntil t ht
   let R : G.Walk t B := P.dropUntil t ht
   have hrev : R.reverse.append L.reverse = P.reverse := by
@@ -696,11 +727,12 @@ private theorem reverse_dropUntil_eq_takeUntil_reverse
           (Walk.support_subset_support_append_left
             R.reverse L.reverse R.reverse.end_mem_support) := hcut.symm
     _ = P.reverse.takeUntil t (by simpa using ht) := by
-      simpa only [hrev]
+      simp only [hrev]
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Same route, both selected vertices on its `B`-half.  Reverse the two
 routes and apply the already-proved `A`-half construction. -/
-theorem exists_pairInsidePath_sameRoute_rightHalf
+theorem exists_pairInsidePath_sameRoute_rightHalf [Finite V]
     {A B p q e f : V} (P Q : G.Walk A B)
     (hP : P.IsPath) (hQ : Q.IsPath)
     (hp : p ∈ P.support) (hq : q ∈ Q.support)
@@ -710,6 +742,8 @@ theorem exists_pairInsidePath_sameRoute_rightHalf
     (hmeet : ∀ w, w ∈ P.support → w ∈ Q.support →
       w = A ∨ w = B) :
     Nonempty (PairInsidePath (p := p) (q := q) (e := e) (f := f) P Q) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hpR : p ∈ P.reverse.support := by simpa using hp
   have hqR : q ∈ Q.reverse.support := by simpa using hq
   have heR : e ∈ (P.reverse.takeUntil p hpR).support := by
@@ -748,27 +782,31 @@ private def k32Route {x y z : V} (T : WatkinsMesnerK32Source G x y z) :
   | 2 => T.zRoute
 
 private def k32Terminal {x y z : V}
-    (T : WatkinsMesnerK32Source G x y z) : Fin 3 → V
+    (_T : WatkinsMesnerK32Source G x y z) : Fin 3 → V
   | 0 => x
   | 1 => y
   | 2 => z
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private theorem k32Route_isPath {x y z : V}
     (T : WatkinsMesnerK32Source G x y z) (i : Fin 3) :
     (k32Route T i).IsPath := by
   fin_cases i <;> simp [k32Route, T.xRoute_isPath, T.yRoute_isPath,
     T.zRoute_isPath]
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private theorem k32Terminal_mem {x y z : V}
     (T : WatkinsMesnerK32Source G x y z) (i : Fin 3) :
     k32Terminal T i ∈ (k32Route T i).support := by
   fin_cases i <;> simp [k32Route, k32Terminal, T.x_mem, T.y_mem, T.z_mem]
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private theorem k32Terminal_internal {x y z : V}
     (T : WatkinsMesnerK32Source G x y z) (i : Fin 3) :
     k32Terminal T i ≠ T.branchA ∧ k32Terminal T i ≠ T.branchB := by
   fin_cases i <;> simp [k32Terminal, T.x_internal, T.y_internal, T.z_internal]
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private theorem k32Route_inter {x y z : V}
     (T : WatkinsMesnerK32Source G x y z) {i j : Fin 3} (hij : i ≠ j) :
     ∀ w, w ∈ (k32Route T i).support →
@@ -786,6 +824,7 @@ private theorem k32Route_inter {x y z : V}
   · intro w hwZ hwY
     exact T.yRoute_inter_zRoute w hwY hwZ
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private theorem exists_k32Route_of_mem_support {x y z w : V}
     (T : WatkinsMesnerK32Source G x y z) (hw : w ∈ K32Support T) :
     ∃ i : Fin 3, w ∈ (k32Route T i).support := by
@@ -794,6 +833,7 @@ private theorem exists_k32Route_of_mem_support {x y z w : V}
   · exact ⟨1, by simpa [k32Route]⟩
   · exact ⟨2, by simpa [k32Route]⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private theorem k32Route_support_subset {x y z : V}
     (T : WatkinsMesnerK32Source G x y z) (i : Fin 3) :
     ∀ w, w ∈ (k32Route T i).support → w ∈ K32Support T := by
@@ -823,13 +863,14 @@ private structure K32InsidePath {x y z e f : V}
   second_mem : k32Terminal T second ∈ path.support
   support_subset : ∀ w, w ∈ path.support → w ∈ K32Support T
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Two selected theta vertices lying on the same side of their respective
 named terminals have an inside path through two distinct terminals.  This
 includes the ordering subcase in which both vertices lie on one route. -/
-private theorem exists_k32InsidePath_of_sameSide
+private theorem exists_k32InsidePath_of_sameSide [Finite V]
     {x y z e f : V} (T : WatkinsMesnerK32Source G x y z)
     (r s : Fin 3)
-    (he : e ∈ (k32Route T r).support)
+    (_he : e ∈ (k32Route T r).support)
     (hf : f ∈ (k32Route T s).support)
     (hef : e ≠ f)
     (leftSide : Prop)
@@ -846,6 +887,8 @@ private theorem exists_k32InsidePath_of_sameSide
       f ∈ ((k32Route T s).dropUntil (k32Terminal T s)
         (k32Terminal_mem T s)).support) :
     Nonempty (K32InsidePath (e := e) (f := f) T) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   by_cases hrs : r = s
   · subst s
     let k := otherRoute r
@@ -927,19 +970,23 @@ private theorem exists_k32InsidePath_of_sameSide
           · exact k32Route_support_subset T r w hwr
           · exact k32Route_support_subset T s w hws }⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private theorem hasCycleThroughThree_swap_last
     {a b c : V} (h : HasCycleThroughThree G a b c) :
     HasCycleThroughThree G a c b := by
   obtain ⟨r, C, hC, ha, hb, hc⟩ := h
   exact ⟨r, C, hC, ha, hc, hb⟩
 
-private theorem terminalPair_cycle_disjunction
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+private theorem terminalPair_cycle_disjunction [Finite V]
     {x y z b : V} (T : WatkinsMesnerK32Source G x y z)
     {i j : Fin 3} (hij : i ≠ j)
     (h : HasCycleThroughThree G b (k32Terminal T i) (k32Terminal T j)) :
     HasCycleThroughThree G b x y ∨
       HasCycleThroughThree G b x z ∨
       HasCycleThroughThree G b y z := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   fin_cases i <;> fin_cases j
   all_goals simp at hij
   · exact Or.inl (by simpa [k32Terminal] using h)
@@ -952,6 +999,7 @@ private theorem terminalPair_cycle_disjunction
   · exact Or.inr (Or.inr (by simpa [k32Terminal] using
       (hasCycleThroughThree_swap_last h)))
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- **The six-half-route lemma.**  Three clean arms into a
 Watkins--Mesner `K_{3,2}` source force a cycle through their common end and
 two of the three named terminals.  The proof assigns each first-hit vertex
@@ -959,12 +1007,14 @@ to one route and to one of the two halves cut at that route's terminal.
 Two of the three hits have the same side; the preceding lemmas construct
 the required inside path both when their routes differ and when they are
 the same. -/
-theorem cycleThroughTwoTerminals_of_cleanThreeFan
+theorem cycleThroughTwoTerminals_of_cleanThreeFan [Finite V]
     {x y z b : V} (T : WatkinsMesnerK32Source G x y z)
     (F : CleanThreeFan T b) (hb : b ∉ K32Support T) :
     HasCycleThroughThree G b x y ∨
       HasCycleThroughThree G b x z ∨
       HasCycleThroughThree G b y z := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   choose routeChoice hendRoute using fun i ↦
     exists_k32Route_of_mem_support T (F.endpoint_mem i)
   let Left : Fin 3 → Prop := fun i ↦
@@ -1062,12 +1112,13 @@ private def threeArms {x y z b : V}
   | 1 => py
   | 2 => pz
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- The direct form used in AHT Lemma 4.5.  Three pairwise internally
 disjoint paths from the theta terminals to `b` force a cycle through `b`
 and two terminals.  If `b` is already in the theta, two theta routes give
 the cycle; otherwise the raw arms are stopped at their first theta hits and
 the six-half-route lemma applies. -/
-theorem cycleThroughTwoTerminals_of_k32Source_and_threeArms
+theorem cycleThroughTwoTerminals_of_k32Source_and_threeArms [Finite V]
     {x y z b : V} (T : WatkinsMesnerK32Source G x y z)
     (px : G.Walk x b) (py : G.Walk y b) (pz : G.Walk z b)
     (hpx : px.IsPath) (hpy : py.IsPath) (hpz : pz.IsPath)
@@ -1077,6 +1128,8 @@ theorem cycleThroughTwoTerminals_of_k32Source_and_threeArms
     HasCycleThroughThree G b x y ∨
       HasCycleThroughThree G b x z ∨
       HasCycleThroughThree G b y z := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   by_cases hb : b ∈ K32Support T
   · exact cycleThroughTwoTerminals_of_mem_K32Support T hb
   · let terminal := threeTerminals x y z

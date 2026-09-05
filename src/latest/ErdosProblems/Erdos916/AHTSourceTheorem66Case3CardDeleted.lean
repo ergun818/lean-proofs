@@ -23,7 +23,7 @@ equality case; in that case one of `y_A,z_A` has degree at most two.
 
 namespace Erdos916
 
-open SimpleGraph
+open _root_.Erdos916.SimpleGraph
 
 universe u w
 
@@ -112,11 +112,13 @@ variable {W : Type w} [DecidableEq W]
 variable {center : V} {x y z : {v : V // v ≠ center}}
 variable (C : AHTClaim3CardinalityCertificateDeleted G center x y z W)
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem card_ahtDeletedFinsetVal
     (S : Finset {v : V // v ≠ center}) :
     (ahtDeletedFinsetVal S).card = S.card := by
   exact Finset.card_map _
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem val_mem_ahtDeletedFinsetVal
     {S : Finset {v : V // v ≠ center}} {q : {v : V // v ≠ center}} :
     q.1 ∈ ahtDeletedFinsetVal S ↔ q ∈ S := by
@@ -129,9 +131,12 @@ variable (C : AHTClaim3CardinalityCertificateDeleted G center x y z W)
   · intro h
     exact Finset.mem_map.mpr ⟨q, h, rfl⟩
 
-@[simp] theorem ahtDeletedFinsetVal_nonempty
+omit [DecidableEq V] [Fintype V] in
+@[simp] theorem ahtDeletedFinsetVal_nonempty [Finite V]
     {S : Finset {v : V // v ≠ center}} :
     (ahtDeletedFinsetVal S).Nonempty ↔ S.Nonempty := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   constructor
   · rintro ⟨q, hq⟩
     rw [ahtDeletedFinsetVal, Finset.mem_map] at hq
@@ -140,6 +145,7 @@ variable (C : AHTClaim3CardinalityCertificateDeleted G center x y z W)
   · rintro ⟨q, hq⟩
     exact ⟨q.1, val_mem_ahtDeletedFinsetVal.mpr hq⟩
 
+omit [DecidableEq V] [Fintype V] in
 theorem center_not_mem_ahtDeletedFinsetVal
     (S : Finset {v : V // v ≠ center}) :
     center ∉ ahtDeletedFinsetVal S := by
@@ -148,6 +154,7 @@ theorem center_not_mem_ahtDeletedFinsetVal
   obtain ⟨q, -, hq⟩ := h
   exact q.2 hq
 
+omit [DecidableEq V] [Fintype V] in
 theorem exists_subtype_of_mem_ahtDeletedFinsetVal
     {S : Finset {v : V // v ≠ center}} {q : V}
     (h : q ∈ ahtDeletedFinsetVal S) :
@@ -156,11 +163,13 @@ theorem exists_subtype_of_mem_ahtDeletedFinsetVal
   obtain ⟨q', hq', hval⟩ := h
   exact ⟨q', hq', hval⟩
 
+omit [DecidableEq V] [Fintype V] in
 theorem disjoint_ahtDeletedFinsetVal
     {S T : Finset {v : V // v ≠ center}} (h : Disjoint S T) :
     Disjoint (ahtDeletedFinsetVal S) (ahtDeletedFinsetVal T) := by
   exact (Finset.disjoint_map (Function.Embedding.subtype _)).2 h
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 theorem ambient_adj_of_deleteVertex
     {p q : {v : V // v ≠ center}}
     (h : (deleteVertex G center).Adj p q) : G.Adj p.1 q.1 := by
@@ -172,6 +181,7 @@ abbrev GXVertex := C.gxVerts
 /-- The replacement graph, with its concrete vertex type. -/
 abbrev GX : SimpleGraph C.GXVertex := C.gxGraph
 
+omit [DecidableEq V] [Fintype V] in
 private theorem eq_of_mem_of_card_eq_one
     {S : Finset V} {p q : V} (hp : p ∈ S) (hq : q ∈ S)
     (hcard : S.card = 1) : p = q := by
@@ -199,6 +209,7 @@ private theorem card_pair_le' {T : Type*} [DecidableEq T] (a b : T) :
       Finset.card_insert_le _ _
     _ = 2 := by simp
 
+omit [DecidableRel G.Adj] [Fintype V] in
 private theorem exceptional_card_eq_three
     {D : AHTTerminalComponentLocal G}
     (h : AHTTerminalExceptionalTriple D) : D.part.card = 3 := by
@@ -206,6 +217,7 @@ private theorem exceptional_card_eq_three
   rw [hpart]
   simp [hp.symm, hq.symm, hpq]
 
+omit [DecidableEq V] [Fintype V] in
 private theorem singleton_eq
     {S : Finset V} {p : V} (hp : p ∈ S) (hcard : S.card = 1) :
     S = {p} := by
@@ -213,12 +225,15 @@ private theorem singleton_eq
   have hpq : p = q := by simpa [hq] using hp
   simpa [hpq] using hq
 
-private theorem attachment_adj_of_singleton
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+private theorem attachment_adj_of_singleton [Finite V]
     {S T : Finset {v : V // v ≠ center}}
     {p a : {v : V // v ≠ center}}
     (hp : p ∈ S) (hS : S.card = 1)
     (hatt : IsUniqueAttachment (deleteVertex G center) S T a) :
     G.Adj p.1 a.1 := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨q, hqS, hqa⟩ := hatt.2.1
   have hqp : q = p := by
     obtain ⟨r, hr⟩ := Finset.card_eq_one.mp hS
@@ -820,7 +835,7 @@ theorem gxVerts_card_lt
     omega
   have hUeq : U = Finset.univ := by
     apply Finset.eq_of_subset_of_card_le (Finset.subset_univ U)
-    simpa [hUcard]
+    simp [hUcard]
   have hcoverV (q : V) :
       q ∈ A ∨ q ∈ B ∨ q ∈ X ∨ q ∈ Y ∨ q ∈ Z ∨ q = center := by
     have hqU : q ∈ U := by rw [hUeq]; simp
@@ -902,7 +917,7 @@ theorem gxVerts_card_lt
         C.splitter.yA C.splitter.Y_A_attachment.1 hdel
       exact False.elim (hxAyA (congrArg Subtype.val heq).symm)
     · have hqy : q = y.1 := by simpa [hYset] using hqY
-      simpa [hqy]
+      simp [hqy]
     · obtain ⟨q', hq'Z, hq'val⟩ :=
         exists_subtype_of_mem_ahtDeletedFinsetVal (by simpa [Z] using hqZ)
       have hdel : (deleteVertex G center).Adj q' C.splitter.yA :=
@@ -941,7 +956,7 @@ theorem gxVerts_card_lt
         C.splitter.zA C.splitter.Z_A_attachment.1 hdel
       exact False.elim (hyAzA (congrArg Subtype.val heq).symm)
     · have hqz : q = z.1 := by simpa [hZset] using hqZ
-      simpa [hqz]
+      simp [hqz]
     · exact False.elim (hzA_not_center_adj hadj)
   by_cases hyAzAedge : G.Adj C.splitter.yA.1 C.splitter.zA.1
   · by_cases hyAxAedge : G.Adj C.splitter.yA.1 C.splitter.xA.1

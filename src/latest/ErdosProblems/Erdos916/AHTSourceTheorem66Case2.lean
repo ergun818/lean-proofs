@@ -92,6 +92,7 @@ private theorem false_of_degree_three_of_neighborFinset_subset_pair
   have hle := Finset.card_le_card hsub
   omega
 
+omit [Fintype V] in
 private theorem pair_description_of_mem_card_two
     {Y : Finset V} {y : V} (hy : y ∈ Y) (hcard : Y.card = 2) :
     ∃ y' : V, y' ≠ y ∧ Y = {y, y'} := by
@@ -106,6 +107,7 @@ private theorem pair_description_of_mem_card_two
     Y = insert y (Y.erase y) := (Finset.insert_erase hy).symm
     _ = {y, y'} := by rw [hErase]
 
+omit [Fintype V] in
 private theorem triple_description_of_mem_card_three
     {Y : Finset V} {y : V} (hy : y ∈ Y) (hcard : Y.card = 3) :
     ∃ y' y'' : V,

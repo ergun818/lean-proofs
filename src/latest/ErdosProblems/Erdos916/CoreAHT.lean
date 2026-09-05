@@ -27,28 +27,34 @@ def AreFalseTwins (G : SimpleGraph V) (u v : V) : Prop :=
 
 namespace AreFalseTwins
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 theorem symm {u v : V} (h : AreFalseTwins G u v) : AreFalseTwins G v u := by
   exact ⟨h.1.symm, h.2.symm⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Distinct vertices with equal open neighbourhoods cannot be adjacent in a
 simple graph: otherwise one of them would belong to its own neighbourhood. -/
 theorem not_adj {u v : V} (h : AreFalseTwins G u v) : ¬G.Adj u v := by
   intro huv
   have hvN : v ∈ G.neighborSet u := by simpa using huv
   have hvN' : v ∈ G.neighborSet v := by simpa only [h.2] using hvN
-  exact G.loopless.irrefl v (by simpa using hvN')
+  exact G.loopless.irrefl v (by simp at hvN')
 
+omit [DecidableEq V] in
 theorem neighborFinset_eq {u v : V} (h : AreFalseTwins G u v) :
     G.neighborFinset u = G.neighborFinset v := by
   ext w
   simpa only [SimpleGraph.mem_neighborFinset, SimpleGraph.mem_neighborSet] using
     Set.ext_iff.mp h.2 w
 
+omit [DecidableEq V] in
 theorem degree_eq {u v : V} (h : AreFalseTwins G u v) :
     G.degree u = G.degree v := by
+  classical
   rw [← G.card_neighborFinset_eq_degree, ← G.card_neighborFinset_eq_degree,
     h.neighborFinset_eq]
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- False twins have exactly the same adjacency relation to every third
 vertex. -/
 theorem adj_iff {u v : V} (h : AreFalseTwins G u v) (w : V) :
@@ -77,11 +83,10 @@ theorem hasWheelWitness_of_fourCycle_threeSpokes
     constructor
     · rw [SimpleGraph.Walk.isTrail_def]
       simp [p, h01.ne, h12.ne, h23.ne, h30.ne, hr02, hr02.symm,
-        hr03, hr03.symm, hr13, hr13.symm]
+        hr03, hr13]
     constructor
     · simp [p]
-    · simp [p, h01.ne, h01.ne.symm, h12.ne, h23.ne, h30.ne,
-        hr02, hr02.symm, hr03, hr03.symm, hr13, hr13.symm]
+    · simp [p, h01.ne.symm, h12.ne, h23.ne, h30.ne, hr02.symm, hr13]
   refine ⟨r0, p, x, hp, ?_, ?_⟩
   · simp [p, hxr0, hxr1, hxr2, hxr3]
   · have h0 : r0 ∈ G.neighborFinset x ∩ p.support.toFinset := by simp [p, hx0]
@@ -91,12 +96,14 @@ theorem hasWheelWitness_of_fourCycle_threeSpokes
       ⟨r0, r2, r3, h0, h2, h3, hr02, hr03, h23.ne⟩
     omega
 
+omit [DecidableEq V] in
 /-- Two specified neighbours of a degree-three vertex leave a third,
 different neighbour. -/
 theorem exists_third_neighbor_of_degree_three
     {u a b : V} (hdeg : G.degree u = 3)
     (ha : G.Adj u a) (hb : G.Adj u b) (hab : a ≠ b) :
     ∃ c : V, G.Adj u c ∧ c ≠ a ∧ c ≠ b := by
+  classical
   have hcard : (G.neighborFinset u).card = 3 := by
     rw [G.card_neighborFinset_eq_degree, hdeg]
   have haN : a ∈ G.neighborFinset u := by simpa using ha
@@ -258,12 +265,9 @@ def reduction_of_stable
     · fin_cases i <;> fin_cases i' <;> simp_all [f, T.huv, T.huv.symm]
     · fin_cases i <;> fin_cases j' <;>
         simp_all [f, T.u_ne_a, T.u_ne_b, T.u_ne_c,
-          T.v_ne_a, T.v_ne_b, T.v_ne_c,
-          T.u_ne_a.symm, T.u_ne_b.symm, T.u_ne_c.symm,
-          T.v_ne_a.symm, T.v_ne_b.symm, T.v_ne_c.symm]
+          T.v_ne_a, T.v_ne_b, T.v_ne_c]
     · fin_cases j <;> fin_cases i' <;>
-        simp_all [f, T.u_ne_a, T.u_ne_b, T.u_ne_c,
-          T.v_ne_a, T.v_ne_b, T.v_ne_c,
+        simp_all [f,
           T.u_ne_a.symm, T.u_ne_b.symm, T.u_ne_c.symm,
           T.v_ne_a.symm, T.v_ne_b.symm, T.v_ne_c.symm]
     · fin_cases j <;> fin_cases j' <;>
@@ -283,8 +287,7 @@ def reduction_of_stable
             simp [f, T.adj_u_a, T.adj_u_b, T.adj_u_c,
               T.adj_v_a, T.adj_v_b, T.adj_v_c]
         · fin_cases j <;> fin_cases i' <;>
-            simp [f, T.adj_u_a, T.adj_u_b, T.adj_u_c,
-              T.adj_v_a, T.adj_v_b, T.adj_v_c,
+            simp [f,
               T.adj_u_a.symm, T.adj_u_b.symm, T.adj_u_c.symm,
               T.adj_v_a.symm, T.adj_v_b.symm, T.adj_v_c.symm]
         · fin_cases j <;> fin_cases j' <;>
@@ -422,6 +425,7 @@ def HasRichFalseTwins (G : SimpleGraph V) [DecidableRel G.Adj] : Prop :=
     AreFalseTwins G u v ∧ G.degree u = 3 ∧
       2 ≤ ((G.neighborFinset u).filter fun w => G.degree w = 3).card
 
+omit [DecidableEq V] in
 /-- If two degree-three false-twin pairs have any edge between the pairs,
 then the first pair is rich.  Indeed one cross edge forces all four cross
 edges, so both vertices of the second pair are degree-three common
@@ -433,6 +437,7 @@ theorem hasRichFalseTwins_of_crossing_pairs
     (hdegu : G.degree u = 3) (hdegx : G.degree x = 3)
     (hcross : G.Adj u x ∨ G.Adj u y ∨ G.Adj v x ∨ G.Adj v y) :
     HasRichFalseTwins G := by
+  classical
   have hux : G.Adj u x := by
     rcases hcross with hux | huy | hvx | hvy
     · exact hux
@@ -471,6 +476,7 @@ theorem wheel_or_reduction_of_crossing_pairs
     hasRichFalseTwins_of_crossing_pairs huv hxy hdegu hdegx hcross
   exact wheel_or_reduction_of_falseTwins_card htwin hdeg hcommon
 
+omit [DecidableEq V] in
 /-- The two vertices in the size-two part of a `K₂,₃` reduction are rich
 false twins.  This proves that the enriched false-twin target is not a
 weaker reformulation: it is precisely the existing reduction certificate. -/
@@ -497,7 +503,7 @@ theorem hasRichFalseTwins_of_k23Reduction (R : K23Reduction G) :
   have htwin : AreFalseTwins G u v := by
     refine ⟨huv, ?_⟩
     ext x
-    simpa only [SimpleGraph.mem_neighborSet, ← SimpleGraph.mem_neighborFinset,
+    simp only [SimpleGraph.mem_neighborSet, ← SimpleGraph.mem_neighborFinset,
       u, v, hN_eq]
   have hdegU : G.degree u = 3 := by
     exact R.degree_left 0
@@ -576,6 +582,7 @@ def leftPiece : Finset V := insert T.cut T.left
 def middlePiece : Finset V := insert T.cut T.middle
 def rightPiece : Finset V := insert T.cut T.right
 
+omit [DecidableRel G.Adj] in
 private theorem pieces_inter_left_middle :
     T.leftPiece ∩ T.middlePiece = {T.cut} := by
   ext x
@@ -590,6 +597,7 @@ private theorem pieces_inter_left_middle :
   · intro hx
     exact ⟨Or.inl hx, Or.inl hx⟩
 
+omit [DecidableRel G.Adj] in
 private theorem pieces_inter_left_right :
     T.leftPiece ∩ T.rightPiece = {T.cut} := by
   ext x
@@ -604,6 +612,7 @@ private theorem pieces_inter_left_right :
   · intro hx
     exact ⟨Or.inl hx, Or.inl hx⟩
 
+omit [DecidableRel G.Adj] in
 private theorem pieces_inter_middle_right :
     T.middlePiece ∩ T.rightPiece = {T.cut} := by
   ext x
@@ -653,6 +662,7 @@ private theorem edge_middle_disjoint_right :
   T.edgeFilters_disjoint_of_piece_inter_singleton
     T.middlePiece T.rightPiece T.pieces_inter_middle_right
 
+omit [DecidableRel G.Adj] in
 private theorem edge_mem_one_piece {x y : V} (hxy : G.Adj x y) :
     (x ∈ T.leftPiece ∧ y ∈ T.leftPiece) ∨
       (x ∈ T.middlePiece ∧ y ∈ T.middlePiece) ∨

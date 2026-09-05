@@ -46,18 +46,24 @@ def AHTTwinPair (G : SimpleGraph V) [DecidableRel G.Adj]
 
 namespace AHTTwinPair
 
+omit [DecidableEq V] in
 theorem falseTwins {u v : V} (h : AHTTwinPair G u v) :
     AreFalseTwins G u v := h.1
 
+omit [DecidableEq V] in
 theorem degree_left {u v : V} (h : AHTTwinPair G u v) :
     G.degree u = 3 := h.2
 
+omit [DecidableEq V] in
 theorem degree_right {u v : V} (h : AHTTwinPair G u v) :
     G.degree v = 3 := by
+  classical
   exact h.1.degree_eq.symm.trans h.2
 
+omit [DecidableEq V] in
 theorem symm {u v : V} (h : AHTTwinPair G u v) :
     AHTTwinPair G v u := by
+  classical
   exact ⟨h.1.symm, h.degree_right⟩
 
 end AHTTwinPair
@@ -69,19 +75,23 @@ def IsCloseToAHTTwin (G : SimpleGraph V) [DecidableRel G.Adj]
   ∃ u v : V, AHTTwinPair G u v ∧
     (w = u ∨ w = v ∨ G.Adj w u ∨ G.Adj w v)
 
+omit [DecidableEq V] in
 theorem AHTTwinPair.close_left {u v : V} (h : AHTTwinPair G u v) :
     IsCloseToAHTTwin G u := by
   exact ⟨u, v, h, Or.inl rfl⟩
 
+omit [DecidableEq V] in
 theorem AHTTwinPair.close_right {u v : V} (h : AHTTwinPair G u v) :
     IsCloseToAHTTwin G v := by
   exact ⟨u, v, h, Or.inr (Or.inl rfl)⟩
 
+omit [DecidableEq V] in
 theorem IsCloseToAHTTwin.of_adj_left {u v w : V}
     (h : AHTTwinPair G u v) (hwu : G.Adj w u) :
     IsCloseToAHTTwin G w := by
   exact ⟨u, v, h, Or.inr (Or.inr (Or.inl hwu))⟩
 
+omit [DecidableEq V] in
 theorem IsCloseToAHTTwin.of_adj_right {u v w : V}
     (h : AHTTwinPair G u v) (hwv : G.Adj w v) :
     IsCloseToAHTTwin G w := by
@@ -204,6 +214,7 @@ theorem exists_ahtTwinPair_of_three_degreeThreeVertices
   obtain ⟨u, v, huv, -⟩ := hclose q hqdeg hqcenter
   exact ⟨u, v, huv⟩
 
+omit [DecidableRel G.Adj] in
 /-- A three-connected triangle-free graph has at least five vertices.  The
 four-vertex case is `K₄`, hence contains a triangle. -/
 theorem five_le_card_of_threeConnected_triangleFree
@@ -261,7 +272,7 @@ theorem exists_ahtTwinPair_of_edgeMinimallyThreeConnected
 cycle.  This elementary forest lemma is the graph-theoretic step used for
 `G[R \ W(G)]` in AHT Lemma 6.5. -/
 theorem exists_cycle_of_nonempty_of_forall_two_le_degree
-    {W : Type u} [Fintype W] [DecidableEq W]
+    {W : Type u} [Fintype W]
     {H : SimpleGraph W} [DecidableRel H.Adj]
     (hne : Nonempty W) (hdeg : ∀ w : W, 2 ≤ H.degree w) :
     ∃ r : W, ∃ p : H.Walk r r, p.IsCycle := by
@@ -331,7 +342,7 @@ theorem twoDisjointPairs_of_isomorphic_k33
       obtain ⟨t, rfl⟩ := f.surjective w
       simp only [SimpleGraph.mem_neighborSet]
       rw [f.map_rel_iff, f.map_rel_iff]
-      rcases t with t | t <;> simp [K, l₀, l₁]
+      rcases t with t | t <;> simp [l₀, l₁]
   have htwinR : AreFalseTwins G (f r₀) (f r₁) := by
     constructor
     · intro h
@@ -341,7 +352,7 @@ theorem twoDisjointPairs_of_isomorphic_k33
       obtain ⟨t, rfl⟩ := f.surjective w
       simp only [SimpleGraph.mem_neighborSet]
       rw [f.map_rel_iff, f.map_rel_iff]
-      rcases t with t | t <;> simp [K, r₀, r₁]
+      rcases t with t | t <;> simp [r₀, r₁]
   have hNL : K.neighborFinset l₀ =
       ({Sum.inr 0, Sum.inr 1, Sum.inr 2} :
         Finset (Fin 3 ⊕ Fin 3)) := by
@@ -571,15 +582,15 @@ theorem twoDisjointPairs_of_not_pairwiseCommonNeighborsOnlyTwins
           c = T.u ∨ c = T.v := by
         intro hyz
         exact hnot ⟨hxy, hxz, hyz⟩
-      push_neg at hyz
+      push Not at hyz
       obtain ⟨c, hyc, hzc, hcu, hcv⟩ := hyz
       exact T.cycleCommonNeighbors.twoDisjointPairs_of_extra_commonNeighbor_xy
         hthree halmost hyc hzc hcu hcv
-    · push_neg at hxz
+    · push Not at hxz
       obtain ⟨c, hxc, hzc, hcu, hcv⟩ := hxz
       exact T.swapLast.twoDisjointPairs_of_extra_commonNeighbor_xy
         hthree halmost hxc hzc hcu hcv
-  · push_neg at hxy
+  · push Not at hxy
     obtain ⟨c, hxc, hyc, hcu, hcv⟩ := hxy
     exact T.twoDisjointPairs_of_extra_commonNeighbor_xy
       hthree halmost hxc hyc hcu hcv

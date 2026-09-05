@@ -35,11 +35,13 @@ instance instDecidableRelEraseEdge (G : SimpleGraph V) [DecidableRel G.Adj]
   dsimp only [eraseEdge]
   infer_instance
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 @[simp] theorem eraseEdge_adj {u v x y : V} :
     (eraseEdge G u v).Adj x y ↔
       G.Adj x y ∧ ¬((x = u ∧ y = v) ∨ (x = v ∧ y = u)) := by
-  simp [eraseEdge, Sym2.eq_iff]
+  simp [eraseEdge]
 
+omit [DecidableEq V] [Fintype V] in
 theorem eraseEdge_le (G : SimpleGraph V) (u v : V) :
     eraseEdge G u v ≤ G :=
   SimpleGraph.deleteEdges_le _
@@ -51,9 +53,11 @@ def IsEdgeMinimallyThreeConnected (G : SimpleGraph V) : Prop :=
 
 namespace IsEdgeMinimallyThreeConnected
 
+omit [DecidableRel G.Adj] in
 theorem isThreeConnected (hG : IsEdgeMinimallyThreeConnected G) :
     IsThreeConnected G := hG.1
 
+omit [DecidableRel G.Adj] in
 theorem eraseEdge_not_isThreeConnected
     (hG : IsEdgeMinimallyThreeConnected G) {u v : V} (huv : G.Adj u v) :
     ¬IsThreeConnected (eraseEdge G u v) :=
@@ -63,7 +67,7 @@ end IsEdgeMinimallyThreeConnected
 
 /-- Deleting an edge removes exactly the opposite endpoint from the open
 neighbourhood of either endpoint. -/
-theorem neighborFinset_eraseEdge_left {u v : V} (huv : G.Adj u v) :
+theorem neighborFinset_eraseEdge_left {u v : V} (_huv : G.Adj u v) :
     (eraseEdge G u v).neighborFinset u = G.neighborFinset u \ {v} := by
   classical
   ext w
@@ -80,7 +84,7 @@ theorem neighborFinset_eraseEdge_left {u v : V} (huv : G.Adj u v) :
   · intro hwv hEq
     rcases hEq with h | h
     · exact hwv h.2
-    · exact G.loopless.irrefl u (by simpa [h.2] using huw)
+    · exact G.loopless.irrefl u (by simp [h.2] at huw)
 
 theorem degree_eraseEdge_left_add_one {u v : V} (huv : G.Adj u v) :
     (eraseEdge G u v).degree u + 1 = G.degree u := by
@@ -95,6 +99,7 @@ theorem degree_eraseEdge_left_add_one {u v : V} (huv : G.Adj u v) :
   simp only [Finset.card_singleton]
   omega
 
+omit [DecidableEq V] [Fintype V] in
 theorem eraseEdge_comm (G : SimpleGraph V) (u v : V) :
     eraseEdge G u v = eraseEdge G v u := by
   simp only [eraseEdge]
@@ -149,6 +154,7 @@ def MaderCycleProperty (G : SimpleGraph V) [DecidableRel G.Adj] : Prop :=
   ∀ {r : V} (p : G.Walk r r), p.IsCycle →
     ∃ v ∈ p.support, G.degree v = 3
 
+omit [DecidableEq V] in
 /-- The vertices of degree different from three induce a forest whenever
 Mader's cycle conclusion holds. -/
 theorem isAcyclic_induce_degree_ne_three
@@ -167,6 +173,7 @@ theorem isAcyclic_induce_degree_ne_three
   rw [hwv]
   exact hvdeg
 
+omit [DecidableEq V] in
 /-- Conversely, acyclicity after deleting the degree-three vertices is
 exactly Mader's assertion that every ambient cycle meets that set. -/
 theorem maderCycleProperty_of_isAcyclic_induce_degree_ne_three
@@ -187,11 +194,14 @@ theorem maderCycleProperty_of_isAcyclic_induce_degree_ne_three
     exact hqMap.of_map
   exact hacyc q hq
 
+omit [DecidableEq V] in
 theorem maderCycleProperty_iff_isAcyclic_induce_degree_ne_three :
     MaderCycleProperty G ↔
-      (G.induce {v : V | G.degree v ≠ 3}).IsAcyclic :=
-  ⟨isAcyclic_induce_degree_ne_three,
-    maderCycleProperty_of_isAcyclic_induce_degree_ne_three⟩
+      (G.induce {v : V | G.degree v ≠ 3}).IsAcyclic := by
+  classical
+  exact
+    ⟨isAcyclic_induce_degree_ne_three,
+      maderCycleProperty_of_isAcyclic_induce_degree_ne_three⟩
 
 /-- The exact finite Mader--Bollobás count for connectivity three.  Written
 without division, it says `2|V| + 2 ≤ 5s`, where `s` is the number of
@@ -252,7 +262,7 @@ theorem mader_degree_three_count
       have hvT : v ∉ T := by
         intro hv'
         exact Set.disjoint_left.1 hdisj hv' hv
-      simp [B, SimpleGraph.between_adj, hv, hvT, G.adj_comm]
+      simp [B, SimpleGraph.between_adj, hv, hvT]
     have hswap :
         ∑ v ∈ T, (G.neighborFinset v ∩ S).card =
           ∑ v ∈ S, (G.neighborFinset v ∩ T).card := by
@@ -285,7 +295,7 @@ theorem mader_degree_three_count
       by_contra hv
       have hvT : v ∈ T := by simp [T, hv]
       rw [hT] at hvT
-      simpa using hvT
+      simp at hvT
     change 2 * Fintype.card V + 2 ≤ 5 * S.card
     simp [hSuniv]
     have := hthree.four_le_card

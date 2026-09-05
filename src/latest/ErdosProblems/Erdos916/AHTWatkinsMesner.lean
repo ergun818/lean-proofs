@@ -46,11 +46,13 @@ noncomputable def componentCarrier (S : Finset V) (C : G.ComponentCompl (S : Set
     Finset V :=
   (C : Set V).toFinset
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 @[simp] theorem mem_componentCarrier {S : Finset V}
     {C : G.ComponentCompl (S : Set V)} {v : V} :
     v ∈ componentCarrier S C ↔ v ∈ (C : Set V) := by
   simp [componentCarrier]
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- Mathlib's component outside a finite deletion set satisfies the literal
 component predicate used in the Watkins--Mesner certificate. -/
 theorem isComponentAfterDeleting_componentCarrier (S : Finset V)
@@ -69,7 +71,7 @@ theorem isComponentAfterDeleting_componentCarrier (S : Finset V)
   have hcarrier : ((componentCarrier S C : Finset V) : Set V) =
       (C : Set V) := by
     ext v
-    simp only [Set.mem_setOf_eq, Finset.mem_coe, mem_componentCarrier]
+    simp only [Finset.mem_coe, mem_componentCarrier]
   refine ⟨?_, ?_, by rw [hcarrier]; exact hconn, ?_⟩
   · obtain ⟨v, hv⟩ := C.nonempty
     exact ⟨v, by simpa only [mem_componentCarrier] using hv⟩
@@ -85,6 +87,7 @@ theorem isComponentAfterDeleting_componentCarrier (S : Finset V)
       ComponentCompl.mem_of_adj u v huC hvS huv
     simpa only [mem_componentCarrier] using hvC
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- A component outside `S₀` remains an exact component after deleting a
 larger set `S`, provided the additional deleted vertices all lie outside the
 component. -/
@@ -99,6 +102,7 @@ theorem isComponentAfterDeleting_componentCarrier_of_subset
   have hvS₀ : v ∉ S₀ := fun hv ↦ hvS (hsub hv)
   exact hbase.2.2.2 u hu v hvS₀ huv
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- In a graph which remains connected after deleting one vertex, a
 component outside a two-element set has an edge to each member of that set.
 This is the elementary boundary fact used for all six named attachments. -/
@@ -156,6 +160,7 @@ theorem ComponentCompl.exists_adj_to_each_of_delete_connected
   refine ⟨one_side hab rfl, ?_⟩
   exact one_side hab.symm (by ext v; simp [or_comm])
 
+omit [DecidableRel G.Adj] in
 /-- A component outside `{a,b}` has `a` as its unique attachment in any
 set `T` which contains `a`, omits `b`, and is disjoint from the component.
 The existence of the attachment uses vertex-two-connectivity; uniqueness is
@@ -188,6 +193,7 @@ theorem ComponentCompl.isUniqueAttachment_left
     · rfl
     · exact (hbT (htb ▸ htT)).elim
 
+omit [DecidableRel G.Adj] in
 /-- Symmetric form of `isUniqueAttachment_left`. -/
 theorem ComponentCompl.isUniqueAttachment_right
     {a b : V} (hab : a ≠ b)
@@ -325,6 +331,7 @@ def RoutedCycleSeparator.IsMaximal {a b x r : V}
     (componentCarrier (G := G) {T.left, T.right} T.side).card ≤
       (componentCarrier (G := G) {S.left, S.right} S.side).card
 
+omit [DecidableRel G.Adj] in
 /-- Once one routed separator exists, finiteness supplies one with a largest
 terminal-side component.  This isolates the finite maximization used three
 times in AHT's proof. -/
@@ -372,6 +379,7 @@ structure WatkinsMesnerThetaSource (G : SimpleGraph V) (x y z : V) where
   cross_meets_rim_only_at_ends :
     ∀ w, w ∈ cross.support → w ∈ rim.support → w = left ∨ w = right
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Two simple paths with the same distinct ends and no other common vertex
 form a simple cycle, provided the first path has a displayed internal
 vertex. -/
@@ -408,7 +416,7 @@ theorem Walk.IsPath.isCycle_append_reverse_of_meet_only_ends
     · have hwst : w = s ∨ w = t := by simpa [hsupp] using hw
       exact hwst.elim hws hwt
     · subst t
-      have hpnil : p = .nil := Walk.isPath_iff_eq_nil.mp hp
+      have hpnil : p = .nil := (Walk.isPath_iff_nil.mp hp).eq_nil
       subst p
       exact hws (by simpa using hw)
 
@@ -465,21 +473,31 @@ def zArmB : G.Walk T.branchB z := (T.zRoute.dropUntil z T.z_mem).reverse
 def zRim : G.Walk T.branchA T.branchA :=
   T.xRoute.append T.yRoute.reverse
 
-theorem xRim_isCycle : T.xRim.IsCycle := by
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+theorem xRim_isCycle [Finite V] : T.xRim.IsCycle := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   exact Walk.IsPath.isCycle_append_reverse_of_meet_only_ends T.yRoute_isPath
     T.zRoute_isPath T.y_mem T.y_internal.1 T.y_internal.2
     T.yRoute_inter_zRoute
 
-theorem yRim_isCycle : T.yRim.IsCycle := by
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+theorem yRim_isCycle [Finite V] : T.yRim.IsCycle := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   exact Walk.IsPath.isCycle_append_reverse_of_meet_only_ends T.xRoute_isPath
     T.zRoute_isPath T.x_mem T.x_internal.1 T.x_internal.2
     T.xRoute_inter_zRoute
 
-theorem zRim_isCycle : T.zRim.IsCycle := by
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+theorem zRim_isCycle [Finite V] : T.zRim.IsCycle := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   exact Walk.IsPath.isCycle_append_reverse_of_meet_only_ends T.xRoute_isPath
     T.yRoute_isPath T.x_mem T.x_internal.1 T.x_internal.2
     T.xRoute_inter_yRoute
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 theorem x_not_mem_xRim : x ∉ T.xRim.support := by
   intro hx
   have hx' : x ∈ T.yRoute.support ∨ x ∈ T.zRoute.support := by
@@ -493,6 +511,7 @@ theorem x_not_mem_xRim : x ∉ T.xRim.support := by
     · exact T.x_internal.1 h
     · exact T.x_internal.2 h
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 theorem y_not_mem_yRim : y ∉ T.yRim.support := by
   intro hy
   have hy' : y ∈ T.xRoute.support ∨ y ∈ T.zRoute.support := by
@@ -506,6 +525,7 @@ theorem y_not_mem_yRim : y ∉ T.yRim.support := by
     · exact T.y_internal.1 h
     · exact T.y_internal.2 h
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 theorem z_not_mem_zRim : z ∉ T.zRim.support := by
   intro hz
   have hz' : z ∈ T.xRoute.support ∨ z ∈ T.yRoute.support := by
@@ -521,13 +541,16 @@ theorem z_not_mem_zRim : z ∉ T.zRim.support := by
 
 end WatkinsMesnerK32Source
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Initial segment ending at the first hit of a finite target set. -/
-theorem exists_initialPath_to_finset_wm
-    (S : Finset V) {r s₀ : V} (hrs : r ∉ S) (hs₀ : s₀ ∈ S)
+theorem exists_initialPath_to_finset_wm [Finite V]
+    (S : Finset V) {r s₀ : V} (_hrs : r ∉ S) (hs₀ : s₀ ∈ S)
     (p : G.Walk r s₀) (hp : p.IsPath) :
     ∃ s : V, s ∈ S ∧ ∃ q : G.Walk r s,
       q.IsPath ∧ (∀ w, w ∈ q.support → w ∈ p.support) ∧
         ∀ w, w ∈ q.support → w ∈ S → w = s := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let P : ℕ → Prop := fun n ↦
     ∃ s : V, ∃ hs : s ∈ p.support,
       s ∈ S ∧ (p.takeUntil s hs).length = n
@@ -555,14 +578,17 @@ theorem exists_initialPath_to_finset_wm
   rw [heq, hlen] at hshort
   exact (Nat.not_lt_of_ge hcandidate) hshort
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- The two-fan theorem in the path form needed below. -/
-private theorem exists_targetPath_through_wm
+private theorem exists_targetPath_through_wm [Finite V]
     (S : Finset V) {r : V} (hrS : r ∉ S) (hcard : 2 ≤ S.card)
     (hconn : G.Connected)
     (hdelete : ∀ d : V, (G.induce fun w : V ↦ w ≠ d).Connected) :
     ∃ s t : V, s ∈ S ∧ t ∈ S ∧ s ≠ t ∧
       ∃ p : G.Walk s t, p.IsPath ∧ r ∈ p.support ∧
         ∀ w, w ∈ p.support → w ∈ S → w = s ∨ w = t := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨s₀, hs₀S⟩ := Finset.card_pos.mp (by omega : 0 < S.card)
   have hcardErase : 0 < (S.erase s₀).card := by
     rw [Finset.card_erase_of_mem hs₀S]
@@ -678,9 +704,11 @@ structure CycleArcPair {r : V} (C : G.Walk r r)
   meet_only_ends : ∀ w, w ∈ first.support → w ∈ second.support →
     w = s ∨ w = t
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 theorem exists_cycleArcPair {r s t : V} {C : G.Walk r r}
     (hC : C.IsCycle) (hsC : s ∈ C.support) (htC : t ∈ C.support)
     (hst : s ≠ t) : Nonempty (CycleArcPair C s t) := by
+  classical
   let R := C.rotate s hsC
   have hR : R.IsCycle := hC.rotate hsC
   have htR : t ∈ R.support := by
@@ -767,6 +795,7 @@ theorem exists_cycleArcPair {r s t : V} {C : G.Walk r r}
       intro hwD
       simpa only [Q, Walk.support_reverse, List.mem_reverse] using hwD)
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Closing a simple path which has a displayed internal vertex by an edge
 gives a simple cycle. -/
 private theorem Walk.IsPath.isCycle_concat_of_mem
@@ -796,10 +825,11 @@ private theorem Walk.IsPath.isCycle_concat_of_mem
     · have hwuv : w = u ∨ w = v := by simpa [hsupp] using hw
       exact hwuv.elim hwu hwv
     · subst v
-      have hpnil : p = .nil := Walk.isPath_iff_eq_nil.mp hp
+      have hpnil : p = .nil := (Walk.isPath_iff_nil.mp hp).eq_nil
       subst p
       exact hwu (by simpa using hw)
 
+omit [DecidableEq V] in
 /-- Three distinct vertices force every one of them to have at least two
 neighbours in a graph which stays connected after one vertex is deleted. -/
 private theorem two_le_degree_of_vertexTwoConnected
@@ -807,6 +837,7 @@ private theorem two_le_degree_of_vertexTwoConnected
     (hconn : G.Connected)
     (hdelete : ∀ d : V, (G.induce fun w : V ↦ w ≠ d).Connected) :
     2 ≤ G.degree x := by
+  classical
   have hpos : 0 < G.degree x :=
     (hconn x y).degree_pos_left hxy
   by_contra hnot
@@ -843,15 +874,18 @@ private theorem two_le_degree_of_vertexTwoConnected
   have hba : b.1 = a := by simpa [ha] using hbmem
   exact b.2 hba
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Any two distinct vertices of a finite vertex-two-connected graph lie on
 one simple cycle.  The third named vertex is used only to witness that the
 graph has at least three vertices. -/
-theorem exists_cycle_through_pair_of_vertexTwoConnected
+theorem exists_cycle_through_pair_of_vertexTwoConnected [Finite V]
     {x y z : V} (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z)
     (hconn : G.Connected)
     (hdelete : ∀ d : V, (G.induce fun w : V ↦ w ≠ d).Connected) :
     ∃ r : V, ∃ C : G.Walk r r,
       C.IsCycle ∧ x ∈ C.support ∧ y ∈ C.support := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hdeg : 2 ≤ G.degree x :=
     two_le_degree_of_vertexTwoConnected hxy hxz hyz hconn hdelete
   by_cases hxyAdj : G.Adj x y
@@ -922,6 +956,7 @@ theorem exists_cycle_through_pair_of_vertexTwoConnected
         Walk.IsPath.isCycle_concat_of_mem hq hyQ hxy.symm hyt hxt.symm
       exact ⟨x, C, hC, by simp [C], by simp [C, q, hyp]⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- **Unconditional Watkins--Mesner source theorem.**  If a finite
 vertex-two-connected graph has no cycle through three distinct prescribed
 vertices, a cycle through `x,y` has a two-ended ear through `z`, and the
@@ -929,12 +964,14 @@ interior of that ear is disjoint from the cycle.
 
 This is the theta-subdivision alternative used at the start of the proof of
 AHT Theorem 5.1, before its three maximal two-separators are selected. -/
-theorem exists_watkinsMesnerThetaSource
+theorem exists_watkinsMesnerThetaSource [Finite V]
     {x y z : V} (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z)
     (hconn : G.Connected)
     (hdelete : ∀ d : V, (G.induce fun w : V ↦ w ≠ d).Connected)
     (hno : ¬HasCycleThroughThree G x y z) :
     Nonempty (WatkinsMesnerThetaSource G x y z) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨r, C, hC, hxC, hyC⟩ :=
     exists_cycle_through_pair_of_vertexTwoConnected
       hxy hxz hyz hconn hdelete
@@ -969,17 +1006,20 @@ theorem exists_watkinsMesnerThetaSource
   apply hfirst w hwp
   simpa [S] using hwC
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- AHT Lemma 3.6 in its route form.  The rim arcs between the ends of the
 theta ear put `x` and `y` on opposite arcs: if they were on the same arc,
 that arc together with the ear would be a cycle through all three terminals.
 Thus the two rim arcs and the ear are the three branches of a subdivision of
 `K_{3,2}`. -/
-theorem exists_watkinsMesnerK32Source
+theorem exists_watkinsMesnerK32Source [Finite V]
     {x y z : V} (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z)
     (hconn : G.Connected)
     (hdelete : ∀ d : V, (G.induce fun w : V ↦ w ≠ d).Connected)
     (hno : ¬HasCycleThroughThree G x y z) :
     Nonempty (WatkinsMesnerK32Source G x y z) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨T⟩ :=
     exists_watkinsMesnerThetaSource hxy hxz hyz hconn hdelete hno
   obtain ⟨A⟩ := exists_cycleArcPair T.rim_isCycle T.left_mem_rim
@@ -1118,15 +1158,18 @@ theorem exists_watkinsMesnerK32Source
           (A.first_subset w hwArc) }⟩
   · exact (hnotSecond ⟨hxSecond, hySecond⟩).elim
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- The source alternative in unconditional disjunctive form: either the
 three terminals lie on a common cycle, or the Watkins--Mesner theta source
 exists. -/
-theorem hasCycleThroughThree_or_watkinsMesnerThetaSource
+theorem hasCycleThroughThree_or_watkinsMesnerThetaSource [Finite V]
     {x y z : V} (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z)
     (hconn : G.Connected)
     (hdelete : ∀ d : V, (G.induce fun w : V ↦ w ≠ d).Connected) :
     HasCycleThroughThree G x y z ∨
       Nonempty (WatkinsMesnerThetaSource G x y z) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   by_cases hcycle : HasCycleThroughThree G x y z
   · exact Or.inl hcycle
   · exact Or.inr

@@ -156,6 +156,7 @@ def torsoOn (G : SimpleGraph V) (S : Set V) (a b : V)
     (ha : a ∈ S) (hb : b ∈ S) : SimpleGraph S :=
   G.induce S ⊔ SimpleGraph.edge ⟨a, ha⟩ ⟨b, hb⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- The virtual attachment edge changes no adjacency incident with an
 interior vertex. -/
 theorem torsoOn_adj_iff_of_ne_boundary
@@ -171,9 +172,10 @@ theorem torsoOn_adj_iff_of_ne_boundary
       · exact False.elim (hub (congrArg Subtype.val hu))
   · exact Or.inl
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- A false-twin pair wholly in the interior of a torso lifts to the ambient
 graph when the two vertices have no neighbours outside the torso set. -/
-theorem falseTwins_lift
+theorem falseTwins_lift [Finite V]
     {S : Set V} {a b : V} {ha : a ∈ S} {hb : b ∈ S}
     {u v : S}
     (hua : u.1 ≠ a) (hub : u.1 ≠ b)
@@ -182,6 +184,8 @@ theorem falseTwins_lift
     (hNv : G.neighborSet v.1 ⊆ S)
     (htwin : AreFalseTwins (torsoOn G S a b ha hb) u v) :
     AreFalseTwins G u.1 v.1 := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   refine ⟨fun huv ↦ htwin.1 (Subtype.ext huv), ?_⟩
   ext w
   constructor
@@ -200,6 +204,7 @@ theorem falseTwins_lift
       (htwin.adj_iff ⟨w, hwS⟩).mpr htorso
     exact (torsoOn_adj_iff_of_ne_boundary hua hub).mp htorso'
 
+omit [DecidableEq V] in
 /-- An interior torso vertex has the same degree in the torso as in the
 ambient graph whenever all its ambient neighbours lie in the torso set. -/
 theorem degree_torsoOn_eq
@@ -240,18 +245,22 @@ namespace ComponentEndBlock
 
 variable {c x₀ : V} (K : (deleteVertex G c).ConnectedComponent)
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private theorem mem_side_of_mem_verts_ne_cut {v : V}
     (hv : v ∈ verts c K) (hvc : v ≠ c) : v ∈ side c K := by
   simpa [verts, hvc] using hv
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- False twins in an induced component end piece lift when both members lie
 on the component side.  This records the neighbourhood part of the lift;
 the degree equalities are added in `liftFalseTwinsAway`. -/
-theorem falseTwins_induce_verts_lift
+theorem falseTwins_induce_verts_lift [Finite V]
     {u v : {w : V // w ∈ verts c K}}
     (hu : u.1 ∈ side c K) (hv : v.1 ∈ side c K)
     (htwin : AreFalseTwins (G.induce (verts c K)) u v) :
     AreFalseTwins G u.1 v.1 := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   refine ⟨fun huv ↦ htwin.1 (Subtype.ext huv), ?_⟩
   ext w
   constructor
@@ -270,6 +279,7 @@ theorem falseTwins_induce_verts_lift
       (htwin.adj_iff ⟨w, hw⟩).mpr hi
     exact hj
 
+omit [DecidableEq V] in
 /-- A pointed false-twin pair in a component end piece lifts to the ambient
 graph and avoids the original exceptional vertex whenever the chosen side
 does. -/
@@ -278,6 +288,7 @@ theorem liftFalseTwinsAway
     (hpair : HasDegreeThreeFalseTwinsAway
       (G.induce (verts c K)) ⟨c, by simp [verts]⟩) :
     HasDegreeThreeFalseTwinsAway G x₀ := by
+  classical
   obtain ⟨u, v, htwin, hdegu, huc, hvc⟩ := hpair
   have hune : u.1 ≠ c := by
     intro h
@@ -353,7 +364,7 @@ theorem connected_falseTwins_of_vertexTwoConnected
             exact heq
           have hvside : v.1 ∈ ComponentEndBlock.side c K := by
             have hvverts : v.1 ∈ ComponentEndBlock.verts c K := by
-              simpa [S] using v.2
+              simp [S]
             simpa [ComponentEndBlock.verts, hvne] using hvverts
           have hvx₀ : v.1 ≠ x₀ := by
             rcases havoidSide with rfl | hx₀side
@@ -403,11 +414,14 @@ noncomputable local instance ahtComponentAdjDecidable
     (C : G.ConnectedComponent) : DecidableRel C.toSimpleGraph.Adj :=
   Classical.decRel _
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- False twins in a connected component are false twins in the ambient
 graph, because components contain every neighbour of each of their vertices. -/
-theorem falseTwins_lift (C : G.ConnectedComponent) {u v : C}
+theorem falseTwins_lift [Finite V] (C : G.ConnectedComponent) {u v : C}
     (htwin : AreFalseTwins C.toSimpleGraph u v) :
     AreFalseTwins G u.1 v.1 := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   refine ⟨fun huv ↦ htwin.1 (Subtype.ext huv), ?_⟩
   ext w
   constructor

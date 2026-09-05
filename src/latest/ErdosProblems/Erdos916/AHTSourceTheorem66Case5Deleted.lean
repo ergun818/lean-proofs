@@ -19,7 +19,7 @@ component, contrary to the intended singleton description.
 
 namespace Erdos916
 
-open SimpleGraph
+open _root_.Erdos916.SimpleGraph
 
 universe u
 
@@ -118,8 +118,9 @@ theorem adj_z_zB : G.Adj z.1 C.splitter.zB.1 := by
   simpa [hwz] using hwb
 
 private theorem eq_of_mem_of_card_eq_one
-    {W : Type*} [DecidableEq W] {S : Finset W} {p q : W}
+    {W : Type*} {S : Finset W} {p q : W}
     (hp : p ∈ S) (hq : q ∈ S) (hcard : S.card = 1) : p = q := by
+  classical
   obtain ⟨w, hS⟩ := Finset.card_eq_one.mp hcard
   have hpw : p = w := by simpa [hS] using hp
   have hqw : q = w := by simpa [hS] using hq

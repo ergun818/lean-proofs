@@ -51,10 +51,12 @@ variable (G)
 def block {P : Finset V} (B : Finset P) : Finset V :=
   B.image Subtype.val
 
+omit [Fintype V] in
 @[simp] theorem card_block {P : Finset V} (B : Finset P) :
     (block B).card = B.card := by
   exact Finset.card_image_of_injective B Subtype.val_injective
 
+omit [Fintype V] in
 @[simp] theorem coe_block {P : Finset V} (B : Finset P) :
     ((block B : Finset V) : Set V) = Subtype.val '' (B : Set P) := by
   ext x
@@ -69,7 +71,7 @@ noncomputable def induceIso {P : Finset V} (B : Finset P) :
       {x : V // x ∈ (block B : Set V)} := by
     let f : {x : P // x ∈ (B : Set P)} →
         {x : V // x ∈ (block B : Set V)} :=
-      fun x => ⟨x.1.1, by simp [block, x.2]⟩
+      fun x => ⟨x.1.1, by simp [block]⟩
     refine Equiv.ofBijective f ?_
     · constructor
       · intro x y h
@@ -88,6 +90,7 @@ noncomputable def induceIso {P : Finset V} (B : Finset P) :
       intro x y
       rfl }
 
+omit [Fintype V] in
 theorem card_edges_block {P : Finset V} (B : Finset P) :
     ((G.induce (P : Set V)).induce (B : Set P)).edgeFinset.card =
       (G.induce (block B : Set V)).edgeFinset.card := by
@@ -98,7 +101,7 @@ end Lift
 /-- Adjoin the selected component piece as one new block to a block
 certificate for the complementary cut piece. -/
 noncomputable def adjoinPiece
-    {d : V} (hd : IsCutVertex G d)
+    {d : V} (_hd : IsCutVertex G d)
     (K : (deleteVertex G d).ConnectedComponent) {k : ℕ}
     (D : BlockCountCertificate
       (G.induce (CutDensity.remainder G d K : Set V)) k) :
@@ -182,7 +185,7 @@ noncomputable def ofCut
       CutDensity.piece_ne_univ (G := G) hd K
     obtain ⟨x, hxP⟩ : ∃ x : V, x ∉ CutDensity.piece G d K := by
       by_contra h
-      push_neg at h
+      push Not at h
       exact hproper (Finset.eq_univ_of_forall h)
     have hxR : x ∈ R := by
       apply (CutDensity.mem_remainder_iff (G := G)).mpr
@@ -285,6 +288,7 @@ namespace ThreeWayCut
 
 variable (T : ThreeWayCut G)
 
+omit [DecidableRel G.Adj] in
 private theorem liftedPieces_pairwise_intersections :
     T.leftPiece ∩ T.middlePiece = {T.cut} ∧
       T.leftPiece ∩ T.rightPiece = {T.cut} ∧
@@ -345,6 +349,7 @@ private theorem edgeFilters_disjoint (P Q : Finset V)
       subst y
       exact G.loopless.irrefl T.cut heP.1
 
+omit [DecidableRel G.Adj] in
 private theorem edge_mem_piece {x y : V} (hxy : G.Adj x y) :
     (x ∈ T.leftPiece ∧ y ∈ T.leftPiece) ∨
       (x ∈ T.middlePiece ∧ y ∈ T.middlePiece) ∨
@@ -493,6 +498,7 @@ end ThreeWayCut
 
 namespace HasThreeTerminalPath
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- An `a`--`b` path through `c` is already endpoint-normalized. -/
 theorem of_path_between_through {a b c : V} (hab : a ≠ b)
     {p : G.Walk a b} (hp : p.IsPath) (hc : c ∈ p.support) :
@@ -500,6 +506,7 @@ theorem of_path_between_through {a b c : V} (hab : a ≠ b)
   exact ⟨a, b, by simp, by simp, hab, p, hp,
     p.start_mem_support, p.end_mem_support, hc⟩
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- A terminal path in an induced graph maps to an ambient terminal path. -/
 theorem map_induce {S : Set V} {a b c : S}
     (h : HasThreeTerminalPath (G.induce S) a b c) :
@@ -536,6 +543,7 @@ theorem map_induce {S : Set V} {a b c : S}
   exact ⟨x.1, y.1, hx', hy', fun h => hxy (Subtype.ext h),
     q, hq, ha', hb', hc'⟩
 
+omit [DecidableRel G.Adj] [Fintype V] in
 theorem swap_left {a b c : V} (h : HasThreeTerminalPath G a b c) :
     HasThreeTerminalPath G b a c := by
   rcases h with ⟨x, y, hx, hy, hxy, p, hp, ha, hb, hc⟩
@@ -545,6 +553,7 @@ theorem swap_left {a b c : V} (h : HasThreeTerminalPath G a b c) :
   · simp only [Finset.mem_insert, Finset.mem_singleton] at hy ⊢
     tauto
 
+omit [DecidableRel G.Adj] [Fintype V] in
 theorem swap_right {a b c : V} (h : HasThreeTerminalPath G a b c) :
     HasThreeTerminalPath G a c b := by
   rcases h with ⟨x, y, hx, hy, hxy, p, hp, ha, hb, hc⟩
@@ -554,6 +563,7 @@ theorem swap_right {a b c : V} (h : HasThreeTerminalPath G a b c) :
   · simp only [Finset.mem_insert, Finset.mem_singleton] at hy ⊢
     tauto
 
+omit [DecidableRel G.Adj] [Fintype V] in
 theorem rotate {a b c : V} (h : HasThreeTerminalPath G a b c) :
     HasThreeTerminalPath G b c a := by
   rcases h with ⟨x, y, hx, hy, hxy, p, hp, ha, hb, hc⟩
@@ -567,6 +577,7 @@ end HasThreeTerminalPath
 
 namespace CutPath
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- A path from a vertex of a component of `G-d` to `d`, staying in that
 component except for its final vertex. -/
 theorem exists_path_to_cut_in_component
@@ -596,6 +607,7 @@ theorem exists_path_to_cut_in_component
     simpa [this] using w.2
   simpa only [S, ComponentEndBlock.verts, Set.mem_insert_iff] using hzS
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 theorem component_side_disjoint {d : V}
     {K L : (deleteVertex G d).ConnectedComponent} (hKL : K ≠ L) :
     Disjoint (ComponentEndBlock.side (G := G) d K)
@@ -608,9 +620,10 @@ theorem component_side_disjoint {d : V}
     (pairwise_disjoint_supp_connectedComponent (deleteVertex G d) hKL)
       hxK' hxL'
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Join a component-to-cut path to a rooted path lying in a different
 component piece. -/
-theorem hasThreeTerminalPath_of_rootedPath_in_component
+theorem hasThreeTerminalPath_of_rootedPath_in_component [Finite V]
     (hconn : G.Connected) {d x y z : V}
     {K L : (deleteVertex G d).ConnectedComponent} (hKL : K ≠ L)
     (hx : x ∈ ComponentEndBlock.side (G := G) d K)
@@ -619,6 +632,8 @@ theorem hasThreeTerminalPath_of_rootedPath_in_component
     (hqside : ∀ w, w ∈ q.support →
       w = d ∨ w ∈ ComponentEndBlock.side (G := G) d L) :
     HasThreeTerminalPath G x y z := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨p, hp, hpside⟩ :=
     exists_path_to_cut_in_component hconn d K hx
   let r : G.Walk x z := p.append q
@@ -639,6 +654,7 @@ theorem hasThreeTerminalPath_of_rootedPath_in_component
   · exact Walk.mem_support_append_of_mem_right p q hyq
   · exact r.end_mem_support
 
+omit [DecidableRel G.Adj] in
 /-- Lift a rooted path from a component piece and splice it to a terminal in
 a different component. -/
 theorem hasThreeTerminalPath_of_induced_rootedPath
@@ -654,6 +670,7 @@ theorem hasThreeTerminalPath_of_induced_rootedPath
     (hyq : (⟨y, (CutDensity.mem_piece_iff (G := G)).mpr (Or.inr hy)⟩ :
       {w : V // w ∈ (CutDensity.piece G d L : Set V)}) ∈ q.support) :
     HasThreeTerminalPath G x y z := by
+  classical
   let inc : G.induce (CutDensity.piece G d L : Set V) →g G :=
     (SimpleGraph.Embedding.induce
       (G := G) (s := (CutDensity.piece G d L : Set V))).toHom
@@ -683,13 +700,14 @@ end CutPath
 /-- Either a finite connected graph has the prescribed rooted path, or it
 has a genuine cut vertex.  The non-cut case is the three-point path theorem. -/
 theorem rootedPath_or_cut
-    {W : Type u} [Fintype W] [DecidableEq W]
-    (H : SimpleGraph W) [DecidableRel H.Adj]
+    {W : Type u} [Finite W]
+    (H : SimpleGraph W)
     (hconn : H.Connected) {r a b : W}
     (hra : r ≠ a) (hrb : r ≠ b) (hab : a ≠ b) :
     (∃ p : H.Walk r b, p.IsPath ∧ a ∈ p.support) ∨
       ∃ d : W, IsCutVertex H d := by
   classical
+  let : Fintype W := Fintype.ofFinite W
   by_cases hcut : ∃ d : W, IsCutVertex H d
   · exact Or.inr hcut
   · left

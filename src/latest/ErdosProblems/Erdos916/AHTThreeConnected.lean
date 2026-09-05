@@ -48,6 +48,7 @@ def order : ℕ := s.separator.card
 def Proper : Prop :=
   (s.left \ s.right).Nonempty ∧ (s.right \ s.left).Nonempty
 
+omit [DecidableRel G.Adj] in
 theorem mem_left_or_mem_right (v : V) : v ∈ s.left ∨ v ∈ s.right := by
   have h : v ∈ s.left ∪ s.right := by
     rw [s.cover]
@@ -141,6 +142,7 @@ def liftDelete (S : Finset V)
       exact Finset.mem_union_right _ (Finset.mem_image.2 ⟨v', h, rfl⟩)
     exact fun huv => t.not_adj huLt huRt hvRt hvLt (by simpa [u', v'] using huv)
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem separator_liftDelete (S : Finset V)
     (t : AHTSeparation (G.induce {v : V | v ∉ S})) :
     (liftDelete S t).separator = S ∪ t.separator.image Subtype.val := by
@@ -157,9 +159,11 @@ def liftDelete (S : Finset V)
     · rintro ⟨u, hu, huv⟩
       exact ⟨⟨u, hu.1, huv⟩, ⟨u, hu.2, huv⟩⟩
 
+omit [DecidableRel G.Adj] in
 theorem order_liftDelete (S : Finset V)
     (t : AHTSeparation (G.induce {v : V | v ∉ S})) :
     (liftDelete S t).order = S.card + t.order := by
+  classical
   rw [order, separator_liftDelete, Finset.card_union_of_disjoint]
   · rw [Finset.card_image_of_injective]
     · rfl
@@ -169,6 +173,7 @@ theorem order_liftDelete (S : Finset V)
     obtain ⟨w, -, rfl⟩ := Finset.mem_image.1 hvI
     exact w.property hvS
 
+omit [DecidableRel G.Adj] in
 theorem proper_liftDelete (S : Finset V)
     (t : AHTSeparation (G.induce {v : V | v ∉ S})) (ht : t.Proper) :
     (liftDelete S t).Proper := by
@@ -238,6 +243,7 @@ def IsThreeConnected (G : SimpleGraph V) : Prop :=
 
 namespace IsThreeConnected
 
+omit [DecidableRel G.Adj] in
 /-- A three-connected finite graph has at least four vertices. -/
 theorem four_le_card (hG : IsThreeConnected G) :
     4 ≤ Fintype.card V := by
@@ -256,12 +262,14 @@ theorem degree_ge (hG : IsThreeConnected G) (v : V) :
   rw [AHTSeparation.order_isolate] at this
   exact (Nat.not_le_of_lt hdeg this).elim
 
+omit [DecidableRel G.Adj] in
 /-- Deleting any set of fewer than three vertices leaves a preconnected
 graph.  This is the form of vertex-connectivity used in the AHT path
 arguments. -/
 theorem induce_compl_preconnected (hG : IsThreeConnected G)
     (S : Finset V) (hS : S.card < 3) :
     (G.induce {v : V | v ∉ S}).Preconnected := by
+  classical
   intro u v
   by_contra huv
   let t := AHTSeparation.reachable (G.induce {v : V | v ∉ S}) u
@@ -272,15 +280,19 @@ theorem induce_compl_preconnected (hG : IsThreeConnected G)
     AHTSeparation.order_reachable] at hsep
   omega
 
+omit [DecidableRel G.Adj] in
 /-- In particular, deleting one vertex leaves a preconnected graph. -/
 theorem delete_vertex_preconnected (hG : IsThreeConnected G) (v : V) :
     (G.induce {w : V | w ∉ ({v} : Finset V)}).Preconnected := by
+  classical
   exact hG.induce_compl_preconnected ({v} : Finset V) (by simp)
 
+omit [DecidableRel G.Adj] in
 /-- Deleting two distinct displayed vertices leaves a preconnected graph. -/
 theorem delete_pair_preconnected (hG : IsThreeConnected G)
     {u v : V} (huv : u ≠ v) :
     (G.induce {w : V | w ∉ ({u, v} : Finset V)}).Preconnected := by
+  classical
   have hcard : ({u, v} : Finset V).card < 3 := by simp [huv]
   exact hG.induce_compl_preconnected ({u, v} : Finset V) hcard
 
@@ -421,15 +433,15 @@ theorem pairwise_distinct :
   · exact T.twin_xy.1
   constructor
   · intro h
-    exact hdisj (a := T.u) (by simp) (by simpa [h])
+    exact hdisj (a := T.u) (by simp) (by simp [h])
   constructor
   · intro h
-    exact hdisj (a := T.u) (by simp) (by simpa [h])
+    exact hdisj (a := T.u) (by simp) (by simp [h])
   constructor
   · intro h
-    exact hdisj (a := T.v) (by simp) (by simpa [h])
+    exact hdisj (a := T.v) (by simp) (by simp [h])
   · intro h
-    exact hdisj (a := T.v) (by simp) (by simpa [h])
+    exact hdisj (a := T.v) (by simp) (by simp [h])
 
 /-- Forgetting the second pair gives the exact single-pair conclusion needed
 by the circuit argument. -/

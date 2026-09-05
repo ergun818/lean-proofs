@@ -22,7 +22,7 @@ all inputs below are finite sets and concrete adjacency facts.
 
 namespace Erdos916
 
-open SimpleGraph
+open _root_.Erdos916.SimpleGraph
 
 universe u
 
@@ -42,7 +42,7 @@ private theorem aht_card_pair_le {W : Type*} [DecidableEq W] (a b : W) :
 neighbours all lie in `T`. -/
 def ahtExternalBoundarySeparation
     (G : SimpleGraph V) (C T : Finset V)
-    (hCT : Disjoint C T) (hboundary : HasExternalBoundaryIn G C T) :
+    (_hCT : Disjoint C T) (hboundary : HasExternalBoundaryIn G C T) :
     AHTSeparation G where
   left := C ∪ T
   right := Finset.univ \ C
@@ -58,6 +58,7 @@ def ahtExternalBoundarySeparation
     have hqT : q ∈ T := hboundary p hpC q hpq hqC
     exact hqL (Finset.mem_union_right _ hqT)
 
+omit [DecidableRel G.Adj] in
 /-- The separator of the external-boundary separation is exactly `T`. -/
 theorem ahtExternalBoundarySeparation_separator
     (C T : Finset V) (hCT : Disjoint C T)
@@ -70,6 +71,7 @@ theorem ahtExternalBoundarySeparation_separator
     simp [AHTSeparation.separator, ahtExternalBoundarySeparation, hzT, hzC]
   · simp [AHTSeparation.separator, ahtExternalBoundarySeparation, hzT]
 
+omit [DecidableRel G.Adj] in
 /-- If both strict sides are inhabited, the external-boundary separation is
 proper. -/
 theorem ahtExternalBoundarySeparation_proper
@@ -87,6 +89,7 @@ theorem ahtExternalBoundarySeparation_proper
       Finset.mem_univ, true_and]
     exact fun hwC ↦ hw (Finset.mem_union_left _ hwC)
 
+omit [DecidableRel G.Adj] in
 /-- In a three-connected graph, every nontrivial external boundary has at
 least three vertices. -/
 theorem three_le_card_of_externalBoundary
@@ -94,6 +97,7 @@ theorem three_le_card_of_externalBoundary
     (hCT : Disjoint C T) (hboundary : HasExternalBoundaryIn G C T)
     (hC : C.Nonempty) (hout : ∃ w : V, w ∉ C ∪ T) :
     3 ≤ T.card := by
+  classical
   have hproper := ahtExternalBoundarySeparation_proper
     (G := G) C T hCT hboundary hC hout
   have horder := hthree.2
@@ -102,6 +106,7 @@ theorem three_le_card_of_externalBoundary
     ahtExternalBoundarySeparation_separator C T hCT hboundary] at horder
   exact horder
 
+omit [DecidableRel G.Adj] in
 /-- If a three-element set contains the external boundary, then every one
 of its vertices is actually met.  This is the exact `N(C)=A` strengthening
 used when turning a component union into a fragment. -/
@@ -111,6 +116,7 @@ theorem externalBoundary_tight_of_card_three
     (hC : C.Nonempty) (hA : A.card = 3)
     (hwC : w ∉ C) (hwA : w ∉ A) :
     ∀ a ∈ A, ∃ c ∈ C, G.Adj c a := by
+  classical
   intro a haA
   by_contra h
   push Not at h
@@ -133,6 +139,7 @@ theorem externalBoundary_tight_of_card_three
 
 /-! ## The component-boundary dichotomy -/
 
+omit [DecidableRel G.Adj] in
 /-- In the `|A|=|B|=3` branch, the three matched-pair alternatives in
 Watkins--Mesner condition (vii) are impossible for any component not meeting
 `v`.  Thus its entire external boundary lies on one side. -/
@@ -150,6 +157,7 @@ theorem component_boundary_in_left_or_right_of_both_triples
         HasExternalBoundaryIn G D {yA, yB} ∨
         HasExternalBoundaryIn G D {zA, zB}) :
     HasExternalBoundaryIn G D A ∨ HasExternalBoundaryIn G D B := by
+  classical
   rcases hoptions with hA | hB | hx | hy | hz
   · exact Or.inl hA
   · exact Or.inr hB
@@ -223,6 +231,7 @@ theorem component_boundary_in_left_or_right_of_both_triples
 def ahtComponentSideUnion (components : Finset (Finset V)) : Finset V :=
   components.biUnion id
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- A union of sets whose external boundaries lie in `A` again has external
 boundary in `A`. -/
 theorem componentSideUnion_externalBoundary
@@ -235,6 +244,7 @@ theorem componentSideUnion_externalBoundary
   intro hqD
   exact hq (Finset.mem_biUnion.mpr ⟨D, hD, hqD⟩)
 
+omit [Fintype V] in
 /-- Disjointness from the boundary is preserved by the component union. -/
 theorem componentSideUnion_disjoint
     (components : Finset (Finset V)) (A : Finset V)
@@ -245,6 +255,7 @@ theorem componentSideUnion_disjoint
   obtain ⟨D, hD, hpD⟩ := Finset.mem_biUnion.mp hp
   exact Finset.disjoint_left.mp (hdisj D hD) hpD hpA
 
+omit [Fintype V] in
 /-- A nonempty family of nonempty components has nonempty union. -/
 theorem componentSideUnion_nonempty
     (components : Finset (Finset V))
@@ -283,12 +294,14 @@ structure AHTRelevantTripleSideLocal (G : SimpleGraph V) where
     ∀ ⦃q : V⦄, G.Adj anchor q →
       q ∈ carrier ∨ q = terminal ∨ q ∈ boundary ∨ q = matched
 
+omit [DecidableEq V] in
 /-- Triangle-freeness and minimum degree three force at least two vertices
 in each relevant same-side component union. -/
 theorem AHTRelevantTripleSideLocal.two_le_card
     (S : AHTRelevantTripleSideLocal G)
     (htri : AHTTriangleFree G) (hmin : ∀ p : V, 3 ≤ G.degree p) :
     2 ≤ S.carrier.card := by
+  classical
   by_contra hcard
   have hle : S.carrier.card ≤ 1 := by omega
   obtain ⟨d, hd⟩ := S.carrier_nonempty
@@ -366,16 +379,17 @@ structure AHTClaimOneFragmentCertificate
   twinLeft_mem : twinLeft ∈ fragment
   twinRight_mem : twinRight ∈ fragment
 
+omit [DecidableRel G.Adj] in
 /-- Given the `A`-side union `C_A`, its set-theoretic complement away from
 `A` has the same external boundary. -/
 theorem externalBoundary_complement_away
-    (C A : Finset V) (hCA : Disjoint C A)
+    (C A : Finset V) (_hCA : Disjoint C A)
     (hboundary : HasExternalBoundaryIn G C A) :
     HasExternalBoundaryIn G (Finset.univ \ (C ∪ A)) A := by
   intro p hp q hpq hqF
   have hqOutside : q ∈ C ∪ A := by
     by_contra hq
-    exact hqF (by simpa [hq])
+    exact hqF (by simp [hq])
   rcases Finset.mem_union.mp hqOutside with hqC | hqA
   · have hpC : p ∉ C := by
       have hp' := Finset.mem_sdiff.mp hp

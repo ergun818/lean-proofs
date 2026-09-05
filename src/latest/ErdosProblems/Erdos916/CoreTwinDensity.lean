@@ -75,12 +75,13 @@ noncomputable def componentEquivSupportFinset {W : Type*} [Fintype W]
 
 /-- `(2,3)` sparsity restricts to every nontrivial connected component. -/
 theorem component_sparse_of_is23Sparse
-    {W : Type*} [Fintype W] [DecidableEq W]
+    {W : Type*} [Finite W]
     {H : SimpleGraph W} [DecidableRel H.Adj]
     (hsparse : Is23Sparse H) (C : H.ConnectedComponent)
     (hC2 : 2 ≤ Fintype.card C) :
     C.toSimpleGraph.edgeFinset.card + 3 ≤ 2 * Fintype.card C := by
   classical
+  let : Fintype W := Fintype.ofFinite W
   let S : Finset W := C.supp.toFinset
   have hScard : S.card = Fintype.card C := by
     calc
@@ -99,7 +100,7 @@ theorem component_sparse_of_is23Sparse
 connectedness.  If there were two components, summing the component bounds
 would give `e + 6 ≤ 2v`, contradicting `e + 4 = 2v`. -/
 theorem connected_of_has24Count_of_component_sparse
-    {W : Type*} [Fintype W] [DecidableEq W]
+    {W : Type*} [Fintype W]
     (H : SimpleGraph W) [DecidableRel H.Adj] [Nonempty W]
     (hcount : H.edgeFinset.card + 4 = 2 * Fintype.card W)
     (hsparse : ∀ C : H.ConnectedComponent,
@@ -133,11 +134,12 @@ theorem connected_of_has24Count_of_component_sparse
 /-- Every component of a `(2,3)`-sparse graph satisfies the weaker bound
 `e + 2 ≤ 2v`, including singleton components. -/
 theorem component_weak_sparse_of_is23Sparse
-    {W : Type*} [Fintype W] [DecidableEq W]
+    {W : Type*} [Finite W]
     {H : SimpleGraph W} [DecidableRel H.Adj]
     (hsparse : Is23Sparse H) (C : H.ConnectedComponent) :
     C.toSimpleGraph.edgeFinset.card + 2 ≤ 2 * Fintype.card C := by
   classical
+  let : Fintype W := Fintype.ofFinite W
   rw [← Nat.card_eq_fintype_card]
   by_cases hC2 : 2 ≤ Nat.card C
   · have hC2' : 2 ≤ Fintype.card C := by
@@ -165,7 +167,7 @@ theorem component_weak_sparse_of_is23Sparse
 bounds would lose at least four units if there were two components, whereas
 the tight count loses only three. -/
 theorem connected_of_is23Tight
-    {W : Type*} [Fintype W] [DecidableEq W]
+    {W : Type*} [Fintype W]
     (H : SimpleGraph W) [DecidableRel H.Adj]
     (htight : Is23Tight H) : H.Connected := by
   classical
@@ -286,6 +288,7 @@ theorem has24Count
   rw [hverts]
   omega
 
+omit [DecidableEq V] in
 /-- Pair deletion inherits `(2,3)` sparsity from a circuit: every vertex set
 in the deletion is a proper vertex set of the original graph. -/
 theorem is23Sparse_of_is23Circuit
@@ -363,6 +366,7 @@ theorem degree_pos_of_is23Circuit
   rw [G.card_neighborFinset_eq_degree, hpair] at hle
   omega
 
+omit [DecidableEq V] in
 /-- Consequently every connected component of the pair deletion has at
 least two vertices. -/
 theorem two_le_card_component_of_is23Circuit
@@ -381,6 +385,7 @@ theorem two_le_card_component_of_is23Circuit
   have hlt := C.toSimpleGraph.degree_lt_card_verts zC
   omega
 
+omit [DecidableEq V] in
 /-- The graph left after deleting a distinct nonadjacent cubic pair from a
 `(2,3)` circuit is connected.  This is the component-counting step in the
 ordinary false-twin route. -/

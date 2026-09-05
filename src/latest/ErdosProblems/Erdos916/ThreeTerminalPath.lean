@@ -104,21 +104,25 @@ def splitTerminalGraph (G : SimpleGraph V) (c : V) : SimpleGraph (SplitVertex c)
     · exact id
     · exact G.loopless.irrefl x.1⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 @[simp] theorem splitTerminalGraph_adj_source_old {c : V} {i : Fin 2}
     {x : {v : V // v ≠ c}} :
     (splitTerminalGraph G c).Adj (.inl i) (.inr x) ↔ G.Adj c x.1 :=
   Iff.rfl
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 @[simp] theorem splitTerminalGraph_adj_old_source {c : V} {i : Fin 2}
     {x : {v : V // v ≠ c}} :
     (splitTerminalGraph G c).Adj (.inr x) (.inl i) ↔ G.Adj x.1 c :=
   Iff.rfl
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 @[simp] theorem splitTerminalGraph_adj_old_old {c : V}
     {x y : {v : V // v ≠ c}} :
     (splitTerminalGraph G c).Adj (.inr x) (.inr y) ↔ G.Adj x.1 y.1 :=
   Iff.rfl
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 @[simp] theorem not_splitTerminalGraph_adj_source_source {c : V} {i j : Fin 2} :
     ¬(splitTerminalGraph G c).Adj (.inl i) (.inl j) :=
   id
@@ -131,6 +135,7 @@ def splitOldHom (G : SimpleGraph V) (c : V) :
     intro x y hxy
     exact hxy
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem splitOldHom_apply (G : SimpleGraph V) (c : V)
     (x : {v : V // v ≠ c}) : splitOldHom G c x = .inr x :=
   rfl
@@ -144,6 +149,7 @@ def splitTail {c : V} :
   | _, _, .cons hxy q, hout =>
       .cons (by exact hxy) (splitTail q fun y hy ↦ hout y (by simp [hy]))
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private theorem splitTail_cons_eq {c x y t : V} (hxy : G.Adj x y)
     (q : G.Walk y t) (hout : ∀ z ∈ (q.cons hxy).support, z ≠ c) :
     splitTail (q.cons hxy) hout =
@@ -153,6 +159,7 @@ private theorem splitTail_cons_eq {c x y t : V} (hxy : G.Adj x y)
           (.inr ⟨y, hout y (by simp)⟩) from hxy) := by
   rfl
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private theorem splitTail_support_cases {c x t : V} (p : G.Walk x t)
     (hout : ∀ y ∈ p.support, y ≠ c) {z : SplitVertex c}
     (hz : z ∈ (splitTail p hout).support) :
@@ -176,8 +183,11 @@ private theorem splitTail_support_cases {c x t : V} (p : G.Walk x t)
           exact ⟨w, hwc, by simp [hwq], rfl⟩
   exact go p hout hz
 
-private theorem splitTail_isPath {c x t : V} (p : G.Walk x t) (hp : p.IsPath)
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+private theorem splitTail_isPath [Finite V] {c x t : V} (p : G.Walk x t) (hp : p.IsPath)
     (hout : ∀ y ∈ p.support, y ≠ c) : (splitTail p hout).IsPath := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [Walk.isPath_def]
   induction p with
   | nil => simp [splitTail]
@@ -211,6 +221,7 @@ noncomputable def splitArm {c t : V} (i : Fin 2) (p : G.Walk c t)
           (.inr ⟨x, hqoutside x q.start_mem_support⟩) := hcx
       exact (splitTail q hqoutside).cons hsource
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private theorem splitArm_cons_eq {c x t : V} (i : Fin 2) (hcx : G.Adj c x)
     (q : G.Walk x t) (hp : (q.cons hcx).IsPath) (hct : c ≠ t) :
     splitArm i (q.cons hcx) hp hct =
@@ -224,9 +235,12 @@ private theorem splitArm_cons_eq {c x t : V} (i : Fin 2) (hcx : G.Adj c x)
               (hxc' ▸ q.start_mem_support)⟩) from hcx) := by
   rfl
 
-private theorem splitArm_isPath {c t : V} (i : Fin 2) (p : G.Walk c t)
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+private theorem splitArm_isPath [Finite V] {c t : V} (i : Fin 2) (p : G.Walk c t)
     (hp : p.IsPath) (hct : c ≠ t) :
     (splitArm i p hp hct).IsPath := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   cases p with
   | nil => exact False.elim (hct rfl)
   | @cons _ x _ hcx q =>
@@ -245,10 +259,13 @@ private theorem splitArm_isPath {c t : V} (i : Fin 2) (p : G.Walk c t)
         simp at hz
       exact htailPath.cons hsourceFresh
 
-private theorem splitArm_support_cases {c t : V} (i : Fin 2) (p : G.Walk c t)
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+private theorem splitArm_support_cases [Finite V] {c t : V} (i : Fin 2) (p : G.Walk c t)
     (hp : p.IsPath) (hct : c ≠ t) {z : SplitVertex c}
     (hz : z ∈ (splitArm i p hp hct).support) :
     z = .inl i ∨ ∃ x, ∃ hxc : x ≠ c, x ∈ p.support ∧ z = .inr ⟨x, hxc⟩ := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   cases p with
   | nil => exact False.elim (hct rfl)
   | @cons _ x _ hcx q =>
@@ -271,10 +288,12 @@ def splitSources (c : V) : Set (SplitVertex c) := Set.range Sum.inl
 def splitTargets {c : V} (a b : {v : V // v ≠ c}) : Set (SplitVertex c) :=
   {.inr a, .inr b}
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem mem_splitSources {c : V} {z : SplitVertex c} :
     z ∈ splitSources c ↔ ∃ i, z = .inl i := by
   simp [splitSources, eq_comm]
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem mem_splitTargets {c : V} {a b : {v : V // v ≠ c}}
     {z : SplitVertex c} :
     z ∈ splitTargets a b ↔ z = .inr a ∨ z = .inr b := by
@@ -282,8 +301,8 @@ def splitTargets {c : V} (a b : {v : V // v ≠ c}) : Set (SplitVertex c) :=
 
 /-- No one-vertex set separates the split sources from two prescribed old targets. -/
 private theorem split_separator_two_le
-    {V : Type} [Fintype V] [DecidableEq V]
-    {G : SimpleGraph V} [DecidableRel G.Adj]
+    {V : Type} [Finite V]
+    {G : SimpleGraph V}
     {a b c : V} (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c)
     (hconn : G.Connected)
     (hdelete : ∀ v : V, (G.induce fun w : V ↦ w ≠ v).Connected)
@@ -292,6 +311,7 @@ private theorem split_separator_two_le
       (splitTargets ⟨a, hac⟩ ⟨b, hbc⟩) S) :
     2 ≤ S.ncard := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   by_contra hnot
   have hlt : S.ncard < 2 := Nat.lt_of_not_ge hnot
   have hfinite : S.Finite := Set.toFinite S
@@ -388,9 +408,11 @@ def collapseSplitHom (G : SimpleGraph V) (c : V) : splitTerminalGraph G c →g G
     · exact h
     · exact h
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem collapseSplitHom_source (G : SimpleGraph V) (c : V) (i : Fin 2) :
     collapseSplitHom G c (.inl i) = c := rfl
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem collapseSplitHom_old (G : SimpleGraph V) (c : V)
     (x : {v : V // v ≠ c}) : collapseSplitHom G c (.inr x) = x.1 := rfl
 
@@ -407,18 +429,19 @@ private theorem Walk.IsPath.append_of_inter_eq_endpoint {W : Type*}
   subst y
   have hxb : x = b := hinter x hxp (List.mem_of_mem_tail hyq)
   subst x
-  rw [q.support_eq_cons] at hqN
+  rw [← q.cons_tail_support] at hqN
   exact (List.nodup_cons.mp hqN).1 hyq
 
 /-- Universe-zero core of the three-point path theorem. -/
 private theorem exists_path_between_through_type0
-    {V : Type} [Fintype V] [DecidableEq V]
-    {G : SimpleGraph V} [DecidableRel G.Adj]
+    {V : Type} [Finite V]
+    {G : SimpleGraph V}
     {a b c : V} (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c)
     (hconn : G.Connected)
     (hdelete : ∀ v : V, (G.induce fun w : V ↦ w ≠ v).Connected) :
     ∃ p : G.Walk a b, p.IsPath ∧ c ∈ p.support := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let H := splitTerminalGraph G c
   let A := splitSources c
   let B := splitTargets ⟨a, hac⟩ ⟨b, hbc⟩
@@ -524,14 +547,14 @@ private theorem exists_path_between_through_type0
     change c ∈ (q0.reverse.append q1).support
     rw [Walk.support_append]
     exact List.mem_append.mpr <| Or.inl <| by
-      simpa [Walk.support_reverse] using q0.start_mem_support
+      simp [Walk.support_reverse]
   rcases hr0 with hr0a | hr0b
   · have hr1b : L.right 1 = .inr ⟨b, hbc⟩ := hr1.resolve_left fun h ↦ hright_ne (hr0a.trans h.symm)
-    let p : G.Walk a b := r.copy (by simpa [r, q0, q, hr0a]) (by simpa [r, q1, q, hr1b])
+    let p : G.Walk a b := r.copy (by simp [hr0a]) (by simp [hr1b])
     exact ⟨p, (Walk.isPath_copy _ _ _).mpr hrPath, by simpa [p, Walk.support_copy] using hcr⟩
   · have hr1a : L.right 1 = .inr ⟨a, hac⟩ := hr1.resolve_right fun h ↦ hright_ne (hr0b.trans h.symm)
     let p : G.Walk a b := r.reverse.copy
-      (by simpa [r, q1, q, hr1a]) (by simpa [r, q0, q, hr0b])
+      (by simp [hr1a]) (by simp [hr0b])
     exact ⟨p, (Walk.isPath_copy _ _ _).mpr hrPath.reverse,
       by simpa [p, Walk.support_copy, Walk.support_reverse] using hcr⟩
 
@@ -541,13 +564,14 @@ The Menger theorem used above is stated in universe zero.  For a finite type in 
 universe, relabel the graph by `Fin (Fintype.card V)`, apply the universe-zero result, and
 transport the resulting path back across the graph isomorphism. -/
 theorem exists_path_between_through
-    {V : Type u} [Fintype V] [DecidableEq V]
-    {G : SimpleGraph V} [DecidableRel G.Adj]
+    {V : Type u} [Finite V]
+    {G : SimpleGraph V}
     {a b c : V} (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c)
     (hconn : G.Connected)
     (hdelete : ∀ v : V, (G.induce fun w : V ↦ w ≠ v).Connected) :
     ∃ p : G.Walk a b, p.IsPath ∧ c ∈ p.support := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let e : V ≃ Fin (Fintype.card V) := Fintype.equivFin V
   let H : SimpleGraph (Fin (Fintype.card V)) := G.map e
   let φ : G ≃g H := SimpleGraph.Iso.map e G
@@ -589,12 +613,14 @@ theorem exists_path_between_through
 
 /-- Rooted form: a path starting at `r`, passing through `a`, and ending at `b`. -/
 theorem exists_rooted_three_path
-    {V : Type u} [Fintype V] [DecidableEq V]
-    {G : SimpleGraph V} [DecidableRel G.Adj]
+    {V : Type u} [Finite V]
+    {G : SimpleGraph V}
     {r a b : V} (hra : r ≠ a) (hrb : r ≠ b) (hab : a ≠ b)
     (hconn : G.Connected)
     (hdelete : ∀ v : V, (G.induce fun w : V ↦ w ≠ v).Connected) :
     ∃ p : G.Walk r b, p.IsPath ∧ a ∈ p.support := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   exact exists_path_between_through hrb hra (Ne.symm hab) hconn hdelete
 
 end Erdos916

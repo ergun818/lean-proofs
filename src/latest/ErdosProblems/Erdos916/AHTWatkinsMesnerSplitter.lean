@@ -32,12 +32,14 @@ def ComponentCompl.transport {K L : Set V} (h : K = L)
     (C : G.ComponentCompl K) : G.ComponentCompl L :=
   h ▸ C
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 @[simp] theorem ComponentCompl.mem_transport {K L : Set V} (h : K = L)
     (C : G.ComponentCompl K) (v : V) :
     v ∈ (ComponentCompl.transport h C : Set V) ↔ v ∈ (C : Set V) := by
   subst L
   rfl
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- A walk which starts in a complementary connected component and avoids
 the deleted set stays in that component. -/
 theorem ComponentCompl.walk_end_mem {K : Set V}
@@ -53,13 +55,16 @@ theorem ComponentCompl.walk_end_mem {K : Set V}
       · intro w hw
         exact havoid w (by simp [hw])
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Two vertices of one complementary component are joined by a simple
 ambient path all of whose vertices remain in that component. -/
-theorem ComponentCompl.exists_path_within {K : Set V}
+theorem ComponentCompl.exists_path_within [Finite V] {K : Set V}
     (D : G.ComponentCompl K) {a b : V}
     (ha : a ∈ (D : Set V)) (hb : b ∈ (D : Set V)) :
     ∃ p : G.Walk a b, p.IsPath ∧
       ∀ w, w ∈ p.support → w ∈ (D : Set V) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let a' : {w : V // w ∈ Kᶜ} := ⟨a, ha.1⟩
   let b' : {w : V // w ∈ Kᶜ} := ⟨b, hb.1⟩
   have hreach : (G.induce Kᶜ).Reachable a' b' :=
@@ -116,21 +121,25 @@ def threeSplitGraph (G : SimpleGraph V) (x : V) :
     · exact id
     · exact G.loopless.irrefl p.1⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 @[simp] theorem threeSplitGraph_adj_source_old {x : V} {i : Fin 3}
     {v : {w : V // w ≠ x}} :
     (threeSplitGraph G x).Adj (.inl i) (.inr v) ↔ G.Adj x v.1 :=
   Iff.rfl
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 @[simp] theorem threeSplitGraph_adj_old_source {x : V} {i : Fin 3}
     {v : {w : V // w ≠ x}} :
     (threeSplitGraph G x).Adj (.inr v) (.inl i) ↔ G.Adj v.1 x :=
   Iff.rfl
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 @[simp] theorem threeSplitGraph_adj_old_old {x : V}
     {v w : {q : V // q ≠ x}} :
     (threeSplitGraph G x).Adj (.inr v) (.inr w) ↔ G.Adj v.1 w.1 :=
   Iff.rfl
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 @[simp] theorem not_threeSplitGraph_adj_source_source {x : V}
     {i j : Fin 3} : ¬(threeSplitGraph G x).Adj (.inl i) (.inl j) :=
   id
@@ -146,6 +155,7 @@ def threeSplitTail {x : V} :
       .cons (by exact hab)
         (threeSplitTail q fun w hw ↦ hout w (by simp [hw]))
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private theorem threeSplitTail_cons_eq {x a b c : V} (hab : G.Adj a b)
     (q : G.Walk b c) (hout : ∀ w ∈ (q.cons hab).support, w ≠ x) :
     threeSplitTail (q.cons hab) hout =
@@ -155,6 +165,7 @@ private theorem threeSplitTail_cons_eq {x a b c : V} (hab : G.Adj a b)
           (.inr ⟨b, hout b (by simp)⟩) from hab) := by
   rfl
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private theorem threeSplitTail_support_cases {x a b : V}
     (p : G.Walk a b) (hout : ∀ w ∈ p.support, w ≠ x)
     {q : ThreeSplitVertex x} (hq : q ∈ (threeSplitTail p hout).support) :
@@ -179,9 +190,12 @@ private theorem threeSplitTail_support_cases {x a b : V}
           exact ⟨w, hwx, by simp [hwr], rfl⟩
   exact go p hout hq
 
-private theorem threeSplitTail_isPath {x a b : V} (p : G.Walk a b)
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+private theorem threeSplitTail_isPath [Finite V] {x a b : V} (p : G.Walk a b)
     (hp : p.IsPath) (hout : ∀ w ∈ p.support, w ≠ x) :
     (threeSplitTail p hout).IsPath := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [Walk.isPath_def]
   induction p with
   | nil => simp [threeSplitTail]
@@ -214,6 +228,7 @@ noncomputable def threeSplitArm {x t : V} (i : Fin 3)
         exact (List.nodup_cons.mp hp.support_nodup).1 hw
       exact (threeSplitTail q hout).cons (by exact hxa)
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private theorem threeSplitArm_cons_eq {x a t : V} (i : Fin 3)
     (hxa : G.Adj x a) (q : G.Walk a t) (hp : (q.cons hxa).IsPath)
     (hxt : x ≠ t) :
@@ -226,9 +241,12 @@ private theorem threeSplitArm_cons_eq {x a t : V} (i : Fin 3)
               (h ▸ q.start_mem_support)⟩) from hxa) := by
   rfl
 
-private theorem threeSplitArm_isPath {x t : V} (i : Fin 3)
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+private theorem threeSplitArm_isPath [Finite V] {x t : V} (i : Fin 3)
     (p : G.Walk x t) (hp : p.IsPath) (hxt : x ≠ t) :
     (threeSplitArm i p hp hxt).IsPath := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   cases p with
   | nil => exact False.elim (hxt rfl)
   | @cons _ a _ hxa q =>
@@ -245,11 +263,14 @@ private theorem threeSplitArm_isPath {x t : V} (i : Fin 3)
         simp at heq
       exact (threeSplitTail_isPath q hq hout).cons hfresh
 
-private theorem threeSplitArm_support_cases {x t : V} (i : Fin 3)
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+private theorem threeSplitArm_support_cases [Finite V] {x t : V} (i : Fin 3)
     (p : G.Walk x t) (hp : p.IsPath) (hxt : x ≠ t)
     {q : ThreeSplitVertex x} (hq : q ∈ (threeSplitArm i p hp hxt).support) :
     q = .inl i ∨
       ∃ w, ∃ hwx : w ≠ x, w ∈ p.support ∧ q = .inr ⟨w, hwx⟩ := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   cases p with
   | nil => exact False.elim (hxt rfl)
   | @cons _ a _ hxa r =>
@@ -274,10 +295,12 @@ def threeSplitSources (x : V) : Set (ThreeSplitVertex x) :=
 def threeSplitTargets (x : V) (R : Set V) : Set (ThreeSplitVertex x) :=
   {q | ∃ v : {w : V // w ≠ x}, v.1 ∈ R ∧ q = .inr v}
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem mem_threeSplitSources {x : V} {q : ThreeSplitVertex x} :
     q ∈ threeSplitSources x ↔ ∃ i, q = .inl i := by
   simp [threeSplitSources, eq_comm]
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem mem_threeSplitTargets {x : V} {R : Set V}
     {q : ThreeSplitVertex x} :
     q ∈ threeSplitTargets x R ↔
@@ -297,10 +320,12 @@ def collapseThreeSplitHom (G : SimpleGraph V) (x : V) :
     · exact h
     · exact h
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem collapseThreeSplitHom_source (G : SimpleGraph V)
     (x : V) (i : Fin 3) : collapseThreeSplitHom G x (.inl i) = x :=
   rfl
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem collapseThreeSplitHom_old (G : SimpleGraph V)
     (x : V) (v : {w : V // w ≠ x}) :
     collapseThreeSplitHom G x (.inr v) = v.1 :=
@@ -314,10 +339,11 @@ private theorem otherThreeSource_ne (i : Fin 3) : otherThreeSource i ≠ i := by
 
 /-! ## Every fan separator has at least two vertices -/
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Vertex-two-connectivity rules out a separator of size zero or one
 between the three split sources and a target set containing two distinct
 old vertices. -/
-theorem two_le_ncard_threeSplit_separator
+theorem two_le_ncard_threeSplit_separator [Finite V]
     {x y z : V} (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z)
     (R : Set V) (hyR : y ∈ R) (hzR : z ∈ R)
     (hconn : G.Connected)
@@ -327,6 +353,7 @@ theorem two_le_ncard_threeSplit_separator
       (threeSplitSources x) (threeSplitTargets x R) S) :
     2 ≤ S.ncard := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   by_contra hnot
   have hlt : S.ncard < 2 := Nat.lt_of_not_ge hnot
   have hfinite : S.Finite := Set.toFinite S
@@ -405,10 +432,11 @@ theorem two_le_ncard_threeSplit_separator
             exact fun h ↦ w.2 (by simpa [inc] using hwa.trans h)
           exact haAvoid had
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- A two-element separator between the three sources and a target
 containing two old vertices cannot spend either of its vertices on a source
 copy.  Thus it is exactly the lift of two distinct old vertices. -/
-theorem threeSplit_separator_eq_old_pair
+theorem threeSplit_separator_eq_old_pair [Finite V]
     {x y z : V} (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z)
     (R : Set V) (hyR : y ∈ R) (hzR : z ∈ R)
     (hconn : G.Connected)
@@ -419,6 +447,7 @@ theorem threeSplit_separator_eq_old_pair
     (hcard : S.ncard = 2) :
     ∃ a b : {w : V // w ≠ x}, a ≠ b ∧ S = {.inr a, .inr b} := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨s, t, hst, rfl⟩ := Set.ncard_eq_two.mp hcard
   have target_mem {q : V} (hqx : q ≠ x) (hqR : q ∈ R) :
       (.inr ⟨q, hqx⟩ : ThreeSplitVertex x) ∈ threeSplitTargets x R :=
@@ -532,9 +561,10 @@ theorem threeSplit_separator_eq_old_pair
 
 /-! ## Converting a Menger separator into a cycle separator -/
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- A two-element separator in the split graph gives the exact
 `VertexCycleSeparator` on the original graph. -/
-theorem exists_vertexCycleSeparator_of_threeSplit_separator
+theorem exists_vertexCycleSeparator_of_threeSplit_separator [Finite V]
     {r x : V} (C : G.Walk r r) (hxC : x ∉ C.support)
     (hconn : G.Connected)
     (hdelete : ∀ d : V, (G.induce fun w : V ↦ w ≠ d).Connected)
@@ -547,6 +577,7 @@ theorem exists_vertexCycleSeparator_of_threeSplit_separator
     (hyC : y ∈ C.support) (hzC : z ∈ C.support) :
     Nonempty (VertexCycleSeparator C x) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨a, b, hab, hS_eq⟩ := threeSplit_separator_eq_old_pair
     hxy hxz hyz {w | w ∈ C.support} hyC hzC hconn hdelete S hS hcard
   have hxa : x ≠ a.1 := a.2.symm
@@ -571,7 +602,7 @@ theorem exists_vertexCycleSeparator_of_threeSplit_separator
     rim_outside_side := ?_ }⟩
   intro w hwC hwa hwb hwSide
   have hwNotPair : w ∉ (({a.1, b.1} : Finset V) : Set V) := by
-    simpa [hwa, hwb]
+    simp [hwa, hwb]
   have hwEq : G.componentComplMk hwNotPair = side := hwSide.choose_spec
   have hreach : (G.induce
       (((({a.1, b.1} : Finset V) : Set V))ᶜ)).Reachable
@@ -636,14 +667,16 @@ structure CleanThreeFanToCycle {r x : V} (C : G.Walk r r) where
   arm_meets_cycle_only_start : ∀ i w, w ∈ (arm i).support →
     w ∈ C.support → w = endpoint i
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Three disjoint paths from the split sources to a cycle collapse and
 truncate to a clean three-fan in the original graph. -/
-theorem exists_cleanThreeFanToCycle_of_threeABLinkage
+theorem exists_cleanThreeFanToCycle_of_threeABLinkage [Finite V]
     {r x : V} (C : G.Walk r r) (hxC : x ∉ C.support)
     (L : ThreeABLinkage (threeSplitGraph G x) (threeSplitSources x)
       (threeSplitTargets x {w | w ∈ C.support})) :
     Nonempty (CleanThreeFanToCycle (x := x) C) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   choose source hsource using fun i ↦
     (mem_threeSplitSources.mp (L.left_mem i))
   have hleft (i) : L.left i = .inl (source i) := hsource i
@@ -767,17 +800,19 @@ theorem exists_cleanThreeFanToCycle_of_threeABLinkage
   apply hqFirst i w hwq
   simpa [target] using hwC
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Three clean arms from an outside vertex to a simple cycle force a
 cycle through that vertex and any two prescribed distinct vertices of the
 old cycle.  This is the fan lemma used contrapositively in Watkins--Mesner.
 -/
-theorem hasCycleThroughThree_of_cleanThreeFanToCycle
+theorem hasCycleThroughThree_of_cleanThreeFanToCycle [Finite V]
     {r x y z : V} {C : G.Walk r r} (hC : C.IsCycle)
     (hxC : x ∉ C.support) (hyC : y ∈ C.support)
     (hzC : z ∈ C.support) (hyz : y ≠ z)
     (F : CleanThreeFanToCycle (x := x) C) :
     HasCycleThroughThree G x y z := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let R : G.Walk y y := C.rotate y hyC
   have hR : R.IsCycle := hC.rotate hyC
   have hRnotNil : ¬R.Nil := hR.not_nil
@@ -882,11 +917,12 @@ theorem hasCycleThroughThree_of_cleanThreeFanToCycle
         ((hside j).resolve_left hj) hef hmeetPQ
     exact finish I
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- In a vertex-two-connected graph with no common cycle through `x,y,z`,
 every cycle through `y,z` and avoiding `x` has a two-vertex separator from
 `x`.  This is AHT Lemma 3.5 in the exact form used three times in Theorem
 5.1. -/
-theorem exists_vertexCycleSeparator_of_no_common_cycle
+theorem exists_vertexCycleSeparator_of_no_common_cycle [Finite V]
     {r x y z : V} (C : G.Walk r r) (hC : C.IsCycle)
     (hxC : x ∉ C.support) (hyC : y ∈ C.support)
     (hzC : z ∈ C.support)
@@ -896,6 +932,7 @@ theorem exists_vertexCycleSeparator_of_no_common_cycle
     (hno : ¬HasCycleThroughThree G x y z) :
     Nonempty (VertexCycleSeparator C x) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let H := threeSplitGraph G x
   let A := threeSplitSources x
   let B := threeSplitTargets x {w | w ∈ C.support}
@@ -905,7 +942,7 @@ theorem exists_vertexCycleSeparator_of_no_common_cycle
     obtain ⟨F⟩ := exists_cleanThreeFanToCycle_of_threeABLinkage C hxC L
     exact (hno (hasCycleThroughThree_of_cleanThreeFanToCycle
       hC hxC hyC hzC hyz F)).elim
-  · push_neg at hlarge
+  · push Not at hlarge
     obtain ⟨S, hS, hScard⟩ := hlarge
     have htwo : 2 ≤ S.ncard := two_le_ncard_threeSplit_separator
       hxy hxz hyz {w | w ∈ C.support} hyC hzC hconn hdelete S hS
@@ -913,23 +950,25 @@ theorem exists_vertexCycleSeparator_of_no_common_cycle
     exact exists_vertexCycleSeparator_of_threeSplit_separator
       C hxC hconn hdelete S hS heq hxy hxz hyz hyC hzC
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Upgrade a cycle separator to the routed form when two internally
 disjoint arms run from two rim vertices to the separated terminal.  The
 two separator vertices are reordered, if necessary, so the first lies on
 the first arm and the second on the second arm. -/
-theorem exists_routedCycleSeparator_of_vertexCycleSeparator
+theorem exists_routedCycleSeparator_of_vertexCycleSeparator [Finite V]
     {a b x r : V} {pA : G.Walk a x} {pB : G.Walk b x}
-    {C : G.Walk r r} (hpA : pA.IsPath) (hpB : pB.IsPath)
+    {C : G.Walk r r} (_hpA : pA.IsPath) (_hpB : pB.IsPath)
     (haC : a ∈ C.support) (hbC : b ∈ C.support)
     (harms : ∀ w, w ∈ pA.support → w ∈ pB.support → w = x)
     (S : VertexCycleSeparator C x) :
     ∃ R : RoutedCycleSeparator pA pB C,
       ∀ w, w ∈ (R.side : Set V) ↔ w ∈ (S.side : Set V) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   have arm_hits {s : V} (p : G.Walk s x) (hsC : s ∈ C.support) :
       S.left ∈ p.support ∨ S.right ∈ p.support := by
     by_contra h
-    push_neg at h
+    push Not at h
     have hsLeft : s ≠ S.left := by
       intro hs
       exact h.1 (hs ▸ p.start_mem_support)
@@ -1020,13 +1059,14 @@ theorem _root_.SimpleGraph.Walk.IsPath.takeUntil_inter_reverse_dropUntil_only
 /-- The interval between two internal vertices of a simple path is again a
 simple path and contains neither end of the ambient path. -/
 theorem _root_.SimpleGraph.Walk.IsPath.exists_internal_interval
-    {W : Type u} [DecidableEq W] {H : SimpleGraph W}
+    {W : Type u} {H : SimpleGraph W}
     {a b w v : W} {p : H.Walk a b} (hp : p.IsPath)
     (hw : w ∈ p.support) (hv : v ∈ p.support)
     (hwa : w ≠ a) (hwb : w ≠ b) (hva : v ≠ a) (hvb : v ≠ b) :
     ∃ q : H.Walk w v, q.IsPath ∧
       (∀ t, t ∈ q.support → t ∈ p.support) ∧
       ∀ t, t ∈ q.support → t ≠ a ∧ t ≠ b := by
+  classical
   have hvCases : v ∈ (p.takeUntil w hw).support ∨
       v ∈ (p.dropUntil w hw).support := by
     have : v ∈ ((p.takeUntil w hw).append (p.dropUntil w hw)).support := by
@@ -1086,6 +1126,7 @@ theorem _root_.SimpleGraph.Walk.IsPath.exists_internal_interval
                 simpa only [htb] using htq
               simpa only [q, r] using hbq)
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Two noninitial vertices of a simple path are joined along that path
 without using its initial vertex. -/
 theorem _root_.SimpleGraph.Walk.IsPath.exists_subpath_avoiding_start
@@ -1095,6 +1136,7 @@ theorem _root_.SimpleGraph.Walk.IsPath.exists_subpath_avoiding_start
     ∃ q : G.Walk x y, q.IsPath ∧
       (∀ v, v ∈ q.support → v ∈ p.support) ∧
       ∀ v, v ∈ q.support → v ≠ a := by
+  classical
   have hxSplit : x ∈ (p.takeUntil y hy).support ∨
       x ∈ (p.dropUntil y hy).support := by
     have hxWhole : x ∈ ((p.takeUntil y hy).append
@@ -1142,24 +1184,28 @@ theorem _root_.SimpleGraph.Walk.IsPath.exists_subpath_avoiding_start
         hp hy a (p.takeUntil y hy).start_mem_support haRev
       exact hya hay.symm
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- On a simple path, taking up to its terminal vertex returns the whole
 path. -/
 theorem _root_.SimpleGraph.Walk.IsPath.takeUntil_end
     {a b : V} (p : G.Walk a b) (hp : p.IsPath) :
     p.takeUntil b p.end_mem_support = p := by
   have hdrop : p.dropUntil b p.end_mem_support = (.nil : G.Walk b b) :=
-    Walk.isPath_iff_eq_nil.mp (hp.dropUntil p.end_mem_support)
+    (Walk.isPath_iff_nil.mp (hp.dropUntil p.end_mem_support)).eq_nil
   have hspec := p.take_spec p.end_mem_support
   rw [hdrop] at hspec
   simpa using hspec
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Splitting an appended simple prefix at its terminal vertex leaves the
 second walk. -/
-theorem _root_.SimpleGraph.Walk.IsPath.dropUntil_append_join
+theorem _root_.SimpleGraph.Walk.IsPath.dropUntil_append_join [Finite V]
     {a b c : V} (p : G.Walk a b) (q : G.Walk b c)
     (hp : p.IsPath) :
     (p.append q).dropUntil b
       (Walk.support_subset_support_append_left p q p.end_mem_support) = q := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let hb : b ∈ (p.append q).support :=
     Walk.support_subset_support_append_left p q p.end_mem_support
   have htake : (p.append q).takeUntil b hb = p := by
@@ -1181,6 +1227,7 @@ def _root_.SimpleGraph.Walk.reverseSplit {a b t : V} (p : G.Walk a b)
     (ht : t ∈ p.support) : G.Walk b a :=
   (p.dropUntil t ht).reverse.append (p.takeUntil t ht).reverse
 
+omit [DecidableRel G.Adj] [Fintype V] in
 theorem _root_.SimpleGraph.Walk.IsPath.reverseSplit
     {a b t : V} (p : G.Walk a b) (hp : p.IsPath)
     (ht : t ∈ p.support) : (p.reverseSplit ht).IsPath := by
@@ -1204,6 +1251,7 @@ theorem _root_.SimpleGraph.Walk.IsPath.reverseSplit
   rw [← (p.takeUntil t ht).reverse.cons_tail_support] at hnd
   exact (List.nodup_cons.mp hnd).1 hvRight
 
+omit [DecidableRel G.Adj] [Fintype V] in
 theorem _root_.SimpleGraph.Walk.mem_reverseSplit_terminal
     {a b t : V} (p : G.Walk a b) (ht : t ∈ p.support) :
     t ∈ (p.reverseSplit ht).support := by
@@ -1212,28 +1260,35 @@ theorem _root_.SimpleGraph.Walk.mem_reverseSplit_terminal
     simpa only [Walk.support_reverse, List.mem_reverse] using
       (p.dropUntil t ht).start_mem_support)
 
-theorem _root_.SimpleGraph.Walk.IsPath.reverseSplit_armA
+omit [DecidableRel G.Adj] [Fintype V] in
+theorem _root_.SimpleGraph.Walk.IsPath.reverseSplit_armA [Finite V]
     {a b t : V} (p : G.Walk a b) (hp : p.IsPath)
     (ht : t ∈ p.support) :
     (p.reverseSplit ht).takeUntil t (p.mem_reverseSplit_terminal ht) =
       (p.dropUntil t ht).reverse := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have htake := Walk.takeUntil_append_of_mem_left
     (p.dropUntil t ht).reverse (p.takeUntil t ht).reverse
       (p.dropUntil t ht).reverse.end_mem_support
   rw [Walk.IsPath.takeUntil_end _ (hp.dropUntil ht).reverse] at htake
   simpa only [Walk.reverseSplit] using htake
 
-theorem _root_.SimpleGraph.Walk.IsPath.reverseSplit_armB
+omit [DecidableRel G.Adj] [Fintype V] in
+theorem _root_.SimpleGraph.Walk.IsPath.reverseSplit_armB [Finite V]
     {a b t : V} (p : G.Walk a b) (hp : p.IsPath)
     (ht : t ∈ p.support) :
     ((p.reverseSplit ht).dropUntil t
       (p.mem_reverseSplit_terminal ht)).reverse = p.takeUntil t ht := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hdrop := Walk.IsPath.dropUntil_append_join
     (p.dropUntil t ht).reverse (p.takeUntil t ht).reverse
       (hp.dropUntil ht).reverse
   simpa only [Walk.reverseSplit, Walk.reverse_reverse] using
     congrArg Walk.reverse hdrop
 
+omit [DecidableRel G.Adj] [Fintype V] in
 theorem _root_.SimpleGraph.Walk.reverseSplit_support_subset
     {a b t w : V} (p : G.Walk a b) (ht : t ∈ p.support)
     (hw : w ∈ (p.reverseSplit ht).support) : w ∈ p.support := by
@@ -1243,6 +1298,7 @@ theorem _root_.SimpleGraph.Walk.reverseSplit_support_subset
   · exact p.support_dropUntil_subset_support ht hwDrop
   · exact p.support_takeUntil_subset_support ht hwTake
 
+omit [DecidableRel G.Adj] [Fintype V] in
 theorem _root_.SimpleGraph.Walk.support_subset_reverseSplit
     {a b t w : V} (p : G.Walk a b) (ht : t ∈ p.support)
     (hw : w ∈ p.support) : w ∈ (p.reverseSplit ht).support := by
@@ -1257,10 +1313,14 @@ theorem _root_.SimpleGraph.Walk.support_subset_reverseSplit
     Walk.support_reverse, List.mem_reverse]
   exact hwSplit.elim Or.inr Or.inl
 
-theorem _root_.SimpleGraph.Walk.mem_reverseSplit_support_iff
+omit [DecidableRel G.Adj] [Fintype V] in
+theorem _root_.SimpleGraph.Walk.mem_reverseSplit_support_iff [Finite V]
     {a b t w : V} (p : G.Walk a b) (ht : t ∈ p.support) :
-    w ∈ (p.reverseSplit ht).support ↔ w ∈ p.support :=
-  ⟨p.reverseSplit_support_subset ht, p.support_subset_reverseSplit ht⟩
+    w ∈ (p.reverseSplit ht).support ↔ w ∈ p.support := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
+  exact
+    ⟨p.reverseSplit_support_subset ht, p.support_subset_reverseSplit ht⟩
 
 /-! ## Clean path splices
 
@@ -1268,6 +1328,7 @@ The last two contradictions in AHT Theorem 5.1 are both eight-piece
 cycles.  Keeping the list arithmetic here avoids repeating it in each of
 the matching cases. -/
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Two paths meeting only at their common endpoint concatenate to a
 path. -/
 private theorem _root_.SimpleGraph.Walk.IsPath.append_of_meet_only_endpoint_wm
@@ -1294,12 +1355,15 @@ def RoutedCycleSeparator.terminalBridge
   (pA.dropUntil S.left S.left_mem_aArm).append
     (pB.dropUntil S.right S.right_mem_bArm).reverse
 
-theorem RoutedCycleSeparator.terminalBridge_isPath
+omit [DecidableRel G.Adj] [Fintype V] in
+theorem RoutedCycleSeparator.terminalBridge_isPath [Finite V]
     {a b x r : V} {pA : G.Walk a x} {pB : G.Walk b x}
     {C : G.Walk r r} (S : RoutedCycleSeparator pA pB C)
     (hpA : pA.IsPath) (hpB : pB.IsPath)
     (harms : ∀ w, w ∈ pA.support → w ∈ pB.support → w = x) :
     S.terminalBridge.IsPath := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   apply (hpA.dropUntil S.left_mem_aArm).append_of_meet_only_endpoint_wm
     (hpB.dropUntil S.right_mem_bArm).reverse
   intro w hwA hwB
@@ -1308,24 +1372,28 @@ theorem RoutedCycleSeparator.terminalBridge_isPath
   · apply pB.support_dropUntil_subset_support S.right_mem_bArm
     simpa only [Walk.support_reverse, List.mem_reverse] using hwB
 
+omit [DecidableRel G.Adj] [Fintype V] in
 @[simp] theorem RoutedCycleSeparator.left_mem_terminalBridge
     {a b x r : V} {pA : G.Walk a x} {pB : G.Walk b x}
     {C : G.Walk r r} (S : RoutedCycleSeparator pA pB C) :
     S.left ∈ S.terminalBridge.support := by
   simp [RoutedCycleSeparator.terminalBridge]
 
+omit [DecidableRel G.Adj] [Fintype V] in
 @[simp] theorem RoutedCycleSeparator.right_mem_terminalBridge
     {a b x r : V} {pA : G.Walk a x} {pB : G.Walk b x}
     {C : G.Walk r r} (S : RoutedCycleSeparator pA pB C) :
     S.right ∈ S.terminalBridge.support := by
   simp [RoutedCycleSeparator.terminalBridge]
 
+omit [DecidableRel G.Adj] [Fintype V] in
 @[simp] theorem RoutedCycleSeparator.terminal_mem_terminalBridge
     {a b x r : V} {pA : G.Walk a x} {pB : G.Walk b x}
     {C : G.Walk r r} (S : RoutedCycleSeparator pA pB C) :
     x ∈ S.terminalBridge.support := by
   simp [RoutedCycleSeparator.terminalBridge]
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Every vertex of the first arm after its separator vertex lies in the
 terminal-side component (apart from the separator vertex itself). -/
 theorem RoutedCycleSeparator.mem_side_of_mem_aSuffix
@@ -1372,6 +1440,7 @@ theorem RoutedCycleSeparator.mem_side_of_mem_aSuffix
     S.x_mem_side.choose_spec
   exact ⟨havoid w s.end_mem_support, hcomp.symm.trans hxEq⟩
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Symmetric terminal-side membership for the second arm suffix. -/
 theorem RoutedCycleSeparator.mem_side_of_mem_bSuffix
     {a b x r w : V} {pA : G.Walk a x} {pB : G.Walk b x}
@@ -1416,9 +1485,10 @@ theorem RoutedCycleSeparator.mem_side_of_mem_bSuffix
     S.x_mem_side.choose_spec
   exact ⟨havoid w s.end_mem_support, hcomp.symm.trans hxEq⟩
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- If a routed separator uses the two branch ends of one displayed route,
 then every nonboundary vertex of that route belongs to its terminal side. -/
-theorem RoutedCycleSeparator.mem_side_of_route_of_eq_branches
+theorem RoutedCycleSeparator.mem_side_of_route_of_eq_branches [Finite V]
     {A B t r : V} {P : G.Walk A B} (ht : t ∈ P.support)
     {C : G.Walk r r}
     (S : RoutedCycleSeparator (P.takeUntil t ht)
@@ -1427,6 +1497,8 @@ theorem RoutedCycleSeparator.mem_side_of_route_of_eq_branches
     {w : V} (hwP : w ∈ P.support)
     (hwleft : w ≠ S.left) (hwright : w ≠ S.right) :
     w ∈ (S.side : Set V) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have harms : ∀ v,
       v ∈ (P.takeUntil t ht).support →
       v ∈ (P.dropUntil t ht).reverse.support → v = t := by
@@ -1460,15 +1532,18 @@ theorem RoutedCycleSeparator.mem_side_of_route_of_eq_branches
       exact hmem hright S.right_mem_bArm
     · exact hwright
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- The canonical bridge has no vertices outside its terminal component
 except its two named attachments. -/
-theorem RoutedCycleSeparator.terminalBridge_support
+theorem RoutedCycleSeparator.terminalBridge_support [Finite V]
     {a b x r w : V} {pA : G.Walk a x} {pB : G.Walk b x}
     {C : G.Walk r r} (S : RoutedCycleSeparator pA pB C)
     (hpA : pA.IsPath) (hpB : pB.IsPath)
     (harms : ∀ v, v ∈ pA.support → v ∈ pB.support → v = x)
     (hw : w ∈ S.terminalBridge.support) :
     w = S.left ∨ w = S.right ∨ w ∈ (S.side : Set V) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hcases :
       w ∈ (pA.dropUntil S.left S.left_mem_aArm).support ∨
       w ∈ (pB.dropUntil S.right S.right_mem_bArm).reverse.support := by
@@ -1484,9 +1559,10 @@ theorem RoutedCycleSeparator.terminalBridge_support
     · exact Or.inr (Or.inl hwr)
     · exact Or.inr (Or.inr (S.mem_side_of_mem_bSuffix hpB harms hwB' hwr))
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- A cycle through three named vertices obtained from two clean arcs with
 the same ends. -/
-theorem hasCycleThroughThree_of_two_clean_arcs
+theorem hasCycleThroughThree_of_two_clean_arcs [Finite V]
     {s t w x y z : V} (p q : G.Walk s t)
     (hp : p.IsPath) (hq : q.IsPath)
     (hw : w ∈ p.support) (hws : w ≠ s) (hwt : w ≠ t)
@@ -1496,6 +1572,8 @@ theorem hasCycleThroughThree_of_two_clean_arcs
     (hy : y ∈ p.support ∨ y ∈ q.support)
     (hz : z ∈ p.support ∨ z ∈ q.support) :
     HasCycleThroughThree G x y z := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let C : G.Walk s s := p.append q.reverse
   have hC : C.IsCycle := by
     dsimp only [C]
@@ -1509,12 +1587,13 @@ theorem hasCycleThroughThree_of_two_clean_arcs
   · simpa only [C, Walk.mem_support_append_iff,
       Walk.support_reverse, List.mem_reverse] using hz
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Let `D` be a component after deleting two vertices of a simple cycle.
 If one open arc of the cycle meets `D`, while `y` and `z` lie on the cycle
 outside `D`, then the other open arc contains both `y` and `z`.  A path
 between the deleted vertices through `x ∈ D` is internally contained in
 `D`, so it and that complementary arc form a cycle through `x,y,z`. -/
-theorem hasCycleThroughThree_of_cycle_component_split
+theorem hasCycleThroughThree_of_cycle_component_split [Finite V]
     {a b x y z r c : V} (C : G.Walk c c) (hC : C.IsCycle)
     (haC : a ∈ C.support) (hbC : b ∈ C.support) (hab : a ≠ b)
     (hrC : r ∈ C.support) (hyC : y ∈ C.support)
@@ -1529,6 +1608,7 @@ theorem hasCycleThroughThree_of_cycle_component_split
     (hdelete : ∀ d : V, (G.induce fun w : V ↦ w ≠ d).Connected) :
     HasCycleThroughThree G x y z := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   have hxEnds : x ≠ a ∧ x ≠ b := by
     simpa only [Finset.mem_coe, Finset.mem_insert,
       Finset.mem_singleton, not_or] using hxD.1
@@ -1607,11 +1687,12 @@ theorem hasCycleThroughThree_of_cycle_component_split
       (fun w hw ↦ (A.cover w hw).symm)
       (fun w hwS hwF ↦ A.meet_only_ends w hwF hwS) hrSecond
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Convenience wrapper for the four-by-four path splices on AHT
 pp. 15--16.  Each new constituent is required to meet its assembled prefix
 only at the joining endpoint, and the two completed arcs meet only at their
 common ends. -/
-theorem hasCycleThroughThree_of_four_by_four_splice
+theorem hasCycleThroughThree_of_four_by_four_splice [Finite V]
     {s a₁ a₂ a₃ t b₁ b₂ b₃ x y z : V}
     (p₀ : G.Walk s a₁) (p₁ : G.Walk a₁ a₂)
     (p₂ : G.Walk a₂ a₃) (p₃ : G.Walk a₃ t)
@@ -1643,6 +1724,8 @@ theorem hasCycleThroughThree_of_four_by_four_splice
       z ∈ (((p₀.append p₁).append p₂).append p₃).support ∨
       z ∈ (((q₀.append q₁).append q₂).append q₃).support) :
     HasCycleThroughThree G x y z := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hp₀₁' : (p₀.append p₁).IsPath :=
     hp₀.append_of_meet_only_endpoint_wm hp₁ hp₀₁
   have hp₀₁₂ : ((p₀.append p₁).append p₂).IsPath :=
@@ -1666,18 +1749,21 @@ theorem hasCycleThroughThree_of_four_by_four_splice
 
 /-! ## The three maximal routed separators -/
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private theorem HasCycleThroughThree.reorder_yxz
     {x y z : V} (h : HasCycleThroughThree G y x z) :
     HasCycleThroughThree G x y z := by
   obtain ⟨r, C, hC, hy, hx, hz⟩ := h
   exact ⟨r, C, hC, hx, hy, hz⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private theorem HasCycleThroughThree.reorder_zxy
     {x y z : V} (h : HasCycleThroughThree G z x y) :
     HasCycleThroughThree G x y z := by
   obtain ⟨r, C, hC, hz, hx, hy⟩ := h
   exact ⟨r, C, hC, hx, hy, hz⟩
 
+omit [DecidableRel G.Adj] in
 /-- Maximal routed separator of `x` from the rim through `y,z`. -/
 theorem WatkinsMesnerK32Source.exists_maximal_xSeparator
     {x y z : V} (T : WatkinsMesnerK32Source G x y z)
@@ -1686,6 +1772,7 @@ theorem WatkinsMesnerK32Source.exists_maximal_xSeparator
     (hdelete : ∀ d : V, (G.induce fun w : V ↦ w ≠ d).Connected)
     (hno : ¬HasCycleThroughThree G x y z) :
     ∃ S : RoutedCycleSeparator T.xArmA T.xArmB T.xRim, S.IsMaximal := by
+  classical
   have hyRim : y ∈ T.xRim.support := by
     simp [WatkinsMesnerK32Source.xRim, T.y_mem]
   have hzRim : z ∈ T.xRim.support := by
@@ -1705,6 +1792,7 @@ theorem WatkinsMesnerK32Source.exists_maximal_xSeparator
         T.xRoute_isPath T.x_mem w hwA hwB) S
   exact exists_maximal_routedCycleSeparator ⟨R⟩
 
+omit [DecidableRel G.Adj] in
 /-- Maximal routed separator of `y` from the rim through `x,z`. -/
 theorem WatkinsMesnerK32Source.exists_maximal_ySeparator
     {x y z : V} (T : WatkinsMesnerK32Source G x y z)
@@ -1713,6 +1801,7 @@ theorem WatkinsMesnerK32Source.exists_maximal_ySeparator
     (hdelete : ∀ d : V, (G.induce fun w : V ↦ w ≠ d).Connected)
     (hno : ¬HasCycleThroughThree G x y z) :
     ∃ S : RoutedCycleSeparator T.yArmA T.yArmB T.yRim, S.IsMaximal := by
+  classical
   have hxRim : x ∈ T.yRim.support := by
     simp [WatkinsMesnerK32Source.yRim, T.x_mem]
   have hzRim : z ∈ T.yRim.support := by
@@ -1734,6 +1823,7 @@ theorem WatkinsMesnerK32Source.exists_maximal_ySeparator
         T.yRoute_isPath T.y_mem w hwA hwB) S
   exact exists_maximal_routedCycleSeparator ⟨R⟩
 
+omit [DecidableRel G.Adj] in
 /-- Maximal routed separator of `z` from the rim through `x,y`. -/
 theorem WatkinsMesnerK32Source.exists_maximal_zSeparator
     {x y z : V} (T : WatkinsMesnerK32Source G x y z)
@@ -1742,6 +1832,7 @@ theorem WatkinsMesnerK32Source.exists_maximal_zSeparator
     (hdelete : ∀ d : V, (G.induce fun w : V ↦ w ≠ d).Connected)
     (hno : ¬HasCycleThroughThree G x y z) :
     ∃ S : RoutedCycleSeparator T.zArmA T.zArmB T.zRim, S.IsMaximal := by
+  classical
   have hxRim : x ∈ T.zRim.support := by
     simp [WatkinsMesnerK32Source.zRim, T.x_mem]
   have hyRim : y ∈ T.zRim.support := by
@@ -2017,6 +2108,7 @@ structure WatkinsMesnerMaximalTriple {x y z : V}
   y_maximal : ySep.IsMaximal
   z_maximal : zSep.IsMaximal
 
+omit [DecidableRel G.Adj] in
 /-- A maximal routed separator has no routed competitor with a strictly
 larger terminal-side component.  This is the finite-cardinality form used
 at every maximality contradiction on pp.14--15 of AHT. -/
@@ -2053,6 +2145,7 @@ def RoutedCycleSeparator.changeRim
   right_mem_bArm := S.right_mem_bArm
   right_ne_terminal := S.right_ne_terminal
 
+omit [DecidableRel G.Adj] in
 /-- Maximality is invariant under changing the rim to a walk with the same
 vertex support. -/
 theorem RoutedCycleSeparator.IsMaximal.changeRim
@@ -2089,6 +2182,7 @@ def RoutedCycleSeparator.changeArms
   right_mem_bArm := hright
   right_ne_terminal := S.right_ne_terminal
 
+omit [DecidableRel G.Adj] in
 /-- Maximality is invariant under replacing the displayed arms when every
 vertex of either new arm also lies on the corresponding old arm. -/
 theorem RoutedCycleSeparator.IsMaximal.changeArms
@@ -2143,6 +2237,7 @@ noncomputable def RoutedCycleSeparator.flipAB
       simpa only [side, ComponentCompl.mem_transport] using hwSide
     exact S.rim_outside_side w (hDC w hwD) hwLeft hwRight hwOld
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem RoutedCycleSeparator.componentCarrier_flipAB
     {a b x r s : V} {pA : G.Walk a x} {pB : G.Walk b x}
     {C : G.Walk r r} {D : G.Walk s s}
@@ -2156,6 +2251,7 @@ noncomputable def RoutedCycleSeparator.flipAB
   simp only [mem_componentCarrier, RoutedCycleSeparator.flipAB,
     ComponentCompl.mem_transport]
 
+omit [DecidableRel G.Adj] in
 theorem RoutedCycleSeparator.IsMaximal.flipAB
     {a b x r s : V} {pA : G.Walk a x} {pB : G.Walk b x}
     {C : G.Walk r r} {D : G.Walk s s}
@@ -2163,12 +2259,14 @@ theorem RoutedCycleSeparator.IsMaximal.flipAB
     (hDC : ∀ w, w ∈ D.support → w ∈ C.support)
     (hCD : ∀ w, w ∈ C.support → w ∈ D.support) :
     (S.flipAB hDC).IsMaximal := by
+  classical
   intro R
   let R' : RoutedCycleSeparator pA pB C := R.flipAB hCD
   have hle := hS R'
   rw [RoutedCycleSeparator.componentCarrier_flipAB] at hle
   simpa only [RoutedCycleSeparator.componentCarrier_flipAB] using hle
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- A connected component outside one deletion set is contained in a
 component outside another deletion set as soon as it avoids the latter set
 and the two components share one vertex. -/
@@ -2200,6 +2298,7 @@ theorem ComponentCompl.subset_of_disjoint_of_shared
         exact ih hbC hbD
   exact walk_mem p ⟨hwK, hwEq⟩ hwD
 
+omit [DecidableRel G.Adj] in
 /-- If a component of `G - {a,b}` is bypassed by an `a`--`b` route, then
 deleting the component (but retaining its two boundary vertices) leaves a
 connected graph.  This is the connectivity half of condition (vi); the
@@ -2242,9 +2341,9 @@ theorem ComponentCompl.connected_induce_compl_componentCarrier
   have boundary_of_adj {v w : V} (hvX : v ∈ X) (hwX : w ∉ X)
       (hvw : G.Adj v w) : w = a ∨ w = b := by
     by_contra hw
-    push_neg at hw
+    push Not at hw
     have hwPair : w ∉ ((({a, b} : Finset V) : Set V)) := by
-      simpa [hw.1, hw.2]
+      simp [hw.1, hw.2]
     have hvC : v ∈ (C : Set V) := by
       simpa only [X, mem_componentCarrier] using hvX
     have hwC : w ∈ (C : Set V) :=
@@ -2282,6 +2381,7 @@ theorem ComponentCompl.connected_induce_compl_componentCarrier
       Subtype.coe_eta] using h
   exact { preconnected := hpre, nonempty := ⟨⟨a, haX⟩⟩ }
 
+omit [DecidableRel G.Adj] in
 /-- Deletion version of
 `ComponentCompl.connected_induce_compl_componentCarrier`.  Once `a` and
 `b` can still be joined outside the chosen component after deleting `d`,
@@ -2334,9 +2434,9 @@ theorem ComponentCompl.connected_delete_induce_compl_componentCarrier
   have boundary_of_adj {v w : V} (hvX : v ∈ X) (hwX : w ∉ X)
       (hvw : G.Adj v w) : w = a ∨ w = b := by
     by_contra hw
-    push_neg at hw
+    push Not at hw
     have hwPair : w ∉ ((({a, b} : Finset V) : Set V)) := by
-      simpa [hw.1, hw.2]
+      simp [hw.1, hw.2]
     have hvC : v ∈ (C : Set V) := by
       simpa only [X, mem_componentCarrier] using hvX
     have hwC : w ∈ (C : Set V) :=
@@ -2418,6 +2518,7 @@ theorem ComponentCompl.connected_delete_induce_compl_componentCarrier
       nonempty := ⟨⟨c, hcX, hcd⟩⟩ }
   exact gi.connected_iff.mp hJ
 
+omit [DecidableRel G.Adj] in
 /-- A two-cut component has vertex-two-connected complement as soon as its
 two boundary vertices remain mutually reachable outside the component,
 both before and after deletion of every surviving third vertex. -/
@@ -2454,12 +2555,14 @@ theorem ComponentCompl.complementVertexTwoConnected_of_boundary_reachable
             · exact hdb⟩) :
     ComplementVertexTwoConnected G
       (componentCarrier (G := G) {a, b} C) := by
+  classical
   refine ⟨ComponentCompl.connected_induce_compl_componentCarrier
     C hab hconn habOutside, ?_⟩
   intro d
   exact ComponentCompl.connected_delete_induce_compl_componentCarrier C
     hab hdelete d (habDelete d)
 
+omit [DecidableRel G.Adj] in
 /-- Contract a component of `G-{a,b}` to `a` along a walk which already
 avoids `b`.  This is the local contraction used when a hypothetical new
 two-cut `{d,b}` puts a rim vertex on the terminal side. -/
@@ -2488,9 +2591,9 @@ theorem ComponentCompl.reachable_compl_component_of_reachable_avoiding_right
   have boundary_of_adj {s t : V} (hsX : s ∈ X) (htX : t ∉ X)
       (hst : G.Adj s t) : t = a ∨ t = b := by
     by_contra ht
-    push_neg at ht
+    push Not at ht
     have htPair : t ∉ ((({a, b} : Finset V) : Set V)) := by
-      simpa [ht.1, ht.2]
+      simp [ht.1, ht.2]
     have hsC : s ∈ (C : Set V) := by
       simpa only [X, mem_componentCarrier] using hsX
     have htC : t ∈ (C : Set V) :=
@@ -2532,8 +2635,9 @@ theorem ComponentCompl.reachable_compl_component_of_reachable_avoiding_right
   have h := anchor_walk p
   rw [anchor_outside (w := ⟨u, hud, hub⟩) (by simpa only [X] using huX),
     anchor_outside (w := ⟨v, hvd, hvb⟩) (by simpa only [X] using hvX)] at h
-  convert h using 1 <;> apply Subtype.ext <;> rfl
+  convert h using 1
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- The prefix of the first routed arm, up to its separator vertex, lies
 outside the separated terminal component.  The two arms are assumed to meet
 only at their common terminal and the arm's initial vertex lies on the
@@ -2541,7 +2645,7 @@ opposite rim. -/
 theorem RoutedCycleSeparator.aPrefix_outside_side
     {a b x r : V} {pA : G.Walk a x} {pB : G.Walk b x}
     {C : G.Walk r r} (S : RoutedCycleSeparator pA pB C)
-    (hpA : pA.IsPath) (haC : a ∈ C.support)
+    (_hpA : pA.IsPath) (haC : a ∈ C.support)
     (harms : ∀ w, w ∈ pA.support → w ∈ pB.support → w = x) :
     ∀ w, w ∈ (pA.takeUntil S.left S.left_mem_aArm).support →
       w ∉ (S.side : Set V) := by
@@ -2582,11 +2686,12 @@ theorem RoutedCycleSeparator.aPrefix_outside_side
     ComponentCompl.notMem_of_mem haSide (by simp [h])
   exact S.rim_outside_side a haC haLeft haRight haSide
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Symmetric prefix lemma for the second routed arm. -/
 theorem RoutedCycleSeparator.bPrefix_outside_side
     {a b x r : V} {pA : G.Walk a x} {pB : G.Walk b x}
     {C : G.Walk r r} (S : RoutedCycleSeparator pA pB C)
-    (hpB : pB.IsPath) (hbC : b ∈ C.support)
+    (_hpB : pB.IsPath) (hbC : b ∈ C.support)
     (harms : ∀ w, w ∈ pA.support → w ∈ pB.support → w = x) :
     ∀ w, w ∈ (pB.takeUntil S.right S.right_mem_bArm).support →
       w ∉ (S.side : Set V) := by
@@ -2637,9 +2742,10 @@ def RoutedCycleSeparator.outerBypass
   (pA.takeUntil S.left S.left_mem_aArm).reverse |>.append
     (q.append (pB.takeUntil S.right S.right_mem_bArm))
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- If the middle route of an outer bypass lies on the displayed rim, the
 whole bypass avoids the separated terminal component. -/
-theorem RoutedCycleSeparator.outerBypass_outside_side
+theorem RoutedCycleSeparator.outerBypass_outside_side [Finite V]
     {a b x r : V} {pA : G.Walk a x} {pB : G.Walk b x}
     {C : G.Walk r r} (S : RoutedCycleSeparator pA pB C)
     (hpA : pA.IsPath) (hpB : pB.IsPath)
@@ -2647,6 +2753,8 @@ theorem RoutedCycleSeparator.outerBypass_outside_side
     (harms : ∀ w, w ∈ pA.support → w ∈ pB.support → w = x)
     (q : G.Walk a b) (hqC : ∀ w, w ∈ q.support → w ∈ C.support) :
     ∀ w, w ∈ (S.outerBypass q).support → w ∉ (S.side : Set V) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   intro w hw hwSide
   have hwCases :
       w ∈ (pA.takeUntil S.left S.left_mem_aArm).reverse.support ∨
@@ -2668,6 +2776,7 @@ theorem RoutedCycleSeparator.outerBypass_outside_side
     exact S.rim_outside_side w hwC hwL hwR hwSide
   · exact S.bPrefix_outside_side hpB hbC harms w hwB hwSide
 
+omit [DecidableRel G.Adj] in
 /-- The outer bypass gives reachability between the two boundary vertices
 in the complement of the terminal component. -/
 theorem RoutedCycleSeparator.outerBypass_reachable
@@ -2687,6 +2796,7 @@ theorem RoutedCycleSeparator.outerBypass_reachable
           intro h
           exact ComponentCompl.notMem_of_mem
             (mem_componentCarrier.mp h) (by simp)⟩ := by
+  classical
   let p := S.outerBypass q
   have hout : ∀ w ∈ p.support,
       w ∉ componentCarrier (G := G) {S.left, S.right} S.side := by
@@ -2695,6 +2805,7 @@ theorem RoutedCycleSeparator.outerBypass_reachable
       (by simpa only [mem_componentCarrier] using hmem)
   exact (p.induce _ hout).reachable
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Two outer bypasses whose middle routes meet only at their ends can both
 contain a vertex only if that vertex already lies on one of the two arm
 prefixes.  Thus a vertex which blocks both canonical bypasses is located on
@@ -2727,6 +2838,7 @@ theorem RoutedCycleSeparator.mem_prefix_of_mem_two_outerBypasses
     · exact Or.inr hdB
   · exact Or.inr hdB
 
+omit [DecidableRel G.Adj] in
 /-- If `d` lies on the first arm prefix, every other rim vertex can reach
 the second boundary vertex outside the terminal component and without
 using `d`.  On the rim we choose one of the two cycle arcs avoiding `d`,
@@ -2767,6 +2879,7 @@ theorem RoutedCycleSeparator.rim_reachable_right_avoiding_of_mem_aPrefix
             have hrA : S.right ∈ pA.support := by
               exact pA.support_takeUntil_subset_support S.left_mem_aArm hdA
             exact S.right_ne_terminal (harms S.right hrA hrB)⟩ := by
+  classical
   have hdB : d ∉ (pB.takeUntil S.right S.right_mem_bArm).support := by
     intro hdB
     have hdPA : d ∈ pA.support :=
@@ -2815,6 +2928,7 @@ theorem RoutedCycleSeparator.rim_reachable_right_avoiding_of_mem_aPrefix
       exact hvCases.elim hdq hdB
   exact (p.induce _ hout).reachable
 
+omit [DecidableRel G.Adj] in
 /-- Maximality rules out a cutvertex on the first arm prefix.  If deleting
 such a vertex `d` separated the old left and right boundary vertices in the
 complement of the terminal component, then the component of the terminal
@@ -2924,7 +3038,7 @@ theorem RoutedCycleSeparator.boundary_reachable_avoiding_of_maximal_mem_aPrefix
         have hreachPair :
             (G.induce ((({d, S.right} : Finset V) : Set V))ᶜ).Reachable
               ⟨S.left, hleftAvoid⟩
-              ⟨w, by simpa [hwd, hwRight]⟩ := by
+              ⟨w, by simp [hwd, hwRight]⟩ := by
           rw [← ConnectedComponent.eq]
           exact hleftD.2.trans hwD.2.symm
         have hreachNew :
@@ -3009,16 +3123,19 @@ def RoutedCycleSeparator.swap
       right_mem_bArm := S.left_mem_aArm
       right_ne_terminal := S.left_ne_terminal }
 
+omit [DecidableRel G.Adj] [Fintype V] in
 @[simp] theorem RoutedCycleSeparator.swap_left
     {a b x r : V} {pA : G.Walk a x} {pB : G.Walk b x}
     {C : G.Walk r r} (S : RoutedCycleSeparator pA pB C) :
     S.swap.left = S.right := rfl
 
+omit [DecidableRel G.Adj] [Fintype V] in
 @[simp] theorem RoutedCycleSeparator.swap_right
     {a b x r : V} {pA : G.Walk a x} {pB : G.Walk b x}
     {C : G.Walk r r} (S : RoutedCycleSeparator pA pB C) :
     S.swap.right = S.left := rfl
 
+omit [DecidableRel G.Adj] [Fintype V] in
 @[simp] theorem RoutedCycleSeparator.mem_swap_side
     {a b x r : V} {pA : G.Walk a x} {pB : G.Walk b x}
     {C : G.Walk r r} (S : RoutedCycleSeparator pA pB C) (v : V) :
@@ -3026,6 +3143,7 @@ def RoutedCycleSeparator.swap
   simp only [RoutedCycleSeparator.swap]
   exact ComponentCompl.mem_transport _ S.side v
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem RoutedCycleSeparator.componentCarrier_swap
     {a b x r : V} {pA : G.Walk a x} {pB : G.Walk b x}
     {C : G.Walk r r} (S : RoutedCycleSeparator pA pB C) :
@@ -3035,15 +3153,18 @@ def RoutedCycleSeparator.swap
   simp only [mem_componentCarrier, RoutedCycleSeparator.swap,
     ComponentCompl.mem_transport]
 
+omit [DecidableRel G.Adj] in
 /-- Maximality is invariant under swapping the two arms. -/
 theorem RoutedCycleSeparator.IsMaximal.swap
     {a b x r : V} {pA : G.Walk a x} {pB : G.Walk b x}
     {C : G.Walk r r} {S : RoutedCycleSeparator pA pB C}
     (hmax : S.IsMaximal) : S.swap.IsMaximal := by
+  classical
   intro R
   have h := hmax R.swap
   simpa only [RoutedCycleSeparator.componentCarrier_swap] using h
 
+omit [DecidableRel G.Adj] in
 /-- Symmetric maximality obstruction for a vertex on the second arm
 prefix. -/
 theorem RoutedCycleSeparator.boundary_reachable_avoiding_of_maximal_mem_bPrefix
@@ -3075,6 +3196,7 @@ theorem RoutedCycleSeparator.boundary_reachable_avoiding_of_maximal_mem_bPrefix
             exact ComponentCompl.notMem_of_mem
               (mem_componentCarrier.mp hr) (by simp)
           · exact Ne.symm hdRight⟩ := by
+  classical
   have hswap := S.swap.boundary_reachable_avoiding_of_maximal_mem_aPrefix
     hmax.swap hpA hC haC
     (fun q hqB hqA ↦ harms q hqA hqB)
@@ -3114,6 +3236,7 @@ theorem RoutedCycleSeparator.boundary_reachable_avoiding_of_maximal_mem_bPrefix
     change S.right = S.swap.left
     exact S.swap_left.symm
 
+omit [DecidableRel G.Adj] in
 /-- Full one-vertex-deletion bypass for a maximal routed separator.  Two
 internally disjoint rim routes give two canonical outer bypasses.  If one
 avoids `d`, use it.  If both meet `d`, the common-bypass lemma puts `d` on
@@ -3146,6 +3269,7 @@ theorem RoutedCycleSeparator.boundary_reachable_avoiding_of_maximal
             exact ComponentCompl.notMem_of_mem
               (mem_componentCarrier.mp hr) (by simp)
           · exact Ne.symm hdRight⟩ := by
+  classical
   have direct (q : G.Walk a b)
       (hqC : ∀ w, w ∈ q.support → w ∈ C.support)
       (hdq : d ∉ (S.outerBypass q).support) :
@@ -3188,18 +3312,23 @@ theorem RoutedCycleSeparator.boundary_reachable_avoiding_of_maximal
 namespace so dot notation remains available throughout the maximal-triple
 development. -/
 
+omit [DecidableRel G.Adj] in
 theorem VertexCycleSeparator.left_not_mem_componentCarrier
     {r x : V} {C : G.Walk r r} (S : VertexCycleSeparator C x) :
     S.left ∉ componentCarrier (G := G) {S.left, S.right} S.side := by
+  classical
   intro h
   exact ComponentCompl.notMem_of_mem (mem_componentCarrier.mp h) (by simp)
 
+omit [DecidableRel G.Adj] in
 theorem VertexCycleSeparator.right_not_mem_componentCarrier
     {r x : V} {C : G.Walk r r} (S : VertexCycleSeparator C x) :
     S.right ∉ componentCarrier (G := G) {S.left, S.right} S.side := by
+  classical
   intro h
   exact ComponentCompl.notMem_of_mem (mem_componentCarrier.mp h) (by simp)
 
+omit [DecidableRel G.Adj] in
 /-- A replacement side containing the old side and its old left boundary
 strictly enlarges the terminal component, contradicting maximality. -/
 theorem RoutedCycleSeparator.IsMaximal.not_replacement_of_subset_of_left_mem
@@ -3208,6 +3337,7 @@ theorem RoutedCycleSeparator.IsMaximal.not_replacement_of_subset_of_left_mem
     (hmax : S.IsMaximal) (R : RoutedCycleSeparator pA pB C)
     (hsub : (S.side : Set V) ⊆ (R.side : Set V))
     (hleft : S.left ∈ (R.side : Set V)) : False := by
+  classical
   apply (hmax.not_ssubset_componentCarrier R)
   rw [Finset.ssubset_iff_subset_ne]
   constructor
@@ -3222,6 +3352,7 @@ theorem RoutedCycleSeparator.IsMaximal.not_replacement_of_subset_of_left_mem
       simpa only [mem_componentCarrier] using hleft
     exact S.left_not_mem_componentCarrier hold
 
+omit [DecidableRel G.Adj] in
 /-- Right-boundary version of the preceding replacement contradiction. -/
 theorem RoutedCycleSeparator.IsMaximal.not_replacement_of_subset_of_right_mem
     {a b x r : V} {pA : G.Walk a x} {pB : G.Walk b x}
@@ -3229,6 +3360,7 @@ theorem RoutedCycleSeparator.IsMaximal.not_replacement_of_subset_of_right_mem
     (hmax : S.IsMaximal) (R : RoutedCycleSeparator pA pB C)
     (hsub : (S.side : Set V) ⊆ (R.side : Set V))
     (hright : S.right ∈ (R.side : Set V)) : False := by
+  classical
   apply (hmax.not_ssubset_componentCarrier R)
   rw [Finset.ssubset_iff_subset_ne]
   constructor
@@ -3243,10 +3375,12 @@ theorem RoutedCycleSeparator.IsMaximal.not_replacement_of_subset_of_right_mem
       simpa only [mem_componentCarrier] using hright
     exact S.right_not_mem_componentCarrier hold
 
+omit [DecidableRel G.Adj] in
 theorem VertexCycleSeparator.not_mem_componentCarrier_of_mem_rim
     {r x w : V} {C : G.Walk r r} (S : VertexCycleSeparator C x)
     (hwC : w ∈ C.support) :
     w ∉ componentCarrier (G := G) {S.left, S.right} S.side := by
+  classical
   intro hw
   have hwSide : w ∈ (S.side : Set V) := mem_componentCarrier.mp hw
   by_cases hwL : w = S.left
@@ -3260,11 +3394,13 @@ theorem VertexCycleSeparator.not_mem_componentCarrier_of_mem_rim
 /-- Two literal components of the same deleted graph that share a vertex
 are equal on vertices.  Root-namespace placement enables dot notation. -/
 theorem IsComponentAfterDeleting.mem_of_shared
-    {W : Type u} [Fintype W] [DecidableEq W]
-    {H : SimpleGraph W} [DecidableRel H.Adj]
+    {W : Type u} [Finite W]
+    {H : SimpleGraph W}
     {S C D : Finset W} (hC : IsComponentAfterDeleting H S C)
     (hD : IsComponentAfterDeleting H S D) {w v : W}
     (hwC : w ∈ C) (hwD : w ∈ D) (hvD : v ∈ D) : v ∈ C := by
+  classical
+  let : Fintype W := Fintype.ofFinite W
   let wD : {q : W // q ∈ (D : Set W)} := ⟨w, hwD⟩
   let vD : {q : W // q ∈ (D : Set W)} := ⟨v, hvD⟩
   obtain ⟨p⟩ := hD.2.2.1.preconnected wD vD
@@ -3282,11 +3418,13 @@ theorem IsComponentAfterDeleting.mem_of_shared
 /-- A walk which starts in a deletion component and avoids the deleted
 set stays in that component. -/
 theorem IsComponentAfterDeleting.walk_end_mem
-    {W : Type u} [Fintype W] [DecidableEq W]
-    {H : SimpleGraph W} [DecidableRel H.Adj]
+    {W : Type u} [Finite W]
+    {H : SimpleGraph W}
     {S C : Finset W} (hC : IsComponentAfterDeleting H S C)
     {a b : W} (p : H.Walk a b) :
     a ∈ C → (∀ w, w ∈ p.support → w ∉ S) → b ∈ C := by
+  classical
+  let : Fintype W := Fintype.ofFinite W
   induction p with
   | nil =>
       intro ha _
@@ -3298,15 +3436,18 @@ theorem IsComponentAfterDeleting.walk_end_mem
       · intro w hw
         exact havoid w (by simp [hw])
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- A simple path ending at one boundary vertex of a two-vertex deletion,
 while avoiding the other boundary vertex, cannot enter a different
 component of the deleted graph. -/
-theorem IsComponentAfterDeleting.path_to_boundary_avoids_component
+theorem IsComponentAfterDeleting.path_to_boundary_avoids_component [Finite V]
     {a b s : V} {C : Finset V}
     (hC : IsComponentAfterDeleting G ({a, b} : Finset V) C)
     (p : G.Walk s b) (hp : p.IsPath) (hsC : s ∉ C)
     (ha : a ∉ p.support) :
     ∀ w, w ∈ p.support → w ∉ C := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   intro w hw hwC
   have hwb : w ≠ b := by
     intro h
@@ -3328,18 +3469,21 @@ theorem IsComponentAfterDeleting.path_to_boundary_avoids_component
       ⟨hva, hvb⟩
   exact hsC hstart
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- If a simple path starts and ends outside a two-cut component, starts
 at neither cut vertex, and can meet either cut vertex only at its terminal
 end, then it avoids the component throughout. -/
-theorem IsComponentAfterDeleting.path_avoids_of_boundary_only_at_end
+theorem IsComponentAfterDeleting.path_avoids_of_boundary_only_at_end [Finite V]
     {a b s t : V} {C : Finset V}
     (hC : IsComponentAfterDeleting G ({a, b} : Finset V) C)
     (hab : a ≠ b) (p : G.Walk s t) (hp : p.IsPath)
     (hsC : s ∉ C) (htC : t ∉ C)
-    (hsA : s ≠ a) (hsB : s ≠ b)
+    (_hsA : s ≠ a) (_hsB : s ≠ b)
     (haOnly : a ∈ p.support → a = t)
     (hbOnly : b ∈ p.support → b = t) :
     ∀ w, w ∈ p.support → w ∉ C := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   by_cases hta : t = a
   · subst t
     have hCswap : IsComponentAfterDeleting G ({b, a} : Finset V) C := by
@@ -3373,13 +3517,16 @@ theorem IsComponentAfterDeleting.path_avoids_of_boundary_only_at_end
         exact htb (hbOnly hvP).symm
     exact hsC hsMem
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- More generally, a walk starting outside a deletion component and
 avoiding every deleted vertex cannot enter that component. -/
-theorem IsComponentAfterDeleting.walk_avoids_component
+theorem IsComponentAfterDeleting.walk_avoids_component [Finite V]
     {S C : Finset V} (hC : IsComponentAfterDeleting G S C)
     {s t : V} (p : G.Walk s t) (hsC : s ∉ C)
     (havoid : ∀ w, w ∈ p.support → w ∉ S) :
     ∀ w, w ∈ p.support → w ∉ C := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   intro w hw hwC
   have hsMem : s ∈ C := by
     apply hC.walk_end_mem (p.takeUntil w hw).reverse hwC
@@ -3394,12 +3541,14 @@ deletion cannot enter that component.  Otherwise the deleted vertex occurs
 on both sides of the first displayed component vertex, contradicting
 simplicity. -/
 theorem IsComponentAfterDeleting.path_avoids_singleton_component
-    {W : Type u} [Fintype W] [DecidableEq W]
-    {H : SimpleGraph W} [DecidableRel H.Adj]
+    {W : Type u} [Finite W]
+    {H : SimpleGraph W}
     {d s t : W} {C : Finset W}
     (hC : IsComponentAfterDeleting H ({d} : Finset W) C)
     (p : H.Walk s t) (hp : p.IsPath) (hsC : s ∉ C) (htC : t ∉ C) :
     ∀ w, w ∈ p.support → w ∉ C := by
+  classical
+  let : Fintype W := Fintype.ofFinite W
   intro w hw hwC
   have hdPrefix : d ∈ (p.takeUntil w hw).support := by
     by_contra hd
@@ -3424,6 +3573,7 @@ theorem IsComponentAfterDeleting.path_avoids_singleton_component
   have hdC : d ∈ C := by simpa only [hdw] using hwC
   exact Finset.disjoint_left.mp hC.2.1 hdC (by simp)
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Two vertices which see the same literal deletion component can be
 joined through that component.  After erasing repetitions, the resulting
 path has no vertices outside the component except its two prescribed
@@ -3434,6 +3584,7 @@ theorem IsComponentAfterDeleting.exists_path_through_component
     (hua : G.Adj u a) (hvb : G.Adj v b) :
     ∃ p : G.Walk a b, p.IsPath ∧
       ∀ w, w ∈ p.support → w = a ∨ w = b ∨ w ∈ D := by
+  classical
   obtain ⟨qD⟩ := hD.2.2.1.preconnected
     (⟨u, huD⟩ : {w : V // w ∈ (D : Set V)})
     (⟨v, hvD⟩ : {w : V // w ∈ (D : Set V)})
@@ -3483,11 +3634,13 @@ def AHTVertexTwoConnected {W : Type*} (H : SimpleGraph W) : Prop :=
 /-- A connected finite graph with at least two displayed vertices and no
 cut vertex is vertex-two-connected in the deletion formulation used here. -/
 theorem ahtVertexTwoConnected_of_connected_noCut
-    {W : Type} [Fintype W] [DecidableEq W]
-    (H : SimpleGraph W) [DecidableRel H.Adj]
+    {W : Type} [Finite W]
+    (H : SimpleGraph W)
     (hH : H.Connected) {u v : W} (huv : u ≠ v)
     (hncut : ∀ d : W, ¬IsCutVertex H d) :
     AHTVertexTwoConnected H := by
+  classical
+  let : Fintype W := Fintype.ofFinite W
   refine ⟨hH, ?_⟩
   intro d
   have hpre : (deleteVertex H d).Preconnected := by
@@ -3500,6 +3653,7 @@ theorem ahtVertexTwoConnected_of_connected_noCut
     exact huv (hdu.symm.trans hvd.symm)
   · exact ⟨⟨u, Ne.symm hdu⟩⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- A path in a two-connected ambient subgraph avoiding a prescribed third
 vertex, mapped back to the original graph. -/
 theorem exists_subgraph_path_avoiding
@@ -3563,11 +3717,11 @@ theorem two_le_ncard_separator_of_vertexTwoConnected
     have had : a ≠ d := by
       by_cases h : a₀ = d
       · simpa [a, h] using fun h₁ : a₁ = d ↦ ha (h.trans h₁.symm)
-      · simpa [a, h]
+      · simp [a, h]
     have hbd : b ≠ d := by
       by_cases h : b₀ = d
       · simpa [b, h] using fun h₁ : b₁ = d ↦ hb (h.trans h₁.symm)
-      · simpa [b, h]
+      · simp [b, h]
     obtain ⟨q, hq⟩ :=
       ((h2.2 d) (⟨a, had⟩ : {w : W // w ≠ d}) ⟨b, hbd⟩).exists_isPath
     let inc := SimpleGraph.Embedding.induce
@@ -3808,9 +3962,10 @@ theorem exists_disjoint_pair_paths_of_vertexTwoConnected
   · exact emit 1 0 (by decide) h₁ h₀
   · exact (hleft_ne (h₀.trans h₁.symm)).elim
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Map the explicit two-pair linkage in a two-connected subgraph back to
 the ambient graph, retaining both disjointness and support containment. -/
-theorem exists_ambient_disjoint_pair_paths_of_subgraph_twoConnected
+theorem exists_ambient_disjoint_pair_paths_of_subgraph_twoConnected [Finite V]
     (H : G.Subgraph) (h2 : AHTVertexTwoConnected H.coe)
     {a₀ a₁ b₀ b₁ : H.verts} (ha : a₀ ≠ a₁) (hb : b₀ ≠ b₁) :
     (∃ (p : G.Walk a₀.1 b₀.1) (q : G.Walk a₁.1 b₁.1),
@@ -3824,6 +3979,7 @@ theorem exists_ambient_disjoint_pair_paths_of_subgraph_twoConnected
         (∀ w, w ∈ p.support → w ∈ H.verts) ∧
         ∀ w, w ∈ q.support → w ∈ H.verts) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   have mapSupport {u v : H.verts} (p : H.coe.Walk u v) :
       ∀ w, w ∈ (p.map H.hom).support → w ∈ H.verts := by
     intro w hw
@@ -3856,9 +4012,10 @@ theorem exists_ambient_disjoint_pair_paths_of_subgraph_twoConnected
       hp.map Subgraph.hom_injective, hq.map Subgraph.hom_injective,
       mapDisjoint p q hdis, mapSupport p, mapSupport q⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Map the explicit no-singleton-separator linkage in a subgraph back to
 the ambient graph, retaining disjointness and support containment. -/
-theorem exists_ambient_disjoint_pair_paths_of_subgraph_no_singleton_separator
+theorem exists_ambient_disjoint_pair_paths_of_subgraph_no_singleton_separator [Finite V]
     (H : G.Subgraph) {a₀ a₁ b₀ b₁ : H.verts}
     (p₀ : H.coe.Walk a₀ b₀) (hp₀ : p₀.IsPath)
     (hnone : ∀ u : H.verts,
@@ -3875,6 +4032,7 @@ theorem exists_ambient_disjoint_pair_paths_of_subgraph_no_singleton_separator
         (∀ w, w ∈ p.support → w ∈ H.verts) ∧
         ∀ w, w ∈ q.support → w ∈ H.verts) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   have mapSupport {u v : H.verts} (p : H.coe.Walk u v) :
       ∀ w, w ∈ (p.map H.hom).support → w ∈ H.verts := by
     intro w hw
@@ -3908,6 +4066,7 @@ theorem exists_ambient_disjoint_pair_paths_of_subgraph_no_singleton_separator
       hp.map Subgraph.hom_injective, hq.map Subgraph.hom_injective,
       mapDisjoint p q hdis, mapSupport p, mapSupport q⟩
 
+omit [DecidableRel G.Adj] in
 /-- The three maximal separators exist unconditionally in the no-common-
 cycle branch. -/
 theorem exists_watkinsMesnerMaximalTriple
@@ -3917,6 +4076,7 @@ theorem exists_watkinsMesnerMaximalTriple
     (hdelete : ∀ d : V, (G.induce fun w : V ↦ w ≠ d).Connected)
     (hno : ¬HasCycleThroughThree G x y z) :
     Nonempty (WatkinsMesnerMaximalTriple T) := by
+  classical
   obtain ⟨xSep, hxMax⟩ :=
     T.exists_maximal_xSeparator hxy hxz hyz hconn hdelete hno
   obtain ⟨ySep, hyMax⟩ :=
@@ -3936,6 +4096,7 @@ namespace WatkinsMesnerMaximalTriple
 variable {x y z : V} {T : WatkinsMesnerK32Source G x y z}
     (M : WatkinsMesnerMaximalTriple T)
 
+omit [DecidableRel G.Adj] in
 /-- A vertex separator of the displayed `x`-rim cannot contain the old
 maximal `x`-side together with its old A-boundary vertex.  The arm-routing
 lemma orders the two new separator vertices, after which this is exactly
@@ -3945,6 +4106,7 @@ theorem false_of_x_vertexCycleSeparator_replacement
     (R : VertexCycleSeparator T.xRim x)
     (hsub : (M.xSep.side : Set V) ⊆ (R.side : Set V))
     (hleft : M.xSep.left ∈ (R.side : Set V)) : False := by
+  classical
   obtain ⟨Q, hQside⟩ := exists_routedCycleSeparator_of_vertexCycleSeparator
     (T.xRoute_isPath.takeUntil T.x_mem)
     (T.xRoute_isPath.dropUntil T.x_mem).reverse
@@ -3956,13 +4118,16 @@ theorem false_of_x_vertexCycleSeparator_replacement
   exact M.x_maximal.not_replacement_of_subset_of_left_mem M.xSep Q
     (fun w hw ↦ (hQside w).2 (hsub hw)) ((hQside M.xSep.left).2 hleft)
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Any two (possibly equal) vertices on a simple cycle are joined by a
 simple path supported on that cycle. -/
-theorem exists_path_in_cycleSupport
+theorem exists_path_in_cycleSupport [Finite V]
     {r s t : V} {C : G.Walk r r} (hC : C.IsCycle)
     (hs : s ∈ C.support) (ht : t ∈ C.support) :
     ∃ p : G.Walk s t, p.IsPath ∧
       ∀ w, w ∈ p.support → w ∈ C.support := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   by_cases hst : s = t
   · subst t
     refine ⟨.nil, by simp, ?_⟩
@@ -3973,14 +4138,17 @@ theorem exists_path_in_cycleSupport
   · obtain ⟨A⟩ := exists_cycleArcPair hC hs ht hst
     exact ⟨A.first, A.first_isPath, A.first_subset⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Two vertices of a simple cycle can be joined along the cycle while
 avoiding any prescribed third vertex. -/
-theorem exists_path_in_cycleSupport_avoiding
+theorem exists_path_in_cycleSupport_avoiding [Finite V]
     {r s t d : V} {C : G.Walk r r} (hC : C.IsCycle)
     (hs : s ∈ C.support) (ht : t ∈ C.support)
     (hds : d ≠ s) (hdt : d ≠ t) :
     ∃ p : G.Walk s t, p.IsPath ∧
       (∀ w, w ∈ p.support → w ∈ C.support) ∧ d ∉ p.support := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   by_cases hst : s = t
   · subst t
     refine ⟨.nil, by simp, ?_, ?_⟩
@@ -3999,11 +4167,12 @@ theorem exists_path_in_cycleSupport_avoiding
       exact ⟨A.second, A.second_isPath, A.second_subset, hdSecond⟩
     · exact ⟨A.first, A.first_isPath, A.first_subset, hdFirst⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Two forbidden vertices on a simple cycle admit a common avoiding arc,
 unless they lie on opposite arcs between the prescribed ends.  The latter
 alternative records both complementary arcs with the orientation used in
 the two-cut external-path exchange on p.15. -/
-theorem exists_cyclePath_avoiding_two_or_opposite_arcs
+theorem exists_cyclePath_avoiding_two_or_opposite_arcs [Finite V]
     {r s t d e : V} {C : G.Walk r r} (hC : C.IsCycle)
     (hs : s ∈ C.support) (ht : t ∈ C.support) (hst : s ≠ t)
     (hds : d ≠ s) (hdt : d ≠ t)
@@ -4018,6 +4187,8 @@ theorem exists_cyclePath_avoiding_two_or_opposite_arcs
       d ∉ p.support ∧ e ∈ p.support ∧
       e ∉ q.support ∧ d ∈ q.support ∧
       ∀ w, w ∈ p.support → w ∈ q.support → w = s ∨ w = t := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨A⟩ := exists_cycleArcPair hC hs ht hst
   have outside_other {w : V} (hws : w ≠ s) (hwt : w ≠ t)
       {p q : G.Walk s t}
@@ -4073,20 +4244,32 @@ noncomputable def yPart : Finset V :=
 noncomputable def zPart : Finset V :=
   componentCarrier (G := G) {M.zSep.left, M.zSep.right} M.zSep.side
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem x_mem_xPart : x ∈ M.xPart := by
+  classical
   simpa only [xPart, mem_componentCarrier] using M.xSep.x_mem_side
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem y_mem_yPart : y ∈ M.yPart := by
+  classical
   simpa only [yPart, mem_componentCarrier] using M.ySep.x_mem_side
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem z_mem_zPart : z ∈ M.zPart := by
+  classical
   simpa only [zPart, mem_componentCarrier] using M.zSep.x_mem_side
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem xA_mem_aSet : M.xSep.left ∈ M.aSet := by simp [aSet]
+omit [DecidableRel G.Adj] in
 @[simp] theorem yA_mem_aSet : M.ySep.left ∈ M.aSet := by simp [aSet]
+omit [DecidableRel G.Adj] in
 @[simp] theorem zA_mem_aSet : M.zSep.left ∈ M.aSet := by simp [aSet]
+omit [DecidableRel G.Adj] in
 @[simp] theorem xB_mem_bSet : M.xSep.right ∈ M.bSet := by simp [bSet]
+omit [DecidableRel G.Adj] in
 @[simp] theorem yB_mem_bSet : M.ySep.right ∈ M.bSet := by simp [bSet]
+omit [DecidableRel G.Adj] in
 @[simp] theorem zB_mem_bSet : M.zSep.right ∈ M.bSet := by simp [bSet]
 
 /-- The three canonical attachment-to-attachment paths through the named
@@ -4100,7 +4283,9 @@ def yTerminalBridge : G.Walk M.ySep.left M.ySep.right :=
 def zTerminalBridge : G.Walk M.zSep.left M.zSep.right :=
   M.zSep.terminalBridge
 
+omit [DecidableRel G.Adj] in
 theorem xTerminalBridge_isPath : M.xTerminalBridge.IsPath := by
+  classical
   apply M.xSep.terminalBridge_isPath
       (T.xRoute_isPath.takeUntil T.x_mem)
       (T.xRoute_isPath.dropUntil T.x_mem).reverse
@@ -4108,7 +4293,9 @@ theorem xTerminalBridge_isPath : M.xTerminalBridge.IsPath := by
     Walk.IsPath.takeUntil_inter_reverse_dropUntil_only
       T.xRoute_isPath T.x_mem w hwA hwB
 
+omit [DecidableRel G.Adj] in
 theorem yTerminalBridge_isPath : M.yTerminalBridge.IsPath := by
+  classical
   apply M.ySep.terminalBridge_isPath
       (T.yRoute_isPath.takeUntil T.y_mem)
       (T.yRoute_isPath.dropUntil T.y_mem).reverse
@@ -4116,7 +4303,9 @@ theorem yTerminalBridge_isPath : M.yTerminalBridge.IsPath := by
     Walk.IsPath.takeUntil_inter_reverse_dropUntil_only
       T.yRoute_isPath T.y_mem w hwA hwB
 
+omit [DecidableRel G.Adj] in
 theorem zTerminalBridge_isPath : M.zTerminalBridge.IsPath := by
+  classical
   apply M.zSep.terminalBridge_isPath
       (T.zRoute_isPath.takeUntil T.z_mem)
       (T.zRoute_isPath.dropUntil T.z_mem).reverse
@@ -4124,18 +4313,29 @@ theorem zTerminalBridge_isPath : M.zTerminalBridge.IsPath := by
     Walk.IsPath.takeUntil_inter_reverse_dropUntil_only
       T.zRoute_isPath T.z_mem w hwA hwB
 
-@[simp] theorem x_mem_xTerminalBridge : x ∈ M.xTerminalBridge.support :=
-  M.xSep.terminal_mem_terminalBridge
+omit [DecidableRel G.Adj] in
+@[simp] theorem x_mem_xTerminalBridge : x ∈ M.xTerminalBridge.support := by
+  classical
+  exact
+    M.xSep.terminal_mem_terminalBridge
 
-@[simp] theorem y_mem_yTerminalBridge : y ∈ M.yTerminalBridge.support :=
-  M.ySep.terminal_mem_terminalBridge
+omit [DecidableRel G.Adj] in
+@[simp] theorem y_mem_yTerminalBridge : y ∈ M.yTerminalBridge.support := by
+  classical
+  exact
+    M.ySep.terminal_mem_terminalBridge
 
-@[simp] theorem z_mem_zTerminalBridge : z ∈ M.zTerminalBridge.support :=
-  M.zSep.terminal_mem_terminalBridge
+omit [DecidableRel G.Adj] in
+@[simp] theorem z_mem_zTerminalBridge : z ∈ M.zTerminalBridge.support := by
+  classical
+  exact
+    M.zSep.terminal_mem_terminalBridge
 
+omit [DecidableRel G.Adj] in
 theorem xTerminalBridge_support {w : V}
     (hw : w ∈ M.xTerminalBridge.support) :
     w = M.xSep.left ∨ w = M.xSep.right ∨ w ∈ M.xPart := by
+  classical
   have h := M.xSep.terminalBridge_support
       (T.xRoute_isPath.takeUntil T.x_mem)
       (T.xRoute_isPath.dropUntil T.x_mem).reverse
@@ -4144,9 +4344,11 @@ theorem xTerminalBridge_support {w : V}
           T.xRoute_isPath T.x_mem v hvA hvB) hw
   simpa only [xPart, mem_componentCarrier] using h
 
+omit [DecidableRel G.Adj] in
 theorem yTerminalBridge_support {w : V}
     (hw : w ∈ M.yTerminalBridge.support) :
     w = M.ySep.left ∨ w = M.ySep.right ∨ w ∈ M.yPart := by
+  classical
   have h := M.ySep.terminalBridge_support
       (T.yRoute_isPath.takeUntil T.y_mem)
       (T.yRoute_isPath.dropUntil T.y_mem).reverse
@@ -4155,9 +4357,11 @@ theorem yTerminalBridge_support {w : V}
           T.yRoute_isPath T.y_mem v hvA hvB) hw
   simpa only [yPart, mem_componentCarrier] using h
 
+omit [DecidableRel G.Adj] in
 theorem zTerminalBridge_support {w : V}
     (hw : w ∈ M.zTerminalBridge.support) :
     w = M.zSep.left ∨ w = M.zSep.right ∨ w ∈ M.zPart := by
+  classical
   have h := M.zSep.terminalBridge_support
       (T.zRoute_isPath.takeUntil T.z_mem)
       (T.zRoute_isPath.dropUntil T.z_mem).reverse
@@ -4171,40 +4375,48 @@ vertices and from every vertex of the displayed opposite rim.  These are
 the elementary component facts behind conditions (i)--(iv) in the source
 proof. -/
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private theorem xRim_mem_of_yRoute_mem {w : V}
     (hw : w ∈ T.yRoute.support) : w ∈ T.xRim.support := by
   simp only [WatkinsMesnerK32Source.xRim, Walk.mem_support_append_iff]
   exact Or.inl hw
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private theorem xRim_mem_of_zRoute_mem {w : V}
     (hw : w ∈ T.zRoute.support) : w ∈ T.xRim.support := by
   simp only [WatkinsMesnerK32Source.xRim, Walk.mem_support_append_iff,
     Walk.support_reverse, List.mem_reverse]
   exact Or.inr hw
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private theorem yRim_mem_of_xRoute_mem {w : V}
     (hw : w ∈ T.xRoute.support) : w ∈ T.yRim.support := by
   simp only [WatkinsMesnerK32Source.yRim, Walk.mem_support_append_iff]
   exact Or.inl hw
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private theorem yRim_mem_of_zRoute_mem {w : V}
     (hw : w ∈ T.zRoute.support) : w ∈ T.yRim.support := by
   simp only [WatkinsMesnerK32Source.yRim, Walk.mem_support_append_iff,
     Walk.support_reverse, List.mem_reverse]
   exact Or.inr hw
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private theorem zRim_mem_of_xRoute_mem {w : V}
     (hw : w ∈ T.xRoute.support) : w ∈ T.zRim.support := by
   simp only [WatkinsMesnerK32Source.zRim, Walk.mem_support_append_iff]
   exact Or.inl hw
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private theorem zRim_mem_of_yRoute_mem {w : V}
     (hw : w ∈ T.yRoute.support) : w ∈ T.zRim.support := by
   simp only [WatkinsMesnerK32Source.zRim, Walk.mem_support_append_iff,
     Walk.support_reverse, List.mem_reverse]
   exact Or.inr hw
 
+omit [DecidableRel G.Adj] in
 theorem xPart_disjoint_aSet : Disjoint M.xPart M.aSet := by
+  classical
   rw [Finset.disjoint_left]
   intro w hwX hwA
   have hwCases : w = M.xSep.left ∨ w = M.ySep.left ∨
@@ -4220,7 +4432,9 @@ theorem xPart_disjoint_aSet : Disjoint M.xPart M.aSet := by
         (T.zRoute.support_takeUntil_subset_support T.z_mem
           M.zSep.left_mem_aArm)) hwX
 
+omit [DecidableRel G.Adj] in
 theorem xPart_disjoint_bSet : Disjoint M.xPart M.bSet := by
+  classical
   rw [Finset.disjoint_left]
   intro w hwX hwB
   have hwCases : w = M.xSep.right ∨ w = M.ySep.right ∨
@@ -4238,7 +4452,9 @@ theorem xPart_disjoint_bSet : Disjoint M.xPart M.bSet := by
           simpa only [WatkinsMesnerK32Source.zArmB, Walk.support_reverse,
             List.mem_reverse] using M.zSep.right_mem_bArm))) hwX
 
+omit [DecidableRel G.Adj] in
 theorem yPart_disjoint_aSet : Disjoint M.yPart M.aSet := by
+  classical
   rw [Finset.disjoint_left]
   intro w hwY hwA
   have hwCases : w = M.xSep.left ∨ w = M.ySep.left ∨
@@ -4254,7 +4470,9 @@ theorem yPart_disjoint_aSet : Disjoint M.yPart M.aSet := by
         (T.zRoute.support_takeUntil_subset_support T.z_mem
           M.zSep.left_mem_aArm)) hwY
 
+omit [DecidableRel G.Adj] in
 theorem yPart_disjoint_bSet : Disjoint M.yPart M.bSet := by
+  classical
   rw [Finset.disjoint_left]
   intro w hwY hwB
   have hwCases : w = M.xSep.right ∨ w = M.ySep.right ∨
@@ -4272,7 +4490,9 @@ theorem yPart_disjoint_bSet : Disjoint M.yPart M.bSet := by
           simpa only [WatkinsMesnerK32Source.zArmB, Walk.support_reverse,
             List.mem_reverse] using M.zSep.right_mem_bArm))) hwY
 
+omit [DecidableRel G.Adj] in
 theorem zPart_disjoint_aSet : Disjoint M.zPart M.aSet := by
+  classical
   rw [Finset.disjoint_left]
   intro w hwZ hwA
   have hwCases : w = M.xSep.left ∨ w = M.ySep.left ∨
@@ -4288,7 +4508,9 @@ theorem zPart_disjoint_aSet : Disjoint M.zPart M.aSet := by
           M.ySep.left_mem_aArm)) hwZ
   · exact M.zSep.left_not_mem_componentCarrier hwZ
 
+omit [DecidableRel G.Adj] in
 theorem zPart_disjoint_bSet : Disjoint M.zPart M.bSet := by
+  classical
   rw [Finset.disjoint_left]
   intro w hwZ hwB
   have hwCases : w = M.xSep.right ∨ w = M.ySep.right ∨
@@ -4306,23 +4528,34 @@ theorem zPart_disjoint_bSet : Disjoint M.zPart M.bSet := by
             List.mem_reverse] using M.ySep.right_mem_bArm))) hwZ
   · exact M.zSep.right_not_mem_componentCarrier hwZ
 
+omit [DecidableRel G.Adj] in
 theorem xPart_disjoint_aSet_union_bSet :
-    Disjoint M.xPart (M.aSet ∪ M.bSet) :=
-  Finset.disjoint_union_right.mpr
-    ⟨M.xPart_disjoint_aSet, M.xPart_disjoint_bSet⟩
+    Disjoint M.xPart (M.aSet ∪ M.bSet) := by
+  classical
+  exact
+    Finset.disjoint_union_right.mpr
+      ⟨M.xPart_disjoint_aSet, M.xPart_disjoint_bSet⟩
 
+omit [DecidableRel G.Adj] in
 theorem yPart_disjoint_aSet_union_bSet :
-    Disjoint M.yPart (M.aSet ∪ M.bSet) :=
-  Finset.disjoint_union_right.mpr
-    ⟨M.yPart_disjoint_aSet, M.yPart_disjoint_bSet⟩
+    Disjoint M.yPart (M.aSet ∪ M.bSet) := by
+  classical
+  exact
+    Finset.disjoint_union_right.mpr
+      ⟨M.yPart_disjoint_aSet, M.yPart_disjoint_bSet⟩
 
+omit [DecidableRel G.Adj] in
 theorem zPart_disjoint_aSet_union_bSet :
-    Disjoint M.zPart (M.aSet ∪ M.bSet) :=
-  Finset.disjoint_union_right.mpr
-    ⟨M.zPart_disjoint_aSet, M.zPart_disjoint_bSet⟩
+    Disjoint M.zPart (M.aSet ∪ M.bSet) := by
+  classical
+  exact
+    Finset.disjoint_union_right.mpr
+      ⟨M.zPart_disjoint_aSet, M.zPart_disjoint_bSet⟩
 
+omit [DecidableRel G.Adj] in
 theorem xPart_isComponent :
     IsComponentAfterDeleting G (M.aSet ∪ M.bSet) M.xPart := by
+  classical
   apply isComponentAfterDeleting_componentCarrier_of_subset
     {M.xSep.left, M.xSep.right} (M.aSet ∪ M.bSet) M.xSep.side
   · intro w hw
@@ -4332,8 +4565,10 @@ theorem xPart_isComponent :
     · exact Finset.mem_union_right _ M.xB_mem_bSet
   · exact M.xPart_disjoint_aSet_union_bSet
 
+omit [DecidableRel G.Adj] in
 theorem yPart_isComponent :
     IsComponentAfterDeleting G (M.aSet ∪ M.bSet) M.yPart := by
+  classical
   apply isComponentAfterDeleting_componentCarrier_of_subset
     {M.ySep.left, M.ySep.right} (M.aSet ∪ M.bSet) M.ySep.side
   · intro w hw
@@ -4343,8 +4578,10 @@ theorem yPart_isComponent :
     · exact Finset.mem_union_right _ M.yB_mem_bSet
   · exact M.yPart_disjoint_aSet_union_bSet
 
+omit [DecidableRel G.Adj] in
 theorem zPart_isComponent :
     IsComponentAfterDeleting G (M.aSet ∪ M.bSet) M.zPart := by
+  classical
   apply isComponentAfterDeleting_componentCarrier_of_subset
     {M.zSep.left, M.zSep.right} (M.aSet ∪ M.bSet) M.zSep.side
   · intro w hw
@@ -4354,11 +4591,12 @@ theorem zPart_isComponent :
     · exact Finset.mem_union_right _ M.zB_mem_bSet
   · exact M.zPart_disjoint_aSet_union_bSet
 
+omit [DecidableRel G.Adj] [Fintype V] in
 private theorem leftHalf_ne_rightHalf_of_distinct_routes
     {A B p q : V} {P Q : G.Walk A B}
     (hP : P.IsPath) (hQ : Q.IsPath)
     (hp : p ∈ P.support) (hq : q ∈ Q.support)
-    (hpA : p ≠ A) (hpB : p ≠ B)
+    (_hpA : p ≠ A) (hpB : p ≠ B)
     (hqA : q ≠ A) (hqB : q ≠ B)
     (hmeet : ∀ w, w ∈ P.support → w ∈ Q.support →
       w = A ∨ w = B)
@@ -4386,6 +4624,7 @@ private theorem leftHalf_ne_rightHalf_of_distinct_routes
       (hlB ▸ hl) hBr
     exact hpB this.symm
 
+omit [DecidableRel G.Adj] [Fintype V] in
 private theorem eq_branchA_of_leftHalves_eq
     {A B p q : V} {P Q : G.Walk A B}
     (hP : P.IsPath) (hp : p ∈ P.support) (hpB : p ≠ B)
@@ -4401,6 +4640,7 @@ private theorem eq_branchA_of_leftHalves_eq
   · exact (Walk.endpoint_notMem_support_takeUntil hP hp hpB.symm
       (hB ▸ hl)).elim
 
+omit [DecidableRel G.Adj] [Fintype V] in
 private theorem eq_branchB_of_rightHalves_eq
     {A B p q : V} {P Q : G.Walk A B}
     (hP : P.IsPath) (hp : p ∈ P.support) (hpA : p ≠ A)
@@ -4425,6 +4665,7 @@ private theorem eq_branchB_of_rightHalves_eq
     exact (hpA h.symm).elim
   · exact hB
 
+omit [DecidableRel G.Adj] in
 /-- Candidate `A` and `B` are disjoint already from the six-route geometry;
 maximality is not needed for this part of condition (iii). -/
 theorem aSet_disjoint_bSet : Disjoint M.aSet M.bSet := by
@@ -4470,42 +4711,55 @@ theorem aSet_disjoint_bSet : Disjoint M.aSet M.bSet := by
       M.zSep.left_mem_aArm M.ySep.right_mem_bArm) h
   · exact M.zSep.left_ne_right h
 
+omit [DecidableRel G.Adj] in
 theorem xA_eq_yA_imp_branchA (h : M.xSep.left = M.ySep.left) :
     M.xSep.left = T.branchA := by
+  classical
   exact eq_branchA_of_leftHalves_eq T.xRoute_isPath T.x_mem
     T.x_internal.2 T.y_mem T.xRoute_inter_yRoute
     M.xSep.left_mem_aArm M.ySep.left_mem_aArm h
 
+omit [DecidableRel G.Adj] in
 theorem xA_eq_zA_imp_branchA (h : M.xSep.left = M.zSep.left) :
     M.xSep.left = T.branchA := by
+  classical
   exact eq_branchA_of_leftHalves_eq T.xRoute_isPath T.x_mem
     T.x_internal.2 T.z_mem T.xRoute_inter_zRoute
     M.xSep.left_mem_aArm M.zSep.left_mem_aArm h
 
+omit [DecidableRel G.Adj] in
 theorem yA_eq_zA_imp_branchA (h : M.ySep.left = M.zSep.left) :
     M.ySep.left = T.branchA := by
+  classical
   exact eq_branchA_of_leftHalves_eq T.yRoute_isPath T.y_mem
     T.y_internal.2 T.z_mem T.yRoute_inter_zRoute
     M.ySep.left_mem_aArm M.zSep.left_mem_aArm h
 
+omit [DecidableRel G.Adj] in
 theorem xB_eq_yB_imp_branchB (h : M.xSep.right = M.ySep.right) :
     M.xSep.right = T.branchB := by
+  classical
   exact eq_branchB_of_rightHalves_eq T.xRoute_isPath T.x_mem
     T.x_internal.1 T.y_mem T.xRoute_inter_yRoute
     M.xSep.right_mem_bArm M.ySep.right_mem_bArm h
 
+omit [DecidableRel G.Adj] in
 theorem xB_eq_zB_imp_branchB (h : M.xSep.right = M.zSep.right) :
     M.xSep.right = T.branchB := by
+  classical
   exact eq_branchB_of_rightHalves_eq T.xRoute_isPath T.x_mem
     T.x_internal.1 T.z_mem T.xRoute_inter_zRoute
     M.xSep.right_mem_bArm M.zSep.right_mem_bArm h
 
+omit [DecidableRel G.Adj] in
 theorem yB_eq_zB_imp_branchB (h : M.ySep.right = M.zSep.right) :
     M.ySep.right = T.branchB := by
+  classical
   exact eq_branchB_of_rightHalves_eq T.yRoute_isPath T.y_mem
     T.y_internal.1 T.z_mem T.yRoute_inter_zRoute
     M.ySep.right_mem_bArm M.zSep.right_mem_bArm h
 
+omit [DecidableRel G.Adj] in
 /-- AHT p.14, first maximality exchange: if the `x` and `y` separators
 have the same `A` boundary but the `z` boundary there is different, their
 `B` boundaries must be different. -/
@@ -4669,16 +4923,20 @@ def conditionVYB :
     fun h ↦ Finset.disjoint_left.mp M.aSet_disjoint_bSet
       M.xA_mem_aSet (h.symm ▸ M.yB_mem_bSet)⟩
 
+omit [DecidableRel G.Adj] in
 theorem aSet_nonempty : M.aSet.Nonempty :=
   ⟨M.xSep.left, by simp [aSet]⟩
 
+omit [DecidableRel G.Adj] in
 theorem bSet_nonempty : M.bSet.Nonempty :=
   ⟨M.xSep.right, by simp [bSet]⟩
 
+omit [DecidableRel G.Adj] in
 /-- Before the maximality argument excludes the middle case, a displayed
 triple has cardinality one, two, or three. -/
 theorem aSet_card_trichotomy :
     M.aSet.card = 1 ∨ M.aSet.card = 2 ∨ M.aSet.card = 3 := by
+  classical
   have hpos : 0 < M.aSet.card := Finset.card_pos.mpr M.aSet_nonempty
   have hle : M.aSet.card ≤ 3 := by
     have htail : ({M.ySep.left, M.zSep.left} : Finset V).card ≤ 2 := by
@@ -4689,8 +4947,10 @@ theorem aSet_card_trichotomy :
     omega
   omega
 
+omit [DecidableRel G.Adj] in
 theorem bSet_card_trichotomy :
     M.bSet.card = 1 ∨ M.bSet.card = 2 ∨ M.bSet.card = 3 := by
+  classical
   have hpos : 0 < M.bSet.card := Finset.card_pos.mpr M.bSet_nonempty
   have hle : M.bSet.card ≤ 3 := by
     have htail : ({M.ySep.right, M.zSep.right} : Finset V).card ≤ 2 := by
@@ -4701,8 +4961,10 @@ theorem bSet_card_trichotomy :
     omega
   omega
 
+omit [DecidableRel G.Adj] in
 theorem all_A_eq_of_card_one (h : M.aSet.card = 1) :
     M.xSep.left = M.ySep.left ∧ M.xSep.left = M.zSep.left := by
+  classical
   obtain ⟨a, ha⟩ := Finset.card_eq_one.mp h
   have hx : M.xSep.left = a := by
     have : M.xSep.left ∈ ({a} : Finset V) := by
@@ -4721,8 +4983,10 @@ theorem all_A_eq_of_card_one (h : M.aSet.card = 1) :
     simpa using this
   exact ⟨hx.trans hy.symm, hx.trans hz.symm⟩
 
+omit [DecidableRel G.Adj] in
 theorem all_B_eq_of_card_one (h : M.bSet.card = 1) :
     M.xSep.right = M.ySep.right ∧ M.xSep.right = M.zSep.right := by
+  classical
   obtain ⟨b, hb⟩ := Finset.card_eq_one.mp h
   have hx : M.xSep.right = b := by
     have : M.xSep.right ∈ ({b} : Finset V) := by
@@ -4741,26 +5005,37 @@ theorem all_B_eq_of_card_one (h : M.bSet.card = 1) :
     simpa using this
   exact ⟨hx.trans hy.symm, hx.trans hz.symm⟩
 
+omit [DecidableRel G.Adj] in
 theorem branchA_eq_of_aSet_card_one (h : M.aSet.card = 1) :
-    M.xSep.left = T.branchA :=
-  M.xA_eq_yA_imp_branchA (M.all_A_eq_of_card_one h).1
+    M.xSep.left = T.branchA := by
+  classical
+  exact
+    M.xA_eq_yA_imp_branchA (M.all_A_eq_of_card_one h).1
 
+omit [DecidableRel G.Adj] in
 theorem branchB_eq_of_bSet_card_one (h : M.bSet.card = 1) :
-    M.xSep.right = T.branchB :=
-  M.xB_eq_yB_imp_branchB (M.all_B_eq_of_card_one h).1
+    M.xSep.right = T.branchB := by
+  classical
+  exact
+    M.xB_eq_yB_imp_branchB (M.all_B_eq_of_card_one h).1
 
+omit [DecidableRel G.Adj] in
 theorem aSet_eq_singleton_branchA (h : M.aSet.card = 1) :
     M.aSet = {T.branchA} := by
+  classical
   obtain ⟨hxy, hxz⟩ := M.all_A_eq_of_card_one h
   rw [aSet, ← hxy, ← hxz, M.branchA_eq_of_aSet_card_one h]
   simp
 
+omit [DecidableRel G.Adj] in
 theorem bSet_eq_singleton_branchB (h : M.bSet.card = 1) :
     M.bSet = {T.branchB} := by
+  classical
   obtain ⟨hxy, hxz⟩ := M.all_B_eq_of_card_one h
   rw [bSet, ← hxy, ← hxz, M.branchB_eq_of_bSet_card_one h]
   simp
 
+omit [DecidableRel G.Adj] in
 theorem A_pair_pattern_of_card_two (h : M.aSet.card = 2) :
     (M.xSep.left = M.ySep.left ∧ M.xSep.left ≠ M.zSep.left) ∨
     (M.xSep.left = M.zSep.left ∧ M.xSep.left ≠ M.ySep.left) ∨
@@ -4780,6 +5055,7 @@ theorem A_pair_pattern_of_card_two (h : M.aSet.card = 2) :
           simp [aSet, hxy, hxz, hyz]
         omega
 
+omit [DecidableRel G.Adj] in
 theorem B_pair_pattern_of_card_two (h : M.bSet.card = 2) :
     (M.xSep.right = M.ySep.right ∧ M.xSep.right ≠ M.zSep.right) ∨
     (M.xSep.right = M.zSep.right ∧ M.xSep.right ≠ M.ySep.right) ∨
@@ -4799,6 +5075,7 @@ theorem B_pair_pattern_of_card_two (h : M.bSet.card = 2) :
           simp [bSet, hxy, hxz, hyz]
         omega
 
+omit [DecidableRel G.Adj] in
 /-- In the forbidden cardinality-two case, the repeated `A`-attachment is
 the left theta branch vertex.  This is the exact symmetry split used at the
 start of AHT's proof of condition (v). -/
@@ -4809,6 +5086,7 @@ theorem A_branch_pattern_of_card_two (h : M.aSet.card = 2) :
       M.xSep.left = T.branchA ∧ M.ySep.left ≠ T.branchA) ∨
     (M.ySep.left = M.zSep.left ∧
       M.ySep.left = T.branchA ∧ M.xSep.left ≠ T.branchA) := by
+  classical
   rcases M.A_pair_pattern_of_card_two h with hxy | hxz | hyz
   · have hbranch := M.xA_eq_yA_imp_branchA hxy.1
     exact Or.inl ⟨hxy.1, hbranch, fun hz ↦ hxy.2 (hbranch.trans hz.symm)⟩
@@ -4819,6 +5097,7 @@ theorem A_branch_pattern_of_card_two (h : M.aSet.card = 2) :
     exact Or.inr (Or.inr
       ⟨hyz.1, hbranch, fun hx ↦ hyz.2 (hbranch.trans hx.symm)⟩)
 
+omit [DecidableRel G.Adj] in
 /-- Symmetric right-branch pattern for a cardinality-two `B`. -/
 theorem B_branch_pattern_of_card_two (h : M.bSet.card = 2) :
     (M.xSep.right = M.ySep.right ∧
@@ -4827,6 +5106,7 @@ theorem B_branch_pattern_of_card_two (h : M.bSet.card = 2) :
       M.xSep.right = T.branchB ∧ M.ySep.right ≠ T.branchB) ∨
     (M.ySep.right = M.zSep.right ∧
       M.ySep.right = T.branchB ∧ M.xSep.right ≠ T.branchB) := by
+  classical
   rcases M.B_pair_pattern_of_card_two h with hxy | hxz | hyz
   · have hbranch := M.xB_eq_yB_imp_branchB hxy.1
     exact Or.inl ⟨hxy.1, hbranch, fun hz ↦ hxy.2 (hbranch.trans hz.symm)⟩
@@ -4837,8 +5117,10 @@ theorem B_branch_pattern_of_card_two (h : M.bSet.card = 2) :
     exact Or.inr (Or.inr
       ⟨hyz.1, hbranch, fun hx ↦ hyz.2 (hbranch.trans hx.symm)⟩)
 
+omit [DecidableRel G.Adj] in
 /-- The other two terminals lie outside the `x`-side component. -/
 theorem y_not_mem_xPart : y ∉ M.xPart := by
+  classical
   have hyL : y ≠ M.xSep.left := by
     intro h
     have hleftRoute : M.xSep.left ∈ T.xRoute.support :=
@@ -4865,7 +5147,9 @@ theorem y_not_mem_xPart : y ∉ M.xPart := by
   apply M.xSep.rim_outside_side y hyRim hyL hyR
   simpa only [xPart, mem_componentCarrier] using hyX
 
+omit [DecidableRel G.Adj] in
 theorem z_not_mem_xPart : z ∉ M.xPart := by
+  classical
   have hzL : z ≠ M.xSep.left := by
     intro h
     have hleftRoute : M.xSep.left ∈ T.xRoute.support :=
@@ -4892,7 +5176,9 @@ theorem z_not_mem_xPart : z ∉ M.xPart := by
   apply M.xSep.rim_outside_side z hzRim hzL hzR
   simpa only [xPart, mem_componentCarrier] using hzX
 
+omit [DecidableRel G.Adj] in
 theorem x_not_mem_yPart : x ∉ M.yPart := by
+  classical
   have hxL : x ≠ M.ySep.left := by
     intro h
     have hleftRoute : M.ySep.left ∈ T.yRoute.support :=
@@ -4919,7 +5205,9 @@ theorem x_not_mem_yPart : x ∉ M.yPart := by
   apply M.ySep.rim_outside_side x hxRim hxL hxR
   simpa only [yPart, mem_componentCarrier] using hxY
 
+omit [DecidableRel G.Adj] in
 theorem z_not_mem_yPart : z ∉ M.yPart := by
+  classical
   have hzL : z ≠ M.ySep.left := by
     intro h
     have hleftRoute : M.ySep.left ∈ T.yRoute.support :=
@@ -4946,7 +5234,9 @@ theorem z_not_mem_yPart : z ∉ M.yPart := by
   apply M.ySep.rim_outside_side z hzRim hzL hzR
   simpa only [yPart, mem_componentCarrier] using hzY
 
+omit [DecidableRel G.Adj] in
 theorem x_not_mem_zPart : x ∉ M.zPart := by
+  classical
   have hxL : x ≠ M.zSep.left := by
     intro h
     have hleftRoute : M.zSep.left ∈ T.zRoute.support :=
@@ -4973,7 +5263,9 @@ theorem x_not_mem_zPart : x ∉ M.zPart := by
   apply M.zSep.rim_outside_side x hxRim hxL hxR
   simpa only [zPart, mem_componentCarrier] using hxZ
 
+omit [DecidableRel G.Adj] in
 theorem y_not_mem_zPart : y ∉ M.zPart := by
+  classical
   have hyL : y ≠ M.zSep.left := by
     intro h
     have hleftRoute : M.zSep.left ∈ T.zRoute.support :=
@@ -5000,9 +5292,11 @@ theorem y_not_mem_zPart : y ∉ M.zPart := by
   apply M.zSep.rim_outside_side y hyRim hyL hyR
   simpa only [zPart, mem_componentCarrier] using hyZ
 
+omit [DecidableRel G.Adj] in
 /-- The three displayed terminal components are pairwise distinct
 components after deleting the common candidate boundary `A ∪ B`. -/
 theorem xPart_disjoint_yPart : Disjoint M.xPart M.yPart := by
+  classical
   rw [Finset.disjoint_left]
   intro w hwX hwY
   have hyX : y ∈ M.xPart :=
@@ -5010,7 +5304,9 @@ theorem xPart_disjoint_yPart : Disjoint M.xPart M.yPart := by
       hwX hwY M.y_mem_yPart
   exact M.y_not_mem_xPart hyX
 
+omit [DecidableRel G.Adj] in
 theorem xPart_disjoint_zPart : Disjoint M.xPart M.zPart := by
+  classical
   rw [Finset.disjoint_left]
   intro w hwX hwZ
   have hzX : z ∈ M.xPart :=
@@ -5018,7 +5314,9 @@ theorem xPart_disjoint_zPart : Disjoint M.xPart M.zPart := by
       hwX hwZ M.z_mem_zPart
   exact M.z_not_mem_xPart hzX
 
+omit [DecidableRel G.Adj] in
 theorem yPart_disjoint_zPart : Disjoint M.yPart M.zPart := by
+  classical
   rw [Finset.disjoint_left]
   intro w hwY hwZ
   have hzY : z ∈ M.yPart :=
@@ -5031,12 +5329,14 @@ of condition (vi) directly from the `K_{3,2}` source.  For the deletion
 half, a failed bypass will be converted into a larger routed separator by
 maximality. -/
 
+omit [DecidableRel G.Adj] in
 theorem x_boundary_reachable :
     (G.induce fun v : V ↦ v ∉ M.xPart).Reachable
       ⟨M.xSep.left, by
         exact M.xSep.left_not_mem_componentCarrier⟩
       ⟨M.xSep.right, by
         exact M.xSep.right_not_mem_componentCarrier⟩ := by
+  classical
   have hq : ∀ w, w ∈ T.yRoute.support → w ∈ T.xRim.support := by
     intro w hw
     simp only [WatkinsMesnerK32Source.xRim,
@@ -5052,12 +5352,14 @@ theorem x_boundary_reachable :
         T.xRoute_isPath T.x_mem w hwA hwB)
     T.yRoute hq
 
+omit [DecidableRel G.Adj] in
 theorem y_boundary_reachable :
     (G.induce fun v : V ↦ v ∉ M.yPart).Reachable
       ⟨M.ySep.left, by
         exact M.ySep.left_not_mem_componentCarrier⟩
       ⟨M.ySep.right, by
         exact M.ySep.right_not_mem_componentCarrier⟩ := by
+  classical
   have hq : ∀ w, w ∈ T.xRoute.support → w ∈ T.yRim.support := by
     intro w hw
     simp only [WatkinsMesnerK32Source.yRim,
@@ -5073,12 +5375,14 @@ theorem y_boundary_reachable :
         T.yRoute_isPath T.y_mem w hwA hwB)
     T.xRoute hq
 
+omit [DecidableRel G.Adj] in
 theorem z_boundary_reachable :
     (G.induce fun v : V ↦ v ∉ M.zPart).Reachable
       ⟨M.zSep.left, by
         exact M.zSep.left_not_mem_componentCarrier⟩
       ⟨M.zSep.right, by
         exact M.zSep.right_not_mem_componentCarrier⟩ := by
+  classical
   have hq : ∀ w, w ∈ T.xRoute.support → w ∈ T.zRim.support := by
     intro w hw
     simp only [WatkinsMesnerK32Source.zRim,
@@ -5094,6 +5398,7 @@ theorem z_boundary_reachable :
         T.zRoute_isPath T.z_mem w hwA hwB)
     T.xRoute hq
 
+omit [DecidableRel G.Adj] in
 /-- Deletion bypass for the `x`-separator. -/
 theorem x_boundary_reachable_delete
     (hdelete : ∀ d : V, (G.induce fun w : V ↦ w ≠ d).Connected)
@@ -5102,6 +5407,7 @@ theorem x_boundary_reachable_delete
     (G.induce fun q : V ↦ q ∉ M.xPart ∧ q ≠ d.1).Reachable
       ⟨M.xSep.left, M.xSep.left_not_mem_componentCarrier, hda⟩
       ⟨M.xSep.right, M.xSep.right_not_mem_componentCarrier, hdb⟩ := by
+  classical
   have hySub : ∀ w, w ∈ T.yRoute.support → w ∈ T.xRim.support := by
     intro w hw
     simp only [WatkinsMesnerK32Source.xRim,
@@ -5126,6 +5432,7 @@ theorem x_boundary_reachable_delete
       (by simpa only [xPart, mem_componentCarrier] using d.2)
       hda.symm hdb.symm
 
+omit [DecidableRel G.Adj] in
 /-- Deletion bypass for the `y`-separator. -/
 theorem y_boundary_reachable_delete
     (hdelete : ∀ d : V, (G.induce fun w : V ↦ w ≠ d).Connected)
@@ -5134,6 +5441,7 @@ theorem y_boundary_reachable_delete
     (G.induce fun q : V ↦ q ∉ M.yPart ∧ q ≠ d.1).Reachable
       ⟨M.ySep.left, M.ySep.left_not_mem_componentCarrier, hda⟩
       ⟨M.ySep.right, M.ySep.right_not_mem_componentCarrier, hdb⟩ := by
+  classical
   have hxSub : ∀ w, w ∈ T.xRoute.support → w ∈ T.yRim.support := by
     intro w hw
     simp only [WatkinsMesnerK32Source.yRim,
@@ -5158,6 +5466,7 @@ theorem y_boundary_reachable_delete
       (by simpa only [yPart, mem_componentCarrier] using d.2)
       hda.symm hdb.symm
 
+omit [DecidableRel G.Adj] in
 /-- Deletion bypass for the `z`-separator. -/
 theorem z_boundary_reachable_delete
     (hdelete : ∀ d : V, (G.induce fun w : V ↦ w ≠ d).Connected)
@@ -5166,6 +5475,7 @@ theorem z_boundary_reachable_delete
     (G.induce fun q : V ↦ q ∉ M.zPart ∧ q ≠ d.1).Reachable
       ⟨M.zSep.left, M.zSep.left_not_mem_componentCarrier, hda⟩
       ⟨M.zSep.right, M.zSep.right_not_mem_componentCarrier, hdb⟩ := by
+  classical
   have hxSub : ∀ w, w ∈ T.xRoute.support → w ∈ T.zRim.support := by
     intro w hw
     simp only [WatkinsMesnerK32Source.zRim,
@@ -5190,29 +5500,35 @@ theorem z_boundary_reachable_delete
       (by simpa only [zPart, mem_componentCarrier] using d.2)
       hda.symm hdb.symm
 
+omit [DecidableRel G.Adj] in
 /-- Condition (vi) for the `x`-side, proved from maximality. -/
 theorem x_complementVertexTwoConnected
     (hconn : G.Connected)
     (hdelete : ∀ d : V, (G.induce fun w : V ↦ w ≠ d).Connected) :
     ComplementVertexTwoConnected G M.xPart := by
+  classical
   simpa only [xPart] using
     ComponentCompl.complementVertexTwoConnected_of_boundary_reachable M.xSep.side
       M.xSep.left_ne_right hconn hdelete M.x_boundary_reachable
       (fun d hda hdb ↦ M.x_boundary_reachable_delete hdelete d hda hdb)
 
+omit [DecidableRel G.Adj] in
 theorem y_complementVertexTwoConnected
     (hconn : G.Connected)
     (hdelete : ∀ d : V, (G.induce fun w : V ↦ w ≠ d).Connected) :
     ComplementVertexTwoConnected G M.yPart := by
+  classical
   simpa only [yPart] using
     ComponentCompl.complementVertexTwoConnected_of_boundary_reachable M.ySep.side
       M.ySep.left_ne_right hconn hdelete M.y_boundary_reachable
       (fun d hda hdb ↦ M.y_boundary_reachable_delete hdelete d hda hdb)
 
+omit [DecidableRel G.Adj] in
 theorem z_complementVertexTwoConnected
     (hconn : G.Connected)
     (hdelete : ∀ d : V, (G.induce fun w : V ↦ w ≠ d).Connected) :
     ComplementVertexTwoConnected G M.zPart := by
+  classical
   simpa only [zPart] using
     ComponentCompl.complementVertexTwoConnected_of_boundary_reachable M.zSep.side
       M.zSep.left_ne_right hconn hdelete M.z_boundary_reachable
@@ -5242,21 +5558,25 @@ def yBStem : G.Walk T.branchB M.ySep.right :=
 def zBStem : G.Walk T.branchB M.zSep.right :=
   T.zArmB.takeUntil M.zSep.right M.zSep.right_mem_bArm
 
+omit [DecidableRel G.Adj] in
 theorem xAStem_subset_route {w : V} (hw : w ∈ M.xAStem.support) :
     w ∈ T.xRoute.support := by
   exact T.xRoute.support_takeUntil_subset_support T.x_mem
     (T.xArmA.support_takeUntil_subset_support M.xSep.left_mem_aArm hw)
 
+omit [DecidableRel G.Adj] in
 theorem yAStem_subset_route {w : V} (hw : w ∈ M.yAStem.support) :
     w ∈ T.yRoute.support := by
   exact T.yRoute.support_takeUntil_subset_support T.y_mem
     (T.yArmA.support_takeUntil_subset_support M.ySep.left_mem_aArm hw)
 
+omit [DecidableRel G.Adj] in
 theorem zAStem_subset_route {w : V} (hw : w ∈ M.zAStem.support) :
     w ∈ T.zRoute.support := by
   exact T.zRoute.support_takeUntil_subset_support T.z_mem
     (T.zArmA.support_takeUntil_subset_support M.zSep.left_mem_aArm hw)
 
+omit [DecidableRel G.Adj] in
 theorem xBStem_subset_route {w : V} (hw : w ∈ M.xBStem.support) :
     w ∈ T.xRoute.support := by
   have hwArm : w ∈ T.xArmB.support :=
@@ -5266,6 +5586,7 @@ theorem xBStem_subset_route {w : V} (hw : w ∈ M.xBStem.support) :
       List.mem_reverse] using hwArm
   exact T.xRoute.support_dropUntil_subset_support T.x_mem hwDrop
 
+omit [DecidableRel G.Adj] in
 theorem yBStem_subset_route {w : V} (hw : w ∈ M.yBStem.support) :
     w ∈ T.yRoute.support := by
   have hwArm : w ∈ T.yArmB.support :=
@@ -5275,6 +5596,7 @@ theorem yBStem_subset_route {w : V} (hw : w ∈ M.yBStem.support) :
       List.mem_reverse] using hwArm
   exact T.yRoute.support_dropUntil_subset_support T.y_mem hwDrop
 
+omit [DecidableRel G.Adj] in
 theorem zBStem_subset_route {w : V} (hw : w ∈ M.zBStem.support) :
     w ∈ T.zRoute.support := by
   have hwArm : w ∈ T.zArmB.support :=
@@ -5284,9 +5606,11 @@ theorem zBStem_subset_route {w : V} (hw : w ∈ M.zBStem.support) :
       List.mem_reverse] using hwArm
   exact T.zRoute.support_dropUntil_subset_support T.z_mem hwDrop
 
+omit [DecidableRel G.Adj] in
 private theorem zBStem_inter_xBStem_only_branchB {w : V}
     (hwZ : w ∈ M.zBStem.support) (hwX : w ∈ M.xBStem.support) :
     w = T.branchB := by
+  classical
   have hwZRoute := M.zBStem_subset_route hwZ
   have hwXRoute := M.xBStem_subset_route hwX
   rcases T.xRoute_inter_zRoute w hwXRoute hwZRoute with hA | hB
@@ -5304,9 +5628,11 @@ private theorem zBStem_inter_xBStem_only_branchB {w : V}
         T.zRoute_isPath T.z_mem T.branchA hleft hright).symm).elim
   · exact hB
 
+omit [DecidableRel G.Adj] in
 private theorem zBStem_inter_yBStem_only_branchB {w : V}
     (hwZ : w ∈ M.zBStem.support) (hwY : w ∈ M.yBStem.support) :
     w = T.branchB := by
+  classical
   have hwZRoute := M.zBStem_subset_route hwZ
   have hwYRoute := M.yBStem_subset_route hwY
   rcases T.yRoute_inter_zRoute w hwYRoute hwZRoute with hA | hB
@@ -5324,9 +5650,11 @@ private theorem zBStem_inter_yBStem_only_branchB {w : V}
         T.zRoute_isPath T.z_mem T.branchA hleft hright).symm).elim
   · exact hB
 
+omit [DecidableRel G.Adj] in
 private theorem xBStem_inter_yBStem_only_branchB {w : V}
     (hwX : w ∈ M.xBStem.support) (hwY : w ∈ M.yBStem.support) :
     w = T.branchB := by
+  classical
   have hwXRoute := M.xBStem_subset_route hwX
   have hwYRoute := M.yBStem_subset_route hwY
   rcases T.xRoute_inter_yRoute w hwXRoute hwYRoute with hA | hB
@@ -5352,7 +5680,9 @@ def zBToXBStemPath : G.Walk M.zSep.right M.xSep.right :=
 def zBToYBStemPath : G.Walk M.zSep.right M.ySep.right :=
   M.zBStem.reverse.append M.yBStem
 
+omit [DecidableRel G.Adj] in
 theorem zBToXBStemPath_isPath : M.zBToXBStemPath.IsPath := by
+  classical
   apply Walk.IsPath.append_of_meet_only_endpoint_wm
     (((T.zRoute_isPath.dropUntil T.z_mem).reverse
       ).takeUntil M.zSep.right_mem_bArm).reverse
@@ -5364,7 +5694,9 @@ theorem zBToXBStemPath_isPath : M.zBToXBStemPath.IsPath := by
     simpa only [Walk.support_reverse, List.mem_reverse] using hwZ
   · exact hwX
 
+omit [DecidableRel G.Adj] in
 theorem zBToYBStemPath_isPath : M.zBToYBStemPath.IsPath := by
+  classical
   apply Walk.IsPath.append_of_meet_only_endpoint_wm
     (((T.zRoute_isPath.dropUntil T.z_mem).reverse
       ).takeUntil M.zSep.right_mem_bArm).reverse
@@ -5376,10 +5708,12 @@ theorem zBToYBStemPath_isPath : M.zBToYBStemPath.IsPath := by
     simpa only [Walk.support_reverse, List.mem_reverse] using hwZ
   · exact hwY
 
+omit [DecidableRel G.Adj] in
 theorem mem_zBStem_of_mem_both_stem_paths {w : V}
     (hwX : w ∈ M.zBToXBStemPath.support)
     (hwY : w ∈ M.zBToYBStemPath.support) :
     w ∈ M.zBStem.support := by
+  classical
   have hxCases : w ∈ M.zBStem.reverse.support ∨ w ∈ M.xBStem.support := by
     simpa only [zBToXBStemPath, Walk.mem_support_append_iff] using hwX
   have hyCases : w ∈ M.zBStem.reverse.support ∨ w ∈ M.yBStem.support := by
@@ -5391,8 +5725,10 @@ theorem mem_zBStem_of_mem_both_stem_paths {w : V}
   · have hwB := xBStem_inter_yBStem_only_branchB (M := M) hwX hwY
     simpa only [hwB, zBStem] using M.zBStem.start_mem_support
 
+omit [DecidableRel G.Adj] in
 theorem xAStem_disjoint_xPart :
     Disjoint M.xAStem.toSubgraph.verts (M.xPart : Set V) := by
+  classical
   rw [Set.disjoint_left]
   intro w hwStem hwPart
   simp only [Walk.mem_verts_toSubgraph] at hwStem
@@ -5402,8 +5738,10 @@ theorem xAStem_disjoint_xPart :
         T.xRoute_isPath T.x_mem v hvA hvB) w hwStem
   exact mem_componentCarrier.mp (by simpa only [Finset.mem_coe, xPart] using hwPart)
 
+omit [DecidableRel G.Adj] in
 theorem xBStem_disjoint_xPart :
     Disjoint M.xBStem.toSubgraph.verts (M.xPart : Set V) := by
+  classical
   rw [Set.disjoint_left]
   intro w hwStem hwPart
   simp only [Walk.mem_verts_toSubgraph] at hwStem
@@ -5414,8 +5752,10 @@ theorem xBStem_disjoint_xPart :
         T.xRoute_isPath T.x_mem v hvA hvB) w hwStem
   exact mem_componentCarrier.mp (by simpa only [Finset.mem_coe, xPart] using hwPart)
 
+omit [DecidableRel G.Adj] in
 theorem yAStem_disjoint_yPart :
     Disjoint M.yAStem.toSubgraph.verts (M.yPart : Set V) := by
+  classical
   rw [Set.disjoint_left]
   intro w hwStem hwPart
   simp only [Walk.mem_verts_toSubgraph] at hwStem
@@ -5425,8 +5765,10 @@ theorem yAStem_disjoint_yPart :
         T.yRoute_isPath T.y_mem v hvA hvB) w hwStem
   exact mem_componentCarrier.mp (by simpa only [Finset.mem_coe, yPart] using hwPart)
 
+omit [DecidableRel G.Adj] in
 theorem yBStem_disjoint_yPart :
     Disjoint M.yBStem.toSubgraph.verts (M.yPart : Set V) := by
+  classical
   rw [Set.disjoint_left]
   intro w hwStem hwPart
   simp only [Walk.mem_verts_toSubgraph] at hwStem
@@ -5437,8 +5779,10 @@ theorem yBStem_disjoint_yPart :
         T.yRoute_isPath T.y_mem v hvA hvB) w hwStem
   exact mem_componentCarrier.mp (by simpa only [Finset.mem_coe, yPart] using hwPart)
 
+omit [DecidableRel G.Adj] in
 theorem zAStem_disjoint_zPart :
     Disjoint M.zAStem.toSubgraph.verts (M.zPart : Set V) := by
+  classical
   rw [Set.disjoint_left]
   intro w hwStem hwPart
   simp only [Walk.mem_verts_toSubgraph] at hwStem
@@ -5448,8 +5792,10 @@ theorem zAStem_disjoint_zPart :
         T.zRoute_isPath T.z_mem v hvA hvB) w hwStem
   exact mem_componentCarrier.mp (by simpa only [Finset.mem_coe, zPart] using hwPart)
 
+omit [DecidableRel G.Adj] in
 theorem zBStem_disjoint_zPart :
     Disjoint M.zBStem.toSubgraph.verts (M.zPart : Set V) := by
+  classical
   rw [Set.disjoint_left]
   intro w hwStem hwPart
   simp only [Walk.mem_verts_toSubgraph] at hwStem
@@ -5466,6 +5812,7 @@ def initialAGraph : G.Subgraph :=
 def initialBGraph : G.Subgraph :=
   M.xBStem.toSubgraph ⊔ M.yBStem.toSubgraph ⊔ M.zBStem.toSubgraph
 
+omit [DecidableRel G.Adj] [Fintype V] in
 private theorem leftStem_disjoint_rightStem_sameRoute
     {A B p l r : V} (P : G.Walk A B) (hP : P.IsPath)
     (hp : p ∈ P.support)
@@ -5486,6 +5833,7 @@ private theorem leftStem_disjoint_rightStem_sameRoute
   exact (Walk.endpoint_notMem_support_takeUntil (hP.takeUntil hp) hl hlp.symm
     (hwp ▸ hwL)).elim
 
+omit [DecidableRel G.Adj] [Fintype V] in
 private theorem leftStem_disjoint_rightStem_distinctRoutes
     {A B p q l r : V} (P Q : G.Walk A B)
     (hP : P.IsPath) (hQ : Q.IsPath)
@@ -5521,6 +5869,7 @@ private theorem leftStem_disjoint_rightStem_distinctRoutes
       hP hp B (hB ▸ hwPt) hBr
     exact hpB hBp.symm
 
+omit [DecidableRel G.Adj] in
 theorem initialAGraph_connected : M.initialAGraph.Connected := by
   apply Subgraph.connected_sup
   · exact (Subgraph.connected_sup
@@ -5528,8 +5877,9 @@ theorem initialAGraph_connected : M.initialAGraph.Connected := by
       M.yAStem.toSubgraph_connected.preconnected
       ⟨T.branchA, by simp [xAStem, yAStem]⟩).preconnected
   · exact M.zAStem.toSubgraph_connected.preconnected
-  · exact ⟨T.branchA, by simp [initialAGraph, xAStem, yAStem, zAStem]⟩
+  · exact ⟨T.branchA, by simp [xAStem, yAStem, zAStem]⟩
 
+omit [DecidableRel G.Adj] in
 theorem initialBGraph_connected : M.initialBGraph.Connected := by
   apply Subgraph.connected_sup
   · exact (Subgraph.connected_sup
@@ -5537,8 +5887,9 @@ theorem initialBGraph_connected : M.initialBGraph.Connected := by
       M.yBStem.toSubgraph_connected.preconnected
       ⟨T.branchB, by simp [xBStem, yBStem]⟩).preconnected
   · exact M.zBStem.toSubgraph_connected.preconnected
-  · exact ⟨T.branchB, by simp [initialBGraph, xBStem, yBStem, zBStem]⟩
+  · exact ⟨T.branchB, by simp [xBStem, yBStem, zBStem]⟩
 
+omit [DecidableRel G.Adj] in
 theorem aSet_subset_initialAGraph :
     ∀ a ∈ M.aSet, a ∈ M.initialAGraph.verts := by
   intro a ha
@@ -5549,6 +5900,7 @@ theorem aSet_subset_initialAGraph :
   · simp [initialAGraph, yAStem]
   · simp [initialAGraph, zAStem]
 
+omit [DecidableRel G.Adj] in
 theorem bSet_subset_initialBGraph :
     ∀ b ∈ M.bSet, b ∈ M.initialBGraph.verts := by
   intro b hb
@@ -5559,8 +5911,10 @@ theorem bSet_subset_initialBGraph :
   · simp [initialBGraph, yBStem]
   · simp [initialBGraph, zBStem]
 
+omit [DecidableRel G.Adj] in
 theorem initialGraphs_vertex_disjoint :
     Disjoint M.initialAGraph.verts M.initialBGraph.verts := by
+  classical
   rw [Set.disjoint_left]
   intro w hwA hwB
   simp only [initialAGraph, initialBGraph, Subgraph.verts_sup,
@@ -5613,8 +5967,10 @@ theorem initialGraphs_vertex_disjoint :
         T.z_mem M.zSep.left_mem_aArm M.zSep.right_mem_bArm
         M.zSep.left_ne_terminal) hzA hzB
 
+omit [DecidableRel G.Adj] in
 theorem initialAGraph_disjoint_xPart :
     Disjoint M.initialAGraph.verts (M.xPart : Set V) := by
+  classical
   rw [Set.disjoint_left]
   intro w hw hwX
   simp only [initialAGraph, Subgraph.verts_sup, Set.mem_union] at hw
@@ -5629,8 +5985,10 @@ theorem initialAGraph_disjoint_xPart :
           simpa only [Walk.mem_verts_toSubgraph] using hz)))
     simpa only [Finset.mem_coe, xPart] using hwX
 
+omit [DecidableRel G.Adj] in
 theorem initialBGraph_disjoint_xPart :
     Disjoint M.initialBGraph.verts (M.xPart : Set V) := by
+  classical
   rw [Set.disjoint_left]
   intro w hw hwX
   simp only [initialBGraph, Subgraph.verts_sup, Set.mem_union] at hw
@@ -5645,8 +6003,10 @@ theorem initialBGraph_disjoint_xPart :
           simpa only [Walk.mem_verts_toSubgraph] using hz)))
     simpa only [Finset.mem_coe, xPart] using hwX
 
+omit [DecidableRel G.Adj] in
 theorem initialAGraph_disjoint_yPart :
     Disjoint M.initialAGraph.verts (M.yPart : Set V) := by
+  classical
   rw [Set.disjoint_left]
   intro w hw hwY
   simp only [initialAGraph, Subgraph.verts_sup, Set.mem_union] at hw
@@ -5661,8 +6021,10 @@ theorem initialAGraph_disjoint_yPart :
           simpa only [Walk.mem_verts_toSubgraph] using hz)))
     simpa only [Finset.mem_coe, yPart] using hwY
 
+omit [DecidableRel G.Adj] in
 theorem initialBGraph_disjoint_yPart :
     Disjoint M.initialBGraph.verts (M.yPart : Set V) := by
+  classical
   rw [Set.disjoint_left]
   intro w hw hwY
   simp only [initialBGraph, Subgraph.verts_sup, Set.mem_union] at hw
@@ -5677,8 +6039,10 @@ theorem initialBGraph_disjoint_yPart :
           simpa only [Walk.mem_verts_toSubgraph] using hz)))
     simpa only [Finset.mem_coe, yPart] using hwY
 
+omit [DecidableRel G.Adj] in
 theorem initialAGraph_disjoint_zPart :
     Disjoint M.initialAGraph.verts (M.zPart : Set V) := by
+  classical
   rw [Set.disjoint_left]
   intro w hw hwZ
   simp only [initialAGraph, Subgraph.verts_sup, Set.mem_union] at hw
@@ -5693,8 +6057,10 @@ theorem initialAGraph_disjoint_zPart :
     simpa only [Finset.mem_coe, zPart] using hwZ
   · exact Set.disjoint_left.mp M.zAStem_disjoint_zPart hz hwZ
 
+omit [DecidableRel G.Adj] in
 theorem initialBGraph_disjoint_zPart :
     Disjoint M.initialBGraph.verts (M.zPart : Set V) := by
+  classical
   rw [Set.disjoint_left]
   intro w hw hwZ
   simp only [initialBGraph, Subgraph.verts_sup, Set.mem_union] at hw
@@ -5709,6 +6075,7 @@ theorem initialBGraph_disjoint_zPart :
     simpa only [Finset.mem_coe, zPart] using hwZ
   · exact Set.disjoint_left.mp M.zBStem_disjoint_zPart hz hwZ
 
+omit [DecidableRel G.Adj] in
 theorem zBToXBStemPath_subset_initialBGraph {w : V}
     (hw : w ∈ M.zBToXBStemPath.support) :
     w ∈ M.initialBGraph.verts := by
@@ -5726,6 +6093,7 @@ theorem zBToXBStemPath_subset_initialBGraph {w : V}
     simp only [initialBGraph, Subgraph.verts_sup, Set.mem_union]
     exact Or.inl (Or.inl this)
 
+omit [DecidableRel G.Adj] in
 theorem zBToYBStemPath_subset_initialBGraph {w : V}
     (hw : w ∈ M.zBToYBStemPath.support) :
     w ∈ M.initialBGraph.verts := by
@@ -5743,34 +6111,43 @@ theorem zBToYBStemPath_subset_initialBGraph {w : V}
     simp only [initialBGraph, Subgraph.verts_sup, Set.mem_union]
     exact Or.inl (Or.inr this)
 
+omit [DecidableRel G.Adj] in
 theorem zBToXBStemPath_avoids_zPart {w : V}
     (hw : w ∈ M.zBToXBStemPath.support) : w ∉ M.zPart := by
+  classical
   intro hwZ
   exact Set.disjoint_left.mp M.initialBGraph_disjoint_zPart
     (M.zBToXBStemPath_subset_initialBGraph hw) hwZ
 
+omit [DecidableRel G.Adj] in
 theorem zBToYBStemPath_avoids_zPart {w : V}
     (hw : w ∈ M.zBToYBStemPath.support) : w ∉ M.zPart := by
+  classical
   intro hwZ
   exact Set.disjoint_left.mp M.initialBGraph_disjoint_zPart
     (M.zBToYBStemPath_subset_initialBGraph hw) hwZ
 
+omit [DecidableRel G.Adj] in
 theorem zBToXBStemPath_avoids_xA {w : V}
     (hw : w ∈ M.zBToXBStemPath.support) : w ≠ M.xSep.left := by
+  classical
   intro h
   subst w
   exact Set.disjoint_left.mp M.initialGraphs_vertex_disjoint
     (M.aSet_subset_initialAGraph M.xSep.left M.xA_mem_aSet)
     (M.zBToXBStemPath_subset_initialBGraph hw)
 
+omit [DecidableRel G.Adj] in
 theorem zBToYBStemPath_avoids_xA {w : V}
     (hw : w ∈ M.zBToYBStemPath.support) : w ≠ M.xSep.left := by
+  classical
   intro h
   subst w
   exact Set.disjoint_left.mp M.initialGraphs_vertex_disjoint
     (M.aSet_subset_initialAGraph M.xSep.left M.xA_mem_aSet)
     (M.zBToYBStemPath_subset_initialBGraph hw)
 
+omit [DecidableRel G.Adj] in
 /-- AHT p.14, localization of the hypothetical one-vertex separator in
 condition (v).  The two displayed paths from `zB` to `xB` and `yB` both
 lie in `G - (Z ∪ {xA})`.  Hence a singleton separating
@@ -5844,6 +6221,7 @@ theorem mem_zBStem_of_conditionV_singleton_separator
     rwa [hmapY] at this
   exact M.mem_zBStem_of_mem_both_stem_paths huX huY
 
+omit [DecidableRel G.Adj] in
 /-- Strict maximality half of the condition-(v) exchange.  Once the
 component of `z` after deleting `{xA,u}` misses the `z`-rim, it is a routed
 `z`-separator strictly larger than the old one: the old side is contained
@@ -5942,10 +6320,12 @@ theorem false_of_conditionV_replacement_rim_free
   exact M.z_maximal.not_replacement_of_subset_of_left_mem M.zSep R
     hsub hzAD
 
+omit [DecidableRel G.Adj] in
 /-- Every displayed `z`-rim vertex is outside the old terminal component,
 including the harmless cases where it is one of the two boundary vertices. -/
 theorem not_mem_zPart_of_mem_zRim {w : V} (hw : w ∈ T.zRim.support) :
     w ∉ M.zPart := by
+  classical
   intro hwZ
   by_cases hwL : w = M.zSep.left
   · subst w
@@ -5958,6 +6338,7 @@ theorem not_mem_zPart_of_mem_zRim {w : V} (hw : w ∈ T.zRim.support) :
   apply M.zSep.rim_outside_side w hw hwL hwR
   simpa only [zPart, mem_componentCarrier] using hwZ
 
+omit [DecidableRel G.Adj] in
 /-- First-exit tail used in condition (v).  If a vertex outside the old
 `z`-component lies with `z` in the component after deleting `{xA,u}`, then
 there is a path from one old boundary vertex `zA` or `zB` to it whose whole
@@ -6033,7 +6414,7 @@ theorem exists_conditionV_boundary_tail
     have hadj : G.Adj s q.penultimate :=
       (q.adj_penultimate hqNotNil).symm
     by_contra h
-    push_neg at h
+    push Not at h
     have hpenAvoid : q.penultimate ∉
         ((({M.zSep.left, M.zSep.right} : Finset V) : Set V)) := by
       simpa only [Finset.mem_coe, Finset.mem_insert,
@@ -6069,6 +6450,7 @@ theorem exists_conditionV_boundary_tail
     · intro v hv
       exact hrGood v (by simpa only [Walk.support_copy] using hv)
 
+omit [DecidableRel G.Adj] in
 /-- A path in `G-(Z∪{xA})` from one `z` boundary to one of `xB,yB`
 which avoids `u` contradicts the singleton-separator hypothesis. -/
 theorem false_of_conditionV_good_path
@@ -6138,6 +6520,7 @@ theorem false_of_conditionV_good_path
     rwa [hmap] at hvMap
   exact (hgood v.1 hvAmbient).2.2 (congrArg Subtype.val hvEq)
 
+omit [DecidableRel G.Adj] in
 /-- AHT p.14, the missing rim-exclusion step in the condition-(v)
 exchange.  A new component meeting the `x`- or `y`-route yields a clean
 path from `zA` or `zB` to the corresponding B-boundary, contradicting the
@@ -6349,6 +6732,7 @@ theorem conditionV_replacement_rim_free
         fun h ↦ hrA v hv (h.trans hbranchA),
         fun h ↦ huNotY (h ▸ hvRoute)⟩
 
+omit [DecidableRel G.Adj] in
 /-- Therefore the condition-(v) auxiliary graph has no one-vertex
 separator between `{zA,zB}` and `{xB,yB}`. -/
 theorem conditionV_no_singleton_separator
@@ -6362,6 +6746,7 @@ theorem conditionV_no_singleton_separator
         ({M.conditionVXB, M.conditionVYB} : Set
           {w : V // w ∉ M.zPart ∧ w ≠ M.xSep.left})
         ({u} : Set {w : V // w ∉ M.zPart ∧ w ≠ M.xSep.left}) := by
+  classical
   intro u hsep
   have huStem := M.mem_zBStem_of_conditionV_singleton_separator hzA u hsep
   apply M.false_of_conditionV_replacement_rim_free
@@ -6381,6 +6766,7 @@ noncomputable def conditionVPath
     (G := G) (s := {w : V | w ∉ M.zPart ∧
       w ≠ M.xSep.left})).toHom
 
+omit [DecidableRel G.Adj] in
 theorem conditionVPath_isPath
     {s t : {w : V // w ∉ M.zPart ∧ w ≠ M.xSep.left}}
     {p : M.conditionVGraph.Walk s t} (hp : p.IsPath) :
@@ -6389,6 +6775,7 @@ theorem conditionVPath_isPath
     (G := G) (s := {w : V | w ∉ M.zPart ∧
       w ≠ M.xSep.left})).injective
 
+omit [DecidableRel G.Adj] in
 theorem conditionVPath_support_good
     {s t : {w : V // w ∉ M.zPart ∧ w ≠ M.xSep.left}}
     {p : M.conditionVGraph.Walk s t} {w : V}
@@ -6398,12 +6785,13 @@ theorem conditionVPath_support_good
     (G := G) (s := {w : V | w ∉ M.zPart ∧
       w ≠ M.xSep.left})).toHom
   have hsupp : (M.conditionVPath p).support = p.support.map inc := by
-    convert (Walk.support_map (p := p) (f := inc)) using 1 <;>
+    convert (Walk.support_map (p := p) (f := inc)) using 1 ;
       rfl
   rw [hsupp] at hw
   obtain ⟨u, -, rfl⟩ := List.mem_map.mp hw
   exact u.2
 
+omit [DecidableRel G.Adj] in
 /-- Vertex-disjoint paths in the auxiliary induced graph remain
 vertex-disjoint after they are mapped back to the ambient graph. -/
 theorem conditionVPaths_disjoint
@@ -6418,10 +6806,10 @@ theorem conditionVPaths_disjoint
     (G := G) (s := {w : V | w ∉ M.zPart ∧
       w ≠ M.xSep.left})).toHom
   have hpSupp : (M.conditionVPath p).support = p.support.map inc := by
-    convert (Walk.support_map (p := p) (f := inc)) using 1 <;>
+    convert (Walk.support_map (p := p) (f := inc)) using 1 ;
       rfl
   have hqSupp : (M.conditionVPath q).support = q.support.map inc := by
-    convert (Walk.support_map (p := q) (f := inc)) using 1 <;>
+    convert (Walk.support_map (p := q) (f := inc)) using 1 ;
       rfl
   rw [Set.disjoint_left]
   intro w hwp hwq
@@ -6432,6 +6820,7 @@ theorem conditionVPaths_disjoint
   have huv : u = v := Subtype.ext (huw.trans hvw.symm)
   exact Set.disjoint_left.mp hdis hu (huv ▸ hv)
 
+omit [DecidableRel G.Adj] in
 /-- A lifted linkage path disjoint from a path ending at `xB` misses the
 entire `x`-terminal bridge. -/
 theorem conditionVPath_disjoint_xBridge_of_disjoint_xBPath
@@ -6467,6 +6856,7 @@ theorem conditionVPath_disjoint_xBridge_of_disjoint_xBPath
   · exact Set.disjoint_left.mp hdis hxBp hwq
   · exact hqAvoidPart w hwq hwPart
 
+omit [DecidableRel G.Adj] in
 /-- The symmetric wrong-linkage-path exclusion for the `y` bridge in the
 normalized case `xA = yA`. -/
 theorem conditionVPath_disjoint_yBridge_of_disjoint_yBPath
@@ -6503,6 +6893,7 @@ theorem conditionVPath_disjoint_yBridge_of_disjoint_yBPath
   · exact Set.disjoint_left.mp hdis hyBp hwq
   · exact hqAvoidPart w hwq hwPart
 
+omit [DecidableRel G.Adj] in
 /-- A lifted condition-(v) path ending at `xB` meets the canonical
 `x`-terminal bridge only at `xB`, provided its other endpoint is outside
 the `x`-component. -/
@@ -6528,6 +6919,7 @@ theorem conditionVPath_to_xB_meets_xBridge_only
   · rfl
   · exact (havoid w hwPath hwX).elim
 
+omit [DecidableRel G.Adj] in
 /-- The symmetric bridge-intersection fact for a path ending at `yB` in
 the normalized condition-(v) case `xA = yA`. -/
 theorem conditionVPath_to_yB_meets_yBridge_only
@@ -6553,6 +6945,7 @@ theorem conditionVPath_to_yB_meets_yBridge_only
   · rfl
   · exact (havoid w hwPath hwY).elim
 
+omit [DecidableRel G.Adj] in
 /-- Menger's two paths for the normalized condition-(v) auxiliary graph,
 with the only two possible endpoint matchings made explicit. -/
 theorem exists_conditionV_disjoint_pair_paths
@@ -6567,6 +6960,7 @@ theorem exists_conditionV_disjoint_pair_paths
         (q : M.conditionVGraph.Walk M.conditionVZB M.conditionVXB),
       p.IsPath ∧ q.IsPath ∧
         Disjoint {u | u ∈ p.support} {u | u ∈ q.support}) := by
+  classical
   let p₀ := M.zBToXBStemPath.induce
     {w : V | w ∉ M.zPart ∧ w ≠ M.xSep.left}
     (fun w hw ↦ ⟨M.zBToXBStemPath_avoids_zPart hw,
@@ -6603,6 +6997,7 @@ theorem exists_conditionV_disjoint_pair_paths
     left
     exact ⟨qAX, pYB, hqAX, hpYB, hdis.symm⟩
 
+omit [DecidableRel G.Adj] in
 /-- Of the two disjoint lifted linkage paths starting at `zA` and `zB`,
 the first meets the `z`-terminal bridge only at `zA`. -/
 theorem conditionVPath_from_zA_meets_zBridge_only
@@ -6622,6 +7017,7 @@ theorem conditionVPath_from_zA_meets_zBridge_only
     exact (Set.disjoint_left.mp hdis hwp hzBq).elim
   · exact ((M.conditionVPath_support_good hwp).1 hwPart).elim
 
+omit [DecidableRel G.Adj] in
 /-- The symmetric `zB` endpoint fact for the second lifted linkage path. -/
 theorem conditionVPath_from_zB_meets_zBridge_only
     (hzA : M.zSep.left ≠ M.xSep.left)
@@ -6640,13 +7036,15 @@ theorem conditionVPath_from_zB_meets_zBridge_only
   · rfl
   · exact ((M.conditionVPath_support_good hwq).1 hwPart).elim
 
+omit [DecidableRel G.Adj] in
 /-- In the normalized condition-(v) case the `x`- and `y`-terminal
 bridges meet only at their common A-end. -/
 theorem xBridge_meets_yBridge_only_xA
-    (hxyA : M.xSep.left = M.ySep.left)
+    (_hxyA : M.xSep.left = M.ySep.left)
     (hxyB : M.xSep.right ≠ M.ySep.right) :
     ∀ w, w ∈ M.xTerminalBridge.support →
       w ∈ M.yTerminalBridge.support → w = M.xSep.left := by
+  classical
   intro w hwX hwY
   rcases M.xTerminalBridge_support hwX with rfl | rfl | hwPartX
   · rfl
@@ -6664,12 +7062,14 @@ theorem xBridge_meets_yBridge_only_xA
     · exact (Finset.disjoint_left.mp M.xPart_disjoint_yPart
         hwPartX hwPartY).elim
 
+omit [DecidableRel G.Adj] in
 /-- The `x`- and `z`-terminal bridges can meet only at the B-end of the
 `z` bridge; this formulation also covers the case `xB = zB`. -/
 theorem xBridge_meets_zBridge_only_zB
     (hzA : M.zSep.left ≠ M.xSep.left) :
     ∀ w, w ∈ M.xTerminalBridge.support →
       w ∈ M.zTerminalBridge.support → w = M.zSep.right := by
+  classical
   intro w hwX hwZ
   rcases M.xTerminalBridge_support hwX with rfl | rfl | hwPartX
   · rcases M.zTerminalBridge_support hwZ with hA | hB | hwPartZ
@@ -6692,12 +7092,14 @@ theorem xBridge_meets_zBridge_only_zB
     · exact (Finset.disjoint_left.mp M.xPart_disjoint_zPart
         hwPartX hwPartZ).elim
 
+omit [DecidableRel G.Adj] in
 /-- The analogous `y`--`z` bridge intersection in the normalized case. -/
 theorem yBridge_meets_zBridge_only_zB
     (hxyA : M.xSep.left = M.ySep.left)
     (hzA : M.zSep.left ≠ M.xSep.left) :
     ∀ w, w ∈ M.yTerminalBridge.support →
       w ∈ M.zTerminalBridge.support → w = M.zSep.right := by
+  classical
   intro w hwY hwZ
   rcases M.yTerminalBridge_support hwY with rfl | rfl | hwPartY
   · rcases M.zTerminalBridge_support hwZ with hA | hB | hwPartZ
@@ -6720,11 +7122,13 @@ theorem yBridge_meets_zBridge_only_zB
     · exact (Finset.disjoint_left.mp M.yPart_disjoint_zPart
         hwPartY hwPartZ).elim
 
+omit [DecidableRel G.Adj] in
 theorem xBridge_disjoint_zBridge
     (hzA : M.zSep.left ≠ M.xSep.left)
     (hxzB : M.xSep.right ≠ M.zSep.right) :
     Disjoint {w | w ∈ M.xTerminalBridge.support}
       {w | w ∈ M.zTerminalBridge.support} := by
+  classical
   rw [Set.disjoint_left]
   intro w hwX hwZ
   have hw := M.xBridge_meets_zBridge_only_zB hzA w hwX hwZ
@@ -6736,12 +7140,14 @@ theorem xBridge_disjoint_zBridge
   · exact (Finset.disjoint_left.mp M.xPart_disjoint_bSet
       hwPart M.zB_mem_bSet).elim
 
+omit [DecidableRel G.Adj] in
 theorem yBridge_disjoint_zBridge
     (hxyA : M.xSep.left = M.ySep.left)
     (hzA : M.zSep.left ≠ M.xSep.left)
     (hyzB : M.ySep.right ≠ M.zSep.right) :
     Disjoint {w | w ∈ M.yTerminalBridge.support}
       {w | w ∈ M.zTerminalBridge.support} := by
+  classical
   rw [Set.disjoint_left]
   intro w hwY hwZ
   have hw := M.yBridge_meets_zBridge_only_zB hxyA hzA w hwY hwZ
@@ -6753,6 +7159,7 @@ theorem yBridge_disjoint_zBridge
   · exact (Finset.disjoint_left.mp M.yPart_disjoint_bSet
       hwPart M.zB_mem_bSet).elim
 
+omit [DecidableRel G.Adj] in
 /-- The first condition-(v) Menger matching, `zA--xB` and `zB--yB`,
 splices with the three terminal bridges to form the forbidden cycle. -/
 theorem hasCycleThroughThree_of_conditionV_straight
@@ -6764,6 +7171,7 @@ theorem hasCycleThroughThree_of_conditionV_straight
     (hp : p.IsPath) (hq : q.IsPath)
     (hdis : Disjoint {u | u ∈ p.support} {u | u ∈ q.support}) :
     HasCycleThroughThree G x y z := by
+  classical
   let X := M.xTerminalBridge
   let Y : G.Walk M.xSep.left M.ySep.right :=
     M.yTerminalBridge.copy hxyA.symm rfl
@@ -6913,6 +7321,7 @@ theorem hasCycleThroughThree_of_conditionV_straight
     M.xSep.x_ne_left hxzA hmeet
     (Or.inl hxL) (Or.inr hyR) (Or.inr hzR)
 
+omit [DecidableRel G.Adj] in
 /-- The crossed condition-(v) matching, `zA--yB` and `zB--xB`, gives
 the complementary literal cycle splice. -/
 theorem hasCycleThroughThree_of_conditionV_crossed
@@ -6924,6 +7333,7 @@ theorem hasCycleThroughThree_of_conditionV_crossed
     (hp : p.IsPath) (hq : q.IsPath)
     (hdis : Disjoint {u | u ∈ p.support} {u | u ∈ q.support}) :
     HasCycleThroughThree G x y z := by
+  classical
   let X := M.xTerminalBridge
   let Y : G.Walk M.xSep.left M.ySep.right :=
     M.yTerminalBridge.copy hxyA.symm rfl
@@ -7072,6 +7482,7 @@ theorem hasCycleThroughThree_of_conditionV_crossed
     M.xSep.x_ne_left hxzA hmeet
     (Or.inl hxL) (Or.inr hyR) (Or.inl hzL)
 
+omit [DecidableRel G.Adj] in
 /-- AHT condition (v), normalized so the repeated A-boundary is
 `xA = yA`: the maximality exchange and Menger splices force a common
 cycle through `x,y,z`. -/
@@ -7080,6 +7491,7 @@ theorem hasCycleThroughThree_of_xA_eq_yA
     (hxyA : M.xSep.left = M.ySep.left)
     (hzA : M.zSep.left ≠ M.xSep.left) :
     HasCycleThroughThree G x y z := by
+  classical
   have hxyB := M.xB_ne_yB_of_xA_eq_yA hdelete hxyA hzA
   rcases M.exists_conditionV_disjoint_pair_paths hdelete hxyA hzA with
       ⟨p, q, hp, hq, hdis⟩ | ⟨p, q, hp, hq, hdis⟩
@@ -7177,38 +7589,50 @@ def reverseABSource (T : WatkinsMesnerK32Source G x y z) :
     · exact Or.inr hA
     · exact Or.inl hB
 
-@[simp] theorem reverseABSource_xArmA :
+omit [DecidableRel G.Adj] [Fintype V] in
+@[simp] theorem reverseABSource_xArmA [Finite V] :
     (reverseABSource T).xArmA = T.xArmB := by
+  let : Fintype V := Fintype.ofFinite V
   simpa only [reverseABSource, WatkinsMesnerK32Source.xArmA,
     WatkinsMesnerK32Source.xArmB] using
       Walk.IsPath.reverseSplit_armA T.xRoute T.xRoute_isPath T.x_mem
 
-@[simp] theorem reverseABSource_xArmB :
+omit [DecidableRel G.Adj] [Fintype V] in
+@[simp] theorem reverseABSource_xArmB [Finite V] :
     (reverseABSource T).xArmB = T.xArmA := by
+  let : Fintype V := Fintype.ofFinite V
   simpa only [reverseABSource, WatkinsMesnerK32Source.xArmA,
     WatkinsMesnerK32Source.xArmB] using
       Walk.IsPath.reverseSplit_armB T.xRoute T.xRoute_isPath T.x_mem
 
-@[simp] theorem reverseABSource_yArmA :
+omit [DecidableRel G.Adj] [Fintype V] in
+@[simp] theorem reverseABSource_yArmA [Finite V] :
     (reverseABSource T).yArmA = T.yArmB := by
+  let : Fintype V := Fintype.ofFinite V
   simpa only [reverseABSource, WatkinsMesnerK32Source.yArmA,
     WatkinsMesnerK32Source.yArmB] using
       Walk.IsPath.reverseSplit_armA T.yRoute T.yRoute_isPath T.y_mem
 
-@[simp] theorem reverseABSource_yArmB :
+omit [DecidableRel G.Adj] [Fintype V] in
+@[simp] theorem reverseABSource_yArmB [Finite V] :
     (reverseABSource T).yArmB = T.yArmA := by
+  let : Fintype V := Fintype.ofFinite V
   simpa only [reverseABSource, WatkinsMesnerK32Source.yArmA,
     WatkinsMesnerK32Source.yArmB] using
       Walk.IsPath.reverseSplit_armB T.yRoute T.yRoute_isPath T.y_mem
 
-@[simp] theorem reverseABSource_zArmA :
+omit [DecidableRel G.Adj] [Fintype V] in
+@[simp] theorem reverseABSource_zArmA [Finite V] :
     (reverseABSource T).zArmA = T.zArmB := by
+  let : Fintype V := Fintype.ofFinite V
   simpa only [reverseABSource, WatkinsMesnerK32Source.zArmA,
     WatkinsMesnerK32Source.zArmB] using
       Walk.IsPath.reverseSplit_armA T.zRoute T.zRoute_isPath T.z_mem
 
-@[simp] theorem reverseABSource_zArmB :
+omit [DecidableRel G.Adj] [Fintype V] in
+@[simp] theorem reverseABSource_zArmB [Finite V] :
     (reverseABSource T).zArmB = T.zArmA := by
+  let : Fintype V := Fintype.ofFinite V
   simpa only [reverseABSource, WatkinsMesnerK32Source.zArmA,
     WatkinsMesnerK32Source.zArmB] using
       Walk.IsPath.reverseSplit_armB T.zRoute T.zRoute_isPath T.z_mem
@@ -7330,31 +7754,37 @@ noncomputable def reverseABTriple (M : WatkinsMesnerMaximalTriple T) :
     y_maximal := hyMax
     z_maximal := hzMax }
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem reverseABTriple_xSep_left :
     (reverseABTriple M).xSep.left = M.xSep.right := by
   simp [reverseABTriple, RoutedCycleSeparator.changeArms,
     RoutedCycleSeparator.flipAB]
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem reverseABTriple_ySep_left :
     (reverseABTriple M).ySep.left = M.ySep.right := by
   simp [reverseABTriple, RoutedCycleSeparator.changeArms,
     RoutedCycleSeparator.flipAB]
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem reverseABTriple_zSep_left :
     (reverseABTriple M).zSep.left = M.zSep.right := by
   simp [reverseABTriple, RoutedCycleSeparator.changeArms,
     RoutedCycleSeparator.flipAB]
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem reverseABTriple_xSep_right :
     (reverseABTriple M).xSep.right = M.xSep.left := by
   simp [reverseABTriple, RoutedCycleSeparator.changeArms,
     RoutedCycleSeparator.flipAB]
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem reverseABTriple_ySep_right :
     (reverseABTriple M).ySep.right = M.ySep.left := by
   simp [reverseABTriple, RoutedCycleSeparator.changeArms,
     RoutedCycleSeparator.flipAB]
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem reverseABTriple_zSep_right :
     (reverseABTriple M).zSep.right = M.zSep.left := by
   simp [reverseABTriple, RoutedCycleSeparator.changeArms,
@@ -7399,17 +7829,14 @@ noncomputable def swapYZTriple (M : WatkinsMesnerMaximalTriple T) :
     x_maximal := ?_
     y_maximal := ?_
     z_maximal := ?_ }
-  · change xS.IsMaximal
-    have h := RoutedCycleSeparator.IsMaximal.changeRim
+  · have h := RoutedCycleSeparator.IsMaximal.changeRim
       M.xSep M.x_maximal hxNewOld hxOldNew
     simpa only [xS, xS₀, swapYZSource, id_eq,
       WatkinsMesnerK32Source.xArmA,
       WatkinsMesnerK32Source.xArmB] using h
-  · change yS.IsMaximal
-    change M.zSep.IsMaximal
+  · change M.zSep.IsMaximal
     exact M.z_maximal
-  · change zS.IsMaximal
-    change M.ySep.IsMaximal
+  · change M.ySep.IsMaximal
     exact M.y_maximal
 
 /-- Relabel a maximal triple along the cyclic source permutation. -/
@@ -7464,98 +7891,109 @@ noncomputable def rotateYZXTriple (M : WatkinsMesnerMaximalTriple T) :
     x_maximal := ?_
     y_maximal := ?_
     z_maximal := ?_ }
-  · change xS.IsMaximal
-    have h := RoutedCycleSeparator.IsMaximal.changeRim
+  · have h := RoutedCycleSeparator.IsMaximal.changeRim
       M.ySep M.y_maximal hxNewOld hxOldNew
     simpa only [xS, xS₀, rotateYZXSource, id_eq,
       WatkinsMesnerK32Source.xArmA, WatkinsMesnerK32Source.xArmB,
       WatkinsMesnerK32Source.yArmA,
       WatkinsMesnerK32Source.yArmB] using h
-  · change yS.IsMaximal
-    have h := RoutedCycleSeparator.IsMaximal.changeRim
+  · have h := RoutedCycleSeparator.IsMaximal.changeRim
       M.zSep M.z_maximal hyNewOld hyOldNew
     simpa only [yS, yS₀, rotateYZXSource, id_eq,
       WatkinsMesnerK32Source.yArmA, WatkinsMesnerK32Source.yArmB,
       WatkinsMesnerK32Source.zArmA,
       WatkinsMesnerK32Source.zArmB] using h
-  · change zS.IsMaximal
-    change M.xSep.IsMaximal
+  · change M.xSep.IsMaximal
     exact M.x_maximal
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem swapYZTriple_xSep_left :
     (swapYZTriple M).xSep.left = M.xSep.left := by
   simp [swapYZTriple, swapYZSource, RoutedCycleSeparator.changeRim,
     WatkinsMesnerK32Source.xArmA, WatkinsMesnerK32Source.xArmB]
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem swapYZTriple_ySep_left :
     (swapYZTriple M).ySep.left = M.zSep.left := by
-  simp [swapYZTriple, swapYZSource, WatkinsMesnerK32Source.yArmA,
+  simp only [swapYZTriple, swapYZSource, WatkinsMesnerK32Source.yArmA,
     WatkinsMesnerK32Source.yArmB, WatkinsMesnerK32Source.yRim,
     WatkinsMesnerK32Source.zArmA, WatkinsMesnerK32Source.zArmB,
     WatkinsMesnerK32Source.zRim]
   change M.zSep.left = M.zSep.left
   rfl
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem swapYZTriple_zSep_left :
     (swapYZTriple M).zSep.left = M.ySep.left := by
-  simp [swapYZTriple, swapYZSource, WatkinsMesnerK32Source.zArmA,
+  simp only [swapYZTriple, swapYZSource, WatkinsMesnerK32Source.zArmA,
     WatkinsMesnerK32Source.zArmB, WatkinsMesnerK32Source.zRim,
     WatkinsMesnerK32Source.yArmA, WatkinsMesnerK32Source.yArmB,
     WatkinsMesnerK32Source.yRim]
   change M.ySep.left = M.ySep.left
   rfl
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem swapYZTriple_xSep_right :
     (swapYZTriple M).xSep.right = M.xSep.right := by
   simp [swapYZTriple, swapYZSource, RoutedCycleSeparator.changeRim,
     WatkinsMesnerK32Source.xArmA, WatkinsMesnerK32Source.xArmB]
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem swapYZTriple_ySep_right :
     (swapYZTriple M).ySep.right = M.zSep.right := by
-  simp [swapYZTriple, swapYZSource, WatkinsMesnerK32Source.yArmA,
+  simp only [swapYZTriple, swapYZSource, WatkinsMesnerK32Source.yArmA,
     WatkinsMesnerK32Source.yArmB, WatkinsMesnerK32Source.yRim,
     WatkinsMesnerK32Source.zArmA, WatkinsMesnerK32Source.zArmB,
     WatkinsMesnerK32Source.zRim]
   change M.zSep.right = M.zSep.right
   rfl
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem swapYZTriple_zSep_right :
     (swapYZTriple M).zSep.right = M.ySep.right := by
-  simp [swapYZTriple, swapYZSource, WatkinsMesnerK32Source.zArmA,
+  simp only [swapYZTriple, swapYZSource, WatkinsMesnerK32Source.zArmA,
     WatkinsMesnerK32Source.zArmB, WatkinsMesnerK32Source.zRim,
     WatkinsMesnerK32Source.yArmA, WatkinsMesnerK32Source.yArmB,
     WatkinsMesnerK32Source.yRim]
   change M.ySep.right = M.ySep.right
   rfl
 
+omit [DecidableRel G.Adj] in
 theorem swapYZTriple_aSet : (swapYZTriple M).aSet = M.aSet := by
+  classical
   ext w
   simp only [aSet, Finset.mem_insert, Finset.mem_singleton,
     swapYZTriple_xSep_left, swapYZTriple_ySep_left,
     swapYZTriple_zSep_left]
   aesop
 
+omit [DecidableRel G.Adj] in
 theorem swapYZTriple_bSet : (swapYZTriple M).bSet = M.bSet := by
+  classical
   ext w
   simp only [bSet, Finset.mem_insert, Finset.mem_singleton,
     swapYZTriple_xSep_right, swapYZTriple_ySep_right,
     swapYZTriple_zSep_right]
   aesop
 
+omit [DecidableRel G.Adj] in
 theorem swapYZTriple_xPart : (swapYZTriple M).xPart = M.xPart := by
   ext w
   simp [xPart, mem_componentCarrier, swapYZTriple, swapYZSource,
     RoutedCycleSeparator.changeRim, WatkinsMesnerK32Source.xArmA,
     WatkinsMesnerK32Source.xArmB]
 
+omit [DecidableRel G.Adj] in
 theorem swapYZTriple_yPart : (swapYZTriple M).yPart = M.zPart := by
   change M.zPart = M.zPart
   rfl
 
+omit [DecidableRel G.Adj] in
 theorem swapYZTriple_zPart : (swapYZTriple M).zPart = M.yPart := by
   change M.yPart = M.yPart
   rfl
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem rotateYZXTriple_xSep_left :
     (rotateYZXTriple M).xSep.left = M.ySep.left := by
   simp [rotateYZXTriple, rotateYZXSource,
@@ -7563,6 +8001,7 @@ theorem swapYZTriple_zPart : (swapYZTriple M).zPart = M.yPart := by
     WatkinsMesnerK32Source.xArmB, WatkinsMesnerK32Source.yArmA,
     WatkinsMesnerK32Source.yArmB]
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem rotateYZXTriple_ySep_left :
     (rotateYZXTriple M).ySep.left = M.zSep.left := by
   simp [rotateYZXTriple, rotateYZXSource,
@@ -7570,15 +8009,17 @@ theorem swapYZTriple_zPart : (swapYZTriple M).zPart = M.yPart := by
     WatkinsMesnerK32Source.yArmB, WatkinsMesnerK32Source.zArmA,
     WatkinsMesnerK32Source.zArmB]
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem rotateYZXTriple_zSep_left :
     (rotateYZXTriple M).zSep.left = M.xSep.left := by
-  simp [rotateYZXTriple, rotateYZXSource, WatkinsMesnerK32Source.zArmA,
+  simp only [rotateYZXTriple, rotateYZXSource, WatkinsMesnerK32Source.zArmA,
     WatkinsMesnerK32Source.zArmB, WatkinsMesnerK32Source.zRim,
     WatkinsMesnerK32Source.xArmA, WatkinsMesnerK32Source.xArmB,
     WatkinsMesnerK32Source.xRim]
   change M.xSep.left = M.xSep.left
   rfl
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem rotateYZXTriple_xSep_right :
     (rotateYZXTriple M).xSep.right = M.ySep.right := by
   simp [rotateYZXTriple, rotateYZXSource,
@@ -7586,6 +8027,7 @@ theorem swapYZTriple_zPart : (swapYZTriple M).zPart = M.yPart := by
     WatkinsMesnerK32Source.xArmB, WatkinsMesnerK32Source.yArmA,
     WatkinsMesnerK32Source.yArmB]
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem rotateYZXTriple_ySep_right :
     (rotateYZXTriple M).ySep.right = M.zSep.right := by
   simp [rotateYZXTriple, rotateYZXSource,
@@ -7593,29 +8035,35 @@ theorem swapYZTriple_zPart : (swapYZTriple M).zPart = M.yPart := by
     WatkinsMesnerK32Source.yArmB, WatkinsMesnerK32Source.zArmA,
     WatkinsMesnerK32Source.zArmB]
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem rotateYZXTriple_zSep_right :
     (rotateYZXTriple M).zSep.right = M.xSep.right := by
-  simp [rotateYZXTriple, rotateYZXSource, WatkinsMesnerK32Source.zArmA,
+  simp only [rotateYZXTriple, rotateYZXSource, WatkinsMesnerK32Source.zArmA,
     WatkinsMesnerK32Source.zArmB, WatkinsMesnerK32Source.zRim,
     WatkinsMesnerK32Source.xArmA, WatkinsMesnerK32Source.xArmB,
     WatkinsMesnerK32Source.xRim]
   change M.xSep.right = M.xSep.right
   rfl
 
+omit [DecidableRel G.Adj] in
 theorem rotateYZXTriple_aSet : (rotateYZXTriple M).aSet = M.aSet := by
+  classical
   ext w
   simp only [aSet, Finset.mem_insert, Finset.mem_singleton,
     rotateYZXTriple_xSep_left, rotateYZXTriple_ySep_left,
     rotateYZXTriple_zSep_left]
   aesop
 
+omit [DecidableRel G.Adj] in
 theorem rotateYZXTriple_bSet : (rotateYZXTriple M).bSet = M.bSet := by
+  classical
   ext w
   simp only [bSet, Finset.mem_insert, Finset.mem_singleton,
     rotateYZXTriple_xSep_right, rotateYZXTriple_ySep_right,
     rotateYZXTriple_zSep_right]
   aesop
 
+omit [DecidableRel G.Adj] in
 theorem rotateYZXTriple_xPart : (rotateYZXTriple M).xPart = M.yPart := by
   ext w
   simp [xPart, yPart, mem_componentCarrier, rotateYZXTriple,
@@ -7623,6 +8071,7 @@ theorem rotateYZXTriple_xPart : (rotateYZXTriple M).xPart = M.yPart := by
     WatkinsMesnerK32Source.xArmA, WatkinsMesnerK32Source.xArmB,
     WatkinsMesnerK32Source.yArmA, WatkinsMesnerK32Source.yArmB]
 
+omit [DecidableRel G.Adj] in
 theorem rotateYZXTriple_yPart : (rotateYZXTriple M).yPart = M.zPart := by
   ext w
   simp [yPart, zPart, mem_componentCarrier, rotateYZXTriple,
@@ -7630,15 +8079,18 @@ theorem rotateYZXTriple_yPart : (rotateYZXTriple M).yPart = M.zPart := by
     WatkinsMesnerK32Source.yArmA, WatkinsMesnerK32Source.yArmB,
     WatkinsMesnerK32Source.zArmA, WatkinsMesnerK32Source.zArmB]
 
+omit [DecidableRel G.Adj] in
 theorem rotateYZXTriple_zPart : (rotateYZXTriple M).zPart = M.xPart := by
   change M.xPart = M.xPart
   rfl
 
+omit [DecidableRel G.Adj] in
 /-- AHT condition (v): the A-boundary cannot have cardinality two. -/
 theorem aSet_card_ne_two
     (hdelete : ∀ d : V, (G.induce fun w : V ↦ w ≠ d).Connected)
     (hno : ¬HasCycleThroughThree G x y z) :
     M.aSet.card ≠ 2 := by
+  classical
   intro hcard
   rcases M.A_branch_pattern_of_card_two hcard with
       ⟨hxy, hxBranch, hzBranch⟩ |
@@ -7672,20 +8124,25 @@ theorem aSet_card_ne_two
       M'.hasCycleThroughThree_of_xA_eq_yA hdelete hxy' hz'
     exact hno ⟨r, C, hC, hx, hy, hz⟩
 
+omit [DecidableRel G.Adj] in
 theorem reverseABTriple_aSet :
     (reverseABTriple M).aSet = M.bSet := by
+  classical
   ext w
   simp only [aSet, bSet, Finset.mem_insert, Finset.mem_singleton,
     reverseABTriple_xSep_left, reverseABTriple_ySep_left,
     reverseABTriple_zSep_left]
 
+omit [DecidableRel G.Adj] in
 theorem reverseABTriple_bSet :
     (reverseABTriple M).bSet = M.aSet := by
+  classical
   ext w
   simp only [bSet, aSet, Finset.mem_insert, Finset.mem_singleton,
     reverseABTriple_xSep_right, reverseABTriple_ySep_right,
     reverseABTriple_zSep_right]
 
+omit [DecidableRel G.Adj] in
 theorem reverseABTriple_xPart : (reverseABTriple M).xPart = M.xPart := by
   ext w
   simp only [xPart, mem_componentCarrier]
@@ -7693,6 +8150,7 @@ theorem reverseABTriple_xPart : (reverseABTriple M).xPart = M.xPart := by
     w ∈ (M.xSep.side : Set V)
   exact ComponentCompl.mem_transport _ _ _
 
+omit [DecidableRel G.Adj] in
 theorem reverseABTriple_yPart : (reverseABTriple M).yPart = M.yPart := by
   ext w
   simp only [yPart, mem_componentCarrier]
@@ -7700,6 +8158,7 @@ theorem reverseABTriple_yPart : (reverseABTriple M).yPart = M.yPart := by
     w ∈ (M.ySep.side : Set V)
   exact ComponentCompl.mem_transport _ _ _
 
+omit [DecidableRel G.Adj] in
 theorem reverseABTriple_zPart : (reverseABTriple M).zPart = M.zPart := by
   ext w
   simp only [zPart, mem_componentCarrier]
@@ -7707,31 +8166,37 @@ theorem reverseABTriple_zPart : (reverseABTriple M).zPart = M.zPart := by
     w ∈ (M.zSep.side : Set V)
   exact ComponentCompl.mem_transport _ _ _
 
+omit [DecidableRel G.Adj] in
 /-- The B-side half of AHT condition (v), obtained by reversing all three
 source routes and applying the proved A-side theorem. -/
 theorem bSet_card_ne_two
     (hdelete : ∀ d : V, (G.induce fun w : V ↦ w ≠ d).Connected)
     (hno : ¬HasCycleThroughThree G x y z) :
     M.bSet.card ≠ 2 := by
+  classical
   intro hcard
   let M' := reverseABTriple M
   have hAcard : M'.aSet.card = 2 := by
     simpa only [M', reverseABTriple_aSet] using hcard
   exact M'.aSet_card_ne_two hdelete hno hAcard
 
+omit [DecidableRel G.Adj] in
 theorem aSet_card_one_or_three
     (hdelete : ∀ d : V, (G.induce fun w : V ↦ w ≠ d).Connected)
     (hno : ¬HasCycleThroughThree G x y z) :
     M.aSet.card = 1 ∨ M.aSet.card = 3 := by
+  classical
   rcases M.aSet_card_trichotomy with h | h | h
   · exact Or.inl h
   · exact (M.aSet_card_ne_two hdelete hno h).elim
   · exact Or.inr h
 
+omit [DecidableRel G.Adj] in
 theorem bSet_card_one_or_three
     (hdelete : ∀ d : V, (G.induce fun w : V ↦ w ≠ d).Connected)
     (hno : ¬HasCycleThroughThree G x y z) :
     M.bSet.card = 1 ∨ M.bSet.card = 3 := by
+  classical
   rcases M.bSet_card_trichotomy with h | h | h
   · exact Or.inl h
   · exact (M.bSet_card_ne_two hdelete hno h).elim
@@ -7761,16 +8226,19 @@ noncomputable def cutComponentComplement (H : G.Subgraph) (d : H.verts)
     ((⊤ : H.coe.Subgraph).induce
       ((ComponentEndBlock.side d K)ᶜ))
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 theorem cutComponentPiece_le (H : G.Subgraph) (d : H.verts)
     (K : (deleteVertex H.coe d).ConnectedComponent) :
     cutComponentPiece H d K ≤ H :=
   Subgraph.coeSubgraph_le _
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 theorem cutComponentComplement_le (H : G.Subgraph) (d : H.verts)
     (K : (deleteVertex H.coe d).ConnectedComponent) :
     cutComponentComplement H d K ≤ H :=
   Subgraph.coeSubgraph_le _
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 @[simp] theorem mem_cutComponentPiece_verts_iff (H : G.Subgraph)
     (d : H.verts) (K : (deleteVertex H.coe d).ConnectedComponent)
     (w : V) :
@@ -7779,6 +8247,7 @@ theorem cutComponentComplement_le (H : G.Subgraph) (d : H.verts)
         (⟨w, hw⟩ : H.verts) ∈ ComponentEndBlock.verts d K := by
   simp [cutComponentPiece]
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 @[simp] theorem mem_cutComponentComplement_verts_iff (H : G.Subgraph)
     (d : H.verts) (K : (deleteVertex H.coe d).ConnectedComponent)
     (w : V) :
@@ -7793,18 +8262,25 @@ theorem cutComponentComplement_le (H : G.Subgraph) (d : H.verts)
   · rintro ⟨hw, hside⟩
     exact ⟨⟨w, hw⟩, hside, rfl⟩
 
-@[simp] theorem cut_mem_cutComponentPiece (H : G.Subgraph) (d : H.verts)
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+@[simp] theorem cut_mem_cutComponentPiece [Finite V] (H : G.Subgraph) (d : H.verts)
     (K : (deleteVertex H.coe d).ConnectedComponent) :
     d.1 ∈ (cutComponentPiece H d K).verts := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [mem_cutComponentPiece_verts_iff]
   exact ⟨d.2, by simp [ComponentEndBlock.verts]⟩
 
-@[simp] theorem cut_mem_cutComponentComplement (H : G.Subgraph)
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+@[simp] theorem cut_mem_cutComponentComplement [Finite V] (H : G.Subgraph)
     (d : H.verts) (K : (deleteVertex H.coe d).ConnectedComponent) :
     d.1 ∈ (cutComponentComplement H d K).verts := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [mem_cutComponentComplement_verts_iff]
   exact ⟨d.2, ComponentEndBlock.cut_not_mem_side d K⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- A component end piece of a connected candidate remains connected after
 it is mapped back to the ambient graph. -/
 theorem cutComponentPiece_connected (H : G.Subgraph) (hH : H.Connected)
@@ -7840,6 +8316,7 @@ noncomputable def cutSideToPieceDeleteHom (H : G.Subgraph)
     exact ⟨Set.mem_insert_iff.mpr (Or.inr q.2),
       Set.mem_insert_iff.mpr (Or.inr r.2), hqr⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Every vertex of the deleted end piece comes from its component side. -/
 theorem cutSideToPieceDeleteHom_surjective (H : G.Subgraph)
     (d : H.verts) (K : (deleteVertex H.coe d).ConnectedComponent) :
@@ -7856,13 +8333,16 @@ theorem cutSideToPieceDeleteHom_surjective (H : G.Subgraph)
   apply Subtype.ext
   rfl
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Removing the restored cut vertex from a component end piece leaves the
 original connected component side, hence a connected graph. -/
-theorem cutComponentPiece_delete_cut_connected (H : G.Subgraph)
+theorem cutComponentPiece_delete_cut_connected [Finite V] (H : G.Subgraph)
     (d : H.verts) (K : (deleteVertex H.coe d).ConnectedComponent) :
     ((cutComponentPiece H d K).coe.induce
       (fun w : (cutComponentPiece H d K).verts ↦
         w ≠ ⟨d.1, cut_mem_cutComponentPiece H d K⟩)).Connected := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hconn :
       ((cutComponentPiece H d K).coe.induce
         (fun w : (cutComponentPiece H d K).verts ↦ w.1 ≠ d.1)).Connected :=
@@ -7921,11 +8401,12 @@ def ABConnectorPair.yBIn (C : M.ABConnectorPair) : C.bGraph.verts :=
 def ABConnectorPair.zBIn (C : M.ABConnectorPair) : C.bGraph.verts :=
   ⟨M.zSep.right, C.b_contains _ M.zB_mem_bSet⟩
 
+omit [DecidableRel G.Adj] in
 private theorem ABConnectorPair.terminalBridge_meets_aGraph_only_left
     (C : M.ABConnectorPair) {l r : V} {P : G.Walk l r}
     {D : Finset V}
     (hP : ∀ w, w ∈ P.support → w = l ∨ w = r ∨ w ∈ D)
-    (hl : l ∈ M.aSet) (hr : r ∈ M.bSet)
+    (_hl : l ∈ M.aSet) (hr : r ∈ M.bSet)
     (hD : (D : Set V) ⊆
       (M.xPart : Set V) ∪ (M.yPart : Set V) ∪ (M.zPart : Set V))
     {w : V} (hwP : w ∈ P.support) (hwA : w ∈ C.aGraph.verts) :
@@ -7939,11 +8420,12 @@ private theorem ABConnectorPair.terminalBridge_meets_aGraph_only_left
     exact Set.disjoint_left.mp C.avoids_terminal_parts
       (Or.inl hwA) (hD hwD)
 
+omit [DecidableRel G.Adj] in
 private theorem ABConnectorPair.terminalBridge_meets_bGraph_only_right
     (C : M.ABConnectorPair) {l r : V} {P : G.Walk l r}
     {D : Finset V}
     (hP : ∀ w, w ∈ P.support → w = l ∨ w = r ∨ w ∈ D)
-    (hl : l ∈ M.aSet) (hr : r ∈ M.bSet)
+    (hl : l ∈ M.aSet) (_hr : r ∈ M.bSet)
     (hD : (D : Set V) ⊆
       (M.xPart : Set V) ∪ (M.yPart : Set V) ∪ (M.zPart : Set V))
     {w : V} (hwP : w ∈ P.support) (hwB : w ∈ C.bGraph.verts) :
@@ -7957,10 +8439,12 @@ private theorem ABConnectorPair.terminalBridge_meets_bGraph_only_right
     exact Set.disjoint_left.mp C.avoids_terminal_parts
       (Or.inr hwB) (hD hwD)
 
+omit [DecidableRel G.Adj] in
 theorem ABConnectorPair.xTerminalBridge_meets_aGraph_only_left
     (C : M.ABConnectorPair) {w : V}
     (hwP : w ∈ M.xTerminalBridge.support) (hwA : w ∈ C.aGraph.verts) :
     w = M.xSep.left := by
+  classical
   rcases M.xTerminalBridge_support hwP with rfl | rfl | hw
   · rfl
   · exact (Set.disjoint_left.mp C.vertex_disjoint hwA
@@ -7968,10 +8452,12 @@ theorem ABConnectorPair.xTerminalBridge_meets_aGraph_only_left
   · exact (Set.disjoint_left.mp C.avoids_terminal_parts
       (Or.inl hwA) (Or.inl (Or.inl hw))).elim
 
+omit [DecidableRel G.Adj] in
 theorem ABConnectorPair.xTerminalBridge_meets_bGraph_only_right
     (C : M.ABConnectorPair) {w : V}
     (hwP : w ∈ M.xTerminalBridge.support) (hwB : w ∈ C.bGraph.verts) :
     w = M.xSep.right := by
+  classical
   rcases M.xTerminalBridge_support hwP with rfl | rfl | hw
   · exact (Set.disjoint_left.mp C.vertex_disjoint
       (C.a_contains _ M.xA_mem_aSet) hwB).elim
@@ -7979,10 +8465,12 @@ theorem ABConnectorPair.xTerminalBridge_meets_bGraph_only_right
   · exact (Set.disjoint_left.mp C.avoids_terminal_parts
       (Or.inr hwB) (Or.inl (Or.inl hw))).elim
 
+omit [DecidableRel G.Adj] in
 theorem ABConnectorPair.yTerminalBridge_meets_aGraph_only_left
     (C : M.ABConnectorPair) {w : V}
     (hwP : w ∈ M.yTerminalBridge.support) (hwA : w ∈ C.aGraph.verts) :
     w = M.ySep.left := by
+  classical
   rcases M.yTerminalBridge_support hwP with rfl | rfl | hw
   · rfl
   · exact (Set.disjoint_left.mp C.vertex_disjoint hwA
@@ -7990,10 +8478,12 @@ theorem ABConnectorPair.yTerminalBridge_meets_aGraph_only_left
   · exact (Set.disjoint_left.mp C.avoids_terminal_parts
       (Or.inl hwA) (Or.inl (Or.inr hw))).elim
 
+omit [DecidableRel G.Adj] in
 theorem ABConnectorPair.yTerminalBridge_meets_bGraph_only_right
     (C : M.ABConnectorPair) {w : V}
     (hwP : w ∈ M.yTerminalBridge.support) (hwB : w ∈ C.bGraph.verts) :
     w = M.ySep.right := by
+  classical
   rcases M.yTerminalBridge_support hwP with rfl | rfl | hw
   · exact (Set.disjoint_left.mp C.vertex_disjoint
       (C.a_contains _ M.yA_mem_aSet) hwB).elim
@@ -8001,10 +8491,12 @@ theorem ABConnectorPair.yTerminalBridge_meets_bGraph_only_right
   · exact (Set.disjoint_left.mp C.avoids_terminal_parts
       (Or.inr hwB) (Or.inl (Or.inr hw))).elim
 
+omit [DecidableRel G.Adj] in
 theorem ABConnectorPair.zTerminalBridge_meets_aGraph_only_left
     (C : M.ABConnectorPair) {w : V}
     (hwP : w ∈ M.zTerminalBridge.support) (hwA : w ∈ C.aGraph.verts) :
     w = M.zSep.left := by
+  classical
   rcases M.zTerminalBridge_support hwP with rfl | rfl | hw
   · rfl
   · exact (Set.disjoint_left.mp C.vertex_disjoint hwA
@@ -8012,10 +8504,12 @@ theorem ABConnectorPair.zTerminalBridge_meets_aGraph_only_left
   · exact (Set.disjoint_left.mp C.avoids_terminal_parts
       (Or.inl hwA) (Or.inr hw)).elim
 
+omit [DecidableRel G.Adj] in
 theorem ABConnectorPair.zTerminalBridge_meets_bGraph_only_right
     (C : M.ABConnectorPair) {w : V}
     (hwP : w ∈ M.zTerminalBridge.support) (hwB : w ∈ C.bGraph.verts) :
     w = M.zSep.right := by
+  classical
   rcases M.zTerminalBridge_support hwP with rfl | rfl | hw
   · exact (Set.disjoint_left.mp C.vertex_disjoint
       (C.a_contains _ M.zA_mem_aSet) hwB).elim
@@ -8172,6 +8666,7 @@ theorem card_connectedComponent_eq_one {W : Type} [Fintype W]
     (i := J.connectedComponentMk (Classical.choice (inferInstance : Nonempty W)))
     (fun _ ↦ Subsingleton.elim _ _)
 
+omit [DecidableRel G.Adj] in
 /-- The cut-vertex summand of a component end piece is zero: deleting the
 restored cut vertex leaves exactly its one chosen component. -/
 theorem cutComponentPiece_cut_summand_eq_zero
@@ -8182,9 +8677,11 @@ theorem cutComponentPiece_cut_summand_eq_zero
           (fun w : (cutComponentPiece H d K).verts ↦
             w ≠ ⟨d.1, cut_mem_cutComponentPiece H d K⟩)).ConnectedComponent) - 1 =
       0 := by
+  classical
   rw [card_connectedComponent_eq_one _
     (cutComponentPiece_delete_cut_connected H d K)]
 
+omit [DecidableRel G.Adj] in
 /-- Deleting a genuine cut vertex produces at least two connected
 components.  This is the strictly positive summand in the end-piece
 cut-defect comparison. -/
@@ -8203,6 +8700,7 @@ theorem two_le_card_delete_components_of_isCutVertex
   rw [show (2 : ℕ) = 1 + 1 by omega]
   exact Fintype.one_lt_card_iff.mpr ⟨_, _, hne⟩
 
+omit [DecidableRel G.Adj] in
 /-- The same lower bound stated with the named vertex-deletion graph.  Keeping
 this form avoids expensive reduction between the named definition and an
 explicit induced graph in later component-pruning arguments. -/
@@ -8220,14 +8718,17 @@ theorem two_le_card_deleteVertex_components_of_isCutVertex
   rw [show (2 : ℕ) = 1 + 1 by omega]
   exact Fintype.one_lt_card_iff.mpr ⟨_, _, hne⟩
 
+omit [DecidableRel G.Adj] in
 /-- Consequently the summand indexed by a cut vertex is positive. -/
 theorem one_le_cutDefect_summand_of_isCutVertex
     (H : G.Subgraph) {d : H.verts} (hd : IsCutVertex H.coe d) :
     1 ≤ Fintype.card
         ((H.coe.induce fun w : H.verts ↦ w ≠ d).ConnectedComponent) - 1 := by
+  classical
   have htwo := two_le_card_delete_components_of_isCutVertex H hd
   omega
 
+omit [DecidableRel G.Adj] in
 /-- At a cut vertex, the end piece has a strictly smaller summand than the
 ambient connector. -/
 theorem cutComponentPiece_cut_summand_lt
@@ -8240,9 +8741,11 @@ theorem cutComponentPiece_cut_summand_lt
             w ≠ ⟨d.1, cut_mem_cutComponentPiece H d K⟩)).ConnectedComponent) - 1 <
       Fintype.card
           ((H.coe.induce fun w : H.verts ↦ w ≠ d).ConnectedComponent) - 1 := by
+  classical
   rw [cutComponentPiece_cut_summand_eq_zero H d K]
   exact one_le_cutDefect_summand_of_isCutVertex H hd
 
+omit [DecidableRel G.Adj] in
 /-- A graph with a cut vertex has nonzero total cut-defect. -/
 theorem connectorCutDefect_pos_of_isCutVertex
     (H : G.Subgraph) {d : H.verts} (hd : IsCutVertex H.coe d) :
@@ -8262,6 +8765,7 @@ theorem connectorCutDefect_pos_of_isCutVertex
   exact lt_of_lt_of_le (by simpa only [defect] using hdpos)
     (by simpa only [defect] using hdle)
 
+omit [DecidableRel G.Adj] in
 /-- The finite-sum comparison underlying every strict cut-defect exchange.
 It remains only to provide the graph-theoretic injection of old component
 classes into the new ones.  The embedding also allows the replacement
@@ -8301,6 +8805,7 @@ theorem connectorCutDefect_lt_of_embedding
   simpa only [connectorCutDefect, defectP, defectH] using
     lt_of_lt_of_le hsumlt hsubsum
 
+omit [DecidableRel G.Adj] in
 /-- Dual finite-sum comparison for an enlargement.  Here the old connector
 embeds into the replacement, every new vertex has zero cut summand, and the
 old summands do not increase, with one strict decrease.  This is the exact
@@ -8422,16 +8927,20 @@ noncomputable def connectorEarWalkInExtension (H : G.Subgraph)
       (show p.toSubgraph ≤ H ⊔ p.toSubgraph from le_sup_right))).copy
         (Subtype.ext rfl) (Subtype.ext rfl)
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 theorem connectorEarWalkInExtension_map (H : G.Subgraph)
     {s t : V} (p : G.Walk s t) :
     (connectorEarWalkInExtension H p).map (H ⊔ p.toSubgraph).hom = p := by
   simp only [connectorEarWalkInExtension, Walk.map_copy, Walk.map_map]
   exact p.map_mapToSubgraph_hom
 
-theorem mem_connectorEarWalkInExtension_support_iff
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+theorem mem_connectorEarWalkInExtension_support_iff [Finite V]
     (H : G.Subgraph) {s t : V} (p : G.Walk s t)
     (w : (H ⊔ p.toSubgraph).verts) :
     w ∈ (connectorEarWalkInExtension H p).support ↔ w.1 ∈ p.support := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   constructor
   · intro hw
     have hw' : w.1 ∈ ((connectorEarWalkInExtension H p).map
@@ -8467,6 +8976,7 @@ def connectorEarOldDeleteInclusion (H : G.Subgraph) {s t : V}
     change (H ⊔ p.toSubgraph).Adj _ _
     exact Or.inl h
 
+omit [DecidableRel G.Adj] in
 /-- Component-count inequality for an old deletion in an ear extension.
 The graph-theoretic hypothesis says precisely that every enlarged component
 contains an old vertex. -/
@@ -8491,6 +9001,7 @@ theorem connectorEarOldDelete_component_card_le
   exact ConnectedComponent.map_surjective_of_forall_reachable
     (connectorEarOldDeleteInclusion H p d) hreach
 
+omit [DecidableRel G.Adj] in
 /-- Strict component-count inequality at an old vertex whose deletion
 separates the two ends of the new ear.  Surjectivity gives the weak
 inequality; the two old components containing the ends are identified by
@@ -8544,11 +9055,12 @@ theorem connectorEarOldDelete_component_card_lt
     exact hne (hinj heq)
   exact Fintype.card_lt_of_surjective_not_injective f hsurj hninj
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- The ear itself joins its old endpoints after any old vertex other than
 those endpoints is deleted.  Internal ear vertices are new, so the induced
 ear walk survives the deletion. -/
-theorem connectorEar_ends_reachable_after_delete_old
-    (H : G.Subgraph) {s t : V} (p : G.Walk s t) (hp : p.IsPath)
+theorem connectorEar_ends_reachable_after_delete_old [Finite V]
+    (H : G.Subgraph) {s t : V} (p : G.Walk s t) (_hp : p.IsPath)
     (hs : s ∈ H.verts) (ht : t ∈ H.verts)
     (hint : ∀ w, w ∈ p.support → w ≠ s → w ≠ t → w ∉ H.verts)
     (d : H.verts) (hsd : (⟨s, hs⟩ : H.verts) ≠ d)
@@ -8558,6 +9070,8 @@ theorem connectorEar_ends_reachable_after_delete_old
         w ≠ connectorEarOldVertsEmbedding H p d).Reachable
       (connectorEarOldDeleteInclusion H p d ⟨⟨s, hs⟩, hsd⟩)
       (connectorEarOldDeleteInclusion H p d ⟨⟨t, ht⟩, htd⟩) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hpd : ∀ (w : (H ⊔ p.toSubgraph).verts),
       w.1 ∈ p.support →
         w ≠ connectorEarOldVertsEmbedding H p d := by
@@ -8588,15 +9102,15 @@ theorem connectorEar_ends_reachable_after_delete_old
       apply (mem_connectorEarWalkInExtension_support_iff H p w).mp
       simpa only [pSup, Walk.support_copy] using hw)
   have hreach := pDel.reachable
-  change _
   convert hreach using 1 <;>
     apply Subtype.ext <;> apply Subtype.ext <;> rfl
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Every component of an ear extension after deleting an old vertex still
 contains an old vertex.  A new vertex reaches one of the two ear ends along
 the side of the simple ear which avoids the deleted old vertex. -/
-theorem connectorEarOldDelete_every_component_meets_old
-    (H : G.Subgraph) (hH : H.Connected) {s t : V}
+theorem connectorEarOldDelete_every_component_meets_old [Finite V]
+    (H : G.Subgraph) (_hH : H.Connected) {s t : V}
     (p : G.Walk s t) (hp : p.IsPath)
     (hs : s ∈ H.verts) (ht : t ∈ H.verts) (hst : s ≠ t)
     (hint : ∀ w, w ∈ p.support → w ≠ s → w ≠ t → w ∉ H.verts)
@@ -8609,6 +9123,7 @@ theorem connectorEarOldDelete_every_component_meets_old
             w ≠ connectorEarOldVertsEmbedding H p d).Reachable
           (connectorEarOldDeleteInclusion H p d u) v := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let sExt : (H ⊔ p.toSubgraph).verts :=
     connectorEarOldVertsEmbedding H p ⟨s, hs⟩
   let tExt : (H ⊔ p.toSubgraph).verts :=
@@ -8649,7 +9164,7 @@ theorem connectorEarOldDelete_every_component_meets_old
   have path_vertex_old_only_at_ends {w : V} (hw : w ∈ p.support)
       (hwH : w ∈ H.verts) : w = s ∨ w = t := by
     by_contra h
-    push_neg at h
+    push Not at h
     exact (hint w hw h.1 h.2) hwH
   by_cases hsd : (⟨s, hs⟩ : H.verts) = d
   · have htd : (⟨t, ht⟩ : H.verts) ≠ d := by
@@ -8692,7 +9207,6 @@ theorem connectorEarOldDelete_every_component_meets_old
     have hreach := rDel.reachable.symm
     convert hreach using 1 <;>
       apply Subtype.ext <;> apply Subtype.ext <;> rfl
-
   · let u : {w : H.verts // w ≠ d} := ⟨⟨s, hs⟩, hsd⟩
     let r := (pExt.takeUntil v.1 hvpExt).reverse
     have hrd : ∀ (w : (H ⊔ p.toSubgraph).verts)
@@ -8732,10 +9246,11 @@ theorem connectorEarOldDelete_every_component_meets_old
     convert hreach using 1 <;>
       apply Subtype.ext <;> apply Subtype.ext <;> rfl
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Deleting a genuinely new internal vertex of an ear leaves the extension
 connected.  The two pieces of the broken ear remain attached to its two old
 ends, and the old connector joins those ends. -/
-theorem connectorEarDeleteNew_connected
+theorem connectorEarDeleteNew_connected [Finite V]
     (H : G.Subgraph) (hH : H.Connected) {s t : V}
     (p : G.Walk s t) (hp : p.IsPath)
     (hs : s ∈ H.verts) (ht : t ∈ H.verts)
@@ -8744,6 +9259,7 @@ theorem connectorEarDeleteNew_connected
     ((H ⊔ p.toSubgraph).coe.induce
       fun w : (H ⊔ p.toSubgraph).verts ↦ w ≠ q).Connected := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   have hqH : q.1 ∉ H.verts := by
     intro h
     apply hqnew
@@ -8812,8 +9328,8 @@ theorem connectorEarDeleteNew_connected
         fun w : (H ⊔ p.toSubgraph).verts ↦ w ≠ q).Reachable v anchor := by
     intro v
     by_cases hvH : v.1.1 ∈ H.verts
-    · convert old_reaches_anchor ⟨v.1.1, hvH⟩ using 1 <;>
-        apply Subtype.ext <;> apply Subtype.ext <;> rfl
+    · convert old_reaches_anchor ⟨v.1.1, hvH⟩ using 1 ;
+        apply Subtype.ext ; apply Subtype.ext ; rfl
     have hvp : v.1.1 ∈ p.support := by
       have hv := v.1.2
       simp only [Subgraph.verts_sup, Set.mem_union,
@@ -8845,8 +9361,8 @@ theorem connectorEarDeleteNew_connected
             fun w : (H ⊔ p.toSubgraph).verts ↦ w ≠ q).Reachable v
             ⟨connectorEarOldVertsEmbedding H p ⟨t, ht⟩,
               hOldQ ⟨t, ht⟩⟩ := by
-        convert hvt using 1 <;>
-          apply Subtype.ext <;> apply Subtype.ext <;> rfl
+        convert hvt using 1 ;
+          apply Subtype.ext ; apply Subtype.ext ; rfl
       exact hvt'.trans htold
     · let r := (pExt.takeUntil v.1 hvpExt).reverse
       have hrq : ∀ (w : (H ⊔ p.toSubgraph).verts)
@@ -8860,12 +9376,13 @@ theorem connectorEarDeleteNew_connected
       let rDel := r.induce
         (fun w : (H ⊔ p.toSubgraph).verts ↦ w ≠ q) hrq
       have hvs := rDel.reachable
-      convert hvs using 1 <;>
-        apply Subtype.ext <;> apply Subtype.ext <;> rfl
+      convert hvs using 1 ;
+        apply Subtype.ext ; apply Subtype.ext ; rfl
   refine { preconnected := ?_, nonempty := ⟨anchor⟩ }
   intro u v
   exact (every_reaches_anchor u).trans (every_reaches_anchor v).symm
 
+omit [DecidableRel G.Adj] in
 /-- AHT p.15: adjoining a clean external ear strictly decreases the
 cut-defect when its ends are separated by deletion of an old vertex. -/
 theorem connectorCutDefect_sup_path_lt
@@ -8975,6 +9492,7 @@ noncomputable def cutComponentPieceDeleteRetraction
         exact hpd (congrArg
           (fun q : (cutComponentPiece H d K).verts ↦ q.1) h).symm⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 @[simp] theorem cutComponentPieceDeleteRetraction_inclusion
     (H : G.Subgraph) (d : H.verts)
     (K : (deleteVertex H.coe d).ConnectedComponent)
@@ -8991,6 +9509,7 @@ noncomputable def cutComponentPieceDeleteRetraction
   rw [cutComponentPieceDeleteRetraction, dif_pos hwPiece]
   rfl
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- The weak retraction sends an ambient-connector edge either to equality
 or to an edge of the deleted end piece.  The only boundary vertex of a
 component end piece is its restored cut vertex. -/
@@ -9064,9 +9583,10 @@ theorem cutComponentPieceDeleteRetraction_adj_eq_or_adj
       apply Subtype.ext
       simp [cutComponentPieceDeleteRetraction, hu, hv]
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Except at the restored cut vertex, inclusion of a component end piece
 induces an injection on connected components after deleting a vertex. -/
-theorem cutComponentPieceDelete_componentMap_injective
+theorem cutComponentPieceDelete_componentMap_injective [Finite V]
     (H : G.Subgraph) (d : H.verts)
     (K : (deleteVertex H.coe d).ConnectedComponent)
     (p : (cutComponentPiece H d K).verts) (hpd : p.1 ≠ d.1) :
@@ -9074,6 +9594,8 @@ theorem cutComponentPieceDelete_componentMap_injective
       ((cutComponentPiece H d K).coe.induce
         (fun w : (cutComponentPiece H d K).verts ↦ w ≠ p)).ConnectedComponent ↦
       C.map (cutComponentPieceDeleteInclusion H d K p)) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   intro C D
   refine ConnectedComponent.ind₂ (c := C) (d := D) ?_
   intro u v huv
@@ -9098,6 +9620,7 @@ theorem cutComponentPieceDelete_componentMap_injective
     (ConnectedComponent.exact huv)
   simpa only [cutComponentPieceDeleteRetraction_inclusion] using hreach
 
+omit [DecidableRel G.Adj] in
 /-- Every non-cut summand of an end piece's cut-defect is bounded by the
 corresponding summand of the ambient connector. -/
 theorem cutComponentPiece_delete_component_card_le
@@ -9110,11 +9633,13 @@ theorem cutComponentPiece_delete_component_card_le
       Fintype.card
         ((H.coe.induce
           (fun w : H.verts ↦
-            w ≠ cutComponentPieceVertsEmbedding H d K p)).ConnectedComponent) :=
-  Fintype.card_le_of_injective
+            w ≠ cutComponentPieceVertsEmbedding H d K p)).ConnectedComponent) := by
+  classical
+  exact Fintype.card_le_of_injective
     (fun C ↦ C.map (cutComponentPieceDeleteInclusion H d K p))
     (cutComponentPieceDelete_componentMap_injective H d K p hpd)
 
+omit [DecidableRel G.Adj] in
 /-- The component end piece at a genuine cut vertex has strictly smaller
 total cut-defect than its ambient connected connector.  This discharges the
 strict hypothesis in both pruning moves. -/
@@ -9123,6 +9648,7 @@ theorem connectorCutDefect_cutComponentPiece_lt
     (K : (deleteVertex H.coe d).ConnectedComponent)
     (hd : IsCutVertex H.coe d) :
     connectorCutDefect (cutComponentPiece H d K) < connectorCutDefect H := by
+  classical
   let f := cutComponentPieceVertsEmbedding H d K
   refine connectorCutDefect_lt_of_embedding
     (cutComponentPiece H d K) H f ?_
@@ -9154,6 +9680,7 @@ structure MinimalABConnectorPair extends M.ABConnectorPair where
   minimal : ∀ C : M.ABConnectorPair,
     toABConnectorPair.cutDefect ≤ C.cutDefect
 
+omit [DecidableRel G.Adj] in
 /-- Finite minimization of AHT's cut-defect parameter. -/
 theorem exists_minimalABConnectorPair :
     Nonempty (M.MinimalABConnectorPair) := by
@@ -9179,6 +9706,7 @@ theorem exists_minimalABConnectorPair :
   simp only [candidates, Finset.mem_filter, Finset.mem_univ, true_and]
   exact ⟨D, rfl⟩
 
+omit [DecidableRel G.Adj] in
 /-- A minimal pair cannot have all three `A`-attachments in a prunable end
 piece whose cut-defect is strictly smaller.  The separate strict-defect
 lemma is the finite component-count calculation isolated by AHT's
@@ -9191,6 +9719,7 @@ theorem MinimalABConnectorPair.not_all_A_in_prunable_piece
       connectorCutDefect C.aGraph) :
     ¬(∀ a ∈ M.aSet,
       a ∈ (cutComponentPiece C.aGraph d K).verts) := by
+  classical
   intro hcontains
   have hmin := C.minimal
     (ABConnectorPair.pruneA (M := M) C.toABConnectorPair d K hcontains)
@@ -9199,6 +9728,7 @@ theorem MinimalABConnectorPair.not_all_A_in_prunable_piece
         connectorCutDefect C.bGraph at hmin
   omega
 
+omit [DecidableRel G.Adj] in
 /-- Symmetric `B`-side pruning obstruction. -/
 theorem MinimalABConnectorPair.not_all_B_in_prunable_piece
     (C : M.MinimalABConnectorPair)
@@ -9208,6 +9738,7 @@ theorem MinimalABConnectorPair.not_all_B_in_prunable_piece
       connectorCutDefect C.bGraph) :
     ¬(∀ b ∈ M.bSet,
       b ∈ (cutComponentPiece C.bGraph d K).verts) := by
+  classical
   intro hcontains
   have hmin := C.minimal
     (ABConnectorPair.pruneB (M := M) C.toABConnectorPair d K hcontains)
@@ -9216,6 +9747,7 @@ theorem MinimalABConnectorPair.not_all_B_in_prunable_piece
         connectorCutDefect (cutComponentPiece C.bGraph d K) at hmin
   omega
 
+omit [DecidableRel G.Adj] in
 /-- The reusable minimality inequality for an admissible exchange on the
 `A` side.  The proof is purely the cancellation step in AHT's minimization;
 all path and component work is confined to constructing the hypotheses. -/
@@ -9234,6 +9766,7 @@ theorem MinimalABConnectorPair.cutDefect_aGraph_le_of_replaceA
       connectorCutDefect A' + connectorCutDefect C.bGraph at hmin
   omega
 
+omit [DecidableRel G.Adj] in
 /-- The symmetric minimality inequality for an admissible exchange on the
 `B` side. -/
 theorem MinimalABConnectorPair.cutDefect_bGraph_le_of_replaceB
@@ -9276,6 +9809,7 @@ def IsolatingCutSide.swapBC {H : G.Subgraph} {a b c : H.verts}
   b_not_mem := S.c_not_mem
   c_not_mem := S.b_not_mem
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- A singleton which separates one displayed vertex from two others
 determines the corresponding isolating component side.  This is the local
 component extraction used in the maximal-endpiece exchange on p.15. -/
@@ -9291,8 +9825,7 @@ theorem exists_isolatingCutSide_of_singleton_separator
     (deleteVertex H.coe u).connectedComponentMk a'
   have haK : a ∈ ComponentEndBlock.side u K := by
     refine ⟨hau, ?_⟩
-    simpa only [a', K, ConnectedComponent.mem_supp_iff,
-      Subtype.coe_eta]
+    simp only [a', K, ConnectedComponent.mem_supp_iff]
   have target_not_mem (t : H.verts)
       (htTarget : t ∈ ({b, c} : Set H.verts)) :
       t ∉ ComponentEndBlock.side u K := by
@@ -9330,6 +9863,7 @@ theorem exists_isolatingCutSide_of_singleton_separator
     b_not_mem := target_not_mem b (by simp)
     c_not_mem := target_not_mem c (by simp) }, rfl⟩
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- An isolating side remains in one component after a second ambient
 vertex outside its connector is deleted.  Connectivity inside `H-cut`
 supplies the required ambient path; the second deletion cannot meet it
@@ -9392,6 +9926,7 @@ theorem IsolatingCutSide.side_subset_componentCompl
   rw [hfw]
   exact hcomp.symm.trans haComp
 
+omit [DecidableRel G.Adj] in
 /-- In the two-vertex deletion formed by an A-isolating cut and any
 B-connector vertex, the component containing `x` also contains `xA`.
 The prefix of the canonical `xA--xB` bridge ending at `x` avoids both
@@ -9447,6 +9982,7 @@ theorem MinimalABConnectorPair.xA_mem_pairComponent
   refine ⟨havoid M.xSep.left P.start_mem_support, ?_⟩
   exact hcomp.trans hxD.2
 
+omit [DecidableRel G.Adj] in
 /-- With active isolating sides on both connectors, the same pair
 component also contains `xB`.  This is the symmetric terminal-bridge
 suffix needed to put `CA ∪ X ∪ CB` in one component of
@@ -9513,6 +10049,7 @@ theorem MinimalABConnectorPair.xB_mem_pairComponent
   refine ⟨havoid M.xSep.right P.end_mem_support, ?_⟩
   exact hcomp.symm.trans hxD.2
 
+omit [DecidableRel G.Adj] in
 /-- The component of `G-{vA,vB}` containing `x` contains the entire old
 maximal `x`-side and the chosen A-isolating side.  Thus, if its opposite
 rim were outside that component, it would be a forbidden enlargement of
@@ -9532,6 +10069,7 @@ theorem MinimalABConnectorPair.pairComponent_contains_xSides
       ∀ w : C.aGraph.verts,
         w ∈ ComponentEndBlock.side S.cut S.component →
           w.1 ∈ (D : Set V) := by
+  classical
   have hdisjoint : Disjoint (M.xSep.side : Set V)
       ((({S.cut.1, vB.1} : Finset V) : Set V)) := by
     rw [Set.disjoint_left]
@@ -9556,6 +10094,7 @@ theorem MinimalABConnectorPair.pairComponent_contains_xSides
   exact ⟨hOld, hxAD,
     S.side_subset_componentCompl hvBNotA D hxAD⟩
 
+omit [DecidableRel G.Adj] in
 /-- In the active/active case the component of `G - {vA,vB}` containing
 `x` contains both chosen isolating sides.  The `B` assertion is the
 preceding symmetric bridge fact followed by transport across
@@ -9579,6 +10118,7 @@ theorem MinimalABConnectorPair.pairComponent_contains_activeSides
     ∀ w : C.bGraph.verts,
       w ∈ ComponentEndBlock.side SB.cut SB.component →
         w.1 ∈ (D : Set V) := by
+  classical
   have hA := (C.pairComponent_contains_xSides
     (M := M) SA SB.cut D hxD).2.2
   have hxBD : M.xSep.right ∈ (D : Set V) :=
@@ -9603,6 +10143,7 @@ theorem MinimalABConnectorPair.pairComponent_contains_activeSides
   have hwD' := hB' w hw
   simpa only [D', ComponentCompl.mem_transport] using hwD'
 
+omit [DecidableRel G.Adj] in
 /-- Maximality of the routed `x`-separator forces the component of
 `G-{vA,vB}` containing `x` to meet the opposite `x`-rim away from both
 new cut vertices.  Otherwise that very component is a vertex-cycle
@@ -9619,6 +10160,7 @@ theorem MinimalABConnectorPair.exists_xRim_mem_pairComponent
     (hxD : x ∈ (D : Set V)) :
     ∃ w, w ∈ T.xRim.support ∧ w ≠ S.cut.1 ∧
       w ≠ vB.1 ∧ w ∈ (D : Set V) := by
+  classical
   by_contra h
   have hrim : ∀ w, w ∈ T.xRim.support → w ≠ S.cut.1 →
       w ≠ vB.1 → w ∉ (D : Set V) := by
@@ -9640,6 +10182,7 @@ theorem MinimalABConnectorPair.exists_xRim_mem_pairComponent
     C.pairComponent_contains_xSides (M := M) S vB D hxD
   exact M.false_of_x_vertexCycleSeparator_replacement R hOld hxAD
 
+omit [DecidableRel G.Adj] in
 /-- Concrete external-path output of the maximal-`X` exchange.  For an
 A-side isolating cut and any B-connector vertex, there is a simple path
 from `xA` to the opposite `x`-rim which avoids both cut vertices; its rim
@@ -9718,6 +10261,7 @@ theorem MinimalABConnectorPair.exists_externalPath_to_xRim
     simpa only [Finset.mem_coe, Finset.mem_insert,
       Finset.mem_singleton, not_or] using hvNot
 
+omit [DecidableRel G.Adj] in
 /-- The minimality half of the p.15 external-ear exchange.  A clean ear
 from an isolated component side back to a different component of the same
 connector strictly lowers the cut-defect, so it cannot remain disjoint from
@@ -9778,6 +10322,7 @@ theorem MinimalABConnectorPair.false_of_clean_A_ear
     (C.aGraph ⊔ p.toSubgraph) hconnected hcontains hdisjoint havoids
   omega
 
+omit [DecidableRel G.Adj] in
 /-- Symmetric minimality exchange for a clean ear of the `B` connector. -/
 theorem MinimalABConnectorPair.false_of_clean_B_ear
     (C : M.MinimalABConnectorPair)
@@ -9835,6 +10380,7 @@ theorem MinimalABConnectorPair.false_of_clean_B_ear
     (C.bGraph ⊔ p.toSubgraph) hconnected hcontains hdisjoint havoids
   omega
 
+omit [DecidableRel G.Adj] in
 /-- User-facing form of the `A`-ear contradiction.  Once the path meets
 the two connector graphs only at its two `A`-ends and avoids the three
 terminal components, all admissibility side conditions for the strict
@@ -9857,6 +10403,7 @@ theorem MinimalABConnectorPair.false_of_connector_clean_A_ear
     (hparts : ∀ w, w ∈ p.support →
       w ∉ (M.xPart : Set V) ∪ (M.yPart : Set V) ∪
         (M.zPart : Set V)) : False := by
+  classical
   have hint : ∀ w, w ∈ p.support → w ≠ s → w ≠ t →
       w ∉ C.aGraph.verts := by
     intro w hw hws hwt hwA
@@ -9894,6 +10441,7 @@ theorem MinimalABConnectorPair.false_of_connector_clean_A_ear
   exact C.false_of_clean_A_ear (M := M) S p hp hs ht hsSide htCut
     htSide hint hdisjoint havoids
 
+omit [DecidableRel G.Adj] in
 /-- Symmetric connector-clean `B`-ear contradiction. -/
 theorem MinimalABConnectorPair.false_of_connector_clean_B_ear
     (C : M.MinimalABConnectorPair)
@@ -9913,6 +10461,7 @@ theorem MinimalABConnectorPair.false_of_connector_clean_B_ear
     (hparts : ∀ w, w ∈ p.support →
       w ∉ (M.xPart : Set V) ∪ (M.yPart : Set V) ∪
         (M.zPart : Set V)) : False := by
+  classical
   have hint : ∀ w, w ∈ p.support → w ≠ s → w ≠ t →
       w ∉ C.bGraph.verts := by
     intro w hw hws hwt hwB
@@ -9950,6 +10499,7 @@ theorem MinimalABConnectorPair.false_of_connector_clean_B_ear
   exact C.false_of_clean_B_ear (M := M) S p hp hs ht hsSide htCut
     htSide hint hdisjoint havoids
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Distinct components after deleting a vertex have disjoint component
 sides when viewed back in the undeleted graph. -/
 theorem componentEndBlock_side_disjoint_of_ne {H : G.Subgraph}
@@ -9965,14 +10515,16 @@ theorem componentEndBlock_side_disjoint_of_ne {H : G.Subgraph}
   apply ConnectedComponent.eq_of_common_vertex hwK
   simpa only [Subtype.coe_eta] using hwL
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Removing one component of `H-d` but retaining `d` and every other
 component preserves connectedness.  Each retained component reaches the
 common cut vertex inside its own endblock. -/
-theorem cutComponentComplement_connected (H : G.Subgraph)
+theorem cutComponentComplement_connected [Finite V] (H : G.Subgraph)
     (hH : H.Connected) (d : H.verts)
     (K : (deleteVertex H.coe d).ConnectedComponent) :
     (cutComponentComplement H d K).Connected := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   apply Subgraph.Connected.map H.hom
   rw [← connected_induce_iff]
   let W : Set H.verts := (ComponentEndBlock.side d K)ᶜ
@@ -9988,8 +10540,7 @@ theorem cutComponentComplement_connected (H : G.Subgraph)
         (deleteVertex H.coe d).connectedComponentMk uDel
       have huL : u.1 ∈ ComponentEndBlock.side d L := by
         refine ⟨hud, ?_⟩
-        simpa only [L, uDel, ConnectedComponent.mem_supp_iff,
-          Subtype.coe_eta]
+        simp only [L, uDel, ConnectedComponent.mem_supp_iff]
       have hLK : L ≠ K := by
         intro h
         apply u.2
@@ -10077,6 +10628,7 @@ noncomputable def cutComponentComplementDeleteRetraction
         exact hpd (congrArg
           (fun q : (cutComponentComplement H d K).verts ↦ q.1) h).symm⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 @[simp] theorem cutComponentComplementDeleteRetraction_inclusion
     (H : G.Subgraph) (d : H.verts)
     (K : (deleteVertex H.coe d).ConnectedComponent)
@@ -10092,6 +10644,7 @@ noncomputable def cutComponentComplementDeleteRetraction
   rw [cutComponentComplementDeleteRetraction, dif_pos hwComplement]
   rfl
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- The complement-pruning retraction sends an original-connector edge to
 either equality or an edge of the pruned connector. -/
 theorem cutComponentComplementDeleteRetraction_adj_eq_or_adj
@@ -10165,10 +10718,11 @@ theorem cutComponentComplementDeleteRetraction_adj_eq_or_adj
       apply Subtype.ext
       simp [cutComponentComplementDeleteRetraction, hu, hv]
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- At every retained vertex other than the restored cut vertex, pruning one
 deleted-component side cannot increase the number of components after the
 corresponding deletion. -/
-theorem cutComponentComplementDelete_componentMap_injective
+theorem cutComponentComplementDelete_componentMap_injective [Finite V]
     (H : G.Subgraph) (d : H.verts)
     (K : (deleteVertex H.coe d).ConnectedComponent)
     (p : (cutComponentComplement H d K).verts) (hpd : p.1 ≠ d.1) :
@@ -10176,6 +10730,8 @@ theorem cutComponentComplementDelete_componentMap_injective
       ((cutComponentComplement H d K).coe.induce
         (fun w : (cutComponentComplement H d K).verts ↦ w ≠ p)).ConnectedComponent ↦
       C.map (cutComponentComplementDeleteInclusion H d K p)) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   intro C D
   refine ConnectedComponent.ind₂ (c := C) (d := D) ?_
   intro u v huv
@@ -10201,6 +10757,7 @@ theorem cutComponentComplementDelete_componentMap_injective
     (ConnectedComponent.exact huv)
   simpa only [cutComponentComplementDeleteRetraction_inclusion] using hreach
 
+omit [DecidableRel G.Adj] in
 theorem cutComponentComplement_delete_component_card_le
     (H : G.Subgraph) (d : H.verts)
     (K : (deleteVertex H.coe d).ConnectedComponent)
@@ -10211,8 +10768,9 @@ theorem cutComponentComplement_delete_component_card_le
       Fintype.card
         ((H.coe.induce
           (fun w : H.verts ↦
-            w ≠ cutComponentComplementVertsEmbedding H d K p)).ConnectedComponent) :=
-  Fintype.card_le_of_injective
+            w ≠ cutComponentComplementVertsEmbedding H d K p)).ConnectedComponent) := by
+  classical
+  exact Fintype.card_le_of_injective
     (fun C ↦ C.map (cutComponentComplementDeleteInclusion H d K p))
     (cutComponentComplementDelete_componentMap_injective H d K p hpd)
 
@@ -10252,6 +10810,7 @@ noncomputable def cutComponentComplementCutDeleteRetraction
           (fun q : (cutComponentComplement H d K).verts ↦ q.1) h⟩
     else b
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 @[simp] theorem cutComponentComplementCutDeleteRetraction_inclusion
     (H : G.Subgraph) (d : H.verts)
     (K : (deleteVertex H.coe d).ConnectedComponent)
@@ -10269,6 +10828,7 @@ noncomputable def cutComponentComplementCutDeleteRetraction
   rw [cutComponentComplementCutDeleteRetraction, dif_pos hwComplement]
   rfl
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 theorem cutComponentComplementCutDeleteRetraction_adj_eq_or_adj
     (H : G.Subgraph) (d : H.verts)
     (K : (deleteVertex H.coe d).ConnectedComponent)
@@ -10329,15 +10889,17 @@ theorem cutComponentComplementCutDeleteRetraction_adj_eq_or_adj
     · left
       simp [cutComponentComplementCutDeleteRetraction, hu, hv]
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- A genuine cut has a retained vertex outside any one selected deleted
 component, so the cut-deleted complement has a basepoint. -/
-theorem cutComponentComplementCutDelete_nonempty
+theorem cutComponentComplementCutDelete_nonempty [Finite V]
     (H : G.Subgraph) (d : H.verts)
     (K : (deleteVertex H.coe d).ConnectedComponent)
     (hd : IsCutVertex H.coe d) :
     Nonempty {w : (cutComponentComplement H d K).verts //
       w ≠ ⟨d.1, cut_mem_cutComponentComplement H d K⟩} := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   have hone : 1 < Fintype.card
       (H.coe.induce fun w : H.verts ↦ w ≠ d).ConnectedComponent := by
     have htwo' := two_le_card_delete_components_of_isCutVertex H hd
@@ -10361,6 +10923,7 @@ theorem cutComponentComplementCutDelete_nonempty
   exact congrArg
     (fun w : (cutComponentComplement H d K).verts ↦ w.1) h
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- The cut-deleted component map is injective: collapse the omitted
 component onto any retained basepoint and transport reachability back. -/
 theorem cutComponentComplementCutDelete_componentMap_injective
@@ -10373,6 +10936,7 @@ theorem cutComponentComplementCutDelete_componentMap_injective
         (fun w : (cutComponentComplement H d K).verts ↦
           w ≠ ⟨d.1, cut_mem_cutComponentComplement H d K⟩)).ConnectedComponent ↦
       C.map (cutComponentComplementCutDeleteInclusion H d K)) := by
+  classical
   intro C D
   refine ConnectedComponent.ind₂ (c := C) (d := D) ?_
   intro u v huv
@@ -10394,6 +10958,7 @@ theorem cutComponentComplementCutDelete_componentMap_injective
     (ConnectedComponent.exact huv)
   simpa only [cutComponentComplementCutDeleteRetraction_inclusion] using hreach
 
+omit [DecidableRel G.Adj] in
 /-- At the cut vertex itself, pruning one deleted component strictly lowers
 the component count: inclusion is injective, and the omitted component `K`
 is not in its image. -/
@@ -10450,6 +11015,7 @@ theorem cutComponentComplement_cut_component_card_lt
       (fun q : H.verts ↦ q ∈ ComponentEndBlock.side d K) heq) huSide
   exact Fintype.card_lt_of_injective_not_surjective f hinj hnSurj
 
+omit [DecidableRel G.Adj] in
 theorem cutComponentComplement_cut_summand_lt
     (H : G.Subgraph) (d : H.verts)
     (K : (deleteVertex H.coe d).ConnectedComponent)
@@ -10460,6 +11026,7 @@ theorem cutComponentComplement_cut_summand_lt
             w ≠ ⟨d.1, cut_mem_cutComponentComplement H d K⟩)).ConnectedComponent) - 1 <
       Fintype.card
         (H.coe.induce fun w : H.verts ↦ w ≠ d).ConnectedComponent - 1 := by
+  classical
   have hcard := cutComponentComplement_cut_component_card_lt H d K hd
   let b := Classical.choice
     (cutComponentComplementCutDelete_nonempty H d K hd)
@@ -10472,6 +11039,7 @@ theorem cutComponentComplement_cut_summand_lt
         w ≠ ⟨d.1, cut_mem_cutComponentComplement H d K⟩)).connectedComponentMk b⟩
   omega
 
+omit [DecidableRel G.Adj] in
 /-- Removing one whole component side at a genuine cut vertex, while
 retaining the cut and all other sides, strictly lowers the total AHT
 cut-defect. -/
@@ -10481,6 +11049,7 @@ theorem connectorCutDefect_cutComponentComplement_lt
     (hd : IsCutVertex H.coe d) :
     connectorCutDefect (cutComponentComplement H d K) <
       connectorCutDefect H := by
+  classical
   let f := cutComponentComplementVertsEmbedding H d K
   have hfcut :
       f ⟨d.1, cut_mem_cutComponentComplement H d K⟩ = d := by
@@ -10502,10 +11071,10 @@ theorem connectorCutDefect_cutComponentComplement_lt
         H d K p hpd
       simpa only [f, cutComponentComplementVertsEmbedding] using
         (Nat.sub_le_sub_right hcard 1)
-  ·
-    rw [hfcut]
+  · rw [hfcut]
     exact cutComponentComplement_cut_summand_lt H d K hd
 
+omit [DecidableRel G.Adj] in
 /-- Minimality forbids an attachment-free component on the `A` side of a
 connector cut: delete that whole component, retain the cut and every other
 component, and use the strict complement-pruning defect inequality. -/
@@ -10516,6 +11085,7 @@ theorem MinimalABConnectorPair.false_of_A_attachment_free_cutComponent
     (hfree : ∀ a (ha : a ∈ M.aSet),
       (⟨a, C.a_contains a ha⟩ : C.aGraph.verts) ∉
         ComponentEndBlock.side d K) : False := by
+  classical
   let A' := cutComponentComplement C.aGraph d K
   have hconnected : A'.Connected :=
     cutComponentComplement_connected C.aGraph C.a_connected d K
@@ -10544,6 +11114,7 @@ theorem MinimalABConnectorPair.false_of_A_attachment_free_cutComponent
     C.aGraph d K hd
   exact (Nat.not_lt_of_ge hmin) hstrict
 
+omit [DecidableRel G.Adj] in
 /-- Symmetric attachment-free component pruning on the `B` connector. -/
 theorem MinimalABConnectorPair.false_of_B_attachment_free_cutComponent
     (C : M.MinimalABConnectorPair) (d : C.bGraph.verts)
@@ -10552,6 +11123,7 @@ theorem MinimalABConnectorPair.false_of_B_attachment_free_cutComponent
     (hfree : ∀ b (hb : b ∈ M.bSet),
       (⟨b, C.b_contains b hb⟩ : C.bGraph.verts) ∉
         ComponentEndBlock.side d K) : False := by
+  classical
   let B' := cutComponentComplement C.bGraph d K
   have hconnected : B'.Connected :=
     cutComponentComplement_connected C.bGraph C.b_connected d K
@@ -10580,6 +11152,7 @@ theorem MinimalABConnectorPair.false_of_B_attachment_free_cutComponent
     C.bGraph d K hd
   exact (Nat.not_lt_of_ge hmin) hstrict
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- A separator is contradicted by any connected subgraph which contains a
 chosen source and target but omits the alleged singleton cut.  This small
 adapter keeps the repeated subtype maps in the connector-cut analysis local. -/
@@ -10599,7 +11172,6 @@ theorem false_of_separator_of_connected_subgraph
   have hinc : Function.Injective inc := by
     intro a b hab
     apply Subtype.ext
-    change a.1 = b.1
     exact congrArg (fun w : H.verts ↦ w.1) hab
   have hp : p.IsPath := by
     exact (Walk.isPath_copy p₀ (Subtype.ext rfl) (Subtype.ext rfl)).2
@@ -10616,6 +11188,7 @@ theorem false_of_separator_of_connected_subgraph
   rw [← hval]
   exact w.2
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Two vertices in the same component after deleting `u` give a path which
 avoids `u`, and hence refute a claimed singleton separator. -/
 theorem false_of_separator_of_same_delete_component
@@ -10639,16 +11212,17 @@ theorem false_of_separator_of_same_delete_component
     simpa only [p, Walk.support_copy] using hvp
   change u ∈ (q.map inc).support at huP₀
   have hsupp : (q.map inc).support = q.support.map inc := by
-    convert (Walk.support_map (p := q) (f := inc)) using 1 <;> rfl
+    convert (Walk.support_map (p := q) (f := inc)) using 1 ; rfl
   rw [hsupp] at huP₀
   obtain ⟨w, -, hwu⟩ := List.mem_map.mp huP₀
   exact w.2 hwu
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- If three vertices all avoid `d` but do not all lie in any one end piece
 at `d`, one of their three component sides isolates that vertex from the
 other two.  The disjunction records the harmless relabelling denoted
 "without loss of generality" in the paper. -/
-theorem exists_isolatingCutSide_of_avoid_cut
+theorem exists_isolatingCutSide_of_avoid_cut [Finite V]
     {H : G.Subgraph} {a b c d : H.verts}
     (had : a ≠ d) (hbd : b ≠ d) (hcd : c ≠ d)
     (hnoAll : ∀ K : (deleteVertex H.coe d).ConnectedComponent,
@@ -10659,6 +11233,7 @@ theorem exists_isolatingCutSide_of_avoid_cut
       Nonempty (IsolatingCutSide H b a c) ∨
       Nonempty (IsolatingCutSide H c a b) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let a' : {w : H.verts // w ≠ d} := ⟨a, had⟩
   let Ka : (deleteVertex H.coe d).ConnectedComponent :=
     (deleteVertex H.coe d).connectedComponentMk a'
@@ -10726,11 +11301,12 @@ theorem exists_isolatingCutSide_of_avoid_cut
         b_not_mem := hbKa
         c_not_mem := hcKa }⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Version of `exists_isolatingCutSide_of_avoid_cut` allowing the cut
 vertex itself to be one of the three attachments.  Pairwise distinctness
 then leaves two attachments off the cut, and the no-common-end-piece
 hypothesis forces their component sides to be distinct. -/
-theorem exists_isolatingCutSide_of_not_all_mem_verts
+theorem exists_isolatingCutSide_of_not_all_mem_verts [Finite V]
     {H : G.Subgraph} {a b c d : H.verts}
     (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c)
     (hnoAll : ∀ K : (deleteVertex H.coe d).ConnectedComponent,
@@ -10741,6 +11317,7 @@ theorem exists_isolatingCutSide_of_not_all_mem_verts
       Nonempty (IsolatingCutSide H b a c) ∨
       Nonempty (IsolatingCutSide H c a b) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   by_cases had : a = d
   · have hbd : b ≠ d := fun h ↦ hab (had.trans h.symm)
     have hcd : c ≠ d := fun h ↦ hac (had.trans h.symm)
@@ -10821,6 +11398,7 @@ theorem exists_isolatingCutSide_of_not_all_mem_verts
       · exact exists_isolatingCutSide_of_avoid_cut
           (G := G) had hbdEq hcdEq hnoAll
 
+omit [DecidableRel G.Adj] in
 /-- At a cut vertex of a minimal `A` connector, some attachment lies in a
 component side which contains neither of the other two attachments.  The
 strict pruning theorem rules out the only alternative. -/
@@ -10888,6 +11466,7 @@ theorem MinimalABConnectorPair.exists_isolating_A_of_cut
       exact ⟨(ABConnectorPair.zAIn (M := M) C.toABConnectorPair).2, by
         simpa [ABConnectorPair.zAIn] using hAll.2.2⟩
 
+omit [DecidableRel G.Adj] in
 /-- Symmetric isolating-side extraction for a cut vertex of the minimal
 `B` connector. -/
 theorem MinimalABConnectorPair.exists_isolating_B_of_cut
@@ -10959,6 +11538,7 @@ noncomputable def IsolatingCutSide.carrier {H : G.Subgraph}
     {a b c : H.verts} (S : IsolatingCutSide H a b c) : Finset H.verts :=
   (ComponentEndBlock.side S.cut S.component).toFinset
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 @[simp] theorem IsolatingCutSide.mem_carrier_iff {H : G.Subgraph}
     {a b c : H.verts} (S : IsolatingCutSide H a b c) (w : H.verts) :
     w ∈ S.carrier ↔ w ∈ ComponentEndBlock.side S.cut S.component := by
@@ -10970,12 +11550,14 @@ noncomputable def IsolatingCutSide.ambientCarrier {H : G.Subgraph}
     {a b c : H.verts} (S : IsolatingCutSide H a b c) : Finset V :=
   S.carrier.image Subtype.val
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem IsolatingCutSide.mem_ambientCarrier_iff {H : G.Subgraph}
     {a b c : H.verts} (S : IsolatingCutSide H a b c) (w : V) :
     w ∈ S.ambientCarrier ↔
       ∃ hw : w ∈ H.verts,
         (⟨w, hw⟩ : H.verts) ∈
           ComponentEndBlock.side S.cut S.component := by
+  classical
   constructor
   · intro hw
     obtain ⟨u, hu, rfl⟩ := Finset.mem_image.mp hw
@@ -10984,18 +11566,22 @@ noncomputable def IsolatingCutSide.ambientCarrier {H : G.Subgraph}
     apply Finset.mem_image.mpr
     exact ⟨⟨w, hwH⟩, (S.mem_carrier_iff _).mpr hwSide, rfl⟩
 
+omit [DecidableRel G.Adj] in
 theorem IsolatingCutSide.ambientCarrier_subset {H : G.Subgraph}
     {a b c : H.verts} (S : IsolatingCutSide H a b c) :
     (S.ambientCarrier : Set V) ⊆ H.verts := by
+  classical
   intro w hw
   exact ((S.mem_ambientCarrier_iff w).mp hw).1
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- An isolating side for two distinct excluded vertices is based at a
 genuine cut vertex.  At least one excluded vertex survives deletion of the
 cut and lies in a different component from the isolated vertex. -/
 theorem IsolatingCutSide.isCutVertex {H : G.Subgraph}
     {a b c : H.verts} (S : IsolatingCutSide H a b c) (hbc : b ≠ c) :
     IsCutVertex H.coe S.cut := by
+  classical
   intro hpre
   by_cases hb : b = S.cut
   · have hc : c ≠ S.cut := by
@@ -11024,32 +11610,41 @@ theorem IsolatingCutSide.isCutVertex {H : G.Subgraph}
       simpa only [ConnectedComponent.mem_supp_iff] using S.a_mem.2
     simpa only [ConnectedComponent.mem_supp_iff] using hcomp.symm.trans haComp
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem IsolatingCutSide.a_mem_ambientCarrier {H : G.Subgraph}
     {a b c : H.verts} (S : IsolatingCutSide H a b c) :
     a.1 ∈ S.ambientCarrier := by
+  classical
   exact (S.mem_ambientCarrier_iff a.1).mpr ⟨a.2, S.a_mem⟩
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem IsolatingCutSide.b_not_mem_ambientCarrier
     {H : G.Subgraph} {a b c : H.verts}
     (S : IsolatingCutSide H a b c) : b.1 ∉ S.ambientCarrier := by
+  classical
   intro h
   obtain ⟨hb, hbSide⟩ := (S.mem_ambientCarrier_iff b.1).mp h
   exact S.b_not_mem (by simpa using hbSide)
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem IsolatingCutSide.c_not_mem_ambientCarrier
     {H : G.Subgraph} {a b c : H.verts}
     (S : IsolatingCutSide H a b c) : c.1 ∉ S.ambientCarrier := by
+  classical
   intro h
   obtain ⟨hc, hcSide⟩ := (S.mem_ambientCarrier_iff c.1).mp h
   exact S.c_not_mem (by simpa using hcSide)
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem IsolatingCutSide.cut_not_mem_ambientCarrier
     {H : G.Subgraph} {a b c : H.verts}
     (S : IsolatingCutSide H a b c) : S.cut.1 ∉ S.ambientCarrier := by
+  classical
   intro h
   obtain ⟨hcut, hside⟩ := (S.mem_ambientCarrier_iff S.cut.1).mp h
   exact hside.1 (Subtype.ext rfl)
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- If the cut of a second isolating side lies outside the first endblock,
 then the entire first carrier and its old cut lie in the second component.
 The old cut is not in the old carrier, so the second carrier is strictly
@@ -11117,12 +11712,14 @@ theorem IsolatingCutSide.carrier_ssubset_of_cut_not_mem_endBlock
     exact ComponentEndBlock.cut_not_mem_side S.cut S.component
       ((S.mem_carrier_iff S.cut).mp hOldCutOld)
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- The finite carrier of an isolating side is literally one component of
 the connector after deleting its cut vertex. -/
 theorem IsolatingCutSide.carrier_isComponentAfterDeleting
     {H : G.Subgraph} {a b c : H.verts}
     (S : IsolatingCutSide H a b c) :
     IsComponentAfterDeleting H.coe ({S.cut} : Finset H.verts) S.carrier := by
+  classical
   have hcarrier : ((S.carrier : Finset H.verts) : Set H.verts) =
       ComponentEndBlock.side S.cut S.component := by
     ext w
@@ -11148,11 +11745,12 @@ theorem IsolatingCutSide.carrier_isComponentAfterDeleting
       exact (hvCut (by simp)).elim
     · exact (S.mem_carrier_iff v).mpr hvSide
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- The isolated attachment and any vertex of its component side can be
 joined disjointly from a path between the other two attachments.  Both
 paths are mapped back to the ambient graph, with connector support
 containment retained. -/
-theorem IsolatingCutSide.exists_ambient_direct_linkage
+theorem IsolatingCutSide.exists_ambient_direct_linkage [Finite V]
     {H : G.Subgraph} (hH : H.Connected) {a b c : H.verts}
     (S : IsolatingCutSide H a b c) {s : H.verts}
     (hs : s ∈ ComponentEndBlock.side S.cut S.component) :
@@ -11161,6 +11759,8 @@ theorem IsolatingCutSide.exists_ambient_direct_linkage
       Disjoint {w | w ∈ p.support} {w | w ∈ q.support} ∧
       (∀ w, w ∈ p.support → w ∈ H.verts) ∧
       ∀ w, w ∈ q.support → w ∈ H.verts := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let hC := S.carrier_isComponentAfterDeleting (G := G)
   let aC : {w : H.verts // w ∈ (S.carrier : Set H.verts)} :=
     ⟨a, (S.mem_carrier_iff a).mpr S.a_mem⟩
@@ -11225,6 +11825,7 @@ def IsolatingCutSide.IsMaximal {H : G.Subgraph} {a b c : H.verts}
     (S : IsolatingCutSide H a b c) : Prop :=
   ∀ R : IsolatingCutSide H a b c, R.carrier.card ≤ S.carrier.card
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- Maximality is unchanged when the two excluded attachments are
 interchanged. -/
 theorem IsolatingCutSide.swapBC_isMaximal
@@ -11235,6 +11836,7 @@ theorem IsolatingCutSide.swapBC_isMaximal
   have h := hS R.swapBC
   exact h
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- Any nonempty family of isolating sides contains one of maximum finite
 cardinality. -/
 theorem exists_maximal_isolatingCutSide {H : G.Subgraph}
@@ -11260,6 +11862,7 @@ theorem exists_maximal_isolatingCutSide {H : G.Subgraph}
   · exact h
   · exact hS (by simp) h
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- A maximum-cardinality isolating side cannot be strictly enlarged by
 another isolating side.  This is the exact contradiction used after an
 external path has been absorbed into the connector. -/
@@ -11272,6 +11875,7 @@ theorem IsolatingCutSide.IsMaximal.not_ssubset_carrier {H : G.Subgraph}
   have hle := hS R
   omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- A singleton separator whose cut lies outside a maximum isolating
 endblock would create a strictly larger isolating component.  The second
 source vertex is irrelevant to the extraction; retaining it in the
@@ -11283,6 +11887,7 @@ theorem IsolatingCutSide.IsMaximal.false_of_separator_cut_outside_endBlock
     (hsep : Erdos599.Countable.Separates H.coe ({a, t} : Set H.verts)
       ({b, c} : Set H.verts) ({u} : Set H.verts))
     (hu : u ∉ ComponentEndBlock.verts S.cut S.component) : False := by
+  classical
   have hsepA : Erdos599.Countable.Separates H.coe ({a} : Set H.verts)
       ({b, c} : Set H.verts) ({u} : Set H.verts) := by
     intro a' ha' v hv q hq
@@ -11295,6 +11900,7 @@ theorem IsolatingCutSide.IsMaximal.false_of_separator_cut_outside_endBlock
   apply hS.not_ssubset_carrier R
   exact S.carrier_ssubset_of_cut_not_mem_endBlock hH R hu
 
+omit [DecidableRel G.Adj] in
 /-- A maximum `xB`-isolating side rules out a singleton separator between
 `{xB,t}` and `{yB,zB}` whenever `t` is outside that side and its cut.  Cuts
 inside the isolated component are bypassed through the connected complement;
@@ -11433,6 +12039,7 @@ theorem MinimalABConnectorPair.no_singleton_B_separator_of_active
     exact IsolatingCutSide.IsMaximal.false_of_separator_cut_outside_endBlock
       C.b_connected S hS hxu hsep huEnd
 
+omit [DecidableRel G.Adj] in
 /-- In the default `B` choice there is no `xB`-isolating side.  A singleton
 separator away from `xB` would create one.  If the separator is `xB` itself,
 the component containing the second source is attachment-free and is removed
@@ -11593,6 +12200,7 @@ noncomputable def carrier (B : BIsolationChoice (M := M) C) : Finset V :=
   | .active S _ => S.ambientCarrier
   | .default _ => ∅
 
+omit [DecidableRel G.Adj] in
 theorem carrier_subset_bGraph (B : BIsolationChoice (M := M) C) :
     (B.carrier : Set V) ⊆ C.bGraph.verts := by
   intro w hw
@@ -11602,6 +12210,7 @@ theorem carrier_subset_bGraph (B : BIsolationChoice (M := M) C) :
       exact hwH
   | default hnone => simp [carrier] at hw
 
+omit [DecidableRel G.Adj] in
 theorem xB_mem_carrier_or_cut_eq
     (B : BIsolationChoice (M := M) C) :
     M.xSep.right ∈ B.carrier ∨ B.cut.1 = M.xSep.right := by
@@ -11615,6 +12224,7 @@ theorem xB_mem_carrier_or_cut_eq
       right
       rfl
 
+omit [DecidableRel G.Adj] in
 theorem yB_not_mem_carrier (B : BIsolationChoice (M := M) C) :
     M.ySep.right ∉ B.carrier := by
   cases B with
@@ -11626,6 +12236,7 @@ theorem yB_not_mem_carrier (B : BIsolationChoice (M := M) C) :
         simpa only [ABConnectorPair.yBIn] using hySide)
   | default hnone => simp [carrier]
 
+omit [DecidableRel G.Adj] in
 theorem zB_not_mem_carrier (B : BIsolationChoice (M := M) C) :
     M.zSep.right ∉ B.carrier := by
   cases B with
@@ -11637,6 +12248,7 @@ theorem zB_not_mem_carrier (B : BIsolationChoice (M := M) C) :
         simpa only [ABConnectorPair.zBIn] using hzSide)
   | default hnone => simp [carrier]
 
+omit [DecidableRel G.Adj] in
 theorem cut_not_mem_carrier (B : BIsolationChoice (M := M) C) :
     B.cut.1 ∉ B.carrier := by
   cases B with
@@ -11649,6 +12261,7 @@ theorem cut_not_mem_carrier (B : BIsolationChoice (M := M) C) :
 
 end BIsolationChoice
 
+omit [DecidableRel G.Adj] in
 /-- The optional maximum `B`-side choice always exists. -/
 theorem MinimalABConnectorPair.exists_BIsolationChoice
     (C : M.MinimalABConnectorPair) :
@@ -11662,6 +12275,7 @@ theorem MinimalABConnectorPair.exists_BIsolationChoice
     exact ⟨BIsolationChoice.active S hS⟩
   · exact ⟨BIsolationChoice.default h⟩
 
+omit [DecidableRel G.Adj] in
 /-- The chosen optional `B` carrier belongs to the same pair component as
 `x`; this is vacuous in the default case. -/
 theorem BIsolationChoice.carrier_subset_pairComponent
@@ -11675,6 +12289,7 @@ theorem BIsolationChoice.carrier_subset_pairComponent
       ((({SA.cut.1, B.cut.1} : Finset V) : Set V)))
     (hxD : x ∈ (D : Set V)) :
     (B.carrier : Set V) ⊆ (D : Set V) := by
+  classical
   intro w hw
   cases B with
   | active SB hSB =>
@@ -11695,6 +12310,7 @@ noncomputable def MinimalABConnectorPair.pairNearRegion
     (B : BIsolationChoice (M := M) C) : Finset V :=
   SA.ambientCarrier ∪ B.carrier ∪ M.xPart
 
+omit [DecidableRel G.Adj] in
 @[simp] theorem MinimalABConnectorPair.x_mem_pairNearRegion
     (C : M.MinimalABConnectorPair)
     (SA : IsolatingCutSide C.aGraph
@@ -11707,6 +12323,7 @@ noncomputable def MinimalABConnectorPair.pairNearRegion
     Finset.mem_union]
   exact Or.inr M.x_mem_xPart
 
+omit [DecidableRel G.Adj] in
 theorem MinimalABConnectorPair.pairNearRegion_subset_pairComponent
     (C : M.MinimalABConnectorPair)
     (SA : IsolatingCutSide C.aGraph
@@ -11718,6 +12335,7 @@ theorem MinimalABConnectorPair.pairNearRegion_subset_pairComponent
       ((({SA.cut.1, B.cut.1} : Finset V) : Set V)))
     (hxD : x ∈ (D : Set V)) :
     (C.pairNearRegion (M := M) SA B : Set V) ⊆ (D : Set V) := by
+  classical
   obtain ⟨hX, -, hA⟩ := C.pairComponent_contains_xSides
     (M := M) SA B.cut D hxD
   have hB := B.carrier_subset_pairComponent (M := M) C SA D hxD
@@ -11733,6 +12351,7 @@ theorem MinimalABConnectorPair.pairNearRegion_subset_pairComponent
       simpa only [xPart, mem_componentCarrier] using hwX
     exact hX hwSide
 
+omit [DecidableRel G.Adj] in
 /-- The four attachments on the opposite `x`-rim are outside the initial
 cluster. -/
 theorem MinimalABConnectorPair.farAttachments_not_mem_pairNearRegion
@@ -11746,6 +12365,7 @@ theorem MinimalABConnectorPair.farAttachments_not_mem_pairNearRegion
       M.zSep.left ∉ C.pairNearRegion (M := M) SA B ∧
       M.ySep.right ∉ C.pairNearRegion (M := M) SA B ∧
       M.zSep.right ∉ C.pairNearRegion (M := M) SA B := by
+  classical
   have left_not_Bcarrier {w : V} (hwA : w ∈ C.aGraph.verts) :
       w ∉ B.carrier := by
     intro hwB
@@ -11780,6 +12400,7 @@ theorem MinimalABConnectorPair.farAttachments_not_mem_pairNearRegion
       fun hwX ↦ Finset.disjoint_left.mp M.xPart_disjoint_bSet
         hwX M.zB_mem_bSet⟩
 
+omit [DecidableRel G.Adj] in
 /-- Trim an arbitrary simple connector-to-connector path to the segment
 which last leaves a prescribed union `U` of connector sides and first
 returns to the remaining connector vertices.  Its interior has no vertex
@@ -11788,7 +12409,7 @@ to obtain AHT's external path `S`. -/
 theorem ABConnectorPair.exists_cleanExitPath
     (C : M.ABConnectorPair) (U : Finset V)
     {a b : V} (raw : G.Walk a b) (hraw : raw.IsPath)
-    (hUsub : (U : Set V) ⊆ C.aGraph.verts ∪ C.bGraph.verts)
+    (_hUsub : (U : Set V) ⊆ C.aGraph.verts ∪ C.bGraph.verts)
     (haU : a ∈ U)
     (hbConn : b ∈ C.aGraph.verts ∪ C.bGraph.verts)
     (hbU : b ∉ U) :
@@ -11836,11 +12457,12 @@ theorem ABConnectorPair.exists_cleanExitPath
       simp only [F, Finset.mem_sdiff, Set.mem_toFinset]
       exact ⟨hwConn, hwU⟩
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- A finite first/last-contact lemma in its symmetric form.  A simple path
 from `U` to a disjoint set `F` contains a subpath whose only vertices in
 `U ∪ F` are its two ends.  This is the path-trimming operation used in
 the "standard" external-path extraction on p.15. -/
-theorem exists_cleanPath_between_finsets
+theorem exists_cleanPath_between_finsets [Finite V]
     (U F : Finset V) (hUF : Disjoint U F)
     {a b : V} (raw : G.Walk a b) (hraw : raw.IsPath)
     (haU : a ∈ U) (hbF : b ∈ F) :
@@ -11850,6 +12472,7 @@ theorem exists_cleanPath_between_finsets
         ∀ w, w ∈ p.support → w ∈ U ∪ F →
           w = s ∨ w = t := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   have haF : a ∉ F := by
     intro ha
     exact Finset.disjoint_left.mp hUF haU ha
@@ -11880,6 +12503,7 @@ theorem exists_cleanPath_between_finsets
         simpa only [Walk.support_reverse, List.mem_reverse] using hwqr
       exact hqFirst w hwq hwF
 
+omit [DecidableRel G.Adj] in
 /-- Combine the maximal-`X` external path with an arc of the opposite rim,
 then trim it by the preceding first/last-contact lemma.  The result starts
 in any prescribed connector-side union `U` containing `xA`, ends in the
@@ -11916,6 +12540,7 @@ theorem MinimalABConnectorPair.exists_cleanExternalExit
       (Or.inl (C.a_contains _ M.yA_mem_aSet)) hyAU
   exact ⟨s, hsU, t, htConn, htU, r, hr, hrMeet⟩
 
+omit [DecidableRel G.Adj] in
 /-- A cut-avoiding raw path from `xA` to a connector vertex outside the
 initial near region can be trimmed to the exact external path used on p.15.
 Unlike `exists_cleanNearExit` below, this formulation remembers that *both*
@@ -12062,6 +12687,7 @@ theorem MinimalABConnectorPair.exists_cleanNearExit_of_cutAvoidingRaw
   intro w hw
   exact hrawCuts w (hpRaw w hw)
 
+omit [DecidableRel G.Adj] in
 /-- If the component of `G - {vA,vB}` containing `x` already contains
 one of the four attachments on the opposite `x`-rim, connectivity inside
 that component supplies the cut-avoiding raw path required by the preceding
@@ -12154,6 +12780,7 @@ theorem MinimalABConnectorPair.exists_cleanNearExit_of_farAttachment_mem
   exact C.exists_cleanNearExit_of_cutAvoidingRaw (M := M) SA B
     hfConn hfNear hfX raw hraw hrawCuts
 
+omit [DecidableRel G.Adj] in
 /-- Suppose both chosen connector cuts lie on the opposite `x`-rim and
 the pair-deletion component containing `x` meets that rim.  Then the pair
 component contains one of the four far attachments, unless the two
@@ -12266,6 +12893,7 @@ theorem MinimalABConnectorPair.farAttachment_mem_pairComponent_or_cycle
     T.xRim T.xRim_isCycle hcutARim hcutBRim hcuts hrRim
     hyRim hzRim hyA hyB hzA hzB D hxD hrD hyD hzD hconn hdelete
 
+omit [DecidableRel G.Adj] in
 /-- Full standard external-path extraction from AHT p.15.  The initial
 maximal-`X` path reaches the opposite rim while avoiding both chosen cuts.
 Cut the rim between that contact and a far A-attachment.  Either one arc
@@ -12427,6 +13055,7 @@ theorem MinimalABConnectorPair.exists_cleanNearExit_avoiding_cuts
         (M := M) SA B D hxD hf hfD
     · exact (hno hcycle).elim
 
+omit [DecidableRel G.Adj] in
 /-- The maximal-`X` path, trimmed against the full initial region
 `CA ∪ CB ∪ X`.  The far end is a connector vertex outside that region,
 and no other connector vertex occurs on the trimmed path.  We retain the
@@ -12681,6 +13310,7 @@ def ABConnectorPair.swapYZ (C : M.ABConnectorPair) :
     simpa only [Set.union_assoc, Set.union_left_comm, Set.union_comm] using
       C.avoids_terminal_parts
 
+omit [DecidableRel G.Adj] in
 theorem ABConnectorPair.swapYZ_isTwoConnected (C : M.ABConnectorPair)
     (h2 : C.IsTwoConnected) : C.swapYZ.IsTwoConnected := h2
 
@@ -12706,6 +13336,7 @@ def ABConnectorPair.rotateYZX (C : M.ABConnectorPair) :
     simpa only [Set.union_assoc, Set.union_left_comm, Set.union_comm] using
       C.avoids_terminal_parts
 
+omit [DecidableRel G.Adj] in
 theorem ABConnectorPair.rotateYZX_isTwoConnected (C : M.ABConnectorPair)
     (h2 : C.IsTwoConnected) : C.rotateYZX.IsTwoConnected := h2
 
@@ -12822,6 +13453,7 @@ def MinimalABConnectorPair.reverseAB (C : M.MinimalABConnectorPair) :
     simpa only [ABConnectorPair.cutDefect, E,
       ABConnectorPair.reverseAB, Nat.add_comm] using hmin
 
+omit [DecidableRel G.Adj] in
 theorem ABConnectorPair.reverseAB_isTwoConnected (C : M.ABConnectorPair)
     (h2 : C.IsTwoConnected) : C.reverseAB.IsTwoConnected := h2.symm
 
@@ -12833,6 +13465,7 @@ def IsMatchedAttachmentPair (a b : V) : Prop :=
   (a = M.ySep.left ∧ b = M.ySep.right) ∨
   (a = M.zSep.left ∧ b = M.zSep.right)
 
+omit [DecidableRel G.Adj] in
 theorem a_attachments_pairwise_ne (hA : M.aSet.card = 3) :
     M.xSep.left ≠ M.ySep.left ∧
     M.xSep.left ≠ M.zSep.left ∧
@@ -12864,6 +13497,7 @@ theorem a_attachments_pairwise_ne (hA : M.aSet.card = 3) :
       exact Finset.card_insert_le _ _
     omega
 
+omit [DecidableRel G.Adj] in
 theorem b_attachments_pairwise_ne (hB : M.bSet.card = 3) :
     M.xSep.right ≠ M.ySep.right ∧
     M.xSep.right ≠ M.zSep.right ∧
@@ -12895,6 +13529,7 @@ theorem b_attachments_pairwise_ne (hB : M.bSet.card = 3) :
       exact Finset.card_insert_le _ _
     omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Two terminal bridges supported in disjoint deletion components are
 vertex-disjoint when their four boundary vertices are distinct on each
 side. -/
@@ -12926,6 +13561,7 @@ private theorem terminalBridge_disjoint_of_support
     · exact Finset.disjoint_left.mp hXB hwX (h ▸ hqB)
     · exact Finset.disjoint_left.mp hXY hwX hwY
 
+omit [DecidableRel G.Adj] in
 /-- Under the triple/triple hypothesis the three canonical terminal
 bridges are pairwise vertex-disjoint. -/
 theorem terminalBridges_pairwise_disjoint
@@ -12936,6 +13572,7 @@ theorem terminalBridges_pairwise_disjoint
         {w | w ∈ M.zTerminalBridge.support} ∧
       Disjoint {w | w ∈ M.yTerminalBridge.support}
         {w | w ∈ M.zTerminalBridge.support} := by
+  classical
   obtain ⟨hAxy, hAxz, hAyz⟩ := M.a_attachments_pairwise_ne hA
   obtain ⟨hBxy, hBxz, hByz⟩ := M.b_attachments_pairwise_ne hB
   constructor
@@ -12965,6 +13602,7 @@ theorem terminalBridges_pairwise_disjoint
       M.zPart_disjoint_aSet M.zPart_disjoint_bSet
       M.yPart_disjoint_zPart
 
+omit [DecidableRel G.Adj] in
 /-- The representative off-diagonal edge contradiction.  The other five
 ordered pairs are obtained by permuting `x,y,z`. -/
 theorem ABConnectorPair.hasCycleThroughThree_of_adj_xA_yB
@@ -12972,6 +13610,7 @@ theorem ABConnectorPair.hasCycleThroughThree_of_adj_xA_yB
     (hA : M.aSet.card = 3) (hB : M.bSet.card = 3)
     (hxy : G.Adj M.xSep.left M.ySep.right) :
     HasCycleThroughThree G x y z := by
+  classical
   obtain ⟨hAxy, hAxz, -⟩ := M.a_attachments_pairwise_ne hA
   obtain ⟨hBxy, -, hByz⟩ := M.b_attachments_pairwise_ne hB
   obtain ⟨Ayz, hAyz, hxAyz, hAyzSub⟩ :=
@@ -13118,14 +13757,18 @@ theorem ABConnectorPair.hasCycleThroughThree_of_adj_xA_yB
     hdetour hcross hxdetour M.xSep.x_ne_left hxyB hmeet
     (Or.inl hxdetour) (Or.inl hydetour) (Or.inl hzdetour)
 
+omit [DecidableRel G.Adj] in
 theorem ABConnectorPair.not_adj_xA_yB
     (C : M.ABConnectorPair) (h2 : C.IsTwoConnected)
     (hA : M.aSet.card = 3) (hB : M.bSet.card = 3)
     (hno : ¬HasCycleThroughThree G x y z) :
-    ¬G.Adj M.xSep.left M.ySep.right :=
-  fun h ↦ hno (ABConnectorPair.hasCycleThroughThree_of_adj_xA_yB
-    (M := M) C h2 hA hB h)
+    ¬G.Adj M.xSep.left M.ySep.right := by
+  classical
+  exact
+    fun h ↦ hno (ABConnectorPair.hasCycleThroughThree_of_adj_xA_yB
+      (M := M) C h2 hA hB h)
 
+omit [DecidableRel G.Adj] in
 /-- The `xA--zB` off-diagonal edge is the `y,z` relabelling of the
 representative edge obstruction. -/
 theorem ABConnectorPair.hasCycleThroughThree_of_adj_xA_zB
@@ -13133,6 +13776,7 @@ theorem ABConnectorPair.hasCycleThroughThree_of_adj_xA_zB
     (hA : M.aSet.card = 3) (hB : M.bSet.card = 3)
     (hxz : G.Adj M.xSep.left M.zSep.right) :
     HasCycleThroughThree G x y z := by
+  classical
   let N := swapYZTriple M
   let C' := ABConnectorPair.swapYZ (M := M) C
   have h2' : C'.IsTwoConnected :=
@@ -13149,6 +13793,7 @@ theorem ABConnectorPair.hasCycleThroughThree_of_adj_xA_zB
       (M := N) C' h2' hA' hB' hxy'
   exact ⟨r, W, hW, hx, hy, hz⟩
 
+omit [DecidableRel G.Adj] in
 /-- The `yA--zB` off-diagonal edge is the cyclic relabelling of the
 representative edge obstruction. -/
 theorem ABConnectorPair.hasCycleThroughThree_of_adj_yA_zB
@@ -13156,6 +13801,7 @@ theorem ABConnectorPair.hasCycleThroughThree_of_adj_yA_zB
     (hA : M.aSet.card = 3) (hB : M.bSet.card = 3)
     (hyz : G.Adj M.ySep.left M.zSep.right) :
     HasCycleThroughThree G x y z := by
+  classical
   let N := rotateYZXTriple M
   let C' := ABConnectorPair.rotateYZX (M := M) C
   have h2' : C'.IsTwoConnected :=
@@ -13172,6 +13818,7 @@ theorem ABConnectorPair.hasCycleThroughThree_of_adj_yA_zB
       (M := N) C' h2' hA' hB' hxy'
   exact ⟨r, W, hW, hx, hy, hz⟩
 
+omit [DecidableRel G.Adj] in
 /-- Reversing the connector orientation reduces the `yA--xB` edge to the
 representative edge obstruction. -/
 theorem ABConnectorPair.hasCycleThroughThree_of_adj_yA_xB
@@ -13179,6 +13826,7 @@ theorem ABConnectorPair.hasCycleThroughThree_of_adj_yA_xB
     (hA : M.aSet.card = 3) (hB : M.bSet.card = 3)
     (hyx : G.Adj M.ySep.left M.xSep.right) :
     HasCycleThroughThree G x y z := by
+  classical
   let N := reverseABTriple M
   let C' := ABConnectorPair.reverseAB (M := M) C
   have h2' : C'.IsTwoConnected :=
@@ -13193,6 +13841,7 @@ theorem ABConnectorPair.hasCycleThroughThree_of_adj_yA_xB
   exact ABConnectorPair.hasCycleThroughThree_of_adj_xA_yB
     (M := N) C' h2' hA' hB' hxy'
 
+omit [DecidableRel G.Adj] in
 /-- Reversing the connector orientation reduces the `zA--xB` edge to the
 `xA--zB` orientation. -/
 theorem ABConnectorPair.hasCycleThroughThree_of_adj_zA_xB
@@ -13200,6 +13849,7 @@ theorem ABConnectorPair.hasCycleThroughThree_of_adj_zA_xB
     (hA : M.aSet.card = 3) (hB : M.bSet.card = 3)
     (hzx : G.Adj M.zSep.left M.xSep.right) :
     HasCycleThroughThree G x y z := by
+  classical
   let N := reverseABTriple M
   let C' := ABConnectorPair.reverseAB (M := M) C
   have h2' : C'.IsTwoConnected :=
@@ -13214,6 +13864,7 @@ theorem ABConnectorPair.hasCycleThroughThree_of_adj_zA_xB
   exact ABConnectorPair.hasCycleThroughThree_of_adj_xA_zB
     (M := N) C' h2' hA' hB' hxz'
 
+omit [DecidableRel G.Adj] in
 /-- Reversing the connector orientation reduces the `zA--yB` edge to the
 `yA--zB` orientation. -/
 theorem ABConnectorPair.hasCycleThroughThree_of_adj_zA_yB
@@ -13221,6 +13872,7 @@ theorem ABConnectorPair.hasCycleThroughThree_of_adj_zA_yB
     (hA : M.aSet.card = 3) (hB : M.bSet.card = 3)
     (hzy : G.Adj M.zSep.left M.ySep.right) :
     HasCycleThroughThree G x y z := by
+  classical
   let N := reverseABTriple M
   let C' := ABConnectorPair.reverseAB (M := M) C
   have h2' : C'.IsTwoConnected :=
@@ -13235,6 +13887,7 @@ theorem ABConnectorPair.hasCycleThroughThree_of_adj_zA_yB
   exact ABConnectorPair.hasCycleThroughThree_of_adj_yA_zB
     (M := N) C' h2' hA' hB' hyz'
 
+omit [DecidableRel G.Adj] in
 /-- Condition (vii), matched-edge clause.  Every one of the six
 off-diagonal attachment edges gives the representative common-cycle
 contradiction after a cyclic relabelling and, when necessary, reversal of
@@ -13245,6 +13898,7 @@ theorem ABConnectorPair.matched_edges_of_both_triples
     (hno : ¬HasCycleThroughThree G x y z) :
     ∀ a ∈ M.aSet, ∀ b ∈ M.bSet, G.Adj a b →
       M.IsMatchedAttachmentPair a b := by
+  classical
   intro a ha b hb hab
   have ha' : a = M.xSep.left ∨ a = M.ySep.left ∨
       a = M.zSep.left := by
@@ -13377,6 +14031,7 @@ structure CleanConnectorCore (C : M.ABConnectorPair) {D : Finset V}
   meets_bGraph_only_right :
     ∀ w, w ∈ path.support → w ∈ C.bGraph.verts → w = right.1
 
+omit [DecidableRel G.Adj] in
 /-- Trim first at the first `B`-connector hit, then reverse and trim at the
 first `A`-connector hit. -/
 theorem exists_cleanConnectorCore (C : M.ABConnectorPair)
@@ -13439,6 +14094,7 @@ theorem exists_cleanConnectorCore (C : M.ABConnectorPair)
       simpa only [B, Set.mem_toFinset] using hwB
     simpa only [sB'] using hqFirstB w hwq hwB'
 
+omit [DecidableRel G.Adj] in
 /-- A boundary vertex different from the two ends of a mismatched path
 does not occur on the path. -/
 theorem MismatchedBoundaryPath.not_mem_support_of_boundary_ne
@@ -13453,6 +14109,7 @@ theorem MismatchedBoundaryPath.not_mem_support_of_boundary_ne
   · exact hwb h
   · exact Finset.disjoint_left.mp hD.2.1 hwD hwAB
 
+omit [DecidableRel G.Adj] in
 /-- The carrier of a routed terminal component has external boundary in
 its two deleted separator vertices. -/
 theorem routedComponentCarrier_externalBoundary
@@ -13461,6 +14118,7 @@ theorem routedComponentCarrier_externalBoundary
     HasExternalBoundaryIn G
       (componentCarrier (G := G) {S.left, S.right} S.side)
       {S.left, S.right} := by
+  classical
   intro u hu v huv hvCarrier
   by_contra hvPair
   have huSide : u ∈ (S.side : Set V) := by
@@ -13473,10 +14131,13 @@ theorem routedComponentCarrier_externalBoundary
   apply hvCarrier
   simpa only [mem_componentCarrier] using hvSide
 
+omit [DecidableRel G.Adj] in
 theorem xPart_externalBoundary :
     HasExternalBoundaryIn G M.xPart {M.xSep.left, M.xSep.right} := by
+  classical
   simpa only [xPart] using routedComponentCarrier_externalBoundary M.xSep
 
+omit [DecidableRel G.Adj] in
 /-- If a walk leaves a finite region immediately after its unique contact
 at the initial vertex, and that region contains the entire `x`-component
 and both of its boundary vertices, then the initial vertex is not in the
@@ -13488,6 +14149,7 @@ theorem not_mem_xPart_of_exit_with_unique_region_contact
     (hxA : M.xSep.left ∈ U) (hxB : M.xSep.right ∈ U)
     (hOnly : ∀ w, w ∈ p.support → w ∈ U → w = s) :
     s ∉ M.xPart := by
+  classical
   intro hsX
   have hst : s ≠ t := by
     intro h
@@ -13510,6 +14172,7 @@ theorem not_mem_xPart_of_exit_with_unique_region_contact
     · exact huNotU (huA ▸ hxA)
     · exact huNotU (huB ▸ hxB)
 
+omit [DecidableRel G.Adj] in
 /-- For either the active or the default `B` choice, a clean near-region
 exit which avoids the old `X` component starts in `CA ∪ CB`. -/
 theorem MinimalABConnectorPair.cleanNearExit_start_mem_carrier
@@ -13527,6 +14190,7 @@ theorem MinimalABConnectorPair.cleanNearExit_start_mem_carrier
     Finset.mem_union] at hsNear
   exact hsNear.resolve_right (hAvoidX s p.start_mem_support)
 
+omit [DecidableRel G.Adj] in
 /-- In the nondegenerate `B` choice, the first vertex of a clean exit from
 `CA ∪ CB ∪ X` belongs to one of the two chosen isolating carriers. -/
 theorem MinimalABConnectorPair.cleanNearExit_start_mem_activeCarrier
@@ -13572,14 +14236,19 @@ theorem MinimalABConnectorPair.cleanNearExit_start_mem_activeCarrier
   simp only [Finset.mem_union] at hsU
   exact hsU.resolve_right hsNotX
 
+omit [DecidableRel G.Adj] in
 theorem yPart_externalBoundary :
     HasExternalBoundaryIn G M.yPart {M.ySep.left, M.ySep.right} := by
+  classical
   simpa only [yPart] using routedComponentCarrier_externalBoundary M.ySep
 
+omit [DecidableRel G.Adj] in
 theorem zPart_externalBoundary :
     HasExternalBoundaryIn G M.zPart {M.zSep.left, M.zSep.right} := by
+  classical
   simpa only [zPart] using routedComponentCarrier_externalBoundary M.zSep
 
+omit [DecidableRel G.Adj] in
 /-- Once the near endpoint has been classified into `CA ∪ CB`, the clean
 exit path avoids all three terminal components.  For `X` this follows from
 the last-near-region property.  For `Y` and `Z`, a first entry would have
@@ -13603,6 +14272,7 @@ theorem MinimalABConnectorPair.cleanNearExit_avoids_terminalParts
     ∀ w, w ∈ p.support →
       w ∉ (M.xPart : Set V) ∪ (M.yPart : Set V) ∪
         (M.zPart : Set V) := by
+  classical
   have hsConn : s ∈ C.aGraph.verts ∪ C.bGraph.verts := by
     rcases hsCarrier with hsA | hsB
     · exact Or.inl (SA.ambientCarrier_subset hsA)
@@ -13717,6 +14387,7 @@ theorem MinimalABConnectorPair.cleanNearExit_avoids_terminalParts
   · exact hyAvoid w hw hwY
   · exact hzAvoid w hw hwZ
 
+omit [DecidableRel G.Adj] in
 /-- Classified form of the full two-cut-avoiding external path.  Its near
 end belongs to one chosen isolating carrier, it meets the two connector
 graphs only at its ends, and its whole support avoids the three terminal
@@ -13745,6 +14416,7 @@ theorem MinimalABConnectorPair.exists_classifiedCleanNearExit_avoiding_cuts
         ∀ w, w ∈ p.support →
           w ∉ (M.xPart : Set V) ∪ (M.yPart : Set V) ∪
             (M.zPart : Set V) := by
+  classical
   obtain ⟨s, hsNear, t, htConn, htNear, p, hp, hmeet,
       hOnlyNear, hcuts, hAvoidX⟩ :=
     C.exists_cleanNearExit_avoiding_cuts
@@ -13756,6 +14428,7 @@ theorem MinimalABConnectorPair.exists_classifiedCleanNearExit_avoiding_cuts
   exact ⟨s, hsCarrier, t, htConn, htNear, p, hp, hmeet,
     hOnlyNear, hcuts, hparts⟩
 
+omit [DecidableRel G.Adj] in
 /-- Consolidated clean-exit package: its near endpoint lies in `CA ∪ CB`,
 the path meets the connector graphs only at its ends, and every vertex of
 the path avoids `X ∪ Y ∪ Z`. -/
@@ -13782,6 +14455,7 @@ theorem MinimalABConnectorPair.exists_classifiedCleanNearExit
         ∀ w, w ∈ p.support →
           w ∈ T.xRim.support ∨
             (w ≠ SA.cut.1 ∧ w ≠ B.cut.1) := by
+  classical
   obtain ⟨s, hsNear, t, htConn, htNear, p, hp, hmeet,
       hOnlyNear, hAvoidCut, hAvoidX, hprovenance⟩ :=
     C.exists_cleanNearExit (M := M) hA SA B
@@ -13792,6 +14466,7 @@ theorem MinimalABConnectorPair.exists_classifiedCleanNearExit
   exact ⟨s, hsCarrier, t, htConn, htNear, p, hp, hmeet,
     hOnlyNear, hAvoidCut, hparts, hprovenance⟩
 
+omit [DecidableRel G.Adj] in
 /-- The classified clean exit cannot have both ends in the `A` connector
 when its near end lies in `CA`: adjoining it is the strict cut-defect ear
 exchange, contradicting minimality of the connector pair. -/
@@ -13812,6 +14487,7 @@ theorem MinimalABConnectorPair.false_of_classifiedCleanNearExit_same_A
     (hparts : ∀ w, w ∈ p.support →
       w ∉ (M.xPart : Set V) ∪ (M.yPart : Set V) ∪
         (M.zPart : Set V)) : False := by
+  classical
   obtain ⟨hsA, hsSide⟩ :=
     (SA.mem_ambientCarrier_iff s).mp hsCarrier
   have htCut : (⟨t, htA⟩ : C.aGraph.verts) ≠ SA.cut := by
@@ -13828,6 +14504,7 @@ theorem MinimalABConnectorPair.false_of_classifiedCleanNearExit_same_A
   exact C.false_of_connector_clean_A_ear (M := M) SA p hp hsA htA
     hsSide htCut htSide hmeet hparts
 
+omit [DecidableRel G.Adj] in
 /-- Therefore, whenever the classified exit starts in `CA`, its far
 connector endpoint lies in the `B` connector. -/
 theorem MinimalABConnectorPair.classifiedCleanNearExit_far_mem_B_of_start_A
@@ -13847,11 +14524,13 @@ theorem MinimalABConnectorPair.classifiedCleanNearExit_far_mem_B_of_start_A
     (hparts : ∀ w, w ∈ p.support →
       w ∉ (M.xPart : Set V) ∪ (M.yPart : Set V) ∪
         (M.zPart : Set V)) : t ∈ C.bGraph.verts := by
+  classical
   rcases htConn with htA | htB
   · exact (C.false_of_classifiedCleanNearExit_same_A (M := M) SA B p hp
       hsCarrier htA htNear hmeet hAvoidCut hparts).elim
   · exact htB
 
+omit [DecidableRel G.Adj] in
 /-- A component violating all three paired-boundary alternatives is
 disjoint from each of the three terminal components. -/
 theorem component_disjoint_terminal_parts_of_boundary_failure
@@ -13864,6 +14543,7 @@ theorem component_disjoint_terminal_parts_of_boundary_failure
     (hnotZ : ¬HasExternalBoundaryIn G D
       {M.zSep.left, M.zSep.right}) :
     Disjoint D M.xPart ∧ Disjoint D M.yPart ∧ Disjoint D M.zPart := by
+  classical
   have one {P U : Finset V}
       (hP : IsComponentAfterDeleting G (M.aSet ∪ M.bSet) P)
       (hboundary : HasExternalBoundaryIn G P U)
@@ -13880,6 +14560,7 @@ theorem component_disjoint_terminal_parts_of_boundary_failure
     one M.yPart_isComponent M.yPart_externalBoundary hnotY,
     one M.zPart_isComponent M.zPart_externalBoundary hnotZ⟩
 
+omit [DecidableRel G.Adj] in
 /-- A trimmed mismatched path can meet a path supported in the deleted
 boundary together with a component disjoint from `D` only at its two
 connector endpoints. -/
@@ -13892,6 +14573,7 @@ theorem cleanConnectorCore_meets_path_only_ends
     (hDK : Disjoint D K) :
     ∀ w, w ∈ core.path.support → w ∈ Q.support →
       w = core.left.1 ∨ w = core.right.1 := by
+  classical
   intro w hwCore hwQ
   have hwS : w ∈ S.path.support := core.support_subset w hwCore
   have left_of_a (hwa : w = S.a) : w = core.left.1 := by
@@ -13914,6 +14596,7 @@ theorem cleanConnectorCore_meets_path_only_ends
     · exact Or.inr (right_of_b hwb)
     · exact (Finset.disjoint_left.mp hDK hwD hwK).elim
 
+omit [DecidableRel G.Adj] in
 theorem cleanConnectorCore_meets_xTerminalBridge_only_ends
     (C : M.ABConnectorPair) {D : Finset V}
     (S : M.MismatchedBoundaryPath D) (core : M.CleanConnectorCore C S)
@@ -13921,6 +14604,7 @@ theorem cleanConnectorCore_meets_xTerminalBridge_only_ends
     (hDX : Disjoint D M.xPart) :
     ∀ w, w ∈ core.path.support → w ∈ M.xTerminalBridge.support →
       w = core.left.1 ∨ w = core.right.1 := by
+  classical
   apply cleanConnectorCore_meets_path_only_ends (M := M) C S core hD
     M.xTerminalBridge
   · intro w hw
@@ -13930,6 +14614,7 @@ theorem cleanConnectorCore_meets_xTerminalBridge_only_ends
     · exact Or.inr hwX
   · exact hDX
 
+omit [DecidableRel G.Adj] in
 theorem cleanConnectorCore_meets_yTerminalBridge_only_ends
     (C : M.ABConnectorPair) {D : Finset V}
     (S : M.MismatchedBoundaryPath D) (core : M.CleanConnectorCore C S)
@@ -13937,6 +14622,7 @@ theorem cleanConnectorCore_meets_yTerminalBridge_only_ends
     (hDY : Disjoint D M.yPart) :
     ∀ w, w ∈ core.path.support → w ∈ M.yTerminalBridge.support →
       w = core.left.1 ∨ w = core.right.1 := by
+  classical
   apply cleanConnectorCore_meets_path_only_ends (M := M) C S core hD
     M.yTerminalBridge
   · intro w hw
@@ -13946,6 +14632,7 @@ theorem cleanConnectorCore_meets_yTerminalBridge_only_ends
     · exact Or.inr hwY
   · exact hDY
 
+omit [DecidableRel G.Adj] in
 theorem cleanConnectorCore_meets_zTerminalBridge_only_ends
     (C : M.ABConnectorPair) {D : Finset V}
     (S : M.MismatchedBoundaryPath D) (core : M.CleanConnectorCore C S)
@@ -13953,6 +14640,7 @@ theorem cleanConnectorCore_meets_zTerminalBridge_only_ends
     (hDZ : Disjoint D M.zPart) :
     ∀ w, w ∈ core.path.support → w ∈ M.zTerminalBridge.support →
       w = core.left.1 ∨ w = core.right.1 := by
+  classical
   apply cleanConnectorCore_meets_path_only_ends (M := M) C S core hD
     M.zTerminalBridge
   · intro w hw
@@ -13962,6 +14650,7 @@ theorem cleanConnectorCore_meets_zTerminalBridge_only_ends
     · exact Or.inr hwZ
   · exact hDZ
 
+omit [DecidableRel G.Adj] in
 theorem cleanConnectorCore_meets_aPath_only_left
     (C : M.ABConnectorPair) {D : Finset V}
     (S : M.MismatchedBoundaryPath D) (core : M.CleanConnectorCore C S)
@@ -13971,6 +14660,7 @@ theorem cleanConnectorCore_meets_aPath_only_left
   intro w hwCore hwP
   exact core.meets_aGraph_only_left w hwCore (hsub w hwP)
 
+omit [DecidableRel G.Adj] in
 theorem cleanConnectorCore_meets_bPath_only_right
     (C : M.ABConnectorPair) {D : Finset V}
     (S : M.MismatchedBoundaryPath D) (core : M.CleanConnectorCore C S)
@@ -13980,6 +14670,7 @@ theorem cleanConnectorCore_meets_bPath_only_right
   intro w hwCore hwP
   exact core.meets_bGraph_only_right w hwCore (hsub w hwP)
 
+omit [DecidableRel G.Adj] in
 /-- A convenient union form of the preceding clean-intersection lemmas.
 Every detour used in the AHT condition-(vii) splice is assembled from
 paths in the two connector graphs and the three terminal bridges. -/
@@ -13997,6 +14688,7 @@ theorem cleanConnectorCore_meets_connector_detour_only_ends
       w ∈ M.zTerminalBridge.support) :
     ∀ w, w ∈ core.path.support → w ∈ p.support →
       w = core.left.1 ∨ w = core.right.1 := by
+  classical
   intro w hwCore hwP
   rcases hclass w hwP with hwA | hwB | hwX | hwY | hwZ
   · exact Or.inl (core.meets_aGraph_only_left w hwCore hwA)
@@ -14008,6 +14700,7 @@ theorem cleanConnectorCore_meets_connector_detour_only_ends
   · exact cleanConnectorCore_meets_zTerminalBridge_only_ends
       (M := M) C S core hD hDZ w hwCore hwZ
 
+omit [DecidableRel G.Adj] in
 /-- In the normalized off-diagonal case `xA--yB`, the trimmed connector
 ends avoid the four other attachments.  These are exactly the inequalities
 needed by the two-linkage applications in the five AHT splice cases. -/
@@ -14019,6 +14712,7 @@ theorem cleanConnectorCore_normalized_endpoint_ne
     (hA : M.aSet.card = 3) (hB : M.bSet.card = 3) :
     core.left.1 ≠ M.ySep.left ∧ core.left.1 ≠ M.zSep.left ∧
       core.right.1 ≠ M.xSep.right ∧ core.right.1 ≠ M.zSep.right := by
+  classical
   obtain ⟨hAxy, hAxz, hAyz⟩ := M.a_attachments_pairwise_ne hA
   obtain ⟨hBxy, hBxz, hByz⟩ := M.b_attachments_pairwise_ne hB
   have hleftS : core.left.1 ∈ S.path.support :=
@@ -14053,10 +14747,11 @@ theorem cleanConnectorCore_normalized_endpoint_ne
   · intro h
     exact avoidB M.zB_mem_bSet hByz.symm (h ▸ hrightS)
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Assemble the seven-piece detours occurring in the five normalized
 condition-(vii) cases.  This keeps the case proofs focused on their
 pairwise connector/bridge intersection calculations. -/
-private theorem hasCycleThroughThree_of_seven_piece_detour
+private theorem hasCycleThroughThree_of_seven_piece_detour [Finite V]
     {v₀ v₁ v₂ v₃ v₄ v₅ v₆ v₇ w x y z : V}
     (p₀ : G.Walk v₀ v₁) (p₁ : G.Walk v₁ v₂)
     (p₂ : G.Walk v₂ v₃) (p₃ : G.Walk v₃ v₄)
@@ -14091,6 +14786,8 @@ private theorem hasCycleThroughThree_of_seven_piece_detour
     (hz : z ∈
       ((((((p₀.append p₁).append p₂).append p₃).append p₄).append p₅).append p₆).support) :
     HasCycleThroughThree G x y z := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hp₀₁ : (p₀.append p₁).IsPath :=
     hp₀.append_of_meet_only_endpoint_wm hp₁ h₁
   have hp₀₁₂ : ((p₀.append p₁).append p₂).IsPath :=
@@ -14110,6 +14807,7 @@ private theorem hasCycleThroughThree_of_seven_piece_detour
     cross hp hcross hw hw₀ hw₇ hmeet
     (Or.inl hx) (Or.inl hy) (Or.inl hz)
 
+omit [DecidableRel G.Adj] in
 /-- The first of the five normalized AHT condition-(vii) splices.  The
 two connector linkages use the direct matchings
 `xA--sA, yA--zA` and `xB--yB, sB--zB`. -/
@@ -14137,6 +14835,7 @@ private theorem ABConnectorPair.hasCycleThroughThree_of_direct_direct_generic
     (hBxySub : ∀ w, w ∈ Bxy.support → w ∈ C.bGraph.verts)
     (hBszSub : ∀ w, w ∈ Bsz.support → w ∈ C.bGraph.verts) :
     HasCycleThroughThree G x y z := by
+  classical
   obtain ⟨hXY, hXZ, hYZ⟩ := M.terminalBridges_pairwise_disjoint hA hB
   let X := M.xTerminalBridge
   let Y := M.yTerminalBridge
@@ -14359,6 +15058,7 @@ private theorem ABConnectorPair.hasCycleThroughThree_of_direct_direct_generic
     hdetour hcross hxdetour hxleft hxright hmeet
     (Or.inl hxdetour) (Or.inl hydetour) (Or.inl hzdetour)
 
+omit [DecidableRel G.Adj] in
 /-- Condition-(vii) wrapper for the generic direct/direct splice. -/
 private theorem ABConnectorPair.hasCycleThroughThree_of_normalized_direct_direct
     (C : M.ABConnectorPair)
@@ -14381,6 +15081,7 @@ private theorem ABConnectorPair.hasCycleThroughThree_of_normalized_direct_direct
     (hBxySub : ∀ w, w ∈ Bxy.support → w ∈ C.bGraph.verts)
     (hBszSub : ∀ w, w ∈ Bsz.support → w ∈ C.bGraph.verts) :
     HasCycleThroughThree G x y z := by
+  classical
   apply ABConnectorPair.hasCycleThroughThree_of_direct_direct_generic
     (M := M) C hA hB core.path core.left.2 core.right.2
       core.path_isPath ?_ Axs Ayz Bxy Bsz hAxs hAyz hBxy hBsz
@@ -14396,6 +15097,7 @@ private theorem ABConnectorPair.hasCycleThroughThree_of_normalized_direct_direct
   · exact cleanConnectorCore_meets_zTerminalBridge_only_ends
       (M := M) C S core hD hDZ w hwCore hwZ
 
+omit [DecidableRel G.Adj] in
 /-- The generic second A-side splice: the A-linkage is direct while the
 B-linkage uses the crossed matching, and the cross path has no further
 intersection with the five constituent regions of the detour. -/
@@ -14422,6 +15124,7 @@ private theorem ABConnectorPair.hasCycleThroughThree_of_direct_cross_generic
     (hBxzSub : ∀ w, w ∈ Bxz.support → w ∈ C.bGraph.verts)
     (hBsySub : ∀ w, w ∈ Bsy.support → w ∈ C.bGraph.verts) :
     HasCycleThroughThree G x y z := by
+  classical
   obtain ⟨hXY, hXZ, hYZ⟩ := M.terminalBridges_pairwise_disjoint hA hB
   let X := M.xTerminalBridge
   let Y := M.yTerminalBridge
@@ -14618,6 +15321,7 @@ private theorem ABConnectorPair.hasCycleThroughThree_of_direct_cross_generic
     h₁ h₂ h₃ h₄ h₅ h₆ hmeet hxdetour hxleft hxright
     hxdetour hydetour hzdetour
 
+omit [DecidableRel G.Adj] in
 /-- The p.15 contradiction once the clean external path starts in the
 chosen A-isolating carrier.  The two possible B-linkage matchings are the
 direct/direct and direct/cross splices above. -/
@@ -14712,6 +15416,7 @@ theorem MinimalABConnectorPair.false_of_classifiedCleanNearExit_start_A
       Axs Ayz Bxz Bty hAxs hAyz hBxz hBty hAdis hBdis
       hAxsSub hAyzSub hBxzSub hBtySub
 
+omit [DecidableRel G.Adj] in
 /-- The symmetric p.15 contradiction when the clean external path starts
 in the active B-isolating carrier.  Reversing the connector orientation
 turns it into the preceding A-start case. -/
@@ -14739,7 +15444,7 @@ theorem MinimalABConnectorPair.false_of_classifiedCleanNearExit_start_B
   classical
   cases B with
   | default hnone =>
-      simpa [BIsolationChoice.carrier] using hsB
+      simp [BIsolationChoice.carrier] at hsB
   | active SB hSB =>
       let N := reverseABTriple M
       let C' := MinimalABConnectorPair.reverseAB (M := M) C
@@ -14809,6 +15514,7 @@ theorem MinimalABConnectorPair.false_of_classifiedCleanNearExit_start_B
           reverseABTriple_zPart] using hparts w hw
       · exact hno
 
+omit [DecidableRel G.Adj] in
 /-- A maximum `xA`-isolating end piece is impossible.  The clean external
 path starts in one of the two chosen near carriers, and the preceding two
 lemmas close the corresponding A- or B-start case. -/
@@ -14835,6 +15541,7 @@ theorem MinimalABConnectorPair.false_of_maximal_xA_isolating
   · exact C.false_of_classifiedCleanNearExit_start_B
       (M := M) hA hB SA hSA B p hp hsB htConn htNear hmeet hcuts hparts hno
 
+omit [DecidableRel G.Adj] in
 /-- The A connector of a minimal pair is vertex-two-connected.  Any cut
 has an isolating side; after cyclic relabeling its isolated attachment is
 `xA`, contradicting the maximal-side exchange above. -/
@@ -14908,6 +15615,7 @@ theorem MinimalABConnectorPair.aGraph_twoConnected
         (by simpa only [N₂, N₁, rotateYZXTriple_bSet] using hB)
         S₂ hS₂ hconn hdelete hno₂
 
+omit [DecidableRel G.Adj] in
 /-- The B connector is vertex-two-connected by reversing the connector
 orientation and applying the A-side theorem. -/
 theorem MinimalABConnectorPair.bGraph_twoConnected
@@ -14917,6 +15625,7 @@ theorem MinimalABConnectorPair.bGraph_twoConnected
     (hdelete : ∀ d : V, (G.induce fun w : V ↦ w ≠ d).Connected)
     (hno : ¬HasCycleThroughThree G x y z) :
     AHTVertexTwoConnected C.bGraph.coe := by
+  classical
   let N := reverseABTriple M
   let C' := MinimalABConnectorPair.reverseAB (M := M) C
   have h := C'.aGraph_twoConnected
@@ -14927,6 +15636,7 @@ theorem MinimalABConnectorPair.bGraph_twoConnected
   simpa only [C', MinimalABConnectorPair.reverseAB,
     ABConnectorPair.reverseAB] using h
 
+omit [DecidableRel G.Adj] in
 /-- Both members of a minimal connector pair are vertex-two-connected. -/
 theorem MinimalABConnectorPair.isTwoConnected
     (C : M.MinimalABConnectorPair)
@@ -14935,8 +15645,10 @@ theorem MinimalABConnectorPair.isTwoConnected
     (hno : ¬HasCycleThroughThree G x y z)
     (hA : M.aSet.card = 3) (hB : M.bSet.card = 3) :
     C.toABConnectorPair.IsTwoConnected := by
+  classical
   exact ⟨C.aGraph_twoConnected (M := M) hA hB hconn hdelete hno,
     C.bGraph_twoConnected (M := M) hA hB hconn hdelete hno⟩
+omit [DecidableRel G.Adj] in
 /-- Condition-(vii) wrapper for the generic direct/cross splice. -/
 private theorem ABConnectorPair.hasCycleThroughThree_of_normalized_direct_cross
     (C : M.ABConnectorPair)
@@ -14959,6 +15671,7 @@ private theorem ABConnectorPair.hasCycleThroughThree_of_normalized_direct_cross
     (hBxzSub : ∀ w, w ∈ Bxz.support → w ∈ C.bGraph.verts)
     (hBsySub : ∀ w, w ∈ Bsy.support → w ∈ C.bGraph.verts) :
     HasCycleThroughThree G x y z := by
+  classical
   apply ABConnectorPair.hasCycleThroughThree_of_direct_cross_generic
     (M := M) C hA hB core.path core.left.2 core.right.2
       core.path_isPath ?_ Axs Ayz Bxz Bsy hAxs hAyz hBxz hBsy
@@ -14974,6 +15687,7 @@ private theorem ABConnectorPair.hasCycleThroughThree_of_normalized_direct_cross
   · exact cleanConnectorCore_meets_zTerminalBridge_only_ends
       (M := M) C S core hD hDZ w hwCore hwZ
 
+omit [DecidableRel G.Adj] in
 /-- The first symmetric B-side case in the normalized AHT table. -/
 private theorem ABConnectorPair.hasCycleThroughThree_of_normalized_symmetric_direct
     (C : M.ABConnectorPair)
@@ -14996,6 +15710,7 @@ private theorem ABConnectorPair.hasCycleThroughThree_of_normalized_symmetric_dir
     (hBxzSub : ∀ w, w ∈ Bxz.support → w ∈ C.bGraph.verts)
     (hBysSub : ∀ w, w ∈ Bys.support → w ∈ C.bGraph.verts) :
     HasCycleThroughThree G x y z := by
+  classical
   obtain ⟨hXY, hXZ, hYZ⟩ := M.terminalBridges_pairwise_disjoint hA hB
   let X := M.xTerminalBridge
   let Y := M.yTerminalBridge
@@ -15185,6 +15900,7 @@ private theorem ABConnectorPair.hasCycleThroughThree_of_normalized_symmetric_dir
     h₁ h₂ h₃ h₄ h₅ h₆ hmeet hxdetour hxleft hxright
     hxdetour hydetour hzdetour
 
+omit [DecidableRel G.Adj] in
 /-- The second symmetric B-side case is the checked direct/cross splice
 with its two connector-end paths read in the reverse direction. -/
 private theorem ABConnectorPair.hasCycleThroughThree_of_normalized_symmetric_cross
@@ -15208,6 +15924,7 @@ private theorem ABConnectorPair.hasCycleThroughThree_of_normalized_symmetric_cro
     (hBxzSub : ∀ w, w ∈ Bxz.support → w ∈ C.bGraph.verts)
     (hBysSub : ∀ w, w ∈ Bys.support → w ∈ C.bGraph.verts) :
     HasCycleThroughThree G x y z := by
+  classical
   apply ABConnectorPair.hasCycleThroughThree_of_normalized_direct_cross
     (M := M) C hA hB S core hD hDX hDY hDZ
     Asx.reverse Ayz Bxz Bys.reverse
@@ -15223,6 +15940,7 @@ private theorem ABConnectorPair.hasCycleThroughThree_of_normalized_symmetric_cro
     apply hBysSub w
     simpa only [Walk.support_reverse, List.mem_reverse] using hw
 
+omit [DecidableRel G.Adj] in
 /-- The residual forced matching in the normalized AHT table. -/
 private theorem ABConnectorPair.hasCycleThroughThree_of_normalized_residual
     (C : M.ABConnectorPair)
@@ -15245,6 +15963,7 @@ private theorem ABConnectorPair.hasCycleThroughThree_of_normalized_residual
     (hByzSub : ∀ w, w ∈ Byz.support → w ∈ C.bGraph.verts)
     (hBxsSub : ∀ w, w ∈ Bxs.support → w ∈ C.bGraph.verts) :
     HasCycleThroughThree G x y z := by
+  classical
   obtain ⟨hXY, hXZ, hYZ⟩ := M.terminalBridges_pairwise_disjoint hA hB
   let X := M.xTerminalBridge
   let Y := M.yTerminalBridge
@@ -15424,6 +16143,7 @@ private theorem ABConnectorPair.hasCycleThroughThree_of_normalized_residual
     h₁ h₂ h₃ h₄ h₅ h₆ hmeet hxdetour hxleft hxright
     hxdetour hydetour hzdetour
 
+omit [DecidableRel G.Adj] in
 /-- The complete normalized path contradiction at the bottom of AHT
 p.15: an unmatched `xA--yB` path through a remaining component, together
 with two-connected connector graphs, yields a common `x,y,z` cycle. -/
@@ -15547,6 +16267,7 @@ theorem ABConnectorPair.hasCycleThroughThree_of_normalized_mismatchedBoundaryPat
         · exact (hBcase ⟨Bys, Bxz, hBys, hBxzP, hBdis.symm,
             hBysSub, hBxzSub⟩).elim
 
+omit [DecidableRel G.Adj] in
 /-- The second normalized orientation of the condition-(vii) path:
 an unmatched `xA--zB` path.  This is the `y,z` relabeling of the
 `xA--yB` router. -/
@@ -15559,6 +16280,7 @@ theorem ABConnectorPair.hasCycleThroughThree_of_xA_zB_mismatchedBoundaryPath
     (hDZ : Disjoint D M.zPart)
     (hSa : S.a = M.xSep.left) (hSb : S.b = M.zSep.right) :
     HasCycleThroughThree G x y z := by
+  classical
   let N := swapYZTriple M
   let C' := ABConnectorPair.swapYZ (M := M) C
   let S' := MismatchedBoundaryPath.swapYZ (M := M) S
@@ -15587,6 +16309,7 @@ theorem ABConnectorPair.hasCycleThroughThree_of_xA_zB_mismatchedBoundaryPath
       (M := N) C' h2' hA' hB' S' hD' hDX' hDY' hDZ' hSa' hSb'
   exact ⟨r, W, hW, hx, hy, hz⟩
 
+omit [DecidableRel G.Adj] in
 /-- The third normalized orientation of the condition-(vii) path:
 an unmatched `yA--zB` path.  This is the cyclic relabeling of the
 `xA--yB` router. -/
@@ -15599,6 +16322,7 @@ theorem ABConnectorPair.hasCycleThroughThree_of_yA_zB_mismatchedBoundaryPath
     (hDZ : Disjoint D M.zPart)
     (hSa : S.a = M.ySep.left) (hSb : S.b = M.zSep.right) :
     HasCycleThroughThree G x y z := by
+  classical
   let N := rotateYZXTriple M
   let C' := ABConnectorPair.rotateYZX (M := M) C
   let S' := MismatchedBoundaryPath.rotateYZX (M := M) S
@@ -15627,6 +16351,7 @@ theorem ABConnectorPair.hasCycleThroughThree_of_yA_zB_mismatchedBoundaryPath
       (M := N) C' h2' hA' hB' S' hD' hDX' hDY' hDZ' hSa' hSb'
   exact ⟨r, W, hW, hx, hy, hz⟩
 
+omit [DecidableRel G.Adj] in
 /-- Reverse the A/B orientation to reduce an unmatched `yA--xB` path to
 the normalized `xA--yB` router. -/
 theorem ABConnectorPair.hasCycleThroughThree_of_yA_xB_mismatchedBoundaryPath
@@ -15638,6 +16363,7 @@ theorem ABConnectorPair.hasCycleThroughThree_of_yA_xB_mismatchedBoundaryPath
     (hDZ : Disjoint D M.zPart)
     (hSa : S.a = M.ySep.left) (hSb : S.b = M.xSep.right) :
     HasCycleThroughThree G x y z := by
+  classical
   let N := reverseABTriple M
   let C' := ABConnectorPair.reverseAB (M := M) C
   let S' := MismatchedBoundaryPath.reverseAB (M := M) S
@@ -15666,6 +16392,7 @@ theorem ABConnectorPair.hasCycleThroughThree_of_yA_xB_mismatchedBoundaryPath
     ABConnectorPair.hasCycleThroughThree_of_normalized_mismatchedBoundaryPath
       (M := N) C' h2' hA' hB' S' hD' hDX' hDY' hDZ' hSa' hSb'
 
+omit [DecidableRel G.Adj] in
 /-- Reverse the A/B orientation to reduce an unmatched `zA--xB` path to
 the `xA--zB` cyclic router. -/
 theorem ABConnectorPair.hasCycleThroughThree_of_zA_xB_mismatchedBoundaryPath
@@ -15677,6 +16404,7 @@ theorem ABConnectorPair.hasCycleThroughThree_of_zA_xB_mismatchedBoundaryPath
     (hDZ : Disjoint D M.zPart)
     (hSa : S.a = M.zSep.left) (hSb : S.b = M.xSep.right) :
     HasCycleThroughThree G x y z := by
+  classical
   let N := reverseABTriple M
   let C' := ABConnectorPair.reverseAB (M := M) C
   let S' := MismatchedBoundaryPath.reverseAB (M := M) S
@@ -15704,6 +16432,7 @@ theorem ABConnectorPair.hasCycleThroughThree_of_zA_xB_mismatchedBoundaryPath
   exact ABConnectorPair.hasCycleThroughThree_of_xA_zB_mismatchedBoundaryPath
     (M := N) C' h2' hA' hB' S' hD' hDX' hDY' hDZ' hSa' hSb'
 
+omit [DecidableRel G.Adj] in
 /-- Reverse the A/B orientation to reduce an unmatched `zA--yB` path to
 the `yA--zB` cyclic router. -/
 theorem ABConnectorPair.hasCycleThroughThree_of_zA_yB_mismatchedBoundaryPath
@@ -15715,6 +16444,7 @@ theorem ABConnectorPair.hasCycleThroughThree_of_zA_yB_mismatchedBoundaryPath
     (hDZ : Disjoint D M.zPart)
     (hSa : S.a = M.zSep.left) (hSb : S.b = M.ySep.right) :
     HasCycleThroughThree G x y z := by
+  classical
   let N := reverseABTriple M
   let C' := ABConnectorPair.reverseAB (M := M) C
   let S' := MismatchedBoundaryPath.reverseAB (M := M) S
@@ -15742,6 +16472,7 @@ theorem ABConnectorPair.hasCycleThroughThree_of_zA_yB_mismatchedBoundaryPath
   exact ABConnectorPair.hasCycleThroughThree_of_yA_zB_mismatchedBoundaryPath
     (M := N) C' h2' hA' hB' S' hD' hDX' hDY' hDZ' hSa' hSb'
 
+omit [DecidableRel G.Adj] in
 /-- Every unmatched path between the two attachment triples has one of
 the six off-diagonal orientations.  The cyclic and A/B-reversal routers
 above reduce all six to the normalized `xA--yB` splice. -/
@@ -15753,6 +16484,7 @@ theorem ABConnectorPair.hasCycleThroughThree_of_mismatchedBoundaryPath
     (hDX : Disjoint D M.xPart) (hDY : Disjoint D M.yPart)
     (hDZ : Disjoint D M.zPart) :
     HasCycleThroughThree G x y z := by
+  classical
   have ha : S.a = M.xSep.left ∨ S.a = M.ySep.left ∨
       S.a = M.zSep.left := by
     simpa [aSet] using S.a_mem
@@ -15785,6 +16517,7 @@ theorem ABConnectorPair.hasCycleThroughThree_of_mismatchedBoundaryPath
           (M := M) C h2 hA hB S hD hDX hDY hDZ haz hby
     · exact (S.unmatched (Or.inr (Or.inr ⟨haz, hbz⟩))).elim
 
+omit [DecidableRel G.Adj] in
 /-- An unmatched edge is the degenerate, length-one instance of the same
 path obstruction.  Keeping it in the common path form lets the final AHT
 cycle splice prove both clauses of condition (vii) at once. -/
@@ -15807,6 +16540,7 @@ theorem mismatchedBoundaryPath_of_unmatched_edge
       have : w = a ∨ w = b := by simpa [p] using hw
       exact this.elim Or.inl (fun h ↦ Or.inr (Or.inl h)) }⟩
 
+omit [DecidableRel G.Adj] in
 /-- Failure of the five boundary alternatives in condition (vii) produces
 an unmatched `A`--`B` path through the offending component.  This is the
 precise reduction to the path `S` at the bottom of p.15 of AHT. -/
@@ -15929,6 +16663,7 @@ theorem exists_mismatchedBoundaryPath_of_boundary_failure
         · exact (hcPair (by simp)).elim
   · exact make huAD huBD hua hub haA hbB hab
 
+omit [DecidableRel G.Adj] in
 /-- Condition (vii), component-boundary clause.  If a remaining component
 had none of the five permitted boundaries, the preceding extraction and
 six-orientation router would produce a common cycle through `x,y,z`. -/
@@ -15943,6 +16678,7 @@ theorem ABConnectorPair.component_boundary_of_both_triples
       HasExternalBoundaryIn G D {M.xSep.left, M.xSep.right} ∨
       HasExternalBoundaryIn G D {M.ySep.left, M.ySep.right} ∨
       HasExternalBoundaryIn G D {M.zSep.left, M.zSep.right} := by
+  classical
   by_contra hall
   have hnotA : ¬HasExternalBoundaryIn G D M.aSet := by
     intro h
@@ -16068,11 +16804,12 @@ noncomputable def toWatkinsMesnerSplitter
 
 end WatkinsMesnerMaximalTriple
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- The unconditional Watkins--Mesner splitter existence theorem.  Starting
 from a vertex-two-connected graph with no common cycle through the three
 distinct terminals, the maximal-separator construction and the minimal
 connector refinement satisfy all seven literal splitter conditions. -/
-theorem exists_watkinsMesnerSplitter
+theorem exists_watkinsMesnerSplitter [Finite V]
     {x y z : V}
     (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z)
     (hconn : G.Connected)
@@ -16080,6 +16817,7 @@ theorem exists_watkinsMesnerSplitter
     (hno : ¬HasCycleThroughThree G x y z) :
     Nonempty (WatkinsMesnerSplitter G x y z) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨T⟩ := exists_watkinsMesnerK32Source
     hxy hxz hyz hconn hdelete hno
   obtain ⟨M⟩ := exists_watkinsMesnerMaximalTriple

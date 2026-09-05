@@ -60,6 +60,7 @@ def side : Set V :=
 /-- Put both attachment vertices back into the selected component. -/
 def verts : Set V := insert E.a (insert E.b E.side)
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem mem_side_iff {v : V} :
     v ∈ E.side ↔
       ∃ (hva : v ≠ E.a) (hvb : v ≠ E.b),
@@ -67,22 +68,31 @@ def verts : Set V := insert E.a (insert E.b E.side)
           E.component.supp :=
   Iff.rfl
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem left_not_mem_side : E.a ∉ E.side := by
   rintro ⟨ha, -, -⟩
   exact ha rfl
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem right_not_mem_side : E.b ∉ E.side := by
   rintro ⟨-, hb, -⟩
   exact hb rfl
 
+omit [DecidableEq V] [Fintype V] in
 theorem side_nonempty : E.side.Nonempty := by
   obtain ⟨⟨v, hva, hvb⟩, hv⟩ := E.component.nonempty_supp
   exact ⟨v, hva, hvb, hv⟩
 
-@[simp] theorem left_mem_verts : E.a ∈ E.verts := by
+omit [DecidableEq V] [Fintype V] in
+@[simp] theorem left_mem_verts [Finite V] : E.a ∈ E.verts := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   simp [verts]
 
-@[simp] theorem right_mem_verts : E.b ∈ E.verts := by
+omit [DecidableEq V] [Fintype V] in
+@[simp] theorem right_mem_verts [Finite V] : E.b ∈ E.verts := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   simp [verts]
 
 /-- Swapping the two deleted boundary vertices gives an isomorphic deleted
@@ -91,8 +101,8 @@ def swapDeletedEquiv :
     {w : V // w ≠ E.a ∧ w ≠ E.b} ≃ {w : V // w ≠ E.b ∧ w ≠ E.a} where
   toFun w := ⟨w.1, w.2.2, w.2.1⟩
   invFun w := ⟨w.1, w.2.2, w.2.1⟩
-  left_inv w := Subtype.ext rfl
-  right_inv w := Subtype.ext rfl
+  left_inv _w := Subtype.ext rfl
+  right_inv _w := Subtype.ext rfl
 
 def swapDeletedIso :
     G.induce (fun w : V ↦ w ≠ E.a ∧ w ≠ E.b) ≃g
@@ -113,10 +123,13 @@ def swap : TwoCutEnd G where
     apply hz
     exact ConnectedComponent.iso_image_comp_eq_map_iff_eq_comp.mp hz'
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem swap_left : E.swap.a = E.b := rfl
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem swap_right : E.swap.b = E.a := rfl
 
+omit [DecidableEq V] [Fintype V] in
 /-- Boundary swapping changes neither the selected ambient component side
 nor its underlying vertices. -/
 theorem swap_side : E.swap.side = E.side := by
@@ -153,14 +166,20 @@ theorem swap_side : E.swap.side = E.side := by
     rw [heq] at hmap
     exact hmap
 
-theorem swap_verts : E.swap.verts = E.verts := by
+omit [DecidableEq V] [Fintype V] in
+theorem swap_verts [Finite V] : E.swap.verts = E.verts := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [verts, verts, E.swap_side]
   exact Set.insert_comm E.b E.a E.side
 
+omit [DecidableEq V] [Fintype V] in
 /-- No edge from the selected component can leave the end set except through
 one of the two attachment vertices. -/
-theorem neighborSet_subset_verts {v : V} (hv : v ∈ E.side) :
+theorem neighborSet_subset_verts [Finite V] {v : V} (hv : v ∈ E.side) :
     G.neighborSet v ⊆ E.verts := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   intro w hvw
   by_cases hwa : w = E.a
   · simp [verts, hwa]
@@ -177,14 +196,20 @@ theorem neighborSet_subset_verts {v : V} (hv : v ∈ E.side) :
   exact Set.mem_insert_iff.mpr <| Or.inr <|
     Set.mem_insert_iff.mpr <| Or.inr ⟨hwa, hwb, hwK⟩
 
+omit [DecidableEq V] [Fintype V] in
 /-- Membership in the end set away from both attachments is exactly
 membership in the component side. -/
-theorem mem_side_of_mem_verts {v : V} (hv : v ∈ E.verts)
+theorem mem_side_of_mem_verts [Finite V] {v : V} (hv : v ∈ E.verts)
     (hva : v ≠ E.a) (hvb : v ≠ E.b) : v ∈ E.side := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   simpa [verts, hva, hvb] using hv
 
+omit [DecidableEq V] [Fintype V] in
 /-- A two-cut component end omits an ambient vertex. -/
-theorem verts_ne_univ : E.verts ≠ Set.univ := by
+theorem verts_ne_univ [Finite V] : E.verts ≠ Set.univ := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨z, hz⟩ := E.proper
   intro hall
   have hzv : z.1 ∈ E.verts := by rw [hall]; exact Set.mem_univ _
@@ -193,9 +218,11 @@ theorem verts_ne_univ : E.verts ≠ Set.univ := by
   rcases hzside with ⟨hza, hzb, hzK⟩
   exact hz (by simpa only [Subtype.coe_eta] using hzK)
 
+omit [DecidableEq V] in
 /-- The selected two-cut end is strictly smaller than the ambient graph. -/
 theorem card_verts_lt :
     Fintype.card {v : V // v ∈ E.verts} < Fintype.card V := by
+  classical
   obtain ⟨x, hx⟩ := (Set.ne_univ_iff_exists_notMem E.verts).mp E.verts_ne_univ
   exact Fintype.card_subtype_lt hx
 
@@ -204,19 +231,27 @@ private def sideHom :
   toFun z := ⟨z.1.1, z.1.2.1, z.1.2.2, z.2⟩
   map_rel' h := h
 
+omit [DecidableEq V] [Fintype V] in
 private theorem sideHom_surjective : Function.Surjective E.sideHom := by
   rintro ⟨v, hva, hvb, hvK⟩
   exact ⟨⟨⟨v, hva, hvb⟩, hvK⟩, rfl⟩
 
+omit [DecidableEq V] [Fintype V] in
 /-- The component side is connected in the ambient graph. -/
-theorem side_connected : (G.induce E.side).Connected :=
-  E.component.connected_toSimpleGraph.map E.sideHom E.sideHom_surjective
+theorem side_connected [Finite V] : (G.induce E.side).Connected := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
+  exact
+    E.component.connected_toSimpleGraph.map E.sideHom E.sideHom_surjective
 
+omit [DecidableEq V] [Fintype V] in
 /-- Vertex-two-connectivity forces the left attachment to have an actual
 neighbour in the selected component side. -/
-private theorem exists_left_attachment
+private theorem exists_left_attachment [Finite V]
     (hdelete : ∀ c : V, (G.induce (fun w : V ↦ w ≠ c)).Connected) :
     ∃ z, z ∈ E.side ∧ G.Adj E.a z := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨v, hv⟩ := E.side_nonempty
   obtain ⟨hva, hvb, hvK⟩ := hv
   let v' : {w : V // w ≠ E.b} := ⟨v, hvb⟩
@@ -228,7 +263,7 @@ private theorem exists_left_attachment
       ∃ z, z ∈ E.side ∧ G.Adj E.a z := by
     cases q with
     | nil =>
-        exact False.elim (E.left_not_mem_side (by simpa [a'] using hwside))
+        exact False.elim (E.left_not_mem_side (by simp [a'] at hwside))
     | @cons _ z _ hwz q =>
         by_cases hza : z.1 = E.a
         · have hAdj : G.Adj w.1 z.1 := hwz
@@ -245,10 +280,13 @@ private theorem exists_left_attachment
   termination_by q.length
   exact firstExit ⟨hva, hvb, hvK⟩ p
 
+omit [DecidableEq V] [Fintype V] in
 /-- The symmetric attachment fact for the right boundary vertex. -/
-private theorem exists_right_attachment
+private theorem exists_right_attachment [Finite V]
     (hdelete : ∀ c : V, (G.induce (fun w : V ↦ w ≠ c)).Connected) :
     ∃ z, z ∈ E.side ∧ G.Adj E.b z := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨v, hv⟩ := E.side_nonempty
   obtain ⟨hva, hvb, hvK⟩ := hv
   let v' : {w : V // w ≠ E.a} := ⟨v, hva⟩
@@ -260,7 +298,7 @@ private theorem exists_right_attachment
       ∃ z, z ∈ E.side ∧ G.Adj E.b z := by
     cases q with
     | nil =>
-        exact False.elim (E.right_not_mem_side (by simpa [b'] using hwside))
+        exact False.elim (E.right_not_mem_side (by simp [b'] at hwside))
     | @cons _ z _ hwz q =>
         by_cases hzb : z.1 = E.b
         · have hAdj : G.Adj w.1 z.1 := hwz
@@ -277,11 +315,14 @@ private theorem exists_right_attachment
   termination_by q.length
   exact firstExit ⟨hva, hvb, hvK⟩ p
 
+omit [DecidableEq V] [Fintype V] in
 /-- Putting both attachment vertices back gives a connected induced end
 graph in every vertex-two-connected ambient graph. -/
-theorem verts_connected
+theorem verts_connected [Finite V]
     (hdelete : ∀ c : V, (G.induce (fun w : V ↦ w ≠ c)).Connected) :
     (G.induce E.verts).Connected := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨za, hza, haza⟩ := E.exists_left_attachment hdelete
   obtain ⟨zb, hzb, hbzb⟩ := E.exists_right_attachment hdelete
   have hright : (G.induce (insert E.b E.side)).Connected := by
@@ -298,6 +339,7 @@ end TwoCutEnd
 
 /-! ## Extracting a genuine two-cut -/
 
+omit [DecidableEq V] in
 /-- A connected graph on at least four vertices which is not vertex-three-
 connected has a genuine two-cut component end. -/
 theorem exists_twoCutEnd_of_not_vertexThreeConnected
@@ -342,6 +384,7 @@ theorem exists_twoCutEnd_of_not_vertexThreeConnected
     exact SimpleGraph.ConnectedComponent.exact heq.symm
   exact ⟨⟨a, b, hab, K, ⟨v, hvK⟩⟩⟩
 
+omit [DecidableEq V] in
 /-- From any genuine two-cut one can choose a component side avoiding a
 prescribed exceptional vertex (unless that vertex itself is an attachment). -/
 theorem exists_twoCutEnd_avoiding_of_not_vertexThreeConnected
@@ -394,6 +437,7 @@ theorem exists_twoCutEnd_avoiding_of_not_vertexThreeConnected
     exact hxEqK'.symm.trans hxEqE
   · exact ⟨E, Or.inr (Or.inr hxside)⟩
 
+omit [DecidableEq V] [Fintype V] in
 /-- Because adjacent vertices which survive a two-deletion lie in the same
 component, some component end avoids both of two prescribed adjacent
 vertices.  This is the elementary reason the nested end chosen inside a
@@ -483,11 +527,13 @@ def IsMinimalAvoiding (E : TwoCutEnd G) (x₀ : V) : Prop :=
       Fintype.card {v : V // v ∈ E.verts} ≤
         Fintype.card {v : V // v ∈ F.verts}
 
+omit [DecidableEq V] in
 /-- Every vertex on an end side avoids the distinguished vertex omitted by
 a minimal pointed end. -/
 theorem IsMinimalAvoiding.ne_exception_of_mem_side
     {E : TwoCutEnd G} {x₀ w : V} (hminimal : E.IsMinimalAvoiding x₀)
     (hw : w ∈ E.side) : w ≠ x₀ := by
+  classical
   intro h
   subst w
   rcases hminimal.1 with hxa | hxb | hxout
@@ -495,11 +541,13 @@ theorem IsMinimalAvoiding.ne_exception_of_mem_side
   · exact E.right_not_mem_side (hxb ▸ hw)
   · exact hxout hw
 
+omit [DecidableEq V] in
 /-- Minimality and avoidance are invariant under exchanging the two boundary
 labels. -/
 theorem IsMinimalAvoiding.swap
     {E : TwoCutEnd G} {x₀ : V} (hminimal : E.IsMinimalAvoiding x₀) :
     E.swap.IsMinimalAvoiding x₀ := by
+  classical
   constructor
   · rcases hminimal.1 with hxa | hxb | hxout
     · exact Or.inr (Or.inl hxa)
@@ -513,6 +561,7 @@ theorem IsMinimalAvoiding.swap
 
 end TwoCutEnd
 
+omit [DecidableEq V] in
 /-- A finite nonempty family of exceptional-vertex-avoiding ends contains a
 cardinality-minimal member. -/
 theorem exists_minimal_twoCutEnd_avoiding
@@ -539,14 +588,17 @@ theorem exists_minimal_twoCutEnd_avoiding
     omega
   exact Nat.find_min hP hlt ⟨F, havoidF, rfl⟩
 
+omit [DecidableEq V] in
 /-- A non-three-connected graph has a minimal end avoiding the distinguished
 vertex. -/
 theorem exists_minimal_twoCutEnd_avoiding_of_not_vertexThreeConnected
     (x₀ : V) (hcard : 4 ≤ Fintype.card V) (hconn : G.Connected)
     (hnot : ¬VertexThreeConnected G) :
-    ∃ E : TwoCutEnd G, E.IsMinimalAvoiding x₀ :=
-  exists_minimal_twoCutEnd_avoiding x₀
-    (exists_twoCutEnd_avoiding_of_not_vertexThreeConnected x₀ hcard hconn hnot)
+    ∃ E : TwoCutEnd G, E.IsMinimalAvoiding x₀ := by
+  classical
+  exact
+    exists_minimal_twoCutEnd_avoiding x₀
+      (exists_twoCutEnd_avoiding_of_not_vertexThreeConnected x₀ hcard hconn hnot)
 
 /-! ## Lifting from the virtual-edge torso -/
 
@@ -576,12 +628,15 @@ def swapInducedEndIso : E.swap.inducedEnd ≃g E.inducedEnd where
 
 /-- False twins transport along graph isomorphisms. -/
 private theorem areFalseTwins_mapIso
-    {X Y : Type u} [Fintype X] [DecidableEq X]
-    [Fintype Y] [DecidableEq Y]
-    {K : SimpleGraph X} [DecidableRel K.Adj]
-    {L : SimpleGraph Y} [DecidableRel L.Adj]
+    {X Y : Type u} [Finite X]
+    [Finite Y]
+    {K : SimpleGraph X}
+    {L : SimpleGraph Y}
     (e : K ≃g L) {u v : X} (h : AreFalseTwins K u v) :
     AreFalseTwins L (e u) (e v) := by
+  classical
+  let : Fintype X := Fintype.ofFinite X
+  let : Fintype Y := Fintype.ofFinite Y
   constructor
   · exact e.injective.ne h.1
   · ext w
@@ -591,9 +646,11 @@ private theorem areFalseTwins_mapIso
     have hvMap := e.map_adj_iff (v := v) (w := e.symm w)
     simpa using huMap.trans (ht.trans hvMap.symm)
 
+omit [DecidableEq V] in
 /-- The actual end graph has at least the two distinct attachments. -/
 theorem two_le_card_inducedEnd :
     2 ≤ Fintype.card {v : V // v ∈ E.verts} := by
+  classical
   rw [show (2 : ℕ) = 1 + 1 by omega]
   apply Fintype.one_lt_card_iff.mpr
   exact ⟨⟨E.a, E.left_mem_verts⟩, ⟨E.b, E.right_mem_verts⟩,
@@ -608,7 +665,7 @@ theorem noWheel_inducedEnd (hnoWheel : ¬HasWheelWitness G) :
 /-- In the genuinely virtual case, the virtual edge contributes exactly the
 right attachment to the left attachment's neighbourhood. -/
 theorem torso_left_neighborFinset_eq_insert
-    (hab : ¬G.Adj E.a E.b) :
+    (_hab : ¬G.Adj E.a E.b) :
     E.torso.neighborFinset ⟨E.a, E.left_mem_verts⟩ =
       insert ⟨E.b, E.right_mem_verts⟩
         (E.inducedEnd.neighborFinset ⟨E.a, E.left_mem_verts⟩) := by
@@ -635,7 +692,7 @@ theorem torso_left_neighborFinset_eq_insert
 
 /-- Symmetric neighbourhood formula at the right attachment. -/
 theorem torso_right_neighborFinset_eq_insert
-    (hab : ¬G.Adj E.a E.b) :
+    (_hab : ¬G.Adj E.a E.b) :
     E.torso.neighborFinset ⟨E.b, E.right_mem_verts⟩ =
       insert ⟨E.a, E.left_mem_verts⟩
         (E.inducedEnd.neighborFinset ⟨E.b, E.right_mem_verts⟩) := by
@@ -660,6 +717,7 @@ theorem torso_right_neighborFinset_eq_insert
     exact hne (hbw.trans hwa)
   tauto
 
+omit [DecidableEq V] in
 /-- Adding the missing virtual edge raises the left attachment degree by
 exactly one. -/
 theorem degree_torso_left_eq_degree_inducedEnd_add_one
@@ -674,6 +732,7 @@ theorem degree_torso_left_eq_degree_inducedEnd_add_one
   rw [SimpleGraph.mem_neighborFinset]
   exact hab
 
+omit [DecidableEq V] in
 /-- Symmetric degree formula at the right attachment. -/
 theorem degree_torso_right_eq_degree_inducedEnd_add_one
     (hab : ¬G.Adj E.a E.b) :
@@ -687,6 +746,7 @@ theorem degree_torso_right_eq_degree_inducedEnd_add_one
   rw [SimpleGraph.mem_neighborFinset]
   exact fun h ↦ hab h.symm
 
+omit [DecidableEq V] in
 /-- The first, purely finite step of source Claim (10).  A false twin of the
 left attachment in the actual end graph, when that attachment has degree at
 least three there, supplies three distinct common neighbours, all strictly
@@ -736,6 +796,7 @@ theorem exists_three_interior_commonNeighbors_left
     (hinside hay).1, (hinside hay).2,
     (hinside haz).1, (hinside haz).2⟩
 
+omit [DecidableEq V] in
 /-- Symmetric common-neighbour extraction at the right attachment. -/
 theorem exists_three_interior_commonNeighbors_right
     (hab : ¬G.Adj E.a E.b)
@@ -782,15 +843,18 @@ theorem exists_three_interior_commonNeighbors_right
     (hinside hby).1, (hinside hby).2,
     (hinside hbz).1, (hinside hbz).2⟩
 
+omit [DecidableEq V] [Fintype V] in
 /-- False twins wholly in the component side of the actual induced end graph
 lift to ambient false twins.  This is the lifting step used after applying
 the Section 7 induction hypothesis to `J`. -/
-theorem falseTwins_inducedEnd_lift
+theorem falseTwins_inducedEnd_lift [Finite V]
     {u v : {w : V // w ∈ E.verts}}
     (hua : u.1 ≠ E.a) (hub : u.1 ≠ E.b)
     (hva : v.1 ≠ E.a) (hvb : v.1 ≠ E.b)
     (htwin : AreFalseTwins E.inducedEnd u v) :
     AreFalseTwins G u.1 v.1 := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have huside : u.1 ∈ E.side := E.mem_side_of_mem_verts u.2 hua hub
   have hvside : v.1 ∈ E.side := E.mem_side_of_mem_verts v.2 hva hvb
   have hNu : G.neighborSet u.1 ⊆ E.verts :=
@@ -809,6 +873,7 @@ theorem falseTwins_inducedEnd_lift
     have hi : E.inducedEnd.Adj v ⟨w, hw⟩ := hvw
     exact (htwin.adj_iff ⟨w, hw⟩).mpr hi
 
+omit [DecidableEq V] in
 /-- A degree-three pair wholly in the side of `J` lifts with its degree
 unchanged. -/
 theorem interiorFalseTwins_inducedEnd_lift
@@ -818,6 +883,7 @@ theorem interiorFalseTwins_inducedEnd_lift
     (hua : u.1 ≠ E.a) (hub : u.1 ≠ E.b)
     (hva : v.1 ≠ E.a) (hvb : v.1 ≠ E.b) :
     ∃ p q : V, AreFalseTwins G p q ∧ G.degree p = 3 := by
+  classical
   have huside : u.1 ∈ E.side := E.mem_side_of_mem_verts u.2 hua hub
   have hNu : G.neighborSet u.1 ⊆ E.verts :=
     E.neighborSet_subset_verts huside
@@ -827,6 +893,7 @@ theorem interiorFalseTwins_inducedEnd_lift
   exact ⟨u.1, v.1,
     E.falseTwins_inducedEnd_lift hua hub hva hvb htwin, hdegG⟩
 
+omit [DecidableEq V] in
 /-- If the left attachment retains degree at least three in `J`, then `J`
 has minimum degree three away from the right attachment.  Interior degrees
 agree with their ambient degrees because the component side is closed. -/
@@ -835,6 +902,7 @@ theorem inducedEnd_minDegreeThreeExcept_right
     (hleft : 3 ≤
       E.inducedEnd.degree ⟨E.a, E.left_mem_verts⟩) :
     MinDegreeThreeExcept E.inducedEnd ⟨E.b, E.right_mem_verts⟩ := by
+  classical
   intro w hwb
   by_cases hwa : w = ⟨E.a, E.left_mem_verts⟩
   · subst w
@@ -854,6 +922,7 @@ theorem inducedEnd_minDegreeThreeExcept_right
     rw [G.degree_induce_of_neighborSet_subset hclosed]
     exact hminSide w.1 hwside
 
+omit [DecidableEq V] in
 /-- Symmetrically, a high-degree right attachment makes the left attachment
 the sole possible low-degree vertex of `J`. -/
 theorem inducedEnd_minDegreeThreeExcept_left
@@ -861,6 +930,7 @@ theorem inducedEnd_minDegreeThreeExcept_left
     (hright : 3 ≤
       E.inducedEnd.degree ⟨E.b, E.right_mem_verts⟩) :
     MinDegreeThreeExcept E.inducedEnd ⟨E.a, E.left_mem_verts⟩ := by
+  classical
   intro w hwa
   by_cases hwb : w = ⟨E.b, E.right_mem_verts⟩
   · subst w
@@ -914,6 +984,7 @@ theorem inducedEnd_pointedData_left
     E.inducedEnd_minDegreeThreeExcept_left hminSide hright,
     E.noWheel_inducedEnd hnoWheel⟩
 
+omit [DecidableEq V] in
 /-- The virtual-edge torso is connected whenever the ambient graph remains
 connected after deleting either attachment. -/
 theorem torso_connected
@@ -923,11 +994,13 @@ theorem torso_connected
   intro u v huv
   exact Or.inl huv
 
+omit [DecidableEq V] in
 /-- If every interior vertex has ambient degree at least three, the end torso
 has at least four vertices. -/
 theorem four_le_card_torso
     (hminSide : ∀ v : V, v ∈ E.side → 3 ≤ G.degree v) :
     4 ≤ Fintype.card {v : V // v ∈ E.verts} := by
+  classical
   obtain ⟨v, hvside⟩ := E.side_nonempty
   obtain ⟨hva, hvb, hvK⟩ := hvside
   let vT : {w : V // w ∈ E.verts} :=
@@ -941,6 +1014,7 @@ theorem four_le_card_torso
   have hlt := E.torso.degree_lt_card_verts vT
   omega
 
+omit [DecidableEq V] in
 /-- The two attachments are adjacent in every virtual-edge torso. -/
 theorem torso_boundary_adj :
     E.torso.Adj ⟨E.a, E.left_mem_verts⟩ ⟨E.b, E.right_mem_verts⟩ := by
@@ -961,6 +1035,7 @@ theorem almostWheelFree_torso_of_centres_of_boundary_degrees
   almostWheelFree_of_at_of_adj_of_degree_three hcentres
     E.torso_boundary_adj hdega hdegb
 
+omit [DecidableEq V] in
 /-- A component of a nested two-cut torso end which avoids both old
 attachments cannot escape the old end in the ambient graph.  This is the
 path-lifting core of the minimal-end proof of AHT Lemma 4.4. -/
@@ -1063,11 +1138,11 @@ private noncomputable def nestedAmbientEnd
   have hoa : o ≠ F.a.1 := by
     intro h
     apply ho
-    simpa [h] using F.a.2
+    simp [h]
   have hob : o ≠ F.b.1 := by
     intro h
     apply ho
-    simpa [h] using F.b.2
+    simp [h]
   let oD : {v : V // v ≠ F.a.1 ∧ v ≠ F.b.1} := ⟨o, hoa, hob⟩
   have hoK : oD ∉ K.supp := by
     intro hm
@@ -1080,6 +1155,7 @@ private noncomputable def nestedAmbientEnd
   exact ⟨F.a.1, F.b.1,
     fun h ↦ F.boundary_ne (Subtype.ext h), K, ⟨oD, hoK⟩⟩
 
+omit [DecidableEq V] in
 /-- The ambient end obtained from a nested torso end has no vertices beyond
 that nested end. -/
 private theorem nestedAmbientEnd_side
@@ -1108,6 +1184,7 @@ private theorem nestedAmbientEnd_side
     simpa only [wD, zD] using hwK
   exact E.ambient_component_subset_nested_side F hleft hright hz hwK'
 
+omit [DecidableEq V] in
 /-- A cardinality-minimal two-cut end has a three-connected virtual-edge
 torso.  This is the connectivity conclusion of AHT Lemma 4.4. -/
 theorem torso_vertexThreeConnected_of_minimalAvoiding
@@ -1271,13 +1348,15 @@ private theorem cyclePath_of_mem_virtualEdge
     exact p.mem_support_rotate_iff aT ha
   exact ⟨q, hqpath, hqSupport⟩
 
+omit [DecidableEq V] [Fintype V] in
 /-- A second component of the deleted graph supplies an attachment path whose
 internal vertices lie outside the chosen end. -/
-private theorem exists_external_attachment_path
+private theorem exists_external_attachment_path [Finite V]
     (hdelete : ∀ c : V, (G.induce (fun w : V ↦ w ≠ c)).Connected) :
     ∃ r : G.Walk E.a E.b, r.IsPath ∧
       ∀ y, y ∈ r.support → y ∈ E.verts → y = E.a ∨ y = E.b := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨z, hzOutside⟩ := E.proper
   obtain ⟨v, hvE⟩ := E.component.nonempty_supp
   let K' :=
@@ -1490,6 +1569,7 @@ theorem almostWheelFreeAt_torso_of_boundary_nonadjacent
     exact hnoWheel (HasWheelWitness.induce E.verts
       ⟨s₀, pI, x, hpI, hxNotPI, hthreeI⟩)
 
+omit [DecidableEq V] in
 /-- If the attachment edge is already present in the ambient graph, adding
 it to the torso changes nothing: the torso is the induced end graph. -/
 theorem torso_eq_induce_of_boundary_adj (hab : G.Adj E.a E.b) :
@@ -1562,6 +1642,7 @@ def HasInteriorFalseTwins : Prop :=
     AreFalseTwins E.torso u v ∧ E.torso.degree u = 3 ∧
       u.1 ≠ E.a ∧ u.1 ≠ E.b ∧ v.1 ≠ E.a ∧ v.1 ≠ E.b
 
+omit [DecidableEq V] in
 /-- Interior false twins in an end torso lift, with their degree unchanged,
 to the ambient graph. -/
 theorem interiorFalseTwins_lift (hpair : E.HasInteriorFalseTwins) :
@@ -1578,6 +1659,7 @@ theorem interiorFalseTwins_lift (hpair : E.HasInteriorFalseTwins) :
     exact hdeg
   exact ⟨u.1, v.1, htwinG, hdegG⟩
 
+omit [DecidableEq V] in
 /-- The pointed strengthening of the interior lift: minimal-end avoidance
 ensures that both lifted side vertices avoid the distinguished vertex. -/
 theorem interiorFalseTwins_lift_away
@@ -1617,12 +1699,14 @@ theorem interiorFalseTwins_of_secondPair
   exact ⟨T.x, T.y, T.twins_xy, T.degree_x,
     hx.1, hx.2, hy.1, hy.2⟩
 
+omit [DecidableEq V] in
 /-- The `K₃,₃` terminal case of the AHT boundary argument.  Two vertices
 in one bipartition class can always be chosen away from the two attachments;
 the resulting pair lifts to the ambient graph. -/
 theorem falseTwins_lift_of_k33_torso
     (e : completeBipartiteGraph (Fin 3) (Fin 3) ≃g E.torso) :
     ∃ u v : V, AreFalseTwins G u v ∧ G.degree u = 3 := by
+  classical
   obtain ⟨p, q, hpq, hdeg, hpa, hpb, hqa, hqb⟩ :=
     AHTSection7.exists_falseTwins_avoiding_two_of_k33_iso
       E.torso e
@@ -1634,12 +1718,14 @@ theorem falseTwins_lift_of_k33_torso
     (fun h ↦ hqa (Subtype.ext h)),
     (fun h ↦ hqb (Subtype.ext h))⟩
 
+omit [DecidableEq V] in
 /-- Pointed version of the `K₃,₃` terminal: the selected same-part pair is
 interior, hence its ambient lift avoids the distinguished vertex. -/
 theorem falseTwinsAway_of_k33_torso
     {x₀ : V} (hminimal : E.IsMinimalAvoiding x₀)
     (e : completeBipartiteGraph (Fin 3) (Fin 3) ≃g E.torso) :
     AHTSection7.HasFalseTwinsAway G x₀ := by
+  classical
   obtain ⟨p, q, hpq, hdeg, hpa, hpb, hqa, hqb⟩ :=
     AHTSection7.exists_falseTwins_avoiding_two_of_k33_iso
       E.torso e
@@ -1656,10 +1742,11 @@ side must meet the separator.  This local copy keeps the end-torso module
 independent of the compilation order of the Section 6.4 development. -/
 private theorem walk_meets_separator
     {W : Type u} [Fintype W] [DecidableEq W]
-    {H : SimpleGraph W} [DecidableRel H.Adj]
+    {H : SimpleGraph W}
     (s : AHTSeparation H) {u v : W} (p : H.Walk u v)
     (hu : u ∈ s.left \ s.right) (hv : v ∈ s.right \ s.left) :
     ∃ x, x ∈ p.support ∧ x ∈ s.separator := by
+  classical
   induction p with
   | nil =>
       rw [Finset.mem_sdiff] at hu hv
@@ -1680,8 +1767,9 @@ private theorem walk_meets_separator
 separation formulation of three-connectivity used by AHT Lemma 6.2. -/
 private theorem isThreeConnected_of_vertexThreeConnected_local
     {W : Type u} [Fintype W] [DecidableEq W]
-    {H : SimpleGraph W} [DecidableRel H.Adj]
+    {H : SimpleGraph W}
     (hH : VertexThreeConnected H) : IsThreeConnected H := by
+  classical
   refine ⟨Nat.lt_of_succ_le hH.1, ?_⟩
   intro s hs
   by_contra horder
@@ -1722,11 +1810,11 @@ private theorem isThreeConnected_of_vertexThreeConnected_local
   have huD : u ∉ ({x, y} : Finset W) := by
     intro huD
     have huT := hDT huD
-    simpa [T] using huT
+    simp [T] at huT
   have hvD : v ∉ ({x, y} : Finset W) := by
     intro hvD
     have hvT := hDT hvD
-    simpa [T] using hvT
+    simp [T] at hvT
   let K := H.induce (fun z : W ↦ z ≠ x ∧ z ≠ y)
   let uK : {z : W // z ≠ x ∧ z ≠ y} := ⟨u, by simpa using huD⟩
   let vK : {z : W // z ≠ x ∧ z ≠ y} := ⟨v, by simpa using hvD⟩
@@ -1749,6 +1837,7 @@ private theorem isThreeConnected_of_vertexThreeConnected_local
     simpa only [Finset.mem_insert, Finset.mem_singleton, not_or] using hzKprop
   exact hzNotD hzD
 
+omit [DecidableEq V] in
 /-- The numerical split in the nonedge branch of AHT Section 7.  Either both
 attachments have torso degree three (so centre confinement upgrades to
 `AlmostWheelFree`), or one attachment already has degree at least three in
@@ -1761,6 +1850,7 @@ theorem boundary_degree_dichotomy
       E.torso.degree ⟨E.b, E.right_mem_verts⟩ = 3) ∨
       3 ≤ E.inducedEnd.degree ⟨E.a, E.left_mem_verts⟩ ∨
       3 ≤ E.inducedEnd.degree ⟨E.b, E.right_mem_verts⟩ := by
+  classical
   have hthree' := isThreeConnected_of_vertexThreeConnected_local hthree
   have hda : 3 ≤ E.torso.degree ⟨E.a, E.left_mem_verts⟩ :=
     hthree'.degree_ge _
@@ -1800,6 +1890,7 @@ theorem minimalEnd_almostWheelFree_or_induced_boundary_degree
 
 /-! ## The boundary-coincidence part of Claim (10) -/
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Two paths meeting only at their common endpoint concatenate to a path.
 Kept local because the identical routing helper in `AHTK32Routing` is
 private to that namespace. -/
@@ -1816,9 +1907,10 @@ private theorem Walk.IsPath.append_of_meet_only_endpoint
   subst y
   have hxb : x = b := hinter x hxp (List.mem_of_mem_tail hyq)
   subst x
-  rw [q.support_eq_cons] at hqN
+  rw [← q.cons_tail_support] at hqN
   exact (List.nodup_cons.mp hqN).1 hyq
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Two paths with the same ends and no other common vertex form a simple
 cycle as soon as the first path has a displayed internal vertex. -/
 private theorem Walk.IsPath.isCycle_append_reverse_of_clean_meet
@@ -1855,10 +1947,11 @@ private theorem Walk.IsPath.isCycle_append_reverse_of_clean_meet
     · have hwst : w = s ∨ w = t := by simpa [hsupp] using hw
       exact hwst.elim hws hwt
     · subst t
-      have hpnil : p = .nil := Walk.isPath_iff_eq_nil.mp hp
+      have hpnil : p = .nil := (Walk.isPath_iff_nil.mp hp).eq_nil
       subst p
       exact hws (by simpa using hw)
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Cutting a simple path at its final vertex returns the original path. -/
 private theorem Walk.IsPath.takeUntil_end_eq_local
     {a b : V} {p : G.Walk a b} (hp : p.IsPath) :
@@ -1866,20 +1959,22 @@ private theorem Walk.IsPath.takeUntil_end_eq_local
   have hdrop : (p.dropUntil b p.end_mem_support).IsPath :=
     hp.dropUntil p.end_mem_support
   have hnil : p.dropUntil b p.end_mem_support = (.nil : G.Walk b b) :=
-    Walk.isPath_iff_eq_nil.mp hdrop
+    (Walk.isPath_iff_nil.mp hdrop).eq_nil
   have hspec := p.take_spec p.end_mem_support
   simpa only [hnil, Walk.append_nil] using hspec
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- A simple path cannot contain an internal vertex whose available
 neighbours on the path are only the two endpoints and also contain a fourth,
 distinct displayed vertex.  The two path neighbours force the path to have
 length two. -/
-theorem Walk.IsPath.not_mem_support_of_neighbors_subset_endpoints_of_extra
+theorem Walk.IsPath.not_mem_support_of_neighbors_subset_endpoints_of_extra [Finite V]
     {s t r w : V} {p : G.Walk s t} (hp : p.IsPath) (hst : s ≠ t)
     (hN : p.toSubgraph.neighborSet r ⊆ ({s, t} : Set V))
     (hrs : r ≠ s) (hrt : r ≠ t)
     (hwp : w ∈ p.support) (hws : w ≠ s) (hwt : w ≠ t)
     (hwr : w ≠ r) : r ∉ p.support := by
+  let : Fintype V := Fintype.ofFinite V
   intro hrp
   rw [Walk.mem_support_iff_exists_getVert] at hrp hwp
   obtain ⟨i, rfl, hile⟩ := hrp
@@ -1936,15 +2031,17 @@ theorem Walk.IsPath.not_mem_support_of_neighbors_subset_endpoints_of_extra
     exact hwr (congrArg p.getVert h)
   omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- A variant for a path whose initial endpoint is known not to be adjacent
 to the putative internal vertex.  If all path-neighbours of that vertex are
 the two endpoints, path simplicity would force the initial endpoint to be
 adjacent to it. -/
-theorem Walk.IsPath.not_mem_support_of_neighbors_subset_endpoints_of_start_not_adj
+theorem Walk.IsPath.not_mem_support_of_neighbors_subset_endpoints_of_start_not_adj [Finite V]
     {s t r : V} {p : G.Walk s t} (hp : p.IsPath) (hst : s ≠ t)
     (hN : p.toSubgraph.neighborSet r ⊆ ({s, t} : Set V))
     (hrs : r ≠ s) (hrt : r ≠ t) (hsr : ¬G.Adj s r) :
     r ∉ p.support := by
+  let : Fintype V := Fintype.ofFinite V
   intro hrp
   rw [Walk.mem_support_iff_exists_getVert] at hrp
   obtain ⟨i, rfl, hile⟩ := hrp
@@ -1969,15 +2066,17 @@ theorem Walk.IsPath.not_mem_support_of_neighbors_subset_endpoints_of_start_not_a
     exact hsMem.symm
   exact hsr (p.toSubgraph.adj_sub hsAdj)
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Strong first-hit extraction.  Unlike the older convenience theorem,
 the returned path is definitionally the `takeUntil` prefix of the supplied
 path; this retained equation is what the Claim (10) crossing splice needs. -/
-theorem exists_firstHitPrefix_to_finset
-    (S : Finset V) {r t : V} (hrS : r ∉ S) (htS : t ∈ S)
+theorem exists_firstHitPrefix_to_finset [Finite V]
+    (S : Finset V) {r t : V} (_hrS : r ∉ S) (htS : t ∈ S)
     (p : G.Walk r t) (hp : p.IsPath) :
     ∃ s : V, ∃ hs : s ∈ p.support, s ∈ S ∧
       (p.takeUntil s hs).IsPath ∧
       (∀ w, w ∈ (p.takeUntil s hs).support → w ∈ S → w = s) := by
+  let : Fintype V := Fintype.ofFinite V
   let P : ℕ → Prop := fun n ↦
     ∃ s : V, ∃ hs : s ∈ p.support,
       s ∈ S ∧ (p.takeUntil s hs).length = n
@@ -2002,14 +2101,17 @@ theorem exists_firstHitPrefix_to_finset
   rw [heq, hlen] at hshort
   exact (Nat.not_lt_of_ge hminimal) hshort
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- If a first hit of `S` were the final vertex, then no earlier distinct
 vertex of the path could lie in `S`.  This is the small ordering fact used
 to turn a cross-family intersection witness into a genuine internal hit. -/
-theorem firstHit_ne_end_of_distinct_hit
+theorem firstHit_ne_end_of_distinct_hit [Finite V]
     (S : Finset V) {r t s u : V} (p : G.Walk r t) (hp : p.IsPath)
     (hs : s ∈ p.support)
     (hfirst : ∀ w, w ∈ (p.takeUntil s hs).support → w ∈ S → w = s)
     (hu : u ∈ p.support) (huS : u ∈ S) (hut : u ≠ t) : s ≠ t := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   intro hst
   subst s
   have hfull : p.takeUntil t hs = p := by
@@ -2018,6 +2120,7 @@ theorem firstHit_ne_end_of_distinct_hit
     simpa only [hfull] using hu
   exact hut (hfirst u huPrefix huS)
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Along one walk, one of two support vertices occurs no later than the
 other. -/
 private theorem mem_takeUntil_or_mem_takeUntil_local
@@ -2039,7 +2142,7 @@ theorem hasWheelCenteredAt_of_cleanTwoFan_inside_three
     (inside : G.Walk e f)
     (hleft : left.IsPath) (hright : right.IsPath)
     (hinside : inside.IsPath)
-    (hef : e ≠ f) (hbe : b ≠ e) (hbf : b ≠ f)
+    (_hef : e ≠ f) (hbe : b ≠ e) (hbf : b ≠ f)
     (harms : ∀ w, w ∈ left.support → w ∈ right.support → w = b)
     (hleft_inside : ∀ w, w ∈ left.support →
       w ∈ inside.support → w = e)
@@ -2419,6 +2522,7 @@ theorem LeftClaim10Initial.torso_twin_neighbors_eq
     _ = {C.x, C.y, C.z} :=
       C.inducedEnd_twin_neighbors_eq (E := E) hdeg htwin
 
+omit [DecidableEq V] in
 /-- The left attachment is distinct from every displayed interior target. -/
 theorem LeftClaim10Initial.left_ne_target
     {a' w : {v : V // v ∈ E.verts}} (C : E.LeftClaim10Initial a')
@@ -2433,6 +2537,7 @@ theorem LeftClaim10Initial.left_ne_target
   · exact C.y_mem_side
   · exact C.z_mem_side
 
+omit [DecidableEq V] in
 /-- The right attachment is distinct from every displayed interior target. -/
 theorem LeftClaim10Initial.right_ne_target
     {a' w : {v : V // v ∈ E.verts}} (C : E.LeftClaim10Initial a')
@@ -2447,6 +2552,7 @@ theorem LeftClaim10Initial.right_ne_target
   · exact C.y_mem_side
   · exact C.z_mem_side
 
+omit [DecidableEq V] in
 /-- The putative twin is distinct from each of its three displayed
 neighbours. -/
 theorem LeftClaim10Initial.twin_ne_target
@@ -2457,6 +2563,7 @@ theorem LeftClaim10Initial.twin_ne_target
   · exact C.twin_adj_y.ne
   · exact C.twin_adj_z.ne
 
+omit [DecidableEq V] in
 /-- The additional neighbour `x'` differs from every target of the second
 fan. -/
 theorem LeftClaim10Initial.next_ne_target
@@ -2467,6 +2574,7 @@ theorem LeftClaim10Initial.next_ne_target
   · exact C.next_ne_y
   · exact C.next_ne_z
 
+omit [DecidableEq V] in
 /-- The two displayed interior vertices also differ from the right
 attachment. -/
 theorem LeftClaim10Initial.twin_ne_right
@@ -2478,6 +2586,7 @@ theorem LeftClaim10Initial.twin_ne_right
   rw [← hv]
   exact C.twin_mem_side
 
+omit [DecidableEq V] in
 theorem LeftClaim10Initial.next_ne_right
     {a' : {v : V // v ∈ E.verts}} (C : E.LeftClaim10Initial a') :
     C.x' ≠ ⟨E.b, E.right_mem_verts⟩ := by
@@ -2487,6 +2596,7 @@ theorem LeftClaim10Initial.next_ne_right
   rw [← hv]
   exact C.next_mem_side
 
+omit [DecidableEq V] in
 /-- The virtual boundary vertex is not adjacent to the interior twin: its
 exact torso neighbourhood consists of the three interior targets. -/
 theorem LeftClaim10Initial.not_right_adj_twin_of_degree_eq_three
@@ -2496,6 +2606,7 @@ theorem LeftClaim10Initial.not_right_adj_twin_of_degree_eq_three
     (htwin : AreFalseTwins E.inducedEnd
       ⟨E.a, E.left_mem_verts⟩ a') :
     ¬E.torso.Adj ⟨E.b, E.right_mem_verts⟩ a' := by
+  classical
   intro hba'
   have hbN : (⟨E.b, E.right_mem_verts⟩ :
       {v : V // v ∈ E.verts}) ∈ E.torso.neighborFinset a' := by
@@ -2601,7 +2712,6 @@ def LeftClaim10FirstFan.reverse
   path := F.path.reverse
   path_isPath := F.path_isPath.reverse
   next_mem := by
-    change C.x' ∈ F.path.reverse.support
     simpa only [Walk.support_reverse, List.mem_reverse] using F.next_mem
   deleted_not_mem := by simpa [Walk.support_reverse] using F.deleted_not_mem
   target_clean := by
@@ -2642,6 +2752,7 @@ def LeftClaim10FirstFan.swapYZ
     · exact Or.inl h
     · exact Or.inr (Or.inr h)
 
+omit [DecidableEq V] in
 /-- Exhaustive endpoint split for the first fan.  Once the boundary-ending
 case is contradicted by the first wheel, only the two orientations of the
 `y`--`z` fan remain. -/
@@ -2664,6 +2775,7 @@ theorem LeftClaim10FirstFan.boundary_or_yz
   · exact Or.inl (Or.inl hs)
   · exact False.elim (F.s_ne_t (hs.trans ht.symm))
 
+omit [DecidableEq V] in
 /-- Existence of the source-exact first fan certificate.  This is a direct,
 unconditional consequence of three-connectivity; it does not assume the
 desired endpoint conclusion. -/
@@ -2672,6 +2784,7 @@ theorem exists_leftClaim10FirstFan
     (hthree : VertexThreeConnected E.torso)
     (C : E.LeftClaim10Initial a') :
     Nonempty (E.LeftClaim10FirstFan C) := by
+  classical
   let H := E.torso.induce fun w : {v : V // v ∈ E.verts} ↦ w ≠ C.x
   have h2 := vertexTwoConnected_delete_of_isThreeConnected
     (isThreeConnected_of_vertexThreeConnected_local hthree) C.x
@@ -2786,6 +2899,7 @@ theorem exists_leftClaim10FirstFan
     deleted_not_mem := hxT
     target_clean := htargetT }⟩
 
+omit [DecidableEq V] in
 /-- At exact attachment degree three, every first-fan path automatically
 avoids both the left attachment and its putative false twin.  Their exact
 neighbourhoods leave only the fan endpoints as possible path-neighbours,
@@ -2800,6 +2914,7 @@ theorem LeftClaim10FirstFan.avoids_left_and_twin_of_degree_eq_three
     (⟨E.a, E.left_mem_verts⟩ : {v : V // v ∈ E.verts}) ∉
         F.path.support ∧
       a' ∉ F.path.support := by
+  classical
   let a : {v : V // v ∈ E.verts} := ⟨E.a, E.left_mem_verts⟩
   have left_ne_first_target {w : {v : V // v ∈ E.verts}}
       (hw : w = C.y ∨ w = C.z ∨
@@ -2962,7 +3077,7 @@ theorem hasWheelCenteredAt_x_of_firstFan_y_right_of_clean
     hr2.concat (by simp [ha'a, ha'b, hza'.ne.symm]) hza'
   have hr : r.IsPath :=
     hr3.concat (by
-      simp [r, hya, hyb, C.y_ne_z, ha'y.ne.symm]) ha'y
+      simp [hya, hyb, C.y_ne_z, ha'y.ne.symm]) ha'y
   have hyNotTail : C.y ∉ p.support.tail := by
     have hnd := hp.support_nodup
     rw [← p.cons_tail_support] at hnd
@@ -3160,6 +3275,7 @@ def LeftClaim10YZFan.swapYZ
       {v : V // v ∈ E.verts}) ∉ F.path.reverse.support
     simpa only [Walk.support_reverse, List.mem_reverse] using F.right_not_mem
 
+omit [DecidableEq V] in
 /-- The normalized first fan inherits the automatic avoidance of the left
 attachment and its putative twin. -/
 theorem LeftClaim10YZFan.avoids_left_and_twin_of_degree_eq_three
@@ -3172,6 +3288,7 @@ theorem LeftClaim10YZFan.avoids_left_and_twin_of_degree_eq_three
     (⟨E.a, E.left_mem_verts⟩ : {v : V // v ∈ E.verts}) ∉
         F.path.support ∧
       a' ∉ F.path.support := by
+  classical
   let F' : E.LeftClaim10FirstFan C := {
     s := C.y
     t := C.z
@@ -3191,6 +3308,7 @@ theorem LeftClaim10YZFan.avoids_left_and_twin_of_degree_eq_three
   simpa only [F'] using
     F'.avoids_left_and_twin_of_degree_eq_three (E := E) hab hdeg htwin
 
+omit [DecidableEq V] in
 /-- Orient a first fan from `y` to `z` once neither endpoint is the right
 attachment. -/
 theorem LeftClaim10FirstFan.toYZFan
@@ -3199,6 +3317,7 @@ theorem LeftClaim10FirstFan.toYZFan
     (hsb : F.s ≠ ⟨E.b, E.right_mem_verts⟩)
     (htb : F.t ≠ ⟨E.b, E.right_mem_verts⟩) :
     Nonempty (E.LeftClaim10YZFan C) := by
+  classical
   have hbNot : (⟨E.b, E.right_mem_verts⟩ :
       {v : V // v ∈ E.verts}) ∉ F.path.support := by
     intro hb
@@ -3259,12 +3378,14 @@ def LeftClaim10YZArms.swapYZ
   boundary_not_mem_left := A.boundary_not_mem_right
   boundary_not_mem_right := A.boundary_not_mem_left
 
+omit [DecidableEq V] in
 /-- The two first-fan arms meet only at their common start `x'`. -/
 theorem LeftClaim10YZArms.meet_only_next
     {a' : {v : V // v ∈ E.verts}} {C : E.LeftClaim10Initial a'}
     (A : E.LeftClaim10YZArms C) {w : {v : V // v ∈ E.verts}}
     (hwL : w ∈ A.left.support) (hwR : w ∈ A.right.support) :
     w = C.x' := by
+  classical
   by_cases h : w = C.x'
   · exact h
   have hwLTail : w ∈ A.left.support.tail := by
@@ -3275,10 +3396,12 @@ theorem LeftClaim10YZArms.meet_only_next
     exact (List.mem_cons.mp hwR).resolve_left h
   exact False.elim (List.disjoint_left.mp A.tails_disjoint hwLTail hwRTail)
 
+omit [DecidableEq V] in
 /-- The two internally disjoint arms encoded by a normalized first fan. -/
 theorem LeftClaim10YZFan.toArms
     {a' : {v : V // v ∈ E.verts}} {C : E.LeftClaim10Initial a'}
     (F : E.LeftClaim10YZFan C) : Nonempty (E.LeftClaim10YZArms C) := by
+  classical
   let P : E.torso.Walk C.x' C.y :=
     (F.path.takeUntil C.x' F.next_mem).reverse
   let Q : E.torso.Walk C.x' C.z :=
@@ -3316,6 +3439,7 @@ theorem LeftClaim10YZFan.toArms
     boundary_not_mem_left := fun h ↦ F.right_not_mem (Psubset h)
     boundary_not_mem_right := fun h ↦ F.right_not_mem (Qsubset h) }⟩
 
+omit [DecidableEq V] in
 /-- Split a normalized first fan while retaining the two support-inclusion
 certificates.  The later collision elimination needs these certificates to
 promote an intersection with one arm to an intersection with the original
@@ -3326,6 +3450,7 @@ theorem LeftClaim10YZFan.toArms_with_subsets
     ∃ A : E.LeftClaim10YZArms C,
       (∀ w, w ∈ A.left.support → w ∈ F.path.support) ∧
       (∀ w, w ∈ A.right.support → w ∈ F.path.support) := by
+  classical
   let P : E.torso.Walk C.x' C.y :=
     (F.path.takeUntil C.x' F.next_mem).reverse
   let Q : E.torso.Walk C.x' C.z :=
@@ -3387,12 +3512,14 @@ structure LeftClaim10SecondFan
   target_clean : ∀ w, w ∈ path.support →
     (w = C.x ∨ w = C.y ∨ w = C.z) → w = s ∨ w = t
 
+omit [DecidableEq V] in
 /-- Existence of the source-exact second fan certificate. -/
 theorem exists_leftClaim10SecondFan
     {a' : {v : V // v ∈ E.verts}}
     (hthree : VertexThreeConnected E.torso)
     (C : E.LeftClaim10Initial a') :
     Nonempty (E.LeftClaim10SecondFan C) := by
+  classical
   let H := E.torso.induce fun w : {v : V // v ∈ E.verts} ↦
     w ≠ ⟨E.a, E.left_mem_verts⟩
   have h2 := vertexTwoConnected_delete_of_isThreeConnected
@@ -3524,6 +3651,7 @@ theorem exists_leftClaim10SecondFan
     left_not_mem := haT
     target_clean := htargetT }⟩
 
+omit [DecidableEq V] in
 /-- At exact left-attachment degree three, the second target-minimal path
 cannot contain the putative twin.  Its path-neighbours would have to be the
 two target endpoints, while the right attachment is a third displayed path
@@ -3536,6 +3664,7 @@ theorem LeftClaim10SecondFan.twin_not_mem_of_degree_eq_three
     (htwin : AreFalseTwins E.inducedEnd
       ⟨E.a, E.left_mem_verts⟩ a') :
     a' ∉ F.path.support := by
+  classical
   have htwinN : F.path.toSubgraph.neighborSet a' ⊆
       ({F.s, F.t} : Set {v : V // v ∈ E.verts}) := by
     intro w hw
@@ -3648,6 +3777,7 @@ def LeftClaim10SecondArms.swapYZ
     · exact Or.inr (Or.inr h)
     · exact Or.inr (Or.inl h)
 
+omit [DecidableEq V] in
 /-- The six possible ordered endpoint pairs of a second fan.  The three
 diagonal cases are excluded by `s_ne_t`. -/
 theorem LeftClaim10SecondArms.endpoint_cases
@@ -3688,6 +3818,7 @@ structure LeftClaim10FirstHit
     w ∈ F.path.support → w = hit
   y_not_mem_pref : C.y ∉ pref.support
 
+omit [DecidableEq V] in
 /-- Extract the exact first-hit prefix from any improper intersection of
 the `y`-ending second arm with the normalized first fan. -/
 theorem exists_leftClaim10FirstHit_of_left_crossing
@@ -3697,6 +3828,7 @@ theorem exists_leftClaim10FirstHit_of_left_crossing
     (hcross : ∃ w, w ∈ B.left.support ∧
       w ∈ F.path.support ∧ w ≠ C.y) :
     Nonempty (E.LeftClaim10FirstHit F B) := by
+  classical
   let b : {v : V // v ∈ E.verts} := ⟨E.b, E.right_mem_verts⟩
   let R : E.torso.Walk b C.y := B.left.copy rfl hsy
   have hR : R.IsPath := (Walk.isPath_copy _ _ _).mpr B.left_isPath
@@ -3731,6 +3863,7 @@ theorem exists_leftClaim10FirstHit_of_left_crossing
     y_not_mem_pref := by
       exact Walk.endpoint_notMem_support_takeUntil hR hwR hwy.symm }⟩
 
+omit [DecidableEq V] in
 /-- First-hit extraction when the endpoint of the chosen second-fan arm is
 outside the normalized first fan.  This is the form needed for the other
 arm in the `y,x` and `y,z` endpoint cases.  The returned strict prefix does
@@ -3742,6 +3875,7 @@ theorem exists_leftClaim10FirstHit_of_left_crossing_away
     (hendNot : B.s ∉ F.path.support)
     (hcross : ∃ w, w ∈ B.left.support ∧ w ∈ F.path.support) :
     ∃ H : E.LeftClaim10FirstHit F B, B.s ∉ H.pref.support := by
+  classical
   let b : {v : V // v ∈ E.verts} := ⟨E.b, E.right_mem_verts⟩
   let S : Finset {v : V // v ∈ E.verts} := F.path.support.toFinset
   have hbS : b ∉ S := by
@@ -3790,6 +3924,7 @@ theorem exists_leftClaim10FirstHit_of_left_crossing_away
   apply hsNotR
   exact R.support_takeUntil_subset_support hwR hsq
 
+omit [DecidableEq V] in
 /-- Splice a first-hit prefix to the appropriate side of the normalized
 first fan.  The result is a genuine target-clean first fan with a boundary
 endpoint, not merely a closed walk.  The two nonmembership assumptions are
@@ -3804,6 +3939,7 @@ theorem LeftClaim10FirstHit.toBoundaryFirstFan
     ∃ F' : E.LeftClaim10FirstFan C,
       F'.s = ⟨E.b, E.right_mem_verts⟩ ∨
       F'.t = ⟨E.b, E.right_mem_verts⟩ := by
+  classical
   let b : {v : V // v ∈ E.verts} := ⟨E.b, E.right_mem_verts⟩
   have hbx : b ≠ C.x := by
     intro h
@@ -3944,6 +4080,7 @@ theorem LeftClaim10FirstHit.toBoundaryFirstFan
         · exact Or.inr hwb }
     exact ⟨F', Or.inr rfl⟩
 
+omit [DecidableEq V] in
 /-- The two second-fan arms meet only at their common start, the right
 attachment. -/
 theorem LeftClaim10SecondArms.meet_only_boundary
@@ -3951,6 +4088,7 @@ theorem LeftClaim10SecondArms.meet_only_boundary
     (A : E.LeftClaim10SecondArms C) {w : {v : V // v ∈ E.verts}}
     (hwL : w ∈ A.left.support) (hwR : w ∈ A.right.support) :
     w = ⟨E.b, E.right_mem_verts⟩ := by
+  classical
   by_cases h : w = (⟨E.b, E.right_mem_verts⟩ :
       {v : V // v ∈ E.verts})
   · exact h
@@ -3962,6 +4100,7 @@ theorem LeftClaim10SecondArms.meet_only_boundary
     exact (List.mem_cons.mp hwR).resolve_left h
   exact False.elim (List.disjoint_left.mp A.tails_disjoint hwLTail hwRTail)
 
+omit [DecidableEq V] in
 /-- In the `y,x` endpoint case, the `y`-arm contains neither of the other
 two targets. -/
 theorem LeftClaim10SecondArms.left_avoids_xz_of_yx
@@ -3969,6 +4108,7 @@ theorem LeftClaim10SecondArms.left_avoids_xz_of_yx
     (B : E.LeftClaim10SecondArms C)
     (hsy : B.s = C.y) (htx : B.t = C.x) :
     C.x ∉ B.left.support ∧ C.z ∉ B.left.support := by
+  classical
   have hxRight : C.x ∈ B.right.support := by
     simpa only [htx] using B.right.end_mem_support
   have hxb : C.x ≠
@@ -3988,6 +4128,7 @@ theorem LeftClaim10SecondArms.left_avoids_xz_of_yx
     · exact C.y_ne_z (h.trans hsy).symm
     · exact C.x_ne_z (h.trans htx).symm
 
+omit [DecidableEq V] in
 /-- In the `y,z` endpoint case, the `y`-arm contains neither `x` nor the
 other endpoint `z`. -/
 theorem LeftClaim10SecondArms.left_avoids_xz_of_yz
@@ -3995,6 +4136,7 @@ theorem LeftClaim10SecondArms.left_avoids_xz_of_yz
     (B : E.LeftClaim10SecondArms C)
     (hsy : B.s = C.y) (htz : B.t = C.z) :
     C.x ∉ B.left.support ∧ C.z ∉ B.left.support := by
+  classical
   have hzRight : C.z ∈ B.right.support := by
     simpa only [htz] using B.right.end_mem_support
   have hzb : C.z ≠
@@ -4014,6 +4156,7 @@ theorem LeftClaim10SecondArms.left_avoids_xz_of_yz
     exact hzb (LeftClaim10SecondArms.meet_only_boundary E B
       hzLeft hzRight)
 
+omit [DecidableEq V] in
 /-- In the `y,x` endpoint case, the `x`-ending arm contains neither `y`
 nor the unused target `z`. -/
 theorem LeftClaim10SecondArms.right_avoids_yz_of_yx
@@ -4021,6 +4164,7 @@ theorem LeftClaim10SecondArms.right_avoids_yz_of_yx
     (B : E.LeftClaim10SecondArms C)
     (hsy : B.s = C.y) (htx : B.t = C.x) :
     C.y ∉ B.right.support ∧ C.z ∉ B.right.support := by
+  classical
   have hyLeft : C.y ∈ B.left.support := by
     simpa only [hsy] using B.left.end_mem_support
   have hyb : C.y ≠
@@ -4040,6 +4184,7 @@ theorem LeftClaim10SecondArms.right_avoids_yz_of_yx
     · exact C.y_ne_z (h.trans hsy).symm
     · exact C.x_ne_z (h.trans htx).symm
 
+omit [DecidableEq V] in
 /-- In the `y,z` endpoint case, the `z`-ending arm contains neither `x`
 nor the other endpoint `y`. -/
 theorem LeftClaim10SecondArms.right_avoids_xy_of_yz
@@ -4047,6 +4192,7 @@ theorem LeftClaim10SecondArms.right_avoids_xy_of_yz
     (B : E.LeftClaim10SecondArms C)
     (hsy : B.s = C.y) (htz : B.t = C.z) :
     C.x ∉ B.right.support ∧ C.y ∉ B.right.support := by
+  classical
   have hyLeft : C.y ∈ B.left.support := by
     simpa only [hsy] using B.left.end_mem_support
   have hyb : C.y ≠
@@ -4066,6 +4212,7 @@ theorem LeftClaim10SecondArms.right_avoids_xy_of_yz
     exact hyb (LeftClaim10SecondArms.meet_only_boundary E B
       hyLeft hyRight)
 
+omit [DecidableEq V] in
 /-- An improper intersection in the `y,x` case splices to the source's
 forbidden first fan with a right-boundary endpoint. -/
 theorem exists_boundaryFirstFan_of_left_crossing_yx
@@ -4077,12 +4224,14 @@ theorem exists_boundaryFirstFan_of_left_crossing_yx
     ∃ F' : E.LeftClaim10FirstFan C,
       F'.s = ⟨E.b, E.right_mem_verts⟩ ∨
       F'.t = ⟨E.b, E.right_mem_verts⟩ := by
+  classical
   obtain ⟨H⟩ := E.exists_leftClaim10FirstHit_of_left_crossing F B hsy hcross
   obtain ⟨hx, hz⟩ := LeftClaim10SecondArms.left_avoids_xz_of_yx E B hsy htx
   exact LeftClaim10FirstHit.toBoundaryFirstFan E H
     (fun h ↦ hx (H.pref_subset_second_left C.x h))
     (fun h ↦ hz (H.pref_subset_second_left C.z h))
 
+omit [DecidableEq V] in
 /-- The same first-hit splice for the `y,z` endpoint case. -/
 theorem exists_boundaryFirstFan_of_left_crossing_yz
     {a' : {v : V // v ∈ E.verts}} {C : E.LeftClaim10Initial a'}
@@ -4093,12 +4242,14 @@ theorem exists_boundaryFirstFan_of_left_crossing_yz
     ∃ F' : E.LeftClaim10FirstFan C,
       F'.s = ⟨E.b, E.right_mem_verts⟩ ∨
       F'.t = ⟨E.b, E.right_mem_verts⟩ := by
+  classical
   obtain ⟨H⟩ := E.exists_leftClaim10FirstHit_of_left_crossing F B hsy hcross
   obtain ⟨hx, hz⟩ := LeftClaim10SecondArms.left_avoids_xz_of_yz E B hsy htz
   exact LeftClaim10FirstHit.toBoundaryFirstFan E H
     (fun h ↦ hx (H.pref_subset_second_left C.x h))
     (fun h ↦ hz (H.pref_subset_second_left C.z h))
 
+omit [DecidableEq V] in
 /-- A crossing of the other second arm in the `y,x` case is handled by
 reversing the two arms and stopping at its first meeting with the normalized
 first fan.  The endpoint `x` is absent from that fan, so the strict prefix
@@ -4112,6 +4263,7 @@ theorem exists_boundaryFirstFan_of_right_crossing_yx
     ∃ F' : E.LeftClaim10FirstFan C,
       F'.s = ⟨E.b, E.right_mem_verts⟩ ∨
       F'.t = ⟨E.b, E.right_mem_verts⟩ := by
+  classical
   obtain ⟨hyRight, hzRight⟩ :=
     LeftClaim10SecondArms.right_avoids_yz_of_yx E B hsy htx
   obtain ⟨w, hwRight, hwF, -⟩ := hcross
@@ -4127,6 +4279,7 @@ theorem exists_boundaryFirstFan_of_right_crossing_yx
     apply hzRight
     exact H.pref_subset_second_left C.z hzPref
 
+omit [DecidableEq V] in
 /-- In the `y,z` case, a crossing of the right arm becomes the preceding
 left-arm crossing after exchanging `y,z` and reversing the two second arms. -/
 theorem exists_boundaryFirstFan_of_right_crossing_yz
@@ -4140,6 +4293,7 @@ theorem exists_boundaryFirstFan_of_right_crossing_yz
     ∃ F' : E.LeftClaim10FirstFan C.swapYZ,
       F'.s = ⟨E.b, E.right_mem_verts⟩ ∨
       F'.t = ⟨E.b, E.right_mem_verts⟩ := by
+  classical
   obtain ⟨w, hwRight, hwA, hwz⟩ := hcross
   apply E.exists_boundaryFirstFan_of_left_crossing_yz
     F.swapYZ B.swapYZ.reverse
@@ -4155,6 +4309,7 @@ theorem exists_boundaryFirstFan_of_right_crossing_yz
       exact hA w hwA
     · exact hwz
 
+omit [DecidableEq V] in
 /-- The two internally disjoint arms encoded by the second fan, together
 with their inclusions in the original target-minimal path. -/
 theorem LeftClaim10SecondFan.toArms_with_subsets
@@ -4163,6 +4318,7 @@ theorem LeftClaim10SecondFan.toArms_with_subsets
     ∃ B : E.LeftClaim10SecondArms C,
       (∀ w, w ∈ B.left.support → w ∈ F.path.support) ∧
       (∀ w, w ∈ B.right.support → w ∈ F.path.support) := by
+  classical
   let P : E.torso.Walk ⟨E.b, E.right_mem_verts⟩ F.s :=
     (F.path.takeUntil ⟨E.b, E.right_mem_verts⟩ F.right_mem).reverse
   let Q : E.torso.Walk ⟨E.b, E.right_mem_verts⟩ F.t :=
@@ -4212,11 +4368,13 @@ theorem LeftClaim10SecondFan.toArms_with_subsets
   · intro w hw
     exact Qsubset hw
 
+omit [DecidableEq V] in
 /-- Convenience form retaining only the two-arm certificate. -/
 theorem LeftClaim10SecondFan.toArms
     {a' : {v : V // v ∈ E.verts}} {C : E.LeftClaim10Initial a'}
     (F : E.LeftClaim10SecondFan C) :
     Nonempty (E.LeftClaim10SecondArms C) := by
+  classical
   obtain ⟨B, -, -⟩ := F.toArms_with_subsets
   exact ⟨B⟩
 

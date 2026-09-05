@@ -94,6 +94,7 @@ theorem commonNeighbors_isIndepSet_of_three_le_of_noWheel
   exact not_adj_of_three_common_neighbors_of_noWheel
     hno huv hua hub huc hva hvb hvc hab hca.symm hcb.symm
 
+omit [DecidableEq V] in
 /-- Two distinct degree-three vertices with at least three common neighbours
 are false twins.  This is the exact terminal conversion used when the
 Watkins--Mesner analysis produces a three-common-neighbour pair. -/

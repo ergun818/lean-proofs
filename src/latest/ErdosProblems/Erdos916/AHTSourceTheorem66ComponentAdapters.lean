@@ -21,12 +21,14 @@ universe u
 variable {V : Type u} [Fintype V] [DecidableEq V]
 variable {G : SimpleGraph V} [DecidableRel G.Adj]
 
+omit [Fintype V] in
 @[simp] theorem ahtDeletedFinsetVal_union {center : V}
     (S T : Finset {v : V // v ≠ center}) :
     ahtDeletedFinsetVal (S ∪ T) =
       ahtDeletedFinsetVal S ∪ ahtDeletedFinsetVal T := by
   simp [ahtDeletedFinsetVal, Finset.map_union]
 
+omit [Fintype V] in
 @[simp] theorem ahtDeletedFinsetVal_insert {center : V}
     (q : {v : V // v ≠ center})
     (S : Finset {v : V // v ≠ center}) :
@@ -34,12 +36,14 @@ variable {G : SimpleGraph V} [DecidableRel G.Adj]
       insert q.1 (ahtDeletedFinsetVal S) := by
   simp [ahtDeletedFinsetVal]
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem ahtDeletedFinsetVal_singleton {center : V}
     (q : {v : V // v ≠ center}) :
     ahtDeletedFinsetVal ({q} : Finset {v : V // v ≠ center}) =
       ({q.1} : Finset V) := by
   simp [ahtDeletedFinsetVal]
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Local component-coincidence lemma for the adapter layer.  Two literal
 components of the same vertex-deleted graph that share a vertex have the
 same carrier. -/
@@ -70,14 +74,16 @@ theorem degree_le_two_of_neighborFinset_subset_pair_local
   exact (Finset.card_le_card hsub).trans
     ((Finset.card_insert_le a ({b} : Finset V)).trans (by simp))
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- A literal component of the centre-deleted graph is the same ambient
 component after also placing `center` in the deletion set. -/
-theorem IsComponentAfterDeleting.ambient_of_deleteVertex
+theorem IsComponentAfterDeleting.ambient_of_deleteVertex [Finite V]
     {center : V} {S C : Finset {v : V // v ≠ center}}
     (hC : IsComponentAfterDeleting (deleteVertex G center) S C) :
     IsComponentAfterDeleting G
       (ahtDeletedFinsetVal S ∪ {center}) (ahtDeletedFinsetVal C) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   have hdisMapped :
       Disjoint (ahtDeletedFinsetVal C) (ahtDeletedFinsetVal S) :=
     disjoint_ahtDeletedFinsetVal hC.2.1
@@ -124,13 +130,15 @@ theorem IsComponentAfterDeleting.ambient_of_deleteVertex
   have hvC : v' ∈ C := hC.2.2.2 u' hu'C v' hvS huvDel
   exact val_mem_ahtDeletedFinsetVal.mpr hvC
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- An external boundary in the centre-deleted graph maps to the same
 ambient boundary, with `center` added as the only possible new neighbour. -/
-theorem HasExternalBoundaryIn.ambient_of_deleteVertex
+theorem HasExternalBoundaryIn.ambient_of_deleteVertex [Finite V]
     {center : V} {C T : Finset {v : V // v ≠ center}}
     (hboundary : HasExternalBoundaryIn (deleteVertex G center) C T) :
     HasExternalBoundaryIn G (ahtDeletedFinsetVal C)
       (ahtDeletedFinsetVal T ∪ {center}) := by
+  let : Fintype V := Fintype.ofFinite V
   intro u huC v huv hvC
   by_cases hvc : v = center
   · exact Finset.mem_union_right _ (by simp [hvc])
@@ -146,6 +154,7 @@ theorem HasExternalBoundaryIn.ambient_of_deleteVertex
   have hvT : v' ∈ T := hboundary u' hu'C v' huvDel hvC'
   exact Finset.mem_union_left _ (val_mem_ahtDeletedFinsetVal.mpr hvT)
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Remove the added centre from a mapped external boundary when the
 component has no edge to that centre. -/
 theorem HasExternalBoundaryIn.erase_center
@@ -159,16 +168,20 @@ theorem HasExternalBoundaryIn.erase_center
   · have hveq : v = center := by simpa using hvc
     exact False.elim (hnoCenter u huC (by simpa [hveq] using huv))
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- The form used for a centre-deleted splitter component which has no
 ambient edge to the deleted centre. -/
-theorem HasExternalBoundaryIn.ambient_of_deleteVertex_of_no_center
+theorem HasExternalBoundaryIn.ambient_of_deleteVertex_of_no_center [Finite V]
     {center : V} {C T : Finset {v : V // v ≠ center}}
     (hboundary : HasExternalBoundaryIn (deleteVertex G center) C T)
     (hnoCenter : ∀ u ∈ ahtDeletedFinsetVal C, ¬G.Adj u center) :
     HasExternalBoundaryIn G (ahtDeletedFinsetVal C)
       (ahtDeletedFinsetVal T) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   exact (hboundary.ambient_of_deleteVertex).erase_center hnoCenter
 
+omit [DecidableRel G.Adj] in
 /-- Condition (vii) for a component of the centre-deleted splitter becomes
 the ambient left/right boundary dichotomy once that component has no edge to
 the deleted centre.  The three matched-pair alternatives are eliminated by
@@ -186,6 +199,7 @@ theorem WatkinsMesnerSplitter.ambient_component_boundary_left_or_right
         (ahtDeletedFinsetVal S.aSet) ∨
       HasExternalBoundaryIn G (ahtDeletedFinsetVal D)
         (ahtDeletedFinsetVal S.bSet) := by
+  classical
   have hDambient : IsComponentAfterDeleting G
       (ahtDeletedFinsetVal S.aSet ∪
         ahtDeletedFinsetVal S.bSet ∪ {center})
@@ -235,6 +249,7 @@ namespace WatkinsMesnerSplitter
 variable {center : V} {x y z : {v : V // v ≠ center}}
 variable (S : WatkinsMesnerSplitter (deleteVertex G center) x y z)
 
+omit [DecidableRel G.Adj] [Fintype V] in
 theorem adj_x_xA_of_xPart_card_one (hx : S.xPart.card = 1) :
     G.Adj x.1 S.xA.1 := by
   obtain ⟨w, hwX, hwxA⟩ := S.X_A_attachment.2.1
@@ -244,6 +259,7 @@ theorem adj_x_xA_of_xPart_card_one (hx : S.xPart.card = 1) :
   have hwx : w = x := hwt.trans hxt.symm
   exact (deleteVertex_adj (G := G)).mp (hwx ▸ hwxA)
 
+omit [DecidableRel G.Adj] [Fintype V] in
 theorem adj_x_xB_of_xPart_card_one (hx : S.xPart.card = 1) :
     G.Adj x.1 S.xB.1 := by
   obtain ⟨w, hwX, hwxB⟩ := S.X_B_attachment.2.1
@@ -253,6 +269,7 @@ theorem adj_x_xB_of_xPart_card_one (hx : S.xPart.card = 1) :
   have hwx : w = x := hwt.trans hxt.symm
   exact (deleteVertex_adj (G := G)).mp (hwx ▸ hwxB)
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- A splitter-side vertex is distinct from all three displayed terminal
 vertices.  Keeping this in the centre-deleted subtype avoids repeatedly
 reconstructing the same component-disjointness argument in Claim (8). -/
@@ -274,6 +291,7 @@ theorem aSet_val_ne_terminals {a : {v : V // v ≠ center}}
     exact Finset.disjoint_left.mp S.Z_component.2.1 S.z_mem_Z
       (Finset.mem_union_left _ (haz' ▸ ha))
 
+omit [DecidableRel G.Adj] [Fintype V] in
 theorem a_attachments_pairwise_ne_of_card_three
     (hAcard : S.aSet.card = 3) :
     S.xA ≠ S.yA ∧ S.xA ≠ S.zA ∧ S.yA ≠ S.zA := by
@@ -314,6 +332,7 @@ theorem a_attachments_pairwise_ne_of_card_three
       Finset.card_insert_le _ _
     omega
 
+omit [DecidableRel G.Adj] [Fintype V] in
 theorem b_attachments_pairwise_ne_of_card_three
     (hBcard : S.bSet.card = 3) :
     S.xB ≠ S.yB ∧ S.xB ≠ S.zB ∧ S.yB ≠ S.zB := by
@@ -354,6 +373,7 @@ theorem b_attachments_pairwise_ne_of_card_three
       Finset.card_insert_le _ _
     omega
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- On a singleton splitter side all three named attachments are literally
 the same subtype vertex. -/
 theorem b_attachments_eq_of_card_one (hBcard : S.bSet.card = 1) :
@@ -364,6 +384,7 @@ theorem b_attachments_eq_of_card_one (hBcard : S.bSet.card = 1) :
   have hzb : S.zB = b := by simpa [hb] using S.Z_B_attachment.1
   exact ⟨hxb.trans hyb.symm, hxb.trans hzb.symm⟩
 
+omit [DecidableRel G.Adj] [Fintype V] in
 theorem adj_y_yA_of_yPart_card_one (hy : S.yPart.card = 1) :
     G.Adj y.1 S.yA.1 := by
   obtain ⟨w, hwY, hwyA⟩ := S.Y_A_attachment.2.1
@@ -373,6 +394,7 @@ theorem adj_y_yA_of_yPart_card_one (hy : S.yPart.card = 1) :
   have hwy : w = y := hwt.trans hyt.symm
   exact (deleteVertex_adj (G := G)).mp (hwy ▸ hwyA)
 
+omit [DecidableRel G.Adj] [Fintype V] in
 theorem adj_y_yB_of_yPart_card_one (hy : S.yPart.card = 1) :
     G.Adj y.1 S.yB.1 := by
   obtain ⟨w, hwY, hwyB⟩ := S.Y_B_attachment.2.1
@@ -382,6 +404,7 @@ theorem adj_y_yB_of_yPart_card_one (hy : S.yPart.card = 1) :
   have hwy : w = y := hwt.trans hyt.symm
   exact (deleteVertex_adj (G := G)).mp (hwy ▸ hwyB)
 
+omit [DecidableRel G.Adj] [Fintype V] in
 theorem adj_z_zA_of_zPart_card_one (hz : S.zPart.card = 1) :
     G.Adj z.1 S.zA.1 := by
   obtain ⟨w, hwZ, hwzA⟩ := S.Z_A_attachment.2.1
@@ -391,6 +414,7 @@ theorem adj_z_zA_of_zPart_card_one (hz : S.zPart.card = 1) :
   have hwz : w = z := hwt.trans hzt.symm
   exact (deleteVertex_adj (G := G)).mp (hwz ▸ hwzA)
 
+omit [DecidableRel G.Adj] [Fintype V] in
 theorem adj_z_zB_of_zPart_card_one (hz : S.zPart.card = 1) :
     G.Adj z.1 S.zB.1 := by
   obtain ⟨w, hwZ, hwzB⟩ := S.Z_B_attachment.2.1
@@ -400,16 +424,19 @@ theorem adj_z_zB_of_zPart_card_one (hz : S.zPart.card = 1) :
   have hwz : w = z := hwt.trans hzt.symm
   exact (deleteVertex_adj (G := G)).mp (hwz ▸ hwzB)
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- In the final singleton-terminal, both-triples branch there are no edges
 between the two splitter sides.  Condition (vi) makes any such edge a
 matched attachment edge, which would close a triangle through its terminal.
 -/
-theorem no_edges_between_sides_of_both_triples_singletons
+theorem no_edges_between_sides_of_both_triples_singletons [Finite V]
     (htri : AHTTriangleFree G)
     (hAcard : S.aSet.card = 3) (hBcard : S.bSet.card = 3)
     (hx : S.xPart.card = 1) (hy : S.yPart.card = 1)
     (hz : S.zPart.card = 1) :
     ∀ a ∈ S.aSet, ∀ b ∈ S.bSet, ¬G.Adj a.1 b.1 := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   intro a ha b hb hab
   have hdel : (deleteVertex G center).Adj a b :=
     (deleteVertex_adj (G := G)).mpr hab
@@ -513,13 +540,15 @@ theorem mem_ambientLeftCarrier_of_component
   apply (S.mem_ambientLeftComponents_iff _).mpr
   exact ⟨D, hD, hnoCenter, rfl, hleft⟩
 
-theorem no_center_adj_of_disjoint_terminalParts
+omit [DecidableRel G.Adj] [Fintype V] in
+theorem no_center_adj_of_disjoint_terminalParts [Finite V]
     (hcenterNeighbors : ∀ ⦃q : V⦄, G.Adj center q →
       q = x.1 ∨ q = y.1 ∨ q = z.1)
     {D : Finset {v : V // v ≠ center}}
     (hDx : Disjoint D S.xPart) (hDy : Disjoint D S.yPart)
     (hDz : Disjoint D S.zPart) :
     ∀ u ∈ ahtDeletedFinsetVal D, ¬G.Adj u center := by
+  let : Fintype V := Fintype.ofFinite V
   intro u huD huc
   obtain ⟨u', hu'D, hu'val⟩ :=
     exists_subtype_of_mem_ahtDeletedFinsetVal huD
@@ -793,7 +822,7 @@ theorem ambientLeftCarrier_nonempty_of_both_triples
     have hadj : G.Adj S.yA.1 q := by simpa using hq
     rcases S.yA_neighbor_location_of_both_triples hthree hAcard hBcard
         hy hcenterNeighbors hadj with hqC | rfl | hqA | rfl
-    · exact False.elim (by simpa [hempty] using hqC)
+    · exact False.elim (by simp [hempty] at hqC)
     · simp
     · rw [hAeq] at hqA
       simp only [Finset.mem_insert, Finset.mem_singleton] at hqA ⊢
@@ -809,7 +838,7 @@ theorem ambientLeftCarrier_nonempty_of_both_triples
     have hadj : G.Adj S.zA.1 q := by simpa using hq
     rcases S.zA_neighbor_location_of_both_triples hthree hAcard hBcard
         hz hcenterNeighbors hadj with hqC | rfl | hqA | rfl
-    · exact False.elim (by simpa [hempty] using hqC)
+    · exact False.elim (by simp [hempty] at hqC)
     · simp
     · rw [hAeq] at hqA
       simp only [Finset.mem_insert, Finset.mem_singleton] at hqA ⊢
@@ -1241,6 +1270,7 @@ theorem terminals_meet_finalLeftVerts
 
 /-! ## The extra residual component in the mixed `3/1` branch -/
 
+omit [DecidableEq V] in
 /-- Minimum degree three supplies a neighbour outside any prescribed pair.
 This tiny finite form is the degree input in both residual-seed subcases of
 source Claim (8). -/
@@ -1288,50 +1318,66 @@ namespace MixedResidualComponent
 
 variable (R : S.MixedResidualComponent)
 
-theorem xBPrime_ne_xB : R.xBPrime ≠ S.xB.1 := by
+omit [DecidableRel G.Adj] [Fintype V] in
+theorem xBPrime_ne_xB [Finite V] : R.xBPrime ≠ S.xB.1 := by
+  let : Fintype V := Fintype.ofFinite V
   intro h
   exact Finset.disjoint_left.mp R.component.2.1 R.xBPrime_mem
     (Finset.mem_union_left _ (Finset.mem_union_right _
       (h ▸ val_mem_ahtDeletedFinsetVal.mpr S.X_B_attachment.1)))
 
+omit [DecidableRel G.Adj] [Fintype V] in
 theorem xBPrime_ne_center : R.xBPrime ≠ center := by
   intro h
   exact Finset.disjoint_left.mp R.component.2.1 R.xBPrime_mem
     (Finset.mem_union_right _ (by simp [h]))
 
-theorem xBPrime_ne_xA : R.xBPrime ≠ S.xA.1 := by
+omit [DecidableRel G.Adj] [Fintype V] in
+theorem xBPrime_ne_xA [Finite V] : R.xBPrime ≠ S.xA.1 := by
+  let : Fintype V := Fintype.ofFinite V
   intro h
   exact Finset.disjoint_left.mp R.component.2.1 R.xBPrime_mem
     (Finset.mem_union_left _ (Finset.mem_union_left _
       (h ▸ val_mem_ahtDeletedFinsetVal.mpr S.X_A_attachment.1)))
 
-theorem xBPrime_ne_yA : R.xBPrime ≠ S.yA.1 := by
+omit [DecidableRel G.Adj] [Fintype V] in
+theorem xBPrime_ne_yA [Finite V] : R.xBPrime ≠ S.yA.1 := by
+  let : Fintype V := Fintype.ofFinite V
   intro h
   exact Finset.disjoint_left.mp R.component.2.1 R.xBPrime_mem
     (Finset.mem_union_left _ (Finset.mem_union_left _
       (h ▸ val_mem_ahtDeletedFinsetVal.mpr S.Y_A_attachment.1)))
 
-theorem xBPrime_ne_zA : R.xBPrime ≠ S.zA.1 := by
+omit [DecidableRel G.Adj] [Fintype V] in
+theorem xBPrime_ne_zA [Finite V] : R.xBPrime ≠ S.zA.1 := by
+  let : Fintype V := Fintype.ofFinite V
   intro h
   exact Finset.disjoint_left.mp R.component.2.1 R.xBPrime_mem
     (Finset.mem_union_left _ (Finset.mem_union_left _
       (h ▸ val_mem_ahtDeletedFinsetVal.mpr S.Z_A_attachment.1)))
 
-theorem xBPrime_ne_x : R.xBPrime ≠ x.1 := by
+omit [DecidableRel G.Adj] [Fintype V] in
+theorem xBPrime_ne_x [Finite V] : R.xBPrime ≠ x.1 := by
+  let : Fintype V := Fintype.ofFinite V
   intro heq
   exact Finset.disjoint_left.mp R.disjoint_xPart R.xBPrime_mem
     (heq ▸ val_mem_ahtDeletedFinsetVal.mpr S.x_mem_X)
 
-theorem xBPrime_ne_y : R.xBPrime ≠ y.1 := by
+omit [DecidableRel G.Adj] [Fintype V] in
+theorem xBPrime_ne_y [Finite V] : R.xBPrime ≠ y.1 := by
+  let : Fintype V := Fintype.ofFinite V
   intro heq
   exact Finset.disjoint_left.mp R.disjoint_yPart R.xBPrime_mem
     (heq ▸ val_mem_ahtDeletedFinsetVal.mpr S.y_mem_Y)
 
-theorem xBPrime_ne_z : R.xBPrime ≠ z.1 := by
+omit [DecidableRel G.Adj] [Fintype V] in
+theorem xBPrime_ne_z [Finite V] : R.xBPrime ≠ z.1 := by
+  let : Fintype V := Fintype.ofFinite V
   intro heq
   exact Finset.disjoint_left.mp R.disjoint_zPart R.xBPrime_mem
     (heq ▸ val_mem_ahtDeletedFinsetVal.mpr S.z_mem_Z)
 
+omit [DecidableRel G.Adj] [Fintype V] in
 theorem xBPrime_ne_xPart {q : V}
     (hq : q ∈ ahtDeletedFinsetVal S.xPart) : R.xBPrime ≠ q := by
   intro h
@@ -1420,11 +1466,12 @@ noncomputable def mixedResidualComponentOfDeletedComponent
   xBPrime_mem := val_mem_ahtDeletedFinsetVal.mpr hxBPrime
   adj_xBPrime_xB := (deleteVertex_adj (G := G)).mp hadj
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- A residual deleted component which is not assigned to `C_A` must meet
 the singleton side `B`.  The only other ambient deletion vertex is
 `center`, and adjacency to it is excluded by the three terminal-component
 disjointness hypotheses. -/
-theorem exists_xBPrime_of_not_leftBoundary
+theorem exists_xBPrime_of_not_leftBoundary [Finite V]
     {D : Finset {v : V // v ≠ center}}
     (hD : IsComponentAfterDeleting (deleteVertex G center)
       (S.aSet ∪ S.bSet) D)
@@ -1436,6 +1483,8 @@ theorem exists_xBPrime_of_not_leftBoundary
     (hnotLeft : ¬HasExternalBoundaryIn G (ahtDeletedFinsetVal D)
       (ahtDeletedFinsetVal S.aSet)) :
     ∃ xBPrime ∈ D, (deleteVertex G center).Adj xBPrime S.xB := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hDambient := hD.ambient_of_deleteVertex (G := G)
   have hnoCenter := S.no_center_adj_of_disjoint_terminalParts
     hcenterNeighbors hDX hDY hDZ
@@ -1728,7 +1777,7 @@ theorem exists_mixedResidualComponent_of_leftCarrier_card_le_one
           · exact G.loopless.irrefl S.zA.1 hzAq
         exact S.exists_mixedResidualComponent_of_zA_neighbor htri
           hcenterNeighbors hAcard hBcard hz hzAq hqA hqz
-            (by simpa [hCempty])
+            (by simp [hCempty])
       · obtain ⟨q, hyAq, hqy, hqzA⟩ :=
           exists_adj_ne_pair (G := G) (hthree.degree_ge S.yA.1)
             (a := y.1) (b := S.zA.1)
@@ -1742,7 +1791,7 @@ theorem exists_mixedResidualComponent_of_leftCarrier_card_le_one
           · exact hqzA rfl
         exact S.exists_mixedResidualComponent_of_yA_neighbor htri
           hcenterNeighbors hAcard hBcard hy hyAq hqA hqy
-            (by simpa [hCempty])
+            (by simp [hCempty])
     · obtain ⟨q, hyAq, hqy, hqxA⟩ :=
         exists_adj_ne_pair (G := G) (hthree.degree_ge S.yA.1)
           (a := y.1) (b := S.xA.1)
@@ -1756,7 +1805,7 @@ theorem exists_mixedResidualComponent_of_leftCarrier_card_le_one
         · exact hyAzA hyAq
       exact S.exists_mixedResidualComponent_of_yA_neighbor htri
         hcenterNeighbors hAcard hBcard hy hyAq hqA hqy
-          (by simpa [hCempty])
+          (by simp [hCempty])
 
 /-- If the other two terminal components are singletons and both splitter
 sides are singletons, those two terminals have the same three neighbours:
@@ -1803,7 +1852,7 @@ theorem false_of_yz_singletons_both_sides_singletons
       have hqt : q' = t := by simpa [ht] using hqY
       have hyt : y = t := by simpa [ht] using S.y_mem_Y
       have hqy : q = y.1 := congrArg Subtype.val (hqt.trans hyt.symm)
-      exact False.elim (G.loopless.irrefl y.1 (by simpa [hqy] using hyq))
+      exact False.elim (G.loopless.irrefl y.1 (by simp [hqy] at hyq))
   have hNz : G.neighborFinset z.1 ⊆ {center, S.yA.1, S.yB.1} := by
     intro q hq
     have hzq : G.Adj z.1 q := by simpa using hq
@@ -1826,7 +1875,7 @@ theorem false_of_yz_singletons_both_sides_singletons
       have hqt : q' = t := by simpa [ht] using hqZ
       have hzt : z = t := by simpa [ht] using S.z_mem_Z
       have hqz : q = z.1 := congrArg Subtype.val (hqt.trans hzt.symm)
-      exact False.elim (G.loopless.irrefl z.1 (by simpa [hqz] using hzq))
+      exact False.elim (G.loopless.irrefl z.1 (by simp [hqz] at hzq))
   have htripleCard :
       ({center, S.yA.1, S.yB.1} : Finset V).card ≤ 3 := by
     calc

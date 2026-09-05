@@ -31,6 +31,7 @@ truncated subtraction on small vertex sets. -/
 def Has23CircuitCount (G : SimpleGraph V) [DecidableRel G.Adj] : Prop :=
   G.edgeFinset.card + 2 = 2 * Fintype.card V
 
+omit [DecidableEq V] in
 /-- The circuit count is equivalently expressed using the instance-independent cardinality
 of the edge set. -/
 theorem has23CircuitCount_iff_ncard
@@ -60,6 +61,7 @@ def Is23Circuit (G : SimpleGraph V) [DecidableRel G.Adj] : Prop :=
 
 namespace Is23Circuit
 
+omit [DecidableEq V] in
 /-- Every vertex of a genuine (at least four vertex) `(2,3)`-circuit has degree at least
 three.  Remove the vertex and apply sparsity to the resulting proper vertex set. -/
 theorem degree_three_le (hcircuit : Is23Circuit G)
@@ -97,6 +99,7 @@ theorem degree_three_le (hcircuit : Is23Circuit G)
 
 end Is23Circuit
 
+omit [DecidableEq V] in
 /-- In a graph with circuit edge count and minimum degree three, at least four vertices
 have degree exactly three.  This is the handshaking argument behind the first inverse
 Henneberg move. -/
@@ -131,16 +134,20 @@ theorem four_le_card_degree_eq_three
 
 namespace Is23Circuit
 
+omit [DecidableEq V] in
 /-- A `(2,3)`-circuit on at least four vertices therefore has at least four
 degree-three nodes. -/
 theorem four_le_card_degree_eq_three (hcircuit : Is23Circuit G)
     (hcard : 4 ≤ Fintype.card V) :
-    4 ≤ (Finset.univ.filter fun v : V => G.degree v = 3).card :=
-  Erdos916.four_le_card_degree_eq_three hcircuit.1
-    (fun v => hcircuit.degree_three_le hcard v)
+    4 ≤ (Finset.univ.filter fun v : V => G.degree v = 3).card := by
+  classical
+  exact
+    Erdos916.four_le_card_degree_eq_three hcircuit.1
+      (fun v => hcircuit.degree_three_le hcard v)
 
 end Is23Circuit
 
+omit [DecidableEq V] in
 /-- In particular, a minimum-degree-three graph with circuit count has a degree-three
 vertex. -/
 theorem exists_degree_eq_three

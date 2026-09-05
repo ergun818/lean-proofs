@@ -25,14 +25,17 @@ universe u
 variable {V : Type u} [Fintype V] [DecidableEq V]
 variable {G : SimpleGraph V} [DecidableRel G.Adj]
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- A path starting outside a finite target set has an initial segment whose
 only target vertex is its endpoint. -/
-theorem exists_initialPath_to_finset
-    (S : Finset V) {r s₀ : V} (hrs : r ∉ S) (hs₀ : s₀ ∈ S)
+theorem exists_initialPath_to_finset [Finite V]
+    (S : Finset V) {r s₀ : V} (_hrs : r ∉ S) (hs₀ : s₀ ∈ S)
     (p : G.Walk r s₀) (hp : p.IsPath) :
     ∃ s : V, s ∈ S ∧ ∃ q : G.Walk r s,
       q.IsPath ∧ (∀ w, w ∈ q.support → w ∈ p.support) ∧
         ∀ w, w ∈ q.support → w ∈ S → w = s := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let P : ℕ → Prop := fun n ↦
     ∃ s : V, ∃ hs : s ∈ p.support,
       s ∈ S ∧ (p.takeUntil s hs).length = n
@@ -60,17 +63,20 @@ theorem exists_initialPath_to_finset
   rw [heq, hlen] at hshort
   exact (Nat.not_lt_of_ge hcandidate) hshort
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- The two-fan lemma in the single-path form used by AHT Lemma 6.2.
 In a vertex-two-connected graph, a root outside a target set of size at
 least two lies on a path between two distinct targets whose interior avoids
 the target set. -/
-theorem exists_targetPath_through_of_vertexTwoConnected
+theorem exists_targetPath_through_of_vertexTwoConnected [Finite V]
     (S : Finset V) {r : V} (hrS : r ∉ S) (hcard : 2 ≤ S.card)
     (hconn : G.Connected)
     (hdelete : ∀ d : V, (G.induce fun w : V ↦ w ≠ d).Connected) :
     ∃ s t : V, s ∈ S ∧ t ∈ S ∧ s ≠ t ∧
       ∃ p : G.Walk s t, p.IsPath ∧ r ∈ p.support ∧
         ∀ w, w ∈ p.support → w ∈ S → w = s ∨ w = t := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨s₀, hs₀S⟩ := Finset.card_pos.mp (by omega : 0 < S.card)
   have hcardErase : 0 < (S.erase s₀).card := by
     rw [Finset.card_erase_of_mem hs₀S]
@@ -920,10 +926,12 @@ def ContainsK33MinusEdge (G : SimpleGraph V) : Prop :=
     G.Adj b x ∧ G.Adj b y ∧ G.Adj b z ∧
     G.Adj c x ∧ G.Adj c y ∧ G.Adj c z
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- A walk from a finite set to its complement crosses its edge boundary. -/
 theorem Walk.exists_adj_mem_notMem_aht {u v : V} (p : G.Walk u v)
     (S : Finset V) (hu : u ∈ S) (hv : v ∉ S) :
     ∃ x ∈ S, ∃ y ∉ S, G.Adj x y := by
+  classical
   induction p with
   | nil => exact (hv hu).elim
   | @cons u w v huw p ih =>
@@ -1015,7 +1023,7 @@ theorem aht_isomorphic_k33_of_k33MinusEdge
     · have hperm : [x, y, z, b, a, c].Nodup := by
         simp [hxy, hxz, hbx_ne.symm, hax.symm, hcx_ne.symm, hyz,
           hby_ne.symm, hay_ne.symm, hcy_ne.symm, hbz_ne.symm,
-          haz_ne.symm, hcz_ne.symm, hab, hab.symm, hac, hbc]
+          haz_ne.symm, hcz_ne.symm, hab.symm, hac, hbc]
       exact no_externalNeighbor_x_of_k33MinusEdge hthree halmost hperm
         haxEdge.symm hcx.symm hby.symm hay.symm hcy.symm hbz.symm haz.symm hcz.symm
         (by simpa [hqb] using hqv) ⟨hvout.2.2.2.1, hvout.2.2.2.2.1, hvout.2.2.2.2.2,
@@ -1023,7 +1031,7 @@ theorem aht_isomorphic_k33_of_k33MinusEdge
     · have hperm : [x, y, z, c, a, b].Nodup := by
         simp [hxy, hxz, hcx_ne.symm, hax.symm, hbx_ne.symm, hyz,
           hcy_ne.symm, hay_ne.symm, hby_ne.symm, hcz_ne.symm,
-          haz_ne.symm, hbz_ne.symm, hab, hac, hac.symm, hbc, hbc.symm]
+          haz_ne.symm, hbz_ne.symm, hab, hac.symm, hbc.symm]
       exact no_externalNeighbor_x_of_k33MinusEdge hthree halmost hperm
         haxEdge.symm hbx.symm hcy.symm hay.symm hby.symm hcz.symm haz.symm hbz.symm
         (by simpa [hqc] using hqv) ⟨hvout.2.2.2.1, hvout.2.2.2.2.1, hvout.2.2.2.2.2,

@@ -22,10 +22,12 @@ universe u
 variable {V : Type u} [Fintype V] [DecidableEq V]
 variable {G : SimpleGraph V} [DecidableRel G.Adj]
 
+omit [DecidableEq V] in
 /-- The `edgeSet.ncard` formulation produced by the minimal-density
 construction is the same `(2,3)`-circuit used by the rigidity layer. -/
 theorem Minimal23Circuit.toIs23Circuit (h : Minimal23Circuit G) :
     Is23Circuit G := by
+  classical
   exact (minimal23Circuit_iff_is23Circuit G).mp h
 
 /-- A path whose endpoints are two of `a,b,c` and whose support contains all
@@ -78,6 +80,7 @@ theorem Is23Circuit.deletePair_has24Count
   rw [hedge, hcard]
   exact hcount
 
+omit [DecidableEq V] in
 /-- Every vertex set of a two-vertex deletion is a proper vertex set of the
 ambient circuit, and hence remains `(2,3)`-sparse. -/
 theorem Is23Circuit.is23Sparse_deletePair (hcircuit : Is23Circuit G)
@@ -137,6 +140,7 @@ theorem Is23Circuit.is23Sparse_deletePair (hcircuit : Is23Circuit G)
   rw [hinduce]
   simpa only [hcardT] using hsparse
 
+omit [DecidableEq V] in
 /-- The graph left after deleting degree-three false twins from a circuit is
 connected.  Exact `(2,4)` density gives connectedness once every component
 has at least two vertices.  A singleton component would have all its ambient
@@ -146,6 +150,7 @@ theorem Is23Circuit.deletePair_connected
     (hcircuit : Is23Circuit G) {u v : V}
     (htwin : AreFalseTwins G u v) (hdeg : G.degree u = 3) :
     (deletePair G u v).Connected := by
+  classical
   have hcardV : 4 ≤ Fintype.card V := by
     have hlt := G.degree_lt_card_verts u
     omega
@@ -163,7 +168,7 @@ theorem hasWheelWitness_of_falseTwins_of_terminalPath
     (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c)
     (ha : G.Adj u a) (hb : G.Adj u b) (hc : G.Adj u c)
     (hx : x ∈ ({a, b, c} : Finset V))
-    (hy : y ∈ ({a, b, c} : Finset V)) (hxy : x ≠ y)
+    (hy : y ∈ ({a, b, c} : Finset V)) (_hxy : x ≠ y)
     (p : G.Walk x y) (hp : p.IsPath)
     (hap : a ∈ p.support) (hbp : b ∈ p.support) (hcp : c ∈ p.support)
     (hup : u ∉ p.support) (hvp : v ∉ p.support) :
@@ -304,10 +309,13 @@ theorem hasWheelWitness_of_falseTwins_of_deletePair_terminalPath
     htwin hab hac hbc ha hb hc hxG hyG hxyG pG hpG
       haP hbP hcP huP hvP
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Every common neighbour of false twins survives deletion of the pair. -/
-theorem common_neighbor_mem_deletePair
+theorem common_neighbor_mem_deletePair [Finite V]
     {u v a : V} (htwin : AreFalseTwins G u v) (ha : G.Adj u a) :
     a ∈ (({u, v} : Set V)ᶜ) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   simp only [Set.mem_compl_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
     not_or]
   constructor

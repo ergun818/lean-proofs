@@ -34,6 +34,7 @@ variable {G : SimpleGraph V} [DecidableRel G.Adj]
 def AHTTriangleFree (G : SimpleGraph V) : Prop :=
   ∀ ⦃x y z : V⦄, G.Adj x y → G.Adj y z → G.Adj z x → False
 
+omit [DecidableRel G.Adj] in
 /-- Deleting one vertex from a finite three-connected graph leaves a
 vertex-two-connected graph. -/
 theorem vertexTwoConnected_delete_of_isThreeConnected
@@ -42,6 +43,7 @@ theorem vertexTwoConnected_delete_of_isThreeConnected
       ∀ d : {w : V // w ≠ x},
         ((G.induce fun w : V ↦ w ≠ x).induce
           fun w : {w : V // w ≠ x} ↦ w ≠ d).Connected := by
+  classical
   have hsmallX : ({x} : Finset V).card < Fintype.card V := by
     have := hthree.1
     simp only [Finset.card_singleton]
@@ -109,12 +111,14 @@ theorem vertexTwoConnected_delete_of_isThreeConnected
       map_rel_iff' := by intro u v; rfl }
   exact gi.connected_iff.mp hflat
 
+omit [DecidableEq V] in
 /-- A vertex of degree at least three with two distinct specified neighbours
 has a third neighbour. -/
 theorem exists_third_neighbor_of_degree_ge_three
     {x y z : V} (hdeg : 3 ≤ G.degree x)
     (hxy : G.Adj x y) (hxz : G.Adj x z) (hyz : y ≠ z) :
     ∃ t : V, G.Adj x t ∧ t ≠ y ∧ t ≠ z := by
+  classical
   have hy : y ∈ G.neighborFinset x := by simpa using hxy
   have hz : z ∈ G.neighborFinset x := by simpa using hxz
   have hpair : ({y, z} : Finset V) ⊆ G.neighborFinset x := by

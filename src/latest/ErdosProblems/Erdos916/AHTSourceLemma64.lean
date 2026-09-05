@@ -64,11 +64,12 @@ theorem HasWheelCenteredAt.mapHomOfInjective
 
 /-- A degree-one vertex cannot lie on a cycle. -/
 theorem not_mem_cycle_support_of_degree_eq_one
-    {X : Type u} [Fintype X] [DecidableEq X]
+    {X : Type u} [Fintype X]
     {K : SimpleGraph X} [DecidableRel K.Adj]
     {r : X} (hr : K.degree r = 1)
     {a : X} {p : K.Walk a a} (hp : p.IsCycle) :
     r ∉ p.support := by
+  classical
   intro hrp
   have hncard := hp.ncard_neighborSet_toSubgraph_eq_two hrp
   have hlarge : 1 < (p.toSubgraph.neighborSet r).ncard := by omega
@@ -87,10 +88,11 @@ theorem not_mem_cycle_support_of_degree_eq_one
 
 /-- A degree-one vertex on a simple path is one of its endpoints. -/
 theorem eq_start_or_eq_end_of_mem_path_of_degree_eq_one
-    {X : Type u} [Fintype X] [DecidableEq X]
+    {X : Type u} [Fintype X]
     {K : SimpleGraph X} [DecidableRel K.Adj]
     {s t r : X} {p : K.Walk s t} (hp : p.IsPath)
     (hr : K.degree r = 1) (hrp : r ∈ p.support) : r = s ∨ r = t := by
+  classical
   obtain ⟨n, hnr, hnle⟩ :=
     SimpleGraph.Walk.mem_support_iff_exists_getVert.mp hrp
   by_cases hn0 : n = 0
@@ -154,7 +156,7 @@ theorem SimpleGraph.Walk.IsPath.isCycle_append_reverse_of_meet_only_ends_local
     · have hwst : w = s ∨ w = t := by simpa [hsupp] using hw
       exact hwst.elim hws hwt
     · subst t
-      have hpnil : p = .nil := SimpleGraph.Walk.isPath_iff_eq_nil.mp hp
+      have hpnil : p = .nil := (SimpleGraph.Walk.isPath_iff_nil.mp hp).eq_nil
       subst p
       exact hws (by simpa using hw)
 
@@ -207,41 +209,48 @@ variable {a b c : V}
 /-- Inclusion of an old torso vertex into the replacement graph. -/
 def oldVertexEmbedding : V ↪ V ⊕ Fin 2 := Function.Embedding.inl
 
+omit [DecidableEq V] [DecidableRel H.Adj] [Fintype V] in
 @[simp]
 theorem adj_old_old_iff {p q : V} :
     (ahtDoublePinReplacement H a b c).Adj (.inl p) (.inl q) ↔
       H.Adj p q := by
   rfl
 
+omit [DecidableEq V] [DecidableRel H.Adj] [Fintype V] in
 @[simp]
 theorem adj_old_new_iff {p : V} {i : Fin 2} :
     (ahtDoublePinReplacement H a b c).Adj (.inl p) (.inr i) ↔
       p = a ∨ p = b ∨ p = c := by
   rfl
 
+omit [DecidableEq V] [DecidableRel H.Adj] [Fintype V] in
 @[simp]
 theorem adj_new_old_iff {i : Fin 2} {p : V} :
     (ahtDoublePinReplacement H a b c).Adj (.inr i) (.inl p) ↔
       p = a ∨ p = b ∨ p = c := by
   rfl
 
+omit [DecidableEq V] [DecidableRel H.Adj] [Fintype V] in
 @[simp]
 theorem not_adj_new_new (i j : Fin 2) :
     ¬(ahtDoublePinReplacement H a b c).Adj (.inr i) (.inr j) := by
   exact id
 
+omit [DecidableEq V] [DecidableRel H.Adj] [Fintype V] in
 /-- Each new vertex has exactly the three old pins as its open
 neighbourhood. -/
-theorem neighborSet_new (i : Fin 2) :
+theorem neighborSet_new [Finite V] (i : Fin 2) :
     (ahtDoublePinReplacement H a b c).neighborSet (.inr i) =
       {(.inl a : V ⊕ Fin 2), .inl b, .inl c} := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   ext x
   rcases x with p | j
   · simp only [SimpleGraph.mem_neighborSet, adj_new_old_iff,
       Set.mem_insert_iff, Set.mem_singleton_iff, Sum.inl.injEq]
   · simp only [SimpleGraph.mem_neighborSet, not_adj_new_new,
-      Set.mem_insert_iff, Set.mem_singleton_iff, Sum.inr.injEq,
-      Sum.inr_ne_inl, or_self, or_false]
+      Set.mem_insert_iff, Set.mem_singleton_iff,
+      Sum.inr_ne_inl, or_self]
 
 /-- Finite form of the exact new-vertex neighbourhood. -/
 theorem neighborFinset_new (i : Fin 2) :
@@ -254,10 +263,13 @@ theorem neighborFinset_new (i : Fin 2) :
   simp only [Set.mem_insert_iff, Set.mem_singleton_iff,
     Finset.mem_insert, Finset.mem_singleton]
 
+omit [DecidableEq V] [DecidableRel H.Adj] [Fintype V] in
 /-- The two vertices adjoined in AHT Lemma 6.4 are false twins. -/
-theorem new_vertices_areFalseTwins :
+theorem new_vertices_areFalseTwins [Finite V] :
     AreFalseTwins (ahtDoublePinReplacement H a b c)
       (.inr 0) (.inr 1) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   refine ⟨?_, ?_⟩
   · intro h
     have h01 : (0 : Fin 2) = 1 := Sum.inr.inj h
@@ -275,6 +287,7 @@ theorem degree_new (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c)
   rw [neighborFinset_new]
   simp [hab, hac, hbc]
 
+omit [Fintype V] in
 /-- The sacrificial new pair is disjoint from every pair of old torso
 vertices. -/
 theorem new_pair_disjoint_old_pair (p q : V) :
@@ -342,13 +355,16 @@ def oldGraphHom : H →g ahtDoublePinReplacement H a b c where
   toFun := Sum.inl
   map_rel' := by intro p q hpq; exact hpq
 
+omit [DecidableEq V] [DecidableRel H.Adj] [Fintype V] in
 @[simp] theorem oldGraphHom_apply (p : V) :
     oldGraphHom (H := H) (a := a) (b := b) (c := c) p = .inl p := rfl
 
+omit [DecidableEq V] [DecidableRel H.Adj] [Fintype V] in
 theorem oldGraphHom_injective :
     Function.Injective (oldGraphHom (H := H) (a := a) (b := b) (c := c)) :=
   Sum.inl_injective
 
+omit [DecidableEq V] [DecidableRel H.Adj] [Fintype V] in
 /-- A replacement walk all of whose vertices are old is the image of an old
 walk.  This is the contraction-free branch of the wheel transfer in AHT
 Lemma 6.4. -/
@@ -388,12 +404,13 @@ theorem exists_oldWalk_of_support_avoids_new {p q : V}
   decreasing_by omega
   exact lower w.length w le_rfl hold
 
+omit [DecidableEq V] [DecidableRel H.Adj] [Fintype V] in
 /-- Cut a simple replacement rim at one of the two artificial vertices.
 What remains is a simple path between two distinct pins, and together with
 the cut vertex this path contains the entire rim support.  The other
 artificial vertex is allowed to occur on the path; this is intentional, as
 it is the first of the two cases in the rim analysis of AHT Lemma 6.4. -/
-theorem exists_pinPath_around_new
+theorem exists_pinPath_around_new [Finite V]
     {r : V ⊕ Fin 2}
     (rim : (ahtDoublePinReplacement H a b c).Walk r r)
     (hcycle : rim.IsCycle) (i : Fin 2)
@@ -406,6 +423,8 @@ theorem exists_pinPath_around_new
         (.inr i : V ⊕ Fin 2) ∉ p.support ∧
         (∀ w ∈ p.support, w ∈ rim.support) ∧
         ∀ w ∈ rim.support, w = .inr i ∨ w ∈ p.support := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let cr := rim.rotate (.inr i) hi
   have hcr : cr.IsCycle := hcycle.rotate hi
   have htail : ¬cr.tail.Nil := by
@@ -498,11 +517,12 @@ theorem exists_pinPath_around_new
     · left
       simpa only [List.mem_singleton] using hwlast
 
+omit [DecidableEq V] [DecidableRel H.Adj] [Fintype V] in
 /-- If a simple replacement rim contains exactly one of the artificial
 vertices, deleting its two incident rim edges leaves a simple path in the
 old graph between two distinct pins.  The support comparison is exact on
 old vertices. -/
-theorem exists_old_pinPath_of_cycle_contains_exactly_one_new
+theorem exists_old_pinPath_of_cycle_contains_exactly_one_new [Finite V]
     {r : V ⊕ Fin 2}
     (rim : (ahtDoublePinReplacement H a b c).Walk r r)
     (hcycle : rim.IsCycle) (i j : Fin 2)
@@ -514,6 +534,8 @@ theorem exists_old_pinPath_of_cycle_contains_exactly_one_new
       (z = a ∨ z = b ∨ z = c) ∧ y ≠ z ∧
       ∃ p : H.Walk y z, p.IsPath ∧
         ∀ w : V, w ∈ p.support ↔ (.inl w : V ⊕ Fin 2) ∈ rim.support := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨y, z, hyPin, hzPin, hyz, q, hq, hiq, hqSub, hrim⟩ :=
     exists_pinPath_around_new rim hcycle i hi
   have hold : ∀ w ∈ q.support, ∃ x : V, w = .inl x := by
@@ -556,6 +578,7 @@ theorem exists_old_pinPath_of_cycle_contains_exactly_one_new
     · exact (Sum.inl_ne_inr hwi).elim
     · exact (hpq w).2 hwq
 
+omit [DecidableEq V] [Fintype V] in
 /-- Four occurrences drawn from three pins cannot be pairwise separated in
 the cyclic order relevant to the two-new-vertex rim.  Thus one of the two
 prepared pieces between consecutive gadget edges is trivial. -/
@@ -567,19 +590,21 @@ theorem left_or_right_pin_repeats
     (hv : v = a ∨ v = b ∨ v = c)
     (hyz : y ≠ z) (hyv : y ≠ v) (huz : u ≠ z) (huv : u ≠ v) :
     y = u ∨ v = z := by
+  classical
   by_contra h
-  push_neg at h
+  push Not at h
   rcases hy with rfl | rfl | rfl <;>
     rcases hz with rfl | rfl | rfl <;>
     rcases hu with rfl | rfl | rfl <;>
     rcases hv with rfl | rfl | rfl <;>
     simp_all
 
+omit [DecidableEq V] [DecidableRel H.Adj] [Fintype V] in
 /-- Split a simple pin-to-pin path at an artificial vertex on it.  Removing
 the two incident edges produces two simple pin-to-pin pieces.  Their supports
 stay in the original path, and the cut vertex occurs in neither piece.  Since
 there are only three pins, one of the two pieces has equal endpoints. -/
-theorem exists_pinPath_split_at_new
+theorem exists_pinPath_split_at_new [Finite V]
     {y z : V}
     (hyPin : y = a ∨ y = b ∨ y = c)
     (hzPin : z = a ∨ z = b ∨ z = c)
@@ -599,6 +624,8 @@ theorem exists_pinPath_split_at_new
         (∀ w ∈ p.support,
           w = .inr j ∨ w ∈ pLeft.support ∨ w ∈ pRight.support) ∧
         (y = u ∨ v = z) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let l := p.takeUntil (.inr j) hj
   let r := p.dropUntil (.inr j) hj
   have hlNot : ¬l.Nil :=
@@ -725,11 +752,12 @@ theorem exists_pinPath_split_at_new
   exact ⟨u, v, huPin, hvPin, huv, pLeft, hpLeft, hjLeft, hpLeftSub,
     pRight, hpRight, hjRight, hpRightSub, hpCover, hdirect⟩
 
+omit [DecidableEq V] [DecidableRel H.Adj] [Fintype V] in
 /-- If both artificial vertices lie on a simple replacement rim, removing
 their four incident rim edges leaves two old simple paths.  Because the four
 gadget incidences use only three pins, one of those paths is nil.  On old
 vertices the two path supports together are exactly the rim support. -/
-theorem exists_old_pinPaths_of_cycle_contains_both_new
+theorem exists_old_pinPaths_of_cycle_contains_both_new [Finite V]
     {s : V ⊕ Fin 2}
     (rim : (ahtDoublePinReplacement H a b c).Walk s s)
     (hcycle : rim.IsCycle) (i j : Fin 2)
@@ -746,6 +774,8 @@ theorem exists_old_pinPaths_of_cycle_contains_both_new
         (y = u ∨ v = z) ∧
         ∀ w : V, (.inl w : V ⊕ Fin 2) ∈ rim.support ↔
           w ∈ pLeft.support ∨ w ∈ pRight.support := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨y, z, hyPin, hzPin, hyz, q, hq, hiq, hqSub, hrim⟩ :=
     exists_pinPath_around_new rim hcycle i hi
   have hjq : (.inr j : V ⊕ Fin 2) ∈ q.support := by
@@ -882,14 +912,17 @@ theorem hasWheelCenteredAt_old_of_cycle_avoids_new {x r₀ : V}
 
 /-! ## Three-connectivity of the double-pin operation -/
 
+omit [DecidableEq V] [Fintype V] in
 /-- Three distinct pins cannot all belong to a set of cardinality below
 three. -/
-theorem exists_pin_not_mem {D : Finset V}
+theorem exists_pin_not_mem [Finite V] {D : Finset V}
     (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c)
     (hD : D.card < 3) :
     ∃ p : V, (p = a ∨ p = b ∨ p = c) ∧ p ∉ D := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   by_contra h
-  push_neg at h
+  push Not at h
   have hsub : ({a, b, c} : Finset V) ⊆ D := by
     intro p hp
     have hp' : p = a ∨ p = b ∨ p = c := by simpa using hp
@@ -900,10 +933,13 @@ theorem exists_pin_not_mem {D : Finset V}
   rw [hthree] at hcard
   omega
 
+omit [DecidableEq V] [DecidableRel H.Adj] [Fintype V] in
 /-- The replacement graph is connected as soon as the old torso is
 preconnected and one pin is available. -/
-theorem connected (hH : H.Connected) :
+theorem connected [Finite V] (hH : H.Connected) :
     (ahtDoublePinReplacement H a b c).Connected := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let f : H →g ahtDoublePinReplacement H a b c :=
     { toFun := Sum.inl
       map_rel' := by intro p q hpq; exact hpq }
@@ -917,6 +953,7 @@ theorem connected (hH : H.Connected) :
     preconnected := fun x y ↦ (hreach x).trans (hreach y).symm
     nonempty := ⟨root⟩ }
 
+omit [DecidableRel H.Adj] in
 /-- Adding the two degree-three vertices on three distinct pins preserves
 three-vertex-connectivity.  The proof uses exactly the deletion-of-two
 vertices formulation: after any two deletions, one of the three pins
@@ -925,6 +962,7 @@ theorem vertexThreeConnected_of_isThreeConnected
     (hH : IsThreeConnected H)
     (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c) :
     VertexThreeConnected (ahtDoublePinReplacement H a b c) := by
+  classical
   let R := ahtDoublePinReplacement H a b c
   have hconnH : H.Connected := by
     have hpre := hH.induce_compl_preconnected (∅ : Finset V) (by simp)
@@ -1001,12 +1039,14 @@ equivalent in the direction needed below.  We record the nontrivial
 direction here because the double-pin proof above naturally uses deletion
 of two vertices, while the paper states Lemma 6.4 using separations. -/
 
+omit [DecidableRel H.Adj] in
 /-- Every walk from the strict left side of an AHT separation to its strict
 right side contains a separator vertex. -/
 theorem AHTSeparation.walk_meets_separator_local
     (s : AHTSeparation H) {u v : V} (p : H.Walk u v)
     (hu : u ∈ s.left \ s.right) (hv : v ∈ s.right \ s.left) :
     ∃ x, x ∈ p.support ∧ x ∈ s.separator := by
+  classical
   induction p with
   | nil =>
       rw [Finset.mem_sdiff] at hu hv
@@ -1023,6 +1063,7 @@ theorem AHTSeparation.walk_meets_separator_local
         · exact ⟨w, by simp, Finset.mem_inter.2 ⟨hwL, hwR⟩⟩
         · exact (s.not_adj hu.1 hu.2 hwR hwL huw).elim
 
+omit [DecidableEq V] [DecidableRel H.Adj] [Fintype V] in
 /-- A vertex set which contains one vertex of a walk and is closed under
 adjacency in the walk's edge-subgraph contains the entire support.  This is
 the small connectedness device used in the fresh-pin wheel-centre exclusion:
@@ -1047,10 +1088,12 @@ theorem walk_support_subset_of_toSubgraph_neighbor_closed
   obtain ⟨q⟩ := p.toSubgraph_connected s' x'
   exact endpoint_closed q hsS
 
+omit [DecidableRel H.Adj] in
 /-- On a finite graph, connectivity after deletion of every two distinct
 vertices implies AHT's separation-based notion of three-connectivity. -/
 theorem isThreeConnected_of_vertexThreeConnected
     (hH : VertexThreeConnected H) : IsThreeConnected H := by
+  classical
   refine ⟨Nat.lt_of_succ_le hH.1, ?_⟩
   intro s hs
   by_contra horder
@@ -1091,11 +1134,11 @@ theorem isThreeConnected_of_vertexThreeConnected
   have huD : u ∉ ({x, y} : Finset V) := by
     intro huD
     have := hDT huD
-    simpa [T] using this
+    simp [T] at this
   have hvD : v ∉ ({x, y} : Finset V) := by
     intro hvD
     have := hDT hvD
-    simpa [T] using this
+    simp [T] at this
   let K := H.induce (fun z : V ↦ z ≠ x ∧ z ≠ y)
   let uK : {z : V // z ≠ x ∧ z ≠ y} := ⟨u, by simpa using huD⟩
   let vK : {z : V // z ≠ x ∧ z ≠ y} := ⟨v, by simpa using hvD⟩
@@ -1119,27 +1162,33 @@ theorem isThreeConnected_of_vertexThreeConnected
     simpa only [Finset.mem_insert, Finset.mem_singleton, not_or] using hzKprop
   exact hzNotD hzD
 
+omit [DecidableRel H.Adj] in
 /-- The double-pin replacement is three-connected in the exact
 separation-based sense used in AHT Lemma 6.4 whenever its prepared torso is
 three-connected. -/
 theorem isThreeConnected_of_isThreeConnected
     (hH : IsThreeConnected H)
     (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c) :
-    IsThreeConnected (ahtDoublePinReplacement H a b c) :=
-  isThreeConnected_of_vertexThreeConnected
-    (vertexThreeConnected_of_isThreeConnected hH hab hac hbc)
+    IsThreeConnected (ahtDoublePinReplacement H a b c) := by
+  classical
+  exact
+    isThreeConnected_of_vertexThreeConnected
+      (vertexThreeConnected_of_isThreeConnected hH hab hac hbc)
 
 /-! ## Triangle and wheel-centre bookkeeping for the source torso -/
 
+omit [DecidableEq V] [DecidableRel H.Adj] [Fintype V] in
 /-- The triangle-freeness check in AHT Lemma 6.4.  In the prepared torso the
 three pins are independent (the three possible boundary edges were deleted),
 so adding the two common neighbours creates no triangle. -/
-theorem triangleFree
+theorem triangleFree [Finite V]
     (htri : AHTTriangleFree H)
     (hpins : ∀ p q : V,
       (p = a ∨ p = b ∨ p = c) →
       (q = a ∨ q = b ∨ q = c) → ¬H.Adj p q) :
     AHTTriangleFree (ahtDoublePinReplacement H a b c) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   intro x y z hxy hyz hzx
   rcases x with x | i <;> rcases y with y | j <;> rcases z with z | k
   · exact htri hxy hyz hzx
@@ -1165,7 +1214,7 @@ theorem not_hasWheelCenteredAt_new_of_other
     (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c)
     (hdega : H.degree a = 1) (hdegb : H.degree b = 1)
     (hdegc : H.degree c = 1)
-    (i j : Fin 2) (hij : i ≠ j) (hcover : ∀ k : Fin 2, k = i ∨ k = j) :
+    (i j : Fin 2) (_hij : i ≠ j) (hcover : ∀ k : Fin 2, k = i ∨ k = j) :
     ¬HasWheelCenteredAt (ahtDoublePinReplacement H a b c) (.inr i) := by
   let R := ahtDoublePinReplacement H a b c
   intro hw
@@ -2119,7 +2168,7 @@ theorem exists_insideNeighbor_not_mem {D : Finset V} (i : Fin 3)
     (hD : D.card < 3) :
     ∃ y ∈ F.insideNeighborFinset i, y ∉ D := by
   by_contra h
-  push_neg at h
+  push Not at h
   have hboundaryNotInside :
       F.boundaryVertex i ∉ F.insideNeighborFinset i := by
     simp [insideNeighborFinset, SimpleGraph.mem_neighborFinset]
@@ -2309,9 +2358,9 @@ theorem walk_inside_to_surviving_pin_avoiding {D : Finset V} {u v : V}
           refine ⟨i, hiD, q, ?_⟩
           intro z hz
           change z ∈ (hbpin.toWalk.cons hub).support at hz
-          simp only [SimpleGraph.Walk.support_cons, SimpleGraph.Adj.support_toWalk,
-            List.mem_cons, List.mem_singleton, List.not_mem_nil] at hz
-          simp at hz
+          simp only [SimpleGraph.Walk.support_cons,
+            List.mem_cons] at hz
+          simp only [SimpleGraph.Walk.support_nil, List.mem_singleton] at hz
           rcases hz with rfl | rfl | rfl
           · exact huD
           · exact hiD
@@ -2323,8 +2372,7 @@ theorem walk_inside_to_surviving_pin_avoiding {D : Finset V} {u v : V}
           intro z hz
           change z ∈ (hub.toWalk.copy rfl hpin).support at hz
           simp only [SimpleGraph.Walk.support_copy,
-            SimpleGraph.Adj.support_toWalk, List.mem_cons,
-            List.mem_singleton, List.not_mem_nil] at hz
+            SimpleGraph.Adj.support_toWalk, List.mem_cons, List.not_mem_nil] at hz
           rcases hz with rfl | rfl | hz
           · exact huD
           · exact hiD
@@ -2452,18 +2500,12 @@ theorem prepared_reaches_pin_after_deletion
           simp [pin, hi, bi]
         have hpinE : F.pin i ∉ E := by simpa [hpin] using hzE
         refine ⟨i, hpinE, ?_⟩
-        simpa [hpin] using
-          (SimpleGraph.Reachable.rfl :
-            (F.preparedGraph.induce fun w : F.PreparedVertex ↦ w ∉ E).Reachable
-              ⟨.inl bi, hzE⟩ ⟨.inl bi, hzE⟩)
+        simp [hpin]
   · have hpin : F.pin j.1 = (.inr j : F.PreparedVertex) := by
       simp [pin, j.2]
     have hpinE : F.pin j.1 ∉ E := by simpa [hpin] using hzE
     refine ⟨j.1, hpinE, ?_⟩
-    simpa [hpin] using
-      (SimpleGraph.Reachable.rfl :
-        (F.preparedGraph.induce fun w : F.PreparedVertex ↦ w ∉ E).Reachable
-          ⟨.inr j, hzE⟩ ⟨.inr j, hzE⟩)
+    simp [hpin]
 
 @[simp] theorem prepared_adj_old_fresh {p : F.BaseVertex} {j : F.FreshPin} :
     F.preparedGraph.Adj (.inl p) (.inr j) ↔
@@ -2735,7 +2777,7 @@ theorem exists_ambient_path_of_prepared_pinPath
               (F.prepared_adj_fresh_old (i := fi) (q := x)).mp
                 (by simpa only [hs] using hadj)
             have hxbi : x = bi := Subtype.ext hx
-            simpa only [hs, hxbi]
+            simp only [hxbi]
         | inr f =>
             exact (F.prepared_not_adj_fresh_fresh fi f
               (by simpa only [hs] using hadj)).elim
@@ -2752,7 +2794,7 @@ theorem exists_ambient_path_of_prepared_pinPath
               (F.prepared_adj_old_fresh (p := x) (j := fj)).mp
                 (by simpa only [hs] using hadj)
             have hxbj : x = bj := Subtype.ext hx
-            simpa only [hs, hxbj]
+            simp only [hxbj]
         | inr f =>
             exact (F.prepared_not_adj_fresh_fresh f fj
               (by simpa only [hs] using hadj)).elim
@@ -2780,7 +2822,7 @@ theorem exists_ambient_path_of_prepared_pinPath
               (F.prepared_adj_fresh_old (i := fi) (q := x)).mp
                 (by simpa only [hs] using hadj)
             have hxbi : x = bi := Subtype.ext hx
-            simpa only [hs, hxbi]
+            simp only [hxbi]
         | inr f =>
             exact (F.prepared_not_adj_fresh_fresh fi f
               (by simpa only [hs] using hadj)).elim
@@ -2806,7 +2848,7 @@ theorem exists_ambient_path_of_prepared_pinPath
               (F.prepared_adj_old_fresh (p := x) (j := fj)).mp
                 (by simpa only [hs] using hadj)
             have hxbj : x = bj := Subtype.ext hx
-            simpa only [hs, hxbj]
+            simp only [hxbj]
         | inr f =>
             exact (F.prepared_not_adj_fresh_fresh f fj
               (by simpa only [hs] using hadj)).elim
@@ -3085,8 +3127,8 @@ theorem ambient_hasWheelCenteredAt_of_inside_rim_support_transfer
     (q : F.BaseVertex) (hqF : q.1 ∈ F.verts)
     (hqPin : ∀ i : Fin 3, (.inl q : F.PreparedVertex) ≠ F.pin i)
     {s : F.PreparedVertex ⊕ Fin 2}
-    (rim : F.replacementGraph.Walk s s) (hrim : rim.IsCycle)
-    (hqRim : (.inl (.inl q) : F.PreparedVertex ⊕ Fin 2) ∉ rim.support)
+    (rim : F.replacementGraph.Walk s s) (_hrim : rim.IsCycle)
+    (_hqRim : (.inl (.inl q) : F.PreparedVertex ⊕ Fin 2) ∉ rim.support)
     (hthree : 3 ≤ (F.replacementGraph.neighborFinset (.inl (.inl q)) ∩
       rim.support.toFinset).card)
     {t : V} (ambientRim : G.Walk t t) (hambient : ambientRim.IsCycle)
@@ -3147,8 +3189,8 @@ theorem ambient_hasWheelCenteredAt_of_inside_spoke_support_transfer
     (q : F.BaseVertex) (hqF : q.1 ∈ F.verts)
     (hqPin : ∀ i : Fin 3, (.inl q : F.PreparedVertex) ≠ F.pin i)
     {s : F.PreparedVertex ⊕ Fin 2}
-    (rim : F.replacementGraph.Walk s s) (hrim : rim.IsCycle)
-    (hqRim : (.inl (.inl q) : F.PreparedVertex ⊕ Fin 2) ∉ rim.support)
+    (rim : F.replacementGraph.Walk s s) (_hrim : rim.IsCycle)
+    (_hqRim : (.inl (.inl q) : F.PreparedVertex ⊕ Fin 2) ∉ rim.support)
     (hthree : 3 ≤ (F.replacementGraph.neighborFinset (.inl (.inl q)) ∩
       rim.support.toFinset).card)
     {t : V} (ambientRim : G.Walk t t) (hambient : ambientRim.IsCycle)
@@ -3327,9 +3369,9 @@ theorem exists_nontrivial_prepared_pinPath_of_cycle_contains_both_new
     subst iu
     subst iz
     have hpLeftNil : pLeft = .nil :=
-      SimpleGraph.Walk.isPath_iff_eq_nil.mp hpLeft
+      (SimpleGraph.Walk.isPath_iff_nil.mp hpLeft).eq_nil
     have hpRightNil : pRight = .nil :=
-      SimpleGraph.Walk.isPath_iff_eq_nil.mp hpRight
+      (SimpleGraph.Walk.isPath_iff_nil.mp hpRight).eq_nil
     have hsub :
         F.replacementGraph.neighborFinset (.inl (.inl q)) ∩
             rim.support.toFinset ⊆
@@ -3373,7 +3415,7 @@ theorem exists_nontrivial_prepared_pinPath_of_cycle_contains_both_new
             ∀ l : Fin 3, l = a ∨ l = b ∨ l = c := by decide
       exact hcomplete iy iv iz hiyiv hiyiz hrightNe
     have hpLeftNil : pLeft = .nil :=
-      SimpleGraph.Walk.isPath_iff_eq_nil.mp hpLeft
+      (SimpleGraph.Walk.isPath_iff_nil.mp hpLeft).eq_nil
     refine ⟨iy, iv, iz, hiyiv, hiyiz, hrightNe, hcover,
       pRight, hpRight, F.pin_ne hrightNe, ?_⟩
     intro w
@@ -3400,7 +3442,7 @@ theorem exists_nontrivial_prepared_pinPath_of_cycle_contains_both_new
             ∀ l : Fin 3, l = a ∨ l = b ∨ l = c := by decide
       exact hcomplete iv iy iu hiviy hiviu hleftNe
     have hpRightNil : pRight = .nil :=
-      SimpleGraph.Walk.isPath_iff_eq_nil.mp hpRight
+      (SimpleGraph.Walk.isPath_iff_nil.mp hpRight).eq_nil
     refine ⟨iv, iy, iu, hiviy, hiviu, hleftNe, hcover,
       pLeft, hpLeft, F.pin_ne hleftNe, ?_⟩
     intro w
@@ -3457,7 +3499,7 @@ theorem ambient_hasWheelCenteredAt_of_replacement_cycle_contains_both_new
     have hiFresh : ¬F.NeedsFreshPin i := by
       intro hi
       have : (.inr ⟨i, hi⟩ : F.PreparedVertex) = .inl y := by
-        simpa [pin, hi] using hpinY'
+        simp [pin, hi] at hpinY'
       exact Sum.inr_ne_inl this
     have hpinBi : F.pin i = (.inl bi : F.PreparedVertex) := by
       simp [pin, hiFresh, bi]
@@ -3655,7 +3697,6 @@ theorem replacement_not_hasWheelCenteredAt_pin_of_other_indices
     have hd : (.inr d : F.PreparedVertex ⊕ Fin 2) ∈ rim.support.toFinset := by
       apply hneighborsSupport
       rw [SimpleGraph.mem_neighborFinset]
-      change R.Adj (.inl (F.pin i)) (.inr d)
       exact ahtDoublePinReplacement.adj_old_new_iff.mpr hcenterAmong
     simpa using hd
   have new_neighborSet_eq_other_pins (d : Fin 2) :
@@ -3943,7 +3984,7 @@ theorem fresh_boundary_index_ne_endpoints_of_pinPath_on_rim
           (F.prepared_adj_fresh_old (i := fi) (q := y)).mp
             (by simpa only [hs] using hadj)
         have hyqi : y = qi := Subtype.ext hy
-        simpa only [hs, hyqi]
+        simp only [hyqi]
       · exact (F.prepared_not_adj_fresh_fresh fi f
           (by simpa only [hs] using hadj)).elim
     have hsndMem : q.snd ∈ q.support :=
@@ -3968,8 +4009,8 @@ theorem ambient_hasWheelCenteredAt_of_fresh_boundary_support_transfer
       (.inl ⟨F.boundaryVertex i, F.boundary_mem_base i⟩ :
         F.PreparedVertex) ≠ F.pin j)
     {s : F.PreparedVertex ⊕ Fin 2}
-    (rim : F.replacementGraph.Walk s s) (hrim : rim.IsCycle)
-    (hcenterRim :
+    (rim : F.replacementGraph.Walk s s) (_hrim : rim.IsCycle)
+    (_hcenterRim :
       (.inl (.inl ⟨F.boundaryVertex i, F.boundary_mem_base i⟩) :
         F.PreparedVertex ⊕ Fin 2) ∉ rim.support)
     (hthree : 3 ≤
@@ -4268,7 +4309,7 @@ exterior neighbour forced by three-connectivity, and the second boundary
 vertex would otherwise be four distinct neighbours. -/
 theorem not_adj_boundary_of_needsFreshPin_of_degree_three
     (hthreeConnected : IsThreeConnected G)
-    (i j : Fin 3) (hij : i ≠ j) (hi : F.NeedsFreshPin i)
+    (i j : Fin 3) (_hij : i ≠ j) (hi : F.NeedsFreshPin i)
     (hdeg : G.degree (F.boundaryVertex i) = 3) :
     ¬G.Adj (F.boundaryVertex i) (F.boundaryVertex j) := by
   classical
@@ -4372,7 +4413,7 @@ theorem replacement_degree_fresh_boundary_le_ambient
       rcases hwClass with ⟨r, hrF, hwr, hir⟩ | hwi
     · rw [hzy, hwr] at hval
       have hyr : y = r := Subtype.ext (by simpa only [value] using hval)
-      simpa only [hzy, hwr, hyr]
+      simp only [hzy, hwr, hyr]
     · rw [hzy, hwi] at hval
       have hyx : y.1 ≠ x := by
         intro hyx
@@ -4695,7 +4736,6 @@ theorem replacementGraph_vertexThreeConnected
     exact Fintype.card_le_of_injective e e.injective
   have hcard : 4 ≤ Fintype.card (F.PreparedVertex ⊕ Fin 2) := by
     simp only [Fintype.card_sum, Fintype.card_fin]
-    change 4 ≤ Fintype.card F.BaseVertex + Fintype.card F.FreshPin + 2
     omega
   refine ⟨hcard, F.replacementGraph_connected hthree, ?_⟩
   intro x y hxy
@@ -4907,13 +4947,13 @@ theorem replacementGraph_almostWheelFree
   by_cases hnone : ∀ z : F.PreparedVertex ⊕ Fin 2,
       ¬HasWheelCenteredAt F.replacementGraph z
   · exact Or.inl hnone
-  · push_neg at hnone
+  · push Not at hnone
     obtain ⟨a, ha⟩ := hnone
     by_cases hone : ∀ z : F.PreparedVertex ⊕ Fin 2,
         HasWheelCenteredAt F.replacementGraph z → z = a
     · exact Or.inr (Or.inl ⟨a,
         F.replacement_center_degree_eq_three hthree halmost ha, hone⟩)
-    · push_neg at hone
+    · push Not at hone
       obtain ⟨b, hb, hba⟩ := hone
       refine Or.inr (Or.inr ⟨a, b,
         F.replacement_centers_adj_of_ne hthree halmost ha hb hba.symm,

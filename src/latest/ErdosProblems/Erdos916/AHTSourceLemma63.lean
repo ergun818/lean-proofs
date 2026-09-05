@@ -121,6 +121,7 @@ theorem hasWheelCenteredAt_of_common_path_through_extra
     ⟨s, t, d, hsR, htR, hdR, hst, hsd, htd⟩
   omega
 
+omit [DecidableEq V] in
 /-- Four displayed distinct neighbours give the degree lower bound used in
 the first paragraph of AHT Lemma 6.3. -/
 theorem four_le_degree_of_three_neighbors_and_extra
@@ -130,6 +131,7 @@ theorem four_le_degree_of_three_neighbors_and_extra
     (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z)
     (hdx : d ≠ x) (hdy : d ≠ y) (hdz : d ≠ z) :
     4 ≤ G.degree a := by
+  classical
   let S : Finset V := {x, y, z, d}
   have hSsub : S ⊆ G.neighborFinset a := by
     intro w hw
@@ -347,6 +349,7 @@ theorem aht63_exists_common_to_other_path_through_extra
       · exact Or.inr (by simpa [htb] using hwt)
 
 
+omit [DecidableRel G.Adj] [Fintype V] in
 lemma mem_dropUntil_or_mem_dropUntil {s t u v : V} (q : G.Walk s t)
     (hqu : u ∈ q.support) (hqv : v ∈ q.support) :
     v ∈ (q.dropUntil u hqu).support ∨ u ∈ (q.dropUntil v hqv).support := by
@@ -363,7 +366,7 @@ lemma mem_dropUntil_or_mem_dropUntil {s t u v : V} (q : G.Walk s t)
       omega
     · have heq : q.support.idxOf u + (q.support.idxOf v - q.support.idxOf u) =
           q.support.idxOf v := by omega
-      simpa [heq] using List.getElem_idxOf (l := q.support) hqv
+      simp [heq]
   · right
     rw [Walk.dropUntil_eq_drop, Walk.support_copy, Walk.drop_support_eq_support_drop_min]
     have hv_lt : q.support.idxOf v < q.support.length := List.idxOf_lt_length_of_mem hqv
@@ -375,8 +378,9 @@ lemma mem_dropUntil_or_mem_dropUntil {s t u v : V} (q : G.Walk s t)
       omega
     · have heq : q.support.idxOf v + (q.support.idxOf u - q.support.idxOf v) =
           q.support.idxOf u := by omega
-      simpa [heq] using List.getElem_idxOf (l := q.support) hqu
+      simp [heq]
 
+omit [DecidableRel G.Adj] [Fintype V] in
 lemma idx_le_of_mem_takeUntil {s t u x : V} (q : G.Walk s t)
     (hu : u ∈ q.support) (hx : x ∈ (q.takeUntil u hu).support) :
     q.support.idxOf x ≤ q.support.idxOf u := by
@@ -385,6 +389,7 @@ lemma idx_le_of_mem_takeUntil {s t u x : V} (q : G.Walk s t)
     List.mem_take_iff_idxOf_lt hxq] at hx
   omega
 
+omit [DecidableRel G.Adj] [Fintype V] in
 lemma idx_ge_of_mem_dropUntil {s t u x : V} (q : G.Walk s t) (hq : q.IsPath)
     (hu : u ∈ q.support) (hx : x ∈ (q.dropUntil u hu).support) :
     q.support.idxOf u ≤ q.support.idxOf x := by
@@ -399,8 +404,11 @@ lemma idx_ge_of_mem_dropUntil {s t u x : V} (q : G.Walk s t) (hq : q.IsPath)
     exact hq.support_nodup.idxOf_getElem _ (by omega)
   omega
 
-lemma eq_start_of_mem_dropUntil {s t u : V} (q : G.Walk s t) (hq : q.IsPath)
+omit [DecidableRel G.Adj] [Fintype V] in
+lemma eq_start_of_mem_dropUntil [Finite V] {s t u : V} (q : G.Walk s t) (hq : q.IsPath)
     (hu : u ∈ q.support) (hs : s ∈ (q.dropUntil u hu).support) : u = s := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hge := idx_ge_of_mem_dropUntil q hq hu hs
   have hidxStart : q.support.idxOf s = 0 := by
     calc
@@ -409,6 +417,7 @@ lemma eq_start_of_mem_dropUntil {s t u : V} (q : G.Walk s t) (hq : q.IsPath)
   have hidx : q.support.idxOf u = q.support.idxOf s := by omega
   exact (List.idxOf_inj hu).mp hidx
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 lemma isPath_append_of_inter_eq_endpoint {a b c : V}
     {p : G.Walk a b} {q : G.Walk b c} (hp : p.IsPath) (hq : q.IsPath)
     (hinter : ∀ x, x ∈ p.support → x ∈ q.support → x = b) :
@@ -423,7 +432,8 @@ lemma isPath_append_of_inter_eq_endpoint {a b c : V}
   rw [← q.cons_tail_support] at hqN
   exact (List.nodup_cons.mp hqN).1 hyq
 
-theorem closed_branch_path_through
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+theorem closed_branch_path_through [Finite V]
     {d b a y u v : V} (q : G.Walk d b) (hq : q.IsPath)
     (had : G.Adj d a) (hay : G.Adj a y) (hyb : G.Adj y b) (hdb : d ≠ b)
     (haq : a ∉ q.support) (hyq : y ∉ q.support)
@@ -431,6 +441,8 @@ theorem closed_branch_path_through
     (hu : u ∈ q.support ∨ u = a) (hv : v ∈ q.support ∨ v = a) :
     ∃ r : G.Walk u v, r.IsPath ∧ a ∈ r.support ∧ b ∈ r.support ∧
       ∀ w, w ∈ r.support → w ∈ q.support ∨ w = a ∨ w = y := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let m : G.Walk d b := (had.toWalk.concat hay).concat hyb
   have hm : m.IsPath := by
     have h1 : had.toWalk.IsPath := Walk.IsPath.of_adj had
@@ -459,7 +471,7 @@ theorem closed_branch_path_through
       subst u
       have hidxEnd : q.support.idxOf b = q.length := by
         have hlast : q.support[q.length] = b := by
-          simpa [Walk.getVert_eq_support_getElem] using q.getVert_length
+          simp
         simpa [hlast] using hq.support_nodup.idxOf_getElem q.length (by simp)
       have hvlt : q.support.idxOf v < q.support.length := List.idxOf_lt_length_of_mem hv
       rw [q.length_support] at hvlt
@@ -574,11 +586,15 @@ theorem closed_branch_path_through
     · exact toA hu huv
   · rcases hv with hv | hva
     · obtain ⟨r, hr, ha, hb, hsub⟩ := toA hv huv.symm
-      exact ⟨r.reverse, hr.reverse, by simpa [Walk.support_reverse] using ha,
-        by simpa [Walk.support_reverse] using hb, by intro w hw; apply hsub w; simpa [Walk.support_reverse] using hw⟩
+      exact ⟨r.reverse, hr.reverse, by simp [Walk.support_reverse],
+        by simpa [Walk.support_reverse] using hb, by
+          intro w hw
+          apply hsub w
+          simpa [Walk.support_reverse] using hw⟩
     · exact False.elim (huv hva.symm)
 
-theorem two_arm_path_through_hubs
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+theorem two_arm_path_through_hubs [Finite V]
     {s b d a y u v : V} (p : G.Walk s b) (hp : p.IsPath)
     (hdp : d ∈ p.support) (hds : d ≠ s) (hdb : d ≠ b) (hsb : s ≠ b)
     (had : G.Adj d a) (has : G.Adj a s) (hay : G.Adj a y)
@@ -589,6 +605,8 @@ theorem two_arm_path_through_hubs
     (hv : v ∈ p.support ∨ v = a ∨ v = y) :
     ∃ r : G.Walk u v, r.IsPath ∧ a ∈ r.support ∧ b ∈ r.support ∧
       ∀ w, w ∈ r.support → w ∈ p.support ∨ w = a ∨ w = y := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let P : G.Walk d s := (p.takeUntil d hdp).reverse
   let Q : G.Walk d b := p.dropUntil d hdp
   have hP : P.IsPath := (hp.takeUntil hdp).reverse
@@ -750,8 +768,8 @@ theorem two_arm_path_through_hubs
       have h1 := Walk.IsPath.of_adj hbs
       have hba : b ≠ a := by intro h; apply hap; simpa [h] using p.end_mem_support
       have h2 := h1.concat (by simp [hba.symm, has.ne]) has.symm
-      have hyb : y ≠ b := by intro h; apply hyp; simpa [h] using p.end_mem_support
-      have hys : y ≠ s := by intro h; apply hyp; simpa [h] using p.start_mem_support
+      have hyb : y ≠ b := by intro h; apply hyp; simp [h]
+      have hys : y ≠ s := by intro h; apply hyp; simp [h]
       exact h2.concat (by simp [hyb, hys, hay.ne.symm]) hay
     have hinter : ∀ w, w ∈ l.support → w ∈ m.support → w = b := by
       intro w hwl hwm
@@ -854,8 +872,8 @@ theorem two_arm_path_through_hubs
       have hba : b ≠ a := by intro h; apply hap; simpa [h] using p.end_mem_support
       have h2 := h1.concat (by simp [hba, hsb.symm]) hbs.symm
       have hya : y ≠ a := hay.ne.symm
-      have hys : y ≠ s := by intro h; apply hyp; simpa [h] using p.start_mem_support
-      have hyb : y ≠ b := by intro h; apply hyp; simpa [h] using p.end_mem_support
+      have hys : y ≠ s := by intro h; apply hyp; simp [h]
+      have hyb : y ≠ b := by intro h; apply hyp; simp [h]
       exact h2.concat (by simp [hya, hys, hyb]) hby
     exact ⟨r, hr, by simp [r], by simp [r], by
       intro w hw
@@ -921,6 +939,7 @@ theorem two_arm_path_through_hubs
     · subst v
       exact False.elim (huv rfl)
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- If a target-minimal path and a second path have the same endpoints, and
 the second path lies in the target set, then the first path and the reverse
 of the second path are internally disjoint. -/
@@ -1074,8 +1093,8 @@ theorem aht63_hasWheelCenteredAt_of_external_neighbor
       simpa [h, U] using hv
     have hcard : 3 ≤ fG.support.toFinset.card := by
       exact Finset.two_lt_card_iff.mpr
-        ⟨u.1, v.1, d, by simpa using fG.start_mem_support,
-          by simpa using fG.end_mem_support, by simpa using hdfG,
+        ⟨u.1, v.1, d, by simp,
+          by simp, by simpa using hdfG,
           fun h ↦ huv (Subtype.ext h), huD, hvD⟩
     have heq : fG.support.toFinset.card = fG.support.length :=
       List.toFinset_card_of_nodup hfG.support_nodup

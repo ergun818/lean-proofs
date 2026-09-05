@@ -31,11 +31,13 @@ def Minimal23Circuit (G : SimpleGraph V) : Prop :=
     ∀ S : Finset V, 2 ≤ S.card → S ≠ Finset.univ →
       (G.edgeSet ∩ (S.sym2 : Set (Sym2 V))).ncard + 3 ≤ 2 * S.card
 
+omit [DecidableEq V] in
 /-- The instance-independent edge-set formulation is exactly the shared
 `Is23Circuit` API from `CoreRigidity`. -/
 theorem minimal23Circuit_iff_is23Circuit
     (G : SimpleGraph V) [DecidableRel G.Adj] :
     Minimal23Circuit G ↔ Is23Circuit G := by
+  classical
   have hcount : Has23CircuitCount G ↔
       G.edgeSet.ncard + 2 = 2 * Fintype.card V := by
     rw [Has23CircuitCount, Set.ncard_eq_toFinset_card']
@@ -126,6 +128,7 @@ theorem sparse_proper_subset_of_minimal_dense
     rcases hcard23 with hcard | hcard <;>
       simp [hcard] at hedge ⊢ <;> omega
 
+omit [DecidableEq V] in
 /-- A graph with at least `2n-2` edges contains, on a vertex subset, a
 spanning `(2,3)`-circuit subgraph.  The subgraph relation is recorded
 explicitly so that a wheel in the circuit transports to the original graph.
@@ -165,7 +168,7 @@ theorem exists_minimal23Circuit_subgraph_with_card
   let : DecidableRel H.Adj := Classical.decRel _
   have hHedgeFinset : H.edgeFinset = E := by
     apply Finset.coe_injective
-    simpa [hHedgeSet]
+    simp [hHedgeSet]
   have hHJ : H ≤ J := by
     rw [← SimpleGraph.edgeSet_subset_edgeSet, hHedgeSet,
       ← SimpleGraph.coe_edgeFinset]
@@ -235,6 +238,7 @@ theorem exists_minimal23Circuit_subgraph_with_card
     rw [hsetEq, Set.ncard_coe_finset]
     omega
 
+omit [DecidableEq V] in
 /-- Compatibility wrapper for callers that do not need the cardinality of the
 extracted circuit. -/
 theorem exists_minimal23Circuit_subgraph
@@ -242,10 +246,12 @@ theorem exists_minimal23Circuit_subgraph
     (hdense : 2 * Fintype.card V ≤ G.edgeFinset.card + 2) :
     ∃ (S : Finset V) (H : SimpleGraph S),
       H ≤ G.induce (S : Set V) ∧ Minimal23Circuit H := by
+  classical
   obtain ⟨S, H, -, hHG, hH⟩ :=
     exists_minimal23Circuit_subgraph_with_card G hcard hdense
   exact ⟨S, H, hHG, hH⟩
 
+omit [DecidableEq V] in
 /-- Shared-API form of `exists_minimal23Circuit_subgraph`.  The adjacency
 decider is recorded explicitly because it is data required by `Is23Circuit`,
 while the underlying circuit property is independent of that choice. -/
@@ -260,9 +266,10 @@ theorem exists_is23Circuit_subgraph_with_card
   rcases exists_minimal23Circuit_subgraph_with_card G hcard hdense with
     ⟨S, H, hS4, hHG, hHcircuit⟩
   refine ⟨S, H, hS4, hHG, ?_⟩
-  exact (@minimal23Circuit_iff_is23Circuit S _ _ H
+  exact (@minimal23Circuit_iff_is23Circuit S _ H
     (Classical.decRel H.Adj)).mp hHcircuit
 
+omit [DecidableEq V] in
 /-- Compatibility wrapper for the shared circuit API. -/
 theorem exists_is23Circuit_subgraph
     (hcard : 4 ≤ Fintype.card V)
@@ -270,6 +277,7 @@ theorem exists_is23Circuit_subgraph
     ∃ (S : Finset V) (H : SimpleGraph S),
       H ≤ G.induce (S : Set V) ∧
         @Is23Circuit S _ H (Classical.decRel H.Adj) := by
+  classical
   obtain ⟨S, H, -, hHG, hH⟩ :=
     exists_is23Circuit_subgraph_with_card G hcard hdense
   exact ⟨S, H, hHG, hH⟩

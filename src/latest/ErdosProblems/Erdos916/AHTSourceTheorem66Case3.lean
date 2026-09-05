@@ -25,7 +25,7 @@ displayed concrete replacement and gate hypotheses.
 
 namespace Erdos916
 
-open SimpleGraph
+open _root_.Erdos916.SimpleGraph
 
 universe u
 
@@ -48,14 +48,14 @@ private theorem cross_pairs_give_pair_away
   have hpa : p ≠ a := hap.1.symm
   have hpb : p ≠ b := by
     intro h
-    exact hd (a := p) (by simp) (by simpa [h])
+    exact hd (a := p) (by simp) (by simp [h])
   have hqa : q ≠ a := by
     intro h
-    exact hd (a := q) (by simpa [h]) (by simp)
+    exact hd (a := q) (by simp [h]) (by simp)
   have hqb : q ≠ b := hbq.1.symm
   have hpq : p ≠ q := by
     intro h
-    exact hd (a := p) (by simp) (by simpa [h])
+    exact hd (a := p) (by simp) (by simp [h])
   have htwins : AreFalseTwins G p q := by
     refine ⟨hpq, ?_⟩
     exact hap.2.symm.trans (hab.2.trans hbq.2)
@@ -170,13 +170,16 @@ theorem ahtDoublePinReplacement_exists_old_twinPair
     · fin_cases j <;> simp at hq
   · fin_cases i <;> simp at hp
 
+omit [DecidableEq V] [Fintype V] in
 /-- Equality of neighbourhoods for an old pair in the replacement restricts
 to equality of neighbourhoods in the prepared torso. -/
-theorem ahtDoublePinReplacement_old_falseTwins
-    {H : SimpleGraph V} [DecidableRel H.Adj] {a b c p q : V}
+theorem ahtDoublePinReplacement_old_falseTwins [Finite V]
+    {H : SimpleGraph V} {a b c p q : V}
     (h : AreFalseTwins (ahtDoublePinReplacement H a b c)
       (.inl p) (.inl q)) :
     AreFalseTwins H p q := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   refine ⟨fun hpq ↦ h.1 (congrArg Sum.inl hpq), ?_⟩
   ext r
   have hadj := h.adj_iff (.inl r)
@@ -189,7 +192,7 @@ Its left side is `X ∪ {v}` and its right side is the complement of `X`
 together with the two gates. -/
 def ahtTwoVertexGateSeparation
     (G : SimpleGraph V) (X : Finset V) (x v : V)
-    (hx : x ∈ X)
+    (_hx : x ∈ X)
     (hgate : ∀ ⦃p q : V⦄, p ∈ X → p ≠ x →
       q ∉ X → q ≠ v → ¬G.Adj p q) :
     AHTSeparation G where
@@ -219,6 +222,7 @@ def ahtTwoVertexGateSeparation
       exact hqL (by simp)
     exact hgate hpX hpx hqX hqv
 
+omit [DecidableRel G.Adj] in
 /-- The separator of the gate separation is exactly `{x,v}`. -/
 theorem ahtTwoVertexGateSeparation_separator
     (X : Finset V) {x v : V} (hx : x ∈ X) (hv : v ∉ X)
@@ -234,6 +238,7 @@ theorem ahtTwoVertexGateSeparation_separator
     simp [AHTSeparation.separator, ahtTwoVertexGateSeparation, hv]
   · simp [AHTSeparation.separator, ahtTwoVertexGateSeparation, hzx, hzv]
 
+omit [DecidableRel G.Adj] in
 /-- If `X` has a vertex besides `x` and the other side has a vertex besides
 `v`, the gate separation is proper. -/
 theorem ahtTwoVertexGateSeparation_proper
@@ -253,6 +258,7 @@ theorem ahtTwoVertexGateSeparation_proper
     · exact Finset.mem_union_left _ (by simp [hy])
     · simp [ahtTwoVertexGateSeparation, hy, hyv]
 
+omit [DecidableRel G.Adj] in
 /-- The exceptional boundary-pair branch of AHT claim (7): in a
 three-connected replacement, a fragment separated from a surviving boundary
 vertex by the two gates `x,v` has no vertex other than `x`. -/
@@ -264,6 +270,7 @@ theorem card_eq_one_of_threeConnected_of_twoVertexGate
     (hgate : ∀ ⦃p q : V⦄, p ∈ X → p ≠ x →
       q ∉ X → q ≠ v → ¬G.Adj p q) :
     X.card = 1 := by
+  classical
   have hall : ∀ q ∈ X, q = x := by
     intro q hq
     by_contra hqx
@@ -278,7 +285,7 @@ theorem card_eq_one_of_threeConnected_of_twoVertexGate
   have hX : X = {x} := by
     apply Finset.Subset.antisymm
     · intro q hq
-      simpa [hall q hq]
+      simp [hall q hq]
     · intro q hq
       have hqx : q = x := by simpa only [Finset.mem_singleton] using hq
       subst q

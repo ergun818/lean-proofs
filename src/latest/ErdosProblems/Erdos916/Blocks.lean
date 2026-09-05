@@ -182,7 +182,7 @@ theorem verts_connected (hG : G.Connected) {c : V}
 
 /-- Vertices on the component side retain their ambient degree in the induced
 end piece. -/
-theorem degree_induce_verts [Fintype V] [DecidableEq V]
+theorem degree_induce_verts [Fintype V]
     [DecidableRel G.Adj] {c v : V}
     (K : (deleteVertex G c).ConnectedComponent) (hv : v ∈ side c K) :
     (G.induce (verts c K)).degree ⟨v, Set.mem_insert_iff.mpr (Or.inr hv)⟩ =

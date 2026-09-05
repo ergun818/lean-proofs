@@ -40,9 +40,10 @@ private lemma mem_right_iff_mem_strictRight_or_separator
   tauto
 
 private lemma mem_strictLeft_or_separator_or_strictRight
-    {H : SimpleGraph V} [DecidableRel H.Adj]
+    {H : SimpleGraph V}
     (s : AHTSeparation H) (v : V) :
     v ∈ strictLeft s ∨ v ∈ s.separator ∨ v ∈ strictRight s := by
+  classical
   have hv := s.mem_left_or_mem_right v
   rcases hv with hv | hv
   · rw [mem_left_iff_mem_strictLeft_or_separator] at hv
@@ -68,10 +69,12 @@ private abbrev middle {a x : V} (C : CriticalCut G a x) : Finset V :=
 private abbrev right {a x : V} (C : CriticalCut G a x) : Finset V :=
   strictRight C.separation
 
+omit [DecidableRel G.Adj] in
 private theorem middle_card_lt_three {a x : V} (C : CriticalCut G a x) :
     C.middle.card < 3 := by
   exact C.order_lt_three
 
+omit [DecidableRel G.Adj] in
 private theorem pairwise_disjoint {a x : V} (C : CriticalCut G a x) :
     Set.PairwiseDisjoint (Set.univ : Set (Fin 3)) ![C.left, C.middle, C.right] := by
   intro i _ j _ hij
@@ -79,8 +82,10 @@ private theorem pairwise_disjoint {a x : V} (C : CriticalCut G a x) :
     simp_all [left, middle, right, strictLeft, strictRight,
       AHTSeparation.separator, Finset.disjoint_left]
 
+omit [DecidableRel G.Adj] in
 private theorem cover {a x : V} (C : CriticalCut G a x) :
     C.left ∪ C.middle ∪ C.right = Finset.univ := by
+  classical
   ext v
   simp only [Finset.mem_union, Finset.mem_univ, iff_true]
   rcases mem_strictLeft_or_separator_or_strictRight C.separation v with h | h | h
@@ -88,13 +93,17 @@ private theorem cover {a x : V} (C : CriticalCut G a x) :
   · exact Or.inl (Or.inr h)
   · exact Or.inr h
 
+omit [DecidableRel G.Adj] in
 private theorem mem_trichotomy {a x : V} (C : CriticalCut G a x) (v : V) :
     v ∈ C.left ∨ v ∈ C.middle ∨ v ∈ C.right := by
+  classical
   exact mem_strictLeft_or_separator_or_strictRight C.separation v
 
+omit [DecidableRel G.Adj] in
 private theorem cross_eq {a x u v : V} (C : CriticalCut G a x)
     (hu : u ∈ C.left) (hv : v ∈ C.right) (huv : G.Adj u v) :
     u = a ∧ v = x := by
+  classical
   have hnot : ¬(eraseEdge G a x).Adj u v := by
     exact C.separation.not_adj
       (Finset.mem_sdiff.mp hu).1 (Finset.mem_sdiff.mp hu).2
@@ -108,11 +117,13 @@ private theorem cross_eq {a x u v : V} (C : CriticalCut G a x)
     exact (Finset.mem_sdiff.mp C.x_mem).2
       (hp.1 ▸ (Finset.mem_sdiff.mp hu).1)
 
+omit [DecidableRel G.Adj] in
 private theorem walk_stays_left_after_delete_a
     {a x : V} (C : CriticalCut G a x)
     {z w : {v : V // v ∉ C.middle ∪ {a}}}
     (p : (G.induce {v : V | v ∉ C.middle ∪ {a}}).Walk z w)
     (hz : z.1 ∈ C.left) : w.1 ∈ C.left := by
+  classical
   induction p with
   | nil => simpa only using hz
   | @cons z y w hzy p ih =>
@@ -122,7 +133,7 @@ private theorem walk_stays_left_after_delete_a
         exact y.property (Finset.mem_union_left _ hy)
       have hya : y.1 ≠ a := by
         intro hya
-        exact y.property (Finset.mem_union_right _ (by simpa [hya]))
+        exact y.property (Finset.mem_union_right _ (by simp [hya]))
       have hyLeft : y.1 ∈ C.left := by
         rcases C.mem_trichotomy y.1 with hy | hy | hy
         · exact hy
@@ -130,7 +141,7 @@ private theorem walk_stays_left_after_delete_a
         · have hcross := C.cross_eq hz hy hzyG
           have hza : z.1 = a := hcross.1
           exact (z.property
-            (Finset.mem_union_right _ (by simpa [hza]))).elim
+            (Finset.mem_union_right _ (by simp [hza]))).elim
       exact ih hyLeft
 
 private theorem middle_card_eq_two
@@ -196,16 +207,18 @@ private def swapSeparation {H : SimpleGraph V} (s : AHTSeparation H) :
     intro u v huL huR hvR hvL huv
     exact s.not_adj hvR hvL huL huR huv.symm
 
+omit [DecidableRel G.Adj] in
 private theorem exists_criticalCut
     (hmin : IsEdgeMinimallyThreeConnected G) {a x : V}
     (hax : G.Adj a x) : Nonempty (CriticalCut G a x) := by
+  classical
   have hnot := hmin.eraseEdge_not_isThreeConnected hax
   have hnotall :
       ¬ ∀ s : AHTSeparation (eraseEdge G a x),
           s.Proper → 3 ≤ s.order := by
     intro hall
     exact hnot ⟨hmin.isThreeConnected.1, hall⟩
-  push_neg at hnotall
+  push Not at hnotall
   obtain ⟨s, hsProper, hsOrder⟩ := hnotall
   have hcross :
       (a ∈ strictLeft s ∧ x ∈ strictRight s) ∨
@@ -258,12 +271,14 @@ private theorem exists_criticalCut
     · simpa [t, swapSeparation, AHTSeparation.order,
         AHTSeparation.separator, Finset.inter_comm] using hsOrder
 
+omit [DecidableRel G.Adj] in
 private theorem no_closed_side_after_small_delete
     (hthree : IsThreeConnected G) (Q R : Finset V)
     (hQ : Q.card < 3) {z w : V}
     (hzQ : z ∉ Q) (hwQ : w ∉ Q) (hzR : z ∈ R) (hwR : w ∉ R)
     (hclosed : ∀ ⦃u v : V⦄, u ∈ R → u ∉ Q → v ∉ Q →
       G.Adj u v → v ∈ R) : False := by
+  classical
   have hreach :
       (G.induce {v : V | v ∉ Q}).Reachable ⟨z, hzQ⟩ ⟨w, hwQ⟩ :=
     hthree.induce_compl_preconnected Q hQ _ _
@@ -280,7 +295,7 @@ private theorem no_closed_side_after_small_delete
   exact hwR (hstay p hzR)
 
 private theorem consecutive_cut_decrease
-    {x a y : V} (hxa : G.Adj x a) (hay : G.Adj a y) (hxy : x ≠ y)
+    {x a y : V} (hxa : G.Adj x a) (_hay : G.Adj a y) (hxy : x ≠ y)
     (hthree : IsThreeConnected G) (hdegx : 4 ≤ G.degree x)
     (hdega : 4 ≤ G.degree a)
     (C : CriticalCut G x a) (D : CriticalCut G a y) :
@@ -377,7 +392,7 @@ private theorem consecutive_cut_decrease
     have hvU : v ∉ U := fun hv ↦ hvQ (Finset.mem_union_left _ hv)
     have hua : u ≠ a := by
       intro h
-      exact huQ (Finset.mem_union_right _ (by simpa [h]))
+      exact huQ (Finset.mem_union_right _ (by simp [h]))
     have hvC : v ∈ C.right := by
       rcases C.mem_trichotomy v with hv | hv | hv
       · have hcross := C.cross_eq hv huC huv.symm

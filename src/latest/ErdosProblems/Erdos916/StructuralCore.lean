@@ -28,6 +28,7 @@ namespace K23Reduction
 def Avoids (R : K23Reduction G) (x₀ : V) : Prop :=
   x₀ ∉ Set.range R.copy
 
+omit [DecidableEq V] in
 theorem avoids_iff (R : K23Reduction G) (x₀ : V) :
     R.Avoids x₀ ↔ ∀ z : Fin 2 ⊕ Fin 3, R.copy z ≠ x₀ := by
   simp [Avoids]
@@ -42,6 +43,7 @@ def liftInduce (S : Set V) (R : K23Reduction (G.induce S))
   degree_left := hleft
   degree_right := hright
 
+omit [DecidableEq V] in
 @[simp] theorem liftInduce_copy (S : Set V) (R : K23Reduction (G.induce S))
     (hleft : ∀ i : Fin 2, G.degree (R.copy (.inl i)).1 = 3)
     (hright : ∀ j : Fin 2,
@@ -73,6 +75,7 @@ namespace ComponentEndBlock
 
 variable {c x₀ : V} (K : (deleteVertex G c).ConnectedComponent)
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private theorem mem_side_of_mem_verts_ne_cut {v : V}
     (hv : v ∈ verts c K) (hvc : v ≠ c) : v ∈ side c K := by
   simpa [verts, hvc] using hv
@@ -98,12 +101,14 @@ def liftReduction
     rw [← degree_induce_verts (G := G) K (hside (.inr (firstTwo j)))]
     exact R.degree_right j
 
+omit [DecidableEq V] in
 @[simp] theorem liftReduction_copy
     (R : K23Reduction (G.induce (verts c K)))
     (havoid : R.Avoids ⟨c, by simp [verts]⟩)
     (z : Fin 2 ⊕ Fin 3) :
     (liftReduction K R havoid).copy z = (R.copy z).1 := rfl
 
+omit [DecidableEq V] in
 /-- If the chosen component side avoids `x₀`, then a lifted certificate
 which avoids the cut vertex also avoids `x₀`. -/
 theorem liftReduction_avoids
@@ -171,7 +176,7 @@ theorem connected_structural_of_vertexTwoConnectedCore
             exact heq
           have hvside : v.1 ∈ ComponentEndBlock.side c K := by
             have hvverts : v.1 ∈ ComponentEndBlock.verts c K := by
-              simpa [S] using v.2
+              simp [S]
             simpa [ComponentEndBlock.verts, hvne] using hvverts
           have hvx₀ : v.1 ≠ x₀ := by
             rcases havoidSide with rfl | hx₀side
@@ -219,15 +224,19 @@ noncomputable local instance componentFintype
 noncomputable local instance componentAdjDecidable
     (C : G.ConnectedComponent) : DecidableRel C.toSimpleGraph.Adj := Classical.decRel _
 
+omit [DecidableEq V] in
 /-- Passing to a connected component preserves every vertex degree. -/
 theorem degree_toSimpleGraph (C : G.ConnectedComponent) (v : C) :
     C.toSimpleGraph.degree v = G.degree v.1 := by
+  classical
   exact degree_connectedComponent G C v
 
+omit [DecidableEq V] in
 /-- A component of a graph of minimum degree at least three has at least four
 vertices. -/
 theorem four_le_card (C : G.ConnectedComponent)
     (hdeg : ∀ v : V, 3 ≤ G.degree v) : 4 ≤ Fintype.card C := by
+  classical
   obtain ⟨v, hv⟩ := C.nonempty_supp
   let v' : C := ⟨v, hv⟩
   have hthree : 3 ≤ C.toSimpleGraph.degree v' := by

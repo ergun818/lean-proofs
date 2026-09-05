@@ -30,12 +30,14 @@ def connectedComponentNeighborEquiv (C : G.ConnectedComponent) (u : C) :
   left_inv w := by apply Subtype.ext; apply Subtype.ext; rfl
   right_inv w := by apply Subtype.ext; rfl
 
+omit [DecidableEq V] in
 theorem degree_connectedComponent (C : G.ConnectedComponent) (u : C) :
     C.toSimpleGraph.degree u = G.degree u.1 := by
   rw [← C.toSimpleGraph.card_neighborSet_eq_degree,
     ← G.card_neighborSet_eq_degree]
   exact Fintype.card_congr (connectedComponentNeighborEquiv G C u)
 
+omit [DecidableEq V] in
 /-- A nonempty graph at density `2n-2` has a connected component at the same density. -/
 theorem exists_dense_connectedComponent
     (hV : Nonempty V)
@@ -61,6 +63,7 @@ theorem exists_dense_connectedComponent
     le_trans (Nat.add_le_add_left hthree _) hsum
   omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- In a non-preconnected graph, every connected component is a proper vertex subset. -/
 theorem connectedComponent_card_lt_of_not_preconnected
     (hG : ¬G.Preconnected) (C : G.ConnectedComponent) :
