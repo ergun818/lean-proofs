@@ -88,13 +88,13 @@ theorem favoriteSites_eq_erdos1165_favoriteSites
     Erdos1165.mem_favoriteSites_iff_forall]
   simp only [localTime_eq_erdos1165_localTime]
 
+open Erdos1165.HLOZStructuralPastAdditiveRecurrence in
 /-- The completed Problem 1165 source construction gives the upper half of
 the planar HLOZ theorem without any additional hypothesis. -/
 theorem erdos1165_ae_eventually_favoriteCount_le_three :
     ∀ᵐ s ∂Erdos1165.simpleRandomWalk,
       ∀ᶠ n : ℕ in atTop, Erdos1165.favoriteCount s n ≤ 3 := by
-  apply
-    Erdos1165.HLOZStructuralPastAdditiveRecurrence.simpleRandomWalk_ae_eventually_favoriteCount_le_three_of_lowerDeviation
+  apply simpleRandomWalk_ae_eventually_favoriteCount_le_three_of_lowerDeviation
   apply
     Erdos1165.HLOZDirectSourceFinalAssembly.hasPlanarMaximumLowerDeviation_of_asymmetricPairSource
   intro delta _hdelta
