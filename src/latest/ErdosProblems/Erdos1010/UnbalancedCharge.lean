@@ -30,7 +30,8 @@ lemma nonstar_charge_add_s2_of_left_max (HA : SimpleGraph A) (HB : SimpleGraph B
     (hr : (M.card : ℤ) + s ^ 2 + 2 ≤ r)
     (hq : HA.edgeFinset.card + (HB.edgeFinset.card : ℤ) ≤ r + M.card + s ^ 2 - 1)
     (hcapA : ∀ a, (HA.degree a : ℤ) + leftDegree M a ≤ r + s)
-    (hcapAB : ∀ a b, (HA.degree a : ℤ) + leftDegree M a + HB.degree b + rightDegree M b ≤ 2 * r - 1) :
+    (hcapAB : ∀ a b,
+      (HA.degree a : ℤ) + leftDegree M a + HB.degree b + rightDegree M b ≤ 2 * r - 1) :
     cutCharge HA HB M + s * (HA.edgeFinset.card + (HB.edgeFinset.card : ℤ)) ≤
       r * (M.card + s ^ 2) := by
   let q : ℤ := HA.edgeFinset.card + (HB.edgeFinset.card : ℤ)
@@ -102,7 +103,8 @@ theorem nonstar_charge_add_s2 (HA : SimpleGraph A) (HB : SimpleGraph B)
     (hq : HA.edgeFinset.card + (HB.edgeFinset.card : ℤ) ≤ r + M.card + s ^ 2 - 1)
     (hcapA : ∀ a, (HA.degree a : ℤ) + leftDegree M a ≤ r + s)
     (hcapB : ∀ b, (HB.degree b : ℤ) + rightDegree M b ≤ r + s)
-    (hcapAB : ∀ a b, (HA.degree a : ℤ) + leftDegree M a + HB.degree b + rightDegree M b ≤ 2 * r - 1) :
+    (hcapAB : ∀ a b,
+      (HA.degree a : ℤ) + leftDegree M a + HB.degree b + rightDegree M b ≤ 2 * r - 1) :
     cutCharge HA HB M + s * (HA.edgeFinset.card + (HB.edgeFinset.card : ℤ)) ≤
       r * (M.card + s ^ 2) := by
   obtain ⟨k, hk, hA, hB, hmax⟩ := exists_max_degree M hM
@@ -153,7 +155,8 @@ lemma unbalanced_charge_star_left (HA : SimpleGraph A) (HB : SimpleGraph B)
     (hcapB : ∀ b, (HB.degree b : ℤ) + rightDegree M b ≤ r - s - 1) :
     unbalancedCharge HA HB M s ≤ r * (M.card + s ^ 2) := by
   let q : ℤ := HA.edgeFinset.card + (HB.edgeFinset.card : ℤ)
-  have hp : (HA.degree u : ℤ) ≤ HA.edgeFinset.card := by exact_mod_cast HA.degree_le_card_edgeFinset u
+  have hp : (HA.degree u : ℤ) ≤ HA.edgeFinset.card := by
+    exact_mod_cast HA.degree_le_card_edgeFinset u
   have hp0 : (0 : ℤ) ≤ HA.degree u := Nat.cast_nonneg _
   have hc1 := cutCharge_star_le_edges_pairs HA HB M u hu
   have hc2 := cutCharge_star_le_twice_edges HA HB M u hu

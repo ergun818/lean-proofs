@@ -10,6 +10,7 @@ open Bipartite
 
 variable {A B : Type*} [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B]
 
+omit [Fintype A] [Fintype B] in
 lemma asymmetric_pair_rigidity (M : Finset (A × B)) (k : ℤ) (U : Finset A) (Z : Finset B)
     (hU : U.card = 2) (hZ : Z.card = 2) (hD : (M.card : ℤ) = 2 * k)
     (hUp : k + 2 < ∑ a ∈ U, (leftDegree M a : ℤ))
@@ -28,7 +29,9 @@ lemma asymmetric_pair_rigidity (M : Finset (A × B)) (k : ℤ) (U : Finset A) (Z
       (M.card : ℤ) + (U.card : ℤ) * Z.card := by rw [hU, hZ]; norm_num; omega
   exact_mod_cast heq
 
-lemma asymmetric_left_pair_unique (M : Finset (A × B)) (k : ℤ) (U : Finset A) (Z : Finset B)
+omit [Fintype A] [Fintype B] in
+lemma asymmetric_left_pair_unique [Finite B] (M : Finset (A × B)) (k : ℤ)
+    (U : Finset A) (Z : Finset B)
     (hU : U.card = 2) (hZ : Z.card = 2) (hD : (M.card : ℤ) = 2 * k)
     (hA : ∀ a, (leftDegree M a : ℤ) ≤ k)
     (hUp : k + 2 < ∑ a ∈ U, (leftDegree M a : ℤ))
@@ -66,7 +69,8 @@ lemma asymmetric_pair_bound_large (M : Finset (A × B)) (k : ℤ) (hk : 4 ≤ k)
   by_cases hzB : pairExcess univ (fun b ↦ (rightDegree M b : ℤ)) k = 0
   · rw [hzB, add_zero]
     exact hmono.trans hpa
-  obtain ⟨U, hUm, hUp⟩ := exists_positive_pair_of_ne_zero univ (fun a ↦ (leftDegree M a : ℤ)) (k + 2) hzA
+  obtain ⟨U, hUm, hUp⟩ :=
+    exists_positive_pair_of_ne_zero univ (fun a ↦ (leftDegree M a : ℤ)) (k + 2) hzA
   obtain ⟨Z, hZm, hZp⟩ := exists_positive_pair_of_ne_zero univ (fun b ↦ (rightDegree M b : ℤ)) k hzB
   have hU := (mem_powersetCard.mp hUm).2
   have hZ := (mem_powersetCard.mp hZm).2

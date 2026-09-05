@@ -24,47 +24,59 @@ def eraseLeft (M : Finset (A × B)) (a : A) : Finset (A × B) :=
 def transpose (M : Finset (A × B)) : Finset (B × A) :=
   M.map (Equiv.prodComm A B).toEmbedding
 
+omit [DecidableEq A] [DecidableEq B] in
 lemma card_transpose (M : Finset (A × B)) : (transpose M).card = M.card := by
   simp [transpose]
 
+omit [DecidableEq A] in
 lemma leftDegree_transpose (M : Finset (A × B)) (b : B) :
     leftDegree (transpose M) b = rightDegree M b := by
   simp [leftDegree, rightDegree, transpose, filter_map, Function.comp_def]
   rfl
 
+omit [DecidableEq B] in
 lemma rightDegree_transpose (M : Finset (A × B)) (a : A) :
     rightDegree (transpose M) a = leftDegree M a := by
   simp [leftDegree, rightDegree, transpose, filter_map, Function.comp_def]
   rfl
 
+omit [DecidableEq B] in
 lemma leftDegree_le_card (M : Finset (A × B)) (a : A) : leftDegree M a ≤ M.card :=
   card_le_card (filter_subset _ _)
 
+omit [DecidableEq A] in
 lemma rightDegree_le_card (M : Finset (A × B)) (b : B) : rightDegree M b ≤ M.card :=
   card_le_card (filter_subset _ _)
 
+omit [DecidableEq B] in
 lemma sum_leftDegree (M : Finset (A × B)) (s : Finset A) :
     (∑ a ∈ s, leftDegree M a) = (M.filter fun e ↦ e.1 ∈ s).card :=
   sum_card_fiberwise_eq_card_filter M s Prod.fst
 
+omit [DecidableEq A] in
 lemma sum_rightDegree (M : Finset (A × B)) (s : Finset B) :
     (∑ b ∈ s, rightDegree M b) = (M.filter fun e ↦ e.2 ∈ s).card :=
   sum_card_fiberwise_eq_card_filter M s Prod.snd
 
+omit [DecidableEq B] in
 lemma sum_leftDegree_univ [Fintype A] (M : Finset (A × B)) :
     ∑ a, leftDegree M a = M.card := by simp [sum_leftDegree]
 
+omit [DecidableEq A] in
 lemma sum_rightDegree_univ [Fintype B] (M : Finset (A × B)) :
     ∑ b, rightDegree M b = M.card := by simp [sum_rightDegree]
 
+omit [DecidableEq B] in
 lemma leftDegree_add_card_eraseLeft (M : Finset (A × B)) (a : A) :
     leftDegree M a + (eraseLeft M a).card = M.card :=
   card_filter_add_card_filter_not _
 
+omit [DecidableEq B] in
 lemma leftDegree_eraseLeft_self (M : Finset (A × B)) (a : A) :
     leftDegree (eraseLeft M a) a = 0 := by
   simp [leftDegree, eraseLeft, filter_filter]
 
+omit [DecidableEq B] in
 lemma leftDegree_eraseLeft_of_ne (M : Finset (A × B)) {a u : A} (h : a ≠ u) :
     leftDegree (eraseLeft M u) a = leftDegree M a := by
   unfold leftDegree eraseLeft
@@ -116,12 +128,14 @@ lemma degree_sums_le_card_add_product (M : Finset (A × B)) (s : Finset A) (t : 
     (∑ a ∈ s, leftDegree M a) + (∑ b ∈ t, rightDegree M b) ≤ M.card + s.card * t.card :=
   (degree_sums_le_card_add_cross M s t).trans (Nat.add_le_add_left (cross_card_le M s t) _)
 
+omit [DecidableEq B] in
 lemma eraseLeft_eq_empty_of_star (M : Finset (A × B)) (u : A)
     (hu : leftDegree M u = M.card) : eraseLeft M u = ∅ := by
   apply card_eq_zero.mp
   have := leftDegree_add_card_eraseLeft M u
   omega
 
+omit [DecidableEq B] in
 lemma leftDegree_of_star (M : Finset (A × B)) (u a : A)
     (hu : leftDegree M u = M.card) : leftDegree M a = if a = u then M.card else 0 := by
   by_cases ha : a = u
@@ -181,9 +195,11 @@ lemma double_hubs_right_le_one (M : Finset (A × B)) (u : A) (v : B)
     simpa [leftDegree_transpose, rightDegree_transpose, card_transpose, add_comm] using h
   simpa [leftDegree_transpose] using double_hubs_left_le_one (transpose M) v u ht b hb
 
-lemma exists_max_degree [Fintype A] [Fintype B] (M : Finset (A × B)) (hM : M.Nonempty) :
+lemma exists_max_degree [Finite A] [Finite B] (M : Finset (A × B)) (hM : M.Nonempty) :
     ∃ k : ℕ, 0 < k ∧ (∀ a, leftDegree M a ≤ k) ∧ (∀ b, rightDegree M b ≤ k) ∧
       ((∃ a, leftDegree M a = k) ∨ ∃ b, rightDegree M b = k) := by
+  let := Fintype.ofFinite A
+  let := Fintype.ofFinite B
   obtain ⟨⟨a, b⟩, hab⟩ := hM
   let f : A ⊕ B → ℕ := Sum.elim (leftDegree M) (rightDegree M)
   obtain ⟨u, hu, hmax⟩ := (univ : Finset (A ⊕ B)).exists_max_image f
@@ -198,14 +214,19 @@ lemma exists_max_degree [Fintype A] [Fintype B] (M : Finset (A × B)) (hM : M.No
   | inl a => exact Or.inl ⟨a, rfl⟩
   | inr b => exact Or.inr ⟨b, rfl⟩
 
+omit [DecidableEq B] in
 lemma leftDegree_pos_of_mem (M : Finset (A × B)) {a : A} {b : B} (hab : (a, b) ∈ M) :
     0 < leftDegree M a := card_pos.mpr ⟨(a, b), mem_filter.mpr ⟨hab, rfl⟩⟩
 
+omit [DecidableEq A] in
 lemma rightDegree_pos_of_mem (M : Finset (A × B)) {a : A} {b : B} (hab : (a, b) ∈ M) :
     0 < rightDegree M b := card_pos.mpr ⟨(a, b), mem_filter.mpr ⟨hab, rfl⟩⟩
 
-lemma exists_two_right_neighbors [Fintype B] (M : Finset (A × B)) (a : A)
+omit [DecidableEq B] in
+lemma exists_two_right_neighbors [Finite B] (M : Finset (A × B)) (a : A)
     (ha : 2 ≤ leftDegree M a) : ∃ b c, b ≠ c ∧ (a, b) ∈ M ∧ (a, c) ∈ M := by
+  classical
+  let := Fintype.ofFinite B
   have hcard : 1 < (univ.filter fun b ↦ (a, b) ∈ M).card := by rw [card_right_neighbors]; omega
   obtain ⟨b, hb, c, hc, hbc⟩ := one_lt_card.mp hcard
   exact ⟨b, c, hbc, (mem_filter.mp hb).2, (mem_filter.mp hc).2⟩
@@ -232,8 +253,11 @@ lemma degree_sums_equality_cover (M : Finset (A × B)) (s : Finset A) (t : Finse
   · exact Or.inl (mem_filter.mp he).2
   · exact Or.inr (mem_filter.mp he).2
 
-lemma exists_right_neighbor_outside [Fintype B] (M : Finset (A × B)) (a : A) (t : Finset B)
+omit [DecidableEq B] in
+lemma exists_right_neighbor_outside [Finite B] (M : Finset (A × B)) (a : A) (t : Finset B)
     (h : t.card < leftDegree M a) : ∃ b, (a, b) ∈ M ∧ b ∉ t := by
+  classical
+  let := Fintype.ofFinite B
   have hn : ¬ (univ.filter fun b ↦ (a, b) ∈ M) ⊆ t := by
     intro hsub
     have hc := card_le_card hsub
@@ -242,6 +266,7 @@ lemma exists_right_neighbor_outside [Fintype B] (M : Finset (A × B)) (a : A) (t
   obtain ⟨b, hb, hbt⟩ := not_subset.mp hn
   exact ⟨b, (mem_filter.mp hb).2, hbt⟩
 
+omit [DecidableEq B] in
 lemma exists_edge_left_outside (M : Finset (A × B)) (s : Finset A)
     (h : (∑ a ∈ s, leftDegree M a) < M.card) : ∃ e ∈ M, e.1 ∉ s := by
   have hs := card_filter_add_card_filter_not (s := M) (fun e ↦ e.1 ∈ s)

@@ -63,9 +63,11 @@ lemma card_cliqueFinset_two (G : SimpleGraph V) [DecidableRel G.Adj] :
   have : ((G.cliqueFinset 2).card : ℤ) = G.edgeFinset.card := by omega
   exact_mod_cast this
 
+omit [DecidableEq V] in
 lemma graph_weighted_degree_le (G : SimpleGraph V) [DecidableRel G.Adj]
     (w : V → ℤ) (k : ℤ) :
     (∑ v, (G.degree v : ℤ) * w v) ≤ k * G.edgeFinset.card + pairExcess univ w k := by
+  classical
   rw [← pairCharge_cliqueFinset_eq G]
   have hsub : G.cliqueFinset 2 ⊆ (univ : Finset V).powersetCard 2 := by
     intro p hp
@@ -91,14 +93,17 @@ lemma indicator_pairExcess (s : Finset V) :
       norm_num
     _ = _ := by simp [card_powersetCard]
 
+omit [DecidableEq V] in
 /-- A leaf set contributes at most one per edge, plus its internal pairs. -/
 lemma degree_sum_subset_le_edges_add_pairs (G : SimpleGraph V) [DecidableRel G.Adj]
     (s : Finset V) : (∑ v ∈ s, (G.degree v : ℤ)) ≤
       G.edgeFinset.card + (s.card.choose 2 : ℤ) := by
+  classical
   have h := graph_weighted_degree_le G (fun v ↦ if v ∈ s then (1 : ℤ) else 0) 1
   rw [indicator_pairExcess] at h
   simpa [mul_ite] using h
 
+omit [DecidableEq V] in
 lemma degree_sum_subset_le_twice_edges (G : SimpleGraph V) [DecidableRel G.Adj]
     (s : Finset V) : (∑ v ∈ s, (G.degree v : ℤ)) ≤ 2 * G.edgeFinset.card := by
   have h : (∑ v ∈ s, (G.degree v : ℤ)) ≤ ∑ v, (G.degree v : ℤ) :=

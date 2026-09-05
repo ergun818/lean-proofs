@@ -30,10 +30,12 @@ lemma cutCharge_empty (HA : SimpleGraph A) (HB : SimpleGraph B)
     [DecidableRel HA.Adj] [DecidableRel HB.Adj] : cutCharge HA HB ∅ = 0 := by
   simp [cutCharge, leftDegree, rightDegree]
 
+omit [DecidableEq B] [Fintype B] in
 lemma missing_left_sum (M : Finset (A × B)) :
     (∑ a, (leftDegree M a : ℤ)) = M.card := by
   exact_mod_cast sum_leftDegree_univ M
 
+omit [DecidableEq A] [Fintype A] in
 lemma missing_right_sum (M : Finset (A × B)) :
     (∑ b, (rightDegree M b : ℤ)) = M.card := by
   exact_mod_cast sum_rightDegree_univ M
@@ -120,7 +122,7 @@ lemma cutCharge_star_eq (HA : SimpleGraph A) (HB : SimpleGraph B)
       ∑ b ∈ univ.filter (fun b ↦ (u, b) ∈ M), (HB.degree b : ℤ) := by
   unfold cutCharge
   simp_rw [leftDegree_of_star M u _ hu, rightDegree_of_star M u _ hu]
-  simp [Nat.cast_ite, mul_ite, sum_filter, mul_comm]
+  simp [Nat.cast_ite, sum_filter, mul_comm]
 
 lemma cutCharge_star_le_edges_pairs (HA : SimpleGraph A) (HB : SimpleGraph B)
     [DecidableRel HA.Adj] [DecidableRel HB.Adj] (M : Finset (A × B)) (u : A)
@@ -194,6 +196,7 @@ lemma balanced_charge_gap_single (HA : SimpleGraph A) (HB : SimpleGraph B)
     (show (HA.degree u : ℤ) ≤ r - k by omega)
   linarith
 
+omit [Fintype A] in
 lemma missing_right_pairExcess_residual (M : Finset (A × B)) (u : A) (k h : ℤ)
     (hk : 1 ≤ k) (hh : 1 ≤ h) (hu : (leftDegree M u : ℤ) = k)
     (hD : (M.card : ℤ) = k + h) :
@@ -254,6 +257,7 @@ lemma balanced_charge_dominant (HA : SimpleGraph A) (HB : SimpleGraph B)
     (q := HA.edgeFinset.card + (HB.edgeFinset.card : ℤ)) hk hh hhk hr (by linarith)
   linarith
 
+omit [DecidableEq B] [Fintype B] in
 lemma missing_left_sum_erase (M : Finset (A × B)) (u : A) (k h : ℤ)
     (hu : (leftDegree M u : ℤ) = k) (hD : (M.card : ℤ) = k + h) :
     (∑ a ∈ univ.erase u, (leftDegree M a : ℤ)) = h := by
@@ -261,6 +265,7 @@ lemma missing_left_sum_erase (M : Finset (A × B)) (u : A) (k h : ℤ)
   rw [missing_left_sum, hu, hD] at hs
   omega
 
+omit [DecidableEq A] [Fintype A] in
 lemma missing_right_sum_erase (M : Finset (A × B)) (v : B) (k h : ℤ)
     (hv : (rightDegree M v : ℤ) = k) (hD : (M.card : ℤ) = k + h) :
     (∑ b ∈ univ.erase v, (rightDegree M b : ℤ)) = h := by
@@ -378,7 +383,8 @@ theorem balanced_sparse_charge (HA : SimpleGraph A) (HB : SimpleGraph B)
     · exact balanced_charge_of_left_max HA HB M u r k hk' (by exact_mod_cast hu)
         hA' hB' hr hq hcapA hcapB
     · have h := balanced_charge_of_left_max HB HA (transpose M) v r k hk'
-        (by simpa [leftDegree_transpose] using (show (rightDegree M v : ℤ) = k by exact_mod_cast hv))
+        (by simpa [leftDegree_transpose] using
+          (show (rightDegree M v : ℤ) = k by exact_mod_cast hv))
         (fun b ↦ by simpa [leftDegree_transpose] using hB' b)
         (fun a ↦ by simpa [rightDegree_transpose] using hA' a)
         (by simpa [card_transpose] using hr)

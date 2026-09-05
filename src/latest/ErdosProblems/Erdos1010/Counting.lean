@@ -63,7 +63,9 @@ lemma sum_triangleDegree_eq_three_mul_cliqueFinset [DecidableEq V]
       ∑ T ∈ Finset.filter (fun T => G.IsNClique 3 T) Finset.univ,
         if e ∈ Finset.image (fun p : V × V => s(p.1, p.2)) (Finset.offDiag T) then 1 else 0
   · rcases e with ⟨u, v⟩
-    simp +decide [SimpleGraph.commonNeighbors]
+    simp +decide only [commonNeighbors, Set.mem_inter_iff, mem_neighborSet, Sym2.lift_mk,
+      Finset.mem_image, Finset.mem_offDiag, ne_eq, Sym2.eq, Prod.mk.eta, Sym2.rel_iff',
+      Prod.swap_prod_mk, Prod.exists, Prod.mk.injEq, Finset.sum_boole, Nat.cast_id]
     refine Finset.card_bij (fun w _hw => {u, v, (w : V)}) ?_ ?_ ?_
     · intro a ha
       simp only [Finset.mem_filter, Finset.mem_univ, true_and] at ha ⊢
@@ -150,20 +152,30 @@ lemma sum_triangleDegree_eq_three_mul_cliqueFinset [DecidableEq V]
       rw [hb.card_eq, hcard_triple]
   · rw [Finset.sum_comm, Finset.sum_congr rfl]
     all_goals try rw [Finset.sum_const, smul_eq_mul, mul_comm]
-    simp +decide [SimpleGraph.isNClique_iff]
+    simp +decide only [isNClique_iff, Finset.mem_filter, Finset.mem_univ, true_and,
+      Finset.mem_image, Finset.mem_offDiag, ne_eq, Prod.exists, Finset.sum_boole, Nat.cast_id,
+      and_imp]
     intro x hx hx'
     rw [Finset.card_eq_three] at hx'
     obtain ⟨a, b, c, hab, hbc, hac⟩ := hx'
-    simp_all +decide [SimpleGraph.isClique_iff]
+    simp_all +decide only [Finset.coe_insert, Finset.coe_singleton, isClique_iff,
+      isClique_insert, Set.pairwise_singleton, Set.mem_singleton_iff, ne_eq,
+      not_false_eq_true, forall_const, forall_eq, true_and, Set.mem_insert_iff,
+      forall_eq_or_imp, Finset.mem_insert, Finset.mem_singleton]
     rw [Finset.card_eq_three]
     use s(a, b), s(a, c), s(b, c)
-    simp +decide [*, Finset.ext_iff]
+    simp +decide only [ne_eq, Sym2.eq, Sym2.rel_iff', Prod.mk.injEq, and_false,
+      Prod.swap_prod_mk, false_and, or_self, not_false_eq_true, and_self, and_true,
+      Finset.ext_iff, Finset.mem_filter, mem_edgeFinset, Finset.mem_insert,
+      Finset.mem_singleton, true_and, hac, hbc, hab]
     intro e
-    constructor <;> intro he <;> rcases e with ⟨u, v⟩ <;> simp_all +decide
+    constructor <;> intro he <;> rcases e with ⟨u, v⟩ <;>
+      simp_all +decide only [mem_edgeSet, Sym2.eq, Sym2.rel_iff', Prod.mk.injEq,
+        Prod.swap_prod_mk]
     · grind
     · rcases he with
       ((⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) | (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) <;>
-        simp_all +decide [SimpleGraph.adj_comm]
+        simp_all +decide only [adj_comm, true_and]
       exacts [⟨u, v, by aesop⟩, ⟨u, v, by aesop⟩, ⟨u, v, by aesop⟩,
         ⟨u, v, by aesop⟩, ⟨u, v, by aesop⟩, ⟨u, v, by aesop⟩]
 lemma commonNeighbors_card_eq_triangleDegree_edge
@@ -187,7 +199,8 @@ lemma edge_endpoint_degree_sum_eq_indicator_sum
   have h_edge_repr : e = s(e.out.1, e.out.2) := by
     exact Eq.symm (Quot.out_eq e)
   rw [h_edge_repr, Finset.sum_ite]
-  rw [Finset.sum_eq_add (Quot.out e |>.1) (Quot.out e |>.2)] <;> simp +decide only [Sym2.mem_iff, not_or, Finset.sum_const_zero, add_zero, ne_eq]
+  rw [Finset.sum_eq_add (Quot.out e |>.1) (Quot.out e |>.2)] <;>
+    simp +decide only [Sym2.mem_iff, not_or, Finset.sum_const_zero, add_zero, ne_eq]
   · rw [← h_edge_repr]
   · intro h
     rw [h_edge_repr] at he

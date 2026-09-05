@@ -178,7 +178,7 @@ lemma card_wedgesOver_of_mem_mixedTriples {V : Type*} [Fintype V] [DecidableEq V
           ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩) <;>
           simp_all [SimpleGraph.adj_comm]
       · rintro (⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩) <;>
-          simp_all [SimpleGraph.adj_comm] <;> aesop
+          simp_all [SimpleGraph.adj_comm]
     rw [heq]
     simp [hbc]
   · have heq : wedgesOver G {a, b, c} = {⟨a, b, c⟩, ⟨c, b, a⟩} := by
@@ -370,10 +370,11 @@ lemma even_gap_triangles {V : Type*} [Fintype V] [DecidableEq V]
       nlinarith
   have hQraw := Finset.sum_le_sum (s := (Finset.univ : Finset V))
     (fun v _ ↦ hpoint v)
-  simp only [Finset.sum_add_distrib, Finset.sum_mul, Finset.mul_sum] at hQraw
+  simp only [Finset.sum_add_distrib] at hQraw
   rw [← Finset.mul_sum, hsumy] at hQraw
   have hQ : (r : ℤ) * t ≤ Q := by
-    simp [hn] at hQraw
+    have hQraw : (t - k) * (2 * t) + (2 * r : ℤ) * (k * t) ≤ Q := by
+      simpa [hn] using hQraw
     have hk : k = r - t - 1 := rfl
     have hfac1 : 0 ≤ (t : ℤ) := by positivity
     have hfac2 : 0 ≤ (r : ℤ) - 2 := by omega
@@ -394,8 +395,8 @@ lemma even_gap_triangles {V : Type*} [Fintype V] [DecidableEq V]
         dsimp [y]
         ring
       _ = _ := by simp [Q, hn, Finset.sum_add_distrib, Finset.mul_sum]
-  rw [hexpand] at hbZ
-  simp only [ge_iff_le] at hbZ
+  rw [hexpand, hsumy, hn, hm] at hbZ
+  push_cast at hbZ
   have hgoalZ : (r : ℤ) * t ≤ ((G.cliqueFinset 3).card : ℤ) := by
     ring_nf at hbZ hQ ⊢
     linarith
@@ -433,10 +434,11 @@ lemma odd_gap_triangles {V : Type*} [Fintype V] [DecidableEq V]
       nlinarith
   have hQraw := Finset.sum_le_sum (s := (Finset.univ : Finset V))
     (fun v _ ↦ hpoint v)
-  simp only [Finset.sum_add_distrib, Finset.sum_mul, Finset.mul_sum] at hQraw
+  simp only [Finset.sum_add_distrib] at hQraw
   rw [← Finset.mul_sum, hsumy] at hQraw
   have hQ : (r : ℤ) * t + t + r ≤ Q := by
-    simp [hn] at hQraw
+    have hQraw : (t - k) * (r + 2 * t) + (2 * r + 1 : ℤ) * (k * t) ≤ Q := by
+      simpa [hn] using hQraw
     have hk : k = r - t := rfl
     let a : ℤ := r - t - 1
     have ha : 0 ≤ a := by dsimp [a]; omega
@@ -477,8 +479,8 @@ lemma odd_gap_triangles {V : Type*} [Fintype V] [DecidableEq V]
         dsimp [y]
         ring
       _ = _ := by simp [Q, hn, Finset.sum_add_distrib, Finset.mul_sum]
-  rw [hexpand] at hbZ
-  simp only [ge_iff_le] at hbZ
+  rw [hexpand, hsumy, hn, hm] at hbZ
+  push_cast at hbZ
   have hgoalZ : (r : ℤ) * t ≤ ((G.cliqueFinset 3).card : ℤ) := by
     ring_nf at hbZ hQ ⊢
     linarith
@@ -509,7 +511,7 @@ private lemma base_even_low_pos (b : ℤ) (hb : 0 ≤ b) :
   have hcub : 0 ≤ b ^ 3 := by positivity
   nlinarith
 
-lemma even_high_arithmetic {r t Q : ℤ} (hr : 2 ≤ r) (ht : 1 ≤ t)
+lemma even_high_arithmetic {r t Q : ℤ} (hr : 2 ≤ r) (_ : 1 ≤ t)
     (htr : t < r) (hQ : 4 * t ^ 2 ≤ 2 * r * Q) :
     6 * r * t - 6 < 3 * Q + 2 * r ^ 3 - 6 * r ^ 2 + 4 * r + 6 * t := by
   let a := r - 1 - t
@@ -529,7 +531,7 @@ lemma even_high_arithmetic {r t Q : ℤ} (hr : 2 ≤ r) (ht : 1 ≤ t)
     nlinarith
   nlinarith
 
-lemma even_low_arithmetic {r t Q : ℤ} (hr : 2 ≤ r) (ht : 1 ≤ t)
+lemma even_low_arithmetic {r t Q : ℤ} (hr : 2 ≤ r) (_ : 1 ≤ t)
     (htr : t < r)
     (hQ : (2 * r - 1) * (r - t - 1) ^ 2 + (r + t - 1) ^ 2 ≤
       (2 * r - 1) * Q) :
@@ -553,7 +555,7 @@ lemma even_low_arithmetic {r t Q : ℤ} (hr : 2 ≤ r) (ht : 1 ≤ t)
     nlinarith
   nlinarith
 
-lemma odd_high_arithmetic {r t Q : ℤ} (hr : 2 ≤ r) (ht : 1 ≤ t)
+lemma odd_high_arithmetic {r t Q : ℤ} (hr : 2 ≤ r) (_ : 1 ≤ t)
     (htr : t < r) (hQ : (r + 2 * t) ^ 2 ≤ (2 * r + 1) * Q) :
     6 * r * t - 6 < 3 * Q + 2 * r ^ 3 - 3 * r ^ 2 - 2 * r := by
   let a := r - 1 - t
@@ -575,7 +577,7 @@ lemma odd_high_arithmetic {r t Q : ℤ} (hr : 2 ≤ r) (ht : 1 ≤ t)
     nlinarith
   nlinarith
 
-lemma odd_low_arithmetic {r t Q : ℤ} (hr : 2 ≤ r) (ht : 1 ≤ t)
+lemma odd_low_arithmetic {r t Q : ℤ} (hr : 2 ≤ r) (_ : 1 ≤ t)
     (htr : t < r)
     (hQ : 2 * r * (r - t) ^ 2 + (2 * r + t) ^ 2 ≤ 2 * r * Q) :
     6 * r * t - 6 < 3 * Q + 2 * r ^ 3 - 3 * r ^ 2 - 2 * r := by

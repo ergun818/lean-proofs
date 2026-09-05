@@ -17,6 +17,7 @@ def crossingPairs (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset V) : Fins
 def cutSize (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset V) : ℕ :=
   (crossingPairs G S).card
 
+omit [Fintype V] in
 lemma pair_inter_card (p S : Finset V) (hp : p.card = 2) :
     (p ∩ S).card = (if (p ∩ S).card = 1 then 1 else 0) + 2 * (if p ⊆ S then 1 else 0) := by
   have hle : (p ∩ S).card ≤ 2 := by simpa [hp] using card_le_card (inter_subset_left : p ∩ S ⊆ p)
@@ -29,6 +30,7 @@ lemma pair_inter_card (p S : Finset V) (hp : p.card = 2) :
       exact hsub (inter_eq_left.mp heq)
     split_ifs <;> omega
 
+omit [Fintype V] in
 lemma sum_indicator_pair (p S : Finset V) :
     (∑ v ∈ p, if v ∈ S then (1 : ℤ) else 0) = (p ∩ S).card := by
   rw [← sum_filter]
@@ -166,7 +168,8 @@ lemma sum_card_trianglesAt (G : SimpleGraph V) [DecidableRel G.Adj] :
 lemma sum_neighbor_cuts (G : SimpleGraph V) [DecidableRel G.Adj] :
     (∑ v, (cutSize G (G.neighborFinset v) : ℤ)) + 6 * (G.cliqueFinset 3).card =
       ∑ v, (G.degree v : ℤ) ^ 2 := by
-  have h := sum_congr (s₁ := (univ : Finset V)) rfl (fun v _ ↦ cut_degree_sum G (G.neighborFinset v))
+  have h :=
+    sum_congr (s₁ := (univ : Finset V)) rfl (fun v _ ↦ cut_degree_sum G (G.neighborFinset v))
   simp only [card_internalPairs_neighbors, sum_add_distrib, ← mul_sum] at h
   have htri : (∑ v, ((trianglesAt G v).card : ℤ)) = 3 * (G.cliqueFinset 3).card := by
     exact_mod_cast sum_card_trianglesAt G
@@ -219,6 +222,7 @@ lemma exists_min_imbalance_maximum_cut (G : SimpleGraph V) [DecidableRel G.Adj] 
       rw [cutImbalance_compl]
       exact hSmin T hT
 
+omit [Fintype V] in
 lemma pair_eq_of_mem {p : Finset V} {v : V} (hp : p.card = 2) (hv : v ∈ p) :
     ∃ w, w ≠ v ∧ p = {v, w} := by
   have hc : (p.erase v).card = 1 := by rw [card_erase_of_mem hv, hp]
@@ -227,7 +231,7 @@ lemma pair_eq_of_mem {p : Finset V} {v : V} (hp : p.card = 2) (hv : v ∈ p) :
   exact ⟨w, ne_of_mem_erase hwm, by rw [← hw, insert_erase hv]⟩
 
 lemma internalPairs_insert (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset V)
-    (v : V) (hv : v ∉ S) :
+    (v : V) (_ : v ∉ S) :
     internalPairs G (insert v S) = internalPairs G S ∪
       (G.neighborFinset v ∩ S).image (fun w ↦ ({v, w} : Finset V)) := by
   ext p
@@ -250,7 +254,8 @@ lemma internalPairs_insert (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset 
 
 lemma card_internalPairs_insert (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset V)
     (v : V) (hv : v ∉ S) :
-    (internalPairs G (insert v S)).card = (internalPairs G S).card + (G.neighborFinset v ∩ S).card := by
+    (internalPairs G (insert v S)).card =
+      (internalPairs G S).card + (G.neighborFinset v ∩ S).card := by
   rw [internalPairs_insert G S v hv, card_union_of_disjoint]
   · rw [card_image_of_injOn]
     intro a ha b hb heq
@@ -322,10 +327,12 @@ lemma maximum_cut_square_bound (G : SimpleGraph V) [DecidableRel G.Adj]
   have hle : (∑ v, (cutSize G (G.neighborFinset v) : ℤ)) ≤
       (Fintype.card V : ℤ) * cutSize G S := by
     calc
-      _ ≤ ∑ _v : V, (cutSize G S : ℤ) := sum_le_sum fun v _ ↦ by exact_mod_cast hmax (G.neighborFinset v)
+      _ ≤ ∑ _v : V, (cutSize G S : ℤ) := sum_le_sum fun v _ ↦ by
+        exact_mod_cast hmax (G.neighborFinset v)
       _ = _ := by simp
   linarith
 
+omit [DecidableEq V] in
 lemma degree_square_lower_even (G : SimpleGraph V) [DecidableRel G.Adj] (r t : ℤ)
     (hn : (Fintype.card V : ℤ) = 2 * r) (hm : (G.edgeFinset.card : ℤ) = r ^ 2 + t) :
     2 * r ^ 3 + 4 * r * t ≤ ∑ v, (G.degree v : ℤ) ^ 2 := by

@@ -53,7 +53,8 @@ lemma unbalanced_equal_s2 {r s k q W : ℤ} (hs : 2 ≤ s) (hk : 1 ≤ k)
         ((k + s) * ((2 * k + s ^ 2 + 2) + (2 * k + s ^ 2 - 1)) + 2 * k) =
         S ^ 4 + 6 * S ^ 3 + 2 * (k + 7) * S ^ 2 + (4 * k + 15) * S + k + 6 := by
       dsimp [S]; ring
-    have hp : 0 ≤ S ^ 4 + 6 * S ^ 3 + 2 * (k + 7) * S ^ 2 + (4 * k + 15) * S + k + 6 := by positivity
+    have hp : 0 ≤ S ^ 4 + 6 * S ^ 3 + 2 * (k + 7) * S ^ 2 + (4 * k + 15) * S + k + 6 := by
+      positivity
     nlinarith only [hid, hp]
   have hb := affine_bound hr (by linarith : q ≤ r + (2 * k + s ^ 2 - 1))
     (show 0 ≤ k + s by omega) hcoef hbase (by simpa using hW)
@@ -74,7 +75,8 @@ lemma unbalanced_gap_single_s2 {r s k q W : ℤ} (hs : 2 ≤ s) (hk : 2 ≤ k)
         (2 * k - 1 + s ^ 2 + 2) + (s - k + 3 * k - 2)) =
         S ^ 4 + 6 * S ^ 3 + (2 * k + 13) * S ^ 2 + 4 * (k + 3) * S + k + 3 := by
       dsimp [S]; ring
-    have hp : 0 ≤ S ^ 4 + 6 * S ^ 3 + (2 * k + 13) * S ^ 2 + 4 * (k + 3) * S + k + 3 := by positivity
+    have hp : 0 ≤ S ^ 4 + 6 * S ^ 3 + (2 * k + 13) * S ^ 2 + 4 * (k + 3) * S + k + 3 := by
+      positivity
     nlinarith only [hid, hp]
   have hb := affine_bound hr (by linarith : q ≤ r + (2 * k - 1 + s ^ 2 - 1))
     (show 0 ≤ k - 1 + s by omega) hcoef hbase (by linarith : W ≤
@@ -162,7 +164,8 @@ lemma unbalanced_large_s1 {r D k q W : ℤ} (hk : 1 ≤ k) (hD : 2 * k + 2 ≤ D
   have hbase : k * (k + 1) * (D + 3 + D) + 0 * (D + 3) + D * (D - 1) ≤ k * (D + 1) * (D + 3) := by
     have hid : k * (D + 1) * (D + 3) - (k * (k + 1) * (D + 3 + D) + D * (D - 1)) =
         a ^ 2 * (k - 1) + a * (2 * k ^ 2 + 2 * k - 3) + (k ^ 2 + 2 * k - 2) := by dsimp [a]; ring
-    have hp : 0 ≤ a ^ 2 * (k - 1) + a * (2 * k ^ 2 + 2 * k - 3) + (k ^ 2 + 2 * k - 2) := by positivity
+    have hp : 0 ≤ a ^ 2 * (k - 1) + a * (2 * k ^ 2 + 2 * k - 3) + (k ^ 2 + 2 * k - 2) := by
+      positivity
     nlinarith only [hid, hp]
   have hb := affine_bound hr hq (show 0 ≤ k * (k + 1) by positivity) hcoef hbase (by simpa using hW)
   have hb' : k * W ≤ k * (r * (D + 1)) := by nlinarith only [hb]

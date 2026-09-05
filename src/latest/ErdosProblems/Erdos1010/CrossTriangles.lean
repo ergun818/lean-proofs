@@ -69,7 +69,8 @@ lemma card_cross_incidence_le (G : SimpleGraph V) [DecidableRel G.Adj] (S : Fins
 
 lemma card_cross_incidences_add_le_triangles (G : SimpleGraph V) [DecidableRel G.Adj]
     (S : Finset V) :
-    (crossTriangleIncidences G S).card + (crossTriangleIncidences G Sᶜ).card ≤ (G.cliqueFinset 3).card := by
+    (crossTriangleIncidences G S).card + (crossTriangleIncidences G Sᶜ).card ≤
+      (G.cliqueFinset 3).card := by
   have hdis : Disjoint (twoSideTriangles G S) (twoSideTriangles G Sᶜ) := by
     apply disjoint_left.mpr
     intro p hp hq
@@ -112,7 +113,8 @@ lemma cross_incidence_lower_bound (G : SimpleGraph V) [DecidableRel G.Adj] (S : 
   have hpoint : ∀ p ∈ internalPairs G S, (Sᶜ.card : ℤ) ≤
       ((Sᶜ.filter fun v ↦ ∀ w ∈ p, G.Adj w v).card : ℤ) + ∑ w ∈ p, (missingDegree G Sᶜ w : ℤ) := by
     intro p hp
-    exact_mod_cast pair_common_neighbor_bound G Sᶜ p (G.mem_cliqueFinset_iff.mp (mem_filter.mp hp).1).card_eq
+    exact_mod_cast
+      pair_common_neighbor_bound G Sᶜ p (G.mem_cliqueFinset_iff.mp (mem_filter.mp hp).1).card_eq
   have hsum := sum_le_sum hpoint
   have hi : ((crossTriangleIncidences G S).card : ℤ) =
       ∑ p ∈ internalPairs G S, ((Sᶜ.filter fun v ↦ ∀ w ∈ p, G.Adj w v).card : ℤ) := by
@@ -123,7 +125,8 @@ lemma cross_incidence_lower_bound (G : SimpleGraph V) [DecidableRel G.Adj] (S : 
 
 lemma cross_triangle_lower_bound (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset V) :
     (Sᶜ.card : ℤ) * (internalPairs G S).card + (S.card : ℤ) * (internalPairs G Sᶜ).card ≤
-      (G.cliqueFinset 3).card + pairCharge (internalPairs G S) (fun v ↦ (missingDegree G Sᶜ v : ℤ)) +
+      (G.cliqueFinset 3).card +
+        pairCharge (internalPairs G S) (fun v ↦ (missingDegree G Sᶜ v : ℤ)) +
       pairCharge (internalPairs G Sᶜ) (fun v ↦ (missingDegree G S v : ℤ)) := by
   have hS := cross_incidence_lower_bound G S
   have hSc := cross_incidence_lower_bound G Sᶜ

@@ -98,7 +98,8 @@ lemma charge_s1_dominant_left (HA : SimpleGraph A) (HB : SimpleGraph B)
     (hcap : (HA.degree u : ℤ) + k ≤ r + 1) :
     unbalancedCharge HA HB M 1 ≤ r * (M.card + 1) := by
   have hc := cutCharge_dominant_bound HA HB M u k h (by omega) hh hu hD
-  have hp : (HA.degree u : ℤ) ≤ HA.edgeFinset.card := by exact_mod_cast HA.degree_le_card_edgeFinset u
+  have hp : (HA.degree u : ℤ) ≤ HA.edgeFinset.card := by
+    exact_mod_cast HA.degree_le_card_edgeFinset u
   rw [hD]
   apply ChargeArithmetic.unbalanced_dominant_left_s1 hh hhk (by omega)
     (by linarith : HA.edgeFinset.card + (HB.edgeFinset.card : ℤ) ≤ r + k + h)
@@ -114,7 +115,8 @@ lemma charge_s1_dominant_right (HA : SimpleGraph A) (HB : SimpleGraph B)
     (hcap : (HB.degree v : ℤ) + k ≤ r - 2) :
     unbalancedCharge HA HB M 1 ≤ r * (M.card + 1) := by
   have hv' : (leftDegree (transpose M) v : ℤ) = k := by simpa [leftDegree_transpose] using hv
-  have hpa := missing_right_pairExcess_zero (transpose M) v k h hv' (by simpa [card_transpose] using hD)
+  have hpa :=
+    missing_right_pairExcess_zero (transpose M) v k h hv' (by simpa [card_transpose] using hD)
   simp only [rightDegree_transpose] at hpa
   have hca := graph_weighted_degree_le HA (fun a ↦ (leftDegree M a : ℤ)) (h + 2)
   rw [hpa] at hca
@@ -149,7 +151,8 @@ lemma charge_s1_double (HA : SimpleGraph A) (HB : SimpleGraph B)
     (hq : HA.edgeFinset.card + (HB.edgeFinset.card : ℤ) ≤ r + M.card)
     (hcapA : (HA.degree u : ℤ) + k ≤ r + 1) (hcapB : (HB.degree v : ℤ) + k ≤ r - 2) :
     unbalancedCharge HA HB M 1 ≤ r * (M.card + 1) := by
-  have hp : (HA.degree u : ℤ) ≤ HA.edgeFinset.card := by exact_mod_cast HA.degree_le_card_edgeFinset u
+  have hp : (HA.degree u : ℤ) ≤ HA.edgeFinset.card := by
+    exact_mod_cast HA.degree_le_card_edgeFinset u
   have hx0 : (0 : ℤ) ≤ HA.edgeFinset.card := Nat.cast_nonneg _
   have heq : (M.card : ℤ) + 1 = 2 * k := by omega
   rw [heq]
@@ -181,7 +184,8 @@ lemma charge_s1_equal (HA : SimpleGraph A) (HB : SimpleGraph B)
   · have hD6 : (M.card : ℤ) = 6 := by omega
     by_cases hz : pairExcess univ (fun a ↦ (leftDegree M a : ℤ)) 5 = 0
     · have hp := pairExcess_le univ (fun b ↦ (rightDegree M b : ℤ)) 3 (by omega)
-        (fun b _ ↦ ⟨Nat.cast_nonneg _, by have := hB b; omega⟩) (by rw [missing_right_sum, hD6]; omega)
+        (fun b _ ↦ ⟨Nat.cast_nonneg _, by have := hB b; omega⟩)
+        (by rw [missing_right_sum, hD6]; omega)
       have hw := unbalancedCharge_one_le_pairs HA HB M 4
       norm_num at hw
       rw [hz] at hw

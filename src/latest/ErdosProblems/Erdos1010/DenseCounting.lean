@@ -11,7 +11,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 lemma edges_add_compl_edges (G : SimpleGraph V) [DecidableRel G.Adj] :
     G.edgeFinset.card + Gᶜ.edgeFinset.card = (Fintype.card V).choose 2 := by
-  have hd : Disjoint G.edgeFinset Gᶜ.edgeFinset := SimpleGraph.disjoint_edgeFinset.mpr disjoint_compl_right
+  have hd : Disjoint G.edgeFinset Gᶜ.edgeFinset :=
+    SimpleGraph.disjoint_edgeFinset.mpr disjoint_compl_right
   have hu : G.edgeFinset ∪ Gᶜ.edgeFinset = (⊤ : SimpleGraph V).edgeFinset := by
     ext e
     induction e using Sym2.ind with
@@ -53,15 +54,19 @@ lemma card_antiNeighbors (G : SimpleGraph V) [DecidableRel G.Adj] (v : V) :
 lemma compl_antiNeighbors (G : SimpleGraph V) [DecidableRel G.Adj] (v : V) :
     (antiNeighbors G v)ᶜ = insert v (G.neighborFinset v) := by simp [antiNeighbors]
 
+omit [DecidableEq V] in
 lemma degree_induce_finset_le (G : SimpleGraph V) [DecidableRel G.Adj]
     (S : Finset V) (v : (S : Set V)) : (G.induce (S : Set V)).degree v ≤ G.degree v.val := by
+  classical
   rw [degree_induce_finset, ← SimpleGraph.card_neighborFinset_eq_degree]
   exact card_le_card inter_subset_left
 
+omit [DecidableEq V] in
 lemma saturated_induce_neighbors (G : SimpleGraph V) [DecidableRel G.Adj]
     (S : Finset V) (v : (S : Set V)) (D : ℕ)
     (hcap : G.degree v.val ≤ D) (hd : (G.induce (S : Set V)).degree v = D) :
     G.degree v.val = D ∧ G.neighborFinset v.val ⊆ S := by
+  classical
   have hle := degree_induce_finset_le G S v
   have hdeg : G.degree v.val = D := by omega
   refine ⟨hdeg, ?_⟩
@@ -82,7 +87,8 @@ lemma sum_external_neighbors (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finse
   have h := Bipartite.sum_rightDegree_univ (presentCross G S)
   simp only [rightDegree_presentCross, card_presentCross] at h
   change (∑ v : (Sᶜ : Finset V), (G.neighborFinset v.val ∩ S).card) = cutSize G S at h
-  exact (Finset.sum_coe_sort (s := Sᶜ) (f := fun v : V ↦ (G.neighborFinset v ∩ S).card)).symm.trans h
+  exact
+    (Finset.sum_coe_sort (s := Sᶜ) (f := fun v : V ↦ (G.neighborFinset v ∩ S).card)).symm.trans h
 
 lemma selected_external_neighbors_bound (G : SimpleGraph V) [DecidableRel G.Adj]
     (S T : Finset V) (hT : T ⊆ Sᶜ) (D : ℕ) (hcap : ∀ v ∈ S, G.degree v ≤ D) :
@@ -119,7 +125,8 @@ lemma leaf_complement_induce_anti (F : SimpleGraph V) [DecidableRel F.Adj]
     have hleaf := adj_iff_eq_of_degree_one H u w hu huw z
     have hiff : (u.val ≠ x ∧ ¬F.Adj u.val x) ↔ x = w.val := by
       simpa [H, z, SimpleGraph.compl_adj, SimpleGraph.induce_adj, Subtype.ext_iff] using hleaf
-    simp only [mem_antiNeighbors, mem_union, mem_compl, mem_singleton, hxS, not_true_eq_false, false_or]
+    simp only [mem_antiNeighbors, mem_union, mem_compl, mem_singleton, hxS,
+      not_true_eq_false, false_or]
     simpa [ne_comm] using hiff
   · have hxu : x ≠ u.val := by intro h; exact hxS (h ▸ u.property)
     have hnot : ¬F.Adj u.val x := by

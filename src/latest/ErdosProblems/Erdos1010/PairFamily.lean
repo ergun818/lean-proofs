@@ -39,6 +39,7 @@ lemma pairCharge_eq_sum_degree (s : Finset V) (H : Finset (Finset V))
       rw [← sum_filter]
       simp [pairDegree]
 
+omit [DecidableEq V] in
 lemma pairCharge_le_baseline (s : Finset V) (H : Finset (Finset V))
     (w : V → ℤ) (k : ℤ) (hH : H ⊆ s.powersetCard 2) :
     pairCharge H w ≤ k * H.card + pairExcess s w k := by
@@ -54,6 +55,7 @@ lemma pairCharge_le_baseline (s : Finset V) (H : Finset (Finset V))
   simp only [sum_add_distrib, sum_const, nsmul_eq_mul] at hpoint
   nlinarith
 
+omit [DecidableEq V] in
 lemma pairCharge_add (H : Finset (Finset V)) (w z : V → ℤ) :
     pairCharge H (fun v ↦ w v + z v) = pairCharge H w + pairCharge H z := by
   simp [pairCharge, sum_add_distrib]

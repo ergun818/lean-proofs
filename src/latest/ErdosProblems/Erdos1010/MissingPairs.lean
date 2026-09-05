@@ -10,9 +10,11 @@ open Bipartite
 
 variable {A B : Type*} [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B]
 
-lemma missing_right_pair_sum_le (M : Finset (A × B)) (u : A) (k h : ℤ)
+omit [Fintype A] [Fintype B] in
+lemma missing_right_pair_sum_le [Finite B] (M : Finset (A × B)) (u : A) (k h : ℤ)
     (hu : (leftDegree M u : ℤ) = k) (hD : (M.card : ℤ) = k + h)
     (b c : B) (hbc : b ≠ c) : (rightDegree M b : ℤ) + rightDegree M c ≤ h + 2 := by
+  let := Fintype.ofFinite B
   have hres : ((eraseLeft M u).card : ℤ) = h := by
     have hcount : (leftDegree M u : ℤ) + (eraseLeft M u).card = M.card := by
       exact_mod_cast leftDegree_add_card_eraseLeft M u
@@ -24,6 +26,7 @@ lemma missing_right_pair_sum_le (M : Finset (A × B)) (u : A) (k h : ℤ)
   have hc := rightDegree_eraseLeft M u c
   split_ifs at hb hc <;> omega
 
+omit [Fintype A] in
 lemma missing_right_pairExcess_zero (M : Finset (A × B)) (u : A) (k h : ℤ)
     (hu : (leftDegree M u : ℤ) = k) (hD : (M.card : ℤ) = k + h) :
     pairExcess univ (fun b ↦ (rightDegree M b : ℤ)) (h + 2) = 0 := by
@@ -31,6 +34,7 @@ lemma missing_right_pairExcess_zero (M : Finset (A × B)) (u : A) (k h : ℤ)
   intro b hb c hc hbc
   exact missing_right_pair_sum_le M u k h hu hD b c hbc
 
+omit [Fintype A] in
 lemma missing_right_pairExcess_two_supports (M : Finset (A × B)) (u a : A) (k h : ℤ)
     (hu : (leftDegree M u : ℤ) = k) (hD : (M.card : ℤ) = k + h)
     (ha : a ≠ u) (hdeg : 2 ≤ leftDegree M a) :

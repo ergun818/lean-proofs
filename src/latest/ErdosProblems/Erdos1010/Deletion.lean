@@ -83,7 +83,7 @@ lemma card_induce_compl_singleton_triangles_add {V : Type*} [Fintype V] [Decidab
   unfold trianglesAt
   omega
 
-lemma exists_subgraph_card_edges {V : Type*} [Fintype V] [DecidableEq V]
+lemma exists_subgraph_card_edges {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (m : ℕ) (hm : m ≤ G.edgeFinset.card) :
     ∃ H : SimpleGraph V, H ≤ G ∧ H.edgeSet.ncard = m := by
   classical

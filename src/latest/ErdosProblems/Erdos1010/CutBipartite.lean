@@ -22,6 +22,7 @@ def presentCross (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset V) :
     Finset (↥(S : Set V) × ↥((Sᶜ : Finset V) : Set V)) :=
   univ.filter fun e ↦ G.Adj e.1.val e.2.val
 
+omit [DecidableEq V] [Fintype V] in
 lemma card_filter_subtype (S : Finset V) (P : V → Prop) [DecidablePred P] :
     ((univ : Finset (S : Set V)).filter fun v ↦ P v.val).card = (S.filter P).card := by
   apply card_bij (fun v _ ↦ v.val)
@@ -35,7 +36,8 @@ lemma card_filter_subtype (S : Finset V) (P : V → Prop) [DecidablePred P] :
 
 lemma card_neighbor_filter_subtype (G : SimpleGraph V) [DecidableRel G.Adj]
     (S : Finset V) (v : V) :
-    ((univ : Finset (S : Set V)).filter fun w ↦ G.Adj v w.val).card = (G.neighborFinset v ∩ S).card := by
+    ((univ : Finset (S : Set V)).filter fun w ↦ G.Adj v w.val).card =
+      (G.neighborFinset v ∩ S).card := by
   rw [card_filter_subtype]
   congr 1
   ext w
@@ -131,7 +133,8 @@ lemma card_presentCross (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset V) 
 lemma cutSize_add_missingCross (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset V) :
     cutSize G S + (missingCross G S).card = S.card * Sᶜ.card := by
   have h := card_filter_add_card_filter_not
-    (s := (univ : Finset (↥(S : Set V) × ↥((Sᶜ : Finset V) : Set V)))) (fun e ↦ G.Adj e.1.val e.2.val)
+    (s := (univ : Finset (↥(S : Set V) × ↥((Sᶜ : Finset V) : Set V))))
+    (fun e ↦ G.Adj e.1.val e.2.val)
   change (presentCross G S).card + (missingCross G S).card = _ at h
   rw [card_presentCross] at h
   simpa [Finset.card_compl] using h
@@ -141,7 +144,7 @@ lemma maximum_cut_left_cap (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset 
     (G.induce (S : Set V)).degree a + leftDegree (missingCross G S) a ≤ Sᶜ.card := by
   rw [degree_induce_finset, leftDegree_missingCross]
   have hlocal := maximum_cut_external_ge_internal G Sᶜ ((isMaximumCut_compl G S).mpr hmax)
-    a.val (by simpa using a.property)
+    a.val (by simp)
   rw [compl_compl] at hlocal
   have hcount := missingDegree_add_neighbors G Sᶜ a.val
   omega
@@ -159,7 +162,8 @@ lemma minimum_imbalance_right_cap (G : SimpleGraph V) [DecidableRel G.Adj] (S : 
     (hgap : S.card + 2 ≤ Sᶜ.card) (b : ((Sᶜ : Finset V) : Set V)) :
     (G.induce ((Sᶜ : Finset V) : Set V)).degree b + rightDegree (missingCross G S) b < S.card := by
   rw [degree_induce_finset, rightDegree_missingCross]
-  have hlocal := minimum_imbalance_external_gt_internal G S hmax hmin hgap b.val (mem_compl.mp b.property)
+  have hlocal :=
+    minimum_imbalance_external_gt_internal G S hmax hmin hgap b.val (mem_compl.mp b.property)
   have hcount := missingDegree_add_neighbors G S b.val
   omega
 

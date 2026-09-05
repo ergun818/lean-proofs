@@ -64,7 +64,8 @@ theorem even_triangles {V : Type*} [Fintype V] [DecidableEq V]
   · have hcapB : ∀ b, (HB.degree b : ℤ) + rightDegree M b ≤ (r : ℤ) := by
       intro b
       have h : ((G.induce ((Sᶜ : Finset V) : Set V)).degree b : ℤ) +
-          rightDegree (missingCross G S) b ≤ S.card := by exact_mod_cast maximum_cut_right_cap G S hmax b
+          rightDegree (missingCross G S) b ≤ S.card := by
+        exact_mod_cast maximum_cut_right_cap G S hmax b
       rw [hAcard, hs0] at h
       simpa using h
     have hc := balanced_sparse_charge HA HB M r (by simpa [hs0] using hrCharge)

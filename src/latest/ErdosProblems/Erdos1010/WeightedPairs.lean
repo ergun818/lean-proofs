@@ -11,7 +11,7 @@ open Finset
 
 namespace Erdos1010
 
-variable {V : Type*} [DecidableEq V]
+variable {V : Type*}
 
 /-- Total positive excess of unordered pairs over the threshold `k`. -/
 def pairExcess (s : Finset V) (w : V → ℤ) (k : ℤ) : ℤ :=
@@ -30,7 +30,7 @@ lemma pairExcess_eq_zero_of_card_lt (s : Finset V) (w : V → ℤ) (k : ℤ)
   unfold pairExcess
   rw [powersetCard_eq_empty.mpr hs, sum_empty]
 
-lemma pairExcess_insert (s : Finset V) (w : V → ℤ) (k : ℤ)
+lemma pairExcess_insert [DecidableEq V] (s : Finset V) (w : V → ℤ) (k : ℤ)
     {a : V} (ha : a ∉ s) :
     pairExcess (insert a s) w k = pairExcess s w k +
       ∑ b ∈ s, max (w a + w b - k) 0 := by
@@ -60,6 +60,7 @@ lemma pairExcess_insert (s : Finset V) (w : V → ℤ) (k : ℤ)
 lemma pairExcess_eq_zero_of_pair_le (s : Finset V) (w : V → ℤ) (k : ℤ)
     (h : ∀ a ∈ s, ∀ b ∈ s, a ≠ b → w a + w b ≤ k) :
     pairExcess s w k = 0 := by
+  classical
   apply sum_eq_zero
   intro p hp
   obtain ⟨hp, hc⟩ := mem_powersetCard.mp hp
@@ -85,6 +86,7 @@ lemma positive_pairs_not_disjoint (s : Finset V) (w : V → ℤ) (k : ℤ)
     {p q : Finset V} (hp : p ⊆ s) (hq : q ⊆ s)
     (hpw : k < ∑ v ∈ p, w v) (hqw : k < ∑ v ∈ q, w v) :
     ¬Disjoint p q := by
+  classical
   intro hd
   have hsub : p ∪ q ⊆ s := union_subset hp hq
   have hsum := sum_le_sum_of_subset_of_nonneg hsub (fun v hv _ ↦ hw v hv)
@@ -137,6 +139,7 @@ lemma pairExcess_restrict (s t : Finset V) (w : V → ℤ) (k : ℤ)
     (ht : t ⊆ s)
     (h : ∀ a ∈ s, ∀ b ∈ s, a ∉ t → w a + w b ≤ k) :
     pairExcess s w k = pairExcess t w k := by
+  classical
   symm
   apply sum_subset (powersetCard_mono ht)
   intro p hp hpt
@@ -154,7 +157,7 @@ lemma pairExcess_restrict (s t : Finset V) (w : V → ℤ) (k : ℤ)
     omega
   · exact sub_nonpos.mpr (h a ha b hb hat)
 
-lemma pairExcess_triple (w : V → ℤ) (k : ℤ) {a b c : V}
+lemma pairExcess_triple [DecidableEq V] (w : V → ℤ) (k : ℤ) {a b c : V}
     (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c) :
     pairExcess {a, b, c} w k = max (w a + w b - k) 0 +
       max (w a + w c - k) 0 + max (w b + w c - k) 0 := by
@@ -170,6 +173,7 @@ lemma pairExcess_bound (s : Finset V) (w : V → ℤ) (k e : ℤ)
     (hw : ∀ v ∈ s, 0 ≤ w v ∧ w v ≤ k)
     (hs : ∑ v ∈ s, w v ≤ 2 * k + e) :
     pairExcess s w k ≤ k + 2 * e := by
+  classical
   by_cases hs0 : s.Nonempty
   · obtain ⟨a, ha, hmax⟩ := s.exists_max_image w hs0
     by_cases hstar : ∀ b ∈ s.erase a, ∀ c ∈ s.erase a, b ≠ c → w b + w c ≤ k
@@ -236,6 +240,7 @@ lemma pairExcess_le_add_two (s : Finset V) (w : V → ℤ) (k : ℤ)
 lemma pairExcess_quadratic_bound (s : Finset V) (w : V → ℤ) (k : ℤ)
     (hw : ∀ v ∈ s, 0 ≤ w v ∧ w v ≤ k) :
     2 * k * pairExcess s w k ≤ (∑ v ∈ s, w v) ^ 2 - ∑ v ∈ s, (w v) ^ 2 := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp [pairExcess_eq_zero_of_card_lt ∅ w k (by simp)]
   | @insert a s ha ih =>
@@ -270,7 +275,7 @@ lemma pairExcess_two_sides_quadratic (A B : Finset V) (w : V → ℤ) (k D : ℤ
 
 /-- If the hub has the threshold weight and all remaining weight fits below
 the threshold, exactly the hub pairs contribute. -/
-lemma pairExcess_hub (s : Finset V) (w : V → ℤ) (k : ℤ) (u : V)
+lemma pairExcess_hub [DecidableEq V] (s : Finset V) (w : V → ℤ) (k : ℤ) (u : V)
     (hu : u ∈ s) (hwu : w u = k) (hw : ∀ v ∈ s.erase u, 0 ≤ w v)
     (hs : ∑ v ∈ s.erase u, w v ≤ k) :
     pairExcess s w k = ∑ v ∈ s.erase u, w v := by
@@ -294,11 +299,12 @@ lemma pairExcess_hub (s : Finset V) (w : V → ℤ) (k : ℤ) (u : V)
 lemma pair_weight_le_total (s : Finset V) (w : V → ℤ)
     (hw : ∀ v ∈ s, 0 ≤ w v) {a b : V} (ha : a ∈ s) (hb : b ∈ s) (hab : a ≠ b) :
     w a + w b ≤ ∑ v ∈ s, w v := by
+  classical
   have hsub : ({a, b} : Finset V) ⊆ s := by simp [insert_subset_iff, ha, hb]
   have hsum := sum_le_sum_of_subset_of_nonneg hsub (fun v hv _ ↦ hw v hv)
   rwa [sum_pair hab] at hsum
 
-lemma pairExcess_hub_unit_weights (s : Finset V) (w : V → ℤ) (k : ℤ) (u : V)
+lemma pairExcess_hub_unit_weights [DecidableEq V] (s : Finset V) (w : V → ℤ) (k : ℤ) (u : V)
     (hu : u ∈ s) (hk : 2 ≤ k) (hwu : w u = k)
     (hw : ∀ v ∈ s.erase u, 0 ≤ w v ∧ w v ≤ 1) :
     pairExcess s w k = ∑ v ∈ s.erase u, w v := by
@@ -325,6 +331,7 @@ lemma pairExcess_unit_residual (s : Finset V) (e g : V → ℤ) (k h : ℤ)
     (hes : ∑ v ∈ s, e v = k) (hgs : ∑ v ∈ s, g v = h)
     (hk : 1 ≤ k) (hh : 1 ≤ h) :
     pairExcess s (fun v ↦ e v + g v) (h + 1) ≤ k - 1 := by
+  classical
   obtain ⟨u, hu, hgu⟩ : ∃ u ∈ s, 0 < g u := by
     by_contra! hn
     have hnon : (∑ v ∈ s, g v) ≤ 0 := sum_nonpos hn
@@ -373,6 +380,7 @@ lemma pairExcess_unit_residual (s : Finset V) (e g : V → ℤ) (k h : ℤ)
 lemma sum_truncated_pred_le (s : Finset V) (w : V → ℤ)
     (hw : ∀ v ∈ s, 0 ≤ w v) (hs : 1 ≤ ∑ v ∈ s, w v) :
     (∑ v ∈ s, max (w v - 1) 0) ≤ (∑ v ∈ s, w v) - 1 := by
+  classical
   obtain ⟨u, hu, hwu⟩ : ∃ u ∈ s, 0 < w u := by
     by_contra! hn
     have hsum : (∑ v ∈ s, w v) ≤ 0 := sum_nonpos hn
@@ -387,7 +395,7 @@ lemma sum_truncated_pred_le (s : Finset V) (w : V → ℤ)
   rw [heq] at hsum
   omega
 
-lemma pairExcess_above_hub_le (s : Finset V) (w : V → ℤ) (k h : ℤ) (u : V)
+lemma pairExcess_above_hub_le [DecidableEq V] (s : Finset V) (w : V → ℤ) (k h : ℤ) (u : V)
     (hu : u ∈ s) (hwu : w u = k) (hw : ∀ v ∈ s.erase u, 0 ≤ w v)
     (hs : ∑ v ∈ s.erase u, w v = h) (hh : 1 ≤ h) (hhk : h ≤ k + 1) :
     pairExcess s w (k + 1) ≤ h - 1 := by
@@ -414,6 +422,7 @@ lemma pairExcess_restrict_of_ne (s t : Finset V) (w : V → ℤ) (k : ℤ)
     (ht : t ⊆ s)
     (h : ∀ a ∈ s, ∀ b ∈ s, a ≠ b → a ∉ t → w a + w b ≤ k) :
     pairExcess s w k = pairExcess t w k := by
+  classical
   symm
   apply sum_subset (powersetCard_mono ht)
   intro p hp hpt
@@ -436,6 +445,7 @@ lemma pairExcess_unit_residual_two_supports (s : Finset V) (e g : V → ℤ) (h 
     (hgs : ∑ v ∈ s, g v = h) (u v : V) (hu : u ∈ s) (hv : v ∈ s)
     (huv : u ≠ v) (hgu : 0 < g u) (hgv : 0 < g v) :
     pairExcess s (fun v ↦ e v + g v) (h + 1) ≤ 1 := by
+  classical
   have havoid : ∀ a ∈ s, ∀ b ∈ s, a ≠ b → ∀ c ∈ s, c ≠ a → c ≠ b →
       0 < g c → (e a + g a) + (e b + g b) ≤ h + 1 := by
     intro a ha b hb hab c hc hca hcb hgc
@@ -519,7 +529,7 @@ lemma star_excess_bound_center (s : Finset V) (w : V → ℤ) (x k : ℤ)
       _ = (L.card : ℤ) * x := by simp [mul_comm]
       _ ≤ x := by nlinarith
 
-lemma pairExcess_star_le_center (s : Finset V) (w : V → ℤ) (k : ℤ) (u : V)
+lemma pairExcess_star_le_center [DecidableEq V] (s : Finset V) (w : V → ℤ) (k : ℤ) (u : V)
     (hu : u ∈ s) (hw : ∀ v ∈ s, 0 ≤ w v ∧ w v ≤ k) (hs : ∑ v ∈ s, w v ≤ 2 * k)
     (hstar : ∀ a ∈ s.erase u, ∀ b ∈ s.erase u, a ≠ b → w a + w b ≤ k) :
     pairExcess s w k ≤ w u := by

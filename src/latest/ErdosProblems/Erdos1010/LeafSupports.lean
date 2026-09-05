@@ -6,11 +6,12 @@ open Finset
 
 namespace Erdos1010
 
-theorem exists_distinct_leaf_supports {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_distinct_leaf_supports {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmin : ∀ v, 1 ≤ G.degree v) (hedge : G.edgeFinset.card + 2 ≤ Fintype.card V) :
     ∃ u₁ u₂ w₁ w₂, G.degree u₁ = 1 ∧ G.degree u₂ = 1 ∧
       G.Adj u₁ w₁ ∧ G.Adj u₂ w₂ ∧ w₁ ≠ w₂ := by
+  classical
   let L := (univ : Finset V).filter fun v ↦ G.degree v = 1
   have hsumL : (∑ v ∈ L, G.degree v) = L.card := by
     calc
@@ -58,7 +59,7 @@ theorem exists_distinct_leaf_supports {V : Type*} [Fintype V] [DecidableEq V]
   have hrestcard := card_erase_of_mem hwLc
   omega
 
-lemma adj_iff_eq_of_degree_one {V : Type*} [Fintype V] [DecidableEq V]
+lemma adj_iff_eq_of_degree_one {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (u w : V) (hu : G.degree u = 1) (huw : G.Adj u w)
     (v : V) : G.Adj u v ↔ v = w := by
   obtain ⟨z, huz, huniq⟩ := SimpleGraph.degree_eq_one_iff_existsUnique_adj.mp hu
