@@ -419,7 +419,7 @@ theorem summable_norm_pairedFourierPrimeLocalFactor_sub_one
     apply Nat.lt_of_not_ge
     intro hle
     apply hp
-    simpa only [Set.mem_setOf_eq] using hle
+    simpa only [Set.mem_ofPred_eq] using hle
   simp [maskedError, hlarge]
 
 /-! ## Direct-good-prime and carry-block versions -/
@@ -574,7 +574,7 @@ theorem
     apply Nat.lt_of_not_ge
     intro hle
     apply hp
-    simpa only [Set.mem_setOf_eq] using hle
+    simpa only [Set.mem_ofPred_eq] using hle
   simp [maskedError, hlarge]
 
 namespace SelectedCFZCarryFourierBlockData

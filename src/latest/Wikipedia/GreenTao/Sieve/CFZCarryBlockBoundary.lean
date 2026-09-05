@@ -147,7 +147,7 @@ theorem mem_affineStripInBox {ι : Type*}
 /-- If an affine form has coefficient `1` or `-1` in coordinate `v`, its
 value together with all other coordinates determines the point. -/
 theorem eq_of_affine_eval_eq_of_eq_off_unit
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (ψ : AffineForm ι ℤ) (v : ι)
     (hunit :
       ψ.coefficient v = 1 ∨ ψ.coefficient v = -1)
@@ -157,6 +157,7 @@ theorem eq_of_affine_eval_eq_of_eq_off_unit
         ψ.eval (fun i => (y i : ℤ)))
     (hoff : ∀ i, i ≠ v → x i = y i) :
     x = y := by
+  classical
   funext i
   by_cases hiv : i = v
   · subst i
@@ -1099,12 +1100,13 @@ theorem mean_neg_eq_neg_mean
 /-- Two functions that agree off `bad` and differ by at most one everywhere
 have means differing by at most the density of `bad`. -/
 theorem abs_mean_sub_mean_le_bad
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*} [Fintype α]
     (bad : Finset α) (F G : α → ℝ)
     (heq : ∀ x, x ∉ bad → F x = G x)
     (hbound : ∀ x, |F x - G x| ≤ 1) :
     |mean F - mean G| ≤
       (bad.card : ℝ) / Fintype.card α := by
+  classical
   let I : α → ℝ := finsetIndicator bad
   have hupper :
       mean (fun x => F x - G x) ≤ mean I := by
@@ -1289,7 +1291,7 @@ theorem abs_pairedDivisibilityDensity_cfz_sub_carryBlockModel_le_bad
 
 /-- Explicit `O_{k,|κ|}(D/N)` form of the unconditional carry-block bridge. -/
 theorem abs_pairedDivisibilityDensity_cfz_sub_carryBlockModel_le_linear
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     {k N D : ℕ} [NeZero N]
     (hk : 2 ≤ k) (hD : 0 < D)
     (W b : ℕ) (forms : κ → CFZFormIndex k)
@@ -1306,6 +1308,7 @@ theorem abs_pairedDivisibilityDensity_cfz_sub_carryBlockModel_le_linear
         D * (N : ℝ) ^
           (Fintype.card (CFZVariable k) - 1) /
         (N : ℝ) ^ Fintype.card (CFZVariable k) := by
+  classical
   have hbridge :=
     abs_pairedDivisibilityDensity_cfz_sub_carryBlockModel_le_bad
       (N := N) hD W b forms z

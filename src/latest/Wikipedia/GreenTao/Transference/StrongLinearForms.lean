@@ -260,11 +260,12 @@ theorem abs_mean_centeredProduct_le_card_mul
 /-- Cardinality-explicit version of the centered-product bound. -/
 theorem abs_mean_centeredProduct_le_two_pow
     {Ω ι : Type*} [Fintype Ω] [Fintype ι]
-    [DecidableEq ι] [Nonempty ι]
+    [Nonempty ι]
     {a : ι → Ω → ℝ} {η : ℝ}
     (h : HasBooleanSubproductCondition a η) :
     |mean (fun x => centeredProduct (fun i => a i x))| ≤
       (2 : ℝ) ^ Fintype.card ι * η := by
+  classical
   simpa [BooleanCube, Fintype.card_fun, Fintype.card_bool] using
     abs_mean_centeredProduct_le_card_mul h
 

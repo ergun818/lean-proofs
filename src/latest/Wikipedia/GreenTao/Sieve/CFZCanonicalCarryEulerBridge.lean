@@ -139,7 +139,7 @@ theorem
 the fixed affine residue value agree modulo every positive modulus. -/
 theorem
     natCast_cfzWTrickedLinearValue_eq_carryAdjustedResidueValueAtVector
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*}
     {k N D : ℕ} [NeZero N] [NeZero D]
     (W b : ℕ)
     (forms : κ → CFZFormIndex k)
@@ -153,6 +153,7 @@ theorem
       (cfzCarryAdjustedResidueValueAtVector
         (D := D) N W b forms carry q
         (fun v => (x v : ZMod D)) : ZMod D) := by
+  classical
   rw [natCast_cfzCarryAdjustedResidueValueAtVector]
   calc
     (cfzWTrickedLinearValue W b (forms q)

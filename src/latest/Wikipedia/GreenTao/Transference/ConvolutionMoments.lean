@@ -131,7 +131,7 @@ theorem HasConvolutionMomentBound.hasMonomialCorrelationBound
 /-- Direct polynomial cut-dense-model consequence of the expanded
 convolution moment condition. -/
 theorem exists_cutDiscrepancy_model_of_convolutionMomentBound
-    {G : Type*} [Fintype G] [DecidableEq G] [AddCommGroup G]
+    {G : Type*} [Fintype G] [AddCommGroup G]
     (r : ℕ) {f ν : G → ℝ}
     {p : ℝ[X]} {δ η M : ℝ}
     (hδ : 0 ≤ δ) (hη : 0 ≤ η) (hM0 : 0 ≤ M)
@@ -143,6 +143,7 @@ theorem exists_cutDiscrepancy_model_of_convolutionMomentBound
     ∃ g : G → ℝ, IsUnitBounded g ∧
       CutDiscrepancyLe (r + 1) f g
         (polynomialCoefficientL1 p * η + δ * M) := by
+  classical
   exact exists_cutDiscrepancy_model_of_monomialCorrelationBound
     (r + 1) (Nat.succ_pos r)
     hδ hη hM0 hf0 hfν hp hM

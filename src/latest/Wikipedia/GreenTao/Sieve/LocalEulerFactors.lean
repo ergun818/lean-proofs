@@ -394,7 +394,7 @@ theorem mean_systemLocalCoprimeWeight_bounds
 /-- System-level one-form normalization outside the exceptional-prime
 range. -/
 theorem mean_localCoprimeWeight_of_bound
-    {κ ι : Type*} [Fintype κ] [DecidableEq κ]
+    {κ ι : Type*} [Fintype κ]
     [Fintype ι] [DecidableEq ι]
     {forms : κ → AffineForm ι ℤ}
     (hforms : NonzeroCoefficientVectors forms)
@@ -402,13 +402,14 @@ theorem mean_localCoprimeWeight_of_bound
     (hlarge : exceptionalPrimeBound forms < p)
     (q : κ) :
     mean ((forms q).localCoprimeWeight p) = 1 := by
+  classical
   obtain ⟨i, hi⟩ :=
     exists_coefficient_cast_ne_zero_of_bound hforms hlarge q
   exact AffineForm.mean_localCoprimeWeight hp (forms q) hi
 
 /-- System-level pair decorrelation outside the exceptional-prime range. -/
 theorem mean_localCoprimeWeight_mul_of_bound
-    {κ ι : Type*} [Fintype κ] [DecidableEq κ]
+    {κ ι : Type*} [Fintype κ]
     [Fintype ι] [DecidableEq ι]
     {forms : κ → AffineForm ι ℤ}
     (hforms : PairwiseIndependentCoefficients forms)
@@ -418,6 +419,7 @@ theorem mean_localCoprimeWeight_mul_of_bound
     mean (fun x =>
       (forms q).localCoprimeWeight p x *
         (forms r).localCoprimeWeight p x) = 1 := by
+  classical
   obtain ⟨i, j, hij⟩ :=
     exists_minor_cast_ne_zero_of_bound hforms hlarge hqr
   exact AffineForm.mean_localCoprimeWeight_mul

@@ -658,7 +658,8 @@ theorem SmoothSieveCutoff.norm_integral_cfzCanonicalCarryEulerCompletionDiscrepa
 
 /-- For one carry cell, the completed support series times the paired
 Fourier envelope is bounded by the full complete-support mass. -/
-theorem SmoothSieveCutoff.norm_pairedEnvelope_mul_selectedCFZCanonicalCarryCompletePrimeSupportSeries_le
+theorem
+    SmoothSieveCutoff.norm_pairedEnvelope_mul_selectedCFZCanonicalCarryCompletePrimeSupportSeries_le
     {k N w b : ℕ} [NeZero N]
     (χ : SmoothSieveCutoff)
     (hk : 2 ≤ k)

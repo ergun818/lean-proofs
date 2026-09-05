@@ -138,7 +138,7 @@ theorem
         2 ≤ sieveLevel k (M + 1) :=
     hRtop (eventually_ge_atTop 2)
   simpa using
-    χ.tendsto_norm_mean_linearFormsProduct_cyclicMajorant_sub_canonicalEulerFourierMainTerm_primorial_zero_of_power_schedule
+    χ.tendsto_norm_cyclicMajorant_sub_eulerFourierMainTerm_of_power_schedule
       (show 2 ≤ k by omega) e
       (fun M => sieveLevel k (M + 1))
       (fun M => M + 1)

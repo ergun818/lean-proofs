@@ -90,10 +90,11 @@ theorem squarefree_pairedLocalModulus
 
 /-- A finite least common multiple of squarefree naturals is squarefree. -/
 theorem squarefree_finset_lcm
-    {κ : Type*} [DecidableEq κ]
+    {κ : Type*}
     (s : Finset κ) (f : κ → ℕ)
     (hf : ∀ q ∈ s, Squarefree (f q)) :
     Squarefree (s.lcm f) := by
+  classical
   induction s using Finset.induction_on with
   | empty =>
       simp
@@ -393,13 +394,14 @@ theorem affineFamilyZeroDensity_pair
 
 /-- Exact singleton density outside the exceptional-prime range. -/
 theorem affineFamilyZeroDensity_singleton_of_bound
-    {κ ι : Type*} [Fintype κ] [DecidableEq κ]
+    {κ ι : Type*} [Fintype κ]
     [Fintype ι] [DecidableEq ι]
     {forms : κ → AffineForm ι ℤ}
     (hforms : NonzeroCoefficientVectors forms)
     {p : ℕ} [NeZero p] (hp : p.Prime)
     (hlarge : exceptionalPrimeBound forms < p) (q : κ) :
     affineFamilyZeroDensity p forms {q} = (1 : ℝ) / p := by
+  classical
   rw [affineFamilyZeroDensity_singleton]
   exact mean_zeroFinsetZMod_of_bound hforms hp hlarge q
 
@@ -421,7 +423,7 @@ theorem affineFamilyZeroDensity_pair_of_bound
 /-- Existing local-factor APIs determine every selected-family density of
 cardinality at most two. -/
 theorem affineFamilyZeroDensity_of_card_le_two
-    {κ ι : Type*} [Fintype κ] [DecidableEq κ]
+    {κ ι : Type*} [Fintype κ]
     [Fintype ι] [DecidableEq ι]
     {forms : κ → AffineForm ι ℤ}
     (hnonzero : NonzeroCoefficientVectors forms)
@@ -431,6 +433,7 @@ theorem affineFamilyZeroDensity_of_card_le_two
     (s : Finset κ) (hs : s.card ≤ 2) :
     affineFamilyZeroDensity p forms s =
       (1 : ℝ) / (p : ℝ) ^ s.card := by
+  classical
   rcases Nat.eq_zero_or_pos s.card with hzero | hpos
   · have hs0 : s = ∅ := Finset.card_eq_zero.mp hzero
     subst s
@@ -652,16 +655,14 @@ theorem pairedDivisibilityIndicator_eq_affinePrimeProduct
         (coordinatePrimePowerEquiv x p))
   by_cases hpvalue : (p : ℕ) ∣ values q x
   · have heval := hiff.mp hpvalue
-    simp [natDivisibilityIndicator, hpvalue, finsetIndicator,
-      squarefreeCanonicalPrimeComponent] at heval ⊢
-    exact heval
+    simpa [natDivisibilityIndicator, hpvalue, finsetIndicator,
+      squarefreeCanonicalPrimeComponent] using heval
   · have heval : ¬
         (forms q).evalZMod (p : ℕ)
           (squarefreeCanonicalPrimeComponent hz p x) = 0 :=
       fun hzero => hpvalue (hiff.mpr hzero)
-    simp [natDivisibilityIndicator, hpvalue, finsetIndicator,
-      squarefreeCanonicalPrimeComponent] at heval ⊢
-    exact heval
+    simpa [natDivisibilityIndicator, hpvalue, finsetIndicator,
+      squarefreeCanonicalPrimeComponent] using heval
 
 /-- Squarefree paired divisor densities localize exactly to the arbitrary
 finite-family affine densities, one for the forms containing each prime. -/

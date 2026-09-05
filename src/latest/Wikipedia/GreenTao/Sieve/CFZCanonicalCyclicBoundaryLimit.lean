@@ -351,14 +351,14 @@ theorem
   simpa only [
     SmoothSieveCutoff.divisorExpansionFourierIntegrand,
     mul_comm] using
-    sum_transformedPairedDivisorFamily_mul_cfzCanonicalCarryEulerAverage_eq_unrestricted_add_discrepancy
+    sum_transformedPairedDivisorFamily_mul_canonicalEulerAverage_eq_unrestricted_add_discrepancy
       (N := N) χ W b R
       (fun q : SelectedCFZFormIndex e => q.1) t u
 
 /-- Exact integral form of the canonical unrestricted-plus-truncation
 splice. -/
 theorem
-    SmoothSieveCutoff.selectedCFZCanonicalEulerFourierMainTerm_eq_integral_unrestricted_add_discrepancy
+    SmoothSieveCutoff.selectedCFZEulerFourierMainTerm_eq_integral_unrestricted_add_discrepancy
     {k N : ℕ} [NeZero N]
     (χ : SmoothSieveCutoff) (R W b : ℕ)
     (e : LinearFormsExponent k) :
@@ -391,7 +391,7 @@ theorem
 /-- Strong scaled estimate retaining the exact coefficient-weighted LCM
 mass. -/
 theorem
-    SmoothSieveCutoff.abs_mean_linearFormsProduct_cyclicMajorant_sub_canonicalEulerMainTerm_le_lcmMass
+    SmoothSieveCutoff.abs_cyclicMajorant_sub_canonicalEulerMainTerm_le_lcmMass
     {k N R W b : ℕ} [NeZero N]
     (χ : SmoothSieveCutoff)
     (hk : 2 ≤ k)
@@ -466,7 +466,7 @@ theorem
             (SelectedCFZFormIndex e)) : ℝ) /
           (N : ℝ)) := by
   have hbase :=
-    χ.abs_mean_linearFormsProduct_cyclicMajorant_sub_canonicalEulerMainTerm_le_lcmMass
+    χ.abs_cyclicMajorant_sub_canonicalEulerMainTerm_le_lcmMass
       (W := W) hk hR hb e hfit
   have hmass :=
     χ.smoothDivisorFamilyLcmMass_le
@@ -531,7 +531,7 @@ theorem
 /-- In the primorial regime the whole scaled boundary is bounded by one
 selected-family power `R^(5m)/N`. -/
 theorem
-    SmoothSieveCutoff.abs_mean_linearFormsProduct_cyclicMajorant_sub_canonicalEulerMainTerm_primorial_le_selectedPower
+    SmoothSieveCutoff.abs_cyclicMajorant_sub_canonicalEulerMainTerm_primorial_le_selectedPower
     {k N R w b : ℕ} [NeZero N]
     (χ : SmoothSieveCutoff)
     (hk : 2 ≤ k)
@@ -641,7 +641,7 @@ theorem
 
 /-- Uniform ambient-CFZ power form of the scaled canonical boundary. -/
 theorem
-    SmoothSieveCutoff.abs_mean_linearFormsProduct_cyclicMajorant_sub_canonicalEulerMainTerm_primorial_le_power
+    SmoothSieveCutoff.abs_cyclicMajorant_sub_canonicalEulerMainTerm_primorial_le_power
     {k N R w b : ℕ} [NeZero N]
     (χ : SmoothSieveCutoff)
     (hk : 2 ≤ k)
@@ -659,7 +659,7 @@ theorem
         (R : ℝ) ^ cfzCanonicalCyclicBoundaryExponent k /
         (N : ℝ) := by
   have hselected :=
-    χ.abs_mean_linearFormsProduct_cyclicMajorant_sub_canonicalEulerMainTerm_primorial_le_selectedPower
+    χ.abs_cyclicMajorant_sub_canonicalEulerMainTerm_primorial_le_selectedPower
       hk hR hb e hfit (w := w)
   have hRone : (1 : ℝ) ≤ R := by
     exact_mod_cast (show 1 ≤ R by omega)
@@ -683,7 +683,7 @@ theorem
 
 /-- Direct complex-Fourier version of the preceding comparison. -/
 theorem
-    SmoothSieveCutoff.norm_mean_linearFormsProduct_cyclicMajorant_sub_canonicalEulerFourierMainTerm_primorial_le_power
+    SmoothSieveCutoff.norm_cyclicMajorant_sub_canonicalEulerFourierMainTerm_primorial_le_power
     {k N R w b : ℕ} [NeZero N]
     (χ : SmoothSieveCutoff)
     (hk : 2 ≤ k)
@@ -703,7 +703,7 @@ theorem
   rw [← χ.coe_selectedCFZCanonicalEulerMainTerm_eq_fourierMainTerm]
   simpa only [← Complex.ofReal_sub, Complex.norm_real,
     Real.norm_eq_abs] using
-    χ.abs_mean_linearFormsProduct_cyclicMajorant_sub_canonicalEulerMainTerm_primorial_le_power
+    χ.abs_cyclicMajorant_sub_canonicalEulerMainTerm_primorial_le_power
       hk hR hb e hfit (w := w)
 
 /-- The power-ratio schedule itself eventually forces the single global
@@ -784,7 +784,7 @@ theorem eventually_two_mul_cfzDivisorBox_le_of_boundaryPower_tendsto_zero
 The power schedule is uniform in the Boolean-selected subfamily; the global
 fit condition is likewise stated using the ambient CFZ family. -/
 theorem
-    SmoothSieveCutoff.tendsto_abs_mean_linearFormsProduct_cyclicMajorant_sub_canonicalEulerMainTerm_primorial_zero_of_power_schedule_and_fit
+    SmoothSieveCutoff.tendsto_abs_cyclicMajorant_sub_eulerMainTerm_of_power_schedule_and_fit
     {k : ℕ}
     (χ : SmoothSieveCutoff)
     (hk : 2 ≤ k)
@@ -846,13 +846,13 @@ theorem
           Nseq n :=
       (Nat.mul_le_mul_left 2 hpow).trans hfitn
     exact
-      χ.abs_mean_linearFormsProduct_cyclicMajorant_sub_canonicalEulerMainTerm_primorial_le_power
+      χ.abs_cyclicMajorant_sub_canonicalEulerMainTerm_primorial_le_power
         hk hRn hbn e hselectedFit (w := wseq n)
   · simpa only [C, mul_div_assoc] using hupper
 
 /-- Complex Fourier-main version of the same joint limit. -/
 theorem
-    SmoothSieveCutoff.tendsto_norm_mean_linearFormsProduct_cyclicMajorant_sub_canonicalEulerFourierMainTerm_primorial_zero_of_power_schedule_and_fit
+    SmoothSieveCutoff.tendsto_norm_cyclicMajorant_sub_eulerFourierMainTerm_of_power_schedule_and_fit
     {k : ℕ}
     (χ : SmoothSieveCutoff)
     (hk : 2 ≤ k)
@@ -883,7 +883,7 @@ theorem
               (primorial (wseq n)) (bseq n) e‖)
       atTop (𝓝 0) := by
   have hreal :=
-    χ.tendsto_abs_mean_linearFormsProduct_cyclicMajorant_sub_canonicalEulerMainTerm_primorial_zero_of_power_schedule_and_fit
+    χ.tendsto_abs_cyclicMajorant_sub_eulerMainTerm_of_power_schedule_and_fit
       hk e R Nseq wseq bseq hN hR hb hfit hscale
   apply hreal.congr'
   exact Filter.Eventually.of_forall fun n => by
@@ -912,7 +912,7 @@ theorem
 with `R ≥ 2` and positivity of the residue representative, makes the whole
 canonical cyclic-to-Euler boundary vanish. -/
 theorem
-    SmoothSieveCutoff.tendsto_abs_mean_linearFormsProduct_cyclicMajorant_sub_canonicalEulerMainTerm_primorial_zero_of_power_schedule
+    SmoothSieveCutoff.tendsto_abs_cyclicMajorant_sub_eulerMainTerm_of_power_schedule
     {k : ℕ}
     (χ : SmoothSieveCutoff)
     (hk : 2 ≤ k)
@@ -942,13 +942,13 @@ theorem
     eventually_two_mul_cfzDivisorBox_le_of_boundaryPower_tendsto_zero
       hk R Nseq hN hR hscale
   exact
-    χ.tendsto_abs_mean_linearFormsProduct_cyclicMajorant_sub_canonicalEulerMainTerm_primorial_zero_of_power_schedule_and_fit
+    χ.tendsto_abs_cyclicMajorant_sub_eulerMainTerm_of_power_schedule_and_fit
       hk e R Nseq wseq bseq hN hR hb hfit hscale
 
 /-- Clean power-schedule endpoint against the exact complex Fourier main
 term. -/
 theorem
-    SmoothSieveCutoff.tendsto_norm_mean_linearFormsProduct_cyclicMajorant_sub_canonicalEulerFourierMainTerm_primorial_zero_of_power_schedule
+    SmoothSieveCutoff.tendsto_norm_cyclicMajorant_sub_eulerFourierMainTerm_of_power_schedule
     {k : ℕ}
     (χ : SmoothSieveCutoff)
     (hk : 2 ≤ k)
@@ -978,7 +978,7 @@ theorem
     eventually_two_mul_cfzDivisorBox_le_of_boundaryPower_tendsto_zero
       hk R Nseq hN hR hscale
   exact
-    χ.tendsto_norm_mean_linearFormsProduct_cyclicMajorant_sub_canonicalEulerFourierMainTerm_primorial_zero_of_power_schedule_and_fit
+    χ.tendsto_norm_cyclicMajorant_sub_eulerFourierMainTerm_of_power_schedule_and_fit
       hk e R Nseq wseq bseq hN hR hb hfit hscale
 
 end Wikipedia.SzemeredisTheorem

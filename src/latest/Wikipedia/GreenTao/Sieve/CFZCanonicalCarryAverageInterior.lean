@@ -232,7 +232,7 @@ theorem
 /-- A convex combination of complex corrections which are uniformly
 `ε`-close to one is itself `ε`-close to one. -/
 theorem norm_nonnegWeightedAverage_sub_one_le
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (s : Finset ι)
     (weight : ι → ℝ)
     (correction : ι → ℂ)
@@ -241,6 +241,7 @@ theorem norm_nonnegWeightedAverage_sub_one_le
     (hsum : ∑ i ∈ s, weight i = 1)
     (hclose : ∀ i ∈ s, ‖correction i - 1‖ ≤ ε) :
     ‖(∑ i ∈ s, (weight i : ℂ) * correction i) - 1‖ ≤ ε := by
+  classical
   have hsumComplex :
       (∑ i ∈ s, (weight i : ℂ)) = 1 := by
     exact_mod_cast hsum

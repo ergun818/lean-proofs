@@ -250,13 +250,13 @@ theorem
 dividing `W` when `b` is reduced modulo `W`. -/
 theorem affineFamilyZeroDensity_wTricked_eq_zero_of_prime_dvd
     {κ ι : Type*} [Fintype ι] [DecidableEq ι]
-    [DecidableEq κ]
     {W b p : ℕ} [NeZero p]
     (hp : p.Prime) (hpW : p ∣ W) (hWb : W.Coprime b)
     (forms : κ → AffineForm ι ℤ)
     (s : Finset κ) (hs : s.Nonempty) :
     affineFamilyZeroDensity p
         (fun q => wTrickedAffineForm W b (forms q)) s = 0 := by
+  classical
   unfold affineFamilyZeroDensity
   rw [show
       affineFamilyZeroProduct p
@@ -316,7 +316,7 @@ theorem selectedCFZWTrickedAffinePrimeLocalDensity_eq_zero_of_dvd
 /-- Direct modular one-form and rank-two hypotheses determine every
 W-tricked common-zero density of cardinality at most two. -/
 theorem affineFamilyZeroDensity_wTricked_eq_inv_pow_card_of_card_le_two
-    {κ ι : Type*} [Fintype κ] [DecidableEq κ]
+    {κ ι : Type*} [Fintype κ]
     [Fintype ι] [DecidableEq ι]
     {p W : ℕ} [NeZero p]
     {forms : κ → AffineForm ι ℤ}
@@ -327,6 +327,7 @@ theorem affineFamilyZeroDensity_wTricked_eq_inv_pow_card_of_card_le_two
     affineFamilyZeroDensity p
         (fun q => wTrickedAffineForm W b (forms q)) s =
       (1 : ℝ) / (p : ℝ) ^ s.card := by
+  classical
   rcases Nat.eq_zero_or_pos s.card with hzero | hpos
   · have hs0 : s = ∅ := Finset.card_eq_zero.mp hzero
     subst s

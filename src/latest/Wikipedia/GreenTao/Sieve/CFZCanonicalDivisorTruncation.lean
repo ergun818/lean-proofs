@@ -361,7 +361,7 @@ noncomputable def fixedFamilyPrimeSupportThreeMajorant
 /-- The unrestricted primewise coefficient has the expected `3`-per-active
 form bound. -/
 theorem norm_fixedFamilyPrimeSupportCoefficient_le_threeMajorant
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     {R : ℕ} (hR : 2 ≤ R) (t u : κ → ℝ)
     {P : Finset Nat.Primes}
     (support : FixedFamilyPrimeSupportAssignment κ P) :

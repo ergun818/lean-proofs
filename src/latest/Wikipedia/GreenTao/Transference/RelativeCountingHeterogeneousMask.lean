@@ -211,7 +211,7 @@ theorem linearFormsProduct_apCSHeterogeneousOrderedStageFaceExponent
     · simp [hω]
   simp_rw [hpoint]
   rw [← Finset.prod_filter]
-  rw [Finset.prod_subtype
+  rw [Finset.prod_subtype (F := inferInstance)
     (p := fun ω :
       DeletedCube
         (((s + 1) + r) + 1)
@@ -1555,9 +1555,11 @@ theorem heterogeneousMaskSimplexCopyPair_true
     heterogeneousMaskSimplexCopyPair H K true = K := by
   rfl
 
+namespace HasLinearFormsCondition
+
 /-- One orientation of the mixed-copy estimate: the `false` copy is below
 the active AP mask, and the `true` copy lies in the unit interval. -/
-theorem HasLinearFormsCondition.abs_heterogeneousMaskSimplexTwoCopyCenteredCorrelation_le_of_falseSparse_trueDense
+theorem abs_heterogeneousMaskSimplexTwoCopyCenteredCorrelation_le_of_falseSparse_trueDense
     {m N : ℕ} [NeZero N]
     {ν : ZMod N → ℝ} {η ε : ℝ}
     (hLF : HasLinearFormsCondition (m + 2) N ν η)
@@ -1600,7 +1602,7 @@ theorem HasLinearFormsCondition.abs_heterogeneousMaskSimplexTwoCopyCenteredCorre
 
 /-- The reverse mixed-copy orientation: the `false` copy lies in the unit
 interval, and the `true` copy is below the active AP mask. -/
-theorem HasLinearFormsCondition.abs_heterogeneousMaskSimplexTwoCopyCenteredCorrelation_le_of_falseDense_trueSparse
+theorem abs_heterogeneousMaskSimplexTwoCopyCenteredCorrelation_le_of_falseDense_trueSparse
     {m N : ℕ} [NeZero N]
     {ν : ZMod N → ℝ} {η ε : ℝ}
     (hLF : HasLinearFormsCondition (m + 2) N ν η)
@@ -1644,7 +1646,7 @@ theorem HasLinearFormsCondition.abs_heterogeneousMaskSimplexTwoCopyCenteredCorre
 /-- Both orientations of the sparse--dense cross correlation follow from
 one heterogeneous CFZ certificate, with the Boolean masks swapped in the
 second orientation. -/
-theorem HasLinearFormsCondition.abs_heterogeneousMaskSimplexCrossCorrelations_le
+theorem abs_heterogeneousMaskSimplexCrossCorrelations_le
     {m N : ℕ} [NeZero N]
     {ν : ZMod N → ℝ} {η ε : ℝ}
     (hLF : HasLinearFormsCondition (m + 2) N ν η)
@@ -1679,5 +1681,7 @@ theorem HasLinearFormsCondition.abs_heterogeneousMaskSimplexCrossCorrelations_le
   · exact
       hLF.abs_heterogeneousMaskSimplexTwoCopyCenteredCorrelation_le_of_falseDense_trueSparse
         hν active K H j hK hH hε hconvert
+
+end HasLinearFormsCondition
 
 end Wikipedia.SzemeredisTheorem

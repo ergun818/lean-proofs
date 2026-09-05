@@ -227,7 +227,7 @@ theorem affineFamilyZeroDensity_pair_wTricked
 /-- Every nontrivial selected subfamily of a W-tricked rank-two system has
 common-zero density at most `p⁻²`. -/
 theorem affineFamilyZeroDensity_le_inv_sq_wTricked
-    {κ ι : Type*} [Fintype κ] [DecidableEq κ]
+    {κ ι : Type*} [Fintype κ]
     [Fintype ι] [DecidableEq ι]
     {p W : ℕ} [NeZero p] {forms : κ → AffineForm ι ℤ}
     (hgood : AffineRankTwoGoodPrime p forms)
@@ -236,6 +236,7 @@ theorem affineFamilyZeroDensity_le_inv_sq_wTricked
     affineFamilyZeroDensity p
         (fun q => wTrickedAffineForm W (b q) (forms q)) s ≤
       (1 : ℝ) / (p : ℝ) ^ 2 := by
+  classical
   exact affineFamilyZeroDensity_le_inv_sq_of_goodPrime
     (hgood.wTricked hpW b) s hs
 

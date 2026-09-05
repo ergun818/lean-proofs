@@ -367,7 +367,7 @@ noncomputable def coordinateProdEquivPi
 pairwise-coprime family of moduli. -/
 theorem mean_coordinateProdEquivPi
     {ι τ : Type*} [Fintype ι] [DecidableEq ι]
-    [Fintype τ] [DecidableEq τ]
+    [Fintype τ]
     (a : τ → ℕ) [∀ t, NeZero (a t)]
     [NeZero (∏ t, a t)]
     (h : Pairwise (Function.onFun Nat.Coprime a))
@@ -449,7 +449,7 @@ its exact density is the product of the local densities. -/
 theorem pairedDivisibilityDensity_eq_prod_localMeans
     {κ ι τ : Type*} [Fintype κ]
     [Fintype ι] [DecidableEq ι]
-    [Fintype τ] [DecidableEq τ]
+    [Fintype τ]
     (a : τ → ℕ) [∀ t, NeZero (a t)]
     [NeZero (∏ t, a t)]
     (h : Pairwise (Function.onFun Nat.Coprime a))
@@ -461,6 +461,7 @@ theorem pairedDivisibilityDensity_eq_prod_localMeans
         a h values z localFactor) :
     pairedDivisibilityDensity values z =
       ∏ t, mean (localFactor t) := by
+  classical
   calc
     pairedDivisibilityDensity values z =
         mean (fun x : ι → ZMod (∏ t, a t) =>

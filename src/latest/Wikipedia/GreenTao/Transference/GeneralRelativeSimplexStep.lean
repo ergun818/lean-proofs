@@ -236,7 +236,7 @@ theorem HasProjectedMajorantMoments.abs_generalSimplexCount_sub_densifiedPairing
     |H.simplexCount -
         generalSimplexDensifiedPairing H j| ≤
       Real.sqrt (3 * η) := by
-  rw [generalSimplexCount_eq_projectedPairing]
+  rw [generalSimplexCount_eq_projectedPairing H j]
   have hface :
       ∀ y, |generalSimplexDistinguishedWeight H j y| ≤ 1 := by
     intro y
@@ -328,8 +328,9 @@ theorem EdgeWeightsInUnitInterval.generalSimplexCount_eq_densifiedPairing
     (j : Fin (n + 1)) :
     H.simplexCount =
       generalSimplexDensifiedPairing H j := by
+  have hmoments := hasProjectedMajorantMoments_generalSimplexOne (G := G) j
   have hloss :=
-    (hasProjectedMajorantMoments_generalSimplexOne j).abs_generalSimplexCount_sub_densifiedPairing_le
+    hmoments.abs_generalSimplexCount_sub_densifiedPairing_le
       (fun x => hH j x)
       (hH.generalSimplexUntouchedBounds_one j)
   have hzero :

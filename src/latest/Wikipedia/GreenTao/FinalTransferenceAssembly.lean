@@ -54,7 +54,7 @@ def HasStandardCyclicMajorantLinearForms : Prop :=
 /-- Ordered removal and the standard smooth-sieve linear-forms estimate
 supply the corrected cofinal-prime count predicate. -/
 theorem
-    hasCofinalPrimeStandardReducedResidueWTrickedPrimeProgressionCounts_of_orderedRemoval_of_linearForms
+    hasCofinalPrimeProgressionCounts_of_orderedRemoval_of_linearForms
     (hremoval : HasOrderedRemovalForAllAPLengths)
     (hsieve : HasStandardCyclicMajorantLinearForms) :
     HasCofinalPrimeStandardReducedResidueWTrickedPrimeProgressionCounts := by
@@ -191,7 +191,7 @@ theorem containsArbitraryAPs_primes_of_orderedRemoval_of_linearForms
     SzemeredisTheorem.ContainsArbitraryAPs
       {p : ℕ | Nat.Prime p} :=
   containsArbitraryAPs_primes_of_standard_reducedResidue_cofinal_prime_counts
-    (hasCofinalPrimeStandardReducedResidueWTrickedPrimeProgressionCounts_of_orderedRemoval_of_linearForms
+    (hasCofinalPrimeProgressionCounts_of_orderedRemoval_of_linearForms
       hremoval hsieve)
 
 end Wikipedia.SzemeredisTheorem

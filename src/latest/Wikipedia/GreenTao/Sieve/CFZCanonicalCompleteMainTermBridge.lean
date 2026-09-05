@@ -362,7 +362,7 @@ theorem
     rw [integral_sub hunrestricted hcomplete] at hsub
     exact sub_eq_zero.mp hsub
   rw [
-    χ.selectedCFZCanonicalEulerFourierMainTerm_eq_integral_unrestricted_add_discrepancy
+    χ.selectedCFZEulerFourierMainTerm_eq_integral_unrestricted_add_discrepancy
       (N := N) R (primorial w) b e]
   congr 2
   rw [integral_add hunrestricted htruncation,
@@ -497,7 +497,7 @@ theorem
 /-- The exact complete-main-term identity with all scalar factors moved
 inside the integral. -/
 theorem
-    SmoothSieveCutoff.selectedCFZCanonicalEulerFourierMainTerm_eq_integral_completeEulerScaledIntegrand
+    SmoothSieveCutoff.selectedCFZEulerFourierMainTerm_eq_integral_completeScaledIntegrand
     {k N w b : ℕ} [NeZero N]
     (χ : SmoothSieveCutoff)
     (hk : 2 ≤ k)
@@ -760,7 +760,7 @@ theorem
           ∫ tu in boxᶜ, scaled tu
             ∂(volume.prod volume) := by
     rw [
-      χ.selectedCFZCanonicalEulerFourierMainTerm_eq_integral_completeEulerScaledIntegrand
+      χ.selectedCFZEulerFourierMainTerm_eq_integral_completeScaledIntegrand
         (N := N) hk hbound hwb e hR]
     exact integral_eq_selectedCFZPairedFourierBox_add_compl
       e T hscaled

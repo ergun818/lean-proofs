@@ -56,7 +56,7 @@ theorem fourierInput_contDiff (χ : SmoothSieveCutoff) :
 /-- The exponential factor does not enlarge the support of the cutoff. -/
 theorem fourierInput_hasCompactSupport (χ : SmoothSieveCutoff) :
     HasCompactSupport χ.fourierInput := by
-  apply HasCompactSupport.of_support_subset_isCompact isCompact_Icc
+  apply HasCompactSupport.of_support_subset_isCompact (K := Set.Icc (-1) 1) isCompact_Icc
   intro x hx
   apply χ.support_subset
   intro hχ

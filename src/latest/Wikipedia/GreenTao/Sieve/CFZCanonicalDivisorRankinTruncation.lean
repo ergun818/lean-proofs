@@ -118,7 +118,7 @@ noncomputable def fixedFamilyPrimeSupportActualCoefficientMass
         R (p : ℕ) (t q) (u q)‖
 
 theorem norm_fixedFamilyPrimeSupportCoefficient_eq_actualMass
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     (R : ℕ) (t u : κ → ℝ)
     {P : Finset Nat.Primes}
     (support : FixedFamilyPrimeSupportAssignment κ P) :
@@ -146,7 +146,7 @@ noncomputable def fixedFamilyPrimeSupportRpowCoefficientMass
       (support p).card
 
 theorem fixedFamilyPrimeSupportActualCoefficientMass_le_rpow
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     {R : ℕ} (hR : 2 ≤ R) (t u : κ → ℝ)
     {P : Finset Nat.Primes}
     (support : FixedFamilyPrimeSupportAssignment κ P) :

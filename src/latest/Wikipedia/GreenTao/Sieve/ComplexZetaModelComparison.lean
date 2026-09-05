@@ -146,7 +146,7 @@ theorem norm_complexProductHigherOrderRemainder_le
 first-order error `D`; the products of two or more factor errors are
 controlled by `B²`. -/
 theorem norm_fintypeProd_sub_combinedFirstOrder_le
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     (Q a : κ → ℂ) (r : ℂ)
     {B D : ℝ}
     (hB0 : 0 ≤ B) (hB1 : B ≤ 1)
@@ -157,6 +157,7 @@ theorem norm_fintypeProd_sub_combinedFirstOrder_le
         (1 - r * ∑ q, a q)‖ ≤
       Fintype.card κ * D +
         (2 : ℝ) ^ Fintype.card κ * B ^ 2 := by
+  classical
   let e : κ → ℂ := fun q => Q q - 1
   have hprod :
       (∏ q, Q q) =
@@ -527,7 +528,7 @@ theorem complexZetaModelDifferenceConstant_nonneg
 /-- The product of the per-form zeta factors differs from the combined
 first-order model by `O_m(p⁻²)`. -/
 theorem norm_phaseZetaSystemEulerLocalFactor_sub_firstOrder_le
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     {p : ℕ} (hp : p.Prime) (hseven : 7 ≤ p)
     (z w : κ → ℂ)
     (hz : ∀ q, ‖z q‖ ≤ 1)
@@ -538,6 +539,7 @@ theorem norm_phaseZetaSystemEulerLocalFactor_sub_firstOrder_le
       complexZetaModelDifferenceConstant
           (Fintype.card κ) /
         (p : ℝ) ^ 2 := by
+  classical
   have hpR : 0 < (p : ℝ) := by
     exact_mod_cast hp.pos
   have hsevenR : (7 : ℝ) ≤ (p : ℝ) := by
@@ -583,7 +585,7 @@ theorem norm_phaseZetaSystemEulerLocalFactor_sub_firstOrder_le
 
 /-- Fourier-uniform version of the finite-system difference estimate. -/
 theorem norm_fourierZetaSystemEulerLocalFactor_sub_firstOrder_le
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     {R p : ℕ} (hR : 2 ≤ R) (hp : p.Prime)
     (hseven : 7 ≤ p)
     (t u : κ → ℝ) :
@@ -592,6 +594,7 @@ theorem norm_fourierZetaSystemEulerLocalFactor_sub_firstOrder_le
       complexZetaModelDifferenceConstant
           (Fintype.card κ) /
         (p : ℝ) ^ 2 := by
+  classical
   rw [fourierZetaSystemEulerLocalFactor_eq_phase
     (by omega) hp]
   exact norm_phaseZetaSystemEulerLocalFactor_sub_firstOrder_le
@@ -625,7 +628,7 @@ theorem complexZetaModelRatioErrorConstant_nonneg
 /-- The zeta-model/first-order ratio is `1 + O_m(p⁻²)`, uniformly in all
 Fourier parameters. -/
 theorem norm_fourierZetaToFirstOrderLocalRatio_sub_one_le
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     {R p : ℕ} (hR : 2 ≤ R) (hp : p.Prime)
     (hseven : 7 ≤ p)
     (hcard : 6 * Fintype.card κ ≤ p)
@@ -634,6 +637,7 @@ theorem norm_fourierZetaToFirstOrderLocalRatio_sub_one_le
       complexZetaModelRatioErrorConstant
           (Fintype.card κ) /
         (p : ℝ) ^ 2 := by
+  classical
   let model :=
     pairedFourierFirstOrderLocalModel R p t u
   have hmodelHalf :
@@ -691,7 +695,7 @@ def complexZetaModelComparisonCutoff (m : ℕ) : ℕ :=
 
 /-- Cutoff-packaged form of the uniform ratio estimate. -/
 theorem norm_fourierZetaToFirstOrderLocalRatio_sub_one_le_of_cutoff
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     {R p : ℕ} (hR : 2 ≤ R) (hp : p.Prime)
     (hcut :
       complexZetaModelComparisonCutoff
@@ -701,6 +705,7 @@ theorem norm_fourierZetaToFirstOrderLocalRatio_sub_one_le_of_cutoff
       complexZetaModelRatioErrorConstant
           (Fintype.card κ) /
         (p : ℝ) ^ 2 := by
+  classical
   exact norm_fourierZetaToFirstOrderLocalRatio_sub_one_le
     hR hp
     ((Nat.le_max_left _ _).trans hcut)
@@ -809,7 +814,7 @@ def complexZetaModelNonzeroCutoff (m : ℕ) : ℕ :=
 /-- Above the stability cutoff, the exact finite-system zeta Euler model
 has norm at least one quarter. -/
 theorem one_fourth_le_norm_fourierZetaSystemEulerLocalFactor
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     {R p : ℕ} (hR : 2 ≤ R) (hp : p.Prime)
     (hcut :
       complexZetaModelNonzeroCutoff
@@ -817,6 +822,7 @@ theorem one_fourth_le_norm_fourierZetaSystemEulerLocalFactor
     (t u : κ → ℝ) :
     (1 : ℝ) / 4 ≤
       ‖fourierZetaSystemEulerLocalFactor R p t u‖ := by
+  classical
   let m := Fintype.card κ
   let model :=
     pairedFourierFirstOrderLocalModel R p t u

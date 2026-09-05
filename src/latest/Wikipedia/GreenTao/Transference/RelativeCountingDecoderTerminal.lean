@@ -249,7 +249,7 @@ theorem iterNext_next_eq_iterNext_succ_reindex
 /-- The Boolean core product after one transform splits into the paid
 head-majorant face and the two endpoint halves of the original core cube. -/
 theorem terminalCoreProduct_next
-    {P G : Type u} [Fintype P] [Fintype G]
+    {P G : Type u}
     {n : ℕ}
     (S : MajorizedCutSystem P G (n + 1))
     (p : P) (a : Fin (n + 1) → G × G) :
@@ -292,7 +292,7 @@ theorem terminalCoreProduct_next
 /-- The symmetric terminal majorant product splits into the original head
 face and the terminal majorant product of `next`. -/
 theorem terminalMajorantProduct_eq_head_mul_next
-    {P G : Type u} [Fintype P] [Fintype G] :
+    {P G : Type u} :
     ∀ {n : ℕ}
       (S : MajorizedCutSystem P G (n + 1))
       (p : P) (a : Fin (n + 1) → G × G),
@@ -398,7 +398,7 @@ theorem terminalMajorantProduct_eq_head_mul_next
 original core occurs once, and every designated majorant occurs once on
 every vertex of its deleted-coordinate cube. -/
 theorem iterNextTerminalDecoded_core
-    {P G : Type u} [Fintype P] [Fintype G] :
+    {P G : Type u} :
     ∀ (n : ℕ) (S : MajorizedCutSystem P G n)
       (p : P) (a : Fin n → G × G),
       (iterNextTerminalDecoded S).core (p, a)
@@ -409,7 +409,11 @@ theorem iterNextTerminalDecoded_core
   induction n generalizing P with
   | zero =>
       intro S p a
-      simp only [terminalMajorantProduct_zero, one_mul]
+      change
+        S.core p (fun i => Fin.elim0 i) =
+          terminalMajorantProduct S p a * terminalCoreProduct S p a
+      simp only [terminalMajorantProduct_zero, one_mul,
+        terminalCoreProduct, Fintype.prod_unique]
       apply congrArg (S.core p)
       funext i
       exact Fin.elim0 i
@@ -530,7 +534,8 @@ noncomputable def apCSTerminalFaceVertexEquiv
     apply Prod.ext
     · simp [apCSTerminalFaceVertex]
     · funext r
-      simp only [ne_eq]
+      change (if h : j.succAbove (t.succAbove r) = j then _ else _) = _
+      rw [dif_neg (Fin.succAbove_ne j (t.succAbove r))]
       apply congrArg bits.2
       apply (finSuccAboveEquiv t).injective
       rw [(finSuccAboveEquiv t).apply_symm_apply]

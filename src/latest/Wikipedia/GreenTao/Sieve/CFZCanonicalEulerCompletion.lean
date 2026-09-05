@@ -396,7 +396,8 @@ theorem fixedFamilyPairedPrimeStateDivisorFamily_not_mem_of_prime_gt
 
 /-- Full-space integral of one complete-series support term vanishes as
 soon as its active prime set contains a prime above `R`. -/
-theorem SmoothSieveCutoff.integral_pairedEnvelope_mul_unrestrictedPrimeSupportTerm_eq_zero_of_prime_gt
+theorem
+    SmoothSieveCutoff.integral_pairedEnvelope_mul_unrestrictedPrimeSupportTerm_eq_zero_of_prime_gt
     {κ ι : Type*} [Fintype κ] [DecidableEq κ]
     [Fintype ι] [DecidableEq ι]
     (χ : SmoothSieveCutoff)
@@ -995,7 +996,8 @@ theorem SmoothSieveCutoff.integrable_selectedCFZCanonicalCarryEulerCompletionTai
         idx.1.1 : ℂ)).neg
 
 /-- The `L¹` norms of all signed tail terms are summable. -/
-theorem SmoothSieveCutoff.summable_integral_norm_selectedCFZCanonicalCarryEulerCompletionTailIntegrand
+theorem
+    SmoothSieveCutoff.summable_integral_norm_selectedCFZCanonicalCarryEulerCompletionTailIntegrand
     {k N w b : ℕ} [NeZero N]
     (χ : SmoothSieveCutoff)
     (hk : 2 ≤ k)

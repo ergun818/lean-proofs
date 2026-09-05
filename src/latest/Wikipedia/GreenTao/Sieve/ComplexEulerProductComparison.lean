@@ -395,7 +395,7 @@ theorem boundedMasked_primeArithmeticZetaRatio_eventuallyEq
   have hnot :
       ¬(p : ℕ) ≤
         complexArithmeticZetaExceptionalBound forms := by
-    simpa only [Set.mem_setOf_eq] using hp
+    simpa only [Set.mem_ofPred_eq] using hp
   exact boundedMaskedComplexPrimeLocalFactor_of_lt
     (Nat.lt_of_not_ge hnot)
 

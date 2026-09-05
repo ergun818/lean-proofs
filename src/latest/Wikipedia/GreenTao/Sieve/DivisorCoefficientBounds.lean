@@ -106,7 +106,7 @@ theorem card_smoothDivisorFamilyChoices
 Lipschitz, with constant equal to the cardinality of its support, for the
 uniform norm on the attached values. -/
 theorem abs_weightedFinsetSum_sub_le_card_mul
-    {α : Type*} [DecidableEq α]
+    {α : Type*}
     (s : Finset α) (weight f g : α → ℝ)
     {ε : ℝ} (_hε : 0 ≤ ε)
     (hweight : ∀ x ∈ s, |weight x| ≤ 1)

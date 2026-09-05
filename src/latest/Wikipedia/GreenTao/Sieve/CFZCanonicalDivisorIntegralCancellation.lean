@@ -18,11 +18,12 @@ open scoped ArithmeticFunction.Moebius BigOperators
 namespace SmoothSieveCutoff
 
 theorem divisorMultiplicativePhase_finsetProd
-    {α : Type*} [DecidableEq α]
+    {α : Type*}
     (R : ℕ) (s : Finset α) (d : α → ℕ)
     (hd : ∀ a ∈ s, 0 < d a) (t : ℝ) :
     divisorMultiplicativePhase R (∏ a ∈ s, d a) t =
       ∏ a ∈ s, divisorMultiplicativePhase R (d a) t := by
+  classical
   induction s using Finset.induction_on with
   | empty =>
       simp [divisorMultiplicativePhase, cutoffMultiplicativePhase]
@@ -37,12 +38,13 @@ theorem divisorMultiplicativePhase_finsetProd
           hd b (Finset.mem_insert_of_mem hb)
 
 theorem moebius_finsetProd_primes
-    {α : Type*} [DecidableEq α]
+    {α : Type*}
     (s : Finset α) (p : α → ℕ)
     (hp : ∀ a ∈ s, (p a).Prime)
     (hinj : Set.InjOn p s) :
     (ArithmeticFunction.moebius (∏ a ∈ s, p a) : ℂ) =
       (-1 : ℂ) ^ s.card := by
+  classical
   have hsquare :
       Squarefree (∏ a ∈ s, p a) := by
     refine Finset.squarefree_prod_of_pairwise_isCoprime ?_ ?_
@@ -289,7 +291,7 @@ theorem fintype_prod_subtype_eq_prod_dite
 
 /-- The state product can be regrouped by form and by side. -/
 theorem fixedFamilyPairedPrimeStateTerm_eq_sideProducts
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     (R : ℕ) (t u : κ → ℝ)
     {P : Finset Nat.Primes}
     (support : FixedFamilyPrimeSupportAssignment κ P)
@@ -448,7 +450,7 @@ theorem fixedFamilyPairedPrimeStateTerm_eq_sideProducts
         rw [Finset.prod_neg]
 
 theorem moebius_fixedFamilyPairedPrimeStateDivisorFamily_left
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     {P : Finset Nat.Primes}
     (support : FixedFamilyPrimeSupportAssignment κ P)
     (A : FixedFamilyPairedPrimeStateAssignment support)
@@ -457,6 +459,7 @@ theorem moebius_fixedFamilyPairedPrimeStateDivisorFamily_left
         (fixedFamilyPairedPrimeStateDivisorFamily support A q).1 : ℂ) =
       (-1 : ℂ) ^
         (fixedFamilyPairedPrimeStateLeftPrimes support A q).card := by
+  classical
   unfold fixedFamilyPairedPrimeStateDivisorFamily
   apply SmoothSieveCutoff.moebius_finsetProd_primes
   · intro p _hp
@@ -467,7 +470,7 @@ theorem moebius_fixedFamilyPairedPrimeStateDivisorFamily_left
     exact hpr
 
 theorem moebius_fixedFamilyPairedPrimeStateDivisorFamily_right
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     {P : Finset Nat.Primes}
     (support : FixedFamilyPrimeSupportAssignment κ P)
     (A : FixedFamilyPairedPrimeStateAssignment support)
@@ -476,6 +479,7 @@ theorem moebius_fixedFamilyPairedPrimeStateDivisorFamily_right
         (fixedFamilyPairedPrimeStateDivisorFamily support A q).2 : ℂ) =
       (-1 : ℂ) ^
         (fixedFamilyPairedPrimeStateRightPrimes support A q).card := by
+  classical
   unfold fixedFamilyPairedPrimeStateDivisorFamily
   apply SmoothSieveCutoff.moebius_finsetProd_primes
   · intro p _hp
@@ -486,7 +490,7 @@ theorem moebius_fixedFamilyPairedPrimeStateDivisorFamily_right
     exact hpr
 
 theorem divisorMultiplicativePhase_fixedFamilyPairedPrimeStateDivisorFamily_left
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     (R : ℕ)
     {P : Finset Nat.Primes}
     (support : FixedFamilyPrimeSupportAssignment κ P)
@@ -497,6 +501,7 @@ theorem divisorMultiplicativePhase_fixedFamilyPairedPrimeStateDivisorFamily_left
       ∏ p ∈ fixedFamilyPairedPrimeStateLeftPrimes support A q,
         SmoothSieveCutoff.divisorMultiplicativePhase
           R (p : ℕ) t := by
+  classical
   unfold fixedFamilyPairedPrimeStateDivisorFamily
   exact SmoothSieveCutoff.divisorMultiplicativePhase_finsetProd
     R
@@ -506,7 +511,7 @@ theorem divisorMultiplicativePhase_fixedFamilyPairedPrimeStateDivisorFamily_left
     t
 
 theorem divisorMultiplicativePhase_fixedFamilyPairedPrimeStateDivisorFamily_right
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     (R : ℕ)
     {P : Finset Nat.Primes}
     (support : FixedFamilyPrimeSupportAssignment κ P)
@@ -517,6 +522,7 @@ theorem divisorMultiplicativePhase_fixedFamilyPairedPrimeStateDivisorFamily_righ
       ∏ p ∈ fixedFamilyPairedPrimeStateRightPrimes support A q,
         SmoothSieveCutoff.divisorMultiplicativePhase
           R (p : ℕ) u := by
+  classical
   unfold fixedFamilyPairedPrimeStateDivisorFamily
   exact SmoothSieveCutoff.divisorMultiplicativePhase_finsetProd
     R
@@ -529,7 +535,7 @@ theorem divisorMultiplicativePhase_fixedFamilyPairedPrimeStateDivisorFamily_righ
 literally the transformed paired-divisor family encoded by that state
 assignment. -/
 theorem pairedCutoffFourierEnvelope_mul_fixedFamilyPairedPrimeStateTerm
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     (χ : SmoothSieveCutoff)
     (R : ℕ) (t u : κ → ℝ)
     {P : Finset Nat.Primes}
@@ -629,7 +635,7 @@ theorem prime_dvd_fixedFamilyPairedPrimeStatePrimeProduct_iff_mem
       (fun r : {p // p ∈ P} => (r : ℕ)) hp
 
 theorem prime_dvd_fixedFamilyPairedPrimeStateDivisorFamily_left_iff
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     {P : Finset Nat.Primes}
     (support : FixedFamilyPrimeSupportAssignment κ P)
     (A : FixedFamilyPairedPrimeStateAssignment support)
@@ -637,13 +643,14 @@ theorem prime_dvd_fixedFamilyPairedPrimeStateDivisorFamily_left_iff
     (p : ℕ) ∣
         (fixedFamilyPairedPrimeStateDivisorFamily support A q).1 ↔
       ∃ hq : q ∈ support p, A p ⟨q, hq⟩ ≠ 1 := by
+  classical
   unfold fixedFamilyPairedPrimeStateDivisorFamily
   rw [
     prime_dvd_fixedFamilyPairedPrimeStatePrimeProduct_iff_mem,
     mem_fixedFamilyPairedPrimeStateLeftPrimes]
 
 theorem prime_dvd_fixedFamilyPairedPrimeStateDivisorFamily_right_iff
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     {P : Finset Nat.Primes}
     (support : FixedFamilyPrimeSupportAssignment κ P)
     (A : FixedFamilyPairedPrimeStateAssignment support)
@@ -651,6 +658,7 @@ theorem prime_dvd_fixedFamilyPairedPrimeStateDivisorFamily_right_iff
     (p : ℕ) ∣
         (fixedFamilyPairedPrimeStateDivisorFamily support A q).2 ↔
       ∃ hq : q ∈ support p, A p ⟨q, hq⟩ ≠ 0 := by
+  classical
   unfold fixedFamilyPairedPrimeStateDivisorFamily
   rw [
     prime_dvd_fixedFamilyPairedPrimeStatePrimeProduct_iff_mem,
@@ -683,12 +691,13 @@ theorem fixedFamilyPrimeSupportAssignmentOf_stateDivisorFamily
       exact ⟨hq, hleft⟩
 
 theorem squarefree_fixedFamilyPairedPrimeStateDivisorFamily
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     {P : Finset Nat.Primes}
     (support : FixedFamilyPrimeSupportAssignment κ P)
     (A : FixedFamilyPairedPrimeStateAssignment support) :
     SquarefreePairedDivisorChoice
       (fixedFamilyPairedPrimeStateDivisorFamily support A) := by
+  classical
   intro q
   constructor <;>
     unfold fixedFamilyPairedPrimeStateDivisorFamily <;>
@@ -717,11 +726,12 @@ theorem squarefree_fixedFamilyPairedPrimeStateDivisorFamily
     exact p.1.prop.squarefree
 
 theorem fixedFamilyPairedPrimeStateDivisorFamily_injective
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     {P : Finset Nat.Primes}
     (support : FixedFamilyPrimeSupportAssignment κ P) :
     Function.Injective
       (fixedFamilyPairedPrimeStateDivisorFamily support) := by
+  classical
   intro A B hAB
   funext p q
   have hzq :
@@ -777,13 +787,14 @@ noncomputable def fixedFamilyPairedPrimeStateAssignmentOf
     else 1
 
 theorem fixedFamilyPairedPrimeStateAssignmentOf_ne_one_iff
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     {P : Finset Nat.Primes}
     (support : FixedFamilyPrimeSupportAssignment κ P)
     (z : κ → ℕ × ℕ)
     (p : {p // p ∈ P}) (q : {q // q ∈ support p}) :
     fixedFamilyPairedPrimeStateAssignmentOf support z p q ≠ 1 ↔
       (p : ℕ) ∣ (z q).1 := by
+  classical
   unfold fixedFamilyPairedPrimeStateAssignmentOf
   by_cases hleft : (p : ℕ) ∣ (z q).1 <;>
     by_cases hright : (p : ℕ) ∣ (z q).2 <;>
@@ -1002,7 +1013,7 @@ theorem fixedFamilyPairedPrimeStateDivisorFamily_assignmentOf_eq
         Nat.prod_primeFactors_of_squarefree (hzSquarefree q).2
 
 theorem fixedFamilyPairedPrimeStateDivisorFamily_pos
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     {P : Finset Nat.Primes}
     (support : FixedFamilyPrimeSupportAssignment κ P)
     (A : FixedFamilyPairedPrimeStateAssignment support)
@@ -1011,6 +1022,7 @@ theorem fixedFamilyPairedPrimeStateDivisorFamily_pos
         (fixedFamilyPairedPrimeStateDivisorFamily support A q).1 ∧
       0 <
         (fixedFamilyPairedPrimeStateDivisorFamily support A q).2 := by
+  classical
   unfold fixedFamilyPairedPrimeStateDivisorFamily
   constructor <;>
     exact Finset.prod_pos fun p _hp => p.1.prop.pos
@@ -1190,7 +1202,7 @@ theorem pairedCutoffFourierEnvelope_mul_fixedFamilyPrimeSupportCoefficient_eq_su
       χ R t u support A
 
 theorem integrable_pairedCutoffFourierEnvelope_mul_fixedFamilyPrimeSupportCoefficient
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     (χ : SmoothSieveCutoff)
     (R : ℕ)
     {P : Finset Nat.Primes}
@@ -1200,6 +1212,7 @@ theorem integrable_pairedCutoffFourierEnvelope_mul_fixedFamilyPrimeSupportCoeffi
         pairedCutoffFourierEnvelope χ tu.1 tu.2 *
           fixedFamilyPrimeSupportCoefficient R tu.1 tu.2 support)
       (volume.prod volume) := by
+  classical
   have hsum :
       Integrable
         (fun tu : (κ → ℝ) × (κ → ℝ) =>

@@ -160,11 +160,12 @@ theorem complexWeightedLocalFactor_eq_inclusionExclusion
 /-- Complex specialization of the elementary decomposition of supports of
 cardinality less than two. -/
 theorem sum_powerset_supports_of_card_lt_two_complex
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     (F : Finset κ → ℂ) :
     (∑ s ∈ (Finset.univ : Finset κ).powerset.filter
         (fun s => ¬ 2 ≤ s.card), F s) =
       F ∅ + ∑ q : κ, F {q} := by
+  classical
   let u : Finset κ := Finset.univ
   have hlow :
       u.powerset.filter (fun s => ¬ 2 ≤ s.card) =

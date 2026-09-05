@@ -73,7 +73,7 @@ theorem pairedPrimeOccurrenceAssignmentWeight_nonneg
 /-! ## The unrestricted assignment sum -/
 
 theorem sum_pairedDivisorOccurrence_localWeight
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     (p : ℕ) :
     (∑ S : Finset (PairedDivisorOccurrence κ),
         if S.Nonempty then (1 : ℝ) / (p : ℝ) else 1) =

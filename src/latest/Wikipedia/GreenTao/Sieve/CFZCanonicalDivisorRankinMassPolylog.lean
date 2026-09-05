@@ -421,10 +421,11 @@ theorem
 
 /-- Binomial expansion of the total coefficient weight over all supports. -/
 theorem sum_three_pow_card_powerset
-    (κ : Type*) [Fintype κ] [DecidableEq κ] :
+    (κ : Type*) [Fintype κ] :
     ∑ s ∈ (Finset.univ : Finset κ).powerset,
         (3 : ℝ) ^ s.card =
       (4 : ℝ) ^ Fintype.card κ := by
+  classical
   calc
     (∑ s ∈ (Finset.univ : Finset κ).powerset,
         (3 : ℝ) ^ s.card) =
@@ -918,7 +919,7 @@ theorem
 
 /-- Eventual form expected by the growing-box Rankin-tail theorem. -/
 theorem
-    SmoothSieveCutoff.eventually_selectedCFZCanonicalCarryScaledTruncationRankinMass_primorial_le_polylog
+    SmoothSieveCutoff.eventually_selectedCFZScaledTruncationRankinMass_primorial_le_polylog
     {k N w b : ℕ} [NeZero N]
     (χ : SmoothSieveCutoff)
     (hk : 2 ≤ k)
@@ -962,13 +963,13 @@ theorem
       (selectedCFZCanonicalRankinPolylogExponent e)
       (χ.selectedCFZCanonicalRankinPolylogConstant e)
       (χ.selectedCFZCanonicalRankinPolylogConstant_nonneg e)
-      (χ.eventually_selectedCFZCanonicalCarryScaledTruncationRankinMass_primorial_le_polylog
+      (χ.eventually_selectedCFZScaledTruncationRankinMass_primorial_le_polylog
         (N := N) hk hbound hwb e)
 
 /-- With the independent full-space cancellation input, the growing
 interior Fourier-box norm tends to zero as well. -/
 theorem
-    SmoothSieveCutoff.tendsto_selectedCFZCanonicalCarryScaledTruncationBoxNorm_sqrt_log_primorial_of_integral_zero
+    SmoothSieveCutoff.tendsto_selectedCFZTruncationBoxNorm_sqrt_log_primorial_of_integral_zero
     {k N w b : ℕ} [NeZero N]
     (χ : SmoothSieveCutoff)
     (hk : 2 ≤ k)
@@ -999,7 +1000,7 @@ theorem
       (selectedCFZCanonicalRankinPolylogExponent e)
       (χ.selectedCFZCanonicalRankinPolylogConstant e)
       (χ.selectedCFZCanonicalRankinPolylogConstant_nonneg e)
-      (χ.eventually_selectedCFZCanonicalCarryScaledTruncationRankinMass_primorial_le_polylog
+      (χ.eventually_selectedCFZScaledTruncationRankinMass_primorial_le_polylog
         (N := N) hk hbound hwb e)
       hzero
 

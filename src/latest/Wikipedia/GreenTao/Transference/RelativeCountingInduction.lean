@@ -1202,7 +1202,7 @@ def simplexIncidentCutTest
 
 @[simp]
 theorem simplexIncidentCutTest_eraseCoordinate
-    {G : Type*} [DecidableEq G] {n : ℕ}
+    {G : Type*} {n : ℕ}
     (K : WeightedSimplexSystem
       (fun _ : Fin (n + 1) => G))
     (j : Fin (n + 1)) (a : G)
@@ -1235,7 +1235,7 @@ theorem simplexIncidentCutTest_bounded
 /-- The reconstructed cut product is exactly the incident simplex
 product. -/
 theorem cutTestProduct_simplexIncidentCutTest
-    {G : Type*} [DecidableEq G] {n : ℕ}
+    {G : Type*} {n : ℕ}
     (K : WeightedSimplexSystem
       (fun _ : Fin (n + 1) => G))
     (j : Fin (n + 1)) (a : G)
@@ -1252,7 +1252,7 @@ theorem cutTestProduct_simplexIncidentCutTest
 distinguished edge is changed while every incident factor comes from the
 bounded system. -/
 theorem abs_directProjectedDifference_le
-    {G : Type*} [Fintype G] [DecidableEq G] [Nonempty G]
+    {G : Type*} [Fintype G] [Nonempty G]
     {n : ℕ}
     {H K : WeightedSimplexSystem
       (fun _ : Fin (n + 1) => G)}

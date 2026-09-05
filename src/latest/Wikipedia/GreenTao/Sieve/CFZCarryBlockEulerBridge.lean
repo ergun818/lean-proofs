@@ -1216,7 +1216,7 @@ theorem localAvoidanceProduct_cfzCarryAdjusted_eq_one_of_dvd
 /-- Dually, a nonempty common-zero density for a supported paired
 divisibility condition is zero at a prime dividing `W`. -/
 theorem affineFamilyZeroDensity_cfzCarryAdjusted_eq_zero_of_prime_dvd
-    {κ : Type*} [DecidableEq κ]
+    {κ : Type*}
     {k p : ℕ} [NeZero p]
     (N W b : ℕ)
     (hp : p.Prime) (hpW : p ∣ W) (hWb : W.Coprime b)
@@ -1227,6 +1227,7 @@ theorem affineFamilyZeroDensity_cfzCarryAdjusted_eq_zero_of_prime_dvd
           cfzCarryAdjustedAffineForm
             N W b (forms q) (c q))
         s = 0 := by
+  classical
   unfold affineFamilyZeroDensity
   rw [show
       affineFamilyZeroProduct p
@@ -1388,7 +1389,7 @@ theorem affineRankTwoGoodPrime_cfzCarryAdjusted
 density supported on at most two indices, for completely arbitrary affine
 constants. -/
 theorem affineFamilyZeroDensity_eq_inv_pow_card_of_goodPrime
-    {κ ι : Type*} [Fintype κ] [DecidableEq κ]
+    {κ ι : Type*} [Fintype κ]
     [Fintype ι] [DecidableEq ι]
     {p : ℕ} [NeZero p]
     {forms : κ → AffineForm ι ℤ}
@@ -1397,6 +1398,7 @@ theorem affineFamilyZeroDensity_eq_inv_pow_card_of_goodPrime
     (s : Finset κ) (hs : s.card ≤ 2) :
     affineFamilyZeroDensity p forms s =
       (1 : ℝ) / (p : ℝ) ^ s.card := by
+  classical
   rcases Nat.eq_zero_or_pos s.card with hzero | hpos
   · have hs0 : s = ∅ := Finset.card_eq_zero.mp hzero
     subst s

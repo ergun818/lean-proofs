@@ -309,7 +309,7 @@ theorem cfzCarry_eq_on_finset_of_affineStrip
 /-- Coordinatewise affine-strip containment supplies an
 `IsCFZCarryCell` certificate for a finite family. -/
 theorem isCFZCarryCell_of_affineStrips
-    {κ : Type*} [Fintype κ]
+    {κ : Type*}
     {k N : ℕ} [NeZero N]
     (forms : κ → CFZFormIndex k)
     (carry : κ → ℤ)

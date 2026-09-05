@@ -113,11 +113,12 @@ theorem mem_higherOrderSelectedSupports
 /-- The complementary part of the powerset consists exactly of the empty
 support and all singleton supports. -/
 theorem sum_powerset_supports_of_card_lt_two
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     (F : Finset κ → ℝ) :
     (∑ s ∈ (Finset.univ : Finset κ).powerset.filter
         (fun s => ¬ 2 ≤ s.card), F s) =
       F ∅ + ∑ q : κ, F {q} := by
+  classical
   let u : Finset κ := Finset.univ
   have hlow :
       u.powerset.filter (fun s => ¬ 2 ≤ s.card) =

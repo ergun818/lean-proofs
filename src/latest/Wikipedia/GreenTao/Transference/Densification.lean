@@ -332,12 +332,13 @@ end HasProjectedMajorantMoments
 Unlike a uniform-error estimate, this retains the individual pointwise
 errors in a sum. -/
 theorem abs_prod_sub_prod_le_sum_abs
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (s : Finset ι) (f g : ι → ℝ)
     (hf : ∀ i ∈ s, |f i| ≤ 1)
     (hg : ∀ i ∈ s, |g i| ≤ 1) :
     |(∏ i ∈ s, f i) - ∏ i ∈ s, g i| ≤
       ∑ i ∈ s, |f i - g i| := by
+  classical
   induction s using Finset.induction_on with
   | empty =>
       simp
@@ -396,7 +397,7 @@ theorem abs_prod_sub_prod_le_sum_abs
 /-- Mean absolute perturbation of a finite product is bounded by the sum of
 the factorwise mean absolute perturbations. -/
 theorem mean_abs_prod_sub_prod_le_sum_mean_abs
-    {Ω ι : Type*} [Fintype Ω] [DecidableEq ι]
+    {Ω ι : Type*} [Fintype Ω]
     (s : Finset ι) (f g : ι → Ω → ℝ)
     (hf : ∀ i ∈ s, ∀ x, |f i x| ≤ 1)
     (hg : ∀ i ∈ s, ∀ x, |g i x| ≤ 1) :
@@ -422,7 +423,7 @@ theorem mean_abs_prod_sub_prod_le_sum_mean_abs
 /-- Absolute difference of the corresponding product means is controlled by
 the same sum of factorwise `L¹` errors. -/
 theorem abs_mean_prod_sub_mean_prod_le_sum_mean_abs
-    {Ω ι : Type*} [Fintype Ω] [DecidableEq ι]
+    {Ω ι : Type*} [Fintype Ω]
     (s : Finset ι) (f g : ι → Ω → ℝ)
     (hf : ∀ i ∈ s, ∀ x, |f i x| ≤ 1)
     (hg : ∀ i ∈ s, ∀ x, |g i x| ≤ 1) :
@@ -441,7 +442,7 @@ theorem abs_mean_prod_sub_mean_prod_le_sum_mean_abs
 
 /-- A finite product of unit-bounded factors is itself unit-bounded. -/
 theorem abs_prod_le_one
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (s : Finset ι) (u : ι → ℝ)
     (hu : ∀ i ∈ s, |u i| ≤ 1) :
     |∏ i ∈ s, u i| ≤ 1 := by
@@ -452,7 +453,7 @@ theorem abs_prod_le_one
 /-- One densification step with the remaining bounded factors already
 packaged as a finite product. -/
 theorem abs_mean_mul_prod_sub_truncateAtOne_mul_prod_le_mean_excessAboveOne
-    {Ω ι : Type*} [Fintype Ω] [DecidableEq ι]
+    {Ω ι : Type*} [Fintype Ω]
     (s : Finset ι)
     {g ν : Ω → ℝ} (u : ι → Ω → ℝ)
     (hgν : ∀ x, g x ≤ ν x)
@@ -473,7 +474,7 @@ namespace HasProjectedMajorantMoments
 /-- Square-root loss bound for one densification step with all other factors
 in a finite unit-bounded product. -/
 theorem abs_mean_mul_prod_sub_truncateAtOne_mul_prod_le_sqrt
-    {Ω ι : Type*} [Fintype Ω] [Nonempty Ω] [DecidableEq ι]
+    {Ω ι : Type*} [Fintype Ω] [Nonempty Ω]
     (s : Finset ι)
     {ν g : Ω → ℝ} {η : ℝ}
     (h : HasProjectedMajorantMoments ν η)

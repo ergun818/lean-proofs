@@ -75,7 +75,7 @@ theorem mem_zeroFinsetZMod {ι : Type*}
 /-- A nonzero coefficient makes the reduced linear form surjective over the
 prime field. -/
 theorem linearMapZMod_surjective_of_coefficient_ne_zero
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {p : ℕ} [Fact p.Prime] (ψ : AffineForm ι ℤ)
     {i : ι} (hi : (ψ.coefficient i : ZMod p) ≠ 0) :
     Function.Surjective (ψ.linearMapZMod p) := by
@@ -105,12 +105,13 @@ theorem pairLinearMapZMod_apply {ι : Type*} [Fintype ι]
 /-- A nonzero two-by-two coefficient minor makes the pair of reduced linear
 forms jointly surjective. -/
 theorem pairLinearMapZMod_surjective_of_minor_ne_zero
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {p : ℕ} [Fact p.Prime] (ψ φ : AffineForm ι ℤ)
     {i j : ι}
     (hdet :
       (((ψ.coefficientMinor φ i j : ℤ) : ZMod p)) ≠ 0) :
     Function.Surjective (pairLinearMapZMod p ψ φ) := by
+  classical
   intro y
   have hij : i ≠ j := by
     intro hij
@@ -359,7 +360,7 @@ end AffineForm
 /-- Beyond the explicit exceptional-prime bound, every form in a nonzero
 system has exact zero-congruence density `1 / p`. -/
 theorem mean_zeroFinsetZMod_of_bound
-    {κ ι : Type*} [Fintype κ] [DecidableEq κ]
+    {κ ι : Type*} [Fintype κ]
     [Fintype ι] [DecidableEq ι]
     {forms : κ → AffineForm ι ℤ}
     (hforms : NonzeroCoefficientVectors forms)
@@ -368,6 +369,7 @@ theorem mean_zeroFinsetZMod_of_bound
     (q : κ) :
     mean (finsetIndicator ((forms q).zeroFinsetZMod p)) =
       (1 : ℝ) / p := by
+  classical
   obtain ⟨i, hi⟩ :=
     exists_coefficient_cast_ne_zero_of_bound hforms hlarge q
   exact AffineForm.mean_zeroFinsetZMod hp (forms q) hi
@@ -375,7 +377,7 @@ theorem mean_zeroFinsetZMod_of_bound
 /-- Beyond the explicit exceptional-prime bound, distinct forms in a
 pairwise-independent system have exact simultaneous zero density `1 / p²`. -/
 theorem mean_zeroFinsetZMod_mul_of_bound
-    {κ ι : Type*} [Fintype κ] [DecidableEq κ]
+    {κ ι : Type*} [Fintype κ]
     [Fintype ι] [DecidableEq ι]
     {forms : κ → AffineForm ι ℤ}
     (hforms : PairwiseIndependentCoefficients forms)
@@ -386,6 +388,7 @@ theorem mean_zeroFinsetZMod_mul_of_bound
       finsetIndicator ((forms q).zeroFinsetZMod p) x *
         finsetIndicator ((forms r).zeroFinsetZMod p) x) =
       (1 : ℝ) / (p : ℝ) ^ 2 := by
+  classical
   obtain ⟨i, j, hij⟩ :=
     exists_minor_cast_ne_zero_of_bound hforms hlarge hqr
   exact AffineForm.mean_zeroFinsetZMod_mul

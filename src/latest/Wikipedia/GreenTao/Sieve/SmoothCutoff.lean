@@ -77,7 +77,7 @@ theorem continuous_deriv_sq (χ : SmoothSieveCutoff) :
 /-- The derivative-square integrand also has compact support. -/
 theorem hasCompactSupport_deriv_sq (χ : SmoothSieveCutoff) :
     HasCompactSupport (fun x : ℝ ↦ |deriv χ.toFun x| ^ 2) := by
-  apply HasCompactSupport.of_support_subset_isCompact isCompact_Icc
+  apply HasCompactSupport.of_support_subset_isCompact (K := Set.Icc (-1) 1) isCompact_Icc
   have htsupport :
       tsupport χ.toFun ⊆ Set.Icc (-1) 1 :=
     closure_minimal χ.support_subset isClosed_Icc

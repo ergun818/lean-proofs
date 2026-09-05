@@ -316,7 +316,7 @@ theorem HasProjectedMajorantMoments.abs_apHeterogeneousSimplexCount_sub_densifie
     |(apHeterogeneousSimplexSystem n N g).simplexCount -
         apHeterogeneousDensifiedPairing n N g j| ≤
       Real.sqrt (3 * η) := by
-  rw [apHeterogeneousSimplexCount_eq_projectedPairing]
+  rw [apHeterogeneousSimplexCount_eq_projectedPairing n N g j]
   have hface :
       ∀ y, |apHeterogeneousDistinguishedFaceWeight n N g j y| ≤ 1 := by
     intro y

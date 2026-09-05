@@ -116,10 +116,12 @@ noncomputable def selectedCFZCarryBlockEulerDivisorSum
       selectedCFZCarryBlockEulerAverage
         (N := N) e W b z
 
+namespace SmoothSieveCutoff
+
 /-- A single supported divisor term inherits the carry-block error.  The
 coefficient is retained exactly.  If it vanishes, no squarefree hypothesis
 is needed; otherwise squarefreeness follows from the Möbius factors. -/
-theorem SmoothSieveCutoff.abs_selectedCFZ_weightedDensity_sub_euler_le
+theorem abs_selectedCFZ_weightedDensity_sub_euler_le
     {k N R : ℕ} [NeZero N]
     (χ : SmoothSieveCutoff)
     (hk : 2 ≤ k)
@@ -164,7 +166,7 @@ theorem SmoothSieveCutoff.abs_selectedCFZ_weightedDensity_sub_euler_le
 
 /-- Summing the termwise comparison retains the exact absolute coefficient
 and LCM of every divisor choice. -/
-theorem SmoothSieveCutoff.abs_selectedCFZCyclicDivisorSum_sub_euler_le_sum
+theorem abs_selectedCFZCyclicDivisorSum_sub_euler_le_sum
     {k N R : ℕ} [NeZero N]
     (χ : SmoothSieveCutoff)
     (hk : 2 ≤ k)
@@ -218,7 +220,7 @@ theorem SmoothSieveCutoff.abs_selectedCFZCyclicDivisorSum_sub_euler_le_sum
 
 /-- Factored form of the sharp finite error, in terms of the
 coefficient-weighted LCM mass. -/
-theorem SmoothSieveCutoff.abs_selectedCFZCyclicDivisorSum_sub_euler_le_lcmMass
+theorem abs_selectedCFZCyclicDivisorSum_sub_euler_le_lcmMass
     {k N R : ℕ} [NeZero N]
     (χ : SmoothSieveCutoff)
     (hk : 2 ≤ k)
@@ -265,7 +267,7 @@ theorem SmoothSieveCutoff.abs_selectedCFZCyclicDivisorSum_sub_euler_le_lcmMass
 
 /-- Crude completely uniform form: there are `R^(2m)` choices and each LCM
 is at most `R^(2m)`, hence the total loss is `C_{k,m} R^(4m) / N`. -/
-theorem SmoothSieveCutoff.abs_selectedCFZCyclicDivisorSum_sub_euler_le_pow
+theorem abs_selectedCFZCyclicDivisorSum_sub_euler_le_pow
     {k N R : ℕ} [NeZero N]
     (χ : SmoothSieveCutoff)
     (hk : 2 ≤ k)
@@ -302,7 +304,7 @@ theorem SmoothSieveCutoff.abs_selectedCFZCyclicDivisorSum_sub_euler_le_pow
 /-! ## Reinsert the normalized Selberg prefactor -/
 
 /-- The blockwise Euler approximation to a cyclic-majorant CFZ mean. -/
-noncomputable def SmoothSieveCutoff.selectedCFZCarryBlockEulerMainTerm
+noncomputable def selectedCFZCarryBlockEulerMainTerm
     {k N : ℕ} [NeZero N]
     (χ : SmoothSieveCutoff) (R W b : ℕ)
     (e : LinearFormsExponent k) : ℝ :=
@@ -315,7 +317,7 @@ noncomputable def SmoothSieveCutoff.selectedCFZCarryBlockEulerMainTerm
 
 /-- The strongest scaled comparison: the exact coefficient-weighted LCM
 mass is retained after restoring both Selberg prefactors. -/
-theorem SmoothSieveCutoff.abs_mean_linearFormsProduct_cyclicMajorant_sub_carryBlockEulerMainTerm_le_lcmMass
+theorem abs_mean_linearFormsProduct_cyclicMajorant_sub_carryBlockEulerMainTerm_le_lcmMass
     {k N R W b : ℕ} [NeZero N]
     (χ : SmoothSieveCutoff)
     (hk : 2 ≤ k)
@@ -365,7 +367,7 @@ theorem SmoothSieveCutoff.abs_mean_linearFormsProduct_cyclicMajorant_sub_carryBl
 
 /-- Fully uniform scaled corollary with the explicit
 `C_{k,m} R^(4m) / N` loss. -/
-theorem SmoothSieveCutoff.abs_mean_linearFormsProduct_cyclicMajorant_sub_carryBlockEulerMainTerm_le_pow
+theorem abs_mean_linearFormsProduct_cyclicMajorant_sub_carryBlockEulerMainTerm_le_pow
     {k N R W b : ℕ} [NeZero N]
     (χ : SmoothSieveCutoff)
     (hk : 2 ≤ k)
@@ -430,5 +432,7 @@ theorem SmoothSieveCutoff.abs_mean_linearFormsProduct_cyclicMajorant_sub_carryBl
   exact
     hbase.trans
       (mul_le_mul_of_nonneg_left hinner hprefactor)
+
+end SmoothSieveCutoff
 
 end Wikipedia.SzemeredisTheorem

@@ -585,7 +585,7 @@ theorem sum_transformedPairedDivisorFamily_mul_fixedFamilyEulerProduct_eq_euler_
 
 /-- The same splice with the Euler term written as the finite powerset
 portion of the unrestricted prime-support series. -/
-theorem sum_transformedPairedDivisorFamily_mul_fixedFamilyEulerProduct_eq_unrestrictedSupport_add_discrepancy
+theorem sum_transformedPairedDivisorFamily_mul_fixedEulerProduct_eq_unrestricted_add_discrepancy
     {κ ι : Type*} [Fintype κ] [DecidableEq κ]
     [Fintype ι] [DecidableEq ι]
     (χ : SmoothSieveCutoff) (R : ℕ)
@@ -707,7 +707,7 @@ theorem cfzCanonicalCarryFixedDivisorExpansion_eq_unrestrictedSupport_add_discre
             cfzCanonicalCarryPrimeSupportDensity
               N W b forms carry support := by
   exact
-    sum_transformedPairedDivisorFamily_mul_fixedFamilyEulerProduct_eq_unrestrictedSupport_add_discrepancy
+    sum_transformedPairedDivisorFamily_mul_fixedEulerProduct_eq_unrestricted_add_discrepancy
       χ R
       (cfzCarryAdjustedFamilyAtVector N W b forms carry)
       t u
@@ -827,7 +827,7 @@ theorem sum_transformedPairedDivisorFamily_mul_cfzCanonicalCarryEulerAverage_eq_
 canonical Euler average in the divisor expansion is reorganized into one
 fixed-family unrestricted Euler series for each carry vector, plus the
 single explicit truncation discrepancy above. -/
-theorem sum_transformedPairedDivisorFamily_mul_cfzCanonicalCarryEulerAverage_eq_unrestricted_add_discrepancy
+theorem sum_transformedPairedDivisorFamily_mul_canonicalEulerAverage_eq_unrestricted_add_discrepancy
     {κ : Type*} [Fintype κ] [DecidableEq κ]
     {k N : ℕ} [NeZero N]
     (χ : SmoothSieveCutoff) (W b R : ℕ)

@@ -425,7 +425,7 @@ theorem faceCutWeightedSimplexCount_eq
       mean (fun y =>
         generalSimplexUntruncatedPairingEdge H j y *
           cutTestProduct u y) := by
-  rw [generalSimplexCount_eq_projectedPairing,
+  rw [generalSimplexCount_eq_projectedPairing (faceCutWeightedSimplexSystem H j u) j,
     generalSimplexProjectedWeight_faceCutWeighted]
   apply congrArg mean
   funext y
@@ -515,7 +515,7 @@ theorem EdgeFaceCutDiscrepancyLe.faceCutWeighted
 /-- Raw projected pairings of two fully bounded systems inherit the
 edgewise discrepancy, with the usual one-error-per-colour loss. -/
 theorem EdgeFaceCutDiscrepancyLe.faceCutDiscrepancyLe_untruncatedPairing
-    {G : Type*} [Fintype G] [DecidableEq G] [Nonempty G]
+    {G : Type*} [Fintype G] [Nonempty G]
     {n : ℕ}
     {H K : WeightedSimplexSystem
       (fun _ : Fin (n + 1) => G)}
@@ -576,7 +576,7 @@ theorem generalSimplexProjectedSurrogate_eq_of_unitInterval
 /-- In the fully bounded case the actual truncated projected-pairing edges
 therefore inherit edgewise face-cut discrepancy with loss `(n+1) ε`. -/
 theorem EdgeFaceCutDiscrepancyLe.faceCutDiscrepancyLe_projectedPairing
-    {G : Type*} [Fintype G] [DecidableEq G] [Nonempty G]
+    {G : Type*} [Fintype G] [Nonempty G]
     {n : ℕ}
     {H K : WeightedSimplexSystem
       (fun _ : Fin (n + 1) => G)}

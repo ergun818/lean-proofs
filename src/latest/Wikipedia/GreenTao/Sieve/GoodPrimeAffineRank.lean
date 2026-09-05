@@ -181,7 +181,7 @@ theorem affineRankTwoGoodPrime_of_exceptionalPrimeBound
 maps surjectively onto two copies of `ZMod p`.  This is the formal rank-at-
 least-two statement used by the density calculation. -/
 theorem pairLinearMapZMod_surjective_of_affineRankTwoGoodPrime
-    {κ ι : Type*} [Fintype κ] [DecidableEq ι]
+    {κ ι : Type*} [Fintype κ]
     [Fintype ι]
     {forms : κ → AffineForm ι ℤ}
     {p : ℕ} (hgood : AffineRankTwoGoodPrime p forms)
@@ -212,7 +212,6 @@ def SelectedAffineFamilyHasRankAtLeastTwo
 good prime. -/
 theorem selectedAffineFamilyHasRankAtLeastTwo_of_goodPrime
     {κ ι : Type*} [Fintype κ] [Fintype ι]
-    [DecidableEq κ]
     {forms : κ → AffineForm ι ℤ}
     {p : ℕ} (hgood : AffineRankTwoGoodPrime p forms)
     {s : Finset κ} (hs : s.Nontrivial) :
@@ -277,7 +276,7 @@ theorem affineFamilyZeroDensity_nonneg
 the full common-zero density.  Equality is used only for the witnessing
 pair; additional forms may reduce the density. -/
 theorem affineFamilyZeroDensity_le_inv_sq_of_rankAtLeastTwo
-    {κ ι : Type*} [DecidableEq κ]
+    {κ ι : Type*}
     [Fintype ι] [DecidableEq ι]
     {p : ℕ} [NeZero p] (hp : p.Prime)
     (forms : κ → AffineForm ι ℤ)
@@ -286,6 +285,7 @@ theorem affineFamilyZeroDensity_le_inv_sq_of_rankAtLeastTwo
       SelectedAffineFamilyHasRankAtLeastTwo p forms s) :
     affineFamilyZeroDensity p forms s ≤
       (1 : ℝ) / (p : ℝ) ^ 2 := by
+  classical
   obtain ⟨q, hq, r, hr, hqr, i, j, hij⟩ := hrank
   calc
     affineFamilyZeroDensity p forms s ≤
@@ -300,7 +300,7 @@ theorem affineFamilyZeroDensity_le_inv_sq_of_rankAtLeastTwo
 /-- Rank-two good primes give the same bound for every nontrivial selected
 subfamily. -/
 theorem affineFamilyZeroDensity_le_inv_sq_of_goodPrime
-    {κ ι : Type*} [Fintype κ] [DecidableEq κ]
+    {κ ι : Type*} [Fintype κ]
     [Fintype ι] [DecidableEq ι]
     {p : ℕ} [NeZero p]
     {forms : κ → AffineForm ι ℤ}
@@ -308,6 +308,7 @@ theorem affineFamilyZeroDensity_le_inv_sq_of_goodPrime
     (s : Finset κ) (hs : s.Nontrivial) :
     affineFamilyZeroDensity p forms s ≤
       (1 : ℝ) / (p : ℝ) ^ 2 := by
+  classical
   exact affineFamilyZeroDensity_le_inv_sq_of_rankAtLeastTwo
     hgood.1 forms s
     (selectedAffineFamilyHasRankAtLeastTwo_of_goodPrime

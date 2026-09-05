@@ -275,7 +275,7 @@ theorem next_majorant_apply
 majorant is the product of the original current-coordinate majorant over
 all Boolean choices of the `r` processed endpoint pairs. -/
 theorem iterNextDecoded_majorant_zero
-    {P G : Type u} [Fintype P] [Fintype G]
+    {P G : Type u}
     (r s : ℕ)
     (S : MajorizedCutSystem P G ((s + 1) + r))
     (p : P) (a : Fin r → G × G)
@@ -522,7 +522,7 @@ theorem linearFormsProduct_apCSStageFaceExponent
               (apCSStageCurrentFace r s j)
               (apCSStageVertex r s j bits) x)
       rw [← Finset.prod_filter]
-      rw [Finset.prod_subtype
+      rw [Finset.prod_subtype (F := inferInstance)
         (p := fun ω :
           DeletedCube
             ((r + (s + 1)) + 1)
@@ -1234,7 +1234,7 @@ theorem linearFormsProduct_apCSOrderedStageFaceExponent
               (apCSOrderedStageCurrentFace r s j)
               (apCSOrderedStageVertex r s j bits) x)
       rw [← Finset.prod_filter]
-      rw [Finset.prod_subtype
+      rw [Finset.prod_subtype (F := inferInstance)
         (p := fun ω :
           DeletedCube
             (((s + 1) + r) + 1)

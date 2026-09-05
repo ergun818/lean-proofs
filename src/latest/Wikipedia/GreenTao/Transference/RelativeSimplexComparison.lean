@@ -136,7 +136,7 @@ def EdgeFaceCutDiscrepancyLe
 telescoping term into the direct face residual paired with the reconstructed
 bounded cut product. -/
 theorem mixedSimplexTerm_insertNth_eq_faceCutDifference
-    {G : Type*} [Fintype G] [DecidableEq G] {n : ℕ}
+    {G : Type*} {n : ℕ}
     (H K : WeightedSimplexSystem
       (fun _ : Fin (n + 1) => G))
     (j : Fin (n + 1))
@@ -176,7 +176,7 @@ theorem mixedSimplexTerm_insertNth_eq_faceCutDifference
 /-- A generic mixed simplex correlation is an average, over the omitted
 vertex, of direct face-cut correlations. -/
 theorem mixedSimplexCorrelation_eq_mean_faceCutDifference
-    {G : Type*} [Fintype G] [DecidableEq G] {n : ℕ}
+    {G : Type*} [Fintype G] {n : ℕ}
     (H K : WeightedSimplexSystem
       (fun _ : Fin (n + 1) => G))
     (j : Fin (n + 1)) :
@@ -199,7 +199,7 @@ theorem mixedSimplexCorrelation_eq_mean_faceCutDifference
 /-- Face-cut discrepancy of the distinguished edge controls its mixed
 telescoping correlation when every other factor is bounded. -/
 theorem abs_mixedSimplexCorrelation_le_of_faceCutDiscrepancy
-    {G : Type*} [Fintype G] [DecidableEq G] [Nonempty G]
+    {G : Type*} [Fintype G] [Nonempty G]
     {n : ℕ}
     (H K : WeightedSimplexSystem
       (fun _ : Fin (n + 1) => G))
@@ -236,7 +236,7 @@ theorem abs_mixedSimplexCorrelation_le_of_faceCutDiscrepancy
 /-- Uniform edgewise face-cut discrepancy controls every mixed
 correlation. -/
 theorem EdgeFaceCutDiscrepancyLe.mixedSimplexCorrelationLe
-    {G : Type*} [Fintype G] [DecidableEq G] [Nonempty G]
+    {G : Type*} [Fintype G] [Nonempty G]
     {n : ℕ}
     (H K : WeightedSimplexSystem
       (fun _ : Fin (n + 1) => G))
@@ -252,7 +252,7 @@ theorem EdgeFaceCutDiscrepancyLe.mixedSimplexCorrelationLe
 /-- Terminal fully bounded relative-simplex comparison in face-cut
 discrepancy.  No sup-distance hypothesis is used. -/
 theorem simplexCount_abs_sub_le_of_edgeFaceCutDiscrepancy
-    {G : Type*} [Fintype G] [DecidableEq G] [Nonempty G]
+    {G : Type*} [Fintype G] [Nonempty G]
     {n : ℕ}
     (H K : WeightedSimplexSystem
       (fun _ : Fin (n + 1) => G))

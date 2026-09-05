@@ -13,11 +13,13 @@ This file records that composition in the primorial regime.
 namespace Wikipedia.SzemeredisTheorem
 open Filter MeasureTheory Topology
 
+namespace SmoothSieveCutoff
+
 /-- Eventual full-space cancellation is enough to turn the canonical
 Rankin-tail limit into the corresponding growing-box limit. No cancellation
 claim is needed at the finitely many radii below the analytic threshold. -/
 theorem
-    SmoothSieveCutoff.tendsto_selectedCFZCanonicalCarryScaledTruncationBoxNorm_sqrt_log_primorial_of_eventually_integral_zero
+    tendsto_selectedCFZTruncationBoxNorm_sqrt_log_primorial_of_eventually_integral_zero
     {k N w b : ℕ} [NeZero N]
     (χ : SmoothSieveCutoff)
     (hk : 2 ≤ k)
@@ -56,7 +58,7 @@ theorem
 the Selberg-scaled canonical coordinatewise-truncation discrepancy vanishes
 on the standard growing Fourier box. -/
 theorem
-    SmoothSieveCutoff.tendsto_selectedCFZCanonicalCarryScaledTruncationBoxNorm_sqrt_log_primorial
+    tendsto_selectedCFZCanonicalCarryScaledTruncationBoxNorm_sqrt_log_primorial
     {k N w b : ℕ} [NeZero N]
     (χ : SmoothSieveCutoff)
     (hk : 2 ≤ k)
@@ -73,12 +75,14 @@ theorem
       atTop (𝓝 0) := by
   classical
   apply
-    χ.tendsto_selectedCFZCanonicalCarryScaledTruncationBoxNorm_sqrt_log_primorial_of_eventually_integral_zero
+    χ.tendsto_selectedCFZTruncationBoxNorm_sqrt_log_primorial_of_eventually_integral_zero
       (N := N) hk hbound hwb e
   filter_upwards [eventually_ge_atTop 2] with R hR
   exact
     integral_cfzCanonicalCarryTruncationDiscrepancy_eq_zero
       (N := N) χ (primorial w) b hR
       (fun q : SelectedCFZFormIndex e => q.1)
+
+end SmoothSieveCutoff
 
 end Wikipedia.SzemeredisTheorem
