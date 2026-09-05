@@ -5,7 +5,7 @@ namespace Erdos1105
 
 open SimpleGraph Finset
 
-theorem low_core_initial_no_external {V : Type*} [Fintype V] [DecidableEq V]
+theorem low_core_initial_no_external {V : Type*} [Fintype V]
     {G : SimpleGraph V} {u x y : V} {d a : ℕ}
     (hG : NoLongCycle G (2 * d + 3)) (hu : G.IsUniversal u)
     (hconn : (G.induce {v | v ≠ u}).Preconnected)
@@ -13,15 +13,17 @@ theorem low_core_initial_no_external {V : Type*} [Fintype V] [DecidableEq V]
     (hd : 1 ≤ d) (hlen : 2 * d + 2 ≤ p.length) (ha : a ≤ p.length)
     (hbefore : ∀ j < a, ¬G.Adj y (p.getVert j)) :
     ∀ r < a, ∀ z, z ∉ p.support → ¬G.Adj (p.getVert r) z := by
+  classical
   intro r hr z hz hadj
   have hzA : z ∉ (range a).image p.getVert := by
     rintro hzA
     obtain ⟨i, _, hi⟩ := mem_image.mp hzA
     exact hz (hi ▸ p.getVert_mem_support i)
   have hxz := (low_core_initial_full_twins hG hu hconn p hp hd hlen ha hbefore r hr z hzA).mp hadj
-  exact hz (hp.left_neighbors z ((longest_low_core_full_neighbors hG hu hconn p hp hd hlen).1 z hxz) hxz)
+  exact hz
+    (hp.left_neighbors z ((longest_low_core_full_neighbors hG hu hconn p hp hd hlen).1 z hxz) hxz)
 
-theorem short_core_universal_attachment {V : Type*} [Fintype V] [DecidableEq V]
+theorem short_core_universal_attachment {V : Type*} [Finite V]
     {G : SimpleGraph V} {u x y : V} {d a : ℕ}
     (hG : NoLongCycle G (2 * d + 3)) (hu : G.IsUniversal u)
     (p : G.Walk x y) (hp : p.IsPath)
@@ -32,6 +34,8 @@ theorem short_core_universal_attachment {V : Type*} [Fintype V] [DecidableEq V]
       (G.Adj x (p.getVert t) ↔ Even (t - a)) ∧
       (G.Adj y (p.getVert t) ↔ Even (t - a))) :
     ∃ i < d + 2 - a, p.getVert (a + 2 * i) = u := by
+  classical
+  let := Fintype.ofFinite V
   have huP := universal_mem_long_path hG (by omega) hu p hp (by omega)
   obtain ⟨t, ht, htL⟩ := Walk.mem_support_iff_exists_getVert.mp huP
   have htint := universal_index_internal hG (by omega) hu p hp (by omega) ht htL
@@ -55,7 +59,7 @@ theorem short_core_universal_attachment {V : Type*} [Fintype V] [DecidableEq V]
   have heq : a + 2 * i = t := by omega
   rwa [heq]
 
-theorem short_core_external_boundary {V : Type*} [Fintype V] [DecidableEq V]
+theorem short_core_external_boundary {V : Type*} [Fintype V]
     {G : SimpleGraph V} {u x y : V} {d a : ℕ}
     (hG : NoLongCycle G (2 * d + 3)) (hu : G.IsUniversal u)
     (hconn : (G.induce {v | v ≠ u}).Preconnected)
@@ -68,6 +72,7 @@ theorem short_core_external_boundary {V : Type*} [Fintype V] [DecidableEq V]
       (G.Adj y (p.getVert t) ↔ Even (t - a))) :
     ∀ z, z ∉ p.support → ∀ v ∈ p.support, G.Adj z v →
       ∃ j < d + 2 - a, p.getVert (a + 2 * j) = v := by
+  classical
   have hAlt := short_core_alternating_ends hG hu hconn p hp hlen ha had.le hbefore hafter hmiddle
   obtain ⟨i, hi, hiu⟩ := short_core_universal_attachment hG hu p hp.isPath hlen ha had.le
     hbefore hafter hmiddle
@@ -100,7 +105,7 @@ theorem short_core_external_boundary {V : Type*} [Fintype V] [DecidableEq V]
       (show t < d + 1 - a by omega) (hiu.symm ▸ hu) hz
     exact (hnone (by simpa only [heq, hs] using hzv.symm)).elim
 
-theorem short_core_outside_independent {V : Type*} [Fintype V] [DecidableEq V]
+theorem short_core_outside_independent {V : Type*} [Fintype V]
     {G : SimpleGraph V} {u x y : V} {d a : ℕ}
     (hG : NoLongCycle G (2 * d + 3)) (hu : G.IsUniversal u)
     (hconn : (G.induce {v | v ≠ u}).Preconnected)
@@ -112,6 +117,7 @@ theorem short_core_outside_independent {V : Type*} [Fintype V] [DecidableEq V]
       (G.Adj x (p.getVert t) ↔ Even (t - a)) ∧
       (G.Adj y (p.getVert t) ↔ Even (t - a))) :
     ∀ z, z ∉ p.support → ∀ w, w ∉ p.support → ¬G.Adj z w := by
+  classical
   have hAlt := short_core_alternating_ends hG hu hconn p hp hlen ha had.le hbefore hafter hmiddle
   obtain ⟨i, hi, hiu⟩ := short_core_universal_attachment hG hu p hp.isPath hlen ha had.le
     hbefore hafter hmiddle

@@ -7,7 +7,7 @@ open SimpleGraph
 
 /-- A rainbow cycle can be opened at the color of an external edge,
 provided an endpoint of that cut can be joined to the external pair. -/
-theorem rainbow_path_of_cycle_color_cut {V C : Type*} [DecidableEq V]
+theorem rainbow_path_of_cycle_color_cut {V C : Type*}
     (c : (⊤ : SimpleGraph V).edgeSet → C) {R : SimpleGraph V}
     (hR : Set.InjOn (extendColor c) R.edgeSet) {u : V} (p : R.Walk u u) (hp : p.IsCycle)
     (A : Set V) (hAsub : A ⊆ {x | x ∈ p.support})
@@ -61,7 +61,7 @@ theorem rainbow_path_of_cycle_color_cut {V C : Type*} [DecidableEq V]
     exact hbad ⟨e, hedges he, hc⟩
 
 /-- The cycle-extension step in the even-path split-graph argument. -/
-theorem rainbow_path_of_cycle_two_external {V C : Type*} [DecidableEq V]
+theorem rainbow_path_of_cycle_two_external {V C : Type*}
     (c : (⊤ : SimpleGraph V).edgeSet → C) {R : SimpleGraph V}
     (hR : Set.InjOn (extendColor c) R.edgeSet) {u : V} (p : R.Walk u u) (hp : p.IsCycle)
     (A : Set V) (hAsub : A ⊆ {x | x ∈ p.support})
@@ -85,7 +85,7 @@ theorem rainbow_path_of_cycle_two_external {V C : Type*} [DecidableEq V]
 
 /-- When both external vertices see a nonempty attachment set, one of
 the two orientations of their edge supplies the needed distinct color. -/
-theorem rainbow_path_of_cycle_two_attached {V C : Type*} [DecidableEq V]
+theorem rainbow_path_of_cycle_two_attached {V C : Type*}
     (c : (⊤ : SimpleGraph V).edgeSet → C) {R : SimpleGraph V}
     (hR : Set.InjOn (extendColor c) R.edgeSet) {u : V} (p : R.Walk u u) (hp : p.IsCycle)
     (A : Set V) (hAsub : A ⊆ {x | x ∈ p.support}) (hA : A.Nonempty)

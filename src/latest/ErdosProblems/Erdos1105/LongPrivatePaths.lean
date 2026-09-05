@@ -15,7 +15,7 @@ lemma penultimate_tail_eq {V : Type*} {R : SimpleGraph V} {x y : V}
 
 /-- Under the private-degree hypotheses, a forbidden-length representative
 path cannot have its final edge private to the penultimate vertex. -/
-theorem private_inward_long_path_impossible {V C : Type*} [Fintype V] [Fintype C] {n : ℕ}
+theorem private_inward_long_path_impossible {V C : Type*} [Finite V] [Fintype C] {n : ℕ}
     (c : (⊤ : SimpleGraph V).edgeSet → C) (hc : Function.Surjective c)
     (hH : ∀ f : (cycleGraph (n + 4)).Copy (⊤ : SimpleGraph V), ¬IsRainbow f c)
     (R : SimpleGraph V) (hR : Set.InjOn (extendColor c) R.edgeSet)
@@ -28,6 +28,7 @@ theorem private_inward_long_path_impossible {V C : Type*} [Fintype V] [Fintype C
     (hlast : PrivateAt c p.penultimate
       (c ⟨s(p.penultimate, y), (p.adj_penultimate hnil).ne⟩)) : False := by
   classical
+  let := Fintype.ofFinite V
   let p₂ := p.tail
   have hp₂ : p₂.IsPath := hp.tail
   have hlen₂ : p₂.length = n + 2 := by simp only [p₂, Walk.length_tail, hlen]; omega
@@ -75,7 +76,8 @@ theorem private_inward_long_path_impossible {V C : Type*} [Fintype V] [Fintype C
   have hqtaillast : PrivateAt c q.tail.penultimate
       (c ⟨s(q.tail.penultimate, w), (q.tail.adj_penultimate hqtailnil).ne⟩) := by
     simpa only [penultimate_tail_eq q (by omega)] using hqlast
-  have hHtail : ∀ f : (cycleGraph (q.tail.length + 2)).Copy (⊤ : SimpleGraph V), ¬IsRainbow f c := by
+  have hHtail :
+      ∀ f : (cycleGraph (q.tail.length + 2)).Copy (⊤ : SimpleGraph V), ¬IsRainbow f c := by
     rw [Walk.length_tail, hqlen]
     exact hH
   have htrap₁ := private_neighbors_trapped_by_inward_end c R hR howned q.tail hq.tail
@@ -110,7 +112,7 @@ theorem private_inward_long_path_impossible {V C : Type*} [Fintype V] [Fintype C
 
 /-- Every path in the private representative has fewer than `k` vertices
 under the high private-degree hypotheses. -/
-theorem private_path_length_lt {V C : Type*} [Fintype V] [Fintype C] {n : ℕ}
+theorem private_path_length_lt {V C : Type*} [Finite V] [Fintype C] {n : ℕ}
     (c : (⊤ : SimpleGraph V).edgeSet → C) (hc : Function.Surjective c)
     (hH : ∀ f : (cycleGraph (n + 4)).Copy (⊤ : SimpleGraph V), ¬IsRainbow f c)
     (R : SimpleGraph V) (hR : Set.InjOn (extendColor c) R.edgeSet)
@@ -121,6 +123,7 @@ theorem private_path_length_lt {V C : Type*} [Fintype V] [Fintype C] {n : ℕ}
     (hsum : ∀ x y, x ≠ y → n + 3 ≤ (privateColors c x).card + (privateColors c y).card)
     {x y : V} (p : R.Walk x y) (hp : p.IsPath) : p.length < n + 3 := by
   classical
+  let := Fintype.ofFinite V
   by_contra! hlarge
   let p₁ := p.take (n + 2)
   have hp₁ : p₁.IsPath := hp.take _

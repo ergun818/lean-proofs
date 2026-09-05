@@ -6,13 +6,14 @@ namespace Erdos1105
 open SimpleGraph
 
 theorem SeparatedRepresentative.leaf_extension_color {V C : Type*}
-    [Fintype V] [DecidableEq V] {k : ℕ} (c : (⊤ : SimpleGraph V).edgeSet → C)
+    [Finite V] {k : ℕ} (c : (⊤ : SimpleGraph V).edgeSet → C)
     {R H : SimpleGraph V} (hsep : SeparatedRepresentative ⊤ (extendColor c) R H)
     (hk : 3 ≤ k) (hfree : ∀ f : (pathGraph k).Copy (⊤ : SimpleGraph V), ¬IsRainbow f c)
     {a b x y : V} (p : H.Walk a b) (hp : p.IsPath) (hlen : p.length + 1 = k - 2)
     (hxy : R.Adj x y) (hxb : ¬R.Reachable x b) :
     extendColor c s(x, y) = extendColor c s(y, a) := by
   classical
+  let := Fintype.ofFinite V
   by_contra hne
   have hyb : ¬R.Reachable y b := fun h ↦ hxb (hxy.reachable.trans h)
   have houtside (z : V) (hz : ¬R.Reachable z b) : z ∉ p.support := by
@@ -35,7 +36,8 @@ theorem SeparatedRepresentative.leaf_extension_color {V C : Type*}
   have hleaf : extendColor c s(x, y) ∉ p.edges.map (extendColor c) := by
     rintro hm
     obtain ⟨e, he, hc⟩ := List.mem_map.mp hm
-    have heq := hsep.representative.rainbow (edgeSet_mono hsep.le (p.edges_subset_edgeSet he)) hxy hc
+    have heq := hsep.representative.rainbow
+      (edgeSet_mono hsep.le (p.edges_subset_edgeSet he)) hxy hc
     have hxyP : s(x, y) ∈ p.edges := heq ▸ he
     exact hxout (p.fst_mem_support_of_mem_edges hxyP)
   have hsub : ∀ e ∈ p.edges, e ∈ (⊤ : SimpleGraph V).edgeSet :=
@@ -64,7 +66,7 @@ theorem SeparatedRepresentative.leaf_extension_color {V C : Type*}
 /-- A disconnected counterexample has a full representative with an
 isolated vertex, enabling a deletion without losing a color. -/
 theorem SeparatedRepresentative.high_colors_isolated_representative {V C : Type*}
-    [Fintype V] [DecidableEq V] {k : ℕ} (c : (⊤ : SimpleGraph V).edgeSet → C)
+    [Fintype V] {k : ℕ} (c : (⊤ : SimpleGraph V).edgeSet → C)
     {R H : SimpleGraph V} (hsep : SeparatedRepresentative ⊤ (extendColor c) R H)
     (hk : 5 ≤ k) (hn : k ≤ Fintype.card V)
     (hfree : ∀ f : (pathGraph k).Copy (⊤ : SimpleGraph V), ¬IsRainbow f c)

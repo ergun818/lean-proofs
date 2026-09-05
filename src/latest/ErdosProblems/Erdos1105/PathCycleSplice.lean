@@ -70,7 +70,8 @@ theorem cycle_of_crossing_chords {V : Type*} {G : SimpleGraph V} {x y : V}
   obtain ⟨s, hs, hslen⟩ := cycle_of_two_disjoint_paths (p.take i) (p.drop j).reverse
     (hp.take i) (hp.drop j).reverse hdisj' hiadj.symm hjadj.symm
     (by simpa only [htake, Walk.length_reverse, Walk.drop_length] using hlen)
-  exact ⟨p.getVert j, s, hs, by simpa only [htake, Walk.length_reverse, Walk.drop_length] using hslen⟩
+  exact ⟨p.getVert j, s, hs, by
+    simpa only [htake, Walk.length_reverse, Walk.drop_length] using hslen⟩
 
 end Erdos1105
 

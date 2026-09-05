@@ -6,10 +6,11 @@ open Finset
 
 /-- Trim a bounded integer degree sequence to the required size while
 retaining two units above the `(l-1)` baseline. -/
-theorem exists_dense_degree_subset {V : Type*} [DecidableEq V] (f : V → ℕ) {l : ℕ}
+theorem exists_dense_degree_subset {V : Type*} (f : V → ℕ) {l : ℕ}
     (hl : 2 ≤ l) (S : Finset V) (hsize : l ≤ S.card)
     (hcap : ∀ v ∈ S, f v ≤ l) (hsum : (l - 1) * S.card + 2 ≤ ∑ v ∈ S, f v) :
     ∃ B ⊆ S, B.card = l ∧ (l - 1) * l + 2 ≤ ∑ v ∈ B, f v := by
+  classical
   induction hn : S.card using Nat.strong_induction_on generalizing S with
   | h n ih =>
     by_cases heq : S.card = l

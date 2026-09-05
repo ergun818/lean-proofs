@@ -10,10 +10,11 @@ def connectedPathCount (n k : ℕ) : ℕ :=
   if n < k then n.choose 2 else
     max (pathExtremalEdges n (k - 1) 1) (pathExtremalEdges n (k - 1) ((k - 2) / 2))
 
-theorem connected_path_count_bound {V : Type*} [Fintype V] [DecidableEq V]
+theorem connected_path_count_bound {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {k : ℕ} (hk : 3 ≤ k)
     (hconn : G.Preconnected) (hfree : ¬pathGraph k ⊑ G) :
     G.edgeFinset.card ≤ connectedPathCount (Fintype.card V) k := by
+  classical
   by_cases hsmall : Fintype.card V < k
   · simpa only [connectedPathCount, if_pos hsmall] using G.card_edgeFinset_le_card_choose_two
   · rw [connectedPathCount, if_neg hsmall]
@@ -65,7 +66,7 @@ theorem connected_count_add_capped_le_formula {n n₀ k₁ k₂ : ℕ}
 distinguished graph is connected; the other graphs need only be
 nonempty. -/
 theorem path_component_sum_le_formula {I V : Type*} [Fintype I] [Nonempty I]
-    [Fintype V] [DecidableEq V] (W : I → Type*) [∀ i, Fintype (W i)] [∀ i, Nonempty (W i)]
+    [Fintype V] (W : I → Type*) [∀ i, Fintype (W i)] [∀ i, Nonempty (W i)]
     (G : SimpleGraph V) [DecidableRel G.Adj] (H : ∀ i, SimpleGraph (W i))
     [∀ i, DecidableRel (H i).Adj] {k₁ k₂ : ℕ}
     (hk₂ : 3 ≤ k₂) (hkk : k₂ ≤ k₁) (hn₀ : k₁ - 1 ≤ Fintype.card V)
@@ -82,7 +83,8 @@ theorem path_component_sum_le_formula {I V : Type*} [Fintype I] [Nonempty I]
       single_le_sum (fun j _ ↦ Nat.zero_le (Fintype.card (W j))) (mem_univ i)
     exact (Fintype.card_pos (α := W i)).trans_le hi
   have hprimary := connected_path_count_bound G (by omega) hconn hG
-  have hsecondary : (∑ i, (H i).edgeFinset.card) ≤ ∑ i, cappedEdgeBound (Fintype.card (W i)) (k₂ - 2) :=
+  have hsecondary : (∑ i, (H i).edgeFinset.card) ≤
+      ∑ i, cappedEdgeBound (Fintype.card (W i)) (k₂ - 2) :=
     sum_le_sum fun i _ ↦ path_free_edges_le_capped (H i) (by omega) (hH i)
   have hsum := cappedEdgeBound_sum univ (fun i ↦ Fintype.card (W i))
     (show 0 < k₂ - 2 by omega) (fun i _ ↦ Fintype.card_pos)

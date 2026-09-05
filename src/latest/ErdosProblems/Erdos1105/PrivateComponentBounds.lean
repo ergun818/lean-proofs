@@ -7,12 +7,13 @@ open SimpleGraph
 
 /-- Private colors at a vertex are represented by distinct neighbors in
 its own connected component. -/
-theorem private_colors_le_component_degree {V C : Type*} [Fintype V] [Fintype C]
-    [DecidableEq V] (c : (⊤ : SimpleGraph V).edgeSet → C) (R : SimpleGraph V)
-    [DecidableRel R.Adj]
+theorem private_colors_le_component_degree {V C : Type*} [Finite V] [Fintype C]
+    (c : (⊤ : SimpleGraph V).edgeSet → C) (R : SimpleGraph V)
     (hpalette : ∀ i, (∃ v, PrivateAt c v i) → ∃ e : R.edgeSet, extendColor c e.val = some i)
     (B : R.ConnectedComponent) [Fintype B] [DecidableRel B.toSimpleGraph.Adj] (v : B) :
     (privateColors c v.val).card ≤ B.toSimpleGraph.degree v := by
+  classical
+  let := Fintype.ofFinite V
   have h := private_colors_le_induced_neighbors c R hpalette B.supp v.val v.property
     (fun w hw _ ↦ B.mem_supp_of_adj_mem_supp v.property hw)
   have heq : Nat.card ((R.induce B.supp).neighborSet ⟨v.val, v.property⟩) =
@@ -22,7 +23,7 @@ theorem private_colors_le_component_degree {V C : Type*} [Fintype V] [Fintype C]
   exact h.trans_eq heq
 
 /-- The private representative components have at most `k-1` vertices. -/
-theorem private_component_card_le {V C : Type*} [Fintype V] [Fintype C] {n : ℕ}
+theorem private_component_card_le {V C : Type*} [Finite V] [Fintype C] {n : ℕ}
     (c : (⊤ : SimpleGraph V).edgeSet → C) (hc : Function.Surjective c)
     (hH : ∀ f : (cycleGraph (n + 4)).Copy (⊤ : SimpleGraph V), ¬IsRainbow f c)
     (R : SimpleGraph V) (hR : Set.InjOn (extendColor c) R.edgeSet)
@@ -33,6 +34,7 @@ theorem private_component_card_le {V C : Type*} [Fintype V] [Fintype C] {n : ℕ
     (hsum : ∀ x y, x ≠ y → n + 3 ≤ (privateColors c x).card + (privateColors c y).card)
     (B : R.ConnectedComponent) : Nat.card B ≤ n + 3 := by
   classical
+  let := Fintype.ofFinite V
   let := Fintype.ofFinite B
   by_contra! hlarge
   have hcount := private_colors_le_component_degree c R hpalette B
@@ -53,11 +55,11 @@ theorem private_component_card_le {V C : Type*} [Fintype V] [Fintype C] {n : ℕ
 
 /-- Each component is Hamiltonian and its size is at least `(k+1)/2`.
 This completes the component-size claim used by the cycle upper bound. -/
-theorem private_component_hamiltonian_and_card {V C : Type*} [Fintype V] [Fintype C]
+theorem private_component_hamiltonian_and_card {V C : Type*} [Finite V] [Fintype C]
     [DecidableEq V] {n : ℕ}
     (c : (⊤ : SimpleGraph V).edgeSet → C) (hc : Function.Surjective c)
     (hH : ∀ f : (cycleGraph (n + 4)).Copy (⊤ : SimpleGraph V), ¬IsRainbow f c)
-    (R : SimpleGraph V) [DecidableRel R.Adj] (hR : Set.InjOn (extendColor c) R.edgeSet)
+    (R : SimpleGraph V) (hR : Set.InjOn (extendColor c) R.edgeSet)
     (howned : ∀ e : R.edgeSet, ∃ w, PrivateAt c w
       (c ⟨e.val, edgeSet_mono (show R ≤ ⊤ from le_top) e.property⟩))
     (hpalette : ∀ i, (∃ v, PrivateAt c v i) → ∃ e : R.edgeSet, extendColor c e.val = some i)
@@ -66,6 +68,7 @@ theorem private_component_hamiltonian_and_card {V C : Type*} [Fintype V] [Fintyp
     (B : R.ConnectedComponent) [Fintype B] :
     B.toSimpleGraph.IsHamiltonian ∧ n + 5 ≤ 2 * Nat.card B ∧ Nat.card B ≤ n + 3 := by
   classical
+  let := Fintype.ofFinite V
   have hcard := private_component_card_le c hc hH R hR howned hpalette hnew hsum B
   have hcount := private_colors_le_component_degree c R hpalette B
   obtain ⟨u⟩ := B.connected_toSimpleGraph.nonempty

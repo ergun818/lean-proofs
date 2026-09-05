@@ -33,7 +33,7 @@ theorem AlternatingEnds.reverse {V : Type*} {G : SimpleGraph V} {x y : V}
     simpa only [Walk.length_reverse, Walk.getVert_reverse,
       Nat.sub_sub_self (show i ≤ p.length by omega), heq] using hp.left_join i hi _ hj'
 
-theorem short_core_alternating_ends {V : Type*} [Fintype V] [DecidableEq V]
+theorem short_core_alternating_ends {V : Type*} [Fintype V]
     {G : SimpleGraph V} {u x y : V} {d a : ℕ}
     (hG : NoLongCycle G (2 * d + 3)) (hu : G.IsUniversal u)
     (hconn : (G.induce {v | v ≠ u}).Preconnected)
@@ -44,6 +44,7 @@ theorem short_core_alternating_ends {V : Type*} [Fintype V] [DecidableEq V]
     (hmiddle : ∀ t, a ≤ t → t ≤ p.length - a →
       (G.Adj x (p.getVert t) ↔ Even (t - a)) ∧
       (G.Adj y (p.getVert t) ↔ Even (t - a))) : AlternatingEnds p d a := by
+  classical
   have hbeforeR : ∀ j < a, ¬G.Adj x (p.reverse.getVert j) := by
     intro j hj
     rw [Walk.getVert_reverse]

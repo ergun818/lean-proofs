@@ -22,7 +22,7 @@ lemma degreeWithin_lower_of_all_adj {V : Type*} (G : SimpleGraph V)
 /-- The exceptional join contains a cycle through `A`, the three-clique,
 and `|A|-1` further vertices, even after deleting any one internal
 edge of the three-clique. -/
-theorem threeCliqueJoin_cycle_avoiding {V : Type*} [Fintype V] [DecidableEq V]
+theorem threeCliqueJoin_cycle_avoiding {V : Type*} [Finite V] [DecidableEq V]
     {A T B : Finset V} {l : ℕ} (hl : 2 ≤ l)
     (hAT : Disjoint A T) (hBA : Disjoint B A) (hBT : Disjoint B T)
     (hA : A.card = l - 1) (hT : T.card = 3) (hB : B.card = l - 2)
@@ -31,6 +31,7 @@ theorem threeCliqueJoin_cycle_avoiding {V : Type*} [Fintype V] [DecidableEq V]
       p.IsCycle ∧ p.length = 2 * l ∧
       (∀ x, x ∈ p.support ↔ x ∈ A ∪ T ∪ B) ∧ e ∉ p.edges := by
   classical
+  let := Fintype.ofFinite V
   let G := threeCliqueJoin A T
   let D := G.deleteEdges {e}
   let S := A ∪ T ∪ B

@@ -7,7 +7,7 @@ open SimpleGraph Finset
 
 /-- Before the first end-neighbor, every shifted position belongs to
 the start-neighbor set of a long low-core path. -/
-theorem low_core_start_neighbors_before {V : Type*} [Fintype V] [DecidableEq V]
+theorem low_core_start_neighbors_before {V : Type*} [Fintype V]
     {G : SimpleGraph V} {u x y : V} {d : ℕ}
     (hG : NoLongCycle G (2 * d + 3)) (hu : G.IsUniversal u)
     (hconn : (G.induce {v | v ≠ u}).Preconnected)
@@ -33,7 +33,7 @@ theorem low_core_start_neighbors_before {V : Type*} [Fintype V] [DecidableEq V]
 
 /-- Rotations entirely before the first end-neighbor show that this
 initial segment is a clique, joined to the next vertex of the path. -/
-theorem low_core_initial_segment_clique {V : Type*} [Fintype V] [DecidableEq V]
+theorem low_core_initial_segment_clique {V : Type*} [Fintype V]
     {G : SimpleGraph V} {u x y : V} {d : ℕ}
     (hG : NoLongCycle G (2 * d + 3)) (hu : G.IsUniversal u)
     (hconn : (G.induce {v | v ≠ u}).Preconnected)

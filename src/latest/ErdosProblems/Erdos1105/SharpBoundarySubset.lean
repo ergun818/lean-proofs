@@ -8,7 +8,7 @@ open SimpleGraph Finset
 
 /-- A sharp clique-core graph contains a boundary-order exceptional join.
 The surviving set still contains every vertex of the original core. -/
-theorem exists_sharp_boundary_join {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_sharp_boundary_join {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℕ}
     (hd : 2 ≤ d) (hn : 2 * d + 3 ≤ Fintype.card V)
     (hclique : G.IsClique (vertexCore G d : Set V))

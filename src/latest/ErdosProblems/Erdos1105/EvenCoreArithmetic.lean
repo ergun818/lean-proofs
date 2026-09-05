@@ -60,7 +60,8 @@ lemma even_extremal_interior_le_formula (n d a : ℕ) (ha : 2 ≤ a) (had : a �
     (hn : 2 * d + 2 ≤ n) : pathExtremalEdges n (2 * d + 1) a ≤ pathFormula n (2 * d + 2) := by
   have hd : 4 ≤ d := by omega
   exact (pathExtremalEdges_le_max n (2 * d + 1) 2 a (d - 2) ha had (by omega) (by omega)).trans
-    (max_le (even_extremal_two_le_formula n d hd hn) (even_extremal_penultimate_le_formula n d hd hn))
+    (max_le (even_extremal_two_le_formula n d hd hn)
+      (even_extremal_penultimate_le_formula n d hd hn))
 
 lemma even_small_core_count_le_formula (n d q : ℕ) (hd : 2 ≤ d) (hn : 2 * d + 2 ≤ n)
     (hq : q + n ≤ (d + 2).choose 2 + d * (n + 1 - (d + 2))) :

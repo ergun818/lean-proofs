@@ -7,7 +7,7 @@ namespace Erdos1105
 open SimpleGraph Finset
 
 theorem SeparatedRepresentative.other_component_free {V C : Type*}
-    [Fintype V] [DecidableEq V] {k : ℕ} (c : (⊤ : SimpleGraph V).edgeSet → C)
+    [Fintype V] {k : ℕ} (c : (⊤ : SimpleGraph V).edgeSet → C)
     {R H : SimpleGraph V} (hsep : SeparatedRepresentative ⊤ (extendColor c) R H)
     (hfree : ∀ f : (pathGraph k).Copy (⊤ : SimpleGraph V), ¬IsRainbow f c)
     {a b : V} (p : H.Walk a b) (hp : p.IsPath) (E : H.ConnectedComponent)
@@ -24,7 +24,8 @@ theorem SeparatedRepresentative.other_component_free {V C : Type*}
     intro h
     apply hne
     have hx := (mem_componentVertices H E x.val).mp x.property
-    exact (ConnectedComponent.mem_supp_iff E x.val).mp hx |>.symm.trans (ConnectedComponent.sound h).symm
+    exact (ConnectedComponent.mem_supp_iff E x.val).mp hx
+      |>.symm.trans (ConnectedComponent.sound h).symm
   have h := hsep.two_path_lengths_lt c hfree p (q.map φ) hp (hq.map Subtype.val_injective) hnot
   rw [Walk.length_map] at h
   omega
@@ -33,7 +34,7 @@ theorem SeparatedRepresentative.other_component_free {V C : Type*}
 path on exactly `k-2` vertices in the bridge decomposition. All the
 ordinary counting cases have already been excluded. -/
 theorem SeparatedRepresentative.high_colors_long_path {V C : Type*}
-    [Fintype V] [DecidableEq V] {k : ℕ} (c : (⊤ : SimpleGraph V).edgeSet → C)
+    [Fintype V] {k : ℕ} (c : (⊤ : SimpleGraph V).edgeSet → C)
     {R H : SimpleGraph V} (hsep : SeparatedRepresentative ⊤ (extendColor c) R H)
     (hk : 5 ≤ k) (hn : k ≤ Fintype.card V)
     (hfree : ∀ f : (pathGraph k).Copy (⊤ : SimpleGraph V), ¬IsRainbow f c)
@@ -92,7 +93,8 @@ theorem SeparatedRepresentative.high_colors_long_path {V C : Type*}
     obtain ⟨x, hx⟩ := hex
     have hcut : ¬H.Reachable b x := fun h ↦ hx ((mem_componentVertices H D x).mpr
       (ConnectedComponent.sound h.symm))
-    have hbound := hsep.two_path_lengths_lt c hfree p (Walk.nil : H.Walk x x) hp Walk.IsPath.nil hcut
+    have hbound := hsep.two_path_lengths_lt c hfree p (Walk.nil : H.Walk x x)
+      hp Walk.IsPath.nil hcut
     simp only [Walk.length_nil] at hbound
     dsimp only [t] at *
     omega

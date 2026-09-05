@@ -11,7 +11,8 @@ theorem connected_pendant_reduction {V C : Type*} [Fintype V] [Fintype C]
     (c : (⊤ : SimpleGraph V).edgeSet → C) {k : ℕ} (hk : 6 ≤ k)
     (hn : k ≤ Fintype.card V) (hsmall : 2 * Fintype.card V ≤ 3 * (k - 2))
     (hq : (k - 2).choose 2 + 2 ≤ Fintype.card C)
-    (hshapes : ∀ Q : SimpleGraph V, IsFullRepresentative c Q → Q.Preconnected → PendantCliqueShape Q k)
+    (hshapes : ∀ Q : SimpleGraph V, IsFullRepresentative c Q → Q.Preconnected →
+      PendantCliqueShape Q k)
     (R : SimpleGraph V) (hR : IsFullRepresentative c R) (hconn : R.Preconnected) :
     k < Fintype.card V ∧ ∃ v, ∃ Q : SimpleGraph {w // w ≠ v},
       IsFullRepresentative (restrictVertexColoring c v) Q ∧ Q.Preconnected := by

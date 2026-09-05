@@ -6,11 +6,12 @@ namespace Erdos1105
 
 open SimpleGraph Finset
 
-lemma cone_cover_remove_none {V : Type*} [Fintype V] [DecidableEq V]
+lemma cone_cover_remove_none {V : Type*} [Finite V]
     (G : SimpleGraph V) (C : Finset (Option V)) (hNone : none ∈ C)
     (hcover : ∀ x y, (graphCone G).Adj x y → x ∈ C ∨ y ∈ C) :
     ∃ S : Finset V, S.card + 1 = C.card ∧ ∀ x y, G.Adj x y → x ∈ S ∨ y ∈ S := by
   classical
+  let := Fintype.ofFinite V
   let S := univ.filter fun v ↦ some v ∈ C
   have himage : S.image some = C.erase none := by
     ext v
@@ -28,7 +29,7 @@ lemma cone_cover_remove_none {V : Type*} [Fintype V] [DecidableEq V]
 /-- For even paths of order at least eight, a non-clique low core yields
 either the required edge bound or a vertex cover of the size already
 handled by the rainbow split-graph argument. -/
-theorem even_nonclique_core_bound_or_cover {V : Type*} [Fintype V] [DecidableEq V]
+theorem even_nonclique_core_bound_or_cover {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℕ} (hd : 3 ≤ d)
     (hn : 2 * d + 2 ≤ Fintype.card V) (hconn : G.Preconnected)
     (hfree : ¬pathGraph (2 * d + 2) ⊑ G)
@@ -59,8 +60,10 @@ theorem even_nonclique_core_bound_or_cover {V : Type*} [Fintype V] [DecidableEq 
       rcases hshape v w hvw with h | h | h | h
       · exact Or.inl h
       · exact Or.inr h
-      · exact (hvw.ne ((card_le_one_iff.mp (by omega : (pathInitialBlock p a).card ≤ 1)) h.1 h.2)).elim
-      · exact (hvw.ne ((card_le_one_iff.mp (by omega : (pathFinalBlock p a).card ≤ 1)) h.1 h.2)).elim
+      · exact
+          (hvw.ne ((card_le_one_iff.mp (by omega : (pathInitialBlock p a).card ≤ 1)) h.1 h.2)).elim
+      · exact
+          (hvw.ne ((card_le_one_iff.mp (by omega : (pathFinalBlock p a).card ≤ 1)) h.1 h.2)).elim
     obtain ⟨i, hi, hiu⟩ := short_core_universal_attachment hG hu p hp.isPath hlen ha had.le
       hbefore hafter hmiddle
     have hNone : none ∈ pathAttachments p d a := mem_image.mpr ⟨i, mem_range.mpr hi, hiu⟩

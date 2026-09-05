@@ -77,9 +77,10 @@ theorem graphComponent_supp {V : Type*} [Fintype V] (R : SimpleGraph V)
     exact (mem_componentVertices R D b).mpr
       (D.mem_supp_of_adj_mem_supp ((mem_componentVertices R D a).mp ha) hab)
 
-theorem exists_graphComponent {V : Type*} [Fintype V] (R : SimpleGraph V) (a : V) :
+theorem exists_graphComponent {V : Type*} [Finite V] (R : SimpleGraph V) (a : V) :
     ∃ S, GraphComponent R S ∧ a ∈ S := by
   classical
+  let := Fintype.ofFinite V
   refine ⟨componentVertices R (R.connectedComponentMk a), graphComponent_supp R _, ?_⟩
   simp
 
@@ -125,7 +126,7 @@ component order. This avoids requiring the set itself to be a component. -/
 theorem MaxRepresentativeComponent.card_le {V C : Type*} [Fintype V] [DecidableEq V]
     {G R : SimpleGraph V} {c : Sym2 V → C} {S : Finset V}
     (hmax : MaxRepresentativeComponent G c R S) {Q : SimpleGraph V}
-    (hQ : ColorRepresentative G c Q) {T : Finset V} {a : V} (ha : a ∈ T)
+    (hQ : ColorRepresentative G c Q) {T : Finset V} {a : V} (_ha : a ∈ T)
     (hT : ∀ b ∈ T, Q.Reachable a b) : T.card ≤ S.card := by
   obtain ⟨U, hU, haU⟩ := exists_graphComponent Q a
   apply (card_le_card (show T ⊆ U from fun b hb ↦ hU.mem_of_reachable haU (hT b hb))).trans

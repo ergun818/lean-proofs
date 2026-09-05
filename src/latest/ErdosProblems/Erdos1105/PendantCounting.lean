@@ -36,12 +36,13 @@ theorem pendant_edges_le {V : Type*} [Fintype V] [DecidableEq V]
     _ ≤ (E767EGApi.edgesInside G S).card + Sᶜ.card := Nat.add_le_add_left (card_image_le) _
     _ = _ := by rw [card_compl]
 
-theorem pendant_core_degree_lower {V : Type*} [Fintype V] [DecidableEq V]
+theorem pendant_core_degree_lower {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset V) {u : V}
     (hpend : ∀ x ∉ S, ∀ y, G.Adj x y → y = u)
     (hedges : S.card.choose 2 + 2 ≤ G.edgeFinset.card)
     {v : V} (hv : v ∈ S) :
     S.card + 1 ≤ degreeWithin G S v + (Fintype.card V - S.card) := by
+  classical
   have he := pendant_edges_le G S hpend
   rw [edgesInside_erase G hv] at he
   have hc := edgesInside_le_choose G (S.erase v)
@@ -52,10 +53,11 @@ theorem pendant_core_degree_lower {V : Type*} [Fintype V] [DecidableEq V]
   simp only [Nat.succ_eq_add_one, Nat.reduceAdd, hpred, Nat.choose_one_right] at hchoose
   omega
 
-theorem PendantCliqueShape.edge_bound {V : Type*} [Fintype V] [DecidableEq V]
+theorem PendantCliqueShape.edge_bound {V : Type*} [Fintype V]
     {G : SimpleGraph V} [DecidableRel G.Adj] {k : ℕ}
     (hshape : PendantCliqueShape G k) (hk : 2 ≤ k) (hn : k ≤ Fintype.card V) :
     G.edgeFinset.card ≤ pathExtremalEdges (Fintype.card V) (k - 1) 1 := by
+  classical
   obtain ⟨S, hS, u, _, hpend⟩ := hshape
   have h := (pendant_edges_le G S hpend).trans
     (Nat.add_le_add_right (edgesInside_le_choose G S) _)

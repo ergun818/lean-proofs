@@ -32,9 +32,10 @@ theorem path_free_vertexCore_empty {V : Type*} [Fintype V] (G : SimpleGraph V)
   have hlen := path_length_lt_of_path_free hfree p hp
   omega
 
-theorem path_free_edges_le_capped {V : Type*} [Fintype V] [DecidableEq V]
+theorem path_free_edges_le_capped {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {k : ℕ} (hk : 2 ≤ k)
     (hfree : ¬pathGraph k ⊑ G) : G.edgeFinset.card ≤ cappedEdgeBound (Fintype.card V) (k - 2) := by
+  classical
   by_cases hn : Fintype.card V ≤ k - 2
   · rw [cappedEdgeBound_eq_choose hn]
     exact G.card_edgeFinset_le_card_choose_two

@@ -13,7 +13,7 @@ lemma rooted_two_no_chain {V : Type*} {G : SimpleGraph V} {u a b c : V}
   have hp : p.IsPath := by
     apply Walk.IsPath.mk'
     simp only [p, Walk.support_cons, Walk.support_nil, List.nodup_cons, List.mem_cons,
-      List.mem_singleton, List.not_mem_nil, List.nodup_nil, not_or, not_false_eq_true, and_true]
+      List.not_mem_nil, List.nodup_nil, not_or, not_false_eq_true, and_true]
     exact ⟨⟨hua.ne, hbu.symm, hcu.symm⟩, ⟨hab.ne, hca.symm⟩, hbc.ne⟩
   have h := hpath c p hp
   simp only [p, Walk.length_cons, Walk.length_nil] at h
@@ -21,7 +21,7 @@ lemma rooted_two_no_chain {V : Type*} {G : SimpleGraph V} {u a b c : V}
 
 /-- Away from the root and its neighbors, every vertex has degree at
 most one when all root-starting paths have length at most two. -/
-theorem rooted_two_outside_degree {V : Type*} [Fintype V] [DecidableEq V]
+theorem rooted_two_outside_degree {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hconn : G.Preconnected) (u : V)
     (hpath : ∀ w, ∀ p : G.Walk u w, p.IsPath → p.length ≤ 2)
     {v : V} (hvu : v ≠ u) (huv : ¬G.Adj u v) : G.degree v ≤ 1 := by
@@ -46,10 +46,12 @@ theorem rooted_two_outside_degree {V : Type*} [Fintype V] [DecidableEq V]
         simpa only [card_neighborFinset_eq_degree, card_singleton] using card_le_card hsub
       | cons h r => simp only [Walk.length_cons] at hlen; omega
 
-theorem rooted_two_neighbor_cover {V : Type*} [Fintype V] [DecidableEq V]
-    (G : SimpleGraph V) [DecidableRel G.Adj] (hconn : G.Preconnected) (u : V)
+theorem rooted_two_neighbor_cover {V : Type*} [Finite V]
+    (G : SimpleGraph V) (hconn : G.Preconnected) (u : V)
     (hpath : ∀ w, ∀ p : G.Walk u w, p.IsPath → p.length ≤ 2) :
     ∀ x y, G.Adj x y → G.Adj u x ∨ G.Adj u y := by
+  classical
+  let := Fintype.ofFinite V
   intro x y hxy
   by_cases hux : G.Adj u x
   · exact Or.inl hux

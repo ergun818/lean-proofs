@@ -7,7 +7,7 @@ open SimpleGraph Finset
 /-- When a maximal low-core path has more than the forbidden cycle
 order, its endpoint-neighbor pattern has just two common attachment
 vertices, with cliques of size `d` at the two ends. -/
-theorem long_low_core_neighbor_pattern {V : Type*} [Fintype V] [DecidableEq V]
+theorem long_low_core_neighbor_pattern {V : Type*} [Fintype V]
     {G : SimpleGraph V} {u x y : V} {d : ℕ}
     (hG : NoLongCycle G (2 * d + 3)) (hu : G.IsUniversal u)
     (hconn : (G.induce {v | v ≠ u}).Preconnected)

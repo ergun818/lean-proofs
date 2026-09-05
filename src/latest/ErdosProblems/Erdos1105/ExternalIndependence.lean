@@ -9,7 +9,7 @@ open SimpleGraph
 /-- If every nonuniversal attachment into a set can be reached from the
 universal vertex by a sufficiently long path inside that set, the
 vertices outside the set are independent. -/
-theorem outside_independent_of_attachment_paths {V : Type*} [DecidableEq V]
+theorem outside_independent_of_attachment_paths {V : Type*}
     {G : SimpleGraph V} {u : V} {k : ℕ} {S : Set V}
     (hG : NoLongCycle G k) (hk : 3 ≤ k) (hu : G.IsUniversal u)
     (hconn : (G.induce {v | v ≠ u}).Preconnected) (huS : u ∈ S)
@@ -17,6 +17,7 @@ theorem outside_independent_of_attachment_paths {V : Type*} [DecidableEq V]
     (hboundary : ∀ z ∉ S, ∀ v ∈ S, v ≠ u → G.Adj z v →
       ∃ q : G.Walk u v, q.IsPath ∧ k - 3 ≤ q.length ∧ ∀ w ∈ q.support, w ∈ S) :
     ∀ z ∉ S, ∀ w ∉ S, ¬G.Adj z w := by
+  classical
   intro z hz w hw hzw
   obtain ⟨v, hvS, hvu⟩ := hSne
   have hzu : z ≠ u := fun h ↦ hz (h ▸ huS)

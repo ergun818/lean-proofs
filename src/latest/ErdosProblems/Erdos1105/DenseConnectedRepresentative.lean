@@ -4,11 +4,12 @@ namespace Erdos1105
 
 open SimpleGraph Finset
 
-theorem ColorRepresentative.card_eq {V C : Type*} [Fintype V]
+theorem ColorRepresentative.card_eq {V C : Type*} [Finite V]
     {G R Q : SimpleGraph V} {c : Sym2 V → C}
     (hR : ColorRepresentative G c R) (hQ : ColorRepresentative G c Q) :
     Nat.card R.edgeSet = Nat.card Q.edgeSet := by
   classical
+  let := Fintype.ofFinite V
   have hle {R Q : SimpleGraph V} (hR : ColorRepresentative G c R)
       (hQ : ColorRepresentative G c Q) : Nat.card R.edgeSet ≤ Nat.card Q.edgeSet := by
     have hp : ∀ e : R.edgeSet, ∃ f ∈ Q.edgeSet, c f = c e.val :=
@@ -73,7 +74,7 @@ theorem MaxRepresentativeComponent.cross_color_count_bound {V C : Type*}
 /-- A complete-graph coloring using more than `choose(n-2,2)+1`
 colors always has a connected full representative. This is the
 boundary case needed before any vertex-deletion induction. -/
-theorem exists_connected_representative_of_dense {V C : Type*} [Fintype V] [DecidableEq V]
+theorem exists_connected_representative_of_dense {V C : Type*} [Fintype V]
     [Nonempty V] (c : Sym2 V → C) {R : SimpleGraph V}
     (hR : ColorRepresentative ⊤ c R)
     (hcount : (Fintype.card V - 2).choose 2 + 1 < Nat.card R.edgeSet) :

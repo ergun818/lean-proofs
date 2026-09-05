@@ -43,7 +43,8 @@ theorem low_core_initial_full_twins {V : Type*} [Fintype V] [DecidableEq V]
     have has : a ≤ s := by
       by_contra h
       exact hz (mem_image.mpr ⟨s, mem_range.mpr (by omega), hs⟩)
-    simpa only [hs] using low_core_initial_segment_twins hG hu hconn p hp hlong ha hbefore r hr s has hsL
+    simpa only [hs] using low_core_initial_segment_twins hG hu hconn p hp
+      hlong ha hbefore r hr s has hsL
   exact ⟨fun h ↦ (hiff (honpath (Or.inl h))).mp h,
     fun h ↦ (hiff (honpath (Or.inr h))).mpr h⟩
 

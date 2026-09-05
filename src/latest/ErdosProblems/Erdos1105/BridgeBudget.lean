@@ -4,12 +4,14 @@ namespace Erdos1105
 
 open SimpleGraph Finset
 
-theorem component_card_lt_delete_bridge {V : Type*} [Fintype V] (G : SimpleGraph V)
+theorem component_card_lt_delete_bridge {V : Type*} [Finite V] (G : SimpleGraph V)
     {e : Sym2 V} (he : e ∈ G.edgeSet) (hb : G.IsBridge e) :
     Nat.card G.ConnectedComponent < Nat.card (G.deleteEdges {e}).ConnectedComponent := by
   classical
+  let := Fintype.ofFinite V
   let D := G.deleteEdges {e}
-  let f : D.ConnectedComponent → G.ConnectedComponent := ConnectedComponent.map (Hom.ofLE (deleteEdges_le _))
+  let f : D.ConnectedComponent → G.ConnectedComponent :=
+    ConnectedComponent.map (Hom.ofLE (deleteEdges_le _))
   have hf : Function.Surjective f := ConnectedComponent.surjective_map_ofLE (deleteEdges_le _)
   have hninj : ¬Function.Injective f := by
     intro hinj
@@ -26,11 +28,12 @@ theorem component_card_lt_delete_bridge {V : Type*} [Fintype V] (G : SimpleGraph
 
 /-- Removing only bridges pays for at least one new component per
 removed edge. The inequality form suffices for the extremal argument. -/
-theorem bridge_deletion_budget {V : Type*} [Fintype V] (R H : SimpleGraph V)
+theorem bridge_deletion_budget {V : Type*} [Finite V] (R H : SimpleGraph V)
     (hle : H ≤ R) (hbridge : ∀ e ∈ R.edgeSet, e ∉ H.edgeSet → R.IsBridge e) :
     Nat.card R.edgeSet + Nat.card R.ConnectedComponent ≤
       Nat.card H.edgeSet + Nat.card H.ConnectedComponent := by
   classical
+  let := Fintype.ofFinite V
   induction hsize : Nat.card R.edgeSet using Nat.strong_induction_on generalizing R with
   | h n ih =>
     by_cases heq : R = H

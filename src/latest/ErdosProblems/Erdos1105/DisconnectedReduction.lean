@@ -23,10 +23,11 @@ theorem IsFullRepresentative.transfer {V C : Type*}
   obtain ⟨f, hf, hc⟩ := hQ.palette e.val (edgeSet_mono le_top e.property)
   exact ⟨⟨f, hf⟩, hc.trans he⟩
 
-theorem IsFullRepresentative.nat_card_edges {V C : Type*} [Fintype V] [Fintype C]
+theorem IsFullRepresentative.nat_card_edges {V C : Type*} [Finite V] [Fintype C]
     {c : (⊤ : SimpleGraph V).edgeSet → C} {R : SimpleGraph V} (hR : IsFullRepresentative c R) :
     Nat.card R.edgeSet = Fintype.card C := by
   classical
+  let := Fintype.ofFinite V
   rw [Nat.card_eq_fintype_card, ← edgeFinset_card, hR.card_edges]
 
 /-- The general disconnected case reduces to deleting a vertex while

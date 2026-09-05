@@ -29,7 +29,8 @@ theorem component_cross_column_constant {V C : Type*} [DecidableEq V] {k : ℕ}
     have heq := component_paths_cross_colors_eq c R hR hH B D hBD hnew p
       (Walk.nil : D.toSimpleGraph.Walk y y) hp.isPath Walk.IsPath.nil
       (by simp only [Walk.length_nil]; omega) (by omega)
-    exact (congrArg (extendColor c) (show s(a.val, y.val) = s(y.val, a.val) from Sym2.eq_swap)).trans
+    exact (congrArg (extendColor c)
+      (show s(a.val, y.val) = s(y.val, a.val) from Sym2.eq_swap)).trans
       heq.symm
   · obtain ⟨z, hz, hz'⟩ := exists_third_vertex hBcard x x'
     obtain ⟨p, hp⟩ := hconnected z x hz
@@ -45,8 +46,8 @@ theorem component_cross_column_constant {V C : Type*} [DecidableEq V] {k : ℕ}
     exact heq.trans heq'.symm
 
 /-- The structural component bounds imply constant cross-edge columns. -/
-theorem private_component_cross_column_constant {V C : Type*} [Fintype V] [Fintype C]
-    [DecidableEq V] {n : ℕ}
+theorem private_component_cross_column_constant {V C : Type*} [Finite V] [Fintype C]
+    {n : ℕ}
     (c : (⊤ : SimpleGraph V).edgeSet → C) (hc : Function.Surjective c)
     (hH : ∀ f : (cycleGraph (n + 4)).Copy (⊤ : SimpleGraph V), ¬IsRainbow f c)
     (R : SimpleGraph V) (hR : Set.InjOn (extendColor c) R.edgeSet)
@@ -55,9 +56,10 @@ theorem private_component_cross_column_constant {V C : Type*} [Fintype V] [Finty
     (hpalette : ∀ i, (∃ v, PrivateAt c v i) → ∃ e : R.edgeSet, extendColor c e.val = some i)
     (hnew : ∀ v, 2 ≤ (privateColors c v).card)
     (hsum : ∀ x y, x ≠ y → n + 3 ≤ (privateColors c x).card + (privateColors c y).card)
-    (B D : R.ConnectedComponent) [Fintype B] [Fintype D] (hBD : B ≠ D)
+    (B D : R.ConnectedComponent) (hBD : B ≠ D)
     (x x' : B) (y : D) : extendColor c s(x.val, y.val) = extendColor c s(x'.val, y.val) := by
   classical
+  let := Fintype.ofFinite V
   have hB := private_component_hamiltonian_and_card c hc hH R hR howned hpalette hnew hsum B
   have hD := private_component_hamiltonian_and_card c hc hH R hR howned hpalette hnew hsum D
   have hBmin := hB.2.1
@@ -87,8 +89,8 @@ theorem private_component_cross_column_constant {V C : Type*} [Fintype V] [Finty
 
 /-- All edges between two distinct private-representative components have
 one common color. -/
-theorem private_component_cross_monochromatic {V C : Type*} [Fintype V] [Fintype C]
-    [DecidableEq V] {n : ℕ}
+theorem private_component_cross_monochromatic {V C : Type*} [Finite V] [Fintype C]
+    {n : ℕ}
     (c : (⊤ : SimpleGraph V).edgeSet → C) (hc : Function.Surjective c)
     (hH : ∀ f : (cycleGraph (n + 4)).Copy (⊤ : SimpleGraph V), ¬IsRainbow f c)
     (R : SimpleGraph V) (hR : Set.InjOn (extendColor c) R.edgeSet)
@@ -97,8 +99,10 @@ theorem private_component_cross_monochromatic {V C : Type*} [Fintype V] [Fintype
     (hpalette : ∀ i, (∃ v, PrivateAt c v i) → ∃ e : R.edgeSet, extendColor c e.val = some i)
     (hnew : ∀ v, 2 ≤ (privateColors c v).card)
     (hsum : ∀ x y, x ≠ y → n + 3 ≤ (privateColors c x).card + (privateColors c y).card)
-    (B D : R.ConnectedComponent) [Fintype B] [Fintype D] (hBD : B ≠ D)
+    (B D : R.ConnectedComponent) (hBD : B ≠ D)
     (x x' : B) (y y' : D) : extendColor c s(x.val, y.val) = extendColor c s(x'.val, y'.val) := by
+  classical
+  let := Fintype.ofFinite V
   have h₁ := private_component_cross_column_constant c hc hH R hR howned hpalette hnew hsum
     B D hBD x x' y
   have h₂ := private_component_cross_column_constant c hc hH R hR howned hpalette hnew hsum

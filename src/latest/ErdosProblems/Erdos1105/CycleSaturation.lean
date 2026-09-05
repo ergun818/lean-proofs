@@ -15,11 +15,12 @@ open SimpleGraph Finset
 def NoLongCycle {V : Type*} (G : SimpleGraph V) (k : ℕ) : Prop :=
   ∀ (v : V) (p : G.Walk v v), p.IsCycle → p.length < k
 
-theorem exists_cycle_saturated_extension {V : Type*} [Fintype V]
+theorem exists_cycle_saturated_extension {V : Type*} [Finite V]
     (G : SimpleGraph V) (k : ℕ) (hG : NoLongCycle G k) :
     ∃ H : SimpleGraph V, G ≤ H ∧ NoLongCycle H k ∧
       ∀ J : SimpleGraph V, H ≤ J → NoLongCycle J k → J = H := by
   classical
+  let := Fintype.ofFinite V
   let P : Finset (SimpleGraph V) := univ.filter fun J ↦ G ≤ J ∧ NoLongCycle J k
   have hP : P.Nonempty := ⟨G, mem_filter.mpr ⟨mem_univ _, le_rfl, hG⟩⟩
   obtain ⟨H, hH, hmax⟩ := P.exists_max_image (fun J ↦ J.edgeFinset.card) hP

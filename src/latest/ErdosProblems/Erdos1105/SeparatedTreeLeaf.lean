@@ -28,7 +28,7 @@ theorem SeparatedRepresentative.no_remaining_edge_outside {V C : Type*}
 /-- Away from the long remaining path, every original component is a
 tree, so it has an isolated vertex or a leaf. -/
 theorem SeparatedRepresentative.exists_outside_leaf {V C : Type*}
-    [Fintype V] [DecidableEq V] {G R H : SimpleGraph V} {c : Sym2 V → C}
+    [Fintype V] {G R H : SimpleGraph V} {c : Sym2 V → C}
     (hsep : SeparatedRepresentative G c R H) (b : V) (hnot : ¬R.Preconnected)
     (hsmall : ∀ E : H.ConnectedComponent, E ≠ H.connectedComponentMk b →
       ¬pathGraph 2 ⊑ componentGraph H E) :

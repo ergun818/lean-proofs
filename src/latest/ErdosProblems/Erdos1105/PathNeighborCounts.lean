@@ -5,10 +5,11 @@ namespace Erdos1105
 
 open SimpleGraph Finset
 
-theorem degreeWithin_eq_induce_degree {V : Type*} [Fintype V] [DecidableEq V]
+theorem degreeWithin_eq_induce_degree {V : Type*} [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset V) (v : (S : Set V)) :
     degreeWithin G S v.val = (G.induce (S : Set V)).degree v := by
   classical
+  let := Fintype.ofFinite V
   let e : ↥(S.filter (G.Adj v.val)) ≃ (G.induce (S : Set V)).neighborSet v :=
     { toFun := fun w ↦ ⟨⟨w.val, (mem_filter.mp w.property).1⟩, (mem_filter.mp w.property).2⟩
       invFun := fun w ↦ ⟨w.val.val, mem_filter.mpr ⟨w.val.property, w.property⟩⟩
@@ -53,7 +54,6 @@ theorem startNeighborIndices_card {V : Type*} [DecidableEq V]
       refine mem_image.mpr ⟨i - 1, ?_, ?_⟩
       · apply mem_filter.mpr
         refine ⟨mem_range.mpr (by omega), ?_⟩
-        change G.Adj x (p.getVert (i - 1 + 1))
         rw [Nat.sub_add_cancel hipos, hi]
         exact hzx
       · rw [Nat.sub_add_cancel hipos]

@@ -7,7 +7,7 @@ open SimpleGraph Finset
 
 /-- For a low-core path with exactly the forbidden cycle order, the
 shifted endpoint-neighbor sets partition all path-edge positions. -/
-theorem short_low_core_neighbor_partition {V : Type*} [Fintype V] [DecidableEq V]
+theorem short_low_core_neighbor_partition {V : Type*} [Fintype V]
     {G : SimpleGraph V} {u x y : V} {d : ℕ}
     (hG : NoLongCycle G (2 * d + 3)) (hu : G.IsUniversal u)
     (hconn : (G.induce {v | v ≠ u}).Preconnected)
@@ -27,7 +27,7 @@ theorem short_low_core_neighbor_partition {V : Type*} [Fintype V] [DecidableEq V
 
 /-- In the short equality case, one endpoint's neighbors determine
 the other endpoint's neighbors exactly. -/
-theorem short_low_core_neighbor_iff {V : Type*} [Fintype V] [DecidableEq V]
+theorem short_low_core_neighbor_iff {V : Type*} [Fintype V]
     {G : SimpleGraph V} {u x y : V} {d : ℕ}
     (hG : NoLongCycle G (2 * d + 3)) (hu : G.IsUniversal u)
     (hconn : (G.induce {v | v ≠ u}).Preconnected)

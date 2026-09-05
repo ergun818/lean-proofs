@@ -6,7 +6,7 @@ open SimpleGraph Finset
 
 /-- The two possible low-core configurations for the six-vertex path:
 a two-vertex cover, or a root with no three-edge path starting there. -/
-theorem path_six_nonclique_cover_or_root {V : Type*} [Fintype V] [DecidableEq V]
+theorem path_six_nonclique_cover_or_root {V : Type*} [Fintype V]
     (G : SimpleGraph V) (hconn : G.Preconnected) (hfree : ¬pathGraph 6 ⊑ G)
     (hmax : ∀ J : SimpleGraph (Option V), graphCone G ≤ J → NoLongCycle J 7 →
       J = graphCone G)
@@ -38,7 +38,8 @@ theorem path_six_nonclique_cover_or_root {V : Type*} [Fintype V] [DecidableEq V]
       exact Or.inr (htwo (short_two_attachment_start_pattern hG hu hconn' p hp hlen hB') hB')
     · have ha1 : a = 1 := by omega
       have hAlt := short_core_alternating_ends hG hu hconn' p hp hlen ha had hbefore hafter hmiddle
-      have hshape := short_core_edge_shape hG hu hconn' p hp hlen ha (by omega) hbefore hafter hmiddle
+      have hshape := short_core_edge_shape hG hu hconn' p hp hlen ha
+        (by omega) hbefore hafter hmiddle
       have hAcard := pathInitialBlock_card p hp.isPath (a := a) (by omega)
       have hBcard := pathFinalBlock_card p hp.isPath (a := a) (by omega)
       have hCcard := pathAttachments_card hAlt
@@ -48,8 +49,10 @@ theorem path_six_nonclique_cover_or_root {V : Type*} [Fintype V] [DecidableEq V]
         rcases hshape v w hvw with h | h | h | h
         · exact Or.inl h
         · exact Or.inr h
-        · exact (hvw.ne ((card_le_one_iff.mp (by omega : (pathInitialBlock p a).card ≤ 1)) h.1 h.2)).elim
-        · exact (hvw.ne ((card_le_one_iff.mp (by omega : (pathFinalBlock p a).card ≤ 1)) h.1 h.2)).elim
+        · exact (hvw.ne
+            ((card_le_one_iff.mp (by omega : (pathInitialBlock p a).card ≤ 1)) h.1 h.2)).elim
+        · exact (hvw.ne
+            ((card_le_one_iff.mp (by omega : (pathFinalBlock p a).card ≤ 1)) h.1 h.2)).elim
       obtain ⟨i, hi, hiu⟩ := short_core_universal_attachment hG hu p hp.isPath hlen ha had
         hbefore hafter hmiddle
       have hNone : none ∈ pathAttachments p 2 a := mem_image.mpr ⟨i, mem_range.mpr hi, hiu⟩

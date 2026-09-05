@@ -51,7 +51,7 @@ theorem exists_crossing_with_card_bound {L : ℕ} (A B : Finset ℕ)
 /-- In the noncrossing case, take the nearest endpoint-neighbors on the
 two sides of a detour. The skipped gaps contain no endpoint-neighbors. -/
 theorem exists_noncrossing_gap_bound {L t i j : ℕ} (A B : Finset ℕ)
-    (hA : A ⊆ range L) (hB : B ⊆ range L)
+    (_hA : A ⊆ range L) (hB : B ⊆ range L)
     (hit : i < t) (htj : t < j) (hjL : j ≤ L)
     (hordA : ∀ z ∈ A, z < t) (hordB : ∀ z ∈ B, t ≤ z)
     (htA : t - 1 ∈ A) (htB : t ∈ B) :

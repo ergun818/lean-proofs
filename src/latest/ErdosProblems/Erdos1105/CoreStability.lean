@@ -7,7 +7,7 @@ open SimpleGraph Finset
 
 /-- Once the high-degree core of a saturated cone is a clique, lowering
 the disintegration threshold to `k - r` does not enlarge it. -/
-theorem saturated_cone_core_stable {V : Type*} [Fintype V] [DecidableEq V]
+theorem saturated_cone_core_stable {V : Type*} [Fintype V]
     (G : SimpleGraph V) {u : V} {k d : ℕ}
     (hG : NoLongCycle G k) (hk : 3 ≤ k) (hu : G.IsUniversal u)
     (hconn : (G.induce {v | v ≠ u}).Preconnected)

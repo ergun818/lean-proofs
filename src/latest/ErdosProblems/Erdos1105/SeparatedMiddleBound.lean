@@ -4,9 +4,10 @@ namespace Erdos1105
 
 open SimpleGraph Finset
 
-theorem two_le_components_of_not_preconnected {V : Type*} [Fintype V]
+theorem two_le_components_of_not_preconnected {V : Type*} [Finite V]
     (G : SimpleGraph V) (hnot : ¬G.Preconnected) : 2 ≤ Nat.card G.ConnectedComponent := by
   classical
+  let := Fintype.ofFinite V
   have hex : ∃ a b, ¬G.Reachable a b := by simpa only [Preconnected, not_forall] using hnot
   obtain ⟨a, b, hab⟩ := hex
   have hne : G.connectedComponentMk a ≠ G.connectedComponentMk b :=
@@ -16,7 +17,7 @@ theorem two_le_components_of_not_preconnected {V : Type*} [Fintype V]
   rw [card_pair hne] at h
   simpa only [Nat.card_eq_fintype_card] using h
 
-theorem component_order_lt_of_not_preconnected {V : Type*} [Fintype V] [DecidableEq V]
+theorem component_order_lt_of_not_preconnected {V : Type*} [Fintype V]
     (G : SimpleGraph V) (hnot : ¬G.Preconnected) (D : G.ConnectedComponent) :
     (componentVertices G D).card < Fintype.card V := by
   classical
@@ -45,7 +46,7 @@ theorem component_edges_le_connected_count {V : Type*} [Fintype V] [DecidableEq 
 One component has a longer path threshold; all others have the shorter
 threshold forced by the fresh joining edges. -/
 theorem SeparatedRepresentative.middle_component_bound {V C : Type*}
-    [Fintype V] [DecidableEq V] {G R H : SimpleGraph V} {c : Sym2 V → C}
+    [Fintype V] {G R H : SimpleGraph V} {c : Sym2 V → C}
     (hsep : SeparatedRepresentative G c R H) (hnot : ¬R.Preconnected)
     (D : H.ConnectedComponent) {k₁ k₂ : ℕ} (hk₂ : 3 ≤ k₂) (hkk : k₂ ≤ k₁)
     (hn₀ : k₁ - 1 ≤ (componentVertices H D).card)

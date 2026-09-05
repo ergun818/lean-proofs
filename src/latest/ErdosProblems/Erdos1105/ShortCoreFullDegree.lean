@@ -9,7 +9,7 @@ open SimpleGraph Finset
 /-- The endpoint degree equality holds in the whole graph, not merely
 inside the path: any external neighbor would extend a long cycle through
 the universal vertex. -/
-theorem short_low_core_neighbors_on_path {V : Type*} [Fintype V] [DecidableEq V]
+theorem short_low_core_neighbors_on_path {V : Type*} [Fintype V]
     {G : SimpleGraph V} {u x y : V} {d : ℕ}
     (hG : NoLongCycle G (2 * d + 3)) (hu : G.IsUniversal u)
     (hconn : (G.induce {v | v ≠ u}).Preconnected)
@@ -64,7 +64,7 @@ theorem short_low_core_neighbors_on_path {V : Type*} [Fintype V] [DecidableEq V]
     have := hG z s hs
     omega
 
-theorem longest_low_core_full_neighbors {V : Type*} [Fintype V] [DecidableEq V]
+theorem longest_low_core_full_neighbors {V : Type*} [Fintype V]
     {G : SimpleGraph V} {u x y : V} {d : ℕ}
     (hG : NoLongCycle G (2 * d + 3)) (hu : G.IsUniversal u)
     (hconn : (G.induce {v | v ≠ u}).Preconnected)
@@ -72,6 +72,7 @@ theorem longest_low_core_full_neighbors {V : Type*} [Fintype V] [DecidableEq V]
     (hd : 1 ≤ d) (hlen : 2 * d + 2 ≤ p.length) :
     (∀ z, G.Adj x z → z ∈ vertexCore G d) ∧
       (∀ z, G.Adj y z → z ∈ vertexCore G d) := by
+  classical
   have hone {a b : V} (q : G.Walk a b)
       (hq : IsLongestSetPath (vertexCore G d : Set V) q) (hqlen : 2 * d + 2 ≤ q.length) :
       ∀ z, G.Adj a z → z ∈ vertexCore G d := by

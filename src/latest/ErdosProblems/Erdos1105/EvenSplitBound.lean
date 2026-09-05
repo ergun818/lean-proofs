@@ -10,7 +10,7 @@ open SimpleGraph Finset
 
 /-- The even-path upper bound for a representative contained in
 `H(n,2l+1,l)`: equivalently, it has a vertex cover of size `l`. -/
-theorem even_path_vertex_cover_bound {V C : Type*} [Fintype V] [DecidableEq V]
+theorem even_path_vertex_cover_bound {V C : Type*} [Fintype V]
     (c : (⊤ : SimpleGraph V).edgeSet → C) (R : SimpleGraph V) [DecidableRel R.Adj]
     (hrainbow : Set.InjOn (extendColor c) R.edgeSet) {l : ℕ} (hl : 2 ≤ l)
     (hn : 2 * l + 2 ≤ Fintype.card V)

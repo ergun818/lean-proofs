@@ -7,7 +7,7 @@ open SimpleGraph Finset
 
 /-- A graph whose edges away from `C` lie inside either of two specified
 sets has at most the complete-join contribution plus the two clique counts. -/
-theorem two_clique_join_edge_bound {V : Type*} [Fintype V] [DecidableEq V]
+theorem two_clique_join_edge_bound {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (A B C : Finset V)
     (hshape : ∀ x y, G.Adj x y → x ∈ C ∨ y ∈ C ∨ (x ∈ A ∧ y ∈ A) ∨ (x ∈ B ∧ y ∈ B)) :
     G.edgeFinset.card ≤ C.card.choose 2 + C.card * (Fintype.card V - C.card) +

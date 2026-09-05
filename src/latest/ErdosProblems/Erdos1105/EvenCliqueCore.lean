@@ -7,7 +7,7 @@ open SimpleGraph Finset
 
 /-- The clique low-core branch has only the pendant endpoint or the
 sharp three-clique-join equality case left above the anti-Ramsey bound. -/
-theorem even_clique_core_high_cases {V : Type*} [Fintype V] [DecidableEq V]
+theorem even_clique_core_high_cases {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℕ} (hd : 2 ≤ d)
     (hn : 2 * d + 2 ≤ Fintype.card V) (hconn : G.Preconnected)
     (hfree : ¬pathGraph (2 * d + 2) ⊑ G)

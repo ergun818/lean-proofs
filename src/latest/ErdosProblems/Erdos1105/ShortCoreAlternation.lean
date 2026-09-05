@@ -7,7 +7,7 @@ open SimpleGraph Finset
 
 /-- Between the first end-neighbor and last start-neighbor, the two
 endpoints have exactly the same, alternating neighbors. -/
-theorem short_low_core_middle_alternates {V : Type*} [Fintype V] [DecidableEq V]
+theorem short_low_core_middle_alternates {V : Type*} [Fintype V]
     {G : SimpleGraph V} {u x y : V} {d : ℕ}
     (hG : NoLongCycle G (2 * d + 3)) (hu : G.IsUniversal u)
     (hconn : (G.induce {v | v ≠ u}).Preconnected)
@@ -66,7 +66,7 @@ theorem short_low_core_middle_alternates {V : Type*} [Fintype V] [DecidableEq V]
 
 /-- Counting the alternating middle shows that the two initial cliques
 have equal size. -/
-theorem short_low_core_complete_pattern {V : Type*} [Fintype V] [DecidableEq V]
+theorem short_low_core_complete_pattern {V : Type*} [Fintype V]
     {G : SimpleGraph V} {u x y : V} {d : ℕ}
     (hG : NoLongCycle G (2 * d + 3)) (hu : G.IsUniversal u)
     (hconn : (G.induce {v | v ≠ u}).Preconnected)
@@ -135,7 +135,7 @@ theorem short_low_core_complete_pattern {V : Type*} [Fintype V] [DecidableEq V]
   · simpa only [hb] using hafter
   · simpa only [hb] using hmiddle
 
-theorem short_low_core_end_pattern {V : Type*} [Fintype V] [DecidableEq V]
+theorem short_low_core_end_pattern {V : Type*} [Fintype V]
     {G : SimpleGraph V} {u x y : V} {d : ℕ}
     (hG : NoLongCycle G (2 * d + 3)) (hu : G.IsUniversal u)
     (hconn : (G.induce {v | v ≠ u}).Preconnected)
@@ -144,6 +144,7 @@ theorem short_low_core_end_pattern {V : Type*} [Fintype V] [DecidableEq V]
     ∃ a : ℕ, 1 ≤ a ∧ a ≤ d ∧
       endNeighborIndices p =
         (range (d + 1 - a)).image (fun j ↦ a + 2 * j) ∪ Ico (p.length - a) p.length := by
+  classical
   obtain ⟨a, ha, had, hB, _⟩ := short_low_core_complete_pattern hG hu hconn p hp hlen
   exact ⟨a, ha, had, hB⟩
 

@@ -7,7 +7,7 @@ open SimpleGraph Finset
 theorem MaxRepresentativeComponent.cross_deleted_disconnect {V C : Type*}
     [Fintype V] [DecidableEq V] {G R Q : SimpleGraph V} {c : Sym2 V → C} {S : Finset V}
     (hmax : MaxRepresentativeComponent G c R S) (hQ : ColorRepresentative G c Q)
-    (hS : GraphComponent Q S) {a b : V} (ha : a ∈ S) (hb : b ∉ S) (hab : G.Adj a b)
+    (_hS : GraphComponent Q S) {a b : V} (ha : a ∈ S) (hb : b ∉ S) (hab : G.Adj a b)
     (e : Q.edgeSet) (hcol : c e.val = c s(a, b)) :
     ¬∀ x ∈ S, (Q.deleteEdges {e.val}).Reachable a x := by
   classical

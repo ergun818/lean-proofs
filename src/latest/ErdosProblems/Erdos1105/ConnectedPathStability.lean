@@ -15,7 +15,7 @@ def PendantCliqueShape {V : Type*} (G : SimpleGraph V) (k : ℕ) : Prop :=
 /-- Above both non-endpoint Kopylov bounds, a connected path-free graph
 has the pendant-clique shape. For odd `k`, this is the stability input
 used in Yuan's path anti-Ramsey argument. -/
-theorem connected_path_high_edges_pendant {V : Type*} [Fintype V] [DecidableEq V]
+theorem connected_path_high_edges_pendant {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {k : ℕ}
     (hk : 6 ≤ k) (hn : k ≤ Fintype.card V) (hconn : G.Preconnected)
     (hfree : ¬pathGraph k ⊑ G)

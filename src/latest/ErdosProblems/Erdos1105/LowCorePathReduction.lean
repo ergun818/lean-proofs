@@ -5,7 +5,7 @@ namespace Erdos1105
 
 open SimpleGraph Finset
 
-lemma short_two_attachment_start_pattern {V : Type*} [Fintype V] [DecidableEq V]
+lemma short_two_attachment_start_pattern {V : Type*} [Fintype V]
     {G : SimpleGraph V} {u x y : V} {d : ℕ}
     (hG : NoLongCycle G (2 * d + 3)) (hu : G.IsUniversal u)
     (hconn : (G.induce {v | v ≠ u}).Preconnected)
@@ -29,7 +29,7 @@ lemma short_two_attachment_start_pattern {V : Type*} [Fintype V] [DecidableEq V]
 /-- The long low-core path case and the two-attachment short case already
 obey the even-path bound. A counterexample with non-clique core must have
 a short alternating pattern with at least three attachments. -/
-theorem even_high_nonclique_core_short_pattern {V : Type*} [Fintype V] [DecidableEq V]
+theorem even_high_nonclique_core_short_pattern {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℕ} (hd : 3 ≤ d)
     (hn : 2 * d + 2 ≤ Fintype.card V) (hconn : G.Preconnected)
     (hfree : ¬pathGraph (2 * d + 2) ⊑ G)
@@ -47,6 +47,7 @@ theorem even_high_nonclique_core_short_pattern {V : Type*} [Fintype V] [Decidabl
         (∀ t, a ≤ t → t ≤ p.length - a →
           ((graphCone G).Adj x (p.getVert t) ↔ Even (t - a)) ∧
           ((graphCone G).Adj y (p.getVert t) ↔ Even (t - a))) := by
+  classical
   have hG : NoLongCycle (graphCone G) (2 * d + 3) :=
     no_long_cycle_cone_of_path_free G (by omega) hfree
   have hu := graphCone_universal G

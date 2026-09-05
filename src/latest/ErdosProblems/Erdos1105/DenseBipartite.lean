@@ -11,7 +11,7 @@ namespace Erdos1105
 
 open SimpleGraph Finset
 
-theorem bipartite_edges_le_remove_two {V : Type*} [Fintype V] [DecidableEq V]
+theorem bipartite_edges_le_remove_two {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {A B : Finset V}
     (hAB : G.IsBipartiteWith (A : Set V) (B : Set V))
     {x y : V} (hx : x ∈ A) (hy : y ∈ B) (hxy : ¬G.Adj x y) :

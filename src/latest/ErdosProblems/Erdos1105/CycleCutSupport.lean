@@ -5,10 +5,11 @@ namespace Erdos1105
 open SimpleGraph
 
 /-- A support-aware version of cutting a cycle at a prescribed edge. -/
-theorem cycle_path_avoiding_dart {V : Type*} [DecidableEq V] {G : SimpleGraph V} {u : V}
+theorem cycle_path_avoiding_dart {V : Type*} {G : SimpleGraph V} {u : V}
     (p : G.Walk u u) (hp : p.IsCycle) (d : G.Dart) (hd : d ∈ p.darts) :
     ∃ q : G.Walk d.snd d.fst, q.IsPath ∧ q.length + 1 = p.length ∧
       q.support ⊆ p.support ∧ q.edges ⊆ p.edges ∧ d.edge ∉ q.edges := by
+  classical
   let r := p.rotate d.fst (p.dart_fst_mem_support_of_mem_darts hd)
   have hr : r.IsCycle := hp.rotate _
   have hd' : d ∈ r.darts := (p.rotate_darts _ _).mem_iff.mpr hd
@@ -38,10 +39,11 @@ theorem cycle_path_avoiding_dart {V : Type*} [DecidableEq V] {G : SimpleGraph V}
 
 /-- Starting at any cycle vertex and cutting the last edge gives a
 path using all the cycle's vertices and only its edges. -/
-theorem cycle_path_from_vertex {V : Type*} [DecidableEq V] {G : SimpleGraph V} {u x : V}
+theorem cycle_path_from_vertex {V : Type*} {G : SimpleGraph V} {u x : V}
     (p : G.Walk u u) (hp : p.IsCycle) (hx : x ∈ p.support) :
     ∃ y, ∃ q : G.Walk x y, q.IsPath ∧ q.length + 1 = p.length ∧
       q.support ⊆ p.support ∧ q.edges ⊆ p.edges := by
+  classical
   let r := p.rotate x hx
   have hr : r.IsCycle := hp.rotate _
   refine ⟨r.penultimate, r.dropLast, hr.isPath_dropLast, ?_, ?_, ?_⟩

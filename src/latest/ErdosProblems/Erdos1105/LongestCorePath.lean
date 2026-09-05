@@ -98,7 +98,7 @@ lemma neighbors_in_left_of_equal_degreeWithin {V : Type*} (G : SimpleGraph V)
 
 /-- Equality means that an endpoint has no extra neighbor on the path
 outside the low core. -/
-theorem longest_low_core_path_neighbors {V : Type*} [Fintype V] [DecidableEq V]
+theorem longest_low_core_path_neighbors {V : Type*} [Fintype V]
     {G : SimpleGraph V} {u x y : V} {d : ℕ}
     (hG : NoLongCycle G (2 * d + 3)) (hu : G.IsUniversal u)
     (hconn : (G.induce {v | v ≠ u}).Preconnected)
@@ -120,13 +120,14 @@ theorem longest_low_core_path_neighbors {V : Type*} [Fintype V] [DecidableEq V]
 
 /-- A maximal path between vertices of the low core must have crossing
 endpoint neighbors. This is the equality case absent from the high-core proof. -/
-theorem longest_low_core_path_crossing {V : Type*} [Fintype V] [DecidableEq V]
+theorem longest_low_core_path_crossing {V : Type*} [Fintype V]
     {G : SimpleGraph V} {u x y : V} {d : ℕ}
     (hG : NoLongCycle G (2 * d + 3)) (hu : G.IsUniversal u)
     (hconn : (G.induce {v | v ≠ u}).Preconnected)
     (p : G.Walk x y) (hp : IsLongestSetPath (vertexCore G d : Set V) p)
     (hlen : 2 * d + 3 ≤ p.length + 1) :
     ∃ i ∈ endNeighborIndices p, ∃ j ∈ startNeighborIndices p, i ≤ j := by
+  classical
   by_contra hcross
   have hdeg := longest_low_core_path_degrees hG hu hconn p hp hlen
   have := universal_posa_noncrossing_bound hG (by omega) hu hconn p hp.isPath hlen hcross

@@ -49,10 +49,11 @@ theorem threePetal_copy_of_disjoint_neighbor_edges {V : Type*} [Fintype V] [Deci
           exact hcd.symm | exact hef.symm |
           (exfalso; simp [threePetalGraph] at hij)
 
-theorem threePetal_copy_of_rooted_two_high_edges {V : Type*} [Fintype V] [DecidableEq V]
+theorem threePetal_copy_of_rooted_two_high_edges {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hconn : G.Preconnected) (u : V)
     (hpath : ∀ w, ∀ p : G.Walk u w, p.IsPath → p.length ≤ 2)
     (hhigh : Fintype.card V + 1 < G.edgeFinset.card) : Nonempty (threePetalGraph.Copy G) := by
+  classical
   have hb := rooted_two_edge_count G hconn u hpath
   have hpos : 0 < Fintype.card V := Fintype.card_pos_iff.mpr ⟨u⟩
   have hthree : 2 < (E767EGApi.edgesInside G (G.neighborFinset u)).card := by omega
@@ -62,12 +63,13 @@ theorem threePetal_copy_of_rooted_two_high_edges {V : Type*} [Fintype V] [Decida
     (rooted_two_neighbor_edges_disjoint G u hpath h₁ h₃ h₁₃)
     (rooted_two_neighbor_edges_disjoint G u hpath h₂ h₃ h₂₃)
 
-theorem rooted_two_rainbow_edge_bound {V C : Type*} [Fintype V] [DecidableEq V]
+theorem rooted_two_rainbow_edge_bound {V C : Type*} [Fintype V]
     (c : (⊤ : SimpleGraph V).edgeSet → C) (G : SimpleGraph V) [DecidableRel G.Adj]
     (hR : Set.InjOn (extendColor c) G.edgeSet) (hconn : G.Preconnected) (u : V)
     (hpath : ∀ w, ∀ p : G.Walk u w, p.IsPath → p.length ≤ 2)
     (hfree : ∀ f : (pathGraph 6).Copy (⊤ : SimpleGraph V), ¬IsRainbow f c) :
     G.edgeFinset.card ≤ Fintype.card V + 1 := by
+  classical
   by_contra! hhigh
   obtain ⟨f⟩ := threePetal_copy_of_rooted_two_high_edges G hconn u hpath hhigh
   obtain ⟨p, hp⟩ := rainbow_path_six_of_threePetal_copy c hR f

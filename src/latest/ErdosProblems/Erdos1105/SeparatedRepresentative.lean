@@ -101,10 +101,11 @@ theorem separated_splice {V C : Type*} [Fintype V] [DecidableEq V]
 
 /-- Every finite colored graph admits the bridge decomposition used in
 the disconnected-representative part of the path proof. -/
-theorem exists_separatedRepresentative {V C : Type*} [Fintype V] [DecidableEq V]
+theorem exists_separatedRepresentative {V C : Type*} [Finite V]
     (G : SimpleGraph V) (c : Sym2 V → C) :
     ∃ R H, SeparatedRepresentative G c R H := by
   classical
+  let := Fintype.ofFinite V
   induction hsize : Fintype.card V using Nat.strong_induction_on generalizing V with
   | h n ih =>
     cases isEmpty_or_nonempty V with
@@ -122,7 +123,7 @@ theorem exists_separatedRepresentative {V C : Type*} [Fintype V] [DecidableEq V]
         have hle := S.card_le_univ
         omega
       obtain ⟨B, D, hBD⟩ := ih _ hlt (remainderGraph G R c S)
-        (inducedColor c (↑(Sᶜ) : Set V)) rfl
+        (inducedColor c (↑(Sᶜ) : Set V)) (by simp only [← Nat.card_eq_fintype_card])
       exact ⟨_, _, separated_splice hmax X hsub hbridge hinside hcross hBD⟩
 
 end Erdos1105

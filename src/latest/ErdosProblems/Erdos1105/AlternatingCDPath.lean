@@ -40,7 +40,7 @@ theorem AlternatingEnds.append_middle_vertex {V : Type*} {G : SimpleGraph V} {x 
   have had := hp.le_core
   have he : G.Adj (p.getVert (a + 2 * (t + 1))) (p.getVert (a + 2 * t + 1)) := by
     have h := (p.adj_getVert_succ (i := a + 2 * t + 1) (by omega)).symm
-    convert h using 1 <;> congr 1 <;> omega
+    convert h using 1; congr 1
   refine ⟨q.concat he, hq.concat hnot he, by rw [Walk.length_concat, hqlen], ?_⟩
   intro z hz
   simp only [Walk.support_concat, List.mem_append, List.mem_singleton] at hz
@@ -62,10 +62,12 @@ theorem AlternatingEnds.path_C_D_internal {V : Type*} {G : SimpleGraph V} {x y :
   let q₂ := pathSegment p (a + 2 * 0) (a + 2 * (i - 1)) (by omega)
   let q₃ := (pathSegment p (a + 2 * (t + 1)) (a + 2 * (d + 1 - a)) (by omega)).reverse
   have hsub₁ := hp.middle_segment_support hit (show t < d + 2 - a by omega)
-  have hsub₂ := hp.middle_segment_support (show 0 ≤ i - 1 by omega) (show i - 1 < d + 2 - a by omega)
+  have hsub₂ := hp.middle_segment_support (show 0 ≤ i - 1 by omega)
+    (show i - 1 < d + 2 - a by omega)
   have hsub₃ : ∀ z ∈ q₃.support, ∃ s, a ≤ s ∧ s ≤ p.length - a ∧ p.getVert s = z := by
     simpa only [q₃, Walk.support_reverse, List.mem_reverse] using
-      hp.middle_segment_support (show t + 1 ≤ d + 1 - a by omega) (show d + 1 - a < d + 2 - a by omega)
+      hp.middle_segment_support (show t + 1 ≤ d + 1 - a by omega)
+        (show d + 1 - a < d + 2 - a by omega)
   have h₁₂ : q₁.support.Disjoint q₂.support :=
     disjoint_pathSegments_of_separated p hp.isPath _ _ _ _ (by omega) (by omega)
       (by omega) (by omega) (by omega)
@@ -101,7 +103,7 @@ theorem AlternatingEnds.path_C_D_internal {V : Type*} {G : SimpleGraph V} {x y :
     tauto
   have he : G.Adj (p.getVert (a + 2 * (t + 1))) (p.getVert (a + 2 * t + 1)) := by
     have h := (p.adj_getVert_succ (i := a + 2 * t + 1) (by omega)).symm
-    convert h using 1 <;> congr 1 <;> omega
+    convert h using 1; congr 1
   refine ⟨q.concat he, hq.concat hnot he, by rw [Walk.length_concat, hqlen'], ?_⟩
   intro z hz
   simp only [Walk.support_concat, List.mem_append, List.mem_singleton] at hz

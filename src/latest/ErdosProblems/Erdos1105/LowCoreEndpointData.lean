@@ -6,7 +6,7 @@ open SimpleGraph Finset
 
 /-- The first end-neighbor and last start-neighbor delimit the alternating
 middle of a maximal low-core path. -/
-theorem low_core_endpoint_data {V : Type*} [Fintype V] [DecidableEq V]
+theorem low_core_endpoint_data {V : Type*} [Fintype V]
     {G : SimpleGraph V} {u x y : V} {d : ℕ}
     (hG : NoLongCycle G (2 * d + 3)) (hu : G.IsUniversal u)
     (hconn : (G.induce {v | v ≠ u}).Preconnected)

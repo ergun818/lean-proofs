@@ -8,7 +8,7 @@ set_option maxHeartbeats 800000 in
 -- The interval cases and their disjointness arithmetic share a large elaboration context.
 theorem AlternatingEnds.path_C_C_via_intervals {V : Type*} {G : SimpleGraph V} {x y : V}
     {p : G.Walk x y} {d a t : ℕ} (hp : AlternatingEnds p d a)
-    (ht : t < d + 1 - a) (l₁ r₁ l₂ r₂ r₃ : ℕ)
+    (_ht : t < d + 1 - a) (l₁ r₁ l₂ r₂ r₃ : ℕ)
     (h₁ : l₁ ≤ r₁) (h₂ : l₂ ≤ r₂) (h₃ : t + 1 ≤ r₃)
     (hr₁ : r₁ < d + 2 - a) (hr₂ : r₂ < d + 2 - a) (hr₃ : r₃ < d + 2 - a)
     (hs₁₂ : r₁ < l₂ ∨ r₂ < l₁) (hs₁₃ : r₁ < t + 1 ∨ r₃ < l₁)

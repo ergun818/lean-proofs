@@ -9,7 +9,7 @@ open SimpleGraph
 /-- A privately colored edge cannot join two different representative
 components: swapping it into the representative would merge two components
 whose combined order exceeds the component-size bound. -/
-theorem cross_component_color_not_private_at_left {V C : Type*} [Fintype V] [Fintype C] {n : ℕ}
+theorem cross_component_color_not_private_at_left {V C : Type*} [Finite V] [Fintype C] {n : ℕ}
     (c : (⊤ : SimpleGraph V).edgeSet → C) (hc : Function.Surjective c)
     (hH : ∀ f : (cycleGraph (n + 4)).Copy (⊤ : SimpleGraph V), ¬IsRainbow f c)
     (R : SimpleGraph V) (hR : Set.InjOn (extendColor c) R.edgeSet)
@@ -22,6 +22,7 @@ theorem cross_component_color_not_private_at_left {V C : Type*} [Fintype V] [Fin
     (hx : x ∈ B.supp) (hy : y ∈ D.supp) (hxy : x ≠ y) :
     ¬PrivateAt c x (c ⟨s(x, y), hxy⟩) := by
   classical
+  let := Fintype.ofFinite V
   intro hpriv
   let d : (⊤ : SimpleGraph V).edgeSet := ⟨s(x, y), hxy⟩
   obtain ⟨⟨e, he⟩, hcol⟩ := hpalette (c d) ⟨x, hpriv⟩
@@ -76,7 +77,7 @@ theorem cross_component_color_not_private_at_left {V C : Type*} [Fintype V] [Fin
   omega
 
 /-- No color on a cross-component edge is private to any vertex. -/
-theorem cross_component_color_not_private {V C : Type*} [Fintype V] [Fintype C] {n : ℕ}
+theorem cross_component_color_not_private {V C : Type*} [Finite V] [Fintype C] {n : ℕ}
     (c : (⊤ : SimpleGraph V).edgeSet → C) (hc : Function.Surjective c)
     (hH : ∀ f : (cycleGraph (n + 4)).Copy (⊤ : SimpleGraph V), ¬IsRainbow f c)
     (R : SimpleGraph V) (hR : Set.InjOn (extendColor c) R.edgeSet)
@@ -88,6 +89,8 @@ theorem cross_component_color_not_private {V C : Type*} [Fintype V] [Fintype C] 
     (B D : R.ConnectedComponent) (hBD : B ≠ D) {x y : V}
     (hx : x ∈ B.supp) (hy : y ∈ D.supp) (hxy : x ≠ y) (z : V) :
     ¬PrivateAt c z (c ⟨s(x, y), hxy⟩) := by
+  classical
+  let := Fintype.ofFinite V
   intro hz
   have hzm : z ∈ s(x, y) := hz ⟨s(x, y), hxy⟩ rfl
   rcases Sym2.mem_iff.mp hzm with hzx | hzy

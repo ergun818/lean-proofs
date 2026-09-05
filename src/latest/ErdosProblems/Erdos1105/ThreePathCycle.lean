@@ -81,9 +81,12 @@ theorem three_paths_cross_colors {V C : Type*} {k : ℕ}
   have h₁₂H : H₁ ≤ H₂ := le_adjoinRepresentative H₁ d₂
   have h₂H : H₂ ≤ H := le_adjoinRepresentative H₂ d₃
   have hRH : R ≤ H := ((le_adjoinRepresentative R d₁).trans h₁₂H).trans h₂H
-  have hsubp : ∀ e ∈ p.edges, e ∈ H.edgeSet := fun _ he ↦ edgeSet_mono hRH (p.edges_subset_edgeSet he)
-  have hsubq : ∀ e ∈ q.edges, e ∈ H.edgeSet := fun _ he ↦ edgeSet_mono hRH (q.edges_subset_edgeSet he)
-  have hsubr : ∀ e ∈ r.edges, e ∈ H.edgeSet := fun _ he ↦ edgeSet_mono hRH (r.edges_subset_edgeSet he)
+  have hsubp : ∀ e ∈ p.edges, e ∈ H.edgeSet :=
+    fun _ he ↦ edgeSet_mono hRH (p.edges_subset_edgeSet he)
+  have hsubq : ∀ e ∈ q.edges, e ∈ H.edgeSet :=
+    fun _ he ↦ edgeSet_mono hRH (q.edges_subset_edgeSet he)
+  have hsubr : ∀ e ∈ r.edges, e ∈ H.edgeSet :=
+    fun _ he ↦ edgeSet_mono hRH (r.edges_subset_edgeSet he)
   obtain ⟨s, hs, hslen⟩ := cycle_of_three_disjoint_paths
     (p.transfer H hsubp) (q.transfer H hsubq) (r.transfer H hsubr)
     (Walk.IsPath.mk' (by simpa only [Walk.support_transfer] using hp.support_nodup))

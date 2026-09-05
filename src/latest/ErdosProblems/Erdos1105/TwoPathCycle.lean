@@ -35,14 +35,17 @@ theorem two_paths_cross_colors_eq {V C : Type*} {k : ℕ}
   have hbuH : H.Adj b u := edgeSet_mono (le_adjoinRepresentative H₁ d₂)
     (added_mem_adjoinRepresentative R d₁)
   have hvaH : H.Adj v a := added_mem_adjoinRepresentative H₁ d₂
-  have hsubp : ∀ e ∈ p.edges, e ∈ H.edgeSet := fun _ he ↦ edgeSet_mono hRH (p.edges_subset_edgeSet he)
-  have hsubq : ∀ e ∈ q.edges, e ∈ H.edgeSet := fun _ he ↦ edgeSet_mono hRH (q.edges_subset_edgeSet he)
+  have hsubp : ∀ e ∈ p.edges, e ∈ H.edgeSet :=
+    fun _ he ↦ edgeSet_mono hRH (p.edges_subset_edgeSet he)
+  have hsubq : ∀ e ∈ q.edges, e ∈ H.edgeSet :=
+    fun _ he ↦ edgeSet_mono hRH (q.edges_subset_edgeSet he)
   let p' := p.transfer H hsubp
   let q' := q.transfer H hsubq
   let r := p'.append (Walk.cons hbuH q')
   have hrpath : r.IsPath := by
     apply Walk.IsPath.mk'
-    simp only [r, p', q', Walk.support_append, Walk.support_cons, List.tail_cons, Walk.support_transfer]
+    simp only [r, p', q', Walk.support_append, Walk.support_cons,
+      List.tail_cons, Walk.support_transfer]
     exact List.nodup_append'.mpr ⟨hp.support_nodup, hq.support_nodup, hdisj⟩
   have hrlen : r.length = p.length + q.length + 1 := by
     simp only [r, p', q', Walk.length_append, Walk.length_cons, Walk.length_transfer]

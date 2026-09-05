@@ -6,13 +6,14 @@ open SimpleGraph Finset
 
 /-- Remove one distinguished vertex from the universal part of the join,
 transporting the remaining vertices along an injection. -/
-theorem threeCliqueJoin_remove_vertex {V W : Type*} [Fintype V] [Fintype W]
+theorem threeCliqueJoin_remove_vertex {V W : Type*} [Finite V]
     (f : V ↪ W) (u : W) (havoid : ∀ v, f v ≠ u)
     (hcover : ∀ w, w ≠ u → ∃ v, f v = w) {A T : Finset W} {d : ℕ}
     (hu : u ∈ A) (hA : A.card = d) (hT : T.card = 3) (hAT : Disjoint A T) :
     ∃ A' T' : Finset V, A'.card = d - 1 ∧ T'.card = 3 ∧ Disjoint A' T' ∧
       threeCliqueJoin A' T' ≤ (threeCliqueJoin A T).comap f := by
   classical
+  let := Fintype.ofFinite V
   let A' : Finset V := univ.filter (fun v ↦ f v ∈ A)
   let T' : Finset V := univ.filter (fun v ↦ f v ∈ T)
   have huT : u ∉ T := fun h ↦ Finset.disjoint_left.mp hAT hu h

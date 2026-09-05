@@ -106,7 +106,7 @@ theorem connected_odd_high_colors_reduction {V C : Type*} [Fintype V] [Fintype C
   have hconn₀ : (R.induce {w | w ≠ z}).Preconnected := by
     apply hconn.induce_of_degree_eq_one
     intro v hv
-    have hvz : v = z := by simpa only [Set.mem_setOf_eq, not_not] using hv
+    have hvz : v = z := by simpa only [Set.mem_ofPred_eq, not_not] using hv
     subst v
     intro a ha b hb
     exact (hpend z hzS a ha).trans (hpend z hzS b hb).symm

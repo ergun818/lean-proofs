@@ -9,10 +9,11 @@ open SimpleGraph
 
 /-- A cycle in a connected graph can be reached from any specified root,
 then opened into a path containing all its vertices. -/
-theorem rooted_path_length_ge_cycle_pred {V : Type*} [DecidableEq V]
+theorem rooted_path_length_ge_cycle_pred {V : Type*}
     {G : SimpleGraph V} (hconn : G.Preconnected) (v : V) {z : V}
     (p : G.Walk z z) (hp : p.IsCycle) :
     ∃ w, ∃ q : G.Walk v w, q.IsPath ∧ p.length ≤ q.length + 1 := by
+  classical
   obtain ⟨r, hr⟩ := hconn.exists_isPath v z
   obtain ⟨a, ha, b, hb, r', hr', _, _, hmeet⟩ := exists_set_path_within G
     {v} {w | w ∈ p.support} Set.univ
@@ -31,11 +32,12 @@ theorem rooted_path_length_ge_cycle_pred {V : Type*} [DecidableEq V]
 /-- A rooted-path bound gives a circumference bound, and hence the sharp
 Erdős--Gallai edge bound. This is the counting input for the two-attachment
 case of the low-core stability argument. -/
-theorem edges_le_of_rooted_path_bound {V : Type*} [Fintype V] [DecidableEq V]
+theorem edges_le_of_rooted_path_bound {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hconn : G.Preconnected)
     (v : V) {d : ℕ} (hd : 1 ≤ d)
     (hpath : ∀ w, ∀ p : G.Walk v w, p.IsPath → p.length ≤ d) :
     2 * G.edgeFinset.card ≤ (d + 1) * (Fintype.card V - 1) := by
+  classical
   apply Erdos767Dirac.erdosGallai_cycle G (d + 1) (by omega)
   intro z p hp
   obtain ⟨w, q, hq, hlen⟩ := rooted_path_length_ge_cycle_pred hconn v p hp

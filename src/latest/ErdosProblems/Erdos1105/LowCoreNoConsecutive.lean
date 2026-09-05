@@ -8,7 +8,7 @@ open SimpleGraph Finset
 /-- Beyond its initial clique, the start of a low-core path cannot
 see consecutive vertices. The initial clique's last vertex supplies
 the third chord of a forbidden spanning cycle. -/
-theorem low_core_no_consecutive_start_neighbors {V : Type*} [Fintype V] [DecidableEq V]
+theorem low_core_no_consecutive_start_neighbors {V : Type*} [Fintype V]
     {G : SimpleGraph V} {u x y : V} {d : ℕ}
     (hG : NoLongCycle G (2 * d + 3)) (hu : G.IsUniversal u)
     (hconn : (G.induce {v | v ≠ u}).Preconnected)
@@ -18,6 +18,7 @@ theorem low_core_no_consecutive_start_neighbors {V : Type*} [Fintype V] [Decidab
     (hbefore : ∀ j < a, ¬G.Adj y (p.getVert j))
     {t : ℕ} (hat : a ≤ t) (ht : t < p.length) :
     ¬(G.Adj x (p.getVert t) ∧ G.Adj x (p.getVert (t + 1))) := by
+  classical
   rintro ⟨hxt, hxt'⟩
   have hfirst := (low_core_initial_segment_twins hG hu hconn p hp hlen haL hbefore
     (a - 1) (by omega) t hat ht.le).mpr hxt
@@ -26,7 +27,7 @@ theorem low_core_no_consecutive_start_neighbors {V : Type*} [Fintype V] [Decidab
   have := hG v s hs
   omega
 
-theorem low_core_no_consecutive_end_neighbors {V : Type*} [Fintype V] [DecidableEq V]
+theorem low_core_no_consecutive_end_neighbors {V : Type*} [Fintype V]
     {G : SimpleGraph V} {u x y : V} {d : ℕ}
     (hG : NoLongCycle G (2 * d + 3)) (hu : G.IsUniversal u)
     (hconn : (G.induce {v | v ≠ u}).Preconnected)
@@ -36,6 +37,7 @@ theorem low_core_no_consecutive_end_neighbors {V : Type*} [Fintype V] [Decidable
     (hafter : ∀ j, b < j → j ≤ p.length → ¬G.Adj x (p.getVert j))
     {t : ℕ} (ht : t < b) :
     ¬(G.Adj y (p.getVert t) ∧ G.Adj y (p.getVert (t + 1))) := by
+  classical
   have hfirst : G.Adj x (p.reverse.getVert (p.length - b)) := by
     rw [Walk.getVert_reverse, Nat.sub_sub_self hb.le]
     exact hxb

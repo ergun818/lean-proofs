@@ -149,7 +149,7 @@ theorem edgesInside_le_choose {V : Type*} [Fintype V] [DecidableEq V]
   rw [E767EGApi.card_edgesInside]
   simpa using (G.induce (S : Set V)).card_edgeFinset_le_card_choose_two
 
-theorem edges_le_core_bound {V : Type*} [Fintype V] [DecidableEq V]
+theorem edges_le_core_bound {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (d : ℕ) :
     G.edgeFinset.card ≤ (vertexCore G d).card.choose 2 +
       d * (Fintype.card V - (vertexCore G d).card) := by
@@ -188,9 +188,10 @@ theorem edgesInside_le_of_core_empty {V : Type*} [Fintype V] [DecidableEq V]
       rw [hdiff, Nat.mul_add, Nat.mul_one]
       omega
 
-theorem edges_le_of_core_empty {V : Type*} [Fintype V] [DecidableEq V]
+theorem edges_le_of_core_empty {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (d : ℕ) (hempty : vertexCore G d = ∅) :
     G.edgeFinset.card ≤ d.choose 2 + d * (Fintype.card V - d) := by
+  classical
   simpa [E767EGApi.edgesInside] using edgesInside_le_of_core_empty G d hempty univ
 
 end Erdos1105

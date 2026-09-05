@@ -24,6 +24,7 @@ namespace Walk
 
 open SimpleGraph
 
+omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 private theorem dart_eq_of_fst_eq_of_nodup_dropLast {u v : V}
     {p : G.Walk u v} (hnodup : p.support.dropLast.Nodup)
     {d e : G.Dart} (hd : d ∈ p.darts) (he : e ∈ p.darts)
@@ -38,6 +39,7 @@ private theorem dart_eq_of_fst_eq_of_nodup_dropLast {u v : V}
   subst j
   rfl
 
+omit [DecidableRel G.Adj] in
 private theorem isHamiltonianCycle_of_length_and_tail_toFinset
     {a : V} {p : G.Walk a a}
     (hlen : p.length = Fintype.card V) (hV : 3 ≤ Fintype.card V)
@@ -59,6 +61,7 @@ private theorem isHamiltonianCycle_of_length_and_tail_toFinset
     simpa using hcard
   simpa using Multiset.toFinset_card_eq_card_iff_nodup.mp hmulti
 
+omit [DecidableRel G.Adj] in
 /-- The path-splicing step in the bipartite closure argument. -/
 private theorem isHamiltonian_of_splice
     {u u' v v' : V} {p : G.Walk u u'}
@@ -66,6 +69,7 @@ private theorem isHamiltonian_of_splice
     (hne : v ≠ u') (hvu' : G.Adj v u') (hv'u : G.Adj v' u)
     (d : G.Dart) (hd : d ∈ p.darts) (hd₁ : d.fst = v) (hd₂ : d.snd = v') :
     G.IsHamiltonian := by
+  classical
   have hv : v ∈ p.support := by simp [List.Perm.mem_iff hp]
   have hdropNonNil : ¬(p.dropUntil v hv).Nil :=
     SimpleGraph.Walk.not_nil_of_ne hne
@@ -104,9 +108,9 @@ private theorem isHamiltonian_of_splice
   · simp only [SimpleGraph.Walk.tail_support_append,
       SimpleGraph.Walk.support_cons, SimpleGraph.Walk.support_nil,
       List.tail_cons, SimpleGraph.Walk.support_copy,
-      SimpleGraph.Walk.support_reverse, List.tails_reverse,
-      List.append_assoc, List.singleton_append, List.cons_append,
-      List.toFinset_append, List.toFinset_cons, List.toFinset_reverse,
+      SimpleGraph.Walk.support_reverse,
+      List.append_assoc, List.cons_append,
+      List.toFinset_append, List.toFinset_cons,
       List.toFinset_nil, insert_empty_eq, Finset.union_insert,
       Finset.eq_univ_iff_forall, Finset.mem_insert, Finset.mem_union,
       List.mem_toFinset, Finset.mem_singleton, Finset.notMem_empty,
@@ -117,7 +121,7 @@ private theorem isHamiltonian_of_splice
     rcases hw with ⟨hw₁, hw₂, hw₃, hw₄⟩
     have hmemTail : w ∈ p.support.tail := by
       have hmem : w ∈ p.support := by simp [List.Perm.mem_iff hp]
-      rw [SimpleGraph.Walk.support_eq_cons] at hmem
+      rw [← SimpleGraph.Walk.cons_tail_support] at hmem
       simp only [List.mem_cons] at hmem
       exact hmem.resolve_left hw₄
     have hnotDrop : w ∉ (p.dropUntil v hv).support.tail := by
@@ -238,7 +242,7 @@ theorem isHamiltonian_of_sup_edge
         simp only [SimpleGraph.edgeSet_deleteEdges,
           SimpleGraph.edgeSet_sup, Set.mem_sdiff, Set.mem_union,
           Set.mem_singleton_iff,
-          SimpleGraph.edge_edgeSet_of_ne hxyNe]
+          SimpleGraph.edgeSet_edge_of_ne hxyNe]
         have hnot : s(x, y) ∉ G.edgeSet := hxy
         constructor
         · rintro ⟨hGe | he, hne⟩
@@ -408,7 +412,7 @@ theorem isHamiltonian_of_degree_sum
       Finset.card_union_of_disjoint hABfin]
   have hKdegree : ∀ v : V, K.degree v = A.card := by
     intro v
-    have hv : v ∈ A ∪ B := by simpa [hcover]
+    have hv : v ∈ A ∪ B := by simp [hcover]
     rcases Finset.mem_union.mp hv with hvA | hvB
     · have hn : K.neighborFinset v = B := by
         ext w
@@ -466,7 +470,7 @@ theorem isHamiltonian_of_degree_sum
             have heH : s(u, v) ∉ H.edgeSet := hnuv
             have : s(u, v) ∈ missing H := by
               simp [missing, heK, heH]
-            simpa [hempty] using this
+            simp [hempty] at this
           have hEq : H = K := le_antisymm hHK hKH
           simpa [hEq] using hKHam
         · obtain ⟨e, heMissing⟩ := Finset.nonempty_iff_ne_empty.mpr hempty

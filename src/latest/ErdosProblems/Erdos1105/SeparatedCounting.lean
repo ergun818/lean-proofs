@@ -29,7 +29,7 @@ lemma capped_path_half_le_formula {n k : ℕ} (hk : 5 ≤ k) (hn : k ≤ n) :
 /-- If every remaining component has short paths, even the elementary
 degeneracy bound already gives the desired anti-Ramsey bound. -/
 theorem SeparatedRepresentative.small_components_bound {V C : Type*}
-    [Fintype V] [DecidableEq V] {G R H : SimpleGraph V} {c : Sym2 V → C}
+    [Fintype V] {G R H : SimpleGraph V} {c : Sym2 V → C}
     (hsep : SeparatedRepresentative G c R H) {k : ℕ} (hk : 5 ≤ k)
     (hn : k ≤ Fintype.card V)
     (hsmall : ∀ D : H.ConnectedComponent, ¬pathGraph ((k - 1) / 2 + 1) ⊑ componentGraph H D) :

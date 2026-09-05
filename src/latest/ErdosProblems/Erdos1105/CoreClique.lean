@@ -7,7 +7,7 @@ open SimpleGraph Finset
 
 /-- In a saturated cone with no long cycle, the high-degree core is a
 clique. This is the first structural step of Kopylov's disintegration proof. -/
-theorem saturated_cone_core_isClique {V : Type*} [Fintype V] [DecidableEq V]
+theorem saturated_cone_core_isClique {V : Type*} [Fintype V]
     (G : SimpleGraph V) {u : V} {k d : ℕ}
     (hG : NoLongCycle G k) (hk : 3 ≤ k) (hu : G.IsUniversal u)
     (hconn : (G.induce {v | v ≠ u}).Preconnected)

@@ -44,7 +44,7 @@ theorem crossing_start_set_unique {L q : ℕ} (A A' B : Finset ℕ)
 
 /-- Equal-length maximal low-core paths with the same end-neighbor positions
 also have exactly the same start-neighbor positions. -/
-theorem low_core_start_indices_unique {V : Type*} [Fintype V] [DecidableEq V]
+theorem low_core_start_indices_unique {V : Type*} [Fintype V]
     {G : SimpleGraph V} {u x y x' y' : V} {d : ℕ}
     (hG : NoLongCycle G (2 * d + 3)) (hu : G.IsUniversal u)
     (hconn : (G.induce {v | v ≠ u}).Preconnected)

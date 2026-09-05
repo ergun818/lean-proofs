@@ -92,7 +92,7 @@ theorem low_core_two_attachment_pendant {V : Type*} [Fintype V] [DecidableEq V]
 
 /-- Transfer a clique attached through the cone vertex and one other
 vertex to an ordinary pendant clique in the base graph. -/
-theorem cone_pendant_clique {V : Type*} [Fintype V] [DecidableEq V]
+theorem cone_pendant_clique {V : Type*} [Finite V] [DecidableEq V]
     (G : SimpleGraph V) {S : Finset (Option V)} {v : Option V} {d : ℕ}
     (hS : S.card = d) (hu : none ∉ S) (hv : v ≠ none) (hvS : v ∉ S)
     (hclique : (graphCone G).IsClique (↑(insert v S) : Set (Option V)))
@@ -100,6 +100,7 @@ theorem cone_pendant_clique {V : Type*} [Fintype V] [DecidableEq V]
     ∃ (T : Finset V) (w : V), T.card = d ∧ w ∉ T ∧ G.IsClique (↑(insert w T) : Set V) ∧
       (∀ a ∈ T, ∀ b, G.Adj a b → b ∈ T ∨ b = w) := by
   classical
+  let := Fintype.ofFinite V
   obtain ⟨w, rfl⟩ := Option.ne_none_iff_exists'.mp hv
   let T := univ.filter fun a ↦ some a ∈ S
   have hmem (a : V) : a ∈ T ↔ some a ∈ S := by simp only [T, mem_filter, mem_univ, true_and]
@@ -129,7 +130,7 @@ theorem cone_pendant_clique {V : Type*} [Fintype V] [DecidableEq V]
     · exact (Option.some_ne_none b hb).elim
     · exact Or.inr (Option.some.inj hb)
 
-theorem even_path_bound_of_two_attachment_core {V : Type*} [Fintype V] [DecidableEq V]
+theorem even_path_bound_of_two_attachment_core {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {d : ℕ} (hd : 3 ≤ d)
     (hn : 2 * d + 2 ≤ Fintype.card V) (hconn : G.Preconnected)
     (hfree : ¬pathGraph (2 * d + 2) ⊑ G) {x y : Option V}
@@ -139,6 +140,7 @@ theorem even_path_bound_of_two_attachment_core {V : Type*} [Fintype V] [Decidabl
     (hA : startNeighborIndices p = insert (p.length - d - 1) (range d))
     (hB : endNeighborIndices p = insert d (Ico (p.length - d) p.length)) :
     G.edgeFinset.card ≤ pathFormula (Fintype.card V) (2 * d + 2) := by
+  classical
   have hG : NoLongCycle (graphCone G) (2 * d + 3) :=
     no_long_cycle_cone_of_path_free G (by omega) hfree
   obtain ⟨S, v, hS, hu, hv, hvS, hc, hclosed⟩ := low_core_two_attachment_pendant hG

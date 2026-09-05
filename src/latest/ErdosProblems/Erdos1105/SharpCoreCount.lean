@@ -10,7 +10,7 @@ lemma degreeWithin_univ {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRe
   rw [← card_neighborFinset_eq_degree]
   apply congrArg Finset.card
   ext w
-  simp only [degreeWithin, mem_filter, mem_univ, true_and, mem_neighborFinset]
+  simp only [mem_filter, mem_univ, true_and, mem_neighborFinset]
 
 lemma degreeWithin_erase_adj {V : Type*} [DecidableEq V] (G : SimpleGraph V)
     {T : Finset V} {v w : V} (hv : v ∈ T) (hvw : G.Adj w v) :

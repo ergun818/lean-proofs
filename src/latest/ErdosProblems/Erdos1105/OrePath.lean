@@ -68,7 +68,8 @@ theorem hamiltonian_of_endpoint_degree_sum {V : Type*} [Fintype V] [DecidableEq 
 
 /-- The endpoint criterion also applies to a path inside a larger graph:
 degrees here count only neighbors lying on the path. -/
-theorem cycle_contained_in_support_of_path_endpoint_degree_sum {V : Type*} [Fintype V] [DecidableEq V]
+theorem cycle_contained_in_support_of_path_endpoint_degree_sum
+    {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {u v : V} (p : G.Walk u v) (hp : p.IsPath)
     (hlen : 2 ≤ p.length)
     (hdeg : p.length + 1 ≤
@@ -177,7 +178,7 @@ theorem hamiltonian_of_cycle_longer_than_paths {V : Type*} [Fintype V] [Decidabl
   · exact q.tail.end_mem_support
   · rwa [Walk.support_tail_of_not_nil q hq.not_nil]
 
-lemma degree_induce_eq_of_neighbors_mem {V : Type*} [Fintype V] [DecidableEq V]
+lemma degree_induce_eq_of_neighbors_mem {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (S : Set V) [DecidablePred (· ∈ S)]
     (v : V) (hv : v ∈ S) (hwithin : ∀ w, G.Adj v w → w ∈ S) :
     (G.induce S).degree ⟨v, hv⟩ = G.degree v := by
@@ -222,7 +223,7 @@ theorem longest_path_hamiltonian_of_endpoint_degree_sum {V : Type*}
 
 /-- The connected degree-sum criterion supplies a long path whenever the
 component has enough vertices. -/
-theorem path_contained_of_degree_sum {V : Type*} [Fintype V] [DecidableEq V]
+theorem path_contained_of_degree_sum {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hconn : G.Connected)
     (k : ℕ) (hk : 3 ≤ k) (hcard : k ≤ Fintype.card V)
     (hmin : ∀ v, 2 ≤ G.degree v)

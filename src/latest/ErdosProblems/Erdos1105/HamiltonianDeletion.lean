@@ -46,11 +46,12 @@ theorem reachable_delete_edge_of_not_isBridge {V : Type*} (G : SimpleGraph V)
 
 /-- A Hamiltonian component certifies that each of its edges is not a
 bridge in the ambient graph. -/
-theorem component_hamiltonian_not_isBridge {V : Type*} [Fintype V] [DecidableEq V]
+theorem component_hamiltonian_not_isBridge {V : Type*} [Finite V] [DecidableEq V]
     (R : SimpleGraph V) (B : R.ConnectedComponent) [Fintype B]
     (hB : B.toSimpleGraph.IsHamiltonian) (hcard : 3 ≤ Fintype.card B)
     {a b : V} (ha : a ∈ B.supp) (hb : b ∈ B.supp) : ¬R.IsBridge s(a, b) := by
   classical
+  let := Fintype.ofFinite V
   have hnb := hamiltonian_not_isBridge B.toSimpleGraph hB hcard ⟨a, ha⟩ ⟨b, hb⟩
   have hr : (B.toSimpleGraph.deleteEdges {s(⟨a, ha⟩, ⟨b, hb⟩)}).Reachable ⟨a, ha⟩ ⟨b, hb⟩ := by
     simpa only [isBridge_iff, not_not] using hnb

@@ -125,10 +125,11 @@ lemma graphCone_comap_some {V : Type*} (H : SimpleGraph (Option V))
     | none => exact iff_of_true True.intro (hu (by simp)).symm
     | some y => rfl
 
-lemma cone_clique_remove_none {V : Type*} [Fintype V] (H : SimpleGraph (Option V))
+lemma cone_clique_remove_none {V : Type*} [Finite V] (H : SimpleGraph (Option V))
     {T : Finset (Option V)} (hT : H.IsClique (T : Set (Option V))) (hNone : none ∈ T) :
     ∃ S : Finset V, (H.comap some).IsClique (S : Set V) ∧ S.card + 1 = T.card := by
   classical
+  let := Fintype.ofFinite V
   let S := univ.filter fun v ↦ some v ∈ T
   have himage : S.image some = T.erase none := by
     ext v
@@ -142,7 +143,7 @@ lemma cone_clique_remove_none {V : Type*} [Fintype V] (H : SimpleGraph (Option V
   intro a ha b hb hab
   exact hT (mem_filter.mp ha).2 (mem_filter.mp hb).2 ((Option.some_injective V).ne hab)
 
-lemma graphCone_card_edges {V : Type*} [Fintype V] [DecidableEq V]
+lemma graphCone_card_edges {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] [DecidableRel (graphCone G).Adj] :
     (graphCone G).edgeFinset.card = G.edgeFinset.card + Fintype.card V := by
   classical

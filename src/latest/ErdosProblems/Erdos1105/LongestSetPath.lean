@@ -4,12 +4,13 @@ namespace Erdos1105
 
 open SimpleGraph Finset
 
-theorem exists_longest_path_between_sets {V : Type*} [Fintype V]
+theorem exists_longest_path_between_sets {V : Type*} [Finite V]
     (G : SimpleGraph V) (A B : Set V)
     (hex : ∃ x ∈ A, ∃ y ∈ B, ∃ p : G.Walk x y, p.IsPath) :
     ∃ x ∈ A, ∃ y ∈ B, ∃ p : G.Walk x y, p.IsPath ∧
       ∀ a ∈ A, ∀ b ∈ B, ∀ q : G.Walk a b, q.IsPath → q.length ≤ p.length := by
   classical
+  let := Fintype.ofFinite V
   let P := (range (Fintype.card V)).filter fun n ↦
     ∃ x ∈ A, ∃ y ∈ B, ∃ p : G.Walk x y, p.IsPath ∧ p.length = n
   have hP : P.Nonempty := by

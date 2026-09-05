@@ -8,7 +8,7 @@ open SimpleGraph
 
 /-- If the endpoint private-color counts exceed the degrees on a path,
 one of its endpoints has a privately colored representative edge leaving it. -/
-theorem private_extension_of_path_no_cycle {V C : Type*} [Fintype V] [Fintype C]
+theorem private_extension_of_path_no_cycle {V C : Type*} [Finite V] [Fintype C]
     (c : (⊤ : SimpleGraph V).edgeSet → C) (R : SimpleGraph V)
     (hpalette : ∀ i, (∃ v, PrivateAt c v i) → ∃ e : R.edgeSet, extendColor c e.val = some i)
     {x y : V} (p : R.Walk x y) (hp : p.IsPath) (hlen : 2 ≤ p.length)
@@ -17,6 +17,7 @@ theorem private_extension_of_path_no_cycle {V C : Type*} [Fintype V] [Fintype C]
     (∃ w, ∃ hw : R.Adj x w, w ∉ p.support ∧ PrivateAt c x (c ⟨s(x, w), hw.ne⟩)) ∨
     (∃ w, ∃ hw : R.Adj y w, w ∉ p.support ∧ PrivateAt c y (c ⟨s(y, w), hw.ne⟩)) := by
   classical
+  let := Fintype.ofFinite V
   have hdeg :
       (R.induce {v | v ∈ p.support}).degree ⟨x, p.start_mem_support⟩ +
       (R.induce {v | v ∈ p.support}).degree ⟨y, p.end_mem_support⟩ < p.length + 1 := by
@@ -61,7 +62,7 @@ theorem private_neighbors_trapped_by_inward_end {V C : Type*}
 
 /-- The preceding extension can always be oriented to put its new
 privately colored edge at the end, private to the interior endpoint. -/
-theorem exists_path_with_inward_end {V C : Type*} [Fintype V] [Fintype C]
+theorem exists_path_with_inward_end {V C : Type*} [Finite V] [Fintype C]
     (c : (⊤ : SimpleGraph V).edgeSet → C) (R : SimpleGraph V)
     (hpalette : ∀ i, (∃ v, PrivateAt c v i) → ∃ e : R.edgeSet, extendColor c e.val = some i)
     {x y : V} (p : R.Walk x y) (hp : p.IsPath) (hlen : 2 ≤ p.length)
@@ -70,13 +71,16 @@ theorem exists_path_with_inward_end {V C : Type*} [Fintype V] [Fintype C]
     ∃ a b, ∃ q : R.Walk a b, q.IsPath ∧ q.length = p.length + 1 ∧
       ∃ hnil : ¬q.Nil, PrivateAt c q.penultimate
         (c ⟨s(q.penultimate, b), (q.adj_penultimate hnil).ne⟩) := by
+  classical
+  let := Fintype.ofFinite V
   obtain h | h := private_extension_of_path_no_cycle c R hpalette p hp hlen hfree hnew
   · obtain ⟨w, hw, hnot, hpriv⟩ := h
     let q := p.reverse.concat hw
     have hqnil : ¬q.Nil := by
       rw [Walk.not_nil_iff_lt_length, Walk.length_concat]
       omega
-    refine ⟨y, w, q, hp.reverse.concat (by simpa only [Walk.support_reverse, List.mem_reverse] using hnot) hw,
+    refine ⟨y, w, q, hp.reverse.concat
+      (by simpa only [Walk.support_reverse, List.mem_reverse] using hnot) hw,
       ?_, hqnil, ?_⟩
     · simp only [q, Walk.length_concat, Walk.length_reverse]
     · simpa only [q, Walk.penultimate_concat] using hpriv

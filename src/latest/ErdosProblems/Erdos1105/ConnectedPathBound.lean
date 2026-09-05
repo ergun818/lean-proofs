@@ -7,7 +7,7 @@ open SimpleGraph Finset
 
 /-- The connected path Turán bound (Faudree--Schelp and Kopylov), obtained
 by adding a universal vertex and applying cone disintegration. -/
-theorem connected_path_edges_le {V : Type*} [Fintype V] [DecidableEq V]
+theorem connected_path_edges_le {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {k : ℕ}
     (hk : 4 ≤ k) (hn : k ≤ Fintype.card V) (hconn : G.Preconnected)
     (hfree : ¬pathGraph k ⊑ G) :

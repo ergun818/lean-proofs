@@ -43,7 +43,8 @@ theorem private_coloring_upper_bound {V C : Type*} [Fintype V] [Nonempty V] [Fin
   have hd : Function.Surjective d := by
     rintro ⟨col, e, rfl⟩
     exact ⟨e, rfl⟩
-  have hsize (B : R.ConnectedComponent) : Fintype.card {v // R.connectedComponentMk v = B} ≤ n + 3 := by
+  have hsize (B : R.ConnectedComponent) :
+      Fintype.card {v // R.connectedComponentMk v = B} ≤ n + 3 := by
     rw [← Nat.card_eq_fintype_card]
     exact private_component_card_le c hc hH R hR howned hpalette hnew hsum B
   have hcross : ∀ a b (hab : a ≠ b) (hne : R.connectedComponentMk a ≠ R.connectedComponentMk b),

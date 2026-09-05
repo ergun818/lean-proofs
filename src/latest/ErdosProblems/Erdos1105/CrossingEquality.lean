@@ -58,7 +58,7 @@ theorem exists_crossing_partition {L q : ℕ} (A B : Finset ℕ)
   exact ⟨i, hi, j, hj, hij', eq_of_subset_of_card_le hsub hceq.le, by omega⟩
 
 /-- The low-core endpoint-neighbor sets realize the equality partition. -/
-theorem longest_low_core_crossing_partition {V : Type*} [Fintype V] [DecidableEq V]
+theorem longest_low_core_crossing_partition {V : Type*} [Fintype V]
     {G : SimpleGraph V} {u x y : V} {d : ℕ}
     (hG : NoLongCycle G (2 * d + 3)) (hu : G.IsUniversal u)
     (hconn : (G.induce {v | v ≠ u}).Preconnected)
@@ -67,6 +67,7 @@ theorem longest_low_core_crossing_partition {V : Type*} [Fintype V] [DecidableEq
     ∃ i ∈ endNeighborIndices p, ∃ j ∈ startNeighborIndices p, i < j ∧
       startNeighborIndices p ∪ endNeighborIndices p = range p.length \ Ioo i j ∧
       i + (p.length - (j + 1)) + 2 = 2 * d + 2 := by
+  classical
   have hdeg := longest_low_core_path_degrees hG hu hconn p hp hlen
   apply exists_crossing_partition (startNeighborIndices p) (endNeighborIndices p)
     (by classical exact filter_subset _ _) (by classical exact filter_subset _ _)

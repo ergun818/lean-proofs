@@ -12,7 +12,7 @@ namespace Erdos1105
 
 open SimpleGraph Finset
 
-theorem closed_degree_obstruction {V : Type*} [Fintype V] [DecidableEq V]
+theorem closed_degree_obstruction {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hG : G ≠ ⊤)
     (hclosed : ∀ x y, x ≠ y → ¬G.Adj x y → G.degree x + G.degree y < Fintype.card V) :
     ∃ x : V, 2 * G.degree x < Fintype.card V ∧
@@ -101,7 +101,7 @@ theorem nonhamiltonian_degree_obstruction {V : Type*} [Fintype V] [DecidableEq V
       (G.degree_le_of_le G.self_le_closure)⟩
 
 /-- Counting the degrees in Chvátal's two exceptional sets. -/
-theorem edges_le_of_degree_obstruction {V : Type*} [Fintype V] [DecidableEq V]
+theorem edges_le_of_degree_obstruction {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {i : ℕ}
     (hi : 2 * i < Fintype.card V)
     (hlow : i ≤ (univ.filter fun v ↦ G.degree v ≤ i).card)

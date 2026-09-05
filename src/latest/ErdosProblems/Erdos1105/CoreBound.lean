@@ -24,7 +24,7 @@ theorem cone_clique_card_le {V : Type*} [Fintype V] (G : SimpleGraph V)
 
 /-- Kopylov's core dichotomy, specialized to cones. The nonempty core has
 order between `d+2` and `k-2` and is unchanged at threshold `k-r`. -/
-theorem saturated_cone_core_dichotomy {V : Type*} [Fintype V] [DecidableEq V]
+theorem saturated_cone_core_dichotomy {V : Type*} [Fintype V]
     (G : SimpleGraph V) {u : V} {k d : ℕ}
     (hG : NoLongCycle G k) (hk : 3 ≤ k) (hn : k ≤ Fintype.card V)
     (hu : G.IsUniversal u) (hconn : (G.induce {v | v ≠ u}).Preconnected)
@@ -46,7 +46,7 @@ theorem saturated_cone_core_dichotomy {V : Type*} [Fintype V] [DecidableEq V]
       saturated_cone_core_stable G hG hk hu hconn hmax hclique hne
         (by omega) (by omega)⟩
 
-theorem saturated_cone_edge_bound {V : Type*} [Fintype V] [DecidableEq V]
+theorem saturated_cone_edge_bound {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {u : V} {k d : ℕ}
     (hG : NoLongCycle G k) (hk : 3 ≤ k) (hn : k ≤ Fintype.card V)
     (hu : G.IsUniversal u) (hconn : (G.induce {v | v ≠ u}).Preconnected)
@@ -55,6 +55,7 @@ theorem saturated_cone_edge_bound {V : Type*} [Fintype V] [DecidableEq V]
     G.edgeFinset.card ≤ d.choose 2 + d * (Fintype.card V - d) ∨
       ∃ r, d + 2 ≤ r ∧ r ≤ k - 2 ∧
         G.edgeFinset.card ≤ r.choose 2 + (k - r) * (Fintype.card V - r) := by
+  classical
   rcases saturated_cone_core_dichotomy G hG hk hn hu hconn hmax hd₁ hd₂ with h | h
   · exact Or.inl (edges_le_of_core_empty G d h)
   · refine Or.inr ⟨(vertexCore G d).card, h.1, h.2.1, ?_⟩

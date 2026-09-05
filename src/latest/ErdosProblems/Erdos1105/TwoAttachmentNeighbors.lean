@@ -41,7 +41,7 @@ theorem universal_at_two_attachments {V : Type*} {G : SimpleGraph V} {u x y : V}
   · exact Or.inl ht.symm
   · exact Or.inr ht.symm
 
-theorem low_core_two_attachment_neighbors_on_path {V : Type*} [Fintype V] [DecidableEq V]
+theorem low_core_two_attachment_neighbors_on_path {V : Type*} [Fintype V]
     {G : SimpleGraph V} {u x y : V} {d : ℕ}
     (hG : NoLongCycle G (2 * d + 3)) (hu : G.IsUniversal u)
     (hconn : (G.induce {v | v ≠ u}).Preconnected)
