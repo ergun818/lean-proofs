@@ -45,7 +45,7 @@ noncomputable def localFactor (p n : ℕ) : ℝ :=
 noncomputable def singularSeries (n : ℕ) : ℝ :=
   ∏' p : Nat.Primes, localFactor p.val n
 
-lemma localFactor_pos_of_prime {p n : ℕ} (hp : p.Prime) :
+lemma localFactor_pos_of_prime {p n : ℕ} (_hp : p.Prime) :
     0 < localFactor p n := by
   unfold localFactor
   by_cases hp2 : p ≤ 2
@@ -254,7 +254,8 @@ theorem singularSeries_lower_half_of_odd (n : ℕ) (hodd : Odd n) :
     · intro hp
       rcases Finset.mem_map.mp hp with ⟨x, _, hx⟩
       have hv : p.val = x.val := congrArg (fun y : Nat.Primes ↦ y.val) hx.symm
-      simpa [hv, base] using x.2
+      rw [hv]
+      exact x.2
     · intro hp
       let x : {p // p ∈ base} := ⟨p.val, hp⟩
       exact Finset.mem_map.mpr ⟨x, by simp [x], by apply Subtype.ext; rfl⟩
@@ -440,7 +441,6 @@ lemma tprod_singularTerm_prime_pow_eq_two_singularSeries
     funext p
     by_cases hp2 : p = twoPrime
     · subst p
-      change Function.update f twoPrime 1 twoPrime = lfC twoPrime
       rw [Function.update_self]
       simp [lfC, twoPrime, localFactor_two]
     · have hp3 : 3 ≤ p.val := by

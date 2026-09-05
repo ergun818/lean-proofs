@@ -126,7 +126,7 @@ theorem primeOnlyWeightedContribution_eq_primeTripleLogWeight (n : ℕ) :
       by_cases ha : a.Prime <;> by_cases hb : b.Prime <;> by_cases hc : c.Prime <;>
         simp [ha, hb, hc]
     · rw [if_neg hnot]
-      push_neg at hnot
+      push Not at hnot
       rcases hnot with h | h | h
       · have ha : ¬a.Prime := h.2
         simp [ha]

@@ -298,7 +298,8 @@ theorem abel_norm_bound_boundedVariation
   -- Top term: ‖Apart N · (b N : ℂ)‖ ≤ A · |b N|.
   have hApN : ‖Apart N‖ ≤ A := by
     rcases Nat.eq_or_lt_of_le hMN with hMN' | hMN'
-    · subst hMN'; simp [hApart_def]; exact hA_nonneg
+    · subst hMN'
+      simpa [hApart_def] using hA_nonneg
     · exact hA N (Finset.mem_Ioc.mpr ⟨hMN', le_rfl⟩)
   have hbnd_top : ‖Apart N * (b N : ℂ)‖ ≤ A * |b N| := by
     rw [norm_mul, Complex.norm_real, Real.norm_eq_abs]

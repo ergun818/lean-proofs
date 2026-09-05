@@ -262,11 +262,10 @@ theorem localMajorArcExplicit_volume_le_one (N a q : ℕ) :
 theorem localMajorArcExplicit_zero_q (N a : ℕ) :
     localMajorArcExplicit N a 0 = ∅ := by
   ext α
-  simp only [localMajorArcExplicit, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+  simp only [localMajorArcExplicit, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
   intro ⟨_, hclose⟩
   push_cast at hclose
-  simp at hclose
-  exact absurd hclose (not_lt.mpr (abs_nonneg _))
+  exact (not_lt_of_ge (abs_nonneg α)) (by simpa using hclose)
 
 /-! ## Ramanujan / Gauss sums attached to a denominator -/
 
@@ -552,8 +551,7 @@ private theorem ramanujan_full_sum_prime_not_dvd {p n : ℕ}
     rcases hpi with ⟨k, hk⟩
     by_cases hk0 : k = 0
     · subst hk0
-      simp at hk
-      exact hi_ne_zero hk
+      exact hi_ne_zero (by simpa only [Nat.mul_zero] using hk)
     · have hkpos : 0 < k := Nat.pos_of_ne_zero hk0
       have hp_le : p ≤ p * k := Nat.le_mul_of_pos_right p hkpos
       omega
@@ -923,7 +921,8 @@ theorem singularIntegral_eq_card (N n : ℕ) :
     intro β
     unfold linearExpSum
     simp_rw [Finset.sum_product]
-    simp [pow_succ, Finset.mul_sum, Finset.sum_mul, mul_assoc]
+    rw [pow_succ, pow_two]
+    simp_rw [Finset.mul_sum, Finset.sum_mul, mul_assoc]
     refine Finset.sum_congr rfl ?_
     intro a _ha
     refine Finset.sum_congr rfl ?_

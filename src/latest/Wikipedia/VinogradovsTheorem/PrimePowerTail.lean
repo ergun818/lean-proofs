@@ -120,12 +120,7 @@ theorem weightedTriples_mem {n : ℕ} {x : ℕ × ℕ × ℕ} :
     x ∈ weightedTriples n ↔
       x.1 ≤ n ∧ x.2.1 ≤ n ∧ x.2.2 ≤ n ∧
         x.1 + x.2.1 + x.2.2 = n := by
-  simp [weightedTriples]
-  constructor
-  · intro h
-    exact ⟨h.1.1, h.1.2.1, h.1.2.2, h.2⟩
-  · intro h
-    exact ⟨⟨h.1, h.2.1, h.2.2.1⟩, h.2.2.2⟩
+  simp [weightedTriples, and_assoc]
 
 theorem vonMangoldtTripleWeight_eq_raw (n : ℕ) :
     vonMangoldtTripleWeight n =
@@ -152,12 +147,7 @@ theorem mem_properPrimePowerSqrtLogWitnessPairsUpTo {n : ℕ} {pk : ℕ × ℕ} 
     pk ∈ properPrimePowerSqrtLogWitnessPairsUpTo n ↔
       pk.1 ≤ Nat.sqrt n ∧ pk.2 ≤ Nat.log 2 n ∧ pk.1.Prime ∧
         2 ≤ pk.2 ∧ pk.1 ^ pk.2 ≤ n := by
-  simp [properPrimePowerSqrtLogWitnessPairsUpTo]
-  constructor
-  · intro h
-    exact ⟨h.1.1, h.1.2, h.2.1, h.2.2.1, h.2.2.2⟩
-  · intro h
-    exact ⟨⟨h.1, h.2.1⟩, h.2.2.1, h.2.2.2.1, h.2.2.2.2⟩
+  simp [properPrimePowerSqrtLogWitnessPairsUpTo, and_assoc]
 
 theorem properPrimePower_exists_bounded_log_witness {n m : ℕ}
     (hm : m ∈ properPrimePowersUpTo n) :

@@ -122,7 +122,7 @@ lemma two_nearestIntDist_le_abs_sin_pi (β : ℝ) :
   have ht_nn : 0 ≤ t := Int.fract_nonneg β
   have ht_lt : t < 1 := Int.fract_lt_one β
   -- We will show `2 · min t (1 - t) ≤ |sin (π t)|` then unfold.
-  show 2 * min t (1 - t) ≤ |Real.sin (Real.pi * t)|
+  change 2 * min t (1 - t) ≤ |Real.sin (Real.pi * t)|
   -- π t ∈ [0, π], so sin(π t) ≥ 0; |sin(π t)| = sin(π t).
   have hπ_nn : 0 ≤ Real.pi := Real.pi_pos.le
   have hπt_nn : 0 ≤ Real.pi * t := mul_nonneg hπ_nn ht_nn
@@ -219,7 +219,7 @@ theorem inner_geom_sum_bound (β : ℝ) (N : ℕ) (hβ : nearestIntDist β ≠ 0
   have hz_norm : ‖z‖ = 1 := by simpa [hz_def] using norm_addChar β 1
   have h_pow : ∀ n : ℕ, addChar β n = z ^ n := by
     intro n
-    show Complex.exp (2 * Real.pi * Complex.I * (β : ℂ) * (n : ℂ)) =
+    change Complex.exp (2 * Real.pi * Complex.I * (β : ℂ) * (n : ℂ)) =
         Complex.exp (2 * Real.pi * Complex.I * (β : ℂ) * ((1 : ℕ) : ℂ)) ^ n
     rw [show ((1 : ℕ) : ℂ) = (1 : ℂ) by norm_cast,
         show (2 * Real.pi * Complex.I * (β : ℂ) * (n : ℂ)) =
@@ -346,8 +346,8 @@ For the degenerate cases `q = 1` and `M = 0` we appeal to the trivial bound
 `min(N+1, …) ≤ N+1` directly. -/
 theorem dirichlet_divided_sum
     (a q : ℕ) (α : ℝ) (M N : ℕ) (hq : 1 ≤ q)
-    (hα : ∃ θ : ℝ, |θ| ≤ 1 / ((q : ℝ) ^ 2) ∧ α = (a : ℝ) / q + θ)
-    (hcop : Nat.Coprime a q) :
+    (_hα : ∃ θ : ℝ, |θ| ≤ 1 / ((q : ℝ) ^ 2) ∧ α = (a : ℝ) / q + θ)
+    (_hcop : Nat.Coprime a q) :
     ∃ C : ℝ, 0 < C ∧
       ∑ m ∈ Finset.range (M + 1),
           min ((N : ℝ) + 1) (1 / (2 * nearestIntDist (α * m))) ≤
@@ -375,7 +375,7 @@ theorem dirichlet_divided_sum
   have hsum_eval : ∑ _m ∈ Finset.range (M + 1), ((N : ℝ) + 1) =
       ((M : ℝ) + 1) * ((N : ℝ) + 1) := by
     rw [Finset.sum_const, Finset.card_range]
-    push_cast; ring
+    ring
   rw [hsum_eval]
   -- Now: `(M+1)(N+1) ≤ (q+1)·(M/q+1)·(N + q·log(q+2))`.
   -- Step A: `(M+1) ≤ (q+1)·(M/q+1) = (M+q+M/q+1)/1 ≥ M+q+1 ≥ M+1` (since q ≥ 1).
@@ -477,7 +477,7 @@ theorem typeI_bound
             mul_le_mul_of_nonneg_left h_inner hA
     refine (Finset.sum_le_sum h_each).trans ?_
     rw [Finset.sum_const, Finset.card_range]
-    push_cast; ring_nf; rfl
+    ring_nf; rfl
   -- Step 2: lower bounds on the RHS factor.
   have hqR : (1 : ℝ) ≤ (q : ℝ) := by exact_mod_cast hq
   have hq_pos : (0 : ℝ) < (q : ℝ) := lt_of_lt_of_le zero_lt_one hqR
@@ -511,7 +511,7 @@ theorem typeI_bound
   set K : ℝ := ((M : ℝ) + 1) * ((N : ℝ) + 1) + 1 with hK_def
   have hK_pos : 0 < K := by
     have h1 : 0 ≤ ((M : ℝ) + 1) * ((N : ℝ) + 1) := by positivity
-    show 0 < ((M : ℝ) + 1) * ((N : ℝ) + 1) + 1
+    change 0 < ((M : ℝ) + 1) * ((N : ℝ) + 1) + 1
     linarith
   refine ⟨K / Real.log 2, div_pos hK_pos h_log2_pos, ?_⟩
   -- Step 4: combine: A·(M+1)(N+1) ≤ (K/log2) · A · F · L.
@@ -520,7 +520,7 @@ theorem typeI_bound
     have h_FL_over_log2_ge_one : 1 ≤ F * L / Real.log 2 := by
       rw [le_div_iff₀ h_log2_pos]; linarith
     have h_K_ge : ((M : ℝ) + 1) * ((N : ℝ) + 1) ≤ K := by
-      show ((M : ℝ) + 1) * ((N : ℝ) + 1) ≤ ((M : ℝ) + 1) * ((N : ℝ) + 1) + 1
+      change ((M : ℝ) + 1) * ((N : ℝ) + 1) ≤ ((M : ℝ) + 1) * ((N : ℝ) + 1) + 1
       linarith
     calc ((M : ℝ) + 1) * ((N : ℝ) + 1)
         ≤ K := h_K_ge
@@ -770,7 +770,7 @@ References:
   (p. 319–320).
 -/
 theorem single_block_sum_bound
-    (a q : ℕ) (α : ℝ) (M N : ℕ) (hq : 1 ≤ q) (k : ℕ) (_hM : (M : ℝ) ≤ (q : ℝ) ^ 2 / 2)
+    (a q : ℕ) (α : ℝ) (M N : ℕ) (_hq : 1 ≤ q) (k : ℕ) (_hM : (M : ℝ) ≤ (q : ℝ) ^ 2 / 2)
     (_hα : ∃ θ : ℝ, |θ| ≤ 1 / ((q : ℝ) ^ 2) ∧ α = (a : ℝ) / q + θ)
     (_hcop : Nat.Coprime a q) :
     ∑ m ∈ (Finset.range q).image (fun j => k * q + j),
@@ -968,7 +968,7 @@ unported `Real.threeDistanceTheorem`.
 Reference: Davenport, *Multiplicative NT* (3rd ed.) Ch. 24 §2 Lemma 2.2,
 proof step "small distance count" (=`O(k)` via pigeonhole). -/
 theorem single_block_bad_residue_count
-    (a q : ℕ) (_α : ℝ) (M N k : ℕ) (_hq : 1 ≤ q)
+    (a q : ℕ) (_α : ℝ) (M _N k : ℕ) (_hq : 1 ≤ q)
     (_hM : (M : ℝ) ≤ (q : ℝ) ^ 2 / 2)
     (_hα : ∃ θ : ℝ, |θ| ≤ 1 / ((q : ℝ) ^ 2) ∧ _α = (a : ℝ) / q + θ)
     (_hcop : Nat.Coprime a q) :
@@ -1171,7 +1171,6 @@ theorem single_block_good_residue_sum_bound
         push_cast; rfl
       rw [h1]
       congr 1
-      push_cast
       exact_mod_cast Nat.cast_sub hj_lt.le
     have hmin_real_pos : (0 : ℝ) < min (j : ℝ) ((q : ℝ) - j) := by
       rw [← hmin_cast]; exact hmin_posR
@@ -1363,10 +1362,10 @@ theorem davenport_good_residue_pointwise_bound
     rw [h_nID_x_eq]
     -- We want `|x - round x| = d/q`.
     -- We have `h : |↑(a*m) / ↑q - ↑(round (↑(a*m)/↑q))| = ↑(min ((a*m)%q) (q - (a*m)%q)) / ↑q`.
-    show |x - (round x : ℝ)| = d / (q : ℝ)
+    change |x - (round x : ℝ)| = d / (q : ℝ)
     -- `x = ↑(a*m) / ↑q` by definition (after a push_cast).
     have hx_eq : x = ((a * m : ℕ) : ℝ) / ((q : ℕ) : ℝ) := by
-      show ((a * m : ℕ) : ℝ) / (q : ℝ) = ((a * m : ℕ) : ℝ) / ((q : ℕ) : ℝ)
+      change ((a * m : ℕ) : ℝ) / (q : ℝ) = ((a * m : ℕ) : ℝ) / ((q : ℕ) : ℝ)
       norm_cast
     rw [hx_eq, h]
     -- Now we need `↑(min ((a*m)%q) (q - (a*m)%q)) / ↑q = d / ↑q`.
@@ -1389,7 +1388,7 @@ theorem davenport_good_residue_pointwise_bound
         have h_le' : (q - j : ℕ) ≤ j := le_of_lt h_le
         rw [← hsub_cast]
         exact_mod_cast h_le'
-    show ((min ((a * m) % q) (q - (a * m) % q) : ℕ) : ℝ) / ((q : ℕ) : ℝ) = d / (q : ℝ)
+    change ((min ((a * m) % q) (q - (a * m) % q) : ℕ) : ℝ) / ((q : ℕ) : ℝ) = d / (q : ℝ)
     have hqcast : ((q : ℕ) : ℝ) = (q : ℝ) := rfl
     rw [hqcast]
     -- Both sides have denominator `(q : ℝ)`; reduce to numerator equality.
@@ -1409,7 +1408,7 @@ theorem davenport_good_residue_pointwise_bound
   have hm_nn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg _
   -- `|y| = |θ| * m ≤ (1/q²) * ((k+1) q) = (k+1)/q`.
   have h_abs_y : |y| ≤ ((k : ℝ) + 1) / (q : ℝ) := by
-    show |θ * (m : ℝ)| ≤ ((k : ℝ) + 1) / (q : ℝ)
+    change |θ * (m : ℝ)| ≤ ((k : ℝ) + 1) / (q : ℝ)
     rw [abs_mul, abs_of_nonneg hm_nn]
     have h_step : |θ| * (m : ℝ) ≤ (1 / ((q : ℝ) ^ 2)) * (((k : ℝ) + 1) * (q : ℝ)) := by
       have h1 : |θ| * (m : ℝ) ≤ (1 / ((q : ℝ) ^ 2)) * (m : ℝ) :=
@@ -1534,7 +1533,7 @@ theorem single_block_sum_bound_refined
   have h_f_le_N1 : ∀ j, f j ≤ (N : ℝ) + 1 := fun j => min_le_left _ _
   have h_f_nn : ∀ j, 0 ≤ f j := by
     intro j
-    show 0 ≤ min ((N : ℝ) + 1) (1 / (2 * nearestIntDist (α * ((k * q + j : ℕ) : ℝ))))
+    change 0 ≤ min ((N : ℝ) + 1) (1 / (2 * nearestIntDist (α * ((k * q + j : ℕ) : ℝ))))
     refine le_min hN1_nn ?_
     have hd_nn : 0 ≤ nearestIntDist (α * ((k * q + j : ℕ) : ℝ)) := nearestIntDist_nonneg _
     have h2d_nn : 0 ≤ 2 * nearestIntDist (α * ((k * q + j : ℕ) : ℝ)) := by linarith
@@ -1546,7 +1545,7 @@ theorem single_block_sum_bound_refined
   -- Termwise: `g j ≥ 0`.
   have h_g_nn : ∀ j, 0 ≤ g j := by
     intro j
-    show 0 ≤ (q : ℝ) / (max (1 : ℝ)
+    change 0 ≤ (q : ℝ) / (max (1 : ℝ)
       (min (((a * (k * q + j)) % q : ℕ) : ℝ) ((q : ℝ) - ((a * (k * q + j)) % q : ℕ))))
     have hmax_pos : (0 : ℝ) < max (1 : ℝ)
         (min (((a * (k * q + j)) % q : ℕ) : ℝ) ((q : ℝ) - ((a * (k * q + j)) % q : ℕ))) :=
@@ -1605,7 +1604,8 @@ theorem single_block_sum_bound_refined
     -- We show `card(badJ) = card(badResidueSetAtK)` directly.
     have h_bij := coprime_residue_bijection a q hq1 hcop
     refine Nat.cast_injective.eq_iff.mpr ?_
-    -- card(badJ) = card({j ∈ range q : (a*(kq+j)) % q ∈ bad}) = card({j ∈ range q : (a*j) % q ∈ bad}).
+    -- card(badJ) = card({j ∈ range q : (a*(kq+j)) % q ∈ bad}) = card({j ∈ range q : (a*j) % q ∈
+    --   bad}).
     have h_eq : badJ = (Finset.range q).filter
         (fun j => ((a * j) % q) ∈ badResidueSetAtK q k) := by
       ext j
@@ -1631,7 +1631,9 @@ theorem single_block_sum_bound_refined
         ((Finset.range q).filter (fun j => ((a * j) % q) ∈ badResidueSetAtK q k)).card =
         ((Finset.range q).filter (fun j' => j' ∈ badResidueSetAtK q k)).card := by
       apply Finset.card_bij
-        (fun (j : ℕ) (_ : j ∈ (Finset.range q).filter (fun j => ((a * j) % q) ∈ badResidueSetAtK q k)) =>
+        (fun (j : ℕ)
+          (_ : j ∈ (Finset.range q).filter
+            (fun j => ((a * j) % q) ∈ badResidueSetAtK q k)) =>
           (a * j) % q)
       · -- Maps to RHS.
         intro j hj
@@ -1656,13 +1658,10 @@ theorem single_block_sum_bound_refined
         refine ⟨j, ?_, ?_⟩
         · simp only [Finset.mem_filter, Finset.mem_range]
           refine ⟨hj_lt, ?_⟩
-          have := congrArg Fin.val hj_eq
-          simp at this
-          rw [this]
+          have hval : (a * j) % q = j' := congrArg Fin.val hj_eq
+          rw [hval]
           exact hj'.2
-        · have := congrArg Fin.val hj_eq
-          simp at this
-          exact this
+        · exact congrArg Fin.val hj_eq
     rw [h_filter_eq]
     have : ((Finset.range q).filter (fun j' => j' ∈ badResidueSetAtK q k)) =
         badResidueSetAtK q k := by
@@ -1738,16 +1737,15 @@ theorem single_block_sum_bound_refined
     have hd_rj_ge_one : (1 : ℝ) ≤ min ((rj : ℕ) : ℝ) (((q - rj : ℕ) : ℝ)) := by
       -- Translate via cast of `(q : ℝ) - (rj : ℕ) = ((q - rj : ℕ) : ℝ)`.
       have h_qsub_cast' : ((q - rj : ℕ) : ℝ) = (q : ℝ) - (rj : ℝ) := by
-        push_cast; exact_mod_cast Nat.cast_sub hrj_lt.le
+        exact_mod_cast Nat.cast_sub hrj_lt.le
       rw [h_qsub_cast']
       exact hd_rj_real_ge_one_pre
     -- Rewrite `(q : ℝ) - (rj : ℕ)` as `((q - rj : ℕ) : ℝ)` (cast).
     have h_qsub_cast : ((q - rj : ℕ) : ℝ) = (q : ℝ) - (rj : ℝ) := by
-      push_cast
       exact_mod_cast Nat.cast_sub hrj_lt.le
     have hd_rj_eq : min (((a * m) % q : ℕ) : ℝ) ((q : ℝ) - ((a * m) % q : ℕ)) =
         min ((rj : ℕ) : ℝ) (((q - rj : ℕ) : ℝ)) := by
-      show min ((rj : ℕ) : ℝ) ((q : ℝ) - ((rj : ℕ) : ℝ)) = _
+      change min ((rj : ℕ) : ℝ) ((q : ℝ) - ((rj : ℕ) : ℝ)) = _
       rw [← h_qsub_cast]
     -- Step B: `2 * ‖αm‖ ≥ d_{rj}/q > 0`.
     have hd_rj_real_ge_one : (1 : ℝ) ≤
@@ -1771,15 +1769,20 @@ theorem single_block_sum_bound_refined
       have h_two_d_q_pos : (0 : ℝ) <
           2 * (min (((a * m) % q : ℕ) : ℝ) ((q : ℝ) - ((a * m) % q : ℕ)) / (2 * (q : ℝ))) := by
         linarith
-      have h_chain : 2 * (min (((a * m) % q : ℕ) : ℝ) ((q : ℝ) - ((a * m) % q : ℕ)) / (2 * (q : ℝ))) ≤
+      have h_chain :
+          2 * (min (((a * m) % q : ℕ) : ℝ) ((q : ℝ) - ((a * m) % q : ℕ)) /
+            (2 * (q : ℝ))) ≤
           2 * nearestIntDist (α * (m : ℝ)) := by
         linarith [h_pw]
       have h_lift : (1 : ℝ) / (2 * nearestIntDist (α * (m : ℝ))) ≤
-          1 / (2 * (min (((a * m) % q : ℕ) : ℝ) ((q : ℝ) - ((a * m) % q : ℕ)) / (2 * (q : ℝ)))) := by
+          1 / (2 * (min (((a * m) % q : ℕ) : ℝ)
+            ((q : ℝ) - ((a * m) % q : ℕ)) / (2 * (q : ℝ)))) := by
         apply one_div_le_one_div_of_le h_two_d_q_pos h_chain
       refine h_lift.trans ?_
       -- Now show `1 / (2 · d/(2q)) ≤ q / d`.  This simplifies via `field_simp`.
-      rw [show (2 : ℝ) * (min (((a * m) % q : ℕ) : ℝ) ((q : ℝ) - ((a * m) % q : ℕ)) / (2 * (q : ℝ))) =
+      rw [show (2 : ℝ) *
+          (min (((a * m) % q : ℕ) : ℝ) ((q : ℝ) - ((a * m) % q : ℕ)) /
+            (2 * (q : ℝ))) =
           min (((a * m) % q : ℕ) : ℝ) ((q : ℝ) - ((a * m) % q : ℕ)) / (q : ℝ) by
         field_simp]
       rw [one_div_div]
@@ -1788,7 +1791,7 @@ theorem single_block_sum_bound_refined
         min (((a * m) % q : ℕ) : ℝ) ((q : ℝ) - ((a * m) % q : ℕ)) :=
       max_eq_right hd_rj_real_ge_one
     -- Combine: f j ≤ 1/(2·‖αm‖) ≤ q/d_{rj} = q/max(1, d_{rj}) = g j.
-    show min ((N : ℝ) + 1) (1 / (2 * nearestIntDist (α * ((k * q + j : ℕ) : ℝ)))) ≤
+    change min ((N : ℝ) + 1) (1 / (2 * nearestIntDist (α * ((k * q + j : ℕ) : ℝ)))) ≤
         (q : ℝ) / (max (1 : ℝ) (min (((a * (k * q + j)) % q : ℕ) : ℝ)
                                       ((q : ℝ) - ((a * (k * q + j)) % q : ℕ))))
     have hm_def : ((m : ℕ) : ℝ) = ((k * q + j : ℕ) : ℝ) := rfl
@@ -1846,9 +1849,7 @@ theorem single_block_sum_bound_refined
       have h_bij := coprime_residue_bijection a q hq1 hcop
       obtain ⟨⟨j, hj_lt⟩, hj_eq⟩ := h_bij.surjective ⟨j', hj'_lt⟩
       have hj_val_eq : (a * j) % q = j' := by
-        have := congrArg Fin.val hj_eq
-        simp at this
-        exact this
+        exact congrArg Fin.val hj_eq
       refine ⟨j, ?_, ?_⟩
       · simp only [hgoodJ_def, Finset.mem_filter, Finset.mem_range]
         refine ⟨hj_lt, ?_⟩
@@ -1968,7 +1969,6 @@ theorem single_block_sum_bound_refined
           push_cast; rfl
         rw [h1]
         congr 1
-        push_cast
         exact_mod_cast Nat.cast_sub hj_lt.le
       have hmin_real_pos : (0 : ℝ) < min (j : ℝ) ((q : ℝ) - j) := by
         rw [← hmin_cast]; exact hmin_posR
@@ -2090,11 +2090,15 @@ end AnalyticNT
 -- symmetric_harmonic_sum_bound:             propext, Classical.choice, Quot.sound
 -- single_block_sum_bound:                   propext, Classical.choice, Quot.sound
 -- single_block_good_residue_sum_bound:      propext, Classical.choice, Quot.sound
--- single_block_bad_residue_count:           propext, Classical.choice, Quot.sound (direct pigeonhole on `badResidueSetAtK`)
+-- single_block_bad_residue_count:           propext, Classical.choice, Quot.sound (direct
+--   pigeonhole on `badResidueSetAtK`)
 -- davenport_good_residue_pointwise_bound:   propext, Classical.choice, Quot.sound
--- single_block_sum_bound_refined:           propext, Classical.choice, Quot.sound (uses k-dep partition; regime follows from `goodResidueSetAtK`)
--- dirichlet_divided_sum_uniform:            propext, Classical.choice, Quot.sound (non-uniform existential wrapper)
--- typeI_bound_uniform:                      propext, Classical.choice, Quot.sound (non-uniform existential wrapper)
+-- single_block_sum_bound_refined:           propext, Classical.choice, Quot.sound (uses k-dep
+--   partition; regime follows from `goodResidueSetAtK`)
+-- dirichlet_divided_sum_uniform:            propext, Classical.choice, Quot.sound (non-uniform
+--   existential wrapper)
+-- typeI_bound_uniform:                      propext, Classical.choice, Quot.sound (non-uniform
+--   existential wrapper)
 --
 -- Phase 2c-3 NOTE: introduced `badResidueSetAtK q k` /  `goodResidueSetAtK q k`,
 -- a k-dependent residue partition with bad-threshold `d < 2(k+1)`.  This aligns

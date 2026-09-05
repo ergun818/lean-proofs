@@ -462,7 +462,7 @@ theorem residue_class_card_bound
         Set.InjOn (fun k : ℕ => k / q)
           ((((Finset.Ico 1 (N + 1)).filter (fun k => k % q = r)) : Finset ℕ) : Set ℕ) := by
       intro a ha b hb hab
-      simp only [Finset.coe_filter, Finset.mem_Ico, Set.mem_setOf_eq] at ha hb
+      simp only [Finset.coe_filter, Finset.mem_Ico, Set.mem_ofPred_eq] at ha hb
       -- `a = q * (a/q) + a%q = q * (b/q) + b%q = b`.
       have hab' : a / q = b / q := hab
       have ha_eq : q * (a / q) + a % q = a := Nat.div_add_mod a q
@@ -744,7 +744,7 @@ lemma nearestIntDist_natDiv (a k q : ℕ) (hq : 1 ≤ q) :
       rw [Nat.min_eq_right (le_of_lt h_le), hsub_cast, min_eq_right]
       have h_le' : (q - j : ℕ) ≤ j := le_of_lt h_le
       rw [← hsub_cast]; exact_mod_cast h_le'
-  show ((min ((a * k) % q) (q - (a * k) % q) : ℕ) : ℝ) / ((q : ℕ) : ℝ) =
+  change ((min ((a * k) % q) (q - (a * k) % q) : ℕ) : ℝ) / ((q : ℕ) : ℝ) =
       min ((((a * k) % q : ℕ) : ℝ)) ((q : ℝ) - (((a * k) % q : ℕ) : ℝ)) / (q : ℝ)
   rw [hqcast, hmin_cast]
 
@@ -765,7 +765,8 @@ theorem large_sieve_per_class_pointwise_bound
   obtain ⟨θ, hθ_abs, hα_eq⟩ := hα
   have hq_pos : (0 : ℝ) < (q : ℝ) := by exact_mod_cast (Nat.lt_of_lt_of_le Nat.zero_lt_one hq)
   have hQ_nat_pos : 1 ≤ Q := le_trans hq hQ
-  have hQ_pos : (0 : ℝ) < (Q : ℝ) := by exact_mod_cast (Nat.lt_of_lt_of_le Nat.zero_lt_one hQ_nat_pos)
+  have hQ_pos : (0 : ℝ) < (Q : ℝ) := by
+    exact_mod_cast (Nat.lt_of_lt_of_le Nat.zero_lt_one hQ_nat_pos)
   have hqQ_pos : (0 : ℝ) < (q : ℝ) * (Q : ℝ) := mul_pos hq_pos hQ_pos
   rw [Finset.mem_Ico] at hk
   obtain ⟨_hk_ge, hk_lt⟩ := hk
@@ -884,7 +885,8 @@ theorem large_sieve_per_class_harmonic_bound
     have h_ak_mod : (a * k) % q = s := by
       rw [hs_def]; exact mul_mod_of_mod_eq a k r q hk_res
     have h_ak_pos : 1 ≤ (a * k) % q := by rw [h_ak_mod]; exact hs_pos
-    have h_pt := large_sieve_per_class_pointwise_bound a q α N Q k hq hQ hN_Q hα hcop hk_mem h_ak_pos
+    have h_pt :=
+      large_sieve_per_class_pointwise_bound a q α N Q k hq hQ hN_Q hα hcop hk_mem h_ak_pos
     have h_pt_s : nearestIntDist (α * (k : ℝ)) ≥ d / (2 * (q : ℝ)) := by
       have hrw : (min (((a * k) % q : ℕ) : ℝ) ((q : ℝ) - (((a * k) % q : ℕ) : ℝ))) = d := by
         rw [h_ak_mod, hd_def]
@@ -1776,32 +1778,53 @@ end Bilinear
 end AnalyticNT
 
 -- Axiom audit (Phase 2c-5 — Farey 1/q harmonic saving recovered):
--- typeII_cauchy_schwarz:                          propext, Classical.choice, Quot.sound (no proof-hole)
--- typeII_bound:                                   propext, Classical.choice, Quot.sound (no proof-hole) [still trivial-existential — 46th DUBIOUS not closed by Phase 2c-5; resolution requires rewiring downstream Helfgott consumers to typeII_bound_uniform's ℓ² shape]
--- C_typeII_pos:                                   propext, Classical.choice, Quot.sound (C_typeII bumped to 16 for the new envelope rearrangement)
--- nearestIntDist_nonneg:                          propext, Classical.choice, Quot.sound (no proof-hole)
--- dyadicL2Sq_nonneg:                              propext, Classical.choice, Quot.sound (no proof-hole)
--- dyadicL2_sq_eq:                                 propext, Classical.choice, Quot.sound (no proof-hole)
--- schur_bilinear_form:                            propext, Classical.choice, Quot.sound (no proof-hole)
+-- typeII_cauchy_schwarz:                          propext, Classical.choice, Quot.sound (no
+--   proof-hole)
+-- typeII_bound:                                   propext, Classical.choice, Quot.sound (no
+--   proof-hole) [still trivial-existential — 46th DUBIOUS not closed by Phase 2c-5; resolution
+--   requires rewiring downstream Helfgott consumers to typeII_bound_uniform's ℓ² shape]
+-- C_typeII_pos:                                   propext, Classical.choice, Quot.sound (C_typeII
+--   bumped to 16 for the new envelope rearrangement)
+-- nearestIntDist_nonneg:                          propext, Classical.choice, Quot.sound (no
+--   proof-hole)
+-- dyadicL2Sq_nonneg:                              propext, Classical.choice, Quot.sound (no
+--   proof-hole)
+-- dyadicL2_sq_eq:                                 propext, Classical.choice, Quot.sound (no
+--   proof-hole)
+-- schur_bilinear_form:                            propext, Classical.choice, Quot.sound (no
+--   proof-hole)
 -- Phase 2c-1..2c-4 sub-Props (still present, used as building blocks):
 -- large_sieve_residue_partition:                  propext, Classical.choice, Quot.sound
 -- residue_class_card_bound:                       propext, Classical.choice, Quot.sound
--- large_sieve_per_class_kernel_bound:             propext, Classical.choice, Quot.sound (used for r=0 trivial cap branch)
+-- large_sieve_per_class_kernel_bound:             propext, Classical.choice, Quot.sound (used for
+--   r=0 trivial cap branch)
 -- large_sieve_dirichlet_residue_separation:       propext, Classical.choice, Quot.sound
 -- large_sieve_class_zero_bound:                   propext, Classical.choice, Quot.sound
--- large_sieve_cross_class_harmonic_bound:         propext, Classical.choice, Quot.sound (OLD trivial-cap version; superseded by _sharp below for r ≥ 1)
+-- large_sieve_cross_class_harmonic_bound:         propext, Classical.choice, Quot.sound (OLD
+--   trivial-cap version; superseded by _sharp below for r ≥ 1)
 -- Phase 2c-5 NEW sub-Props (Farey 1/q harmonic saving):
--- nearestIntDist_sub_le_of_sawtooth_triangle:     propext, Classical.choice, Quot.sound (sawtooth triangle inequality)
--- nearestIntDist_natDiv:                          propext, Classical.choice, Quot.sound (sawtooth at (a*k)/q = symDist((a*k) mod q, q)/q)
--- large_sieve_per_class_pointwise_bound:          propext, Classical.choice, Quot.sound (‖α·k‖ ≥ d/(2q) per-class, uses 2N ≤ Q)
--- mul_mod_of_mod_eq:                              propext, Classical.choice, Quot.sound (k ≡ r ⇒ (a*k) ≡ (a*r) mod q)
--- large_sieve_per_class_harmonic_bound:           propext, Classical.choice, Quot.sound (per-class harmonic ≤ (N/q+1)·q/d, M-independent — source of q^{-1/2} saving)
--- coprime_residue_image_Ico:                      propext, Classical.choice, Quot.sound (r ↦ (a*r) mod q permutes Ico 1 q)
--- large_sieve_cross_class_harmonic_bound_sharp:   propext, Classical.choice, Quot.sound (cross-class ≤ (N/q+1)·q·4(1+log q) via TypeI.symmetric_harmonic_sum_bound + reindex)
+-- nearestIntDist_sub_le_of_sawtooth_triangle:     propext, Classical.choice, Quot.sound (sawtooth
+--   triangle inequality)
+-- nearestIntDist_natDiv:                          propext, Classical.choice, Quot.sound (sawtooth
+--   at (a*k)/q = symDist((a*k) mod q, q)/q)
+-- large_sieve_per_class_pointwise_bound:          propext, Classical.choice, Quot.sound (‖α·k‖ ≥
+--   d/(2q) per-class, uses 2N ≤ Q)
+-- mul_mod_of_mod_eq:                              propext, Classical.choice, Quot.sound (k ≡ r ⇒
+--   (a*k) ≡ (a*r) mod q)
+-- large_sieve_per_class_harmonic_bound:           propext, Classical.choice, Quot.sound
+--   (per-class harmonic ≤ (N/q+1)·q/d, M-independent — source of q^{-1/2} saving)
+-- coprime_residue_image_Ico:                      propext, Classical.choice, Quot.sound (r ↦
+--   (a*r) mod q permutes Ico 1 q)
+-- large_sieve_cross_class_harmonic_bound_sharp:   propext, Classical.choice, Quot.sound
+--   (cross-class ≤ (N/q+1)·q·4(1+log q) via TypeI.symmetric_harmonic_sum_bound + reindex)
 -- Final assembly (now delivers Helfgott (5.54) envelope):
--- large_sieve_diagonal_split:                     propext, Classical.choice, Quot.sound (Phase 2c-5 DONE — bound (M+1)(N/q+1) + 4(N+q)(1+log(q+1)); requires `2N ≤ Q` Helfgott hypothesis)
--- typeII_envelope_rearrangement:                  propext, Classical.choice, Quot.sound (Phase 2c-5 updated — RHS C·(1+log(q+1))·(MN/q+M+N+q) with C=16)
--- typeII_bound_uniform:                           propext, Classical.choice, Quot.sound (Phase 2c-5 DONE — Helfgott (5.54) `‖T‖ ≤ C·√(1+log(q+1))·√(MN/q+M+N+q)·‖a‖₂·‖b‖₂` with 2N ≤ Q; resolves 52nd DUBIOUS envelope-shape weakening)
+-- large_sieve_diagonal_split:                     propext, Classical.choice, Quot.sound (Phase
+--   2c-5 DONE — bound (M+1)(N/q+1) + 4(N+q)(1+log(q+1)); requires `2N ≤ Q` Helfgott hypothesis)
+-- typeII_envelope_rearrangement:                  propext, Classical.choice, Quot.sound (Phase
+--   2c-5 updated — RHS C·(1+log(q+1))·(MN/q+M+N+q) with C=16)
+-- typeII_bound_uniform:                           propext, Classical.choice, Quot.sound (Phase
+--   2c-5 DONE — Helfgott (5.54) `‖T‖ ≤ C·√(1+log(q+1))·√(MN/q+M+N+q)·‖a‖₂·‖b‖₂` with 2N ≤ Q;
+--   resolves 52nd DUBIOUS envelope-shape weakening)
 
 #print axioms AnalyticNT.Bilinear.TypeII.typeII_bound
 #print axioms AnalyticNT.Bilinear.TypeII.C_typeII_pos

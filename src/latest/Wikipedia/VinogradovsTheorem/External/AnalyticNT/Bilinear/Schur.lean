@@ -75,7 +75,7 @@ The bound is proved by exhibiting sufficiently large `R = C` that simultaneously
 dominate the row and column sums and satisfy the bilinear inequality.  Because
 the inequality is one-sided, we have full freedom in choosing `R, C`. -/
 theorem schur_kernel_bound
-    {α : Type*} [DecidableEq α] (s t : Finset α) (K : α → α → ℂ) (f : α → ℂ) :
+    {α : Type*} (s t : Finset α) (K : α → α → ℂ) (f : α → ℂ) :
     ∃ R C : ℝ, 0 ≤ R ∧ 0 ≤ C ∧
       (∀ i ∈ s, ∑ j ∈ t, ‖K i j‖ ≤ R) ∧
       (∀ j ∈ t, ∑ i ∈ s, ‖K i j‖ ≤ C) ∧
@@ -394,7 +394,7 @@ lemma norm_innerKernel_dist (α : ℝ) (M : ℕ) (k : ℤ)
   have hden_ne : ‖z - 1‖ ≠ 0 := ne_of_gt hden_pos
   -- Convert ‖α * β‖ since hND_arg is `α * (k:ℝ)`. We use `nearestIntDist (α*k)`.
   -- Final calculation.
-  show ‖(z ^ (2 * M + 1) - z ^ (M + 1)) / (z - 1)‖ ≤
+  change ‖(z ^ (2 * M + 1) - z ^ (M + 1)) / (z - 1)‖ ≤
       1 / (2 * nearestIntDist (α * (k : ℝ)))
   rw [hND_arg]
   rw [norm_div]
@@ -508,7 +508,7 @@ theorem normalized_typeII_schur
         innerKernel α M ((n₁ : ℤ) - (n₂ : ℤ))‖ =
         ‖b n₁‖ * ‖b n₂‖ * ‖innerKernel α M ((n₁ : ℤ) - (n₂ : ℤ))‖ := by
       rw [norm_mul, norm_mul, RCLike.norm_conj]
-    show ‖b n₁ * (starRingEnd ℂ) (b n₂) *
+    change ‖b n₁ * (starRingEnd ℂ) (b n₂) *
         ∑ m ∈ Finset.Ioc M (2 * M),
           addCharInt α (((n₁ : ℤ) - (n₂ : ℤ)) * (m : ℤ))‖ ≤ _
     change ‖b n₁ * (starRingEnd ℂ) (b n₂) *
@@ -538,7 +538,7 @@ theorem normalized_typeII_schur
     ‖innerKernel α M ((n₁ : ℤ) - (n₂ : ℤ))‖ with hD
   have hDsymm : ∀ n₁ n₂ : ℕ, D n₁ n₂ = D n₂ n₁ := by
     intro n₁ n₂
-    show ‖innerKernel α M ((n₁ : ℤ) - (n₂ : ℤ))‖ =
+    change ‖innerKernel α M ((n₁ : ℤ) - (n₂ : ℤ))‖ =
         ‖innerKernel α M ((n₂ : ℤ) - (n₁ : ℤ))‖
     have hneg : ((n₂ : ℤ) - (n₁ : ℤ)) = -((n₁ : ℤ) - (n₂ : ℤ)) := by ring
     rw [hneg, norm_innerKernel_neg]
@@ -659,7 +659,7 @@ theorem normalized_typeII_schur
         simpa using this
       have hD_nn : 0 ≤ D n₁ n₁ := norm_nonneg _
       have hD_bd : D n₁ n₁ ≤ ((M : ℝ) + 1) := by
-        show ‖innerKernel α M ((n₁ : ℤ) - (n₁ : ℤ))‖ ≤ _
+        change ‖innerKernel α M ((n₁ : ℤ) - (n₁ : ℤ))‖ ≤ _
         exact norm_innerKernel_triv α M _
       calc (sEQ.card : ℕ) • D n₁ n₁ = (sEQ.card : ℝ) * D n₁ n₁ := by
             rw [nsmul_eq_mul]
@@ -693,7 +693,7 @@ theorem normalized_typeII_schur
         exact hLTbound n₂ hn₂_mem
       have hInj : Set.InjOn (fun n₂ => n₁ - n₂) sLT := by
         intro a ha b hb hab
-        simp only [hsLT, Finset.coe_filter, Set.mem_setOf_eq] at ha hb
+        simp only [hsLT, Finset.coe_filter, Set.mem_ofPred_eq] at ha hb
         simp only [] at hab
         omega
       -- Reindex by `j := n₁ - n₂`.
@@ -719,10 +719,9 @@ theorem normalized_typeII_schur
           rcases Finset.mem_image.mp hj_mem with ⟨n₂, _, hj_eq⟩
           omega
         have hDeq : D n₁ (n₁ - j) = ‖innerKernel α M (j : ℤ)‖ := by
-          show ‖innerKernel α M ((n₁ : ℤ) - ((n₁ - j : ℕ) : ℤ))‖ = _
+          change ‖innerKernel α M ((n₁ : ℤ) - ((n₁ - j : ℕ) : ℤ))‖ = _
           have h : ((n₁ : ℤ) - ((n₁ - j : ℕ) : ℤ)) = (j : ℤ) := by
             have : ((n₁ - j : ℕ) : ℤ) = (n₁ : ℤ) - (j : ℤ) := by
-              push_cast [Nat.sub_eq] at *
               omega
             rw [this]; ring
           rw [h]
@@ -781,7 +780,7 @@ theorem normalized_typeII_schur
         exact hGTbound n₂ hn₂_mem
       have hInj : Set.InjOn (fun n₂ => n₂ - n₁) sGT := by
         intro a ha b hb hab
-        simp only [hsGT, Finset.coe_filter, Set.mem_setOf_eq] at ha hb
+        simp only [hsGT, Finset.coe_filter, Set.mem_ofPred_eq] at ha hb
         simp only [] at hab
         omega
       have hReindex :
@@ -800,7 +799,7 @@ theorem normalized_typeII_schur
         have hj_ico : j ∈ Finset.Ico 1 (N + 1) := hImg_subset hj_mem
         -- Rewrite `D n₁ (n₁ + j) = ‖F(-(j))‖ = ‖F(j)‖` via `_neg`.
         have hDeq : D n₁ (n₁ + j) = ‖innerKernel α M (j : ℤ)‖ := by
-          show ‖innerKernel α M ((n₁ : ℤ) - ((n₁ + j : ℕ) : ℤ))‖ = _
+          change ‖innerKernel α M ((n₁ : ℤ) - ((n₁ + j : ℕ) : ℤ))‖ = _
           have h : ((n₁ : ℤ) - ((n₁ + j : ℕ) : ℤ)) = -(j : ℤ) := by
             push_cast; ring
           rw [h, norm_innerKernel_neg]

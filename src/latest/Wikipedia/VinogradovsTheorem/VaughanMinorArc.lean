@@ -1336,7 +1336,7 @@ theorem noncong_row_sum_le (K D m₀ : ℕ) (α : ℝ) (hm₀K : m₀ ≤ K)
         ∑ k ∈ (s.filter (fun m => m < m₀)).image (fun m => m₀ - m), g k :=
       (Finset.sum_image (by
         intro x hx y hy hxy
-        simp only [Finset.coe_filter, Set.mem_setOf_eq] at hx hy
+        simp only [Finset.coe_filter, Set.mem_ofPred_eq] at hx hy
         omega)).symm
     rw [himg]
     refine Finset.sum_le_sum_of_subset_of_nonneg ?_ fun k _ _ => hg0 k
@@ -1372,7 +1372,7 @@ theorem noncong_row_sum_le (K D m₀ : ℕ) (α : ℝ) (hm₀K : m₀ ≤ K)
         ∑ k ∈ (s.filter (fun m => ¬ m < m₀)).image (fun m => m - m₀), g k :=
       (Finset.sum_image (by
         intro x hx y hy hxy
-        simp only [Finset.coe_filter, Set.mem_setOf_eq] at hx hy
+        simp only [Finset.coe_filter, Set.mem_ofPred_eq] at hx hy
         (try dsimp only at hxy)
         omega)).symm
     rw [himg]
@@ -3409,7 +3409,7 @@ theorem vaughanTypeIPieceQSensitiveEnvelopeBound_proved :
             (fun p => p.1 * p.2 = r) with hSdef
           have hinj : Set.InjOn (fun p : ℕ × ℕ => p.2) ↑S := by
             intro p₁ hp₁ p₂ hp₂ hcoord
-            simp only [hSdef, Finset.coe_filter, Set.mem_setOf_eq,
+            simp only [hSdef, Finset.coe_filter, Set.mem_ofPred_eq,
               Finset.mem_product, Finset.mem_Icc] at hp₁ hp₂
             simp only at hcoord
             have he1 : 1 ≤ p₁.2 := hp₁.1.2.1
@@ -3964,7 +3964,7 @@ theorem vaughanTypeIPiece_envelope_at (n a q Q : ℕ) (α : ℝ)
           (fun p => p.1 * p.2 = r) with hSdef
         have hinj : Set.InjOn (fun p : ℕ × ℕ => p.2) ↑S := by
           intro p₁ hp₁ p₂ hp₂ hcoord
-          simp only [hSdef, Finset.coe_filter, Set.mem_setOf_eq,
+          simp only [hSdef, Finset.coe_filter, Set.mem_ofPred_eq,
             Finset.mem_product, Finset.mem_Icc] at hp₁ hp₂
           simp only at hcoord
           have he1 : 1 ≤ p₁.2 := hp₁.1.2.1

@@ -247,7 +247,7 @@ private lemma farey_distinct_centers_separation {a q b r : ℕ}
       congr 1
       rw [div_sub_div (a := (a : ℝ)) (b := (q : ℝ))
         (c := (b : ℝ)) (d := (r : ℝ))]
-      ring
+      · ring
       · exact_mod_cast Nat.ne_of_gt hq
       · exact_mod_cast Nat.ne_of_gt hr
 
@@ -397,7 +397,7 @@ theorem torusLocalArc_measurableSet (D : ℕ) (aq : ℕ × ℕ) :
     MeasurableSet (torusLocalArc D aq) := by
   by_cases h : aq = (0, 1)
   · subst aq
-    simp only [torusLocalArc, if_pos rfl]
+    simp only [torusLocalArc]
     exact (Vinogradov.localMajorArcExplicit_measurableSet D 0 1).union
       (rightEndpointArc_measurableSet D)
   · simp only [torusLocalArc, if_neg h]
@@ -424,7 +424,7 @@ theorem torusLocalArc_subset_Icc (D : ℕ) (aq : ℕ × ℕ) :
     torusLocalArc D aq ⊆ Set.Icc (0 : ℝ) 1 := by
   by_cases h : aq = (0, 1)
   · subst aq
-    simp only [torusLocalArc, if_pos rfl]
+    simp only [torusLocalArc]
     exact Set.union_subset
       (Vinogradov.localMajorArcExplicit_subset_Icc D 0 1)
       (rightEndpointArc_subset_Icc D)
@@ -455,7 +455,7 @@ theorem mem_torusMajorArcs_of_inWrappedMajor
         have hq1 : q = 1 := congrArg Prod.snd he
         subst a
         subst q
-        simp only [torusLocalArc, if_pos rfl, Set.mem_union]
+        simp only [torusLocalArc]
         exact Or.inl ⟨hα, by simpa using hdist⟩
       · simp only [torusLocalArc, if_neg he]
         exact ⟨hα, hdist⟩
@@ -470,7 +470,7 @@ theorem mem_torusMajorArcs_of_inWrappedMajor
     simp only [Set.mem_iUnion]
     refine ⟨(0, 1),
       (Set.Finite.mem_toFinset (majorArcCenters_finite P)).2 hc, ?_⟩
-    simp only [torusLocalArc, if_pos rfl, Set.mem_union]
+    simp only [torusLocalArc]
     right
     refine ⟨?_, hα.2⟩
     have := (abs_lt.mp hdist).1
@@ -1078,8 +1078,7 @@ theorem sum_negAddChar_reduced_eq_ramanujanSum (q n : ℕ) :
           exact ⟨Finset.mem_range.mpr (Nat.sub_lt (by omega) hbpos),
             (Nat.coprime_self_sub_left hblt.le).mpr hb'.2⟩
         simpa [s] using hmem
-      · change q - (q - b) = b
-        omega
+      · omega
     · intro a ha
       have haf : a ∈ (Finset.range q).filter (fun a => Nat.Coprime a q) := by
         simpa [s] using ha
@@ -1848,8 +1847,9 @@ theorem eventually_majorArc_progression_estimate :
   intro q hq hqL r hr hcop m hm
   by_cases hm2 : 2 ≤ m
   · have hLpow : logScale N ^ 20 ≤ logScale N ^ 1000 :=
-      Nat.pow_le_pow_right (by simpa [logScale] using Erdos387.binaryLogScale_pos N)
-        (by omega)
+      pow_le_pow_right₀ (a := logScale N) (m := 20) (n := 1000)
+        (Erdos387.binaryLogScale_pos N)
+        (by decide)
     have h := hdisc q r m (by omega) (hqL.trans hLpow) hcop hm2 (by omega)
     unfold BoundedGaps.Maynard.weightedProgressionDiscrepancy at h
     exact h.trans (le_add_of_nonneg_right zero_le_one)
@@ -3208,7 +3208,7 @@ theorem majorApprox_second_envelope (n : ℕ) :
 
 theorem norm_local_sum_sub_model_le_majorApproxError
     {n a q : ℕ} {β : ℝ}
-    (hn : 1 ≤ n) (hq : 0 < q) (hqP : q ≤ majorDenominatorCutoff n)
+    (_hn : 1 ≤ n) (hq : 0 < q) (hqP : q ≤ majorDenominatorCutoff n)
     (haq : a.Coprime q)
     (hβn : |β| * (n : ℝ) ≤ 2 * (logScale n : ℝ) ^ 100)
     (hAP : ∀ r : ℕ, r < q → r.Coprime q → ∀ m : ℕ, m ≤ n →
@@ -3536,7 +3536,7 @@ theorem norm_integrand_sub_localMain_on_torusLocalArc
       majorIntegrandError n := by
   by_cases hend : aq = (0, 1)
   · subst aq
-    simp only [torusLocalArc, if_pos rfl, Set.mem_union] at hα
+    simp only [torusLocalArc] at hα
     rcases hα with hleft | hright
     · exact norm_integrand_sub_localMain_leftEndpoint hn hnD hAP hleft
     · exact norm_integrand_sub_localMain_rightEndpoint hn hnD hAP hright
@@ -3710,14 +3710,16 @@ theorem eventually_major_integral_error_envelope_le_mul
     simpa only [L, Nat.cast_pow] using hn738
   have hn263' : L ^ 263 ≤ (n : ℝ) / 2 := by
     have hcast : (((logScale n ^ 263 : ℕ) : ℝ)) ≤
-        (((n / 2 : ℕ) : ℝ)) := by exact_mod_cast hn263
+        (((n / 2 : ℕ) : ℝ)) := by
+      simpa only [logScale] using (Nat.cast_le (α := ℝ)).mpr hn263
     calc
       L ^ 263 = ((logScale n ^ 263 : ℕ) : ℝ) := by rw [Nat.cast_pow]
       _ ≤ ((n / 2 : ℕ) : ℝ) := hcast
       _ ≤ (n : ℝ) / 2 := Nat.cast_div_le
   have hn326' : L ^ 326 ≤ (n : ℝ) / 2 := by
     have hcast : (((logScale n ^ 326 : ℕ) : ℝ)) ≤
-        (((n / 2 : ℕ) : ℝ)) := by exact_mod_cast hn326
+        (((n / 2 : ℕ) : ℝ)) := by
+      simpa only [logScale] using (Nat.cast_le (α := ℝ)).mpr hn326
     calc
       L ^ 326 = ((logScale n ^ 326 : ℕ) : ℝ) := by rw [Nat.cast_pow]
       _ ≤ ((n / 2 : ℕ) : ℝ) := hcast

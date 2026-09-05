@@ -63,7 +63,7 @@ lemma psiAP_eq_range_filter (N q r : ℕ) :
   exact Finset.sum_subset hst (by
     intro n hnt hns
     have hn0 : n = 0 := by
-      simp only [s, t, Finset.mem_filter, Finset.mem_Icc,
+      simp only [Finset.mem_filter, Finset.mem_Icc,
         Finset.mem_range] at hnt hns
       omega
     subst n
