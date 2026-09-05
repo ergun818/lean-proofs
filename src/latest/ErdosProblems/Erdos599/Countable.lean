@@ -521,7 +521,7 @@ theorem mem_roof_sdiff_singleton_of_mem_interiorRoof {V : Type}
 still roofs every other point already roofed by the separator. -/
 theorem mem_roof_sdiff_singleton_of_ne_of_mem_roof
     {V : Type} {G : SimpleGraph V} {B S : Set V} {x z : V}
-    (hx : x ∈ roof G B (S \ {x})) (hzx : z ≠ x)
+    (hx : x ∈ roof G B (S \ {x})) (_hzx : z ≠ x)
     (hz : z ∈ roof G B S) :
     z ∈ roof G B (S \ {x}) := by
   classical
@@ -1921,7 +1921,7 @@ theorem active_succ_of_active_of_terminal_ne {V : Type}
     (hterminal : p.terminal? ≠ some (p.vertex n)) :
     longPathActive p.terminalIndex (n + 1) := by
   cases h : p.terminalIndex with
-  | none => simp [longPathActive, h]
+  | none => simp [longPathActive]
   | some k =>
       have hnk : n ≤ k := by simpa [longPathActive, h] using hn
       have hnlt : n < k := by
@@ -2169,7 +2169,7 @@ theorem eq_of_mutual_forward {V : Type} {G : SimpleGraph V}
               have hactive : longPathActive q.terminalIndex l := by
                 simp [hqidx, longPathActive]
               simpa [hpidx, longPathActive] using (hqp l hactive).1
-            simp [hpidx, hqidx, le_antisymm hk hl]
+            simp [le_antisymm hk hl]
   have hvertex : p.vertex = q.vertex := by
     funext n
     by_cases hn : longPathActive p.terminalIndex n
@@ -2647,7 +2647,6 @@ theorem forward_append {V : Type} {G : SimpleGraph V}
   · simp [append, initial, appendVertex, hk]
   · have hk0 : k = 0 := by omega
     subst k
-    simp [append, initial, appendVertex] at hjoin ⊢
     exact hjoin
 
 @[simp] theorem terminal?_append {V : Type} {G : SimpleGraph V}
@@ -2902,9 +2901,9 @@ theorem Forward.terminal_of_mem_of_terminal {V : Type}
         have hnextP : longPathActive p.terminalIndex (k + 1) := by
           simpa [hp, longPathActive] using (show k + 1 ≤ l by omega)
         have hnextQ := (hpq (k + 1) hnextP).1
-        simpa [hkq, longPathActive] using hnextQ
+        simp [hkq, longPathActive] at hnextQ
       have hl : l = k := le_antisymm hlk hkl
-      simp [terminal?, hp, hl, hnt, hkt]
+      simp [terminal?, hp, hl, hnt]
 
 /-- A vertex that is eventually always the terminal of a forward chain is
 the terminal of its direct limit (Observation 2.9 at path level). -/
@@ -2948,7 +2947,7 @@ theorem terminal?_limit_of_eventually {ι V : Type} [LinearOrder ι]
           intro hle
           exact hnextNot (by simpa [ht, longPathActive] using hle)
         have htk : t ≤ k := by omega
-        simpa [le_antisymm htk hkt]
+        simp [le_antisymm htk hkt]
   apply terminal?_eq_some_iff.mpr
   refine ⟨k, hterminalIndex, ?_⟩
   exact (limitVertex_eq_of_active P hchain hkActive).trans hkv
@@ -4056,7 +4055,7 @@ source-clean orientation convention. -/
 theorem IsSourceClean.erasePath_toOutsideGraph {V : Type}
     {G : SimpleGraph V} {A : Set V} {W : Warp G}
     (hW : W.IsSourceClean A) (i : W.ι) {t : V}
-    (hit : (W.path i).terminal? = some t) :
+    (_hit : (W.path i).terminal? = some t) :
     let I : Set W.ι := {j | j ≠ i}
     let R := W.restrictIndices I
     ∀ houtside : Disjoint R.vertexSet {t},
@@ -5524,7 +5523,6 @@ theorem terminalSet_subset_totalize {V : Type} {G : SimpleGraph V}
     · rcases hvMissing with ⟨hvA, hvNotInitial⟩
       let a : A := ⟨v, hvA⟩
       refine ⟨a, ?_⟩
-      change v ∈ (W.sourcePath A a).vertexSet
       rw [W.sourcePath_of_not_mem A a hvNotInitial,
         LongPath.vertexSet_ofWalk]
       simp [a]
@@ -5555,7 +5553,6 @@ theorem terminalSet_subset_totalize {V : Type} {G : SimpleGraph V}
     · rcases hvMissing with ⟨hvA, hvNotInitial⟩
       let a : A := ⟨v, hvA⟩
       refine ⟨a, ?_⟩
-      change (W.sourcePath A a).terminal? = some v
       rw [W.sourcePath_of_not_mem A a hvNotInitial,
         LongPath.terminal?_ofWalk]
 
@@ -5605,7 +5602,6 @@ noncomputable def IsWave.toTotalWave {V : Type} {G : SimpleGraph V}
     refine ⟨?_, ?_⟩
     · change longPathActive (T.path a).normalize.terminalIndex 0
       simpa using hactive
-    change (path a).1.vertex 0 = ((trivial G A).path a).vertex 0
     calc
       (path a).1.vertex 0 = (T.path a).vertex 0 := by
         exact LongPath.vertex_normalize_of_active (T.path a) hactive
@@ -5703,7 +5699,7 @@ theorem isSourceClean {V : Type} {G : SimpleGraph V} {A B : Set V}
   let b : A := ⟨v, hvA⟩
   have hvb : v ∈ (X.path b).1.vertexSet := by
     have hinitial : (X.path b).1.initial = v := by
-      simpa [b] using X.path_initial b
+      simp [b]
     exact hinitial ▸ (X.path b).1.initial_mem_vertexSet
   have hab : a = b := by
     by_contra hab
@@ -5959,7 +5955,7 @@ noncomputable def toOutsideVertex {V : Type} {G : SimpleGraph V}
       change A at a
       change (path a).1.initial ∈ A
       have hstart : (path a).1.initial = (a : V) := by
-        simpa [path] using X.path_initial a
+        simp [path]
       rw [hstart]
       exact a.property
     · intro u hu v hv q hq
@@ -6016,7 +6012,7 @@ noncomputable def mapLEOfSeparates {V : Type} {H G : SimpleGraph V}
       change A at a
       change (path a).1.initial ∈ A
       have hstart : (path a).1.initial = (a : V) := by
-        simpa [path] using Y.path_initial a
+        simp [path]
       rw [hstart]
       exact a.property
     · intro u hu v hv q hq
@@ -6414,7 +6410,7 @@ theorem IsAlternatingWalk.append_reverse_segment {V : Type}
           (Y.path a).1.vertex (n + i + 1)) := by
         rw [(Y.path a).1.getVert_segmentWalk hm hnm (by omega),
           (Y.path a).1.getVert_segmentWalk hm hnm (by omega)]
-        congr 2 <;> omega
+        congr 2
   apply hR.append_of_compatible q
   · intro v hv hvX
     rw [show q.support =
@@ -6450,7 +6446,7 @@ theorem IsAlternatingWalk.append_reverse_segment {V : Type}
           rw [Walk.getElem_edges]
           congr 2
           omega
-    simpa [hdedge]
+    simp [hdedge]
 
 /-- A prefix of an alternating walk is alternating when it is trivial or
 its last edge belongs to `Y`.  All conditions are inherited; the hypothesis
@@ -6542,7 +6538,7 @@ theorem IsAlternatingWalk.edges_take_disjoint_reverse_segment_of_first
           (Y.path a).1.vertex (n + j + 1)) := by
         rw [(Y.path a).1.getVert_segmentWalk hk hnk (by omega),
           (Y.path a).1.getVert_segmentWalk hk hnk (by omega)]
-        congr 2 <;> omega
+        congr 2
   have hdSEdgeY : dS.edge ∈ Y.toWarp.edgeSet :=
     (Y.toWarp.mem_edgeSet_iff).mpr ⟨dS.symm, hdSSymmY, by simp⟩
   have hdREdgeY : dR.edge ∈ Y.toWarp.edgeSet := by
@@ -6558,7 +6554,7 @@ theorem IsAlternatingWalk.edges_take_disjoint_reverse_segment_of_first
         · exact (hexternal.2 (by simpa [heq] using hdY)).elim
   have hsymmEq : dR.symm = dS.symm := by
     have hedge : dR.symm.edge = dS.symm.edge := by
-      simpa [hdREdge, hdSEdge]
+      simp [hdREdge, hdSEdge]
     rcases (dart_edge_eq_iff dR.symm dS.symm).mp hedge with heq | heq
     · exact heq
     · exact (Y.toWarp.symm_not_mem_dartSet hdRSymmY
@@ -6657,7 +6653,7 @@ def toggleDartSet {V : Type} {G : SimpleGraph V} {A B : Set V}
 
 theorem IsAlternatingWalk.mem_toggleDartSet_of_external {V : Type}
     {G : SimpleGraph V} {A B : Set V} {X Y : TotalWave G A B}
-    {t z : V} {R : G.Walk t z} (hR : X.IsAlternatingWalk Y R)
+    {t z : V} {R : G.Walk t z} (_hR : X.IsAlternatingWalk Y R)
     {d : G.Dart} (hd : d ∈ R.darts)
     (hexternal : d.symm ∉ Y.toWarp.dartSet) :
     d ∈ Y.toggleDartSet R := by
@@ -6667,7 +6663,7 @@ theorem IsAlternatingWalk.reverse_not_mem_toggleDartSet {V : Type}
     {G : SimpleGraph V} {A B : Set V} {X Y : TotalWave G A B}
     {t z : V} {R : G.Walk t z} (hR : X.IsAlternatingWalk Y R)
     {d : G.Dart} (hd : d ∈ R.darts)
-    (hreverse : d.symm ∈ Y.toWarp.dartSet) :
+    (_hreverse : d.symm ∈ Y.toWarp.dartSet) :
     d.symm ∉ Y.toggleDartSet R := by
   rintro (hold | hnew)
   · exact hold.2 (by simpa using hd)
@@ -7592,7 +7588,7 @@ theorem exists_incoming_of_mem_vertexSet_of_not_mem {V : Type}
   change D.chainVertex a n = x at hnx
   cases n with
   | zero =>
-      exact (hxA (by simpa [← hnx] using a.property)).elim
+      exact (hxA (by simp [← hnx])).elim
   | succ k =>
       rcases D.exists_step_dart a hn with ⟨d, hd, hfst, hsnd⟩
       exact ⟨d, hd, hsnd.trans hnx⟩
@@ -7705,7 +7701,7 @@ theorem sink_mem_toWarp_of_finite_perturbation {V : Type}
     calc
       (e (N₀ + (k + 1))).snd =
           D.backChain x (N₀ + (k + 1)) := (heSpec _).2.2
-      _ = D.backChain x ((N₀ + k) + 1) := by congr 1 <;> omega
+      _ = D.backChain x ((N₀ + k) + 1) := by congr 1
       _ = (e (N₀ + k)).fst := (heSpec _).2.1.symm
   have hrankBound : ∀ k,
       rank (e (N₀ + k)) + k ≤ rank (e N₀) := by
@@ -7931,7 +7927,7 @@ theorem reachable_toggle_sink_mem_terminal_or_eq_end {V : Type}
       · have hxInitial : x ∈ Y.toWarp.initialSet := by
           simpa [Y.initialSet_toWarp] using hxA
         apply (Y.toWarp.no_dart_to_initial hxInitial hqY)
-        simpa [hqFst]
+        simp [hqFst]
       · have hxReach' : x ∈ (toggleRootedSystem hR ht).toWarp.vertexSet :=
           hxReach
         rcases RootedDartSystem.exists_incoming_of_mem_vertexSet_of_not_mem
@@ -8012,9 +8008,7 @@ theorem firstDart_external_of_common_terminal {V : Type}
       path_eq_of_le_of_terminal_eq hXY a htX htY
     change ∃ i : A, d.symm ∈ (Y.path i).1.dartSet at hreverse
     have hdFst : d.fst = t := by
-      have hfst := congrArg (fun q : G.Dart => q.fst)
-        (R.darts_getElem_eq_getVert 0 (by simpa using hpos))
-      simpa [d, R.getVert_zero] using hfst
+      simp [d]
     rcases hreverse with ⟨i, hi⟩
     have htA : t ∈ (Y.path a).1.vertexSet :=
       LongPath.terminal_mem_vertexSet htY
@@ -8060,9 +8054,7 @@ theorem start_hasOutgoing_of_ne_end {V : Type} {G : SimpleGraph V}
   have hdExternal := firstDart_external_of_common_terminal
     hXY a htX htY hR hpos
   have hdFst : d.fst = t := by
-    have hfst := congrArg (fun q : G.Dart => q.fst)
-      (R.darts_getElem_eq_getVert 0 (by simpa using hpos))
-    simpa [d, R.getVert_zero] using hfst
+    simp [d]
   exact ⟨d, Or.inr ⟨hdMem, by simpa [d] using hdExternal⟩, hdFst⟩
 
 theorem old_terminal_ne_start_is_toggle_sink {V : Type}
@@ -8168,11 +8160,8 @@ theorem end_is_toggle_sink {V : Type} {G : SimpleGraph V}
       (show R.length - 1 < R.length by omega))
     have hlMem : l ∈ R.darts := List.getElem_mem ..
     have hlSnd : l.snd = z := by
-      have hsnd := congrArg (fun q : G.Dart => q.snd)
-        (R.darts_getElem_eq_getVert (R.length - 1)
-          (by simpa using (show R.length - 1 < R.length by omega)))
       have hidx : R.length - 1 + 1 = R.length := by omega
-      simpa [l, hidx, R.getVert_length] using hsnd
+      simp [l, hidx]
     rcases hdD with hdOld | hdNew
     · have hzY : z ∈ Y.toWarp.vertexSet := by
         have := Y.toWarp.fst_mem_vertexSet_of_mem_dartSet hdOld.1
@@ -8240,7 +8229,7 @@ theorem end_is_toggle_sink {V : Type} {G : SimpleGraph V}
         have hsymmEq :
             (R.darts[i - 1]'(by simpa using hprevLt)).symm = l.symm :=
           Y.toWarp.dart_eq_of_fst_eq hprevious hlY (by
-            simpa [hprevSnd, hlSnd])
+            simp [hprevSnd, hlSnd])
         have hdartEq : R.darts[i - 1]'(by simpa using hprevLt) = l := by
           have := congrArg Dart.symm hsymmEq
           simpa using this
@@ -8266,7 +8255,7 @@ theorem exists_toggle_incoming_of_old_outgoing_of_not_source {V : Type}
     ⟨e, heY, heSnd⟩
   by_cases heSurvives : e.symm ∉ R.darts
   · exact ⟨e, Or.inl ⟨heY, heSurvives⟩, heSnd⟩
-  · push_neg at heSurvives
+  · push Not at heSurvives
     rcases (Erdos599.Countable.Walk.mem_darts_iff_exists_getVert R).mp heSurvives with
       ⟨i, hi, hie⟩
     have heAt : R.darts[i]'(by simpa using hi) = e.symm := by
@@ -8303,7 +8292,7 @@ theorem exists_toggle_incoming_of_old_outgoing_of_not_source {V : Type}
       have : p.snd = R.getVert i := by simpa [p, hidx] using hsnd
       exact this.trans hdeparture
     rcases hR.2.1 p hpMem with hpReverse | hpExternal
-    · have hpFst : p.symm.fst = x := by simpa [hpSnd]
+    · have hpFst : p.symm.fst = x := by simp [hpSnd]
       have heq : p.symm = d :=
         Y.toWarp.dart_eq_of_fst_eq hpReverse hdY (hpFst.trans hdFst.symm)
       apply (hdSurvives ?_).elim
@@ -8347,7 +8336,7 @@ theorem exists_toggle_incoming_of_external_outgoing_of_not_source {V : Type}
         hxY hxInitial with ⟨e, heY, heSnd⟩
     by_cases heSurvives : e.symm ∉ R.darts
     · exact ⟨e, Or.inl ⟨heY, heSurvives⟩, heSnd⟩
-    · push_neg at heSurvives
+    · push Not at heSurvives
       rcases (Erdos599.Countable.Walk.mem_darts_iff_exists_getVert R).mp heSurvives with
         ⟨j, hj, hje⟩
       have heAt : R.darts[j]'(by simpa using hj) = e.symm := by
@@ -8393,7 +8382,7 @@ theorem exists_toggle_incoming_of_external_outgoing_of_not_source {V : Type}
       have : p.snd = R.getVert i := by simpa [p, hidx] using hsnd
       exact this.trans hdeparture
     rcases hR.2.1 p hpMem with hpReverse | hpExternal
-    · have hpOutFst : p.symm.fst = x := by simpa [hpSnd]
+    · have hpOutFst : p.symm.fst = x := by simp [hpSnd]
       have hxY : x ∈ Y.toWarp.vertexSet := by
         have := Y.toWarp.fst_mem_vertexSet_of_mem_dartSet hpReverse
         rw [hpOutFst] at this
@@ -8404,7 +8393,7 @@ theorem exists_toggle_incoming_of_external_outgoing_of_not_source {V : Type}
           hxY hxInitial with ⟨e, heY, heSnd⟩
       by_cases heSurvives : e.symm ∉ R.darts
       · exact ⟨e, Or.inl ⟨heY, heSurvives⟩, heSnd⟩
-      · push_neg at heSurvives
+      · push Not at heSurvives
         rcases (Erdos599.Countable.Walk.mem_darts_iff_exists_getVert R).mp heSurvives with
           ⟨j, hj, hje⟩
         have heAt : R.darts[j]'(by simpa using hj) = e.symm := by
@@ -8440,7 +8429,7 @@ theorem exists_toggle_incoming_of_external_outgoing_of_not_source {V : Type}
           have hjeFst : e.symm.fst = R.getVert j := congrArg Prod.fst hje
           exact hrj.trans (hjeFst.symm.trans (by simpa using heSnd))
         rcases hR.2.1 r hrMem with hrReverse | hrExternal
-        · have hrOutFst : r.symm.fst = x := by simpa [hrSnd]
+        · have hrOutFst : r.symm.fst = x := by simp [hrSnd]
           have hsymmEq : r.symm = p.symm :=
             Y.toWarp.dart_eq_of_fst_eq hrReverse hpReverse
               (hrOutFst.trans hpOutFst.symm)
@@ -8588,11 +8577,8 @@ theorem end_mem_switchedWarp {V : Type}
       let l : G.Dart := R.darts[R.length - 1]'(by simpa using hlastLt)
       have hlMem : l ∈ R.darts := List.getElem_mem ..
       have hlSnd : l.snd = z := by
-        have hsnd := congrArg (fun q : G.Dart => q.snd)
-          (R.darts_getElem_eq_getVert (R.length - 1)
-            (by simpa using hlastLt))
         have hidx : R.length - 1 + 1 = R.length := by omega
-        simpa [l, hidx, R.getVert_length] using hsnd
+        simp [l, hidx]
       rcases hR.2.1 l hlMem with hlReverse | hlExternal
       · have hzVertex : z ∈ Y.toWarp.vertexSet := by
           have := Y.toWarp.fst_mem_vertexSet_of_mem_dartSet hlReverse
@@ -8676,11 +8662,11 @@ theorem switchedWarp_terminalSet_subset_exchange {V : Type}
   · by_cases hxt : x = t
     · subst x
       by_cases htz : t = z
-      · exact Or.inr (by simpa [htz])
+      · exact Or.inr (by simp [htz])
       · exact (hx'.2 (start_hasOutgoing_of_ne_end
           hXY a htX htY hR ht htz)).elim
     · exact Or.inl ⟨hxY, by simpa using hxt⟩
-  · exact Or.inr (by simpa [hxz])
+  · exact Or.inr (by simp [hxz])
 
 /-- Shafer Lemma 3.10, terminal calculation: toggling along the finite
 alternating walk replaces exactly its common starting terminal by its final
@@ -8934,8 +8920,8 @@ of that wave.  Prefix the wave component through the vertex to the remaining
 suffix of the path and apply the separator property. -/
 theorem last_wave_vertex_is_terminal {V : Type}
     {G : SimpleGraph V} {A B : Set V} (X : TotalWave G A B)
-    {a b : V} (ha : a ∈ A) (hb : b ∈ B) (q : G.Walk a b)
-    (hq : q.IsPath) {n : ℕ} (hn : n ≤ q.length)
+    {a b : V} (_ha : a ∈ A) (hb : b ∈ B) (q : G.Walk a b)
+    (_hq : q.IsPath) {n : ℕ} (hn : n ≤ q.length)
     (hnX : q.getVert n ∈ X.toWarp.vertexSet)
     (hnlast : ∀ m ≤ q.length, n < m →
       q.getVert m ∉ X.toWarp.vertexSet) :
@@ -9014,7 +9000,7 @@ separator. -/
 theorem last_exterior_wave_vertex_after_deleted_is_terminal {V : Type}
     {G : SimpleGraph V} {A B : Set V} {x : V}
     (U : TotalWave (outsideGraph G {x}) A (B \ {x}))
-    {a b : V} (ha : a ∈ A) (hb : b ∈ B) (q : G.Walk a b)
+    {a b : V} (_ha : a ∈ A) (hb : b ∈ B) (q : G.Walk a b)
     (hq : q.IsPath) {ix n : ℕ} (hix : ix ≤ q.length)
     (hixx : q.getVert ix = x) (hn : n ≤ q.length) (hixn : ix < n)
     (hnU : q.getVert n ∈ U.toWarp.vertexSet)
@@ -9054,7 +9040,7 @@ theorem last_exterior_wave_vertex_after_deleted_is_terminal {V : Type}
   have hstart : (U.path c).1.initial ∈ A := U.isWave.1 ⟨c, rfl⟩
   have hbx : b ≠ x := by
     intro hbx
-    have hblength : q.getVert q.length = x := by simpa [hbx]
+    have hblength : q.getVert q.length = x := by simp [hbx]
     have hilength : ix = q.length :=
       hq.getVert_injOn hix
         (show q.length ≤ q.length from le_rfl)
@@ -9251,12 +9237,12 @@ theorem first_right_contact_mem_alternatingWarp {V : Type}
   have hnpos : 0 < n := by
     by_contra hn0
     have hnzero : n = 0 := by omega
-    exact hnne (by simpa [hnzero])
+    exact hnne (by simp [hnzero])
   let qp : LongPath G := LongPath.ofWalk q hq
   have hnActive : longPathActive qp.terminalIndex n := by
     simp [qp, LongPath.ofWalk, longPathActive, hnle]
   have hsegStart : qp.vertex 0 = t := by
-    simpa [qp, LongPath.ofWalk] using q.getVert_zero
+    simp [qp, LongPath.ofWalk]
   have hsegEnd : qp.vertex n = y := by rfl
   let seg : G.Walk t y :=
     (qp.segmentWalk hnActive (Nat.zero_le n)).copy hsegStart hsegEnd
@@ -9286,7 +9272,6 @@ theorem first_right_contact_mem_alternatingWarp {V : Type}
     rw [show seg =
       (qp.segmentWalk hnActive (Nat.zero_le n)).copy hsegStart hsegEnd by rfl,
       Walk.getVert_copy]
-    change (qp.segmentWalk hnActive (Nat.zero_le n)).getVert j = _
     rw [qp.getVert_segmentWalk hnActive (Nat.zero_le n) hj]
     simp [qp, LongPath.ofWalk]
   have hcontLast : cont.getVert (n + 1) = pred := by
@@ -9296,18 +9281,15 @@ theorem first_right_contact_mem_alternatingWarp {V : Type}
       segY.getVert j = q.getVert j := by
     change (seg.copy rfl hky'.symm).getVert j = _
     rw [Walk.getVert_copy]
-    change seg.getVert j = q.getVert j
     rw [show seg =
       (qp.segmentWalk hnActive (Nat.zero_le n)).copy hsegStart hsegEnd by rfl,
       Walk.getVert_copy]
-    change (qp.segmentWalk hnActive (Nat.zero_le n)).getVert j = _
     rw [qp.getVert_segmentWalk hnActive (Nat.zero_le n) hj]
     simp [qp, LongPath.ofWalk]
   have hsegYPath : segY.IsPath := by
     apply Walk.IsPath.mk'
     change (seg.copy rfl hky'.symm).support.Nodup
     rw [Walk.support_copy]
-    change seg.support.Nodup
     rw [show seg =
       (qp.segmentWalk hnActive (Nat.zero_le n)).copy hsegStart hsegEnd by rfl,
       Walk.support_copy]
@@ -9457,7 +9439,7 @@ theorem first_right_contact_mem_alternatingWarp {V : Type}
   have hyInCont : y ∈ cont.support := by
     rw [show cont = segY.concat hback by rfl, Walk.support_concat,
       List.mem_append]
-    exact Or.inl (by simpa [segY] using seg.end_mem_support)
+    exact Or.inl (by simp [segY])
   have hAlt : X.IsAlternatingWalk Y cont := by
     have hnil := isAlternatingWalk_nil X Y htTerm
     have hcontStart : (.nil : G.Walk t t).append cont = cont := by simp
@@ -9809,7 +9791,7 @@ reachable by finite `(Y-X)`-alternating walks from an `X` terminal is again
 a wave. -/
 theorem alternatingWarp_isWave {V : Type}
     {G : SimpleGraph V} {A B : Set V} {X Y : TotalWave G A B}
-    (hXY : X ≤ Y) {t : V} (htX : t ∈ X.toWarp.terminalSet) :
+    (hXY : X ≤ Y) {t : V} (_htX : t ∈ X.toWarp.terminalSet) :
     (alternatingWarp hXY t).IsWave A B := by
   classical
   constructor
@@ -10367,7 +10349,7 @@ theorem alternatingWarp_isWave {V : Type}
             _ = (q.getVert (ir + j), q.getVert (ir + (j + 1))) := by
               rw [hsegYGet j (by omega), hsegYGet (j + 1) (by omega)]
             _ = (q.getVert (ir + j), q.getVert (ir + j + 1)) := by
-              congr 2 <;> omega
+              congr 2
         have hExt := hqDartExternal (ir + j) (by omega) (by omega) δ hpair
         rcases (Y.toWarp.mem_edgeSet_iff).mp hεY with ⟨η, hηY, hηedge⟩
         rcases (dart_edge_eq_iff η δ).mp hηedge with hEq | hEq
@@ -10426,7 +10408,7 @@ theorem alternatingWarp_isWave {V : Type}
                   _ = (q.getVert (ir + j), q.getVert (ir + (j + 1))) := by
                     rw [hcontGet j (by omega), hcontGet (j + 1) (by omega)]
                   _ = (q.getVert (ir + j), q.getVert (ir + j + 1)) := by
-                    congr 2 <;> omega
+                    congr 2
               exact Or.inr (hqDartExternal (ir + j) (by omega) (by omega)
                 δ hpair)
             · have hjEq : j = iy - ir := by omega
@@ -11101,7 +11083,7 @@ theorem IsAlternatingWalk.exists_extend_along_path_avoiding_right {V : Type}
       calc
         d.snd = seg.getVert (j + 1) := congrArg Prod.snd hdPair
         _ = q.getVert (ir + (j + 1)) := hsegGet (j + 1) (by omega)
-        _ = q.getVert (ir + j + 1) := by congr 1 <;> omega
+        _ = q.getVert (ir + j + 1) := by congr 1
     have hsndNotY : d.snd ∉ Y.toWarp.vertexSet := by
       rw [hsnd]
       apply havoidY (ir + j + 1)
@@ -11136,7 +11118,7 @@ theorem IsAlternatingWalk.exists_extend_along_path_avoiding_right {V : Type}
       · subst dR
         exact R.dart_snd_mem_support_of_mem_darts hdR
       · have hfst : dS.snd = dR.fst := by
-          simpa [hEq]
+          simp [hEq]
         exact hfst.symm ▸ R.dart_fst_mem_support_of_mem_darts hdR
     have hsndTail : dS.snd ∈ seg.support.tail := by
       rcases (Erdos599.Countable.Walk.mem_darts_iff_exists_getVert seg).mp hdS with
@@ -11303,7 +11285,6 @@ theorem first_right_contact_after_reachable_mem_alternatingWarp {V : Type}
       · have hnext :=
           (right_dart_neighbor_mem_alternatingWarp_of_nonterminal
             hXY t (q.getVert iz) hizU hizNotTerminal hδY).1
-
         apply hiyNotU
         apply hnext
         simp [δq, hipEq]
@@ -11358,7 +11339,7 @@ theorem first_right_contact_after_reachable_mem_alternatingWarp {V : Type}
   have hgetOne : cont.getVert 1 = (Y.path e).1.vertex ky := by
     rw [show cont = segY.concat hback by rfl, Walk.concat_eq_append,
       Walk.getVert_append']
-    rw [if_pos (by simpa [hsegYLength])]
+    rw [if_pos (by simp [hsegYLength])]
     rw [← hsegYLength]
     exact segY.getVert_length
   have hgetTwo : cont.getVert 2 = pred := by
@@ -11932,7 +11913,7 @@ theorem IsCleanUnhindered.isTrimmedWeb {V : Type} {G : SimpleGraph V}
   have hWStarting : W.IsStarting A := by
     rw [IsStarting]
     simp only [W, initialSet_trivial]
-    exact Set.diff_subset
+    exact Set.sdiff_subset
   have hWSeparates : Separates G A B W.terminalSet := by
     simp only [W, terminalSet_trivial]
     intro x hx b hb q hq
@@ -11949,7 +11930,7 @@ theorem IsCleanUnhindered.isTrimmedWeb {V : Type} {G : SimpleGraph V}
     intro i v hv _
     simpa [W, trivial, LongPath.vertexSet_ofWalk] using hv
   have haInitial : a ∈ W.initialSet := h W ⟨hWStarting, hWSeparates⟩ hWClean ha
-  simpa [W, T] using haInitial
+  simp [W, T] at haInitial
 
 theorem not_hindrance_of_unhindered {V : Type} {G : SimpleGraph V}
     {A B : Set V} (h : IsUnhindered G A B) (W : Warp G) :
@@ -12042,7 +12023,7 @@ theorem IsWave.mapLE_isSelfRoofing_of_quotient
     have hzEssential : z ∈ essentialVertices G B Z := by
       rcases hnBoundary with hzEssential | hnEnd
       · simpa [z] using hzEssential
-      · have hzb : z = b := by simpa [z, hnEnd]
+      · have hzb : z = b := by simp [z, hnEnd]
         have hbOutside : b ∉ interiorRoof G B Z := by
           intro hbInterior
           exact Set.disjoint_left.mp (target_disjoint_interiorRoof G B Z)
@@ -12114,7 +12095,7 @@ theorem IsWave.separates_terminalSet_mapLE_of_quotient
     have hzEssential : z ∈ essentialVertices G B Z := by
       rcases hnBoundary with hzEssential | hnEnd
       · simpa [z] using hzEssential
-      · have hzb : z = b := by simpa [z, hnEnd]
+      · have hzb : z = b := by simp [z, hnEnd]
         have hbOutside : b ∉ interiorRoof G B Z := by
           intro hbInterior
           exact Set.disjoint_left.mp (target_disjoint_interiorRoof G B Z)
@@ -12207,7 +12188,7 @@ theorem IsWave.mem_roof_mapLE_of_quotient_delete
     have hzEssential : z ∈ essentialVertices G B Z := by
       rcases hnBoundary with hzEssential | hnEnd
       · simpa [z] using hzEssential
-      · have hzb : z = b := by simpa [z, hnEnd]
+      · have hzb : z = b := by simp [z, hnEnd]
         have hbOutside : b ∉ interiorRoof G B Z := by
           intro hbInterior
           exact Set.disjoint_left.mp (target_disjoint_interiorRoof G B Z)
@@ -12443,7 +12424,7 @@ theorem exists_extension_terminal_of_outside_essential_loss {V : Type}
     calc
       (Y'.path a₀).1.terminal? = (Xo.path a₀).1.terminal? := by
         rw [show Y'.path a₀ = Xo.path a₀ by
-          simpa [Y'] using replaceInessentialPath_path_self hXY a₀ haY]
+          simp [Y']]
       _ = some t := htXo
   have haY' : a₀ ∉ Y'.essentialSources := by
     simpa [Y'] using replaceInessentialPath_not_mem_essentialSources
@@ -12455,7 +12436,7 @@ theorem exists_extension_terminal_of_outside_essential_loss {V : Type}
     exact hXY' c n hn
   have hXaPath (c : A) : (Xa.path c).1 = (X.path c).1 := by
     change ((Xo.path c).1.mapLE (outsideGraph_le G {x})) = (X.path c).1
-    simpa [Xo] using toOutsideVertex_path_mapLE X x hx c
+    simp [Xo]
   have htXa : (Xa.path a₀).1.terminal? = some t := by
     rw [hXaPath]
     exact htX
@@ -12545,7 +12526,7 @@ theorem exists_totalWave_terminal_of_delete_not_isCleanUnhindered
   classical
   have hAdelete : A \ ({x} : Set V) = A := by
     ext v
-    simp only [Set.mem_diff, Set.mem_singleton_iff]
+    simp only [Set.mem_sdiff, Set.mem_singleton_iff]
     constructor
     · exact fun hv ↦ hv.1
     · intro hvA
@@ -12582,8 +12563,8 @@ theorem exists_totalWave_terminal_of_delete_not_isCleanUnhindered
       omega
     subst n
     constructor
-    · cases hidx : (Y.path a).1.terminalIndex <;>
-        simp [hidx, longPathActive]
+    · cases (Y.path a).1.terminalIndex <;>
+        simp [longPathActive]
     · exact (Y.path_initial a).trans
         ((toOutsideVertex X x hxX).path_initial a).symm
   have haX : a₀ ∈ X.essentialSources := by
@@ -12658,7 +12639,7 @@ theorem not_isCleanUnhindered_outside_singleton_of_not_isCleanUnhindered
   intro houtside
   have hAdiff : A \ ({x} : Set V) = A := by
     ext v
-    simp only [Set.mem_diff, Set.mem_singleton_iff]
+    simp only [Set.mem_sdiff, Set.mem_singleton_iff]
     constructor
     · exact fun hv ↦ hv.1
     · intro hvA
@@ -12680,8 +12661,8 @@ theorem not_isCleanUnhindered_outside_singleton_of_not_isCleanUnhindered
       omega
     subst n
     constructor
-    · cases hidx : (Y.path c).1.terminalIndex <;>
-        simp [hidx, longPathActive]
+    · cases (Y.path c).1.terminalIndex <;>
+        simp [longPathActive]
     · exact (Y.path_initial c).trans (X.path_initial c).symm
   have htX : (X.path a₀).1.terminal? = some a := by
     simp [X, WaveExtension.base, Warp.trivial, LongPath.toNormalized, a₀]
@@ -12816,7 +12797,7 @@ theorem finiteHindranceDeletion : FiniteHindranceDeletion := by
         (A \ {x}) (B \ {x}) hAD' hxBad
       have hGraph : outsideGraph (outsideGraph G {x}) D =
           outsideGraph G (insert x D) := by
-        simpa only [outsideGraph_outsideGraph, Set.insert_eq]
+        simp only [outsideGraph_outsideGraph, Set.insert_eq]
       have hSource : (A \ {x}) \ D = A \ insert x D := by
         ext v
         simp
@@ -13144,7 +13125,6 @@ theorem initialSet_quotientWarp {V : Type} {G : SimpleGraph V}
         active := by
           cases (W.path i).terminalIndex <;> simp [longPathActive]
         outside := by
-          change (W.path i).vertex 0 ∉ interiorRoof G B X
           rw [show (W.path i).vertex 0 = x by
             simpa [LongPath.initial] using hix]
           exact hxOutside
@@ -13382,7 +13362,7 @@ theorem IsWave.quotientWarp {V : Type} {G : SimpleGraph V}
             (interiorRoof_disjoint G B W.terminalSet)
             htInterior htEssential⟩
       · have htb : t = b := by
-          simpa [t, hnEnd] using qG.getVert_length
+          simp [t, hnEnd]
         have hbTerminal : b ∈ W.terminalSet :=
           (mem_roof_of_mem_target_iff hb).mp (by simpa [htb] using htRoof)
         have hbOutside : b ∉ interiorRoof G B W.terminalSet :=
@@ -13532,7 +13512,7 @@ theorem IsSourceClean.quotientWarp {V : Type} {G : SimpleGraph V}
   | inr x =>
       have hvx : v = x.1 := by
         simpa [quotientWarpPath, LongPath.vertexSet_ofWalk] using hv
-      simpa [hvx, quotientWarpPath, LongPath.initial_ofWalk]
+      simp [hvx, LongPath.initial_ofWalk]
 
 /-- Reinterpret a total wave after replacing its endpoint sets by equal
 sets.  The paths, disjointness, and wave proof are unchanged. -/
@@ -13955,7 +13935,7 @@ is immediate from isolation; otherwise it is exactly Lemma 2.35. -/
 theorem interiorRoof_terminalSet_subset_quotientWarpNested_of_mem
     {V : Type} {G : SimpleGraph V} {B S T : Set V}
     (W : Warp (outsideGraph G (interiorRoof G B S))) (hST : S ⊆ T)
-    {x : V} (hxT : x ∈ T) (hxB : x ∉ B)
+    {x : V} (_hxT : x ∈ T) (hxB : x ∉ B)
     (hxStrict : x ∈ interiorRoof
       (outsideGraph G (interiorRoof G B S)) B W.terminalSet) :
     x ∈ interiorRoof (outsideGraph G (interiorRoof G B T)) B
@@ -14152,7 +14132,7 @@ theorem isSafeRootSet_singleton {V : Type} {G : SimpleGraph V}
     have hxa : x = a := Set.mem_singleton_iff.mp hx
     subst x
     refine ⟨(.nil : G.Walk a a), by simp, ?_⟩
-    simpa using (Set.subset_refl ({a} : Set V))
+    simp
   · intro F hF hFsub
     have hFempty : F = ∅ := by
       apply Set.eq_empty_iff_forall_notMem.mpr
@@ -14225,9 +14205,7 @@ theorem IsSafeRootSet.disjoint_target_of_no_safePath {V : Type}
   have haX : a ∈ X := by
     exact q.start_mem_support
   have hFfinite : F.Finite := by
-    simpa [F, X] using
-      (q.support.finite_toSet.sdiff :
-        ({x | x ∈ q.support} \ ({a} : Set V)).Finite)
+    simp [F, X]
   have hFsub : F ⊆ T \ {a} := by
     intro x hx
     exact ⟨hqT hx.1, hx.2⟩
@@ -14315,7 +14293,7 @@ theorem MaximalSafeRootSet.exists_boundary_totalWave {V : Type}
     · exact ⟨hzT, hz.2⟩
   have hdeleteSet : (({a} : Set V) ∪ F₀) ∪ {y} = {a} ∪ F := by
     ext z
-    simp only [Set.mem_union, Set.mem_singleton_iff, F₀, Set.mem_diff]
+    simp only [Set.mem_union, Set.mem_singleton_iff, F₀, Set.mem_sdiff]
     constructor
     · rintro ((hza | ⟨hzF, -⟩) | hzy)
       · exact Or.inl hza
@@ -14599,7 +14577,7 @@ theorem IsWave.path_sdiff_terminal_subset_interiorRoof
   by_cases hij : i = j
   · subst j
     have hxt : x = t := Option.some.inj (hjx.symm.trans hit)
-    exact hx.2 (by simpa [hxt])
+    exact hx.2 (by simp [hxt])
   · have hxj : x ∈ (W.path j).vertexSet :=
       LongPath.terminal_mem_vertexSet hjx
     exact Set.disjoint_left.mp (W.disjoint hij) hx.1 hxj
@@ -14951,7 +14929,7 @@ activated by the current causal vertex set, and bounded keys by the current
 quotienting set. -/
 def safeTreeCausalKeys {V : Type} {G : SimpleGraph V}
     {A B T : Set V} {a : V}
-    (hT : Maximal (IsSafeRootSet G A B a) T)
+    (_hT : Maximal (IsSafeRootSet G A B a) T)
     (y : outerBoundary G T) (X R : Set V) : Set (SafeTreeWaveKey V) :=
   {SafeTreeWaveKey.boundary y.1} ∪
     SafeTreeWaveKey.boundary '' (outerBoundary G T ∩ R) ∪
@@ -16447,7 +16425,7 @@ theorem interiorRoof_stage_subset_arrowSequence {V : Type}
     interiorRoof G B (U n).terminalSet ⊆
       interiorRoof G B (arrowSequence U hU n).toWarp.terminalSet := by
   cases n with
-  | zero => simpa
+  | zero => simp
   | succ n =>
       intro x hx
       have hxArrow :=
@@ -16715,7 +16693,7 @@ theorem interiorRoof_first_subset_interiorRoof_arrowLimit
     intro n
     induction n with
     | zero =>
-        simpa [T]
+        simp [T]
     | succ n ih =>
         intro x hx
         have hxPrev : x ∈ interiorRoof G B
@@ -16781,7 +16759,7 @@ theorem interiorRoof_arrowSequence_subset_interiorRoof_arrowLimit
         interiorRoof G B (T n) := by
     intro n
     induction n with
-    | zero => simpa [T]
+    | zero => simp [T]
     | succ n ih =>
         intro x hx
         have hxPrev : x ∈ interiorRoof G B
@@ -17627,7 +17605,7 @@ noncomputable def groundWaveStep {V : Type} {H : SimpleGraph V}
         have hsubset : D' ⊆ X := by
           intro v hv
           rcases hv with hvx | hvD
-          · simpa [hvx] using x.property
+          · simp [hvx]
           · exact s.deleted_subset hvD
         have hout : Disjoint s.wave.toWarp.vertexSet ({x.1} : Set V) := by
           rw [Set.disjoint_left]
@@ -17646,7 +17624,7 @@ noncomputable def groundWaveStep {V : Type} {H : SimpleGraph V}
         let C₀ := s.wave.toOutsideGraphSame hout hApoint hBpoint
         have hGraph : outsideGraph (outsideGraph H s.deleted) {x.1} =
             outsideGraph H D' := by
-          simp [D', outsideGraph_outsideGraph, Set.union_comm]
+          simp [D', outsideGraph_outsideGraph]
         let C : TotalWave (outsideGraph H D') A B :=
           TotalWave.castGraph hGraph C₀
         let M := Classical.choose
@@ -17688,7 +17666,7 @@ theorem groundWaveStep_deleted_mono {V : Type} {H : SimpleGraph V}
   | none => exact Set.Subset.rfl
   | some x =>
       by_cases hx : (x : V) ∈ s.wave.toWarp.vertexSet
-      · simpa [groundWaveStep, hx]
+      · simp [groundWaveStep, hx]
       · simp only [groundWaveStep, hx, dite_false]
         exact Set.subset_insert (x : V) s.deleted
 
@@ -17717,8 +17695,7 @@ theorem groundWaveStep_ambient_forward {V : Type} {H : SimpleGraph V}
       by_cases hx : (x : V) ∈ s.wave.toWarp.vertexSet
       · rw [dif_pos hx]
         exact LongPath.Forward.refl _
-      ·
-        rw [dif_neg hx]
+      · rw [dif_neg hx]
         let D' : Set V := insert (x : V) s.deleted
         have hout : Disjoint s.wave.toWarp.vertexSet ({x.1} : Set V) := by
           rw [Set.disjoint_left]
@@ -17737,7 +17714,7 @@ theorem groundWaveStep_ambient_forward {V : Type} {H : SimpleGraph V}
         let C₀ := s.wave.toOutsideGraphSame hout hApoint hBpoint
         have hGraph : outsideGraph (outsideGraph H s.deleted) {x.1} =
             outsideGraph H D' := by
-          simp [D', outsideGraph_outsideGraph, Set.union_comm]
+          simp [D', outsideGraph_outsideGraph]
         let C : TotalWave (outsideGraph H D') A B :=
           TotalWave.castGraph hGraph C₀
         let M := Classical.choose
@@ -17763,7 +17740,7 @@ theorem safeTreeGround_source_disjoint_X {V : Type} {G : SimpleGraph V}
   intro x hxA hxX
   have hxTree := safeTreeCausalXLimit_subset_tree_sdiff hT y hxX
   have hxa := hT.prop.2.1 x hxTree.1 hxA.1
-  exact hxA.2 (by simpa [hxa])
+  exact hxA.2 (by simp [hxa])
 
 theorem safeTreeGround_target_disjoint_X {V : Type} {G : SimpleGraph V}
     {A B T : Set V} {a : V}
@@ -18324,7 +18301,7 @@ theorem safeTreeGroundStage_terminal_not_mem_tree {V : Type}
     · exact ⟨hxt ▸ htT, by simpa [hxt] using hta⟩
     · exact hDtree hxD
   have hiA : (s.wave.path i).1.initial ∈ A \ {a} := by
-    simpa using i.property
+    simp
   have hitne : (s.wave.path i).1.initial ≠ t := by
     intro heq
     have htA : t ∈ A := by
@@ -18357,7 +18334,7 @@ theorem safeTreeGroundStage_terminal_not_mem_tree {V : Type}
         exact hxAvoid (Or.inl hxa)
       · intro hxt
         have hxt' : x = t := Set.mem_singleton_iff.mp hxt
-        exact hxAvoid (Or.inr (by simpa [F, hxt']))
+        exact hxAvoid (Or.inr (by simp [F, hxt']))
   have hBeq : ((B \ {a}) \ {t}) = B \ ({a} ∪ F) := by
     ext x
     constructor
@@ -18374,7 +18351,7 @@ theorem safeTreeGroundStage_terminal_not_mem_tree {V : Type}
         exact hxAvoid (Or.inl hxa)
       · intro hxt
         have hxt' : x = t := Set.mem_singleton_iff.mp hxt
-        exact hxAvoid (Or.inr (by simpa [F, hxt']))
+        exact hxAvoid (Or.inr (by simp [F, hxt']))
   apply hnot
   rw [hGraph, hAeq, hBeq]
   exact hsafe
@@ -18603,7 +18580,7 @@ wave.  Starting at the last old-roof point of a path produces a path in the
 quotient graph, where the exterior wave supplies a terminal. -/
 theorem roof_terminalSet_subset_roof_mapLE_of_exterior_wave
     {V : Type} {G : SimpleGraph V} {W : Warp G} {A B : Set V}
-    (hW : W.IsWave A B)
+    (_hW : W.IsWave A B)
     (U : Warp (outsideGraph G (interiorRoof G B W.terminalSet)))
     (hU : U.IsWave (essentialVertices G B W.terminalSet) B) :
     roof G B W.terminalSet ⊆
@@ -18620,7 +18597,7 @@ theorem roof_terminalSet_subset_roof_mapLE_of_exterior_wave
       essentialVertices G B W.terminalSet := by
     rcases hnBoundary with hnEssential | hnEnd
     · exact hnEssential
-    · have hxb : q.getVert n = b := by simpa [hnEnd]
+    · have hxb : q.getVert n = b := by simp [hnEnd]
       have hbOutside : b ∉ interiorRoof G B W.terminalSet := by
         intro hbInterior
         exact Set.disjoint_left.mp
@@ -18731,7 +18708,7 @@ theorem separates_terminalSet_mapLE_of_exterior_wave
   have hxEssential : x ∈ essentialVertices G B W.terminalSet := by
     rcases hnBoundary with hxEssential | hnEnd
     · exact hxEssential
-    · have hxb : x = b := by simpa [x, hnEnd]
+    · have hxb : x = b := by simp [x, hnEnd]
       have hbOutside : b ∉ interiorRoof G B W.terminalSet := by
         intro hbInterior
         exact Set.disjoint_left.mp
@@ -18800,7 +18777,7 @@ theorem IsWave.arrow_exterior
     have hxEssential : x ∈ essentialVertices G B W.terminalSet := by
       rcases hnBoundary with hxEssential | hnEnd
       · exact hxEssential
-      · have hxb : x = b := by simpa [x, hnEnd]
+      · have hxb : x = b := by simp [x, hnEnd]
         have hbOutside : b ∉ interiorRoof G B W.terminalSet := by
           intro hbInterior
           exact Set.disjoint_left.mp
@@ -19305,9 +19282,7 @@ theorem exists_safeTreeBoundaryWave
           (B₀ \ Q) U.terminalSet := by
         simpa [U, VQ, hGraph] using hzShrunk
       refine ⟨n, hnActive, ?_, ?_⟩
-      · change (W.path j).vertex n ∈
-          roof (outsideGraph (outsideGraph H Q) R) (B₀ \ Q) U.terminalSet
-        rw [← (W.path j).getVert_prefixWalk_of_le hkActive hnleK]
+      · rw [← (W.path j).getVert_prefixWalk_of_le hkActive hnleK]
         exact hzU
       · intro m hm hnm hmR
         have hmX : (W.path j).vertex m ∈ X := hRX hmR
@@ -20278,7 +20253,7 @@ noncomputable def safeStep (hsafe : SafePathRemoval)
         subst p'
         refine ⟨rfl, ?_, ?_, hpDisjoint, ?_⟩
         · simp [p, r]
-        · exact ⟨b, hb.1, by simpa [p, r]⟩
+        · exact ⟨b, hb.1, by simp [p, r]⟩
         · intro v hvp hvA
           have hvq : v ∈ q.support := by
             simpa [hpVertex] using hvp
@@ -20455,7 +20430,7 @@ theorem mem_safeStageSeq_deleted_exists_chosen_initial
       i.1 < n ∧ (safeChosenPath hsafe hunhindered e i).initial = a := by
   induction n with
   | zero =>
-      simpa [safeStageSeq, initialSafeStage] using hadel
+      simp [safeStageSeq, initialSafeStage] at hadel
   | succ n ih =>
       have hrec := safeStageSeq_deleted_succ hsafe hunhindered e n
       cases hchosen : safeChosen hsafe hunhindered e n with
@@ -20562,7 +20537,7 @@ theorem exists_cleanLinkage_singleton {V : Type} {G : SimpleGraph V}
   · intro i v hv hvA
     have hva : v = a := Set.mem_singleton_iff.mp hvA
     cases i
-    simpa [W, P, Warp.ofPaths, hva]
+    simp [W, P, Warp.ofPaths, hva]
 
 /-- Reassemble a linkage after deleting one source-clean finite path.  The
 deleted path supplies its own source, while a clean linkage of all remaining
@@ -20609,7 +20584,7 @@ theorem exists_cleanLinkage_of_safe_path
         by_cases hvX : v ∈ X
         · left
           have hva : v = a := hsource v (by simpa [X] using hvX) hvA
-          simpa [p, hva]
+          simp [p, hva]
         · right
           exact ⟨hvA, hvX⟩
     · intro i
@@ -21020,7 +20995,7 @@ theorem mem_hotelStageSeq_deleted_exists_chosen_initial
         (hotelChosenPath hsafe hA₀ root F hF hunhindered i).initial = a := by
   induction n with
   | zero =>
-      simpa [hotelStageSeq, initialHotelStage, initialSafeStage] using hadel
+      simp [hotelStageSeq, initialHotelStage, initialSafeStage] at hadel
   | succ n ih =>
       have hrec := hotelStageSeq_deleted_succ
         hsafe hA₀ root F hF hunhindered n
@@ -21112,7 +21087,7 @@ theorem hotelTask_odd_of_meets
   have hdiv : (2 * Nat.pair i k + 1) / 2 = Nat.pair i k := by omega
   have hmeet : ∃ l : F.ι, p.vertex k ∈ (F.path l).vertexSet := ⟨j, hv⟩
   rw [hotelTask]
-  simp only [hodd, ↓reduceDIte, hdiv, Nat.unpair_pair, hi]
+  simp only [hodd, hdiv, Nat.unpair_pair, hi]
   simp only [hk, ↓reduceDIte, hmeet]
   let l : F.ι := Classical.choose hmeet
   have hlv : p.vertex k ∈ (F.path l).vertexSet := Classical.choose_spec hmeet
@@ -22233,10 +22208,10 @@ theorem KappaUnbalanced.not_isStronglyPopular_of_subset_target
     by_contra hne
     have hitVertex : t ∈ (F.path i).vertices := by
       change t ∈ (F.path i).walk.support
-      simpa [← hit] using (F.path i).walk.end_mem_support
+      simp [← hit]
     have hjtVertex : t ∈ (F.path j).vertices := by
       change t ∈ (F.path j).walk.support
-      simpa [← hjt] using (F.path j).walk.end_mem_support
+      simp [← hjt]
     exact (Set.disjoint_left.mp (hdisjoint hne) hitVertex hjtVertex).elim
   subst j
   exact hir.symm.trans hjs
@@ -22627,7 +22602,7 @@ theorem KappaUnbalanced.mk_popularitySeparator_sdiff_source_le
   have hsep : PopularityLayers.separator G Y K.popularVertices \ X =
       ⋃ n, C n := by
     ext v
-    simp only [PopularityLayers.separator, Set.mem_diff, Set.mem_iUnion, C]
+    simp only [PopularityLayers.separator, Set.mem_sdiff, Set.mem_iUnion, C]
     constructor
     · rintro ⟨⟨n, hvn⟩, hvX⟩
       exact ⟨n, hvn, hvX⟩
@@ -22909,7 +22884,7 @@ forward. -/
 
 /-- The `n`th family of warps in a pointwise-forward matrix. -/
 def forwardWarpFamilyStage {I V : Type} {G : SimpleGraph V} (K : I → Type)
-    (P : ∀ (n : ℕ) (i : I), K i → LongPath G)
+    (P : ∀ (_n : ℕ) (i : I), K i → LongPath G)
     (hdisjoint : ∀ (n : ℕ) (i : I), Pairwise fun a b =>
       Disjoint (P n i a).vertexSet (P n i b).vertexSet)
     (n : ℕ) : I → Warp G := fun i =>
@@ -22918,7 +22893,7 @@ def forwardWarpFamilyStage {I V : Type} {G : SimpleGraph V} (K : I → Type)
 /-- The componentwise direct limit of a pointwise-forward matrix. -/
 noncomputable def forwardWarpFamilyLimit
     {I V : Type} {G : SimpleGraph V} (K : I → Type)
-    (P : ∀ (n : ℕ) (i : I), K i → LongPath G)
+    (P : ∀ (_n : ℕ) (i : I), K i → LongPath G)
     (hchain : ∀ (i : I) (a : K i) ⦃n m : ℕ⦄,
       n ≤ m → (P n i a).Forward (P m i a))
     (hdisjoint : ∀ (n : ℕ) (i : I), Pairwise fun a b =>
@@ -22931,7 +22906,7 @@ noncomputable def forwardWarpFamilyLimit
 competitor at some common finite stage. -/
 theorem warpFamilyCompetitor_forwardLimit_exists_stage
     {I V : Type} {G : SimpleGraph V} (K : I → Type)
-    (P : ∀ (n : ℕ) (i : I), K i → LongPath G)
+    (P : ∀ (_n : ℕ) (i : I), K i → LongPath G)
     (hchain : ∀ (i : I) (a : K i) ⦃n m : ℕ⦄,
       n ≤ m → (P n i a).Forward (P m i a))
     (hdisjoint : ∀ (n : ℕ) (i : I), Pairwise fun a b =>
@@ -22997,7 +22972,7 @@ theorem warpFamilyCompetitor_forwardLimit_exists_stage
 stage of a pointwise-forward matrix. -/
 theorem warpFamilyCompetitor_forwardStage_mono
     {I V : Type} {G : SimpleGraph V} (K : I → Type)
-    (P : ∀ (n : ℕ) (i : I), K i → LongPath G)
+    (P : ∀ (_n : ℕ) (i : I), K i → LongPath G)
     (hchain : ∀ (i : I) (a : K i) ⦃n m : ℕ⦄,
       n ≤ m → (P n i a).Forward (P m i a))
     (hdisjoint : ∀ (n : ℕ) (i : I), Pairwise fun a b =>
@@ -23096,7 +23071,7 @@ theorem mk_competitorClosure_old_ranked_le_capacity
 pointwise-forward limit of ranked warps is witnessed at a finite stage. -/
 theorem warpFamilyCompetitor_old_forwardLimit_exists_stage
     {I V : Type} {G : SimpleGraph V} (F : Warp G) (K : I → Type)
-    (P : ∀ (n : ℕ) (i : I), K i → LongPath G)
+    (P : ∀ (_n : ℕ) (i : I), K i → LongPath G)
     (hchain : ∀ (i : I) (a : K i) ⦃n m : ℕ⦄,
       n ≤ m → (P n i a).Forward (P m i a))
     (hdisjoint : ∀ (n : ℕ) (i : I), Pairwise fun a b =>
@@ -23222,7 +23197,7 @@ theorem warpFamilyCompetitor_old_forwardLimit_exists_stage
 stage to every later stage. -/
 theorem warpFamilyCompetitor_old_forwardStage_mono
     {I V : Type} {G : SimpleGraph V} (F : Warp G) (K : I → Type)
-    (P : ∀ (n : ℕ) (i : I), K i → LongPath G)
+    (P : ∀ (_n : ℕ) (i : I), K i → LongPath G)
     (hchain : ∀ (i : I) (a : K i) ⦃n m : ℕ⦄,
       n ≤ m → (P n i a).Forward (P m i a))
     (hdisjoint : ∀ (n : ℕ) (i : I), Pairwise fun a b =>
@@ -23683,7 +23658,7 @@ structure ForwardCompetitorMatrix (I : Type) {V : Type} (G : SimpleGraph V)
     (A B : Set V) (F : Warp G) where
   K : I → Type
   source : ∀ i, K i → V
-  path : ∀ (n : ℕ) (i : I), K i → LongPath G
+  path : ∀ (_n : ℕ) (i : I), K i → LongPath G
   chain : ∀ (i : I) (a : K i) ⦃n m : ℕ⦄,
     n ≤ m → (path n i a).Forward (path m i a)
   disjoint : ∀ (n : ℕ) (i : I), Pairwise fun a b =>
@@ -24278,7 +24253,7 @@ theorem separates_of_quotient_separator
     have hzEssential : z ∈ essentialVertices G B C := by
       rcases hnBoundary with hzEssential | hnEnd
       · simpa [z] using hzEssential
-      · have hzb : z = b := by simpa [z, hnEnd]
+      · have hzb : z = b := by simp [z, hnEnd]
         have hbOutside : b ∉ interiorRoof G B C := by
           intro hbInterior
           exact Set.disjoint_left.mp (target_disjoint_interiorRoof G B C)
@@ -24531,7 +24506,7 @@ theorem arrow_isCleanLinkage
         exact Set.mem_singleton_iff.mpr
           (calc
             x = (U.path j).initial := hxInitial
-            _ = c := by simpa [j] using U.initial_sourceIndex hcInitial
+            _ = c := by simp [j]
             _ = (H.warp.path i).vertex k := hkVertex.symm) }⟩
   have hUcleanA : U'.IsSourceClean A := by
     intro j x hxPath hxA
@@ -24619,8 +24594,7 @@ theorem arrowPath_terminal_of_quotient_source
       exact Set.mem_singleton_iff.mpr
         (calc
           x = (U.path j).initial := hxInitial
-          _ = c := by simpa [j] using
-            U.initial_sourceIndex (by rw [hU.1]; exact hcSource)
+          _ = c := by simp [j]
           _ = (H.warp.path i).vertex k := hkVertex.symm) }
   let hex : Nonempty (Warp.ExtensionData H.warp U' i) := ⟨d⟩
   let chosen := Classical.choice hex
@@ -24852,7 +24826,6 @@ theorem arrowPath_stopClean_newStop
         Option.some.inj (d.finite.symm.trans hkFinite)
       have hvQ : v ∈ (Q.warp.path d.carrier).vertexSet := by
         refine ⟨d.meetIndex, d.meetActive, ?_⟩
-        change (Q.warp.path d.carrier).vertex d.meetIndex = v
         calc
           (Q.warp.path d.carrier).vertex d.meetIndex =
               (H.warp.path i).vertex d.endIndex := d.join
@@ -25051,7 +25024,7 @@ noncomputable def compose
       ext v
       constructor
       · rintro ⟨a, rfl⟩
-        simpa using a.property
+        simp
       · intro hv
         refine ⟨⟨v, hv⟩, ?_⟩
         exact advancePath_initial H U ⟨v, hv⟩
@@ -25685,7 +25658,7 @@ theorem exists_cleanLinkage_of_bounded_halfWay_rows
     Bounded.ofSupply seed hseedA hseedCard hunhindered hsupply
   have hFstart : F.initialSet ⊆ A := by
     rw [hF.1.1]
-    exact Set.diff_subset
+    exact Set.sdiff_subset
   let next : ∀ S : Bounded I K G A B, BoundedStepData F S := fun S =>
     S.stepData hI hIK hK hFstart hsupply
   exact exists_cleanLinkage_of_bounded_successors S₀ next hcover hF
