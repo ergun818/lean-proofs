@@ -40,6 +40,7 @@ theorem support_nonempty_of_edgeFinset_nonempty [DecidableRel G.Adj]
       have hadj : G.Adj v w := by simpa using he
       exact ⟨v, w, hadj⟩
 
+omit [Fintype V] in
 /-- Every edge of a bipartite graph has one endpoint in each of the support-trimmed
 parts.  Thus unused vertices may be removed from either displayed part without changing
 the bipartition. -/
@@ -53,6 +54,7 @@ theorem IsBipartiteWith.trim_support {s t : Set V}
   · exact Or.inl ⟨⟨h.1, w, hvw⟩, ⟨h.2, v, hvw.symm⟩⟩
   · exact Or.inr ⟨⟨h.1, w, hvw⟩, ⟨h.2, v, hvw.symm⟩⟩
 
+omit [Fintype V] in
 theorem IsBipartiteWith.trim_support_union {s t : Set V}
     (hG : G.IsBipartiteWith s t) :
     (s ∩ G.support) ∪ (t ∩ G.support) = G.support := by
@@ -64,6 +66,7 @@ theorem IsBipartiteWith.trim_support_union {s t : Set V}
     · exact Or.inl ⟨hv, by assumption⟩
     · exact Or.inr ⟨hv, by assumption⟩
 
+omit [Fintype V] in
 /-- Orient a displayed bipartition so that the first side is the larger one. -/
 theorem IsBipartiteWith.orient_larger_side {s t : Set V}
     (hG : G.IsBipartiteWith s t) :
@@ -91,19 +94,23 @@ private instance (s : Finset V) : DecidableRel (cutAt G s).Adj := by
 private def toggle (s : Finset V) (v : V) : Finset V :=
   if v ∈ s then s.erase v else insert v s
 
+omit [Fintype V] in
 @[simp] private lemma mem_toggle (s : Finset V) (v w : V) :
     w ∈ toggle s v ↔ (w ∈ s ↔ w ≠ v) := by
   by_cases hv : v ∈ s <;> by_cases hw : w = v <;> simp [toggle, hv, hw]
 
+omit [DecidableRel G.Adj] in
 private lemma cutAt_le (s : Finset V) : cutAt G s ≤ G :=
   SimpleGraph.between_le
 
+omit [DecidableRel G.Adj] in
 private lemma cutAt_isBipartiteWith (s : Finset V) :
     (cutAt G s).IsBipartiteWith (↑s : Set V) ↑(Finset.univ \ s) := by
   apply G.between_isBipartiteWith
   rw [Finset.coe_sdiff, Finset.coe_univ]
   exact disjoint_sdiff_self_right
 
+omit [DecidableRel G.Adj] in
 private lemma cutAt_toggle_delete (s : Finset V) (v : V) :
     (cutAt G s).deleteIncidenceSet v =
       (cutAt G (toggle s v)).deleteIncidenceSet v := by
@@ -208,6 +215,7 @@ private lemma edgeCount_eq_card {G : SimpleGraph V} [DecidableRel G.Adj] :
   rw [edgeCount, SimpleGraph.edgeFinset]
   exact Set.ncard_eq_toFinset_card' G.edgeSet
 
+omit [Fintype V] in
 private lemma supportCount_eq_card {G : SimpleGraph V} :
     supportCount G = G.support.ncard := rfl
 
@@ -231,7 +239,7 @@ theorem exists_minDegree_core (G : SimpleGraph V) [DecidableRel G.Adj] (d : ℕ)
   have hHedges : #H.edgeFinset ≤ B := by
     exact Finset.card_le_card (SimpleGraph.edgeFinset_mono hHGle)
   have hGscore : coreScore B d G ≤ coreScore B d H :=
-    hmax G (by simpa)
+    hmax G (by simp)
   have hGpotential : 0 ≤ corePotential d G := by
     rw [corePotential, edgeCount_eq_card, supportCount_eq_card]
     have hz : ((d * G.support.ncard : ℕ) : ℤ) ≤
@@ -251,7 +259,6 @@ theorem exists_minDegree_core (G : SimpleGraph V) [DecidableRel G.Adj] (d : ℕ)
     rw [corePotential, edgeCount_eq_card, supportCount_eq_card] at hp
     have hz : ((d * H.support.ncard : ℕ) : ℤ) ≤
         ((2 * #H.edgeFinset : ℕ) : ℤ) := by
-      push_cast at hp
       omega
     exact_mod_cast hz
   have hHnonempty : H.edgeFinset.Nonempty := by
@@ -264,7 +271,7 @@ theorem exists_minDegree_core (G : SimpleGraph V) [DecidableRel G.Adj] (d : ℕ)
       positivity
     have hscoreHpos : 0 < coreScore B d H := hscoreGpos.trans_le hGscore
     subst H
-    simpa [coreScore, corePotential, edgeCount, supportCount] using hscoreHpos
+    simp [coreScore, corePotential, edgeCount, supportCount] at hscoreHpos
   refine ⟨H, inferInstance, hHGle, hHnonempty, hHdense, ?_⟩
   intro v hv
   by_contra hlow
@@ -292,7 +299,6 @@ theorem exists_minDegree_core (G : SimpleGraph V) [DecidableRel G.Adj] (d : ℕ)
       exact_mod_cast hsuppDel
     have hlowZ : 2 * (H.degree v : ℤ) < d := by exact_mod_cast hlow'
     have hmulS := mul_le_mul_of_nonneg_left hsuppZ (show (0 : ℤ) ≤ d by positivity)
-    push_cast at hmulS
     nlinarith
   have hH'edges : #H'.edgeFinset ≤ B := by
     exact Finset.card_le_card (SimpleGraph.edgeFinset_mono hH'le)
@@ -312,7 +318,7 @@ nonempty set has exactly the same edges and satisfies the rounded minimum-degree
 theorem exists_induced_minDegree_core (G : SimpleGraph V) [DecidableRel G.Adj] (d : ℕ)
     (hE : G.edgeFinset.Nonempty)
     (hdense : d * G.support.ncard ≤ 2 * #G.edgeFinset) :
-    ∃ H : SimpleGraph V, ∃ _ : DecidableRel H.Adj, ∃ hne : H.support.Nonempty,
+    ∃ H : SimpleGraph V, ∃ _ : DecidableRel H.Adj, ∃ _hne : H.support.Nonempty,
       H ≤ G ∧ #(H.induce H.support).edgeFinset = #H.edgeFinset ∧
       d ≤ 2 * (H.induce H.support).minDegree := by
   obtain ⟨H, inst, hHG, hHE, -, hdeg⟩ := exists_minDegree_core G d hE hdense
@@ -330,6 +336,7 @@ section Trim
 
 variable {V : Type u} [Fintype V] [DecidableEq V] {G : SimpleGraph V}
 
+omit [DecidableEq V] in
 /-- Independently keep exactly `r` neighbors at every vertex in the left part of a
 bipartite graph.  Because every edge has a unique left endpoint, these choices are
 compatible and define a simple subgraph. -/
