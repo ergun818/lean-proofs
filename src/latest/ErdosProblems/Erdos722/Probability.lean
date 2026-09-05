@@ -67,7 +67,7 @@ noncomputable instance varyingBernoulliProductMeasure.instIsProbabilityMeasure
 def coordinateIndicator {ι : Type*} (i : ι) (ω : ι → Bool) : ℝ :=
   if ω i = true then 1 else 0
 
-lemma coordinateIndicator_measurable {ι : Type*} [Fintype ι] (i : ι) :
+lemma coordinateIndicator_measurable {ι : Type*} (i : ι) :
     Measurable (coordinateIndicator i) := by
   exact (measurable_of_finite (fun b : Bool ↦ if b then (1 : ℝ) else 0)).comp
     (measurable_pi_apply i)
@@ -209,7 +209,7 @@ def blockIndicator {ι κ : Type*} {δ : ι → Type*}
   ∏ j : δ i, coordinateIndicator (coord ⟨i, j⟩) ω
 
 lemma blockIndicator_measurable
-    {ι κ : Type*} [Fintype κ] {δ : ι → Type*} [∀ i, Fintype (δ i)]
+    {ι κ : Type*} {δ : ι → Type*} [∀ i, Fintype (δ i)]
     (coord : (i : ι) × δ i → κ) (i : ι) :
     Measurable (blockIndicator coord i) := by
   exact Finset.measurable_fun_prod _ fun j _ ↦
@@ -276,14 +276,14 @@ lemma blockIndicator_mem_Icc
       cases h : ω (coord ⟨i, j⟩) <;> simp [coordinateIndicator, h]
 
 lemma blockIndicator_zero_or_one
-    {ι κ : Type*} [Fintype κ] {δ : ι → Type*} [∀ i, Fintype (δ i)]
+    {ι κ : Type*} {δ : ι → Type*} [∀ i, Fintype (δ i)]
     (coord : (i : ι) × δ i → κ) (i : ι) (ω : κ → Bool) :
     blockIndicator coord i ω = 0 ∨ blockIndicator coord i ω = 1 := by
   classical
   by_cases hall : ∀ j : δ i, ω (coord ⟨i, j⟩) = true
   · right
     simp [blockIndicator, coordinateIndicator, hall]
-  · push_neg at hall
+  · push Not at hall
     obtain ⟨j, hj⟩ := hall
     left
     unfold blockIndicator
@@ -331,12 +331,12 @@ private lemma finiteRandomSum_nonneg_le_card
   constructor
   · apply Finset.sum_nonneg
     intro i hi
-    rcases h01 i ω with h | h <;> simp [finiteRandomSum, h]
+    rcases h01 i ω with h | h <;> simp [h]
   · calc
       finiteRandomSum X ω ≤ ∑ _i : ι, (1 : ℝ) := by
         apply Finset.sum_le_sum
         intro i hi
-        rcases h01 i ω with h | h <;> simp [finiteRandomSum, h]
+        rcases h01 i ω with h | h <;> simp [h]
       _ = Fintype.card ι := by simp
 
 private lemma finiteRandomSum_exp_integrable
@@ -539,7 +539,6 @@ finite counting form of the colour-group amplification used after the
 second-moment estimates. -/
 theorem exists_amplified_cover
     {Sample Task : Type*} [Fintype Sample] [Nonempty Sample]
-    [DecidableEq Sample] [DecidableEq Task]
     (tasks : Finset Task) (bad : Task → Finset Sample)
     (B g : ℕ)
     (hbad : ∀ z ∈ tasks, (bad z).card ≤ B)
@@ -570,7 +569,7 @@ theorem exists_amplified_cover
   have hallCard :
       (Finset.univ : Finset (Fin g → Sample)).card =
         Fintype.card Sample ^ g := by
-    simp [Fintype.card_fun]
+    simp
   have hproper : allFailures.card <
       (Finset.univ : Finset (Fin g → Sample)).card := by
     rw [hallCard]
@@ -593,7 +592,6 @@ displayed inequality `|tasks| E^g < D^g` is exactly the corresponding union
 bound after `g` independent repetitions. -/
 theorem exists_amplified_cover_of_scaled_bad
     {Sample Task : Type*} [Fintype Sample] [Nonempty Sample]
-    [DecidableEq Sample] [DecidableEq Task]
     (tasks : Finset Task) (bad : Task → Finset Sample)
     (D E g : ℕ) (hD : 0 < D)
     (hbad : ∀ z ∈ tasks,
@@ -646,7 +644,7 @@ theorem exists_amplified_cover_of_scaled_bad
   have hallCard :
       (Finset.univ : Finset (Fin g → Sample)).card =
         Fintype.card Sample ^ g := by
-    simp [Fintype.card_fun]
+    simp
   have hproper' : allFailures.card <
       (Finset.univ : Finset (Fin g → Sample)).card := by
     rw [hallCard]
@@ -660,7 +658,6 @@ theorem exists_amplified_cover_of_scaled_bad
   apply hchoice
   apply Finset.mem_biUnion.mpr
   refine ⟨z, hz, ?_⟩
-  change choice ∈ failure z
   simpa [failure] using hnone
 
 /-! ## Finite second moments -/
@@ -669,7 +666,7 @@ theorem exists_amplified_cover_of_scaled_bad
 finite sample space.  Writing the identity with the factor `samples.card`
 keeps all later random-rotation estimates in exact integer arithmetic. -/
 lemma centeredSquareSum_identity
-    {Sample : Type*} [DecidableEq Sample]
+    {Sample : Type*}
     (samples : Finset Sample) (X : Sample → ℕ) :
     let T := ∑ ω ∈ samples, X ω
     ∑ ω ∈ samples,
@@ -712,7 +709,7 @@ lemma centeredSquareSum_identity
 square of the total mass to the unnormalised variance.  This is the exact
 finite Chebyshev inequality used for the random rotations in Lemma 6.3. -/
 theorem card_zeros_mul_totalSquare_le_varianceNumerator
-    {Sample : Type*} [DecidableEq Sample]
+    {Sample : Type*}
     (samples : Finset Sample) (X : Sample → ℕ) :
     let zeros := samples.filter fun ω ↦ X ω = 0
     let T := ∑ ω ∈ samples, X ω
@@ -846,7 +843,7 @@ theorem card_samples_with_no_success_scaled
   let S := Fintype.card Sample
   have hfirst : ∑ ω ∈ samples, X ω = T := by
     rw [sum_finiteSuccessCount]
-    simp [samples, T, X]
+    simp [samples, T]
   have hsecondNat : ∑ ω ∈ samples, (X ω) ^ 2 ≤ Q := by
     rw [sum_finiteSuccessCount_sq]
     have hinter (c d : Candidate) :
@@ -1009,7 +1006,7 @@ theorem card_samples_with_no_success_paley_scaled
   let S := Fintype.card Sample
   have hfirst : ∑ ω ∈ samples, X ω = T := by
     rw [sum_finiteSuccessCount]
-    simp [samples, T, X]
+    simp [samples, T]
   have hsumGood : ∑ ω ∈ good, X ω = T := by
     calc
       (∑ ω ∈ good, X ω) =
@@ -1208,7 +1205,7 @@ theorem card_samples_with_no_success_le
     ((success c ∩ success d).card : ℤ)
   have hfirst : ∑ ω ∈ samples, X ω = Tn := by
     rw [sum_finiteSuccessCount]
-    simp [samples, Tn, X]
+    simp [samples, Tn]
   have hsecond : ∑ ω ∈ samples, (X ω : ℤ) ^ 2 = Qz := by
     have hnat := sum_finiteSuccessCount_sq candidates samples success
     have hinter (c d : Candidate) :

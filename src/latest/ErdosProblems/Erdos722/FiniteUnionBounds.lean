@@ -30,8 +30,9 @@ open Finset
 
 noncomputable section
 
-variable {ι α : Type*} [Fintype ι] [DecidableEq ι] [DecidableEq α]
+variable {ι α : Type*} [Finite ι] [DecidableEq ι] [DecidableEq α]
 
+omit [Finite ι] in
 private lemma card_filter_mul_pred_eq_ordered_pairs
     (s : Finset ι) (p : ι → Prop) [DecidablePred p] :
     (s.filter p).card * ((s.filter p).card - 1) =
@@ -52,10 +53,11 @@ private lemma card_filter_mul_pred_eq_ordered_pairs
       · have hit : i ∈ t := Finset.mem_filter.mpr ⟨hi, hpi⟩
         have herase : t.erase i = (s.erase i).filter p := by
           ext j
-          simp [t, and_left_comm, and_assoc]
+          simp [t, and_assoc]
         simp [hpi, herase]
       · simp [hpi]
 
+omit [Finite ι] in
 private lemma sum_ordered_memberships_eq_intersections
     (s : Finset ι) (F : ι → Finset α) :
     ∑ x ∈ s.biUnion F,
@@ -114,6 +116,7 @@ theorem sum_card_le_card_biUnion_add_ordered_intersections
     (s : Finset ι) (F : ι → Finset α) :
     (∑ i ∈ s, (F i).card) ≤ (s.biUnion F).card +
       ∑ i ∈ s, ∑ j ∈ s.erase i, (F i ∩ F j).card := by
+  let := Fintype.ofFinite ι
   have hdouble : (∑ i ∈ s, (F i).card) =
       ∑ x ∈ s.biUnion F, (s.filter fun i ↦ x ∈ F i).card := by
     rw [Finset.sum_card_eq_sum_biUnion_card]

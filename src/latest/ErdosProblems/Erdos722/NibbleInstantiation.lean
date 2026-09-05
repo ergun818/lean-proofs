@@ -254,7 +254,8 @@ lemma concrete_initial_barriers
       (fun e he ↦ (hregular e he).le)
     dsimp [g] at hcount ⊢
     simp only [K]
-    convert hcount using 1 <;> ring
+    convert hcount using 1
+    ring
   intro z
   rcases z with (z | f)
   · rcases z with (eb | b)
@@ -314,7 +315,7 @@ lemma concrete_initial_barriers
         positivity
       have herrorFour : (g : ℝ) * I / K q r = 4 * W := by
         dsimp [W]
-        field_simp [hKreal.ne'] <;> ring
+        field_simp [hKreal.ne']
       cases b with
       | false =>
         have hobs : Y (Sum.inl (Sum.inr false)) [] =

@@ -34,7 +34,7 @@ noncomputable section
 lemma upper_edge_scalar_of_profile
     {K C L x M : ℕ} {degree degreeNext cliqueUpper window : ℝ}
     (hK : 0 < K) (hKC : K * C ≤ L) (hxM : x ≤ M)
-    (hwindow : 0 ≤ degree - window)
+    (_hwindow : 0 ≤ degree - window)
     (hcritical : -window ≤ (x : ℝ) - degree)
     (hMUpper : (M : ℝ) ≤ cliqueUpper)
     (hprofile :
@@ -82,9 +82,10 @@ lemma upper_edge_scalar_of_profile
       have hsecond0 : 0 ≤
           ((M - x : ℕ) : ℝ) * (degreeNext - degree) := by positivity
       linarith
-  convert hsum using 1 <;>
-    push_cast [Nat.cast_sub hCK, Nat.cast_sub hK1, Nat.cast_sub hKC,
-      Nat.cast_sub hxM] <;> ring
+  convert hsum using 1
+  push_cast [Nat.cast_sub hCK, Nat.cast_sub hK1, Nat.cast_sub hKC,
+    Nat.cast_sub hxM]
+  ring
 
 /-- A sufficient real inequality for the lower edge-degree drift. -/
 lemma lower_edge_scalar_of_profile
@@ -116,11 +117,12 @@ lemma lower_edge_scalar_of_profile
       (x : ℝ) * (K - 1) * U +
           ((M - x : ℕ) : ℝ) * (degreeNext - degree) ≤ 0 := by
     linarith
-  convert hsum using 1 <;>
-    push_cast [Nat.cast_sub hK1, Nat.cast_sub hxM] <;> ring
+  convert hsum using 1
+  push_cast [Nat.cast_sub hK1, Nat.cast_sub hxM]
+  ring
 
 lemma floor_profile_sub_one_lt
-    {a : ℝ} (ha : 0 ≤ a) : a - 1 < (Nat.floor a : ℝ) := by
+    {a : ℝ} (_ha : 0 ≤ a) : a - 1 < (Nat.floor a : ℝ) := by
   have h := Nat.lt_floor_add_one a
   change a < (Nat.floor a : ℝ) + 1 at h
   linarith

@@ -109,7 +109,7 @@ lemma focus_exponent_gaps (hrq : r < q) (hrho : 1 < rho) :
   have hcandSub : 1 ≤ 3 * rho * (q - r) := by
     calc
       1 ≤ 3 * 1 * 1 := by norm_num
-      _ ≤ 3 * rho * (q - r) := by gcongr <;> omega
+      _ ≤ 3 * rho * (q - r) := by gcongr
   have hloadSub : 1 ≤ 2 * rho := by omega
   have hrho0 : (0 : ℝ) < rho := by exact_mod_cast (by omega : 0 < rho)
   rw [Nat.cast_sub hcandSub,
@@ -121,7 +121,7 @@ lemma focus_exponent_gaps (hrq : r < q) (hrho : 1 < rho) :
   constructor <;> nlinarith
 
 lemma focusCandidateLower_le_of_power
-    (hrq : r < q) (hrho : 0 < rho) {n x : ℕ}
+    (_hrq : r < q) (hrho : 0 < rho) {n x : ℕ}
     (h : n ^ focusCandidateNum q r rho ≤
       x ^ focusCandidateDen rho) :
     focusCandidateLower q r rho n ≤ x := by
@@ -290,7 +290,9 @@ theorem eventually_focus_legalLowerBound
         ((focusDenominatorConstant q r : ℝ) *
           (n : ℝ) ^ ((q - r - 1 : ℕ) + focusLoadExp rho)) ≤
         (n : ℝ) ^ focusCandidateExp q r rho := by
-      convert hdom using 1 <;> push_cast <;> ring
+      convert hdom using 1
+      push_cast
+      ring
     change (loss : ℝ) ≤ focusDenominatorConstant q r *
       (n : ℝ) ^ ((q - r - 1 : ℕ) + focusLoadExp rho) at hlossRaw
     linarith

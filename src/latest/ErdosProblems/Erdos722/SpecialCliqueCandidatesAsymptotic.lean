@@ -366,7 +366,6 @@ theorem eventually_specialCandidate_expected_lower
           push_cast
           simp [leftExp]
         rw [hexp, Real.rpow_natCast, pow_add, pow_mul]
-        push_cast
         ring
   have hright :
       (n : ℝ) ^ rightExp /

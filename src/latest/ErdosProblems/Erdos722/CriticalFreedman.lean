@@ -36,8 +36,7 @@ open Erdos722.StoppedFreedman
 
 noncomputable section
 
-variable {α β : Type*} [Fintype α] [DecidableEq α]
-  [Fintype β] [DecidableEq β]
+variable {α β : Type*}
 
 /-- From time `start` through the current history, the designated counter
 has remained in the closed lower half of its critical interval. -/
@@ -249,7 +248,7 @@ noncomputable def legalActiveIncrement
 /-- Along a good legal path, the implication used to totalize the stopped
 increment is true at every source history. -/
 lemma pathSum_active_eq_of_allGood_follows
-    (good : List α → Prop) [DecidablePred good]
+    (good : List α → Prop)
     (legal : List α → Finset α)
     (inc : List α → α → ℝ) (depth : ℕ)
     (path : List α)
@@ -297,6 +296,8 @@ lemma pathSum_activeCritical_eq_zero_of_not_allGood
         good Y window b start history a (by simp [hbad])
       simp [pathSum, legalActiveIncrement, hzero, hbad, ih hbadNext]
 
+variable [Fintype α] [DecidableEq α] [Fintype β]
+
 /-- Simultaneous critical-interval concentration.  Negative drift and
 variance estimates are required only while the counter lies in its critical
 interval `[-window,0)`.  Starting a tracker at every possible time costs the
@@ -308,7 +309,7 @@ theorem exists_legal_path_staying_below_zero_critical
     (window jump : β → ℝ)
     (v : β → ℕ → ℝ) (hv : ∀ b i, 0 ≤ v b i)
     {t : ℝ} (ht : 0 ≤ t)
-    (hjumpNonneg : ∀ b, 0 ≤ jump b)
+    (_hjumpNonneg : ∀ b, 0 ≤ jump b)
     (hjumpLt : ∀ b, jump b < window b)
     (hinitial : ∀ b,
       Y b [] < 0 ∧ Y b [] ≤ -window b + jump b)
@@ -385,7 +386,7 @@ theorem exists_legal_path_staying_below_zero_critical
                 criticalIncrement, hlive]]
             exact hbound z.1 history a hdepth (helig hlive.1)
               hlive.1 ha hlive.2.current
-          · simp [inc, legalActiveIncrement, hdepth, helig, ha,
+          · simp [inc, legalActiveIncrement, hdepth, ha,
               criticalIncrement, hlive]
         · simp [inc, legalActiveIncrement, hdepth, helig]
       · simp [inc, legalActiveIncrement, ha]
@@ -409,7 +410,7 @@ theorem exists_legal_path_staying_below_zero_critical
           simpa [inc, legalActiveIncrement, uniformStep, hdepth, helig,
             criticalIncrement, hlive] using
             hmean z.1 history hdepth hfollow hlive.1 hlive.2.current
-        · simp [inc, legalActiveIncrement, hdepth, helig, criticalIncrement, hlive]
+        · simp [inc, legalActiveIncrement, hdepth, criticalIncrement, hlive]
       · simp [inc, legalActiveIncrement, hdepth, helig]
     · simp [inc, legalActiveIncrement, hdepth]
   have hvar' : ∀ z history,

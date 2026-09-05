@@ -40,7 +40,7 @@ variable {n r : ℕ}
 lemma sum_mul_sq_le_mul_sum_abs
     {A : Type*} [Fintype A]
     (p x : A → ℝ) (J : ℝ)
-    (hp : ∀ a, 0 ≤ p a) (hJ : 0 ≤ J)
+    (hp : ∀ a, 0 ≤ p a) (_hJ : 0 ≤ J)
     (hx : ∀ a, p a = 0 ∨ |x a| ≤ J) :
     (∑ a, p a * (x a) ^ 2) ≤
       J * ∑ a, p a * |x a| := by

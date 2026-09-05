@@ -15,7 +15,7 @@ noncomputable section
 
 /-- A single fixed exponent denominator large enough for all finite
 patterns used in the Section 6 focusing certificate. -/
-def sectionSixSampleDen {k r : ℕ} (hrk : r < k) : ℕ :=
+def sectionSixSampleDen {k r : ℕ} (_hrk : r < k) : ℕ :=
   sectionSixPatternDen k r
 
 /-- Fixed number of colour-coordinate roles used by the simultaneous
@@ -29,7 +29,7 @@ def sectionSixColorLoadCoefficient {k r : ℕ} (hrk : r < k) : ℕ :=
     (CoverClique.coverPattern k r).freeEdges.card) +
     (remainingBlocks E).card
 
-lemma sectionSixSampleDen_bounds {k r : ℕ} (hr : 1 < r) (hrk : r < k) :
+lemma sectionSixSampleDen_bounds {k r : ℕ} (_hr : 1 < r) (hrk : r < k) :
     let E := ExchangeEmbedding.fullExchangeData hrk
     let e₀ := ExchangeEmbedding.fullExchangeRootEdge hrk
     let d := sectionSixSampleDen hrk
@@ -318,7 +318,7 @@ theorem eventually_exists_rainbowTwoCapFocusingCertificate
       (by simpa [mR] using hmR') (by simpa [mR] using hmRrho')
       (by
         have hchoose : 0 < Nat.choose k r := Nat.choose_pos hrk.le
-        simp [rhoDen, cliqueSize, hchoose]
+        simp [rhoDen, cliqueSize]
         omega)
   have hfresh :=
     Erdos722.SlowRotationBanks.eventually_exists_prunedGenerator_specialCandidateRotationCover
@@ -391,7 +391,7 @@ theorem eventually_exists_rainbowTwoCapFocusingCertificate
   have huFormula : u = 2 +
       2 * SlowRotationBanks.rotationBankCount d n * (mE + mA + mX + mR) +
       SlowRotationBanks.rotationBankCount d n * mFresh := by
-    simp [u, Color, FocusingColor, FocusingBaseCoord]
+    simp [u, Color, FocusingBaseCoord]
     ring
   have hu : u ≤ n ^ 2 := by
     rw [huFormula]

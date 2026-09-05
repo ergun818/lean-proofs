@@ -32,7 +32,7 @@ open Erdos722.Typicality
 /-- A finite bipartite relation with left degree at least `a` and right
 degree at most `b` satisfies the corresponding edge-count inequality. -/
 theorem card_mul_le_card_mul_of_relation
-    {α β : Type*} [DecidableEq α] [DecidableEq β]
+    {α β : Type*}
     (left : Finset α) (right : Finset β) (rel : α → β → Prop)
     [DecidableRel rel] (a b : ℕ)
     (hleft : ∀ x ∈ left, a ≤ (right.filter (rel x)).card)
@@ -123,7 +123,7 @@ lemma localDegree_sampledEdges_eq_commonNeighbors
         · exact Finset.mem_insert_of_mem hyI
         · have hyDiff : y ∈ A \ I := Finset.mem_sdiff.mpr ⟨hy, hyI⟩
           have : y = x := by simpa [hdiff] using hyDiff
-          simpa [this]
+          simp [this]
       · exact Finset.insert_subset hxA hAtarget.2
     let xclean : cleanVertices n ({I} : Finset (Finset (Fin n))) :=
       ⟨x, by simpa [cleanVertices] using hxI⟩
@@ -271,7 +271,7 @@ theorem typical_localDegree_power_bound
   exact_mod_cast hpow
 
 /-- Valid partial extensions of a root edge by `i` new vertices. -/
-def extensionLevel (n q r : ℕ) (reserve : Finset (Finset (Fin n)))
+def extensionLevel (n _q r : ℕ) (reserve : Finset (Finset (Fin n)))
     (e : Finset (Fin n)) (i : ℕ) : Finset (Finset (Fin n)) :=
   (uniformEdges n (r + i)).filter fun S ↦
     e ⊆ S ∧ cliqueEdges S r \ {e} ⊆ reserve
@@ -754,14 +754,14 @@ lemma prod_half_reserveBranchingReal
           (base * p ^ Nat.choose (r + i) (r - 1) / 4) := by
       apply Finset.prod_congr rfl
       intro i hi
-      simp only [reserveBranchingReal, base, p, m]
+      simp only [reserveBranchingReal, base, p]
       ring
     _ = (base ^ m * p ^ (Nat.choose q r - 1)) / (4 : ℝ) ^ m := by
       simp_rw [div_eq_mul_inv]
       rw [Finset.prod_mul_distrib, Finset.prod_mul_distrib]
       rw [Finset.prod_const, Finset.card_range]
       rw [Finset.prod_pow_eq_pow_sum, hsum]
-      simp [m, div_eq_mul_inv, mul_assoc]
+      simp [m, mul_assoc]
     _ = _ := by simp [base, p, m]
 
 /-- After clearing the fixed predecessor multiplicity and the fractional
@@ -979,7 +979,7 @@ instance instDecidableExtendsByOne (n : ℕ) :
   infer_instance
 
 lemma incoming_extensions_le
-    (right left : Finset (Finset (Fin n))) (T : Finset (Fin n))
+    (_right left : Finset (Finset (Fin n))) (T : Finset (Fin n))
     (hTq : T.card ≤ q) :
     (left.filter fun S ↦ ExtendsByOne S T).card ≤ 2 ^ q := by
   classical
@@ -1001,7 +1001,7 @@ lemma mem_extensionLevel_data
 /-- Every clean common neighbour of a valid partial extension gives a
 distinct valid set on the next level. -/
 lemma commonNeighbors_le_successors
-    {n q r i : ℕ} (hr : 1 < r) (hi : i < q - r)
+    {n q r i : ℕ} (hr : 1 < r) (_hi : i < q - r)
     (e S : Finset (Fin n))
     (ω : {a // a ∈ uniformEdges n r} → Bool)
     (hS : S ∈ extensionLevel n q r (sampledEdges n r ω) e i) :
@@ -1027,7 +1027,7 @@ lemma commonNeighbors_le_successors
     have hSr : r ≤ S.card := by omega
     have hxS : (x : Fin n) ∉ S := by
       apply (mem_cleanVertices_extensionRoots hr hSr x).mp
-      simpa [roots] using x.property
+      simp [roots]
     have hcard : (insert (x : Fin n) S).card = r + (i + 1) := by
       rw [Finset.card_insert_of_notMem hxS, hSdata.1]
       omega
@@ -1083,10 +1083,10 @@ lemma commonNeighbors_le_successors
     have hSr : r ≤ S.card := by omega
     have hxS : (x : Fin n) ∉ S :=
       (mem_cleanVertices_extensionRoots hr hSr x).mp (by
-        simpa [roots] using x.property)
+        simp [roots])
     have hyS : (y : Fin n) ∉ S :=
       (mem_cleanVertices_extensionRoots hr hSr y).mp (by
-        simpa [roots] using y.property)
+        simp [roots])
     apply Subtype.ext
     change insert (x : Fin n) S = insert (y : Fin n) S at hxy
     have hxmem : (x : Fin n) ∈ insert (y : Fin n) S := by
@@ -1100,7 +1100,7 @@ lemma commonNeighbors_le_successors
 common neighbour.  Together with `commonNeighbors_le_successors`, this is
 the exact branching identity for the extension tree. -/
 lemma successors_le_commonNeighbors
-    {n q r i : ℕ} (hr : 1 < r) (hi : i < q - r)
+    {n q r i : ℕ} (hr : 1 < r) (_hi : i < q - r)
     (e S : Finset (Fin n))
     (ω : {a // a ∈ uniformEdges n r} → Bool)
     (hS : S ∈ extensionLevel n q r (sampledEdges n r ω) e i) :
@@ -1411,7 +1411,7 @@ lemma extensionLevel_zero
     have hdata := mem_extensionLevel_data hS
     have hSe : S = e :=
       (Finset.eq_of_subset_of_card_le hdata.2.1 (by omega)).symm
-    simpa [hSe]
+    simp [hSe]
   · intro hS
     have hSe : S = e := Finset.mem_singleton.mp hS
     subst S
@@ -1425,7 +1425,7 @@ lemma extensionLevel_zero
         have hAcard := (Finset.mem_powersetCard.mp hAclique).2
         have hAsub := (Finset.mem_powersetCard.mp hAclique).1
         have hAe : A = e := Finset.eq_of_subset_of_card_le hAsub (by omega)
-        exact ((Finset.mem_sdiff.mp hA).2 (by simpa [hAe])).elim
+        exact ((Finset.mem_sdiff.mp hA).2 (by simp [hAe])).elim
 
 /-- Final partial extensions are precisely the reserve candidates through
 the root edge. -/

@@ -85,7 +85,7 @@ lemma coverDen_pos (hrq : r ≤ q) : 0 < coverDen q r := by
   unfold coverDen
   exact pow_pos (mul_pos (by norm_num) hK) _
 
-lemma three_mul_coverK_lt_coverDen (hr : 0 < r) (hrq : r < q) :
+lemma three_mul_coverK_lt_coverDen (_hr : 0 < r) (hrq : r < q) :
     3 * coverK q r < coverDen q r := by
   have hK := coverK_pos hrq.le
   dsimp [coverDen]
@@ -178,7 +178,7 @@ lemma cover_exponent_identities (hr : 0 < r) (hrq : r < q) :
 /-- The power-cleared reserve conclusion implies the natural candidate
 lower bound chosen above. -/
 lemma coverCandidateLower_le_of_power
-    (hr : 0 < r) (hrq : r < q) {n x : ℕ}
+    (_hr : 0 < r) (hrq : r < q) {n x : ℕ}
     (h : n ^ coverCandidateNumerator q r ≤ x ^ coverDen q r) :
     coverCandidateLower q r n ≤ x := by
   exact rationalPowerThreshold_le_of_power_lower _ _ _ _
@@ -186,7 +186,7 @@ lemma coverCandidateLower_le_of_power
 
 /-- The power-cleared nibble conclusion implies the natural leave cap. -/
 lemma le_coverLeaveCap_of_power
-    (hr : 0 < r) (hrq : r < q) {n x : ℕ}
+    (_hr : 0 < r) (hrq : r < q) {n x : ℕ}
     (h : x ^ coverDen q r ≤ n ^ coverLeaveNumerator q r) :
     x ≤ coverLeaveCap q r n := by
   exact le_rationalPowerThreshold_of_pow_le _ _ _ _

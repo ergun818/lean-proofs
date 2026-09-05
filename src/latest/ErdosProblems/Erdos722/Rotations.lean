@@ -269,7 +269,7 @@ def restrictedRotateAddEquiv (N : ℕ) (σ : Equiv.Perm (Fin n))
   toFun x e := x ⟨rotateEdge σ.symm e.1, mem_rotateFamily.mp e.2⟩
   invFun y e := y ⟨rotateEdge σ e.1, by
     apply mem_rotateFamily.mpr
-    simpa using e.2⟩
+    simp⟩
   left_inv x := by
     funext e
     simp
@@ -327,7 +327,7 @@ theorem inRestrictedModularSpan_rotate
         · simpa [e, oldVec, newVec] using
             (restrictedRotateAddEquiv_modCliqueBoundaryOn N r σ K B).symm
     | zero =>
-        simpa using AddSubgroup.zero_mem (AddSubgroup.closure newSet)
+        simp
     | add x y _hx _hy hx hy =>
         simpa using AddSubgroup.add_mem (AddSubgroup.closure newSet) hx hy
     | neg x _hx hx =>
@@ -637,8 +637,7 @@ lemma hitPermutations_eq_biUnion_edgeFiber
     refine ⟨e, mem_hitPermutations.mp hσ, ?_⟩
     apply mem_edgeFiber.mpr
     dsimp [e]
-    have := rotateEdge_symm_rotateEdge σ.symm target
-    simpa using this
+    simp
   · intro hσ
     obtain ⟨e, heK, heσ⟩ := Finset.mem_biUnion.mp hσ
     apply mem_hitPermutations.mpr
@@ -794,13 +793,14 @@ theorem exists_rotateEdge_eq_pair_of_disjoint
 parts.  This is the convenient transitivity interface for intersection
 types of ordered edge pairs. -/
 theorem exists_rotateEdge_eq_parts
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Finite ι]
     (source target : ι → Finset (Fin n))
     (hsource : ∀ i j, i ≠ j → Disjoint (source i) (source j))
     (htarget : ∀ i j, i ≠ j → Disjoint (target i) (target j))
     (hcard : ∀ i, (source i).card = (target i).card) :
     ∃ σ : Equiv.Perm (Fin n), ∀ i, rotateEdge σ (source i) = target i := by
   classical
+  let := Fintype.ofFinite ι
   let e : (i : ι) → ↑(source i) ≃ ↑(target i) := fun i ↦
     Fintype.equivOfCardEq (by simpa using hcard i)
   let f : ((i : ι) × ↑(source i)) → Fin n := fun z ↦ z.2
@@ -1108,10 +1108,10 @@ lemma pairHitPermutations_eq_biUnion_edgePairFiber
     have hedisjoint : Disjoint e₁ e₂ := by
       have he₁map : rotateEdge σ e₁ = target₁ := by
         dsimp [e₁]
-        simpa using rotateEdge_symm_rotateEdge σ.symm target₁
+        simp
       have he₂map : rotateEdge σ e₂ = target₂ := by
         dsimp [e₂]
-        simpa using rotateEdge_symm_rotateEdge σ.symm target₂
+        simp
       apply Finset.disjoint_left.mpr
       intro x hx₁ hx₂
       have hσx₁ : σ x ∈ target₁ := by
@@ -1131,9 +1131,9 @@ lemma pairHitPermutations_eq_biUnion_edgePairFiber
     · apply mem_edgePairFiber.mpr
       constructor
       · dsimp [e₁]
-        simpa using rotateEdge_symm_rotateEdge σ.symm target₁
+        simp
       · dsimp [e₂]
-        simpa using rotateEdge_symm_rotateEdge σ.symm target₂
+        simp
   · intro hσ
     obtain ⟨p, hp, hσp⟩ := Finset.mem_biUnion.mp hσ
     have hpdata := mem_orderedDisjointPairs.mp hp
@@ -1168,9 +1168,9 @@ lemma pairHitPermutations_eq_biUnion_intersectionFiber
     · apply mem_edgePairFiber.mpr
       constructor
       · dsimp [e₁]
-        simpa using rotateEdge_symm_rotateEdge σ.symm target₁
+        simp
       · dsimp [e₂]
-        simpa using rotateEdge_symm_rotateEdge σ.symm target₂
+        simp
   · intro hσ
     obtain ⟨p, hp, hσp⟩ := Finset.mem_biUnion.mp hσ
     have hpdata := mem_orderedIntersectionPairs.mp hp
@@ -1728,7 +1728,7 @@ def rotationSamples (n m : ℕ) :
 @[simp] lemma card_rotationSamples (n m : ℕ) :
     (rotationSamples n m).card =
       Fintype.card (Equiv.Perm (Fin n)) ^ m := by
-  simp [rotationSamples, Fintype.card_fun]
+  simp [rotationSamples]
 
 /-- Samples for which every colour-indexed target edge lands in the
 corresponding independent rotation of `K`. -/
@@ -2420,7 +2420,7 @@ extract an actual successful rooted embedding.  A successful colour group
 is returned together with the embedding and the coordinatewise membership
 conditions, ready for deterministic pattern-specific decoding. -/
 theorem exists_amplified_rootedRotationCover_of_scaled_bad
-    {v n m r R g : ℕ} {root : Finset (Fin v)}
+    {v n m _r R g : ℕ} {root : Finset (Fin v)}
     (K : Finset (Finset (Fin n)))
     (edges : Fin m → Finset (Fin v))
     (hR : 0 < R)
@@ -2449,7 +2449,7 @@ theorem exists_amplified_rootedRotationCover_of_scaled_bad
       | mk amap ainj =>
         cases b with
         | mk bmap binj =>
-          simp only [Erdos722.RootedEmbedding.RootRequest.map] at hab
+          simp only [] at hab
           cases hab
           rfl)
   let tasks : Finset Task := Finset.univ

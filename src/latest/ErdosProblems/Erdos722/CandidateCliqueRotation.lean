@@ -89,10 +89,10 @@ theorem candidateRotationFailures_paley_of_correlation
     (hU : ∀ Q ∈ U, Q.card = q)
     {blocks : Fin m → Finset (Fin v)}
     (hblocks : ∀ i, (blocks i).card = q)
-    (hproper : ∀ i, (blocks i ∩ root).card < r)
+    (_hproper : ∀ i, (blocks i ∩ root).card < r)
     (hUpos : 0 < U.card)
     (hcandidates : 0 < embeddings.card)
-    (hrooted : ∀ φ ∈ embeddings, ExtendsRequest root request φ)
+    (_hrooted : ∀ φ ∈ embeddings, ExtendsRequest root request φ)
     {L : ℕ}
     (hexceptional : ∀ φ ∈ embeddings,
       (outsideMeetingCandidates root embeddings φ).card ≤ L)
@@ -203,7 +203,7 @@ finite task family.  The conclusion retains membership in the task's
 candidate family, which is the information needed to recover the already
 fixed special monochromatic cliques. -/
 theorem exists_amplified_candidateRotationCover_of_scaled_bad
-    {Task : Type*} [DecidableEq Task]
+    {Task : Type*}
     {v n m R g : ℕ}
     (tasks : Finset Task)
     (embeddings : Task → Finset (Fin v ↪ Fin n))

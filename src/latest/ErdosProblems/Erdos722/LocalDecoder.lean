@@ -29,7 +29,7 @@ namespace Erdos722.LocalDecoder
 
 open Finset
 
-variable {V : Type*} [Fintype V] [DecidableEq V]
+variable {V : Type*} [DecidableEq V]
 
 /-- Coefficient attached to a complement `C`.  Only subsets of `e ∩ C`
 contribute. -/
@@ -295,7 +295,7 @@ private theorem sum_superposedDecoder_single
     {U : Finset V} {roots : Finset (Finset V)}
     {Z : Finset V → Finset V} {q r : ℕ}
     {m : Finset V → ℤ} {e e' : Finset V}
-    (he : e ∈ roots) (her : e.card = r) (heZ : e ⊆ Z e)
+    (_he : e ∈ roots) (her : e.card = r) (heZ : e ⊆ Z e)
     (hZU : Z e ⊆ U) (hZcard : (Z e).card = q + r)
     (he'card : e'.card = r) :
     (∑ Q ∈ U.powersetCard q,
@@ -383,7 +383,7 @@ theorem intBoundary_superposedDecoder
       intro Q hQ
       by_cases he'Q : e' ⊆ Q
       · simp only [if_pos he'Q, superposedDecoder]
-      · simp [he'Q, superposedDecoder]
+      · simp [he'Q]
     _ = ∑ e ∈ roots, ∑ Q ∈ U.powersetCard q,
           if e' ⊆ Q then
             (if Q ∈ (Z e).powersetCard q then
@@ -415,7 +415,7 @@ theorem superposedDecoder_ne_zero_support
     ∃ e ∈ roots, Q ∈ (Z e).powersetCard q := by
   classical
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   apply hQ
   rw [superposedDecoder]
   apply Finset.sum_eq_zero
@@ -456,7 +456,7 @@ theorem natAbs_superposedDecoder_le
         Nat.mul_le_mul (hm e he)
           (natAbs_cliqueCoeff_le hq (hrootcard e he))
       _ = (2 * q) ^ r * Nat.factorial r := by simp
-  · push_neg at hsome
+  · push Not at hsome
     rw [superposedDecoder]
     have hzero : ∀ e ∈ roots,
         (if Q ∈ (Z e).powersetCard q then
@@ -728,7 +728,7 @@ private lemma sum_containing_indicator
 multiple of the sum of clique coefficients through the face. -/
 theorem intLocalDegree_intBoundary
     {Z I : Finset V} {q r : ℕ} (φ : Finset V → ℤ)
-    (hIZ : I ⊆ Z) (hIr : I.card ≤ r) :
+    (_hIZ : I ⊆ Z) (hIr : I.card ≤ r) :
     intLocalDegree Z r (intBoundary Z q φ) I =
       (Nat.choose (q - I.card) (r - I.card) : ℤ) *
         ∑ Q ∈ Z.powersetCard q, if I ⊆ Q then φ Q else 0 := by
@@ -857,8 +857,7 @@ private lemma intLocalDegree_link
       · have hins : insert v (E.erase v) = E := insert_erase hvE
         have hsubset : I ⊆ E.erase v ↔ insert v I ⊆ E := by
           constructor
-          · intro hIE
-            intro x hx
+          · intro hIE x hx
             rcases mem_insert.mp hx with rfl | hxI
             · exact hvE
             · exact (mem_erase.mp (hIE hxI)).2
@@ -907,7 +906,7 @@ private lemma intBoundary_lift_of_mem
             fun h ↦ heQ (hsubset.mpr h)
           simp [heQ, hnotErase]
       · have hnot : ¬e ⊆ Q := fun h ↦ hvQ (h hve)
-        simp [liftCoeffs, hvQ, hnot]
+        simp [hvQ, hnot]
     _ = ∑ Q ∈ (Z.powersetCard q).filter (v ∈ ·),
           if e.erase v ⊆ Q.erase v then ψ (Q.erase v) else 0 := by
       rw [Finset.sum_filter]
@@ -919,7 +918,7 @@ private lemma intBoundary_lift_of_mem
 
 private lemma isLocallyDivisible_link
     {Z : Finset V} {v : V} {q r : ℕ} {J : Finset V → ℤ}
-    (hvZ : v ∈ Z) (hr : 0 < r) (hq : 0 < q)
+    (hvZ : v ∈ Z) (hr : 0 < r) (_hq : 0 < q)
     (hlocal : IsLocallyDivisible Z q r J) :
     IsLocallyDivisible (Z.erase v) (q - 1) (r - 1) (intLink v J) := by
   intro I hIZ hIr
@@ -1146,10 +1145,8 @@ theorem exists_intBoundary_eq
     ring
 termination_by (r, Z.card)
 decreasing_by
-  · simp_wf
-    omega
-  · simp_wf
-    rw [card_erase_of_mem hvZ]
+  · omega
+  · rw [card_erase_of_mem hvZ]
     omega
 
 end Erdos722.LocalDecoder

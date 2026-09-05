@@ -35,8 +35,7 @@ open Erdos722.RandomGreedy
 
 noncomputable section
 
-variable {α β : Type*} [Fintype α] [DecidableEq α]
-  [Fintype β] [DecidableEq β]
+variable {α β : Type*}
 
 /-- `GoodAlong good history path` says that `good` holds at the initial
 history, after every selection, and at the terminal history. -/
@@ -150,6 +149,8 @@ lemma pathSum_stopped_eq_zero_of_not_allGood
       have hbadNext : ¬ AllGood good (history ++ [a]) :=
         not_allGood_append good hbad [a]
       simp [pathSum, stoppedIncrement, hbad, ih hbadNext]
+
+variable [Fintype α] [DecidableEq α] [Fintype β]
 
 /-- Simultaneous stopped-process theorem.  The observable itself defines the
 good region `Y_b(history)<0`; conditional estimates are required only while

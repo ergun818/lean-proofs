@@ -104,7 +104,7 @@ is contained in at most `|K(f)| * M` cliques of `K`. -/
 theorem card_cliques_through_face_le
     {n q r M : ℕ} (hr : 0 < r) (hrq : r ≤ q)
     {K : Finset (Finset (Fin n))}
-    (huniform : ∀ e ∈ K, e.card = r)
+    (_huniform : ∀ e ∈ K, e.card = r)
     (hext : ∀ e ∈ K,
       (extensionLevel n q r K e (q - r)).card ≤ M)
     {f : Finset (Fin n)} (hfcard : f.card = r - 1) :

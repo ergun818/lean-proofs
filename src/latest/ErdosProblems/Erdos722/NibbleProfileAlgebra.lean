@@ -125,7 +125,7 @@ lemma lower_profile_sub_next_ge
         D * ((x - h) ^ m - A * (x - h) ^ (m - 1)) := by ring
 
 lemma one_div_sub_one_div_sub
-    {x h : ℝ} (hx : 0 < x) (hh : 0 ≤ h) (hhx : h < x) :
+    {x h : ℝ} (hx : 0 < x) (_hh : 0 ≤ h) (hhx : h < x) :
     1 / x - 1 / (x - h) = -h / (x * (x - h)) := by
   have hx0 : x ≠ 0 := hx.ne'
   have hy0 : x - h ≠ 0 := (sub_pos.mpr hhx).ne'

@@ -136,14 +136,13 @@ theorem upperDegreeObservable_increment
   unfold upperDegreeObservable
   rw [freezeValue_increment
     (hmono := edgeRelevant_monotone host r e)]
-  simp only [edgeRelevant, Bool.decide_coe, decide_eq_true_eq,
-    List.length_append, List.length_singleton, Nat.add_comm]
+  simp only [edgeRelevant, decide_eq_true_eq,
+    List.length_append, List.length_singleton]
   by_cases hrel : e ∈ residualHost host r history ∧
       e ∈ residualHost host r (history ++ [Q])
   · rw [if_pos hrel]
     rw [availableDegree_update, Nat.cast_sub
       (card_deletedAtEdge_le_availableDegree H r history e Q)]
-    push_cast
     simp only [if_pos hrel]
     ring
   · simp [hrel]
@@ -163,14 +162,13 @@ theorem lowerDegreeObservable_increment
   unfold lowerDegreeObservable
   rw [freezeValue_increment
     (hmono := edgeRelevant_monotone host r e)]
-  simp only [edgeRelevant, Bool.decide_coe, decide_eq_true_eq,
-    List.length_append, List.length_singleton, Nat.add_comm]
+  simp only [edgeRelevant, decide_eq_true_eq,
+    List.length_append, List.length_singleton]
   by_cases hrel : e ∈ residualHost host r history ∧
       e ∈ residualHost host r (history ++ [Q])
   · rw [if_pos hrel]
     rw [availableDegree_update, Nat.cast_sub
       (card_deletedAtEdge_le_availableDegree H r history e Q)]
-    push_cast
     simp only [if_pos hrel]
     ring
   · simp [hrel]
@@ -190,7 +188,6 @@ theorem faceObservable_increment
   rw [residualFaceDegree_update hH hQ,
     Nat.cast_sub (faceLoss_le_residualFaceDegree hH hQ)]
   simp only [List.length_append, List.length_singleton]
-  push_cast
   ring
 
 /-- Exact total-clique observable increment. -/
@@ -233,7 +230,7 @@ theorem weightedFaceObservable_increment
 /-- Conditional mean of the frozen upper-degree increment. -/
 theorem sum_uniformStep_mul_upperDegreeIncrement
     {host H : Finset (Finset (Fin n))}
-    (hH : ∀ Q ∈ H, blockEdges r Q ⊆ host)
+    (_hH : ∀ Q ∈ H, blockEdges r Q ⊆ host)
     (upper : ℕ → ℝ) {e : Finset (Fin n)}
     {history : List (Finset (Fin n))}
     (he : e ∈ residualHost host r history)
@@ -318,7 +315,8 @@ theorem sum_uniformStep_mul_upperDegreeIncrement
             rw [← Finset.sum_neg_distrib]
             apply Finset.sum_congr rfl
             intro Q hQ
-            by_cases heQ : e ∈ blockEdges r Q <;> simp [heQ] <;> ring
+            by_cases heQ : e ∈ blockEdges r Q <;> simp [heQ]
+            ring
           rw [hsum]
           ring
 
@@ -328,7 +326,7 @@ theorem sum_uniformStep_mul_lowerDegreeIncrement
     (lower : ℕ → ℝ) {e : Finset (Fin n)}
     {history : List (Finset (Fin n))}
     (he : e ∈ residualHost host r history)
-    (hne : (availableCliques H r history).Nonempty) :
+    (_hne : (availableCliques H r history).Nonempty) :
     (∑ Q : Finset (Fin n),
       uniformStep (availableCliques H r) history Q *
         (lowerDegreeObservable host H r lower e (history ++ [Q]) -
@@ -563,8 +561,6 @@ theorem sum_uniformStep_mul_weightedFaceIncrement
       have hconst (c : ℝ) :
           (∑ Q : Finset (Fin n),
             uniformStep (availableCliques H r) history Q * c) = c := by
-        change (∑ Q ∈ (Finset.univ : Finset (Finset (Fin n))),
-          uniformStep (availableCliques H r) history Q * c) = c
         rw [← Finset.sum_mul]
         change (∑ Q : Finset (Fin n),
           uniformStep (availableCliques H r) history Q) * c = c
@@ -589,10 +585,6 @@ theorem sum_uniformStep_mul_weightedFaceIncrement
                       intro Q hQ
                       ring
           _ = _ := by
-            change (∑ Q ∈ (Finset.univ : Finset (Finset (Fin n))),
-              weight (history.length + 1) *
-                (uniformStep (availableCliques H r) history Q *
-                  faceLoss r Q f)) = _
             rw [← Finset.mul_sum]
       simp_rw [mul_sub, Finset.sum_sub_distrib]
       rw [hloss, hconst, hconst, hconst]

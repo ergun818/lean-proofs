@@ -195,13 +195,14 @@ lemma extensionRootCount_lt_den
     Nat.add_sub_of_le hrq.le] at hle
   omega
 
-lemma prod_rpow_eq_rpow_sum {ι : Type*} [DecidableEq ι]
+lemma prod_rpow_eq_rpow_sum {ι : Type*}
     (s : Finset ι) (f : ι → ℝ) {x : ℝ} (hx : 0 < x) :
     ∏ i ∈ s, x ^ f i = x ^ (∑ i ∈ s, f i) := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp
   | @insert a s ha ih =>
-      simp only [Finset.mem_insert, Finset.prod_insert ha, Finset.sum_insert ha]
+      simp only [Finset.prod_insert ha, Finset.sum_insert ha]
       rw [ih, Real.rpow_add hx]
 
 /-- The lower-face saturation cap `n^(1-0.7/d)`. -/
@@ -750,7 +751,7 @@ lemma generatorEdgeCap_pos_eventually (hd : 0 < d) :
   exact ht.eventually (eventually_gt_atTop 0)
 
 lemma generatorPruneThreshold_pos_eventually
-    (hrq : r < q) (hchoose : Nat.choose q r - 1 < d * (q - r))
+    (_hrq : r < q) (hchoose : Nat.choose q r - 1 < d * (q - r))
     (hd : 0 < d) :
     ∀ᶠ n : ℕ in atTop, 0 < generatorPruneThreshold q r d n := by
   have hnum : 0 < d * (q - r) - (Nat.choose q r - 1) := by omega
@@ -776,7 +777,8 @@ lemma eventually_rpow_div_sixteen_le_threshold_div_four
     (n : ℝ) ^ ((E : ℝ) / d) / 16 ≤
         (rationalPowerThreshold E d n : ℝ) / 8 := by linarith
     _ ≤ (rationalPowerThreshold E d n / 4 : ℕ) := by
-      convert half_div_le_natDiv _ 4 (by omega) hlarge using 1 <;> norm_num
+      convert half_div_le_natDiv _ 4 (by omega) hlarge using 1
+      norm_num
 
 lemma sum_extensionDeficit_exponents
     {q r d : ℕ} (hr : 0 < r) (hrq : r < q)

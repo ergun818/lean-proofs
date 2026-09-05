@@ -37,7 +37,7 @@ noncomputable section
 /-- Equal finite sets with equally large distinguished subsets admit an
 equivalence carrying the first distinguished subset onto the second. -/
 theorem exists_equiv_subtype_respecting
-    {V W : Type*} [DecidableEq V] [DecidableEq W]
+    {V W : Type*}
     {A : Finset V} {B : Finset W} {S : Finset V} {T : Finset W}
     (hSA : S ⊆ A) (hTB : T ⊆ B)
     (hcard : A.card = B.card) (hsmall : S.card = T.card) :
@@ -86,7 +86,7 @@ theorem exists_equiv_subtype_respecting
         by_cases hx : x.1 ∈ S
         · have hy : (toFun x).1 ∈ T := (hto_mem x).mp hx
           apply Subtype.ext
-          simp [toFun, invFun, hx, hy, σS]
+          simp [toFun, invFun, hx, σS]
         · have hy : (toFun x).1 ∉ T := fun h ↦ hx ((hto_mem x).mpr h)
           have hto : toFun x =
               ⟨(σC ⟨x.1, Finset.mem_sdiff.mpr ⟨x.2, hx⟩⟩).1,
@@ -104,7 +104,7 @@ theorem exists_equiv_subtype_respecting
         by_cases hy : y.1 ∈ T
         · have hx : (invFun y).1 ∈ S := (hinv_mem y).mp hy
           apply Subtype.ext
-          simp [toFun, invFun, hx, hy, σS]
+          simp [toFun, invFun, hy, σS]
         · have hx : (invFun y).1 ∉ S := fun h ↦ hy ((hinv_mem y).mpr h)
           have hinv : invFun y =
               ⟨(σC.symm ⟨y.1, Finset.mem_sdiff.mpr ⟨y.2, hy⟩⟩).1,
@@ -451,7 +451,7 @@ theorem map_right_inter_map_left_eq
     {Q₁ : Finset V₁} {Q₂ : Finset V₂} (equiv : ↑Q₁ ≃ ↑Q₂)
     {A₁ S₁ : Finset V₁} {A₂ T₂ : Finset V₂}
     (hS₁Q₁ : S₁ ⊆ Q₁) (hS₁A₁ : S₁ ⊆ A₁)
-    (hT₂Q₂ : T₂ ⊆ Q₂) (hinter : A₂ ∩ Q₂ = T₂)
+    (_hT₂Q₂ : T₂ ⊆ Q₂) (hinter : A₂ ∩ Q₂ = T₂)
     (hequiv : ∀ x : ↑Q₁, x.1 ∈ S₁ ↔ (equiv x).1 ∈ T₂) :
     A₂.map (glueRightEmbedding equiv) ∩
         A₁.map (glueLeftEmbedding V₁ V₂ Q₂) =
@@ -477,7 +477,7 @@ theorem map_right_inter_map_left_eq
     have hv₂eq : (equiv x).1 = v₂ := by simp [x]
     rw [← hv₂z]
     simp [glueRightEmbedding, glueRightFun, glueLeftEmbedding, hv₂Q,
-      x, hv₂eq]
+      x]
   · intro hz
     obtain ⟨v₁, hv₁S, hv₁z⟩ := Finset.mem_map.mp hz
     have hv₁Q : v₁ ∈ Q₁ := hS₁Q₁ hv₁S
@@ -575,7 +575,6 @@ theorem exists_isolatedExtension
   obtain ⟨σ₁, hσ₁⟩ := exists_equiv_subtype_respecting
     heC hedgePlus (hCcard.trans hpluscard.symm)
       (hecard.trans B.edge_card.symm)
-
   let V₁ := GluedVertex T.V B.V B.plus
   let left₁ : T.V ↪ V₁ := glueLeftEmbedding T.V B.V B.plus
   let right₁ : B.V ↪ V₁ := glueRightEmbedding σ₁
@@ -632,7 +631,6 @@ theorem exists_isolatedExtension
       (Finset.subset_univ e) hedgePlus
     · simpa [Finset.inter_comm] using B.inter_eq
     · exact hσ₁
-
   have hN₁card : N₁.card = q := by
     simp [N₁, B.negative_decomp.1 B.minus B.minus_mem]
   obtain ⟨σ₂, hσ₂⟩ := exists_equiv_subtype_respecting
@@ -644,7 +642,6 @@ theorem exists_isolatedExtension
       exact (Finset.mem_inter.mp this).1)
     hedgePlus (hN₁card.trans hpluscard.symm)
       (by simp [e₁, hecard, B.edge_card])
-
   let V₂ := GluedVertex V₁ B.V B.plus
   let left₂ : V₁ ↪ V₂ := glueLeftEmbedding V₁ B.V B.plus
   let right₂ : B.V ↪ V₂ := glueRightEmbedding σ₂
@@ -687,7 +684,6 @@ theorem exists_isolatedExtension
       (B.positive_decomp.2.1 B.plus B.plus_mem)
   have hneg₂ : IsUniformDecomposition host₂ negative₂ q r :=
     hhosts₂.symm ▸ hneg₂alt
-
   let old : T.V ↪ V₂ := left₁.trans left₂
   let N₂ : Finset V₂ := B.minus.map right₂
   have hN₂neg : N₂ ∈ negative₂ := by
@@ -966,7 +962,7 @@ theorem exists_partialExchange_insert_with_trace_and_bound
   let edge := mappedRootEdge P.rootEmbedding e.1
   obtain ⟨X⟩ := exists_isolatedExtension hqr P.toTradeData B
     P.root_mem (mappedRootEdge_subset_mappedRoot P.rootEmbedding e.1)
-    (by simp [edge])
+    (by simp)
   let : DecidableEq X.data.V := X.data.decEq
   let : Fintype X.data.V := X.data.fintype
   let old := X.oldEmbedding
@@ -975,7 +971,6 @@ theorem exists_partialExchange_insert_with_trace_and_bound
       (Finset.univ : Finset P.V).map old = edge.map old := by
     simpa [tradeInter, tradeMap, tradeUniverse, old, edge] using
       X.special_inter_old
-
   have hnotSubset (j : RootEdge q r) (hj : j ∈ done) (hje : j ≠ e) :
       ¬ edge ⊆ P.special j := by
     intro hsub
@@ -989,7 +984,6 @@ theorem exists_partialExchange_insert_with_trace_and_bound
       simp [edge]
     have : e.1 = j.1 := Finset.map_injective P.rootEmbedding heq
     exact hje (Subtype.ext this.symm)
-
   have hnewInterRoot : X.special ∩ newRoot = edge.map old := by
     ext x
     constructor
@@ -1019,7 +1013,6 @@ theorem exists_partialExchange_insert_with_trace_and_bound
         apply Finset.mem_map.mpr
         exact ⟨v, mappedRootEdge_subset_mappedRoot P.rootEmbedding e.1 hv, rfl⟩
       exact Finset.mem_inter.mpr ⟨hxSpecial, hxRoot⟩
-
   have hnewOldOuter (j : RootEdge q r) :
       Disjoint (X.special \ newRoot)
         ((P.special j).map old \ newRoot) := by
@@ -1040,7 +1033,6 @@ theorem exists_partialExchange_insert_with_trace_and_bound
     obtain ⟨v, hv, rfl⟩ := Finset.mem_map.mp hxEdge
     apply Finset.mem_map.mpr
     exact ⟨v, mappedRootEdge_subset_mappedRoot P.rootEmbedding e.1 hv, rfl⟩
-
   have positive_eq_mapped_old_of_common_old_edge
       (Q : Finset X.data.V) (hQ : Q ∈ X.data.positive)
       (g : Finset X.data.V) (hgQ : g ∈ Q.powersetCard r)
@@ -1064,7 +1056,6 @@ theorem exists_partialExchange_insert_with_trace_and_bound
     exact ⟨Q₀, hQ₀,
       X.data.positive_decomp.blocks_eq_of_common_edge
         hQ hQ₀map hgQ hgMapped⟩
-
   let special : RootEdge q r → Finset X.data.V := fun j ↦
     if j = e then X.special else (P.special j).map old
   let Q : PartialExchange q r (insert e done) :=
@@ -1355,7 +1346,6 @@ theorem exists_partialExchange_insert_with_trace_and_bound
             rw [← hmap₀]
             exact Finset.map_subset_map.mpr hroot
           · right
-            change A ⊆ special j
             simp only [special, hje, if_false]
             rw [← hmap₀]
             exact Finset.map_subset_map.mpr hspecial }

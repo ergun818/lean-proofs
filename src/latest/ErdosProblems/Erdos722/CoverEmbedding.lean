@@ -137,8 +137,8 @@ lemma card_reserveLegalEmbeddings_faceLoadHit_le
 distinct reserve-compatible rooted embedding. -/
 theorem card_reserveCandidates_le_reserveEmbeddings
     (P : RootedPattern v r)
-    (hallEdges : P.edges = Typicality.uniformEdges v r)
-    (hrootCard : P.root.card = r)
+    (_hallEdges : P.edges = Typicality.uniformEdges v r)
+    (_hrootCard : P.root.card = r)
     (request : RootRequest v n P.root)
     (e : Finset (Fin n))
     (hrequest : requestImage P.root request = e)
@@ -261,7 +261,7 @@ theorem exists_reserveEmbeddingPath_of_faceSchedule
     (hrootUniform : ∀ g ∈ rootHost, g.card = r)
     (hrootMax : ∀ J : Finset (Fin n), J.card = r - 1 →
       Reserve.localDegree rootHost J ≤ Droot)
-    (hreserveUniform : ∀ g ∈ reserve, g.card = r)
+    (_hreserveUniform : ∀ g ∈ reserve, g.card = r)
     (hbaseline : ∀ i : ℕ,
       A ≤ (reserveEmbeddings P (request i) reserve).card)
     (hr : 0 < r)

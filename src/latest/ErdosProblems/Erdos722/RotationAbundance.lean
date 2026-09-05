@@ -71,7 +71,7 @@ theorem card_samples_with_small_success_paley_scaled
   have hS : 0 < S := Fintype.card_pos
   have hfirst : ∑ ω ∈ samples, X ω = T := by
     rw [sum_finiteSuccessCount]
-    simp [samples, T, X]
+    simp [samples, T]
   have hpartitionSum :
       (∑ ω ∈ bad, X ω) + ∑ ω ∈ good, X ω = T := by
     have hsplit := Finset.sum_filter_add_sum_filter_not samples
@@ -89,7 +89,6 @@ theorem card_samples_with_small_success_paley_scaled
     · have hsum : ∑ ω ∈ bad, 2 * S * X ω < ∑ _ω ∈ bad, T := by
         exact Finset.sum_lt_sum_of_nonempty hbadNonempty hbadTerm
       have hbadCard : bad.card ≤ S := by
-        change bad.card ≤ S
         calc
           bad.card ≤ samples.card :=
             Finset.card_le_card (Finset.filter_subset _ _)
@@ -666,7 +665,7 @@ theorem exists_amplified_rootedRotationAbundantCover_of_scaled_bad
       | mk amap ainj =>
         cases b with
         | mk bmap binj =>
-          simp only [Erdos722.RootedEmbedding.RootRequest.map] at hab
+          simp only [] at hab
           cases hab
           rfl)
   let tasks : Finset Task := Finset.univ
@@ -1063,7 +1062,7 @@ theorem eventually_candidate_power_of_abundant_rotations
         dsimp [Cedge]
         push_cast
         field_simp
-        <;> ring
+        ring
       _ ≤ ((Nat.choose n (r - 1) : ℝ) *
             generatorDegreeLower d n) / (2 * r) := by gcongr
       _ ≤ K.card := by
@@ -1165,7 +1164,7 @@ theorem eventually_candidate_power_of_abundant_rotations
       _ ≤ Ctotal * candidateCount ^ Dloss *
           (n : ℝ) ^ (Dloss * (r * m)) := hchain
       _ = (Ctotal * (n : ℝ) ^ (Dloss * (r * m))) *
-          (candidateCount : ℝ) ^ Dloss := by push_cast; ring
+          (candidateCount : ℝ) ^ Dloss := by ring
   dsimp [s] at hcancel
   exact_mod_cast hcancel
 
@@ -1322,7 +1321,7 @@ theorem eventually_exists_prunedGenerator_rootedRotationAvoidingCover
       ¬ Erdos722.RootedEmbedding.OutsideRootTouches
         (coverRoot q r) J phi := by
     by_contra hnone
-    push_neg at hnone
+    push Not at hnone
     have hsub : S ⊆ bad := by
       intro phi hphi
       have hSdata := Finset.mem_filter.mp hphi

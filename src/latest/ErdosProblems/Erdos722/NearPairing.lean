@@ -98,7 +98,7 @@ theorem mixedSpecialFace_current_touchesOutsideRoot
 /-- Finite fibrewise Hall matching in the special case where every edge is
 confined to one key fibre. -/
 theorem exists_fiberwiseEmbedding
-    {α β : Type*} [DecidableEq α] [DecidableEq β]
+    {α β : Type*} [DecidableEq β]
     (positive negative : Finset α) (key : α → β)
     (hcard : ∀ b : β,
       (negative.filter fun x ↦ key x = b).card ≤
@@ -154,7 +154,7 @@ theorem exists_fiberwiseEmbedding
   exact ⟨⟨fval, hfinj⟩, hfkey⟩
 
 theorem incidenceCount_image_of_injective
-    {X : Type*} [DecidableEq X]
+    {X : Type*}
     (s : Finset X) (F : X → Finset (Fin n))
     (hF : Set.InjOn F s) (g : Finset (Fin n)) :
     Transversal.incidenceCount (s.image F) g =
@@ -971,7 +971,7 @@ theorem allNegativeFarSplittingBlocks_pairwise_edgeDisjoint
     {m C : ℕ}
     (S : BoundedMultiRootedFamilyEmbeddings
       E.pattern roots forbidden (2 * m) C)
-    (hr : 0 < r) (hrk : r < k)
+    (_hr : 0 < r) (_hrk : r < k)
     {B B' : Finset (Fin n)}
     (hB : B ∈ allNegativeFarSplittingBlocks S)
     (hB' : B' ∈ allNegativeFarSplittingBlocks S)
@@ -1293,7 +1293,7 @@ theorem selectedBankFarNegativeBlocks_disjoint_negativeNear
     {m C : ℕ}
     (S : BoundedMultiRootedFamilyEmbeddings
       E.pattern roots forbidden (2 * m) C)
-    (hr : 0 < r) (hrk : r < k)
+    (_hr : 0 < r) (hrk : r < k)
     (hrootForbidden : rootBoundary roots r ⊆ forbidden)
     (theta : Finset (Fin n) → ℤ) :
     Disjoint (selectedBankFarNegativeBlocks S theta)
@@ -1497,7 +1497,7 @@ theorem allPositiveSplittingBlock_through_negativeNearEdge_sameCopy
     {m C : ℕ}
     (S : BoundedMultiRootedFamilyEmbeddings
       E.pattern roots forbidden (2 * m) C)
-    (hr : 0 < r)
+    (_hr : 0 < r)
     (hrootForbidden : rootBoundary roots r ⊆ forbidden)
     (O : NearOccurrence roots (2 * m) k r)
     (hO : O ∈ allNegativeNearOccurrences
@@ -1851,7 +1851,7 @@ def compatibleNearEliminationPair
     {m C : ℕ}
     (S : BoundedMultiRootedFamilyEmbeddings
       E.pattern roots forbidden (2 * m) C)
-    (hr : 0 < r) (hrk : r < k)
+    (hr : 0 < r) (_hrk : r < k)
     (hrootForbidden : rootBoundary roots r ⊆ forbidden)
     (X : ↥(compatibleNearOccurrencePairs S)) :
     EliminationPair n k r := by
@@ -3119,7 +3119,7 @@ theorem compatibleNearEliminationPairs_fixed_positive_le
     rw [compatibleNearEliminationPairs, Finset.filter_map, Finset.card_map]
     apply congrArg Finset.card
     ext X
-    simp only [Finset.mem_filter, Finset.mem_attach, occurrenceFiber,
+    simp only [Finset.mem_filter, occurrenceFiber,
       Finset.mem_univ, true_and, Function.comp_apply]
     rw [compatibleNearEliminationPairEmbedding_positive
       S hr hrk hrootForbidden X]
@@ -3176,7 +3176,7 @@ theorem compatibleNearEliminationPairs_fixed_negative_le
     rw [compatibleNearEliminationPairs, Finset.filter_map, Finset.card_map]
     apply congrArg Finset.card
     ext X
-    simp only [Finset.mem_filter, Finset.mem_attach, occurrenceFiber,
+    simp only [Finset.mem_filter, occurrenceFiber,
       Finset.mem_univ, true_and, Function.comp_apply]
     rw [compatibleNearEliminationPairEmbedding_negative
       S hr hrk hrootForbidden X]
@@ -3244,7 +3244,7 @@ theorem eventually_exists_compatibleNearEliminationEmbeddings_twoScale
         (S : BoundedMultiRootedFamilyEmbeddings
           E.pattern roots splitForbidden (2 * m) splitCap)
         (hrootForbidden : rootBoundary roots r ⊆ splitForbidden)
-        (hrootMultiplicity : ∀ g : Finset (Fin n), g.card = r →
+        (_hrootMultiplicity : ∀ g : Finset (Fin n), g.card = r →
           Transversal.incidenceCount roots g ≤ M)
         (eliminationForbidden : Finset (Finset (Fin n))),
       (∀ J : Finset (Fin n), J.card = r - 1 →
@@ -3288,7 +3288,7 @@ theorem eventually_exists_compatibleNearEliminationEmbeddings
         (S : BoundedMultiRootedFamilyEmbeddings
           E.pattern roots splitForbidden (2 * m) splitCap)
         (hrootForbidden : rootBoundary roots r ⊆ splitForbidden)
-        (hrootMultiplicity : ∀ g : Finset (Fin n), g.card = r →
+        (_hrootMultiplicity : ∀ g : Finset (Fin n), g.card = r →
           Transversal.incidenceCount roots g ≤ M)
         (eliminationForbidden : Finset (Finset (Fin n))),
       (∀ J : Finset (Fin n), J.card = r - 1 →
@@ -3313,7 +3313,7 @@ def matchedNearEliminationPair
     {m C : ℕ}
     (S : BoundedMultiRootedFamilyEmbeddings
       E.pattern roots forbidden (2 * m) C)
-    (hr : 0 < r) (hrk : r < k)
+    (hr : 0 < r) (_hrk : r < k)
     (hrootForbidden : rootBoundary roots r ⊆ forbidden)
     (θ : Finset (Fin n) → ℤ)
     (f : ↥(negativeNearOccurrences (k := k) (r := r) (m := m) roots θ) ↪

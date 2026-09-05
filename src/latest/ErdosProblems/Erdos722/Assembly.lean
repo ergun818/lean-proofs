@@ -202,8 +202,7 @@ theorem mappedSpecial_mem_rainbowBlocks
   have hBedge : B.powersetCard r ⊆ E.pattern.edges :=
     E.negative_decomp.2.1 B (E.special_mem e)
   have hrootEdgeCard : rootEdge.card = r := by
-    simpa [rootEdge] using Erdos722.Exchange.card_mappedRootEdge
-      E.rootEmbedding e.1
+    simp [rootEdge]
   have hinter : B ∩ E.pattern.root = rootEdge := by
     simpa [B, rootEdge, E.root_eq] using E.special_inter_root e
   have hexists : ∀ g ∈ Q.powersetCard r,
@@ -345,7 +344,7 @@ theorem eventually_exists_prunedGenerator_specialCandidateRotationCover
     dsimp [R]
     omega
   have hfailure :=
-    Erdos722.SpecialCliqueRotationAsymptotic.eventually_prunedGenerator_specialCandidateRotation_failure
+    SpecialCliqueRotationAsymptotic.eventually_prunedGenerator_specialCandidateRotation_failure
       N q r d hr hrq hqd E hbudget
   have hunion :=
     Erdos722.RotationAsymptotic.eventually_polynomial_rotation_amplification_union_bound
@@ -359,7 +358,7 @@ theorem eventually_exists_prunedGenerator_specialCandidateRotationCover
     | mk amap ainj =>
       cases b with
       | mk bmap binj =>
-        simp only [Request, RootRequest.map] at hab
+        simp only [] at hab
         cases hab
         rfl)
   let Task := Request × (Erdos722.Exchange.RootEdge q r → Fin u)
@@ -378,7 +377,7 @@ theorem eventually_exists_prunedGenerator_specialCandidateRotationCover
         rw [← Finset.card_univ]
         exact Finset.card_le_card (Finset.filter_subset _ _)
       _ = Fintype.card Request * u ^ Nat.choose q r := by
-        simp [Task, Fintype.card_prod, Fintype.card_fun, card_rootEdge]
+        simp [Task, Fintype.card_prod]
       _ ≤ n ^ E.v * (n ^ Uexp) ^ Nat.choose q r := by
         exact Nat.mul_le_mul
           (by

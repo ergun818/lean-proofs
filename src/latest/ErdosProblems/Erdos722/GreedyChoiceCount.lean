@@ -34,7 +34,7 @@ open Erdos722.GreedyChoice
 noncomputable section
 
 variable {R Q : Type*} [Fintype R] [Fintype Q]
-  [DecidableEq R] [DecidableEq Q] [Nonempty Q]
+  [DecidableEq R]
 
 /-- A full function is canonical off the roots on which choices have been
 made. -/
@@ -61,7 +61,8 @@ theorem mem_canonicalCompatibleChoices_iff
           CanonicalOutside q₀ roots choice := by
   simp [canonicalCompatibleChoices]
 
-private theorem card_biUnion_le_mul
+omit [Fintype R] [Fintype Q] [DecidableEq R] in
+private theorem card_biUnion_le_mul [DecidableEq Q]
     (S : Finset R) (F : R → Finset Q) (M : ℕ)
     (hF : ∀ a ∈ S, (F a).card ≤ M) :
     (S.biUnion F).card ≤ S.card * M := by

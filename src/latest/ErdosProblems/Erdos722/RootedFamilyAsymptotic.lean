@@ -127,7 +127,7 @@ theorem codimOneMeetingBound_le
 
 lemma rootedFixedMeeting_cast_le
     (P : RootedPattern v r) (hr : 0 < r)
-    (hroot : P.root.card < v) (hd : 0 < d) (hn : 1 ≤ n) :
+    (hroot : P.root.card < v) (_hd : 0 < d) (hn : 1 ≤ n) :
     (codimOneMeetingBound P n (decoderInputCap d n) : ℝ) ≤
       (rootedMeetingConstant P : ℝ) *
         (n : ℝ) ^ ((v - P.root.card - 1 : ℕ) +
@@ -167,7 +167,7 @@ lemma rootedFixedMeeting_cast_le
 
 lemma rootedUsedMeeting_cast_le
     (P : RootedPattern v r) (hr : 0 < r)
-    (hroot : P.root.card < v) (hd : 0 < d) (hn : 1 ≤ n) :
+    (hroot : P.root.card < v) (_hd : 0 < d) (hn : 1 ≤ n) :
     (codimOneMeetingBound P n
         (P.freeEdges.card * decoderPathCap v r d n) : ℝ) ≤
       (rootedUsedConstant P : ℝ) *
@@ -223,7 +223,7 @@ lemma rootedUsedMeeting_cast_le
 
 lemma rootedScaledUsedMeeting_cast_le
     (P : RootedPattern v r) (hr : 0 < r)
-    (hroot : P.root.card < v) (hd : 0 < d) (hn : 1 ≤ n)
+    (hroot : P.root.card < v) (_hd : 0 < d) (hn : 1 ≤ n)
     (scale : ℕ) :
     (codimOneMeetingBound P n
         (P.freeEdges.card * scaledDecoderPathCap scale v r d n) : ℝ) ≤
@@ -456,7 +456,7 @@ theorem eventually_rooted_legalLowerBound
 theorem eventually_rooted_scaled_legalLowerBound
     (P : RootedPattern v r) (hr : 0 < r)
     (hroot : P.root.card < v) (hd : 0 < d)
-    (scale : ℕ) (hscale : 0 < scale) :
+    (scale : ℕ) (_hscale : 0 < scale) :
     ∀ᶠ n : ℕ in atTop,
       0 < rootedFaceLegalLowerBound P n
           (decoderInputCap d n) (scaledDecoderPathCap scale v r d n) ∧
@@ -636,7 +636,7 @@ theorem eventually_rooted_twoScale_scaled_legalLowerBound
     (P : RootedPattern v r) (hr : 0 < r)
     (hroot : P.root.card < v)
     (hdInput : 0 < dInput) (hdPath : 0 < dPath)
-    (scale : ℕ) (hscale : 0 < scale) :
+    (scale : ℕ) (_hscale : 0 < scale) :
     ∀ᶠ n : ℕ in atTop,
       0 < rootedFaceLegalLowerBound P n
           (decoderInputCap dInput n)
@@ -1362,7 +1362,7 @@ theorem eventually_exists_boundedRootedFamilyEmbeddings_of_power_bound
   by_cases hroots : roots = ∅
   · subst roots
     refine ⟨{
-      embedding := fun Q hQ ↦ False.elim (show False by simpa using hQ)
+      embedding := fun Q hQ ↦ False.elim (show False by simp at hQ)
       root_image := ?_
       free_disjoint_forbidden := ?_
       free_pairwise := ?_
@@ -1454,7 +1454,7 @@ theorem eventually_exists_boundedMultiRootedFamilyEmbeddings_of_power_bound
     by_cases hroots : roots = ∅
     · subst roots
       refine ⟨{
-        embedding := fun Q hQ t ↦ False.elim (show False by simpa using hQ)
+        embedding := fun Q hQ t ↦ False.elim (show False by simp at hQ)
         root_image := ?_
         free_disjoint_forbidden := ?_
         free_pairwise := ?_
@@ -1553,7 +1553,7 @@ theorem eventually_exists_boundedMultiRootedFamilyEmbeddings_of_two_power_bounds
     by_cases hroots : roots = ∅
     · subst roots
       refine ⟨{
-        embedding := fun Q hQ t ↦ False.elim (show False by simpa using hQ)
+        embedding := fun Q hQ t ↦ False.elim (show False by simp at hQ)
         root_image := ?_
         free_disjoint_forbidden := ?_
         free_pairwise := ?_

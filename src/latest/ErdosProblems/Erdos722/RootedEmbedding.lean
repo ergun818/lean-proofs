@@ -2155,7 +2155,7 @@ theorem exists_legalEmbeddingPath_until_bad_of_count_bounds
     (P : RootedPattern v r)
     (request : ℕ → RootRequest v n P.root)
     (forbidden : Finset (Finset (Fin n)))
-    (good : List (Fin v ↪ Fin n) → Prop) [DecidablePred good]
+    (good : List (Fin v ↪ Fin n) → Prop)
     (hnonempty : ∀ history, good history →
       (legalEmbeddings P request forbidden history).Nonempty)
     (p : LoadTarget v n → ℕ → ℝ)
@@ -2201,7 +2201,7 @@ theorem exists_legalEmbeddingPath_until_bad_of_partialCount_bounds
     (P : RootedPattern v r)
     (request : ℕ → RootRequest v n P.root)
     (forbidden : Finset (Finset (Fin n)))
-    (good : List (Fin v ↪ Fin n) → Prop) [DecidablePred good]
+    (good : List (Fin v ↪ Fin n) → Prop)
     (hnonempty : ∀ history, good history →
       (legalEmbeddings P request forbidden history).Nonempty)
     (p : RelevantPartialLoadTarget P n → ℕ → ℝ)
@@ -2343,7 +2343,6 @@ theorem exists_legalEmbeddingPath_of_rootSchedule
   apply exists_legalEmbeddingPath_until_bad_of_partialCount_bounds
     P request forbidden good hnonempty probability hp hcount ht
   · intro pref hlen hcaps hlegal
-    change good ([] ++ pref)
     constructor
     · simpa using hlen
     · intro J hJ

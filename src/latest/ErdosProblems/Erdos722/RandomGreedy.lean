@@ -33,7 +33,7 @@ open Erdos722.AdaptiveChernoff
 noncomputable section
 
 variable {α β : Type*} [Fintype α] [DecidableEq α]
-  [Fintype β] [DecidableEq β]
+  [Fintype β]
 
 /-- Every successive element belongs to the legal set exposed by the
 preceding history. -/
@@ -42,6 +42,7 @@ def FollowsLegal (legal : List α → Finset α) : List α → List α → Prop
   | history, a :: rest =>
       a ∈ legal history ∧ FollowsLegal legal (history ++ [a]) rest
 
+omit [Fintype α] [DecidableEq α] in
 /-- The element at position `i` is legal after precisely the preceding
 prefix has been appended to the initial history. -/
 theorem FollowsLegal.get_mem
@@ -56,6 +57,7 @@ theorem FollowsLegal.get_mem
       · have hrest := ih h.2 j
         simpa [List.take, List.append_assoc] using hrest
 
+omit [Fintype α] [DecidableEq α] in
 theorem FollowsLegal.append_iff
     (legal : List α → Finset α) (history xs ys : List α) :
     FollowsLegal legal history (xs ++ ys) ↔
@@ -68,6 +70,7 @@ theorem FollowsLegal.append_iff
       rw [ih]
       simp [List.append_assoc, and_assoc]
 
+omit [Fintype α] [DecidableEq α] in
 theorem FollowsLegal.prefix
     (legal : List α → Finset α) {history path pref : List α}
     (h : FollowsLegal legal history path) (hpref : pref <+: path) :
@@ -75,6 +78,7 @@ theorem FollowsLegal.prefix
   obtain ⟨tail, rfl⟩ := hpref
   exact (FollowsLegal.append_iff legal history pref tail).mp h |>.1
 
+omit [Fintype α] in
 lemma pathPositive_uniformStep_iff
     (legal : List α → Finset α)
     (hnonempty : ∀ history, (legal history).Nonempty) :
@@ -169,6 +173,7 @@ lemma adaptiveBudget_const (c : ℝ) (start depth : ℕ) :
 
 /-! ## Guarding the process at its first bad history -/
 
+omit [Fintype α] [DecidableEq α] in
 /-- Hits split over concatenated paths, with the second part evaluated after
 the history has been extended by the first. -/
 lemma pathHits_append (hit : List α → α → Bool)
@@ -185,6 +190,7 @@ lemma pathHits_append (hit : List α → α → Bool)
       rw [hh]
       omega
 
+omit [Fintype α] [DecidableEq α] in
 lemma pathHits_le_of_prefix (hit : List α → α → Bool)
     (history : List α) {xs ys : List α} (hprefix : xs <+: ys) :
     pathHits hit history xs ≤ pathHits hit history ys := by
@@ -203,6 +209,7 @@ def guardedHit (good : List α → Prop) [DecidablePred good]
     (history : List α) (a : α) : Bool :=
   if good history then hit b history a else false
 
+omit [Fintype α] [DecidableEq α] in
 lemma guardedLegal_nonempty
     (legal : List α → Finset α) (good : List α → Prop)
     [DecidablePred good] (fallback : α)
@@ -220,7 +227,6 @@ fallback branch. -/
 theorem exists_legal_path_with_load_caps_until_bad
     [Nonempty α]
     (legal : List α → Finset α) (good : List α → Prop)
-    [DecidablePred good]
     (hit : β → List α → α → Bool)
     (p : β → ℕ → ℝ) (hp : ∀ b i, 0 ≤ p b i)
     {t : ℝ} (ht : 0 ≤ t)
@@ -312,7 +318,7 @@ theorem exists_legal_path_with_load_caps_until_bad
               pathHits (ghit b) history (pref ++ [a]) := by
           intro b
           rw [pathHits_append, pathHits_append, heqOld b]
-          simp only [pathHits, List.append_nil, Nat.add_zero]
+          simp only [pathHits, Nat.add_zero]
           have hbit : hitBit (hit b) (history ++ pref) a =
               hitBit (ghit b) (history ++ pref) a := by
             unfold hitBit

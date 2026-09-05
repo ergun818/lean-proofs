@@ -125,7 +125,7 @@ lemma eventually_half_rpow_le_rationalPowerThreshold
 /-- A fixed nonnegative multiple of a smaller real power is eventually
 bounded by a larger power. -/
 theorem eventually_const_mul_rpow_le_rpow
-    {a b C : ℝ} (hab : a < b) (hC : 0 ≤ C) :
+    {a b C : ℝ} (hab : a < b) (_hC : 0 ≤ C) :
     ∀ᶠ n : ℕ in atTop, C * (n : ℝ) ^ a ≤ (n : ℝ) ^ b := by
   have hdelta : 0 < b - a := sub_pos.mpr hab
   have ht : Tendsto (fun n : ℕ ↦ (n : ℝ) ^ (b - a)) atTop atTop :=

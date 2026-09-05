@@ -278,7 +278,7 @@ theorem card_uniformSupersets_meeting_le
       Nat.choose (n - (r + 1)) (q - (r + 1)) ≤
           (n - (r + 1)) ^ (q - (r + 1)) := Nat.choose_le_pow _ _
       _ ≤ n ^ (q - (r + 1)) := by gcongr; omega
-      _ = n ^ (q - r - 1) := by congr 1 <;> omega
+      _ = n ^ (q - r - 1) := by congr 1
   calc
     (((uniformEdges n q).filter fun Q ↦ A ⊆ Q).filter fun Q ↦
         ¬Disjoint Q W).card ≤ (W.biUnion through).card :=
@@ -544,7 +544,7 @@ theorem specialSupport_card (E : RelabeledFullExchange q r) :
           (specialOuter E e).card :=
         Finset.card_biUnion (specialOuter_pairwiseDisjoint E)
       _ = Nat.choose q r * (q - r) := by
-        simp [specialOuter_card, card_rootEdge]
+        simp [specialOuter_card]
   rw [specialSupport, Finset.card_union_of_disjoint hrootPetals,
     E.root_card, hpetals]
 
@@ -634,8 +634,7 @@ theorem mem_compatibleSpecialChoices_iff
     exact hnot hd
   · rintro ⟨hchoose, hpair⟩
     refine ⟨fun e he ↦ hchoose e, ?_⟩
-    intro e he e' he' hne
-    intro hconflict
+    intro e he e' he' hne hconflict
     exact hconflict (hpair e e' hne)
 
 /-- Local through-edge abundance gives many mutually compatible choices
@@ -736,7 +735,7 @@ noncomputable def specialPartialMap
     (choice : RootEdge q r → Finset (Fin n))
     (hchoice : choice ∈ compatibleSpecialChoices E request U) :
     Fin E.v → Fin n := fun x ↦
-  if hx : x ∈ E.pattern.root then request.map x
+  if _hx : x ∈ E.pattern.root then request.map x
   else if hp : ∃ e : RootEdge q r, x ∈ specialOuter E e then
     let e := Classical.choose hp
     (specialPetalEquiv E request U hU choice hchoice e
@@ -1137,7 +1136,7 @@ theorem compatibleChoices_mul_descFactorial_le_specialGood
     have hchoice : a.1 = b.1 := Subtype.ext hchoiceVal
     apply Sigma.ext hchoice
     apply (Subtype.heq_iff_coe_eq (fun φ ↦ by
-      simpa only [hchoice])).2
+      simp only [hchoice])).2
     exact hφ
   have hfiber : ∀ c : choicesTy,
       (n - (specialSupport E).card).descFactorial

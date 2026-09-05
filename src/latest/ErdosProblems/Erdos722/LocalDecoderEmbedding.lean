@@ -164,7 +164,7 @@ lemma separatedFreeEdgesOfPath_subset_usedEdges
   classical
   intro g hg
   obtain ⟨e, he, hg⟩ := Finset.mem_biUnion.mp hg
-  simp only [separatedFreeEdges, he, dite_true] at hg
+  simp only [he, dite_true] at hg
   apply Finset.mem_biUnion.mpr
   refine ⟨(separatedCliqueExtensionsOfPath hrv roots forbidden e₀
     request path hrequest hlen hpath).embedding e he, ?_, hg⟩

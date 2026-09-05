@@ -85,7 +85,7 @@ def faceEps (n q r : ℕ) : ℝ :=
 
 /-- Exact quotient-remainder description of the terminal host size. -/
 lemma remaining_depth_eq
-    {g target K₀ : ℕ} (hK : 0 < K₀) (htarget : target ≤ g) :
+    {g target K₀ : ℕ} (_hK : 0 < K₀) (htarget : target ≤ g) :
     g - K₀ * ((g - target) / K₀) =
       target + (g - target) % K₀ := by
   have hsplit := Nat.div_add_mod (g - target) K₀
@@ -131,7 +131,6 @@ lemma density_le_one_of_mul_le
   have hiR : (K₀ : ℝ) * i ≤ g := by exact_mod_cast hi
   have hprod : (0 : ℝ) ≤ (K₀ : ℝ) * i := by positivity
   apply (div_le_iff₀ hgR).2
-  push_cast
   linarith
 
 /-- Before the prescribed endpoint the density is at least `1 / T`. -/
@@ -218,7 +217,7 @@ lemma density_depth_lt
       field_simp
 
 lemma upperProfile_le_upperNat (g n q r i : ℕ)
-    (hupper : 0 ≤ upperProfile g n q r i) :
+    (_hupper : 0 ≤ upperProfile g n q r i) :
     upperProfile g n q r i ≤ upperNat g n q r i := by
   exact Nat.le_ceil _
 
@@ -302,7 +301,7 @@ lemma cliqueUpperProfile_eq_remaining_mul
       _ = density g (K q r) i ^ (K q r + (4 * K q r - 2)) := by
         rw [pow_add]
       _ = density g (K q r) i ^
-          (1 + (4 * K q r - 2) + (K q r - 1)) := by congr 1 <;> omega
+          (1 + (4 * K q r - 2) + (K q r - 1)) := by congr 1; omega
       _ = _ := by rw [pow_add, pow_add, pow_one]
   field_simp [hx0, hg0, hK0]
   rw [hpow]
@@ -334,7 +333,7 @@ lemma cliqueLowerProfile_eq_remaining_mul
       _ = density g (K q r) i ^ (K q r + (4 * K q r - 2)) := by
         rw [pow_add]
       _ = density g (K q r) i ^
-          (1 + (4 * K q r - 2) + (K q r - 1)) := by congr 1 <;> omega
+          (1 + (4 * K q r - 2) + (K q r - 1)) := by congr 1; omega
       _ = _ := by rw [pow_add, pow_add, pow_one]
   field_simp [hx0, hg0, hK0]
   rw [hpow]
@@ -431,7 +430,7 @@ lemma cliqueErrorUpperGrowth_eq
   field_simp [hx0, hy0, hg0, hK0]
   have hscaled := congrArg (fun z : ℝ ↦
     z * profileA n q r * centerDegree n q r * (4 * K q r - 2 : ℕ)) hxPow
-  simpa [mul_assoc, mul_left_comm, mul_comm, Nat.add_comm] using hscaled
+  simp [mul_assoc, mul_comm, Nat.add_comm]
 
 lemma cliqueError_succ_sub_nonneg
     {g n q r i : ℕ} (hg : 0 < g) (hK : 0 < K q r)
@@ -537,7 +536,7 @@ lemma degreeErrorUpperGrowth_eq
   field_simp [hx0, hy0]
   have hscaled := congrArg (fun z : ℝ ↦
     z * profileA n q r * centerDegree n q r * (4 * K q r - 1 : ℕ)) hxPow
-  simpa [mul_assoc, mul_left_comm, mul_comm, Nat.add_comm] using hscaled
+  simp [mul_assoc, mul_comm, Nat.add_comm]
 
 lemma degreeError_succ_sub_nonneg
     {g n q r i : ℕ} (hg : 0 < g)
@@ -798,7 +797,7 @@ lemma degreeError_le_center_div_scale
 /-- On a density at most one, the reciprocal degree error is at least its
 initial value. -/
 lemma initial_degreeError_le
-    {g n q r i : ℕ} (hK : 0 < K q r) (hT : 0 < scale n q r)
+    {g n q r i : ℕ} (_hK : 0 < K q r) (hT : 0 < scale n q r)
     (hx : 0 < density g (K q r) i)
     (hupper : density g (K q r) i ≤ 1) :
     centerDegree n q r /
@@ -1367,7 +1366,7 @@ lemma scale_le_degreeCenter
     have hs : K q r = (K q r - 1) + 1 := by omega
     rw [one_div_pow, hs, pow_succ]
     field_simp
-    congr 1 <;> omega
+    congr 1
   have hD : 0 ≤ D := by dsimp [D, centerDegree]; positivity
   have hmul : T ^ K q r * (1 / T) ^ (K q r - 1) ≤
       D * x ^ (K q r - 1) :=

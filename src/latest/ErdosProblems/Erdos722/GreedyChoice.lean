@@ -31,7 +31,7 @@ open Finset
 
 noncomputable section
 
-variable {R Q : Type*} [DecidableEq R] [DecidableEq Q] [Nonempty Q]
+variable {R Q : Type*} [Nonempty Q]
 
 /-- A choice function selects an allowed candidate at every declared root. -/
 def ChoosesOn (roots : Finset R) (candidates : R → Finset Q)
@@ -43,7 +43,8 @@ def PairwiseCompatibleOn (roots : Finset R) (conflict : Q → Q → Prop)
     (choice : R → Q) : Prop :=
   ∀ a ∈ roots, ∀ b ∈ roots, a ≠ b → ¬ conflict (choice a) (choice b)
 
-private lemma card_biUnion_le_mul
+omit [Nonempty Q] in
+private lemma card_biUnion_le_mul [DecidableEq Q]
     (S : Finset R) (F : R → Finset Q) (M : ℕ)
     (hF : ∀ a ∈ S, (F a).card ≤ M) :
     (S.biUnion F).card ≤ S.card * M := by
@@ -60,7 +61,7 @@ symmetric because compatibility is an unordered condition. -/
 theorem exists_pairwiseCompatible_choice
     (roots : Finset R) (candidates : R → Finset Q)
     (conflict : Q → Q → Prop) [DecidableRel conflict]
-    (hsymm : Symmetric conflict) (M : ℕ)
+    (hsymm : Std.Symm conflict) (M : ℕ)
     (hlarge : ∀ a ∈ roots, roots.card * M < (candidates a).card)
     (hconflict : ∀ a ∈ roots, ∀ q : Q,
       ((candidates a).filter fun x ↦ conflict x q).card ≤ M) :
@@ -127,7 +128,7 @@ theorem exists_pairwiseCompatible_choice
               apply Finset.mem_biUnion.mpr
               exact ⟨b, hbS, Finset.mem_filter.mpr ⟨hqa.1, hbad⟩⟩
             have hba : b ≠ a := fun h ↦ ha (h ▸ hbS)
-            simpa [g, hba] using fun h ↦ hnot (hsymm h)
+            simpa [g, hba] using fun h ↦ hnot (hsymm.symm _ _ h)
           · have hba : b ≠ a := fun h ↦ ha (h ▸ hbS)
             have hca : c ≠ a := fun h ↦ ha (h ▸ hcS)
             simpa [g, hba, hca] using hfcompat b hbS c hcS hbc

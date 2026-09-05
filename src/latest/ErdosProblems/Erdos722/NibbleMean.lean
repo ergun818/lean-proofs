@@ -254,8 +254,7 @@ theorem barrierObservable_mean_nonpos_of_scalar
         simpa [observableIncrement, barrierObservable, i] using
           sum_uniformStep_mul_cliqueLowerIncrement_nonpos hH hne
             cliqueLower (U i) hupperState hs
-  ·
-    have hfcard : f.card = r - 1 :=
+  · have hfcard : f.card = r - 1 :=
       Erdos722.Typicality.mem_uniformEdges.mp hf
     have hstep := hdepth i hi
     have hmul : Nat.choose q r * i < host.card := by

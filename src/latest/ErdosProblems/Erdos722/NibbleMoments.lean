@@ -449,7 +449,7 @@ def barrierAbsBudget
 current state has maximum available degree `U i` and at least `C i`
 available cliques. -/
 theorem barrierObservable_absMoment_le_of_state
-    (hr : 0 < r) (hrq : r < q)
+    (hr : 0 < r) (_hrq : r < q)
     {host H : Finset (Finset (Fin n))}
     (hhost : host ⊆ uniformEdges n r)
     (hH : ∀ Q ∈ H, Q.card = q ∧ blockEdges r Q ⊆ host)
@@ -762,9 +762,9 @@ lemma barrierJump_nonneg
       cliqueUpper cliqueLower faceWeight faceCap U z i := by
   rcases z with (x | b) | f
   · rcases x with ⟨e, b⟩
-    cases b <;> simp [barrierJump, edgeDeletionJump] <;> positivity
-  · cases b <;> simp [barrierJump] <;> positivity
-  · simp [barrierJump]
+    cases b <;> simp only [barrierJump, edgeDeletionJump] <;> positivity
+  · cases b <;> simp only [barrierJump] <;> positivity
+  · simp only [barrierJump]
     positivity
 
 lemma barrierAbsBudget_nonneg
@@ -776,9 +776,9 @@ lemma barrierAbsBudget_nonneg
       cliqueUpper cliqueLower faceWeight faceCap U C z i := by
   rcases z with (x | b) | f
   · rcases x with ⟨e, b⟩
-    cases b <;> simp [barrierAbsBudget] <;> positivity
-  · cases b <;> simp [barrierAbsBudget] <;> positivity
-  · simp [barrierAbsBudget]
+    cases b <;> simp only [barrierAbsBudget] <;> positivity
+  · cases b <;> simp only [barrierAbsBudget] <;> positivity
+  · simp only [barrierAbsBudget]
     positivity
 
 end

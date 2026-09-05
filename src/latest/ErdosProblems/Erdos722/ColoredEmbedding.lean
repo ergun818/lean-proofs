@@ -134,7 +134,7 @@ lemma initialVertices_eq_map_castLE {s v : ℕ} (hsv : s ≤ v) :
   · intro hx
     obtain ⟨y, _hy, hxy⟩ := Finset.mem_map.mp hx
     have hval : x.1 = y.1 := congrArg Fin.val hxy.symm
-    exact mem_initialVertices.mpr (by simpa [hval] using y.2)
+    exact mem_initialVertices.mpr (by simp [hval])
 
 lemma card_initialVertices {s v : ℕ} (hsv : s ≤ v) :
     (initialVertices v s).card = s := by
@@ -291,7 +291,7 @@ lemma image_extendMap_eq_insert_image_erase
     obtain ⟨y, hy, rfl⟩ := Finset.mem_image.mp hz
     by_cases hyt : y = t
     · subst y
-      simpa using Finset.mem_insert_self x ((e.erase t).image φ)
+      simp
     · apply Finset.mem_insert_of_mem
       apply Finset.mem_image.mpr
       exact ⟨y, Finset.mem_erase.mpr ⟨hyt, hy⟩,
@@ -370,7 +370,7 @@ theorem exists_isPartialEmbedding_succ
           (fun x ↦ coloredCommonNeighborIndicator u n r roots hr
             (coloredRoot_card_of_mem hroots) x) ω <
         2 * coloredCommonMean n roots p)
-    (hmean : ∀ roots, ∀ hroots : roots ∈ coloredRootFamilies u n r h,
+    (hmean : ∀ roots, ∀ _hroots : roots ∈ coloredRootFamilies u n r h,
       (v : ℝ) ≤ coloredCommonMean n roots p / 2) :
     ∃ φ' : Fin v → Fin n,
       IsPartialEmbedding P (t + 1) φ' ω ∧
@@ -411,7 +411,7 @@ theorem exists_isPartialEmbedding_add
           (fun x ↦ coloredCommonNeighborIndicator u n r roots hr
             (coloredRoot_card_of_mem hroots) x) ω <
         2 * coloredCommonMean n roots p)
-    (hmean : ∀ roots, ∀ hroots : roots ∈ coloredRootFamilies u n r h,
+    (hmean : ∀ roots, ∀ _hroots : roots ∈ coloredRootFamilies u n r h,
       (v : ℝ) ≤ coloredCommonMean n roots p / 2) :
     ∃ ψ : Fin v → Fin n,
       IsPartialEmbedding P (t + d) ψ ω ∧
@@ -446,7 +446,7 @@ theorem exists_fullEmbedding_of_partial
           (fun x ↦ coloredCommonNeighborIndicator u n r roots hr
             (coloredRoot_card_of_mem hroots) x) ω <
         2 * coloredCommonMean n roots p)
-    (hmean : ∀ roots, ∀ hroots : roots ∈ coloredRootFamilies u n r h,
+    (hmean : ∀ roots, ∀ _hroots : roots ∈ coloredRootFamilies u n r h,
       (v : ℝ) ≤ coloredCommonMean n roots p / 2) :
     ∃ ψ : Fin v ↪ Fin n,
       (∀ e ∈ P.edges,
@@ -458,8 +458,8 @@ theorem exists_fullEmbedding_of_partial
   have hinj : Function.Injective ψ := by
     intro x y hxy
     apply hψ.1
-    · simpa [hfull, initialVertices] using (Finset.mem_univ x)
-    · simpa [hfull, initialVertices] using (Finset.mem_univ y)
+    · simp [hfull, initialVertices]
+    · simp [hfull, initialVertices]
     · exact hxy
   let ψ' : Fin v ↪ Fin n := ⟨ψ, hinj⟩
   refine ⟨ψ', ?_, ?_⟩
@@ -486,7 +486,7 @@ theorem exists_isPartialEmbedding_succ_avoiding
           (fun x ↦ coloredCommonNeighborIndicator u n r roots hr
             (coloredRoot_card_of_mem hroots) x) ω <
         2 * coloredCommonMean n roots p)
-    (hmean : ∀ roots, ∀ hroots : roots ∈ coloredRootFamilies u n r h,
+    (hmean : ∀ roots, ∀ _hroots : roots ∈ coloredRootFamilies u n r h,
       ((v + forbiddenVertices.card : ℕ) : ℝ) ≤
         coloredCommonMean n roots p / 2) :
     ∃ φ' : Fin v → Fin n,
@@ -544,7 +544,7 @@ theorem exists_isPartialEmbedding_add_avoiding
           (fun x ↦ coloredCommonNeighborIndicator u n r roots hr
             (coloredRoot_card_of_mem hroots) x) ω <
         2 * coloredCommonMean n roots p)
-    (hmean : ∀ roots, ∀ hroots : roots ∈ coloredRootFamilies u n r h,
+    (hmean : ∀ roots, ∀ _hroots : roots ∈ coloredRootFamilies u n r h,
       ((v + forbiddenVertices.card : ℕ) : ℝ) ≤
         coloredCommonMean n roots p / 2) :
     ∃ ψ : Fin v → Fin n,
@@ -594,7 +594,7 @@ theorem exists_fullEmbedding_of_partial_avoiding
           (fun x ↦ coloredCommonNeighborIndicator u n r roots hr
             (coloredRoot_card_of_mem hroots) x) ω <
         2 * coloredCommonMean n roots p)
-    (hmean : ∀ roots, ∀ hroots : roots ∈ coloredRootFamilies u n r h,
+    (hmean : ∀ roots, ∀ _hroots : roots ∈ coloredRootFamilies u n r h,
       ((v + forbiddenVertices.card : ℕ) : ℝ) ≤
         coloredCommonMean n roots p / 2) :
     ∃ ψ : Fin v ↪ Fin n,
@@ -609,8 +609,8 @@ theorem exists_fullEmbedding_of_partial_avoiding
   have hinj : Function.Injective ψ := by
     intro x y hxy
     apply hψ.1
-    · simpa [hfull, initialVertices] using (Finset.mem_univ x)
-    · simpa [hfull, initialVertices] using (Finset.mem_univ y)
+    · simp [hfull, initialVertices]
+    · simp [hfull, initialVertices]
     · exact hxy
   let ψ' : Fin v ↪ Fin n := ⟨ψ, hinj⟩
   refine ⟨ψ', ?_, hagree, ?_⟩
@@ -665,7 +665,7 @@ theorem exists_rootedColoredEmbedding
           (fun x ↦ coloredCommonNeighborIndicator u n r roots hr
             (coloredRoot_card_of_mem hroots) x) ω <
         2 * coloredCommonMean n roots p)
-    (hmean : ∀ roots, ∀ hroots : roots ∈ coloredRootFamilies u n r h,
+    (hmean : ∀ roots, ∀ _hroots : roots ∈ coloredRootFamilies u n r h,
       (v : ℝ) ≤ coloredCommonMean n roots p / 2) :
     ∃ ψ : Fin v ↪ Fin n,
       Erdos722.RootedEmbedding.ExtendsRequest P.root request ψ ∧
@@ -736,7 +736,7 @@ theorem exists_rootedColoredEmbedding_avoiding
           (fun x ↦ coloredCommonNeighborIndicator u n r roots hr
             (coloredRoot_card_of_mem hroots) x) ω <
         2 * coloredCommonMean n roots p)
-    (hmean : ∀ roots, ∀ hroots : roots ∈ coloredRootFamilies u n r h,
+    (hmean : ∀ roots, ∀ _hroots : roots ∈ coloredRootFamilies u n r h,
       ((v + forbiddenVertices.card : ℕ) : ℝ) ≤
         coloredCommonMean n roots p / 2) :
     ∃ ψ : Fin v ↪ Fin n,
@@ -804,7 +804,7 @@ theorem eventually_exists_universalColoredHost
     (hr : 0 < r) (hh : 0 < h) (hD : 0 < D) (hhD : h < D)
     (hedges : P.edges.card ≤ h) :
     ∀ᶠ n : ℕ in Filter.atTop,
-      ∃ hn : 0 < n,
+      ∃ _hn : 0 < n,
       ∃ ω : (Fin u × {e // e ∈ uniformEdges n r}) → Bool,
         (∀ i, sampledColorEdges u n r ω i ⊆ uniformEdges n r) ∧
         (∀ i I, I.card = r - 1 →

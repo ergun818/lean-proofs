@@ -47,12 +47,14 @@ def IsSaturated (inc : C → Q → Prop) [DecidableRel inc]
     (cap : ℕ) (selected : Finset Q) (q : Q) : Prop :=
   ∃ c, inc c q ∧ cap ≤ counterLoad inc selected c
 
+omit [DecidableEq Q] in
 theorem counterLoad_mono
     (inc : C → Q → Prop) [DecidableRel inc]
     {A B : Finset Q} (hAB : A ⊆ B) (c : C) :
     counterLoad inc A c ≤ counterLoad inc B c := by
   exact Finset.card_le_card (Finset.filter_subset_filter _ hAB)
 
+omit [DecidableEq Q] in
 theorem IsSaturated.mono
     (inc : C → Q → Prop) [DecidableRel inc]
     (cap : ℕ) {A B : Finset Q} (hAB : A ⊆ B) {q : Q}
@@ -60,10 +62,11 @@ theorem IsSaturated.mono
   obtain ⟨c, hcq, hc⟩ := h
   exact ⟨c, hcq, hc.trans (counterLoad_mono inc hAB c)⟩
 
+omit [DecidableEq Q] in
 /-- Double-counting selected-candidate/counter incidences bounds the number
 of saturated counters. -/
 theorem card_saturatedCounters_mul_le
-    {C : Type*} [DecidableEq C]
+    {C : Type*}
     (inc : C → Q → Prop) [DecidableRel inc]
     (counters : Finset C) (selected : Finset Q) (cap M : ℕ)
     (hincident : ∀ q ∈ selected,
@@ -183,8 +186,8 @@ private theorem counterLoad_insert_le
     · rw [counterLoad, Finset.filter_insert, if_pos hcq,
         Finset.card_insert_of_notMem]
       · simpa [counterLoad] using hlt
-      · simpa [Finset.mem_filter, hqsel]
-  · have : insert q selected = selected ∪ {q} := by ext; simp [or_comm]
+      · simp [Finset.mem_filter, hqsel]
+  · have : insert q selected = selected ∪ {q} := by ext; simp
     rw [counterLoad, Finset.filter_insert, if_neg hcq]
     exact hloads c
 
@@ -199,7 +202,7 @@ theorem greedyStep_load_le
   split
   · exact hloads
   · rename_i h
-    push_neg at h
+    push Not at h
     exact counterLoad_insert_le inc cap hloads h.2
 
 theorem greedyRunFrom_load_le
@@ -275,6 +278,7 @@ theorem exists_bounded_generators_list
         · simpa [next, final, greedyRunFrom] using hqFinal
         · simpa [next, final, greedyRunFrom] using htail x hx
 
+omit [DecidableEq Q] in
 /-- Finset form used by the absorber. -/
 theorem exists_bounded_generators
     (vec : Q → X) (Span : Finset Q → X → Prop)
@@ -305,11 +309,12 @@ theorem exists_bounded_generators
 
 /-! ## Length of a strictly growing finite additive span -/
 
-variable {A : Type*} [AddCommGroup A] [Fintype A] [DecidableEq A]
+variable {A : Type*} [AddCommGroup A] [Finite A]
 
 def InAdditiveSpan (vec : Q → A) (selected : Finset Q) (x : A) : Prop :=
   x ∈ AddSubgroup.closure (vec '' (↑selected : Set Q))
 
+omit [DecidableEq Q] [Finite A] in
 theorem InAdditiveSpan.mono (vec : Q → A)
     {S T : Finset Q} (hST : S ⊆ T) {x : A}
     (hx : InAdditiveSpan vec S x) : InAdditiveSpan vec T x := by
@@ -317,6 +322,7 @@ theorem InAdditiveSpan.mono (vec : Q → A)
   rintro y ⟨q, hq, rfl⟩
   exact ⟨q, hST hq, rfl⟩
 
+omit [DecidableEq Q] [Finite A] in
 theorem vec_mem_additiveSpan (vec : Q → A) (selected : Finset Q)
     {q : Q} (hq : q ∈ selected) : InAdditiveSpan vec selected (vec q) := by
   exact AddSubgroup.subset_closure ⟨q, hq, rfl⟩
@@ -443,7 +449,7 @@ private theorem nat_le_two_pow (m : ℕ) : m ≤ 2 ^ m := by
         omega
 
 private theorem card_le_mul_of_two_pow_le_pow
-    {s N m : ℕ} (hN : 0 < N) (h : 2 ^ s ≤ N ^ m) :
+    {s N m : ℕ} (_hN : 0 < N) (h : 2 ^ s ≤ N ^ m) :
     s ≤ N * m := by
   have hbase : N ≤ 2 ^ N := nat_le_two_pow N
   have hupper : N ^ m ≤ 2 ^ (N * m) := by
@@ -635,6 +641,7 @@ def IsSaturatedAt (inc : C → Q → Prop) [DecidableRel inc]
     (cap : C → ℕ) (selected : Finset Q) (q : Q) : Prop :=
   ∃ c, inc c q ∧ cap c ≤ counterLoad inc selected c
 
+omit [DecidableEq Q] in
 theorem IsSaturatedAt.mono
     (inc : C → Q → Prop) [DecidableRel inc]
     (cap : C → ℕ) {A B : Finset Q} (hAB : A ⊆ B) {q : Q}
@@ -730,7 +737,7 @@ private lemma counterLoad_insert_le_cap
     · rw [counterLoad, Finset.filter_insert, if_pos hcq,
           Finset.card_insert_of_notMem]
       · simpa [counterLoad] using hlt
-      · simpa [Finset.mem_filter, hqsel]
+      · simp [Finset.mem_filter, hqsel]
   · rw [counterLoad, Finset.filter_insert, if_neg hcq]
     exact hloads c
 

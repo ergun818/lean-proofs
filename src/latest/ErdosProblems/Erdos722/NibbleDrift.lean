@@ -107,7 +107,7 @@ theorem card_blockEdges_mul_lower_le_cliqueDestroyers_add_error
     {H : Finset (Finset (Fin n))}
     (hH : ∀ Q ∈ H, Q.card = q)
     {history : List (Finset (Fin n))} {P : Finset (Fin n)}
-    (hPcard : P.card = q) (L : ℕ)
+    (_hPcard : P.card = q) (L : ℕ)
     (hlower : ∀ f ∈ blockEdges r P,
       L ≤ availableDegree H r history f) :
     (blockEdges r P).card * L ≤
@@ -288,8 +288,8 @@ theorem card_otherEdges_mul_lower_le_destroyers_add_error
     {H : Finset (Finset (Fin n))}
     (hH : ∀ Q ∈ H, Q.card = q)
     {history : List (Finset (Fin n))} {e P : Finset (Fin n)}
-    (hecard : e.card = r) (hPcard : P.card = q)
-    (heP : e ∈ blockEdges r P) (L : ℕ)
+    (hecard : e.card = r) (_hPcard : P.card = q)
+    (_heP : e ∈ blockEdges r P) (L : ℕ)
     (hlower : ∀ f ∈ otherEdges r P e,
       L ≤ availableDegree H r history f) :
     (otherEdges r P e).card * (L - n ^ (q - r - 1)) ≤
@@ -341,8 +341,8 @@ theorem card_otherEdges_mul_lower_le_destroyers_add_error
 lemma mem_deletedAtEdge_iff_of_available_surviving
     {H : Finset (Finset (Fin n))}
     {history : List (Finset (Fin n))} {e Q P : Finset (Fin n)}
-    (hQ : Q ∈ availableCliques H r history)
-    (heQ : e ∉ blockEdges r Q) :
+    (_hQ : Q ∈ availableCliques H r history)
+    (_heQ : e ∉ blockEdges r Q) :
     P ∈ deletedAtEdge H r history e Q ↔
       P ∈ availableCliques H r history ∧
         e ∈ blockEdges r P ∧
@@ -501,7 +501,7 @@ theorem degree_mul_other_mul_lower_le_sum_deleted_add_error
 lemma mem_deletedCliques_iff_of_available
     {H : Finset (Finset (Fin n))}
     {history : List (Finset (Fin n))} {Q P : Finset (Fin n)}
-    (hQ : Q ∈ availableCliques H r history) :
+    (_hQ : Q ∈ availableCliques H r history) :
     P ∈ deletedCliques H r history Q ↔
       P ∈ availableCliques H r history ∧
         ¬ Disjoint (blockEdges r P) (blockEdges r Q) := by

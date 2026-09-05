@@ -853,8 +853,7 @@ theorem card_relevantFaceLoadTarget_le (P : RootedPattern v r) (n : ℕ) :
           ↑(Typicality.uniformEdges n (r - 1))) :=
       Fintype.card_le_of_injective f hf
     _ = P.freeEdges.card * Nat.choose n (r - 1) := by
-      simp [Fintype.card_prod, Typicality.uniformEdges,
-        Finset.card_powersetCard]
+      simp [Fintype.card_prod, Typicality.uniformEdges]
 
 /-- A reusable finite exponential-union-bound calculation.  It packages
 the last analytic line of the rooted extension lemma without any limiting

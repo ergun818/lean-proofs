@@ -52,7 +52,7 @@ lemma sum_if_not_add_const
       by_cases hp : p Q
       · simp only [Finset.sum_insert hQA, if_pos hp, zero_add]
         rw [ih]
-        simp [Finset.filter_insert, hQA, hp]
+        simp [Finset.filter_insert, hp]
       · simp only [Finset.sum_insert hQA, if_neg hp]
         rw [ih]
         simp [Finset.filter_insert, hQA, hp]

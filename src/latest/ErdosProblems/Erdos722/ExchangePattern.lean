@@ -403,10 +403,10 @@ theorem exists_relabeledFullExchange_with_trace {q r : ℕ} (hqr : r < q) :
       dsimp [special]
       have hroot : mappedRoot rootEmbedding =
           (mappedRoot E.rootEmbedding).map emb := by
-        simpa [rootEmbedding] using mappedRoot_trans E.rootEmbedding emb
+        simp [rootEmbedding]
       have hedge : mappedRootEdge rootEmbedding e.1 =
           (mappedRootEdge E.rootEmbedding e.1).map emb := by
-        simpa [rootEmbedding] using mappedRootEdge_trans E.rootEmbedding emb e.1
+        simp [rootEmbedding]
       rw [hroot, ← Finset.map_inter,
         E.special_inter_root e (by simp), hedge]
     · intro e e' hee'
@@ -415,7 +415,7 @@ theorem exists_relabeledFullExchange_with_trace {q r : ℕ} (hqr : r < q) :
       have hmap := (Finset.disjoint_map emb).2 h
       have hroot : mappedRoot rootEmbedding =
           (mappedRoot E.rootEmbedding).map emb := by
-        simpa [rootEmbedding] using mappedRoot_trans E.rootEmbedding emb
+        simp [rootEmbedding]
       simpa [special, Finset.map_sdiff, hroot] using hmap
     · intro Q hQ hQroot e e' heEdge he'Edge
       obtain ⟨Q₀, hQ₀, rfl⟩ := mem_mapFamily.mp hQ
@@ -456,7 +456,7 @@ theorem exists_relabeledFullExchange_with_trace {q r : ℕ} (hqr : r < q) :
       obtain ⟨A₀, hA₀, rfl⟩ := mem_mapFamily.mp hA
       have hroot : mappedRoot rootEmbedding =
           (mappedRoot E.rootEmbedding).map emb := by
-        simpa [rootEmbedding] using mappedRoot_trans E.rootEmbedding emb
+        simp [rootEmbedding]
       have hsub₀ : A₀ ⊆ mappedRoot E.rootEmbedding ∪ E.special e := by
         have hmapSub : A₀.map emb ⊆
             (mappedRoot E.rootEmbedding ∪ E.special e).map emb := by

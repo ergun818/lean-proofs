@@ -61,7 +61,7 @@ lemma card_restSupport_le {n q r m : ℕ} (hqr : r < q)
       Finset.card_union_le _ _
     _ ≤ e.card + Finset.univ.card :=
       Nat.add_le_add_left Finset.card_image_le _
-    _ = r + (m - 1) := by simp [he, card_otherIndex]
+    _ = r + (m - 1) := by simp [he]
     _ ≤ q := by omega
 
 /-- Candidate lower faces supported on the root and the nondistinguished
@@ -159,7 +159,7 @@ lemma card_badSequenceWitness_le {n q r m D : ℕ}
         _ ≤ 2 ^ q * D := Nat.mul_le_mul_right D
           (card_lowerFace_le hqr hm he j x)
     _ = n ^ (m - 1) * (2 ^ q * D) := by
-      simp [Fintype.card_fun, card_otherIndex]
+      simp
 
 /-- Restore the distinguished coordinate of a tuple. -/
 def reassemble {n m : ℕ} (j : Fin m)
@@ -188,7 +188,7 @@ def spoiledExtensions (n q : ℕ) (F : Finset (Finset (Fin n)))
     e ⊆ Q ∧ ∃ f ∈ F, f ⊆ Q
 
 private theorem card_mul_le_card_mul_of_relation
-    {α β : Type*} [DecidableEq α] [DecidableEq β]
+    {α β : Type*}
     (left : Finset α) (right : Finset β) (rel : α → β → Prop)
     [DecidableRel rel] (a b : ℕ)
     (hleft : ∀ x ∈ left, a ≤ (right.filter (rel x)).card)

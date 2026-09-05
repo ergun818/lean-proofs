@@ -65,7 +65,8 @@ theorem eventually_polynomial_rotation_amplification_union_bound
     have hcast : ((R - 1 : ℕ) : ℝ) = R - 1 := by
       simpa using (Nat.cast_sub (R := ℝ) (by omega : 1 ≤ R))
     rw [hcast]
-    convert hone using 1 <;> field_simp <;> ring
+    convert hone using 1
+    field_simp
   have hratioNonneg : (0 : ℝ) ≤ ((R - 1 : ℕ) : ℝ) / R := by positivity
   have hexpBound :
       ((((R - 1 : ℕ) : ℝ) / R) ^ g) ≤
@@ -77,7 +78,6 @@ theorem eventually_polynomial_rotation_amplification_union_bound
       _ = Real.exp (-((g : ℝ) / R)) := by
         rw [← Real.exp_nat_mul]
         congr 1
-        push_cast
         ring
       _ ≤ Real.exp (-b * (n : ℝ) ^ a) := by
         apply Real.exp_le_exp.mpr
@@ -88,7 +88,6 @@ theorem eventually_polynomial_rotation_amplification_union_bound
               dsimp [b]
               push_cast
               field_simp
-              <;> ring
             _ ≤ (g : ℝ) / R :=
               div_le_div_of_nonneg_right hcap' hRpos.le
         simpa only [neg_mul] using neg_le_neg hscaled
@@ -175,7 +174,7 @@ theorem eventually_exists_prunedGenerator_rootedRotationCover
   filter_upwards [hfailure, hunion] with n hfailure hunion
   intro hn omega D htyp hDK hmass
   apply Erdos722.Rotations.exists_amplified_rootedRotationCover_of_scaled_bad
-    (r := r) (R := R) (g := rotationBankCount d n)
+    (_r := r) (R := R) (g := rotationBankCount d n)
     D.Kstar edges (by omega)
   · intro request
     have hf := hfailure hn omega D htyp hDK hmass request
@@ -317,7 +316,7 @@ theorem eventually_exists_prunedGenerator_rootedRotationAvoidingCover
   have hexists : ∃ phi ∈ S,
       ¬ OutsideRootTouches (Erdos722.CoverClique.coverRoot q r) J phi := by
     by_contra hnone
-    push_neg at hnone
+    push Not at hnone
     have hsub : S ⊆ bad := by
       intro phi hphi
       have hSdata := Finset.mem_filter.mp hphi
@@ -501,7 +500,7 @@ theorem eventually_exists_prunedGenerator_specialCandidateRotationCover
   let V := E.v + Uexp * Nat.choose q r
   have hR : 1 < R := by dsimp [R]; omega
   have hfailure :=
-    Erdos722.SpecialCliqueRotationAsymptotic.eventually_prunedGenerator_specialCandidateRotation_failure
+    SpecialCliqueRotationAsymptotic.eventually_prunedGenerator_specialCandidateRotation_failure
       N q r d hr hrq hqd E hbudget
   have hunion := eventually_polynomial_rotation_amplification_union_bound
     V d R (by have := (Nat.choose_pos hrq.le).trans hqd; omega) hR
@@ -514,7 +513,7 @@ theorem eventually_exists_prunedGenerator_specialCandidateRotationCover
     | mk amap ainj =>
       cases b with
       | mk bmap binj =>
-        simp only [Request, RootRequest.map] at hab
+        simp only [] at hab
         cases hab
         rfl)
   let Task := Request × (Erdos722.Exchange.RootEdge q r → Fin u)
@@ -533,7 +532,7 @@ theorem eventually_exists_prunedGenerator_specialCandidateRotationCover
         rw [← Finset.card_univ]
         exact Finset.card_le_card (Finset.filter_subset _ _)
       _ = Fintype.card Request * u ^ Nat.choose q r := by
-        simp [Task, Fintype.card_prod, Fintype.card_fun, card_rootEdge]
+        simp [Task, Fintype.card_prod]
       _ ≤ n ^ E.v * (n ^ Uexp) ^ Nat.choose q r := by
         exact Nat.mul_le_mul
           (by

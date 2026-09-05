@@ -52,7 +52,7 @@ lemma mem_cleanVertices {roots : Finset (Finset (Fin n))} {x : Fin n} :
 def commonEdgeCoord (n r : ℕ) (roots : Finset (Finset (Fin n)))
     (hr : 0 < r)
     (hroot : ∀ f ∈ roots, f.card = r - 1)
-    (s : (x : cleanVertices n roots) × {f // f ∈ roots}) :
+    (s : (_x : cleanVertices n roots) × {f // f ∈ roots}) :
     {e // e ∈ uniformEdges n r} := by
   let x : Fin n := s.1
   let f : Finset (Fin n) := s.2
@@ -309,7 +309,7 @@ theorem exists_simultaneously_typical
     apply hω
     simp only [bad, Set.mem_iUnion]
     exact ⟨⟨roots, hroots⟩, hmem⟩
-  rw [commonBad, Set.mem_union, Set.mem_setOf_eq, Set.mem_setOf_eq,
+  rw [commonBad, Set.mem_union, Set.mem_ofPred_eq, Set.mem_ofPred_eq,
     not_or] at hnotBad
   exact ⟨lt_of_not_ge hnotBad.1, lt_of_not_ge hnotBad.2⟩
 

@@ -315,7 +315,7 @@ theorem rainbowFocusing_of_rotationBanks
         Equiv.Perm (Fin n))
     (choiceR : Fin bankCount →
       Fin (CoverClique.coverPattern k r).freeEdges.card → Equiv.Perm (Fin n))
-    (fresh : Fin bankCount →
+    (_fresh : Fin bankCount →
       Fin (remainingBlocks (ExchangeEmbedding.fullExchangeData hrk)).card →
         Equiv.Perm (Fin n))
     (hchoiceE : ∀ request : RootRequest
@@ -566,7 +566,7 @@ theorem rainbowSpan_of_rotationBanks
       fun i ↦ generatorPerm (colorEquiv.symm i)
     let sigmaRoot : Fin (Fintype.card Color) → Equiv.Perm (Fin n) :=
       fun i ↦ rootPerm (colorEquiv.symm i)
-    let K : Fin (Fintype.card Color) → Finset (Finset (Fin n)) :=
+    let _K : Fin (Fintype.card Color) → Finset (Finset (Fin n)) :=
       fun i ↦ D.rotatedK sigmaGenerator i
     let Kstar : Fin (Fintype.card Color) → Finset (Finset (Fin n)) :=
       fun i ↦ D.rotatedKstar sigmaRoot i

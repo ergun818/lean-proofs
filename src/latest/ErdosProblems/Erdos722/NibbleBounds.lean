@@ -158,8 +158,8 @@ lemma degreeProfileStep_le
       _ = _ := by ring
   have hsum := add_le_add hcenterTerm hgrowth'
   constructor
-  · exact hraw.1.trans (by convert hsum using 1 <;> ring)
-  · exact hraw.2.trans (by convert hsum using 1 <;> ring)
+  · exact hraw.1.trans (by convert hsum using 1; ring)
+  · exact hraw.2.trans (by convert hsum using 1; ring)
 
 lemma cliqueErrorUpperGrowth_le
     (hg : 0 < g) (hK : 2 < K q r) (hT : 0 < scale n q r)
@@ -262,8 +262,8 @@ lemma cliqueProfileStep_le
       (by unfold centerDegree; positivity))
   have hsum := add_le_add hcenterTerm hgrowth'
   constructor
-  · exact hraw.1.trans (by convert hsum using 1 <;> ring)
-  · exact hraw.2.trans (by convert hsum using 1 <;> ring)
+  · exact hraw.1.trans (by convert hsum using 1; ring)
+  · exact hraw.2.trans (by convert hsum using 1; ring)
 
 lemma faceWeight_eq_one_div_density
     (hg : 0 < g) (hi : K q r * i < g) :
@@ -970,7 +970,7 @@ def concentrationScore (n q r : ℕ) : ℝ :=
 private lemma edge_score_cross
     {P : ℕ} {x C K₀ T D N J : ℝ}
     (hx : 0 ≤ x) (hC : 1 ≤ C) (hK : 1 ≤ K₀) (hT : 1 ≤ T)
-    (hD : 0 < D) (hN : 0 ≤ N) (hJ : 0 ≤ J)
+    (hD : 0 < D) (hN : 0 ≤ N) (_hJ : 0 ≤ J)
     (hJbound : J ≤ 6 * K₀ ^ 2 * N)
     (hlower : x * N ≤ C * D) :
     (x / (40000 * C * K₀ ^ 4 * T ^ (2 * P + 1))) *
@@ -1099,7 +1099,7 @@ private lemma face_score_cross
           have hKsq : 1 ≤ K₀ ^ 2 := one_le_pow₀ hK
           nlinarith [mul_nonneg (sub_nonneg.mpr hC) (sub_nonneg.mpr hKsq)]
         calc
-          1728 * T ^ 7 ≤ 40000 * T ^ 7 := by gcongr <;> norm_num
+          1728 * T ^ 7 ≤ 40000 * T ^ 7 := by gcongr; norm_num
           _ ≤ 40000 * T ^ Q := by gcongr
           _ ≤ 40000 * C * K₀ ^ 2 * T ^ Q := by
             nlinarith [mul_nonneg
@@ -1204,9 +1204,9 @@ lemma concreteJumpCap_nonneg
     positivity
   rcases z with (eb | b) | f
   · rcases eb with ⟨e, b⟩
-    cases b <;> simp only [ge_iff_le] <;> positivity
-  · cases b <;> simp only [ge_iff_le] <;> positivity
-  · simp only [ge_iff_le]
+    cases b <;> simp only [concreteJumpCap] <;> positivity
+  · cases b <;> simp only [concreteJumpCap] <;> positivity
+  · simp only [concreteJumpCap]
     positivity
 
 lemma concreteAbsCap_nonneg
@@ -1218,9 +1218,9 @@ lemma concreteAbsCap_nonneg
     positivity
   rcases z with (eb | b) | f
   · rcases eb with ⟨e, b⟩
-    cases b <;> simp only [ge_iff_le] <;> positivity
-  · cases b <;> simp only [ge_iff_le] <;> positivity
-  · simp only [ge_iff_le]
+    cases b <;> simp only [concreteAbsCap] <;> positivity
+  · cases b <;> simp only [concreteAbsCap] <;> positivity
+  · simp only [concreteAbsCap]
     positivity
 
 lemma concrete_jump_pos_and_half_window
@@ -1245,9 +1245,9 @@ lemma concrete_jump_pos_and_half_window
   · intro z
     rcases z with (eb | b) | f
     · rcases eb with ⟨e, b⟩
-      cases b <;> simp [concreteJumpCap] <;> positivity
-    · cases b <;> simp [concreteJumpCap] <;> positivity
-    · simp [concreteJumpCap]
+      cases b <;> simp only [concreteJumpCap] <;> positivity
+    · cases b <;> simp only [concreteJumpCap] <;> positivity
+    · simp only [concreteJumpCap]
       positivity
   · intro z
     rcases z with (eb | b) | f
@@ -1368,7 +1368,7 @@ lemma concentrationScore_le_freedman_score
         simp [concentrationScore, scoreConstant, concreteVarianceTotalCap,
           concreteJumpCap, concreteAbsCap, profileWindow, initialError,
           P, C, J, show 10 * K q r - 1 = 2 * (5 * K q r - 1) + 1 by omega] <;>
-        field_simp [hgR.ne'] <;> ring
+        field_simp [hgR.ne']
     · have hcross := clique_score_cross (P := P) hnR.le hC hKR hTR hD
         hgR hng
       cases b <;>
@@ -1383,7 +1383,8 @@ lemma concentrationScore_le_freedman_score
       convert hcross using 1 <;>
         simp [concentrationScore, scoreConstant, concreteVarianceTotalCap,
           concreteJumpCap, concreteAbsCap, profileWindow, faceSlack, C] <;>
-        field_simp [hgR.ne'] <;> ring
+        field_simp [hgR.ne']
+      ring
 
 /-- Uniform total predictable-variance bound for every concrete barrier. -/
 lemma concrete_varianceBudget_le_totalCap
@@ -1518,12 +1519,12 @@ lemma concreteVarianceTotalCap_nonneg
   rcases z with (eb | b) | f
   · rcases eb with ⟨e, b⟩
     cases b <;>
-      simp [concreteVarianceTotalCap, concreteJumpCap, concreteAbsCap] <;>
+      simp only [concreteVarianceTotalCap, concreteJumpCap, concreteAbsCap] <;>
       unfold centerDegree <;> positivity
   · cases b <;>
-      simp [concreteVarianceTotalCap, concreteJumpCap, concreteAbsCap] <;>
+      simp only [concreteVarianceTotalCap, concreteJumpCap, concreteAbsCap] <;>
       unfold centerDegree <;> positivity
-  · simp [concreteVarianceTotalCap, concreteJumpCap, concreteAbsCap]
+  · simp only [concreteVarianceTotalCap, concreteJumpCap, concreteAbsCap]
     positivity
 
 lemma concrete_rate_pos

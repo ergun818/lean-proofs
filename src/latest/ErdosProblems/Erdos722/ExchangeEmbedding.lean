@@ -368,7 +368,7 @@ theorem mappedRootBoundary_subset_mappedNearBoundary
     have hgInter : g ⊆
         mappedSpecial E φ eroot ∩ mapEdge φ E.pattern.root := by
       rw [hinter]
-      simpa [eroot, hmap]
+      simp [eroot, hmap]
     exact hgInter.trans Finset.inter_subset_left
 
 theorem mapped_incidence_eq (E : RelabeledFullExchange k r)
@@ -745,7 +745,7 @@ theorem exists_freeEdge_of_mem_mappedNegative
     ∃ g ∈ B.powersetCard r, g ∈ imageFreeEdges E.pattern φ := by
   have hBcard : B.card = k := (mappedNegative_decomp E φ).1 B hB
   have hrootCard : (mapEdge φ E.pattern.root).card = k := by
-    simpa [E.root_card] using card_mapEdge φ E.pattern.root
+    simp [E.root_card]
   have hnot : ¬B ⊆ mapEdge φ E.pattern.root := by
     intro hsub
     have hEq : B = mapEdge φ E.pattern.root :=
@@ -1358,7 +1358,7 @@ theorem permanentNegativeBankBlocks_decomp
       host I ⊆ imageFreeEdges E.pattern
         (S.embedding I.1.1 I.1.2 I.2) := by
     by_cases hpos : (I.2 : ℕ) < m
-    · simpa [host, permanentNegativeBankHost, hpos]
+    · simp [host, permanentNegativeBankHost, hpos]
     · simpa [host, permanentNegativeBankHost, hpos] using
         mappedFarHost_subset_freeEdges E
           (S.embedding I.1.1 I.1.2 I.2)

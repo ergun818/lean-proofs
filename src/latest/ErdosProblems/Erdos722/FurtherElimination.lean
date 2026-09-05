@@ -91,7 +91,7 @@ theorem inter_card_eq_of_unique_common_edge
     ext g
     constructor
     · intro hg
-      simpa [hunique g hg]
+      simp [hunique g hg]
     · intro hg
       have hge : g = e := Finset.mem_singleton.mp hg
       subst g
@@ -1557,7 +1557,7 @@ theorem preFurtherNegativeBlocks_boundary_subset_allocatorHosts
       (NearPairing.cliqueBoundarySupport_allNegativeFarSplittingBlocks_subset_freeUnion
         S (Finset.mem_biUnion.mpr ⟨B, hBfar, hgB⟩))
   · exact Finset.mem_union_right _
-      (ExchangeEliminationEmbedding.allEliminationNegativeOnly_edge_mem_sideBoundary_union_freeUnion
+      (allEliminationNegativeOnly_edge_mem_sideBoundary_union_freeUnion
         (E := E) (e₀ := e₀)
         (pairs := NearPairing.compatibleNearEliminationPairs S hr hrk
           hrootForbidden)
@@ -1744,7 +1744,7 @@ theorem finalNegativeBlocks_boundary_subset_allocatorHosts
   · apply Finset.mem_union_left
     exact hprefix (Finset.mem_biUnion.mpr ⟨B, hBprefix, hgB⟩)
   · apply Finset.mem_union_right
-    exact ExchangeEliminationEmbedding.allEliminationNegativeOnly_edge_mem_sideBoundary_union_freeUnion
+    exact allEliminationNegativeOnly_edge_mem_sideBoundary_union_freeUnion
       (E := E) (e₀ := e₀) (pairs := furtherEliminationPairs hpartner)
       (forbidden := furtherForbidden) (C := furtherCap) V hBV hgB
 

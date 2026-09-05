@@ -36,7 +36,7 @@ open Erdos722.AdaptiveChernoff
 
 noncomputable section
 
-variable {α : Type*} [Fintype α] [DecidableEq α]
+variable {α : Type*} [Fintype α]
 
 /-- Probability that the sum of the next `depth` real increments is at least
 `threshold`. -/
@@ -62,6 +62,7 @@ def pathSum (inc : List α → α → ℝ) : List α → List α → ℝ
   | history, a :: rest =>
       inc history a + pathSum inc (history ++ [a]) rest
 
+omit [Fintype α] in
 lemma pathSum_append (inc : List α → α → ℝ)
     (history xs ys : List α) :
     pathSum inc history (xs ++ ys) =
@@ -123,6 +124,7 @@ variable
 
 include hstep_nonneg hstep_sum
 
+omit hstep_sum in
 theorem realTailMass_nonneg (inc : List α → α → ℝ) :
     ∀ history depth threshold,
       0 ≤ realTailMass step inc history depth threshold := by
@@ -161,6 +163,7 @@ theorem realTailMass_le_one (inc : List α → α → ℝ) :
             (ih (history ++ [a]) _) (hstep_nonneg history a)
         _ = 1 := by simpa using hstep_sum history
 
+omit hstep_sum in
 theorem multiRealTailMass_nonneg {β : Type*} [Fintype β]
     (inc : β → List α → α → ℝ) :
     ∀ history depth threshold,
@@ -203,9 +206,10 @@ theorem multiRealTailMass_le_one {β : Type*} [Fintype β]
             (ih (history ++ [a]) _) (hstep_nonneg history a)
         _ = 1 := by simpa using hstep_sum history
 
+omit hstep_sum in
 /-- Finite union bound for real-valued upper-tail mass. -/
 theorem multiRealTailMass_le_sum_realTailMass
-    {β : Type*} [Fintype β] [DecidableEq β]
+    {β : Type*} [Fintype β]
     (inc : β → List α → α → ℝ) :
     ∀ history depth threshold,
       multiRealTailMass step inc history depth threshold ≤
@@ -248,6 +252,7 @@ theorem multiRealTailMass_le_sum_realTailMass
           rw [Finset.sum_comm]
         _ = _ := by rfl
 
+omit hstep_sum in
 theorem realMGF_nonneg (inc : List α → α → ℝ) (t : ℝ) :
     ∀ history depth, 0 ≤ realMGF step inc t history depth := by
   intro history depth
@@ -323,7 +328,7 @@ theorem oneStepRealMGF_le
 /-- Iterated variance-sensitive exponential-moment bound. -/
 theorem realMGF_le
     (inc : List α → α → ℝ) (v : ℕ → ℝ)
-    (hv : ∀ i, 0 ≤ v i) {t : ℝ} (ht : 0 ≤ t)
+    (_hv : ∀ i, 0 ≤ v i) {t : ℝ} (ht : 0 ≤ t)
     (hbound : ∀ history a, |t * inc history a| ≤ 1)
     (hmean : ∀ history,
       (∑ a : α, step history a * inc history a) ≤ 0)
@@ -363,10 +368,11 @@ theorem realMGF_le
         _ = Real.exp
             (t ^ 2 * varianceBudget v history.length (depth + 1)) := by
           rw [← Real.exp_add]
-          simp only [future, varianceBudget]
+          simp only [varianceBudget]
           congr 1
           ring
 
+omit hstep_sum in
 /-- Exponential Markov inequality for a real-valued transition tree. -/
 theorem realTailMass_le_exp_mul_mgf
     (inc : List α → α → ℝ) {t : ℝ} (ht : 0 ≤ t) :
@@ -424,7 +430,7 @@ theorem realTailMass_le_variance
         Real.exp (-t * threshold) *
           Real.exp (t ^ 2 * varianceBudget v history.length depth) := by
   intro history depth threshold
-  exact (realTailMass_le_exp_mul_mgf step hstep_nonneg hstep_sum inc ht
+  exact (realTailMass_le_exp_mul_mgf step hstep_nonneg inc ht
       history depth threshold).trans
     (mul_le_mul_of_nonneg_left
       (realMGF_le step hstep_nonneg hstep_sum inc v hv ht hbound hmean hvar
@@ -433,7 +439,7 @@ theorem realTailMass_le_variance
 /-- A union-tail mass below one yields a positive path below every real
 threshold simultaneously. -/
 theorem exists_path_of_multiRealTailMass_lt_one
-    {β : Type*} [Fintype β] [DecidableEq β]
+    {β : Type*} [Fintype β]
     (inc : β → List α → α → ℝ) :
     ∀ history depth threshold,
       multiRealTailMass step inc history depth threshold < 1 →
@@ -461,7 +467,7 @@ theorem exists_path_of_multiRealTailMass_lt_one
           multiRealTailMass step inc (history ++ [a]) depth
             (fun b ↦ threshold b - inc b history a) < 1 := by
         by_contra hnot
-        push_neg at hnot
+        push Not at hnot
         have hterm (a : α) :
             step history a *
                 multiRealTailMass step inc (history ++ [a]) depth
@@ -501,7 +507,7 @@ theorem exists_path_of_multiRealTailMass_lt_one
 
 /-- Simultaneous finite variance-sensitive upper-tail theorem. -/
 theorem exists_path_of_sum_variance_lt_one
-    {β : Type*} [Fintype β] [DecidableEq β]
+    {β : Type*} [Fintype β]
     (inc : β → List α → α → ℝ) (v : β → ℕ → ℝ)
     (hv : ∀ b i, 0 ≤ v b i) {t : ℝ} (ht : 0 ≤ t)
     (hbound : ∀ b history a, |t * inc b history a| ≤ 1)
@@ -519,7 +525,7 @@ theorem exists_path_of_sum_variance_lt_one
       ∀ b : β, pathSum (inc b) history path < threshold b := by
   apply exists_path_of_multiRealTailMass_lt_one step hstep_nonneg hstep_sum inc
   apply lt_of_le_of_lt
-    (multiRealTailMass_le_sum_realTailMass step hstep_nonneg hstep_sum inc
+    (multiRealTailMass_le_sum_realTailMass step hstep_nonneg inc
       history depth threshold)
   apply lt_of_le_of_lt _ hsmall
   apply Finset.sum_le_sum

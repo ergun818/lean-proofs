@@ -302,7 +302,7 @@ theorem eventually_const_n_mul_scale_le_host
     _ ≤ g := hgReal
 
 theorem eventually_const_scale_pow_le_n
-    (hrq : r ≤ q) (m : ℕ) (C₀ : ℝ) (hC₀ : 0 ≤ C₀)
+    (_hrq : r ≤ q) (m : ℕ) (C₀ : ℝ) (hC₀ : 0 ≤ C₀)
     (hexp : (((3 * K q r : ℕ) : ℝ) / den q r) * m < 1) :
     ∀ᶠ n : ℕ in atTop,
       C₀ * (scale n q r : ℝ) ^ m ≤ n := by

@@ -58,7 +58,8 @@ noncomputable instance coverConflictDecidableRel (r : ℕ) :
     DecidableRel (CoverConflict (n := n) r) :=
   Classical.decRel _
 
-lemma coverConflict_symmetric : Symmetric (CoverConflict (n := n) r) := by
+lemma coverConflict_symmetric : Std.Symm (CoverConflict (n := n) r) := by
+  constructor
   intro x y h
   simpa [CoverConflict, disjoint_comm] using h
 
@@ -267,7 +268,7 @@ theorem CoverAssignment.isCoverDecomposition
         obtain ⟨f, hf, hBf⟩ := Finset.mem_image.mp hm.1
         have hfe : f = e := huniq f ⟨hf, by simpa [hBf] using hm.2⟩
         subst f
-        simpa [hBf]
+        simp [hBf]
       · intro hB
         have hBe : B = C.block e := Finset.mem_singleton.mp hB
         subst B

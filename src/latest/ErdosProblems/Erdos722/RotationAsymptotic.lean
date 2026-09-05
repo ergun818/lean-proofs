@@ -225,7 +225,8 @@ theorem eventually_rpow_div_sixteen_le_generatorDegreeLower
         ((n : ℝ) ^ (((d - 1 : ℕ) : ℝ) / d) / 2) / 8 := by ring
     _ ≤ (T : ℝ) / 8 := by gcongr
     _ ≤ (T / 4 : ℕ) := by
-      convert hdiv using 1 <;> norm_num
+      convert hdiv using 1
+      norm_num
     _ = (generatorDegreeLower d n : ℝ) := by
       rfl
 
@@ -579,7 +580,7 @@ theorem eventually_rooted_expected_lower
         dsimp [Cedge]
         push_cast
         field_simp
-        <;> ring
+        ring
       _ ≤ ((Nat.choose n (r - 1) : ℝ) *
             generatorDegreeLower d n) / (2 * r) := by gcongr
       _ ≤ K.card := by
@@ -892,7 +893,7 @@ theorem natCard_rootRequest_le_pow
     | mk amap ainj =>
       cases b with
       | mk bmap binj =>
-        simp only [code, Erdos722.RootedEmbedding.RootRequest.map] at hab
+        simp only [code] at hab
         cases hab
         rfl
   simpa [Nat.card_fun] using Nat.card_le_card_of_injective code hcode
@@ -941,7 +942,8 @@ theorem eventually_polynomial_rotation_amplification_union_bound
     have hcast : ((R - 1 : ℕ) : ℝ) = R - 1 := by
       simpa using (Nat.cast_sub (R := ℝ) (by omega : 1 ≤ R))
     rw [hcast]
-    convert hone using 1 <;> field_simp <;> ring
+    convert hone using 1
+    field_simp
   have hratioNonneg : (0 : ℝ) ≤ ((R - 1 : ℕ) : ℝ) / R := by
     positivity
   have hexpBound :
@@ -954,7 +956,6 @@ theorem eventually_polynomial_rotation_amplification_union_bound
       _ = Real.exp (-((g : ℝ) / R)) := by
         rw [← Real.exp_nat_mul]
         congr 1
-        push_cast
         ring
       _ ≤ Real.exp (-b * (n : ℝ) ^ a) := by
         apply Real.exp_le_exp.mpr
@@ -965,7 +966,6 @@ theorem eventually_polynomial_rotation_amplification_union_bound
               dsimp [b]
               push_cast
               field_simp
-              <;> ring
             _ ≤ (g : ℝ) / R :=
               div_le_div_of_nonneg_right hcap' hRpos.le
         simpa only [neg_mul] using neg_le_neg hscaled
@@ -1018,7 +1018,8 @@ theorem eventually_rotation_amplification_union_bound
     have hcast : ((R - 1 : ℕ) : ℝ) = R - 1 := by
       simpa using (Nat.cast_sub (R := ℝ) (by omega : 1 ≤ R))
     rw [hcast]
-    convert hone using 1 <;> field_simp <;> ring
+    convert hone using 1
+    field_simp
   have hratioNonneg : (0 : ℝ) ≤ ((R - 1 : ℕ) : ℝ) / R := by
     positivity
   have hexpBound :
@@ -1031,7 +1032,6 @@ theorem eventually_rotation_amplification_union_bound
       _ = Real.exp (-((g : ℝ) / R)) := by
         rw [← Real.exp_nat_mul]
         congr 1
-        push_cast
         ring
       _ ≤ Real.exp (-b * (n : ℝ) ^ a) := by
         apply Real.exp_le_exp.mpr
@@ -1042,7 +1042,6 @@ theorem eventually_rotation_amplification_union_bound
               dsimp [b]
               push_cast
               field_simp
-              <;> ring
             _ ≤ (g : ℝ) / R :=
               div_le_div_of_nonneg_right hcap' hRpos.le
         simpa only [neg_mul] using neg_le_neg hscaled
@@ -1120,7 +1119,7 @@ theorem eventually_exists_prunedGenerator_rootedRotationCover
   filter_upwards [hfailure, hunion] with n hfailure hunion
   intro hn ω D htyp hDK hmass
   apply exists_amplified_rootedRotationCover_of_scaled_bad
-    (r := r) (R := R) (g := generatorEdgeCap d n)
+    (_r := r) (R := R) (g := generatorEdgeCap d n)
     D.Kstar edges (by omega)
   · intro request
     have hf := hfailure hn ω D htyp hDK hmass request

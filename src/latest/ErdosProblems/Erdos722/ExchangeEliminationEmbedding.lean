@@ -371,7 +371,7 @@ theorem card_eliminationPairs_with_root_le
 the canonical positive and special blocks to the prescribed pair. -/
 theorem exists_eliminationRootRequest
     [Nonempty (Fin n)] (E : RelabeledFullExchange k r)
-    (hr : 0 < r) (hrk : r < k) (e₀ : RootEdge k r)
+    (_hr : 0 < r) (_hrk : r < k) (e₀ : RootEdge k r)
     (P : EliminationPair n k r) :
     ∃ request : RootRequest E.v n (E.eliminationPattern e₀).root,
       requestImage (E.eliminationPattern e₀).root request = P.root ∧
@@ -1679,7 +1679,7 @@ theorem eventually_exists_boundedEliminationPairEmbeddings_twoScale
   by_cases hpairs : pairs = ∅
   · subst pairs
     refine ⟨{
-      embedding := fun P hP ↦ False.elim (by simpa using hP)
+      embedding := fun P hP ↦ False.elim (by simp at hP)
       maps_positive := ?_
       maps_negative := ?_
       free_disjoint_forbidden := ?_

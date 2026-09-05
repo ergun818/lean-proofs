@@ -432,7 +432,7 @@ theorem eventually_boost_tail_bound
   have hnposNat : 0 < n := by omega
   have hnpos : (0 : ℝ) < n := by exact_mod_cast hnposNat
   have hEpos : 0 < extensionScale n q r := by
-    exact Nat.choose_pos (by simp [extensionScale]; omega)
+    exact Nat.choose_pos (by simp; omega)
   have hApos : 0 < boostAmbientLower n q r := by
     dsimp [boostAmbientLower, ambientScale]
     have hchoose : q + 1 ≤ Nat.choose (n - r) q := by
@@ -490,15 +490,14 @@ theorem eventually_boost_tail_bound
         dsimp [S, Probability.hoeffdingUnitVariance]
         have hcardpos : 0 < Fintype.card (IncidentClique n q r G e) :=
           Fintype.card_pos
-        simp only [one_div, inv_pow, sum_const, card_univ, nsmul_eq_mul, inv_pos, Nat.ofNat_pos, pow_succ_pos,
-    mul_pos_iff_of_pos_right, Nat.cast_pos, gt_iff_lt]
+        simp only [one_div, inv_pow, sum_const, card_univ, nsmul_eq_mul, inv_pos, Nat.ofNat_pos,
+          pow_succ_pos, mul_pos_iff_of_pos_right, Nat.cast_pos, gt_iff_lt]
         positivity
       have hSupper : S ≤ (extensionScale n q r : ℝ) := by
         calc
           S ≤ Fintype.card (IncidentClique n q r G e) := by
             dsimp [S, Probability.hoeffdingUnitVariance]
-            simp only [NNReal.coe_pow, NNReal.coe_div, NNReal.coe_one,
-              Finset.sum_const, nsmul_eq_mul]
+            simp only [Finset.sum_const, nsmul_eq_mul]
             norm_num
             have hcard0 : (0 : ℝ) ≤
                 Fintype.card (IncidentClique n q r G e) := by positivity
@@ -560,7 +559,7 @@ theorem eventually_exists_boost_of_power_bounded_complement
     eventually_ge_atTop (r + q + 1)] with n hambient hquant htail hn
   intro D G hD hGsub hdegree
   have hscale : 0 < extensionScale n q r := by
-    exact Nat.choose_pos (by simp [extensionScale]; omega)
+    exact Nat.choose_pos (by simp; omega)
   have hApos : 0 < boostAmbientLower n q r := by
     dsimp [boostAmbientLower, ambientScale]
     have hchoose : q + 1 ≤ Nat.choose (n - r) q := by

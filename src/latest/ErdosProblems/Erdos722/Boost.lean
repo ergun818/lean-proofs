@@ -377,7 +377,7 @@ theorem decoderAmbients_nonempty_of_sparse
       _ ≤ ((q + r - r) * n ^ (q + r - r - 1) *
           (2 ^ (q + r) * D)) := hspoiled
       _ = q * n ^ (q - 1) * (2 ^ (q + r) * D) := by
-        simp [Nat.add_sub_cancel]
+        simp
       _ < ambientScale n q r := hlarge
   apply Finset.card_pos.mp
   rw [card_decoderAmbients_eq_sub_spoiled hecard]
@@ -905,7 +905,7 @@ theorem card_filter_roundedFamily
       dif_pos hQclique, if_pos heQ]]
   cases hωQ : ω ⟨Q, hQclique⟩ <;>
     simp only [Probability.coordinateIndicator, hωQ, if_false, if_true,
-      dif_pos hQclique, heQ, and_self, Bool.false_eq_true,
+      dif_pos hQclique, Bool.false_eq_true,
       Nat.cast_zero, Nat.cast_one]
 
 /-- Failure of the requested additive degree error at one host edge. -/
@@ -1024,7 +1024,7 @@ theorem exists_roundedFamily
   let X := fun Q : IncidentClique n q r G e ↦
     Probability.coordinateIndicator
       (incidentCoordinate n q r G e Q)
-  rw [roundingBad, Set.mem_union, Set.mem_setOf_eq, Set.mem_setOf_eq,
+  rw [roundingBad, Set.mem_union, Set.mem_ofPred_eq, Set.mem_ofPred_eq,
     not_or] at hnotBad
   have hcenter :
       ∑ Q : IncidentClique n q r G e,

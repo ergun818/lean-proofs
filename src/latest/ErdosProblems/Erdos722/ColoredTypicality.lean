@@ -76,7 +76,7 @@ coloured root. -/
 def coloredCommonEdgeCoord
     (u n r : ℕ) (roots : Finset (ColoredRoot u n))
     (hr : 0 < r) (hroot : ∀ z ∈ roots, z.2.card = r - 1)
-    (s : (x : cleanColoredVertices n roots) × {z // z ∈ roots}) :
+    (s : (_x : cleanColoredVertices n roots) × {z // z ∈ roots}) :
     Fin u × {e // e ∈ uniformEdges n r} := by
   let x : Fin n := s.1
   let z : ColoredRoot u n := s.2
@@ -317,7 +317,7 @@ theorem exists_coloredCommonNeighbor_not_mem
         (coloredTypical_card_commonNeighbors_lower hr p ω htyp hroots)
     exact_mod_cast hreal
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   have hle : common.card ≤ avoid.card := by
     apply Finset.card_le_card_of_injOn (fun x : cleanColoredVertices n roots ↦ x.1)
     · intro x hx
@@ -446,8 +446,8 @@ theorem exists_simultaneously_coloredTypical
     apply hω
     simp only [bad, Set.mem_iUnion]
     exact ⟨⟨roots, hroots⟩, hmem⟩
-  rw [coloredCommonBad, Set.mem_union, Set.mem_setOf_eq,
-    Set.mem_setOf_eq, not_or] at hnotBad
+  rw [coloredCommonBad, Set.mem_union, Set.mem_ofPred_eq,
+    Set.mem_ofPred_eq, not_or] at hnotBad
   exact ⟨lt_of_not_ge hnotBad.1, lt_of_not_ge hnotBad.2⟩
 
 /-- The deterministic `r`-graph in one colour of a coloured Bernoulli
@@ -665,7 +665,7 @@ theorem eventually_fixed_le_half_coloredCommonMean
     (u r h D v : ℕ) (hD : 0 < D) (hhD : h < D) :
     ∀ᶠ n : ℕ in Filter.atTop,
       ∀ hn : 0 < n, ∀ roots,
-      ∀ hroots : roots ∈ coloredRootFamilies u n r h,
+      ∀ _hroots : roots ∈ coloredRootFamilies u n r h,
         (v : ℝ) ≤ coloredCommonMean n roots
           (Erdos722.Reserve.reserveProbabilityIcc n D hn) / 2 := by
   let a : ℝ := 1 - (h : ℝ) / (D : ℝ)

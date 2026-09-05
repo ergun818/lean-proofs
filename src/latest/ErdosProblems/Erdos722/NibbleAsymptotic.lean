@@ -300,7 +300,8 @@ theorem eventually_const_codegree_le_initial_error
   unfold centerDegree extensionScale
   rw [div_div]
   apply (le_div_iff₀ (mul_pos (by norm_num) (pow_pos hTreal _))).2
-  convert hmain using 1 <;> ring
+  convert hmain using 1
+  ring
 
 /-- The profile-scale power is negligible compared with the number of
 `r`-edges in every host containing more than half of the complete graph. -/

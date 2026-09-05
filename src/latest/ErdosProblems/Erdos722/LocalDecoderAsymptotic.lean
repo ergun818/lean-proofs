@@ -455,7 +455,7 @@ theorem eventually_decoder_legalLowerBound
       CoverClique.card_coverRoot hrv.le] using hlower
 
 lemma eventually_half_path_rpow_mul_le_cap
-    (hr : 0 < r) (hd : 0 < d) :
+    (_hr : 0 < r) (hd : 0 < d) :
     ∀ᶠ n : ℕ in atTop,
       (decoderPathMultiplier v r : ℝ) *
           ((n : ℝ) ^ decoderPathExponent d / 2) ≤
@@ -666,7 +666,7 @@ theorem eventually_exists_separatedCliqueExtensions_of_power_bound
   · subst roots
     refine ⟨{
       toSeparatedCliqueExtensions := {
-        embedding := fun e he ↦ False.elim (show False by simpa using he)
+        embedding := fun e he ↦ False.elim (show False by simp at he)
         root_image := ?_
         free_eq := ?_
         free_disjoint_forbidden := ?_
@@ -721,7 +721,7 @@ theorem eventually_exists_separatedCliqueExtensions_of_two_power_bounds
   · subst roots
     refine ⟨{
       toSeparatedCliqueExtensions := {
-        embedding := fun e he ↦ False.elim (show False by simpa using he)
+        embedding := fun e he ↦ False.elim (show False by simp at he)
         root_image := ?_
         free_eq := ?_
         free_disjoint_forbidden := ?_

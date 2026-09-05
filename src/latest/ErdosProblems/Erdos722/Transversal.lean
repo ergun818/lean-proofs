@@ -613,7 +613,7 @@ theorem IsUniformDecomposition.union_canonical
 /-- Pairwise edge-disjoint decompositions may be assembled over a finite
 index set. -/
 theorem IsUniformDecomposition.biUnion
-    {ι V : Type*} [DecidableEq ι] [DecidableEq V]
+    {ι V : Type*} [DecidableEq V]
     (S : Finset ι) (host blocks : ι → Finset (Finset V))
     {q r : ℕ}
     (hdecomp : ∀ i ∈ S, IsUniformDecomposition (host i) (blocks i) q r)

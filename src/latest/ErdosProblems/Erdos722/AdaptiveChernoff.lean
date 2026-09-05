@@ -31,7 +31,7 @@ open Finset Real
 
 noncomputable section
 
-variable {α : Type*} [Fintype α] [DecidableEq α]
+variable {α : Type*} [Fintype α]
 
 /-- `0`/`1` value of the overload indicator at one transition. -/
 def hitBit (hit : List α → α → Bool) (history : List α) (a : α) : ℕ :=
@@ -89,16 +89,17 @@ noncomputable def multiTailMass {β : Type*} [Fintype β]
 /-! ## Uniform transition kernels -/
 
 /-- Uniform mass on a nonempty finite set of legal next choices. -/
-def uniformStep (legal : List α → Finset α) (history : List α) (a : α) : ℝ :=
+def uniformStep [DecidableEq α] (legal : List α → Finset α) (history : List α) (a : α) : ℝ :=
   if a ∈ legal history then ((legal history).card : ℝ)⁻¹ else 0
 
-theorem uniformStep_nonneg (legal : List α → Finset α) :
+omit [Fintype α] in
+theorem uniformStep_nonneg [DecidableEq α] (legal : List α → Finset α) :
     ∀ history a, 0 ≤ uniformStep legal history a := by
   intro history a
   simp only [uniformStep]
   split <;> positivity
 
-theorem sum_uniformStep (legal : List α → Finset α)
+theorem sum_uniformStep [DecidableEq α] (legal : List α → Finset α)
     (hnonempty : ∀ history, (legal history).Nonempty) :
     ∀ history, ∑ a : α, uniformStep legal history a = 1 := by
   intro history
@@ -106,7 +107,8 @@ theorem sum_uniformStep (legal : List α → Finset α)
     exact_mod_cast Finset.card_pos.mpr (hnonempty history)
   simp [uniformStep, hcard.ne']
 
-theorem uniformStep_pos_iff (legal : List α → Finset α)
+omit [Fintype α] in
+theorem uniformStep_pos_iff [DecidableEq α] (legal : List α → Finset α)
     (hnonempty : ∀ history, (legal history).Nonempty)
     (history : List α) (a : α) :
     0 < uniformStep legal history a ↔ a ∈ legal history := by
@@ -126,6 +128,7 @@ variable
 
 include hstep_nonneg hstep_sum
 
+omit hstep_sum in
 theorem tailMass_nonneg (hit : List α → α → Bool) :
     ∀ history depth threshold,
       0 ≤ tailMass step hit history depth threshold := by
@@ -142,6 +145,7 @@ theorem tailMass_nonneg (hit : List α → α → Bool) :
       exact mul_nonneg (hstep_nonneg history a)
         (ih (history ++ [a]) _)
 
+omit hstep_nonneg in
 theorem tailMass_zero (hit : List α → α → Bool) :
     ∀ history depth, tailMass step hit history depth 0 = 1 := by
   intro history depth
@@ -173,6 +177,7 @@ theorem tailMass_le_one (hit : List α → α → Bool) :
             (ih (history ++ [a]) _) (hstep_nonneg history a)
         _ = 1 := by simpa using hstep_sum history
 
+omit hstep_sum in
 theorem multiTailMass_nonneg {β : Type*} [Fintype β]
     (hit : β → List α → α → Bool) :
     ∀ history depth threshold,
@@ -215,9 +220,10 @@ theorem multiTailMass_le_one {β : Type*} [Fintype β]
             (ih (history ++ [a]) _) (hstep_nonneg history a)
         _ = 1 := by simpa using hstep_sum history
 
+omit hstep_sum in
 /-- Finite union bound for overload mass. -/
 theorem multiTailMass_le_sum_tailMass
-    {β : Type*} [Fintype β] [DecidableEq β]
+    {β : Type*} [Fintype β]
     (hit : β → List α → α → Bool) :
     ∀ history depth threshold,
       multiTailMass step hit history depth threshold ≤
@@ -263,6 +269,7 @@ theorem multiTailMass_le_sum_tailMass
           rw [Finset.sum_comm]
         _ = _ := by rfl
 
+omit hstep_sum in
 theorem adaptiveMGF_nonneg (hit : List α → α → Bool) (t : ℝ) :
     ∀ history depth, 0 ≤ adaptiveMGF step hit t history depth := by
   intro history depth
@@ -308,6 +315,7 @@ theorem one_le_adaptiveMGF (hit : List α → α → Bool)
                 (ih (history ++ [a]))
                 (mul_nonneg (hstep_nonneg history a) (Real.exp_nonneg _))
 
+omit hstep_nonneg in
 /-- The one-step Bernoulli exponential-moment identity. -/
 theorem oneStepMGF_eq
     (hit : List α → α → Bool) (history : List α) (t : ℝ) :
@@ -340,7 +348,7 @@ theorem oneStepMGF_eq
 probability caps. -/
 theorem adaptiveMGF_le
     (hit : List α → α → Bool) (p : ℕ → ℝ)
-    (hp : ∀ i, 0 ≤ p i)
+    (_hp : ∀ i, 0 ≤ p i)
     {t : ℝ} (ht : 0 ≤ t)
     (hhit : ∀ history,
       (∑ a : α, step history a * hitBit hit history a) ≤
@@ -364,7 +372,7 @@ theorem adaptiveMGF_le
           (∑ a : α, step history a *
               Real.exp (t * hitBit hit history a)) ≤
             Real.exp ((Real.exp t - 1) * p history.length) := by
-        rw [oneStepMGF_eq step hstep_nonneg hstep_sum]
+        rw [oneStepMGF_eq step hstep_sum]
         calc
           1 + (Real.exp t - 1) *
               (∑ a : α, step history a * hitBit hit history a) ≤
@@ -393,7 +401,7 @@ theorem adaptiveMGF_le
         _ = Real.exp ((Real.exp t - 1) *
               adaptiveBudget p history.length (depth + 1)) := by
           rw [← Real.exp_add]
-          simp only [future, adaptiveBudget]
+          simp only [adaptiveBudget]
           congr 1
           ring
 
@@ -414,7 +422,7 @@ theorem tailMass_le_exp_mul_mgf
       intro threshold
       by_cases hm : threshold = 0
       · subst threshold
-        rw [tailMass_zero step hstep_nonneg hstep_sum]
+        rw [tailMass_zero step hstep_sum]
         simpa using one_le_adaptiveMGF step hstep_nonneg hstep_sum hit ht
           history (depth + 1)
       · obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hm
@@ -523,7 +531,7 @@ theorem exists_path_of_tailMass_lt_one
           tailMass step hit (history ++ [a]) depth
               (threshold - hitBit hit history a) < 1 := by
         by_contra hnot
-        push_neg at hnot
+        push Not at hnot
         have hterm (a : α) :
             step history a *
                 tailMass step hit (history ++ [a]) depth
@@ -570,7 +578,7 @@ theorem exists_path_of_tailMass_lt_one
 /-- If the union-overload mass is below one, one positive path stays below
 every threshold simultaneously. -/
 theorem exists_path_of_multiTailMass_lt_one
-    {β : Type*} [Fintype β] [DecidableEq β]
+    {β : Type*} [Fintype β]
     (hit : β → List α → α → Bool) :
     ∀ history depth threshold,
       multiTailMass step hit history depth threshold < 1 →
@@ -599,7 +607,7 @@ theorem exists_path_of_multiTailMass_lt_one
           multiTailMass step hit (history ++ [a]) depth
             (fun b ↦ threshold b - hitBit (hit b) history a) < 1 := by
         by_contra hnot
-        push_neg at hnot
+        push Not at hnot
         have hterm (a : α) :
             step history a *
                 multiTailMass step hit (history ++ [a]) depth
@@ -647,7 +655,7 @@ theorem exists_path_of_multiTailMass_lt_one
 
 /-- Union-bound form of the path extractor. -/
 theorem exists_path_of_sum_tailMass_lt_one
-    {β : Type*} [Fintype β] [DecidableEq β]
+    {β : Type*} [Fintype β]
     (hit : β → List α → α → Bool)
     {history : List α} {depth : ℕ} {threshold : β → ℕ}
     (hsmall : (∑ b : β,
@@ -656,12 +664,12 @@ theorem exists_path_of_sum_tailMass_lt_one
       PathPositive step history path ∧
       ∀ b : β, pathHits (hit b) history path < threshold b := by
   apply exists_path_of_multiTailMass_lt_one step hstep_nonneg hstep_sum hit
-  exact (multiTailMass_le_sum_tailMass step hstep_nonneg hstep_sum hit
+  exact (multiTailMass_le_sum_tailMass step hstep_nonneg hit
     history depth threshold).trans_lt hsmall
 
 /-- Simultaneous adaptive Chernoff extractor. -/
 theorem exists_path_of_sum_chernoff_lt_one
-    {β : Type*} [Fintype β] [DecidableEq β]
+    {β : Type*} [Fintype β]
     (hit : β → List α → α → Bool)
     (p : β → ℕ → ℝ) (hp : ∀ b i, 0 ≤ p b i)
     {t : ℝ} (ht : 0 ≤ t)

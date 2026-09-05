@@ -203,8 +203,7 @@ theorem card_orderedIntersectionPairs_le_of_intersectionDegree
         have hpair := mem_orderedIntersectionPairs.mp hpdata.1
         apply Finset.mem_powersetCard.mpr
         refine ⟨?_, hpair.2.2⟩
-        simpa [pairInter, hpdata.2] using
-          (Finset.inter_subset_left : p.1 ∩ p.2 ⊆ p.1)
+        simp [pairInter, hpdata.2]
       rw [show (P.filter fun p ↦ p.1 = Q).card = fibre.card by rfl,
         Finset.card_eq_sum_card_fiberwise hfibreMaps]
       calc
@@ -438,7 +437,8 @@ theorem eventually_cliqueRotation_pair_scale
             ((C₁ : ℝ) * 16 * C₂ * C₃) ≤
           (Nat.choose n (r - 1) : ℝ) * generatorDegreeLower d n *
             generatorCliqueLower q r d n * Nat.choose (n - q) (q - j) := by
-      convert hlower using 1 <;> field_simp <;> ring
+      convert hlower using 1
+      field_simp
     calc
       ((4 : ℝ) * r * K * 4 ^ (q - r + 1)) *
           ((n : ℝ) ^ (r - 1) * (n : ℝ) ^ degreeExp *
@@ -1112,7 +1112,7 @@ theorem eventually_exists_prunedGenerator_rootedUnsaturatedRotationCover
   let U := twoCapUnsaturatedCliques n q r
     (generatorFaceCap d n) (generatorEdgeCap d n) D.K D.selected
   apply exists_amplified_rootedRotationCover_of_scaled_bad
-    (r := q) (R := R) (g := generatorEdgeCap d n) U blocks (by omega)
+    (_r := q) (R := R) (g := generatorEdgeCap d n) U blocks (by omega)
   · intro request
     have hf := hfailure hn ω D htyp hDK hmass request
     have hRsub : R - 1 = cliqueRotationPairConstant q r ^ m := by

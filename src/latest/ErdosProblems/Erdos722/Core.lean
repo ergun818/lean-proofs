@@ -504,7 +504,7 @@ theorem maxLowerDegree_pow_le
   apply Finset.sup_mem (s := {x : ℕ | x ^ d ≤ c ^ d * n ^ (d - 1)})
   · by_cases hd : d = 0 <;> simp [hd, zero_pow]
   · intro x hx y hy
-    simp only [Set.mem_setOf_eq] at hx hy ⊢
+    simp only [Set.mem_ofPred_eq] at hx hy ⊢
     rcases max_cases x y with hxy | hxy <;> simp [hxy, hx, hy]
   · intro I hI
     exact h I hI
@@ -1391,7 +1391,7 @@ lemma blockIncidenceCount_union_le
   exact Finset.card_union_le _ _
 
 lemma blockIncidenceCount_biUnion_le_sum
-    {I : Type*} [DecidableEq I]
+    {I : Type*}
     (indices : Finset I) (blocks : I → Finset (Finset (Fin n)))
     (e : Finset (Fin n)) :
     blockIncidenceCount (indices.biUnion blocks) e ≤
@@ -1449,7 +1449,7 @@ lemma blockIncidenceCount_eq_zero_of_subset_of_not_mem_boundary
 
 lemma cliqueBoundarySupport_subset_complete
     {family : Finset (Finset (Fin n))}
-    (huniform : ∀ Q ∈ family, Q.card = k) :
+    (_huniform : ∀ Q ∈ family, Q.card = k) :
     cliqueBoundarySupport family r ⊆ completeUniform n r := by
   intro e he
   obtain ⟨Q, hQ, heQ, hecard⟩ := mem_cliqueBoundarySupport.mp he
@@ -1516,7 +1516,7 @@ lemma localDegree_blocks_le_boundary_mul_incidence
           intro x hxQ
           by_contra hxJ
           have : x ∈ Q \ J := Finset.mem_sdiff.mpr ⟨hxQ, hxJ⟩
-          simpa [hempty] using this
+          simp [hempty] at this
         have hcard := Finset.card_le_card hsub
         rw [huniform Q hQData.1, hJ] at hcard
         omega
@@ -1839,15 +1839,14 @@ theorem exchange_remainders_almostSupported
       subst B
       let exceptional := RootedEmbedding.mapEdge
         (E.rootEmbedding.trans φ) e.1
-      apply mem_almostSupportedBlocks_of_sdiff_subset_singleton
+      apply mem_almostSupportedBlocks_of_sdiff_subset_singleton (e := exceptional)
         ((ExchangeEmbedding.mappedNegative_decomp E φ).1 _
           (ExchangeEmbedding.mappedSpecial_mem_mappedNegative E φ e))
       intro g hg
       have hgData := Finset.mem_sdiff.mp hg
       rcases ExchangeEmbedding.mappedSpecial_edge_eq_or_free
           E φ e hgData.1 with hge | hgfree
-      · show g ∈ {exceptional}
-        rw [Finset.mem_singleton]
+      · rw [Finset.mem_singleton]
         exact hge
       · exact (hgData.2 (hfree hgfree)).elim
     · have hfar : B ∈ ExchangeEmbedding.mappedFarNegative E φ :=
@@ -2368,7 +2367,8 @@ theorem sqrtGroupingAt_spec
       (by
         have h := (mem_highMultiplicityEdges.mp he).2
         simpa only [card_incidentBlockFibre] using (show
-          2 < blockIncidenceCount family e by omega)))) using 1 <;> simp
+          2 < blockIncidenceCount family e by omega)))) using 1
+  simp
 
 /-- A global source multiplicity cap bounds the number of canonical groups
 over every high edge by `⌊√x⌋ + 1`. -/
@@ -2689,7 +2689,7 @@ lemma sqrtIntermediateFreeEdges_disjoint_source
   have heSub : e ⊆ A.intermediate I :=
     (Finset.mem_powersetCard.mp heIData.1).1
   have heEq := A.source_edge_eq I e heSource heSub
-  exact heIData.2 (by simpa [heEq])
+  exact heIData.2 (by simp [heEq])
 
 lemma highMultiplicityEdge_not_mem_sqrtIntermediateFreeEdges
     {n k r : ℕ} {family : Finset (Finset (Fin n))}
@@ -3059,7 +3059,7 @@ lemma eliminationFlattenFamily_eq_intermediates_union_remainders
         apply Finset.mem_union_left
         apply Finset.mem_image.mpr
         refine ⟨I, Finset.mem_univ _, ?_⟩
-        simpa [hBEq, hPEq, sqrtGroupEliminationPair]
+        simp [hBEq, hPEq, sqrtGroupEliminationPair]
       · apply Finset.mem_union_right
         apply Finset.mem_biUnion.mpr
         exact ⟨P, Finset.mem_attach _ _, Finset.mem_union_left _ hpos⟩
@@ -3078,7 +3078,7 @@ lemma eliminationFlattenFamily_eq_intermediates_union_remainders
       refine ⟨⟨P, hP⟩, Finset.mem_attach _ _, ?_⟩
       apply Finset.mem_union_left
       apply Finset.mem_union_left
-      simpa [P, sqrtGroupEliminationPair, hBEq]
+      simp [P, sqrtGroupEliminationPair, hBEq]
     · obtain ⟨P, _hPattach, hBP⟩ := Finset.mem_biUnion.mp hrem
       apply Finset.mem_biUnion.mpr
       refine ⟨P, Finset.mem_attach _ _, ?_⟩
@@ -3151,7 +3151,7 @@ lemma card_sqrtGroupPairs_incident_negative_le_source
       exact (sqrtGroupingAt family I.1.1 I.1.2).eq_of_mem_parts
         I.2.2 hJpart hQ hQ'
     subst J
-    simpa [hEq, hEq']
+    simp [hEq, hEq']
 
 /-- For a non-root edge of one auxiliary clique, all elimination pairs
 whose positive side contains that edge come from that single group.  Their
@@ -3205,7 +3205,7 @@ lemma card_sqrtGroupPairs_incident_auxiliary_le_group
     have hQQ' : Q = Q' := by
       simpa [hEq, hEq', sqrtGroupEliminationPair] using hnegative
     subst Q'
-    simpa [hEq, hEq']
+    simp [hEq, hEq']
 
 /-- The repeated positive roots in one square-root elimination bank cost
 only the maximum group size times the free-edge codimension-one load. -/
@@ -3502,7 +3502,7 @@ lemma nextFlattenMultiplicity_lt_self {x : ℕ} (hx : 4 < x) :
         _ ≤ (x - 2) * (x - 2) := Nat.mul_le_mul_left _ hy
     exact hfirst.trans_le hsecond
   have hsqrt' : Nat.sqrt x + 2 < x := by omega
-  simp [nextFlattenMultiplicity, max_lt_iff, hsqrt', hx]
+  simp [nextFlattenMultiplicity, hsqrt', hx]
 
 /-- One square-root step halves the binary logarithm, up to the unavoidable
 rounding by one.  This is the quantitative fact behind the
@@ -3552,7 +3552,7 @@ lemma log_nextFlattenMultiplicity_le_half
     apply Nat.le_sqrt.mpr
     omega
   have hnext : nextFlattenMultiplicity x = Nat.sqrt x + 2 := by
-    simp [nextFlattenMultiplicity, max_eq_left, hsqrtTwo]
+    simp [nextFlattenMultiplicity, hsqrtTwo]
   have hnextPow : nextFlattenMultiplicity x < 2 ^ (p + 1) := by
     rw [hnext]
     calc
@@ -3642,7 +3642,7 @@ theorem flattenRoundCount_le_clog_log (x : ℕ) :
 /-- A family of `k`-sets has at most `n^k` blocks, so every one of its
 edge-incidence fibres has the same crude polynomial bound. -/
 theorem blockIncidenceCount_le_ground_pow
-    {n k r : ℕ} {family : Finset (Finset (Fin n))}
+    {n k _r : ℕ} {family : Finset (Finset (Fin n))}
     (huniform : ∀ Q ∈ family, Q.card = k) (e : Finset (Fin n)) :
     blockIncidenceCount family e ≤ n ^ k := by
   have hfamily : family ⊆
@@ -3686,7 +3686,7 @@ lemma self_le_two_pow (a : ℕ) : a ≤ 2 ^ a := by
 
 /-- Raising a fixed constant to a ceiling-logarithmic exponent costs only
 a fixed power of the logarithm's argument. -/
-lemma pow_clog_succ_le_poly (A L : ℕ) (hA : 0 < A) (hL : 0 < L) :
+lemma pow_clog_succ_le_poly (A L : ℕ) (_hA : 0 < A) (hL : 0 < L) :
     A ^ (Nat.clog 2 L + 1) ≤ A * (2 * L) ^ A := by
   by_cases hLone : L = 1
   · subst L
@@ -4049,7 +4049,7 @@ theorem rooted_linearCap_finite_estimates
         calc
           n * n ^ (s - 1) = n ^ (s - 1) * n := by ring
           _ = n ^ ((s - 1) + 1) := by rw [pow_succ]
-          _ = n ^ s := by congr 1 <;> omega
+          _ = n ^ s := by congr 1; omega
   have hlossReal : (lossFixed + lossUsed : ℝ) ≤
       (n : ℝ) ^ s / (4 * B₀ : ℕ) := by
     have hcast : (4 * B₀ : ℝ) * (lossFixed + lossUsed : ℝ) ≤
@@ -4347,7 +4347,7 @@ theorem eventually_exists_boundedRootedFamilyEmbeddings_linearRoundBudget
   by_cases hroots : roots = ∅
   · subst roots
     refine ⟨{
-      embedding := fun Q hQ ↦ False.elim (show False by simpa using hQ)
+      embedding := fun Q hQ ↦ False.elim (by simp at hQ)
       root_image := ?_
       free_disjoint_forbidden := ?_
       free_pairwise := ?_
@@ -4661,7 +4661,7 @@ theorem eventually_exists_boundedRootedFamilyEmbeddings_linearStageBudget
   by_cases hroots : roots = ∅
   · subst roots
     refine ⟨{
-      embedding := fun Q hQ ↦ False.elim (show False by simpa using hQ)
+      embedding := fun Q hQ ↦ False.elim (by simp at hQ)
       root_image := ?_
       free_disjoint_forbidden := ?_
       free_pairwise := ?_
@@ -4732,7 +4732,7 @@ theorem eventually_exists_boundedEliminationPairEmbeddings_linearStageBudget
   by_cases hpairs : pairs = ∅
   · subst pairs
     refine ⟨{
-      embedding := fun pair hpair ↦ False.elim (by simpa using hpair)
+      embedding := fun pair hpair ↦ False.elim (by simp at hpair)
       maps_positive := ?_
       maps_negative := ?_
       free_disjoint_forbidden := ?_
@@ -4932,7 +4932,7 @@ lemma flattenStageCoefficient_chain
   have hpairSplit : pair ≤ split := by
     simp [split, flattenSplitStageCoefficient, pair]
   have hsplitBoundary : split ≤ boundary := by
-    simp [boundary, flattenBoundaryStageCoefficient, split, pair]
+    simp [boundary, flattenBoundaryStageCoefficient, split]
   have hboundaryNext : boundary ≤ flattenNextStageCoefficient hrk x z := by
     simpa [flattenNextStageCoefficient, boundary] using
       Nat.le_mul_of_pos_left boundary hnext
@@ -5129,7 +5129,7 @@ lemma nextFlattenMultiplicity_pow_four_le
     nextFlattenMultiplicity x ^ 4 ≤ 16 * x ^ 2 := by
   have hsqrtTwo : 2 ≤ Nat.sqrt x := Nat.le_sqrt.mpr (by omega)
   have hnext : nextFlattenMultiplicity x = Nat.sqrt x + 2 := by
-    simp [nextFlattenMultiplicity, max_eq_left, hsqrtTwo]
+    simp [nextFlattenMultiplicity, hsqrtTwo]
   have hadd : Nat.sqrt x + 2 ≤ 2 * Nat.sqrt x := by omega
   calc
     nextFlattenMultiplicity x ^ 4 ≤ (2 * Nat.sqrt x) ^ 4 := by
@@ -5601,7 +5601,7 @@ slot is the repeated-copy index at its high edge. -/
 noncomputable def sqrtIntermediateAssignmentOfMultiRooted
     {n k r M C : ℕ} (hr : 0 < r) (hrk : r < k)
     {family : Finset (Finset (Fin n))}
-    (huniform : ∀ Q ∈ family, Q.card = k)
+    (_huniform : ∀ Q ∈ family, Q.card = k)
     (hgroups : ∀ e : ↑(highMultiplicityEdges n r 4 family),
       (sqrtGroupingAt family e.1 e.2).parts.card ≤ M)
     (S : RootedFamilyMultiEmbedding.BoundedMultiRootedFamilyEmbeddings
@@ -6103,7 +6103,7 @@ lemma cliqueBoundarySupport_localDecoders_subset
   · apply Finset.mem_union_right
     apply Finset.mem_biUnion.mpr
     refine ⟨e, heRoot, ?_⟩
-    simp only [LocalDecoderEmbedding.separatedFreeEdges, heRoot, dite_true]
+    simp only [heRoot, dite_true]
     rw [S.free_eq e heRoot]
     apply Finset.mem_sdiff.mpr
     constructor
@@ -6343,7 +6343,7 @@ noncomputable def boundedLocalDecoderPlacementOfSeparatedRoots
     · apply Finset.mem_union_right
       apply Finset.mem_biUnion.mpr
       refine ⟨e, heRoot, ?_⟩
-      simp only [LocalDecoderEmbedding.separatedFreeEdges, heRoot, dite_true]
+      simp only [heRoot, dite_true]
       exact hfree e heRoot g
         (Finset.mem_powersetCard.mpr
           ⟨hgQ.trans (Finset.mem_powersetCard.mp hQZ).1, hgcard⟩) hge
@@ -6775,7 +6775,7 @@ lemma boundary_eq_attach_sum_of_support
         (fun Q ↦ if e ⊆ Q then φ Q else 0)).symm
 
 lemma boundary_familyIndicatorCoeff_eq_incidence
-    {n k r : ℕ} {family : Finset (Finset (Fin n))}
+    {n k _r : ℕ} {family : Finset (Finset (Fin n))}
     (huniform : ∀ Q ∈ family, Q.card = k)
     (e : Finset (Fin n)) :
     boundary n k (familyIndicatorCoeff family) e =
@@ -7223,7 +7223,7 @@ lemma blockIncidenceCount_eliminationRemainderFamily_le_group
       exact Finset.sum_attach pairs
         (fun P ↦ if e ⊆ P.positive then 1 else 0)
     _ = (pairs.filter fun P ↦ e ⊆ P.positive).card := by
-      simp [Finset.sum_ite]
+      simp
     _ ≤ I.2.1.card := by
       exact card_sqrtGroupPairs_incident_auxiliary_le_group
         huniform A I heI
@@ -7357,7 +7357,7 @@ lemma blockIncidenceCount_eliminationRemainderFamily_source_le
           apply A.source_edge_eq I e heSource
           simpa [hEq, sqrtGroupEliminationPair] using hePos
         apply heNotHigh
-        simpa [heEqRoot] using I.1.2
+        simp [heEqRoot]
       have hzero :=
         blockIncidenceCount_eliminationRemainderBlocks_eq_zero_of_forbidden
           S P.1 P.2 hecard (hsourceForbidden heSource)
@@ -7378,7 +7378,7 @@ lemma blockIncidenceCount_eliminationRemainderFamily_source_le
       exact Finset.sum_attach pairs
         (fun P ↦ if e ⊆ P.negative then 1 else 0)
     _ = (pairs.filter fun P ↦ e ⊆ P.negative).card := by
-      simp [Finset.sum_ite]
+      simp
     _ ≤ blockIncidenceCount (processedHighBlocks n r family) e :=
       card_sqrtGroupPairs_incident_negative_le_source
         huniform hunique A e
@@ -7412,7 +7412,7 @@ lemma blockIncidenceCount_sqrtIntermediateCliques_source_eq_zero
     simpa [hBEq] using hBData.2
   have heEq : e = I.1.1 := A.source_edge_eq I e heSource heSub
   apply heNotHigh
-  simpa [heEq] using I.1.2
+  simp [heEq]
 
 /-- A fresh edge which is not a non-root edge of an intermediate occurs in
 no intermediate clique. -/
@@ -7925,8 +7925,8 @@ theorem cliqueBoundaryRepresentable_exchangeReplacement
         boundary n k (familyIndicatorCoeff neg) e -
           boundary n k (familyIndicatorCoeff pos) e by
       exact boundary_sub_coeff n k _ _ e]
-    rw [boundary_familyIndicatorCoeff_eq_incidence (r := r) hnegUniform e,
-      boundary_familyIndicatorCoeff_eq_incidence (r := r) hposUniform e]
+    rw [boundary_familyIndicatorCoeff_eq_incidence (_r := r) hnegUniform e,
+      boundary_familyIndicatorCoeff_eq_incidence (_r := r) hposUniform e]
     have hsigned := ExchangeEmbedding.mappedFullExchange_signed_root E φ
       (mem_completeUniform.mp he)
     change (Transversal.incidenceCount neg e : ℤ) -
@@ -7987,9 +7987,9 @@ theorem cliqueBoundaryRepresentable_eliminationFlattenReplacement
           boundary n k (familyIndicatorCoeff neg) e by
       exact congrFun (boundary_add n k _ _) e]
     rw [boundary_sub_coeff,
-      boundary_familyIndicatorCoeff_eq_incidence (r := r) hrootUniform e,
-      boundary_familyIndicatorCoeff_eq_incidence (r := r) hposUniform e,
-      boundary_familyIndicatorCoeff_eq_incidence (r := r) hnegUniform e]
+      boundary_familyIndicatorCoeff_eq_incidence (_r := r) hrootUniform e,
+      boundary_familyIndicatorCoeff_eq_incidence (_r := r) hposUniform e,
+      boundary_familyIndicatorCoeff_eq_incidence (_r := r) hnegUniform e]
     have hrootInc :
         (blockIncidenceCount ({P.positive} :
           Finset (Finset (Fin n))) e : ℤ) =
@@ -8086,9 +8086,9 @@ theorem cliqueBoundaryRepresentable_eliminationPositiveFromNegative
         boundary n k (familyIndicatorCoeff {P.negative}) e +
           boundary n k (familyIndicatorCoeff pos) e by
       exact congrFun (boundary_add n k _ _) e]
-    rw [boundary_familyIndicatorCoeff_eq_incidence (r := r) hrootUniform e,
-      boundary_familyIndicatorCoeff_eq_incidence (r := r) hposUniform e,
-      boundary_familyIndicatorCoeff_eq_incidence (r := r) hnegUniform e]
+    rw [boundary_familyIndicatorCoeff_eq_incidence (_r := r) hrootUniform e,
+      boundary_familyIndicatorCoeff_eq_incidence (_r := r) hposUniform e,
+      boundary_familyIndicatorCoeff_eq_incidence (_r := r) hnegUniform e]
     have hrootInc :
         (blockIncidenceCount ({P.negative} :
           Finset (Finset (Fin n))) e : ℤ) =
@@ -8147,7 +8147,7 @@ lemma cliqueBoundaryRepresentable_of_mem
       intro B hB
       have hBQ : B = Q := by simpa using hB
       simpa [hBQ] using hQcard
-    rw [boundary_familyIndicatorCoeff_eq_incidence (r := r) huniform e]
+    rw [boundary_familyIndicatorCoeff_eq_incidence (_r := r) huniform e]
     by_cases heQ : e ⊆ Q
     · have hf :
           (({Q} : Finset (Finset (Fin n))).filter fun B ↦ e ⊆ B) = {Q} := by
@@ -8609,7 +8609,7 @@ with its single distinguished root edge. -/
 theorem initialSplitFamily_source_edge_unique
     {n k r C : ℕ}
     (E : ExchangePattern.RelabeledFullExchange k r)
-    (hr : 0 < r) (hrk : r < k)
+    (_hr : 0 < r) (_hrk : r < k)
     {source forbidden : Finset (Finset (Fin n))}
     (S : RootedFamilyEmbedding.BoundedRootedFamilyEmbeddings
       E.pattern source forbidden C)
@@ -8800,7 +8800,7 @@ theorem blockIncidenceCount_splitPositiveBlocks_source_le
     _ = blockIncidenceCount source e := by
       rw [show (∑ Q ∈ source.attach, if e ⊆ Q.1 then 1 else 0) =
           (source.attach.filter fun Q ↦ e ⊆ Q.1).card by
-        simp [Finset.sum_ite]]
+        simp]
       rw [Finset.filter_attach]
       simp [blockIncidenceCount]
 
@@ -9000,7 +9000,7 @@ theorem cliqueBoundarySupport_sqrtIntermediateCliques_subset
   have heI : e ∈ (A.intermediate I).powersetCard r :=
     Finset.mem_powersetCard.mpr ⟨by simpa [hBI] using heB, hecard⟩
   by_cases heRoot : e = I.1.1
-  · exact Finset.mem_union_left _ (by simpa [heRoot] using I.1.2)
+  · exact Finset.mem_union_left _ (by simp [heRoot])
   · apply Finset.mem_union_right
     apply Finset.mem_biUnion.mpr
     exact ⟨I, Finset.mem_univ _,
@@ -9100,7 +9100,8 @@ theorem cliqueBoundarySupport_eliminationRemainderFamily_subset
   · have hgHostDiff :=
       (ExchangeEliminationEmbedding.eliminationPositiveRemainder_decomp
         S P.1 P.2).2.1 B hpositive hgPow
-    rcases ExchangeEliminationEmbedding.mem_eliminationPairSideBoundary_or_freeUnion_of_mem_mappedHost
+    rcases
+      ExchangeEliminationEmbedding.mem_eliminationPairSideBoundary_or_freeUnion_of_mem_mappedHost
         S (ExchangeEliminationEmbedding.RelabeledFullExchange.isSpecialIsolated
           E e₀)
           P.1 P.2 hgcard (Finset.mem_sdiff.mp hgHostDiff).1 with
@@ -9112,7 +9113,8 @@ theorem cliqueBoundarySupport_eliminationRemainderFamily_subset
         S P.1 P.2).2.1 B hnegative hgPow
     rw [← ExchangeEmbedding.mappedHost_sdiff_root_eq_freeEdges E
       (S.embedding P.1 P.2)] at hgFree
-    rcases ExchangeEliminationEmbedding.mem_eliminationPairSideBoundary_or_freeUnion_of_mem_mappedHost
+    rcases
+      ExchangeEliminationEmbedding.mem_eliminationPairSideBoundary_or_freeUnion_of_mem_mappedHost
         S (ExchangeEliminationEmbedding.RelabeledFullExchange.isSpecialIsolated
           E e₀) P.1 P.2 hgcard (Finset.mem_sdiff.mp hgFree).1 with
       hgSide | hgFree'
@@ -9300,7 +9302,7 @@ theorem blockIncidenceCount_initialSplit_intermediate_oldNonhigh_eq_zero
         rw [hQI, ← T.root_image Q.1 Q.2]
         exact (Finset.mem_powersetCard.mp heRoot).1
       have heEq := A.source_edge_eq I e heSource heSub
-      exact heNotHigh (by simpa [heEq] using I.1.2)
+      exact heNotHigh (by simp [heEq])
     · exact Finset.disjoint_left.mp
         (T.free_disjoint_forbidden Q.1 Q.2) heFree
           (holdForbidden heSource)
@@ -9556,7 +9558,7 @@ theorem blockIncidenceCount_splitIntermediateRound_nonboundary_le_four
       (sqrtIntermediateCliques A) splitForbidden C₂)
     (hrk : r ≤ k)
     (hpairSource : cliqueBoundarySupport family r ⊆ pairForbidden)
-    (hpairAux : sqrtIntermediateFreeEdges A ⊆ pairForbidden)
+    (_hpairAux : sqrtIntermediateFreeEdges A ⊆ pairForbidden)
     (hsplitSource : cliqueBoundarySupport family r ⊆ splitForbidden)
     {e : Finset (Fin n)} (hecard : e.card = r)
     (heNotIntermediate :
@@ -9941,7 +9943,7 @@ theorem eventually_exists_quantitative_splitIntermediateFlattenRound
         _ = ((Nat.sqrt x + 1) * flattenAuxLoad k r z) * Tscale := by ring
     exact hocc.trans (hscalar.trans
       (scalar_mul_pathScale_le_linearStageDegree hr (by
-        simp [pairZ, flattenPairStageCoefficient, pk]
+        simp [pairZ, flattenPairStageCoefficient]
         omega)))
   have hnegative : ∀ J : Finset (Fin n), J.card = r - 1 →
       ExchangeEliminationEmbedding.negativeSideOccurrenceDegree
@@ -10056,7 +10058,7 @@ theorem eventually_exists_quantitative_splitIntermediateFlattenRound
     exact (localDegree_sqrtIntermediateCliques_le_freeEdges hr hrk X J hJ)
       |>.trans ((hauxScalar J hJ).trans
         (scalar_mul_pathScale_le_linearStageDegree hr (by
-          simp [splitZ, flattenSplitStageCoefficient, pairZ, pk]
+          simp [splitZ, flattenSplitStageCoefficient]
           omega)))
   obtain ⟨T⟩ := hsplit splitZ hsplitPos hsplitBudget
     (sqrtIntermediateCliques X) splitForbidden
@@ -10155,7 +10157,7 @@ theorem eventually_exists_quantitative_splitIntermediateFlattenRound
     intro J hJ
     exact (hnextBoundaryScalar J hJ).trans
       (scalar_mul_pathScale_le_linearStageDegree hr (by
-        simp [nextZ, flattenNextStageCoefficient, boundaryZ]
+        change boundaryZ ≤ nextFlattenMultiplicity x * boundaryZ
         exact Nat.le_mul_of_pos_left boundaryZ (by
           simp [nextFlattenMultiplicity])))
   have hnextDegree : ∀ J : Finset (Fin n), J.card = r - 1 →
@@ -10222,7 +10224,7 @@ theorem eventually_hasQuantitativeFlattenRounds
 geometric round until multiplicity four. -/
 theorem exists_squareRootFlattening_of_quantitative_rounds
     {n k r d A x z : ℕ} {source : Finset (Finset (Fin n))}
-    (hr : 0 < r) (hrk : r < k)
+    (_hr : 0 < r) (hrk : r < k)
     (hround : HasQuantitativeFlattenRounds n k r d A hrk)
     (hbudget :
       (16 * flattenCoefficientLoss hrk) ^ flattenRoundCount x * z * x ^ 4 ≤
@@ -10301,7 +10303,7 @@ this companion theorem carries the common worst-stage budget through the
 same well-founded recursion. -/
 theorem exists_squareRootFlattening_of_quantitative_rounds_with_boundary
     {n k r d A x z : ℕ} {source : Finset (Finset (Fin n))}
-    (hr : 0 < r) (hrk : r < k)
+    (_hr : 0 < r) (hrk : r < k)
     (hround : HasQuantitativeFlattenRounds n k r d A hrk)
     (hbudget :
       (16 * flattenCoefficientLoss hrk) ^ flattenRoundCount x * z * x ^ 4 ≤
@@ -10341,7 +10343,7 @@ theorem exists_squareRootFlattening_of_quantitative_rounds_with_boundary
           IsSquareRootFlattening.done x source hx huniform hbound, ?_⟩
         intro J hJ
         exact (hboundaryDegree J hJ).trans (by
-          simp [linearStageDegree]
+          simp only [linearStageDegree]
           exact Nat.mul_le_mul_right _ hzBudget)
       · have hx4 : 4 < x := by omega
         let y := nextFlattenMultiplicity x
@@ -10507,7 +10509,7 @@ lemma sum_modCliqueBoundary_apply_eq_incidence
     (∑ Q ∈ family, Generators.modCliqueBoundary N n r Q) e =
       (Transversal.incidenceCount family e : ZMod N) := by
   simp [Generators.modCliqueBoundary, he,
-    Transversal.incidenceCount, Finset.sum_ite]
+    Transversal.incidenceCount]
 
 /-- A two-root exchange whose free edges lie in `host` expresses the
 difference of its two prescribed roots using only fully host-supported
@@ -10787,7 +10789,8 @@ theorem modCliqueBoundary_sub_mem_span_of_common_exception
   change (Generators.modCliqueBoundary N n r C -
     Generators.modCliqueBoundary N n r M) ∈ H at hspanC
   have hsub := AddSubgroup.sub_mem H hspanB hspanC
-  convert hsub using 1 <;> abel
+  convert hsub using 1
+  abel
 
 /-- The unique edge outside `host` of an almost-supported but not fully
 supported block.  The empty value in the other cases is immaterial; all
@@ -10899,8 +10902,7 @@ lemma modularBoundaryCombination_eq_sum_nsmul
   apply Finset.sum_congr rfl
   intro B hB
   by_cases h : e.card = r ∧ e ⊆ B
-  · simp [Generators.modCliqueBoundary, h, nsmul_eq_mul,
-      ZMod.natCast_zmod_val]
+  · simp [Generators.modCliqueBoundary, h, nsmul_eq_mul]
   · simp [Generators.modCliqueBoundary, h]
 
 /-- If a modular combination of almost-supported clique boundaries vanishes
@@ -11019,8 +11021,8 @@ theorem modularBoundaryCombination_mem_fullySupportedSpan
           (∑ B ∈ F, (c B).val •
             Generators.modCliqueBoundary N n r C) = 0 := by
         funext g
-        simp only [Finset.sum_apply, Pi.smul_apply, Pi.zero_apply,
-          nsmul_eq_mul, Pi.mul_apply, ZMod.natCast_zmod_val]
+        simp only [Finset.sum_apply, Pi.zero_apply,
+          nsmul_eq_mul, Pi.mul_apply]
         rw [← Finset.sum_mul]
         simp [hcoeffZero]
       change (∑ B ∈ F, w B) ∈ H
@@ -11312,7 +11314,7 @@ theorem isModularIntegralGenerator_of_universal
         apply Finset.sum_congr rfl
         intro Q hQ
         have hQmod : Q ∈ modular := (Finset.mem_filter.mp hQ).1
-        simp [ψ, hQmod, ZMod.natCast_zmod_val]
+        simp [ψ, hQmod]
       _ = ∑ Q ∈ modular, if e ⊆ Q then c Q else 0 := by
         rw [Finset.sum_filter]
       _ = modularBoundaryCombination N r modular c e := by
@@ -11453,7 +11455,7 @@ theorem isModularIntegralGenerator_of_focusing
         apply Finset.sum_congr rfl
         intro Q hQ
         have hQmod : Q ∈ modular := (Finset.mem_filter.mp hQ).1
-        simp [ψ, hQmod, ZMod.natCast_zmod_val]
+        simp [ψ, hQmod]
       _ = ∑ Q ∈ modular, if e ⊆ Q then c Q else 0 := by
         rw [Finset.sum_filter]
       _ = modularBoundaryCombination N r modular c e := by
@@ -11989,7 +11991,7 @@ theorem isModularIntegralGenerator_of_reserveFocusing
     (E : ExchangePattern.RelabeledFullExchange k r)
     (e₀ : Exchange.RootEdge k r)
     {reserve host modular : Finset (Finset (Fin n))}
-    (hreserve : reserve ⊆ completeUniform n r)
+    (_hreserve : reserve ⊆ completeUniform n r)
     (hmodularUniform : ∀ Q ∈ modular, Q.card = k)
     (F : ReserveFocusingAssignment n k r reserve host modular)
     (hfocus : HasExchangeFocusing n k r E
@@ -12061,7 +12063,7 @@ theorem isModularIntegralGenerator_of_reserveFocusing
         apply Finset.sum_congr rfl
         intro Q hQ
         have hQmod : Q ∈ modular := (Finset.mem_filter.mp hQ).1
-        simp [modularCoeff, hQmod, ZMod.natCast_zmod_val]
+        simp [modularCoeff, hQmod]
       _ = ∑ Q ∈ modular, if g ⊆ Q then c Q else 0 := by
         rw [Finset.sum_filter]
       _ = modularBoundaryCombination N r modular c g := by
@@ -12259,7 +12261,7 @@ theorem blockIncidenceCount_survivingSaturatedCliques_le
           exact (heKstar
             (hfull.2 (Finset.mem_powersetCard.mpr ⟨heQ, hecard⟩))).elim
         · intro hQ
-          simpa using hQ
+          simp at hQ
       rw [hempty]
       simp
     simp [hzero]
@@ -12312,7 +12314,7 @@ lemma cliqueBoundarySupport_prunedModularGenerators_subset
 /-- A lower-face cap also bounds the number of selected blocks through a
 complete `r`-edge, by deleting one vertex from that edge. -/
 lemma blockIncidenceCount_le_counterLoad_of_faceCap
-    {n k r cap : ℕ} (hr : 0 < r)
+    {n _k r cap : ℕ} (hr : 0 < r)
     {selected : Finset (Finset (Fin n))}
     (hload : ∀ f : Finset (Fin n), f.card = r - 1 →
       Generators.counterLoad (fun f Q : Finset (Fin n) ↦ f ⊆ Q)
@@ -12356,7 +12358,7 @@ theorem blockIncidenceCount_prunedModularGenerators_le
   exact (blockIncidenceCount_union_le selected
       (survivingSaturatedCliques n k r cap K selected Kstar) e).trans
     (Nat.add_le_add
-      (blockIncidenceCount_le_counterLoad_of_faceCap (k := k)
+      (blockIncidenceCount_le_counterLoad_of_faceCap (_k := k)
         hr hselectedLoad e he)
       (blockIncidenceCount_survivingSaturatedCliques_le
         hsaturatedLoad e he))
@@ -12566,7 +12568,7 @@ theorem blockIncidenceCount_coloredModularGenerators_le
     _ ≤ ∑ _i : Fin u, cap := by
       apply Finset.sum_le_sum
       intro i _hi
-      exact blockIncidenceCount_le_counterLoad_of_faceCap (k := k) hr
+      exact blockIncidenceCount_le_counterLoad_of_faceCap (_k := k) hr
         (hload i) e he
     _ = u * cap := by simp
 
@@ -13512,7 +13514,7 @@ theorem LocalDecoder.natAbs_superposedDecoder_le_three
     rw [hsum, Int.natAbs_mul]
     exact Nat.mul_le_mul (hm e he)
       (LocalDecoder.natAbs_cliqueCoeff_le hq (hrootcard e he))
-  · push_neg at hsome
+  · push Not at hsome
     rw [LocalDecoder.superposedDecoder]
     have hzero : ∀ e ∈ roots,
         (if Q ∈ (Z e).powersetCard q then
@@ -13723,7 +13725,7 @@ theorem selectedBankFullExchangeBlocks_realize_boundary
 /-- A union of families which each contribute at most one block through an
 edge is bounded by the number of indices whose host contains that edge. -/
 lemma blockIncidenceCount_biUnion_le_filter_card
-    {I : Type*} [DecidableEq I] (indices : Finset I)
+    {I : Type*} (indices : Finset I)
     (blocks : I → Finset (Finset (Fin n))) (relevant : I → Prop)
     [DecidablePred relevant] (e : Finset (Fin n))
     (hterm : ∀ i ∈ indices,
@@ -13736,7 +13738,7 @@ lemma blockIncidenceCount_biUnion_le_filter_card
       blockIncidenceCount_biUnion_le_sum indices blocks e
     _ ≤ ∑ i ∈ indices, if relevant i then 1 else 0 :=
       Finset.sum_le_sum fun i hi ↦ hterm i hi
-    _ = (indices.filter relevant).card := by simp [Finset.sum_ite]
+    _ = (indices.filter relevant).card := by simp
 
 /-- Among any set of preallocated splitting copies, an edge can occur in a
 mapped host only in a copy whose prescribed root contains it, or in the
@@ -14243,7 +14245,7 @@ theorem isBooleanizationSystem_of_exchangeBanks
     (hpositiveForbidden :
       (NearPairing.allPositiveSplittingBlocks S).biUnion
           (fun Q ↦ Q.powersetCard r) ⊆ eliminationForbidden)
-    (hnearForbidden :
+    (_hnearForbidden :
       (NearPairing.allNegativeNearSplittingBlocks S).biUnion
           (fun Q ↦ Q.powersetCard r) ⊆ eliminationForbidden)
     (hfarForbidden :
@@ -15692,8 +15694,8 @@ theorem eventually_exists_exchangeBooleanization
         ⟨B, hB, (Finset.mem_powersetCard.mp hgB).1,
           (Finset.mem_powersetCard.mp hgB).2⟩
     · have hgSide :=
-        ExchangeEliminationEmbedding.allEliminationPositiveOnly_edge_mem_sideBoundary_union_freeUnion
-          U hB hgB
+        open ExchangeEliminationEmbedding in
+          allEliminationPositiveOnly_edge_mem_sideBoundary_union_freeUnion U hB hgB
       rcases Finset.mem_union.mp hgSide with hgSide | hgFree
       · exact Finset.mem_union_left _ (huniversalRootForbidden hgSide)
       · exact Finset.mem_union_right _ hgFree
@@ -15732,9 +15734,7 @@ theorem eventually_exists_exchangeBooleanization
     rw [Finset.disjoint_left]
     intro g hgNegative hgReserve
     exact Finset.disjoint_left.mp hnegativeInput hgNegative
-      (by
-        change g ∈ inputBoundary
-        exact hinputReserve hgReserve)
+      (hinputReserve hgReserve)
   have hVfree : IsPowerBounded n r d₆ cV V.freeUnion := by
     apply isPowerBounded_of_localDegree_le_scaledDecoderPathCap hp₃
       (E.eliminationPattern e₀).freeEdges.card M₂ E.v
