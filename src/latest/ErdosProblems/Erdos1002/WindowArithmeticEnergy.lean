@@ -557,13 +557,12 @@ theorem windowModeDecayEnergy_le_separated
     · simp only [hadm, if_true]
       rfl
     · by_cases hrn : r ∣ n
-      · have hdnot : ¬ d * r ≤ P := fun hdr ↦ hadm ⟨hdr, hrn⟩
-        simp only [mul_ite, mul_zero, ge_iff_le]
+      · simp only [if_neg hadm, if_pos hrn, mul_zero]
         exact mul_nonneg
           (mul_nonneg windowCauchyDConstant_nonneg
             (reciprocalDivisorSum_nonneg n))
           (by
-            show 0 ≤ 144 *
+            change 0 ≤ 144 *
               windowDecayWeight d (n / r) (windowCarrierCenter N d ell) /
                 ((d : ℝ) ^ 2 * Real.sqrt (d : ℝ) * (r : ℝ))
             exact div_nonneg
