@@ -103,7 +103,7 @@ theorem eligible_ne_exponent {q : ℕ} (hq : Eligible ell q) : q ≠ ell := by
   intro hqe
   subst q
   have hcast := eligible_natCast_eq_one ell hq
-  simpa using hcast
+  simp at hcast
 
 theorem eligible_not_dvd_exponent {q : ℕ} (hq : Eligible ell q) : ¬ q ∣ ell := by
   intro hdvd
@@ -159,7 +159,7 @@ theorem primeIdealAbove_ne_lambda {q : ℕ} (hq : Eligible ell q) :
       simpa using (inferInstance : IsCyclotomicExtension {ell} ℚ K)
     have hz : IsPrimitiveRoot (IsCyclotomicExtension.zeta ell ℚ K)
         (ell ^ (0 + 1)) := by
-      simpa using (IsCyclotomicExtension.zeta_spec ell ℚ K)
+      simp
     simpa [FLT37.zetaSubOne_def] using
       (IsCyclotomicExtension.Rat.absNorm_span_zeta_sub_one ell 0
         hz)

@@ -126,7 +126,7 @@ theorem ell_pow_mul_inertPowerClassCoordinateCell_card
     (pattern : PowerClassTensor Q (InertLocalUnits K Q) ell) :
     ell ^ Q.card *
         (inertPowerClassCoordinateCell ell K Q
-          (fun q hq ↦ inertAuxiliaryPrimes_prime ell (hQ hq))
+          (fun _ hq ↦ inertAuxiliaryPrimes_prime ell (hQ hq))
           J hcop pattern).card =
       inertUnitResidueCount K Q := by
   classical

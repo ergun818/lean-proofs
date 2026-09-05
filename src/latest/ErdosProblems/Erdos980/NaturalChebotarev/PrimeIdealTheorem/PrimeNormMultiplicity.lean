@@ -50,13 +50,15 @@ namespace PrimeNormMultiplicity
 
 variable (L : Type*) [Field L] [NumberField L] [Algebra ℚ L] [IsGalois ℚ L]
 
+omit [IsGalois ℚ L] in
 private theorem residueDegree_pos (P : PrimeIdeal L) :
     0 < SplitTransfer.residueDegree L P.1 := by
   let : P.1.IsPrime := P.2.1
   let : P.1.LiesOver (P.1.under (𝓞 ℚ)) :=
     Ideal.over_under (A := 𝓞 ℚ) (P := P.1)
-  exact Ideal.inertiaDeg_pos' _ _
+  exact Ideal.inertiaDeg'_pos' _ _
 
+omit [IsGalois ℚ L] in
 /-- A fixed norm can occur for at most `[L : ℚ]` prime ideals. -/
 theorem primeNormMultiplicity_le_degree (n : ℕ) :
     primeNormMultiplicity L n ≤ Module.finrank ℚ L := by
@@ -111,7 +113,7 @@ theorem primeNormMultiplicity_le_degree (n : ℕ) :
         P.LiesOver (SplitTransfer.rationalIdeal p)} ↦ z.1) h).trans
           (SplitTransfer.card_primesAbove_le_degree L hp)
   · have : IsEmpty (primeNormFiber L n) := not_nonempty_iff.mp hne
-    simp [primeNormMultiplicity, Nat.card_eq_zero]
+    simp [primeNormMultiplicity]
 
 end PrimeNormMultiplicity
 

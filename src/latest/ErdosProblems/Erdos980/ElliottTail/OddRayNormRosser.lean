@@ -146,13 +146,13 @@ theorem exists_fixedIdeal_oneCell_normSiftedMass_bound
       hray hsq hlocal
     rw [← hdivisor d hd, ← hmain d hd] at hg
     dsimp only [Crem]
-    convert hg using 1 <;> ring
+    convert hg using 1; ring
   · exact hCrem
 
 /-- A finite cover reduces a global exceptional family to the sum of its
 correction fibres.  Disjointness is not needed for this upper bound. -/
 theorem exceptional_card_le_sum_fibreCards
-    {ι σ : Type*} [DecidableEq ι] [DecidableEq σ]
+    {ι σ : Type*} [DecidableEq σ]
     (indices : Finset ι) (fibre : ι → Finset σ) (exceptional : Finset σ)
     (hcover : exceptional ⊆ indices.biUnion fibre) :
     exceptional.card ≤ ∑ i ∈ indices, (fibre i).card :=

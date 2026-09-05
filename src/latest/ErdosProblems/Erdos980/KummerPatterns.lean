@@ -378,7 +378,7 @@ lemma not_isSquare_prod_rationalPrime_of_nonempty
   rw [Rat.isSquare_natCast_iff]
   rintro ⟨m, hm⟩
   have hsq := rationalPrime_prod_squarefree s
-  have hmunit : IsUnit m := hsq m ⟨1, by simpa [hm]⟩
+  have hmunit : IsUnit m := hsq m ⟨1, by simp [hm]⟩
   have hm1 : m = 1 := Nat.isUnit_iff.mp hmunit
   subst m
   have hprod1 : ∏ i ∈ s, rationalPrime i = 1 := by simpa using hm
@@ -440,7 +440,7 @@ lemma supportRep_succ_iff (r : ℕ) (a : ℚ) :
   · rintro (h | h)
     · rcases h with ⟨s, hs, u, hu⟩
       exact ⟨s, fun i hi => Finset.mem_range.mpr
-        (Nat.lt.step (Finset.mem_range.mp (hs hi))), u, hu⟩
+        (Nat.lt_succ_of_lt (Finset.mem_range.mp (hs hi))), u, hu⟩
     · rcases h with ⟨s, hs, u, hu⟩
       have hrs : r ∉ s := by
         intro hr
@@ -451,7 +451,7 @@ lemma supportRep_succ_iff (r : ℕ) (a : ℚ) :
         rcases hi with rfl | hi
         · simp
         · exact Finset.mem_range.mpr
-            (Nat.lt.step (Finset.mem_range.mp (hs hi)))
+            (Nat.lt_succ_of_lt (Finset.mem_range.mp (hs hi)))
       · rw [Finset.prod_insert hrs]
         have hq : (rationalPrime r : ℚ) ≠ 0 := by
           exact_mod_cast (rationalPrime_pos r).ne'
@@ -523,7 +523,7 @@ private lemma quadraticAdjoinRoot_coeff_eq_zero
       AdjoinRoot.root (quadraticAdjoinPolynomial d) =
       b • AdjoinRoot.root (quadraticAdjoinPolynomial d) by
         rw [Algebra.smul_def]] at hc
-  simp only [map_add, LinearMap.add_apply, LinearMap.smul_apply] at hc
+  simp only [map_add] at hc
   rw [IsAdjoinRootMonic.coeff_algebraMap ar a,
     IsAdjoinRootMonic.coeff_algebraMap ar c] at hc
   simp only [map_smul] at hc
@@ -587,7 +587,7 @@ lemma quadraticGeneratorSet_succ (r : ℕ) :
   constructor
   · rintro (hx | hx)
     · obtain ⟨i, rfl⟩ := hx
-      exact ⟨⟨i, Nat.lt.step i.isLt⟩, rfl⟩
+      exact ⟨⟨i, Nat.lt_succ_of_lt i.isLt⟩, rfl⟩
     · rw [Set.mem_singleton_iff] at hx
       subst x
       exact ⟨⟨r, Nat.lt_succ_self r⟩, rfl⟩
@@ -857,8 +857,7 @@ lemma quadraticRangeTower_eq_rootField (r : ℕ) :
           (X ^ 2 - C (rationalPrime j : ℚ))) = 0 at heval
     simp only [Polynomial.eval₂_add, Polynomial.eval₂_X,
       Polynomial.eval₂_one, Polynomial.eval₂_sub,
-      Polynomial.eval₂_pow, Polynomial.eval₂_C,
-      Polynomial.eval₂_natCast] at heval
+      Polynomial.eval₂_pow, Polynomial.eval₂_C] at heval
     rcases mul_eq_zero.mp heval with hlinear | hprod
     · have hxneg : x = -1 := by linarith
       rw [hxneg]

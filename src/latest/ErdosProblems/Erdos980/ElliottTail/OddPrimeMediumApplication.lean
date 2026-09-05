@@ -376,6 +376,7 @@ theorem exists_eventually_tagSurvivingFibre_bound
         (((t + 1 : ℕ) : ℝ) ^ 2) := by positivity
     simpa only [Nat.cast_zero] using add_nonneg hmain0 henv
 
+omit [Fact (Nat.Prime ell)] in
 /-- Threshold-aware finite-fibre assembly.  The individual auxiliary-prime
 families need only have reached their prescribed cardinality above their own
 fixed threshold; summing those thresholds produces one cutoff that works for
@@ -481,6 +482,7 @@ theorem eventually_exceptional_card_le_tagEnvelope_above
       unfold finiteFibreErrorConstantWithLoss realRosserCellEnvelope
       ring
 
+omit [Fact (Nat.Prime ell)] in
 /-- Above a fixed tensor-availability threshold, the little-oh lattice
 envelope can be paid for by one further inverse-square main-term unit. -/
 theorem eventually_inverseSquare_tail_of_tagEnvelope_above

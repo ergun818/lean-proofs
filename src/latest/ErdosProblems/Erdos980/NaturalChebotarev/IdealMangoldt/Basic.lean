@@ -53,10 +53,13 @@ def norm (x : PrimeIdealPower K) : ℕ := Ideal.absNorm x.prime ^ x.exponent
 /-- Its von Mangoldt weight. -/
 def weight (x : PrimeIdealPower K) : ℝ := Real.log (Ideal.absNorm x.prime : ℝ)
 
+omit [NumberField K] in
 theorem prime_isPrime (x : PrimeIdealPower K) : x.prime.IsPrime := x.1.1.2.1
 
+omit [NumberField K] in
 theorem prime_ne_bot (x : PrimeIdealPower K) : x.prime ≠ ⊥ := x.1.1.2.2
 
+omit [NumberField K] in
 theorem exponent_pos (x : PrimeIdealPower K) : 0 < x.exponent := x.2
 
 theorem two_le_absNorm (x : PrimeIdealPower K) : 2 ≤ Ideal.absNorm x.prime := by
@@ -68,8 +71,8 @@ theorem two_le_absNorm (x : PrimeIdealPower K) : 2 ≤ Ideal.absNorm x.prime := 
 
 theorem weight_pos (x : PrimeIdealPower K) : 0 < x.weight := by
   rw [weight, Real.log_pos_iff]
-  exact_mod_cast (lt_of_lt_of_le Nat.one_lt_two x.two_le_absNorm)
-  positivity
+  · exact_mod_cast (lt_of_lt_of_le Nat.one_lt_two x.two_le_absNorm)
+  · positivity
 
 theorem weight_nonneg (x : PrimeIdealPower K) : 0 ≤ x.weight := x.weight_pos.le
 
@@ -114,7 +117,7 @@ instance normFiber_finite (n : ℕ) : Finite (normFiber K n) := by
           simp only [Finset.mem_Icc]
           exact ⟨x.1.exponent_pos, x.1.exponent_le_norm.trans_eq x.2⟩⟩⟩
   let : Finite {𝔭 : Ideal (𝓞 K) // Ideal.absNorm 𝔭 ≤ n} :=
-    (Ideal.finite_setOf_absNorm_le (S := 𝓞 K) n).to_subtype
+    (Ideal.finite_setOfPred_absNorm_le (S := 𝓞 K) n).to_subtype
   exact Finite.of_injective f fun x y h ↦ by
     apply Subtype.ext
     apply Subtype.ext
@@ -146,7 +149,7 @@ theorem idealMangoldt_pos_iff (n : ℕ) :
   · intro h
     by_contra hf
     have : IsEmpty (normFiber K n) := not_nonempty_iff.mp hf
-    simpa [idealMangoldt] using h
+    simp [idealMangoldt] at h
   · rintro ⟨x⟩
     rw [idealMangoldt]
     exact Finset.sum_pos' (fun (y : normFiber K n) _ ↦ y.1.weight_nonneg)

@@ -59,7 +59,7 @@ theorem exists_integralCoordinates
       (Set.range (Pi.basisFun ℝ (mixedEmbedding.index K))) at hxint
     simpa only [
       (Pi.basisFun ℝ (mixedEmbedding.index K)).mem_span_iff_repr_mem ℤ x,
-      Pi.basisFun_repr, Set.mem_range, eq_intCast, eq_comm] using hxint
+      Pi.basisFun_repr, Set.mem_range, eq_intCast] using hxint
   choose z hz using hxcoords
   refine ⟨z, ?_⟩
   rw [← hxeq]
@@ -184,7 +184,7 @@ theorem integralCoordinates_surjective :
       (Set.range (Pi.basisFun ℝ (mixedEmbedding.index K)))
     simp only [
       (Pi.basisFun ℝ (mixedEmbedding.index K)).mem_span_iff_repr_mem ℤ zr,
-      Pi.basisFun_repr, Set.mem_range, eq_intCast, eq_comm]
+      Pi.basisFun_repr, Set.mem_range, eq_intCast]
     exact fun i ↦ ⟨z i, rfl⟩
   have hchart : idealLatticeChart J zr ∈
       (mixedEmbedding.stdBasis K).equivFunL ''

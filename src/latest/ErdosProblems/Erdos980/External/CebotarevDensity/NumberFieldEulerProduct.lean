@@ -249,7 +249,7 @@ lemma sum_idealNormMultiplicity_isBigO :
   classical
   have h_finite : ∀ (b : ℕ), {I : NonzeroIdeal L | Ideal.absNorm I.1 = b}.Finite := fun b ↦
     Set.Finite.preimage (f := fun I : NonzeroIdeal L ↦ I.1) (fun _ _ _ _ ↦ Subtype.ext)
-      (Ideal.finite_setOf_absNorm_eq (S := 𝓞 L) b)
+      (Ideal.finite_setOfPred_absNorm_eq (S := 𝓞 L) b)
   have h_sum_card : ∀ n : ℕ, ∑ k ∈ Finset.Icc 1 n, idealNormMultiplicity L k =
       Nat.card {I : NonzeroIdeal L // Ideal.absNorm I.1 ≤ n} := fun n ↦ by
     have key := Finset.card_preimage_eq_sum_card_image_eq (f := fun I : NonzeroIdeal L ↦
@@ -257,7 +257,7 @@ lemma sum_idealNormMultiplicity_isBigO :
     rw [show ((fun I : NonzeroIdeal L ↦ Ideal.absNorm I.1) ⁻¹' ↑(Finset.Icc 1 n)) =
         {I : NonzeroIdeal L | Ideal.absNorm I.1 ≤ n} by
       ext ⟨I, hI⟩
-      simp only [Set.mem_preimage, Finset.coe_Icc, Set.mem_Icc, Set.mem_setOf_eq]
+      simp only [Set.mem_preimage, Finset.coe_Icc, Set.mem_Icc, Set.mem_ofPred_eq]
       exact ⟨fun h ↦ h.2, fun h ↦
         ⟨Nat.one_le_iff_ne_zero.mpr (mt Ideal.absNorm_eq_zero_iff.mp hI), h⟩⟩] at key
     exact key.symm
@@ -501,7 +501,7 @@ eventually captured, so the partial sums tend to `∑_𝔞 N𝔞^{-s} = ζ_K(s)`
 private instance instFiniteAbsNormFiber (n : ℕ) :
     Finite {I : NonzeroIdeal L // Ideal.absNorm I.1 = n} :=
   Set.Finite.to_subtype <| Set.Finite.of_finite_image (f := fun I : NonzeroIdeal L ↦ I.1)
-    ((Ideal.finite_setOf_absNorm_eq (S := 𝓞 L) n).subset (by rintro _ ⟨⟨I, _⟩, rfl, rfl⟩; rfl))
+    ((Ideal.finite_setOfPred_absNorm_eq (S := 𝓞 L) n).subset (by rintro _ ⟨⟨I, _⟩, rfl, rfl⟩; rfl))
     (fun _ _ _ _ ↦ Subtype.ext)
 
 private lemma tsum_absNormFiber {M : Type*} [AddCommGroup M] [TopologicalSpace M] [T2Space M]

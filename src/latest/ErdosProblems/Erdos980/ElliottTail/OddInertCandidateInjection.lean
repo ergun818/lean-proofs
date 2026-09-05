@@ -67,7 +67,7 @@ theorem exceptionalTagHeight_pos
 
 theorem exceptionalTagHeight_pow_finrank
     (tag : CyclotomicRayCorrectionIndex ell K × UnitResidueImage ell K)
-    {x : ℕ} (hx : 0 < x) :
+    {x : ℕ} (_ : 0 < x) :
     exceptionalTagHeight ell K tag x ^ Module.finrank ℚ K =
       ((x * Ideal.absNorm
         (tagCorrectionIdeal ell K tag : Ideal (𝓞 K)) : ℕ) : ℝ) := by
@@ -166,7 +166,7 @@ def exceptionalBalancedCandidate
     (hp : p ∈ exceptionalGeneratorFiber ell K t x tag) :
     Candidate K (tagCorrectionIdeal ell K tag) (inertTensorModulus Q)
       (inertPowerClassCoordinateCell ell K Q
-        (fun q hq ↦ inertAuxiliaryPrimes_prime ell (hQ hq))
+        (fun _ hq ↦ inertAuxiliaryPrimes_prime ell (hQ hq))
         (tagCorrectionIdeal ell K tag) hcop
         (exceptionalBalancedPowerClassPattern
           ell K Q hQ tag hcop p₀ hp₀))
@@ -201,7 +201,7 @@ theorem exceptionalBalancedCandidate_generator
     (p : ExceptionalPrime ell t x)
     (hp : p ∈ exceptionalGeneratorFiber ell K t x tag) :
     let rayAllowed := inertPowerClassCoordinateCell ell K Q
-      (fun q hq ↦ inertAuxiliaryPrimes_prime ell (hQ hq))
+      (fun _ hq ↦ inertAuxiliaryPrimes_prime ell (hQ hq))
       (tagCorrectionIdeal ell K tag) hcop
       (exceptionalBalancedPowerClassPattern ell K Q hQ tag hcop p₀ hp₀)
     let R := canonicalGeneratorRealization (K := K)
@@ -243,7 +243,7 @@ theorem exceptionalBalancedCandidate_conductorNorm
     (p : ExceptionalPrime ell t x)
     (hp : p ∈ exceptionalGeneratorFiber ell K t x tag) :
     let rayAllowed := inertPowerClassCoordinateCell ell K Q
-      (fun q hq ↦ inertAuxiliaryPrimes_prime ell (hQ hq))
+      (fun _ hq ↦ inertAuxiliaryPrimes_prime ell (hQ hq))
       (tagCorrectionIdeal ell K tag) hcop
       (exceptionalBalancedPowerClassPattern ell K Q hQ tag hcop p₀ hp₀)
     let R := canonicalGeneratorRealization (K := K)
@@ -302,7 +302,7 @@ def exceptionalBalancedCandidateTotal
     (p : ExceptionalPrime ell t x) :
     Candidate K (tagCorrectionIdeal ell K tag) (inertTensorModulus Q)
       (inertPowerClassCoordinateCell ell K Q
-        (fun q hq ↦ inertAuxiliaryPrimes_prime ell (hQ hq))
+        (fun _ hq ↦ inertAuxiliaryPrimes_prime ell (hQ hq))
         (tagCorrectionIdeal ell K tag) hcop
         (exceptionalBalancedPowerClassPattern
           ell K Q hQ tag hcop p₀ hp₀))
@@ -400,7 +400,7 @@ theorem survivingExceptionalGeneratorFiber_card_le_normSiftedMass
           p ^ Nat.card (index K))
     (hx : 0 < x) :
     let rayAllowed := inertPowerClassCoordinateCell ell K Q
-      (fun q hq ↦ inertAuxiliaryPrimes_prime ell (hQ hq))
+      (fun _ hq ↦ inertAuxiliaryPrimes_prime ell (hQ hq))
       (tagCorrectionIdeal ell K tag) hcop
       (exceptionalBalancedPowerClassPattern ell K Q hQ tag hcop p₀ hp₀)
     let D := canonicalData (K := K) (tagCorrectionIdeal ell K tag)

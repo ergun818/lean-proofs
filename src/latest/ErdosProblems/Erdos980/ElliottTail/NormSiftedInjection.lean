@@ -27,7 +27,7 @@ open RayNormPrimeSieve
 cardinality to `normSiftedMass`. -/
 theorem card_le_normSiftedMass_of_injection
     {K A σ : Type*} [Field K] [NumberField K]
-    [DecidableEq A] [DecidableEq σ]
+    [DecidableEq A]
     (D : Data K A) (S : Finset σ) (enc : σ → A)
     (hinj : Set.InjOn enc S)
     (hmem : ∀ s ∈ S, enc s ∈ D.candidates)

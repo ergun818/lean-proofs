@@ -24,7 +24,7 @@ namespace Erdos980.ElliottTail
 
 open Filter Real
 open BoundedGaps.Maynard
-open scoped BigOperators Classical Topology
+open scoped BigOperators Topology
 
 noncomputable section
 
@@ -204,6 +204,7 @@ theorem exists_exactOrderPrimitive_trivialOn_smoothAmplifier
 /-- Eligible prime moduli up to `Q` whose least `k`-th-power nonresidue is
 larger than `y`. -/
 def largeLeastKthPowerNonresiduePrimes (k Q y : ℕ) : Finset ℕ :=
+  open Classical in
   (Finset.Ioc 0 Q).filter fun p ↦
     Eligible k p ∧ y < leastKthPowerNonresidue k p
 
@@ -215,8 +216,9 @@ def largeLeastKthPowerNonresiduePrimes (k Q y : ℕ) : Finset ℕ :=
   simp [largeLeastKthPowerNonresiduePrimes, and_assoc]
 
 theorem largeLeastKthPowerNonresiduePrimes_subset_Ioc (k Q y : ℕ) :
-    largeLeastKthPowerNonresiduePrimes k Q y ⊆ Finset.Ioc 0 Q :=
-  Finset.filter_subset _ _
+    largeLeastKthPowerNonresiduePrimes k Q y ⊆ Finset.Ioc 0 Q := by
+  classical
+  exact Finset.filter_subset _ _
 
 /-- Exact finite rarity bound obtained from the long smooth amplifier. -/
 theorem largeLeastKthPowerNonresiduePrimes_card_le

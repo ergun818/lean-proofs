@@ -56,7 +56,7 @@ def oneTagRayAllowed
     (hp₀ : p₀ ∈ exceptionalGeneratorFiber ell K t x tag) :
     Finset (index K → ZMod (inertTensorModulus Q)) :=
   inertPowerClassCoordinateCell ell K Q
-    (fun q hq ↦ inertAuxiliaryPrimes_prime ell (hQ hq))
+    (fun _ hq ↦ inertAuxiliaryPrimes_prime ell (hQ hq))
     (tagCorrectionIdeal ell K tag) hcop
     (exceptionalBalancedPowerClassPattern ell K Q hQ tag hcop p₀ hp₀)
 
@@ -81,9 +81,9 @@ def oneTagData
     (normSievePrimes K (tagCorrectionIdeal ell K tag)
       (inertTensorModulus Q) y)
     normSievePrimes_prime ell (oddTensorDepth t) (inertUnitResidueCount K Q)
-    (fun p hp hd ↦ normSievePrimes_rootCount_pos
+    (fun _ hp hd ↦ normSievePrimes_rootCount_pos
       (tagCorrectionIdeal ell K tag) (f := inertTensorModulus Q) (y := y) hp hd)
-    (fun p hp hd ↦ normSievePrimes_rootCount_lt
+    (fun _ hp hd ↦ normSievePrimes_rootCount_lt
       (tagCorrectionIdeal ell K tag) (f := inertTensorModulus Q) (y := y) hp hd)
 
 /-- The exact ray-cell mass is bounded by the tensor density times the fixed

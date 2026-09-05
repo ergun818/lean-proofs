@@ -1,6 +1,6 @@
 import ErdosProblems.Erdos980.ElliottTail.LocalNormEuler
 import ErdosProblems.Erdos980.ElliottTail.RayNormPrimeSieve
-import Mathlib.NumberTheory.RamificationInertia.Basic
+import ErdosProblems.Erdos980.ForMathlib.PrimesOverCard
 
 /-!
 # The prime-local root bound for an integral norm form
@@ -30,9 +30,10 @@ open RayNormPrimeSieve
 open LocalNormEuler
 
 private theorem one_sub_prod_one_sub_le_sum
-    { ι : Type* } [DecidableEq ι] (s : Finset ι) (a : ι → ℝ)
+    {ι : Type*} (s : Finset ι) (a : ι → ℝ)
     (ha0 : ∀ i ∈ s, 0 ≤ a i) (ha1 : ∀ i ∈ s, a i ≤ 1) :
     1 - ∏ i ∈ s, (1 - a i) ≤ ∑ i ∈ s, a i := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp
   | @insert i s hi ih =>
@@ -97,8 +98,12 @@ private theorem rationalPrimeIdealFactors_card_le_degree
       rw [← hbot]
       exact Ideal.subset_span (Set.mem_singleton _)
     exact hp.ne_zero (by exact_mod_cast (show (p : ℤ) = 0 by simpa using hmem))
-  have hcard := Ideal.card_primesOverFinset_le_finrank
-    (S := RingOfIntegers K) ℚ K hpI0
+  have hcard : (IsDedekindDomain.primesOverFinset pI (RingOfIntegers K)).card ≤
+      Module.finrank ℚ K := by
+    rw [IsFractionRing.finrank_eq ℤ ℚ (RingOfIntegers K) K]
+    simpa only [Nat.card_coe_set_eq, ← IsDedekindDomain.coe_primesOverFinset hpI0,
+      Set.ncard_coe_finset] using
+      (Erdos980.card_primesOver_le_finrank (S := RingOfIntegers K) pI)
   have hdegree : Module.finrank ℚ K = Nat.card (index K) := by
     rw [Nat.card_eq_fintype_card,
       ← Module.finrank_eq_card_basis (stdBasis K), mixedEmbedding.finrank]
@@ -214,8 +219,7 @@ theorem rootCount_le_degree_mul_prime_pow_sub_one_of_quotient
   have hcard : Z = (normDivisibleResidues K p (M.normMod p)).card := by
     exact Nat.subtype_card _ (by
       intro x
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and,
-        mem_normDivisibleResidues])
+      simp only [mem_normDivisibleResidues])
   rw [M.rootCount_eq K p, ← hcard]
   exact hnat
 

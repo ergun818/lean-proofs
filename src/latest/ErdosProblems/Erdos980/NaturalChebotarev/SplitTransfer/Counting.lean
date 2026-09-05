@@ -1,3 +1,4 @@
+import ErdosProblems.Erdos980.ForMathlib.PrimesOverCard
 import ErdosProblems.Erdos980.NaturalChebotarev.SplitTransfer.Algebra
 
 /-!
@@ -48,7 +49,7 @@ def splitPrimeCount (x : ℕ) : ℕ := Nat.card (SplitPrimesUpTo L x)
 
 private instance finite_primeIdealsUpTo (x : ℕ) : Finite (PrimeIdealsUpTo L x) := by
   have : Finite {I : Ideal (𝓞 L) // Ideal.absNorm I ≤ x} :=
-    (Ideal.finite_setOf_absNorm_le (S := 𝓞 L) x).to_subtype
+    (Ideal.finite_setOfPred_absNorm_le (S := 𝓞 L) x).to_subtype
   exact Finite.of_injective
     (fun P : PrimeIdealsUpTo L x ↦
       (⟨P.1, P.2.2.2⟩ : {I : Ideal (𝓞 L) // Ideal.absNorm I ≤ x}))
@@ -57,7 +58,7 @@ private instance finite_primeIdealsUpTo (x : ℕ) : Finite (PrimeIdealsUpTo L x)
 private instance finite_unramifiedDegreeOneUpTo (x : ℕ) :
     Finite (UnramifiedDegreeOneUpTo L x) := by
   have : Finite {I : Ideal (𝓞 L) // Ideal.absNorm I ≤ x} :=
-    (Ideal.finite_setOf_absNorm_le (S := 𝓞 L) x).to_subtype
+    (Ideal.finite_setOfPred_absNorm_le (S := 𝓞 L) x).to_subtype
   exact Finite.of_injective
     (fun P : UnramifiedDegreeOneUpTo L x ↦
       (⟨P.1, P.2.2.2.1⟩ : {I : Ideal (𝓞 L) // Ideal.absNorm I ≤ x}))
@@ -66,7 +67,7 @@ private instance finite_unramifiedDegreeOneUpTo (x : ℕ) :
 private instance finite_ramifiedDegreeOneUpTo (x : ℕ) :
     Finite (RamifiedDegreeOneUpTo L x) := by
   have : Finite {I : Ideal (𝓞 L) // Ideal.absNorm I ≤ x} :=
-    (Ideal.finite_setOf_absNorm_le (S := 𝓞 L) x).to_subtype
+    (Ideal.finite_setOfPred_absNorm_le (S := 𝓞 L) x).to_subtype
   exact Finite.of_injective
     (fun P : RamifiedDegreeOneUpTo L x ↦
       (⟨P.1, P.2.2.2.1⟩ : {I : Ideal (𝓞 L) // Ideal.absNorm I ≤ x}))
@@ -74,7 +75,7 @@ private instance finite_ramifiedDegreeOneUpTo (x : ℕ) :
 
 private instance finite_higherDegreeUpTo (x : ℕ) : Finite (HigherDegreeUpTo L x) := by
   have : Finite {I : Ideal (𝓞 L) // Ideal.absNorm I ≤ x} :=
-    (Ideal.finite_setOf_absNorm_le (S := 𝓞 L) x).to_subtype
+    (Ideal.finite_setOfPred_absNorm_le (S := 𝓞 L) x).to_subtype
   exact Finite.of_injective
     (fun P : HigherDegreeUpTo L x ↦
       (⟨P.1, P.2.2.2.1⟩ : {I : Ideal (𝓞 L) // Ideal.absNorm I ≤ x}))
@@ -98,7 +99,7 @@ private def primeIdealPartitionMap (x : ℕ) :
     · haveI : P.1.IsPrime := P.2.1
       haveI : P.1.LiesOver (P.1.under (𝓞 ℚ)) :=
         Ideal.over_under (A := 𝓞 ℚ) (P := P.1)
-      have hpos : 0 < residueDegree L P.1 := Ideal.inertiaDeg_pos' _ _
+      have hpos : 0 < residueDegree L P.1 := Ideal.inertiaDeg'_pos' _ _
       exact Sum.inr (Sum.inr ⟨P.1, P.2.1, P.2.2.1, P.2.2.2, by omega⟩)
 
 private def partitionValue (x : ℕ) :
@@ -234,28 +235,20 @@ theorem unramifiedDegreeOneCount_eq_degree_mul_splitPrimeCount (x : ℕ) :
 
 /-! ## Bounds for the two error terms -/
 
+omit [IsGalois ℚ L] in
 /-- There are at most `[L : ℚ]` primes of `L` over a fixed rational prime. -/
 theorem card_primesAbove_le_degree {p : ℕ} (hp : p.Prime) :
     Nat.card {P : Ideal (𝓞 L) // P.IsPrime ∧ P.LiesOver (rationalIdeal p)} ≤
       Module.finrank ℚ L := by
-  have hp0 : rationalIdeal p ≠ ⊥ := by
-    intro h
-    have hnorm := congrArg Ideal.absNorm h
-    rw [absNorm_rationalIdeal, Ideal.absNorm_bot] at hnorm
-    exact hp.ne_zero hnorm
   have : NoZeroSMulDivisors (𝓞 ℚ) (𝓞 L) :=
     ⟨fun {c x} h ↦ by
       rw [Algebra.smul_def, mul_eq_zero] at h
       exact h.imp
         (fun hc ↦ RingOfIntegers.algebraMap.injective ℚ L (by rwa [map_zero])) id⟩
   let : (rationalIdeal p).IsPrime := rationalIdeal_isPrime hp
-  let : (rationalIdeal p).IsMaximal := (rationalIdeal_isPrime hp).isMaximal hp0
-  rw [show {P : Ideal (𝓞 L) // P.IsPrime ∧ P.LiesOver (rationalIdeal p)} =
-      ↥((rationalIdeal p).primesOver (𝓞 L)) from rfl,
-    Nat.card_coe_set_eq, ← IsDedekindDomain.coe_primesOverFinset hp0,
-    Set.ncard_coe_finset]
-  exact Ideal.card_primesOverFinset_le_finrank (R := 𝓞 ℚ) (S := 𝓞 L)
-    (K := ℚ) (L := L) hp0
+  change Nat.card ((rationalIdeal p).primesOver (𝓞 L)) ≤ Module.finrank ℚ L
+  rw [IsFractionRing.finrank_eq (𝓞 ℚ) ℚ (𝓞 L) L]
+  exact Erdos980.card_primesOver_le_finrank (rationalIdeal p)
 
 /-- A higher-degree prime ideal maps to the rational prime below it, which is
 at most `√x`. -/
@@ -270,6 +263,7 @@ private def higherDegreeToSqrt (x : ℕ) : HigherDegreeUpTo L x → Fin (x.sqrt 
     _ ≤ x := P.2.2.2.1
   exact ⟨primeBelow L P.1, Nat.lt_succ_of_le (Nat.le_sqrt'.mpr hp_sq)⟩
 
+omit [IsGalois ℚ L] in
 private theorem card_higherDegreeToSqrt_fiber_le (x : ℕ) (p : Fin (x.sqrt + 1)) :
     Nat.card {P : HigherDegreeUpTo L x // higherDegreeToSqrt L x P = p} ≤
       Module.finrank ℚ L := by
@@ -304,8 +298,9 @@ private theorem card_higherDegreeToSqrt_fiber_le (x : ℕ) (p : Fin (x.sqrt + 1)
           (card_primesAbove_le_degree L hp)
   · have : IsEmpty {P : HigherDegreeUpTo L x // higherDegreeToSqrt L x P = p} :=
       not_nonempty_iff.mp hne
-    simp [Nat.card_eq_zero]
+    simp
 
+omit [IsGalois ℚ L] in
 /-- Prime ideals of residue degree at least two contribute at most
 `[L : ℚ](√x + 1)`. -/
 theorem higherDegreeCount_le_degree_mul_sqrt_add_one (x : ℕ) :

@@ -639,11 +639,10 @@ theorem span_nat_isPrime_of_prime_modEq {q : ℕ}
     ext Q
     simp [hPset']
   rw [hPfinset] at hmap
-  simp [hramP] at hmap
+  simp only [Finset.prod_singleton, hramP, pow_one] at hmap
   have hmapSpan :
       Ideal.map (algebraMap ℤ (𝓞 K)) p = Ideal.span {(q : 𝓞 K)} := by
     simp [p, Ideal.map_span]
-  rw [← algebraMap_int_eq] at hmap
   rw [hmapSpan] at hmap
   rw [hmap]
   exact hPprime

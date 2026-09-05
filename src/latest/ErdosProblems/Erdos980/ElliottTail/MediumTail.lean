@@ -246,7 +246,7 @@ theorem eventually_nthPrime_le_square :
 
 /-- Prime-index weights multiplied by a geometric factor form a convergent
 series for every ratio of absolute value less than one. -/
-theorem summable_nthPrime_mul_geometric { ρ : ℝ } (hρ : |ρ| < 1) :
+theorem summable_nthPrime_mul_geometric {ρ : ℝ} (hρ : |ρ| < 1) :
     Summable (fun j : ℕ ↦ (Nat.nth Nat.Prime j : ℝ) * ρ ^ j) := by
   have hmajorant : Summable
       (fun j : ℕ ↦ 4 * (j : ℝ) ^ 2 * |ρ| ^ j) := by

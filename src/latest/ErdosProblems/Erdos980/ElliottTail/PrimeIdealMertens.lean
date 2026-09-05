@@ -110,7 +110,7 @@ private lemma weighted_sum_eq_partial_sums (a : ℕ → ℝ) (ha0 : a 0 = 0)
         omega
   have hrange0 : ∑ i ∈ Finset.range (0 + 1), a i = 0 := by simp [ha0]
   rw [hrangeN, hrange0] at hbp
-  simp only [inv_one, mul_zero, sub_zero] at hbp
+  simp only [mul_zero, sub_zero] at hbp
   rw [show Finset.Ioc 0 (N - 1) = Finset.Icc 1 (N - 1) by ext i; simp; omega] at hbp
   calc
     ∑ i ∈ Finset.Icc 1 N, a i / (i : ℝ) =
@@ -186,7 +186,7 @@ theorem eventually_log_le_idealHarmonicMass :
     by_contra h
     have hzero : N₀ = 0 := by omega
     have hbad := hN₀ 0 (by simp [hzero])
-    simp [hzero] at hbad
+    simp at hbad
     linarith
   let B : ℝ := 1 + ∑ i ∈ Finset.Icc 1 (N₀ - 1), (((i + 1 : ℕ) : ℝ))⁻¹
   have hB : 0 ≤ B := by
@@ -433,7 +433,7 @@ noncomputable def primeIdealsUpTo (N : ℕ) :
     𝔭 ∈ primeIdealsUpTo K N ↔ 𝔭.IsPrime ∧ 𝔭 ≠ ⊥ ∧ Ideal.absNorm 𝔭 ≤ N := by
   classical
   simp only [primeIdealsUpTo, Finset.mem_filter, Set.Finite.mem_toFinset,
-    Set.mem_setOf_eq]
+    Set.mem_ofPred_eq]
   tauto
 
 private noncomputable def nonzeroIdealsUpToAsIdeals (N : ℕ) :
@@ -581,15 +581,15 @@ private lemma eventually_two_log_sub_one_ge_log :
   have hzle : z ≤ 2 * (z - 1) := by omega
   have hlogmono : Real.log (z : ℝ) ≤ Real.log ((2 * (z - 1) : ℕ) : ℝ) := by
     apply Real.strictMonoOn_log.monotoneOn
-    · show (0 : ℝ) < (z : ℕ)
+    · change (0 : ℝ) < (z : ℕ)
       exact_mod_cast (show 0 < z by omega)
-    · show (0 : ℝ) < (2 * (z - 1) : ℕ)
+    · change (0 : ℝ) < (2 * (z - 1) : ℕ)
       exact_mod_cast (show 0 < 2 * (z - 1) by omega)
     · exact_mod_cast hzle
   have hlog2 : Real.log (2 : ℝ) ≤ Real.log ((z - 1 : ℕ) : ℝ) := by
     apply Real.strictMonoOn_log.monotoneOn
     · norm_num
-    · show (0 : ℝ) < (z - 1 : ℕ)
+    · change (0 : ℝ) < (z - 1 : ℕ)
       exact_mod_cast (show 0 < z - 1 by omega)
     · exact_mod_cast hz1
   rw [show ((2 * (z - 1) : ℕ) : ℝ) = 2 * ((z - 1 : ℕ) : ℝ) by norm_num,

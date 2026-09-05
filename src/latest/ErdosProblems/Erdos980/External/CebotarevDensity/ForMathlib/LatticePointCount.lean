@@ -318,7 +318,7 @@ theorem abs_card_inter_sub_volume_mul_pow_le {s : Set (ι → ℝ)}
   set Tag : Set (ι → ℤ) := {ν | tag n ν ∈ s} with hTag
   have himg : index n '' (s ∩ (n : ℝ)⁻¹ • span ℤ (Set.range (Pi.basisFun ℝ ι))) = Tag := by
     ext ν
-    simp only [hTag, Set.mem_image, Set.mem_inter_iff, Set.mem_setOf_eq]
+    simp only [hTag, Set.mem_image, Set.mem_inter_iff, Set.mem_ofPred_eq]
     constructor
     · rintro ⟨x, ⟨hxs, hxL⟩, rfl⟩
       rwa [tag_index_eq_self_of_mem_smul_span n hxL]

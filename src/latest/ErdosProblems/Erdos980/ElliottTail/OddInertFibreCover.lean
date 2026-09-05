@@ -56,6 +56,7 @@ def exceptionalTagIndices :
     Finset (CyclotomicRayCorrectionIndex ell K × UnitResidueImage ell K) :=
   Finset.univ
 
+omit [IsCyclotomicExtension {ell} ℚ K] in
 /-- Full local-unit tuples embed into all coordinate residue tuples, so
 their density inside the scalar residue space is at most one.  This is the
 normalization that preserves the factor `ell⁻ʲ` in the Rosser main term. -/

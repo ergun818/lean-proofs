@@ -127,7 +127,7 @@ theorem kummerIntegralPolynomial_splits_ringOfIntegers (hk : k ≠ 0) :
     exact ⟨⟨a, root_isIntegral hk x⟩, rfl⟩
 
 /-- A nonidentity automorphism moves at least one defining root. -/
-theorem exists_root_moved (σ : Gal(KummerField k r / ℚ)) (hσ : σ ≠ 1) :
+theorem exists_root_moved (σ : Gal(KummerField k r/ℚ)) (hσ : σ ≠ 1) :
     ∃ x : KummerRoot k r, σ x.1 ≠ x.1 := by
   by_contra! hfix
   apply hσ
@@ -139,12 +139,12 @@ theorem exists_root_moved (σ : Gal(KummerField k r / ℚ)) (hσ : σ ≠ 1) :
   exact fun x ↦ DFunLike.congr_fun heq x
 
 /-- The integral difference between a root and one of its Galois conjugates. -/
-def rootDifference (hk : k ≠ 0) (σ : Gal(KummerField k r / ℚ))
+def rootDifference (hk : k ≠ 0) (σ : Gal(KummerField k r/ℚ))
     (x : KummerRoot k r) : 𝓞 (KummerField k r) :=
   RingOfIntegers.mapRingEquiv σ.toRingEquiv (rootInteger hk x) - rootInteger hk x
 
 theorem rootDifference_ne_zero_iff (hk : k ≠ 0)
-    (σ : Gal(KummerField k r / ℚ)) (x : KummerRoot k r) :
+    (σ : Gal(KummerField k r/ℚ)) (x : KummerRoot k r) :
     rootDifference hk σ x ≠ 0 ↔ σ x.1 ≠ x.1 := by
   have heq : rootDifference hk σ x = 0 ↔ σ x.1 = x.1 := by
     rw [rootDifference, sub_eq_zero, RingOfIntegers.ext_iff]
@@ -153,12 +153,12 @@ theorem rootDifference_ne_zero_iff (hk : k ≠ 0)
 
 /-- Prime ideals which identify a root with a genuinely different Galois
 conjugate after reduction. -/
-def CollisionIdeals (hk : k ≠ 0) (σ : Gal(KummerField k r / ℚ))
+def CollisionIdeals (hk : k ≠ 0) (σ : Gal(KummerField k r/ℚ))
     (x : KummerRoot k r) : Set (Ideal (𝓞 (KummerField k r))) :=
   {P | P.IsPrime ∧ P ≠ ⊥ ∧ rootDifference hk σ x ∈ P}
 
 theorem collisionIdeals_finite (hk : k ≠ 0)
-    (σ : Gal(KummerField k r / ℚ)) (x : KummerRoot k r)
+    (σ : Gal(KummerField k r/ℚ)) (x : KummerRoot k r)
     (hmove : σ x.1 ≠ x.1) : (CollisionIdeals hk σ x).Finite := by
   let d := rootDifference hk σ x
   have hd : d ≠ 0 := (rootDifference_ne_zero_iff hk σ x).2 hmove
@@ -187,14 +187,14 @@ private instance finite_kummerRoot : Finite (KummerRoot k r) := by
 /-- The rational primes at which two distinct conjugates of a defining root
 can collide. -/
 def collisionPrimes (hk : k ≠ 0) : Set ℕ :=
-  {p | ∃ (σ : Gal(KummerField k r / ℚ)) (x : KummerRoot k r),
+  {p | ∃ (σ : Gal(KummerField k r/ℚ)) (x : KummerRoot k r),
     σ x.1 ≠ x.1 ∧ ∃ P ∈ CollisionIdeals hk σ x,
       NaturalChebotarev.SplitTransfer.primeBelow (KummerField k r) P = p}
 
 theorem collisionPrimes_finite (hk : k ≠ 0) :
     (collisionPrimes (k := k) (r := r) hk).Finite := by
   classical
-  let S : Set ℕ := ⋃ (σ : Gal(KummerField k r / ℚ)),
+  let S : Set ℕ := ⋃ (σ : Gal(KummerField k r/ℚ)),
     ⋃ (x : KummerRoot k r),
       if h : σ x.1 ≠ x.1 then
         NaturalChebotarev.SplitTransfer.primeBelow (KummerField k r) ''
@@ -262,7 +262,7 @@ theorem rootDifference_mem_of_splits {p : ℕ} (hp : p.Prime)
     (hP0 : P ≠ ⊥)
     (hlo : P.LiesOver
       (NaturalChebotarev.SplitTransfer.rationalIdeal p))
-    (σ : Gal(KummerField k r / ℚ))
+    (σ : Gal(KummerField k r/ℚ))
     (hσ : IsArithFrobAt (𝓞 ℚ) σ P)
     (hsplit : (finiteFieldPatternPolynomial p k r).Splits)
     (x : KummerRoot k r) : rootDifference hk σ x ∈ P := by
@@ -359,10 +359,10 @@ theorem isCompletelySplit_of_splits_of_not_mem_bad {p : ℕ}
   let : P.IsPrime := hPprime
   let : Finite (𝓞 (KummerField k r) ⧸ P) :=
     hunr.finite_quotient ℚ (KummerField k r) P hlo
-  let σ : Gal(KummerField k r / ℚ) :=
-    arithFrobAt (𝓞 ℚ) Gal(KummerField k r / ℚ) P
+  let σ : Gal(KummerField k r/ℚ) :=
+    arithFrobAt (𝓞 ℚ) Gal(KummerField k r/ℚ) P
   have hσfrob : IsArithFrobAt (𝓞 ℚ) σ P :=
-    IsArithFrobAt.arithFrobAt (𝓞 ℚ) Gal(KummerField k r / ℚ) P
+    IsArithFrobAt.arithFrobAt (𝓞 ℚ) Gal(KummerField k r/ℚ) P
   have hσone : σ = 1 := by
     by_contra hσ
     obtain ⟨x, hmove⟩ := exists_root_moved σ hσ
@@ -506,7 +506,7 @@ theorem patternBadPrimes_finite (hk : k ≠ 0) (j : ℕ) :
 
 /-- An eligible prime contains a primitive `k`-th root of unity. -/
 theorem exists_isPrimitiveRoot_zmod_of_eligible
-    {p : ℕ} (hk : 2 ≤ k) (helig : Eligible k p) :
+    {p : ℕ} (_ : 2 ≤ k) (helig : Eligible k p) :
     ∃ ζ : ZMod p, IsPrimitiveRoot ζ k := by
   let : Fact p.Prime := ⟨helig.1⟩
   let : IsCyclic (ZMod p)ˣ := ZMod.isCyclic_units_prime helig.1

@@ -53,7 +53,7 @@ theorem weightedTailSum_nonneg (k y x : ℕ) :
 
 /-- With `k ≥ 2`, membership in the positive tail forces Elliott
 eligibility; all ineligible primes have value zero by definition. -/
-theorem eligible_of_mem_exceptionalPrimes {k y x p : ℕ} (hk : 2 ≤ k)
+theorem eligible_of_mem_exceptionalPrimes {k y x p : ℕ} (_ : 2 ≤ k)
     (hp : p ∈ exceptionalPrimes k y x) : Eligible k p := by
   have hpos : 0 < leastKthPowerNonresidue k p :=
     (Nat.zero_le y).trans_lt (mem_exceptionalPrimes.mp hp).2.2

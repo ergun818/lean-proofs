@@ -116,7 +116,7 @@ theorem primeLabels_product_squarefree (D : Data K A) :
 
 /-- A prime label divides the code of a generator exactly when the
 corresponding prime ideal divides its principal ideal. -/
-theorem label_dvd_generatorCode_iff [DecidableEq A]
+theorem label_dvd_generatorCode_iff
     (D : Data K A) {p : ℕ} (hp : p ∈ D.primeLabels) (a : A) :
     p ∣ generatorCode D a ↔ IdealDividesGenerator D p a := by
   classical
@@ -147,7 +147,7 @@ theorem mem_primeLabels_of_mem_primeFactors_of_dvd
 
 /-- Divisibility by a squarefree divisor of the label product is exactly
 simultaneous divisibility by the corresponding prime ideals. -/
-theorem divisor_dvd_generatorCode_iff [DecidableEq A]
+theorem divisor_dvd_generatorCode_iff
     (D : Data K A) {d : ℕ} (hd : d ∣ D.primeLabels.prod id) (a : A) :
     d ∣ generatorCode D a ↔
       ∀ p ∈ d.primeFactors, IdealDividesGenerator D p a := by
@@ -165,7 +165,7 @@ theorem divisor_dvd_generatorCode_iff [DecidableEq A]
 
 /-- Coprimality of a code to the full label product means that none of the
 selected prime ideals divides the principal ideal. -/
-theorem coprime_generatorCode_iff [DecidableEq A]
+theorem coprime_generatorCode_iff
     (D : Data K A) (a : A) :
     Nat.Coprime (D.primeLabels.prod id) (generatorCode D a) ↔
       ∀ p ∈ D.primeLabels, ¬ IdealDividesGenerator D p a := by

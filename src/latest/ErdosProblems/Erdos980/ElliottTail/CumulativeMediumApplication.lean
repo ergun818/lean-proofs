@@ -68,7 +68,7 @@ theorem cumulativeMajorantTail_tendsto_zero
   change Tendsto
     (fun y : ℕ ↦ (y + 1 : ℝ) * g y +
       ∑' t : ℕ, if y < t then g t else 0) atTop (nhds 0)
-  convert hfirst.add hstrict using 1 <;> norm_num
+  convert hfirst.add hstrict using 1; norm_num
 
 /-- A convenient inverse-square cumulative majorant. -/
 def inverseSquareMajorant (C : ℝ) (t : ℕ) : ℝ :=
@@ -109,7 +109,7 @@ theorem cumulativeMajorantTail_inverseSquare_tendsto_zero (C : ℝ) :
 implies the exact prime-exponent medium estimate used by the final
 assembly. -/
 theorem primeExponentMediumEstimate_of_cumulativeExceptional_bound
-    (k : ℕ) (hk : 2 ≤ k) (g : ℕ → ℝ)
+    (k : ℕ) (_ : 2 ≤ k) (g : ℕ → ℝ)
     (hg : ∀ t, 0 ≤ g t) (hsum : Summable g)
     (htail : Tendsto (cumulativeMajorantTail g) atTop (nhds 0))
     (hcount : CumulativeExceptionalPrimeScaleBound k g) :

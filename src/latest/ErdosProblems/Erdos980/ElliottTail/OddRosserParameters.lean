@@ -200,7 +200,7 @@ theorem normSieveUpper_le_self
     _ = (x : ℝ) := Real.rpow_one _
 
 theorem eta_mul_log_le_log_normSieveUpper
-    {eta : ℝ} (heta : 0 < eta) {x : ℕ} (hx : 1 < x) :
+    {eta : ℝ} (_ : 0 < eta) {x : ℕ} (hx : 1 < x) :
     eta * Real.log (x : ℝ) ≤
       Real.log (normSieveUpper eta x : ℝ) := by
   have hxR : (0 : ℝ) < x := by exact_mod_cast (show 0 < x by omega)
@@ -1285,7 +1285,7 @@ theorem height_condition_of_level_le
 the complete level-restricted height condition holds eventually, uniformly
 in every smoothness layer. -/
 theorem eventually_uniform_normRosser_height_condition
-    {degree : ℕ} (hdegree : 0 < degree)
+    {degree : ℕ} (_ : 0 < degree)
     {delta eta : ℝ} (hdelta : 0 < delta) (heta : 0 ≤ eta)
     (S : ℕ) (heightCoefficient : ℝ) (hheightCoefficient : 0 < heightCoefficient)
     (hgap : delta + eta * S < (degree : ℝ)⁻¹) :
@@ -1343,7 +1343,7 @@ theorem normRosser_boundary_scale_le
     (hcard : rayCard ≤ f ^ degree)
     (hlevel : ((f * level : ℕ) : ℝ) ≤
       levelCoefficient * x ^ delta)
-    (hlevelCoefficient : 0 ≤ levelCoefficient)
+    (_ : 0 ≤ levelCoefficient)
     (hx : 0 < x) :
     (Cgeom * (rayCard : ℝ) *
         (height / f) ^ (degree - 1)) * level ≤

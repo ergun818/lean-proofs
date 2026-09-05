@@ -23,7 +23,6 @@ noncomputable section
 section ClassCorrections
 
 variable {R : Type*} [CommRing R] [IsDedekindDomain R]
-  [Fintype (ClassGroup R)]
 
 /-- A fixed nonzero integral ideal in the inverse of a prescribed ideal
 class. -/
@@ -121,13 +120,13 @@ end ClassCorrections
 section ResidueCorrections
 
 variable {R : Type*} [CommRing R] [IsDedekindDomain R]
-  [Fintype (ClassGroup R)]
 variable (L : Ideal R) [L.IsMaximal] (n : ℕ)
 
 /-- A fixed lift of a residue class. -/
 noncomputable def residueLift (x : R ⧸ L ^ n) : R :=
   Classical.choose (Ideal.Quotient.mk_surjective x)
 
+omit [IsDedekindDomain R] [L.IsMaximal] in
 @[simp]
 lemma mk_residueLift (x : R ⧸ L ^ n) :
     Ideal.Quotient.mk (L ^ n) (residueLift L n x) = x :=
@@ -139,10 +138,10 @@ def RayCorrectionIndex :=
   {i : ClassGroup R × (R ⧸ L ^ n) //
     L ⊔ Ideal.span {residueLift L n i.2} = ⊤}
 
-instance [Finite (R ⧸ L ^ n)] : Finite (RayCorrectionIndex L n) :=
+instance [Finite (ClassGroup R)] [Finite (R ⧸ L ^ n)] : Finite (RayCorrectionIndex L n) :=
   Finite.of_injective (fun i : RayCorrectionIndex L n ↦ i.1) Subtype.val_injective
 
-noncomputable instance [Fintype (R ⧸ L ^ n)] :
+noncomputable instance [Finite (ClassGroup R)] [Finite (R ⧸ L ^ n)] :
     Fintype (RayCorrectionIndex L n) :=
   Fintype.ofFinite _
 
@@ -196,7 +195,7 @@ theorem exists_rayCorrection_generator
   let v : R := residueLift L n r
   have hvu : v - u ∈ L ^ n := by
     rw [← Ideal.Quotient.eq]
-    simpa [v, r] using mk_residueLift L n r
+    simp [v, r]
   have hau : a * u - 1 ∈ L ^ n := by
     have : a * u - 1 = -m := by rw [← hmj]; ring
     rw [this, Ideal.neg_mem_iff]

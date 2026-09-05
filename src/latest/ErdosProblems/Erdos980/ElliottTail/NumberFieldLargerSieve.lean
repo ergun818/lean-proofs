@@ -639,13 +639,14 @@ theorem ell_pow_mul_powerClassTensorResidueCell_card
     {I : Type*} [Fintype I] {G : I → Type*} {ell : ℕ}
     [∀ i, CommGroup (G i)] [∀ i, Fintype (G i)]
     [Fintype (∀ i, G i)]
-    [Fintype (PowerClassTensor I G ell)]
+    [Finite (PowerClassTensor I G ell)]
     [∀ i, IsCyclic (G i)]
     (hell : ∀ i, ell ∣ Fintype.card (G i))
     (pattern : PowerClassTensor I G ell) :
     ell ^ Fintype.card I *
         (powerClassTensorResidueCell (G := G) ell pattern).card =
       Fintype.card (∀ i, G i) := by
+  let := Fintype.ofFinite (PowerClassTensor I G ell)
   calc
     ell ^ Fintype.card I *
         (powerClassTensorResidueCell (G := G) ell pattern).card =
@@ -686,7 +687,7 @@ theorem ell_pow_mul_mappedPowerClassTensorResidueCell_card
     {I A : Type*} [Fintype I] {G : I → Type*} {ell : ℕ}
     [∀ i, CommGroup (G i)] [∀ i, Fintype (G i)]
     [Fintype (∀ i, G i)]
-    [Fintype (PowerClassTensor I G ell)]
+    [Finite (PowerClassTensor I G ell)]
     [∀ i, IsCyclic (G i)]
     (hell : ∀ i, ell ∣ Fintype.card (G i))
     (e : (∀ i, G i) ↪ A) (pattern : PowerClassTensor I G ell) :

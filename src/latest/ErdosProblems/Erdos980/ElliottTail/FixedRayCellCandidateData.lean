@@ -395,7 +395,6 @@ theorem normResidueDensityFunction_mult (M : CRTNormResidueSystem K) :
     push_cast
     rw [mul_pow]
     field_simp
-    <;> ring
 
 /-- Away from zero, the arithmetic function is literally the geometric
 norm-residue density used by the ray/norm remainder theorem. -/

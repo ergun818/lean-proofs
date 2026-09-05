@@ -520,7 +520,7 @@ open Ideal in
 /-- **Class split of the residue count.** The number of nonzero integral ideals of norm `≤ N`
 with norm residue `a (mod c)` is the sum over the (finite) class group of the per-class counts.
 The class group is a `Fintype`; finiteness of each fibre follows from
-`Ideal.finite_setOf_absNorm_le₀`. -/
+`Ideal.finite_setOfPred_absNorm_le₀`. -/
 private theorem card_norm_le_residue_eq_sum_class {K : Type*} [Field K] [NumberField K]
     (c : ℕ) [NeZero c] (a : ZMod c) (N : ℕ) :
     Nat.card {I : (Ideal (𝓞 K))⁰ // Ideal.absNorm (I : Ideal (𝓞 K)) ≤ N ∧
@@ -530,7 +530,7 @@ private theorem card_norm_le_residue_eq_sum_class {K : Type*} [Field K] [NumberF
           ((Ideal.absNorm (I : Ideal (𝓞 K)) : ZMod c)) = a) ∧ ClassGroup.mk0 I = C} := by
   classical
   have hbase : Finite {I : (Ideal (𝓞 K))⁰ // Ideal.absNorm (I : Ideal (𝓞 K)) ≤ N} :=
-    Ideal.finite_setOf_absNorm_le₀ N
+    Ideal.finite_setOfPred_absNorm_le₀ N
   have hfin : Finite {I : (Ideal (𝓞 K))⁰ // Ideal.absNorm (I : Ideal (𝓞 K)) ≤ N ∧
         ((Ideal.absNorm (I : Ideal (𝓞 K)) : ZMod c)) = a} :=
     Finite.of_injective (fun I ↦ (⟨I.1, I.2.1⟩ :
@@ -660,7 +660,7 @@ private theorem cone_normLe_eq_smul_normLeOne {K : Type*} [Field K] [NumberField
   have ht0 : (0 : ℝ) < t := lt_of_lt_of_le one_pos ht
   have htne : t ≠ 0 := ht0.ne'
   ext x
-  simp only [Set.mem_setOf_eq, Set.mem_smul_set, normLeOne, Set.mem_inter_iff, Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq, Set.mem_smul_set, normLeOne, Set.mem_inter_iff, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨hcone, hnorm⟩
     refine ⟨t⁻¹ • x, ⟨(smul_mem_iff_mem (inv_ne_zero htne)).mpr hcone, ?_⟩, ?_⟩
@@ -840,7 +840,7 @@ private theorem frontier_signOrthant_subset {ι κ : Type*} [Finite κ] (g : κ 
     rw [frontier_eq_closure_inter_closure] at hy
     rw [interior_eq_compl_closure_compl]; exact fun hh ↦ hh hy.2
   by_contra hcon
-  simp only [Set.mem_iUnion, Set.mem_setOf_eq, not_exists] at hcon
+  simp only [Set.mem_iUnion, Set.mem_ofPred_eq, not_exists] at hcon
   exact hyni (mem_interior.mpr ⟨Os, hsub, hOsopen,
     ⟨fun k hk ↦ lt_of_le_of_ne (hyO.1 k hk) (hcon k),
      fun k hk ↦ lt_of_le_of_ne (hyO.2 k hk) (Ne.symm (hcon k))⟩⟩)
@@ -1590,14 +1590,14 @@ private theorem exists_card_residue_fibre_sub_mul_rpow_le {K : Type*} [Field K] 
 open Ideal NumberField.mixedEmbedding NumberField.mixedEmbedding.fundamentalCone Units in
 /-- **Finiteness of bounded-norm cone points.** The cone points of `idealSet K J` of norm `≤ s`
 form a finite set: they inject (via `integerSetEquiv ∘ idealSetMap`) into the product of the
-finite set of integral ideals of norm `≤ ⌊s⌋` (`Ideal.finite_setOf_absNorm_le₀`) with the finite
+finite set of integral ideals of norm `≤ ⌊s⌋` (`Ideal.finite_setOfPred_absNorm_le₀`) with the finite
 torsion group. -/
 private theorem finite_idealSet_norm_le {K : Type*} [Field K] [NumberField K]
     (J : (Ideal (𝓞 K))⁰) (s : ℝ) :
     Finite {a : idealSet K J // mixedEmbedding.norm (a : mixedSpace K) ≤ s} := by
   classical
   have : Finite {I : (Ideal (𝓞 K))⁰ // Ideal.absNorm (I : Ideal (𝓞 K)) ≤ ⌊s⌋₊} :=
-    (Ideal.finite_setOf_absNorm_le₀ ⌊s⌋₊).to_subtype
+    (Ideal.finite_setOfPred_absNorm_le₀ ⌊s⌋₊).to_subtype
   refine Finite.of_injective (β := {I : (Ideal (𝓞 K))⁰ // Ideal.absNorm (I : Ideal (𝓞 K)) ≤ ⌊s⌋₊} ×
       torsion K) (fun a ↦ ⟨⟨(integerSetEquiv K (idealSetMap K J a.1)).1.1, ?_⟩,
     (integerSetEquiv K (idealSetMap K J a.1)).2⟩) ?_
@@ -2403,7 +2403,7 @@ private theorem crt_single_coset {ι : Type*} [Finite ι] (L L' : Submodule ℤ 
       = {z | ∃ x ∈ M, z = m • x} := by
     intro M
     ext z
-    simp only [Set.mem_smul_set, SetLike.mem_coe, Set.mem_setOf_eq]
+    simp only [Set.mem_smul_set, SetLike.mem_coe, Set.mem_ofPred_eq]
     exact ⟨fun ⟨x, hx, h⟩ ↦ ⟨x, hx, by rw [← h, Nat.cast_smul_eq_nsmul]⟩,
       fun ⟨x, hx, h⟩ ↦ ⟨x, hx, by rw [h, Nat.cast_smul_eq_nsmul]⟩⟩
   have hbij := hcop.nsmul_right_bijective
@@ -2429,7 +2429,7 @@ private theorem crt_single_coset {ι : Type*} [Finite ι] (L L' : Submodule ℤ 
     rw [QuotientAddGroup.eq_zero_iff, AddSubgroup.mem_addSubgroupOf] at hq0
     simpa using hq0
   ext a
-  simp only [Set.mem_setOf_eq, hmsmul, Set.mem_vadd_set, Set.mem_setOf_eq, vadd_eq_add]
+  simp only [Set.mem_ofPred_eq, hmsmul, Set.mem_vadd_set, Set.mem_ofPred_eq, vadd_eq_add]
   constructor
   · rintro ⟨haL', w, ⟨x, hxL, rfl⟩, hweq⟩
     rw [hξeq] at hweq

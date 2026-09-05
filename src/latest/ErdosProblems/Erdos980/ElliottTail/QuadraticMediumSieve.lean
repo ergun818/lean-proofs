@@ -53,7 +53,7 @@ noncomputable def quadraticNonresidues (q : ℕ) [Fact q.Prime] :
   Finset.univ.filter fun a ↦ ¬ IsSquare a
 
 private lemma quadraticChar_eq_indicator (q : ℕ) [Fact q.Prime]
-    (hq2 : q ≠ 2) (a : ZMod q) :
+    (_ : q ≠ 2) (a : ZMod q) :
     quadraticChar (ZMod q) a =
       if a ∈ nonzeroQuadraticResidues q then 1
       else if a ∈ quadraticNonresidues q then -1 else 0 := by
@@ -64,7 +64,7 @@ private lemma quadraticChar_eq_indicator (q : ℕ) [Fact q.Prime]
     rcases hchar with hchar | hchar
     · have hsquare : IsSquare a :=
         (quadraticChar_one_iff_isSquare ha0).mp hchar
-      simp [nonzeroQuadraticResidues, quadraticNonresidues, ha0, hsquare, hchar]
+      simp [nonzeroQuadraticResidues, ha0, hsquare, hchar]
     · have hnsquare : ¬ IsSquare a :=
         quadraticChar_neg_one_iff_not_isSquare.mp hchar
       simp [nonzeroQuadraticResidues, quadraticNonresidues, ha0, hnsquare, hchar]
@@ -86,7 +86,7 @@ private lemma card_nonzeroQuadraticResidues_add_card_quadraticNonresidues
     · by_cases hs : IsSquare a <;>
         simp [nonzeroQuadraticResidues, quadraticNonresidues, ha0, hs]
   rw [← Finset.card_union_of_disjoint hdisj, hunion]
-  simp [(Fact.out : q.Prime).ne_zero]
+  simp
 
 private lemma card_nonzeroQuadraticResidues_eq_card_quadraticNonresidues
     (q : ℕ) [Fact q.Prime] (hq2 : q ≠ 2) :
@@ -321,7 +321,6 @@ theorem quadraticPatternSurvivors_card_le
       ((Q.card - k : ℕ) : ℝ) / 2 =
           ∑ _q ∈ (Finset.univ : Finset Q) \ L, (1 / 2 : ℝ) := by
             rw [Finset.sum_const, nsmul_eq_mul, hcard]
-            push_cast
             ring
       _ ≤ ∑ q ∈ (Finset.univ : Finset Q) \ L, removed q := by
         exact Finset.sum_le_sum fun q _ ↦ hhalf q
@@ -492,7 +491,7 @@ theorem mixedQuadraticModulus_pairwise
           apply (Nat.coprime_primes (hprimeQ q.1 q.2)
             (hprimeR r.1 r.2)).mpr
           intro hqr
-          have hqR : q.1 ∈ R := by simpa [hqr] using r.2
+          have hqR : q.1 ∈ R := by simp [hqr]
           exact (Finset.disjoint_left.mp hdisjoint) q.2 hqR
   | inr r =>
       cases j with
@@ -628,7 +627,7 @@ theorem quadraticResiduePrimePattern_card_le_mixed
     cases i with
     | inl q => exact card_quadraticVanishing_lt q.1 (hoddQ q.1 q.2) _
     | inr r =>
-        simp only [vanish, mixedQuadraticVanishing, Finset.card_singleton,
+        simp only [vanish, mixedQuadraticVanishing,
           mixedQuadraticModulus]
         exact (hprimeR r.1 r.2).one_lt
   exact hcard.trans (Erdos380.residueClassSurvivors_card_le_trimmed_largerSieve
@@ -833,7 +832,6 @@ theorem baseCongruenceBoundingSieve_abs_rem_le
   convert hendpoint using 1
   congr 1
   field_simp [hMne, hdne]
-  <;> ring
 
 open Erdos851.FiniteCombinatorialSieve
 open Erdos851.BetaSieveFundamental
@@ -1014,7 +1012,6 @@ theorem quadraticBaseResidues_lt
     exact (Nat.coprime_primes (hprime q.1 q.2) (hprime r.1 r.2)).mpr
       (Subtype.coe_ne_coe.mpr hqr)
   have hprod : (∏ q : Q, q.1) = ∏ q ∈ Q, q := by
-    change (∏ q ∈ (Finset.univ : Finset Q), q.1) = _
     rw [show (Finset.univ : Finset Q) = Q.attach by ext; simp]
     simpa using (Finset.prod_attach Q id)
   rw [quadraticBaseModulus, ← hprod]
@@ -1073,9 +1070,7 @@ theorem quadraticResiduePrimePattern_subset_baseSifted
   let M := ∏ q : Q, q.1
   have hMeq : M = quadraticBaseModulus Q := by
     dsimp [M, quadraticBaseModulus]
-    change (∏ q ∈ (Finset.univ : Finset Q), q.1) = _
-    rw [show (Finset.univ : Finset Q) = Q.attach by ext; simp]
-    simpa using (Finset.prod_attach Q id)
+    exact Finset.prod_attach Q id
   have hMpos : 0 < M := by
     rw [hMeq]
     exact quadraticBaseModulus_pos Q hprime
@@ -1106,9 +1101,7 @@ theorem quadraticResiduePrimePattern_subset_baseSifted
           (Nat.ne_of_gt (hpSquares q.1 q.2).1)
           candidateOneModFour hpClass (hpSquares q.1 q.2).2
       have hvq : v q = (p : ZMod q.1) := by
-        simpa [v, e] using
-          congrFun (ZMod.prodEquivPi_apply
-            (fun q : Q ↦ q.1) hcoprime (p : ZMod M)) q
+        simp [v, e]
       simpa [hvq] using havoid
     change p % M ∈ crtBaseResidues (fun q : Q ↦ q.1) hcoprime
       (fun q ↦ quadraticAllowed q.1
@@ -1174,14 +1167,12 @@ theorem quadraticBaseModulus_coprime_sievePrimeProduct
 /-! ## A finite Rosser estimate with all analytic factors exposed -/
 
 private theorem ascendingSievePrimes_endpointEuler_le_inverseLocalEuler
-    {z y : ℕ} (hz : 2 ≤ z) :
+    {z y : ℕ} (_ : 2 ≤ z) :
     ((Erdos851.ascendingSievePrimes z y).map
         (fun p : ℕ ↦ 1 + (1 : ℝ) / p)).prod ≤
       Erdos851.inverseLocalEulerProduct Erdos851.oneShiftDensity z y := by
   classical
   rw [Erdos851.inverseLocalEulerProduct]
-  change ((Erdos851.ascendingSievePrimes z y).map
-      (fun p : ℕ ↦ 1 + (1 : ℝ) / p)).prod ≤ _
   rw [← List.prod_toFinset _ (Erdos851.ascendingSievePrimes_nodup z y)]
   have hset : (Erdos851.ascendingSievePrimes z y).toFinset =
       Erdos851.sievePrimes z y := by
@@ -1212,7 +1203,7 @@ is the completely explicit finite-level endpoint loss. -/
 theorem exists_quadraticResiduePrimePattern_rosser_upper_bound :
     ∃ C₁ C₂ : ℝ, 0 < C₁ ∧ 0 < C₂ ∧
       ∀ {Q : Finset ℕ} (hprime : ∀ q ∈ Q, q.Prime)
-        (hodd : ∀ q ∈ Q, q ≠ 2) (candidateOneModFour : Bool)
+        (_ : ∀ q ∈ Q, q ≠ 2) (candidateOneModFour : Bool)
         {m0 N z y S : ℕ},
         y ≤ m0 → 2 ≤ z → z ≤ y → 1 < y → 101 ≤ S →
         (∀ q ∈ Q, q ≤ z) →
@@ -1640,7 +1631,7 @@ theorem quadraticResiduePrimePattern_card_le_three_pow
   have hden : (3 : ℝ) ^ k ≤
       (Q.card.choose k : ℕ) * (1 / 2 : ℝ) ^ k := by
     calc
-      (3 : ℝ) ^ k ≤ (7 / 2 : ℝ) ^ k := by gcongr <;> norm_num
+      (3 : ℝ) ^ k ≤ (7 / 2 : ℝ) ^ k := by gcongr; norm_num
       _ = (7 : ℝ) ^ k * (1 / 2 : ℝ) ^ k := by
         rw [show (7 / 2 : ℝ) = 7 * (1 / 2 : ℝ) by ring, mul_pow]
       _ ≤ (Q.card.choose k : ℕ) * (1 / 2 : ℝ) ^ k := by gcongr
@@ -1671,7 +1662,7 @@ lemma firstOddRationalPrimes_ne_two {J q : ℕ}
   have hthree : 3 ≤ rationalPrime i := by
     calc
       3 = rationalPrime 1 := by
-        simpa [rationalPrime] using Nat.nth_prime_one_eq_three.symm
+        simp [rationalPrime]
       _ ≤ rationalPrime i := rationalPrime_strictMono.monotone hi1
   omega
 
@@ -2090,7 +2081,7 @@ private lemma eventually_quadratic_high_parameters :
     calc
       (∏ q ∈ V.1, q.1) * (∏ q ∈ W.1, q.1) ≤
           (T₀ ^ K) * (T₀ ^ K) := Nat.mul_le_mul hV hW
-      _ = T₀ ^ (2 * K) := by rw [← pow_add]; congr 1 <;> omega
+      _ = T₀ ^ (2 * K) := by rw [← pow_add]; congr 1; omega
       _ ≤ T₀ ^ (16 * T₀) :=
         Nat.pow_le_pow_right (by positivity) hKle
       _ = (T₀ ^ T₀) ^ 16 := by ring
@@ -2317,7 +2308,7 @@ private lemma eventually_quadratic_high_exceptional_bound :
       (fun _q hq ↦ quadraticAuxiliaryPrimes_prime hq)
       (fun _q hq ↦ quadraticAuxiliaryPrimes_ne_two hq)
       b K 2 x hK h8 hproduct
-    convert h using 1 <;> simp [den] <;> ring
+    convert h using 1; simp [den]; ring
   have hraw : ((exceptionalPrimes 2 t x).card : ℝ) ≤
       3 + 4 * (x : ℝ) / den := by
     have hcard := exceptionalPrimes_two_card_le_quadraticPatterns t 2 x (by norm_num)
@@ -2407,7 +2398,6 @@ theorem exists_quadratic_inverseSquare_cumulative_bound :
     have hlogn : Real.log Cβ ≤ (n : ℝ) :=
       (le_max_right (1 : ℝ) (Real.log Cβ)).trans hn.le
     dsimp [S]
-    push_cast
     norm_num
     linarith
   have hlog3 : 0 < Real.log (3 : ℝ) := Real.log_pos (by norm_num)
@@ -2606,8 +2596,7 @@ theorem exists_quadratic_inverseSquare_cumulative_bound :
                   _ ≤ 3 := by norm_num
                   _ ≤ (x : ℝ) := by exact_mod_cast (show 3 ≤ x by omega)).le
             gcongr
-            simpa [pow_succ] using
-              mul_le_mul_of_nonneg_left hA1 (pow_nonneg hA.le 64)
+            simp
           _ ≤ (x : ℝ) / A := htailAbsorb
       have hmain :
           (2 * (C₁ * (1 / 2 : ℝ) ^ Q.card * (x : ℝ) *

@@ -25,7 +25,6 @@ noncomputable section
 
 variable (ell : ℕ) [Fact ell.Prime]
 variable {K : Type*} [Field K] [NumberField K]
-  [IsCyclotomicExtension {ell} ℚ K]
 
 /-- Inert auxiliary primes whose rational prime is coprime to the norm of
 the fixed correction ideal. -/
@@ -208,6 +207,8 @@ theorem selectedCoprimeInertAuxiliaryPrimes_prod_le_modulusBound
     (selectedCoprimeInertAuxiliaryPrimes_card_le ell J t)
   intro q hq
   exact (selectedCoprimeInertAuxiliaryPrimes_lt ell hq).le
+
+variable [IsCyclotomicExtension {ell} ℚ K]
 
 theorem selectedCoprimeInertAuxiliaryPrimes_span_isPrime
     {J : Ideal (𝓞 K)} {t q : ℕ}

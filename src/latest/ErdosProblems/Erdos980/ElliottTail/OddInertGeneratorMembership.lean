@@ -197,7 +197,7 @@ noncomputable def exceptionalGeneratorFiber (t x : ℕ)
   constructor
   · exact fun h ↦ h.2
   · intro h
-    exact ⟨by simpa using p.2, h⟩
+    exact ⟨by simp, h⟩
 
 /-- The balanced algebraic integer attached to an exceptional conductor. -/
 noncomputable def exceptionalBalancedGenerator (t x : ℕ)
@@ -591,9 +591,9 @@ theorem exceptionalBalanced_powerClass_eq_of_same_tag
   let v₂ := unitResidueRepresentative ell K d₂.unitResidueIndex
   have hv : v₁ = v₂ := by simp [v₁, v₂, hr]
   have hb₁ : d₁.balancedGenerator = (v₁ : 𝓞 K) * d₁.primaryGenerator := by
-    simp [d₁.primaryGenerator_eq, v₁, mul_assoc]
+    simp [d₁.primaryGenerator_eq, v₁]
   have hb₂ : d₂.balancedGenerator = (v₂ : 𝓞 K) * d₂.primaryGenerator := by
-    simp [d₂.primaryGenerator_eq, v₂, mul_assoc]
+    simp [d₂.primaryGenerator_eq, v₂]
   let Pq := rationalModulusIdeal K q
   have hPqprime : Pq.IsPrime := by
     simpa [Pq, rationalModulusIdeal] using
@@ -775,11 +775,11 @@ theorem exceptionalBalancedUnitTensor_mem_inertPowerClassCoordinateCell
     (hp₀ : p₀ ∈ exceptionalGeneratorFiber ell K t x tag)
     (hp : p ∈ exceptionalGeneratorFiber ell K t x tag) :
     inertLocalUnitsCoordinateEmbedding K Q
-        (fun q hq ↦ inertAuxiliaryPrimes_prime ell (hQ hq))
+        (fun _ hq ↦ inertAuxiliaryPrimes_prime ell (hQ hq))
         (tagCorrectionIdeal ell K tag) hcop
         (exceptionalBalancedUnitTensor ell K Q hQ tag hcop p hp) ∈
       inertPowerClassCoordinateCell ell K Q
-        (fun q hq ↦ inertAuxiliaryPrimes_prime ell (hQ hq))
+        (fun _ hq ↦ inertAuxiliaryPrimes_prime ell (hQ hq))
         (tagCorrectionIdeal ell K tag) hcop
         (exceptionalBalancedPowerClassPattern
           ell K Q hQ tag hcop p₀ hp₀) := by
@@ -853,7 +853,7 @@ theorem inertLocalUnitsCoordinateEmbedding_exceptional_eq_coordinateResidue
     (p : ExceptionalPrime ell t x)
     (hp : p ∈ exceptionalGeneratorFiber ell K t x tag) :
     inertLocalUnitsCoordinateEmbedding K Q
-        (fun q hq ↦ inertAuxiliaryPrimes_prime ell (hQ hq))
+        (fun _ hq ↦ inertAuxiliaryPrimes_prime ell (hQ hq))
         (tagCorrectionIdeal ell K tag) hcop
         (exceptionalBalancedUnitTensor ell K Q hQ tag hcop p hp) =
       coordinateResidue K (tagCorrectionIdeal ell K tag)
@@ -893,7 +893,7 @@ theorem inertLocalUnitsCoordinateEmbedding_exceptional_eq_coordinateResidue
           InertLocalRing K Q q) =
         Ideal.Quotient.mk (rationalModulusIdeal K q.1) bJ.1 := by
     simp only [exceptionalBalancedUnitTensor, exceptionalBalancedLocalUnit,
-      exceptionalBalancedGenerator, quotientUnitOfNotMem, bJ, J]
+      exceptionalBalancedGenerator, quotientUnitOfNotMem, bJ]
     rfl
   have hcoords :
       (fixedIdealCoordinateQuotientEquiv K J q.1
@@ -945,7 +945,7 @@ theorem embedding_mem_generatorCongruenceCell_coordinateResidue
     simp only [
       (Pi.basisFun ℝ (NumberField.mixedEmbedding.index K)).mem_span_iff_repr_mem
         ℤ zr,
-      Pi.basisFun_repr, Set.mem_range, eq_intCast, eq_comm]
+      Pi.basisFun_repr, Set.mem_range, eq_intCast]
     intro i
     exact ⟨z i, rfl⟩
   rw [generatorCongruenceCell]
@@ -982,7 +982,7 @@ theorem exceptionalBalancedGenerator_mem_tensorGeneratorCongruenceCell
       generatorCongruenceCell (tagCorrectionIdeal ell K tag)
         (inertTensorModulus Q)
         (inertLocalUnitsCoordinateEmbedding K Q
-          (fun q hq ↦ inertAuxiliaryPrimes_prime ell (hQ hq))
+          (fun _ hq ↦ inertAuxiliaryPrimes_prime ell (hQ hq))
           (tagCorrectionIdeal ell K tag) hcop
           (exceptionalBalancedUnitTensor ell K Q hQ tag hcop p hp)) := by
   classical

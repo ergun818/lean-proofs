@@ -18,7 +18,7 @@ open scoped BigOperators Topology
 /-- A finite collection of nonnegative weights, each at most `B`, has total
 mass at most its cardinality times `B`. -/
 lemma sum_le_card_mul_of_nonneg_of_le
-    {α : Type*} [DecidableEq α] (s : Finset α) (w : α → ℝ) (B : ℝ)
+    {α : Type*} (s : Finset α) (w : α → ℝ) (B : ℝ)
     (_hw : ∀ a ∈ s, 0 ≤ w a) (hB : ∀ a ∈ s, w a ≤ B) :
     ∑ a ∈ s, w a ≤ (s.card : ℝ) * B := by
   simpa [nsmul_eq_mul] using
@@ -28,7 +28,7 @@ lemma sum_le_card_mul_of_nonneg_of_le
 mass.  This is the finite inequality used on the range
 `n_k(p) > (log x)^A`. -/
 theorem exceptionalWeightedMass_le
-    {α : Type*} [DecidableEq α] (s : Finset α) (w : α → ℝ)
+    {α : Type*} (s : Finset α) (w : α → ℝ)
     (C D X : ℝ) (a b : ℝ)
     (hw : ∀ p ∈ s, 0 ≤ w p)
     (hcard : (s.card : ℝ) ≤ C * X ^ a)
@@ -44,7 +44,7 @@ theorem exceptionalWeightedMass_le
 
 /-- The same finite bound with the two real powers combined. -/
 theorem exceptionalWeightedMass_le_rpow_add
-    {α : Type*} [DecidableEq α] (s : Finset α) (w : α → ℝ)
+    {α : Type*} (s : Finset α) (w : α → ℝ)
     (C D X : ℝ) (a b : ℝ)
     (hw : ∀ p ∈ s, 0 ≤ w p)
     (hcard : (s.card : ℝ) ≤ C * X ^ a)

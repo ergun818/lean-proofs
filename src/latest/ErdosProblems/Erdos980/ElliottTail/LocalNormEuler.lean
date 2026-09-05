@@ -296,7 +296,7 @@ private lemma rationalPrimeIdealFactors_disjoint
     exact sup_le hsle htle
   have hPprime : Prime P :=
     UniqueFactorizationMonoid.prime_of_factor _ hPs'
-  exact hPprime.not_unit (Ideal.isUnit_iff.mpr htop)
+  exact hPprime.not_isUnit (Ideal.isUnit_iff.mpr htop)
 
 private lemma rationalPrimeIdealFactors_pairwiseDisjoint
     (K : Type*) [Field K] [NumberField K] (w : ℕ) :
@@ -405,19 +405,20 @@ theorem eventually_rationalPrimeNormSieveProduct_le
 If the zero set of a supplied norm form corresponds exactly to the nonunits of the quotient,
 then its complementary density is the unit density. -/
 theorem one_sub_badResidueDensity_eq_unitRatio
-    {X R : Type*} [Fintype X] [CommRing R] [Finite R]
+    {X R : Type*} [Finite X] [CommRing R] [Finite R]
     (e : X ≃ R) (bad : Finset X)
     (hbad : ∀ x : X, x ∈ bad ↔ ¬ IsUnit (e x)) :
     1 - (bad.card : ℝ) / Nat.card X =
       (Nat.card Rˣ : ℝ) / Nat.card R := by
   classical
+  let := Fintype.ofFinite X
   let Good := {x : X // x ∉ bad}
   let eu : Rˣ ≃ Good :=
     { toFun := fun u ↦ ⟨e.symm (u : R), by
         intro hmem
         have hnonunit : ¬ IsUnit (e (e.symm (u : R))) :=
           (hbad _).mp hmem
-        exact hnonunit (by simpa using u.isUnit)⟩
+        exact hnonunit (by simp)⟩
       invFun := fun x ↦ by
         have hxunit : IsUnit (e (x : X)) := by
           by_contra hnonunit
@@ -496,7 +497,7 @@ theorem one_sub_coordinateNormResidueDensity_eq_unitRatio
   push_cast at h
   exact h
 
-private noncomputable def rationalPrimeQuotientFinite
+private theorem rationalPrimeQuotientFinite
     (K : Type*) [Field K] [NumberField K]
     (p : ℕ) (hp : p.Prime) :
     Finite (RingOfIntegers K ⧸ rationalModulusIdeal K p) :=
@@ -709,7 +710,7 @@ private theorem prime_dvd_absNorm_span_iff_nonunit_mod
       rw [Ideal.Quotient.factor_mk, Ideal.Quotient.eq_zero_iff_mem.mpr haP]
     have hu := hunit.map f
     rw [hzero] at hu
-    simpa using hu
+    simp at hu
   · intro hnonunit
     obtain ⟨M, hMmax, haM⟩ := exists_max_ideal_of_mem_nonunits hnonunit
     let P : Ideal (RingOfIntegers K) :=

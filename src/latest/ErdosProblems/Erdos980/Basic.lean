@@ -10,8 +10,6 @@ to `1` modulo `k` (or when `k < 2`) the value is defined to be zero.
 
 namespace Erdos980
 
-open scoped Classical
-
 /-- The primes for which the `k`-th-power map on nonzero residues need not be
 surjective, in the normalization used by Elliott. -/
 def Eligible (k p : ℕ) : Prop := p.Prime ∧ p ≡ 1 [MOD k]
@@ -82,6 +80,7 @@ theorem exists_kthPowerNonresidue {k p : ℕ} (hk : 2 ≤ k)
 
 /-- Elliott's total normalization of the least `k`-th-power nonresidue. -/
 noncomputable def leastKthPowerNonresidue (k p : ℕ) : ℕ :=
+  open Classical in
   if h : 2 ≤ k ∧ Eligible k p then
     Nat.find (exists_kthPowerNonresidue h.1 h.2)
   else 0
@@ -94,12 +93,14 @@ theorem leastKthPowerNonresidue_eq_zero_of_not_eligible {k p : ℕ}
 theorem leastKthPowerNonresidue_spec {k p : ℕ} (hk : 2 ≤ k)
     (hp : Eligible k p) :
     IsKthPowerNonresidue k p (leastKthPowerNonresidue k p) := by
+  classical
   rw [leastKthPowerNonresidue, dif_pos ⟨hk, hp⟩]
   exact Nat.find_spec (exists_kthPowerNonresidue hk hp)
 
 theorem leastKthPowerNonresidue_minimal {k p a : ℕ} (hk : 2 ≤ k)
     (hp : Eligible k p) (ha : IsKthPowerNonresidue k p a) :
     leastKthPowerNonresidue k p ≤ a := by
+  classical
   rw [leastKthPowerNonresidue, dif_pos ⟨hk, hp⟩]
   exact Nat.find_min' (exists_kthPowerNonresidue hk hp) ha
 

@@ -247,7 +247,7 @@ structure NormResidueModel (D : Data K A) where
     (D.conductorNorm a : ZMod d)
 
 theorem NormResidueModel.dvd_conductorNorm_iff_mem
-    [DecidableEq A] {D : Data K A} (M : NormResidueModel D)
+    {D : Data K A} (M : NormResidueModel D)
     (d : ℕ) [NeZero d] (a : A) :
     d ∣ D.conductorNorm a ↔
       M.residueVector d a ∈ normDivisibleResidues K d (M.normMod d) := by
@@ -483,7 +483,7 @@ theorem exists_generatorOfCoordinate
     change z ∈ Submodule.span ℤ
       (Set.range (Pi.basisFun ℝ (NumberField.mixedEmbedding.index K)))
     simp only [(Pi.basisFun ℝ (NumberField.mixedEmbedding.index K)).mem_span_iff_repr_mem
-      ℤ z, Pi.basisFun_repr, Set.mem_range, eq_intCast, eq_comm]
+      ℤ z, Pi.basisFun_repr, Set.mem_range, eq_intCast]
     intro i
     exact ⟨((k i).val : ℤ), by simp [z]⟩
   have hchart : generatorCongruenceTranslate J k ∈
@@ -901,7 +901,7 @@ theorem CRTNormResidueSystem.exists_uniform_normDivisibleGeneratorCellCount_of_p
     (K : Type*) [Field K] [NumberField K]
     (J : (Ideal (NumberField.RingOfIntegers K))⁰)
     (M : CRTNormResidueSystem K) :
-    ∃ C : ℝ, 0 ≤ C ∧ ∀ (d k : ℕ) [NeZero d] (hd : Squarefree d)
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (d k : ℕ) [NeZero d] (_ : Squarefree d)
       (t : ℝ), (d : ℝ) ≤ t →
       (∀ p ∈ d.primeFactors,
         M.rootCount K p ≤

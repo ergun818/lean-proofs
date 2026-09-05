@@ -320,7 +320,7 @@ def realRosserCellEnvelope (r k : ℕ) (eta C : ℝ) (x : ℝ) : ℝ :=
 /-- Once `eta < 1/r`, every fixed-dimensional Rosser cell remainder is
 negligible on the prime-counting scale. -/
 theorem realRosserCellEnvelope_isLittleO
-    {r k : ℕ} {eta C : ℝ} (hr : 0 < r) (heta : eta < (r : ℝ)⁻¹) :
+    {r k : ℕ} {eta C : ℝ} (_ : 0 < r) (heta : eta < (r : ℝ)⁻¹) :
     (realRosserCellEnvelope r k eta C) =o[atTop]
       (fun x : ℝ ↦ x / Real.log x) := by
   let delta : ℝ := (r : ℝ)⁻¹ - eta
@@ -360,7 +360,7 @@ theorem realRosserCellEnvelope_isLittleO
 power.  This stronger form is what makes the estimate uniform all the way up
 to the polylogarithmic cutoff `smoothParameterY`. -/
 theorem realRosserCellEnvelope_isLittleO_logPow
-    {r k : ℕ} {eta C : ℝ} (q : ℕ) (hr : 0 < r)
+    {r k : ℕ} {eta C : ℝ} (q : ℕ) (_ : 0 < r)
     (heta : eta < (r : ℝ)⁻¹) :
     (realRosserCellEnvelope r k eta C) =o[atTop]
       (fun x : ℝ ↦ x / Real.log x ^ q) := by

@@ -19,7 +19,7 @@ Pólya--Vinogradov to the initial interval preceding the least nonresidue.
 namespace Erdos980
 
 open Filter
-open scoped BigOperators Classical
+open scoped BigOperators
 
 /-- Every nonprincipal character of prime level is primitive. -/
 theorem dirichletCharacter_isPrimitive_of_prime_of_ne_one
@@ -39,6 +39,7 @@ theorem exists_exactOrder_powerDetectingCharacter {k p : ℕ} (hk : 2 ≤ k)
     ∃ chi : DirichletCharacter ℂ p,
       chi ≠ 1 ∧ orderOf chi = k ∧ chi.IsPrimitive ∧
         ∀ b : ZMod p, IsUnit b → chi (b ^ k) = 1 := by
+  classical
   let : Fact p.Prime := ⟨hp.1⟩
   let : IsCyclic (ZMod p)ˣ := ZMod.isCyclic_units_prime hp.1
   let : IsCyclic (DirichletCharacter ℂ p) :=
