@@ -29,5 +29,5 @@ def Erdos848For (N : ℕ) : Prop :=
   ∀ A : Finset ℕ, A ⊆ Finset.range N → NonSquarefreeProductProp A →
     A.card ≤ (A₇ N).card
 
-theorem erdos_848.variants.erdos_848 : ∀ᶠ N in Filter.atTop, Erdos848For N := by
+theorem erdos_848 : ∀ᶠ N in Filter.atTop, Erdos848For N := by
   sorry
