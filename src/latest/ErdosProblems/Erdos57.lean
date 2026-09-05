@@ -2545,8 +2545,7 @@ lemma finTwo_val_add_eq_of_eq_iff_eq (a b c d : Fin 2)
     rcases fin_two_eq_zero_or_one b with rfl | rfl <;>
     rcases fin_two_eq_zero_or_one c with rfl | rfl <;>
     rcases fin_two_eq_zero_or_one d with rfl | rfl <;>
-    simp_all only [Fin.isValue, Fin.coe_ofNat_eq_mod, Nat.mod_succ, Nat.cast_one, Nat.zero_mod,
-    Nat.cast_zero, add_zero] <;> decide
+    (revert h; decide)
 
 lemma finTwo_cross_val_add_eq_of_eq_iff_eq (a b c d : Fin 2)
     (h : (a = b ↔ c = d)) :
@@ -2555,8 +2554,7 @@ lemma finTwo_cross_val_add_eq_of_eq_iff_eq (a b c d : Fin 2)
     rcases fin_two_eq_zero_or_one b with rfl | rfl <;>
     rcases fin_two_eq_zero_or_one c with rfl | rfl <;>
     rcases fin_two_eq_zero_or_one d with rfl | rfl <;>
-    simp_all only [Fin.isValue, Fin.coe_ofNat_eq_mod, Nat.mod_succ, Nat.cast_one, Nat.zero_mod,
-    Nat.cast_zero, add_zero] <;> decide
+    (revert h; decide)
 
 /-- If the two pairs of binary colors contribute odd total parity, equality
 inside the first pair cannot be equivalent to equality inside the second. -/
@@ -2786,7 +2784,8 @@ lemma incidenceWalk_length_cast {V : Type*} [Fintype V]
       ((D P).color v).val := by
   rw [incidenceWalk_length]
   rcases fin_two_eq_zero_or_one ((D P).color v) with h | h <;>
-    simp only [Fin.isValue, Nat.cast_ite, Nat.cast_ofNat, Nat.cast_one] <;> decide
+    norm_num [h]
+  decide
 
 lemma incidenceWalk_isPath {V : Type*} [Fintype V]
     {A : Finset (PackedSubgraph V)} {T : ℕ}
@@ -4013,7 +4012,6 @@ lemma familyAuxSinglePieceSide_ne_of_adj {V : Type*} [Fintype V]
           | inr Qw =>
               rcases Qw with ⟨Q, w⟩
               have h := hxy
-              simp only [ne_eq] at h
               rcases h with ⟨rfl, hw, hQ⟩
               rcases fin_two_eq_zero_or_one ((D P).color v) with h0 | h1
               · simp [familyAuxSinglePieceSide, h0]
@@ -4034,7 +4032,6 @@ lemma familyAuxSinglePieceSide_ne_of_adj {V : Type*} [Fintype V]
               | inr Rv =>
                   rcases Rv with ⟨R, v⟩
                   have h := hxy
-                  simp only [ne_eq] at h
                   rcases h with ⟨rfl, hv, h0⟩
                   simp [familyAuxSinglePieceSide, h0]
       | inr Qv =>
@@ -4042,7 +4039,6 @@ lemma familyAuxSinglePieceSide_ne_of_adj {V : Type*} [Fintype V]
           cases y with
           | inl w =>
               have h := hxy
-              simp only [ne_eq] at h
               rcases h with ⟨rfl, hv, hQ⟩
               rcases fin_two_eq_zero_or_one ((D P).color w) with h0 | h1
               · simp [familyAuxSinglePieceSide, h0]
@@ -4053,7 +4049,6 @@ lemma familyAuxSinglePieceSide_ne_of_adj {V : Type*} [Fintype V]
                   have hRP : R = P := hy R rfl
                   subst R
                   have h := hxy
-                  simp only [ne_eq] at h
                   rcases h with ⟨rfl, hv, h0⟩
                   simp [familyAuxSinglePieceSide, h0]
               | inr Rw => simp [familyAuxGraph, familyAuxAdj] at hxy
@@ -4905,13 +4900,15 @@ lemma familyAuxNeighbor_eq_of_root {V : Type*} [Fintype V]
               rcases Qb with ⟨Q, b⟩
               have hx' := hx
               have hy' := hy
-              simp only [reduceCtorEq] at hx' hy'
-              simp only [reduceCtorEq] at hrootx hrooty
+              replace hrootx : a = v := Option.some.inj hrootx
+              replace hrooty : b = v := Option.some.inj hrooty
               subst a
               subst b
               have hQP : Q = P := hy'.1.symm
+              have hzero := hy'.2.2
               subst Q
-              exact (by simp_all : False).elim
+              exact ((by decide : (0 : Fin 2) ≠ 1)
+                (hzero.symm.trans hx'.2)).elim
   | inr p =>
       cases p with
       | inl Q => simp [familyAuxRoot] at hrootx
@@ -4921,13 +4918,15 @@ lemma familyAuxNeighbor_eq_of_root {V : Type*} [Fintype V]
           | inl b =>
               have hx' := hx
               have hy' := hy
-              simp only [reduceCtorEq] at hx' hy'
-              simp only [reduceCtorEq] at hrootx hrooty
+              replace hrootx : a = v := Option.some.inj hrootx
+              replace hrooty : b = v := Option.some.inj hrooty
               subst a
               subst b
               have hQP : Q = P := hx'.1.symm
+              have hzero := hx'.2.2
               subst Q
-              exact (by simp_all : False).elim
+              exact ((by decide : (0 : Fin 2) ≠ 1)
+                (hzero.symm.trans hy'.2)).elim
           | inr q =>
               cases q with
               | inl R => simp [familyAuxRoot] at hrooty
@@ -4935,7 +4934,6 @@ lemma familyAuxNeighbor_eq_of_root {V : Type*} [Fintype V]
                   rcases Rb with ⟨R, b⟩
                   have hx' := hx
                   have hy' := hy
-                  simp only [Sum.inr.injEq, Prod.mk.injEq] at hx' hy'
                   simp [familyAuxRoot] at hrootx hrooty
                   subst a
                   subst b
@@ -5168,7 +5166,8 @@ lemma piece_incidence_bits_eq_residue {V : Type*} [Fintype V]
       ((D P.1).color (auxPieceRight c hc hcodd P)) with hR | hR <;>
     rcases fin_two_eq_zero_or_one
       ((D P.1).color (auxPieceLeft c hc hcodd P)) with hL | hL <;>
-    simp only [Fin.isValue] <;> decide
+    norm_num [FlexiblePathData.residue, hR, hL]
+  decide
 
 /-- Double-counting the directed darts of a simple auxiliary cycle groups
 its incidence sum into the two incidences at each piece node. -/
