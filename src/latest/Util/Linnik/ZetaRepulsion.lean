@@ -13,7 +13,7 @@ gap.  This will be combined with the ordinary strong prime number theorem.
 namespace Linnik
 
 open Complex Erdos48 BoundedGaps.Maynard
-open scoped BigOperators Classical
+open scoped BigOperators
 
 theorem rpow_le_of_exp_repulsion
     {x sigma R H lambda : ℝ} (hx : 0 < x) (hsigma : sigma ≤ 1)
@@ -112,7 +112,8 @@ theorem exists_zetaKernel_exceptional_bound :
     have h := mul_le_mul_of_nonneg_left (hpoint rho hrho)
       (Nat.cast_nonneg (α := ℝ) (analyticOrderNatAt
         (DirichletCharacter.LFunction (1 : DirichletCharacter ℂ 1)) rho))
-    convert h using 1 <;> ring
+    convert h using 1
+    ring
   have hcount' : dirichletNontrivialZeroReciprocalMultiplicitySum
       (1 : DirichletCharacter ℂ 1) T ≤ 8 * B * H ^ 2 := by
     have h := hcount 1 1 T hT

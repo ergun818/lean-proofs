@@ -23,7 +23,8 @@ theorem one_sub_exp_neg_half_ge_min {y : ℝ} (hy : 0 ≤ y) :
     calc
       Real.exp (-y / 2) ≤ Real.exp (-(v / 2)) := Real.exp_le_exp.mpr (by linarith)
       _ = 1 / Real.exp (v / 2) := by rw [Real.exp_neg, one_div]
-      _ ≤ 1 / (1 + v / 2) := one_div_le_one_div_of_le hden (by linarith [Real.add_one_le_exp (v / 2)])
+      _ ≤ 1 / (1 + v / 2) :=
+        one_div_le_one_div_of_le hden (by linarith [Real.add_one_le_exp (v / 2)])
   have hfrac : 1 / (1 + v / 2) ≤ 1 - v / 4 := by
     apply (div_le_iff₀ hden).mpr
     nlinarith [mul_nonneg hv₀ (sub_nonneg.mpr hv₁)]

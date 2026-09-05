@@ -12,7 +12,7 @@ gap is used in this step.
 namespace Linnik
 
 open Complex Erdos48 BoundedGaps.Maynard
-open scoped BigOperators Classical
+open scoped BigOperators
 
 local instance {Q : ℕ} (q : ↥(Finset.Ioc 1 Q)) : NeZero q.val :=
   ⟨by have hq := (Finset.mem_Ioc.mp q.property).1; omega⟩
@@ -38,9 +38,11 @@ theorem exists_family_moment_bounds {epsilon : ℝ} (hepsilon : 0 < epsilon) :
             upperHighZeroWeight i * Real.exp (-D * (H * upperHighZeroGap i))) ≤ epsilon) ∧
         (∀ i₀ : upperHighZeroIndex Q T, H * upperHighZeroGap i₀ ≤ kappa →
           i₀.2.1.1 ^ 2 = 1 ∧ i₀.2.2.val.im = 0 ∧ upperHighZeroWeight i₀ = 1 ∧
-          (∑ i ∈ (Finset.univ : Finset (upperHighZeroIndex Q T)).erase i₀,
+          (∑ i ∈ (open scoped Classical in
+              (Finset.univ : Finset (upperHighZeroIndex Q T)).erase i₀),
             upperHighZeroWeight i * Real.exp (-D * (H * upperHighZeroGap i))) ≤
               epsilon * (H * upperHighZeroGap i₀)) := by
+  classical
   obtain ⟨kappa, hkappa, hkappa₁, hwidth⟩ := exists_family_exceptional_width
   obtain ⟨H₀, C, c, hH₀, hC, hc, hmoment⟩ := exists_upperHighZero_moment_bound
   obtain ⟨A, hA, hrepulsion⟩ := exists_crossLevel_exceptional_zero_repulsion

@@ -12,7 +12,7 @@ moment parameter dominates the density exponent.
 namespace Linnik
 
 open Complex Erdos48 BoundedGaps.Maynard
-open scoped BigOperators Classical
+open scoped BigOperators
 
 local instance conductorSubtype_neZero {Q : ℕ} (q : ↥(Finset.Ioc 1 Q)) : NeZero q.val :=
   ⟨by have hq := (Finset.mem_Ioc.mp q.property).1; omega⟩
@@ -74,18 +74,18 @@ theorem upperHighZero_cumulative_weight_le
   unfold primitiveHighZeroMass
   push_cast
   rw [Finset.sum_subtype (Finset.Ioc 1 Q) (fun _ ↦ Iff.rfl)]
-  simp only [Fintype.sum_sigma]
-  apply Finset.sum_le_sum
-  intro q _
-  apply Finset.sum_le_sum
-  intro psi _
-  rw [primitiveHighZeroMassAt_eq (Finset.mem_Ioc.mp q.property).1]
-  have h := filtered_smallRectangle_mass_le (Finset.mem_Ioc.mp q.property).1
-    psi hT hH heta j hEta
-  rw [Finset.sum_filter, Finset.sum_subtype
-    (highZeroRectangle (Finset.mem_Ioc.mp q.property).1 psi.1 psi.2 (1 / 16) T)
-    (fun _ ↦ Iff.rfl)] at h
-  exact h
+  · simp only [Fintype.sum_sigma]
+    apply Finset.sum_le_sum
+    intro q _
+    apply Finset.sum_le_sum
+    intro psi _
+    rw [primitiveHighZeroMassAt_eq (Finset.mem_Ioc.mp q.property).1]
+    have h := filtered_smallRectangle_mass_le (Finset.mem_Ioc.mp q.property).1
+      psi hT hH heta j hEta
+    rw [Finset.sum_filter, Finset.sum_subtype
+      (highZeroRectangle (Finset.mem_Ioc.mp q.property).1 psi.1 psi.2 (1 / 16) T)
+      (fun _ ↦ Iff.rfl)] at h
+    exact h
 
 theorem upperHighZero_moment_le_of_density
     {Q : ℕ} {T H C c : ℝ} (hT : 0 ≤ T) (hH : 16 ≤ H)

@@ -13,7 +13,7 @@ radius-twelve disks as the primitive L-functions.
 namespace Linnik
 
 open Complex Metric BoundedGaps.Maynard
-open scoped BigOperators Classical
+open scoped BigOperators
 
 theorem norm_primeEulerProduct_le_pow
     {q d : ℕ} [NeZero q] (psi : DirichletCharacter ℂ d)
@@ -109,6 +109,7 @@ theorem exists_nonprincipal_radiusTwelve_bound :
 /-- Remove the principal pole, leaving every nonprincipal character unchanged. -/
 noncomputable def regularizedLFunction {q : ℕ} [NeZero q]
     (chi : DirichletCharacter ℂ q) : ℂ → ℂ :=
+  open scoped Classical in
   if chi = 1 then DirichletCharacter.LFunctionTrivChar₁ q
   else DirichletCharacter.LFunction chi
 
@@ -123,7 +124,8 @@ theorem differentiable_regularizedLFunction {q : ℕ} [NeZero q]
 theorem regularizedLFunction_eq_mul {q : ℕ} [NeZero q]
     (chi : DirichletCharacter ℂ q) {s : ℂ} (hs : s ≠ 1) :
     regularizedLFunction chi s =
-      (if chi = 1 then s - 1 else 1) * DirichletCharacter.LFunction chi s := by
+      (open scoped Classical in if chi = 1 then s - 1 else 1) *
+        DirichletCharacter.LFunction chi s := by
   classical
   by_cases hchi : chi = 1
   · subst chi
@@ -209,6 +211,7 @@ theorem exists_regularized_radiusTwelve_bound :
 theorem one_le_three_mul_norm_regularized_center {q : ℕ} [NeZero q]
     (chi : DirichletCharacter ℂ q) (t : ℝ) :
     1 ≤ 3 * ‖regularizedLFunction chi ((2 : ℂ) + t * I)‖ := by
+  classical
   let c : ℂ := (2 : ℂ) + t * I
   have hc₁ : c ≠ 1 := by
     intro h

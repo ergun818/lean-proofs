@@ -12,7 +12,7 @@ appears once, not twice.
 namespace Linnik
 
 open Complex Erdos48 BoundedGaps.Maynard
-open scoped BigOperators Classical
+open scoped BigOperators
 
 local instance {Q : ℕ} (q : ↥(Finset.Ioc 1 Q)) : NeZero q.val :=
   ⟨by have hq := (Finset.mem_Ioc.mp q.property).1; omega⟩
@@ -52,16 +52,16 @@ theorem sum_upperKernel_norm_le_index
       ‖primitiveHighZeroRealBandKernelSumAt q psi x 0 (1 / 16) T‖) ≤
       ∑ i : upperHighZeroIndex Q T, upperHighZeroKernelWeight x i := by
   rw [Finset.sum_subtype (Finset.Ioc 1 Q) (fun _ ↦ Iff.rfl)]
-  simp only [upperHighZeroIndex, upperHighZeroKernelWeight, Fintype.sum_sigma]
-  apply Finset.sum_le_sum
-  intro q _
-  apply Finset.sum_le_sum
-  intro psi _
-  have hq := (Finset.mem_Ioc.mp q.property).1
-  rw [primitiveHighZeroRealBandKernelSumAt_eq hq, highZeroRealBandKernelSum,
-    highZeroRealBand_zero_eq_rectangle hq psi (by norm_num) hT,
-    Finset.sum_subtype (highZeroRectangle hq psi.1 psi.2 (1 / 16) T) (fun _ ↦ Iff.rfl)]
-  exact norm_sum_le _ _
+  · simp only [upperHighZeroIndex, upperHighZeroKernelWeight, Fintype.sum_sigma]
+    apply Finset.sum_le_sum
+    intro q _
+    apply Finset.sum_le_sum
+    intro psi _
+    have hq := (Finset.mem_Ioc.mp q.property).1
+    rw [primitiveHighZeroRealBandKernelSumAt_eq hq, highZeroRealBandKernelSum,
+      highZeroRealBand_zero_eq_rectangle hq psi (by norm_num) hT,
+      Finset.sum_subtype (highZeroRectangle hq psi.1 psi.2 (1 / 16) T) (fun _ ↦ Iff.rfl)]
+    exact norm_sum_le _ _
 
 theorem sum_positiveKernel_norm_le_index
     {Q : ℕ} {x T : ℝ} (hT : 0 ≤ T) :
@@ -70,21 +70,21 @@ theorem sum_positiveKernel_norm_le_index
       ∑ i ∈ (Finset.univ : Finset (upperHighZeroIndex Q T)).filter (fun i ↦ 0 < i.2.2.val.im),
         upperHighZeroKernelWeight x i := by
   rw [Finset.sum_filter, Finset.sum_subtype (Finset.Ioc 1 Q) (fun _ ↦ Iff.rfl)]
-  simp only [upperHighZeroIndex, upperHighZeroKernelWeight, Fintype.sum_sigma]
-  apply Finset.sum_le_sum
-  intro q _
-  apply Finset.sum_le_sum
-  intro psi _
-  have hq := (Finset.mem_Ioc.mp q.property).1
-  rw [primitiveHighZeroPositiveRealBandKernelSumAt_eq hq, highZeroPositiveRealBandKernelSum,
-    highZeroPositiveRealBand, highZeroRealBand_zero_eq_rectangle hq psi (by norm_num) hT,
-    Finset.sum_filter,
-    Finset.sum_subtype (highZeroRectangle hq psi.1 psi.2 (1 / 16) T) (fun _ ↦ Iff.rfl)]
-  simpa only [apply_ite, norm_zero] using norm_sum_le Finset.univ
-    (fun rho : ↥(highZeroRectangle hq psi.1 psi.2 (1 / 16) T) ↦
-      if 0 < rho.val.im then
-        (analyticOrderNatAt (DirichletCharacter.LFunction psi.1) rho.val : ℂ) *
-          dirichletExplicitFormulaKernel x rho.val else 0)
+  · simp only [upperHighZeroIndex, upperHighZeroKernelWeight, Fintype.sum_sigma]
+    apply Finset.sum_le_sum
+    intro q _
+    apply Finset.sum_le_sum
+    intro psi _
+    have hq := (Finset.mem_Ioc.mp q.property).1
+    rw [primitiveHighZeroPositiveRealBandKernelSumAt_eq hq, highZeroPositiveRealBandKernelSum,
+      highZeroPositiveRealBand, highZeroRealBand_zero_eq_rectangle hq psi (by norm_num) hT,
+      Finset.sum_filter,
+      Finset.sum_subtype (highZeroRectangle hq psi.1 psi.2 (1 / 16) T) (fun _ ↦ Iff.rfl)]
+    simpa only [apply_ite, norm_zero] using norm_sum_le Finset.univ
+      (fun rho : ↥(highZeroRectangle hq psi.1 psi.2 (1 / 16) T) ↦
+        if 0 < rho.val.im then
+          (analyticOrderNatAt (DirichletCharacter.LFunction psi.1) rho.val : ℂ) *
+            dirichletExplicitFormulaKernel x rho.val else 0)
 
 theorem sum_primitiveKernel_norm_le_upper_positive_far
     {Q : ℕ} {x T : ℝ} (hx : 0 < x) (hT : 0 ≤ T) :
@@ -158,12 +158,14 @@ theorem sum_primitiveKernel_norm_le_exceptional_moment_add_far
     {Q : ℕ} {x T D H E : ℝ} (hx : 1 ≤ x) (hT : 0 ≤ T)
     (hscale : D * H ≤ Real.log x) (i₀ : upperHighZeroIndex Q T)
     (him : i₀.2.2.val.im = 0) (hweight : upperHighZeroWeight i₀ = 1)
-    (hmoment : (∑ i ∈ (Finset.univ : Finset (upperHighZeroIndex Q T)).erase i₀,
+    (hmoment : (∑ i ∈ (open scoped Classical in
+        (Finset.univ : Finset (upperHighZeroIndex Q T)).erase i₀),
       upperHighZeroWeight i * Real.exp (-D * (H * upperHighZeroGap i))) ≤ E) :
     (∑ q ∈ Finset.Ioc 1 Q, ∑ psi : primitiveCharacters q,
       ‖primitiveZeroKernelSumAt q psi x T‖) ≤
       ‖dirichletExplicitFormulaKernel x (i₀.2.2.val.re : ℂ)‖ +
       8 * x * E + primitiveFarZeroKernelMass Q x (1 / 16) 0 T := by
+  classical
   let S : Finset (upperHighZeroIndex Q T) := Finset.univ.erase i₀
   have hsum := (sum_upperHighZeroKernelWeight_le_moment hx hT hscale S).trans
     (mul_le_mul_of_nonneg_left hmoment (by positivity : 0 ≤ 4 * x))

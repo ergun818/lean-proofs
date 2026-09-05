@@ -11,7 +11,7 @@ higher prime powers.  The analytic estimates are supplied separately.
 namespace Linnik
 
 open Erdos48 BoundedGaps.Maynard
-open scoped BigOperators Classical
+open scoped BigOperators
 
 theorem inducingEndpointMass_le_fullFamily
     {x q : ℕ} (hq : 0 < q) :

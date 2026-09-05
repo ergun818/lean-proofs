@@ -11,7 +11,6 @@ order in `1 - beta`.
 namespace Linnik
 
 open Complex
-open scoped Classical
 
 theorem quadratic_mul_right_cancel_self {q : ℕ}
     (chi1 chi : DirichletCharacter ℂ q) (hchi1 : chi1 ^ 2 = 1) :
@@ -46,6 +45,7 @@ theorem quadratic_pair_pole_sub_exceptional_eq {q : ℕ} [NeZero q]
     (principalPolePower chi t n + principalPolePower (chi * chi1) t n) -
       (removedExceptionalPower chi1 chi beta t n +
         removedExceptionalPower chi1 (chi * chi1) beta t n) =
+    open scoped Classical in
     if chi = 1 ∨ chi = chi1 then
       (((1 : ℂ) + t * I) ^ n)⁻¹ -
         (if |t| ≤ 4 then ((((2 - beta : ℝ) : ℂ) + t * I) ^ n)⁻¹ else 0)

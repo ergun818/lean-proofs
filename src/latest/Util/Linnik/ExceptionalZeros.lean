@@ -13,7 +13,7 @@ at larger height the principal pole itself is an exponentially small error.
 namespace Linnik
 
 open Complex Metric
-open scoped BigOperators Classical
+open scoped BigOperators
 
 theorem real_zero_mem_radiusSix {beta t : ℝ}
     (hbeta₀ : 0 < beta) (hbeta₁ : beta < 1) (ht : |t| ≤ 4) :
@@ -61,6 +61,7 @@ theorem reciprocalPowerSum_sub_single_one (D : ℂ →₀ ℕ) {beta : ℂ}
 
 noncomputable def remainingCharacterZeros {q : ℕ} [NeZero q]
     (chi1 chi : DirichletCharacter ℂ q) (beta t : ℝ) : ℂ →₀ ℕ :=
+  open scoped Classical in
   if chi = chi1 ∧ |t| ≤ 4 then
     characterDiskZeros chi t - Finsupp.single (beta : ℂ) 1
   else characterDiskZeros chi t
@@ -75,6 +76,7 @@ theorem remainingCharacterZeros_le {q : ℕ} [NeZero q]
 
 noncomputable def removedExceptionalPower {q : ℕ} [NeZero q]
     (chi1 chi : DirichletCharacter ℂ q) (beta t : ℝ) (n : ℕ) : ℂ :=
+  open scoped Classical in
   if chi = chi1 ∧ |t| ≤ 4 then (((2 : ℂ) + t * I - beta) ^ n)⁻¹ else 0
 
 theorem zeroPowerSum_eq_remaining_add_exceptional {q : ℕ} [NeZero q]

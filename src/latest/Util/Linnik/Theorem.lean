@@ -16,7 +16,7 @@ initial segment is absorbed in an absolute multiplicative constant.
 namespace Linnik
 
 open Filter Complex Erdos48 BoundedGaps.Maynard
-open scoped BigOperators Classical
+open scoped BigOperators
 
 local instance {Q : ℕ} (q : ↥(Finset.Ioc 1 Q)) : NeZero q.val :=
   ⟨by have hq := (Finset.mem_Ioc.mp q.property).1; omega⟩
@@ -40,6 +40,7 @@ theorem exists_fullFamily_endpoint_bound :
 theorem exists_eventual_polynomial_prime_bound :
     ∃ L : ℕ, 1 ≤ L ∧ ∀ᶠ n : ℕ in atTop,
       ∃ p : ℕ, p.Prime ∧ n ∣ p - 1 ∧ p ≤ n ^ L := by
+  classical
   obtain ⟨kappa, H₀, D, hkappa, hkappa₁, hH₀, hD, hfamily⟩ :=
     exists_family_moment_bounds (by norm_num : (0 : ℝ) < 1 / 512)
   obtain ⟨R, hR, hprincipal⟩ := exists_principal_powerScale_exceptional_error

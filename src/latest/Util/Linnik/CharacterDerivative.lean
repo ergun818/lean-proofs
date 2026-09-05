@@ -11,11 +11,12 @@ applying the finite zero-divisor estimate.
 namespace Linnik
 
 open Complex Metric Set
-open scoped BigOperators Classical
+open scoped BigOperators
 
 theorem neg_logDeriv_LFunction_eq_pole_sub_regularized
     {q : ℕ} [NeZero q] (chi : DirichletCharacter ℂ q)
     {s : ℂ} (hs : 1 < s.re) :
+    open scoped Classical in
     -logDeriv (DirichletCharacter.LFunction chi) s =
       (if chi = 1 then (s - 1)⁻¹ else 0) - logDeriv (regularizedLFunction chi) s := by
   have hs₁ : s ≠ 1 := by intro h; simp [h] at hs
@@ -37,6 +38,7 @@ theorem neg_logDeriv_LFunction_eq_pole_sub_regularized
 
 theorem iteratedDeriv_principal_pole {q : ℕ} [NeZero q]
     (chi : DirichletCharacter ℂ q) {s : ℂ} (k : ℕ) :
+    open scoped Classical in
     iteratedDeriv k (fun w : ℂ ↦ if chi = 1 then (w - 1)⁻¹ else 0) s =
       (-1 : ℂ) ^ k * k.factorial * (if chi = 1 then ((s - 1) ^ (k + 1))⁻¹ else 0) := by
   by_cases hchi : chi = 1
@@ -53,9 +55,11 @@ theorem iteratedDeriv_principal_pole {q : ℕ} [NeZero q]
 theorem signedLogDerivative_eq_pole_sub_deriv
     {q : ℕ} [NeZero q] (chi : DirichletCharacter ℂ q)
     {s : ℂ} (hs : 1 < s.re) (k : ℕ) :
+    open scoped Classical in
     signedLogDerivative k chi s =
       k.factorial * (if chi = 1 then ((s - 1) ^ (k + 1))⁻¹ else 0) -
         (-1 : ℂ) ^ k * iteratedDeriv k (logDeriv (regularizedLFunction chi)) s := by
+  classical
   let U : Set ℂ := {w | 1 < w.re}
   have hU : IsOpen U := isOpen_lt continuous_const continuous_re
   have heq : Set.EqOn (fun w ↦ -logDeriv (DirichletCharacter.LFunction chi) w)
@@ -87,11 +91,13 @@ theorem norm_signedLogDerivative_sub_diskZeros_le
           (-1 : ℂ) ^ k * k.factorial *
             (characterDiskZeros chi t).sum
               (fun rho m ↦ (m : ℂ) / ((2 : ℂ) + t * I - rho) ^ (k + 1))‖ ≤ E) :
+    open scoped Classical in
     ‖signedLogDerivative k chi ((2 : ℂ) + t * I) -
         k.factorial *
           ((if chi = 1 then (((2 : ℂ) + t * I - 1) ^ (k + 1))⁻¹ else 0) -
             (characterDiskZeros chi t).sum
               (fun rho m ↦ (m : ℂ) / ((2 : ℂ) + t * I - rho) ^ (k + 1)))‖ ≤ E := by
+  classical
   rw [signedLogDerivative_eq_pole_sub_deriv chi (by simp)]
   let Z : ℂ := (characterDiskZeros chi t).sum
     (fun rho m ↦ (m : ℂ) / ((2 : ℂ) + t * I - rho) ^ (k + 1))
@@ -126,6 +132,7 @@ theorem re_zeroSum_le_of_norm_bound {k : ℕ} {S P Z : ℂ} {E : ℝ}
 
 /-- A uniform real-part bound for every reciprocal zero-power sum. -/
 theorem exists_re_characterDiskZeros_bound :
+    open scoped Classical in
     ∃ A : ℕ, 37 ≤ A ∧
       ∀ (q : ℕ) [NeZero q], 1 < q →
         ∀ (chi : DirichletCharacter ℂ q) (t : ℝ) (k : ℕ),
@@ -150,6 +157,7 @@ noncomputable def zeroPowerSum {q : ℕ} [NeZero q]
 
 noncomputable def principalPolePower {q : ℕ} [NeZero q]
     (chi : DirichletCharacter ℂ q) (t : ℝ) (n : ℕ) : ℂ :=
+  open scoped Classical in
   if chi = 1 then (((2 : ℂ) + t * I - 1) ^ n)⁻¹ else 0
 
 /-- Combine positivity with the four local logarithmic-derivative expansions.

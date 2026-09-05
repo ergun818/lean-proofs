@@ -89,7 +89,8 @@ theorem exists_family_exceptional_width :
         (∀ i j : upperHighZeroIndex Q T,
           H * upperHighZeroGap i ≤ kappa → H * upperHighZeroGap j ≤ kappa → i = j) := by
   obtain ⟨Ms, hMs, hshape⟩ := exists_nat_nonprincipalNontrivialLFunctionZero_sq_eq_one_real_simple
-  obtain ⟨Mu, hMu, hunique⟩ := exists_nat_nonprincipalNontrivialLFunctionZero_character_eq_and_zero_eq
+  obtain ⟨Mu, hMu, hunique⟩ :=
+    exists_nat_nonprincipalNontrivialLFunctionZero_character_eq_and_zero_eq
   let M := max Ms Mu
   have hM₁ : 1 ≤ M := (by omega : 1 ≤ Ms).trans (le_max_left _ _)
   have hMR : (1 : ℝ) ≤ M := by exact_mod_cast hM₁

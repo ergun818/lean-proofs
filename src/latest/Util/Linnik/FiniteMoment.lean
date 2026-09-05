@@ -9,7 +9,7 @@ elementary geometric series from the analytic family of zeros.
 
 namespace Linnik
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 theorem sum_half_pow_le_two (N : ℕ) :
     (∑ j ∈ Finset.range N, (1 / 2 : ℝ) ^ j) ≤ 2 := by

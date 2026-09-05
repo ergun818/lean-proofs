@@ -12,7 +12,7 @@ density estimates.
 namespace Linnik
 
 open Complex
-open scoped BigOperators Classical
+open scoped BigOperators
 
 theorem exists_power_index_bound (Z : ℂ →₀ ℕ) {w : ℂ}
     (hw : w ∈ Z.support) {M epsilon : ℝ} (hM : 1 ≤ M) (hepsilon : 0 ≤ epsilon)

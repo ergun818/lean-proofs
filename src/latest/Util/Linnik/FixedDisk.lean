@@ -12,7 +12,7 @@ are packaged here for the four-character zero-repulsion argument.
 namespace Linnik
 
 open Complex Metric Set Filter BoundedGaps.Maynard
-open scoped BigOperators Topology Classical
+open scoped BigOperators Topology
 
 theorem entire_analyticOrderAt_ne_top {f : ℂ → ℂ}
     (hf : Differentiable ℂ f) {c : ℂ} (hc : f c ≠ 0) (rho : ℂ) :

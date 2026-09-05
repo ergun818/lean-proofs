@@ -12,7 +12,7 @@ theorem applies without any separation of zeros.
 namespace Linnik
 
 open Complex
-open scoped BigOperators Classical
+open scoped BigOperators
 
 noncomputable def reciprocalSquareRoots (D : ℂ →₀ ℕ) (c : ℂ) : ℂ →₀ ℕ :=
   D.mapDomain (fun rho ↦ ((c - rho) ^ 2)⁻¹)
@@ -132,8 +132,8 @@ theorem exists_fourRemainingRoots_mass_bound :
       exact mul_le_mul_of_nonneg_left (by linarith : |u| + 2 ≤ |t| + 2) hq₀.le
     exact mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hlog (Nat.cast_nonneg A))
       (by norm_num)
-  have h₀ := hmass 1 0 (by simpa using abs_nonneg t)
-  have h₁ := hmass chi1 0 (by simpa using abs_nonneg t)
+  have h₀ := hmass 1 0 (by simp)
+  have h₁ := hmass chi1 0 (by simp)
   have h₂ := hmass chi t le_rfl
   have h₃ := hmass (chi * chi1) t le_rfl
   simp only [fourRemainingRoots, natFinsupp_mass_add, reciprocalSquareRoots_mass]
