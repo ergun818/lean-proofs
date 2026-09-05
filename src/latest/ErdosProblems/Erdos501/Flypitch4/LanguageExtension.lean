@@ -909,52 +909,60 @@ lemma on_term_inj (h : ϕ.is_injective) {l} :
   induction x with
   | var k =>
       cases y with
-      | var k' => simp only [preterm.var.injEq] at hxy; exact congrArg preterm.var hxy
+      | var k' =>
+          simp only [on_term, preterm.var.injEq] at hxy
+          exact congrArg preterm.var hxy
       | func _ => simp [on_term] at hxy
       | app _ _ => simp [on_term] at hxy
   | func f =>
       cases y with
       | var _ => simp [on_term] at hxy
-      | func f' => simp only [preterm.func.injEq] at hxy; exact congrArg preterm.func (h.on_function hxy)
+      | func f' =>
+          simp only [on_term, preterm.func.injEq] at hxy
+          exact congrArg preterm.func (h.on_function hxy)
       | app _ _ => simp [on_term] at hxy
   | app t₁ t₂ iht₁ iht₂ =>
       cases y with
       | var _ => simp [on_term] at hxy
       | func _ => simp [on_term] at hxy
       | app t₁' t₂' =>
-          simp only [preterm.app.injEq] at hxy
+          simp only [on_term, preterm.app.injEq] at hxy
           exact congrArg₂ preterm.app (iht₁ hxy.1) (iht₂ hxy.2)
 
 lemma on_formula_inj (h : ϕ.is_injective) {l} :
     Function.Injective (ϕ.on_formula : @preformula L l → @preformula L' l) := by
   intro x y hxy
   induction x with
-  | falsum => cases y <;> simp [on_formula] at hxy ⊢ <;> rfl
+  | falsum => cases y <;> simp [on_formula] at hxy ⊢
   | equal t₁ t₂ =>
       cases y with
       | equal t₁' t₂' =>
-          simp only [preformula.equal.injEq] at hxy
+          simp only [on_formula, preformula.equal.injEq] at hxy
           exact congrArg₂ preformula.equal (on_term_inj h hxy.1) (on_term_inj h hxy.2)
       | _ => simp [on_formula] at hxy
   | rel R =>
       cases y with
-      | rel R' => simp only [preformula.rel.injEq] at hxy; exact congrArg preformula.rel (h.on_relation hxy)
+      | rel R' =>
+          simp only [on_formula, preformula.rel.injEq] at hxy
+          exact congrArg preformula.rel (h.on_relation hxy)
       | _ => simp [on_formula] at hxy
   | apprel f t ihf =>
       cases y with
       | apprel f' t' =>
-          simp only [preformula.apprel.injEq] at hxy
+          simp only [on_formula, preformula.apprel.injEq] at hxy
           exact congrArg₂ preformula.apprel (ihf hxy.1) (on_term_inj h hxy.2)
       | _ => simp [on_formula] at hxy
   | imp f₁ f₂ ihf₁ ihf₂ =>
       cases y with
       | imp f₁' f₂' =>
-          simp only [preformula.imp.injEq] at hxy
+          simp only [on_formula, preformula.imp.injEq] at hxy
           exact congrArg₂ preformula.imp (ihf₁ hxy.1) (ihf₂ hxy.2)
       | _ => simp [on_formula] at hxy
   | all f ihf =>
       cases y with
-      | all f' => simp only [preformula.all.injEq] at hxy; exact congrArg preformula.all (ihf hxy)
+      | all f' =>
+          simp only [on_formula, preformula.all.injEq] at hxy
+          exact congrArg preformula.all (ihf hxy)
       | _ => simp [on_formula] at hxy
 
 lemma on_bounded_term_inj (h : ϕ.is_injective) {n l} :
