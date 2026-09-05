@@ -21,6 +21,7 @@ noncomputable abbrev PChain (p m : ℕ) := PositiveTarget.Chain ℤ (Label p m)
 noncomputable def targetAct (a : ZMod p) : PChain p m →ₗ[ℤ] PChain p m :=
   PositiveTarget.map (LabelChainMap.targetShift (m := m) a)
 
+omit [NeZero p] in
 theorem targetShift_injective (a : ZMod p) :
     Function.Injective (LabelChainMap.targetShift (m := m) a) := by
   intro x y h
@@ -28,6 +29,7 @@ theorem targetShift_injective (a : ZMod p) :
   · exact add_left_cancel (congrArg Prod.fst h)
   · simpa [LabelChainMap.targetShift] using congrArg Prod.snd h
 
+omit [NeZero p] in
 @[simp] theorem image_targetShift (a : ZMod p) (s : Finset (Label p m)) :
     s.image (LabelChainMap.targetShift a) = shiftFinset a s := by
   ext v
@@ -43,6 +45,7 @@ noncomputable def orientation (a : ZMod p) (s : Finset (Label p m)) : ℤˣ :=
   Finset.imageSign s (LabelChainMap.targetShift a)
     (targetShift_injective a).injOn
 
+omit [NeZero p] in
 theorem shiftFinset_nonempty (a : ZMod p) {s : Finset (Label p m)}
     (hs : s.Nonempty) : (shiftFinset a s).Nonempty := by
   rcases hs with ⟨v, hv⟩
@@ -54,6 +57,7 @@ noncomputable def positiveSingle (s : Finset (Label p m))
     change (Finsupp.single s (1 : ℤ)) ∅ = 0
     simp [Finset.nonempty_iff_ne_empty.mp hs]⟩
 
+omit [NeZero p] in
 @[simp] theorem positiveSingle_coe (s : Finset (Label p m)) (hs : s.Nonempty) :
     (positiveSingle s hs : TargetChains.FullChain ℤ (Label p m)) =
       Finsupp.single s 1 := rfl
@@ -101,11 +105,13 @@ noncomputable def shiftTotalFace (a : ZMod p)
     (s : TotalFace p m alpha) : TotalFace p m alpha :=
   ⟨s.1, shiftFace a s.2⟩
 
+omit [NeZero p] in
 @[simp] theorem shiftTotalFace_zero (s : TotalFace p m alpha) :
     shiftTotalFace 0 s = s := by
   rcases s with ⟨q, s⟩
   simp [shiftTotalFace]
 
+omit [NeZero p] in
 @[simp] theorem shiftTotalFace_add (a b : ZMod p)
     (s : TotalFace p m alpha) :
     shiftTotalFace a (shiftTotalFace b s) = shiftTotalFace (a + b) s := by
@@ -114,6 +120,7 @@ noncomputable def shiftTotalFace (a : ZMod p)
 
 def totalFaceVal (s : TotalFace p m alpha) : Finset (Label p m) := s.2.1
 
+omit [NeZero p] in
 theorem totalFaceVal_injective :
     Function.Injective (totalFaceVal (p := p) (m := m) (alpha := alpha)) := by
   rintro ⟨q, s⟩ ⟨r, t⟩ h
@@ -127,6 +134,7 @@ theorem totalFaceVal_injective :
   cases hq
   exact heq_of_eq (Subtype.ext h)
 
+omit [NeZero p] in
 theorem totalFaceVal_ne_empty (s : TotalFace p m alpha) :
     totalFaceVal s ≠ ∅ :=
   Finset.nonempty_iff_ne_empty.mp (allowedFace_nonempty s.2)
@@ -148,6 +156,7 @@ noncomputable def totalInclusion : TotalChain p m alpha →ₗ[ℤ] PChain p m w
     exact Finsupp.mapDomain_smul
       (f := totalFaceVal (p := p) (m := m) (alpha := alpha)) r c
 
+omit [NeZero p] in
 theorem totalInclusion_injective :
     Function.Injective
       (totalInclusion (p := p) (m := m) (alpha := alpha)) := by
@@ -155,6 +164,7 @@ theorem totalInclusion_injective :
   apply Finsupp.mapDomain_injective totalFaceVal_injective
   exact congrArg Subtype.val h
 
+omit [NeZero p] in
 @[simp] theorem totalInclusion_single (s : TotalFace p m alpha) (r : ℤ) :
     totalInclusion (Finsupp.single s r) =
       r • positiveSingle s.2.1 (allowedFace_nonempty s.2) := by
@@ -175,7 +185,7 @@ noncomputable def totalTargetAct (a : ZMod p) :
       (r * (orientation a s.2.1 : ℤ)) •
         Finsupp.single (shiftTotalFace a s) 1 := by
   rw [totalTargetAct, Finsupp.linearCombination_single]
-  simp [smul_smul, mul_comm]
+  simp [mul_comm]
 
 @[simp] theorem totalTargetAct_apply (a : ZMod p)
     (c : TotalChain p m alpha) (t : TotalFace p m alpha) :
@@ -207,7 +217,7 @@ theorem totalInclusion_targetAct (a : ZMod p) (c : TotalChain p m alpha) :
     totalInclusion (totalTargetAct a c) = targetAct a (totalInclusion c) := by
   induction c using Finsupp.induction_linear with
   | zero => simp
-  | add c d hc hd => simpa only [map_add, hc, hd]
+  | add c d hc hd => simp only [map_add, hc, hd]
   | single s r =>
       rw [totalTargetAct_single]
       calc
@@ -235,12 +245,13 @@ noncomputable def negTotalOrbitEquiv (hp : p.Prime) :
   (Equiv.prodCongr (Equiv.refl _) (Equiv.neg (ZMod p))).trans
     (totalOrbitEquiv hp)
 
+omit [NeZero p] in
 @[simp] theorem negTotalOrbitEquiv_apply (hp : p.Prime)
     (O : TotalOrbit p m alpha) (a : ZMod p) :
     negTotalOrbitEquiv hp (O, a) =
       ⟨O.1, shiftFace (-a) (orbitRep O.2)⟩ := rfl
 
-noncomputable def totalOrbitWeight (hp : p.Prime)
+noncomputable def totalOrbitWeight (_hp : p.Prime)
     (z : TotalOrbit p m alpha × ZMod p) : ℤˣ :=
   orientation (-z.2) (orbitRep z.1.2).1
 
@@ -336,7 +347,7 @@ theorem actualTotalAct_eq_totalTargetAct :
   intro c
   induction c using Finsupp.induction_linear with
   | zero => simp
-  | add c d hc hd => simpa only [map_add, hc, hd]
+  | add c d hc hd => simp only [map_add, hc, hd]
   | single s r =>
       apply Finsupp.ext
       intro t

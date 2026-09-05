@@ -67,7 +67,7 @@ theorem eligible_shift_iff {p n r : ℕ} (a : ZMod p) (x : SignedVector p n)
     · simp only [SignedVector.shift, hx, Option.map_some] at h
       have hab : a + g = b := Option.some.inj h
       have hg : g = -a + b := by rw [← hab]; abel
-      simpa [hx, hg]
+      simp [hg]
   · rintro ⟨b, hb⟩
     refine ⟨a + b, ?_⟩
     intro v hv
@@ -216,7 +216,7 @@ theorem primeLabel_equivariant {p n r t : ℕ} (hp : p.Prime) (hr : 1 ≤ r)
       apply mem_support.2
       have hv := chosenEdge_in_label_fiber hp hr x.1 hlarge
         (highVertex hp hr x.1 hlarge) (highVertex_mem hp hr x.1 hlarge)
-      simpa [hv]
+      simp [hv]
     ext
     · change signAt (x.1.shift a) (highVertex hp hr (x.1.shift a) _) =
           a + signAt x.1 (highVertex hp hr x.1 hlarge)
@@ -271,7 +271,7 @@ theorem primeLabel_admissible {p n r t : ℕ} (hp : p.Prime) (hr : 1 ≤ r)
       Finset.eq_of_subset_of_card_le hsxy (by omega)
     have hval : x.1 = y.1 := SignedVector.le_antisymm hxy (le_of_support_eq_of_le hxy hs)
     have hsub : x = y := Subtype.ext hval
-    simpa [hsub]
+    simp [hsub]
   · intro xs hmono hcommon hsurj
     let : NeZero p := ⟨hp.ne_zero⟩
     obtain ⟨j, hjhigh, hj⟩ := hcommon

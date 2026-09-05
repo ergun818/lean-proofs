@@ -24,6 +24,7 @@ abbrev Vertex (p m : ℕ) := ZMod p × Fin m
 noncomputable local instance targetOrder : LinearOrder (Vertex p m) :=
   LabelChainMap.targetLinearOrder
 
+omit [NeZero p] in
 theorem targetAllowed_iff (s : Finset (Vertex p m)) :
     TargetOrbits.Allowed alpha s ↔ AllowedFaces.IsAllowed alpha s := by
   rfl
@@ -49,7 +50,7 @@ noncomputable def faceList (s : Finset (Vertex p m)) : List (Vertex p m) :=
 /-- Left exterior multiplication by one vertex sends a basis face to an
 integer multiple of the basis of the inserted face. -/
 theorem wedgePrepend_single_exists
-    {V : Type*} [Fintype V] [LinearOrder V]
+    {V : Type*} [LinearOrder V]
     (v : V) (s : Finset V) :
     ∃ z : ℤ, TargetBridge.wedgePrepend v
         (Finsupp.single s (1 : ℤ)) =
@@ -89,7 +90,7 @@ theorem wedgePrepend_single_exists
 unordered set of labels.  Repetitions are absorbed by the integer coefficient
 being zero. -/
 theorem labelList_eq_smul_single_toFinset
-    {X V : Type*} [Fintype V] [LinearOrder V]
+    {X V : Type*} [LinearOrder V]
     (lab : X → V) (l : List X) :
     ∃ z : ℤ, TargetBridge.labelList lab l =
       z • Finsupp.single (l.map lab).toFinset (1 : ℤ) := by
@@ -104,7 +105,7 @@ theorem labelList_eq_smul_single_toFinset
         (xs.map lab).toFinset
       refine ⟨z * w, ?_⟩
       rw [TargetBridge.labelList, hz, map_smul, hw]
-      simp [smul_smul]
+      simp
 
 /-- Positive target chains whose nonzero faces satisfy the capacity bounds. -/
 noncomputable def PositiveAllowed (p m alpha : ℕ) [NeZero p] :
@@ -200,8 +201,8 @@ noncomputable def positivePredicateEquiv :
         s.Nonempty ∧ AllowedFaces.IsAllowed alpha s} where
   toFun s := ⟨s.1, s.2.1, (targetAllowed_iff s.1).1 s.2.2⟩
   invFun s := ⟨s.1, s.2.1, (targetAllowed_iff s.1).2 s.2.2⟩
-  left_inv s := Subtype.ext rfl
-  right_inv s := Subtype.ext rfl
+  left_inv _s := Subtype.ext rfl
+  right_inv _s := Subtype.ext rfl
 
 /-- The orbit-indexed total face basis, with the duplicate target predicate
 replaced by `AllowedFaces.IsAllowed`. -/

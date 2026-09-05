@@ -7,7 +7,7 @@ namespace TargetChains
 
 universe u v
 
-variable {V : Type u} [Fintype V] [LinearOrder V]
+variable {V : Type u} [LinearOrder V]
 variable {W : Type v} [Fintype W] [LinearOrder W]
 
 theorem map_single_of_injOn (f : V → W) (s : Finset V)

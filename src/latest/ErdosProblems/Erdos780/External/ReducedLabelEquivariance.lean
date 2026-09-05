@@ -28,7 +28,7 @@ theorem normalizedMap_eq_labelLists
     LabelChainMap.normalizedMap lab c = TargetBridge.labelLists lab c := by
   induction c using Finsupp.induction_linear with
   | zero => simp
-  | add c d hc hd => simpa only [map_add, hc, hd]
+  | add c d hc hd => simp only [map_add, hc, hd]
   | single l z =>
       rw [show Finsupp.single l z = z • SourceFlags.basis l by
         simp [SourceFlags.basis]]

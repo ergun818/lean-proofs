@@ -39,7 +39,7 @@ end Contraction
 section FiniteVertices
 
 variable (R : Type*) [CommRing R]
-variable (V : Type u) [Fintype V] [LinearOrder V]
+variable (V : Type u) [LinearOrder V]
 
 abbrev OrientedSimplex (q : ℕ) := Set.powersetCard V (q + 1)
 abbrev Chain (q : ℕ) := OrientedSimplex V q →₀ R
@@ -68,6 +68,7 @@ noncomputable def exteriorContraction :
   CliffordAlgebra.contractLeft (Q := (0 : QuadraticForm R (V →₀ R)))
     (augmentation R V)
 
+omit [LinearOrder V] in
 @[simp]
 theorem augmentation_single (v : V) (r : R) :
     augmentation R V (Finsupp.single v r) = r := by
@@ -113,13 +114,13 @@ noncomputable def projectPositive : FullChain R V →ₗ[R] PositiveChain R V wh
     ext s
     by_cases hs : s = ∅
     · subst s; simp
-    · simp [hs, Ne.symm hs]
+    · simp [hs]
   map_smul' r c := by
     apply Subtype.ext
     ext s
     by_cases hs : s = ∅
     · subst s; simp
-    · simp [hs, Ne.symm hs]
+    · simp [hs]
 
 @[simp]
 theorem projectPositive_coe (c : FullChain R V) :
@@ -192,16 +193,18 @@ noncomputable def vertexMap {W : Type v} [Fintype W] [LinearOrder W] (f : V → 
     (V →₀ R) →ₗ[R] (W →₀ R) :=
   Finsupp.lmapDomain R R f
 
+omit [LinearOrder V] in
 @[simp]
 theorem vertexMap_single {W : Type v} [Fintype W] [LinearOrder W]
     (f : V → W) (v : V) (r : R) :
     vertexMap f (Finsupp.single v r) = Finsupp.single (f v) r := by
   simp [vertexMap]
 
+omit [LinearOrder V] in
 theorem augmentation_vertexMap {W : Type v} [Fintype W] [LinearOrder W]
     (f : V → W) :
     (augmentation R W).comp (vertexMap f) = augmentation R V := by
-  ext v r
+  ext v
   simp
 
 noncomputable def map {W : Type v} [Fintype W] [LinearOrder W] (f : V → W) :

@@ -21,27 +21,25 @@ noncomputable local instance targetOrder [NeZero p] : LinearOrder (Vertex p m) :
   LabelChainMap.targetLinearOrder
 
 theorem map_apply_empty
-    {V W : Type*} [Fintype V] [Fintype W]
+    {V W : Type*} [Fintype W]
     [LinearOrder V] [LinearOrder W]
     (f : V → W) (hf : Function.Injective f)
     (c : TargetChains.FullChain ℤ V) :
     TargetChains.map f c ∅ = c ∅ := by
   induction c using Finsupp.induction_linear with
   | zero => simp
-  | add c d hc hd => simpa only [map_add, Finsupp.add_apply, hc, hd]
+  | add c d hc hd => simp only [map_add, Finsupp.add_apply, hc, hd]
   | single s z =>
       by_cases hs : s = ∅
       · subst s
         rw [TargetChains.map_single_empty]
         simp
-      · have himage : (s.image f).Nonempty :=
-          Finset.image_nonempty.mpr (Finset.nonempty_iff_ne_empty.mpr hs)
-        rw [show Finsupp.single s z = z • Finsupp.single s (1 : ℤ) by simp,
+      · rw [show Finsupp.single s z = z • Finsupp.single s (1 : ℤ) by simp,
           map_smul, TargetChains.map_single_of_injOn f s hf.injOn]
-        simp [hs, Finset.nonempty_iff_ne_empty.mp himage]
+        simp [hs]
 
 theorem augmentation_map
-    {V W : Type*} [Fintype V] [Fintype W]
+    {V W : Type*} [Fintype W]
     [LinearOrder V] [LinearOrder W]
     (f : V → W) (hf : Function.Injective f)
     (c : PositiveTarget.Chain ℤ V) :

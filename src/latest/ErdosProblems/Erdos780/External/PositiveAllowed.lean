@@ -181,7 +181,7 @@ theorem labelLists_basis_mem_allowedPositive
       exact LabelAllowed.labelFace_isAllowed hp lab hadm l hl hinj
     · exfalso
       apply (Finsupp.mem_support_iff.mp hs)
-      simp [Finsupp.single_apply, hsf]
+      simp [hsf]
   · rw [labelList_eq_zero_of_not_injective lab l hinj]
     exact (AllowedFaces.allowedChains ℤ p m alpha).zero_mem
 
@@ -225,7 +225,7 @@ theorem labelLists_basis_mem_allowedPositiveDegree
           omega
       · exfalso
         apply (Finsupp.mem_support_iff.mp hs)
-        simp [Finsupp.single_apply, hsf]
+        simp [hsf]
     · rw [labelList_eq_zero_of_not_injective lab l hinj]
       exact (AllowedFaces.allowedDegreeChains ℤ p m alpha (k - 1)).zero_mem
 
@@ -462,6 +462,7 @@ def targetShift (a : ZMod p) (v : TargetVertex (p := p) (m := m)) :
     TargetVertex (p := p) (m := m) :=
   (a + v.1, v.2)
 
+omit [NeZero p] in
 theorem targetShift_injective (a : ZMod p) :
     Function.Injective (targetShift (m := m) a) := by
   intro x y h
@@ -469,6 +470,7 @@ theorem targetShift_injective (a : ZMod p) :
   · exact add_left_cancel (congrArg Prod.fst h)
   · simpa [targetShift] using congrArg Prod.snd h
 
+omit [NeZero p] in
 theorem fiber_image_targetShift (a : ZMod p)
     (s : Finset (TargetVertex (p := p) (m := m))) (j : Fin m) :
     AllowedFaces.fiber (s.image (targetShift a)) j =
@@ -483,6 +485,7 @@ theorem fiber_image_targetShift (a : ZMod p)
     refine ⟨⟨w, hw, hwv⟩, ?_⟩
     simpa [← hwv, targetShift] using hwj
 
+omit [NeZero p] in
 theorem IsAllowed.image_targetShift (hs : IsAllowed alpha s) (a : ZMod p) :
     IsAllowed alpha (s.image (targetShift (m := m) a)) := by
   intro j

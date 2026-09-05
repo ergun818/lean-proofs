@@ -7,7 +7,7 @@ open TargetChains
 
 noncomputable section
 
-variable {X V : Type*} [Fintype V] [LinearOrder V]
+variable {X V : Type*} [LinearOrder V]
 
 def wedgePrepend (v : V) : FullChain ℤ V →ₗ[ℤ] FullChain ℤ V :=
   (toExterior ℤ V).symm.toLinearMap ∘ₗ

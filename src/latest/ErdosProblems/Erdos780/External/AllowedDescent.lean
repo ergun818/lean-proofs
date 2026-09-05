@@ -18,6 +18,7 @@ abbrev PA := AllowedComplex.PositiveAllowed p m alpha
 noncomputable local instance targetOrder : LinearOrder (Vertex (p := p) (m := m)) :=
   LabelChainMap.targetLinearOrder
 
+omit [NeZero p] in
 theorem single_empty_mem_allowed (r : ℤ) :
     Finsupp.single (∅ : Finset (Vertex (p := p) (m := m))) r ∈
       AllowedFaces.allowedChains ℤ p m alpha := by
@@ -111,7 +112,7 @@ theorem equiv_coe_eq_totalInclusion
         ((TargetOrbits.totalFaceEquivPositive p m alpha).symm u) = t := by
       exact congrArg Subtype.val
         ((TargetOrbits.totalFaceEquivPositive p m alpha).apply_symm_apply u)
-    simp [S, L, s, st, hsallowed, u, hu, h,
+    simp [S, L, s, st, u, hu, h,
       AllowedComplex.totalFaceEquivNonemptyAllowed,
       AllowedComplex.positivePredicateEquiv]
   · have ht : t ∉ Set.range

@@ -57,10 +57,12 @@ def exteriorFlag
   | x :: xs =>
       ExteriorAlgebra.ι ℤ (Finsupp.single (lab x) 1) * exteriorFlag lab xs
 
+omit [NeZero p] in
 @[simp] theorem exteriorFlag_nil
     (lab : SourceVertex p n → TargetVertex p m) :
     exteriorFlag lab [] = 1 := rfl
 
+omit [NeZero p] in
 @[simp] theorem exteriorFlag_cons
     (lab : SourceVertex p n → TargetVertex p m)
     (x : SourceVertex p n) (xs : List (SourceVertex p n)) :
@@ -158,8 +160,7 @@ theorem boundary_normalizedMap_basis
   | nil =>
       apply (TargetChains.toExterior ℤ (TargetVertex p m)).injective
       simp [SourceFlags.boundaryBasis, exteriorFlag,
-        TargetChains.exteriorContraction,
-        CliffordAlgebra.contractLeft_algebraMap]
+        TargetChains.exteriorContraction]
   | cons x xs ih =>
       simp only [normalizedMap_basis, SourceFlags.boundary_basis,
         SourceFlags.boundaryBasis_cons, map_sub, normalizedMap_prepend]
@@ -266,6 +267,7 @@ def allowedFaceSpan (alpha : ℕ) : Submodule ℤ (TargetChain p m) :=
       c = (TargetChains.toExterior ℤ (TargetVertex p m)).symm
         (exteriorFlag (fun x => x) l)}
 
+omit [NeZero p] in
 theorem comparable_of_flag
     {l : List (SourceVertex p n)}
     (hl : SourceFlags.IsFlag (fun x y => x < y) l)
@@ -285,6 +287,7 @@ theorem comparable_of_flag
         · exact Or.inr (hl.1 _ hx).le
         · exact ih hl.2 hx hy
 
+omit [NeZero p] in
 theorem labels_low_allowed
     (lab : SourceVertex p n → TargetVertex p m)
     (hadm : IsAlphaAdmissible alpha lab)
@@ -301,7 +304,7 @@ theorem labels_low_allowed
   · exact (hadm.1 hyx huv.symm (by simpa [huv] using hj)).symm
 
 theorem labels_high_allowed
-    (hp : p.Prime)
+    (_hp : p.Prime)
     (lab : SourceVertex p n → TargetVertex p m)
     (hadm : IsAlphaAdmissible alpha lab)
     {l : List (SourceVertex p n)}
@@ -310,7 +313,7 @@ theorem labels_high_allowed
       ∃ g : ZMod p, (g, j) ∉ (l.map lab).toFinset := by
   intro j hj
   by_contra hmissing
-  push_neg at hmissing
+  push Not at hmissing
   let e : Fin p ≃ ZMod p := (ZMod.finEquiv p).toEquiv
   have hex (i : Fin p) :
       ∃ x ∈ l, lab x = (e i, j) := by
@@ -382,6 +385,7 @@ theorem labels_allowed
   exact ⟨labels_low_allowed lab hadm hl,
     labels_high_allowed hp lab hadm hl⟩
 
+omit [NeZero p] in
 theorem exteriorFlag_map
     {ι : Type*} (lab : ι → TargetVertex p m) (l : List ι) :
     exteriorFlag (fun x => x) (l.map lab) = exteriorFlag lab l := by

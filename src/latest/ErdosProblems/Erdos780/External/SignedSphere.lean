@@ -36,7 +36,7 @@ theorem supported_basis {P : List α → Prop} {l : List α} (hl : P l) :
   intro k hk
   by_cases hkl : k = l
   · simpa [hkl] using hl
-  · simp [basis, Finsupp.single_apply, hkl] at hk
+  · simp [basis, hkl] at hk
 
 theorem supported_add {P : List α → Prop} {c d : Chain α}
     (hc : Supported P c) (hd : Supported P d) : Supported P (c + d) := by
@@ -385,7 +385,7 @@ theorem vertex_shift_lt {p n : ℕ} (a : ZMod p) {x y : Vertex p n} (hxy : x < y
   refine lt_of_le_of_ne (NonzeroSignedVector.shift_mono hxy.le a) ?_
   intro heq
   have hback := congrArg (fun z : Vertex p n => z.shift (-a)) heq
-  simp [vertex_shift_add] at hback
+  simp only [vertex_shift_add, neg_add_cancel, vertex_shift_zero] at hback
   exact hxy.ne hback
 
 def shiftChain {p n : ℕ} (a : ZMod p) : SChain p n →ₗ[ℤ] SChain p n :=
@@ -452,7 +452,7 @@ theorem tau_norm {p n : ℕ} [NeZero p] (c : SChain p n) : tau (norm c) = 0 := b
 theorem norm_tau {p n : ℕ} [NeZero p] (c : SChain p n) : norm (tau c) = 0 := by
   rw [norm, tau]
   simp only [LinearMap.sum_apply, LinearMap.sub_apply, LinearMap.id_apply, map_sub,
-    shiftChain_add, Finset.sum_sub_distrib]
+    shiftChain_add]
   rw [sum_shiftChain_add_right]
   simp
 

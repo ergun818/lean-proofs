@@ -16,7 +16,7 @@ noncomputable section
 universe u v
 
 variable (R : Type*) [CommRing R]
-variable (V : Type u) [Fintype V] [LinearOrder V]
+variable (V : Type u) [LinearOrder V]
 
 abbrev Chain := PositiveChain R V
 
@@ -45,7 +45,7 @@ theorem wedgePrepend_apply_empty (v : V) (c : FullChain ℤ V) :
     TargetBridge.wedgePrepend v c ∅ = 0 := by
   induction c using Finsupp.induction_linear with
   | zero => simp
-  | add c d hc hd => simpa only [map_add, Finsupp.add_apply, hc, hd, add_zero]
+  | add c d hc hd => simp only [map_add, Finsupp.add_apply, hc, hd, add_zero]
   | single s z =>
       rw [show Finsupp.single s z = z • Finsupp.single s (1 : ℤ) by
         simp]
@@ -76,7 +76,7 @@ theorem wedgePrepend_apply_empty (v : V) (c : FullChain ℤ V) :
           have hvu : v ∈ u := by
             change v ∈ (Set.powersetCard.disjUnion hd).val
             simp [Set.powersetCard.disjUnion, sv, ss]
-          simpa [hu0] using hvu
+          simp [hu0] at hvu
         have hw : TargetBridge.wedgePrepend v
             (Finsupp.single s (1 : ℤ)) =
             (Set.powersetCard.permOfDisjoint hd).sign •

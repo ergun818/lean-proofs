@@ -17,6 +17,7 @@ variable {p m : ℕ} [NeZero p]
 noncomputable local instance : LinearOrder (Label p m) :=
   LabelChainMap.targetLinearOrder
 
+omit [NeZero p] in
 theorem targetShift_injective (a : ZMod p) :
     Function.Injective (targetShift (m := m) a) := by
   intro x y h
@@ -26,6 +27,7 @@ theorem targetShift_injective (a : ZMod p) :
     exact add_left_cancel h1
   · simpa [targetShift] using congrArg Prod.snd h
 
+omit [NeZero p] in
 @[simp] theorem image_targetShift (a : ZMod p) (s : Finset (Label p m)) :
     s.image (targetShift a) = shiftFinset a s := by
   ext v
@@ -108,7 +110,6 @@ theorem targetOrientation_add (a b : ZMod p) (s : Finset (Label p m)) :
   have hc := congrArg (fun c : TargetChain p m ↦ c (shiftFinset (a + b) s)) h
   simp only [Finsupp.smul_apply, Finsupp.single_eq_same] at hc
   apply Units.ext
-  change (targetOrientation (a + b) s : ℤ) = _
   simpa [mul_comm] using hc.symm
 
 @[simp] theorem targetOrientation_zero (s : Finset (Label p m)) :
@@ -128,13 +129,14 @@ noncomputable def negFaceOrbitEquiv (hp : p.Prime) :
     FaceOrbit p m alpha q × ZMod p ≃ AllowedFace p m alpha q :=
   (Equiv.prodCongr (Equiv.refl _) (Equiv.neg (ZMod p))).trans (faceOrbitEquiv hp)
 
+omit [NeZero p] in
 @[simp] theorem negFaceOrbitEquiv_apply (hp : p.Prime)
     (O : FaceOrbit p m alpha q) (a : ZMod p) :
     negFaceOrbitEquiv hp (O, a) = shiftFace (-a) (orbitRep O) := rfl
 
 /-- The unit by which the transported exterior orientation differs from the
 canonical increasing orientation of its underlying finset. -/
-noncomputable def orbitWeight (hp : p.Prime)
+noncomputable def orbitWeight (_hp : p.Prime)
     (z : FaceOrbit p m alpha q × ZMod p) : ℤˣ :=
   targetOrientation (-z.2) (orbitRep z.1).1
 
@@ -251,6 +253,7 @@ noncomputable def faceInclusion :
     FaceChain p m alpha q →ₗ[ℤ] TargetChain p m :=
   Finsupp.lmapDomain ℤ ℤ (fun s : AllowedFace p m alpha q ↦ s.1)
 
+omit [NeZero p] in
 @[simp] theorem faceInclusion_single (s : AllowedFace p m alpha q) (z : ℤ) :
     faceInclusion (p := p) (m := m) (alpha := alpha) (q := q)
         (Finsupp.single s z) = Finsupp.single s.1 z := by

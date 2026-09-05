@@ -29,7 +29,7 @@ def shiftFinset {p m : ℕ} (a : ZMod p) (s : Finset (Label p m)) :
     simpa [h1, h2] using hw
   · intro hv
     refine Finset.mem_map.mpr ⟨(-a + v.1, v.2), hv, ?_⟩
-    ext <;> simp <;> abel
+    ext <;> simp
 
 @[simp] theorem shiftFinset_zero {p m : ℕ} (s : Finset (Label p m)) :
     shiftFinset 0 s = s := by ext v; simp
@@ -79,7 +79,9 @@ theorem orbit_mem_of_fixed {p m : ℕ} {a : ZMod p}
   | zero => simpa using hv
   | succ n ih =>
       have hs := mem_shiftFinset_of_mem hfix ih
-      convert hs using 1 <;> simp [Nat.cast_succ] <;> ring
+      convert hs using 1
+      simp [Nat.cast_succ]
+      ring
 
 def signFiberEmbedding {p m : ℕ} (j : Fin m) : ZMod p ↪ Label p m where
   toFun b := (b, j)
@@ -93,7 +95,7 @@ theorem full_fiber_of_fixed {p m : ℕ} [NeZero p] (hp : p.Prime) {a : ZMod p}
   intro w hw
   simp only [Finset.mem_map, Finset.mem_univ, true_and] at hw
   obtain ⟨b, rfl⟩ := hw
-  simp only [fiber, Finset.mem_filter, and_true]
+  simp only [fiber, Finset.mem_filter]
   let z : ZMod p := (b - v.1) * a⁻¹
   have hz := orbit_mem_of_fixed hfix hv z.val
   have hza : (z.val : ZMod p) * a + v.1 = b := by
@@ -173,7 +175,7 @@ theorem orbitRel_symm {p m alpha q : ℕ} {x y : AllowedFace p m alpha q} :
     OrbitRel x y → OrbitRel y x := by
   rintro ⟨a, rfl⟩
   refine ⟨-a, ?_⟩
-  simpa only [shiftFace_add, neg_add_cancel, shiftFace_zero]
+  simp only [shiftFace_add, neg_add_cancel, shiftFace_zero]
 
 theorem orbitRel_trans {p m alpha q : ℕ} {x y z : AllowedFace p m alpha q} :
     OrbitRel x y → OrbitRel y z → OrbitRel x z := by
