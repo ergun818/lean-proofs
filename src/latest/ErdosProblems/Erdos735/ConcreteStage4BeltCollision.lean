@@ -28,7 +28,6 @@ to turn that fact into the directed successor relation required by the
 occupied-belt argument.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735
@@ -107,7 +106,7 @@ theorem geometricFlankIndex_injective
 one evil face are distinct, independently of how the existential flank
 witnesses were chosen. -/
 theorem geometric_flank_indices_ne_of_helpers_ne
-    {Line : Type uL} [Fintype Line] [DecidableEq Line]
+    {Line : Type uL}
     (edgeLine : Edge → Line)
     (hinj : ∀ f, Function.Injective
       (fun i ↦ edgeLine (A.boundaryEdge f i)))
@@ -230,6 +229,11 @@ namespace ConcreteStage4BeltCollision
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction
 open ChartOrder SignVector SignVectorArrangement
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcreteStage4BeltCollisionVertex :
+    DecidableEq (ℙ ℝ SignVector.Vec3) := Classical.decEq _
 open SignVector.ProjectiveEdgeEndpointEquiv
 open ConcretePolarOrientedVertex ConcretePolarEdgeVertices
 

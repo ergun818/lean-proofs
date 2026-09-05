@@ -44,11 +44,11 @@ def signed (b : Bool) (r : ℝ) : ℝ := if b then r else -r
 
 lemma signed_add (b : Bool) (r s : ℝ) :
     signed b (r + s) = signed b r + signed b s := by
-  cases b <;> simp [signed] <;> ring
+  cases b <;> simp [signed]; ring
 
 lemma signed_sub (b : Bool) (r s : ℝ) :
     signed b (r - s) = signed b r - signed b s := by
-  cases b <;> simp [signed] <;> ring
+  cases b <;> simp [signed]; ring
 
 lemma signed_mul (b : Bool) (c r : ℝ) :
     signed b (c * r) = c * signed b r := by
@@ -156,11 +156,12 @@ lemma exists_pos_forall_abs_mul_lt_finset {I : Type*}
           (hct j hj)
 
 /-- Strict signs survive a sufficiently small perturbation in either direction. -/
-lemma exists_small_perturbation {I : Type*} [Fintype I]
+lemma exists_small_perturbation {I : Type*} [Finite I]
     (n : I → Vec3) (s : I → Bool) {x : Vec3}
     (hx : Realizes n s x) (v : Vec3) :
     ∃ c : ℝ, 0 < c ∧ Realizes n s (x + c • v) ∧ Realizes n s (x - c • v) := by
   classical
+  let : Fintype I := Fintype.ofFinite _
   obtain ⟨c, hc, hbound⟩ := exists_pos_forall_abs_mul_lt_finset
     (Finset.univ : Finset I)
     (fun i ↦ signed (s i) (n i ⬝ᵥ x))
@@ -191,10 +192,11 @@ lemma dotProduct_self_pos {h : Vec3} (hh : h ≠ 0) : 0 < h ⬝ᵥ h := by
   have hne : h ⬝ᵥ h ≠ 0 := fun hz ↦ hh (dotProduct_self_eq_zero.mp hz)
   exact lt_of_le_of_ne hnonneg (Ne.symm hne)
 
-lemma realizable_iff_extension_true_or_false {I : Type*} [Fintype I]
+lemma realizable_iff_extension_true_or_false {I : Type*} [Finite I]
     (n : I → Vec3) {h : Vec3} (hh : h ≠ 0) (s : I → Bool) :
     Realizable n s ↔
       ExtensionRealizable n h s true ∨ ExtensionRealizable n h s false := by
+  let : Fintype I := Fintype.ofFinite _
   constructor
   · rintro ⟨x, hx⟩
     rcases lt_trichotomy (h ⬝ᵥ x) 0 with hneg | hzero | hpos
@@ -213,10 +215,11 @@ lemma realizable_iff_extension_true_or_false {I : Type*} [Fintype I]
 /-- A chamber is split by the inserted hyperplane exactly when its old signs
 are feasible on that hyperplane. -/
 lemma restrictedRealizable_iff_extensions_true_and_false
-    {I : Type*} [Fintype I]
+    {I : Type*} [Finite I]
     (n : I → Vec3) {h : Vec3} (hh : h ≠ 0) (s : I → Bool) :
     RestrictedRealizable n h s ↔
       ExtensionRealizable n h s true ∧ ExtensionRealizable n h s false := by
+  let : Fintype I := Fintype.ofFinite _
   constructor
   · rintro ⟨x, hx, hxzero⟩
     obtain ⟨c, hc, hplus, hminus⟩ := exists_small_perturbation n s hx h

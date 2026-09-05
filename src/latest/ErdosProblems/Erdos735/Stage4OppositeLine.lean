@@ -360,7 +360,7 @@ theorem exists_common_vertex_of_distinct_edges_of_faceDegree_eq_three
       intro h
       exact hij (Fin.ext h)
     interval_cases hival : i.val <;> interval_cases hjval : j.val <;>
-      simp [hthree, hival, hjval] at hijv ⊢
+      simp [hthree] at hijv ⊢
   rcases hadj with hadj | hadj
   · refine ⟨A.boundaryVertex f j, ?_, ?_⟩
     · rw [A.boundaryEdge_vertices]

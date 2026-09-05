@@ -26,7 +26,6 @@ subset closed under successor is the whole cyclically ordered set.  This is
 the finite closure principle used by the literal Stage-4 line belt.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ChartOrder
@@ -35,14 +34,17 @@ universe uV
 
 variable {V : Type uV} [DecidableEq V]
 
+omit [DecidableEq V] in
 /-- The cyclic successor acts injectively on a separated finite set. -/
 theorem cyclicSuccessor_injective (coord : V → ℝ) (S : Finset V)
     (hinj : Set.InjOn coord (S : Set V)) :
     Function.Injective (cyclicSuccessor coord S) := by
+  classical
   intro x y hxy
   have := congrArg (cyclicPredecessor coord S) hxy
   simpa [cyclicPredecessor_successor coord S hinj] using this
 
+omit [DecidableEq V] in
 /-- A nonempty subset of a finite separated cyclic order which is closed
 under the canonical successor is the entire set. -/
 theorem eq_univ_of_nonempty_of_cyclicSuccessor_closed
@@ -51,6 +53,7 @@ theorem eq_univ_of_nonempty_of_cyclicSuccessor_closed
     (U : Finset {x // x ∈ S}) (hne : U.Nonempty)
     (hclosed : ∀ x ∈ U, cyclicSuccessor coord S x ∈ U) :
     U = Finset.univ := by
+  classical
   have hsuccInj : Function.Injective (cyclicSuccessor coord S) :=
     cyclicSuccessor_injective coord S hinj
   have himageSub : U.image (cyclicSuccessor coord S) ⊆ U := by
@@ -116,12 +119,13 @@ theorem eq_univ_of_nonempty_of_cyclicSuccessor_closed
   rw [cyclicSuccessor_predecessor coord S hinj] at hsuccPU
   exact hyNotU hsuccPU
 
+omit [DecidableEq V] in
 /-- If two distinct cyclic intervals are the two distinct neighbors of a
 third interval, one of them is its forward successor.  The hypothesis is
 orientation-free, matching the endpoint-sharing facts produced by the
 literal polar geometry. -/
 theorem finish_eq_start_of_two_distinct_neighbors
-    {L : Type*} [Fintype V] [Fintype L] [DecidableEq L]
+    {L : Type*} [Finite V] [Finite L]
     (vertices : Finset V) (onLine : V → L → Prop) [DecidableRel onLine]
     (coord : V → ℝ) (hinj : Set.InjOn coord (vertices : Set V))
     (e y z : CyclicSkeletonEdge vertices onLine)
@@ -137,6 +141,9 @@ theorem finish_eq_start_of_two_distinct_neighbors
       cyclicEdgeFinish vertices onLine coord z = cyclicEdgeStart e) :
     cyclicEdgeFinish vertices onLine coord e = cyclicEdgeStart y ∨
       cyclicEdgeFinish vertices onLine coord e = cyclicEdgeStart z := by
+  classical
+  let : Fintype L := Fintype.ofFinite _
+  let : Fintype V := Fintype.ofFinite _
   rcases hy with heqY | heY | hYe
   · exact (heneY heqY).elim
   · exact Or.inl heY
@@ -171,7 +178,7 @@ theorem finish_eq_start_of_two_distinct_neighbors
 /-- Two distinct intervals on one supporting line with the same unordered
 endpoint pair traverse that pair in opposite directions. -/
 theorem finish_eq_start_of_distinct_of_vertices_eq
-    {L : Type*} [Fintype V] [Fintype L] [DecidableEq L]
+    {L : Type*} [Finite V] [Finite L]
     (vertices : Finset V) (onLine : V → L → Prop) [DecidableRel onLine]
     (coord : V → ℝ)
     (e y : CyclicSkeletonEdge vertices onLine)
@@ -180,6 +187,9 @@ theorem finish_eq_start_of_distinct_of_vertices_eq
     (hvertices : cyclicEdgeVertices vertices onLine coord e =
       cyclicEdgeVertices vertices onLine coord y) :
     cyclicEdgeFinish vertices onLine coord e = cyclicEdgeStart y := by
+  classical
+  let : Fintype L := Fintype.ofFinite _
+  let : Fintype V := Fintype.ofFinite _
   have hymem : cyclicEdgeStart y ∈
       cyclicEdgeVertices vertices onLine coord e := by
     rw [hvertices, cyclicEdgeVertices]
@@ -205,7 +215,7 @@ distinct vertices traverse that common endpoint pair in opposite
 directions.  This is the collision-safe form used when two graph neighbors
 collapse to one projective interval. -/
 theorem finish_eq_start_of_distinct_of_two_common_vertices
-    {L : Type*} [Fintype V] [Fintype L] [DecidableEq L]
+    {L : Type*} [Finite V] [Finite L]
     (vertices : Finset V) (onLine : V → L → Prop) [DecidableRel onLine]
     (coord : V → ℝ) (hinj : Set.InjOn coord (vertices : Set V))
     (htwo : ∀ l, 2 ≤ (verticesOn vertices onLine l).card)
@@ -218,6 +228,9 @@ theorem finish_eq_start_of_distinct_of_two_common_vertices
     (hvy : v ∈ cyclicEdgeVertices vertices onLine coord y)
     (huy : u ∈ cyclicEdgeVertices vertices onLine coord y) :
     cyclicEdgeFinish vertices onLine coord e = cyclicEdgeStart y := by
+  classical
+  let : Fintype L := Fintype.ofFinite _
+  let : Fintype V := Fintype.ofFinite _
   have hcardPair : ({v, u} : Finset V).card = 2 := by
     simp [hvu]
   have hpairE : ({v, u} : Finset V) =

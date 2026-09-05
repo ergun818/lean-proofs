@@ -27,10 +27,14 @@ coverage of projective interval starts, and exclusion of the outside face
 at each endpoint interval.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcreteStage4ProjectiveContinuation
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcreteStage4ProjectiveContinuationVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction
 open SignVector SignVectorArrangement
@@ -104,7 +108,8 @@ noncomputable def continuationOfOccupiedAndEndpointSlots
     ConcreteStage4ContinuationEndpoints.endpointTriangle_degree_three
       hred ha hb hd hncol hAcard hnotFF hHall
   allIncidentTrianglesAreEndpointOrAntipode :=
-    ConcreteStage4BeltClassification.all_incident_triangles_are_endpoint_or_antipode_of_endpointSlots
+    open ConcreteStage4BeltClassification in
+    all_incident_triangles_are_endpoint_or_antipode_of_endpointSlots
       hred ha hb hd hncol hAcard hnotFF hHall hoccupied hendpoint
 
 end Erdos735.ConcreteStage4ProjectiveContinuation

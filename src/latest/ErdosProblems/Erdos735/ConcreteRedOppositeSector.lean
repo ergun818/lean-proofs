@@ -27,7 +27,6 @@ sectors.  This file records the resulting pointwise statement, which is the
 red-diagonal input for the Stage-4 helping-opposite exclusion.
 -/
 
-open Classical
 noncomputable section
 open scoped LinearAlgebra.Projectivization
 
@@ -62,6 +61,7 @@ theorem restrictedRealizable_opposite_sector
     (hav : Incident v.1.1 a) :
     RestrictedRealizable (normals (nonordinaryPoints P))
       (normalVec a) g.1 := by
+  classical
   let n := normals (nonordinaryPoints P)
   let S := SignVector.LocalReceiver.localReceiverFaces n
     (normalVec a) (orientedRep v)

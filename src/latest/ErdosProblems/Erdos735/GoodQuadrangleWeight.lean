@@ -14,7 +14,6 @@ strictly positive extra term.  This is the geometric input to
 `uniqueGoodQuadrangle_weightContradiction`.
 -/
 
-open Classical
 open scoped BigOperators LinearAlgebra.Projectivization
 
 namespace Erdos735.RedBlueDualIncidence
@@ -42,6 +41,7 @@ theorem dualIncidentFiber_eq_insert_blueIncidentPoints
     (hainc : vertexHomogeneous v ∈ ProjectiveDuality.dualLine a) :
     dualIncidentFiber P (vertexHomogeneous v) =
       insert a (blueIncidentPoints P (vertexHomogeneous v)) := by
+  classical
   have hv := v.2
   unfold projectiveVertices at hv
   obtain ⟨pq, -, hpqv⟩ := Finset.mem_image.mp hv
@@ -76,6 +76,7 @@ theorem sum_blueIncidentPoints_eq_half
     {a : Point} (ha : a ∈ ordinaryPoints P)
     (hainc : vertexHomogeneous v ∈ ProjectiveDuality.dualLine a) :
     (∑ b ∈ blueIncidentPoints P (vertexHomogeneous v), w b) = c / 2 := by
+  classical
   have htotal := dualCrossing_weight_eq hred.2.1
     (isDualCrossing_vertex_nonordinary P v)
   have hfiber := dualIncidentFiber_eq_insert_blueIncidentPoints hred v ha hainc
@@ -97,6 +98,7 @@ theorem blueIncidentPoints_eq_pair_of_multiplicity_two
     (hd : OnLine (nonordinaryPoints P) v d)
     (hmult : lineMultiplicity (OnLine (nonordinaryPoints P)) v = 2) :
     blueIncidentPoints P (vertexHomogeneous v) = {b.1, d.1} := by
+  classical
   symm
   apply Finset.eq_of_subset_of_card_le
   · intro x hx
@@ -144,6 +146,7 @@ theorem extraBlueIncidentPoints_nonempty
     (hd : OnLine (nonordinaryPoints P) v d)
     (hmult : 2 < lineMultiplicity (OnLine (nonordinaryPoints P)) v) :
     (extraBlueIncidentPoints v b d).Nonempty := by
+  classical
   have hpair : ({b.1, d.1} : Finset Point) ⊆
       blueIncidentPoints P (vertexHomogeneous v) := by
     intro x hx
@@ -172,6 +175,7 @@ theorem sum_extraBlueIncidentPoints_pos
     (hd : OnLine (nonordinaryPoints P) v d)
     (hmult : 2 < lineMultiplicity (OnLine (nonordinaryPoints P)) v) :
     0 < ∑ x ∈ extraBlueIncidentPoints v b d, w x := by
+  classical
   apply Finset.sum_pos
   · intro x hx
     have hxS := (Finset.mem_sdiff.mp hx).1
@@ -193,6 +197,7 @@ theorem normalized_pair_add_extra_weight_eq_half
     (hd : OnLine (nonordinaryPoints P) v d) :
     w b.1 / c + w d.1 / c +
         (∑ x ∈ extraBlueIncidentPoints v b d, w x) / c = 1 / 2 := by
+  classical
   have hsum := sum_blueIncidentPoints_eq_half hred v ha hainc
   have hpair : ({b.1, d.1} : Finset Point) ⊆
       blueIncidentPoints P (vertexHomogeneous v) := by
@@ -217,6 +222,11 @@ namespace Erdos735.RedChordExtraction.Geometry
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction ChartOrder SignVector
 open SignVector.RotationRealization
+
+noncomputable section
+
+local instance instDecidableEqGoodQuadrangleWeightVertex :
+    DecidableEq (ℙ ℝ SignVector.Vec3) := Classical.decEq _
 
 variable {A B : Finset Point}
 variable {G : SimpleGraph (BlueVertex B)} [DecidableRel G.Adj] [Fintype G.edgeSet]
@@ -340,7 +350,6 @@ theorem goodTwoQuadrangle_twoGoodCorners_ofReducedMagic
     exact Finset.mem_singleton.mpr rfl
   have hi₀nostage : i₀ ∉ D.stage1Corners f :=
     (Finset.mem_sdiff.mp hi₀good).2
-
   have hmult₁ : lineMultiplicity (OnLine (nonordinaryPoints P))
       (Xₚ.boundaryVertex f i₁) = 2 := by
     have h := (D.stage1Corner_iff f i₁).mp hi₁stage |>.2
@@ -369,7 +378,6 @@ theorem goodTwoQuadrangle_twoGoodCorners_ofReducedMagic
     have htwo := two_le_lineMultiplicity (nonordinaryPoints P)
       (Xₚ.boundaryVertex f i₀)
     omega
-
   have hredInc (i : Fin (Xₚ.strictC.faceDegree f)) :
       ∃ a : RedLine (ordinaryPoints P),
         a ∈ redChordLines (A := ordinaryPoints P) f ∧
@@ -389,7 +397,6 @@ theorem goodTwoQuadrangle_twoGoodCorners_ofReducedMagic
   obtain ⟨a₁, ha₁chord, ha₁inc⟩ := hredInc i₁
   obtain ⟨a₂, ha₂chord, ha₂inc⟩ := hredInc i₂
   obtain ⟨a₃, ha₃chord, ha₃inc⟩ := hredInc i₃
-
   let b₀ : Line (nonordinaryPoints P) := strictEdgeOwner (Xₚ.boundaryEdge f i₀)
   let b₁ : Line (nonordinaryPoints P) := strictEdgeOwner (Xₚ.boundaryEdge f i₁)
   let b₂ : Line (nonordinaryPoints P) := strictEdgeOwner (Xₚ.boundaryEdge f i₂)
@@ -406,7 +413,6 @@ theorem goodTwoQuadrangle_twoGoodCorners_ofReducedMagic
   have hb₃b₀ : b₃ ≠ b₀ := by
     intro h
     exact hi₃i₀ (Xₚ.indexedBoundaryOwner_injective f h)
-
   have hb₀i₁ : OnLine (nonordinaryPoints P) (Xₚ.boundaryVertex f i₁) b₀ := by
     change Incident (Xₚ.boundaryVertex f i₁).1 b₀.1
     simpa [b₀, i₁] using Hₚ.boundary_finish_on_owner f i₀
@@ -432,7 +438,6 @@ theorem goodTwoQuadrangle_twoGoodCorners_ofReducedMagic
   have hb₀i₀ : OnLine (nonordinaryPoints P) (Xₚ.boundaryVertex f i₀) b₀ := by
     change Incident (Xₚ.boundaryVertex f i₀).1 b₀.1
     simpa [b₀] using Hₚ.boundary_start_on_owner f i₀
-
   have heq₀₁ := RedBlueDualIncidence.normalized_pair_weight_eq_half_of_multiplicity_two
     hred (Xₚ.boundaryVertex f i₁) a₁.2 ha₁inc b₀ b₁ hb₀b₁ hb₀i₁ hb₁i₁ hmult₁
   have heq₁₂ := RedBlueDualIncidence.normalized_pair_weight_eq_half_of_multiplicity_two
@@ -452,5 +457,7 @@ theorem goodTwoQuadrangle_twoGoodCorners_ofReducedMagic
       (Xₚ.boundaryVertex f i₀) b₃ b₀, w x) / c)
     (w b₀.1 / c) (w b₁.1 / c) (w b₂.1 / c) (w b₃.1 / c)
     hextraNorm heq₀₁ heq₁₂ heq₂₃ heq₃₀
+
+end
 
 end Erdos735.RedChordExtraction.Geometry

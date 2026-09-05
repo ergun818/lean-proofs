@@ -29,12 +29,16 @@ multiplicity two lies on exactly one red line.
 
 namespace Erdos735
 
-open Classical
 open scoped LinearAlgebra.Projectivization
 
 namespace RedBlueDualIncidence
 
 open ChartOrder ProjectiveArrangement ProjectiveBoundaryExtraction
+
+noncomputable section
+
+local instance instDecidableEqRedBlueDualIncidenceVertex :
+    DecidableEq (ℙ ℝ SignVector.Vec3) := Classical.decEq _
 
 /-- The homogeneous representative of a concrete projective arrangement vertex. -/
 noncomputable def vertexHomogeneous {B : Finset Point} (v : Vertex B) : DualPoint :=
@@ -112,12 +116,14 @@ theorem ordinary_incident_unique_at_blue_crossing
       (disjoint_ordinaryPoints_nonordinaryPoints P)) ha'A (hba' ▸ hbB)
 
 /-- Blue members incident with a homogeneous point. -/
-noncomputable def blueIncidentPoints (P : Finset Point) (h : DualPoint) : Finset Point :=
-  (nonordinaryPoints P).filter fun b ↦ h ∈ ProjectiveDuality.dualLine b
+noncomputable def blueIncidentPoints (P : Finset Point) (h : DualPoint) : Finset Point := by
+  classical
+  exact (nonordinaryPoints P).filter fun b ↦ h ∈ ProjectiveDuality.dualLine b
 
 /-- Red members incident with a homogeneous point. -/
-noncomputable def redIncidentPoints (P : Finset Point) (h : DualPoint) : Finset Point :=
-  (ordinaryPoints P).filter fun a ↦ h ∈ ProjectiveDuality.dualLine a
+noncomputable def redIncidentPoints (P : Finset Point) (h : DualPoint) : Finset Point := by
+  classical
+  exact (ordinaryPoints P).filter fun a ↦ h ∈ ProjectiveDuality.dualLine a
 
 /-- Projective blue incidence and homogeneous blue incidence have the same
 finite cardinality. -/
@@ -183,6 +189,7 @@ theorem redIncidentPoints_card_eq_one_of_lineMultiplicity_eq_two
     (v : Vertex (nonordinaryPoints P))
     (hmult : lineMultiplicity (OnLine (nonordinaryPoints P)) v = 2) :
     (redIncidentPoints P (vertexHomogeneous v)).card = 1 := by
+  classical
   obtain ⟨a, haA, haInc⟩ :=
     exists_ordinary_incident_of_lineMultiplicity_eq_two hred v hmult
   have hblueCard : (blueIncidentPoints P (vertexHomogeneous v)).card = 2 := by
@@ -282,6 +289,7 @@ theorem lineFiber_ne_of_distinct_vertices_on_common_line
     (hus : OnLine (nonordinaryPoints P) u s)
     (hud : OnLine (nonordinaryPoints P) u d) :
     lineFiber P s.1 b.1 ≠ lineFiber P s.1 d.1 := by
+  classical
   intro hfiber
   have hbmem : b.1 ∈ lineFiber P s.1 d.1 := by
     rw [← hfiber]
@@ -317,6 +325,8 @@ theorem redIncidentPoints_card_eq_one_of_lifted_blueMultiplicity_eq_two
     (redIncidentPoints P (vertexHomogeneous v.1)).card = 1 := by
   apply redIncidentPoints_card_eq_one_of_lineMultiplicity_eq_two hred v.1
   exact hmult
+
+end
 
 end RedBlueDualIncidence
 end Erdos735

@@ -29,7 +29,6 @@ these facts it proves endpoint disjointness and nonadjacency of every red
 chord.
 -/
 
-open Classical
 noncomputable section
 open scoped LinearAlgebra.Projectivization
 
@@ -43,6 +42,9 @@ abbrev BlueLine (B : Finset Point) := {p // p ∈ B}
 abbrev RedLine (A : Finset Point) := {p // p ∈ A}
 abbrev BlueVertex (B : Finset Point) := {v // v ∈ projectiveVertices B}
 
+local instance instDecidableEqRedChordExtractionVertex :
+    DecidableEq (ℙ ℝ Vec3) := Classical.decEq _
+
 def blueNormals (B : Finset Point) : BlueLine B → Vec3 :=
   fun p ↦ normalVec p.1
 
@@ -55,8 +57,9 @@ def RedChordFeasible {A B : Finset Point}
   RestrictedRealizable (blueNormals B) (normalVec a.1) f.1
 
 noncomputable def redChordLines {A B : Finset Point}
-    (f : StrictFace (blueNormals B)) : Finset (RedLine A) :=
-  Finset.univ.filter (RedChordFeasible f)
+    (f : StrictFace (blueNormals B)) : Finset (RedLine A) := by
+  classical
+  exact Finset.univ.filter (RedChordFeasible f)
 
 theorem mem_redChordLines_iff {A B : Finset Point}
     (f : StrictFace (blueNormals B)) (a : RedLine A) :
@@ -70,8 +73,9 @@ variable (X : RotationRealization (G := G) (blueNormals B) (blueNormals_ne_zero 
 /-- Boundary indices at which the red projective line meets the blue face. -/
 noncomputable def redEndpointIndices
     (f : StrictFace (blueNormals B)) (a : RedLine A) :
-    Finset (Fin (X.strictC.faceDegree f)) :=
-  Finset.univ.filter fun i ↦ Incident (X.boundaryVertex f i).1 a.1
+    Finset (Fin (X.strictC.faceDegree f)) := by
+  classical
+  exact Finset.univ.filter fun i ↦ Incident (X.boundaryVertex f i).1 a.1
 
 theorem mem_redEndpointIndices_iff
     (f : StrictFace (blueNormals B)) (a : RedLine A)

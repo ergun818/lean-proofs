@@ -26,12 +26,12 @@ there are no further vertices on the line.  This elementary order lemma is
 the finite core of the local failed-Fano recognition arguments.
 -/
 
-open Classical
 
 namespace Erdos735.ChartOrder
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
+omit [Fintype V] in
 private theorem cyclicConsecutive_of_pair_eq
     (coord : V → ℝ) (S : Finset V)
     {a b u v : V} (hab : a ≠ b)
@@ -59,6 +59,7 @@ private theorem cyclicConsecutive_of_pair_eq
   · subst u; subst v; exact Or.inr huv
   · exact False.elim (huvne (hu.trans hv.symm))
 
+omit [Fintype V] in
 private theorem subset_three_of_ordered
     (coord : V → ℝ) (S : Finset V)
     (hinj : Set.InjOn coord (S : Set V))
@@ -113,9 +114,10 @@ private theorem subset_three_of_ordered
   · exact Or.inr (Or.inl (hinj hy hb h))
   · exact Or.inr (Or.inr (hinj hy hx h))
 
+omit [Fintype V] in
 /-- If all three unordered pairs among `a,b,x` occur as cyclic edges of
 `S`, then `S` consists exactly of those three vertices. -/
-theorem eq_triple_of_three_cyclic_pairs
+theorem eq_triple_of_three_cyclic_pairs [Finite V]
     (coord : V → ℝ) (S : Finset V)
     (hinj : Set.InjOn coord (S : Set V))
     {a b x : V} (ha : a ∈ S) (hb : b ∈ S) (hx : x ∈ S)
@@ -127,6 +129,7 @@ theorem eq_triple_of_three_cyclic_pairs
     (hXA : CyclicConsecutive coord S x a ∨
       CyclicConsecutive coord S a x) :
     S = {a, b, x} := by
+  let : Fintype V := Fintype.ofFinite _
   apply Finset.Subset.antisymm
   · have habc : coord a ≠ coord b := fun h ↦ hab (hinj ha hb h)
     have haxc : coord a ≠ coord x := fun h ↦ hax (hinj ha hx h)
@@ -170,9 +173,10 @@ theorem eq_triple_of_three_cyclic_pairs
     · exact hb
     · exact hx
 
+omit [Fintype V] in
 /-- Cyclic-edge form of `eq_triple_of_three_cyclic_pairs`. -/
-theorem verticesOn_eq_triple_of_three_edges
-    {L : Type*} [Fintype L] [DecidableEq L]
+theorem verticesOn_eq_triple_of_three_edges [Finite V]
+    {L : Type*} [Finite L]
     (vertices : Finset V) (onLine : V → L → Prop) [DecidableRel onLine]
     (coord : V → ℝ) (hinj : Set.InjOn coord (vertices : Set V))
     {l : L} {a b x : V}
@@ -185,6 +189,9 @@ theorem verticesOn_eq_triple_of_three_edges
     (hBX : cyclicEdgeVertices vertices onLine coord eBX = {b, x})
     (hXA : cyclicEdgeVertices vertices onLine coord eXA = {x, a}) :
     verticesOn vertices onLine l = {a, b, x} := by
+  classical
+  let : Fintype L := Fintype.ofFinite _
+  let : Fintype V := Fintype.ofFinite _
   let S := verticesOn vertices onLine l
   have hconAB := cyclicEdgeFinish_spec vertices onLine coord eAB
   have hconBX := cyclicEdgeFinish_spec vertices onLine coord eBX

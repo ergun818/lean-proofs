@@ -30,10 +30,14 @@ face.  This file packages that local fact in the exact lifted-belt form
 needed by the global exhaustion argument.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcreteStage4BeltClassification
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcreteStage4BeltClassificationVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction
 open ChartOrder SignVector SignVectorArrangement
@@ -65,6 +69,7 @@ private abbrev component
     (hHall : ¬ (G hred ha hb hd hncol hAcard hnotFF).NoEvilEvilPath) :=
   (G hred ha hb hd hncol hAcard hnotFF).deficientPathComponent hHall
 
+omit [Nonempty (ProjectiveBoundaryExtraction.Line (nonordinaryPoints P))] in
 private theorem boundaryEdge_incident
     (q : StrictFace (normals (B (P := P))))
     (i : Fin ((C ha hb hd hncol).faceDegree q)) :
@@ -76,6 +81,7 @@ private theorem boundaryEdge_incident
   exact List.mem_toFinset.mpr
     ((D hred ha hb hd hncol).boundaryEdge_mem q i)
 
+omit [Nonempty (ProjectiveBoundaryExtraction.Line (nonordinaryPoints P))] in
 private theorem strictDegree_ne_three_of_faceDegree_eq_four
     (q : StrictFace (normals (B (P := P))))
     (hq : (C ha hb hd hncol).faceDegree q = 4) :
@@ -87,6 +93,7 @@ private theorem strictDegree_ne_three_of_faceDegree_eq_four
   have h43 : (4 : ℕ) = 3 := hq.symm.trans hthree
   norm_num at h43
 
+omit [Nonempty (ProjectiveBoundaryExtraction.Line (nonordinaryPoints P))] in
 private theorem strictDegree_ne_three_of_faceDegree_ne_three
     (q : StrictFace (normals (B (P := P))))
     (hq : (C ha hb hd hncol).faceDegree q ≠ 3) :

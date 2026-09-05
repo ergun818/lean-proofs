@@ -12,7 +12,6 @@ the equivalence between its face indices and the concrete polar boundary,
 and show that vertices, successors, and supporting owners agree.
 -/
 
-open Classical
 open scoped LinearAlgebra.Projectivization Matrix
 open Matrix
 
@@ -21,6 +20,9 @@ namespace Erdos735.RedChordExtraction
 noncomputable section
 
 open ProjectiveArrangement SignVector
+
+local instance instDecidableEqPolarRedChordGeometryVertex :
+    DecidableEq (ℙ ℝ SignVector.Vec3) := Classical.decEq _
 open SignVector.RotationRealization
 open SignVector.PolarBoundaryAcross
 open RedChordPolarBoundaryIndices

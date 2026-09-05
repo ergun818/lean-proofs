@@ -31,11 +31,13 @@ triangle.  The two endpoints on the quadrangle are double.  The concrete
 three-edge recognition theorem therefore gives failed Fano.
 -/
 
-open Classical
 noncomputable section
 open scoped LinearAlgebra.Projectivization Matrix
 
 namespace Erdos735.OppositeTriangleRecognition
+
+local instance instDecidableEqOppositeTriangleRecognitionVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 open ChartOrder ProjectiveArrangement ProjectiveBoundaryExtraction
 open SignVector ConcretePolarOrientedVertex ConcretePolarEdgeVertices

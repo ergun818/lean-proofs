@@ -29,7 +29,6 @@ indices are the concrete cyclic polar corners, and every incidence assertion
 is projectively literal.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.PolarRedChordExtraction
@@ -86,6 +85,7 @@ theorem endpointIndices_disjoint
     (f : StrictFace (normals (nonordinaryPoints P)))
     {a b : ChordLine f} (hab : a ≠ b) :
     Disjoint (endpointIndices hspan f a.1) (endpointIndices hspan f b.1) := by
+  classical
   rw [Finset.disjoint_left]
   intro i hai hbi
   have haInc : Incident
@@ -118,8 +118,9 @@ theorem chordLine_injective
 noncomputable def redChords
     (f : StrictFace (normals (nonordinaryPoints P))) :
     Finset (BoundaryIndex (normals (nonordinaryPoints P)) f ×
-      BoundaryIndex (normals (nonordinaryPoints P)) f) :=
-  Finset.univ.image (chordPair hred hspan f)
+      BoundaryIndex (normals (nonordinaryPoints P)) f) := by
+  classical
+  exact Finset.univ.image (chordPair hred hspan f)
 
 theorem mem_redChords_iff
     (f : StrictFace (normals (nonordinaryPoints P))) (p :
@@ -127,6 +128,7 @@ theorem mem_redChords_iff
         BoundaryIndex (normals (nonordinaryPoints P)) f) :
     p ∈ redChords hred hspan f ↔
       ∃ a : ChordLine f, chordPair hred hspan f a = p := by
+  classical
   simp [redChords]
 
 theorem redChord_distinct
@@ -194,6 +196,7 @@ theorem redChord_nonadjacent
     (hp : p ∈ redChords hred hspan f) :
     p.2 ≠ Erdos957.cyclicSucc p.1 ∧
       p.1 ≠ Erdos957.cyclicSucc p.2 := by
+  classical
   obtain ⟨a, rfl⟩ := (mem_redChords_iff hred hspan f p).mp hp
   have hs := chordPair_spec hred hspan f a
   have hinc1 : Incident

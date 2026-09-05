@@ -28,10 +28,14 @@ quadrangle with triangles across opposite edges, the exact local
 failed-Fano certificate used in ABKPR.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcreteDonationPacking
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcreteDonationPackingVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction SignVector ChartOrder
 open ConcretePolarABKPRData
@@ -68,6 +72,7 @@ private abbrev PC := ConcretePolarCellulation.blueCellulation
   (B (P := P)) ha hb hd hncol
 private abbrev D := ConcretePolarABKPRData.concreteData hred ha hb hd hncol
 
+omit [Nonempty (Line (nonordinaryPoints P))] in
 /-- Version of the reindexed local-sector lemma where the two across faces
 are named explicitly. -/
 theorem adjacent_bad_face_edges_of_common_corner
@@ -86,6 +91,7 @@ theorem adjacent_bad_face_edges_of_common_corner
   exact ConcretePolarABKPRData.concreteData_adjacent_edges_of_common_across_corner
     hred ha hb hd hncol r i j hij vf vg hv
 
+omit [Nonempty (Line (nonordinaryPoints P))] in
 /-- A collision of the canonical donation edges is exactly the
 opposite-triangles exception around the common bad quadrangle. -/
 theorem oppositeTriangles_of_donationEdgeCollision

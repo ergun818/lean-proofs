@@ -27,7 +27,6 @@ and multiplicity condition. The public constructor leaves only the exact edge-re
 and face-region formulas of the one-dimensional deletion--restriction argument.
 -/
 
-open Classical
 noncomputable section
 
 open scoped LinearAlgebra.Projectivization
@@ -44,6 +43,9 @@ abbrev Line (B : Finset Point) := {p // p ∈ B}
 
 /-- Arrangement vertices are the projective intersections determined by pairs of lines. -/
 abbrev Vertex (B : Finset Point) := {v // v ∈ projectiveVertices B}
+
+local instance instDecidableEqProjectiveBoundaryExtractionVertex :
+    DecidableEq (ℙ ℝ Vec3) := Classical.decEq _
 
 /-- Incidence restricted to the finite line and vertex types. -/
 def OnLine (B : Finset Point) (v : Vertex B) (p : Line B) : Prop :=
@@ -129,11 +131,11 @@ theorem two_le_lineMultiplicity (B : Finset Point) :
   let q : Line B := pq.1.2
   apply Finset.one_lt_card.mpr
   refine ⟨p, ?_, q, ?_, ?_⟩
-  · simp only [lineMultiplicity, Finset.mem_filter, Finset.mem_univ, true_and]
+  · simp only [Finset.mem_filter, Finset.mem_univ, true_and]
     change Incident v.1 pq.1.1.1
     rw [← hpqv]
     exact indexedIntersection_incident_left B pq
-  · simp only [lineMultiplicity, Finset.mem_filter, Finset.mem_univ, true_and]
+  · simp only [Finset.mem_filter, Finset.mem_univ, true_and]
     change Incident v.1 pq.1.2.1
     rw [← hpqv]
     exact indexedIntersection_incident_right B pq

@@ -29,11 +29,13 @@ boundary owner.  Hence that projective blue line has exactly three vertices;
 the two triangle endpoints are double, and failed-Fano recognition applies.
 -/
 
-open Classical
 noncomputable section
 open scoped LinearAlgebra.Projectivization Matrix
 
 namespace Erdos735.TriangleExceptionCardinality
+
+local instance instDecidableEqTriangleExceptionCardinalityVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction SignVector ChartOrder
 open SignVector.RedChordSector
@@ -243,6 +245,7 @@ private noncomputable def bad_side_continuation
     Continuation hred ha hb hd hncol t third
       ((D hred ha hb hd hncol).boundaryVertex t shared).1.1
       ((D hred ha hb hd hncol).boundaryVertex t outer).1 := by
+  classical
   let DD := D hred ha hb hd hncol
   let CC := C ha hb hd hncol
   let dart : ABKPR.FaceDart CC := ⟨t, side⟩
@@ -258,15 +261,15 @@ private noncomputable def bad_side_continuation
         DD.boundaryVertex t (ABKPR.faceSucc CC t side)} :
           Finset (OrientedVertex (B (P := P)))) := by
     rcases houterSide with h | h
-    · simpa [h]
-    · simpa [h, CC]
+    · simp [h]
+    · simp [h, CC]
   have shared_mem : DD.boundaryVertex t shared ∈
       ({DD.boundaryVertex t side,
         DD.boundaryVertex t (ABKPR.faceSucc CC t side)} :
           Finset (OrientedVertex (B (P := P)))) := by
     rcases hsharedSide with h | h
-    · simpa [h]
-    · simpa [h, CC]
+    · simp [h]
+    · simp [h, CC]
   have outer_mem_g : DD.boundaryVertex t outer ∈
       ({DD.boundaryVertex g j,
         DD.boundaryVertex g (ABKPR.faceSucc CC g j)} :
@@ -582,7 +585,7 @@ theorem isFailedFano_of_triangleTwoBad
       omega
     have hcycle : ABKPR.faceSucc CC t k = i := by
       apply Fin.ext
-      simp only [s, k, ABKPR.faceSucc, ABKPR.cyclicSucc, Fin.ext_iff]
+      simp only [s, k, ABKPR.faceSucc, ABKPR.cyclicSucc]
       simp only [CC, ht]
       omega
     have hbadI : DD.IsBadTwoQuadrangle (DD.across ⟨t, i⟩).1 :=

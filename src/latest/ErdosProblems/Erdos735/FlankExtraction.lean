@@ -25,7 +25,6 @@ this to the actual geometric-flank relation removes both lookup maps and their c
 as independent inputs to `FlankSystem`.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735
@@ -93,12 +92,14 @@ variable {A : ABKPR.Data C}
 variable {Line : Type uL} [Fintype Line] [DecidableEq Line]
 
 def geometricFlanks (edgeLine : Edge → Line) (e : A.EvilFace) :
-    Finset A.HelpingPair :=
-  Finset.univ.filter fun h ↦ A.IsGeometricFlank edgeLine e h
+    Finset A.HelpingPair := by
+  classical
+  exact Finset.univ.filter fun h ↦ A.IsGeometricFlank edgeLine e h
 
 def geometricEvilEndpoints (edgeLine : Edge → Line) (h : A.HelpingPair) :
-    Finset A.EvilFace :=
-  Finset.univ.filter fun e ↦ A.IsGeometricFlank edgeLine e h
+    Finset A.EvilFace := by
+  classical
+  exact Finset.univ.filter fun e ↦ A.IsGeometricFlank edgeLine e h
 
 /-- Minimal relation-level geometric input for Stage 4.  The lookup maps of
 `FlankSystem` are extracted from the actual geometric flank relation. -/

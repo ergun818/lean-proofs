@@ -29,12 +29,14 @@ This upgrades the projective endpoint pairing to a literal equality of the
 global oriented endpoints in `projectiveVertices B × Bool`.
 -/
 
-open Classical
 noncomputable section
 open scoped Matrix LinearAlgebra.Projectivization BigOperators
 open Matrix
 
 namespace Erdos735.ConcretePolarOrientedVertex
+
+local instance instDecidableEqConcretePolarOrientedAcrossVertex :
+    DecidableEq (ℙ ℝ SignVector.Vec3) := Classical.decEq _
 
 open ProjectiveArrangement SignVector
 open SignVector.PolarFace SignVector.PolarBoundaryOrder
@@ -45,11 +47,12 @@ open ProjectiveBoundaryExtraction ChartOrder
 
 variable {I : Type*} [Fintype I] [DecidableEq I] [Nonempty I]
 
+omit [DecidableEq I] [Nonempty I] in
 /-- A nonzero weak realization evaluates positively on the sum of the
 oriented normals when the normals span three-space. -/
 theorem orientedSum_dot_pos_of_weak_of_span
     {n : I → Vec3} {s : I → Bool} {x y : Vec3}
-    (hx : Realizes n s x)
+    (_hx : Realizes n s x)
     (hspan : Submodule.span ℝ (Set.range n) = ⊤)
     (hy0 : y ≠ 0) (hy : WeaklyRealizes n s y) :
     0 < orientedSum n s ⬝ᵥ y := by
@@ -81,6 +84,7 @@ theorem orientedSum_dot_pos_of_weak_of_span
   obtain ⟨i, hi⟩ := hex
   exact ⟨i, Finset.mem_univ i, by simpa [orientedNormal_dot] using hi⟩
 
+omit [DecidableEq I] [Nonempty I] in
 /-- A weak covector vanishing on an edge support weakly realizes every
 strict face incident with that edge. -/
 theorem weaklyRealizes_transfer_incident
@@ -88,6 +92,7 @@ theorem weaklyRealizes_transfer_incident
     (hef : e ∈ faceEdges n f) (heg : e ∈ faceEdges n g)
     (hy : WeaklyRealizes n f.1 y) (hzero : n e.1.1 ⬝ᵥ y = 0) :
     WeaklyRealizes n g.1 y := by
+  classical
   intro j
   by_cases hj : j = e.1.1
   · subst j

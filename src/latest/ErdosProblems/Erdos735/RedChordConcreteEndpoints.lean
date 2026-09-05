@@ -28,7 +28,6 @@ sector endpoints are actual blue arrangement vertices, not merely abstract
 points supplied by a cardinality equivalence.
 -/
 
-open Classical
 open scoped LinearAlgebra.Projectivization Matrix
 open Matrix
 

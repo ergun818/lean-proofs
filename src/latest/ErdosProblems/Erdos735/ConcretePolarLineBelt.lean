@@ -41,7 +41,6 @@ slot must be recognized as the face across the opposite edge of a helping
 or bad quadrangle, and hence excluded from being triangular.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735
@@ -191,6 +190,11 @@ open ChartOrder SignVector SignVectorArrangement
 open SignVector.ProjectiveEdgeEndpointEquiv
 open ConcretePolarOrientedVertex
 
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcretePolarLineBeltVertex :
+    DecidableEq (ℙ ℝ SignVector.Vec3) := Classical.decEq _
+
 abbrev Point := ProjectiveArrangement.Point
 abbrev Line (B : Finset Point) := ProjectiveBoundaryExtraction.Line B
 abbrev Vertex (B : Finset Point) := ProjectiveBoundaryExtraction.Vertex B
@@ -246,6 +250,7 @@ theorem concreteEdgeVertices_antipodal_disjoint
   have hself : orientedRep v ⬝ᵥ orientedRep v = 0 := hle (by simp)
   exact orientedRep_ne_zero v (dotProduct_self_eq_zero.mp hself)
 
+omit [Nonempty (Line B)] in
 /-- Equality of the underlying projective cyclic interval determines a
 strict sign-vector edge up to antipode.  This is the precise fact needed to
 pass from projective belt exhaustion to the two spherical sheets. -/
@@ -303,6 +308,7 @@ theorem strictEdge_eq_of_liftedCyclic_base_eq_of_common_orientedVertex
     apply concreteEdgeVertices_antipodal_disjoint (B := B) hspan e v hv
     rwa [← heq]
 
+omit [Nonempty (Line B)] in
 /-- Local projective-slot classifier.  If one face at a reference strict
 edge is `endpoint` and the other face is not triangular, then every
 triangular face carried by either lift of the same projective interval is
@@ -360,6 +366,7 @@ theorem triangular_face_eq_or_antipodal_of_liftedCyclic_base_eq
         exact htri
       rwa [strictFaceDegree_antipodalStrictFace] at hanti
 
+omit [Nonempty (Line B)] in
 /-- Every spherical face slot above one projective cyclic interval lies in
 the antipodal orbit of one of the two sides of any chosen lift of that
 interval. -/
@@ -388,6 +395,7 @@ theorem exists_edgeFace_sameOrbit_of_liftedCyclic_base_eq
     rw [edgeFace_antipodalEdge_flip] at hface
     exact ⟨!side, Or.inr hface.symm⟩
 
+omit [Nonempty (Line B)] in
 /-- If two non-antipodal faces occur above the same projective interval,
 their two antipodal orbits exhaust all four spherical face slots above
 that interval. -/

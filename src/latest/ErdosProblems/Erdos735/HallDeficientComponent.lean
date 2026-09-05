@@ -27,7 +27,6 @@ neighbors in the set, and exactly two evils have degree one.  These are the
 two endpoints of the alternating component used in Stage 4.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ABKPR.HelpingGraph
@@ -56,7 +55,7 @@ def LinkedEvil (e e' : Evil) : Prop :=
   ∃ h : Help, G.Adj e h ∧ G.Adj e' h
 
 instance hallDeficientDecidable (S : Finset Evil) : Decidable (G.HallDeficient S) :=
-  inferInstance
+  inferInstanceAs (Decidable ((G.neighborsOf S).card < S.card))
 
 @[simp] theorem mem_neighborsOf {S : Finset Evil} {h : Help} :
     h ∈ G.neighborsOf S ↔ ∃ e ∈ S, G.Adj e h := by
@@ -141,7 +140,7 @@ theorem neighborsOf_card_add_one_eq_of_minimal
   have hpos : 0 < S.card := Finset.card_pos.mpr ⟨e, he⟩
   omega
 
-theorem linkedEvil_symmetric : Symmetric G.LinkedEvil := by
+theorem linkedEvil_symmetric : ∀ ⦃e e'⦄, G.LinkedEvil e e' → G.LinkedEvil e' e := by
   intro e e' h
   obtain ⟨a, he, he'⟩ := h
   exact ⟨a, he', he⟩
@@ -153,6 +152,7 @@ theorem minimal_hallDeficient_connected
     (hmin : ∀ T : Finset Evil, G.HallDeficient T → S.card ≤ T.card)
     {root : Evil} (hroot : root ∈ S) :
     ∀ e ∈ S, Relation.ReflTransGen G.LinkedEvil root e := by
+  classical
   let R : Finset Evil := S.filter fun e ↦
     Relation.ReflTransGen G.LinkedEvil root e
   have hRsub : R ⊆ S := Finset.filter_subset _ _

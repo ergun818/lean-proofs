@@ -28,10 +28,14 @@ a red chord in the face across the helper's opposite edge.  A triangular
 face has no red chord, giving the required Stage-4 belt exclusion.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcreteStage4HelperOpposite
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcreteStage4HelperOppositeVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction
 open ChartOrder SignVector SignVector.RedChordSector SignVectorArrangement

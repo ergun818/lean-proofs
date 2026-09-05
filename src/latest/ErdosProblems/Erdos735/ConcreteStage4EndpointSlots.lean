@@ -28,10 +28,14 @@ classifies every triangular face in an endpoint projective slot as the
 endpoint triangle itself, up to the antipodal lift.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcreteStage4EndpointSlots
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcreteStage4EndpointSlotsVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction
 open ChartOrder SignVector SignVector.RedChordSector SignVectorArrangement

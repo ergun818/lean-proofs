@@ -122,12 +122,14 @@ def AffineArrangement.coeff (A : AffineArrangement I) (i : I) : ℝ × ℝ :=
 def AffineArrangement.coeffSet (A : AffineArrangement I) : Set (ℝ × ℝ) :=
   Set.range A.coeff
 
+omit [DecidableEq I] in
 lemma AffineArrangement.coeff_injective (A : AffineArrangement I) :
     Function.Injective A.coeff := by
   intro i j hij
   apply A.slope_injective
   exact congrArg Prod.fst hij
 
+omit [DecidableEq I] in
 lemma AffineArrangement.coeffSet_finite (A : AffineArrangement I) :
     A.coeffSet.Finite :=
   Set.finite_range A.coeff
@@ -139,6 +141,7 @@ def AffineArrangement.crossingX (A : AffineArrangement I) (i j : I) : ℝ :=
 def AffineArrangement.crossingY (A : AffineArrangement I) (i j : I) : ℝ :=
   (A.line i).eval (A.crossingX i j)
 
+omit [DecidableEq I] in
 lemma AffineArrangement.eval_crossingX_eq (A : AffineArrangement I)
     {i j : I} (hij : i ≠ j) :
     (A.line i).eval (A.crossingX i j) =
@@ -186,8 +189,10 @@ def AffineArrangement.extremeIndexToPoint (A : AffineArrangement I) :
     A.ExtremeIndex → (convexHull ℝ A.coeffSet).extremePoints ℝ :=
   fun i => ⟨A.coeff i.1, i.property⟩
 
+omit [DecidableEq I] in
 lemma AffineArrangement.extremeIndexToPoint_bijective (A : AffineArrangement I) :
     Function.Bijective A.extremeIndexToPoint := by
+  classical
   constructor
   · intro i j hij
     apply Subtype.ext
@@ -208,9 +213,11 @@ noncomputable def AffineArrangement.extremeIndexEquiv (A : AffineArrangement I) 
     A.ExtremeIndex ≃ (convexHull ℝ A.coeffSet).extremePoints ℝ :=
   Equiv.ofBijective A.extremeIndexToPoint A.extremeIndexToPoint_bijective
 
+omit [DecidableEq I] in
 theorem AffineArrangement.three_le_card_extremeIndex (A : AffineArrangement I)
     (hspan : affineSpan ℝ A.coeffSet = ⊤) :
     3 ≤ Fintype.card A.ExtremeIndex := by
+  classical
   have h := finrank_add_one_le_card_extremePoints A.coeffSet_finite hspan
   have hthree : 3 ≤ ((convexHull ℝ A.coeffSet).extremePoints ℝ).ncard := by
     simpa using h
@@ -248,14 +255,19 @@ noncomputable def AffineArrangement.coeffFinset (A : AffineArrangement I) :
     Finset Erdos957.Point :=
   Finset.univ.image A.coeffPoint
 
+omit [DecidableEq I] in
 lemma AffineArrangement.coeffPoint_injective (A : AffineArrangement I) :
-    Function.Injective A.coeffPoint :=
+    Function.Injective A.coeffPoint := by
+  classical
+  exact
   pairPointEquiv.injective.comp A.coeff_injective
 
+omit [DecidableEq I] in
 @[simp] lemma AffineArrangement.mem_coeffFinset (A : AffineArrangement I)
     (p : Erdos957.Point) : p ∈ A.coeffFinset ↔ ∃ i, A.coeffPoint i = p := by
   simp [AffineArrangement.coeffFinset]
 
+omit [DecidableEq I] in
 lemma AffineArrangement.coeffPoint_range (A : AffineArrangement I) :
     Set.range A.coeffPoint = pairPointEquiv '' A.coeffSet := by
   ext p
@@ -265,9 +277,11 @@ lemma AffineArrangement.coeffPoint_range (A : AffineArrangement I) :
   · rintro ⟨q, ⟨i, rfl⟩, rfl⟩
     exact ⟨i, rfl⟩
 
+omit [DecidableEq I] in
 lemma AffineArrangement.affineSpan_coeffPoint_eq_top (A : AffineArrangement I)
     (hspan : affineSpan ℝ A.coeffSet = ⊤) :
     affineSpan ℝ (Set.range A.coeffPoint) = ⊤ := by
+  classical
   rw [A.coeffPoint_range]
   let f := pairPointEquiv.toLinearEquiv.toAffineEquiv
   change affineSpan ℝ (f '' A.coeffSet) = ⊤
@@ -285,16 +299,20 @@ lemma AffineArrangement.affineSpan_coeffPoint_eq_top (A : AffineArrangement I)
       · intro
         exact pairPointEquiv.surjective p
 
+omit [DecidableEq I] in
 lemma AffineArrangement.coe_coeffFinset (A : AffineArrangement I) :
     (A.coeffFinset : Set Erdos957.Point) = Set.range A.coeffPoint := by
+  classical
   ext p
   simp
 
+omit [DecidableEq I] in
 /-- A two-dimensional coefficient family has at least three vertices in the
 finite hull used by the checked gift-wrapping construction. -/
 theorem AffineArrangement.three_le_hullVertexCount (A : AffineArrangement I)
     (hspan : affineSpan ℝ A.coeffSet = ⊤) :
     3 ≤ Erdos957.hullVertexCount A.coeffFinset := by
+  classical
   have h := finrank_add_one_le_card_extremePoints A.coeffFinset.finite_toSet
     (by rw [A.coe_coeffFinset]; exact A.affineSpan_coeffPoint_eq_top hspan)
   have hfinrank : Module.finrank ℝ Erdos957.Point = 2 := by
@@ -338,6 +356,7 @@ lemma pairFunctional_apply (l : Erdos957.Point →L[ℝ] ℝ) (p : ℝ × ℝ) :
   rw [hp, map_add, map_smul, map_smul]
   simp [mul_comm]
 
+omit [DecidableEq I] in
 /-- A strict supporting edge of the coefficient hull is exactly an upper or
 lower envelope crossing of the corresponding affine lines. -/
 lemma AffineArrangement.isEnvelopePair_of_strictSupportingEdge
@@ -345,6 +364,7 @@ lemma AffineArrangement.isEnvelopePair_of_strictSupportingEdge
     (h : Erdos957.IsStrictSupportingEdge A.coeffFinset
       (A.coeffPoint i) (A.coeffPoint j)) :
     ∃ side, A.IsEnvelopePair i j side := by
+  classical
   rcases h with ⟨hpq, l, hl, heq, hmax, _⟩
   have hij : i ≠ j := by
     intro hij
@@ -499,6 +519,7 @@ noncomputable def AffineArrangement.hullIndex
   A.coeffPointEquiv.symm ⟨(A.coeffCyclicHullOrder hspan).vertex t,
     (A.coeffCyclicHullOrder hspan).vertex_mem t⟩
 
+omit [DecidableEq I] in
 @[simp] lemma AffineArrangement.coeffPoint_hullIndex
     (A : AffineArrangement I) (hspan : affineSpan ℝ A.coeffSet = ⊤)
     (t : Fin (Erdos957.hullVertexCount A.coeffFinset)) :
@@ -508,9 +529,11 @@ noncomputable def AffineArrangement.hullIndex
     ⟨(A.coeffCyclicHullOrder hspan).vertex t,
       (A.coeffCyclicHullOrder hspan).vertex_mem t⟩)
 
+omit [DecidableEq I] in
 lemma AffineArrangement.hullIndex_injective
     (A : AffineArrangement I) (hspan : affineSpan ℝ A.coeffSet = ⊤) :
     Function.Injective (A.hullIndex hspan) := by
+  classical
   intro t u h
   apply (A.coeffCyclicHullOrder hspan).vertex.injective
   rw [← A.coeffPoint_hullIndex hspan, ← A.coeffPoint_hullIndex hspan, h]
@@ -538,10 +561,12 @@ lemma AffineArrangement.hullTriangleAt_lineIndices
       {A.hullIndex hspan t, A.hullIndex hspan (Erdos957.cyclicSucc t)} := by
   simp [AffineArrangement.hullTriangleAt]
 
+omit [DecidableEq I] in
 lemma AffineArrangement.cyclicSucc_sq_ne
     (A : AffineArrangement I) (hspan : affineSpan ℝ A.coeffSet = ⊤)
     (t : Fin (Erdos957.hullVertexCount A.coeffFinset)) :
     Erdos957.cyclicSucc (Erdos957.cyclicSucc t) ≠ t := by
+  classical
   intro h
   have ht := (A.coeffCyclicHullOrder hspan).strict_turn t
   rw [h] at ht

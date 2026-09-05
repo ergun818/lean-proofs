@@ -30,7 +30,6 @@ red-chord fields of `ABKPR.Data`.  Only the two genuinely local weighted
 sector statements are parameters of the final constructor.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcretePolarABKPRData
@@ -39,6 +38,11 @@ open ProjectiveArrangement ProjectiveBoundaryExtraction SignVector ChartOrder
 open SignVector.PolarBoundaryAcross SignVector.PolarBoundaryOrder
 open ConcretePolarOrientedVertex ConcretePolarEdgeVertices
 open PolarRedChordExtraction
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcretePolarABKPRDataVertex :
+    DecidableEq (ℙ ℝ SignVector.Vec3) := Classical.decEq _
 
 abbrev Point := ProjectiveArrangement.Point
 
@@ -304,8 +308,9 @@ noncomputable def chordPair
 noncomputable def redChords
     (f : StrictFace (normals (nonordinaryPoints P))) :
     Finset (Fin ((C (vertex_degree := vertex_degree) ha hb hd hncol).faceDegree f) ×
-      Fin ((C (vertex_degree := vertex_degree) ha hb hd hncol).faceDegree f)) :=
-  Finset.univ.image (chordPair hred (vertex_degree := vertex_degree)
+      Fin ((C (vertex_degree := vertex_degree) ha hb hd hncol).faceDegree f)) := by
+  classical
+  exact Finset.univ.image (chordPair hred (vertex_degree := vertex_degree)
     ha hb hd hncol f)
 
 theorem mem_redChords_iff

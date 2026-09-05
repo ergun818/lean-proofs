@@ -149,7 +149,7 @@ noncomputable def scaleYEquiv (M : ℝ) (hM : M ≠ 0) : Point ≃ₗ[ℝ] Point
   map_smul' c x := by
     apply WithLp.ofLp_injective
     funext i
-    fin_cases i <;> simp <;> ring
+    fin_cases i <;> simp; ring
 
 lemma scaleY_fst (M : ℝ) (hM : M ≠ 0) (z : Point) :
     scaleYEquiv M hM z 0 = z 0 := by simp [scaleYEquiv]
@@ -278,10 +278,10 @@ lemma dist_scaleY_horizontal (M : ℝ) (hM : 0 < M) {q a b : Point}
   have hz1 : z 1 = M * (q 1 - a 1) := by simp [z, scaleYEquiv]; ring
   have hinner : ⟪z, w⟫ = z 0 * w 0 := by
     rw [EuclideanSpace.inner_eq_star_dotProduct]
-    simp [Fin.sum_univ_two, hw1, mul_comm]
+    simp [hw1, mul_comm]
   have hww : ⟪w, w⟫ = w 0 * w 0 := by
     rw [EuclideanSpace.inner_eq_star_dotProduct]
-    simp [Fin.sum_univ_two, hw1]
+    simp [hw1]
   have hw0ne : w 0 ≠ 0 := by simpa [hw0] using hx
   have hperp0 : perp w z 0 = 0 := by
     simp only [perp]

@@ -27,12 +27,16 @@ arrangement vertex.  This discharges the red-red incidence field of
 boundary-owner geometry remain.
 -/
 
-open Classical
 noncomputable section
+
+open scoped LinearAlgebra.Projectivization
 
 namespace Erdos735.RedChordExtraction
 
 open ProjectiveArrangement SignVector
+
+local instance instDecidableEqConcreteRedChordExtractionVertex :
+    DecidableEq (ℙ ℝ SignVector.Vec3) := Classical.decEq _
 open SignVector.RotationRealization
 
 variable {P : Finset Point} {w : Point → ℝ} {c : ℝ}

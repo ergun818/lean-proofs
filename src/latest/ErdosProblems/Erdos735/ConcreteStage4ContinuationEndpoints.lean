@@ -28,10 +28,14 @@ triangle, it lies on the endpoint's opposite line, and it is not the face of
 any helping neighbor of that endpoint.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcreteStage4ContinuationEndpoints
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcreteStage4ContinuationEndpointsVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction SignVector
 open SignVectorArrangement

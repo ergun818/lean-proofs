@@ -27,10 +27,14 @@ projective intervals cover the selected line and the two endpoint slots are
 classified, it constructs the antipodally correct `ProjectiveLeviPathExtraction`.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcreteProjectiveLeviPathExtraction
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcreteProjectiveLeviPathExtractionVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction
 open SignVector SignVectorArrangement

@@ -29,7 +29,6 @@ skeleton.  A restricted sign pattern on one dual line is equipped with its
 two literal adjacent arrangement intersections.
 -/
 
-open Classical
 open scoped LinearAlgebra.Projectivization Matrix
 open Matrix
 
@@ -37,11 +36,15 @@ namespace Erdos735.SignVector.ProjectiveEdgeEndpointEquiv
 
 noncomputable section
 
+local instance instDecidableEqProjectiveEdgeEndpointEquivVertex :
+    DecidableEq (ℙ ℝ Vec3) := Classical.decEq _
+
 open ChartOrder ProjectiveArrangement ProjectiveBoundaryExtraction
 open PolarFace RedChordSector
 
 variable {I : Type*} [Fintype I] [DecidableEq I] [Nonempty I]
 
+omit [DecidableEq I] in
 /-- The restriction-sector direction is nonzero without any rank hypothesis:
 otherwise the positive oriented sum would be parallel to the cutting normal,
 contradicting its positive value on the strict witness. -/
@@ -65,6 +68,7 @@ lemma direction_ne_zero_of_restricted
     simp [smul_dotProduct, hhx]
   linarith
 
+omit [DecidableEq I] [Nonempty I] in
 /-- If the cutting normal together with all restricted normals spans the
 ambient three-space, some restricted normal has nonzero slope. -/
 lemma exists_slope_ne_zero_of_span_insert_eq_top
@@ -99,9 +103,10 @@ lemma exists_slope_ne_zero_of_span_insert_eq_top
   have hzz : z ⬝ᵥ z = 0 := hle (by simp)
   exact hz (dotProduct_self_eq_zero.mp hzz)
 
+omit [DecidableEq I] in
 /-- Endpoint data under the natural rank hypothesis for a restricted
 arrangement: the cutting normal is included in the spanning family. -/
-def endpointDataOfRestrictedInsertSpan
+theorem endpointDataOfRestrictedInsertSpan
     {n : I → Vec3} {s : I → Bool} {h x : Vec3}
     (hh : h ≠ 0) (hx : Realizes n s x) (hhx : h ⬝ᵥ x = 0)
     (hspan : Submodule.span ℝ (Set.insert h (Set.range n)) = ⊤) :
@@ -146,7 +151,7 @@ theorem span_insert_otherNormals_eq_top
 line, providing the nonempty restricted index type. -/
 theorem exists_line_ne
     (B : Finset Point) {a b c : Point}
-    (ha : a ∈ B) (hb : b ∈ B) (hc : c ∈ B)
+    (ha : a ∈ B) (hb : b ∈ B) (_hc : c ∈ B)
     (hncol : ¬ ProjectiveDuality.Collinear3 a b c) (i : Line B) :
     ∃ j : Line B, j ≠ i := by
   by_cases hai : (⟨a, ha⟩ : Line B) ≠ i
@@ -168,7 +173,8 @@ variable (ha : a ∈ B) (hb : b ∈ B) (hc : c ∈ B)
 variable (hncol : ¬ ProjectiveDuality.Collinear3 a b c)
 variable (pick : OtherLineChoice (Line B))
 
-private def restrictedIndexNonempty (i : Line B) :
+include ha hb hc hncol in
+private theorem restrictedIndexNonempty (i : Line B) :
     Nonempty {j : Line B // j ≠ i} :=
   ⟨⟨Classical.choose (exists_line_ne B ha hb hc hncol i),
     Classical.choose_spec (exists_line_ne B ha hb hc hncol i)⟩⟩
@@ -186,9 +192,10 @@ theorem edgeWitness_on_owner (e : ProjectiveStrictEdge pick (normals B)) :
     normals B e.1.1.1 ⬝ᵥ edgeWitness B pick e = 0 :=
   (Classical.choose_spec e.1.2).2
 
+include ha hb hc hncol in
 /-- The literal two-endpoint certificate attached to a projective strict
 edge. -/
-def edgeEndpointData (e : ProjectiveStrictEdge pick (normals B)) :
+theorem edgeEndpointData (e : ProjectiveStrictEdge pick (normals B)) :
     letI := restrictedIndexNonempty B ha hb hc hncol e.1.1.1
     EndpointData (otherNormals (normals B) e.1.1.1) e.1.1.2
       (normals B e.1.1.1) (edgeWitness B pick e)
@@ -344,7 +351,7 @@ between the two literal endpoints.  Any such vertex would lie on a second
 configuration line, contradicting strict realization of its sign. -/
 theorem no_vertex_in_open_edgeSector
     (e : ProjectiveStrictEdge pick (normals B))
-    (v : Vertex B) (hvowner : OnLine B v e.1.1.1) :
+    (v : Vertex B) (_hvowner : OnLine B v e.1.1.1) :
     ¬ ∃ t : ℝ,
       letI := restrictedIndexNonempty B ha hb hc hncol e.1.1.1
       let D := edgeEndpointData B ha hb hc hncol pick e
@@ -1023,7 +1030,6 @@ theorem projectiveStrictEdgeToCyclic_vertices
         rw [dif_pos hpos, dif_pos hlt]
         rfl
       rw [cyclicEdgeVertices, hstart, finish_eq vl vu hcyc hstart]
-
     · have hgt : vertexCoord B vu < vertexCoord B vl :=
         lt_of_le_of_ne (le_of_not_gt hlt) hcoordne.symm
       have hcyc : CyclicConsecutive (vertexCoord B) S vu vl := by
@@ -1063,7 +1069,6 @@ theorem projectiveStrictEdgeToCyclic_vertices
         rw [dif_neg hpos, dif_neg hlt]
         rfl
       rw [cyclicEdgeVertices, hstart, finish_eq vl vu hcyc hstart]
-
 /-- The cyclic successor is determined once the genuine start and its
 geometric successor proof are known. -/
 theorem projectiveStrictEdgeToCyclic_finish_eq_of_start_eq
@@ -1280,7 +1285,6 @@ theorem orient_cyclicInteriorRaw_realizes
       have hinv : z⁻¹ < 0 := inv_lt_zero.mpr hneg
       rw [mul_inv] at hinv
       nlinarith
-
     · have hgt : vertexCoord B vu < vertexCoord B vl :=
         lt_of_le_of_ne (le_of_not_gt hlt) hcoordne.symm
       have hcyc : CyclicConsecutive (vertexCoord B)

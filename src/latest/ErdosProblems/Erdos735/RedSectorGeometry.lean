@@ -128,13 +128,14 @@ lemma dot_fromCoordinates_fromCoordinates (a b : Vec3) :
 common point of two blue lines and a red line, then the red restriction
 cannot realize two blue faces obtained by flipping only the first blue sign. -/
 theorem not_restrictedRealizable_of_flip_left
-    {I : Type*} [Fintype I] (n : I → Vec3) (r x : Vec3)
+    {I : Type*} [Finite I] (n : I → Vec3) (r x : Vec3)
     (i j : I) (s t : I → Bool)
     (hxne : x ≠ 0) (hrne : r ≠ 0)
     (hix : n i ⬝ᵥ x = 0) (hjx : n j ⬝ᵥ x = 0) (hrx : r ⬝ᵥ x = 0)
     (hti : t i = !(s i)) (htj : t j = s j)
     (hs : RestrictedRealizable n r s)
     (ht : RestrictedRealizable n r t) : False := by
+  let : Fintype I := Fintype.ofFinite _
   obtain ⟨y, hy, hry⟩ := hs
   obtain ⟨z, hz, hrz⟩ := ht
   apply no_red_line_in_adjacent_sectors (s i) (s j)
@@ -162,13 +163,14 @@ theorem not_restrictedRealizable_of_flip_left
 
 /-- Sign-vector form for flipping only the second blue sign. -/
 theorem not_restrictedRealizable_of_flip_right
-    {I : Type*} [Fintype I] (n : I → Vec3) (r x : Vec3)
+    {I : Type*} [Finite I] (n : I → Vec3) (r x : Vec3)
     (i j : I) (s t : I → Bool)
     (hxne : x ≠ 0) (hrne : r ≠ 0)
     (hix : n i ⬝ᵥ x = 0) (hjx : n j ⬝ᵥ x = 0) (hrx : r ⬝ᵥ x = 0)
     (hti : t i = s i) (htj : t j = !(s j))
     (hs : RestrictedRealizable n r s)
     (ht : RestrictedRealizable n r t) : False := by
+  let : Fintype I := Fintype.ofFinite _
   obtain ⟨y, hy, hry⟩ := hs
   obtain ⟨z, hz, hrz⟩ := ht
   apply no_red_line_in_adjacent_sectors_right (s i) (s j)

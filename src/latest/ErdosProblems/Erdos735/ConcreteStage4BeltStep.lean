@@ -30,13 +30,17 @@ equivalence therefore makes them consecutive intervals in the fixed-owner
 line belt.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcreteStage4BeltStep
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction
 open ChartOrder SignVector SignVectorArrangement
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcreteStage4BeltStepVertex :
+    DecidableEq (ℙ ℝ SignVector.Vec3) := Classical.decEq _
 open SignVector.ProjectiveEdgeEndpointEquiv
 open ConcretePolarOrientedVertex ConcretePolarEdgeVertices
 
@@ -47,7 +51,7 @@ share an endpoint are either the same interval or literal successor
 intervals in one of the two orientations. -/
 theorem cyclicEdges_eq_or_end_start
     {V : Type uV} {Line : Type uL}
-    [Fintype V] [DecidableEq V] [Fintype Line] [DecidableEq Line]
+    [DecidableEq V]
     (vertices : Finset V) (onLine : V → Line → Prop)
     [DecidableRel onLine] (coord : V → ℝ)
     (hinj : Set.InjOn coord (vertices : Set V))
@@ -59,6 +63,7 @@ theorem cyclicEdges_eq_or_end_start
     e = e' ∨
       cyclicEdgeFinish vertices onLine coord e = cyclicEdgeStart e' ∨
       cyclicEdgeFinish vertices onLine coord e' = cyclicEdgeStart e := by
+  classical
   rcases e with ⟨l, p⟩
   rcases e' with ⟨l', p'⟩
   change l = l' at hline

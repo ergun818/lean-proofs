@@ -31,6 +31,7 @@ namespace Erdos735.SignVector
 
 variable {I : Type*} [Fintype I] [DecidableEq I]
 
+omit [DecidableEq I] [Fintype I] in
 lemma restrictedRealizable_antipodalSign_iff (n : I → Vec3) (h : Vec3)
     (s : I → Bool) :
     RestrictedRealizable n h (antipodalSign s) ↔ RestrictedRealizable n h s := by
@@ -38,23 +39,26 @@ lemma restrictedRealizable_antipodalSign_iff (n : I → Vec3) (h : Vec3)
   · rintro ⟨x, hx, hxzero⟩
     refine ⟨-x, ?_, ?_⟩
     · exact (realizes_antipodalSign_neg_iff n s (-x)).mp (by simpa using hx)
-    · simpa [dotProduct_neg, hxzero]
+    · simp [dotProduct_neg, hxzero]
   · rintro ⟨x, hx, hxzero⟩
     refine ⟨-x, (realizes_antipodalSign_neg_iff n s x).mpr hx, ?_⟩
-    simpa [dotProduct_neg, hxzero]
+    simp [dotProduct_neg, hxzero]
 
 def antipodalEdge (n : I → Vec3) (e : StrictEdge n) : StrictEdge n :=
   ⟨⟨e.1.1, antipodalSign e.1.2⟩,
     (restrictedRealizable_antipodalSign_iff
       (otherNormals n e.1.1) (n e.1.1) e.1.2).2 e.2⟩
 
+omit [DecidableEq I] [Fintype I] in
 @[simp] theorem antipodalEdge_support (n : I → Vec3) (e : StrictEdge n) :
     (antipodalEdge n e).1.1 = e.1.1 := rfl
 
+omit [DecidableEq I] [Fintype I] in
 @[simp] theorem antipodalEdge_sign (n : I → Vec3) (e : StrictEdge n)
     (j : {j : I // j ≠ e.1.1}) :
     (antipodalEdge n e).1.2 j = !(e.1.2 j) := rfl
 
+omit [DecidableEq I] [Fintype I] in
 @[simp] theorem antipodalEdge_involutive (n : I → Vec3) (e : StrictEdge n) :
     antipodalEdge n (antipodalEdge n e) = e := by
   rcases e with ⟨⟨i, s⟩, hs⟩
@@ -77,6 +81,7 @@ noncomputable instance (pick : OtherLineChoice I) (n : I → Vec3) :
 noncomputable instance (pick : OtherLineChoice I) (n : I → Vec3) :
     DecidableEq (ProjectiveStrictEdge pick n) := Classical.decEq _
 
+omit [DecidableEq I] [Fintype I] in
 lemma antipodalEdge_isPositive_iff (pick : OtherLineChoice I)
     (n : I → Vec3) (e : StrictEdge n) :
     IsPositiveEdgeRepresentative pick n (antipodalEdge n e) ↔
@@ -129,10 +134,12 @@ noncomputable def strictEdgeEquivProjectiveTimesBool (pick : OtherLineChoice I)
           simp [normalizeProjectiveEdge, he]
         · exact he
 
+omit [DecidableEq I] in
 theorem card_strictEdge_eq_two_mul_projective
     (pick : OtherLineChoice I) (n : I → Vec3) :
     Fintype.card (StrictEdge n) =
       2 * Fintype.card (ProjectiveStrictEdge pick n) := by
+  classical
   rw [Fintype.card_congr (strictEdgeEquivProjectiveTimesBool pick n),
     Fintype.card_prod, Fintype.card_bool]
   omega

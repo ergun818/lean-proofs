@@ -24,7 +24,7 @@ open scoped BigOperators LinearAlgebra.Projectivization
 
 namespace Erdos735.ProjectiveArrangement
 
-open Classical SignVector ChartOrder
+open SignVector ChartOrder
 noncomputable section
 
 def enumeratedPointSet {k : ℕ} (p : Fin k → Point) : Finset Point :=
@@ -112,6 +112,7 @@ theorem faceCount_normalVec_eq_two_add_sum_multiplicity
     faceCount (fun i ↦ normalVec (p i)) =
       2 + ∑ v : EnumeratedVertex p,
         2 * (lineMultiplicity (EnumeratedOnLine p) v - 1) := by
+  classical
   rw [faceCount_normalVec_eq_two_add_prefixIntersections k p hp]
   have hcards (i : Fin (k + 1)) :
       (prefixIntersections p hp i).card =

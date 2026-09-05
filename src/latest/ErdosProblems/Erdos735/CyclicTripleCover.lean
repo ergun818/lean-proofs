@@ -25,7 +25,6 @@ three distinct vertices follow one another cyclically and the third is
 followed by the first, then there are no further vertices.
 -/
 
-open Classical
 
 namespace Erdos735.ChartOrder
 

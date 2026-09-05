@@ -117,13 +117,13 @@ theorem directionEval_smul (p q u : Point) (t : ℝ) :
 theorem chartPoint_add_direction (p u v : Point) :
     chartPoint p (u + v) = chartPoint p u + chartDirection p v := by
   funext i
-  fin_cases i <;> simp [chartPoint, chartDirection] <;> ring
+  fin_cases i <;> simp [chartPoint, chartDirection]; ring
 
 theorem chartPoint_add_smul_direction (p u v : Point) (t : ℝ) :
     chartPoint p (u + t • v) =
       chartPoint p u + t • chartDirection p v := by
   funext i
-  fin_cases i <;> simp [chartPoint, chartDirection] <;> ring
+  fin_cases i <;> simp [chartPoint, chartDirection]; ring
 
 theorem chartDirection_injective (p : Point) :
     Function.Injective (chartDirection p) := by

@@ -27,7 +27,6 @@ vertex.  This file keeps the line labels throughout the cyclic hull order;
 no cardinality-only equivalence is used.
 -/
 
-open Classical
 open scoped LinearAlgebra.Projectivization Matrix
 open Matrix
 
@@ -70,18 +69,9 @@ lemma dot_coordDual (x p : Vec3) (l : Plane →L[ℝ] ℝ) :
   rw [planeFunctional_decompose]
   by_cases hx2 : x 2 = 0
   · by_cases hx1 : x 1 = 0
-    · simp only [Fin.isValue]
-      change p 1 * l planeBasisZero + p 2 * l planeBasisOne =
-        l planeBasisZero * p 1 + l planeBasisOne * p 2
-      ring
-    · simp only [Fin.isValue]
-      change p 0 * l planeBasisZero + p 2 * l planeBasisOne =
-        l planeBasisZero * p 0 + l planeBasisOne * p 2
-      ring
-  · simp only [Fin.isValue]
-    change p 0 * l planeBasisZero + p 1 * l planeBasisOne =
-      l planeBasisZero * p 0 + l planeBasisOne * p 1
-    ring
+    · simp [coordDual, coord, hx2, hx1, vecHead, vecTail, mul_comm]
+    · simp [coordDual, coord, hx2, hx1, vecHead, vecTail, mul_comm]
+  · simp [coordDual, coord, hx2, vecHead, vecTail, mul_comm]
 
 /-- Lift a supporting functional at level `c` to a homogeneous covector. -/
 def liftedSupportVector (x : Vec3) (l : Plane →L[ℝ] ℝ) (c : ℝ) : Vec3 :=
@@ -100,6 +90,7 @@ def edgeOfOwner {n : I → Vec3} {s : I → Bool}
     (i : {i // i ∈ edgeOwners n s}) : StrictEdge n :=
   ⟨faceEdgeCode s i.1, mem_edgeOwners.mp i.2⟩
 
+omit [DecidableEq I] [Nonempty I] in
 lemma edgeOfOwner_owner {n : I → Vec3} {s : I → Bool}
     (i : {i // i ∈ edgeOwners n s}) : (edgeOfOwner i).1.1 = i.1 := rfl
 
@@ -147,6 +138,7 @@ noncomputable def ownerPointEquiv {n : I → Vec3} {s : I → Bool} {x : Vec3}
         obtain ⟨i, hi, hip⟩ := Finset.mem_image.mp p.2
         exact ⟨⟨i, hi⟩, Subtype.ext hip⟩⟩
 
+omit [DecidableEq I] in
 /-- The polar boundary polygon has as many points as the face has edges. -/
 theorem boundaryPolygon_card_eq_faceEdges_card {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
@@ -160,12 +152,14 @@ theorem boundaryPolygon_card_eq_faceEdges_card {n : I → Vec3}
       Fintype.card_congr (ownerFaceEdgeEquiv f)
     _ = (faceEdges n f).card := Fintype.card_coe _
 
+omit [DecidableEq I] in
 /-- Full rank gives the polar boundary at least three vertices. -/
 theorem three_le_boundaryPolygon_card {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
     (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0)
     (hspan : Submodule.span ℝ (Set.range n) = ⊤) :
     3 ≤ (boundaryPolygon n f.1 x).card := by
+  classical
   rw [boundaryPolygon_card_eq_faceEdges_card f hx hcross]
   exact faceEdges_card_three_le_of_span_eq_top n hcross hspan f
 
@@ -187,6 +181,7 @@ noncomputable def cornerFunctional {n : I → Vec3}
     (t : Fin (Erdos957.hullVertexCount (boundaryPolygon n f.1 x))) : Plane →L[ℝ] ℝ :=
   Classical.choose ((boundaryHullOrder f hx hcross hspan).edge_support t).2
 
+omit [DecidableEq I] in
 theorem cornerFunctional_spec {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
     (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0)
@@ -228,6 +223,7 @@ def cornerVector {n : I → Vec3}
   liftedSupportVector x (cornerFunctional f hx hcross hspan t)
     (cornerLevel f hx hcross hspan t)
 
+omit [DecidableEq I] in
 /-- Evaluation of the homogeneous corner covector on every normalized polar normal. -/
 theorem polarPoint_dot_cornerVector {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
@@ -241,6 +237,7 @@ theorem polarPoint_dot_cornerVector {n : I → Vec3}
     (cornerFunctional f hx hcross hspan t)
     (cornerLevel f hx hcross hspan t)
 
+omit [DecidableEq I] in
 /-- Every normalized normal lies in the closed homogeneous half-space
 selected by the corner covector. -/
 theorem polarPoint_dot_cornerVector_nonneg {n : I → Vec3}
@@ -249,6 +246,7 @@ theorem polarPoint_dot_cornerVector_nonneg {n : I → Vec3}
     (hspan : Submodule.span ℝ (Set.range n) = ⊤)
     (t : Fin (Erdos957.hullVertexCount (boundaryPolygon n f.1 x))) (i : I) :
     0 ≤ polarPoint n f.1 x i ⬝ᵥ cornerVector f hx hcross hspan t := by
+  classical
   let A := polarPoints n f.1 x
   let H := convexHull ℝ (A : Set Vec3)
   let V := polarVertices n f.1 x
@@ -332,6 +330,7 @@ def boundaryOwner {n : I → Vec3}
     (t : Fin (Erdos957.hullVertexCount (boundaryPolygon n f.1 x))) : I :=
   (boundaryOwnerEquiv f hx hcross hspan t).1
 
+omit [DecidableEq I] in
 lemma ownerPoint_boundaryOwner {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
     (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0)
@@ -344,6 +343,7 @@ lemma ownerPoint_boundaryOwner {n : I → Vec3}
       (hullIndexEquiv (boundaryHullOrder f hx hcross hspan) t))
   exact congrArg Subtype.val h
 
+omit [DecidableEq I] in
 /-- The homogeneous corner covector vanishes on its first endpoint owner. -/
 theorem polarPoint_dot_cornerVector_left_eq_zero {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
@@ -352,10 +352,12 @@ theorem polarPoint_dot_cornerVector_left_eq_zero {n : I → Vec3}
     (t : Fin (Erdos957.hullVertexCount (boundaryPolygon n f.1 x))) :
     polarPoint n f.1 x (boundaryOwner f hx hcross hspan t) ⬝ᵥ
       cornerVector f hx hcross hspan t = 0 := by
+  classical
   rw [polarPoint_dot_cornerVector,
     ownerPoint_boundaryOwner f hx hcross hspan t]
   simp [cornerLevel]
 
+omit [DecidableEq I] in
 /-- The homogeneous corner covector vanishes on its successor endpoint owner. -/
 theorem polarPoint_dot_cornerVector_right_eq_zero {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
@@ -365,25 +367,26 @@ theorem polarPoint_dot_cornerVector_right_eq_zero {n : I → Vec3}
     polarPoint n f.1 x
         (boundaryOwner f hx hcross hspan (Erdos957.cyclicSucc t)) ⬝ᵥ
       cornerVector f hx hcross hspan t = 0 := by
+  classical
   rw [polarPoint_dot_cornerVector,
     ownerPoint_boundaryOwner f hx hcross hspan (Erdos957.cyclicSucc t)]
-  change cornerLevel f hx hcross hspan t -
-    cornerFunctional f hx hcross hspan t
-      ((boundaryHullOrder f hx hcross hspan).vertex (Erdos957.cyclicSucc t)) = 0
   rw [cornerLevel, (cornerFunctional_spec f hx hcross hspan t).2.1]
   ring
 
+omit [DecidableEq I] [Fintype I] [Nonempty I] in
 /-- Vanishing of a normalized polar normal is equivalent to vanishing of
 its underlying unoriented arrangement normal. -/
-theorem polarPoint_dot_eq_zero_iff {n : I → Vec3} {s : I → Bool} {x : Vec3}
+theorem polarPoint_dot_eq_zero_iff [Finite I] {n : I → Vec3} {s : I → Bool} {x : Vec3}
     (hx : Realizes n s x) (i : I) (y : Vec3) :
     polarPoint n s x i ⬝ᵥ y = 0 ↔ n i ⬝ᵥ y = 0 := by
+  let : Fintype I := Fintype.ofFinite _
   rw [polarPoint, smul_dotProduct, orientedNormal_dot, smul_eq_mul, mul_eq_zero]
   have hinv : (polarDenom n s x i)⁻¹ ≠ 0 :=
     inv_ne_zero (polarDenom_ne_zero hx i)
   simp only [hinv, false_or]
-  cases hsi : s i <;> simp [signed, hsi]
+  cases hsi : s i <;> simp [signed]
 
+omit [DecidableEq I] in
 /-- The corner covector has the weak sign vector of the face. -/
 theorem cornerVector_weaklyRealizes {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
@@ -391,11 +394,13 @@ theorem cornerVector_weaklyRealizes {n : I → Vec3}
     (hspan : Submodule.span ℝ (Set.range n) = ⊤)
     (t : Fin (Erdos957.hullVertexCount (boundaryPolygon n f.1 x))) :
     ∀ i, 0 ≤ signed (f.1 i) (n i ⬝ᵥ cornerVector f hx hcross hspan t) := by
+  classical
   intro i
   have hp := polarPoint_dot_cornerVector_nonneg f hx hcross hspan t i
   rw [polarPoint, smul_dotProduct, orientedNormal_dot] at hp
   exact (mul_nonneg_iff_of_pos_left (inv_pos.mpr (polarDenom_pos hx i))).1 hp
 
+omit [DecidableEq I] in
 /-- The first owner normal vanishes at the homogeneous corner. -/
 theorem cornerVector_on_left_owner {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
@@ -403,10 +408,13 @@ theorem cornerVector_on_left_owner {n : I → Vec3}
     (hspan : Submodule.span ℝ (Set.range n) = ⊤)
     (t : Fin (Erdos957.hullVertexCount (boundaryPolygon n f.1 x))) :
     n (boundaryOwner f hx hcross hspan t) ⬝ᵥ
-      cornerVector f hx hcross hspan t = 0 :=
+      cornerVector f hx hcross hspan t = 0 := by
+  classical
+  exact
   (polarPoint_dot_eq_zero_iff hx _ _).1
     (polarPoint_dot_cornerVector_left_eq_zero f hx hcross hspan t)
 
+omit [DecidableEq I] in
 /-- The successor owner normal vanishes at the homogeneous corner. -/
 theorem cornerVector_on_right_owner {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
@@ -414,10 +422,13 @@ theorem cornerVector_on_right_owner {n : I → Vec3}
     (hspan : Submodule.span ℝ (Set.range n) = ⊤)
     (t : Fin (Erdos957.hullVertexCount (boundaryPolygon n f.1 x))) :
     n (boundaryOwner f hx hcross hspan (Erdos957.cyclicSucc t)) ⬝ᵥ
-      cornerVector f hx hcross hspan t = 0 :=
+      cornerVector f hx hcross hspan t = 0 := by
+  classical
+  exact
   (polarPoint_dot_eq_zero_iff hx _ _).1
     (polarPoint_dot_cornerVector_right_eq_zero f hx hcross hspan t)
 
+omit [DecidableEq I] in
 lemma boundaryHull_third_ne_left {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
     (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0)
@@ -432,6 +443,7 @@ lemma boundaryHull_third_ne_left {n : I → Vec3}
   simp [Erdos957.orientedTurn] at hturn
   nlinarith
 
+omit [DecidableEq I] in
 lemma boundaryHull_third_ne_right {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
     (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0)
@@ -445,6 +457,7 @@ lemma boundaryHull_third_ne_right {n : I → Vec3}
   rw [heq] at hturn
   simp [Erdos957.orientedTurn] at hturn
 
+omit [DecidableEq I] in
 /-- A third hull vertex is strictly positive on the lifted homogeneous corner covector. -/
 theorem polarPoint_dot_cornerVector_third_pos {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
@@ -455,6 +468,7 @@ theorem polarPoint_dot_cornerVector_third_pos {n : I → Vec3}
         (boundaryOwner f hx hcross hspan
           (Erdos957.cyclicSucc (Erdos957.cyclicSucc t))) ⬝ᵥ
       cornerVector f hx hcross hspan t := by
+  classical
   rw [polarPoint_dot_cornerVector,
     ownerPoint_boundaryOwner f hx hcross hspan
       (Erdos957.cyclicSucc (Erdos957.cyclicSucc t))]
@@ -466,6 +480,7 @@ theorem polarPoint_dot_cornerVector_third_pos {n : I → Vec3}
     (boundaryHull_third_ne_left f hx hcross hspan t)
     (boundaryHull_third_ne_right f hx hcross hspan t)
 
+omit [DecidableEq I] in
 /-- The lifted corner covector is nonzero, hence defines a genuine
 projective and spherical arrangement vertex. -/
 theorem cornerVector_ne_zero {n : I → Vec3}
@@ -474,6 +489,7 @@ theorem cornerVector_ne_zero {n : I → Vec3}
     (hspan : Submodule.span ℝ (Set.range n) = ⊤)
     (t : Fin (Erdos957.hullVertexCount (boundaryPolygon n f.1 x))) :
     cornerVector f hx hcross hspan t ≠ 0 := by
+  classical
   intro hzero
   have hpos := polarPoint_dot_cornerVector_third_pos f hx hcross hspan t
   rw [hzero, dotProduct_zero] at hpos
@@ -488,12 +504,14 @@ def cornerUnitVector {n : I → Vec3}
   (norm3 (cornerVector f hx hcross hspan t))⁻¹ •
     cornerVector f hx hcross hspan t
 
+omit [DecidableEq I] in
 theorem norm3_cornerUnitVector {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
     (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0)
     (hspan : Submodule.span ℝ (Set.range n) = ⊤)
     (t : Fin (Erdos957.hullVertexCount (boundaryPolygon n f.1 x))) :
     norm3 (cornerUnitVector f hx hcross hspan t) = 1 := by
+  classical
   have hnorm : 0 < norm3 (cornerVector f hx hcross hspan t) :=
     norm_pos_iff.mpr (by
       simpa [norm3] using cornerVector_ne_zero f hx hcross hspan t)
@@ -506,6 +524,7 @@ theorem norm3_cornerUnitVector {n : I → Vec3}
     norm3 (cornerVector f hx hcross hspan t) = 1
   exact inv_mul_cancel₀ hnorm.ne'
 
+omit [DecidableEq I] in
 /-- The unit corner retains the face's weak sign vector. -/
 theorem cornerUnitVector_weaklyRealizes {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
@@ -513,6 +532,7 @@ theorem cornerUnitVector_weaklyRealizes {n : I → Vec3}
     (hspan : Submodule.span ℝ (Set.range n) = ⊤)
     (t : Fin (Erdos957.hullVertexCount (boundaryPolygon n f.1 x))) :
     ∀ i, 0 ≤ signed (f.1 i) (n i ⬝ᵥ cornerUnitVector f hx hcross hspan t) := by
+  classical
   intro i
   have hnorm : 0 < norm3 (cornerVector f hx hcross hspan t) :=
     norm_pos_iff.mpr (by
@@ -541,6 +561,7 @@ noncomputable def cornerProjectiveVertex {n : I → Vec3}
   Projectivization.mk ℝ (cornerVector f hx hcross hspan t)
     (cornerVector_ne_zero f hx hcross hspan t)
 
+omit [DecidableEq I] in
 theorem cornerProjectiveVertex_on_left {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
     (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0)
@@ -552,6 +573,7 @@ theorem cornerProjectiveVertex_on_left {n : I → Vec3}
   rw [cornerProjectiveVertex, ProjectiveArrangement.onProjectiveLine_mk_iff]
   exact cornerVector_on_left_owner f hx hcross hspan t
 
+omit [DecidableEq I] in
 theorem cornerProjectiveVertex_on_right {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
     (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0)
@@ -563,6 +585,7 @@ theorem cornerProjectiveVertex_on_right {n : I → Vec3}
   rw [cornerProjectiveVertex, ProjectiveArrangement.onProjectiveLine_mk_iff]
   exact cornerVector_on_right_owner f hx hcross hspan t
 
+omit [DecidableEq I] in
 /-- Consecutive cyclic boundary positions have distinct supporting lines. -/
 theorem boundaryOwner_ne_succ {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
@@ -571,6 +594,7 @@ theorem boundaryOwner_ne_succ {n : I → Vec3}
     (t : Fin (Erdos957.hullVertexCount (boundaryPolygon n f.1 x))) :
     boundaryOwner f hx hcross hspan t ≠
       boundaryOwner f hx hcross hspan (Erdos957.cyclicSucc t) := by
+  classical
   intro heq
   apply (boundaryHullOrder f hx hcross hspan).consecutive_ne t
   rw [← ownerPoint_boundaryOwner f hx hcross hspan t,
@@ -588,6 +612,7 @@ noncomputable def boundaryProjectiveVertex {n : I → Vec3}
       n (boundaryOwner f hx hcross hspan (Erdos957.cyclicSucc t)))
     (hcross _ _ (boundaryOwner_ne_succ f hx hcross hspan t))
 
+omit [DecidableEq I] in
 /-- The consecutive projective vertex lies on its first supporting line. -/
 theorem boundaryProjectiveVertex_on_left {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
@@ -600,6 +625,7 @@ theorem boundaryProjectiveVertex_on_left {n : I → Vec3}
   rw [boundaryProjectiveVertex, ProjectiveArrangement.onProjectiveLine_mk_iff]
   exact dot_self_cross _ _
 
+omit [DecidableEq I] in
 /-- The consecutive projective vertex lies on its successor supporting line. -/
 theorem boundaryProjectiveVertex_on_right {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
@@ -612,6 +638,7 @@ theorem boundaryProjectiveVertex_on_right {n : I → Vec3}
   rw [boundaryProjectiveVertex, ProjectiveArrangement.onProjectiveLine_mk_iff]
   exact dot_cross_self _ _
 
+omit [DecidableEq I] in
 /-- The oriented supporting covector represents the same projective point
 as the cross product of its two consecutive owner normals. -/
 theorem cornerProjectiveVertex_eq_boundaryProjectiveVertex {n : I → Vec3}
@@ -631,6 +658,7 @@ theorem cornerProjectiveVertex_eq_boundaryProjectiveVertex {n : I → Vec3}
   rw [hright, cornerVector_on_left_owner f hx hcross hspan t]
   simp
 
+omit [DecidableEq I] in
 /-- Among extreme owner points, the only normals vanishing on a corner are
 the two endpoints of its supporting hull edge. -/
 theorem owner_eq_endpoint_of_dot_cornerVector_eq_zero {n : I → Vec3}
@@ -642,6 +670,7 @@ theorem owner_eq_endpoint_of_dot_cornerVector_eq_zero {n : I → Vec3}
     (hzero : n i ⬝ᵥ cornerVector f hx hcross hspan t = 0) :
     i = boundaryOwner f hx hcross hspan t ∨
       i = boundaryOwner f hx hcross hspan (Erdos957.cyclicSucc t) := by
+  classical
   by_cases hil : i = boundaryOwner f hx hcross hspan t
   · exact Or.inl hil
   by_cases hir : i = boundaryOwner f hx hcross hspan (Erdos957.cyclicSucc t)
@@ -667,6 +696,7 @@ theorem owner_eq_endpoint_of_dot_cornerVector_eq_zero {n : I → Vec3}
   simp only [cornerLevel] at hpzero
   linarith
 
+omit [DecidableEq I] in
 /-- The left owner of one corner is strictly inside the next corner's
 selected half-space. -/
 theorem polarPoint_dot_next_cornerVector_pos {n : I → Vec3}
@@ -676,6 +706,7 @@ theorem polarPoint_dot_next_cornerVector_pos {n : I → Vec3}
     (t : Fin (Erdos957.hullVertexCount (boundaryPolygon n f.1 x))) :
     0 < polarPoint n f.1 x (boundaryOwner f hx hcross hspan t) ⬝ᵥ
       cornerVector f hx hcross hspan (Erdos957.cyclicSucc t) := by
+  classical
   rw [polarPoint_dot_cornerVector,
     ownerPoint_boundaryOwner f hx hcross hspan t]
   apply sub_pos.mpr
@@ -685,6 +716,7 @@ theorem polarPoint_dot_next_cornerVector_pos {n : I → Vec3}
     ((boundaryHullOrder f hx hcross hspan).consecutive_ne t)
     (boundaryHull_third_ne_left f hx hcross hspan t).symm
 
+omit [DecidableEq I] in
 theorem left_owner_dot_next_cornerVector_ne_zero {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
     (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0)
@@ -692,6 +724,7 @@ theorem left_owner_dot_next_cornerVector_ne_zero {n : I → Vec3}
     (t : Fin (Erdos957.hullVertexCount (boundaryPolygon n f.1 x))) :
     n (boundaryOwner f hx hcross hspan t) ⬝ᵥ
       cornerVector f hx hcross hspan (Erdos957.cyclicSucc t) ≠ 0 := by
+  classical
   have hp := polarPoint_dot_next_cornerVector_pos f hx hcross hspan t
   rw [polarPoint, smul_dotProduct, orientedNormal_dot, smul_eq_mul] at hp
   have hsigned : 0 < signed (f.1 (boundaryOwner f hx hcross hspan t))
@@ -703,6 +736,7 @@ theorem left_owner_dot_next_cornerVector_ne_zero {n : I → Vec3}
   rw [hzero] at hsigned
   cases f.1 (boundaryOwner f hx hcross hspan t) <;> simp [signed] at hsigned
 
+omit [DecidableEq I] in
 /-- Consecutive projective corner vertices are distinct. -/
 theorem cornerProjectiveVertex_ne_succ {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
@@ -726,6 +760,7 @@ theorem cornerProjectiveVertex_ne_succ {n : I → Vec3}
   exact mul_ne_zero ha0
     (left_owner_dot_next_cornerVector_ne_zero f hx hcross hspan t) hdot
 
+omit [DecidableEq I] in
 theorem boundaryProjectiveVertex_ne_succ {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
     (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0)
@@ -733,17 +768,20 @@ theorem boundaryProjectiveVertex_ne_succ {n : I → Vec3}
     (t : Fin (Erdos957.hullVertexCount (boundaryPolygon n f.1 x))) :
     boundaryProjectiveVertex f hx hcross hspan t ≠
       boundaryProjectiveVertex f hx hcross hspan (Erdos957.cyclicSucc t) := by
+  classical
   rw [← cornerProjectiveVertex_eq_boundaryProjectiveVertex f hx hcross hspan t,
     ← cornerProjectiveVertex_eq_boundaryProjectiveVertex f hx hcross hspan
       (Erdos957.cyclicSucc t)]
   exact cornerProjectiveVertex_ne_succ f hx hcross hspan t
 
+omit [DecidableEq I] in
 /-- Distinct cyclic corners give distinct projective arrangement vertices. -/
 theorem boundaryProjectiveVertex_injective {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
     (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0)
     (hspan : Submodule.span ℝ (Set.range n) = ⊤) :
     Function.Injective (boundaryProjectiveVertex f hx hcross hspan) := by
+  classical
   intro t u htu
   have hcorner : cornerProjectiveVertex f hx hcross hspan t =
       cornerProjectiveVertex f hx hcross hspan u := by
@@ -803,6 +841,7 @@ def boundaryEdge {n : I → Vec3}
     (t : Fin (Erdos957.hullVertexCount (boundaryPolygon n f.1 x))) : StrictEdge n :=
   edgeOfOwner (boundaryOwnerEquiv f hx hcross hspan t)
 
+omit [DecidableEq I] in
 @[simp] theorem boundaryEdge_owner {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
     (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0)
@@ -811,6 +850,7 @@ def boundaryEdge {n : I → Vec3}
     (boundaryEdge f hx hcross hspan t).1.1 =
       boundaryOwner f hx hcross hspan t := rfl
 
+omit [DecidableEq I] in
 theorem boundaryEdge_mem_faceEdges {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
     (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0)
@@ -830,6 +870,7 @@ noncomputable def boundaryEdgeEquiv {n : I → Vec3}
       {e // e ∈ faceEdges n f} :=
   (boundaryOwnerEquiv f hx hcross hspan).trans (ownerFaceEdgeEquiv f)
 
+omit [DecidableEq I] in
 @[simp] theorem boundaryEdgeEquiv_val {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
     (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0)
@@ -845,6 +886,7 @@ noncomputable def faceBoundary {n : I → Vec3}
     (hspan : Submodule.span ℝ (Set.range n) = ⊤) : List (StrictEdge n) :=
   List.ofFn fun t ↦ boundaryEdge f hx hcross hspan t
 
+omit [DecidableEq I] in
 theorem faceBoundary_nodup {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
     (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0)
@@ -856,11 +898,13 @@ theorem faceBoundary_nodup {n : I → Vec3}
   apply Subtype.ext
   simpa using hij
 
+omit [DecidableEq I] in
 theorem faceBoundary_toFinset {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
     (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0)
     (hspan : Submodule.span ℝ (Set.range n) = ⊤) :
     (faceBoundary f hx hcross hspan).toFinset = faceEdges n f := by
+  classical
   ext e
   rw [List.mem_toFinset, faceBoundary, List.mem_ofFn']
   constructor
@@ -870,6 +914,7 @@ theorem faceBoundary_toFinset {n : I → Vec3}
     obtain ⟨t, ht⟩ := (boundaryEdgeEquiv f hx hcross hspan).surjective ⟨e, he⟩
     exact ⟨t, congrArg Subtype.val ht⟩
 
+omit [DecidableEq I] in
 @[simp] theorem faceBoundary_length {n : I → Vec3}
     (f : StrictFace n) {x : Vec3} (hx : Realizes n f.1 x)
     (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0)

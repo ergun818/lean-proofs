@@ -28,7 +28,6 @@ single remaining one-skeleton statement: the number of literal strict edges
 at an oriented projective vertex is twice its projective line multiplicity.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcretePolarCellulation
@@ -36,6 +35,11 @@ namespace Erdos735.ConcretePolarCellulation
 open ProjectiveArrangement ProjectiveBoundaryExtraction SignVector ChartOrder
 open SignVector.PolarBoundaryAcross SignVector.PolarFace
 open ConcretePolarOrientedVertex ConcretePolarEdgeVertices
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcretePolarCellulationVertex :
+    DecidableEq (ℙ ℝ SignVector.Vec3) := Classical.decEq _
 
 abbrev Point := ProjectiveArrangement.Point
 abbrev Line (B : Finset Point) := ProjectiveBoundaryExtraction.Line B
@@ -55,6 +59,7 @@ noncomputable def boundaryExtractionOfVertexDegree
         (concreteVertexEdges hspan v).card =
           2 * lineMultiplicity (OnLine B) v.1) :
     BoundaryExtraction (normals B) (normals_ne_zero B) := by
+  classical
   letI : Nonempty (Line B) := ⟨⟨a, ha⟩⟩
   let hspan := span_normalVec_range_eq_top_of_noncollinear_triple
     B ha hb hc hncol

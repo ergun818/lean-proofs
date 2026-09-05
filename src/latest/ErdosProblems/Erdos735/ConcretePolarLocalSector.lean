@@ -30,7 +30,6 @@ fundamental local-sector fact in a form used by the Stage-3 donation
 geometry.
 -/
 
-open Classical
 noncomputable section
 open scoped LinearAlgebra.Projectivization
 
@@ -328,6 +327,9 @@ end Erdos735.ConcretePolarLocalSector
 
 namespace Erdos735.ConcretePolarABKPRData
 
+local instance instDecidableEqConcretePolarLocalSectorVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
+
 open ProjectiveArrangement ProjectiveBoundaryExtraction SignVector ChartOrder
 open SignVector.PolarBoundaryAcross SignVector.PolarBoundaryOrder
 open ConcretePolarOrientedVertex
@@ -420,6 +422,7 @@ theorem adjacent_edges_of_common_across_corner
     rw [indexEquiv_succ (vertex_degree := vertex_degree)]
     exact h
 
+omit [Nonempty (ProjectiveBoundaryExtraction.Line (nonordinaryPoints P))] in
 /-- Unconditional specialization using the proved literal vertex-degree
 identity. -/
 theorem concreteData_adjacent_edges_of_common_across_corner
@@ -441,6 +444,7 @@ theorem concreteData_adjacent_edges_of_common_across_corner
       (nonordinaryPoints P) ha hb hd hncol) f i = j ∨
       ABKPR.faceSucc (ConcretePolarCellulation.blueCellulation
         (nonordinaryPoints P) ha hb hd hncol) f j = i := by
+  let : Nonempty (ProjectiveBoundaryExtraction.Line (nonordinaryPoints P)) := ⟨⟨a, ha⟩⟩
   exact adjacent_edges_of_common_across_corner hred
     (vertex_degree := ConcretePolarVertexDegree.concreteVertexEdges_card_eq
       (nonordinaryPoints P) ha hb hd hncol)

@@ -28,10 +28,14 @@ recognition theorem gives failed Fano.  Outside that exception the geometric
 flank bounds, and hence the complete flank lookup system, are unconditional.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcreteStage4FlankComplete
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcreteStage4FlankCompleteVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction SignVector
 

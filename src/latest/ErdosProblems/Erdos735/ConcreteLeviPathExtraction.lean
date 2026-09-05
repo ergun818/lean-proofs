@@ -31,10 +31,14 @@ three-edge recognition gives failed Fano or the two continuation triangles
 on the common opposite line satisfy the exhaustive Levi certificate.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcreteLeviPathExtraction
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcreteLeviPathExtractionVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction SignVector
 open SignVectorArrangement

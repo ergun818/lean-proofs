@@ -69,6 +69,7 @@ def chartRep (f : Module.Dual K V) (p : ℙ K V) : V :=
 def chartCoord (f g : Module.Dual K V) (p : ℙ K V) : K :=
   g (chartRep f p)
 
+omit [Infinite K] in
 /-- Applying a linear form to the library's chosen representative of a
 projective point created from `x` vanishes exactly when it vanishes on `x`.
 This is the representative-independent incidence bridge used by concrete
@@ -80,20 +81,24 @@ lemma apply_rep_mk_eq_zero_iff (g : Module.Dual K V) (x : V) (hx : x ≠ 0) :
   rw [← ha', map_smul]
   simp
 
+omit [Infinite K] in
 lemma chartRep_nonzero (f : Module.Dual K V) (p : ℙ K V) (hp : f p.rep ≠ 0) :
     chartRep f p ≠ 0 := by
   exact smul_ne_zero (inv_ne_zero hp) p.rep_nonzero
 
+omit [Infinite K] in
 @[simp] lemma apply_chartRep (f : Module.Dual K V) (p : ℙ K V) (hp : f p.rep ≠ 0) :
     f (chartRep f p) = 1 := by
   simp [chartRep, hp]
 
+omit [Infinite K] in
 /-- Normalization into an affine chart preserves incidence with every
 projective hyperplane. -/
 lemma apply_chartRep_eq_zero_iff (f g : Module.Dual K V) (p : ℙ K V)
     (hp : f p.rep ≠ 0) : g (chartRep f p) = 0 ↔ g p.rep = 0 := by
   simp [chartRep, hp]
 
+omit [Infinite K] in
 lemma mk_chartRep (f : Module.Dual K V) (p : ℙ K V) (hp : f p.rep ≠ 0) :
     Projectivization.mk K (chartRep f p) (chartRep_nonzero f p hp) = p := by
   calc
@@ -103,6 +108,7 @@ lemma mk_chartRep (f : Module.Dual K V) (p : ℙ K V) (hp : f p.rep ≠ 0) :
       exact ⟨(f p.rep)⁻¹, rfl⟩
     _ = p := p.mk_rep
 
+omit [Infinite K] in
 lemma chartRep_injOn (f : Module.Dual K V) (S : Finset (ℙ K V))
     (hf : ∀ p ∈ S, f p.rep ≠ 0) : Set.InjOn (chartRep f) (S : Set (ℙ K V)) := by
   intro p hp q hq heq
@@ -153,18 +159,22 @@ coordinate separates the vertices, this list parametrizes them bijectively. -/
 def sortedCoordinates (coord : V → ℝ) (S : Finset V) : List ℝ :=
   (S.image coord).sort
 
+omit [DecidableEq V] in
 @[simp] lemma mem_sortedCoordinates {coord : V → ℝ} {S : Finset V} {t : ℝ} :
     t ∈ sortedCoordinates coord S ↔ ∃ v ∈ S, coord v = t := by
   simp [sortedCoordinates]
 
+omit [DecidableEq V] in
 lemma sortedCoordinates_nodup (coord : V → ℝ) (S : Finset V) :
     (sortedCoordinates coord S).Nodup := by
   exact Finset.sort_nodup _ _
 
+omit [DecidableEq V] in
 lemma sortedCoordinates_strict (coord : V → ℝ) (S : Finset V) :
     (sortedCoordinates coord S).SortedLT := by
   exact Finset.sortedLT_sort _
 
+omit [DecidableEq V] in
 lemma length_sortedCoordinates (coord : V → ℝ) (S : Finset V)
     (hinj : Set.InjOn coord (S : Set V)) :
     (sortedCoordinates coord S).length = S.card := by
@@ -175,24 +185,31 @@ def Consecutive (coord : V → ℝ) (S : Finset V) (a b : V) : Prop :=
   a ∈ S ∧ b ∈ S ∧ coord a < coord b ∧
     ∀ x ∈ S, ¬(coord a < coord x ∧ coord x < coord b)
 
+omit [DecidableEq V] in
 lemma Consecutive.left_mem {coord : V → ℝ} {S : Finset V} {a b : V}
     (h : Consecutive coord S a b) : a ∈ S := h.1
 
+omit [DecidableEq V] in
 lemma Consecutive.right_mem {coord : V → ℝ} {S : Finset V} {a b : V}
     (h : Consecutive coord S a b) : b ∈ S := h.2.1
 
+omit [DecidableEq V] in
 lemma Consecutive.lt {coord : V → ℝ} {S : Finset V} {a b : V}
     (h : Consecutive coord S a b) : coord a < coord b := h.2.2.1
 
+omit [DecidableEq V] in
 lemma Consecutive.ne {coord : V → ℝ} {S : Finset V} {a b : V}
     (h : Consecutive coord S a b) : a ≠ b := by
+  classical
   intro hab
   simpa [hab] using h.lt
 
+omit [DecidableEq V] in
 lemma Consecutive.no_between {coord : V → ℝ} {S : Finset V} {a b x : V}
     (h : Consecutive coord S a b) (hx : x ∈ S) :
     ¬(coord a < coord x ∧ coord x < coord b) := h.2.2.2 x hx
 
+omit [DecidableEq V] in
 /-- Every nonterminal vertex of a finite coordinate-ordered set has a
 consecutive successor. -/
 theorem exists_consecutive_successor (coord : V → ℝ) (S : Finset V) (a : V)
@@ -210,10 +227,12 @@ theorem exists_consecutive_successor (coord : V → ℝ) (S : Finset V) (a : V)
   have hxT : x ∈ T := Finset.mem_filter.mpr ⟨hx, hbetween.1⟩
   exact (not_lt_of_ge (hbmin x hxT)) hbetween.2
 
+omit [DecidableEq V] in
 /-- Consecutive successors are unique when the coordinate separates `S`. -/
 theorem consecutive_right_unique (coord : V → ℝ) (S : Finset V)
     (hinj : Set.InjOn coord (S : Set V)) {a b c : V}
     (hab : Consecutive coord S a b) (hac : Consecutive coord S a c) : b = c := by
+  classical
   apply hinj hab.right_mem hac.right_mem
   rcases lt_trichotomy (coord b) (coord c) with hbc | hbc | hcb
   · exact (hac.no_between hab.right_mem ⟨hab.lt, hbc⟩).elim
@@ -229,30 +248,38 @@ def CyclicConsecutive (coord : V → ℝ) (S : Finset V) (a b : V) : Prop :=
       (∀ x ∈ S, coord x ≤ coord a) ∧
       ∀ x ∈ S, coord b ≤ coord x
 
+omit [DecidableEq V] in
 lemma CyclicConsecutive.left_mem {coord : V → ℝ} {S : Finset V} {a b : V}
     (h : CyclicConsecutive coord S a b) : a ∈ S := by
+  classical
   rcases h with h | h
   · exact h.left_mem
   · exact h.1
 
+omit [DecidableEq V] in
 lemma CyclicConsecutive.right_mem {coord : V → ℝ} {S : Finset V} {a b : V}
     (h : CyclicConsecutive coord S a b) : b ∈ S := by
+  classical
   rcases h with h | h
   · exact h.right_mem
   · exact h.2.1
 
+omit [DecidableEq V] in
 lemma CyclicConsecutive.no_between {coord : V → ℝ} {S : Finset V} {a b x : V}
     (h : CyclicConsecutive coord S a b) (hx : x ∈ S) :
     ¬(coord a < coord x ∧ coord x < coord b) := by
+  classical
   rcases h with h | h
   · exact h.no_between hx
   · intro hbetween
     exact (not_lt_of_ge (h.2.2.1 x hx)) hbetween.1
 
+omit [DecidableEq V] in
 /-- Every vertex of a nonempty finite coordinate-ordered set has a cyclic
 successor, with the maximum wrapping to the minimum. -/
 theorem exists_cyclicConsecutive_successor (coord : V → ℝ) (S : Finset V) (a : V)
     (ha : a ∈ S) : ∃ b, CyclicConsecutive coord S a b := by
+  classical
   by_cases hnext : ∃ b ∈ S, coord a < coord b
   · obtain ⟨b, hab⟩ := exists_consecutive_successor coord S a ha hnext
     exact ⟨b, Or.inl hab⟩
@@ -261,10 +288,12 @@ theorem exists_cyclicConsecutive_successor (coord : V → ℝ) (S : Finset V) (a
     intro x hx
     exact le_of_not_gt fun hax ↦ hnext ⟨x, hx, hax⟩
 
+omit [DecidableEq V] in
 /-- Cyclic successors are unique when the coordinate separates the set. -/
 theorem cyclicConsecutive_right_unique (coord : V → ℝ) (S : Finset V)
     (hinj : Set.InjOn coord (S : Set V)) {a b c : V}
     (hab : CyclicConsecutive coord S a b) (hac : CyclicConsecutive coord S a c) : b = c := by
+  classical
   rcases hab with hab | ⟨ha, hb, hamax, hbmin⟩
   · rcases hac with hac | ⟨_, hc, hamax, _⟩
     · exact consecutive_right_unique coord S hinj hab hac
@@ -274,6 +303,7 @@ theorem cyclicConsecutive_right_unique (coord : V → ℝ) (S : Finset V)
     · apply hinj hb hc
       exact le_antisymm (hbmin c hc) (hcmin b hb)
 
+omit [DecidableEq V] in
 /-- Every vertex of a nonempty finite coordinate-ordered set has a cyclic
 predecessor. -/
 theorem exists_cyclicConsecutive_predecessor (coord : V → ℝ) (S : Finset V) (a : V)
@@ -295,21 +325,25 @@ theorem exists_cyclicConsecutive_predecessor (coord : V → ℝ) (S : Finset V) 
     intro x hx
     exact le_of_not_gt fun hxa ↦ hprev ⟨x, hx, hxa⟩
 
+omit [DecidableEq V] in
 /-- Ordinary consecutive predecessors are unique under a separating
 coordinate. -/
 theorem consecutive_left_unique (coord : V → ℝ) (S : Finset V)
     (hinj : Set.InjOn coord (S : Set V)) {a b c : V}
     (hba : Consecutive coord S b a) (hca : Consecutive coord S c a) : b = c := by
+  classical
   apply hinj hba.left_mem hca.left_mem
   rcases lt_trichotomy (coord b) (coord c) with hbc | hbc | hcb
   · exact (hba.no_between hca.left_mem ⟨hbc, hca.lt⟩).elim
   · exact hbc
   · exact (hca.no_between hba.left_mem ⟨hcb, hba.lt⟩).elim
 
+omit [DecidableEq V] in
 /-- Cyclic predecessors are unique when the coordinate separates the set. -/
 theorem cyclicConsecutive_left_unique (coord : V → ℝ) (S : Finset V)
     (hinj : Set.InjOn coord (S : Set V)) {a b c : V}
     (hba : CyclicConsecutive coord S b a) (hca : CyclicConsecutive coord S c a) : b = c := by
+  classical
   rcases hba with hba | ⟨hb, ha, hbmax, hamin⟩
   · rcases hca with hca | ⟨hc, _, _, hamin⟩
     · exact consecutive_left_unique coord S hinj hba hca
@@ -319,11 +353,13 @@ theorem cyclicConsecutive_left_unique (coord : V → ℝ) (S : Finset V)
     · apply hinj hb hc
       exact le_antisymm (hcmax b hb) (hbmax c hc)
 
+omit [DecidableEq V] in
 /-- A cyclic consecutive pair has distinct endpoints as soon as the finite
 set has at least two vertices and the coordinate separates it. -/
 theorem cyclicConsecutive_ne_of_two_le_card (coord : V → ℝ) (S : Finset V)
     (hinj : Set.InjOn coord (S : Set V)) (hcard : 2 ≤ S.card) {a b : V}
     (hab : CyclicConsecutive coord S a b) : a ≠ b := by
+  classical
   rcases hab with hab | ⟨ha, hb, hamax, hbmin⟩
   · exact hab.ne
   · intro hab
@@ -343,6 +379,7 @@ noncomputable def cyclicSuccessor (coord : V → ℝ) (S : Finset V) (a : {x // 
   ⟨Classical.choose (exists_cyclicConsecutive_successor coord S a.1 a.2),
     (Classical.choose_spec (exists_cyclicConsecutive_successor coord S a.1 a.2)).right_mem⟩
 
+omit [DecidableEq V] in
 lemma cyclicSuccessor_spec (coord : V → ℝ) (S : Finset V) (a : {x // x ∈ S}) :
     CyclicConsecutive coord S a.1 (cyclicSuccessor coord S a).1 :=
   Classical.choose_spec (exists_cyclicConsecutive_successor coord S a.1 a.2)
@@ -353,21 +390,26 @@ noncomputable def cyclicPredecessor (coord : V → ℝ) (S : Finset V) (a : {x /
   ⟨Classical.choose (exists_cyclicConsecutive_predecessor coord S a.1 a.2),
     (Classical.choose_spec (exists_cyclicConsecutive_predecessor coord S a.1 a.2)).left_mem⟩
 
+omit [DecidableEq V] in
 lemma cyclicPredecessor_spec (coord : V → ℝ) (S : Finset V) (a : {x // x ∈ S}) :
     CyclicConsecutive coord S (cyclicPredecessor coord S a).1 a.1 :=
   Classical.choose_spec (exists_cyclicConsecutive_predecessor coord S a.1 a.2)
 
+omit [DecidableEq V] in
 lemma cyclicSuccessor_predecessor (coord : V → ℝ) (S : Finset V)
     (hinj : Set.InjOn coord (S : Set V)) (a : {x // x ∈ S}) :
     cyclicSuccessor coord S (cyclicPredecessor coord S a) = a := by
+  classical
   apply Subtype.ext
   exact cyclicConsecutive_right_unique coord S hinj
     (cyclicSuccessor_spec coord S (cyclicPredecessor coord S a))
     (cyclicPredecessor_spec coord S a)
 
+omit [DecidableEq V] in
 lemma cyclicPredecessor_successor (coord : V → ℝ) (S : Finset V)
     (hinj : Set.InjOn coord (S : Set V)) (a : {x // x ∈ S}) :
     cyclicPredecessor coord S (cyclicSuccessor coord S a) = a := by
+  classical
   apply Subtype.ext
   exact cyclicConsecutive_left_unique coord S hinj
     (cyclicPredecessor_spec coord S (cyclicSuccessor coord S a))
@@ -378,6 +420,7 @@ def verticesOn (vertices : Finset V) (onLine : V → L → Prop)
     [DecidableRel onLine] (l : L) : Finset V :=
   vertices.filter fun v ↦ onLine v l
 
+omit [DecidableEq V] in
 lemma mem_verticesOn (vertices : Finset V) (onLine : V → L → Prop)
     [DecidableRel onLine] {v : V} {l : L} :
     v ∈ verticesOn vertices onLine l ↔ v ∈ vertices ∧ onLine v l := by
@@ -398,40 +441,54 @@ structure LabeledArrangementEdge (vertices : Finset V) (onLine : V → L → Pro
   right : V
   edge : IsArrangementEdge vertices onLine coord line left right
 
+omit [DecidableEq V] in
 lemma IsArrangementEdge.left_incident (vertices : Finset V) (onLine : V → L → Prop)
     [DecidableRel onLine] (coord : V → ℝ) {l : L} {a b : V}
     (h : IsArrangementEdge vertices onLine coord l a b) : onLine a l := by
+  classical
   exact (mem_verticesOn vertices onLine).mp h.left_mem |>.2
 
+omit [DecidableEq V] in
 lemma IsArrangementEdge.right_incident (vertices : Finset V) (onLine : V → L → Prop)
     [DecidableRel onLine] (coord : V → ℝ) {l : L} {a b : V}
     (h : IsArrangementEdge vertices onLine coord l a b) : onLine b l := by
+  classical
   exact (mem_verticesOn vertices onLine).mp h.right_mem |>.2
 
+omit [DecidableEq V] in
 lemma IsArrangementEdge.endpoints_mem (vertices : Finset V) (onLine : V → L → Prop)
     [DecidableRel onLine] (coord : V → ℝ) {l : L} {a b : V}
     (h : IsArrangementEdge vertices onLine coord l a b) : a ∈ vertices ∧ b ∈ vertices := by
+  classical
   exact ⟨(mem_verticesOn vertices onLine).mp h.left_mem |>.1,
     (mem_verticesOn vertices onLine).mp h.right_mem |>.1⟩
 
+omit [DecidableEq V] in
 lemma IsArrangementEdge.no_incident_vertex_between
     (vertices : Finset V) (onLine : V → L → Prop) [DecidableRel onLine]
     (coord : V → ℝ) {l : L} {a b x : V}
     (h : IsArrangementEdge vertices onLine coord l a b)
     (hxv : x ∈ vertices) (hxl : onLine x l) :
     ¬(coord a < coord x ∧ coord x < coord b) := by
+  classical
   exact h.no_between ((mem_verticesOn vertices onLine).mpr ⟨hxv, hxl⟩)
 
+omit [DecidableEq V] in
 lemma LabeledArrangementEdge.left_incident
     (vertices : Finset V) (onLine : V → L → Prop) [DecidableRel onLine]
     (coord : V → ℝ) (e : LabeledArrangementEdge vertices onLine coord) :
-    onLine e.left e.line :=
+    onLine e.left e.line := by
+  classical
+  exact
   IsArrangementEdge.left_incident vertices onLine coord e.edge
 
+omit [DecidableEq V] in
 lemma LabeledArrangementEdge.right_incident
     (vertices : Finset V) (onLine : V → L → Prop) [DecidableRel onLine]
     (coord : V → ℝ) (e : LabeledArrangementEdge vertices onLine coord) :
-    onLine e.right e.line :=
+    onLine e.right e.line := by
+  classical
+  exact
   IsArrangementEdge.right_incident vertices onLine coord e.edge
 
 /-- A line-labelled cyclic edge, including the wrap-around edge from the
@@ -444,18 +501,23 @@ structure LabeledCyclicArrangementEdge
   right : V
   edge : CyclicConsecutive coord (verticesOn vertices onLine line) left right
 
+omit [DecidableEq V] in
 lemma LabeledCyclicArrangementEdge.left_incident
     (vertices : Finset V) (onLine : V → L → Prop) [DecidableRel onLine]
     (coord : V → ℝ) (e : LabeledCyclicArrangementEdge vertices onLine coord) :
     onLine e.left e.line := by
+  classical
   exact (mem_verticesOn vertices onLine).mp e.edge.left_mem |>.2
 
+omit [DecidableEq V] in
 lemma LabeledCyclicArrangementEdge.right_incident
     (vertices : Finset V) (onLine : V → L → Prop) [DecidableRel onLine]
     (coord : V → ℝ) (e : LabeledCyclicArrangementEdge vertices onLine coord) :
     onLine e.right e.line := by
+  classical
   exact (mem_verticesOn vertices onLine).mp e.edge.right_mem |>.2
 
+omit [DecidableEq V] in
 /-- On a line with a separating coordinate, the bounded arrangement edge
 starting at a given vertex is unique. -/
 theorem arrangementEdge_right_unique
@@ -464,6 +526,7 @@ theorem arrangementEdge_right_unique
     {l : L} {a b c : V}
     (hab : IsArrangementEdge vertices onLine coord l a b)
     (hac : IsArrangementEdge vertices onLine coord l a c) : b = c := by
+  classical
   apply consecutive_right_unique coord (verticesOn vertices onLine l)
   · exact hinj.mono (Finset.filter_subset _ _)
   · exact hab

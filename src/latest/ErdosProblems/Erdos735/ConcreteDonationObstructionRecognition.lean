@@ -28,7 +28,6 @@ a fixed face across both owners is unique, even when the two owners are
 presented in a different order.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcreteDonationObstructionRecognition
@@ -207,6 +206,11 @@ theorem opposite_across_face_unique_at_double_corner
 end Erdos735.ConcreteDonationObstructionRecognition
 
 namespace Erdos735.ConcretePolarABKPRData
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcreteDonationObstructionRecognitionVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction SignVector ChartOrder
 open SignVector.PolarBoundaryAcross SignVector.PolarBoundaryOrder
@@ -451,6 +455,11 @@ theorem concreteData_opposite_across_face_unique_at_double_corner
 end Erdos735.ConcretePolarABKPRData
 
 namespace Erdos735.ConcreteDonationObstructionRecognition
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcreteDonationObstructionRecognitionVertex2 :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction SignVector ChartOrder
 open ConcretePolarABKPRData

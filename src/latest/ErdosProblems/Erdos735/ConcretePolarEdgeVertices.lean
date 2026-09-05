@@ -17,7 +17,6 @@ limitations under the License.
 
 import ErdosProblems.Erdos735.ConcretePolarOrientedAcross
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcretePolarEdgeVertices
@@ -80,12 +79,14 @@ theorem concreteEdgeVertices_boundaryEdge
 
 /-- All strict edges incident with a global oriented projective vertex. -/
 def concreteVertexEdges (v : OrientedVertex B) :
-    Finset (StrictEdge (normals B)) :=
-  Finset.univ.filter fun e ↦ v ∈ concreteEdgeVertices hspan e
+    Finset (StrictEdge (normals B)) := by
+  classical
+  exact Finset.univ.filter fun e ↦ v ∈ concreteEdgeVertices hspan e
 
 @[simp] theorem mem_concreteVertexEdges_iff
     (v : OrientedVertex B) (e : StrictEdge (normals B)) :
     e ∈ concreteVertexEdges hspan v ↔ v ∈ concreteEdgeVertices hspan e := by
+  classical
   simp [concreteVertexEdges]
 
 /-- Every concrete endpoint is incident with its strict edge's supporting
@@ -94,6 +95,7 @@ theorem concreteEdgeVertex_on_support
     (e : StrictEdge (normals B)) (v : OrientedVertex B)
     (hv : v ∈ concreteEdgeVertices hspan e) :
     Incident v.1.1 e.1.1.1 := by
+  classical
   let d := canonicalDart hspan e
   have hedge : boundaryEdge (normals B) normal_cross hspan d.1 d.2 = e :=
     boundaryEdge_canonicalDart hspan e
@@ -116,6 +118,7 @@ theorem concreteEdgeVertex_weaklyRealizes_restriction
     (hv : v ∈ concreteEdgeVertices hspan e) :
     WeaklyRealizes (otherNormals (normals B) e.1.1) e.1.2
       (orientedRep v) := by
+  classical
   let d := canonicalDart hspan e
   have hdedge : boundaryEdge (normals B) normal_cross hspan d.1 d.2 = e :=
     boundaryEdge_canonicalDart hspan e

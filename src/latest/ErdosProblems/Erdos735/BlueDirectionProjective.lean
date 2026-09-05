@@ -26,13 +26,16 @@ indexed by `s`.  The quotient by repeated collinear directions is handled by
 an explicit finite equivalence.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.BlueDirectionProjective
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction
 open RedBlueDualIncidence ChartOrder
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqBlueDirectionProjectiveVertex :
+    DecidableEq (ℙ ℝ SignVector.Vec3) := Classical.decEq _
 
 abbrev Blue (P : Finset Point) := nonordinaryPoints P
 abbrev OtherBlue (P : Finset Point) (s : Point) := {b // b ∈ (Blue P).erase s}
@@ -67,6 +70,7 @@ theorem directionVertex_eq_iff_lineFiber_eq (P : Finset Point) (s : Point)
     (hs : s ∈ Blue P) (b d : OtherBlue P s) :
     directionVertex P s hs b = directionVertex P s hs d ↔
       lineFiber P s b.1 = lineFiber P s d.1 := by
+  classical
   let ps : Line (Blue P) := ⟨s, hs⟩
   let pb : Line (Blue P) := ⟨b.1, (Finset.mem_erase.mp b.2).2⟩
   let pd : Line (Blue P) := ⟨d.1, (Finset.mem_erase.mp d.2).2⟩

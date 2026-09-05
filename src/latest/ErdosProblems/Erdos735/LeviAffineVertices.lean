@@ -87,7 +87,7 @@ theorem nonparallel_iff_not_collinear (p q r : Point) :
   rw [hdet]
 
 /-- The crossing of two nonparallel affine dual lines. -/
-def crossing (p q r : Point) (hqr : Nonparallel p q r) : Point :=
+def crossing (p q r : Point) (_hqr : Nonparallel p q r) : Point :=
   let d := coeff p q
   let e := coeff p r
   let D := det2 d e

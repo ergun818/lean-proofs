@@ -27,7 +27,6 @@ strict sign edges to cyclic skeleton edges preserves the line label, as does its
 In particular, both endpoints assigned to a strict edge lie on that edge's supporting line.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.SignVector
@@ -39,15 +38,19 @@ universe u v
 variable {I : Type u} [Fintype I] [DecidableEq I]
 variable {V : Type v} [Fintype V] [DecidableEq V]
 
+omit [DecidableEq I] [Fintype I] in
 @[simp] theorem normalizeProjectiveEdge_support
     (pick : OtherLineChoice I) (n : I → Vec3) (e : StrictEdge n) :
     (normalizeProjectiveEdge pick n e).1.1.1 = e.1.1 := by
   unfold normalizeProjectiveEdge
   split <;> rfl
 
-@[simp] theorem strictEdgeEquivProjectiveTimesBool_support
+omit [DecidableEq I] [Fintype I] in
+@[simp] theorem strictEdgeEquivProjectiveTimesBool_support [Finite I]
     (pick : OtherLineChoice I) (n : I → Vec3) (e : StrictEdge n) :
     ((strictEdgeEquivProjectiveTimesBool pick n e).1).1.1.1 = e.1.1 := by
+  classical
+  let : Fintype I := Fintype.ofFinite _
   exact normalizeProjectiveEdge_support pick n e
 
 abbrev StrictEdgeOn (n : I → Vec3) (i : I) :=
@@ -59,6 +62,10 @@ abbrev ProjectiveStrictEdgeOn (pick : OtherLineChoice I) (n : I → Vec3) (i : I
 abbrev RestrictedPatternOn (n : I → Vec3) (i : I) :=
   {s : {j : I // j ≠ i} → Bool //
     RestrictedRealizable (otherNormals n i) (n i) s}
+
+local instance (n : I → Vec3) (i : I) : Fintype (RestrictedPatternOn n i) := by
+  classical
+  infer_instance
 
 noncomputable def strictEdgeOnEquivRestrictedPatternOn
     (n : I → Vec3) (i : I) :
@@ -79,6 +86,7 @@ noncomputable def strictEdgeOnEquivRestrictedPatternOn
 theorem card_restrictedPatternOn (n : I → Vec3) (i : I) :
     Fintype.card (RestrictedPatternOn n i) =
       restrictedFaceCount (otherNormals n i) (n i) := by
+  classical
   rw [Fintype.card_subtype]
   unfold restrictedFaceCount restrictedFacePatterns
   apply congrArg Finset.card
@@ -109,7 +117,8 @@ noncomputable def strictEdgeOnEquivProjectiveOnTimesBool
     rcases eb with ⟨e, b⟩
     apply Prod.ext
     · apply Subtype.ext
-      exact congrArg Prod.fst ((strictEdgeEquivProjectiveTimesBool pick n).apply_symm_apply (e.1, b))
+      exact congrArg Prod.fst
+        ((strictEdgeEquivProjectiveTimesBool pick n).apply_symm_apply (e.1, b))
     · change ((strictEdgeEquivProjectiveTimesBool pick n)
           ((strictEdgeEquivProjectiveTimesBool pick n).symm (e.1, b))).2 = b
       exact congrArg Prod.snd
@@ -130,6 +139,7 @@ theorem card_projectiveStrictEdgeOn
     omega
   omega
 
+omit [DecidableEq V] [Fintype V] in
 theorem card_projectiveStrictEdgeOn_eq_verticesOn
     (pick : OtherLineChoice I) (n : I → Vec3)
     (vertices : Finset V) (onLine : V → I → Prop) [DecidableRel onLine]
@@ -158,6 +168,7 @@ noncomputable def ownerPreservingProjectiveEdgeEquiv
         (card_projectiveStrictEdgeOn_eq_verticesOn
           pick n vertices onLine hrestricted i))
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem ownerPreservingProjectiveEdgeEquiv_line
     (pick : OtherLineChoice I) (n : I → Vec3)
     (vertices : Finset V) (onLine : V → I → Prop) [DecidableRel onLine]
@@ -179,7 +190,8 @@ noncomputable def ownerPreservingStrictEdgeEquivLiftedCyclic
   strictEdgeEquivLiftedCyclic pick n
     (ownerPreservingProjectiveEdgeEquiv pick n vertices onLine hrestricted)
 
-@[simp] theorem ownerPreservingStrictEdgeEquivLiftedCyclic_line
+omit [DecidableEq V] [Fintype V] in
+@[simp] theorem ownerPreservingStrictEdgeEquivLiftedCyclic_line [Finite V]
     (pick : OtherLineChoice I) (n : I → Vec3)
     (vertices : Finset V) (onLine : V → I → Prop) [DecidableRel onLine]
     (hrestricted : ∀ i,
@@ -188,6 +200,8 @@ noncomputable def ownerPreservingStrictEdgeEquivLiftedCyclic
     (e : StrictEdge n) :
     cyclicEdgeLine ((ownerPreservingStrictEdgeEquivLiftedCyclic
       pick n vertices onLine hrestricted e).1) = e.1.1 := by
+  classical
+  let : Fintype V := Fintype.ofFinite _
   change cyclicEdgeLine (ownerPreservingProjectiveEdgeEquiv pick n vertices onLine
     hrestricted (normalizeProjectiveEdge pick n e)) = e.1.1
   rw [ownerPreservingProjectiveEdgeEquiv_line, normalizeProjectiveEdge_support]

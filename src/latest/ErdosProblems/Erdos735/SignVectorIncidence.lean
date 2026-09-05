@@ -47,6 +47,7 @@ noncomputable instance strictFaceFintype (n : I → Vec3) : Fintype (StrictFace 
 noncomputable instance strictFaceDecidableEq (n : I → Vec3) :
     DecidableEq (StrictFace n) := Classical.decEq _
 
+omit [DecidableEq I] in
 theorem card_strictFace (n : I → Vec3) :
     Fintype.card (StrictFace n) = faceCount n := by
   classical
@@ -81,8 +82,8 @@ noncomputable def strictEdgeEquiv (n : I → Vec3) :
         RestrictedRealizable (otherNormals n i) (n i) s} where
   toFun e := ⟨e.1.1, ⟨e.1.2, e.2⟩⟩
   invFun e := ⟨⟨e.1, e.2.1⟩, e.2.2⟩
-  left_inv e := rfl
-  right_inv e := rfl
+  left_inv _e := rfl
+  right_inv _e := rfl
 
 /-- The number of spherical open edges is the sum, over supporting lines,
 of feasible strict sign patterns in that line's restriction. -/
@@ -103,17 +104,21 @@ theorem card_strictEdge (n : I → Vec3) :
 def extendEdgeSign (e : EdgeCode I) (b : Bool) : I → Bool := fun j ↦
   if h : j = e.1 then b else e.2 ⟨j, h⟩
 
+omit [Fintype I] in
 @[simp] lemma extendEdgeSign_support (e : EdgeCode I) (b : Bool) :
     extendEdgeSign e b e.1 = b := by
   simp [extendEdgeSign]
 
+omit [Fintype I] in
 lemma extendEdgeSign_other (e : EdgeCode I) (b : Bool) {j : I} (hj : j ≠ e.1) :
     extendEdgeSign e b j = e.2 ⟨j, hj⟩ := by
   simp [extendEdgeSign, hj]
 
+omit [Fintype I] in
 /-- Both sign extensions of a feasible restricted edge are realizable faces. -/
-lemma edgeExtension_realizable (n : I → Vec3) (hn : ∀ i, n i ≠ 0)
+lemma edgeExtension_realizable [Finite I] (n : I → Vec3) (hn : ∀ i, n i ≠ 0)
     (e : StrictEdge n) (b : Bool) : Realizable n (extendEdgeSign e.1 b) := by
+  let : Fintype I := Fintype.ofFinite _
   rcases e.2 with ⟨x, hx, hxzero⟩
   obtain ⟨c, hc, hplus, hminus⟩ :=
     exists_small_perturbation (otherNormals n e.1.1) e.1.2 hx (n e.1.1)
@@ -202,6 +207,7 @@ noncomputable def faceEdges (n : I → Vec3) (f : StrictFace n) :
   classical
   exact Finset.univ.filter (FaceEdgeIncident n f)
 
+omit [DecidableEq I] in
 theorem mem_faceEdges_iff (n : I → Vec3) (f : StrictFace n) (e : StrictEdge n) :
     e ∈ faceEdges n f ↔ FaceEdgeIncident n f e := by
   classical
@@ -213,6 +219,7 @@ theorem faceEdge_iff (n : I → Vec3) (hn : ∀ i, n i ≠ 0)
     e ∈ faceEdges n f ↔ f ∈ edgeFaces n hn e := by
   rw [mem_faceEdges_iff, mem_edgeFaces_iff]
 
+omit [DecidableEq I] in
 /-- Double-counting the completely algebraic face--edge incidence. -/
 theorem sum_faceEdges_card (n : I → Vec3) (hn : ∀ i, n i ≠ 0) :
     (∑ f : StrictFace n, (faceEdges n f).card) =

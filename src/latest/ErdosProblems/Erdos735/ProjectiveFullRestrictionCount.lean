@@ -22,9 +22,12 @@ open scoped LinearAlgebra.Projectivization
 
 namespace Erdos735.ProjectiveArrangement
 
-open Classical SignVector
+open SignVector
 open ChartOrder
 noncomputable section
+
+local instance instDecidableEqProjectiveFullRestrictionCountVertex :
+    DecidableEq (ℙ ℝ Vec3) := Classical.decEq _
 
 def otherIndexEquivFin {I : Type*} [Fintype I] [DecidableEq I] (a : I) :
     Fin (Fintype.card {b : I // b ≠ a}) ≃ {b : I // b ≠ a} :=

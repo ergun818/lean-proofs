@@ -30,13 +30,17 @@ separation this supplies the collision-safe cyclic closure theorem and shows
 that every projective interval on the selected line is occupied.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcreteStage4BeltCoverage
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction
 open ChartOrder SignVector SignVectorArrangement
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcreteStage4BeltCoverageVertex :
+    DecidableEq (ℙ ℝ SignVector.Vec3) := Classical.decEq _
 
 abbrev Point := ProjectiveArrangement.Point
 
@@ -146,8 +150,7 @@ theorem component_collision_forward
     · exact False.elim hxy
     · exact False.elim hxy
     · exact False.elim hxz
-    ·
-      have hhk : hy.1 ≠ hz.1 := by
+    · have hhk : hy.1 ≠ hz.1 := by
         intro hval
         apply hyz
         exact congrArg (fun q ↦ Sum.inl (Sum.inr q)) (Subtype.ext hval)
@@ -176,8 +179,7 @@ theorem component_collision_forward
       apply hnot
       exact ⟨ky, kz, rfl, rfl⟩
   · rcases y with (ey | hy) | ky <;> rcases z with (ez | hz) | kz
-    ·
-      have hek : ey.1 ≠ ez.1 := by
+    · have hek : ey.1 ≠ ez.1 := by
         intro hval
         apply hyz
         exact congrArg (fun q ↦ Sum.inl (Sum.inl q)) (Subtype.ext hval)

@@ -10,7 +10,6 @@ Weak endpoints which are actual blue arrangement vertices are exactly
 represented by consecutive-owner projective vertices of the polar boundary.
 -/
 
-open Classical
 open scoped LinearAlgebra.Projectivization Matrix
 open Matrix
 
@@ -19,6 +18,9 @@ namespace Erdos735.RedChordPolarBoundary
 noncomputable section
 
 open ProjectiveArrangement SignVector
+
+local instance instDecidableEqRedChordPolarBoundaryVertex :
+    DecidableEq (ℙ ℝ SignVector.Vec3) := Classical.decEq _
 open SignVector.PolarFace SignVector.PolarPlaneChart
 open SignVector.PolarBoundaryOrder
 open SignVector.PolarBoundaryEndpointBridge
@@ -28,6 +30,7 @@ abbrev Point := ProjectiveArrangement.Point
 
 variable {B : Finset Point} [Nonempty {b // b ∈ B}]
 
+omit [Nonempty ↥B] in
 private theorem normal_cross
     (i j : {b // b ∈ B}) (hij : i ≠ j) :
     normalVec i.1 ⨯₃ normalVec j.1 ≠ 0 := by
@@ -35,15 +38,17 @@ private theorem normal_cross
   intro h
   exact hij (Subtype.ext h)
 
+omit [Nonempty ↥B] in
 private theorem polar_zero_of_normal_zero
     {f : StrictFace (fun b : {b // b ∈ B} ↦ normalVec b.1)}
     {x y : Vec3}
-    (hx : Realizes (fun b : {b // b ∈ B} ↦ normalVec b.1) f.1 x)
+    (_hx : Realizes (fun b : {b // b ∈ B} ↦ normalVec b.1) f.1 x)
     (i : {b // b ∈ B}) (hi : normalVec i.1 ⬝ᵥ y = 0) :
     polarPoint (fun b : {b // b ∈ B} ↦ normalVec b.1) f.1 x i ⬝ᵥ y = 0 := by
   rw [polarPoint, smul_dotProduct, orientedNormal_dot]
-  cases hsi : f.1 i <;> simp [signed, hsi, hi]
+  cases hsi : f.1 i <;> simp [signed, hi]
 
+omit [Nonempty ↥B] in
 private theorem normal_zero_of_polar_zero
     {f : StrictFace (fun b : {b // b ∈ B} ↦ normalVec b.1)}
     {x y : Vec3}
@@ -157,10 +162,11 @@ theorem cornerVector_projectivization_eq_boundaryProjectiveVertex
   · exact boundaryProjectiveVertex_on_left f hx normal_cross hspan t
   · exact boundaryProjectiveVertex_on_right f hx normal_cross hspan t
 
+omit [Nonempty ↥B] in
 private theorem orientedSum_dot_pos_of_weak_of_span
     {f : StrictFace (fun b : {b // b ∈ B} ↦ normalVec b.1)}
     {x y : Vec3}
-    (hx : Realizes (fun b : {b // b ∈ B} ↦ normalVec b.1) f.1 x)
+    (_hx : Realizes (fun b : {b // b ∈ B} ↦ normalVec b.1) f.1 x)
     (hspan : Submodule.span ℝ
       (Set.range (fun b : {b // b ∈ B} ↦ normalVec b.1)) = ⊤)
     (hy0 : y ≠ 0)

@@ -28,7 +28,6 @@ fields of `BoundaryExtraction` follow. Face lists require no extra ordering data
 interface only asks for a nodup list with the prescribed finset, so `Finset.toList` is canonical.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.SignVector
@@ -40,6 +39,7 @@ universe u v
 variable {I : Type u} [Fintype I] [DecidableEq I]
 variable {V : Type v} [Fintype V] [DecidableEq V]
 
+omit [DecidableEq I] [DecidableEq V] [Fintype V] in
 /-- Cardinality of the line-labelled projective cyclic skeleton. The explicit instance comparison
 is needed because `CyclicSkeletonEdge` intentionally uses `Fintype.ofFinite`. -/
 theorem card_cyclicSkeletonEdge_eq_sum
@@ -59,9 +59,10 @@ theorem card_cyclicSkeletonEdge_eq_sum
         inferInstance (fun _ ↦ inferInstance))
   simpa only [oldInst] using hchange.trans hsigma
 
+omit [DecidableEq V] [Fintype V] in
 /-- The one-dimensional restriction count on every line implies that projective strict sign edges
 and projective cyclic intervals have the same finite cardinality. -/
-theorem card_projectiveStrictEdge_eq_cyclic_of_restrictedFaceCount
+theorem card_projectiveStrictEdge_eq_cyclic_of_restrictedFaceCount [Finite V]
     (pick : OtherLineChoice I) (n : I → Vec3)
     (vertices : Finset V) (onLine : V → I → Prop) [DecidableRel onLine]
     (hrestricted : ∀ i,
@@ -69,6 +70,8 @@ theorem card_projectiveStrictEdge_eq_cyclic_of_restrictedFaceCount
         2 * (verticesOn vertices onLine i).card) :
     Fintype.card (ProjectiveStrictEdge pick n) =
       Fintype.card (CyclicSkeletonEdge vertices onLine) := by
+  classical
+  let : Fintype V := Fintype.ofFinite _
   have hstrict := card_strictEdge n
   have hpair := card_strictEdge_eq_two_mul_projective pick n
   have hcyclic := card_cyclicSkeletonEdge_eq_sum vertices onLine
@@ -155,18 +158,23 @@ def edgeVertices (e : StrictEdge n) : Finset (V × Bool) :=
 def vertexEdges (v : V × Bool) : Finset (StrictEdge n) :=
   Finset.univ.filter fun e ↦ v ∈ X.edgeVertices e
 
+omit [DecidableEq I] in
 theorem vertexEdge_iff (v : V × Bool) (e : StrictEdge n) :
     e ∈ X.vertexEdges v ↔ v ∈ X.edgeVertices e := by
   simp [vertexEdges]
 
+omit [DecidableEq I] in
 theorem edgeVertices_card (e : StrictEdge n) :
     (X.edgeVertices e).card = 2 := by
+  classical
   exact liftedCyclicEdgeVertices_card X.vertices onLine X.coord X.coord_injective
     X.two_vertices_on_line X.transition (X.edgeEquiv e)
 
+omit [DecidableEq I] in
 theorem vertexEdges_card_eq_lifted (v : V × Bool) :
     (X.vertexEdges v).card =
       (liftedCyclicVertexEdges X.vertices onLine X.coord X.transition v).card := by
+  classical
   apply Finset.card_bij (fun e _ ↦ X.edgeEquiv e)
   · intro e he
     rw [mem_liftedCyclicVertexEdges_iff]
@@ -182,21 +190,26 @@ theorem vertexEdges_card_eq_lifted (v : V × Bool) :
     exact (mem_liftedCyclicVertexEdges_iff
       X.vertices onLine X.coord X.transition v e).mp he
 
+omit [DecidableEq I] in
 theorem vertexEdges_card (v : V × Bool) :
     (X.vertexEdges v).card = 2 * lineMultiplicity onLine v.1 := by
+  classical
   rw [X.vertexEdges_card_eq_lifted v]
   apply liftedCyclicVertexEdges_card X.vertices onLine X.coord X.coord_injective
     X.two_vertices_on_line X.transition v
   rw [X.all_vertices]
   exact Finset.mem_univ v.1
 
+omit [DecidableEq I] [DecidableEq V] in
 /-- The number of projective cyclic intervals is the sum of the numbers of vertices on all
 projective lines. -/
 theorem card_cyclicSkeletonEdge :
     Fintype.card (CyclicSkeletonEdge X.vertices onLine) =
       ∑ i : I, (verticesOn X.vertices onLine i).card := by
+  classical
   exact card_cyclicSkeletonEdge_eq_sum X.vertices onLine
 
+omit [DecidableEq I] [DecidableEq V] in
 /-- Double-counting projective vertex--line incidences. -/
 theorem sum_verticesOn_card_eq_sum_lineMultiplicity :
     (∑ i : I, (verticesOn X.vertices onLine i).card) =
@@ -206,15 +219,18 @@ theorem sum_verticesOn_card_eq_sum_lineMultiplicity :
   rw [← X.all_vertices]
   exact Finset.sum_comm
 
+omit [DecidableEq I] [DecidableEq V] in
 /-- The lifted interval equivalence fixes the exact spherical edge count. -/
 theorem card_strictEdge_eq_two_mul_sum_multiplicity
     (X : LiftedCyclicEdgeRealization n onLine) :
     Fintype.card (StrictEdge n) =
       2 * ∑ v : V, lineMultiplicity onLine v := by
+  classical
   rw [Fintype.card_congr X.edgeEquiv, Fintype.card_prod, Fintype.card_bool,
     X.card_cyclicSkeletonEdge, X.sum_verticesOn_card_eq_sum_lineMultiplicity]
   omega
 
+omit [DecidableEq I] [DecidableEq V] in
 /-- Once deletion--restriction supplies the standard face-count formula, Euler's identity follows
 purely from the lifted cyclic edge count and incidence double-counting. -/
 theorem euler_sphere_of_face_card_formula
@@ -223,6 +239,7 @@ theorem euler_sphere_of_face_card_formula
       2 + ∑ v : V, 2 * ((lineMultiplicity onLine v : ℤ) - 1)) :
     (Fintype.card (V × Bool) : ℤ) - (Fintype.card (StrictEdge n) : ℤ) +
       (Fintype.card (StrictFace n) : ℤ) = 2 := by
+  classical
   rw [hface, X.card_strictEdge_eq_two_mul_sum_multiplicity,
     Fintype.card_prod, Fintype.card_bool]
   push_cast

@@ -27,7 +27,6 @@ are identified with `StrictEdge` and `StrictFace`, it transports every field
 of `SignVector.BoundaryExtraction`, including the Euler identity.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.SignVector
@@ -60,10 +59,12 @@ variable (X : RotationRealization (G := G) n hn)
 /-- The arrangement line supporting an open sign-vector edge. -/
 def strictEdgeOwner (e : StrictEdge n) : I := e.1.1
 
+omit [DecidableEq I] in
 /-- A strict face has at most one open edge on each arrangement line.  Indeed,
 the signs on every other line are forced by the face sign vector. -/
 theorem strictEdgeOwner_injective_on_faceEdges (f : StrictFace n) :
     Set.InjOn strictEdgeOwner (faceEdges n f : Set (StrictEdge n)) := by
+  classical
   rintro ⟨⟨i, s⟩, hs⟩ hi ⟨⟨j, t⟩, ht⟩ hj hij
   dsimp [strictEdgeOwner] at hij
   subst j
@@ -84,6 +85,7 @@ def vertexEdges (v : V) : Finset (StrictEdge n) :=
 def faceBoundary (f : StrictFace n) : List (StrictEdge n) :=
   (X.rotation.C.faceBoundary (X.faceEquiv.symm f)).map X.edgeEquiv
 
+omit [DecidableEq I] in
 theorem vertexEdge_iff (v : V) (e : StrictEdge n) :
     e ∈ X.vertexEdges v ↔ v ∈ X.edgeVertices e := by
   simp only [vertexEdges, Finset.mem_map, Equiv.coe_toEmbedding]
@@ -96,11 +98,13 @@ theorem vertexEdge_iff (v : V) (e : StrictEdge n) :
     refine ⟨X.edgeEquiv.symm e, ?_, X.edgeEquiv.apply_symm_apply e⟩
     simpa [edgeVertices] using X.rotation.C.vertexEdge_iff v (X.edgeEquiv.symm e) |>.mpr he
 
+omit [DecidableEq I] in
 theorem faceBoundary_nodup (f : StrictFace n) :
     (X.faceBoundary f).Nodup := by
   exact (X.rotation.C.faceBoundary_nodup (X.faceEquiv.symm f)).map
     X.edgeEquiv.injective
 
+omit [DecidableEq I] in
 theorem faceBoundary_toFinset (f : StrictFace n) :
     (X.faceBoundary f).toFinset = faceEdges n f := by
   ext e
@@ -113,20 +117,24 @@ theorem faceBoundary_toFinset (f : StrictFace n) :
   · intro he
     exact ⟨X.edgeEquiv.symm e, he, X.edgeEquiv.apply_symm_apply e⟩
 
+omit [DecidableEq I] in
 /-- The supporting-line label is injective along the cyclic edge boundary of
 every transported face. -/
 theorem strictEdgeOwner_injective_on_faceBoundary (f : StrictFace n) :
     Set.InjOn strictEdgeOwner {e | e ∈ X.faceBoundary f} := by
+  classical
   apply (strictEdgeOwner_injective_on_faceEdges (n := n) f).mono
   intro e he
   rw [← X.faceBoundary_toFinset f]
   simpa using he
 
+omit [DecidableEq I] in
 /-- Indexed form of `strictEdgeOwner_injective_on_faceBoundary`, matching the
 boundary indexing used by the discharging data. -/
 theorem boundaryOwner_injective (f : StrictFace n) :
     Function.Injective (fun i : Fin (X.faceBoundary f).length ↦
       strictEdgeOwner ((X.faceBoundary f).get i)) := by
+  classical
   intro i j hij
   have hedge : (X.faceBoundary f).get i = (X.faceBoundary f).get j :=
     strictEdgeOwner_injective_on_faceBoundary X f

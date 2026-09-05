@@ -64,11 +64,12 @@ theorem dot_kernelPerturbation_right_pos {h k : Vec3} (hind : h ⨯₃ k ≠ 0) 
 /-- Deletion--restriction inside `ker h`: a cone is feasible on the double kernel exactly when
 both signs of `k` occur while retaining the equation `h · x = 0`. -/
 theorem doubleRestrictedRealizable_iff_restrictedExtensions
-    {I : Type*} [Fintype I] (n : I → Vec3) {h k : Vec3}
+    {I : Type*} [Finite I] (n : I → Vec3) {h k : Vec3}
     (hind : h ⨯₃ k ≠ 0) (s : I → Bool) :
     DoubleRestrictedRealizable n h k s ↔
       RestrictedExtensionRealizable n h k s true ∧
         RestrictedExtensionRealizable n h k s false := by
+  let : Fintype I := Fintype.ofFinite _
   constructor
   · rintro ⟨x, hx, hx_h, hx_k⟩
     obtain ⟨c, hc, hplus, hminus⟩ :=
@@ -111,11 +112,12 @@ theorem doubleRestrictedRealizable_iff_restrictedExtensions
       ring
 
 theorem restrictedRealizable_iff_restrictedExtension_true_or_false
-    {I : Type*} [Fintype I] (n : I → Vec3) {h k : Vec3}
+    {I : Type*} [Finite I] (n : I → Vec3) {h k : Vec3}
     (hind : h ⨯₃ k ≠ 0) (s : I → Bool) :
     RestrictedRealizable n h s ↔
       RestrictedExtensionRealizable n h k s true ∨
         RestrictedExtensionRealizable n h k s false := by
+  let : Fintype I := Fintype.ofFinite _
   constructor
   · rintro ⟨x, hx, hx_h⟩
     rcases lt_trichotomy (k ⬝ᵥ x) 0 with hkneg | hkzero | hkpos

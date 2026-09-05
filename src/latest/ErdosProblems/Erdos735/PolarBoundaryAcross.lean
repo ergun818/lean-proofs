@@ -29,7 +29,6 @@ dependent across map is an involution, changes the face, and preserves the
 strict edge exactly.
 -/
 
-open Classical
 noncomputable section
 open scoped Matrix LinearAlgebra.Projectivization
 open Matrix
@@ -54,9 +53,11 @@ noncomputable def boundaryEdgeEquiv (f : StrictFace n) :
     BoundaryIndex n f ≃ {e // e ∈ faceEdges n f} :=
   PolarBoundaryOrder.boundaryEdgeEquiv f (faceWitness_realizes n f) hcross hspan
 
+omit [DecidableEq I] in
 theorem boundaryEdgeEquiv_val (f : StrictFace n) (i : BoundaryIndex n f) :
     (boundaryEdgeEquiv n hcross hspan f i).1 = boundaryEdge n hcross hspan f i := rfl
 
+omit [DecidableEq I] in
 theorem boundaryEdge_mem (f : StrictFace n) (i : BoundaryIndex n f) :
     boundaryEdge n hcross hspan f i ∈ faceEdges n f :=
   (boundaryEdgeEquiv n hcross hspan f i).2
@@ -68,10 +69,12 @@ noncomputable def boundaryVertex (f : StrictFace n) (i : BoundaryIndex n f) :
   PolarBoundaryOrder.boundaryProjectiveVertex f (faceWitness_realizes n f)
     hcross hspan ((finRotate _).symm i)
 
+omit [DecidableEq I] in
 theorem boundaryVertex_on_edge_start (f : StrictFace n) (i : BoundaryIndex n f) :
     ProjectiveArrangement.OnProjectiveLine
       (n (boundaryEdge n hcross hspan f i).1.1)
       (boundaryVertex n hcross hspan f i) := by
+  classical
   have h := PolarBoundaryOrder.boundaryProjectiveVertex_on_right f
     (faceWitness_realizes n f) hcross hspan ((finRotate _).symm i)
   have hs : Erdos957.cyclicSucc ((finRotate _).symm i) = i :=
@@ -79,10 +82,12 @@ theorem boundaryVertex_on_edge_start (f : StrictFace n) (i : BoundaryIndex n f) 
   rw [hs] at h
   simpa [boundaryVertex, boundaryEdge] using h
 
+omit [DecidableEq I] in
 theorem boundaryVertex_on_edge_finish (f : StrictFace n) (i : BoundaryIndex n f) :
     ProjectiveArrangement.OnProjectiveLine
       (n (boundaryEdge n hcross hspan f i).1.1)
       (boundaryVertex n hcross hspan f (Erdos957.cyclicSucc i)) := by
+  classical
   have h := PolarBoundaryOrder.boundaryProjectiveVertex_on_left f
     (faceWitness_realizes n f) hcross hspan i
   have hs : (finRotate _).symm (Erdos957.cyclicSucc i) = i :=
@@ -97,12 +102,18 @@ theorem boundaryVertex_on_edge_finish (f : StrictFace n) (i : BoundaryIndex n f)
 def faceBoundary (f : StrictFace n) : List (StrictEdge n) :=
   PolarBoundaryOrder.faceBoundary f (faceWitness_realizes n f) hcross hspan
 
+omit [DecidableEq I] in
 theorem faceBoundary_nodup (f : StrictFace n) :
-    (faceBoundary n hcross hspan f).Nodup :=
+    (faceBoundary n hcross hspan f).Nodup := by
+  classical
+  exact
   PolarBoundaryOrder.faceBoundary_nodup f (faceWitness_realizes n f) hcross hspan
 
+omit [DecidableEq I] in
 theorem faceBoundary_toFinset (f : StrictFace n) :
-    (faceBoundary n hcross hspan f).toFinset = faceEdges n f :=
+    (faceBoundary n hcross hspan f).toFinset = faceEdges n f := by
+  classical
+  exact
   PolarBoundaryOrder.faceBoundary_toFinset f (faceWitness_realizes n f) hcross hspan
 
 abbrev FaceEdgeDart := (f : StrictFace n) × {e // e ∈ faceEdges n f}
@@ -114,16 +125,19 @@ noncomputable def indexedDartEquiv :
 def oppositeFace (f : StrictFace n) (e : StrictEdge n) : StrictFace n :=
   edgeFace n hn e (!(f.1 e.1.1))
 
+omit [Nonempty I] in
 theorem oppositeFace_edge_mem (f : StrictFace n) (e : StrictEdge n) :
     e ∈ faceEdges n (oppositeFace n hn f e) := by
   rw [mem_faceEdges_iff]
   exact faceEdgeIncident_edgeFace n hn e _
 
+omit [Nonempty I] in
 theorem face_eq_edgeFace_of_mem (f : StrictFace n) (e : StrictEdge n)
     (he : e ∈ faceEdges n f) :
     f = edgeFace n hn e (f.1 e.1.1) :=
   eq_edgeFace_of_incident n hn f e ((mem_faceEdges_iff n f e).mp he)
 
+omit [Nonempty I] in
 theorem oppositeFace_ne (f : StrictFace n) (e : StrictEdge n)
     (he : e ∈ faceEdges n f) : oppositeFace n hn f e ≠ f := by
   intro h
@@ -133,6 +147,7 @@ theorem oppositeFace_ne (f : StrictFace n) (e : StrictEdge n)
   have hb := edgeFace_injective n hn e hfaces
   cases hval : f.1 e.1.1 <;> simp [hval] at hb
 
+omit [Nonempty I] in
 theorem oppositeFace_involutive (f : StrictFace n) (e : StrictEdge n)
     (he : e ∈ faceEdges n f) :
     oppositeFace n hn (oppositeFace n hn f e) e = f := by
@@ -145,6 +160,7 @@ noncomputable def faceEdgeAcross (d : FaceEdgeDart n) : FaceEdgeDart n :=
   ⟨oppositeFace n hn d.1 d.2.1,
     ⟨d.2.1, oppositeFace_edge_mem n hn d.1 d.2.1⟩⟩
 
+omit [Nonempty I] in
 theorem faceEdgeAcross_involutive :
     Function.Involutive (faceEdgeAcross n hn) := by
   rintro ⟨f, e, he⟩

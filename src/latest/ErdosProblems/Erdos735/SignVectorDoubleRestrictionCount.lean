@@ -45,10 +45,11 @@ lemma eq_smul_cross_of_dot_eq_zero {h k x : Vec3}
     rw [← crossProduct_ne_zero_iff_linearIndependent]
     exact not_ne_iff.mpr hcross
   rw [LinearIndependent.pair_iff' hind] at hnotli
-  push_neg at hnotli
+  push Not at hnotli
   obtain ⟨a, ha⟩ := hnotli
   exact ⟨a, ha.symm⟩
 
+omit [Fintype I] in
 lemma realizes_of_realizes_pos_smul {n : I → Vec3} {s : I → Bool}
     {x : Vec3} {a : ℝ} (ha : 0 < a) (hx : Realizes n s (a • x)) :
     Realizes n s x := by
@@ -57,11 +58,13 @@ lemma realizes_of_realizes_pos_smul {n : I → Vec3} {s : I → Bool}
   simp only [dotProduct_smul, smul_eq_mul, signed_mul] at hi
   exact (mul_pos_iff_of_pos_left ha).mp hi
 
-lemma doubleRestrictedRealizable_iff_realizes_cross_or_neg
+omit [Fintype I] in
+lemma doubleRestrictedRealizable_iff_realizes_cross_or_neg [Finite I]
     [Nonempty I] (n : I → Vec3) {h k : Vec3} (hind : h ⨯₃ k ≠ 0)
     (s : I → Bool) :
     DoubleRestrictedRealizable n h k s ↔
       Realizes n s (h ⨯₃ k) ∨ Realizes n s (-(h ⨯₃ k)) := by
+  let : Fintype I := Fintype.ofFinite _
   constructor
   · rintro ⟨x, hx, hhx, hkx⟩
     obtain ⟨a, rfl⟩ := eq_smul_cross_of_dot_eq_zero hind hhx hkx
@@ -86,6 +89,7 @@ lemma doubleRestrictedRealizable_iff_realizes_cross_or_neg
 def strictSignAt (n : I → Vec3) (x : Vec3) (i : I) : Bool :=
   decide (0 < n i ⬝ᵥ x)
 
+omit [Fintype I] in
 lemma realizes_strictSignAt_iff (n : I → Vec3) (x : Vec3) :
     Realizes n (strictSignAt n x) x ↔ ∀ i, n i ⬝ᵥ x ≠ 0 := by
   constructor
@@ -100,6 +104,7 @@ lemma realizes_strictSignAt_iff (n : I → Vec3) (x : Vec3) :
         lt_of_le_of_ne (le_of_not_gt hpos) (hne i)
       simp [strictSignAt, hpos, signed, hneg]
 
+omit [Fintype I] in
 lemma eq_strictSignAt_of_realizes (n : I → Vec3) (x : Vec3) (s : I → Bool)
     (hs : Realizes n s x) : s = strictSignAt n x := by
   funext i
@@ -107,22 +112,26 @@ lemma eq_strictSignAt_of_realizes (n : I → Vec3) (x : Vec3) (s : I → Bool)
   cases hb : s i with
   | false =>
       have hneg : n i ⬝ᵥ x < 0 := by simpa [signed, hb] using hi
-      simp [strictSignAt, hb, not_lt.mpr hneg.le]
+      simp [strictSignAt, not_lt.mpr hneg.le]
   | true =>
       have hpos : 0 < n i ⬝ᵥ x := by simpa [signed, hb] using hi
-      simp [strictSignAt, hb, hpos]
+      simp [strictSignAt, hpos]
 
-lemma realizes_iff_eq_strictSignAt (n : I → Vec3) (x : Vec3)
+omit [Fintype I] in
+lemma realizes_iff_eq_strictSignAt [Finite I] (n : I → Vec3) (x : Vec3)
     (hne : ∀ i, n i ⬝ᵥ x ≠ 0) (s : I → Bool) :
     Realizes n s x ↔ s = strictSignAt n x := by
+  let : Fintype I := Fintype.ofFinite _
   constructor
   · exact eq_strictSignAt_of_realizes n x s
   · rintro rfl
     exact (realizes_strictSignAt_iff n x).2 hne
 
-lemma strictSignAt_neg_eq_antipodalSign (n : I → Vec3) (x : Vec3)
+omit [Fintype I] in
+lemma strictSignAt_neg_eq_antipodalSign [Finite I] (n : I → Vec3) (x : Vec3)
     (hne : ∀ i, n i ⬝ᵥ x ≠ 0) :
     strictSignAt n (-x) = antipodalSign (strictSignAt n x) := by
+  let : Fintype I := Fintype.ofFinite _
   have hx : Realizes n (strictSignAt n x) x :=
     (realizes_strictSignAt_iff n x).2 hne
   have hneg : Realizes n (antipodalSign (strictSignAt n x)) (-x) :=

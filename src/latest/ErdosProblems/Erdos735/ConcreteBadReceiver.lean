@@ -23,7 +23,6 @@ import ErdosProblems.Erdos735.RedChordPolarBoundary
 import ErdosProblems.Erdos735.RedBlueDualIncidence
 import ErdosProblems.Erdos735.PolarRedChordExtraction
 
-open Classical
 open scoped Matrix
 open Matrix
 
@@ -45,8 +44,9 @@ open Erdos735.RedBlueDualIncidence
 variable {I : Type*} [Fintype I]
 
 noncomputable def localReceiverFaces (n : I → Vec3) (r y : Vec3) :
-    Finset (StrictFace n) :=
-  Finset.univ.filter fun f ↦ WeaklyRealizes n f.1 y ∧
+    Finset (StrictFace n) := by
+  classical
+  exact Finset.univ.filter fun f ↦ WeaklyRealizes n f.1 y ∧
     RestrictedRealizable n r f.1
 
 omit [Fintype I] in
@@ -98,6 +98,7 @@ theorem localReceiverFaces_card_eq_two
     (hzeros : ∀ k, dotProduct (n k) y = 0 ↔ k = i ∨ k = j)
     (hz : ∀ k, dotProduct (n k) y = 0 → dotProduct (n k) z ≠ 0) :
     (localReceiverFaces n r y).card = 2 := by
+  classical
   let K := {k : I // dotProduct (n k) y ≠ 0}
   let nK : K → Vec3 := fun k ↦ n k.1
   let sK : K → Bool := strictSignAt nK y
@@ -171,7 +172,12 @@ theorem localReceiverFaces_card_eq_two
       smul_eq_mul, hiy, zero_add, zero_sub] at hpv hmv
     intro heq
     rw [heq] at hpv
-    cases h : sm i <;> simp [signed, h] at hpv hmv <;> nlinarith
+    cases h : sm i
+    · simp only [signed, h, Bool.false_eq_true, ↓reduceIte, Left.neg_pos_iff,
+        neg_neg] at hpv hmv
+      nlinarith
+    · simp only [signed, h, ↓reduceIte, Left.neg_pos_iff] at hpv hmv
+      nlinarith
   have hspj : sp j ≠ sm j := by
     have hjy := (hzeros j).2 (Or.inr rfl)
     have hjz := hz j hjy
@@ -181,7 +187,12 @@ theorem localReceiverFaces_card_eq_two
       smul_eq_mul, hjy, zero_add, zero_sub] at hpv hmv
     intro heq
     rw [heq] at hpv
-    cases h : sm j <;> simp [signed, h] at hpv hmv <;> nlinarith
+    cases h : sm j
+    · simp only [signed, h, Bool.false_eq_true, ↓reduceIte, Left.neg_pos_iff,
+        neg_neg] at hpv hmv
+      nlinarith
+    · simp only [signed, h, ↓reduceIte, Left.neg_pos_iff] at hpv hmv
+      nlinarith
   have hfpne : fp ≠ fm := by
     intro h
     exact hspi (congrArg (fun f : StrictFace n ↦ f.1 i) h)
@@ -424,6 +435,7 @@ theorem localReceiverFaces_card_eq_two_at_badVertex
   exact localReceiverFaces_card_eq_two n (normalVec a) y z i j hy0
     (normalVec_ne_zero a) hry hrz hzeros hz
 
+open Classical in
 /-- Boundary-index form of the local count: exactly two concrete polar
 faces have `v` as a boundary corner and are feasible on the incident red
 line. -/
@@ -487,6 +499,7 @@ theorem mem_polarRedEndpoints_iff_exists_feasible_incident
         RestrictedRealizable (normals (nonordinaryPoints P))
             (normalVec a) f.1 ∧
           Incident (boundaryOrientedVertex hspan f i).1.1 a := by
+  classical
   constructor
   · intro hi
     obtain ⟨p, hp, hip⟩ :=
@@ -531,6 +544,7 @@ theorem mem_polarRedEndpoints_iff_exists_feasible_incident
     mem_polarRedEndpoints_iff_exists_feasible_incident hred hspan f i]
   tauto
 
+open Classical in
 /-- Direct adapter to the shape of `ABKPR.Data.badVertex_receiverCount`.
 The hypothesis is the geometry-expanded form of `stage1Corner_iff`: a
 selected corner is multiplicity two and lies on a feasible ordinary red
@@ -611,6 +625,7 @@ theorem badVertex_receiverCount_of_stage1Corner_iff
   rw [hset]
   exact boundaryReceiverFaces_card_eq_two_at_badVertex hspan v hmult ha hainc
 
+open Classical in
 /-- Fully concrete literal-polar form of the ABKPR bad-vertex receiver
 count.  No residual local-sector hypothesis remains. -/
 theorem polarStage1Corners_receiverCount

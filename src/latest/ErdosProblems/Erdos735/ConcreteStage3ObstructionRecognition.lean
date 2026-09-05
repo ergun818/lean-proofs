@@ -29,11 +29,13 @@ donor edges at the donation corner are impossible in the literal polar
 cellulation.
 -/
 
-open Classical
 noncomputable section
 open scoped LinearAlgebra.Projectivization Matrix
 
 namespace Erdos735.ConcreteStage3ObstructionRecognition
+
+local instance instDecidableEqConcreteStage3ObstructionRecognitionVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction SignVector
 

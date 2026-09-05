@@ -34,7 +34,6 @@ These statements use the actual projective vertices of the concrete blue
 arrangement, independently of any cardinality-chosen edge equivalence.
 -/
 
-open Classical
 open scoped LinearAlgebra.Projectivization
 
 namespace Erdos735.RedChordIncidence
@@ -82,6 +81,7 @@ lemma incident_iff_vertexHomogeneous {B : Finset Point} (v : Vertex B)
 blue line (in fact with both lines of any pair producing it). -/
 lemma exists_incident_line_of_projectiveVertex (B : Finset Point)
     (v : Vertex B) : ∃ b ∈ B, Incident v.1 b := by
+  classical
   have hv := v.2
   unfold projectiveVertices at hv
   obtain ⟨pq, -, hpqv⟩ := Finset.mem_image.mp hv

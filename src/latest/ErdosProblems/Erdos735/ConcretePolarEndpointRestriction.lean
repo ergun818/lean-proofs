@@ -26,7 +26,6 @@ This file transports the projective adjacent-sector exclusion to the literal
 polar boundary used by `ConcretePolarABKPRData.concreteData`.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcretePolarEndpointRestriction
@@ -35,6 +34,11 @@ open ProjectiveArrangement ProjectiveBoundaryExtraction SignVector ChartOrder
 open SignVector.PolarBoundaryAcross SignVector.PolarBoundaryAcrossEndpoints
 open ConcretePolarOrientedVertex ConcretePolarEdgeVertices ConcretePolarABKPRData
 open RedBlueDualIncidence
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcretePolarEndpointRestrictionVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 abbrev Point := ProjectiveArrangement.Point
 
@@ -205,9 +209,11 @@ theorem toData_endpointRestriction
     rwa [ConcretePolarABKPRData.indexEquiv_succ
       (vertex_degree := vertex_degree) ha hb hd hncol f i] at hp
 
+omit [Nonempty (ProjectiveBoundaryExtraction.Line (nonordinaryPoints P))] in
 /-- Unconditional endpoint restriction for `concreteData`. -/
 theorem concreteData_endpointRestriction :
     (ConcretePolarABKPRData.concreteData hred ha hb hd hncol).EndpointRestriction := by
+  let : Nonempty (ProjectiveBoundaryExtraction.Line (nonordinaryPoints P)) := ⟨⟨a, ha⟩⟩
   exact toData_endpointRestriction hred ha hb hd hncol
     (ConcretePolarVertexDegree.concreteVertexEdges_card_eq
       (nonordinaryPoints P) ha hb hd hncol)

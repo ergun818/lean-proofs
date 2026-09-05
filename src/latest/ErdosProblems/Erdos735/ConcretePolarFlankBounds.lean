@@ -33,7 +33,6 @@ local statements -- existence of a zero-diagonal flank and the two-endpoint
 bound for a fixed helper -- into the final `GeometricFlankBounds` object.
 -/
 
-open Classical
 noncomputable section
 open scoped Matrix LinearAlgebra.Projectivization
 
@@ -55,6 +54,7 @@ variable (n : I → Vec3) (hn : ∀ i, n i ≠ 0)
 variable (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0)
 variable (hspan : Submodule.span ℝ (Set.range n) = ⊤)
 
+omit [DecidableEq I] in
 /-- A boundary vertex which lies on an owner line occurring on the face is
 an endpoint of that owner's unique boundary edge. -/
 theorem boundaryVertex_mem_edgeVertices_of_onLine
@@ -109,6 +109,7 @@ theorem boundaryVertex_mem_edgeVertices_of_onLine
   · left
     rw [hi, htu]
 
+omit [DecidableEq I] in
 theorem boundaryVertex_injective (f : StrictFace n) :
     Function.Injective (boundaryVertex n hcross hspan f) := by
   intro i j hij
@@ -117,6 +118,7 @@ theorem boundaryVertex_injective (f : StrictFace n) :
     hcross hspan
   simpa only [boundaryVertex] using hij
 
+omit [DecidableEq I] in
 /-- In a simple cyclic boundary, two distinct edges which share a boundary
 vertex are cyclically adjacent. -/
 theorem cyclicAdjacent_of_common_boundaryVertex
@@ -125,6 +127,7 @@ theorem cyclicAdjacent_of_common_boundaryVertex
     (hvi : v ∈ projectiveEdgeVertices n hcross hspan f i)
     (hvj : v ∈ projectiveEdgeVertices n hcross hspan f j) :
     Erdos957.cyclicSucc i = j ∨ Erdos957.cyclicSucc j = i := by
+  classical
   simp only [projectiveEdgeVertices, Finset.mem_insert, Finset.mem_singleton] at hvi hvj
   rcases hvi with hvi | hvi <;> rcases hvj with hvj | hvj
   · exfalso
@@ -231,6 +234,7 @@ theorem adjacent_across_common_endpoint
     have hm := boundaryVertex_mem_edgeVertices_of_onLine n hcross hspan _ i _ hon
     rwa [← hv] at hm
 
+omit [DecidableEq I] in
 /-- Transporting a boundary index along equality of faces preserves its
 supporting-line owner. -/
 theorem boundaryEdge_owner_cast
@@ -243,6 +247,7 @@ theorem boundaryEdge_owner_cast
   subst g
   rfl
 
+omit [DecidableEq I] [Nonempty I] in
 theorem cyclicAdjacent_cast
     (f g : StrictFace n) (hfg : f = g)
     {i j : BoundaryIndex n f}
@@ -285,6 +290,7 @@ noncomputable def endpointAdjacentIndex
     Fin (C₀.faceDegree (A.across (A.evilDart e.1)).1) :=
   Classical.choose e.2.1
 
+omit [DecidableEq Line₀] [Fintype Line₀] in
 theorem endpointAdjacentIndex_spec
     (edgeLine₀ : Edge → Line₀) (h : A.HelpingPair)
     (e : {e : A.EvilFace // A.IsGeometricFlank edgeLine₀ e h}) :
@@ -301,6 +307,7 @@ noncomputable def endpointAcrossDart
   A.across ⟨(A.across (A.evilDart e.1)).1,
     A.endpointAdjacentIndex edgeLine₀ h e⟩
 
+omit [DecidableEq Line₀] [Fintype Line₀] in
 theorem endpointAcrossDart_face
     (edgeLine₀ : Edge → Line₀) (h : A.HelpingPair)
     (e : {e : A.EvilFace // A.IsGeometricFlank edgeLine₀ e h}) :
@@ -315,6 +322,7 @@ noncomputable def endpointHelperIndex
     (A.endpointAcrossDart_face edgeLine₀ h e))
     (A.endpointAcrossDart edgeLine₀ h e).2
 
+omit [DecidableEq Line₀] [Fintype Line₀] in
 theorem endpointAcrossDart_eq
     (edgeLine₀ : Edge → Line₀) (h : A.HelpingPair)
     (e : {e : A.EvilFace // A.IsGeometricFlank edgeLine₀ e h}) :
@@ -332,6 +340,7 @@ theorem endpointAcrossDart_eq
   simp only [endpointHelperIndex, Fin.val_cast]
   exact (congrArg (fun q : ABKPR.FaceDart C₀ ↦ q.2.val) hp).symm
 
+omit [DecidableEq Line₀] [Fintype Line₀] in
 private theorem faceDart_eq_of_fst_eq_of_boundaryLine_eq
     (edgeLine₀ : Edge → Line₀)
     (hinj : ∀ f, Function.Injective
@@ -347,6 +356,7 @@ private theorem faceDart_eq_of_fst_eq_of_boundaryLine_eq
   subst j
   rfl
 
+omit [DecidableEq Line₀] [Fintype Line₀] in
 /-- Pure cellulation bookkeeping: if a geometric flank really meets the
 designated helper edge at one of its two cyclic endpoints, distinct evil
 faces give distinct endpoint indices. -/
@@ -356,6 +366,7 @@ theorem endpointHelperIndex_injective
       (fun i ↦ edgeLine₀ (A.boundaryEdge f i)))
     (h : A.HelpingPair) :
     Function.Injective (A.endpointHelperIndex edgeLine₀ h) := by
+  classical
   intro e e' hee'
   have hdart : A.endpointAcrossDart edgeLine₀ h e =
       A.endpointAcrossDart edgeLine₀ h e' := by
@@ -388,6 +399,7 @@ theorem endpointHelperIndex_injective
   apply Subtype.ext
   exact congrArg (fun z ↦ z.1) hevilDart
 
+omit [DecidableEq Line₀] [Fintype Line₀] in
 /-- If the transported flank edge is cyclically adjacent to the helper's
 designated edge, a fixed helper has at most two evil endpoints. -/
 theorem geometricEvilEndpoints_card_le_two_of_endpoint_adjacent
@@ -400,6 +412,7 @@ theorem geometricEvilEndpoints_card_le_two_of_endpoint_adjacent
         (A.endpointHelperIndex edgeLine₀ h e))
     (h : A.HelpingPair) :
     (A.geometricEvilEndpoints edgeLine₀ h).card ≤ 2 := by
+  classical
   rw [← Fintype.card_coe]
   let φ : {e : A.EvilFace // e ∈ A.geometricEvilEndpoints edgeLine₀ h} → Bool :=
     fun e ↦ decide (ABKPR.faceSucc C₀ h.face h.index =
@@ -455,6 +468,9 @@ theorem faceSucc_ne_self (f : Face) (i : Fin (C₀.faceDegree f)) :
 end Erdos735.ABKPR.Data
 
 namespace Erdos735.ConcretePolarFlankBounds
+
+local instance instDecidableEqConcretePolarFlankBoundsVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction SignVector ChartOrder
 open SignVector.PolarBoundaryOrder

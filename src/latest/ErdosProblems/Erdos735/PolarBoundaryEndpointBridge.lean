@@ -31,7 +31,6 @@ orientations.  This is the order-theoretic bridge used to identify weak
 restriction-sector endpoints with actual projective boundary vertices.
 -/
 
-open Classical
 
 namespace Erdos735.SignVector.PolarBoundaryEndpointBridge
 
@@ -79,7 +78,7 @@ theorem orientedTurn_coord_eq_zero_of_common_zero
       rw [← crossProduct_ne_zero_iff_linearIndependent]
       exact not_ne_iff.mpr hcross
     rw [LinearIndependent.pair_iff' hx] at hdep
-    push_neg at hdep
+    push Not at hdep
     obtain ⟨a, hay⟩ := hdep
     have hpa := congrArg (fun z : Vec3 ↦ p ⬝ᵥ z) hay
     simp only [dotProduct_smul, smul_eq_mul, hpx, mul_one] at hpa
@@ -115,7 +114,9 @@ theorem orientedTurn_coord_eq_zero_of_common_zero
       have hr2 : r 2 - p 2 = b * (x ⨯₃ y) 2 := by
         have := congrArg (fun z : Vec3 ↦ z 2) hb
         simpa using this
-      simp [coord, hx2, hx1, crossVec]
+      suffices hdet : (q 1 - p 1) * (r 2 - p 2) -
+          (q 2 - p 2) * (r 1 - p 1) = 0 by
+        simpa [coord, hx2, hx1, crossVec] using hdet
       rw [hq1, hq2, hr1, hr2]
       ring
     · have hq0 : q 0 - p 0 = a * (x ⨯₃ y) 0 := by
@@ -130,7 +131,9 @@ theorem orientedTurn_coord_eq_zero_of_common_zero
       have hr2 : r 2 - p 2 = b * (x ⨯₃ y) 2 := by
         have := congrArg (fun z : Vec3 ↦ z 2) hb
         simpa using this
-      simp [coord, hx2, hx1, crossVec]
+      suffices hdet : (q 0 - p 0) * (r 2 - p 2) -
+          (q 2 - p 2) * (r 0 - p 0) = 0 by
+        simpa [coord, hx2, hx1, crossVec] using hdet
       rw [hq0, hq2, hr0, hr2]
       ring
   · have hq0 : q 0 - p 0 = a * (x ⨯₃ y) 0 := by
@@ -145,12 +148,15 @@ theorem orientedTurn_coord_eq_zero_of_common_zero
     have hr1 : r 1 - p 1 = b * (x ⨯₃ y) 1 := by
       have := congrArg (fun z : Vec3 ↦ z 1) hb
       simpa using this
-    simp [coord, hx2, crossVec]
+    suffices hdet : (q 0 - p 0) * (r 1 - p 1) -
+        (q 1 - p 1) * (r 0 - p 0) = 0 by
+      simpa [coord, hx2, crossVec] using hdet
     rw [hq0, hq1, hr0, hr1]
     ring
 
 variable {I : Type*} [Fintype I] [DecidableEq I] [Nonempty I]
 
+omit [DecidableEq I] [Fintype I] [Nonempty I] in
 /-- Weak realization gives nonnegative evaluation on every normalized polar
 point. -/
 theorem polarPoint_dot_nonneg_of_weak
@@ -161,6 +167,7 @@ theorem polarPoint_dot_nonneg_of_weak
   rw [polarPoint, smul_dotProduct, orientedNormal_dot]
   exact mul_nonneg (inv_pos.mpr (polarDenom_pos hx i)).le (hy i)
 
+omit [DecidableEq I] in
 /-- Two distinct normalized polar generators on a weak endpoint hyperplane
 force two consecutive boundary owners on that hyperplane.  The conclusion
 is label-preserving and remains valid at a multiple projective crossing. -/
@@ -179,6 +186,7 @@ theorem exists_consecutive_zero_owners
       polarPoint n f.1 x
           (PolarBoundaryOrder.boundaryOwner f hx hcross hspan
             (cyclicSucc t)) ⬝ᵥ y = 0 := by
+  classical
   let P3 := polarPoints n f.1 x
   let H : Set Vec3 := convexHull ℝ (P3 : Set Vec3)
   let L : Vec3 →L[ℝ] ℝ := dotCLM y
@@ -214,7 +222,7 @@ theorem exists_consecutive_zero_owners
       refine ⟨hzH, ?_⟩
       intro w hwH
       have hw := hHnonneg hwH
-      simp only [ContinuousLinearMap.neg_apply]
+      simp only [_root_.neg_apply]
       change 0 ≤ L w at hw
       rw [hz0]
       linarith
@@ -222,7 +230,7 @@ theorem exists_consecutive_zero_owners
       refine ⟨hzH, ?_⟩
       have hznonneg := hHnonneg hzH
       have hcomp := hzmax (polarPoint n f.1 x i) hpiF.1
-      simp only [ContinuousLinearMap.neg_apply] at hcomp
+      simp only [_root_.neg_apply] at hcomp
       change 0 ≤ L z at hznonneg
       change L z = 0
       rw [hiyL] at hcomp
@@ -302,12 +310,12 @@ theorem exists_consecutive_zero_owners
     have hsub := chartFunctional_coord_sub hx0
       (polarPoint_dot_witness hx k) (polarPoint_dot_witness hx a) (dotCLM y)
     dsimp only [l, pa, ownerPoint] at heq
-    simp only [ContinuousLinearMap.neg_apply, neg_inj] at heq
+    simp only [_root_.neg_apply, neg_inj] at heq
     rw [heq, sub_self, dotCLM_apply_comm, dotCLM_apply_comm, hay] at hsub
     linarith
   have hlab : l pa = l pb := by
     dsimp only [l, pa, pb, ownerPoint]
-    simp only [ContinuousLinearMap.neg_apply, neg_inj]
+    simp only [_root_.neg_apply, neg_inj]
     have hsub := chartFunctional_coord_sub hx0
       (polarPoint_dot_witness hx a) (polarPoint_dot_witness hx b) (dotCLM y)
     rw [dotCLM_apply_comm, hay, dotCLM_apply_comm, hby, sub_self] at hsub
@@ -319,7 +327,7 @@ theorem exists_consecutive_zero_owners
     have hsub := chartFunctional_coord_sub hx0
       (polarPoint_dot_witness hx k) (polarPoint_dot_witness hx a) (dotCLM y)
     dsimp only [l, pa, ownerPoint]
-    simp only [ContinuousLinearMap.neg_apply]
+    simp only [_root_.neg_apply]
     rw [dotCLM_apply_comm, dotCLM_apply_comm, hay] at hsub
     linarith
   have hlstrict : ∀ z ∈ hullVertices (boundaryPolygon n f.1 x),
@@ -356,7 +364,7 @@ theorem exists_consecutive_zero_owners
     have hsub := chartFunctional_coord_sub hx0
       (polarPoint_dot_witness hx k) (polarPoint_dot_witness hx a) (dotCLM y)
     dsimp only [l, pa, ownerPoint]
-    simp only [ContinuousLinearMap.neg_apply]
+    simp only [_root_.neg_apply]
     rw [dotCLM_apply_comm, dotCLM_apply_comm, hay] at hsub
     linarith
   have hedge : IsStrictSupportingEdge (boundaryPolygon n f.1 x) pa pb :=
@@ -395,6 +403,7 @@ theorem exists_consecutive_zero_owners
             simpa only [P, pa] using hta
       rwa [hown]
 
+omit [DecidableEq I] in
 /-- A lifted supporting covector of a genuine polar corner is nonzero. -/
 theorem cornerVector_ne_zero
     {n : I → Vec3} (f : StrictFace n) {x : Vec3}
@@ -403,6 +412,7 @@ theorem cornerVector_ne_zero
     (hspan : Submodule.span ℝ (Set.range n) = ⊤)
     (t : Fin (hullVertexCount (boundaryPolygon n f.1 x))) :
     PolarBoundaryOrder.cornerVector f hx hcross hspan t ≠ 0 := by
+  classical
   let P := PolarBoundaryOrder.boundaryHullOrder f hx hcross hspan
   have hthree : 3 ≤ hullVertexCount (boundaryPolygon n f.1 x) := by
     rw [hullVertexCount, hullVertices_boundaryPolygon hx hcross]

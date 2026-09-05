@@ -4,10 +4,14 @@ import ErdosProblems.Erdos735.ConcreteStage4EndpointSlots
 import ErdosProblems.Erdos735.ConcreteStage4BeltNoncollision
 import ErdosProblems.Erdos735.ConcreteStage4EndpointBeltClosure
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcreteStage4EndpointIntervalSeparation
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcreteStage4EndpointIntervalSeparationVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction
 open ChartOrder SignVector SignVectorArrangement
@@ -293,6 +297,7 @@ theorem endpointTriangles_not_antipodal
     simpa only [antipodalStrictFace_sign, antipodalSign] using hx
   cases hs : q₀.1 p <;> simp_all
 
+omit [Nonempty (ProjectiveBoundaryExtraction.Line (nonordinaryPoints P))] in
 private theorem boundaryEdge_mem_faceEdges
     (q : StrictFace (normals (B (P := P))))
     (i : Fin ((C ha hb hd hncol).faceDegree q)) :

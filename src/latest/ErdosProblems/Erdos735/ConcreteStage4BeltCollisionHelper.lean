@@ -10,13 +10,17 @@ helper's opposite edge at its two different far corners.  This is the
 fixed-helper companion to `two_helpers_distinct_shared_vertices`.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcreteStage4BeltCollisionHelper
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction
 open ChartOrder SignVector SignVectorArrangement
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcreteStage4BeltCollisionHelperVertex :
+    DecidableEq (ℙ ℝ SignVector.Vec3) := Classical.decEq _
 open ConcretePolarOrientedVertex ConcretePolarEdgeVertices
 
 abbrev Point := ProjectiveArrangement.Point

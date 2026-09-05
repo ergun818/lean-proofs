@@ -38,7 +38,6 @@ projective recognition argument may therefore work only with the local
 exceptional configurations, rather than with negated injectivity statements.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ABKPR.Data

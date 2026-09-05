@@ -26,7 +26,6 @@ most three sides.  This is the finite combinatorial core of the concurrent
 branch of Levi's triangle theorem.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.LeviCyclicDegenerate
@@ -157,7 +156,7 @@ theorem cyclicFour_pairwise_distinct (r : Fin 4) :
 the distinguished owner `p` is the same vertex, there are at most three
 owners. -/
 theorem card_le_three_of_nonselected_corners_constant
-    {k : ℕ} [DecidableEq I]
+    {k : ℕ}
     (owner : Fin k → I) (vertex : Fin k → V)
     (howner : Function.Injective owner)
     (hvertex : Function.Injective vertex)
@@ -165,6 +164,7 @@ theorem card_le_three_of_nonselected_corners_constant
     (hconstant : ∀ t,
       owner t ≠ p → owner (cyclicSucc t) ≠ p → vertex t = v) :
     k ≤ 3 := by
+  classical
   by_contra hk
   have hkfour : 4 ≤ k := by omega
   let leftBad : Finset (Fin k) :=
@@ -233,7 +233,7 @@ theorem card_le_three_of_nonselected_corners_constant
 corners not touching the distinguished owner `p`, two of the corresponding
 vertices coincide.  Then the polygon has at most four sides. -/
 theorem card_le_four_of_nonselected_corners_no_three
-    {k : ℕ} [DecidableEq I]
+    {k : ℕ}
     (owner : Fin k → I) (vertex : Fin k → V)
     (howner : Function.Injective owner)
     (hvertex : Function.Injective vertex)
@@ -244,6 +244,7 @@ theorem card_le_four_of_nonselected_corners_no_three
       owner z ≠ p → owner (cyclicSucc z) ≠ p →
       vertex t = vertex u ∨ vertex t = vertex z ∨ vertex u = vertex z) :
     k ≤ 4 := by
+  classical
   by_contra hk
   have hkfive : 5 ≤ k := by omega
   let leftBad : Finset (Fin k) :=
@@ -309,7 +310,7 @@ are impossible, then an injectively owner-labelled cyclic polygon has at most
 four sides.  This is the exact cyclic wrapper used in the collinear branch of
 Levi's triangle theorem. -/
 theorem card_le_four_of_three_consecutive_nonselected_corners_impossible
-    {k : ℕ} [DecidableEq I]
+    {k : ℕ}
     (owner : Fin k → I) (howner : Function.Injective owner) (p : I)
     (himpossible : ∀ t,
       owner t ≠ p →
@@ -317,6 +318,7 @@ theorem card_le_four_of_three_consecutive_nonselected_corners_impossible
       owner (cyclicSucc (cyclicSucc t)) ≠ p →
       owner (cyclicSucc (cyclicSucc (cyclicSucc t))) ≠ p → False) :
     k ≤ 4 := by
+  classical
   by_contra hk
   have hkfive : 5 ≤ k := by omega
   by_cases hp : ∃ r, owner r = p

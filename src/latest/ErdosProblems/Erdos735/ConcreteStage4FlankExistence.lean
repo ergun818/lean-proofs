@@ -33,11 +33,13 @@ polar construction and packages every zero-diagonal flank whose continuation
 is not bad as a concrete helping pair.
 -/
 
-open Classical
 noncomputable section
 open scoped LinearAlgebra.Projectivization Matrix
 
 namespace Erdos735.ConcreteStage4FlankExistence
+
+local instance instDecidableEqConcreteStage4FlankExistenceVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction SignVector ChartOrder
 open ConcretePolarOrientedVertex ConcretePolarEdgeVertices
@@ -60,6 +62,7 @@ private abbrev hspan : Submodule.span ℝ
     (Set.range (normals (B (P := P)))) = ⊤ :=
   ConcretePolarABKPRData.hspan ha hb hd hncol
 
+omit [Nonempty (ProjectiveBoundaryExtraction.Line (nonordinaryPoints P))] in
 private theorem line_eq_of_multiplicity_two
     (v : ProjectiveBoundaryExtraction.Vertex (B (P := P)))
     (l₀ l₁ l : ProjectiveBoundaryExtraction.Line (B (P := P)))

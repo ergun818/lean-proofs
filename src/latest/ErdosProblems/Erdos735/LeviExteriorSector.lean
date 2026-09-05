@@ -140,8 +140,7 @@ theorem hullVertex_exists_generic_strict_support
           mul_le_mul_of_nonneg_left (le_abs_self _) hε.le
         _ = |g w - g v| * ε := mul_comm _ _
     dsimp [l]
-    simp only [ContinuousLinearMap.add_apply,
-      ContinuousLinearMap.smul_apply, smul_eq_mul]
+    simp only [add_apply, smul_apply, smul_eq_mul]
     linarith
   refine ⟨l, ?_, hstrict, ?_⟩
   · intro w hw
@@ -152,8 +151,7 @@ theorem hullVertex_exists_generic_strict_support
   · intro d hd
     by_cases hzero : l₀ d = 0
     · dsimp [l]
-      simp only [ContinuousLinearMap.add_apply,
-        ContinuousLinearMap.smul_apply, smul_eq_mul, hzero, zero_add]
+      simp only [add_apply, smul_apply, smul_eq_mul, hzero, zero_add]
       exact mul_ne_zero hε.ne' (hg d hd)
     · have hdD' : d ∈ D' := Finset.mem_filter.mpr ⟨hd, hzero⟩
       have hb := heD d hdD'
@@ -372,7 +370,7 @@ theorem det2_supportRay_ne_zero_of_rayCoordinate_lt
 /-- In any finite linearly ordered family with at least two members and
 distinct coordinates, the two smallest members are consecutive. -/
 theorem exists_consecutive_of_two_le_card
-    {A : Type*} [DecidableEq A] (S : Finset A) (t : A → ℝ)
+    {A : Type*} (S : Finset A) (t : A → ℝ)
     (hcard : 2 ≤ S.card) (hinj : Set.InjOn t (S : Set A)) :
     ∃ q ∈ S, ∃ r ∈ S, q ≠ r ∧ t q < t r ∧
       ∀ a ∈ S, ¬ (t q < t a ∧ t a < t r) := by
@@ -526,7 +524,8 @@ theorem vec3_eq_of_dot_chartPoint_and_directions
   have hz₁eq : z 1 = p 1 * z 2 := sub_eq_zero.mp hz₁
   have hz₂ : z 2 = 0 := by
     rw [Matrix.vec3_dotProduct] at hvz
-    simp [chartPoint] at hvz
+    simp only [Fin.isValue, chartPoint, Matrix.cons_val_zero, Matrix.cons_val_one,
+      Matrix.cons_val] at hvz
     rw [hz₀eq, hz₁eq] at hvz
     linear_combination hvz
   have hz : z = 0 := by
@@ -822,7 +821,7 @@ theorem directionEval_mul_nonneg_of_consecutive_incident_rays
 from a strictly supported arrangement vertex.  Otherwise that meeting would
 be another arrangement vertex beyond the strict supporting line. -/
 theorem lineEval_ne_zero_on_positive_incident_ray_smul
-    (p : B) {v : Point} (hv : v ∈ vertexFinset B p)
+    (p : B) {v : Point} (_hv : v ∈ vertexFinset B p)
     (l : Point →L[ℝ] ℝ)
     (hstrict : ∀ w ∈ vertexFinset B p, w ≠ v → l w < l v)
     {q a : OtherPoint B p}
@@ -1074,7 +1073,7 @@ theorem lineEval_mul_lineEval_qWall_pos
     (hstrict : ∀ w ∈ vertexFinset B p, w ≠ v → l w < l v)
     {q r : OtherPoint B p}
     (hq : q ∈ incidentLines B p v)
-    (hr : r ∈ incidentLines B p v) (hqr : q ≠ r)
+    (hr : r ∈ incidentLines B p v) (_hqr : q ≠ r)
     (hl : ∀ z ∈ incidentLines B p v,
       l (lineDirection p.1 z.1.1) ≠ 0)
     (hcoord : rayCoordinate l p.1 q.1.1 < rayCoordinate l p.1 r.1.1)
@@ -1132,7 +1131,7 @@ theorem lineEval_mul_lineEval_rWall_pos
     (hstrict : ∀ w ∈ vertexFinset B p, w ≠ v → l w < l v)
     {q r : OtherPoint B p}
     (hq : q ∈ incidentLines B p v)
-    (hr : r ∈ incidentLines B p v) (hqr : q ≠ r)
+    (hr : r ∈ incidentLines B p v) (_hqr : q ≠ r)
     (hl : ∀ z ∈ incidentLines B p v,
       l (lineDirection p.1 z.1.1) ≠ 0)
     (hcoord : rayCoordinate l p.1 q.1.1 < rayCoordinate l p.1 r.1.1)

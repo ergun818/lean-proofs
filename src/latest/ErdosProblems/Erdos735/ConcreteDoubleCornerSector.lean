@@ -31,7 +31,6 @@ Stage-3 donation-vertex collisions to the already identified edge and
 two-bad-neighbour exceptions.
 -/
 
-open Classical
 noncomputable section
 open scoped LinearAlgebra.Projectivization
 

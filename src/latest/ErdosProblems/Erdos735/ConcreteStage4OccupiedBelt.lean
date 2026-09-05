@@ -28,13 +28,17 @@ is the ordered interface between the finite component and the literal
 cyclic line geometry.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcreteStage4OccupiedBelt
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction
 open ChartOrder SignVector SignVectorArrangement
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcreteStage4OccupiedBeltVertex :
+    DecidableEq (ℙ ℝ SignVector.Vec3) := Classical.decEq _
 open SignVector.ProjectiveEdgeEndpointEquiv
 
 abbrev Point := ProjectiveArrangement.Point
@@ -492,7 +496,8 @@ theorem endpoint_indices_eq_of_component_adjacent
 
 theorem beltAdjacent_symmetric
     (hHall : ¬ (G hred ha hb hd hncol hAcard hnotFF).NoEvilEvilPath) :
-    Symmetric (BeltAdjacent hred ha hb hd hncol hAcard hnotFF hHall) := by
+    ∀ ⦃x y⦄, BeltAdjacent hred ha hb hd hncol hAcard hnotFF hHall x y →
+      BeltAdjacent hred ha hb hd hncol hAcard hnotFF hHall y x := by
   intro x y hxy
   rcases x with (e | h) | k <;> rcases y with (e' | h') | l <;>
     simp only [BeltAdjacent] at hxy ⊢
@@ -630,6 +635,7 @@ theorem exists_two_distinct_beltNeighbors
       y ≠ z ∧
       BeltAdjacent hred ha hb hd hncol hAcard hnotFF hHall x y ∧
       BeltAdjacent hred ha hb hd hncol hAcard hnotFF hHall x z := by
+  classical
   let GG := G hred ha hb hd hncol hAcard hnotFF
   let H := component hred ha hb hd hncol hAcard hnotFF hHall
   rcases x with (e | h) | k

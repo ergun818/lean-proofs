@@ -28,10 +28,14 @@ zero-diagonal flank is a helping neighbor.  Hence the other cyclic flank
 must be triangular.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcreteStage4EndpointTriangle
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcreteStage4EndpointTriangleVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction SignVector
 
@@ -71,6 +75,7 @@ theorem exists_missing_triangle_flank
       ∀ h : (D hred ha hb hd hncol).HelpingPair,
         G.Adj e h →
           ((D hred ha hb hd hncol).across ⟨bad.1, j⟩).1 ≠ h.face := by
+  classical
   let K := ConcreteStage4FlankComplete.geometricFlankBounds
     hred ha hb hd hncol hAcard hnotFF
   let L := ConcreteStage4FlankComplete.flankSystem

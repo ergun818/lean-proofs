@@ -66,13 +66,17 @@ def liftedCyclicEdgeVertices
   {(cyclicEdgeStart e.1, e.2),
     (cyclicEdgeFinish vertices onLine coord e.1, boolTwist (transition e.1) e.2)}
 
-theorem liftedCyclicEdgeVertices_card
+omit [DecidableEq L] [Fintype L] [Fintype V] in
+theorem liftedCyclicEdgeVertices_card [Finite L] [Finite V]
     (vertices : Finset V) (onLine : V → L → Prop) [DecidableRel onLine]
     (coord : V → ℝ) (hinj : Set.InjOn coord (vertices : Set V))
     (hline : ∀ l, 2 ≤ (verticesOn vertices onLine l).card)
     (transition : CyclicSkeletonEdge vertices onLine → Bool)
     (e : LiftedCyclicSkeletonEdge vertices onLine) :
     (liftedCyclicEdgeVertices vertices onLine coord transition e).card = 2 := by
+  classical
+  let : Fintype L := Fintype.ofFinite _
+  let : Fintype V := Fintype.ofFinite _
   rw [liftedCyclicEdgeVertices, Finset.card_insert_of_notMem, Finset.card_singleton]
   simp only [Finset.mem_singleton, Prod.mk.injEq, not_and]
   intro hfirst
@@ -87,6 +91,7 @@ def liftedCyclicVertexEdges
   Finset.univ.filter fun e =>
     v ∈ liftedCyclicEdgeVertices vertices onLine coord transition e
 
+omit [DecidableEq L] [Fintype V] in
 theorem mem_liftedCyclicVertexEdges_iff
     (vertices : Finset V) (onLine : V → L → Prop) [DecidableRel onLine]
     (coord : V → ℝ) (transition : CyclicSkeletonEdge vertices onLine → Bool)
@@ -183,7 +188,8 @@ noncomputable def liftedIncidentEquivBase
     unfold liftBaseIncident forgetLiftedIncident
     split_ifs <;> rfl
 
-theorem liftedCyclicVertexEdges_card
+omit [DecidableEq L] [Fintype V] in
+theorem liftedCyclicVertexEdges_card [Finite V]
     (vertices : Finset V) (onLine : V → L → Prop) [DecidableRel onLine]
     (coord : V → ℝ) (hinj : Set.InjOn coord (vertices : Set V))
     (hline : ∀ l, 2 ≤ (verticesOn vertices onLine l).card)
@@ -191,6 +197,8 @@ theorem liftedCyclicVertexEdges_card
     (v : V × Bool) (hv : v.1 ∈ vertices) :
     (liftedCyclicVertexEdges vertices onLine coord transition v).card =
       2 * lineMultiplicity onLine v.1 := by
+  classical
+  let : Fintype V := Fintype.ofFinite _
   rw [← Fintype.card_coe]
   let memEquiv : ↥(liftedCyclicVertexEdges vertices onLine coord transition v) ≃
       {e : LiftedCyclicSkeletonEdge vertices onLine //

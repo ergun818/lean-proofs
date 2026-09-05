@@ -25,7 +25,6 @@ point.  Thus chord occurrences in different faces whose endpoint projective
 vertices agree necessarily come from the same red point.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.PolarRedChordExtraction

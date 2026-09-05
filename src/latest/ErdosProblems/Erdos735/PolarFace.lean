@@ -62,11 +62,13 @@ lemma signed_eq_signScalar_mul (b : Bool) (r : ℝ) :
 def orientedNormal (n : I → Vec3) (s : I → Bool) (i : I) : Vec3 :=
   signScalar (s i) • n i
 
+omit [DecidableEq I] [Fintype I] in
 lemma orientedNormal_dot (n : I → Vec3) (s : I → Bool) (x : Vec3) (i : I) :
     orientedNormal n s i ⬝ᵥ x = signed (s i) (n i ⬝ᵥ x) := by
   rw [orientedNormal, smul_dotProduct, signed_eq_signScalar_mul]
   rfl
 
+omit [DecidableEq I] [Fintype I] in
 lemma signScalar_smul_orientedNormal (n : I → Vec3) (s : I → Bool) (i : I) :
     signScalar (s i) • orientedNormal n s i = n i := by
   simp only [orientedNormal, smul_smul]
@@ -81,31 +83,45 @@ def polarDenom (n : I → Vec3) (s : I → Bool) (x : Vec3) (i : I) : ℝ :=
 def polarPoint (n : I → Vec3) (s : I → Bool) (x : Vec3) (i : I) : Vec3 :=
   (polarDenom n s x i)⁻¹ • orientedNormal n s i
 
+omit [DecidableEq I] [Fintype I] in
 lemma polarDenom_pos {n : I → Vec3} {s : I → Bool} {x : Vec3}
     (hx : Realizes n s x) (i : I) : 0 < polarDenom n s x i :=
   hx i
 
-lemma polarDenom_ne_zero {n : I → Vec3} {s : I → Bool} {x : Vec3}
-    (hx : Realizes n s x) (i : I) : polarDenom n s x i ≠ 0 :=
+omit [DecidableEq I] [Fintype I] in
+lemma polarDenom_ne_zero [Finite I] {n : I → Vec3} {s : I → Bool} {x : Vec3}
+    (hx : Realizes n s x) (i : I) : polarDenom n s x i ≠ 0 := by
+  classical
+  let : Fintype I := Fintype.ofFinite _
+  exact
   (polarDenom_pos hx i).ne'
 
+omit [DecidableEq I] [Fintype I] in
 /-- Every polar point belongs to the affine plane with equation `p ⬝ᵥ x = 1`. -/
-lemma polarPoint_dot_witness {n : I → Vec3} {s : I → Bool} {x : Vec3}
+lemma polarPoint_dot_witness [Finite I] {n : I → Vec3} {s : I → Bool} {x : Vec3}
     (hx : Realizes n s x) (i : I) : polarPoint n s x i ⬝ᵥ x = 1 := by
+  classical
+  let : Fintype I := Fintype.ofFinite _
   rw [polarPoint, smul_dotProduct, orientedNormal_dot]
   exact inv_mul_cancel₀ (polarDenom_ne_zero hx i)
 
-lemma orientedNormal_eq_denom_smul_polarPoint
+omit [DecidableEq I] [Fintype I] in
+lemma orientedNormal_eq_denom_smul_polarPoint [Finite I]
     {n : I → Vec3} {s : I → Bool} {x : Vec3}
     (hx : Realizes n s x) (i : I) :
     orientedNormal n s i = polarDenom n s x i • polarPoint n s x i := by
+  classical
+  let : Fintype I := Fintype.ofFinite _
   rw [polarPoint, smul_smul, mul_inv_cancel₀ (polarDenom_ne_zero hx i), one_smul]
 
+omit [DecidableEq I] [Fintype I] in
 /-- Pairwise projectively distinct normals give pairwise distinct polar
 points in every realized affine chart. -/
-lemma polarPoint_injective {n : I → Vec3} {s : I → Bool} {x : Vec3}
+lemma polarPoint_injective [Finite I] {n : I → Vec3} {s : I → Bool} {x : Vec3}
     (hx : Realizes n s x) (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0) :
     Function.Injective (polarPoint n s x) := by
+  classical
+  let : Fintype I := Fintype.ofFinite _
   intro i j hij
   by_contra hne
   apply hcross i j hne
@@ -120,6 +136,7 @@ lemma polarPoint_injective {n : I → Vec3} {s : I → Bool} {x : Vec3}
 def polarPoints (n : I → Vec3) (s : I → Bool) (x : Vec3) : Finset Vec3 :=
   Finset.univ.image (polarPoint n s x)
 
+omit [DecidableEq I] in
 lemma polarPoint_mem_polarPoints (n : I → Vec3) (s : I → Bool)
     (x : Vec3) (i : I) : polarPoint n s x i ∈ polarPoints n s x := by
   classical
@@ -130,9 +147,11 @@ away from one supporting index. -/
 def faceEdgeCode (s : I → Bool) (i : I) : EdgeCode I :=
   ⟨i, fun j ↦ s j.1⟩
 
+omit [DecidableEq I] [Fintype I] in
 @[simp] lemma faceEdgeCode_support (s : I → Bool) (i : I) :
     (faceEdgeCode s i).1 = i := rfl
 
+omit [DecidableEq I] [Fintype I] in
 @[simp] lemma faceEdgeCode_other (s : I → Bool) (i : I)
     (j : {j : I // j ≠ i}) : (faceEdgeCode s i).2 j = s j.1 := rfl
 
@@ -158,13 +177,13 @@ lemma convex_uniqueMaxSet (l : Vec3 →L[ℝ] ℝ) (p : Vec3) :
       have hpw : l p ≤ l w := by
         rw [hmap, ha0, hb1] at hge
         simpa using hge
-      simpa [ha0, hb1, hw.2 hpw]
+      simp [ha0, hb1, hw.2 hpw]
     by_cases hb0 : b = 0
     · have ha1 : a = 1 := by linarith
       have hpz : l p ≤ l z := by
         rw [hmap, ha1, hb0] at hge
         simpa using hge
-      simpa [ha1, hb0, hz.2 hpz]
+      simp [ha1, hb0, hz.2 hpz]
     · have hapos : 0 < a := lt_of_le_of_ne ha (Ne.symm ha0)
       have hbpos : 0 < b := lt_of_le_of_ne hb (Ne.symm hb0)
       have hpz : l p ≤ l z := by
@@ -233,7 +252,7 @@ lemma extremePoint_exists_strictMax (A : Finset Vec3) {p : Vec3}
   refine ⟨l, ?_, ?_⟩
   · intro q hq
     by_cases hqp : q = p
-    · simpa [hqp]
+    · simp [hqp]
     · exact (hlt q (subset_convexHull ℝ _
         (Finset.mem_erase.mpr ⟨hqp, hq⟩))).le.trans hulp.le
   · intro q hq hqp
@@ -271,10 +290,13 @@ exactly `l p - l q`. -/
 def separatorVector (l : Vec3 →L[ℝ] ℝ) (p x : Vec3) : Vec3 :=
   (l p) • x - dualVector l
 
-lemma polarPoint_dot_separatorVector
+omit [DecidableEq I] [Fintype I] in
+lemma polarPoint_dot_separatorVector [Finite I]
     {n : I → Vec3} {s : I → Bool} {x : Vec3}
     (hx : Realizes n s x) (l : Vec3 →L[ℝ] ℝ) (p : Vec3) (i : I) :
     polarPoint n s x i ⬝ᵥ separatorVector l p x = l p - l (polarPoint n s x i) := by
+  classical
+  let : Fintype I := Fintype.ofFinite _
   rw [separatorVector, dotProduct_sub, dotProduct_smul,
     polarPoint_dot_witness hx,
     dotProduct_comm (polarPoint n s x i) (dualVector l), dualVector_dot]
@@ -282,6 +304,7 @@ lemma polarPoint_dot_separatorVector
 
 /-! ## Feasible face edges are exactly polar vertices -/
 
+omit [DecidableEq I] in
 /-- The canonical edge at index `i` is feasible exactly when the normalized
 polar point at `i` is an extreme point of the finite polar convex hull. -/
 theorem edgeFeasible_faceEdgeCode_iff_extreme
@@ -291,6 +314,7 @@ theorem edgeFeasible_faceEdgeCode_iff_extreme
     EdgeFeasible n (faceEdgeCode s i) ↔
       polarPoint n s x i ∈
         (convexHull ℝ (polarPoints n s x : Set Vec3)).extremePoints ℝ := by
+  classical
   constructor
   · rintro ⟨y, hy, hyzero⟩
     let l : Vec3 →L[ℝ] ℝ := -(dotCLM y)
@@ -309,7 +333,7 @@ theorem edgeFeasible_faceEdgeCode_iff_extreme
       have hyzero' : n i ⬝ᵥ y = 0 := by simpa using hyzero
       rw [polarPoint, smul_dotProduct, orientedNormal_dot, hyzero']
       cases s i <;> simp [signed]
-    simp only [l, ContinuousLinearMap.neg_apply, dotCLM_apply]
+    simp only [l, _root_.neg_apply, dotCLM_apply]
     linarith
   · intro hextreme
     obtain ⟨l, -, hstrict⟩ :=
@@ -339,9 +363,7 @@ theorem edgeFeasible_faceEdgeCode_iff_extreme
       have hsigned : signed (s i) (n i ⬝ᵥ y) = 0 :=
         (mul_eq_zero.mp hpolar).resolve_left
           (inv_ne_zero (polarDenom_ne_zero hx i))
-      cases hsi : s i <;> simp only [ne_eq, faceEdgeCode_support] at hsigned ⊢
-      · exact hsigned
-      · exact hsigned
+      cases hsi : s i <;> simpa [signed, hsi] using hsigned
 
 /-! ## Full span gives at least three face edges -/
 
@@ -352,6 +374,7 @@ noncomputable def polarVertices (n : I → Vec3) (s : I → Bool)
   exact (polarPoints n s x).filter fun p ↦
     p ∈ (convexHull ℝ (polarPoints n s x : Set Vec3)).extremePoints ℝ
 
+omit [DecidableEq I] in
 @[simp] lemma mem_polarVertices {n : I → Vec3} {s : I → Bool}
     {x p : Vec3} :
     p ∈ polarVertices n s x ↔
@@ -363,6 +386,7 @@ noncomputable def polarVertices (n : I → Vec3) (s : I → Bool)
   · intro hp
     exact ⟨extremePoints_convexHull_subset hp, hp⟩
 
+omit [DecidableEq I] in
 /-- Rescaling each normal by the nonzero polar normalization preserves full
 linear span. -/
 lemma span_polarPoints_eq_top_of_span_normals_eq_top
@@ -370,6 +394,7 @@ lemma span_polarPoints_eq_top_of_span_normals_eq_top
     (hx : Realizes n s x)
     (hspan : Submodule.span ℝ (Set.range n) = ⊤) :
     Submodule.span ℝ (polarPoints n s x : Set Vec3) = ⊤ := by
+  classical
   apply top_unique
   rw [← hspan]
   apply Submodule.span_le.mpr
@@ -379,6 +404,7 @@ lemma span_polarPoints_eq_top_of_span_normals_eq_top
   exact Submodule.smul_mem _ _ (Submodule.smul_mem _ _
     (Submodule.subset_span (R := ℝ) (polarPoint_mem_polarPoints n s x i)))
 
+omit [DecidableEq I] in
 /-- Krein--Milman, specialized to a finite polar hull: if all polar points
 span three-space, then its (finite) vertex set still spans three-space. -/
 lemma span_polarVertices_eq_top_of_span_normals_eq_top
@@ -386,6 +412,7 @@ lemma span_polarVertices_eq_top_of_span_normals_eq_top
     (hx : Realizes n s x)
     (hspan : Submodule.span ℝ (Set.range n) = ⊤) :
     Submodule.span ℝ (polarVertices n s x : Set Vec3) = ⊤ := by
+  classical
   let P := polarPoints n s x
   let H := convexHull ℝ (P : Set Vec3)
   let V := polarVertices n s x
@@ -418,12 +445,14 @@ noncomputable def extremeIndices (n : I → Vec3) (s : I → Bool)
   classical
   exact Finset.univ.filter fun i ↦ polarPoint n s x i ∈ polarVertices n s x
 
+omit [DecidableEq I] in
 @[simp] lemma mem_extremeIndices {n : I → Vec3} {s : I → Bool}
     {x : Vec3} {i : I} :
     i ∈ extremeIndices n s x ↔ polarPoint n s x i ∈ polarVertices n s x := by
   classical
   simp [extremeIndices]
 
+omit [DecidableEq I] in
 lemma image_extremeIndices_eq_polarVertices
     {n : I → Vec3} {s : I → Bool} {x : Vec3} :
     (extremeIndices n s x).image (polarPoint n s x) = polarVertices n s x := by
@@ -439,11 +468,13 @@ lemma image_extremeIndices_eq_polarVertices
     obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hpP
     exact Finset.mem_image.mpr ⟨i, mem_extremeIndices.mpr hp, rfl⟩
 
+omit [DecidableEq I] in
 lemma card_extremeIndices_eq_card_polarVertices
     {n : I → Vec3} {s : I → Bool} {x : Vec3}
     (hx : Realizes n s x)
     (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0) :
     (extremeIndices n s x).card = (polarVertices n s x).card := by
+  classical
   rw [← image_extremeIndices_eq_polarVertices,
     Finset.card_image_of_injective _ (polarPoint_injective hx hcross)]
 
@@ -457,6 +488,7 @@ def extremeIndexEdge {n : I → Vec3} {s : I → Bool} {x : Vec3}
     (edgeFeasible_faceEdgeCode_iff_extreme hx hcross i.1).2
       (mem_polarVertices.mp (mem_extremeIndices.mp i.2))⟩
 
+omit [DecidableEq I] in
 lemma extremeIndexEdge_incident {n : I → Vec3} {s : I → Bool} {x : Vec3}
     (hx : Realizes n s x)
     (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0)
@@ -465,8 +497,9 @@ lemma extremeIndexEdge_incident {n : I → Vec3} {s : I → Bool} {x : Vec3}
     extremeIndexEdge hx hcross i ∈ faceEdges n f := by
   rw [mem_faceEdges_iff]
   intro j
-  simpa [extremeIndexEdge, faceEdgeCode, hs]
+  simp [extremeIndexEdge, faceEdgeCode, hs]
 
+omit [DecidableEq I] in
 lemma extremeIndexEdge_injective {n : I → Vec3} {s : I → Bool} {x : Vec3}
     (hx : Realizes n s x)
     (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0) :
@@ -476,6 +509,7 @@ lemma extremeIndexEdge_injective {n : I → Vec3} {s : I → Bool} {x : Vec3}
   have howner := congrArg (fun e : StrictEdge n ↦ e.1.1) hij
   exact howner
 
+omit [DecidableEq I] in
 /-- A rank-three, pairwise projectively distinct central arrangement has at
 least three edges on every strict face.  This is the concrete degree field
 needed by `BoundaryExtraction`. -/
@@ -485,6 +519,7 @@ theorem faceEdges_card_three_le_of_span_eq_top
     (hspan : Submodule.span ℝ (Set.range n) = ⊤)
     (f : StrictFace n) :
     3 ≤ (faceEdges n f).card := by
+  classical
   let x : Vec3 := Classical.choose f.2
   have hx : Realizes n f.1 x := Classical.choose_spec f.2
   let E := extremeIndices n f.1 x

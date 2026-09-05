@@ -27,7 +27,6 @@ if every boundary vertex of the face across an edge is a red endpoint, then neit
 that edge can be a red endpoint of the original face.
 -/
 
-open Classical
 noncomputable section
 open scoped LinearAlgebra.Projectivization
 
@@ -36,6 +35,9 @@ namespace Erdos735.RedChordExtraction.Geometry
 open ProjectiveArrangement SignVector
 open SignVector.RotationRealization
 open RedBlueDualIncidence
+
+local instance instDecidableEqRedChordEndpointRestrictionVertex :
+    DecidableEq (ℙ ℝ Vec3) := Classical.decEq _
 
 variable {A B : Finset Point}
 variable {G : SimpleGraph (BlueVertex B)} [DecidableRel G.Adj] [Fintype G.edgeSet]

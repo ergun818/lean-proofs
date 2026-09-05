@@ -23,7 +23,7 @@ open scoped BigOperators LinearAlgebra.Projectivization
 
 namespace Erdos735.ProjectiveBoundaryExtraction
 
-open Classical ChartOrder SignVector ProjectiveArrangement
+open ChartOrder SignVector ProjectiveArrangement
 noncomputable section
 
 noncomputable def projectiveVertexEquivOfFinsetEq {B C : Finset Point} (h : B = C) :
@@ -39,7 +39,7 @@ noncomputable def projectiveVertexEquivOfFinsetEq {B C : Finset Point} (h : B = 
 
 theorem concreteRestrictedFaceCount
     (B : Finset Point) {a b c : Point}
-    (ha : a ∈ B) (hb : b ∈ B) (hc : c ∈ B)
+    (ha : a ∈ B) (hb : b ∈ B) (_hc : c ∈ B)
     (hncol : ¬ ProjectiveDuality.Collinear3 a b c) :
     ∀ p : Line B,
       restrictedFaceCount (otherNormals (normals B) p) (normals B p) =
@@ -82,18 +82,18 @@ theorem concreteStrictFaceCardNat
       rw [hpcomp]
       exact congrArg Subtype.val (e.apply_symm_apply y)
   have hmul (v : Vertex B) :
-      lineMultiplicity (EnumeratedOnLine p) ⟨v.1, by simpa [henum] using v.2⟩ =
+      lineMultiplicity (EnumeratedOnLine p) ⟨v.1, by simp [henum]⟩ =
         lineMultiplicity (OnLine B) v := by
     classical
     apply Finset.card_bij (fun i _ ↦ e i)
     · intro i hi
-      simp only [lineMultiplicity, Finset.mem_filter, Finset.mem_univ, true_and] at hi ⊢
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hi ⊢
       simpa [EnumeratedOnLine, OnLine, hpcomp] using hi
     · intro i hi j hj hij
       exact e.injective hij
     · intro l hl
       refine ⟨e.symm l, ?_, e.apply_symm_apply l⟩
-      simp only [lineMultiplicity, Finset.mem_filter, Finset.mem_univ, true_and] at hl ⊢
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hl ⊢
       simpa [EnumeratedOnLine, OnLine, hpcomp] using hl
   have hcount := strictFace_card_normalVec_eq_two_add_sum_multiplicity m p hp
   have hleft :
@@ -125,7 +125,7 @@ theorem concreteStrictFaceCardNat
 
 theorem concreteStrictFaceCardInt
     (B : Finset Point) {a b c : Point}
-    (ha : a ∈ B) (hb : b ∈ B) (hc : c ∈ B)
+    (ha : a ∈ B) (hb : b ∈ B) (_hc : c ∈ B)
     (hncol : ¬ ProjectiveDuality.Collinear3 a b c) :
     (Fintype.card (StrictFace (normals B)) : ℤ) =
       2 + ∑ v : Vertex B, 2 * ((lineMultiplicity (OnLine B) v : ℤ) - 1) := by

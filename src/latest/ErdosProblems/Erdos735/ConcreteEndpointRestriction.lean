@@ -26,13 +26,15 @@ This is the final interface bridge from the projective red-sector theorem to
 finsets are those extracted from the rotation realization satisfies its endpoint restriction.
 -/
 
-open Classical
 noncomputable section
 open scoped LinearAlgebra.Projectivization
 
 namespace Erdos735.RedChordExtraction.Geometry
 
 open ProjectiveArrangement SignVector
+
+local instance instDecidableEqConcreteEndpointRestrictionVertex :
+    DecidableEq (ℙ ℝ SignVector.Vec3) := Classical.decEq _
 open SignVector.RotationRealization
 
 variable {A B : Finset Point}

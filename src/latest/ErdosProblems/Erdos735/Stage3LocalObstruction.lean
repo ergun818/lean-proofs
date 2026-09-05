@@ -25,7 +25,6 @@ non-exceptional inputs in `ReducedStage3Geometry` after the donation-edge
 freeness field has been discharged by `BadNeighborLocal`.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ABKPR.Data

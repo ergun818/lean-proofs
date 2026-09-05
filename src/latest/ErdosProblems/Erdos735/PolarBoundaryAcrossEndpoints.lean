@@ -3,7 +3,6 @@
 import ErdosProblems.Erdos735.PolarBoundaryAcross
 import ErdosProblems.Erdos735.PolarBoundaryEndpointBridge
 
-open Classical
 noncomputable section
 open scoped Matrix LinearAlgebra.Projectivization
 open Matrix
@@ -14,11 +13,15 @@ open PolarFace PolarPlaneChart PolarBoundaryOrder
 open PolarBoundaryEndpointBridge RedChordSector
 open PolarBoundaryAcross
 
+local instance instDecidableEqPolarBoundaryAcrossEndpointsVertex :
+    DecidableEq (ℙ ℝ Vec3) := Classical.decEq _
+
 variable {I : Type*} [Fintype I] [DecidableEq I] [Nonempty I]
 variable (n : I → Vec3) (hn : ∀ i, n i ≠ 0)
 variable (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0)
 variable (hspan : Submodule.span ℝ (Set.range n) = ⊤)
 
+omit [DecidableEq I] in
 /-- A nonzero weak face point on two distinct arrangement lines is one of
 the face's literal consecutive-owner projective corners. -/
 theorem weak_mk_eq_boundaryProjectiveVertex
@@ -76,6 +79,7 @@ theorem weaklyRealizes_oppositeFace_of_zero
     rw [hsign]
     exact hy k
 
+omit [DecidableEq I] in
 theorem boundaryVertex_succ_eq_boundaryProjectiveVertex
     (f : StrictFace n) (t : BoundaryIndex n f) :
     boundaryVertex n hcross hspan f (Erdos957.cyclicSucc t) =
@@ -84,6 +88,7 @@ theorem boundaryVertex_succ_eq_boundaryProjectiveVertex
       ((finRotate _).symm (Erdos957.cyclicSucc t)) = _
   rw [(finRotate _).symm_apply_apply]
 
+omit [DecidableEq I] in
 private theorem owner_index_injective (f : StrictFace n) :
     Function.Injective
       (boundaryOwner f (faceWitness_realizes n f) hcross hspan) := by

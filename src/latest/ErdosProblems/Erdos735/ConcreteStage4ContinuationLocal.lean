@@ -26,10 +26,14 @@ Consequently a triangle across the opposite edge is exactly the concrete
 opposite-triangles failed-Fano obstruction.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcreteStage4ContinuationLocal
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcreteStage4ContinuationLocalVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction SignVector
 

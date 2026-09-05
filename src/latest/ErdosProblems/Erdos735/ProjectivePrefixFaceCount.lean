@@ -26,8 +26,11 @@ open Matrix
 
 namespace Erdos735.ProjectiveArrangement
 
-open Classical SignVector
+open SignVector
 noncomputable section
+
+local instance instDecidableEqProjectivePrefixFaceCountVertex :
+    DecidableEq (ℙ ℝ Vec3) := Classical.decEq _
 
 def priorNormals {k : ℕ} (p : Fin k → Point) (i : Fin k) : Fin i → Vec3 :=
   fun j ↦ normalVec (p (priorIndex i j))
@@ -81,7 +84,7 @@ theorem doubleRestrictedFaceCount_priorNormals_prefix
         by_contra hall
         apply hnew
         rw [prefixIntersection_not_mem_intersectionsBefore_iff p hp i j]
-        push_neg at hall
+        push Not at hall
         exact fun l ↦ hall l
       simpa [restrictedFinPrefix, priorNormals, earlierPriorIndex] using hex
 

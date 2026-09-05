@@ -30,7 +30,6 @@ criterion and proves it for the nondegenerate affine-hull branch of the
 concrete exterior-sector construction.
 -/
 
-open Classical
 open scoped LinearAlgebra.Projectivization Matrix
 noncomputable section
 
@@ -42,12 +41,14 @@ universe u
 
 variable {I : Type u} [Fintype I] [DecidableEq I]
 
+omit [DecidableEq I] [Fintype I] in
 @[simp] theorem antipodalStrictFace_involutive
     {n : I → Vec3} (f : StrictFace n) :
     antipodalStrictFace (antipodalStrictFace f) = f := by
   apply Subtype.ext
   simp [antipodalStrictFace, antipodalSign_antipodalSign]
 
+omit [DecidableEq I] in
 /-- Three triangular faces, no one antipodal to another, give six distinct
 spherical triangles after adjoining all antipodes.  This is exactly the
 cardinality form of three projective triangle orbits. -/
@@ -59,6 +60,7 @@ theorem six_le_incident_triangles_of_three_antipodal_orbits
     (hdegree : ∀ t, strictFaceDegree n (face t) = 3) :
     6 ≤ (Finset.univ.filter fun f : StrictFace n ↦
       LineFaceIncident n i f ∧ strictFaceDegree n f = 3).card := by
+  classical
   let sixFace : Fin 3 × Bool → StrictFace n := fun tb ↦
     if tb.2 then antipodalStrictFace (face tb.1) else face tb.1
   have hsix : Function.Injective sixFace := by
@@ -103,6 +105,7 @@ theorem six_le_incident_triangles_of_three_antipodal_orbits
     6 = T.card := hTcard.symm
     _ ≤ _ := Finset.card_le_card hsubset
 
+omit [DecidableEq I] in
 theorem HasProjectiveSignVectorLeviProperty.six_le_incident_triangles
     {n : I → Vec3} (H : HasProjectiveSignVectorLeviProperty n) (i : I) :
     6 ≤ (Finset.univ.filter fun f : StrictFace n ↦
@@ -122,6 +125,7 @@ variable (ha : a ∈ B) (hb : b ∈ B) (hc : c ∈ B)
 variable (hncol : ¬ ProjectiveDuality.Collinear3 a b c)
 variable [Nonempty (Line B)]
 
+omit [Nonempty (Line B)] in
 /-- Degenerate-branch endpoint for projective Levi.  If every spherical
 face in a fixed literal line belt is triangular, the belt contains four
 faces per projective vertex and every represented line has at least two
@@ -331,7 +335,7 @@ theorem exists_vertexFinset_eq_boundaryProjectiveVertex
       rw [boundaryProjectiveVertex, onProjectiveLine_mk_iff]
       dsimp [q, r] at hcol
       simp [ProjectiveDuality.Collinear3,
-        ProjectiveDuality.orientationDet, vec3_dotProduct, cross_apply,
+        ProjectiveDuality.orientationDet, cross_apply,
         normalVec] at hcol ⊢
       linear_combination hcol
     rw [← cornerProjectiveVertex_eq_boundaryProjectiveVertex

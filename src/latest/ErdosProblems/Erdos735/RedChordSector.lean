@@ -79,12 +79,12 @@ def chartPoint (n : I → Vec3) (s : I → Bool) (h x : Vec3) (t : ℝ) : Vec3 :
 def WeaklyRealizes (n : I → Vec3) (s : I → Bool) (y : Vec3) : Prop :=
   ∀ i, 0 ≤ signed (s i) (n i ⬝ᵥ y)
 
-omit [Nonempty I] in
+omit [Nonempty I] [DecidableEq I] [Fintype I] in
 lemma offset_pos {n : I → Vec3} {s : I → Bool} {x : Vec3}
     (hx : Realizes n s x) (i : I) : 0 < offset n s x i := by
   simpa [offset, orientedNormal_dot] using hx i
 
-omit [Nonempty I] in
+omit [Nonempty I] [DecidableEq I] in
 lemma signed_chartPoint (n : I → Vec3) (s : I → Bool) (h x : Vec3)
     (t : ℝ) (i : I) :
     signed (s i) (n i ⬝ᵥ chartPoint n s h x t) =
@@ -99,7 +99,7 @@ lemma sum_slope (n : I → Vec3) (s : I → Bool) (h : Vec3) :
   rw [← sum_dotProduct]
   exact dot_cross_self h (orientedSum n s)
 
-omit [Nonempty I] in
+omit [Nonempty I] [DecidableEq I] in
 lemma exists_slope_ne_zero_of_span_eq_top
     {n : I → Vec3} {s : I → Bool} {h : Vec3}
     (hspan : Submodule.span ℝ (Set.range n) = ⊤)
@@ -124,6 +124,7 @@ lemma exists_slope_ne_zero_of_span_eq_top
   have hzz : z ⬝ᵥ z = 0 := hle (by simp)
   exact hz ((dotProduct_self_eq_zero.mp hzz))
 
+omit [DecidableEq I] in
 lemma direction_ne_zero_of_restricted_of_span_eq_top
     {n : I → Vec3} {s : I → Bool} {h x : Vec3}
     (hh : h ≠ 0) (hx : Realizes n s x) (hhx : h ⬝ᵥ x = 0)
@@ -206,12 +207,13 @@ lemma upperEndpoint_le_threshold
   apply Finset.min'_le
   exact Finset.mem_image.mpr ⟨i, by simp [upperOwners, hi], rfl⟩
 
-omit [Nonempty I] in
+omit [Nonempty I] [DecidableEq I] in
 lemma lowerEndpoint_lt_zero
     {n : I → Vec3} {s : I → Bool} {h x : Vec3}
     (hx : Realizes n s x)
     (hl : (lowerThresholds n s h x).Nonempty) :
     lowerEndpoint n s h x hl < 0 := by
+  classical
   have hm := Finset.max'_mem (lowerThresholds n s h x) hl
   obtain ⟨i, hi, heq⟩ := Finset.mem_image.mp hm
   have hipos : 0 < slope n s h i := by simpa [lowerOwners] using hi
@@ -219,12 +221,13 @@ lemma lowerEndpoint_lt_zero
   rw [← heq]
   exact div_neg_of_neg_of_pos (neg_neg_of_pos (offset_pos hx i)) hipos
 
-omit [Nonempty I] in
+omit [Nonempty I] [DecidableEq I] in
 lemma zero_lt_upperEndpoint
     {n : I → Vec3} {s : I → Bool} {h x : Vec3}
     (hx : Realizes n s x)
     (hu : (upperThresholds n s h x).Nonempty) :
     0 < upperEndpoint n s h x hu := by
+  classical
   have hm := Finset.min'_mem (upperThresholds n s h x) hu
   obtain ⟨i, hi, heq⟩ := Finset.mem_image.mp hm
   have hineg : slope n s h i < 0 := by simpa [upperOwners] using hi
@@ -232,7 +235,7 @@ lemma zero_lt_upperEndpoint
   rw [← heq]
   exact div_pos_of_neg_of_neg (neg_neg_of_pos (offset_pos hx i)) hineg
 
-omit [Nonempty I] in
+omit [Nonempty I] [DecidableEq I] in
 lemma realizes_chartPoint_iff
     {n : I → Vec3} {s : I → Bool} {h x : Vec3}
     (hx : Realizes n s x)
@@ -240,6 +243,7 @@ lemma realizes_chartPoint_iff
     (hu : (upperThresholds n s h x).Nonempty) (t : ℝ) :
     Realizes n s (chartPoint n s h x t) ↔
       lowerEndpoint n s h x hl < t ∧ t < upperEndpoint n s h x hu := by
+  classical
   constructor
   · intro ht
     have hli := Finset.max'_mem (lowerThresholds n s h x) hl
@@ -281,7 +285,7 @@ lemma realizes_chartPoint_iff
       rw [div_lt_iff₀ hbpos] at htth
       nlinarith
 
-omit [Nonempty I] in
+omit [Nonempty I] [DecidableEq I] in
 lemma weaklyRealizes_chartPoint_iff
     {n : I → Vec3} {s : I → Bool} {h x : Vec3}
     (hx : Realizes n s x)
@@ -289,6 +293,7 @@ lemma weaklyRealizes_chartPoint_iff
     (hu : (upperThresholds n s h x).Nonempty) (t : ℝ) :
     WeaklyRealizes n s (chartPoint n s h x t) ↔
       lowerEndpoint n s h x hl ≤ t ∧ t ≤ upperEndpoint n s h x hu := by
+  classical
   constructor
   · intro ht
     have hli := Finset.max'_mem (lowerThresholds n s h x) hl
@@ -346,6 +351,7 @@ lemma orientedSum_dot_chartPoint
   simp [chartPoint, direction, dotProduct_add, dotProduct_smul,
     smul_eq_mul, dot_cross_self]
 
+omit [DecidableEq I] in
 lemma chartPoint_ne_zero
     {n : I → Vec3} {s : I → Bool} {h x : Vec3}
     (hx : Realizes n s x) (t : ℝ) :
@@ -373,13 +379,14 @@ lemma chartPoint_injective
     exact sub_eq_zero.mpr hs
   exact sub_eq_zero.mp ((smul_eq_zero.mp hsmul).resolve_right hz)
 
-omit [Nonempty I] in
+omit [Nonempty I] [DecidableEq I] in
 lemma lowerEndpoint_active
     {n : I → Vec3} {s : I → Bool} {h x : Vec3}
     (hl : (lowerThresholds n s h x).Nonempty) :
     ∃ i, 0 < slope n s h i ∧
       signed (s i) (n i ⬝ᵥ
         chartPoint n s h x (lowerEndpoint n s h x hl)) = 0 := by
+  classical
   have hm := Finset.max'_mem (lowerThresholds n s h x) hl
   obtain ⟨i, hi, heq⟩ := Finset.mem_image.mp hm
   have hb : 0 < slope n s h i := by simpa [lowerOwners] using hi
@@ -393,13 +400,14 @@ lemma lowerEndpoint_active
   field_simp [hb.ne']
   ring
 
-omit [Nonempty I] in
+omit [Nonempty I] [DecidableEq I] in
 lemma upperEndpoint_active
     {n : I → Vec3} {s : I → Bool} {h x : Vec3}
     (hu : (upperThresholds n s h x).Nonempty) :
     ∃ i, slope n s h i < 0 ∧
       signed (s i) (n i ⬝ᵥ
         chartPoint n s h x (upperEndpoint n s h x hu)) = 0 := by
+  classical
   have hm := Finset.min'_mem (upperThresholds n s h x) hu
   obtain ⟨i, hi, heq⟩ := Finset.mem_image.mp hm
   have hb : slope n s h i < 0 := by simpa [upperOwners] using hi
@@ -438,6 +446,7 @@ noncomputable def projectiveEndpoints
   exact {lowerProjectiveEndpoint n s h x hl hx,
     upperProjectiveEndpoint n s h x hu hx}
 
+omit [DecidableEq I] in
 lemma projectiveEndpoints_card
     {n : I → Vec3} {s : I → Bool} {h x : Vec3}
     (hx : Realizes n s x)
@@ -472,7 +481,7 @@ lemma projectiveEndpoints_card
     Projectivization.mk ℝ yu hyu} : Finset (ℙ ℝ Vec3)).card = 2
   simp [hproj]
 
-omit [Nonempty I] in
+omit [Nonempty I] [DecidableEq I] in
 theorem chart_sector_has_exactly_two_endpoints
     {n : I → Vec3} {s : I → Bool} {h x : Vec3}
     (hx : Realizes n s x)
@@ -485,6 +494,7 @@ theorem chart_sector_has_exactly_two_endpoints
       (∀ t, WeaklyRealizes n s (chartPoint n s h x t) ∧
           ¬ Realizes n s (chartPoint n s h x t) ↔
         t = lowerEndpoint n s h x hl ∨ t = upperEndpoint n s h x hu) := by
+  classical
   obtain ⟨hp, hn⟩ := exists_pos_and_neg_slope hne
   let hl := lowerThresholds_nonempty_of_exists_pos (x := x) hp
   let hu := upperThresholds_nonempty_of_exists_neg (x := x) hn
@@ -510,6 +520,7 @@ theorem chart_sector_has_exactly_two_endpoints
           (zero_lt_upperEndpoint hx hu).le, le_rfl⟩
       · simp
 
+omit [DecidableEq I] in
 theorem restricted_chart_sector_has_exactly_two_endpoints
     {n : I → Vec3} {s : I → Bool} {h x : Vec3}
     (hh : h ≠ 0) (hx : Realizes n s x) (hhx : h ⬝ᵥ x = 0)
@@ -522,6 +533,7 @@ theorem restricted_chart_sector_has_exactly_two_endpoints
       (∀ t, WeaklyRealizes n s (chartPoint n s h x t) ∧
           ¬ Realizes n s (chartPoint n s h x t) ↔
         t = lowerEndpoint n s h x hl ∨ t = upperEndpoint n s h x hu) := by
+  classical
   apply chart_sector_has_exactly_two_endpoints hx
   apply exists_slope_ne_zero_of_span_eq_top hspan
   exact direction_ne_zero_of_restricted_of_span_eq_top hh hx hhx hspan
@@ -557,6 +569,7 @@ structure EndpointData
   projective_card :
     (projectiveEndpoints n s h x lower_nonempty upper_nonempty hx).card = 2
 
+omit [DecidableEq I] in
 /-- A nonzero red normal cutting a strict sector of a spanning central
 arrangement has exactly two concrete projective boundary points. -/
 theorem endpointDataOfRestricted
@@ -564,6 +577,7 @@ theorem endpointDataOfRestricted
     (hh : h ≠ 0) (hx : Realizes n s x) (hhx : h ⬝ᵥ x = 0)
     (hspan : Submodule.span ℝ (Set.range n) = ⊤) :
     EndpointData n s h x hx := by
+  classical
   let hz := direction_ne_zero_of_restricted_of_span_eq_top hh hx hhx hspan
   obtain ⟨hl, hu, hlu, hreal, hboundary⟩ :=
     restricted_chart_sector_has_exactly_two_endpoints hh hx hhx hspan
@@ -578,6 +592,7 @@ theorem endpointDataOfRestricted
       upper_active := upperEndpoint_active hu
       projective_card := projectiveEndpoints_card hx hz hl hu hlu }
 
+omit [DecidableEq I] in
 lemma EndpointData.lower_on_red
     {n : I → Vec3} {s : I → Bool} {h x : Vec3}
     {hx : Realizes n s x} (D : EndpointData n s h x hx)
@@ -586,6 +601,7 @@ lemma EndpointData.lower_on_red
       (lowerEndpoint n s h x D.lower_nonempty) = 0 :=
   chartPoint_on_red hhx _
 
+omit [DecidableEq I] in
 lemma EndpointData.upper_on_red
     {n : I → Vec3} {s : I → Bool} {h x : Vec3}
     {hx : Realizes n s x} (D : EndpointData n s h x hx)
@@ -594,6 +610,7 @@ lemma EndpointData.upper_on_red
       (upperEndpoint n s h x D.upper_nonempty) = 0 :=
   chartPoint_on_red hhx _
 
+omit [DecidableEq I] in
 /-- The lower endpoint lies on one of the concrete supporting blue lines. -/
 theorem EndpointData.exists_lower_owner_incident
     {n : I → Vec3} {s : I → Bool} {h x : Vec3}
@@ -605,6 +622,7 @@ theorem EndpointData.exists_lower_owner_incident
     (chartPoint_ne_zero hx _)).2 ?_⟩
   cases hs : s i <;> simpa [signed, hs] using hi
 
+omit [DecidableEq I] in
 /-- The upper endpoint lies on one of the concrete supporting blue lines. -/
 theorem EndpointData.exists_upper_owner_incident
     {n : I → Vec3} {s : I → Bool} {h x : Vec3}

@@ -5,7 +5,6 @@ import ErdosProblems.Erdos957.HullGeometryBridge
 
 /-! Strict supporting edges are consecutive in a genuine cyclic hull order. -/
 
-open Classical
 
 namespace Erdos735.CyclicSupportingEdge
 

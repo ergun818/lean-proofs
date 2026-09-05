@@ -25,7 +25,6 @@ coordinate.  Hence crossings at two distinct owners commute whenever both
 continuation edges occur on the intermediate faces.
 -/
 
-open Classical
 noncomputable section
 open scoped Matrix
 
@@ -124,9 +123,9 @@ theorem across_square_face
     else if x = oj then !(q.1 x) else q.1 x)
   · by_cases hxk : x = ok
     · have hxj : x ≠ oj := by simpa [hxk] using hokj
-      simp [hxk, hxj, hokj]
+      simp [hxk, hokj]
     · by_cases hxj : x = oj
-      · simp [hxk, hxj, hokj.symm]
+      · simp [hxj, hokj.symm]
       · simp [hxk, hxj]
 
 end Erdos735.SignVector.PolarBoundaryAcross

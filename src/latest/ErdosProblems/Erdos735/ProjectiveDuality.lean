@@ -182,7 +182,8 @@ def Collinear3 (p q r : Point) : Prop := orientationDet p q r = 0
 
 lemma collinear3_iff_pairIntersection_mem (p q r : Point) :
     Collinear3 p q r ↔ pairIntersection p q ∈ dualLine r := by
-  simp [Collinear3, orientationDet, pairIntersection, cross, dualLine, dot, embed]
+  simp only [Collinear3, orientationDet, pairIntersection, cross, dualLine, dot, embed,
+    Set.mem_ofPred_eq, one_mul, mul_one]
   constructor <;> intro h <;> nlinarith
 
 /-- Explicit concurrency of three dual projective lines, with the zero
@@ -204,13 +205,12 @@ theorem collinear3_iff_threeConcurrent {p q r : Point} (hpq : p ≠ q) :
     exact (collinear3_iff_pairIntersection_mem p q r).mp hcol
   · rintro ⟨h, hne, hp, hq, hr⟩
     rcases h with ⟨u, v, w⟩
-    simp [dualLine, dot, embed] at hp hq hr
+    simp only [dualLine, dot, embed, Set.mem_ofPred_eq, one_mul] at hp hq hr
     have huv : u ≠ 0 ∨ v ≠ 0 := by
       by_contra hn
       push Not at hn
       have hw : w = 0 := by
-        simp [hn.1, hn.2] at hp
-        exact hp
+        simpa [hn.1, hn.2] using hp
       apply hne
       simp [homZero, hn.1, hn.2, hw]
     simp only [Collinear3, orientationDet]
@@ -269,7 +269,7 @@ lemma toCoordinates_ne_zero_iff (h : Homogeneous) :
   constructor
   · intro hv hh
     apply hv
-    simpa [hh]
+    simp [hh]
   · intro hh hv
     apply hh
     have := congrArg fromCoordinates hv
@@ -346,7 +346,7 @@ theorem exists_chart_avoiding_pairwise_intersections
     simp only [ne_eq] at hzero
     intro hc0
     have hx := congrArg Homogeneous.x hc0
-    simp [fromCoordinates, homZero] at hx
+    simp only [fromCoordinates, homZero] at hx
     exact hzero (by simpa [f, dotLinear] using hx)
   intro l hl m hm hlm
   let il : L := ⟨l, hl⟩

@@ -25,7 +25,6 @@ new intersection on each incident line except the earliest incident line. Thus a
 multiplicity `m` contributes exactly `m - 1` to the total insertion count.
 -/
 
-open Classical
 
 namespace Erdos735.ChartOrder
 
@@ -42,10 +41,12 @@ def nonfirstIncidentLines (onLine : V → L → Prop) [DecidableRel onLine]
   (incidentLines onLine v).filter fun l ↦
     ∃ k ∈ incidentLines onLine v, k < l
 
+omit [DecidableEq L] [DecidableEq V] [Fintype V] [LinearOrder L] in
 theorem card_incidentLines (onLine : V → L → Prop) [DecidableRel onLine] (v : V) :
     (incidentLines onLine v).card = lineMultiplicity onLine v := by
   rfl
 
+omit [DecidableEq V] [Fintype V] in
 theorem nonfirstIncidentLines_eq_erase_min
     (onLine : V → L → Prop) [DecidableRel onLine]
     (v : V) (hne : (incidentLines onLine v).Nonempty) :
@@ -64,10 +65,13 @@ theorem nonfirstIncidentLines_eq_erase_min
       Finset.min'_mem _ _, ?_⟩
     exact lt_of_le_of_ne (Finset.min'_le _ _ hl) fun h ↦ hlmin h.symm
 
-theorem card_nonfirstIncidentLines
+omit [DecidableEq L] [DecidableEq V] [Fintype V] in
+theorem card_nonfirstIncidentLines [Finite V]
     (onLine : V → L → Prop) [DecidableRel onLine]
     (v : V) (hne : (incidentLines onLine v).Nonempty) :
     (nonfirstIncidentLines onLine v).card = lineMultiplicity onLine v - 1 := by
+  classical
+  let : Fintype V := Fintype.ofFinite _
   rw [nonfirstIncidentLines_eq_erase_min onLine v hne,
     Finset.card_erase_of_mem (Finset.min'_mem _ _), card_incidentLines]
 
@@ -78,13 +82,15 @@ def verticesEncounteredAt
     (l : L) : Finset V :=
   vertices.filter fun v ↦ l ∈ nonfirstIncidentLines onLine v
 
+omit [DecidableEq V] [Fintype V] in
 /-- Ordered insertion double count: every vertex contributes its multiplicity minus one. -/
-theorem sum_verticesEncounteredAt_card
+theorem sum_verticesEncounteredAt_card [Finite V]
     (vertices : Finset V) (onLine : V → L → Prop) [DecidableRel onLine]
     (hne : ∀ v ∈ vertices, (incidentLines onLine v).Nonempty) :
     (∑ l : L, (verticesEncounteredAt vertices onLine l).card) =
       ∑ v ∈ vertices, (lineMultiplicity onLine v - 1) := by
   classical
+  let : Fintype V := Fintype.ofFinite _
   simp only [verticesEncounteredAt, Finset.card_filter]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun v hv ↦ by

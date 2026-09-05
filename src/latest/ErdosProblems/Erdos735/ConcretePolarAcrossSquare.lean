@@ -18,7 +18,6 @@ limitations under the License.
 import ErdosProblems.Erdos735.PolarAcrossSquare
 import ErdosProblems.Erdos735.ConcretePolarABKPRData
 
-open Classical
 noncomputable section
 open scoped Matrix
 
@@ -27,6 +26,11 @@ namespace Erdos735.ConcretePolarABKPRData
 open ProjectiveArrangement ProjectiveBoundaryExtraction SignVector ChartOrder
 open SignVector.PolarBoundaryAcross
 open ConcretePolarOrientedVertex
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcretePolarAcrossSquareVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 abbrev AcrossSquarePoint := ProjectiveArrangement.Point
 

@@ -29,10 +29,14 @@ distinct double vertices automatically, so only the three-vertices-on-owner
 cardinality remains to invoke failed-Fano recognition.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcreteStage3Local
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcreteStage3LocalVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction SignVector ChartOrder
 open ConcretePolarABKPRData ConcretePolarOrientedVertex ConcretePolarEdgeVertices
@@ -56,6 +60,7 @@ private abbrev vd := ConcretePolarVertexDegree.concreteVertexEdges_card_eq
   (B (P := P)) ha hb hd hncol
 private abbrev D := ConcretePolarABKPRData.concreteData hred ha hb hd hncol
 
+omit [Nonempty (ProjectiveBoundaryExtraction.Line (nonordinaryPoints P))] in
 /-- A bad face across a concrete polar boundary edge makes the start
 projective endpoint a double blue vertex. -/
 theorem badNeighbor_start_lineMultiplicity_eq_two
@@ -73,6 +78,7 @@ theorem badNeighbor_start_lineMultiplicity_eq_two
     ConcretePolarCellulation.boundaryExtractionOfVertexDegree,
     BoundaryExtraction.toBlueCellulation] using h
 
+omit [Nonempty (ProjectiveBoundaryExtraction.Line (nonordinaryPoints P))] in
 /-- The finish endpoint of the same edge is also double. -/
 theorem badNeighbor_finish_lineMultiplicity_eq_two
     (f : StrictFace (normals (B (P := P))))
@@ -90,6 +96,7 @@ theorem badNeighbor_finish_lineMultiplicity_eq_two
     ConcretePolarCellulation.boundaryExtractionOfVertexDegree,
     BoundaryExtraction.toBlueCellulation] using h
 
+omit [Nonempty (ProjectiveBoundaryExtraction.Line (nonordinaryPoints P))] in
 /-- Two distinct bad-neighbour edges of a concrete polar triangle make all
 three projective boundary vertices double. -/
 theorem triangle_boundary_lineMultiplicity_eq_two
@@ -111,6 +118,7 @@ theorem triangle_boundary_lineMultiplicity_eq_two
     ConcretePolarCellulation.boundaryExtractionOfVertexDegree,
     BoundaryExtraction.toBlueCellulation] using h
 
+omit [Nonempty (ProjectiveBoundaryExtraction.Line (nonordinaryPoints P))] in
 /-- Concrete specialization of the unconditional donation-edge freeness
 lemma. -/
 theorem donationEdgeOfGeometry_free
@@ -122,6 +130,7 @@ theorem donationEdgeOfGeometry_free
     (ConcretePolarEndpointRestriction.concreteData_endpointRestriction
       hred ha hb hd hncol) f t
 
+omit [Nonempty (ProjectiveBoundaryExtraction.Line (nonordinaryPoints P))] in
 /-- The exact concrete dichotomy before the remaining four local exceptional
 patterns are recognized. -/
 theorem localObstruction_or_reducedStage3Geometry :
@@ -131,6 +140,7 @@ theorem localObstruction_or_reducedStage3Geometry :
     (ConcretePolarEndpointRestriction.concreteData_endpointRestriction
       hred ha hb hd hncol)
 
+omit [Nonempty (ProjectiveBoundaryExtraction.Line (nonordinaryPoints P))] in
 /-- Final assembly point for the local exceptional analysis: a recognition
 proof for each explicit obstruction yields failed Fano or the complete
 reduced Stage-3 geometry. -/
@@ -205,13 +215,13 @@ theorem isFailedFano_of_owner_three_vertices
           change (D hred ha hb hd hncol).boundaryVertex f i ∈
             (C (P := P) ha hb hd hncol).edgeVertices e
           rw [(D hred ha hb hd hncol).boundaryEdge_vertices f i]
-          simp [e])
+          simp [])
         (by
           change (D hred ha hb hd hncol).boundaryVertex f
               (ABKPR.faceSucc (C (P := P) ha hb hd hncol) f i) ∈
             (C (P := P) ha hb hd hncol).edgeVertices e
           rw [(D hred ha hb hd hncol).boundaryEdge_vertices f i]
-          simp [e]) h
+          simp []) h
     have hisucc : i = ABKPR.faceSucc (C (P := P) ha hb hd hncol) f i :=
       (D hred ha hb hd hncol).boundaryVertex_injective f horiented
     have hcard := (C (P := P) ha hb hd hncol).edgeVertices_card e
@@ -222,7 +232,7 @@ theorem isFailedFano_of_owner_three_vertices
     change (D hred ha hb hd hncol).boundaryVertex f i ∈
       (C (P := P) ha hb hd hncol).edgeVertices e
     rw [(D hred ha hb hd hncol).boundaryEdge_vertices f i]
-    simp [e]
+    simp []
   have hv₃mem : (D hred ha hb hd hncol).boundaryVertex f
         (ABKPR.faceSucc (C (P := P) ha hb hd hncol) f i) ∈
       concreteEdgeVertices (hs ha hb hd hncol) e := by
@@ -230,7 +240,7 @@ theorem isFailedFano_of_owner_three_vertices
         (ABKPR.faceSucc (C (P := P) ha hb hd hncol) f i) ∈
       (C (P := P) ha hb hd hncol).edgeVertices e
     rw [(D hred ha hb hd hncol).boundaryEdge_vertices f i]
-    simp [e]
+    simp []
   have hv₂s : OnLine (B (P := P)) v₂ s := by
     exact concreteEdgeVertex_on_support (hs ha hb hd hncol) e
       ((D hred ha hb hd hncol).boundaryVertex f i) hv₂mem

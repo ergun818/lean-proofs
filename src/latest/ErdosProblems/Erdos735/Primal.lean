@@ -739,11 +739,11 @@ theorem inGeneralPosition_of_nonordinaryPoints_eq_empty
   have hpA : p ∈ ordinaryPoints P := by
     by_contra hpa
     have : p ∈ nonordinaryPoints P := Finset.mem_sdiff.mpr ⟨hp, hpa⟩
-    simpa [hB] using this
+    simp [hB] at this
   have hqA : q ∈ ordinaryPoints P := by
     by_contra hqa
     have : q ∈ nonordinaryPoints P := Finset.mem_sdiff.mpr ⟨hq, hqa⟩
-    simpa [hB] using this
+    simp [hB] at this
   exact (ordinaryPair_of_mem_ordinaryPoints hpos hsum havoid hpA hqA hpq).2.2.2
 
 /-- The exact hypotheses passed from the metric weight argument to the
@@ -854,7 +854,7 @@ theorem classified_of_magic_of_geometric_cores
     (reducedCore : ∀ {P : Finset Point} {w : Point → ℝ} {c : ℝ},
       3 ≤ (ordinaryPoints P).card → (nonordinaryPoints P).Nonempty →
         IsReducedMagic P w c → IsFailedFano P)
-    {P : Finset Point} (hcard : 2 ≤ P.card) (hmagic : IsMagic P) :
+    {P : Finset Point} (_hcard : 2 ≤ P.card) (hmagic : IsMagic P) :
     IsCollinearConfig P ∨ InGeneralPosition P ∨
       IsNearPencil P ∨ IsFailedFano P := by
   classical
@@ -939,7 +939,7 @@ lemma mem_dualLine_of_collinear3 {p q r : Point} {h : DualPoint}
     h ∈ ProjectiveDuality.dualLine r := by
   rcases h with ⟨u, v, z⟩
   simp only [ProjectiveDuality.dualLine, ProjectiveDuality.dot,
-    ProjectiveDuality.embed, Set.mem_setOf_eq] at hp hq ⊢
+    ProjectiveDuality.embed, Set.mem_ofPred_eq] at hp hq ⊢
   have hcoord : q 0 - p 0 ≠ 0 ∨ q 1 - p 1 ≠ 0 := by
     by_contra hn
     simp only [not_or, not_not] at hn
@@ -977,7 +977,7 @@ lemma collinear3_of_mem_three_dualLines {p q r : Point} {h : DualPoint}
 primal line fiber of any two distinct incident points. -/
 theorem dualIncidentFiber_eq_lineFiber {P : Finset Point} {h : DualPoint}
     (hne : h ≠ ProjectiveDuality.homZero) {p q : Point}
-    (hp : p ∈ P) (hq : q ∈ P) (hpq : p ≠ q)
+    (_hp : p ∈ P) (_hq : q ∈ P) (hpq : p ≠ q)
     (hph : h ∈ ProjectiveDuality.dualLine p)
     (hqh : h ∈ ProjectiveDuality.dualLine q) :
     dualIncidentFiber P h = lineFiber P p q := by
@@ -1616,7 +1616,7 @@ private lemma third_direction_card_le_three
     (ha₀A : a₀ ∈ ordinaryPoints P)
     (ha₁A : a₁ ∈ ordinaryPoints P)
     (ha₂A : a₂ ∈ ordinaryPoints P)
-    (ha₀a₁ : a₀ ≠ a₁) (ha₀a₂ : a₀ ≠ a₂)
+    (ha₀a₁ : a₀ ≠ a₁) (_ha₀a₂ : a₀ ≠ a₂)
     (ha₁a₂ : a₁ ≠ a₂)
     (hA : ordinaryPoints P = {a₀, a₁, a₂})
     (ha₀line : a₀ ∈ lineFiber P s s₂)

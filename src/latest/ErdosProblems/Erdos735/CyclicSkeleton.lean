@@ -66,44 +66,64 @@ noncomputable def cyclicEdgeVertices (vertices : Finset V) (onLine : V → L →
     (e : CyclicSkeletonEdge vertices onLine) : Finset V :=
   {cyclicEdgeStart e, cyclicEdgeFinish vertices onLine coord e}
 
+omit [DecidableEq L] [Fintype L] [Fintype V] in
+omit [DecidableEq V] in
 lemma cyclicEdgeFinish_spec (vertices : Finset V) (onLine : V → L → Prop)
     [DecidableRel onLine] (coord : V → ℝ)
     (e : CyclicSkeletonEdge vertices onLine) :
     CyclicConsecutive coord (verticesOn vertices onLine e.1)
-      (cyclicEdgeStart e) (cyclicEdgeFinish vertices onLine coord e) :=
+      (cyclicEdgeStart e) (cyclicEdgeFinish vertices onLine coord e) := by
+  classical
+  exact
   cyclicSuccessor_spec coord (verticesOn vertices onLine e.1) e.2
 
+omit [DecidableEq L] [DecidableEq V] [Fintype L] [Fintype V] in
 lemma cyclicEdgeStart_incident (vertices : Finset V) (onLine : V → L → Prop)
     [DecidableRel onLine] (e : CyclicSkeletonEdge vertices onLine) :
     onLine (cyclicEdgeStart e) (cyclicEdgeLine e) := by
+  classical
   exact (mem_verticesOn vertices onLine).mp e.2.2 |>.2
 
-lemma cyclicEdgeFinish_incident (vertices : Finset V) (onLine : V → L → Prop)
+omit [DecidableEq L] [Fintype L] [Fintype V] in
+omit [DecidableEq V] in
+lemma cyclicEdgeFinish_incident [Finite L] [Finite V] (vertices : Finset V) (onLine : V → L → Prop)
     [DecidableRel onLine] (coord : V → ℝ)
     (e : CyclicSkeletonEdge vertices onLine) :
     onLine (cyclicEdgeFinish vertices onLine coord e) (cyclicEdgeLine e) := by
+  classical
+  let : Fintype L := Fintype.ofFinite _
+  let : Fintype V := Fintype.ofFinite _
   exact (mem_verticesOn vertices onLine).mp
     (cyclicEdgeFinish_spec vertices onLine coord e).right_mem |>.2
 
-lemma cyclicEdge_start_ne_finish
+omit [DecidableEq L] [Fintype L] [Fintype V] in
+omit [DecidableEq V] in
+lemma cyclicEdge_start_ne_finish [Finite L] [Finite V]
     (vertices : Finset V) (onLine : V → L → Prop) [DecidableRel onLine]
     (coord : V → ℝ)
     (hinj : Set.InjOn coord (vertices : Set V))
     (hline : ∀ l, 2 ≤ (verticesOn vertices onLine l).card)
     (e : CyclicSkeletonEdge vertices onLine) :
     cyclicEdgeStart e ≠ cyclicEdgeFinish vertices onLine coord e := by
+  classical
+  let : Fintype L := Fintype.ofFinite _
+  let : Fintype V := Fintype.ofFinite _
   apply cyclicConsecutive_ne_of_two_le_card coord (verticesOn vertices onLine e.1)
   · exact hinj.mono (Finset.filter_subset _ _)
   · exact hline e.1
   · exact cyclicEdgeFinish_spec vertices onLine coord e
 
-lemma cyclicEdgeVertices_card
+omit [DecidableEq L] [Fintype L] [Fintype V] in
+lemma cyclicEdgeVertices_card [Finite L] [Finite V]
     (vertices : Finset V) (onLine : V → L → Prop) [DecidableRel onLine]
     (coord : V → ℝ)
     (hinj : Set.InjOn coord (vertices : Set V))
     (hline : ∀ l, 2 ≤ (verticesOn vertices onLine l).card)
     (e : CyclicSkeletonEdge vertices onLine) :
     (cyclicEdgeVertices vertices onLine coord e).card = 2 := by
+  classical
+  let : Fintype L := Fintype.ofFinite _
+  let : Fintype V := Fintype.ofFinite _
   rw [cyclicEdgeVertices, Finset.card_pair]
   exact cyclicEdge_start_ne_finish vertices onLine coord hinj hline e
 
@@ -117,6 +137,7 @@ noncomputable def cyclicVertexEdges
     (coord : V → ℝ) (v : V) : Finset (CyclicSkeletonEdge vertices onLine) :=
   Finset.univ.filter fun e ↦ v ∈ cyclicEdgeVertices vertices onLine coord e
 
+omit [DecidableEq L] [Fintype V] in
 lemma mem_cyclicVertexEdges_iff
     (vertices : Finset V) (onLine : V → L → Prop) [DecidableRel onLine]
     (coord : V → ℝ) (v : V) (e : CyclicSkeletonEdge vertices onLine) :
@@ -235,13 +256,15 @@ noncomputable def incidentEdgeEquivLineSide
         unfold incidentEdgeToLineSide
         simp [vv, p, hvp]
 
-theorem cyclicVertexEdges_card
+omit [DecidableEq L] [Fintype V] in
+theorem cyclicVertexEdges_card [Finite V]
     (vertices : Finset V) (onLine : V → L → Prop) [DecidableRel onLine]
     (coord : V → ℝ) (hinj : Set.InjOn coord (vertices : Set V))
     (hline : ∀ l, 2 ≤ (verticesOn vertices onLine l).card)
     (v : V) (hv : v ∈ vertices) :
     (cyclicVertexEdges vertices onLine coord v).card = 2 * lineMultiplicity onLine v := by
   classical
+  let : Fintype V := Fintype.ofFinite _
   rw [← Fintype.card_coe]
   let memEquiv : ↥(cyclicVertexEdges vertices onLine coord v) ≃
       {e : CyclicSkeletonEdge vertices onLine //

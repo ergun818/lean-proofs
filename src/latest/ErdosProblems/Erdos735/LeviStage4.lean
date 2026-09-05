@@ -44,12 +44,14 @@ blue cellulation. -/
 structure LeviPathBridge (G : HelpingGraph Help Evil) (n : I → Vec3) where
   certificate : ¬ G.NoEvilEvilPath → EvilPathLineCertificate n
 
+omit [DecidableEq I] in
 /-- Sign-vector Levi excludes evil--evil paths, hence produces the Hall
 hypothesis used by `exists_adjacent_matching`. -/
 theorem noEvilEvilPath_of_signVectorLevi
     {G : HelpingGraph Help Evil} {n : I → Vec3}
     (H : HasSignVectorLeviProperty n) (B : LeviPathBridge G n) :
     G.NoEvilEvilPath := by
+  classical
   by_contra hpath
   exact no_evil_path_of_levi_certificate H (B.certificate hpath)
 
@@ -59,12 +61,14 @@ structure ProjectiveLeviPathBridge (G : HelpingGraph Help Evil)
     (n : I → Vec3) where
   certificate : ¬ G.NoEvilEvilPath → ProjectiveEvilPathLineCertificate n
 
+omit [DecidableEq I] in
 /-- The strengthened six-strict-face form of Levi excludes a path whose
 incident triangles lie in two antipodal endpoint orbits. -/
 theorem noEvilEvilPath_of_projective_signVectorLevi
     {G : HelpingGraph Help Evil} {n : I → Vec3}
     (H : HasProjectiveSignVectorLeviProperty n)
     (B : ProjectiveLeviPathBridge G n) : G.NoEvilEvilPath := by
+  classical
   by_contra hpath
   exact no_evil_path_of_projective_levi_certificate H (B.certificate hpath)
 

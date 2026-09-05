@@ -29,7 +29,6 @@ their projective endpoint pairs agree.  This is the label-preserving bridge
 needed by the local failed-Fano recognition arguments.
 -/
 
-open Classical
 open scoped BigOperators Matrix LinearAlgebra.Projectivization
 open Matrix
 
@@ -40,17 +39,23 @@ open SignVector SignVector.RedChordSector
 open SignVector.ProjectiveEdgeEndpointEquiv
 open ConcretePolarOrientedVertex ConcretePolarEdgeVertices
 
+noncomputable section
+
+local instance instDecidableEqConcreteStrictEdgeCyclicVertex :
+    DecidableEq (ℙ ℝ SignVector.Vec3) := Classical.decEq _
+
 abbrev Point := ProjectiveArrangement.Point
 abbrev Line (B : Finset Point) := ProjectiveBoundaryExtraction.Line B
 abbrev Vertex (B : Finset Point) := ProjectiveBoundaryExtraction.Vertex B
 
 private theorem orientedSum_dot_pos_of_weak_of_insertSpan
-    {I : Type*} [Fintype I] [DecidableEq I] [Nonempty I]
+    {I : Type*} [Fintype I] [Nonempty I]
     {n : I → Vec3} {s : I → Bool} {h y : Vec3}
     (hspan : Submodule.span ℝ (Set.insert h (Set.range n)) = ⊤)
     (hy0 : y ≠ 0) (hhy : h ⬝ᵥ y = 0)
     (hy : WeaklyRealizes n s y) :
     0 < orientedSum n s ⬝ᵥ y := by
+  classical
   have hnonneg (i : I) : 0 ≤ PolarFace.orientedNormal n s i ⬝ᵥ y := by
     simpa [PolarFace.orientedNormal_dot] using hy i
   rw [orientedSum, sum_dotProduct]
@@ -71,8 +76,8 @@ private theorem orientedSum_dot_pos_of_weak_of_insertSpan
     rintro z ⟨i, rfl⟩
     change n i ⬝ᵥ y = 0
     have hi := hallzero i
-    cases hs : s i <;> simp [PolarFace.orientedNormal,
-      PolarFace.signScalar, hs] at hi ⊢ <;> exact hi
+    rw [PolarFace.orientedNormal_dot] at hi
+    cases hs : s i <;> simpa [signed, hs] using hi
   have hhker : h ∈ L.ker := hhy
   have hins : Set.insert h (Set.range n) ⊆ L.ker := by
     intro z hz
@@ -126,7 +131,7 @@ private theorem projective_eq_lower_or_upper_of_weak
     have hid : signed (s i) (n i ⬝ᵥ y') =
         q * signed (s i) (n i ⬝ᵥ y) := by
       cases hs : s i <;>
-        simp [y', signed, hs, dotProduct_smul, smul_eq_mul]
+        simp [y', signed, dotProduct_smul, smul_eq_mul]
     rw [hid]
     exact mul_nonneg hq.le hi
   let v : Vertex B := ⟨Projectivization.mk ℝ y hy0, hyvertex⟩
@@ -304,5 +309,7 @@ theorem strictEdgeLiftedCyclicEquiv_projectiveVertices_eq_concrete
     exact boundaryVertex_ne_succ hspan d.1 d.2
       (congrArg Subtype.val heq)
   exact (Finset.eq_of_subset_of_card_le hsub (by rw [htarget, himage])).symm
+
+end
 
 end Erdos735.ConcreteStrictEdgeCyclic

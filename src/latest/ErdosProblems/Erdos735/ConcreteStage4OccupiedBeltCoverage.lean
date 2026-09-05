@@ -28,13 +28,17 @@ literal far-corner geometry then supplies both distinct endpoints and fixes
 the direction of the resulting two-interval cycle.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcreteStage4OccupiedBeltCoverage
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction
 open ChartOrder SignVector SignVectorArrangement
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcreteStage4OccupiedBeltCoverageVertex :
+    DecidableEq (ℙ ℝ SignVector.Vec3) := Classical.decEq _
 open SignVector.ProjectiveEdgeEndpointEquiv
 open ConcretePolarOrientedVertex ConcretePolarEdgeVertices
 

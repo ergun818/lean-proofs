@@ -199,7 +199,6 @@ lemma finalCharge_nonnegative
 
 private lemma sum_card_incidence
     {α β : Type*} [Fintype α] [Fintype β]
-    [DecidableEq α] [DecidableEq β]
     (row : α → Finset β) (column : β → Finset α)
     (h : ∀ a b, b ∈ row a ↔ a ∈ column b) :
     (∑ a, (row a).card) = ∑ b, (column b).card := by
@@ -222,8 +221,9 @@ private lemma sum_card_incidence
       simp
 
 private lemma sum_fiber_card {α β : Type*} [Fintype α] [Fintype β]
-    [DecidableEq α] [DecidableEq β] (owner : β → α) :
+    [DecidableEq α] (owner : β → α) :
     (∑ a, (Finset.univ.filter fun b => owner b = a).card) = Fintype.card β := by
+  classical
   calc
     (∑ a, (Finset.univ.filter fun b => owner b = a).card) =
         ∑ b, ({owner b} : Finset α).card := by

@@ -18,7 +18,6 @@ limitations under the License.
 import ErdosProblems.Erdos735.ConcretePolarEdgeVertices
 import ErdosProblems.Erdos735.ProjectiveConcreteExtraction
 
-open Classical
 noncomputable section
 open scoped Matrix LinearAlgebra.Projectivization BigOperators
 open Matrix
@@ -28,6 +27,11 @@ namespace Erdos735.ConcretePolarVertexDegree
 open ProjectiveArrangement ProjectiveBoundaryExtraction SignVector ChartOrder
 open SignVector.RedChordSector
 open ConcretePolarOrientedVertex ConcretePolarEdgeVertices
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcretePolarVertexDegreeVertex :
+    DecidableEq (ℙ ℝ SignVector.Vec3) := Classical.decEq _
 
 abbrev Point := ProjectiveArrangement.Point
 abbrev Line (B : Finset Point) := ProjectiveBoundaryExtraction.Line B

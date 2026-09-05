@@ -26,7 +26,6 @@ a bad two-diagonal quadrangle are multiplicity-two vertices, and an edge of a
 donor which is also an edge of that bad quadrangle is free of red endpoints.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ABKPR.Data

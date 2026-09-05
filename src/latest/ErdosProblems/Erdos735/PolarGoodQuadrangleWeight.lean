@@ -13,7 +13,6 @@ does not pass through a rotation realization or require transport
 compatibility equalities.
 -/
 
-open Classical
 noncomputable section
 open scoped BigOperators LinearAlgebra.Projectivization
 
@@ -133,6 +132,7 @@ theorem exists_incident_red_of_mem_redEndpoints
         Incident
           (boundaryVertex (normals (nonordinaryPoints P)) normal_cross hspan f i)
           a.1 := by
+  classical
   obtain ⟨p, hp, hip⟩ := (mem_redEndpoints_iff hred hspan f i).mp hi
   obtain ⟨a, hpa⟩ := (mem_redChords_iff hred hspan f p).mp hp
   subst p
@@ -175,7 +175,6 @@ theorem goodTwoQuadrangle_twoGoodCorners
       i₂ ≠ i₀ ∧ Erdos957.cyclicSucc i₃ = i₀ := by
     simpa [i₁, i₂, i₃] using cyclicSucc_four_cycle hdegree i₀
   rcases hcyc with ⟨hi₀i₁, hi₁i₂, hi₂i₃, hi₃i₀, hi₂i₀, hcycle⟩
-
   have hend_univ : redEndpoints hred hspan f = Finset.univ := by
     apply Finset.eq_univ_of_card
     rw [redEndpoints_card hred hspan f, hchords]
@@ -223,7 +222,6 @@ theorem goodTwoQuadrangle_twoGoodCorners
     have htwo := two_le_lineMultiplicity (nonordinaryPoints P)
       (boundaryProjectiveVertex hspan f i₀)
     omega
-
   have hredInc (i : BoundaryIndex (normals (nonordinaryPoints P)) f) :
       ∃ a : RedLine P,
         a ∈ redChordLines (A := ordinaryPoints P) f ∧
@@ -240,7 +238,6 @@ theorem goodTwoQuadrangle_twoGoodCorners
   obtain ⟨a₁, ha₁chord, ha₁inc⟩ := hredInc i₁
   obtain ⟨a₂, ha₂chord, ha₂inc⟩ := hredInc i₂
   obtain ⟨a₃, ha₃chord, ha₃inc⟩ := hredInc i₃
-
   let b₀ : BlueLine P := boundaryBlueOwner hspan f i₀
   let b₁ : BlueLine P := boundaryBlueOwner hspan f i₁
   let b₂ : BlueLine P := boundaryBlueOwner hspan f i₂
@@ -257,7 +254,6 @@ theorem goodTwoQuadrangle_twoGoodCorners
   have hb₁b₂ : b₁ ≠ b₂ := fun h ↦ hi₁i₂ (howner_inj h)
   have hb₂b₃ : b₂ ≠ b₃ := fun h ↦ hi₂i₃ (howner_inj h)
   have hb₃b₀ : b₃ ≠ b₀ := fun h ↦ hi₃i₀ (howner_inj h)
-
   have owner_start (i : BoundaryIndex (normals (nonordinaryPoints P)) f) :
       OnLine (nonordinaryPoints P) (boundaryProjectiveVertex hspan f i)
         (boundaryBlueOwner hspan f i) := by
@@ -303,7 +299,6 @@ theorem goodTwoQuadrangle_twoGoodCorners
   have hb₀i₀ : OnLine (nonordinaryPoints P)
       (boundaryProjectiveVertex hspan f i₀) b₀ := by
     simpa [b₀] using owner_start i₀
-
   have heq₀₁ :=
     RedBlueDualIncidence.normalized_pair_weight_eq_half_of_multiplicity_two
       hred (boundaryProjectiveVertex hspan f i₁) a₁.2 ha₁inc

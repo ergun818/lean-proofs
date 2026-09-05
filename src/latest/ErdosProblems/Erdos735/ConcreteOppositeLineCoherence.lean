@@ -28,10 +28,14 @@ blue vertex, so the two opposite edges have the same projective owner.  This
 is the local strip lemma needed by the corrected Stage-4 Levi path.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcreteOppositeLineCoherence
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcreteOppositeLineCoherenceVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction SignVector ChartOrder
 open ConcretePolarOrientedVertex ConcretePolarEdgeVertices
@@ -55,6 +59,7 @@ private abbrev hspan : Submodule.span ℝ
   ConcretePolarABKPRData.hspan ha hb hd hncol
 private abbrev Line := ProjectiveBoundaryExtraction.Line (B (P := P))
 
+omit [Nonempty (ProjectiveBoundaryExtraction.Line (nonordinaryPoints P))] in
 private theorem line_eq_of_multiplicity_two
     (v : ProjectiveBoundaryExtraction.Vertex (B (P := P)))
     (l₀ l₁ l : Line (P := P))
@@ -80,6 +85,7 @@ private theorem line_eq_of_multiplicity_two
   simp only [Finset.mem_insert, Finset.mem_singleton] at hlmem
   exact hlmem.resolve_left hl₀ne
 
+omit [Nonempty (ProjectiveBoundaryExtraction.Line (nonordinaryPoints P))] in
 theorem lineMultiplicity_eq_two_of_mem_bad_boundaryEdge
     {f : StrictFace (normals (B (P := P)))}
     (hbad : (D hred ha hb hd hncol).IsBadTwoQuadrangle f)
@@ -544,21 +550,21 @@ theorem triangleFlank_oppositeEdge_bridge
       hSepBadOpp hSepPath.symm
     exact hBadOppPath hpathEq.symm
   refine ⟨u, ?_, v, hvj, hvopp, hvu, ?_⟩
-  change ConcretePolarFlankBounds.edgeLine
+  · change ConcretePolarFlankBounds.edgeLine
         (DD.boundaryEdge flank.1 u) =
-      ABKPR.Data.evilOppositeLine DD L e
-  unfold ABKPR.Data.evilOppositeLine ABKPR.Data.evilBadOppositeDart
-  rw [hedge]
-  exact hline
-  rw [hedge]
-  have hpath := congrArg ConcretePolarFlankBounds.edgeLine
-    (DD.across_sameEdge (DD.evilDart e))
-  intro hv
-  apply hvnotPathLine
-  change OnLine (B (P := P)) v.1
-    (ConcretePolarFlankBounds.edgeLine
-      (DD.boundaryEdge bad.1 i))
-  exact hpath ▸ hv
+        ABKPR.Data.evilOppositeLine DD L e
+    unfold ABKPR.Data.evilOppositeLine ABKPR.Data.evilBadOppositeDart
+    rw [hedge]
+    exact hline
+  · rw [hedge]
+    have hpath := congrArg ConcretePolarFlankBounds.edgeLine
+      (DD.across_sameEdge (DD.evilDart e))
+    intro hv
+    apply hvnotPathLine
+    change OnLine (B (P := P)) v.1
+      (ConcretePolarFlankBounds.edgeLine
+        (DD.boundaryEdge bad.1 i))
+    exact hpath ▸ hv
 
 /-- In the same triangular flank, the boundary edge complementary to the
 opposite-line edge lies on the evil path line.  The two edges meet at the

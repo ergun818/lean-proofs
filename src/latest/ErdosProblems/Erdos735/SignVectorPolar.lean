@@ -38,6 +38,7 @@ variable {I : Type*} [Fintype I] [DecidableEq I]
 noncomputable def faceWitness (n : I → Vec3) (f : StrictFace n) : Vec3 :=
   Classical.choose f.2
 
+omit [DecidableEq I] [Fintype I] in
 theorem faceWitness_realizes (n : I → Vec3) (f : StrictFace n) :
     Realizes n f.1 (faceWitness n f) :=
   Classical.choose_spec f.2
@@ -46,6 +47,7 @@ theorem faceWitness_realizes (n : I → Vec3) (f : StrictFace n) :
 def faceOrientedNormal (n : I → Vec3) (f : StrictFace n) (i : I) : Vec3 :=
   if f.1 i then n i else -n i
 
+omit [DecidableEq I] [Fintype I] in
 @[simp] theorem faceOrientedNormal_dot (n : I → Vec3) (f : StrictFace n)
     (i : I) (y : Vec3) :
     faceOrientedNormal n f i ⬝ᵥ y = signed (f.1 i) (n i ⬝ᵥ y) := by
@@ -55,34 +57,50 @@ def faceOrientedNormal (n : I → Vec3) (f : StrictFace n) (i : I) : Vec3 :=
 noncomputable def facePolarDenom (n : I → Vec3) (f : StrictFace n) (i : I) : ℝ :=
   signed (f.1 i) (n i ⬝ᵥ faceWitness n f)
 
-theorem facePolarDenom_pos (n : I → Vec3) (f : StrictFace n) (i : I) :
-    0 < facePolarDenom n f i :=
+omit [DecidableEq I] [Fintype I] in
+theorem facePolarDenom_pos [Finite I] (n : I → Vec3) (f : StrictFace n) (i : I) :
+    0 < facePolarDenom n f i := by
+  classical
+  let : Fintype I := Fintype.ofFinite _
+  exact
   faceWitness_realizes n f i
 
 /-- The signed normal normalized into the affine plane `p · faceWitness = 1`. -/
 noncomputable def facePolarNormal (n : I → Vec3) (f : StrictFace n) (i : I) : Vec3 :=
   (facePolarDenom n f i)⁻¹ • faceOrientedNormal n f i
 
-theorem facePolarNormal_dot (n : I → Vec3) (f : StrictFace n) (i : I) (y : Vec3) :
+omit [DecidableEq I] [Fintype I] in
+theorem facePolarNormal_dot [Finite I] (n : I → Vec3) (f : StrictFace n) (i : I) (y : Vec3) :
     facePolarNormal n f i ⬝ᵥ y =
       (facePolarDenom n f i)⁻¹ * signed (f.1 i) (n i ⬝ᵥ y) := by
+  classical
+  let : Fintype I := Fintype.ofFinite _
   simp [facePolarNormal, faceOrientedNormal_dot]
 
-@[simp] theorem facePolarNormal_dot_witness (n : I → Vec3) (f : StrictFace n)
+omit [DecidableEq I] [Fintype I] in
+@[simp] theorem facePolarNormal_dot_witness [Finite I] (n : I → Vec3) (f : StrictFace n)
     (i : I) :
     facePolarNormal n f i ⬝ᵥ faceWitness n f = 1 := by
+  classical
+  let : Fintype I := Fintype.ofFinite _
   rw [facePolarNormal_dot]
   exact inv_mul_cancel₀ (facePolarDenom_pos n f i).ne'
 
-theorem facePolarNormal_dot_pos_iff (n : I → Vec3) (f : StrictFace n)
+omit [DecidableEq I] [Fintype I] in
+theorem facePolarNormal_dot_pos_iff [Finite I] (n : I → Vec3) (f : StrictFace n)
     (i : I) (y : Vec3) :
     0 < facePolarNormal n f i ⬝ᵥ y ↔ 0 < signed (f.1 i) (n i ⬝ᵥ y) := by
+  classical
+  let : Fintype I := Fintype.ofFinite _
   rw [facePolarNormal_dot]
   exact mul_pos_iff_of_pos_left (inv_pos.mpr (facePolarDenom_pos n f i))
 
-theorem facePolarNormal_dot_eq_zero_iff (n : I → Vec3) (f : StrictFace n)
+omit [DecidableEq I] [Fintype I] in
+theorem facePolarNormal_dot_eq_zero_iff [Finite I] (n : I → Vec3) (f : StrictFace n)
     (i : I) (y : Vec3) :
     facePolarNormal n f i ⬝ᵥ y = 0 ↔ n i ⬝ᵥ y = 0 := by
+  classical
+  let : Fintype I := Fintype.ofFinite _
   rw [facePolarNormal_dot, mul_eq_zero]
   have hinv : (facePolarDenom n f i)⁻¹ ≠ 0 :=
     inv_ne_zero (facePolarDenom_pos n f i).ne'
@@ -101,12 +119,15 @@ def faceRestrictionSigns (n : I → Vec3) (f : StrictFace n) (i : I) :
     {j : I // j ≠ i} → Bool :=
   fun j ↦ f.1 j.1
 
+omit [DecidableEq I] [Fintype I] in
 /-- The polar algebra: a face sign pattern is feasible on hyperplane `i` exactly when the
 normalized signed normal `i` is strictly exposed from the remaining normalized normals. -/
-theorem restrictedRealizable_face_iff_polarStrictlyExposed
+theorem restrictedRealizable_face_iff_polarStrictlyExposed [Finite I]
     (n : I → Vec3) (f : StrictFace n) (i : I) :
     RestrictedRealizable (otherNormals n i) (n i) (faceRestrictionSigns n f i) ↔
       PolarStrictlyExposedAt n f i := by
+  classical
+  let : Fintype I := Fintype.ofFinite _
   constructor
   · rintro ⟨y, hy, hzero⟩
     refine ⟨y, (facePolarNormal_dot_eq_zero_iff n f i y).2 hzero, ?_⟩
@@ -118,12 +139,14 @@ theorem restrictedRealizable_face_iff_polarStrictlyExposed
     intro j
     exact (facePolarNormal_dot_pos_iff n f j.1 y).1 (hy j.1 j.2)
 
+omit [DecidableEq I] in
 /-- There is a strict edge owned by `i` on `f` exactly when the normalized signed normal `i`
 is strictly exposed. -/
 theorem exists_incident_strictEdge_owner_iff_polarStrictlyExposed
     (n : I → Vec3) (f : StrictFace n) (i : I) :
     (∃ e : StrictEdge n, e ∈ faceEdges n f ∧ e.1.1 = i) ↔
       PolarStrictlyExposedAt n f i := by
+  classical
   rw [← restrictedRealizable_face_iff_polarStrictlyExposed n f i]
   constructor
   · rintro ⟨e, he, hei⟩
@@ -140,6 +163,7 @@ theorem exists_incident_strictEdge_owner_iff_polarStrictlyExposed
     intro j
     simp [e, c, faceRestrictionSigns]
 
+omit [DecidableEq I] in
 /-- Three distinct strictly exposed polar normals give three distinct strict edges on the face. -/
 theorem faceEdges_card_three_le_of_three_polarStrictlyExposed
     (n : I → Vec3) (f : StrictFace n) {i j k : I}
@@ -148,6 +172,7 @@ theorem faceEdges_card_three_le_of_three_polarStrictlyExposed
     (hj : PolarStrictlyExposedAt n f j)
     (hk : PolarStrictlyExposedAt n f k) :
     3 ≤ (faceEdges n f).card := by
+  classical
   obtain ⟨ei, hei, hei_owner⟩ :=
     (exists_incident_strictEdge_owner_iff_polarStrictlyExposed n f i).2 hi
   obtain ⟨ej, hej, hej_owner⟩ :=

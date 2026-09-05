@@ -30,10 +30,14 @@ proved endpoint restriction together with its finite-cycle packing
 consequence.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ReducedCore
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqReducedCoreVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction
 
@@ -61,19 +65,19 @@ theorem exists_noncollinear_nonordinary_triple
   · exfalso
     apply hncol
     apply SylvesterGallai.collinear_of_subset_line
-    intro p hp
-    have hpcol : ProjectiveDuality.Collinear3 a b p := by
-      by_contra hnp
-      exact hthird ⟨p, hp, hnp⟩
-    have hpaff : p ∈ line[ℝ, a, b] :=
-      (collinear3_iff_mem_affineSpan_pair hab).mp hpcol
-    apply (SylvesterGallai.mem_lineThrough_iff
-      (p := p) (a := a) (b := b)).2
-    rw [mem_affineSpan_pair_iff_exists_lineMap_eq] at hpaff
-    obtain ⟨t, ht⟩ := hpaff
-    refine ⟨t, ?_⟩
-    rw [← ht]
-    simp [AffineMap.lineMap_apply_module']
+    · intro p hp
+      have hpcol : ProjectiveDuality.Collinear3 a b p := by
+        by_contra hnp
+        exact hthird ⟨p, hp, hnp⟩
+      have hpaff : p ∈ line[ℝ, a, b] :=
+        (collinear3_iff_mem_affineSpan_pair hab).mp hpcol
+      apply (SylvesterGallai.mem_lineThrough_iff
+        (p := p) (a := a) (b := b)).2
+      rw [mem_affineSpan_pair_iff_exists_lineMap_eq] at hpaff
+      obtain ⟨t, ht⟩ := hpaff
+      refine ⟨t, ?_⟩
+      rw [← ht]
+      simp [AffineMap.lineMap_apply_module']
 
 /-- The concrete discharging objects attached to a fixed noncollinear blue
 triple satisfy both the geometric endpoint restriction and the resulting

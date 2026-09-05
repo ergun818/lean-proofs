@@ -30,7 +30,6 @@ open scoped BigOperators Matrix
 
 namespace Erdos735.SignVector
 
-open Classical
 noncomputable section
 
 def restrictedFinPrefix {k : ℕ} (n : Fin k → Vec3) (i : Fin k) : Fin i → Vec3 :=

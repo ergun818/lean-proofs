@@ -12,7 +12,6 @@ Consequently a reduced ordinary red line cuts that boundary at exactly two
 cyclic indices, not merely at two unlabelled projective points.
 -/
 
-open Classical
 open scoped LinearAlgebra.Projectivization Matrix
 open Matrix
 
@@ -26,6 +25,9 @@ open SignVector.PolarBoundaryOrder
 open SignVector.PolarBoundaryAcross
 open SignVector.RedChordSector
 open RedChordPolarBoundary
+
+local instance instDecidableEqRedChordPolarBoundaryIndicesVertex :
+    DecidableEq (ℙ ℝ Vec3) := Classical.decEq _
 
 abbrev Point := ProjectiveArrangement.Point
 
@@ -243,7 +245,7 @@ whose vertex map agrees with the concrete polar projective vertices.  This
 is the adapter used when a rotation realization has its own face-index
 type. -/
 theorem compatibleEndpointIndices_card_of_restricted
-    {J : Type*} [Fintype J] [DecidableEq J]
+    {J : Type*} [Fintype J]
     {P : Finset Point} {w : Point → ℝ} {c : ℝ}
     [Nonempty {b // b ∈ nonordinaryPoints P}]
     (hred : IsReducedMagic P w c)
@@ -263,6 +265,7 @@ theorem compatibleEndpointIndices_card_of_restricted
         (fun b : {b // b ∈ nonordinaryPoints P} ↦ normalVec b.1)
         normal_cross hspan f (e j)) :
     (Finset.univ.filter fun j ↦ Incident (vertex j) a).card = 2 := by
+  classical
   calc
     (Finset.univ.filter fun j ↦ Incident (vertex j) a).card =
         (faceRedEndpointIndices f hspan a).card := by

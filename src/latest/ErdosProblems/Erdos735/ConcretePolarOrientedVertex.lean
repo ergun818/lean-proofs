@@ -29,7 +29,6 @@ therefore maps every indexed polar corner into the one global type
 nondegeneracy facts needed to identify corners across adjacent faces.
 -/
 
-open Classical
 noncomputable section
 open scoped Matrix LinearAlgebra.Projectivization
 open Matrix
@@ -48,6 +47,7 @@ abbrev OrientedVertex (B : Finset Point) := Vertex B × Bool
 
 variable {B : Finset Point} [Nonempty (Line B)]
 
+omit [Nonempty (Line B)] in
 theorem normal_cross (i j : Line B) (hij : i ≠ j) :
     normals B i ⨯₃ normals B j ≠ 0 := by
   apply normalVec_cross_ne_zero
@@ -147,6 +147,7 @@ theorem boundaryOrientedVertex_ne_succ
   exact boundaryVertex_ne_succ hspan f i
     (congrArg (fun v : OrientedVertex B ↦ v.1.1) h)
 
+omit [Nonempty (Line B)] in
 theorem chartF_vertex_rep_ne_zero (v : Vertex B) : chartF B v.1.rep ≠ 0 :=
   (chart_spec B).1 v.1 v.2
 
@@ -155,6 +156,7 @@ theorem chartF_vertex_rep_ne_zero (v : Vertex B) : chartF B v.1.rep ≠ 0 :=
 noncomputable def orientedRep (v : OrientedVertex B) : Vec3 :=
   if v.2 then chartRep (chartF B) v.1.1 else -chartRep (chartF B) v.1.1
 
+omit [Nonempty (Line B)] in
 theorem orientedRep_ne_zero (v : OrientedVertex B) : orientedRep v ≠ 0 := by
   unfold orientedRep
   split
@@ -162,11 +164,13 @@ theorem orientedRep_ne_zero (v : OrientedVertex B) : orientedRep v ≠ 0 := by
   · exact neg_ne_zero.mpr
       (chartRep_nonzero (chartF B) v.1.1 (chartF_vertex_rep_ne_zero v.1))
 
+omit [Nonempty (Line B)] in
 @[simp] theorem chartF_orientedRep (v : OrientedVertex B) :
     chartF B (orientedRep v) = if v.2 then 1 else -1 := by
   unfold orientedRep
   split <;> simp [apply_chartRep, chartF_vertex_rep_ne_zero]
 
+omit [Nonempty (Line B)] in
 theorem orientedRep_projectivization (v : OrientedVertex B) :
     Projectivization.mk ℝ (orientedRep v) (orientedRep_ne_zero v) = v.1.1 := by
   let p := v.1.1
@@ -181,11 +185,13 @@ theorem orientedRep_projectivization (v : OrientedVertex B) :
       · exact ⟨1, by simp [orientedRep, hv, p]⟩
     _ = p := mk_chartRep (chartF B) p hp
 
+omit [Nonempty (Line B)] in
 @[simp] theorem orientedRep_sheet (v : OrientedVertex B) :
     decide (0 < chartF B (orientedRep v)) = v.2 := by
   rw [chartF_orientedRep]
   cases v.2 <;> norm_num
 
+omit [Nonempty (Line B)] in
 theorem orientedRep_injective : Function.Injective (orientedRep (B := B)) := by
   intro v w h
   apply Prod.ext

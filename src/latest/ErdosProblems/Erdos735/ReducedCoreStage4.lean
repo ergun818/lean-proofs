@@ -28,10 +28,14 @@ projective continuation extraction.  It leaves only construction of that
 last extraction to the literal line-belt modules.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ReducedCore.Setup
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqReducedCoreStage4Vertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction
 open SignVectorArrangement

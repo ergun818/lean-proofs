@@ -26,7 +26,6 @@ donating face.  This file selects those witnesses canonically and supplies the c
 input.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ABKPR.Data

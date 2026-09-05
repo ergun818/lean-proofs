@@ -25,7 +25,6 @@ cyclic boundary and red-chord nonadjacency, rather than on any additional
 geometry of real line arrangements.
 -/
 
-open Classical
 
 namespace Erdos735.ABKPR.Data
 

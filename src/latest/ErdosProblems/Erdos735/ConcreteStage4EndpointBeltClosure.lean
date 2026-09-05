@@ -26,13 +26,17 @@ projective plane, so the two opposite-line intervals meet at that common
 crossing.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcreteStage4EndpointBeltClosure
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction
 open ChartOrder SignVector SignVectorArrangement
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcreteStage4EndpointBeltClosureVertex :
+    DecidableEq (ℙ ℝ SignVector.Vec3) := Classical.decEq _
 
 abbrev Point := ProjectiveArrangement.Point
 
@@ -104,6 +108,7 @@ theorem endpointCyclicEdge_has_path_crossing
       hred ha hb hd hncol hAcard hnotFF)
     e j hadj htri
 
+omit [Nonempty (ProjectiveBoundaryExtraction.Line (nonordinaryPoints P))] in
 private theorem onLine_of_mem_cyclicEdgeVertices
     (edge : CyclicSkeletonEdge (Finset.univ : Finset (Vertex (P := P)))
       (OnLine (B (P := P))))

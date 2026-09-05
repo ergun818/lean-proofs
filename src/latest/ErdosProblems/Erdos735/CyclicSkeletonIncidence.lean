@@ -28,7 +28,6 @@ vertex-degree fields of `SignVector.BoundaryExtraction` are consequences of
 the generic cyclic-order lemmas in `CyclicSkeleton`.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.SignVector

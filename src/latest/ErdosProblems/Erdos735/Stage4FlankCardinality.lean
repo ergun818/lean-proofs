@@ -28,7 +28,6 @@ the corresponding cardinality bound directly from the cyclic boundary and
 injectivity of supporting-line labels on a face.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735
@@ -80,6 +79,7 @@ private noncomputable def geometricFlankAdjacentIndex
     Fin (C.faceDegree (A.across (A.evilDart e)).1) :=
   Classical.choose h.2.1
 
+omit [DecidableEq Line] [Fintype Line] in
 private theorem geometricFlankAdjacentIndex_spec
     (edgeLine : Edge → Line) (e : A.EvilFace)
     (h : {h : A.HelpingPair // A.IsGeometricFlank edgeLine e h}) :
@@ -96,6 +96,7 @@ private noncomputable def geometricFlankSide
     (A.across (A.evilDart e)).2 =
       A.geometricFlankAdjacentIndex edgeLine e h)
 
+omit [DecidableEq Line] [Fintype Line] in
 /-- Supporting-line injectivity on each face makes the two cyclic flank
 slots injectively enumerate all geometric flanks of a fixed evil face. -/
 theorem geometricFlanks_card_le_two_of_boundaryLine_injective
@@ -104,6 +105,7 @@ theorem geometricFlanks_card_le_two_of_boundaryLine_injective
       (fun i ↦ edgeLine (A.boundaryEdge f i)))
     (e : A.EvilFace) :
     (A.geometricFlanks edgeLine e).card ≤ 2 := by
+  classical
   rw [← Fintype.card_coe]
   let φ : {h : A.HelpingPair // h ∈ A.geometricFlanks edgeLine e} → Bool :=
     fun h ↦ A.geometricFlankSide edgeLine e
@@ -193,6 +195,11 @@ open ProjectiveArrangement ProjectiveBoundaryExtraction SignVector
 open SignVectorArrangement
 open ConcretePolarABKPRData
 open ConcretePolarOrientedVertex
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqStage4FlankCardinalityVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 abbrev Point := ProjectiveArrangement.Point
 

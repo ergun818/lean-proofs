@@ -23,7 +23,6 @@ open scoped BigOperators
 
 namespace Erdos735
 
-open Classical
 noncomputable section
 
 def valuesBefore {k : ℕ} {A : Type*} [DecidableEq A]

@@ -29,10 +29,14 @@ That gives the bad recipient triangle two distinct bad neighbours,
 contrary to the definition of a donation recipient.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcreteDonationObstructionRecognition
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcreteDonationNoTwoBadVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction SignVector ChartOrder
 open SignVector.PolarPlaneChart
@@ -53,6 +57,7 @@ private abbrev D := ConcretePolarABKPRData.concreteData hred ha hb hd hncol
 private abbrev VD := ConcretePolarVertexDegree.concreteVertexEdges_card_eq
   (B (P := P)) ha hb hd hncol
 
+omit [Nonempty (ProjectiveBoundaryExtraction.Line (nonordinaryPoints P))] in
 private theorem faceSucc_ne_self
     (q : StrictFace (normals (B (P := P))))
     (k : Fin ((C (P := P) ha hb hd hncol).faceDegree q)) :
@@ -70,6 +75,7 @@ private theorem faceSucc_ne_self
     rw [hlast, Nat.mod_self] at hval
     omega
 
+omit [Nonempty (ProjectiveBoundaryExtraction.Line (nonordinaryPoints P))] in
 /-- If `v` is an endpoint of a quadrangular boundary edge, crossing that
 edge and the other boundary edge through `v` produces two faces which
 still share the corner `v`. -/
@@ -172,7 +178,7 @@ theorem no_two_bad_at_donationVertex
             (ConcretePolarABKPRData.dartEquiv
               (vertex_degree := VD (P := P) ha hb hd hncol)
               ha hb hd hncol r) := by
-      simp [A, D, ConcretePolarABKPRData.concreteData,
+      simp [A, ConcretePolarABKPRData.concreteData,
         ConcretePolarABKPRData.toData, ConcretePolarABKPRData.across]
     have hfi : di.1 =
         (SignVector.PolarBoundaryAcross.across (normals (B (P := P)))

@@ -26,11 +26,13 @@ are triangles, the opposite-triangles recognition theorem gives failed
 Fano.
 -/
 
-open Classical
 noncomputable section
 open scoped LinearAlgebra.Projectivization Matrix
 
 namespace Erdos735.Stage4TriangleFlankRecognition
+
+local instance instDecidableEqStage4TriangleFlankRecognitionVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction SignVector
 

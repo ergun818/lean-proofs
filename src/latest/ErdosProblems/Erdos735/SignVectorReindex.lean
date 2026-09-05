@@ -37,6 +37,7 @@ def reindexNormals (e : J ≃ I) (n : I → Vec3) : J → Vec3 :=
 def reindexSigns (e : J ≃ I) (s : J → Bool) : I → Bool :=
   fun i ↦ s (e.symm i)
 
+omit [Fintype I] [Fintype J] in
 theorem realizes_reindex_iff (e : J ≃ I) (n : I → Vec3)
     (s : J → Bool) (x : Vec3) :
     Realizes (reindexNormals e n) s x ↔ Realizes n (reindexSigns e s) x := by
@@ -46,18 +47,24 @@ theorem realizes_reindex_iff (e : J ≃ I) (n : I → Vec3)
   · intro h j
     simpa [reindexNormals, reindexSigns] using h (e j)
 
-theorem realizable_reindex_iff (e : J ≃ I) (n : I → Vec3) (s : J → Bool) :
+omit [Fintype I] [Fintype J] in
+theorem realizable_reindex_iff [Finite I] [Finite J] (e : J ≃ I) (n : I → Vec3) (s : J → Bool) :
     Realizable (reindexNormals e n) s ↔ Realizable n (reindexSigns e s) := by
+  let : Fintype I := Fintype.ofFinite _
+  let : Fintype J := Fintype.ofFinite _
   constructor
   · rintro ⟨x, hx⟩
     exact ⟨x, (realizes_reindex_iff e n s x).mp hx⟩
   · rintro ⟨x, hx⟩
     exact ⟨x, (realizes_reindex_iff e n s x).mpr hx⟩
 
-theorem restrictedRealizable_reindex_iff (e : J ≃ I) (n : I → Vec3)
+omit [Fintype I] [Fintype J] in
+theorem restrictedRealizable_reindex_iff [Finite I] [Finite J] (e : J ≃ I) (n : I → Vec3)
     (h : Vec3) (s : J → Bool) :
     RestrictedRealizable (reindexNormals e n) h s ↔
       RestrictedRealizable n h (reindexSigns e s) := by
+  let : Fintype I := Fintype.ofFinite _
+  let : Fintype J := Fintype.ofFinite _
   constructor
   · rintro ⟨x, hx, hzero⟩
     exact ⟨x, (realizes_reindex_iff e n s x).mp hx, hzero⟩
@@ -81,9 +88,10 @@ noncomputable def strictFaceReindexEquiv (e : J ≃ I) (n : I → Vec3) :
   left_inv f := by apply Subtype.ext; funext j; simp [reindexSigns]
   right_inv f := by apply Subtype.ext; funext i; simp [reindexSigns]
 
-theorem faceCount_reindex [DecidableEq I] [DecidableEq J]
+theorem faceCount_reindex
     (e : J ≃ I) (n : I → Vec3) :
     faceCount (reindexNormals e n) = faceCount n := by
+  classical
   rw [← card_strictFace, ← card_strictFace]
   exact Fintype.card_congr (strictFaceReindexEquiv e n)
 
@@ -93,7 +101,7 @@ abbrev StrictRestriction (n : I → Vec3) (h : Vec3) :=
 noncomputable instance strictRestrictionFintype (n : I → Vec3) (h : Vec3) :
     Fintype (StrictRestriction n h) := Fintype.ofFinite _
 
-theorem card_strictRestriction [DecidableEq I] (n : I → Vec3) (h : Vec3) :
+theorem card_strictRestriction (n : I → Vec3) (h : Vec3) :
     Fintype.card (StrictRestriction n h) = restrictedFaceCount n h := by
   classical
   rw [Fintype.card_subtype]
@@ -113,9 +121,10 @@ noncomputable def strictRestrictionReindexEquiv (e : J ≃ I) (n : I → Vec3) (
   left_inv s := by apply Subtype.ext; funext j; simp [reindexSigns]
   right_inv s := by apply Subtype.ext; funext i; simp [reindexSigns]
 
-theorem restrictedFaceCount_reindex [DecidableEq I] [DecidableEq J]
+theorem restrictedFaceCount_reindex
     (e : J ≃ I) (n : I → Vec3) (h : Vec3) :
     restrictedFaceCount (reindexNormals e n) h = restrictedFaceCount n h := by
+  classical
   rw [← card_strictRestriction, ← card_strictRestriction]
   exact Fintype.card_congr (strictRestrictionReindexEquiv e n h)
 

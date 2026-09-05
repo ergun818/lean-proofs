@@ -28,7 +28,6 @@ theorem applies.  This theorem is the common final step for the local
 triangle and opposite-triangle exclusions in the ABKPR discharging proof.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcretePolarRecognition
@@ -36,6 +35,11 @@ namespace Erdos735.ConcretePolarRecognition
 open ChartOrder ProjectiveArrangement ProjectiveBoundaryExtraction
 open SignVector SignVector.ProjectiveEdgeEndpointEquiv
 open ConcretePolarOrientedVertex ConcretePolarEdgeVertices
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcretePolarRecognitionVertex :
+    DecidableEq (ℙ ℝ SignVector.Vec3) := Classical.decEq _
 open ConcreteStrictEdgeCyclic
 
 abbrev Point := ProjectiveArrangement.Point

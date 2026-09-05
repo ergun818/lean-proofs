@@ -26,10 +26,14 @@ the latter remains independent of the higher-level `ReducedCore.Setup`
 packaging.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ReducedCore.Setup
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcreteStage3SetupRecognitionVertex :
+    DecidableEq (ℙ ℝ Erdos735.SignVector.Vec3) := Classical.decEq _
 
 open ProjectiveArrangement
 

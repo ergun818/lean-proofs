@@ -28,7 +28,6 @@ projective Levi path extraction, the Stage-4 discharging contradiction,
 and finally the primal classification reduction.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735

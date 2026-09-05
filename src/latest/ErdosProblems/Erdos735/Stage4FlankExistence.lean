@@ -30,7 +30,6 @@ would make it a Stage-3 donor, while in degree four endpoint restriction
 rules out every red chord.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735

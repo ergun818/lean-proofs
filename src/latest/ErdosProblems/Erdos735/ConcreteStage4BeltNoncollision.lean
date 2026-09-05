@@ -28,13 +28,17 @@ endpoint evil's interval because every face slot above a component-cell
 interval is nontriangular.
 -/
 
-open Classical
 noncomputable section
 
 namespace Erdos735.ConcreteStage4BeltNoncollision
 
 open ProjectiveArrangement ProjectiveBoundaryExtraction
 open ChartOrder SignVector SignVectorArrangement
+
+open scoped LinearAlgebra.Projectivization
+
+local instance instDecidableEqConcreteStage4BeltNoncollisionVertex :
+    DecidableEq (ℙ ℝ SignVector.Vec3) := Classical.decEq _
 
 abbrev Point := ProjectiveArrangement.Point
 

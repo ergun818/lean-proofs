@@ -26,7 +26,6 @@ iterates the one-hyperplane deletion--restriction recurrence along `Fin k`.
 
 namespace Erdos735.SignVector
 
-open Classical
 noncomputable section
 
 def finPrefix {k : ℕ} (n : Fin k → Vec3) (i : Fin k) : Fin i → Vec3 :=

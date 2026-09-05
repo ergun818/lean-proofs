@@ -186,17 +186,25 @@ theorem chartFunctional_coord_sub {x p q : Vec3} (hx : x ≠ 0)
         have hm : (p 0 - q 0) * x 0 = 0 := by
           simpa [hx1, hx2] using hplane
         exact sub_eq_zero.mp ((mul_eq_zero.mp hm).resolve_right hx0)
-      simp [chartFunctional, coord, hx2, hx1, planeFunctional]
+      simp only [chartFunctional, Fin.isValue, hx2, ne_eq, not_true_eq_false, ↓reduceIte, hx1,
+        planeFunctional, mul_zero, zero_div, sub_zero, coord,
+        LinearMap.coe_toContinuousLinearMap', LinearMap.coe_mk, AddHom.coe_mk, planePoint_zero,
+        planePoint_one]
       rw [← hlp, ← hlq]
       simp [vec3_dotProduct, hp0q]
       ring
-    · simp [chartFunctional, coord, hx2, hx1, planeFunctional]
+    · simp only [chartFunctional, Fin.isValue, hx2, ne_eq, not_true_eq_false, ↓reduceIte, hx1,
+        not_false_eq_true, planeFunctional, mul_zero, zero_div, sub_zero, coord,
+        LinearMap.coe_toContinuousLinearMap', LinearMap.coe_mk, AddHom.coe_mk, planePoint_zero,
+        planePoint_one]
       rw [← hlp, ← hlq]
       simp only [vec3_dotProduct]
       field_simp [hx1]
       simp [hx2] at hplane ⊢
       linear_combination -(PolarFace.dualVector l 1) * hplane
-  · simp [chartFunctional, coord, hx2, planeFunctional]
+  · simp only [chartFunctional, Fin.isValue, ne_eq, hx2, not_false_eq_true, ↓reduceIte,
+      planeFunctional, coord, LinearMap.coe_toContinuousLinearMap', LinearMap.coe_mk,
+      AddHom.coe_mk, planePoint_zero, planePoint_one]
     rw [← hlp, ← hlq]
     simp only [vec3_dotProduct]
     field_simp [hx2]
@@ -221,6 +229,7 @@ noncomputable def edgeOwners (n : I → Vec3) (s : I → Bool) : Finset I := by
   classical
   exact Finset.univ.filter fun i ↦ EdgeFeasible n (PolarFace.faceEdgeCode s i)
 
+omit [DecidableEq I] [Nonempty I] in
 @[simp] lemma mem_edgeOwners {n : I → Vec3} {s : I → Bool} {i : I} :
     i ∈ edgeOwners n s ↔ EdgeFeasible n (PolarFace.faceEdgeCode s i) := by
   classical
@@ -234,6 +243,7 @@ def ownerPoint (n : I → Vec3) (s : I → Bool) (x : Vec3) (i : I) : Plane :=
 def boundaryPolygon (n : I → Vec3) (s : I → Bool) (x : Vec3) : Finset Plane :=
   (edgeOwners n s).image (ownerPoint n s x)
 
+omit [DecidableEq I] [Fintype I] in
 lemma witness_ne_zero {n : I → Vec3} {s : I → Bool} {x : Vec3}
     (hx : Realizes n s x) : x ≠ 0 := by
   intro hx0
@@ -242,7 +252,8 @@ lemma witness_ne_zero {n : I → Vec3} {s : I → Bool} {x : Vec3}
   rw [hx0, dotProduct_zero] at hi
   cases hs : s i <;> simp [signed, hs] at hi
 
-lemma ownerPoint_injective {n : I → Vec3} {s : I → Bool} {x : Vec3}
+omit [DecidableEq I] [Fintype I] in
+lemma ownerPoint_injective [Finite I] {n : I → Vec3} {s : I → Bool} {x : Vec3}
     (hx : Realizes n s x)
     (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0) :
     Function.Injective (ownerPoint n s x) := by
@@ -253,10 +264,12 @@ lemma ownerPoint_injective {n : I → Vec3} {s : I → Bool} {x : Vec3}
   · exact PolarFace.polarPoint_dot_witness hx j
   · exact hij
 
+omit [DecidableEq I] in
 lemma boundaryPolygon_card {n : I → Vec3} {s : I → Bool} {x : Vec3}
     (hx : Realizes n s x)
     (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0) :
     (boundaryPolygon n s x).card = (edgeOwners n s).card := by
+  classical
   rw [boundaryPolygon, Finset.card_image_iff]
   intro i hi j hj hij
   exact ownerPoint_injective hx hcross hij
@@ -279,13 +292,13 @@ lemma convex_uniqueMaxSet_plane (l : Plane →L[ℝ] ℝ) (p : Plane) :
       have hpw : l p ≤ l w := by
         rw [hmap, ha0, hb1] at hge
         simpa using hge
-      simpa [ha0, hb1, hw.2 hpw]
+      simp [ha0, hb1, hw.2 hpw]
     by_cases hb0 : b = 0
     · have ha1 : a = 1 := by linarith
       have hpz : l p ≤ l z := by
         rw [hmap, ha1, hb0] at hge
         simpa using hge
-      simpa [ha1, hb0, hz.2 hpz]
+      simp [ha1, hb0, hz.2 hpz]
     · have hapos : 0 < a := lt_of_le_of_ne ha (Ne.symm ha0)
       have hbpos : 0 < b := lt_of_le_of_ne hb (Ne.symm hb0)
       have hpz : l p ≤ l z := by
@@ -328,6 +341,7 @@ lemma strictMax_mem_hullVertices_plane (A : Finset Plane) {p : Plane}
   have hqmax := hhull hq
   exact ⟨hqmax.1, hqmax.2⟩
 
+omit [DecidableEq I] in
 /-- Every feasible canonical face edge becomes a vertex of the planar polar
 polygon. -/
 lemma ownerPoint_mem_hullVertices {n : I → Vec3} {s : I → Bool} {x : Vec3}
@@ -335,6 +349,7 @@ lemma ownerPoint_mem_hullVertices {n : I → Vec3} {s : I → Bool} {x : Vec3}
     (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0)
     {i : I} (hi : i ∈ edgeOwners n s) :
     ownerPoint n s x i ∈ Erdos957.hullVertices (boundaryPolygon n s x) := by
+  classical
   have hextreme : PolarFace.polarPoint n s x i ∈
       (convexHull ℝ (PolarFace.polarPoints n s x : Set Vec3)).extremePoints ℝ :=
     (PolarFace.edgeFeasible_faceEdgeCode_iff_extreme hx hcross i).mp
@@ -358,18 +373,22 @@ lemma ownerPoint_mem_hullVertices {n : I → Vec3} {s : I → Bool} {x : Vec3}
     exact hstrict _ (PolarFace.polarPoint_mem_polarPoints n s x j)
       ((PolarFace.polarPoint_injective hx hcross).ne hji)
 
+omit [DecidableEq I] in
 /-- The polar polygon has no nonvertex generators: it is exactly the image
 of the feasible canonical face-edge owners. -/
 theorem hullVertices_boundaryPolygon {n : I → Vec3} {s : I → Bool} {x : Vec3}
     (hx : Realizes n s x)
     (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0) :
     Erdos957.hullVertices (boundaryPolygon n s x) = boundaryPolygon n s x := by
+  classical
   apply Finset.Subset.antisymm
   · exact Erdos957.hullVertices_subset _
   · intro p hp
     obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp hp
     exact ownerPoint_mem_hullVertices hx hcross hi
 
+omit [DecidableEq I] in
+omit [Nonempty I] in
 /-- Canonical face-edge owners are in bijection with the actual strict edges
 incident with the face. -/
 theorem edgeOwners_card_eq_faceEdges {n : I → Vec3} (f : StrictFace n) :
@@ -404,12 +423,14 @@ theorem edgeOwners_card_eq_faceEdges {n : I → Vec3} (f : StrictFace n) :
     apply Subtype.ext
     exact hcode
 
+omit [DecidableEq I] in
 /-- Full rank gives at least three vertices of every planar polar boundary. -/
 theorem three_le_hullVertices_boundaryPolygon
     {n : I → Vec3} (hcross : ∀ i j, i ≠ j → n i ⨯₃ n j ≠ 0)
     (hspan : Submodule.span ℝ (Set.range n) = ⊤) (f : StrictFace n)
     (x : Vec3) (hx : Realizes n f.1 x) :
     3 ≤ (Erdos957.hullVertices (boundaryPolygon n f.1 x)).card := by
+  classical
   rw [hullVertices_boundaryPolygon hx hcross, boundaryPolygon_card hx hcross,
     edgeOwners_card_eq_faceEdges f]
   exact PolarFace.faceEdges_card_three_le_of_span_eq_top n hcross hspan f

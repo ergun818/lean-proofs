@@ -31,7 +31,6 @@ cellulation and the indexed boundary/across-edge data used by the ABKPR
 discharging argument.
 -/
 
-open Classical
 open scoped BigOperators
 noncomputable section
 
@@ -88,7 +87,7 @@ abbrev Face := (facePerm G R.rotation).cycleFactorsFinset
 instance : DecidableEq (R.Face) := inferInstance
 
 def dartEdge (R : SphericalRotationData G) (d : G.Dart) : R.Edge :=
-  ⟨d.edge, by simpa [SimpleGraph.mem_edgeFinset] using d.edge_mem⟩
+  ⟨d.edge, by simp [SimpleGraph.mem_edgeFinset]⟩
 
 @[simp] theorem dartEdge_val (d : G.Dart) : (R.dartEdge d).1 = d.edge := rfl
 
@@ -349,7 +348,7 @@ theorem boundaryDart_surjective : Function.Surjective R.boundaryDart := by
   obtain ⟨i, hi⟩ := List.mem_iff_get.mp hd
   let j : Fin (R.C.faceDegree (R.faceOf d)) :=
     ⟨i.val, by
-      simpa [C, toBlueCellulation, BlueCellulation.faceDegree, faceBoundary] using i.isLt⟩
+      simp [C, toBlueCellulation, BlueCellulation.faceDegree, faceBoundary]⟩
   refine ⟨⟨R.faceOf d, j⟩, ?_⟩
   simpa [boundaryDart, faceIndex, j] using hi
 
@@ -530,6 +529,7 @@ instance (vertices : Finset Vertex) (onLine : Vertex → Line → Prop)
   classical
   infer_instance
 
+omit [DecidableEq Line] [DecidableEq Vertex] [Fintype Line] [Fintype Vertex] in
 theorem adj_of_cyclicConsecutive
     (vertices : Finset Vertex) (onLine : Vertex → Line → Prop)
     [DecidableRel onLine] (coord : Vertex → ℝ)
@@ -540,6 +540,7 @@ theorem adj_of_cyclicConsecutive
   rw [graph, SimpleGraph.fromEdgeSet_adj]
   exact ⟨⟨l, a, b, hab, rfl⟩, hne⟩
 
+omit [DecidableEq Line] [DecidableEq Vertex] [Fintype Line] [Fintype Vertex] in
 theorem cyclicConsecutive_ne_of_two_le_card
     (vertices : Finset Vertex) (onLine : Vertex → Line → Prop)
     [DecidableRel onLine] (coord : Vertex → ℝ)
@@ -548,6 +549,7 @@ theorem cyclicConsecutive_ne_of_two_le_card
     (hcard : 2 ≤ (ChartOrder.verticesOn vertices onLine l).card)
     (hab : ChartOrder.CyclicConsecutive coord
       (ChartOrder.verticesOn vertices onLine l) a b) : a ≠ b := by
+  classical
   rcases hab with hab | ⟨ha, hb, hamax, hbmin⟩
   · exact hab.ne
   · intro hab
@@ -565,11 +567,12 @@ theorem cyclicConsecutive_ne_of_two_le_card
     simp only [Finset.card_singleton] at hc
     omega
 
+omit [DecidableEq Line] [DecidableEq Vertex] [Fintype Line] [Fintype Vertex] in
 /-- Chart order constructs a graph edge starting at every incident vertex,
 provided the cyclic successor is never the vertex itself. This is the exact
 finite consequence of the non-pencil condition used before the local
 rotation at a vertex is introduced. -/
-theorem exists_cyclic_successor_edge
+theorem exists_cyclic_successor_edge [Finite Line] [Finite Vertex]
     (vertices : Finset Vertex) (onLine : Vertex → Line → Prop)
     [DecidableRel onLine] (coord : Vertex → ℝ)
     {l : Line} {a : Vertex}
@@ -580,17 +583,21 @@ theorem exists_cyclic_successor_edge
     ∃ b, (graph vertices onLine coord).Adj a b ∧
       ChartOrder.CyclicConsecutive coord
         (ChartOrder.verticesOn vertices onLine l) a b := by
+  classical
+  let : Fintype Line := Fintype.ofFinite _
+  let : Fintype Vertex := Fintype.ofFinite _
   obtain ⟨b, hab⟩ :=
     ChartOrder.exists_cyclicConsecutive_successor coord
       (ChartOrder.verticesOn vertices onLine l) a ha
   exact ⟨b, adj_of_cyclicConsecutive vertices onLine coord hab
     (hnonsingleton b hab), hab⟩
 
+omit [DecidableEq Line] [DecidableEq Vertex] [Fintype Line] [Fintype Vertex] in
 /-- If every represented line contains at least two arrangement vertices,
 the separating chart coordinate produces an honest graph edge out of every
 incident vertex. This is the graph-extraction statement to which the
 homogeneous non-pencil lemma reduces. -/
-theorem exists_cyclic_successor_edge_of_two_vertices
+theorem exists_cyclic_successor_edge_of_two_vertices [Finite Line] [Finite Vertex]
     (vertices : Finset Vertex) (onLine : Vertex → Line → Prop)
     [DecidableRel onLine] (coord : Vertex → ℝ)
     (hinj : Set.InjOn coord (vertices : Set Vertex))
@@ -600,6 +607,9 @@ theorem exists_cyclic_successor_edge_of_two_vertices
     ∃ b, (graph vertices onLine coord).Adj a b ∧
       ChartOrder.CyclicConsecutive coord
         (ChartOrder.verticesOn vertices onLine l) a b := by
+  classical
+  let : Fintype Line := Fintype.ofFinite _
+  let : Fintype Vertex := Fintype.ofFinite _
   apply exists_cyclic_successor_edge vertices onLine coord ha
   intro b hab
   exact cyclicConsecutive_ne_of_two_le_card vertices onLine coord
