@@ -34,7 +34,7 @@ theorem exists_unconditional_normalizedPacket_bowenPairs_bound {ε : ℝ} (hε :
       (d : ℝ) ^ ε * (3 * δ) ^ 3)) =
         6 * C * (d : ℝ) ^ (-1 / 2 + ε) + 54 * C * ((d : ℝ) ^ ε * δ ^ 2) := by
     field_simp
-    <;> ring
+    ring
   rw [heq]
   have hfirst : 0 ≤ C * (d : ℝ) ^ (-1 / 2 + ε) := by positivity
   have hsecond : 0 ≤ C * ((d : ℝ) ^ ε * δ ^ 2) := by positivity

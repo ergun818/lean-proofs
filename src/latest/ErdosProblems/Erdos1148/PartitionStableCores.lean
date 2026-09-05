@@ -8,13 +8,14 @@ namespace Erdos1148.DukeArithmetic
 open MeasureTheory
 open scoped MatrixGroups
 
-theorem exists_partition_stable_cores {ι : Type*} [Fintype ι]
+theorem exists_partition_stable_cores {ι : Type*} [Finite ι]
     (P : FiniteMeasurablePartition ModularOrbitSpace ι) (μ : Measure ModularOrbitSpace)
     [IsFiniteMeasure μ] (hnull : ∀ i, μ (frontier (P.atom i)) = 0) {ε : ℝ} (hε : 0 < ε) :
     ∃ (C : ι → Set ModularOrbitSpace) (η : ℝ),
       (∀ i, IsCompact (C i)) ∧ (∀ i, C i ⊆ P.atom i) ∧ μ.real (⋃ i, C i)ᶜ < ε ∧
       0 < η ∧ η ≤ 1 / 192 ∧
       ∀ i, ∀ x ∈ C i, ∀ u : SL(2, ℝ), EntryCloseOne η u → modularRightTranslate u x ∈ P.atom i := by
+  let := Fintype.ofFinite ι
   classical
   obtain ⟨C, hC, hCsub, hmass⟩ := exists_partition_compact_cores P μ hnull hε
   have hex (i : ι) := exists_compact_modular_right_thickening (hC i) isOpen_interior (hCsub i)

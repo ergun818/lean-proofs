@@ -30,7 +30,8 @@ theorem integral_evalForm_ne_zero {d : ℤ} (hns : ¬IsSquare d) {t : ℤ × ℤ
   have ha := fst_ne_zero_of_nonsquare_discr hns ht
   rw [hv] at heval
   simp only [evalForm, zero_pow (by norm_num : 2 ≠ 0), mul_zero, add_zero] at heval
-  have hu : u = 0 := (pow_eq_zero_iff (by norm_num : 2 ≠ 0)).mp ((mul_eq_zero.mp heval).resolve_left ha)
+  have hu : u = 0 :=
+    (pow_eq_zero_iff (by norm_num : 2 ≠ 0)).mp ((mul_eq_zero.mp heval).resolve_left ha)
   exact huv.elim (fun h => h hu) (fun h => h hv)
 
 noncomputable def modularVector (g : SL(2, ℝ)) (u v : ℤ) : ℝ × ℝ :=

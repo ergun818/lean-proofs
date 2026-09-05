@@ -27,7 +27,7 @@ theorem modularHaarDomain_ae_covers : ∀ᵐ g ∂(Measure.haar (G := SL(2, ℝ)
     apply ae_all_iff.mpr
     intro γ
     apply ae_iff.mpr
-    simpa only [Set.preimage, Set.mem_setOf_eq, not_not] using
+    simpa only [Set.preimage, Set.mem_ofPred_eq, not_not] using
       measure_preimage_smul_null specialLinear_haar_fd_boundary_null γ
   filter_upwards [hae] with g hg
   obtain ⟨γ, hγ⟩ := ModularGroup.exists_smul_mem_fd (g • UpperHalfPlane.I)
@@ -58,6 +58,6 @@ theorem modularHaarDomain_mass_pos :
     intro hzero
     have hp := IsOpen.measure_pos (Measure.haar (G := SL(2, ℝ))) isOpen_univ
       (Set.univ_nonempty : (Set.univ : Set SL(2, ℝ)).Nonempty)
-    simpa [hzero] using hp))
+    simp [hzero] at hp))
 
 end Erdos1148.DukeArithmetic

@@ -13,7 +13,7 @@ theorem normalizedModularHaarMeasure_ae_lift_iff {p : ModularOrbitSpace → Prop
     (∀ᵐ x ∂normalizedModularHaarMeasure, p x) ↔
       ∀ᵐ g ∂(Measure.haar (G := SL(2, ℝ))), p (modularMk g) := by
   rw [ae_iff, ae_iff, normalizedModularHaarMeasure_null_iff]
-  simpa only [Set.compl_def, Set.mem_setOf_eq, Set.preimage] using
+  simpa only [Set.compl_def, Set.mem_ofPred_eq, Set.preimage] using
     modularHaarMeasure_null_iff hp.compl
 
 theorem normalizedModularHaarMeasure_aeconst_of_right_invariant

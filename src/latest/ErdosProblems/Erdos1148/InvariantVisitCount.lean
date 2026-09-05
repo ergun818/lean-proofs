@@ -28,7 +28,8 @@ lemma measurable_orbitVisitCount (hf : Measurable f) (hQ : MeasurableSet Q) (n :
     Measurable (orbitVisitCount f Q n) := by
   have heq := funext (orbitVisitCount_eq_sum_indicator f Q n)
   rw [heq]
-  exact Finset.measurable_sum _ (fun i _ => measurable_const.indicator (hQ.preimage (hf.iterate i.val)))
+  exact Finset.measurable_sum _ (fun i _ =>
+    measurable_const.indicator (hQ.preimage (hf.iterate i.val)))
 
 lemma integrable_orbitVisitCount [IsFiniteMeasure μ] (hf : Measurable f) (hQ : MeasurableSet Q)
     (n : ℕ) : Integrable (orbitVisitCount f Q n) μ := by
@@ -76,7 +77,8 @@ theorem orbitVisitCount_below_mass_lower [IsProbabilityMeasure μ] (hf : Measure
     intro x hx
     change ¬ orbitVisitCount f Q n x ≤ κ * n at hx
     exact (lt_of_not_ge hx).le
-  have hbound := (measureReal_mono (μ := μ) hsub).trans (orbitVisitCount_exceedance_mass_le hf hQ hκ hn)
+  have hbound := (measureReal_mono (μ := μ) hsub).trans
+    (orbitVisitCount_exceedance_mass_le hf hQ hκ hn)
   rw [measureReal_compl hm, probReal_univ] at hbound
   linarith only [hbound]
 

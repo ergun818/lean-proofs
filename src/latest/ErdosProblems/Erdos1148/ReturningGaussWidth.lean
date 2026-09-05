@@ -12,10 +12,12 @@ theorem returning_gauss_width_le (g : SL(2, ℝ)) (r₁ r₂ x₁ x₂ h₁ h₂
     (hlow : c ≤ modularVectorLengthSq
       (g * unstableHorocycle r₁ * upperTriangularFrame x₁ h₁ (by linarith : h₁ ≠ 0)) u v)
     (hreturn₁ : modularVectorLengthSq
-      ((g * unstableHorocycle r₁ * upperTriangularFrame x₁ h₁ (by linarith : h₁ ≠ 0)) * diagonalFlow S)
+      ((g * unstableHorocycle r₁ * upperTriangularFrame x₁ h₁ (by linarith : h₁ ≠ 0)) *
+        diagonalFlow S)
         u v ≤ 1)
     (hreturn₂ : modularVectorLengthSq
-      ((g * unstableHorocycle r₂ * upperTriangularFrame x₂ h₂ (by linarith : h₂ ≠ 0)) * diagonalFlow S)
+      ((g * unstableHorocycle r₂ * upperTriangularFrame x₂ h₂ (by linarith : h₂ ≠ 0)) *
+        diagonalFlow S)
         u v ≤ 1)
     (hsmall : 96 * Real.exp (-S) ≤ c) :
     |r₁ - r₂| ≤ (16 / Real.sqrt c) * Real.exp (-(S / 2)) := by

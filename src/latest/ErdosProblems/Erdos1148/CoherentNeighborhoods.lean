@@ -20,7 +20,7 @@ theorem exists_open_coherent_modular_neighborhood {η : ℝ} (hη : 0 < η)
     let E : Set SL(2, ℝ) := {h | ∀ i j : Fin 2,
       |(g⁻¹ * h) i j - (1 : Matrix (Fin 2) (Fin 2) ℝ) i j| < δ}
     have hopen : IsOpen E := by
-      simp only [E, Set.setOf_forall]
+      simp only [E, Set.ofPred_forall]
       apply isOpen_iInter_of_finite
       intro i
       apply isOpen_iInter_of_finite

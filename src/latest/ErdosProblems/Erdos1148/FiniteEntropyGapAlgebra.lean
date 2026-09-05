@@ -4,7 +4,7 @@ import ErdosProblems.Erdos1148.FiniteEntropyThreeClasses
 
 namespace Erdos1148.DukeArithmetic
 
-theorem finiteEntropy_le_gap_of_word_families {ι : Type*} [Fintype ι] [DecidableEq ι]
+theorem finiteEntropy_le_gap_of_word_families {ι : Type*} [Fintype ι]
     (G H : Finset ι) (hGH : G ⊆ H) {p : ι → ℝ} (hp : ∀ i, 0 ≤ p i)
     (hsum : ∑ i, p i = 1) {L d q A B : ℝ} (hL : 0 ≤ L) (hd : 0 ≤ d)
     (hA : 1 ≤ A) (hB : 1 ≤ B)

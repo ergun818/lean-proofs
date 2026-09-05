@@ -34,7 +34,7 @@ theorem integral_form_of_positive_packet_image {d : ℤ} (hd : 0 < d) (hns : ¬I
 
 theorem eventually_integral_form_in_open {W : Set (ℝ × ℝ × ℝ)}
     (hW : IsOpen W) (hne : ∃ t ∈ W, discr t = 1) :
-    ∃ D : ℕ, ∀ d : ℕ, D ≤ d → ∀ (hd : 0 < (d : ℤ)) (hns : ¬IsSquare (d : ℤ))
+    ∃ D : ℕ, ∀ d : ℕ, D ≤ d → ∀ (_hd : 0 < (d : ℤ)) (_hns : ¬IsSquare (d : ℤ))
       (_base : IntegralDiscrForm (d : ℤ)), ∃ (g : SL(2, ℝ)) (t : IntegralDiscrForm (d : ℤ)),
         formAction g (splitForm ℝ) ∈ W ∧
         Real.sqrt (d : ℝ) • formAction g (splitForm ℝ) = mapCoeffs (Int.castRingHom ℝ) t.1 := by

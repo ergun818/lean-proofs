@@ -16,7 +16,8 @@ lemma quadraticOrderRoot_val (d : ℤ) :
   change (2 : ℤ) • quadraticOrderGenerator d - d • (1 : QuadraticDiscrAlgebra d) = _
   rw [zsmul_eq_mul, zsmul_eq_mul]
   ext <;> norm_num [quadraticOrderGenerator, QuadraticAlgebra.re_ofNat,
-    QuadraticAlgebra.im_ofNat] <;> ring
+    QuadraticAlgebra.im_ofNat]
+  ring
 
 lemma quadraticOrderRoot_mul_self (d : ℤ) :
     quadraticOrderRoot d * quadraticOrderRoot d = d • (1 : quadraticOrder d) := by

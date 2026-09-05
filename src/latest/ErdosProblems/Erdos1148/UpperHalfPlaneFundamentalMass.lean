@@ -16,7 +16,7 @@ theorem invariant_upper_shifted_siegel_strip_finite (ν : Measure UpperHalfPlane
       {z : UpperHalfPlane | z.re ∈ Set.Ico r (1 + r) ∧ 1 ≤ z.im} =
       {z : UpperHalfPlane | z.re ∈ Set.Ico 0 1 ∧ 1 ≤ z.im} := by
     ext z
-    simp only [Set.mem_preimage, Set.mem_setOf_eq, Set.mem_Ico,
+    simp only [Set.mem_preimage, Set.mem_ofPred_eq, Set.mem_Ico,
       stableHorocycle_smul_re, stableHorocycle_smul_im]
     constructor <;> rintro ⟨⟨h₁, h₂⟩, h₃⟩ <;>
       exact ⟨⟨by linarith, by linarith⟩, h₃⟩

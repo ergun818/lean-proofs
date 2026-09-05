@@ -10,7 +10,8 @@ open scoped MatrixGroups
 noncomputable def modularCuspVisitPattern (H : ℝ) (n : ℕ) (x : ModularOrbitSpace) :
     Finset (Fin n) := by
   classical
-  exact Finset.univ.filter (fun i => modularRightTranslate (diagonalFlow (i.val : ℝ)) x ∈ modularCusp H)
+  exact Finset.univ.filter (fun i =>
+    modularRightTranslate (diagonalFlow (i.val : ℝ)) x ∈ modularCusp H)
 
 lemma ordConnected_modularCuspVisitPattern {H : ℝ} (hH : 0 < H) (n : ℕ)
     (hwindow : Real.exp (n : ℝ) ≤ H ^ 4) (x : ModularOrbitSpace) :

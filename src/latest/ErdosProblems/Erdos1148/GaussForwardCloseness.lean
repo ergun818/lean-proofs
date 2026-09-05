@@ -30,8 +30,10 @@ theorem gaussFrame_forward_close (g : SL(2, ℝ)) {r s x y h k δ S : ℝ}
     (hheight : |k - h| ≤ δ) (hstable : |y - x| ≤ δ)
     (hunstable : |s - r| ≤ δ * Real.exp (-S)) :
     ∀ t ∈ Set.Icc 0 S, EntryCloseOne (8 * δ)
-      (((g * unstableHorocycle r * upperTriangularFrame x h (by linarith : h ≠ 0)) * diagonalFlow t)⁻¹ *
-        ((g * unstableHorocycle s * upperTriangularFrame y k (by linarith : k ≠ 0)) * diagonalFlow t)) := by
+      (((g * unstableHorocycle r * upperTriangularFrame x h (by linarith : h ≠ 0)) *
+        diagonalFlow t)⁻¹ *
+        ((g * unstableHorocycle s * upperTriangularFrame y k (by linarith : k ≠ 0)) *
+          diagonalFlow t)) := by
   have htube := gaussFrame_forward_tube g hx hy hh hk hh2 hk2 hδ hS hheight hstable hunstable
   have hclose := (entryForwardBowenTube_iff_flow_closeness hS _).mp htube
   intro t ht

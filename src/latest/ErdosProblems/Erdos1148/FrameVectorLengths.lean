@@ -31,7 +31,7 @@ lemma vectorLengthSq_rotationFrame (θ : ℝ) (v : Fin 2 → ℝ) :
     rw [Matrix.SpecialLinearGroup.coe_inv]
     ext i
     fin_cases i <;>
-      simp [Matrix.mulVec, Fin.sum_univ_two, rotationFrame, Matrix.adjugate_fin_two,
+      simp [Matrix.mulVec, rotationFrame, Matrix.adjugate_fin_two,
         Matrix.vecHead, Matrix.vecTail]
   rw [hvec]
   dsimp only [vectorLengthSq]
@@ -51,7 +51,8 @@ theorem modularVectorLengthSq_cuspFrame (x h θ : ℝ) (hh : h ≠ 0) (u v : ℤ
     ext i
     fin_cases i <;>
       simp [Matrix.mulVec, upperTriangularFrame, Matrix.adjugate_fin_two, Matrix.vecHead,
-        Matrix.vecTail, div_eq_mul_inv] <;> ring
+        Matrix.vecTail, div_eq_mul_inv]
+    ring
   rw [hvec]
   dsimp only [vectorLengthSq]
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one]

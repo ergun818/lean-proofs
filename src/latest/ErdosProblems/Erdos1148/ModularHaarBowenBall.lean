@@ -13,7 +13,8 @@ def modularForwardHaarBall (η S : ℝ) (g : SL(2, ℝ)) : Set ModularOrbitSpace
   (fun h : SL(2, ℝ) => modularMk (g * h)) '' forwardHaarTube η S
 
 lemma modularForwardHaarBall_eq (η S : ℝ) (g : SL(2, ℝ)) :
-    modularForwardHaarBall η S g = modularMk '' ((fun h : SL(2, ℝ) => g * h) '' forwardHaarTube η S) :=
+    modularForwardHaarBall η S g =
+      modularMk '' ((fun h : SL(2, ℝ) => g * h) '' forwardHaarTube η S) :=
   (Set.image_image _ _ _).symm
 
 lemma isCompact_modularForwardHaarBall {η S : ℝ} (hη : 0 ≤ η) (hηsmall : η ≤ 1 / 8)

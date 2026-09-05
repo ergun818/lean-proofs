@@ -47,6 +47,7 @@ theorem exists_naturalScale_normalizedPacketProduct_close_le {ε : ℝ} (hε : 0
     ring
   rw [hpow1, hpow2] at h
   rw [hpow3]
-  convert h using 2 <;> ring
+  convert h using 2
+  ring
 
 end Erdos1148.DukeArithmetic

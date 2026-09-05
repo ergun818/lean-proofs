@@ -20,7 +20,7 @@ theorem int_pair_determinant_eq_zero_of_short_product (g : SL(2, ℝ)) (u v w z 
     u * z - v * w = 0 := by
   have hdet : (((u * z - v * w : ℤ) : ℝ)) ^ 2 ≤
       modularVectorLengthSq g u v * modularVectorLengthSq g w z := by
-    rw [← modularVector_determinant]
+    rw [← modularVector_determinant g u v w z]
     dsimp only [modularVectorLengthSq]
     nlinarith [sq_nonneg ((modularVector g u v).1 * (modularVector g w z).1 +
       (modularVector g u v).2 * (modularVector g w z).2)]

@@ -28,8 +28,6 @@ theorem entryCloseOne_mul {η δ : ℝ} (hη : 0 ≤ η) (hδ : 0 ≤ δ)
     noncomm_ring
   apply (entryCloseOne_iff_entries _ _).mpr
   intro i j
-  change |((g * h : SL(2, ℝ)) : Matrix (Fin 2) (Fin 2) ℝ) i j -
-    (1 : Matrix (Fin 2) (Fin 2) ℝ) i j| ≤ _
   rw [Matrix.SpecialLinearGroup.coe_mul]
   change |(A * B - 1) i j| ≤ _
   rw [heq, Matrix.add_apply, Matrix.add_apply]
@@ -58,6 +56,7 @@ theorem entryCloseOne_conjugate {A η : ℝ} (hA : 0 ≤ A) (hη : 0 ≤ η)
   rw [Matrix.SpecialLinearGroup.coe_mul, Matrix.SpecialLinearGroup.coe_mul]
   change |(G * M * B - 1) i j| ≤ _
   rw [heq]
-  convert hGMB i j using 1 <;> ring
+  convert hGMB i j using 1
+  ring
 
 end Erdos1148.DukeArithmetic

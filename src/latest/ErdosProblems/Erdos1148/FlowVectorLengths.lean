@@ -13,8 +13,7 @@ lemma frameRealVector_diagonalFlow (t : ℝ) (v : Fin 2 → ℝ) :
   change (((diagonalFlow t)⁻¹ : SL(2, ℝ)) : Matrix (Fin 2) (Fin 2) ℝ).mulVec v = _
   rw [← diagonalFlow_neg]
   ext i
-  fin_cases i <;> simp [diagonalFlow, Matrix.mulVec, Fin.sum_univ_two,
-    Matrix.vecHead, Matrix.vecTail, neg_div]
+  fin_cases i <;> simp [diagonalFlow, Matrix.mulVec, Matrix.vecHead, Matrix.vecTail, neg_div]
 
 theorem modularVectorLengthSq_flow (g : SL(2, ℝ)) (t : ℝ) (u v : ℤ) :
     modularVectorLengthSq (g * diagonalFlow t) u v =

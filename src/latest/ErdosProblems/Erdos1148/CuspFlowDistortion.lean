@@ -17,7 +17,7 @@ theorem modularRightTranslate_mem_cusp_of_scale {H M t : ℝ}
     exact (modularVectorLengthSq_flow_le g t u v).trans_lt
       ((mul_lt_mul_of_pos_left hshort (Real.exp_pos _)).trans_le hscale)
 
-theorem modularRightTranslate_mem_cusp_distortion {H : ℝ} (hH : 0 < H) (t : ℝ)
+theorem modularRightTranslate_mem_cusp_distortion {H : ℝ} (_hH : 0 < H) (t : ℝ)
     {x : ModularOrbitSpace} (hx : x ∈ modularCusp H) :
     modularRightTranslate (diagonalFlow t) x ∈ modularCusp (H * Real.exp (-(|t| / 2))) := by
   apply modularRightTranslate_mem_cusp_of_scale (H := H) (t := t) (hx := hx)

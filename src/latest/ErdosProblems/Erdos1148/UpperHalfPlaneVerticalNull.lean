@@ -26,7 +26,7 @@ theorem invariant_upperHalfPlane_vertical_eq_zero (ν : Measure UpperHalfPlane) 
   have heq : (fun z : UpperHalfPlane => stableHorocycle (c - r) • z) ⁻¹'
       {z : UpperHalfPlane | z.re = c} = {z : UpperHalfPlane | z.re = r} := by
     ext z
-    simp only [Set.mem_preimage, Set.mem_setOf_eq, stableHorocycle_smul_re]
+    simp only [Set.mem_preimage, Set.mem_ofPred_eq, stableHorocycle_smul_re]
     constructor <;> intro h <;> linarith
   have hmeasure := measure_preimage_smul ν (stableHorocycle (c - r)) {z : UpperHalfPlane | z.re = c}
   rw [heq, hzero] at hmeasure

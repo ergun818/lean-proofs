@@ -9,7 +9,8 @@ open scoped MatrixGroups Topology
 
 theorem exists_compact_modular_right_thickening {K U : Set ModularOrbitSpace}
     (hK : IsCompact K) (hU : IsOpen U) (hKU : K ⊆ U) :
-    ∃ η : ℝ, 0 < η ∧ ∀ x ∈ K, ∀ u : SL(2, ℝ), EntryCloseOne η u → modularRightTranslate u x ∈ U := by
+    ∃ η : ℝ, 0 < η ∧ ∀ x ∈ K, ∀ u : SL(2, ℝ),
+      EntryCloseOne η u → modularRightTranslate u x ∈ U := by
   let A := (fun p : SL(2, ℝ) × ModularOrbitSpace => modularRightTranslate p.1 p.2) ⁻¹' U
   have hpre : A ∈ 𝓝 (1 : SL(2, ℝ)) ×ˢ 𝓝ˢ K := by
     apply hK.mem_prod_nhdsSet_of_forall

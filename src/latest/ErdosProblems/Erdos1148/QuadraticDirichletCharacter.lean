@@ -12,11 +12,12 @@ def quadraticCharacterValue (a n : ℕ) : ℤ :=
   simp [quadraticCharacterValue, jacobiSym.one_right]
 
 lemma quadraticCharacterValue_mul (a n m : ℕ) :
-    quadraticCharacterValue a (n * m) = quadraticCharacterValue a n * quadraticCharacterValue a m := by
+    quadraticCharacterValue a (n * m) =
+      quadraticCharacterValue a n * quadraticCharacterValue a m := by
   by_cases hn : Odd n
   · by_cases hm : Odd m
-    · have hn0 : n ≠ 0 := by intro h; subst n; simpa using hn
-      have hm0 : m ≠ 0 := by intro h; subst m; simpa using hm
+    · have hn0 : n ≠ 0 := by intro h; subst n; simp at hn
+      have hm0 : m ≠ 0 := by intro h; subst m; simp at hm
       rw [quadraticCharacterValue, if_pos (hn.mul hm), quadraticCharacterValue, if_pos hn,
         quadraticCharacterValue, if_pos hm, jacobiSym.mul_right' _ hn0 hm0]
     · simp only [quadraticCharacterValue, Nat.odd_mul, hn, hm, and_false, if_false, mul_zero]
@@ -36,7 +37,7 @@ lemma quadraticCharacterValue_eq_zero_of_not_coprime (a n : ℕ)
     (hn : ¬n.Coprime (4 * a)) : quadraticCharacterValue a n = 0 := by
   by_cases hodd : Odd n
   · rw [quadraticCharacterValue, if_pos hodd]
-    have hn0 : n ≠ 0 := by intro h; subst n; simpa using hodd
+    have hn0 : n ≠ 0 := by intro h; subst n; simp at hodd
     have hn4 : n.Coprime 4 := by
       simpa only [show (2 : ℕ) ^ 2 = 4 by norm_num] using hodd.coprime_two_right.pow_right 2
     have hna : ¬n.Coprime a := fun h => hn (hn4.mul_right h)

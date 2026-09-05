@@ -15,7 +15,6 @@ theorem returning_cover_constant_le_cubic {Y δ : ℝ} (hY : 1 ≤ Y) (hδ : 0 <
   have hfrac : 32 / (Real.sqrt ((Y ^ 2)⁻¹) * δ) = (32 / δ) * Y := by
     rw [Real.sqrt_inv, Real.sqrt_sq hYpos.le]
     field_simp
-    <;> ring
   have hsecond : 32 / (Real.sqrt ((Y ^ 2)⁻¹) * δ) + 1 ≤ (32 / δ + 1) * (Y + 1) := by
     rw [hfrac]
     nlinarith [div_nonneg (by norm_num : (0 : ℝ) ≤ 32) hδ.le]

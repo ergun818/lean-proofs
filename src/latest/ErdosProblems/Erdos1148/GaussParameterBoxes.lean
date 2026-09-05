@@ -54,9 +54,12 @@ def gaussParameterCell (a b c wr wx wh : ℝ) : Set BoundedGaussParameters :=
 
 lemma isClosed_gaussParameterCell (a b c wr wx wh : ℝ) :
     IsClosed (gaussParameterCell a b c wr wx wh) :=
-  (isClosed_Icc.preimage (by fun_prop : Continuous (fun p : BoundedGaussParameters => p.val.1))).inter
-    ((isClosed_Icc.preimage (by fun_prop : Continuous (fun p : BoundedGaussParameters => p.val.2.1))).inter
-      (isClosed_Icc.preimage (by fun_prop : Continuous (fun p : BoundedGaussParameters => p.val.2.2))))
+  (isClosed_Icc.preimage
+    (by fun_prop : Continuous (fun p : BoundedGaussParameters => p.val.1))).inter
+    ((isClosed_Icc.preimage
+      (by fun_prop : Continuous (fun p : BoundedGaussParameters => p.val.2.1))).inter
+      (isClosed_Icc.preimage
+        (by fun_prop : Continuous (fun p : BoundedGaussParameters => p.val.2.2))))
 
 noncomputable def gaussParameterBox (g : SL(2, ℝ)) (a b c wr wx wh : ℝ) : Set ModularOrbitSpace :=
   (fun p : BoundedGaussParameters => modularMk (gaussParameterFrame g p)) ''

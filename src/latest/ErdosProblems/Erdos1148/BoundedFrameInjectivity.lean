@@ -14,7 +14,7 @@ theorem entryCloseOne_integral_eq_one {η : ℝ} (hη : η < 1) (γ : SL(2, ℤ)
   have hlt := (hentries i j).trans_lt hη
   have hcast : (γ : SL(2, ℝ)) i j - (1 : Matrix (Fin 2) (Fin 2) ℝ) i j =
       ((γ i j - (1 : Matrix (Fin 2) (Fin 2) ℤ) i j : ℤ) : ℝ) := by
-    simp [Matrix.SpecialLinearGroup.coe_matrix_coe, Matrix.one_apply]
+    simp [Matrix.one_apply]
   rw [hcast] at hlt
   have hint : |γ i j - (1 : Matrix (Fin 2) (Fin 2) ℤ) i j| < 1 := by exact_mod_cast hlt
   exact sub_eq_zero.mp (Int.abs_lt_one_iff.mp hint)

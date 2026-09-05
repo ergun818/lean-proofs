@@ -11,7 +11,7 @@ lemma entryCloseOne_iff_entries (η : ℝ) (g : SL(2, ℝ)) :
   simp [Fin.forall_fin_two, EntryCloseOne, Matrix.one_apply, and_assoc]
 
 lemma matrix_two_mul_entry_bound (A B : Matrix (Fin 2) (Fin 2) ℝ) {a b : ℝ}
-    (ha : 0 ≤ a) (hb : 0 ≤ b) (hA : ∀ i j, |A i j| ≤ a) (hB : ∀ i j, |B i j| ≤ b)
+    (ha : 0 ≤ a) (_hb : 0 ≤ b) (hA : ∀ i j, |A i j| ≤ a) (hB : ∀ i j, |B i j| ≤ b)
     (i j : Fin 2) : |(A * B) i j| ≤ 2 * a * b := by
   rw [Matrix.mul_apply, Fin.sum_univ_two]
   apply (abs_add_le _ _).trans
@@ -46,7 +46,8 @@ theorem entryCloseOne_rotation_change {η : ℝ} {g : SL(2, ℝ)} (hη : 0 ≤ �
   have hAMB : ∀ i j, |(A * (M - 1) * B) i j| ≤ 4 * η := by
     intro i j
     have h := matrix_two_mul_entry_bound (A * (M - 1)) B (by positivity) zero_le_one hAM hB i j
-    convert h using 1 <;> ring
+    convert h using 1
+    ring
   have hAB : ∀ i j, |(A * B - 1) i j| ≤ |φ - θ| := by
     have h := (entryCloseOne_iff_entries _ _).mp (rotationFrame_relative_close θ φ)
     intro i j
@@ -56,8 +57,6 @@ theorem entryCloseOne_rotation_change {η : ℝ} {g : SL(2, ℝ)} (hη : 0 ≤ �
     exact h i j
   apply (entryCloseOne_iff_entries _ _).mpr
   intro i j
-  change |(((rotationFrame θ)⁻¹ * g * rotationFrame φ : SL(2, ℝ)) :
-    Matrix (Fin 2) (Fin 2) ℝ) i j - (1 : Matrix (Fin 2) (Fin 2) ℝ) i j| ≤ _
   rw [Matrix.SpecialLinearGroup.coe_mul, Matrix.SpecialLinearGroup.coe_mul]
   change |(A * M * B - 1) i j| ≤ _
   have heq : A * M * B - 1 = A * (M - 1) * B + (A * B - 1) := by noncomm_ring

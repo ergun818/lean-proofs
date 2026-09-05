@@ -21,7 +21,8 @@ theorem collision_entropy_linear_lower {m m₀ C κ L σ t : ℝ}
   have hlogm₀ : Real.log m₀ ≤ 0 := Real.log_nonpos hm₀.le hm₀one
   have hmlog : Real.log m₀ ≤ m * Real.log m := by
     calc
-      Real.log m₀ ≤ m * Real.log m₀ := by nlinarith [mul_nonneg (sub_nonneg.mpr hmone) (neg_nonneg.mpr hlogm₀)]
+      Real.log m₀ ≤ m * Real.log m₀ := by
+        nlinarith [mul_nonneg (sub_nonneg.mpr hmone) (neg_nonneg.mpr hlogm₀)]
       _ ≤ m * Real.log m := mul_le_mul_of_nonneg_left hlogm hmpos.le
   have hmlogC : m * Real.log C ≤ |Real.log C| := by
     calc

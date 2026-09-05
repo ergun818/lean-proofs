@@ -44,19 +44,19 @@ theorem exists_shrunk_lift_cover {η δ S : ℝ}
           (d * Real.exp (-S)) + 1 = 32 * η / δ + 1 := by
         dsimp only [d]
         field_simp [hδ.ne', Real.exp_ne_zero]
-        <;> ring
+        ring
       exact hNr.trans_eq heq
     have hNx' : (Nx : ℝ) ≤ 32 * η / δ + 1 := by
       have heq : (2 * η - -(2 * η)) / d + 1 = 32 * η / δ + 1 := by
         dsimp only [d]
         field_simp [hδ.ne']
-        <;> ring
+        ring
       exact hNx.trans_eq heq
     have hNh' : (Nh : ℝ) ≤ 32 * η / δ + 1 := by
       have heq : (1 + η - (1 - η)) / d + 1 = 16 * η / δ + 1 := by
         dsimp only [d]
         field_simp [hδ.ne']
-        <;> ring
+        ring
       have hbound := hNh.trans_eq heq
       exact hbound.trans (add_le_add
         (div_le_div_of_nonneg_right (by linarith only [hη] : 16 * η ≤ 32 * η) hδ.le) le_rfl)

@@ -32,7 +32,7 @@ lemma regularOrbitWords_cover {X ι : Type*} [MeasurableSpace X] [Fintype ι]
   have hmem := (mem_regularOrbitWords P f Q τ n A w).mpr ⟨x, hx, hcount, hw⟩
   exact Set.mem_iUnion.mpr ⟨⟨w, hmem⟩, hw⟩
 
-theorem orbitWord_family_mass {X ι : Type*} [MeasurableSpace X] [Fintype ι]
+theorem orbitWord_family_mass {X ι : Type*} [MeasurableSpace X]
     (P : FiniteMeasurablePartition X ι) {f : X → X} (hf : Measurable f) (n : ℕ)
     (μ : Measure X) [IsFiniteMeasure μ] (F : Finset (Fin n → ι)) :
     (∑ w ∈ F, μ.real (P.orbitAtom f n w)) = μ.real (⋃ w : F, P.orbitAtom f n w.val) := by

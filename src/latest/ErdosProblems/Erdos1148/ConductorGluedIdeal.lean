@@ -15,7 +15,7 @@ noncomputable def conductorGluedSubmodule {d : ℤ} [Fact (¬IsSquare d)]
     Ideal.Quotient.mk (quadraticOrderConductor d) x * (↑u⁻¹) ∈ (conductorQuotientMap ht).range}
   zero_mem' := by
     refine ⟨0, rfl, ?_⟩
-    simpa using (conductorQuotientMap ht).range.zero_mem
+    simp
   add_mem' := by
     rintro _ _ ⟨x, rfl, hx⟩ ⟨y, rfl, hy⟩
     refine ⟨x + y, rfl, ?_⟩

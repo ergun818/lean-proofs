@@ -27,7 +27,8 @@ lemma exceptionalStepCoverCost_pow_le_exp {N n : ℕ} {κ : ℝ}
     exceptionalStepCoverCost ^ exceptionalWordStepCount w ≤
       Real.exp (κ * (n + 1) * Real.log exceptionalStepCoverCost) := by
   have hpos : 0 < exceptionalStepCoverCost := zero_lt_one.trans_le exceptionalStepCoverCost_one_le
-  have hlog : 0 ≤ Real.log exceptionalStepCoverCost := Real.log_nonneg exceptionalStepCoverCost_one_le
+  have hlog : 0 ≤ Real.log exceptionalStepCoverCost :=
+    Real.log_nonneg exceptionalStepCoverCost_one_le
   calc
     _ = Real.exp ((exceptionalWordStepCount w : ℝ) * Real.log exceptionalStepCoverCost) := by
       rw [Real.exp_nat_mul, Real.exp_log hpos]

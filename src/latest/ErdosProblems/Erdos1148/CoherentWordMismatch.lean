@@ -9,10 +9,11 @@ namespace Erdos1148.DukeArithmetic
 
 open scoped MatrixGroups
 
-theorem coherent_word_mismatch_le_bad_visits {ι : Type*} [Fintype ι] [DecidableEq ι]
+theorem coherent_word_mismatch_le_bad_visits {ι : Type*} [DecidableEq ι]
     (P : FiniteMeasurablePartition ModularOrbitSpace ι) (C : ι → Set ModularOrbitSpace)
     (hCsub : ∀ i, C i ⊆ P.atom i) {η S : ℝ}
-    (hstable : ∀ i, ∀ x ∈ C i, ∀ u : SL(2, ℝ), EntryCloseOne η u → modularRightTranslate u x ∈ P.atom i)
+    (hstable : ∀ i, ∀ x ∈ C i, ∀ u : SL(2, ℝ),
+      EntryCloseOne η u → modularRightTranslate u x ∈ P.atom i)
     {E : Set SL(2, ℝ)} (hE : LiftForwardClose η S E) {n : ℕ} (hnS : (n : ℝ) ≤ S)
     {g h : SL(2, ℝ)} (hg : g ∈ E) (hh : h ∈ E) {v w : Fin n → ι}
     (hv : modularMk g ∈ P.orbitAtom modularTimeOne n v)
@@ -43,7 +44,8 @@ theorem coherent_word_mismatch_le_bad_visits {ι : Type*} [Fintype ι] [Decidabl
       exact Set.disjoint_left.mp (P.disjoint_atom hne) (hw j) hmem
     exact (Finset.mem_filter.mp hj).2 (hwi.trans hvi.symm)
   have hcard := Finset.card_le_card hsub
-  change (wordMismatchCount v w : ℝ) ≤ ((orbitVisitPattern modularTimeOne (⋃ i, C i)ᶜ n (modularMk g)).card : ℝ)
+  change (wordMismatchCount v w : ℝ) ≤
+    ((orbitVisitPattern modularTimeOne (⋃ i, C i)ᶜ n (modularMk g)).card : ℝ)
   exact_mod_cast hcard
 
 end Erdos1148.DukeArithmetic

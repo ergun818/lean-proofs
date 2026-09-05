@@ -17,7 +17,7 @@ lemma quadraticRadicandRoot_sq (d : ℤ) :
 lemma quadraticRadicandRoot_isIntegral (d : ℤ) : IsIntegral ℤ (quadraticRadicandRoot d) := by
   refine ⟨X ^ 2 - C d, monic_X_pow_sub_C d (by norm_num), ?_⟩
   change aeval (quadraticRadicandRoot d) (X ^ 2 - C d) = 0
-  simp only [map_sub, map_pow, aeval_X, aeval_C, eq_intCast, map_intCast,
+  simp only [map_sub, map_pow, aeval_X, eq_intCast, map_intCast,
     quadraticRadicandRoot_sq, sub_self]
 
 def quadraticIntegerRoot (d : ℤ) [Fact (¬IsSquare d)] : 𝓞 (QuadraticDiscrAlgebra d) :=
@@ -37,7 +37,7 @@ theorem quadraticIntegerRoot_minpoly (d : ℤ) [hns : Fact (¬IsSquare d)] :
     apply Rat.isSquare_intCast_iff.mp
     exact ⟨r, by simpa only [pow_two, eq_intCast] using hr.symm⟩
   · change aeval (quadraticRadicandRoot d) (X ^ 2 - C (algebraMap ℤ ℚ d)) = 0
-    simp only [map_sub, map_pow, aeval_X, aeval_C, eq_intCast, map_intCast,
+    simp only [map_sub, map_pow, aeval_X, eq_intCast, map_intCast,
       quadraticRadicandRoot_sq, sub_self]
   · exact monic_X_pow_sub_C _ (by norm_num)
 
@@ -53,7 +53,8 @@ theorem twice_orderIndex_mem_root_conductor {d : ℤ} [Fact (¬IsSquare d)]
       ((2 * x + y * d : ℤ) : 𝓞 (QuadraticDiscrAlgebra d)) +
         (y : 𝓞 (QuadraticDiscrAlgebra d)) * quadraticIntegerRoot d := by
     apply Subtype.ext
-    change (2 * (quadraticOrderIndex ht : QuadraticDiscrAlgebra d)) * (b : QuadraticDiscrAlgebra d) =
+    change (2 * (quadraticOrderIndex ht : QuadraticDiscrAlgebra d)) *
+        (b : QuadraticDiscrAlgebra d) =
       ((2 * x + y * d : ℤ) : QuadraticDiscrAlgebra d) +
         (y : QuadraticDiscrAlgebra d) * quadraticRadicandRoot d
     rw [mul_assoc, hxy]

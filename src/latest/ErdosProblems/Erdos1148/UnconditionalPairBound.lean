@@ -8,7 +8,7 @@ namespace Erdos1148.DukeArithmetic
 open MeasureTheory
 open scoped ENNReal
 
-lemma rpow_div_mul_rpow {x c : ℝ} (hx : 0 < x) (hc : c ≠ 0) (s t : ℝ) :
+lemma rpow_div_mul_rpow {x c : ℝ} (hx : 0 < x) (_hc : c ≠ 0) (s t : ℝ) :
     x ^ s / (c * x ^ t) = c⁻¹ * x ^ (s - t) := by
   rw [Real.rpow_sub hx]
   ring

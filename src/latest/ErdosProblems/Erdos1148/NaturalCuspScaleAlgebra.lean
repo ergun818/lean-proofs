@@ -23,7 +23,9 @@ lemma naturalCuspScale_coefficient_bound {d H A K : ℝ} (hd : 0 < d) (hH : 0 < 
   have hp3 : η ^ (3 - ε) / η ^ 3 = d ^ (ε / 4) := by
     simpa only [Nat.cast_ofNat, sub_self, zero_add] using naturalPairScale_rpow_div_pow hd ε 3
   have hp2 : η ^ (3 - ε) / η ^ 2 = d ^ (-1 / 4 + ε / 4) := by
-    convert naturalPairScale_rpow_div_pow hd ε 2 using 2 <;> norm_num <;> ring
+    convert naturalPairScale_rpow_div_pow hd ε 2 using 2
+    norm_num
+    ring
   have hmul : d ^ (1 / 8 : ℝ) * d ^ (-1 / 4 + ε / 4) =
       d ^ (-1 / 8 + ε / 4) := by
     rw [← Real.rpow_add hd]
@@ -35,7 +37,7 @@ lemma naturalCuspScale_coefficient_bound {d H A K : ℝ} (hd : 0 < d) (hH : 0 < 
         A * K * ((500 / 3) * (η ^ (3 - ε) / η ^ 3) / H ^ 2 +
           25 * J * (η ^ (3 - ε) / η ^ 2)) := by
     field_simp
-    <;> ring
+    ring
   change (A * ((4 / 3) / ((η / 5) ^ 3 * H ^ 2) + J / (η / 5) ^ 2)) *
       (K * η ^ (3 - ε)) ≤ _
   rw [hrewrite, hp3, hp2]

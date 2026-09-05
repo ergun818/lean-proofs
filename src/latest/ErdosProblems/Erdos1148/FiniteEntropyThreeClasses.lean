@@ -4,7 +4,7 @@ import ErdosProblems.Erdos1148.FiniteEntropyCrossBound
 
 namespace Erdos1148.DukeArithmetic
 
-theorem finiteEntropy_le_three_class_bound {ι : Type*} [Fintype ι] [DecidableEq ι]
+theorem finiteEntropy_le_three_class_bound {ι : Type*} [Fintype ι]
     (G H : Finset ι) (hGH : G ⊆ H) {A B C : ℝ} (hA : 0 < A) (hB : 0 < B) (hC : 0 < C)
     (hGA : (G.card : ℝ) ≤ A) (hHB : (H.card : ℝ) ≤ B) (hIC : (Fintype.card ι : ℝ) ≤ C)
     {p : ι → ℝ} (hp : ∀ i, 0 ≤ p i) (hsum : ∑ i, p i = 1) :

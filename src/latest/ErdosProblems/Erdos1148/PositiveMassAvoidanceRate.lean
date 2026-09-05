@@ -35,7 +35,6 @@ theorem exists_positive_mass_avoidance_rate (μ : Measure ModularOrbitSpace)
     congr 1
     dsimp only [d]
     field_simp
-    <;> ring
   refine ⟨n, hn, d, hd, hd1, ?_⟩
   intro δ hδ
   let R := (32 * η / δ + 1) ^ 3

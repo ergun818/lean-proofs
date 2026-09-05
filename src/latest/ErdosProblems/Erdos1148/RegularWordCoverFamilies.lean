@@ -7,7 +7,7 @@ namespace Erdos1148.DukeArithmetic
 open MeasureTheory
 open scoped MatrixGroups
 
-theorem regular_word_families_of_covers {ι : Type*} [Fintype ι] [DecidableEq ι]
+theorem regular_word_families_of_covers {ι : Type*} [Finite ι] [DecidableEq ι]
     (P : FiniteMeasurablePartition ModularOrbitSpace ι)
     (μ : Measure ModularOrbitSpace) [IsProbabilityMeasure μ]
     (hf : MeasurePreserving modularTimeOne μ μ)
@@ -28,11 +28,14 @@ theorem regular_word_families_of_covers {ι : Type*} [Fintype ι] [DecidableEq �
       (H.card : ℝ) ≤ ((Ng : ℝ) + Na) * Real.exp (ε * n) ∧
       3 / 4 - β ≤ ∑ w ∈ G, μ.real (P.orbitAtom modularTimeOne n w) ∧
       1 - 2 * β ≤ ∑ w ∈ H, μ.real (P.orbitAtom modularTimeOne n w) := by
+  let := Fintype.ofFinite ι
   classical
   let G := regularOrbitWords P modularTimeOne (⋃ i, C i)ᶜ τ n (⋃ i, modularMk '' Bg i)
   let J := regularOrbitWords P modularTimeOne (⋃ i, C i)ᶜ τ n (⋃ i, modularMk '' Ba i)
-  have hGcard := regularOrbitWords_card_le_coherent_cover P C hCsub hstable hwords Bg hBg (le_refl _)
-  have hJcard := regularOrbitWords_card_le_coherent_cover P C hCsub hstable hwords Ba hBa (le_refl _)
+  have hGcard :=
+    regularOrbitWords_card_le_coherent_cover P C hCsub hstable hwords Bg hBg (le_refl _)
+  have hJcard :=
+    regularOrbitWords_card_le_coherent_cover P C hCsub hstable hwords Ba hBa (le_refl _)
   have hGmass := regularOrbitWords_mass_lower P μ hf hQ hτ hn (⋃ i, modularMk '' Bg i)
   have hJmass := regularOrbitWords_mass_lower P μ hf hQ hτ hn (⋃ i, modularMk '' Ba i)
   refine ⟨G, G ∪ J, Finset.subset_union_left, hGcard, ?_, ?_, ?_⟩

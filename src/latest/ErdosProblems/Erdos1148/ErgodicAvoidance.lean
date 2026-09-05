@@ -27,10 +27,11 @@ lemma measurableSet_infiniteOrbitAvoidance (hf : Measurable f) (hU : MeasurableS
   simp only [infiniteOrbitAvoidance, Set.ofPred_forall]
   exact MeasurableSet.iInter fun k => hU.compl.preimage (hf.iterate k)
 
+omit [MeasurableSpace X] in
 lemma infiniteOrbitAvoidance_eq_iInter :
     infiniteOrbitAvoidance f U = ⋂ n : ℕ, finiteOrbitAvoidance f U n := by
   ext x
-  simp only [infiniteOrbitAvoidance, finiteOrbitAvoidance, Set.mem_setOf_eq, Set.mem_iInter]
+  simp only [infiniteOrbitAvoidance, finiteOrbitAvoidance, Set.mem_ofPred_eq, Set.mem_iInter]
   exact ⟨fun h _ k _ => h k, fun h k => h (k + 1) k (Nat.lt_succ_self k)⟩
 
 theorem _root_.Ergodic.infiniteOrbitAvoidance_null [IsFiniteMeasure μ] (hf : _root_.Ergodic f μ)

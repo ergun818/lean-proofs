@@ -41,6 +41,6 @@ theorem normalizedModularHaarMeasure_open_pos {U : Set ModularOrbitSpace}
 
 instance normalizedModularHaarMeasure_openPos :
     normalizedModularHaarMeasure.IsOpenPosMeasure :=
-  ⟨fun U hU hne => (normalizedModularHaarMeasure_open_pos hU hne).ne'⟩
+  ⟨fun _U hU hne => (normalizedModularHaarMeasure_open_pos hU hne).ne'⟩
 
 end Erdos1148.DukeArithmetic

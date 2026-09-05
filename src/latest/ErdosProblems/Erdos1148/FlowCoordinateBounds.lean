@@ -13,7 +13,8 @@ theorem modularVector_second_le_of_flow_lengthSq (g : SL(2, ℝ)) (S C : ℝ) (h
   have hle : Real.exp S * (modularVector g u v).2 ^ 2 ≤ C ^ 2 := by
     nlinarith [mul_nonneg (Real.exp_pos (-S)).le (sq_nonneg (modularVector g u v).1)]
   have hmul := mul_le_mul_of_nonneg_left hle (Real.exp_pos (-S)).le
-  have hexp : Real.exp (-S) * Real.exp S = 1 := by rw [← Real.exp_add, neg_add_cancel, Real.exp_zero]
+  have hexp : Real.exp (-S) * Real.exp S = 1 := by
+    rw [← Real.exp_add, neg_add_cancel, Real.exp_zero]
   have hsquare : Real.exp (-(S / 2)) ^ 2 = Real.exp (-S) := by
     rw [pow_two, ← Real.exp_add]
     congr 1

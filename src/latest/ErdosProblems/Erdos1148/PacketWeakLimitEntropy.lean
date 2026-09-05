@@ -28,7 +28,8 @@ theorem normalizedPacket_weak_limit_entropy_lower {ι : Type*} {l : Filter ι} [
       (normalizedDiscriminantPacket (hd i) (hns i)).real (P.partition.atom none) := by
     filter_upwards [hsmall] with i hi
     let μ := normalizedDiscriminantPacket (hd i) (hns i)
-    let : IsProbabilityMeasure μ := normalizedDiscriminantPacket_isProbability (hd i) (hns i) (base i)
+    let : IsProbabilityMeasure μ :=
+      normalizedDiscriminantPacket_isProbability (hd i) (hns i) (base i)
     have hmass : μ.real (P.partition.atom none) ≤ δ := (measureReal_mono hbadsub).trans hi.le
     have hscaled := mul_le_mul_of_nonneg_left hmass (by positivity : 0 ≤ 1 + κ⁻¹)
     rw [hm₀eq]
@@ -42,7 +43,8 @@ theorem normalizedPacket_weak_limit_entropy_lower {ι : Type*} {l : Filter ι} [
   have hνinv : Measure.map modularTimeOne (ν : Measure ModularOrbitSpace) = ν :=
     normalizedPacket_weak_limit_flow_invariant hd hns base hweak 1
   have hμinv (i : ι) : Measure.map modularTimeOne
-      ((normalizedPacketProbability (hd i) (hns i) (base i) : ProbabilityMeasure ModularOrbitSpace) :
+      ((normalizedPacketProbability (hd i) (hns i) (base i) :
+        ProbabilityMeasure ModularOrbitSpace) :
         Measure ModularOrbitSpace) = normalizedPacketProbability (hd i) (hns i) (base i) :=
     normalizedDiscriminantPacket_flow_invariant (hd i) (hns i) 1
   refine ⟨P, hboundary, ?_⟩

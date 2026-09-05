@@ -25,7 +25,9 @@ lemma exists_balanced_shear {a : ℤ} (ha : a ≠ 0) (b : ℤ) :
   · obtain ⟨k, hk⟩ := exists_balanced_shear_of_pos (neg_pos.mpr hneg) b
     refine ⟨-k, ?_⟩
     rw [abs_of_neg hneg]
-    convert hk using 1 <;> congr 1 <;> ring
+    convert hk using 1
+    congr 1
+    ring
   · simpa only [abs_of_pos hpos] using exists_balanced_shear_of_pos hpos b
 
 lemma coeff_bounds_of_reduced {d a b c : ℤ} (hd : 0 < d)

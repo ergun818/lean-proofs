@@ -17,7 +17,8 @@ theorem gauss_frame_decomposition (g : SL(2, ℝ)) (ha : g 0 0 ≠ 0) :
   ext i j
   fin_cases i <;> fin_cases j <;>
     simp [unstableHorocycle, upperTriangularFrame, Matrix.mul_apply, Fin.sum_univ_two] <;>
-    field_simp <;> nlinarith [hdet]
+    field_simp
+  nlinarith [hdet]
 
 theorem entryCloseOne_gauss_coordinates {η : ℝ} (hη : η ≤ 1 / 2) {g : SL(2, ℝ)}
     (hg : EntryCloseOne η g) :

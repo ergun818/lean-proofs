@@ -43,12 +43,14 @@ theorem modularCuspVisitCount_le (H : ℝ) (n : ℕ) (x : ModularOrbitSpace) :
   change ((modularCuspVisitTimes H n x).card : ℝ) ≤ (n : ℝ)
   exact_mod_cast hcard
 
-theorem measurable_modularCuspVisitCount (H : ℝ) (n : ℕ) : Measurable (modularCuspVisitCount H n) := by
+theorem measurable_modularCuspVisitCount (H : ℝ) (n : ℕ) :
+    Measurable (modularCuspVisitCount H n) := by
   have heq : modularCuspVisitCount H n = fun x => ∑ i : Fin n,
       (modularCuspVisitSet H i.val).indicator (fun _ : ModularOrbitSpace => (1 : ℝ)) x :=
     funext (modularCuspVisitCount_eq_sum_indicator H n)
   rw [heq]
-  exact Finset.measurable_sum _ (fun i _ => measurable_const.indicator (measurableSet_modularCuspVisitSet H i.val))
+  exact Finset.measurable_sum _ (fun i _ =>
+    measurable_const.indicator (measurableSet_modularCuspVisitSet H i.val))
 
 theorem integrable_modularCuspVisitCount (μ : Measure ModularOrbitSpace) [IsFiniteMeasure μ]
     (H : ℝ) (n : ℕ) : Integrable (modularCuspVisitCount H n) μ := by

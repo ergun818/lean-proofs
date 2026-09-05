@@ -18,7 +18,8 @@ lemma mem_halfBadPatterns (k : ℕ) (p : Finset ℕ) :
 lemma halfBadPatterns_card_le (k : ℕ) : (halfBadPatterns k).card ≤ 2 ^ k :=
   (Finset.card_filter_le _ _).trans_eq (by simp only [Finset.card_powerset, Finset.card_range])
 
-noncomputable def goodAvoidanceBlocks (K U : Set ModularOrbitSpace) (n k : ℕ) : Set ModularOrbitSpace :=
+noncomputable def goodAvoidanceBlocks (K U : Set ModularOrbitSpace) (n k : ℕ) :
+    Set ModularOrbitSpace :=
   finiteOrbitAvoidance modularTimeOne U (k * n) ∩
     {x | 2 * (orbitBlockPattern modularTimeOne Kᶜ n k x).card ≤ k}
 
@@ -34,10 +35,12 @@ lemma mem_goodAvoidanceBlocks_iff (K U : Set ModularOrbitSpace) (n k : ℕ) (x :
     ((orbitVisitPattern (modularTimeOne^[n]) Kᶜ k x).card : ℝ) ≤ (k : ℝ) / 2
   constructor
   · intro h
-    have hR : 2 * ((orbitVisitPattern (modularTimeOne^[n]) Kᶜ k x).card : ℝ) ≤ k := by exact_mod_cast h
+    have hR : 2 * ((orbitVisitPattern (modularTimeOne^[n]) Kᶜ k x).card : ℝ) ≤ k := by
+      exact_mod_cast h
     linarith only [hR]
   · intro h
-    have hR : 2 * ((orbitVisitPattern (modularTimeOne^[n]) Kᶜ k x).card : ℝ) ≤ k := by linarith only [h]
+    have hR : 2 * ((orbitVisitPattern (modularTimeOne^[n]) Kᶜ k x).card : ℝ) ≤ k := by
+      linarith only [h]
     exact_mod_cast hR
 
 theorem goodAvoidanceBlocks_mass_lower (μ : Measure ModularOrbitSpace) [IsProbabilityMeasure μ]
@@ -48,7 +51,8 @@ theorem goodAvoidanceBlocks_mass_lower (μ : Measure ModularOrbitSpace) [IsProba
       {x | orbitVisitCount (modularTimeOne^[n]) Kᶜ k x ≤ (k : ℝ) / 2} := by
     filter_upwards [ae_finiteOrbitAvoidance_of_null hf hU (k * n)] with x hx
     apply propext
-    change x ∈ goodAvoidanceBlocks K U n k ↔ orbitVisitCount (modularTimeOne^[n]) Kᶜ k x ≤ (k : ℝ) / 2
+    change x ∈ goodAvoidanceBlocks K U n k ↔
+      orbitVisitCount (modularTimeOne^[n]) Kᶜ k x ≤ (k : ℝ) / 2
     simpa only [hx, true_and] using mem_goodAvoidanceBlocks_iff K U n k x
   have hbound := orbitVisitCount_below_mass_lower (hf.iterate n) hK.compl
     (by norm_num : (0 : ℝ) < 1 / 2) hk

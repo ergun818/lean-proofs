@@ -14,7 +14,8 @@ theorem exp_le_ten_height_mul_exp_half {Y T : ℝ} (hY : 0 < Y)
   have hsquare : Real.exp (T / 2) ^ 2 = Real.exp T := by
     rw [← Real.exp_nat_mul]
     congr 1
-    norm_num <;> ring
+    norm_num
+    ring
   have hhalf : Real.exp (T / 2) ≤ 10 * Y := by
     nlinarith [Real.exp_pos (T / 2)]
   calc

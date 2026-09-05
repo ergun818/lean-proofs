@@ -7,7 +7,8 @@ namespace Erdos1148.DukeArithmetic
 open MeasureTheory
 open scoped MatrixGroups
 
-lemma continuous_modularVectorLengthSq (u v : ℤ) : Continuous (fun g => modularVectorLengthSq g u v) := by
+lemma continuous_modularVectorLengthSq (u v : ℤ) :
+    Continuous (fun g => modularVectorLengthSq g u v) := by
   unfold modularVectorLengthSq modularVector
   fun_prop
 
@@ -23,7 +24,8 @@ lemma isOpen_modularCusp (H : ℝ) : IsOpen (modularCusp H) := by
   apply isOpen_iUnion
   intro huv
   exact (MulAction.isOpenQuotientMap_quotientMk (Γ := SL(2, ℤ))
-    (T := SL(2, ℝ))).isOpenMap _ ((continuous_modularVectorLengthSq u v).isOpen_preimage _ isOpen_Iio)
+    (T := SL(2, ℝ))).isOpenMap _
+    ((continuous_modularVectorLengthSq u v).isOpen_preimage _ isOpen_Iio)
 
 lemma measurableSet_modularCusp (H : ℝ) : MeasurableSet (modularCusp H) :=
   (isOpen_modularCusp H).measurableSet

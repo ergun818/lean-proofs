@@ -38,11 +38,13 @@ theorem buffered_excursion_endpoints_not_cusp (g : SL(2, ℝ)) {H L : ℝ}
     (hshort L ⟨by linarith, le_rfl⟩).le
   have hrightLower : cuspEndpointLengthSqLower ≤
       modularVectorLengthSq (g * diagonalFlow (L + 2 * Real.log H)) u v := by
-    have hnext' : (H ^ 2)⁻¹ ≤ modularVectorLengthSq ((g * diagonalFlow L) * diagonalFlow 1) u v := by
+    have hnext' :
+        (H ^ 2)⁻¹ ≤ modularVectorLengthSq ((g * diagonalFlow L) * diagonalFlow 1) u v := by
       rwa [mul_assoc, ← diagonalFlow_add]
     have hzero : modularVectorLengthSq ((g * diagonalFlow L) * diagonalFlow (-L)) u v ≤
         (H ^ 2)⁻¹ := by
-      simpa only [mul_assoc, ← diagonalFlow_add, add_neg_cancel] using (hshort 0 ⟨le_rfl, by linarith⟩).le
+      simpa only [mul_assoc, ← diagonalFlow_add, add_neg_cancel] using
+        (hshort 0 ⟨le_rfl, by linarith⟩).le
     have h := buffered_terminal_vector_lengthSq_lower (g * diagonalFlow L) hHpos hL u v hnext' hzero
     simpa only [mul_assoc, ← diagonalFlow_add] using h
   constructor
@@ -58,7 +60,8 @@ theorem buffered_excursion_endpoints_mem_compactCore (g : SL(2, ℝ)) {H L : ℝ
     (hbefore : modularMk (g * diagonalFlow (-1)) ∉ modularCusp H)
     (hafter : modularMk (g * diagonalFlow (L + 1)) ∉ modularCusp H) :
     modularMk (g * diagonalFlow (-(2 * Real.log H))) ∈ modularCompactCore cuspEndpointHeight ∧
-      modularMk (g * diagonalFlow (L + 2 * Real.log H)) ∈ modularCompactCore cuspEndpointHeight := by
+      modularMk (g * diagonalFlow (L + 2 * Real.log H)) ∈
+        modularCompactCore cuspEndpointHeight := by
   have h := buffered_excursion_endpoints_not_cusp g hH hL hcusp hbefore hafter
   exact ⟨modularCusp_compl_subset_compactCore cuspEndpointHeight_pos h.1,
     modularCusp_compl_subset_compactCore cuspEndpointHeight_pos h.2⟩

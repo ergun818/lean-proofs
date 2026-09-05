@@ -18,7 +18,7 @@ lemma stableHorocycle_add (r s : ℝ) :
 lemma map_conjugate_comm {G C : Type*} [Group G] [CommGroup C] (f : G →* C) (a u : G) :
     f (a⁻¹ * u * a) = f u := by
   rw [map_mul, map_mul, map_inv]
-  simp [mul_comm, mul_left_comm, mul_assoc]
+  simp [mul_comm]
 
 theorem specialLinear_commGroupHom_eq_one {C : Type*} [CommGroup C]
     (f : SL(2, ℝ) →* C) (g : SL(2, ℝ)) : f g = 1 := by

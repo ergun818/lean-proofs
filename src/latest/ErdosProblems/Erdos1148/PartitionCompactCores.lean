@@ -9,11 +9,12 @@ namespace Erdos1148.DukeArithmetic
 open MeasureTheory Measure
 open scoped ENNReal
 
-theorem exists_partition_compact_cores {ι : Type*} [Fintype ι]
+theorem exists_partition_compact_cores {ι : Type*} [Finite ι]
     (P : FiniteMeasurablePartition ModularOrbitSpace ι) (μ : Measure ModularOrbitSpace)
     [IsFiniteMeasure μ] (hnull : ∀ i, μ (frontier (P.atom i)) = 0) {ε : ℝ} (hε : 0 < ε) :
     ∃ C : ι → Set ModularOrbitSpace, (∀ i, IsCompact (C i)) ∧
       (∀ i, C i ⊆ interior (P.atom i)) ∧ μ.real (⋃ i, C i)ᶜ < ε := by
+  let := Fintype.ofFinite ι
   classical
   let d := ε / ((Fintype.card ι : ℝ) + 1)
   have hd : 0 < d := by dsimp only [d]; positivity

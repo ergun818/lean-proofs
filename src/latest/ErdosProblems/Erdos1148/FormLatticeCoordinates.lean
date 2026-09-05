@@ -10,11 +10,13 @@ noncomputable def formLatticeCoordinates {d : ℤ} (t : ℤ × ℤ × ℤ) (ha :
   invFun v := ⟨v 0 + (t.2.1 : ℚ) * (v 1 / (2 * (t.1 : ℚ))), v 1 / (2 * (t.1 : ℚ))⟩
   left_inv w := by
     have haQ : (t.1 : ℚ) ≠ 0 := by exact_mod_cast ha
-    ext <;> dsimp <;> field_simp <;> ring
+    ext <;> dsimp <;> field_simp
+    ring
   right_inv v := by
     have haQ : (t.1 : ℚ) ≠ 0 := by exact_mod_cast ha
     ext i
-    fin_cases i <;> dsimp <;> field_simp <;> ring
+    fin_cases i <;> dsimp <;> field_simp
+    ring
   map_add' w z := by ext i; fin_cases i <;> dsimp <;> ring
   map_smul' c w := by ext i; fin_cases i <;> dsimp <;> ring
 

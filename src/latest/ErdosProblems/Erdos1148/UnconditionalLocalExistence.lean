@@ -53,7 +53,7 @@ theorem unconditional_fixed_ball_existence_nat :
   have hnsd : ¬IsSquare ((4 * n : ℕ) : ℤ) := by
     simpa only [Nat.cast_mul, Nat.cast_ofNat] using not_isSquare_four_mul hns
   let base : IntegralDiscrForm ((4 * n : ℕ) : ℤ) :=
-    ⟨(1, 0, -(n : ℤ)), by dsimp [discr]; push_cast; ring⟩
+    ⟨(1, 0, -(n : ℤ)), by dsimp [discr]; ring⟩
   obtain ⟨g, t, hlocal, hscale⟩ := hD (4 * n) (by omega) hd hnsd base
   refine ⟨t.1, ?_, ?_⟩
   · simpa only [discr, Nat.cast_mul, Nat.cast_ofNat] using t.2

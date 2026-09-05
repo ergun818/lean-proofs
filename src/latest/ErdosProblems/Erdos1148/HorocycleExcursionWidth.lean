@@ -28,10 +28,12 @@ theorem horocycle_width_of_shared_returning_vector (g : SL(2, ℝ))
     (r₁ r₂ x₁ x₂ h₁ h₂ S C h₀ c : ℝ) (hh₀ : 0 < h₀) (hh₁ : h₀ ≤ h₁) (hh₂ : h₀ ≤ h₂)
     (hC : 0 ≤ C) (hc : 0 < c) (u v : ℤ) (hfirst : c ≤ |(modularVector g u v).1|)
     (hshort₁ : modularVectorLengthSq
-      ((g * unstableHorocycle r₁ * upperTriangularFrame x₁ h₁ (hh₀.trans_le hh₁).ne') * diagonalFlow S)
+      ((g * unstableHorocycle r₁ * upperTriangularFrame x₁ h₁ (hh₀.trans_le hh₁).ne') *
+        diagonalFlow S)
         u v ≤ C ^ 2)
     (hshort₂ : modularVectorLengthSq
-      ((g * unstableHorocycle r₂ * upperTriangularFrame x₂ h₂ (hh₀.trans_le hh₂).ne') * diagonalFlow S)
+      ((g * unstableHorocycle r₂ * upperTriangularFrame x₂ h₂ (hh₀.trans_le hh₂).ne') *
+        diagonalFlow S)
         u v ≤ C ^ 2) :
     |r₁ - r₂| ≤ (2 * C / (h₀ * c)) * Real.exp (-(S / 2)) := by
   have h₁ := horocycle_parameter_error_le g r₁ x₁ h₁ S C h₀ hh₀ hh₁ hC u v hshort₁

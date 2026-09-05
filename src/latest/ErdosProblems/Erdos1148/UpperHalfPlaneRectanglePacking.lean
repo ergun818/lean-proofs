@@ -16,7 +16,7 @@ theorem invariant_upper_rectangle_translation (ν : Measure UpperHalfPlane)
       upperHalfOpenRectangle (a + r) (b + r) c d =
       upperHalfOpenRectangle a b c d := by
     ext z
-    simp only [Set.mem_preimage, upperHalfOpenRectangle, Set.mem_setOf_eq,
+    simp only [Set.mem_preimage, upperHalfOpenRectangle, Set.mem_ofPred_eq,
       Set.mem_Ico, Set.mem_Icc, stableHorocycle_smul_re, stableHorocycle_smul_im]
     constructor <;> rintro ⟨⟨h₁, h₂⟩, h₃⟩ <;>
       exact ⟨⟨by linarith, by linarith⟩, h₃⟩

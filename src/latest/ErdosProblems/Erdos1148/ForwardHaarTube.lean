@@ -85,7 +85,8 @@ theorem forwardHaarTube_mass_lower {η : ℝ} (hηpos : 0 < η) (hη : η ≤ 1 
         exact measure_iUnion_le _
       _ ≤ (N : ℝ≥0∞) * (Measure.haar (G := SL(2, ℝ))) (forwardHaarTube η S) := by
         simpa only [tsum_fintype, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
-          nsmul_eq_mul] using ENNReal.tsum_le_tsum (fun i => liftForwardClose_haar_mass_le hS (hB' i))
+          nsmul_eq_mul] using
+          ENNReal.tsum_le_tsum (fun i => liftForwardClose_haar_mass_le hS (hB' i))
       _ ≤ _ := mul_le_mul_left hN' _
   have hcancel : (Real.exp (-S) / 33 ^ 3) * (33 ^ 3 * Real.exp S) = 1 := by
     calc

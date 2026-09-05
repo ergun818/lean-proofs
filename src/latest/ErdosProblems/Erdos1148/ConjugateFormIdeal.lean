@@ -15,7 +15,9 @@ lemma leading_mul_generator_difference {d : ℤ} (t : ℤ × ℤ × ℤ) (ha : t
         (formIdealGenerator t - formIdealGenerator (conjugateForm t)) =
       (t.2.1 : QuadraticDiscrAlgebra d) := by
   have haQ : (t.1 : ℚ) ≠ 0 := by exact_mod_cast ha
-  ext <;> simp [formIdealGenerator, conjugateForm] <;> field_simp <;> ring
+  ext <;> simp [formIdealGenerator, conjugateForm]
+  field_simp
+  ring
 
 lemma leading_mul_generator_product {d : ℤ} {t : ℤ × ℤ × ℤ}
     (ht : discr t = d) (ha : t.1 ≠ 0) :

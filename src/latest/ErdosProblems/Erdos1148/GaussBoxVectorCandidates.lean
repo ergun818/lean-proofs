@@ -49,7 +49,7 @@ lemma translated_gaussFrame_abs_entries_le (g : SL(2, ℝ)) {A : ℝ} (hA : 0 �
 
 theorem exists_gaussBox_vector_candidates {A : ℝ} (hA : 0 ≤ A) :
     ∃ V : Finset (ℤ × ℤ), ∀ (g : SL(2, ℝ)), (∀ i j : Fin 2, |g i j| ≤ A) →
-      ∀ (r x h : ℝ) (hr : |r| ≤ 1) (hx : |x| ≤ 1) (hh : 1 / 2 ≤ h) (hh2 : h ≤ 2)
+      ∀ (r x h : ℝ) (_hr : |r| ≤ 1) (_hx : |x| ≤ 1) (hh : 1 / 2 ≤ h) (_hh2 : h ≤ 2)
         (u v : ℤ), modularVectorLengthSq
           (g * unstableHorocycle r * upperTriangularFrame x h (by linarith : h ≠ 0)) u v ≤ 1 →
             (u, v) ∈ V := by

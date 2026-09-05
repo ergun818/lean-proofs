@@ -35,7 +35,8 @@ theorem quadratic_residue_ge_principalMean_mul_LValue (a : ℕ) [NeZero a]
   apply le_of_tendsto_of_tendsto hL hR
   filter_upwards [] with N
   apply div_le_div_of_nonneg_right _ (sq_nonneg _)
-  have hsum := sum_le_sum (fun n (_ : n ∈ Ioc 0 (N * N)) => quadratic_convolution_le_ideal_count a ht n)
+  have hsum := sum_le_sum (fun n (_ : n ∈ Ioc 0 (N * N)) =>
+    quadratic_convolution_le_ideal_count a ht n)
   have hcount := ideal_norm_count_sum_Ioc_le (K := QuadraticDiscrAlgebra (a : ℤ)) (N * N)
   have hsum' : (∑ n ∈ Ioc 0 (N * N), realCoprimeZetaConvolution (quadraticDirichletCharacter a) n) ≤
       (Nat.card {I : Ideal (𝓞 (QuadraticDiscrAlgebra (a : ℤ))) // absNorm I ≤ N * N} : ℝ) :=

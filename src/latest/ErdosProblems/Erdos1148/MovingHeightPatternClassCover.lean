@@ -42,7 +42,8 @@ theorem exists_small_rate_moving_pattern_cover {η : ℝ} (hηpos : 0 < η) (hη
     have hcost := fixed_pattern_cost_small_rate hK hH hrate n V.card (maximalNatRuns V).card hr
     calc
       _ = (C * (Y * H + 1) ^ 3) * (K ^ (2 * (maximalNatRuns V).card + 1) *
-          Real.exp ((n : ℝ) + 4 * Real.log H - ((V.card : ℝ) - (maximalNatRuns V).card) / 2)) := by ring
+          Real.exp ((n : ℝ) + 4 * Real.log H - ((V.card : ℝ) -
+            (maximalNatRuns V).card) / 2)) := by ring
       _ ≤ (C * (Y * H + 1) ^ 3) * (Real.exp (3 * Real.log K + 4 * Real.log H + 1 / 2) *
           Real.exp ((1 + ε) * n - (V.card : ℝ) / 2)) :=
         mul_le_mul_of_nonneg_left hcost (by positivity)

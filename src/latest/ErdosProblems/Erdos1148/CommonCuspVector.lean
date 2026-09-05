@@ -28,7 +28,7 @@ theorem primitive_short_vector_on_preconnected_cusp (g : SL(2, ℝ)) {H : ℝ} (
     apply Set.disjoint_left.mpr
     intro t htU htV
     obtain ⟨w, z, hdet, hwz⟩ := by
-      simpa only [V, Set.mem_iUnion, Set.mem_setOf_eq] using htV
+      simpa only [V, Set.mem_iUnion, Set.mem_ofPred_eq] using htV
     have hprod : modularVectorLengthSq (g * diagonalFlow t) u v *
         modularVectorLengthSq (g * diagonalFlow t) w z < 1 := by
       calc
@@ -44,7 +44,8 @@ theorem primitive_short_vector_on_preconnected_cusp (g : SL(2, ℝ)) {H : ℝ} (
       obtain ⟨w, z, hwz, hshortw⟩ := (mem_modularCusp_iff_primitive _ H).mp (hcusp t ht)
       have hdet : u * z - v * w ≠ 0 := by
         intro hzero
-        exact htu ((primitive_vector_lengthSq_le _ huv hwz.ne_zero_or_ne_zero hzero).trans_lt hshortw)
+        exact htu
+          ((primitive_vector_lengthSq_le _ huv hwz.ne_zero_or_ne_zero hzero).trans_lt hshortw)
       exact Set.mem_iUnion.mpr ⟨w, Set.mem_iUnion.mpr ⟨z, Set.mem_iUnion.mpr ⟨hdet, hshortw⟩⟩⟩
   exact hE.subset_left_of_subset_union hU hV hdisj hcover ⟨a, ha, hshort⟩
 

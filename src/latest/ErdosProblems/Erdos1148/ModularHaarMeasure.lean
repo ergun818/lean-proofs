@@ -16,7 +16,8 @@ noncomputable def modularHaarMeasure : Measure ModularOrbitSpace :=
   Measure.map modularMk ((Measure.haar (G := SL(2, ℝ))).restrict modularHaarDomain)
 
 lemma modularHaarMeasure_apply {U : Set ModularOrbitSpace} (hU : MeasurableSet U) :
-    modularHaarMeasure U = (Measure.haar (G := SL(2, ℝ))) (modularMk ⁻¹' U ∩ modularHaarDomain) := by
+    modularHaarMeasure U =
+      (Measure.haar (G := SL(2, ℝ))) (modularMk ⁻¹' U ∩ modularHaarDomain) := by
   rw [modularHaarMeasure, Measure.map_apply continuous_modularMk.measurable hU,
     Measure.restrict_apply (hU.preimage continuous_modularMk.measurable)]
 
@@ -32,7 +33,7 @@ instance modularHaarMeasure_neZero : NeZero modularHaarMeasure := by
   intro hzero
   have hpos := modularHaarDomain_mass_pos
   rw [← modularHaarMeasure_univ] at hpos
-  simpa [hzero] using hpos
+  simp [hzero] at hpos
 
 theorem modularHaarMeasure_right_invariant (g : SL(2, ℝ)) :
     Measure.map (modularRightTranslate g) modularHaarMeasure = modularHaarMeasure := by
@@ -55,12 +56,14 @@ theorem modularHaarMeasure_right_invariant (g : SL(2, ℝ)) :
     (modularMk ⁻¹' U ∩ F')]
   congr 1
   ext x
-  simp only [Set.mem_inter_iff, Set.mem_preimage, F', modularRightTranslate_mk, mul_inv_cancel_right]
+  simp only [Set.mem_inter_iff, Set.mem_preimage, F', modularRightTranslate_mk,
+    mul_inv_cancel_right]
 
 noncomputable def normalizedModularHaarMeasure : Measure ModularOrbitSpace :=
   (modularHaarMeasure Set.univ)⁻¹ • modularHaarMeasure
 
-instance normalizedModularHaarMeasure_probability : IsProbabilityMeasure normalizedModularHaarMeasure :=
+instance normalizedModularHaarMeasure_probability :
+    IsProbabilityMeasure normalizedModularHaarMeasure :=
   inferInstanceAs (IsProbabilityMeasure ((modularHaarMeasure Set.univ)⁻¹ • modularHaarMeasure))
 
 noncomputable def modularHaarProbability : ProbabilityMeasure ModularOrbitSpace :=

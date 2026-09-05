@@ -16,14 +16,13 @@ lemma frameRealVector_mul (g h : SL(2, ℝ)) (v : Fin 2 → ℝ) :
 lemma integral_toLin_cast (γ : SL(2, ℤ)) (v : Fin 2 → ℤ) :
     (fun i => ((γ.toLin' v i : ℤ) : ℝ)) = (γ : SL(2, ℝ)).toLin' (fun i => (v i : ℝ)) := by
   ext i
-  simp [Matrix.SpecialLinearGroup.toLin'_apply, Matrix.toLin'_apply, Matrix.mulVec,
-    Fin.sum_univ_two]
+  simp [Matrix.SpecialLinearGroup.toLin'_apply, Matrix.toLin'_apply, Matrix.mulVec]
 
 lemma frameRealVector_pair (g : SL(2, ℝ)) (u v : ℤ) :
     (frameRealVector g ![(u : ℝ), (v : ℝ)] 0, frameRealVector g ![(u : ℝ), (v : ℝ)] 1) =
       modularVector g u v := by
   simp [frameRealVector, Matrix.SpecialLinearGroup.toLin'_symm_apply, Matrix.toLin'_apply,
-    Matrix.mulVec, Fin.sum_univ_two, modularVector, Matrix.vecHead, Matrix.vecTail]
+    Matrix.mulVec, modularVector, Matrix.vecHead, Matrix.vecTail]
 
 theorem modularVector_integral_change (γ : SL(2, ℤ)) (g : SL(2, ℝ)) (u v : ℤ) :
     modularVector ((γ : SL(2, ℝ)) * g) (γ.toLin' ![u, v] 0) (γ.toLin' ![u, v] 1) =

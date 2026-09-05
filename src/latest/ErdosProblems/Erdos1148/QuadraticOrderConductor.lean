@@ -35,7 +35,7 @@ def quadraticOrderConductor (d : ℤ) [Fact (¬IsSquare d)] :
     Ideal (𝓞 (QuadraticDiscrAlgebra d)) where
   carrier := {x | ∀ y : 𝓞 (QuadraticDiscrAlgebra d),
     (x : QuadraticDiscrAlgebra d) * (y : QuadraticDiscrAlgebra d) ∈ quadraticOrder d}
-  zero_mem' := by intro y; simpa using (quadraticOrder d).zero_mem
+  zero_mem' := by intro y; simp
   add_mem' hx hy z := by
     simpa only [map_add, add_mul] using (quadraticOrder d).add_mem (hx z) (hy z)
   smul_mem' r x hx y := by

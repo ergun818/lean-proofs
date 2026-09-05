@@ -20,8 +20,7 @@ lemma unitCircleToVerticalFrame_re_eq_zero (z : UpperHalfPlane)
   have hnorm : (z : ℂ).re ^ 2 + (z : ℂ).im ^ 2 = 1 := by
     simpa only [Complex.normSq_apply, pow_two] using hz
   simp only [Complex.div_re, Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im,
-    Complex.ofReal_re, Complex.ofReal_im, one_mul, zero_mul, mul_zero, sub_zero, add_zero,
-    zero_add]
+    Complex.ofReal_re, Complex.ofReal_im, one_mul, zero_mul, sub_zero, add_zero]
   have hnum : ((z : ℂ).re + -1) * ((1 / 2 : ℝ) * (z : ℂ).re + 1 / 2) +
       (z : ℂ).im * ((1 / 2 : ℝ) * (z : ℂ).im) = 0 := by nlinarith
   rw [← add_div, hnum, zero_div]

@@ -63,11 +63,12 @@ theorem mismatch_family_card_bound {α : Type*} [Fintype α] [DecidableEq α]
   congr 1
   ring
 
-theorem exists_small_mismatch_family_bound (α : Type*) [Fintype α] [DecidableEq α]
+theorem exists_small_mismatch_family_bound (α : Type*) [Finite α] [DecidableEq α]
     {ε : ℝ} (hε : 0 < ε) : ∃ τ : ℝ, 0 < τ ∧ ∀ (n : ℕ) (v : Fin n → α)
       (F : Finset (Fin n → α)),
       (∀ w ∈ F, (wordMismatchCount v w : ℝ) ≤ τ * n) →
       (F.card : ℝ) ≤ Real.exp (ε * n) := by
+  let := Fintype.ofFinite α
   let q : ℝ := Fintype.card α
   have hq : 0 ≤ q := Nat.cast_nonneg _
   let t := min (1 / 2 : ℝ) (ε / (4 * (q + 1)))

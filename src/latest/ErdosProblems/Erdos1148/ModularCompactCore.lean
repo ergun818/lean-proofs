@@ -18,7 +18,6 @@ lemma im_smul_I_eq_inv_modularVectorLengthSq (g : SL(2, ℝ)) :
   rw [modularVectorLengthSq_one_zero]
   simp only [MulAction.compHom_smul_def, UpperHalfPlane.im_smul_eq_div_normSq,
     Matrix.SpecialLinearGroup.det_mapGL, Units.val_one, abs_one, UpperHalfPlane.I_im, mul_one]
-  congr 1
   simp [Complex.normSq, UpperHalfPlane.denom, pow_two, add_comm]
 
 def modularCompactCore (H : ℝ) : Set ModularOrbitSpace :=

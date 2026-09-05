@@ -23,7 +23,8 @@ theorem refined_global_mass_scale_bound {D α ε σ β : ℝ}
       Real.exp 1 * D ^ (-1 / 2 + σ) := by
     calc
       _ ≤ D ^ σ * (Real.exp 1 * D ^ (-(1 / 2 : ℝ))) :=
-        mul_le_mul_of_nonneg_left (exp_neg_packetObservationTime_le hD) (Real.rpow_nonneg hDpos.le σ)
+        mul_le_mul_of_nonneg_left (exp_neg_packetObservationTime_le hD)
+          (Real.rpow_nonneg hDpos.le σ)
       _ = Real.exp 1 * (D ^ σ * D ^ (-(1 / 2 : ℝ))) := by ring
       _ = Real.exp 1 * D ^ (σ + -(1 / 2 : ℝ)) := by rw [← Real.rpow_add hDpos]
       _ = _ := by congr 1; congr 1; ring
@@ -32,7 +33,8 @@ theorem refined_global_mass_scale_bound {D α ε σ β : ℝ}
     calc
       _ ≤ D ^ (-1 / 2 + σ) + Real.exp 1 * D ^ (-1 / 2 + σ) := add_le_add le_rfl hterm
       _ = _ := by ring
-  have hfirst := mul_le_mul (power_height_eleven_bound hD hβ) hexp (Real.exp_pos _).le (by positivity)
+  have hfirst :=
+    mul_le_mul (power_height_eleven_bound hD hβ) hexp (Real.exp_pos _).le (by positivity)
   calc
     _ ≤ (2 ^ 11 * D ^ (11 * β) * D ^ ((1 + ε - α / 2) / 2)) *
         ((1 + Real.exp 1) * D ^ (-1 / 2 + σ)) :=

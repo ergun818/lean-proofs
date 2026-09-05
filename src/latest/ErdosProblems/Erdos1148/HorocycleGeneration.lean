@@ -17,7 +17,8 @@ lemma diagonal_frame_horocycle_product (h : ℝ) (hh : h ≠ 0) :
   ext i j
   fin_cases i <;> fin_cases j <;>
     simp [upperTriangularFrame, stableHorocycle, unstableHorocycle,
-      Matrix.mul_apply, Fin.sum_univ_two] <;> field_simp [hh] <;> ring_nf <;> simp
+      Matrix.mul_apply, Fin.sum_univ_two] <;> field_simp [hh] <;> ring_nf
+  simp
 
 lemma upperTriangularFrame_diagonal_stable (x h : ℝ) (hh : h ≠ 0) :
     upperTriangularFrame x h hh = upperTriangularFrame 0 h hh * stableHorocycle (x / h ^ 2) := by
@@ -26,8 +27,8 @@ lemma upperTriangularFrame_diagonal_stable (x h : ℝ) (hh : h ≠ 0) :
     (upperTriangularFrame 0 h hh).1 * (stableHorocycle (x / h ^ 2)).1
   ext i j
   fin_cases i <;> fin_cases j <;>
-    simp [upperTriangularFrame, stableHorocycle, Matrix.mul_apply, Fin.sum_univ_two] <;>
-    field_simp [hh] <;> ring
+    simp [upperTriangularFrame, stableHorocycle, Matrix.mul_apply, Fin.sum_univ_two]
+  field_simp [hh]
 
 theorem specialLinear_fixed_of_horocycles {X : Type*} [MulAction SL(2, ℝ) X] {x : X}
     (hs : ∀ r : ℝ, stableHorocycle r • x = x)
@@ -46,7 +47,6 @@ theorem specialLinear_fixed_of_horocycles {X : Type*} [MulAction SL(2, ℝ) X] {
       rw [Matrix.det_fin_two, hg00, h] at hdet
       norm_num at hdet
     have hentry : (stableHorocycle 1 * g) 0 0 ≠ 0 := by
-      change ((stableHorocycle 1 * g : SL(2, ℝ)) : Matrix (Fin 2) (Fin 2) ℝ) 0 0 ≠ 0
       rw [Matrix.SpecialLinearGroup.coe_mul]
       simpa [stableHorocycle, Matrix.mul_apply, Fin.sum_univ_two, hg00] using hg10
     have hfixed := hregular (stableHorocycle 1 * g) hentry

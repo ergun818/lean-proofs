@@ -14,7 +14,7 @@ theorem exists_compact_bounded_lifts {K : Set ModularOrbitSpace} (hK : IsCompact
   have hopen (A : ℝ) : IsOpen (U A) := by
     apply (MulAction.isOpenQuotientMap_quotientMk (Γ := SL(2, ℤ))
       (T := SL(2, ℝ))).isOpenMap
-    simp only [Set.setOf_forall]
+    simp only [Set.ofPred_forall]
     apply isOpen_iInter_of_finite
     intro i
     apply isOpen_iInter_of_finite

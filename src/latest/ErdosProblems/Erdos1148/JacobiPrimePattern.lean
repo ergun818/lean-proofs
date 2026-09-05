@@ -24,13 +24,13 @@ lemma quadraticPatternModulus_coprime {p l : ℕ} (hp : p.Prime) (hl : l.Prime) 
   by_cases hp2 : p = 2
   · subst p
     have hl2 : l ≠ 2 := Ne.symm hpl
-    simp only [if_pos rfl, if_neg hl2]
+    simp only [if_neg hl2]
     have h := ((Nat.coprime_primes Nat.prime_two hl).mpr hpl).pow_left 3
     norm_num only [show (2 : ℕ) ^ 3 = 8 by norm_num] at h
     exact h
   · by_cases hl2 : l = 2
     · subst l
-      simp only [if_neg hp2, if_pos rfl]
+      simp only [if_neg hp2]
       have h := ((Nat.coprime_primes hp Nat.prime_two).mpr hp2).pow_right 3
       norm_num only [show (2 : ℕ) ^ 3 = 8 by norm_num] at h
       exact h
@@ -92,8 +92,7 @@ theorem exists_jacobi_prime_pattern (S : Finset ℕ) (hS : ∀ p ∈ S, p.Prime)
     rw [jacobiSym_nat_modEq_left h]
     by_cases hlp : l = p
     · subst l
-      simp only [if_pos rfl]
-      exact hk hl2
+      simpa using hk hl2
     · simp only [if_neg hlp, Nat.cast_one, jacobiSym.one_left]
 
 end Erdos1148.DukeArithmetic

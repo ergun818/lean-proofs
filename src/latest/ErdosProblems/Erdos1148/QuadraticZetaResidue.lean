@@ -21,7 +21,7 @@ theorem quadraticField_torsionOrder {d : ℤ} [Fact (¬IsSquare d)] (hd : 0 < d)
           Set (𝓞 (QuadraticDiscrAlgebra d))ˣ).ncard := Nat.card_coe_set_eq _
       _ ≤ ({1, -1} : Set (𝓞 (QuadraticDiscrAlgebra d))ˣ).ncard :=
         Set.ncard_le_ncard hsub (by simp)
-      _ ≤ 2 := by simpa using Set.ncard_insert_le (1 : (𝓞 (QuadraticDiscrAlgebra d))ˣ) {-1}
+      _ ≤ 2 := by simp
   have hpos := NumberField.Units.torsionOrder_pos (QuadraticDiscrAlgebra d)
   obtain ⟨k, hk⟩ := NumberField.Units.even_torsionOrder (QuadraticDiscrAlgebra d)
   omega

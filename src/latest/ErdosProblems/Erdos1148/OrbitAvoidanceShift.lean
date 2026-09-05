@@ -22,7 +22,7 @@ theorem ae_infiniteOrbitAvoidance_of_null {X : Type*} [MeasurableSpace X]
     ∀ᵐ x ∂μ, x ∈ infiniteOrbitAvoidance f U := by
   have hae : ∀ᵐ x ∂μ, x ∉ U := by
     apply ae_iff.mpr
-    simpa only [not_not, Set.setOf_mem_eq] using hU
+    simpa only [not_not, Set.ofPred_mem_eq] using hU
   exact ae_all_iff.mpr (fun n => (hf.iterate n).quasiMeasurePreserving.ae hae)
 
 theorem ae_finiteOrbitAvoidance_of_null {X : Type*} [MeasurableSpace X]

@@ -27,7 +27,7 @@ theorem exists_bounded_frame_lift_grid {A η : ℝ} (hA : 0 ≤ A) (hη : 0 < η
     have heq : (A - -A) / δ = (4 / η) * (A * (A + 1)) := by
       dsimp only [δ]
       field_simp
-      <;> ring
+      ring
     rw [heq] at hm
     have hpoly : A * (A + 1) ≤ (A + 1) ^ 2 := by nlinarith
     have hunit : (1 : ℝ) ≤ (A + 1) ^ 2 := by nlinarith [sq_nonneg A]

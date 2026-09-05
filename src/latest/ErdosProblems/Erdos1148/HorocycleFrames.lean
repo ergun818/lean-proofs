@@ -25,7 +25,8 @@ lemma frameRealVector_unstableHorocycle (r : ℝ) (v : Fin 2 → ℝ) :
   rw [Matrix.SpecialLinearGroup.coe_inv]
   ext i
   fin_cases i <;> simp [unstableHorocycle, Matrix.adjugate_fin_two, Matrix.mulVec,
-    Matrix.vecHead, Matrix.vecTail, sub_eq_add_neg, add_comm] <;> ring
+    Matrix.vecHead, Matrix.vecTail, sub_eq_add_neg, add_comm]
+  ring
 
 lemma frameRealVector_upperTriangularFrame_second (x h : ℝ) (hh : h ≠ 0) (v : Fin 2 → ℝ) :
     frameRealVector (upperTriangularFrame x h hh) v 1 = h * v 1 := by
@@ -47,7 +48,8 @@ lemma frameRealVector_upperTriangularFrame_first (x h : ℝ) (hh : h ≠ 0) (v :
 theorem modularVector_horocycle_upper_first (g : SL(2, ℝ)) (r x h : ℝ) (hh : h ≠ 0)
     (u v : ℤ) :
     (modularVector (g * unstableHorocycle r * upperTriangularFrame x h hh) u v).1 =
-      ((modularVector g u v).1 - x * ((modularVector g u v).2 - r * (modularVector g u v).1)) / h := by
+      ((modularVector g u v).1 -
+        x * ((modularVector g u v).2 - r * (modularVector g u v).1)) / h := by
   rw [← frameRealVector_pair, frameRealVector_comp, frameRealVector_upperTriangularFrame_first,
     frameRealVector_comp, frameRealVector_unstableHorocycle]
   have hp := frameRealVector_pair g u v

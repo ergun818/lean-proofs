@@ -25,7 +25,8 @@ theorem good_avoidance_blocks_lift_cover {η a : ℝ}
   let F : P → Set SL(2, ℝ) := fun p => E ∩ modularMk ⁻¹' modularAvoidanceBlockPattern K U n k p.val
   have hF (p : P) : LiftCoverBound η ((k : ℝ) * n) (F p) ((Real.exp n / 4) ^ k) := by
     have hp := (mem_halfBadPatterns k p.val).mp p.property
-    exact fixed_avoidance_pattern_lift_cover hη hηsmall ha haone haC n K U hrefine E hE k p hp.1 hp.2
+    exact fixed_avoidance_pattern_lift_cover
+      hη hηsmall ha haone haC n K U hrefine E hE k p hp.1 hp.2
   have hUnion := LiftCoverBound.iUnion F hF
   have hcard : (Fintype.card P : ℝ) ≤ (2 : ℝ) ^ k := by
     have hreal : ((halfBadPatterns k).card : ℝ) ≤ (2 : ℝ) ^ k := by

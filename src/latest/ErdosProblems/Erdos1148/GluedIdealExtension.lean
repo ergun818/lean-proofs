@@ -39,7 +39,8 @@ theorem orderClassExtension_conductorClassMap {d : ℤ} [Fact (¬IsSquare d)]
   change orderClassExtension ht (ClassGroup.mk (QuadraticDiscrAlgebra d)
     (conductorGluedIdealHom ht u)) = 1
   rw [orderClassExtension_mk]
-  have hu : Units.map (orderFractionalExtension ht).toMonoidHom (conductorGluedIdealHom ht u) = 1 := by
+  have hu :
+      Units.map (orderFractionalExtension ht).toMonoidHom (conductorGluedIdealHom ht u) = 1 := by
     apply Units.ext
     exact orderFractionalExtension_gluedIdeal ht u
   rw [hu, map_one]

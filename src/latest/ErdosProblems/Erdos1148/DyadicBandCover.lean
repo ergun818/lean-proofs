@@ -48,7 +48,8 @@ theorem exists_dyadicBand_cover {H δ : ℝ} (hH : 0 < H) (hδ : 0 < δ) (hδ1 :
     apply add_le_add _ le_rfl
     have hsum := mul_le_mul_of_nonneg_left (sum_inverse_dyadic_height_sq_le hH J)
       (by positivity : 0 ≤ 1 / δ ^ 3)
-    convert hsum using 1 <;> ring
+    convert hsum using 1
+    ring
   · intro i
     exact hSj _ _
   · intro x hx

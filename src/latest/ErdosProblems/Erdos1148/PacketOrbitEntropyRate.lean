@@ -10,7 +10,7 @@ open MeasureTheory Filter
 
 theorem exists_packet_orbit_entropy_linear_bound {σ : ℝ} (hσpos : 0 < σ) (hσ : σ ≤ 1 / 2) :
     ∃ C : ℝ, 0 < C ∧ ∀ (d : ℕ) (hd : 0 < (d : ℤ)) (hns : ¬IsSquare (d : ℤ))
-      (base : IntegralDiscrForm d) (P : FineModularPartition) (κ m₀ : ℝ),
+      (_base : IntegralDiscrForm d) (P : FineModularPartition) (κ m₀ : ℝ),
       0 < κ → 0 < m₀ → 0 ≤ 1 - 2 * σ - κ * Real.log exceptionalStepCoverCost →
       m₀ ≤ 1 - (1 + κ⁻¹) * (normalizedDiscriminantPacket hd hns).real (P.partition.atom none) →
       m₀ * (1 - 2 * σ - κ * Real.log exceptionalStepCoverCost) *

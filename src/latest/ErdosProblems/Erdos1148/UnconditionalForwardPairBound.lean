@@ -31,7 +31,8 @@ theorem exists_unconditional_normalizedPacket_forwardPairs_bound {ε : ℝ} (hε
   have hexp : Real.exp (-(T / 2)) ^ 2 = Real.exp (-T) := by
     rw [← Real.exp_nat_mul]
     congr 1
-    norm_num <;> ring
+    norm_num
+    ring
   simpa only [mul_pow, hexp] using h
 
 end Erdos1148.DukeArithmetic

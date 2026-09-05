@@ -17,7 +17,7 @@ theorem invariant_upper_rectangle_dilation (ν : Measure UpperHalfPlane)
       upperHalfOpenRectangle (h ^ 2 * a) (h ^ 2 * b) (h ^ 2 * c) (h ^ 2 * d) =
       upperHalfOpenRectangle a b c d := by
     ext z
-    simp only [Set.mem_preimage, upperHalfOpenRectangle, Set.mem_setOf_eq,
+    simp only [Set.mem_preimage, upperHalfOpenRectangle, Set.mem_ofPred_eq,
       Set.mem_Ico, Set.mem_Icc, diagonal_frame_smul_re, diagonal_frame_smul_im,
       mul_le_mul_iff_right₀ hp, mul_lt_mul_iff_right₀ hp]
   exact (measure_preimage_smul ν (upperTriangularFrame 0 h hh.ne') _).symm.trans (congrArg ν heq)

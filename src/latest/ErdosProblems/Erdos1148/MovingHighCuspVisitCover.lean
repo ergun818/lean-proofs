@@ -22,7 +22,8 @@ theorem exists_moving_high_cusp_visit_lift_cover {η : ℝ} (hηpos : 0 < η) (h
       LiftCoverBound η ((n : ℝ) + 4 * Real.log H)
         (highCuspVisitsWithInitialHeight H Y n A E)
         ((P.card : ℝ) * (C * (Y * H + 1) ^ 3 *
-          Real.exp (3 * Real.log K + 4 * Real.log H + 1 / 2) * Real.exp ((1 + ε) * n - A / 2))) := by
+          Real.exp (3 * Real.log K + 4 * Real.log H + 1 / 2) *
+            Real.exp ((1 + ε) * n - A / 2))) := by
   classical
   obtain ⟨K, C, hK, hC, hcover⟩ := exists_small_rate_moving_pattern_cover hηpos hη
   refine ⟨K, C, hK, hC, ?_⟩

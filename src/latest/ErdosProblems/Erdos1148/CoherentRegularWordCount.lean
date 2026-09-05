@@ -10,7 +10,8 @@ open scoped MatrixGroups
 theorem regularOrbitWords_card_le_coherent {ι : Type*} [Fintype ι] [DecidableEq ι]
     (P : FiniteMeasurablePartition ModularOrbitSpace ι) (C : ι → Set ModularOrbitSpace)
     (hCsub : ∀ i, C i ⊆ P.atom i) {η S ε τ : ℝ} {n : ℕ}
-    (hstable : ∀ i, ∀ x ∈ C i, ∀ u : SL(2, ℝ), EntryCloseOne η u → modularRightTranslate u x ∈ P.atom i)
+    (hstable : ∀ i, ∀ x ∈ C i, ∀ u : SL(2, ℝ),
+      EntryCloseOne η u → modularRightTranslate u x ∈ P.atom i)
     (hwords : ∀ (v : Fin n → ι) (F : Finset (Fin n → ι)),
       (∀ w ∈ F, (wordMismatchCount v w : ℝ) ≤ τ * n) → (F.card : ℝ) ≤ Real.exp (ε * n))
     {E : Set SL(2, ℝ)} (hE : LiftForwardClose η S E) (hnS : (n : ℝ) ≤ S) :
@@ -32,7 +33,8 @@ theorem regularOrbitWords_card_le_coherent {ι : Type*} [Fintype ι] [DecidableE
     simp only [hzero, Finset.card_empty, Nat.cast_zero]
     exact (Real.exp_pos _).le
 
-theorem regularOrbitWords_iUnion {X ι κ : Type*} [MeasurableSpace X] [Fintype ι] [DecidableEq ι] [Fintype κ]
+theorem regularOrbitWords_iUnion {X ι κ : Type*} [MeasurableSpace X]
+    [Fintype ι] [DecidableEq ι] [Fintype κ]
     (P : FiniteMeasurablePartition X ι) (f : X → X) (Q : Set X) (τ : ℝ) (n : ℕ) (A : κ → Set X) :
     regularOrbitWords P f Q τ n (⋃ j, A j) =
       Finset.univ.biUnion (fun j : κ => regularOrbitWords P f Q τ n (A j)) := by
@@ -52,7 +54,8 @@ theorem regularOrbitWords_iUnion {X ι κ : Type*} [MeasurableSpace X] [Fintype 
 theorem regularOrbitWords_card_le_coherent_cover {ι : Type*} [Fintype ι] [DecidableEq ι]
     (P : FiniteMeasurablePartition ModularOrbitSpace ι) (C : ι → Set ModularOrbitSpace)
     (hCsub : ∀ i, C i ⊆ P.atom i) {η S ε τ : ℝ} {n N : ℕ}
-    (hstable : ∀ i, ∀ x ∈ C i, ∀ u : SL(2, ℝ), EntryCloseOne η u → modularRightTranslate u x ∈ P.atom i)
+    (hstable : ∀ i, ∀ x ∈ C i, ∀ u : SL(2, ℝ),
+      EntryCloseOne η u → modularRightTranslate u x ∈ P.atom i)
     (hwords : ∀ (v : Fin n → ι) (F : Finset (Fin n → ι)),
       (∀ w ∈ F, (wordMismatchCount v w : ℝ) ≤ τ * n) → (F.card : ℝ) ≤ Real.exp (ε * n))
     (B : Fin N → Set SL(2, ℝ)) (hB : ∀ i, LiftForwardClose η S (B i)) (hnS : (n : ℝ) ≤ S) :
@@ -63,7 +66,8 @@ theorem regularOrbitWords_card_le_coherent_cover {ι : Type*} [Fintype ι] [Deci
   calc
     ((Finset.univ.biUnion (fun j : Fin N => regularOrbitWords P modularTimeOne (⋃ i, C i)ᶜ τ n
         (modularMk '' B j))).card : ℝ) ≤
-        ∑ j : Fin N, ((regularOrbitWords P modularTimeOne (⋃ i, C i)ᶜ τ n (modularMk '' B j)).card : ℝ) := by
+        ∑ j : Fin N,
+          ((regularOrbitWords P modularTimeOne (⋃ i, C i)ᶜ τ n (modularMk '' B j)).card : ℝ) := by
       exact_mod_cast Finset.card_biUnion_le
     _ ≤ ∑ _j : Fin N, Real.exp (ε * n) := Finset.sum_le_sum (fun j _ =>
       regularOrbitWords_card_le_coherent P C hCsub hstable hwords (hB j) hnS)

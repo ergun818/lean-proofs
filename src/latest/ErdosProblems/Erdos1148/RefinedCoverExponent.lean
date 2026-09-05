@@ -4,7 +4,7 @@ import ErdosProblems.Erdos1148.CuspRunGeometry
 
 namespace Erdos1148.DukeArithmetic
 
-theorem fixed_pattern_cost_exp_bound {K H : ℝ} (hK : 1 ≤ K) (hH : 1 < H)
+theorem fixed_pattern_cost_exp_bound {K H : ℝ} (hK : 1 ≤ K) (_hH : 1 < H)
     (n v r : ℕ) (hr : (r : ℝ) ≤ (n : ℝ) / (4 * Real.log H) + 1) :
     K ^ (2 * r + 1) * Real.exp ((n : ℝ) + 4 * Real.log H - ((v : ℝ) - r) / 2) ≤
       Real.exp (3 * Real.log K + 4 * Real.log H + 1 / 2) *

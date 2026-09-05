@@ -21,7 +21,8 @@ theorem upperTriangularFrame_relative (x y h k : ℝ) (hh : h ≠ 0) (hk : k ≠
   ext i j
   fin_cases i <;> fin_cases j <;>
     simp [upperTriangularFrame, Matrix.adjugate_fin_two, Matrix.mul_apply, Fin.sum_univ_two] <;>
-    field_simp <;> ring
+    field_simp
+  ring
 
 theorem upperTriangularFrame_relative_close {x y h k H δ : ℝ}
     (hH : 0 < H) (hh : H ≤ h) (hk : H ≤ k) (hδ : 0 ≤ δ)

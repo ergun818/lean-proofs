@@ -10,6 +10,7 @@ open NumberField Polynomial RingOfIntegers
 variable {K : Type*} [Field K] [NumberField K]
 variable {p : ℕ} [Fact p.Prime] {θ : 𝓞 K}
 
+omit [NumberField K] in
 lemma linear_factor_mem_monicFactorsMod {r : ZMod p}
     (hr : ((minpoly ℤ θ).map (Int.castRingHom (ZMod p))).eval r = 0) :
     X - C r ∈ monicFactorsMod θ p := by

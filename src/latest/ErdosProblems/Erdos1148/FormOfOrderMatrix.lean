@@ -57,6 +57,7 @@ theorem formRootMatrix_formOfOrderMatrix {d : ℤ} (hns : ¬IsSquare d)
   have htr := trace_of_orderRootMatrix_square hns hM
   ext i j
   fin_cases i <;> fin_cases j <;>
-    simp [formRootMatrix, pellFormMatrix, formOfOrderMatrix, orderRootMatrix_apply] <;> omega
+    simp [formRootMatrix, pellFormMatrix, formOfOrderMatrix, orderRootMatrix_apply]
+  omega
 
 end Erdos1148.DukeArithmetic

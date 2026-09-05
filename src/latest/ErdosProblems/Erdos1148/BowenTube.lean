@@ -43,7 +43,7 @@ theorem entryBowenTube_iff_flow_closeness {η N : ℝ} (hN : 0 ≤ N) (g : SL(2,
     · calc
         _ ≤ (η * Real.exp (-N)) * Real.exp (-t) :=
           mul_le_mul_of_nonneg_right hb (Real.exp_pos _).le
-        _ = η * Real.exp (-N - t) := by rw [mul_assoc, ← Real.exp_add]; congr 2 <;> ring
+        _ = η * Real.exp (-N - t) := by rw [mul_assoc, ← Real.exp_add]; congr 2
         _ ≤ η * 1 := mul_le_mul_of_nonneg_left
           (Real.exp_le_one_iff.mpr (by linarith [ht.1])) hη
         _ = η := mul_one _

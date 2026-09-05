@@ -52,7 +52,7 @@ lemma integral_frame_smul_I (γ : SL(2, ℤ)) (g : SL(2, ℝ)) :
 
 instance integralRealHaarInvariant : SMulInvariantMeasure SL(2, ℤ) SL(2, ℝ)
     (Measure.haar (G := SL(2, ℝ))) where
-  measure_preimage_smul γ s hs := measure_preimage_mul _ (γ : SL(2, ℝ)) s
+  measure_preimage_smul γ s _hs := measure_preimage_mul _ (γ : SL(2, ℝ)) s
 
 theorem modularHaarDomain_translate_unique {g : SL(2, ℝ)} {γ : SL(2, ℤ)}
     (hg : g ∈ modularHaarDomain) (hγg : γ • g ∈ modularHaarDomain) : γ = 1 := by

@@ -11,7 +11,7 @@ open scoped MatrixGroups
 noncomputable def rotationFrame (θ : ℝ) : SL(2, ℝ) :=
   ⟨!![Real.cos θ, -Real.sin θ; Real.sin θ, Real.cos θ], by
     simp only [Matrix.det_fin_two, Matrix.of_apply, Matrix.cons_val_zero,
-      Matrix.cons_val_one, mul_neg, sub_neg_eq_add]
+      Matrix.cons_val_one]
     nlinarith [Real.sin_sq_add_cos_sq θ]⟩
 
 lemma rotationFrame_add (θ φ : ℝ) : rotationFrame (θ + φ) = rotationFrame θ * rotationFrame φ := by

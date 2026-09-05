@@ -29,7 +29,7 @@ theorem exists_small_gauss_lift_cover {η : ℝ} (hη : 0 < η) (g : SL(2, ℝ))
     dsimp only [δ]
     rw [Real.exp_neg]
     field_simp [hη.ne', Real.exp_ne_zero]
-    <;> ring
+    ring
   have hNr' : (Nr : ℝ) ≤ 33 * Real.exp T := by
     rw [hratio] at hNr
     linarith
@@ -37,13 +37,13 @@ theorem exists_small_gauss_lift_cover {η : ℝ} (hη : 0 < η) (g : SL(2, ℝ))
     have heq : (2 * η - -(2 * η)) / δ + 1 = 33 := by
       dsimp only [δ]
       field_simp [hη.ne']
-      <;> ring
+      ring
     exact hNx.trans_eq heq
   have hNh' : (Nh : ℝ) ≤ 33 := by
     have heq : (1 + η - (1 - η)) / δ + 1 = 17 := by
       dsimp only [δ]
       field_simp [hη.ne']
-      <;> ring
+      ring
     linarith [hNh.trans_eq heq]
   obtain ⟨N, B, hN, hBcompact, hcover, hclose⟩ :=
     exists_gauss_lift_cover_of_parameter_grids hδ.le hT g (smallGaussParameters η) a b c

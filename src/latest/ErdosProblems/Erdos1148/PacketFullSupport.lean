@@ -44,7 +44,8 @@ theorem normalizedPacket_exists_full_support_limit {d : ℕ → ℕ}
         atTop (𝓝 ν) ∧
       ∀ U : Set ModularOrbitSpace, IsOpen U → U.Nonempty →
         0 < (ν : Measure ModularOrbitSpace) U := by
-  obtain ⟨ν, φ, hφ, hweak⟩ := normalizedPacket_exists_weakly_convergent_subsequence hd hns base hdisc
+  obtain ⟨ν, φ, hφ, hweak⟩ :=
+    normalizedPacket_exists_weakly_convergent_subsequence hd hns base hdisc
   refine ⟨ν, φ, hφ, hweak, ?_⟩
   intro U hU hne
   exact normalizedPacket_weak_limit_open_pos (fun i => hd (φ i)) (fun i => hns (φ i))

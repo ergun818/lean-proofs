@@ -18,7 +18,7 @@ lemma returning_grid_count_bound {c δ S : ℝ} (hc : 0 < c) (hδ : 0 < δ) (hS 
       (32 / (Real.sqrt c * δ)) * Real.exp (S / 2) := by
     rw [hexp]
     field_simp
-    <;> ring
+    ring
   rw [heq]
   have h1 : 1 ≤ Real.exp (S / 2) := Real.one_le_exp_iff.mpr (by linarith)
   nlinarith

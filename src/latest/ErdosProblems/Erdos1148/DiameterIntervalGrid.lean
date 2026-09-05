@@ -14,7 +14,8 @@ theorem exists_diameter_interval_grid {E : Set ℝ} {D w : ℝ} (hD : 0 ≤ D) (
     obtain ⟨N, c, hN, _, hcover⟩ := exists_real_interval_grid
       (show a - D ≤ a + D by linarith) hw
     refine ⟨N, c, ?_, ?_⟩
-    · convert hN using 1 <;> ring
+    · convert hN using 1
+      ring
     · intro x hx
       have h := abs_le.mp (hdiam x hx a ha)
       exact hcover x ⟨by linarith [h.1], by linarith [h.2]⟩

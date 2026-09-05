@@ -20,9 +20,11 @@ lemma exists_transform_splitForm {t : ℝ × ℝ × ℝ} {ρ : ℝ}
   · have hb : b = ρ ∨ b = -ρ := sq_eq_sq_iff_eq_or_eq_neg.mp (by simpa [ha] using ht)
     rcases hb with hb | hb
     · refine ⟨!![1, c / ρ; 0, 1], by simp [Matrix.det_fin_two], ?_⟩
-      ext <;> dsimp [transform, splitForm] <;> simp [ha, hb] <;> field_simp
+      ext <;> dsimp [transform, splitForm] <;> simp [ha, hb]
+      field_simp
     · refine ⟨!![0, -1; 1, -c / ρ], by simp [Matrix.det_fin_two], ?_⟩
-      ext <;> dsimp [transform, splitForm] <;> simp [ha, hb] <;> field_simp
+      ext <;> dsimp [transform, splitForm] <;> simp [ha, hb]
+      field_simp
   · refine ⟨!![a / ρ, (b - ρ) / (2 * ρ); 1, (b + ρ) / (2 * a)], ?_, ?_⟩
     · rw [Matrix.det_fin_two]
       dsimp

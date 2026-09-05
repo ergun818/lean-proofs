@@ -14,7 +14,8 @@ lemma modularRightTranslate_diagonal_zero (x : ModularOrbitSpace) :
     change modularMk (g * diagonalFlow 0) = modularMk g
     rw [diagonalFlow_zero, mul_one]
 
-noncomputable def modularDiagonalFlowHomeomorph (t : ℝ) : ModularOrbitSpace ≃ₜ ModularOrbitSpace where
+noncomputable def modularDiagonalFlowHomeomorph (t : ℝ) :
+    ModularOrbitSpace ≃ₜ ModularOrbitSpace where
   toFun := modularRightTranslate (diagonalFlow t)
   invFun := modularRightTranslate (diagonalFlow (-t))
   left_inv := by

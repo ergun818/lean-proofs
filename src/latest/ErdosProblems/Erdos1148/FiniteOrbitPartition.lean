@@ -26,12 +26,12 @@ lemma orbitAtom_eq_iInter (P : FiniteMeasurablePartition X ι) (f : X → X)
     (n : ℕ) (w : Fin n → ι) :
     P.orbitAtom f n w = ⋂ j : Fin n, f^[j.val] ⁻¹' P.atom (w j) := by
   ext x
-  simp only [orbitAtom, Set.mem_setOf_eq, Set.mem_iInter, Set.mem_preimage]
+  simp only [orbitAtom, Set.mem_ofPred_eq, Set.mem_iInter, Set.mem_preimage]
 
 lemma measurableSet_orbitAtom (P : FiniteMeasurablePartition X ι)
     {f : X → X} (hf : Measurable f) (n : ℕ) (w : Fin n → ι) :
     MeasurableSet (P.orbitAtom f n w) := by
-  simpa only [orbitAtom, Set.setOf_forall, Set.preimage] using
+  simpa only [orbitAtom, Set.ofPred_forall, Set.preimage] using
     MeasurableSet.iInter (fun j => (P.measurable_atom (w j)).preimage (hf.iterate j.val))
 
 lemma pairwise_disjoint_orbitAtom (P : FiniteMeasurablePartition X ι)

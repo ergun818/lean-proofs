@@ -18,7 +18,8 @@ theorem packet_critical_pair_scale {D σ : ℝ} (hD : 1 ≤ D) (hσ : σ ≤ 1 /
       Real.exp 1 * D ^ (-1 / 2 + σ) := by
     calc
       _ ≤ D ^ σ * (Real.exp 1 * D ^ (-(1 / 2 : ℝ))) :=
-        mul_le_mul_of_nonneg_left (exp_neg_packetObservationTime_le hD) (Real.rpow_nonneg hDpos.le σ)
+        mul_le_mul_of_nonneg_left (exp_neg_packetObservationTime_le hD)
+          (Real.rpow_nonneg hDpos.le σ)
       _ = Real.exp 1 * (D ^ σ * D ^ (-(1 / 2 : ℝ))) := by ring
       _ = Real.exp 1 * D ^ (σ + -(1 / 2 : ℝ)) := by rw [← Real.rpow_add hDpos]
       _ = _ := by congr 1; congr 1; ring

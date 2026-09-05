@@ -15,7 +15,8 @@ noncomputable def upperHalfPlaneHaarImage : Measure UpperHalfPlane :=
 lemma measurable_smul_I : Measurable (fun g : SL(2, ℝ) => g • UpperHalfPlane.I) :=
   (continuous_id.smul continuous_const).measurable
 
-instance upperHalfPlaneHaarImage_finiteOnCompacts : IsFiniteMeasureOnCompacts upperHalfPlaneHaarImage where
+instance upperHalfPlaneHaarImage_finiteOnCompacts :
+    IsFiniteMeasureOnCompacts upperHalfPlaneHaarImage where
   lt_top_of_isCompact K hK := by
     rw [upperHalfPlaneHaarImage, Measure.map_apply measurable_smul_I hK.measurableSet]
     exact (UpperHalfPlane.isProperMap_smul_I.isCompact_preimage hK).measure_lt_top

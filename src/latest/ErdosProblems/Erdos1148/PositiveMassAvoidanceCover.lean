@@ -8,7 +8,8 @@ namespace Erdos1148.DukeArithmetic
 open MeasureTheory Measure
 open scoped MatrixGroups ENNReal
 
-theorem exists_positive_mass_avoidance_cover (μ : Measure ModularOrbitSpace) [IsProbabilityMeasure μ]
+theorem exists_positive_mass_avoidance_cover (μ : Measure ModularOrbitSpace)
+    [IsProbabilityMeasure μ]
     (hf : MeasurePreserving modularTimeOne μ μ) {U : Set ModularOrbitSpace}
     (hU : IsOpen U) (hne : U.Nonempty) (hnull : μ U = 0) :
     ∃ η : ℝ, 0 < η ∧ η ≤ 1 / 192 ∧ ∃ n : ℕ, 0 < n ∧ ∃ M : ℝ, 0 < M ∧

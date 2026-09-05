@@ -14,7 +14,7 @@ theorem normalizedPacket_eventually_open_pos {U : Set ModularOrbitSpace}
       (_base : IntegralDiscrForm (d : ℤ)), 0 < normalizedDiscriminantPacket hd hns U := by
   classical
   by_contra hnot
-  push_neg at hnot
+  push Not at hnot
   choose d hlarge hd hns base hzero using hnot
   have hdisc : Tendsto d atTop atTop := tendsto_atTop_mono hlarge tendsto_id
   obtain ⟨ν, φ, _, hweak, hsupport⟩ := normalizedPacket_exists_full_support_limit hd hns base hdisc

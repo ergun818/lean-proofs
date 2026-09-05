@@ -46,7 +46,8 @@ theorem exceptionalVisitCount_exceedance_mass_le (P : FineModularPartition)
     (μ : Measure ModularOrbitSpace) [IsFiniteMeasure μ]
     (hinv : ∀ t : ℝ, Measure.map (modularRightTranslate (diagonalFlow t)) μ = μ)
     {κ : ℝ} (hκ : 0 < κ) (n : ℕ) :
-    μ.real {x | κ * (n + 1) ≤ exceptionalVisitCount P n x} ≤ μ.real (P.partition.atom none) / κ := by
+    μ.real {x | κ * (n + 1) ≤ exceptionalVisitCount P n x} ≤
+      μ.real (P.partition.atom none) / κ := by
   have hmarkov := mul_meas_ge_le_integral_of_nonneg
     (Filter.Eventually.of_forall (exceptionalVisitCount_nonneg P n))
     (integrable_exceptionalVisitCount P μ n) (κ * (n + 1))
