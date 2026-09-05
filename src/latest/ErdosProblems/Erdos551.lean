@@ -236,7 +236,8 @@ theorem exists_selected_handle_of_fullCore_crossEdge
       refine ⟨x, ha₁, y, hb₂, p, ?_, by simp [p], by simp [p], ?_⟩
       · simp [p, SimpleGraph.Walk.cons_isPath_iff, hxyne]
       · intro z hz
-        simp only [Finset.union_assoc, Finset.mem_union] at hz
+        simp only [p, SimpleGraph.Walk.support_cons, SimpleGraph.Walk.support_nil,
+          List.mem_cons, List.not_mem_nil, or_false] at hz
         rcases hz with rfl | rfl
         · exact Finset.mem_union_left _ hx
         · exact Finset.mem_union_right _ hy
@@ -247,7 +248,8 @@ theorem exists_selected_handle_of_fullCore_crossEdge
       · simp [p, SimpleGraph.Walk.cons_isPath_iff, hxyne, hxb,
           hby.ne.symm]
       · intro z hz
-        simp only [Finset.union_assoc, Finset.mem_union] at hz
+        simp only [p, SimpleGraph.Walk.support_cons, SimpleGraph.Walk.support_nil,
+          List.mem_cons, List.not_mem_nil, or_false] at hz
         rcases hz with rfl | rfl | rfl
         · exact Finset.mem_union_left _ hx
         · exact Finset.mem_union_right _ hy
@@ -259,7 +261,8 @@ theorem exists_selected_handle_of_fullCore_crossEdge
       refine ⟨a, ha₁, y, hb₂, p, ?_, by simp [p], by simp [p], ?_⟩
       · simp [p, SimpleGraph.Walk.cons_isPath_iff, hax.ne, hay, hxyne]
       · intro z hz
-        simp only [Finset.union_assoc, Finset.mem_union] at hz
+        simp only [p, SimpleGraph.Walk.support_cons, SimpleGraph.Walk.support_nil,
+          List.mem_cons, List.not_mem_nil, or_false] at hz
         rcases hz with rfl | rfl | rfl
         · exact Finset.mem_union_left _ (Finset.mem_union_left _ ha₁)
         · exact Finset.mem_union_left _ hx
@@ -271,7 +274,8 @@ theorem exists_selected_handle_of_fullCore_crossEdge
       · simp [p, SimpleGraph.Walk.cons_isPath_iff, hax.ne, hay, hab', hxyne, hxb,
           hby.ne.symm]
       · intro z hz
-        simp only [Finset.union_assoc, Finset.mem_union] at hz
+        simp only [p, SimpleGraph.Walk.support_cons, SimpleGraph.Walk.support_nil,
+          List.mem_cons, List.not_mem_nil, or_false] at hz
         rcases hz with rfl | rfl | rfl | rfl
         · exact Finset.mem_union_left _ (Finset.mem_union_left _ ha₁)
         · exact Finset.mem_union_left _ hx
@@ -311,7 +315,8 @@ theorem exists_selected_handle_of_hubAnchors
       refine ⟨p, ?_, by simp [p], by simp [p], ?_⟩
       · simp [p, SimpleGraph.Walk.cons_isPath_iff, hxyne]
       · intro z hz
-        simp only [or_self, or_self_left] at hz
+        simp only [p, SimpleGraph.Walk.support_cons, SimpleGraph.Walk.support_nil,
+          List.mem_cons, List.not_mem_nil, or_false] at hz
         rcases hz with rfl | rfl <;> simp
     · let p : G.Walk x b := SimpleGraph.Walk.cons hxy
         (SimpleGraph.Walk.cons hby.symm SimpleGraph.Walk.nil)
@@ -319,7 +324,8 @@ theorem exists_selected_handle_of_hubAnchors
       · simp [p, SimpleGraph.Walk.cons_isPath_iff, hxyne, hxb,
           hby.ne.symm]
       · intro z hz
-        simp only [or_self_left] at hz
+        simp only [p, SimpleGraph.Walk.support_cons, SimpleGraph.Walk.support_nil,
+          List.mem_cons, List.not_mem_nil, or_false] at hz
         rcases hz with rfl | rfl | rfl <;> simp
   · rcases hb.2 with hbyEq | hby
     · subst b
@@ -328,7 +334,8 @@ theorem exists_selected_handle_of_hubAnchors
       refine ⟨p, ?_, by simp [p], by simp [p], ?_⟩
       · simp [p, SimpleGraph.Walk.cons_isPath_iff, hax.ne, hay, hxyne]
       · intro z hz
-        simp only [or_self] at hz
+        simp only [p, SimpleGraph.Walk.support_cons, SimpleGraph.Walk.support_nil,
+          List.mem_cons, List.not_mem_nil, or_false] at hz
         rcases hz with rfl | rfl | rfl <;> simp
     · let p : G.Walk a b :=
         SimpleGraph.Walk.cons hax (SimpleGraph.Walk.cons hxy
@@ -337,7 +344,8 @@ theorem exists_selected_handle_of_hubAnchors
       · simp [p, SimpleGraph.Walk.cons_isPath_iff, hax.ne, hay, hab, hxyne, hxb,
           hby.ne.symm]
       · intro z hz
-        simp [p] at hz
+        simp only [p, SimpleGraph.Walk.support_cons, SimpleGraph.Walk.support_nil,
+          List.mem_cons, List.not_mem_nil, or_false] at hz
         rcases hz with rfl | rfl | rfl | rfl <;> simp
 
 /-- A cross matching between two disjoint full cores has a quarter-sized
@@ -6084,9 +6092,10 @@ theorem unbroken_alternatingScaffold_selected_count_of_hybrid_lift_at_scale
     · simpa [J] using hcount
   · have hcard : Fintype.card J = 0 :=
       Fintype.card_eq_zero_iff.mpr (not_nonempty_iff.mp hJ)
-    simp [J] at hcard
-    simp only [card_subtype_compl, gt_iff_lt]
-    exact hn
+    change ((σ - 4) - 4 * (pathThreshold + 1)) * Fintype.card J <
+      32 * (pathThreshold + 1) * n
+    rw [hcard, Nat.mul_zero]
+    positivity
 
 /-- An eighth-degree polynomial is below `2^(4r)` from a concrete constant
 onward.  This elementary estimate converts the extremal-order binary
@@ -6629,13 +6638,15 @@ theorem exists_path_joining_disjoint_major_paths_fin
           hxy, hzx.symm, hzyNe]
       · simp [q]
       · intro w hw
-        simp only [Finset.mem_union] at hw
+        simp only [q, SimpleGraph.Walk.support_cons, SimpleGraph.Walk.support_nil,
+          List.mem_cons, List.not_mem_nil, or_false] at hw
         rcases hw with rfl | rfl | rfl
         · exact Or.inl (Finset.mem_union_left _ hx)
         · exact Or.inr hzD
         · exact Or.inl (Finset.mem_union_left _ hy)
       · intro w hw
-        simp only [IsEmpty.exists_iff, Finset.mem_singleton, false_or] at hw
+        simp only [q, SimpleGraph.Walk.support_cons, SimpleGraph.Walk.support_nil,
+          List.mem_cons, List.not_mem_nil, or_false] at hw
         rcases hw with rfl | rfl | rfl
         · exact Or.inl rfl
         · exact Or.inr (Or.inr (Or.inr (by simp)))

@@ -554,45 +554,56 @@ theorem exists_rotated_isPath_from_at_index
   let q := a.append s
   have hi1 : i + 1 ≤ p.length := by omega
   refine ⟨q, ?_, ?_, ?_⟩
-  have hpSplit : (a.append (p.drop i)).IsPath := by
-    dsimp [a]
-    rw [p.append_take_drop_eq]
-    exact hp
-  have hdropNotNil : ¬ (p.drop i).Nil := by
-    intro hnil
-    have : (p.drop i).length = 0 := Walk.nil_iff_length_eq.mp hnil
-    simp at this
-    omega
-  have hdis0 := hpSplit.disjoint_support_of_append (q := p.drop i) hdropNotNil
-  have hdis : a.support.Disjoint r'.support := by
-    simpa [r', Walk.support_tail_of_not_nil, hdropNotNil,
-      Walk.drop_support_eq_support_drop_min, Nat.min_eq_left hi.le,
-      Nat.min_eq_left hi1] using hdis0
-  have hr' : r'.IsPath := hp.drop (i + 1)
-  have hdisrev : a.support.Disjoint r'.support.reverse := by
-    rw [List.disjoint_left] at hdis ⊢
-    intro z hza hz
-    exact hdis hza (by simpa using hz)
-  unfold q s
-  rw [Walk.isPath_def, Walk.support_append]
-  simp only [Walk.support_append, Walk.support_reverse]
-  simp only [Walk.support_cons, Walk.support_nil, List.tail_reverse, List.cons_append, List.nil_append,
-    List.tail_cons]
-  have hrev : r'.support.reverse = v :: r'.support.dropLast.reverse := by
-    rw [← r'.dropLast_support_concat]
-    simp
-  have hsuf : (v :: r'.support.dropLast.reverse).Nodup := by
-    rw [← hrev]
-    exact List.nodup_reverse.mpr hr'.support_nodup
-  have hdis2 : a.support.Disjoint (v :: r'.support.dropLast.reverse) := by
-    rw [← hrev]
-    exact hdisrev
-  exact List.Nodup.append (hp.take i).support_nodup hsuf hdis2
+  · have hpSplit : (a.append (p.drop i)).IsPath := by
+      dsimp [a]
+      rw [p.append_take_drop_eq]
+      exact hp
+    have hdropNotNil : ¬ (p.drop i).Nil := by
+      intro hnil
+      have : (p.drop i).length = 0 := Walk.nil_iff_length_eq.mp hnil
+      simp at this
+      omega
+    have hdis0 := hpSplit.disjoint_support_of_append (q := p.drop i) hdropNotNil
+    have hdis : a.support.Disjoint r'.support := by
+      simpa [r', Walk.support_tail_of_not_nil, hdropNotNil,
+        Walk.drop_support_eq_support_drop_min, Nat.min_eq_left hi.le,
+        Nat.min_eq_left hi1] using hdis0
+    have hr' : r'.IsPath := hp.drop (i + 1)
+    have hdisrev : a.support.Disjoint r'.support.reverse := by
+      rw [List.disjoint_left] at hdis ⊢
+      intro z hza hz
+      exact hdis hza (by simpa using hz)
+    unfold q s
+    rw [Walk.isPath_def, Walk.support_append]
+    simp only [Walk.support_append, Walk.support_reverse]
+    simp only [Walk.support_cons, Walk.support_nil, List.tail_reverse,
+      List.cons_append, List.nil_append, List.tail_cons]
+    have hrev : r'.support.reverse = v :: r'.support.dropLast.reverse := by
+      rw [← r'.dropLast_support_concat]
+      simp
+    have hsuf : (v :: r'.support.dropLast.reverse).Nodup := by
+      rw [← hrev]
+      exact List.nodup_reverse.mpr hr'.support_nodup
+    have hdis2 : a.support.Disjoint (v :: r'.support.dropLast.reverse) := by
+      rw [← hrev]
+      exact hdisrev
+    exact List.Nodup.append (hp.take i).support_nodup hsuf hdis2
   · simp [q, s, a, r', Nat.min_eq_left hi.le, Nat.min_eq_left hi1]
     omega
-  · ext z
-    simp only [List.mem_toFinset]
-    rw [← List.mem_append, List.take_append_drop]
+  · have hrev : r'.support.reverse = v :: r'.support.dropLast.reverse := by
+      rw [← r'.dropLast_support_concat]
+      simp
+    have hsupport : q.support = a.support ++ r'.support.reverse := by
+      simp only [q, s, Walk.support_append, Walk.support_reverse,
+        Walk.support_cons, Walk.support_nil, List.tail_reverse,
+        List.cons_append, List.nil_append, List.tail_cons]
+      rw [← hrev]
+    have hsplit : a.support ++ r'.support = p.support := by
+      simp only [a, r', Walk.support_take, Walk.drop_support_eq_support_drop_min,
+        Nat.min_eq_left hi1, List.take_append_drop]
+    ext z
+    simp only [List.mem_toFinset, hsupport, List.mem_append, List.mem_reverse]
+    rw [← List.mem_append, hsplit]
 
 /-- Every indexed rotated endpoint of a path that is longest from its
 starting vertex has all of its neighbors inside the original support.
@@ -20046,8 +20057,10 @@ theorem cycleGraph_isContained_of_two_path_handles_and_disjoint_paths
   have hrdisj : ∀ i j : Fin 4, i ≠ j →
       (r i).support.Disjoint (r j).support := by
     intro i j hij
-    fin_cases i <;> fin_cases j <;> simp_all only [Fin.mk_one, Fin.isValue, Fin.zero_eta, Fin.reduceFinMk]
+    fin_cases i <;> fin_cases j
     all_goals first
+      | exact (hij rfl).elim
+      | assumption
       | exact hph.symm
       | exact hpq.symm
       | exact hps.symm
@@ -20084,32 +20097,16 @@ theorem cycleGraph_isContained_of_two_twoEdge_handles_and_disjoint_paths
     (hdy : G.Adj d y) (hya : G.Adj y a)
     (hlen : p.length + q.length + 4 = k) :
     cycleGraph k ⊑ G := by
-  let W : Fin 4 → (Σ u v : V, G.Walk u v) :=
-    ![⟨a, b, p⟩, ⟨x, x, Walk.nil⟩, ⟨c, d, q⟩, ⟨y, y, Walk.nil⟩]
-  let A : Fin 4 → V := fun i => (W i).1
-  let B : Fin 4 → V := fun i => (W i).2.1
-  let r : ∀ i : Fin 4, G.Walk (A i) (B i) := fun i => (W i).2.2
-  have hr : ∀ i : Fin 4, (r i).IsPath := by
-    intro i
-    fin_cases i <;> simp [r, A, B, W, hp, hq]
-  have hrdisj : ∀ i j : Fin 4, i ≠ j →
-      (r i).support.Disjoint (r j).support := by
-    intro i j hij
-    fin_cases i <;> fin_cases j <;>
-      simp_all only [Fin.mk_one, Fin.isValue, Fin.reduceFinMk, Fin.zero_eta]
-    all_goals first | exact hpq.symm | exact Ne.symm hxy
-  have hcross : ∀ i : Fin 3, G.Adj (B i.castSucc) (A i.succ) := by
-    intro i
-    fin_cases i
-    · simpa [A, B, W] using hbx
-    · simpa [A, B, W] using hxc
-    · simpa [A, B, W] using hdy
-  have hclose : G.Adj (B (Fin.last 3)) (A 0) := by
-    simpa [A, B, W] using hya
-  apply cycleGraph_isContained_of_cyclic_cross_edges_and_disjoint_paths_fin
-    G hk A B r hr hrdisj hcross hclose
-  · simp [r, A, B, W]
-  · simpa [Fin.sum_univ_succ, r, A, B, W] using hlen
+  refine cycleGraph_isContained_of_two_path_handles_and_disjoint_paths
+    (h := (Walk.nil : G.Walk x x)) (s := (Walk.nil : G.Walk y y))
+    G hk hp (by simp) hq (by simp)
+    ?_ hpq ?_ ?_ ?_ ?_ hbx hxc hdy hya ?_
+  · simpa only [Walk.support_nil, List.disjoint_singleton] using hxp
+  · simpa only [Walk.support_nil, List.disjoint_singleton] using hyp
+  · simpa only [Walk.support_nil, List.singleton_disjoint] using hxq
+  · simpa only [Walk.support_nil, List.singleton_disjoint, List.mem_singleton] using hxy
+  · simpa only [Walk.support_nil, List.disjoint_singleton] using hyq
+  · simpa only [Walk.length_nil, Nat.add_zero] using hlen
 
 /-- Cyclic even-route system for finitely many disjoint robust hubs.  Each
 hub supplies one prescribed even internal path, disjoint routing regions make
@@ -35551,8 +35548,9 @@ theorem unbroken_alternatingScaffold_selected_count_of_hybrid_lift
     · simpa [J] using hcount
   · have hcard : Fintype.card J = 0 :=
       Fintype.card_eq_zero_iff.mpr (not_nonempty_iff.mp hJ)
-    simp [J] at hcard
-    simp only [card_subtype_compl, gt_iff_lt]
+    change ((σ - 4) - 4 * (pathThreshold + 1)) * Fintype.card J <
+      32 * (pathThreshold + 1) * n
+    rw [hcard, Nat.mul_zero]
     positivity
 
 /-- Parity-unbroken alternating cores satisfy a selected-transversal count
@@ -36597,19 +36595,13 @@ theorem exists_forbidden_near_third_pruned_hubInteraction_cycle
     hm (by omega) G U T θ X hrob hregions
       (by rw [hmq]; exact hcopy) hnorep route
   · intro i j
-    by_cases hj : j = 0
-    · subst j
-      simp [route]
-      exact (by have := hU i; omega)
-    · simp [route, hj]
-      exact (by have := hU i; omega)
+    have := hU i
+    simp only [route]
+    split_ifs <;> omega
   · intro i j
-    by_cases hj : j = 0
-    · subst j
-      simp only [Order.add_one_le_iff]
-      exact (by have := hθ i; omega)
-    · simp only [Order.add_one_le_iff]
-      exact (by have := hθ i; omega)
+    have := hθ i
+    simp only [route]
+    split_ifs <;> omega
   · rw [hsum]
     dsimp [m]
     omega
