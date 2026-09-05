@@ -237,7 +237,7 @@ theorem sum_sorted_gapWeight_le (n k : ℕ) (q : Fin (n + 1) → ℝ)
     _ = (n + 1 : ℝ) * (∑ d : Fin (n + 1), q d) ^ k := by
       simp only [target, W]
       rw [Fintype.sum_prod_type]
-      simp only [Prod.snd]
+      dsimp only
       rw [← Fintype.sum_pow]
       simp
 
@@ -247,7 +247,7 @@ section Probability
 
 open MeasureTheory
 
-variable {Site Ω : Type*} [DecidableEq Site] [MeasurableSpace Ω]
+variable {Site Ω : Type*} [DecidableEq Site]
 
 def collisionSet (n r : ℕ) (X : Ω → Fin (n + 1) → Site) (t : TimeTuple n r) : Set Ω :=
   {ω | allEqualAlong n r (X ω) t}
@@ -264,6 +264,7 @@ noncomputable def localMoment
     (n r : ℕ) (X : Ω → Fin (n + 1) → Site) : Ω → ℝ :=
   fun ω ↦ ∑ x ∈ visitedSites n (X ω), (finiteLocalTime n (X ω) x ^ r : ℕ)
 
+omit [DecidableEq Site] in
 lemma collisionRealIndicator_eq_cast
     (n r : ℕ) (X : Ω → Fin (n + 1) → Site) (t : TimeTuple n r) (ω : Ω) :
     collisionRealIndicator n r X t ω = (collisionIndicator n r (X ω) t : ℝ) := by
@@ -288,6 +289,8 @@ lemma localMoment_eq_cast_nat_sum (n r : ℕ)
     localMoment n r X ω =
       ((∑ x ∈ visitedSites n (X ω), finiteLocalTime n (X ω) x ^ r : ℕ) : ℝ) := by
   simp [localMoment]
+
+variable [MeasurableSpace Ω]
 
 lemma integrable_localMoment (n r : ℕ) (hr : 0 < r)
     (X : Ω → Fin (n + 1) → Site) (μ : Measure Ω) [IsFiniteMeasure μ]
@@ -331,24 +334,26 @@ theorem measureReal_finiteMaxLocalTime_ge_le_moment_div
       _ ≤ B := hMoment
   simpa [mul_comm] using hchain
 
+omit [DecidableEq Site] [MeasurableSpace Ω] in
 lemma collisionSet_comp_perm (n r : ℕ) (X : Ω → Fin (n + 1) → Site)
     (t : TimeTuple n r) (σ : Equiv.Perm (Fin r)) :
     collisionSet n r X (t ∘ σ) = collisionSet n r X t := by
   ext ω
-  simp only [collisionSet, Set.mem_setOf_eq, allEqualAlong, Function.comp_apply]
+  simp only [collisionSet, Set.mem_ofPred_eq, allEqualAlong, Function.comp_apply]
   constructor
   · intro h i j
     simpa using h (σ.symm i) (σ.symm j)
   · intro h i j
     exact h (σ i) (σ j)
 
+omit [DecidableEq Site] in
 lemma integral_collisionMoment_eq_sum_probability
     (n r : ℕ) (X : Ω → Fin (n + 1) → Site) (μ : Measure Ω) [IsFiniteMeasure μ]
     (hMeas : ∀ t : TimeTuple n r, MeasurableSet (collisionSet n r X t)) :
     ∫ ω, collisionMoment n r X ω ∂μ =
       ∑ t : TimeTuple n r, μ.real (collisionSet n r X t) := by
   change (∫ ω, ∑ t : TimeTuple n r, collisionRealIndicator n r X t ω ∂μ) = _
-  rw [MeasureTheory.integral_finset_sum]
+  rw [MeasureTheory.integral_finsetSum]
   · apply Finset.sum_congr rfl
     intro t _
     exact MeasureTheory.integral_indicator_one (hMeas t)
@@ -432,7 +437,7 @@ lemma dyadic_factorial_ratio_bound (k : ℕ) (hk : 1 ≤ k) :
   have hnum :
       (k.factorial : ℝ) * ((2 : ℝ) ^ k + 1) * (6 * k : ℝ) ^ k ≤
         (k : ℝ) ^ k * (2 * 2 ^ k) * (6 * k : ℝ) ^ k := by
-    gcongr <;> positivity
+    gcongr
   calc
     ((k.factorial : ℝ) * ((2 : ℝ) ^ k + 1) * (6 * k : ℝ) ^ k) /
           (48 * k ^ 2 : ℝ) ^ k ≤

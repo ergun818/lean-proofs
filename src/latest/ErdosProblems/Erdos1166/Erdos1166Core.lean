@@ -181,7 +181,7 @@ theorem step_eval_map (n : ℕ) :
     incrementLaw.map (fun ω ↦ directionStep (ω n)) =
         (incrementLaw.map (fun ω ↦ ω n)).map directionStep := by
       rw [Measure.map_map]
-      rfl
+      · rfl
       all_goals fun_prop
     _ = directionLaw.map directionStep := by rw [increment_eval_map]
 
@@ -231,7 +231,7 @@ theorem return_prob_eq_card_div_pow (n : ℕ) :
       rw [Measure.map_apply]
       · congr 1
         ext ω
-        simp only [Set.mem_setOf_eq, Set.mem_preimage, Finset.mem_coe,
+        simp only [Set.mem_ofPred_eq, Set.mem_preimage, Finset.mem_coe,
           A, returningPrefixes, Finset.mem_filter, Finset.mem_univ, true_and]
         rw [finitePosition_restrict]
       · fun_prop
@@ -257,7 +257,7 @@ theorem prefixLaw_return (n : ℕ) :
       rw [Measure.map_apply]
       · congr 1
         ext ω
-        simp only [Set.mem_setOf_eq, Set.mem_preimage]
+        simp only [Set.mem_ofPred_eq, Set.mem_preimage]
         rw [finitePosition_restrict]
       · fun_prop
       · measurability
@@ -351,8 +351,8 @@ theorem sum_boolSign_eq_card_sub_twice {I : Type*} [Fintype I] [DecidableEq I]
       intro i _
       cases u i <;> simp [boolSign]
     _ = (Fintype.card I : ℤ) - 2 * (truePositions u).card := by
-      simp only [mul_ite, mul_one, mul_zero, Finset.sum_sub_distrib, Finset.sum_const, Finset.card_univ,
-    Int.nsmul_eq_mul, sub_right_inj]
+      simp only [mul_ite, mul_one, mul_zero, Finset.sum_sub_distrib, Finset.sum_const,
+        Finset.card_univ, Int.nsmul_eq_mul, sub_right_inj]
       calc
         ∑ x, (if u x = true then (2 : ℤ) else 0) =
             ∑ x, 2 * (if u x = true then (1 : ℤ) else 0) := by
@@ -394,8 +394,7 @@ theorem diagonal_sum_two {n : ℕ} (w : Prefix n) :
       intro i _
       exact (diagonal_step_two (w i)).symm
     _ = (∑ i, stepX (w i)) - ∑ i, stepY (w i) := by
-      simpa using (Finset.sum_sub_distrib (s := Finset.univ)
-        (fun i ↦ stepX (w i)) (fun i ↦ stepY (w i)))
+      exact Finset.sum_sub_distrib (fun i ↦ stepX (w i)) (fun i ↦ stepY (w i))
     _ = (finitePosition w).1 - (finitePosition w).2 := by
       simp [finitePosition, stepX, stepY, Prod.fst_sum, Prod.snd_sum]
 
@@ -696,7 +695,7 @@ theorem collisionSet_preimage_blocks {n k : ℕ} {t : TimeTuple n (k + 1)}
     (ht : Monotone t) :
     collisionSet t = extractBlocks t ⁻¹' (Set.univ.pi (blockReturnSet t)) := by
   ext ω
-  simp only [collisionSet, Set.mem_setOf_eq, Set.mem_preimage, Set.mem_pi, Set.mem_univ,
+  simp only [collisionSet, Set.mem_ofPred_eq, Set.mem_preimage, Set.mem_pi, Set.mem_univ,
     forall_const, blockReturnSet]
   rw [allEqual_iff_adjacent]
   apply forall_congr'
@@ -863,7 +862,7 @@ theorem measurable_finiteCoordinateProcess (n : ℕ) :
 theorem measurableSet_kacCollision (n r : ℕ) (t : KacMoment.TimeTuple n r) :
     MeasurableSet (KacMoment.collisionSet n r (finiteCoordinateProcess n) t) := by
   unfold KacMoment.collisionSet KacMoment.allEqualAlong
-  simp only [Set.setOf_forall]
+  simp only [Set.ofPred_forall]
   apply MeasurableSet.iInter
   intro i
   apply MeasurableSet.iInter
@@ -997,7 +996,7 @@ theorem canonical_dyadic_maxLocalTime_tail (k : ℕ) (hk : 1 ≤ k) :
           (finiteCoordinateProcess ((2 : ℕ) ^ k) ω)} =
       {ω | 48 * k ^ 2 ≤ maxLocalTime (simpleRandomWalk ω) ((2 : ℕ) ^ k)} := by
     ext ω
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     rw [show finiteCoordinateProcess ((2 : ℕ) ^ k) ω =
         (fun i : Fin ((2 : ℕ) ^ k + 1) ↦ simpleRandomWalk ω i.val) from rfl]
     rw [finiteMaxLocalTime_finiteCoordinateProcess]
@@ -1326,7 +1325,7 @@ theorem incrementLaw_inter_blockAfter_stopping_eq_mul
     have hPre : MeasurableSet[iidHistory (X := Direction) k]
         (simpleRandomWalk ⁻¹' (A ∩ {s | τ s = k})) :=
       measurable_simpleRandomWalk_iidHistory_canonicalFiltration k hPath
-    simpa only [Set.preimage_inter, Set.preimage_setOf_eq] using hPre
+    simpa only [Set.preimage_inter, Set.preimage_ofPred_eq] using hPre
   · exact hB
 
 /-- Specialization of strong restart to the finite-horizon hit chains used
@@ -1334,8 +1333,7 @@ for successive boundary excursions. -/
 theorem incrementLaw_inter_blockAfter_boundedHitChain_eq_mul
     {target : ℕ → Set Site} (htarget : ∀ k, MeasurableSet (target k))
     (N r : ℕ) {A : Set (ℕ → Site)}
-    (hA : MeasurableSet[
-      (isStoppingTime_boundedHitChain htarget N r).measurableSpace] A)
+    (hA : MeasurableSet[(isStoppingTime_boundedHitChain htarget N r).measurableSpace] A)
     (m : ℕ) {B : Set (Fin m → Direction)} (hB : MeasurableSet B) :
     incrementLaw
         (simpleRandomWalk ⁻¹' A ∩
@@ -1497,7 +1495,7 @@ theorem secondMoment_support_lower
     by_cases hω : ω ∈ A
     · simp [g, hω]
     · have hz : f ω = 0 := by
-        simp only [A, Set.mem_setOf_eq, not_lt] at hω
+        simp only [A, Set.mem_ofPred_eq, not_lt] at hω
         exact le_antisymm hω (hf0 ω)
       simp [g, hω, hz]
   have hholder := integral_mul_le_Lp_mul_Lq_of_nonneg
@@ -1590,7 +1588,7 @@ theorem integral_returnCount (n : ℕ) :
       ∑ i ∈ Finset.range (n + 1),
         incrementLaw.real {ω | simpleRandomWalk ω i = (0, 0)} := by
   unfold returnCount
-  rw [integral_finset_sum]
+  rw [integral_finsetSum]
   · apply Finset.sum_congr rfl
     intro i _
     exact integral_returnIndicator i
@@ -1613,7 +1611,7 @@ theorem collisionSet_zeroIJTimes (i j : ℕ) (hij : i ≤ j) :
       {ω | simpleRandomWalk ω i = (0, 0)} ∩
         {ω | simpleRandomWalk ω j = (0, 0)} := by
   ext ω
-  simp only [CollisionKernel.collisionSet, Set.mem_inter_iff, Set.mem_setOf_eq]
+  simp only [CollisionKernel.collisionSet, Set.mem_inter_iff, Set.mem_ofPred_eq]
   have hzero : (0 : Site) = (0, 0) := rfl
   constructor
   · intro h
@@ -1621,7 +1619,7 @@ theorem collisionSet_zeroIJTimes (i j : ℕ) (hij : i ≤ j) :
     have hj := h (0 : Fin 3) (2 : Fin 3)
     simpa [zeroIJTimes, simpleRandomWalk, hzero] using And.intro hi.symm hj.symm
   · rintro ⟨hi, hj⟩ a b
-    fin_cases a <;> fin_cases b <;> simp_all [zeroIJTimes, simpleRandomWalk, hzero]
+    fin_cases a <;> fin_cases b <;> simp_all [zeroIJTimes, simpleRandomWalk]
 
 theorem gapWeight_zeroIJTimes (i j : ℕ) (hij : i ≤ j) :
     CollisionKernel.gapWeight j 2 (CollisionKernel.returnKernel j)
@@ -1678,10 +1676,10 @@ theorem integral_returnCount_sq (n : ℕ) :
     funext ω
     simp only [returnCount, pow_two, Finset.sum_mul, Finset.mul_sum]
     rw [Finset.sum_comm]
-  rw [hpoint, integral_finset_sum]
+  rw [hpoint, integral_finsetSum]
   · apply Finset.sum_congr rfl
     intro i _
-    rw [integral_finset_sum]
+    rw [integral_finsetSum]
     intro j _
     exact integrable_returnIndicator_mul i j
   · intro i _
@@ -1865,12 +1863,12 @@ theorem half_mean_sq_le_measure_ge_half_mul_second
       ∫ ω in Aᶜ, f ω ∂μ ≤ ∫ _ω in Aᶜ, m / 2 ∂μ := by
         apply setIntegral_mono_on hfint.integrableOn (integrable_const (m / 2)) hA.compl
         intro ω hω
-        simp only [A, Set.mem_compl_iff, Set.mem_setOf_eq, not_le] at hω
+        simp only [A, Set.mem_compl_iff, Set.mem_ofPred_eq, not_le] at hω
         exact hω.le
       _ = μ.real Aᶜ * (m / 2) := by rw [setIntegral_const, smul_eq_mul]
       _ ≤ 1 * (m / 2) := by
         gcongr
-        simpa using measureReal_mono (show Aᶜ ⊆ (Set.univ : Set Ω) from Set.subset_univ _)
+        simp
       _ = m / 2 := one_mul _
   have hgm : m / 2 ≤ ∫ ω, g ω ∂μ := by
     rw [show (∫ ω, g ω ∂μ) = ∫ ω in A, f ω ∂μ by
@@ -1968,7 +1966,7 @@ theorem measurableSet_returnThreshold (K : ℕ) : MeasurableSet (returnThreshold
 
 theorem antitone_returnThreshold : Antitone returnThreshold := by
   intro K L hKL ω hω
-  simp only [returnThreshold, Set.mem_iUnion, Set.mem_setOf_eq] at hω ⊢
+  simp only [returnThreshold, Set.mem_iUnion, Set.mem_ofPred_eq] at hω ⊢
   rcases hω with ⟨n, hn⟩
   have hKL' : (K : ℝ) ≤ L := by exact_mod_cast hKL
   exact ⟨n, hKL'.trans hn⟩
@@ -1992,8 +1990,8 @@ theorem one_eighth_le_measureReal_returnThreshold (K : ℕ) :
     _ ≤ incrementLaw.real (returnThreshold K) := by
       apply measureReal_mono (h₂ := measure_ne_top incrementLaw (returnThreshold K))
       intro ω hω
-      simp only [Set.mem_setOf_eq] at hω
-      simp only [returnThreshold, Set.mem_iUnion, Set.mem_setOf_eq]
+      simp only [Set.mem_ofPred_eq] at hω
+      simp only [returnThreshold, Set.mem_iUnion, Set.mem_ofPred_eq]
       exact ⟨N, hhalf.trans hω⟩
 
 theorem one_eighth_le_measureReal_unboundedOriginReturns :
@@ -2027,7 +2025,7 @@ theorem unboundedOriginReturns_maxLocalTime_tendsto {ω : ℕ → Direction}
   intro b
   have hb := hω
   simp only [unboundedOriginReturns, Set.mem_iInter, returnThreshold,
-    Set.mem_iUnion, Set.mem_setOf_eq] at hb
+    Set.mem_iUnion, Set.mem_ofPred_eq] at hb
   rcases hb b with ⟨n, hn⟩
   have hbn : b ≤ localTime (simpleRandomWalk ω) n (0, 0) := by
     have hbn' : (b : ℝ) ≤ (localTime (simpleRandomWalk ω) n (0, 0) : ℕ) := by
@@ -2051,7 +2049,7 @@ theorem measurableSet_incrementMaxLocalTimeDiverges :
   have heq : incrementMaxLocalTimeDiverges =
       ⋂ K : ℕ, ⋃ n : ℕ, {ω | K ≤ maxLocalTime (simpleRandomWalk ω) n} := by
     ext ω
-    simp only [incrementMaxLocalTimeDiverges, Set.mem_setOf_eq,
+    simp only [incrementMaxLocalTimeDiverges, Set.mem_ofPred_eq,
       Set.mem_iInter, Set.mem_iUnion]
     constructor
     · intro h K
@@ -2137,9 +2135,11 @@ theorem maxLocalTime_tendsto_iff_of_eventually_translate
     have hle := maxLocalTime_le_prefix_add_of_eventually_translate h n
     omega
 
+@[instance_reducible]
 def incrementCoordinateSigma (i : ℕ) : MeasurableSpace (ℕ → Direction) :=
   MeasurableSpace.comap (fun ω ↦ ω i) inferInstance
 
+@[instance_reducible]
 def incrementTailSigma (K : ℕ) : MeasurableSpace (ℕ → Direction) :=
   ⨆ i, ⨆ (_ : K ≤ i), incrementCoordinateSigma i
 
@@ -2172,7 +2172,7 @@ theorem measurableSet_pathMaxLocalTimeDiverges :
   have heq : pathMaxLocalTimeDiverges =
       ⋂ K : ℕ, ⋃ n : ℕ, {s | K ≤ maxLocalTime s n} := by
     ext s
-    simp only [pathMaxLocalTimeDiverges, Set.mem_setOf_eq,
+    simp only [pathMaxLocalTimeDiverges, Set.mem_ofPred_eq,
       Set.mem_iInter, Set.mem_iUnion]
     constructor
     · intro h K
@@ -2193,10 +2193,10 @@ theorem measurableSet_incrementMaxLocalTimeDiverges_incrementTailSigma (K : ℕ)
       walkAfter K ⁻¹' pathMaxLocalTimeDiverges := by
     ext ω
     simp only [incrementMaxLocalTimeDiverges, pathMaxLocalTimeDiverges,
-      Set.mem_setOf_eq, Set.mem_preimage]
+      Set.mem_ofPred_eq, Set.mem_preimage]
     apply maxLocalTime_tendsto_iff_of_eventually_translate
-    intro n hKn
-    exact simpleRandomWalk_eq_add_walkAfter hKn ω
+    · intro n hKn
+      exact simpleRandomWalk_eq_add_walkAfter hKn ω
   rw [heq]
   exact measurableSet_pathMaxLocalTimeDiverges.preimage (measurable_walkAfter K)
 
@@ -3021,8 +3021,7 @@ theorem levelCreationSite_localTime_eq
       have hyv : y ∈ visitedSites s 0 := by
         simpa [ht0] using (Finset.mem_filter.mp hy).1
       have hyx : y = x := by
-        simp [visitedSites, x, ht0] at hyv ⊢
-        exact hyv
+        simpa [visitedSites, x, ht0] using hyv
       simpa [hyx, ht0] using hy
     have hxm : m ≤ localTime s t x := (Finset.mem_filter.mp hxmem).2
     have hlt : localTime s t x = 1 := by
@@ -3300,7 +3299,7 @@ theorem recursiveExactlyKSitesReachLevel_eq (s : ℕ → Site) (m k : ℕ)
   induction k generalizing s with
   | zero =>
       rw [recursiveExactlyKSitesReachLevel]
-      simp only [Nat.zero_add, WithTop.coe_zero, zero_add]
+      simp only [zero_add]
       unfold firstExactlyKSitesReachLevelAfterStopping
       simp only [WithTop.add_eq_top, WithTop.one_ne_top, or_false]
       exact hittingAfter_eq_of_le_hittingAfter_zero
