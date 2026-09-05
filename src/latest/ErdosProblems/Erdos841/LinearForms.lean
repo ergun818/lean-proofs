@@ -142,13 +142,14 @@ original number-field kernel.  Nondegeneracy of the trace pairing is the
 only algebraic input. -/
 lemma traceConstraintMatrix_kernel
     {K rows cols ι : Type*} [Field K] [NumberField K]
-    [Fintype cols] [Fintype ι]
+    [Fintype cols] [Finite ι]
     (b : Module.Basis ι ℚ K) (hb : ∀ i, IsIntegral ℤ (b i))
     (A : Matrix rows cols K) (Q : ℕ) (hQ : Q ≠ 0)
     (hQA : ∀ r j, IsIntegral ℤ ((Q : K) * A r j))
     (c : cols → ℤ)
     (hc : (traceConstraintMatrix b hb A Q hQA).mulVec c = 0) :
     A.mulVec (fun j ↦ (c j : K)) = 0 := by
+  let : Fintype ι := Fintype.ofFinite ι
   funext r
   let y : K := ∑ j, (c j : K) * A r j
   have htrace : ∀ i, Algebra.trace ℚ K ((Q : K) * y * b i) = 0 := by
@@ -679,11 +680,12 @@ The returned sample still lies among the first `card κ` nonnegative
 integers; this form avoids choosing a global numbering of an exponent box. -/
 theorem exists_finite_exponentialSum_ne_zero
     {R κ : Type*} [CommRing R] [IsDomain R]
-    [Fintype κ] [DecidableEq κ]
+    [Fintype κ]
     (alpha coeff : κ → R) (halpha : Function.Injective alpha)
     (hcoeff : coeff ≠ 0) :
     ∃ t : Fin (Fintype.card κ),
       ∑ k, coeff k * alpha k ^ (t : ℕ) ≠ 0 := by
+  classical
   let e : κ ≃ Fin (Fintype.card κ) := Fintype.equivFin κ
   let alpha' : Fin (Fintype.card κ) → R := fun i ↦ alpha (e.symm i)
   let coeff' : Fin (Fintype.card κ) → R := fun i ↦ coeff (e.symm i)
@@ -837,7 +839,7 @@ theorem eval_iterateDerivative_ofFn
 /-- Fully explicit confluent Vandermonde kernel statement, in terms of its
 descending-factorial matrix entries. -/
 theorem confluentVandermonde_descFactorial_coefficients_eq_zero
-    {K : Type*} [CommRing K] [IsDomain K] [CharZero K] [DecidableEq K]
+    {K : Type*} [CommRing K] [IsDomain K] [CharZero K]
     {ι : Type*} [Fintype ι] (alpha : ι → K)
     (halpha : Function.Injective alpha) (multiplicity : ℕ)
     (coeff : Fin (Fintype.card ι * multiplicity) → K)
@@ -846,6 +848,7 @@ theorem confluentVandermonde_descFactorial_coefficients_eq_zero
         coeff k * (Nat.descFactorial (k : ℕ) j : K) *
           alpha i ^ ((k : ℕ) - j) = 0) :
     coeff = 0 := by
+  classical
   apply confluentVandermonde_coefficients_eq_zero alpha halpha
     multiplicity coeff
   intro i j hj
@@ -854,7 +857,7 @@ theorem confluentVandermonde_descFactorial_coefficients_eq_zero
 
 /-- A nonzero coefficient vector has a nonzero confluent-Vandermonde row. -/
 theorem exists_confluentVandermonde_descFactorial_ne_zero
-    {K : Type*} [CommRing K] [IsDomain K] [CharZero K] [DecidableEq K]
+    {K : Type*} [CommRing K] [IsDomain K] [CharZero K]
     {ι : Type*} [Fintype ι] (alpha : ι → K)
     (halpha : Function.Injective alpha) (multiplicity : ℕ)
     (coeff : Fin (Fintype.card ι * multiplicity) → K)
@@ -863,6 +866,7 @@ theorem exists_confluentVandermonde_descFactorial_ne_zero
       ∑ k : Fin (Fintype.card ι * multiplicity),
         coeff k * (Nat.descFactorial (k : ℕ) j : K) *
           alpha i ^ ((k : ℕ) - j) ≠ 0 := by
+  classical
   by_contra h
   push Not at h
   exact hcoeff <|
@@ -1705,11 +1709,12 @@ lemma infinitePlace_intCast_apply
 bounded by the field degree times the logarithm of the common bound, with
 no factor for the number of coordinates. -/
 lemma logHeight_intTuple_le
-    {F ι : Type*} [Field F] [NumberField F] [Fintype ι]
+    {F ι : Type*} [Field F] [NumberField F] [Finite ι]
     (z : ι → ℤ) {C : ℕ} (hC : 1 ≤ C)
     (hz : ∀ i, (z i).natAbs ≤ C) :
     Height.logHeight (fun i ↦ (z i : F)) ≤
       (Module.finrank ℚ F : ℝ) * Real.log C := by
+  let : Fintype ι := Fintype.ofFinite ι
   let x : ι → F := fun i ↦ (z i : F)
   have hlogC : 0 ≤ Real.log (C : ℝ) :=
     Real.log_nonneg (by exact_mod_cast hC)
@@ -1833,7 +1838,7 @@ theorem logHeight₁_boxAuxiliaryAlgebraicValue_projective_le
     intro ji
     rcases ji with ⟨j, i⟩
     fin_cases j <;> cases i with
-    | inl k => simp [z, hcoeff k, hC]
+    | inl k => simp [z, hcoeff k]
     | inr u =>
         cases u
         simp [z, hC]
@@ -2944,7 +2949,6 @@ coordinate, which is the bookkeeping invariant used in every
 extrapolation round. -/
 theorem iteratedDeriv_weightedAuxiliaryExponentialSum_eq_zero_of_multipoint_moments
     {kappa iota : Type*} [Fintype kappa] [Fintype iota]
-    [DecidableEq iota]
     (c beta L : kappa → ℂ) (b0 Lambda : ℂ)
     (a : kappa → ℤ) (r : kappa → iota → ℤ) (ell : iota → ℂ)
     {A T S : ℕ} (hb0 : b0 ≠ 0)
@@ -2960,6 +2964,7 @@ theorem iteratedDeriv_weightedAuxiliaryExponentialSum_eq_zero_of_multipoint_mome
       (auxiliaryExponentialSum L (fun k ↦
         c k * (a k : ℂ) ^ q0 * ∏ i, (r k i : ℂ) ^ u0 i))
       (h : ℂ) = 0 := by
+  classical
   let d : kappa → ℂ := fun k ↦
     c k * (a k : ℂ) ^ q0 * ∏ i, (r k i : ℂ) ^ u0 i
   let ch : kappa → ℂ := fun k ↦ d k * beta k ^ (h : ℕ)
@@ -3355,7 +3360,7 @@ smallness, the height estimate, and Liouville's inequality force the new
 moment value to vanish exactly. -/
 theorem multipointMomentValue_eq_zero_of_extrapolation
     {F kappa iota : Type*} [Field F] [NumberField F]
-    [Fintype kappa] [Fintype iota] [DecidableEq iota]
+    [Fintype kappa] [Fintype iota]
     (φ : F →+* ℂ) (beta : kappa → F)
     (c : kappa → ℤ) (L : kappa → ℂ) (b0 Lambda : ℂ)
     (a : kappa → ℤ) (r : kappa → iota → ℤ) (ell : iota → ℂ)
@@ -3387,6 +3392,7 @@ theorem multipointMomentValue_eq_zero_of_extrapolation
                 ((q0 + ∑ i, u0 i : ℕ) : ℝ) *
                   ((Module.finrank ℚ F : ℝ) * Real.log V))))) :
     multipointMomentValue beta a r c h q0 u0 = 0 := by
+  classical
   let d : kappa → ℂ := fun x ↦
     (c x : ℂ) * (a x : ℂ) ^ q0 * ∏ i, (r x i : ℂ) ^ u0 i
   have hd : ∀ x, ‖d x‖ ≤ C * V ^ (q0 + ∑ i, u0 i) := by
@@ -3498,7 +3504,7 @@ moment box has widths `A,T,S`; after reserving `k` derivative orders in
 each moment direction, all values in the target box vanish. -/
 theorem multipointMoments_extend_of_extrapolation
     {F kappa iota : Type*} [Field F] [NumberField F]
-    [Fintype kappa] [Fintype iota] [DecidableEq iota]
+    [Fintype kappa] [Fintype iota]
     (φ : F →+* ℂ) (beta : kappa → F)
     (c : kappa → ℤ) (L : kappa → ℂ) (b0 Lambda : ℂ)
     (a : kappa → ℤ) (r : kappa → iota → ℤ) (ell : iota → ℂ)
@@ -3531,6 +3537,7 @@ theorem multipointMoments_extend_of_extrapolation
                   ((Module.finrank ℚ F : ℝ) * Real.log V))))) :
     ∀ node : Fin A', ∀ q : Fin T', ∀ u : iota → Fin S',
       multipointMomentValue beta a r c node q (fun i ↦ u i) = 0 := by
+  classical
   intro node q u
   apply multipointMomentValue_eq_zero_of_extrapolation
     (A := A) (T := T) (S := S) (k := k) (h := (node : ℕ))
@@ -3551,7 +3558,7 @@ theorem multipointMoments_extend_of_extrapolation
 projective-height Liouville bound. -/
 theorem boxMultipointMomentValue_eq_zero_of_extrapolation
     {F iota : Type*} [Field F] [NumberField F]
-    [Fintype iota] [DecidableEq iota]
+    [Fintype iota]
     (φ : F →+* ℂ) {n K : ℕ} (alpha : Fin n → F)
     (c : ExponentBox n K → ℤ) (L : ExponentBox n K → ℂ)
     (b0 Lambda : ℂ) (a : ExponentBox n K → ℤ)
@@ -3584,6 +3591,7 @@ theorem boxMultipointMomentValue_eq_zero_of_extrapolation
             (h : ℝ) * ((K : ℝ) *
               ∑ i, Height.logHeight₁ (alpha i))))) :
     multipointMomentValue (boxMonomial alpha) a r c h q0 u0 = 0 := by
+  classical
   let dZ : ExponentBox n K → ℤ := fun x ↦
     c x * a x ^ q0 * ∏ i, r x i ^ u0 i
   let d : ExponentBox n K → ℂ := fun x ↦ (dZ x : ℂ)
@@ -3718,7 +3726,7 @@ theorem boxMultipointMomentValue_eq_zero_of_extrapolation
 /-- Uniform rectangular form of exact exponent-box extrapolation. -/
 theorem boxMultipointMoments_extend_of_extrapolation
     {F iota : Type*} [Field F] [NumberField F]
-    [Fintype iota] [DecidableEq iota]
+    [Fintype iota]
     (φ : F →+* ℂ) {n K : ℕ} (alpha : Fin n → F)
     (c : ExponentBox n K → ℤ) (L : ExponentBox n K → ℂ)
     (b0 Lambda : ℂ) (a : ExponentBox n K → ℤ)
@@ -3753,6 +3761,7 @@ theorem boxMultipointMoments_extend_of_extrapolation
     ∀ node : Fin A', ∀ q : Fin T', ∀ u : iota → Fin S',
       multipointMomentValue (boxMonomial alpha) a r c node q
         (fun i ↦ u i) = 0 := by
+  classical
   intro node q u
   apply boxMultipointMomentValue_eq_zero_of_extrapolation
     (A := A) (T := T) (S := S) (k := k) (h := (node : ℕ))
@@ -3773,7 +3782,7 @@ theorem boxMultipointMoments_extend_of_extrapolation
 prescribed sequence of rectangular moment regions. -/
 theorem boxMultipointMoments_iterate_extrapolation
     {F iota : Type*} [Field F] [NumberField F]
-    [Fintype iota] [DecidableEq iota]
+    [Fintype iota]
     (φ : F →+* ℂ) {n K : ℕ} (alpha : Fin n → F)
     (c : ExponentBox n K → ℤ) (L : ExponentBox n K → ℂ)
     (b0 Lambda : ℂ) (a : ExponentBox n K → ℤ)
@@ -3813,6 +3822,7 @@ theorem boxMultipointMoments_iterate_extrapolation
     ∀ node : Fin (A m), ∀ q : Fin (T m), ∀ u : iota → Fin (S m),
       multipointMomentValue (boxMonomial alpha) a r c node q
         (fun i ↦ u i) = 0 := by
+  classical
   induction m with
   | zero => simpa using hmoment
   | succ m ih =>
@@ -3836,15 +3846,14 @@ lemma hermiteJetMatrix_mulVec
       (Polynomial.hasseDeriv (j : ℕ)
         (Polynomial.ofFn (A * k) v)).eval (h : ℂ) := by
   classical
-  rw [Polynomial.ofFn_eq_sum_monomial, map_sum, Polynomial.eval_finset_sum]
-  simp only [map_mul, Polynomial.hasseDeriv_monomial, Polynomial.eval_monomial,
-    Matrix.mulVec, dotProduct, hermiteJetMatrix, Equiv.symm_apply_apply]
+  rw [Polynomial.ofFn_eq_sum_monomial, map_sum, Polynomial.eval_finsetSum]
+  simp only [Polynomial.hasseDeriv_monomial, Polynomial.eval_monomial,
+    Matrix.mulVec, dotProduct]
   apply Finset.sum_congr rfl
   intro m hm
   simp only [RingHom.mapMatrix_apply, Matrix.map_apply, hermiteJetMatrix,
     Equiv.symm_apply_apply]
   norm_num [map_mul, map_pow]
-  push_cast
   ring
 
 lemma hermiteJetMatrix_mulVec_eq_zero_imp
@@ -3922,7 +3931,7 @@ lemma hermiteJetMatrix_det_ne_zero (A k : ℕ) :
   intro hdet
   apply hdetC
   rw [← RingHom.map_det]
-  simp [hdet, M]
+  simp [hdet]
 
 lemma hermiteJetMatrix_entry_norm_le (A k : ℕ)
     (i j : Fin (A * k)) :
@@ -3997,7 +4006,7 @@ lemma one_le_hermiteJetMatrix_det_norm (A k : ℕ) :
   exact_mod_cast Int.one_le_abs (hermiteJetMatrix_det_ne_zero A k)
 
 lemma exists_hermiteJetMatrix_solution
-    (A k : ℕ) (y : Fin (A * k) → ℂ) {δ : ℝ} (hδ : 0 ≤ δ)
+    (A k : ℕ) (y : Fin (A * k) → ℂ) {δ : ℝ} (_hδ : 0 ≤ δ)
     (hy : ∀ i, ‖y i‖ ≤ δ) :
     ∃ v : Fin (A * k) → ℂ,
       ((Int.castRingHom ℂ).mapMatrix
@@ -4640,7 +4649,7 @@ each known node.  The Leibniz index spends polynomial-jet width, while the
 remaining exponential derivative spends logarithmic-moment width. -/
 theorem iteratedDeriv_pochhammerWeightedAuxiliary_eq_zero_of_moments
     {F κ iota : Type*} [Field F] [NumberField F]
-    [Fintype κ] [Fintype iota] [DecidableEq iota]
+    [Fintype κ] [Fintype iota]
     (φ : F →+* ℂ) (beta : κ → F)
     (L : κ → ℂ) (b0 Lambda : ℂ)
     (a : κ → ℤ) (r : κ → iota → ℤ) (ell : iota → ℂ)
@@ -4875,7 +4884,7 @@ system.  Analytic smallness and the projective-height Liouville bound force
 the target algebraic moment to vanish. -/
 theorem boxPochhammerMomentValue_eq_zero_of_extrapolation
     {F iota : Type*} [Field F] [NumberField F]
-    [Fintype iota] [DecidableEq iota]
+    [Fintype iota]
     (φ : F →+* ℂ) {n K P : ℕ} (alpha : Fin n → F)
     (c : ExponentBox n K → Fin P → ℤ)
     (L : ExponentBox n K → ℂ) (b0 Lambda : ℂ)
@@ -4916,6 +4925,7 @@ theorem boxPochhammerMomentValue_eq_zero_of_extrapolation
               ∑ i, Height.logHeight₁ (alpha i))))) :
     pochhammerMultipointMomentValue (boxMonomial alpha) a r P c
       h v0 q0 u0 = 0 := by
+  classical
   have hcComplex : ∀ x m, ‖(c x m : ℂ)‖ ≤ (C : ℝ) := by
     intro x m
     rw [Complex.norm_intCast, ← Int.cast_abs, ← Nat.cast_natAbs]
@@ -5025,7 +5035,7 @@ theorem boxPochhammerMomentValue_eq_zero_of_extrapolation
 /-- Uniform rectangular form of one exact Pochhammer extrapolation step. -/
 theorem boxPochhammerMoments_extend_of_extrapolation
     {F iota : Type*} [Field F] [NumberField F]
-    [Fintype iota] [DecidableEq iota]
+    [Fintype iota]
     (φ : F →+* ℂ) {n K P : ℕ} (alpha : Fin n → F)
     (c : ExponentBox n K → Fin P → ℤ)
     (L : ExponentBox n K → ℂ) (b0 Lambda : ℂ)
@@ -5067,6 +5077,7 @@ theorem boxPochhammerMoments_extend_of_extrapolation
       ∀ u : iota → Fin S',
         pochhammerMultipointMomentValue (boxMonomial alpha) a r P c
           node v q (fun i ↦ u i) = 0 := by
+  classical
   intro node v q u
   apply boxPochhammerMomentValue_eq_zero_of_extrapolation
     (A := A) (W := W) (T := T) (S := S) (k := k)
@@ -5089,7 +5100,7 @@ theorem boxPochhammerMoments_extend_of_extrapolation
 sequence of rectangular moment regions. -/
 theorem boxPochhammerMoments_iterate_extrapolation
     {F iota : Type*} [Field F] [NumberField F]
-    [Fintype iota] [DecidableEq iota]
+    [Fintype iota]
     (φ : F →+* ℂ) {n K P : ℕ} (alpha : Fin n → F)
     (c : ExponentBox n K → Fin P → ℤ)
     (L : ExponentBox n K → ℂ) (b0 Lambda : ℂ)
@@ -5137,6 +5148,7 @@ theorem boxPochhammerMoments_iterate_extrapolation
       ∀ q : Fin (T m), ∀ u : iota → Fin (S m),
         pochhammerMultipointMomentValue (boxMonomial alpha) a r P c
           node v q (fun i ↦ u i) = 0 := by
+  classical
   induction m with
   | zero => simpa using hmoment
   | succ m ih =>
@@ -5589,7 +5601,7 @@ falling-factorial coefficient, while the remaining exponential derivative
 contributes the decisive factor `‖Lambda‖ ^ T`. -/
 theorem pochhammerExponentialPolynomial_normalized_jet_norm_le_of_moments
     {F κ iota : Type*} [Field F] [NumberField F]
-    [Fintype κ] [Fintype iota] [DecidableEq iota]
+    [Fintype κ] [Fintype iota]
     (φ : F →+* ℂ) (beta : κ → F) (L : κ → ℂ)
     (b0 Lambda : ℂ) (a : κ → ℤ) (r : κ → iota → ℤ)
     (ell : iota → ℂ) (P : ℕ) (c : κ → Fin P → ℤ)
@@ -5617,6 +5629,7 @@ theorem pochhammerExponentialPolynomial_normalized_jet_norm_le_of_moments
           (((Fintype.card κ * P : ℕ) : ℝ) * C *
             (k.factorial : ℝ) * (A + 1 + P) ^ P *
             Real.exp (U * A) * M ^ k * (2 : ℝ) ^ (2 * k)) := by
+  classical
   intro node j
   have hterm : ∀ t ∈ Finset.range ((j : ℕ) + 1),
       ‖∑ x, ∑ m,
@@ -5916,7 +5929,7 @@ theorem pochhammerExponentialPolynomial_normalized_jet_norm_le_of_moments
 
 theorem pochhammerWeightedAuxiliary_normalized_jet_norm_le_of_moments
     {F κ iota : Type*} [Field F] [NumberField F]
-    [Fintype κ] [Fintype iota] [DecidableEq iota]
+    [Fintype κ] [Fintype iota]
     (φ : F →+* ℂ) (beta : κ → F) (L : κ → ℂ)
     (b0 Lambda : ℂ) (a : κ → ℤ) (r : κ → iota → ℤ)
     (ell : iota → ℂ) (P : ℕ) (c : κ → Fin P → ℤ)
@@ -5948,6 +5961,7 @@ theorem pochhammerWeightedAuxiliary_normalized_jet_norm_le_of_moments
             V ^ (q0 + ∑ i, u0 i) * ((v0 + k).factorial : ℝ) *
             (A + 1 + P) ^ P * Real.exp (U * A) *
             V ^ k * (2 : ℝ) ^ (2 * k)) := by
+  classical
   intro node j
   have hterm : ∀ t ∈ Finset.range ((j : ℕ) + 1),
       ‖∑ x, ∑ m,
@@ -6499,7 +6513,7 @@ lemma log_pochhammerWeightedPerturbationCore
   ring
 
 lemma log_hermiteInterpolationBound
-    (A k : ℕ) (hA : 0 < A) (hk : 0 < k) :
+    (A k : ℕ) (hA : 0 < A) (_hk : 0 < k) :
     Real.log (hermiteInterpolationBound A k) =
       Real.log ((A * k).factorial : ℝ) +
         ((A * k : ℕ) : ℝ) ^ 2 * Real.log (2 * (A + 1 : ℝ)) := by
@@ -6660,7 +6674,7 @@ lemma pochhammerWeightedPerturbationCoefficient_log_le
 
 theorem pochhammerWeightedAuxiliary_norm_le_of_moments
     {F κ iota : Type*} [Field F] [NumberField F]
-    [Fintype κ] [Fintype iota] [DecidableEq iota]
+    [Fintype κ] [Fintype iota]
     (φ : F →+* ℂ) (beta : κ → F) (L : κ → ℂ)
     (b0 Lambda : ℂ) (a : κ → ℤ) (r : κ → iota → ℤ)
     (ell : iota → ℂ) (P : ℕ) (c : κ → Fin P → ℤ)
@@ -6690,6 +6704,7 @@ theorem pochhammerWeightedAuxiliary_norm_le_of_moments
       pochhammerWeightedApproximationBound
         (Fintype.card κ) P A k Q v0 q0 (∑ i, u0 i)
           C V U R Z ‖Lambda‖ := by
+  classical
   unfold pochhammerWeightedApproximationBound
   dsimp only
   apply analytic_norm_le_of_approximate_nat_node_jets
@@ -6769,7 +6784,7 @@ theorem pochhammerWeightedAuxiliary_norm_le_of_moments
 
 theorem boxPochhammerMomentValue_eq_zero_of_approximate_extrapolation
     {F iota : Type*} [Field F] [NumberField F]
-    [Fintype iota] [DecidableEq iota]
+    [Fintype iota]
     (φ : F →+* ℂ) {n K P : ℕ} (alpha : Fin n → F)
     (c : ExponentBox n K → Fin P → ℤ)
     (L : ExponentBox n K → ℂ) (b0 Lambda : ℂ)
@@ -6808,6 +6823,7 @@ theorem boxPochhammerMomentValue_eq_zero_of_approximate_extrapolation
               ∑ i, Height.logHeight₁ (alpha i))))) :
     pochhammerMultipointMomentValue (boxMonomial alpha) a r P c
       h v0 q0 u0 = 0 := by
+  classical
   have hcComplex : ∀ x m, ‖(c x m : ℂ)‖ ≤ (C : ℝ) := by
     intro x m
     rw [Complex.norm_intCast, ← Int.cast_abs, ← Nat.cast_natAbs]
@@ -6902,7 +6918,7 @@ theorem boxPochhammerMomentValue_eq_zero_of_approximate_extrapolation
 
 theorem boxPochhammerMoments_extend_of_approximate_extrapolation
     {F iota : Type*} [Field F] [NumberField F]
-    [Fintype iota] [DecidableEq iota]
+    [Fintype iota]
     (φ : F →+* ℂ) {n K P : ℕ} (alpha : Fin n → F)
     (c : ExponentBox n K → Fin P → ℤ)
     (L : ExponentBox n K → ℂ) (b0 Lambda : ℂ)
@@ -6942,6 +6958,7 @@ theorem boxPochhammerMoments_extend_of_approximate_extrapolation
       ∀ u : iota → Fin S',
         pochhammerMultipointMomentValue (boxMonomial alpha) a r P c
           node v q (fun i ↦ u i) = 0 := by
+  classical
   intro node v q u
   apply boxPochhammerMomentValue_eq_zero_of_approximate_extrapolation
     (A := A) (W := W) (T := T) (S := S) (k := k) (Q := Q)
@@ -6964,7 +6981,7 @@ theorem boxPochhammerMoments_extend_of_approximate_extrapolation
 
 theorem no_small_box_linear_form_of_pochhammer_approximate_then_iterated_moments
     {F iota : Type*} [Field F] [NumberField F]
-    [Fintype iota] [DecidableEq iota]
+    [Fintype iota]
     (φ : F →+* ℂ) {n K P : ℕ} (alpha : Fin n → F)
     (c : ExponentBox n K → Fin P → ℤ)
     (L : ExponentBox n K → ℂ) (b0 Lambda : ℂ)
@@ -7038,6 +7055,7 @@ theorem no_small_box_linear_form_of_pochhammer_approximate_then_iterated_moments
     (hfinalA : K ^ n * P ≤ A m)
     (hfinalW : 0 < W m) (hfinalT : 0 < T m) (hfinalS : 0 < S m) :
     False := by
+  classical
   have hmoment0 :=
     boxPochhammerMoments_extend_of_approximate_extrapolation
       (A := Ainit) (W := Wsrc) (T := Tsrc) (S := Ssrc)
@@ -7365,7 +7383,7 @@ theorem no_small_distinguished_linear_form_of_pochhammer_schedule
 
 theorem boxPochhammerMoments_iterate_approximate_extrapolation
     {F iota : Type*} [Field F] [NumberField F]
-    [Fintype iota] [DecidableEq iota]
+    [Fintype iota]
     (φ : F →+* ℂ) {n K P : ℕ} (alpha : Fin n → F)
     (c : ExponentBox n K → Fin P → ℤ)
     (L : ExponentBox n K → ℂ) (b0 Lambda : ℂ)
@@ -7413,6 +7431,7 @@ theorem boxPochhammerMoments_iterate_approximate_extrapolation
       ∀ q : Fin (T m), ∀ u : iota → Fin (S m),
         pochhammerMultipointMomentValue (boxMonomial alpha) a r P c
           node v q (fun i ↦ u i) = 0 := by
+  classical
   induction m with
   | zero => simpa using hmoment
   | succ m ih =>
@@ -7443,7 +7462,7 @@ theorem boxPochhammerMoments_iterate_approximate_extrapolation
 
 theorem no_small_box_linear_form_of_pochhammer_iterated_approximate_moments
     {F iota : Type*} [Field F] [NumberField F]
-    [Fintype iota] [DecidableEq iota]
+    [Fintype iota]
     (φ : F →+* ℂ) {n K P : ℕ} (alpha : Fin n → F)
     (c : ExponentBox n K → Fin P → ℤ)
     (L : ExponentBox n K → ℂ) (b0 Lambda : ℂ)
@@ -7494,6 +7513,7 @@ theorem no_small_box_linear_form_of_pochhammer_iterated_approximate_moments
     (hfinalA : K ^ n * P ≤ A m)
     (hfinalW : 0 < W m) (hfinalT : 0 < T m) (hfinalS : 0 < S m) :
     False := by
+  classical
   have hfinal := boxPochhammerMoments_iterate_approximate_extrapolation
     φ alpha c L b0 Lambda a r ell A W T S k Q R Z m
     hK hP hA hk hb0 hLambda hC hV hU hc haV hrV hrLinear
@@ -7789,7 +7809,7 @@ lemma pochhammerWeightedApproximationBound_continuous
   fun_prop
 
 theorem exists_uniform_lambda_radius_of_boundary_small
-    {iota : Type*} [Fintype iota] [DecidableEq iota]
+    {iota : Type*} [Fintype iota]
     (N P : ℕ) (A W T S k Q : ℕ → ℕ)
     (C V U : ℝ) (R Z : ℕ → ℝ) (m : ℕ)
     (target : (j : ℕ) → ℕ → ℕ → ℕ → (iota → ℕ) → ℝ)
@@ -7806,6 +7826,7 @@ theorem exists_uniform_lambda_radius_of_boundary_small
       pochhammerWeightedApproximationBound N P (A j) (k j) (Q j)
           v q (∑ i, u i) C V U (R j) (Z j) lambdaNorm <
         target j h v q u := by
+  classical
   have hlocal (j : Fin m) (h : Fin (A (j + 1)))
       (v : Fin (W (j + 1))) (q : Fin (T (j + 1)))
       (u : iota → Fin (S (j + 1))) :
@@ -8228,7 +8249,7 @@ theorem logHeight₁_pochhammerMultipointInitialMomentMatrix_le
     [Fintype κ] [Fintype iota]
     (beta : κ → F) (a : κ → ℤ) (r : κ → iota → ℤ)
     (P A W T S : ℕ) {H V : ℝ}
-    (hA : 0 < A) (hW : 0 < W) (hP : 0 < P) (hV : 1 ≤ V)
+    (hA : 0 < A) (_hW : 0 < W) (hP : 0 < P) (hV : 1 ≤ V)
     (hbeta : ∀ x, Height.logHeight₁ (beta x) ≤ H)
     (ha : ∀ x, ‖a x‖ ≤ V) (hr : ∀ x i, ‖r x i‖ ≤ V) :
     ∀ row xm,
@@ -8396,7 +8417,7 @@ lemma one_le_numberFieldKernelCoefficientMajorant
 
 theorem exists_pochhammerMultipoint_coefficients_with_majorant
     {F κ iota ι : Type*} [Field F] [NumberField F]
-    [Fintype κ] [Fintype iota] [DecidableEq iota] [Fintype ι]
+    [Fintype κ] [Fintype iota] [Fintype ι]
     (basis : Module.Basis ι ℚ F) (hbasis : ∀ i, IsIntegral ℤ (basis i))
     (beta : κ → F) (a : κ → ℤ) (r : κ → iota → ℤ)
     (P A W T S : ℕ) {H V M : ℝ}
@@ -8425,6 +8446,7 @@ theorem exists_pochhammerMultipoint_coefficients_with_majorant
       ∀ x p, (c x p).natAbs ≤
         numberFieldKernelCoefficientMajorant
           rows cols (Fintype.card ι) Hentry M := by
+  classical
   dsimp only
   let rows := A * W * T * S ^ Fintype.card iota
   let cols := Fintype.card κ * P
@@ -8457,7 +8479,7 @@ theorem exists_pochhammerMultipoint_coefficients_with_majorant
 
 noncomputable def boxPochhammerMultipointCoefficientMajorant
     {F ι : Type*} [Field F] [NumberField F] [Fintype ι]
-    (basis : Module.Basis ι ℚ F) (M : ℝ)
+    (_basis : Module.Basis ι ℚ F) (M : ℝ)
     (r B K P A W T S : ℕ) (alpha : Fin (r + 1) → F) : ℕ :=
   let rows := A * W * T * S ^ r
   let cols := K ^ (r + 1) * P
@@ -8884,13 +8906,14 @@ noncomputable def rowTraceConstraintMatrix
 
 lemma rowTraceConstraintMatrix_kernel
     {K rows cols ι : Type*} [Field K] [NumberField K]
-    [Fintype cols] [Fintype ι]
+    [Fintype cols] [Finite ι]
     (b : Module.Basis ι ℚ K) (hb : ∀ i, IsIntegral ℤ (b i))
     (A : Matrix rows cols K) (Q : rows → ℕ) (hQ : ∀ r, Q r ≠ 0)
     (hQA : ∀ r j, IsIntegral ℤ ((Q r : K) * A r j))
     (c : cols → ℤ)
     (hc : (rowTraceConstraintMatrix b hb A Q hQA).mulVec c = 0) :
     A.mulVec (fun j ↦ (c j : K)) = 0 := by
+  let : Fintype ι := Fintype.ofFinite ι
   funext r
   let y : K := ∑ j, (c j : K) * A r j
   have htrace : ∀ i, Algebra.trace ℚ K ((Q r : K) * y * b i) = 0 := by
@@ -9071,7 +9094,7 @@ lemma one_le_numberFieldRowKernelCoefficientMajorant
 
 theorem exists_pochhammerMultipoint_coefficients_with_rowMajorant
     {F κ iota ι : Type*} [Field F] [NumberField F]
-    [Fintype κ] [Fintype iota] [DecidableEq iota] [Fintype ι]
+    [Fintype κ] [Fintype iota] [Fintype ι]
     (basis : Module.Basis ι ℚ F) (hbasis : ∀ i, IsIntegral ℤ (basis i))
     (beta : κ → F) (a : κ → ℤ) (r : κ → iota → ℤ)
     (P A W T S : ℕ) {H V M : ℝ}
@@ -9100,6 +9123,7 @@ theorem exists_pochhammerMultipoint_coefficients_with_rowMajorant
       ∀ x p, (c x p).natAbs ≤
         numberFieldRowKernelCoefficientMajorant
           rows cols (Fintype.card ι) Hentry M := by
+  classical
   dsimp only
   let rowsType := PochhammerMultipointInitialMomentIndex iota A W T S
   let colsType := κ × Fin P
@@ -9158,7 +9182,7 @@ theorem exists_pochhammerMultipoint_coefficients_with_rowMajorant
 
 noncomputable def boxPochhammerMultipointRowCoefficientMajorant
     {F ι : Type*} [Field F] [NumberField F] [Fintype ι]
-    (basis : Module.Basis ι ℚ F) (M : ℝ)
+    (_basis : Module.Basis ι ℚ F) (M : ℝ)
     (r B K P A W T S : ℕ) (alpha : Fin (r + 1) → F) : ℕ :=
   let rows := A * W * T * S ^ r
   let cols := K ^ (r + 1) * P
@@ -9864,7 +9888,7 @@ lemma one_le_structuredKernelCoefficientMajorant
 
 noncomputable def boxPochhammerStructuredCoefficientMajorant
     {F ι : Type*} [Field F] [NumberField F] [Fintype ι]
-    (basis : Module.Basis ι ℚ F) (M : ℝ)
+    (_basis : Module.Basis ι ℚ F) (M : ℝ)
     (r B K P A W T S : ℕ) (alpha : Fin (r + 1) → F) : ℕ :=
   let rows := A * W * T * S ^ r
   let cols := K ^ (r + 1) * P
@@ -10529,7 +10553,7 @@ lemma boxMomentCoordinateBound_le_poly
 lemma structured_initial_entry_height_le
     {r d B L : ℕ} (Halpha cMoment : ℝ)
     (hr : r ≤ 8) (hd : d ≤ 8) (hHalpha : 0 ≤ Halpha)
-    (hcMoment : 0 ≤ cMoment)
+    (_hcMoment : 0 ≤ cMoment)
     (hL : 2 ≤ L) (hlogL : 1 ≤ Real.log (L : ℝ)) :
     Real.log (boxMomentCoordinateBound B (L ^ 32) : ℝ) ≤
       cMoment * Real.log (L : ℝ) →
@@ -10591,7 +10615,6 @@ lemma structured_initial_entry_height_le
       calc
         (L : ℝ) ^ 24 * Real.log ((L : ℝ) ^ 2 + (L : ℝ) ^ 24) ≤
             (L : ℝ) ^ 24 * (26 * Real.log (L : ℝ)) := by
-          push_cast
           apply mul_le_mul_of_nonneg_left _ (by positivity)
           have hlogsum' := hlogsum
           norm_num [Nat.cast_add, Nat.cast_pow] at hlogsum' ⊢
@@ -10742,7 +10765,6 @@ lemma structured_initial_entry_height_le_duplicate
       calc
         (L : ℝ) ^ 24 * Real.log ((L : ℝ) ^ 2 + (L : ℝ) ^ 24) ≤
             (L : ℝ) ^ 24 * (26 * Real.log (L : ℝ)) := by
-          push_cast
           apply mul_le_mul_of_nonneg_left _ (by positivity)
           have hlogsum' := hlogsum
           norm_num [Nat.cast_add, Nat.cast_pow] at hlogsum' ⊢
@@ -10840,7 +10862,7 @@ lemma boxPochhammerStructuredCoefficientMajorant_cast_le
     {F ι : Type*} [Field F] [NumberField F] [Fintype ι]
     (basis : Module.Basis ι ℚ F) {M : ℝ}
     {r B K P A W T S : ℕ} (alpha : Fin (r + 1) → F)
-    (hK : 0 < K) (hP : 0 < P) (hA : 0 < A) (hW : 0 < W)
+    (hK : 0 < K) (hP : 0 < P) (hA : 0 < A) (_hW : 0 < W)
     (hM : 1 ≤ M)
     (hhalf : 2 * ((A * W * T * S ^ r) * Fintype.card ι) ≤
       K ^ (r + 1) * P) :
@@ -11339,7 +11361,7 @@ lemma structured_stage_log_growth_le
       dsimp [N, P]
       rw [← pow_mul, ← pow_add]
     rw [heq]
-    exact Nat.pow_le_pow_right hLone he
+    exact pow_le_pow_right' hLone he
   have hApoly : A ≤ 2 * L ^ 314 := by
     have hAstep : A ≤ scaledDyadicStageA (L ^ 2) (j + 1) := by
       dsimp [A, scaledDyadicStageA]
@@ -11355,8 +11377,8 @@ lemma structured_stage_log_growth_le
   have hYpoly : Y ≤ 6 * L ^ 315 := by
     have hPpoly : P ≤ L ^ 315 := by
       dsimp [P]
-      exact Nat.pow_le_pow_right hLone (by omega)
-    have hOne : 1 ≤ L ^ 315 := Nat.one_le_pow _ _ hLone
+      exact pow_le_pow_right' hLone (by omega)
+    have hOne : 1 ≤ L ^ 315 := one_le_pow₀ hLone
     dsimp [Y]
     calc
       L * (2 * A) + 1 + P ≤ L * (2 * (2 * L ^ 314)) + L ^ 315 + L ^ 315 := by
@@ -11457,7 +11479,7 @@ lemma structured_stage_log_growth_le
   have hZpoly : Z ≤ 5 * L ^ 314 := by
     have hPpoly : P ≤ L ^ 314 := by
       dsimp [P]
-      exact Nat.pow_le_pow_right hLone (by omega)
+      exact pow_le_pow_right' hLone (by omega)
     dsimp [Z]
     calc
       2 * A + P ≤ 2 * (2 * L ^ 314) + L ^ 314 := by gcongr
@@ -11504,8 +11526,8 @@ lemma structured_stage_log_growth_le
         dsimp [N]
         rw [← pow_mul]
       rw [heq]
-      exact Nat.pow_le_pow_right hLone he
-    have hone : 1 ≤ L ^ 288 := Nat.one_le_pow _ _ hLone
+      exact pow_le_pow_right' hLone he
+    have hone : 1 ≤ L ^ 288 := one_le_pow₀ hLone
     omega
   have hlogNplus := log_nat_le_poly (n := N + 1) (c := 2) (e := 288)
     (by positivity) (by norm_num) hLpos hlogL hNplus
@@ -11578,7 +11600,7 @@ lemma structured_stage_log_growth_le
         (s := 2 * ∑ i, ‖ell i‖)
         (x := (L : ℝ) ^ 32 * Real.log (L : ℝ))
         (y := (L : ℝ) ^ 33)
-        (by positivity) hcbase hell (by positivity) (by positivity) using 1 <;> ring
+        (by positivity) hcbase hell (by positivity) (by positivity) using 1; ring
 
 
 
@@ -11703,7 +11725,7 @@ lemma structured_stage_log_growth_le_fixed_radius
       dsimp [N, P]
       rw [← pow_mul, ← pow_add]
     rw [heq]
-    exact Nat.pow_le_pow_right hLone he
+    exact pow_le_pow_right' hLone he
   have hApoly : A ≤ 2 * L ^ 314 := by
     have hAstep : A ≤ scaledDyadicStageA (L ^ 2) (j + 1) := by
       dsimp [A, scaledDyadicStageA]
@@ -11719,8 +11741,8 @@ lemma structured_stage_log_growth_le_fixed_radius
   have hYpoly : Y ≤ 6 * L ^ 315 := by
     have hPpoly : P ≤ L ^ 315 := by
       dsimp [P]
-      exact Nat.pow_le_pow_right hLone (by omega)
-    have hOne : 1 ≤ L ^ 315 := Nat.one_le_pow _ _ hLone
+      exact pow_le_pow_right' hLone (by omega)
+    have hOne : 1 ≤ L ^ 315 := one_le_pow₀ hLone
     dsimp [Y]
     calc
       D * (2 * A) + 1 + P ≤ L * (2 * (2 * L ^ 314)) + L ^ 315 + L ^ 315 := by
@@ -11823,7 +11845,7 @@ lemma structured_stage_log_growth_le_fixed_radius
   have hZpoly : Z ≤ 5 * L ^ 314 := by
     have hPpoly : P ≤ L ^ 314 := by
       dsimp [P]
-      exact Nat.pow_le_pow_right hLone (by omega)
+      exact pow_le_pow_right' hLone (by omega)
     dsimp [Z]
     calc
       2 * A + P ≤ 2 * (2 * L ^ 314) + L ^ 314 := by gcongr
@@ -11870,8 +11892,8 @@ lemma structured_stage_log_growth_le_fixed_radius
         dsimp [N]
         rw [← pow_mul]
       rw [heq]
-      exact Nat.pow_le_pow_right hLone he
-    have hone : 1 ≤ L ^ 288 := Nat.one_le_pow _ _ hLone
+      exact pow_le_pow_right' hLone he
+    have hone : 1 ≤ L ^ 288 := one_le_pow₀ hLone
     omega
   have hlogNplus := log_nat_le_poly (n := N + 1) (c := 2) (e := 288)
     (by positivity) (by norm_num) hLpos hlogL hNplus
@@ -12015,7 +12037,7 @@ lemma structured_stage_perturbation_log_le
       dsimp [N, P]
       rw [← pow_mul, ← pow_add]
     rw [heq]
-    exact Nat.pow_le_pow_right hLone he
+    exact pow_le_pow_right' hLone he
   have hApoly : A ≤ 2 * L ^ 314 := by
     have hAstep : A ≤ scaledDyadicStageA (L ^ 2) (j + 1) := by
       dsimp [A, scaledDyadicStageA]
@@ -12037,8 +12059,8 @@ lemma structured_stage_perturbation_log_le
   have hAPA : A + 1 + P ≤ 4 * L ^ 314 := by
     have hP314 : P ≤ L ^ 314 := by
       dsimp [P]
-      exact Nat.pow_le_pow_right hLone (by omega)
-    have hOne314 : 1 ≤ L ^ 314 := Nat.one_le_pow _ _ hLone
+      exact pow_le_pow_right' hLone (by omega)
+    have hOne314 : 1 ≤ L ^ 314 := one_le_pow₀ hLone
     omega
   have hZA : 2 * A + A ≤ 6 * L ^ 314 := by omega
   have hRnat : L * (2 * A) ≤ 4 * L ^ 315 := by
@@ -12046,7 +12068,7 @@ lemma structured_stage_perturbation_log_le
       L * (2 * A) ≤ L * (2 * (2 * L ^ 314)) := by gcongr
       _ = 4 * L ^ 315 := by ring
   have hHermBase : 2 * (A + 1) ≤ 6 * L ^ 314 := by
-    have hOne314 : 1 ≤ L ^ 314 := Nat.one_le_pow _ _ hLone
+    have hOne314 : 1 ≤ L ^ 314 := one_le_pow₀ hLone
     omega
   have hlogAk := log_nat_le_poly (n := A * k) (c := 2) (e := 347)
     (by positivity) (by norm_num) hLpos hlogL hAk
@@ -12422,7 +12444,7 @@ lemma structured_stage_perturbation_log_le_fixed_radius
       dsimp [N, P]
       rw [← pow_mul, ← pow_add]
     rw [heq]
-    exact Nat.pow_le_pow_right hLone he
+    exact pow_le_pow_right' hLone he
   have hApoly : A ≤ 2 * L ^ 314 := by
     have hAstep : A ≤ scaledDyadicStageA (L ^ 2) (j + 1) := by
       dsimp [A, scaledDyadicStageA]
@@ -12444,8 +12466,8 @@ lemma structured_stage_perturbation_log_le_fixed_radius
   have hAPA : A + 1 + P ≤ 4 * L ^ 314 := by
     have hP314 : P ≤ L ^ 314 := by
       dsimp [P]
-      exact Nat.pow_le_pow_right hLone (by omega)
-    have hOne314 : 1 ≤ L ^ 314 := Nat.one_le_pow _ _ hLone
+      exact pow_le_pow_right' hLone (by omega)
+    have hOne314 : 1 ≤ L ^ 314 := one_le_pow₀ hLone
     omega
   have hZA : 2 * A + A ≤ 6 * L ^ 314 := by omega
   have hRnat : D * (2 * A) ≤ 4 * L ^ 315 := by
@@ -12453,7 +12475,7 @@ lemma structured_stage_perturbation_log_le_fixed_radius
       D * (2 * A) ≤ L * (2 * (2 * L ^ 314)) := by gcongr
       _ = 4 * L ^ 315 := by ring
   have hHermBase : 2 * (A + 1) ≤ 6 * L ^ 314 := by
-    have hOne314 : 1 ≤ L ^ 314 := Nat.one_le_pow _ _ hLone
+    have hOne314 : 1 ≤ L ^ 314 := one_le_pow₀ hLone
     omega
   have hlogAk := log_nat_le_poly (n := A * k) (c := 2) (e := 347)
     (by positivity) (by norm_num) hLpos hlogL hAk
@@ -12750,7 +12772,7 @@ lemma structured_stage_perturbation_log_le_fixed_radius
 lemma perturbation_product_le_half_target
     {lambda coeff coeffWorst X Xmax Q : ℝ}
     (hlambda : 0 ≤ lambda)
-    (hcoeff : 0 ≤ coeff) (hcoeffWorst : 0 < coeffWorst)
+    (_hcoeff : 0 ≤ coeff) (hcoeffWorst : 0 < coeffWorst)
     (hcoeffle : coeff ≤ coeffWorst)
     (hlogCoeff : Real.log coeffWorst ≤ Q)
     (hX : X ≤ Xmax)
@@ -12777,7 +12799,7 @@ lemma perturbation_product_le_half_target
 lemma pochhammer_liouville_exponent_le_worst_case
     {iota : Type*} [Fintype iota]
     (N P A W T S C V h v q : ℕ) (u : iota → ℕ) (Hbox d : ℝ)
-    (hP : 0 < P) (hA : 0 < A) (hC : 0 < C) (hV : 1 ≤ V)
+    (hP : 0 < P) (_hA : 0 < A) (hC : 0 < C) (hV : 1 ≤ V)
     (hd : 0 ≤ d) (hHbox : 0 ≤ Hbox)
     (hh : h < 2 * A) (hv : v < W) (hq : q < T)
     (hu : ∀ i, u i < S) :
@@ -12938,7 +12960,7 @@ lemma boxPochhammerStructuredCoefficientMajorant_cast_le_duplicate
     {F ι : Type*} [Field F] [NumberField F] [Fintype ι]
     (basis : Module.Basis ι ℚ F) {M : ℝ}
     {r B K P A W T S : ℕ} (alpha : Fin (r + 1) → F)
-    (hK : 0 < K) (hP : 0 < P) (hA : 0 < A) (hW : 0 < W)
+    (hK : 0 < K) (hP : 0 < P) (hA : 0 < A) (_hW : 0 < W)
     (hM : 1 ≤ M)
     (hhalf : 2 * ((A * W * T * S ^ r) * Fintype.card ι) ≤
       K ^ (r + 1) * P) :
@@ -13173,7 +13195,7 @@ lemma pochhammerWeightedApproximationBound_zero_scaled
     ring
   rw [hZA, hRA, mul_pow, mul_pow]
   field_simp
-  <;> ring
+  ring
 
 lemma boundary_log_dominates_of_explicit_bounds
     (c : ℝ) {L : ℕ}
@@ -13293,7 +13315,7 @@ lemma eventually_boundary_log_dominates (c : ℝ) :
 
 lemma boundary_master_of_log_inequality
     (N P A k W E C V : ℕ) (U D R X : ℝ)
-    (hN : 0 < N) (hP : 0 < P) (hA : 0 < A) (hC : 0 < C)
+    (hN : 0 < N) (hP : 0 < P) (_hA : 0 < A) (hC : 0 < C)
     (hV : 0 < V) (hD : 1 < D) (hR : 0 ≤ R)
     (hlog :
       Real.log
@@ -13821,7 +13843,7 @@ theorem structured_box_small_of_norm_bound
       dsimp [K, P]
       rw [← pow_mul, ← pow_add]
     rw [heq]
-    exact Nat.pow_le_pow_right hLone he
+    exact pow_le_pow_right' hLone he
   have hApoly : A ≤ 2 * L ^ 314 := by
     have hAstepLe : A ≤ scaledDyadicStageA (L ^ 2) (j + 1) := by
       dsimp [A, Ainit, scaledDyadicStageA]
@@ -14337,7 +14359,7 @@ theorem structured_box_boundary
 
 
 theorem exists_positive_lower_bound_box_logarithmic_form
-    {F ι : Type*} [Field F] [NumberField F] [Fintype ι]
+    {F ι : Type*} [Field F] [NumberField F] [Finite ι]
     (basis : Module.Basis ι ℚ F) (hbasis : ∀ i, IsIntegral ℤ (basis i))
     (φ : F →+* ℂ) {r B : ℕ}
     (alpha : Fin (r + 1) → F) (ell : Fin (r + 1) → ℂ)
@@ -14351,6 +14373,7 @@ theorem exists_positive_lower_bound_box_logarithmic_form
     (hexp : ∀ K (x : ExponentBox (r + 1) K),
       Complex.exp (boxLinearForm ell x) = φ (boxMonomial alpha x)) :
     ∃ ε : ℝ, 0 < ε ∧ ε ≤ ‖∑ i, (b i : ℂ) * ell i‖ := by
+  let : Fintype ι := Fintype.ofFinite ι
   let Halpha : ℝ := ∑ i, Height.logHeight₁ (alpha i)
   let cH : ℝ := 8 * (314 * (314 + 34) + 26) + Halpha +
     (314 * 9) * 8 * ((2 * B + 1 : ℕ) + 32)
@@ -14950,7 +14973,7 @@ theorem structured_box_small_schedule_of_norm_bound
     (B := B) (L := L) basis M alpha ell lambdaNorm hr hd hL hlogL
       hparams hboundary hlambda0 hlambda
 theorem structured_box_logarithmic_form_lower_bound
-    {F ι : Type*} [Field F] [NumberField F] [Fintype ι]
+    {F ι : Type*} [Field F] [NumberField F] [Finite ι]
     (basis : Module.Basis ι ℚ F) (hbasis : ∀ i, IsIntegral ℤ (basis i))
     (φ : F →+* ℂ) {r B L : ℕ}
     (alpha : Fin (r + 1) → F) (ell : Fin (r + 1) → ℂ)
@@ -14968,6 +14991,7 @@ theorem structured_box_logarithmic_form_lower_bound
       Complex.exp (boxLinearForm ell x) = φ (boxMonomial alpha x)) :
     structuredBoxLogarithmicFormThreshold B L M alpha ell ≤
       ‖∑ i, (b i : ℂ) * ell i‖ := by
+  let : Fintype ι := Fintype.ofFinite ι
   let K := L ^ 32
   let P := L ^ 24
   let Ainit := L ^ 2
@@ -15011,7 +15035,7 @@ theorem structured_box_logarithmic_form_lower_bound
           lambdaNorm] using hsmall)
 
 theorem structured_box_logarithmic_form_lower_bound_at_master
-    {F ι : Type*} [Field F] [NumberField F] [Fintype ι]
+    {F ι : Type*} [Field F] [NumberField F] [Finite ι]
     (basis : Module.Basis ι ℚ F) (hbasis : ∀ i, IsIntegral ℤ (basis i))
     (φ : F →+* ℂ) {r B : ℕ}
     (alpha : Fin (r + 1) → F) (ell : Fin (r + 1) → ℂ)
@@ -15027,6 +15051,7 @@ theorem structured_box_logarithmic_form_lower_bound_at_master
     structuredBoxLogarithmicFormThreshold B
         (structuredBoxMasterL B M alpha ell) M alpha ell ≤
       ‖∑ i, (b i : ℂ) * ell i‖ := by
+  let : Fintype ι := Fintype.ofFinite ι
   obtain ⟨hL, hlogL, hbig, hdom, _hupper⟩ :=
     structured_box_master_parameter B M alpha ell hM
   exact structured_box_logarithmic_form_lower_bound
@@ -15038,7 +15063,7 @@ reindexing of the logarithms.  Besides making the symmetry explicit, this
 wrapper lets an application move any nonzero coefficient into the
 distinguished zeroth coordinate required by the auxiliary construction. -/
 theorem structured_box_logarithmic_form_lower_bound_at_master_reindex
-    {F ι : Type*} [Field F] [NumberField F] [Fintype ι]
+    {F ι : Type*} [Field F] [NumberField F] [Finite ι]
     (basis : Module.Basis ι ℚ F) (hbasis : ∀ i, IsIntegral ℤ (basis i))
     (φ : F →+* ℂ) {r n B : ℕ}
     (e : Fin (r + 1) ≃ Fin n)
@@ -15057,6 +15082,7 @@ theorem structured_box_logarithmic_form_lower_bound_at_master_reindex
           (fun i ↦ ell (e i))) M
         (fun i ↦ alpha (e i)) (fun i ↦ ell (e i)) ≤
       ‖∑ i, (b i : ℂ) * ell i‖ := by
+  let : Fintype ι := Fintype.ofFinite ι
   let alpha' : Fin (r + 1) → F := fun i ↦ alpha (e i)
   let ell' : Fin (r + 1) → ℂ := fun i ↦ ell (e i)
   let b' : Fin (r + 1) → ℤ := fun i ↦ b (e i)
@@ -15208,7 +15234,7 @@ theorem auxiliaryExponentialSum_norm_le_multipointApproximationBound
 
 theorem multipointMomentValue_eq_zero_of_approximate_extrapolation
     {F kappa iota : Type*} [Field F] [NumberField F]
-    [Fintype kappa] [Fintype iota] [DecidableEq iota]
+    [Fintype kappa] [Fintype iota]
     (φ : F →+* ℂ) (beta : kappa → F)
     (c : kappa → ℤ) (L : kappa → ℂ) (b0 Lambda : ℂ)
     (a : kappa → ℤ) (r : kappa → iota → ℤ) (ell : iota → ℂ)
@@ -15237,6 +15263,7 @@ theorem multipointMomentValue_eq_zero_of_approximate_extrapolation
           (Fintype.card kappa : ℝ) *
             ((Module.finrank ℚ F : ℝ) * Real.log C + (h : ℝ) * H)))) :
     multipointMomentValue beta a r c h 0 (fun _ ↦ 0) = 0 := by
+  classical
   have hcComplex : ∀ x, ‖(c x : ℂ)‖ ≤ C := by
     intro x
     simpa [Complex.norm_intCast, Int.cast_abs, Int.natCast_natAbs] using hc x
@@ -15324,7 +15351,7 @@ theorem multipointMomentValue_eq_zero_of_approximate_extrapolation
 
 theorem multipointMomentValue_eq_zero_of_shifted_approximate_extrapolation
     {F kappa iota : Type*} [Field F] [NumberField F]
-    [Fintype kappa] [Fintype iota] [DecidableEq iota]
+    [Fintype kappa] [Fintype iota]
     (φ : F →+* ℂ) (beta : kappa → F)
     (c : kappa → ℤ) (L : kappa → ℂ) (b0 Lambda : ℂ)
     (a : kappa → ℤ) (r : kappa → iota → ℤ) (ell : iota → ℂ)
@@ -15358,6 +15385,7 @@ theorem multipointMomentValue_eq_zero_of_shifted_approximate_extrapolation
                 ((q0 + ∑ i, u0 i : ℕ) : ℝ) *
                   ((Module.finrank ℚ F : ℝ) * Real.log V))))) :
     multipointMomentValue beta a r c h q0 u0 = 0 := by
+  classical
   let d : kappa → ℂ := fun x ↦
     (c x : ℂ) * (a x : ℂ) ^ q0 * ∏ i, (r x i : ℂ) ^ u0 i
   have hd : ∀ x, ‖d x‖ ≤ C * V ^ (q0 + ∑ i, u0 i) := by
@@ -15488,7 +15516,7 @@ structured projective-height bound rather than charging each monomial
 separately. -/
 theorem boxMultipointMomentValue_eq_zero_of_shifted_approximate_extrapolation
     {F iota : Type*} [Field F] [NumberField F]
-    [Fintype iota] [DecidableEq iota]
+    [Fintype iota]
     (φ : F →+* ℂ) {n K : ℕ} (alpha : Fin n → F)
     (c : ExponentBox n K → ℤ) (L : ExponentBox n K → ℂ)
     (b0 Lambda : ℂ) (a : ExponentBox n K → ℤ)
@@ -15523,6 +15551,7 @@ theorem boxMultipointMomentValue_eq_zero_of_shifted_approximate_extrapolation
             (h : ℝ) * ((K : ℝ) *
               ∑ i, Height.logHeight₁ (alpha i))))) :
     multipointMomentValue (boxMonomial alpha) a r c h q0 u0 = 0 := by
+  classical
   let dZ : ExponentBox n K → ℤ := fun x ↦
     c x * a x ^ q0 * ∏ i, r x i ^ u0 i
   let d : ExponentBox n K → ℂ := fun x ↦ (dZ x : ℂ)
@@ -15673,7 +15702,7 @@ theorem boxMultipointMomentValue_eq_zero_of_shifted_approximate_extrapolation
 extrapolation step. -/
 theorem boxMultipointMoments_extend_of_shifted_approximate_extrapolation
     {F iota : Type*} [Field F] [NumberField F]
-    [Fintype iota] [DecidableEq iota]
+    [Fintype iota]
     (φ : F →+* ℂ) {n K : ℕ} (alpha : Fin n → F)
     (c : ExponentBox n K → ℤ) (L : ExponentBox n K → ℂ)
     (b0 Lambda : ℂ) (a : ExponentBox n K → ℤ)
@@ -15711,6 +15740,7 @@ theorem boxMultipointMoments_extend_of_shifted_approximate_extrapolation
     ∀ node : Fin A', ∀ q : Fin T', ∀ u : iota → Fin S',
       multipointMomentValue (boxMonomial alpha) a r c node q
         (fun i ↦ u i) = 0 := by
+  classical
   intro node q u
   apply boxMultipointMomentValue_eq_zero_of_shifted_approximate_extrapolation
     (A := A) (Tsrc := Tsrc) (Ssrc := Ssrc) (T0 := T0) (S0 := S0)
@@ -15748,7 +15778,7 @@ forces all samples below the box cardinality to vanish, while ordinary
 Vandermonde nonvanishing supplies one nonzero sample. -/
 theorem no_small_box_linear_form_of_multipoint_moments
     {F iota : Type*} [Field F] [NumberField F]
-    [Fintype iota] [DecidableEq iota]
+    [Fintype iota]
     (φ : F →+* ℂ) {n K : ℕ} (alpha : Fin n → F)
     (c : ExponentBox n K → ℤ) (L : ExponentBox n K → ℂ)
     (b0 Lambda : ℂ) (a : ExponentBox n K → ℤ)
@@ -15786,6 +15816,7 @@ theorem no_small_box_linear_form_of_multipoint_moments
             (h : ℝ) * ((K : ℝ) *
               ∑ i, Height.logHeight₁ (alpha i))))) :
     False := by
+  classical
   obtain ⟨t, ht⟩ :=
     exists_boxAuxiliaryAlgebraicValue_ne_zero alpha c hinj hc0
   have hvalueNe :
@@ -15814,7 +15845,7 @@ contains the cardinality of the exponent box, Vandermonde nonvanishing
 contradicts the propagated moment table. -/
 theorem no_small_box_linear_form_of_approximate_then_iterated_moments
     {F iota : Type*} [Field F] [NumberField F]
-    [Fintype iota] [DecidableEq iota]
+    [Fintype iota]
     (φ : F →+* ℂ) {n K : ℕ} (alpha : Fin n → F)
     (c : ExponentBox n K → ℤ) (L : ExponentBox n K → ℂ)
     (b0 Lambda : ℂ) (a : ExponentBox n K → ℤ)
@@ -15879,6 +15910,7 @@ theorem no_small_box_linear_form_of_approximate_then_iterated_moments
               ∑ i, Height.logHeight₁ (alpha i)))))
     (hfinalA : K ^ n ≤ A m) (hfinalT : 0 < T m)
     (hfinalS : 0 < S m) : False := by
+  classical
   have hmoment0 :=
     boxMultipointMoments_extend_of_shifted_approximate_extrapolation
       (A := Ainit) (Tsrc := Tsrc) (Ssrc := Ssrc)
@@ -15911,7 +15943,7 @@ theorem no_small_box_linear_form_of_approximate_then_iterated_moments
 /-- Uniform rectangular form of one approximate extrapolation step. -/
 theorem multipointMoments_extend_of_shifted_approximate_extrapolation
     {F kappa iota : Type*} [Field F] [NumberField F]
-    [Fintype kappa] [Fintype iota] [DecidableEq iota]
+    [Fintype kappa] [Fintype iota]
     (φ : F →+* ℂ) (beta : kappa → F)
     (c : kappa → ℤ) (L : kappa → ℂ) (b0 Lambda : ℂ)
     (a : kappa → ℤ) (r : kappa → iota → ℤ) (ell : iota → ℂ)
@@ -15946,6 +15978,7 @@ theorem multipointMoments_extend_of_shifted_approximate_extrapolation
                   ((Module.finrank ℚ F : ℝ) * Real.log V))))) :
     ∀ node : Fin A', ∀ q : Fin T', ∀ u : iota → Fin S',
       multipointMomentValue beta a r c node q (fun i ↦ u i) = 0 := by
+  classical
   intro node q u
   apply multipointMomentValue_eq_zero_of_shifted_approximate_extrapolation
     (A := A) (Tsrc := Tsrc) (Ssrc := Ssrc) (T0 := T0) (S0 := S0)
@@ -15981,7 +16014,7 @@ theorem multipointMoments_extend_of_shifted_approximate_extrapolation
 
 theorem no_small_linear_form_of_multipoint_moments
     {F kappa iota : Type*} [Field F] [NumberField F]
-    [Fintype kappa] [DecidableEq kappa] [Fintype iota] [DecidableEq iota]
+    [Fintype kappa] [Fintype iota]
     (φ : F →+* ℂ) (beta : kappa → F)
     (c : kappa → ℤ) (L : kappa → ℂ) (b0 Lambda : ℂ)
     (a : kappa → ℤ) (r : kappa → iota → ℤ) (ell : iota → ℂ)
@@ -16012,6 +16045,7 @@ theorem no_small_linear_form_of_multipoint_moments
           (Fintype.card kappa : ℝ) *
             ((Module.finrank ℚ F : ℝ) * Real.log C + (h : ℝ) * H)))) :
     False := by
+  classical
   have hcF : (fun x ↦ (c x : F)) ≠ 0 := by
     intro hz
     apply hc0

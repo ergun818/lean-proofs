@@ -237,9 +237,9 @@ lemma boundedUnitSquares_sum_logHeight_le
         Height.logHeight₁
           ((((Units.map (algebraMap (NumberField.RingOfIntegers K) K).toMonoidHom
               (BoundedUnits.boundedFundSystem hB i) : Kˣ) : K)) ^ 2)) =
-      ∑ _i : Fin (NumberField.Units.rank K),
+      ∑ i : Fin (NumberField.Units.rank K),
         (2 * Height.logHeight₁
-          (((BoundedUnits.boundedFundSystem hB _ :
+          (((BoundedUnits.boundedFundSystem hB i :
             (NumberField.RingOfIntegers K)ˣ) :
               NumberField.RingOfIntegers K) : K)) := by
         apply Finset.sum_congr rfl
@@ -495,7 +495,7 @@ lemma degreeEightMinkowskiNatBound_le_pellMinkowskiControl (H : ℕ) :
         258 * (((40320 * H ^ 24) ^ 2) + 1) :=
       degreeEightMinkowskiNatBound_le _
     _ ≤ 258 * ((40320 * (H + 1) ^ 24) ^ 2 + 1) := by
-      gcongr <;> omega
+      gcongr; omega
     _ = pellMinkowskiControl H := rfl
 
 lemma realPellField_classNumber_le_control
@@ -711,8 +711,8 @@ lemma realPell_primeProductHeightMajorant_le_control
     have hcommon0 := BoundedUnits.commonBoundedUnitLogBound_nonneg hB
     by_cases hJ0 : J = 0
     · subst J
-      simp only [Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat, Nat.cast_one, CharP.cast_eq_zero, Real.log_zero,
-    mul_zero, add_zero, ge_iff_le]
+      simp only [Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat, Nat.cast_one,
+        CharP.cast_eq_zero, Real.log_zero, mul_zero, add_zero, ge_iff_le]
       positivity
     · have hlogJ : 0 ≤ Real.log (J : ℝ) :=
         Real.log_nonneg (by exact_mod_cast (show 1 ≤ J by omega))
@@ -921,7 +921,7 @@ lemma structuredBoxThresholdControl_le_of_bounds
     (B : ℕ) (M LM BC Q : ℝ)
     (alpha : Fin (r + 1) → F) (ell : Fin (r + 1) → ℂ)
     (hlogM : Real.log M ≤ LM)
-    (hBC0 : 0 ≤ BC) (hB : (B : ℝ) ≤ BC)
+    (_hBC0 : 0 ≤ BC) (hB : (B : ℝ) ≤ BC)
     (hheight : (∑ i, Height.logHeight₁ (alpha i)) ≤ Q)
     (hell : (∑ i, ‖ell i‖) ≤ ∑ i, Height.logHeight₁ (alpha i)) :
     LinearForms.structuredBoxThresholdControl B M alpha ell ≤
@@ -1207,9 +1207,9 @@ theorem realPell_uniform_logarithmic_form_lower
     exact finrank_adjoin_three_sqRoots_le_eight
       (Real.sqrt γ₁) (Real.sqrt γ₂) (Real.sqrt γ₃)
       (γ₁ : ℚ) (γ₂ : ℚ) (γ₃ : ℚ)
-      (by simpa using Real.sq_sqrt (show (0 : ℝ) ≤ γ₁ by positivity))
-      (by simpa using Real.sq_sqrt (show (0 : ℝ) ≤ γ₂ by positivity))
-      (by simpa using Real.sq_sqrt (show (0 : ℝ) ≤ γ₃ by positivity))
+      (by simp)
+      (by simp)
+      (by simp)
   have hdata := realPell_controlled_archimedean_data hPell hβ₁₂ hβ₁₃ hβ₂₃
     hJ₁₂ hJ₁₃ hJ₂₃ hγ₁ hγ₂ hγ₃ hγ₁H hγ₂H hγ₃H
     hx₁ hx₂ hx₃ hlarge
@@ -1376,7 +1376,6 @@ theorem realPell_uniform_logarithmic_form_lower
       exact fun h ↦ hgapNe (sub_eq_zero.mpr h)
     · rw [← hzapprox]
       exact hgapAbs
-
   · rcases hunit with ⟨c, reindex, _hWunit, hlower⟩
     let alphaBase : Fin (NumberField.Units.rank K) → K := fun i ↦ eps i ^ 2
     let alpha : Fin (NumberField.Units.rank K - 1 + 1) → K :=
@@ -1690,7 +1689,6 @@ lemma pellUnitBoxControl_le_static
   have hI : 0 ≤ (pellIndexControl H : ℝ) := Nat.cast_nonneg _
   have hcoefStatic := pellCoefficientStaticControl_pos H J
   unfold pellUnitBoxControl pellUnitBoxStaticControl
-  push_cast
   nlinarith [mul_nonneg habs (sub_nonneg.mpr hpow1),
     mul_nonneg (mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) hI)
       (sub_nonneg.mpr hcoef),
@@ -1825,7 +1823,7 @@ lemma one_add_log_one_add_pow_two_mul_le
 
 lemma absorb_one_add_log_power
     {Y D L : ℝ} {q : ℕ}
-    (hY : 0 ≤ Y) (hD : 0 ≤ D) (hL : 0 ≤ L)
+    (hY : 0 ≤ Y) (_hD : 0 ≤ D) (hL : 0 ≤ L)
     (hineq : Y ≤ D * (1 + Real.log (1 + Y)) ^ q + L) :
     Y ≤ 1 + 2 * L + 24 * D ^ 2 * (logPowerAbsorptionFactor q : ℝ) := by
   let V := (1 + Real.log (1 + Y)) ^ q
@@ -2724,7 +2722,7 @@ lemma pellBalanceConstant_pos : 0 < pellBalanceConstant := by
   positivity
 
 lemma direct_pell_expression_le_balance
-    {J D : ℕ} (hJ : 2 ≤ J) (hD : 3 ≤ D) (hDJ : D ≤ J)
+    {J D : ℕ} (hJ : 2 ≤ J) (hD : 3 ≤ D) (_hDJ : D ≤ J)
     (hDscale : (D : ℝ) ≤ lowerBalanceScale J) :
     ((pellHeightDegree + 4 : ℕ) : ℝ) *
         Real.log (J ^ (D - 1) + 2 * J + 2 : ℕ) ≤
@@ -3065,9 +3063,9 @@ lemma pellLowerBoundConstant_le_one : pellLowerBoundConstant ≤ 1 := by
   exact (div_le_one₀ (by positivity)).2 hdenom
 
 lemma lowerLogShape_le_of_pell_balance {L J A : ℝ}
-    (hL : 1 < L) (hlogL : 1 ≤ Real.log L) (hJ : 1 < J)
+    (hL : 1 < L) (_hlogL : 1 ≤ Real.log L) (hJ : 1 < J)
     (hJL : J ≤ L ^ 2)
-    (hAnonneg : 0 ≤ A) (hbalance : L ≤ pellBalanceConstant * A)
+    (_hAnonneg : 0 ≤ A) (hbalance : L ≤ pellBalanceConstant * A)
     (hmagPow : A ^ 6 = J ^ 5 * Real.log J) :
     pellLowerBoundConstant * lowerLogShape L ≤ J := by
   have hJpos : 0 < J := by linarith

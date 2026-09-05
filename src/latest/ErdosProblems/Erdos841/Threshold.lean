@@ -182,7 +182,8 @@ theorem structuredBoxBoundaryBase_control_bound
       dsimp [cBoundary]; nlinarith
     have hdom : 9 * T ^ 4 + 3 * T + 2320 ≤ T ^ 5 := by
       nlinarith [mul_nonneg (pow_nonneg hTpos.le 4)
-          (sub_nonneg.mpr (hTlarge.trans' (by norm_num : (9 : ℝ) ≤ 1000000000000000000000000000000))),
+          (sub_nonneg.mpr (hTlarge.trans'
+            (by norm_num : (9 : ℝ) ≤ 1000000000000000000000000000000))),
         mul_nonneg (sub_nonneg.mpr hTlarge) hTpos.le]
     exact hraw.trans hdom
   change 0 ≤ cBoundary ∧ cBoundary ≤ T ^ 5
@@ -269,7 +270,7 @@ theorem structuredBoxThreshold_extra_control_bounds
     have hdom : T ^ 3 + 3000 * T + 200000 ≤ T ^ 6 := by
       calc
         T ^ 3 + 3000 * T + 200000 ≤ 3 * T ^ 5 := by linarith
-        _ ≤ T * T ^ 5 := by gcongr <;> linarith
+        _ ≤ T * T ^ 5 := by gcongr; linarith
         _ = T ^ 6 := by ring
     exact hraw.trans hdom
   have hcPerturb0 : 0 ≤ cPerturb := by dsimp [cPerturb]; positivity
@@ -282,7 +283,7 @@ theorem structuredBoxThreshold_extra_control_bounds
     have hdom : T ^ 6 + 3956 ≤ T ^ 7 := by
       calc
         T ^ 6 + 3956 ≤ 2 * T ^ 6 := by linarith
-        _ ≤ T * T ^ 6 := by gcongr <;> linarith
+        _ ≤ T * T ^ 6 := by gcongr; linarith
         _ = T ^ 7 := by ring
     exact hraw.trans hdom
   obtain ⟨hboundary0, hboundary⟩ :=
@@ -294,8 +295,7 @@ theorem structuredBoxThreshold_extra_control_bounds
     have hraw : structuredBoxThresholdTotal B M alpha ell ≤ T ^ 5 + 2 * T := by
       rw [show structuredBoxThresholdTotal B M alpha ell =
           structuredBoxBoundaryBase B M alpha ell + 2 * S by
-        simp [structuredBoxThresholdTotal, structuredBoxBoundaryBase,
-          Halpha, S, logM, logB]]
+        simp [structuredBoxThresholdTotal, structuredBoxBoundaryBase, S]]
       nlinarith
     have hdom : T ^ 5 + 2 * T ≤ T ^ 6 := by
       nlinarith [mul_nonneg (pow_nonneg hTpos.le 5) (sub_nonneg.mpr hTone),
@@ -378,7 +378,7 @@ theorem structuredBoxMasterL_control_bound
     calc
       (N : ℝ) ≤ T ^ 6 + 1 := hraw
       _ ≤ 2 * T ^ 6 := by linarith
-      _ ≤ T * T ^ 6 := by gcongr <;> linarith
+      _ ≤ T * T ^ 6 := by gcongr; linarith
       _ = T ^ 7 := by ring
   have hLdef : L = N ^ 2 := by rfl
   have hL : (L : ℝ) ≤ T ^ 14 := by

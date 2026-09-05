@@ -267,9 +267,9 @@ private lemma card_squareProductSubsets_toggle {I W : Finset ℕ} {a : ℕ}
     refine ⟨squareProductSubsets_symmDiff hI0 hS.1 hW, ?_⟩
     simp [Finset.mem_symmDiff, hS.2, ha]
   · intro S _
-    simpa using (symmDiff_symmDiff_cancel_right W S)
+    simp
   · intro S _
-    simpa using (symmDiff_symmDiff_cancel_right W S)
+    simp
 
 /-- Starting points in `(X,E]` whose least witness closes by `E`. -/
 def closedStarts (X E : ℕ) : Finset ℕ :=
@@ -422,7 +422,6 @@ lemma isSquare_iff_even_factorization {n : ℕ} (hn : n ≠ 0) :
     have ha0 : a ≠ 0 := by
       intro haz
       subst a
-      simp at ha
       exact hn ha
     rw [ha, Nat.factorization_mul ha0 ha0, Finsupp.add_apply]
     exact ⟨a.factorization p, by omega⟩
@@ -1452,7 +1451,7 @@ lemma odd_factorization_of_sq_mul_squarefree
     (Nat.factorization_mul (pow_ne_zero 2 hz0) hb0)
   rw [hdecomp] at hfac
   have hpowfac : (z ^ 2).factorization p = 2 * z.factorization p := by
-    simpa using congrArg (fun F : ℕ →₀ ℕ ↦ F p) (Nat.factorization_pow z 2)
+    simp
   simp only [Finsupp.add_apply] at hfac
   rw [hpowfac, hbp] at hfac
   exact ⟨z.factorization p, by omega⟩
@@ -1478,7 +1477,7 @@ lemma even_factorization_of_sq_mul_not_dvd
     (Nat.factorization_mul (pow_ne_zero 2 hz0) hb0)
   rw [hdecomp] at hfac
   have hpowfac : (z ^ 2).factorization p = 2 * z.factorization p := by
-    simpa using congrArg (fun F : ℕ →₀ ℕ ↦ F p) (Nat.factorization_pow z 2)
+    simp
   simp only [Finsupp.add_apply] at hfac
   rw [hpowfac, hbp] at hfac
   exact ⟨z.factorization p, by omega⟩
@@ -1538,11 +1537,11 @@ theorem prime_le_shift_bound_of_squarefree_factors
   rcases lt_or_gt_of_ne hji with hij | hji'
   · have hpdiff : p ∣ i - j := by
       have hd := Nat.dvd_sub hpi hpj
-      convert hd using 1 <;> omega
+      convert hd using 1; omega
     exact (Nat.le_of_dvd (Nat.sub_pos_of_lt hij) hpdiff).trans (by omega)
   · have hpdiff : p ∣ j - i := by
       have hd := Nat.dvd_sub hpj hpi
-      convert hd using 1 <;> omega
+      convert hd using 1; omega
     exact (Nat.le_of_dvd (Nat.sub_pos_of_lt hji') hpdiff).trans (by omega)
 
 /-- Product of the nonzero distances from one selected shift to all the
@@ -1550,7 +1549,7 @@ other shifts in the ambient witness. -/
 def shiftDifferenceProduct (I : Finset ℕ) (i : ℕ) : ℕ :=
   ∏ j ∈ I.erase i, Nat.dist i j
 
-lemma shiftDifferenceProduct_pos {I : Finset ℕ} {i : ℕ} (hi : i ∈ I) :
+lemma shiftDifferenceProduct_pos {I : Finset ℕ} {i : ℕ} (_hi : i ∈ I) :
     0 < shiftDifferenceProduct I i := by
   rw [Nat.pos_iff_ne_zero, shiftDifferenceProduct,
     Finset.prod_ne_zero_iff]
@@ -1587,10 +1586,10 @@ theorem squarefree_factor_dvd_shiftDifferenceProduct
     rcases lt_or_gt_of_ne hji.symm with hij | hji'
     · rw [Nat.dist_eq_sub_of_le hij.le]
       have hd := Nat.dvd_sub hpj hpi
-      convert hd using 1 <;> omega
+      convert hd using 1; omega
     · rw [Nat.dist_eq_sub_of_le_right hji'.le]
       have hd := Nat.dvd_sub hpi hpj
-      convert hd using 1 <;> omega
+      convert hd using 1; omega
   have hjErase : j ∈ I.erase i := Finset.mem_erase.mpr ⟨hji, hjI⟩
   have hpProd : p ∣ shiftDifferenceProduct I i :=
     hpdist.trans (by
@@ -1648,11 +1647,11 @@ theorem gcd_squarefree_factors_le_shift_bound
   rcases lt_or_gt_of_ne hij with hij' | hji
   · have hgd : Nat.gcd (b i) (b j) ∣ j - i := by
       have hd := Nat.dvd_sub hgj hgi
-      convert hd using 1 <;> omega
+      convert hd using 1; omega
     exact (Nat.le_of_dvd (Nat.sub_pos_of_lt hij') hgd).trans (by omega)
   · have hgd : Nat.gcd (b i) (b j) ∣ i - j := by
       have hd := Nat.dvd_sub hgi hgj
-      convert hd using 1 <;> omega
+      convert hd using 1; omega
     exact (Nat.le_of_dvd (Nat.sub_pos_of_lt hji) hgd).trans (by omega)
 
 /-! ### Sparse squarefree supports -/
@@ -1661,7 +1660,7 @@ theorem gcd_squarefree_factors_le_shift_bound
 uniformly bounded pairwise intersections.  The deliberately coarse
 `I.card ^ 2` term is the form needed in BPZ's sparse-support argument. -/
 theorem sum_card_le_biUnion_card_add_sq_mul
-    {ι α : Type*} [DecidableEq ι] [DecidableEq α]
+    {ι α : Type*} [DecidableEq α]
     (I : Finset ι) (S : ι → Finset α) (B : ℕ)
     (hinter : ∀ i ∈ I, ∀ j ∈ I, i ≠ j → (S i ∩ S j).card ≤ B) :
     (∑ i ∈ I, (S i).card) ≤
@@ -1710,7 +1709,7 @@ theorem sum_card_le_biUnion_card_add_sq_mul
 support at most the average with the loss of two exceptional members.
 The multiplication form avoids all rounding conventions. -/
 theorem exists_three_small_of_sum_card_le
-    {ι α : Type*} [DecidableEq ι] [DecidableEq α]
+    {ι α : Type*}
     {I : Finset ι} {S : ι → Finset α} {M : ℕ}
     (hI : 3 ≤ I.card) (hsum : (∑ i ∈ I, (S i).card) ≤ M) :
     ∃ i ∈ I, ∃ j ∈ I, ∃ k ∈ I,
@@ -1763,7 +1762,7 @@ theorem exists_three_small_of_sum_card_le
 /-- Abstract form of BPZ Lemma 6.4: three supports are sparse when the
 ambient union and all pairwise overlaps are bounded. -/
 theorem exists_three_sparse_supports
-    {ι α : Type*} [DecidableEq ι] [DecidableEq α]
+    {ι α : Type*} [DecidableEq α]
     {I : Finset ι} {S : ι → Finset α} {N B : ℕ}
     (hI : 3 ≤ I.card)
     (hunion : (I.biUnion S).card ≤ N)
@@ -1773,6 +1772,7 @@ theorem exists_three_sparse_supports
       (I.card - 2) * (S i).card ≤ N + I.card ^ 2 * B ∧
       (I.card - 2) * (S j).card ≤ N + I.card ^ 2 * B ∧
       (I.card - 2) * (S k).card ≤ N + I.card ^ 2 * B := by
+  classical
   apply exists_three_small_of_sum_card_le hI
   exact (sum_card_le_biUnion_card_add_sq_mul I S B hinter).trans
     (Nat.add_le_add_right hunion _)
@@ -1790,7 +1790,7 @@ lemma primeFactors_card_le_log_two {n : ℕ} (hn : n ≠ 0) :
 /-- Number-theoretic specialization of the sparse-support lemma.  It is an
 exact finite version of BPZ Lemma 6.4, with all constants visible. -/
 theorem exists_three_sparse_squarefree_parts
-    {ι : Type*} [DecidableEq ι] {I : Finset ι} {b : ι → ℕ} {J : ℕ}
+    {ι : Type*} {I : Finset ι} {b : ι → ℕ} {J : ℕ}
     (hI : 3 ≤ I.card) (hbpos : ∀ i ∈ I, 0 < b i)
     (hprime : ∀ i ∈ I, ∀ p ∈ (b i).primeFactors, p ≤ J)
     (hgcd : ∀ i ∈ I, ∀ j ∈ I, i ≠ j → Nat.gcd (b i) (b j) ≤ J) :
@@ -1802,6 +1802,7 @@ theorem exists_three_sparse_squarefree_parts
         Nat.primeCounting J + I.card ^ 2 * Nat.log 2 J ∧
       (I.card - 2) * (b k).primeFactors.card ≤
         Nat.primeCounting J + I.card ^ 2 * Nat.log 2 J := by
+  classical
   have hunion : (I.biUnion fun i ↦ (b i).primeFactors).card ≤
       Nat.primeCounting J := by
     rw [← Nat.primesLE_card_eq_primeCounting]
@@ -2326,12 +2327,17 @@ lemma pellLinear_rank_three_relation_eq_zero
           b • pellLinearMinus s₂ s₃ 1 2 +
           c • pellLinearPlus s₁ s₂ 0 1 = 0) :
     a = 0 ∧ b = 0 ∧ c = 0 := by
-  have h₀ := congrArg (MvPolynomial.eval ![(1 : K), 0, 0]) h
-  have h₁ := congrArg (MvPolynomial.eval ![(0 : K), 1, 0]) h
-  have h₂ := congrArg (MvPolynomial.eval ![(0 : K), 0, 1]) h
-  simp [pellLinearMinus, pellLinearPlus] at h₀ h₁ h₂
+  have h₀ : a * s₁ + c * s₁ = 0 := by
+    simpa [pellLinearMinus, pellLinearPlus] using
+      congrArg (MvPolynomial.eval ![(1 : K), 0, 0]) h
+  have h₁ : -(a * s₂) + b * s₂ + c * s₂ = 0 := by
+    simpa [pellLinearMinus, pellLinearPlus, mul_neg] using
+      congrArg (MvPolynomial.eval ![(0 : K), 1, 0]) h
+  have h₂ : b * s₃ = 0 := by
+    simpa [pellLinearMinus, pellLinearPlus] using
+      congrArg (MvPolynomial.eval ![(0 : K), 0, 1]) h
   have hb : b = 0 := by
-    exact h₂.resolve_right hs₃
+    exact (mul_eq_zero.mp h₂).resolve_right hs₃
   have hac : a + c = 0 := by
     apply (mul_eq_zero.mp ?_).resolve_right hs₁
     linear_combination h₀
@@ -2529,7 +2535,7 @@ lemma numberField_logHeight_natCast
     rw [abs_of_nonneg (apply_nonneg v (n : K))]
     exact IsNonarchimedean.apply_natCast_le_one
       (NumberField.FinitePlace.add_le v)
-  simpa only [hinf, hfin, add_zero]
+  simp only [hinf, hfin, add_zero]
 
 /-- A chosen square root of a natural number has logarithmic height exactly
 half that of its square, and hence is controlled by the natural coefficient
@@ -4135,9 +4141,7 @@ lemma numberFieldPrimeSupport_card_le
           · intro v₁ _hv₁ v₂ _hv₂ hv
             exact IsDedekindDomain.HeightOneSpectrum.ext hv
         _ ≤ Module.finrank ℚ K := by
-          exact Ideal.card_primesOverFinset_le_finrank
-            (R := ℤ) (S := NumberField.RingOfIntegers K)
-            (K := ℚ) (L := K) hP0
+          exact Towers.numberField_primesOverFinset_card_le (K := K) hP0
     _ ≤ Module.finrank ℚ K * beta.natAbs.primeFactors.card := by
       apply Nat.mul_le_mul_left
       apply Finset.card_le_card
@@ -4668,7 +4672,7 @@ lemma numberFieldPrimeClassUnit_mem_supportedUnits
     numberFieldPrimeClassUnit v ∈ S.unit K := by
   intro w hw
   exact numberFieldPrimeClassUnit_mem_singleton_supportedUnits v w (by
-    show w ≠ v
+    change w ≠ v
     intro hwv
     exact hw (hwv ▸ hv))
 
@@ -5050,7 +5054,7 @@ lemma valuationMap_numberFieldPrimeClassSupportedUnit_of_ne
     valuationMap S K (numberFieldPrimeClassSupportedUnit S v) w = 1 := by
   rw [valuationMap_apply, valuationOfNeZero_eq_one_iff]
   exact numberFieldPrimeClassUnit_mem_singleton_supportedUnits v.1 w.1 (by
-    show w.1 ≠ v.1
+    change w.1 ≠ v.1
     intro h
     exact hvw (Subtype.ext h))
 
@@ -5296,6 +5300,7 @@ theorem finrank_le [Finite S]
   rw [← finrank_valuationCodomain (S := S)]
   exact Submodule.finrank_le _
 
+omit [IsDedekindDomain R] in
 /-- Units supported at no prime are the ordinary units of the base
 Dedekind domain. -/
 private lemma algebraMap_botEquivOfInjective_apply
@@ -5421,9 +5426,9 @@ lemma log_nat_pow_le_class_mul_eight_log
     calc
       Real.log (A : ℝ) ≤ Real.log (((J ^ 8 : ℕ) : ℝ)) := by
         apply Real.strictMonoOn_log.monotoneOn
-        · show (0 : ℝ) < (A : ℝ)
+        · change (0 : ℝ) < (A : ℝ)
           exact_mod_cast hApos
-        · show (0 : ℝ) < ((J ^ 8 : ℕ) : ℝ)
+        · change (0 : ℝ) < ((J ^ 8 : ℕ) : ℝ)
           positivity
         · exact_mod_cast hA
       _ = 8 * Real.log (J : ℝ) := by
@@ -5447,7 +5452,7 @@ theorem exists_degree_eight_mahlerMeasure_gap :
     {p | p.natDegree ≤ 8 ∧
       (p.map (Int.castRingHom ℂ)).mahlerMeasure ≤ (2 : ℝ)}
   have hA : A.Finite := by
-    simpa only [A, Set.mem_setOf_eq, NNReal.coe_ofNat] using
+    simpa only [A, Set.mem_ofPred_eq, NNReal.coe_ofNat] using
       (Polynomial.finite_mahlerMeasure_le (n := 8) (B := (2 : NNReal)))
   let F : Finset (Polynomial ℤ) := hA.toFinset
   let G : Finset ℝ := insert 1
@@ -5461,7 +5466,7 @@ theorem exists_degree_eight_mahlerMeasure_gap :
     exact G.min'_mem hG
   have hδpos : 0 < δ := by
     rcases Finset.mem_insert.mp hδmem with hδ | hδ
-    · simpa [hδ]
+    · simp [hδ]
     · obtain ⟨p, hp, hpδ⟩ := Finset.mem_image.mp hδ
       have hpgt : 1 < (p.map (Int.castRingHom ℂ)).mahlerMeasure :=
         (Finset.mem_filter.mp hp).2
@@ -5483,7 +5488,7 @@ theorem exists_degree_eight_mahlerMeasure_gap :
       exact Finset.mem_image.mpr ⟨p, hpFilter, rfl⟩
     exact G.min'_le _ hpG
   · have hpLarge : 1 < (p.map (Int.castRingHom ℂ)).mahlerMeasure - 1 := by
-      push_neg at hpTwo
+      push Not at hpTwo
       linarith
     exact hδone.trans hpLarge.le
 
@@ -5693,9 +5698,9 @@ theorem exists_unit_minpoly_root_log_norm_ge
   have hlog : Real.log (1 + degreeEightMahlerGap) ≤
       Real.log (‖z‖ ^ 8) := by
     apply Real.strictMonoOn_log.monotoneOn
-    · show 0 < 1 + degreeEightMahlerGap
+    · change 0 < 1 + degreeEightMahlerGap
       linarith [degreeEightMahlerGap_pos]
-    · show 0 < ‖z‖ ^ 8
+    · change 0 < ‖z‖ ^ 8
       exact pow_pos (by linarith [hzOne]) _
     · simpa [hzNorm, max_eq_right hzOne.le] using hRpow
   rw [Real.log_pow] at hlog
@@ -6904,7 +6909,7 @@ theorem simultaneousPell_common_left_coordinate_pow_le_of_eq
     (J : ℕ) (hJ₁₂ : β₁₂.natAbs ≤ J) (hJ₁₃ : β₁₃.natAbs ≤ J)
     (hJ₂₃ : (β₁₃ - β₁₂).natAbs ≤ J)
     (S : Set (IsDedekindDomain.HeightOneSpectrum
-      (NumberField.RingOfIntegers K))) [Fintype S] (U : S.unit K)
+      (NumberField.RingOfIntegers K))) [Finite S] (U : S.unit K)
     (hSdef : S = pellCommonPrimeSupport
       (Units.mk0 (β₁₂ : K) (Int.cast_ne_zero.mpr hβ₁₂))
       (Units.mk0 (β₁₃ : K) (Int.cast_ne_zero.mpr hβ₁₃))
@@ -6916,6 +6921,7 @@ theorem simultaneousPell_common_left_coordinate_pow_le_of_eq
     (∀ v : S,
       2 ^ Int.natAbs (SupportedUnits.valuationMap S K U v).toAdd ≤ J ^ 16) ∧
     ∀ v : S, v.1.asIdeal.absNorm ≤ J ^ 8 := by
+  let : Fintype S := Fintype.ofFinite S
   subst S
   obtain ⟨S', U', V', hSdef', _hS', _hUV', hU', _hV',
       hcoordU', _hcoordV'⟩ :=
@@ -7845,12 +7851,14 @@ open Module in
 number field's integral basis are rational integers. -/
 lemma numberField_integral_basis_coordinate_isIntegral
     {K : Type*} [Field K] [NumberField K]
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Finite ι]
     (b : Basis ι ℚ K) (hInt : ∀ i, IsIntegral ℤ (b i)) :
     let b₀ : Basis ι ℚ K :=
       (NumberField.integralBasis K).reindex
         (b.indexEquiv (NumberField.integralBasis K)).symm
     ∀ i j, IsIntegral ℤ (b₀.toMatrix b i j) := by
+  classical
+  let : Fintype ι := Fintype.ofFinite ι
   dsimp only
   intro i j
   rw [Basis.toMatrix_apply]
@@ -7922,12 +7930,13 @@ open Module in
 whose conjugates all have one common norm bound. -/
 lemma numberField_natAbs_discr_le_of_integral_basis_embedding_norm_le
     {K : Type*} [Field K] [NumberField K]
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (b : Basis ι ℚ K) (e : ι ≃ (K →ₐ[ℚ] ℂ)) (M : ℝ)
     (hInt : ∀ i, IsIntegral ℤ (b i))
     (hM : ∀ i j, ‖e j (b i)‖ ≤ M) :
     ((NumberField.discr K).natAbs : ℝ) ≤
       (((Fintype.card ι).factorial : ℝ) * M ^ Fintype.card ι) ^ 2 := by
+  classical
   exact (numberField_natAbs_discr_le_integral_basis_discr_norm b hInt).trans
     (algebra_discr_norm_le_of_embedding_norm_le b e M hM)
 
@@ -7937,13 +7946,14 @@ uniform conjugate bound, and hence gives a discriminant estimate expressed
 only in the field degree. -/
 lemma numberField_natAbs_discr_le_of_finite_spanning_family
     {K : Type*} [Field K] [NumberField K]
-    {α : Type*} [Fintype α] (v : α → K) (M : ℝ)
+    {α : Type*} [Finite α] (v : α → K) (M : ℝ)
     (hspan : ⊤ ≤ Submodule.span ℚ (Set.range v))
     (hInt : ∀ a, IsIntegral ℤ (v a))
     (hM : ∀ a (w : K →ₐ[ℚ] ℂ), ‖w (v a)‖ ≤ M) :
     ((NumberField.discr K).natAbs : ℝ) ≤
       (((Module.finrank ℚ K).factorial : ℝ) *
         M ^ Module.finrank ℚ K) ^ 2 := by
+  let : Fintype α := Fintype.ofFinite α
   let I : Set K :=
     (linearIndepOn_empty ℚ id).extend (empty_subset (Set.range v))
   let b : Basis I ℚ K := Basis.ofSpan hspan
@@ -7982,13 +7992,14 @@ Every extracted basis vector is one of the original vectors, so both
 integrality and the common conjugate bound are preserved. -/
 theorem exists_integral_basis_of_finite_spanning_family
     {K : Type*} [Field K] [NumberField K]
-    {α : Type*} [Fintype α] (v : α → K) (M : ℝ)
+    {α : Type*} [Finite α] (v : α → K) (M : ℝ)
     (hspan : ⊤ ≤ Submodule.span ℚ (Set.range v))
     (hInt : ∀ a, IsIntegral ℤ (v a))
     (hM : ∀ a (w : K →ₐ[ℚ] ℂ), ‖w (v a)‖ ≤ M) :
     ∃ I : Set K, I.Finite ∧ ∃ b : Module.Basis I ℚ K,
       (∀ i, IsIntegral ℤ (b i)) ∧
       (∀ i (w : K →ₐ[ℚ] ℂ), ‖w (b i)‖ ≤ M) := by
+  let : Fintype α := Fintype.ofFinite α
   let I : Set K :=
     (linearIndepOn_empty ℚ id).extend (empty_subset (Set.range v))
   let b : Basis I ℚ K := Basis.ofSpan hspan
@@ -8033,22 +8044,6 @@ lemma threeSqRootMonomial_span_mul_mem
   have hv (c : Fin 2 × Fin 2 × Fin 2) :
       threeSqRootMonomial s₁ s₂ s₃ c ∈ V :=
     Submodule.subset_span (Set.mem_range_self c)
-  have h000 : (1 : K) ∈ V := by
-    simpa [threeSqRootMonomial] using hv (0, 0, 0)
-  have h001 : s₃ ∈ V := by
-    simpa [threeSqRootMonomial] using hv (0, 0, 1)
-  have h010 : s₂ ∈ V := by
-    simpa [threeSqRootMonomial] using hv (0, 1, 0)
-  have h011 : s₂ * s₃ ∈ V := by
-    simpa [threeSqRootMonomial] using hv (0, 1, 1)
-  have h100 : s₁ ∈ V := by
-    simpa [threeSqRootMonomial] using hv (1, 0, 0)
-  have h101 : s₁ * s₃ ∈ V := by
-    simpa [threeSqRootMonomial] using hv (1, 0, 1)
-  have h110 : s₁ * s₂ ∈ V := by
-    simpa [threeSqRootMonomial] using hv (1, 1, 0)
-  have h111 : s₁ * s₂ * s₃ ∈ V := by
-    simpa [threeSqRootMonomial] using hv (1, 1, 1)
   have heq :
       threeSqRootMonomial s₁ s₂ s₃ a *
           threeSqRootMonomial s₁ s₂ s₃ b =
@@ -8056,14 +8051,24 @@ lemma threeSqRootMonomial_span_mul_mem
           algebraMap ℚ K (γ₂ ^ ((a.2.1 : ℕ) * (b.2.1 : ℕ))) *
           algebraMap ℚ K (γ₃ ^ ((a.2.2 : ℕ) * (b.2.2 : ℕ))) *
           threeSqRootMonomial s₁ s₂ s₃ (a + b) := by
-    rcases a with ⟨a₁, a₂, a₃⟩
-    rcases b with ⟨b₁, b₂, b₃⟩
-    fin_cases a₁ <;> fin_cases a₂ <;> fin_cases a₃ <;>
-      fin_cases b₁ <;> fin_cases b₂ <;> fin_cases b₃ <;>
-      simp only [Fin.mk_one, Fin.isValue, Fin.zero_eta, mul_one, pow_one, eq_ratCast, mul_zero, pow_zero,
-    Rat.cast_one, Prod.mk_add_mk, Fin.reduceAdd, add_zero, zero_add, one_mul] <;> (try ring_nf) <;>
-      simp [hs₁, hs₂, hs₃] <;> (try ac_rfl) <;>
-      exact Or.inl (mul_comm _ _)
+    have hmul (s : K) (γ : ℚ) (hs : s ^ 2 = algebraMap ℚ K γ)
+        (i j : Fin 2) :
+        s ^ (i : ℕ) * s ^ (j : ℕ) =
+          algebraMap ℚ K (γ ^ ((i : ℕ) * (j : ℕ))) * s ^ ((i + j : Fin 2) : ℕ) := by
+      fin_cases i <;> fin_cases j <;> norm_num [Fin.add_def]
+      simpa [pow_two] using hs
+    dsimp only [threeSqRootMonomial]
+    calc
+      s₁ ^ (a.1 : ℕ) * s₂ ^ (a.2.1 : ℕ) * s₃ ^ (a.2.2 : ℕ) *
+          (s₁ ^ (b.1 : ℕ) * s₂ ^ (b.2.1 : ℕ) * s₃ ^ (b.2.2 : ℕ)) =
+        (s₁ ^ (a.1 : ℕ) * s₁ ^ (b.1 : ℕ)) *
+          (s₂ ^ (a.2.1 : ℕ) * s₂ ^ (b.2.1 : ℕ)) *
+          (s₃ ^ (a.2.2 : ℕ) * s₃ ^ (b.2.2 : ℕ)) := by ring
+      _ = _ := by
+        rw [hmul s₁ γ₁ hs₁ a.1 b.1, hmul s₂ γ₂ hs₂ a.2.1 b.2.1,
+          hmul s₃ γ₃ hs₃ a.2.2 b.2.2]
+        simp only [Prod.fst_add, Prod.snd_add]
+        ring
   rw [heq]
   simpa [Algebra.smul_def, mul_assoc] using
     V.smul_mem (γ₁ ^ ((a.1 : ℕ) * (b.1 : ℕ)))
@@ -8092,9 +8097,9 @@ lemma threeSqRootMonomial_span_eq_top_of_adjoin_eq_top
     · rintro _ _ ⟨a, rfl⟩ ⟨b, rfl⟩
       exact threeSqRootMonomial_span_mul_mem s₁ s₂ s₃ γ₁ γ₂ γ₃ hs₁ hs₂ hs₃ a b
     · intro y hy
-      simpa using V.zero_mem
+      simp
     · intro x hx
-      simpa using V.zero_mem
+      simp
     · intro x y z hx hy hz hxz hyz
       simpa [add_mul] using V.add_mem hxz hyz
     · intro x y z hx hy hz hxy hxz
@@ -8119,7 +8124,7 @@ lemma threeSqRootMonomial_span_eq_top_of_adjoin_eq_top
     simpa [hgen] using hadjoin
   apply top_unique
   intro x hx
-  have : x ∈ A := by simpa [hAtop]
+  have : x ∈ A := by simp [hAtop]
   exact this
 
 /-- A square root of a rational integer is integral over `ℤ`. -/
@@ -9800,7 +9805,7 @@ theorem degreeEight_boundedUnitExponentData_of_logHeight
     (hdeg : Module.finrank ℚ K ≤ 8) {N : ℕ}
     (hdisc : |NumberField.discr K| ≤ N)
     (q : (NumberField.RingOfIntegers K)ˣ) {Q : ℝ}
-    (hQ : 0 ≤ Q)
+    (_hQ : 0 ≤ Q)
     (hq : Height.logHeight₁
       (((q : NumberField.RingOfIntegers K) : K)) ≤ Q) :
     let B := boundedUnitMinkowskiNatBound N
@@ -9868,7 +9873,7 @@ theorem degreeEight_boundedUnitDecompositionData_of_logHeight
     (hdeg : Module.finrank ℚ K ≤ 8) {N : ℕ}
     (hdisc : |NumberField.discr K| ≤ N)
     (q : (NumberField.RingOfIntegers K)ˣ) {Q : ℝ}
-    (hQ : 0 ≤ Q)
+    (_hQ : 0 ≤ Q)
     (hq : Height.logHeight₁
       (((q : NumberField.RingOfIntegers K) : K)) ≤ Q) :
     let B := boundedUnitMinkowskiNatBound N
@@ -10428,7 +10433,7 @@ factor case.  The leading coefficient is one, while the remaining bases
 are the squared bounded fundamental units. -/
 theorem nonintegerUnit_combined_logarithmic_form_lower_bound
     {K ι : Type*} [Field K] [NumberField K]
-    [NumberField.IsTotallyReal K] [Fintype ι]
+    [NumberField.IsTotallyReal K] [Finite ι]
     (basis : Module.Basis ι ℚ K) (hbasis : ∀ i, IsIntegral ℤ (basis i))
     (φ : K →+* ℂ)
     {B0 B : ℕ}
@@ -10449,6 +10454,7 @@ theorem nonintegerUnit_combined_logarithmic_form_lower_bound
     LinearForms.structuredBoxLogarithmicFormThreshold B
         (LinearForms.structuredBoxMasterL B M alpha ell) M alpha ell ≤
       ‖∑ i, (combinedSquaredProductCoefficients a i : ℂ) * ell i‖ := by
+  let : Fintype ι := Fintype.ofFinite ι
   dsimp only
   let eps : Fin (NumberField.Units.rank K) → Kˣ := fun i ↦
     Units.map
@@ -10491,7 +10497,7 @@ bound is exactly a lower bound for the absolute real logarithm of the
 powered Pell product. -/
 theorem nonintegerUnit_combined_real_log_lower_bound
     {K ι : Type*} [Field K] [NumberField K]
-    [NumberField.IsTotallyReal K] [Fintype ι]
+    [NumberField.IsTotallyReal K] [Finite ι]
     (basis : Module.Basis ι ℚ K) (hbasis : ∀ i, IsIntegral ℤ (basis i))
     (φ : K →+* ℂ) (ρ : K →+* ℝ) (hφρ : ∀ x, φ x = (ρ x : ℂ))
     {B0 B m : ℕ}
@@ -10519,6 +10525,7 @@ theorem nonintegerUnit_combined_real_log_lower_bound
     LinearForms.structuredBoxLogarithmicFormThreshold B
         (LinearForms.structuredBoxMasterL B M alpha ell) M alpha ell ≤
       |Real.log (ρ (z ^ m))| := by
+  let : Fintype ι := Fintype.ofFinite ι
   dsimp only
   let eps : Fin (NumberField.Units.rank K) → K := fun i ↦
     ((Units.map
@@ -10546,7 +10553,7 @@ in the squared bounded fundamental units.  A finite permutation moves a
 nonzero coefficient to the distinguished coordinate. -/
 theorem integerUnit_bounded_logarithmic_form_lower_bound
     {K ι : Type*} [Field K] [NumberField K]
-    [NumberField.IsTotallyReal K] [Fintype ι]
+    [NumberField.IsTotallyReal K] [Finite ι]
     (basis : Module.Basis ι ℚ K) (hbasis : ∀ i, IsIntegral ℤ (basis i))
     (φ : K →+* ℂ) {B0 B : ℕ}
     (hB : NumberField.mixedEmbedding.minkowskiBound K 1 <
@@ -10569,6 +10576,7 @@ theorem integerUnit_bounded_logarithmic_form_lower_bound
             (fun i ↦ ell (e i))) M
           (fun i ↦ alpha (e i)) (fun i ↦ ell (e i)) ≤
         ‖∑ i, (b i : ℂ) * ell i‖ := by
+  let : Fintype ι := Fintype.ofFinite ι
   dsimp only
   let eps : Fin (NumberField.Units.rank K) → Kˣ := fun i ↦
     Units.map
@@ -10622,7 +10630,7 @@ embedding, rewritten as a lower bound for the absolute real logarithm of
 the powered product. -/
 theorem integerUnit_bounded_real_log_lower_bound
     {K ι : Type*} [Field K] [NumberField K]
-    [NumberField.IsTotallyReal K] [Fintype ι]
+    [NumberField.IsTotallyReal K] [Finite ι]
     (basis : Module.Basis ι ℚ K) (hbasis : ∀ i, IsIntegral ℤ (basis i))
     (φ : K →+* ℂ) (ρ : K →+* ℝ) (hφρ : ∀ x, φ x = (ρ x : ℂ))
     {B0 B m : ℕ}
@@ -10650,6 +10658,7 @@ theorem integerUnit_bounded_real_log_lower_bound
             (fun i ↦ ell (e i))) M
           (fun i ↦ alpha (e i)) (fun i ↦ ell (e i)) ≤
         |Real.log (ρ (z ^ m))| := by
+  let : Fintype ι := Fintype.ofFinite ι
   dsimp only
   let eps : Fin (NumberField.Units.rank K) → K := fun i ↦
     ((Units.map
@@ -11049,7 +11058,7 @@ it is absorbed with a controlled coefficient box into the maximal-rank
 bounded unit basis. -/
 theorem supportedUnit_combined_real_log_lower_dichotomy
     {K ι : Type*} [Field K] [NumberField K]
-    [NumberField.IsTotallyReal K] [Fintype ι]
+    [NumberField.IsTotallyReal K] [Finite ι]
     (basis : Module.Basis ι ℚ K) (hbasis : ∀ i, IsIntegral ℤ (basis i))
     (φ : K →+* ℂ) (ρ : K →+* ℝ) (hφρ : ∀ x, φ x = (ρ x : ℂ))
     (S : Set (IsDedekindDomain.HeightOneSpectrum
@@ -11104,7 +11113,7 @@ theorem supportedUnit_combined_real_log_lower_dichotomy
         (reindex : Fin (NumberField.Units.rank K - 1 + 1) ≃
           Fin (NumberField.Units.rank K)),
       W ∈ integerUnitSubgroup K ∧
-      let b : Fin (NumberField.Units.rank K) → ℤ := fun i ↦
+      let _b : Fin (NumberField.Units.rank K) → ℤ := fun i ↦
         c i + ((2 * I : ℕ) : ℤ) * a i
       let alphaUnit : Fin (NumberField.Units.rank K) → K := fun i ↦ eps i ^ 2
       let ellUnit : Fin (NumberField.Units.rank K) → ℂ := fun i ↦
@@ -11118,6 +11127,7 @@ theorem supportedUnit_combined_real_log_lower_dichotomy
           (fun i ↦ alphaUnit (reindex i))
           (fun i ↦ ellUnit (reindex i)) ≤
         |Real.log (ρ ((z ^ m) ^ (2 * I)))| := by
+  let : Fintype ι := Fintype.ofFinite ι
   dsimp only
   let I := (BoundedUnits.boundedUnitSubgroup hB).index
   let P : Kˣ := SupportedUnits.numberFieldPrimeClassSupportedUnitProduct S e
@@ -11392,19 +11402,19 @@ lemma realPellRootOne_sq (γ₁ γ₂ γ₃ : ℕ) :
     realPellRootOne γ₁ γ₂ γ₃ ^ 2 =
       (γ₁ : realPellField γ₁ γ₂ γ₃) := by
   apply Subtype.ext
-  simpa using Real.sq_sqrt (show (0 : ℝ) ≤ γ₁ by positivity)
+  simp
 
 lemma realPellRootTwo_sq (γ₁ γ₂ γ₃ : ℕ) :
     realPellRootTwo γ₁ γ₂ γ₃ ^ 2 =
       (γ₂ : realPellField γ₁ γ₂ γ₃) := by
   apply Subtype.ext
-  simpa using Real.sq_sqrt (show (0 : ℝ) ≤ γ₂ by positivity)
+  simp
 
 lemma realPellRootThree_sq (γ₁ γ₂ γ₃ : ℕ) :
     realPellRootThree γ₁ γ₂ γ₃ ^ 2 =
       (γ₃ : realPellField γ₁ γ₂ γ₃) := by
   apply Subtype.ext
-  simpa using Real.sq_sqrt (show (0 : ℝ) ≤ γ₃ by positivity)
+  simp
 
 lemma real_sqrt_nat_isIntegral (γ : ℕ) :
     IsIntegral ℚ (Real.sqrt γ) := by
@@ -11490,11 +11500,11 @@ theorem realPellFieldIsTotallyReal
     {γ₁ γ₂ γ₃ : ℕ} (hγ₁ : 0 < γ₁) (hγ₂ : 0 < γ₂) (hγ₃ : 0 < γ₃) :
     let K := realPellField γ₁ γ₂ γ₃
     let _ : Algebra ℚ K := K.algebra'
-    let r₁ : K := ⟨Real.sqrt γ₁,
+    let _r₁ : K := ⟨Real.sqrt γ₁,
       IntermediateField.subset_adjoin ℚ _ (by simp)⟩
-    let r₂ : K := ⟨Real.sqrt γ₂,
+    let _r₂ : K := ⟨Real.sqrt γ₂,
       IntermediateField.subset_adjoin ℚ _ (by simp)⟩
-    let r₃ : K := ⟨Real.sqrt γ₃,
+    let _r₃ : K := ⟨Real.sqrt γ₃,
       IntermediateField.subset_adjoin ℚ _ (by simp)⟩
     let _ : NumberField K := realPellFieldNumberField γ₁ γ₂ γ₃
     NumberField.IsTotallyReal K := by
@@ -11517,13 +11527,13 @@ theorem realPellFieldIsTotallyReal
     IntermediateField.subset_adjoin ℚ _ (by simp)⟩
   have hr₁ : r₁ ^ 2 = (γ₁ : K) := by
     apply Subtype.ext
-    simpa [r₁] using Real.sq_sqrt (show (0 : ℝ) ≤ γ₁ by positivity)
+    simp [r₁]
   have hr₂ : r₂ ^ 2 = (γ₂ : K) := by
     apply Subtype.ext
-    simpa [r₂] using Real.sq_sqrt (show (0 : ℝ) ≤ γ₂ by positivity)
+    simp [r₂]
   have hr₃ : r₃ ^ 2 = (γ₃ : K) := by
     apply Subtype.ext
-    simpa [r₃] using Real.sq_sqrt (show (0 : ℝ) ≤ γ₃ by positivity)
+    simp [r₃]
   exact numberField_isTotallyReal_of_three_positive_sqRoots
     r₁ r₂ r₃ hr₁ hr₂ hr₃ hγ₁ hγ₂ hγ₃
       (realPellField_adjoin_roots_eq_top γ₁ γ₂ γ₃)
@@ -11558,13 +11568,13 @@ theorem realPellField_natAbs_discr_le
     IntermediateField.subset_adjoin ℚ _ (by simp)⟩
   have hr₁ : r₁ ^ 2 = (γ₁ : K) := by
     apply Subtype.ext
-    simpa [r₁] using Real.sq_sqrt (show (0 : ℝ) ≤ γ₁ by positivity)
+    simp [r₁]
   have hr₂ : r₂ ^ 2 = (γ₂ : K) := by
     apply Subtype.ext
-    simpa [r₂] using Real.sq_sqrt (show (0 : ℝ) ≤ γ₂ by positivity)
+    simp [r₂]
   have hr₃ : r₃ ^ 2 = (γ₃ : K) := by
     apply Subtype.ext
-    simpa [r₃] using Real.sq_sqrt (show (0 : ℝ) ≤ γ₃ by positivity)
+    simp [r₃]
   exact numberField_natAbs_discr_le_three_sqRoots_explicit
     r₁ r₂ r₃ hr₁ hr₂ hr₃ hγ₁ hγ₂ hγ₃
       hγ₁H hγ₂H hγ₃H (realPellField_adjoin_roots_eq_top γ₁ γ₂ γ₃)
@@ -11599,13 +11609,13 @@ theorem realPellField_classNumber_le
     IntermediateField.subset_adjoin ℚ _ (by simp)⟩
   have hr₁ : r₁ ^ 2 = (γ₁ : K) := by
     apply Subtype.ext
-    simpa [r₁] using Real.sq_sqrt (show (0 : ℝ) ≤ γ₁ by positivity)
+    simp [r₁]
   have hr₂ : r₂ ^ 2 = (γ₂ : K) := by
     apply Subtype.ext
-    simpa [r₂] using Real.sq_sqrt (show (0 : ℝ) ≤ γ₂ by positivity)
+    simp [r₂]
   have hr₃ : r₃ ^ 2 = (γ₃ : K) := by
     apply Subtype.ext
-    simpa [r₃] using Real.sq_sqrt (show (0 : ℝ) ≤ γ₃ by positivity)
+    simp [r₃]
   exact numberField_classNumber_le_three_sqRoots_explicit
     r₁ r₂ r₃ hr₁ hr₂ hr₃ hγ₁ hγ₂ hγ₃
       hγ₁H hγ₂H hγ₃H (realPellField_adjoin_roots_eq_top γ₁ γ₂ γ₃)
@@ -11690,9 +11700,9 @@ theorem realPell_supportedUnit_log_gap
     exact finrank_adjoin_three_sqRoots_le_eight
       (Real.sqrt γ₁) (Real.sqrt γ₂) (Real.sqrt γ₃)
       (γ₁ : ℚ) (γ₂ : ℚ) (γ₃ : ℚ)
-      (by simpa using Real.sq_sqrt (show (0 : ℝ) ≤ γ₁ by positivity))
-      (by simpa using Real.sq_sqrt (show (0 : ℝ) ≤ γ₂ by positivity))
-      (by simpa using Real.sq_sqrt (show (0 : ℝ) ≤ γ₃ by positivity))
+      (by simp)
+      (by simp)
+      (by simp)
   obtain ⟨S, U, V, hS, hSdef, hUV, hU, hV, hdecomp⟩ :=
     simultaneousPell_quantitative_common_all_coordinate_bounds
       hr₁ hr₂ hr₃ hPell hβ₁₂ hβ₁₃ hβ₂₃ hdeg J
@@ -11843,9 +11853,9 @@ theorem realPellField_supportedUnit_boundedUnit_decomposition_explicit
     exact finrank_adjoin_three_sqRoots_le_eight
       (Real.sqrt γ₁) (Real.sqrt γ₂) (Real.sqrt γ₃)
       (γ₁ : ℚ) (γ₂ : ℚ) (γ₃ : ℚ)
-      (by simpa using Real.sq_sqrt (show (0 : ℝ) ≤ γ₁ by positivity))
-      (by simpa using Real.sq_sqrt (show (0 : ℝ) ≤ γ₂ by positivity))
-      (by simpa using Real.sq_sqrt (show (0 : ℝ) ≤ γ₃ by positivity))
+      (by simp)
+      (by simp)
+      (by simp)
   let N : ℕ := (40320 * H ^ 24) ^ 2
   have hdiscR := realPellField_natAbs_discr_le
     hγ₁ hγ₂ hγ₃ hγ₁H hγ₂H hγ₃H
@@ -11959,9 +11969,9 @@ theorem pellSplittingFieldIsTotallyReal
     let K := IntermediateField.adjoin ℚ
       ({s₁, s₂, s₃} : Set (AlgebraicClosure ℚ))
     let _ : Algebra ℚ K := K.algebra'
-    let r₁ : K := ⟨s₁, IntermediateField.subset_adjoin ℚ _ (by simp)⟩
-    let r₂ : K := ⟨s₂, IntermediateField.subset_adjoin ℚ _ (by simp)⟩
-    let r₃ : K := ⟨s₃, IntermediateField.subset_adjoin ℚ _ (by simp)⟩
+    let _r₁ : K := ⟨s₁, IntermediateField.subset_adjoin ℚ _ (by simp)⟩
+    let _r₂ : K := ⟨s₂, IntermediateField.subset_adjoin ℚ _ (by simp)⟩
+    let _r₃ : K := ⟨s₃, IntermediateField.subset_adjoin ℚ _ (by simp)⟩
     let _ : NumberField K := pellSplittingFieldNumberField s₁ s₂ s₃
     NumberField.IsTotallyReal K := by
   dsimp only
@@ -12007,9 +12017,9 @@ theorem pellSplittingField_natAbs_discr_le
     let K := IntermediateField.adjoin ℚ
       ({s₁, s₂, s₃} : Set (AlgebraicClosure ℚ))
     let _ : Algebra ℚ K := K.algebra'
-    let r₁ : K := ⟨s₁, IntermediateField.subset_adjoin ℚ _ (by simp)⟩
-    let r₂ : K := ⟨s₂, IntermediateField.subset_adjoin ℚ _ (by simp)⟩
-    let r₃ : K := ⟨s₃, IntermediateField.subset_adjoin ℚ _ (by simp)⟩
+    let _r₁ : K := ⟨s₁, IntermediateField.subset_adjoin ℚ _ (by simp)⟩
+    let _r₂ : K := ⟨s₂, IntermediateField.subset_adjoin ℚ _ (by simp)⟩
+    let _r₃ : K := ⟨s₃, IntermediateField.subset_adjoin ℚ _ (by simp)⟩
     let _ : NumberField K := pellSplittingFieldNumberField s₁ s₂ s₃
     ((NumberField.discr K).natAbs : ℝ) ≤
       ((40320 : ℝ) * (H : ℝ) ^ 24) ^ 2 := by
@@ -12054,9 +12064,9 @@ theorem pellSplittingField_classNumber_le
     let K := IntermediateField.adjoin ℚ
       ({s₁, s₂, s₃} : Set (AlgebraicClosure ℚ))
     let _ : Algebra ℚ K := K.algebra'
-    let r₁ : K := ⟨s₁, IntermediateField.subset_adjoin ℚ _ (by simp)⟩
-    let r₂ : K := ⟨s₂, IntermediateField.subset_adjoin ℚ _ (by simp)⟩
-    let r₃ : K := ⟨s₃, IntermediateField.subset_adjoin ℚ _ (by simp)⟩
+    let _r₁ : K := ⟨s₁, IntermediateField.subset_adjoin ℚ _ (by simp)⟩
+    let _r₂ : K := ⟨s₂, IntermediateField.subset_adjoin ℚ _ (by simp)⟩
+    let _r₃ : K := ⟨s₃, IntermediateField.subset_adjoin ℚ _ (by simp)⟩
     let _ : NumberField K := pellSplittingFieldNumberField s₁ s₂ s₃
     (NumberField.classNumber K : ℝ) ≤
       (6 : ℝ) ^ 8 * ((40320 : ℝ) * (H : ℝ) ^ 24) ^ 2 := by
@@ -12332,7 +12342,7 @@ lemma log_log_le_of_effective_height
 /-- Convert a bound for the square-root coordinate of a shifted
 squarefree decomposition into a bound for the original `n`. -/
 lemma log_log_le_of_squarefactor_height
-    {n i z b H C K : ℕ} (hn : 1 < n) (hz : 0 < z) (hb : 0 < b)
+    {n i z b H C K : ℕ} (hn : 1 < n) (hz : 0 < z) (_hb : 0 < b)
     (hH : 0 < H) (hC : 0 < C) (hbH : b ≤ H)
     (hdecomp : z ^ 2 * b = n + i)
     (hroot : Real.log (z : ℝ) ≤
@@ -12575,7 +12585,7 @@ counterpart of `log H = O(E/R + log J)`. -/
 lemma auxiliaryQuarticCoeffHeight_pow_le
     {bi bj bk i j k J R E : ℕ}
     (hi : i ≤ J) (hj : j ≤ J) (hk : k ≤ J)
-    (hbi : 0 < bi) (hbj : 0 < bj) (hbk : 0 < bk)
+    (hbi : 0 < bi) (_hbj : 0 < bj) (_hbk : 0 < bk)
     (hbiPow : bi ^ R ≤ J ^ E) (hbjPow : bj ^ R ≤ J ^ E)
     (hbkPow : bk ^ R ≤ J ^ E) :
     auxiliaryQuarticCoeffHeight bi bj bk i j k ^ R ≤
@@ -12867,14 +12877,14 @@ theorem sparse_subfamily_loglog_bound
     exact (hbiPow.trans hmul).trans (by
       dsimp [H, auxiliaryQuarticCoeffHeight]
       exact le_max_left _ _)
-  have hC : 0 < C := by dsimp [C]; positivity
+  have hC : 0 < C :=
+    show 0 < (16 : ℕ) ^ (212 * 4 ^ 4) from pow_pos (by norm_num) _
   have hLL : Real.log (Real.log (n : ℝ)) ≤
       Real.log ((3 * C : ℕ) : ℝ) +
         (L + 1 : ℕ) * Real.log (H : ℝ) := by
     apply log_log_le_of_squarefactor_height hnlarge hzi hbi hH hC hbH hdeci
-    have hcastC : (C : ℝ) = (16 : ℝ) ^ (212 * 4 ^ 4) := by
-      rw [show C = 16 ^ (212 * 4 ^ 4) by rfl, Nat.cast_pow]
-      norm_num
+    have hcastC : (C : ℝ) = (16 : ℝ) ^ (212 * 4 ^ 4) :=
+      Nat.cast_pow 16 (212 * 4 ^ 4)
     rw [hcastC]
     have hbase : (((4 * 4 : ℕ) : ℝ)) = 16 := by norm_num
     rw [hbase] at hroot
@@ -13084,7 +13094,7 @@ the published explicit height bound. -/
 theorem exists_minimal_direct_height_bound
     (hheight : EffectiveHyperellipticHeightBound)
     {n : ℕ} (hn : ¬IsSquare n) :
-    ∃ I : Finset ℕ, ∃ y : ℕ,
+    ∃ I : Finset ℕ, ∃ _y : ℕ,
       I ⊆ Finset.Icc 0 (t n) ∧ 0 ∈ I ∧ t n ∈ I ∧ 2 ≤ I.card ∧
       (I.card = 2 ∨
         Real.log (n : ℝ) ≤
@@ -13404,9 +13414,9 @@ lemma lowerLogShape_le_sq {L : ℝ} (hL : 1 < L)
     _ = (L ^ 2) ^ 5 := by ring
 
 lemma lowerLogShape_le_of_balance {L J A : ℝ}
-    (hL : 1 < L) (hlogL : 1 ≤ Real.log L) (hJ : 1 < J)
+    (hL : 1 < L) (_hlogL : 1 ≤ Real.log L) (hJ : 1 < J)
     (hJL : J ≤ L ^ 2)
-    (hAnonneg : 0 ≤ A) (hbalance : L ≤ 2000000 * A)
+    (_hAnonneg : 0 ≤ A) (hbalance : L ≤ 2000000 * A)
     (hmagPow : A ^ 6 = J ^ 5 * Real.log J) :
     lowerBoundConstant * lowerLogShape L ≤ J := by
   have hJpos : 0 < J := by linarith
@@ -14642,7 +14652,6 @@ theorem fixedThreshold_comparison_tendsto_zero (y : ℕ → ℕ)
     change B ≤ A +
       ((x / y x + 1) * (y x + 1).primesBelow.card +
         (exceptionalInterval 0 ((x / y x + 1) * y x)).card) at hreverse
-    change B ≤ A + R
     simp only [R, fixedThresholdError]
     omega
   have habs : |(A : ℝ) - (B : ℝ)| ≤ (R : ℝ) := by
@@ -15044,7 +15053,7 @@ theorem prime_product_excess_div_le_short_count
 reservoirs.  If `N` contains `m` disjoint blocks of at least `A` elements,
 then the number of `m`-subsets is at least `A^m`.  The proof is numerical,
 via the standard lower bound `(N+1-m)^m / m! ≤ N.choose m`. -/
-theorem pow_le_choose_of_mul_add_le {A m N : ℕ} (hm : 0 < m)
+theorem pow_le_choose_of_mul_add_le {A m N : ℕ} (_hm : 0 < m)
     (hblocks : m * A + m ≤ N + 1) : A ^ m ≤ N.choose m := by
   have hbase : m * A ≤ N + 1 - m := by omega
   have hfac : m.factorial * A ^ m ≤ (m * A) ^ m := by
@@ -15444,7 +15453,7 @@ theorem manySmallStarts_log_card_ratio_tendsto_one :
       change 4 ≤ m ^ m
       exact (show 4 ≤ m by omega).trans (Nat.le_pow hmpos)
     have hQpos : 0 < smallValueQ m := by
-      simp [smallValueQ, Y, smallValueY, hmpos]
+      simp [smallValueQ, smallValueY, hmpos]
     have hcardpos : 0 < (manySmallStarts m).card := hQpos.trans hb.1
     have hendpos : 0 < smallValueEnd m := hcardpos.trans_le hb.2.1
     have hcard2 : 2 ≤ (manySmallStarts m).card := by omega
@@ -15460,15 +15469,15 @@ theorem manySmallStarts_log_card_ratio_tendsto_one :
     have hlogQle : Real.log (smallValueQ m : ℝ) ≤
         Real.log ((manySmallStarts m).card : ℝ) := by
       apply Real.strictMonoOn_log.monotoneOn
-      · show (0 : ℝ) < smallValueQ m
+      · change (0 : ℝ) < smallValueQ m
         exact_mod_cast hQpos
-      · show (0 : ℝ) < (manySmallStarts m).card
+      · change (0 : ℝ) < (manySmallStarts m).card
         exact_mod_cast hcardpos
       · exact_mod_cast hb.1.le
     have hlogY3 : Real.log (3 : ℝ) ≤ Real.log (Y : ℝ) := by
       apply Real.strictMonoOn_log.monotoneOn
       · norm_num
-      · show (0 : ℝ) < Y
+      · change (0 : ℝ) < Y
         exact_mod_cast hY4.trans' (by norm_num : 0 < 4)
       · exact_mod_cast (show 3 ≤ Y by omega)
     have hlogEndUpper : Real.log (smallValueEnd m : ℝ) ≤
@@ -15476,9 +15485,9 @@ theorem manySmallStarts_log_card_ratio_tendsto_one :
       have hlogmono : Real.log (smallValueEnd m : ℝ) ≤
           Real.log ((3 * Y ^ m : ℕ) : ℝ) := by
         apply Real.strictMonoOn_log.monotoneOn
-        · show (0 : ℝ) < smallValueEnd m
+        · change (0 : ℝ) < smallValueEnd m
           exact_mod_cast hendpos
-        · show (0 : ℝ) < (3 * Y ^ m : ℕ)
+        · change (0 : ℝ) < (3 * Y ^ m : ℕ)
           exact_mod_cast Nat.mul_pos (by norm_num) (pow_pos (by omega) m)
         · exact_mod_cast hb.2.2
       have hrewrite : Real.log ((3 * Y ^ m : ℕ) : ℝ) =
@@ -15512,9 +15521,9 @@ theorem manySmallStarts_log_card_ratio_tendsto_one :
     have hlogle : Real.log ((manySmallStarts m).card : ℝ) ≤
         Real.log (smallValueEnd m : ℝ) := by
       apply Real.strictMonoOn_log.monotoneOn
-      · show (0 : ℝ) < (manySmallStarts m).card
+      · change (0 : ℝ) < (manySmallStarts m).card
         exact_mod_cast hcardpos
-      · show (0 : ℝ) < smallValueEnd m
+      · change (0 : ℝ) < smallValueEnd m
         exact_mod_cast hendpos
       · exact_mod_cast hb.2.1
     exact (div_le_one hlogendpos).mpr hlogle
@@ -16011,7 +16020,7 @@ theorem manySmallUpTo_log_card_ratio_tendsto_one :
     have hCone : 1 < smallValueCeiling (m + 1) := by
       rw [smallValueCeiling]
       have hpowpos : 0 < smallValueY (m + 1) ^ (m + 1) :=
-        pow_pos (by simp [smallValueY, hmpos]) _
+        pow_pos (by simp [smallValueY]) _
       omega
     have hlogx : 0 < Real.log (x : ℝ) :=
       Real.log_pos (by exact_mod_cast hxone)
@@ -16048,7 +16057,7 @@ theorem manySmallUpTo_log_card_ratio_tendsto_one :
       calc
         (manySmallUpTo x).card ≤ (Finset.Icc 1 x).card :=
           Finset.card_le_card (Finset.filter_subset _ _)
-        _ ≤ x := by simpa using card_Icc_one x
+        _ ≤ x := by simp
     have hlogx : 0 < Real.log (x : ℝ) :=
       Real.log_pos (by exact_mod_cast (show 1 < x by omega))
     have hcardpos : 0 < (manySmallUpTo x).card := by
@@ -16348,7 +16357,7 @@ theorem movingFailures_card_le_tail_errors (x D H Y : ℕ) (c : ℝ)
     (smoothSegmentFailures D (x - D) H Y)
   have hsegment := smoothSegmentFailures_card_le D (x - D) H Y hH hHY
   have hIcc : (Finset.Icc 1 D).card ≤ D := by
-    simpa using card_Icc_one D
+    simp
   omega
 
 /-- The moving smooth count is at most the moving `t` count plus the number
@@ -16430,7 +16439,6 @@ theorem moving_comparison_tendsto_zero_of_tail_scales
     change (movingFailures x c).card ≤ D x +
       ((x - D x) / H x + 1) * (Y x + 1).primesBelow.card +
         (exceptionalInterval (D x) (((x - D x) / H x + 1) * H x)).card at hfail
-    change B ≤ A + R
     simp only [R, movingTailError]
     omega
   have hARreal : (A : ℝ) ≤ (B : ℝ) + (R : ℝ) := by exact_mod_cast hAR
@@ -16931,13 +16939,13 @@ parameter needed for the subsequent explicit estimates. -/
 noncomputable def SupportedUnitCombinedRealLogDichotomy
     {K ι : Type*} [Field K] [NumberField K]
     [NumberField.IsTotallyReal K] [Fintype ι]
-    (basis : Module.Basis ι ℚ K) (φ : K →+* ℂ) (ρ : K →+* ℝ)
+    (_basis : Module.Basis ι ℚ K) (φ : K →+* ℂ) (ρ : K →+* ℝ)
     {S : Set (IsDedekindDomain.HeightOneSpectrum
       (NumberField.RingOfIntegers K))} [Fintype S]
     (u : S.unit K) (ratio : Kˣ) (e : S → ℤ) {B : ℕ}
     (hB : NumberField.mixedEmbedding.minkowskiBound K 1 <
       NumberField.mixedEmbedding.convexBodyLTFactor K * B)
-    (a : Fin (NumberField.Units.rank K) →₀ ℤ)
+    (_a : Fin (NumberField.Units.rank K) →₀ ℤ)
     (Ba : ℕ) (QW M : ℝ) : Prop :=
   let I := (BoundedUnits.boundedUnitSubgroup hB).index
   let P : Kˣ := SupportedUnits.numberFieldPrimeClassSupportedUnitProduct S e
@@ -16956,7 +16964,7 @@ noncomputable def SupportedUnitCombinedRealLogDichotomy
     LinearForms.structuredBoxLogarithmicFormThreshold Ba
         (LinearForms.structuredBoxMasterL Ba M alphaNon ellNon)
         M alphaNon ellNon ≤ |Real.log (ρ (z ^ m))|) ∨
-  ∃ (c : Fin (NumberField.Units.rank K) →₀ ℤ)
+  ∃ (_c : Fin (NumberField.Units.rank K) →₀ ℤ)
       (reindex : Fin (NumberField.Units.rank K - 1 + 1) ≃
         Fin (NumberField.Units.rank K)),
     W ∈ integerUnitSubgroup K ∧
@@ -17106,9 +17114,9 @@ theorem realPell_combined_archimedean_data
     exact finrank_adjoin_three_sqRoots_le_eight
       (Real.sqrt γ₁) (Real.sqrt γ₂) (Real.sqrt γ₃)
       (γ₁ : ℚ) (γ₂ : ℚ) (γ₃ : ℚ)
-      (by simpa using Real.sq_sqrt (show (0 : ℝ) ≤ γ₁ by positivity))
-      (by simpa using Real.sq_sqrt (show (0 : ℝ) ≤ γ₂ by positivity))
-      (by simpa using Real.sq_sqrt (show (0 : ℝ) ≤ γ₃ by positivity))
+      (by simp)
+      (by simp)
+      (by simp)
   obtain ⟨S, U, V, hS, hSdef, hUV, hU, _hV, _hdecomp0,
       hUreal, hgapNe0, hgapAbs0, _hlog⟩ :=
     realPell_supportedUnit_log_gap hPell hβ₁₂ hβ₁₃ hβ₂₃
@@ -17360,7 +17368,7 @@ theorem test_exists_numberFieldPrimeClassGenerator_bounded_logMap
     intro i
     simp only [map_add, Finsupp.coe_add, Pi.add_apply, map_sum,
       LinearEquiv.map_smul,
-      b.repr_self, smul_eq_mul, Finsupp.single_apply, z]
+      b.repr_self, z]
     have hsumApply := map_sum (Finsupp.applyAddHom i)
       (fun j : Fin (NumberField.Units.rank K) ↦
         (z j : ℝ) • (Finsupp.single j (1 : ℝ))) Finset.univ
@@ -17708,7 +17716,7 @@ lemma test_numberFieldPrimeClassBoundedUnit_mem_supportedUnits
   intro w hw
   exact test_numberFieldPrimeClassBoundedUnit_mem_singleton_supportedUnits
     hB v w (by
-      show w ≠ v
+      change w ≠ v
       intro hwv
       exact hw (hwv ▸ hv))
 
@@ -17771,7 +17779,7 @@ lemma test_valuationMap_numberFieldPrimeClassBoundedSupportedUnit_of_ne
     SupportedUnits.valuationOfNeZero_eq_one_iff]
   exact test_numberFieldPrimeClassBoundedUnit_mem_singleton_supportedUnits
     hB v.1 w.1 (by
-      show w.1 ≠ v.1
+      change w.1 ≠ v.1
       intro h
       exact hvw (Subtype.ext h))
 
@@ -18286,7 +18294,7 @@ theorem supportedUnit_ratio_two_power_eq_combined_product_field_of_hpow
 
 theorem supportedUnit_combined_real_log_lower_dichotomy_of_hpow
     {K ι : Type*} [Field K] [NumberField K]
-    [NumberField.IsTotallyReal K] [Fintype ι]
+    [NumberField.IsTotallyReal K] [Finite ι]
     (basis : Module.Basis ι ℚ K) (hbasis : ∀ i, IsIntegral ℤ (basis i))
     (φ : K →+* ℂ) (ρ : K →+* ℝ) (hφρ : ∀ x, φ x = (ρ x : ℂ))
     (u ratio P : Kˣ)
@@ -18336,7 +18344,7 @@ theorem supportedUnit_combined_real_log_lower_dichotomy_of_hpow
         (reindex : Fin (NumberField.Units.rank K - 1 + 1) ≃
           Fin (NumberField.Units.rank K)),
       W ∈ integerUnitSubgroup K ∧
-      let b : Fin (NumberField.Units.rank K) → ℤ := fun i ↦
+      let _b : Fin (NumberField.Units.rank K) → ℤ := fun i ↦
         c i + ((2 * I : ℕ) : ℤ) * a i
       let alphaUnit : Fin (NumberField.Units.rank K) → K := fun i ↦ eps i ^ 2
       let ellUnit : Fin (NumberField.Units.rank K) → ℂ := fun i ↦
@@ -18350,6 +18358,7 @@ theorem supportedUnit_combined_real_log_lower_dichotomy_of_hpow
           (fun i ↦ alphaUnit (reindex i))
           (fun i ↦ ellUnit (reindex i)) ≤
         |Real.log (ρ ((z ^ m) ^ (2 * I)))| := by
+  let : Fintype ι := Fintype.ofFinite ι
   dsimp only
   let I := (BoundedUnits.boundedUnitSubgroup hB).index
   let epsU : Fin (NumberField.Units.rank K) → Kˣ := fun i ↦
@@ -18414,13 +18423,13 @@ parameter needed for the subsequent explicit estimates. -/
 noncomputable def SupportedUnitControlledCombinedRealLogDichotomy
     {K ι : Type*} [Field K] [NumberField K]
     [NumberField.IsTotallyReal K] [Fintype ι]
-    (basis : Module.Basis ι ℚ K) (φ : K →+* ℂ) (ρ : K →+* ℝ)
+    (_basis : Module.Basis ι ℚ K) (φ : K →+* ℂ) (ρ : K →+* ℝ)
     {S : Set (IsDedekindDomain.HeightOneSpectrum
       (NumberField.RingOfIntegers K))} [Fintype S]
     (u : S.unit K) (ratio P : Kˣ) {B : ℕ}
     (hB : NumberField.mixedEmbedding.minkowskiBound K 1 <
       NumberField.mixedEmbedding.convexBodyLTFactor K * B)
-    (a : Fin (NumberField.Units.rank K) →₀ ℤ)
+    (_a : Fin (NumberField.Units.rank K) →₀ ℤ)
     (Ba : ℕ) (QW M : ℝ) : Prop :=
   let I := (BoundedUnits.boundedUnitSubgroup hB).index
   let eps : Fin (NumberField.Units.rank K) → K := fun i ↦
@@ -18438,7 +18447,7 @@ noncomputable def SupportedUnitControlledCombinedRealLogDichotomy
     LinearForms.structuredBoxLogarithmicFormThreshold Ba
         (LinearForms.structuredBoxMasterL Ba M alphaNon ellNon)
         M alphaNon ellNon ≤ |Real.log (ρ (z ^ m))|) ∨
-  ∃ (c : Fin (NumberField.Units.rank K) →₀ ℤ)
+  ∃ (_c : Fin (NumberField.Units.rank K) →₀ ℤ)
       (reindex : Fin (NumberField.Units.rank K - 1 + 1) ≃
         Fin (NumberField.Units.rank K)),
     W ∈ integerUnitSubgroup K ∧
@@ -18587,9 +18596,9 @@ theorem realPell_controlled_archimedean_data
     exact finrank_adjoin_three_sqRoots_le_eight
       (Real.sqrt γ₁) (Real.sqrt γ₂) (Real.sqrt γ₃)
       (γ₁ : ℚ) (γ₂ : ℚ) (γ₃ : ℚ)
-      (by simpa using Real.sq_sqrt (show (0 : ℝ) ≤ γ₁ by positivity))
-      (by simpa using Real.sq_sqrt (show (0 : ℝ) ≤ γ₂ by positivity))
-      (by simpa using Real.sq_sqrt (show (0 : ℝ) ≤ γ₃ by positivity))
+      (by simp)
+      (by simp)
+      (by simp)
   obtain ⟨S, U, V, hS, hSdef, hUV, hU, _hV, _hdecomp0,
       hUreal, hgapNe0, hgapAbs0, _hlog⟩ :=
     realPell_supportedUnit_log_gap hPell hβ₁₂ hβ₁₃ hβ₂₃

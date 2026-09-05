@@ -8,17 +8,18 @@ noncomputable section
 namespace Erdos841.BoundedUnits
 
 variable {K : Type*} [Field K] [NumberField K] [NumberField.IsTotallyReal K]
-open scoped Classical
 
 
 def placeHalf (x : NumberField.RingOfIntegers K) (w : InfinitePlace K) : ℝ≥0 :=
   ⟨w (x : K) / 2, by positivity⟩
 
+open Classical in
 noncomputable def boundedRadius (w₁ : InfinitePlace K)
     (x : NumberField.RingOfIntegers K) (C R : ℝ≥0) :
     InfinitePlace K → ℝ≥0 := fun w =>
   if w = w₁ then C * R else placeHalf x w
 
+open Classical in
 lemma prod_boundedRadius (w₁ : InfinitePlace K)
     (x : NumberField.RingOfIntegers K) (C R : ℝ≥0) :
     ∏ w, (boundedRadius w₁ x C R w) ^ InfinitePlace.mult w =
@@ -34,6 +35,7 @@ lemma prod_boundedRadius (w₁ : InfinitePlace K)
   intro w hw
   rw [if_neg (Finset.ne_of_mem_erase hw)]
 
+open Classical in
 lemma prod_other_radius_lower
     (w₁ : InfinitePlace K)
     (x : NumberField.RingOfIntegers K) (hx : x ≠ 0)
@@ -75,9 +77,11 @@ lemma prod_other_radius_lower
       have htwo : (2 : ℝ) ^ (Finset.univ.erase w₁).card ≠ 0 := by positivity
       field_simp
 
+open Classical in
 noncomputable def boundedStepFactor (w₁ : InfinitePlace K) (B : ℕ) : ℝ≥0 :=
   (B : ℝ≥0) * 2 ^ (Finset.univ.erase w₁).card
 
+omit [IsTotallyReal K] in
 lemma one_le_boundedStepFactor (w₁ : InfinitePlace K) {B : ℕ} (hBnat : 1 ≤ B) :
     (1 : ℝ≥0) ≤ boundedStepFactor w₁ B := by
   dsimp [boundedStepFactor]
@@ -104,8 +108,7 @@ theorem exists_bounded_next
     NumberField.RingOfIntegers.coe_ne_zero_iff.mpr hx
   let f : InfinitePlace K → ℝ≥0 := fun w => placeHalf x w
   have hf : ∀ w, w ≠ w₁ → f w ≠ 0 := by
-    intro w _hw
-    intro hz
+    intro w _hw hz
     have hzR : (f w : ℝ) = 0 := congrArg ((↑) : ℝ≥0 → ℝ) hz
     change w (x : K) / 2 = 0 at hzR
     have hwpos : 0 < w (x : K) := InfinitePlace.pos_iff.mpr hxK
@@ -206,11 +209,13 @@ def placeVector (x : NumberField.RingOfIntegers K) : InfinitePlace K → ℝ :=
 noncomputable def placeNorm (x : NumberField.RingOfIntegers K) : ℝ≥0 :=
   ‖placeVector x‖₊
 
+omit [IsTotallyReal K] in
 lemma place_le_placeNorm (x : NumberField.RingOfIntegers K) (w : InfinitePlace K) :
     w (x : K) ≤ placeNorm x := by
   change (placeVector x w : ℝ) ≤ ‖placeVector x‖
   exact (le_abs_self _).trans (norm_le_pi_norm (placeVector x) w)
 
+omit [IsTotallyReal K] in
 lemma placeNorm_one : placeNorm (1 : NumberField.RingOfIntegers K) = 1 := by
   apply NNReal.eq
   change ‖placeVector (1 : NumberField.RingOfIntegers K)‖ = 1
@@ -407,6 +412,7 @@ theorem exists_boundedSeq_collision
   · exact ⟨n, m, hnm, by simpa [t] using hmle, heq⟩
   · exact ⟨m, n, hmn, by simpa [t] using hnle, heq.symm⟩
 
+open Classical in
 lemma boundedSeq_place_inv_le
     (w₁ : InfinitePlace K) {B : ℕ}
     (hB : mixedEmbedding.minkowskiBound K 1 <
@@ -475,6 +481,8 @@ lemma boundedStepFactor_one_le
     simp at hB
   exact_mod_cast one_le_boundedStepFactor w₁ hBnat
 
+omit [IsTotallyReal K] in
+open Classical in
 lemma infinitePlace_erase_card_add_one (w : InfinitePlace K) :
     (Finset.univ.erase w).card + 1 = Fintype.card (InfinitePlace K) := by
   classical
@@ -626,7 +634,6 @@ theorem exists_bounded_unit_log
     by simpa [boundedUnitLogBound] using hupper⟩
 
 open Module Matrix NumberField.Units NumberField.Units.dirichletUnitTheorem
-open scoped Classical
 
 noncomputable def boundedPlaceUnit
     (w : {w : InfinitePlace K // w ≠ NumberField.Units.dirichletUnitTheorem.w₀})
@@ -698,6 +705,8 @@ theorem boundedFundSystem_isMaxRank {B : ℕ}
   simpa [NumberField.Units.IsMaxRank, boundedFundSystem, v, e,
     Function.comp_def] using hli'
 
+omit [IsTotallyReal K] in
+open Classical in
 lemma erase_infinitePlace_card_eq_rank (w : InfinitePlace K) :
     (Finset.univ.erase w).card = NumberField.Units.rank K := by
   classical
@@ -707,6 +716,7 @@ lemma erase_infinitePlace_card_eq_rank (w : InfinitePlace K) :
 noncomputable def commonBoundedStepFactor (B : ℕ) : ℝ≥0 :=
   (B : ℝ≥0) * 2 ^ NumberField.Units.rank K
 
+omit [IsTotallyReal K] in
 lemma boundedStepFactor_eq_common (w : InfinitePlace K) (B : ℕ) :
     boundedStepFactor w B = commonBoundedStepFactor (K := K) B := by
   unfold boundedStepFactor commonBoundedStepFactor
@@ -716,6 +726,7 @@ noncomputable def commonBoundedUnitLogBound (B : ℕ) : ℝ :=
   (boundedIdealCount (K := K) B * Fintype.card (InfinitePlace K) : ℕ) *
     Real.log (commonBoundedStepFactor (K := K) B : ℝ)
 
+omit [IsTotallyReal K] in
 lemma boundedUnitLogBound_eq_common (w : InfinitePlace K) (B : ℕ) :
     boundedUnitLogBound w B = commonBoundedUnitLogBound (K := K) B := by
   simp only [boundedUnitLogBound, commonBoundedUnitLogBound,
@@ -762,6 +773,7 @@ lemma basisCoordinate_mul_det_le {ι : Type*} [Fintype ι] [DecidableEq ι]
   rw [← abs_mul, mul_comm, heq]
   exact hdet
 
+open Classical in
 /-- The coordinates in the explicitly bounded fundamental system satisfy
 a determinant-normalized estimate with no hidden field-dependent constant. -/
 theorem boundedFundSystem_coordinate_mul_regulator_le {B : ℕ}
@@ -913,6 +925,7 @@ theorem boundedUnitSubgroup_index_le {B : ℕ} {ε : ℝ}
   exact (Nat.cast_le (α := ℝ)).mp
     (hreal.trans (Nat.le_ceil _))
 
+open Classical in
 /-- Cramer's rule together with a regulator lower bound gives an
 explicit coordinate bound in the bounded fundamental system. -/
 theorem boundedFundSystem_coordinate_le_of_regulator_lower {B : ℕ} {ε : ℝ}
@@ -1072,6 +1085,7 @@ lemma boundedUnit_pow_decomposition_log_coordinates {B : ℕ}
   obtain ⟨ζ, a, ha⟩ := boundedUnit_pow_decomposition hB q
   exact ⟨a, boundedUnit_decomposition_log_coordinates hB q ζ a ha⟩
 
+open Classical in
 /-- The exponent vector in the finite-index decomposition has a fully
 explicit bound in terms of the regulator lower bound and the logarithmic
 size of the powered unit. -/
@@ -1096,6 +1110,7 @@ theorem boundedUnit_pow_decomposition_exponent_le {B : ℕ} {ε : ℝ}
   rw [ha i]
   exact boundedFundSystem_coordinate_le_of_regulator_lower hB hε hreg _ i
 
+open Classical in
 /-- Taking a natural power scales the sup norm of the logarithmic
 embedding by that natural number. -/
 lemma logEmbedding_pow_norm
@@ -1114,6 +1129,7 @@ lemma logEmbedding_pow_norm
     simp [nsmul_eq_mul]
   rw [hfun, norm_smul_of_nonneg (Nat.cast_nonneg n)]
 
+open Classical in
 /-- The preceding exponent bound can be written entirely in terms of the
 unpowered unit: the only extra factor is the explicit subgroup index. -/
 theorem boundedUnit_pow_decomposition_exponent_le_unpowered {B : ℕ} {ε : ℝ}
@@ -1138,6 +1154,7 @@ theorem boundedUnit_pow_decomposition_exponent_le_unpowered {B : ℕ} {ε : ℝ}
   refine ⟨a, fun i ↦ ?_⟩
   simpa only [logEmbedding_pow_norm] using ha i
 
+open Classical in
 /-- The bounded generators, torsion factor, decomposition identity, and
 explicit exponent estimates can be chosen simultaneously. -/
 theorem boundedUnit_pow_decomposition_with_exponent_le_unpowered

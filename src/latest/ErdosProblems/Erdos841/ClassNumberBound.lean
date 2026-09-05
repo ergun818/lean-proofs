@@ -197,7 +197,7 @@ lemma ncard_ideals_abs
     let s : Set (Ideal (NumberField.RingOfIntegers K)) := {J | Ideal.absNorm J ≤ N}
     have hs : s.Finite := by
       simpa [s] using
-        (Ideal.finite_setOf_absNorm_le (S := NumberField.RingOfIntegers K) N)
+        (Ideal.finite_setOfPred_absNorm_le (S := NumberField.RingOfIntegers K) N)
     have hinj :
         Set.InjOn
           (fun I : NonzeroIntegersIdeal K => (I : Ideal (NumberField.RingOfIntegers K)))
@@ -254,7 +254,7 @@ lemma ideals_abs_finite
     let s : Set (Ideal (NumberField.RingOfIntegers K)) := {J | Ideal.absNorm J ≤ N}
     have hs : s.Finite := by
       simpa [s] using
-        (Ideal.finite_setOf_absNorm_le (S := NumberField.RingOfIntegers K) N)
+        (Ideal.finite_setOfPred_absNorm_le (S := NumberField.RingOfIntegers K) N)
     have hinj :
         Set.InjOn
           (fun I : NonzeroIntegersIdeal K => (I : Ideal (NumberField.RingOfIntegers K)))
@@ -304,7 +304,7 @@ lemma summable_zeta_summand
     intro n
     let s : Set (Ideal (NumberField.RingOfIntegers K)) := {J | Ideal.absNorm J = n}
     have hs : s.Finite := by
-      simpa [s] using (Ideal.finite_setOf_absNorm_eq (S := NumberField.RingOfIntegers K) n)
+      simpa [s] using (Ideal.finite_setOfPred_absNorm_eq (S := NumberField.RingOfIntegers K) n)
     have hinj :
         Set.InjOn
           (fun I : NonzeroIntegersIdeal K =>
@@ -319,7 +319,7 @@ lemma summable_zeta_summand
     intro n
     let s : Set (Ideal (NumberField.RingOfIntegers K)) := {J | Ideal.absNorm J ≤ n}
     have hs : s.Finite := by
-      simpa [s] using (Ideal.finite_setOf_absNorm_le (S := NumberField.RingOfIntegers K) n)
+      simpa [s] using (Ideal.finite_setOfPred_absNorm_le (S := NumberField.RingOfIntegers K) n)
     have hinj :
         Set.InjOn
           (fun I : NonzeroIntegersIdeal K =>
@@ -745,7 +745,7 @@ lemma zeta_tsum_count
       ∀ n : ℕ, Finite {I : NonzeroIntegersIdeal K // normFun I = n} := by
     intro n
     let : Fintype {J : Ideal (NumberField.RingOfIntegers K) // Ideal.absNorm J = n} :=
-      (Ideal.finite_setOf_absNorm_eq (S := NumberField.RingOfIntegers K) n).fintype
+      (Ideal.finite_setOfPred_absNorm_eq (S := NumberField.RingOfIntegers K) n).fintype
     refine Finite.of_injective
       (fun I : {I : NonzeroIntegersIdeal K // normFun I = n} =>
         (⟨(I.1 : Ideal (NumberField.RingOfIntegers K)), I.2⟩ :
@@ -1446,6 +1446,30 @@ lemma weighted_subtype_multichoose
           rw [Sym.card_sym_eq_multichoose]
           simp
 
+/-- Each prime above a rational prime contributes a positive term to the
+ramification-inertia sum, so their number is bounded by the field degree. -/
+lemma numberField_primesOverFinset_card_le
+    {K : Type*} [Field K] [NumberField K]
+    {p : Ideal ℤ} [p.IsMaximal] (hp : p ≠ ⊥) :
+    (IsDedekindDomain.primesOverFinset p (NumberField.RingOfIntegers K)).card ≤
+      Module.finrank ℚ K := by
+  classical
+  let S := NumberField.RingOfIntegers K
+  calc
+    (IsDedekindDomain.primesOverFinset p S).card =
+        Fintype.card ↥(IsDedekindDomain.primesOverFinset p S) :=
+      (Fintype.card_coe _).symm
+    _ = Fintype.card (p.primesOver S) :=
+      Fintype.card_congr
+        (Equiv.setCongr (IsDedekindDomain.coe_primesOverFinset hp S))
+    _ = ∑ _q : p.primesOver S, (1 : ℕ) := by simp
+    _ ≤ ∑ q : p.primesOver S, q.1.ramificationIdx ℤ * q.1.inertiaDeg ℤ := by
+      apply Finset.sum_le_sum
+      intro q _hq
+      exact Nat.mul_pos (q.1.ramificationIdx_pos ℤ) (q.1.inertiaDeg_pos ℤ)
+    _ = Module.finrank ℤ S := Ideal.sum_ramification_inertia_eq_finrank p S
+    _ = Module.finrank ℚ K := NumberField.RingOfIntegers.rank K
+
 /--
 For a rational prime `p`, the number of ideals of norm `p^k` is bounded by the
 stars-and-bars count coming from distributing the exponent among the prime
@@ -1463,8 +1487,7 @@ lemma ideal_count_multichoose
     rw [show Fintype.card α = (IsDedekindDomain.primesOverFinset pI (NumberField.RingOfIntegers
       K)).card by
       exact Fintype.card_coe (IsDedekindDomain.primesOverFinset pI (NumberField.RingOfIntegers K))]
-    exact Ideal.card_primesOverFinset_le_finrank
-      (S := NumberField.RingOfIntegers K) (K := ℚ) (L := K) (p := pI) hpI0
+    exact numberField_primesOverFinset_card_le (K := K) hpI0
   let e : α ↪ Fin (Module.finrank ℚ K) :=
     (Fintype.equivFin α).toEmbedding.trans (Fin.castLEEmb hαcard)
   let w : α → ℕ := fun P => Ideal.inertiaDeg' pI
