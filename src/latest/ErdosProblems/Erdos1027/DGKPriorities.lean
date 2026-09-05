@@ -111,7 +111,7 @@ lemma not_low_iff_high {N d j : ℕ} (p : Fin N) : ¬ IsLow N d j p ↔ IsHigh N
 
 /-- Addition-only form matching the usual DGK definition of the final
 `d/j` priority window. -/
-lemma isHigh_iff_le_add {N d j : ℕ} (hdj : d ≤ j) (p : Fin N) :
+lemma isHigh_iff_le_add {N d j : ℕ} (_hdj : d ≤ j) (p : Fin N) :
     IsHigh N d j p ↔ N ≤ p.val + highCount N d j := by
   unfold IsHigh cutoff
   omega
@@ -130,6 +130,7 @@ def priorityKey (w : Outcome V N) (v : V) : Fin N ×ₗ V :=
 def Earlier (w : Outcome V N) (v u : V) : Prop :=
   priorityKey w v < priorityKey w u
 
+omit [LinearOrder V] in
 lemma priorityKey_injective (w : Outcome V N) : Function.Injective (priorityKey w) := by
   intro v u h
   exact congrArg (fun p : Fin N ×ₗ V ↦ p.2) h
@@ -154,7 +155,6 @@ lemma sum_indicator_eq_card_filter {A : Type*} [Fintype A]
     (P : A → Prop) [DecidablePred P] :
     (∑ x : A, indicator (P x)) = ((Finset.univ.filter P).card : ℚ) := by
   classical
-  change (∑ x ∈ (Finset.univ : Finset A), indicator (P x)) = _
   induction (Finset.univ : Finset A) using Finset.induction_on with
   | empty => simp
   | @insert a s ha ih =>
@@ -194,7 +194,7 @@ lemma sum_indicator_eq_card_filter {A : Type*} [Fintype A]
 an exact rational expectation, and importantly `s` may be a proper subset of
 the global vertex type `V`. -/
 lemma expect_indicator_all_mem {V A : Type*} [Fintype V] [DecidableEq V]
-    [Fintype A] [DecidableEq A] [Nonempty A] (s : Finset V) (t : Finset A) :
+    [Fintype A] [Nonempty A] (s : Finset V) (t : Finset A) :
     (𝔼 w : V → A, indicator (∀ v ∈ s, w v ∈ t)) =
       ((t.card : ℚ) / Fintype.card A) ^ s.card := by
   classical

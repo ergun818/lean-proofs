@@ -35,7 +35,7 @@ open Erdos1027.FiniteExpect
 /-! ## Pointwise events and elementary finite bounds -/
 
 /-- Cardinality union bound for predicates on a finite sample space. -/
-lemma card_filter_biExists_le_sum {Ω ι : Type*} [DecidableEq Ω]
+lemma card_filter_biExists_le_sum {Ω ι : Type*}
     (sample : Finset Ω) (I : Finset ι) (P : ι → Ω → Prop)
     [∀ i ω, Decidable (P i ω)] :
     (sample.filter fun ω ↦ ∃ i ∈ I, P i ω).card ≤
@@ -54,7 +54,7 @@ lemma card_filter_biExists_le_sum {Ω ι : Type*} [DecidableEq Ω]
     simp
 
 /-- Division-free Markov bound for a natural-valued statistic. -/
-lemma threshold_mul_card_filter_le_sum {Ω : Type*} [DecidableEq Ω]
+lemma threshold_mul_card_filter_le_sum {Ω : Type*}
     (sample : Finset Ω) (Z : Ω → ℕ) (a : ℕ) :
     a * (sample.filter (fun ω ↦ a ≤ Z ω)).card ≤ (∑ ω ∈ sample, Z ω) := by
   calc

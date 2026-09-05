@@ -319,7 +319,7 @@ theorem almostMass_markov_le_one_eighth
     _ = (1 : ℝ) / 8 := by
       have hQr : (Q : ℝ) ≠ 0 := by positivity
       norm_num
-      field_simp [hQr] <;> norm_num
+      field_simp [hQr]; norm_num
 
 /-! ## Union over final colours and edges -/
 
@@ -335,8 +335,7 @@ def HasFinalMonochromaticEdge {V Ω : Type*} (H : Hypergraph V)
 
 private lemma invTwoPow_eq_zpow_neg (k : ℕ) :
     invTwoPow k = (2 : ℝ) ^ (-(k : ℤ)) := by
-  simpa [invTwoPow, zpow_neg, zpow_natCast] using
-    (inv_pow (2 : ℝ) k)
+  simp [invTwoPow, zpow_neg, zpow_natCast]
 
 /-- If the fixed-edge estimate has the common error factor `K`, summing it
 over both colours and every edge multiplies `K` by exactly the doubled
@@ -447,7 +446,7 @@ lemma twoQ_div_sixteenQ_eq_one_eighth (Q : ℕ) (hQ : 0 < Q) :
     (2 * (Q : ℝ)) / (16 * Q : ℕ) = (1 : ℝ) / 8 := by
   have hQr : (Q : ℝ) ≠ 0 := by positivity
   norm_num
-  field_simp [hQr] <;> norm_num
+  field_simp [hQr]; norm_num
 
 /-- The natural-number cutoff inequality used by DGK implies that the final
 monochromatic-edge error is below `1/16`. -/
@@ -485,7 +484,7 @@ theorem exists_not_bad_of_expect_lt_one
     ∃ ω : Ω, ¬ Bad ω := by
   classical
   by_contra h
-  push_neg at h
+  push Not at h
   have hone : (𝔼 ω : Ω, realIndicator (Bad ω)) = 1 := by
     simp [realIndicator, h]
   linarith
@@ -518,7 +517,7 @@ def ProperBooleanColouring {V : Type*} (H : Hypergraph V) (χ : V → Bool) : Pr
   ∀ e ∈ H, ∃ x ∈ e, ∃ y ∈ e, χ x ≠ χ y
 
 lemma properBooleanColouring_of_not_hasFinalMonochromaticEdge
-    {V Ω : Type*} [DecidableEq V]
+    {V Ω : Type*}
     (H : Hypergraph V) (finalColour : Ω → V → Bool) (ω : Ω)
     (hω : ¬HasFinalMonochromaticEdge H finalColour ω) :
     ProperBooleanColouring H (finalColour ω) := by
@@ -528,10 +527,10 @@ lemma properBooleanColouring_of_not_hasFinalMonochromaticEdge
     by_contra hempty
     apply hω
     refine ⟨false, e, he, ?_⟩
-    simpa [FinalMonoInColour, Finset.not_nonempty_iff_eq_empty.mp hempty]
+    simp [FinalMonoInColour, Finset.not_nonempty_iff_eq_empty.mp hempty]
   obtain ⟨x, hxe⟩ := hene
   by_contra hdiff
-  push_neg at hdiff
+  push Not at hdiff
   apply hω
   refine ⟨finalColour ω x, e, he, ?_⟩
   intro y hye
@@ -540,7 +539,7 @@ lemma properBooleanColouring_of_not_hasFinalMonochromaticEdge
 /-- The final extraction step: a probability below one for the event that
 some edge finishes monochromatic produces a proper Boolean colouring. -/
 theorem exists_properColouring_of_finalMono_expect_lt_one
-    {V Ω : Type*} [DecidableEq V] [Fintype Ω] [Nonempty Ω]
+    {V Ω : Type*} [Fintype Ω] [Nonempty Ω]
     (H : Hypergraph V) (finalColour : Ω → V → Bool)
     (hbad :
       (𝔼 ω : Ω, realIndicator (HasFinalMonochromaticEdge H finalColour ω)) < 1) :
@@ -556,7 +555,7 @@ theorem exists_properColouring_of_finalMono_expect_lt_one
 Markov, and fixed-edge estimates can be supplied independently; if their
 three bounds add to less than one, one outcome has a proper final colouring. -/
 theorem exists_properColouring_of_three_bad_estimates
-    {V Ω : Type*} [DecidableEq V] [Fintype Ω] [Nonempty Ω]
+    {V Ω : Type*} [Fintype Ω] [Nonempty Ω]
     (H : Hypergraph V) (finalColour : Ω → V → Bool)
     (light excessive : Ω → Prop) (a b c : ℝ)
     (hlight : (𝔼 ω : Ω, realIndicator (light ω)) ≤ a)

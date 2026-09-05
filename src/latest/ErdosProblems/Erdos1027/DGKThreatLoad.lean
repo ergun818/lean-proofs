@@ -556,7 +556,7 @@ private lemma qWeightR_eq_sum_invTwoPow_sub_one
   have hcard : F.card = (F.card - 1) + 1 := by omega
   rw [hcard, pow_succ]
   field_simp
-  congr 1 <;> omega
+  congr 1
 
 /-- Expected global possible-threat load.  The `1/r` is obtained before
 summing over threat edges, from `d / |F| ≤ d / r`. -/
@@ -740,14 +740,6 @@ lemma expect_comp_outsideLabelColours
     _ = 𝔼 outside : OutsideColouring edge,
           𝔼 _priority : OutsidePriorities edge N,
             statistic outside := by
-      change
-        (𝔼 p ∈ (Finset.univ : Finset
-            (OutsideColouring edge × OutsidePriorities edge N)),
-          statistic p.1) =
-          𝔼 outside ∈ (Finset.univ : Finset (OutsideColouring edge)),
-            𝔼 _priority ∈
-                (Finset.univ : Finset (OutsidePriorities edge N)),
-              statistic outside
       rw [show (Finset.univ : Finset
           (OutsideColouring edge × OutsidePriorities edge N)) =
             (Finset.univ : Finset (OutsideColouring edge)) ×ˢ

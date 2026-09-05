@@ -26,9 +26,10 @@ open Finset
 
 Every term indexed by `i` with `t ≤ f i` contributes at least `t`; the
 nonnegativity hypothesis allows us to discard all remaining terms. -/
-lemma threshold_mul_card_le_sum {I : Type*} [DecidableEq I]
+lemma threshold_mul_card_le_sum {I : Type*}
     (s : Finset I) (f : I → ℝ) (t : ℝ) (hf : ∀ i ∈ s, 0 ≤ f i) :
     t * ((s.filter fun i ↦ t ≤ f i).card : ℝ) ≤ ∑ i ∈ s, f i := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp
   | @insert a s ha ih =>
@@ -56,7 +57,7 @@ lemma threshold_mul_card_le_sum {I : Type*} [DecidableEq I]
           _ = ∑ i ∈ insert a s, f i := (Finset.sum_insert ha).symm
 
 /-- Markov's inequality in cardinality form. -/
-lemma card_threshold_le_sum_div {I : Type*} [DecidableEq I]
+lemma card_threshold_le_sum_div {I : Type*}
     (s : Finset I) (f : I → ℝ) {t : ℝ} (ht : 0 < t)
     (hf : ∀ i ∈ s, 0 ≤ f i) :
     ((s.filter fun i ↦ t ≤ f i).card : ℝ) ≤ (∑ i ∈ s, f i) / t := by
@@ -66,7 +67,7 @@ lemma card_threshold_le_sum_div {I : Type*} [DecidableEq I]
 /-- Markov's inequality for the uniform probability measure on a nonempty
 finite set.  Both sides are written out as quotients so no probability-space
 infrastructure is required. -/
-lemma card_threshold_div_card_le_average_div {I : Type*} [DecidableEq I]
+lemma card_threshold_div_card_le_average_div {I : Type*}
     (s : Finset I) (f : I → ℝ) {t : ℝ} (ht : 0 < t)
     (hs : s.Nonempty) (hf : ∀ i ∈ s, 0 ≤ f i) :
     ((s.filter fun i ↦ t ≤ f i).card : ℝ) / s.card ≤

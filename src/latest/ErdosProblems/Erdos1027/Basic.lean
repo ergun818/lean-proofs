@@ -61,7 +61,8 @@ def child (p : Partial α) (v : α) (b : Bool) : Partial α :=
 @[simp] lemma child_red_true (p : Partial α) (v : α) : (p.child v true).red = insert v p.red := rfl
 @[simp] lemma child_blue_true (p : Partial α) (v : α) : (p.child v true).blue = p.blue := rfl
 @[simp] lemma child_red_false (p : Partial α) (v : α) : (p.child v false).red = p.red := rfl
-@[simp] lemma child_blue_false (p : Partial α) (v : α) : (p.child v false).blue = insert v p.blue := rfl
+@[simp] lemma child_blue_false (p : Partial α) (v : α) :
+    (p.child v false).blue = insert v p.blue := rfl
 
 lemma valid_child {X : Finset α} {p : Partial α} {v : α} (hp : p.Valid X)
     (hv : v ∈ p.uncolored X) (b : Bool) : (p.child v b).Valid X := by
@@ -98,10 +99,10 @@ lemma valid_child {X : Finset α} {p : Partial α} {v : α} (hp : p.Valid X)
       · exact hsub (Finset.mem_union_right _ hx)
 
 lemma uncolored_child {X : Finset α} {p : Partial α} {v : α}
-    (hv : v ∈ p.uncolored X) (b : Bool) :
+    (_hv : v ∈ p.uncolored X) (b : Bool) :
     (p.child v b).uncolored X = p.uncolored X \ {v} := by
   ext x
-  cases b <;> simp [uncolored, colored, child, and_assoc, and_left_comm, and_comm]
+  cases b <;> simp [uncolored, colored, child, and_left_comm, and_comm]
 
 lemma card_uncolored_child {X : Finset α} {p : Partial α} {v : α}
     (hv : v ∈ p.uncolored X) (b : Bool) :
@@ -193,20 +194,20 @@ lemma totalScore_branch {F : Hypergraph α} {p : Partial α} {v : α}
       2 * totalScore F p := by
   simp only [totalScore, ← Finset.sum_add_distrib]
   rw [Finset.mul_sum]
-  exact Finset.sum_congr rfl fun A hA => edgeScore_branch hv
+  exact Finset.sum_congr rfl fun _ _ => edgeScore_branch hv
 
 section DecisionTree
-
-variable [LinearOrder α]
 
 /-- A deterministic minimizer of a natural-valued load over a finite set. -/
 noncomputable def selectMin (U : Finset α) (load : α → ℕ) : Option α :=
   if hU : U.Nonempty then some (Classical.choose (Finset.exists_min_image U load hU)) else none
 
+omit [DecidableEq α] in
 lemma selectMin_eq_none_iff (U : Finset α) (load : α → ℕ) :
     selectMin U load = none ↔ U = ∅ := by
   simp [selectMin, Finset.not_nonempty_iff_eq_empty]
 
+omit [DecidableEq α] in
 lemma selectMin_mem {U : Finset α} {load : α → ℕ} {v : α}
     (hv : selectMin U load = some v) : v ∈ U := by
   simp only [selectMin] at hv
@@ -217,6 +218,7 @@ lemma selectMin_mem {U : Finset α} {load : α → ℕ} {v : α}
       (Classical.choose_spec (Finset.exists_min_image U load ‹U.Nonempty›)).1
   · simp at hv
 
+omit [DecidableEq α] in
 lemma selectMin_minimal {U : Finset α} {load : α → ℕ} {v : α}
     (hv : selectMin U load = some v) : ∀ x ∈ U, load v ≤ load x := by
   simp only [selectMin] at hv
@@ -516,7 +518,7 @@ lemma weightedScore_build (threshold r : ℕ) (X : Finset α) (F : Hypergraph α
                 calc
                   2 ^ (p.uncolored X).card =
                       2 ^ (((p.uncolored X).card - 1) + 1) := by
-                        congr 1 <;> omega
+                        congr 1; omega
                   _ = 2 ^ ((p.uncolored X).card - 1) * 2 := by rw [pow_succ]
                   _ = 2 * 2 ^ ((p.uncolored X).card - 1) := by ring
               calc
@@ -564,7 +566,7 @@ lemma allMass_build (threshold r : ℕ) (X : Finset α) (F : Hypergraph α)
                 calc
                   2 ^ (p.uncolored X).card =
                       2 ^ (((p.uncolored X).card - 1) + 1) := by
-                        congr 1 <;> omega
+                        congr 1; omega
                   _ = 2 ^ ((p.uncolored X).card - 1) * 2 := by rw [pow_succ]
                   _ = 2 * 2 ^ ((p.uncolored X).card - 1) := by ring
               rw [hpow]
@@ -692,13 +694,13 @@ lemma card_colored_add_uncolored {X A : Finset α} {p : Partial α}
     (A ∩ p.colored).card + (A ∩ p.uncolored X).card = A.card := by
   have heq : A ∩ p.uncolored X = A \ (A ∩ p.colored) := by
     ext x
-    simp [Partial.uncolored, and_assoc]
+    simp [Partial.uncolored]
     aesop
   rw [heq, add_comm]
   exact Finset.card_sdiff_add_card_eq_card (Finset.inter_subset_left)
 
 lemma edgeScore_lower_of_live {X A : Finset α} {p : Partial α}
-    (hA : A ⊆ X) (hlive : Live p A) :
+    (_hA : A ⊆ X) (hlive : Live p A) :
     2 ^ (A ∩ p.colored).card ≤ edgeScore p A := by
   rcases hlive with hred | hblue
   · have heq : A ∩ p.colored = A ∩ p.blue := by
@@ -773,6 +775,7 @@ lemma heavy_edge_residual_card_le {n r : ℕ} (hn : r + 2 ≤ n)
   have hpartition := card_colored_add_uncolored (p := p) hA
   omega
 
+omit [DecidableEq α] in
 lemma sum_image_le_sum_of_nonneg {β : Type*} [DecidableEq β]
     (s : Finset α) (f : α → β) (g : β → ℕ) (h : α → ℕ)
     (hle : ∀ a ∈ s, g (f a) ≤ h a) :
@@ -822,9 +825,9 @@ lemma live_parent_of_live_child (p : Partial α) (A : Finset α) (v : α) (b : B
 
 lemma child_edge_uncolored_le_parent (X A : Finset α) (p : Partial α) (v : α) (b : Bool) :
     (A ∩ (p.child v b).uncolored X).card ≤ (A ∩ p.uncolored X).card := by
-  cases b <;> simp [Partial.uncolored, Partial.colored, Partial.child]
-  · exact Finset.card_le_card (by intro x hx; simp_all)
-  · exact Finset.card_le_card (by intro x hx; simp_all)
+  cases b <;> exact Finset.card_le_card (by
+    intro x hx
+    simp_all [Partial.uncolored, Partial.colored, Partial.child])
 
 lemma parent_edge_uncolored_le_child_add_one {X A : Finset α} {p : Partial α} {v : α}
     (hv : v ∈ p.uncolored X) (b : Bool) :

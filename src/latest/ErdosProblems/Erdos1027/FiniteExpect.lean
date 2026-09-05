@@ -141,7 +141,7 @@ noncomputable instance allowedFunctionsFintype
 /-- The number of pointwise allowed functions is the product of the numbers
 of choices at their coordinates. -/
 lemma card_allowedFunctions {α : Type*} {β : α → Type*}
-    [Fintype α] [∀ x, DecidableEq (β x)]
+    [Fintype α]
     (allowed : ∀ x, Finset (β x)) :
     Fintype.card (AllowedFunctions allowed) = ∏ x, (allowed x).card := by
   classical
@@ -205,7 +205,7 @@ def restrictedExtensionsEquiv {α β : Type*} [Fintype α] [DecidableEq α]
   toFun f x := f.1 x
   invFun f := ⟨fun x ↦ if hx : x ∈ E then g x else f ⟨x, by simp [hx]⟩, by
     intro x hx
-    simp [AgreesOn, hx]⟩
+    simp [hx]⟩
   left_inv f := by
     apply Subtype.ext
     funext x

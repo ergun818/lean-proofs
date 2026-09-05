@@ -60,7 +60,7 @@ The empty subset is the initially-all-red choice.  Thus the sum over
 nonempty sets of exceptional (blue, high-priority) vertices is the full
 product minus one. -/
 lemma sum_nonempty_subsets_prod_eq_prod_one_add_sub_one
-    {V : Type*} [DecidableEq V] (edge : Finset V) (penalty : V → ℝ) :
+    {V : Type*} (edge : Finset V) (penalty : V → ℝ) :
     (∑ t ∈ edge.powerset.filter Finset.Nonempty, ∏ v ∈ t, penalty v) =
       (∏ v ∈ edge, (1 + penalty v)) - 1 := by
   classical
@@ -105,7 +105,7 @@ lemma exp_sub_one_le_mul_exp_of_nonneg_of_le {x M : ℝ}
 /-- The pointwise product/exponential estimate used for one exposed outside
 configuration. -/
 lemma prod_one_add_sub_one_le_exp_cap_mul_sum
-    {V : Type*} [DecidableEq V] (edge : Finset V) (penalty : V → ℝ) {M : ℝ}
+    {V : Type*} (edge : Finset V) (penalty : V → ℝ) {M : ℝ}
     (hpenalty : ∀ v ∈ edge, 0 ≤ penalty v)
     (hcap : ∑ v ∈ edge, penalty v ≤ M) :
     (∏ v ∈ edge, (1 + penalty v)) - 1 ≤
@@ -140,7 +140,7 @@ supplies the certifying threat of each endangered vertex, the fact that it
 has the same rank as the vertex's severity, and injectivity of certificates.
 -/
 lemma severityClass_card_le_threatClass_card
-    {V E : Type*} [DecidableEq V] [DecidableEq E]
+    {V E : Type*}
     (vertices : Finset V) (threats : Finset E)
     (severity : V → ℕ) (rank : E → ℕ) (certificate : V → E)
     (hcertificate : ∀ v ∈ vertices, certificate v ∈ threats)
@@ -167,7 +167,7 @@ lemma sum_expected_severityCost_le
     (expectedCount threatWeight : ℕ → ℝ)
     (hr : 0 < r) (hd : 0 ≤ d)
     (hrank : ∀ j ∈ ranks, r ≤ j)
-    (hcount : ∀ j ∈ ranks, 0 ≤ expectedCount j)
+    (_hcount : ∀ j ∈ ranks, 0 ≤ expectedCount j)
     (hthreat : ∀ j ∈ ranks, 0 ≤ threatWeight j)
     (hdom : ∀ j ∈ ranks, expectedCount j ≤ threatWeight j)
     (hsum : ∑ j ∈ ranks, threatWeight j ≤ q) :
@@ -199,7 +199,7 @@ lemma sum_expected_severityCost_le
 /-- Interchange the finite outside-configuration and severity-rank sums.
 This is useful for rewriting `E X` as `∑_j (E R_j) d/j`. -/
 lemma sum_weight_mul_severityCost
-    {O : Type*} [DecidableEq O] (outcomes : Finset O) (ranks : Finset ℕ)
+    {O : Type*} (outcomes : Finset O) (ranks : Finset ℕ)
     (outsideWeight : O → ℝ) (count : O → ℕ → ℕ) (d : ℝ) :
     ∑ ω ∈ outcomes, outsideWeight ω *
         (∑ j ∈ ranks, (count ω j : ℝ) * (d / (j : ℝ))) =
@@ -235,7 +235,7 @@ or by rational/real masses.
 The hypothesis `hconditional` is precisely what the direct exposure of the
 colours and priorities on the fixed edge proves. -/
 theorem fixedEdge_finalRed_good_le_of_expectedPenalty
-    {O V : Type*} [DecidableEq O] [DecidableEq V]
+    {O V : Type*}
     (outcomes : Finset O) (edge : Finset V)
     (outsideWeight redGood : O → ℝ) (penalty : O → V → ℝ)
     (M expectedPenaltyBound : ℝ)
@@ -291,7 +291,7 @@ The conclusion is exactly
 `P(e final red, good) ≤ 2^{-|e|} exp(M) q*d/r`.
 -/
 theorem fixedEdge_finalRed_good_le
-    {O V : Type*} [DecidableEq O] [DecidableEq V]
+    {O V : Type*}
     (outcomes : Finset O) (edge : Finset V) (ranks : Finset ℕ)
     (outsideWeight redGood : O → ℝ) (penalty : O → V → ℝ)
     (count : O → ℕ → ℕ) (threatWeight : ℕ → ℝ)
@@ -343,7 +343,7 @@ needed at the call site. -/
 /-- Uniform-expectation version of
 `fixedEdge_finalRed_good_le_of_expectedPenalty`. -/
 theorem fixedEdge_finalRed_good_expect_le_of_expectedPenalty
-    {O V : Type*} [Fintype O] [DecidableEq V]
+    {O V : Type*} [Fintype O]
     (edge : Finset V) (redGood : O → ℝ) (penalty : O → V → ℝ)
     (M expectedPenaltyBound : ℝ)
     (hpenalty : ∀ ω, ∀ v ∈ edge, 0 ≤ penalty ω v)
@@ -390,7 +390,7 @@ instantiate `O`
 with `Trial α L`, `count ω j` with the number `R_j` of endangered vertices of
 severity `j`, and `threatWeight j` with `q_j`. -/
 theorem fixedEdge_finalRed_good_expect_le
-    {O V : Type*} [Fintype O] [DecidableEq V]
+    {O V : Type*} [Fintype O]
     (edge : Finset V) (ranks : Finset ℕ)
     (redGood : O → ℝ) (penalty : O → V → ℝ)
     (count : O → ℕ → ℕ) (threatWeight : ℕ → ℝ)

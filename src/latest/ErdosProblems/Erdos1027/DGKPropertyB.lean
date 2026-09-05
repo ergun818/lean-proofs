@@ -170,6 +170,7 @@ lemma sum_unionPenalty_eq_outsideThreatLoad
       DGKThreatLoad.outsideThreatLoad H e target outside d := by
   rfl
 
+omit [Fintype V] in
 /-- The complement of the light-edge event is the deterministic `NoLight`
 condition required by the greedy certificate. -/
 lemma noLight_of_not_hasLightEdge
@@ -178,13 +179,14 @@ lemma noLight_of_not_hasLightEdge
   classical
   intro F hFH hmono
   by_contra hhigh
-  push_neg at hhigh
+  push Not at hhigh
   apply h
   refine ⟨F, hFH, hmono, ?_⟩
   intro v hv
   by_contra hlow
   exact hhigh v hv ((DGKPriorities.not_low_iff_high _).mp hlow)
 
+omit [Fintype V] in
 /-- The target-specific pair mass is bounded by the ordinary
 almost-monochromatic pair mass used in the Markov event. -/
 lemma targetAlmostMass_le_outcomeAlmostPairMass
@@ -226,6 +228,7 @@ def ControlledFinal (H : Hypergraph V) (hne : ∀ F ∈ H, F.Nonempty)
     ¬ DGKUnion.HasLightEdge H d w ∧
     DGKBadEvents.outcomeAlmostPairMassQ H w < (16 * Q : ℕ)
 
+omit [Fintype V] in
 lemma controlledFinal_not_all_target
     {H : Hypergraph V} {hne : ∀ F ∈ H, F.Nonempty}
     {Q d : ℕ} {target : Bool} {edge : Finset V} (heH : edge ∈ H)
@@ -554,6 +557,7 @@ lemma hasControlledFinal_expect_le
       simp_rw [invTwoPow_eq_zpow_neg]
       ring
 
+omit [Fintype V] in
 /-- Pointwise decomposition of a final monochromatic edge into the two
 preliminary bad events or the controlled fixed-edge event. -/
 lemma finalBad_indicator_le_three
@@ -590,13 +594,15 @@ lemma finalBad_indicator_le_three
   · simp only [DGKUnion.realIndicator, if_neg hbad]
     split_ifs <;> norm_num
 
+omit [Fintype V] in
 /-- Convert a proper Boolean colouring to the red-set formulation used by
 the decision-tree development. -/
-lemma treeProperColoring_of_boolean
+lemma treeProperColoring_of_boolean [Finite V]
     {H : Hypergraph V} {colour : V → Bool}
     (h : DGKUnion.ProperBooleanColouring H colour) :
     ∃ R : Finset V, Tree.ProperColoring H R := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let R : Finset V := Finset.univ.filter fun v ↦ colour v = true
   refine ⟨R, ?_⟩
   intro edge heH
@@ -611,13 +617,15 @@ lemma treeProperColoring_of_boolean
     · exact ⟨y, Finset.mem_sdiff.mpr ⟨hy, by simp [R, hcy]⟩⟩
   · exact (hxy (hcx.trans hcy.symm)).elim
 
+omit [Fintype V] in
 /-- The finite DGK experiment produces a proper colouring under the scaled
 fixed-budget hypotheses. -/
-theorem fixedBudget
+theorem fixedBudget [Finite V]
     (C n : ℕ) (hC : 0 < C) :
     Tree.BeckFixedBudget (C := C) (n := n) (r := dgkThreshold (8 * C))
       (α := V) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   intro H hmin hweight
   let Q : ℕ := 8 * C
   let r : ℕ := dgkThreshold Q

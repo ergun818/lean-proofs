@@ -7,7 +7,7 @@ open scoped BigOperators
 
 attribute [local instance] Classical.propDecidable
 
-variable {α : Type*} [DecidableEq α] [LinearOrder α]
+variable {α : Type*} [DecidableEq α]
 
 lemma residual_min_at_leaf {C n r : ℕ} (hn : r + 2 ≤ n)
     {X : Finset α} {F : Hypergraph α}
@@ -27,7 +27,9 @@ lemma residual_min_at_leaf {C n r : ℕ} (hn : r + 2 ≤ n)
     have heq : A ∩ (Partial.mk (α := α) ∅ ∅).uncolored X = A := by
       ext x
       simp only [Finset.mem_inter, and_iff_left_iff_imp]
-      exact fun hx => hAX hx
+      intro hx
+      simpa only [Partial.uncolored, Partial.colored, Finset.empty_union,
+        Finset.sdiff_empty] using hAX hx
     rw [heq, (hedges A hAF).2]
     omega
   · subst q
@@ -40,7 +42,7 @@ lemma residual_min_at_leaf {C n r : ℕ} (hn : r + 2 ≤ n)
     omega
 
 lemma completion_from_residual {X : Finset α} {F : Hypergraph α} {p : Partial α}
-    (hp : p.Valid X) (hedges : ∀ A ∈ F, A ⊆ X)
+    (hp : p.Valid X) (_hedges : ∀ A ∈ F, A ⊆ X)
     {R : Finset α} (hR : ProperColoring (residual X F p) R) :
     ∃ B : Finset α, B ⊆ X ∧ Extends p B ∧ ProperColoring F B := by
   let U := p.uncolored X
@@ -188,7 +190,7 @@ lemma heavyEdges_card_le {C n r : ℕ} (hn : r + 2 ≤ n)
         _ = _ := by rw [pow_add]
     have hpowR : 2 ^ (r + 3) = 2 ^ (r + 1) * 4 := by
       calc
-        2 ^ (r + 3) = 2 ^ ((r + 1) + 2) := by congr 1 <;> omega
+        2 ^ (r + 3) = 2 ^ ((r + 1) + 2) := by congr 1
         _ = _ := by rw [pow_add]; norm_num
     rw [hpowN, hpowR]
     ring
@@ -221,7 +223,9 @@ lemma bounded_uncolored_leaf {C n r : ℕ} (hn : r + 2 ≤ n)
       have heq : A ∩ (Partial.mk (α := α) ∅ ∅).uncolored X = A := by
         ext x
         simp only [Finset.mem_inter, and_iff_left_iff_imp]
-        exact fun hx => (hedges A hAF).1 hx
+        intro hx
+        simpa only [Partial.uncolored, Partial.colored, Finset.empty_union,
+          Finset.sdiff_empty] using (hedges A hAF).1 hx
       rw [heq, (hedges A hAF).2] at hsmall
       omega
     · subst q
@@ -295,7 +299,7 @@ lemma good_leaf_count_le_goodSets {C n r : ℕ} (hn : r + 2 ≤ n)
     (Partial.mk ∅ ∅) q₀ q₁ (pick q₀) hq₀Both.1 hq₁Both.1
     (hpickExt q₀ hq₀) (by simpa [heq] using hpickExt q₁ hq₁)
 
-/-- Integer-budget resolution on a linearly ordered finite ambient set. -/
+/-- Integer-budget resolution on a finite ambient set. -/
 theorem natBudgetResolutionLinear (C n r : ℕ) (hC : 0 < C) (hn : r + 2 ≤ n)
     (X : Finset α) (F : Hypergraph α)
     (hedges : ∀ A ∈ F, A ⊆ X ∧ A.card = n)
@@ -404,7 +408,7 @@ lemma liftBack_injective {X : Finset γ} : Function.Injective (@liftBack γ _ X)
     simpa [Subtype.ext hval] using hy
 
 lemma properColoring_liftBack {X : Finset γ} {F : Hypergraph γ}
-    (hedges : ∀ A ∈ F, A ⊆ X) {B : Finset {x // x ∈ X}}
+    (_hedges : ∀ A ∈ F, A ⊆ X) {B : Finset {x // x ∈ X}}
     (hB : ProperColoring (restrictHypergraph X F) B) :
     ProperColoring F (liftBack B) := by
   intro A hAF
@@ -451,7 +455,6 @@ theorem NatBudgetResolution (C n r : ℕ) (hC : 0 < C) (hn : r + 2 ≤ n)
     2 ^ X.card ≤
       2 ^ (C * 2 ^ (r + 3) * (r + 2) + 1) * (goodSets X F).card := by
   let β := {x // x ∈ X}
-  let : LinearOrder β := (Fintype.equivFin β).linearOrder
   let F' : Hypergraph β := restrictHypergraph X F
   have hedges' : ∀ A ∈ F', A ⊆ (Finset.univ : Finset β) ∧ A.card = n := by
     intro A hA
