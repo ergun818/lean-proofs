@@ -386,7 +386,7 @@ lemma addNet_add_finiteAP {S T : Set ℕ} {q K a : ℕ}
 
 /-- Explicit membership form of common-difference lowering. -/
 lemma lowerStep_of_residue_translates_mem {S U : Set ℕ}
-    {a q M L Z : ℕ} (hq : 0 < q) (hM : 0 < M)
+    {a q M L Z : ℕ} (_hq : 0 < q) (hM : 0 < M)
     (hAP : ∀ j < L, a + j * (q * M) ∈ S)
     (hres : ∀ i < M, ∃ u ∈ U, ∃ z ≤ Z, u = i * q + (q * M) * z) :
     ∀ n < M * (L - Z),
@@ -643,7 +643,7 @@ lemma exists_generator_modulus {d : ℕ} (hd : 0 < d)
         simpa [r] using hsum
       have hcast : (r : ZMod d) = -((d / q : ℕ) • g) := by
         rw [← hcastg]
-        simp only [nsmul_eq_mul, Nat.cast_mul]
+        simp only [nsmul_eq_mul]
         apply (eq_neg_iff_add_eq_zero).2
         simpa [add_comm] using hsumZ
       have hrK : (r : ZMod d) ∈ K := by
@@ -736,7 +736,7 @@ lemma subgroup_eq_zmultiples_of_generator_modulus
         have hi : (i + 1) • (q : ZMod d) ∈ H := by
           simpa [nsmul_eq_mul, mul_comm] using hmult (i + 1)
         have hneg := H.neg_mem hi
-        convert hneg using 1 <;> simp [nsmul_eq_mul] <;> ring
+        convert hneg using 1; simp [nsmul_eq_mul]; ring
 
 /-- Cardinality of the subgroup of multiples of `q` in `ZMod d`. -/
 lemma natCard_subgroup_of_generator_modulus
@@ -817,11 +817,14 @@ lemma zmod_castHom_eq_zero_iff_val_dvd {q d : ℕ} [NeZero q]
 /-- If a surjective homomorphism has exactly the translation stabilizer of
 `S` as its kernel, the image of `S` has trivial translation stabilizer. -/
 lemma image_stabilizer_eq_bot {G H : Type*}
-    [AddCommGroup G] [DecidableEq G] [Fintype G]
-    [AddCommGroup H] [DecidableEq H] [Fintype H]
+    [AddCommGroup G] [DecidableEq G] [Finite G]
+    [AddCommGroup H] [DecidableEq H] [Finite H]
     (f : G →+ H) (hf : Function.Surjective f) (S : Finset G)
     (hker : ∀ x, f x = 0 ↔ x ∈ Erdos587.finsetAddStabilizer S) :
     Erdos587.finsetAddStabilizer (S.image f) = ⊥ := by
+  classical
+  let : Fintype G := Fintype.ofFinite G
+  let : Fintype H := Fintype.ofFinite H
   apply eq_bot_iff.mpr
   intro y hy
   obtain ⟨x, rfl⟩ := hf y
@@ -852,7 +855,7 @@ lemma image_stabilizer_eq_bot {G H : Type*}
     exact Finset.eq_of_subset_of_card_le hxsub (by
       rw [Erdos587.card_addTranslate])
   have hxker : f x = 0 := (hker x).mpr hxstab
-  simpa [hxker]
+  simp [hxker]
 
 /-- Under the same kernel hypothesis, a proper set has proper image. -/
 lemma image_ne_univ_of_stabilizer_kernel {G H : Type*}
@@ -1153,12 +1156,13 @@ lemma exists_translationNew_large_of_closure_eq_top
 internal subset-sum set has fewer than half as many points as the remaining
 set, one remaining shift grows it by a factor of at least `3/2`. -/
 lemma exists_three_halves_growth
-    {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+    {G : Type*} [AddCommGroup G] [Finite G] [DecidableEq G]
     {T X : Finset G} (hT : T.Nonempty) (_hX : X.Nonempty)
     (hsmall : 2 * T.card < X.card) :
     ∃ x ∈ X,
       3 * T.card ≤ 2 * (T ∪ Erdos587.addTranslate x T).card := by
   classical
+  let : Fintype G := Fintype.ofFinite G
   let e := T.card / 2
   let P := Erdos360.almostPeriods T e
   have hTpos : 0 < T.card := Finset.card_pos.mpr hT
@@ -1223,7 +1227,7 @@ lemma card_liftFinsetToClosure
     Fintype.ofInjective (fun x : H => x.1) Subtype.val_injective
   have himage : (liftFinsetToClosure X).image (fun x : H => x.1) = X := by
     ext x
-    simp only [Finset.mem_image, mem_liftFinsetToClosure]
+    simp only [Finset.mem_image]
     constructor
     · rintro ⟨y, hy, rfl⟩
       exact mem_liftFinsetToClosure.mp hy
@@ -1709,7 +1713,7 @@ lemma normalizedCosetFiber_nonempty_of_diverse_used
       rw [List.length_map]
       rw [← List.toFinset_card_of_nodup (U.nodup_toList.filter _)]
       rw [List.toFinset_filter]
-      simp [Function.comp_def]
+      simp
     rw [hlen]
     exact (hdiverse d hd (by simpa [q] using hdq)).trans hcard
   have hallVal : Erdos587.listSubsetSums
@@ -1850,7 +1854,7 @@ lemma sdiff_erase_eq_insert_sdiff
 
 /-- A growth phase is witnessed by a coset fibre no larger than one quarter
 of the remaining residue set. -/
-def IsModularGrowthPhase {b : ℕ} [NeZero b] (hb : 0 < b)
+def IsModularGrowthPhase {b : ℕ} [NeZero b] (_hb : 0 < b)
     (R₀ R E : Finset (ZMod b)) : Prop :=
   ∃ u : ZMod b,
     4 * (normalizedCosetFiber (AddSubgroup.closure (R : Set (ZMod b)))
@@ -2044,7 +2048,7 @@ lemma modularPhasePick_internal_growth
   let x := Classical.choose hex
   have hxSpec := (Classical.choose_spec hex).2
   have hpick : modularPhasePick hb R₀ E hE hdiverse R = x.1 := by
-    simp only [modularPhasePick, dif_pos hR, dif_pos hwide, dif_pos hg, hex, x]
+    simp only [modularPhasePick, dif_pos hR, dif_pos hwide, dif_pos hg, x]
   have hsubtype :
       (⟨modularPhasePick hb R₀ E hE hdiverse R,
         AddSubgroup.subset_closure
@@ -2274,7 +2278,7 @@ lemma modularInternalCard_mono_of_modulus_eq
 
 lemma elementsInSubgroup_insert
     {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
-    (H : AddSubgroup G) (A : Finset G) (x : H) (hx : x.1 ∉ A) :
+    (H : AddSubgroup G) (A : Finset G) (x : H) (_hx : x.1 ∉ A) :
     elementsInSubgroup H (insert x.1 A) =
       insert x (elementsInSubgroup H A) := by
   ext y
@@ -2576,10 +2580,12 @@ theorem card_modularGrowthIndices_le
     hiData.2 hjData.2 (hfi.trans hfj.symm) (hfj.trans hfq.symm)
 
 lemma card_union_addTranslate_eq
-    {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+    {G : Type*} [AddCommGroup G] [Finite G] [DecidableEq G]
     (S : Finset G) (x : G) :
     (S ∪ Erdos587.addTranslate x S).card =
       S.card + (Erdos360.translationNew S x).card := by
+  classical
+  let : Fintype G := Fintype.ofFinite G
   have hsdiff := Finset.card_sdiff_add_card
     (Erdos587.addTranslate x S) S
   dsimp only [Erdos360.translationNew] at hsdiff ⊢
@@ -2812,7 +2818,7 @@ lemma mem_divideMultiples_iff {Y : Finset ℕ} {e y : ℕ} (he : 0 < e) :
     refine ⟨e * y, Finset.mem_filter.mpr ⟨hy, dvd_mul_right e y⟩, ?_⟩
     exact Nat.mul_div_right y he
 
-lemma card_divideMultiples {Y : Finset ℕ} {e : ℕ} (he : 0 < e) :
+lemma card_divideMultiples {Y : Finset ℕ} {e : ℕ} (_he : 0 < e) :
     (divideMultiples Y e).card = (Y.filter fun y => e ∣ y).card := by
   classical
   rw [divideMultiples, Finset.card_image_iff]
@@ -2930,8 +2936,7 @@ theorem exists_divisorExtractionAux
               simp only [List.length_cons, List.sum_cons]
               ring
         · intro a ha hbound
-          convert hdiverse a ha (by simpa [mul_assoc] using hbound) using 1 <;>
-            simp [mul_assoc]
+          convert hdiverse a ha (by simpa [mul_assoc] using hbound) using 1
       · refine ⟨1, Y, [], by omega, by simp, by simp, ?_, by simp, by simp, ?_⟩
         · simpa using hdB
         · intro e he hde
@@ -3511,9 +3516,8 @@ lemma bernoulliHalf_lower_inter {ι : Type*} [DecidableEq ι]
     (K := K) (EW := (F.card : ℝ) / 2) (r := (1 : ℝ) / 2)
     (by simp; ring) (by norm_num) (by norm_num) (by
       have hKr : (4 * K : ℝ) ≤ (F.card : ℝ) := by exact_mod_cast hK
-      push_cast at hKr
       nlinarith)
-  convert htail using 1 <;> norm_num <;> ring
+  convert htail using 1; norm_num; ring
 
 open Erdos697.Bernoulli in
 lemma bernoulliHalf_upper_inter {ι : Type*} [DecidableEq ι]
@@ -3529,9 +3533,8 @@ lemma bernoulliHalf_upper_inter {ι : Type*} [DecidableEq ι]
     (K := K) (EW := (F.card : ℝ) / 2) (r := (3 : ℝ) / 2)
     (by simp; ring) (by norm_num) (by
       have hKr : (3 * F.card : ℝ) ≤ (4 * K : ℝ) := by exact_mod_cast hK
-      push_cast at hKr
       nlinarith)
-  convert htail using 1 <;> norm_num <;> ring
+  convert htail using 1; norm_num; ring
 
 open Erdos697.Bernoulli in
 lemma bernoulliHalf_lower_two_fifths {ι : Type*} [DecidableEq ι]
@@ -3548,7 +3551,7 @@ lemma bernoulliHalf_lower_two_fifths {ι : Type*} [DecidableEq ι]
       have hKr : (5 * K : ℝ) ≤ (2 * F.card : ℕ) := by exact_mod_cast hK
       push_cast at hKr
       nlinarith)
-  convert htail using 1 <;> norm_num <;> ring
+  convert htail using 1; norm_num; ring
 
 open Erdos697.Bernoulli in
 lemma bernoulliHalf_upper_three_fifths {ι : Type*} [DecidableEq ι]
@@ -3566,7 +3569,7 @@ lemma bernoulliHalf_upper_three_fifths {ι : Type*} [DecidableEq ι]
       have hKr : (3 * F.card : ℝ) ≤ (5 * K : ℕ) := by exact_mod_cast hK
       push_cast at hKr
       nlinarith)
-  convert htail using 1 <;> norm_num <;> ring
+  convert htail using 1; norm_num; ring
 
 open Erdos697.Bernoulli in
 lemma bernoulliHalf_lower_nine_twentieths {ι : Type*} [DecidableEq ι]
@@ -3586,7 +3589,7 @@ lemma bernoulliHalf_lower_nine_twentieths {ι : Type*} [DecidableEq ι]
       nlinarith)
   calc
     _ ≤ Real.exp (-((F.card : ℝ) / 760)) := by
-      convert htail using 1 <;> norm_num <;> ring
+      convert htail using 1; norm_num; ring
     _ ≤ Real.exp (-((F.card : ℝ) / 1000)) := by
       apply Real.exp_le_exp.mpr
       have hcard : (0 : ℝ) ≤ F.card := by positivity
@@ -3611,7 +3614,7 @@ lemma bernoulliHalf_upper_eleven_twentieths {ι : Type*} [DecidableEq ι]
       nlinarith)
   calc
     _ ≤ Real.exp (-((F.card : ℝ) / 840)) := by
-      convert htail using 1 <;> norm_num <;> ring
+      convert htail using 1; norm_num; ring
     _ ≤ Real.exp (-((F.card : ℝ) / 1000)) := by
       apply Real.exp_le_exp.mpr
       have hcard : (0 : ℝ) ≤ F.card := by positivity
@@ -3630,7 +3633,7 @@ lemma two_mul_exp_neg_log_bound (r : ℕ) :
   have hcast : (2 * r : ℝ) < (2 : ℝ) ^ L := by
     exact_mod_cast hnat
   have he2 : (2 : ℝ) ≤ Real.exp 1 := by
-    convert Real.add_one_le_exp 1 using 1 <;> norm_num
+    convert Real.add_one_le_exp 1 using 1; norm_num
   have hpow : (2 : ℝ) ^ L ≤ Real.exp (L : ℝ) := by
     calc
       (2 : ℝ) ^ L ≤ (Real.exp 1) ^ L :=
@@ -3703,7 +3706,6 @@ theorem exists_simultaneously_balanced_subset
     have hcard : 220 * L ≤ F.card := hlarge F hF
     have hcast : (L : ℝ) ≤ (F.card : ℝ) / 220 := by
       have hcardR : (220 * L : ℝ) ≤ (F.card : ℝ) := by exact_mod_cast hcard
-      push_cast at hcardR
       nlinarith
     exact htail.trans (Real.exp_le_exp.mpr (by
       have hFnonneg : (0 : ℝ) ≤ F.card := by positivity
@@ -3717,7 +3719,6 @@ theorem exists_simultaneously_balanced_subset
     have hcard : 220 * L ≤ F.card := hlarge F hF
     have hcast : (L : ℝ) ≤ (F.card : ℝ) / 220 := by
       have hcardR : (220 * L : ℝ) ≤ (F.card : ℝ) := by exact_mod_cast hcard
-      push_cast at hcardR
       nlinarith
     exact htail.trans (Real.exp_le_exp.mpr (by nlinarith))
   have hbad (F : Finset ι) (hF : F ∈ family) :
@@ -3735,7 +3736,6 @@ theorem exists_simultaneously_balanced_subset
         mul_le_mul_of_nonneg_right hcardR hpnonneg
       _ = ((low F).card : ℝ) * (2 : ℝ)⁻¹ ^ s.card +
           ((high F).card : ℝ) * (2 : ℝ)⁻¹ ^ s.card := by
-        push_cast
         ring
       _ ≤ Real.exp (-((L : ℕ) : ℝ)) +
           Real.exp (-((L : ℕ) : ℝ)) :=
@@ -3766,9 +3766,7 @@ theorem exists_simultaneously_balanced_subset
       _ < 1 := by
         simpa [L] using two_mul_exp_neg_log_bound family.card
   have hwhole : (s.powerset.card : ℝ) * (2 : ℝ)⁻¹ ^ s.card = 1 := by
-    simpa using (Erdos697.Bernoulli.sum_weight_powerset s
-      (fun _ ↦ (2 : ℝ)⁻¹)).trans (sum_bernoulliHalf_finset s s.powerset
-        (Subset.refl _))
+    simp
   have hcardltR : (Bad.card : ℝ) < s.powerset.card := by
     have hp : 0 < (2 : ℝ)⁻¹ ^ s.card := by positivity
     nlinarith
@@ -3795,7 +3793,7 @@ theorem exists_simultaneously_balanced_subset
     exact lt_of_not_ge (this.resolve_left (by simpa using hT.1))
 
 theorem exists_simultaneously_balanced_subset_indexed
-    {ι κ : Type*} [DecidableEq ι] [DecidableEq κ]
+    {ι κ : Type*} [DecidableEq ι]
     (s : Finset ι) (J : Finset κ) (F : κ → Finset ι)
     (hsub : ∀ j ∈ J, F j ⊆ s)
     (hlarge : ∀ j ∈ J,
@@ -3803,6 +3801,7 @@ theorem exists_simultaneously_balanced_subset_indexed
     ∃ T : Finset ι, T ⊆ s ∧ ∀ j ∈ J,
       2 * (F j).card / 5 ≤ (T ∩ F j).card ∧
         (T ∩ F j).card < 3 * (F j).card / 5 + 1 := by
+  classical
   let family := J.image F
   have hfamilyCard : family.card ≤ J.card := Finset.card_image_le
   have hlog : Nat.log 2 (2 * family.card + 1) ≤
@@ -3828,7 +3827,7 @@ theorem exists_simultaneously_balanced_subset_indexed
 /-- Indexed simultaneous bisection, with the same two-fifths/three-fifths
 bounds for both complementary children. -/
 theorem exists_balanced_bipartition_indexed
-    {ι κ : Type*} [DecidableEq ι] [DecidableEq κ]
+    {ι κ : Type*} [DecidableEq ι]
     (s : Finset ι) (J : Finset κ) (F : κ → Finset ι)
     (hsub : ∀ j ∈ J, F j ⊆ s)
     (hlarge : ∀ j ∈ J,
@@ -3839,6 +3838,7 @@ theorem exists_balanced_bipartition_indexed
           (T ∩ F j).card < 3 * (F j).card / 5 + 2) ∧
         (2 * (F j).card / 5 ≤ (U ∩ F j).card ∧
           (U ∩ F j).card < 3 * (F j).card / 5 + 2) := by
+  classical
   obtain ⟨T, hTs, hT⟩ := exists_simultaneously_balanced_subset_indexed
     s J F hsub hlarge
   let U := s \ T
@@ -3918,7 +3918,6 @@ theorem exists_simultaneously_balanced_subset_tight
     have hcast : (L : ℝ) ≤ (F.card : ℝ) / 1000 := by
       have hcardR : (1000 * L : ℝ) ≤ (F.card : ℝ) := by
         exact_mod_cast hcard
-      push_cast at hcardR
       nlinarith
     exact htail.trans (Real.exp_le_exp.mpr (by
       have hFnonneg : (0 : ℝ) ≤ F.card := by positivity
@@ -3933,7 +3932,6 @@ theorem exists_simultaneously_balanced_subset_tight
     have hcast : (L : ℝ) ≤ (F.card : ℝ) / 1000 := by
       have hcardR : (1000 * L : ℝ) ≤ (F.card : ℝ) := by
         exact_mod_cast hcard
-      push_cast at hcardR
       nlinarith
     exact htail.trans (Real.exp_le_exp.mpr (by nlinarith))
   have hbad (F : Finset ι) (hF : F ∈ family) :
@@ -3951,7 +3949,6 @@ theorem exists_simultaneously_balanced_subset_tight
         mul_le_mul_of_nonneg_right hcardR hpnonneg
       _ = ((low F).card : ℝ) * (2 : ℝ)⁻¹ ^ s.card +
           ((high F).card : ℝ) * (2 : ℝ)⁻¹ ^ s.card := by
-        push_cast
         ring
       _ ≤ Real.exp (-((L : ℕ) : ℝ)) +
           Real.exp (-((L : ℕ) : ℝ)) :=
@@ -3981,9 +3978,7 @@ theorem exists_simultaneously_balanced_subset_tight
       _ < 1 := by
         simpa [L] using two_mul_exp_neg_log_bound family.card
   have hwhole : (s.powerset.card : ℝ) * (2 : ℝ)⁻¹ ^ s.card = 1 := by
-    simpa using (Erdos697.Bernoulli.sum_weight_powerset s
-      (fun _ ↦ (2 : ℝ)⁻¹)).trans (sum_bernoulliHalf_finset s s.powerset
-        (Subset.refl _))
+    simp
   have hcardltR : (Bad.card : ℝ) < s.powerset.card := by
     have hp : 0 < (2 : ℝ)⁻¹ ^ s.card := by positivity
     nlinarith
@@ -4010,7 +4005,7 @@ theorem exists_simultaneously_balanced_subset_tight
     exact lt_of_not_ge (h.resolve_left (by simpa using hT.1))
 
 theorem exists_simultaneously_balanced_subset_tight_indexed
-    {ι κ : Type*} [DecidableEq ι] [DecidableEq κ]
+    {ι κ : Type*} [DecidableEq ι]
     (s : Finset ι) (J : Finset κ) (F : κ → Finset ι)
     (hsub : ∀ j ∈ J, F j ⊆ s)
     (hlarge : ∀ j ∈ J,
@@ -4018,6 +4013,7 @@ theorem exists_simultaneously_balanced_subset_tight_indexed
     ∃ T : Finset ι, T ⊆ s ∧ ∀ j ∈ J,
       9 * (F j).card / 20 ≤ (T ∩ F j).card ∧
         (T ∩ F j).card < 11 * (F j).card / 20 + 1 := by
+  classical
   let family := J.image F
   have hfamilyCard : family.card ≤ J.card := Finset.card_image_le
   have hlog : Nat.log 2 (2 * family.card + 1) ≤
@@ -4041,7 +4037,7 @@ theorem exists_simultaneously_balanced_subset_tight_indexed
   exact hT (F j) (Finset.mem_image.mpr ⟨j, hj, rfl⟩)
 
 theorem exists_balanced_bipartition_tight_indexed
-    {ι κ : Type*} [DecidableEq ι] [DecidableEq κ]
+    {ι κ : Type*} [DecidableEq ι]
     (s : Finset ι) (J : Finset κ) (F : κ → Finset ι)
     (hsub : ∀ j ∈ J, F j ⊆ s)
     (hlarge : ∀ j ∈ J,
@@ -4052,6 +4048,7 @@ theorem exists_balanced_bipartition_tight_indexed
           (T ∩ F j).card < 11 * (F j).card / 20 + 2) ∧
         (9 * (F j).card / 20 ≤ (U ∩ F j).card ∧
           (U ∩ F j).card < 11 * (F j).card / 20 + 2) := by
+  classical
   obtain ⟨T, hTs, hT⟩ := exists_simultaneously_balanced_subset_tight_indexed
     s J F hsub hlarge
   let U := s \ T
@@ -4150,6 +4147,7 @@ def PairwiseDisjoint : {t : ℕ} → PartitionTree ι t → Prop
       PairwiseDisjoint left ∧ PairwiseDisjoint right ∧
         Disjoint left.carrier right.carrier
 
+omit [DecidableEq ι] in
 lemma AllLeaves.mono {t : ℕ} {T : PartitionTree ι t}
     {P Q : Finset ι → Prop} (h : T.AllLeaves P)
     (hPQ : ∀ S, P S → Q S) : T.AllLeaves Q := by
@@ -4158,6 +4156,7 @@ lemma AllLeaves.mono {t : ℕ} {T : PartitionTree ι t}
   | node left right ihl ihr =>
       exact ⟨ihl h.1, ihr h.2⟩
 
+omit [DecidableEq ι] in
 lemma AllLeaves.and {t : ℕ} {T : PartitionTree ι t}
     {P Q : Finset ι → Prop} (hP : T.AllLeaves P)
     (hQ : T.AllLeaves Q) : T.AllLeaves fun S ↦ P S ∧ Q S := by
@@ -4193,7 +4192,7 @@ Every tracked subset has, in every leaf, between the displayed fixed powers
 of its ideal share.  The hypothesis is written in multiplication form so it
 can be propagated without any floor or divisibility assumptions. -/
 theorem exists_tight_partition
-    {κ : Type*} [DecidableEq κ]
+    {κ : Type*}
     (t : ℕ) (s : Finset ι) (J : Finset κ) (F : κ → Finset ι)
     (hsub : ∀ j ∈ J, F j ⊆ s)
     (hlarge : ∀ j ∈ J,
@@ -4204,6 +4203,7 @@ theorem exists_tight_partition
       T.AllLeaves fun C ↦ ∀ j ∈ J,
         89 ^ t * (F j).card ≤ 200 ^ t * (C ∩ F j).card ∧
         200 ^ t * (C ∩ F j).card ≤ 111 ^ t * (F j).card := by
+  classical
   induction t generalizing s F with
   | zero =>
       refine ⟨.leaf s, rfl, trivial, ?_⟩
@@ -4399,7 +4399,7 @@ theorem exists_weightBalanced_bipartition
             refine ⟨(Finset.erase_subset _ _).trans (Finset.erase_subset _ _), ?_⟩
             intro hEq
             have haR : a ∈ R := by simpa [hEq] using haS
-            exact (by simpa [R, s₁] using haR)
+            simp [R, s₁] at haR
           have hwR : ∀ x ∈ R, w x ≤ M := by
             intro x hx
             exact hw x (hRs.subset hx)
@@ -4480,7 +4480,7 @@ theorem exists_weightBalanced_bipartition
             intro x hx
             by_contra hxa
             have : x ∈ s₁ := Finset.mem_erase.mpr ⟨hxa, hx⟩
-            simpa [hs₁empty] using this
+            simp [hs₁empty] at this
           refine ⟨{a}, ∅, by simp, by simpa using hsEq.symm,
             by simp, by simp, ?_, by simp⟩
           simpa using hw a haS
@@ -4740,10 +4740,11 @@ lemma boundedSubsetSum_le_sum_pivots
   exact hsumH.trans ((Nat.mul_le_mul_right p₀ (hHk.trans hk)).trans hsumP)
 
 lemma exists_preimage_finset_of_subset_image
-    {α β : Type*} [DecidableEq α] [DecidableEq β]
+    {α β : Type*} [DecidableEq β]
     (C : Finset α) (f : α → β) (hinj : Set.InjOn f C)
     (G : Finset β) (hG : G ⊆ C.image f) :
     ∃ H : Finset α, H ⊆ C ∧ H.card = G.card ∧ H.image f = G := by
+  classical
   let H := C.filter fun c ↦ f c ∈ G
   have hHC : H ⊆ C := Finset.filter_subset _ _
   have himage : H.image f = G := by
@@ -4762,7 +4763,7 @@ lemma exists_preimage_finset_of_subset_image
 No injectivity hypothesis on the original map is needed: one representative
 is chosen when each new image point is inserted. -/
 lemma exists_preimage_finset_of_subset_image'
-    {α β : Type*} [DecidableEq α] [DecidableEq β]
+    {α β : Type*} [DecidableEq β]
     (C : Finset α) (f : α → β) (G : Finset β)
     (hG : G ⊆ C.image f) :
     ∃ H : Finset α, H ⊆ C ∧ H.card = G.card ∧ H.image f = G := by
@@ -4795,7 +4796,7 @@ lemma natCast_zmod_injOn_of_lt {b : ℕ} [NeZero b] {C : Finset ℕ}
 an interval.  Consequently every occupied residue has at most `N / p + 1`
 representatives in `[1,N]`. -/
 lemma card_le_div_add_one_mul_card_image_zmod
-    {C : Finset ℕ} {N p : ℕ} [NeZero p] (hp : 0 < p)
+    {C : Finset ℕ} {N p : ℕ} [NeZero p] (_hp : 0 < p)
     (hC : C ⊆ Finset.Icc 1 N) :
     C.card ≤ (N / p + 1) *
       (C.image fun c : ℕ ↦ (c : ZMod p)).card := by
@@ -4830,7 +4831,7 @@ lemma card_le_div_add_one_mul_card_image_zmod
 /-- The same quotient--residue injection, restricted to elements not
 divisible by a divisor of the modulus. -/
 lemma card_filter_not_dvd_le_mul_card_image_filter
-    {C : Finset ℕ} {N p e : ℕ} [NeZero p] (hp : 0 < p)
+    {C : Finset ℕ} {N p e : ℕ} [NeZero p] (_hp : 0 < p)
     (hC : C ⊆ Finset.Icc 1 N) (hep : e ∣ p) :
     (C.filter fun c ↦ ¬e ∣ c).card ≤
       (N / p + 1) *
@@ -4877,7 +4878,7 @@ lemma card_filter_not_dvd_le_mul_card_image_filter
 
 lemma card_filter_core_le_card_image_filter
     {D C : Finset ℕ} {p e : ℕ} [NeZero p]
-    (hDC : D ⊆ C) (hDlt : ∀ d ∈ D, d < p) (hep : e ∣ p) :
+    (hDC : D ⊆ C) (hDlt : ∀ d ∈ D, d < p) (_hep : e ∣ p) :
     (D.filter fun d ↦ ¬e ∣ d).card ≤
       ((C.image fun c : ℕ ↦ (c : ZMod p)).filter
         fun r ↦ ¬e ∣ r.val).card := by
@@ -5355,6 +5356,7 @@ def mapSumTree (f : Finset ι → Finset ℕ) :
   | 0, .leaf A => .leaf (f A)
   | _ + 1, .node A B => .node (mapSumTree f A) (mapSumTree f B)
 
+omit [DecidableEq ι] in
 lemma allLeaves_mapSumTree {t : ℕ} (f : Finset ι → Finset ℕ)
     (T : PartitionTree ι t) (P : Finset ℕ → Prop) :
     (mapSumTree f T).AllLeaves P ↔ T.AllLeaves fun C ↦ P (f C) := by
@@ -5601,7 +5603,7 @@ lemma leaf_parameters_of_mass
   have hPn : 32 * partitionAmplifier * n ≤ M := by
     have h := Nat.le_of_mul_le_mul_left
       (show 16 * (32 * partitionAmplifier * n) ≤ 16 * M by
-        convert hscaled using 1 <;> ring)
+        convert hscaled using 1; ring)
       (by norm_num : 0 < 16)
     exact h
   have hq : 32 ≤ M / partitionAmplifier := by
@@ -5722,7 +5724,7 @@ lemma finite_extraction_pruning_loss
           6 * l * trackingThreshold n) ≤
           896000 * partitionAmplifier * l ^ 3 := by
             have h := Nat.mul_le_mul_left 16 hpoly
-            convert h using 1 <;> ring
+            convert h using 1; ring
       _ ≤ m := by simpa [l] using hpolyBudget
   have hquotCoef : 8 * (192 * partitionAmplifier * coreAmplifier) ≤
       svDensityConstant ^ 2 := by
@@ -5952,7 +5954,7 @@ lemma phase_quotient_bound
       _ ≤ 2 * B * m := by
         have h := Nat.mul_le_mul_left 2 hB
         have hm' := Nat.mul_le_mul_right m h
-        convert hm' using 1 <;> ring
+        convert hm' using 1; ring
   have hdqe : d * ((N / p + 1) * e) ≤ 2 * B :=
     Nat.le_of_mul_le_mul_right hscaled hm
   have hqediv : (N / p + 1) * e ≤ (2 * B) / d :=
@@ -5989,7 +5991,7 @@ lemma lower_tag_gives_leaf_witness
           have : 1 ≤ 89 ^ 48 * 200 := by norm_num
           nlinarith
         have hmul := Nat.mul_le_mul_right e hcoef
-        convert hmul using 1 <;> ring
+        convert hmul using 1; ring
       _ ≤ 89 ^ 48 * (L.filter fun z ↦ ¬e ∣ z).card := by
         apply Nat.mul_le_mul_left
         exact (Nat.le_add_left _ T).trans htag
@@ -6024,7 +6026,7 @@ lemma upper_tag_gives_leaf_witness
           have : 1 ≤ 89 ^ 49 := by norm_num
           nlinarith
         have hmul := Nat.mul_le_mul_right (e + 2 * (B / d)) hcoef
-        convert hmul using 1 <;> ring
+        convert hmul using 1; ring
       _ ≤ 89 ^ 49 * (H.filter fun z ↦ ¬e ∣ z).card := by
         apply Nat.mul_le_mul_left
         omega
@@ -6087,7 +6089,7 @@ lemma leaf_box_bound_of_weights
           have hpos : 0 < 111 ^ 48 := by positivity
           nlinarith
         have := Nat.mul_le_mul_right M hcoef
-        convert this using 1 <;> ring
+        convert this using 1; ring
   have hround : M ≤ partitionAmplifier * (M / partitionAmplifier + 1) := by
     have hmod := Nat.mod_lt M partitionAmplifier_pos
     calc
@@ -6150,7 +6152,7 @@ lemma depth_fortyEight_growth
       _ ≤ 3 ^ 48 * (89 ^ 49 * (q / 16) - 2) + 2 := by
             have hadd := Nat.add_le_add_right
               (Nat.mul_le_mul_left (3 ^ 48) hminus) 2
-            convert hadd using 1 <;> ring
+            convert hadd using 1; ring
   exact hstrict.trans_le hgrowth
 
 /-! ### Dyadic pruning and weighted balance
@@ -6269,7 +6271,7 @@ lemma card_sdiff_dyadicPrune_le {Y : Finset ℕ} {N Q : ℕ}
     _ ≤ (Nat.log 2 N + 1) * Q := Nat.mul_le_mul_right Q hJcard
 
 lemma card_filter_le_pruned_filter_add_loss
-    {X S : Finset ℕ} (hS : S ⊆ X) (P : ℕ → Prop) [DecidablePred P] :
+    {X S : Finset ℕ} (_hS : S ⊆ X) (P : ℕ → Prop) [DecidablePred P] :
     (X.filter P).card ≤ (S.filter P).card + (X \ S).card := by
   have hsub : X.filter P ⊆ S.filter P ∪ (X \ S) := by
     intro x hx
@@ -6293,7 +6295,7 @@ lemma dyadicBin_dyadicPrune_eq {Y : Finset ℕ} {N Q j : ℕ}
     exact Finset.mem_filter.mpr ⟨hyY, hjy⟩
 
 lemma dyadicBin_dyadicPrune_eq_empty {Y : Finset ℕ} {N Q j : ℕ}
-    (hj : j ∈ dyadicRange N)
+    (_hj : j ∈ dyadicRange N)
     (hsmall : (dyadicBin Y j).card < Q) :
     dyadicBin (dyadicPrune Y N Q) j = ∅ := by
   classical
@@ -6526,7 +6528,7 @@ theorem exists_preparedPools
                   2 * ((Nat.log 2 n + 1) * T) := by
             have hp' : (L₀ \ L).card + (H₀ \ H).card ≤
                 2 * ((Nat.log 2 n + 1) * T) := by
-              convert hp using 1 <;> ring
+              convert hp using 1; ring
             exact Nat.add_le_add_left hp' _
           _ ≤ extractionLinearCharge n * Nat.log 2 B +
                 6 * partitionAmplifier * B +
@@ -6535,7 +6537,7 @@ theorem exists_preparedPools
                 6 * (Nat.log 2 n + 1) * T := by
               have := Nat.mul_le_mul_right ((Nat.log 2 n + 1) * T)
                 (by omega : 2 ≤ 6)
-              convert this using 1 <;> ring
+              convert this using 1; ring
             exact Nat.add_le_add_left htwo _
       _ ≤ m := by simpa [B, T] using hbudget0
   have hLcardEq : (L₀ \ L).card + L.card = L₀.card :=
@@ -6613,7 +6615,7 @@ theorem exists_preparedPools
             by
               have hp' : (L₀ \ L).card + (H₀ \ H).card ≤
                   2 * ((Nat.log 2 n + 1) * T) := by
-                convert hp using 1 <;> ring
+                convert hp using 1; ring
               simpa [Nat.add_assoc] using Nat.add_le_add_left hp' (2 * T)
           _ = (2 * (Nat.log 2 n + 1) + 2) * T := by ring
           _ ≤ (6 * (Nat.log 2 n + 1) + 2) * T := by
@@ -6800,7 +6802,7 @@ weight.  The only classes that can be lost from the upper half meet the lower
 half; order then forces all of them to be the same boundary class. -/
 lemma upperPart_prune_sum_dominates
     {Y : Finset ℕ} {N Q : ℕ}
-    (hY : Y ⊆ Finset.Icc 1 N) (hQ : 0 < Q)
+    (hY : Y ⊆ Finset.Icc 1 N) (_hQ : 0 < Q)
     (hYcard : 4 * Q ≤ Y.card)
     (hbins : ∀ j ∈ dyadicRange N,
       dyadicBin Y j = ∅ ∨ 4 * Q ≤ (dyadicBin Y j).card) :
@@ -6941,7 +6943,7 @@ lemma upperPart_prune_sum_dominates
       · intro y hyH
         by_contra hyP
         have : y ∈ E := Finset.mem_sdiff.mpr ⟨hyH, hyP⟩
-        simpa [hEempty] using this
+        simp [hEempty] at this
       · exact hPY
     rw [hHP]
     omega
@@ -7052,7 +7054,7 @@ lemma dyadic_weight_balance_of_large_indices
       have hyY : y ∈ dyadicBin Y j :=
         Finset.mem_filter.mpr
           ⟨hC (dyadicBin_subset C j hy), (Finset.mem_filter.mp hy).2⟩
-      simpa [hne] using hyY
+      simp [hne] at hyY
     rw [hne, hCempty]
     simp
   · have hjLarge : j ∈ largeDyadicIndices Y N 1 := by
@@ -7089,7 +7091,7 @@ lemma dyadic_weight_balance_pruned
       have hyPrune := hC hy'
       have : y ∈ dyadicBin (dyadicPrune X N Q) j :=
         Finset.mem_filter.mpr ⟨hyPrune, (Finset.mem_filter.mp hy).2⟩
-      simpa [hempty] using this
+      simp [hempty] at this
     rw [hempty, hCempty]
     simp
 
@@ -7097,7 +7099,7 @@ lemma dyadic_weight_balance_pruned
 divisor-witness sets, and all occupied dyadic classes. -/
 theorem PartitionTree.exists_dyadic_diverse_partition
     (t : ℕ) (S : Finset ℕ) (N Q : ℕ) (E : Finset ℕ)
-    (hS : S ⊆ Finset.Icc 1 N)
+    (_hS : S ⊆ Finset.Icc 1 N)
     (hwhole : Q ≤ S.card)
     (hdiv : ∀ e ∈ E, Q ≤ (S.filter fun x ↦ ¬e ∣ x).card)
     (hbin : ∀ j ∈ largeDyadicIndices S N 1,
@@ -7183,7 +7185,7 @@ theorem PartitionTree.exists_dyadic_diverse_partition
             rcases hz' with hz' | hzbin
             · exact (Finset.mem_union.mp hz').resolve_left (by simp [Jwhole])
             · exfalso
-              simpa [Jbin] using hzbin
+              simp [Jbin] at hzbin
           have he : e ∈ E := by simpa [Jdiv] using hzdiv
           simpa [F] using hdiv e he
         · have hzbin : Sum.inr (Sum.inr j) ∈ Jbin := by
@@ -7192,8 +7194,8 @@ theorem PartitionTree.exists_dyadic_diverse_partition
             exact hz'.resolve_left (by
               intro h
               rcases Finset.mem_union.mp h with hw | hd
-              · simpa [Jwhole] using hw
-              · simpa [Jdiv] using hd)
+              · simp [Jwhole] at hw
+              · simp [Jdiv] at hd)
           have hj : j ∈ largeDyadicIndices S N 1 := by
             simpa [Jbin] using hzbin
           simpa [F] using hbin j hj
@@ -7317,8 +7319,8 @@ lemma boundedSubsetSum_quarter_modulus_of_phase
 
 lemma pivot_modular_cover_of_split
     {D U : Finset ℕ} {G n m d B N p k : ℕ}
-    (hm : 0 < m) (hd : 0 < d) (hp : 0 < p)
-    (hDN : D ⊆ Finset.Icc 1 N) (hUN : U ⊆ Finset.Icc 1 N)
+    (hm : 0 < m) (_hd : 0 < d) (hp : 0 < p)
+    (_hDN : D ⊆ Finset.Icc 1 N) (hUN : U ⊆ Finset.Icc 1 N)
     (hpN : p ≤ N) (hdN : d * N ≤ n)
     (hB : 2 * G * (n / m + 1) ≤ B)
     (hcore : m ≤ G * D.card)
@@ -7346,32 +7348,32 @@ lemma pivot_modular_cover_of_split
     have heD : e * D.card ≤ 2 * p := by
       exact (Nat.mul_le_mul_left e hDcard).trans heR
     apply hdiv e he
-    have hemp : e * m ≤ 2 * G * p := by
-      calc
-        e * m ≤ e * (G * D.card) :=
-          Nat.mul_le_mul_left e hcore
-        _ = G * (e * D.card) := by ring
-        _ ≤ G * (2 * p) := Nat.mul_le_mul_left _ heD
-        _ = 2 * G * p := by ring
-    have hdem : d * e * m ≤ B * m := by
-      calc
-        d * e * m = d * (e * m) := by ring
-        _ ≤ d * (2 * G * p) := Nat.mul_le_mul_left d hemp
-        _ ≤ 2 * G * (d * N) := by
-          have h := Nat.mul_le_mul_left (2 * G * d) hpN
-          convert h using 1 <;> ring
-        _ ≤ 2 * G * n := Nat.mul_le_mul_left _ hdN
-        _ ≤ (2 * G * (n / m + 1)) * m := by
-          have hn : n ≤ (n / m + 1) * m := by
-            calc
-              n = n / m * m + n % m := by
-                simpa [mul_comm] using (Nat.div_add_mod n m).symm
-              _ ≤ n / m * m + m :=
-                Nat.add_le_add_left (Nat.le_of_lt (Nat.mod_lt n hm)) _
-              _ = (n / m + 1) * m := by ring
-          simpa [mul_assoc] using Nat.mul_le_mul_left (2 * G) hn
-        _ ≤ B * m := Nat.mul_le_mul_right m hB
-    · exact Nat.le_of_mul_le_mul_right hdem hm
+    · have hemp : e * m ≤ 2 * G * p := by
+        calc
+          e * m ≤ e * (G * D.card) :=
+            Nat.mul_le_mul_left e hcore
+          _ = G * (e * D.card) := by ring
+          _ ≤ G * (2 * p) := Nat.mul_le_mul_left _ heD
+          _ = 2 * G * p := by ring
+      have hdem : d * e * m ≤ B * m := by
+        calc
+          d * e * m = d * (e * m) := by ring
+          _ ≤ d * (2 * G * p) := Nat.mul_le_mul_left d hemp
+          _ ≤ 2 * G * (d * N) := by
+            have h := Nat.mul_le_mul_left (2 * G * d) hpN
+            convert h using 1 <;> ring
+          _ ≤ 2 * G * n := Nat.mul_le_mul_left _ hdN
+          _ ≤ (2 * G * (n / m + 1)) * m := by
+            have hn : n ≤ (n / m + 1) * m := by
+              calc
+                n = n / m * m + n % m := by
+                  simpa [mul_comm] using (Nat.div_add_mod n m).symm
+                _ ≤ n / m * m + m :=
+                  Nat.add_le_add_left (Nat.le_of_lt (Nat.mod_lt n hm)) _
+                _ = (n / m + 1) * m := by ring
+            simpa [mul_assoc] using Nat.mul_le_mul_left (2 * G) hn
+          _ ≤ B * m := Nat.mul_le_mul_right m hB
+      exact Nat.le_of_mul_le_mul_right hdem hm
     · exact heD
   have hhalfR : 2 * k ≤ R₀.card := hhalf.trans hDcard
   have hmassR : 16 * p ≤ k * R₀.card := by
@@ -8322,7 +8324,7 @@ lemma AP_step_le_two_card {F : Finset ℕ} {N a d : ℕ}
 
 lemma svBlock_subset_Icc_of_inversion {A : Set ℕ} {H m : ℕ}
     (hAinf : A.Infinite) (hApos : A ⊆ Set.Ici 1)
-    (hH : 0 < H) (hm : 0 < m)
+    (hH : 0 < H) (_hm : 0 < m)
     (hinv : ∀ j, H * m ≤ j →
       (8 * (H : ℝ)) ^ 2 * (Nat.nth (· ∈ A) j : ℝ) ≤
         (((j + 1 : ℕ) : ℝ)) ^ 2) :
@@ -8679,7 +8681,7 @@ theorem finiteSzemerediVu_nat
     have hTLfull : TL.AllLeaves fun D ↦ LowerLeaf D ∧ D ⊆ P.lower := by
       refine hTLleaf'.and ((PartitionTree.allLeaves_subset_carrier TL).mono ?_)
       intro D hD
-      exact hD.trans (by simpa [hTLcarrier])
+      exact hD.trans (by simp [hTLcarrier])
     have hTUfull : TU.AllLeaves fun U ↦ UpperLeaf U ∧ U ⊆ P.upper := by
       refine hTUleaf'.and ((PartitionTree.allLeaves_subset_carrier TU).mono ?_)
       intro U hU
@@ -8867,7 +8869,7 @@ theorem finiteSzemerediVu_nat
       exact ⟨hQpos, hcover, hlarge, htarget, hboxLeaf⟩
     have hL_TU : Disjoint TL.carrier TU.carrier := by
       apply P.disjoint.mono
-      · simpa [hTLcarrier]
+      · simp [hTLcarrier]
       · exact hTUupper
     have hBaseDisj : Base.PairwiseDisjoint :=
       PartitionTree.pairwiseDisjoint_zipUnion hTLdisj hTUdisj hL_TU

@@ -253,7 +253,7 @@ private lemma mem_roughDivideMultiples_iff
     exact Nat.mul_div_right y he
 
 private lemma card_roughDivideMultiples
-    {Y : Finset ℕ} {e : ℕ} (he : 0 < e) :
+    {Y : Finset ℕ} {e : ℕ} (_he : 0 < e) :
     (roughDivideMultiples Y e).card =
       (Y.filter fun y ↦ e ∣ y).card := by
   classical
@@ -598,6 +598,7 @@ namespace PartitionTree
 
 variable {iota : Type*} [DecidableEq iota]
 
+omit [DecidableEq iota] in
 lemma allLeaves_true {t : ℕ} (T : PartitionTree iota t) :
     T.AllLeaves fun _ ↦ True := by
   induction T with
