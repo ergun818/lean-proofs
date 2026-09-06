@@ -17,7 +17,6 @@ URLs:
 import Mathlib
 
 open scoped BigOperators
-open scoped Classical
 
 /-!
 # A Negative Answer to an Erdős–Galvin Problem
@@ -68,16 +67,17 @@ def chi (f : ℕ → ℕ) (x : ℤ) : ℕ := if 0 < x then rho (Gfun f) x.toNat 
 /-! ## Elementary properties of `Fenv` and `Gfun` -/
 
 lemma Fenv_ge_self (f : ℕ → ℕ) (n : ℕ) : f n ≤ Fenv f n := by
-  exact le_max_of_le_right ( Finset.le_sup ( f := f ) ( Finset.mem_range.mpr ( Nat.lt_succ_self _ ) ) )
+  exact le_max_of_le_right
+    (Finset.le_sup (f := f) (Finset.mem_range.mpr (Nat.lt_succ_self _)))
 
 lemma Fenv_ge_two (f : ℕ → ℕ) (n : ℕ) : 2 ≤ Fenv f n := by
-  -- By definition of $Fenv$, we know that $Fenv f n \geq 2$ because $2$ is the first term in the maximum.
+  -- The first term in the maximum defining `Fenv` is two.
   simp [Fenv]
 
 lemma Fenv_pos (f : ℕ → ℕ) (n : ℕ) : 0 < Fenv f n := lt_of_lt_of_le (by norm_num) (Fenv_ge_two f n)
 
 lemma Fenv_mono (f : ℕ → ℕ) : Monotone (Fenv f) := by
-  refine' fun n m hnm => max_le_max le_rfl _;
+  refine fun n m hnm => max_le_max le_rfl ?_
   exact Finset.sup_mono ( Finset.range_mono ( Nat.succ_le_succ hnm ) )
 
 lemma Gfun_mono (f : ℕ → ℕ) : Monotone (Gfun f) := by
@@ -93,8 +93,13 @@ The key growth inequality `2^L · F(2^{L+3}) < 2^{G(L)}`.
 lemma Gfun_growth (f : ℕ → ℕ) (L : ℕ) :
     2 ^ L * Fenv f (2 ^ (L + 3)) < 2 ^ (Gfun f L) := by
       rw [ Gfun ];
-      refine' lt_of_le_of_lt ( mul_le_mul_of_nonneg_left ( show Fenv f ( 2 ^ ( L + 3 ) ) ≤ 2 ^ ( ( Finset.range ( L + 1 ) ).sup fun j => clog 2 ( Fenv f ( 2 ^ ( j + 3 ) ) ) ) from _ ) ( by positivity ) ) _;
-      · refine' le_trans _ ( pow_le_pow_right₀ ( by decide ) ( Finset.le_sup ( f := fun j => clog 2 ( Fenv f ( 2 ^ ( j + 3 ) ) ) ) ( Finset.mem_range.mpr ( Nat.lt_succ_self L ) ) ) );
+      refine lt_of_le_of_lt (mul_le_mul_of_nonneg_left
+        (show Fenv f (2 ^ (L + 3)) ≤
+          2 ^ ((Finset.range (L + 1)).sup fun j => clog 2 (Fenv f (2 ^ (j + 3))))
+          from ?_) (by positivity)) ?_
+      · refine le_trans ?_ (pow_le_pow_right₀ (by decide)
+          (Finset.le_sup (f := fun j => clog 2 (Fenv f (2 ^ (j + 3))))
+            (Finset.mem_range.mpr (Nat.lt_succ_self L))))
         exact Nat.le_pow_clog ( by decide ) _;
       · grind
 
@@ -116,7 +121,8 @@ lemma clusterAux2_append (G : ℕ → ℕ) (b : ℕ) :
       clusterAux2 G b (L1 ++ L2) =
         ((clusterAux2 G b L1).1 + (clusterAux2 G (clusterAux2 G b L1).2 L2).1,
          (clusterAux2 G (clusterAux2 G b L1).2 L2).2) := by
-           intros L1 L2; induction' L1 with hd tl ih generalizing b <;> simp_all +decide [ clusterAux2 ] ;
+           intros L1 L2
+           induction L1 generalizing b <;> simp_all +decide [clusterAux2]
            grind
 
 /-
@@ -127,9 +133,12 @@ cluster and leaves threshold `G v`.
 lemma clusterAux2_block (G : ℕ → ℕ) (L : List ℕ) (v b : ℕ)
     (hhead : L.head? = some v) (hb : b ≤ v) (hlt : ∀ e ∈ L, e < G v) :
     clusterAux2 G b L = (1, G v) := by
-      induction' L with e L ih generalizing b;
-      · contradiction;
-      · simp_all +decide [ clusterAux2 ];
+      induction L generalizing b with
+      | nil => contradiction
+      | cons e L ih =>
+        simp_all +decide only [List.mem_cons, or_true, implies_true, forall_const,
+          head?_cons, Option.some.injEq, forall_eq_or_imp, clusterAux2, ↓reduceIte,
+          Prod.mk.injEq, Nat.add_eq_right]
         exact clusterAux2_all_below G ( G v ) L ( fun x hx => hlt.2 x hx ) ▸ by norm_num;
 
 /-! ## Binary support manipulations -/
@@ -140,7 +149,7 @@ If `2^L ∣ m` then every binary exponent of `m` is at least `L`.
 lemma le_of_mem_bitIndices_of_dvd {m L : ℕ} (h : 2 ^ L ∣ m) :
     ∀ e ∈ m.bitIndices, L ≤ e := by
       rcases h with ⟨ k, rfl ⟩;
-      induction' L with L ih generalizing k <;> simp_all +decide [ Nat.pow_succ', Nat.mul_assoc ];
+      induction L generalizing k <;> simp_all +decide [ Nat.pow_succ', Nat.mul_assoc ];
       grind
 
 /-
@@ -150,11 +159,11 @@ lemma lt_of_mem_bitIndices_of_lt {m k : ℕ} (h : m < 2 ^ k) :
     ∀ e ∈ m.bitIndices, e < k := by
       contrapose! h;
       obtain ⟨ e, he₁, he₂ ⟩ := h;
-      refine' le_trans _ ( Nat.le_of_not_lt fun h => _ );
-      exact Nat.pow_le_pow_right ( by decide ) he₂;
-      have h_contra : m.testBit e = false := by
-        grind +suggestions;
-      grind +suggestions
+      refine le_trans (b := 2 ^ e) ?_ (Nat.le_of_not_lt fun h => ?_)
+      · exact Nat.pow_le_pow_right (by decide) he₂
+      · have h_contra : m.testBit e = false := by
+          grind +suggestions
+        grind +suggestions
 
 /-
 For a sorted-ascending list, the head is the minimum element.
@@ -162,9 +171,10 @@ For a sorted-ascending list, the head is the minimum element.
 lemma head?_eq_of_mem_of_forall_le {L : List ℕ} {v : ℕ}
     (hsorted : L.Pairwise (· ≤ ·)) (hv : v ∈ L) (hle : ∀ e ∈ L, v ≤ e) :
     L.head? = some v := by
-      induction' L with hd tl ih;
-      · contradiction;
-      · simp_all +decide [ List.pairwise_cons ];
+      induction L with
+      | nil => contradiction
+      | cons hd tl ih =>
+        simp_all +decide [List.pairwise_cons]
         grind
 
 /-
@@ -186,10 +196,17 @@ A strictly increasing integer sequence is eventually positive.
 lemma strictMono_eventually_pos (a : ℕ → ℤ) (ha : StrictMono a) :
     ∃ q0 : ℕ, ∀ i, q0 < i → 0 < a i := by
       by_contra! h;
-      -- By definition of strict monotonicity, if $a$ is strictly increasing, then $a(n) \geq a(0) + n$ for all $n$.
+      -- Strict monotonicity gives `a n ≥ a 0 + n` for every `n`.
       have h_lower_bound : ∀ n, a n ≥ a 0 + n := by
-        exact fun n => by induction' n with n ih <;> norm_num ; linarith [ ha n.lt_succ_self ] ;
-      exact absurd ( h ( Int.toNat ( -a 0 ) ) ) ( by rintro ⟨ i, hi₁, hi₂ ⟩ ; linarith [ Int.self_le_toNat ( -a 0 ), h_lower_bound i ] )
+        intro n
+        induction n with
+        | zero => norm_num
+        | succ n ih =>
+          norm_num
+          linarith [ha n.lt_succ_self]
+      exact absurd (h (Int.toNat (-a 0))) (by
+        rintro ⟨i, hi₁, hi₂⟩
+        linarith [Int.self_le_toNat (-a 0), h_lower_bound i])
 
 /-! ## The compact packet lemma -/
 
@@ -208,13 +225,26 @@ lemma packet (f : ℕ → ℕ) (a : ℕ → ℤ) (hmono : StrictMono a)
       (∀ e ∈ ((∑ i ∈ I, a i).toNat).bitIndices, v ≤ e ∧ e < Gfun f v) := by
   -- Since {n | a n < f n} is infinite, pick n in this set with n ≥ max(4, 2*q+1, 2^(T+2)).
   obtain ⟨n, hn⟩ : ∃ n, n ∈ {n | (a n) < f n} ∧ n ≥ max 4 (2 * q + 1) ∧ n ≥ 2 ^ (T + 2) := by
-    exact Exists.elim ( hinf.exists_gt ( Max.max ( max 4 ( 2 * q + 1 ) ) ( 2 ^ ( T + 2 ) ) ) ) fun n hn => ⟨ n, hn.1, le_of_lt ( lt_of_le_of_lt ( le_max_left _ _ ) hn.2 ), le_of_lt ( lt_of_le_of_lt ( le_max_right _ _ ) hn.2 ) ⟩;
+    exact Exists.elim (hinf.exists_gt (max (max 4 (2 * q + 1)) (2 ^ (T + 2)))) fun n hn =>
+      ⟨n, hn.1, le_of_lt (lt_of_le_of_lt (le_max_left _ _) hn.2),
+        le_of_lt (lt_of_le_of_lt (le_max_right _ _) hn.2)⟩
   -- Set L := Nat.log 2 n - 2.
   set L := Nat.log 2 n - 2;
   -- Consider the map Fin (2^L+1) → ZMod (2^L) sending j ↦ (P j.val : ZMod (2^L)).
-  obtain ⟨r, s, hrs, h_eq⟩ : ∃ r s : Fin (2 ^ L + 1), r < s ∧ (∑ i ∈ Finset.Ioc q (q + r.val), a i) ≡ (∑ i ∈ Finset.Ioc q (q + s.val), a i) [ZMOD 2 ^ L] := by
+  obtain ⟨r, s, hrs, h_eq⟩ : ∃ r s : Fin (2 ^ L + 1), r < s ∧
+      (∑ i ∈ Finset.Ioc q (q + r.val), a i) ≡
+        (∑ i ∈ Finset.Ioc q (q + s.val), a i) [ZMOD 2 ^ L] := by
     by_contra! h;
-    exact absurd ( Finset.card_le_card ( show Finset.image ( fun r : Fin ( 2 ^ L + 1 ) => ( ∑ i ∈ Finset.Ioc q ( q + r.val ), a i ) % ( 2 ^ L ) ) Finset.univ ⊆ Finset.Ico 0 ( 2 ^ L ) from Finset.image_subset_iff.mpr fun r _ => Finset.mem_Ico.mpr ⟨ Int.emod_nonneg _ ( by positivity ), Int.emod_lt_of_pos _ ( by positivity ) ⟩ ) ) ( by rw [ Finset.card_image_of_injective _ fun r s hrs => le_antisymm ( not_lt.mp fun hlt => h _ _ hlt hrs.symm ) ( not_lt.mp fun hlt => h _ _ hlt hrs ), Finset.card_fin ] ; simp +arith +decide );
+    exact absurd (Finset.card_le_card (show
+      Finset.image (fun r : Fin (2 ^ L + 1) =>
+        (∑ i ∈ Finset.Ioc q (q + r.val), a i) % (2 ^ L)) Finset.univ ⊆
+          Finset.Ico 0 (2 ^ L) from
+      Finset.image_subset_iff.mpr fun r _ => Finset.mem_Ico.mpr
+        ⟨Int.emod_nonneg _ (by positivity), Int.emod_lt_of_pos _ (by positivity)⟩)) (by
+      rw [Finset.card_image_of_injective _ fun r s hrs =>
+        le_antisymm (not_lt.mp fun hlt => h _ _ hlt hrs.symm)
+          (not_lt.mp fun hlt => h _ _ hlt hrs), Finset.card_fin]
+      simp +arith +decide)
   -- Set I := Finset.Ioc (q+r) (q+s) (nonempty since r < s, q+r < q+s).
   set I := Finset.Ioc (q + r.val) (q + s.val) with hI_def
   have hI_nonempty : I.Nonempty := by
@@ -223,32 +253,49 @@ lemma packet (f : ℕ → ℕ) (a : ℕ → ℤ) (hmono : StrictMono a)
     exact Finset.sum_pos ( fun i hi => hpos i <| by linarith [ Finset.mem_Ioc.mp hi ] ) hI_nonempty
   have hI_div : (2 ^ L : ℤ) ∣ ∑ i ∈ I, a i := by
     convert h_eq.dvd using 1 ; ring_nf!;
-    exact eq_tsub_of_add_eq <| by rw [ add_comm, ← Finset.sum_union ( Finset.disjoint_right.mpr fun x hx => by aesop ) ] ; congr ; ext ; simp +decide ; omega;
+    exact eq_tsub_of_add_eq <| by
+      rw [add_comm, ← Finset.sum_union (Finset.disjoint_right.mpr fun x hx => by aesop)]
+      congr
+      ext
+      simp +decide
+      omega
   have hI_lt : ∑ i ∈ I, a i < 2 ^ (Gfun f L) := by
-    -- Each index i ∈ I satisfies i ≤ q+s ≤ q+2^L < n, so a i < a n by hmono, and a n < f n ≤ Fenv f n ≤ Fenv f (2^(L+3)) (n ≤ 2^(L+3) via Fenv_mono and Fenv_ge_self).
+    -- Each `i ∈ I` satisfies `i ≤ q + s ≤ q + 2^L < n`, so `a i < a n`.
+    -- Bound `a n < f n ≤ Fenv f n ≤ Fenv f (2^(L+3))` using monotonicity.
     have hI_lt_f : ∀ i ∈ I, a i < Fenv f (2 ^ (L + 3)) := by
       intros i hi
       have h_i_lt_n : i < n := by
         have h_i_lt_n : 2 ^ (L + 2) ≤ n := by
-          rw [ Nat.sub_add_cancel ( show 2 ≤ Nat.log 2 n from Nat.le_log_of_pow_le ( by decide ) ( by linarith [ Nat.le_max_left 4 ( 2 * q + 1 ), Nat.le_max_right 4 ( 2 * q + 1 ) ] ) ) ] ; exact Nat.pow_log_le_self 2 ( by linarith [ Nat.le_max_left 4 ( 2 * q + 1 ), Nat.le_max_right 4 ( 2 * q + 1 ) ] ) ;
+          rw [Nat.sub_add_cancel (show 2 ≤ Nat.log 2 n from
+            Nat.le_log_of_pow_le (by decide) (by
+              linarith [Nat.le_max_left 4 (2 * q + 1), Nat.le_max_right 4 (2 * q + 1)]))]
+          exact Nat.pow_log_le_self 2 (by
+            linarith [Nat.le_max_left 4 (2 * q + 1), Nat.le_max_right 4 (2 * q + 1)])
         grind
       have h_a_i_lt_f_n : a i < f n := by
         exact lt_of_le_of_lt ( hmono.monotone h_i_lt_n.le ) hn.1
       have h_f_n_le_Fenv : f n ≤ Fenv f n := by
         exact Fenv_ge_self f n
       have h_Fenv_le_Fenv_2L3 : Fenv f n ≤ Fenv f (2 ^ (L + 3)) := by
-        refine' Fenv_mono f _;
+        refine Fenv_mono f ?_
         have := Nat.lt_pow_succ_log_self ( by decide : 1 < 2 ) n;
         exact this.le.trans ( Nat.pow_le_pow_right ( by decide ) ( by omega ) )
       linarith [h_a_i_lt_f_n, h_f_n_le_Fenv, h_Fenv_le_Fenv_2L3];
     -- Since $I$ is a subset of $\{q+1, q+2, \ldots, q+2^L\}$, we have $|I| \leq 2^L$.
     have hI_card : I.card ≤ 2 ^ L := by
       simp +zetaDelta at *;
-      linarith [ show ( s : ℕ ) ≤ 2 ^ L from Nat.le_of_lt_succ s.2, show ( r : ℕ ) ≥ 0 from Nat.zero_le _ ];
-    refine' lt_of_le_of_lt ( Finset.sum_le_sum fun i hi => show a i ≤ Fenv f ( 2 ^ ( L + 3 ) ) from le_of_lt ( hI_lt_f i hi ) ) _ ; norm_num;
-    exact lt_of_le_of_lt ( mul_le_mul_of_nonneg_right ( Nat.cast_le.mpr hI_card ) ( Nat.cast_nonneg _ ) ) ( by norm_cast; linarith [ Gfun_growth f L ] );
+      linarith [show (s : ℕ) ≤ 2 ^ L from Nat.le_of_lt_succ s.2,
+        show (r : ℕ) ≥ 0 from Nat.zero_le _]
+    refine lt_of_le_of_lt (Finset.sum_le_sum fun i hi =>
+      show a i ≤ Fenv f (2 ^ (L + 3)) from le_of_lt (hI_lt_f i hi)) ?_
+    norm_num
+    exact lt_of_le_of_lt
+      (mul_le_mul_of_nonneg_right (Nat.cast_le.mpr hI_card) (Nat.cast_nonneg _)) (by
+        norm_cast
+        linarith [Gfun_growth f L])
   -- Set v := y.toNat.bitIndices.min' (nonempty since y.toNat > 0 so bitIndices nonempty).
-  obtain ⟨v, hv⟩ : ∃ v, v ∈ (∑ i ∈ I, a i).toNat.bitIndices ∧ ∀ e ∈ (∑ i ∈ I, a i).toNat.bitIndices, v ≤ e := by
+  obtain ⟨v, hv⟩ : ∃ v, v ∈ (∑ i ∈ I, a i).toNat.bitIndices ∧
+      ∀ e ∈ (∑ i ∈ I, a i).toNat.bitIndices, v ≤ e := by
     have h_bitIndices_nonempty : (∑ i ∈ I, a i).toNat.bitIndices ≠ [] := by
       intro h
       have h_bitIndices_nonempty : ∀ {m : ℕ}, 0 < m → m.bitIndices ≠ [] := by
@@ -258,16 +305,19 @@ lemma packet (f : ℕ → ℕ) (a : ℕ → ℤ) (hmono : StrictMono a)
         simp only [List.map_nil, List.sum_nil] at hsum
         exact (Nat.ne_of_gt hm) hsum.symm
       exact h_bitIndices_nonempty ( by linarith [ Int.toNat_of_nonneg hI_pos.le ] ) h;
-    exact ⟨ Nat.find <| List.length_pos_iff_exists_mem.mp <| List.length_pos_iff.mpr h_bitIndices_nonempty, Nat.find_spec <| List.length_pos_iff_exists_mem.mp <| List.length_pos_iff.mpr h_bitIndices_nonempty, fun e he => Nat.find_min' _ he ⟩;
-  refine' ⟨ I, v, hI_nonempty, _, hI_pos, hv.1, _, _ ⟩;
+    exact ⟨Nat.find <| List.length_pos_iff_exists_mem.mp <|
+      List.length_pos_iff.mpr h_bitIndices_nonempty,
+      Nat.find_spec <| List.length_pos_iff_exists_mem.mp <|
+        List.length_pos_iff.mpr h_bitIndices_nonempty, fun e he => Nat.find_min' _ he⟩
+  refine ⟨I, v, hI_nonempty, ?_, hI_pos, hv.1, ?_, ?_⟩
   · exact fun i hi => by linarith [ Finset.mem_Ioc.mp hi ] ;
   · -- Since $2^L \mid y$, we have $L \leq v$.
     have hL_le_v : L ≤ v := by
       apply le_of_mem_bitIndices_of_dvd;
       any_goals exact hv.1;
       simpa [ ← Int.natCast_dvd_natCast, Int.toNat_of_nonneg hI_pos.le ] using hI_div;
-    refine' le_trans _ hL_le_v;
-    refine' Nat.le_sub_of_add_le _;
+    refine le_trans ?_ hL_le_v
+    refine Nat.le_sub_of_add_le ?_
     exact Nat.le_log_of_pow_le ( by decide ) hn.2.2;
   · -- Since $v \geq L$, we have $Gfun f v \geq Gfun f L$.
     have hGfun_ge : Gfun f v ≥ Gfun f L := by
@@ -294,36 +344,49 @@ lemma packet_chain (f : ℕ → ℕ) (a : ℕ → ℤ) (hmono : StrictMono a)
       clusterAux2 (Gfun f) 0 ((∑ i ∈ I, a i).toNat).bitIndices = (t + 1, B) ∧
       (∀ e ∈ ((∑ i ∈ I, a i).toNat).bitIndices, e < B) := by
   intro t;
-  induction' t with t ih generalizing q0;
-  · -- Apply `packet` to get $I$, $v$ with $I.Nonempty$, $hI : ∀ i ∈ I, q0 < i$, $hSpos : 0 < (∑ i ∈ I, a i)$, $hv_mem : v ∈ S.toNat.bitIndices$, $0 ≤ v$, $hbits : ∀ e ∈ S.toNat.bitIndices, v ≤ e ∧ e < Gfun f v$.
-    obtain ⟨I, v, hI_nonempty, hI_pos, hv_mem, hv_bound⟩ : ∃ I : Finset ℕ, ∃ v : ℕ, I.Nonempty ∧ (∀ i ∈ I, q0 < i) ∧ 0 < (∑ i ∈ I, a i) ∧ v ∈ ((∑ i ∈ I, a i).toNat).bitIndices ∧ 0 ≤ v ∧ ∀ e ∈ ((∑ i ∈ I, a i).toNat).bitIndices, v ≤ e ∧ e < Gfun f v := by
+  induction t generalizing q0 with
+  | zero =>
+    -- Apply `packet` to get a positive sum whose binary support is one cluster.
+    obtain ⟨I, v, hI_nonempty, hI_pos, hv_mem, hv_bound⟩ :
+        ∃ I : Finset ℕ, ∃ v : ℕ, I.Nonempty ∧ (∀ i ∈ I, q0 < i) ∧
+          0 < (∑ i ∈ I, a i) ∧ v ∈ ((∑ i ∈ I, a i).toNat).bitIndices ∧ 0 ≤ v ∧
+          ∀ e ∈ ((∑ i ∈ I, a i).toNat).bitIndices, v ≤ e ∧ e < Gfun f v := by
       exact packet f a hmono hinf q0 hpos 0;
-    refine' ⟨ I, Gfun f v, hI_nonempty, hI_pos, hv_mem, _, _ ⟩;
+    refine ⟨I, Gfun f v, hI_nonempty, hI_pos, hv_mem, ?_, ?_⟩
     · convert clusterAux2_block ( Gfun f ) _ _ _ _ _ _ using 1;
       · apply head?_eq_of_mem_of_forall_le;
         · have h_sorted : ∀ n : ℕ, List.Pairwise (· ≤ ·) n.bitIndices := by
-            intro n; induction' n using Nat.strong_induction_on with n ih; rcases n with ( _ | _ | n ) <;> simp_all +decide [ Nat.bitIndices ] ;
-            rw [ binaryRec ];
-            cases Nat.mod_two_eq_zero_or_one ( n + 1 + 1 ) <;> simp +decide [ *, Nat.shiftRight_eq_div_pow ];
-            · exact List.pairwise_map.mpr ( by simpa using ih _ ( Nat.div_le_of_le_mul <| by linarith ) );
-            · grind;
+            intro n
+            exact List.Pairwise.imp (fun h => le_of_lt h) Nat.bitIndices_sorted.pairwise
           exact h_sorted _;
         · exact hv_bound.1;
         · exact fun e he => hv_bound.2.2 e he |>.1;
       · linarith;
       · exact fun e he => hv_bound.2.2 e he |>.2;
     · exact fun e he => hv_bound.2.2 e he |>.2;
-  · obtain ⟨ I, B, hI₁, hI₂, hI₃, hI₄, hI₅ ⟩ := ih q0 hpos;
-    obtain ⟨J, w, hJ₁, hJ₂, hJ₃, hw_mem, hw_bound, hybits⟩ : ∃ J : Finset ℕ, ∃ w : ℕ, J.Nonempty ∧ (∀ j ∈ J, I.max' hI₁ < j) ∧ 0 < (∑ j ∈ J, a j) ∧ w ∈ ((∑ j ∈ J, a j).toNat).bitIndices ∧ B ≤ w ∧ (∀ e ∈ ((∑ j ∈ J, a j).toNat).bitIndices, w ≤ e ∧ e < Gfun f w) := by
+  | succ t ih =>
+    obtain ⟨ I, B, hI₁, hI₂, hI₃, hI₄, hI₅ ⟩ := ih q0 hpos;
+    obtain ⟨J, w, hJ₁, hJ₂, hJ₃, hw_mem, hw_bound, hybits⟩ :
+        ∃ J : Finset ℕ, ∃ w : ℕ, J.Nonempty ∧ (∀ j ∈ J, I.max' hI₁ < j) ∧
+          0 < (∑ j ∈ J, a j) ∧ w ∈ ((∑ j ∈ J, a j).toNat).bitIndices ∧ B ≤ w ∧
+          (∀ e ∈ ((∑ j ∈ J, a j).toNat).bitIndices, w ≤ e ∧ e < Gfun f w) := by
       apply packet f a hmono hinf (I.max' hI₁) (fun i hi => hpos i (by
-      exact lt_of_le_of_lt ( Finset.le_max' _ _ ( hI₁.choose_spec ) |> le_trans ( le_of_lt ( hI₂ _ hI₁.choose_spec ) ) ) hi)) B;
-    refine' ⟨ I ∪ J, Gfun f w, _, _, _, _, _ ⟩;
+        exact lt_of_le_of_lt (Finset.le_max' _ _ hI₁.choose_spec |>
+          le_trans (le_of_lt (hI₂ _ hI₁.choose_spec))) hi)) B
+    refine ⟨I ∪ J, Gfun f w, ?_, ?_, ?_, ?_, ?_⟩
     · exact ⟨ _, Finset.mem_union_left _ ( hI₁.choose_spec ) ⟩;
-    · exact fun i hi => by cases Finset.mem_union.mp hi <;> [ exact hI₂ i ‹_›; exact lt_trans ( hI₂ _ ( Finset.max'_mem _ hI₁ ) ) ( hJ₂ _ ‹_› ) ] ;
-    · rw [ Finset.sum_union ( Finset.disjoint_left.mpr fun x hxI hxJ => by linarith [ Finset.le_max' I x hxI, hJ₂ x hxJ ] ) ] ; linarith;
-    · have h_bitIndices_union : (∑ i ∈ I ∪ J, a i).toNat.bitIndices = (∑ i ∈ I, a i).toNat.bitIndices ++ (∑ j ∈ J, a j).toNat.bitIndices := by
+    · exact fun i hi => by
+        cases Finset.mem_union.mp hi
+        · exact hI₂ i ‹_›
+        · exact lt_trans (hI₂ _ (Finset.max'_mem _ hI₁)) (hJ₂ _ ‹_›)
+    · rw [Finset.sum_union (Finset.disjoint_left.mpr fun x hxI hxJ => by
+        linarith [Finset.le_max' I x hxI, hJ₂ x hxJ])]
+      linarith
+    · have h_bitIndices_union : (∑ i ∈ I ∪ J, a i).toNat.bitIndices =
+          (∑ i ∈ I, a i).toNat.bitIndices ++ (∑ j ∈ J, a j).toNat.bitIndices := by
         convert bitIndices_add_separated _;
-        · rw [ Finset.sum_union ( Finset.disjoint_left.mpr fun x hxI hxJ => by linarith [ Finset.le_max' I x hxI, hJ₂ x hxJ ] ) ];
+        · rw [Finset.sum_union (Finset.disjoint_left.mpr fun x hxI hxJ => by
+            linarith [Finset.le_max' I x hxI, hJ₂ x hxJ])]
           grind;
         · grind;
       rw [ h_bitIndices_union, clusterAux2_append ];
@@ -339,7 +402,8 @@ lemma packet_chain (f : ℕ → ℕ) (a : ℕ → ℤ) (hmono : StrictMono a)
       · exact fun e he => hybits e he |>.2;
     · -- By definition of $S$, we know that $S.toNat = St.toNat + Sy.toNat$.
       have hS_toNat : (∑ i ∈ I ∪ J, a i).toNat = (∑ i ∈ I, a i).toNat + (∑ j ∈ J, a j).toNat := by
-        rw [ Finset.sum_union ( Finset.disjoint_left.mpr fun x hxI hxJ => by linarith [ Finset.le_max' I x hxI, hJ₂ x hxJ ] ) ];
+        rw [Finset.sum_union (Finset.disjoint_left.mpr fun x hxI hxJ => by
+          linarith [Finset.le_max' I x hxI, hJ₂ x hxJ])]
         grind;
       rw [ hS_toNat, bitIndices_add_separated ]; all_goals grind
 
@@ -356,14 +420,14 @@ theorem countable (f : ℕ → ℕ) :
       ∀ c : ℕ, ∃ I : Finset ℕ, I.Nonempty ∧ χ (∑ i ∈ I, a i) = c := by
   -- Use χ = chi f.
   use chi f;
-  -- Introduce the arbitrary strictly increasing sequence `a`, the infinite condition `hinf`, and the colour `c`.
+  -- Introduce the increasing sequence, the infinite condition, and the colour.
   intro a hmono hinf c
   -- Use `strictMono_eventually_pos` to obtain an index `q0` such that `a i > 0` for all `i > q0`.
   obtain ⟨q0, hpos⟩ := strictMono_eventually_pos a hmono
   -- Use `packet_chain` to get a finite subset `I` such that `chi f (∑ i ∈ I, a i) = c`.
   obtain ⟨I, hI⟩ := packet_chain f a hmono hinf q0 hpos c
   use I
-  simp [chi];
+  simp only [chi];
   unfold rho; aesop;
 
 /-
