@@ -93,7 +93,7 @@ theorem hasLargeIndependentSets_iff_onFinsets {V : Type u} [Finite V]
         have : v ∈ S := hIS hv
         simpa only [S, Set.mem_toFinset] using this
     have hJcard : J.card = I.card := by
-      simpa only [J, Finset.card_subtype, hIfilter]
+      simp only [J, Finset.card_subtype, hIfilter]
     rw [Set.ncard_eq_toFinset_card']
     simpa only [S, hJcard] using hcard
 
@@ -142,8 +142,9 @@ theorem alphaOn_mono {V : Type u} {G : SimpleGraph V} {S T : Finset V}
 
 /-- Restricting an independent set to a smaller finite set preserves
 independence. -/
-theorem indepSet_inter {V : Type u} [DecidableEq V] {G : SimpleGraph V}
+theorem indepSet_inter {V : Type u} {G : SimpleGraph V}
     {I S : Finset V} (hI : G.IsIndepSet I) : G.IsIndepSet (I ∩ S) := by
+  classical
   exact hI.mono (by simp)
 
 /-- Removing vertices outside `T` loses at most that many vertices from an
@@ -274,8 +275,6 @@ theorem f_le_of_hasLargeIndependentSets {V : Type u} [Fintype V]
   exact potential_le_of_hasLargeIndependentSets h S
 
 end Erdos922
-
-open scoped Classical
 
 namespace SimpleGraph
 
@@ -457,7 +456,7 @@ def subtypeEmbedding {V : Type u} (S : Finset V) : {v : V // v ∈ S} ↪ V :=
 /-- Independence number transport through the canonical embedding of an
 induced vertex finset. -/
 theorem alphaOn_induce_eq_alphaOn_map
-    {V : Type u} [DecidableEq V] (G : SimpleGraph V) (S : Finset V)
+    {V : Type u} (G : SimpleGraph V) (S : Finset V)
     (A : Finset {v : V // v ∈ S}) :
     alphaOn (G.induce (S : Set V)) A =
       alphaOn G (A.map (subtypeEmbedding S)) := by
@@ -492,15 +491,17 @@ theorem alphaOn_induce_eq_alphaOn_map
 /-- Signed potential is invariant under the canonical embedding of an
 induced vertex finset. -/
 theorem potential_induce_eq_potential_map
-    {V : Type u} [DecidableEq V] (G : SimpleGraph V) (S : Finset V)
+    {V : Type u} (G : SimpleGraph V) (S : Finset V)
     (A : Finset {v : V // v ∈ S}) :
     potential (G.induce (S : Set V)) A =
       potential G (A.map (subtypeEmbedding S)) := by
+  classical
   rw [potential, potential, alphaOn_induce_eq_alphaOn_map, Finset.card_map]
 
 @[simp] theorem univ_map_subtypeEmbedding
-    {V : Type u} [DecidableEq V] (S : Finset V) :
+    {V : Type u} (S : Finset V) :
     (Finset.univ : Finset {v : V // v ∈ S}).map (subtypeEmbedding S) = S := by
+  classical
   ext v
   simp [subtypeEmbedding]
 
@@ -535,7 +536,7 @@ theorem potential_le_fOn {V : Type u} (G : SimpleGraph V)
 /-- The localized maximum on `S` is definitionally the global maximum for
 the graph induced on `S`, after transporting subtype finsets. -/
 theorem fOn_induce_univ_eq_fOn
-    {V : Type u} [DecidableEq V] (G : SimpleGraph V) (S : Finset V) :
+    {V : Type u} (G : SimpleGraph V) (S : Finset V) :
     fOn (G.induce (S : Set V))
         (Finset.univ : Finset {v : V // v ∈ S}) = fOn G S := by
   classical
@@ -580,7 +581,7 @@ theorem twice_card_le_of_cycleGraph_isIndepSet
 /-- Any embedded odd cycle certifies strictly positive hereditary
 deficiency. -/
 theorem fOn_pos_of_odd_cycle_copy
-    {V : Type u} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
+    {V : Type u} [Fintype V] (G : SimpleGraph V)
     {n : ℕ} (hn : 3 ≤ n) (hodd : Odd n)
     (c : SimpleGraph.Copy (SimpleGraph.cycleGraph n) G) :
     0 < fOn G Finset.univ := by
@@ -687,22 +688,28 @@ the finite value of Mathlib's `ℕ∞`-valued chromatic number. -/
 noncomputable def chiNat {V : Type u} (G : SimpleGraph V) : ℕ :=
   ENat.toNat G.chromaticNumber
 
-theorem chromaticNumber_eq_natCast_chiNat {V : Type u} [Fintype V]
+theorem chromaticNumber_eq_natCast_chiNat {V : Type u} [Finite V]
     (G : SimpleGraph V) : G.chromaticNumber = (chiNat G : ℕ∞) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hne : G.chromaticNumber ≠ ⊤ := by
     have hlt : G.chromaticNumber < ⊤ :=
       G.colorable_of_fintype.chromaticNumber_le.trans_lt (ENat.natCast_lt_top _)
     exact hlt.ne
   exact (ENat.natCast_toNat hne).symm
 
-theorem colorable_iff_chiNat_le {V : Type u} [Fintype V]
+theorem colorable_iff_chiNat_le {V : Type u} [Finite V]
     (G : SimpleGraph V) (q : ℕ) : G.Colorable q ↔ chiNat G ≤ q := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [← chromaticNumber_le_iff_colorable,
     chromaticNumber_eq_natCast_chiNat G]
   exact ENat.natCast_le_natCast
 
-theorem colorable_chiNat {V : Type u} [Fintype V] (G : SimpleGraph V) :
+theorem colorable_chiNat {V : Type u} [Finite V] (G : SimpleGraph V) :
     G.Colorable (chiNat G) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   exact (colorable_iff_chiNat_le G _).mpr le_rfl
 
 /-- The global form of Folkman's bound, with the signed deficiency maximum
@@ -760,25 +767,28 @@ theorem IsOrderMinimalCounterexample.counterexample
 theorem IsOrderMinimalCounterexample.smaller
     {V : Type u} [Fintype V] {G : SimpleGraph V}
     (hG : IsOrderMinimalCounterexample G)
-    {W : Type u} [Fintype W] [DecidableEq W] (H : SimpleGraph W)
-    (hcard : Fintype.card W < Fintype.card V) : FolkmanBound H :=
-  hG.2 H hcard
+    {W : Type u} [Fintype W] (H : SimpleGraph W)
+    (hcard : Fintype.card W < Fintype.card V) : FolkmanBound H := by
+  classical
+  exact hG.2 H hcard
 
 theorem IsOrderMinimalCounterexample.proper_induce
-    {V : Type u} [Fintype V] [DecidableEq V] {G : SimpleGraph V}
+    {V : Type u} [Fintype V] {G : SimpleGraph V}
     (hG : IsOrderMinimalCounterexample G) (S : Finset V)
     (hS : S ⊂ (Finset.univ : Finset V)) :
     FolkmanBound (G.induce (S : Set V)) := by
+  classical
   apply hG.smaller
   have hcard : S.card < Fintype.card V := by
     simpa using Finset.card_lt_card hS
   simpa using hcard
 
 theorem IsOrderMinimalCounterexample.proper_induce_chiNat_le
-    {V : Type u} [Fintype V] [DecidableEq V] {G : SimpleGraph V}
+    {V : Type u} [Fintype V] {G : SimpleGraph V}
     (hG : IsOrderMinimalCounterexample G) (S : Finset V)
     (hS : S ⊂ (Finset.univ : Finset V)) :
     (chiNat (G.induce (S : Set V)) : ℤ) ≤ fOn G S + 2 := by
+  classical
   have hc := (folkmanBound_iff_chiNat_le (G.induce (S : Set V))).mp
     (hG.proper_induce S hS)
   rw [fOn_induce_univ_eq_fOn] at hc
@@ -823,7 +833,7 @@ theorem IsOrderMinimalCounterexample.exists_odd_closed_walk
     ∃ v, ∃ w : G.Walk v v, Odd w.length := by
   have hnot := hG.not_colorable_two
   rw [SimpleGraph.two_colorable_iff_forall_loop_even] at hnot
-  push_neg at hnot
+  push Not at hnot
   obtain ⟨v, w, hw⟩ := hnot
   exact ⟨v, w, Nat.not_even_iff_odd.mp hw⟩
 
@@ -831,9 +841,10 @@ theorem IsOrderMinimalCounterexample.exists_odd_closed_walk
 argument this follows from chordlessness and the exclusion of induced even
 cycles), it witnesses positive hereditary deficiency. -/
 theorem IsOrderMinimalCounterexample.fOn_pos_of_girth_odd
-    {V : Type u} [Fintype V] [DecidableEq V] {G : SimpleGraph V}
+    {V : Type u} [Fintype V] {G : SimpleGraph V}
     (hG : IsOrderMinimalCounterexample G) (hodd : Odd G.girth) :
     0 < fOn G Finset.univ := by
+  classical
   obtain ⟨v, w, hwcycle, hlength⟩ := hG.exists_shortest_cycle
   have hthree : 3 ≤ G.girth := by
     rw [← hlength]
@@ -847,9 +858,10 @@ theorem IsOrderMinimalCounterexample.fOn_pos_of_girth_odd
 /-- The positive deficiency raises the automatic lower bound on the
 chromatic number from three to four. -/
 theorem IsOrderMinimalCounterexample.four_le_chiNat_of_girth_odd
-    {V : Type u} [Fintype V] [DecidableEq V] {G : SimpleGraph V}
+    {V : Type u} [Fintype V] {G : SimpleGraph V}
     (hG : IsOrderMinimalCounterexample G) (hodd : Odd G.girth) :
     4 ≤ chiNat G := by
+  classical
   exact four_le_chiNat_of_not_folkmanBound_of_fOn_pos G hG.counterexample
     (hG.fOn_pos_of_girth_odd hodd)
 
@@ -858,9 +870,10 @@ The proof recursively removes a nontrivial closed subwalk of the tail.  If
 that subwalk is odd we recurse into it; if it is even we delete it, preserving
 odd parity and strictly decreasing length. -/
 theorem exists_odd_cycle_of_odd_closed_walk
-    {V : Type u} [DecidableEq V] {G : SimpleGraph V} {v : V}
+    {V : Type u} {G : SimpleGraph V} {v : V}
     (w : G.Walk v v) (hodd : Odd w.length) :
     ∃ x, ∃ c : G.Walk x x, c.IsCycle ∧ Odd c.length := by
+  classical
   have hwnnil : ¬ w.Nil := by
     rw [Walk.not_nil_iff_lt_length]
     obtain ⟨m, hm⟩ := hodd
@@ -875,7 +888,7 @@ theorem exists_odd_cycle_of_odd_closed_walk
     exact ⟨v, w, Walk.isCycle_iff_isPath_tail_and_le_length.mpr
       ⟨hpath, hthree⟩, hodd⟩
   · rw [Walk.isPath_iff_isSubwalk_imp_nil] at hpath
-    push_neg at hpath
+    push Not at hpath
     obtain ⟨x, q, hqsub, hqnonnil⟩ := hpath
     have hqlt : q.length < w.length := by
       have hle := Walk.length_le_of_isSubwalk hqsub
@@ -913,17 +926,19 @@ decreasing_by
 
 /-- The direct odd-cycle consequence of failure of two-colorability. -/
 theorem IsOrderMinimalCounterexample.exists_odd_cycle
-    {V : Type u} [Fintype V] [DecidableEq V] {G : SimpleGraph V}
+    {V : Type u} [Fintype V] {G : SimpleGraph V}
     (hG : IsOrderMinimalCounterexample G) :
     ∃ x, ∃ c : G.Walk x x, c.IsCycle ∧ Odd c.length := by
+  classical
   obtain ⟨v, w, hodd⟩ := hG.exists_odd_closed_walk
   exact exists_odd_cycle_of_odd_closed_walk w hodd
 
 /-- Unconditional positivity of the hereditary deficiency maximum for an
 order-minimal counterexample. -/
 theorem IsOrderMinimalCounterexample.fOn_pos
-    {V : Type u} [Fintype V] [DecidableEq V] {G : SimpleGraph V}
+    {V : Type u} [Fintype V] {G : SimpleGraph V}
     (hG : IsOrderMinimalCounterexample G) : 0 < fOn G Finset.univ := by
+  classical
   obtain ⟨v, c, hcycle, hodd⟩ := hG.exists_odd_cycle
   have hcopy : SimpleGraph.cycleGraph c.length ⊑ G := by
     rw [SimpleGraph.cycleGraph_isContained_iff (by
@@ -935,8 +950,9 @@ theorem IsOrderMinimalCounterexample.fOn_pos
 /-- Every order-minimal counterexample has natural chromatic number at
 least four. -/
 theorem IsOrderMinimalCounterexample.four_le_chiNat
-    {V : Type u} [Fintype V] [DecidableEq V] {G : SimpleGraph V}
+    {V : Type u} [Fintype V] {G : SimpleGraph V}
     (hG : IsOrderMinimalCounterexample G) : 4 ≤ chiNat G := by
+  classical
   exact four_le_chiNat_of_not_folkmanBound_of_fOn_pos G hG.counterexample hG.fOn_pos
 
 
@@ -951,8 +967,9 @@ noncomputable def NoOrderMinimalCounterexample : Prop :=
 order-minimal counterexample, Folkman's bound holds for every finite graph. -/
 theorem folkmanBound_of_noOrderMinimalCounterexample
     (hNo : NoOrderMinimalCounterexample.{u}) :
-    ∀ {V : Type u} [Fintype V] [DecidableEq V] (G : SimpleGraph V),
+    ∀ {V : Type u} [Fintype V] (G : SimpleGraph V),
       FolkmanBound G := by
+  classical
   let P : ℕ → Prop := fun n ↦
     ∀ (V : Type u) [Fintype V] [DecidableEq V], Fintype.card V = n →
       ∀ G : SimpleGraph V, FolkmanBound G
@@ -969,7 +986,7 @@ theorem folkmanBound_of_noOrderMinimalCounterexample
         apply ih (Fintype.card W)
         · omega
         · rfl
-  intro V _ _ G
+  intro V _ G
   exact hall (Fintype.card V) V rfl G
 
 /-- Numerical form of the critical split property `(A)` in the modern proof
@@ -1023,8 +1040,6 @@ open Function
 
 namespace Erdos922EvenHole
 
-open scoped Classical
-
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-- The preliminary contraction map.  Vertices in `A` go to the left new
@@ -1047,23 +1062,32 @@ def contractGraph (G : SimpleGraph V) (A B : Finset V) :
     SimpleGraph (ContractVertex A B) :=
   G.map (contract A B)
 
-theorem preContract_eq_inr_false_iff (A B : Finset V) (v : V) :
+omit [Fintype V] in
+theorem preContract_eq_inr_false_iff [Finite V] (A B : Finset V) (v : V) :
     preContract A B v = Sum.inr false ↔ v ∈ A := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   simp only [preContract]
   by_cases hvA : v ∈ A
   · simp [hvA]
   · by_cases hvB : v ∈ B <;> simp [hvA, hvB]
 
-theorem preContract_eq_inr_true_iff (A B : Finset V) (hAB : Disjoint A B) (v : V) :
+omit [Fintype V] in
+theorem preContract_eq_inr_true_iff [Finite V] (A B : Finset V) (hAB : Disjoint A B) (v : V) :
     preContract A B v = Sum.inr true ↔ v ∈ B := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   simp only [preContract]
   by_cases hvA : v ∈ A
   · have hvB : v ∉ B := fun hvB ↦ Finset.disjoint_left.mp hAB hvA hvB
     simp [hvA, hvB]
   · by_cases hvB : v ∈ B <;> simp [hvA, hvB]
 
-theorem preContract_eq_inl_iff (A B : Finset V) (v w : V) :
+omit [Fintype V] in
+theorem preContract_eq_inl_iff [Finite V] (A B : Finset V) (v w : V) :
     preContract A B v = Sum.inl w ↔ v = w ∧ w ∉ A ∧ w ∉ B := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   by_cases hvA : v ∈ A
   · constructor
     · intro h
@@ -1084,51 +1108,69 @@ theorem preContract_eq_inl_iff (A B : Finset V) (v w : V) :
       · rintro ⟨rfl, -, -⟩
         simp [preContract, hvA, hvB]
 
-theorem contract_injective_outside (A B : Finset V) {v w : V}
+omit [Fintype V] in
+theorem contract_injective_outside [Finite V] (A B : Finset V) {v w : V}
     (hvA : v ∉ A) (hvB : v ∉ B) (hwA : w ∉ A) (hwB : w ∉ B)
     (h : contract A B v = contract A B w) : v = w := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hval := congrArg Subtype.val h
   simpa [contract, preContract, hvA, hvB, hwA, hwB] using hval
 
-theorem contract_eq_iff_of_outside (A B : Finset V) {v w : V}
+omit [Fintype V] in
+theorem contract_eq_iff_of_outside [Finite V] (A B : Finset V) {v w : V}
     (hvA : v ∉ A) (hvB : v ∉ B) (hwA : w ∉ A) (hwB : w ∉ B) :
     contract A B v = contract A B w ↔ v = w := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   constructor
   · exact contract_injective_outside A B hvA hvB hwA hwB
   · exact congrArg _
 
-theorem contract_eq_of_mem_left (A B : Finset V) {v w : V}
+omit [Fintype V] in
+theorem contract_eq_of_mem_left [Finite V] (A B : Finset V) {v w : V}
     (hv : v ∈ A) (hw : w ∈ A) : contract A B v = contract A B w := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   apply Subtype.ext
   simp [contract, preContract, hv, hw]
 
-theorem contract_eq_of_mem_right (A B : Finset V) (hAB : Disjoint A B) {v w : V}
+omit [Fintype V] in
+theorem contract_eq_of_mem_right [Finite V] (A B : Finset V) (hAB : Disjoint A B) {v w : V}
     (hv : v ∈ B) (hw : w ∈ B) : contract A B v = contract A B w := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hvA : v ∉ A := fun ha ↦ Finset.disjoint_left.mp hAB ha hv
   have hwA : w ∉ A := fun ha ↦ Finset.disjoint_left.mp hAB ha hw
   apply Subtype.ext
   simp [contract, preContract, hvA, hwA, hv, hw]
 
-theorem contract_ne_left_right (A B : Finset V) (hAB : Disjoint A B)
+omit [Fintype V] in
+theorem contract_ne_left_right [Finite V] (A B : Finset V) (hAB : Disjoint A B)
     {a b : V} (ha : a ∈ A) (hb : b ∈ B) :
     contract A B a ≠ contract A B b := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hbA : b ∉ A := fun hba ↦ Finset.disjoint_left.mp hAB hba hb
   intro h
   have hval := congrArg Subtype.val h
-  simpa [contract, preContract, ha, hbA, hb] using hval
+  simp [contract, preContract, ha, hbA, hb] at hval
 
 section Fibers
 
 variable {W : Type*} [DecidableEq W]
 
+omit [DecidableEq V] [DecidableEq W] [Fintype V] in
 /-- An independent set descends through a possibly noninjective graph map as
 soon as it contains the whole fiber above every image vertex retained.  This
 is the key fact that makes the contraction proof honest: retaining only one
 old representative of a contracted vertex would not suffice. -/
-theorem isIndepSet_map_of_fiber_subset (G : SimpleGraph V) (q : V → W)
+theorem isIndepSet_map_of_fiber_subset [Finite V] (G : SimpleGraph V) (q : V → W)
     {I : Finset V} {J : Finset W} (hI : G.IsIndepSet I)
     (hfiber : ∀ x ∈ J, ∀ v, q v = x → v ∈ I) :
     (G.map q).IsIndepSet J := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [SimpleGraph.isIndepSet_iff]
   rintro x hx y hy hxy hAdj
   rcases hAdj with ⟨hqne, u, v, huv, hu, hv⟩
@@ -1148,12 +1190,18 @@ def outsidePart (A B I : Finset V) : Finset V :=
 def outsideImage (A B I : Finset V) : Finset (ContractVertex A B) :=
   (outsidePart A B I).image (contract A B)
 
-theorem mem_outsidePart_iff (A B I : Finset V) (v : V) :
+omit [Fintype V] in
+theorem mem_outsidePart_iff [Finite V] (A B I : Finset V) (v : V) :
     v ∈ outsidePart A B I ↔ v ∈ I ∧ v ∉ A ∧ v ∉ B := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   simp [outsidePart]
 
-theorem outsideImage_fiber_subset (A B I : Finset V) :
+omit [Fintype V] in
+theorem outsideImage_fiber_subset [Finite V] (A B I : Finset V) :
     ∀ x ∈ outsideImage A B I, ∀ v, contract A B v = x → v ∈ I := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   intro x hx v hvx
   simp only [outsideImage, Finset.mem_image] at hx
   rcases hx with ⟨w, hw, rfl⟩
@@ -1166,19 +1214,25 @@ theorem outsideImage_fiber_subset (A B I : Finset V) :
   have hvw := (preContract_eq_inl_iff A B v w).mp hpv |>.1
   simpa [hvw] using hw'.1
 
-theorem isIndepSet_outsideImage (G : SimpleGraph V) (A B I : Finset V)
+omit [Fintype V] in
+theorem isIndepSet_outsideImage [Finite V] (G : SimpleGraph V) (A B I : Finset V)
     (hI : G.IsIndepSet I) :
     (contractGraph G A B).IsIndepSet (outsideImage A B I) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   exact isIndepSet_map_of_fiber_subset G (contract A B) hI
     (outsideImage_fiber_subset A B I)
 
+omit [Fintype V] in
 /-- If `I` contains all of `A`, its outside image together with the left
 contracted vertex is independent. -/
-theorem isIndepSet_insert_left (G : SimpleGraph V) (A B I : Finset V)
+theorem isIndepSet_insert_left [Finite V] (G : SimpleGraph V) (A B I : Finset V)
     {a : V} (ha : a ∈ A) (hAI : A ⊆ I) (hI : G.IsIndepSet I) :
     (contractGraph G A B).IsIndepSet
       ((insert (contract A B a) (outsideImage A B I) :
         Finset (ContractVertex A B)) : Set (ContractVertex A B)) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   apply isIndepSet_map_of_fiber_subset G (contract A B) hI
   intro x hx v hvx
   simp only [Finset.mem_insert] at hx
@@ -1189,14 +1243,17 @@ theorem isIndepSet_insert_left (G : SimpleGraph V) (A B I : Finset V)
     simpa [contract, preContract, ha] using hval
   · exact outsideImage_fiber_subset A B I x hx v hvx
 
+omit [Fintype V] in
 /-- If `I` contains all of `B`, its outside image together with the right
 contracted vertex is independent. -/
-theorem isIndepSet_insert_right (G : SimpleGraph V) (A B I : Finset V)
+theorem isIndepSet_insert_right [Finite V] (G : SimpleGraph V) (A B I : Finset V)
     (hAB : Disjoint A B) {b : V} (hb : b ∈ B) (hBI : B ⊆ I)
     (hI : G.IsIndepSet I) :
     (contractGraph G A B).IsIndepSet
       ((insert (contract A B b) (outsideImage A B I) :
         Finset (ContractVertex A B)) : Set (ContractVertex A B)) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   apply isIndepSet_map_of_fiber_subset G (contract A B) hI
   intro x hx v hvx
   simp only [Finset.mem_insert] at hx
@@ -1208,14 +1265,17 @@ theorem isIndepSet_insert_right (G : SimpleGraph V) (A B I : Finset V)
     simpa [contract, preContract, hbA, hb] using hval
   · exact outsideImage_fiber_subset A B I x hx v hvx
 
+omit [Fintype V] in
 /-- If `I` contains both full fibers, both contracted vertices can be kept. -/
-theorem isIndepSet_insert_both (G : SimpleGraph V) (A B I : Finset V)
+theorem isIndepSet_insert_both [Finite V] (G : SimpleGraph V) (A B I : Finset V)
     (hAB : Disjoint A B) {a b : V} (ha : a ∈ A) (hb : b ∈ B)
     (hAI : A ⊆ I) (hBI : B ⊆ I) (hI : G.IsIndepSet I) :
     (contractGraph G A B).IsIndepSet
       ((insert (contract A B a)
         (insert (contract A B b) (outsideImage A B I)) :
           Finset (ContractVertex A B)) : Set (ContractVertex A B)) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   apply isIndepSet_map_of_fiber_subset G (contract A B) hI
   intro x hx v hvx
   simp only [Finset.mem_insert] at hx
@@ -1233,16 +1293,22 @@ theorem isIndepSet_insert_both (G : SimpleGraph V) (A B I : Finset V)
 
 section Cardinalities
 
-theorem outsideImage_card (A B I : Finset V) :
+omit [Fintype V] in
+theorem outsideImage_card [Finite V] (A B I : Finset V) :
     (outsideImage A B I).card = (outsidePart A B I).card := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [outsideImage, Finset.card_image_iff]
   intro v hv w hw hvw
   have hv' := (mem_outsidePart_iff A B I v).mp hv
   have hw' := (mem_outsidePart_iff A B I w).mp hw
   exact contract_injective_outside A B hv'.2.1 hv'.2.2 hw'.2.1 hw'.2.2 hvw
 
-theorem contract_left_not_mem_outsideImage (A B I : Finset V) {a : V} (ha : a ∈ A) :
+omit [Fintype V] in
+theorem contract_left_not_mem_outsideImage [Finite V] (A B I : Finset V) {a : V} (ha : a ∈ A) :
     contract A B a ∉ outsideImage A B I := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   intro h
   simp only [outsideImage, Finset.mem_image] at h
   rcases h with ⟨v, hv, hva⟩
@@ -1250,8 +1316,11 @@ theorem contract_left_not_mem_outsideImage (A B I : Finset V) {a : V} (ha : a �
   have hval := congrArg Subtype.val hva
   simp [contract, preContract, ha, hv'.2.1, hv'.2.2] at hval
 
-theorem contract_right_not_mem_outsideImage (A B I : Finset V) (hAB : Disjoint A B)
+omit [Fintype V] in
+theorem contract_right_not_mem_outsideImage [Finite V] (A B I : Finset V) (hAB : Disjoint A B)
     {b : V} (hb : b ∈ B) : contract A B b ∉ outsideImage A B I := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   intro h
   simp only [outsideImage, Finset.mem_image] at h
   rcases h with ⟨v, hv, hvb⟩
@@ -1260,23 +1329,32 @@ theorem contract_right_not_mem_outsideImage (A B I : Finset V) (hAB : Disjoint A
   have hval := congrArg Subtype.val hvb
   simp [contract, preContract, hbA, hb, hv'.2.1, hv'.2.2] at hval
 
-theorem insert_left_outsideImage_card (A B I : Finset V) {a : V} (ha : a ∈ A) :
+omit [Fintype V] in
+theorem insert_left_outsideImage_card [Finite V] (A B I : Finset V) {a : V} (ha : a ∈ A) :
     (insert (contract A B a) (outsideImage A B I)).card =
       (outsidePart A B I).card + 1 := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [Finset.card_insert_of_notMem (contract_left_not_mem_outsideImage A B I ha)]
   rw [outsideImage_card]
 
-theorem insert_right_outsideImage_card (A B I : Finset V) (hAB : Disjoint A B)
+omit [Fintype V] in
+theorem insert_right_outsideImage_card [Finite V] (A B I : Finset V) (hAB : Disjoint A B)
     {b : V} (hb : b ∈ B) :
     (insert (contract A B b) (outsideImage A B I)).card =
       (outsidePart A B I).card + 1 := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [Finset.card_insert_of_notMem (contract_right_not_mem_outsideImage A B I hAB hb)]
   rw [outsideImage_card]
 
-theorem insert_both_outsideImage_card (A B I : Finset V) (hAB : Disjoint A B)
+omit [Fintype V] in
+theorem insert_both_outsideImage_card [Finite V] (A B I : Finset V) (hAB : Disjoint A B)
     {a b : V} (ha : a ∈ A) (hb : b ∈ B) :
     (insert (contract A B a) (insert (contract A B b) (outsideImage A B I))).card =
       (outsidePart A B I).card + 2 := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hright := contract_right_not_mem_outsideImage A B I hAB hb
   have hleft : contract A B a ∉ insert (contract A B b) (outsideImage A B I) := by
     simp only [Finset.mem_insert, not_or]
@@ -1287,13 +1365,19 @@ theorem insert_both_outsideImage_card (A B I : Finset V) (hAB : Disjoint A B)
 /-- Portion of an independent set lying on the old even cycle. -/
 def cyclePart (A B I : Finset V) : Finset V := I ∩ (A ∪ B)
 
-theorem outsidePart_eq_sdiff (A B I : Finset V) :
+omit [Fintype V] in
+theorem outsidePart_eq_sdiff [Finite V] (A B I : Finset V) :
     outsidePart A B I = I \ (A ∪ B) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   ext v
   simp [outsidePart]
 
-theorem outside_cycle_card_decomposition (A B I : Finset V) :
+omit [Fintype V] in
+theorem outside_cycle_card_decomposition [Finite V] (A B I : Finset V) :
     (outsidePart A B I).card + (cyclePart A B I).card = I.card := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [outsidePart_eq_sdiff]
   exact Finset.card_sdiff_add_card_inter I (A ∪ B)
 
@@ -1461,12 +1545,13 @@ end Cardinalities
 
 section WitnessLift
 
+omit [Fintype V] in
 /-- The common 0/1/2-contracted-vertex witness lift.  The cycle classification
 is supplied separately: an independent intersection of size `p` must be one
 of the two alternating sides.  When it is smaller, dropping the cycle part
 costs at most `p-1`; when it is a full side, its entire fiber can safely be
 replaced by the corresponding contracted vertex. -/
-theorem exists_contracted_independent_witness
+theorem exists_contracted_independent_witness [Finite V]
     (G : SimpleGraph V) (A B I : Finset V) (p : ℕ) (hAB : Disjoint A B)
     {a b : V} (ha : a ∈ A) (hb : b ∈ B)
     (hp : 1 ≤ p) (hAcard : A.card = p) (hBcard : B.card = p)
@@ -1480,6 +1565,8 @@ theorem exists_contracted_independent_witness
     (hright : cyclePart A B I = B → contract A B b ∈ S) :
     ∃ J : Finset (ContractVertex A B), J ⊆ S ∧
       (contractGraph G A B).IsIndepSet J ∧ I.card ≤ J.card + (p - 1) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have houtside_subset : outsideImage A B I ⊆ S := by
     intro x hx
     simp only [outsideImage, Finset.mem_image] at hx
@@ -1532,8 +1619,6 @@ open SimpleGraph
 namespace Erdos922
 namespace EvenHole
 
-open scoped Classical
-
 universe u
 
 variable {V : Type u} [Fintype V] [DecidableEq V]
@@ -1572,10 +1657,13 @@ def contractionHom (G : SimpleGraph V) (A B : Finset V) (hAB : Disjoint A B)
         have hvu := (preContract_eq_inl_iff A B v u).mp hpv |>.1
         exact huv.ne hvu.symm
 
- theorem chromaticNumber_le_contraction (G : SimpleGraph V) (A B : Finset V)
+omit [Fintype V] in
+theorem chromaticNumber_le_contraction [Finite V] (G : SimpleGraph V) (A B : Finset V)
     (hAB : Disjoint A B) (hA : G.IsIndepSet A) (hB : G.IsIndepSet B) :
-    G.chromaticNumber ≤ (qgraph G A B).chromaticNumber :=
- SimpleGraph.chromaticNumber_mono_of_hom (contractionHom G A B hAB hA hB)
+    G.chromaticNumber ≤ (qgraph G A B).chromaticNumber := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
+  exact SimpleGraph.chromaticNumber_mono_of_hom (contractionHom G A B hAB hA hB)
 
 /-- The exact abstract information about an induced even cycle used by the
 contraction argument. -/
@@ -1590,7 +1678,8 @@ structure Configuration (G : SimpleGraph V) (A B : Finset V) (p : ℕ) : Prop wh
   cycle_eq_of_card : ∀ I : Finset V, I ⊆ A ∪ B → G.IsIndepSet I →
     I.card = p → I = A ∨ I = B
 
-theorem potential_le_of_witness_lift
+omit [Fintype V] in
+theorem potential_le_of_witness_lift [Finite V]
     (G : SimpleGraph V) (A B : Finset V) (p : ℕ)
     (S : Finset (CV A B)) (H : Finset V) (hp : 1 ≤ p)
     (hcard : (H.card : ℤ) = (S.card : ℤ) + 2 * (p : ℤ) - 2)
@@ -1598,6 +1687,8 @@ theorem potential_le_of_witness_lift
       ∃ J : Finset (CV A B), J ⊆ S ∧ (qgraph G A B).IsIndepSet J ∧
         I.card ≤ J.card + (p - 1)) :
     Erdos922.potential (qgraph G A B) S ≤ Erdos922.potential G H := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨I, hIH, hIind, hIcard⟩ := Erdos922.exists_maximum_independent_subset G H
   obtain ⟨J, hJS, hJind, hIJ⟩ := hlift I hIH hIind
   have hJalpha : J.card ≤ Erdos922.alphaOn (qgraph G A B) S :=
@@ -1605,12 +1696,15 @@ theorem potential_le_of_witness_lift
   rw [Erdos922.potential, Erdos922.potential, ← hIcard]
   omega
 
+omit [Fintype V] in
 /-- Every independent set in a proposed lifted vertex set gives the cycle
 classification required by the witness lift. -/
-theorem cyclePart_data (G : SimpleGraph V) (A B I : Finset V) (p : ℕ)
+theorem cyclePart_data [Finite V] (G : SimpleGraph V) (A B I : Finset V) (p : ℕ)
     (hC : Configuration G A B p) (hI : G.IsIndepSet I) :
     (cyclePart A B I).card ≤ p ∧
       ((cyclePart A B I).card = p → cyclePart A B I = A ∨ cyclePart A B I = B) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hsub : cyclePart A B I ⊆ A ∪ B := by simp [cyclePart]
   have hind : G.IsIndepSet (cyclePart A B I) := hI.mono (by simp [cyclePart])
   exact ⟨hC.cycle_bound _ hsub hind, hC.cycle_eq_of_card _ hsub hind⟩
@@ -1625,9 +1719,12 @@ theorem outsidePreimage_disjoint_cycle (A B : Finset V) (S : Finset (CV A B)) :
   · exact hvout.2.1 hvA
   · exact hvout.2.2 hvB
 
+omit [Fintype V] in
 /-- All cycle cardinalities needed in the three lift cases. -/
-theorem cycle_card (G : SimpleGraph V) (A B : Finset V) (p : ℕ)
+theorem cycle_card [Finite V] (G : SimpleGraph V) (A B : Finset V) (p : ℕ)
     (hC : Configuration G A B p) : (A ∪ B).card = 2 * p := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [Finset.card_union_of_disjoint hC.disjoint, hC.card_left, hC.card_right]
   omega
 
@@ -1858,10 +1955,12 @@ theorem no_configuration_of_minimal_counterexample
     exact_mod_cast Nat.add_le_add_right hnat 2
   exact hcounter (hchrom.trans (hmin.trans henat))
 
+omit [DecidableEq V] in
 /-- The global maximum used by the endpoint/core file is the localized
 maximum on the full vertex finset used by the minimal-counterexample file. -/
 theorem f_eq_fOn_univ (G : SimpleGraph V) :
     Erdos922.f G = Erdos922FullB.fOn G Finset.univ := by
+  classical
   rfl
 
 /-- The final form consumed by the repository's strong-induction framework. -/
@@ -1920,7 +2019,7 @@ theorem missingColorRecolor_valid {α : Type v}
     have hbY : b ≠ y := habne.symm
     by_cases hbX : b = x
     · subst b
-      simp [missingColorRecolor, hxy.ne, hxy.ne.symm]
+      simp [missingColorRecolor, hxy.ne]
     · by_cases hbR : G.Adj x b ∧ c b = i
       · exact (hmiss b hbR.1 hab hbR.2).elim
       · simp [missingColorRecolor, hbY, hbX, hbR]
@@ -1928,7 +2027,7 @@ theorem missingColorRecolor_valid {α : Type v}
     · subst b
       by_cases haX : a = x
       · subst a
-        simp [missingColorRecolor, hxy.ne, hxy.ne.symm]
+        simp [missingColorRecolor, hxy.ne]
       · by_cases haR : G.Adj x a ∧ c a = i
         · exact (hmiss a haR.1 hab.symm haR.2).elim
         · simp [missingColorRecolor, haY, haX, haR]
@@ -1938,13 +2037,13 @@ theorem missingColorRecolor_valid {α : Type v}
         by_cases hbR : G.Adj x b ∧ c b = i
         · simp [missingColorRecolor, haY, hbY, hbX, hbR]
         · have hci : c b ≠ i := fun h ↦ hbR ⟨hab, h⟩
-          simp [missingColorRecolor, haY, hbY, hbX, hbR, hci, hci.symm]
+          simp [missingColorRecolor, haY, hbY, hbX, hci, hci.symm]
       · by_cases hbX : b = x
         · subst b
           by_cases haR : G.Adj x a ∧ c a = i
           · simp [missingColorRecolor, haY, haX, hbY, haR]
           · have hci : c a ≠ i := fun h ↦ haR ⟨hab.symm, h⟩
-            simp [missingColorRecolor, haY, haX, hbY, haR, hci]
+            simp [missingColorRecolor, haY, haX, hbY, hci]
         · have hcAB : c a ≠ c b := hc hab haX haY hbX hbY
           by_cases haR : G.Adj x a ∧ c a = i <;>
             by_cases hbR : G.Adj x b ∧ c b = i
@@ -2088,7 +2187,7 @@ theorem pairGraph_roundTrip {α : Type v}
       c ⟨z, by simp [hzx, hzy]⟩ := by
   classical
   simp only [pairGraphPullFunction, Set.mem_compl_iff, Set.mem_insert_iff,
-    Set.mem_singleton_iff, not_or, hzx, hzy, and_self, dif_pos]
+    Set.mem_singleton_iff, not_or, hzx, hzy, and_self]
   change c (pairIdentify x y u v hux huy huv ⟨z, by simp [hzx, hzy]⟩).1 =
     c ⟨z, by simp [hzx, hzy]⟩
   by_cases hzv : z = v
@@ -2100,7 +2199,7 @@ theorem pairGraph_roundTrip {α : Type v}
 color beyond `α`, then every color of a coloring of the pair-identification
 graph occurs on the image of a common neighbor of `x,y`. -/
 theorem everyColorOccursOnIdentifiedCommonNeighbors {α : Type v}
-    [DecidableEq V] [DecidableEq α] [DecidableRel G.Adj]
+    [DecidableEq V]
     (hxy : G.Adj x y)
     (hux : u ≠ x) (huy : u ≠ y) (huv : u ≠ v)
     (huvNA : ¬ G.Adj u v)
@@ -2108,6 +2207,7 @@ theorem everyColorOccursOnIdentifiedCommonNeighbors {α : Type v}
     (C : (pairGraph (G := G) hux huy huv).Coloring α) (i : α) :
     ∃ z, G.Adj x z ∧ G.Adj y z ∧
       pairGraphPullFunction hux huy huv huvNA C i z = i := by
+  classical
   by_contra! hmiss
   apply hncol
   exact ⟨coloringOptionOfMissingCommonColor hxy
@@ -2179,12 +2279,13 @@ def CommonNeighbor.toDeletedPair (z : CommonNeighbor G x y) : DeletedPair x y :=
 /-- If there are more common neighbors than colors, an apex coloring has two
 distinct, nonadjacent common neighbors with the same color. -/
 theorem exists_nonadjacent_commonNeighbors_sameColor
-    [Fintype V] [Fintype α]
+    [Finite V] [Fintype α]
     (C : (commonNeighborApexGraph (G := G) (x := x) (y := y)).Coloring α)
     (hcard : Fintype.card α < Nat.card (CommonNeighbor G x y)) :
     ∃ u v : CommonNeighbor G x y, u.1 ≠ v.1 ∧ ¬ G.Adj u.1 v.1 ∧
       C (some u.toDeletedPair) = C (some v.toDeletedPair) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let : Fintype (CommonNeighbor G x y) := Fintype.ofFinite _
   let color : CommonNeighbor G x y → α := fun z ↦ C (some z.toDeletedPair)
   have hcard' : Fintype.card α < Fintype.card (CommonNeighbor G x y) := by
@@ -2199,13 +2300,14 @@ theorem exists_nonadjacent_commonNeighbors_sameColor
 larger than `α`.  This is the complete pigeonhole + pair-identification +
 missing-color portion of Folkman's diamond argument. -/
 theorem commonNeighborApexGraph_not_colorable
-    [Fintype V] [Fintype α] [DecidableEq V] [DecidableEq α]
-    [DecidableRel G.Adj]
+    [Finite V] [Fintype α]
     (hxy : G.Adj x y)
     (hncol : ¬ Nonempty (G.Coloring (Option α)))
     (hcard : Fintype.card α < Nat.card (CommonNeighbor G x y)) :
     ¬ Nonempty
       ((commonNeighborApexGraph (G := G) (x := x) (y := y)).Coloring α) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rintro ⟨C0⟩
   obtain ⟨u, v, huv, huvNA, heq⟩ :=
     exists_nonadjacent_commonNeighbors_sameColor C0 hcard
@@ -2241,11 +2343,13 @@ open Erdos922
 
 variable {V : Type u} [Fintype V]
 
+omit [Fintype V] in
 /-- The finite-set independence number agrees with Mathlib's independence
 number on the induced subtype graph. -/
-theorem indepNum_induce_finset_eq_alphaOn (G : SimpleGraph V) (S : Finset V) :
+theorem indepNum_induce_finset_eq_alphaOn [Finite V] (G : SimpleGraph V) (S : Finset V) :
     (G.induce (S : Set V)).indepNum = alphaOn G S := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   apply Nat.le_antisymm
   · obtain ⟨J, hJ⟩ := (G.induce (S : Set V)).exists_isNIndepSet_indepNum
     let I : Finset V := J.map ⟨Subtype.val, Subtype.val_injective⟩
@@ -2278,14 +2382,16 @@ theorem indepNum_induce_finset_eq_alphaOn (G : SimpleGraph V) (S : Finset V) :
     rw [← hJcard]
     exact hJ.card_le_indepNum
 
+omit [Fintype V] in
 /-- Finset form of Hajnal's lemma, ready for the `J \ A` set in the diamond
 argument. -/
-theorem exists_mem_all_maximum_independent_subset
+theorem exists_mem_all_maximum_independent_subset [Finite V]
     (G : SimpleGraph V) (U : Finset V)
     (hlarge : U.card < 2 * alphaOn G U) :
     ∃ q ∈ U, ∀ I : Finset V, I ⊆ U → G.IsIndepSet I →
       I.card = alphaOn G U → q ∈ I := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let : Fintype U := Fintype.ofFinite U
   have hcardU : Fintype.card U = U.card := Fintype.card_coe U
   have hindep : (G.induce (U : Set V)).indepNum = alphaOn G U :=
@@ -2346,7 +2452,7 @@ theorem hajnal_apexWitness_contradiction
   let H : Finset V := insert x (insert y (J.erase q))
   have hHcard : H.card = J.card + 1 := by
     have herase := Finset.card_erase_add_one hqJ
-    simp [H, hxJ, hyJ, hqJ, hxy.ne, hxy.ne.symm, hqx, hqy]
+    simp [H, hxJ, hyJ, hqJ, hxy.ne]
     omega
   have hpH := potential_le_f G H
   rw [← hmax] at hpH
@@ -2391,7 +2497,7 @@ theorem hajnal_apexWitness_contradiction
     · rfl
   have hsplit := Finset.card_sdiff_add_card_inter I P
   have hsplit' : Iold.card + (I ∩ P).card = I.card := by
-    simpa [Iold] using hsplit
+    exact hsplit
   have hIold_eq : Iold.card = a := by
     omega
   have hIP_nonempty : (I ∩ P).Nonempty := by
@@ -2446,9 +2552,12 @@ def identifiedPairEmbedding (x y v : V) : IdentifiedPair x y v ↪ V where
 def pairLiftBase (x y v : V) (S : Finset (IdentifiedPair x y v)) : Finset V :=
   S.map (identifiedPairEmbedding x y v)
 
-@[simp] theorem mem_pairLiftBase {S : Finset (IdentifiedPair x y v)} {z : V} :
+omit [DecidableEq V] [Fintype V] in
+@[simp] theorem mem_pairLiftBase [Finite V] {S : Finset (IdentifiedPair x y v)} {z : V} :
     z ∈ pairLiftBase x y v S ↔
       ∃ q ∈ S, q.1.1 = z := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [pairLiftBase, Finset.mem_map]
   constructor
   · rintro ⟨q, hq, hqz⟩
@@ -2456,8 +2565,11 @@ def pairLiftBase (x y v : V) (S : Finset (IdentifiedPair x y v)) : Finset V :=
   · rintro ⟨q, hq, hqz⟩
     exact ⟨q, hq, hqz⟩
 
-@[simp] theorem pairLiftBase_card (S : Finset (IdentifiedPair x y v)) :
+omit [DecidableEq V] [Fintype V] in
+@[simp] theorem pairLiftBase_card [Finite V] (S : Finset (IdentifiedPair x y v)) :
     (pairLiftBase x y v S).card = S.card := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   simp [pairLiftBase]
 
 /-- The quotient representative corresponding to `u`. -/
@@ -2465,14 +2577,21 @@ def pairRepresentative (hux : u ≠ x) (huy : u ≠ y) (huv : u ≠ v) :
     IdentifiedPair x y v :=
   ⟨⟨u, by simp [hux, huy]⟩, huv⟩
 
-@[simp] theorem pairRepresentative_val
+omit [DecidableEq V] [Fintype V] in
+@[simp] theorem pairRepresentative_val [Finite V]
     (hux : u ≠ x) (huy : u ≠ y) (huv : u ≠ v) :
-    (pairRepresentative hux huy huv).1.1 = u := rfl
+    (pairRepresentative hux huy huv).1.1 = u := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
+  exact rfl
 
-theorem pairRepresentative_mem_iff
+omit [DecidableEq V] [Fintype V] in
+theorem pairRepresentative_mem_iff [Finite V]
     (hux : u ≠ x) (huy : u ≠ y) (huv : u ≠ v)
     (S : Finset (IdentifiedPair x y v)) :
     pairRepresentative hux huy huv ∈ S ↔ u ∈ pairLiftBase x y v S := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   constructor
   · intro h
     exact mem_pairLiftBase.mpr ⟨_, h, rfl⟩
@@ -2493,7 +2612,8 @@ def pairWitnessLift
   else
     insert x (insert y (insert u (pairLiftBase x y v S)))
 
-theorem pairWitnessLift_card
+omit [DecidableRel G.Adj] [Fintype V] in
+theorem pairWitnessLift_card [Finite V]
     (hxy : G.Adj x y)
     (hxu : G.Adj x u) (hyu : G.Adj y u)
     (hxv : G.Adj x v) (hyv : G.Adj y v)
@@ -2501,6 +2621,7 @@ theorem pairWitnessLift_card
     (S : Finset (IdentifiedPair x y v)) :
     (pairWitnessLift hxu.ne.symm hyu.ne.symm huv S).card = S.card + 3 := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   have hux : u ≠ x := hxu.ne.symm
   have huy : u ≠ y := hyu.ne.symm
   have hvx : v ≠ x := hxv.ne.symm
@@ -2572,14 +2693,19 @@ def pairCompressedSet
     (outsideFourToIdentified x y u v)
   if u ∈ I ∧ v ∈ I then insert (pairRepresentative hux huy huv) O else O
 
-@[simp] theorem mem_outsideFourFinset {I : Finset V} {z : OutsideFour x y u v} :
+omit [Fintype V] in
+@[simp] theorem mem_outsideFourFinset [Finite V] {I : Finset V} {z : OutsideFour x y u v} :
     z ∈ outsideFourFinset x y u v I ↔ z.1 ∈ I := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   simp [outsideFourFinset]
 
-@[simp] theorem outsideFourFinset_card (I : Finset V) :
+omit [Fintype V] in
+@[simp] theorem outsideFourFinset_card [Finite V] (I : Finset V) :
     (outsideFourFinset x y u v I).card =
       (I \ {x, y, u, v}).card := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   simp only [outsideFourFinset, Finset.card_subtype]
   congr 1
   ext z
@@ -2587,12 +2713,14 @@ def pairCompressedSet
     Finset.mem_singleton]
   tauto
 
-theorem pairIdentify_eq_representative_iff
+omit [DecidableEq V] [Fintype V] in
+theorem pairIdentify_eq_representative_iff [Finite V]
     (hux : u ≠ x) (huy : u ≠ y) (huv : u ≠ v)
     (z : DeletedPair x y) :
     pairIdentify x y u v hux huy huv z = pairRepresentative hux huy huv ↔
       z.1 = u ∨ z.1 = v := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   by_cases hzv : z.1 = v
   · simp [pairIdentify, pairRepresentative, hzv]
   · simp only [pairIdentify, dif_neg hzv, pairRepresentative]
@@ -2604,12 +2732,14 @@ theorem pairIdentify_eq_representative_iff
       · exact Subtype.ext (Subtype.ext hzu)
       · exact (hzv hzu).elim
 
-theorem pairIdentify_eq_outside
+omit [DecidableEq V] [Fintype V] in
+theorem pairIdentify_eq_outside [Finite V]
     (hux : u ≠ x) (huy : u ≠ y) (huv : u ≠ v)
     (z : DeletedPair x y) (a : OutsideFour x y u v)
     (h : pairIdentify x y u v hux huy huv z = outsideFourToIdentified x y u v a) :
     z.1 = a.1 := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   by_cases hzv : z.1 = v
   · have hvu := congrArg (fun q : IdentifiedPair x y v => q.1.1) h
     simp [pairIdentify, hzv, outsideFourToIdentified] at hvu
@@ -2619,12 +2749,14 @@ theorem pairIdentify_eq_outside
     change z.1 = a.1 at hza
     exact hza
 
-theorem outside_mem_S_of_mem_pairWitnessLift
+omit [Fintype V] in
+theorem outside_mem_S_of_mem_pairWitnessLift [Finite V]
     (hux : u ≠ x) (huy : u ≠ y) (huv : u ≠ v)
     (S : Finset (IdentifiedPair x y v)) (a : OutsideFour x y u v)
     (ha : a.1 ∈ pairWitnessLift hux huy huv S) :
     outsideFourToIdentified x y u v a ∈ S := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   by_cases hw : pairRepresentative hux huy huv ∈ S
   · simp only [pairWitnessLift, hw, if_pos] at ha
     have haB : a.1 ∈ pairLiftBase x y v S := by
@@ -2633,7 +2765,7 @@ theorem outside_mem_S_of_mem_pairWitnessLift
     have hqa : q = outsideFourToIdentified x y u v a := by
       exact Subtype.ext (Subtype.ext hq)
     simpa [hqa] using hqS
-  · simp only [pairWitnessLift, hw, if_neg] at ha
+  · simp only [pairWitnessLift, hw] at ha
     have haB : a.1 ∈ pairLiftBase x y v S := by
       simpa [a.2.1, a.2.2.1, a.2.2.2.1] using ha
     obtain ⟨q, hqS, hq⟩ := mem_pairLiftBase.mp haB
@@ -2641,29 +2773,33 @@ theorem outside_mem_S_of_mem_pairWitnessLift
       exact Subtype.ext (Subtype.ext hq)
     simpa [hqa] using hqS
 
-theorem pairRepresentative_mem_of_both_mem_pairWitnessLift
-    (hxy : G.Adj x y) (hxu : G.Adj x u) (hyu : G.Adj y u)
+omit [DecidableRel G.Adj] [Fintype V] in
+theorem pairRepresentative_mem_of_both_mem_pairWitnessLift [Finite V]
+    (_hxy : G.Adj x y) (hxu : G.Adj x u) (hyu : G.Adj y u)
     (hxv : G.Adj x v) (hyv : G.Adj y v) (huv : u ≠ v)
     (S : Finset (IdentifiedPair x y v))
-    (huI : u ∈ pairWitnessLift hxu.ne.symm hyu.ne.symm huv S)
+    (_huI : u ∈ pairWitnessLift hxu.ne.symm hyu.ne.symm huv S)
     (hvI : v ∈ pairWitnessLift hxu.ne.symm hyu.ne.symm huv S) :
     pairRepresentative hxu.ne.symm hyu.ne.symm huv ∈ S := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   by_contra hw
   have hvB : v ∉ pairLiftBase x y v S := by
     rintro hv
     obtain ⟨q, -, hq⟩ := mem_pairLiftBase.mp hv
     exact q.2 hq
-  simp only [pairWitnessLift, hw, if_neg] at hvI
+  simp only [pairWitnessLift, hw] at hvI
   simp [hxv.ne.symm, hyv.ne.symm, huv.symm, hvB] at hvI
 
-theorem pairCompressedSet_subset
+omit [DecidableRel G.Adj] [Fintype V] in
+theorem pairCompressedSet_subset [Finite V]
     (hxy : G.Adj x y) (hxu : G.Adj x u) (hyu : G.Adj y u)
     (hxv : G.Adj x v) (hyv : G.Adj y v) (huv : u ≠ v)
     (S : Finset (IdentifiedPair x y v)) (I : Finset V)
     (hIH : I ⊆ pairWitnessLift hxu.ne.symm hyu.ne.symm huv S) :
     pairCompressedSet hxu.ne.symm hyu.ne.symm huv I ⊆ S := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   intro q hq
   by_cases hboth : u ∈ I ∧ v ∈ I
   · rw [pairCompressedSet, if_pos hboth] at hq
@@ -2682,12 +2818,14 @@ theorem pairCompressedSet_subset
     exact outside_mem_S_of_mem_pairWitnessLift hxu.ne.symm hyu.ne.symm huv S a
       (hIH (mem_outsideFourFinset.mp haI))
 
-theorem source_mem_of_pairIdentify_mem_pairCompressedSet
+omit [Fintype V] in
+theorem source_mem_of_pairIdentify_mem_pairCompressedSet [Finite V]
     (hux : u ≠ x) (huy : u ≠ y) (huv : u ≠ v)
     (I : Finset V) (z : DeletedPair x y)
     (hz : pairIdentify x y u v hux huy huv z ∈
       pairCompressedSet hux huy huv I) : z.1 ∈ I := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   by_cases hboth : u ∈ I ∧ v ∈ I
   · rw [pairCompressedSet, if_pos hboth] at hz
     simp only [Finset.mem_insert] at hz
@@ -2705,12 +2843,14 @@ theorem source_mem_of_pairIdentify_mem_pairCompressedSet
     have hzval := pairIdentify_eq_outside hux huy huv z a hza.symm
     simpa [hzval] using (mem_outsideFourFinset.mp haI)
 
-theorem pairCompressedSet_indep
+omit [DecidableRel G.Adj] [Fintype V] in
+theorem pairCompressedSet_indep [Finite V]
     (hux : u ≠ x) (huy : u ≠ y) (huv : u ≠ v)
     (I : Finset V) (hI : G.IsIndepSet I) :
     (pairGraph (G := G) hux huy huv).IsIndepSet
       (pairCompressedSet hux huy huv I) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   intro a ha b hb hab hAdj
   rcases (SimpleGraph.map_adj' (pairIdentify x y u v hux huy huv)
       (G.induce ({x, y}ᶜ : Set V)) a b).mp hAdj with
@@ -2721,16 +2861,18 @@ theorem pairCompressedSet_indep
     hux huy huv I b' (hb' ▸ hb)
   exact hI haI hbI (Subtype.coe_ne_coe.mpr hab'.ne) hab'
 
-theorem pairCompressedSet_card_bound
+omit [DecidableRel G.Adj] [Fintype V] in
+theorem pairCompressedSet_card_bound [Finite V]
     (hxy : G.Adj x y) (hxu : G.Adj x u) (hyu : G.Adj y u)
     (hxv : G.Adj x v) (hyv : G.Adj y v) (huv : u ≠ v)
     (I : Finset V) (hI : G.IsIndepSet I) :
     I.card ≤ (pairCompressedSet hxu.ne.symm hyu.ne.symm huv I).card + 1 := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let P : Finset V := {x, y, u, v}
   have hsplit := Finset.card_sdiff_add_card_inter I P
   have hsplit' : (I \ P).card + (I ∩ P).card = I.card := by
-    simpa [add_comm] using hsplit
+    exact hsplit
   by_cases hboth : u ∈ I ∧ v ∈ I
   · have hxI : x ∉ I := by
       intro hxI
@@ -2800,15 +2942,17 @@ theorem pairCompressedSet_card_bound
     rw [hcardC]
     omega
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Every independent set in the lifted witness compresses to an independent
 set of the quotient while losing at most one vertex. -/
-theorem alphaOn_pairWitnessLift_le
+theorem alphaOn_pairWitnessLift_le [Finite V]
     (hxy : G.Adj x y) (hxu : G.Adj x u) (hyu : G.Adj y u)
     (hxv : G.Adj x v) (hyv : G.Adj y v) (huv : u ≠ v)
     (S : Finset (IdentifiedPair x y v)) :
     alphaOn G (pairWitnessLift hxu.ne.symm hyu.ne.symm huv S) ≤
       alphaOn (pairGraph (G := G) hxu.ne.symm hyu.ne.symm huv) S + 1 := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨I, hIH, hI, hIcard⟩ :=
     exists_maximum_independent_subset G
       (pairWitnessLift hxu.ne.symm hyu.ne.symm huv S)
@@ -2823,25 +2967,30 @@ theorem alphaOn_pairWitnessLift_le
   rw [← hIcard]
   exact hcard.trans (Nat.add_le_add_right hJalpha 1)
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Each quotient witness gains at least one unit of signed potential when
 lifted back to the four diamond vertices. -/
-theorem pairGraph_potential_add_one_le
+theorem pairGraph_potential_add_one_le [Finite V]
     (hxy : G.Adj x y) (hxu : G.Adj x u) (hyu : G.Adj y u)
     (hxv : G.Adj x v) (hyv : G.Adj y v) (huv : u ≠ v)
     (S : Finset (IdentifiedPair x y v)) :
     potential (pairGraph (G := G) hxu.ne.symm hyu.ne.symm huv) S + 1 ≤
       potential G (pairWitnessLift hxu.ne.symm hyu.ne.symm huv S) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hcard := pairWitnessLift_card hxy hxu hyu hxv hyv huv S
   have halpha := alphaOn_pairWitnessLift_le hxy hxu hyu hxv hyv huv S
   rw [potential, potential, hcard]
   omega
 
+omit [DecidableRel G.Adj] in
 /-- C1.1's potential estimate: identifying the two nonadjacent common
 neighbors after deleting the edge endpoints lowers `f` by at least one. -/
 theorem pairGraph_f_le_sub_one
     (hxy : G.Adj x y) (hxu : G.Adj x u) (hyu : G.Adj y u)
     (hxv : G.Adj x v) (hyv : G.Adj y v) (huv : u ≠ v) :
     f (pairGraph (G := G) hxu.ne.symm hyu.ne.symm huv) ≤ f G - 1 := by
+  classical
   rw [f_le_iff_forall_potential_le]
   intro S
   have hlift := pairGraph_potential_add_one_le hxy hxu hyu hxv hyv huv S
@@ -2850,7 +2999,7 @@ theorem pairGraph_f_le_sub_one
 
 /-- The pair quotient is strictly smaller than the original graph. -/
 theorem pairGraph_card_lt
-    (hux : u ≠ x) (huy : u ≠ y) (huv : u ≠ v) :
+    (_hux : u ≠ x) (_huy : u ≠ y) (_huv : u ≠ v) :
     Fintype.card (IdentifiedPair x y v) < Fintype.card V := by
   apply Fintype.card_lt_of_injective_not_surjective
     (identifiedPairEmbedding x y v) (identifiedPairEmbedding x y v).injective
@@ -2877,10 +3026,12 @@ def apexIntoOriginal (x y : V) : Option (DeletedPair x y) ↪ V where
         | none => exact (a.2 (Or.inl (by simpa using h))).elim
         | some b => exact congrArg some (Subtype.ext h)
 
+omit [DecidableRel G.Adj] in
 /-- The apex construction is strictly smaller, since `y` is not in the
 image of `apexIntoOriginal`. -/
 theorem commonNeighborApexGraph_card_lt (hxy : G.Adj x y) :
     Fintype.card (Option (DeletedPair x y)) < Fintype.card V := by
+  classical
   apply Fintype.card_lt_of_injective_not_surjective
     (apexIntoOriginal x y) (apexIntoOriginal x y).injective
   intro hsurj
@@ -2903,6 +3054,7 @@ theorem nonempty_coloring_iff_colorable_card {W : Type u} (H : SimpleGraph W)
   · rintro ⟨C⟩
     exact ⟨SimpleGraph.recolorOfEquiv H (Fintype.equivFin α).symm C⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- C1.1 in the form used by C1.2: the pair quotient has an
 `(chiNat G - 2)`-coloring. -/
 theorem pairGraph_colorable_chi_sub_two
@@ -2911,6 +3063,7 @@ theorem pairGraph_colorable_chi_sub_two
     (hxv : G.Adj x v) (hyv : G.Adj y v) (huv : u ≠ v) :
     (pairGraph (G := G) hxu.ne.symm hyu.ne.symm huv).Colorable
       (Erdos922FullB.chiNat G - 2) := by
+  classical
   let Q := pairGraph (G := G) hxu.ne.symm hyu.ne.symm huv
   have hsmall := hmin.smaller Q
     (pairGraph_card_lt hxu.ne.symm hyu.ne.symm huv)
@@ -2927,11 +3080,13 @@ theorem pairGraph_colorable_chi_sub_two
   apply hsmall.mono
   omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- A minimal counterexample has no coloring using one fewer color than its
 chromatic number, with `Option` supplying the fresh color. -/
 theorem not_coloring_option_chi_sub_two
     (hmin : Erdos922FullB.IsOrderMinimalCounterexample G) :
     ¬ Nonempty (G.Coloring (Option (Fin (Erdos922FullB.chiNat G - 2)))) := by
+  classical
   intro hC
   have hc := (nonempty_coloring_iff_colorable_card G).mp hC
   have hchi := Erdos922FullB.three_le_chiNat_of_not_folkmanBound G hmin.counterexample
@@ -2943,6 +3098,7 @@ theorem not_coloring_option_chi_sub_two
   have hle := (Erdos922FullB.colorable_iff_chiNat_le G _).mp hc
   omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- C1.2 plus the identified pair show that an edge has strictly more common
 neighbors than the quotient palette. -/
 theorem chi_sub_two_lt_commonNeighbors
@@ -2985,6 +3141,7 @@ theorem chi_sub_two_lt_commonNeighbors
   have hlt := Fintype.card_lt_of_surjective_not_injective color hsurj hnotinj
   simpa [α, Nat.card_eq_fintype_card] using hlt
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- The common-neighbor apex graph cannot use `chiNat G - 2` colors. -/
 theorem apex_not_colorable_chi_sub_two
     (hmin : Erdos922FullB.IsOrderMinimalCounterexample G)
@@ -2993,6 +3150,7 @@ theorem apex_not_colorable_chi_sub_two
     (huvNA : ¬ G.Adj u v) :
     ¬ (commonNeighborApexGraph (G := G) (x := x) (y := y)).Colorable
       (Erdos922FullB.chiNat G - 2) := by
+  classical
   intro hc
   apply commonNeighborApexGraph_not_colorable hxy
     (not_coloring_option_chi_sub_two hmin)
@@ -3001,6 +3159,7 @@ theorem apex_not_colorable_chi_sub_two
   apply (nonempty_coloring_iff_colorable_card _).mpr
   simpa using hc
 
+omit [DecidableRel G.Adj] in
 /-- Minimality and apex noncolorability force the apex graph's potential
 maximum to be at least that of `G`. -/
 theorem f_le_f_apex
@@ -3009,6 +3168,7 @@ theorem f_le_f_apex
     (hxv : G.Adj x v) (hyv : G.Adj y v) (huv : u ≠ v)
     (huvNA : ¬ G.Adj u v) :
     f G ≤ f (commonNeighborApexGraph (G := G) (x := x) (y := y)) := by
+  classical
   let G0 := commonNeighborApexGraph (G := G) (x := x) (y := y)
   have hsmall := hmin.smaller G0 (commonNeighborApexGraph_card_lt hxy)
   change G0.Colorable (Int.toNat (f G0) + 2) at hsmall
@@ -3053,10 +3213,12 @@ def nonApexIntoOriginal (x y : V) : NonApex x y ↪ V where
 def apexOldPart (x y : V) (S : Finset (Option (DeletedPair x y))) : Finset V :=
   (S.subtype (fun z => z ≠ none)).map (nonApexIntoOriginal x y)
 
-@[simp] theorem mem_apexOldPart {S : Finset (Option (DeletedPair x y))} {z : V} :
+omit [DecidableEq V] [Fintype V] in
+@[simp] theorem mem_apexOldPart [Finite V] {S : Finset (Option (DeletedPair x y))} {z : V} :
     z ∈ apexOldPart x y S ↔
       ∃ d : DeletedPair x y, some d ∈ S ∧ d.1 = z := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   constructor
   · intro hz
     rw [apexOldPart, Finset.mem_map] at hz
@@ -3078,10 +3240,12 @@ def apexOldPart (x y : V) (S : Finset (Option (DeletedPair x y))) : Finset V :=
     · simpa [q] using hdS
     · rfl
 
-theorem apexOldPart_card_add_one_of_mem
+omit [DecidableEq V] [Fintype V] in
+theorem apexOldPart_card_add_one_of_mem [Finite V]
     (S : Finset (Option (DeletedPair x y))) (h : none ∈ S) :
     (apexOldPart x y S).card + 1 = S.card := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   rw [apexOldPart, Finset.card_map, Finset.card_subtype]
   have herase := Finset.card_erase_add_one h
   have hfilter : S.filter (fun z => z ≠ none) = S.erase none := by
@@ -3089,10 +3253,12 @@ theorem apexOldPart_card_add_one_of_mem
     simp [and_comm]
   simpa [hfilter] using herase
 
-theorem apexOldPart_card_of_not_mem
+omit [DecidableEq V] [Fintype V] in
+theorem apexOldPart_card_of_not_mem [Finite V]
     (S : Finset (Option (DeletedPair x y))) (h : none ∉ S) :
     (apexOldPart x y S).card = S.card := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   rw [apexOldPart, Finset.card_map, Finset.card_subtype]
   have hfilter : S.filter (fun z => z ≠ none) = S := by
     apply Finset.filter_eq_self.mpr
@@ -3121,14 +3287,19 @@ def apexCompression (x y : V) (I : Finset V) :
   let O := (awayPairFinset x y I).map (awayPairToApex x y)
   if x ∈ I ∨ y ∈ I then insert none O else O
 
-@[simp] theorem mem_awayPairFinset {I : Finset V} {z : AwayPair x y} :
+omit [Fintype V] in
+@[simp] theorem mem_awayPairFinset [Finite V] {I : Finset V} {z : AwayPair x y} :
     z ∈ awayPairFinset x y I ↔ z.1 ∈ I := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   simp [awayPairFinset]
 
-theorem apexCompression_card
+omit [DecidableRel G.Adj] [Fintype V] in
+theorem apexCompression_card [Finite V]
     (hxy : G.Adj x y) (I : Finset V) (hI : G.IsIndepSet I) :
     (apexCompression x y I).card = I.card := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let P : Finset V := {x, y}
   have hsplit := Finset.card_sdiff_add_card_inter I P
   have hawayCard : (awayPairFinset x y I).card = (I \ P).card := by
@@ -3167,9 +3338,11 @@ theorem apexCompression_card
     rw [apexCompression, if_neg hspecial, Finset.card_map, hawayCard]
     omega
 
-@[simp] theorem none_mem_apexCompression (I : Finset V) :
+omit [Fintype V] in
+@[simp] theorem none_mem_apexCompression [Finite V] (I : Finset V) :
     none ∈ apexCompression x y I ↔ x ∈ I ∨ y ∈ I := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   have hnone : none ∉ (awayPairFinset x y I).map (awayPairToApex x y) := by
     intro hm
     rw [Finset.mem_map] at hm
@@ -3180,9 +3353,11 @@ theorem apexCompression_card
   · simp [apexCompression, h, hnone]
   · simp [apexCompression, h, hnone]
 
-@[simp] theorem some_mem_apexCompression (I : Finset V) (d : DeletedPair x y) :
+omit [Fintype V] in
+@[simp] theorem some_mem_apexCompression [Finite V] (I : Finset V) (d : DeletedPair x y) :
     some d ∈ apexCompression x y I ↔ d.1 ∈ I := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   by_cases h : x ∈ I ∨ y ∈ I
   · rw [apexCompression, if_pos h]
     simp only [Finset.mem_insert, Option.some_ne_none, false_or, Finset.mem_map]
@@ -3210,12 +3385,14 @@ theorem apexCompression_card
           not_or] using d.2⟩
       exact ⟨a, mem_awayPairFinset.mpr hdI, by rfl⟩
 
-theorem apexCompression_subset
+omit [Fintype V] in
+theorem apexCompression_subset [Finite V]
     (S : Finset (Option (DeletedPair x y))) (I : Finset V)
     (hIH : I ⊆ insert x (insert y (apexOldPart x y S)))
     (hapex : x ∈ I ∨ y ∈ I → none ∈ S) :
     apexCompression x y I ⊆ S := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   intro q hq
   cases q with
   | none => exact hapex ((none_mem_apexCompression I).mp hq)
@@ -3234,11 +3411,13 @@ theorem apexCompression_subset
       have hed : e = d := Subtype.ext heq
       simpa [hed] using heS
 
-theorem apexCompression_indep
-    (hxy : G.Adj x y) (I : Finset V) (hI : G.IsIndepSet I) :
+omit [DecidableRel G.Adj] [Fintype V] in
+theorem apexCompression_indep [Finite V]
+    (_hxy : G.Adj x y) (I : Finset V) (hI : G.IsIndepSet I) :
     (commonNeighborApexGraph (G := G) (x := x) (y := y)).IsIndepSet
       (apexCompression x y I) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   intro a ha b hb hab hAdj
   cases a with
   | none =>
@@ -3263,14 +3442,16 @@ theorem apexCompression_indep
           have hbI := (some_mem_apexCompression I b).mp hb
           exact hI haI hbI (fun h => hab (congrArg some (Subtype.ext h))) hAdj
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Replacing a present apex by the adjacent pair `x,y` does not increase
 the independence number. -/
-theorem alphaOn_apexReplacement_le
+theorem alphaOn_apexReplacement_le [Finite V]
     (hxy : G.Adj x y) (S : Finset (Option (DeletedPair x y)))
     (hapex : none ∈ S) :
     alphaOn G (insert x (insert y (apexOldPart x y S))) ≤
       alphaOn (commonNeighborApexGraph (G := G) (x := x) (y := y)) S := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨I, hIH, hI, hIcard⟩ := exists_maximum_independent_subset G
     (insert x (insert y (apexOldPart x y S)))
   let K := apexCompression x y I
@@ -3281,6 +3462,7 @@ theorem alphaOn_apexReplacement_le
   rw [← hIcard, ← apexCompression_card hxy I hI]
   exact hKalpha
 
+omit [DecidableRel G.Adj] in
 /-- A maximizing apex witness cannot contain the apex once `f G ≤ f G0`. -/
 theorem apex_not_mem_maximumWitness
     (hxy : G.Adj x y) (S : Finset (Option (DeletedPair x y)))
@@ -3288,6 +3470,7 @@ theorem apex_not_mem_maximumWitness
       f (commonNeighborApexGraph (G := G) (x := x) (y := y)))
     (hf : f G ≤ f (commonNeighborApexGraph (G := G) (x := x) (y := y))) :
     none ∉ S := by
+  classical
   intro hapex
   let H := insert x (insert y (apexOldPart x y S))
   have hxOld : x ∉ apexOldPart x y S := by
@@ -3314,29 +3497,37 @@ theorem apex_not_mem_maximumWitness
     (commonNeighborApexGraph (G := G) (x := x) (y := y)) S at halpha
   omega
 
-theorem apexOldPart_mono {S T : Finset (Option (DeletedPair x y))}
+omit [DecidableEq V] [Fintype V] in
+theorem apexOldPart_mono [Finite V] {S T : Finset (Option (DeletedPair x y))}
     (hST : S ⊆ T) : apexOldPart x y S ⊆ apexOldPart x y T := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   intro z hz
   obtain ⟨d, hdS, rfl⟩ := mem_apexOldPart.mp hz
   exact mem_apexOldPart.mpr ⟨d, hST hdS, rfl⟩
 
-theorem apexOldPart_indep
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+theorem apexOldPart_indep [Finite V]
     (S : Finset (Option (DeletedPair x y)))
     (hS : (commonNeighborApexGraph (G := G) (x := x) (y := y)).IsIndepSet S) :
     G.IsIndepSet (apexOldPart x y S) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   intro a ha b hb hab hAdj
   obtain ⟨da, hda, rfl⟩ := mem_apexOldPart.mp ha
   obtain ⟨db, hdb, rfl⟩ := mem_apexOldPart.mp hb
   exact hS hda hdb (fun h => hab (congrArg Subtype.val (Option.some.inj h))) hAdj
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- When the apex is absent, the witness and its old-vertex image have equal
 independence number. -/
-theorem alphaOn_apex_eq_old_of_not_mem
+theorem alphaOn_apex_eq_old_of_not_mem [Finite V]
     (hxy : G.Adj x y) (S : Finset (Option (DeletedPair x y)))
     (hno : none ∉ S) :
     alphaOn (commonNeighborApexGraph (G := G) (x := x) (y := y)) S =
       alphaOn G (apexOldPart x y S) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   apply Nat.le_antisymm
   · obtain ⟨K, hKS, hK, hKcard⟩ := exists_maximum_independent_subset
       (commonNeighborApexGraph (G := G) (x := x) (y := y)) S
@@ -3368,18 +3559,24 @@ theorem alphaOn_apex_eq_old_of_not_mem
     rw [← hIcard, ← apexCompression_card hxy I hI]
     exact card_le_alphaOn hKS hK
 
-theorem potential_apex_eq_old_of_not_mem
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+theorem potential_apex_eq_old_of_not_mem [Finite V]
     (hxy : G.Adj x y) (S : Finset (Option (DeletedPair x y)))
     (hno : none ∉ S) :
     potential (commonNeighborApexGraph (G := G) (x := x) (y := y)) S =
       potential G (apexOldPart x y S) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [potential, potential, apexOldPart_card_of_not_mem S hno,
     alphaOn_apex_eq_old_of_not_mem hxy S hno]
 
-theorem triangleExtension_card
+omit [DecidableRel G.Adj] [Fintype V] in
+theorem triangleExtension_card [Finite V]
     (hxy : G.Adj x y) (hxt : G.Adj x u) (hyt : G.Adj y u)
     (J : Finset V) (hxJ : x ∉ J) (hyJ : y ∉ J) (htJ : u ∉ J) :
     (insert x (insert y (insert u J))).card = J.card + 3 := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have htcard : (insert u J).card = J.card + 1 := Finset.card_insert_of_notMem htJ
   have hycard : (insert y (insert u J)).card = (insert u J).card + 1 := by
     apply Finset.card_insert_of_notMem
@@ -3390,11 +3587,13 @@ theorem triangleExtension_card
     simp [hxy.ne, hxt.ne, hxJ]
   omega
 
-theorem alphaOn_triangleExtension_le
+omit [DecidableRel G.Adj] [Fintype V] in
+theorem alphaOn_triangleExtension_le [Finite V]
     (hxy : G.Adj x y) (hxt : G.Adj x u) (hyt : G.Adj y u)
     (J : Finset V) :
     alphaOn G (insert x (insert y (insert u J))) ≤ alphaOn G J + 1 := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨I, hIH, hI, hIcard⟩ := exists_maximum_independent_subset G
     (insert x (insert y (insert u J)))
   let P : Finset V := {x, y, u}
@@ -3433,6 +3632,7 @@ theorem alphaOn_triangleExtension_le
   rw [← hIcard]
   omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- The no-induced-diamond conclusion for a genuine order-minimal
 counterexample: common neighbors of every edge form a clique. -/
 theorem commonNeighbors_isClique_of_orderMinimalCounterexample
@@ -3470,7 +3670,6 @@ theorem commonNeighbors_isClique_of_orderMinimalCounterexample
     rintro hy
     obtain ⟨d, -, hd⟩ := mem_apexOldPart.mp hy
     exact d.2 (Or.inr hd)
-
   -- Adding the apex to a maximizing old witness forces an independent set
   -- one vertex larger, whose old part avoids every common neighbor.
   let K : Finset (Option (DeletedPair x y)) := insert none S
@@ -3526,7 +3725,6 @@ theorem commonNeighbors_isClique_of_orderMinimalCounterexample
     · exact alphaOn_mono (Finset.sdiff_subset)
     · rw [← hIcard]
       exact card_le_alphaOn hIU hIind
-
   -- Every common neighbor must already occur in the maximizing witness.
   have hAJ : A ⊆ J := by
     intro t htA
@@ -3541,7 +3739,6 @@ theorem commonNeighbors_isClique_of_orderMinimalCounterexample
     change H.card = J.card + 3 at hHcard
     change alphaOn G H ≤ alphaOn G J + 1 at halphaH
     omega
-
   -- The common-neighbor lower bound makes `J \ A` smaller than twice its
   -- independence number, exactly the Hajnal hypothesis.
   have hcommon := chi_sub_two_lt_commonNeighbors
@@ -3605,7 +3802,7 @@ def nextIndex (p : ℕ) (hp : 1 ≤ p) (i : Fin p) : Fin p :=
     (pairEquiv p (i, b)).val = b.val + 2 * i.val := rfl
 
 /-- The two vertices in one consecutive pair are adjacent on the cycle. -/
-theorem pair_adj (p : ℕ) (hp : 1 ≤ p) (i : Fin p) :
+theorem pair_adj (p : ℕ) (_hp : 1 ≤ p) (i : Fin p) :
     (SimpleGraph.cycleGraph (2 * p)).Adj
       (pairEquiv p (i, 0)) (pairEquiv p (i, 1)) := by
   rw [SimpleGraph.cycleGraph_adj']
@@ -3640,7 +3837,7 @@ theorem pair_next_adj (p : ℕ) (hp : 1 ≤ p) (i : Fin p) :
     rw [Fin.coe_sub_iff_lt.mpr]
     · rw [pairEquiv_val, pairEquiv_val, hilast, hnext]
       omega
-    · rw [Fin.lt_iff_val_lt_val, pairEquiv_val, pairEquiv_val, hilast, hnext]
+    · rw [Fin.lt_def, pairEquiv_val, pairEquiv_val, hilast, hnext]
       omega
 
 theorem independent_card_le (p : ℕ) (hp : 1 ≤ p)
@@ -3708,7 +3905,7 @@ theorem exists_iterate_nextIndex_eq (p : ℕ) (hp : 1 ≤ p) (i j : Fin p) :
   refine ⟨p - i.val + j.val, ?_⟩
   rw [iterate_nextIndex]
   apply Fin.ext
-  simp only [Fin.val_mk]
+  simp only
   have hi : i.val ≤ p := i.isLt.le
   rw [← Nat.add_assoc, Nat.add_sub_of_le hi, Nat.add_mod]
   simp [Nat.mod_eq_of_lt j.isLt]
@@ -3841,7 +4038,7 @@ theorem rightIndices_card (p : ℕ) : (rightIndices p).card = p := by
   classical
   simp [rightIndices]
 
-theorem leftIndices_independent (p : ℕ) (hp : 1 ≤ p) :
+theorem leftIndices_independent (p : ℕ) (_hp : 1 ≤ p) :
     (SimpleGraph.cycleGraph (2 * p)).IsIndepSet (leftIndices p) := by
   classical
   let c := SimpleGraph.cycleGraph.bicoloring_of_even (2 * p)
@@ -3855,7 +4052,7 @@ theorem leftIndices_independent (p : ℕ) (hp : 1 ≤ p) :
   rw [pairEquiv_val]
   simp
 
-theorem rightIndices_independent (p : ℕ) (hp : 1 ≤ p) :
+theorem rightIndices_independent (p : ℕ) (_hp : 1 ≤ p) :
     (SimpleGraph.cycleGraph (2 * p)).IsIndepSet (rightIndices p) := by
   classical
   let c := SimpleGraph.cycleGraph.bicoloring_of_even (2 * p)
@@ -3892,13 +4089,14 @@ embedding.  The proof explicitly pulls every independent subset of the image
 back through the embedding, so both the extremal bound and its equality case
 are preserved. -/
 theorem configuration_map_embedding
-    {W : Type v} [Fintype W] [DecidableEq W] [DecidableEq V]
+    {W : Type v} [Finite W] [DecidableEq W] [DecidableEq V]
     {H : SimpleGraph W} {G : SimpleGraph V} (φ : H ↪g G)
     {A B : Finset W} {p : ℕ}
     (hC : Erdos922.EvenHole.Configuration H A B p) :
     Erdos922.EvenHole.Configuration G
       (A.map φ.toEmbedding) (B.map φ.toEmbedding) p := by
   classical
+  let : Fintype W := Fintype.ofFinite W
   let e : W ↪ V := φ.toEmbedding
   have image_independent (S : Finset W) (hS : H.IsIndepSet S) :
       G.IsIndepSet (S.map e) := by
@@ -3972,10 +4170,12 @@ theorem configuration_map_embedding
 /-- An induced copy of an even cycle in an ambient graph gives the exact
 configuration needed by the contraction theorem. -/
 theorem configuration_of_induced_even_cycle_iso
-    [Fintype V] [DecidableEq V] (G : SimpleGraph V) (C : Set V)
+    [Finite V] [DecidableEq V] (G : SimpleGraph V) (C : Set V)
     (p : ℕ) (hp : 2 ≤ p)
     (e : G.induce C ≃g SimpleGraph.cycleGraph (2 * p)) :
     ∃ A B : Finset V, Erdos922.EvenHole.Configuration G A B p := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let φ : SimpleGraph.cycleGraph (2 * p) ↪g G :=
     (SimpleGraph.Embedding.induce C).comp e.symm.toEmbedding
   refine ⟨(leftIndices p).map φ.toEmbedding,
@@ -3985,11 +4185,13 @@ theorem configuration_of_induced_even_cycle_iso
 /-- An order-minimal counterexample contains no induced even cycle (stated
 as an isomorphism onto an induced subgraph). -/
 theorem no_induced_even_cycle_iso_of_no_configuration
-    [Fintype V] [DecidableEq V] (G : SimpleGraph V)
+    [Finite V] [DecidableEq V] (G : SimpleGraph V)
     (hnone : ¬ ∃ (A B : Finset V) (p : ℕ),
       Erdos922.EvenHole.Configuration G A B p) :
     ¬ ∃ (C : Set V) (p : ℕ), 2 ≤ p ∧
       Nonempty (G.induce C ≃g SimpleGraph.cycleGraph (2 * p)) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rintro ⟨C, p, hp, ⟨e⟩⟩
   obtain ⟨A, B, hC⟩ := configuration_of_induced_even_cycle_iso G C p hp e
   exact hnone ⟨A, B, p, hC⟩
@@ -4482,8 +4684,8 @@ theorem inducedCycleIso_of_chordless_cycle
       intro i j hij
       apply Fin.ext
       exact hp.getVert_injOn'
-        (by simp only [Set.mem_setOf_eq]; omega)
-        (by simp only [Set.mem_setOf_eq]; omega) hij }
+        (by simp only [Set.mem_ofPred_eq]; omega)
+        (by simp only [Set.mem_ofPred_eq]; omega) hij }
   let f : SimpleGraph.cycleGraph p.length ↪g G := {
     __ := f0
     map_rel_iff' := by
@@ -4499,14 +4701,14 @@ theorem inducedCycleIso_of_chordless_cycle
         · have hik : i.val = k := by
             symm
             exact hp.getVert_injOn'
-              (by simp only [Set.mem_setOf_eq]; omega)
-              (by simp only [Set.mem_setOf_eq]; omega) hdir.1
+              (by simp only [Set.mem_ofPred_eq]; omega)
+              (by simp only [Set.mem_ofPred_eq]; omega) hdir.1
           by_cases hks : k + 1 < p.length
           · have hjk : j.val = k + 1 := by
               symm
               exact hp.getVert_injOn'
-                (by simp only [Set.mem_setOf_eq]; omega)
-                (by simp only [Set.mem_setOf_eq]; omega) hdir.2
+                (by simp only [Set.mem_ofPred_eq]; omega)
+                (by simp only [Set.mem_ofPred_eq]; omega) hdir.2
             rw [SimpleGraph.cycleGraph_adj']
             right
             rw [Fin.coe_sub_iff_le.mpr (by omega : i ≤ j)]
@@ -4519,8 +4721,8 @@ theorem inducedCycleIso_of_chordless_cycle
                   _ = p.getVert p.length := congrArg p.getVert hklen
                   _ = p.getVert 0 := p.getVert_length.trans p.getVert_zero.symm
               exact hp.getVert_injOn'
-                (by simp only [Set.mem_setOf_eq]; omega)
-                (by simp only [Set.mem_setOf_eq]; omega) hv
+                (by simp only [Set.mem_ofPred_eq]; omega)
+                (by simp only [Set.mem_ofPred_eq]; omega) hv
             rw [SimpleGraph.cycleGraph_adj']
             right
             have hji : j < i := by
@@ -4534,14 +4736,14 @@ theorem inducedCycleIso_of_chordless_cycle
         · have hjk : j.val = k := by
             symm
             exact hp.getVert_injOn'
-              (by simp only [Set.mem_setOf_eq]; omega)
-              (by simp only [Set.mem_setOf_eq]; omega) hrev.1
+              (by simp only [Set.mem_ofPred_eq]; omega)
+              (by simp only [Set.mem_ofPred_eq]; omega) hrev.1
           by_cases hks : k + 1 < p.length
           · have hik : i.val = k + 1 := by
               symm
               exact hp.getVert_injOn'
-                (by simp only [Set.mem_setOf_eq]; omega)
-                (by simp only [Set.mem_setOf_eq]; omega) hrev.2
+                (by simp only [Set.mem_ofPred_eq]; omega)
+                (by simp only [Set.mem_ofPred_eq]; omega) hrev.2
             rw [SimpleGraph.cycleGraph_adj']
             left
             rw [Fin.coe_sub_iff_le.mpr (by omega : j ≤ i)]
@@ -4554,8 +4756,8 @@ theorem inducedCycleIso_of_chordless_cycle
                   _ = p.getVert p.length := congrArg p.getVert hklen
                   _ = p.getVert 0 := p.getVert_length.trans p.getVert_zero.symm
               exact hp.getVert_injOn'
-                (by simp only [Set.mem_setOf_eq]; omega)
-                (by simp only [Set.mem_setOf_eq]; omega) hv
+                (by simp only [Set.mem_ofPred_eq]; omega)
+                (by simp only [Set.mem_ofPred_eq]; omega) hv
             rw [SimpleGraph.cycleGraph_adj']
             left
             have hij : i < j := by
@@ -4962,11 +5164,12 @@ universe u
 
 variable {V : Type u} {G : SimpleGraph V}
 
-theorem exists_shorter_cycle_of_chord [DecidableEq V]
+theorem exists_shorter_cycle_of_chord
     {v : V} {c : G.Walk v v} (hc : c.IsCycle)
     {x y : V} (hx : x ∈ c.support) (hy : y ∈ c.support)
     (hxy : G.Adj x y) (hnot : ¬ c.toSubgraph.Adj x y) :
     ∃ a : V, ∃ c' : G.Walk a a, c'.IsCycle ∧ c'.length < c.length := by
+  classical
   let r := c.rotate x hx
   have hr_cycle : r.IsCycle := hc.rotate hx
   have hlen_rot : r.length = c.length := by
@@ -5031,9 +5234,10 @@ theorem exists_shorter_cycle_of_chord [DecidableEq V]
   simpa [SimpleGraph.Walk.length_cons, hlen_rot] using hlen_short
 
 /-- A cycle attaining the girth has no chord. -/
-theorem isChordless_of_isCycle_length_eq_girth [DecidableEq V]
+theorem isChordless_of_isCycle_length_eq_girth
     {v : V} {w : G.Walk v v} (hw : w.IsCycle)
     (hlen : w.length = G.girth) : w.IsChordless := by
+  classical
   rw [SimpleGraph.Walk.isChordless_iff_forall_mem_edges]
   intro x y hx hy hxy
   by_contra hedge
@@ -5059,11 +5263,13 @@ theorem fOn_le_of_large_independent_sets
   omega
 
 theorem erdos_922_of_noOrderMinimalCounterexample
-    {V : Type u} [Fintype V] [DecidableEq V]
+    {V : Type u} [Finite V]
     (hNo : Erdos922FullB.NoOrderMinimalCounterexample.{u})
     (G : SimpleGraph V) (k : ℕ)
     (hG : Erdos922.HasLargeIndependentSets G k) :
     G.chromaticNumber ≤ ((k + 2 : ℕ) : ℕ∞) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hfolk : Erdos922FullB.FolkmanBound G :=
     Erdos922FullB.folkmanBound_of_noOrderMinimalCounterexample hNo G
   have hf : Erdos922FullB.fOn G Finset.univ ≤ (k : ℤ) :=
@@ -5085,9 +5291,10 @@ universe u
 vertex.  This tiny estimate is the numerical input used at the maximum
 clique in the final recoloring argument. -/
 theorem alphaOn_eq_one_of_nonempty_clique
-    {V : Type u} [DecidableEq V] {G : SimpleGraph V} {K : Finset V}
+    {V : Type u} {G : SimpleGraph V} {K : Finset V}
     (hK : G.IsClique (K : Set V)) (hKne : K.Nonempty) :
     Erdos922FullB.alphaOn G K = 1 := by
+  classical
   apply Nat.le_antisymm
   · obtain ⟨I, hIK, hI, hIcard⟩ :=
       Erdos922FullB.exists_maximum_independent_subset G K
@@ -5165,9 +5372,10 @@ theorem evenHoleConfiguration_of_inducedFourCycle
 /-- The abstract even-hole exclusion specializes to the local induced-C4
 predicate used by the maximum-clique recoloring. -/
 theorem noInducedFourCycle_of_orderMinimal
-    {V : Type u} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
+    {V : Type u} [Fintype V] (G : SimpleGraph V)
     (hmin : Erdos922FullB.IsOrderMinimalCounterexample G) :
     Erdos922Recolor.NoInducedFourCycle G := by
+  classical
   intro a b c d hab hac had hbc hbd hcd hAB hBC hCD hDA hAC hBD
   apply Erdos922.EvenHole.no_configuration_of_orderMinimalCounterexample G hmin
   exact ⟨{a, c}, {b, d}, 2,
@@ -5177,7 +5385,7 @@ theorem noInducedFourCycle_of_orderMinimal
 /-- Common-neighbor cliquehood is exactly the local no-induced-diamond
 predicate used by the recoloring layer. -/
 theorem noInducedDiamond_of_orderMinimal
-    {V : Type u} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
+    {V : Type u} [Fintype V] (G : SimpleGraph V)
     (hmin : Erdos922FullB.IsOrderMinimalCounterexample G) :
     Erdos922Recolor.NoInducedDiamond G := by
   classical
@@ -5190,7 +5398,7 @@ theorem noInducedDiamond_of_orderMinimal
 /-- The maximum-clique recoloring rules out a triangle in an order-minimal
 counterexample once diamonds and induced four-cycles have been excluded. -/
 theorem triangle_free_of_orderMinimal
-    {V : Type u} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
+    {V : Type u} [Fintype V] (G : SimpleGraph V)
     (hmin : Erdos922FullB.IsOrderMinimalCounterexample G)
     (hdiamond : Erdos922Recolor.NoInducedDiamond G)
     (hfour : Erdos922Recolor.NoInducedFourCycle G) :
@@ -5258,26 +5466,28 @@ theorem triangle_free_of_orderMinimal
 /-- With the four-cycle part discharged by the even-hole contraction, only
 the diamond exclusion is needed to obtain triangle-freeness. -/
 theorem triangle_free_of_orderMinimal_of_noInducedDiamond
-    {V : Type u} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
+    {V : Type u} [Fintype V] (G : SimpleGraph V)
     (hmin : Erdos922FullB.IsOrderMinimalCounterexample G)
     (hdiamond : Erdos922Recolor.NoInducedDiamond G) :
-    G.CliqueFree 3 :=
-  triangle_free_of_orderMinimal G hmin hdiamond
+    G.CliqueFree 3 := by
+  classical
+  exact triangle_free_of_orderMinimal G hmin hdiamond
     (noInducedFourCycle_of_orderMinimal G hmin)
 
 /-- Every order-minimal counterexample is triangle-free. -/
 theorem triangle_free_of_orderMinimalCounterexample
-    {V : Type u} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
+    {V : Type u} [Fintype V] (G : SimpleGraph V)
     (hmin : Erdos922FullB.IsOrderMinimalCounterexample G) :
-    G.CliqueFree 3 :=
-  triangle_free_of_orderMinimal G hmin
+    G.CliqueFree 3 := by
+  classical
+  exact triangle_free_of_orderMinimal G hmin
     (noInducedDiamond_of_orderMinimal G hmin)
     (noInducedFourCycle_of_orderMinimal G hmin)
 
 /-- The structural heart of Folkman's argument: a counterexample minimal in
 vertex order cannot exist. -/
 theorem not_orderMinimalCounterexample
-    {V : Type u} [Fintype V] [DecidableEq V] (G : SimpleGraph V) :
+    {V : Type u} [Fintype V] (G : SimpleGraph V) :
     ¬ Erdos922FullB.IsOrderMinimalCounterexample G := by
   classical
   intro hmin
