@@ -33,7 +33,6 @@ noncomputable section
 local instance gaussPrefixAnnularTupleDensityPropDecidable (P : Prop) :
     Decidable P := Classical.propDecidable P
 
-set_option maxHeartbeats 800000
 
 /-! ## A general collision code for finite boxes -/
 
@@ -65,7 +64,7 @@ noncomputable def boxCollisionWitnessData {boxes : σ → Finset ℕ}
     have hmem := Finset.mem_filter.mp F.2
     have hnot := hmem.2
     unfold Function.Injective at hnot
-    push_neg at hnot
+    push Not at hnot
     rcases hnot with ⟨i, j, heq, hne⟩
     exact ⟨⟨(i, j), hne, heq⟩⟩)
 
@@ -204,7 +203,7 @@ theorem exists_short_pair_of_not_separated_nat
     (ht : ¬ IsSeparatedNatTuple gap t) :
     ∃ i j : Fin r, i < j ∧ ¬ t i + gap ≤ t j := by
   by_contra h
-  push_neg at h
+  push Not at h
   exact ht (fun i j hij ↦ h i j hij)
 
 /-- Subtype of the short members of a finite natural tuple family. -/

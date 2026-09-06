@@ -335,7 +335,7 @@ theorem nearCarrierDyadicTotal_continuous
     (ha : 0 < a) (haε : a ≤ ε / 4) :
     Continuous (nearCarrierDyadicTotal N M ell a ε) := by
   unfold nearCarrierDyadicTotal
-  apply continuous_finset_sum
+  apply continuous_finsetSum
   intro s _hs
   exact smoothNearPrimitivePoleCarrierTail_continuous
     N ((2 ^ s) / 2) (2 ^ s) ell a ε ha haε
@@ -399,7 +399,7 @@ theorem unitFourierCoefficientInt_nearCarrierDyadicTotal
           paperExp (-(n : ℝ) * alpha)) by
     funext alpha
     rw [Finset.sum_mul]]
-  rw [intervalIntegral.integral_finset_sum]
+  rw [intervalIntegral.integral_finsetSum]
   · rfl
   · intro s _hs
     have hphase : Continuous
@@ -459,12 +459,13 @@ Unlike `coefficientEnergy_finset_sum_le_card_mul_sum`, this estimate retains
 the summable carrier weights and is therefore uniform in a growing carrier
 cutoff. -/
 theorem coefficientEnergy_finset_sum_le_weighted
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (s : Finset ι) (c : ι → ℤ → ℂ) (w : ι → ℝ)
     (hw : ∀ i ∈ s, 0 < w i) :
     coefficientEnergy (fun n ↦ ∑ i ∈ s, c i n) ≤
       ENNReal.ofReal (∑ i ∈ s, w i) *
         ∑ i ∈ s, (ENNReal.ofReal (w i))⁻¹ * coefficientEnergy (c i) := by
+  classical
   have hswap (g : ι → ℤ → ENNReal) :
       (∑' n : ℤ, ∑ i ∈ s, g i n) =
         ∑ i ∈ s, ∑' n : ℤ, g i n := by
@@ -487,12 +488,13 @@ theorem coefficientEnergy_finset_sum_le_weighted
       have hcauchy : (∑ i ∈ s, ‖c i n‖) ^ 2 ≤
           (∑ i ∈ s, w i) *
             ∑ i ∈ s, ‖c i n‖ ^ 2 / w i := by
-        apply sum_sq_le_sum_mul_sum_of_sq_eq_mul s
+        apply sum_sq_le_sum_mul_sum_of_sq_le_mul s
         · intro i hi
           exact (hw i hi).le
         · intro i hi
           exact div_nonneg (sq_nonneg _) (hw i hi).le
         · intro i hi
+          apply le_of_eq
           field_simp [(hw i hi).ne']
       have hreal : ‖∑ i ∈ s, c i n‖ ^ 2 ≤
           (∑ i ∈ s, w i) *
@@ -529,13 +531,14 @@ theorem coefficientEnergy_finset_sum_le_weighted
 /-- Uniform weighted aggregation when each summand has energy at most its
 weight squared times one common bound. -/
 theorem coefficientEnergy_finset_sum_le_weighted_common
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (s : Finset ι) (c : ι → ℤ → ℂ) (w : ι → ℝ)
     (B : ENNReal) (hw : ∀ i ∈ s, 0 < w i)
     (hc : ∀ i ∈ s,
       coefficientEnergy (c i) ≤ ENNReal.ofReal ((w i) ^ 2) * B) :
     coefficientEnergy (fun n ↦ ∑ i ∈ s, c i n) ≤
       ENNReal.ofReal ((∑ i ∈ s, w i) ^ 2) * B := by
+  classical
   have hweighted := coefficientEnergy_finset_sum_le_weighted s c w hw
   have hterm (i : ι) (hi : i ∈ s) :
       (ENNReal.ofReal (w i))⁻¹ * coefficientEnergy (c i) ≤
@@ -759,7 +762,7 @@ theorem nearCarrierDyadicRangeTotal_continuous
     (ha : 0 < a) (haε : a ≤ ε / 4) :
     Continuous (nearCarrierDyadicRangeTotal N S H ell a ε) := by
   unfold nearCarrierDyadicRangeTotal
-  apply continuous_finset_sum
+  apply continuous_finsetSum
   intro s _hs
   exact smoothNearPrimitivePoleCarrierTail_continuous
     N ((2 ^ s) / 2) (2 ^ s) ell a ε ha haε
@@ -826,7 +829,7 @@ theorem unitFourierCoefficientInt_nearCarrierDyadicRangeTotal
           paperExp (-(n : ℝ) * alpha)) by
     funext alpha
     rw [Finset.sum_mul]]
-  rw [intervalIntegral.integral_finset_sum]
+  rw [intervalIntegral.integral_finsetSum]
   · rfl
   · intro s _hs
     have hphase : Continuous

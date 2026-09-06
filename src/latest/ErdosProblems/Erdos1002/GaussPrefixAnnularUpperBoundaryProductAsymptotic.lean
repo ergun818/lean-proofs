@@ -25,7 +25,6 @@ namespace Erdos1002
 
 noncomputable section
 
-set_option maxHeartbeats 3000000
 
 local instance gaussPrefixAnnularUpperBoundaryProductPropDecidable
     (P : Prop) : Decidable P := Classical.propDecidable P
@@ -163,7 +162,8 @@ theorem annularContractedUpperRetainedBoundaryDominatingDigitBaseEvent_of_future
   rw [
     annularContractedUpperRetainedBaseOrientedLower_eq,
     annularContractedUpperRetainedBaseOrientedUpper_eq]
-  rfl
+  simp only [annularUpperRetainedOrientedLower, annularUpperRetainedOrientedUpper,
+    annularContractedUpperRetainedUpperTag, annularContractedUpperRetainedToUpper]
 
 /-- The complementary chronological mask and the packaged future tuple
 agree almost everywhere.  The only discrepancy is the terminating

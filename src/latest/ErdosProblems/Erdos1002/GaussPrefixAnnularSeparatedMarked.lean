@@ -292,7 +292,7 @@ theorem gaussMovingSignedMarkedTupleIntegrand_fixedOrder_eq_mixedCharacter
             (lower (e j).1) (upper (e j).1) := by
       intro hall
       exact htuple (mem_orderedEventIntersection_ofFn_iff.mpr hall)
-    push_neg at hnotAll
+    push Not at hnotAll
     obtain ⟨j, hj⟩ := hnotAll
     have hnotEvent :
         x ∉ gaussPrefixMarkedEvent N
@@ -1327,7 +1327,7 @@ theorem tendsto_annularCanonicalMidpointBandDigitMassUpper
             (Fin (MixedOccurrenceCount k) ≃
               GaussPrefixMixedOccurrence k) : ℝ) *
           annularOccurrenceSignedDensity ε A k)) := by
-    have hsum := tendsto_finset_sum Finset.univ
+    have hsum := tendsto_finsetSum Finset.univ
       (fun e _he ↦ hscaled e)
     simpa using! hsum
   have hmajorant :=
@@ -1548,7 +1548,6 @@ def annularCanonicalUniformMidpointBandMarkedFourierSum
       (annularCanonicalLaterMidpointBandTaggedTupleFamily
         rho N k hr mode hmode e)
 
-set_option maxHeartbeats 800000
 /-- The exact Gauss mass on a moving midpoint family is at most its
 one-digit mass plus the complete-canonical replacement error. -/
 theorem
@@ -1817,7 +1816,6 @@ theorem
               (annularCanonicalLaterMidpointBandTaggedTupleFamily
                 rho N k hr mode hmode e))
 
-set_option maxHeartbeats 200000
 
 /-- The Gauss one-digit mass of every tagged moving midpoint family is
 bounded by the explicit mode-independent envelope.  No limiting density

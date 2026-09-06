@@ -294,9 +294,8 @@ theorem sum_range_crudeAllPTailHighSquare_le
 theorem summable_crudeAllPTailHighSquare
     (N P M : ℕ) (hN : 0 < N) (hM : 0 < M) :
     Summable (crudeAllPTailHighSquare N P M) := by
-  apply summable_of_sum_range_le (crudeAllPTailHighSquare_nonneg N P M)
-  intro K
-  exact sum_range_crudeAllPTailHighSquare_le N P M K hN hM
+  exact summable_of_sum_range_le (crudeAllPTailHighSquare_nonneg N P M)
+    (fun K ↦ sum_range_crudeAllPTailHighSquare_le N P M K hN hM)
 
 /-- Global high-frequency square-sum estimate obtained after the explicit
 dyadic summation. -/
@@ -321,7 +320,7 @@ def crudeAllPTailLowSquare (N P M n : ℕ) : ℝ :=
 
 theorem summable_crudeAllPTailLowSquare (N P M : ℕ) :
     Summable (crudeAllPTailLowSquare N P M) := by
-  apply summable_of_finite_support
+  apply summable_of_hasFiniteSupport
   refine (Icc 1 M).finite_toSet.subset ?_
   intro n hn
   by_contra hmem
@@ -530,9 +529,8 @@ theorem summable_sq_dyadicDenominatorBlockSumCoefficient
     (N J : ℕ) (hN : 0 < N) :
     Summable fun n : ℕ ↦
       dyadicDenominatorBlockSumCoefficient N J n ^ 2 := by
-  apply summable_of_sum_range_le (fun n ↦ sq_nonneg _)
-  intro K
-  exact sum_range_sq_dyadicDenominatorBlockSumCoefficient_le N J K hN
+  exact summable_of_sum_range_le (fun n ↦ sq_nonneg _)
+    (fun K ↦ sum_range_sq_dyadicDenominatorBlockSumCoefficient_le N J K hN)
 
 /-- Fully summed coefficient-space form of the finite natural-denominator
 cutoff estimate.  Its square-root is `O(J)`; in the manuscript one takes
@@ -878,11 +876,11 @@ theorem tsum_naturalDenominator_compl_eq_tail
       apply tsum_congr
       intro p
       by_cases hp : P < (p : ℕ)
-      · have hpS : p ∉ S := by simpa only [S, Set.mem_setOf_eq, not_le] using! hp
+      · have hpS : p ∉ S := by simpa only [S, Set.mem_ofPred_eq, not_le] using! hp
         have hpSc : p ∈ Sᶜ := hpS
         rw [Set.indicator_of_mem hpSc, if_pos hp]
       · have hpS : p ∈ S := by
-          simpa only [S, Set.mem_setOf_eq] using! Nat.le_of_not_gt hp
+          simpa only [S, Set.mem_ofPred_eq] using! Nat.le_of_not_gt hp
         have hpSc : p ∉ Sᶜ := by simpa
         rw [Set.indicator_of_notMem hpSc, if_neg hp]
 

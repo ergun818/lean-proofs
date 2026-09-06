@@ -192,7 +192,7 @@ theorem norm_integerIntervalComplementMultiplier_sub_succ_le_relevant
     simpa only [leftIntervalBoundaryVariation,
       rightIntervalBoundaryVariation, add_assoc] using!
         norm_integerIntervalComplementMultiplier_sub_succ_le huv w n
-  · push_neg at hrel
+  · push Not at hrel
     have hn : u ≤ n ∧ n ≤ v := ⟨hrel.1, hrel.2.le⟩
     have hn1 : u ≤ n + 1 ∧ n + 1 ≤ v := ⟨by omega, by omega⟩
     have hnu : n + 1 ≠ u := by omega
@@ -525,7 +525,7 @@ theorem norm_projected_fixedAwayHermitianIntegerWeight_le_rapid
     exact mul_nonneg (sq_nonneg _)
       (fixedAwayRapidEnvelope_nonneg J h)
   · have hout : n < u ∨ v < n := by
-      push_neg at hn
+      push Not at hn
       omega
     have hxExterior : (n : ℝ) ≤ (u : ℝ) ∨ (v : ℝ) ≤ (n : ℝ) := by
       rcases hout with hn | hn

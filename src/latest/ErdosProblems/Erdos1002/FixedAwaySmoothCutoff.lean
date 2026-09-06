@@ -262,8 +262,8 @@ theorem tendsto_fixedAwayPVTransform_smooth_nhdsGT_zero
     {t δ : ℝ} (hδ : 0 < δ) (hδt : δ ≤ t) :
     Tendsto (fixedAwayPVTransform (fixedAwaySmoothCorrection t δ) t)
       (𝓝[>] 0) (nhds (-Complex.I * Real.pi)) := by
-  apply tendsto_fixedAwayPVTransform_nhdsGT_zero
-  intro v hv
+  apply tendsto_fixedAwayPVTransform_nhdsGT_zero (M := 1)
+  intro v _hv
   exact abs_fixedAwaySmoothCorrection_le_one hδ hδt v
 
 /-- The explicit smooth family has the manuscript's left-hand jump. -/
@@ -271,8 +271,8 @@ theorem tendsto_fixedAwayPVTransform_smooth_nhdsLT_zero
     {t δ : ℝ} (hδ : 0 < δ) (hδt : δ ≤ t) :
     Tendsto (fixedAwayPVTransform (fixedAwaySmoothCorrection t δ) t)
       (𝓝[<] 0) (nhds (Complex.I * Real.pi)) := by
-  apply tendsto_fixedAwayPVTransform_nhdsLT_zero
-  intro v hv
+  apply tendsto_fixedAwayPVTransform_nhdsLT_zero (M := 1)
+  intro v _hv
   exact abs_fixedAwaySmoothCorrection_le_one hδ hδt v
 
 end

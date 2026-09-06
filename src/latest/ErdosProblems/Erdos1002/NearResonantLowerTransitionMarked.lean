@@ -558,7 +558,7 @@ theorem integral_lowerTransitionMarkedKernelReal_section_eq_zero
   rw [signedAnnulusFiniteMeasure_toMeasure]
   change (∫ x : ℝ in signedAnnulusSet (A / 2) A, f x) = 0
   rw [signedAnnulusSet,
-    integral_union_ae
+    setIntegral_union₀
       (disjoint_signedAnnulus_halves (by positivity : 0 ≤ A / 2)).aedisjoint
       measurableSet_Ioo.nullMeasurableSet hneg hpos]
   have hnegSet :
@@ -822,7 +822,7 @@ theorem lowerTransitionCompoundPoisson_tail_le
       hInt (R ^ 2)
   have hset : {x : ℝ | R ≤ |x|} = {x : ℝ | R ^ 2 ≤ x ^ 2} := by
     ext x
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     constructor
     · intro hx
       simpa only [sq_abs] using!
@@ -1430,7 +1430,7 @@ theorem tendstoInMeasure_lowerTransitionMarkedFunctionalReal_sub_all
           lowerTransitionMarkedFunctionalReal N A alpha := by
         rw [lowerTransitionMarkedFunctionalAll_eq_endpoint_add hN,
           hzero, zero_add]
-      simp only [Set.mem_setOf_eq, Pi.zero_apply, sub_zero] at hbad
+      simp only [Set.mem_ofPred_eq, Pi.zero_apply, sub_zero] at hbad
       rw [hall, sub_self, norm_zero] at hbad
       linarith
     · exact measure_ne_top _ _

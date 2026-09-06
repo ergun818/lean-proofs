@@ -479,7 +479,7 @@ theorem
         Finset.sum_nonneg fun _t _ht ↦ measureReal_nonneg
     · exact herrUpper
     · exact hupperZero
-  simpa using! tendsto_finset_sum Finset.univ
+  simpa using! tendsto_finsetSum Finset.univ
     (fun b _hb ↦ herrorComponent b)
 
 /-- Uniform-Lebesgue version of the complete tagged masked replacement

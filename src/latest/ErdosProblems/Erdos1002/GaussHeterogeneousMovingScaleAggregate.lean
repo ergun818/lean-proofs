@@ -210,7 +210,7 @@ theorem
       Tendsto (fun n ↦ ∑ b, component b n * deviation b n)
         atTop (nhds 0) :=
     by
-      simpa using! tendsto_finset_sum Finset.univ
+      simpa using! tendsto_finsetSum Finset.univ
         (fun b _hb ↦ hcomponentDeviation b)
   have hmain :=
     (tendsto_const_nhds : Tendsto
@@ -378,7 +378,7 @@ theorem tendsto_aggregateGaussMovingHeterogeneousDigitTupleSum
           gaussMovingHeterogeneousDigitTupleSum
             (scale n) (lower b) (upper b) (short n b))
         atTop (nhds 0) := by
-    simpa using! tendsto_finset_sum Finset.univ
+    simpa using! tendsto_finsetSum Finset.univ
       (fun b _hb ↦ hshortSumComponent b)
   have hseparatedDensity : Tendsto
       (fun n ↦
@@ -504,7 +504,7 @@ theorem tendsto_aggregateGaussMovingHeterogeneousDigitTupleSum
                 (scaledGaussFirstDigitWindow
                   (scale n) (lower b i) (upper b i))))
         atTop (nhds 0) := by
-    simpa using! tendsto_finset_sum Finset.univ
+    simpa using! tendsto_finsetSum Finset.univ
       (fun b _hb ↦ hseparatedErrorComponent b)
   have hseparatedSum : Tendsto
       (fun n ↦ ∑ b,
@@ -685,7 +685,7 @@ theorem
           gaussMovingHeterogeneousDigitTupleSum
             (scale n) (lower b) (upper b) (tuples n b)))
       atTop (nhds 0) := by
-    simpa using! tendsto_finset_sum Finset.univ
+    simpa using! tendsto_finsetSum Finset.univ
       (fun b _hb ↦ hdifferenceComponent b)
   apply hsum.congr'
   filter_upwards with n

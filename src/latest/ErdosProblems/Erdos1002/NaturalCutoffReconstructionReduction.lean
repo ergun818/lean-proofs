@@ -94,22 +94,22 @@ theorem rotationSumCircleFunction_coe_real (N : ℕ) (alpha : ℝ) :
     · rintro ⟨j, hj, rfl⟩
       omega
   rw [hset, Finset.sum_image]
-  push_cast
-  apply Finset.sum_congr rfl
-  intro k hk
-  simp only [Finset.mem_range] at hk
-  have hdil :
-      positiveCircleDilation ⟨k + 1, Nat.succ_pos k⟩
-          (alpha : AddCircle (1 : ℝ)) =
-        (((k + 1 : ℕ) : ℝ) * alpha : AddCircle (1 : ℝ)) := by
-    unfold positiveCircleDilation
-    rw [← AddCircle.coe_zsmul]
-    congr 1
-    simp [zsmul_eq_mul]
-  rw [hdil, sawtoothCircle_coe_all]
-  norm_num
-  intro a _ha b _hb hab
-  simpa using! hab
+  · push_cast
+    apply Finset.sum_congr rfl
+    intro k hk
+    simp only [Finset.mem_range] at hk
+    have hdil :
+        positiveCircleDilation ⟨k + 1, Nat.succ_pos k⟩
+            (alpha : AddCircle (1 : ℝ)) =
+          (((k + 1 : ℕ) : ℝ) * alpha : AddCircle (1 : ℝ)) := by
+      unfold positiveCircleDilation
+      rw [← AddCircle.coe_zsmul]
+      congr 1
+      simp [zsmul_eq_mul]
+    rw [hdil, sawtoothCircle_coe_all]
+    norm_num
+  · intro a _ha b _hb hab
+    simpa using! hab
 
 theorem allDenominatorReconstructionCircle_coe_real
     (N : ℕ+) (alpha : ℝ) :
@@ -293,7 +293,7 @@ theorem tendsto_eLpNorm_normalizedAllDenominator_sub_naturalCutoffPullback :
         (unitCircleL2Pullback (normalizedAllDenominatorReconstructionL2 N) -
           unitCircleL2Pullback (normalizedNaturalCutoffReconstructionL2 N))
         2 uniform01Measure
-  rw [ofReal_norm_eq_enorm]
+  rw [ofReal_norm]
   rw [← eLpNorm_unitCircleL2Pullback]
   exact eLpNorm_congr_ae
     (unitCircleL2Pullback_sub_ae

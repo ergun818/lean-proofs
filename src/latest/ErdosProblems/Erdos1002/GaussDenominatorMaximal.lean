@@ -2,7 +2,7 @@ import ErdosProblems.Erdos1002.MonotoneMeshWindow
 import ErdosProblems.Erdos1002.GaussDenominatorWeakLaw
 import ErdosProblems.Erdos1002.GaussLebesgueTransfer
 import ErdosProblems.Erdos1002.GaussPrefixMarkedMixedFourier
-import Mathlib.MeasureTheory.Measure.Typeclasses.NoAtoms
+import Mathlib.MeasureTheory.Measure.Typeclasses.NullSingletonClass
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false
@@ -217,7 +217,7 @@ theorem tendsto_gaussRoofLinearWindowBadEvent_measureReal_zero
           ext x
           simp only [meshBad, zero_mul, gaussRoofSum, Finset.range_zero,
             Finset.sum_empty, Nat.cast_zero, sub_zero, abs_zero,
-            mem_setOf_eq, mem_empty_iff_false, iff_false]
+            mem_ofPred_eq, mem_empty_iff_false, iff_false]
           exact not_lt_of_ge
             (div_nonneg (mul_nonneg hDelta.le (Nat.cast_nonneg L))
               (by norm_num))
@@ -229,14 +229,9 @@ theorem tendsto_gaussRoofLinearWindowBadEvent_measureReal_zero
       have hlarge :=
         tendsto_gaussRoofSum_meshDeviation_measureReal_zero
           hMpos hjpos (show 0 < Delta / 2 by positivity)
-      apply squeeze_zero'
+      refine squeeze_zero' ?_ ?_ hlarge
       · exact Eventually.of_forall fun _ => measureReal_nonneg
       · filter_upwards with L
-        show gaussMeasure.real (meshBad j L) ≤
-          gaussMeasure.real
-            {x | Delta / 2 * (L : ℝ) ≤
-              |gaussRoofSum (j * (L / M)) x -
-                ((j * (L / M) : ℕ) : ℝ) * gaussRoofMean|}
         apply measureReal_mono (h₂ := measure_ne_top gaussMeasure _)
         intro x hx
         change Delta * (L : ℝ) / 2 <
@@ -246,11 +241,10 @@ theorem tendsto_gaussRoofLinearWindowBadEvent_measureReal_zero
           |gaussRoofSum (j * (L / M)) x -
             ((j * (L / M) : ℕ) : ℝ) * gaussRoofMean|
         nlinarith
-      · simpa only [meshBad] using! hlarge
   have hsum : Tendsto
       (fun L : ℕ => ∑ j ∈ Finset.range (D + 2),
         gaussMeasure.real (meshBad j L)) atTop (𝓝 0) := by
-    have h := tendsto_finset_sum (Finset.range (D + 2))
+    have h := tendsto_finsetSum (Finset.range (D + 2))
       (fun j _hj => hmeshTerm j)
     simpa using! h
   have hlong : ∀ᶠ L : ℕ in atTop, D ≤ L / M :=
@@ -394,7 +388,7 @@ theorem measurableSet_gaussDenominatorLinearGoodEvent
     ext x
     simp only [gaussDenominatorLinearGoodEvent,
       mem_iInter, Finset.mem_range,
-      mem_setOf_eq, Nat.lt_add_one_iff]
+      mem_ofPred_eq, Nat.lt_add_one_iff]
     rfl
   rw [heq]
   exact (Finset.range (C * L + 1)).measurableSet_biInter

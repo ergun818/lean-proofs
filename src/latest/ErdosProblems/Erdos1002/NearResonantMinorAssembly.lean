@@ -118,7 +118,7 @@ theorem iterated_probabilityDeletion_normalizedNearMinorSmallDenominatorSum
       {alpha | r ≤ ‖normalizedNearMinorSmallDenominatorSum
         N (A : ℝ) ε alpha‖} = (∅ : Set ℝ) := by
     ext alpha
-    simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+    simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
     apply not_le_of_gt
     exact (norm_nearMinorSmallDenominatorSum_div_log_le
       N (A : ℝ) ε alpha hApos hL).trans_lt hAr
@@ -339,7 +339,7 @@ theorem lowerTransitionProbabilityDeletion_of_actualGridFactorialLimits
       {alpha | r ≤ |lowerTransitionMarkedFunctionalReal
         N (A : ℝ) alpha|} := by
     ext alpha
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     rw [normalizedNearMinorLowerTransitionSum,
       norm_nearMinorLowerTransitionSum_div_log_eq_abs_markedFunctional
         N (A : ℝ) ε alpha hApos hscaleN.1 hε hscaleN.2]

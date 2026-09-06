@@ -35,7 +35,6 @@ namespace Erdos1002
 
 noncomputable section
 
-set_option maxHeartbeats 800000
 
 local instance gaussPrefixAnnularUpperFreezingPhaseAsymptoticPropDecidable
     (P : Prop) : Decidable P := Classical.propDecidable P
@@ -85,12 +84,10 @@ theorem ambient_add_center_le_two_split_add_one
         annularContractedUpperRetainedCenterDepth p ≤
       2 * annularUpperRetainedSplitDepth
           (annularContractedUpperRetainedToUpper p) + 1 := by
-  let q := annularContractedUpperRetainedToUpper p
-  let s := annularLastNonzeroIndex (mode p.1) (hmode p.1)
-  change
-    annularDepthAmbientSize N + annularUpperRetainedTimes q s ≤
-      2 * ((annularDepthAmbientSize N +
-        annularUpperRetainedTimes q s) / 2) + 1
+  simp only [annularContractedUpperRetainedCenterDepth,
+    annularUpperRetainedSplitDepth, midpointPrefixSplitDepth,
+    annularContractedUpperRetainedToUpper, annularUpperRetainedTimes,
+    annularContractedUpperRetainedTimes]
   omega
 
 /-- The logarithmic scale is below the ambient-depth scale. -/

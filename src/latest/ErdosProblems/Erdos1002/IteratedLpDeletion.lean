@@ -35,8 +35,8 @@ theorem measureReal_norm_ge_le_sq_div_of_eLpNorm_two_le
   norm_num only [ENNReal.toReal_ofNat, ENNReal.rpow_two] at hcheb
   have hset : {x | ENNReal.ofReal r ≤ ‖f x‖ₑ} = {x | r ≤ ‖f x‖} := by
     ext x
-    simp only [Set.mem_setOf_eq]
-    rw [← ofReal_norm_eq_enorm]
+    simp only [Set.mem_ofPred_eq]
+    rw [← ofReal_norm]
     exact ENNReal.ofReal_le_ofReal_iff (norm_nonneg _)
   rw [hset] at hcheb
   have hnormSq : eLpNorm f (2 : ENNReal) μ ^ 2 ≤

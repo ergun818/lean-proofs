@@ -318,7 +318,7 @@ theorem abs_eval_expNegInvDerivativePoly_mul_exp_neg_le
 
 /-- Global quantitative Gevrey-2 estimate for the one-sided flat profile.
 In particular, this controls derivative orders that grow with an external
-parameter; it is strictly stronger than `ContDiff`.-/
+parameter; it is strictly stronger than `ContDiff`. -/
 theorem abs_iteratedDeriv_expNegInvGlue_le (n : ℕ) (x : ℝ) :
     |iteratedDeriv n expNegInvGlue x| ≤
       24 ^ n * (n.factorial : ℝ) ^ 2 := by

@@ -553,7 +553,7 @@ theorem integral_primitiveMarkedFourierIntegrand_eq_sum_cells
     _ = ∑ q ∈ reducedResidues p,
         ∫ α, scaledMarkedCellFourierTerm N p q h a b α
           ∂uniform01Measure := by
-      rw [MeasureTheory.integral_finset_sum]
+      rw [MeasureTheory.integral_finsetSum]
       intro q _hq
       exact integrable_scaledMarkedCellFourierTerm_uniform01 N p q h a b
 
@@ -597,7 +597,7 @@ theorem norm_primitiveMarkedFourierCoefficient_le
     ‖primitiveMarkedFourierCoefficient N P h a b‖ ≤
       (P : ℝ) / (Real.pi * |(h : ℝ)| * (N : ℝ)) := by
   unfold primitiveMarkedFourierCoefficient
-  rw [MeasureTheory.integral_finset_sum]
+  rw [MeasureTheory.integral_finsetSum]
   · calc
       ‖∑ p ∈ Finset.Icc 2 P,
           ∫ α, primitiveMarkedFourierIntegrand N p h a b α

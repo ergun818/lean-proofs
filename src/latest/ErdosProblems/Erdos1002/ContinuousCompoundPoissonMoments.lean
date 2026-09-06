@@ -207,20 +207,20 @@ theorem integral_sq_probabilityConvolutionPow_eq
 
 private lemma poissonPMFReal_mul_nat_succ
     (r : NNReal) (m : ℕ) :
-    poissonPMFReal r (m + 1) * (m + 1 : ℝ) =
-      (r : ℝ) * poissonPMFReal r m := by
-  unfold poissonPMFReal
+    poissonMass r (m + 1) * (m + 1 : ℝ) =
+      (r : ℝ) * poissonMass r m := by
+  simp_rw [poissonMass_eq]
   rw [pow_succ, Nat.factorial_succ]
   push_cast
   field_simp
 
 theorem hasSum_poissonPMFReal_mul_nat (r : NNReal) :
-    HasSum (fun n : ℕ ↦ poissonPMFReal r n * (n : ℝ)) (r : ℝ) := by
-  let f : ℕ → ℝ := fun n ↦ poissonPMFReal r n * (n : ℝ)
+    HasSum (fun n : ℕ ↦ poissonMass r n * (n : ℝ)) (r : ℝ) := by
+  let f : ℕ → ℝ := fun n ↦ poissonMass r n * (n : ℝ)
   have htail : HasSum (fun m : ℕ ↦ f (m + 1)) (r : ℝ) := by
     have hscaled : HasSum
-        (fun m : ℕ ↦ (r : ℝ) * poissonPMFReal r m) (r : ℝ) := by
-      simpa using! HasSum.mul_left (r : ℝ) (poissonPMFRealSum r)
+        (fun m : ℕ ↦ (r : ℝ) * poissonMass r m) (r : ℝ) := by
+      simpa using! HasSum.mul_left (r : ℝ) (poissonMass_hasSum r)
     apply HasSum.congr_fun hscaled
     intro m
     simpa only [f, Nat.cast_add, Nat.cast_one] using!
@@ -272,7 +272,7 @@ theorem integrable_sq_continuousCompoundPoissonProbability_of_centered
         (ofReal_integral_eq_lintegral_ofReal (hpowInt n) hnonneg).symm
       _ = _ := by rw [hpowMoment n]
   have hseries : HasSum
-      (fun n : ℕ ↦ poissonPMFReal r n * ((n : ℝ) * s))
+      (fun n : ℕ ↦ poissonMass r n * ((n : ℝ) * s))
       ((r : ℝ) * s) := by
     simpa only [mul_assoc] using!
       (hasSum_poissonPMFReal_mul_nat r).mul_right s
@@ -282,26 +282,26 @@ theorem integrable_sq_continuousCompoundPoissonProbability_of_centered
       continuousCompoundPoissonMeasure]
     change (∫⁻ x : ℝ, ‖x ^ 2‖ₑ
       ∂Measure.sum (fun n : ℕ ↦
-        (poissonPMF r n) •
+        (poissonLawPMF r n) •
           (probabilityConvolutionPow μ n : Measure ℝ))) < ⊤
     rw [lintegral_sum_measure]
     calc
       (∑' n : ℕ, ∫⁻ x : ℝ, ‖x ^ 2‖ₑ
-          ∂(poissonPMF r n) •
+          ∂(poissonLawPMF r n) •
             (probabilityConvolutionPow μ n : Measure ℝ)) =
           ∑' n : ℕ, ENNReal.ofReal
-            (poissonPMFReal r n * ((n : ℝ) * s)) := by
+            (poissonMass r n * ((n : ℝ) * s)) := by
         apply tsum_congr
         intro n
         rw [lintegral_smul_measure, hpowLIntegral n]
-        change poissonPMF r n * ENNReal.ofReal ((n : ℝ) * s) = _
-        rw [show poissonPMF r n =
-          ENNReal.ofReal (poissonPMFReal r n) by rfl,
-          ← ENNReal.ofReal_mul poissonPMFReal_nonneg]
+        change poissonLawPMF r n * ENNReal.ofReal ((n : ℝ) * s) = _
+        rw [show poissonLawPMF r n =
+          ENNReal.ofReal (poissonMass r n) from poissonLawPMF_apply r n,
+          ← ENNReal.ofReal_mul poissonMass_nonneg]
       _ = ENNReal.ofReal (∑' n : ℕ,
-          poissonPMFReal r n * ((n : ℝ) * s)) :=
+          poissonMass r n * ((n : ℝ) * s)) :=
         (ENNReal.ofReal_tsum_of_nonneg
-          (fun n ↦ mul_nonneg poissonPMFReal_nonneg
+          (fun n ↦ mul_nonneg poissonMass_nonneg
             (mul_nonneg (Nat.cast_nonneg n) hs0))
           hseries.summable).symm
       _ = ENNReal.ofReal ((r : ℝ) * s) := by rw [hseries.tsum_eq]
@@ -319,7 +319,7 @@ theorem integral_sq_continuousCompoundPoissonProbability_of_centered
       (r : ℝ) * ∫ x : ℝ, x ^ 2 ∂(μ : Measure ℝ) := by
   let s : ℝ := ∫ x : ℝ, x ^ 2 ∂(μ : Measure ℝ)
   have hseries : HasSum
-      (fun n : ℕ ↦ poissonPMFReal r n * ((n : ℝ) * s))
+      (fun n : ℕ ↦ poissonMass r n * ((n : ℝ) * s))
       ((r : ℝ) * s) := by
     simpa only [mul_assoc] using!
       (hasSum_poissonPMFReal_mul_nat r).mul_right s
@@ -331,9 +331,9 @@ theorem integral_sq_continuousCompoundPoissonProbability_of_centered
   calc
     (∑' n : ℕ,
         ∫ x : ℝ, x ^ 2
-          ∂(poissonPMF r n) •
+          ∂(poissonLawPMF r n) •
             (probabilityConvolutionPow μ n : Measure ℝ)) =
-      ∑' n : ℕ, poissonPMFReal r n * ((n : ℝ) * s) := by
+      ∑' n : ℕ, poissonMass r n * ((n : ℝ) * s) := by
       apply tsum_congr
       intro n
       rw [integral_smul_measure, poissonPMF_toReal,

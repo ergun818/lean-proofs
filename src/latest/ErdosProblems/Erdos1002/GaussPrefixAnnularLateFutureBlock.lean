@@ -332,7 +332,7 @@ theorem measurableSet_annularUpperRetainedFutureSignedValueEvent
           else Set.univ := by
     ext x
     simp only [annularUpperRetainedFutureSignedValueEvent,
-      Set.mem_setOf_eq, Set.mem_iInter]
+      Set.mem_ofPred_eq, Set.mem_iInter]
     constructor
     · intro hx j
       by_cases hj : annularUpperRetainedSplitDepth p <
@@ -439,7 +439,7 @@ theorem annularUpperRetainedFutureDigitBlock_eq_prod
     apply Finset.prod_eq_one
     intro j _hj
     rw [Set.indicator_of_mem (hall j)]
-  · push_neg at hall
+  · push Not at hall
     obtain ⟨j, hj⟩ := hall
     have hx :
         x ∉ annularUpperRetainedFutureDigitTupleEvent ε A p := by
@@ -534,7 +534,7 @@ theorem annularUpperRetainedFutureSignedValueEvent_eq_approximationEvent
       annularUpperRetainedFutureApproximationEvent ε A p := by
   ext x
   simp only [annularUpperRetainedFutureSignedValueEvent,
-    Set.mem_setOf_eq, annularUpperRetainedFutureApproximationEvent,
+    Set.mem_ofPred_eq, annularUpperRetainedFutureApproximationEvent,
     mem_orderedEventIntersection_ofFn_iff]
   constructor
   · intro hx j

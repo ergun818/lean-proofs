@@ -34,7 +34,6 @@ namespace Erdos1002
 
 noncomputable section
 
-set_option maxHeartbeats 800000
 
 local instance gaussPrefixAnnularUpperGoodTransferPropDecidable
     (P : Prop) : Decidable P := Classical.propDecidable P
@@ -128,8 +127,8 @@ def annularContractedUpperRetainedTimes
     annularUpperRetainedTimes
         (annularContractedUpperRetainedToUpper p) =
       annularContractedUpperRetainedTimes p := by
-  change p.2.1 = p.2.1
-  rfl
+  simp only [annularUpperRetainedTimes, annularContractedUpperRetainedToUpper,
+    annularContractedUpperRetainedTimes]
 
 theorem annularContractedUpperRetainedTimes_mem_canonical
     {eta rho : ℝ} {N grid : ℕ}
@@ -192,9 +191,12 @@ theorem annularContractedUpperRetainedRealization_times
         (annularContractedUpperRetainedRealization p) =
       annularContractedUpperRetainedTimes p := by
   simpa only [annularContractedUpperRetainedRealization,
-    annularContractedUpperRetainedTimes_embedding] using!
-    annularUpperRetainedRealization_times
-      (annularContractedUpperRetainedToUpper p)
+    annularContractedUpperRetainedToUpper, annularUpperRetainedTimes,
+    annularContractedUpperRetainedTimes] using!
+      annularUpperRetainedRealization_times
+        (rho := rho) (N := N) (grid := grid) (k := k) (hr := hr)
+        (mode := mode) (hmode := hmode)
+        (annularContractedUpperRetainedToUpper p)
 
 /-- The delayed prefix depth `b` used for the prefix-good restriction,
 freezing, and subsequent prefix--future mixing. -/
@@ -753,6 +755,7 @@ theorem
 /-! ## Summed bad-event domination -/
 
 set_option maxHeartbeats 400000 in
+-- Budget for the finite-set injection through the dependent chronological tuple types.
 /-- For one fixed chronological order, the contracted upper family is a
 subfamily of the canonical family, so its simultaneous window indicators
 are bounded by the full homogeneous count power. -/
@@ -1166,7 +1169,7 @@ theorem
         (uniform01Measure.restrict bad) := by
     apply Integrable.mono_measure _ Measure.restrict_le_self
     apply Integrable.const_mul
-    apply integrable_finset_sum
+    apply integrable_finsetSum
     intro p _hp
     apply (integrable_const (1 : ℝ)).indicator
     apply measurableSet_orderedEventIntersection

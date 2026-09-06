@@ -35,16 +35,18 @@ def mixedTupleEvent {s : Finset I} {k : ι → ℕ}
     (E : ι → I → Set Ω) (F : ∀ i, Fin (k i) ↪ s) : Set Ω :=
   ⋂ i, tupleEvent (E i) (F i)
 
-omit [DecidableEq I] in
-theorem measurableSet_mixedTupleEvent [MeasurableSpace Ω]
+omit [DecidableEq I] [Fintype ι] in
+theorem measurableSet_mixedTupleEvent [MeasurableSpace Ω] [Finite ι]
     {s : Finset I} {k : ι → ℕ} {E : ι → I → Set Ω}
     (hE : ∀ (i : ι) (q : I), q ∈ s → MeasurableSet (E i q))
     (F : ∀ i, Fin (k i) ↪ s) :
     MeasurableSet (mixedTupleEvent E F) := by
+  let := Fintype.ofFinite ι
   apply MeasurableSet.iInter
   intro i
   exact measurableSet_tupleEvent (fun q hq ↦ hE i q hq) (F i)
 
+omit [DecidableEq I] in
 theorem mixedDescFactorial_finiteEventCount_eq_sum_indicators
     (s : Finset I) (E : ι → I → Set Ω) (ω : Ω) (k : ι → ℕ) :
     mixedDescFactorial k (fun i ↦ finiteEventCount s (E i) ω) =
@@ -70,6 +72,7 @@ theorem mixedDescFactorial_finiteEventCount_eq_sum_indicators
     apply Finset.prod_eq_zero (Finset.mem_univ i)
     exact Set.indicator_of_notMem hi _
 
+omit [DecidableEq I] in
 theorem integral_mixedDescFactorial_finiteEventCount
     [MeasurableSpace Ω] (s : Finset I) (E : ι → I → Set Ω)
     (k : ι → ℕ) (mu : Measure Ω) [IsFiniteMeasure mu]
@@ -78,7 +81,7 @@ theorem integral_mixedDescFactorial_finiteEventCount
       ∑ F : ∀ i, Fin (k i) ↪ (s : Finset I),
         mu.real (mixedTupleEvent E F) := by
   simp_rw [mixedDescFactorial_finiteEventCount_eq_sum_indicators]
-  rw [MeasureTheory.integral_finset_sum]
+  rw [MeasureTheory.integral_finsetSum]
   · apply Finset.sum_congr rfl
     intro F _hF
     exact MeasureTheory.integral_indicator_one

@@ -79,7 +79,7 @@ theorem integral_unitTorusTrigPolynomial_finiteMeasure
     rw [map_smul]
     simp only [smul_eq_mul, ContinuousMap.smul_apply]
     rfl]
-  rw [MeasureTheory.integral_finset_sum]
+  rw [MeasureTheory.integral_finsetSum]
   · apply Finset.sum_congr rfl
     intro mode _hmode
     change
@@ -166,7 +166,7 @@ theorem tendsto_integral_unitTorusTrigPolynomial_of_fourier
           (nu n)).symm
     · simpa only [modeLimit, if_neg hzero] using!
         hnonzero mode hzero
-  have hsum := tendsto_finset_sum p.support fun mode hmodeSupport ↦
+  have hsum := tendsto_finsetSum p.support fun mode hmodeSupport ↦
     (hmode mode hmodeSupport).const_mul (p mode)
   have hintegral : Tendsto
       (fun n ↦ ∫ z, unitTorusTrigPolynomial p z
@@ -613,7 +613,7 @@ theorem integral_aggregateMovingSignedMarkedTupleFiniteMeasure_mFourier
   unfold aggregateMovingSignedMarkedTupleFiniteMeasure
     aggregateMovingSignedMarkedFourierTupleSum
   rw [FiniteMeasure.toMeasure_sum,
-    MeasureTheory.integral_finset_sum_measure]
+    MeasureTheory.integral_finsetSum_measure]
   · apply Finset.sum_congr rfl
     intro b _hb
     exact integral_movingSignedMarkedTupleFiniteMeasure_mFourier
@@ -856,7 +856,7 @@ theorem
     aggregateGaussMovingSignedMarkedFourierTupleSum
     gaussMovingSignedMarkedFourierTupleSum
   rw [FiniteMeasure.toMeasure_sum,
-    MeasureTheory.integral_finset_sum_measure]
+    MeasureTheory.integral_finsetSum_measure]
   · apply Finset.sum_congr rfl
     intro b _hb
     exact integral_movingSignedMarkedTupleFiniteMeasure_mFourier

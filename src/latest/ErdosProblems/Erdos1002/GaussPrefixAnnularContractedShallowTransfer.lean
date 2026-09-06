@@ -22,7 +22,6 @@ namespace Erdos1002
 
 noncomputable section
 
-set_option maxHeartbeats 800000
 
 local instance gaussPrefixAnnularContractedShallowTransferPropDecidable
     (P : Prop) : Decidable P := Classical.propDecidable P
@@ -45,10 +44,14 @@ theorem annularContractedUpperRetainedToUpper_injective
   intro p q hpq
   rcases p with ⟨e, t⟩
   rcases q with ⟨e', t'⟩
+  dsimp only [annularContractedUpperRetainedToUpper] at hpq
   have he : e = e' := congrArg Sigma.fst hpq
   subst e'
-  have ht : t.1 = t'.1 :=
-    congrArg (fun u ↦ u.2.1) hpq
+  have ht : t.1 = t'.1 := by
+    have htimes := congrArg
+      (annularUpperRetainedTimes (rho := rho) (N := N) (grid := grid)
+        (k := k) (hr := hr) (mode := mode) (hmode := hmode)) hpq
+    simpa only [annularUpperRetainedTimes] using! htimes
   have htt : t = t' := Subtype.ext ht
   subst t'
   rfl

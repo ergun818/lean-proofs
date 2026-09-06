@@ -29,7 +29,6 @@ namespace Erdos1002
 
 noncomputable section
 
-set_option maxHeartbeats 800000
 
 local instance gaussPrefixAnnularUpperCovarianceAggregatePropDecidable
     (P : Prop) : Decidable P := Classical.propDecidable P

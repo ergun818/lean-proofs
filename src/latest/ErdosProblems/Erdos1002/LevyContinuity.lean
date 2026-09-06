@@ -145,7 +145,7 @@ private theorem isTightMeasureSet_probability_prefix
             {m : Measure ℝ | ∃ n < N, (μSeq n : Measure ℝ) = m} ∪
               {(μSeq N : Measure ℝ)} := by
         ext m
-        simp only [mem_setOf_eq, mem_union, mem_singleton_iff]
+        simp only [mem_ofPred_eq, mem_union, mem_singleton_iff]
         constructor
         · rintro ⟨n, hn, rfl⟩
           rcases Nat.lt_succ_iff_lt_or_eq.mp hn with hn | rfl
@@ -183,7 +183,7 @@ private theorem isTightMeasureSet_range_of_charFun_tendsto
   have hKtail : IsCompact Ktail := isCompact_closedBall 0 R
   have hKtail_compl : Ktailᶜ = {x : ℝ | R < |x|} := by
     ext x
-    simp only [Ktail, mem_compl_iff, Metric.mem_closedBall, mem_setOf_eq]
+    simp only [Ktail, mem_compl_iff, Metric.mem_closedBall, mem_ofPred_eq]
     rw [Real.dist_eq, sub_zero]
     exact not_le
   refine ⟨Kprefix ∪ Ktail, hKprefix.union hKtail, ?_⟩
@@ -228,7 +228,7 @@ theorem levy_continuity_real
       subset_closure (mem_range_self n)
   · intro ν _hν hcluster
     obtain ⟨ψ, hψmono, hψlim⟩ :=
-      TopologicalSpace.FirstCountableTopology.tendsto_subseq hcluster
+      MapClusterPt.tendsto_subseq hcluster
     have hchar_eq :
         charFun (ν : Measure ℝ) = charFun (μ : Measure ℝ) := by
       funext t

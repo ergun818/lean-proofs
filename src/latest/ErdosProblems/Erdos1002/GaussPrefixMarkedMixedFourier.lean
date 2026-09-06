@@ -312,7 +312,7 @@ theorem gaussPrefixMarkedMixedFourierCoefficient_eq_integral
         ∂uniform01Measure := by
   unfold gaussPrefixMarkedMixedFourierCoefficient
   unfold gaussPrefixMarkedMixedFourierStatistic
-  rw [MeasureTheory.integral_finset_sum]
+  rw [MeasureTheory.integral_finsetSum]
   intro F _hF
   exact integrable_gaussPrefixMarkedMixedTupleCharacter
     N hB k h F uniform01Measure
@@ -350,7 +350,7 @@ theorem gaussPrefixMarkedMixedTupleCharacter_zero
         x ∉ mixedTupleEvent (fun i ↦ gaussPrefixMarkedEvent N (B i)) F := by
       simpa only [mixedTupleEvent, tupleEvent, Set.mem_iInter] using! hall
     rw [Set.indicator_of_notMem hmixed]
-    push_neg at hall
+    push Not at hall
     obtain ⟨i, j, hj⟩ := hall
     apply Finset.prod_eq_zero (Finset.mem_univ i)
     apply Finset.prod_eq_zero (Finset.mem_univ j)

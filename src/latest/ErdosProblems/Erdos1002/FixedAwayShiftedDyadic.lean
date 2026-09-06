@@ -1203,7 +1203,7 @@ theorem tsum_norm_projected_fixedAwayShiftedProfile_diagonalTerm_le_tail
         (fixedAwayProfilePair (fixedAwayShiftedProfile t δ N ell) p p)
           p p (m + a)‖ ≤ _
       have hout : m + a < u ∨ v < m + a := by
-        push_neg at hin
+        push Not at hin
         omega
       have hexterior : (((m + a : ℤ) : ℝ) ≤ (u : ℝ)) ∨
           ((v : ℝ) ≤ ((m + a : ℤ) : ℝ)) := by
@@ -1942,7 +1942,7 @@ theorem mem_nearCarrierAnnulus_iff_fixedAwayCarrierInterval
           (fixedAwayCarrierIntervalLower N ell P : ℝ) ≤ (n : ℝ) ∧
             (n : ℝ) ≤ (fixedAwayCarrierIntervalUpper N ell P : ℝ) := by
         rw [hu, hv]
-        simpa only [nearCarrierAnnulus, Set.mem_setOf_eq, nearCarrierScale,
+        simpa only [nearCarrierAnnulus, Set.mem_ofPred_eq, nearCarrierScale,
           horient, one_mul, S] using! hn
       exact ⟨by exact_mod_cast hnR.1, by exact_mod_cast hnR.2⟩
     · rintro ⟨hun, hnv⟩
@@ -1954,7 +1954,7 @@ theorem mem_nearCarrierAnnulus_iff_fixedAwayCarrierInterval
         exact_mod_cast hnv
       rw [hu] at hunR
       rw [hv] at hnvR
-      simpa only [nearCarrierAnnulus, Set.mem_setOf_eq, nearCarrierScale,
+      simpa only [nearCarrierAnnulus, Set.mem_ofPred_eq, nearCarrierScale,
         horient, one_mul, S] using! ⟨hunR, hnvR⟩
   · have hneg : ell < 0 := lt_of_le_of_ne (not_lt.mp hpos) hell
     have hu : (fixedAwayCarrierIntervalLower N ell P : ℝ) = -(2 * S) := by
@@ -1972,7 +1972,7 @@ theorem mem_nearCarrierAnnulus_iff_fixedAwayCarrierInterval
     constructor
     · intro hn
       have hnS : S / 4 ≤ -(n : ℝ) ∧ -(n : ℝ) ≤ 2 * S := by
-        simpa only [nearCarrierAnnulus, Set.mem_setOf_eq, nearCarrierScale,
+        simpa only [nearCarrierAnnulus, Set.mem_ofPred_eq, nearCarrierScale,
           horient, neg_one_mul, S] using! hn
       have hnR :
           (fixedAwayCarrierIntervalLower N ell P : ℝ) ≤ (n : ℝ) ∧
@@ -1991,7 +1991,7 @@ theorem mem_nearCarrierAnnulus_iff_fixedAwayCarrierInterval
       rw [hv] at hnvR
       have hnS : S / 4 ≤ -(n : ℝ) ∧ -(n : ℝ) ≤ 2 * S := by
         constructor <;> linarith
-      simpa only [nearCarrierAnnulus, Set.mem_setOf_eq, nearCarrierScale,
+      simpa only [nearCarrierAnnulus, Set.mem_ofPred_eq, nearCarrierScale,
         horient, neg_one_mul, S] using! hnS
 
 /-- Complementary annular projection of one literal shifted dyadic block. -/

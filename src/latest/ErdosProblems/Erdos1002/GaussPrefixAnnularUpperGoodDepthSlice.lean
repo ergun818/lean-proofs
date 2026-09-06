@@ -32,7 +32,6 @@ namespace Erdos1002
 
 noncomputable section
 
-set_option maxHeartbeats 3000000
 
 local instance gaussPrefixAnnularUpperGoodDepthSlicePropDecidable
     (P : Prop) : Decidable P := Classical.propDecidable P
@@ -207,14 +206,16 @@ theorem
         ε ≤ annularUpperRetainedOrientedLower ε A
           (annularContractedUpperRetainedUpperTag p) j := by
       simpa only [annularUpperRetainedOrientedLower,
-        annularContractedUpperRetainedUpperTag] using!
+        annularContractedUpperRetainedUpperTag,
+        annularContractedUpperRetainedToUpper] using!
         flattenedAnnular_oriented_lower_ge_epsilon
           hεA hgrid hsigned p.1 j
     have hupper :
         annularUpperRetainedOrientedUpper ε A
             (annularContractedUpperRetainedUpperTag p) j ≤ A := by
       simpa only [annularUpperRetainedOrientedUpper,
-        annularContractedUpperRetainedUpperTag] using!
+        annularContractedUpperRetainedUpperTag,
+        annularContractedUpperRetainedToUpper] using!
         flattenedAnnular_oriented_upper_le
           hεA hgrid hsigned p.1 j
     have hxHomogeneous :
@@ -344,7 +345,8 @@ theorem
       annularContractedUpperRetainedDelayedDepth,
       annularContractedUpperRetainedShallowDepth,
       annularContractedUpperRetainedUpperTag,
-      annularContractedUpperRetainedRealization] using!
+      annularContractedUpperRetainedRealization,
+      annularContractedUpperRetainedToUpper] using!
       annularUpperRetained_delayedPrefixCharacter_eq_shallow
         hgrid htime (annularContractedUpperRetainedToUpper p)
         (by omega) hW B x
@@ -755,28 +757,34 @@ theorem
             (annularContractedUpperRetainedUpperTag p) <
           annularUpperRetainedTimes
             (annularContractedUpperRetainedUpperTag p) j := by
-      simpa only [annularContractedUpperRetainedTimes_embedding] using!
+      simpa only [annularContractedUpperRetainedUpperTag,
+        annularContractedUpperRetainedToUpper, annularUpperRetainedTimes,
+        annularContractedUpperRetainedTimes] using!
         Nat.lt_of_not_ge hj
     have hjMem := hxFuture j hjFuture
     have hlower :
         ε ≤ annularUpperRetainedOrientedLower ε A
           (annularContractedUpperRetainedUpperTag p) j := by
       simpa only [annularUpperRetainedOrientedLower,
-        annularContractedUpperRetainedUpperTag] using!
+        annularContractedUpperRetainedUpperTag,
+        annularContractedUpperRetainedToUpper] using!
         flattenedAnnular_oriented_lower_ge_epsilon
           hεA hgrid hsigned p.1 j
     have hupper :
         annularUpperRetainedOrientedUpper ε A
             (annularContractedUpperRetainedUpperTag p) j ≤ A := by
       simpa only [annularUpperRetainedOrientedUpper,
-        annularContractedUpperRetainedUpperTag] using!
+        annularContractedUpperRetainedUpperTag,
+        annularContractedUpperRetainedToUpper] using!
         flattenedAnnular_oriented_upper_le
           hεA hgrid hsigned p.1 j
     change
       gaussOrbit (annularContractedUpperRetainedTimes p j) x ∈
         scaledGaussFirstDigitWindow
           (Real.log (N : ℝ)) ε (2 * A)
-    simpa only [annularContractedUpperRetainedTimes_embedding] using!
+    simpa only [annularContractedUpperRetainedUpperTag,
+        annularContractedUpperRetainedToUpper, annularUpperRetainedTimes,
+        annularContractedUpperRetainedTimes] using!
       ⟨hjMem.1, hlower.trans hjMem.2.1,
         hjMem.2.2.trans (hupper.trans (by linarith [hε, hεA]))⟩
 

@@ -25,7 +25,7 @@ noncomputable section
 /-- Deterministic aggregate inequality transferring a joint error to its
 factorized product of means. -/
 theorem sum_nested_norm_product_le_joint_add_covariance
-    {α β : Type*} [DecidableEq α] [DecidableEq β]
+    {α β : Type*}
     (prefixes : Finset α) (futures : α → Finset β)
     (joint : α → β → ℂ)
     (prefixMean futureMean : α → β → ℂ) :
@@ -34,6 +34,7 @@ theorem sum_nested_norm_product_le_joint_add_covariance
       (∑ p ∈ prefixes, ∑ u ∈ futures p, ‖joint p u‖) +
         ∑ p ∈ prefixes, ∑ u ∈ futures p,
           ‖joint p u - prefixMean p u * futureMean p u‖ := by
+  classical
   calc
     (∑ p ∈ prefixes, ∑ u ∈ futures p,
         ‖prefixMean p u * futureMean p u‖) ≤
@@ -63,7 +64,7 @@ theorem sum_nested_norm_product_le_joint_add_covariance
 /-- Abstract limiting form: vanishing joint mass and vanishing summed
 covariance imply vanishing products of means. -/
 theorem tendsto_sum_nested_norm_product_zero_of_joint_covariance
-    {α β : Type*} [DecidableEq α] [DecidableEq β]
+    {α β : Type*}
     (prefixes : ℕ → Finset α)
     (futures : ℕ → α → Finset β)
     (joint prefixMean futureMean : ℕ → α → β → ℂ)
@@ -80,6 +81,7 @@ theorem tendsto_sum_nested_norm_product_zero_of_joint_covariance
       (fun N ↦ ∑ p ∈ prefixes N, ∑ u ∈ futures N p,
         ‖prefixMean N p u * futureMean N p u‖)
       atTop (nhds 0) := by
+  classical
   apply squeeze_zero'
   · exact Eventually.of_forall fun N ↦
       Finset.sum_nonneg fun _p _hp ↦

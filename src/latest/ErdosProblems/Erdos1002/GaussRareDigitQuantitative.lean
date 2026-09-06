@@ -256,7 +256,7 @@ theorem scaledGaussFirstDigitBoundaryStrip_eq_window
         (center - width / scale) (center + width / scale) := by
   ext x
   simp only [scaledGaussFirstDigitBoundaryStrip, scaledGaussFirstDigitWindow,
-    mem_setOf_eq]
+    mem_ofPred_eq]
   rw [and_congr_right_iff]
   intro hx
   rw [abs_sub_le_iff]

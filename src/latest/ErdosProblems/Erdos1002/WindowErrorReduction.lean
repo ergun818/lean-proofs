@@ -71,7 +71,7 @@ private theorem measurable_transformKernel_window (N : ℕ) :
     Measurable (transformKernel N) := by
   unfold transformKernel
   exact Measurable.ite
-    (by simpa only [Set.setOf_eq_eq_singleton] using!
+    (by simpa only [Set.ofPred_eq_eq_singleton] using!
       (measurableSet_singleton (0 : ℝ)))
     measurable_const
     ((bernoulliMark_measurable.comp
@@ -457,7 +457,7 @@ theorem windowCauchyWeight_pos_of_mem
 /-- A general finite weighted Cauchy--Schwarz inequality for complex
 vectors.  Strict positivity keeps all divisions honest. -/
 theorem norm_finset_sum_sq_le_weighted
-    { ι : Type* } [DecidableEq ι]
+    {ι : Type*}
     (s : Finset ι) (f : ι → ℂ) (w : ι → ℝ)
     (hw : ∀ i ∈ s, 0 < w i) :
     ‖∑ i ∈ s, f i‖ ^ 2 ≤
@@ -469,12 +469,13 @@ theorem norm_finset_sum_sq_le_weighted
       ‖∑ i ∈ s, f i‖ ^ 2 ≤ (∑ i ∈ s, ‖f i‖) ^ 2 :=
     (sq_le_sq₀ (norm_nonneg _) hsum_nonneg).2 htriangle
   refine hsquare.trans ?_
-  apply Finset.sum_sq_le_sum_mul_sum_of_sq_eq_mul s
+  apply Finset.sum_sq_le_sum_mul_sum_of_sq_le_mul s
   · intro i hi
     exact (hw i hi).le
   · intro i hi
     exact div_nonneg (sq_nonneg _) (hw i hi).le
   · intro i hi
+    apply le_of_eq
     field_simp [(hw i hi).ne']
 
 /-- The mass of the Cauchy--Schwarz weights at one frequency. -/

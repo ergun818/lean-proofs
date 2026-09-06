@@ -27,7 +27,6 @@ noncomputable section
 
 local instance (P : Prop) : Decidable P := Classical.propDecidable P
 
-set_option maxHeartbeats 800000
 
 def annularOccurrenceSignedDensity
     (ε A : ℝ) {grid : ℕ}

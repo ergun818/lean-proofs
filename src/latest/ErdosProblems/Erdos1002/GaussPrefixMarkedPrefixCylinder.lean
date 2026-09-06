@@ -181,7 +181,7 @@ theorem exactDepthActualMixedPrefixValueWindowSet_ae_eq_affine
     (x ∈ exactDepthActualMixedPrefixValueWindowSet N k F w lower upper) ↔
       x ∈ exactDepthMixedPrefixValueWindowIntersection N k F w lower upper
   unfold exactDepthActualMixedPrefixValueWindowSet
-  simp only [Set.mem_inter_iff, Set.mem_iInter, Set.mem_setOf_eq]
+  simp only [Set.mem_inter_iff, Set.mem_iInter, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨hxCell, hall⟩
     apply (mem_exactDepthMixedPrefixValueWindowIntersection_iff
@@ -198,9 +198,11 @@ theorem exactDepthActualMixedPrefixValueWindowSet_ae_eq_affine
     exact (mem_exactDepthMixedPrefixValueWindowIntersection_iff
       N k F w lower upper hxgood.1 hxgood.2 hxCell).1 hinter
 
+omit [Fintype ι] in
 /-- Therefore the actual prefix window set is almost everywhere empty or
 one closed interval. -/
 theorem exactDepthActualMixedPrefixValueWindowSet_ae_eq_empty_or_Icc
+    [Finite ι]
     (N : ℕ) (k : ι → ℕ) (F : GaussPrefixMixedDepthTuple N k)
     {m : ℕ} (w : ExactDepthBoundedPositiveWord N m)
     (lower upper : ∀ i, Fin (k i) → ℝ) :
@@ -209,6 +211,7 @@ theorem exactDepthActualMixedPrefixValueWindowSet_ae_eq_empty_or_Icc
       ∃ left right : ℝ, left ≤ right ∧
         exactDepthActualMixedPrefixValueWindowSet N k F w lower upper
           =ᵐ[uniform01Measure] Icc left right := by
+  let := Fintype.ofFinite ι
   have hae := exactDepthActualMixedPrefixValueWindowSet_ae_eq_affine
     N k F w lower upper
   rcases exactDepthMixedPrefixValueWindowIntersection_eq_empty_or_Icc
@@ -219,9 +222,11 @@ theorem exactDepthActualMixedPrefixValueWindowSet_ae_eq_empty_or_Icc
     refine ⟨left, right, hlr, ?_⟩
     simpa only [heq] using! hae
 
+omit [Fintype ι] in
 /-- Every actual prefix value-window integral on one deepest cylinder is
 exactly one ordinary interval integral. -/
 theorem exists_intervalIntegral_eq_setIntegral_actualMixedPrefixValueWindows
+    [Finite ι]
     (N : ℕ) (k : ι → ℕ) (F : GaussPrefixMixedDepthTuple N k)
     {m : ℕ} (w : ExactDepthBoundedPositiveWord N m)
     (lower upper : ∀ i, Fin (k i) → ℝ) (K : ℝ) :
@@ -230,6 +235,7 @@ theorem exists_intervalIntegral_eq_setIntegral_actualMixedPrefixValueWindows
           N k F w lower upper,
         oscillatoryPhase K x ∂uniform01Measure) =
         ∫ x in left..right, oscillatoryPhase K x := by
+  let := Fintype.ofFinite ι
   have hae := exactDepthActualMixedPrefixValueWindowSet_ae_eq_affine
     N k F w lower upper
   rcases exactDepthMixedPrefixValueWindowIntersection_eq_empty_or_Icc
@@ -282,12 +288,15 @@ def exactDepthMixedPrefixTupleEventSet
     ⋂ z : GaussPrefixMixedPrefixOccurrence N k F m,
       gaussPrefixMarkedEvent N (B z.1.1) (F z.1.1 z.1.2)
 
+omit [Fintype ι] in
 theorem measurableSet_exactDepthMixedPrefixTupleEventSet
+    [Finite ι]
     (N : ℕ) {B : ι → Set (ℝ × ℝ × ℝ)}
     (hB : ∀ i, MeasurableSet (B i)) (k : ι → ℕ)
     (F : GaussPrefixMixedDepthTuple N k) {m : ℕ}
     (w : ExactDepthBoundedPositiveWord N m) :
     MeasurableSet (exactDepthMixedPrefixTupleEventSet N B k F w) := by
+  let := Fintype.ofFinite ι
   apply (measurableSet_exactDepthBoundedCylinder w).inter
   apply MeasurableSet.iInter
   intro z
@@ -382,7 +391,7 @@ theorem setIntegral_mixedPrefixCharacter_eq_fixedCarrier_on_event
         intro hxEvent
         exact hall (Set.mem_iInter.mp hxEvent.2)
       rw [Set.indicator_of_notMem hxNotEvent]
-      push_neg at hall
+      push Not at hall
       obtain ⟨z, hzNot⟩ := hall
       unfold gaussPrefixMarkedMixedPrefixCharacter
       apply Finset.prod_eq_zero

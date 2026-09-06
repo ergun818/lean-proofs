@@ -82,7 +82,7 @@ private theorem norm_paperExp_local (t : ℝ) : ‖paperExp t‖ = 1 := by
 private theorem transformKernel_measurable_local (N : ℕ) :
     Measurable (transformKernel N) := by
   unfold transformKernel
-  exact Measurable.ite (by simpa only [Set.setOf_eq_eq_singleton] using!
+  exact Measurable.ite (by simpa only [Set.ofPred_eq_eq_singleton] using!
       (measurableSet_singleton (0 : ℝ))) measurable_const
     ((bernoulliMark_measurable.comp (measurable_const.mul measurable_id)).div measurable_id)
 
@@ -240,9 +240,10 @@ private theorem periodizationCellFourier_intervalIntegrable
       _ = |C| := (abs_of_nonneg hC).symm
 
 private theorem intervalIntegrable_finsetSum
-    {ι : Type*} [DecidableEq ι] (s : Finset ι) (f : ι → ℝ → ℂ) (u v : ℝ)
+    {ι : Type*} (s : Finset ι) (f : ι → ℝ → ℂ) (u v : ℝ)
     (hf : ∀ i ∈ s, IntervalIntegrable (f i) volume u v) :
     IntervalIntegrable (fun x => ∑ i ∈ s, f i x) volume u v := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp
   | @insert i s hi ih =>
@@ -270,7 +271,7 @@ private theorem unitFourierCoefficient_residuePeriodizationTruncation_sum
         unitFourierCoefficient (periodizationCell N p (residueCutoffQ p a R r)) n := by
   unfold unitFourierCoefficient residuePeriodizationTruncation
   simp_rw [Finset.sum_mul]
-  exact intervalIntegral.integral_finset_sum fun r hr =>
+  exact intervalIntegral.integral_finsetSum fun r hr =>
     periodizationCellFourier_intervalIntegrable N n p (residueCutoffQ p a R r)
 
 private theorem sum_range_adjacent_intervalIntegrals
@@ -682,10 +683,10 @@ theorem unitFourierCoefficient_pvPeriodizationTruncation
           unitFourierCoefficient (residuePeriodizationTruncation N p a R) n := by
   unfold unitFourierCoefficient pvPeriodizationTruncation
   simp_rw [Finset.sum_mul]
-  rw [intervalIntegral.integral_finset_sum]
+  rw [intervalIntegral.integral_finsetSum]
   · apply Finset.sum_congr rfl
     intro p hpMem
-    exact intervalIntegral.integral_finset_sum fun a haMem =>
+    exact intervalIntegral.integral_finsetSum fun a haMem =>
       residuePeriodizationFourier_intervalIntegrable N n p a R
   · intro p hpMem
     exact intervalIntegrable_finsetSum (reducedResidues p)
@@ -763,9 +764,9 @@ theorem tendsto_pvPeriodizationCoefficient_pos
               paperExp (-(n : ℝ) * (a : ℝ) / (p : ℝ)) *
                 ((-(Complex.I / (2 * Real.pi))) *
                   (hStarRatio n (p * N) : ℂ)))) := by
-    apply tendsto_finset_sum
+    apply tendsto_finsetSum
     intro p hpMem
-    apply tendsto_finset_sum
+    apply tendsto_finsetSum
     intro a haMem
     exact tendsto_residuePeriodizationCoefficient_pos N n p a hN hn
       (by exact (Finset.mem_Icc.mp hpMem).1)
@@ -788,9 +789,9 @@ theorem tendsto_pvPeriodizationCoefficient_zero (N P : ℕ) :
             unitFourierCoefficient (residuePeriodizationTruncation N p a R) 0)
       atTop
       (nhds (∑ p ∈ Finset.Icc 1 P, ∑ a ∈ reducedResidues p, (0 : ℂ))) := by
-    apply tendsto_finset_sum
+    apply tendsto_finsetSum
     intro p hpMem
-    apply tendsto_finset_sum
+    apply tendsto_finsetSum
     intro a haMem
     exact tendsto_residuePeriodizationCoefficient_zero N p a
       (by exact (Finset.mem_Icc.mp hpMem).1)

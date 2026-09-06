@@ -392,7 +392,6 @@ private theorem nearMinorSmallDenominatorSum_eq_zero_of_outer_le_inner
     (hcut : ε / 4 < A / Real.log (N : ℝ)) :
     nearMinorSmallDenominatorSum N A ε = (fun _alpha : ℝ ↦ 0) := by
   funext alpha
-  change nearMinorSmallDenominatorSum N A ε alpha = (0 : ℂ)
   unfold nearMinorSmallDenominatorSum nearMinorSmallDenominatorTerm
   have hzero (p : ℕ) :
       ¬ (A < Real.log (N : ℝ) *

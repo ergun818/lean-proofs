@@ -22,7 +22,6 @@ namespace Erdos1002
 
 noncomputable section
 
-set_option maxHeartbeats 2000000
 
 local instance gaussPrefixAnnularUpperFreezingEventBridgePropDecidable
     (P : Prop) : Decidable P := Classical.propDecidable P
@@ -161,7 +160,8 @@ theorem ae_annularContractedUpperRetainedCompletePhaseEvent_subset_masked
             simpa only [q,
               annularContractedUpperRetainedUpperTag,
               annularContractedUpperRetainedDelayedDepth,
-              annularContractedUpperRetainedTimes_embedding] using!
+              annularContractedUpperRetainedToUpper, annularUpperRetainedTimes,
+              annularContractedUpperRetainedTimes] using!
               hjFuture)
     have hjDigit :=
       (mem_annularUpperRetainedFutureDigitTupleEvent_iff
@@ -178,16 +178,18 @@ theorem ae_annularContractedUpperRetainedCompletePhaseEvent_subset_masked
             (flattenedAnnularSignedLower ε A p.1 j)
             (flattenedAnnularSignedUpper ε A p.1 j) =
           annularUpperRetainedOrientedLower ε A q j := by
-      simpa only [q,
-        annularContractedUpperRetainedTimes_embedding] using! hlower
+      simpa only [q, annularContractedUpperRetainedUpperTag,
+        annularContractedUpperRetainedToUpper, annularUpperRetainedTimes,
+        annularContractedUpperRetainedTimes] using! hlower
     have hupper' :
         gaussParityOrientedUpper
             (annularContractedUpperRetainedTimes p j)
             (flattenedAnnularSignedLower ε A p.1 j)
             (flattenedAnnularSignedUpper ε A p.1 j) =
           annularUpperRetainedOrientedUpper ε A q j := by
-      simpa only [q,
-        annularContractedUpperRetainedTimes_embedding] using! hupper
+      simpa only [q, annularContractedUpperRetainedUpperTag,
+        annularContractedUpperRetainedToUpper, annularUpperRetainedTimes,
+        annularContractedUpperRetainedTimes] using! hupper
     have hxIoc : x ∈ Ioc (0 : ℝ) 1 := ⟨hx.1.1, hx.1.2.le⟩
     simp only [
       maskedCoordinateEvent,
@@ -203,9 +205,10 @@ theorem ae_annularContractedUpperRetainedCompletePhaseEvent_subset_masked
       annularContractedUpperRetainedPhaseOrientedLower,
       annularContractedUpperRetainedPhaseOrientedUpper]
     refine ⟨hxIoc, ?_⟩
-    simpa only [q,
-      annularContractedUpperRetainedTimes_embedding,
-      hlower', hupper'] using! hjDigit
+    rw [hlower', hupper']
+    simpa only [q, annularContractedUpperRetainedUpperTag,
+      annularContractedUpperRetainedToUpper, annularUpperRetainedTimes,
+      annularContractedUpperRetainedTimes] using! hjDigit
 
 /-! ## Full-dimensional endpoint-strip events -/
 
@@ -419,9 +422,9 @@ theorem annularContractedUpperRetainedBaseOrientedLower_eq
         (flattenedAnnularParity p.1)
         (flattenedAnnularSignedLower ε A p.1)
         (flattenedAnnularSignedUpper ε A p.1) j := by
-  simpa only [annularContractedUpperRetainedTimes_embedding,
-    annularContractedUpperRetainedUpperTag,
-    annularUpperRetainedOrientedLower] using!
+  simpa only [annularContractedUpperRetainedUpperTag,
+    annularContractedUpperRetainedToUpper, annularUpperRetainedTimes,
+    annularContractedUpperRetainedTimes, annularUpperRetainedOrientedLower] using!
     annularUpperRetained_actual_orientedLower_eq
       (ε := ε) (A := A)
       (annularContractedUpperRetainedUpperTag p) j
@@ -438,9 +441,9 @@ theorem annularContractedUpperRetainedBaseOrientedUpper_eq
         (flattenedAnnularParity p.1)
         (flattenedAnnularSignedLower ε A p.1)
         (flattenedAnnularSignedUpper ε A p.1) j := by
-  simpa only [annularContractedUpperRetainedTimes_embedding,
-    annularContractedUpperRetainedUpperTag,
-    annularUpperRetainedOrientedUpper] using!
+  simpa only [annularContractedUpperRetainedUpperTag,
+    annularContractedUpperRetainedToUpper, annularUpperRetainedTimes,
+    annularContractedUpperRetainedTimes, annularUpperRetainedOrientedUpper] using!
     annularUpperRetained_actual_orientedUpper_eq
       (ε := ε) (A := A)
       (annularContractedUpperRetainedUpperTag p) j
@@ -913,7 +916,8 @@ theorem
             simpa only [q,
               annularContractedUpperRetainedUpperTag,
               annularContractedUpperRetainedDelayedDepth,
-              annularContractedUpperRetainedTimes_embedding] using!
+              annularContractedUpperRetainedToUpper, annularUpperRetainedTimes,
+              annularContractedUpperRetainedTimes] using!
               hjFuture)
     have hjDigit :=
       (mem_annularUpperRetainedFutureDigitTupleEvent_iff
@@ -930,16 +934,18 @@ theorem
             (flattenedAnnularSignedLower ε A p.1 j)
             (flattenedAnnularSignedUpper ε A p.1 j) =
           annularUpperRetainedOrientedLower ε A q j := by
-      simpa only [q,
-        annularContractedUpperRetainedTimes_embedding] using! hlower
+      simpa only [q, annularContractedUpperRetainedUpperTag,
+        annularContractedUpperRetainedToUpper, annularUpperRetainedTimes,
+        annularContractedUpperRetainedTimes] using! hlower
     have hupper' :
         gaussParityOrientedUpper
             (annularContractedUpperRetainedTimes p j)
             (flattenedAnnularSignedLower ε A p.1 j)
             (flattenedAnnularSignedUpper ε A p.1 j) =
           annularUpperRetainedOrientedUpper ε A q j := by
-      simpa only [q,
-        annularContractedUpperRetainedTimes_embedding] using! hupper
+      simpa only [q, annularContractedUpperRetainedUpperTag,
+        annularContractedUpperRetainedToUpper, annularUpperRetainedTimes,
+        annularContractedUpperRetainedTimes] using! hupper
     have hxIoc : x ∈ Ioc (0 : ℝ) 1 := ⟨hx.1.1, hx.1.2.le⟩
     simp only [
       maskedCoordinateEvent,
@@ -955,9 +961,10 @@ theorem
       annularContractedUpperRetainedBoundaryOrientedLower,
       annularContractedUpperRetainedBoundaryOrientedUpper]
     refine ⟨hxIoc, ?_⟩
-    simpa only [q,
-      annularContractedUpperRetainedTimes_embedding,
-      hlower', hupper'] using! hjDigit
+    rw [hlower', hupper']
+    simpa only [q, annularContractedUpperRetainedUpperTag,
+      annularContractedUpperRetainedToUpper, annularUpperRetainedTimes,
+      annularContractedUpperRetainedTimes] using! hjDigit
 
 /-- Consequently each complete boundary event is contained in the union of
 the two full-dimensional endpoint-strip masked events. -/

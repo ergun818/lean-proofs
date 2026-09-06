@@ -38,7 +38,6 @@ open MultivariateFactorialMomentMethod
 local instance gaussPrefixAnnularLiteralTransferLimitPropDecidable
     (P : Prop) : Decidable P := Classical.propDecidable P
 
-set_option maxHeartbeats 4000000
 
 /-! ## Restricted finite masses -/
 
@@ -139,7 +138,7 @@ theorem sum_measureReal_inter_le_setIntegral
       Integrable
         (fun x ↦ ∑ i ∈ s, (E i).indicator (fun _ ↦ (1 : ℝ)) x)
         (mu.restrict bad) := by
-    apply integrable_finset_sum
+    apply integrable_finsetSum
     intro i hi
     exact ((integrable_const (1 : ℝ)).indicator (hE i hi)).mono_measure
       Measure.restrict_le_self
@@ -149,7 +148,7 @@ theorem sum_measureReal_inter_le_setIntegral
     (∑ i ∈ s, mu.real (E i ∩ bad)) =
         ∫ x, (∑ i ∈ s,
           (E i).indicator (fun _ ↦ (1 : ℝ)) x) ∂(mu.restrict bad) := by
-      rw [integral_finset_sum]
+      rw [integral_finsetSum]
       · apply Finset.sum_congr rfl
         intro i hi
         symm
@@ -1696,7 +1695,8 @@ theorem abs_literalMass_sub_canonicalBoxMass_le_boundary_add_bad
   have hcontractedBadNonneg : 0 ≤ contractedBad := by
     dsimp only [contractedBad]
     unfold aggregateCanonicalSourceRestrictedMass
-    positivity
+    exact Finset.sum_nonneg fun _e _he ↦
+      Finset.sum_nonneg fun _F _hF ↦ measureReal_nonneg
   have habstract :
     |literalFull - canonical| ≤
       boundary + literalBad + contractedBad :=

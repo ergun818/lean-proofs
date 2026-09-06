@@ -281,6 +281,7 @@ theorem windowCosineCarrierMode_succ_eq_groupedCarriers
 positive cosine modes.  The zero carrier is distributed using
 `sum k⁻² = pi²/6`; no conditional rearrangement occurs. -/
 set_option maxHeartbeats 1600000 in
+-- Regrouping the carrier series involves repeated complex coercion and ring normalization.
 theorem tsum_windowCarrierKernelTerm_eq_tsum_cosineCarrier
     (N d : ℕ) (m : ℤ) (hd : 0 < d) :
     (∑' ell : ℤ, windowCarrierKernelTerm N d m ell) =

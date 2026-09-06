@@ -49,7 +49,7 @@ theorem support_iteratedDeriv_smoothNearPrimitivePoleSum_subset_unit
   have hex : ∃ q ∈ reducedResidues p,
       iteratedDeriv j (nearPoleCell a ε p q) alpha ≠ 0 := by
     by_contra hnot
-    push_neg at hnot
+    push Not at hnot
     apply halpha
     exact Finset.sum_eq_zero fun q hq ↦ hnot q hq
   obtain ⟨q, hq, hqne⟩ := hex
@@ -105,8 +105,6 @@ private theorem unitFourierCoefficientInt_eq_fourier_of_support_unit
       rw [paperExp_eq_fourierChar_carrierLeakage]
       simp only [smul_eq_mul]
       rw [show inner ℝ x (n : ℝ) = x * (n : ℝ) by simp [mul_comm]]
-      change f x * (Real.fourierChar (-(n : ℝ) * x) : ℂ) =
-        (Real.fourierChar (-(x * (n : ℝ))) : ℂ) * f x
       rw [show -(n : ℝ) * x = -(x * (n : ℝ)) by ring]
       ring
 
@@ -388,9 +386,10 @@ theorem coefficientEnergy_physicalNearCarrier_annulus_scaled_le_gevrey
 frequency.  This is the squared form of the triangle estimate used for the
 leakage of a denominator block. -/
 theorem coefficientEnergy_finset_sum_le_card_mul_sum
-    {ι : Type*} [DecidableEq ι] (s : Finset ι) (c : ι → ℤ → ℂ) :
+    {ι : Type*} (s : Finset ι) (c : ι → ℤ → ℂ) :
     coefficientEnergy (fun n ↦ ∑ i ∈ s, c i n) ≤
       s.card * ∑ i ∈ s, coefficientEnergy (c i) := by
+  classical
   have hoverlap : ∀ n : ℤ,
       frequencyOverlapCount s (fun _i ↦ (Set.univ : Set ℤ)) n ≤ s.card := by
     intro n
@@ -402,12 +401,13 @@ theorem coefficientEnergy_finset_sum_le_card_mul_sum
 /-- A scaled version in which a common derivative-loss factor is absorbed
 by a separate estimate for each summand. -/
 theorem coefficientEnergy_finset_sum_scaled_le
-    {ι : Type*} [DecidableEq ι] (s : Finset ι) (c : ι → ℤ → ℂ)
+    {ι : Type*} (s : Finset ι) (c : ι → ℤ → ℂ)
     (scale : ENNReal) (R : ι → ENNReal)
     (hindividual : ∀ i ∈ s,
       scale * coefficientEnergy (c i) ≤ R i) :
     scale * coefficientEnergy (fun n ↦ ∑ i ∈ s, c i n) ≤
       s.card * ∑ i ∈ s, R i := by
+  classical
   calc
     scale * coefficientEnergy (fun n ↦ ∑ i ∈ s, c i n) ≤
         scale * (s.card * ∑ i ∈ s, coefficientEnergy (c i)) :=

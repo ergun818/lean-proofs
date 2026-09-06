@@ -548,7 +548,7 @@ theorem exactDepthBoundedCylinder_ae_eq_closed
   · have hsub : exactDepthBoundedCylinder w ⊆
         closedGaussPrefixCylinder w.1.1 := by
       exact gaussHalfOpenPrefixCylinder_subset_closed w.1.2.2.1
-    rw [diff_eq_empty.mpr hsub, measure_empty]
+    rw [sdiff_eq_empty.mpr hsub, measure_empty]
   · simpa only [exactDepthBoundedCylinder, positivePrefixCylinder] using!
       uniform01Measure_closedGaussPrefixCylinder_diff_halfOpen w.1.2.2.1
 
@@ -607,7 +607,7 @@ theorem half_le_abs_sum_of_dominant_occurrence
 whole weighted sum is at most `Q / 2`.  The multiplication-only statement
 avoids any hidden division by an asymptotic parameter. -/
 theorem two_mul_sum_weight_mul_le_of_common_scale
-    { α : Type* } [Fintype α]
+    {α : Type*}
     (S : Finset α) (weight q : α → ℝ) {P Q : ℝ}
     (hP : 0 < P) (hQ : 0 ≤ Q)
     (hweight : ∀ z ∈ S, 0 ≤ weight z)
@@ -855,7 +855,7 @@ theorem exactDepthActualMixedValueWindowSet_ae_eq_affine
       x ∈ exactDepthMixedValueWindowIntersection
         N k F hF w lower upper
   unfold exactDepthActualMixedValueWindowSet
-  simp only [Set.mem_inter_iff, Set.mem_iInter, Set.mem_setOf_eq]
+  simp only [Set.mem_inter_iff, Set.mem_iInter, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨hxCell, hall⟩
     apply (mem_exactDepthMixedValueWindowIntersection_iff
@@ -875,9 +875,11 @@ theorem exactDepthActualMixedValueWindowSet_ae_eq_affine
     rintro ⟨i, j⟩
     exact hall i j
 
+omit [Fintype ι] in
 /-- Therefore the actual simultaneous selected-prefix window set is, up to
 a uniform-Lebesgue null set, either empty or one closed interval. -/
 theorem exactDepthActualMixedValueWindowSet_ae_eq_empty_or_Icc
+    [Finite ι]
     (N : ℕ) (k : ι → ℕ) (F : GaussPrefixMixedDepthTuple N k)
     {m : ℕ} (hF : ∀ i j, (F i j : ℕ) ≤ m)
     (w : ExactDepthBoundedPositiveWord N m)
@@ -887,6 +889,7 @@ theorem exactDepthActualMixedValueWindowSet_ae_eq_empty_or_Icc
       ∃ left right : ℝ, left ≤ right ∧
         exactDepthActualMixedValueWindowSet N k F w lower upper
           =ᵐ[uniform01Measure] Icc left right := by
+  let := Fintype.ofFinite ι
   have hae := exactDepthActualMixedValueWindowSet_ae_eq_affine
     N k F hF w lower upper
   rcases exactDepthMixedValueWindowIntersection_eq_empty_or_Icc
@@ -911,7 +914,7 @@ theorem uniform01Measure_restrict_Icc_eq_volume_restrict_Ioc
       =ᵐ[volume] (Icc a b : Set ℝ) := by
     apply ae_eq_set.mpr
     constructor
-    · rw [diff_eq_empty.mpr inter_subset_left, measure_empty]
+    · rw [sdiff_eq_empty.mpr inter_subset_left, measure_empty]
     · refine MeasureTheory.measure_mono_null
         (t := ({0, 1} : Set ℝ)) ?_ ?_
       · intro x hx
@@ -953,12 +956,14 @@ theorem setIntegral_uniform01_Icc_eq_intervalIntegral
     ∫ x, f x ∂volume.restrict (Ioc a b)
   rw [uniform01Measure_restrict_Icc_eq_volume_restrict_Ioc hsub]
 
+omit [Fintype ι] in
 /-- For every deepest cylinder and every finite family of selected-prefix
 value windows, the actual oscillatory set integral is exactly one ordinary
 interval integral (the degenerate interval is used when the retained set is
 empty).  This is the literal per-cylinder input required by the
 deterministic cylinder-sum estimate. -/
 theorem exists_intervalIntegral_eq_setIntegral_actualMixedValueWindows
+    [Finite ι]
     (N : ℕ) (k : ι → ℕ) (F : GaussPrefixMixedDepthTuple N k)
     {m : ℕ} (hF : ∀ i j, (F i j : ℕ) ≤ m)
     (w : ExactDepthBoundedPositiveWord N m)
@@ -967,6 +972,7 @@ theorem exists_intervalIntegral_eq_setIntegral_actualMixedValueWindows
       (∫ x in exactDepthActualMixedValueWindowSet N k F w lower upper,
         oscillatoryPhase K x ∂uniform01Measure) =
         ∫ x in left..right, oscillatoryPhase K x := by
+  let := Fintype.ofFinite ι
   have hae := exactDepthActualMixedValueWindowSet_ae_eq_affine
     N k F hF w lower upper
   rcases exactDepthMixedValueWindowIntersection_eq_empty_or_Icc
@@ -1352,12 +1358,15 @@ def exactDepthMixedTupleEventSet
   exactDepthBoundedCylinder w ∩
     mixedTupleEvent (fun i ↦ gaussPrefixMarkedEvent N (B i)) F
 
+omit [Fintype ι] in
 theorem measurableSet_exactDepthMixedTupleEventSet
+    [Finite ι]
     (N : ℕ) {B : ι → Set (ℝ × ℝ × ℝ)}
     (hB : ∀ i, MeasurableSet (B i)) (k : ι → ℕ)
     (F : GaussPrefixMixedDepthTuple N k) {m : ℕ}
     (w : ExactDepthBoundedPositiveWord N m) :
     MeasurableSet (exactDepthMixedTupleEventSet N B k F w) := by
+  let := Fintype.ofFinite ι
   apply (measurableSet_exactDepthBoundedCylinder w).inter
   apply measurableSet_mixedTupleEvent
   intro i q _hq
@@ -1461,7 +1470,7 @@ theorem setIntegral_mixedTupleCharacter_eq_fixedCarrier_on_event
         have hi := Set.mem_iInter.mp hxEvent.2 i
         exact Set.mem_iInter.mp hi j
       rw [Set.indicator_of_notMem hxNotEvent]
-      push_neg at hall
+      push Not at hall
       obtain ⟨i, j, hnot⟩ := hall
       unfold gaussPrefixMarkedMixedTupleCharacter
       apply Finset.prod_eq_zero (Finset.mem_univ i)

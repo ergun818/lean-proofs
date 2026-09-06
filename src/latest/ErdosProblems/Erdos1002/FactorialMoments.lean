@@ -74,9 +74,10 @@ theorem pow_eq_sum_stirlingSecond_mul_descFactorial (n r : ℕ) :
 
 /-- Ordered distinct `r`-tuples selected from a finite set are embeddings
 from `Fin r` into that set.  Their cardinal is the falling factorial. -/
-theorem card_orderedDistinctTuples {I : Type*} [DecidableEq I]
+theorem card_orderedDistinctTuples {I : Type*}
     (s : Finset I) (r : ℕ) :
     Fintype.card (Fin r ↪ s) = s.card.descFactorial r := by
+  classical
   rw [Fintype.card_embedding_eq, Fintype.card_fin, Fintype.card_coe]
 
 /-- Integrated form of the Stirling identity.  Thus uniform bounds for all
@@ -100,7 +101,7 @@ theorem integral_count_pow_eq_sum_factorialMoments
     funext ω
     norm_cast
     exact pow_eq_sum_stirlingSecond_mul_descFactorial (X ω) r
-  rw [hpoint, MeasureTheory.integral_finset_sum]
+  rw [hpoint, MeasureTheory.integral_finsetSum]
   · apply sum_congr rfl
     intro j _
     exact MeasureTheory.integral_const_mul _ _

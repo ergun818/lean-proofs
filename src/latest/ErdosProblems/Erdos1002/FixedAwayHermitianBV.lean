@@ -120,7 +120,8 @@ theorem norm_integerIntervalComplementMultiplier_sub_succ_le
         (if n = v then ‖w v‖ else 0) := by
   by_cases hn : u ≤ n ∧ n ≤ v
   · by_cases hn1 : u ≤ n + 1 ∧ n + 1 ≤ v
-    · simp [integerIntervalComplementMultiplier, hn, hn1]
+    · simp only [integerIntervalComplementMultiplier, hn, and_self, ↓reduceIte, hn1,
+        sub_self, norm_zero]
       positivity
     · have hnv : n = v := by omega
       subst n
@@ -174,7 +175,7 @@ def rightIntervalBoundaryVariation (v : ℤ) (w : ℤ → ℂ) (n : ℤ) : ℝ :
 theorem summable_leftIntervalBoundaryVariation
     (u : ℤ) (w : ℤ → ℂ) :
     Summable (leftIntervalBoundaryVariation u w) := by
-  apply summable_of_finite_support
+  apply summable_of_hasFiniteSupport
   apply (Set.finite_singleton (u - 1)).subset
   intro n hn
   rw [Function.mem_support] at hn
@@ -186,7 +187,7 @@ theorem summable_leftIntervalBoundaryVariation
 theorem summable_rightIntervalBoundaryVariation
     (v : ℤ) (w : ℤ → ℂ) :
     Summable (rightIntervalBoundaryVariation v w) := by
-  apply summable_of_finite_support
+  apply summable_of_hasFiniteSupport
   apply (Set.finite_singleton v).subset
   intro n hn
   rw [Function.mem_support] at hn
@@ -356,7 +357,7 @@ private theorem summable_finsetSum
   classical
   induction P using Finset.induction_on with
   | empty =>
-      simpa using! (summable_zero : Summable fun _n : ℤ ↦ (0 : α))
+      simp
   | @insert p P hp ih =>
       have hpSum : Summable (f p) := hf p (Finset.mem_insert_self p P)
       have hrest : Summable fun n : ℤ ↦ ∑ q ∈ P, f q n :=

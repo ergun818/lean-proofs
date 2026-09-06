@@ -1171,7 +1171,6 @@ theorem
         nlinarith
       _ = (12 * C * Real.sqrt (K : ℝ) / (P : ℝ)) *
             fixedAwayUnshiftedTransitionMultiplierConstant t δ := by ring
-
   · have h2PU : 2 * P < U := lt_of_not_ge hU2P
     have h2P : 0 < 2 * P := by positivity
     have hK2P : K ≤ (2 * P) ^ 2 := by

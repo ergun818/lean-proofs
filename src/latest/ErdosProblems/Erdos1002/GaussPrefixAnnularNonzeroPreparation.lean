@@ -262,7 +262,7 @@ particular, that every strictly later occurrence has Fourier mode zero.
 This is the exact hypothesis required by the prefix/future indicator
 factorization. -/
 theorem modes_zero_strictly_after_lastNonzeroOccurrence
-    {ι : Type*} [Fintype ι]
+    {ι : Type*}
     {N gap : ℕ} {k : ι → ℕ}
     (h : ∀ i, Fin (k i) → ℤ)
     (F : GaussPrefixMixedDepthTuple N k)

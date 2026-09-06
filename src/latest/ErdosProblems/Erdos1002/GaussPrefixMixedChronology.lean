@@ -62,7 +62,7 @@ theorem gaussPrefixMarkedMixedTupleCharacter_eq_zero_of_not_globalInjective
     gaussPrefixMarkedMixedTupleCharacter N B k h F x = 0 := by
   classical
   unfold IsGloballyInjectiveMixedDepthTuple Function.Injective at hnot
-  push_neg at hnot
+  push Not at hnot
   obtain ⟨⟨i, a⟩, ⟨i', b⟩, heq, hne⟩ := hnot
   have hii : i ≠ i' := by
     intro hii
@@ -148,12 +148,14 @@ theorem exists_last_nonzero_fin
   have hjle : j ≤ i := S.le_max' j hjS
   exact (not_le_of_gt hij) hjle
 
+omit [Fintype ι] in
 /-- Intrinsic last-carrier selection.  For a globally injective and
 gap-separated tuple, there is a last nonzero Fourier occurrence, and every
 other nonzero occurrence lies at least `gap` depths before it.  Later
 occurrences are allowed, but necessarily carry Fourier weight zero; these
 are precisely the future block in the late-case mixing argument. -/
 theorem exists_lastNonzeroOccurrence_with_gap
+    [Finite ι]
     (N gap : ℕ) (k : ι → ℕ)
     (h : ∀ i, Fin (k i) → ℤ)
     (F : GaussPrefixMixedDepthTuple N k)
@@ -165,6 +167,7 @@ theorem exists_lastNonzeroOccurrence_with_gap
         ∀ z : GaussPrefixMixedOccurrence k, z ≠ z₀ →
           h z.1 z.2 ≠ 0 →
             (F z.1 z.2 : ℕ) + gap ≤ (F z₀.1 z₀.2 : ℕ) := by
+  let := Fintype.ofFinite ι
   obtain ⟨e, heStrict⟩ :=
     exists_strictMono_mixedOccurrenceEquiv N k F hInjective
   have hnonzeroFin : ∃ j, h (e j).1 (e j).2 ≠ 0 := by
@@ -547,11 +550,14 @@ def gaussPrefixMarkedMixedFutureEvent
     m < (F z.1 z.2 : ℕ) →
       x ∈ gaussPrefixMarkedEvent N (B z.1) (F z.1 z.2)}
 
+omit [Fintype ι] in
 theorem measurableSet_gaussPrefixMarkedMixedFutureEvent
+    [Finite ι]
     (N : ℕ) {B : ι → Set (ℝ × ℝ × ℝ)}
     (hB : ∀ i, MeasurableSet (B i)) (k : ι → ℕ)
     (F : GaussPrefixMixedDepthTuple N k) (m : ℕ) :
     MeasurableSet (gaussPrefixMarkedMixedFutureEvent N B k F m) := by
+  let := Fintype.ofFinite ι
   have heq : gaussPrefixMarkedMixedFutureEvent N B k F m =
       ⋂ z : GaussPrefixMixedOccurrence k,
         if m < (F z.1 z.2 : ℕ) then
@@ -559,7 +565,7 @@ theorem measurableSet_gaussPrefixMarkedMixedFutureEvent
         else Set.univ := by
     ext x
     unfold gaussPrefixMarkedMixedFutureEvent
-    simp only [Set.mem_setOf_eq, Set.mem_iInter]
+    simp only [Set.mem_ofPred_eq, Set.mem_iInter]
     change (∀ z : GaussPrefixMixedOccurrence k,
         m < (F z.1 z.2 : ℕ) →
           x ∈ gaussPrefixMarkedEvent N (B z.1) (F z.1 z.2)) ↔
@@ -612,7 +618,7 @@ theorem gaussPrefixMarkedMixedFutureCharacter_eq_indicator_of_modes_zero
       if_pos (hall z hzLate)]
   · have hxNot : x ∉ gaussPrefixMarkedMixedFutureEvent N B k F m := hall
     rw [Set.indicator_of_notMem hxNot]
-    push_neg at hall
+    push Not at hall
     obtain ⟨z, hzLate, hzNot⟩ := hall
     unfold gaussPrefixMarkedMixedFutureCharacter
     apply Finset.prod_eq_zero

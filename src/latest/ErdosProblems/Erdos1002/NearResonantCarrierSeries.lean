@@ -234,7 +234,7 @@ theorem hasSum_smoothNearPrimitivePoleCarrierTail
     intro S
     induction S using Finset.induction_on with
     | empty =>
-        simpa using! (hasSum_zero : HasSum (fun _ell : ℤ ↦ (0 : ℂ)) 0)
+        simp
     | @insert p S hp ih =>
         have hpTail := hasSum_smoothNearCarrierTerm_oneDenominator
           N p a ε alpha

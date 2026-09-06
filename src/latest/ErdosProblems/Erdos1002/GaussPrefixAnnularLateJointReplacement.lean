@@ -130,6 +130,7 @@ def aggregateAnnularUpperRetainedJointFutureReplacementError
             ε A N e (mode e) (hmode e) t)
 
 set_option maxHeartbeats 2000000 in
+-- Budget for the dependent tuple sums and the normalization of the joint-error envelope.
 /-- The exact-to-future-digit error of the complete upper-retained tagged
 family tends to zero.  The absolute event error is inside both finite sums,
 and its proof retains every prefix rare-window factor. -/
@@ -249,17 +250,13 @@ theorem tendsto_annularUpperRetained_jointFutureReplacement_zero
       positivity
     · exact hnormalizedBound
     · exact hCdiv
-  apply squeeze_zero'
+  refine squeeze_zero' ?_ ?_ hupperZero
   · exact Eventually.of_forall fun N ↦ by
       unfold aggregateAnnularUpperRetainedJointFutureReplacementError
       exact Finset.sum_nonneg fun _e _he ↦
         Finset.sum_nonneg fun _t _ht ↦ measureReal_nonneg
   · filter_upwards [hscalePos, hscaleOne, hlarge] with
       N hscaleN hscaleOneN hlargeN
-    change
-      aggregateAnnularUpperRetainedJointFutureReplacementError
-          ε A rho N k hr mode hmode ≤
-        normalized N * (C / scale N)
     let common : ℝ :=
       (MixedOccurrenceCount k : ℝ) *
         (2 * ((1 + gaussDigitExponentialRate 1) ^
@@ -327,7 +324,6 @@ theorem tendsto_annularUpperRetained_jointFutureReplacement_zero
           (MixedOccurrenceCount k - 1) + 1 by omega, pow_succ]
     rw [hpow]
     field_simp [hsne]
-  · exact hupperZero
 
 end
 

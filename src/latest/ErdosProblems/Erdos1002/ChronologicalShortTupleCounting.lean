@@ -103,7 +103,7 @@ theorem exists_short_pair_of_not_separated
     (ht : ¬ IsSeparatedTuple gap t) :
     ∃ i k : Fin r, i < k ∧ ¬(t i).1 + gap ≤ (t k).1 := by
   by_contra h
-  push_neg at h
+  push Not at h
   exact ht (fun i k hik ↦ h i k hik)
 
 /-- A witness remembers a bad ordered pair together with the entire

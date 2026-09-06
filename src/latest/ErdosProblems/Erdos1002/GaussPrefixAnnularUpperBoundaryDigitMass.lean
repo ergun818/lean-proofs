@@ -25,7 +25,6 @@ namespace Erdos1002
 
 noncomputable section
 
-set_option maxHeartbeats 2000000
 
 local instance gaussPrefixAnnularUpperBoundaryDigitMassPropDecidable
     (P : Prop) : Decidable P := Classical.propDecidable P

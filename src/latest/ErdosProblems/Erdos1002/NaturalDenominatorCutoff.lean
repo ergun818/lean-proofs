@@ -762,7 +762,7 @@ theorem summable_sq_naturalDenominatorBlockCoefficient
     Summable fun n : ℕ ↦ naturalDenominatorBlockCoefficient N Q n ^ 2 := by
   let C : ℝ := 80 * (N : ℝ) / (Q : ℝ) +
     64 * (Real.pi ^ 2 / 6) ^ 2
-  apply summable_of_sum_range_le (fun n ↦ sq_nonneg _)
+  apply summable_of_sum_range_le (c := C) (fun n ↦ sq_nonneg _)
   intro k
   calc
     (∑ n ∈ range k, naturalDenominatorBlockCoefficient N Q n ^ 2) ≤

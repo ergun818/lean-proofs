@@ -34,7 +34,6 @@ namespace Erdos1002
 
 noncomputable section
 
-set_option maxHeartbeats 800000
 
 open MultivariateFactorialMomentMethod
 
@@ -1354,7 +1353,7 @@ theorem tendsto_mixedOccurrenceParityAssignmentBox_card_div_log_pow
               (boxes N) parity z).card : ℝ) /
             Real.log (N : ℝ))
         atTop (nhds (∏ z, factor z)) := by
-    apply tendsto_finset_prod Finset.univ
+    apply tendsto_finsetProd Finset.univ
     intro z _hz
     exact hcoordinate z
   apply hprod.congr'
@@ -2553,7 +2552,6 @@ theorem coordinates_of_mem_gaussPrefixAnnularLiteralMixedTupleEvent
     constructor
     · exact ⟨hxUnit.1, hxUnit.2.le⟩
     · have hj := (hpoint j).2.1
-      unfold annularGridCell at hj
       unfold intervalGridCell at hj
       rw [if_pos (hsigned (e j).1 (hactive j))] at hj
       rw [gaussPrefixMarkedPoint_value_eq_signedScaledApproximation] at hj
@@ -2569,7 +2567,6 @@ theorem coordinates_of_mem_gaussPrefixAnnularLiteralMixedTupleEvent
       And.intro hj.2.1 hj.2.2.1
   · intro j
     have hj := (hpoint j).2.1
-    unfold annularGridCell at hj
     rw [gaussPrefixMarkedPoint_value_eq_signedScaledApproximation] at hj
     exact depth_parity_eq_annularGridDepthParity_of_signed_mem
       hε hεA hgrid (e j).1
@@ -2666,7 +2663,6 @@ theorem norm_movingSignedMarkedFourierTupleSum_sub_le_sdiff_mass
   exact norm_movingSignedMarkedFourierTupleSum_le_mass
     mu N scale lower upper mode (large \ small)
 
-set_option maxHeartbeats 4000000
 
 /-- The canonical coefficient and its contracted version differ by no
 more than the explicit expanded-minus-contracted boundary mass. -/

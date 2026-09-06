@@ -280,7 +280,7 @@ theorem gaussPrefixAnnularGridFactorialLimits_of_nonterminal
   · exact hInterior hε hεA m k hinterior
   · rw [not_forall] at hinterior
     obtain ⟨i, hi⟩ := hinterior
-    rw [_root_.not_imp] at hi
+    rw [Classical.not_imp] at hi
     obtain ⟨hki, hterminal⟩ := hi
     have hterminal' :
         i.time.1 = m + 1 ∨
@@ -322,7 +322,7 @@ theorem gaussPrefixAnnularGridFactorialLimits_of_nonterminal
                   (Finset.mem_univ i)).trans_lt' hki
               omega)
         exact
-          tendsto_mixedFactorialMoment_gaussPrefixAnnular_of_active_time_terminal_of_uniform_coordinate_moments
+          tendsto_mixedFactorialMoment_gaussPrefixAnnular_of_terminal_coordinate_moments
             hε.le hεA (by omega) k hki htime hC
     · apply tendsto_const_nhds.congr'
       filter_upwards [eventually_ge_atTop 2,

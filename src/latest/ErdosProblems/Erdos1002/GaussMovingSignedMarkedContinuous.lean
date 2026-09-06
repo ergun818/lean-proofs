@@ -112,7 +112,7 @@ theorem integral_movingSignedMarkedTupleFiniteMeasure
   unfold movingSignedMarkedTupleFiniteMeasure
     movingSignedMarkedContinuousTupleSum
   rw [FiniteMeasure.toMeasure_sum,
-    MeasureTheory.integral_finset_sum_measure]
+    MeasureTheory.integral_finsetSum_measure]
   · apply Finset.sum_congr rfl
     intro times _htimes
     rw [FiniteMeasure.toMeasure_map,
@@ -337,7 +337,7 @@ theorem integral_unitTorusTrigPolynomial
     rw [map_smul]
     simp only [smul_eq_mul, ContinuousMap.smul_apply]
     rfl]
-  rw [MeasureTheory.integral_finset_sum]
+  rw [MeasureTheory.integral_finsetSum]
   · simp_rw [ContinuousMap.smul_apply, smul_eq_mul,
       integral_const_mul, integral_unitAddTorus_mFourier]
     by_cases hp : 0 ∈ p.support

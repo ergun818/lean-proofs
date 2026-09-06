@@ -130,7 +130,7 @@ def gaussTransferENN (f : ℝ → ℝ≥0∞) (y : ℝ) : ℝ≥0∞ :=
 theorem measurable_gaussTransferENN {f : ℝ → ℝ≥0∞} (hf : Measurable f) :
     Measurable (gaussTransferENN f) := by
   unfold gaussTransferENN
-  apply Measurable.ennreal_tsum
+  apply Measurable.tsum
   intro n
   exact (measurable_ofReal_gaussBranchRatio (n + 1)).mul
     (hf.comp (measurable_gaussInverseBranch (n + 1)))
@@ -572,7 +572,7 @@ theorem lintegral_finiteGaussDigitTailDensity (digits : Finset ℕ) :
     _ = ∑ n ∈ digits, ∫⁻ y in Ico (0 : ℝ) 1,
         ENNReal.ofReal (gaussBranchRatio (n + 1) y)
           ∂gaussMeasure := by
-      rw [lintegral_finset_sum]
+      rw [lintegral_finsetSum]
       intro n hn
       exact measurable_ofReal_gaussBranchRatio (n + 1)
     _ = ∑ n ∈ digits,
@@ -795,7 +795,7 @@ theorem gaussMeasure_finiteGaussDigitEvent_inter_preimage
         ∑ n ∈ digits,
           ENNReal.ofReal (gaussBranchRatio (n + 1) y)
             ∂gaussMeasure := by
-      rw [lintegral_finset_sum]
+      rw [lintegral_finsetSum]
       intro n hn
       exact measurable_ofReal_gaussBranchRatio (n + 1)
     _ = ∫⁻ y in tail,

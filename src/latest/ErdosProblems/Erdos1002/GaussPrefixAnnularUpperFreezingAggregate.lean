@@ -22,7 +22,6 @@ namespace Erdos1002
 
 noncomputable section
 
-set_option maxHeartbeats 800000
 
 local instance gaussPrefixAnnularUpperFreezingAggregatePropDecidable
     (P : Prop) : Decidable P := Classical.propDecidable P
@@ -582,10 +581,10 @@ theorem integral_annularContractedUpperRetainedJointFreezingEnvelope_eq
         ε A eta rho N p x)]
   rw [integral_add
     (((integrable_const (1 : ℝ)).indicator hphase).const_mul _)
-    (integrable_finset_sum _ fun j _hj ↦
+    (integrable_finsetSum _ fun j _hj ↦
       (integrable_const (1 : ℝ)).indicator (hboundary j))]
   rw [integral_const_mul,
-    integral_finset_sum _ (fun j _hj ↦
+    integral_finsetSum _ (fun j _hj ↦
       (integrable_const (1 : ℝ)).indicator (hboundary j))]
   congr 1
   · exact congrArg

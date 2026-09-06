@@ -33,7 +33,7 @@ theorem volumeReal_affine_band_le (p : ℕ) (q : ℤ) (ε : ℝ)
   let b : ℝ := ((q : ℝ) + ε) / (p : ℝ)
   have hsub : {α : ℝ | |(p : ℝ) * α - (q : ℝ)| ≤ ε} ⊆ Icc a b := by
     intro α hα
-    rw [mem_setOf_eq, abs_le] at hα
+    rw [mem_ofPred_eq, abs_le] at hα
     constructor
     · dsimp [a]
       rw [div_le_iff₀ hpR]
@@ -179,7 +179,7 @@ theorem scaledPrimitiveResonanceBand_eq (N p : ℕ) (A : ℝ)
   have hpR : (0 : ℝ) < (p : ℝ) := by exact_mod_cast hp
   have hc : 0 < Real.log (N : ℝ) * (p : ℝ) := mul_pos hlog hpR
   ext α
-  simp only [scaledPrimitiveResonanceBand, primitiveResonanceBand, mem_setOf_eq,
+  simp only [scaledPrimitiveResonanceBand, primitiveResonanceBand, mem_ofPred_eq,
     and_congr_right_iff]
   intro _hunit _hprim
   rw [show Real.log (N : ℝ) * (p : ℝ) * resonanceDelta p α =

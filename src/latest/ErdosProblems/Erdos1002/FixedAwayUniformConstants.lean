@@ -37,7 +37,7 @@ theorem iteratedDeriv_realCutoffComplex_eq
       have hd : DifferentiableAt ℝ
           (iteratedDeriv (𝕜 := ℝ) n κ : ℝ → ℝ) x :=
         (hκ.differentiable_iteratedDeriv n
-          (WithTop.coe_lt_coe.mpr (ENat.coe_lt_top n))).differentiableAt
+          (WithTop.coe_lt_coe.mpr (ENat.natCast_lt_top n))).differentiableAt
       exact hd.hasDerivAt.ofReal_comp.deriv
 
 /-- Every iterated derivative of the smooth correction is supported in
@@ -73,7 +73,7 @@ theorem support_iteratedDeriv_fixedAwaySmoothCorrection_subset
     calc
       iteratedDeriv n (fixedAwaySmoothCorrection t δ) x =
           iteratedDeriv n (fun _x : ℝ ↦ 0) x := hderivEq hxU
-      _ = 0 := by simp [iteratedDeriv_const]
+      _ = 0 := by simp
   exact hx hzero
 
 /-- A slightly enlarged open interval contains the support.  The unit

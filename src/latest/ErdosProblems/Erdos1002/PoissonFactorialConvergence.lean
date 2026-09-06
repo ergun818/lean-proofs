@@ -31,9 +31,9 @@ open ProbabilityTheory
 /-- The shifted, factorial-weighted Poisson mass is a constant multiple of
 the original mass. -/
 private lemma pmf_mul_descFactorial_shift (r : ℝ≥0) (m k : ℕ) :
-    poissonPMFReal r (m + k) * ((m + k).descFactorial k : ℝ) =
-      (r : ℝ) ^ k * poissonPMFReal r m := by
-  unfold poissonPMFReal
+    poissonMass r (m + k) * ((m + k).descFactorial k : ℝ) =
+      (r : ℝ) ^ k * poissonMass r m := by
+  simp_rw [poissonMass_eq]
   rw [pow_add]
   have hfac : m ! * (m + k).descFactorial k = (m + k)! := by
     simpa using! Nat.factorial_mul_descFactorial (n := m + k) (k := k) (by omega)
@@ -45,13 +45,13 @@ private lemma pmf_mul_descFactorial_shift (r : ℝ≥0) (m k : ℕ) :
 /-- The real series defining the `k`-th falling-factorial moment of a Poisson
 law has sum `r ^ k`. -/
 lemma hasSum_poissonPMFReal_mul_descFactorial (r : ℝ≥0) (k : ℕ) :
-    HasSum (fun n : ℕ ↦ poissonPMFReal r n * (n.descFactorial k : ℝ))
+    HasSum (fun n : ℕ ↦ poissonMass r n * (n.descFactorial k : ℝ))
       ((r : ℝ) ^ k) := by
-  let f : ℕ → ℝ := fun n ↦ poissonPMFReal r n * (n.descFactorial k : ℝ)
+  let f : ℕ → ℝ := fun n ↦ poissonMass r n * (n.descFactorial k : ℝ)
   have htail : HasSum (fun m : ℕ ↦ f (m + k)) ((r : ℝ) ^ k) := by
     have hscaled :
-        HasSum (fun m : ℕ ↦ (r : ℝ) ^ k * poissonPMFReal r m) ((r : ℝ) ^ k) := by
-      simpa using! HasSum.mul_left ((r : ℝ) ^ k) (poissonPMFRealSum r)
+        HasSum (fun m : ℕ ↦ (r : ℝ) ^ k * poissonMass r m) ((r : ℝ) ^ k) := by
+      simpa using! HasSum.mul_left ((r : ℝ) ^ k) (poissonMass_hasSum r)
     apply HasSum.congr_fun hscaled
     intro m
     exact pmf_mul_descFactorial_shift r m k
@@ -73,8 +73,8 @@ lemma integrable_descFactorial_poisson (r : ℝ≥0) (k : ℕ) :
   let g : ℕ → ℝ := fun n ↦ (n.descFactorial k : ℝ)
   have hs := hasSum_poissonPMFReal_mul_descFactorial r k
   have hnonneg : ∀ n : ℕ,
-      0 ≤ poissonPMFReal r n * (n.descFactorial k : ℝ) := fun n ↦
-    mul_nonneg poissonPMFReal_nonneg (Nat.cast_nonneg _)
+      0 ≤ poissonMass r n * (n.descFactorial k : ℝ) := fun n ↦
+    mul_nonneg poissonMass_nonneg (Nat.cast_nonneg _)
   refine ⟨(measurable_of_countable g).aestronglyMeasurable, ?_⟩
   change (∫⁻ n : ℕ, ‖g n‖ₑ ∂poissonMeasure r) < ⊤
   have hlin :
@@ -84,18 +84,18 @@ lemma integrable_descFactorial_poisson (r : ℝ≥0) (k : ℕ) :
     calc
       ∑' n : ℕ, ‖g n‖ₑ * (poissonMeasure r) {n} =
           ∑' n : ℕ,
-            ENNReal.ofReal (poissonPMFReal r n * (n.descFactorial k : ℝ)) := by
+            ENNReal.ofReal (poissonMass r n * (n.descFactorial k : ℝ)) := by
         apply tsum_congr
         intro n
         simp only [g, Real.enorm_eq_ofReal (Nat.cast_nonneg _), poissonMeasure_eq_toMeasure]
         rw [PMF.toMeasure_apply_singleton _ _ (measurableSet_singleton n)]
-        simp only [poissonPMF]
-        rw [ENNReal.ofReal_mul poissonPMFReal_nonneg]
+        simp only [poissonLawPMF_apply]
+        rw [ENNReal.ofReal_mul poissonMass_nonneg]
         change ENNReal.ofReal (n.descFactorial k : ℝ) *
-            ENNReal.ofReal (poissonPMFReal r n) = _
+            ENNReal.ofReal (poissonMass r n) = _
         ac_rfl
       _ = ENNReal.ofReal (∑' n : ℕ,
-          poissonPMFReal r n * (n.descFactorial k : ℝ)) :=
+          poissonMass r n * (n.descFactorial k : ℝ)) :=
         (ENNReal.ofReal_tsum_of_nonneg hnonneg hs.summable).symm
       _ = ENNReal.ofReal ((r : ℝ) ^ k) := by rw [hs.tsum_eq]
   rw [hlin]
@@ -110,9 +110,10 @@ theorem integral_descFactorial_poisson (r : ℝ≥0) (k : ℕ) :
   apply tsum_congr
   intro n
   simp only [smul_eq_mul]
-  change (ENNReal.ofReal (poissonPMFReal r n)).toReal *
+  rw [poissonLawPMF_apply]
+  change (ENNReal.ofReal (poissonMass r n)).toReal *
       (n.descFactorial k : ℝ) = _
-  rw [ENNReal.toReal_ofReal poissonPMFReal_nonneg]
+  rw [ENNReal.toReal_ofReal poissonMass_nonneg]
 
 end Poisson
 
@@ -254,7 +255,7 @@ private lemma integrable_bonferroni (μ : Measure ℕ) (j K : ℕ)
     funext x
     exact bonferroni_eq_sum_descFactorial j K x
   rw [hfun]
-  apply integrable_finset_sum
+  apply integrable_finsetSum
   intro k hk
   exact (hInt (j + k)).const_mul _
 
@@ -271,7 +272,7 @@ private lemma integral_bonferroni (μ : Measure ℕ) (j K : ℕ)
     funext x
     exact bonferroni_eq_sum_descFactorial j K x
   rw [hfun]
-  rw [integral_finset_sum]
+  rw [integral_finsetSum]
   · apply sum_congr rfl
     intro k _
     exact integral_const_mul _ _
@@ -284,7 +285,7 @@ private def atomSeries (r : ℝ≥0) (j k : ℕ) : ℝ :=
   ((-1 : ℝ) ^ k / ((j ! : ℝ) * (k ! : ℝ))) * (r : ℝ) ^ (j + k)
 
 private lemma hasSum_atomSeries (r : ℝ≥0) (j : ℕ) :
-    HasSum (atomSeries r j) (poissonPMFReal r j) := by
+    HasSum (atomSeries r j) (poissonMass r j) := by
   let c : ℝ := (r : ℝ) ^ j / (j ! : ℝ)
   have hbase := NormedSpace.expSeries_div_hasSum_exp (-(r : ℝ))
   have hscaled :
@@ -300,13 +301,14 @@ private lemma hasSum_atomSeries (r : ℝ≥0) (j : ℕ) :
     field_simp
     ring
   convert! hterms using 1
-  unfold c poissonPMFReal
+  unfold c
+  simp_rw [poissonMass_eq]
   rw [← Real.exp_eq_exp_ℝ]
   ring
 
 private lemma tendsto_even_truncation (r : ℝ≥0) (j : ℕ) :
     Tendsto (fun q : ℕ ↦ ∑ k ∈ range (2 * q + 1), atomSeries r j k)
-      atTop (𝓝 (poissonPMFReal r j)) := by
+      atTop (𝓝 (poissonMass r j)) := by
   have hindex : Tendsto (fun q : ℕ ↦ 2 * q + 1) atTop atTop := by
     apply Filter.tendsto_atTop.mpr
     intro b
@@ -316,7 +318,7 @@ private lemma tendsto_even_truncation (r : ℝ≥0) (j : ℕ) :
 
 private lemma tendsto_odd_truncation (r : ℝ≥0) (j : ℕ) :
     Tendsto (fun q : ℕ ↦ ∑ k ∈ range (2 * q + 2), atomSeries r j k)
-      atTop (𝓝 (poissonPMFReal r j)) := by
+      atTop (𝓝 (poissonMass r j)) := by
   have hindex : Tendsto (fun q : ℕ ↦ 2 * q + 2) atTop atTop := by
     apply Filter.tendsto_atTop.mpr
     intro b
@@ -339,7 +341,7 @@ private lemma tendsto_integral_bonferroni
     funext n
     exact integral_bonferroni (μs n : Measure ℕ) j K (hInt n)
   rw [hfun]
-  apply tendsto_finset_sum
+  apply tendsto_finsetSum
   intro k hk
   exact (hFac (j + k)).const_mul _
 
@@ -353,7 +355,7 @@ theorem tendsto_real_singleton_of_factorialMoments
     (hFac : ∀ k, Tendsto (fun n ↦ factorialMoment (μs n) k) atTop
       (𝓝 ((r : ℝ) ^ k))) (j : ℕ) :
     Tendsto (fun n ↦ (μs n : Measure ℕ).real {j}) atTop
-      (𝓝 (poissonPMFReal r j)) := by
+      (𝓝 (poissonMass r j)) := by
   rw [Metric.tendsto_atTop]
   intro ε hε
   have hε4 : 0 < ε / 4 := div_pos hε (by norm_num)
@@ -363,10 +365,10 @@ theorem tendsto_real_singleton_of_factorialMoments
     (Metric.tendsto_atTop.mp (tendsto_even_truncation r j)) (ε / 4) hε4
   let q := max qOdd qEven
   have hOddLimit :
-      dist (∑ k ∈ range (2 * q + 2), atomSeries r j k) (poissonPMFReal r j) < ε / 4 :=
+      dist (∑ k ∈ range (2 * q + 2), atomSeries r j k) (poissonMass r j) < ε / 4 :=
     hqOdd q (le_max_left _ _)
   have hEvenLimit :
-      dist (∑ k ∈ range (2 * q + 1), atomSeries r j k) (poissonPMFReal r j) < ε / 4 :=
+      dist (∑ k ∈ range (2 * q + 1), atomSeries r j k) (poissonMass r j) < ε / 4 :=
     hqEven q (le_max_right _ _)
   obtain ⟨nOdd, hnOdd⟩ :=
     (Metric.tendsto_atTop.mp
@@ -410,7 +412,7 @@ theorem tendsto_probabilityMeasure_nat_of_real_singletons
       Tendsto (fun n ↦ (μs n : Measure ℕ).real (s : Set ℕ)) atTop
         (𝓝 ((μ : Measure ℕ).real (s : Set ℕ))) := by
     simpa only [sum_measureReal_singleton] using!
-      tendsto_finset_sum s (fun j hj ↦ hPoint j)
+      tendsto_finsetSum s (fun j hj ↦ hPoint j)
   have hFin (s : Finset ℕ) :
       Tendsto (fun n ↦ (μs n : Measure ℕ) (s : Set ℕ)) atTop
         (𝓝 ((μ : Measure ℕ) (s : Set ℕ))) := by
@@ -459,12 +461,8 @@ theorem tendsto_probabilityMeasure_nat_of_real_singletons
   exact le_of_tendsto hcont (Eventually.of_forall hfinite_le)
 
 private lemma poissonProbabilityMeasure_real_singleton (r : ℝ≥0) (j : ℕ) :
-    (poissonProbabilityMeasure r : Measure ℕ).real {j} = poissonPMFReal r j := by
-  rw [measureReal_def]
-  change (poissonMeasure r {j}).toReal = poissonPMFReal r j
-  rw [poissonMeasure_eq_toMeasure, PMF.toMeasure_apply_singleton _ _ (measurableSet_singleton j)]
-  change (ENNReal.ofReal (poissonPMFReal r j)).toReal = poissonPMFReal r j
-  exact ENNReal.toReal_ofReal poissonPMFReal_nonneg
+    (poissonProbabilityMeasure r : Measure ℕ).real {j} = poissonMass r j :=
+  rfl
 
 /-- **Method of factorial moments for a Poisson limit on `ℕ`.**
 

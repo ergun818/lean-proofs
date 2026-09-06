@@ -427,7 +427,7 @@ theorem integrableOn_signedAnnularExponentIntegrand_section
     have h := measure_ne_top (signedAnnulusFiniteMeasure ε A : Measure ℝ) univ
     simpa only [signedAnnulusFiniteMeasure_toMeasure,
       Measure.restrict_apply_univ] using! h
-  apply Measure.integrableOn_of_bounded hfinite
+  apply Measure.integrableOn_of_bounded (M := 2) hfinite
     ((measurable_signedAnnularExponentIntegrand t).comp
       (measurable_id.prodMk measurable_const)).aestronglyMeasurable
   filter_upwards with x
@@ -469,7 +469,7 @@ theorem integral_signedAnnularExponentIntegrand_section_zero
   rw [signedAnnulusFiniteMeasure_toMeasure]
   change (∫ x : ℝ in signedAnnulusSet 0 A, f x) = _
   rw [signedAnnulusSet,
-    integral_union_ae (disjoint_signedAnnulus_halves (le_refl 0)).aedisjoint
+    setIntegral_union₀ (disjoint_signedAnnulus_halves (le_refl 0)).aedisjoint
       measurableSet_Ioo.nullMeasurableSet
       (by simpa only [neg_zero] using! hneg) hpos]
   simp only [neg_zero]

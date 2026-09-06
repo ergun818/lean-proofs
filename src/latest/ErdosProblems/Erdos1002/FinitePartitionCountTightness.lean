@@ -76,7 +76,7 @@ theorem integral_markedResonanceCount_partition
     funext α
     exact_mod_cast (sum_markedResonanceCount_partition
       N P K B hsub hpart α).symm
-  rw [hfun, MeasureTheory.integral_finset_sum]
+  rw [hfun, MeasureTheory.integral_finsetSum]
   intro i _hi
   exact integrable_markedResonanceCount_cast N P (hB i)
 
@@ -99,7 +99,7 @@ theorem tendsto_integral_markedResonanceCount_partition
         (markedResonanceCount (Ns n) (Ps n) K α : ℝ)
           ∂uniform01Measure)
       atTop (nhds (∑ i, r i)) := by
-  have hsum := tendsto_finset_sum Finset.univ (fun i _hi ↦ hcell i)
+  have hsum := tendsto_finsetSum Finset.univ (fun i _hi ↦ hcell i)
   apply hsum.congr'
   exact Eventually.of_forall fun n ↦ by
     change (∑ i, ∫ α,
@@ -110,8 +110,9 @@ theorem tendsto_integral_markedResonanceCount_partition
     exact (integral_markedResonanceCount_partition
       (Ns n) (Ps n) B hB hsub hpart).symm
 
+omit [Fintype ι] in
 /-- Hence the total count of a finite marked partition is tight. -/
-theorem markedResonanceCount_partition_tight
+theorem markedResonanceCount_partition_tight [Finite ι]
     (Ns Ps : ℕ → ℕ) {K : Set (ℝ × ℝ × ℝ)} (hK : MeasurableSet K)
     (B : ι → Set (ℝ × ℝ × ℝ))
     (hB : ∀ i, MeasurableSet (B i))
@@ -126,6 +127,7 @@ theorem markedResonanceCount_partition_tight
     ∀ δ > 0, ∃ C : ℕ, ∀ᶠ n : ℕ in atTop,
       uniform01Measure.real
         {α | C < markedResonanceCount (Ns n) (Ps n) K α} < δ := by
+  let := Fintype.ofFinite ι
   apply markedResonanceCount_tight_of_tendsto_firstMoment
     Ns Ps hK (∑ i, r i)
   · exact Finset.sum_nonneg fun i _hi ↦ hr i

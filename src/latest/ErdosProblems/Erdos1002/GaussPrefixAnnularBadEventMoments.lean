@@ -33,7 +33,6 @@ noncomputable section
 local instance gaussPrefixAnnularBadEventMomentsPropDecidable (P : Prop) :
     Decidable P := Classical.propDecidable P
 
-set_option maxHeartbeats 800000
 
 /-! ## Sorting one injective depth tuple -/
 
@@ -958,7 +957,7 @@ theorem tupleEvent_gaussPrefixCompact_eq_empty_of_not_bounded
     tupleEvent
         (gaussPrefixMarkedEvent N
           (compactAnnularMarkedRegion ε A)) f = ∅ := by
-  push_neg at hf
+  push Not at hf
   obtain ⟨i, hi⟩ := hf
   have hE :=
     gaussPrefixMarkedEvent_compactAnnular_empty_above_coarseDepth

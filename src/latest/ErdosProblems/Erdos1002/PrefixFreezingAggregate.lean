@@ -158,7 +158,7 @@ theorem closedIntervalIndicatorProduct_eq_eventIndicator
     apply Finset.prod_eq_one
     intro i _hi
     simp only [closedIntervalIndicator, if_pos (hall i)]
-  · push_neg at hall
+  · push Not at hall
     obtain ⟨i, hi⟩ := hall
     have hnotMem : ω ∉ closedWindowTupleEvent a b coordinate := by
       intro hmem
@@ -201,7 +201,7 @@ theorem boundaryIndicatorProduct_eq_eventIndicator
         have hij : i ≠ j := Finset.ne_of_mem_erase hi
         simp only [closedIntervalIndicator, if_pos (hother i hij)]
       simp only [closedIntervalBoundaryIndicator, if_pos hj, hprod, mul_one]
-    · push_neg at hother
+    · push Not at hother
       obtain ⟨i, hij, hi⟩ := hother
       have hnotMem : ω ∉
           closedBoundaryWindowTupleEvent a b coordinate eta j := by
@@ -288,9 +288,9 @@ theorem integral_oscillatoryPrefixFreezingEnvelope_eq_eventMasses
       oscillatoryPrefixFreezingEnvelope_eq_eventIndicators
         a b coordinate K phaseRadius eta ω),
     integral_add hmainInt
-      (integrable_finset_sum _ fun j _hj ↦ hboundaryInt j),
+      (integrable_finsetSum _ fun j _hj ↦ hboundaryInt j),
     integral_const_mul,
-    integral_finset_sum _ (fun j _hj ↦ hboundaryInt j)]
+    integral_finsetSum _ (fun j _hj ↦ hboundaryInt j)]
   apply congrArg₂ (· + ·)
   · exact congrArg (fun t : ℝ ↦
       (2 * Real.pi * |K| * phaseRadius) * t)

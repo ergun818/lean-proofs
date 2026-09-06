@@ -41,7 +41,7 @@ theorem smoothNearPrimitivePoleTail_continuous
     (a ε : ℝ) (Q U : ℕ) (ha : 0 < a) (haε : a ≤ ε / 4) :
     Continuous (smoothNearPrimitivePoleTail a ε Q U) := by
   unfold smoothNearPrimitivePoleTail
-  apply continuous_finset_sum
+  apply continuous_finsetSum
   intro p _hp
   exact (smoothNearPrimitivePoleSum_contDiff a ε p ha haε).continuous
 
@@ -134,7 +134,7 @@ theorem unitFourierCoefficient_smoothNearPrimitivePoleTail_eq
           paperExp (-(n : ℝ) * alpha)) by
     funext alpha
     rw [Finset.sum_mul]]
-  rw [intervalIntegral.integral_finset_sum]
+  rw [intervalIntegral.integral_finsetSum]
   · apply Finset.sum_congr rfl
     intro p hp
     simpa only [unitFourierCoefficient] using!

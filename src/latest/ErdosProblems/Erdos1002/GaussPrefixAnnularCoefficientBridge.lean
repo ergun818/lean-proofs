@@ -24,7 +24,6 @@ namespace Erdos1002
 
 noncomputable section
 
-set_option maxHeartbeats 800000
 
 variable {ι : Type*} [Fintype ι]
 

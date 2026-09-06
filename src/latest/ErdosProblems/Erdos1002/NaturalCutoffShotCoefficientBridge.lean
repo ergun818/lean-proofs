@@ -38,7 +38,7 @@ theorem naturalDenominatorPrefixCoefficient_eq_sum
       exact_mod_cast hp.2
     · intro hp
       constructor
-      · exact PNat.one_le p
+      · exact one_le
       · exact_mod_cast hp
   let e : {p : ℕ+ // (p : ℕ) ≤ P} ≃ {p : ℕ+ // p ∈ S} :=
     Equiv.subtypeEquivRight (fun p ↦ (hS p).symm)
@@ -72,7 +72,7 @@ theorem naturalDenominatorPrefixCoefficient_eq_sum
           (show (1 : ℕ+) ≤ ⟨p, (Finset.mem_Icc.mp hp).1⟩ ∧
               ⟨p, (Finset.mem_Icc.mp hp).1⟩ ≤ Pp by
             constructor
-            · exact PNat.one_le _
+            · exact one_le
             · exact_mod_cast (Finset.mem_Icc.mp hp).2)
       · intro p _hp
         rfl

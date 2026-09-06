@@ -489,7 +489,7 @@ theorem tendsto_annularOccurrenceAssignmentBox_card_div_log_pow
           ((annularOccurrenceParityDepthBox N k z).card : ℝ) /
             Real.log (N : ℝ))
         atTop (nhds (annularOccurrenceTimeDensity k)) := by
-    apply tendsto_finset_prod Finset.univ
+    apply tendsto_finsetProd Finset.univ
     intro z _hz
     exact tendsto_annularTimeParityDepthBox_card_div_log
       hgrid z.1 (htime z.1 (by

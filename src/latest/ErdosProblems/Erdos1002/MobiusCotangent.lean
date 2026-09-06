@@ -246,7 +246,7 @@ theorem integerComplement_div_nat
     {z : ℂ} (hz : z ∈ Complex.integerComplement)
     {d : ℕ} (hd : 0 < d) :
     z / (d : ℂ) ∈ Complex.integerComplement := by
-  rw [Complex.integerComplement.mem_iff] at hz ⊢
+  rw [Complex.mem_integerComplement_iff] at hz ⊢
   rintro ⟨k, hk⟩
   apply hz
   refine ⟨(d : ℤ) * k, ?_⟩
@@ -318,7 +318,7 @@ theorem summable_pairedPoleTerm_mul_succ
     {z : ℂ} (hz : z ∈ Complex.integerComplement)
     {d : ℕ} (hd : 0 < d) :
     Summable (fun n : ℕ ↦ pairedPoleTerm z (d * (n + 1))) := by
-  have hbase := Summable_cotTerm (integerComplement_div_nat hz hd)
+  have hbase := summable_cotTerm (integerComplement_div_nat hz hd)
   have hscaled :
       Summable (fun n : ℕ ↦
         (1 / (d : ℂ)) * cotTerm (z / (d : ℂ)) n) :=
@@ -423,7 +423,7 @@ theorem tendsto_mobiusExpandedPairedPartialSum
       atTop (nhds (mobiusCotangentPrincipalValue p z)) := by
   simp_rw [mobiusExpandedPairedPartialSum_eq_factored]
   unfold mobiusCotangentPrincipalValue
-  apply tendsto_finset_sum
+  apply tendsto_finsetSum
   intro d hdMem
   have hdPos : 0 < d := Nat.pos_of_mem_divisors hdMem
   exact (tendsto_divisorFilteredPairedPartialSum hz hdPos).const_mul

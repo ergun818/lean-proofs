@@ -120,6 +120,7 @@ theorem annularUpperRetained_nonzero_gap_before_centerOccurrence
   simpa only [s] using! hjGap
 
 set_option maxHeartbeats 800000 in
+-- Budget for elaborating the generic carrier estimate with the dependent shallow-cell indices.
 /-- Direct application of the generic carrier theorem at the shallow
 cutoff.  The bound is uniform in the tagged tuple. -/
 theorem

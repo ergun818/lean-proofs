@@ -61,7 +61,7 @@ theorem norm_fixedAwayCoefficientL2_sq
     ‖fixedAwayCoefficientL2 c hc‖ ^ 2 = ∑' n : ℤ, ‖c n‖ ^ 2 := by
   unfold fixedAwayCoefficientL2
   rw [LinearIsometryEquiv.norm_map]
-  let x : lp (λ _ : ℤ => ℂ) 2 :=
+  let x : lp (fun _ : ℤ => ℂ) 2 :=
     ⟨c, by
       apply memℓp_gen
       simpa using! hc⟩

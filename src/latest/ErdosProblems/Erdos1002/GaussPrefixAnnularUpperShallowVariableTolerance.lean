@@ -51,6 +51,7 @@ def annularUpperRetainedShallowPrefixGoodIntegralWithTolerance
         ∂uniform01Measure
 
 set_option maxHeartbeats 800000 in
+-- Budget for specializing the dependent carrier bound with the caller-supplied tolerance.
 /-- Uniform one-tuple bound at the caller-supplied tolerance. -/
 theorem
     norm_annularUpperRetainedShallowPrefixGoodIntegralWithTolerance_le
@@ -135,6 +136,7 @@ theorem upperRetainedShallowUniformExponent_mono_tolerance
   nlinarith
 
 set_option maxHeartbeats 800000 in
+-- Budget for the dependent tuple sums and the asymptotic normalization of their envelope.
 /-- Polynomially many shallow prefix-good means cancel for every fixed
 admissible tolerance. -/
 theorem

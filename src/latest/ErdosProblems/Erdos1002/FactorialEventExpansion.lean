@@ -81,7 +81,7 @@ def embeddingFilterEquiv {I : Type*} [DecidableEq I] (s : Finset I)
 /-- Pointwise factorial expansion.  The right side ranges over ordered
 distinct tuples because its index type consists of embeddings. -/
 theorem finiteEventCount_descFactorial_eq_sum_embeddings
-    {Ω I : Type*} [DecidableEq I] (s : Finset I) (E : I → Set Ω)
+    {Ω I : Type*} (s : Finset I) (E : I → Set Ω)
     (ω : Ω) (r : ℕ) :
     (finiteEventCount s E ω).descFactorial r =
       ∑ f : Fin r ↪ (s : Finset I),
@@ -113,7 +113,7 @@ theorem finiteEventCount_descFactorial_eq_sum_embeddings
 
 /-- Real-valued indicator form of the pointwise expansion. -/
 theorem cast_finiteEventCount_descFactorial_eq_sum_indicators
-    {Ω I : Type*} [DecidableEq I] (s : Finset I) (E : I → Set Ω)
+    {Ω I : Type*} (s : Finset I) (E : I → Set Ω)
     (ω : Ω) (r : ℕ) :
     ((finiteEventCount s E ω).descFactorial r : ℝ) =
       ∑ f : Fin r ↪ (s : Finset I),
@@ -126,13 +126,13 @@ theorem cast_finiteEventCount_descFactorial_eq_sum_indicators
 moments to factorial measures; it has no diagonal or multiplicity convention
 left implicit. -/
 theorem integral_finiteEventCount_descFactorial
-    {Ω I : Type*} [MeasurableSpace Ω] [DecidableEq I]
+    {Ω I : Type*} [MeasurableSpace Ω]
     (s : Finset I) (E : I → Set Ω) (r : ℕ) (mu : Measure Ω)
     [IsFiniteMeasure mu] (hE : ∀ i ∈ s, MeasurableSet (E i)) :
     ∫ ω, ((finiteEventCount s E ω).descFactorial r : ℝ) ∂mu =
       ∑ f : Fin r ↪ (s : Finset I), mu.real (tupleEvent E f) := by
   simp_rw [cast_finiteEventCount_descFactorial_eq_sum_indicators s E]
-  rw [MeasureTheory.integral_finset_sum]
+  rw [MeasureTheory.integral_finsetSum]
   · apply Finset.sum_congr rfl
     intro f _hf
     exact MeasureTheory.integral_indicator_one (measurableSet_tupleEvent hE f)

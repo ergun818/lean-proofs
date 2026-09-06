@@ -97,10 +97,11 @@ def unitTorusHalfOpenBox
 frontier. -/
 private theorem measure_frontier_iInter_fintype_eq_zero
     {Omega iota : Type*} [TopologicalSpace Omega]
-    [MeasurableSpace Omega] [Fintype iota]
+    [MeasurableSpace Omega] [Finite iota]
     (mu : Measure Omega) (s : iota → Set Omega)
     (hnull : ∀ i, mu (frontier (s i)) = 0) :
     mu (frontier (⋂ i, s i)) = 0 := by
+  let := Fintype.ofFinite iota
   classical
   let interFinset : Finset iota → Set Omega := fun I ↦
     ⋂ i ∈ I, s i

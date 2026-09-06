@@ -205,10 +205,11 @@ theorem summable_fixedAwayShiftedDyadicTotalSum_norm_sq
   nlinarith [sq_nonneg (‖P n‖ - ‖E n‖)]
 
 theorem summable_norm_sq_finset_sum
-    {ι : Type*} [DecidableEq ι] (S : Finset ι)
+    {ι : Type*} (S : Finset ι)
     (c : ι → ℤ → ℂ)
     (hc : ∀ i ∈ S, Summable fun n : ℤ ↦ ‖c i n‖ ^ 2) :
     Summable fun n : ℤ ↦ ‖∑ i ∈ S, c i n‖ ^ 2 := by
+  classical
   have hright : Summable fun n : ℤ ↦
       (S.card : ℝ) * ∑ i ∈ S, ‖c i n‖ ^ 2 :=
     (summable_sum hc).mul_left (S.card : ℝ)

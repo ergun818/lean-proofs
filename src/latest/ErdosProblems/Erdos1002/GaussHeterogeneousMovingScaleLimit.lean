@@ -147,7 +147,7 @@ theorem tendsto_movingGaussHeterogeneousRareDigitProduct
               (scale n) (lower i) (upper i)))
       atTop
       (𝓝 (∏ i, (upper i - lower i) / Real.log 2)) := by
-  apply tendsto_finset_prod Finset.univ
+  apply tendsto_finsetProd Finset.univ
   intro i _hi
   have hmain :=
     tendsto_scaled_gaussFirstDigitBlock_floorCeil

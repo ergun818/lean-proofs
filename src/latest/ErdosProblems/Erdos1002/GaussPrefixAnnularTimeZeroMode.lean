@@ -28,7 +28,6 @@ noncomputable section
 local instance gaussPrefixAnnularTimeZeroModePropDecidable (P : Prop) :
     Decidable P := Classical.propDecidable P
 
-set_option maxHeartbeats 800000
 
 /-- The part of a tuple family whose first chronological depth is below
 `gap`. -/

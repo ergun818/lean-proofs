@@ -13,7 +13,7 @@ open scoped BigOperators ComplexConjugate ENNReal Topology
 namespace Erdos1002
 noncomputable section
 
- theorem naturalDenominatorTailCoefficient_sub_eq_sum_Ioc
+theorem naturalDenominatorTailCoefficient_sub_eq_sum_Ioc
     (N P U n : ℕ) (hP : 0 < P) (hPU : P ≤ U) (hn : n ≠ 0) :
     naturalDenominatorTailCoefficient N P n -
         naturalDenominatorTailCoefficient N U n =

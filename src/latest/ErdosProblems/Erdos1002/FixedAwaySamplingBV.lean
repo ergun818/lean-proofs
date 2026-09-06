@@ -187,8 +187,6 @@ theorem tendsto_fixedAwayScaledHermitianProduct_nhdsGT_diagonal_of_pos
       (-Complex.I * (Real.pi : ℂ)) *
           conj (-Complex.I * (Real.pi : ℂ)) =
         (Real.pi ^ 2 : ℂ) := by
-    change (-Complex.I * (Real.pi : ℂ)) *
-      conj (-Complex.I * (Real.pi : ℂ)) = (Real.pi : ℂ) ^ 2
     ring_nf
     rw [map_neg, map_mul, Complex.conj_I, Complex.conj_ofReal]
     ring_nf
@@ -211,8 +209,6 @@ theorem tendsto_fixedAwayScaledHermitianProduct_nhdsLT_diagonal_of_pos
       (Complex.I * (Real.pi : ℂ)) *
           conj (Complex.I * (Real.pi : ℂ)) =
         (Real.pi ^ 2 : ℂ) := by
-    change (Complex.I * (Real.pi : ℂ)) *
-      conj (Complex.I * (Real.pi : ℂ)) = (Real.pi : ℂ) ^ 2
     ring_nf
     rw [map_mul, Complex.conj_I, Complex.conj_ofReal]
     ring_nf
@@ -703,7 +699,8 @@ theorem tsum_fixedAwayHermitianDiscreteJumpCharge
         2 * Real.pi * ‖fixedAwayScaledPV t δ s' a' a‖
       else 2 * Real.pi * ‖fixedAwayScaledPV t δ s a a'‖)
     have ha'a : a' ≠ a := fun h ↦ haa' h.symm
-    simp [fixedAwayHermitianDiscreteJumpCharge, haa', ha'a,
+    simp only [Finset.mem_singleton, haa', not_false_eq_true, sum_insert, ↓reduceIte,
+      sum_singleton, ha'a, fixedAwayHermitianDiscreteJumpCharge,
       fixedAwayHermitianCarrierJumpCost] at hsum ⊢
     exact hsum.trans (by ring)
 
@@ -869,7 +866,6 @@ theorem norm_fixedAwayPVTransform_smooth_le_quadraticDecay
         norm_fixedAwayPVTransform_smooth_le_local hδ hδt.le hySmall
     have hsquare : (1 + |y|) ^ 2 ≤ 4 := by nlinarith [abs_nonneg y]
     nlinarith
-
   · have hyLarge : 1 < |y| := lt_of_not_ge hySmall
     have hy0 : y ≠ 0 := abs_pos.mp (zero_lt_one.trans hyLarge)
     have htail := norm_fixedAwayPVTransform_smooth_le_rpow_tail_abs
@@ -905,7 +901,7 @@ theorem summable_shiftedScaledQuadraticEnvelope
   let exceptional : ℤ → ℝ := fun n ↦
     if |(n : ℝ) - a| < 1 then 1 else 0
   have hexceptional : Summable exceptional := by
-    apply summable_of_finite_support
+    apply summable_of_hasFiniteSupport
     apply (Set.finite_Icc ⌊a⌋ (⌊a⌋ + 1)).subset
     intro n hn
     rw [Function.mem_support] at hn

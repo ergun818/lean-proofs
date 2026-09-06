@@ -52,7 +52,8 @@ private theorem integral_exp_neg_mul_cos_Ioi (ε t : ℝ) (hε : 0 < ε) :
   let z : ℂ := (-ε : ℂ) + (t : ℂ) * Complex.I
   have hz : z.re < 0 := by
     dsimp [z]
-    simp only [Complex.mul_re, Complex.ofReal_re, Complex.I_re, mul_zero, Complex.ofReal_im, Complex.I_im,
+    simp only [Complex.mul_re, Complex.ofReal_re, Complex.I_re, mul_zero,
+      Complex.ofReal_im, Complex.I_im,
     mul_one, sub_self, add_zero, Left.neg_neg_iff]
     exact hε
   have hzint := integrableOn_exp_mul_complex_Ioi hz 0
@@ -161,7 +162,8 @@ theorem dampedSineIntegral_neg (ε a : ℝ) :
   simp only [neg_mul, Real.sin_neg, neg_div, mul_neg]
   exact integral_neg _
 
-/-- The elementary Abel-damped sine integral, proved by Fubini and the Laplace transform of cosine. -/
+/-- The elementary Abel-damped sine integral, proved by Fubini and the Laplace
+transform of cosine. -/
 theorem dampedSineIntegral_eq_arctan (ε a : ℝ) (hε : 0 < ε) :
     dampedSineIntegral ε a = Real.arctan (a / ε) := by
   rcases le_total 0 a with ha | ha
@@ -955,7 +957,7 @@ private theorem bernoulliMark_le_abs_div_two (y : ℝ) :
 
 private theorem transformKernel_measurable (N : ℕ) : Measurable (transformKernel N) := by
   unfold transformKernel
-  exact Measurable.ite (by simpa only [Set.setOf_eq_eq_singleton] using!
+  exact Measurable.ite (by simpa only [Set.ofPred_eq_eq_singleton] using!
       (measurableSet_singleton (0 : ℝ))) measurable_const
     ((bernoulliMark_measurable.comp (measurable_const.mul measurable_id)).div measurable_id)
 
@@ -987,7 +989,8 @@ private theorem principalValueIntegrand_intervalIntegrable (N : ℕ) (s a b : �
       (fun x => (transformKernel N x : ℂ) * paperExp (-s * x)) volume a b := by
   apply (intervalIntegrable_const (c := ((N : ℝ) / 2))).mono_fun
   · exact ((transformKernel_measurable N).complex_ofReal.mul
-      (continuous_paperExp.comp (continuous_const.mul continuous_id)).measurable).aestronglyMeasurable
+      (continuous_paperExp.comp
+        (continuous_const.mul continuous_id)).measurable).aestronglyMeasurable
   · filter_upwards with x
     rw [norm_mul, Complex.norm_real, norm_paperExp, mul_one]
     have hN : 0 ≤ (N : ℝ) / 2 := div_nonneg (Nat.cast_nonneg N) (by norm_num)

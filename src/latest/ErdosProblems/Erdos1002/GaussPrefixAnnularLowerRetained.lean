@@ -571,7 +571,7 @@ theorem norm_gaussPrefixMarkedMixedTupleCharacter_eq_indicator
           (fun i ↦ gaussPrefixMarkedEvent N (B i)) F := by
       simpa only [mixedTupleEvent, tupleEvent, Set.mem_iInter] using! hall
     rw [Set.indicator_of_notMem hmixed]
-    push_neg at hall
+    push Not at hall
     obtain ⟨i, j, hj⟩ := hall
     unfold gaussPrefixMarkedMixedTupleCharacter
     rw [norm_prod]
@@ -584,7 +584,7 @@ theorem norm_gaussPrefixMarkedMixedTupleCharacter_eq_indicator
 cut off at `N` but whose actual terminal denominators are at most `R`.
 This is the form needed after selecting the prefix-good cells. -/
 theorem
-    norm_sum_setIntegral_mixedTupleCharacter_compactValue_le_of_lastNonzero_gap_prefixGoodCells_sharp
+    norm_sum_setIntegral_mixedTupleCharacter_le_of_lastNonzero_gap_prefixGoodCells_sharp
     (N R : ℕ) (hN : 2 ≤ N)
     (k : ι → ℕ) (h : ∀ i, Fin (k i) → ℤ)
     (F : GaussPrefixMixedDepthTuple N k)
@@ -737,7 +737,7 @@ theorem
       (mul_nonneg (Nat.cast_nonneg m) gaussRoofMean_pos.le)
       (mul_nonneg hDelta (Nat.cast_nonneg L))
   have hraw :=
-    norm_sum_setIntegral_mixedTupleCharacter_compactValue_le_of_lastNonzero_gap_prefixGoodCells_sharp
+    norm_sum_setIntegral_mixedTupleCharacter_le_of_lastNonzero_gap_prefixGoodCells_sharp
       N R hN k h F hF z₀ hcoeff hgap hweightBudget
       lower upper hlower hupper hsmall
       (exactDepthPrefixGoodCells N m L Delta)
@@ -1154,6 +1154,7 @@ theorem
 /-! ## Uniform one-tuple cancellation on prefix-good cylinders -/
 
 set_option maxHeartbeats 800000 in
+-- Budget for transporting the carrier estimate through the dependent chronological realization.
 /-- A contracted lower-retained chronological tuple, realized as a
 globally injective labeled depth tuple, has its entire prefix-good
 deepest-cylinder sum bounded by the uniform lower-retained exponent.
@@ -1810,6 +1811,7 @@ def annularContractedLowerRetainedPrefixGoodCylinderSum
       ε A eta rho N k hr mode hmode p
 
 set_option maxHeartbeats 400000 in
+-- Budget for the finite-set injection through the dependent chronological tuple types.
 /-- The homogeneous-window bound for one fixed ordering of the labelled
 occurrences.  Keeping this estimate separate prevents the dependent sum over
 all orderings from obscuring the elementary finite-set injection. -/
@@ -2002,6 +2004,7 @@ theorem eventually_annularContractedLowerRetained_fullWeightBudget
     _ ≤ ((2 ^ (annularSeparationGap N / 2) : ℕ) : ℝ) := hN
 
 set_option maxHeartbeats 800000 in
+-- Budget for summing the dependent cylinder bounds and normalizing the common envelope.
 /-- After summing over every chronological tag and contracted lower tuple,
 the complete prefix-good cylinder surrogate tends to zero. -/
 theorem
@@ -2417,12 +2420,12 @@ theorem norm_sum_integral_sub_le_goodCompl_indicatorSum
     ∑ i ∈ s, (E i).indicator (fun _x ↦ (1 : ℝ)) x
   have hqInt : Integrable q mu := by
     dsimp only [q]
-    apply integrable_finset_sum
+    apply integrable_finsetSum
     intro i hi
     exact (hf i hi).sub (hg i hi)
   have hcountInt : Integrable count mu := by
     dsimp only [count]
-    apply integrable_finset_sum
+    apply integrable_finsetSum
     intro i hi
     exact (integrable_const (1 : ℝ)).indicator (hE i hi)
   have hdomInt :
@@ -2441,7 +2444,7 @@ theorem norm_sum_integral_sub_le_goodCompl_indicatorSum
         rw [integral_sub (hf i hi) (hg i hi)]
       _ = ∫ x, q x ∂mu := by
         dsimp only [q]
-        rw [integral_finset_sum]
+        rw [integral_finsetSum]
         intro i hi
         exact (hf i hi).sub (hg i hi)
   rw [hsumIntegral]
@@ -2821,7 +2824,7 @@ theorem
         (uniform01Measure.restrict bad) := by
     apply Integrable.mono_measure _ Measure.restrict_le_self
     apply Integrable.const_mul
-    apply integrable_finset_sum
+    apply integrable_finsetSum
     intro p _hp
     apply (integrable_const (1 : ℝ)).indicator
     apply measurableSet_orderedEventIntersection

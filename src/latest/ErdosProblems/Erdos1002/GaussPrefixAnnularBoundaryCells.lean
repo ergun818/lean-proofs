@@ -827,7 +827,7 @@ theorem tendsto_integral_mixedDescFactorial_of_rare_coordinate
       · simp [Set.indicator_of_mem hω]
       · have hzero : X n ω i = 0 := by
           dsimp only [E] at hω
-          simp only [Set.mem_setOf_eq, not_lt] at hω
+          simp only [Set.mem_ofPred_eq, not_lt] at hω
           omega
         have hfzero : f n ω = 0 := by
           exact mixedDescFactorial_eq_zero_of_coordinate_eq_zero
@@ -897,7 +897,7 @@ theorem
             (Fintype.card ι : ℝ) ^ (s - 1) *
               ∑ j, (X n ω j : ℝ) ^ s) μ := by
       apply Integrable.const_mul
-      apply integrable_finset_sum
+      apply integrable_finsetSum
       intro j _hj
       simpa only [s, r] using! hXmoment n j
     have hmeas :
@@ -923,7 +923,7 @@ theorem
             (Fintype.card ι : ℝ) ^ (s - 1) *
               ∑ j, (X n ω j : ℝ) ^ s) μ := by
       apply Integrable.const_mul
-      apply integrable_finset_sum
+      apply integrable_finsetSum
       intro j _hj
       simpa only [s, r] using! hXmoment n j
     calc
@@ -937,7 +937,7 @@ theorem
             ∑ j, ∫ ω, (X n ω j : ℝ) ^ s ∂μ := by
         rw [integral_const_mul]
         congr 1
-        rw [integral_finset_sum]
+        rw [integral_finsetSum]
         intro j _hj
         simpa only [s, r] using! hXmoment n j
       _ ≤
@@ -1142,7 +1142,7 @@ ordinary moment of order twice the total mixed order of each individual
 cell count.  The proof uses the sum of all coordinates as its dominator and
 the finite-dimensional power-sum inequality. -/
 theorem
-    tendsto_mixedFactorialMoment_gaussPrefixAnnular_of_active_time_terminal_of_uniform_coordinate_moments
+    tendsto_mixedFactorialMoment_gaussPrefixAnnular_of_terminal_coordinate_moments
     {ε A : ℝ} (hε : 0 ≤ ε) (hεA : ε < A)
     {grid : ℕ} (hgrid : 0 < grid)
     (k : AnnularGridIndex grid → ℕ)

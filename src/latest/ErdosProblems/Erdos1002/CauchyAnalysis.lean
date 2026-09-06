@@ -122,7 +122,7 @@ theorem fourier_laplaceKernel (w : ℝ) :
     FourierTransform.fourier laplaceKernel w = (cauchyLimitDensity w : ℂ) := by
   rw [Real.fourier_real_eq_integral_exp_smul]
   simp only [smul_eq_mul]
-  rw [← integral_add_compl measurableSet_Iic
+  rw [← integral_add_compl (s := Iic (0 : ℝ)) measurableSet_Iic
     (integrable_fourier_laplaceKernel_integrand w), compl_Iic]
   have hIic :
       (∫ x : ℝ in Iic 0,

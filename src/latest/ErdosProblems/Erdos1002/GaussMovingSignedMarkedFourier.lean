@@ -289,7 +289,7 @@ theorem movingSignedMarkedTrigTupleSum_eq_fourierSum
         exact
           indicator_realTorusTrigPolynomial_eq_sum_markedIntegrands
             N scale lower upper p times x]
-      rw [MeasureTheory.integral_finset_sum]
+      rw [MeasureTheory.integral_finsetSum]
       · apply Finset.sum_congr rfl
         intro mode _hmode
         exact integral_const_mul
@@ -429,7 +429,7 @@ theorem tendsto_movingSignedMarkedTrigTupleSum_of_fourier
       atTop
       (nhds (p.sum fun mode coefficient ↦
         coefficient * limit mode)) := by
-  have hsum := tendsto_finset_sum p.support fun mode hmodeSupport ↦
+  have hsum := tendsto_finsetSum p.support fun mode hmodeSupport ↦
     (hmode mode hmodeSupport).const_mul (p mode)
   apply hsum.congr'
   filter_upwards with n

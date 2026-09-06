@@ -98,13 +98,14 @@ theorem smoothNearPrimitivePoleSum_contDiff
   exact nearPoleCell_contDiff a ε p q ha haε
 
 private theorem iteratedDeriv_finset_sum
-    {ι : Type*} [DecidableEq ι] (s : Finset ι)
+    {ι : Type*} (s : Finset ι)
     (f : ι → ℝ → ℂ) (j : ℕ)
     (hf : ∀ i ∈ s, ContDiff ℝ j (f i)) (x : ℝ) :
     iteratedDeriv j (fun y ↦ ∑ i ∈ s, f i y) x =
       ∑ i ∈ s, iteratedDeriv j (f i) x := by
+  classical
   induction s using Finset.induction_on with
-  | empty => simp [iteratedDeriv_const]
+  | empty => simp
   | @insert i s hi ih =>
       have hfi : ContDiff ℝ j (f i) := hf i (Finset.mem_insert_self i s)
       have hfs : ∀ k ∈ s, ContDiff ℝ j (f k) := by
@@ -171,9 +172,10 @@ theorem iteratedDeriv_nearPoleCell_pairwise_zero
     nlinarith [hqcut.1, hqcut.2, hrcut.1, hrcut.2]
 
 private theorem norm_sq_finset_sum_eq_sum_norm_sq
-    {ι : Type*} [DecidableEq ι] (s : Finset ι) (f : ι → ℂ)
+    {ι : Type*} (s : Finset ι) (f : ι → ℂ)
     (hdisj : ∀ i ∈ s, ∀ k ∈ s, i ≠ k → f i = 0 ∨ f k = 0) :
     ‖∑ i ∈ s, f i‖ ^ 2 = ∑ i ∈ s, ‖f i‖ ^ 2 := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp
   | @insert i s hi ih =>
@@ -312,7 +314,7 @@ theorem integral_unit_norm_iteratedDeriv_smoothNearPrimitivePoleSum_sq_eq
     intro _hmem
     exact halpha
   rw [intervalIntegral.integral_congr_ae heqInterval,
-    intervalIntegral.integral_finset_sum]
+    intervalIntegral.integral_finsetSum]
   · calc
       (∑ q ∈ reducedResidues p,
           ∫ alpha in (0 : ℝ)..1,

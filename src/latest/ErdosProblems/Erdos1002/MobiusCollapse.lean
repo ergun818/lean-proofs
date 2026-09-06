@@ -21,8 +21,6 @@ namespace Erdos1002
 
 noncomputable section
 
-set_option maxHeartbeats 1000000
-
 /-- The value `1`, `1/2`, or `0` attached to a strict tail, its endpoint,
 or its complement. -/
 def midpointTailWeight (n scale m : ℕ) : ℝ :=

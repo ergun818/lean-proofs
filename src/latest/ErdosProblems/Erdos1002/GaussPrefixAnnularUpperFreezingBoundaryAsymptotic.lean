@@ -25,7 +25,6 @@ namespace Erdos1002
 
 noncomputable section
 
-set_option maxHeartbeats 2000000
 
 local instance gaussPrefixAnnularUpperFreezingBoundaryAsymptoticPropDecidable
     (P : Prop) : Decidable P := Classical.propDecidable P
@@ -1166,7 +1165,7 @@ theorem norm_weightedLiveDigitJoint_sub_weightedAffineDigitJoint_le
       ((((integrable_const (1 : ℝ)).indicator hphase).const_mul
           (annularContractedUpperRetainedPhaseFreezingMajorant
             eta rho N k hr mode hmode p)).add
-        (integrable_finset_sum _ fun i _hi ↦
+        (integrable_finsetSum _ fun i _hi ↦
           (integrable_const (1 : ℝ)).indicator (hboundary i))).const_mul
         (2 * Real.log 2)
   unfold annularContractedUpperRetainedLebesgueWeightedLiveDigitJoint

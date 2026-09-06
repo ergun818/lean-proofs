@@ -361,7 +361,7 @@ theorem integral_unit_norm_sq_smoothNearPrimitivePoleCarrierTail_le
   have hgCont : Continuous g := by
     dsimp [g]
     apply continuous_const.mul
-    apply continuous_finset_sum
+    apply continuous_finsetSum
     intro p _hp
     exact (smoothNearPrimitivePoleCarrierTerm_continuous
       N p ell a ε ha haε).norm.pow 2
@@ -382,7 +382,7 @@ theorem integral_unit_norm_sq_smoothNearPrimitivePoleCarrierTail_le
           ‖smoothNearPrimitivePoleCarrierTerm N ell a ε p alpha‖ ^ 2 := by
       dsimp [g]
       rw [intervalIntegral.integral_const_mul,
-        intervalIntegral.integral_finset_sum]
+        intervalIntegral.integral_finsetSum]
       intro p _hp
       exact ((smoothNearPrimitivePoleCarrierTerm_continuous
         N p ell a ε ha haε).norm.pow 2).intervalIntegrable 0 1

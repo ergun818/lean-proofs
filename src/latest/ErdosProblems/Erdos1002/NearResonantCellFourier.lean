@@ -463,7 +463,7 @@ theorem unitFourierCoefficient_nearestNearPoleCellExpansion
     · rw [if_pos hcell, nearPoleCellFourierTerm, if_pos hcell]
     · rw [if_neg hcell, zero_mul, nearPoleCellFourierTerm, if_neg hcell]
   unfold unitFourierCoefficient
-  rw [hfun, intervalIntegral.integral_finset_sum]
+  rw [hfun, intervalIntegral.integral_finsetSum]
   · apply Finset.sum_congr rfl
     intro q hq
     exact integral_unit_nearPoleCellFourierTerm_eq a ε n p q hp hq
@@ -631,7 +631,7 @@ theorem unitFourierCoefficient_nearPrimitivePoleSum_eq
           paperExp (-(n : ℝ) * alpha)) by
     funext alpha
     rw [Finset.sum_mul]]
-  rw [intervalIntegral.integral_finset_sum]
+  rw [intervalIntegral.integral_finsetSum]
   · apply Finset.sum_congr rfl
     intro p hpMem
     simpa only [unitFourierCoefficient] using!

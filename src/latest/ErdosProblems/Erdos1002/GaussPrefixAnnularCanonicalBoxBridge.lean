@@ -241,28 +241,29 @@ theorem
     measurableSet_flattenedAnnularTorusBox hgrid htorus e₀
   unfold reindexedAnnularUniformMarkedTupleFiniteMeasure
   rw [measureReal_def, FiniteMeasure.toMeasure_sum,
-    Measure.coe_finset_sum, Finset.sum_apply, ENNReal.toReal_sum]
-  apply Finset.sum_congr rfl
-  intro e _he
-  rw [FiniteMeasure.toMeasure_map,
-    Measure.map_apply (measurable_annularOrderReindex e₀ e) hS,
-    annularOrderReindex_preimage_flattenedAnnularTorusBox e₀ e]
-  unfold movingSignedMarkedTupleFiniteMeasure
-  rw [FiniteMeasure.toMeasure_sum,
-    Measure.coe_finset_sum, Finset.sum_apply, ENNReal.toReal_sum]
-  apply Finset.sum_congr rfl
-  intro times _htimes
-  rw [FiniteMeasure.toMeasure_map,
-    Measure.map_apply
-      (measurable_gaussMovingUnitTorusPoint N times)
-      (measurableSet_flattenedAnnularTorusBox hgrid htorus e)]
-  rw [FiniteMeasure.restrict_measure_eq,
-    Measure.restrict_apply
-      ((measurableSet_flattenedAnnularTorusBox hgrid htorus e).preimage
-        (measurable_gaussMovingUnitTorusPoint N times))]
-  rfl
-  all_goals
-    intro a _ha
+    Measure.coe_finsetSum, Finset.sum_apply, ENNReal.toReal_sum]
+  · apply Finset.sum_congr rfl
+    intro e _he
+    rw [FiniteMeasure.toMeasure_map,
+      Measure.map_apply (measurable_annularOrderReindex e₀ e) hS,
+      annularOrderReindex_preimage_flattenedAnnularTorusBox e₀ e]
+    unfold movingSignedMarkedTupleFiniteMeasure
+    rw [FiniteMeasure.toMeasure_sum,
+      Measure.coe_finsetSum, Finset.sum_apply, ENNReal.toReal_sum]
+    · apply Finset.sum_congr rfl
+      intro times _htimes
+      rw [FiniteMeasure.toMeasure_map,
+        Measure.map_apply
+          (measurable_gaussMovingUnitTorusPoint N times)
+          (measurableSet_flattenedAnnularTorusBox hgrid htorus e)]
+      rw [FiniteMeasure.restrict_measure_eq,
+        Measure.restrict_apply
+          ((measurableSet_flattenedAnnularTorusBox hgrid htorus e).preimage
+            (measurable_gaussMovingUnitTorusPoint N times))]
+      rfl
+    · intro a _ha
+      exact measure_ne_top _ _
+  · intro a _ha
     exact measure_ne_top _ _
 
 end

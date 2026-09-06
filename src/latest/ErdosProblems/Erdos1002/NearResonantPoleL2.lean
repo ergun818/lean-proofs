@@ -399,7 +399,7 @@ theorem integral_unit_norm_nearPrimitivePole_sq_eq
       exact ⟨halpha.1, lt_of_le_of_ne halpha.2 halphaOne⟩
     exact norm_nearPrimitivePole_sq_eq_sum_cells hp hmem
   rw [intervalIntegral.integral_congr_ae heq,
-    intervalIntegral.integral_finset_sum]
+    intervalIntegral.integral_finsetSum]
   · calc
       (∑ q ∈ reducedResidues p,
           ∫ alpha in (0 : ℝ)..1,

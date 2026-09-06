@@ -70,11 +70,11 @@ private theorem integral_simpleFunc_mul_eq_double_sum
       ((f ⁻¹' {x} ∩ g ⁻¹' {y}).indicator (fun _ : Ω => x * y)) μ :=
     (integrable_const (x * y)).indicator
       ((f.measurableSet_preimage {x}).inter (g.measurableSet_preimage {y}))
-  rw [integral_finset_sum f.range (fun x hx =>
-    integrable_finset_sum g.range (fun y hy => hInt x y))]
+  rw [integral_finsetSum f.range (fun x hx =>
+    integrable_finsetSum g.range (fun y hy => hInt x y))]
   congr 1
   ext x
-  rw [integral_finset_sum g.range (fun y hy => hInt x y)]
+  rw [integral_finsetSum g.range (fun y hy => hInt x y)]
   congr 1
   ext y
   rw [integral_indicator]

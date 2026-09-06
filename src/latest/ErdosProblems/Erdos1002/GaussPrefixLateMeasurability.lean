@@ -1058,7 +1058,7 @@ theorem gaussPrefixMarkedMixedPrefixCharacter_compactValue_eq_wordPhase
       simp only [closedIntervalIndicator, if_pos hvalue]
     rw [hcharacter, hcarrier, ← hword, hindicators]
     simp
-  · push_neg at hall
+  · push Not at hall
     obtain ⟨z, hzNot⟩ := hall
     have hvalueNot :
         (gaussPrefixMarkedPoint N (F z.1.1 z.1.2)

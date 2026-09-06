@@ -33,7 +33,6 @@ namespace Erdos1002
 
 noncomputable section
 
-set_option maxHeartbeats 1000000
 
 local instance gaussPrefixAnnularUpperDigitTransferPropDecidable
     (P : Prop) : Decidable P := Classical.propDecidable P
@@ -95,17 +94,17 @@ theorem norm_sum_integral_sub_le_error_add_goodCompl_indicatorSum
     ∑ i ∈ s, (envelope i).indicator (fun _x ↦ (1 : ℝ)) x
   have hqInt : Integrable q mu := by
     dsimp only [q]
-    apply integrable_finset_sum
+    apply integrable_finsetSum
     intro i hi
     exact (hf i hi).sub (hg i hi)
   have herrCountInt : Integrable errCount mu := by
     dsimp only [errCount]
-    apply integrable_finset_sum
+    apply integrable_finsetSum
     intro i hi
     exact (integrable_const (1 : ℝ)).indicator (herror i hi)
   have henvelopeCountInt : Integrable envelopeCount mu := by
     dsimp only [envelopeCount]
-    apply integrable_finset_sum
+    apply integrable_finsetSum
     intro i hi
     exact (integrable_const (1 : ℝ)).indicator (henvelope i hi)
   have hmajorInt :
@@ -127,7 +126,7 @@ theorem norm_sum_integral_sub_le_error_add_goodCompl_indicatorSum
         rw [integral_sub (hf i hi) (hg i hi)]
       _ = ∫ x, q x ∂mu := by
         dsimp only [q]
-        rw [integral_finset_sum]
+        rw [integral_finsetSum]
         intro i hi
         exact (hf i hi).sub (hg i hi)
   rw [hsumIntegral]
@@ -188,7 +187,7 @@ theorem norm_sum_integral_sub_le_error_add_goodCompl_indicatorSum
         ((henvelopeCountInt.const_mul 2).indicator hgood.compl)]
       congr 1
       · dsimp only [errCount]
-        rw [integral_finset_sum]
+        rw [integral_finsetSum]
         · apply Finset.sum_congr rfl
           intro i hi
           exact integral_indicator_one (herror i hi)
@@ -225,17 +224,17 @@ theorem setIntegral_two_sum_unionIndicator_le
       (fun _x ↦ (1 : ℝ)) x
   have hprimaryInt : Integrable primaryCount mu := by
     dsimp only [primaryCount]
-    apply integrable_finset_sum
+    apply integrable_finsetSum
     intro i hi
     exact (integrable_const (1 : ℝ)).indicator (hprimary i hi)
   have herrorInt : Integrable errorCount mu := by
     dsimp only [errorCount]
-    apply integrable_finset_sum
+    apply integrable_finsetSum
     intro i hi
     exact (integrable_const (1 : ℝ)).indicator (herror i hi)
   have hunionInt : Integrable unionCount mu := by
     dsimp only [unionCount]
-    apply integrable_finset_sum
+    apply integrable_finsetSum
     intro i hi
     exact (integrable_const (1 : ℝ)).indicator
       ((hprimary i hi).union (herror i hi))
@@ -286,7 +285,7 @@ theorem setIntegral_two_sum_unionIndicator_le
       rw [integral_const_mul]
       congr 1
       dsimp only [errorCount]
-      rw [integral_finset_sum]
+      rw [integral_finsetSum]
       · apply Finset.sum_congr rfl
         intro i hi
         exact integral_indicator_one (herror i hi)
@@ -385,7 +384,8 @@ theorem
           (annularContractedUpperRetainedToUpper p) := by
   simpa only [annularUpperRetainedOrientedLower,
     annularUpperRetainedOrientedUpper,
-    annularContractedUpperRetainedTimes_embedding] using!
+    annularContractedUpperRetainedToUpper, annularUpperRetainedTimes,
+    annularContractedUpperRetainedTimes] using!
     (annularUpperRetained_exactTupleEvent_eq_prefix_inter_futureApproximation
       (ε := ε) (A := A)
       (annularContractedUpperRetainedToUpper p))
@@ -413,7 +413,8 @@ theorem
           (annularContractedUpperRetainedToUpper p) ∩
         annularUpperRetainedFutureDigitTupleEvent ε A
           (annularContractedUpperRetainedToUpper p) := by
-  simpa only [annularContractedUpperRetainedTimes_embedding] using!
+  simpa only [annularContractedUpperRetainedToUpper, annularUpperRetainedTimes,
+    annularContractedUpperRetainedTimes] using!
     (annularUpperRetained_maskedEvent_eq_prefix_inter_futureDigit
       (ε := ε) (A := A) hgrid htime
       (annularContractedUpperRetainedToUpper p) hN hW)
@@ -474,18 +475,8 @@ theorem
   rw [mem_annularUpperRetainedPrefixApproximationEvent_iff
     (annularContractedUpperRetainedToUpper p) x]
   intro j hj
-  change
-    x ∈ gaussApproximationWindow
-      (Real.log (N : ℝ))
-      (annularContractedUpperRetainedTimes p j)
-      (gaussPrescribedParityOrientedLower
-        (flattenedAnnularParity p.1)
-        (flattenedAnnularSignedLower ε A p.1)
-        (flattenedAnnularSignedUpper ε A p.1) j)
-      (gaussPrescribedParityOrientedUpper
-        (flattenedAnnularParity p.1)
-        (flattenedAnnularSignedLower ε A p.1)
-        (flattenedAnnularSignedUpper ε A p.1) j)
+  simp only [annularUpperRetainedOrientedLower, annularUpperRetainedOrientedUpper,
+    annularContractedUpperRetainedToUpper, annularUpperRetainedTimes]
   let z : GaussPrefixMixedOccurrence k := p.1 j
   have htime :
       ((annularContractedUpperRetainedRealization p).1 z.1 z.2 : ℕ) =
@@ -567,7 +558,8 @@ theorem
     apply gaussParityOrientedUpper_eq_of_mod_two_eq
     rw [Nat.mod_eq_of_lt (flattenedAnnularParity p.1 j).isLt]
     exact annularContractedUpperRetainedTimes_parity p j
-  simpa only [hlower', hupper'] using! hsigned
+  rw [hlower', hupper'] at hsigned
+  simpa only [annularContractedUpperRetainedTimes] using! hsigned
 
 /-! ## Pointwise localized replacement -/
 
@@ -699,30 +691,9 @@ theorem
           hN hW z).mp <| by
             simpa only [F, b,
               annularContractedUpperRetainedDelayedDepth_embedding] using! hz
-    let j : Fin (MixedOccurrenceCount k) := p.1.symm z
-    have htimeEq :
-        annularContractedUpperRetainedTimes p j =
-          ((annularContractedUpperRetainedRealization p).1
-            z.1 z.2 : ℕ) := by
-      have htimes :=
-        congrFun (annularContractedUpperRetainedRealization_times p) j
-      change
-        ((annularContractedUpperRetainedRealization p).1
-            (p.1 j).1 (p.1 j).2 : ℕ) =
-          annularContractedUpperRetainedTimes p j at htimes
-      have hej : p.1 j = z := p.1.apply_symm_apply z
-      rw [hej] at htimes
-      exact htimes.symm
-    have hgap :=
-      (annularUpperRetainedRealization_gap_package
-        hgrid htime (annularContractedUpperRetainedToUpper p)
-        hN hW).2.2 j
-    have hj : mode p.1 j = 0 := by
-      apply hgap
-      simpa only [annularContractedUpperRetainedTimes_embedding,
-        htimeEq] using! hzSplit
-    simpa only [unflattenedAnnularFourierMode, j,
-      p.1.symm_apply_apply] using! hj
+    simpa only [annularContractedUpperRetainedToUpper] using!
+      annularUpperRetained_labeledMode_zero_after_split
+        hgrid htime (annularContractedUpperRetainedToUpper p) hN hW z hzSplit
   have hfutureDigit :
       annularContractedUpperRetainedFutureDigitBlock ε A p x =
         futureDigit.indicator (fun _ ↦ (1 : ℂ)) x := by
@@ -1709,7 +1680,7 @@ theorem
           (uniform01Measure.restrict bad) := by
       apply Integrable.mono_measure _ Measure.restrict_le_self
       apply Integrable.const_mul
-      apply integrable_finset_sum
+      apply integrable_finsetSum
       intro p _hp
       exact (integrable_const (1 : ℝ)).indicator (hprimary p (by simp))
     have hrightInt :

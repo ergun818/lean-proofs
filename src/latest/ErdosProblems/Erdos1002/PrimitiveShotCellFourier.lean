@@ -215,7 +215,7 @@ theorem unitFourierCoefficient_nearestPrimitiveCellExpansion
     · rw [if_pos hcell, nearestCellFourierTerm, if_pos hcell]
     · rw [if_neg hcell, zero_mul, nearestCellFourierTerm, if_neg hcell]
   unfold unitFourierCoefficient
-  rw [hfun, intervalIntegral.integral_finset_sum]
+  rw [hfun, intervalIntegral.integral_finsetSum]
   · apply Finset.sum_congr rfl
     intro q hq
     exact integral_unit_nearestCellFourierTerm_eq N n p q hp hq
@@ -518,7 +518,7 @@ theorem unitFourierCoefficient_primitiveShotSum_eq
     push_cast
     rw [Finset.sum_mul]
   unfold unitFourierCoefficient
-  rw [hfun, intervalIntegral.integral_finset_sum]
+  rw [hfun, intervalIntegral.integral_finsetSum]
   · apply Finset.sum_congr rfl
     intro p hpMem
     simpa only [unitFourierCoefficient] using!

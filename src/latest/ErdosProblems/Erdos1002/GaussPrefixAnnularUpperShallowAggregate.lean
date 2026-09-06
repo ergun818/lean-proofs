@@ -121,6 +121,7 @@ def annularUpperRetainedShallowPrefixGoodIntegral
         ∂uniform01Measure
 
 set_option maxHeartbeats 800000 in
+-- Budget for specializing the dependent carrier estimate to the actual annular endpoints.
 /-- Pointwise uniform bound for the actual annular endpoints. -/
 theorem norm_annularUpperRetainedShallowPrefixGoodIntegral_le
     {ε A rho : ℝ} {N grid : ℕ}
@@ -245,6 +246,7 @@ theorem card_annularUpperRetainedTaggedTuple_eq_nestedPairCount
   exact Fintype.card_coe _
 
 set_option maxHeartbeats 800000 in
+-- Budget for summing the dependent tuple estimates and normalizing their common envelope.
 /-- Polynomially many upper-retained shallow prefix-good means cancel in
 absolute sum. -/
 theorem tendsto_sum_norm_annularUpperRetainedShallowPrefixGoodIntegral_zero

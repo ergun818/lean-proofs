@@ -78,7 +78,7 @@ theorem norm_sub_le_four_stage
 quantifier order required in the paper: the norm of each tuple error is
 formed before summing over both indices. -/
 theorem sum_nested_norm_sub_le_four_stage
-    {α β : Type*} [DecidableEq α] [DecidableEq β]
+    {α β : Type*}
     (prefixes : Finset α) (futures : α → Finset β)
     (exact good digit frozenPrefix frozenDensity : α → β → ℂ) :
     (∑ p ∈ prefixes, ∑ u ∈ futures p,
@@ -91,6 +91,7 @@ theorem sum_nested_norm_sub_le_four_stage
         ‖digit p u - frozenPrefix p u‖) +
       (∑ p ∈ prefixes, ∑ u ∈ futures p,
         ‖frozenPrefix p u - frozenDensity p u‖) := by
+  classical
   calc
     (∑ p ∈ prefixes, ∑ u ∈ futures p,
         ‖exact p u - frozenDensity p u‖) ≤
@@ -111,7 +112,7 @@ theorem sum_nested_norm_sub_le_four_stage
 /-- If the four auditable aggregate errors tend to zero separately, then
 the complete exact-to-frozen aggregate error tends to zero. -/
 theorem tendsto_sum_nested_norm_exact_sub_frozen_zero_of_four_stages
-    {α β : Type*} [DecidableEq α] [DecidableEq β]
+    {α β : Type*}
     (prefixes : ℕ → Finset α)
     (futures : ℕ → α → Finset β)
     (exact good digit frozenPrefix frozenDensity :
@@ -136,6 +137,7 @@ theorem tendsto_sum_nested_norm_exact_sub_frozen_zero_of_four_stages
       (fun N ↦ ∑ p ∈ prefixes N, ∑ u ∈ futures N p,
         ‖exact N p u - frozenDensity N p u‖)
       atTop (nhds 0) := by
+  classical
   let upper : ℕ → ℝ := fun N ↦
     (∑ p ∈ prefixes N, ∑ u ∈ futures N p,
       ‖exact N p u - good N p u‖) +
@@ -162,7 +164,7 @@ theorem tendsto_sum_nested_norm_exact_sub_frozen_zero_of_four_stages
 /-- A complex nested sum tends to zero whenever the sum of the norms of
 its summands tends to zero. -/
 theorem tendsto_nested_sum_zero_of_sum_norm
-    {α β : Type*} [DecidableEq α] [DecidableEq β]
+    {α β : Type*}
     (prefixes : ℕ → Finset α)
     (futures : ℕ → α → Finset β)
     (z : ℕ → α → β → ℂ)
@@ -172,6 +174,7 @@ theorem tendsto_nested_sum_zero_of_sum_norm
     Tendsto
       (fun N ↦ ∑ p ∈ prefixes N, ∑ u ∈ futures N p, z N p u)
       atTop (nhds 0) := by
+  classical
   apply tendsto_zero_iff_norm_tendsto_zero.mpr
   apply squeeze_zero'
   · exact Eventually.of_forall fun _N ↦ norm_nonneg _
@@ -227,7 +230,7 @@ theorem tendsto_integral_oscillatoryPrefixFreezingEnvelope_zero
             (closedBoundaryWindowTupleEvent
               (a N) (b N) (coordinate N) (eta N) j))
         atTop (nhds 0) := by
-    simpa using! tendsto_finset_sum Finset.univ
+    simpa using! tendsto_finsetSum Finset.univ
       (fun j _hj ↦ hboundary j)
   have htotal :
       Tendsto

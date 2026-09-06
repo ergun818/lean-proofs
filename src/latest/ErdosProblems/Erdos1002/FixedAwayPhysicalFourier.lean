@@ -550,7 +550,7 @@ theorem unitFourierCoefficientInt_cellExpansion_fixedAway
     · rw [if_neg hcell, zero_mul,
         fixedAwaySmoothPoleCellFourierTerm, if_neg hcell]
   unfold unitFourierCoefficientInt
-  rw [hfun, intervalIntegral.integral_finset_sum]
+  rw [hfun, intervalIntegral.integral_finsetSum]
   · apply Finset.sum_congr rfl
     intro q hq
     exact integral_unit_fixedAwaySmoothPoleCellFourierTerm_eq
@@ -988,7 +988,7 @@ theorem unitFourierCoefficientInt_fixedAwaySmoothShotSum_eq_sum
           paperExp (-(n : ℝ) * alpha) by
     funext alpha
     rw [Finset.sum_mul]]
-  rw [intervalIntegral.integral_finset_sum]
+  rw [intervalIntegral.integral_finsetSum]
   intro p hpMem
   exact intervalIntegrable_fixedAwaySmoothShotFourierIntegrand
     hδ hδt N n p (Finset.mem_Icc.mp hpMem).1
@@ -1027,7 +1027,7 @@ theorem hasSum_fixedAwaySmoothCarrierBlock
     intro T hT
     induction T using Finset.induction_on with
     | empty =>
-        simpa using! (hasSum_zero : HasSum (fun _ell : ℤ ↦ (0 : ℂ)) 0)
+        simp
     | @insert p T hpNot ih =>
         have hpOne := hT p (Finset.mem_insert_self p T)
         have hrest := ih fun q hq ↦ hT q (Finset.mem_insert_of_mem hq)
@@ -1090,7 +1090,7 @@ theorem hasSum_fixedAwayWindowCarrierBlock_pos
     intro T hT
     induction T using Finset.induction_on with
     | empty =>
-        simpa using! (hasSum_zero : HasSum (fun _ell : ℤ ↦ (0 : ℂ)) 0)
+        simp
     | @insert p T hpNot ih =>
         have hpOne := hT p (Finset.mem_insert_self p T)
         have hrest := ih fun q hq ↦ hT q (Finset.mem_insert_of_mem hq)

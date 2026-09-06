@@ -2,7 +2,14 @@ import ErdosProblems.Erdos1002.PoissonCompat
 import ErdosProblems.Erdos1002.CompoundPoisson
 import ErdosProblems.Erdos1002.ProbabilityFoundations
 import Mathlib.MeasureTheory.Group.Convolution
-import Mathlib.MeasureTheory.Measure.CharacteristicFunction
+import Mathlib.Analysis.Fourier.BoundedContinuousFunctionChar
+import Mathlib.Analysis.Fourier.FourierTransform
+import Mathlib.Analysis.InnerProductSpace.Dual
+import Mathlib.Analysis.InnerProductSpace.ProdL2
+import Mathlib.Analysis.Normed.Lp.MeasurableSpace
+import Mathlib.MeasureTheory.Group.IntegralConvolution
+import Mathlib.MeasureTheory.Integral.Pi
+import Mathlib.MeasureTheory.Measure.FiniteMeasureExt
 
 set_option autoImplicit false
 set_option relaxedAutoImplicit false
@@ -65,7 +72,7 @@ theorem charFun_probabilityConvolutionPow
 def continuousCompoundPoissonMeasure
     (r : NNReal) (μ : ProbabilityMeasure ℝ) : Measure ℝ :=
   Measure.sum fun n : ℕ ↦
-    (poissonPMF r n) • (probabilityConvolutionPow μ n : Measure ℝ)
+    (poissonLawPMF r n) • (probabilityConvolutionPow μ n : Measure ℝ)
 
 instance continuousCompoundPoissonMeasure_isProbability
     (r : NNReal) (μ : ProbabilityMeasure ℝ) :
@@ -73,7 +80,7 @@ instance continuousCompoundPoissonMeasure_isProbability
   refine ⟨?_⟩
   rw [continuousCompoundPoissonMeasure, Measure.sum_apply _ MeasurableSet.univ]
   simpa only [Measure.smul_apply, measure_univ, smul_eq_mul, mul_one] using!
-    (poissonPMF r).tsum_coe
+    (poissonLawPMF r).tsum_coe
 
 /-- The compound Poisson law as a `ProbabilityMeasure`. -/
 def continuousCompoundPoissonProbability
@@ -89,7 +96,7 @@ theorem continuousCompoundPoissonProbability_toMeasure
 
 private theorem tsum_poissonPMFReal_mul_pow_eq_exp
     (r : NNReal) (z : ℂ) :
-    (∑' n : ℕ, (poissonPMFReal r n : ℂ) * z ^ n) =
+    (∑' n : ℕ, (poissonMass r n : ℂ) * z ^ n) =
       Complex.exp ((r : ℂ) * (z - 1)) := by
   have h := integral_pow_poissonMeasure r z
   rw [poissonMeasure_eq_toMeasure,
@@ -114,9 +121,9 @@ theorem charFun_continuousCompoundPoissonProbability
   calc
     (∑' n : ℕ,
         ∫ x : ℝ, Complex.exp (t * x * Complex.I)
-          ∂(poissonPMF r n) •
+          ∂(poissonLawPMF r n) •
             (probabilityConvolutionPow μ n : Measure ℝ)) =
-        ∑' n : ℕ, (poissonPMFReal r n : ℂ) *
+        ∑' n : ℕ, (poissonMass r n : ℂ) *
           charFun (μ : Measure ℝ) t ^ n := by
       apply tsum_congr
       intro n

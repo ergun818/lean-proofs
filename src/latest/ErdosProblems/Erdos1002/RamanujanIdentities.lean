@@ -126,7 +126,7 @@ private theorem phase_mul_divisor {q d b n : ℕ} (hq : q ≠ 0) (hd : d ∣ q) 
   have hd0 : d ≠ 0 := by
     intro hdZero
     subst d
-    simp at hd
+    simp only [zero_dvd_iff] at hd
     exact hq hd
   have hfac : d * (q / d) = q := Nat.mul_div_cancel' hd
   have hquot0 : q / d ≠ 0 := by

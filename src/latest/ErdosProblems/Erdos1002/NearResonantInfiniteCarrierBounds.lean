@@ -109,11 +109,9 @@ theorem eventually_summable_smoothNearNonzeroCarrierL2Term_low
       eventually_norm_sq_smoothNearPrimitivePoleCarrierTailL2_low_le
         A ε hA hε hεhalf] with L hcarrier
   intro N M ha haε hN hNL hcut
-  apply summable_smoothNearNonzeroCarrierL2Term
-    N (A / L) ε 2 (2 ^ (M + 1)) ha haε
-    ENNReal.toReal_nonneg
-  intro ell
-  exact hcarrier N M (ell : ℤ) ha haε hN ell.property hNL hcut
+  exact summable_smoothNearNonzeroCarrierL2Term
+    N (A / L) ε 2 (2 ^ (M + 1)) ha haε ENNReal.toReal_nonneg
+    (fun ell ↦ hcarrier N M (ell : ℤ) ha haε hN ell.property hNL hcut)
 
 /-- The short high-denominator range as a real norm-squared bound for one
 physical circle `L²` carrier. -/
@@ -167,12 +165,10 @@ theorem summable_smoothNearNonzeroCarrierL2Term_high
     (haε : a ≤ ε / 4) (hεhalf : ε < 1 / 2) :
     Summable (smoothNearNonzeroCarrierL2Term N a ε
       ((2 ^ S) / 2) ((2 ^ (S + H)) / 2) ha haε) := by
-  apply summable_smoothNearNonzeroCarrierL2Term
-    N a ε ((2 ^ S) / 2) ((2 ^ (S + H)) / 2) ha haε
-    ENNReal.toReal_nonneg
-  intro ell
-  exact norm_sq_smoothNearPrimitivePoleCarrierTailL2_high_le
-    N S H (ell : ℤ) a ε hS ha hε haε hεhalf
+  exact summable_smoothNearNonzeroCarrierL2Term
+    N a ε ((2 ^ S) / 2) ((2 ^ (S + H)) / 2) ha haε ENNReal.toReal_nonneg
+    (fun ell ↦ norm_sq_smoothNearPrimitivePoleCarrierTailL2_high_le
+      N S H (ell : ℤ) a ε hS ha hε haε hεhalf)
 
 end
 

@@ -305,7 +305,7 @@ theorem measurableSet_scaledGaussFirstDigitWindow
           (fun x : ℝ => scale / (gaussFirstDigitNat x : ℝ)) ⁻¹'
             Icc lower upper := by
     ext x
-    simp only [scaledGaussFirstDigitWindow, mem_setOf_eq, mem_inter_iff,
+    simp only [scaledGaussFirstDigitWindow, mem_ofPred_eq, mem_inter_iff,
       mem_preimage, mem_Icc]
   rw [heq]
   exact measurableSet_Ioc.inter (measurableSet_Icc.preimage hfun)
@@ -344,7 +344,7 @@ theorem mem_gaussDigitWindowAt_iff
         gaussScaledDigitCoordinate scale n x ∈ Icc lower upper := by
   simp only [gaussDigitWindowAt, scaledGaussFirstDigitWindow,
     gaussScaledDigitCoordinate, gaussDigitAt, mem_inter_iff, mem_preimage,
-    mem_setOf_eq, mem_Icc]
+    mem_ofPred_eq, mem_Icc]
 
 /-- A closed-window mismatch between an exact coordinate `e` and a larger
 surrogate `d`, at distance at most `eta`, forces `d` into one of the two

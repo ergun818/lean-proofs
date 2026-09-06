@@ -202,7 +202,7 @@ theorem card_divisors_pow_le
       congr 1
       exact_mod_cast (by
         simpa only [Nat.prod_factorization_eq_prod_primeFactors] using!
-          Nat.factorization_prod_pow_eq_self hn)
+          Nat.prod_factorization_pow_eq_self hn)
     _ ≤ divisorPowerConstant k * (n : ℝ) :=
       mul_le_mul_of_nonneg_right
         (prod_divisorPrimeMultiplier_le k n) (Nat.cast_nonneg n)

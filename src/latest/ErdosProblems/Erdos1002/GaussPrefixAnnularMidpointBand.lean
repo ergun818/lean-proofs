@@ -113,7 +113,6 @@ theorem
       (fun e ↦ annularCanonicalLaterMidpointBandTaggedTupleFamily
         rho N k hr mode hmode e)
 
-set_option maxHeartbeats 800000
 
 /-- Scaled exact-to-digit replacement on the midpoint band. -/
 theorem
@@ -234,7 +233,6 @@ theorem norm_annularCanonicalUniformMidpointBandMarkedFourierSum_le
       twoLog_mul_annularCanonicalGaussMidpointBandMass_le
         hN hgrid k hr htime mode hmode
 
-set_option maxHeartbeats 200000
 
 /-- The deterministic midpoint majorant converges to the explicit
 quantity linear in `rho`. -/

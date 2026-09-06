@@ -203,7 +203,7 @@ theorem norm_phase_mul_intervalProducts_sub_le_freezingError
           mul_nonneg (closedIntervalBoundaryIndicator_nonneg _ _ _ _)
             (Finset.prod_nonneg fun j _hj ↦
               closedIntervalIndicator_nonneg _ _ _))
-    · push_neg at hyall
+    · push Not at hyall
       obtain ⟨i, hyi⟩ := hyall
       rw [closedIntervalIndicatorProduct_eq_one hxall,
         closedIntervalIndicatorProduct_eq_zero hyi]
@@ -253,7 +253,7 @@ theorem norm_phase_mul_intervalProducts_sub_le_freezingError
         le_add_of_nonneg_left (mul_nonneg hdelta
           (closedIntervalIndicatorProduct_nonneg _ _ _))
   · by_cases hyall : ∀ i, y i ∈ Icc (a i) (b i)
-    · push_neg at hxall
+    · push Not at hxall
       obtain ⟨i, hxi⟩ := hxall
       rw [closedIntervalIndicatorProduct_eq_zero hxi,
         closedIntervalIndicatorProduct_eq_one hyall]
@@ -300,7 +300,7 @@ theorem norm_phase_mul_intervalProducts_sub_le_freezingError
       exact hfrozenPhase.trans <| hsumOne.trans <|
         le_add_of_nonneg_left (mul_nonneg hdelta
           (closedIntervalIndicatorProduct_nonneg _ _ _))
-    · push_neg at hxall hyall
+    · push Not at hxall hyall
       obtain ⟨i, hxi⟩ := hxall
       obtain ⟨j, hyj⟩ := hyall
       rw [closedIntervalIndicatorProduct_eq_zero hxi,

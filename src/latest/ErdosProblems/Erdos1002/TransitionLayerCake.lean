@@ -77,8 +77,8 @@ private theorem intervalIntegrable_indicator_smul_const
     ⟨hh'.1.smul_const w₀, hh'.2.smul_const w₀⟩
   have hmeas : MeasurableSet {t : ℝ | t ≤ c} := measurableSet_Iic
   constructor
-  · simpa only [Set.indicator, Set.mem_setOf_eq] using! hsmul.1.indicator hmeas
-  · simpa only [Set.indicator, Set.mem_setOf_eq] using! hsmul.2.indicator hmeas
+  · simpa only [Set.indicator, Set.mem_ofPred_eq] using! hsmul.1.indicator hmeas
+  · simpa only [Set.indicator, Set.mem_ofPred_eq] using! hsmul.2.indicator hmeas
 
 /-- Multiplying a finite sharp tail by an interval-integrable scalar
 derivative produces a genuine Bochner-integrable interval map. -/
@@ -135,7 +135,7 @@ private theorem single_shot_layerCake
     have hindicator :
         (∫ t in r₀..r₁, if t ≤ c then h' t • w₀ else 0) =
           ∫ t in r₀..c, h' t • w₀ := by
-      simpa only [Set.indicator, Set.mem_setOf_eq] using!
+      simpa only [Set.indicator, Set.mem_ofPred_eq] using!
         (intervalIntegral.integral_indicator
           (f := fun t ↦ h' t • w₀) (a₁ := r₀) (a₂ := c) (a₃ := r₁) hcMem)
     have hh'sub : IntervalIntegrable h' volume r₀ c :=
@@ -184,7 +184,7 @@ theorem finite_stieltjes_layerCake
     intro i _hi
     simpa only [smul_ite, smul_zero] using!
       intervalIntegrable_indicator_smul_const (w i) hh'
-  rw [intervalIntegral.integral_finset_sum hint, ← Finset.sum_add_distrib]
+  rw [intervalIntegral.integral_finsetSum hint, ← Finset.sum_add_distrib]
   exact Finset.sum_congr rfl fun i hi ↦
     single_shot_layerCake (w i) hr hr₁ hderiv hh'
 

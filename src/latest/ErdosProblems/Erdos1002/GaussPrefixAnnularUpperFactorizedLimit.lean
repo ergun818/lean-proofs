@@ -33,7 +33,6 @@ namespace Erdos1002
 
 noncomputable section
 
-set_option maxHeartbeats 3000000
 
 local instance gaussPrefixAnnularUpperFactorizedLimitPropDecidable
     (P : Prop) : Decidable P := Classical.propDecidable P
@@ -545,10 +544,10 @@ theorem integral_annularContractedUpperRetainedPrefixFreezingEnvelope_eq
         ε A eta rho N k hr mode hmode p x)]
   rw [integral_add
     (((integrable_const (1 : ℝ)).indicator hphase).const_mul _)
-    (integrable_finset_sum _ fun j _hj ↦
+    (integrable_finsetSum _ fun j _hj ↦
       (integrable_const (1 : ℝ)).indicator (hboundary j))]
   rw [integral_const_mul,
-    integral_finset_sum _ (fun j _hj ↦
+    integral_finsetSum _ (fun j _hj ↦
       (integrable_const (1 : ℝ)).indicator (hboundary j))]
   congr 1
   · exact congrArg
@@ -761,7 +760,7 @@ theorem
       ((((integrable_const (1 : ℝ)).indicator hphase).const_mul
           (annularContractedUpperRetainedPhaseFreezingMajorant
             eta rho N k hr mode hmode p)).add
-        (integrable_finset_sum _ fun j _hj ↦
+        (integrable_finsetSum _ fun j _hj ↦
           (integrable_const (1 : ℝ)).indicator (hboundary j))).const_mul
         (2 * Real.log 2)
   unfold
@@ -1395,7 +1394,7 @@ theorem
     simpa only [q, annularContractedUpperRetainedCenterDepth,
       annularContractedUpperRetainedTimes,
       annularContractedUpperRetainedUpperTag,
-      ← annularContractedUpperRetainedTimes_embedding] using! hraw
+      annularContractedUpperRetainedToUpper, annularUpperRetainedTimes] using! hraw
   have hm :
       0 < annularContractedUpperRetainedShallowDepth p :=
     hcenterPos.trans_le
@@ -1430,7 +1429,8 @@ theorem
     annularActiveSignedLower, annularActiveSignedUpper,
     annularContractedUpperRetainedShallowDepth,
     annularContractedUpperRetainedUpperTag,
-    annularContractedUpperRetainedRealization] using!
+    annularContractedUpperRetainedRealization,
+    annularContractedUpperRetainedToUpper] using!
     gaussPrefixMarkedMixedPrefixCharacter_activeEndpoints_eq
       k
       (unflattenedAnnularFourierMode p.1 (mode p.1))
@@ -1490,7 +1490,8 @@ theorem
       annularContractedUpperRetainedDelayedDepth,
       annularContractedUpperRetainedShallowDepth,
       annularContractedUpperRetainedUpperTag,
-      annularContractedUpperRetainedRealization] using!
+      annularContractedUpperRetainedRealization,
+      annularContractedUpperRetainedToUpper] using!
       annularUpperRetained_delayedPrefixCharacter_eq_shallow
         hgrid htime (annularContractedUpperRetainedToUpper p)
         (by omega) hW B x

@@ -399,7 +399,7 @@ theorem iteratedDeriv_nearW_eq_zero_of_abs_lt
     unfold nearW
     rw [nearRho_eq_zero_of_abs_le a ε y ha haε hy.le, zero_div]
   rw [heq.iteratedDeriv_eq j]
-  simp [iteratedDeriv_const]
+  simp
 
 end
 

@@ -129,7 +129,7 @@ theorem tendsto_rotation_reconstruction_of_naturalCutoff_L2
   filter_upwards with m
   let N : ℕ+ := ⟨m + 1, Nat.succ_pos m⟩
   rw [eLpNorm_normalizedNaturalCutoff_sub_reconstructedShot_eq_enorm]
-  rw [ofReal_norm_eq_enorm]
+  rw [ofReal_norm]
 
 end
 

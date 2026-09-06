@@ -50,7 +50,7 @@ theorem isGaussOneDigitEvent_scaledGaussFirstDigitWindow
   refine ⟨{q : ℕ | lower ≤ scale / (q : ℝ) ∧
       scale / (q : ℝ) ≤ upper}, ?_⟩
   ext x
-  simp only [scaledGaussFirstDigitWindow, mem_setOf_eq, mem_inter_iff,
+  simp only [scaledGaussFirstDigitWindow, mem_ofPred_eq, mem_inter_iff,
     Set.mem_preimage]
 
 theorem isGaussOneDigitEvent_scaledGaussFirstDigitBoundaryStrip

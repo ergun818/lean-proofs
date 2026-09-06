@@ -203,7 +203,7 @@ private lemma integrable_rectangularBonferroni
     funext x
     exact rectangularBonferroni_eq_sum j K x
   rw [hfun]
-  apply integrable_finset_sum
+  apply integrable_finsetSum
   intro k hk
   exact (hInt (j + k)).const_mul _
 
@@ -219,7 +219,7 @@ private lemma integral_rectangularBonferroni
         atomCoefficient j k * mixedDescFactorial (j + k) x := by
     funext x
     exact rectangularBonferroni_eq_sum j K x
-  rw [hfun, integral_finset_sum]
+  rw [hfun, integral_finsetSum]
   · apply sum_congr rfl
     intro k hk
     exact integral_const_mul _ _
@@ -248,7 +248,7 @@ private lemma tendsto_integral_rectangularBonferroni
     funext n
     exact integral_rectangularBonferroni (μs n : Measure (ι → ℕ)) j K (hInt n)
   rw [hfun]
-  apply tendsto_finset_sum
+  apply tendsto_finsetSum
   intro k hk
   exact (hFac (j + k)).const_mul _
 
@@ -256,7 +256,7 @@ private def coordinateAtomSeries (r : ℝ≥0) (j k : ℕ) : ℝ :=
   ((-1 : ℝ) ^ k / ((j ! : ℝ) * (k ! : ℝ))) * (r : ℝ) ^ (j + k)
 
 private lemma hasSum_coordinateAtomSeries (r : ℝ≥0) (j : ℕ) :
-    HasSum (coordinateAtomSeries r j) (poissonPMFReal r j) := by
+    HasSum (coordinateAtomSeries r j) (poissonMass r j) := by
   let c : ℝ := (r : ℝ) ^ j / (j ! : ℝ)
   have hbase := NormedSpace.expSeries_div_hasSum_exp (-(r : ℝ))
   have hscaled :
@@ -272,14 +272,15 @@ private lemma hasSum_coordinateAtomSeries (r : ℝ≥0) (j : ℕ) :
     field_simp
     ring
   convert! hterms using 1
-  unfold c poissonPMFReal
+  unfold c
+  simp_rw [poissonMass_eq]
   rw [← Real.exp_eq_exp_ℝ]
   ring
 
 private lemma tendsto_coordinate_even (r : ℝ≥0) (j : ℕ) :
     Tendsto
       (fun q : ℕ ↦ ∑ k ∈ range (2 * q + 1), coordinateAtomSeries r j k)
-      atTop (𝓝 (poissonPMFReal r j)) := by
+      atTop (𝓝 (poissonMass r j)) := by
   have hindex : Tendsto (fun q : ℕ ↦ 2 * q + 1) atTop atTop := by
     apply Filter.tendsto_atTop.mpr
     intro b
@@ -290,7 +291,7 @@ private lemma tendsto_coordinate_even (r : ℝ≥0) (j : ℕ) :
 private lemma tendsto_coordinate_odd (r : ℝ≥0) (j : ℕ) :
     Tendsto
       (fun q : ℕ ↦ ∑ k ∈ range (2 * q + 2), coordinateAtomSeries r j k)
-      atTop (𝓝 (poissonPMFReal r j)) := by
+      atTop (𝓝 (poissonMass r j)) := by
   have hindex : Tendsto (fun q : ℕ ↦ 2 * q + 2) atTop atTop := by
     apply Filter.tendsto_atTop.mpr
     intro b
@@ -321,14 +322,14 @@ private def otherIndices (i : ι) : Finset ι := by
 
 /-- The mass of the atom `j` under the independent Poisson product law. -/
 def jointPoissonMass (r : ι → ℝ≥0) (j : ι → ℕ) : ℝ :=
-  ∏ i, poissonPMFReal (r i) (j i)
+  ∏ i, poissonMass (r i) (j i)
 
 private lemma tendsto_rectangularLimit_even (r : ι → ℝ≥0) (j : ι → ℕ) :
     Tendsto (fun q ↦ rectangularLimit r j (evenTruncation q)) atTop
       (𝓝 (jointPoissonMass r j)) := by
   classical
   simp_rw [rectangularLimit_eq_prod, evenTruncation]
-  exact tendsto_finset_prod univ (fun i hi ↦ tendsto_coordinate_even (r i) (j i))
+  exact tendsto_finsetProd univ (fun i hi ↦ tendsto_coordinate_even (r i) (j i))
 
 private lemma tendsto_rectangularLimit_oddAt
     (r : ι → ℝ≥0) (j : ι → ℕ) (i : ι) :
@@ -336,7 +337,7 @@ private lemma tendsto_rectangularLimit_oddAt
       (𝓝 (jointPoissonMass r j)) := by
   classical
   simp_rw [rectangularLimit_eq_prod]
-  apply tendsto_finset_prod univ
+  apply tendsto_finsetProd univ
   intro h hh
   by_cases hhi : h = i
   · subst h
@@ -437,7 +438,7 @@ private lemma lowerBonferroni_le_jointAtomIndicator
       oddAtBonferroni_eq_one]
   · have hex : ∃ i, x i ≠ j i := by
       by_contra h
-      push_neg at h
+      push Not at h
       exact hx (funext h)
     obtain ⟨i, hi⟩ := hex
     have hodd_nonpos : oddAtBonferroni j q i x ≤ 0 := by
@@ -483,7 +484,7 @@ private lemma tendsto_lowerLimit (r : ι → ℝ≥0) (j : ι → ℕ) :
   have hc : Tendsto
       (fun q ↦ ∑ i, (upperLimit r j q - oddAtLimit r j q i)) atTop
       (𝓝 (∑ _i : ι, (jointPoissonMass r j - jointPoissonMass r j))) := by
-    apply tendsto_finset_sum univ
+    apply tendsto_finsetSum univ
     intro i hi
     exact hu.sub (tendsto_oddAtLimit r j i)
   simpa only [lowerLimit, sub_self, sum_const_zero, sub_zero] using! hu.sub hc
@@ -531,7 +532,7 @@ private lemma integrable_lowerBonferroni
     (hInt : ∀ k : ι → ℕ, Integrable (mixedDescFactorial k) μ) :
     Integrable (lowerBonferroni j q) μ := by
   apply (integrable_upperBonferroni μ j q hInt).sub
-  apply integrable_finset_sum
+  apply integrable_finsetSum
   intro i hi
   exact (integrable_upperBonferroni μ j q hInt).sub
     (integrable_oddAtBonferroni μ j q i hInt)
@@ -546,7 +547,7 @@ private lemma integral_lowerBonferroni
   change (∫ x, upperBonferroni j q x -
       ∑ i, (upperBonferroni j q x - oddAtBonferroni j q i x) ∂μ) = _
   rw [integral_sub]
-  · rw [integral_finset_sum]
+  · rw [integral_finsetSum]
     · apply congrArg ((∫ x, upperBonferroni j q x ∂μ) - ·)
       apply sum_congr rfl
       intro i hi
@@ -557,7 +558,7 @@ private lemma integral_lowerBonferroni
       exact (integrable_upperBonferroni μ j q hInt).sub
         (integrable_oddAtBonferroni μ j q i hInt)
   · exact integrable_upperBonferroni μ j q hInt
-  · apply integrable_finset_sum
+  · apply integrable_finsetSum
     intro i hi
     exact (integrable_upperBonferroni μ j q hInt).sub
       (integrable_oddAtBonferroni μ j q i hInt)
@@ -599,7 +600,7 @@ private lemma tendsto_integral_lowerBonferroni
         ((∫ x, upperBonferroni j q x ∂(μs n : Measure (ι → ℕ))) -
           ∫ x, oddAtBonferroni j q i x ∂(μs n : Measure (ι → ℕ))))
       atTop (𝓝 (∑ i, (upperLimit r j q - oddAtLimit r j q i))) := by
-    apply tendsto_finset_sum univ
+    apply tendsto_finsetSum univ
     intro i hi
     exact hu.sub (tendsto_integral_oddAtBonferroni μs r j q i hInt hFac)
   have hfun :
@@ -670,19 +671,21 @@ private def finiteCountBox (m : ℕ) : Finset (ι → ℕ) := by
   classical
   exact Fintype.piFinset (fun _ ↦ range m)
 
+omit [Fintype ι] in
 /-- On a finite product of discrete count spaces, convergence of all joint
 singleton masses implies weak convergence. -/
-theorem tendsto_probabilityMeasure_pi_nat_of_real_singletons
+theorem tendsto_probabilityMeasure_pi_nat_of_real_singletons [Finite ι]
     (μs : ℕ → ProbabilityMeasure (ι → ℕ)) (μ : ProbabilityMeasure (ι → ℕ))
     (hPoint : ∀ j : ι → ℕ,
       Tendsto (fun n ↦ (μs n : Measure (ι → ℕ)).real {j}) atTop
         (𝓝 ((μ : Measure (ι → ℕ)).real {j}))) :
     Tendsto μs atTop (𝓝 μ) := by
+  let := Fintype.ofFinite ι
   have hFinReal (s : Finset (ι → ℕ)) :
       Tendsto (fun n ↦ (μs n : Measure (ι → ℕ)).real (s : Set (ι → ℕ))) atTop
         (𝓝 ((μ : Measure (ι → ℕ)).real (s : Set (ι → ℕ)))) := by
     simpa only [sum_measureReal_singleton] using!
-      tendsto_finset_sum s (fun j hj ↦ hPoint j)
+      tendsto_finsetSum s (fun j hj ↦ hPoint j)
   have hFin (s : Finset (ι → ℕ)) :
       Tendsto (fun n ↦ (μs n : Measure (ι → ℕ)) (s : Set (ι → ℕ))) atTop
         (𝓝 ((μ : Measure (ι → ℕ)) (s : Set (ι → ℕ)))) := by
@@ -761,11 +764,7 @@ private lemma independentPoisson_real_singleton
   apply prod_congr rfl
   intro i hi
   rw [FactorialMomentMethod.poissonProbabilityMeasure]
-  change (poissonMeasure (r i) {j i}).toReal = _
-  rw [poissonMeasure_eq_toMeasure,
-    PMF.toMeasure_apply_singleton _ _ (measurableSet_singleton (j i))]
-  change (ENNReal.ofReal (poissonPMFReal (r i) (j i))).toReal = _
-  exact ENNReal.toReal_ofReal poissonPMFReal_nonneg
+  rfl
 
 /-- **Finite-dimensional method of factorial moments.**
 

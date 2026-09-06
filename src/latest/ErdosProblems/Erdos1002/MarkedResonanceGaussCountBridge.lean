@@ -473,9 +473,10 @@ def gaussPrefixMarkedCountVectorLaw (N : ℕ)
     (hB : ∀ i, MeasurableSet (B i)) : ProbabilityMeasure (ι → ℕ) :=
   uniform01.map (measurable_gaussPrefixMarkedCountVector N hB).aemeasurable
 
+omit [Fintype ι] in
 /-- Equality of the actual count-vector law with its finite Gauss-prefix
 model for every sufficiently large fixed `N`. -/
-theorem markedResonanceCountVectorLaw_eq_gaussPrefix
+theorem markedResonanceCountVectorLaw_eq_gaussPrefix [Finite ι]
     {N : ℕ} {ε A : ℝ} (B : ι → Set (ℝ × ℝ × ℝ))
     (hBmeas : ∀ i, MeasurableSet (B i))
     (hBsub : ∀ i, B i ⊆ compactAnnularMarkedRegion ε A)
@@ -483,6 +484,7 @@ theorem markedResonanceCountVectorLaw_eq_gaussPrefix
     (hlog : 2 * A < Real.log (N : ℝ)) :
     markedResonanceCountVectorLaw N N B hBmeas =
       gaussPrefixMarkedCountVectorLaw N B hBmeas := by
+  let := Fintype.ofFinite ι
   apply ProbabilityMeasure.toMeasure_injective
   change Measure.map (markedResonanceCountVector N N B) uniform01Measure =
     Measure.map (gaussPrefixMarkedCountVector N B) uniform01Measure
@@ -510,9 +512,10 @@ theorem mixedFactorialMoment_markedResonance_eq_gaussPrefix
   rw [markedResonanceCountVectorLaw_eq_gaussPrefix
     B hBmeas hBsub hN hε hlog]
 
+omit [Fintype ι] in
 /-- For fixed annular windows the law identity holds eventually as the
 natural denominator cutoff tends to infinity. -/
-theorem eventually_markedResonanceCountVectorLaw_eq_gaussPrefix
+theorem eventually_markedResonanceCountVectorLaw_eq_gaussPrefix [Finite ι]
     {ε A : ℝ} (B : ι → Set (ℝ × ℝ × ℝ))
     (hBmeas : ∀ i, MeasurableSet (B i))
     (hBsub : ∀ i, B i ⊆ compactAnnularMarkedRegion ε A)
@@ -520,6 +523,7 @@ theorem eventually_markedResonanceCountVectorLaw_eq_gaussPrefix
     ∀ᶠ N : ℕ in atTop,
       markedResonanceCountVectorLaw N N B hBmeas =
         gaussPrefixMarkedCountVectorLaw N B hBmeas := by
+  let := Fintype.ofFinite ι
   have hlogTop : Tendsto (fun N : ℕ ↦ Real.log (N : ℝ)) atTop atTop :=
     Real.tendsto_log_atTop.comp tendsto_natCast_atTop_atTop
   have hlogLarge : ∀ᶠ N : ℕ in atTop,

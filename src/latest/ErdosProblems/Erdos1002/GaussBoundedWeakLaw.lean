@@ -246,7 +246,7 @@ theorem memLp_two_gaussBirkhoffAverage
   have hsum : MemLp
       (fun x => ∑ i ∈ Finset.range n, f (gaussOrbit i x))
       2 gaussMeasure := by
-    have hraw := memLp_finset_sum' (Finset.range n) fun i hi =>
+    have hraw := memLp_finsetSum' (Finset.range n) fun i hi =>
       memLp_two_comp_gaussOrbit_of_unit_bounds hfM hf0 hfA i
     convert! hraw using 1
     funext x
@@ -266,7 +266,7 @@ theorem integral_gaussBirkhoffAverage
       (by norm_num)
   unfold gaussBirkhoffAverage
   rw [integral_div]
-  rw [integral_finset_sum _ fun i hi => hint i]
+  rw [integral_finsetSum _ fun i hi => hint i]
   simp_rw [integral_comp_gaussOrbit f hfM]
   have hnR : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
   rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
@@ -327,7 +327,7 @@ theorem tendstoInMeasure_gaussBirkhoffAverage
           |gaussBirkhoffAverage f n x -
             ∫ y, gaussBirkhoffAverage f n y ∂gaussMeasure|} := by
       ext x
-      simp only [E, mem_setOf_eq, Real.dist_eq, hmean]
+      simp only [E, mem_ofPred_eq, Real.dist_eq, hmean]
     have hreal : gaussMeasure.real (E n) ≤
         Var[gaussBirkhoffAverage f n; gaussMeasure] / epsilon ^ 2 := by
       rw [hset, measureReal_def]

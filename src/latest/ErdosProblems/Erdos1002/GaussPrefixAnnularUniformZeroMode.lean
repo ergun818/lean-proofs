@@ -27,7 +27,6 @@ noncomputable section
 local instance gaussPrefixAnnularUniformZeroModePropDecidable (P : Prop) :
     Decidable P := Classical.propDecidable P
 
-set_option maxHeartbeats 800000
 
 /-- Common lower depth supplied by the first positive annular time cell. -/
 def annularPositiveTimeDepthFloor (N grid : ℕ) : ℕ :=

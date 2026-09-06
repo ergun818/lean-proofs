@@ -316,7 +316,10 @@ private theorem norm_ramanujanPairWeight_le (p p' d e : ℕ) :
     ‖ramanujanPairWeight p p' d e‖ ≤ (d : ℝ) * (e : ℝ) := by
   rcases ArithmeticFunction.moebius_eq_or (p / d) with hd | hd | hd <;>
     rcases ArithmeticFunction.moebius_eq_or (p' / e) with he | he | he <;>
-    simp [ramanujanPairWeight, hd, he] <;> positivity
+    simp only [ramanujanPairWeight, hd, Int.cast_zero, mul_zero, he, norm_zero,
+      Int.cast_one, mul_one, zero_mul, Int.reduceNeg, Int.cast_neg, mul_neg,
+      neg_zero, Complex.norm_mul, RCLike.norm_natCast, Std.le_refl, norm_neg,
+      neg_mul, neg_neg] <;> positivity
 
 private theorem sum_norm_ramanujanPairWeight_le (p p' : ℕ) :
     (∑ d ∈ p.divisors, ∑ e ∈ p'.divisors,
@@ -488,7 +491,6 @@ private theorem sum_Icc_natCast_eq_sum_Icc_int
       ∑ z ∈ Icc (i : ℤ) (j : ℤ), f z := by
   refine Finset.sum_bij (fun n _ ↦ (n : ℤ)) ?_ ?_ ?_ ?_
   · intro n hn
-    change (n : ℤ) ∈ Icc (i : ℤ) (j : ℤ)
     rw [Finset.mem_Icc] at hn ⊢
     exact ⟨by exact_mod_cast hn.1, by exact_mod_cast hn.2⟩
   · intro n₁ hn₁ n₂ hn₂ heq
@@ -505,8 +507,7 @@ private theorem sum_Icc_natCast_eq_sum_Icc_int
       constructor
       · exact_mod_cast hiZ
       · exact_mod_cast hjZ
-    · change (z.toNat : ℤ) = z
-      exact hcast
+    · exact hcast
   · intro n hn
     rfl
 

@@ -2706,7 +2706,7 @@ theorem eLpNorm_fixedAwaySmoothShotSum_div_eq_ofReal
     ring
   rw [hfun, eLpNorm_const_smul,
     eLpNorm_fixedAwaySmoothShotSum_eq_enorm N P hδ hδt]
-  rw [← ofReal_norm_eq_enorm, ← ofReal_norm_eq_enorm]
+  rw [← ofReal_norm, ← ofReal_norm]
   rw [← ENNReal.ofReal_mul (norm_nonneg ((L : ℂ)⁻¹))]
   congr 1
   rw [norm_inv, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hL]

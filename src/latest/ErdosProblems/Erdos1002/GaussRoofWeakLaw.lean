@@ -250,7 +250,7 @@ theorem integrable_gaussBirkhoffAverage_of_integrable
   have hsum : Integrable
       (fun x => ∑ i ∈ Finset.range n, f (gaussOrbit i x))
       gaussMeasure := by
-    have hraw := integrable_finset_sum' (Finset.range n) fun i _hi =>
+    have hraw := integrable_finsetSum' (Finset.range n) fun i _hi =>
       integrable_comp_gaussOrbit_of_integrable hf i
     convert! hraw using 1
     funext x
@@ -270,7 +270,7 @@ theorem integral_gaussBirkhoffAverage_of_integrable
     integrable_comp_gaussOrbit_of_integrable hf i
   unfold gaussBirkhoffAverage
   rw [integral_div]
-  rw [integral_finset_sum _ fun i _hi => hint i]
+  rw [integral_finsetSum _ fun i _hi => hint i]
   simp_rw [integral_comp_gaussOrbit f hfM]
   have hnR : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
   rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
@@ -351,7 +351,7 @@ theorem gaussMeasureReal_ge_le_integral_div
       {x | ENNReal.ofReal epsilon ≤ ENNReal.ofReal (f x)} =
         {x | epsilon ≤ f x} := by
     ext x
-    simp only [mem_setOf_eq, ENNReal.ofReal_le_ofReal_iff']
+    simp only [mem_ofPred_eq, ENNReal.ofReal_le_ofReal_iff']
     exact or_iff_left (not_le.mpr hepsilon)
   rw [hset, ← ofReal_integral_eq_lintegral_ofReal hf hf0] at hmarkov
   have hreal := ENNReal.toReal_mono (by finiteness) hmarkov
@@ -473,14 +473,14 @@ theorem tendstoInMeasure_gaussRoofAverage :
         gaussBirkhoffAverage (gaussRoofTail (B : ℝ)) n x <
           epsilon / 3 := by
       have : x ∉ T := fun hx => hxUnion (mem_union_left U hx)
-      simpa only [T, mem_setOf_eq, not_le] using! this
+      simpa only [T, mem_ofPred_eq, not_le] using! this
     have hxU :
         dist
           (gaussBirkhoffAverage
             (gaussRoofTruncation (B : ℝ)) n x)
           truncMean < epsilon / 3 := by
       have : x ∉ U := fun hx => hxUnion (mem_union_right T hx)
-      simpa only [U, mem_setOf_eq, not_le] using! this
+      simpa only [U, mem_ofPred_eq, not_le] using! this
     have htriangle :
         dist (gaussRoofAverage n x) gaussRoofMean ≤
           gaussBirkhoffAverage (gaussRoofTail (B : ℝ)) n x +

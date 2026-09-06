@@ -395,7 +395,6 @@ theorem fixedAwayUnshiftedPowerShell_le_four_base_sq (s : ℕ) :
 theorem fixedAwayUnshiftedPowerShellMiddleCount_pos (s : ℕ) :
     0 < fixedAwayUnshiftedPowerShellMiddleCount s := by
   apply Nat.clog_pos (by omega : 1 < 2)
-  change 1 < (s + 2) ^ 4
   have htwo : 2 ≤ s + 2 := by omega
   have hpow : 2 ^ 4 ≤ (s + 2) ^ 4 :=
     Nat.pow_le_pow_left htwo 4

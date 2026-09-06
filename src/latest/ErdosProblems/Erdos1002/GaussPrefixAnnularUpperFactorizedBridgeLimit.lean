@@ -28,7 +28,6 @@ namespace Erdos1002
 
 noncomputable section
 
-set_option maxHeartbeats 3000000
 
 /-- Named form of the factorized prefix-boundary estimate used by the
 freezing squeeze. -/

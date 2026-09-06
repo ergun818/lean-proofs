@@ -52,7 +52,7 @@ def euclideanIntervalPartialSum {ι : Type*} [Fintype ι]
 
 /-- Exact finite Abel summation in Euclidean space. -/
 theorem euclideanVectorDiscreteAbel_identity {ι : Type*}
-    [Fintype ι] [DecidableEq ι]
+    [Fintype ι]
     (u : ℕ → EuclideanSpace ℂ ι) (w : ℕ → ι → ℂ)
     {a b : ℕ} (hab : a ≤ b) :
     (∑ n ∈ Finset.Icc a b, euclideanCoordinateMul (u n) (w n)) =
@@ -60,6 +60,7 @@ theorem euclideanVectorDiscreteAbel_identity {ι : Type*}
         ∑ n ∈ Finset.Ico a b,
           euclideanCoordinateMul (euclideanIntervalPartialSum u a n)
             (w n - w (n + 1)) := by
+  classical
   have h := vectorDiscreteAbel_identity
     (fun n i ↦ u n i) w hab
   ext i
@@ -91,13 +92,14 @@ theorem norm_euclideanCoordinateMul_le {ι : Type*} [Fintype ι]
 /-- Norm form of finite Euclidean Abel summation, with the terminal term and
 all variations explicit. -/
 theorem norm_euclidean_vector_sum_coordinateMul_le
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (u : ℕ → EuclideanSpace ℂ ι) (w : ℕ → ι → ℂ)
     {a b : ℕ} (hab : a ≤ b) (M : ℝ)
     (hM : ∀ n ∈ Finset.Icc a b,
       ‖euclideanIntervalPartialSum u a n‖ ≤ M) :
     ‖∑ n ∈ Finset.Icc a b, euclideanCoordinateMul (u n) (w n)‖ ≤
       M * (‖w b‖ + ∑ n ∈ Finset.Ico a b, ‖w n - w (n + 1)‖) := by
+  classical
   rw [euclideanVectorDiscreteAbel_identity u w hab]
   calc
     ‖euclideanCoordinateMul (euclideanIntervalPartialSum u a b) (w b) +

@@ -160,7 +160,7 @@ theorem
   unfold reindexedAnnularUniformMarkedTupleFiniteMeasure
     reindexedAnnularUniformMarkedFourierTupleSum
   rw [FiniteMeasure.toMeasure_sum,
-    MeasureTheory.integral_finset_sum_measure]
+    MeasureTheory.integral_finsetSum_measure]
   · apply Finset.sum_congr rfl
     intro e _he
     rw [FiniteMeasure.toMeasure_map,
@@ -318,7 +318,7 @@ theorem
       atTop (nhds 0) := by
   simpa only [reindexedAnnularUniformMarkedFourierTupleSum,
     Finset.sum_const_zero] using!
-    tendsto_finset_sum Finset.univ (fun e _he ↦
+    tendsto_finsetSum Finset.univ (fun e _he ↦
       htag e (fun j ↦ mode (e₀.symm (e j)))
         (annularOrderPulledMode_ne_zero e₀ e mode hmode))
 

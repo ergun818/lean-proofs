@@ -24,7 +24,6 @@ namespace Erdos1002
 
 noncomputable section
 
-set_option maxHeartbeats 800000
 
 local instance gaussPrefixAnnularUpperFreezingPointwisePropDecidable
     (P : Prop) : Decidable P := Classical.propDecidable P
@@ -274,7 +273,8 @@ theorem annularContractedUpperRetainedCenterDepth_le_shallow
   simpa only [annularContractedUpperRetainedCenterDepth,
     annularContractedUpperRetainedShallowDepth,
     annularContractedUpperRetainedUpperTag,
-    ← annularContractedUpperRetainedTimes_embedding] using!
+    annularContractedUpperRetainedToUpper, annularUpperRetainedTimes,
+    annularContractedUpperRetainedTimes] using!
     annularUpperRetained_centerDepth_le_shallow
       hgrid htime (annularContractedUpperRetainedUpperTag p)
         (by omega) hW

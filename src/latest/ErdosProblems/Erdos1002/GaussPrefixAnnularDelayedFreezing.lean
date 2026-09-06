@@ -359,7 +359,7 @@ theorem annularUpperRetained_futureEvent_delayed_eq_split
         (annularUpperRetainedSplitDepth p) := by
   ext x
   unfold gaussPrefixMarkedMixedFutureEvent
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq]
   constructor
   · intro h z hz
     exact h z

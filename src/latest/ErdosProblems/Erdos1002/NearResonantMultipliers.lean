@@ -58,11 +58,12 @@ theorem vectorDiscreteAbel_identity {ι : Type*}
 is stated for a finite set of coordinates, so the Pi norm is the required
 uniform norm over the dyadic block. -/
 theorem norm_vector_sum_coordinateMul_le
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (u w : ℕ → ι → ℂ) {a b : ℕ} (hab : a ≤ b) (M : ℝ)
     (hM : ∀ n ∈ Finset.Icc a b, ‖vectorIntervalPartialSum u a n‖ ≤ M) :
     ‖∑ n ∈ Finset.Icc a b, coordinateMul (u n) (w n)‖ ≤
       M * (‖w b‖ + ∑ n ∈ Finset.Ico a b, ‖w n - w (n + 1)‖) := by
+  classical
   rw [vectorDiscreteAbel_identity u w hab]
   calc
     ‖coordinateMul (vectorIntervalPartialSum u a b) (w b) +
@@ -1448,8 +1449,7 @@ theorem nearJReciprocalSquareDyadicMax_le_envelope
     a ε (K : ℝ) (n : ℝ) x ha hε haε
   · exact_mod_cast hK
   · exact_mod_cast hbounds.1
-  · norm_num at hbounds ⊢
-    exact_mod_cast hbounds.2
+  · exact_mod_cast hbounds.2
   · exact hx
 
 theorem nearJReciprocalSquareDyadicMax_nonneg
