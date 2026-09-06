@@ -18,9 +18,8 @@ private theorem shadow_residue_kernel (a b : Axis) (hab : a ≠ b)
   cases a1 <;> cases a2 <;> cases b1 <;> cases b2 <;>
     simp only [ne_eq, Prod.mk.injEq, Bool.false_eq_true, Bool.true_eq_false,
       and_self, not_true_eq_false, not_false_eq_true, and_false, false_and,
-      Bool.not_eq_true, sign, ↓reduceIte, Int.cast_neg, Int.cast_one, one_mul,
+      sign, ↓reduceIte, Int.cast_neg, Int.cast_one, one_mul,
       neg_one_mul] at hab ha hb hca hcb
-  all_goals try contradiction
   all_goals revert x y z u v w; decide
 
 theorem shadow_local_divisible {a b : Axis} (hab : a ≠ b) {v c : Triple}

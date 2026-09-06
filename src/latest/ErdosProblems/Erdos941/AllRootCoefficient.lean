@@ -47,7 +47,7 @@ theorem allRootResidues_card_formula (n a : ℕ) :
   · have ha : 0 < a := by
       by_contra hh
       have ha0 : a = 0 := by omega
-      have hbad : 2 * n = 1 := by simpa [ha0] using h
+      have hbad : 2 * n = 1 := by simp [ha0] at h
       omega
     exact allRootResidues_card_eq ha h
   · have he : allRootResidues n a = ∅ := by

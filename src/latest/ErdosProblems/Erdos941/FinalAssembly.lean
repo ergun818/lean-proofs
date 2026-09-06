@@ -12,7 +12,8 @@ theorem exists_large_seven_mod_twenty_four :
   intro n hn h24
   obtain ⟨v, hv, hC⟩ := hhit (5 * n) (by omega) (by omega) (by omega) (by omega)
     (dvd_mul_right 5 n)
-  have hv' : norm3 v.1 v.2.1 v.2.2 = 5 * (n : ℤ) := by simpa only [tripleNorm, Nat.cast_mul, Nat.cast_ofNat] using hv
+  have hv' : norm3 v.1 v.2.1 v.2.2 = 5 * (n : ℤ) := by
+    simpa only [tripleNorm, Nat.cast_mul, Nat.cast_ofNat] using hv
   obtain ⟨x, y, z, hform⟩ := sphere_five_to_form hv' hC
   exact representable_of_five_form (hN.trans_le hn) hform
 

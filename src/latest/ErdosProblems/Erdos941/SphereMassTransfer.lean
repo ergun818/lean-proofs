@@ -11,7 +11,8 @@ theorem root_square_sum_bound {n : ℕ} {A K H : ℝ} (hA : 0 ≤ A) (hK : 0 ≤
     (hroot : ∀ X : ℕ, (allRootCount n X : ℝ) ≤ A * X + K * Real.sqrt X + H)
     (N : ℕ) :
     (∑ a ∈ Ioc 0 (N ^ 2),
-      ((allRootCoefficient n : ArithmeticFunction ℝ) * (squareIndicator : ArithmeticFunction ℝ)) a) ≤
+      ((allRootCoefficient n : ArithmeticFunction ℝ) *
+        (squareIndicator : ArithmeticFunction ℝ)) a) ≤
       2 * A * (N : ℝ) ^ 2 + K * N * Real.sqrt (2 * N) + H * N := by
   rw [sum_square_convolution]
   have hpoint (c : ℕ) (hc : c ∈ Ioc 0 N) :
@@ -53,7 +54,8 @@ theorem root_square_mean_bound {n : ℕ} {A K H : ℝ} (hA : 0 ≤ A) (hK : 0 �
     (hroot : ∀ X : ℕ, (allRootCount n X : ℝ) ≤ A * X + K * Real.sqrt X + H)
     {N : ℕ} (hN : 0 < N) :
     (∑ a ∈ Ioc 0 (N ^ 2),
-      ((allRootCoefficient n : ArithmeticFunction ℝ) * (squareIndicator : ArithmeticFunction ℝ)) a) /
+      ((allRootCoefficient n : ArithmeticFunction ℝ) *
+        (squareIndicator : ArithmeticFunction ℝ)) a) /
       (N : ℝ) ^ 2 ≤ 2 * A + K * Real.sqrt (2 / N) + H / N := by
   have hNR : (0 : ℝ) < N := by exact_mod_cast hN
   have hsqrt : Real.sqrt (2 * (N : ℝ)) / N = Real.sqrt (2 / N) := by
@@ -79,7 +81,7 @@ theorem principalMean_mul_LValue_le_sphere {v : Triple} {n : ℕ} [NeZero n] (hn
   have hA : 0 ≤ A := by dsimp [A]; positivity
   have hroot (X : ℕ) : (allRootCount n X : ℝ) ≤
       A * X + K * Real.sqrt X + (sphereCount n : ℝ) := by
-    convert hcount X using 1 <;> dsimp [A] <;> ring
+    convert hcount X using 1; dsimp [A]; ring
   have hlim := coprime_convolution_sum_div_sq_tendsto
     (realNegativeQuadraticCharacter n) (realNegativeQuadraticCharacter_ne_one n)
   rw [realNegativeDirichletValue_eq] at hlim
@@ -98,6 +100,6 @@ theorem principalMean_mul_LValue_le_sphere {v : Triple} {n : ℕ} [NeZero n] (hn
     have hb := root_square_mean_bound hA hK hroot hN
     rw [pow_two N] at hs hb
     exact (div_le_div_of_nonneg_right hs (sq_nonneg (N : ℝ))).trans hb
-  convert hle using 1 <;> dsimp [A] <;> ring
+  convert hle using 1; dsimp [A]; ring
 
 end Erdos941

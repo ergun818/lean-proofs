@@ -38,18 +38,18 @@ theorem hurwitzCoordinates_add (a b c d e f g h : ℤ) :
 theorem hurwitzCoordinates_neg (a b c d : ℤ) :
     -hurwitzCoordinates a b c d = hurwitzCoordinates (-a) (-b) (-c) (-d) := by
   apply Quaternion.ext
-  · rw [Quaternion.re_neg]; dsimp [hurwitzCoordinates]; push_cast; ring
-  · rw [Quaternion.imI_neg]; dsimp [hurwitzCoordinates]; push_cast; ring
-  · rw [Quaternion.imJ_neg]; dsimp [hurwitzCoordinates]; push_cast; ring
-  · rw [Quaternion.imK_neg]; dsimp [hurwitzCoordinates]; push_cast; ring
+  · rw [Quaternion.re_neg]; dsimp [hurwitzCoordinates]; ring
+  · rw [Quaternion.imI_neg]; dsimp [hurwitzCoordinates]; ring
+  · rw [Quaternion.imJ_neg]; dsimp [hurwitzCoordinates]; ring
+  · rw [Quaternion.imK_neg]; dsimp [hurwitzCoordinates]; ring
 
 theorem hurwitzCoordinates_star (a b c d : ℤ) :
     star (hurwitzCoordinates a b c d) = hurwitzCoordinates (a + d) (-b) (-c) (-d) := by
   apply Quaternion.ext
   · rw [Quaternion.re_star]; dsimp [hurwitzCoordinates]; push_cast; ring
-  · rw [Quaternion.imI_star]; dsimp [hurwitzCoordinates]; push_cast; ring
-  · rw [Quaternion.imJ_star]; dsimp [hurwitzCoordinates]; push_cast; ring
-  · rw [Quaternion.imK_star]; dsimp [hurwitzCoordinates]; push_cast; ring
+  · rw [Quaternion.imI_star]; dsimp [hurwitzCoordinates]; ring
+  · rw [Quaternion.imJ_star]; dsimp [hurwitzCoordinates]; ring
+  · rw [Quaternion.imK_star]; dsimp [hurwitzCoordinates]; ring
 
 theorem hurwitzCoordinates_mul (a b c d e f g h : ℤ) :
     hurwitzCoordinates a b c d * hurwitzCoordinates e f g h =
@@ -107,7 +107,7 @@ theorem hurwitz_norm_integral {q : ℍ[ℚ]} (h : q ∈ hurwitzOrder) :
 theorem integralQuaternion_mem (a b c d : ℤ) :
     (⟨(a : ℚ), (b : ℚ), (c : ℚ), (d : ℚ)⟩ : ℍ[ℚ]) ∈ hurwitzOrder := by
   refine ⟨a - d, b - d, c - d, 2 * d, ?_⟩
-  ext <;> simp [hurwitzCoordinates] <;> ring
+  ext <;> simp [hurwitzCoordinates]
 
 noncomputable def hurwitzNorm (q : hurwitzOrder) : ℕ :=
   (hurwitz_norm_integral q.property).choose

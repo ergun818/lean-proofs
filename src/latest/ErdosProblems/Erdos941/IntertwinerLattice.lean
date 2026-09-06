@@ -23,7 +23,7 @@ def parameterLattice {v : Triple} {n : ℕ} (hv : tripleNorm v = n) (q : hurwitz
 def parameterLatticeMap {v : Triple} {n : ℕ} (hv : tripleNorm v = n) (q : hurwitzOrder) :
     parameterLattice hv q →ₗ[ℤ] hurwitzOrder where
   toFun z := ⟨quaternionParam hv q z, z.property⟩
-  map_add' z t := Subtype.ext ((quaternionParam hv q).map_add _ _)
+  map_add' _z _t := Subtype.ext ((quaternionParam hv q).map_add _ _)
   map_smul' r z := Subtype.ext (((quaternionParam hv q).restrictScalars ℤ).map_smul r z)
 
 theorem quaternionParam_injective {v : Triple} {n : ℕ} [Fact (0 < n)]

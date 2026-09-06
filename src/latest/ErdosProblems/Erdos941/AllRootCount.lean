@@ -85,7 +85,8 @@ theorem allRootCount_bound {v : Triple} {n : ℕ} (hn : 0 < n)
     (hv : tripleNorm v = n) (hp : PrimitiveTriple v) :
     ∃ K : ℝ, 0 ≤ K ∧ ∀ X : ℕ,
       (allRootCount n X : ℝ) ≤
-        8 * (sphereCount n : ℝ) * X / Real.sqrt (n : ℝ) + K * Real.sqrt X + (sphereCount n : ℝ) := by
+        8 * (sphereCount n : ℝ) * X / Real.sqrt (n : ℝ) + K * Real.sqrt X +
+          (sphereCount n : ℝ) := by
   obtain ⟨K, hK, hcount⟩ := allRoot_finite_count_bound hn hv hp
   refine ⟨K, hK, fun X => ?_⟩
   apply hcount X (Nat.cast_nonneg X) (boundedAllRootData n X)

@@ -71,12 +71,14 @@ theorem sphereFrameEquiv_det {R : Type*} [CommRing R] {n e : R}
   rw [sphereFrameEquiv, coeffMatrixEquiv_toLinearMap, det_coeffMatrixMap, spherePair_frame_det]
 
 theorem sphereFrameEquiv_first {R : Type*} [CommRing R] {n e : R}
-    (p : SpherePair R n e) (h : IsUnit (n ^ 2 - e ^ 2)) : sphereFrameEquiv p h (1, 0, 0) = p.1.1 := by
+    (p : SpherePair R n e) (h : IsUnit (n ^ 2 - e ^ 2)) :
+    sphereFrameEquiv p h (1, 0, 0) = p.1.1 := by
   rw [sphereFrameEquiv_apply, coeffMatrixMap_sphereFrame]
   simp
 
 theorem sphereFrameEquiv_second {R : Type*} [CommRing R] {n e : R}
-    (p : SpherePair R n e) (h : IsUnit (n ^ 2 - e ^ 2)) : sphereFrameEquiv p h (0, 1, 0) = p.1.2 := by
+    (p : SpherePair R n e) (h : IsUnit (n ^ 2 - e ^ 2)) :
+    sphereFrameEquiv p h (0, 1, 0) = p.1.2 := by
   rw [sphereFrameEquiv_apply, coeffMatrixMap_sphereFrame]
   simp
 

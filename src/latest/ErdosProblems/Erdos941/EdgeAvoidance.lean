@@ -7,7 +7,7 @@ namespace Erdos941
 
 section CanHit
 
-variable {α : Type*} (step : α → Fin 3 → α) (target : α → Prop) [DecidablePred target]
+variable {α : Type*} (step : α → Fin 3 → α) (target : α → Prop)
 
 theorem CanHit.succ {n : ℕ} {s : α} (h : CanHit step target n s) :
     CanHit step target (n + 1) s := by

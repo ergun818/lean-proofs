@@ -22,9 +22,12 @@ theorem card_integer_spherePair (n : ℕ) (e : ℤ) :
 
 def integerSphereGroupColumns (g : sphereSpecialGroup ℤ) :
     {v // v ∈ spherePoints 1} × {v // v ∈ spherePoints 1} × {v // v ∈ spherePoints 1} :=
-  (⟨g.1 (1, 0, 0), mem_spherePoints.mpr (by simpa [normThree, tripleNorm, norm3] using g.2.1 (1, 0, 0))⟩,
-    ⟨g.1 (0, 1, 0), mem_spherePoints.mpr (by simpa [normThree, tripleNorm, norm3] using g.2.1 (0, 1, 0))⟩,
-    ⟨g.1 (0, 0, 1), mem_spherePoints.mpr (by simpa [normThree, tripleNorm, norm3] using g.2.1 (0, 0, 1))⟩)
+  (⟨g.1 (1, 0, 0), mem_spherePoints.mpr (by
+    simpa [normThree, tripleNorm, norm3] using g.2.1 (1, 0, 0))⟩,
+    ⟨g.1 (0, 1, 0), mem_spherePoints.mpr (by
+      simpa [normThree, tripleNorm, norm3] using g.2.1 (0, 1, 0))⟩,
+    ⟨g.1 (0, 0, 1), mem_spherePoints.mpr (by
+      simpa [normThree, tripleNorm, norm3] using g.2.1 (0, 0, 1))⟩)
 
 theorem integerSphereGroupColumns_injective : Function.Injective integerSphereGroupColumns := by
   intro g h heq

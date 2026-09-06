@@ -36,7 +36,8 @@ noncomputable def allRootSphereWitness {v : Triple} {n : ℕ} (hv : tripleNorm v
 noncomputable def allRootQuaternionChoice {v : Triple} {n : ℕ} (hv : tripleNorm v = n)
     (d : RootDatum n) : hurwitzOrder := (allRootSphereWitness hv d).quaternion
 
-theorem allRootQuaternionChoice_injective {v : Triple} {n : ℕ} (hv : tripleNorm v = n) (hp : PrimitiveTriple v) :
+theorem allRootQuaternionChoice_injective {v : Triple} {n : ℕ}
+    (hv : tripleNorm v = n) (hp : PrimitiveTriple v) :
     Function.Injective (allRootQuaternionChoice hv) := by
   intro d e hq
   let D := allRootSphereWitness hv d

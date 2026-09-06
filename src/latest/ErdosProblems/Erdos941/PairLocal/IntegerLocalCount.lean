@@ -37,7 +37,8 @@ lemma resultant_valuation_le_binary_discriminant (p : ℕ) [Fact p.Prime]
   omega
 
 theorem card_padicPairOrbits_le_factorization (p : ℕ) [Fact p.Prime]
-    {d ℓ : ℤ} (base : FormPair (PadicInt p) (d : PadicInt p) (ℓ : PadicInt p)) (hd : d ≠ 0) (hnd : ℓ ^ 2 ≠ 4 * d ^ 2) :
+    {d ℓ : ℤ} (base : FormPair (PadicInt p) (d : PadicInt p) (ℓ : PadicInt p))
+    (hd : d ≠ 0) (hnd : ℓ ^ 2 ≠ 4 * d ^ 2) :
     Nat.card (SpecialPairOrbits (PadicInt p) d ℓ) ≤
       16 * ((ℓ ^ 2 - 4 * d ^ 2).natAbs.factorization p + 1) *
         p ^ ((d.natAbs.gcd ℓ.natAbs).factorization p / 2) := by

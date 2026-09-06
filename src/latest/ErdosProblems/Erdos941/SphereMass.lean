@@ -38,7 +38,7 @@ theorem exists_sphereCount_lower_of_primitive {δ : ℝ} (hδ : 0 < δ) :
       (Cl * (n : ℝ) ^ (-(δ / 2))) = C * (n : ℝ) ^ (-δ) := by
     calc
       _ = C * ((n : ℝ) ^ (-(δ / 2)) * (n : ℝ) ^ (-(δ / 2))) := by dsimp [C]; ring
-      _ = _ := by rw [← Real.rpow_add hnR]; congr 2 <;> ring
+      _ = _ := by rw [← Real.rpow_add hnR]; congr 2; ring
   rw [he] at hprod
   have hbound := hprod.trans (principalMean_mul_LValue_le_sphere hn hv hp)
   have hsqrt : 0 < Real.sqrt (n : ℝ) := Real.sqrt_pos.mpr hnR

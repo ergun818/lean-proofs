@@ -41,7 +41,7 @@ theorem exists_large_dense_trajectory_hit (p : ℕ) [NeZero (p ^ 2)]
   refine ⟨N, hN, ?_⟩
   intro n hn h4 h8 h3 A _ o hinj hnorm hsize
   by_contra hbad
-  push_neg at hbad
+  push Not at hbad
   apply hno n (sphereCount n) hn (hmass n (hN.trans_le hn) h4 h8)
   intro j
   have hB : ∀ s : Axis × ModularTriple p,

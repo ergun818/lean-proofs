@@ -23,7 +23,7 @@ theorem squareIndicator_prime_pow {p : ℕ} (hp : p.Prime) (k : ℕ) :
 theorem squareIndicator_nonzero_isSquare {n : ℕ} (h : squareIndicator n ≠ 0) :
     IsSquare n := by
   classical
-  have hn : n ≠ 0 := by intro hn; simpa [hn] using h
+  have hn : n ≠ 0 := by intro hn; simp [hn] at h
   rw [squareIndicator_multiplicative.multiplicative_factorization _ hn] at h
   change (∏ p ∈ n.primeFactors, squareIndicator (p ^ n.factorization p)) ≠ 0 at h
   have heven (p : ℕ) (hp : p ∈ n.primeFactors) : Even (n.factorization p) := by
@@ -61,10 +61,10 @@ theorem squareIndicator_eq (n : ℕ) :
   split_ifs with h
   · obtain ⟨c, hc⟩ := h.2.exists_sq
     rw [hc]
-    exact squareIndicator_square (by intro hz; simp [hz] at hc; exact h.1 hc)
+    exact squareIndicator_square (fun hz => h.1 (hc.trans (by simp [hz])))
   · by_contra hn
     apply h
-    exact ⟨by intro hz; simpa [hz] using hn, squareIndicator_nonzero_isSquare hn⟩
+    exact ⟨by intro hz; simp [hz] at hn, squareIndicator_nonzero_isSquare hn⟩
 
 theorem squareIndicator_nonneg (n : ℕ) : 0 ≤ squareIndicator n := by
   rw [squareIndicator_eq]

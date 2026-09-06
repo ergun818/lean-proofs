@@ -16,7 +16,8 @@ def unsplitSphereGroup {R : Type*} [CommRing R]
       rw [F.apply_symm_apply, g.2.1, hF] at h
       exact neg_injective h.symm
     · change LinearMap.det (F.symm.toLinearMap.comp (g.1.toLinearMap.comp F.toLinearMap)) = 1
-      simpa only [LinearEquiv.symm_symm] using (LinearMap.det_conj g.1.toLinearMap F.symm).trans g.2.2⟩
+      simpa only [LinearEquiv.symm_symm] using
+        (LinearMap.det_conj g.1.toLinearMap F.symm).trans g.2.2⟩
 
 theorem splitSpherePair_injective {R : Type*} [CommRing R]
     (F : (R × R × R) ≃ₗ[R] (R × R × R))

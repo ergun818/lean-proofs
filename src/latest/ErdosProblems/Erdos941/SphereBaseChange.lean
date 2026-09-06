@@ -19,13 +19,17 @@ theorem dotThree_mapCoeffs {R S : Type*} [CommRing R] [CommRing S] (φ : R →+*
     (v w : R × R × R) : dotThree (mapCoeffs φ v) (mapCoeffs φ w) = φ (dotThree v w) := by
   simp [mapCoeffs, dotThree]
 
-def mapSpherePair {R S : Type*} [CommRing R] [NoZeroDivisors R] [CharZero R] [CommRing S] [NoZeroDivisors S] [CharZero S] (φ : R →+* S)
+def mapSpherePair {R S : Type*}
+    [CommRing R] [NoZeroDivisors R] [CharZero R] [CommRing S] [NoZeroDivisors S] [CharZero S]
+    (φ : R →+* S)
     {n e : R} (p : SpherePair R n e) : SpherePair S (φ n) (φ e) :=
   ⟨(mapCoeffs φ p.1.1, mapCoeffs φ p.1.2), by
     rw [normThree_mapCoeffs, normThree_mapCoeffs, dotThree_mapCoeffs, p.2.1, p.2.2.1, p.2.2.2]
     exact ⟨rfl, rfl, rfl⟩⟩
 
-lemma mapSpherePair_injective {R S : Type*} [CommRing R] [NoZeroDivisors R] [CharZero R] [CommRing S] [NoZeroDivisors S] [CharZero S] (φ : R →+* S)
+lemma mapSpherePair_injective {R S : Type*}
+    [CommRing R] [NoZeroDivisors R] [CharZero R] [CommRing S] [NoZeroDivisors S] [CharZero S]
+    (φ : R →+* S)
     (hφ : Function.Injective φ) {n e : R} :
     Function.Injective (mapSpherePair (n := n) (e := e) φ) := by
   intro p q h
@@ -33,7 +37,9 @@ lemma mapSpherePair_injective {R S : Type*} [CommRing R] [NoZeroDivisors R] [Cha
   exact Prod.ext (mapCoeffs_injective φ hφ (congrArg (fun x => x.1.1) h))
     (mapCoeffs_injective φ hφ (congrArg (fun x => x.1.2) h))
 
-lemma map_sphere_nondegenerate {R S : Type*} [CommRing R] [NoZeroDivisors R] [CharZero R] [CommRing S] [NoZeroDivisors S] [CharZero S] (φ : R →+* S)
+lemma map_sphere_nondegenerate {R S : Type*}
+    [CommRing R] [NoZeroDivisors R] [CharZero R] [CommRing S] [NoZeroDivisors S] [CharZero S]
+    (φ : R →+* S)
     (hφ : Function.Injective φ) {n e : R} (hnd : e ^ 2 ≠ n ^ 2) :
     (φ e) ^ 2 ≠ (φ n) ^ 2 := by
   intro h
@@ -66,7 +72,8 @@ lemma normThree_preserved_iff_columns {R : Type*} [CommRing R] [NoZeroDivisors R
     dsimp [normThree]
     ring
 
-lemma normThree_preserved_matrix_map {R S : Type*} [CommRing R] [NoZeroDivisors R] [CharZero R] [CommRing S] [NoZeroDivisors S] [CharZero S]
+lemma normThree_preserved_matrix_map {R S : Type*}
+    [CommRing R] [NoZeroDivisors R] [CharZero R] [CommRing S] [NoZeroDivisors S] [CharZero S]
     (φ : R →+* S) (M : Matrix (Fin 3) (Fin 3) R)
     (hM : ∀ t, normThree (coeffMatrixMap M t) = normThree t) :
     ∀ t, normThree (coeffMatrixMap (M.map φ) t) = normThree t := by
@@ -89,7 +96,8 @@ lemma normThree_preserved_matrix_map {R S : Type*} [CommRing R] [NoZeroDivisors 
   · rw [← h0, ← h2, dotThree_mapCoeffs, hac, map_zero]
   · rw [← h1, ← h2, dotThree_mapCoeffs, hbc, map_zero]
 
-lemma normThree_preserved_of_matrix_map {R S : Type*} [CommRing R] [NoZeroDivisors R] [CharZero R] [CommRing S] [NoZeroDivisors S] [CharZero S]
+lemma normThree_preserved_of_matrix_map {R S : Type*}
+    [CommRing R] [NoZeroDivisors R] [CharZero R] [CommRing S] [NoZeroDivisors S] [CharZero S]
     (φ : R →+* S) (hφ : Function.Injective φ) (M : Matrix (Fin 3) (Fin 3) R)
     (hM : ∀ t, normThree (coeffMatrixMap (M.map φ) t) = normThree t) :
     ∀ t, normThree (coeffMatrixMap M t) = normThree t := by
@@ -97,7 +105,8 @@ lemma normThree_preserved_of_matrix_map {R S : Type*} [CommRing R] [NoZeroDiviso
   apply hφ
   rw [← normThree_mapCoeffs φ (coeffMatrixMap M t), coeffMatrixMap_map, hM, normThree_mapCoeffs]
 
-noncomputable def sphereSpecialBaseChange {R S : Type*} [CommRing R] [NoZeroDivisors R] [CharZero R] [CommRing S] [NoZeroDivisors S] [CharZero S]
+noncomputable def sphereSpecialBaseChange {R S : Type*}
+    [CommRing R] [NoZeroDivisors R] [CharZero R] [CommRing S] [NoZeroDivisors S] [CharZero S]
     (φ : R →+* S) (g : sphereSpecialGroup R) : sphereSpecialGroup S := by
   let M := matrixOfCoeffMap g.1.toLinearMap
   have hdet : (M.map φ).det = 1 := by
@@ -113,14 +122,16 @@ noncomputable def sphereSpecialBaseChange {R S : Type*} [CommRing R] [NoZeroDivi
     exact g.2.1 v
   · rw [coeffMatrixEquiv_toLinearMap, det_coeffMatrixMap, hdet]
 
-lemma sphereSpecialBaseChange_apply {R S : Type*} [CommRing R] [NoZeroDivisors R] [CharZero R] [CommRing S] [NoZeroDivisors S] [CharZero S]
+lemma sphereSpecialBaseChange_apply {R S : Type*}
+    [CommRing R] [NoZeroDivisors R] [CharZero R] [CommRing S] [NoZeroDivisors S] [CharZero S]
     (φ : R →+* S) (g : sphereSpecialGroup R) (t : R × R × R) :
     (sphereSpecialBaseChange φ g).1 (mapCoeffs φ t) = mapCoeffs φ (g.1 t) := by
   change coeffMatrixEquiv ((matrixOfCoeffMap g.1.toLinearMap).map φ) _ (mapCoeffs φ t) = _
   rw [coeffMatrixEquiv_apply, ← coeffMatrixMap_map, coeffMatrixMap_matrixOfCoeffMap]
   rfl
 
-lemma matrix_sphereSpecialBaseChange {R S : Type*} [CommRing R] [NoZeroDivisors R] [CharZero R] [CommRing S] [NoZeroDivisors S] [CharZero S]
+lemma matrix_sphereSpecialBaseChange {R S : Type*}
+    [CommRing R] [NoZeroDivisors R] [CharZero R] [CommRing S] [NoZeroDivisors S] [CharZero S]
     (φ : R →+* S) (g : sphereSpecialGroup R) :
     matrixOfCoeffMap (sphereSpecialBaseChange φ g).1.toLinearMap =
       (matrixOfCoeffMap g.1.toLinearMap).map φ := by
@@ -138,7 +149,8 @@ lemma sphereSpecialGroup_matrix_injective {R : Type*} [CommRing R] [NoZeroDiviso
   rw [coeffMatrixMap_matrixOfCoeffMap, coeffMatrixMap_matrixOfCoeffMap] at heq
   exact heq
 
-lemma sphereSpecialBaseChange_intCast_action {R S : Type*} [CommRing R] [NoZeroDivisors R] [CharZero R] [CommRing S] [NoZeroDivisors S] [CharZero S]
+lemma sphereSpecialBaseChange_intCast_action {R S : Type*}
+    [CommRing R] [NoZeroDivisors R] [CharZero R] [CommRing S] [NoZeroDivisors S] [CharZero S]
     (φ : R →+* S) (g : sphereSpecialGroup R) (t u : ℤ × ℤ × ℤ)
     (h : g.1 (mapCoeffs (Int.castRingHom R) t) = mapCoeffs (Int.castRingHom R) u) :
     (sphereSpecialBaseChange φ g).1 (mapCoeffs (Int.castRingHom S) t) =
@@ -147,7 +159,8 @@ lemma sphereSpecialBaseChange_intCast_action {R S : Type*} [CommRing R] [NoZeroD
   rw [← sphereSpecialBaseChange_apply, mapCoeffs_intCast_comp, mapCoeffs_intCast_comp] at heq
   exact heq
 
-lemma mapSpherePair_smul {R S : Type*} [CommRing R] [NoZeroDivisors R] [CharZero R] [CommRing S] [NoZeroDivisors S] [CharZero S]
+lemma mapSpherePair_smul {R S : Type*}
+    [CommRing R] [NoZeroDivisors R] [CharZero R] [CommRing S] [NoZeroDivisors S] [CharZero S]
     (φ : R →+* S) (g : sphereSpecialGroup R) {n e : R} (p : SpherePair R n e) :
     mapSpherePair φ (g • p) = sphereSpecialBaseChange φ g • mapSpherePair φ p := by
   apply Subtype.ext
@@ -156,7 +169,8 @@ lemma mapSpherePair_smul {R S : Type*} [CommRing R] [NoZeroDivisors R] [CharZero
   · exact (sphereSpecialBaseChange_apply φ g p.1.2).symm
 
 /-- The map used to send global pair orbits to local pair orbits. -/
-noncomputable def spherePairOrbitBaseChange {R S : Type*} [CommRing R] [NoZeroDivisors R] [CharZero R] [CommRing S] [NoZeroDivisors S] [CharZero S]
+noncomputable def spherePairOrbitBaseChange {R S : Type*}
+    [CommRing R] [NoZeroDivisors R] [CharZero R] [CommRing S] [NoZeroDivisors S] [CharZero S]
     (φ : R →+* S) {n e : R} : SpherePairOrbits R n e → SpherePairOrbits S (φ n) (φ e) :=
   Quotient.map (mapSpherePair φ) (by
     intro p q hpq
@@ -166,7 +180,8 @@ noncomputable def spherePairOrbitBaseChange {R S : Type*} [CommRing R] [NoZeroDi
     refine ⟨sphereSpecialBaseChange φ g, ?_⟩
     rw [← mapSpherePair_smul, hg])
 
-lemma spherePairOrbitBaseChange_mk {R S : Type*} [CommRing R] [NoZeroDivisors R] [CharZero R] [CommRing S] [NoZeroDivisors S] [CharZero S]
+lemma spherePairOrbitBaseChange_mk {R S : Type*}
+    [CommRing R] [NoZeroDivisors R] [CharZero R] [CommRing S] [NoZeroDivisors S] [CharZero S]
     (φ : R →+* S) {n e : R} (p : SpherePair R n e) :
     spherePairOrbitBaseChange φ (Quotient.mk _ p) = Quotient.mk _ (mapSpherePair φ p) := rfl
 

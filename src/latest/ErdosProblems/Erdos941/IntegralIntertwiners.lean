@@ -25,7 +25,7 @@ def parameterToIntertwiners {v w : Triple} {n : ℕ} (hv : tripleNorm v = n)
     (hq : (q : ℍ[ℚ]) * pureQuaternion v = pureQuaternion w * q) :
     parameterLattice hv q →ₗ[ℤ] integralIntertwiners v w where
   toFun z := ⟨parameterLatticeMap hv q z, quaternionParam_intertwines hv hq z⟩
-  map_add' z t := Subtype.ext ((parameterLatticeMap hv q).map_add _ _)
+  map_add' _z _t := Subtype.ext ((parameterLatticeMap hv q).map_add _ _)
   map_smul' r z := Subtype.ext ((parameterLatticeMap hv q).map_smul r z)
 
 noncomputable def parameterIntertwinerEquiv {v w : Triple} {n : ℕ} [Fact (0 < n)]

@@ -74,7 +74,10 @@ theorem sphere_residue_squareDivisor_card {n q f : ℕ} {c : ℤ}
       (noncentralMultiples 0 (4 * n) ((q : ℤ) * (f : ℤ) ^ 2)).card := by
   have hfsq : f ^ 2 ∣ n := ((mem_squareDivisors hn.ne').mp hf).2
   have hfsqZ : (f : ℤ) ^ 2 ∣ (n : ℤ) := by exact_mod_cast hfsq
-  have hfc : (f : ℤ) ^ 2 ∣ c := by rcases hc with rfl | rfl; exact hfsqZ; exact dvd_neg.mpr hfsqZ
+  have hfc : (f : ℤ) ^ 2 ∣ c := by
+    rcases hc with rfl | rfl
+    · exact hfsqZ
+    · exact dvd_neg.mpr hfsqZ
   have hcp : IsCoprime (q : ℤ) ((f : ℤ) ^ 2) := by
     simpa only [Nat.cast_pow] using (hcop.of_dvd_right hfsq).isCoprime
   apply Finset.card_le_card_of_injOn (fun e : ℤ => 2 * (e - c))
@@ -88,7 +91,7 @@ theorem sphere_residue_squareDivisor_card {n q f : ℕ} {c : ℤ}
     · rcases hc with rfl | rfl <;> omega
     · apply hcp.mul_dvd (dvd_mul_of_dvd_right hqe 2)
       have hsub := dvd_sub hf2e (dvd_mul_of_dvd_right hfc 2)
-      convert hsub using 1 <;> ring
+      convert hsub using 1; ring
     · rcases hc with rfl | rfl <;> omega
   · intro a _ b _ hab
     dsimp only at hab

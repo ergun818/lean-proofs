@@ -40,7 +40,8 @@ noncomputable def modularRootsCRT (n : ℕ) {a b : ℕ} (hab : a.Coprime b) :
       exact congrArg Prod.snd (e.apply_symm_apply (x.1.val, x.2.val))
 
 theorem modularRoots_card_mul (n : ℕ) {a b : ℕ} (hab : a.Coprime b) :
-    Nat.card (ModularRoots n (a * b)) = Nat.card (ModularRoots n a) * Nat.card (ModularRoots n b) := by
+    Nat.card (ModularRoots n (a * b)) =
+      Nat.card (ModularRoots n a) * Nat.card (ModularRoots n b) := by
   rw [Nat.card_congr (modularRootsCRT n hab), Nat.card_prod]
 
 theorem modularRoots_card_prime (n : ℕ) {p : ℕ} [Fact p.Prime] (hp2 : p ≠ 2) :

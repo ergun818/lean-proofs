@@ -46,12 +46,13 @@ lemma sphere_matrix_column_norm (g : sphereSpecialGroup ℚ) (j : Fin 3) :
   have hmap (v : ℚ × ℚ × ℚ) : g.1 v = coeffMatrixMap (matrixOfCoeffMap g.1.toLinearMap) v := by
     rw [coeffMatrixMap_matrixOfCoeffMap]; rfl
   rw [hmap] at h0 h1 h2
-  simp [coeffMatrixMap, coeffVecEquiv_apply, coeffVecEquiv_symm_apply,
-    Matrix.toLin'_apply, Matrix.mulVec, dotProduct, Fin.sum_univ_succ, normThree] at h0 h1 h2
   fin_cases j
-  · exact h0
-  · exact h1
-  · exact h2
+  · simpa [coeffMatrixMap, coeffVecEquiv_apply, coeffVecEquiv_symm_apply,
+      Matrix.toLin'_apply, Matrix.mulVec, dotProduct, Fin.sum_univ_succ, normThree] using h0
+  · simpa [coeffMatrixMap, coeffVecEquiv_apply, coeffVecEquiv_symm_apply,
+      Matrix.toLin'_apply, Matrix.mulVec, dotProduct, Fin.sum_univ_succ, normThree] using h1
+  · simpa [coeffMatrixMap, coeffVecEquiv_apply, coeffVecEquiv_symm_apply,
+      Matrix.toLin'_apply, Matrix.mulVec, dotProduct, Fin.sum_univ_succ, normThree] using h2
 
 lemma exists_integer_matrix_of_local_transporters {d ℓ : ℤ}
     (src dst : SpherePair ℤ d ℓ) (hnd : ℓ ^ 2 ≠ d ^ 2) (g : sphereSpecialGroup ℚ)

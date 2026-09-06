@@ -58,7 +58,8 @@ theorem shadowPairs_card_le (n q : ℕ) :
       have hcm : (q : ℤ) ∣ dot3 v w - -(n : ℤ) := by simpa only [sub_neg_eq_add] using hc
       exact Finset.mem_biUnion.mpr ⟨dot3 v w, Finset.mem_filter.mpr ⟨hI, hcm⟩,
         mem_spherePairs.mpr ⟨hnv, hnw, rfl⟩⟩
-  have hP : P.card ≤ ∑ e ∈ sphereResidueValues n q n, (spherePairs n e).card := Finset.card_biUnion_le
+  have hP : P.card ≤ ∑ e ∈ sphereResidueValues n q n, (spherePairs n e).card :=
+    Finset.card_biUnion_le
   have hM : M.card ≤ ∑ e ∈ sphereResidueValues n q (-(n : ℤ)),
       (spherePairs n e).card := Finset.card_biUnion_le
   have hD : D.card = sphereCount n := spherePairs_diagonal_card n

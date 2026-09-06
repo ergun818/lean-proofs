@@ -76,7 +76,8 @@ theorem sphereCount_le_six_parity_count {n : ℕ} (b : Bool)
     sphereCount n ≤ (Finset.univ.biUnion
         (fun g : Fin 3 × Bool => (paritySpherePoints n b).image (recover g))).card :=
       Finset.card_le_card hsub
-    _ ≤ ∑ g : Fin 3 × Bool, ((paritySpherePoints n b).image (recover g)).card := Finset.card_biUnion_le
+    _ ≤ ∑ g : Fin 3 × Bool, ((paritySpherePoints n b).image (recover g)).card :=
+      Finset.card_biUnion_le
     _ ≤ ∑ _g : Fin 3 × Bool, (paritySpherePoints n b).card :=
       Finset.sum_le_sum (fun _ _ => Finset.card_image_le)
     _ = _ := by simp

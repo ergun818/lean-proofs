@@ -16,7 +16,7 @@ lemma realCoprimeZetaConvolution_eq_pmul {q : ℕ} (χ : DirichletCharacter ℝ 
       (realCharacterArithmetic (1 : DirichletCharacter ℝ q)).pmul (realZetaConvolution χ) := by
   ext n
   rcases eq_or_ne n 0 with rfl | hn
-  · simp only [ArithmeticFunction.map_zero, pmul_apply, zero_mul]
+  · simp only [ArithmeticFunction.map_zero]
   rw [realCoprimeZetaConvolution, mul_apply, pmul_apply, realZetaConvolution, mul_apply,
     mul_sum]
   apply sum_congr rfl

@@ -11,7 +11,8 @@ open PairLocal
 noncomputable def orientedChoice (s : OrientedTriple) : Fin 3 :=
   Classical.choose (exists_otherAxis (nextAxis_ne s))
 
-theorem orientedChoice_axis (s : OrientedTriple) : otherAxis s.1.1 (orientedChoice s) = nextAxis s :=
+theorem orientedChoice_axis (s : OrientedTriple) :
+    otherAxis s.1.1 (orientedChoice s) = nextAxis s :=
   Classical.choose_spec (exists_otherAxis (nextAxis_ne s))
 
 noncomputable def trajectoryChoices : ℕ → OrientedTriple → List (Fin 3)

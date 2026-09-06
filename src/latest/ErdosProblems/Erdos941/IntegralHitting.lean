@@ -41,7 +41,8 @@ theorem integral_badTurn_target {p n : ℕ} (target : ModularTriple p → Prop)
   have h2 := nextAxis_admissible s
   rw [ha'] at h1
   rw [hb'] at h2
-  simp only [Admissible, axisDot, sign, ↓reduceIte, Bool.false_eq_true, one_mul, neg_one_mul] at h1 h2
+  simp only [Admissible, axisDot, sign, ↓reduceIte, Bool.false_eq_true, one_mul,
+    neg_one_mul] at h1 h2
   exact ⟨hT, by omega, by omega⟩
 
 theorem exists_large_sphere_integral_target (p : ℕ) [NeZero (p ^ 2)]
@@ -53,7 +54,8 @@ theorem exists_large_sphere_integral_target (p : ℕ) [NeZero (p ^ 2)]
       ∃ v : Triple, tripleNorm v = n ∧
         target (mapCoeffs (Int.castRingHom (ZMod (p ^ 2))) v) ∧
         (3 : ℤ) ∣ v.1 + v.2.1 ∧ (3 : ℤ) ∣ v.2.2 := by
-  obtain ⟨N, hN, hhit⟩ := exists_large_dense_trajectory_hit p t target ht K hK havoid 1 (by norm_num)
+  obtain ⟨N, hN, hhit⟩ :=
+    exists_large_dense_trajectory_hit p t target ht K hK havoid 1 (by norm_num)
   refine ⟨N, hN, ?_⟩
   intro n hn h4 h8 h3 hp
   obtain ⟨L, v, i, _, hbad⟩ := hhit n hn h4 h8 h3 {v // v ∈ spherePoints n}

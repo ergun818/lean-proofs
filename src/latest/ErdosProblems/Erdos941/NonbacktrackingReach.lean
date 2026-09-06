@@ -72,7 +72,8 @@ theorem turnEdge_reverse [Finite X] (hrot : ∀ a, Function.Involutive (rot a))
   | zero => omega
   | succ k =>
     have heq : (fun z => turnStateStep rot z i)^[k] (turnStateStep rot s i) = s := by
-      simpa only [Function.IsPeriodicPt, Function.IsFixedPt, Function.iterate_succ_apply] using hperiod
+      simpa only [Function.IsPeriodicPt, Function.IsFixedPt,
+        Function.iterate_succ_apply] using hperiod
     have hreach := turnReach_iterate rot (turnStateStep rot s i) i k
     rw [heq] at hreach
     exact hreach

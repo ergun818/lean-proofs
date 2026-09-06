@@ -16,7 +16,7 @@ theorem card_sq_le_image_mul_collisions {α β : Type*} [DecidableEq β] (S : Fi
     have he : (collisionPairs S f).filter (fun p => f p.1 = b) =
         (S.filter (fun x => f x = b)).product (S.filter (fun x => f x = b)) := by
       ext ⟨x, y⟩
-      simp only [collisionPairs, Finset.mem_filter, Finset.mem_product]
+      simp only [collisionPairs, Finset.mem_filter]
       aesop
     rw [he]
     exact (Finset.card_product _ _).trans (pow_two _).symm

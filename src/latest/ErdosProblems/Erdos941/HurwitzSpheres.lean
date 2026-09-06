@@ -41,7 +41,7 @@ theorem pure_hurwitz_integral {q : ℍ[ℚ]} (hq : q ∈ hurwitzOrder) (hre : q.
   · exact hre
   · push_cast; linarith
   · push_cast; linarith
-  · push_cast; linarith
+  · linarith
 
 theorem quaternion_re_mul_comm (q r : ℍ[ℚ]) : (q * r).re = (r * q).re := by
   rw [Quaternion.re_mul, Quaternion.re_mul]
