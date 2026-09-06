@@ -65,7 +65,10 @@ open Filter Finset Asymptotics
 
 namespace Erdos987
 
-/-! This file contains the material needed for the two questions: Tao's L2 argument for the universal lower statement, and the APSSV prefix-scrambled van der Corput construction for the little-o witness. The detailed mathematical proof and declaration map are in tex/987.tex. Indices are zero-based, so range n represents j < n. -/
+/-! This file contains the material needed for the two questions: Tao's L2 argument for the
+universal lower statement, and the APSSV prefix-scrambled van der Corput construction for the
+little-o witness. The detailed mathematical proof and declaration map are in tex/987.tex. Indices
+are zero-based, so range n represents j < n. -/
 
 /- ## API for the additive character `e(x) = e^{2πi x}` -/
 
@@ -229,7 +232,8 @@ theorem integral_e_int_mul (m : ℤ) :
     -- Compute: (exp(c·1) - exp(c·0))/c = (1 - 1)/c = 0 since exp(2πim) = 1.
     have h_one : Complex.exp (c * (1 : ℝ)) = 1 := by
       simp only [Complex.ofReal_one, mul_one, c]
-      rw [show (2 * Real.pi * Complex.I * (m : ℂ) : ℂ) = (m : ℂ) * (2 * Real.pi * Complex.I) by ring]
+      rw [show (2 * Real.pi * Complex.I * (m : ℂ) : ℂ) =
+        (m : ℂ) * (2 * Real.pi * Complex.I) by ring]
       exact_mod_cast Complex.exp_int_mul_two_pi_mul_I m
     have h_zero : Complex.exp (c * (0 : ℝ)) = 1 := by simp
     rw [h_one, h_zero, sub_self, zero_div]
@@ -390,17 +394,23 @@ theorem Circle.l2_averaging_bound {C' : ℝ} (w : ℕ → Circle) (k₀ K n : �
         · left; use k - k'; omega
         right; use k' - k; omega
       rcases h with ⟨l, hl, rfl⟩ | ⟨l, hl, rfl⟩
-      · convert le_of_lt (hw n l ?_ hl) with j hj; field_simp; grind; omega
-      rw [← Complex.norm_conj, map_sum]
-      convert le_of_lt (hw n l ?_ hl) with j hj
-      simp [← Circle.coe_inv_eq_conj]; field_simp; grind; omega
+      · convert le_of_lt (hw n l ?_ hl) with j hj
+        · field_simp
+          grind
+        · omega
+      · rw [← Complex.norm_conj, map_sum]
+        convert le_of_lt (hw n l ?_ hl) with j hj
+        · simp [← Circle.coe_inv_eq_conj]
+          field_simp
+          grind
+        · omega
     _ ≤ _ := by
-      simp [sum_add_distrib]; gcongr 1
+      simp only [sum_add_distrib, sum_const, card_range, nsmul_eq_mul]; gcongr 1
       · grind
       calc
         _ ≤ ∑ k ∈ range K, ((2 * k₀) * n ^ 2 : ℝ) := by
           apply sum_le_sum; intro k hk
-          simp [← sum_filter]; gcongr; norm_cast
+          simp only [← sum_filter, sum_const, nsmul_eq_mul]; gcongr; norm_cast
           convert card_le_card_of_injOn (t := range (2 * k₀)) (fun a ↦ a + k₀ - k) _ _
           · simp
           · intro a; grind
@@ -458,7 +468,8 @@ theorem tao_circle (z : ℕ → Circle) :
 
 Is it true that $\limsup_{k \to \infty} A_k = \infty$?
 
-Erdős [Er64b] remarks it is "easy to see" that $\limsup_k \sup_n |\sum_{j \le n} e(k x_j)| = \infty$.
+Erdős [Er64b] remarks it is "easy to see" that $\limsup_k \sup_n |\sum_{j \le n} e(k x_j)| =
+\infty$.
 Erdős [Er65b] later found a "very easy" proof that $A_k \gg \log k$ for infinitely many $k$.
 Clunie [Cl67] proved that $A_k \gg k^{1/2}$ for infinitely many $k$, which implies the answer is
 yes (Tao independently found a proof). This is Problem 7.21 in [Ha74].
@@ -476,7 +487,7 @@ theorem erdos_987 :
   -- ((z j) ^ k : ℂ) = (e (x j)) ^ k = e (k * x j)
   have key : ∀ k j : ℕ, ((z j) ^ k : ℂ) = e ((k : ℝ) * x j) := by
     intro k j
-    show (e (x j)) ^ k = e ((k : ℝ) * x j)
+    change (e (x j)) ^ k = e ((k : ℝ) * x j)
     exact e_pow_eq (x j) k
   -- Reduce to Tao's theorem on Circle
   have h := tao_circle z
@@ -634,7 +645,8 @@ lemma apssvJ_lt_two_pow (η : List Bool → Bool) (r : ℕ) (w : Fin r → Bool)
   have h_pow_pos : 1 ≤ 2 ^ r := Nat.one_le_two_pow
   omega
 
-/-- Cardinality fact: $|\mathrm{Fin}\,r \to \mathrm{Bool}| = 2^r$, matching $|\mathrm{Fin}\,(2^r)|$. -/
+/-- Cardinality fact: $|\mathrm{Fin}\,r \to \mathrm{Bool}| = 2^r$, matching $|\mathrm{Fin}\,(2^r)|$.
+-/
 lemma apssv_card_word_eq_two_pow (r : ℕ) :
     Fintype.card (Fin r → Bool) = 2 ^ r := by
   simp
@@ -653,12 +665,12 @@ lemma apssvJ_topBit (η : List Bool → Bool) (r : ℕ) (w : Fin (r + 1) → Boo
   else 0 with hf_def
   -- Split off i = 0.
   have h_zero_mem : (0 : ℕ) ∈ Finset.range (r + 1) := Finset.mem_range.mpr (by omega)
-  show (∑ i ∈ Finset.range (r + 1), f i) / 2 ^ r =
+  change (∑ i ∈ Finset.range (r + 1), f i) / 2 ^ r =
     if (w 0).xor (η []) then 1 else 0
   rw [← Finset.add_sum_erase _ f h_zero_mem]
   -- Compute f 0.
   have h_zero_term : f 0 = if (w 0).xor (η []) then 2 ^ r else 0 := by
-    show (if h : 0 < r + 1 then
+    change (if h : 0 < r + 1 then
         if (w ⟨0, h⟩).xor (η (apssvWordPrefix w 0)) then 2 ^ (r + 1 - 1 - 0) else 0
       else 0) = _
     rw [dif_pos (Nat.zero_lt_succ r)]
@@ -673,7 +685,7 @@ lemma apssvJ_topBit (η : List Bool → Bool) (r : ℕ) (w : Fin (r + 1) → Boo
     intro i hi
     rw [Finset.mem_erase, Finset.mem_range] at hi
     obtain ⟨hi_ne, hi_lt⟩ := hi
-    show (if h : i < r + 1 then
+    change (if h : i < r + 1 then
         if (w ⟨i, h⟩).xor (η (apssvWordPrefix w i)) then 2 ^ (r + 1 - 1 - i) else 0
       else 0) ≤ 2 ^ (r - i)
     rw [dif_pos hi_lt]
@@ -691,7 +703,7 @@ lemma apssvJ_topBit (η : List Bool → Bool) (r : ℕ) (w : Fin (r + 1) → Boo
       · rintro ⟨y, hy_lt, rfl⟩; exact ⟨by omega, by omega⟩
     rw [h_setEq]
     have h_inj : Set.InjOn (fun x : ℕ => x + 1) (Finset.range r : Set ℕ) := fun a _ b _ h => by
-      simp at h; exact h
+      simp only [Nat.add_right_cancel_iff] at h; exact h
     rw [Finset.sum_image (fun a _ b _ h => Nat.succ_injective h)]
     have h_step : ∀ y ∈ Finset.range r, (2 : ℕ) ^ (r - (y + 1)) = 2 ^ (r - 1 - y) := by
       intros y hy
@@ -724,7 +736,7 @@ lemma apssvWordPrefix_shift {r : ℕ} (w : Fin (r + 1) → Bool) (j : ℕ) :
   induction j with
   | zero =>
     intro _
-    show apssvWordPrefix w 0 ++ [if h : (0 : ℕ) < r + 1 then w ⟨0, h⟩ else false] =
+    change apssvWordPrefix w 0 ++ [if h : (0 : ℕ) < r + 1 then w ⟨0, h⟩ else false] =
         w 0 :: apssvWordPrefix (fun i : Fin r => w i.succ) 0
     simp only [apssvWordPrefix, Nat.zero_lt_succ, dif_pos]
     rfl
@@ -732,7 +744,7 @@ lemma apssvWordPrefix_shift {r : ℕ} (w : Fin (r + 1) → Bool) (j : ℕ) :
     intro hj
     have hj' : j ≤ r := by omega
     have ih' := ih hj'
-    show apssvWordPrefix w (j + 1) ++
+    change apssvWordPrefix w (j + 1) ++
         [if h : j + 1 < r + 1 then w ⟨j + 1, h⟩ else false] =
         w 0 :: (apssvWordPrefix (fun i : Fin r => w i.succ) j ++
           [if h : j < r then (fun i : Fin r => w i.succ) ⟨j, h⟩ else false])
@@ -767,11 +779,11 @@ lemma apssvJ_decompose (η : List Bool → Bool) (r : ℕ) (w : Fin (r + 1) → 
   else 0 with hg_def
   -- Split off i = 0.
   have h_zero_mem : (0 : ℕ) ∈ Finset.range (r + 1) := Finset.mem_range.mpr (by omega)
-  show (∑ i ∈ Finset.range (r + 1), f i) = _ + ∑ j ∈ Finset.range r, g j
+  change (∑ i ∈ Finset.range (r + 1), f i) = _ + ∑ j ∈ Finset.range r, g j
   rw [← Finset.add_sum_erase _ f h_zero_mem]
   -- Compute f 0 = top-bit contribution.
   have h_zero_term : f 0 = if (w 0).xor (η []) then 2 ^ r else 0 := by
-    show (if h : 0 < r + 1 then
+    change (if h : 0 < r + 1 then
         if (w ⟨0, h⟩).xor (η (apssvWordPrefix w 0)) then 2 ^ (r + 1 - 1 - 0) else 0
       else 0) = _
     rw [dif_pos (Nat.zero_lt_succ r)]
@@ -794,7 +806,7 @@ lemma apssvJ_decompose (η : List Bool → Bool) (r : ℕ) (w : Fin (r + 1) → 
   rw [Finset.mem_range] at hj
   -- f (j+1) = if (j+1) < r+1 then ... else 0; the cond holds.
   have hj_lt : j + 1 < r + 1 := by omega
-  show (if h : j + 1 < r + 1 then
+  change (if h : j + 1 < r + 1 then
       if (w ⟨j + 1, h⟩).xor (η (apssvWordPrefix w (j + 1))) then 2 ^ (r + 1 - 1 - (j + 1)) else 0
     else 0) =
     (if h : j < r then
@@ -808,10 +820,10 @@ lemma apssvJ_decompose (η : List Bool → Bool) (r : ℕ) (w : Fin (r + 1) → 
   have h_fin_eq : (⟨j + 1, hj_lt⟩ : Fin (r + 1)) = (⟨j, hj⟩ : Fin r).succ := by
     apply Fin.ext; rfl
   rw [h_fin_eq]
-  show (if (w (⟨j, hj⟩ : Fin r).succ).xor (η (apssvWordPrefix w (j + 1))) then _ else _) =
+  change (if (w (⟨j, hj⟩ : Fin r).succ).xor (η (apssvWordPrefix w (j + 1))) then _ else _) =
       if (tailW ⟨j, hj⟩).xor (tailEta (apssvWordPrefix tailW j)) then _ else _
   -- tailW ⟨j, hj⟩ = w (Fin.succ ⟨j, hj⟩) by definition.
-  show (if (w (⟨j, hj⟩ : Fin r).succ).xor (η (apssvWordPrefix w (j + 1))) then _ else _) =
+  change (if (w (⟨j, hj⟩ : Fin r).succ).xor (η (apssvWordPrefix w (j + 1))) then _ else _) =
       if (w (⟨j, hj⟩ : Fin r).succ).xor (tailEta (apssvWordPrefix tailW j)) then _ else _
   -- The remaining match: η (apssvWordPrefix w (j+1)) = tailEta (apssvWordPrefix tailW j).
   rw [apssvWordPrefix_shift w j (by omega)]
@@ -887,7 +899,8 @@ lemma apssvJ_bijective (η : List Bool → Bool) (r : ℕ) :
   · simp
 
 /-- The scrambled tail of [APSSV26b (3.3)] for prefix word `w : Fin r → Bool` and integer `P`:
-$$ T_{w, P} := \sum_{\ell \ge 0} \frac{p_\ell \oplus \eta(w \cdot p_0 \cdots p_{\ell-1})}{2^{\ell+1}}, $$
+$$ T_{w, P} := \sum_{\ell \ge 0} \frac{p_\ell \oplus \eta(w \cdot p_0 \cdots
+p_{\ell-1})}{2^{\ell+1}}, $$
 where $p_\ell$ are the binary digits of $P$ and $w \cdot u$ denotes the concatenation of the
 list-of-`w` with `u`. -/
 noncomputable def apssvT (η : List Bool → Bool) {r : ℕ} (w : Fin r → Bool) (P : ℕ) : ℝ :=
@@ -1041,7 +1054,8 @@ lemma apssvT_factored_summable (P : ℕ) (b : ℕ → Bool) :
 lemma apssvT_factored_nonneg (P : ℕ) (b : ℕ → Bool) : 0 ≤ apssvT_factored P b :=
   tsum_nonneg (apssvT_factored_summand_nonneg P b)
 
-/-- `apssvT_factored P b ≤ 1`, by termwise comparison with $\sum_{\ell \ge 0} (1/2)^{\ell+1} = 1$. -/
+/-- `apssvT_factored P b ≤ 1`, by termwise comparison with $\sum_{\ell \ge 0} (1/2)^{\ell+1} = 1$.
+-/
 lemma apssvT_factored_le_one (P : ℕ) (b : ℕ → Bool) : apssvT_factored P b ≤ 1 := by
   have h_geom_summable : Summable (fun ℓ : ℕ => ((1 / 2 : ℝ)) ^ (ℓ + 1)) := by
     have h := summable_geometric_of_lt_one (by norm_num : (0 : ℝ) ≤ 1 / 2)
@@ -1102,7 +1116,7 @@ lemma apssvT_factored_measurable (P : ℕ) :
     rw [ENNReal.toReal_ofReal (tsum_nonneg (h_summand_nn b))]
   rw [h_eq]
   apply Measurable.ennreal_toReal
-  exact Measurable.ennreal_tsum
+  exact Measurable.tsum
     (fun ℓ => ENNReal.measurable_ofReal.comp (h_summand_meas ℓ))
 
 /-- Pair-indexing of the long-prefix coordinate sets for a pair `(w, w')`:
@@ -1200,8 +1214,8 @@ lemma apssvPrefix_block_le_r {P r m : ℕ} (hm : m < 2 ^ r) (w : Fin r → Bool)
     rw [apssvPrefix_succ, ih hi']
     -- Need: apssvWordPrefix w i ++ [(P*2^r+m).testBit i] = apssvWordPrefix w (i+1).
     rw [apssv_testBit_block P r m hm i, if_pos hi_lt]
-    show apssvWordPrefix w i ++ [m.testBit i] = _
-    show apssvWordPrefix w i ++ [m.testBit i] =
+    change apssvWordPrefix w i ++ [m.testBit i] = _
+    change apssvWordPrefix w i ++ [m.testBit i] =
         apssvWordPrefix w i ++ [if h : i < r then w ⟨i, h⟩ else false]
     rw [dif_pos hi_lt]
     have : w ⟨i, hi_lt⟩ = m.testBit i := hw ⟨i, hi_lt⟩
@@ -1233,7 +1247,8 @@ lemma apssvPrefix_block_ge_r {P r m : ℕ} (hm : m < 2 ^ r) (w : Fin r → Bool)
     rw [List.append_assoc]
 
 /-- The block-sum building block of [APSSV26b §3, eq. (3.4)]:
-$$ B_{P,r}(k) := \sum_{w \in \{0,1\}^r} e\!\left(\,k \!\cdot\! \frac{j_r(w) + T_{w,P}}{2^r}\right). $$
+$$ B_{P,r}(k) := \sum_{w \in \{0,1\}^r} e\!\left(\,k \!\cdot\! \frac{j_r(w) + T_{w,P}}{2^r}\right).
+$$
 Sums the additive character `e(k · ·)` over all $2^r$ scrambled prefix-tails. -/
 noncomputable def apssvBlockSum (η : List Bool → Bool) (P r : ℕ) (k : ℕ) : ℂ :=
   ∑ w : (Fin r → Bool), e ((k : ℝ) *
@@ -1266,7 +1281,7 @@ lemma apssvX_block_eq (η : List Bool → Bool) (P r : ℕ) (m : ℕ) (hm : m < 
         (2 : ℝ) ^ (i + 1)) +
       ∑' ℓ : ℕ, (if (n.testBit (ℓ + r)).xor (η (apssvPrefix n (ℓ + r))) then (1 : ℝ) else 0) /
         (2 : ℝ) ^ ((ℓ + r) + 1) := by
-    show ∑' i, _ = _
+    change ∑' i, _ = _
     have h_summable := apssvX_summable η n
     have := h_summable.sum_add_tsum_nat_add r
     rw [show (fun i : ℕ =>
@@ -1292,7 +1307,8 @@ lemma apssvX_block_eq (η : List Bool → Bool) (P r : ℕ) (m : ℕ) (hm : m < 
     have : w ⟨i, hi⟩ = m.testBit i := hw ⟨i, hi⟩
     rw [this]
   -- The tail = apssvT η w P / 2^r.
-  have h_tail : (∑' ℓ : ℕ, (if (n.testBit (ℓ + r)).xor (η (apssvPrefix n (ℓ + r))) then (1 : ℝ) else 0) /
+  have h_tail : (∑' ℓ : ℕ,
+      (if (n.testBit (ℓ + r)).xor (η (apssvPrefix n (ℓ + r))) then (1 : ℝ) else 0) /
         (2 : ℝ) ^ ((ℓ + r) + 1)) = apssvT η w P / (2 : ℝ) ^ r := by
     unfold apssvT
     rw [eq_div_iff (by positivity : (2 : ℝ) ^ r ≠ 0)]
@@ -1332,7 +1348,7 @@ lemma apssvBitDecode_bijective (r : ℕ) : Function.Bijective (apssvBitDecode r)
       have := congr_fun h ⟨i, hi⟩
       exact this
     · -- For i ≥ r: both testBit values are false (m_j < 2^r ≤ 2^i).
-      push_neg at hi
+      push Not at hi
       have hi_le : 2 ^ r ≤ 2 ^ i := Nat.pow_le_pow_right (by norm_num) hi
       rw [Nat.testBit_eq_false_of_lt (lt_of_lt_of_le m₁.is_lt hi_le)]
       rw [Nat.testBit_eq_false_of_lt (lt_of_lt_of_le m₂.is_lt hi_le)]
@@ -1482,7 +1498,7 @@ lemma apssv_dyadic_decomp_aux (η : List Bool → Bool) (k : ℕ) :
       intro pr hpr
       exact (hT_lev pr hpr).trans (Nat.le_succ _)
     · -- 2^(r+1) < N; split [0, N) = [0, 2^(r+1)) ⊔ [2^(r+1), N).
-      push_neg at hNle
+      push Not at hNle
       set R : ℕ := r + 1 with hR_def
       have hR_pow_pos : 0 < (2 : ℕ) ^ R := Nat.two_pow_pos R
       have hN_split : N = 2 ^ R + (N - 2 ^ R) := by omega
@@ -1623,7 +1639,11 @@ def apssvBlockBound (η : List Bool → Bool) (C : ℝ) : Prop :=
 /- ## Probability infrastructure for `apssv_exists_block_bound` -/
 
 /-- Bernoulli(1/2) PMF on `Bool`. -/
-noncomputable def apssvBoolPMF : PMF Bool := PMF.bernoulli (1/2) (by norm_num)
+noncomputable def apssvBoolPMF : PMF Bool :=
+  PMF.ofFintype
+    (fun b => cond b (1 / 2 : NNReal) (1 - (1 / 2 : NNReal))) (by
+      norm_num
+      exact ENNReal.mul_inv_cancel (by norm_num) (by norm_num))
 
 /-- Bernoulli(1/2) measure on `Bool`. -/
 noncomputable def apssvBoolMeasure : MeasureTheory.Measure Bool := apssvBoolPMF.toMeasure
@@ -1687,6 +1707,7 @@ Used as the conditioning σ-algebra in the conditional sub-Gaussian MGF chassis 
 APSSV block sum: `apssvJ η r w` — a finite sum over `i ∈ Finset.range r` of summands
 each depending on `η` at the coordinate `apssvWordPrefix w i` (length `i < r`) — is
 `apssvShortSigma r`-measurable. -/
+@[instance_reducible]
 def apssvShortSigma (r : ℕ) : MeasurableSpace (List Bool → Bool) :=
   ⨆ c : {c : List Bool // c.length < r},
     MeasurableSpace.comap (fun η : List Bool → Bool => η c.val) inferInstance
@@ -1759,6 +1780,7 @@ locate the (Y_w)_w family: each `apssvT η w P` involves only η-coords at posit
 `apssvLongSigma r`-measurable. The independence of `apssvShortSigma r` and
 `apssvLongSigma r` (under the iid product measure `apssvEtaMeasure`) is the core
 structural input to the conditional independence of c_w from (Y_w)_w. -/
+@[instance_reducible]
 def apssvLongSigma (r : ℕ) : MeasurableSpace (List Bool → Bool) :=
   ⨆ c : {c : List Bool // r ≤ c.length},
     MeasurableSpace.comap (fun η : List Bool → Bool => η c.val) inferInstance
@@ -1841,7 +1863,7 @@ lemma apssv_short_long_indep (r : ℕ) :
   have hST : Disjoint {u : List Bool | u.length < r} {u : List Bool | r ≤ u.length} := by
     rw [Set.disjoint_iff_inter_eq_empty]
     ext u
-    simp only [Set.mem_inter_iff, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_and]
+    simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_and]
     omega
   have h_indep_sup :=
     ProbabilityTheory.indep_iSup_of_disjoint h_le h_eta_iIndep hST
@@ -2447,7 +2469,7 @@ lemma apssvBlockSum_j_T_indepFun {r : ℕ} (w w' : Fin r → Bool) (P k : ℕ) :
       · simp only [hi, dite_true]
         refine Measurable.ite ?_ measurable_const measurable_const
         have h_short_mem : apssvWordPrefix v i ∈ ShortSet := by
-          show (apssvWordPrefix v i).length < r
+          change (apssvWordPrefix v i).length < r
           rw [apssvWordPrefix_length]; exact hi
         have h_coord_short : @Measurable _ _
             (⨆ u ∈ ShortSet, m u) Bool.instMeasurableSpace
@@ -2483,7 +2505,8 @@ lemma apssvBlockSum_j_T_indepFun {r : ℕ} (w w' : Fin r → Bool) (P k : ℕ) :
         (⨆ u ∈ LongSet, m u) Real.measurableSpace
         (fun η : List Bool → Bool => apssvT η v P) := by
       intro v
-      -- Rewrite via apssvT_eq_factored: apssvT η v P = apssvT_factored P ∘ (η ↦ ℓ ↦ η at long coord).
+      -- Rewrite via apssvT_eq_factored: apssvT η v P = apssvT_factored P ∘ (η ↦ ℓ ↦ η at long
+      -- coord).
       have h_eq : (fun η : List Bool → Bool => apssvT η v P) =
           apssvT_factored P ∘
             (fun η : List Bool → Bool => fun ℓ : ℕ =>
@@ -2495,7 +2518,7 @@ lemma apssvBlockSum_j_T_indepFun {r : ℕ} (w w' : Fin r → Bool) (P k : ℕ) :
       refine (@measurable_pi_iff _ _ _ (⨆ u ∈ LongSet, m u) _ _).mpr fun ℓ => ?_
       -- Each component coord η ↦ η (apssvWordPrefix v r ++ apssvPrefix P ℓ) is in m_(...) ≤ ⨆_long.
       have h_long_mem : (apssvWordPrefix v r ++ apssvPrefix P ℓ) ∈ LongSet := by
-        show r ≤ (apssvWordPrefix v r ++ apssvPrefix P ℓ).length
+        change r ≤ (apssvWordPrefix v r ++ apssvPrefix P ℓ).length
         rw [List.length_append, apssvWordPrefix_length]
         exact Nat.le_add_right _ _
       exact (comap_measurable (m := Bool.instMeasurableSpace) _).mono
@@ -2532,8 +2555,7 @@ relevant coordinate's flip negates the integrand. -/
 lemma apssvBoolMeasure_singleton (b : Bool) : apssvBoolMeasure {b} = 1/2 := by
   unfold apssvBoolMeasure apssvBoolPMF
   rw [PMF.toMeasure_apply_singleton _ _ (MeasurableSet.singleton b)]
-  simp [PMF.bernoulli_apply]
-  cases b <;> simp
+  cases b <;> norm_num [PMF.ofFintype_apply]
 
 /-- The Bernoulli(1/2) measure on `Bool` is invariant under `Bool.not`. Elementary
 symmetry: under `Bool.not`, `{true} ↔ {false}`, and the measure of both is `1/2`. -/
@@ -2636,7 +2658,7 @@ lemma apssvT_factored_update_eq (P ℓ₀ : ℕ) (b : ℕ → Bool) :
   -- Compute f' ℓ₀ - f ℓ₀ = (1 - 2·old)/2^(ℓ₀+1).
   have h_f'_ℓ₀ : f' ℓ₀ =
       (if (P.testBit ℓ₀).xor (!b ℓ₀) then (1 : ℝ) else 0) / 2 ^ (ℓ₀ + 1) := by
-    show (if (P.testBit ℓ₀).xor (Function.update b ℓ₀ (!b ℓ₀) ℓ₀) then (1 : ℝ) else 0) /
+    change (if (P.testBit ℓ₀).xor (Function.update b ℓ₀ (!b ℓ₀) ℓ₀) then (1 : ℝ) else 0) /
         2 ^ (ℓ₀ + 1) = _
     rw [Function.update_self]
   have h_xor_flip :
@@ -2654,7 +2676,7 @@ lemma apssvT_factored_update_eq (P ℓ₀ : ℕ) (b : ℕ → Bool) :
         · exact absurd h hxor
       rw [hxf, Bool.not_false]; simp
   rw [h_f'_ℓ₀, h_xor_flip]
-  show (1 - (if (P.testBit ℓ₀).xor (b ℓ₀) then (1 : ℝ) else 0)) / 2 ^ (ℓ₀ + 1) +
+  change (1 - (if (P.testBit ℓ₀).xor (b ℓ₀) then (1 : ℝ) else 0)) / 2 ^ (ℓ₀ + 1) +
         ∑' ℓ, (if ℓ = ℓ₀ then (0 : ℝ) else f ℓ) =
       f ℓ₀ + ∑' ℓ, (if ℓ = ℓ₀ then (0 : ℝ) else f ℓ) +
       (1 - 2 * (if (P.testBit ℓ₀).xor (b ℓ₀) then (1 : ℝ) else 0)) / 2 ^ (ℓ₀ + 1)
@@ -2693,7 +2715,7 @@ lemma apssvT_flipAt_eq {r : ℕ} (w : Fin r → Bool) (P ℓ₀ : ℕ) (η : Lis
         omega
       have h_ne : apssvWordPrefix w r ++ apssvPrefix P ℓ ≠ c := fun h_eq =>
         h_len_ne (congr_arg List.length h_eq)
-      show (apssvFlipAt c η) (apssvWordPrefix w r ++ apssvPrefix P ℓ) =
+      change (apssvFlipAt c η) (apssvWordPrefix w r ++ apssvPrefix P ℓ) =
           (Function.update b ℓ₀ (!b ℓ₀)) ℓ
       unfold apssvFlipAt
       simp only [if_neg h_ne, Function.update_of_ne hℓ]
@@ -2839,8 +2861,8 @@ lemma integral_apssvBoolMeasure (f : Bool → ℂ) :
     ∫ b, f b ∂apssvBoolMeasure = (f false + f true) / 2 := by
   unfold apssvBoolMeasure apssvBoolPMF
   rw [PMF.integral_eq_sum]
-  simp [PMF.bernoulli_apply]
-  ring
+  simp
+  ring_nf
 
 /-- Pushforward of the integral via the coordinate map: `∫ η, f(η u) dη = ∫ b, f b db`
 under the Bernoulli law of the coordinate. -/
@@ -2848,7 +2870,8 @@ lemma integral_apssvEta_coord (u : List Bool) (f : Bool → ℂ) :
     ∫ η, f (η u) ∂apssvEtaMeasure = ∫ b, f b ∂apssvBoolMeasure := by
   rw [← MeasureTheory.integral_map (apssv_eta_coord_measurable u).aemeasurable]
   · rw [apssv_eta_coord_law]
-  · -- f is integrable on apssvEtaMeasure.map (fun η => η u) = apssvBoolMeasure (a finite measure on Bool).
+  · -- f is integrable on apssvEtaMeasure.map (fun η => η u) = apssvBoolMeasure (a finite measure on
+    -- Bool).
     rw [apssv_eta_coord_law]
     exact (Measurable.of_discrete : Measurable f).aestronglyMeasurable
 
@@ -2863,7 +2886,7 @@ lemma apssv_eta_at_coord_summand_integral (P k i : ℕ) (u : List Bool) :
         ∂apssvEtaMeasure = (1 + e ((k : ℝ) / 2 ^ (i + 1))) / 2 := by
   set f : Bool → ℂ := fun b =>
     e ((k : ℝ) * (if (P.testBit i).xor b then (1 : ℝ) else 0) / 2 ^ (i + 1)) with hf_def
-  show ∫ η, f (η u) ∂apssvEtaMeasure = _
+  change ∫ η, f (η u) ∂apssvEtaMeasure = _
   rw [integral_apssvEta_coord, integral_apssvBoolMeasure]
   rw [hf_def]
   have h_e0 : e ((k : ℝ) * 0 / 2 ^ (i + 1)) = 1 := by
@@ -2871,14 +2894,14 @@ lemma apssv_eta_at_coord_summand_integral (P k i : ℕ) (u : List Bool) :
   have h_e1 : e ((k : ℝ) * 1 / 2 ^ (i + 1)) = e ((k : ℝ) / 2 ^ (i + 1)) := by
     congr 1; ring
   rcases h_tb : P.testBit i
-  · show (e ((k : ℝ) * (if (false ^^ false : Bool) = true then (1:ℝ) else 0) / 2 ^ (i + 1)) +
+  · change (e ((k : ℝ) * (if (false ^^ false : Bool) = true then (1:ℝ) else 0) / 2 ^ (i + 1)) +
           e ((k : ℝ) * (if (false ^^ true : Bool) = true then (1:ℝ) else 0) / 2 ^ (i + 1))) / 2 = _
     have hxorff : (false ^^ false : Bool) = false := rfl
     have hxorft : (false ^^ true : Bool) = true := rfl
     rw [hxorff, hxorft]
     simp only [Bool.false_eq_true, ↓reduceIte]
     rw [h_e0, h_e1]
-  · show (e ((k : ℝ) * (if (true ^^ false : Bool) = true then (1:ℝ) else 0) / 2 ^ (i + 1)) +
+  · change (e ((k : ℝ) * (if (true ^^ false : Bool) = true then (1:ℝ) else 0) / 2 ^ (i + 1)) +
           e ((k : ℝ) * (if (true ^^ true : Bool) = true then (1:ℝ) else 0) / 2 ^ (i + 1))) / 2 = _
     have hxortf : (true ^^ false : Bool) = true := rfl
     have hxortt : (true ^^ true : Bool) = false := rfl
@@ -2917,7 +2940,7 @@ lemma apssvX_measurable (n : ℕ) :
     rw [ENNReal.toReal_ofReal (tsum_nonneg (apssvX_summand_nonneg η n))]
   rw [h_eq]
   apply Measurable.ennreal_toReal
-  exact Measurable.ennreal_tsum
+  exact Measurable.tsum
     (fun i => ENNReal.measurable_ofReal.comp (apssvX_summand_measurable n i))
 
 /-- `apssvBlockSum η P r k` is measurable in `η`. Uses the partial-sum form from
@@ -3317,7 +3340,8 @@ lemma apssvX_part_succ (η : List Bool → Bool) (n N : ℕ) :
 
 /-- **Generalized partial-sum factorization** for an arbitrary injection
 `φ : ℕ → List Bool` of η-coordinates:
-$$ \mathbb{E}\!\left[e\!\left(k \!\cdot\! \sum_{i < N} \frac{n.\!testBit_i \oplus \eta(\varphi i)}{2^{i+1}}\right)\right]
+$$ \mathbb{E}\!\left[e\!\left(k \!\cdot\! \sum_{i < N} \frac{n.\!testBit_i \oplus \eta(\varphi
+i)}{2^{i+1}}\right)\right]
    = \prod_{i < N} \frac{1 + e(k / 2^{i+1})}{2}. $$
 
 The proof is identical to `apssvX_part_integral` but parameterized by the
@@ -3363,7 +3387,7 @@ lemma apssv_eta_part_integral (n N k : ℕ) (φ : ℕ → List Bool)
     funext η
     refine Finset.prod_congr rfl fun i _ => ?_
     rw [hf_def, hX_def]
-    show _ = e ((k : ℝ) * (if (n.testBit i.val).xor (η (φ i.val))
+    change _ = e ((k : ℝ) * (if (n.testBit i.val).xor (η (φ i.val))
         then (1:ℝ) else 0) / 2 ^ (i.val + 1))
     congr 1; ring
   rw [h_factor_eq]
@@ -3374,9 +3398,9 @@ lemma apssv_eta_part_integral (n N k : ℕ) (φ : ℕ → List Bool)
     fun i => (Measurable.of_discrete : Measurable (f i)).aestronglyMeasurable
   rw [h_iIndep.integral_fun_prod_comp hX_meas hf_strong]
   refine Finset.prod_congr rfl fun i _ => ?_
-  show ∫ η, f i (X i η) ∂apssvEtaMeasure = (1 + e ((k : ℝ) / 2 ^ (i.val + 1))) / 2
+  change ∫ η, f i (X i η) ∂apssvEtaMeasure = (1 + e ((k : ℝ) / 2 ^ (i.val + 1))) / 2
   rw [hf_def, hX_def]
-  show ∫ η, e ((k : ℝ) *
+  change ∫ η, e ((k : ℝ) *
       (if (n.testBit i.val).xor (η (φ i.val)) then (1 : ℝ) else 0) /
         2 ^ (i.val + 1)) ∂apssvEtaMeasure = _
   exact apssv_eta_at_coord_summand_integral n k i.val (φ i.val)
@@ -3844,7 +3868,7 @@ lemma apssv_alpha_J_sum_eq_zero {r : ℕ} (η : List Bool → Bool) (P k : ℕ) 
   · -- Case 1: 1 ≤ k % 2^r ⟹ J_sum = 0.
     rw [apssv_j_sum_eq_zero η r k hk_mod, mul_zero]
   · -- Case 2: k % 2^r = 0, i.e., 2^r ∣ k ⟹ α = 0.
-    push_neg at hk_mod
+    push Not at hk_mod
     have hkdvd : 2 ^ r ∣ k := Nat.dvd_of_mod_eq_zero (by omega)
     obtain ⟨q, hq_eq⟩ := hkdvd
     have hq_pos : 1 ≤ q := by
@@ -4007,8 +4031,8 @@ lemma apssvBlockSum_variance_eq (P r k : ℕ) (hk : 1 ≤ k) :
             e ((k : ℝ) * ((apssvJ η r w : ℝ) - (apssvJ η r w' : ℝ)) / (2 : ℝ) ^ r) *
             e ((k : ℝ) * (apssvT η w P - apssvT η w' P) / (2 : ℝ) ^ r))
         apssvEtaMeasure := by
-      refine MeasureTheory.integrable_finset_sum _ fun w _ => ?_
-      refine MeasureTheory.integrable_finset_sum _ fun w' _ => ?_
+      refine MeasureTheory.integrable_finsetSum _ fun w _ => ?_
+      refine MeasureTheory.integrable_finsetSum _ fun w' _ => ?_
       exact h_int_AB w w'
     rw [MeasureTheory.integral_add (MeasureTheory.integrable_const _) h_cross_integrable]
     -- Constant integrates to (μ univ).toReal • c = 1 • 2^r = 2^r on probability measure.
@@ -4016,12 +4040,12 @@ lemma apssvBlockSum_variance_eq (P r k : ℕ) (hk : 1 ≤ k) :
         one_smul]
     congr 1
     -- Swap the outer ∫ with the outer ∑.
-    rw [MeasureTheory.integral_finset_sum]
+    rw [MeasureTheory.integral_finsetSum]
     · refine Finset.sum_congr rfl fun w _ => ?_
       -- Swap the inner ∫ with the inner ∑.
-      exact MeasureTheory.integral_finset_sum _ fun w' _ => h_int_AB w w'
+      exact MeasureTheory.integral_finsetSum _ fun w' _ => h_int_AB w w'
     · intro w _
-      exact MeasureTheory.integrable_finset_sum _ fun w' _ => h_int_AB w w'
+      exact MeasureTheory.integrable_finsetSum _ fun w' _ => h_int_AB w w'
   -- (5) For each (w, w') with w ≠ w', apply j_T_indepFun to factor:
   --   ∫ A(w,w') · B(w,w') = (∫ A(w,w')) · (∫ B(w,w'))
   have h_AB_factor : ∀ w w' : Fin r → Bool,
@@ -4090,9 +4114,9 @@ lemma apssvBlockSum_variance_eq (P r k : ℕ) (hk : 1 ≤ k) :
                   e ((k : ℝ) * ((apssvJ η r w : ℝ) - (apssvJ η r w' : ℝ)) / (2 : ℝ) ^ r)
                     ∂apssvEtaMeasure) from
           Finset.sum_congr rfl fun w _ =>
-            (MeasureTheory.integral_finset_sum _ fun w' _ => h_int_A w w').symm]
-      rw [← MeasureTheory.integral_finset_sum _ fun w _ =>
-            MeasureTheory.integrable_finset_sum _ fun w' _ => h_int_A w w']
+            (MeasureTheory.integral_finsetSum _ fun w' _ => h_int_A w w').symm]
+      rw [← MeasureTheory.integral_finsetSum _ fun w _ =>
+            MeasureTheory.integrable_finsetSum _ fun w' _ => h_int_A w w']
       rw [MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall
             (fun η : List Bool → Bool => apssv_j_factor_double_sum_mod η r k hk_mod))]
       rw [MeasureTheory.integral_const, MeasureTheory.probReal_univ (μ := apssvEtaMeasure),
@@ -4120,7 +4144,7 @@ lemma apssvBlockSum_variance_eq (P r k : ℕ) (hk : 1 ≤ k) :
         (2 : ℝ) ^ r * (1 - ‖α‖^2) := by exact_mod_cast h_int_final
     exact h_eq_real
   · -- Case 2: k % 2^r = 0, i.e. 2^r ∣ k. Use bit-flip symmetry to get α = 0.
-    push_neg at hk_mod
+    push Not at hk_mod
     have hkdvd : 2 ^ r ∣ k :=
       Nat.dvd_of_mod_eq_zero (by omega)
     obtain ⟨q, hq_eq⟩ := hkdvd
@@ -4321,7 +4345,7 @@ lemma apssvT_residue_diff_bound {r : ℕ} (w : Fin r → Bool) (η : List Bool �
   have h_T_eq : ∀ M, apssvT η w M = ∑' ℓ : ℕ, f M ℓ := fun _ => rfl
   have hf_nn : ∀ M ℓ, 0 ≤ f M ℓ := fun M ℓ => by show 0 ≤ _; positivity
   have hf_le : ∀ M ℓ, f M ℓ ≤ (1 / 2 : ℝ) ^ (ℓ + 1) := fun M ℓ => by
-    show _ / _ ≤ _
+    change _ / _ ≤ _
     rw [div_pow, one_pow]
     apply div_le_div_of_nonneg_right _ (by positivity)
     split_ifs <;> norm_num
@@ -4330,7 +4354,7 @@ lemma apssvT_residue_diff_bound {r : ℕ} (w : Fin r → Bool) (η : List Bool �
       rw [Nat.testBit_mod_two_pow]; simp [hℓ]
     have h_pref : apssvPrefix P ℓ = apssvPrefix (P % 2 ^ h) ℓ :=
       (apssvPrefix_mod_eq_of_le (Nat.le_of_lt hℓ)).symm
-    show (if _ then _ else _) / _ = (if _ then _ else _) / _
+    change (if _ then _ else _) / _ = (if _ then _ else _) / _
     rw [h_tb, h_pref]
   have h_geom : Summable (fun ℓ : ℕ => ((1 / 2 : ℝ)) ^ (ℓ + 1)) := by
     have hg := summable_geometric_of_lt_one (by norm_num : (0 : ℝ) ≤ 1 / 2)
@@ -4341,19 +4365,19 @@ lemma apssvT_residue_diff_bound {r : ℕ} (w : Fin r → Bool) (η : List Bool �
   -- Bounding function g for diff.
   let g : ℕ → ℝ := fun ℓ => if h ≤ ℓ then ((1 / 2 : ℝ)) ^ (ℓ + 1) else 0
   have hg_nn : ∀ ℓ, 0 ≤ g ℓ := fun ℓ => by
-    show 0 ≤ ite _ _ _
+    change 0 ≤ ite _ _ _
     by_cases hℓ : h ≤ ℓ
     · simp only [if_pos hℓ]; positivity
     · simp only [if_neg hℓ]; exact le_refl _
   have h_g_summable : Summable g := by
     refine Summable.of_nonneg_of_le hg_nn (fun ℓ => ?_) h_geom
-    show ite _ _ _ ≤ _
+    change ite _ _ _ ≤ _
     by_cases hℓ : h ≤ ℓ
     · simp only [if_pos hℓ]; exact le_refl _
     · simp only [if_neg hℓ]; positivity
   -- Termwise: |f P ℓ - f Q ℓ| ≤ g ℓ.
   have h_termwise : ∀ ℓ, |f P ℓ - f (P % 2 ^ h) ℓ| ≤ g ℓ := fun ℓ => by
-    show _ ≤ ite _ _ _
+    change _ ≤ ite _ _ _
     by_cases hℓ : h ≤ ℓ
     · simp only [if_pos hℓ]
       have h_lo : -((1 / 2 : ℝ)) ^ (ℓ + 1) ≤ f P ℓ - f (P % 2 ^ h) ℓ := by
@@ -4421,7 +4445,7 @@ lemma apssvBlockSum_residue_diff_bound (η : List Bool → Bool) (P r k h : ℕ)
     -- |α - β| = (k/2^r) · |T_P - T_Q|.
     have h_diff_eq : α - β =
         (k : ℝ) / (2 : ℝ) ^ r * (apssvT η w P - apssvT η w (P % 2 ^ h)) := by
-      show (k : ℝ) * ((apssvJ η r w : ℝ) + apssvT η w P) / (2 : ℝ) ^ r -
+      change (k : ℝ) * ((apssvJ η r w : ℝ) + apssvT η w P) / (2 : ℝ) ^ r -
            (k : ℝ) * ((apssvJ η r w : ℝ) + apssvT η w (P % 2 ^ h)) / (2 : ℝ) ^ r =
            (k : ℝ) / (2 : ℝ) ^ r * (apssvT η w P - apssvT η w (P % 2 ^ h))
       field_simp; ring
@@ -4526,7 +4550,7 @@ lemma apssvBlockSum_bad_event_eq_empty_of_two_pow_le {r k : ℕ} (τ : ℝ)
     (hτ : (2 : ℝ) ^ r ≤ τ) :
     {η : List Bool → Bool | ∃ P : ℕ, τ < ‖apssvBlockSum η P r k‖} = ∅ := by
   ext η
-  simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_exists]
+  simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_exists]
   intro P hP
   have h_triv := apssvBlockSum_norm_le_two_pow η P r k
   linarith
@@ -4545,7 +4569,7 @@ lemma apssvBlockSum_integral_eq_zero (P r k : ℕ) (hk : 1 ≤ k) :
     funext η; exact (apssv_block_sum_eq η P r k).symm
   rw [h_eq]
   -- Linearity of the integral over a finite sum.
-  rw [MeasureTheory.integral_finset_sum _ (fun m _ => apssvX_e_integrable (P * 2 ^ r + m) k)]
+  rw [MeasureTheory.integral_finsetSum _ (fun m _ => apssvX_e_integrable (P * 2 ^ r + m) k)]
   -- Each integrand has zero mean.
   refine Finset.sum_eq_zero fun m _ => ?_
   exact apssvX_integral_eq_zero (P * 2 ^ r + m) k hk
@@ -5133,7 +5157,7 @@ by `iIndepFun.meas_biInter`.
 
 TODO: Mathlib upstream candidate. -/
 lemma iIndepFun_condExpKernel_of_indep_of_indep
-    {ι : Type*} [Fintype ι] {β : ι → Type*} [∀ i, MeasurableSpace (β i)]
+    {ι : Type*} [Finite ι] {β : ι → Type*} [∀ i, MeasurableSpace (β i)]
     {Ω : Type*} {m m' mΩ : MeasurableSpace Ω} [StandardBorelSpace Ω]
     {μ : Measure Ω} [IsProbabilityMeasure μ]
     (hm : m ≤ mΩ) (hm' : m' ≤ mΩ)
@@ -5142,6 +5166,8 @@ lemma iIndepFun_condExpKernel_of_indep_of_indep
     (hX_meas : ∀ i, @Measurable _ _ m' _ (X i))
     (hX_iIndep : ProbabilityTheory.iIndepFun X μ) :
     ProbabilityTheory.Kernel.iIndepFun X (condExpKernel μ m) (μ.trim hm) := by
+  classical
+  let : Fintype ι := Fintype.ofFinite ι
   -- Unfold: need ∀ s f', (∀ i ∈ s, f' i ∈ comap (X i)) →
   --   ∀ᵐ ω' ∂(μ.trim hm), (κ ω')(⋂ f' i) = ∏ (κ ω')(f' i)
   intro s f' h_f'_mem
@@ -5259,7 +5285,7 @@ The full statement `∀ᵐ ω' ∂ν, iIndepFun X (κ ω')` (the per-fiber Measu
 **Output**: `∀ᵐ ω' ∂ν, iIndepSets s' (κ ω')` — the seed-level form, which is
 provable cleanly. -/
 theorem Kernel.iIndepFun.iIndepSets_apply_ae_seed
-    {ι : Type*} [Fintype ι] {β : ι → Type*} [m_β : ∀ i, MeasurableSpace (β i)]
+    {ι : Type*} [Finite ι] {β : ι → Type*} [m_β : ∀ i, MeasurableSpace (β i)]
     [∀ i, MeasurableSpace.CountablyGenerated (β i)]
     {Ω Ω' : Type*} {mΩ : MeasurableSpace Ω} {_mΩ' : MeasurableSpace Ω'}
     {κ : Kernel Ω' Ω} {ν : Measure Ω'}
@@ -5270,6 +5296,7 @@ theorem Kernel.iIndepFun.iIndepSets_apply_ae_seed
         (MeasurableSpace.countableGeneratingSet (β i))
     ∀ᵐ ω' ∂ν, ProbabilityTheory.iIndepSets s' (κ ω') := by
   classical
+  let : Fintype ι := Fintype.ofFinite ι
   -- Step 1: countable generating sets g_i ⊆ Set (β i) for each m_β i.
   let g : ∀ i, Set (Set (β i)) := fun i => MeasurableSpace.countableGeneratingSet (β i)
   have hg_countable : ∀ i, (g i).Countable :=
@@ -5355,7 +5382,7 @@ for `ν`-almost every `ω'`.
 
 TODO: Mathlib upstream candidate. -/
 theorem Kernel.iIndepFun.iIndepFun_apply_ae
-    {ι : Type*} [Fintype ι] {β : ι → Type*} [m_β : ∀ i, MeasurableSpace (β i)]
+    {ι : Type*} [Finite ι] {β : ι → Type*} [m_β : ∀ i, MeasurableSpace (β i)]
     [∀ i, MeasurableSpace.CountablyGenerated (β i)]
     {Ω Ω' : Type*} {mΩ : MeasurableSpace Ω} {_mΩ' : MeasurableSpace Ω'}
     {κ : Kernel Ω' Ω} {ν : Measure Ω'}
@@ -5363,6 +5390,7 @@ theorem Kernel.iIndepFun.iIndepFun_apply_ae
     (h : ProbabilityTheory.Kernel.iIndepFun X κ ν) :
     ∀ᵐ ω' ∂ν, ProbabilityTheory.iIndepFun X (κ ω') := by
   classical
+  let : Fintype ι := Fintype.ofFinite ι
   -- Step 1: countable generating sets g_i ⊆ Set (β i) for each m_β i.
   let g : ∀ i, Set (Set (β i)) := fun i => MeasurableSpace.countableGeneratingSet (β i)
   have hg_countable : ∀ i, (g i).Countable :=
@@ -5655,7 +5683,8 @@ lemma apssv_per_w_HasCondSubgaussianMGF (P k : ℕ) {r : ℕ} (w : Fin r → Boo
       rw [Real.norm_eq_abs]
       exact (Complex.abs_im_le_norm _).trans (norm_e _).le
     -- Apply Helper 2 to Re(Y_w) and Im(Y_w): a.e. ω', their integral over κ(ω') = unconditional.
-    -- This avoids the parametric κ(ω') → μ substitution (the integrand would depend on ω' through z).
+    -- This avoids the parametric κ(ω') → μ substitution (the integrand would depend on ω' through
+    -- z).
     have h_indep_long_short : ProbabilityTheory.Indep
         (apssvLongSigma r) (apssvShortSigma r) apssvEtaMeasure :=
       (apssv_short_long_indep r).symm
@@ -5700,7 +5729,7 @@ lemma apssv_per_w_HasCondSubgaussianMGF (P k : ℕ) {r : ℕ} (w : Fin r → Boo
       unfold ProbabilityTheory.mgf
       exact MeasureTheory.integral_congr_ae h_exp_eq
     -- The goal needs unfolding of α (since we use `set` above)
-    show ProbabilityTheory.mgf _ _ t ≤ Real.exp (((1 : NNReal) : ℝ) * t ^ 2 / 2)
+    change ProbabilityTheory.mgf _ _ t ≤ Real.exp (((1 : NNReal) : ℝ) * t ^ 2 / 2)
     rw [h_mgf_rewrite]
     -- σ_long-measurability of (fun η ↦ exp(t · Re(z · (Y_w η - α)))).
     have h_inner_meas_long : @Measurable _ _ (apssvLongSigma r) _
@@ -5725,7 +5754,7 @@ lemma apssv_per_w_HasCondSubgaussianMGF (P k : ℕ) {r : ℕ} (w : Fin r → Boo
         ‖e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)‖ = 1 := fun η => norm_e _
     set a : ℝ := -1 - (z * α).re with ha_def
     set b : ℝ := 1 - (z * α).re with hb_def
-    have h_b_sub_a : b - a = 2 := by show (1 - (z * α).re) - (-1 - (z * α).re) = 2; ring
+    have h_b_sub_a : b - a = 2 := by change (1 - (z * α).re) - (-1 - (z * α).re) = 2; ring
     have h_re_in_Icc : ∀ η : List Bool → Bool,
         (z * (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r) - α)).re ∈ Set.Icc a b := by
       intro η
@@ -5771,11 +5800,11 @@ lemma apssv_per_w_HasCondSubgaussianMGF (P k : ℕ) {r : ℕ} (w : Fin r → Boo
         apssvEtaMeasure := apssvT_e_integrable w P k r
     have h_int_Y_re_unconditional :
         ∫ η, (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)).re ∂apssvEtaMeasure = α.re := by
-      show ∫ η, RCLike.re (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)) ∂apssvEtaMeasure = α.re
+      change ∫ η, RCLike.re (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)) ∂apssvEtaMeasure = α.re
       rw [integral_re h_Y_int_unconditional, h_int_Y_unconditional]; rfl
     have h_int_Y_im_unconditional :
         ∫ η, (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)).im ∂apssvEtaMeasure = α.im := by
-      show ∫ η, RCLike.im (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)) ∂apssvEtaMeasure = α.im
+      change ∫ η, RCLike.im (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)) ∂apssvEtaMeasure = α.im
       rw [integral_im h_Y_int_unconditional, h_int_Y_unconditional]; rfl
     -- Now under κ(ω'): ∫ Re(Y_w) = α.re, ∫ Im(Y_w) = α.im.
     rw [h_int_Y_re_unconditional] at h_re_int_kernel_eq
@@ -6027,13 +6056,13 @@ lemma apssv_per_w_HasCondSubgaussianMGF_param (P k : ℕ) {r : ℕ} (w : Fin r �
           ∂(ProbabilityTheory.condExpKernel apssvEtaMeasure (apssvShortSigma r) ω') := by
       unfold ProbabilityTheory.mgf
       exact MeasureTheory.integral_congr_ae h_exp_eq
-    show ProbabilityTheory.mgf _ _ t ≤ Real.exp (((H ^ 2 : NNReal) : ℝ) * t ^ 2 / 2)
+    change ProbabilityTheory.mgf _ _ t ≤ Real.exp (((H ^ 2 : NNReal) : ℝ) * t ^ 2 / 2)
     rw [h_mgf_rewrite]
     -- Range bound from parameter h_range.
     obtain ⟨c, h_re_in_Icc⟩ := h_range z h_z_norm
     set a : ℝ := c - (H : ℝ) with ha_def
     set b : ℝ := c + (H : ℝ) with hb_def
-    have h_b_sub_a : b - a = 2 * (H : ℝ) := by show (c + (H : ℝ)) - (c - (H : ℝ)) = _; ring
+    have h_b_sub_a : b - a = 2 * (H : ℝ) := by change (c + (H : ℝ)) - (c - (H : ℝ)) = _; ring
     have h_κ_prob : MeasureTheory.IsProbabilityMeasure
         (ProbabilityTheory.condExpKernel apssvEtaMeasure (apssvShortSigma r) ω') :=
       ProbabilityTheory.IsMarkovKernel.isProbabilityMeasure
@@ -6045,11 +6074,11 @@ lemma apssv_per_w_HasCondSubgaussianMGF_param (P k : ℕ) {r : ℕ} (w : Fin r �
         apssvEtaMeasure := apssvT_e_integrable w P k r
     have h_int_Y_re_unconditional :
         ∫ η, (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)).re ∂apssvEtaMeasure = α.re := by
-      show ∫ η, RCLike.re (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)) ∂apssvEtaMeasure = α.re
+      change ∫ η, RCLike.re (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)) ∂apssvEtaMeasure = α.re
       rw [integral_re h_Y_int_unconditional, h_int_Y_unconditional]; rfl
     have h_int_Y_im_unconditional :
         ∫ η, (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)).im ∂apssvEtaMeasure = α.im := by
-      show ∫ η, RCLike.im (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)) ∂apssvEtaMeasure = α.im
+      change ∫ η, RCLike.im (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)) ∂apssvEtaMeasure = α.im
       rw [integral_im h_Y_int_unconditional, h_int_Y_unconditional]; rfl
     rw [h_int_Y_re_unconditional] at h_re_int_kernel_eq
     rw [h_int_Y_im_unconditional] at h_im_int_kernel_eq
@@ -6532,12 +6561,12 @@ lemma apssvBlockSum_centered_summand_HasCondSubgaussianMGF_sum (P r k : ℕ) :
     have h_int_Y_re_μ : ∀ w : Fin r → Bool,
         ∫ η, (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)).re ∂apssvEtaMeasure = α.re := by
       intro w
-      show ∫ η, RCLike.re (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)) ∂apssvEtaMeasure = α.re
+      change ∫ η, RCLike.re (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)) ∂apssvEtaMeasure = α.re
       rw [integral_re (h_Y_int_μ_w w), h_α_inv w]; rfl
     have h_int_Y_im_μ : ∀ w : Fin r → Bool,
         ∫ η, (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)).im ∂apssvEtaMeasure = α.im := by
       intro w
-      show ∫ η, RCLike.im (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)) ∂apssvEtaMeasure = α.im
+      change ∫ η, RCLike.im (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)) ∂apssvEtaMeasure = α.im
       rw [integral_im (h_Y_int_μ_w w), h_α_inv w]; rfl
     -- Per-w mean-zero under κ(ω'): derive from Helper 2 + decomposition of Re(Z_w · (Y_w - α)).
     -- κ(ω') is a probability measure (via h_κ_prob below).
@@ -6604,7 +6633,7 @@ lemma apssvBlockSum_centered_summand_HasCondSubgaussianMGF_sum (P r k : ℕ) :
       intro w
       set a : ℝ := -1 - (Z w * α).re with ha_def
       set b : ℝ := 1 - (Z w * α).re with hb_def
-      have h_b_sub_a : b - a = 2 := by show (1 - (Z w * α).re) - (-1 - (Z w * α).re) = 2; ring
+      have h_b_sub_a : b - a = 2 := by change (1 - (Z w * α).re) - (-1 - (Z w * α).re) = 2; ring
       have h_re_in_Icc : ∀ η : List Bool → Bool,
           (Z w * (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r) - α)).re ∈ Set.Icc a b := by
         intro η
@@ -6972,12 +7001,12 @@ lemma apssvBlockSum_centered_summand_im_HasCondSubgaussianMGF_sum (P r k : ℕ) 
     have h_int_Y_re_μ : ∀ w : Fin r → Bool,
         ∫ η, (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)).re ∂apssvEtaMeasure = α.re := by
       intro w
-      show ∫ η, RCLike.re (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)) ∂apssvEtaMeasure = α.re
+      change ∫ η, RCLike.re (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)) ∂apssvEtaMeasure = α.re
       rw [integral_re (h_Y_int_μ_w w), h_α_inv w]; rfl
     have h_int_Y_im_μ : ∀ w : Fin r → Bool,
         ∫ η, (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)).im ∂apssvEtaMeasure = α.im := by
       intro w
-      show ∫ η, RCLike.im (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)) ∂apssvEtaMeasure = α.im
+      change ∫ η, RCLike.im (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)) ∂apssvEtaMeasure = α.im
       rw [integral_im (h_Y_int_μ_w w), h_α_inv w]; rfl
     -- Per-w mean-zero under κ(ω'): Im(Z_w · w) = Z.re · Im(w) + Z.im · Re(w).
     have h_per_w_mean_zero_kernel : ∀ w : Fin r → Bool,
@@ -7040,7 +7069,7 @@ lemma apssvBlockSum_centered_summand_im_HasCondSubgaussianMGF_sum (P r k : ℕ) 
       intro w
       set a : ℝ := -1 - (Z w * α).im with ha_def
       set b : ℝ := 1 - (Z w * α).im with hb_def
-      have h_b_sub_a : b - a = 2 := by show (1 - (Z w * α).im) - (-1 - (Z w * α).im) = 2; ring
+      have h_b_sub_a : b - a = 2 := by change (1 - (Z w * α).im) - (-1 - (Z w * α).im) = 2; ring
       have h_im_in_Icc : ∀ η : List Bool → Bool,
           (Z w * (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r) - α)).im ∈ Set.Icc a b := by
         intro η
@@ -7408,12 +7437,12 @@ lemma apssvBlockSum_centered_summand_HasCondSubgaussianMGF_sum_linear (P r k : �
     have h_int_Y_re_μ : ∀ w : Fin r → Bool,
         ∫ η, (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)).re ∂apssvEtaMeasure = α.re := by
       intro w
-      show ∫ η, RCLike.re (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)) ∂apssvEtaMeasure = α.re
+      change ∫ η, RCLike.re (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)) ∂apssvEtaMeasure = α.re
       rw [integral_re (h_Y_int_μ_w w), h_α_inv w]; rfl
     have h_int_Y_im_μ : ∀ w : Fin r → Bool,
         ∫ η, (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)).im ∂apssvEtaMeasure = α.im := by
       intro w
-      show ∫ η, RCLike.im (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)) ∂apssvEtaMeasure = α.im
+      change ∫ η, RCLike.im (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)) ∂apssvEtaMeasure = α.im
       rw [integral_im (h_Y_int_μ_w w), h_α_inv w]; rfl
     have h_per_w_mean_zero_kernel : ∀ w : Fin r → Bool,
         ∫ η, (Z w * (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r) - α)).re
@@ -7476,7 +7505,7 @@ lemma apssvBlockSum_centered_summand_HasCondSubgaussianMGF_sum_linear (P r k : �
       intro w
       set a : ℝ := -H with ha_def
       set b : ℝ := H with hb_def
-      have h_b_sub_a : b - a = 2 * H := by show H - (-H) = _; ring
+      have h_b_sub_a : b - a = 2 * H := by change H - (-H) = _; ring
       have h_re_in_Icc : ∀ η : List Bool → Bool,
           (Z w * (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r) - α)).re ∈ Set.Icc a b := by
         intro η
@@ -7841,12 +7870,12 @@ lemma apssvBlockSum_centered_summand_im_HasCondSubgaussianMGF_sum_linear (P r k 
     have h_int_Y_re_μ : ∀ w : Fin r → Bool,
         ∫ η, (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)).re ∂apssvEtaMeasure = α.re := by
       intro w
-      show ∫ η, RCLike.re (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)) ∂apssvEtaMeasure = α.re
+      change ∫ η, RCLike.re (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)) ∂apssvEtaMeasure = α.re
       rw [integral_re (h_Y_int_μ_w w), h_α_inv w]; rfl
     have h_int_Y_im_μ : ∀ w : Fin r → Bool,
         ∫ η, (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)).im ∂apssvEtaMeasure = α.im := by
       intro w
-      show ∫ η, RCLike.im (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)) ∂apssvEtaMeasure = α.im
+      change ∫ η, RCLike.im (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r)) ∂apssvEtaMeasure = α.im
       rw [integral_im (h_Y_int_μ_w w), h_α_inv w]; rfl
     have h_per_w_mean_zero_kernel : ∀ w : Fin r → Bool,
         ∫ η, (Z w * (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r) - α)).im
@@ -7908,7 +7937,7 @@ lemma apssvBlockSum_centered_summand_im_HasCondSubgaussianMGF_sum_linear (P r k 
       intro w
       set a : ℝ := -H with ha_def
       set b : ℝ := H with hb_def
-      have h_b_sub_a : b - a = 2 * H := by show H - (-H) = _; ring
+      have h_b_sub_a : b - a = 2 * H := by change H - (-H) = _; ring
       have h_im_in_Icc : ∀ η : List Bool → Bool,
           (Z w * (e ((k : ℝ) * apssvT η w P / (2 : ℝ) ^ r) - α)).im ∈ Set.Icc a b := by
         intro η
@@ -8025,7 +8054,7 @@ lemma apssvBlockSum_re_mgf_le_M2 (P r k : ℕ) (hk : 1 ≤ k) (t : ℝ) :
       (apssvEtaMeasure.trim (apssvShortSigma_le r)) :=
     h_zero_uncond.trim (apssvShortSigma_le r) measurable_const
   -- Tower lift: HasSubgaussianMGF (0 + Y) (0 + 2^r) μ = HasSubgaussianMGF Y 2^r μ.
-  have h_sum := ProbabilityTheory.HasSubgaussianMGF_add_of_HasCondSubgaussianMGF
+  have h_sum := ProbabilityTheory.HasSubgaussianMGF.add_of_hasCondSubgaussianMGF
     (apssvShortSigma_le r) h_zero h_cond
   -- Apply mgf_le.
   rw [h_decomp]
@@ -8081,7 +8110,7 @@ lemma apssvBlockSum_im_mgf_le_M2 (P r k : ℕ) (hk : 1 ≤ k) (t : ℝ) :
   have h_zero : ProbabilityTheory.HasSubgaussianMGF (fun _ : List Bool → Bool => (0 : ℝ)) 0
       (apssvEtaMeasure.trim (apssvShortSigma_le r)) :=
     h_zero_uncond.trim (apssvShortSigma_le r) measurable_const
-  have h_sum := ProbabilityTheory.HasSubgaussianMGF_add_of_HasCondSubgaussianMGF
+  have h_sum := ProbabilityTheory.HasSubgaussianMGF.add_of_hasCondSubgaussianMGF
     (apssvShortSigma_le r) h_zero h_cond
   rw [h_decomp]
   have h_mgf_le := h_sum.mgf_le t
@@ -8178,7 +8207,7 @@ lemma apssvBlockSum_subGaussian_tail_M2 (P r k : ℕ) (hk : 1 ≤ k) (t : ℝ) (
     have h_max : s ^ 2 ≤ (apssvBlockSum η P r k).re ^ 2 ∨
                  s ^ 2 ≤ (apssvBlockSum η P r k).im ^ 2 := by
       by_contra h_neg
-      push_neg at h_neg
+      push Not at h_neg
       have : s ^ 2 + s ^ 2 = t ^ 2 := by rw [h_s_sq]; ring
       linarith [h_neg.1, h_neg.2]
     rcases h_max with h_re_sq | h_im_sq
@@ -8213,7 +8242,7 @@ lemma apssvBlockSum_subGaussian_tail_M2 (P r k : ℕ) (hk : 1 ≤ k) (t : ℝ) (
       ({η | s ≤ (apssvBlockSum η P r k).im})
       ({η | s ≤ -(apssvBlockSum η P r k).im})
     -- The goal uses .toReal on the measure; convert via defEq.
-    show apssvEtaMeasure.real {η | t ≤ ‖apssvBlockSum η P r k‖} ≤ _
+    change apssvEtaMeasure.real {η | t ≤ ‖apssvBlockSum η P r k‖} ≤ _
     linarith [h_mono]
   -- Each event bounded by exp(-s²/(2·2^r)) = exp(-t²/(4·2^r)) via sub-Gaussian.
   have h_2pow_pos : (0 : ℝ) < (2 : ℝ) ^ r := by positivity
@@ -8302,7 +8331,7 @@ lemma apssvBlockSum_re_mgf_le_linear (P r k : ℕ) (hk : 1 ≤ k) (t : ℝ) :
   have h_zero : ProbabilityTheory.HasSubgaussianMGF (fun _ : List Bool → Bool => (0 : ℝ)) 0
       (apssvEtaMeasure.trim (apssvShortSigma_le r)) :=
     h_zero_uncond.trim (apssvShortSigma_le r) measurable_const
-  have h_sum := ProbabilityTheory.HasSubgaussianMGF_add_of_HasCondSubgaussianMGF
+  have h_sum := ProbabilityTheory.HasSubgaussianMGF.add_of_hasCondSubgaussianMGF
     (apssvShortSigma_le r) h_zero h_cond
   rw [h_decomp]
   have h_mgf_le := h_sum.mgf_le t
@@ -8359,7 +8388,7 @@ lemma apssvBlockSum_im_mgf_le_linear (P r k : ℕ) (hk : 1 ≤ k) (t : ℝ) :
   have h_zero : ProbabilityTheory.HasSubgaussianMGF (fun _ : List Bool → Bool => (0 : ℝ)) 0
       (apssvEtaMeasure.trim (apssvShortSigma_le r)) :=
     h_zero_uncond.trim (apssvShortSigma_le r) measurable_const
-  have h_sum := ProbabilityTheory.HasSubgaussianMGF_add_of_HasCondSubgaussianMGF
+  have h_sum := ProbabilityTheory.HasSubgaussianMGF.add_of_hasCondSubgaussianMGF
     (apssvShortSigma_le r) h_zero h_cond
   rw [h_decomp]
   have h_mgf_le := h_sum.mgf_le t
@@ -8455,7 +8484,7 @@ lemma apssvBlockSum_subGaussian_tail_linear (P r k : ℕ) (hk : 1 ≤ k)
     have h_max : s ^ 2 ≤ (apssvBlockSum η P r k).re ^ 2 ∨
                  s ^ 2 ≤ (apssvBlockSum η P r k).im ^ 2 := by
       by_contra h_neg
-      push_neg at h_neg
+      push Not at h_neg
       have : s ^ 2 + s ^ 2 = t ^ 2 := by rw [h_s_sq]; ring
       linarith [h_neg.1, h_neg.2]
     rcases h_max with h_re_sq | h_im_sq
@@ -8488,7 +8517,7 @@ lemma apssvBlockSum_subGaussian_tail_linear (P r k : ℕ) (hk : 1 ≤ k)
       (μ := apssvEtaMeasure)
       ({η | s ≤ (apssvBlockSum η P r k).im})
       ({η | s ≤ -(apssvBlockSum η P r k).im})
-    show apssvEtaMeasure.real {η | t ≤ ‖apssvBlockSum η P r k‖} ≤ _
+    change apssvEtaMeasure.real {η | t ≤ ‖apssvBlockSum η P r k‖} ≤ _
     linarith [h_mono]
   -- Each event bounded via sub-Gaussian.
   have h_pi_pos : 0 < Real.pi := Real.pi_pos
@@ -8575,7 +8604,7 @@ lemma apssvBlockSum_universalP_subGaussian_M2 (r k h : ℕ) (hk : 1 ≤ k)
     -- {τ' < ‖B‖} ⊆ {τ' ≤ ‖B‖}.
     have h_sub : {η : List Bool → Bool | τ' < ‖apssvBlockSum η Q r k‖} ⊆
         {η | τ' ≤ ‖apssvBlockSum η Q r k‖} :=
-      Set.setOf_subset_setOf.mpr (fun _ hη => hη.le)
+      Set.ofPred_subset_ofPred.mpr (fun _ hη => hη.le)
     have h_meas_sub :
         (apssvEtaMeasure {η | τ' < ‖apssvBlockSum η Q r k‖}).toReal ≤
         (apssvEtaMeasure {η | τ' ≤ ‖apssvBlockSum η Q r k‖}).toReal :=
@@ -8618,7 +8647,7 @@ lemma apssvBlockSum_universalP_subGaussian_linear (r k h : ℕ) (hk : 1 ≤ k)
     intro Q
     have h_sub : {η : List Bool → Bool | τ' < ‖apssvBlockSum η Q r k‖} ⊆
         {η | τ' ≤ ‖apssvBlockSum η Q r k‖} :=
-      Set.setOf_subset_setOf.mpr (fun _ hη => hη.le)
+      Set.ofPred_subset_ofPred.mpr (fun _ hη => hη.le)
     have h_meas_sub :
         (apssvEtaMeasure {η | τ' < ‖apssvBlockSum η Q r k‖}).toReal ≤
         (apssvEtaMeasure {η | τ' ≤ ‖apssvBlockSum η Q r k‖}).toReal :=
@@ -8652,13 +8681,13 @@ lemma apssvBlockBound_compl_eq_iUnion (C : ℝ) :
           ‖apssvBlockSum η P r k‖} := by
   ext η
   unfold apssvBlockBound
-  simp only [not_forall, Set.mem_iUnion, Set.mem_setOf_eq]
+  simp only [not_forall, Set.mem_iUnion, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨k, P, r, hk, hbound⟩
-    push_neg at hbound
+    push Not at hbound
     exact ⟨k, hk, r, P, hbound⟩
   · rintro ⟨k, hk, r, P, hbound⟩
-    exact ⟨k, P, r, hk, by push_neg; exact hbound⟩
+    exact ⟨k, P, r, hk, by push Not; exact hbound⟩
 
 /-- **Measurability of `{η | apssvBlockBound η C}`**: a countable intersection
 of measurable sets `{η | ‖B_{P, r}(k)‖ ≤ threshold}`. Each block-sum is
@@ -8700,7 +8729,7 @@ lemma apssv_blockBound_pos_of_compl_lt_one {C : ℝ}
     (s := {η | apssvBlockBound η C})
   -- 1 - μ S < 1 ↔ μ S ≠ 0 (using μ S ≤ 1 < ⊤).
   by_contra h_zero
-  push_neg at h_zero
+  push Not at h_zero
   have h_eq_zero : apssvEtaMeasure {η | apssvBlockBound η C} = 0 :=
     le_antisymm h_zero bot_le
   rw [h_eq_zero] at h
@@ -8736,7 +8765,7 @@ lemma apssv_blockBound_compl_measure_le_tsum_kr (C : ℝ) :
           ‖apssvBlockSum η P r k‖} := by
     intro η hη
     unfold apssvBlockBound at hη
-    push_neg at hη
+    push Not at hη
     obtain ⟨k, P, r, hk, h⟩ := hη
     refine Set.mem_iUnion.mpr ⟨k, ?_⟩
     refine Set.mem_iUnion.mpr ⟨r, ?_⟩
@@ -8847,7 +8876,7 @@ lemma apssv_blockBound_compl_antitone {C₁ C₂ : ℝ} (_hC : 0 ≤ C₁) (h : 
     {η : List Bool → Bool | ¬ apssvBlockBound η C₁} := by
   intro η hη
   unfold apssvBlockBound at hη ⊢
-  push_neg at hη ⊢
+  push Not at hη ⊢
   obtain ⟨k, P, r, hk, hbound₂⟩ := hη
   refine ⟨k, P, r, hk, ?_⟩
   -- Threshold for C₁ ≤ threshold for C₂; use transitivity.
@@ -8970,7 +8999,8 @@ lemma apssv_exists_h_residue_shift_strong (k : ℕ) (τ : ℝ) (hτ : 0 < τ) :
 `apssv_exists_h_residue_shift_strong` with `apssv_per_kr_measure_le_M2` to give
 a per-`(k, r)` bound that is *fully closed-form* in `(k, r, τ)`, with no
 existential `h`:
-$$ \mu \le \left(\frac{8\pi k}{\tau} + 4\right) \cdot 4 \cdot \exp\!\left(-\frac{(\tau/2)^2}{16 \cdot 2^r}\right). $$
+$$ \mu \le \left(\frac{8\pi k}{\tau} + 4\right) \cdot 4 \cdot \exp\!\left(-\frac{(\tau/2)^2}{16
+\cdot 2^r}\right). $$
 This is the form ready to plug into the tsum summation in
 `apssv_exists_C_with_bad_event_lt_one`. -/
 lemma apssv_per_kr_measure_le_M2_explicit (k r : ℕ) (hk : 1 ≤ k)
@@ -9015,7 +9045,8 @@ lemma apssv_per_kr_measure_le_M2_explicit (k r : ℕ) (hk : 1 ≤ k)
 
 /-- **Per-`(k, r)` sub-Gaussian bound (linear) with explicit prefactor**: linear
 analog of `apssv_per_kr_measure_le_M2_explicit`:
-$$ \mu \le \left(\frac{8\pi k}{\tau} + 4\right) \cdot 4 \cdot \exp\!\left(-\frac{(\tau/2)^2 \cdot 2^r}{64 \pi^2 k^2}\right). $$ -/
+$$ \mu \le \left(\frac{8\pi k}{\tau} + 4\right) \cdot 4 \cdot \exp\!\left(-\frac{(\tau/2)^2 \cdot
+2^r}{64 \pi^2 k^2}\right). $$ -/
 lemma apssv_per_kr_measure_le_linear_explicit (k r : ℕ) (hk : 1 ≤ k)
     (τ : ℝ) (hτ : 0 < τ) :
     apssvEtaMeasure {η : List Bool → Bool | 1 ≤ k ∧ ∃ P : ℕ,
@@ -9380,7 +9411,7 @@ lemma apssvRegimeSplitBoundReal_tendsto_zero (k r : ℕ) :
         rw [dif_pos ⟨hk, hC_pos⟩]
         -- After dif_pos, the body is `let τ := ...; min A(τ) B(τ)`.
         -- We want this = `min A(C*α) B(C*α)`.  Reduce the let:
-        show
+        change
           (let τ := C * Real.sqrt ((r : ℝ) + apssvB k) *
             min ((2 : ℝ) ^ ((r : ℝ) / 2))
               ((2 : ℝ) ^ ((apssvB k : ℝ) - (r : ℝ) / 2))
@@ -9454,7 +9485,7 @@ lemma apssvRegimeSplitBoundReal_antitone_on_pos (k r : ℕ) :
       intro C hC_pos
       unfold apssvRegimeSplitBoundReal
       rw [dif_pos ⟨hk, hC_pos⟩]
-      show
+      change
         (let τ := C * Real.sqrt ((r : ℝ) + apssvB k) *
           min ((2 : ℝ) ^ ((r : ℝ) / 2))
             ((2 : ℝ) ^ ((apssvB k : ℝ) - (r : ℝ) / 2))
@@ -9469,7 +9500,7 @@ lemma apssvRegimeSplitBoundReal_antitone_on_pos (k r : ℕ) :
             ((2 : ℝ) ^ ((apssvB k : ℝ) - (r : ℝ) / 2)) = C * α := by
         rw [hα_def]; ring
       rw [h_τ_eq]
-    show apssvRegimeSplitBoundReal C₂ k r ≤ apssvRegimeSplitBoundReal C₁ k r
+    change apssvRegimeSplitBoundReal C₂ k r ≤ apssvRegimeSplitBoundReal C₁ k r
     rw [h_unfold C₁ hC₁, h_unfold C₂ hC₂]
     -- Compare the two `min`s termwise.
     have h_C₁α_pos : 0 < C₁ * α := mul_pos hC₁ hα_pos
@@ -9558,7 +9589,7 @@ lemma apssvRegimeSplitBoundReal_antitone_on_pos (k r : ℕ) :
   · -- k = 0 case: both sides equal 0.
     have h_neg₁ : ¬ (1 ≤ k ∧ 0 < C₁) := fun ⟨h, _⟩ => hk h
     have h_neg₂ : ¬ (1 ≤ k ∧ 0 < C₂) := fun ⟨h, _⟩ => hk h
-    show apssvRegimeSplitBoundReal C₂ k r ≤ apssvRegimeSplitBoundReal C₁ k r
+    change apssvRegimeSplitBoundReal C₂ k r ≤ apssvRegimeSplitBoundReal C₁ k r
     unfold apssvRegimeSplitBoundReal
     rw [dif_neg h_neg₂, dif_neg h_neg₁]
 
@@ -10099,7 +10130,7 @@ lemma apssvRegimeSplitBoundReal_le_envelope_sum (C : ℝ) (k r : ℕ) :
               (2 : ℝ) ^ r) / (64 * Real.pi ^ 2 * (k : ℝ) ^ 2))))
       linarith
     · -- Long regime: min ≤ lin ≤ longEnv. shortEnv ≥ 0.
-      push_neg at hr  -- hr : apssvB k < r
+      push Not at hr  -- hr : apssvB k < r
       have h_lin_le := apssv_linear_term_le_long_envelope C hC k r hk hr
       have h_short_nn := apssvShortEnvelope_nonneg C k r
       have h_min_le_right := min_le_right
@@ -10133,8 +10164,6 @@ lemma apssv_two_pow_b_le (k : ℕ) (hk : 1 ≤ k) : (2 : ℝ) ^ (apssvB k : ℝ)
     exact Nat.pow_log_le_self 2 h2k_ne
   have h_log_real : ((2 : ℝ) ^ Nat.log2 (2 * k)) ≤ 2 * (k : ℝ) := by
     have := h_log_nat
-    push_cast [show ((2 : ℕ) ^ Nat.log2 (2 * k) : ℝ) = (2 : ℝ) ^ Nat.log2 (2 * k) from by
-      push_cast; ring] at this
     exact_mod_cast this
   nlinarith [h_log_real, pow_nonneg (by norm_num : (0:ℝ) ≤ 2) (Nat.log2 (2*k))]
 
@@ -10174,7 +10203,7 @@ lemma apssvShortEnvelope_summable_at_C100 :
   have h_factor : ∀ kr : ℕ × ℕ,
       apssvShortEnvelope 100 kr.1 kr.2 = f kr.1 * g kr.2 := by
     rintro ⟨k, r⟩
-    show apssvShortEnvelope 100 k r = f k * g r
+    change apssvShortEnvelope 100 k r = f k * g r
     by_cases hk : 1 ≤ k
     · -- Active case.
       have h_short : apssvShortEnvelope 100 k r =
@@ -10335,7 +10364,7 @@ lemma apssvShortEnvelope_summable_at_C100 :
             linarith [h_inv_pos]
     · simp only [hf_def, hk, if_false]
       have : (0:ℝ) ≤ 4 / (k:ℝ)^3 := by
-        push_neg at hk
+        push Not at hk
         interval_cases k
         simp
       linarith
@@ -10403,7 +10432,7 @@ lemma apssvLongEnvelope_summable_at_C100 :
   have h_factor : ∀ kr : ℕ × ℕ,
       apssvLongEnvelope 100 kr.1 kr.2 = f kr.1 * g kr.2 := by
     rintro ⟨k, r⟩
-    show apssvLongEnvelope 100 k r = f k * g r
+    change apssvLongEnvelope 100 k r = f k * g r
     by_cases hk : 1 ≤ k
     · have h_long : apssvLongEnvelope 100 k r =
           (8 * Real.pi * (2 : ℝ) ^ ((r : ℝ) / 2) / 100 + 4) * 4 *
@@ -10565,7 +10594,7 @@ lemma apssvLongEnvelope_summable_at_C100 :
         _ = 1 / (2 : ℝ) ^ (3 * apssvB k) := h_step_b
         _ ≤ 1 / (8 * (k : ℝ)^3) := h_step_c
     · simp only [hf_def, hk, if_false]
-      push_neg at hk
+      push Not at hk
       interval_cases k
       simp
   have h_f_summable : Summable f := by
@@ -11070,7 +11099,7 @@ lemma apssv_boundary_ae :
     ⋃ j : ℕ, ({η | apssvX η j = 0} ∪ {η | apssvX η j = 1})
   have h_subset : {η | ¬ ∀ j : ℕ, apssvX η j ∈ Set.Ioo (0 : ℝ) 1} ⊆ U := by
     intro η hη
-    push_neg at hη
+    push Not at hη
     obtain ⟨j, hj⟩ := hη
     have h_nn := apssvX_nonneg η j
     have h_le := apssvX_le_one η j
@@ -11110,16 +11139,16 @@ lemma apssv_alternating_boundary :
     | succ i ih => rw [apssvPrefix_succ, List.length_append, ih]; simp
   have h_eta_at : ∀ i : ℕ, η (apssvPrefix j i) = decide (i % 2 = 1) := by
     intro i
-    show decide ((apssvPrefix j i).length % 2 = 1) = decide (i % 2 = 1)
+    change decide ((apssvPrefix j i).length % 2 = 1) = decide (i % 2 = 1)
     rw [h_prefix_len]
   -- Pick i_odd ≥ Nat.size j with i_odd odd, and i_even ≥ Nat.size j with i_even even.
   let N := Nat.size j
   let i_odd : ℕ := 2 * N + 1   -- ≥ N, odd
   let i_even : ℕ := 2 * N + 2  -- ≥ N, even
-  have h_iodd_ge : N ≤ i_odd := by show N ≤ 2 * N + 1; omega
-  have h_ieven_ge : N ≤ i_even := by show N ≤ 2 * N + 2; omega
-  have h_iodd_odd : i_odd % 2 = 1 := by show (2 * N + 1) % 2 = 1; omega
-  have h_ieven_even : i_even % 2 = 0 := by show (2 * N + 2) % 2 = 0; omega
+  have h_iodd_ge : N ≤ i_odd := by change N ≤ 2 * N + 1; omega
+  have h_ieven_ge : N ≤ i_even := by change N ≤ 2 * N + 2; omega
+  have h_iodd_odd : i_odd % 2 = 1 := by change (2 * N + 1) % 2 = 1; omega
+  have h_ieven_even : i_even % 2 = 0 := by change (2 * N + 2) % 2 = 0; omega
   -- For i ≥ N = Nat.size j, j.testBit i = false.
   have h_j_lt : j < 2 ^ N := Nat.lt_size_self j
   have h_test_iodd : j.testBit i_odd = false :=
@@ -11139,13 +11168,13 @@ lemma apssv_alternating_boundary :
   have hf_nn : ∀ i, 0 ≤ f i := apssvX_summand_nonneg η j
   have h_apssvX_eq : apssvX η j = ∑' i, f i := rfl
   have hf_iodd_pos : 0 < f i_odd := by
-    show 0 < (if (j.testBit i_odd).xor (η (apssvPrefix j i_odd)) then (1 : ℝ) else 0) /
+    change 0 < (if (j.testBit i_odd).xor (η (apssvPrefix j i_odd)) then (1 : ℝ) else 0) /
          2 ^ (i_odd + 1)
     rw [h_test_iodd, h_eta_iodd]
     simp only [Bool.false_xor, if_true]
     positivity
   have hf_ieven_zero : f i_even = 0 := by
-    show (if (j.testBit i_even).xor (η (apssvPrefix j i_even)) then (1 : ℝ) else 0) /
+    change (if (j.testBit i_even).xor (η (apssvPrefix j i_even)) then (1 : ℝ) else 0) /
          2 ^ (i_even + 1) = 0
     rw [h_test_ieven, h_eta_ieven]; simp
   refine ⟨?_, ?_⟩
@@ -11313,7 +11342,8 @@ lemma apssv_geom_tail :
 
 /-- Geometric envelope long-block sum (tail with √τ factor):
 $\sum_{\tau=1}^{\infty} \sqrt{\tau} \cdot 2^{-\tau/2} \le 10$. The closed form for
-$\sum_{\tau \ge 1} \tau \cdot r^{\tau}$ at $r = 1/\sqrt{2}$ is $r/(1-r)^2 = 4 + 3\sqrt{2} \approx 8.24$;
+$\sum_{\tau \ge 1} \tau \cdot r^{\tau}$ at $r = 1/\sqrt{2}$ is $r/(1-r)^2 = 4 + 3\sqrt{2} \approx
+8.24$;
 bounding $\sqrt{\tau} \le \tau$ for $\tau \ge 1$ gives the constant 10 (with slack). -/
 lemma apssv_geom_tail_sqrt :
     ∀ N : ℕ, ∑ τ ∈ Finset.Ico 1 (N + 1), Real.sqrt (τ : ℝ) * (2 : ℝ) ^ (-(τ : ℝ) / 2) ≤ 10 := by
@@ -11463,7 +11493,7 @@ lemma apssv_geom_envelope (b M : ℕ) :
     rw [h_eq]
     exact h_short_bound_le_total
   · -- Case M > b: split at ρ = b+1.
-    push_neg at hMb
+    push Not at hMb
     -- Split: range (M+1) = range (b+1) ⊔ Ico (b+1) (M+1).
     have h_split : ∑ ρ ∈ Finset.range (M + 1),
         Real.sqrt ((ρ : ℝ) + b) *
@@ -11647,7 +11677,8 @@ lemma apssv_b_le_log (k : ℕ) (hk : 2 ≤ k) :
   rw [h_logb_eq] at h_log2_le_logb
   -- Now: Nat.log2 (2*k) ≤ 1 + log k / log 2.
   -- So Nat.log2 (2*k) + 1 + 1 ≤ 2 + 1 + log k / log 2 = 3 + log k / log 2.
-  -- And 3 + log k / log 2 ≤ 4 · log k / log 2 iff 3 ≤ 3 · log k / log 2 iff 1 ≤ log k / log 2 iff log 2 ≤ log k. ✓
+  -- And 3 + log k / log 2 ≤ 4 · log k / log 2 iff 3 ≤ 3 · log k / log 2 iff 1 ≤ log k / log 2 iff
+  -- log 2 ≤ log k. ✓
   have h_logk_div_ge : 1 ≤ Real.log k / Real.log 2 := by
     rw [le_div_iff₀ h_log2_pos]
     linarith
@@ -11756,7 +11787,7 @@ lemma apssv_partial_sum_bound (η : List Bool → Bool) (C : ℝ) (hC : 0 < C)
   have h_per_block : ∀ pr ∈ T, ‖apssvBlockSum η pr.1 pr.2 k‖ ≤ C * f pr.2 := by
     intro pr _
     have h := hbb k pr.1 pr.2 hk1
-    show ‖apssvBlockSum η pr.1 pr.2 k‖ ≤ C * (Real.sqrt ((pr.2 : ℝ) + b) *
+    change ‖apssvBlockSum η pr.1 pr.2 k‖ ≤ C * (Real.sqrt ((pr.2 : ℝ) + b) *
       min ((2 : ℝ) ^ ((pr.2 : ℝ) / 2)) ((2 : ℝ) ^ ((b : ℝ) - (pr.2 : ℝ) / 2)))
     rw [← mul_assoc]; exact h
   refine le_trans (Finset.sum_le_sum (fun pr hpr => h_per_block pr hpr)) ?_
@@ -11850,7 +11881,8 @@ centered random variables.
    $\sum_{n=P 2^r}^{(P+1) 2^r - 1} e(k x_n) = B_{P,r}(k)$ where the form of $x_n$ on this block
    factorizes into $r$ scrambled-prefix digits $j_r(w) \in \{0, \ldots, 2^r - 1\}$ (a random
    bijection from $\{0,1\}^r$) plus a tail $T_{w,P}$ shared across $w$.
-2. **Block bound** (Proposition 3.5): $|B_{P,r}(k)| \ll \sqrt{r + b} \cdot \min\{2^{r/2}, 2^{b-r/2}\}$
+2. **Block bound** (Proposition 3.5): $|B_{P,r}(k)| \ll \sqrt{r + b} \cdot \min\{2^{r/2},
+   2^{b-r/2}\}$
    where $b = b(k)$ (formally `apssvB k = Nat.log2 (2k) + 1` here; mathematically
    $\lceil \log_2(2k) \rceil$, the formal version is $\lfloor \log_2(2k) \rfloor + 1$,
    which matches except at exact powers of two and weakens the bound harmlessly).
