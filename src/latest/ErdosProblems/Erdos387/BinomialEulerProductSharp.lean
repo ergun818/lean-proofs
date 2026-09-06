@@ -321,8 +321,8 @@ theorem log_sharpBinomialDimensionConstant_le
         nlinarith [mul_nonneg (show (0 : ℝ) ≤ 2 * k by positivity)
           (sub_nonneg.mpr hkR)]
   have hlog3 : Real.log (3 : ℝ) ≤ 2 := by
-    convert Real.log_le_sub_one_of_pos (show (0 : ℝ) < 3 by norm_num) using 1 <;>
-      norm_num
+    convert Real.log_le_sub_one_of_pos (show (0 : ℝ) < 3 by norm_num) using 1
+    norm_num
   have hthree : (k : ℝ) * Real.log 3 ≤ 2 * k := by
     simpa [mul_comm] using
       (mul_le_mul_of_nonneg_left hlog3 (by positivity : (0 : ℝ) ≤ k))
