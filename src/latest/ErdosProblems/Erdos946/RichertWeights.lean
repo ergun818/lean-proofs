@@ -59,7 +59,7 @@ theorem richertTerm_eq_of_le {y p : ℕ} (hy : 1 < y) (hpy : p ≤ y) :
     subst p
     have hlog : Real.log (y : ℝ) ≠ 0 :=
       (Real.log_pos (by exact_mod_cast hy)).ne'
-    simp [richertTerm, logNat, hlog]
+    simp [richertTerm, hlog]
 
 theorem richertTerm_eq_zero_of_le {y p : ℕ} (hyp : y ≤ p) :
     richertTerm y p = 0 := by

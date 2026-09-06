@@ -45,11 +45,11 @@ theorem primeRichertMass_eq_mertens {z Y : ℕ} (hzY : z ≤ Y) :
   have hfirst (n : ℕ) :
       (∑ p ∈ sievePrimes 0 n, (1 : ℝ) / p) =
         Real.log (Real.log (n : ℝ)) + Mertens.M + Mertens.E₂p (n : ℝ) := by
-    simpa [sievePrimes] using Mertens.sum_prime_div_eq (n : ℝ)
+    simp [sievePrimes]
   have hsecond (n : ℕ) :
       (∑ p ∈ sievePrimes 0 n, Real.log (p : ℝ) / p) =
         Real.log (n : ℝ) + Mertens.E₁p (n : ℝ) := by
-    simpa [sievePrimes] using Mertens.sum_log_prime_div_eq (n : ℝ)
+    simp [sievePrimes]
   have hsplit : primeRichertMass z Y =
       (∑ p ∈ sievePrimes z Y, (1 : ℝ) / p) -
         (∑ p ∈ sievePrimes z Y, Real.log (p : ℝ) / p) / Real.log (Y : ℝ) := by
@@ -91,7 +91,7 @@ theorem primeRichertMass_pow_eq {N R : ℕ} (hN : 2 ≤ N) (hR : 1 ≤ R) :
   rw [primeRichertMass_eq_mertens (le_self_pow (by omega : 1 ≤ N) (by omega)),
     hloglog, hlogpow]
   field_simp [hRR, hlogN]
-  <;> ring
+  ring
 
 /-- The weighted prime mass between `N` and a fixed positive natural power
 of `N` has the exact limit required by the Richert average. -/

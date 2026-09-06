@@ -210,7 +210,7 @@ theorem evalFailureTerms_le_geometric_eight
 /-- Prefix product-ratio estimates imply dimension-eight bounds for the
 recursive Rosser main terms. -/
 theorem rosserMainTerms_bounds_of_prefixProductRatio_eight
-    {α : Type*} [DecidableEq α]
+    {α : Type*}
     (stop : List α → Bool) (x : α → ℝ)
     (fuel : ℕ) (selected : List α) {P : List α}
     (upperCutoff lowerCutoff : ℕ → List α) {A κ : ℝ} {start : ℕ}
@@ -242,6 +242,7 @@ theorem rosserMainTerms_bounds_of_prefixProductRatio_eight
         rosserLowerEval stop x fuel selected P ∧
       rosserUpperEval stop x fuel selected P ≤
         (1 + eta) * buchstabProduct x P := by
+  classical
   dsimp only
   have huRatio := upper_hasDepthProductRatio_of_prefixProductRatio
     stop x fuel selected upperCutoff hx0 hx1 hPnodup rfl

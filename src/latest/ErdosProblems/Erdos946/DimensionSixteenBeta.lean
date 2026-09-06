@@ -244,8 +244,8 @@ theorem sixteen_betaCutoffPrefix_inverse_bound
       _ = (2 * C) * Real.rpow (inflation (201 : ℝ)) ((17 : ℝ) * r) := by
         have hrpow : Real.rpow (inflation (201 : ℝ)) ((17 : ℝ) * r) =
             inflation (201 : ℝ) ^ (17 * r : ℕ) := by
-          convert Real.rpow_natCast (inflation (201 : ℝ)) (17 * r) using 1 <;>
-            norm_num
+          convert Real.rpow_natCast (inflation (201 : ℝ)) (17 * r) using 1
+          norm_num
         rw [hrpow]
         rw [Nat.mul_comm, pow_mul]
         ring

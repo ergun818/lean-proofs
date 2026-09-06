@@ -31,7 +31,7 @@ noncomputable section
 /-- Pre-sieving by `z!` preserves distinct affine roots at every prime
 strictly above `z`. -/
 theorem preSieved_localNu_eq_card
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {a b : ι → ℕ} (hadm : Admissible a b) {z p : ℕ}
     (haPos : ∀ i, 0 < a i) (haLe : ∀ i, a i ≤ z)
     (hp : p.Prime) (hzp : z < p)
@@ -65,7 +65,7 @@ theorem preSieved_localNu_eq_card
 /-- If every prime divisor of a squarefree `d` is larger than the size of
 the affine family, the exact number of CRT classes is at most `d`. -/
 theorem nuClasses_le_self_of_large_primeFactors
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {a b : ι → ℕ} {d z : ℕ} (hd : Squarefree d)
     (hlarge : ∀ p ∈ d.primeFactors, z < p)
     (hcard : Fintype.card ι ≤ z)
@@ -86,7 +86,7 @@ theorem nuClasses_le_self_of_large_primeFactors
 survivors for an arbitrary finite affine family.  Both the Rosser beta
 parameter and the level exponent are explicit. -/
 theorem boundingSieve_cardinality_between_mainTerms
-    {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty ι]
+    {ι : Type*} [Fintype ι] [Nonempty ι]
     {a b : ι → ℕ} {X z y beta S : ℕ}
     (hcard : Fintype.card ι ≤ z)
     (hz : 2 ≤ z) (hzy : z ≤ y) (hbeta : 1 ≤ beta) (hS : 1 ≤ S)

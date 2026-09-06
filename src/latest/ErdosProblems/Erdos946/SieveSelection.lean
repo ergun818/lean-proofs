@@ -59,7 +59,8 @@ theorem affine_le_parameterPower {a b : Fin 16 → ℕ} {N n : ℕ}
         (by simpa only [mul_one] using Nat.mul_le_mul_left (b i) hX)
     _ = (2 * a i + b i) * N ^ 2100 := by ring
     _ ≤ N * N ^ 2100 := Nat.mul_le_mul_right _ hi
-    _ = N ^ 2101 := (pow_succ' N 2100).symm
+    _ = N ^ 2101 := by
+      conv_rhs => rw [show (2101 : ℕ) = 2100 + 1 from rfl, pow_succ']
 
 theorem affine_le_squarePower {a b : Fin 16 → ℕ} {N n : ℕ}
     (hN : 1 ≤ N) (hC : coefficientBound a b ≤ N)
@@ -67,7 +68,8 @@ theorem affine_le_squarePower {a b : Fin 16 → ℕ} {N n : ℕ}
     a i * n + b i ≤ (N ^ 1051) ^ 2 := by
   calc
     _ ≤ N ^ 2101 := affine_le_parameterPower hN hC hn i
-    _ ≤ N ^ 2102 := Nat.pow_le_pow_right hN (by decide : (2101 : ℕ) ≤ 2102)
+    _ ≤ N ^ 2102 :=
+      pow_le_pow_right₀ hN (by decide : (2101 : ℕ) ≤ 2102)
     _ = _ := by rw [← pow_mul]
 
 theorem affineProduct_le_weightPower {a b : Fin 16 → ℕ} {N n : ℕ}
@@ -79,7 +81,8 @@ theorem affineProduct_le_weightPower {a b : Fin 16 → ℕ} {N n : ℕ}
       (fun i _ ↦ affine_le_parameterPower hN hC hn i)
     _ = N ^ 33616 := by simp only [Finset.prod_const, Finset.card_univ,
       Fintype.card_fin, ← pow_mul]
-    _ ≤ N ^ 34000 := Nat.pow_le_pow_right hN (by decide : (33616 : ℕ) ≤ 34000)
+    _ ≤ N ^ 34000 :=
+      pow_le_pow_right₀ hN (by decide : (33616 : ℕ) ≤ 34000)
     _ = _ := by rw [← pow_mul]
 
 theorem log_ratio_le_of_le_pow {m Y : ℕ} (hm : 0 < m) (hY : 1 < Y)

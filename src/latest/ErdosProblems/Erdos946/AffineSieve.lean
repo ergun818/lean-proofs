@@ -172,9 +172,10 @@ theorem assignmentResidues_lt {ι : Type*} [Fintype ι]
   obtain ⟨C, _hC, rfl⟩ := hr
   exact assignmentResidue_lt hd C
 
-theorem prime_dvd_affineProduct_iff {ι : Type*} [Fintype ι] [DecidableEq ι]
+theorem prime_dvd_affineProduct_iff {ι : Type*} [Fintype ι]
     {a b : ι → ℕ} {p n : ℕ} (hp : p.Prime) :
     p ∣ affineProduct a b n ↔ ∃ i : ι, p ∣ a i * n + b i := by
+  classical
   unfold affineProduct
   simpa using
     (Erdos387.prime_dvd_finset_prod_iff hp (Finset.univ : Finset ι)
@@ -183,7 +184,7 @@ theorem prime_dvd_affineProduct_iff {ι : Type*} [Fintype ι] [DecidableEq ι]
 /-- Divisibility by a squarefree modulus is exactly membership in the CRT
 root set assembled from the local roots. -/
 theorem squarefree_dvd_affineProduct_iff_mod_mem
-    {ι : Type*} [Fintype ι] [DecidableEq ι] {a b : ι → ℕ} {n d : ℕ}
+    {ι : Type*} [Fintype ι] {a b : ι → ℕ} {n d : ℕ}
     (hd : Squarefree d) :
     d ∣ affineProduct a b n ↔ n % d ∈ assignmentResidues a b d := by
   classical
@@ -244,7 +245,7 @@ theorem squarefree_dvd_affineProduct_iff_mod_mem
       (hmod.trans (Nat.modEq_zero_iff_dvd.mpr hi))
 
 theorem affineResidues_eq_assignmentResidues
-    {ι : Type*} [Fintype ι] [DecidableEq ι] {a b : ι → ℕ} {d : ℕ}
+    {ι : Type*} [Fintype ι] {a b : ι → ℕ} {d : ℕ}
     (hd : Squarefree d) :
     affineResidues a b d = assignmentResidues a b d := by
   ext r
@@ -262,14 +263,14 @@ theorem affineResidues_eq_assignmentResidues
     exact mem_affineResidues.mpr ⟨hrlt, hdiv⟩
 
 theorem card_affineResidues_of_squarefree
-    {ι : Type*} [Fintype ι] [DecidableEq ι] {a b : ι → ℕ} {d : ℕ}
+    {ι : Type*} [Fintype ι] {a b : ι → ℕ} {d : ℕ}
     (hd : Squarefree d) :
     (affineResidues a b d).card = nuClasses a b d := by
   rw [affineResidues_eq_assignmentResidues hd,
     card_assignmentResidues]
 
 theorem affineNu_eq_residueDensity_of_squarefree
-    {ι : Type*} [Fintype ι] [DecidableEq ι] {a b : ι → ℕ} {d : ℕ}
+    {ι : Type*} [Fintype ι] {a b : ι → ℕ} {d : ℕ}
     (hd : Squarefree d) :
     affineNu a b d = ((affineResidues a b d).card : ℝ) / d := by
   rw [affineNu_squarefree hd, card_affineResidues_of_squarefree hd]
@@ -277,7 +278,7 @@ theorem affineNu_eq_residueDensity_of_squarefree
 /-! ## Prime-local bounds -/
 
 theorem affineResidues_eq_biUnion_of_prime
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {a b : ι → ℕ} {p : ℕ} (hp : p.Prime) :
     affineResidues a b p =
       Finset.univ.biUnion fun i ↦ Erdos822.affineRootResidues (a i) (b i) p := by
@@ -288,7 +289,7 @@ theorem affineResidues_eq_biUnion_of_prime
   rw [prime_dvd_affineProduct_iff hp]
   tauto
 
-theorem localNu_le_card {ι : Type*} [Fintype ι] [DecidableEq ι]
+theorem localNu_le_card {ι : Type*} [Fintype ι]
     {a b : ι → ℕ} {p : ℕ} (hp : p.Prime)
     (hcop : ∀ i, (a i).Coprime p) :
     localNu a b p ≤ Fintype.card ι := by
@@ -358,7 +359,7 @@ theorem affineRootResidues_disjoint_of_not_modEq
 
 /-- Away from the slopes and cross-determinants, the product of `k`
 affine forms has exactly `k` roots modulo `p`. -/
-theorem localNu_eq_card {ι : Type*} [Fintype ι] [DecidableEq ι]
+theorem localNu_eq_card {ι : Type*} [Fintype ι]
     {a b : ι → ℕ} {p : ℕ} (hp : p.Prime)
     (hcop : ∀ i, (a i).Coprime p)
     (hdet : ∀ i j, i ≠ j → ¬a i * b j ≡ a j * b i [MOD p]) :
@@ -478,7 +479,7 @@ theorem boundingSieve_siftedSum
   norm_cast
 
 theorem divisibleCandidates_eq_modularPreimage
-    {ι : Type*} [Fintype ι] [DecidableEq ι] {a b : ι → ℕ}
+    {ι : Type*} [Fintype ι] {a b : ι → ℕ}
     {X z Y d : ℕ} (hd : d ∣ Erdos387.sievePrimeProduct z Y) :
     divisibleCandidates a b X d =
       Erdos387.modularPreimageIoc X (2 * X) d
@@ -493,7 +494,7 @@ theorem divisibleCandidates_eq_modularPreimage
   exact squarefree_dvd_affineProduct_iff_mod_mem hsq
 
 theorem abs_card_divisibleCandidates_sub_density
-    {ι : Type*} [Fintype ι] [DecidableEq ι] {a b : ι → ℕ}
+    {ι : Type*} [Fintype ι] {a b : ι → ℕ}
     {X z Y d : ℕ} (hd : d ∣ Erdos387.sievePrimeProduct z Y) :
     |((divisibleCandidates a b X d).card : ℝ) -
         (nuClasses a b d : ℝ) * X / d| ≤ nuClasses a b d := by
@@ -521,11 +522,12 @@ theorem boundingSieve_abs_rem_le_nuClasses
   rw [affineNu_squarefree hsq]
   have h := abs_card_divisibleCandidates_sub_density
     (a := a) (b := b) (X := X) hd
-  convert h using 1 <;> ring_nf
+  convert h using 1
+  ring_nf
 
 theorem nuClasses_le_card_pow_primeFactors
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
-    {a b : ι → ℕ} {d : ℕ} (hd : Squarefree d)
+    {ι : Type*} [Fintype ι]
+    {a b : ι → ℕ} {d : ℕ} (_hd : Squarefree d)
     (hcop : ∀ p ∈ d.primeFactors, ∀ i, (a i).Coprime p) :
     nuClasses a b d ≤ (Fintype.card ι) ^ d.primeFactors.card := by
   unfold nuClasses

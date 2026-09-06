@@ -18,7 +18,7 @@ open Erdos851 Erdos851.FiniteCombinatorialSieve Erdos851.FiniteSieveApplication
 
 noncomputable section
 
-variable {ι : Type*} [Fintype ι] [DecidableEq ι]
+variable {ι : Type*} [Fintype ι]
 
 theorem nuClasses_mul_of_coprime (a b : ι → ℕ) {m n : ℕ}
     (h : m.Coprime n) :
@@ -65,7 +65,7 @@ private theorem sum_fiber_counts_filter (I : Finset ℕ) (f : ℕ → ℕ)
     aesop
   rw [← Nat.cast_sum, hcount]
 
-variable [Nonempty ι]
+variable [DecidableEq ι] [Nonempty ι]
 
 /-- Sieve with the large-prime divisibility indicator scaled by `1/16`. -/
 def conditionedBoundingSieve (a b : ι → ℕ) (X z Y p : ℕ)
@@ -174,6 +174,7 @@ theorem prime_coprime_sievePrimeProduct_of_gt {p z y : ℕ}
   have hpy := (Erdos387.mem_sievePrimes.mp hmem).2.2
   omega
 
+omit [DecidableEq ι] [Nonempty ι] in
 theorem nuClasses_le_self_of_dvd_sievePrimeProduct
     {a b : ι → ℕ} {z Y d : ℕ}
     (hcard : Fintype.card ι ≤ z)
@@ -193,6 +194,7 @@ theorem nuClasses_le_self_of_dvd_sievePrimeProduct
     exact hcop q (Nat.prime_of_mem_primeFactors hq)
       ((Nat.dvd_of_mem_primeFactors hq).trans hd) i
 
+omit [DecidableEq ι] in
 /-- The finite upper sieve after conditioning on a prime larger than every
 sieving prime.  The factor sixteen multiplies both the main term and the
 square-level error. -/
