@@ -1,6 +1,4 @@
-This is a formalized disproof of [Erdős Problem 1](https://www.erdosproblems.com/forum/thread/1).
-
-It formalizes the [dyadic graph construction](../pdf/Erdos1.pdf), producing, for every integer $n \geq 2$, a set of $n$ positive integers with distinct subset sums and maximum less than $2^{n+1}/\log_2 n$.
+This is a formalized disproof of [Erdős Problem 1](https://www.erdosproblems.com/forum/thread/1). See the [dyadic graph construction](../pdf/Erdos1.pdf).
 
 It is available for these Mathlib (and Lean) versions:
 

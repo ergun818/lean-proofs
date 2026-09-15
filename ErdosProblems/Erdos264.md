@@ -1,10 +1,4 @@
-This is a formalized proof of (parts of!) [Erdős Problem
-264](https://www.erdosproblems.com/forum/thread/264).
-
-The latest `Erdos264b` formalization combines the earlier `Erdos264` and
-`Erdos264b` results: the counterexample for $2^n$, the explicit construction
-with perturbations in $\{1,2,3,4,5\}$, and the irrationality-sequence example
-$2^{2^n}$. The older ports remain separate.
+This is a formalized proof of (parts of) [Erdős Problem 264](https://www.erdosproblems.com/forum/thread/264).
 
 It is available for these Mathlib (and Lean) versions:
 

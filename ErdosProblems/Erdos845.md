@@ -7,7 +7,4 @@ It is available for these Mathlib (and Lean) versions:
 * [Mathlib/Lean v4.30.0](../src/v4.30.0/ErdosProblems/Erdos845.lean).
 * [Mathlib/Lean v4.29.1](../src/v4.29.1/ErdosProblems/Erdos845.lean).
 * [Mathlib/Lean v4.24.0](../src/v4.24.0/ErdosProblems/Erdos845.lean).
-
-There is also a bigger file available:
-
-* [Mathlib v4.24.0, Lean v4.24.0](../src/v4.24.0/ErdosProblems/Erdos845b.lean).
+* [Mathlib/Lean v4.24.0](../src/v4.24.0/ErdosProblems/Erdos845b.lean) (larger file).
