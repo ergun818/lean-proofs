@@ -23,4 +23,9 @@ theorem erdos_1 : ¬ ∃ C > (0 : ℝ), ∀ (N : ℕ) (A : Finset ℕ) (_ : IsSu
     N ≠ 0 → C * 2 ^ A.card < N :=
   not_uniform_bound_of_quantitative erdos_1_quantitative
 
+/-- The negative answer, named for the independent Comparator challenge. -/
+theorem not_erdos_1 : ¬ ∃ C > (0 : ℝ), ∀ (N : ℕ) (A : Finset ℕ) (_ : IsSumDistinctSet A N),
+    N ≠ 0 → C * 2 ^ A.card < N :=
+  erdos_1
+
 end Erdos1

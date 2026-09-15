@@ -433,6 +433,8 @@ roots = [
 
   "Erdos305",
 
+  "Erdos1",
+  "Erdos1b",
   "Erdos2",
   "Erdos4",
   "Erdos4b",
