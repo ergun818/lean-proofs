@@ -16,7 +16,7 @@ open Erdos1 (IsSumDistinctSet minimumBound)
 
 /-- For every positive error tolerance, all sufficiently large cardinalities have
 a sum-distinct set with the cube-root saving and leading constant `(9/4)^(1/3)`. -/
-theorem erdos_1 (ε : ℝ) (hε : 0 < ε) :
+theorem not_erdos_1b (ε : ℝ) (hε : 0 < ε) :
     ∀ᶠ n : ℕ in atTop, ∃ (N : ℕ) (A : Finset ℕ),
       0 < N ∧ A.card = n ∧ IsSumDistinctSet A N ∧
         (N : ℝ) < ((9 / 4 : ℝ) ^ (1 / 3 : ℝ) + ε) * 2 ^ n /

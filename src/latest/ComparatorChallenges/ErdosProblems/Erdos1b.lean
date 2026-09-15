@@ -15,7 +15,7 @@ end Erdos1
 
 namespace Erdos1b
 
-theorem erdos_1 (ε : ℝ) (hε : 0 < ε) :
+theorem not_erdos_1b (ε : ℝ) (hε : 0 < ε) :
     ∀ᶠ n : ℕ in atTop, ∃ (N : ℕ) (A : Finset ℕ),
       0 < N ∧ A.card = n ∧ Erdos1.IsSumDistinctSet A N ∧
         (N : ℝ) < ((9 / 4 : ℝ) ^ (1 / 3 : ℝ) + ε) * 2 ^ n /
